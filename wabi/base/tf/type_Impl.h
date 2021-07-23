@@ -57,7 +57,10 @@ struct Tf_AddBases<TfType::Bases<Bases...>>
       TfType::_CastFunction func;
     };
 
-    const std::initializer_list<Cast> baseCasts = {{&typeid(Bases), &Tf_CastToParent<Derived, Bases>}...};
+    const std::initializer_list<Cast> baseCasts = {
+      {&typeid(Bases), &Tf_CastToParent<Derived, Bases>}
+      ...
+    };
 
     for (const Cast &cast : baseCasts)
     {
@@ -118,8 +121,7 @@ inline void *Tf_CastToParent(void *addr, bool derivedToBase)
     DERIVED *derived = reinterpret_cast<DERIVED *>(addr);
     BASE *base = derived;
     return base;
-  }
-  else
+  } else
   {
     // Downcast -- use static_cast.
     BASE *base = reinterpret_cast<BASE *>(addr);

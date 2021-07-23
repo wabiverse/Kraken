@@ -37,19 +37,15 @@ WABI_NAMESPACE_USING
 
 void wrapMetrics()
 {
-    def("GetStageKilogramsPerUnit", UsdPhysicsGetStageKilogramsPerUnit, 
-            arg("stage"));
-    def("StageHasAuthoredKilogramsPerUnit", 
-            UsdPhysicsStageHasAuthoredKilogramsPerUnit, arg("stage"));
-    def("SetStageKilogramsPerUnit", UsdPhysicsSetStageKilogramsPerUnit, 
-        (arg("stage"), arg("metersPerUnit")));
-    def("MassUnitsAre", UsdPhysicsMassUnitsAre, 
-        (arg("authoredUnits"), arg("standardUnits"), arg("epsilon")=1e-5));
+  def("GetStageKilogramsPerUnit", UsdPhysicsGetStageKilogramsPerUnit, arg("stage"));
+  def("StageHasAuthoredKilogramsPerUnit", UsdPhysicsStageHasAuthoredKilogramsPerUnit, arg("stage"));
+  def("SetStageKilogramsPerUnit", UsdPhysicsSetStageKilogramsPerUnit, (arg("stage"), arg("metersPerUnit")));
+  def("MassUnitsAre",
+      UsdPhysicsMassUnitsAre,
+      (arg("authoredUnits"), arg("standardUnits"), arg("epsilon") = 1e-5));
 
-    boost::python::class_<UsdPhysicsMassUnits>
-        cls("MassUnits", boost::python::no_init);
-    cls
-        .def_readonly("kilograms", UsdPhysicsMassUnits::kilograms)
-        .def_readonly("grams", UsdPhysicsMassUnits::grams)
-        .def_readonly("slugs", UsdPhysicsMassUnits::slugs);
+  boost::python::class_<UsdPhysicsMassUnits> cls("MassUnits", boost::python::no_init);
+  cls.def_readonly("kilograms", UsdPhysicsMassUnits::kilograms)
+    .def_readonly("grams", UsdPhysicsMassUnits::grams)
+    .def_readonly("slugs", UsdPhysicsMassUnits::slugs);
 }

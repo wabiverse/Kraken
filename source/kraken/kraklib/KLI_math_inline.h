@@ -213,55 +213,55 @@ float ceil_power_of_10(float f);
 #ifndef NDEBUG
 #  define KLI_ASSERT_UNIT_EPSILON 0.0002f
 
-#  define KLI_ASSERT_UNIT_V3(v) \
-    { \
-      const float _test_unit = len_squared_v3(v); \
+#  define KLI_ASSERT_UNIT_V3(v)                                            \
+    {                                                                      \
+      const float _test_unit = len_squared_v3(v);                          \
       KLI_assert(!(fabsf(_test_unit - 1.0f) >= KLI_ASSERT_UNIT_EPSILON) || \
-                 !(fabsf(_test_unit) >= KLI_ASSERT_UNIT_EPSILON)); \
-    } \
+                 !(fabsf(_test_unit) >= KLI_ASSERT_UNIT_EPSILON));         \
+    }                                                                      \
     (void)0
 
-#  define KLI_ASSERT_UNIT_V3_DB(v) \
-    { \
-      const double _test_unit = len_squared_v3_db(v); \
+#  define KLI_ASSERT_UNIT_V3_DB(v)                                       \
+    {                                                                    \
+      const double _test_unit = len_squared_v3_db(v);                    \
       KLI_assert(!(fabs(_test_unit - 1.0) >= KLI_ASSERT_UNIT_EPSILON) || \
-                 !(fabs(_test_unit) >= KLI_ASSERT_UNIT_EPSILON)); \
-    } \
+                 !(fabs(_test_unit) >= KLI_ASSERT_UNIT_EPSILON));        \
+    }                                                                    \
     (void)0
 
-#  define KLI_ASSERT_UNIT_V2(v) \
-    { \
-      const float _test_unit = len_squared_v2(v); \
+#  define KLI_ASSERT_UNIT_V2(v)                                            \
+    {                                                                      \
+      const float _test_unit = len_squared_v2(v);                          \
       KLI_assert(!(fabsf(_test_unit - 1.0f) >= KLI_ASSERT_UNIT_EPSILON) || \
-                 !(fabsf(_test_unit) >= KLI_ASSERT_UNIT_EPSILON)); \
-    } \
+                 !(fabsf(_test_unit) >= KLI_ASSERT_UNIT_EPSILON));         \
+    }                                                                      \
     (void)0
 
-#  define KLI_ASSERT_UNIT_QUAT(q) \
-    { \
-      const float _test_unit = dot_qtqt(q, q); \
+#  define KLI_ASSERT_UNIT_QUAT(q)                                               \
+    {                                                                           \
+      const float _test_unit = dot_qtqt(q, q);                                  \
       KLI_assert(!(fabsf(_test_unit - 1.0f) >= KLI_ASSERT_UNIT_EPSILON * 10) || \
-                 !(fabsf(_test_unit) >= KLI_ASSERT_UNIT_EPSILON * 10)); \
-    } \
+                 !(fabsf(_test_unit) >= KLI_ASSERT_UNIT_EPSILON * 10));         \
+    }                                                                           \
     (void)0
 
-#  define KLI_ASSERT_ZERO_M3(m) \
-    { \
+#  define KLI_ASSERT_ZERO_M3(m)                                            \
+    {                                                                      \
       KLI_assert(dot_vn_vn((const float *)m, (const float *)m, 9) != 0.0); \
-    } \
+    }                                                                      \
     (void)0
 
-#  define KLI_ASSERT_ZERO_M4(m) \
-    { \
+#  define KLI_ASSERT_ZERO_M4(m)                                             \
+    {                                                                       \
       KLI_assert(dot_vn_vn((const float *)m, (const float *)m, 16) != 0.0); \
-    } \
+    }                                                                       \
     (void)0
-#  define KLI_ASSERT_UNIT_M3(m) \
-    { \
+#  define KLI_ASSERT_UNIT_M3(m)   \
+    {                             \
       KLI_ASSERT_UNIT_V3((m)[0]); \
       KLI_ASSERT_UNIT_V3((m)[1]); \
       KLI_ASSERT_UNIT_V3((m)[2]); \
-    } \
+    }                             \
     (void)0
 #else
 #  define KLI_ASSERT_UNIT_V2(v) (void)(v)

@@ -43,35 +43,37 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateExpansionRuleAttr(UsdCollectionAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateExpansionRuleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+  static UsdAttribute _CreateExpansionRuleAttr(UsdCollectionAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateExpansionRuleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                        writeSparsely);
+  }
+
+  static UsdAttribute _CreateIncludeRootAttr(UsdCollectionAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateIncludeRootAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                       writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateIncludeRootAttr(UsdCollectionAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateIncludeRootAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static bool _WrapIsCollectionAPIPath(const SdfPath &path)
+  {
+    TfToken collectionName;
+    return UsdCollectionAPI::IsCollectionAPIPath(path, &collectionName);
+  }
 
-static bool _WrapIsCollectionAPIPath(const SdfPath &path)
-{
-  TfToken collectionName;
-  return UsdCollectionAPI::IsCollectionAPIPath(path, &collectionName);
-}
-
-static std::string _Repr(const UsdCollectionAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  std::string instanceName = self.GetName();
-  return TfStringPrintf("Usd.CollectionAPI(%s, '%s')", primRepr.c_str(), instanceName.c_str());
-}
+  static std::string _Repr(const UsdCollectionAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    std::string instanceName = self.GetName();
+    return TfStringPrintf("Usd.CollectionAPI(%s, '%s')", primRepr.c_str(), instanceName.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -151,77 +153,77 @@ void wrapUsdCollectionAPI()
 namespace
 {
 
-static object _WrapValidate(const UsdCollectionAPI &coll)
-{
-  std::string reason;
-  bool valid = coll.Validate(&reason);
-  return boost::python::make_tuple(valid, reason);
-}
+  static object _WrapValidate(const UsdCollectionAPI &coll)
+  {
+    std::string reason;
+    bool valid = coll.Validate(&reason);
+    return boost::python::make_tuple(valid, reason);
+  }
 
-WRAP_CUSTOM
-{
+  WRAP_CUSTOM
+  {
 
-  scope s_query = _class;
+    scope s_query = _class;
 
-  using MQuery = UsdCollectionMembershipQuery;
-  using This = UsdCollectionAPI;
+    using MQuery = UsdCollectionMembershipQuery;
+    using This = UsdCollectionAPI;
 
-  MQuery (This::*_ComputeMembershipQuery)() const = &This::ComputeMembershipQuery;
+    MQuery (This::*_ComputeMembershipQuery)() const = &This::ComputeMembershipQuery;
 
-  scope collectionAPI =
-    _class
-      .def(init<UsdPrim, TfToken>())
+    scope collectionAPI =
+      _class
+        .def(init<UsdPrim, TfToken>())
 
-      .def("GetCollection",
-           (UsdCollectionAPI(*)(const UsdPrim &prim, const TfToken &name)) & This::GetCollection,
-           (arg("prim"), arg("name")))
-      .def("GetCollection",
-           (UsdCollectionAPI(*)(const UsdStagePtr &stage, const SdfPath &collectionPath)) &
-             This::GetCollection,
-           (arg("stage"), arg("collectionPath")))
-      .staticmethod("GetCollection")
+        .def("GetCollection",
+             (UsdCollectionAPI(*)(const UsdPrim &prim, const TfToken &name)) & This::GetCollection,
+             (arg("prim"), arg("name")))
+        .def("GetCollection",
+             (UsdCollectionAPI(*)(const UsdStagePtr &stage, const SdfPath &collectionPath)) &
+               This::GetCollection,
+             (arg("stage"), arg("collectionPath")))
+        .staticmethod("GetCollection")
 
-      .def("GetAllCollections",
-           &This::GetAllCollections,
-           arg("prim"),
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("GetAllCollections")
+        .def("GetAllCollections",
+             &This::GetAllCollections,
+             arg("prim"),
+             return_value_policy<TfPySequenceToList>())
+        .staticmethod("GetAllCollections")
 
-      .def("GetName", &This::GetName)
-      .def("GetCollectionPath", &This::GetCollectionPath)
+        .def("GetName", &This::GetName)
+        .def("GetCollectionPath", &This::GetCollectionPath)
 
-      .def("GetNamedCollectionPath", &This::GetNamedCollectionPath, (arg("prim"), arg("collectionName")))
-      .staticmethod("GetNamedCollectionPath")
+        .def("GetNamedCollectionPath", &This::GetNamedCollectionPath, (arg("prim"), arg("collectionName")))
+        .staticmethod("GetNamedCollectionPath")
 
-      .def("IsSchemaPropertyBaseName", &This::IsSchemaPropertyBaseName, arg("baseName"))
-      .staticmethod("IsSchemaPropertyBaseName")
+        .def("IsSchemaPropertyBaseName", &This::IsSchemaPropertyBaseName, arg("baseName"))
+        .staticmethod("IsSchemaPropertyBaseName")
 
-      .def("ComputeMembershipQuery", _ComputeMembershipQuery)
+        .def("ComputeMembershipQuery", _ComputeMembershipQuery)
 
-      .def("HasNoIncludedPaths", &This::HasNoIncludedPaths)
+        .def("HasNoIncludedPaths", &This::HasNoIncludedPaths)
 
-      .def("IncludePath", &This::IncludePath, arg("pathToInclude"))
-      .def("ExcludePath", &This::ExcludePath, arg("pathToExclude"))
+        .def("IncludePath", &This::IncludePath, arg("pathToInclude"))
+        .def("ExcludePath", &This::ExcludePath, arg("pathToExclude"))
 
-      .def("Validate", &_WrapValidate)
+        .def("Validate", &_WrapValidate)
 
-      .def("ComputeIncludedObjects",
-           &This::ComputeIncludedObjects,
-           (arg("query"), arg("stage"), arg("predicate") = UsdPrimDefaultPredicate),
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("ComputeIncludedObjects")
+        .def("ComputeIncludedObjects",
+             &This::ComputeIncludedObjects,
+             (arg("query"), arg("stage"), arg("predicate") = UsdPrimDefaultPredicate),
+             return_value_policy<TfPySequenceToList>())
+        .staticmethod("ComputeIncludedObjects")
 
-      .def("ComputeIncludedPaths",
-           &This::ComputeIncludedPaths,
-           (arg("query"), arg("stage"), arg("predicate") = UsdPrimDefaultPredicate),
-           return_value_policy<TfPySequenceToList>())
-      .staticmethod("ComputeIncludedPaths")
+        .def("ComputeIncludedPaths",
+             &This::ComputeIncludedPaths,
+             (arg("query"), arg("stage"), arg("predicate") = UsdPrimDefaultPredicate),
+             return_value_policy<TfPySequenceToList>())
+        .staticmethod("ComputeIncludedPaths")
 
-      .def("CanContainPropertyName", This::CanContainPropertyName, arg("name"))
-      .staticmethod("CanContainPropertyName")
+        .def("CanContainPropertyName", This::CanContainPropertyName, arg("name"))
+        .staticmethod("CanContainPropertyName")
 
-      .def("ResetCollection", &This::ResetCollection)
-      .def("BlockCollection", &This::BlockCollection);
-}
+        .def("ResetCollection", &This::ResetCollection)
+        .def("BlockCollection", &This::BlockCollection);
+  }
 
 }  // namespace

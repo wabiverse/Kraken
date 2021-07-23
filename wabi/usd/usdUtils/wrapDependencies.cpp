@@ -43,33 +43,33 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static bp::tuple _ExtractExternalReferences(const std::string &filePath)
-{
-  std::vector<std::string> subLayers, references, payloads;
-  UsdUtilsExtractExternalReferences(filePath, &subLayers, &references, &payloads);
-  return bp::make_tuple(subLayers, references, payloads);
-}
-
-// Helper for creating a python object holding a layer ref ptr.
-bp::object _LayerRefToObj(const SdfLayerRefPtr &layer)
-{
-  using RefPtrFactory = Tf_MakePyConstructor::RefPtrFactory<>::apply<SdfLayerRefPtr>::type;
-  return bp::object(bp::handle<>(RefPtrFactory()(layer)));
-}
-
-static bp::tuple _ComputeAllDependencies(const SdfAssetPath &assetPath)
-{
-  std::vector<SdfLayerRefPtr> layers;
-  std::vector<std::string> assets, unresolvedPaths;
-
-  UsdUtilsComputeAllDependencies(assetPath, &layers, &assets, &unresolvedPaths);
-  bp::list layersList;
-  for (auto &l : layers)
+  static bp::tuple _ExtractExternalReferences(const std::string &filePath)
   {
-    layersList.append(_LayerRefToObj(l));
+    std::vector<std::string> subLayers, references, payloads;
+    UsdUtilsExtractExternalReferences(filePath, &subLayers, &references, &payloads);
+    return bp::make_tuple(subLayers, references, payloads);
   }
-  return bp::make_tuple(layersList, assets, unresolvedPaths);
-}
+
+  // Helper for creating a python object holding a layer ref ptr.
+  bp::object _LayerRefToObj(const SdfLayerRefPtr &layer)
+  {
+    using RefPtrFactory = Tf_MakePyConstructor::RefPtrFactory<>::apply<SdfLayerRefPtr>::type;
+    return bp::object(bp::handle<>(RefPtrFactory()(layer)));
+  }
+
+  static bp::tuple _ComputeAllDependencies(const SdfAssetPath &assetPath)
+  {
+    std::vector<SdfLayerRefPtr> layers;
+    std::vector<std::string> assets, unresolvedPaths;
+
+    UsdUtilsComputeAllDependencies(assetPath, &layers, &assets, &unresolvedPaths);
+    bp::list layersList;
+    for (auto &l : layers)
+    {
+      layersList.append(_LayerRefToObj(l));
+    }
+    return bp::make_tuple(layersList, assets, unresolvedPaths);
+  }
 
 }  // anonymous namespace
 

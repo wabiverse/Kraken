@@ -140,14 +140,15 @@ UsdAttribute UsdGeomPointBased::CreateNormalsAttr(VtValue const &defaultValue, b
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -220,24 +221,24 @@ bool UsdGeomPointBased::SetNormalsInterpolation(TfToken const &interpolation)
 
 namespace
 {
-template<typename Reduction>
-bool _ComputeExtentImpl(const VtVec3fArray &points, VtVec3fArray *extent, Reduction &&reduction)
-{
-  extent->resize(2);
+  template<typename Reduction>
+  bool _ComputeExtentImpl(const VtVec3fArray &points, VtVec3fArray *extent, Reduction &&reduction)
+  {
+    extent->resize(2);
 
-  // Calculate bounds
-  GfRange3d bbox = WorkParallelReduceN(
-    GfRange3d(),
-    points.size(),
-    std::forward<Reduction>(reduction),
-    [](GfRange3d lhs, GfRange3d rhs) { return GfRange3d::GetUnion(lhs, rhs); },
-    /*grainSize=*/500);
+    // Calculate bounds
+    GfRange3d bbox = WorkParallelReduceN(
+      GfRange3d(),
+      points.size(),
+      std::forward<Reduction>(reduction),
+      [](GfRange3d lhs, GfRange3d rhs) { return GfRange3d::GetUnion(lhs, rhs); },
+      /*grainSize=*/500);
 
-  (*extent)[0] = GfVec3f(bbox.GetMin());
-  (*extent)[1] = GfVec3f(bbox.GetMax());
+    (*extent)[0] = GfVec3f(bbox.GetMin());
+    (*extent)[1] = GfVec3f(bbox.GetMax());
 
-  return true;
-}
+    return true;
+  }
 }  // end anonymous namespace
 
 bool UsdGeomPointBased::ComputeExtent(const VtVec3fArray &points, VtVec3fArray *extent)
@@ -284,8 +285,7 @@ static bool _ComputeExtentForPointBased(const UsdGeomBoundable &boundable,
   if (transform)
   {
     return UsdGeomPointBased::ComputeExtent(points, *transform, extent);
-  }
-  else
+  } else
   {
     return UsdGeomPointBased::ComputeExtent(points, extent);
   }
@@ -380,8 +380,14 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
       }
     }
 
-    if (!ComputePointsAtTime(
-          points, stage, time, positions, velocities, velocitiesSampleTime, accelerations, velocityScale))
+    if (!ComputePointsAtTime(points,
+                             stage,
+                             time,
+                             positions,
+                             velocities,
+                             velocitiesSampleTime,
+                             accelerations,
+                             velocityScale))
     {
       return false;
     }
@@ -403,8 +409,10 @@ bool UsdGeomPointBased::ComputePointsAtTime(VtArray<GfVec3f> *points,
   size_t numPoints = positions.size();
 
   const double timeCodesPerSecond = stage->GetTimeCodesPerSecond();
-  const float velocityTimeDelta = UsdGeom_CalculateTimeDelta(
-    velocityScale, time, velocitiesSampleTime, timeCodesPerSecond);
+  const float velocityTimeDelta = UsdGeom_CalculateTimeDelta(velocityScale,
+                                                             time,
+                                                             velocitiesSampleTime,
+                                                             timeCodesPerSecond);
 
   points->resize(numPoints);
 

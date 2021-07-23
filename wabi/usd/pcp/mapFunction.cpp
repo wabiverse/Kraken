@@ -40,30 +40,30 @@ WABI_NAMESPACE_BEGIN
 
 namespace
 {
-// Order PathPairs using FastLessThan.
-struct _PathPairOrder
-{
-  bool operator()(const PcpMapFunction::PathPair &lhs, const PcpMapFunction::PathPair &rhs)
+  // Order PathPairs using FastLessThan.
+  struct _PathPairOrder
   {
-    SdfPath::FastLessThan less;
-    // We need to ensure that "root identity" elements appear first
-    // ('/' -> '/') so we special-case those.
-    SdfPath const &absRoot = SdfPath::AbsoluteRootPath();
-    if (lhs == rhs)
+    bool operator()(const PcpMapFunction::PathPair &lhs, const PcpMapFunction::PathPair &rhs)
     {
-      return false;
+      SdfPath::FastLessThan less;
+      // We need to ensure that "root identity" elements appear first
+      // ('/' -> '/') so we special-case those.
+      SdfPath const &absRoot = SdfPath::AbsoluteRootPath();
+      if (lhs == rhs)
+      {
+        return false;
+      }
+      if (lhs.first == absRoot && lhs.second == absRoot)
+      {
+        return true;
+      }
+      if (rhs.first == absRoot && rhs.second == absRoot)
+      {
+        return false;
+      }
+      return less(lhs.first, rhs.first) || (lhs.first == rhs.first && less(lhs.second, rhs.second));
     }
-    if (lhs.first == absRoot && lhs.second == absRoot)
-    {
-      return true;
-    }
-    if (rhs.first == absRoot && rhs.second == absRoot)
-    {
-      return false;
-    }
-    return less(lhs.first, rhs.first) || (lhs.first == rhs.first && less(lhs.second, rhs.second));
-  }
-};
+  };
 };  // namespace
 
 PcpMapFunction::PcpMapFunction(PathPair const *begin,
@@ -138,8 +138,7 @@ static bool _Canonicalize(PairIter &begin, PairIter &end)
       // Entries are not sorted yet so swap to back for O(1) erase.
       std::swap(*i, *(end - 1));
       --end;
-    }
-    else
+    } else
     {
       ++i;
     }
@@ -310,8 +309,8 @@ static SdfPath _Map(const SdfPath &path,
 
   SdfPath result;
   const SdfPath &target = bestIndex == -1 ? SdfPath::AbsoluteRootPath() :
-                                            invert ? pairs[bestIndex].first :
-                                                     pairs[bestIndex].second;
+                          invert          ? pairs[bestIndex].first :
+                                            pairs[bestIndex].second;
   if (bestIndex != -1)
   {
     const SdfPath &source = invert ? pairs[bestIndex].second : pairs[bestIndex].first;
@@ -320,8 +319,7 @@ static SdfPath _Map(const SdfPath &path,
     {
       return result;
     }
-  }
-  else
+  } else
   {
     // Use the root identity.
     result = path;

@@ -31,61 +31,65 @@ struct AnchorBBox;
 
 namespace AnchorCurveEdit
 {
-enum CurveType
-{
-  CurveNone,
-  CurveDiscrete,
-  CurveLinear,
-  CurveSmooth,
-  CurveBezier,
-};
-
-struct EditPoint
-{
-  int curveIndex;
-  int pointIndex;
-  bool operator<(const EditPoint &other) const
+  enum CurveType
   {
-    if (curveIndex < other.curveIndex)
-      return true;
-    if (curveIndex > other.curveIndex)
+    CurveNone,
+    CurveDiscrete,
+    CurveLinear,
+    CurveSmooth,
+    CurveBezier,
+  };
+
+  struct EditPoint
+  {
+    int curveIndex;
+    int pointIndex;
+    bool operator<(const EditPoint &other) const
+    {
+      if (curveIndex < other.curveIndex)
+        return true;
+      if (curveIndex > other.curveIndex)
+        return false;
+
+      if (pointIndex < other.pointIndex)
+        return true;
       return false;
+    }
+  };
 
-    if (pointIndex < other.pointIndex)
+  struct Delegate
+  {
+    bool focused = false;
+    virtual size_t GetCurveCount() = 0;
+    virtual bool IsVisible(size_t /*curveIndex*/)
+    {
       return true;
-    return false;
-  }
-};
+    }
+    virtual CurveType GetCurveType(size_t /*curveIndex*/) const
+    {
+      return CurveLinear;
+    }
+    virtual wabi::GfVec2f &GetMin() = 0;
+    virtual wabi::GfVec2f &GetMax() = 0;
+    virtual size_t GetPointCount(size_t curveIndex) = 0;
+    virtual uint32_t GetCurveColor(size_t curveIndex) = 0;
+    virtual wabi::GfVec2f *GetPoints(size_t curveIndex) = 0;
+    virtual int EditPoint(size_t curveIndex, int pointIndex, wabi::GfVec2f value) = 0;
+    virtual void AddPoint(size_t curveIndex, wabi::GfVec2f value) = 0;
+    virtual unsigned int GetBackgroundColor()
+    {
+      return 0xFF202020;
+    }
+    // handle undo/redo thru this functions
+    virtual void BeginEdit(int /*index*/)
+    {}
+    virtual void EndEdit()
+    {}
+  };
 
-struct Delegate
-{
-  bool focused = false;
-  virtual size_t GetCurveCount() = 0;
-  virtual bool IsVisible(size_t /*curveIndex*/)
-  {
-    return true;
-  }
-  virtual CurveType GetCurveType(size_t /*curveIndex*/) const
-  {
-    return CurveLinear;
-  }
-  virtual wabi::GfVec2f &GetMin() = 0;
-  virtual wabi::GfVec2f &GetMax() = 0;
-  virtual size_t GetPointCount(size_t curveIndex) = 0;
-  virtual uint32_t GetCurveColor(size_t curveIndex) = 0;
-  virtual wabi::GfVec2f *GetPoints(size_t curveIndex) = 0;
-  virtual int EditPoint(size_t curveIndex, int pointIndex, wabi::GfVec2f value) = 0;
-  virtual void AddPoint(size_t curveIndex, wabi::GfVec2f value) = 0;
-  virtual unsigned int GetBackgroundColor()
-  {
-    return 0xFF202020;
-  }
-  // handle undo/redo thru this functions
-  virtual void BeginEdit(int /*index*/)
-  {}
-  virtual void EndEdit()
-  {}
-};
-
-int Edit(Delegate &delegate, const wabi::GfVec2f &size, unsigned int id, const AnchorBBox *clippingRect = NULL, std::vector<EditPoint> *selectedPoints = NULL);
+  int Edit(Delegate &delegate,
+           const wabi::GfVec2f &size,
+           unsigned int id,
+           const AnchorBBox *clippingRect = NULL,
+           std::vector<EditPoint> *selectedPoints = NULL);
 }  // namespace AnchorCurveEdit

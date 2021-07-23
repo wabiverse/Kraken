@@ -31,11 +31,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-#define HD_TOKENS \
+#define HD_TOKENS             \
   (accelerations)(adjacency)( \
     bboxLocalMin)(bboxLocalMax)(bbox)(bezier)(bSpline)(camera)(catmullRom)(collection)(computeShader)(coordSysBindings)(cubic)(cullStyle)(doubleSided)(dispatchCount)(displayColor)(displayOpacity)(displayStyle)(drawDispatch)(drawingShader)(drawingCoord0)(drawingCoord1)(drawingCoord2)(drawingCoordI)(drivers)(edgeIndices)(elementCount)(elementsVisibility)(extent)(faceColors)(filters)(full)(geometry)(hermite)(hullIndices)(indices)(isFlipped)(itemsDrawn)(layout)(leftHanded)(linear)(lightLink)(lightFilterLink)(materialParams)(nonperiodic)(normals)(params)(patchParam)(periodic)(pinned)(points)(pointsIndices)(power)(preview)(pointsVisibility)(primvar)(primID)(primitiveParam)(quadInfo)(renderTags)(rightHanded)(segmented)(shadowLink)(subdivTags)(taskState)(taskParams)(topology)(topologyVisibility)(totalItemCount)(transform)(transformInverse)(velocities)(visibility)(widths)
 
-#define HD_INSTANCER_TOKENS \
+#define HD_INSTANCER_TOKENS           \
   (culledInstanceIndices)(instancer)( \
     instancerTransform)(instancerTransformInverse)(instanceIndices)(instanceIndexBase)(instanceTransform)(rotate)(scale)(translate)
 
@@ -61,16 +61,16 @@ WABI_NAMESPACE_BEGIN
 
 #define HD_OPTION_TOKENS (parallelRprimSync)
 
-#define HD_PRIMTYPE_TOKENS \
-  /* Rprims */ \
-  (mesh)(basisCurves)(points)(volume) \
-\
-    /* Sprims */ \
-    (camera)(drawTarget)(material)(coordSys)                                                                                  /* Sprims Lights */ \
+#define HD_PRIMTYPE_TOKENS                                                                                                                                 \
+  /* Rprims */                                                                                                                                             \
+  (mesh)(basisCurves)(points)(volume)                                                                                                                      \
+                                                                                                                                                           \
+    /* Sprims */                                                                                                                                           \
+    (camera)(drawTarget)(material)(coordSys)                                                                                  /* Sprims Lights */          \
     (simpleLight)(cylinderLight)(diskLight)(distantLight)(domeLight)(light)(lightFilter)(pluginLight)(rectLight)(sphereLight) /* Sprims ExtComputations */ \
-    (extComputation) \
-\
-    /* Bprims */ \
+    (extComputation)                                                                                                                                       \
+                                                                                                                                                           \
+    /* Bprims */                                                                                                                                           \
     (renderBuffer)
 
 #define HD_PRIMVAR_ROLE_TOKENS ((none, ""))(color)(vector)(normal)(point)(textureCoordinate)
@@ -79,51 +79,51 @@ WABI_NAMESPACE_BEGIN
  * describing which values a renderpass should
  * compute and write at render time.
  */
-#define HD_AOV_TOKENS \
-  /* Standard rendering outputs */ \
-\
-  /* HdAovTokens->color represents the final \
-   * fragment RGBA color. For correct compositing \
-   * using Hydra, it should have pre-multiplied alpha. \
-   */ \
-  (color)                                            /* HdAovTokens->depth represents the clip-space \
-                                                      * depth of the final fragment. \
-                                                      */ \
-    (depth)                                          /* HdAovTokens->cameraDepth represents the camera-space \
-                                                      * depth of the final fragment. \
-                                                      */ \
-    (cameraDepth)                                    /* ID rendering - these tokens represent the \
-                                                      * prim, instance, and subprim ids of the final \
-                                                      * fragment. \
-                                                      */ \
-    (primId)(instanceId)(elementId)(edgeId)(pointId) /* Geometric data */ \
-    (Peye)(Neye)(patchCoord)(primitiveParam)(normal) /* Others we might want to add: \
+#define HD_AOV_TOKENS                                                                                                     \
+  /* Standard rendering outputs */                                                                                        \
+                                                                                                                          \
+  /* HdAovTokens->color represents the final                                                                              \
+   * fragment RGBA color. For correct compositing                                                                         \
+   * using Hydra, it should have pre-multiplied alpha.                                                                    \
+   */                                                                                                                     \
+  (color)                                            /* HdAovTokens->depth represents the clip-space                      \
+                                                      * depth of the final fragment.                                      \
+                                                      */                                                                  \
+    (depth)                                          /* HdAovTokens->cameraDepth represents the camera-space              \
+                                                      * depth of the final fragment.                                      \
+                                                      */                                                                  \
+    (cameraDepth)                                    /* ID rendering - these tokens represent the                         \
+                                                      * prim, instance, and subprim ids of the final                      \
+                                                      * fragment.                                                         \
+                                                      */                                                                  \
+    (primId)(instanceId)(elementId)(edgeId)(pointId) /* Geometric data */                                                 \
+    (Peye)(Neye)(patchCoord)(primitiveParam)(normal) /* Others we might want to add:                                      \
                                                       * https://rmanwiki.pixar.com/display/REN/Arbitrary+Output+Variables \
-                                                      * - curvature \
-                                                      * - tangent \
-                                                      * - velocity \
-                                                      */ \
-    /* Primvars: \
-     *   The tokens don't try to enumerate primvars, \
-     *   but instead provide an identifying namespace. \
-     *   The "color" primvar is addressable as "primvars:color". \
-     */ \
-    ((primvars, "primvars:")) /* Light path expressions: \
-                               *   Applicable only to raytracers, these tell \
-                               *   the renderer to output specific shading \
-                               *   components for specific classes of lightpath. \
-                               * \
-                               *   Lightpath syntax is defined here: \
-                               *   https://rmanwiki.pixar.com/display/REN/Light+Path+Expressions \
-                               *   ... so for example, you could specify \
-                               *   "lpe:CD[<L.>O]" \
-                               */ \
-    ((lpe, "lpe:"))           /* Shader signals: \
-                               *   This tells the renderer to output a partial shading signal, \
-                               *   whether from the BXDF (e.g. bxdf.diffuse) or from an intermediate \
-                               *   shading node (e.g. fractal.rgb). \
-                               *   XXX: The exact format is TBD. \
-                               */ \
+                                                      * - curvature                                                       \
+                                                      * - tangent                                                         \
+                                                      * - velocity                                                        \
+                                                      */                                                                  \
+    /* Primvars:                                                                                                          \
+     *   The tokens don't try to enumerate primvars,                                                                      \
+     *   but instead provide an identifying namespace.                                                                    \
+     *   The "color" primvar is addressable as "primvars:color".                                                          \
+     */                                                                                                                   \
+    ((primvars, "primvars:")) /* Light path expressions:                                                                  \
+                               *   Applicable only to raytracers, these tell                                              \
+                               *   the renderer to output specific shading                                                \
+                               *   components for specific classes of lightpath.                                          \
+                               *                                                                                          \
+                               *   Lightpath syntax is defined here:                                                      \
+                               *   https://rmanwiki.pixar.com/display/REN/Light+Path+Expressions                          \
+                               *   ... so for example, you could specify                                                  \
+                               *   "lpe:CD[<L.>O]"                                                                        \
+                               */                                                                                         \
+    ((lpe, "lpe:"))           /* Shader signals:                                                                          \
+                               *   This tells the renderer to output a partial shading signal,                            \
+                               *   whether from the BXDF (e.g. bxdf.diffuse) or from an intermediate                      \
+                               *   shading node (e.g. fractal.rgb).                                                       \
+                               *   XXX: The exact format is TBD.                                                          \
+                               */                                                                                         \
     ((shader, "shader:"))
 
 HD_API
@@ -136,11 +136,11 @@ HD_API
 TfToken HdAovTokensMakeShader(TfToken const &shader);
 
 /* Schema for application-configurable render settings. */
-#define HD_RENDER_SETTINGS_TOKENS \
-  /* General graphical options */ \
+#define HD_RENDER_SETTINGS_TOKENS                                                            \
+  /* General graphical options */                                                            \
   (enableShadows)(enableSceneMaterials)(enableSceneLights) /* Raytracer sampling settings */ \
-    (convergedVariance)(convergedSamplesPerPixel)          /* thread limit settings */ \
-    (threadLimit)                                          /* interactive vs offline */ \
+    (convergedVariance)(convergedSamplesPerPixel)          /* thread limit settings */       \
+    (threadLimit)                                          /* interactive vs offline */      \
     (enableInteractive)
 
 #define HD_RESOURCE_TYPE_TOKENS (texture)(shaderFile)

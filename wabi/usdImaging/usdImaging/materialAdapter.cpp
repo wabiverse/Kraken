@@ -248,8 +248,11 @@ VtValue UsdImagingMaterialAdapter::GetMaterialResource(UsdPrim const &prim,
 
   if (UsdShadeShader surface = material.ComputeSurfaceSource(contextVector))
   {
-    UsdImaging_BuildHdMaterialNetworkFromTerminal(
-      surface.GetPrim(), HdMaterialTerminalTokens->surface, shaderSourceTypes, &networkMap, time);
+    UsdImaging_BuildHdMaterialNetworkFromTerminal(surface.GetPrim(),
+                                                  HdMaterialTerminalTokens->surface,
+                                                  shaderSourceTypes,
+                                                  &networkMap,
+                                                  time);
 
     // Only build a displacement materialNetwork if we also have a surface
     if (UsdShadeShader displacement = material.ComputeDisplacementSource(contextVector))
@@ -265,8 +268,11 @@ VtValue UsdImagingMaterialAdapter::GetMaterialResource(UsdPrim const &prim,
   // Only build a volume materialNetwork if we do not have a surface
   else if (UsdShadeShader volume = material.ComputeVolumeSource(contextVector))
   {
-    UsdImaging_BuildHdMaterialNetworkFromTerminal(
-      volume.GetPrim(), HdMaterialTerminalTokens->volume, shaderSourceTypes, &networkMap, time);
+    UsdImaging_BuildHdMaterialNetworkFromTerminal(volume.GetPrim(),
+                                                  HdMaterialTerminalTokens->volume,
+                                                  shaderSourceTypes,
+                                                  &networkMap,
+                                                  time);
   }
 
   return VtValue(networkMap);

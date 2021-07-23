@@ -34,10 +34,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 #include <string>
 
 #ifdef _DEBUG
-#  define DEBUG_FILL_GAP \
+#  define DEBUG_FILL_GAP                                  \
     for (auto *pCh = m_pGapStart; pCh < m_pGapEnd; pCh++) \
-    { \
-      *pCh = '@'; \
+    {                                                     \
+      *pCh = '@';                                         \
     }
 #else
 #  define DEBUG_FILL_GAP
@@ -393,8 +393,7 @@ class GapBuffer
     if (size == 0)
     {
       clear();
-    }
-    else
+    } else
     {
       resize(size);
     }
@@ -981,8 +980,7 @@ class GapBuffer
       memmove(pPos + (m_pGapEnd - m_pGapStart), pPos, m_pGapStart - pPos);
       m_pGapEnd -= (m_pGapStart - pPos);
       m_pGapStart = pPos;
-    }
-    else
+    } else
     {
       // Since we are moving after the gap, find distance
       // between m_pGapEnd and target and that's how

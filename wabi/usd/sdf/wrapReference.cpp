@@ -40,46 +40,43 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Repr(const SdfReference &self)
-{
-  string args;
-  bool useKeywordArgs = false;
+  static string _Repr(const SdfReference &self)
+  {
+    string args;
+    bool useKeywordArgs = false;
 
-  if (!self.GetAssetPath().empty())
-  {
-    args += TfPyRepr(self.GetAssetPath());
-  }
-  else
-  {
-    useKeywordArgs = true;
-  }
-  if (!self.GetPrimPath().IsEmpty())
-  {
-    args += (args.empty() ? "" : ", ");
-    args += (useKeywordArgs ? "primPath=" : "") + TfPyRepr(self.GetPrimPath());
-  }
-  else
-  {
-    useKeywordArgs = true;
-  }
-  if (!self.GetLayerOffset().IsIdentity())
-  {
-    args += (args.empty() ? "" : ", ");
-    args += (useKeywordArgs ? "layerOffset=" : "") + TfPyRepr(self.GetLayerOffset());
-  }
-  else
-  {
-    useKeywordArgs = true;
-  }
-  // Always use keyword args for custom data (for readability).
-  if (!self.GetCustomData().empty())
-  {
-    args += (args.empty() ? "" : ", ");
-    args += "customData=" + TfPyRepr(self.GetCustomData());
-  }
+    if (!self.GetAssetPath().empty())
+    {
+      args += TfPyRepr(self.GetAssetPath());
+    } else
+    {
+      useKeywordArgs = true;
+    }
+    if (!self.GetPrimPath().IsEmpty())
+    {
+      args += (args.empty() ? "" : ", ");
+      args += (useKeywordArgs ? "primPath=" : "") + TfPyRepr(self.GetPrimPath());
+    } else
+    {
+      useKeywordArgs = true;
+    }
+    if (!self.GetLayerOffset().IsIdentity())
+    {
+      args += (args.empty() ? "" : ", ");
+      args += (useKeywordArgs ? "layerOffset=" : "") + TfPyRepr(self.GetLayerOffset());
+    } else
+    {
+      useKeywordArgs = true;
+    }
+    // Always use keyword args for custom data (for readability).
+    if (!self.GetCustomData().empty())
+    {
+      args += (args.empty() ? "" : ", ");
+      args += "customData=" + TfPyRepr(self.GetCustomData());
+    }
 
-  return TF_PY_REPR_PREFIX + "Reference(" + args + ")";
-}
+    return TF_PY_REPR_PREFIX + "Reference(" + args + ")";
+  }
 
 }  // anonymous namespace
 

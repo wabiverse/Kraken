@@ -47,9 +47,9 @@ HGIMETAL_API
 bool HgiMetalDebugEnabled();
 
 #define HGIMETAL_DEBUG_LABEL(_obj, label) \
-  if (HgiMetalDebugEnabled()) \
-  { \
-    [_obj setLabel:@(label)]; \
+  if (HgiMetalDebugEnabled())             \
+  {                                       \
+    [_obj setLabel:@(label)];             \
   }
 
 /// Posts diagnostic errors for all Metal errors in the current context.

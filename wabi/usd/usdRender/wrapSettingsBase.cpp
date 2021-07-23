@@ -50,54 +50,57 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateResolutionAttr(UsdRenderSettingsBase &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateResolutionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int2), writeSparsely);
-}
+  static UsdAttribute _CreateResolutionAttr(UsdRenderSettingsBase &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
+  {
+    return self.CreateResolutionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int2), writeSparsely);
+  }
 
-static UsdAttribute _CreatePixelAspectRatioAttr(UsdRenderSettingsBase &self,
-                                                object defaultVal,
-                                                bool writeSparsely)
-{
-  return self.CreatePixelAspectRatioAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                         writeSparsely);
-}
+  static UsdAttribute _CreatePixelAspectRatioAttr(UsdRenderSettingsBase &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
+  {
+    return self.CreatePixelAspectRatioAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                           writeSparsely);
+  }
 
-static UsdAttribute _CreateAspectRatioConformPolicyAttr(UsdRenderSettingsBase &self,
-                                                        object defaultVal,
-                                                        bool writeSparsely)
-{
-  return self.CreateAspectRatioConformPolicyAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                                 writeSparsely);
-}
+  static UsdAttribute _CreateAspectRatioConformPolicyAttr(UsdRenderSettingsBase &self,
+                                                          object defaultVal,
+                                                          bool writeSparsely)
+  {
+    return self.CreateAspectRatioConformPolicyAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                                   writeSparsely);
+  }
 
-static UsdAttribute _CreateDataWindowNDCAttr(UsdRenderSettingsBase &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreateDataWindowNDCAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateDataWindowNDCAttr(UsdRenderSettingsBase &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateDataWindowNDCAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateInstantaneousShutterAttr(UsdRenderSettingsBase &self,
-                                                    object defaultVal,
-                                                    bool writeSparsely)
-{
-  return self.CreateInstantaneousShutterAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                             writeSparsely);
-}
+  static UsdAttribute _CreateInstantaneousShutterAttr(UsdRenderSettingsBase &self,
+                                                      object defaultVal,
+                                                      bool writeSparsely)
+  {
+    return self.CreateInstantaneousShutterAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                               writeSparsely);
+  }
 
-static std::string _Repr(const UsdRenderSettingsBase &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRender.SettingsBase(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRenderSettingsBase &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRender.SettingsBase(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -179,7 +182,7 @@ void wrapUsdRenderSettingsBase()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

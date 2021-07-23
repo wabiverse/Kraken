@@ -50,8 +50,9 @@ void wrapRendererCommands()
 {
   // Wrap the UsdImagingGLRendererCommandArgDescriptor struct.
   // Accessible as UsdImagingGL.RendererCommandArgDescriptor
-  class_<UsdImagingGLRendererCommandArgDescriptor>(
-    "RendererCommandArgDescriptor", "Renderer Command Argument Metadata", no_init)
+  class_<UsdImagingGLRendererCommandArgDescriptor>("RendererCommandArgDescriptor",
+                                                   "Renderer Command Argument Metadata",
+                                                   no_init)
     .add_property("argName",
                   make_getter(&UsdImagingGLRendererCommandArgDescriptor::argName,
                               return_value_policy<return_by_value>()))
@@ -60,8 +61,9 @@ void wrapRendererCommands()
 
   // Wrap the UsdImagingGLRendererCommandDescriptor struct.
   // Accessible as UsdImagingGL.RendererCommandDescriptor
-  class_<UsdImagingGLRendererCommandDescriptor>(
-    "RendererCommandDescriptor", "Renderer Command Metadata", no_init)
+  class_<UsdImagingGLRendererCommandDescriptor>("RendererCommandDescriptor",
+                                                "Renderer Command Metadata",
+                                                no_init)
     .add_property("commandName",
                   make_getter(&UsdImagingGLRendererCommandDescriptor::commandName,
                               return_value_policy<return_by_value>()))

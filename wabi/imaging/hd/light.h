@@ -37,17 +37,17 @@
 
 WABI_NAMESPACE_BEGIN
 
-#define HD_LIGHT_TOKENS \
+#define HD_LIGHT_TOKENS                                                                                   \
   (angle)(color)(colorTemperature)(enableColorTemperature)(exposure)(height)(intensity)(radius)(length)(( \
-    textureFile, "texture:file"))(( \
-    textureFormat, "texture:format"))(width)(diffuse)(specular)(normalize)((shapingFocus, \
-                                                                            "shaping:focus"))(( \
-    shapingFocusTint, "shaping:focusTint"))((shapingConeAngle, "shaping:cone:angle"))(( \
-    shapingConeSoftness, "shaping:cone:softness"))((shapingIesFile, "shaping:ies:file"))(( \
-    shapingIesAngleScale, "shaping:ies:angleScale"))((shapingIesNormalize, "shaping:ies:normalize"))(( \
-    shadowEnable, "shadow:enable"))((shadowColor, "shadow:color"))((shadowDistance, "shadow:distance"))(( \
-    shadowFalloff, "shadow:falloff"))((shadowFalloffGamma, "shadow:falloffGamma")) \
-\
+    textureFile,                                                                                          \
+    "texture:file"))((textureFormat, "texture:format"))(                                                  \
+    width)(diffuse)(specular)(normalize)((shapingFocus, "shaping:focus"))(                                \
+    (shapingFocusTint, "shaping:focusTint"))((shapingConeAngle, "shaping:cone:angle"))(                   \
+    (shapingConeSoftness, "shaping:cone:softness"))((shapingIesFile, "shaping:ies:file"))(                \
+    (shapingIesAngleScale, "shaping:ies:angleScale"))((shapingIesNormalize, "shaping:ies:normalize"))(    \
+    (shadowEnable, "shadow:enable"))((shadowColor, "shadow:color"))((shadowDistance, "shadow:distance"))( \
+    (shadowFalloff, "shadow:falloff"))((shadowFalloffGamma, "shadow:falloffGamma"))                       \
+                                                                                                          \
     (params)(shadowCollection)(shadowParams)
 
 TF_DECLARE_PUBLIC_TOKENS(HdLightTokens, HD_API, HD_LIGHT_TOKENS);

@@ -252,17 +252,17 @@ static void Sdf_WriteSimpleField(Sdf_TextOutput &out,
     const VtValue &boxedValue = value.Get<SdfUnregisteredValue>().GetValue();
     if (boxedValue.IsHolding<SdfUnregisteredValueListOp>())
     {
-      Sdf_FileIOUtility::WriteListOp(
-        out, indent, field, boxedValue.UncheckedGet<SdfUnregisteredValueListOp>());
-    }
-    else
+      Sdf_FileIOUtility::WriteListOp(out,
+                                     indent,
+                                     field,
+                                     boxedValue.UncheckedGet<SdfUnregisteredValueListOp>());
+    } else
     {
       Sdf_FileIOUtility::Write(out, indent, "%s = ", field.GetText());
       if (boxedValue.IsHolding<VtDictionary>())
       {
         Sdf_FileIOUtility::WriteDictionary(out, indent, true, boxedValue.Get<VtDictionary>());
-      }
-      else if (boxedValue.IsHolding<std::string>())
+      } else if (boxedValue.IsHolding<std::string>())
       {
         Sdf_FileIOUtility::Write(out, 0, "%s\n", boxedValue.Get<std::string>().c_str());
       }
@@ -274,12 +274,10 @@ static void Sdf_WriteSimpleField(Sdf_TextOutput &out,
   if (value.IsHolding<VtDictionary>())
   {
     Sdf_FileIOUtility::WriteDictionary(out, indent, true, value.Get<VtDictionary>());
-  }
-  else if (value.IsHolding<bool>())
+  } else if (value.IsHolding<bool>())
   {
     Sdf_FileIOUtility::Write(out, 0, "%s\n", TfStringify(value.Get<bool>()).c_str());
-  }
-  else
+  } else
   {
     Sdf_FileIOUtility::Write(out, 0, "%s\n", Sdf_FileIOUtility::StringFromVtValue(value).c_str());
   }
@@ -314,8 +312,9 @@ static bool Sdf_WritePrimMetadata(const SdfPrimSpec &prim, Sdf_TextOutput &out, 
   // Partition this prim's fields so that all fields to write out are
   // in the range [fields.begin(), metadataFieldsEnd).
   TfTokenVector fields = prim.ListFields();
-  TfTokenVector::iterator metadataFieldsEnd = std::partition(
-    fields.begin(), fields.end(), Sdf_IsPrimMetadataField());
+  TfTokenVector::iterator metadataFieldsEnd = std::partition(fields.begin(),
+                                                             fields.end(),
+                                                             Sdf_IsPrimMetadataField());
 
   // Comment isn't tagged as a metadata field but gets special cased
   // because it wants to be at the top of the metadata section.
@@ -351,45 +350,43 @@ static bool Sdf_WritePrimMetadata(const SdfPrimSpec &prim, Sdf_TextOutput &out, 
       Sdf_FileIOUtility::Puts(out, indent + 1, "doc = ");
       Sdf_FileIOUtility::WriteQuotedString(out, 0, prim.GetDocumentation());
       Sdf_FileIOUtility::Puts(out, 0, "\n");
-    }
-    else if (field == SdfFieldKeys->Permission)
+    } else if (field == SdfFieldKeys->Permission)
     {
       if (multiLine)
       {
-        Sdf_FileIOUtility::Write(
-          out, indent + 1, "permission = %s\n", Sdf_FileIOUtility::Stringify(prim.GetPermission()));
-      }
-      else
+        Sdf_FileIOUtility::Write(out,
+                                 indent + 1,
+                                 "permission = %s\n",
+                                 Sdf_FileIOUtility::Stringify(prim.GetPermission()));
+      } else
       {
-        Sdf_FileIOUtility::Write(
-          out, 0, "permission = %s", Sdf_FileIOUtility::Stringify(prim.GetPermission()));
+        Sdf_FileIOUtility::Write(out,
+                                 0,
+                                 "permission = %s",
+                                 Sdf_FileIOUtility::Stringify(prim.GetPermission()));
       }
-    }
-    else if (field == SdfFieldKeys->SymmetryFunction)
+    } else if (field == SdfFieldKeys->SymmetryFunction)
     {
       Sdf_FileIOUtility::Write(out,
                                multiLine ? indent + 1 : 0,
                                "symmetryFunction = %s%s",
                                prim.GetSymmetryFunction().GetText(),
                                multiLine ? "\n" : "");
-    }
-    else if (field == SdfFieldKeys->Payload)
+    } else if (field == SdfFieldKeys->Payload)
     {
       const VtValue v = prim.GetField(field);
       if (!Sdf_WriteIfListOp<SdfPayloadListOp>(out, indent + 1, TfToken("payload"), v))
       {
         TF_CODING_ERROR("'%s' field holding unexpected type '%s'", field.GetText(), v.GetTypeName().c_str());
       }
-    }
-    else if (field == SdfFieldKeys->References)
+    } else if (field == SdfFieldKeys->References)
     {
       const VtValue v = prim.GetField(field);
       if (!Sdf_WriteIfListOp<SdfReferenceListOp>(out, indent + 1, TfToken("references"), v))
       {
         TF_CODING_ERROR("'%s' field holding unexpected type '%s'", field.GetText(), v.GetTypeName().c_str());
       }
-    }
-    else if (field == SdfFieldKeys->VariantSetNames)
+    } else if (field == SdfFieldKeys->VariantSetNames)
     {
       SdfVariantSetNamesProxy variantSetNameList = prim.GetVariantSetNameList();
       if (variantSetNameList.IsExplicit())
@@ -399,8 +396,7 @@ static bool Sdf_WritePrimMetadata(const SdfPrimSpec &prim, Sdf_TextOutput &out, 
         Sdf_FileIOUtility::Puts(out, indent + 1, "variantSets = ");
         Sdf_FileIOUtility::WriteNameVector(out, indent + 1, setNames);
         Sdf_FileIOUtility::Puts(out, 0, "\n");
-      }
-      else
+      } else
       {
         // List operations
         SdfVariantSetNamesProxy::ListProxy setNames = variantSetNameList.GetDeletedItems();
@@ -439,24 +435,21 @@ static bool Sdf_WritePrimMetadata(const SdfPrimSpec &prim, Sdf_TextOutput &out, 
           Sdf_FileIOUtility::Puts(out, 0, "\n");
         }
       }
-    }
-    else if (field == SdfFieldKeys->InheritPaths)
+    } else if (field == SdfFieldKeys->InheritPaths)
     {
       const VtValue v = prim.GetField(field);
       if (!Sdf_WriteIfListOp<SdfPathListOp>(out, indent + 1, TfToken("inherits"), v))
       {
         TF_CODING_ERROR("'%s' field holding unexpected type '%s'", field.GetText(), v.GetTypeName().c_str());
       }
-    }
-    else if (field == SdfFieldKeys->Specializes)
+    } else if (field == SdfFieldKeys->Specializes)
     {
       const VtValue v = prim.GetField(field);
       if (!Sdf_WriteIfListOp<SdfPathListOp>(out, indent + 1, TfToken("specializes"), v))
       {
         TF_CODING_ERROR("'%s' field holding unexpected type '%s'", field.GetText(), v.GetTypeName().c_str());
       }
-    }
-    else if (field == SdfFieldKeys->Relocates)
+    } else if (field == SdfFieldKeys->Relocates)
     {
 
       // Relativize all paths in the relocates.
@@ -471,22 +464,25 @@ static bool Sdf_WritePrimMetadata(const SdfPrimSpec &prim, Sdf_TextOutput &out, 
       }
 
       Sdf_FileIOUtility::WriteRelocates(out, indent + 1, multiLine, finalRelocates);
-    }
-    else if (field == SdfFieldKeys->PrefixSubstitutions)
+    } else if (field == SdfFieldKeys->PrefixSubstitutions)
     {
       VtDictionary prefixSubstitutions = prim.GetPrefixSubstitutions();
       Sdf_FileIOUtility::Puts(out, indent + 1, "prefixSubstitutions = ");
-      Sdf_FileIOUtility::WriteDictionary(
-        out, indent + 1, multiLine, prefixSubstitutions, /* stringValuesOnly = */ true);
-    }
-    else if (field == SdfFieldKeys->SuffixSubstitutions)
+      Sdf_FileIOUtility::WriteDictionary(out,
+                                         indent + 1,
+                                         multiLine,
+                                         prefixSubstitutions,
+                                         /* stringValuesOnly = */ true);
+    } else if (field == SdfFieldKeys->SuffixSubstitutions)
     {
       VtDictionary suffixSubstitutions = prim.GetSuffixSubstitutions();
       Sdf_FileIOUtility::Puts(out, indent + 1, "suffixSubstitutions = ");
-      Sdf_FileIOUtility::WriteDictionary(
-        out, indent + 1, multiLine, suffixSubstitutions, /* stringValuesOnly = */ true);
-    }
-    else if (field == SdfFieldKeys->VariantSelection)
+      Sdf_FileIOUtility::WriteDictionary(out,
+                                         indent + 1,
+                                         multiLine,
+                                         suffixSubstitutions,
+                                         /* stringValuesOnly = */ true);
+    } else if (field == SdfFieldKeys->VariantSelection)
     {
       SdfVariantSelectionMap refVariants = prim.GetVariantSelections();
       if (refVariants.size() > 0)
@@ -499,8 +495,7 @@ static bool Sdf_WritePrimMetadata(const SdfPrimSpec &prim, Sdf_TextOutput &out, 
         Sdf_FileIOUtility::Puts(out, indent + 1, "variants = ");
         Sdf_FileIOUtility::WriteDictionary(out, indent + 1, multiLine, dictionary);
       }
-    }
-    else
+    } else
     {
       Sdf_WriteSimpleField(out, indent + 1, prim, field);
     }
@@ -514,19 +509,19 @@ static bool Sdf_WritePrimMetadata(const SdfPrimSpec &prim, Sdf_TextOutput &out, 
 
 namespace
 {
-struct _SortByNameThenType
-{
-  template<class T>
-  bool operator()(T const &lhs, T const &rhs) const
+  struct _SortByNameThenType
   {
-    // If the names are identical, order by spectype.  This puts Attributes
-    // before Relationships (if identically named).
-    std::string const &lhsName = lhs->GetName();
-    std::string const &rhsName = rhs->GetName();
-    return (lhsName == rhsName && lhs->GetSpecType() < rhs->GetSpecType()) ||
-           TfDictionaryLessThan()(lhsName, rhsName);
-  }
-};
+    template<class T>
+    bool operator()(T const &lhs, T const &rhs) const
+    {
+      // If the names are identical, order by spectype.  This puts Attributes
+      // before Relationships (if identically named).
+      std::string const &lhsName = lhs->GetName();
+      std::string const &rhsName = rhs->GetName();
+      return (lhsName == rhsName && lhs->GetSpecType() < rhs->GetSpecType()) ||
+             TfDictionaryLessThan()(lhsName, rhsName);
+    }
+  };
 }  // namespace
 
 static bool Sdf_WritePrimProperties(const SdfPrimSpec &prim, Sdf_TextOutput &out, size_t indent)
@@ -543,11 +538,11 @@ static bool Sdf_WritePrimProperties(const SdfPrimSpec &prim, Sdf_TextOutput &out
     if (specType == SdfSpecTypeAttribute)
     {
       Sdf_WriteAttribute(Sdf_CastAccess::CastSpec<SdfAttributeSpec, SdfPropertySpec>(spec), out, indent + 1);
-    }
-    else
+    } else
     {
-      Sdf_WriteRelationship(
-        Sdf_CastAccess::CastSpec<SdfRelationshipSpec, SdfPropertySpec>(spec), out, indent + 1);
+      Sdf_WriteRelationship(Sdf_CastAccess::CastSpec<SdfRelationshipSpec, SdfPropertySpec>(spec),
+                            out,
+                            indent + 1);
     }
   }
 
@@ -586,8 +581,7 @@ static bool Sdf_WritePrimChildren(const SdfPrimSpec &prim, Sdf_TextOutput &out, 
     if (newline)
     {
       Sdf_FileIOUtility::Puts(out, 0, "\n");
-    }
-    else
+    } else
     {
       newline = true;
     }
@@ -662,10 +656,11 @@ static bool Sdf_WriteVariant(const SdfVariantSpec &variantSpec, Sdf_TextOutput &
 static bool Sdf_WriteVariantSet(const SdfVariantSetSpec &spec, Sdf_TextOutput &out, size_t indent)
 {
   SdfVariantSpecHandleVector variants = spec.GetVariantList();
-  std::sort(
-    variants.begin(), variants.end(), [](const SdfVariantSpecHandle &a, const SdfVariantSpecHandle &b) {
-      return a->GetName() < b->GetName();
-    });
+  std::sort(variants.begin(),
+            variants.end(),
+            [](const SdfVariantSpecHandle &a, const SdfVariantSpecHandle &b) {
+              return a->GetName() < b->GetName();
+            });
 
   if (!variants.empty())
   {
@@ -702,13 +697,11 @@ static bool Sdf_WriteConnectionStatement(Sdf_TextOutput &out,
   if (connections.size() == 0)
   {
     Sdf_FileIOUtility::Puts(out, 0, "None\n");
-  }
-  else if (connections.size() == 1)
+  } else if (connections.size() == 1)
   {
     Sdf_FileIOUtility::WriteSdfPath(out, 0, connections.front());
     Sdf_FileIOUtility::Puts(out, 0, "\n");
-  }
-  else
+  } else
   {
     Sdf_FileIOUtility::Puts(out, 0, "[\n");
     TF_FOR_ALL (it, connections)
@@ -733,8 +726,7 @@ static bool Sdf_WriteConnectionList(Sdf_TextOutput &out,
   {
     SdfConnectionsProxy::ListProxy vec = connList.GetExplicitItems();
     Sdf_WriteConnectionStatement(out, indent, vec, "", variabilityStr, typeStr, nameStr, attrOwner);
-  }
-  else
+  } else
   {
     SdfConnectionsProxy::ListProxy vec = connList.GetDeletedItems();
     if (!vec.empty())
@@ -749,8 +741,14 @@ static bool Sdf_WriteConnectionList(Sdf_TextOutput &out,
     vec = connList.GetPrependedItems();
     if (!vec.empty())
     {
-      Sdf_WriteConnectionStatement(
-        out, indent, vec, "prepend ", variabilityStr, typeStr, nameStr, attrOwner);
+      Sdf_WriteConnectionStatement(out,
+                                   indent,
+                                   vec,
+                                   "prepend ",
+                                   variabilityStr,
+                                   typeStr,
+                                   nameStr,
+                                   attrOwner);
     }
     vec = connList.GetAppendedItems();
     if (!vec.empty())
@@ -797,8 +795,9 @@ static inline bool Sdf_WriteAttribute(const SdfAttributeSpec &attr, Sdf_TextOutp
   // Partition this attribute's fields so that all fields to write in the
   // metadata section are in the range [fields.begin(), metadataFieldsEnd).
   TfTokenVector fields = attr.ListFields();
-  TfTokenVector::iterator metadataFieldsEnd = std::partition(
-    fields.begin(), fields.end(), Sdf_IsAttributeMetadataField());
+  TfTokenVector::iterator metadataFieldsEnd = std::partition(fields.begin(),
+                                                             fields.end(),
+                                                             Sdf_IsAttributeMetadataField());
 
   // As long as there's anything to write in the metadata section, we'll
   // always use the multi-line format.
@@ -853,32 +852,28 @@ static inline bool Sdf_WriteAttribute(const SdfAttributeSpec &attr, Sdf_TextOutp
         Sdf_FileIOUtility::Puts(out, indent + 1, "doc = ");
         Sdf_FileIOUtility::WriteQuotedString(out, 0, attr.GetDocumentation());
         Sdf_FileIOUtility::Puts(out, 0, "\n");
-      }
-      else if (field == SdfFieldKeys->Permission)
+      } else if (field == SdfFieldKeys->Permission)
       {
         Sdf_FileIOUtility::Write(out,
                                  multiLine ? indent + 1 : 0,
                                  "permission = %s%s",
                                  Sdf_FileIOUtility::Stringify(attr.GetPermission()),
                                  multiLine ? "\n" : "");
-      }
-      else if (field == SdfFieldKeys->SymmetryFunction)
+      } else if (field == SdfFieldKeys->SymmetryFunction)
       {
         Sdf_FileIOUtility::Write(out,
                                  multiLine ? indent + 1 : 0,
                                  "symmetryFunction = %s%s",
                                  attr.GetSymmetryFunction().GetText(),
                                  multiLine ? "\n" : "");
-      }
-      else if (field == SdfFieldKeys->DisplayUnit)
+      } else if (field == SdfFieldKeys->DisplayUnit)
       {
         Sdf_FileIOUtility::Write(out,
                                  multiLine ? indent + 1 : 0,
                                  "displayUnit = %s%s",
                                  SdfGetNameForUnit(attr.GetDisplayUnit()).c_str(),
                                  multiLine ? "\n" : "");
-      }
-      else
+      } else
       {
         Sdf_WriteSimpleField(out, indent + 1, attr, field);
       }
@@ -903,8 +898,13 @@ static inline bool Sdf_WriteAttribute(const SdfAttributeSpec &attr, Sdf_TextOutp
 
   if (hasConnections)
   {
-    Sdf_WriteConnectionList(
-      out, indent, attr.GetConnectionPathList(), variabilityStr, typeName, attr.GetName(), &attr);
+    Sdf_WriteConnectionList(out,
+                            indent,
+                            attr.GetConnectionPathList(),
+                            variabilityStr,
+                            typeName,
+                            attr.GetName(),
+                            &attr);
   }
 
   return true;
@@ -932,8 +932,7 @@ static bool Sdf_WriteRelationshipTargetList(const SdfRelationshipSpec &rel,
   {
     Sdf_FileIOUtility::Write(out, 0, " = [\n");
     ++indent;
-  }
-  else
+  } else
   {
     Sdf_FileIOUtility::Write(out, 0, " = ");
   }
@@ -997,8 +996,9 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel, Sdf_Tex
   // Partition this attribute's fields so that all fields to write in the
   // metadata section are in the range [fields.begin(), metadataFieldsEnd).
   TfTokenVector fields = rel.ListFields();
-  TfTokenVector::iterator metadataFieldsEnd = std::partition(
-    fields.begin(), fields.end(), Sdf_IsRelationshipMetadataField());
+  TfTokenVector::iterator metadataFieldsEnd = std::partition(fields.begin(),
+                                                             fields.end(),
+                                                             Sdf_IsRelationshipMetadataField());
 
   bool hasInfo = hasComment || (fields.begin() != metadataFieldsEnd);
   bool multiLine = hasInfo;
@@ -1026,8 +1026,7 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel, Sdf_Tex
     if (hasCustom)
     {
       Sdf_FileIOUtility::Write(out, indent, "custom %srel %s", varyingStr.c_str(), rel.GetName().c_str());
-    }
-    else
+    } else
     {
       Sdf_FileIOUtility::Write(out, indent, "%srel %s", varyingStr.c_str(), rel.GetName().c_str());
     }
@@ -1039,12 +1038,14 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel, Sdf_Tex
       if (targetPaths.size() == 0)
       {
         Sdf_FileIOUtility::Write(out, 0, " = None");
-      }
-      else
+      } else
       {
         // Write explicit targets
-        Sdf_WriteRelationshipTargetList(
-          rel, targetPaths, out, indent, Sdf_WriteFlagAttributes | Sdf_WriteFlagNoLastNewline);
+        Sdf_WriteRelationshipTargetList(rel,
+                                        targetPaths,
+                                        out,
+                                        indent,
+                                        Sdf_WriteFlagAttributes | Sdf_WriteFlagNoLastNewline);
       }
     }
 
@@ -1071,29 +1072,29 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel, Sdf_Tex
         Sdf_FileIOUtility::Write(out, indent + 1, "doc = ");
         Sdf_FileIOUtility::WriteQuotedString(out, 0, rel.GetDocumentation());
         Sdf_FileIOUtility::Write(out, 0, "\n");
-      }
-      else if (field == SdfFieldKeys->Permission)
+      } else if (field == SdfFieldKeys->Permission)
       {
         if (multiLine)
         {
-          Sdf_FileIOUtility::Write(
-            out, indent + 1, "permission = %s\n", Sdf_FileIOUtility::Stringify(rel.GetPermission()));
-        }
-        else
+          Sdf_FileIOUtility::Write(out,
+                                   indent + 1,
+                                   "permission = %s\n",
+                                   Sdf_FileIOUtility::Stringify(rel.GetPermission()));
+        } else
         {
-          Sdf_FileIOUtility::Write(
-            out, 0, "permission = %s", Sdf_FileIOUtility::Stringify(rel.GetPermission()));
+          Sdf_FileIOUtility::Write(out,
+                                   0,
+                                   "permission = %s",
+                                   Sdf_FileIOUtility::Stringify(rel.GetPermission()));
         }
-      }
-      else if (field == SdfFieldKeys->SymmetryFunction)
+      } else if (field == SdfFieldKeys->SymmetryFunction)
       {
         Sdf_FileIOUtility::Write(out,
                                  multiLine ? indent + 1 : 0,
                                  "symmetryFunction = %s%s",
                                  rel.GetSymmetryFunction().GetText(),
                                  multiLine ? "\n" : "");
-      }
-      else
+      } else
       {
         Sdf_WriteSimpleField(out, indent + 1, rel, field);
       }
@@ -1102,8 +1103,7 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel, Sdf_Tex
 
     Sdf_FileIOUtility::CloseParensIfNeeded(out, indent, didParens, multiLine);
     Sdf_FileIOUtility::Write(out, 0, "\n");
-  }
-  else if (hasCustom)
+  } else if (hasCustom)
   {
     // If we did not write out the "basic" line AND we are custom,
     // we need to add a custom decl line, because we won't include
@@ -1153,8 +1153,11 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel, Sdf_Tex
 
   if (hasTimeSamples)
   {
-    Sdf_FileIOUtility::Write(
-      out, indent, "%srel %s.timeSamples = {\n", varyingStr.c_str(), rel.GetName().c_str());
+    Sdf_FileIOUtility::Write(out,
+                             indent,
+                             "%srel %s.timeSamples = {\n",
+                             varyingStr.c_str(),
+                             rel.GetName().c_str());
     Sdf_FileIOUtility::WriteTimeSamples(out, indent, rel);
     Sdf_FileIOUtility::Puts(out, indent, "}\n");
   }
@@ -1165,8 +1168,11 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel, Sdf_Tex
     VtValue value = rel.GetDefaultValue();
     if (!value.IsEmpty())
     {
-      Sdf_FileIOUtility::Write(
-        out, indent, "%srel %s.default = ", varyingStr.c_str(), rel.GetName().c_str());
+      Sdf_FileIOUtility::Write(out,
+                               indent,
+                               "%srel %s.default = ",
+                               varyingStr.c_str(),
+                               rel.GetName().c_str());
       Sdf_FileIOUtility::WriteDefaultValue(out, 0, value);
       Sdf_FileIOUtility::Puts(out, indent, "\n");
     }

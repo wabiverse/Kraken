@@ -46,20 +46,18 @@ class HdSceneDelegate;
 class SdfPath;
 class TfToken;
 
-bool HdPrmanLightFilterPopulateNodesFromLightParams(
-  std::vector<riley::ShadingNode> *filterNodes,
-  SdfPath &filterPath,
-  HdSceneDelegate *sceneDelegate);
+bool HdPrmanLightFilterPopulateNodesFromLightParams(std::vector<riley::ShadingNode> *filterNodes,
+                                                    SdfPath &filterPath,
+                                                    HdSceneDelegate *sceneDelegate);
 
-void HdPrmanLightFilterGenerateCoordSysAndLinks(
-  riley::ShadingNode *filter,
-  SdfPath &filterPath,
-  std::vector<riley::CoordinateSystemId> *coordsysIds,
-  std::vector<TfToken> *filterLinks,
-  HdSceneDelegate *sceneDelegate,
-  HdPrman_Context *context,
-  riley::Riley *riley,
-  const riley::ShadingNode &lightNode);
+void HdPrmanLightFilterGenerateCoordSysAndLinks(riley::ShadingNode *filter,
+                                                SdfPath &filterPath,
+                                                std::vector<riley::CoordinateSystemId> *coordsysIds,
+                                                std::vector<TfToken> *filterLinks,
+                                                HdSceneDelegate *sceneDelegate,
+                                                HdPrman_Context *context,
+                                                riley::Riley *riley,
+                                                const riley::ShadingNode &lightNode);
 
 WABI_NAMESPACE_END
 

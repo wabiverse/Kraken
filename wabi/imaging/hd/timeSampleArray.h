@@ -96,13 +96,11 @@ T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T 
   {
     // u is before the first sample.
     return vs[0];
-  }
-  else if (i == numSamples)
+  } else if (i == numSamples)
   {
     // u is after the last sample.
     return vs[numSamples - 1];
-  }
-  else if (us[i] == us[i - 1])
+  } else if (us[i] == us[i - 1])
   {
     // Neighboring samples have identical parameter.
     // Arbitrarily choose a sample.
@@ -111,8 +109,7 @@ T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T 
       "using first sample",
       us[i]);
     return vs[i - 1];
-  }
-  else
+  } else
   {
     // Linear blend of neighboring samples.
     float alpha = (us[i] - u) / (us[i] - us[i - 1]);
@@ -154,13 +151,11 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
   {
     // u is before the first sample.
     return std::pair<T, VtIntArray>(vs[0], is[0]);
-  }
-  else if (i == numSamples)
+  } else if (i == numSamples)
   {
     // u is after the last sample.
     return std::pair<T, VtIntArray>(vs[numSamples - 1], is[numSamples - 1]);
-  }
-  else if (us[i] == us[i - 1])
+  } else if (us[i] == us[i - 1])
   {
     // Neighboring samples have identical parameter.
     // Arbitrarily choose a sample.
@@ -169,8 +164,7 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
       "using first sample",
       us[i]);
     return std::pair<T, VtIntArray>(vs[i - 1], is[i - 1]);
-  }
-  else
+  } else
   {
     // Linear blend of neighboring samples for values
     // Hold earlier value for indices
@@ -240,8 +234,7 @@ struct HdTimeSampleArray
       if (box.values[i].GetArraySize() > 0)
       {
         values[i] = box.values[i].template Get<TYPE>();
-      }
-      else
+      } else
       {
         values[i] = TYPE();
       }
@@ -310,8 +303,7 @@ struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY>
       if (box.values[i].GetArraySize() > 0)
       {
         this->values[i] = box.values[i].template Get<TYPE>();
-      }
-      else
+      } else
       {
         this->values[i] = TYPE();
       }

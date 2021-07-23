@@ -36,10 +36,10 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Str(const PcpMapExpression &e)
-{
-  return e.GetString();
-}
+  static string _Str(const PcpMapExpression &e)
+  {
+    return e.GetString();
+  }
 
 }  // anonymous namespace
 

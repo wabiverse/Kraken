@@ -160,8 +160,9 @@ bool UsdAbc_AlembicData::Open(const std::string &filePath)
     return true;
   }
 
-  TF_RUNTIME_ERROR(
-    "Failed to open Alembic archive \"%s\": %s", filePath.c_str(), _reader->GetErrors().c_str());
+  TF_RUNTIME_ERROR("Failed to open Alembic archive \"%s\": %s",
+                   filePath.c_str(),
+                   _reader->GetErrors().c_str());
   Close();
   return false;
 }

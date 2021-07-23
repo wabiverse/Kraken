@@ -357,6 +357,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
     _SpecDefiner &CopyFrom(const SpecDefinition &other);
 
     /// @}
+
    private:
     friend class SdfSchemaBase;
     explicit _SpecDefiner(SdfSchemaBase *schema, SpecDefinition *definition)
@@ -552,37 +553,37 @@ SDF_API_TEMPLATE_CLASS(TfSingleton<SdfSchema>);
 ///
 /// The following fields are pre-registered by Sdf.
 /// \showinitializer
-#define SDF_FIELD_KEYS \
-  ((Active, "active"))((AllowedTokens, "allowedTokens"))((AssetInfo, "assetInfo"))(( \
-    ColorConfiguration, "colorConfiguration"))((ColorManagementSystem, "colorManagementSystem"))(( \
-    ColorSpace, "colorSpace"))((Comment, "comment"))((ConnectionPaths, "connectionPaths"))(( \
-    Custom, "custom"))((CustomData, "customData"))((CustomLayerData, "customLayerData"))(( \
-    Default, "default"))((DefaultPrim, "defaultPrim"))((DisplayGroup, "displayGroup"))(( \
-    DisplayGroupOrder, "displayGroupOrder"))((DisplayName, "displayName"))((DisplayUnit, "displayUnit"))(( \
-    Documentation, "documentation"))((EndTimeCode, "endTimeCode"))((FramePrecision, "framePrecision"))(( \
-    FramesPerSecond, "framesPerSecond"))((Hidden, "hidden"))((HasOwnedSubLayers, "hasOwnedSubLayers"))(( \
-    InheritPaths, "inheritPaths"))((Instanceable, "instanceable"))((Kind, "kind"))(( \
-    PrimOrder, "primOrder"))((NoLoadHint, "noLoadHint"))((Owner, "owner"))((Payload, "payload"))(( \
-    Permission, "permission"))((Prefix, "prefix"))((PrefixSubstitutions, "prefixSubstitutions"))(( \
-    PropertyOrder, "propertyOrder"))((References, "references"))((Relocates, "relocates"))(( \
-    SessionOwner, "sessionOwner"))((Specializes, "specializes"))((Specifier, "specifier"))(( \
-    StartTimeCode, "startTimeCode"))((SubLayers, "subLayers"))((SubLayerOffsets, "subLayerOffsets"))(( \
-    Suffix, "suffix"))((SuffixSubstitutions, "suffixSubstitutions"))((SymmetricPeer, "symmetricPeer"))(( \
-    SymmetryArgs, "symmetryArgs"))((SymmetryArguments, "symmetryArguments"))(( \
-    SymmetryFunction, "symmetryFunction"))((TargetPaths, "targetPaths"))((TimeSamples, "timeSamples"))(( \
-    TimeCodesPerSecond, "timeCodesPerSecond"))((TypeName, "typeName"))(( \
-    VariantSelection, "variantSelection"))((Variability, "variability"))((VariantSetNames, \
-                                                                          "variantSetNames")) \
-\
-    /* XXX: These fields should move into Sd. See bug 123508. */ \
+#define SDF_FIELD_KEYS                                                                                     \
+  ((Active, "active"))((AllowedTokens, "allowedTokens"))((AssetInfo, "assetInfo"))(                        \
+    (ColorConfiguration, "colorConfiguration"))((ColorManagementSystem, "colorManagementSystem"))(         \
+    (ColorSpace, "colorSpace"))((Comment, "comment"))((ConnectionPaths, "connectionPaths"))(               \
+    (Custom, "custom"))((CustomData, "customData"))((CustomLayerData, "customLayerData"))(                 \
+    (Default, "default"))((DefaultPrim, "defaultPrim"))((DisplayGroup, "displayGroup"))(                   \
+    (DisplayGroupOrder, "displayGroupOrder"))((DisplayName, "displayName"))((DisplayUnit, "displayUnit"))( \
+    (Documentation, "documentation"))((EndTimeCode, "endTimeCode"))((FramePrecision, "framePrecision"))(   \
+    (FramesPerSecond, "framesPerSecond"))((Hidden, "hidden"))((HasOwnedSubLayers, "hasOwnedSubLayers"))(   \
+    (InheritPaths, "inheritPaths"))((Instanceable, "instanceable"))((Kind, "kind"))(                       \
+    (PrimOrder, "primOrder"))((NoLoadHint, "noLoadHint"))((Owner, "owner"))((Payload, "payload"))(         \
+    (Permission, "permission"))((Prefix, "prefix"))((PrefixSubstitutions, "prefixSubstitutions"))(         \
+    (PropertyOrder, "propertyOrder"))((References, "references"))((Relocates, "relocates"))(               \
+    (SessionOwner, "sessionOwner"))((Specializes, "specializes"))((Specifier, "specifier"))(               \
+    (StartTimeCode, "startTimeCode"))((SubLayers, "subLayers"))((SubLayerOffsets, "subLayerOffsets"))(     \
+    (Suffix, "suffix"))((SuffixSubstitutions, "suffixSubstitutions"))((SymmetricPeer, "symmetricPeer"))(   \
+    (SymmetryArgs, "symmetryArgs"))((SymmetryArguments, "symmetryArguments"))(                             \
+    (SymmetryFunction, "symmetryFunction"))((TargetPaths, "targetPaths"))((TimeSamples, "timeSamples"))(   \
+    (TimeCodesPerSecond, "timeCodesPerSecond"))((TypeName, "typeName"))(                                   \
+    (VariantSelection, "variantSelection"))((Variability, "variability"))(                                 \
+    (VariantSetNames, "variantSetNames"))                                                                  \
+                                                                                                           \
+    /* XXX: These fields should move into Sd. See bug 123508. */                                           \
     ((EndFrame, "endFrame"))((StartFrame, "startFrame"))
 
-#define SDF_CHILDREN_KEYS \
+#define SDF_CHILDREN_KEYS                                                                   \
   ((ConnectionChildren, "connectionChildren"))((ExpressionChildren, "expressionChildren"))( \
-    (MapperArgChildren, "mapperArgChildren"))((MapperChildren, "mapperChildren"))(( \
-    PrimChildren, "primChildren"))((PropertyChildren, "properties"))((RelationshipTargetChildren, \
-                                                                      "targetChildren"))(( \
-    VariantChildren, "variantChildren"))((VariantSetChildren, "variantSetChildren"))
+    (MapperArgChildren, "mapperArgChildren"))((MapperChildren, "mapperChildren"))(          \
+    (PrimChildren, "primChildren"))((PropertyChildren, "properties"))(                      \
+    (RelationshipTargetChildren, "targetChildren"))((VariantChildren, "variantChildren"))(  \
+    (VariantSetChildren, "variantSetChildren"))
 
 TF_DECLARE_PUBLIC_TOKENS(SdfFieldKeys, SDF_API, SDF_FIELD_KEYS);
 TF_DECLARE_PUBLIC_TOKENS(SdfChildrenKeys, SDF_API, SDF_CHILDREN_KEYS);

@@ -61,50 +61,50 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static const int _dimension = {{DIM}};
+  static const int _dimension = {{DIM}};
 
-static string _Repr({
+  static string _Repr({
+    {
+      RNG
+    }
+  } const &self)
   {
-    RNG
+    return TF_PY_REPR_PREFIX + "Range{{ SUFFIX }}(" + TfPyRepr(self.GetMin()) + ", " +
+           TfPyRepr(self.GetMax()) + ")";
   }
-} const &self)
-{
-  return TF_PY_REPR_PREFIX + "Range{{ SUFFIX }}(" + TfPyRepr(self.GetMin()) + ", " +
-         TfPyRepr(self.GetMax()) + ")";
-}
 
 #if PY_MAJOR_VERSION == 2
-static
-{
+  static
   {
-    RNG
+    {
+      RNG
+    }
   }
-}
-__truediv__(const {{RNG}} & self, double value)
-{
-  return self / value;
-}
+  __truediv__(const {{RNG}} & self, double value)
+  {
+    return self / value;
+  }
 
-static
-{
+  static
   {
-    RNG
+    {
+      RNG
+    }
   }
-}
-__itruediv__({{RNG}} & self, double value)
-{
-  return self /= value;
-}
+  __itruediv__({{RNG}} & self, double value)
+  {
+    return self /= value;
+  }
 #endif
 
-static size_t __hash__({
+  static size_t __hash__({
+    {
+      RNG
+    }
+  } const &r)
   {
-    RNG
+    return hash_value(r);
   }
-} const &r)
-{
-  return hash_value(r);
-}
 
 }  // anonymous namespace
 
@@ -202,7 +202,7 @@ void wrapRange{{SUFFIX}}()
 
     .def(
       "Contains",
-      (bool ({
+      (bool({
         {
           RNG
         }
@@ -214,7 +214,7 @@ void wrapRange{{SUFFIX}}()
         } ::Contains)
     .def(
       "Contains",
-      (bool ({
+      (bool({
         {
           RNG
         }

@@ -84,8 +84,7 @@ bool ArResolverContext::operator<(const ArResolverContext &rhs) const
   if (_contexts.size() < rhs._contexts.size())
   {
     return true;
-  }
-  else if (_contexts.size() > rhs._contexts.size())
+  } else if (_contexts.size() > rhs._contexts.size())
   {
     return false;
   }
@@ -99,13 +98,11 @@ bool ArResolverContext::operator<(const ArResolverContext &rhs) const
       if (lhsContext->LessThan(*rhsContext))
       {
         return true;
-      }
-      else if (!lhsContext->Equals(*rhsContext))
+      } else if (!lhsContext->Equals(*rhsContext))
       {
         return false;
       }
-    }
-    else
+    } else
     {
       return std::type_index(lhsContext->GetTypeid()) < std::type_index(rhsContext->GetTypeid());
     }

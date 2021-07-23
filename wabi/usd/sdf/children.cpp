@@ -201,8 +201,7 @@ void Sdf_Children<ChildPolicy>::_UpdateChildNames() const
   if (_layer)
   {
     _childNames = _layer->GetFieldAs<std::vector<FieldType>>(_parentPath, _childrenKey);
-  }
-  else
+  } else
   {
     _childNames.clear();
   }

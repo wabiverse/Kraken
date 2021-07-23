@@ -68,8 +68,8 @@ void Trace_EventTreeBuilder::OnBeginThread(const TraceThreadId &threadId)
   // thread, we label the current thread "Main Thread" in the trace.
   _threadStacks[threadId] = _PendingNodeStack();
   {
-    _threadStacks[threadId].emplace_back(
-      TfToken(threadId.ToString()), TraceCategory::Default, 0, 0, false, true);
+    _threadStacks[threadId]
+      .emplace_back(TfToken(threadId.ToString()), TraceCategory::Default, 0, 0, false, true);
   }
 }
 
@@ -155,8 +155,7 @@ void Trace_EventTreeBuilder::_OnBegin(const TraceThreadId &threadId, const TfTok
       _PopAndClose(stack);
       prevNode = &stack.back();
       --index;
-    }
-    else
+    } else
     {
       --index;
       prevNode = &stack[index];
@@ -171,8 +170,7 @@ void Trace_EventTreeBuilder::_OnBegin(const TraceThreadId &threadId, const TfTok
     prevNode->isComplete = true;
 
     // Couldn't find the matching End, so treat as incomplete
-  }
-  else
+  } else
   {
     // If we encounter a begin event that does not match an end
     // event it means its from an incomplete scope. We need to
@@ -285,8 +283,8 @@ TraceEventNodeRefPtr Trace_EventTreeBuilder::_PendingEventNode::Close()
   std::reverse(children.begin(), children.end());
   std::reverse(attributes.begin(), attributes.end());
 
-  TraceEventNodeRefPtr node = TraceEventNode::New(
-    key, category, start, end, std::move(children), separateEvents);
+  TraceEventNodeRefPtr node =
+    TraceEventNode::New(key, category, start, end, std::move(children), separateEvents);
   for (AttributeData &it : attributes)
   {
     node->AddAttribute(TfToken(it.key), std::move(it.data));

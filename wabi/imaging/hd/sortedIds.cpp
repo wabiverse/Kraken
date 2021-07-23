@@ -123,8 +123,7 @@ void Hd_SortedIds::Remove(const SdfPath &id)
           {
             idToRemove = _ids.end();
           }
-        }
-        else
+        } else
         {
           // We checked that id should be in the sorted range
           // so lower_bound should return an iterator between
@@ -160,8 +159,7 @@ void Hd_SortedIds::Remove(const SdfPath &id)
         {
           // idToRemove points to the last element after pop_back()
           _afterLastDeletePoint = INVALID_DELETE_POINT;
-        }
-        else
+        } else
         {
           _afterLastDeletePoint = idToRemove - _ids.begin();
           ++_afterLastDeletePoint;
@@ -173,8 +171,7 @@ void Hd_SortedIds::Remove(const SdfPath &id)
         // was removed.
 
         _sortedCount = std::min(_sortedCount, static_cast<size_t>((idToRemove - _ids.begin())));
-      }
-      else
+      } else
       {
         _ids.pop_back();
         _afterLastDeletePoint = INVALID_DELETE_POINT;
@@ -258,8 +255,7 @@ void Hd_SortedIds::_Sort()
   if (100 * _sortedCount > SORTED_PERCENT * numIds)
   {
     _InsertSort();
-  }
-  else
+  } else
   {
     _FullSort();
   }

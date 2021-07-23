@@ -135,8 +135,10 @@ void HdUnitTestDelegate::AddMesh(SdfPath const &id,
 
   // Add color and opacity as a constant primvar
   _primvars[id] = {
-    _Primvar(
-      HdTokens->displayColor, VtValue(GfVec3f(1)), HdInterpolationConstant, HdPrimvarRoleTokens->color),
+    _Primvar(HdTokens->displayColor,
+             VtValue(GfVec3f(1)),
+             HdInterpolationConstant,
+             HdPrimvarRoleTokens->color),
     _Primvar(HdTokens->displayOpacity, VtValue(1.0f), HdInterpolationConstant, HdPrimvarRoleTokens->color)};
 
   if (!instancerId.IsEmpty())
@@ -168,8 +170,8 @@ void HdUnitTestDelegate::AddMesh(SdfPath const &id,
   HdRenderIndex &index = GetRenderIndex();
   index.InsertRprim(HdPrimTypeTokens->mesh, this, id);
 
-  _meshes[id] = _Mesh(
-    scheme, orientation, transform, points, numVerts, verts, holes, subdivTags, guide, doubleSided);
+  _meshes[id] =
+    _Mesh(scheme, orientation, transform, points, numVerts, verts, holes, subdivTags, guide, doubleSided);
 
   _primvars[id] = {
     _Primvar(HdTokens->displayColor, color, colorInterpolation, HdPrimvarRoleTokens->color),
@@ -206,13 +208,16 @@ void HdUnitTestDelegate::AddMesh(SdfPath const &id,
   HdRenderIndex &index = GetRenderIndex();
   index.InsertRprim(HdPrimTypeTokens->mesh, this, id);
 
-  _meshes[id] = _Mesh(
-    scheme, orientation, transform, points, numVerts, verts, holes, subdivTags, guide, doubleSided);
+  _meshes[id] =
+    _Mesh(scheme, orientation, transform, points, numVerts, verts, holes, subdivTags, guide, doubleSided);
 
   _primvars[id] = {
     _Primvar(HdTokens->displayColor, color, colorInterpolation, HdPrimvarRoleTokens->color, colorIndices),
-    _Primvar(
-      HdTokens->displayOpacity, opacity, opacityInterpolation, HdPrimvarRoleTokens->color, opacityIndices)};
+    _Primvar(HdTokens->displayOpacity,
+             opacity,
+             opacityInterpolation,
+             HdPrimvarRoleTokens->color,
+             opacityIndices)};
 
   if (!instancerId.IsEmpty())
   {
@@ -386,8 +391,7 @@ void HdUnitTestDelegate::UpdatePrimvarValue(SdfPath const &id,
 
     HdChangeTracker &tracker = GetRenderIndex().GetChangeTracker();
     tracker.MarkRprimDirty(id, HdChangeTracker::DirtyPrimvar);
-  }
-  else
+  } else
   {
     TF_WARN("Rprim %s has no primvar named %s.\n", id.GetText(), name.GetText());
   }
@@ -403,8 +407,7 @@ void HdUnitTestDelegate::RemovePrimvar(SdfPath const &id, TfToken const &name)
     HdChangeTracker &tracker = GetRenderIndex().GetChangeTracker();
     // XXX: Using DirtyPrimvar even though this is a descriptor change.
     tracker.MarkRprimDirty(id, HdChangeTracker::DirtyPrimvar);
-  }
-  else
+  } else
   {
     TF_WARN("Rprim %s has no primvar named %s.\n", id.GetText(), name.GetText());
   }
@@ -513,16 +516,13 @@ void HdUnitTestDelegate::UpdatePositions(SdfPath const &id, float time)
   if (_meshes.find(id) != _meshes.end())
   {
     _meshes[id].points = _AnimatePositions(_meshes[id].points, time);
-  }
-  else if (_curves.find(id) != _curves.end())
+  } else if (_curves.find(id) != _curves.end())
   {
     _curves[id].points = _AnimatePositions(_curves[id].points, time);
-  }
-  else if (_points.find(id) != _points.end())
+  } else if (_points.find(id) != _points.end())
   {
     _points[id].points = _AnimatePositions(_points[id].points, time);
-  }
-  else
+  } else
   {
     return;
   }
@@ -626,12 +626,10 @@ void HdUnitTestDelegate::UpdateTask(SdfPath const &id, TfToken const &key, VtVal
   if (key == HdTokens->params)
   {
     tracker.MarkTaskDirty(id, HdChangeTracker::DirtyParams);
-  }
-  else if (key == HdTokens->collection)
+  } else if (key == HdTokens->collection)
   {
     tracker.MarkTaskDirty(id, HdChangeTracker::DirtyCollection);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown key %s", key.GetText());
   }
@@ -652,17 +650,14 @@ TfToken HdUnitTestDelegate::GetRenderTag(SdfPath const &id)
     if (mesh->guide)
     {
       return HdRenderTagTokens->guide;
-    }
-    else
+    } else
     {
       return HdRenderTagTokens->geometry;
     }
-  }
-  else if (_curves.count(id) > 0)
+  } else if (_curves.count(id) > 0)
   {
     return HdRenderTagTokens->geometry;
-  }
-  else if (_points.count(id) > 0)
+  } else if (_points.count(id) > 0)
   {
     return HdRenderTagTokens->geometry;
   }
@@ -688,8 +683,11 @@ HdBasisCurvesTopology HdUnitTestDelegate::GetBasisCurvesTopology(SdfPath const &
   const _Curves &curve = _curves[id];
 
   // Need to implement testing support for basis curves
-  return HdBasisCurvesTopology(
-    curve.type, curve.basis, HdTokens->nonperiodic, curve.curveVertexCounts, VtIntArray());
+  return HdBasisCurvesTopology(curve.type,
+                               curve.basis,
+                               HdTokens->nonperiodic,
+                               curve.curveVertexCounts,
+                               VtIntArray());
 }
 
 /*virtual*/
@@ -712,12 +710,10 @@ GfRange3d HdUnitTestDelegate::GetExtent(SdfPath const &id)
   if (_meshes.find(id) != _meshes.end())
   {
     points = _meshes[id].points;
-  }
-  else if (_curves.find(id) != _curves.end())
+  } else if (_curves.find(id) != _curves.end())
   {
     points = _curves[id].points;
-  }
-  else if (_points.find(id) != _points.end())
+  } else if (_points.find(id) != _points.end())
   {
     points = _points[id].points;
   }
@@ -867,116 +863,95 @@ bool HdUnitTestDelegate::GetVisible(SdfPath const &id)
 namespace
 {
 
-template<typename T>
-VtValue _ComputeFlattened(VtValue const &value, VtIntArray const &indices)
-{
-  VtArray<T> array = value.Get<VtArray<T>>();
-  VtArray<T> result = VtArray<T>(indices.size());
-
-  for (size_t i = 0; i < indices.size(); ++i)
+  template<typename T>
+  VtValue _ComputeFlattened(VtValue const &value, VtIntArray const &indices)
   {
-    int index = indices[i];
-    if (index >= 0 && (size_t)index < array.size())
+    VtArray<T> array = value.Get<VtArray<T>>();
+    VtArray<T> result = VtArray<T>(indices.size());
+
+    for (size_t i = 0; i < indices.size(); ++i)
     {
-      result[i] = array[index];
+      int index = indices[i];
+      if (index >= 0 && (size_t)index < array.size())
+      {
+        result[i] = array[index];
+      } else
+      {
+        TF_CODING_ERROR("Invalid indices");
+      }
     }
-    else
+
+    return VtValue(result);
+  }
+
+  VtValue _ComputeFlattenedValue(VtValue const &value, VtIntArray const &indices)
+  {
+    if (value.IsHolding<VtVec2fArray>())
     {
-      TF_CODING_ERROR("Invalid indices");
+      return _ComputeFlattened<GfVec2f>(value, indices);
+    } else if (value.IsHolding<VtVec2dArray>())
+    {
+      return _ComputeFlattened<GfVec2d>(value, indices);
+    } else if (value.IsHolding<VtVec2iArray>())
+    {
+      return _ComputeFlattened<GfVec2i>(value, indices);
+    } else if (value.IsHolding<VtVec2hArray>())
+    {
+      return _ComputeFlattened<GfVec2h>(value, indices);
+    } else if (value.IsHolding<VtVec3fArray>())
+    {
+      return _ComputeFlattened<GfVec3f>(value, indices);
+    } else if (value.IsHolding<VtVec3dArray>())
+    {
+      return _ComputeFlattened<GfVec3d>(value, indices);
+    } else if (value.IsHolding<VtVec3iArray>())
+    {
+      return _ComputeFlattened<GfVec3i>(value, indices);
+    } else if (value.IsHolding<VtVec3hArray>())
+    {
+      return _ComputeFlattened<GfVec3h>(value, indices);
+    } else if (value.IsHolding<VtVec4fArray>())
+    {
+      return _ComputeFlattened<GfVec4f>(value, indices);
+    } else if (value.IsHolding<VtVec4dArray>())
+    {
+      return _ComputeFlattened<GfVec4d>(value, indices);
+    } else if (value.IsHolding<VtVec4iArray>())
+    {
+      return _ComputeFlattened<GfVec4i>(value, indices);
+    } else if (value.IsHolding<VtVec4hArray>())
+    {
+      return _ComputeFlattened<GfVec4h>(value, indices);
+    } else if (value.IsHolding<VtMatrix3dArray>())
+    {
+      return _ComputeFlattened<GfMatrix3d>(value, indices);
+    } else if (value.IsHolding<VtMatrix4dArray>())
+    {
+      return _ComputeFlattened<GfMatrix4d>(value, indices);
+    } else if (value.IsHolding<VtStringArray>())
+    {
+      return _ComputeFlattened<std::string>(value, indices);
+    } else if (value.IsHolding<VtDoubleArray>())
+    {
+      return _ComputeFlattened<double>(value, indices);
+    } else if (value.IsHolding<VtIntArray>())
+    {
+      return _ComputeFlattened<int>(value, indices);
+    } else if (value.IsHolding<VtUIntArray>())
+    {
+      return _ComputeFlattened<unsigned int>(value, indices);
+    } else if (value.IsHolding<VtFloatArray>())
+    {
+      return _ComputeFlattened<float>(value, indices);
+    } else if (value.IsHolding<VtHalfArray>())
+    {
+      return _ComputeFlattened<GfHalf>(value, indices);
+    } else
+    {
+      TF_WARN("Type of primvar not yet fully supported");
     }
+    return value;
   }
-
-  return VtValue(result);
-}
-
-VtValue _ComputeFlattenedValue(VtValue const &value, VtIntArray const &indices)
-{
-  if (value.IsHolding<VtVec2fArray>())
-  {
-    return _ComputeFlattened<GfVec2f>(value, indices);
-  }
-  else if (value.IsHolding<VtVec2dArray>())
-  {
-    return _ComputeFlattened<GfVec2d>(value, indices);
-  }
-  else if (value.IsHolding<VtVec2iArray>())
-  {
-    return _ComputeFlattened<GfVec2i>(value, indices);
-  }
-  else if (value.IsHolding<VtVec2hArray>())
-  {
-    return _ComputeFlattened<GfVec2h>(value, indices);
-  }
-  else if (value.IsHolding<VtVec3fArray>())
-  {
-    return _ComputeFlattened<GfVec3f>(value, indices);
-  }
-  else if (value.IsHolding<VtVec3dArray>())
-  {
-    return _ComputeFlattened<GfVec3d>(value, indices);
-  }
-  else if (value.IsHolding<VtVec3iArray>())
-  {
-    return _ComputeFlattened<GfVec3i>(value, indices);
-  }
-  else if (value.IsHolding<VtVec3hArray>())
-  {
-    return _ComputeFlattened<GfVec3h>(value, indices);
-  }
-  else if (value.IsHolding<VtVec4fArray>())
-  {
-    return _ComputeFlattened<GfVec4f>(value, indices);
-  }
-  else if (value.IsHolding<VtVec4dArray>())
-  {
-    return _ComputeFlattened<GfVec4d>(value, indices);
-  }
-  else if (value.IsHolding<VtVec4iArray>())
-  {
-    return _ComputeFlattened<GfVec4i>(value, indices);
-  }
-  else if (value.IsHolding<VtVec4hArray>())
-  {
-    return _ComputeFlattened<GfVec4h>(value, indices);
-  }
-  else if (value.IsHolding<VtMatrix3dArray>())
-  {
-    return _ComputeFlattened<GfMatrix3d>(value, indices);
-  }
-  else if (value.IsHolding<VtMatrix4dArray>())
-  {
-    return _ComputeFlattened<GfMatrix4d>(value, indices);
-  }
-  else if (value.IsHolding<VtStringArray>())
-  {
-    return _ComputeFlattened<std::string>(value, indices);
-  }
-  else if (value.IsHolding<VtDoubleArray>())
-  {
-    return _ComputeFlattened<double>(value, indices);
-  }
-  else if (value.IsHolding<VtIntArray>())
-  {
-    return _ComputeFlattened<int>(value, indices);
-  }
-  else if (value.IsHolding<VtUIntArray>())
-  {
-    return _ComputeFlattened<unsigned int>(value, indices);
-  }
-  else if (value.IsHolding<VtFloatArray>())
-  {
-    return _ComputeFlattened<float>(value, indices);
-  }
-  else if (value.IsHolding<VtHalfArray>())
-  {
-    return _ComputeFlattened<GfHalf>(value, indices);
-  }
-  else
-  {
-    TF_WARN("Type of primvar not yet fully supported");
-  }
-  return value;
-}
 
 }  // namespace
 
@@ -989,8 +964,7 @@ VtValue HdUnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
   if (_tasks.find(id) != _tasks.end())
   {
     return _tasks[id].params[key];
-  }
-  else if (_lights.find(id) != _lights.end())
+  } else if (_lights.find(id) != _lights.end())
   {
     return _lights[id].params[key];
   }
@@ -1002,38 +976,32 @@ VtValue HdUnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
     if (_meshes.find(id) != _meshes.end())
     {
       return VtValue(_meshes[id].points);
-    }
-    else if (_curves.find(id) != _curves.end())
+    } else if (_curves.find(id) != _curves.end())
     {
       return VtValue(_curves[id].points);
-    }
-    else if (_points.find(id) != _points.end())
+    } else if (_points.find(id) != _points.end())
     {
       return VtValue(_points[id].points);
     }
-  }
-  else if (key == HdInstancerTokens->scale)
+  } else if (key == HdInstancerTokens->scale)
   {
     if (_instancers.find(id) != _instancers.end())
     {
       return VtValue(_instancers[id].scale);
     }
-  }
-  else if (key == HdInstancerTokens->rotate)
+  } else if (key == HdInstancerTokens->rotate)
   {
     if (_instancers.find(id) != _instancers.end())
     {
       return VtValue(_instancers[id].rotate);
     }
-  }
-  else if (key == HdInstancerTokens->translate)
+  } else if (key == HdInstancerTokens->translate)
   {
     if (_instancers.find(id) != _instancers.end())
     {
       return VtValue(_instancers[id].translate);
     }
-  }
-  else
+  } else
   {
     // Check if key is a primvar
     _Primvars::iterator pvIt;
@@ -1042,8 +1010,7 @@ VtValue HdUnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
       if (pvIt->indices.empty())
       {
         value = pvIt->value;
-      }
-      else
+      } else
       {
         // Flatten primvar
         value = pvIt->value;
@@ -1066,38 +1033,32 @@ VtValue HdUnitTestDelegate::GetIndexedPrimvar(SdfPath const &id, TfToken const &
     if (_meshes.find(id) != _meshes.end())
     {
       return VtValue(_meshes[id].points);
-    }
-    else if (_curves.find(id) != _curves.end())
+    } else if (_curves.find(id) != _curves.end())
     {
       return VtValue(_curves[id].points);
-    }
-    else if (_points.find(id) != _points.end())
+    } else if (_points.find(id) != _points.end())
     {
       return VtValue(_points[id].points);
     }
-  }
-  else if (key == HdInstancerTokens->scale)
+  } else if (key == HdInstancerTokens->scale)
   {
     if (_instancers.find(id) != _instancers.end())
     {
       return VtValue(_instancers[id].scale);
     }
-  }
-  else if (key == HdInstancerTokens->rotate)
+  } else if (key == HdInstancerTokens->rotate)
   {
     if (_instancers.find(id) != _instancers.end())
     {
       return VtValue(_instancers[id].rotate);
     }
-  }
-  else if (key == HdInstancerTokens->translate)
+  } else if (key == HdInstancerTokens->translate)
   {
     if (_instancers.find(id) != _instancers.end())
     {
       return VtValue(_instancers[id].translate);
     }
-  }
-  else
+  } else
   {
     // Check if key is a primvar
     _Primvars::iterator pvIt;
@@ -1227,8 +1188,7 @@ void HdUnitTestDelegate::AddCube(SdfPath const &id,
             guide,
             instancerId,
             scheme);
-  }
-  else
+  } else
   {
     int numVerts[] = {4, 4, 4, 4, 4, 4};
     int verts[] = {
@@ -1293,13 +1253,11 @@ void HdUnitTestDelegate::AddPolygons(SdfPath const &id,
   if (colorInterp == HdInterpolationConstant)
   {
     color = VtValue(GfVec3f(1, 1, 0));
-  }
-  else if (colorInterp == HdInterpolationUniform)
+  } else if (colorInterp == HdInterpolationUniform)
   {
     GfVec3f colors[] = {GfVec3f(1, 0, 0), GfVec3f(0, 0, 1), GfVec3f(0, 1, 0)};
     color = VtValue(_BuildArray(&colors[0], sizeof(colors) / sizeof(colors[0])));
-  }
-  else if (colorInterp == HdInterpolationVertex)
+  } else if (colorInterp == HdInterpolationVertex)
   {
     VtVec3fArray colorArray(sizeof(points) / sizeof(points[0]));
     for (size_t i = 0; i < colorArray.size(); ++i)
@@ -1307,8 +1265,7 @@ void HdUnitTestDelegate::AddPolygons(SdfPath const &id,
       colorArray[i] = GfVec3f(fabs(sin(0.5 * i)), fabs(cos(0.7 * i)), fabs(sin(0.9 * i) * cos(0.25 * i)));
     }
     color = VtValue(colorArray);
-  }
-  else if (colorInterp == HdInterpolationFaceVarying)
+  } else if (colorInterp == HdInterpolationFaceVarying)
   {
     VtVec3fArray colorArray(sizeof(verts) / sizeof(verts[0]));
     for (size_t i = 0; i < colorArray.size(); ++i)
@@ -1645,13 +1602,11 @@ void HdUnitTestDelegate::AddCurves(SdfPath const &id,
   if (colorInterp == HdInterpolationConstant)
   {
     color = VtValue(GfVec3f(1));
-  }
-  else if (colorInterp == HdInterpolationUniform)
+  } else if (colorInterp == HdInterpolationUniform)
   {
     GfVec3f colors[] = {GfVec3f(1, 0, 0), GfVec3f(0, 0, 1)};
     color = VtValue(_BuildArray(&colors[0], sizeof(colors) / sizeof(colors[0])));
-  }
-  else if (colorInterp == HdInterpolationVertex)
+  } else if (colorInterp == HdInterpolationVertex)
   {
     GfVec3f colors[] = {GfVec3f(0, 0, 1),
                         GfVec3f(0, 1, 0),
@@ -1669,23 +1624,19 @@ void HdUnitTestDelegate::AddCurves(SdfPath const &id,
   if (widthInterp == HdInterpolationConstant)
   {
     width = VtValue(0.1f);
-  }
-  else if (widthInterp == HdInterpolationUniform)
+  } else if (widthInterp == HdInterpolationUniform)
   {
     float widths[] = {0.1f, 0.4f};
     width = VtValue(_BuildArray(&widths[0], sizeof(widths) / sizeof(widths[0])));
-  }
-  else if (widthInterp == HdInterpolationVertex)
+  } else if (widthInterp == HdInterpolationVertex)
   {
     float widths[] = {0, 0.1f, 0.2f, 0.3f, 0.1f, 0.2f, 0.2f, 0.1f};
     width = VtValue(_BuildArray(&widths[0], sizeof(widths) / sizeof(widths[0])));
-  }
-  else if (type == HdTokens->cubic && widthInterp == HdInterpolationVarying)
+  } else if (type == HdTokens->cubic && widthInterp == HdInterpolationVarying)
   {
     float widths[] = {0, 0.1f, 0.2f, 0.3f};
     width = VtValue(_BuildArray(&widths[0], sizeof(widths) / sizeof(widths[0])));
-  }
-  else if (type == HdTokens->linear && widthInterp == HdInterpolationVarying)
+  } else if (type == HdTokens->linear && widthInterp == HdInterpolationVarying)
   {
     float widths[] = {0, 0.1f, 0.2f, 0.3f, 0.1f, 0.2f, 0.2f, 0.1f};
     width = VtValue(_BuildArray(&widths[0], sizeof(widths) / sizeof(widths[0])));
@@ -1730,8 +1681,7 @@ void HdUnitTestDelegate::AddPoints(SdfPath const &id,
   if (colorInterp == HdInterpolationConstant || colorInterp == HdInterpolationUniform)
   {
     color = VtValue(GfVec3f(1, 1, 1));
-  }
-  else if (colorInterp == HdInterpolationVertex)
+  } else if (colorInterp == HdInterpolationVertex)
   {
     VtVec3fArray colors(numPoints);
     for (int i = 0; i < numPoints; ++i)
@@ -1745,8 +1695,7 @@ void HdUnitTestDelegate::AddPoints(SdfPath const &id,
   if (widthInterp == HdInterpolationConstant || widthInterp == HdInterpolationUniform)
   {
     width = VtValue(0.1f);
-  }
-  else
+  } else
   {  // VERTEX
     VtFloatArray widths(numPoints);
     for (int i = 0; i < numPoints; ++i)
@@ -1756,8 +1705,15 @@ void HdUnitTestDelegate::AddPoints(SdfPath const &id,
     width = VtValue(widths);
   }
 
-  AddPoints(
-    id, points, color, colorInterp, VtValue(1.0f), HdInterpolationConstant, width, widthInterp, instancerId);
+  AddPoints(id,
+            points,
+            color,
+            colorInterp,
+            VtValue(1.0f),
+            HdInterpolationConstant,
+            width,
+            widthInterp,
+            instancerId);
 }
 
 void HdUnitTestDelegate::AddSubdiv(SdfPath const &id,
@@ -2118,8 +2074,8 @@ bool HdUnitTestDelegate::_FindPrimvar(SdfPath const &id, TfToken const &name, _P
 
   _Primvars &primvars = it->second;
 
-  HdUnitTestDelegate::_Primvars::iterator it2 = std::find_if(
-    primvars.begin(), primvars.end(), [&name](const _Primvar &x) { return x.name == name; });
+  HdUnitTestDelegate::_Primvars::iterator it2 =
+    std::find_if(primvars.begin(), primvars.end(), [&name](const _Primvar &x) { return x.name == name; });
 
   if (it2 == primvars.end())
   {

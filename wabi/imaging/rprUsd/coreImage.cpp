@@ -21,216 +21,223 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-rpr::ImageDesc GetRprImageDesc(rpr::ImageFormat format, uint32_t width, uint32_t height, uint32_t depth = 1)
-{
-  int bytesPerComponent = 1;
-  if (format.type == RPR_COMPONENT_TYPE_FLOAT16)
+  rpr::ImageDesc GetRprImageDesc(rpr::ImageFormat format,
+                                 uint32_t width,
+                                 uint32_t height,
+                                 uint32_t depth = 1)
   {
-    bytesPerComponent = 2;
-  }
-  else if (format.type == RPR_COMPONENT_TYPE_FLOAT32)
-  {
-    bytesPerComponent = 4;
-  }
-
-  rpr::ImageDesc desc = {};
-  desc.image_width = width;
-  desc.image_height = height;
-  desc.image_depth = depth;
-  desc.image_row_pitch = width * format.num_components * bytesPerComponent;
-  desc.image_slice_pitch = desc.image_row_pitch * height;
-
-  return desc;
-}
-
-template<typename ComponentT, typename PixelConverterFunc>
-std::unique_ptr<uint8_t[]> _ConvertTexture(RprUsdTextureData *textureData,
-                                           rpr::ImageFormat const &srcFormat,
-                                           uint32_t dstNumComponents,
-                                           PixelConverterFunc &&converter)
-{
-  uint8_t *src = textureData->GetData();
-
-  size_t srcPixelStride = srcFormat.num_components * sizeof(ComponentT);
-  size_t dstPixelStride = dstNumComponents * sizeof(ComponentT);
-
-  size_t numPixels = size_t(textureData->GetWidth()) * textureData->GetHeight();
-  auto dstData = std::make_unique<uint8_t[]>(numPixels * dstPixelStride);
-  uint8_t *dst = dstData.get();
-
-  for (size_t i = 0; i < numPixels; ++i)
-  {
-    converter((ComponentT *)(dst + i * dstPixelStride), (ComponentT *)(src + i * srcPixelStride));
-  }
-
-  return dstData;
-}
-
-template<typename T>
-struct WhiteColor
-{
-  const T value = static_cast<T>(1);
-};
-
-template<>
-struct WhiteColor<uint8_t>
-{
-  const uint8_t value = 255u;
-};
-
-template<typename ComponentT>
-std::unique_ptr<uint8_t[]> ConvertTexture(RprUsdTextureData *textureData,
-                                          rpr::ImageFormat const &format,
-                                          uint32_t dstNumComponents)
-{
-  if (dstNumComponents < format.num_components)
-  {
-    // Trim excessive channels
-    return _ConvertTexture<ComponentT>(
-      textureData, format, dstNumComponents, [=](ComponentT *dst, ComponentT *src) {
-        for (size_t i = 0; i < dstNumComponents; ++i)
-        {
-          dst[i] = src[i];
-        }
-      });
-  }
-
-  if (format.num_components == 1)
-  {
-    // Expand to a required amount of channels. Example: greyscale texture that is stored as
-    // single-channel.
-    if (dstNumComponents == 4)
+    int bytesPerComponent = 1;
+    if (format.type == RPR_COMPONENT_TYPE_FLOAT16)
     {
-      // r -> rrr1
-      return _ConvertTexture<ComponentT>(
-        textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
-          dst[0] = dst[1] = dst[2] = src[0];
-          dst[3] = WhiteColor<ComponentT>{}.value;
-        });
-    }
-    else
+      bytesPerComponent = 2;
+    } else if (format.type == RPR_COMPONENT_TYPE_FLOAT32)
     {
-      return _ConvertTexture<ComponentT>(
-        textureData, format, dstNumComponents, [=](ComponentT *dst, ComponentT *src) {
-          for (size_t i = 0; i < dstNumComponents; ++i)
-          {
-            dst[i] = src[0];
-          }
-        });
-    }
-  }
-  else if (format.num_components == 2)
-  {
-    if (dstNumComponents == 4)
-    {
-      // rg -> rrrg
-      return _ConvertTexture<ComponentT>(
-        textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
-          dst[0] = dst[1] = dst[2] = src[0];
-          dst[3] = src[1];
-        });
-    }
-    else
-    {
-      // rg -> rrr
-      return _ConvertTexture<ComponentT>(
-        textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
-          dst[0] = dst[1] = dst[2] = src[0];
-        });
-    }
-  }
-  else if (format.num_components == 3)
-  {
-    // rgb -> rgb1
-    return _ConvertTexture<ComponentT>(
-      textureData, format, dstNumComponents, [](ComponentT *dst, ComponentT *src) {
-        dst[0] = src[0];
-        dst[1] = src[1];
-        dst[2] = src[2];
-        dst[3] = WhiteColor<ComponentT>{}.value;
-      });
-  }
-
-  return nullptr;
-}
-
-rpr::Image *CreateRprImage(rpr::Context *context,
-                           RprUsdTextureData *textureData,
-                           uint32_t numComponentsRequired)
-{
-  rpr::ImageFormat format = {};
-
-  auto imageMetadata = textureData->GetGLMetadata();
-
-  switch (imageMetadata.glType)
-  {
-    case GL_UNSIGNED_BYTE:
-      format.type = RPR_COMPONENT_TYPE_UINT8;
-      break;
-    case GL_HALF_FLOAT:
-      format.type = RPR_COMPONENT_TYPE_FLOAT16;
-      break;
-    case GL_FLOAT:
-      format.type = RPR_COMPONENT_TYPE_FLOAT32;
-      break;
-    default:
-      TF_RUNTIME_ERROR("Unsupported pixel data GLtype: %#x", imageMetadata.glType);
-      return nullptr;
-  }
-
-  switch (imageMetadata.glFormat)
-  {
-    case GL_RED:
-      format.num_components = 1;
-      break;
-    case GL_RGB:
-      format.num_components = 3;
-      break;
-    case GL_RGBA:
-      format.num_components = 4;
-      break;
-    default:
-      TF_RUNTIME_ERROR("Unsupported pixel data GLformat: %#x", imageMetadata.glFormat);
-      return nullptr;
-  }
-  rpr::ImageDesc desc = GetRprImageDesc(format, textureData->GetWidth(), textureData->GetHeight());
-
-  auto textureBuffer = textureData->GetData();
-
-  std::unique_ptr<uint8_t[]> convertedData;
-  if (numComponentsRequired != 0 && numComponentsRequired != format.num_components)
-  {
-    if (format.type == RPR_COMPONENT_TYPE_UINT8)
-    {
-      convertedData = ConvertTexture<uint8_t>(textureData, format, numComponentsRequired);
-    }
-    else if (format.type == RPR_COMPONENT_TYPE_FLOAT16)
-    {
-      convertedData = ConvertTexture<GfHalf>(textureData, format, numComponentsRequired);
-    }
-    else if (format.type == RPR_COMPONENT_TYPE_FLOAT32)
-    {
-      convertedData = ConvertTexture<float>(textureData, format, numComponentsRequired);
+      bytesPerComponent = 4;
     }
 
-    if (convertedData)
-    {
-      textureBuffer = convertedData.get();
-      format.num_components = numComponentsRequired;
-      desc = GetRprImageDesc(format, textureData->GetWidth(), textureData->GetHeight());
-    }
+    rpr::ImageDesc desc = {};
+    desc.image_width = width;
+    desc.image_height = height;
+    desc.image_depth = depth;
+    desc.image_row_pitch = width * format.num_components * bytesPerComponent;
+    desc.image_slice_pitch = desc.image_row_pitch * height;
+
+    return desc;
   }
 
-  rpr::Status status;
-  auto rprImage = context->CreateImage(format, desc, textureBuffer, &status);
-  if (!rprImage)
+  template<typename ComponentT, typename PixelConverterFunc>
+  std::unique_ptr<uint8_t[]> _ConvertTexture(RprUsdTextureData *textureData,
+                                             rpr::ImageFormat const &srcFormat,
+                                             uint32_t dstNumComponents,
+                                             PixelConverterFunc &&converter)
   {
-    RPR_ERROR_CHECK(status, "Failed to create image from data", context);
+    uint8_t *src = textureData->GetData();
+
+    size_t srcPixelStride = srcFormat.num_components * sizeof(ComponentT);
+    size_t dstPixelStride = dstNumComponents * sizeof(ComponentT);
+
+    size_t numPixels = size_t(textureData->GetWidth()) * textureData->GetHeight();
+    auto dstData = std::make_unique<uint8_t[]>(numPixels * dstPixelStride);
+    uint8_t *dst = dstData.get();
+
+    for (size_t i = 0; i < numPixels; ++i)
+    {
+      converter((ComponentT *)(dst + i * dstPixelStride), (ComponentT *)(src + i * srcPixelStride));
+    }
+
+    return dstData;
+  }
+
+  template<typename T>
+  struct WhiteColor
+  {
+    const T value = static_cast<T>(1);
+  };
+
+  template<>
+  struct WhiteColor<uint8_t>
+  {
+    const uint8_t value = 255u;
+  };
+
+  template<typename ComponentT>
+  std::unique_ptr<uint8_t[]> ConvertTexture(RprUsdTextureData *textureData,
+                                            rpr::ImageFormat const &format,
+                                            uint32_t dstNumComponents)
+  {
+    if (dstNumComponents < format.num_components)
+    {
+      // Trim excessive channels
+      return _ConvertTexture<ComponentT>(textureData,
+                                         format,
+                                         dstNumComponents,
+                                         [=](ComponentT *dst, ComponentT *src) {
+                                           for (size_t i = 0; i < dstNumComponents; ++i)
+                                           {
+                                             dst[i] = src[i];
+                                           }
+                                         });
+    }
+
+    if (format.num_components == 1)
+    {
+      // Expand to a required amount of channels. Example: greyscale texture that is stored as
+      // single-channel.
+      if (dstNumComponents == 4)
+      {
+        // r -> rrr1
+        return _ConvertTexture<ComponentT>(textureData,
+                                           format,
+                                           dstNumComponents,
+                                           [](ComponentT *dst, ComponentT *src) {
+                                             dst[0] = dst[1] = dst[2] = src[0];
+                                             dst[3] = WhiteColor<ComponentT>{}.value;
+                                           });
+      } else
+      {
+        return _ConvertTexture<ComponentT>(textureData,
+                                           format,
+                                           dstNumComponents,
+                                           [=](ComponentT *dst, ComponentT *src) {
+                                             for (size_t i = 0; i < dstNumComponents; ++i)
+                                             {
+                                               dst[i] = src[0];
+                                             }
+                                           });
+      }
+    } else if (format.num_components == 2)
+    {
+      if (dstNumComponents == 4)
+      {
+        // rg -> rrrg
+        return _ConvertTexture<ComponentT>(textureData,
+                                           format,
+                                           dstNumComponents,
+                                           [](ComponentT *dst, ComponentT *src) {
+                                             dst[0] = dst[1] = dst[2] = src[0];
+                                             dst[3] = src[1];
+                                           });
+      } else
+      {
+        // rg -> rrr
+        return _ConvertTexture<ComponentT>(
+          textureData,
+          format,
+          dstNumComponents,
+          [](ComponentT *dst, ComponentT *src) { dst[0] = dst[1] = dst[2] = src[0]; });
+      }
+    } else if (format.num_components == 3)
+    {
+      // rgb -> rgb1
+      return _ConvertTexture<ComponentT>(textureData,
+                                         format,
+                                         dstNumComponents,
+                                         [](ComponentT *dst, ComponentT *src) {
+                                           dst[0] = src[0];
+                                           dst[1] = src[1];
+                                           dst[2] = src[2];
+                                           dst[3] = WhiteColor<ComponentT>{}.value;
+                                         });
+    }
+
     return nullptr;
   }
 
-  return rprImage;
-}
+  rpr::Image *CreateRprImage(rpr::Context *context,
+                             RprUsdTextureData *textureData,
+                             uint32_t numComponentsRequired)
+  {
+    rpr::ImageFormat format = {};
+
+    auto imageMetadata = textureData->GetGLMetadata();
+
+    switch (imageMetadata.glType)
+    {
+      case GL_UNSIGNED_BYTE:
+        format.type = RPR_COMPONENT_TYPE_UINT8;
+        break;
+      case GL_HALF_FLOAT:
+        format.type = RPR_COMPONENT_TYPE_FLOAT16;
+        break;
+      case GL_FLOAT:
+        format.type = RPR_COMPONENT_TYPE_FLOAT32;
+        break;
+      default:
+        TF_RUNTIME_ERROR("Unsupported pixel data GLtype: %#x", imageMetadata.glType);
+        return nullptr;
+    }
+
+    switch (imageMetadata.glFormat)
+    {
+      case GL_RED:
+        format.num_components = 1;
+        break;
+      case GL_RGB:
+        format.num_components = 3;
+        break;
+      case GL_RGBA:
+        format.num_components = 4;
+        break;
+      default:
+        TF_RUNTIME_ERROR("Unsupported pixel data GLformat: %#x", imageMetadata.glFormat);
+        return nullptr;
+    }
+    rpr::ImageDesc desc = GetRprImageDesc(format, textureData->GetWidth(), textureData->GetHeight());
+
+    auto textureBuffer = textureData->GetData();
+
+    std::unique_ptr<uint8_t[]> convertedData;
+    if (numComponentsRequired != 0 && numComponentsRequired != format.num_components)
+    {
+      if (format.type == RPR_COMPONENT_TYPE_UINT8)
+      {
+        convertedData = ConvertTexture<uint8_t>(textureData, format, numComponentsRequired);
+      } else if (format.type == RPR_COMPONENT_TYPE_FLOAT16)
+      {
+        convertedData = ConvertTexture<GfHalf>(textureData, format, numComponentsRequired);
+      } else if (format.type == RPR_COMPONENT_TYPE_FLOAT32)
+      {
+        convertedData = ConvertTexture<float>(textureData, format, numComponentsRequired);
+      }
+
+      if (convertedData)
+      {
+        textureBuffer = convertedData.get();
+        format.num_components = numComponentsRequired;
+        desc = GetRprImageDesc(format, textureData->GetWidth(), textureData->GetHeight());
+      }
+    }
+
+    rpr::Status status;
+    auto rprImage = context->CreateImage(format, desc, textureBuffer, &status);
+    if (!rprImage)
+    {
+      RPR_ERROR_CHECK(status, "Failed to create image from data", context);
+      return nullptr;
+    }
+
+    return rprImage;
+  }
 
 }  // namespace
 
@@ -244,7 +251,11 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
     return nullptr;
   }
 
-  return Create(context, {{0, textureData.get()}}, numComponentsRequired);
+  return Create(context,
+                {
+                  {0, textureData.get()}
+  },
+                numComponentsRequired);
 }
 
 RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
@@ -283,8 +294,7 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
     }
 
     return new RprUsdCoreImage(rprImage);
-  }
-  else
+  } else
   {
     // Process UDIM
     RprUsdCoreImage *coreImage = nullptr;
@@ -354,8 +364,7 @@ rpr::Status RprUsdCoreImage::ForEachImage(F f)
   if (m_subImages.empty())
   {
     return f(m_rootImage);
-  }
-  else
+  } else
   {
     for (auto image : m_subImages)
     {

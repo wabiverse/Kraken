@@ -129,8 +129,7 @@ TF_API void Tf_PostMsgSuccessHelper(const TfCallContext &context, const char *fm
 TF_API void Tf_PostMsgSuccessHelper(const TfCallContext &context, const std::string &msg);
 
 
-TF_API void Tf_PostMsgHelper(const TfCallContext &context, const char *fmt, ...)
-  ARCH_PRINTF_FUNCTION(2, 3);
+TF_API void Tf_PostMsgHelper(const TfCallContext &context, const char *fmt, ...) ARCH_PRINTF_FUNCTION(2, 3);
 
 TF_API void Tf_PostMsgHelper(const TfCallContext &context, const std::string &msg);
 

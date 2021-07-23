@@ -98,8 +98,8 @@ bool UsdAttribute::GetBracketingTimeSamples(double desiredTime,
                                             double *upper,
                                             bool *hasTimeSamples) const
 {
-  return _GetStage()->_GetBracketingTimeSamples(
-    *this, desiredTime, /*requireAuthored*/ false, lower, upper, hasTimeSamples);
+  return _GetStage()
+    ->_GetBracketingTimeSamples(*this, desiredTime, /*requireAuthored*/ false, lower, upper, hasTimeSamples);
 }
 
 bool UsdAttribute::GetTimeSamplesInInterval(const GfInterval &interval, std::vector<double> *times) const
@@ -276,8 +276,11 @@ SdfAttributeSpecHandle UsdAttribute::_CreateSpec(const SdfValueTypeName &typeNam
   if (m.IsClean())
   {
     SdfChangeBlock block;
-    return SdfAttributeSpec::New(
-      stage->_CreatePrimSpecForEditing(GetPrim()), _PropName(), typeName, variability, custom);
+    return SdfAttributeSpec::New(stage->_CreatePrimSpecForEditing(GetPrim()),
+                                 _PropName(),
+                                 typeName,
+                                 variability,
+                                 custom);
   }
   return TfNullPtr;
 }
@@ -299,8 +302,8 @@ ARCH_PRAGMA_INSTANTIATION_AFTER_SPECIALIZATION
 
 // Explicitly instantiate templated getters and setters for all Sdf value
 // types.
-#define _INSTANTIATE_GET(r, unused, elem) \
-  template USD_API bool UsdAttribute::_Get(SDF_VALUE_CPP_TYPE(elem) *, UsdTimeCode) const; \
+#define _INSTANTIATE_GET(r, unused, elem)                                                        \
+  template USD_API bool UsdAttribute::_Get(SDF_VALUE_CPP_TYPE(elem) *, UsdTimeCode) const;       \
   template USD_API bool UsdAttribute::_Get(SDF_VALUE_CPP_ARRAY_TYPE(elem) *, UsdTimeCode) const; \
   template USD_API bool UsdAttribute::_Set(const SDF_VALUE_CPP_TYPE(elem) &, UsdTimeCode) const; \
   template USD_API bool UsdAttribute::_Set(const SDF_VALUE_CPP_ARRAY_TYPE(elem) &, UsdTimeCode) const;
@@ -338,8 +341,7 @@ SdfPath UsdAttribute::_GetPathForAuthoring(const SdfPath &path, std::string *why
   if (path.IsAbsolutePath())
   {
     result = editTarget.MapToSpecPath(path).StripAllVariantSelections();
-  }
-  else
+  } else
   {
     const SdfPath anchorPrim = GetPath().GetPrimPath();
     const SdfPath translatedAnchorPrim = editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();

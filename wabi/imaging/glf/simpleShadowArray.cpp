@@ -191,8 +191,7 @@ size_t GlfSimpleShadowArray::GetNumShadowMapPasses() const
   if (GetBindlessShadowMapsEnabled())
   {
     return _resolutions.size();
-  }
-  else
+  } else
   {
     return _numLayers;
   }
@@ -207,8 +206,7 @@ GfVec2i GlfSimpleShadowArray::GetShadowMapSize(size_t index) const
     {
       shadowMapSize = _resolutions[index];
     }
-  }
-  else
+  } else
   {
     // In the bindful case, all shadow map textures use the same size.
     shadowMapSize = _size;
@@ -338,8 +336,7 @@ void GlfSimpleShadowArray::EndCapture(size_t index)
     if (image->Write(storage))
     {
       TfDebug::Helper().Msg("Wrote shadow texture: %s\n", outputImageFile.c_str());
-    }
-    else
+    } else
     {
       TfDebug::Helper().Msg("Failed to write shadow texture: %s\n", outputImageFile.c_str());
     }
@@ -393,8 +390,7 @@ void GlfSimpleShadowArray::_AllocResources()
   if (GetBindlessShadowMapsEnabled())
   {
     _AllocBindlessTextures();
-  }
-  else
+  } else
   {
     _AllocBindfulTextures();
   }
@@ -424,8 +420,10 @@ void GlfSimpleShadowArray::_AllocBindfulTextures()
   glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
   TF_DEBUG(GLF_DEBUG_SHADOW_TEXTURES)
-    .Msg(
-      "Created bindful shadow map texture array with %lu %dx%d textures\n", _numLayers, _size[0], _size[1]);
+    .Msg("Created bindful shadow map texture array with %lu %dx%d textures\n",
+         _numLayers,
+         _size[0],
+         _size[1]);
 }
 
 void GlfSimpleShadowArray::_AllocBindlessTextures()
@@ -447,8 +445,15 @@ void GlfSimpleShadowArray::_AllocBindlessTextures()
     GLuint id;
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
-    glTexImage2D(
-      GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, size[0], size[1], 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_DEPTH_COMPONENT32F,
+                 size[0],
+                 size[1],
+                 0,
+                 GL_DEPTH_COMPONENT,
+                 GL_FLOAT,
+                 NULL);
     _bindlessTextures.push_back(id);
 
     GLuint64 handle = glGetTextureSamplerHandleARB(id, _shadowCompareSampler);
@@ -458,8 +463,7 @@ void GlfSimpleShadowArray::_AllocBindlessTextures()
     if (TF_VERIFY(!glIsTextureHandleResidentARB(handle)))
     {
       glMakeTextureHandleResidentARB(handle);
-    }
-    else
+    } else
     {
       GLF_POST_PENDING_GL_ERRORS();
     }
@@ -484,8 +488,7 @@ void GlfSimpleShadowArray::_FreeResources()
   if (GetBindlessShadowMapsEnabled())
   {
     _FreeBindlessTextures();
-  }
-  else
+  } else
   {
     _FreeBindfulTextures();
   }
@@ -565,8 +568,7 @@ void GlfSimpleShadowArray::_BindFramebuffer(size_t index)
   if (GetBindlessShadowMapsEnabled())
   {
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _bindlessTextures[index], 0);
-  }
-  else
+  } else
   {
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _bindfulTexture, 0, index);
   }

@@ -225,8 +225,7 @@ class TfStacked
     if (ARCH_LIKELY(IsStackTop(p)))
     {
       _GetStack().pop_back();
-    }
-    else
+    } else
     {
       // CODE_COVERAGE_OFF
       TF_FATAL_ERROR("Destroyed %s out of stack order.", ArchGetDemangled<Derived>().c_str());
@@ -267,15 +266,15 @@ class TfStacked
 /// \p IsPerThread selected thread safety and \p eiAPI is used to export
 /// the storage for the stack.  Use \c TF_INSTANTIATE_DEFINED_STACKED
 /// to define the storage.
-#define TF_DEFINE_STACKED(Derived, IsPerThread, eiAPI) \
-  class Derived; \
-  template<> \
-  struct Tf_ExportedStackedStorage<Derived, IsPerThread> \
-  { \
+#define TF_DEFINE_STACKED(Derived, IsPerThread, eiAPI)                         \
+  class Derived;                                                               \
+  template<>                                                                   \
+  struct Tf_ExportedStackedStorage<Derived, IsPerThread>                       \
+  {                                                                            \
     typedef typename Tf_StackedStorageType<Derived, IsPerThread>::Stack Stack; \
-    typedef typename Tf_StackedStorageType<Derived, IsPerThread>::Type Type; \
-    static eiAPI std::atomic<Type *> value; \
-  }; \
+    typedef typename Tf_StackedStorageType<Derived, IsPerThread>::Type Type;   \
+    static eiAPI std::atomic<Type *> value;                                    \
+  };                                                                           \
   class Derived : public TfStacked<Derived, IsPerThread, Tf_ExportedStackedStorage<Derived, IsPerThread>>
 
 WABI_NAMESPACE_END

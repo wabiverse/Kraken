@@ -58,8 +58,7 @@ HdPhTextureObjectSharedPtr HdPh_TextureObjectRegistry::_MakeTextureObject(
       if (_IsDynamic(textureId))
       {
         return std::make_shared<HdPhDynamicUvTextureObject>(textureId, this);
-      }
-      else
+      } else
       {
         return std::make_shared<HdPhAssetUvTextureObject>(textureId, this);
       }
@@ -174,10 +173,10 @@ std::set<HdPhTextureObjectSharedPtr> HdPh_TextureObjectRegistry::Commit()
       TF_PY_ALLOW_THREADS_IN_SCOPE();
 
       // Parallel load texture files
-      WorkParallelForEach(
-        result.begin(), result.end(), [](const HdPhTextureObjectSharedPtr &texture) { texture->_Load(); });
-    }
-    else
+      WorkParallelForEach(result.begin(), result.end(), [](const HdPhTextureObjectSharedPtr &texture) {
+        texture->_Load();
+      });
+    } else
     {
       for (const HdPhTextureObjectSharedPtr &texture : result)
       {
@@ -245,8 +244,7 @@ static void _GarbageCollect(std::unordered_map<TfToken, HdPhTextureObjectPtrVect
     if (_GarbageCollect(&it->second))
     {
       it = filePathToTextureObjects->erase(it);
-    }
-    else
+    } else
     {
       ++it;
     }

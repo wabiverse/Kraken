@@ -114,8 +114,7 @@ void TraceEventContainer::Allocate()
   if (!_front)
   {
     _front = node;
-  }
-  else
+  } else
   {
     _Node::Join(_back, node);
   }

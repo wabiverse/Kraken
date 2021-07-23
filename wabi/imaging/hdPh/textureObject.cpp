@@ -486,8 +486,7 @@ void HdPhFieldTextureObject::_Load()
 
     _bbox = texData->GetBoundingBox();
     _samplingTransform = _ComputeSamplingTransform(_bbox);
-  }
-  else
+  } else
   {
     _bbox = GfBBox3d();
     _samplingTransform = GfMatrix4d(1.0);

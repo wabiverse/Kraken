@@ -50,17 +50,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static std::string _Repr(const UsdVolVolume &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdVol.Volume(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdVolVolume &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdVol.Volume(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -118,13 +119,15 @@ void wrapUsdVolVolume()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def("GetFieldPaths", &UsdVolVolume::GetFieldPaths, return_value_policy<TfPyMapToDictionary>())
-    .def("GetFieldPath", &UsdVolVolume::GetFieldPath, arg("name"))
-    .def("HasFieldRelationship", &UsdVolVolume::HasFieldRelationship, arg("name"))
-    .def("CreateFieldRelationship", &UsdVolVolume::CreateFieldRelationship, (arg("name"), arg("fieldPath")))
-    .def("BlockFieldRelationship", &UsdVolVolume::BlockFieldRelationship, arg("name"));
-}
+  WRAP_CUSTOM
+  {
+    _class.def("GetFieldPaths", &UsdVolVolume::GetFieldPaths, return_value_policy<TfPyMapToDictionary>())
+      .def("GetFieldPath", &UsdVolVolume::GetFieldPath, arg("name"))
+      .def("HasFieldRelationship", &UsdVolVolume::HasFieldRelationship, arg("name"))
+      .def("CreateFieldRelationship",
+           &UsdVolVolume::CreateFieldRelationship,
+           (arg("name"), arg("fieldPath")))
+      .def("BlockFieldRelationship", &UsdVolVolume::BlockFieldRelationship, arg("name"));
+  }
 
 }  // namespace

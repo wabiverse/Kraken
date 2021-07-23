@@ -60,156 +60,152 @@ WABI_NAMESPACE_BEGIN
 
 namespace
 {
-struct HdCyclesAov
-{
-  std::string name;
-  ccl::PassType type;
-  TfToken token;
-  HdFormat format;
-  bool filter;
-};
-
-std::array<HdCyclesAov, 27> DefaultAovs = {{
-  {"Combined", ccl::PASS_COMBINED, HdAovTokens->color, HdFormatFloat32Vec4, true},
-  {"Depth", ccl::PASS_DEPTH, HdAovTokens->depth, HdFormatFloat32, false},
-  {"Normal", ccl::PASS_NORMAL, HdAovTokens->normal, HdFormatFloat32Vec3, true},
-  {"IndexOB", ccl::PASS_OBJECT_ID, HdAovTokens->primId, HdFormatFloat32, false},
-  {"IndexMA", ccl::PASS_MATERIAL_ID, HdCyclesAovTokens->IndexMA, HdFormatFloat32, false},
-  {"Mist", ccl::PASS_MIST, HdCyclesAovTokens->Mist, HdFormatFloat32, true},
-  {"Emission", ccl::PASS_EMISSION, HdCyclesAovTokens->Emit, HdFormatFloat32Vec3, true},
-  {"Shadow", ccl::PASS_SHADOW, HdCyclesAovTokens->Shadow, HdFormatFloat32Vec3, true},
-  {"AO", ccl::PASS_AO, HdCyclesAovTokens->AO, HdFormatFloat32Vec3, true},
-
-  {"UV", ccl::PASS_UV, HdCyclesAovTokens->UV, HdFormatFloat32Vec3, true},
-  {"Vector", ccl::PASS_MOTION, HdCyclesAovTokens->Vector, HdFormatFloat32Vec4, true},
-
-  {"DiffDir", ccl::PASS_DIFFUSE_DIRECT, HdCyclesAovTokens->DiffDir, HdFormatFloat32Vec3, true},
-  {"DiffInd", ccl::PASS_DIFFUSE_INDIRECT, HdCyclesAovTokens->DiffInd, HdFormatFloat32Vec3, true},
-  {"DiffCol", ccl::PASS_DIFFUSE_COLOR, HdCyclesAovTokens->DiffCol, HdFormatFloat32Vec3, true},
-
-  {"GlossDir", ccl::PASS_GLOSSY_DIRECT, HdCyclesAovTokens->GlossDir, HdFormatFloat32Vec3, true},
-  {"GlossInd", ccl::PASS_GLOSSY_INDIRECT, HdCyclesAovTokens->GlossInd, HdFormatFloat32Vec3, true},
-  {"GlossCol", ccl::PASS_GLOSSY_COLOR, HdCyclesAovTokens->GlossCol, HdFormatFloat32Vec3, true},
-
-  {"TransDir", ccl::PASS_TRANSMISSION_DIRECT, HdCyclesAovTokens->TransDir, HdFormatFloat32Vec3, true},
-  {"TransInd", ccl::PASS_TRANSMISSION_INDIRECT, HdCyclesAovTokens->TransInd, HdFormatFloat32Vec3, true},
-  {"TransCol", ccl::PASS_TRANSMISSION_COLOR, HdCyclesAovTokens->TransCol, HdFormatFloat32Vec3, true},
-
-  {"VolumeDir", ccl::PASS_VOLUME_DIRECT, HdCyclesAovTokens->VolumeDir, HdFormatFloat32Vec3, true},
-  {"VolumeInd", ccl::PASS_VOLUME_INDIRECT, HdCyclesAovTokens->VolumeInd, HdFormatFloat32Vec3, true},
-
-  {"RenderTime", ccl::PASS_RENDER_TIME, HdCyclesAovTokens->RenderTime, HdFormatFloat32, false},
-  {"SampleCount", ccl::PASS_SAMPLE_COUNT, HdCyclesAovTokens->SampleCount, HdFormatFloat32, false},
-
-  {"P", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->P, HdFormatFloat32Vec3, false},
-  {"Pref", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->Pref, HdFormatFloat32Vec3, false},
-  {"Ngn", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->Ngn, HdFormatFloat32Vec3, false},
-}};
-
-std::array<HdCyclesAov, 2> CustomAovs = {{
-  {"AOVC", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->AOVC, HdFormatFloat32Vec3, true},
-  {"AOVV", ccl::PASS_AOV_VALUE, HdCyclesAovTokens->AOVV, HdFormatFloat32, true},
-}};
-
-std::array<HdCyclesAov, 3> CryptomatteAovs = {{
-  {"CryptoObject", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoObject, HdFormatFloat32Vec4, true},
-  {"CryptoMaterial", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoMaterial, HdFormatFloat32Vec4, true},
-  {"CryptoAsset", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoAsset, HdFormatFloat32Vec4, true},
-}};
-
-std::array<HdCyclesAov, 2> DenoiseAovs = {{
-  {"DenoiseNormal", ccl::PASS_NONE, HdCyclesAovTokens->DenoiseNormal, HdFormatFloat32Vec3, true},
-  {"DenoiseAlbedo", ccl::PASS_NONE, HdCyclesAovTokens->DenoiseAlbedo, HdFormatFloat32Vec3, true},
-}};
-
-// Workaround for Houdini's default color buffer naming convention (not using HdAovTokens->color)
-const TfToken defaultHoudiniColor = TfToken("C.*");
-
-TfToken GetSourceName(const HdRenderPassAovBinding &aov)
-{
-  const auto &it = aov.aovSettings.find(UsdRenderTokens->sourceName);
-  if (it != aov.aovSettings.end())
+  struct HdCyclesAov
   {
-    if (it->second.IsHolding<std::string>())
+    std::string name;
+    ccl::PassType type;
+    TfToken token;
+    HdFormat format;
+    bool filter;
+  };
+
+  std::array<HdCyclesAov, 27> DefaultAovs = {{
+    {"Combined", ccl::PASS_COMBINED, HdAovTokens->color, HdFormatFloat32Vec4, true},
+    {"Depth", ccl::PASS_DEPTH, HdAovTokens->depth, HdFormatFloat32, false},
+    {"Normal", ccl::PASS_NORMAL, HdAovTokens->normal, HdFormatFloat32Vec3, true},
+    {"IndexOB", ccl::PASS_OBJECT_ID, HdAovTokens->primId, HdFormatFloat32, false},
+    {"IndexMA", ccl::PASS_MATERIAL_ID, HdCyclesAovTokens->IndexMA, HdFormatFloat32, false},
+    {"Mist", ccl::PASS_MIST, HdCyclesAovTokens->Mist, HdFormatFloat32, true},
+    {"Emission", ccl::PASS_EMISSION, HdCyclesAovTokens->Emit, HdFormatFloat32Vec3, true},
+    {"Shadow", ccl::PASS_SHADOW, HdCyclesAovTokens->Shadow, HdFormatFloat32Vec3, true},
+    {"AO", ccl::PASS_AO, HdCyclesAovTokens->AO, HdFormatFloat32Vec3, true},
+
+    {"UV", ccl::PASS_UV, HdCyclesAovTokens->UV, HdFormatFloat32Vec3, true},
+    {"Vector", ccl::PASS_MOTION, HdCyclesAovTokens->Vector, HdFormatFloat32Vec4, true},
+
+    {"DiffDir", ccl::PASS_DIFFUSE_DIRECT, HdCyclesAovTokens->DiffDir, HdFormatFloat32Vec3, true},
+    {"DiffInd", ccl::PASS_DIFFUSE_INDIRECT, HdCyclesAovTokens->DiffInd, HdFormatFloat32Vec3, true},
+    {"DiffCol", ccl::PASS_DIFFUSE_COLOR, HdCyclesAovTokens->DiffCol, HdFormatFloat32Vec3, true},
+
+    {"GlossDir", ccl::PASS_GLOSSY_DIRECT, HdCyclesAovTokens->GlossDir, HdFormatFloat32Vec3, true},
+    {"GlossInd", ccl::PASS_GLOSSY_INDIRECT, HdCyclesAovTokens->GlossInd, HdFormatFloat32Vec3, true},
+    {"GlossCol", ccl::PASS_GLOSSY_COLOR, HdCyclesAovTokens->GlossCol, HdFormatFloat32Vec3, true},
+
+    {"TransDir", ccl::PASS_TRANSMISSION_DIRECT, HdCyclesAovTokens->TransDir, HdFormatFloat32Vec3, true},
+    {"TransInd", ccl::PASS_TRANSMISSION_INDIRECT, HdCyclesAovTokens->TransInd, HdFormatFloat32Vec3, true},
+    {"TransCol", ccl::PASS_TRANSMISSION_COLOR, HdCyclesAovTokens->TransCol, HdFormatFloat32Vec3, true},
+
+    {"VolumeDir", ccl::PASS_VOLUME_DIRECT, HdCyclesAovTokens->VolumeDir, HdFormatFloat32Vec3, true},
+    {"VolumeInd", ccl::PASS_VOLUME_INDIRECT, HdCyclesAovTokens->VolumeInd, HdFormatFloat32Vec3, true},
+
+    {"RenderTime", ccl::PASS_RENDER_TIME, HdCyclesAovTokens->RenderTime, HdFormatFloat32, false},
+    {"SampleCount", ccl::PASS_SAMPLE_COUNT, HdCyclesAovTokens->SampleCount, HdFormatFloat32, false},
+
+    {"P", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->P, HdFormatFloat32Vec3, false},
+    {"Pref", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->Pref, HdFormatFloat32Vec3, false},
+    {"Ngn", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->Ngn, HdFormatFloat32Vec3, false},
+  }};
+
+  std::array<HdCyclesAov, 2> CustomAovs = {{
+    {"AOVC", ccl::PASS_AOV_COLOR, HdCyclesAovTokens->AOVC, HdFormatFloat32Vec3, true},
+    {"AOVV", ccl::PASS_AOV_VALUE, HdCyclesAovTokens->AOVV, HdFormatFloat32, true},
+  }};
+
+  std::array<HdCyclesAov, 3> CryptomatteAovs = {{
+    {"CryptoObject", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoObject, HdFormatFloat32Vec4, true},
+    {"CryptoMaterial", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoMaterial, HdFormatFloat32Vec4, true},
+    {"CryptoAsset", ccl::PASS_CRYPTOMATTE, HdCyclesAovTokens->CryptoAsset, HdFormatFloat32Vec4, true},
+  }};
+
+  std::array<HdCyclesAov, 2> DenoiseAovs = {{
+    {"DenoiseNormal", ccl::PASS_NONE, HdCyclesAovTokens->DenoiseNormal, HdFormatFloat32Vec3, true},
+    {"DenoiseAlbedo", ccl::PASS_NONE, HdCyclesAovTokens->DenoiseAlbedo, HdFormatFloat32Vec3, true},
+  }};
+
+  // Workaround for Houdini's default color buffer naming convention (not using HdAovTokens->color)
+  const TfToken defaultHoudiniColor = TfToken("C.*");
+
+  TfToken GetSourceName(const HdRenderPassAovBinding &aov)
+  {
+    const auto &it = aov.aovSettings.find(UsdRenderTokens->sourceName);
+    if (it != aov.aovSettings.end())
     {
-      TfToken token = TfToken(it->second.UncheckedGet<std::string>());
-      if (token == defaultHoudiniColor)
+      if (it->second.IsHolding<std::string>())
       {
-        return HdAovTokens->color;
+        TfToken token = TfToken(it->second.UncheckedGet<std::string>());
+        if (token == defaultHoudiniColor)
+        {
+          return HdAovTokens->color;
+        } else if (token == HdAovTokens->cameraDepth)
+        {
+          // To be backwards-compatible with older scenes
+          return HdAovTokens->depth;
+        } else
+        {
+          return token;
+        }
       }
-      else if (token == HdAovTokens->cameraDepth)
+    }
+
+    // If a source name is not present, we attempt to use the name of the
+    // AOV for the same purpose. This picks up the default aovs in
+    // usdview and the Houdini Render Outputs pane
+    return aov.aovName;
+  }
+
+  bool GetCyclesAov(const HdRenderPassAovBinding &aov, HdCyclesAov &cyclesAov)
+  {
+    TfToken sourceName = GetSourceName(aov);
+
+    for (HdCyclesAov &_cyclesAov : DefaultAovs)
+    {
+      if (sourceName == _cyclesAov.token)
       {
-        // To be backwards-compatible with older scenes
-        return HdAovTokens->depth;
+        cyclesAov = _cyclesAov;
+        return true;
       }
-      else
+    }
+    for (HdCyclesAov &_cyclesAov : CustomAovs)
+    {
+      if (sourceName == _cyclesAov.token)
       {
-        return token;
+        cyclesAov = _cyclesAov;
+        return true;
       }
     }
+    for (HdCyclesAov &_cyclesAov : CryptomatteAovs)
+    {
+      if (sourceName == _cyclesAov.token)
+      {
+        cyclesAov = _cyclesAov;
+        return true;
+      }
+    }
+    for (HdCyclesAov &_cyclesAov : DenoiseAovs)
+    {
+      if (sourceName == _cyclesAov.token)
+      {
+        cyclesAov = _cyclesAov;
+        return true;
+      }
+    }
+
+    return false;
   }
 
-  // If a source name is not present, we attempt to use the name of the
-  // AOV for the same purpose. This picks up the default aovs in
-  // usdview and the Houdini Render Outputs pane
-  return aov.aovName;
-}
-
-bool GetCyclesAov(const HdRenderPassAovBinding &aov, HdCyclesAov &cyclesAov)
-{
-  TfToken sourceName = GetSourceName(aov);
-
-  for (HdCyclesAov &_cyclesAov : DefaultAovs)
+  int GetDenoisePass(const TfToken token)
   {
-    if (sourceName == _cyclesAov.token)
+    if (token == HdCyclesAovTokens->DenoiseNormal)
     {
-      cyclesAov = _cyclesAov;
-      return true;
+      return ccl::DENOISING_PASS_PREFILTERED_NORMAL;
+    } else if (token == HdCyclesAovTokens->DenoiseAlbedo)
+    {
+      return ccl::DENOISING_PASS_PREFILTERED_ALBEDO;
+    } else
+    {
+      return -1;
     }
   }
-  for (HdCyclesAov &_cyclesAov : CustomAovs)
-  {
-    if (sourceName == _cyclesAov.token)
-    {
-      cyclesAov = _cyclesAov;
-      return true;
-    }
-  }
-  for (HdCyclesAov &_cyclesAov : CryptomatteAovs)
-  {
-    if (sourceName == _cyclesAov.token)
-    {
-      cyclesAov = _cyclesAov;
-      return true;
-    }
-  }
-  for (HdCyclesAov &_cyclesAov : DenoiseAovs)
-  {
-    if (sourceName == _cyclesAov.token)
-    {
-      cyclesAov = _cyclesAov;
-      return true;
-    }
-  }
-
-  return false;
-}
-
-int GetDenoisePass(const TfToken token)
-{
-  if (token == HdCyclesAovTokens->DenoiseNormal)
-  {
-    return ccl::DENOISING_PASS_PREFILTERED_NORMAL;
-  }
-  else if (token == HdCyclesAovTokens->DenoiseAlbedo)
-  {
-    return ccl::DENOISING_PASS_PREFILTERED_ALBEDO;
-  }
-  else
-  {
-    return -1;
-  }
-}
 
 }  // namespace
 
@@ -243,8 +239,7 @@ void HdCyclesRenderParam::_InitializeDefaults()
   if (config.up_axis == "Z")
   {
     m_upAxis = UpAxis::Z;
-  }
-  else if (config.up_axis == "Y")
+  } else if (config.up_axis == "Y")
   {
     m_upAxis = UpAxis::Y;
   }
@@ -534,8 +529,7 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
     {
       sessionParams->tile_size = vec2i_to_int2(
         _HdCyclesGetVtValue<GfVec2i>(value, int2_to_vec2i(sessionParams->tile_size), &session_updated));
-    }
-    else if (value.IsHolding<GfVec2f>())
+    } else if (value.IsHolding<GfVec2f>())
     {
       // Adding this check for safety since the original implementation was using GfVec2i which
       // might have been valid at some point but does not match the current schema.
@@ -544,8 +538,7 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
       TF_WARN(
         "Tile size was specified as float, but the schema uses int. The value will be converted "
         "but you should update the schema version.");
-    }
-    else
+    } else
     {
       TF_WARN("Tile size has unsupported type %s, expected GfVec2f", value.GetTypeName().c_str());
     }
@@ -559,24 +552,19 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
     if (tileOrder == HdCyclesTokens->hilbert_spiral)
     {
       sessionParams->tile_order = ccl::TILE_HILBERT_SPIRAL;
-    }
-    else if (tileOrder == HdCyclesTokens->center)
+    } else if (tileOrder == HdCyclesTokens->center)
     {
       sessionParams->tile_order = ccl::TILE_CENTER;
-    }
-    else if (tileOrder == HdCyclesTokens->right_to_left)
+    } else if (tileOrder == HdCyclesTokens->right_to_left)
     {
       sessionParams->tile_order = ccl::TILE_RIGHT_TO_LEFT;
-    }
-    else if (tileOrder == HdCyclesTokens->left_to_right)
+    } else if (tileOrder == HdCyclesTokens->left_to_right)
     {
       sessionParams->tile_order = ccl::TILE_LEFT_TO_RIGHT;
-    }
-    else if (tileOrder == HdCyclesTokens->top_to_bottom)
+    } else if (tileOrder == HdCyclesTokens->top_to_bottom)
     {
       sessionParams->tile_order = ccl::TILE_TOP_TO_BOTTOM;
-    }
-    else if (tileOrder == HdCyclesTokens->bottom_to_top)
+    } else if (tileOrder == HdCyclesTokens->bottom_to_top)
     {
       sessionParams->tile_order = ccl::TILE_BOTTOM_TO_TOP;
     }
@@ -619,8 +607,7 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
     if (shadingSystem == HdCyclesTokens->osl)
     {
       sessionParams->shadingsystem = ccl::SHADINGSYSTEM_OSL;
-    }
-    else
+    } else
     {
       sessionParams->shadingsystem = ccl::SHADINGSYSTEM_SVM;
     }
@@ -664,16 +651,13 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
     if (type == HdCyclesTokens->none)
     {
       denoisingParams.type = ccl::DENOISER_NONE;
-    }
-    else if (type == HdCyclesTokens->openimagedenoise)
+    } else if (type == HdCyclesTokens->openimagedenoise)
     {
       denoisingParams.type = ccl::DENOISER_OPENIMAGEDENOISE;
-    }
-    else if (type == HdCyclesTokens->optix)
+    } else if (type == HdCyclesTokens->optix)
     {
       denoisingParams.type = ccl::DENOISER_OPTIX;
-    }
-    else
+    } else
     {
       denoisingParams.type = ccl::DENOISER_NONE;
     }
@@ -687,12 +671,10 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
     if (inputPasses == HdCyclesTokens->rgb)
     {
       denoisingParams.input_passes = ccl::DENOISER_INPUT_RGB;
-    }
-    else if (inputPasses == HdCyclesTokens->rgb_albedo)
+    } else if (inputPasses == HdCyclesTokens->rgb_albedo)
     {
       denoisingParams.input_passes = ccl::DENOISER_INPUT_RGB_ALBEDO;
-    }
-    else if (inputPasses == HdCyclesTokens->rgb_albedo_normal)
+    } else if (inputPasses == HdCyclesTokens->rgb_albedo_normal)
     {
       denoisingParams.input_passes = ccl::DENOISER_INPUT_RGB_ALBEDO_NORMAL;
     }
@@ -707,8 +689,7 @@ bool HdCyclesRenderParam::_HandleSessionRenderSetting(const TfToken &key, const 
       {
         m_cyclesSession->set_denoising_start_sample(sessionParams->denoising_start_sample);
       }
-    }
-    else
+    } else
     {
       sessionParams->denoising = denoisingParams;
     }
@@ -785,8 +766,7 @@ bool HdCyclesRenderParam::_HandleSceneRenderSetting(const TfToken &key, const Vt
     if (shading_system == HdCyclesTokens->svm)
     {
       sceneParams->shadingsystem = ccl::SHADINGSYSTEM_SVM;
-    }
-    else if (shading_system == HdCyclesTokens->osl)
+    } else if (shading_system == HdCyclesTokens->osl)
     {
       sceneParams->shadingsystem = ccl::SHADINGSYSTEM_OSL;
     }
@@ -798,8 +778,7 @@ bool HdCyclesRenderParam::_HandleSceneRenderSetting(const TfToken &key, const Vt
     if (bvh_type == HdCyclesTokens->bvh_dynamic)
     {
       sceneParams->bvh_type = ccl::SceneParams::BVH_DYNAMIC;
-    }
-    else if (bvh_type == HdCyclesTokens->bvh_static)
+    } else if (bvh_type == HdCyclesTokens->bvh_static)
     {
       sceneParams->bvh_type = ccl::SceneParams::BVH_STATIC;
     }
@@ -938,8 +917,7 @@ void HdCyclesRenderParam::_UpdateIntegratorFromConfig(bool a_forceInit)
     if (config.integrator_method.value == "PATH")
     {
       integrator->method = ccl::Integrator::PATH;
-    }
-    else
+    } else
     {
       integrator->method = ccl::Integrator::BRANCHED_PATH;
     }
@@ -1029,8 +1007,7 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
     if (integratorMethod == HdCyclesTokens->path)
     {
       integrator->method = ccl::Integrator::PATH;
-    }
-    else
+    } else
     {
       integrator->method = ccl::Integrator::BRANCHED_PATH;
     }
@@ -1051,8 +1028,7 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
     if (integrator->sampling_pattern == ccl::SAMPLING_PATTERN_CMJ)
     {
       defaultPattern = HdCyclesTokens->cmj;
-    }
-    else if (integrator->sampling_pattern == ccl::SAMPLING_PATTERN_PMJ)
+    } else if (integrator->sampling_pattern == ccl::SAMPLING_PATTERN_PMJ)
     {
       defaultPattern = HdCyclesTokens->pmj;
     }
@@ -1061,12 +1037,10 @@ bool HdCyclesRenderParam::_HandleIntegratorRenderSetting(const TfToken &key, con
     if (samplingMethod == HdCyclesTokens->sobol)
     {
       integrator->sampling_pattern = ccl::SAMPLING_PATTERN_SOBOL;
-    }
-    else if (samplingMethod == HdCyclesTokens->cmj)
+    } else if (samplingMethod == HdCyclesTokens->cmj)
     {
       integrator->sampling_pattern = ccl::SAMPLING_PATTERN_CMJ;
-    }
-    else
+    } else
     {
       integrator->sampling_pattern = ccl::SAMPLING_PATTERN_PMJ;
     }
@@ -1413,12 +1387,10 @@ bool HdCyclesRenderParam::_HandleFilmRenderSetting(const TfToken &key, const VtV
     if (filter == HdCyclesTokens->box)
     {
       film->filter_type = ccl::FilterType::FILTER_BOX;
-    }
-    else if (filter == HdCyclesTokens->gaussian)
+    } else if (filter == HdCyclesTokens->gaussian)
     {
       film->filter_type = ccl::FilterType::FILTER_GAUSSIAN;
-    }
-    else
+    } else
     {
       film->filter_type = ccl::FilterType::FILTER_BLACKMAN_HARRIS;
     }
@@ -1727,9 +1699,8 @@ void HdCyclesRenderParam::_WriteRenderTile(ccl::RenderTile &rtile)
           (cyclesAov.token == HdCyclesAovTokens->AOVC) || (cyclesAov.token == HdCyclesAovTokens->AOVV))
       {
         custom = true;
-      }
-      else if ((cyclesAov.token == HdCyclesAovTokens->DenoiseNormal) ||
-               (cyclesAov.token == HdCyclesAovTokens->DenoiseAlbedo))
+      } else if ((cyclesAov.token == HdCyclesAovTokens->DenoiseNormal) ||
+                 (cyclesAov.token == HdCyclesAovTokens->DenoiseAlbedo))
       {
         denoise = true;
       }
@@ -1745,13 +1716,11 @@ void HdCyclesRenderParam::_WriteRenderTile(ccl::RenderTile &rtile)
       {
         read = buffers->get_pass_rect(
           cyclesAov.name.c_str(), exposure, sample, static_cast<int>(numComponents), &tileData[0]);
-      }
-      else if (denoise)
+      } else if (denoise)
       {
         read = buffers->get_denoising_pass_rect(
           GetDenoisePass(cyclesAov.token), exposure, sample, static_cast<int>(numComponents), &tileData[0]);
-      }
-      else if (custom)
+      } else if (custom)
       {
         read = buffers->get_pass_rect(
           aov.aovName.GetText(), exposure, sample, static_cast<int>(numComponents), &tileData[0]);
@@ -1866,8 +1835,7 @@ void HdCyclesRenderParam::CommitResources()
     {
       if (m_numDomeLights <= 0)
         SetBackgroundShader(nullptr, false);
-    }
-    else
+    } else
     {
       SetBackgroundShader(nullptr, true);
     }
@@ -2131,8 +2099,7 @@ void HdCyclesRenderParam::RemoveShader(ccl::Shader *shader)
       m_shadersUpdated = true;
 
       break;
-    }
-    else
+    } else
     {
       ++it;
     }
@@ -2159,8 +2126,7 @@ void HdCyclesRenderParam::RemoveLight(ccl::Light *light)
       m_lightsUpdated = true;
 
       break;
-    }
-    else
+    } else
     {
       ++it;
     }
@@ -2180,8 +2146,7 @@ void HdCyclesRenderParam::RemoveObject(ccl::Object *object)
 
       m_objectsUpdated = true;
       break;
-    }
-    else
+    } else
     {
       ++it;
     }
@@ -2202,8 +2167,7 @@ void HdCyclesRenderParam::RemoveGeometry(ccl::Geometry *geometry)
       m_geometryUpdated = true;
 
       break;
-    }
-    else
+    } else
     {
       ++it;
     }
@@ -2436,8 +2400,7 @@ void HdCyclesRenderParam::SetAovBindings(HdRenderPassAovBindingVector const &a_a
         if (cyclesAov.type == ccl::PASS_COMBINED)
         {
           has_combined = true;
-        }
-        else if (cyclesAov.type == ccl::PASS_SAMPLE_COUNT)
+        } else if (cyclesAov.type == ccl::PASS_SAMPLE_COUNT)
         {
           has_sample_count = true;
         }
@@ -2545,8 +2508,7 @@ void HdCyclesRenderParam::SetAovBindings(HdRenderPassAovBindingVector const &a_a
   {
     TF_WARN("Cryptomatte Object has an invalid layer name");
     cryptoObject = 0;
-  }
-  else
+  } else
   {
     cryptoObjectName.erase(cryptoObjectName.end() - 2, cryptoObjectName.end());
   }
@@ -2554,8 +2516,7 @@ void HdCyclesRenderParam::SetAovBindings(HdRenderPassAovBindingVector const &a_a
   {
     TF_WARN("Cryptomatte Material has an invalid layer name");
     cryptoMaterial = 0;
-  }
-  else
+  } else
   {
     cryptoMaterialName.erase(cryptoMaterialName.end() - 2, cryptoMaterialName.end());
   }
@@ -2563,8 +2524,7 @@ void HdCyclesRenderParam::SetAovBindings(HdRenderPassAovBindingVector const &a_a
   {
     TF_WARN("Cryptomatte Asset has an invalid layer name");
     cryptoAsset = 0;
-  }
-  else
+  } else
   {
     cryptoAssetName.erase(cryptoAssetName.end() - 2, cryptoAssetName.end());
   }
@@ -2746,14 +2706,12 @@ void HdCyclesRenderParam::BlitFromCyclesPass(const HdRenderPassAovBinding &aov, 
           {
             pixels[i] -= 1;
           }
-        }
-        else
+        } else
         {
           TF_WARN("Object ID pass %s has unrecognized type", aov.aovName.GetText());
         }
       }
-    }
-    else
+    } else
     {
       TF_WARN(
         "Don't know how to narrow aov %s from %d components (cycles) to %d components "
@@ -2763,8 +2721,7 @@ void HdCyclesRenderParam::BlitFromCyclesPass(const HdRenderPassAovBinding &aov, 
         n_comps_hd);
     }
     rb->Unmap();
-  }
-  else
+  } else
   {
     TF_WARN("Failed to map renderbuffer %s for writing on Cycles display callback", aov.aovName.GetText());
   }

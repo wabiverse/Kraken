@@ -59,8 +59,7 @@ void SdfReference::SetCustomData(const std::string &name, const VtValue &value)
   if (value.IsEmpty())
   {
     _customData.erase(name);
-  }
-  else
+  } else
   {
     _customData[name] = value;
   }
@@ -94,9 +93,9 @@ bool SdfReference::operator<(const SdfReference &rhs) const
 int SdfFindReferenceByIdentity(const SdfReferenceVector &references, const SdfReference &referenceId)
 {
   SdfReferenceVector::const_iterator it = std::find_if(
-    references.begin(), references.end(), [&referenceId](SdfReference const &ref) {
-      return SdfReference::IdentityEqual()(referenceId, ref);
-    });
+    references.begin(),
+    references.end(),
+    [&referenceId](SdfReference const &ref) { return SdfReference::IdentityEqual()(referenceId, ref); });
 
   return it != references.end() ? it - references.begin() : -1;
 }

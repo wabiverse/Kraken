@@ -39,74 +39,74 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-template<typename T>
-T _ConvertWithDefault(const object obj, const T &def)
-{
-  if (!TfPyIsNone(obj))
+  template<typename T>
+  T _ConvertWithDefault(const object obj, const T &def)
   {
-    return extract<T>(obj);
+    if (!TfPyIsNone(obj))
+    {
+      return extract<T>(obj);
+    }
+
+    return def;
   }
 
-  return def;
-}
+  bool _ConvertStitchClips(const SdfLayerHandle &resultLayer,
+                           const std::vector<std::string> &clipLayerFiles,
+                           const SdfPath &clipPath,
+                           const object pyStartFrame,
+                           const object pyEndFrame,
+                           const object pyInterpolateMissingClipValues,
+                           const object pyClipSet)
+  {
+    const auto clipSet = _ConvertWithDefault(pyClipSet, UsdClipsAPISetNames->default_);
+    constexpr double dmax = std::numeric_limits<double>::max();
+    return UsdUtilsStitchClips(resultLayer,
+                               clipLayerFiles,
+                               clipPath,
+                               _ConvertWithDefault(pyStartFrame, dmax),
+                               _ConvertWithDefault(pyEndFrame, dmax),
+                               _ConvertWithDefault(pyInterpolateMissingClipValues, false),
+                               clipSet);
+  }
 
-bool _ConvertStitchClips(const SdfLayerHandle &resultLayer,
-                         const std::vector<std::string> &clipLayerFiles,
-                         const SdfPath &clipPath,
-                         const object pyStartFrame,
-                         const object pyEndFrame,
-                         const object pyInterpolateMissingClipValues,
-                         const object pyClipSet)
-{
-  const auto clipSet = _ConvertWithDefault(pyClipSet, UsdClipsAPISetNames->default_);
-  constexpr double dmax = std::numeric_limits<double>::max();
-  return UsdUtilsStitchClips(resultLayer,
-                             clipLayerFiles,
-                             clipPath,
-                             _ConvertWithDefault(pyStartFrame, dmax),
-                             _ConvertWithDefault(pyEndFrame, dmax),
-                             _ConvertWithDefault(pyInterpolateMissingClipValues, false),
-                             clipSet);
-}
+  bool _ConvertStitchClipsTopology(const SdfLayerHandle &topologyLayer,
+                                   const std::vector<std::string> &clipLayerFiles)
+  {
+    return UsdUtilsStitchClipsTopology(topologyLayer, clipLayerFiles);
+  }
 
-bool _ConvertStitchClipsTopology(const SdfLayerHandle &topologyLayer,
-                                 const std::vector<std::string> &clipLayerFiles)
-{
-  return UsdUtilsStitchClipsTopology(topologyLayer, clipLayerFiles);
-}
+  std::string _ConvertGenerateClipTopologyName(const std::string &resultLayerName)
+  {
+    return UsdUtilsGenerateClipTopologyName(resultLayerName);
+  }
 
-std::string _ConvertGenerateClipTopologyName(const std::string &resultLayerName)
-{
-  return UsdUtilsGenerateClipTopologyName(resultLayerName);
-}
-
-bool _ConvertStitchClipTemplate(const SdfLayerHandle &resultLayer,
-                                const SdfLayerHandle &topologyLayer,
-                                const SdfLayerHandle &manifestLayer,
-                                const SdfPath &clipPath,
-                                const std::string &templatePath,
-                                const double startFrame,
-                                const double endFrame,
-                                const double stride,
-                                const object pyActiveOffset,
-                                const object pyInterpolateMissingClipValues,
-                                const object pyClipSet)
-{
-  const auto clipSet = _ConvertWithDefault(pyClipSet, UsdClipsAPISetNames->default_);
-  const auto activeOffset = _ConvertWithDefault(pyActiveOffset, std::numeric_limits<double>::max());
-  const auto interpolateMissingClipValues = _ConvertWithDefault(pyInterpolateMissingClipValues, false);
-  return UsdUtilsStitchClipsTemplate(resultLayer,
-                                     topologyLayer,
-                                     manifestLayer,
-                                     clipPath,
-                                     templatePath,
-                                     startFrame,
-                                     endFrame,
-                                     stride,
-                                     activeOffset,
-                                     interpolateMissingClipValues,
-                                     clipSet);
-}
+  bool _ConvertStitchClipTemplate(const SdfLayerHandle &resultLayer,
+                                  const SdfLayerHandle &topologyLayer,
+                                  const SdfLayerHandle &manifestLayer,
+                                  const SdfPath &clipPath,
+                                  const std::string &templatePath,
+                                  const double startFrame,
+                                  const double endFrame,
+                                  const double stride,
+                                  const object pyActiveOffset,
+                                  const object pyInterpolateMissingClipValues,
+                                  const object pyClipSet)
+  {
+    const auto clipSet = _ConvertWithDefault(pyClipSet, UsdClipsAPISetNames->default_);
+    const auto activeOffset = _ConvertWithDefault(pyActiveOffset, std::numeric_limits<double>::max());
+    const auto interpolateMissingClipValues = _ConvertWithDefault(pyInterpolateMissingClipValues, false);
+    return UsdUtilsStitchClipsTemplate(resultLayer,
+                                       topologyLayer,
+                                       manifestLayer,
+                                       clipPath,
+                                       templatePath,
+                                       startFrame,
+                                       endFrame,
+                                       stride,
+                                       activeOffset,
+                                       interpolateMissingClipValues,
+                                       clipSet);
+  }
 
 }  // anonymous namespace
 

@@ -43,10 +43,11 @@
 WABI_NAMESPACE_BEGIN
 
 /// \hideinitializer
-#define USDGEOM_XFORM_OP_TYPES \
-  (translate)(scale)( \
+#define USDGEOM_XFORM_OP_TYPES                                                                                        \
+  (translate)(scale)(                                                                                                 \
     rotateX)(rotateY)(rotateZ)(rotateXYZ)(rotateXZY)(rotateYXZ)(rotateYZX)(rotateZXY)(rotateZYX)(orient)(transform)(( \
-    resetXformStack, "!resetXformStack!"))
+    resetXformStack,                                                                                                  \
+    "!resetXformStack!"))
 
 /// \anchor UsdGeomXformOpTypes
 /// Provides TfToken's for use in conjunction with UsdGeomXformable::Add

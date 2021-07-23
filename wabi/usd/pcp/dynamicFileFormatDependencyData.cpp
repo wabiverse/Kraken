@@ -75,8 +75,7 @@ void PcpDynamicFileFormatDependencyData::AppendDependencyData(
     }
     // Add the other data's relevants fields to ours as well.
     _data->_AddRelevantFieldNames(std::move(dependencyData._data->relevantFieldNames));
-  }
-  else
+  } else
   {
     Swap(dependencyData);
   }
@@ -110,8 +109,10 @@ bool PcpDynamicFileFormatDependencyData::CanFieldChangeAffectFileFormatArguments
 
     // Return true if any context's file format can be affect by this
     // field change.
-    if (contextData.first->CanFieldChangeAffectFileFormatArguments(
-          fieldName, oldValue, newValue, contextData.second))
+    if (contextData.first->CanFieldChangeAffectFileFormatArguments(fieldName,
+                                                                   oldValue,
+                                                                   newValue,
+                                                                   contextData.second))
     {
       return true;
     }
@@ -131,8 +132,7 @@ void PcpDynamicFileFormatDependencyData::_Data::_AddRelevantFieldNames(TfToken::
   if (relevantFieldNames.empty())
   {
     relevantFieldNames.swap(fieldNames);
-  }
-  else
+  } else
   {
     relevantFieldNames.insert(fieldNames.begin(), fieldNames.end());
   }

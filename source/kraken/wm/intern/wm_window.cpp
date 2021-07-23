@@ -147,9 +147,9 @@ static void wm_window_set_dpi(const wmWindow *win)
 
   /* ----- */
 
-  /** 
+  /**
    * Update font drawing
-   * 
+   *
    * TODO: This makes font F@&#ng HUGE. Fix. */
   // ANCHOR::GetIO().FontGlobalScale = pixelsize * dpiadj;
 }
@@ -286,8 +286,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
     if (anchorwin && ANCHOR::ValidWindow(anchor_system, anchorwin))
     {
       win = (wmWindow *)ANCHOR::GetWindowUserData(anchorwin);
-    }
-    else
+    } else
     {
       win = wm->winactive;
     }
@@ -296,13 +295,11 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
     if (win)
     {
       WM_quit_with_optional_confirmation_prompt(C, win);
-    }
-    else
+    } else
     {
       WM_exit_schedule_delayed(C);
     }
-  }
-  else
+  } else
   {
     AnchorSystemWindowHandle anchorwin = ANCHOR::GetEventWindow(evt);
     AnchorEventDataPtr data = ANCHOR::GetEventData(evt);
@@ -336,8 +333,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
         break;
       case AnchorEventTypeWindowActivate: {
         AnchorEventKeyData kdata;
-        const int keymodifier = ((query_qual(SHIFT) ? KM_SHIFT : 0) |
-                                 (query_qual(CONTROL) ? KM_CTRL : 0) |
+        const int keymodifier = ((query_qual(SHIFT) ? KM_SHIFT : 0) | (query_qual(CONTROL) ? KM_CTRL : 0) |
                                  (query_qual(ALT) ? KM_ALT : 0) | (query_qual(OS) ? KM_OSKEY : 0));
         wm->winactive = win;
         win->active = 1;
@@ -608,18 +604,19 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
   wmWindow *prev_windrawable = wm->windrawable;
   wm_window_clear_drawable(wm);
 
-  AnchorSystemWindowHandle anchorwin = ANCHOR::CreateSystemWindow(anchor_system,
-                                                                  (win->parent) ? (AnchorSystemWindowHandle)win->parent->anchorwin : NULL,
-                                                                  CHARALL(win_title),
-                                                                  CHARALL(win_icon.GetAssetPath()),
-                                                                  GET_X(win_pos),
-                                                                  GET_Y(win_pos),
-                                                                  GET_X(win_size),
-                                                                  GET_Y(win_size),
-                                                                  AnchorWindowStateNormal,
-                                                                  is_dialog,
-                                                                  ANCHOR_DrawingContextTypeDX12,
-                                                                  0);
+  AnchorSystemWindowHandle anchorwin = ANCHOR::CreateSystemWindow(
+    anchor_system,
+    (win->parent) ? (AnchorSystemWindowHandle)win->parent->anchorwin : NULL,
+    CHARALL(win_title),
+    CHARALL(win_icon.GetAssetPath()),
+    GET_X(win_pos),
+    GET_Y(win_pos),
+    GET_X(win_size),
+    GET_Y(win_size),
+    AnchorWindowStateNormal,
+    is_dialog,
+    ANCHOR_DrawingContextTypeDX12,
+    0);
   if (anchorwin)
   {
     // win->gpuctx = GPU_context_create(anchorwin);
@@ -667,8 +664,7 @@ static void wm_window_title(wmWindowManager *wm, wmWindow *win)
   {
     /* Nothing to do for 'temp' windows,
      * because #WM_window_open always sets window title. */
-  }
-  else if (win->anchorwin)
+  } else if (win->anchorwin)
   {
     /* this is set to 1 if you don't have startup.usd open */
     // if (G.save_over && KKE_main_pixarfile_path_from_global()[0]) {
@@ -793,7 +789,7 @@ void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect)
   screen_rect = window_rect;
 
   /* Subtract global areas from screen rectangle. */
-  UNIVERSE_FOR_ALL(global_area, win->global_areas.areas)
+  UNIVERSE_FOR_ALL (global_area, win->global_areas.areas)
   {
     int height = ED_area_global_size_y(global_area) - 1;
 
@@ -824,7 +820,7 @@ void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect)
 
 void WM_window_anchorwindows_ensure(wmWindowManager *wm)
 {
-  UNIVERSE_FOR_ALL(win, wm->windows)
+  UNIVERSE_FOR_ALL (win, wm->windows)
   {
     wm_window_anchorwindow_ensure(wm, VALUE(win), false);
   }
@@ -925,14 +921,12 @@ wmWindow *WM_window_open(kContext *C,
     /* Window centered around x,y location. */
     rect[0] -= sizex / 2;
     rect[1] -= sizey / 2;
-  }
-  else if (alignment == UsdUITokens->alignParent)
+  } else if (alignment == UsdUITokens->alignParent)
   {
     /* Centered within parent. X,Y as offsets from there. */
     rect[0] += (size[0] - sizex) / 2;
     rect[1] += (size[1] - sizey) / 2;
-  }
-  else
+  } else
   {
     /* Positioned absolutely within parent bounds. */
   }
@@ -949,7 +943,7 @@ wmWindow *WM_window_open(kContext *C,
   wmWindow *win = POINTER_ZERO;
   if (temp)
   {
-    UNIVERSE_FOR_ALL(win_iter, wm->windows)
+    UNIVERSE_FOR_ALL (win_iter, wm->windows)
     {
       if (WM_window_is_temp_screen(VALUE(win_iter)))
       {
@@ -1056,8 +1050,7 @@ static void wm_close_file_dialog(kContext *C, wmGenericCallback *post_action)
   if (/*!UI_popup_block_name_exists(CTX_wm_screen(C), close_file_dialog_name)*/ false)
   {
     // UI_popup_block_invoke(C, block_create__close_file_dialog, post_action, free_post_file_close_action);
-  }
-  else
+  } else
   {
     WM_generic_callback_free(post_action);
   }
@@ -1096,9 +1089,7 @@ static void wm_confirm_quit(kContext *C)
 }
 
 
-static void wm_window_desktop_pos_get(wmWindow *win,
-                                      const GfVec2f screen_pos,
-                                      GfVec2i *r_desk_pos)
+static void wm_window_desktop_pos_get(wmWindow *win, const GfVec2f screen_pos, GfVec2i *r_desk_pos)
 {
   float win_pixelsz = FormFactory(win->pixelsz);
   GfVec2f win_pos = FormFactory(win->pos);
@@ -1109,9 +1100,7 @@ static void wm_window_desktop_pos_get(wmWindow *win,
            (GET_Y(screen_pos) + (int)(win_pixelsz * GET_Y(win_pos))));
 }
 
-static void wm_window_screen_pos_get(wmWindow *win,
-                                     const GfVec2i desktop_pos,
-                                     GfVec2i *r_scr_pos)
+static void wm_window_screen_pos_get(wmWindow *win, const GfVec2i desktop_pos, GfVec2i *r_scr_pos)
 {
   float win_pixelsz = FormFactory(win->pixelsz);
   GfVec2f win_pos = FormFactory(win->pos);
@@ -1135,7 +1124,7 @@ bool WM_window_find_under_cursor(wmWindowManager *wm,
 
   /* TODO: This should follow the order of the activated windows.
    * The current solution is imperfect but usable in most cases. */
-  UNIVERSE_FOR_ALL(win_iter, wm->windows)
+  UNIVERSE_FOR_ALL (win_iter, wm->windows)
   {
     if (VALUE(win_iter) == win_ignore)
     {
@@ -1205,13 +1194,11 @@ void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
     {
       wm_window_raise(win);
       wm_confirm_quit(C);
-    }
-    else
+    } else
     {
       WM_exit_schedule_delayed(C);
     }
-  }
-  else
+  } else
   {
     WM_exit_schedule_delayed(C);
   }
@@ -1228,7 +1215,7 @@ void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win)
   SdfPath other_hash;
 
   /* First check if there is another main window remaining. */
-  UNIVERSE_FOR_ALL(win_other, wm->windows)
+  UNIVERSE_FOR_ALL (win_other, wm->windows)
   {
     if (VALUE(win_other) != win && VALUE(win_other)->parent == NULL)
     {
@@ -1244,7 +1231,7 @@ void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win)
   }
 
   /* Close child windows */
-  UNIVERSE_FOR_ALL(iter_win, wm->windows)
+  UNIVERSE_FOR_ALL (iter_win, wm->windows)
   {
     if (VALUE(iter_win)->parent == win)
     {
@@ -1289,7 +1276,7 @@ static int find_free_winid(wmWindowManager *wm)
 {
   int id = 1;
 
-  UNIVERSE_FOR_ALL(win, wm->windows)
+  UNIVERSE_FOR_ALL (win, wm->windows)
   {
     if (id <= VALUE(win)->winid)
     {
@@ -1338,7 +1325,7 @@ wmWindow *wm_window_copy(kContext *C,
   win_dst->scene = win_src->scene;
   KKE_workspace_active_set(win_dst->workspace_hook, workspace);
 
-  /** 
+  /**
    * TODO: Duplicate layouts */
   WorkSpaceLayout *layout_new = layout_old;
 
@@ -1346,10 +1333,7 @@ wmWindow *wm_window_copy(kContext *C,
 }
 
 
-wmWindow *wm_window_copy_test(kContext *C,
-                              wmWindow *win_src,
-                              const bool duplicate_layout,
-                              const bool child)
+wmWindow *wm_window_copy_test(kContext *C, wmWindow *win_src, const bool duplicate_layout, const bool child)
 {
   Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
@@ -1485,8 +1469,7 @@ static int wm_window_fullscreen_toggle_exec(kContext *C, wmOperator *UNUSED(op))
   if (state != AnchorWindowStateFullScreen)
   {
     ANCHOR::SetWindowState((AnchorSystemWindowHandle)window->anchorwin, AnchorWindowStateFullScreen);
-  }
-  else
+  } else
   {
     ANCHOR::SetWindowState((AnchorSystemWindowHandle)window->anchorwin, AnchorWindowStateNormal);
   }
@@ -1538,8 +1521,7 @@ static int wm_exit_kraken_invoke(kContext *C, wmOperator *UNUSED(op), wmEvent *U
   if (prompt_save)
   {
     WM_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
-  }
-  else
+  } else
   {
     WM_exit_schedule_delayed(C);
   }

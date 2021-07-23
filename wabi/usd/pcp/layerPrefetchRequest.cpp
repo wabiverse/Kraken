@@ -36,59 +36,59 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-struct _Opener
-{
-  explicit _Opener(const Pcp_MutedLayers &mutedLayers, std::set<SdfLayerRefPtr> *retainedLayers)
-    : _mutedLayers(mutedLayers),
-      _retainedLayers(retainedLayers)
-  {}
-
-  ~_Opener()
+  struct _Opener
   {
-    _dispatcher.Wait();
-  }
+    explicit _Opener(const Pcp_MutedLayers &mutedLayers, std::set<SdfLayerRefPtr> *retainedLayers)
+      : _mutedLayers(mutedLayers),
+        _retainedLayers(retainedLayers)
+    {}
 
-  void OpenSublayers(const SdfLayerRefPtr &layer, const SdfLayer::FileFormatArguments &layerArgs)
-  {
-    TF_FOR_ALL (path, layer->GetSubLayerPaths())
+    ~_Opener()
     {
-      _dispatcher.Run(&_Opener::_OpenSublayer, this, *path, layer, layerArgs);
-    }
-  }
-
- private:
-  void _OpenSublayer(std::string path,
-                     const SdfLayerRefPtr &anchorLayer,
-                     const SdfLayer::FileFormatArguments &layerArgs)
-  {
-    if (_mutedLayers.IsLayerMuted(anchorLayer, path))
-    {
-      return;
+      _dispatcher.Wait();
     }
 
-    // Open this specific sublayer path.
-    // The call to SdfLayer::FindOrOpenRelativeToLayer() may take some
-    // time, potentially multiple seconds.
-    if (SdfLayerRefPtr sublayer = SdfLayer::FindOrOpenRelativeToLayer(anchorLayer, path, layerArgs))
+    void OpenSublayers(const SdfLayerRefPtr &layer, const SdfLayer::FileFormatArguments &layerArgs)
     {
-      // Retain this sublayer.
-      bool didInsert;
+      TF_FOR_ALL (path, layer->GetSubLayerPaths())
       {
-        tbb::spin_mutex::scoped_lock lock(_retainedLayersMutex);
-        didInsert = _retainedLayers->insert(sublayer).second;
+        _dispatcher.Run(&_Opener::_OpenSublayer, this, *path, layer, layerArgs);
       }
-      // Open the nested sublayers.  Only do this if we haven't seen this
-      // layer before, i.e. didInsert is true.
-      if (didInsert)
-        OpenSublayers(sublayer, layerArgs);
     }
-  }
 
-  WorkDispatcher _dispatcher;
-  const Pcp_MutedLayers &_mutedLayers;
-  std::set<SdfLayerRefPtr> *_retainedLayers;
-  mutable tbb::spin_mutex _retainedLayersMutex;
-};
+   private:
+    void _OpenSublayer(std::string path,
+                       const SdfLayerRefPtr &anchorLayer,
+                       const SdfLayer::FileFormatArguments &layerArgs)
+    {
+      if (_mutedLayers.IsLayerMuted(anchorLayer, path))
+      {
+        return;
+      }
+
+      // Open this specific sublayer path.
+      // The call to SdfLayer::FindOrOpenRelativeToLayer() may take some
+      // time, potentially multiple seconds.
+      if (SdfLayerRefPtr sublayer = SdfLayer::FindOrOpenRelativeToLayer(anchorLayer, path, layerArgs))
+      {
+        // Retain this sublayer.
+        bool didInsert;
+        {
+          tbb::spin_mutex::scoped_lock lock(_retainedLayersMutex);
+          didInsert = _retainedLayers->insert(sublayer).second;
+        }
+        // Open the nested sublayers.  Only do this if we haven't seen this
+        // layer before, i.e. didInsert is true.
+        if (didInsert)
+          OpenSublayers(sublayer, layerArgs);
+      }
+    }
+
+    WorkDispatcher _dispatcher;
+    const Pcp_MutedLayers &_mutedLayers;
+    std::set<SdfLayerRefPtr> *_retainedLayers;
+    mutable tbb::spin_mutex _retainedLayersMutex;
+  };
 
 }  // namespace
 

@@ -37,22 +37,22 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define PCP_GET_NODE_FN(nodeFn) \
-  static boost::python::object _##nodeFn(const PcpNodeRef &node) \
-  { \
-    PcpNodeRef n = node.nodeFn(); \
+#define PCP_GET_NODE_FN(nodeFn)                                    \
+  static boost::python::object _##nodeFn(const PcpNodeRef &node)   \
+  {                                                                \
+    PcpNodeRef n = node.nodeFn();                                  \
     return n ? boost::python::object(n) : boost::python::object(); \
   }
 
-PCP_GET_NODE_FN(GetParentNode);
-PCP_GET_NODE_FN(GetOriginNode);
-PCP_GET_NODE_FN(GetRootNode);
-PCP_GET_NODE_FN(GetOriginRootNode);
+  PCP_GET_NODE_FN(GetParentNode);
+  PCP_GET_NODE_FN(GetOriginNode);
+  PCP_GET_NODE_FN(GetRootNode);
+  PCP_GET_NODE_FN(GetOriginRootNode);
 
-static PcpNodeRefVector _GetChildren(const PcpNodeRef &node)
-{
-  return Pcp_GetChildren(node);
-}
+  static PcpNodeRefVector _GetChildren(const PcpNodeRef &node)
+  {
+    return Pcp_GetChildren(node);
+  }
 
 }  // anonymous namespace
 

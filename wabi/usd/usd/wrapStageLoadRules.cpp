@@ -43,20 +43,20 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string __str__(UsdStageLoadRules const &self)
-{
-  return boost::lexical_cast<std::string>(self);
-}
+  static std::string __str__(UsdStageLoadRules const &self)
+  {
+    return boost::lexical_cast<std::string>(self);
+  }
 
-static string __repr__(UsdStageLoadRules const &self)
-{
-  return TF_PY_REPR_PREFIX + "StageLoadRules(" + TfPyRepr(self.GetRules()) + ")";
-}
+  static string __repr__(UsdStageLoadRules const &self)
+  {
+    return TF_PY_REPR_PREFIX + "StageLoadRules(" + TfPyRepr(self.GetRules()) + ")";
+  }
 
-static size_t __hash__(UsdStageLoadRules const &self)
-{
-  return hash_value(self);
-}
+  static size_t __hash__(UsdStageLoadRules const &self)
+  {
+    return hash_value(self);
+  }
 
 }  // anonymous namespace
 
@@ -82,13 +82,14 @@ void wrapUsdStageLoadRules()
 
     .def("Unload", &UsdStageLoadRules::Unload, arg("path"))
 
-    .def(
-      "LoadAndUnload", &UsdStageLoadRules::LoadAndUnload, (arg("loadSet"), arg("unloadSet"), arg("policy")))
+    .def("LoadAndUnload",
+         &UsdStageLoadRules::LoadAndUnload,
+         (arg("loadSet"), arg("unloadSet"), arg("policy")))
 
     .def("AddRule", &UsdStageLoadRules::AddRule, (arg("path"), arg("rule")))
 
     .def("SetRules",
-         (void (UsdStageLoadRules::*)(std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>> const &)) &
+         (void(UsdStageLoadRules::*)(std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>> const &)) &
            UsdStageLoadRules::SetRules,
          arg("rules"))
 

@@ -207,8 +207,10 @@ HdPhDispatchBuffer::HdPhDispatchBuffer(HdPhResourceRegistry *resourceRegistry,
   HgiBufferHandle buffer = _resourceRegistry->GetHgi()->CreateBuffer(bufDesc);
 
   // monolithic resource
-  _entireResource = std::make_shared<HdPhBufferResource>(
-    role, HdTupleType{HdTypeInt32, 1}, /*offset=*/0, stride);
+  _entireResource = std::make_shared<HdPhBufferResource>(role,
+                                                         HdTupleType{HdTypeInt32, 1},
+                                                         /*offset=*/0,
+                                                         stride);
   _entireResource->SetAllocation(buffer, dataSize);
 
   // create a buffer array range, which aggregates all views
@@ -328,8 +330,10 @@ HdPhBufferResourceSharedPtr HdPhDispatchBuffer::_AddResource(TfToken const &name
     }
   }
 
-  HdPhBufferResourceSharedPtr bufferRes = std::make_shared<HdPhBufferResource>(
-    GetRole(), tupleType, offset, stride);
+  HdPhBufferResourceSharedPtr bufferRes = std::make_shared<HdPhBufferResource>(GetRole(),
+                                                                               tupleType,
+                                                                               offset,
+                                                                               stride);
 
   _resourceList.emplace_back(name, bufferRes);
   return bufferRes;

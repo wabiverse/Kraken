@@ -71,8 +71,7 @@ void GlfGLContext::MakeCurrent(const GlfGLContextSharedPtr &context)
     // Now that this context is current add it to the registry for
     // later lookup.
     GlfGLContextRegistry::GetInstance().DidMakeCurrent(context);
-  }
-  else
+  } else
   {
     DoneCurrent();
   }

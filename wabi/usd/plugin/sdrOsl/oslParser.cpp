@@ -149,8 +149,7 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
     if (TfIsFile(discoveryResult.resolvedUri))
     {
       parseSuccessful = oslQuery.open(discoveryResult.resolvedUri);
-    }
-    else
+    } else
     {
       std::shared_ptr<const char> buffer;
       std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(
@@ -172,12 +171,10 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
 
       parseSuccessful = _ParseFromSourceCode(&oslQuery, OSL::string_view(buffer.get(), asset->GetSize()));
     }
-  }
-  else if (!discoveryResult.sourceCode.empty())
+  } else if (!discoveryResult.sourceCode.empty())
   {
     parseSuccessful = _ParseFromSourceCode(&oslQuery, discoveryResult.sourceCode);
-  }
-  else
+  } else
   {
     TF_WARN(
       "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
@@ -336,8 +333,7 @@ NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(const OslParameter *param,
           metadata[SdrPropertyMetadata->VstructMemberOf] = vstruct.substr(0, dotPos);
 
           metadata[SdrPropertyMetadata->VstructMemberName] = vstruct.substr(dotPos + 1);
-        }
-        else
+        } else
         {
           TF_DEBUG(NDR_PARSING)
             .Msg("Bad virtual structure member in %s.%s:%s",
@@ -346,8 +342,7 @@ NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(const OslParameter *param,
                  vstruct.c_str());
         }
       }
-    }
-    else
+    } else
     {
       metadata[entryName] = _getParamAsString(metaParam);
     }
@@ -389,12 +384,10 @@ std::string SdrOslParserPlugin::_getParamAsString(const OslParameter &param) con
   if (param.sdefault.size() == 1)
   {
     return param.sdefault[0].string();
-  }
-  else if (param.idefault.size() == 1)
+  } else if (param.idefault.size() == 1)
   {
     return std::to_string(param.idefault[0]);
-  }
-  else if (param.fdefault.size() == 1)
+  } else if (param.fdefault.size() == 1)
   {
     return std::to_string(param.fdefault[0]);
   }
@@ -516,8 +509,7 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
     if (!isArray && param.fdefault.size() == 3)
     {
       return VtValue(GfVec3f(param.fdefault[0], param.fdefault[1], param.fdefault[2]));
-    }
-    else if (isArray && param.fdefault.size() % 3 == 0)
+    } else if (isArray && param.fdefault.size() % 3 == 0)
     {
       int numElements = param.fdefault.size() / 3;
       VtVec3fArray array(numElements);

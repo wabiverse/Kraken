@@ -134,15 +134,15 @@ void Bernstein(const void *key, int len, uint32_t seed, void *out)
 
 uint32_t Crap8(const uint8_t *key, uint32_t len, uint32_t seed)
 {
-#define c8fold(a, b, y, z) \
-  { \
+#define c8fold(a, b, y, z)             \
+  {                                    \
     p = (uint32_t)(a) * (uint64_t)(b); \
-    y ^= (uint32_t)p; \
-    z ^= (uint32_t)(p >> 32); \
+    y ^= (uint32_t)p;                  \
+    z ^= (uint32_t)(p >> 32);          \
   }
-#define c8mix(in) \
-  { \
-    h *= m; \
+#define c8mix(in)        \
+  {                      \
+    h *= m;              \
     c8fold(in, m, k, h); \
   }
 

@@ -94,7 +94,7 @@ namespace WABI_INTERNAL_NS
 // The root level namespace for all source in the USD distribution.
 namespace WABI_NS
 {
-using namespace WABI_INTERNAL_NS;
+  using namespace WABI_INTERNAL_NS;
 }
 
 #  define WABI_NAMESPACE_BEGIN \

@@ -63,8 +63,8 @@ SdfPath UsdImagingMeshAdapter::Populate(UsdPrim const &prim,
                                         UsdImagingIndexProxy *index,
                                         UsdImagingInstancerContext const *instancerContext)
 {
-  SdfPath cachePath = _AddRprim(
-    HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  SdfPath cachePath =
+    _AddRprim(HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
 
   // Check for any UsdGeomSubset children and record dependencies for them.
   if (UsdGeomImageable imageable = UsdGeomImageable(prim))
@@ -250,8 +250,7 @@ void UsdImagingMeshAdapter::UpdateForTime(UsdPrim const &prim,
       if (pv)
       {
         _ComputeAndMergePrimvar(prim, pv, time, &primvars);
-      }
-      else
+      } else
       {
         UsdGeomMesh mesh(prim);
         VtVec3fArray normals;
@@ -261,8 +260,7 @@ void UsdImagingMeshAdapter::UpdateForTime(UsdPrim const &prim,
                         UsdGeomTokens->normals,
                         _UsdToHdInterpolation(mesh.GetNormalsInterpolation()),
                         HdPrimvarRoleTokens->normal);
-        }
-        else
+        } else
         {
           _RemovePrimvar(&primvars, UsdGeomTokens->normals);
         }
@@ -322,8 +320,10 @@ HdDirtyBits UsdImagingMeshAdapter::ProcessPropertyChange(UsdPrim const &prim,
   }
   if (propertyName == UsdImagingTokens->primvarsNormals)
   {
-    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
-      prim, cachePath, propertyName, HdChangeTracker::DirtyNormals);
+    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(prim,
+                                                                        cachePath,
+                                                                        propertyName,
+                                                                        HdChangeTracker::DirtyNormals);
   }
 
   // Handle attributes that are treated as "built-in" primvars.
@@ -341,8 +341,10 @@ HdDirtyBits UsdImagingMeshAdapter::ProcessPropertyChange(UsdPrim const &prim,
   // Handle prefixed primvars that use special dirty bits.
   else if (propertyName == UsdImagingTokens->primvarsNormals)
   {
-    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
-      prim, cachePath, propertyName, HdChangeTracker::DirtyNormals);
+    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(prim,
+                                                                        cachePath,
+                                                                        propertyName,
+                                                                        HdChangeTracker::DirtyNormals);
   }
 
   // Allow base class to handle change processing.
@@ -378,8 +380,10 @@ VtValue UsdImagingMeshAdapter::GetTopology(UsdPrim const &prim,
       {
         if (elementType == UsdGeomTokens->face)
         {
-          geomSubsets.emplace_back(HdGeomSubset{
-            HdGeomSubset::TypeFaceSet, subset.GetPath(), GetMaterialUsdPath(subset.GetPrim()), indices});
+          geomSubsets.emplace_back(HdGeomSubset{HdGeomSubset::TypeFaceSet,
+                                                subset.GetPath(),
+                                                GetMaterialUsdPath(subset.GetPrim()),
+                                                indices});
         }
       }
     }
@@ -486,8 +490,7 @@ VtValue UsdImagingMeshAdapter::Get(UsdPrim const &prim,
           pv.GetIndices(outIndices, time);
           return value;
         }
-      }
-      else if (pv && pv.ComputeFlattened(&value, time))
+      } else if (pv && pv.ComputeFlattened(&value, time))
       {
         return value;
       }

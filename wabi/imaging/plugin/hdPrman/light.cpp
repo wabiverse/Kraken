@@ -43,13 +43,21 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
-  // tokens for RenderMan-specific light parameters
-  ((cheapCaustics, "inputs:ri:light:cheapCaustics"))((cheapCausticsExcludeGroup, "inputs:ri:light:cheapCausticsExcludeGroup"))((fixedSampleCount, "inputs:ri:light:fixedSampleCount"))((importanceMultiplier, "inputs:ri:light:importanceMultiplier"))((intensityNearDist, "inputs:ri:light:intensityNearDist"))((thinShadow, "inputs:ri:light:thinShadow"))((traceLightPaths, "inputs:ri:light:traceLightPaths"))((visibleInRefractionPath, "inputs:ri:light:visibleInRefractionPath"))((lightGroup, "inputs:ri:light:lightGroup"))((colorMapGamma, "inputs:ri:light:colorMapGamma"))((colorMapSaturation, "inputs:ri:light:colorMapSaturation")));
+                         // tokens for RenderMan-specific light parameters
+                         ((cheapCaustics, "inputs:ri:light:cheapCaustics"))((cheapCausticsExcludeGroup,
+                                                                             "inputs:ri:light:cheapCausticsExcludeGroup"))(
+                           (fixedSampleCount, "inputs:ri:light:fixedSampleCount"))((importanceMultiplier,
+                                                                                    "inputs:ri:light:importanceMultiplier"))(
+                           (intensityNearDist, "inputs:ri:light:intensityNearDist"))((thinShadow, "inputs:ri:light:thinShadow"))(
+                           (traceLightPaths, "inputs:ri:light:traceLightPaths"))((visibleInRefractionPath,
+                                                                                  "inputs:ri:light:visibleInRefractionPath"))(
+                           (lightGroup, "inputs:ri:light:lightGroup"))((colorMapGamma, "inputs:ri:light:colorMapGamma"))(
+                           (colorMapSaturation, "inputs:ri:light:colorMapSaturation")));
 
-TF_DEFINE_ENV_SETTING(HD_PRMAN_ENABLE_LIGHT_MATERIAL_NETWORKS, false,
+TF_DEFINE_ENV_SETTING(HD_PRMAN_ENABLE_LIGHT_MATERIAL_NETWORKS,
+                      false,
                       "bool env setting to enable material networks for lights "
                       "and light filters");
 
@@ -63,13 +71,11 @@ HdPrmanLight::HdPrmanLight(SdfPath const &id, TfToken const &lightType)
 }
 
 HdPrmanLight::~HdPrmanLight()
-{
-}
+{}
 
 void HdPrmanLight::Finalize(HdRenderParam *renderParam)
 {
-  HdPrman_Context *context =
-    static_cast<HdPrman_RenderParam *>(renderParam)->AcquireContext();
+  HdPrman_Context *context = static_cast<HdPrman_RenderParam *>(renderParam)->AcquireContext();
   _ResetLight(context);
 }
 
@@ -94,9 +100,7 @@ void HdPrmanLight::_ResetLight(HdPrman_Context *context)
   riley::Riley *riley = context->riley;
   if (_instanceId != riley::LightInstanceId::InvalidId())
   {
-    riley->DeleteLightInstance(
-      riley::GeometryPrototypeId::InvalidId(),
-      _instanceId);
+    riley->DeleteLightInstance(riley::GeometryPrototypeId::InvalidId(), _instanceId);
     _instanceId = riley::LightInstanceId::InvalidId();
   }
   if (_shaderId != riley::LightShaderId::InvalidId())
@@ -106,8 +110,7 @@ void HdPrmanLight::_ResetLight(HdPrman_Context *context)
   }
 }
 
-static RtUString
-_RtStringFromSdfAssetPath(SdfAssetPath const &ap)
+static RtUString _RtStringFromSdfAssetPath(SdfAssetPath const &ap)
 {
   // Although Renderman does its own searchpath resolution,
   // scene delegates like USD may have additional path resolver
@@ -120,11 +123,10 @@ _RtStringFromSdfAssetPath(SdfAssetPath const &ap)
   return RtUString(p.c_str());
 }
 
-static void
-_PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
-                             const SdfPath &id,
-                             const TfToken &hdLightType,
-                             std::vector<riley::ShadingNode> *lightNodes)
+static void _PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
+                                         const SdfPath &id,
+                                         const TfToken &hdLightType,
+                                         std::vector<riley::ShadingNode> *lightNodes)
 {
   static const RtUString us_intensity("intensity");
   static const RtUString us_exposure("exposure");
@@ -157,15 +159,13 @@ _PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
   static const RtUString us_lightColorMap("lightColorMap");
   static const RtUString us_default("default");
   static const RtUString us_cheapCaustics("cheapCaustics");
-  static const RtUString us_cheapCausticsExcludeGroup(
-    "cheapCausticsExcludeGroup");
+  static const RtUString us_cheapCausticsExcludeGroup("cheapCausticsExcludeGroup");
   static const RtUString us_fixedSampleCount("fixedSampleCount");
   static const RtUString us_importanceMultiplier("importanceMultiplier");
   static const RtUString us_intensityNearDist("intensityNearDist");
   static const RtUString us_thinShadow("thinShadow");
   static const RtUString us_traceLightPaths("traceLightPaths");
-  static const RtUString us_visibleInRefractionPath(
-    "visibleInRefractionPath");
+  static const RtUString us_visibleInRefractionPath("visibleInRefractionPath");
   static const RtUString us_lightGroup("lightGroup");
   static const RtUString us_colorMapGamma("colorMapGamma");
   static const RtUString us_colorMapSaturation("colorMapSaturation");
@@ -182,24 +182,21 @@ _PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
   // UsdLuxLight base parameters
   {
     // intensity
-    VtValue intensity =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->intensity);
+    VtValue intensity = sceneDelegate->GetLightParamValue(id, HdLightTokens->intensity);
     if (intensity.IsHolding<float>())
     {
       lightNode.params.SetFloat(us_intensity, intensity.UncheckedGet<float>());
     }
 
     // exposure
-    VtValue exposure =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->exposure);
+    VtValue exposure = sceneDelegate->GetLightParamValue(id, HdLightTokens->exposure);
     if (exposure.IsHolding<float>())
     {
       lightNode.params.SetFloat(us_exposure, exposure.UncheckedGet<float>());
     }
 
     // color -> lightColor
-    VtValue lightColor =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->color);
+    VtValue lightColor = sceneDelegate->GetLightParamValue(id, HdLightTokens->color);
     if (lightColor.IsHolding<GfVec3f>())
     {
       GfVec3f v = lightColor.UncheckedGet<GfVec3f>();
@@ -207,9 +204,7 @@ _PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
     }
 
     // enableColorTemperature -> enableTemperature
-    VtValue enableTemperature =
-      sceneDelegate->GetLightParamValue(id,
-                                        HdLightTokens->enableColorTemperature);
+    VtValue enableTemperature = sceneDelegate->GetLightParamValue(id, HdLightTokens->enableColorTemperature);
     if (enableTemperature.IsHolding<bool>())
     {
       int v = enableTemperature.UncheckedGet<bool>();
@@ -217,25 +212,21 @@ _PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
     }
 
     // temperature
-    VtValue temperature =
-      sceneDelegate->GetLightParamValue(id,
-                                        HdLightTokens->colorTemperature);
+    VtValue temperature = sceneDelegate->GetLightParamValue(id, HdLightTokens->colorTemperature);
     if (temperature.IsHolding<float>())
     {
       lightNode.params.SetFloat(us_temperature, temperature.UncheckedGet<float>());
     }
 
     // diffuse
-    VtValue diffuse =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->diffuse);
+    VtValue diffuse = sceneDelegate->GetLightParamValue(id, HdLightTokens->diffuse);
     if (diffuse.IsHolding<float>())
     {
       lightNode.params.SetFloat(us_diffuse, diffuse.UncheckedGet<float>());
     }
 
     // specular
-    VtValue specular =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->specular);
+    VtValue specular = sceneDelegate->GetLightParamValue(id, HdLightTokens->specular);
     if (specular.IsHolding<float>())
     {
       lightNode.params.SetFloat(us_specular, specular.UncheckedGet<float>());
@@ -245,8 +236,7 @@ _PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
     // (Avoid unused param warnings for light types that don't have this)
     if (hdLightType != HdPrimTypeTokens->domeLight)
     {
-      VtValue normalize =
-        sceneDelegate->GetLightParamValue(id, HdLightTokens->normalize);
+      VtValue normalize = sceneDelegate->GetLightParamValue(id, HdLightTokens->normalize);
       if (normalize.IsHolding<bool>())
       {
         int v = normalize.UncheckedGet<bool>();
@@ -259,146 +249,113 @@ _PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
   {
     if (hdLightType != HdPrimTypeTokens->domeLight)
     {
-      VtValue shapingFocus =
-        sceneDelegate->GetLightParamValue(id,
-                                          HdLightTokens->shapingFocus);
+      VtValue shapingFocus = sceneDelegate->GetLightParamValue(id, HdLightTokens->shapingFocus);
       if (shapingFocus.IsHolding<float>())
       {
-        lightNode.params.SetFloat(us_emissionFocus,
-                                  shapingFocus.UncheckedGet<float>());
+        lightNode.params.SetFloat(us_emissionFocus, shapingFocus.UncheckedGet<float>());
       }
 
       // XXX -- emissionFocusNormalize is missing here
 
-      VtValue shapingFocusTint =
-        sceneDelegate->GetLightParamValue(id,
-                                          HdLightTokens->shapingFocusTint);
+      VtValue shapingFocusTint = sceneDelegate->GetLightParamValue(id, HdLightTokens->shapingFocusTint);
       if (shapingFocusTint.IsHolding<GfVec3f>())
       {
         GfVec3f v = shapingFocusTint.UncheckedGet<GfVec3f>();
-        lightNode.params.SetColor(us_emissionFocusTint,
-                                  RtColorRGB(v[0], v[1], v[2]));
+        lightNode.params.SetColor(us_emissionFocusTint, RtColorRGB(v[0], v[1], v[2]));
       }
     }
 
     // ies is only supported on rect, disk, cylinder and sphere light.
     // cone angle only supported on rect, disk, cylinder and sphere lights.
     // XXX -- fix for mesh/geometry light when it comes online
-    if (hdLightType == HdPrimTypeTokens->rectLight ||
-        hdLightType == HdPrimTypeTokens->diskLight ||
-        hdLightType == HdPrimTypeTokens->cylinderLight ||
-        hdLightType == HdPrimTypeTokens->sphereLight)
+    if (hdLightType == HdPrimTypeTokens->rectLight || hdLightType == HdPrimTypeTokens->diskLight ||
+        hdLightType == HdPrimTypeTokens->cylinderLight || hdLightType == HdPrimTypeTokens->sphereLight)
     {
 
-      VtValue shapingConeAngle =
-        sceneDelegate->GetLightParamValue(id,
-                                          HdLightTokens->shapingConeAngle);
+      VtValue shapingConeAngle = sceneDelegate->GetLightParamValue(id, HdLightTokens->shapingConeAngle);
       if (shapingConeAngle.IsHolding<float>())
       {
-        lightNode.params.SetFloat(us_coneAngle,
-                                  shapingConeAngle.UncheckedGet<float>());
+        lightNode.params.SetFloat(us_coneAngle, shapingConeAngle.UncheckedGet<float>());
       }
 
-      VtValue shapingConeSoftness =
-        sceneDelegate->GetLightParamValue(id,
-                                          HdLightTokens->shapingConeSoftness);
+      VtValue shapingConeSoftness = sceneDelegate->GetLightParamValue(id,
+                                                                      HdLightTokens->shapingConeSoftness);
       if (shapingConeSoftness.IsHolding<float>())
       {
-        lightNode.params.SetFloat(us_coneSoftness,
-                                  shapingConeSoftness.UncheckedGet<float>());
+        lightNode.params.SetFloat(us_coneSoftness, shapingConeSoftness.UncheckedGet<float>());
       }
 
-      VtValue shapingIesFile =
-        sceneDelegate->GetLightParamValue(id,
-                                          HdLightTokens->shapingIesFile);
+      VtValue shapingIesFile = sceneDelegate->GetLightParamValue(id, HdLightTokens->shapingIesFile);
       if (shapingIesFile.IsHolding<SdfAssetPath>())
       {
         SdfAssetPath ap = shapingIesFile.UncheckedGet<SdfAssetPath>();
         lightNode.params.SetString(us_iesProfile, _RtStringFromSdfAssetPath(ap));
       }
 
-      VtValue shapingIesAngleScale =
-        sceneDelegate->GetLightParamValue(id,
-                                          HdLightTokens->shapingIesAngleScale);
+      VtValue shapingIesAngleScale = sceneDelegate->GetLightParamValue(id,
+                                                                       HdLightTokens->shapingIesAngleScale);
       if (shapingIesAngleScale.IsHolding<float>())
       {
-        lightNode.params.SetFloat(us_iesProfileScale,
-                                  shapingIesAngleScale.UncheckedGet<float>());
+        lightNode.params.SetFloat(us_iesProfileScale, shapingIesAngleScale.UncheckedGet<float>());
       }
 
-      VtValue shapingIesNormalize =
-        sceneDelegate->GetLightParamValue(id,
-                                          HdLightTokens->shapingIesNormalize);
+      VtValue shapingIesNormalize = sceneDelegate->GetLightParamValue(id,
+                                                                      HdLightTokens->shapingIesNormalize);
       if (shapingIesNormalize.IsHolding<bool>())
       {
-        lightNode.params.SetInteger(us_iesProfileNormalize,
-                                    shapingIesNormalize.UncheckedGet<bool>());
+        lightNode.params.SetInteger(us_iesProfileNormalize, shapingIesNormalize.UncheckedGet<bool>());
       }
     }
   }
 
   // UsdLuxShadowAPI
   {
-    VtValue shadowEnable =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowEnable);
+    VtValue shadowEnable = sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowEnable);
     if (shadowEnable.IsHolding<bool>())
     {
-      lightNode.params.SetInteger(us_enableShadows,
-                                  shadowEnable.UncheckedGet<bool>());
+      lightNode.params.SetInteger(us_enableShadows, shadowEnable.UncheckedGet<bool>());
     }
 
-    VtValue shadowColor =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowColor);
+    VtValue shadowColor = sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowColor);
     if (shadowColor.IsHolding<GfVec3f>())
     {
       GfVec3f v = shadowColor.UncheckedGet<GfVec3f>();
       lightNode.params.SetColor(us_shadowColor, RtColorRGB(v[0], v[1], v[2]));
     }
 
-    VtValue shadowDistance =
-      sceneDelegate->GetLightParamValue(id,
-                                        HdLightTokens->shadowDistance);
+    VtValue shadowDistance = sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowDistance);
     if (shadowDistance.IsHolding<float>())
     {
-      lightNode.params.SetFloat(us_shadowDistance,
-                                shadowDistance.UncheckedGet<float>());
+      lightNode.params.SetFloat(us_shadowDistance, shadowDistance.UncheckedGet<float>());
     }
 
-    VtValue shadowFalloff =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowFalloff);
+    VtValue shadowFalloff = sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowFalloff);
     if (shadowFalloff.IsHolding<float>())
     {
-      lightNode.params.SetFloat(us_shadowFalloff,
-                                shadowFalloff.UncheckedGet<float>());
+      lightNode.params.SetFloat(us_shadowFalloff, shadowFalloff.UncheckedGet<float>());
     }
 
-    VtValue shadowFalloffGamma =
-      sceneDelegate->GetLightParamValue(id,
-                                        HdLightTokens->shadowFalloffGamma);
+    VtValue shadowFalloffGamma = sceneDelegate->GetLightParamValue(id, HdLightTokens->shadowFalloffGamma);
     if (shadowFalloffGamma.IsHolding<float>())
     {
-      lightNode.params.SetFloat(us_shadowFalloffGamma,
-                                shadowFalloffGamma.UncheckedGet<float>());
+      lightNode.params.SetFloat(us_shadowFalloffGamma, shadowFalloffGamma.UncheckedGet<float>());
     }
   }
 
   // extra RenderMan parameters - "ri:light"
   {
-    VtValue cheapCaustics =
-      sceneDelegate->GetLightParamValue(id, _tokens->cheapCaustics);
+    VtValue cheapCaustics = sceneDelegate->GetLightParamValue(id, _tokens->cheapCaustics);
     if (cheapCaustics.IsHolding<int>())
     {
-      lightNode.params.SetInteger(us_cheapCaustics,
-                                  cheapCaustics.UncheckedGet<int>());
+      lightNode.params.SetInteger(us_cheapCaustics, cheapCaustics.UncheckedGet<int>());
     }
 
-    VtValue cheapCausticsExcludeGroupVal =
-      sceneDelegate->GetLightParamValue(id,
-                                        _tokens->cheapCausticsExcludeGroup);
+    VtValue cheapCausticsExcludeGroupVal = sceneDelegate->GetLightParamValue(
+      id,
+      _tokens->cheapCausticsExcludeGroup);
     if (cheapCausticsExcludeGroupVal.IsHolding<TfToken>())
     {
-      TfToken cheapCausticsExcludeGroup =
-        cheapCausticsExcludeGroupVal.UncheckedGet<TfToken>();
+      TfToken cheapCausticsExcludeGroup = cheapCausticsExcludeGroupVal.UncheckedGet<TfToken>();
       if (!cheapCausticsExcludeGroup.IsEmpty())
       {
         lightNode.params.SetString(us_cheapCausticsExcludeGroup,
@@ -406,140 +363,112 @@ _PopulateNodeFromLightParams(HdSceneDelegate *sceneDelegate,
       }
     }
 
-    VtValue fixedSampleCount =
-      sceneDelegate->GetLightParamValue(id, _tokens->fixedSampleCount);
+    VtValue fixedSampleCount = sceneDelegate->GetLightParamValue(id, _tokens->fixedSampleCount);
     if (fixedSampleCount.IsHolding<int>())
     {
-      lightNode.params.SetInteger(us_fixedSampleCount,
-                                  fixedSampleCount.UncheckedGet<int>());
+      lightNode.params.SetInteger(us_fixedSampleCount, fixedSampleCount.UncheckedGet<int>());
     }
 
-    VtValue importanceMultiplier =
-      sceneDelegate->GetLightParamValue(id,
-                                        _tokens->importanceMultiplier);
+    VtValue importanceMultiplier = sceneDelegate->GetLightParamValue(id, _tokens->importanceMultiplier);
     if (importanceMultiplier.IsHolding<float>())
     {
-      lightNode.params.SetFloat(us_importanceMultiplier,
-                                importanceMultiplier.UncheckedGet<float>());
+      lightNode.params.SetFloat(us_importanceMultiplier, importanceMultiplier.UncheckedGet<float>());
     }
 
-    VtValue intensityNearDist =
-      sceneDelegate->GetLightParamValue(id, _tokens->intensityNearDist);
+    VtValue intensityNearDist = sceneDelegate->GetLightParamValue(id, _tokens->intensityNearDist);
     if (intensityNearDist.IsHolding<float>())
     {
-      lightNode.params.SetFloat(us_intensityNearDist,
-                                intensityNearDist.UncheckedGet<float>());
+      lightNode.params.SetFloat(us_intensityNearDist, intensityNearDist.UncheckedGet<float>());
     }
 
-    VtValue thinShadow =
-      sceneDelegate->GetLightParamValue(id, _tokens->thinShadow);
+    VtValue thinShadow = sceneDelegate->GetLightParamValue(id, _tokens->thinShadow);
     if (thinShadow.IsHolding<int>())
     {
       lightNode.params.SetInteger(us_thinShadow, thinShadow.UncheckedGet<int>());
     }
 
-    VtValue traceLightPaths =
-      sceneDelegate->GetLightParamValue(id, _tokens->traceLightPaths);
+    VtValue traceLightPaths = sceneDelegate->GetLightParamValue(id, _tokens->traceLightPaths);
     if (traceLightPaths.IsHolding<int>())
     {
-      lightNode.params.SetInteger(us_traceLightPaths,
-                                  traceLightPaths.UncheckedGet<int>());
+      lightNode.params.SetInteger(us_traceLightPaths, traceLightPaths.UncheckedGet<int>());
     }
 
-    VtValue visibleInRefractionPath =
-      sceneDelegate->GetLightParamValue(id,
-                                        _tokens->visibleInRefractionPath);
+    VtValue visibleInRefractionPath = sceneDelegate->GetLightParamValue(id,
+                                                                        _tokens->visibleInRefractionPath);
     if (visibleInRefractionPath.IsHolding<int>())
     {
-      lightNode.params.SetInteger(us_visibleInRefractionPath,
-                                  visibleInRefractionPath.UncheckedGet<int>());
+      lightNode.params.SetInteger(us_visibleInRefractionPath, visibleInRefractionPath.UncheckedGet<int>());
     }
 
-    VtValue lightGroupVal =
-      sceneDelegate->GetLightParamValue(id, _tokens->lightGroup);
+    VtValue lightGroupVal = sceneDelegate->GetLightParamValue(id, _tokens->lightGroup);
     if (lightGroupVal.IsHolding<TfToken>())
     {
       TfToken lightGroup = lightGroupVal.UncheckedGet<TfToken>();
       if (!lightGroup.IsEmpty())
       {
-        lightNode.params.SetString(us_lightGroup,
-                                   RtUString(lightGroup.GetText()));
+        lightNode.params.SetString(us_lightGroup, RtUString(lightGroup.GetText()));
       }
     }
   }
 
 
   TF_DEBUG(HDPRMAN_LIGHT_LIST)
-    .Msg("HdPrman: Light <%s> lightType \"%s\"\n",
-         id.GetText(),
-         hdLightType.GetText());
+    .Msg("HdPrman: Light <%s> lightType \"%s\"\n", id.GetText(), hdLightType.GetText());
 
   if (hdLightType == HdPrimTypeTokens->domeLight)
   {
     lightNode.name = us_PxrDomeLight;
-  }
-  else if (hdLightType == HdPrimTypeTokens->rectLight)
+  } else if (hdLightType == HdPrimTypeTokens->rectLight)
   {
     lightNode.name = us_PxrRectLight;
-  }
-  else if (hdLightType == HdPrimTypeTokens->diskLight)
+  } else if (hdLightType == HdPrimTypeTokens->diskLight)
   {
     lightNode.name = us_PxrDiskLight;
-  }
-  else if (hdLightType == HdPrimTypeTokens->cylinderLight)
+  } else if (hdLightType == HdPrimTypeTokens->cylinderLight)
   {
     lightNode.name = us_PxrCylinderLight;
-  }
-  else if (hdLightType == HdPrimTypeTokens->sphereLight)
+  } else if (hdLightType == HdPrimTypeTokens->sphereLight)
   {
     lightNode.name = us_PxrSphereLight;
-  }
-  else if (hdLightType == HdPrimTypeTokens->distantLight)
+  } else if (hdLightType == HdPrimTypeTokens->distantLight)
   {
     lightNode.name = us_PxrDistantLight;
-    VtValue angle =
-      sceneDelegate->GetLightParamValue(id, HdLightTokens->angle);
+    VtValue angle = sceneDelegate->GetLightParamValue(id, HdLightTokens->angle);
     if (angle.IsHolding<float>())
     {
       lightNode.params.SetFloat(us_angleExtent, angle.UncheckedGet<float>());
     }
   }
 
-  if (hdLightType == HdPrimTypeTokens->domeLight ||
-      hdLightType == HdPrimTypeTokens->rectLight)
+  if (hdLightType == HdPrimTypeTokens->domeLight || hdLightType == HdPrimTypeTokens->rectLight)
   {
     // textureFile -> lightColorMap
-    VtValue textureFile = sceneDelegate->GetLightParamValue(id,
-                                                            HdLightTokens->textureFile);
+    VtValue textureFile = sceneDelegate->GetLightParamValue(id, HdLightTokens->textureFile);
     if (textureFile.IsHolding<SdfAssetPath>())
     {
       SdfAssetPath ap = textureFile.UncheckedGet<SdfAssetPath>();
       lightNode.params.SetString(us_lightColorMap, _RtStringFromSdfAssetPath(ap));
     }
 
-    VtValue colorMapGamma =
-      sceneDelegate->GetLightParamValue(id, _tokens->colorMapGamma);
+    VtValue colorMapGamma = sceneDelegate->GetLightParamValue(id, _tokens->colorMapGamma);
     if (colorMapGamma.IsHolding<GfVec3f>())
     {
       GfVec3f v = colorMapGamma.UncheckedGet<GfVec3f>();
       lightNode.params.SetVector(us_colorMapGamma, RtVector3(v[0], v[1], v[2]));
     }
 
-    VtValue colorMapSaturation =
-      sceneDelegate->GetLightParamValue(id, _tokens->colorMapSaturation);
+    VtValue colorMapSaturation = sceneDelegate->GetLightParamValue(id, _tokens->colorMapSaturation);
     if (colorMapSaturation.IsHolding<float>())
     {
-      lightNode.params.SetFloat(us_colorMapSaturation,
-                                colorMapSaturation.UncheckedGet<float>());
+      lightNode.params.SetFloat(us_colorMapSaturation, colorMapSaturation.UncheckedGet<float>());
     }
   }
 }
 
-static bool
-_PopulateNodesFromMaterialResource(HdSceneDelegate *sceneDelegate,
-                                   const SdfPath &id,
-                                   const TfToken &terminalName,
-                                   std::vector<riley::ShadingNode> *result)
+static bool _PopulateNodesFromMaterialResource(HdSceneDelegate *sceneDelegate,
+                                               const SdfPath &id,
+                                               const TfToken &terminalName,
+                                               std::vector<riley::ShadingNode> *result)
 {
   VtValue hdMatVal = sceneDelegate->GetMaterialResource(id);
   if (!hdMatVal.IsHolding<HdMaterialNetworkMap>())
@@ -550,8 +479,8 @@ _PopulateNodesFromMaterialResource(HdSceneDelegate *sceneDelegate,
 
   // Convert HdMaterial to HdMaterialNetwork2 form.
   HdMaterialNetwork2 matNetwork2;
-  HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(
-    hdMatVal.UncheckedGet<HdMaterialNetworkMap>(), &matNetwork2);
+  HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(hdMatVal.UncheckedGet<HdMaterialNetworkMap>(),
+                                                    &matNetwork2);
 
   SdfPath nodePath;
   for (auto const &terminal : matNetwork2.terminals)
@@ -572,8 +501,7 @@ _PopulateNodesFromMaterialResource(HdSceneDelegate *sceneDelegate,
   }
 
   result->reserve(matNetwork2.nodes.size());
-  if (!HdPrman_ConvertHdMaterialNetwork2ToRmanNodes(
-        matNetwork2, nodePath, result))
+  if (!HdPrman_ConvertHdMaterialNetwork2ToRmanNodes(matNetwork2, nodePath, result))
   {
     TF_WARN(
       "Failed to convert HdMaterialNetwork to Renderman shading "
@@ -586,9 +514,7 @@ _PopulateNodesFromMaterialResource(HdSceneDelegate *sceneDelegate,
 }
 
 /* virtual */
-void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
-                        HdRenderParam *renderParam,
-                        HdDirtyBits *dirtyBits)
+void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
 {
   static const RtUString us_PxrDomeLight("PxrDomeLight");
   static const RtUString us_PxrRectLight("PxrRectLight");
@@ -599,8 +525,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
   static const RtUString us_shadowSubset("shadowSubset");
   static const RtUString us_default("default");
 
-  HdPrman_Context *context =
-    static_cast<HdPrman_RenderParam *>(renderParam)->AcquireContext();
+  HdPrman_Context *context = static_cast<HdPrman_RenderParam *>(renderParam)->AcquireContext();
 
   SdfPath id = GetId();
 
@@ -614,27 +539,21 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
 
   if (TfGetEnvSetting(HD_PRMAN_ENABLE_LIGHT_MATERIAL_NETWORKS))
   {
-    _PopulateNodesFromMaterialResource(
-      sceneDelegate, id, HdMaterialTerminalTokens->light, &lightNodes);
-  }
-  else
+    _PopulateNodesFromMaterialResource(sceneDelegate, id, HdMaterialTerminalTokens->light, &lightNodes);
+  } else
   {
-    _PopulateNodeFromLightParams(
-      sceneDelegate, id, _hdLightType, &lightNodes);
+    _PopulateNodeFromLightParams(sceneDelegate, id, _hdLightType, &lightNodes);
   }
 
   if (lightNodes.empty())
   {
-    TF_WARN("Could not populate shading nodes for light '%s'. Skipping.",
-            id.GetText());
+    TF_WARN("Could not populate shading nodes for light '%s'. Skipping.", id.GetText());
     *dirtyBits = HdChangeTracker::Clean;
     return;
   }
 
   TF_DEBUG(HDPRMAN_LIGHT_LIST)
-    .Msg("HdPrman: Light <%s> lightType \"%s\"\n",
-         id.GetText(),
-         _hdLightType.GetText());
+    .Msg("HdPrman: Light <%s> lightType \"%s\"\n", id.GetText(), _hdLightType.GetText());
 
   // The terminal light node will be updated with other parameters that
   // aren't direct inputs of the material resource.
@@ -645,8 +564,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
 
   // Light linking
   {
-    VtValue val =
-      sceneDelegate->GetLightParamValue(id, HdTokens->lightLink);
+    VtValue val = sceneDelegate->GetLightParamValue(id, HdTokens->lightLink);
     if (val.IsHolding<TfToken>())
     {
       _lightLink = val.UncheckedGet<TfToken>();
@@ -658,38 +576,29 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
       // For lights to link geometry, the lights must
       // be assigned a grouping membership, and the
       // geometry must subscribe to that grouping.
-      attrs.SetString(RixStr.k_grouping_membership,
-                      RtUString(_lightLink.GetText()));
+      attrs.SetString(RixStr.k_grouping_membership, RtUString(_lightLink.GetText()));
       TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-        .Msg("HdPrman: Light <%s> grouping membership \"%s\"\n",
-             id.GetText(),
-             _lightLink.GetText());
-    }
-    else
+        .Msg("HdPrman: Light <%s> grouping membership \"%s\"\n", id.GetText(), _lightLink.GetText());
+    } else
     {
       // Default light group
       attrs.SetString(RixStr.k_grouping_membership, us_default);
       TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-        .Msg("HdPrman: Light <%s> grouping membership \"default\"\n",
-             id.GetText());
+        .Msg("HdPrman: Light <%s> grouping membership \"default\"\n", id.GetText());
     }
   }
 
   // Shadow linking
   {
-    VtValue shadowLinkVal =
-      sceneDelegate->GetLightParamValue(id, HdTokens->shadowLink);
+    VtValue shadowLinkVal = sceneDelegate->GetLightParamValue(id, HdTokens->shadowLink);
     if (shadowLinkVal.IsHolding<TfToken>())
     {
       TfToken shadowLink = shadowLinkVal.UncheckedGet<TfToken>();
       if (!shadowLink.IsEmpty())
       {
-        lightNode.params.SetString(us_shadowSubset,
-                                   RtUString(shadowLink.GetText()));
+        lightNode.params.SetString(us_shadowSubset, RtUString(shadowLink.GetText()));
         TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-          .Msg("HdPrman: Light <%s> shadowSubset \"%s\"\n",
-               id.GetText(),
-               shadowLink.GetText());
+          .Msg("HdPrman: Light <%s> shadowSubset \"%s\"\n", id.GetText(), shadowLink.GetText());
       }
     }
   }
@@ -698,8 +607,7 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
   std::vector<riley::ShadingNode> filterNodes;
   std::vector<riley::CoordinateSystemId> coordsysIds;
   {
-    VtValue val =
-      sceneDelegate->GetLightParamValue(id, HdTokens->filters);
+    VtValue val = sceneDelegate->GetLightParamValue(id, HdTokens->filters);
     if (val.IsHolding<SdfPathVector>())
     {
       _lightFilterPaths = val.UncheckedGet<SdfPathVector>();
@@ -726,30 +634,35 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
             // Invis of a filter works but does not cause the light
             // to re-sync so one has to tweak the light to see the
             // effect of the invised filter
-            TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING)
-              .Msg("  filter invisible\n");
+            TF_DEBUG(HDPRMAN_LIGHT_FILTER_LINKING).Msg("  filter invisible\n");
             continue;
           }
 
           if (TfGetEnvSetting(HD_PRMAN_ENABLE_LIGHT_MATERIAL_NETWORKS))
           {
-            if (!_PopulateNodesFromMaterialResource(
-                  sceneDelegate, filterPath, HdMaterialTerminalTokens->lightFilter, &filterNodes))
+            if (!_PopulateNodesFromMaterialResource(sceneDelegate,
+                                                    filterPath,
+                                                    HdMaterialTerminalTokens->lightFilter,
+                                                    &filterNodes))
             {
               continue;
             }
-          }
-          else
+          } else
           {
-            if (!HdPrmanLightFilterPopulateNodesFromLightParams(
-                  &filterNodes, filterPath, sceneDelegate))
+            if (!HdPrmanLightFilterPopulateNodesFromLightParams(&filterNodes, filterPath, sceneDelegate))
             {
               continue;
             }
           }
 
-          HdPrmanLightFilterGenerateCoordSysAndLinks(
-            &filterNodes.back(), filterPath, &coordsysIds, &_lightFilterLinks, sceneDelegate, context, riley, lightNode);
+          HdPrmanLightFilterGenerateCoordSysAndLinks(&filterNodes.back(),
+                                                     filterPath,
+                                                     &coordsysIds,
+                                                     &_lightFilterLinks,
+                                                     sceneDelegate,
+                                                     context,
+                                                     riley,
+                                                     lightNode);
           sa.push_back(filterNodes.back().handle);
         }
         if (sa.size() > 1)
@@ -761,10 +674,9 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
                                  RtUString("terminal.Lightfilter"),
                                  RtParamList()});
           // XXX -- assume mult for now
-          filterNodes.back().params.SetLightFilterReferenceArray(
-            RtUString("mult"),
-            (const RtUString *const &)&sa[0],
-            sa.size());
+          filterNodes.back().params.SetLightFilterReferenceArray(RtUString("mult"),
+                                                                 (const RtUString *const &)&sa[0],
+                                                                 sa.size());
         }
       }
     }
@@ -772,17 +684,15 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
 
   // TODO: portals
 
-  _shaderId = riley->CreateLightShader(
-    riley::UserId::DefaultId(),
-    {static_cast<uint32_t>(lightNodes.size()), lightNodes.data()},
-    {static_cast<uint32_t>(filterNodes.size()), filterNodes.data()});
+  _shaderId = riley->CreateLightShader(riley::UserId::DefaultId(),
+                                       {static_cast<uint32_t>(lightNodes.size()), lightNodes.data()},
+                                       {static_cast<uint32_t>(filterNodes.size()), filterNodes.data()});
 
   // Sample transform
   HdTimeSampleArray<GfMatrix4d, HDPRMAN_MAX_TIME_SAMPLES> xf;
   sceneDelegate->SampleTransform(id, &xf);
 
-  TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES>
-    xf_rt_values(xf.count);
+  TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES> xf_rt_values(xf.count);
 
   GfMatrix4d geomMat(1.0);
 
@@ -793,54 +703,45 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
   if (lightNode.name == us_PxrRectLight)
   {
     // width
-    VtValue width = sceneDelegate->GetLightParamValue(id,
-                                                      HdLightTokens->width);
+    VtValue width = sceneDelegate->GetLightParamValue(id, HdLightTokens->width);
     if (width.IsHolding<float>())
     {
       geomScale[0] = width.UncheckedGet<float>();
     }
     // height
-    VtValue height = sceneDelegate->GetLightParamValue(id,
-                                                       HdLightTokens->height);
+    VtValue height = sceneDelegate->GetLightParamValue(id, HdLightTokens->height);
     if (height.IsHolding<float>())
     {
       geomScale[1] = height.UncheckedGet<float>();
     }
-  }
-  else if (lightNode.name == us_PxrDiskLight)
+  } else if (lightNode.name == us_PxrDiskLight)
   {
     // radius (XY only, default 0.5)
-    VtValue radius = sceneDelegate->GetLightParamValue(id,
-                                                       HdLightTokens->radius);
+    VtValue radius = sceneDelegate->GetLightParamValue(id, HdLightTokens->radius);
     if (radius.IsHolding<float>())
     {
       geomScale[0] *= radius.UncheckedGet<float>() / 0.5;
       geomScale[1] *= radius.UncheckedGet<float>() / 0.5;
     }
-  }
-  else if (lightNode.name == us_PxrCylinderLight)
+  } else if (lightNode.name == us_PxrCylinderLight)
   {
     // radius (YZ only, default 0.5)
-    VtValue radius = sceneDelegate->GetLightParamValue(id,
-                                                       HdLightTokens->radius);
+    VtValue radius = sceneDelegate->GetLightParamValue(id, HdLightTokens->radius);
     if (radius.IsHolding<float>())
     {
       geomScale[1] *= radius.UncheckedGet<float>() / 0.5;
       geomScale[2] *= radius.UncheckedGet<float>() / 0.5;
     }
     // length (X-axis)
-    VtValue length = sceneDelegate->GetLightParamValue(id,
-                                                       HdLightTokens->length);
+    VtValue length = sceneDelegate->GetLightParamValue(id, HdLightTokens->length);
     if (length.IsHolding<float>())
     {
       geomScale[0] *= length.UncheckedGet<float>();
     }
-  }
-  else if (lightNode.name == us_PxrSphereLight)
+  } else if (lightNode.name == us_PxrSphereLight)
   {
     // radius (XYZ, default 0.5)
-    VtValue radius = sceneDelegate->GetLightParamValue(id,
-                                                       HdLightTokens->radius);
+    VtValue radius = sceneDelegate->GetLightParamValue(id, HdLightTokens->radius);
     if (radius.IsHolding<float>())
     {
       geomScale *= radius.UncheckedGet<float>() / 0.5;
@@ -857,12 +758,12 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
     // Transform Dome to match OpenEXR spec for environment maps
     // Rotate -90 X, Rotate 90 Y
     orientMat = GfMatrix4d(0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-  }
-  else
+  } else
   {
     // Transform lights to match correct orientation
     // Scale -1 Z, Rotate 180 Z
-    orientMat = GfMatrix4d(-1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    orientMat =
+      GfMatrix4d(-1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
   }
 
   geomMat = orientMat * geomMat;
@@ -871,31 +772,27 @@ void HdPrmanLight::Sync(HdSceneDelegate *sceneDelegate,
   {
     xf_rt_values[i] = HdPrman_GfMatrixToRtMatrix(geomMat * xf.values[i]);
   }
-  const riley::Transform xform = {
-    unsigned(xf.count), xf_rt_values.data(), xf.times.data()};
+  const riley::Transform xform = {unsigned(xf.count), xf_rt_values.data(), xf.times.data()};
 
   // Instance attributes.
   attrs.SetInteger(RixStr.k_lighting_mute, !sceneDelegate->GetVisible(id));
 
   // Light instance
-  riley::CoordinateSystemList const coordsysList = {
-    unsigned(coordsysIds.size()), coordsysIds.data()};
-  _instanceId = riley->CreateLightInstance(
-    riley::UserId::DefaultId(),
-    riley::GeometryPrototypeId::InvalidId(),  // no group
-    riley::GeometryPrototypeId::InvalidId(),  // no geo
-    riley::MaterialId::InvalidId(),           // no material
-    _shaderId,
-    coordsysList,
-    xform,
-    attrs);
+  riley::CoordinateSystemList const coordsysList = {unsigned(coordsysIds.size()), coordsysIds.data()};
+  _instanceId = riley->CreateLightInstance(riley::UserId::DefaultId(),
+                                           riley::GeometryPrototypeId::InvalidId(),  // no group
+                                           riley::GeometryPrototypeId::InvalidId(),  // no geo
+                                           riley::MaterialId::InvalidId(),           // no material
+                                           _shaderId,
+                                           coordsysList,
+                                           xform,
+                                           attrs);
 
   *dirtyBits = HdChangeTracker::Clean;
 }
 
 /* virtual */
-HdDirtyBits
-HdPrmanLight::GetInitialDirtyBitsMask() const
+HdDirtyBits HdPrmanLight::GetInitialDirtyBitsMask() const
 {
   return HdChangeTracker::AllDirty;
 }

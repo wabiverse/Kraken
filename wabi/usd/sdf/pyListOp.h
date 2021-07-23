@@ -65,8 +65,7 @@ class SdfPyWrapListOp
     if (boost::optional<T> r = outer.ApplyOperations(inner))
     {
       return boost::python::object(*r);
-    }
-    else
+    } else
     {
       return boost::python::object();
     }

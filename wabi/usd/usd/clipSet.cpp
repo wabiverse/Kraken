@@ -66,8 +66,10 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const Usd_ClipRefPtrVector &clips,
     }
   }
 
-  return Usd_GenerateClipManifest(
-    clipLayers, clipPrimPath, tag, writeBlocksForClipsWithMissingValues ? &activeTimes : nullptr);
+  return Usd_GenerateClipManifest(clipLayers,
+                                  clipPrimPath,
+                                  tag,
+                                  writeBlocksForClipsWithMissingValues ? &activeTimes : nullptr);
 }
 
 SdfLayerRefPtr Usd_GenerateClipManifest(const SdfLayerHandleVector &clipLayers,
@@ -104,8 +106,10 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const SdfLayerHandleVector &clipLayers,
       SdfAttributeSpecHandle clipAttr = clipLayer->GetAttributeAtPath(path);
       if (clipAttr && !manifestLayer->HasSpec(path) && clipLayer->GetNumTimeSamplesForPath(path) != 0)
       {
-        SdfJustCreatePrimAttributeInLayer(
-          manifestLayer, path, clipAttr->GetTypeName(), clipAttr->GetVariability());
+        SdfJustCreatePrimAttributeInLayer(manifestLayer,
+                                          path,
+                                          clipAttr->GetTypeName(),
+                                          clipAttr->GetVariability());
       }
     });
   }
@@ -115,7 +119,8 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const SdfLayerHandleVector &clipLayers,
     std::vector<std::pair<SdfPath, std::vector<double>>> attrToActiveTimeOfClipsWithoutSamples;
 
     manifestLayer->Traverse(
-      clipPrimPath, [&clipLayers, &clipActive, &attrToActiveTimeOfClipsWithoutSamples](const SdfPath &path) {
+      clipPrimPath,
+      [&clipLayers, &clipActive, &attrToActiveTimeOfClipsWithoutSamples](const SdfPath &path) {
         if (!path.IsPropertyPath())
         {
           return;
@@ -303,12 +308,12 @@ Usd_ClipSetRefPtr Usd_ClipSet::New(const std::string &name,
 
 namespace
 {
-struct Usd_ClipEntry
-{
- public:
-  double startTime;
-  SdfAssetPath clipAssetPath;
-};
+  struct Usd_ClipEntry
+  {
+   public:
+    double startTime;
+    SdfAssetPath clipAssetPath;
+  };
 }  // end anonymous namespace
 
 Usd_ClipSet::Usd_ClipSet(const std::string &name_, const Usd_ClipSetDefinition &clipDef)
@@ -394,11 +399,11 @@ Usd_ClipSet::Usd_ClipSet(const std::string &name_, const Usd_ClipSetDefinition &
   if (clipDef.clipManifestAssetPath)
   {
     manifestAssetPath = *clipDef.clipManifestAssetPath;
-  }
-  else
+  } else
   {
-    generatedManifest = Usd_GenerateClipManifest(
-      valueClips, clipPrimPath, _tokens->generated_manifest.GetString());
+    generatedManifest = Usd_GenerateClipManifest(valueClips,
+                                                 clipPrimPath,
+                                                 _tokens->generated_manifest.GetString());
     manifestAssetPath = SdfAssetPath(generatedManifest->GetIdentifier());
   }
 
@@ -535,12 +540,10 @@ bool Usd_ClipSet::GetBracketingTimeSamplesForPath(const SdfPath &path,
   if (foundLower && !foundUpper)
   {
     *upper = *lower;
-  }
-  else if (!foundLower && foundUpper)
+  } else if (!foundLower && foundUpper)
   {
     *lower = *upper;
-  }
-  else if (!foundLower && !foundUpper)
+  } else if (!foundLower && !foundUpper)
   {
     // In this case, no clips have been found that contribute
     // values. Use the start time of the first clip as the sole
@@ -587,9 +590,10 @@ size_t Usd_ClipSet::_FindClipIndexForTime(double time) const
     // Find the first clip whose start time is greater than the given
     // time.
     auto it = std::upper_bound(
-      valueClips.begin(), valueClips.end(), time, [](double time, const Usd_ClipRefPtr &clip) {
-        return time < clip->startTime;
-      });
+      valueClips.begin(),
+      valueClips.end(),
+      time,
+      [](double time, const Usd_ClipRefPtr &clip) { return time < clip->startTime; });
 
     // The upper bound should never be the first clip. Since its
     // startTime is set to -inf, it should never be greater than any

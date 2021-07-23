@@ -107,8 +107,7 @@ void FactorSlices(slice_vec &slices)
             bestA = j;
             bestB = i;
           }
-        }
-        else if (d < counts[i])
+        } else if (d < counts[i])
         {
           // bestA =
         }

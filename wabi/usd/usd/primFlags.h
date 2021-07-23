@@ -195,8 +195,7 @@ class Usd_PrimFlagsPredicate
     {
       _mask[Usd_PrimInstanceProxyFlag] = 0;
       _values[Usd_PrimInstanceProxyFlag] = 1;
-    }
-    else
+    } else
     {
       _mask[Usd_PrimInstanceProxyFlag] = 1;
       _values[Usd_PrimInstanceProxyFlag] = 0;
@@ -354,8 +353,7 @@ class Usd_PrimFlagsConjunction : public Usd_PrimFlagsPredicate
     {
       _mask[term.flag] = 1;
       _values[term.flag] = !term.negated;
-    }
-    else if (_values[term.flag] != !term.negated)
+    } else if (_values[term.flag] != !term.negated)
     {
       // If we do have the bit and the values disagree, then this entire
       // conjunction becomes a contradiction.  If the values agree, it's
@@ -463,8 +461,7 @@ class Usd_PrimFlagsDisjunction : public Usd_PrimFlagsPredicate
     {
       _mask[term.flag] = 1;
       _values[term.flag] = term.negated;
-    }
-    else if (_values[term.flag] != term.negated)
+    } else if (_values[term.flag] != term.negated)
     {
       // If we do have the bit and the values disagree, then this entire
       // disjunction becomes a tautology.  If the values agree, it's

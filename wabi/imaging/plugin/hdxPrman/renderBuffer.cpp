@@ -100,22 +100,18 @@ static void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, 
       if (srcComponentFormat == HdFormatInt32)
       {
         readValue = ((int32_t *)src)[c];
-      }
-      else if (srcComponentFormat == HdFormatFloat16)
+      } else if (srcComponentFormat == HdFormatFloat16)
       {
         GfHalf half;
         half.setBits(((uint16_t *)src)[c]);
         readValue = static_cast<float>(half);
-      }
-      else if (srcComponentFormat == HdFormatFloat32)
+      } else if (srcComponentFormat == HdFormatFloat32)
       {
         readValue = ((float *)src)[c];
-      }
-      else if (srcComponentFormat == HdFormatUNorm8)
+      } else if (srcComponentFormat == HdFormatUNorm8)
       {
         readValue = ((uint8_t *)src)[c] / 255.0f;
-      }
-      else if (srcComponentFormat == HdFormatSNorm8)
+      } else if (srcComponentFormat == HdFormatSNorm8)
       {
         readValue = ((int8_t *)src)[c] / 127.0f;
       }
@@ -124,41 +120,33 @@ static void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, 
     if (dstComponentFormat == HdFormatInt32)
     {
       ((int32_t *)dst)[c] = readValue;
-    }
-    else if (dstComponentFormat == HdFormatFloat16)
+    } else if (dstComponentFormat == HdFormatFloat16)
     {
       ((uint16_t *)dst)[c] = GfHalf(float(readValue)).bits();
-    }
-    else if (dstComponentFormat == HdFormatFloat32)
+    } else if (dstComponentFormat == HdFormatFloat32)
     {
       ((float *)dst)[c] = readValue;
-    }
-    else if (dstComponentFormat == HdFormatUNorm8)
+    } else if (dstComponentFormat == HdFormatUNorm8)
     {
       if (readValue < 0.0f)
       {
         ((uint8_t *)dst)[c] = 0;
-      }
-      else if (readValue > 1.0f)
+      } else if (readValue > 1.0f)
       {
         ((uint8_t *)dst)[c] = 255;
-      }
-      else
+      } else
       {
         ((uint8_t *)dst)[c] = uint8_t(readValue * 255.0f);
       }
-    }
-    else if (dstComponentFormat == HdFormatSNorm8)
+    } else if (dstComponentFormat == HdFormatSNorm8)
     {
       if (readValue < -1.0f)
       {
         ((int8_t *)dst)[c] = -127;
-      }
-      else if (readValue > 1.0f)
+      } else if (readValue > 1.0f)
       {
         ((int8_t *)dst)[c] = 127;
-      }
-      else
+      } else
       {
         ((int8_t *)dst)[c] = int8_t(readValue * 127.0f);
       }
@@ -173,8 +161,7 @@ void HdxPrmanRenderBuffer::Blit(HdFormat format, int width, int height, uint8_t 
   {
     // Nothing to copy from, set to zero
     std::fill(_buffer.begin(), _buffer.end(), 0);
-  }
-  else if (_format == format)
+  } else if (_format == format)
   {
     size_t pixelSize = HdDataSizeOfFormat(_format);
 
@@ -185,8 +172,7 @@ void HdxPrmanRenderBuffer::Blit(HdFormat format, int width, int height, uint8_t 
       {
         memcpy(&_buffer[(j * _width) * pixelSize], &data[(j * width) * pixelSize], _width * pixelSize);
       }
-    }
-    else
+    } else
     {
       // Ok...  Blit pixel by pixel, with nearest point sampling.
       float scalei = width / float(_width);
@@ -201,8 +187,7 @@ void HdxPrmanRenderBuffer::Blit(HdFormat format, int width, int height, uint8_t 
         }
       }
     }
-  }
-  else
+  } else
   {
     // D'oh.  Convert pixel by pixel, with nearest point sampling.
     // If src and dst are both int-based, don't round trip to float.
@@ -226,8 +211,7 @@ void HdxPrmanRenderBuffer::Blit(HdFormat format, int width, int height, uint8_t 
                                  static_cast<uint8_t *>(&_buffer[(j * _width + i) * dstPixelSize]),
                                  format,
                                  &data[(jj * width + ii) * srcPixelSize]);
-        }
-        else
+        } else
         {
           _ConvertPixel<float>(_format,
                                static_cast<uint8_t *>(&_buffer[(j * _width + i) * dstPixelSize]),

@@ -55,8 +55,7 @@ static SdfPath _MapTargetPath(const UsdStage *stage, const SdfPath &anchor, cons
   if (target.IsAbsolutePath())
   {
     return editTarget.MapToSpecPath(target).StripAllVariantSelections();
-  }
-  else
+  } else
   {
     const SdfPath anchorPrim = anchor.GetPrimPath();
     const SdfPath translatedAnchorPrim = editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();
@@ -212,8 +211,7 @@ bool UsdRelationship::ClearTargets(bool removeSpec) const
   {
     SdfPrimSpecHandle owner = TfDynamic_cast<SdfPrimSpecHandle>(relSpec->GetOwner());
     owner->RemoveProperty(relSpec);
-  }
-  else
+  } else
   {
     relSpec->GetTargetPathList().ClearEdits();
   }
@@ -261,8 +259,11 @@ bool UsdRelationship::_GetForwardedTargetsImpl(SdfPathSet *visited,
           // Only do this rel if we've not yet seen it.
           if (visited->insert(rel.GetPath()).second)
           {
-            success |= rel._GetForwardedTargetsImpl(
-              visited, uniqueTargets, targets, foundAnyErrors, includeForwardingRels);
+            success |= rel._GetForwardedTargetsImpl(visited,
+                                                    uniqueTargets,
+                                                    targets,
+                                                    foundAnyErrors,
+                                                    includeForwardingRels);
           }
           if (!includeForwardingRels)
             continue;
@@ -286,8 +287,11 @@ bool UsdRelationship::_GetForwardedTargets(SdfPathVector *targets, bool includeF
 {
   SdfPathSet visited, uniqueTargets;
   bool foundAnyErrors = false;
-  return _GetForwardedTargetsImpl(
-           &visited, &uniqueTargets, targets, &foundAnyErrors, includeForwardingRels) &&
+  return _GetForwardedTargetsImpl(&visited,
+                                  &uniqueTargets,
+                                  targets,
+                                  &foundAnyErrors,
+                                  includeForwardingRels) &&
          !foundAnyErrors;
 }
 

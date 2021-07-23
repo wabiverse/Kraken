@@ -66,8 +66,7 @@ HdBufferSourceSharedPtr HdPh_BasisCurvesTopology::GetPointsIndexBuilderComputati
   if (curveIndices.empty())
   {
     std::copy(indices.begin(), indices.end(), finalIndices.begin());
-  }
-  else
+  } else
   {
     // If have topology has indices set, map the generated indices
     // with the given indices.

@@ -212,8 +212,7 @@ void HdxAovInputTask::_UpdateTexture(HdTaskContext *ctx, HgiTextureHandle &textu
   // Update the existing texture if specs are compatible. This is more
   // efficient than re-creating, because the underlying framebuffer that
   // had the old texture attached would also need to be re-created.
-  if (texture && texture->GetDescriptor().dimensions == dim &&
-      texture->GetDescriptor().format == bufFormat)
+  if (texture && texture->GetDescriptor().dimensions == dim && texture->GetDescriptor().format == bufFormat)
   {
     const void *pixelData = buffer->Map();
     HgiTextureCpuToGpuOp copyOp;
@@ -226,8 +225,7 @@ void HdxAovInputTask::_UpdateTexture(HdTaskContext *ctx, HgiTextureHandle &textu
     blitCmds->PopDebugGroup();
     _GetHgi()->SubmitCmds(blitCmds.get());
     buffer->Unmap();
-  }
-  else
+  } else
   {
     // Create a new texture
     HgiTextureDesc texDesc;

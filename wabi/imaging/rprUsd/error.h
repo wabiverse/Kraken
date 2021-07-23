@@ -24,15 +24,15 @@ limitations under the License.
 #include <stdexcept>
 #include <string>
 
-#define RPR_ERROR_CHECK_THROW(status, msg, ...) \
-  do \
-  { \
-    auto st = status; \
-    if (st != RPR_SUCCESS) \
-    { \
-      assert(false); \
+#define RPR_ERROR_CHECK_THROW(status, msg, ...)                                              \
+  do                                                                                         \
+  {                                                                                          \
+    auto st = status;                                                                        \
+    if (st != RPR_SUCCESS)                                                                   \
+    {                                                                                        \
+      assert(false);                                                                         \
       throw RprUsdError(st, msg, __ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-    } \
+    }                                                                                        \
   } while (0);
 
 #define RPR_ERROR_CHECK(status, msg, ...) \
@@ -95,8 +95,7 @@ inline std::string RprUsdConstructErrorMessage(rpr::Status errorStatus,
   if (errorStatus == RPR_SUCCESS)
   {
     return TfStringPrintf("[RPR ERROR] %s%s", messageOnFail.c_str(), suffix.c_str());
-  }
-  else
+  } else
   {
     auto errorStr = rprErrorString();
     return TfStringPrintf("[RPR ERROR] %s -- %s%s", messageOnFail.c_str(), errorStr.c_str(), suffix.c_str());

@@ -84,8 +84,7 @@ HdInstance<T> _Register(ID id, HdInstanceRegistry<T> &registry, TfToken const &p
     }
 
     return instance;
-  }
-  else
+  } else
   {
     // Return an instance that is not managed by the registry when
     // topology instancing is disabled.
@@ -139,8 +138,7 @@ void HdPhResourceRegistry::ReloadResource(TfToken const &resourceType, std::stri
     HioGlslfxSharedPtr glslfxSharedPtr = glslfxInstance.GetValue();
     glslfxSharedPtr.reset(new HioGlslfx(path));
     glslfxInstance.SetValue(glslfxSharedPtr);
-  }
-  else if (resourceType == HdResourceTypeTokens->texture)
+  } else if (resourceType == HdResourceTypeTokens->texture)
   {
     HdPh_TextureObjectRegistry *const reg = _textureHandleRegistry->GetTextureObjectRegistry();
     reg->MarkTextureFilePathDirty(TfToken(path));
@@ -156,15 +154,20 @@ VtDictionary HdPhResourceRegistry::GetResourceAllocation() const
   // buffer array allocation
 
   const size_t nonUniformSize = _nonUniformBufferArrayRegistry.GetResourceAllocation(
-                                  _nonUniformAggregationStrategy.get(), result) +
+                                  _nonUniformAggregationStrategy.get(),
+                                  result) +
                                 _nonUniformImmutableBufferArrayRegistry.GetResourceAllocation(
-                                  _nonUniformImmutableAggregationStrategy.get(), result);
+                                  _nonUniformImmutableAggregationStrategy.get(),
+                                  result);
   const size_t uboSize = _uniformUboBufferArrayRegistry.GetResourceAllocation(
-    _uniformUboAggregationStrategy.get(), result);
+    _uniformUboAggregationStrategy.get(),
+    result);
   const size_t ssboSize = _uniformSsboBufferArrayRegistry.GetResourceAllocation(
-    _uniformSsboAggregationStrategy.get(), result);
+    _uniformSsboAggregationStrategy.get(),
+    result);
   const size_t singleBufferSize = _singleBufferArrayRegistry.GetResourceAllocation(
-    _singleAggregationStrategy.get(), result);
+    _singleAggregationStrategy.get(),
+    result);
 
   result[HdPerfTokens->nonUniformSize] = VtValue(nonUniformSize);
   result[HdPerfTokens->uboSize] = VtValue(uboSize);
@@ -197,8 +200,11 @@ HdBufferArrayRangeSharedPtr HdPhResourceRegistry::AllocateNonUniformBufferArrayR
   HdBufferSpecVector const &bufferSpecs,
   HdBufferArrayUsageHint usageHint)
 {
-  return _AllocateBufferArrayRange(
-    _nonUniformAggregationStrategy.get(), _nonUniformBufferArrayRegistry, role, bufferSpecs, usageHint);
+  return _AllocateBufferArrayRange(_nonUniformAggregationStrategy.get(),
+                                   _nonUniformBufferArrayRegistry,
+                                   role,
+                                   bufferSpecs,
+                                   usageHint);
 }
 
 HdBufferArrayRangeSharedPtr HdPhResourceRegistry::AllocateNonUniformImmutableBufferArrayRange(
@@ -220,8 +226,11 @@ HdBufferArrayRangeSharedPtr HdPhResourceRegistry::AllocateUniformBufferArrayRang
   HdBufferSpecVector const &bufferSpecs,
   HdBufferArrayUsageHint usageHint)
 {
-  return _AllocateBufferArrayRange(
-    _uniformUboAggregationStrategy.get(), _uniformUboBufferArrayRegistry, role, bufferSpecs, usageHint);
+  return _AllocateBufferArrayRange(_uniformUboAggregationStrategy.get(),
+                                   _uniformUboBufferArrayRegistry,
+                                   role,
+                                   bufferSpecs,
+                                   usageHint);
 }
 
 HdBufferArrayRangeSharedPtr HdPhResourceRegistry::AllocateShaderStorageBufferArrayRange(
@@ -229,8 +238,11 @@ HdBufferArrayRangeSharedPtr HdPhResourceRegistry::AllocateShaderStorageBufferArr
   HdBufferSpecVector const &bufferSpecs,
   HdBufferArrayUsageHint usageHint)
 {
-  return _AllocateBufferArrayRange(
-    _uniformSsboAggregationStrategy.get(), _uniformSsboBufferArrayRegistry, role, bufferSpecs, usageHint);
+  return _AllocateBufferArrayRange(_uniformSsboAggregationStrategy.get(),
+                                   _uniformSsboBufferArrayRegistry,
+                                   role,
+                                   bufferSpecs,
+                                   usageHint);
 }
 
 HdBufferArrayRangeSharedPtr HdPhResourceRegistry::AllocateSingleBufferArrayRange(
@@ -238,8 +250,11 @@ HdBufferArrayRangeSharedPtr HdPhResourceRegistry::AllocateSingleBufferArrayRange
   HdBufferSpecVector const &bufferSpecs,
   HdBufferArrayUsageHint usageHint)
 {
-  return _AllocateBufferArrayRange(
-    _singleAggregationStrategy.get(), _singleBufferArrayRegistry, role, bufferSpecs, usageHint);
+  return _AllocateBufferArrayRange(_singleAggregationStrategy.get(),
+                                   _singleBufferArrayRegistry,
+                                   role,
+                                   bufferSpecs,
+                                   usageHint);
 }
 
 /// ------------------------------------------------------------------------
@@ -347,8 +362,7 @@ void HdPhResourceRegistry::AddSources(HdBufferArrayRangeSharedPtr const &range,
         AddSource(sources[srcNum]->GetPreChainedBuffer());
       }
       ++srcNum;
-    }
-    else
+    } else
     {
       TF_RUNTIME_ERROR("Source Buffer for %s is invalid", sources[srcNum]->GetName().GetText());
 
@@ -456,8 +470,10 @@ HdPhDispatchBufferSharedPtr HdPhResourceRegistry::RegisterDispatchBuffer(TfToken
                                                                          int count,
                                                                          int commandNumUints)
 {
-  HdPhDispatchBufferSharedPtr const result = std::make_shared<HdPhDispatchBuffer>(
-    this, role, count, commandNumUints);
+  HdPhDispatchBufferSharedPtr const result = std::make_shared<HdPhDispatchBuffer>(this,
+                                                                                  role,
+                                                                                  count,
+                                                                                  commandNumUints);
 
   _dispatchBufferRegistry.push_back(result);
 
@@ -467,8 +483,10 @@ HdPhDispatchBufferSharedPtr HdPhResourceRegistry::RegisterDispatchBuffer(TfToken
 HdPhBufferResourceSharedPtr HdPhResourceRegistry::RegisterBufferResource(TfToken const &role,
                                                                          HdTupleType tupleType)
 {
-  HdPhBufferResourceSharedPtr const result = std::make_shared<HdPhBufferResource>(
-    role, tupleType, /*offset*/ 0, /*stride*/ 0);
+  HdPhBufferResourceSharedPtr const result = std::make_shared<HdPhBufferResource>(role,
+                                                                                  tupleType,
+                                                                                  /*offset*/ 0,
+                                                                                  /*stride*/ 0);
 
   size_t byteSize = HdDataSizeOfTupleType(tupleType);
 
@@ -538,8 +556,9 @@ HdInstance<HdBufferArrayRangeSharedPtr> HdPhResourceRegistry::RegisterBasisCurve
   HdInstance<HdBufferArrayRangeSharedPtr>::ID id,
   TfToken const &name)
 {
-  return _Register(
-    id, _basisCurvesTopologyIndexRangeRegistry[name], HdPerfTokens->instBasisCurvesTopologyRange);
+  return _Register(id,
+                   _basisCurvesTopologyIndexRangeRegistry[name],
+                   HdPerfTokens->instBasisCurvesTopologyRange);
 }
 
 HdInstance<HdBufferArrayRangeSharedPtr> HdPhResourceRegistry::RegisterPrimvarRange(
@@ -1005,10 +1024,11 @@ HdBufferArrayRangeSharedPtr HdPhResourceRegistry::_UpdateBufferArrayRange(
 
   // Create new BAR ...
   HdBufferSpecVector newBufferSpecs = HdBufferSpec::ComputeUnion(
-    updatedOrAddedSpecs, HdBufferSpec::ComputeDifference(curBufferSpecs, removedSpecs));
+    updatedOrAddedSpecs,
+    HdBufferSpec::ComputeDifference(curBufferSpecs, removedSpecs));
 
-  HdBufferArrayRangeSharedPtr newRange = _AllocateBufferArrayRange(
-    strategy, bufferArrayRegistry, role, newBufferSpecs, usageHint);
+  HdBufferArrayRangeSharedPtr newRange =
+    _AllocateBufferArrayRange(strategy, bufferArrayRegistry, role, newBufferSpecs, usageHint);
 
   // ... and migrate relevant buffers that haven't changed.
   // (skip the dirty sources, since new data needs to be copied over)
@@ -1017,7 +1037,8 @@ HdBufferArrayRangeSharedPtr HdPhResourceRegistry::_UpdateBufferArrayRange(
   {
     AddComputation(/*dstRange*/ newRange,
                    std::make_shared<HdPhCopyComputationGPU>(
-                     /*src=*/curRange, spec.name),
+                     /*src=*/curRange,
+                     spec.name),
                    /*CopyComp queue*/ HdPhComputeQueueZero);
   }
 
@@ -1035,8 +1056,9 @@ HdBufferArrayRangeSharedPtr HdPhResourceRegistry::_UpdateBufferArrayRange(
 
 void HdPhResourceRegistry::_TallyResourceAllocation(VtDictionary *result) const
 {
-  size_t gpuMemoryUsed = VtDictionaryGet<size_t>(
-    *result, HdPerfTokens->gpuMemoryUsed.GetString(), VtDefault = 0);
+  size_t gpuMemoryUsed = VtDictionaryGet<size_t>(*result,
+                                                 HdPerfTokens->gpuMemoryUsed.GetString(),
+                                                 VtDefault = 0);
 
   // dispatch buffers
   for (auto const &buffer : _dispatchBufferRegistry)
@@ -1118,8 +1140,12 @@ HdPhTextureHandleSharedPtr HdPhResourceRegistry::AllocateTextureHandle(
   const bool createBindlessHandle,
   HdPhShaderCodePtr const &shaderCode)
 {
-  return _textureHandleRegistry->AllocateTextureHandle(
-    textureId, textureType, samplerParams, memoryRequest, createBindlessHandle, shaderCode);
+  return _textureHandleRegistry->AllocateTextureHandle(textureId,
+                                                       textureType,
+                                                       samplerParams,
+                                                       memoryRequest,
+                                                       createBindlessHandle,
+                                                       shaderCode);
 }
 
 HdPhTextureObjectSharedPtr HdPhResourceRegistry::AllocateTextureObject(

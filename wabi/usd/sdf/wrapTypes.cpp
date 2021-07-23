@@ -56,259 +56,253 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-struct Sdf_TimeSampleMapConverter
-{
- public:
-  static PyObject *convert(SdfTimeSampleMap const &c)
+  struct Sdf_TimeSampleMapConverter
   {
-    boost::python::dict result = TfPyCopyMapToDictionary(c);
-    return boost::python::incref(result.ptr());
-  }
-};
-
-struct Sdf_RelocatesMapConverter
-{
- public:
-  static PyObject *convert(SdfRelocatesMap const &c)
-  {
-    boost::python::dict result = TfPyCopyMapToDictionary(c);
-    return boost::python::incref(result.ptr());
-  }
-};
-
-struct Sdf_VariantSelectionMapConverter
-{
- public:
-  Sdf_VariantSelectionMapConverter()
-  {
-    boost::python::converter::registry::push_back(&Sdf_VariantSelectionMapConverter::convertible,
-                                                  &Sdf_VariantSelectionMapConverter::construct,
-                                                  boost::python::type_id<SdfVariantSelectionMap>());
-    to_python_converter<SdfVariantSelectionMap, Sdf_VariantSelectionMapConverter>();
-  }
-
-  static void *convertible(PyObject *obj_ptr)
-  {
-    return _convert(obj_ptr, NULL);
-  }
-
-  static void construct(PyObject *obj_ptr, boost::python::converter::rvalue_from_python_stage1_data *data)
-  {
-    void *storage = ((converter::rvalue_from_python_storage<SdfVariantSelectionMap> *)data)->storage.bytes;
-    new (storage) SdfVariantSelectionMap();
-    data->convertible = storage;
-    _convert(obj_ptr, (SdfVariantSelectionMap *)storage);
-  }
-
-  static PyObject *convert(const SdfVariantSelectionMap &c)
-  {
-    boost::python::dict result = TfPyCopyMapToDictionary(c);
-    return boost::python::incref(result.ptr());
-  }
-
- private:
-  static PyObject *_convert(PyObject *pyDict, SdfVariantSelectionMap *result)
-  {
-    extract<dict> dictProxy(pyDict);
-    if (!dictProxy.check())
+   public:
+    static PyObject *convert(SdfTimeSampleMap const &c)
     {
-      return NULL;
+      boost::python::dict result = TfPyCopyMapToDictionary(c);
+      return boost::python::incref(result.ptr());
     }
-    dict d = dictProxy();
+  };
 
-    list keys = d.keys();
-    for (int i = 0, numKeys = len(d); i < numKeys; ++i)
+  struct Sdf_RelocatesMapConverter
+  {
+   public:
+    static PyObject *convert(SdfRelocatesMap const &c)
     {
-      object pyKey = keys[i];
-      extract<std::string> keyProxy(pyKey);
-      if (!keyProxy.check())
+      boost::python::dict result = TfPyCopyMapToDictionary(c);
+      return boost::python::incref(result.ptr());
+    }
+  };
+
+  struct Sdf_VariantSelectionMapConverter
+  {
+   public:
+    Sdf_VariantSelectionMapConverter()
+    {
+      boost::python::converter::registry::push_back(&Sdf_VariantSelectionMapConverter::convertible,
+                                                    &Sdf_VariantSelectionMapConverter::construct,
+                                                    boost::python::type_id<SdfVariantSelectionMap>());
+      to_python_converter<SdfVariantSelectionMap, Sdf_VariantSelectionMapConverter>();
+    }
+
+    static void *convertible(PyObject *obj_ptr)
+    {
+      return _convert(obj_ptr, NULL);
+    }
+
+    static void construct(PyObject *obj_ptr, boost::python::converter::rvalue_from_python_stage1_data *data)
+    {
+      void *storage = ((converter::rvalue_from_python_storage<SdfVariantSelectionMap> *)data)->storage.bytes;
+      new (storage) SdfVariantSelectionMap();
+      data->convertible = storage;
+      _convert(obj_ptr, (SdfVariantSelectionMap *)storage);
+    }
+
+    static PyObject *convert(const SdfVariantSelectionMap &c)
+    {
+      boost::python::dict result = TfPyCopyMapToDictionary(c);
+      return boost::python::incref(result.ptr());
+    }
+
+   private:
+    static PyObject *_convert(PyObject *pyDict, SdfVariantSelectionMap *result)
+    {
+      extract<dict> dictProxy(pyDict);
+      if (!dictProxy.check())
       {
         return NULL;
       }
+      dict d = dictProxy();
 
-      object pyValue = d[pyKey];
-      extract<std::string> valueProxy(pyValue);
-      if (!valueProxy.check())
+      list keys = d.keys();
+      for (int i = 0, numKeys = len(d); i < numKeys; ++i)
       {
-        return NULL;
+        object pyKey = keys[i];
+        extract<std::string> keyProxy(pyKey);
+        if (!keyProxy.check())
+        {
+          return NULL;
+        }
+
+        object pyValue = d[pyKey];
+        extract<std::string> valueProxy(pyValue);
+        if (!valueProxy.check())
+        {
+          return NULL;
+        }
+
+        std::string key = keyProxy();
+        if (result)
+        {
+          result->insert(std::make_pair(keyProxy(), valueProxy()));
+        }
       }
 
-      std::string key = keyProxy();
-      if (result)
-      {
-        result->insert(std::make_pair(keyProxy(), valueProxy()));
-      }
+      return pyDict;
     }
+  };
 
-    return pyDict;
-  }
-};
-
-class Sdf_VariantSelectionProxyWrap
-{
- public:
-  typedef SdfVariantSelectionProxy Type;
-  typedef Type::key_type key_type;
-  typedef Type::mapped_type mapped_type;
-  typedef Type::value_type value_type;
-  typedef Type::iterator iterator;
-  typedef Type::const_iterator const_iterator;
-  typedef std::pair<key_type, mapped_type> pair_type;
-
-  static void SetItem(Type &x, const key_type &key, const mapped_type &value)
+  class Sdf_VariantSelectionProxyWrap
   {
-    if (value.empty())
+   public:
+    typedef SdfVariantSelectionProxy Type;
+    typedef Type::key_type key_type;
+    typedef Type::mapped_type mapped_type;
+    typedef Type::value_type value_type;
+    typedef Type::iterator iterator;
+    typedef Type::const_iterator const_iterator;
+    typedef std::pair<key_type, mapped_type> pair_type;
+
+    static void SetItem(Type &x, const key_type &key, const mapped_type &value)
     {
-      x.erase(key);
-    }
-    else
-    {
-      std::pair<iterator, bool> i = x.insert(value_type(key, value));
-      if (!i.second && i.first != iterator())
+      if (value.empty())
       {
-        i.first->second = value;
+        x.erase(key);
+      } else
+      {
+        std::pair<iterator, bool> i = x.insert(value_type(key, value));
+        if (!i.second && i.first != iterator())
+        {
+          i.first->second = value;
+        }
       }
     }
-  }
 
-  static mapped_type SetDefault(Type &x, const key_type &key, const mapped_type &def)
-  {
-    const_iterator i = x.find(key);
-    if (i != x.end())
+    static mapped_type SetDefault(Type &x, const key_type &key, const mapped_type &def)
     {
-      return i->second;
+      const_iterator i = x.find(key);
+      if (i != x.end())
+      {
+        return i->second;
+      } else if (!def.empty())
+      {
+        SdfChangeBlock block;
+        return x[key] = def;
+      } else
+      {
+        return def;
+      }
     }
-    else if (!def.empty())
+
+    static void Update(Type &x, const std::vector<pair_type> &values)
     {
       SdfChangeBlock block;
-      return x[key] = def;
-    }
-    else
-    {
-      return def;
-    }
-  }
-
-  static void Update(Type &x, const std::vector<pair_type> &values)
-  {
-    SdfChangeBlock block;
-    TF_FOR_ALL (i, values)
-    {
-      if (i->second.empty())
+      TF_FOR_ALL (i, values)
       {
-        x.erase(i->first);
-      }
-      else
-      {
-        x[i->first] = i->second;
+        if (i->second.empty())
+        {
+          x.erase(i->first);
+        } else
+        {
+          x[i->first] = i->second;
+        }
       }
     }
-  }
 
-  static void UpdateDict(Type &x, const boost::python::dict &d)
-  {
-    UpdateList(x, d.items());
-  }
-
-  static void UpdateList(Type &x, const boost::python::list &pairs)
-  {
-    std::vector<pair_type> values;
-    for (int i = 0, n = len(pairs); i != n; ++i)
+    static void UpdateDict(Type &x, const boost::python::dict &d)
     {
-      values.push_back(pair_type(extract<key_type>(pairs[i][0]), extract<mapped_type>(pairs[i][1])));
+      UpdateList(x, d.items());
     }
-    Update(x, values);
-  }
-};
 
-static void _ModifyVariantSelectionProxy()
-{
-  // The map edit proxy for SdfVariantSelectionProxy has to have a
-  // special behavior for assignment:  assigning the empty string
-  // means delete.  Rather than mess with SdfPyMapEditProxy we just
-  // edit the python class, replacing the original methods with
-  // customized methods.  We need to fix __setitem__, setdefault,
-  // and update.
-  typedef Sdf_VariantSelectionProxyWrap Wrap;
-  object cls = TfPyGetClassObject<SdfVariantSelectionProxy>();
+    static void UpdateList(Type &x, const boost::python::list &pairs)
+    {
+      std::vector<pair_type> values;
+      for (int i = 0, n = len(pairs); i != n; ++i)
+      {
+        values.push_back(pair_type(extract<key_type>(pairs[i][0]), extract<mapped_type>(pairs[i][1])));
+      }
+      Update(x, values);
+    }
+  };
 
-  // Erase old methods.
-  PyObject *const ns = cls.ptr();
-  PyObject *dict = ((PyTypeObject *)ns)->tp_dict;
-  PyObject_DelItem(dict, str("__setitem__").ptr());
-  PyObject_DelItem(dict, str("setdefault").ptr());
-  PyObject_DelItem(dict, str("update").ptr());
-
-  // Insert new methods.
-  object setitem = make_function(&Wrap::SetItem);
-  object setdefault = make_function(&Wrap::SetDefault);
-  object updateList = make_function(&Wrap::UpdateList);
-  object updateDict = make_function(&Wrap::UpdateDict);
-  objects::add_to_namespace(cls, "__setitem__", setitem);
-  objects::add_to_namespace(cls, "setdefault", setdefault);
-  objects::add_to_namespace(cls, "update", updateDict);
-  objects::add_to_namespace(cls, "update", updateList);
-}
-
-static TfEnum _DefaultUnitWrapper1(const TfEnum &unit)
-{
-  return SdfDefaultUnit(unit);
-}
-
-static TfEnum _DefaultUnitWrapper2(const TfToken &typeName)
-{
-  return SdfDefaultUnit(typeName);
-}
-
-static string _UnitCategoryWrapper(const TfEnum &unit)
-{
-  return SdfUnitCategory(unit);
-}
-
-static string _UnregisteredValueRepr(const SdfUnregisteredValue &self)
-{
-  string value = TfPyRepr(self.GetValue());
-  return TF_PY_REPR_PREFIX + "UnregisteredValue(" + value + ")";
-}
-
-static int _UnregisteredValueHash(const SdfUnregisteredValue &self)
-{
-  const VtValue &value = self.GetValue();
-  if (value.IsHolding<VtDictionary>())
+  static void _ModifyVariantSelectionProxy()
   {
-    return VtDictionaryHash()(value.Get<VtDictionary>());
+    // The map edit proxy for SdfVariantSelectionProxy has to have a
+    // special behavior for assignment:  assigning the empty string
+    // means delete.  Rather than mess with SdfPyMapEditProxy we just
+    // edit the python class, replacing the original methods with
+    // customized methods.  We need to fix __setitem__, setdefault,
+    // and update.
+    typedef Sdf_VariantSelectionProxyWrap Wrap;
+    object cls = TfPyGetClassObject<SdfVariantSelectionProxy>();
+
+    // Erase old methods.
+    PyObject *const ns = cls.ptr();
+    PyObject *dict = ((PyTypeObject *)ns)->tp_dict;
+    PyObject_DelItem(dict, str("__setitem__").ptr());
+    PyObject_DelItem(dict, str("setdefault").ptr());
+    PyObject_DelItem(dict, str("update").ptr());
+
+    // Insert new methods.
+    object setitem = make_function(&Wrap::SetItem);
+    object setdefault = make_function(&Wrap::SetDefault);
+    object updateList = make_function(&Wrap::UpdateList);
+    object updateDict = make_function(&Wrap::UpdateDict);
+    objects::add_to_namespace(cls, "__setitem__", setitem);
+    objects::add_to_namespace(cls, "setdefault", setdefault);
+    objects::add_to_namespace(cls, "update", updateDict);
+    objects::add_to_namespace(cls, "update", updateList);
   }
-  else if (value.IsHolding<std::string>())
+
+  static TfEnum _DefaultUnitWrapper1(const TfEnum &unit)
   {
-    return TfHash()(value.Get<std::string>());
+    return SdfDefaultUnit(unit);
   }
-  else
+
+  static TfEnum _DefaultUnitWrapper2(const TfToken &typeName)
   {
-    return 0;
+    return SdfDefaultUnit(typeName);
   }
-}
 
-static string _SdfValueBlockRepr(const SdfValueBlock &self)
-{
-  return TF_PY_REPR_PREFIX + "ValueBlock";
-}
+  static string _UnitCategoryWrapper(const TfEnum &unit)
+  {
+    return SdfUnitCategory(unit);
+  }
 
-static int _SdfValueBlockHash(const SdfValueBlock &self)
-{
-  return boost::hash<SdfValueBlock>()(self);
-}
+  static string _UnregisteredValueRepr(const SdfUnregisteredValue &self)
+  {
+    string value = TfPyRepr(self.GetValue());
+    return TF_PY_REPR_PREFIX + "UnregisteredValue(" + value + ")";
+  }
 
-SdfValueTypeName _FindType(const std::string &typeName)
-{
-  return SdfSchema::GetInstance().FindType(typeName);
-}
+  static int _UnregisteredValueHash(const SdfUnregisteredValue &self)
+  {
+    const VtValue &value = self.GetValue();
+    if (value.IsHolding<VtDictionary>())
+    {
+      return VtDictionaryHash()(value.Get<VtDictionary>());
+    } else if (value.IsHolding<std::string>())
+    {
+      return TfHash()(value.Get<std::string>());
+    } else
+    {
+      return 0;
+    }
+  }
 
-boost::python::tuple _ConvertToValidMetadataDictionary(VtDictionary dict)
-{
-  std::string errMsg;
-  bool success = SdfConvertToValidMetadataDictionary(&dict, &errMsg);
-  return boost::python::make_tuple(success, dict, errMsg);
-}
+  static string _SdfValueBlockRepr(const SdfValueBlock &self)
+  {
+    return TF_PY_REPR_PREFIX + "ValueBlock";
+  }
+
+  static int _SdfValueBlockHash(const SdfValueBlock &self)
+  {
+    return boost::hash<SdfValueBlock>()(self);
+  }
+
+  SdfValueTypeName _FindType(const std::string &typeName)
+  {
+    return SdfSchema::GetInstance().FindType(typeName);
+  }
+
+  boost::python::tuple _ConvertToValidMetadataDictionary(VtDictionary dict)
+  {
+    std::string errMsg;
+    bool success = SdfConvertToValidMetadataDictionary(&dict, &errMsg);
+    return boost::python::make_tuple(success, dict, errMsg);
+  }
 
 }  // anonymous namespace
 
@@ -316,8 +310,9 @@ void wrapTypes()
 {
   TF_PY_WRAP_PUBLIC_TOKENS("ValueRoleNames", SdfValueRoleNames, SDF_VALUE_ROLE_NAME_TOKENS);
 
-  def(
-    "DefaultUnit", _DefaultUnitWrapper1, "For a given unit of measurement get the default compatible unit.");
+  def("DefaultUnit",
+      _DefaultUnitWrapper1,
+      "For a given unit of measurement get the default compatible unit.");
 
   def("DefaultUnit",
       _DefaultUnitWrapper2,
@@ -358,7 +353,7 @@ void wrapTypes()
   VtValueFromPython<SdfAuthoringError>();
 
 // Wrap all units enums.
-#define _WRAP_ENUM(r, unused, elem) \
+#define _WRAP_ENUM(r, unused, elem)          \
   TfPyWrapEnum<_SDF_UNITSLIST_ENUM(elem)>(); \
   VtValueFromPython<_SDF_UNITSLIST_ENUM(elem)>();
   BOOST_PP_LIST_FOR_EACH(_WRAP_ENUM, ~, _SDF_UNITS)

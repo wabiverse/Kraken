@@ -103,7 +103,8 @@ static VtDictionary _Hio_GetDictionaryFromJSON(const string &input, string *erro
     if (errorStr || TfDebug::IsEnabled(HIO_DEBUG_DICTIONARY))
     {
       std::string errorMessageStr = TfStringPrintf(
-        "Input string did not evaluate to a JSON dictionary:\n%s\n", input.c_str());
+        "Input string did not evaluate to a JSON dictionary:\n%s\n",
+        input.c_str());
       if (errorStr)
       {
         *errorStr = errorMessageStr;

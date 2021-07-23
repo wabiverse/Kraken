@@ -89,15 +89,13 @@ void HdRprDomeLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
       if (assetPath.GetResolvedPath().empty())
       {
         texturePath = ArGetResolver().Resolve(assetPath.GetAssetPath());
-      }
-      else
+      } else
       {
         texturePath = assetPath.GetResolvedPath();
       }
       // XXX: Why?
       removeFirstSlash(texturePath);
-    }
-    else if (texturePathValue.IsHolding<std::string>())
+    } else if (texturePathValue.IsHolding<std::string>())
     {
       // XXX: Is it even possible?
       texturePath = texturePathValue.UncheckedGet<std::string>();
@@ -116,8 +114,7 @@ void HdRprDomeLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
       }
 
       m_rprLight = rprApi->CreateEnvironmentLight(color, computedIntensity, backgroundOverride);
-    }
-    else
+    } else
     {
       m_rprLight = rprApi->CreateEnvironmentLight(texturePath, computedIntensity, backgroundOverride);
     }

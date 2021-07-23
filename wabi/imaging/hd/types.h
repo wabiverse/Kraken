@@ -178,8 +178,9 @@ struct HdVec4f_2_10_10_10_REV
   template<typename Vec3Type>
   Vec3Type GetAsVec() const
   {
-    return Vec3Type(
-      HdConvertFixedToFloat(x, 10), HdConvertFixedToFloat(y, 10), HdConvertFixedToFloat(z, 10));
+    return Vec3Type(HdConvertFixedToFloat(x, 10),
+                    HdConvertFixedToFloat(y, 10),
+                    HdConvertFixedToFloat(z, 10));
   }
 
   int GetAsInt() const

@@ -76,18 +76,27 @@ HdRprAovRegistry::HdRprAovRegistry()
   }
 
   // singlesampled AOVs
-  m_aovDescriptors[RPR_AOV_DEPTH] = HdRprAovDescriptor(
-    RPR_AOV_DEPTH, false, HdFormatFloat32, GfVec4f(std::numeric_limits<float>::infinity()));
+  m_aovDescriptors[RPR_AOV_DEPTH] = HdRprAovDescriptor(RPR_AOV_DEPTH,
+                                                       false,
+                                                       HdFormatFloat32,
+                                                       GfVec4f(std::numeric_limits<float>::infinity()));
   m_aovDescriptors[RPR_AOV_UV] = HdRprAovDescriptor(RPR_AOV_UV, false, HdFormatFloat32Vec3);
-  m_aovDescriptors[RPR_AOV_SHADING_NORMAL] = HdRprAovDescriptor(
-    RPR_AOV_SHADING_NORMAL, false, HdFormatFloat32Vec3);
+  m_aovDescriptors[RPR_AOV_SHADING_NORMAL] = HdRprAovDescriptor(RPR_AOV_SHADING_NORMAL,
+                                                                false,
+                                                                HdFormatFloat32Vec3);
   m_aovDescriptors[RPR_AOV_GEOMETRIC_NORMAL] = HdRprAovDescriptor(RPR_AOV_GEOMETRIC_NORMAL, false);
-  m_aovDescriptors[RPR_AOV_OBJECT_ID] = HdRprAovDescriptor(
-    RPR_AOV_OBJECT_ID, false, HdFormatInt32, idClearValue);
-  m_aovDescriptors[RPR_AOV_MATERIAL_ID] = HdRprAovDescriptor(
-    RPR_AOV_MATERIAL_ID, false, HdFormatInt32, idClearValue);
-  m_aovDescriptors[RPR_AOV_OBJECT_GROUP_ID] = HdRprAovDescriptor(
-    RPR_AOV_OBJECT_GROUP_ID, false, HdFormatInt32, idClearValue);
+  m_aovDescriptors[RPR_AOV_OBJECT_ID] = HdRprAovDescriptor(RPR_AOV_OBJECT_ID,
+                                                           false,
+                                                           HdFormatInt32,
+                                                           idClearValue);
+  m_aovDescriptors[RPR_AOV_MATERIAL_ID] = HdRprAovDescriptor(RPR_AOV_MATERIAL_ID,
+                                                             false,
+                                                             HdFormatInt32,
+                                                             idClearValue);
+  m_aovDescriptors[RPR_AOV_OBJECT_GROUP_ID] = HdRprAovDescriptor(RPR_AOV_OBJECT_GROUP_ID,
+                                                                 false,
+                                                                 HdFormatInt32,
+                                                                 idClearValue);
   m_aovDescriptors[RPR_AOV_WORLD_COORDINATE] = HdRprAovDescriptor(RPR_AOV_WORLD_COORDINATE, false);
   m_aovDescriptors[RPR_AOV_BACKGROUND] = HdRprAovDescriptor(RPR_AOV_BACKGROUND, false);
   m_aovDescriptors[RPR_AOV_VELOCITY] = HdRprAovDescriptor(RPR_AOV_VELOCITY, false);
@@ -95,16 +104,19 @@ HdRprAovRegistry::HdRprAovRegistry()
   m_aovDescriptors[RPR_AOV_CAMERA_NORMAL] = HdRprAovDescriptor(RPR_AOV_CAMERA_NORMAL, false);
 
   m_computedAovDescriptors.resize(kComputedAovsCount);
-  m_computedAovDescriptors[kNdcDepth] = HdRprAovDescriptor(
-    kNdcDepth, false, HdFormatFloat32, GfVec4f(std::numeric_limits<float>::infinity()), true);
-  m_computedAovDescriptors[kColorAlpha] = HdRprAovDescriptor(
-    kColorAlpha, true, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
-  m_computedAovDescriptors[kMaterialIdMask] = HdRprAovDescriptor(
-    kMaterialIdMask, false, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
-  m_computedAovDescriptors[kObjectIdMask] = HdRprAovDescriptor(
-    kObjectIdMask, false, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
-  m_computedAovDescriptors[kObjectGroupIdMask] = HdRprAovDescriptor(
-    kObjectGroupIdMask, false, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
+  m_computedAovDescriptors[kNdcDepth] = HdRprAovDescriptor(kNdcDepth,
+                                                           false,
+                                                           HdFormatFloat32,
+                                                           GfVec4f(std::numeric_limits<float>::infinity()),
+                                                           true);
+  m_computedAovDescriptors[kColorAlpha] =
+    HdRprAovDescriptor(kColorAlpha, true, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
+  m_computedAovDescriptors[kMaterialIdMask] =
+    HdRprAovDescriptor(kMaterialIdMask, false, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
+  m_computedAovDescriptors[kObjectIdMask] =
+    HdRprAovDescriptor(kObjectIdMask, false, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
+  m_computedAovDescriptors[kObjectGroupIdMask] =
+    HdRprAovDescriptor(kObjectGroupIdMask, false, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
 
   auto addAovNameLookup = [this](TfToken const &name, HdRprAovDescriptor const &descriptor) {
     auto status = m_aovNameLookup.emplace(name, AovNameLookupValue(descriptor.id, descriptor.computed));
@@ -194,8 +206,7 @@ HdRprAovDescriptor const &HdRprAovRegistry::GetAovDesc(uint32_t id, bool compute
   if (computed)
   {
     return m_computedAovDescriptors[id];
-  }
-  else
+  } else
   {
     return m_aovDescriptors[id];
   }

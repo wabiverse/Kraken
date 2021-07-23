@@ -112,8 +112,12 @@ void HdxPresentTask::Execute(HdTaskContext *ctx)
     // framebuffer contents.
     // Eg. This allows us to render with HgiMetal and present the images
     // into a opengl based application (such as usdview).
-    _interop.TransferToApp(
-      _hgi, aovTexture, depthTexture, _params.dstApi, _params.dstFramebuffer, _params.dstRegion);
+    _interop.TransferToApp(_hgi,
+                           aovTexture,
+                           depthTexture,
+                           _params.dstApi,
+                           _params.dstFramebuffer,
+                           _params.dstRegion);
   }
 
   // Wrap one HdEngine::Execute frame with Hgi StartFrame and EndFrame.

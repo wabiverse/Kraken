@@ -264,8 +264,7 @@ void SdfListOp<T>::ApplyOperations(ItemVector *vec, const ApplyCallback &cb) con
   {
     _ApplyMap search;
     _AddKeys(SdfListOpTypeExplicit, cb, &result, &search);
-  }
-  else
+  } else
   {
     size_t numToDelete = _deletedItems.size();
     size_t numToAdd = _addedItems.size();
@@ -406,8 +405,7 @@ static inline void _InsertOrMove(const ItemType &item,
   if (entry == search->end())
   {
     (*search)[item] = result->insert(pos, item);
-  }
-  else if (entry->second != pos)
+  } else if (entry->second != pos)
   {
     result->splice(pos, *result, entry->second, std::next(entry->second));
   }
@@ -439,8 +437,7 @@ void SdfListOp<T>::_AddKeys(SdfListOpType op,
         // Only append if the item isn't already present.
         _InsertIfUnique(*item, result, search);
       }
-    }
-    else
+    } else
     {
       _InsertIfUnique(*i, result, search);
     }
@@ -463,8 +460,7 @@ void SdfListOp<T>::_PrependKeys(SdfListOpType op,
         _InsertOrMove(*mappedItem, result->begin(), result, search);
       }
     }
-  }
-  else
+  } else
   {
     for (auto i = items.rbegin(), iEnd = items.rend(); i != iEnd; ++i)
     {
@@ -490,8 +486,7 @@ void SdfListOp<T>::_AppendKeys(SdfListOpType op,
         _InsertOrMove(*mappedItem, result->end(), result, search);
       }
     }
-  }
-  else
+  } else
   {
     for (const T &item : items)
     {
@@ -514,8 +509,7 @@ void SdfListOp<T>::_DeleteKeys(SdfListOpType op,
       {
         _RemoveIfPresent(*item, result, search);
       }
-    }
-    else
+    } else
     {
       _RemoveIfPresent(*i, result, search);
     }
@@ -542,8 +536,7 @@ void SdfListOp<T>::_ReorderKeys(SdfListOpType op,
           order.push_back(*item);
         }
       }
-    }
-    else
+    } else
     {
       if (orderSet.insert(*i).second)
       {
@@ -600,13 +593,11 @@ static inline bool _ModifyCallbackHelper(const typename SdfListOp<T>::ModifyCall
     if (!modifiedItem)
     {
       didModify = true;
-    }
-    else if (*modifiedItem != *item)
+    } else if (*modifiedItem != *item)
     {
       modifiedVector.push_back(*modifiedItem);
       didModify = true;
-    }
-    else
+    } else
     {
       modifiedVector.push_back(*item);
     }
@@ -666,8 +657,7 @@ bool SdfListOp<T>::ReplaceOperations(const SdfListOpType op,
   {
     TF_CODING_ERROR("Invalid start index %zd (size is %zd)", index, itemVector.size());
     return false;
-  }
-  else if (index + n > itemVector.size())
+  } else if (index + n > itemVector.size())
   {
     TF_CODING_ERROR("Invalid end index %zd (size is %zd)", index + n - 1, itemVector.size());
     return false;
@@ -676,8 +666,7 @@ bool SdfListOp<T>::ReplaceOperations(const SdfListOpType op,
   if (n == newItems.size())
   {
     std::copy(newItems.begin(), newItems.end(), itemVector.begin() + index);
-  }
-  else
+  } else
   {
     itemVector.erase(itemVector.begin() + index, itemVector.begin() + index + n);
     itemVector.insert(itemVector.begin() + index, newItems.begin(), newItems.end());
@@ -696,8 +685,7 @@ void SdfListOp<T>::ComposeOperations(const SdfListOp<T> &stronger, SdfListOpType
   if (op == SdfListOpTypeExplicit)
   {
     weaker.SetItems(stronger.GetItems(op), op);
-  }
-  else
+  } else
   {
     const ItemVector &weakerVector = weaker.GetItems(op);
     _ApplyList weakerList(weakerVector.begin(), weakerVector.end());
@@ -711,20 +699,16 @@ void SdfListOp<T>::ComposeOperations(const SdfListOp<T> &stronger, SdfListOpType
     {
       stronger._AddKeys(op, ApplyCallback(), &weakerList, &weakerSearch);
       stronger._ReorderKeys(op, ApplyCallback(), &weakerList, &weakerSearch);
-    }
-    else if (op == SdfListOpTypeAdded)
+    } else if (op == SdfListOpTypeAdded)
     {
       stronger._AddKeys(op, ApplyCallback(), &weakerList, &weakerSearch);
-    }
-    else if (op == SdfListOpTypeDeleted)
+    } else if (op == SdfListOpTypeDeleted)
     {
       stronger._AddKeys(op, ApplyCallback(), &weakerList, &weakerSearch);
-    }
-    else if (op == SdfListOpTypePrepended)
+    } else if (op == SdfListOpTypePrepended)
     {
       stronger._PrependKeys(op, ApplyCallback(), &weakerList, &weakerSearch);
-    }
-    else if (op == SdfListOpTypeAppended)
+    } else if (op == SdfListOpTypeAppended)
     {
       stronger._AppendKeys(op, ApplyCallback(), &weakerList, &weakerSearch);
     }
@@ -785,8 +769,7 @@ static std::ostream &_StreamOut(std::ostream &out, const SdfListOp<T> &op)
                     op.GetExplicitItems(),
                     &firstItems,
                     /* isExplicitList = */ true);
-  }
-  else
+  } else
   {
     _StreamOutItems(out, "Deleted", op.GetDeletedItems(), &firstItems);
     _StreamOutItems(out, "Added", op.GetAddedItems(), &firstItems);
@@ -831,8 +814,7 @@ struct Sdf_ListOpTraits<SdfUnregisteredValue>
       if (xHash < yHash)
       {
         return true;
-      }
-      else if (xHash > yHash || x == y)
+      } else if (xHash > yHash || x == y)
       {
         return false;
       }
@@ -850,7 +832,7 @@ struct Sdf_ListOpTraits<SdfUnregisteredValue>
 // Template instantiation.
 
 #define SDF_INSTANTIATE_LIST_OP(ValueType) \
-  template class SdfListOp<ValueType>; \
+  template class SdfListOp<ValueType>;     \
   template SDF_API std::ostream &operator<<(std::ostream &, const SdfListOp<ValueType> &)
 
 SDF_INSTANTIATE_LIST_OP(int);

@@ -133,11 +133,14 @@ HdArnoldConfig::HdArnoldConfig()
   shutter_start = static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_shutter_start).c_str()));
   shutter_end = static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_shutter_end).c_str()));
   interactive_target_fps = std::max(
-    1.0f, static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_target_fps).c_str())));
+    1.0f,
+    static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_target_fps).c_str())));
   interactive_target_fps_min = std::max(
-    1.0f, static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_target_fps_min).c_str())));
+    1.0f,
+    static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_target_fps_min).c_str())));
   interactive_fps_min = std::max(
-    1.0f, static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_fps_min).c_str())));
+    1.0f,
+    static_cast<float>(std::atof(TfGetEnvSetting(HDARNOLD_interactive_fps_min).c_str())));
   profile_file = TfGetEnvSetting(HDARNOLD_profile_file);
   texture_searchpath = TfGetEnvSetting(HDARNOLD_texture_searchpath);
   plugin_searchpath = TfGetEnvSetting(HDARNOLD_plugin_searchpath);

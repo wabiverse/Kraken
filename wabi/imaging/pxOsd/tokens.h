@@ -40,7 +40,7 @@
 WABI_NAMESPACE_BEGIN
 
 #define PXOSD_OPENSUBDIV_TOKENS \
-  (all)(none)( \
+  (all)(none)(                  \
     cornersOnly)(cornersPlus1)(cornersPlus2)(boundaries)(bilinear)(catmullClark)(loop)(edgeOnly)(edgeAndCorner)(uniform)(chaikin)(leftHanded)(rightHanded)(smooth)
 
 TF_DECLARE_PUBLIC_TOKENS(PxOsdOpenSubdivTokens, PXOSD_API, PXOSD_OPENSUBDIV_TOKENS);

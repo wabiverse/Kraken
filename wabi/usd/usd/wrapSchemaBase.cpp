@@ -63,8 +63,7 @@ static object __getattribute__(object selfObj, const char *name)
   {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
-  }
-  else
+  } else
   {
     // Otherwise raise a runtime error.
     TfPyThrowRuntimeError(TfStringPrintf("Accessed schema on invalid prim"));

@@ -242,8 +242,7 @@ class TfSpan
     if (count == -1)
     {
       return TfSpan<T>(_data + offset, _size - offset);
-    }
-    else
+    } else
     {
       TF_DEV_AXIOM(count >= 0);
       TF_DEV_AXIOM(((index_type)offset + (index_type)count) <= _size);

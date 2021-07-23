@@ -56,8 +56,7 @@ GfVec3d GfLineSeg::FindClosestPoint(const GfVec3d &point, double *t) const
   if (_length == 0.0)
   {
     lt = 0.0;
-  }
-  else
+  } else
   {
     _line.FindClosestPoint(point, &lt);
 

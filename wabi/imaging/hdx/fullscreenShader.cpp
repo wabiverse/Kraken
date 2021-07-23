@@ -41,9 +41,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          ((fullscreenVertex, "FullscreenVertex"))((compositeFragmentNoDepth,
-                                                                   "CompositeFragmentNoDepth"))((
-                           compositeFragmentWithDepth,
-                           "CompositeFragmentWithDepth"))(fullscreenShader));
+                                                                   "CompositeFragmentNoDepth"))(
+                           (compositeFragmentWithDepth, "CompositeFragmentWithDepth"))(fullscreenShader));
 
 HdxFullscreenShader::HdxFullscreenShader(Hgi *hgi, std::string const &debugName)
   : _hgi(hgi),
@@ -322,8 +321,7 @@ void HdxFullscreenShader::BindTextures(TfTokenVector const &names, HgiTextureHan
     if (tex)
     {
       _textures[name] = tex;
-    }
-    else
+    } else
     {
       _textures.erase(name);
     }
@@ -600,8 +598,7 @@ void HdxFullscreenShader::_Draw(TextureMap const &textures,
   if (dimensionSrc)
   {
     dimensions = dimensionSrc->GetDescriptor().dimensions;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Could not determine the backbuffer dimensions");
   }
@@ -632,8 +629,11 @@ void HdxFullscreenShader::_Draw(TextureMap const &textures,
 
   if (!_constantsData.empty())
   {
-    gfxCmds->SetConstantValues(
-      _pipeline, HgiShaderStageFragment, 0, _constantsData.size(), _constantsData.data());
+    gfxCmds->SetConstantValues(_pipeline,
+                               HgiShaderStageFragment,
+                               0,
+                               _constantsData.size(),
+                               _constantsData.data());
   }
 
   gfxCmds->DrawIndexed(_indexBuffer, 3, 0, 0, 1);

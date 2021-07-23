@@ -50,31 +50,32 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateRiTextureGammaAttr(UsdRiTextureAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiTextureGammaAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                       writeSparsely);
-}
+  static UsdAttribute _CreateRiTextureGammaAttr(UsdRiTextureAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRiTextureGammaAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
 
-static UsdAttribute _CreateRiTextureSaturationAttr(UsdRiTextureAPI &self,
-                                                   object defaultVal,
-                                                   bool writeSparsely)
-{
-  return self.CreateRiTextureSaturationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                            writeSparsely);
-}
+  static UsdAttribute _CreateRiTextureSaturationAttr(UsdRiTextureAPI &self,
+                                                     object defaultVal,
+                                                     bool writeSparsely)
+  {
+    return self.CreateRiTextureSaturationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                              writeSparsely);
+  }
 
-static std::string _Repr(const UsdRiTextureAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.TextureAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiTextureAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.TextureAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -142,7 +143,7 @@ void wrapUsdRiTextureAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

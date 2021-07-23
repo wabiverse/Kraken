@@ -276,8 +276,7 @@ void VtDictionary::_EraseValueAtPathImpl(vector<string>::const_iterator curKeyEl
     if (newDict.empty())
     {
       erase(i);
-    }
-    else
+    } else
     {
       i->second.Swap(newDict);
     }
@@ -363,14 +362,12 @@ void VtDictionaryOver(const VtDictionary &strong, VtDictionary *weak, bool coerc
       if (j == weak->end())
       {
         weak->insert(*it);
-      }
-      else
+      } else
       {
         j->second = VtValue::CastToTypeOf(it->second, j->second);
       }
     }
-  }
-  else
+  } else
   {
     // Can't use map::insert here, because that doesn't overwrite
     // values for keys in strong that are already in weak.
@@ -420,8 +417,7 @@ void VtDictionaryOverRecursive(VtDictionary *strong,
       VtDictionaryOverRecursive(&strongSubDict, weakSubDict);
       // Swap the modified dict back into place.
       i->second.Swap(strongSubDict);
-    }
-    else
+    } else
     {
       // Insert will set strong with value from weak only if
       // strong does not already have a value for that key.
@@ -464,21 +460,18 @@ void VtDictionaryOverRecursive(const VtDictionary &strong,
       VtDictionaryOverRecursive(strongSubDict, &weakSubDict);
       // Swap the modified dict back into place.
       i->second.Swap(weakSubDict);
-    }
-    else if (coerceToWeakerOpinionType)
+    } else if (coerceToWeakerOpinionType)
     {
       // Else stomp over weak with strong but with type coersion.
       VtDictionary::iterator j = weak->find(it->first);
       if (j == weak->end())
       {
         weak->insert(*it);
-      }
-      else
+      } else
       {
         j->second = VtValue::CastToTypeOf(it->second, j->second);
       }
-    }
-    else
+    } else
     {
       // Else stomp over weak with strong
       (*weak)[it->first] = it->second;

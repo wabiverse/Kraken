@@ -305,16 +305,14 @@ static void _ResolveConsumers(const UsdShadeInput &consumer,
         {
           _ResolveConsumers(nestedConsumer, nodeGraphInputConsumers, resolvedConsumers);
         }
-      }
-      else
+      } else
       {
         // If the node-graph input has no consumers, then add it to
         // the list of resolved consumers.
         resolvedConsumers->push_back(consumer);
       }
     }
-  }
-  else
+  } else
   {
     resolvedConsumers->push_back(consumer);
   }

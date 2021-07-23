@@ -78,8 +78,7 @@ double PIL_check_seconds_timer(void)
     QueryPerformanceCounter((LARGE_INTEGER *)&count);
 
     return count / perffreq;
-  }
-  else
+  } else
   {
     static double accum = 0.0;
     static int ltick = 0;
@@ -88,8 +87,7 @@ double PIL_check_seconds_timer(void)
     if (ntick < ltick)
     {
       accum += (0xFFFFFFFF - ltick + ntick) / 1000.0;
-    }
-    else
+    } else
     {
       accum += (ntick - ltick) / 1000.0;
     }

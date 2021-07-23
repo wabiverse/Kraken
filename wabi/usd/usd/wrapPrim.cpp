@@ -66,91 +66,90 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static SdfPathVector _FindAllAttributeConnectionPaths(UsdPrim const &self,
-                                                      boost::python::object pypred,
-                                                      bool recurseOnSources)
-{
-  using Predicate = std::function<bool(UsdAttribute const &)>;
-  Predicate pred;
-  if (!pypred.is_none())
-    pred = boost::python::extract<Predicate>(pypred);
-  return self.FindAllAttributeConnectionPaths(pred, recurseOnSources);
-}
-
-static SdfPathVector _FindAllRelationshipTargetPaths(UsdPrim const &self,
-                                                     boost::python::object pypred,
-                                                     bool recurseOnTargets)
-{
-  using Predicate = std::function<bool(UsdRelationship const &)>;
-  Predicate pred;
-  if (!pypred.is_none())
-    pred = boost::python::extract<Predicate>(pypred);
-  return self.FindAllRelationshipTargetPaths(pred, recurseOnTargets);
-}
-
-static string __repr__(const UsdPrim &self)
-{
-  if (self)
+  static SdfPathVector _FindAllAttributeConnectionPaths(UsdPrim const &self,
+                                                        boost::python::object pypred,
+                                                        bool recurseOnSources)
   {
-    return TF_PY_REPR_PREFIX + TfStringPrintf("Prim(<%s>)", self.GetPath().GetText());
+    using Predicate = std::function<bool(UsdAttribute const &)>;
+    Predicate pred;
+    if (!pypred.is_none())
+      pred = boost::python::extract<Predicate>(pypred);
+    return self.FindAllAttributeConnectionPaths(pred, recurseOnSources);
   }
-  else
+
+  static SdfPathVector _FindAllRelationshipTargetPaths(UsdPrim const &self,
+                                                       boost::python::object pypred,
+                                                       bool recurseOnTargets)
   {
-    return "invalid " + self.GetDescription();
+    using Predicate = std::function<bool(UsdRelationship const &)>;
+    Predicate pred;
+    if (!pypred.is_none())
+      pred = boost::python::extract<Predicate>(pypred);
+    return self.FindAllRelationshipTargetPaths(pred, recurseOnTargets);
   }
-}
 
-static TfTokenVector _WrapGetPropertyNames(const UsdPrim &prim, boost::python::object predicate)
-{
-  const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                                 UsdPrim::PropertyPredicateFunc();
-  return prim.GetPropertyNames(pred);
-}
+  static string __repr__(const UsdPrim &self)
+  {
+    if (self)
+    {
+      return TF_PY_REPR_PREFIX + TfStringPrintf("Prim(<%s>)", self.GetPath().GetText());
+    } else
+    {
+      return "invalid " + self.GetDescription();
+    }
+  }
 
-static TfTokenVector _WrapGetAuthoredPropertyNames(const UsdPrim &prim, boost::python::object predicate)
-{
-  const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                                 UsdPrim::PropertyPredicateFunc();
-  return prim.GetAuthoredPropertyNames(pred);
-}
+  static TfTokenVector _WrapGetPropertyNames(const UsdPrim &prim, boost::python::object predicate)
+  {
+    const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                                   UsdPrim::PropertyPredicateFunc();
+    return prim.GetPropertyNames(pred);
+  }
 
-static std::vector<UsdProperty> _WrapGetProperties(const UsdPrim &prim, boost::python::object predicate)
-{
-  const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                                 UsdPrim::PropertyPredicateFunc();
-  return prim.GetProperties(pred);
-}
+  static TfTokenVector _WrapGetAuthoredPropertyNames(const UsdPrim &prim, boost::python::object predicate)
+  {
+    const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                                   UsdPrim::PropertyPredicateFunc();
+    return prim.GetAuthoredPropertyNames(pred);
+  }
 
-static std::vector<UsdProperty> _WrapGetAuthoredProperties(const UsdPrim &prim,
-                                                           boost::python::object predicate)
-{
-  const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                                 UsdPrim::PropertyPredicateFunc();
-  return prim.GetAuthoredProperties(pred);
-}
+  static std::vector<UsdProperty> _WrapGetProperties(const UsdPrim &prim, boost::python::object predicate)
+  {
+    const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                                   UsdPrim::PropertyPredicateFunc();
+    return prim.GetProperties(pred);
+  }
 
-struct Usd_PrimCanApplyAPIResult : public TfPyAnnotatedBoolResult<string>
-{
-  Usd_PrimCanApplyAPIResult(bool val, string const &msg)
-    : TfPyAnnotatedBoolResult<string>(val, msg)
-  {}
-};
+  static std::vector<UsdProperty> _WrapGetAuthoredProperties(const UsdPrim &prim,
+                                                             boost::python::object predicate)
+  {
+    const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                                   UsdPrim::PropertyPredicateFunc();
+    return prim.GetAuthoredProperties(pred);
+  }
 
-static Usd_PrimCanApplyAPIResult _WrapCanApplyAPI(const UsdPrim &prim, const TfType &schemaType)
-{
-  std::string whyNot;
-  bool result = prim.CanApplyAPI(schemaType, &whyNot);
-  return Usd_PrimCanApplyAPIResult(result, whyNot);
-}
+  struct Usd_PrimCanApplyAPIResult : public TfPyAnnotatedBoolResult<string>
+  {
+    Usd_PrimCanApplyAPIResult(bool val, string const &msg)
+      : TfPyAnnotatedBoolResult<string>(val, msg)
+    {}
+  };
 
-static Usd_PrimCanApplyAPIResult _WrapCanApplyAPI_2(const UsdPrim &prim,
-                                                    const TfType &schemaType,
-                                                    const TfToken &instanceName)
-{
-  std::string whyNot;
-  bool result = prim.CanApplyAPI(schemaType, instanceName, &whyNot);
-  return Usd_PrimCanApplyAPIResult(result, whyNot);
-}
+  static Usd_PrimCanApplyAPIResult _WrapCanApplyAPI(const UsdPrim &prim, const TfType &schemaType)
+  {
+    std::string whyNot;
+    bool result = prim.CanApplyAPI(schemaType, &whyNot);
+    return Usd_PrimCanApplyAPIResult(result, whyNot);
+  }
+
+  static Usd_PrimCanApplyAPIResult _WrapCanApplyAPI_2(const UsdPrim &prim,
+                                                      const TfType &schemaType,
+                                                      const TfToken &instanceName)
+  {
+    std::string whyNot;
+    bool result = prim.CanApplyAPI(schemaType, instanceName, &whyNot);
+    return Usd_PrimCanApplyAPIResult(result, whyNot);
+  }
 }  // anonymous namespace
 
 void wrapUsdPrim()
@@ -241,19 +240,19 @@ void wrapUsdPrim()
     .def("SetPropertyOrder", &UsdPrim::SetPropertyOrder, arg("order"))
     .def("ClearPropertyOrder", &UsdPrim::ClearPropertyOrder)
 
-    .def("IsA", (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::IsA, arg("schemaType"))
+    .def("IsA", (bool(UsdPrim::*)(const TfType &) const) & UsdPrim::IsA, arg("schemaType"))
     .def("HasAPI",
-         (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::HasAPI,
+         (bool(UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::HasAPI,
          (arg("schemaType"), arg("instanceName") = TfToken()))
     .def("CanApplyAPI", &_WrapCanApplyAPI, (arg("schemaType")))
     .def("CanApplyAPI", &_WrapCanApplyAPI_2, (arg("schemaType"), arg("instanceName")))
-    .def("ApplyAPI", (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::ApplyAPI, (arg("schemaType")))
+    .def("ApplyAPI", (bool(UsdPrim::*)(const TfType &) const) & UsdPrim::ApplyAPI, (arg("schemaType")))
     .def("ApplyAPI",
-         (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::ApplyAPI,
+         (bool(UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::ApplyAPI,
          (arg("schemaType"), arg("instanceName")))
-    .def("RemoveAPI", (bool (UsdPrim::*)(const TfType &) const) & UsdPrim::RemoveAPI, (arg("schemaType")))
+    .def("RemoveAPI", (bool(UsdPrim::*)(const TfType &) const) & UsdPrim::RemoveAPI, (arg("schemaType")))
     .def("RemoveAPI",
-         (bool (UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::RemoveAPI,
+         (bool(UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::RemoveAPI,
          (arg("schemaType"), arg("instanceName")))
 
     .def("AddAppliedSchema", &UsdPrim::AddAppliedSchema)
@@ -335,12 +334,12 @@ void wrapUsdPrim()
          (arg("predicate") = object(), arg("recurseOnTargets") = false))
 
     .def("HasPayload", &UsdPrim::HasPayload)
-    .def("SetPayload", (bool (UsdPrim::*)(const SdfPayload &) const) & UsdPrim::SetPayload, (arg("payload")))
+    .def("SetPayload", (bool(UsdPrim::*)(const SdfPayload &) const) & UsdPrim::SetPayload, (arg("payload")))
     .def("SetPayload",
-         (bool (UsdPrim::*)(const string &, const SdfPath &) const) & UsdPrim::SetPayload,
+         (bool(UsdPrim::*)(const string &, const SdfPath &) const) & UsdPrim::SetPayload,
          (arg("assetPath"), arg("primPath")))
     .def("SetPayload",
-         (bool (UsdPrim::*)(const SdfLayerHandle &, const SdfPath &) const) & UsdPrim::SetPayload,
+         (bool(UsdPrim::*)(const SdfLayerHandle &, const SdfPath &) const) & UsdPrim::SetPayload,
          (arg("layer"), arg("primPath")))
     .def("ClearPayload", &UsdPrim::ClearPayload)
 

@@ -322,8 +322,7 @@ class SdfListEditorProxy
         if (_listEditor->IsExplicit())
         {
           _AddOrReplace(SdfListOpTypeExplicit, value);
-        }
-        else
+        } else
         {
           GetDeletedItems().Remove(value);
           _AddOrReplace(SdfListOpTypeAdded, value);
@@ -341,8 +340,7 @@ class SdfListEditorProxy
         if (_listEditor->IsExplicit())
         {
           _Prepend(SdfListOpTypeExplicit, value);
-        }
-        else
+        } else
         {
           GetDeletedItems().Remove(value);
           _Prepend(SdfListOpTypePrepended, value);
@@ -360,8 +358,7 @@ class SdfListEditorProxy
         if (_listEditor->IsExplicit())
         {
           _Append(SdfListOpTypeExplicit, value);
-        }
-        else
+        } else
         {
           GetDeletedItems().Remove(value);
           _Append(SdfListOpTypeAppended, value);
@@ -377,8 +374,7 @@ class SdfListEditorProxy
       if (_listEditor->IsExplicit())
       {
         GetExplicitItems().Remove(value);
-      }
-      else if (!_listEditor->IsOrderedOnly())
+      } else if (!_listEditor->IsOrderedOnly())
       {
         GetAddedItems().Remove(value);
         GetPrependedItems().Remove(value);
@@ -397,8 +393,7 @@ class SdfListEditorProxy
         if (_listEditor->IsExplicit())
         {
           GetExplicitItems().Remove(value);
-        }
-        else
+        } else
         {
           GetAddedItems().Remove(value);
           GetPrependedItems().Remove(value);
@@ -464,8 +459,7 @@ class SdfListEditorProxy
     if (index == size_t(-1))
     {
       proxy.push_back(value);
-    }
-    else if (value != static_cast<value_type>(proxy[index]))
+    } else if (value != static_cast<value_type>(proxy[index]))
     {
       proxy[index] = value;
     }

@@ -274,8 +274,7 @@
     inverse._mtx[2][3] = {{SCALAR_CAST("z32*rcp")}};
     inverse._mtx[3][2] = {{SCALAR_CAST("z23*rcp")}};
     inverse._mtx[3][3] = {{SCALAR_CAST("z33*rcp")}};
-  }
-  else
+  } else
   {
     inverse.SetScale(FLT_MAX);
   }
@@ -820,8 +819,7 @@ bool
     if (eigenvalues[i] < eps)
     {
       (*s)[i] = detSign * eps;
-    }
-    else
+    } else
     {
       (*s)[i] = detSign * sqrt(eigenvalues[i]);
     }
@@ -900,8 +898,7 @@ void
           if (GfAbs(h) + g == GfAbs(h))
           {
             t = a._mtx[p][q] / h;
-          }
-          else
+          } else
           {
             double theta = 0.5 * h / a._mtx[p][q];
             t = 1.0 / (GfAbs(theta) + sqrt(1.0 + theta * theta));
@@ -1033,8 +1030,7 @@ GfQuat{{SCL[0]}}
     im.Set((_mtx[1][2] - _mtx[2][1]) / (4.0 * r),
            (_mtx[2][0] - _mtx[0][2]) / (4.0 * r),
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
-  }
-  else
+  } else
   {
     int j = (i + 1) % 3;
     int k = (i + 2) % 3;

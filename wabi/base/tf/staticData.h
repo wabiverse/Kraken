@@ -199,21 +199,21 @@ class TfStaticData
 /// not have side-effects, but you should be aware of it.
 ///
 /// \hideinitializer
-#define TF_MAKE_STATIC_DATA(Type, Name) \
-  static void TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl)(TF_PP_EAT_PARENS(Type) *); \
-  namespace \
-  { \
-  struct TF_PP_CAT(Name, _Tf_StaticDataFactory) \
-  { \
-    static TF_PP_EAT_PARENS(Type) * New() \
-    { \
-      auto *p = new TF_PP_EAT_PARENS(Type); \
-      TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl) \
-      (p); \
-      return p; \
-    } \
-  }; \
-  } \
+#define TF_MAKE_STATIC_DATA(Type, Name)                                                     \
+  static void TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl)(TF_PP_EAT_PARENS(Type) *);         \
+  namespace                                                                                 \
+  {                                                                                         \
+    struct TF_PP_CAT(Name, _Tf_StaticDataFactory)                                           \
+    {                                                                                       \
+      static TF_PP_EAT_PARENS(Type) * New()                                                 \
+      {                                                                                     \
+        auto *p = new TF_PP_EAT_PARENS(Type);                                               \
+        TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl)                                          \
+        (p);                                                                                \
+        return p;                                                                           \
+      }                                                                                     \
+    };                                                                                      \
+  }                                                                                         \
   static TfStaticData<TF_PP_EAT_PARENS(Type), TF_PP_CAT(Name, _Tf_StaticDataFactory)> Name; \
   static void TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl)(TF_PP_EAT_PARENS(Type) * Name)
 

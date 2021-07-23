@@ -72,8 +72,7 @@ HgiGLShaderProgram::HgiGLShaderProgram(HgiShaderProgramDesc const &desc)
     glGetProgramInfoLog(_programId, logSize, nullptr, &_errors[0]);
     glDeleteProgram(_programId);
     _programId = 0;
-  }
-  else
+  } else
   {
     GLint size;
     glGetProgramiv(_programId, GL_PROGRAM_BINARY_LENGTH, &size);

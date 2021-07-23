@@ -92,8 +92,7 @@ void HdPrimGather::PredicatedFilter(const SdfPathVector &paths,
                               predicateParam);
         }
       });
-    }
-    else
+    } else
     {
       size_t numRanges = _gatheredRanges.size();
       for (size_t rangeNum = 0; rangeNum < numRanges; ++rangeNum)
@@ -163,8 +162,7 @@ size_t HdPrimGather::_FindLowerBound(const SdfPathVector &paths,
     {
       start = mid + 1;
       rangeSize -= step + 1;
-    }
-    else
+    } else
     {
       rangeSize = step;
     }
@@ -197,8 +195,7 @@ size_t HdPrimGather::_FindUpperBound(const SdfPathVector &paths,
     {
       start = mid + 1;
       rangeSize -= step + 1;
-    }
-    else
+    } else
     {
       rangeSize = step;
     }
@@ -252,8 +249,7 @@ void HdPrimGather::_FilterRange(const SdfPathVector &paths, size_t start, size_t
   if (skipFilter)
   {
     _FilterRange(paths, start, end, isIncludeRange);
-  }
-  else
+  } else
   {
     // We need to split the range.
 
@@ -352,8 +348,7 @@ void HdPrimGather::_DoPredicateTestOnRange(const SdfPathVector &paths,
                                 std::placeholders::_1,
                                 predicateFn,
                                 predicateParam));
-  }
-  else
+  } else
   {
     _DoPredicateTestOnPrims(paths, concurrentRange, predicateFn, predicateParam);
   }

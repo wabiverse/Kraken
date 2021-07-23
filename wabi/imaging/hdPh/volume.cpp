@@ -161,293 +161,296 @@ void HdPhVolume::_UpdateRepr(HdSceneDelegate *sceneDelegate,
 namespace
 {
 
-// Fallback volume shader created from shaders/fallbackVolume.glslfx
-HdPhShaderCodeSharedPtr _MakeFallbackVolumeShader()
-{
-  const HioGlslfx glslfx(HdPhPackageFallbackVolumeShader());
-
-  // Note that we use HdPhSurfaceShader for a volume shader.
-  // Despite its name, HdPhSurfaceShader is really just a pair of
-  // GLSL code and bindings and not specific to surface shading.
-  HdPhSurfaceShaderSharedPtr const result = std::make_shared<HdPhSurfaceShader>();
-
-  result->SetFragmentSource(glslfx.GetVolumeSource());
-  result->SetParams({HdPh_MaterialParam(HdPh_MaterialParam::ParamTypeFieldRedirect,
-                                        _fallbackShaderTokens->density,
-                                        VtValue(0.0f),
-                                        {_fallbackShaderTokens->density}),
-                     HdPh_MaterialParam(HdPh_MaterialParam::ParamTypeFieldRedirect,
-                                        _fallbackShaderTokens->emission,
-                                        VtValue(GfVec3f(0.0, 0.0, 0.0)),
-                                        {_fallbackShaderTokens->emission})});
-
-  return result;
-}
-
-HdPhShaderCodeSharedPtr _ComputeVolumeShader(const HdPhMaterial *const material)
-{
-  if (material)
+  // Fallback volume shader created from shaders/fallbackVolume.glslfx
+  HdPhShaderCodeSharedPtr _MakeFallbackVolumeShader()
   {
-    // Use the shader from the HdPhMaterial as volume shader.
-    //
-    // Note that rprims should query the material whether they want
-    // a surface or volume shader instead of just asking for "some"
-    // shader with HdPhMaterial::GetShaderCode().
-    // We can use HdPhMaterial::GetShaderCode() here because the
-    // UsdImagingGLHydraMaterialAdapter is following the outputs:volume
-    // input of a material if the outputs:surface is unconnected.
-    //
-    // We should revisit the API an rprim is using to ask HdPhMaterial
-    // for a shader once we switched over to HdMaterialNetworkMap's.
-    return material->GetShaderCode();
+    const HioGlslfx glslfx(HdPhPackageFallbackVolumeShader());
+
+    // Note that we use HdPhSurfaceShader for a volume shader.
+    // Despite its name, HdPhSurfaceShader is really just a pair of
+    // GLSL code and bindings and not specific to surface shading.
+    HdPhSurfaceShaderSharedPtr const result = std::make_shared<HdPhSurfaceShader>();
+
+    result->SetFragmentSource(glslfx.GetVolumeSource());
+    result->SetParams({HdPh_MaterialParam(HdPh_MaterialParam::ParamTypeFieldRedirect,
+                                          _fallbackShaderTokens->density,
+                                          VtValue(0.0f),
+                                          {_fallbackShaderTokens->density}),
+                       HdPh_MaterialParam(HdPh_MaterialParam::ParamTypeFieldRedirect,
+                                          _fallbackShaderTokens->emission,
+                                          VtValue(GfVec3f(0.0, 0.0, 0.0)),
+                                          {_fallbackShaderTokens->emission})});
+
+    return result;
   }
-  else
-  {
-    // Instantiate fallback volume shader only once
-    //
-    // Note that the default HdPhMaterial provides a fallback surface
-    // shader and we need a volume shader, so we create the shader here
-    // ourselves.
-    static const HdPhShaderCodeSharedPtr fallbackVolumeShader = _MakeFallbackVolumeShader();
-    return fallbackVolumeShader;
-  }
-}
 
-// A map from name to HdPhVolumeFieldDescriptor (identifying a
-// field prim).
-//
-// Initialized from a volume prim identified by its path. In the usd world,
-// this map is created by following the field:NAME relationships on the volume
-// prim to the targeted field prims. The information identifiying the field
-// prim is inserted under the key NAME.
-//
-class _NameToFieldDescriptor
-{
- public:
-  // Get information from scene delegate and create map.
-  //
-  // Issue validation error if relationship did not target a field prim.
-  //
-  _NameToFieldDescriptor(HdSceneDelegate *const sceneDelegate, const SdfPath &id)
-    : _descriptors(sceneDelegate->GetVolumeFieldDescriptors(id))
+  HdPhShaderCodeSharedPtr _ComputeVolumeShader(const HdPhMaterial *const material)
   {
-    for (const HdVolumeFieldDescriptor &desc : _descriptors)
+    if (material)
     {
-      if (dynamic_cast<HdPhField *>(
-            sceneDelegate->GetRenderIndex().GetBprim(desc.fieldPrimType, desc.fieldId)))
-      {
-
-        _nameToDescriptor.insert({desc.fieldName, &desc});
-      }
-      else
-      {
-        HF_VALIDATION_WARN(
-          id, "Volume has field relationship to non-field prim %s.", desc.fieldId.GetText());
-      }
+      // Use the shader from the HdPhMaterial as volume shader.
+      //
+      // Note that rprims should query the material whether they want
+      // a surface or volume shader instead of just asking for "some"
+      // shader with HdPhMaterial::GetShaderCode().
+      // We can use HdPhMaterial::GetShaderCode() here because the
+      // UsdImagingGLHydraMaterialAdapter is following the outputs:volume
+      // input of a material if the outputs:surface is unconnected.
+      //
+      // We should revisit the API an rprim is using to ask HdPhMaterial
+      // for a shader once we switched over to HdMaterialNetworkMap's.
+      return material->GetShaderCode();
+    } else
+    {
+      // Instantiate fallback volume shader only once
+      //
+      // Note that the default HdPhMaterial provides a fallback surface
+      // shader and we need a volume shader, so we create the shader here
+      // ourselves.
+      static const HdPhShaderCodeSharedPtr fallbackVolumeShader = _MakeFallbackVolumeShader();
+      return fallbackVolumeShader;
     }
   }
 
-  // Get information identifiying field prim associated to given name.
+  // A map from name to HdPhVolumeFieldDescriptor (identifying a
+  // field prim).
   //
-  // Returns nullptr if no such field prim. Lifetime of returned object
-  // is tied to _NameToFieldDescriptor.
+  // Initialized from a volume prim identified by its path. In the usd world,
+  // this map is created by following the field:NAME relationships on the volume
+  // prim to the targeted field prims. The information identifiying the field
+  // prim is inserted under the key NAME.
   //
-  const HdVolumeFieldDescriptor *GetDescriptor(const TfToken &name) const
+  class _NameToFieldDescriptor
   {
-    const auto it = _nameToDescriptor.find(name);
-    if (it == _nameToDescriptor.end())
+   public:
+    // Get information from scene delegate and create map.
+    //
+    // Issue validation error if relationship did not target a field prim.
+    //
+    _NameToFieldDescriptor(HdSceneDelegate *const sceneDelegate, const SdfPath &id)
+      : _descriptors(sceneDelegate->GetVolumeFieldDescriptors(id))
     {
-      return nullptr;
-    }
-    return it->second;
-  }
-
- private:
-  using _NameToDescriptor =
-    std::unordered_map<TfToken, const HdVolumeFieldDescriptor *, TfToken::HashFunctor>;
-  HdVolumeFieldDescriptorVector _descriptors;
-  _NameToDescriptor _nameToDescriptor;
-};
-
-// Add GLSL code such as "HdGet_density(vec3 p)" for sampling the fields
-// to the volume shader code and add necessary 3d textures and other
-// parameters and buffer sources to the resulting HdPh_VolumeShader.
-// HdMaterialParam's are consulted to figure out the names of the fields
-// to sample and the names of the associated sampling functions to generate.
-//
-// The resulting shader can also fill the points bar of the volume computed
-// from the bounding box of the volume.
-//
-HdPh_VolumeShaderSharedPtr _ComputeMaterialShader(HdSceneDelegate *const sceneDelegate,
-                                                  const SdfPath &id,
-                                                  const HdPhShaderCodeSharedPtr &volumeShader,
-                                                  const GfRange3d &authoredExtents)
-{
-  TRACE_FUNCTION();
-
-  HdPhResourceRegistrySharedPtr const resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
-    sceneDelegate->GetRenderIndex().GetResourceRegistry());
-
-  // Generate new shader from volume shader
-  HdPh_VolumeShaderSharedPtr const result = std::make_shared<HdPh_VolumeShader>(
-    sceneDelegate->GetRenderIndex().GetRenderDelegate());
-
-  // Buffer specs and source for the shader BAR
-  HdBufferSpecVector bufferSpecs;
-  HdBufferSourceSharedPtrVector bufferSources;
-
-  // The names of the fields read by field readers.
-  std::set<TfToken> fieldNames;
-
-  // Make a copy of the original params
-  HdPh_MaterialParamVector params = volumeShader->GetParams();
-
-  for (const auto &param : params)
-  {
-    // Scan original parameters...
-    if (param.IsFieldRedirect() || param.IsPrimvarRedirect() || param.IsFallback())
-    {
-      // Add fallback values for parameters
-      HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &bufferSpecs, &bufferSources);
-
-      if (param.IsFieldRedirect())
+      for (const HdVolumeFieldDescriptor &desc : _descriptors)
       {
-        // Determine the name of the field the field reader requests.
-        TfTokenVector const &names = param.samplerCoords;
-        if (!names.empty())
+        if (dynamic_cast<HdPhField *>(
+              sceneDelegate->GetRenderIndex().GetBprim(desc.fieldPrimType, desc.fieldId)))
         {
-          fieldNames.insert(names[0]);
+
+          _nameToDescriptor.insert({desc.fieldName, &desc});
+        } else
+        {
+          HF_VALIDATION_WARN(id,
+                             "Volume has field relationship to non-field prim %s.",
+                             desc.fieldId.GetText());
         }
       }
     }
-    // Ignoring 2D texture parameters for volumes.
-  }
 
-  // Note that it is a requirement of HdPh_VolumeShader that
-  // namedTextureHandles and fieldDescs line up.
-  HdPhShaderCode::NamedTextureHandleVector namedTextureHandles;
-  HdVolumeFieldDescriptorVector fieldDescs;
-
-  const _NameToFieldDescriptor _nameToFieldDescriptor(sceneDelegate, id);
-
-  // For each requested field name, record the information needed to
-  // allocate the necessary texture later:
-  // - a texture HdPh_MaterialParam
-  // - an HdVolumeFieldDescriptor identifying the HdPhField prim holding
-  //   the path to the texture
-  // - a HdPhShader::NamedTextureHandle initialized with a null-handle.
-  //
-  for (const auto &fieldName : fieldNames)
-  {
-    // See whether we have the the field in the volume field
-    // descriptors given to us by the scene delegate.
-    const HdVolumeFieldDescriptor *const desc = _nameToFieldDescriptor.GetDescriptor(fieldName);
-    if (!desc)
+    // Get information identifiying field prim associated to given name.
+    //
+    // Returns nullptr if no such field prim. Lifetime of returned object
+    // is tied to _NameToFieldDescriptor.
+    //
+    const HdVolumeFieldDescriptor *GetDescriptor(const TfToken &name) const
     {
-      // Invalid field prim, skip.
-      continue;
+      const auto it = _nameToDescriptor.find(name);
+      if (it == _nameToDescriptor.end())
+      {
+        return nullptr;
+      }
+      return it->second;
     }
 
-    // Record field descriptor
-    fieldDescs.push_back(*desc);
+   private:
+    using _NameToDescriptor =
+      std::unordered_map<TfToken, const HdVolumeFieldDescriptor *, TfToken::HashFunctor>;
+    HdVolumeFieldDescriptorVector _descriptors;
+    _NameToDescriptor _nameToDescriptor;
+  };
 
-    const TfToken textureName(fieldName.GetString() + HdPh_ResourceBindingSuffixTokens->texture.GetString());
-    static const HdTextureType textureType = HdTextureType::Field;
-
-    // Produce HdGet_FIELDNAME_texture(vec3 p) to sample
-    // the texture.
-    const HdPh_MaterialParam param(
-      HdPh_MaterialParam::ParamTypeTexture, textureName, VtValue(GfVec4f(0)), TfTokenVector(), textureType);
-
-    HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &bufferSpecs, &bufferSources);
-
-    params.push_back(param);
-
-    namedTextureHandles.push_back({textureName, textureType, nullptr, desc->fieldId.GetHash()});
-  }
-
-  const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
-
-  // Get buffer specs for textures (i.e., for
-  // field sampling transforms and bindless texture handles).
-  HdPh_TextureBinder::GetBufferSpecs(namedTextureHandles, bindlessTextureEnabled, &bufferSpecs);
-
-  // Create params (so that HdGet_... are created) and buffer specs,
-  // to communicate volume bounding box and sample distance to shader.
-  HdPh_VolumeShader::GetParamsAndBufferSpecsForBBoxAndSampleDistance(&params, &bufferSpecs);
-
-  const bool hasField = !namedTextureHandles.empty();
-
-  // If there is a field, we postpone giving buffer sources for
-  // the volume bounding box until after the textures have been
-  // committed.
-  if (!hasField)
+  // Add GLSL code such as "HdGet_density(vec3 p)" for sampling the fields
+  // to the volume shader code and add necessary 3d textures and other
+  // parameters and buffer sources to the resulting HdPh_VolumeShader.
+  // HdMaterialParam's are consulted to figure out the names of the fields
+  // to sample and the names of the associated sampling functions to generate.
+  //
+  // The resulting shader can also fill the points bar of the volume computed
+  // from the bounding box of the volume.
+  //
+  HdPh_VolumeShaderSharedPtr _ComputeMaterialShader(HdSceneDelegate *const sceneDelegate,
+                                                    const SdfPath &id,
+                                                    const HdPhShaderCodeSharedPtr &volumeShader,
+                                                    const GfRange3d &authoredExtents)
   {
-    HdPh_VolumeShader::GetBufferSourcesForBBoxAndSampleDistance({GfBBox3d(authoredExtents), 1.0f},
-                                                                &bufferSources);
-  }
+    TRACE_FUNCTION();
 
-  // Make volume shader responsible if we have fields with bounding
-  // boxes.
-  result->SetFillsPointsBar(hasField);
-  result->SetParams(params);
-  result->SetBufferSources(bufferSpecs, std::move(bufferSources), resourceRegistry);
-  result->SetNamedTextureHandles(namedTextureHandles);
-  result->SetFieldDescriptors(fieldDescs);
+    HdPhResourceRegistrySharedPtr const resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
+      sceneDelegate->GetRenderIndex().GetResourceRegistry());
 
-  // Append the volume shader (calling into the GLSL functions
-  // generated above)
-  result->SetFragmentSource(volumeShader->GetSource(HdShaderTokens->fragmentShader));
+    // Generate new shader from volume shader
+    HdPh_VolumeShaderSharedPtr const result = std::make_shared<HdPh_VolumeShader>(
+      sceneDelegate->GetRenderIndex().GetRenderDelegate());
 
-  return result;
-}
+    // Buffer specs and source for the shader BAR
+    HdBufferSpecVector bufferSpecs;
+    HdBufferSourceSharedPtrVector bufferSources;
 
-VtValue _ComputeBBoxVertices(GfRange3d const &range)
-{
-  VtVec3fArray result(8);
+    // The names of the fields read by field readers.
+    std::set<TfToken> fieldNames;
 
-  const GfVec3d min = HdPh_VolumeShader::GetSafeMin(range);
-  const GfVec3d &max = HdPh_VolumeShader::GetSafeMax(range);
+    // Make a copy of the original params
+    HdPh_MaterialParamVector params = volumeShader->GetParams();
 
-  int i = 0;
-
-  for (const double x : {min[0], max[0]})
-  {
-    for (const double y : {min[1], max[1]})
+    for (const auto &param : params)
     {
-      for (const double z : {min[2], max[2]})
+      // Scan original parameters...
+      if (param.IsFieldRedirect() || param.IsPrimvarRedirect() || param.IsFallback())
       {
-        result[i] = GfVec3f(x, y, z);
-        i++;
+        // Add fallback values for parameters
+        HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &bufferSpecs, &bufferSources);
+
+        if (param.IsFieldRedirect())
+        {
+          // Determine the name of the field the field reader requests.
+          TfTokenVector const &names = param.samplerCoords;
+          if (!names.empty())
+          {
+            fieldNames.insert(names[0]);
+          }
+        }
+      }
+      // Ignoring 2D texture parameters for volumes.
+    }
+
+    // Note that it is a requirement of HdPh_VolumeShader that
+    // namedTextureHandles and fieldDescs line up.
+    HdPhShaderCode::NamedTextureHandleVector namedTextureHandles;
+    HdVolumeFieldDescriptorVector fieldDescs;
+
+    const _NameToFieldDescriptor _nameToFieldDescriptor(sceneDelegate, id);
+
+    // For each requested field name, record the information needed to
+    // allocate the necessary texture later:
+    // - a texture HdPh_MaterialParam
+    // - an HdVolumeFieldDescriptor identifying the HdPhField prim holding
+    //   the path to the texture
+    // - a HdPhShader::NamedTextureHandle initialized with a null-handle.
+    //
+    for (const auto &fieldName : fieldNames)
+    {
+      // See whether we have the the field in the volume field
+      // descriptors given to us by the scene delegate.
+      const HdVolumeFieldDescriptor *const desc = _nameToFieldDescriptor.GetDescriptor(fieldName);
+      if (!desc)
+      {
+        // Invalid field prim, skip.
+        continue;
+      }
+
+      // Record field descriptor
+      fieldDescs.push_back(*desc);
+
+      const TfToken textureName(fieldName.GetString() +
+                                HdPh_ResourceBindingSuffixTokens->texture.GetString());
+      static const HdTextureType textureType = HdTextureType::Field;
+
+      // Produce HdGet_FIELDNAME_texture(vec3 p) to sample
+      // the texture.
+      const HdPh_MaterialParam param(HdPh_MaterialParam::ParamTypeTexture,
+                                     textureName,
+                                     VtValue(GfVec4f(0)),
+                                     TfTokenVector(),
+                                     textureType);
+
+      HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &bufferSpecs, &bufferSources);
+
+      params.push_back(param);
+
+      namedTextureHandles.push_back({textureName, textureType, nullptr, desc->fieldId.GetHash()});
+    }
+
+    const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
+
+    // Get buffer specs for textures (i.e., for
+    // field sampling transforms and bindless texture handles).
+    HdPh_TextureBinder::GetBufferSpecs(namedTextureHandles, bindlessTextureEnabled, &bufferSpecs);
+
+    // Create params (so that HdGet_... are created) and buffer specs,
+    // to communicate volume bounding box and sample distance to shader.
+    HdPh_VolumeShader::GetParamsAndBufferSpecsForBBoxAndSampleDistance(&params, &bufferSpecs);
+
+    const bool hasField = !namedTextureHandles.empty();
+
+    // If there is a field, we postpone giving buffer sources for
+    // the volume bounding box until after the textures have been
+    // committed.
+    if (!hasField)
+    {
+      HdPh_VolumeShader::GetBufferSourcesForBBoxAndSampleDistance({GfBBox3d(authoredExtents), 1.0f},
+                                                                  &bufferSources);
+    }
+
+    // Make volume shader responsible if we have fields with bounding
+    // boxes.
+    result->SetFillsPointsBar(hasField);
+    result->SetParams(params);
+    result->SetBufferSources(bufferSpecs, std::move(bufferSources), resourceRegistry);
+    result->SetNamedTextureHandles(namedTextureHandles);
+    result->SetFieldDescriptors(fieldDescs);
+
+    // Append the volume shader (calling into the GLSL functions
+    // generated above)
+    result->SetFragmentSource(volumeShader->GetSource(HdShaderTokens->fragmentShader));
+
+    return result;
+  }
+
+  VtValue _ComputeBBoxVertices(GfRange3d const &range)
+  {
+    VtVec3fArray result(8);
+
+    const GfVec3d min = HdPh_VolumeShader::GetSafeMin(range);
+    const GfVec3d &max = HdPh_VolumeShader::GetSafeMax(range);
+
+    int i = 0;
+
+    for (const double x : {min[0], max[0]})
+    {
+      for (const double y : {min[1], max[1]})
+      {
+        for (const double z : {min[2], max[2]})
+        {
+          result[i] = GfVec3f(x, y, z);
+          i++;
+        }
       }
     }
+
+    return VtValue(result);
   }
 
-  return VtValue(result);
-}
+  const VtValue &_GetCubeTriangleIndices()
+  {
+    static const VtValue result(VtVec3iArray{GfVec3i(1, 3, 2),
+                                             GfVec3i(0, 1, 2),
 
-const VtValue &_GetCubeTriangleIndices()
-{
-  static const VtValue result(VtVec3iArray{GfVec3i(1, 3, 2),
-                                           GfVec3i(0, 1, 2),
+                                             GfVec3i(7, 5, 4),
+                                             GfVec3i(6, 7, 4),
 
-                                           GfVec3i(7, 5, 4),
-                                           GfVec3i(6, 7, 4),
+                                             GfVec3i(5, 1, 0),
+                                             GfVec3i(4, 5, 0),
 
-                                           GfVec3i(5, 1, 0),
-                                           GfVec3i(4, 5, 0),
+                                             GfVec3i(3, 7, 6),
+                                             GfVec3i(2, 3, 6),
 
-                                           GfVec3i(3, 7, 6),
-                                           GfVec3i(2, 3, 6),
+                                             GfVec3i(2, 6, 4),
+                                             GfVec3i(0, 2, 4),
 
-                                           GfVec3i(2, 6, 4),
-                                           GfVec3i(0, 2, 4),
+                                             GfVec3i(7, 3, 1),
+                                             GfVec3i(5, 7, 1)});
 
-                                           GfVec3i(7, 3, 1),
-                                           GfVec3i(5, 7, 1)});
-
-  return result;
-}
+    return result;
+  }
 
 }  // end namespace
 
@@ -465,10 +468,17 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
   if (HdPhShouldPopulateConstantPrimvars(dirtyBits, GetId()))
   {
     /* CONSTANT PRIMVARS, TRANSFORM AND EXTENT */
-    const HdPrimvarDescriptorVector constantPrimvars = HdPhGetPrimvarDescriptors(
-      this, drawItem, sceneDelegate, HdInterpolationConstant);
-    HdPhPopulateConstantPrimvars(
-      this, &_sharedData, sceneDelegate, renderParam, drawItem, dirtyBits, constantPrimvars);
+    const HdPrimvarDescriptorVector constantPrimvars = HdPhGetPrimvarDescriptors(this,
+                                                                                 drawItem,
+                                                                                 sceneDelegate,
+                                                                                 HdInterpolationConstant);
+    HdPhPopulateConstantPrimvars(this,
+                                 &_sharedData,
+                                 sceneDelegate,
+                                 renderParam,
+                                 drawItem,
+                                 dirtyBits,
+                                 constantPrimvars);
   }
 
   if ((*dirtyBits) & HdChangeTracker::DirtyMaterialId)
@@ -494,8 +504,10 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
     // GLSL functions such as "float scattering(vec3)" in the volume shader
     // to evaluate physical properties of a volume at the point p.
 
-    drawItem->SetMaterialShader(_ComputeMaterialShader(
-      sceneDelegate, GetId(), _ComputeVolumeShader(material), _sharedData.bounds.GetRange()));
+    drawItem->SetMaterialShader(_ComputeMaterialShader(sceneDelegate,
+                                                       GetId(),
+                                                       _ComputeVolumeShader(material),
+                                                       _sharedData.bounds.GetRange()));
   }
 
   HdPhResourceRegistrySharedPtr resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
@@ -530,7 +542,9 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
         HdBufferSpec(HdTokens->points, HdTupleType{HdTypeFloatVec3, 1})};
 
       HdBufferArrayRangeSharedPtr const range = resourceRegistry->AllocateNonUniformBufferArrayRange(
-        HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
+        HdTokens->primvar,
+        bufferSpecs,
+        HdBufferArrayUsageHint());
       _sharedData.barContainer.Set(drawItem->GetDrawingCoord()->GetVertexPrimvarIndex(), range);
     }
 
@@ -543,9 +557,10 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
     if (!materialShader->GetFillsPointsBar())
     {
       // ... fill the points from the authored extents.
-      resourceRegistry->AddSource(drawItem->GetVertexPrimvarRange(),
-                                  std::make_shared<HdVtBufferSource>(
-                                    HdTokens->points, _ComputeBBoxVertices(_sharedData.bounds.GetRange())));
+      resourceRegistry->AddSource(
+        drawItem->GetVertexPrimvarRange(),
+        std::make_shared<HdVtBufferSource>(HdTokens->points,
+                                           _ComputeBBoxVertices(_sharedData.bounds.GetRange())));
     }
   }
 
@@ -573,7 +588,9 @@ void HdPhVolume::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
         HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 
         HdBufferArrayRangeSharedPtr const range = resourceRegistry->AllocateNonUniformBufferArrayRange(
-          HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
+          HdTokens->primvar,
+          bufferSpecs,
+          HdBufferArrayUsageHint());
         _sharedData.barContainer.Set(drawItem->GetDrawingCoord()->GetTopologyIndex(), range);
       }
 

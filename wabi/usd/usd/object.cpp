@@ -301,23 +301,19 @@ std::string UsdObject::_GetObjectDescription(const std::string &preface) const
   if (_type == UsdTypePrim)
   {
     return _Prim().GetDescription(_ProxyPrimPath());
-  }
-  else if (_type == UsdTypeAttribute)
+  } else if (_type == UsdTypeAttribute)
   {
     return TfStringPrintf("%sattribute '%s' on ", preface.c_str(), _PropName().GetText()) +
            _Prim().GetDescription(_ProxyPrimPath());
-  }
-  else if (_type == UsdTypeRelationship)
+  } else if (_type == UsdTypeRelationship)
   {
     return TfStringPrintf("%srelationship '%s' on ", preface.c_str(), _PropName().GetText()) +
            _Prim().GetDescription(_ProxyPrimPath());
-  }
-  else if (_type == UsdTypeProperty)
+  } else if (_type == UsdTypeProperty)
   {
     return TfStringPrintf("%sproperty '%s' on ", preface.c_str(), _PropName().GetText()) +
            _Prim().GetDescription(_ProxyPrimPath());
-  }
-  else if (_type == UsdTypeObject)
+  } else if (_type == UsdTypeObject)
   {
     return _Prim().GetDescription(_ProxyPrimPath());
   }

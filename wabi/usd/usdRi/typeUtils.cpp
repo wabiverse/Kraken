@@ -50,11 +50,13 @@ SdfValueTypeName UsdRi_GetUsdType(const string &riType)
     const char *riName;
     SdfValueTypeName usdType;
   };
-  static Entry map[] = {{"color", SdfValueTypeNames->Color3f},
-                        {"vector", SdfValueTypeNames->Vector3d},
-                        {"normal", SdfValueTypeNames->Normal3d},
-                        {"point", SdfValueTypeNames->Point3d},
-                        {"matrix", SdfValueTypeNames->Matrix4d}};
+  static Entry map[] = {
+    {"color",  SdfValueTypeNames->Color3f },
+    {"vector", SdfValueTypeNames->Vector3d},
+    {"normal", SdfValueTypeNames->Normal3d},
+    {"point",  SdfValueTypeNames->Point3d },
+    {"matrix", SdfValueTypeNames->Matrix4d}
+  };
   static const size_t mapLen = sizeof(map) / sizeof(map[0]);
 
   for (size_t i = 0; i != mapLen; ++i)

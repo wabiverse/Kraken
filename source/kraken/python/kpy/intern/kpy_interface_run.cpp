@@ -40,10 +40,7 @@ WABI_NAMESPACE_BEGIN
  * @param mode: Passed to #PyRun_String, matches Python's
  * `compile` functions mode argument. #Py_eval_input for
  * `eval`, #Py_file_input for `exec`. */
-static bool kpy_run_string_impl(kContext *C,
-                                const char *imports[],
-                                const char *expr,
-                                const int mode)
+static bool kpy_run_string_impl(kContext *C, const char *imports[], const char *expr, const int mode)
 {
   KLI_assert(expr);
   PyGILState_STATE gilstate;
@@ -66,8 +63,7 @@ static bool kpy_run_string_impl(kContext *C,
   {
     Py_DECREF(py_dict);
     retval = NULL;
-  }
-  else
+  } else
   {
     retval = PyRun_String(expr, mode, py_dict, py_dict);
   }
@@ -76,8 +72,7 @@ static bool kpy_run_string_impl(kContext *C,
   {
     ok = false;
     // KPy_errors_to_report(CTX_wm_reports(C));
-  }
-  else
+  } else
   {
     Py_DECREF(retval);
   }

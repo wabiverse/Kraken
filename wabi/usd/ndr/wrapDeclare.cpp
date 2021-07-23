@@ -45,50 +45,50 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string _Repr(const NdrVersion &x)
-{
-  auto result = TF_PY_REPR_PREFIX;
-  if (!x)
+  static std::string _Repr(const NdrVersion &x)
   {
-    result += "Version()";
+    auto result = TF_PY_REPR_PREFIX;
+    if (!x)
+    {
+      result += "Version()";
+    } else
+    {
+      result += TfStringPrintf("Version(%s, %s)",
+                               TfPyRepr(x.GetMajor()).c_str(),
+                               TfPyRepr(x.GetMinor()).c_str());
+    }
+    if (x.IsDefault())
+    {
+      result += ".GetAsDefault()";
+    }
+    return result;
   }
-  else
-  {
-    result += TfStringPrintf(
-      "Version(%s, %s)", TfPyRepr(x.GetMajor()).c_str(), TfPyRepr(x.GetMinor()).c_str());
-  }
-  if (x.IsDefault())
-  {
-    result += ".GetAsDefault()";
-  }
-  return result;
-}
 
-static void wrapVersion()
-{
-  typedef NdrVersion This;
+  static void wrapVersion()
+  {
+    typedef NdrVersion This;
 
-  class_<This>("Version", no_init)
-    .def(init<>())
-    .def(init<int>())
-    .def(init<int, int>())
-    .def(init<std::string>())
-    .def("GetMajor", &This::GetMajor)
-    .def("GetMinor", &This::GetMinor)
-    .def("IsDefault", &This::IsDefault)
-    .def("GetAsDefault", &This::GetAsDefault)
-    .def("GetStringSuffix", &This::GetStringSuffix)
-    .def("__repr__", _Repr)
-    .def("__str__", &This::GetString)
-    .def("__hash__", &This::GetHash)
-    .def(!self)
-    .def(self == self)
-    .def(self != self)
-    .def(self < self)
-    .def(self <= self)
-    .def(self > self)
-    .def(self >= self);
-}
+    class_<This>("Version", no_init)
+      .def(init<>())
+      .def(init<int>())
+      .def(init<int, int>())
+      .def(init<std::string>())
+      .def("GetMajor", &This::GetMajor)
+      .def("GetMinor", &This::GetMinor)
+      .def("IsDefault", &This::IsDefault)
+      .def("GetAsDefault", &This::GetAsDefault)
+      .def("GetStringSuffix", &This::GetStringSuffix)
+      .def("__repr__", _Repr)
+      .def("__str__", &This::GetString)
+      .def("__hash__", &This::GetHash)
+      .def(!self)
+      .def(self == self)
+      .def(self != self)
+      .def(self < self)
+      .def(self <= self)
+      .def(self > self)
+      .def(self >= self);
+  }
 
 }  // namespace
 

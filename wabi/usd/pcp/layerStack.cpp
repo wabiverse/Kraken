@@ -242,8 +242,7 @@ void Pcp_ComputeRelocationsForLayerStack(const SdfLayerRefPtrVector &layers,
           //      formal PcpError for this case.  Perhaps
           //      we can do this when removing the
           //      non-Pcp-mode composition code from Csd.
-        }
-        else
+        } else
         {
           relocatesPerPrim[primPath][source] = target;
         }
@@ -479,8 +478,7 @@ void PcpLayerStack::Apply(const PcpLayerStackChanges &changes, PcpLifeboat *life
                                           &_incrementalRelocatesSourceToTarget,
                                           &_incrementalRelocatesTargetToSource,
                                           &_relocatesPrimPaths);
-    }
-    else
+    } else
     {
       // Change processing has provided a specific new set of
       // relocations to use.
@@ -517,8 +515,9 @@ SdfLayerHandleVector PcpLayerStack::GetSessionLayers() const
     // Session layers will always be the strongest layers in the
     // layer stack. So, we can just take all of the layers stronger
     // than the root layer.
-    SdfLayerRefPtrVector::const_iterator rootLayerIt = std::find(
-      _layers.begin(), _layers.end(), _identifier.rootLayer);
+    SdfLayerRefPtrVector::const_iterator rootLayerIt = std::find(_layers.begin(),
+                                                                 _layers.end(),
+                                                                 _identifier.rootLayer);
     if (TF_VERIFY(rootLayerIt != _layers.end()))
     {
       sessionLayers.insert(sessionLayers.begin(), _layers.begin(), rootLayerIt);
@@ -742,12 +741,12 @@ void PcpLayerStack::_Compute(const std::string &fileFormatTarget, const Pcp_Mute
   if (_identifier.sessionLayer)
   {
     std::string canonicalMutedPath;
-    if (mutedLayers.IsLayerMuted(
-          _identifier.sessionLayer, _identifier.sessionLayer->GetIdentifier(), &canonicalMutedPath))
+    if (mutedLayers.IsLayerMuted(_identifier.sessionLayer,
+                                 _identifier.sessionLayer->GetIdentifier(),
+                                 &canonicalMutedPath))
     {
       _mutedAssetPaths.insert(canonicalMutedPath);
-    }
-    else
+    } else
     {
       // The session layer has its own time codes per second.
       const double sessionTcps = _identifier.sessionLayer->GetTimeCodesPerSecond();
@@ -771,8 +770,7 @@ void PcpLayerStack::_Compute(const std::string &fileFormatTarget, const Pcp_Mute
         {
           rootLayerOffset.SetScale(_timeCodesPerSecond / rootTcps);
         }
-      }
-      else
+      } else
       {
         if (scaleLayerOffsetByTcps)
         {
@@ -795,8 +793,9 @@ void PcpLayerStack::_Compute(const std::string &fileFormatTarget, const Pcp_Mute
       {
         static bool FindSessionOwner(const SdfLayerTreeHandle &tree, std::string *sessionOwner)
         {
-          if (tree->GetLayer()->HasField(
-                SdfPath::AbsoluteRootPath(), SdfFieldKeys->SessionOwner, sessionOwner))
+          if (tree->GetLayer()->HasField(SdfPath::AbsoluteRootPath(),
+                                         SdfFieldKeys->SessionOwner,
+                                         sessionOwner))
           {
             return true;
           }
@@ -837,8 +836,7 @@ void PcpLayerStack::_Compute(const std::string &fileFormatTarget, const Pcp_Mute
   if (errors.empty())
   {
     _localErrors.reset();
-  }
-  else
+  } else
   {
     _localErrors.reset(new PcpErrorVector);
     _localErrors->swap(errors);
@@ -881,8 +879,9 @@ SdfLayerTreeHandle PcpLayerStack::_BuildLayerStack(const SdfLayerHandle &layer,
     TfErrorMark m;
 
     SdfLayer::FileFormatArguments localArgs;
-    const SdfLayer::FileFormatArguments &layerArgs = Pcp_GetArgumentsForFileFormatTarget(
-      sublayers[i], &defaultLayerArgs, &localArgs);
+    const SdfLayer::FileFormatArguments &layerArgs = Pcp_GetArgumentsForFileFormatTarget(sublayers[i],
+                                                                                         &defaultLayerArgs,
+                                                                                         &localArgs);
 
     // This is equivalent to SdfLayer::FindOrOpenRelativeToLayer, but we
     // want to keep track of the final sublayer path after anchoring it
@@ -992,8 +991,7 @@ std::ostream &operator<<(std::ostream &s, const PcpLayerStackPtr &x)
   if (x)
   {
     return s << x->GetIdentifier();
-  }
-  else
+  } else
   {
     return s << "@<expired>@";
   }
@@ -1004,8 +1002,7 @@ std::ostream &operator<<(std::ostream &s, const PcpLayerStackRefPtr &x)
   if (x)
   {
     return s << x->GetIdentifier();
-  }
-  else
+  } else
   {
     return s << "@NULL@";
   }

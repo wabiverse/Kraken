@@ -90,8 +90,7 @@ void kpy_context_clear(kContext *UNUSED(C), const PyGILState_STATE *gilstate)
   if (py_call_level < 0)
   {
     fprintf(stderr, "ERROR: Python context internal state bug. this should not happen!\n");
-  }
-  else if (py_call_level == 0)
+  } else if (py_call_level == 0)
   {
   }
 }
@@ -106,7 +105,7 @@ void KPY_modules_update(void)
 
 static struct _inittab kpy_internal_modules[] = {
   {"_kpy_path", KPyInit__kpy_path},
-  {NULL, NULL},
+  {NULL,        NULL             },
 };
 
 #ifndef WITH_PYTHON_MODULE
@@ -143,8 +142,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
     if (py_use_system_env)
     {
       PyPreConfig_InitPythonConfig(&preconfig);
-    }
-    else
+    } else
     {
       /**
        * Only use the systems environment variables and site when explicitly requested. */
@@ -195,14 +193,15 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
      * can launch new Python instances. */
     {
       char program_path[FILE_MAX];
-      if (KKE_appdir_program_python_search(
-            program_path, sizeof(program_path), PY_MAJOR_VERSION, PY_MINOR_VERSION))
+      if (KKE_appdir_program_python_search(program_path,
+                                           sizeof(program_path),
+                                           PY_MAJOR_VERSION,
+                                           PY_MINOR_VERSION))
       {
         status = PyConfig_SetBytesString(&config, &config.executable, program_path);
         pystatus_exit_on_error(status);
         has_python_executable = true;
-      }
-      else
+      } else
       {
         /* Set to `sys.executable = None` below (we can't do before Python is initialized). */
         fprintf(stderr,
@@ -231,8 +230,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
 
         status = PyConfig_SetBytesString(&config, &config.home, py_path_bundle);
         pystatus_exit_on_error(status);
-      }
-      else
+      } else
       {
         /* Common enough to use the system Python on Linux/Unix, warn on other systems. */
 #  if defined(__APPLE__) || defined(_WIN32)
@@ -275,8 +273,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
       if (mod)
       {
         PyDict_SetItemString(sys_modules, inittab_item->name, mod);
-      }
-      else
+      } else
       {
         PyErr_Print();
         PyErr_Clear();

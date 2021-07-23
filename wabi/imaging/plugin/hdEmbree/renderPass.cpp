@@ -89,8 +89,7 @@ static GfRect2i _GetDataWindow(HdRenderPassStateSharedPtr const &renderPassState
   if (framing.IsValid())
   {
     return framing.dataWindow;
-  }
-  else
+  } else
   {
     // For applications that use the old viewport API instead of
     // the new camera framing API.
@@ -126,13 +125,13 @@ void HdEmbreeRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
       renderDelegate->GetRenderSetting<int>(HdRenderSettingsTokens->convergedSamplesPerPixel, 1));
 
     bool enableAmbientOcclusion = renderDelegate->GetRenderSetting<bool>(
-      HdEmbreeRenderSettingsTokens->enableAmbientOcclusion, false);
+      HdEmbreeRenderSettingsTokens->enableAmbientOcclusion,
+      false);
     if (enableAmbientOcclusion)
     {
       _renderer->SetAmbientOcclusionSamples(
         renderDelegate->GetRenderSetting<int>(HdEmbreeRenderSettingsTokens->ambientOcclusionSamples, 0));
-    }
-    else
+    } else
     {
       _renderer->SetAmbientOcclusionSamples(0);
     }

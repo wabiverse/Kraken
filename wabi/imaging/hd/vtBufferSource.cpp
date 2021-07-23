@@ -91,8 +91,7 @@ HdVtBufferSource::HdVtBufferSource(TfToken const &name, GfMatrix4d const &matrix
   if (GetDefaultMatrixType() == HdTypeDoubleMat4)
   {
     _SetValue(VtValue(matrix), 1);
-  }
-  else
+  } else
   {
     GfMatrix4f fmatrix(matrix[0][0],
                        matrix[0][1],
@@ -120,8 +119,7 @@ HdVtBufferSource::HdVtBufferSource(TfToken const &name, VtArray<GfMatrix4d> cons
   if (GetDefaultMatrixType() == HdTypeDoubleMat4)
   {
     _SetValue(VtValue(matrices), arraySize);
-  }
-  else
+  } else
   {
     VtArray<GfMatrix4f> fmatrices(matrices.size());
     for (size_t i = 0; i < matrices.size(); ++i)

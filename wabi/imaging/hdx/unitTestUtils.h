@@ -51,33 +51,33 @@ class HdRprimCollection;
 
 namespace HdxUnitTestUtils
 {
-HdSelectionSharedPtr TranslateHitsToSelection(TfToken const &pickTarget,
-                                              HdSelection::HighlightMode highlightMode,
-                                              HdxPickHitVector const &allHits);
+  HdSelectionSharedPtr TranslateHitsToSelection(TfToken const &pickTarget,
+                                                HdSelection::HighlightMode highlightMode,
+                                                HdxPickHitVector const &allHits);
 
-// For a drag-select from start to end, with given pick radius, what size
-// ID buffer should we ask for?
-GfVec2i CalculatePickResolution(GfVec2i const &start, GfVec2i const &end, GfVec2i const &pickRadius);
+  // For a drag-select from start to end, with given pick radius, what size
+  // ID buffer should we ask for?
+  GfVec2i CalculatePickResolution(GfVec2i const &start, GfVec2i const &end, GfVec2i const &pickRadius);
 
-GfMatrix4d ComputePickingProjectionMatrix(GfVec2i const &start,
-                                          GfVec2i const &end,
-                                          GfVec2i const &screen,
-                                          GfFrustum const &viewFrustum);
+  GfMatrix4d ComputePickingProjectionMatrix(GfVec2i const &start,
+                                            GfVec2i const &end,
+                                            GfVec2i const &screen,
+                                            GfFrustum const &viewFrustum);
 
-class Marquee
-{
- public:
-  Marquee();
-  ~Marquee();
+  class Marquee
+  {
+   public:
+    Marquee();
+    ~Marquee();
 
-  void InitGLResources();
-  void DestroyGLResources();
-  void Draw(float width, float height, GfVec2f const &startPos, GfVec2f const &endPos);
+    void InitGLResources();
+    void DestroyGLResources();
+    void Draw(float width, float height, GfVec2f const &startPos, GfVec2f const &endPos);
 
- private:
-  GLuint _vbo;
-  GLuint _program;
-};
+   private:
+    GLuint _vbo;
+    GLuint _program;
+  };
 }  // namespace HdxUnitTestUtils
 
 WABI_NAMESPACE_END

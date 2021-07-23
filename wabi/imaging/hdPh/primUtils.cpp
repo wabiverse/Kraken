@@ -191,16 +191,14 @@ void HdPhSetMaterialTag(HdSceneDelegate *delegate,
   if (occludedSelectionShowsThrough)
   {
     newMaterialTag = HdPhMaterialTagTokens->translucentToSelection;
-  }
-  else
+  } else
   {
     const HdPhMaterial *material = static_cast<const HdPhMaterial *>(
       delegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, rprim->GetMaterialId()));
     if (material)
     {
       newMaterialTag = material->GetMaterialTag();
-    }
-    else
+    } else
     {
       newMaterialTag = hasDisplayOpacityPrimvar ? HdPhMaterialTagTokens->masked :
                                                   HdMaterialTagTokens->defaultMaterialTag;
@@ -406,8 +404,7 @@ void HdPhUpdateDrawItemBAR(HdBufferArrayRangeSharedPtr const &newRange,
           id.GetText(),
           newRange.get(),
           curRange.get());
-      }
-      else if (!newRange->IsAggregatedWith(curRange))
+      } else if (!newRange->IsAggregatedWith(curRange))
       {
         TfDebug::Helper().Msg(
           "%s: Marking all batches dirty since the new BAR (%p) "
@@ -415,8 +412,7 @@ void HdPhUpdateDrawItemBAR(HdBufferArrayRangeSharedPtr const &newRange,
           id.GetText(),
           newRange.get(),
           curRange.get());
-      }
-      else
+      } else
       {
         TfDebug::Helper().Msg(
           "%s: Marking all batches dirty since the new BAR (%p) "
@@ -556,10 +552,12 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
         leftHanded ^= rootTransforms[i].IsLeftHanded();
       }
 
-      sources.push_back(std::make_shared<HdVtBufferSource>(
-        HdInstancerTokens->instancerTransform, rootTransforms, rootTransforms.size()));
-      sources.push_back(std::make_shared<HdVtBufferSource>(
-        HdInstancerTokens->instancerTransformInverse, rootInverseTransforms, rootInverseTransforms.size()));
+      sources.push_back(std::make_shared<HdVtBufferSource>(HdInstancerTokens->instancerTransform,
+                                                           rootTransforms,
+                                                           rootTransforms.size()));
+      sources.push_back(std::make_shared<HdVtBufferSource>(HdInstancerTokens->instancerTransformInverse,
+                                                           rootInverseTransforms,
+                                                           rootInverseTransforms.size()));
 
       // XXX: It might be worth to consider to have isFlipped
       // for non-instanced prims as well. It can improve
@@ -584,12 +582,14 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
 
     GfVec3d const &localMin = drawItem->GetBounds().GetBox().GetMin();
     HdBufferSourceSharedPtr sourceMin = std::make_shared<HdVtBufferSource>(
-      HdTokens->bboxLocalMin, VtValue(GfVec4f(localMin[0], localMin[1], localMin[2], 1.0f)));
+      HdTokens->bboxLocalMin,
+      VtValue(GfVec4f(localMin[0], localMin[1], localMin[2], 1.0f)));
     sources.push_back(sourceMin);
 
     GfVec3d const &localMax = drawItem->GetBounds().GetBox().GetMax();
     HdBufferSourceSharedPtr sourceMax = std::make_shared<HdVtBufferSource>(
-      HdTokens->bboxLocalMax, VtValue(GfVec4f(localMax[0], localMax[1], localMax[2], 1.0f)));
+      HdTokens->bboxLocalMax,
+      VtValue(GfVec4f(localMax[0], localMax[1], localMax[2], 1.0f)));
     sources.push_back(sourceMax);
   }
 
@@ -621,14 +621,15 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
           // empty value. Catch that case here.
           //
           // Do nothing in this case.
-        }
-        else if (!value.IsEmpty())
+        } else if (!value.IsEmpty())
         {
           // Given that this is a constant primvar, if it is
           // holding VtArray then use that as a single array
           // value rather than as one value per element.
           HdBufferSourceSharedPtr source = std::make_shared<HdVtBufferSource>(
-            pv.name, value, value.IsArrayValued() ? value.GetArraySize() : 1);
+            pv.name,
+            value,
+            value.IsArrayValued() ? value.GetArraySize() : 1);
 
           TF_VERIFY(source->GetTupleType().type != HdTypeInvalid);
           TF_VERIFY(source->GetTupleType().count > 0);
@@ -665,7 +666,11 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
   HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 
   HdBufferArrayRangeSharedPtr range = hdPhResourceRegistry->UpdateShaderStorageBufferArrayRange(
-    HdTokens->primvar, bar, bufferSpecs, removedSpecs, HdBufferArrayUsageHint());
+    HdTokens->primvar,
+    bar,
+    bufferSpecs,
+    removedSpecs,
+    HdBufferArrayUsageHint());
 
   HdPhUpdateDrawItemBAR(range,
                         drawItem->GetDrawingCoord()->GetConstantPrimvarIndex(),
@@ -792,10 +797,15 @@ void HdPhUpdateInstancerData(HdRenderIndex &renderIndex,
         bufferSpecs.emplace_back(HdInstancerTokens->culledInstanceIndices, HdTupleType{HdTypeInt32, 1});
 
         HdBufferArrayRangeSharedPtr const range = resourceRegistry->AllocateNonUniformBufferArrayRange(
-          HdTokens->topology, bufferSpecs, HdBufferArrayUsageHint());
+          HdTokens->topology,
+          bufferSpecs,
+          HdBufferArrayUsageHint());
 
-        HdPhUpdateDrawItemBAR(
-          range, drawingCoord->GetInstanceIndexIndex(), sharedData, renderParam, &changeTracker);
+        HdPhUpdateDrawItemBAR(range,
+                              drawingCoord->GetInstanceIndexIndex(),
+                              sharedData,
+                              renderParam,
+                              &changeTracker);
 
         TF_VERIFY(drawItem->GetInstanceIndexRange()->IsValid());
       }
@@ -834,7 +844,8 @@ bool HdPhIsInstancePrimvarExistentAndValid(HdRenderIndex &renderIndex,
     }
 
     HdPrimvarDescriptorVector const primvars = instancer->GetDelegate()->GetPrimvarDescriptors(
-      instancer->GetId(), HdInterpolationInstance);
+      instancer->GetId(),
+      HdInterpolationInstance);
 
     for (const HdPrimvarDescriptor &pv : primvars)
     {
@@ -879,8 +890,7 @@ static HdBufferSourceSharedPtr _GetBitmaskEncodedVisibilityBuffer(VtIntArray inv
   // Initialize all bits to 1 (visible)
   VtArray<uint32_t> visibility(numUIntsNeeded, std::numeric_limits<uint32_t>::max());
 
-  for (VtIntArray::const_iterator i = invisibleIndices.begin(), end = invisibleIndices.end(); i != end;
-       ++i)
+  for (VtIntArray::const_iterator i = invisibleIndices.begin(), end = invisibleIndices.end(); i != end; ++i)
   {
     if (*i >= numTotalIndices || *i < 0)
     {
@@ -923,10 +933,14 @@ void HdPhProcessTopologyVisibility(VtIntArray invisibleElements,
   // reset the bits to make all elements/points visible.
   if (tvBAR || (!invisibleElements.empty() || !invisiblePoints.empty()))
   {
-    sources.push_back(_GetBitmaskEncodedVisibilityBuffer(
-      invisibleElements, numTotalElements, HdTokens->elementsVisibility, rprimId));
-    sources.push_back(_GetBitmaskEncodedVisibilityBuffer(
-      invisiblePoints, numTotalPoints, HdTokens->pointsVisibility, rprimId));
+    sources.push_back(_GetBitmaskEncodedVisibilityBuffer(invisibleElements,
+                                                         numTotalElements,
+                                                         HdTokens->elementsVisibility,
+                                                         rprimId));
+    sources.push_back(_GetBitmaskEncodedVisibilityBuffer(invisiblePoints,
+                                                         numTotalPoints,
+                                                         HdTokens->pointsVisibility,
+                                                         rprimId));
   }
 
   // Exit early if the BAR doesn't need to be allocated.
@@ -950,7 +964,9 @@ void HdPhProcessTopologyVisibility(VtIntArray invisibleElements,
   if (!tvBAR || barNeedsReallocation)
   {
     HdBufferArrayRangeSharedPtr range = resourceRegistry->AllocateShaderStorageBufferArrayRange(
-      HdTokens->topologyVisibility, bufferSpecs, HdBufferArrayUsageHint());
+      HdTokens->topologyVisibility,
+      bufferSpecs,
+      HdBufferArrayUsageHint());
     sharedData->barContainer.Set(drawItem->GetDrawingCoord()->GetTopologyVisibilityIndex(), range);
 
     HdPhMarkDrawBatchesDirty(renderParam);

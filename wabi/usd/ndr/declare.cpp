@@ -53,36 +53,36 @@ TF_REGISTRY_FUNCTION(TfEnum)
 namespace
 {
 
-NdrVersion _ParseVersionString(const std::string &x)
-{
-  try
+  NdrVersion _ParseVersionString(const std::string &x)
   {
-    std::size_t i;
-    auto major = std::stoi(x, &i);
-    if (i == x.size())
+    try
     {
-      return NdrVersion(major);
-    }
-    if (i < x.size() && x[i] == '.')
-    {
-      std::size_t j;
-      auto minor = std::stoi(x.substr(i + 1), &j);
-      if (i + j + 1 == x.size())
+      std::size_t i;
+      auto major = std::stoi(x, &i);
+      if (i == x.size())
       {
-        return NdrVersion(major, minor);
+        return NdrVersion(major);
+      }
+      if (i < x.size() && x[i] == '.')
+      {
+        std::size_t j;
+        auto minor = std::stoi(x.substr(i + 1), &j);
+        if (i + j + 1 == x.size())
+        {
+          return NdrVersion(major, minor);
+        }
       }
     }
+    catch (std::invalid_argument &)
+    {
+    }
+    catch (std::out_of_range &)
+    {
+    }
+    auto result = NdrVersion();
+    TF_CODING_ERROR("Invalid version string '%s'", x.c_str());
+    return result;
   }
-  catch (std::invalid_argument &)
-  {
-  }
-  catch (std::out_of_range &)
-  {
-  }
-  auto result = NdrVersion();
-  TF_CODING_ERROR("Invalid version string '%s'", x.c_str());
-  return result;
-}
 
 }  // anonymous namespace
 
@@ -112,12 +112,10 @@ std::string NdrVersion::GetString() const
   if (!*this)
   {
     return "<invalid version>";
-  }
-  else if (_minor)
+  } else if (_minor)
   {
     return std::to_string(_major) + "." + std::to_string(_minor);
-  }
-  else
+  } else
   {
     return std::to_string(_major);
   }
@@ -128,18 +126,15 @@ std::string NdrVersion::GetStringSuffix() const
   if (IsDefault())
   {
     return "";
-  }
-  else if (!*this)
+  } else if (!*this)
   {
     // XXX -- It's not clear what to do here.  For now we return the
     //        same result as for a default version.
     return "";
-  }
-  else if (_minor)
+  } else if (_minor)
   {
     return '_' + std::to_string(_major) + "." + std::to_string(_minor);
-  }
-  else
+  } else
   {
     return '_' + std::to_string(_major);
   }

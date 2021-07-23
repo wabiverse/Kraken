@@ -43,41 +43,44 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreatePointsAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreatePointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3fArray),
-                               writeSparsely);
-}
+  static UsdAttribute _CreatePointsAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreatePointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3fArray),
+                                 writeSparsely);
+  }
 
-static UsdAttribute _CreateVelocitiesAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                   writeSparsely);
-}
+  static UsdAttribute _CreateVelocitiesAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+                                     writeSparsely);
+  }
 
-static UsdAttribute _CreateAccelerationsAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateAccelerationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateAccelerationsAttr(UsdGeomPointBased &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateAccelerationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateNormalsAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateNormalsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Normal3fArray),
-                                writeSparsely);
-}
+  static UsdAttribute _CreateNormalsAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateNormalsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Normal3fArray),
+                                  writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomPointBased &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.PointBased(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdGeomPointBased &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.PointBased(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -106,8 +109,9 @@ void wrapUsdGeomPointBased()
     .def(!self)
 
     .def("GetPointsAttr", &This::GetPointsAttr)
-    .def(
-      "CreatePointsAttr", &_CreatePointsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreatePointsAttr",
+         &_CreatePointsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetVelocitiesAttr", &This::GetVelocitiesAttr)
     .def("CreateVelocitiesAttr",
@@ -150,68 +154,67 @@ void wrapUsdGeomPointBased()
 namespace
 {
 
-static TfPyObjWrapper _ComputeExtent(object points)
-{
-
-  // Convert from python objects to VtValue
-  VtVec3fArray extent;
-  VtValue pointsAsVtValue = UsdPythonToSdfType(points, SdfValueTypeNames->Float3Array);
-
-  // Check for proper conversion to VtVec3fArray
-  if (!pointsAsVtValue.IsHolding<VtVec3fArray>())
+  static TfPyObjWrapper _ComputeExtent(object points)
   {
-    TF_CODING_ERROR("Improper value for 'points'");
-    return object();
+
+    // Convert from python objects to VtValue
+    VtVec3fArray extent;
+    VtValue pointsAsVtValue = UsdPythonToSdfType(points, SdfValueTypeNames->Float3Array);
+
+    // Check for proper conversion to VtVec3fArray
+    if (!pointsAsVtValue.IsHolding<VtVec3fArray>())
+    {
+      TF_CODING_ERROR("Improper value for 'points'");
+      return object();
+    }
+
+    // Convert from VtValue to VtVec3fArray
+    VtVec3fArray pointsArray = pointsAsVtValue.UncheckedGet<VtVec3fArray>();
+    if (UsdGeomPointBased::ComputeExtent(pointsArray, &extent))
+    {
+      return UsdVtValueToPython(VtValue(extent));
+    } else
+    {
+      return object();
+    }
   }
 
-  // Convert from VtValue to VtVec3fArray
-  VtVec3fArray pointsArray = pointsAsVtValue.UncheckedGet<VtVec3fArray>();
-  if (UsdGeomPointBased::ComputeExtent(pointsArray, &extent))
+  static VtVec3fArray _ComputePointsAtTime(const UsdGeomPointBased &self,
+                                           const UsdTimeCode time,
+                                           const UsdTimeCode baseTime)
   {
-    return UsdVtValueToPython(VtValue(extent));
+    VtVec3fArray points;
+
+    // On error we'll be returning an empty array.
+    self.ComputePointsAtTime(&points, time, baseTime);
+
+    return points;
   }
-  else
+
+  static std::vector<VtVec3fArray> _ComputePointsAtTimes(const UsdGeomPointBased &self,
+                                                         const std::vector<UsdTimeCode> &times,
+                                                         const UsdTimeCode baseTime)
   {
-    return object();
+    std::vector<VtVec3fArray> points;
+
+    // On error we'll be returning an empty array.
+    self.ComputePointsAtTimes(&points, times, baseTime);
+
+    return points;
   }
-}
 
-static VtVec3fArray _ComputePointsAtTime(const UsdGeomPointBased &self,
-                                         const UsdTimeCode time,
-                                         const UsdTimeCode baseTime)
-{
-  VtVec3fArray points;
+  WRAP_CUSTOM
+  {
+    _class.def("GetNormalsInterpolation", &UsdGeomPointBased::GetNormalsInterpolation)
+      .def("SetNormalsInterpolation", &UsdGeomPointBased::SetNormalsInterpolation, arg("interpolation"))
 
-  // On error we'll be returning an empty array.
-  self.ComputePointsAtTime(&points, time, baseTime);
+      .def("ComputeExtent", &_ComputeExtent, (arg("points")))
+      .staticmethod("ComputeExtent")
 
-  return points;
-}
+      .def("ComputePointsAtTime", &_ComputePointsAtTime, (arg("time"), arg("baseTime")))
+      .def("ComputePointsAtTimes", &_ComputePointsAtTimes, (arg("times"), arg("baseTime")))
 
-static std::vector<VtVec3fArray> _ComputePointsAtTimes(const UsdGeomPointBased &self,
-                                                       const std::vector<UsdTimeCode> &times,
-                                                       const UsdTimeCode baseTime)
-{
-  std::vector<VtVec3fArray> points;
-
-  // On error we'll be returning an empty array.
-  self.ComputePointsAtTimes(&points, times, baseTime);
-
-  return points;
-}
-
-WRAP_CUSTOM
-{
-  _class.def("GetNormalsInterpolation", &UsdGeomPointBased::GetNormalsInterpolation)
-    .def("SetNormalsInterpolation", &UsdGeomPointBased::SetNormalsInterpolation, arg("interpolation"))
-
-    .def("ComputeExtent", &_ComputeExtent, (arg("points")))
-    .staticmethod("ComputeExtent")
-
-    .def("ComputePointsAtTime", &_ComputePointsAtTime, (arg("time"), arg("baseTime")))
-    .def("ComputePointsAtTimes", &_ComputePointsAtTimes, (arg("times"), arg("baseTime")))
-
-    ;
-}
+      ;
+  }
 
 }  // anonymous namespace

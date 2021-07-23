@@ -76,19 +76,19 @@ bool Usd_UntypedInterpolator::_Interpolate(const Src &src,
     return false;
   }
 
-#define _MAKE_CLAUSE(r, unused, type) \
-  { \
-    static const TfType valueType = TfType::Find<type>(); \
-    if (attrValueType == valueType) \
-    { \
-      type result; \
+#define _MAKE_CLAUSE(r, unused, type)                                                       \
+  {                                                                                         \
+    static const TfType valueType = TfType::Find<type>();                                   \
+    if (attrValueType == valueType)                                                         \
+    {                                                                                       \
+      type result;                                                                          \
       if (Usd_LinearInterpolator<type>(&result).Interpolate(src, path, time, lower, upper)) \
-      { \
-        *_result = result; \
-        return true; \
-      } \
-      return false; \
-    } \
+      {                                                                                     \
+        *_result = result;                                                                  \
+        return true;                                                                        \
+      }                                                                                     \
+      return false;                                                                         \
+    }                                                                                       \
   }
 
   BOOST_PP_SEQ_FOR_EACH(_MAKE_CLAUSE, ~, USD_LINEAR_INTERPOLATION_TYPES)

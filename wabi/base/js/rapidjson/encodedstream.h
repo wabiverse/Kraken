@@ -309,8 +309,7 @@ class AutoUTFInputStream
       is_->Take();
       is_->Take();
       is_->Take();
-    }
-    else if (bom == 0x0000FEFF)
+    } else if (bom == 0x0000FEFF)
     {
       type_ = kUTF32LE;
       hasBOM_ = true;
@@ -318,22 +317,19 @@ class AutoUTFInputStream
       is_->Take();
       is_->Take();
       is_->Take();
-    }
-    else if ((bom & 0xFFFF) == 0xFFFE)
+    } else if ((bom & 0xFFFF) == 0xFFFE)
     {
       type_ = kUTF16BE;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
-    }
-    else if ((bom & 0xFFFF) == 0xFEFF)
+    } else if ((bom & 0xFFFF) == 0xFEFF)
     {
       type_ = kUTF16LE;
       hasBOM_ = true;
       is_->Take();
       is_->Take();
-    }
-    else if ((bom & 0xFFFFFF) == 0xBFBBEF)
+    } else if ((bom & 0xFFFFFF) == 0xBFBBEF)
     {
       type_ = kUTF8;
       hasBOM_ = true;

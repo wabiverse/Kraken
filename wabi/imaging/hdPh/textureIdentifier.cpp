@@ -91,8 +91,7 @@ size_t hash_value(const HdPhTextureIdentifier &id)
   if (const HdPhSubtextureIdentifier *const subId = id.GetSubtextureIdentifier())
   {
     return TfHash::Combine(id.GetFilePath(), *subId);
-  }
-  else
+  } else
   {
     return TfHash()(id.GetFilePath());
   }

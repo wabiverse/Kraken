@@ -40,8 +40,8 @@
 
 namespace MaterialX
 {
-using DocumentPtr = std::shared_ptr<class Document>;
-using StringMap = std::unordered_map<std::string, std::string>;
+  using DocumentPtr = std::shared_ptr<class Document>;
+  using StringMap = std::unordered_map<std::string, std::string>;
 }  // namespace MaterialX
 
 WABI_NAMESPACE_BEGIN

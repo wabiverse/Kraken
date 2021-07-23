@@ -83,12 +83,10 @@ class Sdf_ListEditor : public boost::noncopyable
     if (IsExplicit())
     {
       return true;
-    }
-    else if (IsOrderedOnly())
+    } else if (IsOrderedOnly())
     {
       return !_GetOperations(SdfListOpTypeOrdered).empty();
-    }
-    else
+    } else
     {
       return (
         !_GetOperations(SdfListOpTypeAdded).empty() || !_GetOperations(SdfListOpTypePrepended).empty() ||
@@ -169,8 +167,9 @@ class Sdf_ListEditor : public boost::noncopyable
   size_t Find(SdfListOpType op, const value_type &val) const
   {
     const value_vector_type &vec = _GetOperations(op);
-    typename value_vector_type::const_iterator findIt = std::find(
-      vec.begin(), vec.end(), _typePolicy.Canonicalize(val));
+    typename value_vector_type::const_iterator findIt = std::find(vec.begin(),
+                                                                  vec.end(),
+                                                                  _typePolicy.Canonicalize(val));
     if (findIt != vec.end())
     {
       return std::distance(vec.begin(), findIt);
@@ -263,15 +262,13 @@ class Sdf_ListEditor : public boost::noncopyable
     if (!fieldDef)
     {
       TF_CODING_ERROR("No field definition for field '%s'", _field.GetText());
-    }
-    else
+    } else
     {
       for (auto i = newValuesTail; i != newEnd; ++i)
       {
         if (SdfAllowed isValid = fieldDef->IsValidListValue(*i))
         {
-        }
-        else
+        } else
         {
           TF_CODING_ERROR("%s", isValid.GetWhyNot().c_str());
           return false;
@@ -320,13 +317,11 @@ std::ostream &operator<<(std::ostream &s, const Sdf_ListEditor<TypePolicy> &x)
   if (!x.IsValid())
   {
     return s;
-  }
-  else if (x.IsExplicit())
+  } else if (x.IsExplicit())
   {
     Util::_Write(s, x.GetVector(SdfListOpTypeExplicit));
     return s;
-  }
-  else
+  } else
   {
     s << "{ ";
     if (!x.IsOrderedOnly())

@@ -438,8 +438,8 @@ void Tf_TerminateHandler();
 
 // See documentation above.
 #      define TF_VERIFY(cond, ...) \
-        (ARCH_LIKELY(cond) ? \
-           true : \
+        (ARCH_LIKELY(cond) ?       \
+           true :                  \
            Tf_FailedVerifyHelper(TF_CALL_CONTEXT, #cond, Tf_VerifyStringFormat(__VA_ARGS__)))
 
 // Helpers for TF_VERIFY.

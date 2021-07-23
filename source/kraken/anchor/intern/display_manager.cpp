@@ -43,8 +43,7 @@ eAnchorStatus AnchorDisplayManager::initialize(void)
   {
     success = initializeSettings();
     m_settingsInitialized = true;
-  }
-  else
+  } else
   {
     success = ANCHOR_SUCCESS;
   }
@@ -70,8 +69,7 @@ eAnchorStatus AnchorDisplayManager::getNumDisplaySettings(AnchorU8 display, Anch
     if (display < numDisplays)
     {
       numSettings = m_settings[display].size();
-    }
-    else
+    } else
     {
       success = ANCHOR_FAILURE;
     }
@@ -93,8 +91,7 @@ eAnchorStatus AnchorDisplayManager::getDisplaySetting(AnchorU8 display,
     if (display < numDisplays && ((AnchorU8)index < m_settings[display].size()))
     {
       setting = m_settings[display][index];
-    }
-    else
+    } else
     {
       success = ANCHOR_FAILURE;
     }
@@ -185,8 +182,7 @@ eAnchorStatus AnchorDisplayManager::initializeSettings(void)
           success = getDisplaySetting(display, index, setting);
           m_settings[display].push_back(setting);
         }
-      }
-      else
+      } else
       {
         break;
       }

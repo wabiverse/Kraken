@@ -183,46 +183,46 @@ UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::_FindOrCreateSkinningQuery(co
 namespace
 {
 
-/// Create a string representing an indent.
-std::string _MakeIndent(size_t count, int indentSize = 2)
-{
-  return std::string(count * indentSize, ' ');
-}
-
-void _DeprecatedBindingCheck(bool hasBindingAPI, const UsdProperty &prop)
-{
-  if (!hasBindingAPI)
+  /// Create a string representing an indent.
+  std::string _MakeIndent(size_t count, int indentSize = 2)
   {
-    TF_WARN(
-      "Found binding property <%s>, but the SkelBindingAPI was not "
-      "applied on the owning prim. In the future, binding properties "
-      "will be ignored unless the SkelBindingAPI is applied "
-      "(see UsdSkelBindingAPI::Apply)",
-      prop.GetPath().GetText());
+    return std::string(count * indentSize, ' ');
   }
-}
 
-/// If \p attr is an attribute on an instance proxy, return the attr on the
-/// instance prototype. Otherwise return the original attr.
-UsdAttribute _GetAttrInPrototype(const UsdAttribute &attr)
-{
-  if (attr && attr.GetPrim().IsInstanceProxy())
+  void _DeprecatedBindingCheck(bool hasBindingAPI, const UsdProperty &prop)
   {
-    return attr.GetPrim().GetPrimInPrototype().GetAttribute(attr.GetName());
+    if (!hasBindingAPI)
+    {
+      TF_WARN(
+        "Found binding property <%s>, but the SkelBindingAPI was not "
+        "applied on the owning prim. In the future, binding properties "
+        "will be ignored unless the SkelBindingAPI is applied "
+        "(see UsdSkelBindingAPI::Apply)",
+        prop.GetPath().GetText());
+    }
   }
-  return attr;
-}
 
-/// If \p rel is an attribute on an instance proxy, return the rel on the
-/// instance prototype. Otherwise return the original rel.
-UsdRelationship _GetRelInPrototype(const UsdRelationship &rel)
-{
-  if (rel && rel.GetPrim().IsInstanceProxy())
+  /// If \p attr is an attribute on an instance proxy, return the attr on the
+  /// instance prototype. Otherwise return the original attr.
+  UsdAttribute _GetAttrInPrototype(const UsdAttribute &attr)
   {
-    return rel.GetPrim().GetPrimInPrototype().GetRelationship(rel.GetName());
+    if (attr && attr.GetPrim().IsInstanceProxy())
+    {
+      return attr.GetPrim().GetPrimInPrototype().GetAttribute(attr.GetName());
+    }
+    return attr;
   }
-  return rel;
-}
+
+  /// If \p rel is an attribute on an instance proxy, return the rel on the
+  /// instance prototype. Otherwise return the original rel.
+  UsdRelationship _GetRelInPrototype(const UsdRelationship &rel)
+  {
+    if (rel && rel.GetPrim().IsInstanceProxy())
+    {
+      return rel.GetPrim().GetPrimInPrototype().GetRelationship(rel.GetName());
+    }
+    return rel;
+  }
 
 }  // namespace
 

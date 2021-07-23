@@ -51,51 +51,51 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static int normalizeIndex(int index)
-{
-  return TfPyNormalizeIndex(index, 2, true /*throw error*/);
-}
+  static int normalizeIndex(int index)
+  {
+    return TfPyNormalizeIndex(index, 2, true /*throw error*/);
+  }
 
-static int __len__(const GfSize2 &self)
-{
-  return 2;
-}
+  static int __len__(const GfSize2 &self)
+  {
+    return 2;
+  }
 
-static size_t __getitem__(const GfSize2 &self, int index)
-{
-  index = normalizeIndex(index);
-  return self[index];
-}
+  static size_t __getitem__(const GfSize2 &self, int index)
+  {
+    index = normalizeIndex(index);
+    return self[index];
+  }
 
-static void __setitem__(GfSize2 &self, int index, size_t value)
-{
-  index = normalizeIndex(index);
-  self[index] = value;
-}
+  static void __setitem__(GfSize2 &self, int index, size_t value)
+  {
+    index = normalizeIndex(index);
+    self[index] = value;
+  }
 
-static bool __contains__(const GfSize2 &self, size_t value)
-{
-  if (self[0] == value || self[1] == value)
-    return true;
-  return false;
-}
+  static bool __contains__(const GfSize2 &self, size_t value)
+  {
+    if (self[0] == value || self[1] == value)
+      return true;
+    return false;
+  }
 
 #if PY_MAJOR_VERSION == 2
-static GfSize2 __truediv__(const GfSize2 &self, int value)
-{
-  return self / value;
-}
+  static GfSize2 __truediv__(const GfSize2 &self, int value)
+  {
+    return self / value;
+  }
 
-static GfSize2 __itruediv__(GfSize2 &self, int value)
-{
-  return self /= value;
-}
+  static GfSize2 __itruediv__(GfSize2 &self, int value)
+  {
+    return self /= value;
+  }
 #endif
 
-static string _Repr(GfSize2 const &self)
-{
-  return TF_PY_REPR_PREFIX + "Size2(" + TfPyRepr(self[0]) + ", " + TfPyRepr(self[1]) + ")";
-}
+  static string _Repr(GfSize2 const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Size2(" + TfPyRepr(self[0]) + ", " + TfPyRepr(self[1]) + ")";
+  }
 
 }  // anonymous namespace
 

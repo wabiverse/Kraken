@@ -66,129 +66,130 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static bool _Export(const UsdStagePtr &self,
-                    const std::string &filename,
-                    bool addSourceFileComment,
-                    const boost::python::dict &dict)
-{
-  SdfLayer::FileFormatArguments args;
-  std::string errMsg;
-  if (!SdfFileFormatArgumentsFromPython(dict, &args, &errMsg))
+  static bool _Export(const UsdStagePtr &self,
+                      const std::string &filename,
+                      bool addSourceFileComment,
+                      const boost::python::dict &dict)
   {
-    TF_CODING_ERROR("%s", errMsg.c_str());
-    return false;
+    SdfLayer::FileFormatArguments args;
+    std::string errMsg;
+    if (!SdfFileFormatArgumentsFromPython(dict, &args, &errMsg))
+    {
+      TF_CODING_ERROR("%s", errMsg.c_str());
+      return false;
+    }
+
+    return self->Export(filename, addSourceFileComment, args);
   }
 
-  return self->Export(filename, addSourceFileComment, args);
-}
-
-static string _ExportToString(const UsdStagePtr &self, bool addSourceFileComment = true)
-{
-  string result;
-  self->ExportToString(&result, addSourceFileComment);
-  return result;
-}
-
-static string __repr__(const UsdStagePtr &self)
-{
-  if (self.IsExpired())
+  static string _ExportToString(const UsdStagePtr &self, bool addSourceFileComment = true)
   {
-    return "invalid " + UsdDescribe(self);
+    string result;
+    self->ExportToString(&result, addSourceFileComment);
+    return result;
   }
 
-  string result = TF_PY_REPR_PREFIX + TfStringPrintf("Stage.Open(rootLayer=%s, sessionLayer=%s",
-                                                     TfPyRepr(self->GetRootLayer()).c_str(),
-                                                     TfPyRepr(self->GetSessionLayer()).c_str());
-
-  if (!self->GetPathResolverContext().IsEmpty())
+  static string __repr__(const UsdStagePtr &self)
   {
-    result += TfStringPrintf(", pathResolverContext=%s", TfPyRepr(self->GetPathResolverContext()).c_str());
+    if (self.IsExpired())
+    {
+      return "invalid " + UsdDescribe(self);
+    }
+
+    string result = TF_PY_REPR_PREFIX + TfStringPrintf("Stage.Open(rootLayer=%s, sessionLayer=%s",
+                                                       TfPyRepr(self->GetRootLayer()).c_str(),
+                                                       TfPyRepr(self->GetSessionLayer()).c_str());
+
+    if (!self->GetPathResolverContext().IsEmpty())
+    {
+      result += TfStringPrintf(", pathResolverContext=%s", TfPyRepr(self->GetPathResolverContext()).c_str());
+    }
+
+    return result + ")";
   }
 
-  return result + ")";
-}
-
-static TfPyObjWrapper _GetMetadata(const UsdStagePtr &self, const TfToken &key)
-{
-  VtValue result;
-  self->GetMetadata(key, &result);
-  // If the above failed, result will still be empty, which is
-  // the appropriate return value
-  return UsdVtValueToPython(result);
-}
-
-static bool _SetMetadata(const UsdStagePtr &self, const TfToken &key, object obj)
-{
-  VtValue value;
-  return UsdPythonToMetadataValue(key, /*keyPath*/ TfToken(), obj, &value) && self->SetMetadata(key, value);
-}
-
-static TfPyObjWrapper _GetMetadataByDictKey(const UsdStagePtr &self,
-                                            const TfToken &key,
-                                            const TfToken &keyPath)
-{
-  VtValue result;
-  self->GetMetadataByDictKey(key, keyPath, &result);
-  // If the above failed, result will still be empty, which is
-  // the appropriate return value
-  return UsdVtValueToPython(result);
-}
-
-static bool _SetMetadataByDictKey(const UsdStagePtr &self,
-                                  const TfToken &key,
-                                  const TfToken &keyPath,
-                                  object obj)
-{
-  VtValue value;
-  return UsdPythonToMetadataValue(key, keyPath, obj, &value) &&
-         self->SetMetadataByDictKey(key, keyPath, value);
-}
-
-static void _SetGlobalVariantFallbacks(const dict &d)
-{
-  PcpVariantFallbackMap fallbacks;
-  if (PcpVariantFallbackMapFromPython(d, &fallbacks))
+  static TfPyObjWrapper _GetMetadata(const UsdStagePtr &self, const TfToken &key)
   {
-    UsdStage::SetGlobalVariantFallbacks(fallbacks);
+    VtValue result;
+    self->GetMetadata(key, &result);
+    // If the above failed, result will still be empty, which is
+    // the appropriate return value
+    return UsdVtValueToPython(result);
   }
-}
 
-static UsdEditTarget _GetEditTargetForLocalLayerIndex(const UsdStagePtr &self, size_t index)
-{
-  return self->GetEditTargetForLocalLayer(index);
-}
-
-static UsdEditTarget _GetEditTargetForLocalLayer(const UsdStagePtr &self, const SdfLayerHandle &layer)
-{
-  return self->GetEditTargetForLocalLayer(layer);
-}
-
-static void _ExpandPopulationMask(UsdStage &self,
-                                  boost::python::object pyRelPred,
-                                  boost::python::object pyAttrPred)
-{
-  using RelPredicate = std::function<bool(UsdRelationship const &)>;
-  using AttrPredicate = std::function<bool(UsdAttribute const &)>;
-  RelPredicate relPred;
-  AttrPredicate attrPred;
-  if (!pyRelPred.is_none())
+  static bool _SetMetadata(const UsdStagePtr &self, const TfToken &key, object obj)
   {
-    relPred = boost::python::extract<RelPredicate>(pyRelPred);
+    VtValue value;
+    return UsdPythonToMetadataValue(key, /*keyPath*/ TfToken(), obj, &value) &&
+           self->SetMetadata(key, value);
   }
-  if (!pyAttrPred.is_none())
-  {
-    attrPred = boost::python::extract<AttrPredicate>(pyAttrPred);
-  }
-  return self.ExpandPopulationMask(relPred, attrPred);
-}
 
-static object _GetColorConfigFallbacks()
-{
-  SdfAssetPath colorConfiguration;
-  TfToken colorManagementSystem;
-  UsdStage::GetColorConfigFallbacks(&colorConfiguration, &colorManagementSystem);
-  return boost::python::make_tuple(colorConfiguration, colorManagementSystem);
-}
+  static TfPyObjWrapper _GetMetadataByDictKey(const UsdStagePtr &self,
+                                              const TfToken &key,
+                                              const TfToken &keyPath)
+  {
+    VtValue result;
+    self->GetMetadataByDictKey(key, keyPath, &result);
+    // If the above failed, result will still be empty, which is
+    // the appropriate return value
+    return UsdVtValueToPython(result);
+  }
+
+  static bool _SetMetadataByDictKey(const UsdStagePtr &self,
+                                    const TfToken &key,
+                                    const TfToken &keyPath,
+                                    object obj)
+  {
+    VtValue value;
+    return UsdPythonToMetadataValue(key, keyPath, obj, &value) &&
+           self->SetMetadataByDictKey(key, keyPath, value);
+  }
+
+  static void _SetGlobalVariantFallbacks(const dict &d)
+  {
+    PcpVariantFallbackMap fallbacks;
+    if (PcpVariantFallbackMapFromPython(d, &fallbacks))
+    {
+      UsdStage::SetGlobalVariantFallbacks(fallbacks);
+    }
+  }
+
+  static UsdEditTarget _GetEditTargetForLocalLayerIndex(const UsdStagePtr &self, size_t index)
+  {
+    return self->GetEditTargetForLocalLayer(index);
+  }
+
+  static UsdEditTarget _GetEditTargetForLocalLayer(const UsdStagePtr &self, const SdfLayerHandle &layer)
+  {
+    return self->GetEditTargetForLocalLayer(layer);
+  }
+
+  static void _ExpandPopulationMask(UsdStage &self,
+                                    boost::python::object pyRelPred,
+                                    boost::python::object pyAttrPred)
+  {
+    using RelPredicate = std::function<bool(UsdRelationship const &)>;
+    using AttrPredicate = std::function<bool(UsdAttribute const &)>;
+    RelPredicate relPred;
+    AttrPredicate attrPred;
+    if (!pyRelPred.is_none())
+    {
+      relPred = boost::python::extract<RelPredicate>(pyRelPred);
+    }
+    if (!pyAttrPred.is_none())
+    {
+      attrPred = boost::python::extract<AttrPredicate>(pyAttrPred);
+    }
+    return self.ExpandPopulationMask(relPred, attrPred);
+  }
+
+  static object _GetColorConfigFallbacks()
+  {
+    SdfAssetPath colorConfiguration;
+    TfToken colorManagementSystem;
+    UsdStage::GetColorConfigFallbacks(&colorConfiguration, &colorManagementSystem);
+    return boost::python::make_tuple(colorConfiguration, colorManagementSystem);
+  }
 
 }  // anonymous namespace
 
@@ -223,8 +224,10 @@ void wrapUsdStage()
          return_value_policy<TfPyRefPtrFactory<>>())
     .def(
       "CreateNew",
-      (UsdStageRefPtr(*)(
-        const string &, const SdfLayerHandle &, const ArResolverContext &, UsdStage::InitialLoadSet)) &
+      (UsdStageRefPtr(*)(const string &,
+                         const SdfLayerHandle &,
+                         const ArResolverContext &,
+                         UsdStage::InitialLoadSet)) &
         UsdStage::CreateNew,
       (arg("identifier"), arg("sessionLayer"), arg("pathResolverContext"), arg("load") = UsdStage::LoadAll),
       return_value_policy<TfPyRefPtrFactory<>>())
@@ -250,8 +253,10 @@ void wrapUsdStage()
          return_value_policy<TfPyRefPtrFactory<>>())
     .def(
       "CreateInMemory",
-      (UsdStageRefPtr(*)(
-        const string &, const SdfLayerHandle &, const ArResolverContext &, UsdStage::InitialLoadSet)) &
+      (UsdStageRefPtr(*)(const string &,
+                         const SdfLayerHandle &,
+                         const ArResolverContext &,
+                         UsdStage::InitialLoadSet)) &
         UsdStage::CreateInMemory,
       (arg("identifier"), arg("sessionLayer"), arg("pathResolverContext"), arg("load") = UsdStage::LoadAll),
       return_value_policy<TfPyRefPtrFactory<>>())

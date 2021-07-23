@@ -188,17 +188,16 @@ void UsdDracoImportAttribute<T>::SetToMesh(UsdGeomMesh *usdMesh) const
       // reduce memory. Meeanwhile, the interpolation is changed to
       // faceVarying.
       primvar.SetInterpolation(UsdGeomTokens->faceVarying);
-    }
-    else
+    } else
     {
       primvar.SetInterpolation(_descriptor.GetInterpolation());
     }
-  }
-  else
+  } else
   {
     // Set data as an attribute.
     UsdAttribute attribute = usdMesh->GetPrim().CreateAttribute(
-      _descriptor.GetName(), UsdDracoAttributeFactory::GetSdfValueTypeName(_descriptor));
+      _descriptor.GetName(),
+      UsdDracoAttributeFactory::GetSdfValueTypeName(_descriptor));
     attribute.Set(_values, _descriptor.GetValuesTime());
   }
 }

@@ -50,27 +50,28 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateAngleAttr(UsdLuxDistantLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateAngleAttr(UsdLuxDistantLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateIntensityAttr(UsdLuxDistantLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateIntensityAttr(UsdLuxDistantLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static std::string _Repr(const UsdLuxDistantLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.DistantLight(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdLuxDistantLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.DistantLight(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -102,8 +103,9 @@ void wrapUsdLuxDistantLight()
     .def(!self)
 
     .def("GetAngleAttr", &This::GetAngleAttr)
-    .def(
-      "CreateAngleAttr", &_CreateAngleAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateAngleAttr",
+         &_CreateAngleAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetIntensityAttr", &This::GetIntensityAttr)
     .def("CreateIntensityAttr",
@@ -137,7 +139,7 @@ void wrapUsdLuxDistantLight()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

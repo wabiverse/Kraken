@@ -50,7 +50,8 @@ static NdrTokenMap _GetSdrMetadata(const UsdShadeShader &shaderDef,
   metadata.insert(shaderDefMetadata.begin(), shaderDefMetadata.end());
 
   metadata[SdrNodeMetadata->Primvars] = UsdShadeShaderDefUtils::GetPrimvarNamesMetadataString(
-    metadata, shaderDef.ConnectableAPI());
+    metadata,
+    shaderDef.ConnectableAPI());
 
   return metadata;
 }

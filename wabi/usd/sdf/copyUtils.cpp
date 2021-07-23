@@ -51,43 +51,43 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// A _CopyStackEntry is a (source path, destination path) pair indicating
-// a spec that should be copied.
-struct _CopyStackEntry
-{
-  SdfPath srcPath;
-  SdfPath dstPath;
+  // A _CopyStackEntry is a (source path, destination path) pair indicating
+  // a spec that should be copied.
+  struct _CopyStackEntry
+  {
+    SdfPath srcPath;
+    SdfPath dstPath;
 
-  _CopyStackEntry(const SdfPath &srcPath, const SdfPath &dstPath)
-    : srcPath(srcPath),
-      dstPath(dstPath){};
-};
+    _CopyStackEntry(const SdfPath &srcPath, const SdfPath &dstPath)
+      : srcPath(srcPath),
+        dstPath(dstPath){};
+  };
 
-typedef std::deque<_CopyStackEntry> _CopyStack;
+  typedef std::deque<_CopyStackEntry> _CopyStack;
 
-// Collection of (field name, value) pairs.
-typedef std::pair<TfToken, VtValue> _FieldValuePair;
-typedef std::vector<_FieldValuePair> _FieldValueList;
+  // Collection of (field name, value) pairs.
+  typedef std::pair<TfToken, VtValue> _FieldValuePair;
+  typedef std::vector<_FieldValuePair> _FieldValueList;
 
-// A _SpecDataEntry contains all of the information being copied for a
-// single spec.
-struct _SpecDataEntry
-{
-  _SpecDataEntry(const SdfPath &dstPath_, SdfSpecType specType_)
-    : dstPath(dstPath_),
-      specType(specType_)
-  {}
+  // A _SpecDataEntry contains all of the information being copied for a
+  // single spec.
+  struct _SpecDataEntry
+  {
+    _SpecDataEntry(const SdfPath &dstPath_, SdfSpecType specType_)
+      : dstPath(dstPath_),
+        specType(specType_)
+    {}
 
-  // Destination path to which this spec data should be copied.
-  SdfPath dstPath;
+    // Destination path to which this spec data should be copied.
+    SdfPath dstPath;
 
-  // Type of spec this entry represents.
-  SdfSpecType specType;
+    // Type of spec this entry represents.
+    SdfSpecType specType;
 
-  // List containing (field, value) pairs of data to be copied to
-  // the destination spec.
-  _FieldValueList dataToCopy;
-};
+    // List containing (field, value) pairs of data to be copied to
+    // the destination spec.
+    _FieldValueList dataToCopy;
+  };
 
 }  // end anonymous namespace
 
@@ -106,8 +106,7 @@ static void _GetFieldNames(const SdfLayerHandle &layer,
     if (schema.HoldsChildren(field))
     {
       childrenFields->push_back(field);
-    }
-    else
+    } else
     {
       valueFields->push_back(field);
     }
@@ -372,8 +371,7 @@ static void _DoAddNewPrimSpec(const SdfLayerHandle &destLayer, const _SpecDataEn
     if (fieldValue.first == SdfFieldKeys->TypeName)
     {
       type = fieldValue.second.Get<TfToken>();
-    }
-    else if (fieldValue.first == SdfFieldKeys->Specifier)
+    } else if (fieldValue.first == SdfFieldKeys->Specifier)
     {
       specifier = fieldValue.second.Get<SdfSpecifier>();
     }
@@ -460,8 +458,9 @@ static void _AddNewSpecToLayer(const SdfLayerHandle &destLayer, const _SpecDataE
 template<class ChildPolicy>
 static void _DoRemoveSpec(const SdfLayerHandle &dstLayer, const SdfPath &dstPath)
 {
-  Sdf_ChildrenUtils<ChildPolicy>::RemoveChild(
-    dstLayer, ChildPolicy::GetParentPath(dstPath), ChildPolicy::GetFieldValue(dstPath));
+  Sdf_ChildrenUtils<ChildPolicy>::RemoveChild(dstLayer,
+                                              ChildPolicy::GetParentPath(dstPath),
+                                              ChildPolicy::GetFieldValue(dstPath));
 }
 
 static void _RemoveSpecFromLayer(const SdfLayerHandle &dstLayer, const SdfPath &dstPath)
@@ -521,8 +520,7 @@ static void _AddFieldValueToCopy(SdfSpecType specType,
                                  _FieldValueList *valueList)
 {
   boost::optional<VtValue> value;
-  if (shouldCopyValue(
-        specType, field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst, &value))
+  if (shouldCopyValue(specType, field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst, &value))
   {
 
     // XXX: VtValue doesn't have move semantics...
@@ -530,8 +528,7 @@ static void _AddFieldValueToCopy(SdfSpecType specType,
     if (value)
     {
       value->Swap(valueList->back().second);
-    }
-    else
+    } else
     {
       srcLayer->GetField(srcPath, field).Swap(valueList->back().second);
     }
@@ -563,15 +560,13 @@ static void _ForEachField(const std::vector<TfToken> &srcFields,
     {
       fn(*srcIt, /* inSrc = */ true, /* inDst = */ true);
       ++srcIt, ++dstIt;
-    }
-    else if (lessThan(*srcIt, *dstIt))
+    } else if (lessThan(*srcIt, *dstIt))
     {
       for (; srcIt != srcEndIt && lessThan(*srcIt, *dstIt); ++srcIt)
       {
         fn(*srcIt, /* inSrc = */ true, /* inDst = */ false);
       }
-    }
-    else
+    } else
     {
       for (; dstIt != dstEndIt && lessThan(*dstIt, *srcIt); ++dstIt)
       {
@@ -674,19 +669,20 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
 
     // From the list of value fields, retrieve all values that the copy
     // policy says we need to copy over to the destination.
-    _ForEachField(
-      srcValueFields, dstValueFields, [&](const TfToken &field, bool fieldInSrc, bool fieldInDst) {
-        _AddFieldValueToCopy(specType,
-                             field,
-                             srcLayer,
-                             toCopy.srcPath,
-                             fieldInSrc,
-                             dstLayer,
-                             toCopy.dstPath,
-                             fieldInDst,
-                             shouldCopyValueFn,
-                             &copyEntry.dataToCopy);
-      });
+    _ForEachField(srcValueFields,
+                  dstValueFields,
+                  [&](const TfToken &field, bool fieldInSrc, bool fieldInDst) {
+                    _AddFieldValueToCopy(specType,
+                                         field,
+                                         srcLayer,
+                                         toCopy.srcPath,
+                                         fieldInSrc,
+                                         dstLayer,
+                                         toCopy.dstPath,
+                                         fieldInDst,
+                                         shouldCopyValueFn,
+                                         &copyEntry.dataToCopy);
+                  });
 
     // Since prims and variants hold the same information, a prim can be
     // copied to a variant and vice-versa. If this is the case, we need
@@ -714,8 +710,7 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
         // that's the value used in SdfVariantSpec's c'tor.
         copyEntry.dataToCopy.push_back({SdfFieldKeys->Specifier, VtValue(SdfSpecifierOver)});
         copyEntry.specType = SdfSpecTypeVariant;
-      }
-      else if (copyingVariantToPrim)
+      } else if (copyingVariantToPrim)
       {
         // Variants don't have a specifier or typename, but for
         // convenience we copy those values from the owning prim.
@@ -760,8 +755,7 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
         const SdfCopySpecsValueEdit::EditFunction &edit =
           fieldValue.second.UncheckedGet<SdfCopySpecsValueEdit>().GetEditFunction();
         edit(dstLayer, copyEntry.dstPath);
-      }
-      else
+      } else
       {
         dstLayer->SetField(copyEntry.dstPath, fieldValue.first, fieldValue.second);
       }
@@ -769,18 +763,19 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
 
     // Now add any children specs that need to be copied to our
     // copy stack.
-    _ForEachField(
-      srcChildrenFields, dstChildrenFields, [&](const TfToken &field, bool fieldInSrc, bool fieldInDst) {
-        _ProcessChildField(field,
-                           srcLayer,
-                           toCopy.srcPath,
-                           fieldInSrc,
-                           dstLayer,
-                           toCopy.dstPath,
-                           fieldInDst,
-                           shouldCopyChildrenFn,
-                           &copyStack);
-      });
+    _ForEachField(srcChildrenFields,
+                  dstChildrenFields,
+                  [&](const TfToken &field, bool fieldInSrc, bool fieldInDst) {
+                    _ProcessChildField(field,
+                                       srcLayer,
+                                       toCopy.srcPath,
+                                       fieldInSrc,
+                                       dstLayer,
+                                       toCopy.dstPath,
+                                       fieldInDst,
+                                       shouldCopyChildrenFn,
+                                       &copyStack);
+                  });
   }
 
   return true;
@@ -832,8 +827,7 @@ bool SdfShouldCopyValue(const SdfPath &srcRootPath,
 
         *valueToCopy = VtValue::Take(srcListOp);
       }
-    }
-    else if (field == SdfFieldKeys->References)
+    } else if (field == SdfFieldKeys->References)
     {
       SdfReferenceListOp refListOp;
       if (srcLayer->HasField(srcPath, field, &refListOp))
@@ -848,8 +842,7 @@ bool SdfShouldCopyValue(const SdfPath &srcRootPath,
 
         *valueToCopy = VtValue::Take(refListOp);
       }
-    }
-    else if (field == SdfFieldKeys->Payload)
+    } else if (field == SdfFieldKeys->Payload)
     {
       SdfPayloadListOp payloadListOp;
       if (srcLayer->HasField(srcPath, field, &payloadListOp))
@@ -864,8 +857,7 @@ bool SdfShouldCopyValue(const SdfPath &srcRootPath,
 
         *valueToCopy = VtValue::Take(payloadListOp);
       }
-    }
-    else if (field == SdfFieldKeys->Relocates)
+    } else if (field == SdfFieldKeys->Relocates)
     {
       SdfRelocatesMap relocates;
       if (srcLayer->HasField(srcPath, field, &relocates))

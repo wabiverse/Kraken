@@ -50,48 +50,50 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateGeomBindTransformAttr(UsdSkelBindingAPI &self,
-                                                 object defaultVal,
-                                                 bool writeSparsely)
-{
-  return self.CreateGeomBindTransformAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4d),
-                                          writeSparsely);
-}
+  static UsdAttribute _CreateGeomBindTransformAttr(UsdSkelBindingAPI &self,
+                                                   object defaultVal,
+                                                   bool writeSparsely)
+  {
+    return self.CreateGeomBindTransformAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4d),
+                                            writeSparsely);
+  }
 
-static UsdAttribute _CreateJointsAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateJointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
-}
+  static UsdAttribute _CreateJointsAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateJointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+                                 writeSparsely);
+  }
 
-static UsdAttribute _CreateJointIndicesAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateJointIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreateJointIndicesAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateJointIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateJointWeightsAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateJointWeightsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreateJointWeightsAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateJointWeightsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateBlendShapesAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateBlendShapesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
-                                    writeSparsely);
-}
+  static UsdAttribute _CreateBlendShapesAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateBlendShapesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+                                      writeSparsely);
+  }
 
-static std::string _Repr(const UsdSkelBindingAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdSkel.BindingAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdSkelBindingAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdSkel.BindingAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -128,8 +130,9 @@ void wrapUsdSkelBindingAPI()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetJointsAttr", &This::GetJointsAttr)
-    .def(
-      "CreateJointsAttr", &_CreateJointsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateJointsAttr",
+         &_CreateJointsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetJointIndicesAttr", &This::GetJointIndicesAttr)
     .def("CreateJointIndicesAttr",
@@ -181,54 +184,56 @@ void wrapUsdSkelBindingAPI()
 namespace
 {
 
-object _GetSkeleton(const UsdSkelBindingAPI &binding)
-{
-  UsdSkelSkeleton skel;
-  return binding.GetSkeleton(&skel) ? object(skel) : object();
-}
+  object _GetSkeleton(const UsdSkelBindingAPI &binding)
+  {
+    UsdSkelSkeleton skel;
+    return binding.GetSkeleton(&skel) ? object(skel) : object();
+  }
 
-object _GetAnimationSource(const UsdSkelBindingAPI &binding)
-{
-  UsdPrim prim;
-  return binding.GetAnimationSource(&prim) ? object(prim) : object();
-}
+  object _GetAnimationSource(const UsdSkelBindingAPI &binding)
+  {
+    UsdPrim prim;
+    return binding.GetAnimationSource(&prim) ? object(prim) : object();
+  }
 
-tuple _ValidateJointIndices(TfSpan<const int> jointIndices, size_t numJoints)
-{
-  std::string reason;
-  bool valid = UsdSkelBindingAPI::ValidateJointIndices(jointIndices, numJoints, &reason);
-  return boost::python::make_tuple(valid, reason);
-}
+  tuple _ValidateJointIndices(TfSpan<const int> jointIndices, size_t numJoints)
+  {
+    std::string reason;
+    bool valid = UsdSkelBindingAPI::ValidateJointIndices(jointIndices, numJoints, &reason);
+    return boost::python::make_tuple(valid, reason);
+  }
 
-WRAP_CUSTOM
-{
-  using This = UsdSkelBindingAPI;
+  WRAP_CUSTOM
+  {
+    using This = UsdSkelBindingAPI;
 
-  _class
-    .def("GetJointIndicesPrimvar", &This::GetJointIndicesPrimvar)
+    _class
+      .def("GetJointIndicesPrimvar", &This::GetJointIndicesPrimvar)
 
-    .def("CreateJointIndicesPrimvar",
-         &This::CreateJointIndicesPrimvar,
-         (arg("constant"), arg("elementSize") = -1))
+      .def("CreateJointIndicesPrimvar",
+           &This::CreateJointIndicesPrimvar,
+           (arg("constant"), arg("elementSize") = -1))
 
-    .def("GetJointWeightsPrimvar", &This::GetJointWeightsPrimvar)
+      .def("GetJointWeightsPrimvar", &This::GetJointWeightsPrimvar)
 
-    .def("CreateJointWeightsPrimvar",
-         &This::CreateJointWeightsPrimvar,
-         (arg("constant"), arg("elementSize") = -1))
+      .def("CreateJointWeightsPrimvar",
+           &This::CreateJointWeightsPrimvar,
+           (arg("constant"), arg("elementSize") = -1))
 
-    .def("SetRigidJointInfluence", &This::SetRigidJointInfluence, (arg("jointIndex"), arg("weight") = 1.0f))
+      .def("SetRigidJointInfluence",
+           &This::SetRigidJointInfluence,
+           (arg("jointIndex"), arg("weight") = 1.0f))
 
-    .def("GetSkeleton", &_GetSkeleton)
+      .def("GetSkeleton", &_GetSkeleton)
 
-    .def("GetAnimationSource", &_GetAnimationSource)
+      .def("GetAnimationSource", &_GetAnimationSource)
 
-    .def("GetInheritedSkeleton", &This::GetInheritedSkeleton)
+      .def("GetInheritedSkeleton", &This::GetInheritedSkeleton)
 
-    .def("GetInheritedAnimationSource", &This::GetInheritedAnimationSource)
+      .def("GetInheritedAnimationSource", &This::GetInheritedAnimationSource)
 
-    .def("ValidateJointIndices", &_ValidateJointIndices, (arg("jointIndices"), arg("numJoints")))
-    .staticmethod("ValidateJointIndices");
-}
+      .def("ValidateJointIndices", &_ValidateJointIndices, (arg("jointIndices"), arg("numJoints")))
+      .staticmethod("ValidateJointIndices");
+  }
 
 }  // namespace

@@ -388,8 +388,7 @@ static void CheckForMissingArguments(int i, int n, int argc, char *argv[])
     if (n == 1)
     {
       ParseError(argv[0], "missing parameter for '%s'", argv[i]);
-    }
-    else
+    } else
     {
       ParseError(argv[0], "argument '%s' requires %d values", argv[i], n);
     }
@@ -436,12 +435,10 @@ static bool ParseShowHide(int &i, int argc, char *argv[], bool *result)
   if (strcmp(argv[i + 1], "show") == 0)
   {
     *result = true;
-  }
-  else if (strcmp(argv[i + 1], "hide") == 0)
+  } else if (strcmp(argv[i + 1], "hide") == 0)
   {
     *result = false;
-  }
-  else
+  } else
   {
     ParseError(argv[0],
                "invalid parameter for '%s': %s. Must be either "
@@ -497,8 +494,7 @@ static VtValue ParseVtValue(int &i, int argc, char *argv[])
   {
     CheckForMissingArguments(i, 1, argc, argv);
     return VtValue(float(ParseDouble(i, argc, argv)));
-  }
-  else
+  } else
   {
     ParseError(argv[0], "unknown type '%s'", typeString);
     return VtValue();
@@ -512,166 +508,134 @@ void UsdImagingGL_UnitTestGLDrawing::_Parse(int argc, char *argv[], _Args *args)
     if (strcmp(argv[i], "-") == 0)
     {
       Usage(argc, argv);
-    }
-    else if (strcmp(argv[i], "-frameAll") == 0)
+    } else if (strcmp(argv[i], "-frameAll") == 0)
     {
       _shouldFrameAll = true;
-    }
-    else if (strcmp(argv[i], "-cullStyle") == 0)
+    } else if (strcmp(argv[i], "-cullStyle") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       args->cullStyle = argv[++i];
-    }
-    else if (strcmp(argv[i], "-offscreen") == 0)
+    } else if (strcmp(argv[i], "-offscreen") == 0)
     {
       args->offscreen = true;
-    }
-    else if (strcmp(argv[i], "-lighting") == 0)
+    } else if (strcmp(argv[i], "-lighting") == 0)
     {
       _testLighting = true;
-    }
-    else if (strcmp(argv[i], "-sceneLights") == 0)
+    } else if (strcmp(argv[i], "-sceneLights") == 0)
     {
       _sceneLights = true;
-    }
-    else if (strcmp(argv[i], "-camlight") == 0)
+    } else if (strcmp(argv[i], "-camlight") == 0)
     {
       _cameraLight = true;
-    }
-    else if (strcmp(argv[i], "-camera") == 0)
+    } else if (strcmp(argv[i], "-camera") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       _cameraPath = argv[++i];
-    }
-    else if (strcmp(argv[i], "-idRender") == 0)
+    } else if (strcmp(argv[i], "-idRender") == 0)
     {
       _testIdRender = true;
-    }
-    else if (strcmp(argv[i], "-stage") == 0)
+    } else if (strcmp(argv[i], "-stage") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       args->unresolvedStageFilePath = argv[++i];
-    }
-    else if (strcmp(argv[i], "-write") == 0)
+    } else if (strcmp(argv[i], "-write") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       _outputFilePath = argv[++i];
-    }
-    else if (strcmp(argv[i], "-shading") == 0)
+    } else if (strcmp(argv[i], "-shading") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       args->shading = argv[++i];
-    }
-    else if (strcmp(argv[i], "-complexity") == 0)
+    } else if (strcmp(argv[i], "-complexity") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       _complexity = ParseDouble(i, argc, argv);
-    }
-    else if (strcmp(argv[i], "-renderer") == 0)
+    } else if (strcmp(argv[i], "-renderer") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       _renderer = TfToken(argv[++i]);
-    }
-    else if (strcmp(argv[i], "-rendererAov") == 0)
+    } else if (strcmp(argv[i], "-rendererAov") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       _rendererAov = TfToken(argv[++i]);
-    }
-    else if (strcmp(argv[i], "-perfStatsFile") == 0)
+    } else if (strcmp(argv[i], "-perfStatsFile") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       _perfStatsFile = argv[++i];
-    }
-    else if (strcmp(argv[i], "-traceFile") == 0)
+    } else if (strcmp(argv[i], "-traceFile") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       _traceFile = argv[++i];
-    }
-    else if (strcmp(argv[i], "-clipPlane") == 0)
+    } else if (strcmp(argv[i], "-clipPlane") == 0)
     {
       CheckForMissingArguments(i, 4, argc, argv);
       args->clipPlaneCoords.push_back(ParseDouble(i, argc, argv));
       args->clipPlaneCoords.push_back(ParseDouble(i, argc, argv));
       args->clipPlaneCoords.push_back(ParseDouble(i, argc, argv));
       args->clipPlaneCoords.push_back(ParseDouble(i, argc, argv));
-    }
-    else if (strcmp(argv[i], "-complexities") == 0)
+    } else if (strcmp(argv[i], "-complexities") == 0)
     {
       ParseDoubleVector(i, argc, argv, &args->complexities);
-    }
-    else if (strcmp(argv[i], "-times") == 0)
+    } else if (strcmp(argv[i], "-times") == 0)
     {
       ParseDoubleVector(i, argc, argv, &_times);
-    }
-    else if (strcmp(argv[i], "-clear") == 0)
+    } else if (strcmp(argv[i], "-clear") == 0)
     {
       CheckForMissingArguments(i, 4, argc, argv);
       args->clearColor[0] = (float)ParseDouble(i, argc, argv);
       args->clearColor[1] = (float)ParseDouble(i, argc, argv);
       args->clearColor[2] = (float)ParseDouble(i, argc, argv);
       args->clearColor[3] = (float)ParseDouble(i, argc, argv);
-    }
-    else if (strcmp(argv[i], "-translate") == 0)
+    } else if (strcmp(argv[i], "-translate") == 0)
     {
       CheckForMissingArguments(i, 3, argc, argv);
       args->translate[0] = (float)ParseDouble(i, argc, argv);
       args->translate[1] = (float)ParseDouble(i, argc, argv);
       args->translate[2] = (float)ParseDouble(i, argc, argv);
-    }
-    else if (strcmp(argv[i], "-widgetSize") == 0)
+    } else if (strcmp(argv[i], "-widgetSize") == 0)
     {
       CheckForMissingArguments(i, 2, argc, argv);
       args->widgetSize[0] = (int)ParseDouble(i, argc, argv);
       args->widgetSize[1] = (int)ParseDouble(i, argc, argv);
-    }
-    else if (strcmp(argv[i], "-pixelAspectRatio") == 0)
+    } else if (strcmp(argv[i], "-pixelAspectRatio") == 0)
     {
       CheckForMissingArguments(i, 1, argc, argv);
       args->pixelAspectRatio = (float)ParseDouble(i, argc, argv);
-    }
-    else if (strcmp(argv[i], "-dataWindow") == 0)
+    } else if (strcmp(argv[i], "-dataWindow") == 0)
     {
       CheckForMissingArguments(i, 4, argc, argv);
       args->dataWindow[0] = (int)ParseDouble(i, argc, argv);
       args->dataWindow[1] = (int)ParseDouble(i, argc, argv);
       args->dataWindow[2] = (int)ParseDouble(i, argc, argv);
       args->dataWindow[3] = (int)ParseDouble(i, argc, argv);
-    }
-    else if (strcmp(argv[i], "-displayWindow") == 0)
+    } else if (strcmp(argv[i], "-displayWindow") == 0)
     {
       CheckForMissingArguments(i, 4, argc, argv);
       args->displayWindow[0] = (float)ParseDouble(i, argc, argv);
       args->displayWindow[1] = (float)ParseDouble(i, argc, argv);
       args->displayWindow[2] = (float)ParseDouble(i, argc, argv);
       args->displayWindow[3] = (float)ParseDouble(i, argc, argv);
-    }
-    else if (strcmp(argv[i], "-renderSetting") == 0)
+    } else if (strcmp(argv[i], "-renderSetting") == 0)
     {
       CheckForMissingArguments(i, 2, argc, argv);
       const char *const key = ParseString(i, argc, argv);
       _renderSettings[key] = ParseVtValue(i, argc, argv);
-    }
-    else if (strcmp(argv[i], "-guidesPurpose") == 0)
+    } else if (strcmp(argv[i], "-guidesPurpose") == 0)
     {
       ParseShowHide(i, argc, argv, &_showGuides);
-    }
-    else if (strcmp(argv[i], "-renderPurpose") == 0)
+    } else if (strcmp(argv[i], "-renderPurpose") == 0)
     {
       ParseShowHide(i, argc, argv, &_showRender);
-    }
-    else if (strcmp(argv[i], "-proxyPurpose") == 0)
+    } else if (strcmp(argv[i], "-proxyPurpose") == 0)
     {
       ParseShowHide(i, argc, argv, &_showProxy);
-    }
-    else if (strcmp(argv[i], "-clearOnce") == 0)
+    } else if (strcmp(argv[i], "-clearOnce") == 0)
     {
       _clearOnce = true;
-    }
-    else if (strcmp(argv[i], "-presentDisabled") == 0)
+    } else if (strcmp(argv[i], "-presentDisabled") == 0)
     {
       _presentDisabled = true;
-    }
-    else
+    } else
     {
       ParseError(argv[0], "unknown argument %s", argv[i]);
     }
@@ -713,24 +677,22 @@ void UsdImagingGL_UnitTestGLDrawing::RunTest(int argc, char *argv[])
   _displayWindow = GfRange2f(
     GfVec2f(args.displayWindow[0], args.displayWindow[1]),
     GfVec2f(args.displayWindow[0] + args.displayWindow[2], args.displayWindow[1] + args.displayWindow[3]));
-  _dataWindow = GfRect2i(
-    GfVec2i(args.dataWindow[0], args.dataWindow[1]), args.dataWindow[2], args.dataWindow[3]);
+  _dataWindow = GfRect2i(GfVec2i(args.dataWindow[0], args.dataWindow[1]),
+                         args.dataWindow[2],
+                         args.dataWindow[3]);
 
   _drawMode = UsdImagingGLDrawMode::DRAW_SHADED_SMOOTH;
 
   if (args.shading.compare("wireOnSurface") == 0)
   {
     _drawMode = UsdImagingGLDrawMode::DRAW_WIREFRAME_ON_SURFACE;
-  }
-  else if (args.shading.compare("flat") == 0)
+  } else if (args.shading.compare("flat") == 0)
   {
     _drawMode = UsdImagingGLDrawMode::DRAW_SHADED_FLAT;
-  }
-  else if (args.shading.compare("wire") == 0)
+  } else if (args.shading.compare("wire") == 0)
   {
     _drawMode = UsdImagingGLDrawMode::DRAW_WIREFRAME;
-  }
-  else
+  } else
   {
     TF_WARN("Draw mode %s not supported!", args.shading.c_str());
   }
@@ -740,16 +702,13 @@ void UsdImagingGL_UnitTestGLDrawing::RunTest(int argc, char *argv[])
   if (args.cullStyle.compare("back") == 0)
   {
     _cullStyle = UsdImagingGLCullStyle::CULL_STYLE_BACK;
-  }
-  else if (args.cullStyle.compare("backUnlessDoubleSided") == 0)
+  } else if (args.cullStyle.compare("backUnlessDoubleSided") == 0)
   {
     _cullStyle = UsdImagingGLCullStyle::CULL_STYLE_BACK_UNLESS_DOUBLE_SIDED;
-  }
-  else if (args.cullStyle.compare("front") == 0)
+  } else if (args.cullStyle.compare("front") == 0)
   {
     _cullStyle = UsdImagingGLCullStyle::CULL_STYLE_FRONT;
-  }
-  else
+  } else
   {
     TF_WARN("Cull style %s not supported!", args.cullStyle.c_str());
   }
@@ -783,12 +742,10 @@ void UsdImagingGL_UnitTestGLDrawing::RunTest(int argc, char *argv[])
 
       _widget->DrawOffscreen();
     }
-  }
-  else if (args.offscreen)
+  } else if (args.offscreen)
   {
     _widget->DrawOffscreen();
-  }
-  else
+  } else
   {
     _widget->Run();
   }

@@ -43,33 +43,32 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static size_t __hash__(const UsdTimeCode &self)
-{
-  return hash_value(self);
-}
-
-static std::string _Str(const UsdTimeCode &self)
-{
-  return boost::lexical_cast<std::string>(self);
-}
-
-static string __repr__(const UsdTimeCode &self)
-{
-  string tail = ".Default()";
-  if (self.IsNumeric())
+  static size_t __hash__(const UsdTimeCode &self)
   {
-    if (self.IsEarliestTime())
-    {
-      tail = ".EarliestTime()";
-    }
-    else
-    {
-      tail = self.GetValue() == 0.0 ? string("()") :
-                                      TfStringPrintf("(%s)", TfPyRepr(self.GetValue()).c_str());
-    }
+    return hash_value(self);
   }
-  return TF_PY_REPR_PREFIX + "TimeCode" + tail;
-}
+
+  static std::string _Str(const UsdTimeCode &self)
+  {
+    return boost::lexical_cast<std::string>(self);
+  }
+
+  static string __repr__(const UsdTimeCode &self)
+  {
+    string tail = ".Default()";
+    if (self.IsNumeric())
+    {
+      if (self.IsEarliestTime())
+      {
+        tail = ".EarliestTime()";
+      } else
+      {
+        tail = self.GetValue() == 0.0 ? string("()") :
+                                        TfStringPrintf("(%s)", TfPyRepr(self.GetValue()).c_str());
+      }
+    }
+    return TF_PY_REPR_PREFIX + "TimeCode" + tail;
+  }
 
 }  // anonymous namespace
 

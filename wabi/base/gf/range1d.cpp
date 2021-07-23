@@ -62,8 +62,7 @@ double GfRange1d::GetDistanceSquared(double p) const
   {
     // p is left of box
     dist += GfSqr(_min - p);
-  }
-  else if (p > _max)
+  } else if (p > _max)
   {
     // p is right of box
     dist += GfSqr(p - _max);

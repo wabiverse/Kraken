@@ -118,23 +118,37 @@ void HdPhPoints::_UpdateDrawItem(HdSceneDelegate *sceneDelegate,
 
   /* INSTANCE PRIMVARS */
   _UpdateInstancer(sceneDelegate, dirtyBits);
-  HdPhUpdateInstancerData(
-    sceneDelegate->GetRenderIndex(), renderParam, this, drawItem, &_sharedData, *dirtyBits);
+  HdPhUpdateInstancerData(sceneDelegate->GetRenderIndex(),
+                          renderParam,
+                          this,
+                          drawItem,
+                          &_sharedData,
+                          *dirtyBits);
 
-  _displayOpacity = _displayOpacity || HdPhIsInstancePrimvarExistentAndValid(
-                                         sceneDelegate->GetRenderIndex(), this, HdTokens->displayOpacity);
+  _displayOpacity = _displayOpacity || HdPhIsInstancePrimvarExistentAndValid(sceneDelegate->GetRenderIndex(),
+                                                                             this,
+                                                                             HdTokens->displayOpacity);
 
   /* CONSTANT PRIMVARS, TRANSFORM, EXTENT AND PRIMID */
   if (HdPhShouldPopulateConstantPrimvars(dirtyBits, id))
   {
-    HdPrimvarDescriptorVector constantPrimvars = HdPhGetPrimvarDescriptors(
-      this, drawItem, sceneDelegate, HdInterpolationConstant);
+    HdPrimvarDescriptorVector constantPrimvars = HdPhGetPrimvarDescriptors(this,
+                                                                           drawItem,
+                                                                           sceneDelegate,
+                                                                           HdInterpolationConstant);
 
-    HdPhPopulateConstantPrimvars(
-      this, &_sharedData, sceneDelegate, renderParam, drawItem, dirtyBits, constantPrimvars);
+    HdPhPopulateConstantPrimvars(this,
+                                 &_sharedData,
+                                 sceneDelegate,
+                                 renderParam,
+                                 drawItem,
+                                 dirtyBits,
+                                 constantPrimvars);
 
-    _displayOpacity = _displayOpacity || HdPhIsPrimvarExistentAndValid(
-                                           this, sceneDelegate, constantPrimvars, HdTokens->displayOpacity);
+    _displayOpacity = _displayOpacity || HdPhIsPrimvarExistentAndValid(this,
+                                                                       sceneDelegate,
+                                                                       constantPrimvars,
+                                                                       HdTokens->displayOpacity);
   }
 
   HdPh_PointsShaderKey shaderKey;
@@ -167,8 +181,9 @@ void HdPhPoints::_UpdateRepr(HdSceneDelegate *sceneDelegate,
 
   if (TfDebug::IsEnabled(HD_RPRIM_UPDATED))
   {
-    TfDebug::Helper().Msg(
-      "HdPhPoints::_UpdateRepr for %s : Repr = %s\n", GetId().GetText(), reprToken.GetText());
+    TfDebug::Helper().Msg("HdPhPoints::_UpdateRepr for %s : Repr = %s\n",
+                          GetId().GetText(),
+                          reprToken.GetText());
     HdChangeTracker::DumpDirtyBits(*dirtyBits);
   }
 
@@ -207,14 +222,17 @@ void HdPhPoints::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
   {
     primvars = HdPhGetPrimvarDescriptors(this, drawItem, sceneDelegate, HdInterpolationVertex);
 
-    HdPrimvarDescriptorVector varyingPvs = HdPhGetPrimvarDescriptors(
-      this, drawItem, sceneDelegate, HdInterpolationVarying);
+    HdPrimvarDescriptorVector varyingPvs = HdPhGetPrimvarDescriptors(this,
+                                                                     drawItem,
+                                                                     sceneDelegate,
+                                                                     HdInterpolationVarying);
     primvars.insert(primvars.end(), varyingPvs.begin(), varyingPvs.end());
   }
 
   // Get computed vertex primvars
   HdExtComputationPrimvarDescriptorVector compPrimvars = sceneDelegate->GetExtComputationPrimvarDescriptors(
-    id, HdInterpolationVertex);
+    id,
+    HdInterpolationVertex);
 
   HdBufferSourceSharedPtrVector sources;
   HdBufferSourceSharedPtrVector reserveOnlySources;
@@ -274,7 +292,11 @@ void HdPhPoints::_PopulateVertexPrimvars(HdSceneDelegate *sceneDelegate,
   HdPhGetBufferSpecsFromCompuations(computations, &bufferSpecs);
 
   HdBufferArrayRangeSharedPtr range = resourceRegistry->UpdateNonUniformBufferArrayRange(
-    HdTokens->primvar, bar, bufferSpecs, removedSpecs, HdBufferArrayUsageHint());
+    HdTokens->primvar,
+    bar,
+    bufferSpecs,
+    removedSpecs,
+    HdBufferArrayUsageHint());
 
   HdPhUpdateDrawItemBAR(range,
                         drawItem->GetDrawingCoord()->GetVertexPrimvarIndex(),

@@ -39,17 +39,17 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static SdfPropertySpecHandleVector _WrapPropertyStack(const PcpPropertyIndex &propIndex)
-{
-  const PcpPropertyRange range = propIndex.GetPropertyRange();
-  return SdfPropertySpecHandleVector(range.first, range.second);
-}
+  static SdfPropertySpecHandleVector _WrapPropertyStack(const PcpPropertyIndex &propIndex)
+  {
+    const PcpPropertyRange range = propIndex.GetPropertyRange();
+    return SdfPropertySpecHandleVector(range.first, range.second);
+  }
 
-static SdfPropertySpecHandleVector _WrapLocalPropertyStack(const PcpPropertyIndex &propIndex)
-{
-  const PcpPropertyRange range = propIndex.GetPropertyRange(/* localOnly= */ true);
-  return SdfPropertySpecHandleVector(range.first, range.second);
-}
+  static SdfPropertySpecHandleVector _WrapLocalPropertyStack(const PcpPropertyIndex &propIndex)
+  {
+    const PcpPropertyRange range = propIndex.GetPropertyRange(/* localOnly= */ true);
+    return SdfPropertySpecHandleVector(range.first, range.second);
+  }
 
 }  // anonymous namespace
 

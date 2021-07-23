@@ -67,35 +67,35 @@ TF_DEFINE_ENV_SETTING(USDAPOLLO_ENGINE_DEBUG_SCENE_DELEGATE_ID, "/", "Default us
 namespace
 {
 
-bool _GetHydraEnabledEnvVar()
-{
-  /**
-   * XXX: Note that we don't cache the result here. This is primarily because
-   * of the way usdview currently interacts with this setting. This should be
-   * cleaned up, and the class hierarchy around UsdApolloEngine makes it much
-   * easier to do so. */
-  return TfGetenv("HD_ENABLED", "1") == "1";
-}
-
-SdfPath const &_GetUsdImagingDelegateId()
-{
-  static SdfPath const delegateId = SdfPath(TfGetEnvSetting(USDAPOLLO_ENGINE_DEBUG_SCENE_DELEGATE_ID));
-  return delegateId;
-}
-
-bool _IsHydraEnabled()
-{
-  if (!_GetHydraEnabledEnvVar())
+  bool _GetHydraEnabledEnvVar()
   {
-    return false;
+    /**
+     * XXX: Note that we don't cache the result here. This is primarily because
+     * of the way usdview currently interacts with this setting. This should be
+     * cleaned up, and the class hierarchy around UsdApolloEngine makes it much
+     * easier to do so. */
+    return TfGetenv("HD_ENABLED", "1") == "1";
   }
 
-  /**
-   * Check to see if we have a default plugin for the renderer. */
-  TfToken defaultPlugin = HdRendererPluginRegistry::GetInstance().GetDefaultPluginId();
+  SdfPath const &_GetUsdImagingDelegateId()
+  {
+    static SdfPath const delegateId = SdfPath(TfGetEnvSetting(USDAPOLLO_ENGINE_DEBUG_SCENE_DELEGATE_ID));
+    return delegateId;
+  }
 
-  return !defaultPlugin.IsEmpty();
-}
+  bool _IsHydraEnabled()
+  {
+    if (!_GetHydraEnabledEnvVar())
+    {
+      return false;
+    }
+
+    /**
+     * Check to see if we have a default plugin for the renderer. */
+    TfToken defaultPlugin = HdRendererPluginRegistry::GetInstance().GetDefaultPluginId();
+
+    return !defaultPlugin.IsEmpty();
+  }
 
 }  // namespace
 
@@ -737,8 +737,10 @@ TfTokenVector UsdApolloEngine::GetRendererAovs() const
   if (m_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer))
   {
 
-    static const TfToken candidates[] = {
-      HdAovTokens->primId, HdAovTokens->depth, HdAovTokens->normal, HdAovTokensMakePrimvar(TfToken("st"))};
+    static const TfToken candidates[] = {HdAovTokens->primId,
+                                         HdAovTokens->depth,
+                                         HdAovTokens->normal,
+                                         HdAovTokensMakePrimvar(TfToken("st"))};
 
     TfTokenVector aovs = {HdAovTokens->color};
 
@@ -1130,40 +1132,31 @@ static int _GetRefineLevel(float c)
   if (1.0f <= c && c < 1.1f)
   {
     refineLevel = 0;
-  }
-  else if (1.1f <= c && c < 1.2f)
+  } else if (1.1f <= c && c < 1.2f)
   {
     refineLevel = 1;
-  }
-  else if (1.2f <= c && c < 1.3f)
+  } else if (1.2f <= c && c < 1.3f)
   {
     refineLevel = 2;
-  }
-  else if (1.3f <= c && c < 1.4f)
+  } else if (1.3f <= c && c < 1.4f)
   {
     refineLevel = 3;
-  }
-  else if (1.4f <= c && c < 1.5f)
+  } else if (1.4f <= c && c < 1.5f)
   {
     refineLevel = 4;
-  }
-  else if (1.5f <= c && c < 1.6f)
+  } else if (1.5f <= c && c < 1.6f)
   {
     refineLevel = 5;
-  }
-  else if (1.6f <= c && c < 1.7f)
+  } else if (1.6f <= c && c < 1.7f)
   {
     refineLevel = 6;
-  }
-  else if (1.7f <= c && c < 1.8f)
+  } else if (1.7f <= c && c < 1.8f)
   {
     refineLevel = 7;
-  }
-  else if (1.8f <= c && c <= 2.0f)
+  } else if (1.8f <= c && c <= 2.0f)
   {
     refineLevel = 8;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Invalid complexity %f, expected range is [1.0,2.0]\n", c);
   }
@@ -1317,8 +1310,7 @@ HdxRenderTaskParams UsdApolloEngine::APOLLO_MakeHydraUsdApolloRenderParams(
       renderParams.drawMode == UsdApolloDrawMode::DRAW_POINTS)
   {
     params.enableLighting = false;
-  }
-  else
+  } else
   {
     params.enableLighting = renderParams.enableLighting && !renderParams.enableIdRender;
   }
@@ -1334,8 +1326,7 @@ HdxRenderTaskParams UsdApolloEngine::APOLLO_MakeHydraUsdApolloRenderParams(
   if (renderParams.alphaThreshold < 0.0)
   {
     params.alphaThreshold = renderParams.enableSampleAlphaToCoverage ? 0.1f : 0.5f;
-  }
-  else
+  } else
   {
     params.alphaThreshold = renderParams.alphaThreshold;
   }

@@ -121,9 +121,8 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          ((materialBindingFull, "material:binding:full"))((materialBindingPreview,
                                                                            "material:binding:preview"))
 
-                           ((materialBindingCollectionFull,
-                             "material:binding:collection:full"))((materialBindingCollectionPreview,
-                                                                   "material:binding:collection:preview")));
+                           ((materialBindingCollectionFull, "material:binding:collection:full"))(
+                             (materialBindingCollectionPreview, "material:binding:collection:preview")));
 
 static TfToken _GetDirectBindingRelName(const TfToken &materialPurpose)
 {
@@ -131,12 +130,10 @@ static TfToken _GetDirectBindingRelName(const TfToken &materialPurpose)
   if (materialPurpose == UsdShadeTokens->allPurpose)
   {
     return UsdShadeTokens->materialBinding;
-  }
-  else if (materialPurpose == UsdShadeTokens->preview)
+  } else if (materialPurpose == UsdShadeTokens->preview)
   {
     return _tokens->materialBindingPreview;
-  }
-  else if (materialPurpose == UsdShadeTokens->full)
+  } else if (materialPurpose == UsdShadeTokens->full)
   {
     return _tokens->materialBindingFull;
   }
@@ -149,12 +146,10 @@ static TfToken _GetCollectionBindingRelName(const TfToken &bindingName, const Tf
   if (materialPurpose == UsdShadeTokens->allPurpose)
   {
     return TfToken(SdfPath::JoinIdentifier(UsdShadeTokens->materialBindingCollection, bindingName));
-  }
-  else if (materialPurpose == UsdShadeTokens->preview)
+  } else if (materialPurpose == UsdShadeTokens->preview)
   {
     return TfToken(SdfPath::JoinIdentifier(_tokens->materialBindingCollectionPreview, bindingName));
-  }
-  else if (materialPurpose == UsdShadeTokens->full)
+  } else if (materialPurpose == UsdShadeTokens->full)
   {
     return TfToken(SdfPath::JoinIdentifier(_tokens->materialBindingCollectionFull, bindingName));
   }
@@ -182,8 +177,7 @@ static TfToken _GetMaterialPurpose(const UsdRelationship &bindingRel)
   if (nameTokens.size() == 5)
   {
     return TfToken(nameTokens[3]);
-  }
-  else if (nameTokens.size() == 3)
+  } else if (nameTokens.size() == 3)
   {
     return TfToken(nameTokens[2]);
   }
@@ -393,8 +387,7 @@ bool UsdShadeMaterialBindingAPI::Bind(const UsdCollectionAPI &collection,
   if (bindingName.IsEmpty())
   {
     fixedBindingName = SdfPath::StripNamespace(collection.GetName());
-  }
-  else if (bindingName.GetString().find(':') != std::string::npos)
+  } else if (bindingName.GetString().find(':') != std::string::npos)
   {
     TF_CODING_ERROR(
       "Invalid bindingName '%s', as it contains namespaces. "
@@ -498,7 +491,8 @@ static TfTokenVector _GetCollectionBindingPropertyNames(const TfTokenVector &mat
                                                         const TfToken &purpose)
 {
   TfToken collBindingPrefix = _GetCollectionBindingRelName(
-    /* bindingName */ TfToken(), purpose);
+    /* bindingName */ TfToken(),
+    purpose);
 
   TfTokenVector collBindingRelNames;
   // Not reserving memory because we don't expect to find these on most
@@ -749,8 +743,10 @@ std::vector<UsdShadeMaterial> UsdShadeMaterialBindingAPI::ComputeBoundMaterials(
     {
       const UsdPrim &prim = prims[i];
       UsdRelationship *bindingRel = bindingRels ? &((*bindingRels)[i]) : nullptr;
-      materials[i] = UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(
-        &bindingsCache, &collQueryCache, materialPurpose, bindingRel);
+      materials[i] = UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(&bindingsCache,
+                                                                           &collQueryCache,
+                                                                           materialPurpose,
+                                                                           bindingRel);
     }
   });
 
@@ -763,8 +759,8 @@ UsdGeomSubset UsdShadeMaterialBindingAPI::CreateMaterialBindSubset(const TfToken
 {
   UsdGeomImageable geom(GetPrim());
 
-  UsdGeomSubset result = UsdGeomSubset::CreateGeomSubset(
-    geom, subsetName, elementType, indices, UsdShadeTokens->materialBind);
+  UsdGeomSubset result =
+    UsdGeomSubset::CreateGeomSubset(geom, subsetName, elementType, indices, UsdShadeTokens->materialBind);
 
   TfToken familyType = UsdGeomSubset::GetFamilyType(geom, UsdShadeTokens->materialBind);
   // Subsets that have materials bound to them should have

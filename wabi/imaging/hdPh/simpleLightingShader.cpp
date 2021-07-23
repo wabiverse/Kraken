@@ -221,8 +221,7 @@ void HdPhSimpleLightingShader::SetLightingState(GlfSimpleLightingContextPtr cons
     _lightingContext->SetMaterial(src->GetMaterial());
     _lightingContext->SetSceneAmbient(src->GetSceneAmbient());
     _lightingContext->SetShadows(src->GetShadows());
-  }
-  else
+  } else
   {
     // XXX:
     // if src is null, turn off lights (this is temporary used for shadowmap drawing).
@@ -340,8 +339,11 @@ void HdPhSimpleLightingShader::AllocateTextureHandles(HdSceneDelegate *const del
                                           /* premultiplyAlpha = */ false,
                                           /* sourceColorSpace = */ HdPhTokens->colorSpaceAuto));
 
-  static const HdSamplerParameters envSamplerParameters{
-    HdWrapRepeat, HdWrapClamp, HdWrapClamp, HdMinFilterLinearMipmapLinear, HdMagFilterLinear};
+  static const HdSamplerParameters envSamplerParameters{HdWrapRepeat,
+                                                        HdWrapClamp,
+                                                        HdWrapClamp,
+                                                        HdMinFilterLinearMipmapLinear,
+                                                        HdMagFilterLinear};
 
   _domeLightEnvironmentTextureHandle = resourceRegistry->AllocateTextureHandle(
     textureId,
@@ -423,8 +425,11 @@ void HdPhSimpleLightingShader::AddResourcesFromTextures(ResourceContext &ctx) co
     const float roughness = (float)mipLevel / (float)(numPrefilterLevels - 1);
 
     ctx.AddComputation(nullptr,
-                       std::make_shared<HdPh_DomeLightComputationGPU>(
-                         _tokens->domeLightPrefilter, thisShader, numPrefilterLevels, mipLevel, roughness),
+                       std::make_shared<HdPh_DomeLightComputationGPU>(_tokens->domeLightPrefilter,
+                                                                      thisShader,
+                                                                      numPrefilterLevels,
+                                                                      mipLevel,
+                                                                      roughness),
                        HdPhComputeQueueZero);
   }
 

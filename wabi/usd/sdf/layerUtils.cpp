@@ -42,38 +42,38 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// Anchor the given relativePath to the same path as the layer
-// specified by anchorLayerPath.
-string _AnchorRelativePath(const string &anchorLayerPath, const string &relativePath)
-{
-  const string anchorPath = TfGetPathName(anchorLayerPath);
-  return anchorPath.empty() ? relativePath : TfStringCatPaths(anchorPath, relativePath);
-}
-
-// Expand a (package path, packaged path) pair until the packaged path is
-// a non-package layer that is the root layer of the package layer specified
-// by the package path.
-std::pair<string, string> _ExpandPackagePath(const std::pair<string, string> &packageRelativePath)
-{
-  std::pair<string, string> result = packageRelativePath;
-  while (1)
+  // Anchor the given relativePath to the same path as the layer
+  // specified by anchorLayerPath.
+  string _AnchorRelativePath(const string &anchorLayerPath, const string &relativePath)
   {
-    if (result.second.empty())
-    {
-      break;
-    }
-
-    SdfFileFormatConstPtr packagedFormat = SdfFileFormat::FindByExtension(result.second);
-    if (!packagedFormat || !packagedFormat->IsPackage())
-    {
-      break;
-    }
-
-    result.first = ArJoinPackageRelativePath(result.first, result.second);
-    result.second = packagedFormat->GetPackageRootLayerPath(result.first);
+    const string anchorPath = TfGetPathName(anchorLayerPath);
+    return anchorPath.empty() ? relativePath : TfStringCatPaths(anchorPath, relativePath);
   }
-  return result;
-}
+
+  // Expand a (package path, packaged path) pair until the packaged path is
+  // a non-package layer that is the root layer of the package layer specified
+  // by the package path.
+  std::pair<string, string> _ExpandPackagePath(const std::pair<string, string> &packageRelativePath)
+  {
+    std::pair<string, string> result = packageRelativePath;
+    while (1)
+    {
+      if (result.second.empty())
+      {
+        break;
+      }
+
+      SdfFileFormatConstPtr packagedFormat = SdfFileFormat::FindByExtension(result.second);
+      if (!packagedFormat || !packagedFormat->IsPackage())
+      {
+        break;
+      }
+
+      result.first = ArJoinPackageRelativePath(result.first, result.second);
+      result.second = packagedFormat->GetPackageRootLayerPath(result.first);
+    }
+    return result;
+  }
 
 }  // end anonymous namespace
 
@@ -139,8 +139,7 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
       packagePath.second = anchor->GetFileFormat()->GetPackageRootLayerPath(anchor->GetRealPath());
 
       packagePath = _ExpandPackagePath(packagePath);
-    }
-    else
+    } else
     {
       packagePath = ArSplitPackageRelativePathInner(anchorPackagePath);
     }
@@ -175,8 +174,7 @@ string SdfComputeAssetPathRelativeToLayer(const SdfLayerHandle &anchor, const st
       packagePath = _ExpandPackagePath(packagePath);
 
       packagePath.second = _AnchorRelativePath(packagePath.second, normAssetPath);
-    }
-    else
+    } else
     {
       packagePath.second = normAssetPath;
     }

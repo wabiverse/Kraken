@@ -83,8 +83,7 @@ void UsdDracoImportTranslator::_FindOriginalFaceEdges(draco::FaceIndex faceIndex
       // Visit triangle across the new edge.
       const draco::FaceIndex oppositeFaceIndex = cornerTable->Face(co);
       _FindOriginalFaceEdges(oppositeFaceIndex, cornerTable, triangleVisited, polygonEdges);
-    }
-    else
+    } else
     {
       // Insert the original edge to the map.
       const draco::PointIndex pointFrom = face[(c + 1) % 3];
@@ -155,8 +154,7 @@ void UsdDracoImportTranslator::_PopulateValuesFromMesh()
   {
     const size_t numFaces = _dracoMesh.num_faces();
     _positions.PopulateValuesWithOrder(_posOrder, numFaces, _dracoMesh);
-  }
-  else
+  } else
   {
     _positions.PopulateValues();
   }
@@ -213,8 +211,9 @@ std::unique_ptr<UsdDracoImportAttributeInterface> UsdDracoImportTranslator::Crea
 {
   // Get attribute descriptor from Draco attribute and metadata.
   const bool isPrimvar = true;
-  const UsdDracoAttributeDescriptor descriptor = UsdDracoAttributeDescriptor::FromDracoAttribute(
-    attribute, metadata, isPrimvar);
+  const UsdDracoAttributeDescriptor descriptor = UsdDracoAttributeDescriptor::FromDracoAttribute(attribute,
+                                                                                                 metadata,
+                                                                                                 isPrimvar);
 
   // Check if attribute is valid.
   if (descriptor.GetStatus() != UsdDracoAttributeDescriptor::VALID)
@@ -223,7 +222,8 @@ std::unique_ptr<UsdDracoImportAttributeInterface> UsdDracoImportTranslator::Crea
   // Create import attribute from attribute descriptor.
   const ImportAttributeCreator creator(_dracoMesh);
   return UsdDracoAttributeFactory::CreateAttribute<UsdDracoImportAttributeInterface, ImportAttributeCreator>(
-    descriptor, creator);
+    descriptor,
+    creator);
 }
 
 void UsdDracoImportTranslator::_PopulateIndicesFromMesh()
@@ -281,8 +281,7 @@ void UsdDracoImportTranslator::_PopulateIndicesFromMesh()
         _SetIndices(vertexIndex++, pi);
         positionIndex = _positions.GetMappedIndex(pi);
       } while (positionIndex != firstPositionIndex);
-    }
-    else
+    } else
     {
       _faceVertexCounts[i] = 3;
       for (size_t c = 0; c < 3; c++)

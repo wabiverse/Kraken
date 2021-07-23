@@ -74,8 +74,7 @@ void HdArnoldPoints::Sync(HdSceneDelegate *sceneDelegate,
     if (material != nullptr)
     {
       AiNodeSetPtr(GetArnoldNode(), str::shader, material->GetSurfaceShader());
-    }
-    else
+    } else
     {
       AiNodeSetPtr(GetArnoldNode(), str::shader, GetRenderDelegate()->GetFallbackShader());
     }

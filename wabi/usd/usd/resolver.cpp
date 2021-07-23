@@ -57,8 +57,7 @@ void Usd_Resolver::_SkipEmptyNodes()
     {
       // do nothing.
     }
-  }
-  else
+  } else
   {
     for (; IsValid() && _curNode->IsInert(); ++_curNode)
     {

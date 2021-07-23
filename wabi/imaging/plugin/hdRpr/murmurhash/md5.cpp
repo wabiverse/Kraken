@@ -108,18 +108,18 @@ int md5_self_test(int verbose);
  * 32-bit integer manipulation macros (little endian)
  */
 #ifndef GET_ULONG_LE
-#  define GET_ULONG_LE(n, b, i) \
-    { \
-      (n) = ((unsigned long)(b)[(i)]) | ((unsigned long)(b)[(i) + 1] << 8) | \
+#  define GET_ULONG_LE(n, b, i)                                                        \
+    {                                                                                  \
+      (n) = ((unsigned long)(b)[(i)]) | ((unsigned long)(b)[(i) + 1] << 8) |           \
             ((unsigned long)(b)[(i) + 2] << 16) | ((unsigned long)(b)[(i) + 3] << 24); \
     }
 #endif
 
 #ifndef PUT_ULONG_LE
-#  define PUT_ULONG_LE(n, b, i) \
-    { \
-      (b)[(i)] = (unsigned char)((n)); \
-      (b)[(i) + 1] = (unsigned char)((n) >> 8); \
+#  define PUT_ULONG_LE(n, b, i)                  \
+    {                                            \
+      (b)[(i)] = (unsigned char)((n));           \
+      (b)[(i) + 1] = (unsigned char)((n) >> 8);  \
       (b)[(i) + 2] = (unsigned char)((n) >> 16); \
       (b)[(i) + 3] = (unsigned char)((n) >> 24); \
     }
@@ -162,10 +162,10 @@ static void md5_process(md5_context *ctx, unsigned char data[64])
 
 #define S(x, n) ((x << n) | ((x & 0xFFFFFFFF) >> (32 - n)))
 
-#define P(a, b, c, d, k, s, t) \
-  { \
+#define P(a, b, c, d, k, s, t)  \
+  {                             \
     a += F(b, c, d) + X[k] + t; \
-    a = S(a, s) + b; \
+    a = S(a, s) + b;            \
   }
 
   A = ctx->state[0];

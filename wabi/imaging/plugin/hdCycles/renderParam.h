@@ -33,12 +33,12 @@
 
 namespace ccl
 {
-class Session;
-class Scene;
-class Mesh;
-class PointCloud;
-class RenderTile;
-class Shader;
+  class Session;
+  class Scene;
+  class Mesh;
+  class PointCloud;
+  class RenderTile;
+  class Shader;
 }  // namespace ccl
 
 WABI_NAMESPACE_BEGIN

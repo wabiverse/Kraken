@@ -22,40 +22,35 @@ AI_DRIVER_NODE_EXPORT_METHODS(HdArnoldDriverAOVMtd);
 
 namespace
 {
-const char *supportedExtensions[] = {nullptr};
+  const char *supportedExtensions[] = {nullptr};
 
-struct DriverData
-{
-  HdArnoldRenderBuffer *renderBuffer;
-};
+  struct DriverData
+  {
+    HdArnoldRenderBuffer *renderBuffer;
+  };
 
-HdFormat _GetFormatFromArnoldType(const int arnoldType)
-{
-  if (arnoldType == AI_TYPE_RGBA)
+  HdFormat _GetFormatFromArnoldType(const int arnoldType)
   {
-    return HdFormatFloat32Vec4;
+    if (arnoldType == AI_TYPE_RGBA)
+    {
+      return HdFormatFloat32Vec4;
+    } else if (arnoldType == AI_TYPE_RGB || arnoldType == AI_TYPE_VECTOR)
+    {
+      return HdFormatFloat32Vec3;
+    } else if (arnoldType == AI_TYPE_VECTOR2)
+    {
+      return HdFormatFloat32Vec2;
+    } else if (arnoldType == AI_TYPE_FLOAT)
+    {
+      return HdFormatFloat32;
+    } else if (arnoldType == AI_TYPE_INT)
+    {
+      return HdFormatInt32;
+    } else
+    {
+      return HdFormatUNorm8;
+    }
   }
-  else if (arnoldType == AI_TYPE_RGB || arnoldType == AI_TYPE_VECTOR)
-  {
-    return HdFormatFloat32Vec3;
-  }
-  else if (arnoldType == AI_TYPE_VECTOR2)
-  {
-    return HdFormatFloat32Vec2;
-  }
-  else if (arnoldType == AI_TYPE_FLOAT)
-  {
-    return HdFormatFloat32;
-  }
-  else if (arnoldType == AI_TYPE_INT)
-  {
-    return HdFormatInt32;
-  }
-  else
-  {
-    return HdFormatUNorm8;
-  }
-}
 
 }  // namespace
 
@@ -111,8 +106,12 @@ driver_process_bucket
   {
     if (Ai_likely(driverData->renderBuffer != nullptr))
     {
-      driverData->renderBuffer->WriteBucket(
-        bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, _GetFormatFromArnoldType(pixelType), bucketData);
+      driverData->renderBuffer->WriteBucket(bucket_xo,
+                                            bucket_yo,
+                                            bucket_size_x,
+                                            bucket_size_y,
+                                            _GetFormatFromArnoldType(pixelType),
+                                            bucketData);
     }
     // There will be only one aov assigned to each driver.
     break;

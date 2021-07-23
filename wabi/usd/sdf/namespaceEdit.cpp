@@ -418,8 +418,7 @@ SdfPath SdfNamespaceEdit_Namespace::GetOriginalPath(const SdfPath &path)
   if (_IsDeadspace(path))
   {
     return SdfPath::EmptyPath();
-  }
-  else
+  } else
   {
     return _UneditPath(path);
   }
@@ -431,12 +430,10 @@ bool SdfNamespaceEdit_Namespace::Apply(const SdfNamespaceEdit &edit, std::string
   if (edit.newPath.IsEmpty())
   {
     return _Remove(edit.currentPath, whyNot);
-  }
-  else if (edit.currentPath != edit.newPath)
+  } else if (edit.currentPath != edit.newPath)
   {
     return _Move(edit.currentPath, edit.newPath, whyNot);
-  }
-  else
+  } else
   {
     // Reorder -- Ignore the reorder in our virtual namespace.
     return true;
@@ -496,8 +493,7 @@ SdfNamespaceEdit_Namespace::_Node *SdfNamespaceEdit_Namespace::_FindOrCreateNode
       {
         _AddBackpointer(target, node);
       }
-    }
-    else
+    } else
     {
       node = node->FindOrCreateChild(prefix);
     }
@@ -690,8 +686,7 @@ std::ostream &operator<<(std::ostream &s, const SdfNamespaceEdit &x)
   if (x == SdfNamespaceEdit())
   {
     return s << "()";
-  }
-  else
+  } else
   {
     return s << "(" << x.currentPath << "," << x.newPath << "," << x.index << ")";
   }
@@ -734,8 +729,7 @@ std::ostream &operator<<(std::ostream &s, const SdfNamespaceEditDetail &x)
   if (x == SdfNamespaceEditDetail())
   {
     return s << TfEnum::GetName(x.result);
-  }
-  else
+  } else
   {
     return s << "(" << TfEnum::GetName(x.result) << "," << x.edit << "," << x.reason << ")";
   }
@@ -803,12 +797,10 @@ bool SdfBatchNamespaceEdit::Process(SdfNamespaceEditVector *processedEdits,
     if (edit.currentPath.IsPrimPath())
     {
       mismatch = !edit.newPath.IsPrimPath();
-    }
-    else if (edit.currentPath.IsPropertyPath())
+    } else if (edit.currentPath.IsPropertyPath())
     {
       mismatch = !edit.newPath.IsPropertyPath();
-    }
-    else
+    } else
     {
       // Unsupported path type.
       if (details)
@@ -903,8 +895,7 @@ bool SdfBatchNamespaceEdit::Process(SdfNamespaceEditVector *processedEdits,
       if (edit.currentPath == edit.newPath)
       {
         // Ignore reordering.
-      }
-      else if (edit.currentPath.HasPrefix(edit.newPath))
+      } else if (edit.currentPath.HasPrefix(edit.newPath))
       {
         // Making object an ancestor of itself.
         if (details)
@@ -915,8 +906,7 @@ bool SdfBatchNamespaceEdit::Process(SdfNamespaceEditVector *processedEdits,
                                                     "of itself"));
         }
         return false;
-      }
-      else if (edit.newPath.HasPrefix(edit.currentPath))
+      } else if (edit.newPath.HasPrefix(edit.currentPath))
       {
         // Making object a descendant of itself.
         if (details)
@@ -927,8 +917,7 @@ bool SdfBatchNamespaceEdit::Process(SdfNamespaceEditVector *processedEdits,
                                                     "of itself"));
         }
         return false;
-      }
-      else
+      } else
       {
         // Can't move over an existing object.
         to = ns.GetOriginalPath(edit.newPath);

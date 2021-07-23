@@ -40,26 +40,26 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string _ReportAllWatchedCounts(TfRefPtrTracker &tracker)
-{
-  std::ostringstream s;
-  tracker.ReportAllWatchedCounts(s);
-  return s.str();
-}
+  static std::string _ReportAllWatchedCounts(TfRefPtrTracker &tracker)
+  {
+    std::ostringstream s;
+    tracker.ReportAllWatchedCounts(s);
+    return s.str();
+  }
 
-static std::string _ReportAllTraces(TfRefPtrTracker &tracker)
-{
-  std::ostringstream s;
-  tracker.ReportAllTraces(s);
-  return s.str();
-}
+  static std::string _ReportAllTraces(TfRefPtrTracker &tracker)
+  {
+    std::ostringstream s;
+    tracker.ReportAllTraces(s);
+    return s.str();
+  }
 
-static std::string _ReportTracesForWatched(TfRefPtrTracker &tracker, uintptr_t ptr)
-{
-  std::ostringstream s;
-  tracker.ReportTracesForWatched(s, (TfRefBase *)ptr);
-  return s.str();
-}
+  static std::string _ReportTracesForWatched(TfRefPtrTracker &tracker, uintptr_t ptr)
+  {
+    std::ostringstream s;
+    tracker.ReportTracesForWatched(s, (TfRefBase *)ptr);
+    return s.str();
+  }
 
 }  // anonymous namespace
 

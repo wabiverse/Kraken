@@ -245,8 +245,7 @@ inline void TraceCollector::_PyTracingCallback(const TfPyTraceInfo &info)
     // If this is a CALL, push a scope for this \a frame in the collector.
     _PerThreadData *threadData = _GetThreadData();
     threadData->PushPyScope(_MakePythonScopeKey(info), IsEnabled());
-  }
-  else if (info.what == PyTrace_RETURN)
+  } else if (info.what == PyTrace_RETURN)
   {
     // If instead this is a RETURN, pop the current scope in the collector.
     // We may be called with no active scopes if python tracing is enabled
@@ -268,8 +267,7 @@ void TraceCollector::SetPythonTracingEnabled(bool enabled)
     _isPythonTracingEnabled.store(enabled, std::memory_order_release);
     // Install the python tracing function.
     _pyTraceFnId = TfPyRegisterTraceFn([this](const TfPyTraceInfo &info) { _PyTracingCallback(info); });
-  }
-  else if (!enabled && IsPythonTracingEnabled())
+  } else if (!enabled && IsPythonTracingEnabled())
   {
     _isPythonTracingEnabled.store(enabled, std::memory_order_release);
     // Remove the python tracing function.

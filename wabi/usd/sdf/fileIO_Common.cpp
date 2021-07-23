@@ -179,8 +179,7 @@ static bool _StringFromVtValueHelper(string *valueStr, const VtValue &value)
   {
     *valueStr = _StringFromValue(value.UncheckedGet<T>());
     return true;
-  }
-  else if (value.IsHolding<VtArray<T>>())
+  } else if (value.IsHolding<VtArray<T>>())
   {
     const VtArray<T> &valArray = value.UncheckedGet<VtArray<T>>();
     _StringFromVtArray(valueStr, valArray);
@@ -196,210 +195,206 @@ static bool _StringFromVtValueHelper(string *valueStr, const VtValue &value)
 namespace
 {
 
-template<class T>
-struct _ListOpWriter
-{
-  static constexpr bool ItemPerLine = false;
-  static constexpr bool SingleItemRequiresBrackets(const T &item)
+  template<class T>
+  struct _ListOpWriter
   {
-    return true;
-  }
-  static void Write(Sdf_TextOutput &out, size_t indent, const T &item)
-  {
-    Sdf_FileIOUtility::Write(out, indent, "%s", TfStringify(item).c_str());
-  }
-};
-
-template<>
-struct _ListOpWriter<string>
-{
-  static constexpr bool ItemPerLine = false;
-  static constexpr bool SingleItemRequiresBrackets(const string &s)
-  {
-    return true;
-  }
-  static void Write(Sdf_TextOutput &out, size_t indent, const string &s)
-  {
-    Sdf_FileIOUtility::WriteQuotedString(out, indent, s);
-  }
-};
-
-template<>
-struct _ListOpWriter<TfToken>
-{
-  static constexpr bool ItemPerLine = false;
-  static constexpr bool SingleItemRequiresBrackets(const TfToken &s)
-  {
-    return true;
-  }
-  static void Write(Sdf_TextOutput &out, size_t indent, const TfToken &s)
-  {
-    Sdf_FileIOUtility::WriteQuotedString(out, indent, s.GetString());
-  }
-};
-
-template<>
-struct _ListOpWriter<SdfPath>
-{
-  static constexpr bool ItemPerLine = true;
-  static constexpr bool SingleItemRequiresBrackets(const SdfPath &path)
-  {
-    return false;
-  }
-  static void Write(Sdf_TextOutput &out, size_t indent, const SdfPath &path)
-  {
-    Sdf_FileIOUtility::WriteSdfPath(out, indent, path);
-  }
-};
-
-template<>
-struct _ListOpWriter<SdfReference>
-{
-  static constexpr bool ItemPerLine = true;
-  static bool SingleItemRequiresBrackets(const SdfReference &ref)
-  {
-    return !ref.GetCustomData().empty();
-  }
-  static void Write(Sdf_TextOutput &out, size_t indent, const SdfReference &ref)
-  {
-    bool multiLineRefMetaData = !ref.GetCustomData().empty();
-
-    Sdf_FileIOUtility::Write(out, indent, "");
-
-    if (!ref.GetAssetPath().empty())
+    static constexpr bool ItemPerLine = false;
+    static constexpr bool SingleItemRequiresBrackets(const T &item)
     {
-      Sdf_FileIOUtility::WriteAssetPath(out, 0, ref.GetAssetPath());
-      if (!ref.GetPrimPath().IsEmpty())
+      return true;
+    }
+    static void Write(Sdf_TextOutput &out, size_t indent, const T &item)
+    {
+      Sdf_FileIOUtility::Write(out, indent, "%s", TfStringify(item).c_str());
+    }
+  };
+
+  template<>
+  struct _ListOpWriter<string>
+  {
+    static constexpr bool ItemPerLine = false;
+    static constexpr bool SingleItemRequiresBrackets(const string &s)
+    {
+      return true;
+    }
+    static void Write(Sdf_TextOutput &out, size_t indent, const string &s)
+    {
+      Sdf_FileIOUtility::WriteQuotedString(out, indent, s);
+    }
+  };
+
+  template<>
+  struct _ListOpWriter<TfToken>
+  {
+    static constexpr bool ItemPerLine = false;
+    static constexpr bool SingleItemRequiresBrackets(const TfToken &s)
+    {
+      return true;
+    }
+    static void Write(Sdf_TextOutput &out, size_t indent, const TfToken &s)
+    {
+      Sdf_FileIOUtility::WriteQuotedString(out, indent, s.GetString());
+    }
+  };
+
+  template<>
+  struct _ListOpWriter<SdfPath>
+  {
+    static constexpr bool ItemPerLine = true;
+    static constexpr bool SingleItemRequiresBrackets(const SdfPath &path)
+    {
+      return false;
+    }
+    static void Write(Sdf_TextOutput &out, size_t indent, const SdfPath &path)
+    {
+      Sdf_FileIOUtility::WriteSdfPath(out, indent, path);
+    }
+  };
+
+  template<>
+  struct _ListOpWriter<SdfReference>
+  {
+    static constexpr bool ItemPerLine = true;
+    static bool SingleItemRequiresBrackets(const SdfReference &ref)
+    {
+      return !ref.GetCustomData().empty();
+    }
+    static void Write(Sdf_TextOutput &out, size_t indent, const SdfReference &ref)
+    {
+      bool multiLineRefMetaData = !ref.GetCustomData().empty();
+
+      Sdf_FileIOUtility::Write(out, indent, "");
+
+      if (!ref.GetAssetPath().empty())
+      {
+        Sdf_FileIOUtility::WriteAssetPath(out, 0, ref.GetAssetPath());
+        if (!ref.GetPrimPath().IsEmpty())
+          Sdf_FileIOUtility::WriteSdfPath(out, 0, ref.GetPrimPath());
+      } else
+      {
+        // If this is an internal reference, we always have to write
+        // out a path, even if it's empty since that encodes a reference
+        // to the default prim.
         Sdf_FileIOUtility::WriteSdfPath(out, 0, ref.GetPrimPath());
-    }
-    else
-    {
-      // If this is an internal reference, we always have to write
-      // out a path, even if it's empty since that encodes a reference
-      // to the default prim.
-      Sdf_FileIOUtility::WriteSdfPath(out, 0, ref.GetPrimPath());
-    }
+      }
 
-    if (multiLineRefMetaData)
-    {
-      Sdf_FileIOUtility::Puts(out, 0, " (\n");
+      if (multiLineRefMetaData)
+      {
+        Sdf_FileIOUtility::Puts(out, 0, " (\n");
+      }
+      Sdf_FileIOUtility::WriteLayerOffset(out, indent + 1, multiLineRefMetaData, ref.GetLayerOffset());
+      if (!ref.GetCustomData().empty())
+      {
+        Sdf_FileIOUtility::Puts(out, indent + 1, "customData = ");
+        Sdf_FileIOUtility::WriteDictionary(out, indent + 1, /* multiline = */ true, ref.GetCustomData());
+      }
+      if (multiLineRefMetaData)
+      {
+        Sdf_FileIOUtility::Puts(out, indent, ")");
+      }
     }
-    Sdf_FileIOUtility::WriteLayerOffset(out, indent + 1, multiLineRefMetaData, ref.GetLayerOffset());
-    if (!ref.GetCustomData().empty())
-    {
-      Sdf_FileIOUtility::Puts(out, indent + 1, "customData = ");
-      Sdf_FileIOUtility::WriteDictionary(out, indent + 1, /* multiline = */ true, ref.GetCustomData());
-    }
-    if (multiLineRefMetaData)
-    {
-      Sdf_FileIOUtility::Puts(out, indent, ")");
-    }
-  }
-};
+  };
 
-template<>
-struct _ListOpWriter<SdfPayload>
-{
-  static constexpr bool ItemPerLine = true;
-  static bool SingleItemRequiresBrackets(const SdfPayload &payload)
+  template<>
+  struct _ListOpWriter<SdfPayload>
   {
-    return false;
-  }
-  static void Write(Sdf_TextOutput &out, size_t indent, const SdfPayload &payload)
-  {
-    Sdf_FileIOUtility::Write(out, indent, "");
-
-    if (!payload.GetAssetPath().empty())
+    static constexpr bool ItemPerLine = true;
+    static bool SingleItemRequiresBrackets(const SdfPayload &payload)
     {
-      Sdf_FileIOUtility::WriteAssetPath(out, 0, payload.GetAssetPath());
-      if (!payload.GetPrimPath().IsEmpty())
+      return false;
+    }
+    static void Write(Sdf_TextOutput &out, size_t indent, const SdfPayload &payload)
+    {
+      Sdf_FileIOUtility::Write(out, indent, "");
+
+      if (!payload.GetAssetPath().empty())
+      {
+        Sdf_FileIOUtility::WriteAssetPath(out, 0, payload.GetAssetPath());
+        if (!payload.GetPrimPath().IsEmpty())
+          Sdf_FileIOUtility::WriteSdfPath(out, 0, payload.GetPrimPath());
+      } else
+      {
+        // If this is an internal payload, we always have to write
+        // out a path, even if it's empty since that encodes a payload
+        // to the default prim.
         Sdf_FileIOUtility::WriteSdfPath(out, 0, payload.GetPrimPath());
-    }
-    else
-    {
-      // If this is an internal payload, we always have to write
-      // out a path, even if it's empty since that encodes a payload
-      // to the default prim.
-      Sdf_FileIOUtility::WriteSdfPath(out, 0, payload.GetPrimPath());
-    }
-
-    Sdf_FileIOUtility::WriteLayerOffset(
-      out, indent + 1, false /*multiLineMetaData*/, payload.GetLayerOffset());
-  }
-};
-
-template<class ListOpList>
-void _WriteListOpList(Sdf_TextOutput &out,
-                      size_t indent,
-                      const string &name,
-                      const ListOpList &listOpList,
-                      const string &op = string())
-{
-  typedef _ListOpWriter<typename ListOpList::value_type> _Writer;
-
-  Sdf_FileIOUtility::Write(out, indent, "%s%s%s = ", op.c_str(), op.empty() ? "" : " ", name.c_str());
-
-  if (listOpList.empty())
-  {
-    Sdf_FileIOUtility::Puts(out, 0, "None\n");
-  }
-  else if (listOpList.size() == 1 && !_Writer::SingleItemRequiresBrackets(listOpList.front()))
-  {
-    _Writer::Write(out, 0, listOpList.front());
-    Sdf_FileIOUtility::Puts(out, 0, "\n");
-  }
-  else
-  {
-    const bool itemPerLine = _Writer::ItemPerLine;
-
-    Sdf_FileIOUtility::Puts(out, 0, itemPerLine ? "[\n" : "[");
-    TF_FOR_ALL (it, listOpList)
-    {
-      _Writer::Write(out, itemPerLine ? indent + 1 : 0, *it);
-      if (it.GetNext())
-      {
-        Sdf_FileIOUtility::Puts(out, 0, itemPerLine ? ",\n" : ", ");
       }
-      else
+
+      Sdf_FileIOUtility::WriteLayerOffset(out,
+                                          indent + 1,
+                                          false /*multiLineMetaData*/,
+                                          payload.GetLayerOffset());
+    }
+  };
+
+  template<class ListOpList>
+  void _WriteListOpList(Sdf_TextOutput &out,
+                        size_t indent,
+                        const string &name,
+                        const ListOpList &listOpList,
+                        const string &op = string())
+  {
+    typedef _ListOpWriter<typename ListOpList::value_type> _Writer;
+
+    Sdf_FileIOUtility::Write(out, indent, "%s%s%s = ", op.c_str(), op.empty() ? "" : " ", name.c_str());
+
+    if (listOpList.empty())
+    {
+      Sdf_FileIOUtility::Puts(out, 0, "None\n");
+    } else if (listOpList.size() == 1 && !_Writer::SingleItemRequiresBrackets(listOpList.front()))
+    {
+      _Writer::Write(out, 0, listOpList.front());
+      Sdf_FileIOUtility::Puts(out, 0, "\n");
+    } else
+    {
+      const bool itemPerLine = _Writer::ItemPerLine;
+
+      Sdf_FileIOUtility::Puts(out, 0, itemPerLine ? "[\n" : "[");
+      TF_FOR_ALL (it, listOpList)
       {
-        Sdf_FileIOUtility::Puts(out, 0, itemPerLine ? "\n" : "");
+        _Writer::Write(out, itemPerLine ? indent + 1 : 0, *it);
+        if (it.GetNext())
+        {
+          Sdf_FileIOUtility::Puts(out, 0, itemPerLine ? ",\n" : ", ");
+        } else
+        {
+          Sdf_FileIOUtility::Puts(out, 0, itemPerLine ? "\n" : "");
+        }
+      }
+      Sdf_FileIOUtility::Puts(out, itemPerLine ? indent : 0, "]\n");
+    }
+  }
+
+  template<class ListOp>
+  void _WriteListOp(Sdf_TextOutput &out, size_t indent, const std::string &name, const ListOp &listOp)
+  {
+    if (listOp.IsExplicit())
+    {
+      _WriteListOpList(out, indent, name, listOp.GetExplicitItems());
+    } else
+    {
+      if (!listOp.GetDeletedItems().empty())
+      {
+        _WriteListOpList(out, indent, name, listOp.GetDeletedItems(), "delete");
+      }
+      if (!listOp.GetAddedItems().empty())
+      {
+        _WriteListOpList(out, indent, name, listOp.GetAddedItems(), "add");
+      }
+      if (!listOp.GetPrependedItems().empty())
+      {
+        _WriteListOpList(out, indent, name, listOp.GetPrependedItems(), "prepend");
+      }
+      if (!listOp.GetAppendedItems().empty())
+      {
+        _WriteListOpList(out, indent, name, listOp.GetAppendedItems(), "append");
+      }
+      if (!listOp.GetOrderedItems().empty())
+      {
+        _WriteListOpList(out, indent, name, listOp.GetOrderedItems(), "reorder");
       }
     }
-    Sdf_FileIOUtility::Puts(out, itemPerLine ? indent : 0, "]\n");
   }
-}
-
-template<class ListOp>
-void _WriteListOp(Sdf_TextOutput &out, size_t indent, const std::string &name, const ListOp &listOp)
-{
-  if (listOp.IsExplicit())
-  {
-    _WriteListOpList(out, indent, name, listOp.GetExplicitItems());
-  }
-  else
-  {
-    if (!listOp.GetDeletedItems().empty())
-    {
-      _WriteListOpList(out, indent, name, listOp.GetDeletedItems(), "delete");
-    }
-    if (!listOp.GetAddedItems().empty())
-    {
-      _WriteListOpList(out, indent, name, listOp.GetAddedItems(), "add");
-    }
-    if (!listOp.GetPrependedItems().empty())
-    {
-      _WriteListOpList(out, indent, name, listOp.GetPrependedItems(), "prepend");
-    }
-    if (!listOp.GetAppendedItems().empty())
-    {
-      _WriteListOpList(out, indent, name, listOp.GetAppendedItems(), "append");
-    }
-    if (!listOp.GetOrderedItems().empty())
-    {
-      _WriteListOpList(out, indent, name, listOp.GetOrderedItems(), "reorder");
-    }
-  }
-}
 
 }  // end anonymous namespace
 // ------------------------------------------------------------
@@ -432,8 +427,7 @@ bool Sdf_FileIOUtility::OpenParensIfNeeded(Sdf_TextOutput &out, bool didParens, 
   if (!didParens)
   {
     Puts(out, 0, multiLine ? " (\n" : " (");
-  }
-  else if (!multiLine)
+  } else if (!multiLine)
   {
     Puts(out, 0, "; ");
   }
@@ -530,18 +524,18 @@ bool Sdf_FileIOUtility::WriteTimeSamples(Sdf_TextOutput &out, size_t indent, con
       if (i->second.IsHolding<SdfPath>())
       {
         WriteSdfPath(out, 0, i->second.Get<SdfPath>());
-      }
-      else
+      } else
       {
         Puts(out, 0, StringFromVtValue(i->second));
       }
       Puts(out, 0, ",\n");
     }
-  }
-  else if (timeSamplesVal.IsHolding<SdfHumanReadableValue>())
+  } else if (timeSamplesVal.IsHolding<SdfHumanReadableValue>())
   {
-    Write(
-      out, indent + 1, "%s\n", TfStringify(timeSamplesVal.UncheckedGet<SdfHumanReadableValue>()).c_str());
+    Write(out,
+          indent + 1,
+          "%s\n",
+          TfStringify(timeSamplesVal.UncheckedGet<SdfHumanReadableValue>()).c_str());
   }
   return true;
 }
@@ -570,8 +564,7 @@ bool Sdf_FileIOUtility::WriteRelocates(Sdf_TextOutput &out,
   if (multiLine)
   {
     Puts(out, indent, "}\n");
-  }
-  else
+  } else
   {
     Puts(out, 0, " }");
   }
@@ -606,8 +599,7 @@ void Sdf_FileIOUtility::_WriteDictionary(Sdf_TextOutput &out,
         {
           Puts(out, 0, "\n");
         }
-      }
-      else
+      } else
       {
         // CODE_COVERAGE_OFF
         // This is not possible to hit with the current public API.
@@ -617,8 +609,7 @@ void Sdf_FileIOUtility::_WriteDictionary(Sdf_TextOutput &out,
           i->first->c_str());
         // CODE_COVERAGE_ON
       }
-    }
-    else
+    } else
     {
       // Put quotes around the keyName if it is not a valid identifier
       string keyName = *(i->first);
@@ -640,8 +631,7 @@ void Sdf_FileIOUtility::_WriteDictionary(Sdf_TextOutput &out,
                          multiLine,
                          newDictionary,
                          /* stringValuesOnly = */ false);
-      }
-      else
+      } else
       {
         const TfToken &typeName = SdfValueTypeNames->GetSerializationName(value);
         Write(out, multiLine ? indent + 1 : 0, "%s %s = ", typeName.GetText(), keyName.c_str());
@@ -654,8 +644,7 @@ void Sdf_FileIOUtility::_WriteDictionary(Sdf_TextOutput &out,
             _StringFromVtValueHelper<SdfAssetPath>(&str, value))
         {
           Puts(out, 0, str);
-        }
-        else
+        } else
         {
           Puts(out, 0, TfStringify(value));
         }
@@ -676,8 +665,7 @@ void Sdf_FileIOUtility::_WriteDictionary(Sdf_TextOutput &out,
   if (multiLine)
   {
     Puts(out, indent, "}\n");
-  }
-  else
+  } else
   {
     // CODE_COVERAGE_OFF
     // Not currently hittable from public API.
@@ -767,8 +755,11 @@ void Sdf_FileIOUtility::WriteLayerOffset(Sdf_TextOutput &out,
     double scale = layerOffset.GetScale();
     if (offset != 0.0)
     {
-      Write(
-        out, multiLine ? indent : 0, "offset = %s%s", TfStringify(offset).c_str(), multiLine ? "\n" : "");
+      Write(out,
+            multiLine ? indent : 0,
+            "offset = %s%s",
+            TfStringify(offset).c_str(),
+            multiLine ? "\n" : "");
     }
     if (scale != 1.0)
     {
@@ -821,8 +812,7 @@ string Sdf_FileIOUtility::Quote(const string &str)
         if (tripleQuotes)
         {
           result += ch;
-        }
-        else
+        } else
         {
           result += "\\n";
         }
@@ -846,13 +836,11 @@ string Sdf_FileIOUtility::Quote(const string &str)
           // Always escape the character we're using for quoting.
           result += '\\';
           result += quote;
-        }
-        else if (!_IsASCIIPrintable(ch))
+        } else if (!_IsASCIIPrintable(ch))
         {
           // Non-printable;  use two digit hex form.
           _WriteHexEscape(ch, &result);
-        }
-        else
+        } else
         {
           // Printable, non-special.
           result += ch;
@@ -870,8 +858,7 @@ string Sdf_FileIOUtility::Quote(const string &str)
     {
       result.append(i, i + nBytes);
       i += nBytes - 1;  // account for next loop increment.
-    }
-    else
+    } else
     {
       writeASCIIorHex(*i);
     }
@@ -900,12 +887,10 @@ string Sdf_FileIOUtility::StringFromVtValue(const VtValue &value)
   if (value.IsHolding<char>())
   {
     return TfStringify(static_cast<int>(value.UncheckedGet<char>()));
-  }
-  else if (value.IsHolding<unsigned char>())
+  } else if (value.IsHolding<unsigned char>())
   {
     return TfStringify(static_cast<unsigned int>(value.UncheckedGet<unsigned char>()));
-  }
-  else if (value.IsHolding<signed char>())
+  } else if (value.IsHolding<signed char>())
   {
     return TfStringify(static_cast<int>(value.UncheckedGet<signed char>()));
   }

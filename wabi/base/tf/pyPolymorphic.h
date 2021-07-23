@@ -207,13 +207,13 @@ WABI_NAMESPACE_END
 // PyObject* as the 1st argument to TfPyPolymorphic's ctor.
 namespace boost
 {
-namespace python
-{
-template<typename T>
-struct has_back_reference<WABI_NS::TfPyPolymorphic<T>> : mpl::true_
-{
-};
-}  // namespace python
+  namespace python
+  {
+    template<typename T>
+    struct has_back_reference<WABI_NS::TfPyPolymorphic<T>> : mpl::true_
+    {
+    };
+  }  // namespace python
 }  // end namespace boost
 
 WABI_NAMESPACE_BEGIN

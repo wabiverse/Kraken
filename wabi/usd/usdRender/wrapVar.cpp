@@ -50,32 +50,35 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateDataTypeAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateDataTypeAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static UsdAttribute _CreateSourceNameAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSourceNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String), writeSparsely);
-}
+  static UsdAttribute _CreateSourceNameAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSourceNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String),
+                                     writeSparsely);
+  }
 
-static UsdAttribute _CreateSourceTypeAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSourceTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateSourceTypeAttr(UsdRenderVar &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSourceTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                     writeSparsely);
+  }
 
-static std::string _Repr(const UsdRenderVar &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRender.Var(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRenderVar &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRender.Var(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -148,7 +151,7 @@ void wrapUsdRenderVar()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

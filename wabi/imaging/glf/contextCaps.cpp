@@ -186,8 +186,9 @@ void GlfContextCaps::_LoadCaps()
   {
     const char *glslVersionStr = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
     dot = strchr(glslVersionStr, '.');
-    if (TF_VERIFY(
-          (dot && dot != glslVersionStr), "Can't parse GL_SHADING_LANGUAGE_VERSION %s", glslVersionStr))
+    if (TF_VERIFY((dot && dot != glslVersionStr),
+                  "Can't parse GL_SHADING_LANGUAGE_VERSION %s",
+                  glslVersionStr))
     {
       // GL_SHADING_LANGUAGE_VERSION = "4.10"
       //                               "4.50 <vendor>"
@@ -195,8 +196,7 @@ void GlfContextCaps::_LoadCaps()
       int minor = std::max(0, std::min(9, *(dot + 1) - '0'));
       glslVersion = major * 100 + minor * 10;
     }
-  }
-  else
+  } else
   {
     glslVersion = 0;
   }

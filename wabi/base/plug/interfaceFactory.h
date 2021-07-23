@@ -73,10 +73,10 @@ class Plug_InterfaceFactory
 /// Clients that want to create instances of types defined in a plugin
 /// but not added to the TfType system should create a singleton with
 /// factory methods to create those objects.
-#define PLUG_REGISTER_INTERFACE_SINGLETON_TYPE(Interface, Implementation) \
-  TF_REGISTRY_FUNCTION(TfType) \
-  { \
-    TfType::Define<Interface>() \
+#define PLUG_REGISTER_INTERFACE_SINGLETON_TYPE(Interface, Implementation)                \
+  TF_REGISTRY_FUNCTION(TfType)                                                           \
+  {                                                                                      \
+    TfType::Define<Interface>()                                                          \
       .SetFactory<Plug_InterfaceFactory::SingletonFactory<Interface, Implementation>>(); \
   }
 

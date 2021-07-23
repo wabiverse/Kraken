@@ -139,450 +139,449 @@ class HioOpenVDB_TextureData_DenseGridHolderBase
 namespace
 {
 
-// Extracts the transform associated with an OpenVDB grid
-GfMatrix4d _ExtractTransformFromGrid(const openvdb::GridBase::Ptr &grid)
-{
-  // Get transform
-  openvdb::math::Transform::ConstPtr const t = grid->constTransformPtr();
-  if (!t)
+  // Extracts the transform associated with an OpenVDB grid
+  GfMatrix4d _ExtractTransformFromGrid(const openvdb::GridBase::Ptr &grid)
   {
-    return GfMatrix4d(1.0);
-  }
-
-  // Only support linear transforms so far.
-  if (!t->isLinear())
-  {
-    TF_WARN("OpenVDB grid has non-linear transform which is not supported");
-    return GfMatrix4d(1.0);
-  }
-
-  // Get underlying map
-  openvdb::math::MapBase::ConstPtr const b = t->baseMap();
-  if (!b)
-  {
-    TF_WARN("Could not get map underlying transform of OpenVDB grid");
-    return GfMatrix4d(1.0);
-  }
-
-  openvdb::math::AffineMap::ConstPtr const a = b->getAffineMap();
-  if (!a)
-  {
-    TF_WARN("OpenVDB grid has non-affine map which is not supported");
-    return GfMatrix4d(1.0);
-  }
-
-  const openvdb::math::Mat4d m = a->getMat4();
-  return GfMatrix4d(reinterpret_cast<const double(*)[4]>(m.asPointer()));
-}
-
-// Holds on to an OpenVDB dense grid
-template<typename GridType>
-class _DenseGridHolder final : public HioOpenVDB_TextureData_DenseGridHolderBase
-{
- public:
-  using ValueType = typename GridType::ValueType;
-  using DenseGrid = openvdb::tools::Dense<ValueType, openvdb::tools::LayoutXYZ>;
-  using GridPtr = typename GridType::Ptr;
-
-  // Create dense grid holder from grid and bounding box or return
-  // null pointer for empty grid.
-  // Callee owns result.
-  static _DenseGridHolder *New(const GridPtr &grid, const openvdb::CoordBBox &bbox)
-  {
-    TRACE_FUNCTION();
-
-    if (bbox.empty())
+    // Get transform
+    openvdb::math::Transform::ConstPtr const t = grid->constTransformPtr();
+    if (!t)
     {
-      // Empty grid
+      return GfMatrix4d(1.0);
+    }
+
+    // Only support linear transforms so far.
+    if (!t->isLinear())
+    {
+      TF_WARN("OpenVDB grid has non-linear transform which is not supported");
+      return GfMatrix4d(1.0);
+    }
+
+    // Get underlying map
+    openvdb::math::MapBase::ConstPtr const b = t->baseMap();
+    if (!b)
+    {
+      TF_WARN("Could not get map underlying transform of OpenVDB grid");
+      return GfMatrix4d(1.0);
+    }
+
+    openvdb::math::AffineMap::ConstPtr const a = b->getAffineMap();
+    if (!a)
+    {
+      TF_WARN("OpenVDB grid has non-affine map which is not supported");
+      return GfMatrix4d(1.0);
+    }
+
+    const openvdb::math::Mat4d m = a->getMat4();
+    return GfMatrix4d(reinterpret_cast<const double(*)[4]>(m.asPointer()));
+  }
+
+  // Holds on to an OpenVDB dense grid
+  template<typename GridType>
+  class _DenseGridHolder final : public HioOpenVDB_TextureData_DenseGridHolderBase
+  {
+   public:
+    using ValueType = typename GridType::ValueType;
+    using DenseGrid = openvdb::tools::Dense<ValueType, openvdb::tools::LayoutXYZ>;
+    using GridPtr = typename GridType::Ptr;
+
+    // Create dense grid holder from grid and bounding box or return
+    // null pointer for empty grid.
+    // Callee owns result.
+    static _DenseGridHolder *New(const GridPtr &grid, const openvdb::CoordBBox &bbox)
+    {
+      TRACE_FUNCTION();
+
+      if (bbox.empty())
+      {
+        // Empty grid
+        return nullptr;
+      }
+      // Allocate dense grid and copy grid to it.
+      return new _DenseGridHolder(grid, bbox);
+    }
+
+    _DenseGridHolder(const GridPtr &grid, const openvdb::CoordBBox &bbox)
+      // Allocate dense grid of given size
+      : _denseGrid(bbox)
+    {
+      HF_MALLOC_TAG_FUNCTION();
+      {
+        TRACE_FUNCTION_SCOPE("HioOpenVDB_TextureData: Copy to dense");
+        HF_MALLOC_TAG("Copy to dense");
+        openvdb::tools::copyToDense(grid->tree(), _denseGrid);
+      }
+    }
+
+    const unsigned char *GetData() const override
+    {
+      return reinterpret_cast<const unsigned char *>(_denseGrid.data());
+    }
+
+    const openvdb::CoordBBox &GetTreeBoundingBox() const override
+    {
+      return _denseGrid.bbox();
+    }
+
+   private:
+    DenseGrid _denseGrid;
+  };
+
+  // A base class for a template to hold on to an OpenVDB grid.
+  //
+  // This is to dispatch to the templated openvdb::tools::resampleToMatch,
+  // dense grids, ...
+  //
+  class _GridHolderBase
+  {
+   public:
+    // Get grid transform from OpenVDB grid.
+    virtual GfMatrix4d GetGridTransform() const = 0;
+
+    // Get metadata for corresponding OpenGL texture.
+    virtual void GetMetadata(int *bytesPerPixel, HioFormat *format) const = 0;
+
+    // Create a new OpenVDB grid (of the right type) by resampling
+    // the old grid. The new grid will have the given transform.
+    virtual _GridHolderBase *GetResampled(const GfMatrix4d &newTransform) = 0;
+
+    // Convert to dense grid.
+    virtual HioOpenVDB_TextureData_DenseGridHolderBase *GetDense() const = 0;
+
+    // Get bounding box of the tree in the grid.
+    const openvdb::CoordBBox &GetTreeBoundingBox() const
+    {
+      return _treeBoundingBox;
+    }
+
+    // Dispatch OpenVDB grid pointer by type to construct corresponding
+    // templated subclass of _GridHolderBase - also computes the bounding
+    // box of the tree in the grid.
+    static _GridHolderBase *New(const openvdb::GridBase::Ptr &grid);
+
+   protected:
+    _GridHolderBase(const openvdb::GridBase::Ptr &grid)
+      : _treeBoundingBox(_ComputeTreeBoundingBox(grid))
+    {}
+
+   private:
+    // Compute the tree's bounding box of an OpenVDB grid
+    static openvdb::CoordBBox _ComputeTreeBoundingBox(const openvdb::GridBase::Ptr &grid)
+    {
+      TRACE_FUNCTION();
+
+      // There is a tradeoff between using
+      // evalLeafBoundingBox() (less CPU time) or
+      // evalActiveVoxelBoundingBox() (less memory)
+      // here.
+      return grid->evalActiveVoxelBoundingBox();
+    }
+
+    const openvdb::CoordBBox _treeBoundingBox;
+  };
+
+  template<typename GridType>
+  class _GridHolder final : public _GridHolderBase
+  {
+   public:
+    using GridPtr = typename GridType::Ptr;
+    using This = _GridHolder<GridType>;
+
+    // Construct's _GridHolder if given OpenVDB grid pointer has the
+    // correct type - also computed the bounding box of the tree in the grid.
+    static _GridHolderBase *New(const openvdb::GridBase::Ptr &grid)
+    {
+      GridPtr const typedGrid = openvdb::gridPtrCast<GridType>(grid);
+      if (!typedGrid)
+      {
+        return nullptr;
+      }
+      return new This(typedGrid);
+    }
+
+    _GridHolder(const GridPtr &grid)
+      : _GridHolderBase(grid),
+        _grid(grid)
+    {}
+
+    GfMatrix4d GetGridTransform() const override
+    {
+      return _ExtractTransformFromGrid(_grid);
+    }
+
+    void GetMetadata(int *bytesPerPixel, HioFormat *format) const override;
+
+    _GridHolderBase *GetResampled(const GfMatrix4d &newTransform) override
+    {
+      TRACE_FUNCTION();
+
+      GridPtr const result = GridType::create();
+
+      result->setTransform(
+        openvdb::math::Transform::createLinearTransform(openvdb::math::Mat4d(newTransform.data())));
+
+      openvdb::tools::resampleToMatch<openvdb::tools::BoxSampler>(*_grid, *result);
+
+      return New(result);
+    }
+
+    HioOpenVDB_TextureData_DenseGridHolderBase *GetDense() const override
+    {
+      return _DenseGridHolder<GridType>::New(_grid, GetTreeBoundingBox());
+    }
+
+   private:
+    const GridPtr _grid;
+  };
+
+  template<>
+  void _GridHolder<openvdb::FloatGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
+  {
+    *bytesPerPixel = sizeof(float);
+    *format = HioFormatFloat32;
+  }
+
+  template<>
+  void _GridHolder<openvdb::DoubleGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
+  {
+    *bytesPerPixel = sizeof(double);
+    *format = HioFormatDouble64;
+  }
+
+  template<>
+  void _GridHolder<openvdb::Vec3fGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
+  {
+    *bytesPerPixel = 3 * sizeof(float);
+    *format = HioFormatFloat32Vec3;
+  }
+
+  template<>
+  void _GridHolder<openvdb::Vec3dGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
+  {
+    *bytesPerPixel = 3 * sizeof(double);
+    *format = HioFormatDouble64Vec3;
+  }
+
+  _GridHolderBase *_GridHolderBase::New(const openvdb::GridBase::Ptr &grid)
+  {
+    if (!grid)
+    {
       return nullptr;
     }
-    // Allocate dense grid and copy grid to it.
-    return new _DenseGridHolder(grid, bbox);
-  }
 
-  _DenseGridHolder(const GridPtr &grid, const openvdb::CoordBBox &bbox)
-    // Allocate dense grid of given size
-    : _denseGrid(bbox)
-  {
-    HF_MALLOC_TAG_FUNCTION();
+    if (_GridHolderBase *g = _GridHolder<openvdb::FloatGrid>::New(grid))
     {
-      TRACE_FUNCTION_SCOPE("HioOpenVDB_TextureData: Copy to dense");
-      HF_MALLOC_TAG("Copy to dense");
-      openvdb::tools::copyToDense(grid->tree(), _denseGrid);
+      TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding floats\n");
+      return g;
     }
-  }
 
-  const unsigned char *GetData() const override
-  {
-    return reinterpret_cast<const unsigned char *>(_denseGrid.data());
-  }
-
-  const openvdb::CoordBBox &GetTreeBoundingBox() const override
-  {
-    return _denseGrid.bbox();
-  }
-
- private:
-  DenseGrid _denseGrid;
-};
-
-// A base class for a template to hold on to an OpenVDB grid.
-//
-// This is to dispatch to the templated openvdb::tools::resampleToMatch,
-// dense grids, ...
-//
-class _GridHolderBase
-{
- public:
-  // Get grid transform from OpenVDB grid.
-  virtual GfMatrix4d GetGridTransform() const = 0;
-
-  // Get metadata for corresponding OpenGL texture.
-  virtual void GetMetadata(int *bytesPerPixel, HioFormat *format) const = 0;
-
-  // Create a new OpenVDB grid (of the right type) by resampling
-  // the old grid. The new grid will have the given transform.
-  virtual _GridHolderBase *GetResampled(const GfMatrix4d &newTransform) = 0;
-
-  // Convert to dense grid.
-  virtual HioOpenVDB_TextureData_DenseGridHolderBase *GetDense() const = 0;
-
-  // Get bounding box of the tree in the grid.
-  const openvdb::CoordBBox &GetTreeBoundingBox() const
-  {
-    return _treeBoundingBox;
-  }
-
-  // Dispatch OpenVDB grid pointer by type to construct corresponding
-  // templated subclass of _GridHolderBase - also computes the bounding
-  // box of the tree in the grid.
-  static _GridHolderBase *New(const openvdb::GridBase::Ptr &grid);
-
- protected:
-  _GridHolderBase(const openvdb::GridBase::Ptr &grid)
-    : _treeBoundingBox(_ComputeTreeBoundingBox(grid))
-  {}
-
- private:
-  // Compute the tree's bounding box of an OpenVDB grid
-  static openvdb::CoordBBox _ComputeTreeBoundingBox(const openvdb::GridBase::Ptr &grid)
-  {
-    TRACE_FUNCTION();
-
-    // There is a tradeoff between using
-    // evalLeafBoundingBox() (less CPU time) or
-    // evalActiveVoxelBoundingBox() (less memory)
-    // here.
-    return grid->evalActiveVoxelBoundingBox();
-  }
-
-  const openvdb::CoordBBox _treeBoundingBox;
-};
-
-template<typename GridType>
-class _GridHolder final : public _GridHolderBase
-{
- public:
-  using GridPtr = typename GridType::Ptr;
-  using This = _GridHolder<GridType>;
-
-  // Construct's _GridHolder if given OpenVDB grid pointer has the
-  // correct type - also computed the bounding box of the tree in the grid.
-  static _GridHolderBase *New(const openvdb::GridBase::Ptr &grid)
-  {
-    GridPtr const typedGrid = openvdb::gridPtrCast<GridType>(grid);
-    if (!typedGrid)
+    if (_GridHolderBase *g = _GridHolder<openvdb::DoubleGrid>::New(grid))
     {
-      return nullptr;
+      TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding doubles\n");
+      return g;
     }
-    return new This(typedGrid);
-  }
 
-  _GridHolder(const GridPtr &grid)
-    : _GridHolderBase(grid),
-      _grid(grid)
-  {}
+    if (_GridHolderBase *g = _GridHolder<openvdb::Vec3fGrid>::New(grid))
+    {
+      TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding float vectors\n");
+      return g;
+    }
 
-  GfMatrix4d GetGridTransform() const override
-  {
-    return _ExtractTransformFromGrid(_grid);
-  }
+    if (_GridHolderBase *g = _GridHolder<openvdb::Vec3dGrid>::New(grid))
+    {
+      TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding double vectors\n");
+      return g;
+    }
 
-  void GetMetadata(int *bytesPerPixel, HioFormat *format) const override;
-
-  _GridHolderBase *GetResampled(const GfMatrix4d &newTransform) override
-  {
-    TRACE_FUNCTION();
-
-    GridPtr const result = GridType::create();
-
-    result->setTransform(
-      openvdb::math::Transform::createLinearTransform(openvdb::math::Mat4d(newTransform.data())));
-
-    openvdb::tools::resampleToMatch<openvdb::tools::BoxSampler>(*_grid, *result);
-
-    return New(result);
-  }
-
-  HioOpenVDB_TextureData_DenseGridHolderBase *GetDense() const override
-  {
-    return _DenseGridHolder<GridType>::New(_grid, GetTreeBoundingBox());
-  }
-
- private:
-  const GridPtr _grid;
-};
-
-template<>
-void _GridHolder<openvdb::FloatGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
-{
-  *bytesPerPixel = sizeof(float);
-  *format = HioFormatFloat32;
-}
-
-template<>
-void _GridHolder<openvdb::DoubleGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
-{
-  *bytesPerPixel = sizeof(double);
-  *format = HioFormatDouble64;
-}
-
-template<>
-void _GridHolder<openvdb::Vec3fGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
-{
-  *bytesPerPixel = 3 * sizeof(float);
-  *format = HioFormatFloat32Vec3;
-}
-
-template<>
-void _GridHolder<openvdb::Vec3dGrid>::GetMetadata(int *bytesPerPixel, HioFormat *format) const
-{
-  *bytesPerPixel = 3 * sizeof(double);
-  *format = HioFormatDouble64Vec3;
-}
-
-_GridHolderBase *_GridHolderBase::New(const openvdb::GridBase::Ptr &grid)
-{
-  if (!grid)
-  {
+    TF_WARN("Unsupported OpenVDB grid type");
     return nullptr;
   }
 
-  if (_GridHolderBase *g = _GridHolder<openvdb::FloatGrid>::New(grid))
+  // Classes for converting a char buffer and size to an istream, similar to the
+  // functionality of boost::iostreams. These are pretty generic and could be
+  // moved to a lower level library if desired in the future.
+  class _CharBuf : public std::basic_streambuf<char>
   {
-    TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding floats\n");
-    return g;
-  }
-
-  if (_GridHolderBase *g = _GridHolder<openvdb::DoubleGrid>::New(grid))
-  {
-    TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding doubles\n");
-    return g;
-  }
-
-  if (_GridHolderBase *g = _GridHolder<openvdb::Vec3fGrid>::New(grid))
-  {
-    TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding float vectors\n");
-    return g;
-  }
-
-  if (_GridHolderBase *g = _GridHolder<openvdb::Vec3dGrid>::New(grid))
-  {
-    TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding double vectors\n");
-    return g;
-  }
-
-  TF_WARN("Unsupported OpenVDB grid type");
-  return nullptr;
-}
-
-// Classes for converting a char buffer and size to an istream, similar to the
-// functionality of boost::iostreams. These are pretty generic and could be
-// moved to a lower level library if desired in the future.
-class _CharBuf : public std::basic_streambuf<char>
-{
- public:
-  _CharBuf(const char *p, size_t l)
-  {
-    setg((char *)p, (char *)p, (char *)p + l);
-  }
-
-  pos_type seekpos(pos_type pos, std::ios_base::openmode which) override
-  {
-    return seekoff(pos - pos_type(off_type(0)), std::ios_base::beg, which);
-  }
-
-  pos_type seekoff(off_type off,
-                   std::ios_base::seekdir dir,
-                   std::ios_base::openmode which = std::ios_base::in) override
-  {
-    // Should use switch(dir) but that results in a compiler error due to
-    // a missing case (_S_ios_seekdir_end) which isn't actually a case.
-    if (dir == std::ios_base::cur)
-      gbump(off);
-    else if (dir == std::ios_base::end)
-      setg(eback(), egptr() + off, egptr());
-    else if (dir == std::ios_base::beg)
-      setg(eback(), eback() + off, egptr());
-    return gptr() - eback();
-  }
-};
-
-class _CharStream : public std::istream
-{
- public:
-  _CharStream(const char *p, size_t l)
-    : std::istream(&_buffer),
-      _buffer(p, l)
-  {
-    rdbuf(&_buffer);
-  }
-
- private:
-  _CharBuf _buffer;
-};
-
-// Load the grid with given name from the OpenVDB file at given path
-_GridHolderBase *_LoadGrid(const std::string &filePath, std::string const &gridName)
-{
-  HF_MALLOC_TAG_FUNCTION();
-  TRACE_FUNCTION();
-
-  openvdb::initialize();
-  openvdb::GridBase::Ptr result;
-
-  if (TfIsFile(filePath))
-  {
-    openvdb::io::File f(filePath);
-
+   public:
+    _CharBuf(const char *p, size_t l)
     {
-      TRACE_FUNCTION_SCOPE("Opening VDB file");
-      try
+      setg((char *)p, (char *)p, (char *)p + l);
+    }
+
+    pos_type seekpos(pos_type pos, std::ios_base::openmode which) override
+    {
+      return seekoff(pos - pos_type(off_type(0)), std::ios_base::beg, which);
+    }
+
+    pos_type seekoff(off_type off,
+                     std::ios_base::seekdir dir,
+                     std::ios_base::openmode which = std::ios_base::in) override
+    {
+      // Should use switch(dir) but that results in a compiler error due to
+      // a missing case (_S_ios_seekdir_end) which isn't actually a case.
+      if (dir == std::ios_base::cur)
+        gbump(off);
+      else if (dir == std::ios_base::end)
+        setg(eback(), egptr() + off, egptr());
+      else if (dir == std::ios_base::beg)
+        setg(eback(), eback() + off, egptr());
+      return gptr() - eback();
+    }
+  };
+
+  class _CharStream : public std::istream
+  {
+   public:
+    _CharStream(const char *p, size_t l)
+      : std::istream(&_buffer),
+        _buffer(p, l)
+    {
+      rdbuf(&_buffer);
+    }
+
+   private:
+    _CharBuf _buffer;
+  };
+
+  // Load the grid with given name from the OpenVDB file at given path
+  _GridHolderBase *_LoadGrid(const std::string &filePath, std::string const &gridName)
+  {
+    HF_MALLOC_TAG_FUNCTION();
+    TRACE_FUNCTION();
+
+    openvdb::initialize();
+    openvdb::GridBase::Ptr result;
+
+    if (TfIsFile(filePath))
+    {
+      openvdb::io::File f(filePath);
+
       {
-        f.open();
-      }
-      catch (openvdb::IoError e)
-      {
-        TF_WARN("Could not open OpenVDB file: %s", e.what());
-        return nullptr;
-      }
-      catch (openvdb::LookupError e)
-      {
-        // Occurs, e.g., when there is an unknown grid type in VDB file
-        TF_WARN("Could not parse OpenVDB file: %s", e.what());
-        return nullptr;
-      }
-    }
-
-    if (!f.hasGrid(gridName))
-    {
-      TF_WARN("OpenVDB file %s has no grid %s", filePath.c_str(), gridName.c_str());
-      return nullptr;
-    }
-
-    {
-      HF_MALLOC_TAG("readGrid");
-      result = f.readGrid(gridName);
-    }
-
-    {
-      TRACE_FUNCTION_SCOPE("Closing VDB file");
-      // openvdb::io::File's d'tor is probably closing the file, but this
-      // is not explicitly specified in the documentation.
-      f.close();
-    }
-  }
-  else
-  {
-    // Try reading the vdb with ArAsset.
-    // XXX In the future we may want to first try to read with a vdb
-    // specific subclass of ArAsset that directly stores a GridPtrVecPtr,
-    // to avoid serializing and deserializing the vdb data.
-    std::shared_ptr<ArAsset> asset;
-    {
-      TRACE_FUNCTION_SCOPE("Opening VDB ArAsset");
-      asset = ArGetResolver().OpenAsset(ArResolvedPath(filePath));
-    }
-
-    // Use an openvdb::io::Stream to read raw bytes provided by ArAsset.
-    // ArAsset provides a char buffer and size, but Stream requires a
-    // std::istream. To bridge the gap, we use the _CharStream above to
-    // wrap the char buffer from ArAsset in a std::istream.
-    {
-      TRACE_FUNCTION_SCOPE("Streaming VDB grids from ArAsset bytes");
-      std::shared_ptr<const char> vdbBytes = asset->GetBuffer();
-      const size_t vdbNumBytes = asset->GetSize();
-      _CharStream vdbSource(vdbBytes.get(), vdbNumBytes);
-
-      openvdb::io::Stream s(vdbSource);
-      openvdb::GridPtrVecPtr grids = s.getGrids();
-
-      // Find the grid in the grid vector.
-      for (const openvdb::GridBase::Ptr grid : *grids)
-      {
-        if (grid->getName() == gridName)
+        TRACE_FUNCTION_SCOPE("Opening VDB file");
+        try
         {
-          result = grid;
-          break;
+          f.open();
+        }
+        catch (openvdb::IoError e)
+        {
+          TF_WARN("Could not open OpenVDB file: %s", e.what());
+          return nullptr;
+        }
+        catch (openvdb::LookupError e)
+        {
+          // Occurs, e.g., when there is an unknown grid type in VDB file
+          TF_WARN("Could not parse OpenVDB file: %s", e.what());
+          return nullptr;
         }
       }
 
-      if (!result)
+      if (!f.hasGrid(gridName))
       {
-        TF_WARN("OpenVDB asset path %s has no grid %s", filePath.c_str(), gridName.c_str());
+        TF_WARN("OpenVDB file %s has no grid %s", filePath.c_str(), gridName.c_str());
         return nullptr;
       }
+
+      {
+        HF_MALLOC_TAG("readGrid");
+        result = f.readGrid(gridName);
+      }
+
+      {
+        TRACE_FUNCTION_SCOPE("Closing VDB file");
+        // openvdb::io::File's d'tor is probably closing the file, but this
+        // is not explicitly specified in the documentation.
+        f.close();
+      }
+    } else
+    {
+      // Try reading the vdb with ArAsset.
+      // XXX In the future we may want to first try to read with a vdb
+      // specific subclass of ArAsset that directly stores a GridPtrVecPtr,
+      // to avoid serializing and deserializing the vdb data.
+      std::shared_ptr<ArAsset> asset;
+      {
+        TRACE_FUNCTION_SCOPE("Opening VDB ArAsset");
+        asset = ArGetResolver().OpenAsset(ArResolvedPath(filePath));
+      }
+
+      // Use an openvdb::io::Stream to read raw bytes provided by ArAsset.
+      // ArAsset provides a char buffer and size, but Stream requires a
+      // std::istream. To bridge the gap, we use the _CharStream above to
+      // wrap the char buffer from ArAsset in a std::istream.
+      {
+        TRACE_FUNCTION_SCOPE("Streaming VDB grids from ArAsset bytes");
+        std::shared_ptr<const char> vdbBytes = asset->GetBuffer();
+        const size_t vdbNumBytes = asset->GetSize();
+        _CharStream vdbSource(vdbBytes.get(), vdbNumBytes);
+
+        openvdb::io::Stream s(vdbSource);
+        openvdb::GridPtrVecPtr grids = s.getGrids();
+
+        // Find the grid in the grid vector.
+        for (const openvdb::GridBase::Ptr grid : *grids)
+        {
+          if (grid->getName() == gridName)
+          {
+            result = grid;
+            break;
+          }
+        }
+
+        if (!result)
+        {
+          TF_WARN("OpenVDB asset path %s has no grid %s", filePath.c_str(), gridName.c_str());
+          return nullptr;
+        }
+      }
     }
+
+    return _GridHolderBase::New(result);
   }
 
-  return _GridHolderBase::New(result);
-}
+  GfVec3d _ToVec3d(const openvdb::Coord &c)
+  {
+    return GfVec3d(c.x(), c.y(), c.z());
+  }
 
-GfVec3d _ToVec3d(const openvdb::Coord &c)
-{
-  return GfVec3d(c.x(), c.y(), c.z());
-}
+  GfRange3d _ToRange3d(const openvdb::CoordBBox &b)
+  {
+    return GfRange3d(_ToVec3d(b.min()), _ToVec3d(b.max()));
+  }
 
-GfRange3d _ToRange3d(const openvdb::CoordBBox &b)
-{
-  return GfRange3d(_ToVec3d(b.min()), _ToVec3d(b.max()));
-}
+  // We can compute the approximate distance of the new sampling points
+  // using the cube root of native to target memory - if it weren't for
+  // rounding and re-sampling issues.
+  //
+  // This function accounts for that so that if when we feed the resulting
+  // sampling point distance to OpenVDB's resampleToMatch, we should be
+  // under the target memory and not just near the target memory.
+  //
+  double _ResamplingAdjustment(const int nativeLength, const double scale)
+  {
+    // This is done in two steps:
 
-// We can compute the approximate distance of the new sampling points
-// using the cube root of native to target memory - if it weren't for
-// rounding and re-sampling issues.
-//
-// This function accounts for that so that if when we feed the resulting
-// sampling point distance to OpenVDB's resampleToMatch, we should be
-// under the target memory and not just near the target memory.
-//
-double _ResamplingAdjustment(const int nativeLength, const double scale)
-{
-  // This is done in two steps:
+    // First, we can use the approximate distance to compute how many
+    // voxels the texture can have at most accross the direction we
+    // consider here to not exceed the target memory.
+    const int maxNumberOfSamples = floor(nativeLength / scale);
 
-  // First, we can use the approximate distance to compute how many
-  // voxels the texture can have at most accross the direction we
-  // consider here to not exceed the target memory.
-  const int maxNumberOfSamples = floor(nativeLength / scale);
-
-  // Second, before dividing the length of the interval containing all
-  // original sampling points by the above number of samples, we account
-  // for the fact that re-sampling might pick up ad additional sample
-  // at each end.
-  //
-  // Example:
-  //
-  // Imagine you have samples at {-3, -2, -1, 0, 1, 2, 3} and pick a
-  // distance of 1.3 for the new sampling points.
-  //
-  // You would expect 6 / 1.3 ~ 4.6 new sampling points.
-  //
-  // However, the value at 3.9 is not zero with linear interpolation
-  // so the sampling points you need are at
-  // {-3.9, -2.6, -1.3, 0, 1.3, 2.6, 3.9}, so actually 7 points in total.
-  //
-  return nativeLength / double(std::max(1, maxNumberOfSamples - 2));
-}
+    // Second, before dividing the length of the interval containing all
+    // original sampling points by the above number of samples, we account
+    // for the fact that re-sampling might pick up ad additional sample
+    // at each end.
+    //
+    // Example:
+    //
+    // Imagine you have samples at {-3, -2, -1, 0, 1, 2, 3} and pick a
+    // distance of 1.3 for the new sampling points.
+    //
+    // You would expect 6 / 1.3 ~ 4.6 new sampling points.
+    //
+    // However, the value at 3.9 is not zero with linear interpolation
+    // so the sampling points you need are at
+    // {-3.9, -2.6, -1.3, 0, 1.3, 2.6, 3.9}, so actually 7 points in total.
+    //
+    return nativeLength / double(std::max(1, maxNumberOfSamples - 2));
+  }
 
 }  // end anonymous namespace
 

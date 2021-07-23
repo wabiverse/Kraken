@@ -370,8 +370,7 @@ class TfDenseHashMap
         return end();
 
       return _vec().begin() + iter->second;
-    }
-    else
+    } else
     {
       return _FindInVec(k);
     }
@@ -388,8 +387,7 @@ class TfDenseHashMap
         return end();
 
       return _vec().begin() + iter->second;
-    }
-    else
+    } else
     {
       return _FindInVec(k);
     }
@@ -415,8 +413,7 @@ class TfDenseHashMap
 
       if (!res.second)
         return insert_result(_vec().begin() + res.first->second, false);
-    }
-    else
+    } else
     {
       // Bail if already inserted.
       iterator iter = _FindInVec(v.first);
@@ -460,8 +457,7 @@ class TfDenseHashMap
     {
       _vec().assign(begin, end);
       _CreateTableIfNeeded();
-    }
-    else
+    } else
     {
       // Just insert, since duplicate checking will use the hash.
       insert(begin, end);
@@ -559,8 +555,7 @@ class TfDenseHashMap
     {
 
       _h.reset();
-    }
-    else
+    } else
     {
 
       // Otherwise, allocate a new hash map with the optimal size.

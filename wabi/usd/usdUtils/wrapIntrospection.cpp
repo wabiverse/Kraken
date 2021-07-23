@@ -36,19 +36,19 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-VtDictionary _WrapUsdUtilsComputeUsdStageStats_1(const std::string &rootLayerPath)
-{
-  VtDictionary stats;
-  UsdUtilsComputeUsdStageStats(rootLayerPath, &stats);
-  return stats;
-}
+  VtDictionary _WrapUsdUtilsComputeUsdStageStats_1(const std::string &rootLayerPath)
+  {
+    VtDictionary stats;
+    UsdUtilsComputeUsdStageStats(rootLayerPath, &stats);
+    return stats;
+  }
 
-VtDictionary _WrapUsdUtilsComputeUsdStageStats_2(const UsdStageWeakPtr &stage)
-{
-  VtDictionary stats;
-  UsdUtilsComputeUsdStageStats(stage, &stats);
-  return stats;
-}
+  VtDictionary _WrapUsdUtilsComputeUsdStageStats_2(const UsdStageWeakPtr &stage)
+  {
+    VtDictionary stats;
+    UsdUtilsComputeUsdStageStats(stage, &stats);
+    return stats;
+  }
 
 }  // anonymous namespace
 

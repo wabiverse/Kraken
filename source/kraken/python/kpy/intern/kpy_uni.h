@@ -72,30 +72,30 @@ extern PyTypeObject pyuni_object_Type;
 #define KPy_PropertyLUXO_Check(v) (PyObject_TypeCheck(v, &pyuni_prop_Type))
 #define KPy_PropertyLUXO_CheckExact(v) (Py_TYPE(v) == &pyuni_prop_Type)
 
-#define PYUNI_STRUCT_CHECK_OBJ(obj) \
+#define PYUNI_STRUCT_CHECK_OBJ(obj)                          \
   if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) \
-  { \
-    return NULL; \
-  } \
+  {                                                          \
+    return NULL;                                             \
+  }                                                          \
   (void)0
-#define PYUNI_STRUCT_CHECK_INT(obj) \
+#define PYUNI_STRUCT_CHECK_INT(obj)                          \
   if (ARCH_UNLIKELY(pyuni_struct_validity_check(obj) == -1)) \
-  { \
-    return -1; \
-  } \
+  {                                                          \
+    return -1;                                               \
+  }                                                          \
   (void)0
 
-#define PYUNI_PROP_CHECK_OBJ(obj) \
+#define PYUNI_PROP_CHECK_OBJ(obj)                          \
   if (ARCH_UNLIKELY(pyuni_prop_validity_check(obj) == -1)) \
-  { \
-    return NULL; \
-  } \
+  {                                                        \
+    return NULL;                                           \
+  }                                                        \
   (void)0
-#define PYUNI_PROP_CHECK_INT(obj) \
+#define PYUNI_PROP_CHECK_INT(obj)                          \
   if (ARCH_UNLIKELY(pyuni_prop_validity_check(obj) == -1)) \
-  { \
-    return -1; \
-  } \
+  {                                                        \
+    return -1;                                             \
+  }                                                        \
   (void)0
 
 #define PYUNI_STRUCT_IS_VALID(pysrna) (LIKELY(((KPy_KrakenPrim *)(pyuni))->ptr.type != NULL))

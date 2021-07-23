@@ -69,9 +69,9 @@ ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_SetMinImageCount(uint32_t min_image_co
 /**
  * Optional: load Vulkan functions with a custom function loader
  * This is only useful with ANCHOR_IMPL_VULKAN_NO_PROTOTYPES / VK_NO_PROTOTYPES */
-ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_LoadFunctions(PFN_vkVoidFunction (*loader_func)(const char *fn_name,
-                                                                                          void *data),
-                                                        void *data = NULL);
+ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_LoadFunctions(
+  PFN_vkVoidFunction (*loader_func)(const char *fn_name, void *data),
+  void *data = NULL);
 
 struct ANCHOR_VulkanGPU_Frame;
 struct ANCHOR_VulkanGPU_Surface;
@@ -96,10 +96,11 @@ ANCHOR_ImplVulkanH_SelectSurfaceFormat(VkPhysicalDevice physical_device,
                                        const VkFormat *request_formats,
                                        int request_formats_count,
                                        VkColorSpaceKHR request_color_space);
-ANCHOR_BACKEND_API VkPresentModeKHR ANCHOR_ImplVulkanH_SelectPresentMode(VkPhysicalDevice physical_device,
-                                                                         VkSurfaceKHR surface,
-                                                                         const VkPresentModeKHR *request_modes,
-                                                                         int request_modes_count);
+ANCHOR_BACKEND_API VkPresentModeKHR
+ANCHOR_ImplVulkanH_SelectPresentMode(VkPhysicalDevice physical_device,
+                                     VkSurfaceKHR surface,
+                                     const VkPresentModeKHR *request_modes,
+                                     int request_modes_count);
 ANCHOR_BACKEND_API int ANCHOR_ImplVulkanH_GetMinImageCountFromPresentMode(VkPresentModeKHR present_mode);
 
 // Helper structure to hold the data needed by one rendering frame

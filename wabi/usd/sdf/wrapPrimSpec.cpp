@@ -50,121 +50,121 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-////////////////////////////////////////////////////////////////////////
-// Wrappers for constructors and proxy constructors
+  ////////////////////////////////////////////////////////////////////////
+  // Wrappers for constructors and proxy constructors
 
-static SdfPrimSpecHandle _NewFromLayer(const SdfLayerHandle &parent,
-                                       const std::string &name,
-                                       SdfSpecifier spec,
-                                       const std::string &typeName)
-{
-  return SdfPrimSpec::New(parent, name, spec, typeName);
-}
-
-static SdfPrimSpecHandle _NewTypelessFromLayer(const SdfLayerHandle &parent,
-                                               const std::string &name,
-                                               SdfSpecifier spec)
-{
-  return SdfPrimSpec::New(parent, name, spec);
-}
-
-static SdfPrimSpecHandle _NewPrim(const SdfPrimSpecHandle &parent,
-                                  const std::string &name,
-                                  SdfSpecifier spec,
-                                  const std::string &typeName)
-{
-  return SdfPrimSpec::New(parent, name, spec, typeName);
-}
-
-static SdfPrimSpecHandle _NewTypelessPrim(const SdfPrimSpecHandle &parent,
-                                          const std::string &name,
-                                          SdfSpecifier spec)
-{
-  return SdfPrimSpec::New(parent, name, spec);
-}
-
-typedef SdfPyChildrenProxy<SdfPrimSpec::NameChildrenView> NameChildrenProxy;
-
-static NameChildrenProxy _WrapGetNameChildrenProxy(const SdfPrimSpec &prim)
-{
-  return NameChildrenProxy(prim.GetNameChildren(), "prim");
-}
-
-typedef SdfPyChildrenProxy<SdfPrimSpec::PropertySpecView> PropertiesProxy;
-
-static PropertiesProxy _WrapGetPropertiesProxy(const SdfPrimSpec &prim)
-{
-  return PropertiesProxy(prim.GetProperties(), "property");
-}
-
-typedef SdfPyChildrenProxy<SdfVariantSetView> VariantSetProxy;
-
-static VariantSetProxy _WrapGetVariantSetsProxy(const SdfPrimSpec &prim)
-{
-  return VariantSetProxy(prim.GetVariantSets());
-}
-
-static void _SetSymmetryArguments(const SdfPrimSpec &self, VtDictionary const &dictionary)
-{
-  self.GetSymmetryArguments() = dictionary;
-}
-
-static void _SetCustomData(const SdfPrimSpec &self, VtDictionary const &dictionary)
-{
-  self.GetCustomData() = dictionary;
-}
-
-static void _SetAssetInfo(const SdfPrimSpec &self, VtDictionary const &dictionary)
-{
-  self.GetAssetInfo() = dictionary;
-}
-
-static void _SetRelocates(SdfPrimSpec &self, const dict &d)
-{
-  SdfRelocatesMap reloMap;
-
-  list keys = d.keys();
-  int numKeys = len(d);
-
-  for (int i = 0; i < numKeys; i++)
+  static SdfPrimSpecHandle _NewFromLayer(const SdfLayerHandle &parent,
+                                         const std::string &name,
+                                         SdfSpecifier spec,
+                                         const std::string &typeName)
   {
-    SdfPath key = extract<SdfPath>(keys[i]);
-    SdfPath val = extract<SdfPath>(d[keys[i]]);
-
-    reloMap[key] = val;
+    return SdfPrimSpec::New(parent, name, spec, typeName);
   }
 
-  self.SetRelocates(reloMap);
-}
+  static SdfPrimSpecHandle _NewTypelessFromLayer(const SdfLayerHandle &parent,
+                                                 const std::string &name,
+                                                 SdfSpecifier spec)
+  {
+    return SdfPrimSpec::New(parent, name, spec);
+  }
 
-////////////////////////////////////////////////////////////////////////
+  static SdfPrimSpecHandle _NewPrim(const SdfPrimSpecHandle &parent,
+                                    const std::string &name,
+                                    SdfSpecifier spec,
+                                    const std::string &typeName)
+  {
+    return SdfPrimSpec::New(parent, name, spec, typeName);
+  }
 
-static void _WrapSetName(SdfPrimSpec &self, const std::string &newName)
-{
-  // Always validate the new name from python.
-  self.SetName(newName, true);
-}
+  static SdfPrimSpecHandle _NewTypelessPrim(const SdfPrimSpecHandle &parent,
+                                            const std::string &name,
+                                            SdfSpecifier spec)
+  {
+    return SdfPrimSpec::New(parent, name, spec);
+  }
 
-static bool _WrapCanSetName(SdfPrimSpec &self, const std::string &newName)
-{
-  std::string errStr;
-  return self.CanSetName(newName, &errStr);
-}
+  typedef SdfPyChildrenProxy<SdfPrimSpec::NameChildrenView> NameChildrenProxy;
 
-static std::vector<TfToken> _ApplyNameChildrenOrder(const SdfPrimSpec &self,
-                                                    const std::vector<TfToken> &names)
-{
-  std::vector<TfToken> result = names;
-  self.ApplyNameChildrenOrder(&result);
-  return result;
-}
+  static NameChildrenProxy _WrapGetNameChildrenProxy(const SdfPrimSpec &prim)
+  {
+    return NameChildrenProxy(prim.GetNameChildren(), "prim");
+  }
 
-static std::vector<TfToken> _ApplyPropertyOrder(const SdfPrimSpec &self, const std::vector<TfToken> &names)
-{
-  std::vector<TfToken> result = names;
-  self.ApplyPropertyOrder(&result);
-  return result;
-}
+  typedef SdfPyChildrenProxy<SdfPrimSpec::PropertySpecView> PropertiesProxy;
+
+  static PropertiesProxy _WrapGetPropertiesProxy(const SdfPrimSpec &prim)
+  {
+    return PropertiesProxy(prim.GetProperties(), "property");
+  }
+
+  typedef SdfPyChildrenProxy<SdfVariantSetView> VariantSetProxy;
+
+  static VariantSetProxy _WrapGetVariantSetsProxy(const SdfPrimSpec &prim)
+  {
+    return VariantSetProxy(prim.GetVariantSets());
+  }
+
+  static void _SetSymmetryArguments(const SdfPrimSpec &self, VtDictionary const &dictionary)
+  {
+    self.GetSymmetryArguments() = dictionary;
+  }
+
+  static void _SetCustomData(const SdfPrimSpec &self, VtDictionary const &dictionary)
+  {
+    self.GetCustomData() = dictionary;
+  }
+
+  static void _SetAssetInfo(const SdfPrimSpec &self, VtDictionary const &dictionary)
+  {
+    self.GetAssetInfo() = dictionary;
+  }
+
+  static void _SetRelocates(SdfPrimSpec &self, const dict &d)
+  {
+    SdfRelocatesMap reloMap;
+
+    list keys = d.keys();
+    int numKeys = len(d);
+
+    for (int i = 0; i < numKeys; i++)
+    {
+      SdfPath key = extract<SdfPath>(keys[i]);
+      SdfPath val = extract<SdfPath>(d[keys[i]]);
+
+      reloMap[key] = val;
+    }
+
+    self.SetRelocates(reloMap);
+  }
+
+  ////////////////////////////////////////////////////////////////////////
+
+  static void _WrapSetName(SdfPrimSpec &self, const std::string &newName)
+  {
+    // Always validate the new name from python.
+    self.SetName(newName, true);
+  }
+
+  static bool _WrapCanSetName(SdfPrimSpec &self, const std::string &newName)
+  {
+    std::string errStr;
+    return self.CanSetName(newName, &errStr);
+  }
+
+  static std::vector<TfToken> _ApplyNameChildrenOrder(const SdfPrimSpec &self,
+                                                      const std::vector<TfToken> &names)
+  {
+    std::vector<TfToken> result = names;
+    self.ApplyNameChildrenOrder(&result);
+    return result;
+  }
+
+  static std::vector<TfToken> _ApplyPropertyOrder(const SdfPrimSpec &self, const std::vector<TfToken> &names)
+  {
+    std::vector<TfToken> result = names;
+    self.ApplyPropertyOrder(&result);
+    return result;
+  }
 
 }  // anonymous namespace
 
@@ -205,8 +205,10 @@ void wrapPrimSpec()
 
     .add_property("comment", &This::GetComment, &This::SetComment, "The prim's comment string.")
 
-    .add_property(
-      "documentation", &This::GetDocumentation, &This::SetDocumentation, "The prim's documentation string.")
+    .add_property("documentation",
+                  &This::GetDocumentation,
+                  &This::SetDocumentation,
+                  "The prim's documentation string.")
 
     .add_property("active",
                   &This::GetActive,
@@ -260,8 +262,10 @@ void wrapPrimSpec()
                   "modify the contents to add, change, and clear symmetry "
                   "arguments.")
 
-    .add_property(
-      "symmetricPeer", &This::GetSymmetricPeer, &This::SetSymmetricPeer, "The prims's symmetric peer.")
+    .add_property("symmetricPeer",
+                  &This::GetSymmetricPeer,
+                  &This::SetSymmetricPeer,
+                  "The prims's symmetric peer.")
 
     .add_property("customData",
                   &This::GetCustomData,
@@ -381,11 +385,13 @@ void wrapPrimSpec()
                   "read-only, you can modify the contents to add, "
                   "remove, or reorder properties.")
 
-    .add_property(
-      "attributes", &This::GetAttributes, "The attributes of this prim, as an ordered dictionary.")
+    .add_property("attributes",
+                  &This::GetAttributes,
+                  "The attributes of this prim, as an ordered dictionary.")
 
-    .add_property(
-      "relationships", &This::GetRelationships, "The relationships of this prim, as an ordered dictionary.")
+    .add_property("relationships",
+                  &This::GetRelationships,
+                  "The relationships of this prim, as an ordered dictionary.")
 
     .add_property("propertyOrder",
                   &This::GetPropertyOrder,

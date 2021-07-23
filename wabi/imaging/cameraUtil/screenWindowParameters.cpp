@@ -48,8 +48,7 @@ CameraUtilScreenWindowParameters::CameraUtilScreenWindowParameters(const GfCamer
     {
       _screenWindow /= denom;
     }
-  }
-  else
+  } else
   {
     _screenWindow *= GfCamera::APERTURE_UNIT / 2.0;
   }

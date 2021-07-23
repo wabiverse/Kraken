@@ -53,8 +53,7 @@ wmOperatorType *WM_operatortype_find(const TfToken &idname)
     }
 
     TF_DEBUG(KRAKEN_DEBUG_OPERATORS).Msg("Unknown operator '%s'\n", CHARALL(idname));
-  }
-  else
+  } else
   {
     TF_DEBUG(KRAKEN_DEBUG_OPERATORS).Msg("Operator has no id.\n");
   }
@@ -72,9 +71,7 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
   /* ------ */
 
   /** Hashed. */
-  global_ops_hash->insert(
-    typename RHashOp::value_type(
-      std::make_pair(ot->idname, ot)));
+  global_ops_hash->insert(typename RHashOp::value_type(std::make_pair(ot->idname, ot)));
 
   /* ------ */
 

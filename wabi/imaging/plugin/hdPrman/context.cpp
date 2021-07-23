@@ -53,8 +53,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_MAKE_STATIC_DATA(std::vector<HdPrman_Context::IntegratorCameraCallback>,
-                    _integratorCameraCallbacks)
+TF_MAKE_STATIC_DATA(std::vector<HdPrman_Context::IntegratorCameraCallback>, _integratorCameraCallbacks)
 {
   _integratorCameraCallbacks->clear();
 }
@@ -123,8 +122,7 @@ bool HdPrman_Context::IsLightFilterUsed(TfToken const &name)
   return _lightFilterRefs.find(name) != _lightFilterRefs.end();
 }
 
-inline static RtDetailType
-_RixDetailForHdInterpolation(HdInterpolation interp)
+inline static RtDetailType _RixDetailForHdInterpolation(HdInterpolation interp)
 {
   switch (interp)
   {
@@ -153,28 +151,24 @@ enum _ParamType
   _ParamTypeAttribute,
 };
 
-static bool
-_SetParamValue(RtUString const &name,
-               VtValue const &val,
-               TfToken const &role,
-               RtParamList &params)
+static bool _SetParamValue(RtUString const &name,
+                           VtValue const &val,
+                           TfToken const &role,
+                           RtParamList &params)
 {
   if (val.IsHolding<float>())
   {
     float v = val.UncheckedGet<float>();
     params.SetFloat(name, v);
-  }
-  else if (val.IsHolding<double>())
+  } else if (val.IsHolding<double>())
   {
     double v = val.UncheckedGet<double>();
     params.SetFloat(name, static_cast<float>(v));
-  }
-  else if (val.IsHolding<VtArray<float>>())
+  } else if (val.IsHolding<VtArray<float>>())
   {
     const VtArray<float> &v = val.UncheckedGet<VtArray<float>>();
     params.SetFloatArray(name, v.cdata(), v.size());
-  }
-  else if (val.IsHolding<VtArray<double>>())
+  } else if (val.IsHolding<VtArray<double>>())
   {
     const VtArray<double> &vd = val.UncheckedGet<VtArray<double>>();
     // Convert double->float
@@ -185,42 +179,32 @@ _SetParamValue(RtUString const &name,
       v[i] = float(vd[i]);
     }
     params.SetFloatArray(name, v.cdata(), v.size());
-  }
-  else if (val.IsHolding<int>())
+  } else if (val.IsHolding<int>())
   {
     int v = val.UncheckedGet<int>();
     params.SetInteger(name, v);
-  }
-  else if (val.IsHolding<VtArray<int>>())
+  } else if (val.IsHolding<VtArray<int>>())
   {
     const VtArray<int> &v = val.UncheckedGet<VtArray<int>>();
     params.SetIntegerArray(name, v.cdata(), v.size());
-  }
-  else if (val.IsHolding<long>())
+  } else if (val.IsHolding<long>())
   {
     long v = val.UncheckedGet<long>();
     params.SetInteger(name, (int)v);
-  }
-  else if (val.IsHolding<GfVec2f>())
+  } else if (val.IsHolding<GfVec2f>())
   {
     GfVec2f v = val.UncheckedGet<GfVec2f>();
-    params.SetFloatArray(
-      name, reinterpret_cast<const float *>(&v), 2);
-  }
-  else if (val.IsHolding<VtArray<GfVec2f>>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 2);
+  } else if (val.IsHolding<VtArray<GfVec2f>>())
   {
     const VtArray<GfVec2f> &v = val.UncheckedGet<VtArray<GfVec2f>>();
-    params.SetFloatArray(name,
-                         reinterpret_cast<const float *>(v.cdata()),
-                         2);
-  }
-  else if (val.IsHolding<GfVec2d>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 2);
+  } else if (val.IsHolding<GfVec2d>())
   {
     GfVec2d vd = val.UncheckedGet<GfVec2d>();
     float v[2] = {float(vd[0]), float(vd[1])};
     params.SetFloatArray(name, v, 2);
-  }
-  else if (val.IsHolding<VtArray<GfVec2d>>())
+  } else if (val.IsHolding<VtArray<GfVec2d>>())
   {
     const VtArray<GfVec2d> &vd = val.UncheckedGet<VtArray<GfVec2d>>();
     // Convert double->float
@@ -230,93 +214,66 @@ _SetParamValue(RtUString const &name,
     {
       v[i] = GfVec2f(vd[i]);
     }
-    params.SetFloatArray(name,
-                         reinterpret_cast<const float *>(v.cdata()),
-                         2);
-  }
-  else if (val.IsHolding<GfVec3f>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 2);
+  } else if (val.IsHolding<GfVec3f>())
   {
     GfVec3f v = val.UncheckedGet<GfVec3f>();
     if (role == HdPrimvarRoleTokens->color)
     {
       params.SetColor(name, RtColorRGB(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->point)
+    } else if (role == HdPrimvarRoleTokens->point)
     {
       params.SetPoint(name, RtPoint3(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->normal)
+    } else if (role == HdPrimvarRoleTokens->normal)
     {
       params.SetPoint(name, RtNormal3(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->vector)
+    } else if (role == HdPrimvarRoleTokens->vector)
     {
       params.SetVector(name, RtVector3(v[0], v[1], v[2]));
-    }
-    else
+    } else
     {
-      params.SetFloatArray(name,
-                           reinterpret_cast<const float *>(&v),
-                           3);
+      params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 3);
     }
-  }
-  else if (val.IsHolding<VtArray<GfVec3f>>())
+  } else if (val.IsHolding<VtArray<GfVec3f>>())
   {
     const VtArray<GfVec3f> &v = val.UncheckedGet<VtArray<GfVec3f>>();
     if (role == HdPrimvarRoleTokens->color)
     {
-      params.SetColor(
-        name, *reinterpret_cast<const RtColorRGB *>(v.cdata()));
-    }
-    else if (role == HdPrimvarRoleTokens->point)
+      params.SetColor(name, *reinterpret_cast<const RtColorRGB *>(v.cdata()));
+    } else if (role == HdPrimvarRoleTokens->point)
     {
-      params.SetPoint(
-        name, *reinterpret_cast<const RtPoint3 *>(v.cdata()));
-    }
-    else if (role == HdPrimvarRoleTokens->normal)
+      params.SetPoint(name, *reinterpret_cast<const RtPoint3 *>(v.cdata()));
+    } else if (role == HdPrimvarRoleTokens->normal)
     {
-      params.SetNormal(
-        name, *reinterpret_cast<const RtNormal3 *>(v.cdata()));
-    }
-    else if (role == HdPrimvarRoleTokens->vector)
+      params.SetNormal(name, *reinterpret_cast<const RtNormal3 *>(v.cdata()));
+    } else if (role == HdPrimvarRoleTokens->vector)
     {
-      params.SetVector(
-        name, *reinterpret_cast<const RtVector3 *>(v.cdata()));
-    }
-    else
+      params.SetVector(name, *reinterpret_cast<const RtVector3 *>(v.cdata()));
+    } else
     {
-      params.SetFloatArray(
-        name, reinterpret_cast<const float *>(v.cdata()), 3);
+      params.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 3);
     }
-  }
-  else if (val.IsHolding<GfVec3d>())
+  } else if (val.IsHolding<GfVec3d>())
   {
     // double->float
     GfVec3f v(val.UncheckedGet<GfVec3d>());
     if (role == HdPrimvarRoleTokens->color)
     {
       params.SetColor(name, RtColorRGB(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->point)
+    } else if (role == HdPrimvarRoleTokens->point)
     {
       params.SetPoint(name, RtPoint3(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->normal)
+    } else if (role == HdPrimvarRoleTokens->normal)
     {
       params.SetPoint(name, RtNormal3(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->vector)
+    } else if (role == HdPrimvarRoleTokens->vector)
     {
       params.SetVector(name, RtVector3(v[0], v[1], v[2]));
-    }
-    else
+    } else
     {
-      params.SetFloatArray(name,
-                           reinterpret_cast<const float *>(&v),
-                           3);
+      params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 3);
     }
-  }
-  else if (val.IsHolding<VtArray<GfVec3d>>())
+  } else if (val.IsHolding<VtArray<GfVec3d>>())
   {
     const VtArray<GfVec3d> &vd = val.UncheckedGet<VtArray<GfVec3d>>();
     // double->float
@@ -328,50 +285,34 @@ _SetParamValue(RtUString const &name,
     }
     if (role == HdPrimvarRoleTokens->color)
     {
-      params.SetColor(
-        name, *reinterpret_cast<const RtColorRGB *>(v.cdata()));
-    }
-    else if (role == HdPrimvarRoleTokens->point)
+      params.SetColor(name, *reinterpret_cast<const RtColorRGB *>(v.cdata()));
+    } else if (role == HdPrimvarRoleTokens->point)
     {
-      params.SetPoint(
-        name, *reinterpret_cast<const RtPoint3 *>(v.cdata()));
-    }
-    else if (role == HdPrimvarRoleTokens->normal)
+      params.SetPoint(name, *reinterpret_cast<const RtPoint3 *>(v.cdata()));
+    } else if (role == HdPrimvarRoleTokens->normal)
     {
-      params.SetNormal(
-        name, *reinterpret_cast<const RtNormal3 *>(v.cdata()));
-    }
-    else if (role == HdPrimvarRoleTokens->vector)
+      params.SetNormal(name, *reinterpret_cast<const RtNormal3 *>(v.cdata()));
+    } else if (role == HdPrimvarRoleTokens->vector)
     {
-      params.SetVector(
-        name, *reinterpret_cast<const RtVector3 *>(v.cdata()));
-    }
-    else
+      params.SetVector(name, *reinterpret_cast<const RtVector3 *>(v.cdata()));
+    } else
     {
-      params.SetFloatArray(
-        name, reinterpret_cast<const float *>(v.cdata()), 3);
+      params.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 3);
     }
-  }
-  else if (val.IsHolding<GfVec4f>())
+  } else if (val.IsHolding<GfVec4f>())
   {
     GfVec4f v = val.UncheckedGet<GfVec4f>();
-    params.SetFloatArray(
-      name, reinterpret_cast<const float *>(&v), 4);
-  }
-  else if (val.IsHolding<VtArray<GfVec4f>>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 4);
+  } else if (val.IsHolding<VtArray<GfVec4f>>())
   {
     const VtArray<GfVec4f> &v = val.UncheckedGet<VtArray<GfVec4f>>();
-    params.SetFloatArray(
-      name, reinterpret_cast<const float *>(v.cdata()), 4);
-  }
-  else if (val.IsHolding<GfVec4d>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 4);
+  } else if (val.IsHolding<GfVec4d>())
   {
     // double->float
     GfVec4f v(val.UncheckedGet<GfVec4d>());
-    params.SetFloatArray(
-      name, reinterpret_cast<const float *>(&v), 4);
-  }
-  else if (val.IsHolding<VtArray<GfVec4d>>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 4);
+  } else if (val.IsHolding<VtArray<GfVec4d>>())
   {
     const VtArray<GfVec4d> &vd = val.UncheckedGet<VtArray<GfVec4d>>();
     // double->float
@@ -381,32 +322,25 @@ _SetParamValue(RtUString const &name,
     {
       v[i] = GfVec4f(vd[i]);
     }
-    params.SetFloatArray(
-      name, reinterpret_cast<const float *>(v.cdata()), 4);
-  }
-  else if (val.IsHolding<GfMatrix4d>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 4);
+  } else if (val.IsHolding<GfMatrix4d>())
   {
     GfMatrix4d v = val.UncheckedGet<GfMatrix4d>();
     params.SetMatrix(name, HdPrman_GfMatrixToRtMatrix(v));
-  }
-  else if (val.IsHolding<int>())
+  } else if (val.IsHolding<int>())
   {
     int v = val.UncheckedGet<int>();
     params.SetInteger(name, v);
-  }
-  else if (val.IsHolding<VtArray<int>>())
+  } else if (val.IsHolding<VtArray<int>>())
   {
     const VtArray<int> &v = val.UncheckedGet<VtArray<int>>();
-    params.SetIntegerArray(
-      name, reinterpret_cast<const int *>(v.cdata()), 1);
-  }
-  else if (val.IsHolding<bool>())
+    params.SetIntegerArray(name, reinterpret_cast<const int *>(v.cdata()), 1);
+  } else if (val.IsHolding<bool>())
   {
     // bool->integer
     int v = val.UncheckedGet<bool>();
     params.SetInteger(name, v);
-  }
-  else if (val.IsHolding<VtArray<bool>>())
+  } else if (val.IsHolding<VtArray<bool>>())
   {
     const VtArray<bool> &vb = val.UncheckedGet<VtArray<bool>>();
     // bool->integer
@@ -416,24 +350,19 @@ _SetParamValue(RtUString const &name,
     {
       v[i] = int(vb[i]);
     }
-    params.SetIntegerArray(
-      name, reinterpret_cast<const int *>(v.cdata()), 1);
-  }
-  else if (val.IsHolding<TfToken>())
+    params.SetIntegerArray(name, reinterpret_cast<const int *>(v.cdata()), 1);
+  } else if (val.IsHolding<TfToken>())
   {
     TfToken v = val.UncheckedGet<TfToken>();
     params.SetString(name, RtUString(v.GetText()));
-  }
-  else if (val.IsHolding<std::string>())
+  } else if (val.IsHolding<std::string>())
   {
     std::string v = val.UncheckedGet<std::string>();
     params.SetString(name, RtUString(v.c_str()));
-  }
-  else if (val.IsHolding<VtArray<std::string>>())
+  } else if (val.IsHolding<VtArray<std::string>>())
   {
     // Convert to RtUString.
-    const VtArray<std::string> &v =
-      val.UncheckedGet<VtArray<std::string>>();
+    const VtArray<std::string> &v = val.UncheckedGet<VtArray<std::string>>();
     std::vector<RtUString> us;
     us.reserve(v.size());
     for (std::string const &s : v)
@@ -441,12 +370,10 @@ _SetParamValue(RtUString const &name,
       us.push_back(RtUString(s.c_str()));
     }
     params.SetStringArray(name, &us[0], us.size());
-  }
-  else if (val.IsHolding<VtArray<TfToken>>())
+  } else if (val.IsHolding<VtArray<TfToken>>())
   {
     // Convert to RtUString.
-    const VtArray<TfToken> &v =
-      val.UncheckedGet<VtArray<TfToken>>();
+    const VtArray<TfToken> &v = val.UncheckedGet<VtArray<TfToken>>();
     std::vector<RtUString> us;
     us.reserve(v.size());
     for (TfToken const &s : v)
@@ -454,8 +381,7 @@ _SetParamValue(RtUString const &name,
       us.push_back(RtUString(s.GetText()));
     }
     params.SetStringArray(name, &us[0], us.size());
-  }
-  else
+  } else
   {
     // Unhandled type
     return false;
@@ -464,36 +390,31 @@ _SetParamValue(RtUString const &name,
   return true;
 }
 
-static bool
-_SetPrimVarValue(RtUString const &name,
-                 VtValue const &val,
-                 RtDetailType const &detail,
-                 TfToken const &role,
-                 RtPrimVarList &params)
+static bool _SetPrimVarValue(RtUString const &name,
+                             VtValue const &val,
+                             RtDetailType const &detail,
+                             TfToken const &role,
+                             RtPrimVarList &params)
 {
   if (val.IsHolding<float>())
   {
     float v = val.UncheckedGet<float>();
     params.SetFloat(name, v);
-  }
-  else if (val.IsHolding<double>())
+  } else if (val.IsHolding<double>())
   {
     double v = val.UncheckedGet<double>();
     params.SetFloat(name, static_cast<float>(v));
-  }
-  else if (val.IsHolding<VtArray<float>>())
+  } else if (val.IsHolding<VtArray<float>>())
   {
     const VtArray<float> &v = val.UncheckedGet<VtArray<float>>();
     if (detail == RtDetailType::k_constant)
     {
       params.SetFloatArray(name, v.cdata(), v.size());
-    }
-    else
+    } else
     {
       params.SetFloatDetail(name, v.cdata(), detail);
     }
-  }
-  else if (val.IsHolding<VtArray<double>>())
+  } else if (val.IsHolding<VtArray<double>>())
   {
     const VtArray<double> &vd = val.UncheckedGet<VtArray<double>>();
     // Convert double->float
@@ -506,66 +427,50 @@ _SetPrimVarValue(RtUString const &name,
     if (detail == RtDetailType::k_constant)
     {
       params.SetFloatArray(name, v.cdata(), v.size());
-    }
-    else
+    } else
     {
       params.SetFloatDetail(name, v.cdata(), detail);
     }
-  }
-  else if (val.IsHolding<int>())
+  } else if (val.IsHolding<int>())
   {
     int v = val.UncheckedGet<int>();
     params.SetInteger(name, v);
-  }
-  else if (val.IsHolding<VtArray<int>>())
+  } else if (val.IsHolding<VtArray<int>>())
   {
     const VtArray<int> &v = val.UncheckedGet<VtArray<int>>();
     if (detail == RtDetailType::k_constant)
     {
       params.SetIntegerArray(name, v.cdata(), v.size());
-    }
-    else
+    } else
     {
       params.SetIntegerDetail(name, v.cdata(), detail);
     }
-  }
-  else if (val.IsHolding<long>())
+  } else if (val.IsHolding<long>())
   {
     long v = val.UncheckedGet<long>();
     params.SetInteger(name, (int)v);
-  }
-  else if (val.IsHolding<long long>())
+  } else if (val.IsHolding<long long>())
   {
     long long v = val.UncheckedGet<long long>();
     params.SetInteger(name, (int)v);
-  }
-  else if (val.IsHolding<GfVec2i>())
+  } else if (val.IsHolding<GfVec2i>())
   {
     GfVec2i v = val.UncheckedGet<GfVec2i>();
-    params.SetIntegerArray(
-      name, reinterpret_cast<const int *>(&v), 2);
-  }
-  else if (val.IsHolding<GfVec2f>())
+    params.SetIntegerArray(name, reinterpret_cast<const int *>(&v), 2);
+  } else if (val.IsHolding<GfVec2f>())
   {
     GfVec2f v = val.UncheckedGet<GfVec2f>();
-    params.SetFloatArray(
-      name, reinterpret_cast<const float *>(&v), 2);
-  }
-  else if (val.IsHolding<VtArray<GfVec2f>>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 2);
+  } else if (val.IsHolding<VtArray<GfVec2f>>())
   {
     const VtArray<GfVec2f> &v = val.UncheckedGet<VtArray<GfVec2f>>();
-    params.SetFloatArrayDetail(name,
-                               reinterpret_cast<const float *>(v.cdata()),
-                               2,
-                               detail);
-  }
-  else if (val.IsHolding<GfVec2d>())
+    params.SetFloatArrayDetail(name, reinterpret_cast<const float *>(v.cdata()), 2, detail);
+  } else if (val.IsHolding<GfVec2d>())
   {
     GfVec2d vd = val.UncheckedGet<GfVec2d>();
     float v[2] = {float(vd[0]), float(vd[1])};
     params.SetFloatArray(name, v, 2);
-  }
-  else if (val.IsHolding<VtArray<GfVec2d>>())
+  } else if (val.IsHolding<VtArray<GfVec2d>>())
   {
     const VtArray<GfVec2d> &vd = val.UncheckedGet<VtArray<GfVec2d>>();
     // Convert double->float
@@ -575,94 +480,66 @@ _SetPrimVarValue(RtUString const &name,
     {
       v[i] = GfVec2f(vd[i]);
     }
-    params.SetFloatArrayDetail(name,
-                               reinterpret_cast<const float *>(v.cdata()),
-                               2,
-                               detail);
-  }
-  else if (val.IsHolding<GfVec3f>())
+    params.SetFloatArrayDetail(name, reinterpret_cast<const float *>(v.cdata()), 2, detail);
+  } else if (val.IsHolding<GfVec3f>())
   {
     GfVec3f v = val.UncheckedGet<GfVec3f>();
     if (role == HdPrimvarRoleTokens->color)
     {
       params.SetColor(name, RtColorRGB(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->point)
+    } else if (role == HdPrimvarRoleTokens->point)
     {
       params.SetPoint(name, RtPoint3(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->normal)
+    } else if (role == HdPrimvarRoleTokens->normal)
     {
       params.SetPoint(name, RtNormal3(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->vector)
+    } else if (role == HdPrimvarRoleTokens->vector)
     {
       params.SetVector(name, RtVector3(v[0], v[1], v[2]));
-    }
-    else
+    } else
     {
-      params.SetFloatArray(name,
-                           reinterpret_cast<const float *>(&v),
-                           3);
+      params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 3);
     }
-  }
-  else if (val.IsHolding<VtArray<GfVec3f>>())
+  } else if (val.IsHolding<VtArray<GfVec3f>>())
   {
     const VtArray<GfVec3f> &v = val.UncheckedGet<VtArray<GfVec3f>>();
     if (role == HdPrimvarRoleTokens->color)
     {
-      params.SetColorDetail(
-        name, reinterpret_cast<const RtColorRGB *>(v.cdata()), detail);
-    }
-    else if (role == HdPrimvarRoleTokens->point)
+      params.SetColorDetail(name, reinterpret_cast<const RtColorRGB *>(v.cdata()), detail);
+    } else if (role == HdPrimvarRoleTokens->point)
     {
-      params.SetPointDetail(
-        name, reinterpret_cast<const RtPoint3 *>(v.cdata()), detail);
-    }
-    else if (role == HdPrimvarRoleTokens->normal)
+      params.SetPointDetail(name, reinterpret_cast<const RtPoint3 *>(v.cdata()), detail);
+    } else if (role == HdPrimvarRoleTokens->normal)
     {
-      params.SetNormalDetail(
-        name, reinterpret_cast<const RtNormal3 *>(v.cdata()), detail);
-    }
-    else if (role == HdPrimvarRoleTokens->vector)
+      params.SetNormalDetail(name, reinterpret_cast<const RtNormal3 *>(v.cdata()), detail);
+    } else if (role == HdPrimvarRoleTokens->vector)
     {
-      params.SetVectorDetail(
-        name, reinterpret_cast<const RtVector3 *>(v.cdata()), detail);
-    }
-    else
+      params.SetVectorDetail(name, reinterpret_cast<const RtVector3 *>(v.cdata()), detail);
+    } else
     {
-      params.SetFloatArrayDetail(
-        name, reinterpret_cast<const float *>(v.cdata()), 3, detail);
+      params.SetFloatArrayDetail(name, reinterpret_cast<const float *>(v.cdata()), 3, detail);
     }
-  }
-  else if (val.IsHolding<GfVec3d>())
+  } else if (val.IsHolding<GfVec3d>())
   {
     // double->float
     GfVec3f v(val.UncheckedGet<GfVec3d>());
     if (role == HdPrimvarRoleTokens->color)
     {
       params.SetColor(name, RtColorRGB(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->point)
+    } else if (role == HdPrimvarRoleTokens->point)
     {
       params.SetPoint(name, RtPoint3(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->normal)
+    } else if (role == HdPrimvarRoleTokens->normal)
     {
       params.SetPoint(name, RtNormal3(v[0], v[1], v[2]));
-    }
-    else if (role == HdPrimvarRoleTokens->vector)
+    } else if (role == HdPrimvarRoleTokens->vector)
     {
       params.SetVector(name, RtVector3(v[0], v[1], v[2]));
-    }
-    else
+    } else
     {
-      params.SetFloatArray(name,
-                           reinterpret_cast<const float *>(&v),
-                           3);
+      params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 3);
     }
-  }
-  else if (val.IsHolding<VtArray<GfVec3d>>())
+  } else if (val.IsHolding<VtArray<GfVec3d>>())
   {
     const VtArray<GfVec3d> &vd = val.UncheckedGet<VtArray<GfVec3d>>();
     // double->float
@@ -674,50 +551,34 @@ _SetPrimVarValue(RtUString const &name,
     }
     if (role == HdPrimvarRoleTokens->color)
     {
-      params.SetColorDetail(
-        name, reinterpret_cast<const RtColorRGB *>(v.cdata()), detail);
-    }
-    else if (role == HdPrimvarRoleTokens->point)
+      params.SetColorDetail(name, reinterpret_cast<const RtColorRGB *>(v.cdata()), detail);
+    } else if (role == HdPrimvarRoleTokens->point)
     {
-      params.SetPointDetail(
-        name, reinterpret_cast<const RtPoint3 *>(v.cdata()), detail);
-    }
-    else if (role == HdPrimvarRoleTokens->normal)
+      params.SetPointDetail(name, reinterpret_cast<const RtPoint3 *>(v.cdata()), detail);
+    } else if (role == HdPrimvarRoleTokens->normal)
     {
-      params.SetNormalDetail(
-        name, reinterpret_cast<const RtNormal3 *>(v.cdata()), detail);
-    }
-    else if (role == HdPrimvarRoleTokens->vector)
+      params.SetNormalDetail(name, reinterpret_cast<const RtNormal3 *>(v.cdata()), detail);
+    } else if (role == HdPrimvarRoleTokens->vector)
     {
-      params.SetVectorDetail(
-        name, reinterpret_cast<const RtVector3 *>(v.cdata()), detail);
-    }
-    else
+      params.SetVectorDetail(name, reinterpret_cast<const RtVector3 *>(v.cdata()), detail);
+    } else
     {
-      params.SetFloatArrayDetail(
-        name, reinterpret_cast<const float *>(v.cdata()), 3, detail);
+      params.SetFloatArrayDetail(name, reinterpret_cast<const float *>(v.cdata()), 3, detail);
     }
-  }
-  else if (val.IsHolding<GfVec4f>())
+  } else if (val.IsHolding<GfVec4f>())
   {
     GfVec4f v = val.UncheckedGet<GfVec4f>();
-    params.SetFloatArray(
-      name, reinterpret_cast<const float *>(&v), 4);
-  }
-  else if (val.IsHolding<VtArray<GfVec4f>>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 4);
+  } else if (val.IsHolding<VtArray<GfVec4f>>())
   {
     const VtArray<GfVec4f> &v = val.UncheckedGet<VtArray<GfVec4f>>();
-    params.SetFloatArrayDetail(
-      name, reinterpret_cast<const float *>(v.cdata()), 4, detail);
-  }
-  else if (val.IsHolding<GfVec4d>())
+    params.SetFloatArrayDetail(name, reinterpret_cast<const float *>(v.cdata()), 4, detail);
+  } else if (val.IsHolding<GfVec4d>())
   {
     // double->float
     GfVec4f v(val.UncheckedGet<GfVec4d>());
-    params.SetFloatArray(
-      name, reinterpret_cast<const float *>(&v), 4);
-  }
-  else if (val.IsHolding<VtArray<GfVec4d>>())
+    params.SetFloatArray(name, reinterpret_cast<const float *>(&v), 4);
+  } else if (val.IsHolding<VtArray<GfVec4d>>())
   {
     const VtArray<GfVec4d> &vd = val.UncheckedGet<VtArray<GfVec4d>>();
     // double->float
@@ -727,32 +588,25 @@ _SetPrimVarValue(RtUString const &name,
     {
       v[i] = GfVec4f(vd[i]);
     }
-    params.SetFloatArrayDetail(
-      name, reinterpret_cast<const float *>(v.cdata()), 4, detail);
-  }
-  else if (val.IsHolding<GfMatrix4d>())
+    params.SetFloatArrayDetail(name, reinterpret_cast<const float *>(v.cdata()), 4, detail);
+  } else if (val.IsHolding<GfMatrix4d>())
   {
     GfMatrix4d v = val.UncheckedGet<GfMatrix4d>();
     params.SetMatrix(name, HdPrman_GfMatrixToRtMatrix(v));
-  }
-  else if (val.IsHolding<int>())
+  } else if (val.IsHolding<int>())
   {
     int v = val.UncheckedGet<int>();
     params.SetInteger(name, v);
-  }
-  else if (val.IsHolding<VtArray<int>>())
+  } else if (val.IsHolding<VtArray<int>>())
   {
     const VtArray<int> &v = val.UncheckedGet<VtArray<int>>();
-    params.SetIntegerArrayDetail(
-      name, reinterpret_cast<const int *>(v.cdata()), 1, detail);
-  }
-  else if (val.IsHolding<bool>())
+    params.SetIntegerArrayDetail(name, reinterpret_cast<const int *>(v.cdata()), 1, detail);
+  } else if (val.IsHolding<bool>())
   {
     // bool->integer
     int v = val.UncheckedGet<bool>();
     params.SetInteger(name, v);
-  }
-  else if (val.IsHolding<VtArray<bool>>())
+  } else if (val.IsHolding<VtArray<bool>>())
   {
     const VtArray<bool> &vb = val.UncheckedGet<VtArray<bool>>();
     // bool->integer
@@ -762,24 +616,19 @@ _SetPrimVarValue(RtUString const &name,
     {
       v[i] = int(vb[i]);
     }
-    params.SetIntegerArrayDetail(
-      name, reinterpret_cast<const int *>(v.cdata()), 1, detail);
-  }
-  else if (val.IsHolding<TfToken>())
+    params.SetIntegerArrayDetail(name, reinterpret_cast<const int *>(v.cdata()), 1, detail);
+  } else if (val.IsHolding<TfToken>())
   {
     TfToken v = val.UncheckedGet<TfToken>();
     params.SetString(name, RtUString(v.GetText()));
-  }
-  else if (val.IsHolding<std::string>())
+  } else if (val.IsHolding<std::string>())
   {
     std::string v = val.UncheckedGet<std::string>();
     params.SetString(name, RtUString(v.c_str()));
-  }
-  else if (val.IsHolding<VtArray<std::string>>())
+  } else if (val.IsHolding<VtArray<std::string>>())
   {
     // Convert to RtUString.
-    const VtArray<std::string> &v =
-      val.UncheckedGet<VtArray<std::string>>();
+    const VtArray<std::string> &v = val.UncheckedGet<VtArray<std::string>>();
     std::vector<RtUString> us;
     us.reserve(v.size());
     for (std::string const &s : v)
@@ -789,17 +638,14 @@ _SetPrimVarValue(RtUString const &name,
     if (detail == RtDetailType::k_constant)
     {
       params.SetStringArray(name, &us[0], us.size());
-    }
-    else
+    } else
     {
       params.SetStringDetail(name, &us[0], detail);
     }
-  }
-  else if (val.IsHolding<VtArray<TfToken>>())
+  } else if (val.IsHolding<VtArray<TfToken>>())
   {
     // Convert to RtUString.
-    const VtArray<TfToken> &v =
-      val.UncheckedGet<VtArray<TfToken>>();
+    const VtArray<TfToken> &v = val.UncheckedGet<VtArray<TfToken>>();
     std::vector<RtUString> us;
     us.reserve(v.size());
     for (TfToken const &s : v)
@@ -809,13 +655,11 @@ _SetPrimVarValue(RtUString const &name,
     if (detail == RtDetailType::k_constant)
     {
       params.SetStringArray(name, &us[0], us.size());
-    }
-    else
+    } else
     {
       params.SetStringDetail(name, &us[0], detail);
     }
-  }
-  else
+  } else
   {
     // Unhandled type
     return false;
@@ -824,22 +668,18 @@ _SetPrimVarValue(RtUString const &name,
   return true;
 }
 
-static RtUString
-_GetPrmanPrimvarName(TfToken const &hdPrimvarName,
-                     RtDetailType const & /*detail*/)
+static RtUString _GetPrmanPrimvarName(TfToken const &hdPrimvarName, RtDetailType const & /*detail*/)
 {
   // Handle cases where Hydra built-in primvars map to Renderman
   // built-in primvars.
   if (hdPrimvarName == HdTokens->points)
   {
     return RixStr.k_P;
-  }
-  else if (hdPrimvarName == HdTokens->normals)
+  } else if (hdPrimvarName == HdTokens->normals)
   {
     // Hydra "normals" becomes Renderman "N"
     return RixStr.k_N;
-  }
-  else if (hdPrimvarName == HdTokens->widths)
+  } else if (hdPrimvarName == HdTokens->widths)
   {
     return RixStr.k_width;
   }
@@ -847,11 +687,10 @@ _GetPrmanPrimvarName(TfToken const &hdPrimvarName,
   return RtUString(hdPrimvarName.GetText());
 }
 
-static HdExtComputationPrimvarDescriptorVector
-_GetComputedPrimvars(HdSceneDelegate *sceneDelegate,
-                     SdfPath const &id,
-                     HdInterpolation interp,
-                     HdDirtyBits dirtyBits)
+static HdExtComputationPrimvarDescriptorVector _GetComputedPrimvars(HdSceneDelegate *sceneDelegate,
+                                                                    SdfPath const &id,
+                                                                    HdInterpolation interp,
+                                                                    HdDirtyBits dirtyBits)
 {
   HdExtComputationPrimvarDescriptorVector dirtyCompPrimvars;
 
@@ -869,8 +708,7 @@ _GetComputedPrimvars(HdSceneDelegate *sceneDelegate,
   return dirtyCompPrimvars;
 }
 
-static bool
-_IsPrototypeAttribute(TfToken const &primvarName)
+static bool _IsPrototypeAttribute(TfToken const &primvarName)
 {
   // This is a list of names for uniform primvars/attributes that
   // affect the prototype geometry in Renderman. They need to be
@@ -932,23 +770,23 @@ _IsPrototypeAttribute(TfToken const &primvarName)
   return prototypeAttributes.count(primvarName) > 0;
 }
 
-static void
-_Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdInterp, RtPrimVarList &params, _ParamType paramType, int expectedSize)
+static void _Convert(HdSceneDelegate *sceneDelegate,
+                     SdfPath const &id,
+                     HdInterpolation hdInterp,
+                     RtPrimVarList &params,
+                     _ParamType paramType,
+                     int expectedSize)
 {
   // XXX:TODO: To support array-valued types, we need more
   // shaping information.  Currently we assume arrays are
   // simply N scalar values, according to the detail.
 
-  const char *label =
-    (paramType == _ParamTypePrimvar) ? "primvar" : "attribute";
+  const char *label = (paramType == _ParamTypePrimvar) ? "primvar" : "attribute";
 
   const RtDetailType detail = _RixDetailForHdInterpolation(hdInterp);
 
   TF_DEBUG(HDPRMAN_PRIMVARS)
-    .Msg("HdPrman: _Convert called -- <%s> %s %s\n",
-         id.GetText(),
-         TfEnum::GetName(hdInterp).c_str(),
-         label);
+    .Msg("HdPrman: _Convert called -- <%s> %s %s\n", id.GetText(), TfEnum::GetName(hdInterp).c_str(), label);
 
   // Computed primvars
   if (paramType == _ParamTypePrimvar)
@@ -961,7 +799,8 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
     {
       // Execute the computations
       HdExtComputationUtils::ValueStore valueStore = HdExtComputationUtils::GetComputedPrimvarValues(
-        computedPrimvars, sceneDelegate);
+        computedPrimvars,
+        sceneDelegate);
 
       for (auto const &compPrimvar : computedPrimvars)
       {
@@ -971,8 +810,7 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
           continue;
         }
         VtValue val = it->second;
-        if (val.IsEmpty() ||
-            (val.IsArrayValued() && val.GetArraySize() == 0))
+        if (val.IsEmpty() || (val.IsArrayValued() && val.GetArraySize() == 0))
         {
           continue;
         }
@@ -990,8 +828,7 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
             name.CStr(),
             TfStringify(val).c_str());
 
-        if (val.IsArrayValued() &&
-            val.GetArraySize() != static_cast<size_t>(expectedSize))
+        if (val.IsArrayValued() && val.GetArraySize() != static_cast<size_t>(expectedSize))
         {
           TF_WARN(
             "<%s> %s '%s' size (%zu) did not match "
@@ -1017,8 +854,7 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
   }
 
   // Authored primvars
-  for (HdPrimvarDescriptor const &primvar :
-       sceneDelegate->GetPrimvarDescriptors(id, hdInterp))
+  for (HdPrimvarDescriptor const &primvar : sceneDelegate->GetPrimvarDescriptors(id, hdInterp))
   {
     TF_DEBUG(HDPRMAN_PRIMVARS)
       .Msg(
@@ -1049,10 +885,8 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
       static const char *userAttrPrefix = "user:";
       static const char *riAttrPrefix = "ri:attributes:";
 
-      bool hasUserPrefix =
-        TfStringStartsWith(primvar.name.GetString(), userAttrPrefix);
-      bool hasRiAttributesPrefix =
-        TfStringStartsWith(primvar.name.GetString(), riAttrPrefix);
+      bool hasUserPrefix = TfStringStartsWith(primvar.name.GetString(), userAttrPrefix);
+      bool hasRiAttributesPrefix = TfStringStartsWith(primvar.name.GetString(), riAttrPrefix);
 
       bool skipPrimvar = false;
       if (paramType == _ParamTypeAttribute)
@@ -1063,8 +897,7 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
         if (!hasUserPrefix && !hasRiAttributesPrefix)
         {
           skipPrimvar = true;
-        }
-        else if (hasRiAttributesPrefix)
+        } else if (hasRiAttributesPrefix)
         {
           // For 'ri:attributes' we check if the attribute is a
           // prototype attribute and if so omit it, since it
@@ -1074,8 +907,7 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
             skipPrimvar = true;
           }
         }
-      }
-      else
+      } else
       {
         // When we're looking for actual primvars, we skip the ones with
         // the 'user:' or 'ri:attributes:' prefix. Except for a specific
@@ -1084,8 +916,7 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
         if (hasUserPrefix)
         {
           skipPrimvar = true;
-        }
-        else if (hasRiAttributesPrefix)
+        } else if (hasRiAttributesPrefix)
         {
           // If this ri attribute does not affect the prototype
           // we skip
@@ -1106,13 +937,11 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
         const char *strippedName = primvar.name.GetText();
         strippedName += strlen(riAttrPrefix);
         name = _GetPrmanPrimvarName(TfToken(strippedName), detail);
-      }
-      else
+      } else
       {
         name = _GetPrmanPrimvarName(primvar.name, detail);
       }
-    }
-    else
+    } else
     {
       name = _GetPrmanPrimvarName(primvar.name, detail);
     }
@@ -1132,14 +961,12 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
            name.CStr(),
            TfStringify(val).c_str());
 
-    if (val.IsEmpty() ||
-        (val.IsArrayValued() && val.GetArraySize() == 0))
+    if (val.IsEmpty() || (val.IsArrayValued() && val.GetArraySize() == 0))
     {
       continue;
     }
 
-    if (val.IsArrayValued() &&
-        val.GetArraySize() != static_cast<size_t>(expectedSize))
+    if (val.IsArrayValued() && val.GetArraySize() != static_cast<size_t>(expectedSize))
     {
       TF_WARN(
         "<%s> %s '%s' size (%zu) did not match "
@@ -1163,7 +990,13 @@ _Convert(HdSceneDelegate *sceneDelegate, SdfPath const &id, HdInterpolation hdIn
   }
 }
 
-void HdPrman_ConvertPrimvars(HdSceneDelegate *sceneDelegate, SdfPath const &id, RtPrimVarList &primvars, int numUniform, int numVertex, int numVarying, int numFaceVarying)
+void HdPrman_ConvertPrimvars(HdSceneDelegate *sceneDelegate,
+                             SdfPath const &id,
+                             RtPrimVarList &primvars,
+                             int numUniform,
+                             int numVertex,
+                             int numVarying,
+                             int numFaceVarying)
 {
   const HdInterpolation hdInterpValues[] = {
     HdInterpolationConstant,
@@ -1174,12 +1007,7 @@ void HdPrman_ConvertPrimvars(HdSceneDelegate *sceneDelegate, SdfPath const &id, 
   };
   // The expected size of each interpolation mode. -1 means any size is
   // acceptable.
-  const int primvarSizes[] = {
-    1,
-    numUniform,
-    numVertex,
-    numVarying,
-    numFaceVarying};
+  const int primvarSizes[] = {1, numUniform, numVertex, numVarying, numFaceVarying};
   const int modeCount = 5;
   for (size_t i = 0; i < modeCount; ++i)
   {
@@ -1187,9 +1015,7 @@ void HdPrman_ConvertPrimvars(HdSceneDelegate *sceneDelegate, SdfPath const &id, 
   }
 }
 
-RtParamList
-HdPrman_Context::ConvertAttributes(HdSceneDelegate *sceneDelegate,
-                                   SdfPath const &id)
+RtParamList HdPrman_Context::ConvertAttributes(HdSceneDelegate *sceneDelegate, SdfPath const &id)
 {
   RtPrimVarList attrs;
 
@@ -1221,20 +1047,16 @@ HdPrman_Context::ConvertAttributes(HdSceneDelegate *sceneDelegate,
   return attrs;
 }
 
-void HdPrman_Context::ConvertCategoriesToAttributes(
-  SdfPath const &id,
-  VtArray<TfToken> const &categories,
-  RtParamList &attrs)
+void HdPrman_Context::ConvertCategoriesToAttributes(SdfPath const &id,
+                                                    VtArray<TfToken> const &categories,
+                                                    RtParamList &attrs)
 {
   if (categories.empty())
   {
-    attrs.SetString(RixStr.k_lightfilter_subset,
-                    RtUString(""));
-    attrs.SetString(RixStr.k_lighting_subset,
-                    RtUString("default"));
+    attrs.SetString(RixStr.k_lightfilter_subset, RtUString(""));
+    attrs.SetString(RixStr.k_lighting_subset, RtUString("default"));
     TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-      .Msg("HdPrman: <%s> no categories; lighting:subset = \"default\"\n",
-           id.GetText());
+      .Msg("HdPrman: <%s> no categories; lighting:subset = \"default\"\n", id.GetText());
     return;
   }
 
@@ -1255,12 +1077,9 @@ void HdPrman_Context::ConvertCategoriesToAttributes(
     std::string input = inputGrouping.CStr();
     membership += " " + input;
   }
-  attrs.SetString(RixStr.k_grouping_membership,
-                  RtUString(membership.c_str()));
+  attrs.SetString(RixStr.k_grouping_membership, RtUString(membership.c_str()));
   TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-    .Msg("HdPrman: <%s> grouping:membership = \"%s\"\n",
-         id.GetText(),
-         membership.c_str());
+    .Msg("HdPrman: <%s> grouping:membership = \"%s\"\n", id.GetText(), membership.c_str());
 
   // Light linking:
   // Geometry subscribes to categories of lights illuminating it.
@@ -1278,12 +1097,9 @@ void HdPrman_Context::ConvertCategoriesToAttributes(
       lightingSubset += category;
     }
   }
-  attrs.SetString(RixStr.k_lighting_subset,
-                  RtUString(lightingSubset.c_str()));
+  attrs.SetString(RixStr.k_lighting_subset, RtUString(lightingSubset.c_str()));
   TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-    .Msg("HdPrman: <%s> lighting:subset = \"%s\"\n",
-         id.GetText(),
-         lightingSubset.c_str());
+    .Msg("HdPrman: <%s> lighting:subset = \"%s\"\n", id.GetText(), lightingSubset.c_str());
 
   // Light filter linking:
   // Geometry subscribes to categories of light filters applied to it.
@@ -1301,12 +1117,9 @@ void HdPrman_Context::ConvertCategoriesToAttributes(
       lightFilterSubset += category;
     }
   }
-  attrs.SetString(RixStr.k_lightfilter_subset,
-                  RtUString(lightFilterSubset.c_str()));
+  attrs.SetString(RixStr.k_lightfilter_subset, RtUString(lightFilterSubset.c_str()));
   TF_DEBUG(HDPRMAN_LIGHT_LINKING)
-    .Msg("HdPrman: <%s> lightFilter:subset = \"%s\"\n",
-         id.GetText(),
-         lightFilterSubset.c_str());
+    .Msg("HdPrman: <%s> lightFilter:subset = \"%s\"\n", id.GetText(), lightFilterSubset.c_str());
 }
 
 bool HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
@@ -1316,11 +1129,10 @@ bool HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
 {
   if (hdMaterialId != SdfPath())
   {
-    if (const HdSprim *sprim = sceneDelegate->GetRenderIndex().GetSprim(
-          HdPrimTypeTokens->material, hdMaterialId))
+    if (const HdSprim *sprim = sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material,
+                                                                        hdMaterialId))
     {
-      const HdPrmanMaterial *material =
-        dynamic_cast<const HdPrmanMaterial *>(sprim);
+      const HdPrmanMaterial *material = dynamic_cast<const HdPrmanMaterial *>(sprim);
       if (material && material->IsValid())
       {
         *materialId = material->GetMaterialId();
@@ -1332,14 +1144,12 @@ bool HdPrman_ResolveMaterial(HdSceneDelegate *sceneDelegate,
   return false;
 }
 
-HdPrman_Context::RileyCoordSysIdVecRefPtr
-HdPrman_Context::ConvertAndRetainCoordSysBindings(
+HdPrman_Context::RileyCoordSysIdVecRefPtr HdPrman_Context::ConvertAndRetainCoordSysBindings(
   HdSceneDelegate *sceneDelegate,
   SdfPath const &id)
 {
   // Query Hydra coordinate system bindings.
-  HdIdVectorSharedPtr hdIdVecPtr =
-    sceneDelegate->GetCoordSysBindings(id);
+  HdIdVectorSharedPtr hdIdVecPtr = sceneDelegate->GetCoordSysBindings(id);
   if (!hdIdVecPtr)
   {
     return nullptr;
@@ -1347,8 +1157,7 @@ HdPrman_Context::ConvertAndRetainCoordSysBindings(
   // We have bindings to convert.
   std::lock_guard<std::mutex> lock(_coordSysMutex);
   // Check for an existing converted binding vector.
-  _HdToRileyCoordSysMap::const_iterator it =
-    _hdToRileyCoordSysMap.find(hdIdVecPtr);
+  _HdToRileyCoordSysMap::const_iterator it = _hdToRileyCoordSysMap.find(hdIdVecPtr);
   if (it != _hdToRileyCoordSysMap.end())
   {
     // Found an existing conversion.
@@ -1362,15 +1171,12 @@ HdPrman_Context::ConvertAndRetainCoordSysBindings(
   for (SdfPath const &hdId : *hdIdVecPtr)
   {
     // Look up sprim for binding.
-    const HdSprim *sprim =
-      sceneDelegate->GetRenderIndex()
-        .GetSprim(HdPrimTypeTokens->coordSys, hdId);
+    const HdSprim *sprim = sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->coordSys, hdId);
     // Expect there to be an sprim with this id.
     if (TF_VERIFY(sprim))
     {
       // Expect it to be an HdPrmanCoordSys.
-      const HdPrmanCoordSys *prmanSprim =
-        dynamic_cast<const HdPrmanCoordSys *>(sprim);
+      const HdPrmanCoordSys *prmanSprim = dynamic_cast<const HdPrmanCoordSys *>(sprim);
       if (TF_VERIFY(prmanSprim) && prmanSprim->IsValid())
       {
         // Use the assigned Riley ID.
@@ -1379,8 +1185,7 @@ HdPrman_Context::ConvertAndRetainCoordSysBindings(
     }
   }
   // Establish a cache entry.
-  RileyCoordSysIdVecRefPtr rileyIdVecPtr =
-    std::make_shared<RileyCoordSysIdVec>(rileyIdVec);
+  RileyCoordSysIdVecRefPtr rileyIdVecPtr = std::make_shared<RileyCoordSysIdVec>(rileyIdVec);
   _hdToRileyCoordSysMap[hdIdVecPtr] = rileyIdVecPtr;
   _geomToHdCoordSysMap[id] = hdIdVecPtr;
   return rileyIdVecPtr;
@@ -1406,19 +1211,12 @@ void HdPrman_Context::ReleaseCoordSysBindings(SdfPath const &id)
   _geomToHdCoordSysMap.erase(geomIt);
 }
 
-static void
-_GetShutterInterval(
-  HdRenderSettingsMap &renderSettings,
-  float *shutterOpen,
-  float *shutterClose)
+static void _GetShutterInterval(HdRenderSettingsMap &renderSettings, float *shutterOpen, float *shutterClose)
 {
-  auto const &shutterOpenEntry =
-    renderSettings.find(HdPrmanRenderSettingsTokens->shutterOpen);
-  auto const &shutterCloseEntry =
-    renderSettings.find(HdPrmanRenderSettingsTokens->shutterClose);
+  auto const &shutterOpenEntry = renderSettings.find(HdPrmanRenderSettingsTokens->shutterOpen);
+  auto const &shutterCloseEntry = renderSettings.find(HdPrmanRenderSettingsTokens->shutterClose);
 
-  if (shutterOpenEntry != renderSettings.end() &&
-      shutterCloseEntry != renderSettings.end())
+  if (shutterOpenEntry != renderSettings.end() && shutterCloseEntry != renderSettings.end())
   {
     VtValue shutterOpenVal = shutterOpenEntry->second;
     VtValue shutterCloseVal = shutterCloseEntry->second;
@@ -1426,8 +1224,7 @@ _GetShutterInterval(
     if (shutterOpenVal.IsHolding<float>())
     {
       *shutterOpen = shutterOpenVal.UncheckedGet<float>();
-    }
-    else if (shutterOpenVal.IsHolding<double>())
+    } else if (shutterOpenVal.IsHolding<double>())
     {
       double v = shutterOpenVal.UncheckedGet<double>();
       *shutterOpen = static_cast<float>(v);
@@ -1436,8 +1233,7 @@ _GetShutterInterval(
     if (shutterCloseVal.IsHolding<float>())
     {
       *shutterOpen = shutterCloseVal.UncheckedGet<float>();
-    }
-    else if (shutterCloseVal.IsHolding<double>())
+    } else if (shutterCloseVal.IsHolding<double>())
     {
       double v = shutterCloseVal.UncheckedGet<double>();
       *shutterClose = static_cast<float>(v);
@@ -1445,9 +1241,8 @@ _GetShutterInterval(
   }
 }
 
-void HdPrman_Context::SetOptionsFromRenderSettings(
-  HdPrmanRenderDelegate *renderDelegate,
-  RtParamList &options)
+void HdPrman_Context::SetOptionsFromRenderSettings(HdPrmanRenderDelegate *renderDelegate,
+                                                   RtParamList &options)
 {
   HdRenderSettingsMap renderSettings = renderDelegate->GetRenderSettingsMap();
 
@@ -1459,8 +1254,7 @@ void HdPrman_Context::SetOptionsFromRenderSettings(
     bool hasRiPrefix = TfStringStartsWith(token.GetText(), "ri:");
     if (hasRiPrefix)
     {
-      bool hasIntegratorPrefix =
-        TfStringStartsWith(token.GetText(), "ri:integrator");
+      bool hasIntegratorPrefix = TfStringStartsWith(token.GetText(), "ri:integrator");
       if (hasIntegratorPrefix)
       {
         // This is an integrator setting. Skip.
@@ -1475,24 +1269,17 @@ void HdPrman_Context::SetOptionsFromRenderSettings(
       // float3 setting (color, point, vector).  All float3 settings are
       // treated as float[3] until we have a way to determine the type.
       _SetParamValue(riName, val, TfToken(), options);
-    }
-    else
+    } else
     {
       // map usd renderSetting to ri option
       if (token == HdPrmanRenderSettingsTokens->pixelAspectRatio)
       {
-        options.SetFloat(RixStr.k_Ri_FormatPixelAspectRatio,
-                         val.UncheckedGet<float>());
-      }
-      else if (token == HdPrmanRenderSettingsTokens->resolution)
+        options.SetFloat(RixStr.k_Ri_FormatPixelAspectRatio, val.UncheckedGet<float>());
+      } else if (token == HdPrmanRenderSettingsTokens->resolution)
       {
         auto const &res = val.UncheckedGet<GfVec2i>();
-        options.SetIntegerArray(RixStr.k_Ri_FormatResolution,
-                                &res[0],
-                                2);
-      }
-      else if (token ==
-               HdPrmanRenderSettingsTokens->instantaneousShutter)
+        options.SetIntegerArray(RixStr.k_Ri_FormatResolution, &res[0], 2);
+      } else if (token == HdPrmanRenderSettingsTokens->instantaneousShutter)
       {
         _instantaneousShutter = val.UncheckedGet<bool>();
       }
@@ -1518,10 +1305,9 @@ void HdPrman_Context::SetOptionsFromRenderSettings(
   options.SetFloatArray(RixStr.k_Ri_Shutter, shutterInterval, 2);
 }
 
-void HdPrman_Context::SetIntegratorParamsFromRenderSettings(
-  HdPrmanRenderDelegate *renderDelegate,
-  std::string &integratorName,
-  RtParamList &params)
+void HdPrman_Context::SetIntegratorParamsFromRenderSettings(HdPrmanRenderDelegate *renderDelegate,
+                                                            std::string &integratorName,
+                                                            RtParamList &params)
 {
   static const RtUString us_PxrPathTracer("PxrPathTracer");
 
@@ -1533,8 +1319,7 @@ void HdPrman_Context::SetIntegratorParamsFromRenderSettings(
     TfToken token = entry.first;
     VtValue val = entry.second;
 
-    bool hasRiPrefix = TfStringStartsWith(token.GetText(),
-                                          preFix.GetText());
+    bool hasRiPrefix = TfStringStartsWith(token.GetText(), preFix.GetText());
     if (hasRiPrefix)
     {
       // Strip namespace from USD.
@@ -1555,10 +1340,8 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
     // RenderMan expects ':' as path separator, regardless of platform
     NdrStringVec paths = TfStringSplit(shaderpath, ARCH_PATH_LIST_SEP);
     shaderpath = TfStringJoin(paths, ":");
-    options.SetString(RixStr.k_searchpath_shader,
-                      RtUString(shaderpath.c_str()));
-  }
-  else
+    options.SetString(RixStr.k_searchpath_shader, RtUString(shaderpath.c_str()));
+  } else
   {
     NdrStringVec paths;
     // Default RenderMan installation under '$RMANTREE/lib/shaders'
@@ -1568,8 +1351,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
       paths.push_back(TfStringCatPaths(rmantree, "lib/shaders"));
     }
     // Default hdPrman installation under 'plugins/usd/resources/shaders'
-    PlugPluginPtr plugin =
-      PlugRegistry::GetInstance().GetPluginWithName("hdPrmanLoader");
+    PlugPluginPtr plugin = PlugRegistry::GetInstance().GetPluginWithName("hdPrmanLoader");
     if (plugin)
     {
       std::string path = TfGetPathName(plugin->GetPath());
@@ -1579,8 +1361,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
       }
     }
     shaderpath = TfStringJoin(paths, ":");
-    options.SetString(RixStr.k_searchpath_shader,
-                      RtUString(shaderpath.c_str()));
+    options.SetString(RixStr.k_searchpath_shader, RtUString(shaderpath.c_str()));
   }
 
   // searchpath:rixplugin contains C++ (.so) plugins
@@ -1590,10 +1371,8 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
     // RenderMan expects ':' as path separator, regardless of platform
     NdrStringVec paths = TfStringSplit(rixpluginpath, ARCH_PATH_LIST_SEP);
     rixpluginpath = TfStringJoin(paths, ":");
-    options.SetString(RixStr.k_searchpath_rixplugin,
-                      RtUString(rixpluginpath.c_str()));
-  }
-  else
+    options.SetString(RixStr.k_searchpath_rixplugin, RtUString(rixpluginpath.c_str()));
+  } else
   {
     NdrStringVec paths;
     // Default RenderMan installation under '$RMANTREE/lib/plugins'
@@ -1603,8 +1382,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
       paths.push_back(TfStringCatPaths(rmantree, "lib/plugins"));
     }
     rixpluginpath = TfStringJoin(paths, ":");
-    options.SetString(RixStr.k_searchpath_rixplugin,
-                      RtUString(rixpluginpath.c_str()));
+    options.SetString(RixStr.k_searchpath_rixplugin, RtUString(rixpluginpath.c_str()));
   }
 
   // searchpath:texture contains textures (.tex) and Rtx plugins (.so)
@@ -1614,10 +1392,8 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
     // RenderMan expects ':' as path separator, regardless of platform
     NdrStringVec paths = TfStringSplit(texturepath, ARCH_PATH_LIST_SEP);
     texturepath = TfStringJoin(paths, ":");
-    options.SetString(RixStr.k_searchpath_texture,
-                      RtUString(texturepath.c_str()));
-  }
-  else
+    options.SetString(RixStr.k_searchpath_texture, RtUString(texturepath.c_str()));
+  } else
   {
     NdrStringVec paths;
     // Default RenderMan installation under '$RMANTREE/lib/textures'
@@ -1631,8 +1407,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
     // Default hdPrman installation under 'plugins/usd'
     // We need the path to RtxHioImage and we assume that it lives in the
     // same directory as hdPrmanLoader
-    PlugPluginPtr plugin =
-      PlugRegistry::GetInstance().GetPluginWithName("hdPrmanLoader");
+    PlugPluginPtr plugin = PlugRegistry::GetInstance().GetPluginWithName("hdPrmanLoader");
     if (plugin)
     {
       std::string path = TfGetPathName(plugin->GetPath());
@@ -1642,8 +1417,7 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
       }
     }
     texturepath = TfStringJoin(paths, ":");
-    options.SetString(RixStr.k_searchpath_texture,
-                      RtUString(texturepath.c_str()));
+    options.SetString(RixStr.k_searchpath_texture, RtUString(texturepath.c_str()));
   }
 
   std::string proceduralpath = TfGetenv("RMAN_PROCEDURALPATH");
@@ -1652,16 +1426,14 @@ void HdPrman_UpdateSearchPathsFromEnvironment(RtParamList &options)
     // RenderMan expects ':' as path separator, regardless of platform
     NdrStringVec paths = TfStringSplit(proceduralpath, ARCH_PATH_LIST_SEP);
     proceduralpath = TfStringJoin(paths, ":");
-    options.SetString(RixStr.k_searchpath_procedural,
-                      RtUString(proceduralpath.c_str()));
+    options.SetString(RixStr.k_searchpath_procedural, RtUString(proceduralpath.c_str()));
   }
 }
 
-void HdPrman_Context::SetIntegratorParamsFromCamera(
-  HdPrmanRenderDelegate *renderDelegate,
-  HdPrmanCamera *camera,
-  std::string const &integratorName,
-  RtParamList &integratorParams)
+void HdPrman_Context::SetIntegratorParamsFromCamera(HdPrmanRenderDelegate *renderDelegate,
+                                                    HdPrmanCamera *camera,
+                                                    std::string const &integratorName,
+                                                    RtParamList &integratorParams)
 {
   for (auto const &cb : *_integratorCameraCallbacks)
   {
@@ -1669,8 +1441,7 @@ void HdPrman_Context::SetIntegratorParamsFromCamera(
   }
 }
 
-void HdPrman_Context::RegisterIntegratorCallbackForCamera(
-  IntegratorCameraCallback const &callback)
+void HdPrman_Context::RegisterIntegratorCallbackForCamera(IntegratorCameraCallback const &callback)
 {
   _integratorCameraCallbacks->push_back(callback);
 }
@@ -1700,8 +1471,7 @@ void HdPrman_Context::_InitializePrman()
   rix_xcpt->Register(&xcpt);
 
   // Populate RixStr struct
-  RixSymbolResolver *sym = (RixSymbolResolver *)rix->GetRixInterface(
-    k_RixSymbolResolver);
+  RixSymbolResolver *sym = (RixSymbolResolver *)rix->GetRixInterface(k_RixSymbolResolver);
   sym->ResolvePredefinedStrings(RixStr);
 
   // Sanity check symbol resolution with a canary symbol, shutterTime.
@@ -1725,8 +1495,7 @@ void HdPrman_Context::_InitializePrman()
     return;
   }
 
-  _xpu = (!rileyvariant.empty() ||
-          (rileyvariant.find("xpu") != std::string::npos));
+  _xpu = (!rileyvariant.empty() || (rileyvariant.find("xpu") != std::string::npos));
 }
 
 

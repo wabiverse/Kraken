@@ -132,8 +132,7 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueError(const TfError &err)
       err.GetContext(),
       true);
     ArchAbort(false);
-  }
-  else if (!err.GetQuiet())
+  } else if (!err.GetQuiet())
   {
     _PrintDiagnostic(err.GetDiagnosticCode(), err.GetContext(), err.GetCommentary(), err.GetInfo<TfError>());
   }
@@ -148,8 +147,10 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueFatalError(const TfCallCon
 
 void UsdUtilsConditionalAbortDiagnosticDelegate::IssueStatus(const TfStatus &status)
 {
-  _PrintDiagnostic(
-    status.GetDiagnosticCode(), status.GetContext(), status.GetCommentary(), status.GetInfo<TfStatus>());
+  _PrintDiagnostic(status.GetDiagnosticCode(),
+                   status.GetContext(),
+                   status.GetCommentary(),
+                   status.GetInfo<TfStatus>());
 }
 
 void UsdUtilsConditionalAbortDiagnosticDelegate::IssueWarning(const TfWarning &warning)
@@ -166,8 +167,7 @@ void UsdUtilsConditionalAbortDiagnosticDelegate::IssueWarning(const TfWarning &w
       warning.GetContext(),
       true);
     ArchAbort(false);
-  }
-  else if (!warning.GetQuiet())
+  } else if (!warning.GetQuiet())
   {
     _PrintDiagnostic(warning.GetDiagnosticCode(),
                      warning.GetContext(),

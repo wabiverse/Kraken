@@ -50,33 +50,35 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateIncludedPurposesAttr(UsdRenderSettings &self,
-                                                object defaultVal,
-                                                bool writeSparsely)
-{
-  return self.CreateIncludedPurposesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
-                                         writeSparsely);
-}
+  static UsdAttribute _CreateIncludedPurposesAttr(UsdRenderSettings &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
+  {
+    return self.CreateIncludedPurposesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+                                           writeSparsely);
+  }
 
-static UsdAttribute _CreateMaterialBindingPurposesAttr(UsdRenderSettings &self,
-                                                       object defaultVal,
-                                                       bool writeSparsely)
-{
-  return self.CreateMaterialBindingPurposesAttr(
-    UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
-}
+  static UsdAttribute _CreateMaterialBindingPurposesAttr(UsdRenderSettings &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateMaterialBindingPurposesAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+      writeSparsely);
+  }
 
-static std::string _Repr(const UsdRenderSettings &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRender.Settings(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRenderSettings &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRender.Settings(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -146,10 +148,10 @@ void wrapUsdRenderSettings()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def("GetStageRenderSettings", &UsdRenderSettings::GetStageRenderSettings)
-    .staticmethod("GetStageRenderSettings");
-}
+  WRAP_CUSTOM
+  {
+    _class.def("GetStageRenderSettings", &UsdRenderSettings::GetStageRenderSettings)
+      .staticmethod("GetStageRenderSettings");
+  }
 
 }  // namespace

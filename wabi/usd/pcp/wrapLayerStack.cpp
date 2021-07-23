@@ -39,25 +39,25 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static SdfLayerHandleVector _GetLayerStackLayers(const PcpLayerStack &layerStack)
-{
-  const SdfLayerRefPtrVector &layers = layerStack.GetLayers();
-  return SdfLayerHandleVector(layers.begin(), layers.end());
-}
-
-static SdfLayerOffsetVector _GetLayerOffsets(const PcpLayerStack &layerStack)
-{
-  const size_t numLayers = layerStack.GetLayers().size();
-
-  SdfLayerOffsetVector rval(numLayers);
-  for (size_t i = 0; i != numLayers; ++i)
+  static SdfLayerHandleVector _GetLayerStackLayers(const PcpLayerStack &layerStack)
   {
-    if (const SdfLayerOffset *offset = layerStack.GetLayerOffsetForLayer(i))
-      rval[i] = *offset;
+    const SdfLayerRefPtrVector &layers = layerStack.GetLayers();
+    return SdfLayerHandleVector(layers.begin(), layers.end());
   }
 
-  return rval;
-}
+  static SdfLayerOffsetVector _GetLayerOffsets(const PcpLayerStack &layerStack)
+  {
+    const size_t numLayers = layerStack.GetLayers().size();
+
+    SdfLayerOffsetVector rval(numLayers);
+    for (size_t i = 0; i != numLayers; ++i)
+    {
+      if (const SdfLayerOffset *offset = layerStack.GetLayerOffsetForLayer(i))
+        rval[i] = *offset;
+    }
+
+    return rval;
+  }
 
 }  // anonymous namespace
 

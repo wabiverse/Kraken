@@ -76,38 +76,37 @@ std::ostream &VtStreamOut(double const &val, std::ostream &stream)
 namespace
 {
 
-void _StreamArrayRecursive(std::ostream &out,
-                           VtStreamOutIterator *i,
-                           const Vt_ShapeData &shape,
-                           size_t lastDimSize,
-                           size_t *index,
-                           size_t dimension)
-{
-  out << '[';
-  if (dimension == shape.GetRank() - 1)
+  void _StreamArrayRecursive(std::ostream &out,
+                             VtStreamOutIterator *i,
+                             const Vt_ShapeData &shape,
+                             size_t lastDimSize,
+                             size_t *index,
+                             size_t dimension)
   {
-    for (size_t j = 0; j < lastDimSize; ++j)
+    out << '[';
+    if (dimension == shape.GetRank() - 1)
     {
-      if (j)
+      for (size_t j = 0; j < lastDimSize; ++j)
       {
-        out << ", ";
+        if (j)
+        {
+          out << ", ";
+        }
+        i->Next(out);
       }
-      i->Next(out);
-    }
-  }
-  else
-  {
-    for (size_t j = 0; j < shape.otherDims[dimension]; ++j)
+    } else
     {
-      if (j)
+      for (size_t j = 0; j < shape.otherDims[dimension]; ++j)
       {
-        out << ", ";
+        if (j)
+        {
+          out << ", ";
+        }
+        _StreamArrayRecursive(out, i, shape, lastDimSize, index, dimension + 1);
       }
-      _StreamArrayRecursive(out, i, shape, lastDimSize, index, dimension + 1);
     }
+    out << ']';
   }
-  out << ']';
-}
 
 }  // namespace
 

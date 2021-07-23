@@ -48,53 +48,52 @@ struct _FormatDesc
 
 static const _FormatDesc FORMAT_DESC[] = {
   // format,  type,             internal format
-  {GL_RED, GL_UNSIGNED_BYTE, GL_R8},  // UNorm8
-  {GL_RG, GL_UNSIGNED_BYTE, GL_RG8},  // UNorm8Vec2
+  {GL_RED,           GL_UNSIGNED_BYTE,  GL_R8                                }, // UNorm8
+  {GL_RG,            GL_UNSIGNED_BYTE,  GL_RG8                               }, // UNorm8Vec2
   // {GL_RGB,  GL_UNSIGNED_BYTE, GL_RGB8       }, // Unsupported by HgiFormat
-  {GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8},  // UNorm8Vec4
+  {GL_RGBA,          GL_UNSIGNED_BYTE,  GL_RGBA8                             }, // UNorm8Vec4
 
-  {GL_RED, GL_BYTE, GL_R8_SNORM},  // SNorm8
-  {GL_RG, GL_BYTE, GL_RG8_SNORM},  // SNorm8Vec2
+  {GL_RED,           GL_BYTE,           GL_R8_SNORM                          }, // SNorm8
+  {GL_RG,            GL_BYTE,           GL_RG8_SNORM                         }, // SNorm8Vec2
   // {GL_RGB,  GL_BYTE,         GL_RGB8_SNORM  }, // Unsupported by HgiFormat
-  {GL_RGBA, GL_BYTE, GL_RGBA8_SNORM},  // SNorm8Vec4
+  {GL_RGBA,          GL_BYTE,           GL_RGBA8_SNORM                       }, // SNorm8Vec4
 
-  {GL_RED, GL_HALF_FLOAT, GL_R16F},      // Float16
-  {GL_RG, GL_HALF_FLOAT, GL_RG16F},      // Float16Vec2
-  {GL_RGB, GL_HALF_FLOAT, GL_RGB16F},    // Float16Vec3
-  {GL_RGBA, GL_HALF_FLOAT, GL_RGBA16F},  // Float16Vec4
+  {GL_RED,           GL_HALF_FLOAT,     GL_R16F                              }, // Float16
+  {GL_RG,            GL_HALF_FLOAT,     GL_RG16F                             }, // Float16Vec2
+  {GL_RGB,           GL_HALF_FLOAT,     GL_RGB16F                            }, // Float16Vec3
+  {GL_RGBA,          GL_HALF_FLOAT,     GL_RGBA16F                           }, // Float16Vec4
 
-  {GL_RED, GL_FLOAT, GL_R32F},      // Float32
-  {GL_RG, GL_FLOAT, GL_RG32F},      // Float32Vec2
-  {GL_RGB, GL_FLOAT, GL_RGB32F},    // Float32Vec3
-  {GL_RGBA, GL_FLOAT, GL_RGBA32F},  // Float32Vec4
+  {GL_RED,           GL_FLOAT,          GL_R32F                              }, // Float32
+  {GL_RG,            GL_FLOAT,          GL_RG32F                             }, // Float32Vec2
+  {GL_RGB,           GL_FLOAT,          GL_RGB32F                            }, // Float32Vec3
+  {GL_RGBA,          GL_FLOAT,          GL_RGBA32F                           }, // Float32Vec4
 
-  {GL_RED_INTEGER, GL_SHORT, GL_R16I},      // Int16
-  {GL_RG_INTEGER, GL_SHORT, GL_RG16I},      // Int16Vec2
-  {GL_RGB_INTEGER, GL_SHORT, GL_RGB16I},    // Int16Vec3
-  {GL_RGBA_INTEGER, GL_SHORT, GL_RGBA16I},  // Int16Vec4
+  {GL_RED_INTEGER,   GL_SHORT,          GL_R16I                              }, // Int16
+  {GL_RG_INTEGER,    GL_SHORT,          GL_RG16I                             }, // Int16Vec2
+  {GL_RGB_INTEGER,   GL_SHORT,          GL_RGB16I                            }, // Int16Vec3
+  {GL_RGBA_INTEGER,  GL_SHORT,          GL_RGBA16I                           }, // Int16Vec4
 
-  {GL_RED_INTEGER, GL_UNSIGNED_SHORT, GL_R16UI},      // UInt16
-  {GL_RG_INTEGER, GL_UNSIGNED_SHORT, GL_RG16UI},      // UInt16Vec2
-  {GL_RGB_INTEGER, GL_UNSIGNED_SHORT, GL_RGB16UI},    // UInt16Vec3
-  {GL_RGBA_INTEGER, GL_UNSIGNED_SHORT, GL_RGBA16UI},  // UInt16Vec4
+  {GL_RED_INTEGER,   GL_UNSIGNED_SHORT, GL_R16UI                             }, // UInt16
+  {GL_RG_INTEGER,    GL_UNSIGNED_SHORT, GL_RG16UI                            }, // UInt16Vec2
+  {GL_RGB_INTEGER,   GL_UNSIGNED_SHORT, GL_RGB16UI                           }, // UInt16Vec3
+  {GL_RGBA_INTEGER,  GL_UNSIGNED_SHORT, GL_RGBA16UI                          }, // UInt16Vec4
 
-  {GL_RED_INTEGER, GL_INT, GL_R32I},      // Int32
-  {GL_RG_INTEGER, GL_INT, GL_RG32I},      // Int32Vec2
-  {GL_RGB_INTEGER, GL_INT, GL_RGB32I},    // Int32Vec3
-  {GL_RGBA_INTEGER, GL_INT, GL_RGBA32I},  // Int32Vec4
+  {GL_RED_INTEGER,   GL_INT,            GL_R32I                              }, // Int32
+  {GL_RG_INTEGER,    GL_INT,            GL_RG32I                             }, // Int32Vec2
+  {GL_RGB_INTEGER,   GL_INT,            GL_RGB32I                            }, // Int32Vec3
+  {GL_RGBA_INTEGER,  GL_INT,            GL_RGBA32I                           }, // Int32Vec4
 
   // {GL_RGB,  GL_UNSIGNED_BYTE, GL_SRGB8      }, // Unsupported by HgiFormat
-  {GL_RGBA, GL_UNSIGNED_BYTE, GL_SRGB8_ALPHA8},  // UNorm8Vec4sRGB,
+  {GL_RGBA,          GL_UNSIGNED_BYTE,  GL_SRGB8_ALPHA8                      }, // UNorm8Vec4sRGB,
 
-  {GL_RGB, GL_FLOAT, GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT},           // BC6FloatVec3
-  {GL_RGB, GL_FLOAT, GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT},         // BC6UFloatVec3
-  {GL_RGBA, GL_UNSIGNED_BYTE, GL_COMPRESSED_RGBA_BPTC_UNORM},        // BC7UNorm8Vec4
-  {GL_RGBA, GL_UNSIGNED_BYTE, GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM},  // BC7UNorm8Vec4srgb
-  {GL_RGBA, GL_UNSIGNED_BYTE, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT},     // BC1UNorm8Vec4
-  {GL_RGBA, GL_UNSIGNED_BYTE, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT},     // BC3UNorm8Vec4
+  {GL_RGB,           GL_FLOAT,          GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT  }, // BC6FloatVec3
+  {GL_RGB,           GL_FLOAT,          GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT}, // BC6UFloatVec3
+  {GL_RGBA,          GL_UNSIGNED_BYTE,  GL_COMPRESSED_RGBA_BPTC_UNORM        }, // BC7UNorm8Vec4
+  {GL_RGBA,          GL_UNSIGNED_BYTE,  GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM  }, // BC7UNorm8Vec4srgb
+  {GL_RGBA,          GL_UNSIGNED_BYTE,  GL_COMPRESSED_RGBA_S3TC_DXT1_EXT     }, // BC1UNorm8Vec4
+  {GL_RGBA,          GL_UNSIGNED_BYTE,  GL_COMPRESSED_RGBA_S3TC_DXT5_EXT     }, // BC3UNorm8Vec4
 
-  {GL_DEPTH_STENCIL, GL_FLOAT, GL_DEPTH32F_STENCIL8},  // Float32UInt8
-
+  {GL_DEPTH_STENCIL, GL_FLOAT,          GL_DEPTH32F_STENCIL8                 }, // Float32UInt8
 };
 
 // A few random format validations to make sure out GL table stays aligned
@@ -110,92 +109,101 @@ constexpr bool _CompileTimeValidateHgiFormatTable()
 
 static_assert(_CompileTimeValidateHgiFormatTable(), "_FormatDesc array out of sync with HgiFormat enum");
 
-static const uint32_t _ShaderStageTable[][2] = {{HgiShaderStageVertex, GL_VERTEX_SHADER},
-                                                {HgiShaderStageFragment, GL_FRAGMENT_SHADER},
-                                                {HgiShaderStageCompute, GL_COMPUTE_SHADER},
-                                                {HgiShaderStageTessellationControl, GL_TESS_CONTROL_SHADER},
-                                                {HgiShaderStageTessellationEval, GL_TESS_EVALUATION_SHADER},
-                                                {HgiShaderStageGeometry, GL_GEOMETRY_SHADER}};
+static const uint32_t _ShaderStageTable[][2] = {
+  {HgiShaderStageVertex,              GL_VERTEX_SHADER         },
+  {HgiShaderStageFragment,            GL_FRAGMENT_SHADER       },
+  {HgiShaderStageCompute,             GL_COMPUTE_SHADER        },
+  {HgiShaderStageTessellationControl, GL_TESS_CONTROL_SHADER   },
+  {HgiShaderStageTessellationEval,    GL_TESS_EVALUATION_SHADER},
+  {HgiShaderStageGeometry,            GL_GEOMETRY_SHADER       }
+};
 
-static const uint32_t _CullModeTable[HgiCullModeCount][2] = {{HgiCullModeNone, GL_NONE},
-                                                             {HgiCullModeFront, GL_FRONT},
-                                                             {HgiCullModeBack, GL_BACK},
-                                                             {HgiCullModeFrontAndBack, GL_FRONT_AND_BACK}};
+static const uint32_t _CullModeTable[HgiCullModeCount][2] = {
+  {HgiCullModeNone,         GL_NONE          },
+  {HgiCullModeFront,        GL_FRONT         },
+  {HgiCullModeBack,         GL_BACK          },
+  {HgiCullModeFrontAndBack, GL_FRONT_AND_BACK}
+};
 
 static const uint32_t _PolygonModeTable[HgiCullModeCount][2] = {
-  {HgiPolygonModeFill, GL_FILL},
-  {HgiPolygonModeLine, GL_LINE},
+  {HgiPolygonModeFill,  GL_FILL },
+  {HgiPolygonModeLine,  GL_LINE },
   {HgiPolygonModePoint, GL_POINT},
 };
 
 static uint32_t _blendEquationTable[HgiBlendOpCount][2] = {
-  {HgiBlendOpAdd, GL_FUNC_ADD},
-  {HgiBlendOpSubtract, GL_FUNC_SUBTRACT},
+  {HgiBlendOpAdd,             GL_FUNC_ADD             },
+  {HgiBlendOpSubtract,        GL_FUNC_SUBTRACT        },
   {HgiBlendOpReverseSubtract, GL_FUNC_REVERSE_SUBTRACT},
-  {HgiBlendOpMin, GL_MIN},
-  {HgiBlendOpMax, GL_MAX},
+  {HgiBlendOpMin,             GL_MIN                  },
+  {HgiBlendOpMax,             GL_MAX                  },
 };
 
 static uint32_t _blendFactorTable[HgiBlendFactorCount][2] = {
-  {HgiBlendFactorZero, GL_ZERO},
-  {HgiBlendFactorOne, GL_ONE},
-  {HgiBlendFactorSrcColor, GL_SRC_COLOR},
-  {HgiBlendFactorOneMinusSrcColor, GL_ONE_MINUS_SRC_COLOR},
-  {HgiBlendFactorDstColor, GL_DST_COLOR},
-  {HgiBlendFactorOneMinusDstColor, GL_ONE_MINUS_DST_COLOR},
-  {HgiBlendFactorSrcAlpha, GL_SRC_ALPHA},
-  {HgiBlendFactorOneMinusSrcAlpha, GL_ONE_MINUS_SRC_ALPHA},
-  {HgiBlendFactorDstAlpha, GL_DST_ALPHA},
-  {HgiBlendFactorOneMinusDstAlpha, GL_ONE_MINUS_DST_ALPHA},
-  {HgiBlendFactorConstantColor, GL_CONSTANT_COLOR},
+  {HgiBlendFactorZero,                  GL_ZERO                    },
+  {HgiBlendFactorOne,                   GL_ONE                     },
+  {HgiBlendFactorSrcColor,              GL_SRC_COLOR               },
+  {HgiBlendFactorOneMinusSrcColor,      GL_ONE_MINUS_SRC_COLOR     },
+  {HgiBlendFactorDstColor,              GL_DST_COLOR               },
+  {HgiBlendFactorOneMinusDstColor,      GL_ONE_MINUS_DST_COLOR     },
+  {HgiBlendFactorSrcAlpha,              GL_SRC_ALPHA               },
+  {HgiBlendFactorOneMinusSrcAlpha,      GL_ONE_MINUS_SRC_ALPHA     },
+  {HgiBlendFactorDstAlpha,              GL_DST_ALPHA               },
+  {HgiBlendFactorOneMinusDstAlpha,      GL_ONE_MINUS_DST_ALPHA     },
+  {HgiBlendFactorConstantColor,         GL_CONSTANT_COLOR          },
   {HgiBlendFactorOneMinusConstantColor, GL_ONE_MINUS_CONSTANT_COLOR},
-  {HgiBlendFactorConstantAlpha, GL_CONSTANT_ALPHA},
+  {HgiBlendFactorConstantAlpha,         GL_CONSTANT_ALPHA          },
   {HgiBlendFactorOneMinusConstantAlpha, GL_ONE_MINUS_CONSTANT_ALPHA},
-  {HgiBlendFactorSrcAlphaSaturate, GL_SRC_ALPHA_SATURATE},
-  {HgiBlendFactorSrc1Color, GL_SRC1_COLOR},
-  {HgiBlendFactorOneMinusSrc1Color, GL_ONE_MINUS_SRC1_COLOR},
-  {HgiBlendFactorSrc1Alpha, GL_SRC1_ALPHA},
-  {HgiBlendFactorOneMinusSrc1Alpha, GL_ONE_MINUS_SRC1_COLOR},
+  {HgiBlendFactorSrcAlphaSaturate,      GL_SRC_ALPHA_SATURATE      },
+  {HgiBlendFactorSrc1Color,             GL_SRC1_COLOR              },
+  {HgiBlendFactorOneMinusSrc1Color,     GL_ONE_MINUS_SRC1_COLOR    },
+  {HgiBlendFactorSrc1Alpha,             GL_SRC1_ALPHA              },
+  {HgiBlendFactorOneMinusSrc1Alpha,     GL_ONE_MINUS_SRC1_COLOR    },
 };
 
 static uint32_t _compareFunctionTable[HgiCompareFunctionCount][2] = {
-  {HgiCompareFunctionNever, GL_NEVER},
-  {HgiCompareFunctionLess, GL_LESS},
-  {HgiCompareFunctionEqual, GL_EQUAL},
-  {HgiCompareFunctionLEqual, GL_LEQUAL},
-  {HgiCompareFunctionGreater, GL_GREATER},
+  {HgiCompareFunctionNever,    GL_NEVER   },
+  {HgiCompareFunctionLess,     GL_LESS    },
+  {HgiCompareFunctionEqual,    GL_EQUAL   },
+  {HgiCompareFunctionLEqual,   GL_LEQUAL  },
+  {HgiCompareFunctionGreater,  GL_GREATER },
   {HgiCompareFunctionNotEqual, GL_NOTEQUAL},
-  {HgiCompareFunctionGEqual, GL_GEQUAL},
-  {HgiCompareFunctionAlways, GL_ALWAYS},
+  {HgiCompareFunctionGEqual,   GL_GEQUAL  },
+  {HgiCompareFunctionAlways,   GL_ALWAYS  },
 };
 
-static uint32_t _textureTypeTable[HgiTextureTypeCount][2] = {{HgiTextureType1D, GL_TEXTURE_1D},
-                                                             {HgiTextureType2D, GL_TEXTURE_2D},
-                                                             {HgiTextureType3D, GL_TEXTURE_3D},
-                                                             {HgiTextureType1DArray, GL_TEXTURE_1D_ARRAY},
-                                                             {HgiTextureType2DArray, GL_TEXTURE_2D_ARRAY}};
+static uint32_t _textureTypeTable[HgiTextureTypeCount][2] = {
+  {HgiTextureType1D,      GL_TEXTURE_1D      },
+  {HgiTextureType2D,      GL_TEXTURE_2D      },
+  {HgiTextureType3D,      GL_TEXTURE_3D      },
+  {HgiTextureType1DArray, GL_TEXTURE_1D_ARRAY},
+  {HgiTextureType2DArray, GL_TEXTURE_2D_ARRAY}
+};
 
 static uint32_t _samplerAddressModeTable[HgiSamplerAddressModeCount][2] = {
-  {HgiSamplerAddressModeClampToEdge, GL_CLAMP_TO_EDGE},
-  {HgiSamplerAddressModeMirrorClampToEdge, GL_MIRROR_CLAMP_TO_EDGE},
-  {HgiSamplerAddressModeRepeat, GL_REPEAT},
-  {HgiSamplerAddressModeMirrorRepeat, GL_MIRRORED_REPEAT},
-  {HgiSamplerAddressModeClampToBorderColor, GL_CLAMP_TO_BORDER}};
+  {HgiSamplerAddressModeClampToEdge,        GL_CLAMP_TO_EDGE       },
+  {HgiSamplerAddressModeMirrorClampToEdge,  GL_MIRROR_CLAMP_TO_EDGE},
+  {HgiSamplerAddressModeRepeat,             GL_REPEAT              },
+  {HgiSamplerAddressModeMirrorRepeat,       GL_MIRRORED_REPEAT     },
+  {HgiSamplerAddressModeClampToBorderColor, GL_CLAMP_TO_BORDER     }
+};
 
 static const uint32_t _componentSwizzleTable[HgiComponentSwizzleCount][2] = {
-  {HgiComponentSwizzleZero, GL_ZERO},
-  {HgiComponentSwizzleOne, GL_ONE},
-  {HgiComponentSwizzleR, GL_RED},
-  {HgiComponentSwizzleG, GL_GREEN},
-  {HgiComponentSwizzleB, GL_BLUE},
-  {HgiComponentSwizzleA, GL_ALPHA}};
+  {HgiComponentSwizzleZero, GL_ZERO },
+  {HgiComponentSwizzleOne,  GL_ONE  },
+  {HgiComponentSwizzleR,    GL_RED  },
+  {HgiComponentSwizzleG,    GL_GREEN},
+  {HgiComponentSwizzleB,    GL_BLUE },
+  {HgiComponentSwizzleA,    GL_ALPHA}
+};
 
 static const uint32_t _primitiveTypeTable[HgiPrimitiveTypeCount][2] = {
-  {HgiPrimitiveTypePointList, GL_POINTS},
-  {HgiPrimitiveTypeLineList, GL_LINES},
-  {HgiPrimitiveTypeLineStrip, GL_LINES_ADJACENCY},
-  {HgiPrimitiveTypeTriangleList, GL_TRIANGLES},
-  {HgiPrimitiveTypePatchList, GL_PATCHES}};
+  {HgiPrimitiveTypePointList,    GL_POINTS         },
+  {HgiPrimitiveTypeLineList,     GL_LINES          },
+  {HgiPrimitiveTypeLineStrip,    GL_LINES_ADJACENCY},
+  {HgiPrimitiveTypeTriangleList, GL_TRIANGLES      },
+  {HgiPrimitiveTypePatchList,    GL_PATCHES        }
+};
 
 void HgiGLConversions::GetFormat(HgiFormat inFormat,
                                  GLenum *outFormat,

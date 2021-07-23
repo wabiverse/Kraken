@@ -166,8 +166,7 @@ void UsdImagingPointsAdapter::UpdateForTime(UsdPrim const &prim,
     if (pv)
     {
       _ComputeAndMergePrimvar(prim, pv, time, &primvars);
-    }
-    else
+    } else
     {
       UsdGeomPoints points(prim);
       VtFloatArray widths;
@@ -175,8 +174,7 @@ void UsdImagingPointsAdapter::UpdateForTime(UsdPrim const &prim,
       {
         HdInterpolation interpolation = _UsdToHdInterpolation(points.GetWidthsInterpolation());
         _MergePrimvar(&primvars, UsdGeomTokens->widths, interpolation);
-      }
-      else
+      } else
       {
         _RemovePrimvar(&primvars, UsdGeomTokens->widths);
       }
@@ -197,8 +195,7 @@ void UsdImagingPointsAdapter::UpdateForTime(UsdPrim const &prim,
     if (pv)
     {
       _ComputeAndMergePrimvar(prim, pv, time, &primvars);
-    }
-    else
+    } else
     {
       UsdGeomPoints points(prim);
       VtVec3fArray normals;
@@ -208,8 +205,7 @@ void UsdImagingPointsAdapter::UpdateForTime(UsdPrim const &prim,
                       UsdGeomTokens->normals,
                       _UsdToHdInterpolation(points.GetNormalsInterpolation()),
                       HdPrimvarRoleTokens->normal);
-      }
-      else
+      } else
       {
         _RemovePrimvar(&primvars, UsdGeomTokens->normals);
       }
@@ -235,8 +231,7 @@ HdDirtyBits UsdImagingPointsAdapter::ProcessPropertyChange(UsdPrim const &prim,
       HdTokens->widths,
       _UsdToHdInterpolation(points.GetWidthsInterpolation()),
       HdChangeTracker::DirtyWidths);
-  }
-  else if (propertyName == UsdGeomTokens->normals)
+  } else if (propertyName == UsdGeomTokens->normals)
   {
     UsdGeomPoints points(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
@@ -250,13 +245,16 @@ HdDirtyBits UsdImagingPointsAdapter::ProcessPropertyChange(UsdPrim const &prim,
   // Handle prefixed primvars that use special dirty bits.
   else if (propertyName == UsdImagingTokens->primvarsWidths)
   {
-    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
-      prim, cachePath, propertyName, HdChangeTracker::DirtyWidths);
-  }
-  else if (propertyName == UsdImagingTokens->primvarsNormals)
+    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(prim,
+                                                                        cachePath,
+                                                                        propertyName,
+                                                                        HdChangeTracker::DirtyWidths);
+  } else if (propertyName == UsdImagingTokens->primvarsNormals)
   {
-    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
-      prim, cachePath, propertyName, HdChangeTracker::DirtyNormals);
+    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(prim,
+                                                                        cachePath,
+                                                                        propertyName,
+                                                                        HdChangeTracker::DirtyNormals);
   }
 
   // Allow base class to handle change processing.
@@ -293,8 +291,7 @@ VtValue UsdImagingPointsAdapter::Get(UsdPrim const &prim,
         pv.GetIndices(outIndices, time);
         return value;
       }
-    }
-    else if (pv && pv.ComputeFlattened(&value, time))
+    } else if (pv && pv.ComputeFlattened(&value, time))
     {
       return value;
     }
@@ -308,8 +305,7 @@ VtValue UsdImagingPointsAdapter::Get(UsdPrim const &prim,
       value = normals;
       return value;
     }
-  }
-  else if (key == HdTokens->widths)
+  } else if (key == HdTokens->widths)
   {
     // First check for "primvars:widths"
     UsdGeomPrimvarsAPI primvarsApi(prim);
@@ -329,8 +325,7 @@ VtValue UsdImagingPointsAdapter::Get(UsdPrim const &prim,
         pv.GetIndices(outIndices, time);
         return value;
       }
-    }
-    else if (pv && pv.ComputeFlattened(&value, time))
+    } else if (pv && pv.ComputeFlattened(&value, time))
     {
       return value;
     }

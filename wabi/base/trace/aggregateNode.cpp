@@ -49,8 +49,7 @@ TraceAggregateNodeRefPtr TraceAggregateNode::Append(Id id, const TfToken &key, T
     n->_exclusiveCount += xc;
     n->_exclusiveTs += ts;
     n->_recursiveExclusiveTs += ts;
-  }
-  else
+  } else
   {
     n = TraceAggregateNode::New(id, key, ts, c, xc);
     _children.push_back(n);
@@ -88,8 +87,7 @@ void TraceAggregateNode::Append(TraceAggregateNodeRefPtr child)
     {
       n->Append(c);
     }
-  }
-  else
+  } else
   {
     _children.push_back(child);
     _childrenByKey[child->GetKey()] = _children.size() - 1;
@@ -133,8 +131,7 @@ TraceAggregateNodeRefPtr TraceAggregateNode::GetChild(const TfToken &key)
   if (i != _childrenByKey.end())
   {
     return _children[i->second];
-  }
-  else
+  } else
   {
     return TraceAggregateNodeRefPtr(0);
   }
@@ -226,8 +223,7 @@ void TraceAggregateNode::MarkRecursiveChildren()
       if (parentIdx > -1)
         stack[parentIdx].remainingChildren -= 1;
       stack.pop_back();
-    }
-    else
+    } else
     {
       // Here our node has children, so before we go on, we must
       // push our children on the child stack.  This gives us the
@@ -265,8 +261,7 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
     }
     _recursionParent->_MergeRecursive(node);
     return;
-  }
-  else
+  } else
   {
     _recursiveCount += node->GetCount(true /* recursion */);
     _recursiveExclusiveTs += node->GetExclusiveTime(true /* recursion */);
@@ -298,8 +293,11 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
     if (!n)
     {
       // Create an empty node to merge with.
-      n = TraceAggregateNode::New(
-        child->GetId(), child->GetKey(), child->GetInclusiveTime(), 0, child->GetExclusiveCount());
+      n = TraceAggregateNode::New(child->GetId(),
+                                  child->GetKey(),
+                                  child->GetInclusiveTime(),
+                                  0,
+                                  child->GetExclusiveCount());
 
       // On our new node, we want the exclusiveTs to be computed by
       // recursiveTs not exclusiveTs, which is done during the merge
@@ -317,8 +315,7 @@ void TraceAggregateNode::_MergeRecursive(const TraceAggregateNodeRefPtr &node)
       else
         // We always want to merge new nodes.
         n->_MergeRecursive(child);
-    }
-    else
+    } else
     {
       // This key already exists, determine if we want to merge it in.
 

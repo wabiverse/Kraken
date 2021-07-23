@@ -123,8 +123,7 @@ static bool _UsePtmalloc()
   if (ArchIsPtmallocActive())
   {
     return true;
-  }
-  else if (TfStringStartsWith(impl, "ptmalloc"))
+  } else if (TfStringStartsWith(impl, "ptmalloc"))
   {
     TF_WARN(
       "TfMallocTag can only use ptmalloc-specific implementation "
@@ -249,8 +248,7 @@ Tf_MallocTagStringMatchTable::_MatchString::_MatchString(const std::string &s)
       {
         allow = false;
         str.erase(0, 1);
-      }
-      else if (str[0] == '+')
+      } else if (str[0] == '+')
       {
         str.erase(0, 1);
       }
@@ -296,8 +294,7 @@ bool Tf_MallocTagStringMatchTable::Match(const char *s) const
       {
         continue;
       }
-    }
-    else
+    } else
     {
       // Check exact match.
       if (i->str != s)
@@ -347,32 +344,31 @@ struct Tf_MallocCallSite
 namespace
 {
 
-typedef TfHashMap<const char *, struct Tf_MallocCallSite *, TfHashCString, TfEqualCString>
-  Tf_MallocCallSiteTable;
+  typedef TfHashMap<const char *, struct Tf_MallocCallSite *, TfHashCString, TfEqualCString>
+    Tf_MallocCallSiteTable;
 
-Tf_MallocCallSite *Tf_GetOrCreateCallSite(Tf_MallocCallSiteTable *table,
-                                          const char *name,
-                                          size_t *traceSiteCount)
-{
-  TF_AXIOM(table);
-  Tf_MallocCallSiteTable::iterator it = table->find(name);
-
-  if (it == table->end())
+  Tf_MallocCallSite *Tf_GetOrCreateCallSite(Tf_MallocCallSiteTable *table,
+                                            const char *name,
+                                            size_t *traceSiteCount)
   {
-    Tf_MallocCallSite *site = new Tf_MallocCallSite(name, static_cast<uint32_t>(table->size()));
-    // site->_name is const so it is ok to use c_str() as the key.
-    (*table)[site->_name.c_str()] = site;
-    if (site->_trace)
+    TF_AXIOM(table);
+    Tf_MallocCallSiteTable::iterator it = table->find(name);
+
+    if (it == table->end())
     {
-      ++*traceSiteCount;
+      Tf_MallocCallSite *site = new Tf_MallocCallSite(name, static_cast<uint32_t>(table->size()));
+      // site->_name is const so it is ok to use c_str() as the key.
+      (*table)[site->_name.c_str()] = site;
+      if (site->_trace)
+      {
+        ++*traceSiteCount;
+      }
+      return site;
+    } else
+    {
+      return it->second;
     }
-    return site;
   }
-  else
-  {
-    return it->second;
-  }
-}
 }  // namespace
 
 /*
@@ -646,25 +642,25 @@ static bool Tf_MatchesMallocTagDebugName(const string &name)
 
 namespace
 {
-// Hash functor for a malloc stack.
-//
-struct _HashMallocStack
-{
-  size_t operator()(const vector<uintptr_t> &stack) const
+  // Hash functor for a malloc stack.
+  //
+  struct _HashMallocStack
   {
-    return ArchHash((const char *)&stack[0], sizeof(uintptr_t) * stack.size());
-  }
-};
+    size_t operator()(const vector<uintptr_t> &stack) const
+    {
+      return ArchHash((const char *)&stack[0], sizeof(uintptr_t) * stack.size());
+    }
+  };
 
-// The data associated with a malloc stack (a pointer to the malloc stack
-// itself, and the allocation size and number of allocations).
-//
-struct _MallocStackData
-{
-  const vector<uintptr_t> *stack;
-  size_t size;
-  size_t numAllocations;
-};
+  // The data associated with a malloc stack (a pointer to the malloc stack
+  // itself, and the allocation size and number of allocations).
+  //
+  struct _MallocStackData
+  {
+    const vector<uintptr_t> *stack;
+    size_t size;
+    size_t numAllocations;
+  };
 }  // namespace
 
 // Comparison for sorting TfMallocTag::CallStackInfo based on their
@@ -754,8 +750,7 @@ void Tf_MallocPathNode::_BuildTree(TfMallocTag::CallTree::PathNode *node, bool s
         node->children.insert(node->children.end(), childNode.children.begin(), childNode.children.end());
       }
       node->nBytes += childNode.nBytes;
-    }
-    else
+    } else
     {
       node->children.push_back(TfMallocTag::CallTree::PathNode());
       TfMallocTag::CallTree::PathNode &childNode = node->children.back();
@@ -767,20 +762,20 @@ void Tf_MallocPathNode::_BuildTree(TfMallocTag::CallTree::PathNode *node, bool s
 
 namespace
 {
-void Tf_GetCallSites(TfMallocTag::CallTree::PathNode *node, Tf_MallocCallSiteTable *table)
-{
-  TF_AXIOM(node);
-  TF_AXIOM(table);
-
-  size_t dummy;
-  Tf_MallocCallSite *site = Tf_GetOrCreateCallSite(table, node->siteName.c_str(), &dummy);
-  site->_totalBytes += node->nBytesDirect;
-
-  TF_FOR_ALL (pi, node->children)
+  void Tf_GetCallSites(TfMallocTag::CallTree::PathNode *node, Tf_MallocCallSiteTable *table)
   {
-    Tf_GetCallSites(&(*pi), table);
+    TF_AXIOM(node);
+    TF_AXIOM(table);
+
+    size_t dummy;
+    Tf_MallocCallSite *site = Tf_GetOrCreateCallSite(table, node->siteName.c_str(), &dummy);
+    site->_totalBytes += node->nBytesDirect;
+
+    TF_FOR_ALL (pi, node->children)
+    {
+      Tf_GetCallSites(&(*pi), table);
+    }
   }
-}
 }  // namespace
 
 /*
@@ -893,8 +888,7 @@ inline bool TfMallocTag::_ShouldNotTag(TfMallocTag::_ThreadData **tptr, _Tagging
       *statePtr = _TaggingDormant;
     }
     return true;
-  }
-  else
+  } else
   {
     *tptr = TfMallocTag::Tls::Find();
     if (statePtr)
@@ -1367,8 +1361,7 @@ bool TfMallocTag::GetCallTree(CallTree *tree, bool skipRepeated)
 
     gd->_mutex.unlock();
     return true;
-  }
-  else
+  } else
     return false;
 }
 
@@ -1440,8 +1433,7 @@ bool TfMallocTag::_Initialize(std::string *errMsg)
                                   _MemalignWrapper_ptmalloc,
                                   _FreeWrapper_ptmalloc,
                                   errMsg);
-  }
-  else
+  } else
   {
     return _mallocHook.Initialize(_MallocWrapper, _ReallocWrapper, _MemalignWrapper, _FreeWrapper, errMsg);
   }
@@ -1490,8 +1482,7 @@ void TfMallocTag::Auto::_Begin(const char *name)
     _threadData->_tagStack.push_back(thisNode);
     _threadData->_callSiteOnStack[site->_index] += 1;
     _threadData->_tagState = _TaggingEnabled;
-  }
-  else
+  } else
   {
     _threadData->_tagState = _TaggingEnabled;
     _threadData = NULL;
@@ -1516,8 +1507,9 @@ void TfMallocTag::Pop(const char *name)
 
   if (name && node->_callSite->_name != name)
   {
-    TF_CODING_ERROR(
-      "mismatched call Pop(\"%s\"); top of stack is \"%s\"", name, node->_callSite->_name.c_str());
+    TF_CODING_ERROR("mismatched call Pop(\"%s\"); top of stack is \"%s\"",
+                    name,
+                    node->_callSite->_name.c_str());
   }
 
   TF_AXIOM(threadData->_callSiteOnStack[node->_callSite->_index] > 0);
@@ -1567,8 +1559,13 @@ static size_t _PrintMallocNode(string *rpt,
   {
     // XXX:cleanup  We should pass in maxNameWidth and generate format
     //              strings like in _PrintMallocCallSites().
-    *rpt += TfStringPrintf(
-      "%-72s %15s%15s %5s %5s %5s\n", "TAGNAME", "BytesIncl", "BytesExcl", "%Prnt", "% Exc", "%Totl");
+    *rpt += TfStringPrintf("%-72s %15s%15s %5s %5s %5s\n",
+                           "TAGNAME",
+                           "BytesIncl",
+                           "BytesExcl",
+                           "%Prnt",
+                           "% Exc",
+                           "%Totl");
     *rpt += TfStringPrintf("%-72s %12s%12s %5s %5s %5s\n\n",
                            string(72, '-').c_str(),
                            " --------------",
@@ -1636,8 +1633,10 @@ static size_t _PrintMallocNode(string *rpt,
       percentDirectOfRoot = TfStringPrintf(" %.0f%%", percent);
     }
   }
-  *rpt += TfStringPrintf(
-    "%5s %5s %5s\n", curPercent.c_str(), curPercentDirect.c_str(), percentDirectOfRoot.c_str());
+  *rpt += TfStringPrintf("%5s %5s %5s\n",
+                         curPercent.c_str(),
+                         curPercentDirect.c_str(),
+                         percentDirectOfRoot.c_str());
 
   vector<TfMallocTag::CallTree::PathNode>::const_iterator it;
   for (it = node.children.begin(); it != node.children.end(); ++it)

@@ -34,11 +34,11 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-bool _IsValid(HioFieldTextureDataSharedPtr const &textureData)
-{
-  return textureData->ResizedWidth() > 0 && textureData->ResizedHeight() > 0 &&
-         textureData->ResizedDepth() > 0 && textureData->HasRawBuffer();
-}
+  bool _IsValid(HioFieldTextureDataSharedPtr const &textureData)
+  {
+    return textureData->ResizedWidth() > 0 && textureData->ResizedHeight() > 0 &&
+           textureData->ResizedDepth() > 0 && textureData->HasRawBuffer();
+  }
 
 }  // anonymous namespace
 
@@ -80,20 +80,25 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
 
   _textureDesc.format = HdPhTextureUtils::GetHgiFormat(hioFormat, premultiplyAlpha);
   const HdPhTextureUtils::ConversionFunction conversionFunction = HdPhTextureUtils::GetHioToHgiConversion(
-    hioFormat, premultiplyAlpha);
+    hioFormat,
+    premultiplyAlpha);
 
   // Handle grayscale textures by expanding value to green and blue.
   if (HgiGetComponentCount(_textureDesc.format) == 1)
   {
-    _textureDesc.componentMapping = {
-      HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleOne};
+    _textureDesc.componentMapping = {HgiComponentSwizzleR,
+                                     HgiComponentSwizzleR,
+                                     HgiComponentSwizzleR,
+                                     HgiComponentSwizzleOne};
   }
 
-  _textureDesc.dimensions = GfVec3i(
-    textureData->ResizedWidth(), textureData->ResizedHeight(), textureData->ResizedDepth());
+  _textureDesc.dimensions = GfVec3i(textureData->ResizedWidth(),
+                                    textureData->ResizedHeight(),
+                                    textureData->ResizedDepth());
 
-  const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-    _textureDesc.format, _textureDesc.dimensions, _textureDesc.layerCount);
+  const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(_textureDesc.format,
+                                                          _textureDesc.dimensions,
+                                                          _textureDesc.layerCount);
 
   // How many mipmaps to use from the file.
   unsigned int numGivenMipmaps = 1;
@@ -114,8 +119,7 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
 
     // Point to converted data
     _textureDesc.initialData = _convertedData.get();
-  }
-  else
+  } else
   {
     // Ensure that texture data are not deleted
     _textureData = textureData;

@@ -48,37 +48,37 @@ TF_REGISTRY_FUNCTION(VtValue)
 namespace
 {
 
-static std::string _Str(SdfAssetPath const &self)
-{
-  return boost::lexical_cast<std::string>(self);
-}
-
-static std::string _Repr(SdfAssetPath const &self)
-{
-  std::ostringstream repr;
-  repr << TF_PY_REPR_PREFIX << "AssetPath(" << TfPyRepr(self.GetAssetPath());
-
-  const std::string &resolvedPath = self.GetResolvedPath();
-  if (!resolvedPath.empty())
+  static std::string _Str(SdfAssetPath const &self)
   {
-    repr << ", " << TfPyRepr(resolvedPath);
+    return boost::lexical_cast<std::string>(self);
   }
-  repr << ")";
-  return repr.str();
-}
 
-static bool _Nonzero(SdfAssetPath const &self)
-{
-  return !self.GetAssetPath().empty();
-}
+  static std::string _Repr(SdfAssetPath const &self)
+  {
+    std::ostringstream repr;
+    repr << TF_PY_REPR_PREFIX << "AssetPath(" << TfPyRepr(self.GetAssetPath());
 
-static size_t _Hash(SdfAssetPath const &self)
-{
-  size_t hash = 0;
-  boost::hash_combine(hash, self.GetAssetPath());
-  boost::hash_combine(hash, self.GetResolvedPath());
-  return hash;
-}
+    const std::string &resolvedPath = self.GetResolvedPath();
+    if (!resolvedPath.empty())
+    {
+      repr << ", " << TfPyRepr(resolvedPath);
+    }
+    repr << ")";
+    return repr.str();
+  }
+
+  static bool _Nonzero(SdfAssetPath const &self)
+  {
+    return !self.GetAssetPath().empty();
+  }
+
+  static size_t _Hash(SdfAssetPath const &self)
+  {
+    size_t hash = 0;
+    boost::hash_combine(hash, self.GetAssetPath());
+    boost::hash_combine(hash, self.GetResolvedPath());
+    return hash;
+  }
 
 }  // anonymous namespace
 

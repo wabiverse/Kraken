@@ -96,8 +96,7 @@ RprUsdMaterial const *HdRprMesh::GetFallbackMaterial(
         {
           color = colors[0];
         }
-      }
-      else if (val.IsHolding<GfVec3f>())
+      } else if (val.IsHolding<GfVec3f>())
       {
         color = val.UncheckedGet<GfVec3f>();
       }
@@ -201,8 +200,10 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
       m_pointSamples.clear();
 
       HdExtComputationUtils::SampledValueStore<2> valueStore;
-      HdExtComputationUtils::SampleComputedPrimvarValues(
-        {desc}, sceneDelegate, m_numGeometrySamples, &valueStore);
+      HdExtComputationUtils::SampleComputedPrimvarValues({desc},
+                                                         sceneDelegate,
+                                                         m_numGeometrySamples,
+                                                         &valueStore);
       auto pointValueIt = valueStore.find(desc.name);
       if (pointValueIt != valueStore.end())
       {
@@ -214,8 +215,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
           if (sampleValue.IsHolding<VtVec3fArray>())
           {
             newPointSamples.push_back(sampleValue.UncheckedGet<VtVec3fArray>());
-          }
-          else
+          } else
           {
             newPointSamples.clear();
             break;
@@ -280,8 +280,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
       {
         materialToSubsetMapping.emplace(subset.materialId, i);
         ++i;
-      }
-      else
+      } else
       {
         auto &baseSubset = m_geomSubsets[it->second];
 
@@ -364,8 +363,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
     if (m_authoredNormals)
     {
       HdRprGetPrimvarIndices(interpolation, m_faceVertexIndices, &m_normalIndices);
-    }
-    else
+    } else
     {
       m_normalSamples.clear();
       m_normalIndices.clear();
@@ -425,8 +423,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
                              &interpolation))
       {
         HdRprGetPrimvarIndices(interpolation, m_faceVertexIndices, &m_uvIndices);
-      }
-      else
+      } else
       {
         m_uvSamples.clear();
         m_uvIndices.clear();
@@ -513,8 +510,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
       {
         m_rprMeshes.push_back(rprMesh);
       }
-    }
-    else
+    } else
     {
       // GeomSubset may reference face subset in any given order so we need to be able to
       //   randomly lookup face indexes but each face may be of an arbitrary number of vertices
@@ -551,13 +547,15 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
         subsetVertexPerFace.reserve(subset.indices.size());
 
         vertexIndexRemapping.reserve(m_pointSamples.front().size());
-        std::fill(
-          vertexIndexRemapping.begin(), vertexIndexRemapping.begin() + m_pointSamples.front().size(), -1);
+        std::fill(vertexIndexRemapping.begin(),
+                  vertexIndexRemapping.begin() + m_pointSamples.front().size(),
+                  -1);
         if (!m_normalIndices.empty())
         {
           normalIndexRemapping.reserve(m_normalSamples.front().size());
-          std::fill(
-            normalIndexRemapping.begin(), normalIndexRemapping.begin() + m_normalSamples.front().size(), -1);
+          std::fill(normalIndexRemapping.begin(),
+                    normalIndexRemapping.begin() + m_normalSamples.front().size(),
+                    -1);
         }
         if (!m_uvIndices.empty())
         {
@@ -601,8 +599,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
                     subsetNormalSamples[sampleIndex].push_back(m_normalSamples[sampleIndex][pointIndex]);
                   }
                 }
-              }
-              else
+              } else
               {
                 const int normalIndex = m_normalIndices[faceIndexesOffset + i];
                 int subsetNormalIndex = normalIndexRemapping[normalIndex];
@@ -631,8 +628,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
                     subsetUvSamples[sampleIndex].push_back(m_uvSamples[sampleIndex][pointIndex]);
                   }
                 }
-              }
-              else
+              } else
               {
                 const int uvIndex = m_uvIndices[faceIndexesOffset + i];
                 int subsetuvIndex = uvIndexRemapping[uvIndex];
@@ -663,8 +659,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
         {
           m_rprMeshes.push_back(rprMesh);
           ++it;
-        }
-        else
+        } else
         {
           it = m_geomSubsets.erase(it);
         }
@@ -716,8 +711,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
 
     if (newMesh || (*dirtyBits & HdChangeTracker::DirtyMaterialId) ||
         (*dirtyBits & HdChangeTracker::DirtyDoubleSided) ||  // update twosided material node
-        (*dirtyBits & HdChangeTracker::DirtyDisplayStyle) ||
-        isRefineLevelDirty)
+        (*dirtyBits & HdChangeTracker::DirtyDisplayStyle) || isRefineLevelDirty)
     {  // update displacement material
       auto getMeshMaterial =
         [sceneDelegate, rprApi, dirtyBits, &primvarDescsPerInterpolation, this](SdfPath const &materialId) {
@@ -726,8 +720,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
           if (material && material->GetRprMaterialObject())
           {
             return material->GetRprMaterialObject();
-          }
-          else
+          } else
           {
             HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, GetId(), &primvarDescsPerInterpolation);
             return GetFallbackMaterial(sceneDelegate, rprApi, *dirtyBits, primvarDescsPerInterpolation);
@@ -741,8 +734,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
         {
           rprApi->SetMeshMaterial(mesh, material, m_displayStyle.displacementEnabled);
         }
-      }
-      else
+      } else
       {
         if (m_geomSubsets.size() == m_rprMeshes.size())
         {
@@ -751,8 +743,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
             auto material = getMeshMaterial(m_geomSubsets[i].materialId);
             rprApi->SetMeshMaterial(m_rprMeshes[i], material, m_displayStyle.displacementEnabled);
           }
-        }
-        else
+        } else
         {
           TF_CODING_ERROR("Unexpected number of meshes");
         }
@@ -783,8 +774,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
           {
             rprApi->SetMeshVisibility(m_rprMeshes[i], visibilityMask);
           }
-        }
-        else
+        } else
         {
           updateTransform = false;
 
@@ -804,8 +794,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
               {
                 instanceTransform[j] = instanceTransforms.values[j][i];
               }
-            }
-            else
+            } else
             {
               for (size_t j = 0; j < instanceTransforms.count; ++j)
               {
@@ -838,8 +827,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
                   rprApi->Release(meshInstances[i]);
                 }
                 meshInstances.resize(newNumInstances);
-              }
-              else
+              } else
               {
                 int32_t meshId = GetPrimId();
                 for (int j = meshInstances.size(); j < newNumInstances; ++j)
@@ -873,8 +861,7 @@ void HdRprMesh::Sync(HdSceneDelegate *sceneDelegate,
         {
           rprApi->SetMeshVisibility(rprMesh, visibilityMask);
         }
-      }
-      else
+      } else
       {
         // Do not touch prototype meshes (m_rprMeshes), set visibility for instances only
         for (auto &instances : m_rprMeshInstances)

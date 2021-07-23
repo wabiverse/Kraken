@@ -32,14 +32,14 @@
 
 namespace ccl
 {
-class Light;
-class Shader;
-class Scene;
-class BackgroundNode;
-class TextureCoordinateNode;
-class EnvironmentTextureNode;
-class EmissionNode;
-class BlackbodyNode;
+  class Light;
+  class Shader;
+  class Scene;
+  class BackgroundNode;
+  class TextureCoordinateNode;
+  class EnvironmentTextureNode;
+  class EmissionNode;
+  class BlackbodyNode;
 }  // namespace ccl
 
 WABI_NAMESPACE_BEGIN

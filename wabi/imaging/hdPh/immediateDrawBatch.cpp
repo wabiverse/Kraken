@@ -302,8 +302,7 @@ void HdPh_ImmediateDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &re
           instanceBarCurrents.push_back(instanceBar);
           binder.BindInstanceBufferArray(instanceBar, i);
           continue;
-        }
-        else if (!instanceBar->IsAggregatedWith(instanceBarCurrents[i]))
+        } else if (!instanceBar->IsAggregatedWith(instanceBarCurrents[i]))
         {
           binder.UnbindInstanceBufferArray(instanceBarCurrents[i], i);
           binder.BindInstanceBufferArray(instanceBar, i);
@@ -458,8 +457,7 @@ void HdPh_ImmediateDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &re
         (void *)(firstIndex * sizeof(uint32_t)),
         instanceCount,
         baseVertex);
-    }
-    else if (vertexCount > 0)
+    } else if (vertexCount > 0)
     {
       glDrawArraysInstanced(geometricShader->GetPrimitiveMode(), baseVertex, vertexCount, instanceCount);
     }

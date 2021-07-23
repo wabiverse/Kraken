@@ -55,17 +55,17 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Repr(GfPlane const &self)
-{
-  return TF_PY_REPR_PREFIX + "Plane(" + TfPyRepr(self.GetNormal()) + ", " +
-         TfPyRepr(self.GetDistanceFromOrigin()) + ")";
-}
+  static string _Repr(GfPlane const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Plane(" + TfPyRepr(self.GetNormal()) + ", " +
+           TfPyRepr(self.GetDistanceFromOrigin()) + ")";
+  }
 
-static object _FitPlaneToPoints(const std::vector<GfVec3d> &points)
-{
-  GfPlane plane;
-  return GfFitPlaneToPoints(points, &plane) ? object(plane) : object();
-}
+  static object _FitPlaneToPoints(const std::vector<GfVec3d> &points)
+  {
+    GfPlane plane;
+    return GfFitPlaneToPoints(points, &plane) ? object(plane) : object();
+  }
 
 }  // anonymous namespace
 
@@ -85,12 +85,12 @@ void wrapPlane()
 
     .def(TfTypePythonClass())
 
-    .def("Set", (void (This::*)(const GfVec3d &, double)) & This::Set, return_self<>())
-    .def("Set", (void (This::*)(const GfVec3d &, const GfVec3d &)) & This::Set, return_self<>())
+    .def("Set", (void(This::*)(const GfVec3d &, double)) & This::Set, return_self<>())
+    .def("Set", (void(This::*)(const GfVec3d &, const GfVec3d &)) & This::Set, return_self<>())
     .def("Set",
-         (void (This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &)) & This::Set,
+         (void(This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &)) & This::Set,
          return_self<>())
-    .def("Set", (void (This::*)(const GfVec4d &)) & This::Set, return_self<>())
+    .def("Set", (void(This::*)(const GfVec4d &)) & This::Set, return_self<>())
 
     .add_property("normal", getNormal)
     .add_property("distanceFromOrigin", &This::GetDistanceFromOrigin)
@@ -106,10 +106,10 @@ void wrapPlane()
     .def("Reorient", &This::Reorient, return_self<>())
 
     .def("IntersectsPositiveHalfSpace",
-         (bool (This::*)(const GfRange3d &) const) & This::IntersectsPositiveHalfSpace)
+         (bool(This::*)(const GfRange3d &) const) & This::IntersectsPositiveHalfSpace)
 
     .def("IntersectsPositiveHalfSpace",
-         (bool (This::*)(const GfVec3d &) const) & This::IntersectsPositiveHalfSpace)
+         (bool(This::*)(const GfVec3d &) const) & This::IntersectsPositiveHalfSpace)
 
     .def(str(self))
     .def(self == self)

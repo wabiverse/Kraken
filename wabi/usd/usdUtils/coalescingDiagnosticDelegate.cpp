@@ -48,28 +48,28 @@ WABI_NAMESPACE_BEGIN
 // function name.
 namespace
 {
-using _CoalescedItem = UsdUtilsCoalescingDiagnosticDelegateSharedItem;
+  using _CoalescedItem = UsdUtilsCoalescingDiagnosticDelegateSharedItem;
 
-struct _CoalescedItemHash
-{
-  std::size_t operator()(const _CoalescedItem &i) const
+  struct _CoalescedItemHash
   {
-    std::size_t hashVal = 0;
-    boost::hash_combine(hashVal, i.sourceLineNumber);
-    boost::hash_combine(hashVal, i.sourceFunction);
-    boost::hash_combine(hashVal, i.sourceFileName);
-    return hashVal;
-  }
-};
+    std::size_t operator()(const _CoalescedItem &i) const
+    {
+      std::size_t hashVal = 0;
+      boost::hash_combine(hashVal, i.sourceLineNumber);
+      boost::hash_combine(hashVal, i.sourceFunction);
+      boost::hash_combine(hashVal, i.sourceFileName);
+      return hashVal;
+    }
+  };
 
-struct _CoalescedItemEqualTo
-{
-  bool operator()(const _CoalescedItem &i1, const _CoalescedItem &i2) const
+  struct _CoalescedItemEqualTo
   {
-    return i1.sourceLineNumber == i2.sourceLineNumber && i1.sourceFunction == i2.sourceFunction &&
-           i1.sourceFileName == i2.sourceFileName;
-  }
-};
+    bool operator()(const _CoalescedItem &i1, const _CoalescedItem &i2) const
+    {
+      return i1.sourceLineNumber == i2.sourceLineNumber && i1.sourceFunction == i2.sourceFunction &&
+             i1.sourceFileName == i2.sourceFileName;
+    }
+  };
 }  // namespace
 
 UsdUtilsCoalescingDiagnosticDelegate::UsdUtilsCoalescingDiagnosticDelegate()
@@ -141,8 +141,7 @@ UsdUtilsCoalescingDiagnosticDelegateVector UsdUtilsCoalescingDiagnosticDelegate:
 
         result.push_back(vItem);
         vectorIndex += 1;
-      }
-      else
+      } else
       {
         result[lookup->second].unsharedItems.push_back(unsharedItem);
       }

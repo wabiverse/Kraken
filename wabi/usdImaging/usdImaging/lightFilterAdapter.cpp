@@ -84,8 +84,10 @@ void UsdImagingLightFilterAdapter::TrackVariability(UsdPrim const &prim,
                                                     UsdImagingInstancerContext const *instancerContext) const
 {
   // Discover time-varying transforms.
-  _IsTransformVarying(
-    prim, HdLight::DirtyBits::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
+  _IsTransformVarying(prim,
+                      HdLight::DirtyBits::DirtyTransform,
+                      UsdImagingTokens->usdVaryingXform,
+                      timeVaryingBits);
 
   // Determine if the light filter material network is time varying.
   if (UsdImaging_IsHdMaterialNetworkTimeVarying(prim))
@@ -185,8 +187,11 @@ VtValue UsdImagingLightFilterAdapter::GetMaterialResource(UsdPrim const &prim,
 
   HdMaterialNetworkMap networkMap;
 
-  UsdImaging_BuildHdMaterialNetworkFromTerminal(
-    prim, HdMaterialTerminalTokens->lightFilter, _GetShaderSourceTypes(), &networkMap, time);
+  UsdImaging_BuildHdMaterialNetworkFromTerminal(prim,
+                                                HdMaterialTerminalTokens->lightFilter,
+                                                _GetShaderSourceTypes(),
+                                                &networkMap,
+                                                time);
 
   return VtValue(networkMap);
 }

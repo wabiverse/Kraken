@@ -60,8 +60,7 @@ GfRotation &GfRotation::SetQuat(const GfQuatd &quat)
     // SetQuaternion which cannot be re-created via SetAxisAngle().
     double x = acos(GfClamp(quat.GetReal(), -1.0, 1.0));
     SetAxisAngle(quat.GetImaginary() / len, 2.0 * GfRadiansToDegrees(x));
-  }
-  else
+  } else
     SetIdentity();
 
   return *this;
@@ -164,8 +163,7 @@ GfVec3d GfRotation::Decompose(const GfVec3d &axis0, const GfVec3d &axis1, const 
     r0 = atan2(m[k][j], m[k][k]);
     r1 = atan2(-m[k][i], cy);
     r2 = atan2(m[j][i], m[i][i]);
-  }
-  else
+  } else
   {
     r0 = atan2(-m[j][k], m[j][j]);
     r1 = atan2(-m[k][i], cy);
@@ -619,8 +617,7 @@ GfRotation &GfRotation::operator*=(const GfRotation &r)
   {
     _axis = q.GetImaginary() / len;
     _angle = 2.0 * GfRadiansToDegrees(acos(q.GetReal()));
-  }
-  else
+  } else
   {
     // Leave the axis as is; just set the angle to 0.
     _angle = 0.0;

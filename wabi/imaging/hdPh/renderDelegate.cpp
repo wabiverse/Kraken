@@ -93,71 +93,72 @@ using HdPhResourceRegistryWeakPtr = std::weak_ptr<HdPhResourceRegistry>;
 namespace
 {
 
-//
-// Map from Hgi instances to resource registries.
-//
-// An entry is kept alive until the last shared_ptr to a resource
-// registry is dropped.
-//
-class _HgiToResourceRegistryMap final
-{
- public:
-  // Map is a singleton.
-  static _HgiToResourceRegistryMap &GetInstance()
+  //
+  // Map from Hgi instances to resource registries.
+  //
+  // An entry is kept alive until the last shared_ptr to a resource
+  // registry is dropped.
+  //
+  class _HgiToResourceRegistryMap final
   {
-    static _HgiToResourceRegistryMap instance;
-    return instance;
-  }
-
-  // Look-up resource registry by Hgi instance, create resource
-  // registry for the instance if it didn't exist.
-  HdPhResourceRegistrySharedPtr GetOrCreateRegistry(Hgi *const hgi)
-  {
-    std::lock_guard<std::mutex> guard(_mutex);
-
-    // Previous entry exists, use it.
-    auto it = _map.find(hgi);
-    if (it != _map.end())
+   public:
+    // Map is a singleton.
+    static _HgiToResourceRegistryMap &GetInstance()
     {
-      HdPhResourceRegistryWeakPtr const &registry = it->second;
-      return HdPhResourceRegistrySharedPtr(registry);
+      static _HgiToResourceRegistryMap instance;
+      return instance;
     }
 
-    // Create resource registry, custom deleter to remove corresponding
-    // entry from map.
-    HdPhResourceRegistrySharedPtr const result(
-      new HdPhResourceRegistry(hgi), [this](HdPhResourceRegistry *registry) { this->_Destroy(registry); });
+    // Look-up resource registry by Hgi instance, create resource
+    // registry for the instance if it didn't exist.
+    HdPhResourceRegistrySharedPtr GetOrCreateRegistry(Hgi *const hgi)
+    {
+      std::lock_guard<std::mutex> guard(_mutex);
 
-    // Insert into map.
-    _map.insert({hgi, result});
+      // Previous entry exists, use it.
+      auto it = _map.find(hgi);
+      if (it != _map.end())
+      {
+        HdPhResourceRegistryWeakPtr const &registry = it->second;
+        return HdPhResourceRegistrySharedPtr(registry);
+      }
 
-    // Also register with HdPerfLog.
-    //
-    HdPerfLog::GetInstance().AddResourceRegistry(result.get());
+      // Create resource registry, custom deleter to remove corresponding
+      // entry from map.
+      HdPhResourceRegistrySharedPtr const result(
+        new HdPhResourceRegistry(hgi),
+        [this](HdPhResourceRegistry *registry) { this->_Destroy(registry); });
 
-    return result;
-  }
+      // Insert into map.
+      _map.insert({hgi, result});
 
- private:
-  void _Destroy(HdPhResourceRegistry *const registry)
-  {
-    TRACE_FUNCTION();
+      // Also register with HdPerfLog.
+      //
+      HdPerfLog::GetInstance().AddResourceRegistry(result.get());
 
-    std::lock_guard<std::mutex> guard(_mutex);
+      return result;
+    }
 
-    HdPerfLog::GetInstance().RemoveResourceRegistry(registry);
+   private:
+    void _Destroy(HdPhResourceRegistry *const registry)
+    {
+      TRACE_FUNCTION();
 
-    _map.erase(registry->GetHgi());
-    delete registry;
-  }
+      std::lock_guard<std::mutex> guard(_mutex);
 
-  using _Map = std::unordered_map<Hgi *, HdPhResourceRegistryWeakPtr>;
+      HdPerfLog::GetInstance().RemoveResourceRegistry(registry);
 
-  _HgiToResourceRegistryMap() = default;
+      _map.erase(registry->GetHgi());
+      delete registry;
+    }
 
-  std::mutex _mutex;
-  _Map _map;
-};
+    using _Map = std::unordered_map<Hgi *, HdPhResourceRegistryWeakPtr>;
+
+    _HgiToResourceRegistryMap() = default;
+
+    std::mutex _mutex;
+    _Map _map;
+  };
 
 }  // namespace
 
@@ -177,14 +178,15 @@ HdPhRenderDelegate::HdPhRenderDelegate(HdRenderSettingsMap const &settingsMap)
                               VtValue(bool(TfGetEnvSetting(HD_ENABLE_GPU_TINY_PRIM_CULLING)))},
     HdRenderSettingDescriptor{"Step size when raymarching volume",
                               HdPhRenderSettingsTokens->volumeRaymarchingStepSize,
-                              VtValue(HdPhVolume::defaultStepSize)},
+                              VtValue(HdPhVolume::defaultStepSize)                           },
     HdRenderSettingDescriptor{"Step size when raymarching volume for lighting computation",
                               HdPhRenderSettingsTokens->volumeRaymarchingStepSizeLighting,
-                              VtValue(HdPhVolume::defaultStepSizeLighting)},
+                              VtValue(HdPhVolume::defaultStepSizeLighting)                   },
     HdRenderSettingDescriptor{"Maximum memory for a volume field texture in Mb "
                               "(unless overridden by field prim)",
                               HdPhRenderSettingsTokens->volumeMaxTextureMemoryPerField,
-                              VtValue(HdPhVolume::defaultMaxTextureMemoryPerField)}};
+                              VtValue(HdPhVolume::defaultMaxTextureMemoryPerField)           }
+  };
 
   _PopulateDefaultSettings(_settingDescriptors);
 }
@@ -283,8 +285,7 @@ HdAovDescriptor HdPhRenderDelegate::GetDefaultAovDescriptor(TfToken const &name)
   {
     HdFormat colorFormat = HdFormatFloat16Vec4;
     return HdAovDescriptor(colorFormat, colorDepthMSAA, VtValue(GfVec4f(0)));
-  }
-  else if (HdAovHasDepthSemantic(name))
+  } else if (HdAovHasDepthSemantic(name))
   {
     return HdAovDescriptor(HdFormatFloat32, colorDepthMSAA, VtValue(1.0f));
   }
@@ -318,20 +319,16 @@ HdRprim *HdPhRenderDelegate::CreateRprim(TfToken const &typeId, SdfPath const &r
   if (typeId == HdPrimTypeTokens->mesh)
   {
     return new HdPhMesh(rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->basisCurves)
+  } else if (typeId == HdPrimTypeTokens->basisCurves)
   {
     return new HdPhBasisCurves(rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->points)
+  } else if (typeId == HdPrimTypeTokens->points)
   {
     return new HdPhPoints(rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->volume)
+  } else if (typeId == HdPrimTypeTokens->volume)
   {
     return new HdPhVolume(rprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Rprim Type %s", typeId.GetText());
   }
@@ -349,25 +346,20 @@ HdSprim *HdPhRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath const &s
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdCamera(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->drawTarget)
+  } else if (typeId == HdPrimTypeTokens->drawTarget)
   {
     return new HdPhDrawTarget(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->extComputation)
+  } else if (typeId == HdPrimTypeTokens->extComputation)
   {
     return new HdPhExtComputation(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->material)
+  } else if (typeId == HdPrimTypeTokens->material)
   {
     return new HdPhMaterial(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->domeLight || typeId == HdPrimTypeTokens->simpleLight ||
-           typeId == HdPrimTypeTokens->sphereLight || typeId == HdPrimTypeTokens->rectLight)
+  } else if (typeId == HdPrimTypeTokens->domeLight || typeId == HdPrimTypeTokens->simpleLight ||
+             typeId == HdPrimTypeTokens->sphereLight || typeId == HdPrimTypeTokens->rectLight)
   {
     return new HdPhLight(sprimId, typeId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
@@ -380,25 +372,20 @@ HdSprim *HdPhRenderDelegate::CreateFallbackSprim(TfToken const &typeId)
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdCamera(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->drawTarget)
+  } else if (typeId == HdPrimTypeTokens->drawTarget)
   {
     return new HdPhDrawTarget(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->extComputation)
+  } else if (typeId == HdPrimTypeTokens->extComputation)
   {
     return new HdPhExtComputation(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->material)
+  } else if (typeId == HdPrimTypeTokens->material)
   {
     return _CreateFallbackMaterialPrim();
-  }
-  else if (typeId == HdPrimTypeTokens->domeLight || typeId == HdPrimTypeTokens->simpleLight ||
-           typeId == HdPrimTypeTokens->sphereLight || typeId == HdPrimTypeTokens->rectLight)
+  } else if (typeId == HdPrimTypeTokens->domeLight || typeId == HdPrimTypeTokens->simpleLight ||
+             typeId == HdPrimTypeTokens->sphereLight || typeId == HdPrimTypeTokens->rectLight)
   {
     return new HdPhLight(SdfPath::EmptyPath(), typeId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
@@ -416,12 +403,10 @@ HdBprim *HdPhRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath const &b
   if (HdPhField::IsSupportedBprimType(typeId))
   {
     return new HdPhField(bprimId, typeId);
-  }
-  else if (typeId == HdPrimTypeTokens->renderBuffer)
+  } else if (typeId == HdPrimTypeTokens->renderBuffer)
   {
     return new HdPhRenderBuffer(_resourceRegistry.get(), bprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
@@ -434,12 +419,10 @@ HdBprim *HdPhRenderDelegate::CreateFallbackBprim(TfToken const &typeId)
   if (HdPhField::IsSupportedBprimType(typeId))
   {
     return new HdPhField(SdfPath::EmptyPath(), typeId);
-  }
-  else if (typeId == HdPrimTypeTokens->renderBuffer)
+  } else if (typeId == HdPrimTypeTokens->renderBuffer)
   {
     return new HdPhRenderBuffer(_resourceRegistry.get(), SdfPath::EmptyPath());
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }

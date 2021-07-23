@@ -43,27 +43,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateWidthsAttr(UsdGeomPoints &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateWidthsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray), writeSparsely);
-}
+  static UsdAttribute _CreateWidthsAttr(UsdGeomPoints &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateWidthsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+                                 writeSparsely);
+  }
 
-static UsdAttribute _CreateIdsAttr(UsdGeomPoints &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array), writeSparsely);
-}
+  static UsdAttribute _CreateIdsAttr(UsdGeomPoints &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array), writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomPoints &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.Points(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdGeomPoints &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.Points(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -95,8 +97,9 @@ void wrapUsdGeomPoints()
     .def(!self)
 
     .def("GetWidthsAttr", &This::GetWidthsAttr)
-    .def(
-      "CreateWidthsAttr", &_CreateWidthsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateWidthsAttr",
+         &_CreateWidthsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetIdsAttr", &This::GetIdsAttr)
     .def("CreateIdsAttr", &_CreateIdsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
@@ -128,51 +131,50 @@ void wrapUsdGeomPoints()
 namespace
 {
 
-static TfPyObjWrapper _ComputeExtent(object points, object widths)
-{
-
-  // Convert from python objects to VtValue
-  VtVec3fArray extent;
-  VtValue pointsAsVtValue = UsdPythonToSdfType(points, SdfValueTypeNames->Float3Array);
-  VtValue widthsAsVtValue = UsdPythonToSdfType(widths, SdfValueTypeNames->FloatArray);
-
-  // Check Proper conversion to VtVec3fArray
-  if (!pointsAsVtValue.IsHolding<VtVec3fArray>())
+  static TfPyObjWrapper _ComputeExtent(object points, object widths)
   {
-    TF_CODING_ERROR("Improper value for 'points'");
-    return object();
+
+    // Convert from python objects to VtValue
+    VtVec3fArray extent;
+    VtValue pointsAsVtValue = UsdPythonToSdfType(points, SdfValueTypeNames->Float3Array);
+    VtValue widthsAsVtValue = UsdPythonToSdfType(widths, SdfValueTypeNames->FloatArray);
+
+    // Check Proper conversion to VtVec3fArray
+    if (!pointsAsVtValue.IsHolding<VtVec3fArray>())
+    {
+      TF_CODING_ERROR("Improper value for 'points'");
+      return object();
+    }
+
+    if (!widthsAsVtValue.IsHolding<VtFloatArray>())
+    {
+      TF_CODING_ERROR("Improper value for 'widths'");
+      return object();
+    }
+
+    // Convert from VtValue to VtVec3fArray
+    VtVec3fArray pointsArray = pointsAsVtValue.UncheckedGet<VtVec3fArray>();
+    VtFloatArray widthsArray = widthsAsVtValue.UncheckedGet<VtFloatArray>();
+
+    if (UsdGeomPoints::ComputeExtent(pointsArray, widthsArray, &extent))
+    {
+      return UsdVtValueToPython(VtValue(extent));
+    } else
+    {
+      return object();
+    }
   }
 
-  if (!widthsAsVtValue.IsHolding<VtFloatArray>())
+  WRAP_CUSTOM
   {
-    TF_CODING_ERROR("Improper value for 'widths'");
-    return object();
+    _class.def("GetWidthsInterpolation", &UsdGeomPoints::GetWidthsInterpolation)
+      .def("SetWidthsInterpolation", &UsdGeomPoints::SetWidthsInterpolation, arg("interpolation"))
+
+      .def("ComputeExtent", &_ComputeExtent, (arg("points"), arg("widths")))
+      .def("GetPointCount", &UsdGeomPoints::GetPointCount, arg("timeCode") = UsdTimeCode::Default())
+      .staticmethod("ComputeExtent")
+
+      ;
   }
-
-  // Convert from VtValue to VtVec3fArray
-  VtVec3fArray pointsArray = pointsAsVtValue.UncheckedGet<VtVec3fArray>();
-  VtFloatArray widthsArray = widthsAsVtValue.UncheckedGet<VtFloatArray>();
-
-  if (UsdGeomPoints::ComputeExtent(pointsArray, widthsArray, &extent))
-  {
-    return UsdVtValueToPython(VtValue(extent));
-  }
-  else
-  {
-    return object();
-  }
-}
-
-WRAP_CUSTOM
-{
-  _class.def("GetWidthsInterpolation", &UsdGeomPoints::GetWidthsInterpolation)
-    .def("SetWidthsInterpolation", &UsdGeomPoints::SetWidthsInterpolation, arg("interpolation"))
-
-    .def("ComputeExtent", &_ComputeExtent, (arg("points"), arg("widths")))
-    .def("GetPointCount", &UsdGeomPoints::GetPointCount, arg("timeCode") = UsdTimeCode::Default())
-    .staticmethod("ComputeExtent")
-
-    ;
-}
 
 }  // anonymous namespace

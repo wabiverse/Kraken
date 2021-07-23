@@ -94,8 +94,7 @@
     "-Wimplicit-int-float-conversion"  // warning: implicit conversion from 'xxx' to 'float' \
                                          // may lose precision
 #elif defined(__GNUC__)
-#  pragma GCC diagnostic ignored \
-    "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
+#  pragma GCC diagnostic ignored "-Wpragmas"  // warning: unknown option after '#pragma GCC diagnostic' kind
 #  pragma GCC diagnostic ignored \
     "-Wformat-nonliteral"  // warning: format not a string literal, format string not checked
 #  pragma GCC diagnostic ignored \
@@ -219,8 +218,9 @@ bool ANCHOR::BeginTableEx(const char *name,
   // clipping rules may evolve.
   const bool use_child_window = (flags & (AnchorTableFlags_ScrollX | AnchorTableFlags_ScrollY)) != 0;
   const GfVec2f avail_size = GetContentRegionAvail();
-  GfVec2f actual_outer_size = CalcItemSize(
-    outer_size, AnchorMax(avail_size[0], 1.0f), use_child_window ? AnchorMax(avail_size[1], 1.0f) : 0.0f);
+  GfVec2f actual_outer_size = CalcItemSize(outer_size,
+                                           AnchorMax(avail_size[0], 1.0f),
+                                           use_child_window ? AnchorMax(avail_size[1], 1.0f) : 0.0f);
   AnchorBBox outer_rect(outer_window->DC.CursorPos, outer_window->DC.CursorPos + actual_outer_size);
   if (use_child_window && IsClippedEx(outer_rect, 0, false))
   {
@@ -301,8 +301,7 @@ bool ANCHOR::BeginTableEx(const char *name,
     ANCHOR_ASSERT(table->InnerWindow->WindowPadding[0] == 0.0f &&
                   table->InnerWindow->WindowPadding[1] == 0.0f &&
                   table->InnerWindow->WindowBorderSize == 0.0f);
-  }
-  else
+  } else
   {
     // For non-scrolling tables, WorkRect == OuterRect == InnerRect.
     // But at this point we do NOT have a correct value for .Max[1] (unless a height has been
@@ -333,14 +332,12 @@ bool ANCHOR::BeginTableEx(const char *name,
   // - PadOuter           | Pad ..Content..... Pad .....Content.. Pad |
   // - PadInner           ........Content.. Pad | Pad ..Content........
   // - PadOuter+PadInner  | Pad ..Content.. Pad | Pad ..Content.. Pad |
-  const bool pad_outer_x = (flags & AnchorTableFlags_NoPadOuterX) ?
-                             false :
-                             (flags & AnchorTableFlags_PadOuterX) ?
-                             true :
-                             (flags & AnchorTableFlags_BordersOuterV) != 0;
+  const bool pad_outer_x = (flags & AnchorTableFlags_NoPadOuterX) ? false :
+                           (flags & AnchorTableFlags_PadOuterX)   ? true :
+                                                                    (flags & AnchorTableFlags_BordersOuterV) !=
+                                                                    0;
   const bool pad_inner_x = (flags & AnchorTableFlags_NoPadInnerX) ? false : true;
-  const float inner_spacing_for_border = (flags & AnchorTableFlags_BordersInnerV) ? TABLE_BORDER_SIZE :
-                                                                                    0.0f;
+  const float inner_spacing_for_border = (flags & AnchorTableFlags_BordersInnerV) ? TABLE_BORDER_SIZE : 0.0f;
   const float inner_spacing_explicit = (pad_inner_x && (flags & AnchorTableFlags_BordersInnerV) == 0) ?
                                          g.Style.CellPadding[0] :
                                          0.0f;
@@ -352,8 +349,7 @@ bool ANCHOR::BeginTableEx(const char *name,
   table->CellPaddingX = inner_padding_explicit;
   table->CellPaddingY = g.Style.CellPadding[1];
 
-  const float outer_padding_for_border = (flags & AnchorTableFlags_BordersOuterV) ? TABLE_BORDER_SIZE :
-                                                                                    0.0f;
+  const float outer_padding_for_border = (flags & AnchorTableFlags_BordersOuterV) ? TABLE_BORDER_SIZE : 0.0f;
   const float outer_padding_explicit = pad_outer_x ? g.Style.CellPadding[0] : 0.0f;
   table->OuterPaddingX = (outer_padding_for_border + outer_padding_explicit) - table->CellPaddingX;
 
@@ -431,8 +427,7 @@ bool ANCHOR::BeginTableEx(const char *name,
       {
         // FIXME: We don't attempt to preserve column order in this path.
         *column = old_columns_to_preserve[n];
-      }
-      else
+      } else
       {
         float width_auto = column->WidthAuto;
         *column = AnchorTableColumn();
@@ -598,8 +593,7 @@ static void TableSetupColumnFlags(AnchorTable *table,
       flags |= AnchorTableColumnFlags_WidthFixed;
     else
       flags |= AnchorTableColumnFlags_WidthStretch;
-  }
-  else
+  } else
   {
     ANCHOR_ASSERT(
       ImIsPowerOfTwo(flags & AnchorTableColumnFlags_WidthMask_));  // Check that only 1 of each set is used.
@@ -610,8 +604,7 @@ static void TableSetupColumnFlags(AnchorTable *table,
     flags |= AnchorTableColumnFlags_NoResize;
 
   // Sorting
-  if ((flags & AnchorTableColumnFlags_NoSortAscending) &&
-      (flags & AnchorTableColumnFlags_NoSortDescending))
+  if ((flags & AnchorTableColumnFlags_NoSortAscending) && (flags & AnchorTableColumnFlags_NoSortDescending))
     flags |= AnchorTableColumnFlags_NoSort;
 
   // Indentation
@@ -690,8 +683,9 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
   table->EnabledMaskByIndex = 0x00;
   table->EnabledMaskByDisplayOrder = 0x00;
   table->LeftMostEnabledColumn = -1;
-  table->MinColumnWidth = AnchorMax(
-    1.0f, g.Style.FramePadding[0] * 1.0f);  // g.Style.ColumnsMinSpacing; // FIXME-TABLE
+  table->MinColumnWidth = AnchorMax(1.0f,
+                                    g.Style.FramePadding[0] *
+                                      1.0f);  // g.Style.ColumnsMinSpacing; // FIXME-TABLE
 
   // [Part 1] Apply/lock Enabled and Order states. Calculate auto/ideal width for columns. Count
   // fixed/stretch columns. Process columns in their visible orders as we are building the
@@ -783,8 +777,7 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
     {
       stretch_sum_width_auto += column->WidthAuto;
       count_stretch++;
-    }
-    else
+    } else
     {
       fixed_max_width_auto = AnchorMax(fixed_max_width_auto, column->WidthAuto);
       count_fixed++;
@@ -847,8 +840,7 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
                                          table->MinColumnWidth *
                                            4.0f);  // FIXME-TABLE: Another constant/scale?
       sum_width_requests += column->WidthRequest;
-    }
-    else
+    } else
     {
       // Initialize stretch weight
       if (column->AutoFitQueue != 0x00 || column->StretchWeight < 0.0f || !column_is_resizable)
@@ -996,7 +988,8 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
     // Lock width based on start position and minimum/maximum width for this position
     float max_width = TableGetMaxColumnWidth(table, column_n);
     column->WidthGiven = AnchorMin(column->WidthGiven, max_width);
-    column->WidthGiven = AnchorMax(column->WidthGiven, AnchorMin(column->WidthRequest, table->MinColumnWidth));
+    column->WidthGiven = AnchorMax(column->WidthGiven,
+                                   AnchorMin(column->WidthRequest, table->MinColumnWidth));
     column->MaxX = offset_x + column->WidthGiven + table->CellSpacingX1 + table->CellSpacingX2 +
                    table->CellPaddingX * 2.0f;
 
@@ -1080,8 +1073,9 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
     }
 
     if (visible_n < table->FreezeColumnsCount)
-      host_clip_rect.Min[0] = AnchorClamp(
-        column->MaxX + TABLE_BORDER_SIZE, host_clip_rect.Min[0], host_clip_rect.Max[0]);
+      host_clip_rect.Min[0] = AnchorClamp(column->MaxX + TABLE_BORDER_SIZE,
+                                          host_clip_rect.Min[0],
+                                          host_clip_rect.Max[0]);
 
     offset_x += column->WidthGiven + table->CellSpacingX1 + table->CellSpacingX2 +
                 table->CellPaddingX * 2.0f;
@@ -1139,8 +1133,7 @@ void ANCHOR::TableUpdateLayout(AnchorTable *table)
     {
       TableDrawContextMenu(table);
       EndPopup();
-    }
-    else
+    } else
     {
       table->IsContextPopupOpen = false;
     }
@@ -1279,7 +1272,8 @@ void ANCHOR::EndTable()
     inner_window->DC.CursorMaxPos[1] = inner_content_max_y;
   else if (!(flags & AnchorTableFlags_NoHostExtendY))
     table->OuterRect.Max[1] = table->InnerRect.Max[1] = AnchorMax(
-      table->OuterRect.Max[1], inner_content_max_y);  // Patch OuterRect/InnerRect height
+      table->OuterRect.Max[1],
+      inner_content_max_y);  // Patch OuterRect/InnerRect height
   table->WorkRect.Max[1] = AnchorMax(table->WorkRect.Max[1], table->OuterRect.Max[1]);
   table->LastOuterHeight = table->OuterRect.GetHeight();
 
@@ -1352,19 +1346,20 @@ void ANCHOR::EndTable()
   if ((table->Flags & AnchorTableFlags_ScrollX) == 0 && inner_window != outer_window)
   {
     inner_window->Scroll[0] = 0.0f;
-  }
-  else if (table->LastResizedColumn != -1 && table->ResizedColumn == -1 && inner_window->ScrollbarX &&
-           table->InstanceInteracted == table->InstanceCurrent)
+  } else if (table->LastResizedColumn != -1 && table->ResizedColumn == -1 && inner_window->ScrollbarX &&
+             table->InstanceInteracted == table->InstanceCurrent)
   {
     // When releasing a column being resized, scroll to keep the resulting column in sight
     const float neighbor_width_to_keep_visible = table->MinColumnWidth + table->CellPaddingX * 2.0f;
     AnchorTableColumn *column = &table->Columns[table->LastResizedColumn];
     if (column->MaxX < table->InnerClipRect.Min[0])
-      SetScrollFromPosX(
-        inner_window, column->MaxX - inner_window->Pos[0] - neighbor_width_to_keep_visible, 1.0f);
+      SetScrollFromPosX(inner_window,
+                        column->MaxX - inner_window->Pos[0] - neighbor_width_to_keep_visible,
+                        1.0f);
     else if (column->MaxX > table->InnerClipRect.Max[0])
-      SetScrollFromPosX(
-        inner_window, column->MaxX - inner_window->Pos[0] + neighbor_width_to_keep_visible, 1.0f);
+      SetScrollFromPosX(inner_window,
+                        column->MaxX - inner_window->Pos[0] + neighbor_width_to_keep_visible,
+                        1.0f);
   }
 
   // Apply resizing/dragging at the end of the frame
@@ -1402,8 +1397,7 @@ void ANCHOR::EndTable()
   if (inner_window != outer_window)
   {
     EndChild();
-  }
-  else
+  } else
   {
     ItemSize(table->OuterRect.GetSize());
     ItemAdd(table->OuterRect, 0);
@@ -1419,8 +1413,7 @@ void ANCHOR::EndTable()
     ANCHOR_ASSERT((table->Flags & AnchorTableFlags_ScrollX) == 0);
     outer_window->DC.CursorMaxPos[0] = AnchorMax(backup_outer_max_pos[0],
                                                  table->OuterRect.Min[0] + table->ColumnsAutoFitWidth);
-  }
-  else if (temp_data->UserOuterSize[0] <= 0.0f)
+  } else if (temp_data->UserOuterSize[0] <= 0.0f)
   {
     const float decoration_size = (table->Flags & AnchorTableFlags_ScrollX) ?
                                     inner_window->ScrollbarSizes[0] :
@@ -1431,8 +1424,7 @@ void ANCHOR::EndTable()
     outer_window->DC.CursorMaxPos[0] = AnchorMax(
       backup_outer_max_pos[0],
       AnchorMin(table->OuterRect.Max[0], table->OuterRect.Min[0] + table->ColumnsAutoFitWidth));
-  }
-  else
+  } else
   {
     outer_window->DC.CursorMaxPos[0] = AnchorMax(backup_outer_max_pos[0], table->OuterRect.Max[0]);
   }
@@ -1441,12 +1433,12 @@ void ANCHOR::EndTable()
     const float decoration_size = (table->Flags & AnchorTableFlags_ScrollY) ?
                                     inner_window->ScrollbarSizes[1] :
                                     0.0f;
-    outer_window->DC.IdealMaxPos[1] = AnchorMax(
-      outer_window->DC.IdealMaxPos[1], inner_content_max_y + decoration_size - temp_data->UserOuterSize[1]);
+    outer_window->DC.IdealMaxPos[1] = AnchorMax(outer_window->DC.IdealMaxPos[1],
+                                                inner_content_max_y + decoration_size -
+                                                  temp_data->UserOuterSize[1]);
     outer_window->DC.CursorMaxPos[1] = AnchorMax(backup_outer_max_pos[1],
                                                  AnchorMin(table->OuterRect.Max[1], inner_content_max_y));
-  }
-  else
+  } else
   {
     // OuterRect.Max[1] may already have been pushed downward from the initial value (unless
     // AnchorTableFlags_NoHostExtendY is set)
@@ -1848,8 +1840,7 @@ void ANCHOR::TableEndRow(AnchorTable *table)
     if (table->RowBgColor[0] != ANCHOR_COL32_DISABLE)
       bg_col0 = table->RowBgColor[0];
     else if (table->Flags & AnchorTableFlags_RowBg)
-      bg_col0 = GetColorU32((table->RowBgColorCounter & 1) ? AnchorCol_TableRowBgAlt :
-                                                             AnchorCol_TableRowBg);
+      bg_col0 = GetColorU32((table->RowBgColorCounter & 1) ? AnchorCol_TableRowBgAlt : AnchorCol_TableRowBg);
     if (table->RowBgColor[1] != ANCHOR_COL32_DISABLE)
       bg_col1 = table->RowBgColor[1];
 
@@ -1889,8 +1880,7 @@ void ANCHOR::TableEndRow(AnchorTable *table)
     if (draw_cell_bg_color)
     {
       AnchorTableCellData *cell_data_end = &table->RowCellData[table->RowCellDataCurrent];
-      for (AnchorTableCellData *cell_data = &table->RowCellData[0]; cell_data <= cell_data_end;
-           cell_data++)
+      for (AnchorTableCellData *cell_data = &table->RowCellData[0]; cell_data <= cell_data_end; cell_data++)
       {
         const AnchorTableColumn *column = &table->Columns[cell_data->Column];
         AnchorBBox cell_bg_rect = TableGetCellBgRect(table, cell_data->Column);
@@ -1905,8 +1895,10 @@ void ANCHOR::TableEndRow(AnchorTable *table)
 
     // Draw top border
     if (border_col && bg_y1 >= table->BgClipRect.Min[1] && bg_y1 < table->BgClipRect.Max[1])
-      window->DrawList->AddLine(
-        GfVec2f(table->BorderX1, bg_y1), GfVec2f(table->BorderX2, bg_y1), border_col, border_size);
+      window->DrawList->AddLine(GfVec2f(table->BorderX1, bg_y1),
+                                GfVec2f(table->BorderX2, bg_y1),
+                                border_col,
+                                border_size);
 
     // Draw bottom border at the row unfreezing mark (always strong)
     if (draw_strong_bottom_border && bg_y2 >= table->BgClipRect.Min[1] && bg_y2 < table->BgClipRect.Max[1])
@@ -1934,7 +1926,8 @@ void ANCHOR::TableEndRow(AnchorTable *table)
     // BgClipRect starts as table->InnerClipRect, reduce it now and make BgClipRectForDrawCmd ==
     // BgClipRect
     float y0 = AnchorMax(table->RowPosY2 + 1, window->InnerClipRect.Min[1]);
-    table->BgClipRect.Min[1] = table->Bg2ClipRectForDrawCmd.Min[1] = AnchorMin(y0, window->InnerClipRect.Max[1]);
+    table->BgClipRect.Min[1] = table->Bg2ClipRectForDrawCmd.Min[1] = AnchorMin(y0,
+                                                                               window->InnerClipRect.Max[1]);
     table->BgClipRect.Max[1] = table->Bg2ClipRectForDrawCmd.Max[1] = window->InnerClipRect.Max[1];
     table->Bg2DrawChannelCurrent = table->Bg2DrawChannelUnfrozen;
     ANCHOR_ASSERT(table->Bg2ClipRectForDrawCmd.Min[1] <= table->Bg2ClipRectForDrawCmd.Max[1]);
@@ -2014,8 +2007,7 @@ bool ANCHOR::TableNextColumn()
     if (table->CurrentColumn != -1)
       TableEndCell(table);
     TableBeginCell(table, table->CurrentColumn + 1);
-  }
-  else
+  } else
   {
     TableNextRow();
     TableBeginCell(table, 0);
@@ -2072,8 +2064,7 @@ void ANCHOR::TableBeginCell(AnchorTable *table, int column_n)
     // that channel hasn't changed.
     table->DrawSplitter->SetCurrentChannel(window->DrawList, TABLE_DRAW_CHANNEL_NOCLIP);
     // ANCHOR_ASSERT(table->DrawSplitter._Current == TABLE_DRAW_CHANNEL_NOCLIP);
-  }
-  else
+  } else
   {
     // FIXME-TABLE: Could avoid this if draw channel is dummy channel?
     SetWindowClipRectBeforeSetChannel(window, column->ClipRect);
@@ -2141,8 +2132,7 @@ float ANCHOR::TableGetMaxColumnWidth(const AnchorTable *table, int column_n)
                   column->MinX;
       max_width = max_width - table->OuterPaddingX - table->CellPaddingX - table->CellSpacingX2;
     }
-  }
-  else if ((table->Flags & AnchorTableFlags_NoKeepColumnsVisible) == 0)
+  } else if ((table->Flags & AnchorTableFlags_NoKeepColumnsVisible) == 0)
   {
     // If horizontal scrolling if disabled, we apply a final lossless shrinking of columns in order
     // to make sure they are all visible. Because of this we also know that all of the columns will
@@ -2423,8 +2413,7 @@ void ANCHOR::TableSetupDrawChannels(AnchorTable *table)
                                                                    0));
       if (!(table->Flags & AnchorTableFlags_NoClip))
         draw_channel_current++;
-    }
-    else
+    } else
     {
       column->DrawChannelFrozen = column->DrawChannelUnfrozen = table->DummyDrawChannel;
     }
@@ -2721,10 +2710,9 @@ void ANCHOR::TableDrawBorders(AnchorTable *table)
       {
         draw_y2 = draw_y2_body;
         col = is_resized ? GetColorU32(AnchorCol_SeparatorActive) :
-                           is_hovered ? GetColorU32(AnchorCol_SeparatorHovered) :
-                                        table->BorderColorStrong;
-      }
-      else
+              is_hovered ? GetColorU32(AnchorCol_SeparatorHovered) :
+                           table->BorderColorStrong;
+      } else
       {
         draw_y2 = (table->Flags &
                    (AnchorTableFlags_NoBordersInBody | AnchorTableFlags_NoBordersInBodyUntilResize)) ?
@@ -2737,8 +2725,10 @@ void ANCHOR::TableDrawBorders(AnchorTable *table)
       }
 
       if (draw_y2 > draw_y1)
-        inner_drawlist->AddLine(
-          GfVec2f(column->MaxX, draw_y1), GfVec2f(column->MaxX, draw_y2), col, border_size);
+        inner_drawlist->AddLine(GfVec2f(column->MaxX, draw_y1),
+                                GfVec2f(column->MaxX, draw_y2),
+                                col,
+                                border_size);
     }
   }
 
@@ -2757,20 +2747,26 @@ void ANCHOR::TableDrawBorders(AnchorTable *table)
     if ((table->Flags & AnchorTableFlags_BordersOuter) == AnchorTableFlags_BordersOuter)
     {
       inner_drawlist->AddRect(outer_border.Min, outer_border.Max, outer_col, 0.0f, 0, border_size);
-    }
-    else if (table->Flags & AnchorTableFlags_BordersOuterV)
+    } else if (table->Flags & AnchorTableFlags_BordersOuterV)
     {
-      inner_drawlist->AddLine(
-        outer_border.Min, GfVec2f(outer_border.Min[0], outer_border.Max[1]), outer_col, border_size);
-      inner_drawlist->AddLine(
-        GfVec2f(outer_border.Max[0], outer_border.Min[1]), outer_border.Max, outer_col, border_size);
-    }
-    else if (table->Flags & AnchorTableFlags_BordersOuterH)
+      inner_drawlist->AddLine(outer_border.Min,
+                              GfVec2f(outer_border.Min[0], outer_border.Max[1]),
+                              outer_col,
+                              border_size);
+      inner_drawlist->AddLine(GfVec2f(outer_border.Max[0], outer_border.Min[1]),
+                              outer_border.Max,
+                              outer_col,
+                              border_size);
+    } else if (table->Flags & AnchorTableFlags_BordersOuterH)
     {
-      inner_drawlist->AddLine(
-        outer_border.Min, GfVec2f(outer_border.Max[0], outer_border.Min[1]), outer_col, border_size);
-      inner_drawlist->AddLine(
-        GfVec2f(outer_border.Min[0], outer_border.Max[1]), outer_border.Max, outer_col, border_size);
+      inner_drawlist->AddLine(outer_border.Min,
+                              GfVec2f(outer_border.Max[0], outer_border.Min[1]),
+                              outer_col,
+                              border_size);
+      inner_drawlist->AddLine(GfVec2f(outer_border.Min[0], outer_border.Max[1]),
+                              outer_border.Max,
+                              outer_col,
+                              border_size);
     }
   }
   if ((table->Flags & AnchorTableFlags_BordersInnerH) && table->RowPosY2 < table->OuterRect.Max[1])
@@ -2974,8 +2970,8 @@ void ANCHOR::TableSortSpecsBuild(AnchorTable *table)
   AnchorTableTempData *temp_data = table->TempData;
   temp_data->SortSpecsMulti.resize(table->SortSpecsCount <= 1 ? 0 : table->SortSpecsCount);
   AnchorTableColumnSortSpecs *sort_specs = (table->SortSpecsCount == 0) ? NULL :
-                                                                          (table->SortSpecsCount == 1) ? &temp_data->SortSpecsSingle :
-                                                                                                         temp_data->SortSpecsMulti.Data;
+                                           (table->SortSpecsCount == 1) ? &temp_data->SortSpecsSingle :
+                                                                          temp_data->SortSpecsMulti.Data;
   if (sort_specs != NULL)
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
     {
@@ -3143,19 +3139,19 @@ void ANCHOR::TableHeader(const char *label)
     SetItemAllowOverlap();
   if (held || hovered || selected)
   {
-    const AnchorU32 col = GetColorU32(held ? AnchorCol_HeaderActive :
-                                             hovered ? AnchorCol_HeaderHovered :
-                                                       AnchorCol_Header);
+    const AnchorU32 col = GetColorU32(held    ? AnchorCol_HeaderActive :
+                                      hovered ? AnchorCol_HeaderHovered :
+                                                AnchorCol_Header);
     // RenderFrame(bb.Min, bb.Max, col, false, 0.0f);
     TableSetBgColor(AnchorTableBGTarget_CellBg, col, table->CurrentColumn);
     RenderNavHighlight(bb, id, AnchorNavHighlightFlags_TypeThin | AnchorNavHighlightFlags_NoRounding);
-  }
-  else
+  } else
   {
     // Submit single cell bg color in the case we didn't submit a full header row
     if ((table->RowFlags & AnchorTableRowFlags_Headers) == 0)
-      TableSetBgColor(
-        AnchorTableBGTarget_CellBg, GetColorU32(AnchorCol_TableHeaderBg), table->CurrentColumn);
+      TableSetBgColor(AnchorTableBGTarget_CellBg,
+                      GetColorU32(AnchorCol_TableHeaderBg),
+                      table->CurrentColumn);
   }
   if (held)
     table->HeldHeaderColumn = (AnchorTableColumnIdx)column_n;
@@ -3261,8 +3257,7 @@ void ANCHOR::TableOpenContextMenu(int column_n)
   if (column_n == table->ColumnsCount)  // To facilitate using with TableGetHoveredColumn()
     column_n = -1;
   ANCHOR_ASSERT(column_n >= -1 && column_n < table->ColumnsCount);
-  if (table->Flags &
-      (AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable | AnchorTableFlags_Hideable))
+  if (table->Flags & (AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable | AnchorTableFlags_Hideable))
   {
     table->IsContextPopupOpen = true;
     table->ContextPopupColumn = (AnchorTableColumnIdx)column_n;
@@ -3537,8 +3532,7 @@ void ANCHOR::TableLoadSettings(AnchorTable *table)
                                                         // We could otherwise decide to return...
       table->IsSettingsDirty = true;
     table->SettingsOffset = g.SettingsTables.offset_from_ptr(settings);
-  }
-  else
+  } else
   {
     settings = TableGetBoundSettings(table);
   }
@@ -3878,8 +3872,9 @@ void ANCHOR::DebugNodeTable(AnchorTable *table)
     PopStyleColor();
   }
   if (IsItemHovered())
-    GetForegroundDrawList()->AddRect(
-      table->OuterRect.Min, table->OuterRect.Max, ANCHOR_COL32(255, 255, 0, 255));
+    GetForegroundDrawList()->AddRect(table->OuterRect.Min,
+                                     table->OuterRect.Max,
+                                     ANCHOR_COL32(255, 255, 0, 255));
   if (IsItemVisible() && table->HoveredColumnBody != -1)
     GetForegroundDrawList()->AddRect(GetItemRectMin(), GetItemRectMax(), ANCHOR_COL32(255, 255, 0, 255));
   if (!open)
@@ -3901,8 +3896,9 @@ void ANCHOR::DebugNodeTable(AnchorTable *table)
              table->CellSpacingX1,
              table->CellSpacingX2,
              table->OuterPaddingX);
-  BulletText(
-    "HoveredColumnBody: %d, HoveredColumnBorder: %d", table->HoveredColumnBody, table->HoveredColumnBorder);
+  BulletText("HoveredColumnBody: %d, HoveredColumnBorder: %d",
+             table->HoveredColumnBody,
+             table->HoveredColumnBorder);
   BulletText("ResizedColumn: %d, ReorderColumn: %d, HeldHeaderColumn: %d",
              table->ResizedColumn,
              table->ReorderColumn,
@@ -3916,51 +3912,52 @@ void ANCHOR::DebugNodeTable(AnchorTable *table)
   {
     AnchorTableColumn *column = &table->Columns[n];
     const char *name = TableGetColumnName(table, n);
-    AnchorFormatString(buf,
-                       ANCHOR_ARRAYSIZE(buf),
-                       "Column %d order %d '%s': offset %+.2f to %+.2f%s\n"
-                       "Enabled: %d, VisibleX/Y: %d/%d, RequestOutput: %d, SkipItems: %d, DrawChannels: %d,%d\n"
-                       "WidthGiven: %.1f, Request/Auto: %.1f/%.1f, StretchWeight: %.3f (%.1f%%)\n"
-                       "MinX: %.1f, MaxX: %.1f (%+.1f), ClipRect: %.1f to %.1f (+%.1f)\n"
-                       "ContentWidth: %.1f,%.1f, HeadersUsed/Ideal %.1f/%.1f\n"
-                       "Sort: %d%s, UserID: 0x%08X, Flags: 0x%04X: %s%s%s..",
-                       n,
-                       column->DisplayOrder,
-                       name,
-                       column->MinX - table->WorkRect.Min[0],
-                       column->MaxX - table->WorkRect.Min[0],
-                       (n < table->FreezeColumnsRequest) ? " (Frozen)" : "",
-                       column->IsEnabled,
-                       column->IsVisibleX,
-                       column->IsVisibleY,
-                       column->IsRequestOutput,
-                       column->IsSkipItems,
-                       column->DrawChannelFrozen,
-                       column->DrawChannelUnfrozen,
-                       column->WidthGiven,
-                       column->WidthRequest,
-                       column->WidthAuto,
-                       column->StretchWeight,
-                       column->StretchWeight > 0.0f ? (column->StretchWeight / sum_weights) * 100.0f : 0.0f,
-                       column->MinX,
-                       column->MaxX,
-                       column->MaxX - column->MinX,
-                       column->ClipRect.Min[0],
-                       column->ClipRect.Max[0],
-                       column->ClipRect.Max[0] - column->ClipRect.Min[0],
-                       column->ContentMaxXFrozen - column->WorkMinX,
-                       column->ContentMaxXUnfrozen - column->WorkMinX,
-                       column->ContentMaxXHeadersUsed - column->WorkMinX,
-                       column->ContentMaxXHeadersIdeal - column->WorkMinX,
-                       column->SortOrder,
-                       (column->SortDirection == AnchorSortDirection_Ascending) ? " (Asc)" :
-                                                                                  (column->SortDirection == AnchorSortDirection_Descending) ? " (Des)" :
-                                                                                                                                              "",
-                       column->UserID,
-                       column->Flags,
-                       (column->Flags & AnchorTableColumnFlags_WidthStretch) ? "WidthStretch " : "",
-                       (column->Flags & AnchorTableColumnFlags_WidthFixed) ? "WidthFixed " : "",
-                       (column->Flags & AnchorTableColumnFlags_NoResize) ? "NoResize " : "");
+    AnchorFormatString(
+      buf,
+      ANCHOR_ARRAYSIZE(buf),
+      "Column %d order %d '%s': offset %+.2f to %+.2f%s\n"
+      "Enabled: %d, VisibleX/Y: %d/%d, RequestOutput: %d, SkipItems: %d, DrawChannels: %d,%d\n"
+      "WidthGiven: %.1f, Request/Auto: %.1f/%.1f, StretchWeight: %.3f (%.1f%%)\n"
+      "MinX: %.1f, MaxX: %.1f (%+.1f), ClipRect: %.1f to %.1f (+%.1f)\n"
+      "ContentWidth: %.1f,%.1f, HeadersUsed/Ideal %.1f/%.1f\n"
+      "Sort: %d%s, UserID: 0x%08X, Flags: 0x%04X: %s%s%s..",
+      n,
+      column->DisplayOrder,
+      name,
+      column->MinX - table->WorkRect.Min[0],
+      column->MaxX - table->WorkRect.Min[0],
+      (n < table->FreezeColumnsRequest) ? " (Frozen)" : "",
+      column->IsEnabled,
+      column->IsVisibleX,
+      column->IsVisibleY,
+      column->IsRequestOutput,
+      column->IsSkipItems,
+      column->DrawChannelFrozen,
+      column->DrawChannelUnfrozen,
+      column->WidthGiven,
+      column->WidthRequest,
+      column->WidthAuto,
+      column->StretchWeight,
+      column->StretchWeight > 0.0f ? (column->StretchWeight / sum_weights) * 100.0f : 0.0f,
+      column->MinX,
+      column->MaxX,
+      column->MaxX - column->MinX,
+      column->ClipRect.Min[0],
+      column->ClipRect.Max[0],
+      column->ClipRect.Max[0] - column->ClipRect.Min[0],
+      column->ContentMaxXFrozen - column->WorkMinX,
+      column->ContentMaxXUnfrozen - column->WorkMinX,
+      column->ContentMaxXHeadersUsed - column->WorkMinX,
+      column->ContentMaxXHeadersIdeal - column->WorkMinX,
+      column->SortOrder,
+      (column->SortDirection == AnchorSortDirection_Ascending)  ? " (Asc)" :
+      (column->SortDirection == AnchorSortDirection_Descending) ? " (Des)" :
+                                                                  "",
+      column->UserID,
+      column->Flags,
+      (column->Flags & AnchorTableColumnFlags_WidthStretch) ? "WidthStretch " : "",
+      (column->Flags & AnchorTableColumnFlags_WidthFixed) ? "WidthFixed " : "",
+      (column->Flags & AnchorTableColumnFlags_NoResize) ? "NoResize " : "");
     Bullet();
     Selectable(buf);
     if (IsItemHovered())
@@ -3995,9 +3992,9 @@ void ANCHOR::DebugNodeTableSettings(AnchorTableSettings *settings)
                n,
                column_settings->DisplayOrder,
                column_settings->SortOrder,
-               (sort_dir == AnchorSortDirection_Ascending) ? "Asc" :
-                                                             (sort_dir == AnchorSortDirection_Descending) ? "Des" :
-                                                                                                            "---",
+               (sort_dir == AnchorSortDirection_Ascending)  ? "Asc" :
+               (sort_dir == AnchorSortDirection_Descending) ? "Des" :
+                                                              "---",
                column_settings->IsEnabled,
                column_settings->IsStretch ? "Weight" : "Width ",
                column_settings->WidthOrWeight,
@@ -4133,8 +4130,9 @@ float ANCHOR::GetColumnWidth(int column_index)
 
   if (column_index < 0)
     column_index = columns->Current;
-  return GetColumnOffsetFromNorm(
-    columns, columns->Columns[column_index + 1].OffsetNorm - columns->Columns[column_index].OffsetNorm);
+  return GetColumnOffsetFromNorm(columns,
+                                 columns->Columns[column_index + 1].OffsetNorm -
+                                   columns->Columns[column_index].OffsetNorm);
 }
 
 void ANCHOR::SetColumnOffset(int column_index, float offset)
@@ -4154,7 +4152,8 @@ void ANCHOR::SetColumnOffset(int column_index, float offset)
                                        0.0f;
 
   if (!(columns->Flags & AnchorOldColumnFlags_NoForceWithinWindow))
-    offset = AnchorMin(offset, columns->OffMaxX - g.Style.ColumnsMinSpacing * (columns->Count - column_index));
+    offset = AnchorMin(offset,
+                       columns->OffMaxX - g.Style.ColumnsMinSpacing * (columns->Count - column_index));
   columns->Columns[column_index].OffsetNorm = GetColumnNormFromOffset(columns, offset - columns->OffMinX);
 
   if (preserve_width)
@@ -4331,7 +4330,8 @@ void ANCHOR::NextColumn()
 
   if (columns->Count == 1)
   {
-    window->DC.CursorPos[0] = ANCHOR_FLOOR(window->Pos[0] + window->DC.Indent.x + window->DC.ColumnsOffset.x);
+    window->DC.CursorPos[0] = ANCHOR_FLOOR(window->Pos[0] + window->DC.Indent.x +
+                                           window->DC.ColumnsOffset.x);
     ANCHOR_ASSERT(columns->Current == 0);
     return;
   }
@@ -4356,8 +4356,7 @@ void ANCHOR::NextColumn()
     // Columns 1+ ignore IndentX (by canceling it out)
     // FIXME-COLUMNS: Unnecessary, could be locked?
     window->DC.ColumnsOffset.x = GetColumnOffset(columns->Current) - window->DC.Indent.x + column_padding;
-  }
-  else
+  } else
   {
     // New row/line: column 0 honor IndentX.
     window->DC.ColumnsOffset.x = AnchorMax(column_padding - window->WindowPadding[0], 0.0f);
@@ -4430,9 +4429,9 @@ void ANCHOR::EndColumns()
       }
 
       // Draw column
-      const AnchorU32 col = GetColorU32(held ? AnchorCol_SeparatorActive :
-                                               hovered ? AnchorCol_SeparatorHovered :
-                                                         AnchorCol_Separator);
+      const AnchorU32 col = GetColorU32(held    ? AnchorCol_SeparatorActive :
+                                        hovered ? AnchorCol_SeparatorHovered :
+                                                  AnchorCol_Separator);
       const float xi = ANCHOR_FLOOR(x);
       window->DrawList->AddLine(GfVec2f(xi, y1 + 1.0f), GfVec2f(xi, y2), col);
     }

@@ -140,8 +140,7 @@ bool UsdSkel_SkelAnimationQueryImpl::_ComputeJointLocalTransforms(VtArray<Matrix
       if (xforms->size() == _jointOrder.size())
       {
         return true;
-      }
-      else if (xforms->empty())
+      } else if (xforms->empty())
       {
         // If all transform components were empty, that could mean:
         // - the attributes were never authored
@@ -159,8 +158,7 @@ bool UsdSkel_SkelAnimationQueryImpl::_ComputeJointLocalTransforms(VtArray<Matrix
         _anim.GetPrim().GetPath().GetText(),
         xforms->size(),
         _jointOrder.size());
-    }
-    else
+    } else
     {
       TF_WARN("%s -- failed composing transforms from components.", _anim.GetPrim().GetPath().GetText());
     }
@@ -183,7 +181,9 @@ bool UsdSkel_SkelAnimationQueryImpl::GetJointTransformTimeSamples(const GfInterv
                                                                   std::vector<double> *times) const
 {
   return UsdAttribute::GetUnionedTimeSamplesInInterval(
-    {_translations.GetAttribute(), _rotations.GetAttribute(), _scales.GetAttribute()}, interval, times);
+    {_translations.GetAttribute(), _rotations.GetAttribute(), _scales.GetAttribute()},
+    interval,
+    times);
 }
 
 bool UsdSkel_SkelAnimationQueryImpl::GetJointTransformAttributes(std::vector<UsdAttribute> *attrs) const

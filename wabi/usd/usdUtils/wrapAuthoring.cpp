@@ -65,8 +65,11 @@ static std::vector<UsdCollectionAPI> _WrapUsdUtilsCreateCollections(
     assignmentsVec[i] = std::make_pair(collName, includedPaths);
   }
 
-  return UsdUtilsCreateCollections(
-    assignmentsVec, usdPrim, minInclusionRatio, maxNumExcludesBelowInclude, minIncludeExcludeCollectionSize);
+  return UsdUtilsCreateCollections(assignmentsVec,
+                                   usdPrim,
+                                   minInclusionRatio,
+                                   maxNumExcludesBelowInclude,
+                                   minIncludeExcludeCollectionSize);
 }
 
 static object _WrapUsdUtilsComputeCollectionIncludesAndExcludes(

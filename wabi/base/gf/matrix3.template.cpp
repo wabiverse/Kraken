@@ -114,8 +114,7 @@
     inverse._mtx[2][0] = {{SCALAR_CAST("(-(a11*a20) + a10*a21)*rcp")}};
     inverse._mtx[2][1] = {{SCALAR_CAST("(a01*a20 - a00*a21)*rcp")}};
     inverse._mtx[2][2] = {{SCALAR_CAST("(-(a01*a10) + a00*a11)*rcp")}};
-  }
-  else
+  } else
   {
     inverse.SetScale(FLT_MAX);
   }
@@ -327,8 +326,7 @@ GfQuaternion
     im.Set((_mtx[1][2] - _mtx[2][1]) / (4.0 * r),
            (_mtx[2][0] - _mtx[0][2]) / (4.0 * r),
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
-  }
-  else
+  } else
   {
     int j = (i + 1) % 3;
     int k = (i + 2) % 3;

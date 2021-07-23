@@ -370,12 +370,10 @@ static vector<UsdGeomXformOp::Type> _GetCommonOpTypesForOpOrder(const vector<Usd
     {
       hasRotateOp = true;
       rotateOpType = it->GetOpType();
-    }
-    else if (it->GetOpType() == UsdGeomXformOp::TypeScale)
+    } else if (it->GetOpType() == UsdGeomXformOp::TypeScale)
     {
       hasScaleOp = true;
-    }
-    else if (it->GetOpType() == UsdGeomXformOp::TypeTranslate && it->IsInverseOp())
+    } else if (it->GetOpType() == UsdGeomXformOp::TypeTranslate && it->IsInverseOp())
     {
       ++numInverseTranslateOps;
     }
@@ -558,8 +556,7 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
       // We currently do not allow rotate ops to accumulate, so as
       // soon as we match one, advance to the next commonOpType.
       --commonOpTypeIndex;
-    }
-    else if (commonOpType == UsdGeomXformOp::TypeTranslate)
+    } else if (commonOpType == UsdGeomXformOp::TypeTranslate)
     {
       if (xformOp.IsInverseOp())
       {
@@ -568,10 +565,9 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
         // inverse translate, we can assume that a valid order will
         // have its pair farther towards the front.
         --commonOpTypeIndex;
-      }
-      else if (commonOpTypeIndex == translatePivotIndex &&
-               _MatricesAreInverses(commonOpMatrices[translatePivotIndex],
-                                    commonOpMatrices[translatePivotInvertIndex]))
+      } else if (commonOpTypeIndex == translatePivotIndex &&
+                 _MatricesAreInverses(commonOpMatrices[translatePivotIndex],
+                                      commonOpMatrices[translatePivotInvertIndex]))
       {
         // We've found a pair of pivot transforms, so we'll accumulate
         // the rest of the translates into regular translation.
@@ -636,8 +632,7 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
       GfRotation accumRot = commonOpMatrices[rotateIndex].ExtractRotation();
       GfVec3d result = accumRot.Decompose(GfVec3d::XAxis(), GfVec3d::YAxis(), GfVec3d::ZAxis());
       *rotation = GfVec3f(result[0], result[1], result[2]);
-    }
-    else
+    } else
     {
       *rotation = GfVec3f(0.0, 0.0, 0.0);
     }
@@ -650,8 +645,7 @@ bool UsdGeomXformCommonAPI::GetXformVectorsByAccumulation(GfVec3d *translation,
       (*scale)[0] = commonOpMatrices[scaleIndex][0][0];
       (*scale)[1] = commonOpMatrices[scaleIndex][1][1];
       (*scale)[2] = commonOpMatrices[scaleIndex][2][2];
-    }
-    else
+    } else
     {
       *scale = GfVec3f(1.0, 1.0, 1.0);
     }
@@ -985,8 +979,12 @@ UsdGeomXformCommonAPI::Ops UsdGeomXformCommonAPI::CreateXformOps(RotationOrder r
   }
 
   const auto flags = op1 | op2 | op3 | op4;
-  return _GetOrAddCommonXformOps(
-    xformable, &rotOrder, flags & OpTranslate, flags & OpPivot, flags & OpRotate, flags & OpScale);
+  return _GetOrAddCommonXformOps(xformable,
+                                 &rotOrder,
+                                 flags & OpTranslate,
+                                 flags & OpPivot,
+                                 flags & OpRotate,
+                                 flags & OpScale);
 }
 
 UsdGeomXformCommonAPI::Ops UsdGeomXformCommonAPI::CreateXformOps(OpFlags op1,
@@ -1001,8 +999,12 @@ UsdGeomXformCommonAPI::Ops UsdGeomXformCommonAPI::CreateXformOps(OpFlags op1,
   }
 
   const auto flags = op1 | op2 | op3 | op4;
-  return _GetOrAddCommonXformOps(
-    xformable, nullptr, flags & OpTranslate, flags & OpPivot, flags & OpRotate, flags & OpScale);
+  return _GetOrAddCommonXformOps(xformable,
+                                 nullptr,
+                                 flags & OpTranslate,
+                                 flags & OpPivot,
+                                 flags & OpRotate,
+                                 flags & OpScale);
 }
 
 /* static */

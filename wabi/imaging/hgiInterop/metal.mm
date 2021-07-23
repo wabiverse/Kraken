@@ -37,11 +37,11 @@ WABI_NAMESPACE_BEGIN
 
 namespace
 {
-struct Vertex
-{
-  float position[2];
-  float uv[2];
-};
+  struct Vertex
+  {
+    float position[2];
+    float uv[2];
+  };
 }
 
 static bool _ProcessGLErrors(bool silent = false)
@@ -60,8 +60,7 @@ static bool _ProcessGLErrors(bool silent = false)
     if (!errorString)
     {
       errorMessage << "GL error code: 0x" << std::hex << error << std::dec;
-    }
-    else
+    } else
     {
       errorMessage << "GL error: " << errorString;
     }
@@ -173,29 +172,39 @@ void HgiInteropMetal::_CreateShaderContext(int32_t vertexSource,
   if (shader.vao)
   {
     glEnableVertexAttribArray(shader.posAttrib);
-    glVertexAttribPointer(
-      shader.posAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, position)));
+    glVertexAttribPointer(shader.posAttrib,
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          sizeof(Vertex),
+                          (void *)(offsetof(Vertex, position)));
     glEnableVertexAttribArray(shader.texAttrib);
-    glVertexAttribPointer(
-      shader.texAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, uv)));
+    glVertexAttribPointer(shader.texAttrib,
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          sizeof(Vertex),
+                          (void *)(offsetof(Vertex, uv)));
   }
 
-  Vertex v[12] = {{{-1, -1}, {0, 0}},
-                  {{1, -1}, {1, 0}},
-                  {{-1, 1}, {0, 1}},
+  Vertex v[12] = {
+    {{-1, -1}, {0, 0}},
+    {{1, -1},  {1, 0}},
+    {{-1, 1},  {0, 1}},
 
-                  {{-1, 1}, {0, 1}},
-                  {{1, -1}, {1, 0}},
-                  {{1, 1}, {1, 1}},
+    {{-1, 1},  {0, 1}},
+    {{1, -1},  {1, 0}},
+    {{1, 1},   {1, 1}},
 
-                  // Second set have flipped v coord
-                  {{-1, -1}, {0, 1}},
-                  {{1, -1}, {1, 1}},
-                  {{-1, 1}, {0, 0}},
+ // Second set have flipped v coord
+    {{-1, -1}, {0, 1}},
+    {{1, -1},  {1, 1}},
+    {{-1, 1},  {0, 0}},
 
-                  {{-1, 1}, {0, 0}},
-                  {{1, -1}, {1, 1}},
-                  {{1, 1}, {1, 0}}};
+    {{-1, 1},  {0, 0}},
+    {{1, -1},  {1, 1}},
+    {{1, 1},   {1, 0}}
+  };
   glBufferData(GL_ARRAY_BUFFER, sizeof(v), v, GL_STATIC_DRAW);
 
   shader.program = program;
@@ -552,8 +561,11 @@ void HgiInteropMetal::_SetAttachmentSize(int width, int height)
                       &_depthBuffer);
 
   // Create the OpenGL texture for the color buffer
-  cvret = CVOpenGLTextureCacheCreateTextureFromImage(
-    kCFAllocatorDefault, _cvglTextureCache, _pixelBuffer, nil, &_cvglColorTexture);
+  cvret = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault,
+                                                     _cvglTextureCache,
+                                                     _pixelBuffer,
+                                                     nil,
+                                                     &_cvglColorTexture);
   if (cvret != kCVReturnSuccess)
   {
     TF_FATAL_CODING_ERROR(
@@ -563,8 +575,11 @@ void HgiInteropMetal::_SetAttachmentSize(int width, int height)
   _glColorTexture = CVOpenGLTextureGetName(_cvglColorTexture);
 
   // Create the OpenGL texture for the depth buffer
-  cvret = CVOpenGLTextureCacheCreateTextureFromImage(
-    kCFAllocatorDefault, _cvglTextureCache, _depthBuffer, nil, &_cvglDepthTexture);
+  cvret = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault,
+                                                     _cvglTextureCache,
+                                                     _depthBuffer,
+                                                     nil,
+                                                     &_cvglDepthTexture);
   if (cvret != kCVReturnSuccess)
   {
     TF_FATAL_CODING_ERROR(
@@ -677,21 +692,21 @@ void HgiInteropMetal::_RestoreOpenGlState()
   if (_restoreAlphaToCoverage)
   {
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-  }
-  else
+  } else
   {
     glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   }
 
-  glBlendFuncSeparate(
-    _restoreColorSrcFnOp, _restoreColorDstFnOp, _restoreAlphaSrcFnOp, _restoreAlphaDstFnOp);
+  glBlendFuncSeparate(_restoreColorSrcFnOp,
+                      _restoreColorDstFnOp,
+                      _restoreAlphaSrcFnOp,
+                      _restoreAlphaDstFnOp);
   glBlendEquationSeparate(_restoreColorOp, _restoreAlphaOp);
 
   if (_restoreblendEnabled)
   {
     glEnable(GL_BLEND);
-  }
-  else
+  } else
   {
     glDisable(GL_BLEND);
   }
@@ -704,8 +719,7 @@ void HgiInteropMetal::_RestoreOpenGlState()
   if (_restoreCullFace)
   {
     glEnable(GL_CULL_FACE);
-  }
-  else
+  } else
   {
     glDisable(GL_CULL_FACE);
   }
@@ -714,8 +728,7 @@ void HgiInteropMetal::_RestoreOpenGlState()
   if (_restoreDepthTest)
   {
     glEnable(GL_DEPTH_TEST);
-  }
-  else
+  } else
   {
     glDisable(GL_DEPTH_TEST);
   }
@@ -735,11 +748,14 @@ void HgiInteropMetal::_RestoreOpenGlState()
       VertexAttribState &state(_restoreVertexAttribState[i]);
       if (state.enabled)
       {
-        glVertexAttribPointer(
-          state.bufferBinding, state.size, state.type, state.normalized, state.stride, state.pointer);
+        glVertexAttribPointer(state.bufferBinding,
+                              state.size,
+                              state.type,
+                              state.normalized,
+                              state.stride,
+                              state.pointer);
         glEnableVertexAttribArray(state.bufferBinding);
-      }
-      else
+      } else
       {
         glDisableVertexAttribArray(state.bufferBinding);
       }
@@ -773,8 +789,7 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
     if (framebuffer.IsHolding<uint32_t>())
     {
       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.UncheckedGet<uint32_t>());
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("dstFramebuffer must hold uint32_t when targeting OpenGL");
     }
@@ -804,17 +819,24 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
   if (shader.vao)
   {
     glBindVertexArray(shader.vao);
-  }
-  else
+  } else
   {
     glBindBuffer(GL_ARRAY_BUFFER, shader.vbo);
 
     glEnableVertexAttribArray(shader.posAttrib);
-    glVertexAttribPointer(
-      shader.posAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, position)));
+    glVertexAttribPointer(shader.posAttrib,
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          sizeof(Vertex),
+                          (void *)(offsetof(Vertex, position)));
     glEnableVertexAttribArray(shader.texAttrib);
-    glVertexAttribPointer(
-      shader.texAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, uv)));
+    glVertexAttribPointer(shader.texAttrib,
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          sizeof(Vertex),
+                          (void *)(offsetof(Vertex, uv)));
   }
 
   GLint unit = 0;
@@ -838,8 +860,7 @@ void HgiInteropMetal::_BlitToOpenGL(VtValue const &framebuffer,
   if (flipY)
   {
     glDrawArrays(GL_TRIANGLES, 6, 12);
-  }
-  else
+  } else
   {
     glDrawArrays(GL_TRIANGLES, 0, 6);
   }
@@ -867,12 +888,12 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   constexpr bool flipImage = true;
 
   const int width = color ? color->GetDescriptor().dimensions[0] :
-                            depth ? depth->GetDescriptor().dimensions[0] :
-                                    256;
+                    depth ? depth->GetDescriptor().dimensions[0] :
+                            256;
 
   const int height = color ? color->GetDescriptor().dimensions[1] :
-                             depth ? depth->GetDescriptor().dimensions[1] :
-                                     256;
+                     depth ? depth->GetDescriptor().dimensions[1] :
+                             256;
 
   _SetAttachmentSize(width, height);
 
@@ -894,8 +915,7 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   if (_hgiMetal->GetCapabilities().concurrentDispatchSupported)
   {
     computeEncoder = [commandBuffer computeCommandEncoderWithDispatchType:MTLDispatchTypeConcurrent];
-  }
-  else
+  } else
   {
     computeEncoder = [commandBuffer computeCommandEncoder];
   }
@@ -948,8 +968,7 @@ void HgiInteropMetal::CompositeToInterop(HgiTextureHandle const &color,
   if (depthTexture && colorTexture)
   {
     glShaderIndex = ShaderContextColorDepth;
-  }
-  else if (colorTexture)
+  } else if (colorTexture)
   {
     glShaderIndex = ShaderContextColor;
   }

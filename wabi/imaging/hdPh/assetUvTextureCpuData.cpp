@@ -115,8 +115,7 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(std::string const &filePath
   {
     // We have authored mips we can use, so use them.
     _textureDesc.mipLevels = numUsableMips;
-  }
-  else
+  } else
   {
     // No authored mips, generate the mipmaps from the image.
     _generateMipmaps = true;
@@ -155,8 +154,10 @@ HdPhAssetUvTextureCpuData::HdPhAssetUvTextureCpuData(std::string const &filePath
   // Handle grayscale textures by expanding value to green and blue.
   if (HgiGetComponentCount(_textureDesc.format) == 1)
   {
-    _textureDesc.componentMapping = {
-      HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleR, HgiComponentSwizzleOne};
+    _textureDesc.componentMapping = {HgiComponentSwizzleR,
+                                     HgiComponentSwizzleR,
+                                     HgiComponentSwizzleR,
+                                     HgiComponentSwizzleOne};
   }
 
   _textureDesc.debugName = filePath + " - flipVertically=" +

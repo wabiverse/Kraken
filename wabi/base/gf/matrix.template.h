@@ -33,11 +33,11 @@
 #}
 #ifndef WABI_BASE_GF_{{UPPER(MAT)[2 : ] } } _H
 #define WABI_BASE_GF_ \
-  { \
-    { \
-      UPPER(MAT)[2:] \
-    } \
-  } \
+  {                   \
+    {                 \
+      UPPER(MAT)[2:]  \
+    }                 \
+  }                   \
   _H
 
   /// \file gf/matrix{{ SUFFIX }}.h
@@ -580,7 +580,8 @@
       }
     }
     f operator*(
-      const {{MAT}} & m, const GfVec {
+      const {{MAT}} & m,
+      const GfVec {
         {
           DIM
         }

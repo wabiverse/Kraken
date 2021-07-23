@@ -49,24 +49,24 @@
 // TfWeakPtr.
 namespace boost
 {
-namespace python
-{
+  namespace python
+  {
 
-// TfWeakPtrFacade
-template<template<class> class X, class Y>
-struct pointee<WABI_NS::TfWeakPtrFacade<X, Y>>
-{
-  typedef Y type;
-};
+    // TfWeakPtrFacade
+    template<template<class> class X, class Y>
+    struct pointee<WABI_NS::TfWeakPtrFacade<X, Y>>
+    {
+      typedef Y type;
+    };
 
-// TfRefPtr
-template<typename T>
-struct pointee<WABI_NS::TfRefPtr<T>>
-{
-  typedef T type;
-};
+    // TfRefPtr
+    template<typename T>
+    struct pointee<WABI_NS::TfRefPtr<T>>
+    {
+      typedef T type;
+    };
 
-}  // namespace python
+  }  // namespace python
 }  // namespace boost
 
 WABI_NAMESPACE_BEGIN

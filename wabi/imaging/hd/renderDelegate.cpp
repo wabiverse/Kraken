@@ -124,8 +124,7 @@ void HdRenderDelegate::SetRenderSetting(TfToken const &key, VtValue const &value
   {
     _settingsMap[key] = value;
     ++_settingsVersion;
-  }
-  else if (iter->second != value)
+  } else if (iter->second != value)
   {
     iter->second = value;
     ++_settingsVersion;

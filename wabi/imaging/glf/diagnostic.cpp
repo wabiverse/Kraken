@@ -127,8 +127,7 @@ void GlfDefaultDebugOutputMessageCallback(GLenum source,
 
     TF_DEBUG(GLF_DEBUG_ERROR_STACKTRACE)
       .Msg(TfStringPrintf("==== GL Error Stack ====\n%s\n", TfGetStackTrace().c_str()));
-  }
-  else
+  } else
   {
     TF_WARN("GL debug output: %s", message);
   }

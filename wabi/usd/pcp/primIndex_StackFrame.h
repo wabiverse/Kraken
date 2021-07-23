@@ -102,16 +102,14 @@ class PcpPrimIndex_StackFrameIterator
     {
       // Step to the next parent within this graph.
       node = node.GetParentNode();
-    }
-    else if (previousFrame)
+    } else if (previousFrame)
     {
       // No more parents in this graph, but there is an outer
       // prim index that this node will become part of.
       // Step to the (eventual) parent in that graph.
       node = previousFrame->parentNode;
       previousFrame = previousFrame->previousFrame;
-    }
-    else
+    } else
     {
       // No more parents.
       node = PcpNodeRef();
@@ -125,8 +123,7 @@ class PcpPrimIndex_StackFrameIterator
     {
       node = previousFrame->parentNode;
       previousFrame = previousFrame->previousFrame;
-    }
-    else
+    } else
     {
       node = PcpNodeRef();
     }
@@ -139,14 +136,12 @@ class PcpPrimIndex_StackFrameIterator
     {
       // Use the current node's arc type.
       return node.GetArcType();
-    }
-    else if (previousFrame)
+    } else if (previousFrame)
     {
       // No more parents in this graph, but there is an outer
       // prim index, so consult arcToParent.
       return previousFrame->arcToParent->type;
-    }
-    else
+    } else
     {
       // No more parents; this must be the absolute final root.
       return PcpArcTypeRoot;

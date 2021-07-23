@@ -75,10 +75,13 @@ void HgiVulkanShaderGenerator::_WriteTextures(const HgiShaderFunctionTextureDesc
   for (const HgiShaderFunctionTextureDesc &desc : textures)
   {
     const HgiShaderSectionAttributeVector attrs = {
-      HgiShaderSectionAttribute{"binding", std::to_string(_bindIndex)}};
+      HgiShaderSectionAttribute{"binding", std::to_string(_bindIndex)}
+    };
 
-    GetShaderSections()->push_back(std::make_unique<HgiVulkanTextureShaderSection>(
-      desc.nameInShader, _bindIndex, desc.dimensions, attrs));
+    GetShaderSections()->push_back(std::make_unique<HgiVulkanTextureShaderSection>(desc.nameInShader,
+                                                                                   _bindIndex,
+                                                                                   desc.dimensions,
+                                                                                   attrs));
 
     // In Vulkan buffers and textures cannot have the same binding index.
     _bindIndex++;
@@ -92,10 +95,14 @@ void HgiVulkanShaderGenerator::_WriteBuffers(const HgiShaderFunctionBufferDescVe
   {
     const HgiShaderFunctionBufferDesc &bufferDescription = buffers[i];
     const HgiShaderSectionAttributeVector attrs = {
-      HgiShaderSectionAttribute{"binding", std::to_string(_bindIndex)}};
+      HgiShaderSectionAttribute{"binding", std::to_string(_bindIndex)}
+    };
 
-    GetShaderSections()->push_back(std::make_unique<HgiVulkanBufferShaderSection>(
-      bufferDescription.nameInShader, _bindIndex, bufferDescription.type, attrs));
+    GetShaderSections()->push_back(
+      std::make_unique<HgiVulkanBufferShaderSection>(bufferDescription.nameInShader,
+                                                     _bindIndex,
+                                                     bufferDescription.type,
+                                                     attrs));
 
     // In Vulkan buffers and textures cannot have the same binding index.
     _bindIndex++;
@@ -112,8 +119,9 @@ void HgiVulkanShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVect
   // taken in opengl we ignore them
   const static std::set<std::string> takenOutParams{"gl_Position", "gl_FragColor", "gl_FragDepth"};
   const static std::map<std::string, std::string> takenInParams{
-    {HgiShaderKeywordTokens->hdPosition, "gl_Postiion"},
-    {HgiShaderKeywordTokens->hdGlobalInvocationID, "gl_GlobalInvocationID"}};
+    {HgiShaderKeywordTokens->hdPosition,           "gl_Postiion"          },
+    {HgiShaderKeywordTokens->hdGlobalInvocationID, "gl_GlobalInvocationID"}
+  };
 
   const bool in_qualifier = qualifier == "in";
   const bool out_qualifier = qualifier == "out";
@@ -138,7 +146,8 @@ void HgiVulkanShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVect
     }
 
     const HgiShaderSectionAttributeVector attrs{
-      HgiShaderSectionAttribute{"location", std::to_string(counter)}};
+      HgiShaderSectionAttribute{"location", std::to_string(counter)}
+    };
 
     GetShaderSections()->push_back(
       std::make_unique<HgiVulkanMemberShaderSection>(paramName, param.type, attrs, qualifier));

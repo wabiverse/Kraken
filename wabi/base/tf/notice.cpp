@@ -49,8 +49,8 @@ void TfNotice::_DelivererBase::_BeginDelivery(const TfNotice &notice,
                                               const type_info &listenerType,
                                               const vector<TfNotice::WeakProbePtr> &probes)
 {
-  Tf_NoticeRegistry::_GetInstance()._BeginDelivery(
-    notice, sender, senderType, listener, listenerType, probes);
+  Tf_NoticeRegistry::_GetInstance()
+    ._BeginDelivery(notice, sender, senderType, listener, listenerType, probes);
 }
 
 void TfNotice::_DelivererBase::_EndDelivery(const vector<TfNotice::WeakProbePtr> &probes)

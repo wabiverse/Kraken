@@ -72,8 +72,7 @@ class Tf_Remnant : public TfSimpleRefBase
     {
       // Remnant exists.  Return additional reference.
       return TfRefPtr<Tf_Remnant>(remnant);
-    }
-    else
+    } else
     {
       // Allocate a remnant and attempt to register it.
       return Register(remnantPtr, new Tf_Remnant);
@@ -90,8 +89,7 @@ class Tf_Remnant : public TfSimpleRefBase
     {
       // Candidate registered.  Return additional reference.
       return TfRefPtr<Tf_Remnant>(candidate);
-    }
-    else
+    } else
     {
       // Somebody beat us to it.
       // Discard candidate and return additional reference.

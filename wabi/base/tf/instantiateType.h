@@ -92,10 +92,10 @@ struct Tf_MakeTypeManufacturable<T, false>
 #define TF_NO_PARENT() (TfType::Bases<>)
 #define TF_1_PARENT(p1) (TfType::Bases<p1>)
 #define TF_2_PARENT(p1, p2) (TfType::Bases<p1, p2>)
-#define TF_INSTANTIATE_TYPE(Type, flags, Bases) \
-  TF_REGISTRY_DEFINE_WITH_TYPE(TfType, Type) \
-  { \
-    TfType t1 = TfType::Define<Type, _TF_REMOVE_PARENS(Bases)>(); \
+#define TF_INSTANTIATE_TYPE(Type, flags, Bases)                                       \
+  TF_REGISTRY_DEFINE_WITH_TYPE(TfType, Type)                                          \
+  {                                                                                   \
+    TfType t1 = TfType::Define<Type, _TF_REMOVE_PARENS(Bases)>();                     \
     Tf_MakeTypeManufacturable<Type, (flags & TfType::MANUFACTURABLE) != 0>::Doit(t1); \
   }
 

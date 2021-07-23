@@ -152,17 +152,14 @@ Usd_DefaultValueResult Usd_HasDefault(const Source &source, const SdfPath &specP
     if (ti == typeid(void))
     {
       return Usd_DefaultValueResult::None;
-    }
-    else if (ti == typeid(SdfValueBlock))
+    } else if (ti == typeid(SdfValueBlock))
     {
       return Usd_DefaultValueResult::Blocked;
-    }
-    else
+    } else
     {
       return Usd_DefaultValueResult::Found;
     }
-  }
-  else
+  } else
   {
     // Caller requests the value.
     if (source->HasField(specPath, SdfFieldKeys->Default, value))
@@ -243,8 +240,7 @@ void Usd_InsertListItem(PROXY proxy, const typename PROXY::value_type &item, Usd
   if (list.empty())
   {
     list.Insert(-1, item);
-  }
-  else
+  } else
   {
     const size_t pos = list.Find(item);
     if (pos != size_t(-1))
@@ -277,8 +273,7 @@ void Usd_ResolveValuesInDictionary(VtDictionary *dict, const Fn &resolveFunc)
       v.UncheckedSwap(resolvedDict);
       Usd_ResolveValuesInDictionary(&resolvedDict, resolveFunc);
       v.UncheckedSwap(resolvedDict);
-    }
-    else
+    } else
     {
       resolveFunc(&v);
     }

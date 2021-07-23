@@ -51,10 +51,10 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Repr(GfRect2i const &self)
-{
-  return TF_PY_REPR_PREFIX + "Rect2i(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
-}
+  static string _Repr(GfRect2i const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Rect2i(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
+  }
 
 }  // anonymous namespace
 

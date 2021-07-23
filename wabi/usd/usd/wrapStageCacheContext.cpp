@@ -44,35 +44,35 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// Expose C++ RAII class as python context manager.
-struct Usd_PyStageCacheContext
-{
-  // Constructor stores off arguments to pass to the factory later.
-  template<class Arg>
-  explicit Usd_PyStageCacheContext(Arg arg)
-    : _makeContext([arg]() { return new UsdStageCacheContext(arg); })
-  {}
-
-  explicit Usd_PyStageCacheContext(UsdStageCache &cache)
-    : _makeContext([&cache]() { return new UsdStageCacheContext(cache); })
-  {}
-
-  // Instantiate the C++ class object and hold it by shared_ptr.
-  void __enter__()
+  // Expose C++ RAII class as python context manager.
+  struct Usd_PyStageCacheContext
   {
-    _context.reset(_makeContext());
-  }
+    // Constructor stores off arguments to pass to the factory later.
+    template<class Arg>
+    explicit Usd_PyStageCacheContext(Arg arg)
+      : _makeContext([arg]() { return new UsdStageCacheContext(arg); })
+    {}
 
-  // Drop the shared_ptr.
-  void __exit__(object, object, object)
-  {
-    _context.reset();
-  }
+    explicit Usd_PyStageCacheContext(UsdStageCache &cache)
+      : _makeContext([&cache]() { return new UsdStageCacheContext(cache); })
+    {}
 
- private:
-  std::shared_ptr<UsdStageCacheContext> _context;
-  std::function<UsdStageCacheContext *()> _makeContext;
-};
+    // Instantiate the C++ class object and hold it by shared_ptr.
+    void __enter__()
+    {
+      _context.reset(_makeContext());
+    }
+
+    // Drop the shared_ptr.
+    void __exit__(object, object, object)
+    {
+      _context.reset();
+    }
+
+   private:
+    std::shared_ptr<UsdStageCacheContext> _context;
+    std::function<UsdStageCacheContext *()> _makeContext;
+  };
 
 }  // anonymous namespace
 

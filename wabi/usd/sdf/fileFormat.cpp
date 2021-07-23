@@ -323,8 +323,7 @@ void SdfFileFormat::_SetLayerData(SdfLayer *layer, SdfAbstractDataRefPtr &data, 
   if (layerIsLoadingAsNew)
   {
     layer->_SwapData(data);
-  }
-  else
+  } else
   {
     layer->_SetData(data);
   }

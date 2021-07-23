@@ -41,142 +41,129 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
-
-#define WRAP_CUSTOM                                                     \
-    template <class Cls> static void _CustomWrapCode(Cls &_class)
-
-// fwd decl.
-WRAP_CUSTOM;
-
-        
-static UsdAttribute
-_CreateDynamicFrictionAttr(UsdPhysicsMaterialAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateDynamicFrictionAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-        
-static UsdAttribute
-_CreateStaticFrictionAttr(UsdPhysicsMaterialAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateStaticFrictionAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-        
-static UsdAttribute
-_CreateRestitutionAttr(UsdPhysicsMaterialAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateRestitutionAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-        
-static UsdAttribute
-_CreateDensityAttr(UsdPhysicsMaterialAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateDensityAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static std::string
-_Repr(const UsdPhysicsMaterialAPI &self)
+namespace
 {
+
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
+
+  // fwd decl.
+  WRAP_CUSTOM;
+
+
+  static UsdAttribute _CreateDynamicFrictionAttr(UsdPhysicsMaterialAPI &self,
+                                                 object defaultVal,
+                                                 bool writeSparsely)
+  {
+    return self.CreateDynamicFrictionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                          writeSparsely);
+  }
+
+  static UsdAttribute _CreateStaticFrictionAttr(UsdPhysicsMaterialAPI &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateStaticFrictionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateRestitutionAttr(UsdPhysicsMaterialAPI &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
+  {
+    return self.CreateRestitutionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                      writeSparsely);
+  }
+
+  static UsdAttribute _CreateDensityAttr(UsdPhysicsMaterialAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
+
+  static std::string _Repr(const UsdPhysicsMaterialAPI &self)
+  {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf(
-        "UsdPhysics.MaterialAPI(%s)",
-        primRepr.c_str());
-}
+    return TfStringPrintf("UsdPhysics.MaterialAPI(%s)", primRepr.c_str());
+  }
 
-struct UsdPhysicsMaterialAPI_CanApplyResult : 
-    public TfPyAnnotatedBoolResult<std::string>
-{
-    UsdPhysicsMaterialAPI_CanApplyResult(bool val, std::string const &msg) :
-        TfPyAnnotatedBoolResult<std::string>(val, msg) {}
-};
+  struct UsdPhysicsMaterialAPI_CanApplyResult : public TfPyAnnotatedBoolResult<std::string>
+  {
+    UsdPhysicsMaterialAPI_CanApplyResult(bool val, std::string const &msg)
+      : TfPyAnnotatedBoolResult<std::string>(val, msg)
+    {}
+  };
 
-static UsdPhysicsMaterialAPI_CanApplyResult
-_WrapCanApply(const UsdPrim& prim)
-{
+  static UsdPhysicsMaterialAPI_CanApplyResult _WrapCanApply(const UsdPrim &prim)
+  {
     std::string whyNot;
     bool result = UsdPhysicsMaterialAPI::CanApply(prim, &whyNot);
     return UsdPhysicsMaterialAPI_CanApplyResult(result, whyNot);
-}
+  }
 
-} // anonymous namespace
+}  // anonymous namespace
 
 void wrapUsdPhysicsMaterialAPI()
 {
-    typedef UsdPhysicsMaterialAPI This;
+  typedef UsdPhysicsMaterialAPI This;
 
-    UsdPhysicsMaterialAPI_CanApplyResult::Wrap<UsdPhysicsMaterialAPI_CanApplyResult>(
-        "_CanApplyResult", "whyNot");
+  UsdPhysicsMaterialAPI_CanApplyResult::Wrap<UsdPhysicsMaterialAPI_CanApplyResult>("_CanApplyResult",
+                                                                                   "whyNot");
 
-    class_<This, bases<UsdAPISchemaBase> >
-        cls("MaterialAPI");
+  class_<This, bases<UsdAPISchemaBase>> cls("MaterialAPI");
 
-    cls
-        .def(init<UsdPrim>(arg("prim")))
-        .def(init<UsdSchemaBase const&>(arg("schemaObj")))
-        .def(TfTypePythonClass())
+  cls.def(init<UsdPrim>(arg("prim")))
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-        .def("Get", &This::Get, (arg("stage"), arg("path")))
-        .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-        .def("CanApply", &_WrapCanApply, (arg("prim")))
-        .staticmethod("CanApply")
+    .def("CanApply", &_WrapCanApply, (arg("prim")))
+    .staticmethod("CanApply")
 
-        .def("Apply", &This::Apply, (arg("prim")))
-        .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-        .def("GetSchemaAttributeNames",
-             &This::GetSchemaAttributeNames,
-             arg("includeInherited")=true,
-             return_value_policy<TfPySequenceToList>())
-        .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-        .def("GetStaticTfType", (TfType const &(*)()) TfType::Find<This>,
-             return_value_policy<return_by_value>())
-        .staticmethod("GetStaticTfType")
+    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("GetStaticTfType")
 
-        .def(!self)
+    .def(!self)
 
-        
-        .def("GetDynamicFrictionAttr",
-             &This::GetDynamicFrictionAttr)
-        .def("CreateDynamicFrictionAttr",
-             &_CreateDynamicFrictionAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
-        
-        .def("GetStaticFrictionAttr",
-             &This::GetStaticFrictionAttr)
-        .def("CreateStaticFrictionAttr",
-             &_CreateStaticFrictionAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
-        
-        .def("GetRestitutionAttr",
-             &This::GetRestitutionAttr)
-        .def("CreateRestitutionAttr",
-             &_CreateRestitutionAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
-        
-        .def("GetDensityAttr",
-             &This::GetDensityAttr)
-        .def("CreateDensityAttr",
-             &_CreateDensityAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
 
-        .def("__repr__", ::_Repr)
-    ;
+    .def("GetDynamicFrictionAttr", &This::GetDynamicFrictionAttr)
+    .def("CreateDynamicFrictionAttr",
+         &_CreateDynamicFrictionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-    _CustomWrapCode(cls);
+    .def("GetStaticFrictionAttr", &This::GetStaticFrictionAttr)
+    .def("CreateStaticFrictionAttr",
+         &_CreateStaticFrictionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("GetRestitutionAttr", &This::GetRestitutionAttr)
+    .def("CreateRestitutionAttr",
+         &_CreateRestitutionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("GetDensityAttr", &This::GetDensityAttr)
+    .def("CreateDensityAttr",
+         &_CreateDensityAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("__repr__", ::_Repr);
+
+  _CustomWrapCode(cls);
 }
 
 // ===================================================================== //
-// Feel free to add custom code below this line, it will be preserved by 
+// Feel free to add custom code below this line, it will be preserved by
 // the code generator.  The entry point for your custom code should look
 // minimally like the following:
 //
@@ -187,16 +174,17 @@ void wrapUsdPhysicsMaterialAPI()
 // }
 //
 // Of course any other ancillary or support code may be provided.
-// 
+//
 // Just remember to wrap code in the appropriate delimiters:
 // 'namespace {', '}'.
 //
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
-WRAP_CUSTOM {
-}
+  WRAP_CUSTOM
+  {}
 
-}
+}  // namespace

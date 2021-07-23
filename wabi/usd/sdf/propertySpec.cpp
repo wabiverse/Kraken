@@ -181,16 +181,14 @@ bool SdfPropertySpec::SetDefaultValue(const VtValue &defaultValue)
     {
       return SetField(SdfFieldKeys->Default, defaultValue);
     }
-  }
-  else
+  } else
   {
     // Otherwise check if defaultValue is castable to valueType
     VtValue value = VtValue::CastToTypeid(defaultValue, valueType.GetTypeid());
     if (!value.IsEmpty())
     {
       return SetField(SdfFieldKeys->Default, value);
-    }
-    else if (defaultValue.IsHolding<SdfValueBlock>())
+    } else if (defaultValue.IsHolding<SdfValueBlock>())
     {
       // If we're setting a value block, always allow that.
       return SetField(SdfFieldKeys->Default, defaultValue);
@@ -256,8 +254,9 @@ SdfValueTypeName SdfPropertySpec::GetTypeName() const
 
 bool SdfPropertySpec::HasOnlyRequiredFields() const
 {
-  return GetLayer()->_IsInert(
-    GetPath(), true /*ignoreChildren*/, true /* requiredFieldOnlyPropertiesAreInert */);
+  return GetLayer()->_IsInert(GetPath(),
+                              true /*ignoreChildren*/,
+                              true /* requiredFieldOnlyPropertiesAreInert */);
 }
 
 WABI_NAMESPACE_END

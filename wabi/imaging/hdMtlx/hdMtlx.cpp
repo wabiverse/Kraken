@@ -71,12 +71,10 @@ static TfToken _GetMxNodeType(TfToken const &hdNodeType)
   if (hdNodeType == _tokens->ND_standard_surface_surfaceshader)
   {
     return _tokens->standard_surface;
-  }
-  else if (hdNodeType == _tokens->ND_UsdPreviewSurface_surfaceshader)
+  } else if (hdNodeType == _tokens->ND_UsdPreviewSurface_surfaceshader)
   {
     return _tokens->UsdPreviewSurface;
-  }
-  else
+  } else
   {
     TF_WARN("Unsupported Node Type '%s'", hdNodeType.GetText());
     return TfToken();
@@ -151,40 +149,34 @@ std::string HdMtlxConvertToString(VtValue const &hdParameterValue)
   if (hdParameterValue.IsHolding<bool>())
   {
     return (hdParameterValue.UncheckedGet<bool>()) ? "false" : "true";
-  }
-  else if (hdParameterValue.IsHolding<int>() || hdParameterValue.IsHolding<float>())
+  } else if (hdParameterValue.IsHolding<int>() || hdParameterValue.IsHolding<float>())
   {
     valStream << hdParameterValue;
     return valStream.str();
-  }
-  else if (hdParameterValue.IsHolding<GfVec2f>())
+  } else if (hdParameterValue.IsHolding<GfVec2f>())
   {
     const GfVec2f &value = hdParameterValue.UncheckedGet<GfVec2f>();
     valStream << value.data()[0] << ", " << value.data()[1];
     return valStream.str();
-  }
-  else if (hdParameterValue.IsHolding<GfVec3f>())
+  } else if (hdParameterValue.IsHolding<GfVec3f>())
   {
     const GfVec3f &value = hdParameterValue.UncheckedGet<GfVec3f>();
     valStream << value.data()[0] << ", " << value.data()[1] << ", " << value.data()[2];
     return valStream.str();
-  }
-  else if (hdParameterValue.IsHolding<GfVec4f>())
+  } else if (hdParameterValue.IsHolding<GfVec4f>())
   {
     const GfVec4f &value = hdParameterValue.UncheckedGet<GfVec4f>();
     valStream << value.data()[0] << ", " << value.data()[1] << ", " << value.data()[2] << ", "
               << value.data()[3];
     return valStream.str();
-  }
-  else if (hdParameterValue.IsHolding<GfMatrix3d>())
+  } else if (hdParameterValue.IsHolding<GfMatrix3d>())
   {
     const GfMatrix3d &value = hdParameterValue.UncheckedGet<GfMatrix3d>();
     valStream << value[0][0] << ", " << value[0][1] << ", " << value[0][2] << ",  " << value[1][0] << ", "
               << value[1][1] << ", " << value[1][2] << ",  " << value[2][0] << ", " << value[2][1] << ", "
               << value[2][2] << ",  ";
     return valStream.str();
-  }
-  else if (hdParameterValue.IsHolding<GfMatrix4d>())
+  } else if (hdParameterValue.IsHolding<GfMatrix4d>())
   {
     const GfMatrix4d &value = hdParameterValue.UncheckedGet<GfMatrix4d>();
     valStream << value[0][0] << ", " << value[0][1] << ", " << value[0][2] << ", " << value[0][3] << ",  "
@@ -192,16 +184,13 @@ std::string HdMtlxConvertToString(VtValue const &hdParameterValue)
               << value[2][0] << ", " << value[2][1] << ", " << value[2][2] << ", " << value[2][3] << ",  "
               << value[3][0] << ", " << value[3][1] << ", " << value[3][2] << ", " << value[3][3] << ",  ";
     return valStream.str();
-  }
-  else if (hdParameterValue.IsHolding<SdfAssetPath>())
+  } else if (hdParameterValue.IsHolding<SdfAssetPath>())
   {
     return hdParameterValue.UncheckedGet<SdfAssetPath>().GetAssetPath();
-  }
-  else if (hdParameterValue.IsHolding<std::string>())
+  } else if (hdParameterValue.IsHolding<std::string>())
   {
     return hdParameterValue.UncheckedGet<std::string>();
-  }
-  else
+  } else
   {
     TF_WARN("Unsupported Parameter Type '%s'", hdParameterValue.GetTypeName().c_str());
     return mx::EMPTY_STRING;
@@ -259,8 +248,8 @@ static mx::NodePtr _AddMaterialXNode(HdMaterialNetwork2 const &hdNetwork,
 
   /**
    *  Add the mxNode to the mxNodeGraph. */
-  mx::NodePtr mxNode = _AddNodeToNodeGraph(
-    mxNodeName, mxNodeCategory, mxNodeType, mxNodeGraph, addedNodeNames);
+  mx::NodePtr mxNode =
+    _AddNodeToNodeGraph(mxNodeName, mxNodeCategory, mxNodeType, mxNodeGraph, addedNodeNames);
 
   /**
    * For each of the HdNode parameters add the corresponding parameter/input
@@ -448,18 +437,15 @@ mx::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(
     {
       bool value = hdParamValue.UncheckedGet<bool>();
       mxInput->setValue(value);
-    }
-    else if (hdParamValue.IsHolding<int>())
+    } else if (hdParamValue.IsHolding<int>())
     {
       int value = hdParamValue.UncheckedGet<int>();
       mxInput->setValue(value);
-    }
-    else if (hdParamValue.IsHolding<float>())
+    } else if (hdParamValue.IsHolding<float>())
     {
       float value = hdParamValue.UncheckedGet<float>();
       mxInput->setValue(value);
-    }
-    else if (hdParamValue.IsHolding<GfVec3f>())
+    } else if (hdParamValue.IsHolding<GfVec3f>())
     {
 
       const GfVec3f &value = hdParamValue.UncheckedGet<GfVec3f>();
@@ -468,13 +454,11 @@ mx::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(
       if (_IsInputVector3(mxInputName))
       {
         mxInput->setValue(mx::Vector3(value.data()[0], value.data()[1], value.data()[2]));
-      }
-      else
+      } else
       {
         mxInput->setValue(mx::Color3(value.data()[0], value.data()[1], value.data()[2]));
       }
-    }
-    else
+    } else
     {
       mxShaderNode->removeInput(mxInputName);
       TF_WARN("Unsupported Input Type '%s' for mxNode '%s' of type '%s'",

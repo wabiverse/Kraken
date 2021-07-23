@@ -261,8 +261,9 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
     std::vector<FieldType> oldSiblings = layer->GetFieldAs<std::vector<FieldType>>(oldParentPath,
                                                                                    oldChildrenKey);
 
-    typename std::vector<FieldType>::iterator oldNameIter = std::find(
-      oldSiblings.begin(), oldSiblings.end(), key);
+    typename std::vector<FieldType>::iterator oldNameIter = std::find(oldSiblings.begin(),
+                                                                      oldSiblings.end(),
+                                                                      key);
     if (oldNameIter == oldSiblings.end())
     {
       TF_CODING_ERROR(
@@ -275,8 +276,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
     if (oldSiblings.empty())
     {
       layer->EraseField(oldParentPath, oldChildrenKey);
-    }
-    else
+    } else
     {
       layer->SetField(oldParentPath, oldChildrenKey, oldSiblings);
     }
@@ -288,8 +288,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::SetChildren(
   if (newNames.empty())
   {
     layer->EraseField(path, childrenKey);
-  }
-  else
+  } else
   {
     layer->SetField(path, childrenKey, newNames);
   }
@@ -370,8 +369,9 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
   std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(oldParentPath,
                                                                                      oldChildrenKey);
 
-  typename std::vector<FieldType>::iterator oldNameIter = std::find(
-    oldSiblingNames.begin(), oldSiblingNames.end(), key);
+  typename std::vector<FieldType>::iterator oldNameIter = std::find(oldSiblingNames.begin(),
+                                                                    oldSiblingNames.end(),
+                                                                    key);
 
   if (oldNameIter == oldSiblingNames.end())
   {
@@ -388,8 +388,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
   if (oldSiblingNames.empty())
   {
     layer->EraseField(oldParentPath, oldChildrenKey);
-  }
-  else
+  } else
   {
     layer->SetField(oldParentPath, oldChildrenKey, oldSiblingNames);
   }
@@ -436,8 +435,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::RemoveChild(const SdfLayerHandle &layer,
       if (childNames.empty())
       {
         layer->EraseField(path, childrenKey);
-      }
-      else
+      } else
       {
         layer->SetField(path, childrenKey, childNames);
       }
@@ -484,8 +482,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
   if (index == SdfNamespaceEdit::Same && oldParentPath == path)
   {
     index = std::find(childNames.begin(), childNames.end(), oldKey) - childNames.begin();
-  }
-  else if ((size_t)index > childNames.size())
+  } else if ((size_t)index > childNames.size())
   {
     // This catches all negative indexes.
     index = childNames.size();
@@ -495,8 +492,9 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
   const TfToken oldChildrenKey = ChildPolicy::GetChildrenToken(oldParentPath);
   std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(oldParentPath,
                                                                                      oldChildrenKey);
-  typename std::vector<FieldType>::iterator oldNameIter = std::find(
-    oldSiblingNames.begin(), oldSiblingNames.end(), oldKey);
+  typename std::vector<FieldType>::iterator oldNameIter = std::find(oldSiblingNames.begin(),
+                                                                    oldSiblingNames.end(),
+                                                                    oldKey);
 
   // Use a change block to ensure all layer data manipulations below are
   // treated atomically.
@@ -527,8 +525,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
 
     // Erase the old name.
     childNames.erase(std::find(childNames.begin(), childNames.end(), oldKey));
-  }
-  else
+  } else
   {
     oldSiblingNames.erase(oldNameIter);
     if (oldSiblingNames.empty())
@@ -542,8 +539,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
       {
         Sdf_CleanupTracker::GetInstance().AddSpecIfTracking(spec);
       }
-    }
-    else
+    } else
     {
       layer->SetField(oldParentPath, oldChildrenKey, oldSiblingNames);
     }
@@ -656,8 +652,9 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
   const TfToken oldChildrenKey = ChildPolicy::GetChildrenToken(oldParentPath);
   std::vector<FieldType> oldSiblingNames = layer->GetFieldAs<std::vector<FieldType>>(oldParentPath,
                                                                                      oldChildrenKey);
-  typename std::vector<FieldType>::iterator oldNameIter = std::find(
-    oldSiblingNames.begin(), oldSiblingNames.end(), oldKey);
+  typename std::vector<FieldType>::iterator oldNameIter = std::find(oldSiblingNames.begin(),
+                                                                    oldSiblingNames.end(),
+                                                                    oldKey);
   if (oldNameIter == oldSiblingNames.end())
   {
     if (whyNot)
@@ -725,8 +722,9 @@ SdfAllowed Sdf_ChildrenUtils<ChildPolicy>::CanRename(const SdfSpec &spec,
   }
   if (!IsValidName(newName))
   {
-    return TfStringPrintf(
-      "Cannot rename %s to invalid name '%s'", spec.GetPath().GetText(), newName.GetText());
+    return TfStringPrintf("Cannot rename %s to invalid name '%s'",
+                          spec.GetPath().GetText(),
+                          newName.GetText());
   }
 
   SdfPath newPath = _ComputeRenamedPath<ChildPolicy>(spec.GetPath(), newName);

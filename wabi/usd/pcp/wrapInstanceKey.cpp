@@ -36,10 +36,10 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static size_t __hash__(const PcpInstanceKey &key)
-{
-  return hash_value(key);
-}
+  static size_t __hash__(const PcpInstanceKey &key)
+  {
+    return hash_value(key);
+  }
 
 }  // anonymous namespace
 

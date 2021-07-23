@@ -106,21 +106,20 @@ static void Arch_DebuggerInitPosix()
       "Failed to set SIGTRAP handler;  "
       "debug trap not enabled");
     _archDebuggerEnabled = false;
-  }
-  else
+  } else
   {
     _archDebuggerEnabled = true;
   }
 }
 namespace
 {
-struct InitPosix
-{
-  InitPosix()
+  struct InitPosix
   {
-    Arch_DebuggerInitPosix();
-  }
-};
+    InitPosix()
+    {
+      Arch_DebuggerInitPosix();
+    }
+  };
 }  // namespace
 #endif
 
@@ -140,7 +139,7 @@ static void Arch_DebuggerInit()
     "movq %%rsi, %[rsi];\n"
     "movq %%rdx, %[rdx];\n"
     "movq %%rcx, %[rcx];\n"
-    : [ rdi ] "=m"(rdi), [ rsi ] "=m"(rsi), [ rdx ] "=m"(rdx), [ rcx ] "=m"(rcx)
+    : [rdi] "=m"(rdi), [rsi] "=m"(rsi), [rdx] "=m"(rdx), [rcx] "=m"(rcx)
     :  // input
     :  // clobbered
   );
@@ -157,7 +156,7 @@ static void Arch_DebuggerInit()
     "movq %[rdx], %%rdx;\n"
     "movq %[rcx], %%rcx;\n"
     :  // output
-    : [ rdi ] "m"(rdi), [ rsi ] "m"(rsi), [ rdx ] "m"(rdx), [ rcx ] "m"(rcx)
+    : [rdi] "m"(rdi), [rsi] "m"(rsi), [rdx] "m"(rdx), [rcx] "m"(rcx)
     :  // clobbered
   );
 #  endif
@@ -183,8 +182,7 @@ static int nonLockingFork()
   if (Arch_nonLockingFork != NULL)
   {
     return (Arch_nonLockingFork)();
-  }
-  else
+  } else
   {
     return fork();
   }
@@ -537,8 +535,7 @@ void Arch_InitDebuggerAttach()
       {
         n += _decimalPidLength;
         ++i;
-      }
-      else if (i[0] == '%' && i[1] == 'e')
+      } else if (i[0] == '%' && i[1] == 'e')
       {
         // Get the symlink in the proc filesystem if we haven't
         // yet.
@@ -549,8 +546,7 @@ void Arch_InitDebuggerAttach()
 
         n += link.size();
         ++i;
-      }
-      else
+      } else
       {
         ++n;
       }
@@ -580,8 +576,7 @@ void Arch_InitDebuggerAttach()
 
         // Skip over the '%p'.
         ++i;
-      }
-      else if (i[0] == '%' && i[1] == 'e')
+      } else if (i[0] == '%' && i[1] == 'e')
       {
         // Write the executable path
         strcat(a, link.c_str());
@@ -591,8 +586,7 @@ void Arch_InitDebuggerAttach()
 
         // Skip over the '%e'.
         ++i;
-      }
-      else
+      } else
       {
         // Copy the character.
         *a++ = *i;
@@ -637,10 +631,10 @@ void ArchDebuggerWait(bool wait)
 
 namespace
 {
-bool _ArchAvoidJIT()
-{
-  return (getenv("ARCH_AVOID_JIT") != nullptr);
-}
+  bool _ArchAvoidJIT()
+  {
+    return (getenv("ARCH_AVOID_JIT") != nullptr);
+  }
 }  // namespace
 
 bool ArchDebuggerAttach()

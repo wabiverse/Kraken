@@ -80,12 +80,10 @@ MINLINE float sqrt3f(float f)
   if (UNLIKELY(f == 0.0f))
   {
     return 0.0f;
-  }
-  else if (UNLIKELY(f < 0.0f))
+  } else if (UNLIKELY(f < 0.0f))
   {
     return -(float)(exp(log(-f) / 3.0));
-  }
-  else
+  } else
   {
     return (float)(exp(log(f) / 3.0));
   }
@@ -96,12 +94,10 @@ MINLINE double sqrt3d(double d)
   if (UNLIKELY(d == 0.0))
   {
     return 0.0;
-  }
-  else if (UNLIKELY(d < 0.0))
+  } else if (UNLIKELY(d < 0.0))
   {
     return -exp(log(-d) / 3.0);
-  }
-  else
+  } else
   {
     return exp(log(d) / 3.0);
   }
@@ -117,12 +113,10 @@ MINLINE float saacos(float fac)
   if (UNLIKELY(fac <= -1.0f))
   {
     return (float)M_PI;
-  }
-  else if (UNLIKELY(fac >= 1.0f))
+  } else if (UNLIKELY(fac >= 1.0f))
   {
     return 0.0f;
-  }
-  else
+  } else
   {
     return acosf(fac);
   }
@@ -133,12 +127,10 @@ MINLINE float saasin(float fac)
   if (UNLIKELY(fac <= -1.0f))
   {
     return (float)-M_PI / 2.0f;
-  }
-  else if (UNLIKELY(fac >= 1.0f))
+  } else if (UNLIKELY(fac >= 1.0f))
   {
     return (float)M_PI / 2.0f;
-  }
-  else
+  } else
   {
     return asinf(fac);
   }
@@ -149,8 +141,7 @@ MINLINE float sasqrt(float fac)
   if (UNLIKELY(fac <= 0.0f))
   {
     return 0.0f;
-  }
-  else
+  } else
   {
     return sqrtf(fac);
   }
@@ -161,12 +152,10 @@ MINLINE float saacosf(float fac)
   if (UNLIKELY(fac <= -1.0f))
   {
     return (float)M_PI;
-  }
-  else if (UNLIKELY(fac >= 1.0f))
+  } else if (UNLIKELY(fac >= 1.0f))
   {
     return 0.0f;
-  }
-  else
+  } else
   {
     return acosf(fac);
   }
@@ -177,12 +166,10 @@ MINLINE float saasinf(float fac)
   if (UNLIKELY(fac <= -1.0f))
   {
     return (float)-M_PI / 2.0f;
-  }
-  else if (UNLIKELY(fac >= 1.0f))
+  } else if (UNLIKELY(fac >= 1.0f))
   {
     return (float)M_PI / 2.0f;
-  }
-  else
+  } else
   {
     return asinf(fac);
   }
@@ -193,8 +180,7 @@ MINLINE float sasqrtf(float fac)
   if (UNLIKELY(fac <= 0.0f))
   {
     return 0.0f;
-  }
-  else
+  } else
   {
     return sqrtf(fac);
   }
@@ -294,53 +280,48 @@ MINLINE unsigned int log2_ceil_u(unsigned int x)
   if (is_power_of_2_i((int)x))
   {
     return log2_floor_u(x);
-  }
-  else
+  } else
   {
     return log2_floor_u(x) + 1;
   }
 }
 
 #define _round_clamp_fl_impl(arg, ty, min, max) \
-  { \
-    float r = floorf(arg + 0.5f); \
-    if (UNLIKELY(r <= (float)min)) \
-    { \
-      return (ty)min; \
-    } \
-    else if (UNLIKELY(r >= (float)max)) \
-    { \
-      return (ty)max; \
-    } \
-    else \
-    { \
-      return (ty)r; \
-    } \
+  {                                             \
+    float r = floorf(arg + 0.5f);               \
+    if (UNLIKELY(r <= (float)min))              \
+    {                                           \
+      return (ty)min;                           \
+    } else if (UNLIKELY(r >= (float)max))       \
+    {                                           \
+      return (ty)max;                           \
+    } else                                      \
+    {                                           \
+      return (ty)r;                             \
+    }                                           \
   }
 
 #define _round_clamp_db_impl(arg, ty, min, max) \
-  { \
-    double r = floor(arg + 0.5); \
-    if (UNLIKELY(r <= (double)min)) \
-    { \
-      return (ty)min; \
-    } \
-    else if (UNLIKELY(r >= (double)max)) \
-    { \
-      return (ty)max; \
-    } \
-    else \
-    { \
-      return (ty)r; \
-    } \
+  {                                             \
+    double r = floor(arg + 0.5);                \
+    if (UNLIKELY(r <= (double)min))             \
+    {                                           \
+      return (ty)min;                           \
+    } else if (UNLIKELY(r >= (double)max))      \
+    {                                           \
+      return (ty)max;                           \
+    } else                                      \
+    {                                           \
+      return (ty)r;                             \
+    }                                           \
   }
 
-#define _round_fl_impl(arg, ty) \
-  { \
+#define _round_fl_impl(arg, ty)    \
+  {                                \
     return (ty)floorf(arg + 0.5f); \
   }
-#define _round_db_impl(arg, ty) \
-  { \
+#define _round_db_impl(arg, ty)  \
+  {                              \
     return (ty)floor(arg + 0.5); \
   }
 
@@ -506,8 +487,7 @@ MINLINE float smoothminf(float a, float b, float c)
   {
     float h = max_ff(c - fabsf(a - b), 0.0f) / c;
     return min_ff(a, b) - h * h * h * c * (1.0f / 6.0f);
-  }
-  else
+  } else
   {
     return min_ff(a, b);
   }
@@ -604,8 +584,7 @@ MINLINE float clamp_f(float value, float min, float max)
   if (value > max)
   {
     return max;
-  }
-  else if (value < min)
+  } else if (value < min)
   {
     return min;
   }
@@ -641,7 +620,8 @@ MINLINE int compare_ff_relative(float a, float b, const float max_diff, const in
   ua.f = a;
   ub.f = b;
 
-  return ((ua.i < 0) != (ub.i < 0)) ? 0 : (abs(ua.i - ub.i) <= max_ulps) ? 1 : 0;
+  return ((ua.i < 0) != (ub.i < 0)) ? 0 : (abs(ua.i - ub.i) <= max_ulps) ? 1 :
+                                                                           0;
 }
 
 MINLINE float signf(float f)
@@ -658,8 +638,7 @@ MINLINE float compatible_signf(float f)
   if (f < 0.0f)
   {
     return -1.0f;
-  }
-  else
+  } else
   {
     return 0.0f;
   }
@@ -674,8 +653,7 @@ MINLINE int signum_i_ex(float a, float eps)
   if (a < -eps)
   {
     return -1;
-  }
-  else
+  } else
   {
     return 0;
   }
@@ -690,8 +668,7 @@ MINLINE int signum_i(float a)
   if (a < 0.0f)
   {
     return -1;
-  }
-  else
+  } else
   {
     return 0;
   }
@@ -776,8 +753,8 @@ MINLINE unsigned char unit_float_to_uchar_clamp(float val)
 MINLINE unsigned short unit_float_to_ushort_clamp(float val)
 {
   return (unsigned short)((val >= 1.0f - 0.5f / 65535) ? 65535 :
-                                                         (val <= 0.0f) ? 0 :
-                                                                         (val * 65535.0f + 0.5f));
+                          (val <= 0.0f)                ? 0 :
+                                                         (val * 65535.0f + 0.5f));
 }
 #define unit_float_to_ushort_clamp(val) ((CHECK_TYPE_INLINE(val, float)), unit_float_to_ushort_clamp(val))
 
@@ -787,20 +764,20 @@ MINLINE unsigned char unit_ushort_to_uchar(unsigned short val)
 }
 #define unit_ushort_to_uchar(val) ((CHECK_TYPE_INLINE(val, unsigned short)), unit_ushort_to_uchar(val))
 
-#define unit_float_to_uchar_clamp_v3(v1, v2) \
-  { \
+#define unit_float_to_uchar_clamp_v3(v1, v2)      \
+  {                                               \
     (v1)[0] = unit_float_to_uchar_clamp((v2[0])); \
     (v1)[1] = unit_float_to_uchar_clamp((v2[1])); \
     (v1)[2] = unit_float_to_uchar_clamp((v2[2])); \
-  } \
+  }                                               \
   ((void)0)
-#define unit_float_to_uchar_clamp_v4(v1, v2) \
-  { \
+#define unit_float_to_uchar_clamp_v4(v1, v2)      \
+  {                                               \
     (v1)[0] = unit_float_to_uchar_clamp((v2[0])); \
     (v1)[1] = unit_float_to_uchar_clamp((v2[1])); \
     (v1)[2] = unit_float_to_uchar_clamp((v2[2])); \
     (v1)[3] = unit_float_to_uchar_clamp((v2[3])); \
-  } \
+  }                                               \
   ((void)0)
 
 #ifdef __cplusplus

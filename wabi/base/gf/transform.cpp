@@ -124,18 +124,17 @@ GfMatrix4d GfTransform::GetMatrix() const
   //
 
 #define _GF_ACCUM(mtxOp) \
-  { \
-    if (anySet) \
-    { \
-      GfMatrix4d tmp; \
-      tmp.mtxOp; \
-      mtx *= tmp; \
-    } \
-    else \
-    { \
-      mtx.mtxOp; \
-      anySet = true; \
-    } \
+  {                      \
+    if (anySet)          \
+    {                    \
+      GfMatrix4d tmp;    \
+      tmp.mtxOp;         \
+      mtx *= tmp;        \
+    } else               \
+    {                    \
+      mtx.mtxOp;         \
+      anySet = true;     \
+    }                    \
   }
 
   if (doPivot)

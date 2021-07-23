@@ -53,8 +53,10 @@ struct Usd_ObjectSubclass : boost::python::def_visitor<Usd_ObjectSubclass>
   void visit(CLS &c) const
   {
     typedef typename CLS::wrapped_type Type;
-    _ReplaceConverter(
-      boost::python::type_id<Type>(), _Detail::GetObjType<Type>::Value, _Convert<Type>, _Downcast<Type>);
+    _ReplaceConverter(boost::python::type_id<Type>(),
+                      _Detail::GetObjType<Type>::Value,
+                      _Convert<Type>,
+                      _Downcast<Type>);
   }
 
  private:

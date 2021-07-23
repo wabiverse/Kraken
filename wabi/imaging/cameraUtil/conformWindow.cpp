@@ -174,14 +174,14 @@ GfVec2d CameraUtilConformedWindow(const GfVec2d &window,
     return window;
   }
 
-  const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
-    window, policy, targetAspect);
+  const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(window,
+                                                                                   policy,
+                                                                                   targetAspect);
 
   if (resolvedPolicy == CameraUtilMatchHorizontally)
   {
     return GfVec2d(window[0], _SafeDiv(window[0], targetAspect));
-  }
-  else
+  } else
   {
     return GfVec2d(window[1] * targetAspect, window[1]);
   }
@@ -199,8 +199,9 @@ GfRange2d CameraUtilConformedWindow(const GfRange2d &window,
   const GfVec2d &size = window.GetSize();
   const GfVec2d center = (window.GetMin() + window.GetMax()) / 2.0;
 
-  const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
-    size, policy, targetAspect);
+  const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(size,
+                                                                                   policy,
+                                                                                   targetAspect);
 
   if (resolvedPolicy == CameraUtilMatchHorizontally)
   {
@@ -208,8 +209,7 @@ GfRange2d CameraUtilConformedWindow(const GfRange2d &window,
 
     return GfRange2d(GfVec2d(window.GetMin()[0], center[1] - height / 2.0),
                      GfVec2d(window.GetMax()[0], center[1] + height / 2.0));
-  }
-  else
+  } else
   {
     const double width = size[1] * targetAspect;
 
@@ -269,8 +269,9 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
 
   // This tells us whether we need to adjust the parameters affecting the
   // vertical or horizontal aspects of the projectionMatrix.
-  const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(
-    window, policy, targetAspect);
+  const CameraUtilConformWindowPolicy resolvedPolicy = _ResolveConformWindowPolicy(window,
+                                                                                   policy,
+                                                                                   targetAspect);
 
   if (resolvedPolicy == CameraUtilMatchHorizontally)
   {
@@ -287,8 +288,7 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
     result[2][1] *= scaleFactor;
     // This one is important for orthographic:
     result[3][1] *= scaleFactor;
-  }
-  else
+  } else
   {
     // As above, but horizontally.
     result[0][0] = _Sign(projectionMatrix[0][0]) * _SafeDiv(window[0], targetAspect);

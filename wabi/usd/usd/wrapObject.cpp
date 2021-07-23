@@ -51,130 +51,129 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static TfPyObjWrapper _GetMetadata(const UsdObject &self, const TfToken &key)
-{
-  VtValue result;
-  self.GetMetadata(key, &result);
-  return UsdVtValueToPython(result);
-}
-
-static TfPyObjWrapper _GetMetadataByDictKey(const UsdObject &self,
-                                            const TfToken &key,
-                                            const TfToken &keyPath)
-{
-  VtValue result;
-  self.GetMetadataByDictKey(key, keyPath, &result);
-  return UsdVtValueToPython(result);
-}
-
-static bool _SetMetadata(const UsdObject &self, const TfToken &key, object obj)
-{
-  VtValue value;
-  return UsdPythonToMetadataValue(key, /*keyPath*/ TfToken(), obj, &value) && self.SetMetadata(key, value);
-}
-
-static bool _SetMetadataByDictKey(const UsdObject &self,
-                                  const TfToken &key,
-                                  const TfToken &keyPath,
-                                  object obj)
-{
-  VtValue value;
-  return UsdPythonToMetadataValue(key, keyPath, obj, &value) &&
-         self.SetMetadataByDictKey(key, keyPath, value);
-}
-
-static TfPyObjWrapper _GetCustomData(const UsdObject &self)
-{
-  return UsdVtValueToPython(VtValue(self.GetCustomData()));
-}
-
-static TfPyObjWrapper _GetCustomDataByKey(const UsdObject &self, const TfToken &keyPath)
-{
-  return UsdVtValueToPython(VtValue(self.GetCustomDataByKey(keyPath)));
-}
-
-static void _SetCustomData(UsdObject &self, object obj)
-{
-  VtValue value;
-  if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, TfToken(), obj, &value) &&
-      value.IsHolding<VtDictionary>())
+  static TfPyObjWrapper _GetMetadata(const UsdObject &self, const TfToken &key)
   {
-    self.SetCustomData(value.UncheckedGet<VtDictionary>());
+    VtValue result;
+    self.GetMetadata(key, &result);
+    return UsdVtValueToPython(result);
   }
-}
 
-static void _SetCustomDataByKey(UsdObject &self, const TfToken &keyPath, object obj)
-{
-  VtValue value;
-  if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, keyPath, obj, &value))
+  static TfPyObjWrapper _GetMetadataByDictKey(const UsdObject &self,
+                                              const TfToken &key,
+                                              const TfToken &keyPath)
   {
-    self.SetCustomDataByKey(keyPath, value);
+    VtValue result;
+    self.GetMetadataByDictKey(key, keyPath, &result);
+    return UsdVtValueToPython(result);
   }
-}
 
-static TfPyObjWrapper _GetAssetInfo(const UsdObject &self)
-{
-  return UsdVtValueToPython(VtValue(self.GetAssetInfo()));
-}
-
-static TfPyObjWrapper _GetAssetInfoByKey(const UsdObject &self, const TfToken &keyPath)
-{
-  return UsdVtValueToPython(VtValue(self.GetAssetInfoByKey(keyPath)));
-}
-
-static void _SetAssetInfo(UsdObject &self, object obj)
-{
-  VtValue value;
-  if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, TfToken(), obj, &value) &&
-      value.IsHolding<VtDictionary>())
+  static bool _SetMetadata(const UsdObject &self, const TfToken &key, object obj)
   {
-    self.SetAssetInfo(value.UncheckedGet<VtDictionary>());
+    VtValue value;
+    return UsdPythonToMetadataValue(key, /*keyPath*/ TfToken(), obj, &value) && self.SetMetadata(key, value);
   }
-}
 
-static void _SetAssetInfoByKey(UsdObject &self, const TfToken &keyPath, object obj)
-{
-  VtValue value;
-  if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, keyPath, obj, &value))
+  static bool _SetMetadataByDictKey(const UsdObject &self,
+                                    const TfToken &key,
+                                    const TfToken &keyPath,
+                                    object obj)
   {
-    self.SetAssetInfoByKey(keyPath, value);
+    VtValue value;
+    return UsdPythonToMetadataValue(key, keyPath, obj, &value) &&
+           self.SetMetadataByDictKey(key, keyPath, value);
   }
-}
 
-static size_t __hash__(const UsdObject &self)
-{
-  return hash_value(self);
-}
-
-// We override __getattribute__ for UsdObject to check object validity and raise
-// an exception instead of crashing from Python.
-
-// Store the original __getattribute__ so we can dispatch to it after verifying
-// validity.
-static TfStaticData<TfPyObjWrapper> _object__getattribute__;
-
-// This function gets wrapped as __getattribute__ on UsdObject.
-static object __getattribute__(object selfObj, const char *name)
-{
-  // Allow attribute lookups if the attribute name starts with '__', if the
-  // object's prim is valid, or if the attribute is one of a specific
-  // inclusion list.
-  if ((name[0] == '_' && name[1] == '_') || extract<UsdObject &>(selfObj)().GetPrim().IsValid() ||
-      strcmp(name, "IsValid") == 0 || strcmp(name, "GetDescription") == 0 || strcmp(name, "GetPrim") == 0 ||
-      strcmp(name, "GetPath") == 0 || strcmp(name, "GetPrimPath") == 0 ||
-      strcmp(name, "IsPseudoRoot") == 0)
+  static TfPyObjWrapper _GetCustomData(const UsdObject &self)
   {
-    // Dispatch to object's __getattribute__.
-    return (*_object__getattribute__)(selfObj, name);
+    return UsdVtValueToPython(VtValue(self.GetCustomData()));
   }
-  else
+
+  static TfPyObjWrapper _GetCustomDataByKey(const UsdObject &self, const TfToken &keyPath)
   {
-    // Otherwise raise a runtime error.
-    TfPyThrowRuntimeError(TfStringPrintf("Accessed %s", TfPyRepr(selfObj).c_str()));
+    return UsdVtValueToPython(VtValue(self.GetCustomDataByKey(keyPath)));
   }
-  // Unreachable.
-  return object();
-}
+
+  static void _SetCustomData(UsdObject &self, object obj)
+  {
+    VtValue value;
+    if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, TfToken(), obj, &value) &&
+        value.IsHolding<VtDictionary>())
+    {
+      self.SetCustomData(value.UncheckedGet<VtDictionary>());
+    }
+  }
+
+  static void _SetCustomDataByKey(UsdObject &self, const TfToken &keyPath, object obj)
+  {
+    VtValue value;
+    if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, keyPath, obj, &value))
+    {
+      self.SetCustomDataByKey(keyPath, value);
+    }
+  }
+
+  static TfPyObjWrapper _GetAssetInfo(const UsdObject &self)
+  {
+    return UsdVtValueToPython(VtValue(self.GetAssetInfo()));
+  }
+
+  static TfPyObjWrapper _GetAssetInfoByKey(const UsdObject &self, const TfToken &keyPath)
+  {
+    return UsdVtValueToPython(VtValue(self.GetAssetInfoByKey(keyPath)));
+  }
+
+  static void _SetAssetInfo(UsdObject &self, object obj)
+  {
+    VtValue value;
+    if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, TfToken(), obj, &value) &&
+        value.IsHolding<VtDictionary>())
+    {
+      self.SetAssetInfo(value.UncheckedGet<VtDictionary>());
+    }
+  }
+
+  static void _SetAssetInfoByKey(UsdObject &self, const TfToken &keyPath, object obj)
+  {
+    VtValue value;
+    if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, keyPath, obj, &value))
+    {
+      self.SetAssetInfoByKey(keyPath, value);
+    }
+  }
+
+  static size_t __hash__(const UsdObject &self)
+  {
+    return hash_value(self);
+  }
+
+  // We override __getattribute__ for UsdObject to check object validity and raise
+  // an exception instead of crashing from Python.
+
+  // Store the original __getattribute__ so we can dispatch to it after verifying
+  // validity.
+  static TfStaticData<TfPyObjWrapper> _object__getattribute__;
+
+  // This function gets wrapped as __getattribute__ on UsdObject.
+  static object __getattribute__(object selfObj, const char *name)
+  {
+    // Allow attribute lookups if the attribute name starts with '__', if the
+    // object's prim is valid, or if the attribute is one of a specific
+    // inclusion list.
+    if ((name[0] == '_' && name[1] == '_') || extract<UsdObject &>(selfObj)().GetPrim().IsValid() ||
+        strcmp(name, "IsValid") == 0 || strcmp(name, "GetDescription") == 0 ||
+        strcmp(name, "GetPrim") == 0 || strcmp(name, "GetPath") == 0 || strcmp(name, "GetPrimPath") == 0 ||
+        strcmp(name, "IsPseudoRoot") == 0)
+    {
+      // Dispatch to object's __getattribute__.
+      return (*_object__getattribute__)(selfObj, name);
+    } else
+    {
+      // Otherwise raise a runtime error.
+      TfPyThrowRuntimeError(TfStringPrintf("Accessed %s", TfPyRepr(selfObj).c_str()));
+    }
+    // Unreachable.
+    return object();
+  }
 
 }  // anonymous namespace
 

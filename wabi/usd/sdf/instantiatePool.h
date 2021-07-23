@@ -75,8 +75,7 @@ typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_RegionState Sdf_Poo
   if (ARCH_UNLIKELY(avail <= num))
   {
     ret._state = LockedState;
-  }
-  else
+  } else
   {
     ret = _RegionState(region, index + num);
   }
@@ -96,19 +95,16 @@ typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::Handle Sdf_Pool<Tag,
   if (alloc)
   {
     threadData.freeList.Pop();
-  }
-  else if (!threadData.span.empty())
+  } else if (!threadData.span.empty())
   {
     // Allocate new from local span.
     alloc = threadData.span.Alloc();
-  }
-  else if (_TakeSharedFreeList(threadData.freeList))
+  } else if (_TakeSharedFreeList(threadData.freeList))
   {
     // Nothing local.  Try to take a shared free list.
     alloc = threadData.freeList.head;
     threadData.freeList.Pop();
-  }
-  else
+  } else
   {
     // No shared free list -- reserve a new span and allocate from it.
     _ReserveSpan(threadData.span);

@@ -30,7 +30,7 @@
 
 namespace ccl
 {
-class Mesh;
+  class Mesh;
 }
 
 WABI_NAMESPACE_BEGIN

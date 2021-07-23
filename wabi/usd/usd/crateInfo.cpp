@@ -53,8 +53,7 @@ UsdCrateInfo::SummaryStats UsdCrateInfo::GetSummaryStats() const
   if (!*this)
   {
     TF_CODING_ERROR("Invalid UsdCrateInfo object");
-  }
-  else
+  } else
   {
     stats.numSpecs = _impl->crateFile->GetSpecs().size();
     stats.numUniquePaths = _impl->crateFile->GetPaths().size();
@@ -72,8 +71,7 @@ vector<UsdCrateInfo::Section> UsdCrateInfo::GetSections() const
   if (!*this)
   {
     TF_CODING_ERROR("Invalid UsdCrateInfo object");
-  }
-  else
+  } else
   {
     auto secs = _impl->crateFile->GetSectionsNameStartSize();
     for (auto const &s : secs)

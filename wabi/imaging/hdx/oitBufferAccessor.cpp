@@ -112,8 +112,7 @@ bool HdxOitBufferAccessor::AddOitBufferBindings(const HdPhRenderPassShaderShared
                                               uniformBar,
                                               /*interleave = */ true));
     return true;
-  }
-  else
+  } else
   {
     shader->RemoveBufferBinding(HdxTokens->oitCounterBufferBar);
     shader->RemoveBufferBinding(HdxTokens->oitDataBufferBar);
@@ -169,8 +168,7 @@ void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
   if (ARCH_LIKELY(caps.directStateAccessEnabled))
   {
     glClearNamedBufferData(glBuffer->GetBufferId(), GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);
-  }
-  else
+  } else
   {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, glBuffer->GetBufferId());
     glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);

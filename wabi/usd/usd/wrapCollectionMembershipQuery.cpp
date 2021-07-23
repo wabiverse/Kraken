@@ -35,17 +35,17 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static bool _WrapIsPathIncluded_1(const UsdCollectionMembershipQuery &query, const SdfPath &path)
-{
-  return query.IsPathIncluded(path);
-}
+  static bool _WrapIsPathIncluded_1(const UsdCollectionMembershipQuery &query, const SdfPath &path)
+  {
+    return query.IsPathIncluded(path);
+  }
 
-static bool _WrapIsPathIncluded_2(const UsdCollectionMembershipQuery &query,
-                                  const SdfPath &path,
-                                  const TfToken &parentExpansionRule)
-{
-  return query.IsPathIncluded(path, parentExpansionRule);
-}
+  static bool _WrapIsPathIncluded_2(const UsdCollectionMembershipQuery &query,
+                                    const SdfPath &path,
+                                    const TfToken &parentExpansionRule)
+  {
+    return query.IsPathIncluded(path, parentExpansionRule);
+  }
 
 }  // anonymous namespace
 

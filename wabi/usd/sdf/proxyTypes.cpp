@@ -67,8 +67,7 @@ struct Sdf_ListEditorProxyTraits<SdfPathEditorProxy>
     {
       return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
         new Sdf_RelationshipTargetListEditor(o, TypePolicy(o)));
-    }
-    else if (n == SdfFieldKeys->ConnectionPaths)
+    } else if (n == SdfFieldKeys->ConnectionPaths)
     {
       return boost::shared_ptr<Sdf_ListEditor<TypePolicy>>(
         new Sdf_AttributeConnectionListEditor(o, TypePolicy(o)));

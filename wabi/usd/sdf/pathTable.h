@@ -160,8 +160,7 @@ class SdfPathTable
       if (child == firstChild)
       {
         firstChild = child->GetNextSibling();
-      }
-      else
+      } else
       {
         // Search the list to find the preceding child, then unlink the
         // child to remove.
@@ -229,8 +228,7 @@ class SdfPathTable
         {
           // Next subtree is next sibling, if present.
           result._entry = sibling;
-        }
-        else
+        } else
         {
           // Otherwise, walk up parents until we either find one with
           // a next sibling or run out.
@@ -555,8 +553,9 @@ class SdfPathTable
   /// requires that running the contained objects' destructors is thread-safe.
   void ClearInParallel()
   {
-    Sdf_ClearPathTableInParallel(
-      reinterpret_cast<void **>(_buckets.data()), _buckets.size(), _DeleteEntryChain);
+    Sdf_ClearPathTableInParallel(reinterpret_cast<void **>(_buckets.data()),
+                                 _buckets.size(),
+                                 _DeleteEntryChain);
     _size = 0;
   }
 

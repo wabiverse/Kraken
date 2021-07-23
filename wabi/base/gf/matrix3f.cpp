@@ -68,7 +68,11 @@ GfMatrix3f::GfMatrix3f(const GfMatrix3d &m)
 
 GfMatrix3f::GfMatrix3f(const std::vector<std::vector<double>> &v)
 {
-  float m[3][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
+  float m[3][3] = {
+    {1.0, 0.0, 0.0},
+    {0.0, 1.0, 0.0},
+    {0.0, 0.0, 1.0}
+  };
   for (size_t row = 0; row < 3 && row < v.size(); ++row)
   {
     for (size_t col = 0; col < 3 && col < v[row].size(); ++col)
@@ -81,7 +85,11 @@ GfMatrix3f::GfMatrix3f(const std::vector<std::vector<double>> &v)
 
 GfMatrix3f::GfMatrix3f(const std::vector<std::vector<float>> &v)
 {
-  float m[3][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
+  float m[3][3] = {
+    {1.0, 0.0, 0.0},
+    {0.0, 1.0, 0.0},
+    {0.0, 0.0, 1.0}
+  };
   for (size_t row = 0; row < 3 && row < v.size(); ++row)
   {
     for (size_t col = 0; col < 3 && col < v[row].size(); ++col)
@@ -210,8 +218,7 @@ GfMatrix3f GfMatrix3f::GetInverse(double *detPtr, double eps) const
     inverse._mtx[2][0] = static_cast<float>((-(a11 * a20) + a10 * a21) * rcp);
     inverse._mtx[2][1] = static_cast<float>((a01 * a20 - a00 * a21) * rcp);
     inverse._mtx[2][2] = static_cast<float>((-(a01 * a10) + a00 * a11) * rcp);
-  }
-  else
+  } else
   {
     inverse.SetScale(FLT_MAX);
   }
@@ -440,8 +447,7 @@ GfQuaternion GfMatrix3f::ExtractRotationQuaternion() const
     im.Set((_mtx[1][2] - _mtx[2][1]) / (4.0 * r),
            (_mtx[2][0] - _mtx[0][2]) / (4.0 * r),
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
-  }
-  else
+  } else
   {
     int j = (i + 1) % 3;
     int k = (i + 2) % 3;

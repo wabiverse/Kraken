@@ -116,12 +116,14 @@ class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
 
     // Check if any of the list operation vectors have changed and validate
     // their new contents.
-    std::pair<const SdfListOpType, bool> opTypesAndChanged[] = {{SdfListOpTypeExplicit, false},
-                                                                {SdfListOpTypeAdded, false},
-                                                                {SdfListOpTypeDeleted, false},
-                                                                {SdfListOpTypeOrdered, false},
-                                                                {SdfListOpTypePrepended, false},
-                                                                {SdfListOpTypeAppended, false}};
+    std::pair<const SdfListOpType, bool> opTypesAndChanged[] = {
+      {SdfListOpTypeExplicit,  false},
+      {SdfListOpTypeAdded,     false},
+      {SdfListOpTypeDeleted,   false},
+      {SdfListOpTypeOrdered,   false},
+      {SdfListOpTypePrepended, false},
+      {SdfListOpTypeAppended,  false}
+    };
     bool anyChanged = false;
 
     for (auto &opTypeAndChanged : opTypesAndChanged)
@@ -160,8 +162,7 @@ class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
     if (newListOp.HasKeys())
     {
       _GetOwner()->SetField(_GetField(), VtValue(newListOp));
-    }
-    else
+    } else
     {
       _GetOwner()->ClearField(_GetField());
     }

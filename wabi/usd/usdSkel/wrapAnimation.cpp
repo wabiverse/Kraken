@@ -50,53 +50,56 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateJointsAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateJointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
-}
+  static UsdAttribute _CreateJointsAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateJointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+                                 writeSparsely);
+  }
 
-static UsdAttribute _CreateTranslationsAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateTranslationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreateTranslationsAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateTranslationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateRotationsAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRotationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->QuatfArray),
-                                  writeSparsely);
-}
-
-static UsdAttribute _CreateScalesAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateScalesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Half3Array), writeSparsely);
-}
-
-static UsdAttribute _CreateBlendShapesAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateBlendShapesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+  static UsdAttribute _CreateRotationsAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRotationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->QuatfArray),
                                     writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateBlendShapeWeightsAttr(UsdSkelAnimation &self,
-                                                 object defaultVal,
-                                                 bool writeSparsely)
-{
-  return self.CreateBlendShapeWeightsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                          writeSparsely);
-}
+  static UsdAttribute _CreateScalesAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateScalesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Half3Array),
+                                 writeSparsely);
+  }
 
-static std::string _Repr(const UsdSkelAnimation &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdSkel.Animation(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateBlendShapesAttr(UsdSkelAnimation &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateBlendShapesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+                                      writeSparsely);
+  }
+
+  static UsdAttribute _CreateBlendShapeWeightsAttr(UsdSkelAnimation &self,
+                                                   object defaultVal,
+                                                   bool writeSparsely)
+  {
+    return self.CreateBlendShapeWeightsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+                                            writeSparsely);
+  }
+
+  static std::string _Repr(const UsdSkelAnimation &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdSkel.Animation(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -128,8 +131,9 @@ void wrapUsdSkelAnimation()
     .def(!self)
 
     .def("GetJointsAttr", &This::GetJointsAttr)
-    .def(
-      "CreateJointsAttr", &_CreateJointsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateJointsAttr",
+         &_CreateJointsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetTranslationsAttr", &This::GetTranslationsAttr)
     .def("CreateTranslationsAttr",
@@ -142,8 +146,9 @@ void wrapUsdSkelAnimation()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetScalesAttr", &This::GetScalesAttr)
-    .def(
-      "CreateScalesAttr", &_CreateScalesAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateScalesAttr",
+         &_CreateScalesAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetBlendShapesAttr", &This::GetBlendShapesAttr)
     .def("CreateBlendShapesAttr",
@@ -182,19 +187,19 @@ void wrapUsdSkelAnimation()
 namespace
 {
 
-VtMatrix4dArray _GetTransforms(const UsdSkelAnimation &self, UsdTimeCode time)
-{
-  VtMatrix4dArray xforms;
-  self.GetTransforms(&xforms, time);
-  return xforms;
-}
+  VtMatrix4dArray _GetTransforms(const UsdSkelAnimation &self, UsdTimeCode time)
+  {
+    VtMatrix4dArray xforms;
+    self.GetTransforms(&xforms, time);
+    return xforms;
+  }
 
-WRAP_CUSTOM
-{
-  using This = UsdSkelAnimation;
+  WRAP_CUSTOM
+  {
+    using This = UsdSkelAnimation;
 
-  _class.def("GetTransforms", &_GetTransforms, (arg("time") = UsdTimeCode::Default()))
-    .def("SetTransforms", &This::SetTransforms, (arg("xforms"), arg("time") = UsdTimeCode::Default()));
-}
+    _class.def("GetTransforms", &_GetTransforms, (arg("time") = UsdTimeCode::Default()))
+      .def("SetTransforms", &This::SetTransforms, (arg("xforms"), arg("time") = UsdTimeCode::Default()));
+  }
 
 }  // namespace

@@ -155,11 +155,14 @@ void UsdImagingCameraAdapter::TrackVariability(UsdPrim const &prim,
   if (*timeVaryingBits & HdCamera::DirtyProjMatrix)
   {
     *timeVaryingBits |= HdCamera::DirtyParams;
-  }
-  else
+  } else
   {
-    _IsVarying(
-      prim, UsdGeomTokens->fStop, HdCamera::DirtyParams, HdCameraTokens->fStop, timeVaryingBits, false);
+    _IsVarying(prim,
+               UsdGeomTokens->fStop,
+               HdCamera::DirtyParams,
+               HdCameraTokens->fStop,
+               timeVaryingBits,
+               false);
     if ((*timeVaryingBits & HdCamera::DirtyParams) == 0)
     {
       _IsVarying(prim,
@@ -246,8 +249,7 @@ VtValue UsdImagingCameraAdapter::Get(UsdPrim const &prim,
     TfToken v;
     cam.GetProjectionAttr().Get(&v, time);
     return VtValue(_ToProjection(v));
-  }
-  else if (key == HdCameraTokens->horizontalAperture)
+  } else if (key == HdCameraTokens->horizontalAperture)
   {
     // The USD schema specifies several camera parameters in tenths of a
     // world unit (e.g., focalLength = 50mm)
@@ -256,68 +258,57 @@ VtValue UsdImagingCameraAdapter::Get(UsdPrim const &prim,
     float v;
     cam.GetHorizontalApertureAttr().Get(&v, time);
     return VtValue(v * float(GfCamera::APERTURE_UNIT));
-  }
-  else if (key == HdCameraTokens->verticalAperture)
+  } else if (key == HdCameraTokens->verticalAperture)
   {
     float v;
     cam.GetVerticalApertureAttr().Get(&v, time);
     return VtValue(v * float(GfCamera::APERTURE_UNIT));
-  }
-  else if (key == HdCameraTokens->horizontalApertureOffset)
+  } else if (key == HdCameraTokens->horizontalApertureOffset)
   {
     float v;
     cam.GetHorizontalApertureOffsetAttr().Get(&v, time);
     return VtValue(v * float(GfCamera::APERTURE_UNIT));
-  }
-  else if (key == HdCameraTokens->verticalApertureOffset)
+  } else if (key == HdCameraTokens->verticalApertureOffset)
   {
     float v;
     cam.GetVerticalApertureOffsetAttr().Get(&v, time);
     return VtValue(v * float(GfCamera::APERTURE_UNIT));
-  }
-  else if (key == HdCameraTokens->focalLength)
+  } else if (key == HdCameraTokens->focalLength)
   {
     float v;
     cam.GetFocalLengthAttr().Get(&v, time);
     return VtValue(v * float(GfCamera::FOCAL_LENGTH_UNIT));
-  }
-  else if (key == HdCameraTokens->clippingRange)
+  } else if (key == HdCameraTokens->clippingRange)
   {
     GfVec2f v;
     cam.GetClippingRangeAttr().Get(&v, time);
     return VtValue(GfRange1f(v[0], v[1]));
-  }
-  else if (key == HdCameraTokens->clipPlanes)
+  } else if (key == HdCameraTokens->clipPlanes)
   {
     VtArray<GfVec4f> v;
     cam.GetClippingPlanesAttr().Get(&v, time);
     return VtValue(_ToGfVec4dVector(v));
-  }
-  else if (key == HdCameraTokens->fStop)
+  } else if (key == HdCameraTokens->fStop)
   {
     VtValue v;
     cam.GetFStopAttr().Get(&v, time);
     return v;
-  }
-  else if (key == HdCameraTokens->focusDistance)
+  } else if (key == HdCameraTokens->focusDistance)
   {
     VtValue v;
     cam.GetFocusDistanceAttr().Get(&v, time);
     return v;
-  }
-  else if (key == HdCameraTokens->shutterOpen)
+  } else if (key == HdCameraTokens->shutterOpen)
   {
     VtValue vShutterOpen;
     cam.GetShutterOpenAttr().Get(&vShutterOpen, time);  // conversion n/a
     return vShutterOpen;
-  }
-  else if (key == HdCameraTokens->shutterClose)
+  } else if (key == HdCameraTokens->shutterClose)
   {
     VtValue vShutterClose;
     cam.GetShutterCloseAttr().Get(&vShutterClose, time);  // conversion n/a
     return vShutterClose;
-  }
-  else if (key == HdCameraTokens->exposure)
+  } else if (key == HdCameraTokens->exposure)
   {
     VtValue v;
     cam.GetExposureAttr().Get(&v, time);  // conversion n/a

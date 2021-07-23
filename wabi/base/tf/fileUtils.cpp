@@ -347,8 +347,7 @@ bool TfReadDir(const string &dirPath,
       *errMsg = TfStringPrintf("Path not found: %s", szPath);
     }
     return false;
-  }
-  else
+  } else
   {
     do
     {
@@ -358,8 +357,7 @@ bool TfReadDir(const string &dirPath,
         {
           if (dirnames)
             dirnames->push_back(fdFile.cFileName);
-        }
-        else
+        } else
         {
           if (filenames)
             filenames->push_back(fdFile.cFileName);
@@ -398,12 +396,10 @@ bool TfReadDir(const string &dirPath,
     if (entry->d_type == DT_DIR)
     {
       entryIsDir = true;
-    }
-    else if (entry->d_type == DT_LNK)
+    } else if (entry->d_type == DT_LNK)
     {
       entryIsLnk = true;
-    }
-    else if (entry->d_type == DT_UNKNOWN)
+    } else if (entry->d_type == DT_UNKNOWN)
     {
 #  endif
       // If d_type is not available, or the filesystem has no support
@@ -415,8 +411,7 @@ bool TfReadDir(const string &dirPath,
       if (ARCH_S_ISDIR(st.st_mode))
       {
         entryIsDir = true;
-      }
-      else if (S_ISLNK(st.st_mode))
+      } else if (S_ISLNK(st.st_mode))
       {
         entryIsLnk = true;
       }
@@ -428,13 +423,11 @@ bool TfReadDir(const string &dirPath,
     {
       if (dirnames)
         dirnames->push_back(entry->d_name);
-    }
-    else if (entryIsLnk)
+    } else if (entryIsLnk)
     {
       if (symlinknames)
         symlinknames->push_back(entry->d_name);
-    }
-    else if (filenames)
+    } else if (filenames)
     {
       filenames->push_back(entry->d_name);
     }
@@ -523,15 +516,12 @@ static bool Tf_WalkDirsRec(const string &dirpath,
           linkTargets->insert(fileId);
 
           dirnames.push_back(name);
-        }
-        else
+        } else
           filenames.push_back(name);
-      }
-      else
+      } else
         filenames.push_back(name);
     }
-  }
-  else
+  } else
     filenames.insert(filenames.end(), symlinknames.begin(), symlinknames.end());
 
   if (topDown && !func(dirpath, &dirnames, filenames))

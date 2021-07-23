@@ -47,8 +47,7 @@ eAnchorStatus AnchorISystem::createSystem()
     m_system = new AnchorSystemCocoa();
 #endif
     success = (m_system != NULL) ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }
@@ -67,8 +66,7 @@ eAnchorStatus AnchorISystem::destroySystem()
   {
     delete m_system;
     m_system = NULL;
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }

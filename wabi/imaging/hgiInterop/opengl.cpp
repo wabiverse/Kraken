@@ -184,8 +184,7 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
     if (framebuffer.IsHolding<uint32_t>())
     {
       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.UncheckedGet<uint32_t>());
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("dstFramebuffer must hold uint32_t when targeting OpenGL");
     }
@@ -225,8 +224,12 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   glEnableVertexAttribArray(locPosition);
 
   const GLint locUv = glGetAttribLocation(prg, "uvIn");
-  glVertexAttribPointer(
-    locUv, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 6, reinterpret_cast<void *>(sizeof(float) * 4));
+  glVertexAttribPointer(locUv,
+                        2,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        sizeof(float) * 6,
+                        reinterpret_cast<void *>(sizeof(float) * 4));
   glEnableVertexAttribArray(locUv);
 
   // Since we want to composite over the application's framebuffer contents,
@@ -243,8 +246,7 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
     // Note: Use LEQUAL and not LESS to ensure that fragments with only
     // translucent contribution (that don't update depth) are composited.
     glDepthFunc(GL_LEQUAL);
-  }
-  else
+  } else
   {
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -297,8 +299,7 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   if (!restoreDepthEnabled)
   {
     glDisable(GL_DEPTH_TEST);
-  }
-  else
+  } else
   {
     glEnable(GL_DEPTH_TEST);
   }

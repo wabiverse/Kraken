@@ -46,27 +46,27 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-template<typename R>
-static bool _Read(UsdStagePtr stage, R &&reader)
-{
-  try
+  template<typename R>
+  static bool _Read(UsdStagePtr stage, R &&reader)
   {
-    auto doc = mx::createDocument();
-    reader(doc);
-    UsdMtlxRead(doc, stage);
-    return true;
+    try
+    {
+      auto doc = mx::createDocument();
+      reader(doc);
+      UsdMtlxRead(doc, stage);
+      return true;
+    }
+    catch (mx::ExceptionFoundCycle &x)
+    {
+      TF_RUNTIME_ERROR("MaterialX cycle found: %s\n", x.what());
+      return false;
+    }
+    catch (mx::Exception &x)
+    {
+      TF_RUNTIME_ERROR("MaterialX error: %s\n", x.what());
+      return false;
+    }
   }
-  catch (mx::ExceptionFoundCycle &x)
-  {
-    TF_RUNTIME_ERROR("MaterialX cycle found: %s\n", x.what());
-    return false;
-  }
-  catch (mx::Exception &x)
-  {
-    TF_RUNTIME_ERROR("MaterialX error: %s\n", x.what());
-    return false;
-  }
-}
 
 }  // anonymous namespace
 

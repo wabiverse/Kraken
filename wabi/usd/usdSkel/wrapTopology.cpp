@@ -45,12 +45,12 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-tuple _Validate(const UsdSkelTopology &self)
-{
-  std::string reason;
-  bool success = self.Validate(&reason);
-  return boost::python::make_tuple(success, reason);
-}
+  tuple _Validate(const UsdSkelTopology &self)
+  {
+    std::string reason;
+    bool success = self.Validate(&reason);
+    return boost::python::make_tuple(success, reason);
+  }
 
 }  // namespace
 

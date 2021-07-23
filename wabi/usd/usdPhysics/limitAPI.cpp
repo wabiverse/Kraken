@@ -34,249 +34,214 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsLimitAPI,
-        TfType::Bases< UsdAPISchemaBase > >();
-    
+  TfType::Define<UsdPhysicsLimitAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _schemaTokens,
-    (PhysicsLimitAPI)
-    (limit)
-);
+TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsLimitAPI)(limit));
 
 /* virtual */
 UsdPhysicsLimitAPI::~UsdPhysicsLimitAPI()
+{}
+
+/* static */
+UsdPhysicsLimitAPI UsdPhysicsLimitAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsLimitAPI();
+  }
+  TfToken name;
+  if (!IsPhysicsLimitAPIPath(path, &name))
+  {
+    TF_CODING_ERROR("Invalid limit path <%s>.", path.GetText());
+    return UsdPhysicsLimitAPI();
+  }
+  return UsdPhysicsLimitAPI(stage->GetPrimAtPath(path.GetPrimPath()), name);
+}
+
+UsdPhysicsLimitAPI UsdPhysicsLimitAPI::Get(const UsdPrim &prim, const TfToken &name)
+{
+  return UsdPhysicsLimitAPI(prim, name);
+}
+
+
+/* static */
+bool UsdPhysicsLimitAPI::IsSchemaPropertyBaseName(const TfToken &baseName)
+{
+  static TfTokenVector attrsAndRels = {
+    UsdPhysicsTokens->physicsLow,
+    UsdPhysicsTokens->physicsHigh,
+  };
+
+  return find(attrsAndRels.begin(), attrsAndRels.end(), baseName) != attrsAndRels.end();
 }
 
 /* static */
-UsdPhysicsLimitAPI
-UsdPhysicsLimitAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+bool UsdPhysicsLimitAPI::IsPhysicsLimitAPIPath(const SdfPath &path, TfToken *name)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsLimitAPI();
-    }
-    TfToken name;
-    if (!IsPhysicsLimitAPIPath(path, &name)) {
-        TF_CODING_ERROR("Invalid limit path <%s>.", path.GetText());
-        return UsdPhysicsLimitAPI();
-    }
-    return UsdPhysicsLimitAPI(stage->GetPrimAtPath(path.GetPrimPath()), name);
-}
-
-UsdPhysicsLimitAPI
-UsdPhysicsLimitAPI::Get(const UsdPrim &prim, const TfToken &name)
-{
-    return UsdPhysicsLimitAPI(prim, name);
-}
-
-
-/* static */
-bool 
-UsdPhysicsLimitAPI::IsSchemaPropertyBaseName(const TfToken &baseName)
-{
-    static TfTokenVector attrsAndRels = {
-        UsdPhysicsTokens->physicsLow,
-        UsdPhysicsTokens->physicsHigh,
-    };
-
-    return find(attrsAndRels.begin(), attrsAndRels.end(), baseName)
-            != attrsAndRels.end();
-}
-
-/* static */
-bool
-UsdPhysicsLimitAPI::IsPhysicsLimitAPIPath(
-    const SdfPath &path, TfToken *name)
-{
-    if (!path.IsPropertyPath()) {
-        return false;
-    }
-
-    std::string propertyName = path.GetName();
-    TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(propertyName);
-
-    // The baseName of the  path can't be one of the 
-    // schema properties. We should validate this in the creation (or apply)
-    // API.
-    TfToken baseName = *tokens.rbegin();
-    if (IsSchemaPropertyBaseName(baseName)) {
-        return false;
-    }
-
-    if (tokens.size() >= 2
-        && tokens[0] == _schemaTokens->limit) {
-        *name = TfToken(propertyName.substr(
-            _schemaTokens->limit.GetString().size() + 1));
-        return true;
-    }
-
+  if (!path.IsPropertyPath())
+  {
     return false;
+  }
+
+  std::string propertyName = path.GetName();
+  TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(propertyName);
+
+  // The baseName of the  path can't be one of the
+  // schema properties. We should validate this in the creation (or apply)
+  // API.
+  TfToken baseName = *tokens.rbegin();
+  if (IsSchemaPropertyBaseName(baseName))
+  {
+    return false;
+  }
+
+  if (tokens.size() >= 2 && tokens[0] == _schemaTokens->limit)
+  {
+    *name = TfToken(propertyName.substr(_schemaTokens->limit.GetString().size() + 1));
+    return true;
+  }
+
+  return false;
 }
 
 /* virtual */
 UsdSchemaKind UsdPhysicsLimitAPI::GetSchemaKind() const
 {
-    return UsdPhysicsLimitAPI::schemaKind;
+  return UsdPhysicsLimitAPI::schemaKind;
 }
 
 /* static */
-bool
-UsdPhysicsLimitAPI::CanApply(
-    const UsdPrim &prim, const TfToken &name, std::string *whyNot)
+bool UsdPhysicsLimitAPI::CanApply(const UsdPrim &prim, const TfToken &name, std::string *whyNot)
 {
-    return prim.CanApplyAPI<UsdPhysicsLimitAPI>(name, whyNot);
+  return prim.CanApplyAPI<UsdPhysicsLimitAPI>(name, whyNot);
 }
 
 /* static */
-UsdPhysicsLimitAPI
-UsdPhysicsLimitAPI::Apply(const UsdPrim &prim, const TfToken &name)
+UsdPhysicsLimitAPI UsdPhysicsLimitAPI::Apply(const UsdPrim &prim, const TfToken &name)
 {
-    // Ensure that the instance name is valid.
-    TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(name);
+  // Ensure that the instance name is valid.
+  TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(name);
 
-    if (tokens.empty()) {
-        TF_CODING_ERROR("Invalid PhysicsLimitAPI name '%s'.", 
-                        name.GetText());
-        return UsdPhysicsLimitAPI();
-    }
-
-    const TfToken &baseName = tokens.back();
-    if (IsSchemaPropertyBaseName(baseName)) {
-        TF_CODING_ERROR("Invalid PhysicsLimitAPI name '%s'. "
-                        "The base-name '%s' is a schema property name.", 
-                        name.GetText(), baseName.GetText());
-        return UsdPhysicsLimitAPI();
-    }
-
-    if (prim.ApplyAPI<UsdPhysicsLimitAPI>(name)) {
-        return UsdPhysicsLimitAPI(prim, name);
-    }
+  if (tokens.empty())
+  {
+    TF_CODING_ERROR("Invalid PhysicsLimitAPI name '%s'.", name.GetText());
     return UsdPhysicsLimitAPI();
+  }
+
+  const TfToken &baseName = tokens.back();
+  if (IsSchemaPropertyBaseName(baseName))
+  {
+    TF_CODING_ERROR(
+      "Invalid PhysicsLimitAPI name '%s'. "
+      "The base-name '%s' is a schema property name.",
+      name.GetText(),
+      baseName.GetText());
+    return UsdPhysicsLimitAPI();
+  }
+
+  if (prim.ApplyAPI<UsdPhysicsLimitAPI>(name))
+  {
+    return UsdPhysicsLimitAPI(prim, name);
+  }
+  return UsdPhysicsLimitAPI();
 }
 
 /* static */
-const TfType &
-UsdPhysicsLimitAPI::GetStaticTfType()
+const TfType &UsdPhysicsLimitAPI::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsLimitAPI>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsLimitAPI>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsLimitAPI::IsTypedSchema()
+bool UsdPhysicsLimitAPI::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsLimitAPI::GetTfType() const
+const TfType &UsdPhysicsLimitAPI::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /// Returns the property name prefixed with the correct namespace prefix, which
 /// is composed of the the API's propertyNamespacePrefix metadata and the
 /// instance name of the API.
-static inline
-TfToken
-_GetNamespacedPropertyName(const TfToken instanceName, const TfToken propName)
+static inline TfToken _GetNamespacedPropertyName(const TfToken instanceName, const TfToken propName)
 {
-    TfTokenVector identifiers =
-        {_schemaTokens->limit, instanceName, propName};
-    return TfToken(SdfPath::JoinIdentifier(identifiers));
+  TfTokenVector identifiers = {_schemaTokens->limit, instanceName, propName};
+  return TfToken(SdfPath::JoinIdentifier(identifiers));
 }
 
-UsdAttribute
-UsdPhysicsLimitAPI::GetLowAttr() const
+UsdAttribute UsdPhysicsLimitAPI::GetLowAttr() const
 {
-    return GetPrim().GetAttribute(
-        _GetNamespacedPropertyName(
-            GetName(),
-            UsdPhysicsTokens->physicsLow));
+  return GetPrim().GetAttribute(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsLow));
 }
 
-UsdAttribute
-UsdPhysicsLimitAPI::CreateLowAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsLimitAPI::CreateLowAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(
-                       _GetNamespacedPropertyName(
-                            GetName(),
-                           UsdPhysicsTokens->physicsLow),
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsLow),
+                                    SdfValueTypeNames->Float,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsLimitAPI::GetHighAttr() const
+UsdAttribute UsdPhysicsLimitAPI::GetHighAttr() const
 {
-    return GetPrim().GetAttribute(
-        _GetNamespacedPropertyName(
-            GetName(),
-            UsdPhysicsTokens->physicsHigh));
+  return GetPrim().GetAttribute(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsHigh));
 }
 
-UsdAttribute
-UsdPhysicsLimitAPI::CreateHighAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsLimitAPI::CreateHighAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(
-                       _GetNamespacedPropertyName(
-                            GetName(),
-                           UsdPhysicsTokens->physicsHigh),
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsHigh),
+                                    SdfValueTypeNames->Float,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-namespace {
-static inline TfTokenVector
-_ConcatenateAttributeNames(
-    const TfToken instanceName,
-    const TfTokenVector& left,
-    const TfTokenVector& right)
+namespace
 {
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfToken instanceName,
+                                                         const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
     TfTokenVector result;
     result.reserve(left.size() + right.size());
     result.insert(result.end(), left.begin(), left.end());
 
-    for (const TfToken attrName : right) {
-        result.push_back(
-            _GetNamespacedPropertyName(instanceName, attrName));
+    for (const TfToken attrName : right)
+    {
+      result.push_back(_GetNamespacedPropertyName(instanceName, attrName));
     }
     result.insert(result.end(), right.begin(), right.end());
     return result;
-}
-}
+  }
+}  // namespace
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsLimitAPI::GetSchemaAttributeNames(
-    bool includeInherited, const TfToken instanceName)
+const TfTokenVector &UsdPhysicsLimitAPI::GetSchemaAttributeNames(bool includeInherited,
+                                                                 const TfToken instanceName)
 {
-    static TfTokenVector localNames = {
-        UsdPhysicsTokens->physicsLow,
-        UsdPhysicsTokens->physicsHigh,
-    };
-    static TfTokenVector allNames =
-        _ConcatenateAttributeNames(
-            instanceName,
-            UsdAPISchemaBase::GetSchemaAttributeNames(true),
-            localNames);
+  static TfTokenVector localNames = {
+    UsdPhysicsTokens->physicsLow,
+    UsdPhysicsTokens->physicsHigh,
+  };
+  static TfTokenVector allNames = _ConcatenateAttributeNames(instanceName,
+                                                             UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END

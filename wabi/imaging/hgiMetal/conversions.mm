@@ -176,10 +176,10 @@ struct
   HgiCullMode hgiCullMode;
   MTLCullMode metalCullMode;
 } static const _CullModeTable[] = {
-  {HgiCullModeNone, MTLCullModeNone},
-  {HgiCullModeFront, MTLCullModeFront},
-  {HgiCullModeBack, MTLCullModeBack},
-  {HgiCullModeFrontAndBack, MTLCullModeNone}  // Unsupported
+  {HgiCullModeNone,         MTLCullModeNone },
+  {HgiCullModeFront,        MTLCullModeFront},
+  {HgiCullModeBack,         MTLCullModeBack },
+  {HgiCullModeFrontAndBack, MTLCullModeNone }  // Unsupported
 };
 
 static_assert(TfArraySize(_CullModeTable) == HgiCullModeCount,
@@ -193,9 +193,9 @@ struct
   HgiPolygonMode hgiFillMode;
   MTLTriangleFillMode metalFillMode;
 } static const _PolygonModeTable[] = {
-  {HgiPolygonModeFill, MTLTriangleFillModeFill},
-  {HgiPolygonModeLine, MTLTriangleFillModeLines},
-  {HgiPolygonModePoint, MTLTriangleFillModeFill},  // Unsupported
+  {HgiPolygonModeFill,  MTLTriangleFillModeFill },
+  {HgiPolygonModeLine,  MTLTriangleFillModeLines},
+  {HgiPolygonModePoint, MTLTriangleFillModeFill }, // Unsupported
 };
 
 static_assert(TfArraySize(_PolygonModeTable) == HgiPolygonModeCount,
@@ -209,11 +209,11 @@ struct
   HgiBlendOp hgiBlendOp;
   MTLBlendOperation metalBlendOp;
 } static const _blendEquationTable[] = {
-  {HgiBlendOpAdd, MTLBlendOperationAdd},
-  {HgiBlendOpSubtract, MTLBlendOperationSubtract},
+  {HgiBlendOpAdd,             MTLBlendOperationAdd            },
+  {HgiBlendOpSubtract,        MTLBlendOperationSubtract       },
   {HgiBlendOpReverseSubtract, MTLBlendOperationReverseSubtract},
-  {HgiBlendOpMin, MTLBlendOperationMin},
-  {HgiBlendOpMax, MTLBlendOperationMax},
+  {HgiBlendOpMin,             MTLBlendOperationMin            },
+  {HgiBlendOpMax,             MTLBlendOperationMax            },
 };
 
 static_assert(TfArraySize(_blendEquationTable) == HgiBlendOpCount,
@@ -227,25 +227,25 @@ struct
   HgiBlendFactor hgiBlendFactor;
   MTLBlendFactor metalBlendFactor;
 } static const _blendFactorTable[] = {
-  {HgiBlendFactorZero, MTLBlendFactorZero},
-  {HgiBlendFactorOne, MTLBlendFactorOne},
-  {HgiBlendFactorSrcColor, MTLBlendFactorSourceColor},
-  {HgiBlendFactorOneMinusSrcColor, MTLBlendFactorOneMinusSourceColor},
-  {HgiBlendFactorDstColor, MTLBlendFactorDestinationColor},
-  {HgiBlendFactorOneMinusDstColor, MTLBlendFactorOneMinusDestinationColor},
-  {HgiBlendFactorSrcAlpha, MTLBlendFactorSourceAlpha},
-  {HgiBlendFactorOneMinusSrcAlpha, MTLBlendFactorOneMinusSourceAlpha},
-  {HgiBlendFactorDstAlpha, MTLBlendFactorDestinationAlpha},
-  {HgiBlendFactorOneMinusDstAlpha, MTLBlendFactorOneMinusDestinationAlpha},
-  {HgiBlendFactorConstantColor, MTLBlendFactorZero},          // Unsupported
-  {HgiBlendFactorOneMinusConstantColor, MTLBlendFactorZero},  // Unsupported
-  {HgiBlendFactorConstantAlpha, MTLBlendFactorZero},          // Unsupported
-  {HgiBlendFactorOneMinusConstantAlpha, MTLBlendFactorZero},  // Unsupported
-  {HgiBlendFactorSrcAlphaSaturate, MTLBlendFactorSourceAlphaSaturated},
-  {HgiBlendFactorSrc1Color, MTLBlendFactorSource1Color},
-  {HgiBlendFactorOneMinusSrc1Color, MTLBlendFactorOneMinusSource1Color},
-  {HgiBlendFactorSrc1Alpha, MTLBlendFactorSourceAlpha},
-  {HgiBlendFactorOneMinusSrc1Alpha, MTLBlendFactorOneMinusSource1Alpha},
+  {HgiBlendFactorZero,                  MTLBlendFactorZero                    },
+  {HgiBlendFactorOne,                   MTLBlendFactorOne                     },
+  {HgiBlendFactorSrcColor,              MTLBlendFactorSourceColor             },
+  {HgiBlendFactorOneMinusSrcColor,      MTLBlendFactorOneMinusSourceColor     },
+  {HgiBlendFactorDstColor,              MTLBlendFactorDestinationColor        },
+  {HgiBlendFactorOneMinusDstColor,      MTLBlendFactorOneMinusDestinationColor},
+  {HgiBlendFactorSrcAlpha,              MTLBlendFactorSourceAlpha             },
+  {HgiBlendFactorOneMinusSrcAlpha,      MTLBlendFactorOneMinusSourceAlpha     },
+  {HgiBlendFactorDstAlpha,              MTLBlendFactorDestinationAlpha        },
+  {HgiBlendFactorOneMinusDstAlpha,      MTLBlendFactorOneMinusDestinationAlpha},
+  {HgiBlendFactorConstantColor,         MTLBlendFactorZero                    }, // Unsupported
+  {HgiBlendFactorOneMinusConstantColor, MTLBlendFactorZero                    }, // Unsupported
+  {HgiBlendFactorConstantAlpha,         MTLBlendFactorZero                    }, // Unsupported
+  {HgiBlendFactorOneMinusConstantAlpha, MTLBlendFactorZero                    }, // Unsupported
+  {HgiBlendFactorSrcAlphaSaturate,      MTLBlendFactorSourceAlphaSaturated    },
+  {HgiBlendFactorSrc1Color,             MTLBlendFactorSource1Color            },
+  {HgiBlendFactorOneMinusSrc1Color,     MTLBlendFactorOneMinusSource1Color    },
+  {HgiBlendFactorSrc1Alpha,             MTLBlendFactorSourceAlpha             },
+  {HgiBlendFactorOneMinusSrc1Alpha,     MTLBlendFactorOneMinusSource1Alpha    },
 };
 
 static_assert(TfArraySize(_blendFactorTable) == HgiBlendFactorCount,
@@ -259,7 +259,7 @@ struct
   HgiWinding hgiWinding;
   MTLWinding metalWinding;
 } static const _windingTable[] = {
-  {HgiWindingClockwise, MTLWindingClockwise},
+  {HgiWindingClockwise,        MTLWindingClockwise       },
   {HgiWindingCounterClockwise, MTLWindingCounterClockwise},
 };
 
@@ -275,8 +275,8 @@ struct
   MTLLoadAction metalLoadOp;
 } static const _attachmentLoadOpTable[] = {
   {HgiAttachmentLoadOpDontCare, MTLLoadActionDontCare},
-  {HgiAttachmentLoadOpClear, MTLLoadActionClear},
-  {HgiAttachmentLoadOpLoad, MTLLoadActionLoad},
+  {HgiAttachmentLoadOpClear,    MTLLoadActionClear   },
+  {HgiAttachmentLoadOpLoad,     MTLLoadActionLoad    },
 };
 
 static_assert(TfArraySize(_attachmentLoadOpTable) == HgiAttachmentLoadOpCount,
@@ -291,7 +291,7 @@ struct
   MTLStoreAction metalStoreOp;
 } static const _attachmentStoreOpTable[] = {
   {HgiAttachmentStoreOpDontCare, MTLStoreActionDontCare},
-  {HgiAttachmentStoreOpStore, MTLStoreActionStore},
+  {HgiAttachmentStoreOpStore,    MTLStoreActionStore   },
 };
 
 static_assert(TfArraySize(_attachmentStoreOpTable) == HgiAttachmentStoreOpCount,
@@ -305,14 +305,14 @@ struct
   HgiCompareFunction hgiCompareFunction;
   MTLCompareFunction metalCF;
 } static const _compareFnTable[] = {
-  {HgiCompareFunctionNever, MTLCompareFunctionNever},
-  {HgiCompareFunctionLess, MTLCompareFunctionLess},
-  {HgiCompareFunctionEqual, MTLCompareFunctionEqual},
-  {HgiCompareFunctionLEqual, MTLCompareFunctionLessEqual},
-  {HgiCompareFunctionGreater, MTLCompareFunctionGreater},
-  {HgiCompareFunctionNotEqual, MTLCompareFunctionNotEqual},
-  {HgiCompareFunctionGEqual, MTLCompareFunctionGreaterEqual},
-  {HgiCompareFunctionAlways, MTLCompareFunctionAlways},
+  {HgiCompareFunctionNever,    MTLCompareFunctionNever       },
+  {HgiCompareFunctionLess,     MTLCompareFunctionLess        },
+  {HgiCompareFunctionEqual,    MTLCompareFunctionEqual       },
+  {HgiCompareFunctionLEqual,   MTLCompareFunctionLessEqual   },
+  {HgiCompareFunctionGreater,  MTLCompareFunctionGreater     },
+  {HgiCompareFunctionNotEqual, MTLCompareFunctionNotEqual    },
+  {HgiCompareFunctionGEqual,   MTLCompareFunctionGreaterEqual},
+  {HgiCompareFunctionAlways,   MTLCompareFunctionAlways      },
 };
 
 static_assert(TfArraySize(_compareFnTable) == HgiCompareFunctionCount,
@@ -323,9 +323,9 @@ struct
   HgiTextureType hgiTextureType;
   MTLTextureType metalTT;
 } static const _textureTypeTable[HgiTextureTypeCount] = {
-  {HgiTextureType1D, MTLTextureType1D},
-  {HgiTextureType2D, MTLTextureType2D},
-  {HgiTextureType3D, MTLTextureType3D},
+  {HgiTextureType1D,      MTLTextureType1D     },
+  {HgiTextureType2D,      MTLTextureType2D     },
+  {HgiTextureType3D,      MTLTextureType3D     },
   {HgiTextureType1DArray, MTLTextureType1DArray},
   {HgiTextureType2DArray, MTLTextureType2DArray},
 };
@@ -338,11 +338,12 @@ struct
   HgiSamplerAddressMode hgiAddressMode;
   MTLSamplerAddressMode metalAM;
 } static const _samplerAddressModeTable[HgiSamplerAddressModeCount] = {
-  {HgiSamplerAddressModeClampToEdge, MTLSamplerAddressModeClampToEdge},
-  {HgiSamplerAddressModeMirrorClampToEdge, MTLSamplerAddressModeMirrorClampToEdge},
-  {HgiSamplerAddressModeRepeat, MTLSamplerAddressModeRepeat},
-  {HgiSamplerAddressModeMirrorRepeat, MTLSamplerAddressModeMirrorRepeat},
-  {HgiSamplerAddressModeClampToBorderColor, MTLSamplerAddressModeClampToBorderColor}};
+  {HgiSamplerAddressModeClampToEdge,        MTLSamplerAddressModeClampToEdge       },
+  {HgiSamplerAddressModeMirrorClampToEdge,  MTLSamplerAddressModeMirrorClampToEdge },
+  {HgiSamplerAddressModeRepeat,             MTLSamplerAddressModeRepeat            },
+  {HgiSamplerAddressModeMirrorRepeat,       MTLSamplerAddressModeMirrorRepeat      },
+  {HgiSamplerAddressModeClampToBorderColor, MTLSamplerAddressModeClampToBorderColor}
+};
 
 struct
 {
@@ -350,7 +351,8 @@ struct
   MTLSamplerMinMagFilter metalSF;
 } static const _samplerFilterTable[HgiSamplerFilterCount] = {
   {HgiSamplerFilterNearest, MTLSamplerMinMagFilterNearest},
-  {HgiSamplerFilterLinear, MTLSamplerMinMagFilterLinear}};
+  {HgiSamplerFilterLinear,  MTLSamplerMinMagFilterLinear }
+};
 
 struct
 {
@@ -358,8 +360,9 @@ struct
   MTLSamplerMipFilter metalMF;
 } static const _mipFilterTable[HgiMipFilterCount] = {
   {HgiMipFilterNotMipmapped, MTLSamplerMipFilterNotMipmapped},
-  {HgiMipFilterNearest, MTLSamplerMipFilterNearest},
-  {HgiMipFilterLinear, MTLSamplerMipFilterLinear}};
+  {HgiMipFilterNearest,      MTLSamplerMipFilterNearest     },
+  {HgiMipFilterLinear,       MTLSamplerMipFilterLinear      }
+};
 
 #if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_15) || \
   __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
@@ -368,12 +371,13 @@ struct
   HgiComponentSwizzle hgiComponentSwizzle;
   MTLTextureSwizzle metalCS;
 } static const _componentSwizzleTable[HgiComponentSwizzleCount] = {
-  {HgiComponentSwizzleZero, MTLTextureSwizzleZero},
-  {HgiComponentSwizzleOne, MTLTextureSwizzleOne},
-  {HgiComponentSwizzleR, MTLTextureSwizzleRed},
-  {HgiComponentSwizzleG, MTLTextureSwizzleGreen},
-  {HgiComponentSwizzleB, MTLTextureSwizzleBlue},
-  {HgiComponentSwizzleA, MTLTextureSwizzleAlpha}};
+  {HgiComponentSwizzleZero, MTLTextureSwizzleZero },
+  {HgiComponentSwizzleOne,  MTLTextureSwizzleOne  },
+  {HgiComponentSwizzleR,    MTLTextureSwizzleRed  },
+  {HgiComponentSwizzleG,    MTLTextureSwizzleGreen},
+  {HgiComponentSwizzleB,    MTLTextureSwizzleBlue },
+  {HgiComponentSwizzleA,    MTLTextureSwizzleAlpha}
+};
 #endif
 
 struct
@@ -381,22 +385,24 @@ struct
   HgiPrimitiveType hgiPrimitiveType;
   MTLPrimitiveTopologyClass metalTC;
 } static const _primitiveClassTable[HgiPrimitiveTypeCount] = {
-  {HgiPrimitiveTypePointList, MTLPrimitiveTopologyClassPoint},
-  {HgiPrimitiveTypeLineList, MTLPrimitiveTopologyClassLine},
-  {HgiPrimitiveTypeLineStrip, MTLPrimitiveTopologyClassLine},
-  {HgiPrimitiveTypeTriangleList, MTLPrimitiveTopologyClassTriangle},
-  {HgiPrimitiveTypePatchList, MTLPrimitiveTopologyClassUnspecified}};
+  {HgiPrimitiveTypePointList,    MTLPrimitiveTopologyClassPoint      },
+  {HgiPrimitiveTypeLineList,     MTLPrimitiveTopologyClassLine       },
+  {HgiPrimitiveTypeLineStrip,    MTLPrimitiveTopologyClassLine       },
+  {HgiPrimitiveTypeTriangleList, MTLPrimitiveTopologyClassTriangle   },
+  {HgiPrimitiveTypePatchList,    MTLPrimitiveTopologyClassUnspecified}
+};
 
 struct
 {
   HgiPrimitiveType hgiPrimitiveType;
   MTLPrimitiveType metalPT;
 } static const _primitiveTypeTable[HgiPrimitiveTypeCount] = {
-  {HgiPrimitiveTypePointList, MTLPrimitiveTypePoint},
-  {HgiPrimitiveTypeLineList, MTLPrimitiveTypeLine},
-  {HgiPrimitiveTypeLineStrip, MTLPrimitiveTypeLineStrip},
-  {HgiPrimitiveTypeTriangleList, MTLPrimitiveTypeTriangle},
-  {HgiPrimitiveTypePatchList, MTLPrimitiveTypeTriangle /*Invalid*/}};
+  {HgiPrimitiveTypePointList,    MTLPrimitiveTypePoint               },
+  {HgiPrimitiveTypeLineList,     MTLPrimitiveTypeLine                },
+  {HgiPrimitiveTypeLineStrip,    MTLPrimitiveTypeLineStrip           },
+  {HgiPrimitiveTypeTriangleList, MTLPrimitiveTypeTriangle            },
+  {HgiPrimitiveTypePatchList,    MTLPrimitiveTypeTriangle /*Invalid*/}
+};
 
 MTLPixelFormat HgiMetalConversions::GetPixelFormat(HgiFormat inFormat)
 {

@@ -167,7 +167,10 @@ class TfNotice
     return new _RawDeliverer<
       LPtr,
       void (L::*)(const TfNotice &, const TfType &, TfWeakBase *, const void *, const std::type_info &)>(
-      listener, method, sender, noticeType);
+      listener,
+      method,
+      sender,
+      noticeType);
   }
 
   template<class LPtr, class L>
@@ -599,8 +602,12 @@ class TfNotice
                          probes);
         }
 
-        derived->_InvokeListenerMethod(
-          listener, *_CastNotice<NoticeType>(&notice), noticeType, sender, senderUniqueId, senderType);
+        derived->_InvokeListenerMethod(listener,
+                                       *_CastNotice<NoticeType>(&notice),
+                                       noticeType,
+                                       sender,
+                                       senderUniqueId,
+                                       senderType);
 
         if (ARCH_UNLIKELY(!probes.empty()))
           _EndDelivery(probes);

@@ -219,8 +219,7 @@ static bool _GetRenderBufferSize(const HdRenderPassAovBindingVector &aovBindings
       *width = renderBuffer->GetWidth();
       *height = renderBuffer->GetHeight();
       return true;
-    }
-    else
+    } else
     {
       TF_CODING_ERROR(
         "No render buffer available for AOV "
@@ -300,11 +299,16 @@ static GfVec4f _ComputeScreenWindow(HdRenderPassStateSharedPtr const &renderPass
 
   // Conform to match display window's aspect ratio.
   const GfRange2d screenWindowForDisplayWindow = CameraUtilConformedWindow(
-    screenWindowForCamera, renderPassState->GetWindowPolicy(), _GetDisplayWindowAspect(framing));
+    screenWindowForCamera,
+    renderPassState->GetWindowPolicy(),
+    _GetDisplayWindowAspect(framing));
 
   // Compute screen window we need to send to RenderMan.
   const GfRange2d screenWindowForRenderBuffer = _ConvertScreenWindowForDisplayWindowToRenderBuffer(
-    screenWindowForDisplayWindow, framing.displayWindow, renderBufferWidth, renderBufferHeight);
+    screenWindowForDisplayWindow,
+    framing.displayWindow,
+    renderBufferWidth,
+    renderBufferHeight);
 
   return _ToVec4f(screenWindowForRenderBuffer);
 }
@@ -399,8 +403,9 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
       {
         _interactiveContext->resolution[0] = renderBufferWidth;
         _interactiveContext->resolution[1] = renderBufferHeight;
-        _interactiveContext->_options.SetIntegerArray(
-          RixStr.k_Ri_FormatResolution, _interactiveContext->resolution, 2);
+        _interactiveContext->_options.SetIntegerArray(RixStr.k_Ri_FormatResolution,
+                                                      _interactiveContext->resolution,
+                                                      2);
       }
       if (cropWindowChanged)
       {
@@ -448,8 +453,9 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
 
     if (hdCam && renderPassState->GetFraming().IsValid())
     {
-      const GfVec4f screenWindow = _ComputeScreenWindow(
-        renderPassState, renderBufferWidth, renderBufferHeight);
+      const GfVec4f screenWindow = _ComputeScreenWindow(renderPassState,
+                                                        renderBufferWidth,
+                                                        renderBufferHeight);
 
       if (hdCam->GetProjection() == HdCamera::Perspective)
       {
@@ -462,8 +468,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
         cameraNode.params.SetFloat(RixStr.k_fov, 90.0f);
       }
       camParams.SetFloatArray(RixStr.k_Ri_ScreenWindow, screenWindow.data(), 4);
-    }
-    else
+    } else
     {
       if (!isPerspective)
       {
@@ -474,8 +479,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
         const double w = (right - left) / 2;
         const double h = (top - bottom) / 2;
         viewToWorldCorrectionMatrix = GfMatrix4d(GfVec4d(w, h, 1, 1));
-      }
-      else
+      } else
       {
         // Extract FOV from hydra projection matrix. More precisely,
         // use the smaller value among the horizontal and vertical FOV.
@@ -513,8 +517,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
 
       // Commit camera.
       riley->ModifyCamera(_interactiveContext->cameraId, &cameraNode, &xform, &camParams);
-    }
-    else
+    } else
     {
       // Use the framing state as a single time sample.
       float const zerotime = 0.0f;
@@ -540,7 +543,8 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
     _interactiveContext->StopRender();
 
     _integrator = renderDelegate->GetRenderSetting<std::string>(
-      HdPrmanRenderSettingsTokens->integratorName, HdPrmanIntegratorTokens->PxrPathTracer.GetString());
+      HdPrmanRenderSettingsTokens->integratorName,
+      HdPrmanIntegratorTokens->PxrPathTracer.GetString());
     _isPrimaryIntegrator = _integrator == HdPrmanIntegratorTokens->PxrPathTracer.GetString() ||
                            _integrator == HdPrmanIntegratorTokens->PbsPathTracer.GetString();
     if (_enableQuickIntegrate)
@@ -550,18 +554,21 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
         HdPrmanIntegratorTokens->PxrDirectLighting.GetString());
 
       _quickIntegrateTime = renderDelegate->GetRenderSetting<int>(
-                              HdPrmanRenderSettingsTokens->interactiveIntegratorTimeout, 200) /
+                              HdPrmanRenderSettingsTokens->interactiveIntegratorTimeout,
+                              200) /
                             1000.f;
-    }
-    else
+    } else
     {
       _quickIntegrateTime = 0.0f;
 
       RtParamList integratorParams;
-      _interactiveContext->SetIntegratorParamsFromRenderSettings(
-        (HdPrmanRenderDelegate *)renderDelegate, _integrator, integratorParams);
-      _interactiveContext->SetIntegratorParamsFromCamera(
-        (HdPrmanRenderDelegate *)renderDelegate, hdCam, _integrator, integratorParams);
+      _interactiveContext->SetIntegratorParamsFromRenderSettings((HdPrmanRenderDelegate *)renderDelegate,
+                                                                 _integrator,
+                                                                 integratorParams);
+      _interactiveContext->SetIntegratorParamsFromCamera((HdPrmanRenderDelegate *)renderDelegate,
+                                                         hdCam,
+                                                         _integrator,
+                                                         integratorParams);
 
       riley::ShadingNode integratorNode{riley::ShadingNode::k_Integrator,
                                         RtUString(_integrator.c_str()),
@@ -594,8 +601,10 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
     // Setup quick integrator and save ids of it and main
     if (_enableQuickIntegrate)
     {
-      riley::ShadingNode integratorNode{
-        riley::ShadingNode::k_Integrator, RtUString(_quickIntegrator.c_str()), us_PathTracer, RtParamList()};
+      riley::ShadingNode integratorNode{riley::ShadingNode::k_Integrator,
+                                        RtUString(_quickIntegrator.c_str()),
+                                        us_PathTracer,
+                                        RtParamList()};
       integratorNode.params.SetInteger(RtUString("numLightSamples"), 1);
       integratorNode.params.SetInteger(RtUString("numBxdfSamples"), 1);
       _quickIntegratorId = riley->CreateIntegrator(integratorNode);
@@ -637,8 +646,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
         _interactiveContext->SetIntegrator(_quickIntegratorId);
         _quickIntegrate = true;
       }
-    }
-    else if (_quickIntegrateTime <= 0 || _quickIntegrate)
+    } else if (_quickIntegrateTime <= 0 || _quickIntegrate)
     {
       // Disable quick integrate
       _interactiveContext->SetIntegrator(_mainIntegratorId);

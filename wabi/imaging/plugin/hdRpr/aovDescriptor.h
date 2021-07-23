@@ -27,9 +27,8 @@ limitations under the License.
 WABI_NAMESPACE_BEGIN
 
 #define HDRPR_AOV_TOKENS \
-  (rawColor)( \
-    albedo)(variance)(worldCoordinate)(opacity)((primvarsSt, \
-                                                 "primvars:st"))(materialId)(geometricNormal)(objectGroupId)(shadowCatcher)(background)(emission)(velocity)(directIllumination)(indirectIllumination)(ao)(directDiffuse)(directReflect)(indirectDiffuse)(indirectReflect)(refract)(volume)(lightGroup0)(lightGroup1)(lightGroup2)(lightGroup3)(viewShadingNormal)(reflectionCatcher)(colorRight)(lpe0)(lpe1)(lpe2)(lpe3)(lpe4)(lpe5)(lpe6)(lpe7)(lpe8)(cameraNormal)(cryptomatteMat0)(cryptomatteMat1)(cryptomatteMat2)(cryptomatteObj0)(cryptomatteObj1)(cryptomatteObj2)(materialIdMask)(objectIdMask)(objectGroupIdMask)
+  (rawColor)(albedo)(    \
+    variance)(worldCoordinate)(opacity)((primvarsSt, "primvars:st"))(materialId)(geometricNormal)(objectGroupId)(shadowCatcher)(background)(emission)(velocity)(directIllumination)(indirectIllumination)(ao)(directDiffuse)(directReflect)(indirectDiffuse)(indirectReflect)(refract)(volume)(lightGroup0)(lightGroup1)(lightGroup2)(lightGroup3)(viewShadingNormal)(reflectionCatcher)(colorRight)(lpe0)(lpe1)(lpe2)(lpe3)(lpe4)(lpe5)(lpe6)(lpe7)(lpe8)(cameraNormal)(cryptomatteMat0)(cryptomatteMat1)(cryptomatteMat2)(cryptomatteObj0)(cryptomatteObj1)(cryptomatteObj2)(materialIdMask)(objectIdMask)(objectGroupIdMask)
 
 TF_DECLARE_PUBLIC_TOKENS(HdRprAovTokens, HDRPR_AOV_TOKENS);
 

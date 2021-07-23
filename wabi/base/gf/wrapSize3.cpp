@@ -52,52 +52,52 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static int normalizeIndex(int index)
-{
-  return TfPyNormalizeIndex(index, 3, true /*throw error*/);
-}
+  static int normalizeIndex(int index)
+  {
+    return TfPyNormalizeIndex(index, 3, true /*throw error*/);
+  }
 
-static int __len__(const GfSize3 &self)
-{
-  return 3;
-}
+  static int __len__(const GfSize3 &self)
+  {
+    return 3;
+  }
 
-static size_t __getitem__(const GfSize3 &self, int index)
-{
-  index = normalizeIndex(index);
-  return self[index];
-}
+  static size_t __getitem__(const GfSize3 &self, int index)
+  {
+    index = normalizeIndex(index);
+    return self[index];
+  }
 
-static void __setitem__(GfSize3 &self, int index, size_t value)
-{
-  index = normalizeIndex(index);
-  self[index] = value;
-}
+  static void __setitem__(GfSize3 &self, int index, size_t value)
+  {
+    index = normalizeIndex(index);
+    self[index] = value;
+  }
 
-static bool __contains__(const GfSize3 &self, size_t value)
-{
-  if (self[0] == value || self[1] == value || self[2] == value)
-    return true;
-  return false;
-}
+  static bool __contains__(const GfSize3 &self, size_t value)
+  {
+    if (self[0] == value || self[1] == value || self[2] == value)
+      return true;
+    return false;
+  }
 
 #if PY_MAJOR_VERSION == 2
-static GfSize3 __truediv__(const GfSize3 &self, size_t value)
-{
-  return self / value;
-}
+  static GfSize3 __truediv__(const GfSize3 &self, size_t value)
+  {
+    return self / value;
+  }
 
-static GfSize3 __itruediv__(GfSize3 &self, size_t value)
-{
-  return self /= value;
-}
+  static GfSize3 __itruediv__(GfSize3 &self, size_t value)
+  {
+    return self /= value;
+  }
 #endif
 
-static string _Repr(GfSize3 const &self)
-{
-  return TF_PY_REPR_PREFIX + "Size3(" + TfPyRepr(self[0]) + ", " + TfPyRepr(self[1]) + ", " +
-         TfPyRepr(self[2]) + ")";
-}
+  static string _Repr(GfSize3 const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Size3(" + TfPyRepr(self[0]) + ", " + TfPyRepr(self[1]) + ", " +
+           TfPyRepr(self[2]) + ")";
+  }
 
 }  // anonymous namespace
 

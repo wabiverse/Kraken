@@ -166,8 +166,12 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::ForPositions(const UsdG
   const bool isPrimvar = false;
   const UsdTimeCode indicesTime = GetDefaultTime();
   const TfToken interpolation;
-  return FromUsdAttribute(
-    attribute, draco::GeometryAttribute::POSITION, name, isPrimvar, indicesTime, interpolation);
+  return FromUsdAttribute(attribute,
+                          draco::GeometryAttribute::POSITION,
+                          name,
+                          isPrimvar,
+                          indicesTime,
+                          interpolation);
 }
 
 UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::ForTexCoords(const UsdGeomMesh &mesh)
@@ -366,8 +370,12 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::FromUsdPrimvar(
 
   // Create descriptor from the underlying attribute and with a given name.
   const bool isPrimvar = true;
-  return FromUsdAttribute(
-    primvar.GetAttr(), attributeType, primvar.GetName(), isPrimvar, indicesTime, primvar.GetInterpolation());
+  return FromUsdAttribute(primvar.GetAttr(),
+                          attributeType,
+                          primvar.GetName(),
+                          isPrimvar,
+                          indicesTime,
+                          primvar.GetInterpolation());
 }
 
 UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::FromUsdAttribute(

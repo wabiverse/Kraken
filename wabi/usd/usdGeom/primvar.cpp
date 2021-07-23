@@ -85,8 +85,7 @@ TfToken UsdGeomPrimvar::_MakeNamespaced(const TfToken &name, bool quiet)
   if (_IsNamespaced(name))
   {
     result = name;
-  }
-  else
+  } else
   {
     result = TfToken(_tokens->primvarsPrefix.GetString() + name.GetString());
   }
@@ -200,10 +199,11 @@ UsdAttribute UsdGeomPrimvar::_GetIndicesAttr(bool create) const
 
   if (create)
   {
-    return _attr.GetPrim().CreateAttribute(
-      indicesAttrName, SdfValueTypeNames->IntArray, /*custom*/ false, SdfVariabilityVarying);
-  }
-  else
+    return _attr.GetPrim().CreateAttribute(indicesAttrName,
+                                           SdfValueTypeNames->IntArray,
+                                           /*custom*/ false,
+                                           SdfVariabilityVarying);
+  } else
   {
     return _attr.GetPrim().GetAttribute(indicesAttrName);
   }
@@ -413,8 +413,7 @@ UsdRelationship UsdGeomPrimvar::_GetIdTargetRel(bool create) const
   if (create)
   {
     return _attr.GetPrim().CreateRelationship(_idTargetRelName);
-  }
-  else
+  } else
   {
     return _attr.GetPrim().GetRelationship(_idTargetRelName);
   }
@@ -510,8 +509,7 @@ bool UsdGeomPrimvar::Get(VtValue *value, UsdTimeCode time) const
         *value = VtValue(s);
       }
       return ret;
-    }
-    else if (typeName == SdfValueTypeNames->StringArray)
+    } else if (typeName == SdfValueTypeNames->StringArray)
     {
       VtStringArray s;
       bool ret = Get(&s, time);

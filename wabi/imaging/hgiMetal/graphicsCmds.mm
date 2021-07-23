@@ -83,8 +83,7 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
     if (@available(macos 100.100, ios 8.0, *))
     {
       metalColorAttachment.loadAction = MTLLoadActionLoad;
-    }
-    else
+    } else
     {
       metalColorAttachment.loadAction = HgiMetalConversions::GetAttachmentLoadOp(hgiColorAttachment.loadOp);
     }
@@ -93,8 +92,10 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
     if (hgiColorAttachment.loadOp == HgiAttachmentLoadOpClear)
     {
       GfVec4f const &clearColor = hgiColorAttachment.clearValue;
-      metalColorAttachment.clearColor = MTLClearColorMake(
-        clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+      metalColorAttachment.clearColor = MTLClearColorMake(clearColor[0],
+                                                          clearColor[1],
+                                                          clearColor[2],
+                                                          clearColor[3]);
     }
 
     HgiMetalTexture *colorTexture = static_cast<HgiMetalTexture *>(desc.colorTextures[i].Get());
@@ -111,8 +112,7 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
       if (hgiColorAttachment.storeOp == HgiAttachmentStoreOpStore)
       {
         metalColorAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
-      }
-      else
+      } else
       {
         metalColorAttachment.storeAction = MTLStoreActionMultisampleResolve;
       }
@@ -149,8 +149,7 @@ HgiMetalGraphicsCmds::HgiMetalGraphicsCmds(HgiMetal *hgi, HgiGraphicsCmdsDesc co
       if (hgiDepthAttachment.storeOp == HgiAttachmentStoreOpStore)
       {
         metalDepthAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
-      }
-      else
+      } else
       {
         metalDepthAttachment.storeAction = MTLStoreActionMultisampleResolve;
       }
@@ -201,8 +200,7 @@ void HgiMetalGraphicsCmds::SetViewport(GfVec4i const &vp)
   if (_encoder)
   {
     [_encoder setViewport:(MTLViewport){x, y, w, h, 0.0, 1.0}];
-  }
-  else
+  } else
   {
     _viewport = (MTLViewport){x, y, w, h, 0.0, 1.0};
   }
@@ -292,8 +290,7 @@ void HgiMetalGraphicsCmds::Draw(uint32_t vertexCount, uint32_t firstVertex, uint
   if (instanceCount == 1)
   {
     [_encoder drawPrimitives:type vertexStart:firstVertex vertexCount:vertexCount];
-  }
-  else
+  } else
   {
     [_encoder drawPrimitives:type
                  vertexStart:firstVertex
@@ -387,8 +384,7 @@ void HgiMetalGraphicsCmds::PushDebugGroup(const char *label)
   if (_encoder)
   {
     HGIMETAL_DEBUG_LABEL(_encoder, label)
-  }
-  else if (HgiMetalDebugEnabled())
+  } else if (HgiMetalDebugEnabled())
   {
     _debugLabel = [@(label) copy];
   }

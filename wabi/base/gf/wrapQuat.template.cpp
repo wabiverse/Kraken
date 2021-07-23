@@ -64,53 +64,53 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string __repr__({
+  static string __repr__({
+    {
+      QUAT
+    }
+  } const &self)
   {
-    QUAT
+    return TF_PY_REPR_PREFIX + "Quat{{ SUFFIX }}(" + TfPyRepr(self.GetReal()) + ", " +
+           TfPyRepr(self.GetImaginary()) + ")";
   }
-} const &self)
-{
-  return TF_PY_REPR_PREFIX + "Quat{{ SUFFIX }}(" + TfPyRepr(self.GetReal()) + ", " +
-         TfPyRepr(self.GetImaginary()) + ")";
-}
 
 #if PY_MAJOR_VERSION == 2
-static
-{
+  static
   {
-    QUAT
+    {
+      QUAT
+    }
   }
-}
-__truediv__(const {{QUAT}} & self, {
+  __truediv__(const {{QUAT}} & self, {
+    {
+      SCL
+    }
+  } value)
   {
-    SCL
+    return self / value;
   }
-} value)
-{
-  return self / value;
-}
 
-static
-{
+  static
   {
-    QUAT
+    {
+      QUAT
+    }
   }
-}
-__itruediv__({{QUAT}} & self, {
+  __itruediv__({{QUAT}} & self, {
+    {
+      SCL
+    }
+  } value)
   {
-    SCL
+    return self /= value;
   }
-} value)
-{
-  return self /= value;
-}
 #endif
 
-// Zero-initialized default ctor for python.
-static {{QUAT}} * __init__()
-{
-  return new {{QUAT}}(0);
-}
+  // Zero-initialized default ctor for python.
+  static {{QUAT}} * __init__()
+  {
+    return new {{QUAT}}(0);
+  }
 
 }  // anonymous namespace
 
@@ -124,7 +124,7 @@ void wrapQuat{{SUFFIX}}()
     } ::GetImaginary,
     return_value_policy<return_by_value>());
 
-  object setImaginaryVec = make_function((void ({
+  object setImaginaryVec = make_function((void({
                                            {
                                              QUAT
                                            }
@@ -135,7 +135,7 @@ void wrapQuat{{SUFFIX}}()
                                            }
                                          } ::SetImaginary);
 
-  object setImaginaryScl = make_function((void ({
+  object setImaginaryScl = make_function((void({
                                            {
                                              QUAT
                                            }

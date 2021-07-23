@@ -210,8 +210,7 @@ void KindRegistry::_RegisterDefaults()
         if (i->second.IsString())
         {
           baseKind = TfToken(i->second.GetString());
-        }
-        else
+        } else
         {
           TF_RUNTIME_ERROR("Expected string for baseKind");
           continue;

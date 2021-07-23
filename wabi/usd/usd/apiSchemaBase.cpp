@@ -117,8 +117,7 @@ bool UsdAPISchemaBase::_IsCompatible() const
    * This virtual function call tells us whether we're an applied
    * API schema. For applied API schemas, we'd like to check whether
    * the API schema has been applied properly on the prim. */
-  if (IsAppliedAPISchema() &&
-      !GetPrim()._HasAPI(GetTfType(), /*validateSchemaType*/ false, _instanceName))
+  if (IsAppliedAPISchema() && !GetPrim()._HasAPI(GetTfType(), /*validateSchemaType*/ false, _instanceName))
   {
     return false;
   }

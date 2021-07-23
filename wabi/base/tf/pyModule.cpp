@@ -264,8 +264,7 @@ class Tf_ModuleProcessor
       // reraise the posted errors as an exception in python, defeating
       // its purpose entirely.
       return false;
-    }
-    else if (IsBoostPythonFunc(obj))
+    } else if (IsBoostPythonFunc(obj))
     {
       // Replace owner's name attribute with decorated function obj.
       // Do this by using boost.python's add_to_namespace, since that sets
@@ -275,8 +274,7 @@ class Tf_ModuleProcessor
       // overload.
       ReplaceFunctionOnOwner(name, owner, obj);
       return false;
-    }
-    else if (IsProperty(obj))
+    } else if (IsProperty(obj))
     {
       // Replace owner's name attribute with a new property, decorating the
       // get, set, and del functions.
@@ -287,8 +285,7 @@ class Tf_ModuleProcessor
         // class) which at least for now means that this is likely a static
         // property.  For now, just not wrapping static properties with
         // error handling.
-      }
-      else
+      } else
       {
         object propType(handle<>(borrowed(&PyProperty_Type)));
         object newfget = DecorateForErrorHandling(name, owner, obj.attr("fget"));
@@ -298,8 +295,7 @@ class Tf_ModuleProcessor
         setattr(owner, name, newProp);
       }
       return false;
-    }
-    else if (IsStaticMethod(obj))
+    } else if (IsStaticMethod(obj))
     {
       object underlyingFn = obj.attr("__get__")(owner);
       if (IsBoostPythonFunc(underlyingFn))
@@ -310,8 +306,7 @@ class Tf_ModuleProcessor
         setattr(owner, name, object(handle<>(PyStaticMethod_New(newFn.ptr()))));
       }
       return false;
-    }
-    else if (IsClassMethod(obj))
+    } else if (IsClassMethod(obj))
     {
       object underlyingFn = obj.attr("__get__")(owner).attr(TfPyClassMethodFuncName);
       if (IsBoostPythonFunc(underlyingFn))

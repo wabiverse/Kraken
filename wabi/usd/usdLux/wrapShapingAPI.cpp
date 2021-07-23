@@ -50,69 +50,72 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateShapingFocusAttr(UsdLuxShapingAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateShapingFocusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                     writeSparsely);
-}
-
-static UsdAttribute _CreateShapingFocusTintAttr(UsdLuxShapingAPI &self,
-                                                object defaultVal,
-                                                bool writeSparsely)
-{
-  return self.CreateShapingFocusTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
-                                         writeSparsely);
-}
-
-static UsdAttribute _CreateShapingConeAngleAttr(UsdLuxShapingAPI &self,
-                                                object defaultVal,
-                                                bool writeSparsely)
-{
-  return self.CreateShapingConeAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                         writeSparsely);
-}
-
-static UsdAttribute _CreateShapingConeSoftnessAttr(UsdLuxShapingAPI &self,
-                                                   object defaultVal,
-                                                   bool writeSparsely)
-{
-  return self.CreateShapingConeSoftnessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                            writeSparsely);
-}
-
-static UsdAttribute _CreateShapingIesFileAttr(UsdLuxShapingAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateShapingIesFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+  static UsdAttribute _CreateShapingFocusAttr(UsdLuxShapingAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateShapingFocusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                        writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateShapingIesAngleScaleAttr(UsdLuxShapingAPI &self,
-                                                    object defaultVal,
-                                                    bool writeSparsely)
-{
-  return self.CreateShapingIesAngleScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                             writeSparsely);
-}
+  static UsdAttribute _CreateShapingFocusTintAttr(UsdLuxShapingAPI &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
+  {
+    return self.CreateShapingFocusTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
+                                           writeSparsely);
+  }
 
-static UsdAttribute _CreateShapingIesNormalizeAttr(UsdLuxShapingAPI &self,
-                                                   object defaultVal,
-                                                   bool writeSparsely)
-{
-  return self.CreateShapingIesNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                            writeSparsely);
-}
+  static UsdAttribute _CreateShapingConeAngleAttr(UsdLuxShapingAPI &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
+  {
+    return self.CreateShapingConeAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                           writeSparsely);
+  }
 
-static std::string _Repr(const UsdLuxShapingAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.ShapingAPI(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateShapingConeSoftnessAttr(UsdLuxShapingAPI &self,
+                                                     object defaultVal,
+                                                     bool writeSparsely)
+  {
+    return self.CreateShapingConeSoftnessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                              writeSparsely);
+  }
+
+  static UsdAttribute _CreateShapingIesFileAttr(UsdLuxShapingAPI &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateShapingIesFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateShapingIesAngleScaleAttr(UsdLuxShapingAPI &self,
+                                                      object defaultVal,
+                                                      bool writeSparsely)
+  {
+    return self.CreateShapingIesAngleScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                               writeSparsely);
+  }
+
+  static UsdAttribute _CreateShapingIesNormalizeAttr(UsdLuxShapingAPI &self,
+                                                     object defaultVal,
+                                                     bool writeSparsely)
+  {
+    return self.CreateShapingIesNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                              writeSparsely);
+  }
+
+  static std::string _Repr(const UsdLuxShapingAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.ShapingAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -207,24 +210,24 @@ void wrapUsdLuxShapingAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
-    .def("ConnectableAPI", &UsdLuxShapingAPI::ConnectableAPI)
+  WRAP_CUSTOM
+  {
+    _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
+      .def("ConnectableAPI", &UsdLuxShapingAPI::ConnectableAPI)
 
-    .def("CreateOutput", &UsdLuxShapingAPI::CreateOutput, (arg("name"), arg("type")))
-    .def("GetOutput", &UsdLuxShapingAPI::GetOutput, arg("name"))
-    .def("GetOutputs",
-         &UsdLuxShapingAPI::GetOutputs,
-         (arg("onlyAuthored") = true),
-         return_value_policy<TfPySequenceToList>())
+      .def("CreateOutput", &UsdLuxShapingAPI::CreateOutput, (arg("name"), arg("type")))
+      .def("GetOutput", &UsdLuxShapingAPI::GetOutput, arg("name"))
+      .def("GetOutputs",
+           &UsdLuxShapingAPI::GetOutputs,
+           (arg("onlyAuthored") = true),
+           return_value_policy<TfPySequenceToList>())
 
-    .def("CreateInput", &UsdLuxShapingAPI::CreateInput, (arg("name"), arg("type")))
-    .def("GetInput", &UsdLuxShapingAPI::GetInput, arg("name"))
-    .def("GetInputs",
-         &UsdLuxShapingAPI::GetInputs,
-         (arg("onlyAuthored") = true),
-         return_value_policy<TfPySequenceToList>());
-}
+      .def("CreateInput", &UsdLuxShapingAPI::CreateInput, (arg("name"), arg("type")))
+      .def("GetInput", &UsdLuxShapingAPI::GetInput, arg("name"))
+      .def("GetInputs",
+           &UsdLuxShapingAPI::GetInputs,
+           (arg("onlyAuthored") = true),
+           return_value_policy<TfPySequenceToList>());
+  }
 
 }  // namespace

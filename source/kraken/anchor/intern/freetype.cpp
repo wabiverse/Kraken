@@ -73,315 +73,316 @@ static void *GAnchorFreeTypeAllocatorUserData = NULL;
 
 namespace
 {
-// Glyph metrics:
-// --------------
-//
-//                       xmin                     xmax
-//                        |                         |
-//                        |<-------- width -------->|
-//                        |                         |
-//              |         +-------------------------+----------------- ymax
-//              |         |    ggggggggg   ggggg    |     ^        ^
-//              |         |   g:::::::::ggg::::g    |     |        |
-//              |         |  g:::::::::::::::::g    |     |        |
-//              |         | g::::::ggggg::::::gg    |     |        |
-//              |         | g:::::g     g:::::g     |     |        |
-//    offsetX  -|-------->| g:::::g     g:::::g     |  offsetY     |
-//              |         | g:::::g     g:::::g     |     |        |
-//              |         | g::::::g    g:::::g     |     |        |
-//              |         | g:::::::ggggg:::::g     |     |        |
-//              |         |  g::::::::::::::::g     |     |      height
-//              |         |   gg::::::::::::::g     |     |        |
-//  baseline ---*---------|---- gggggggg::::::g-----*--------      |
-//            / |         |             g:::::g     |              |
-//     origin   |         | gggggg      g:::::g     |              |
-//              |         | g:::::gg   gg:::::g     |              |
-//              |         |  g::::::ggg:::::::g     |              |
-//              |         |   gg:::::::::::::g      |              |
-//              |         |     ggg::::::ggg        |              |
-//              |         |         gggggg          |              v
-//              |         +-------------------------+----------------- ymin
-//              |                                   |
-//              |------------- advanceX ----------->|
+  // Glyph metrics:
+  // --------------
+  //
+  //                       xmin                     xmax
+  //                        |                         |
+  //                        |<-------- width -------->|
+  //                        |                         |
+  //              |         +-------------------------+----------------- ymax
+  //              |         |    ggggggggg   ggggg    |     ^        ^
+  //              |         |   g:::::::::ggg::::g    |     |        |
+  //              |         |  g:::::::::::::::::g    |     |        |
+  //              |         | g::::::ggggg::::::gg    |     |        |
+  //              |         | g:::::g     g:::::g     |     |        |
+  //    offsetX  -|-------->| g:::::g     g:::::g     |  offsetY     |
+  //              |         | g:::::g     g:::::g     |     |        |
+  //              |         | g::::::g    g:::::g     |     |        |
+  //              |         | g:::::::ggggg:::::g     |     |        |
+  //              |         |  g::::::::::::::::g     |     |      height
+  //              |         |   gg::::::::::::::g     |     |        |
+  //  baseline ---*---------|---- gggggggg::::::g-----*--------      |
+  //            / |         |             g:::::g     |              |
+  //     origin   |         | gggggg      g:::::g     |              |
+  //              |         | g:::::gg   gg:::::g     |              |
+  //              |         |  g::::::ggg:::::::g     |              |
+  //              |         |   gg:::::::::::::g      |              |
+  //              |         |     ggg::::::ggg        |              |
+  //              |         |         gggggg          |              v
+  //              |         +-------------------------+----------------- ymin
+  //              |                                   |
+  //              |------------- advanceX ----------->|
 
-// A structure that describe a glyph.
-struct GlyphInfo
-{
-  int Width;       // Glyph's width in pixels.
-  int Height;      // Glyph's height in pixels.
-  FT_Int OffsetX;  // The distance from the origin ("pen position") to the left of the glyph.
-  FT_Int OffsetY;  // The distance from the origin to the top of the glyph. This is usually a value
-                   // < 0.
-  float AdvanceX;  // The distance from the origin to the origin of the next glyph. This is usually
-                   // a value > 0.
-  bool IsColored;  // The glyph is colored
-};
-
-// Font parameters and metrics.
-struct FontInfo
-{
-  uint32_t PixelHeight;   // Size this font was generated with.
-  float Ascender;         // The pixel extents above the baseline in pixels (typically positive).
-  float Descender;        // The extents below the baseline in pixels (typically negative).
-  float LineSpacing;      // The baseline-to-baseline distance. Note that it usually is larger than the
-                          // sum of the ascender and descender taken as absolute values. There is also
-                          // no guarantee that no glyphs extend above or below subsequent baselines
-                          // when using this distance. Think of it as a value the designer of the font
-                          // finds appropriate.
-  float LineGap;          // The spacing in pixels between one row's descent and the next row's ascent.
-  float MaxAdvanceWidth;  // This field gives the maximum horizontal cursor advance for all glyphs
-                          // in the font.
-};
-
-// FreeType glyph rasterizer.
-// NB: No ctor/dtor, explicitly call Init()/Shutdown()
-struct FreeTypeFont
-{
-  bool InitFont(FT_Library ft_library,
-                const AnchorFontConfig &cfg,
-                unsigned int extra_user_flags);  // Initialize from an external data buffer.
-                                                 // Doesn't copy data, and you must ensure it stays
-                                                 // valid up to this object lifetime.
-  void CloseFont();
-  void SetPixelHeight(int pixel_height);  // Change font pixel size. All following calls to
-                                          // RasterizeGlyph() will use this size
-  const FT_Glyph_Metrics *LoadGlyph(uint32_t in_codepoint);
-  const FT_Bitmap *RenderGlyphAndGetInfo(GlyphInfo *out_glyph_info);
-  void BlitGlyph(const FT_Bitmap *ft_bitmap,
-                 uint32_t *dst,
-                 uint32_t dst_pitch,
-                 unsigned char *multiply_table = NULL);
-  ~FreeTypeFont()
+  // A structure that describe a glyph.
+  struct GlyphInfo
   {
-    CloseFont();
-  }
+    int Width;       // Glyph's width in pixels.
+    int Height;      // Glyph's height in pixels.
+    FT_Int OffsetX;  // The distance from the origin ("pen position") to the left of the glyph.
+    FT_Int OffsetY;  // The distance from the origin to the top of the glyph. This is usually a value
+                     // < 0.
+    float AdvanceX;  // The distance from the origin to the origin of the next glyph. This is usually
+                     // a value > 0.
+    bool IsColored;  // The glyph is colored
+  };
 
-  // [Internals]
-  FontInfo Info;  // Font descriptor of the current font.
-  FT_Face Face;
-  unsigned int UserFlags;  // = AnchorFontConfig::RasterizerFlags
-  FT_Int32 LoadFlags;
-  FT_Render_Mode RenderMode;
-};
+  // Font parameters and metrics.
+  struct FontInfo
+  {
+    uint32_t PixelHeight;   // Size this font was generated with.
+    float Ascender;         // The pixel extents above the baseline in pixels (typically positive).
+    float Descender;        // The extents below the baseline in pixels (typically negative).
+    float LineSpacing;      // The baseline-to-baseline distance. Note that it usually is larger than the
+                            // sum of the ascender and descender taken as absolute values. There is also
+                            // no guarantee that no glyphs extend above or below subsequent baselines
+                            // when using this distance. Think of it as a value the designer of the font
+                            // finds appropriate.
+    float LineGap;          // The spacing in pixels between one row's descent and the next row's ascent.
+    float MaxAdvanceWidth;  // This field gives the maximum horizontal cursor advance for all glyphs
+                            // in the font.
+  };
+
+  // FreeType glyph rasterizer.
+  // NB: No ctor/dtor, explicitly call Init()/Shutdown()
+  struct FreeTypeFont
+  {
+    bool InitFont(FT_Library ft_library,
+                  const AnchorFontConfig &cfg,
+                  unsigned int extra_user_flags);  // Initialize from an external data buffer.
+                                                   // Doesn't copy data, and you must ensure it stays
+                                                   // valid up to this object lifetime.
+    void CloseFont();
+    void SetPixelHeight(int pixel_height);  // Change font pixel size. All following calls to
+                                            // RasterizeGlyph() will use this size
+    const FT_Glyph_Metrics *LoadGlyph(uint32_t in_codepoint);
+    const FT_Bitmap *RenderGlyphAndGetInfo(GlyphInfo *out_glyph_info);
+    void BlitGlyph(const FT_Bitmap *ft_bitmap,
+                   uint32_t *dst,
+                   uint32_t dst_pitch,
+                   unsigned char *multiply_table = NULL);
+    ~FreeTypeFont()
+    {
+      CloseFont();
+    }
+
+    // [Internals]
+    FontInfo Info;  // Font descriptor of the current font.
+    FT_Face Face;
+    unsigned int UserFlags;  // = AnchorFontConfig::RasterizerFlags
+    FT_Int32 LoadFlags;
+    FT_Render_Mode RenderMode;
+  };
 
 // From SDL_ttf: Handy routines for converting from fixed point
 #define FT_CEIL(X) (((X + 63) & -64) / 64)
 
-bool FreeTypeFont::InitFont(FT_Library ft_library,
-                            const AnchorFontConfig &cfg,
-                            unsigned int extra_font_builder_flags)
-{
-  FT_Error error = FT_New_Memory_Face(
-    ft_library, (uint8_t *)cfg.FontData, (uint32_t)cfg.FontDataSize, (uint32_t)cfg.FontNo, &Face);
-  if (error != 0)
-    return false;
-  error = FT_Select_Charmap(Face, FT_ENCODING_UNICODE);
-  if (error != 0)
-    return false;
-
-  // Convert to FreeType flags (NB: Bold and Oblique are processed separately)
-  UserFlags = cfg.FontBuilderFlags | extra_font_builder_flags;
-
-  LoadFlags = 0;
-  if ((UserFlags & AnchorFreeTypeBuilderFlags_Bitmap) == 0)
-    LoadFlags |= FT_LOAD_NO_BITMAP;
-
-  if (UserFlags & AnchorFreeTypeBuilderFlags_NoHinting)
-    LoadFlags |= FT_LOAD_NO_HINTING;
-  if (UserFlags & AnchorFreeTypeBuilderFlags_NoAutoHint)
-    LoadFlags |= FT_LOAD_NO_AUTOHINT;
-  if (UserFlags & AnchorFreeTypeBuilderFlags_ForceAutoHint)
-    LoadFlags |= FT_LOAD_FORCE_AUTOHINT;
-  if (UserFlags & AnchorFreeTypeBuilderFlags_LightHinting)
-    LoadFlags |= FT_LOAD_TARGET_LIGHT;
-  else if (UserFlags & AnchorFreeTypeBuilderFlags_MonoHinting)
-    LoadFlags |= FT_LOAD_TARGET_MONO;
-  else
-    LoadFlags |= FT_LOAD_TARGET_NORMAL;
-
-  if (UserFlags & AnchorFreeTypeBuilderFlags_Monochrome)
-    RenderMode = FT_RENDER_MODE_MONO;
-  else
-    RenderMode = FT_RENDER_MODE_NORMAL;
-
-  if (UserFlags & AnchorFreeTypeBuilderFlags_LoadColor)
-    LoadFlags |= FT_LOAD_COLOR;
-
-  memset(&Info, 0, sizeof(Info));
-  SetPixelHeight((uint32_t)cfg.SizePixels);
-
-  return true;
-}
-
-void FreeTypeFont::CloseFont()
-{
-  if (Face)
+  bool FreeTypeFont::InitFont(FT_Library ft_library,
+                              const AnchorFontConfig &cfg,
+                              unsigned int extra_font_builder_flags)
   {
-    FT_Done_Face(Face);
-    Face = NULL;
-  }
-}
+    FT_Error error = FT_New_Memory_Face(ft_library,
+                                        (uint8_t *)cfg.FontData,
+                                        (uint32_t)cfg.FontDataSize,
+                                        (uint32_t)cfg.FontNo,
+                                        &Face);
+    if (error != 0)
+      return false;
+    error = FT_Select_Charmap(Face, FT_ENCODING_UNICODE);
+    if (error != 0)
+      return false;
 
-void FreeTypeFont::SetPixelHeight(int pixel_height)
-{
-  // Vuhdo: I'm not sure how to deal with font sizes properly. As far as I understand, currently
-  // Anchor assumes that the 'pixel_height' is a maximum height of an any given glyph, i.e. it's the
-  // sum of font's ascender and descender. Seems strange to me. NB: FT_Set_Pixel_Sizes() doesn't
-  // seem to get us the same result.
-  FT_Size_RequestRec req;
-  req.type = (UserFlags & AnchorFreeTypeBuilderFlags_Bitmap) ? FT_SIZE_REQUEST_TYPE_NOMINAL :
-                                                               FT_SIZE_REQUEST_TYPE_REAL_DIM;
-  req.width = 0;
-  req.height = (uint32_t)pixel_height * 64;
-  req.horiResolution = 0;
-  req.vertResolution = 0;
-  FT_Request_Size(Face, &req);
+    // Convert to FreeType flags (NB: Bold and Oblique are processed separately)
+    UserFlags = cfg.FontBuilderFlags | extra_font_builder_flags;
 
-  // Update font info
-  FT_Size_Metrics metrics = Face->size->metrics;
-  Info.PixelHeight = (uint32_t)pixel_height;
-  Info.Ascender = (float)FT_CEIL(metrics.ascender);
-  Info.Descender = (float)FT_CEIL(metrics.descender);
-  Info.LineSpacing = (float)FT_CEIL(metrics.height);
-  Info.LineGap = (float)FT_CEIL(metrics.height - metrics.ascender + metrics.descender);
-  Info.MaxAdvanceWidth = (float)FT_CEIL(metrics.max_advance);
-}
+    LoadFlags = 0;
+    if ((UserFlags & AnchorFreeTypeBuilderFlags_Bitmap) == 0)
+      LoadFlags |= FT_LOAD_NO_BITMAP;
 
-const FT_Glyph_Metrics *FreeTypeFont::LoadGlyph(uint32_t codepoint)
-{
-  uint32_t glyph_index = FT_Get_Char_Index(Face, codepoint);
-  if (glyph_index == 0)
-    return NULL;
-  FT_Error error = FT_Load_Glyph(Face, glyph_index, LoadFlags);
-  if (error)
-    return NULL;
+    if (UserFlags & AnchorFreeTypeBuilderFlags_NoHinting)
+      LoadFlags |= FT_LOAD_NO_HINTING;
+    if (UserFlags & AnchorFreeTypeBuilderFlags_NoAutoHint)
+      LoadFlags |= FT_LOAD_NO_AUTOHINT;
+    if (UserFlags & AnchorFreeTypeBuilderFlags_ForceAutoHint)
+      LoadFlags |= FT_LOAD_FORCE_AUTOHINT;
+    if (UserFlags & AnchorFreeTypeBuilderFlags_LightHinting)
+      LoadFlags |= FT_LOAD_TARGET_LIGHT;
+    else if (UserFlags & AnchorFreeTypeBuilderFlags_MonoHinting)
+      LoadFlags |= FT_LOAD_TARGET_MONO;
+    else
+      LoadFlags |= FT_LOAD_TARGET_NORMAL;
 
-  // Need an outline for this to work
-  FT_GlyphSlot slot = Face->glyph;
-  ANCHOR_ASSERT(slot->format == FT_GLYPH_FORMAT_OUTLINE || slot->format == FT_GLYPH_FORMAT_BITMAP);
+    if (UserFlags & AnchorFreeTypeBuilderFlags_Monochrome)
+      RenderMode = FT_RENDER_MODE_MONO;
+    else
+      RenderMode = FT_RENDER_MODE_NORMAL;
 
-  // Apply convenience transform (this is not picking from real "Bold"/"Italic" fonts! Merely
-  // applying FreeType helper transform. Oblique == Slanting)
-  if (UserFlags & AnchorFreeTypeBuilderFlags_Bold)
-    FT_GlyphSlot_Embolden(slot);
-  if (UserFlags & AnchorFreeTypeBuilderFlags_Oblique)
-  {
-    FT_GlyphSlot_Oblique(slot);
-    // FT_BBox bbox;
-    // FT_Outline_Get_BBox(&slot->outline, &bbox);
-    // slot->metrics.width = bbox.xMax - bbox.xMin;
-    // slot->metrics.height = bbox.yMax - bbox.yMin;
+    if (UserFlags & AnchorFreeTypeBuilderFlags_LoadColor)
+      LoadFlags |= FT_LOAD_COLOR;
+
+    memset(&Info, 0, sizeof(Info));
+    SetPixelHeight((uint32_t)cfg.SizePixels);
+
+    return true;
   }
 
-  return &slot->metrics;
-}
-
-const FT_Bitmap *FreeTypeFont::RenderGlyphAndGetInfo(GlyphInfo *out_glyph_info)
-{
-  FT_GlyphSlot slot = Face->glyph;
-  FT_Error error = FT_Render_Glyph(slot, RenderMode);
-  if (error != 0)
-    return NULL;
-
-  FT_Bitmap *ft_bitmap = &Face->glyph->bitmap;
-  out_glyph_info->Width = (int)ft_bitmap->width;
-  out_glyph_info->Height = (int)ft_bitmap->rows;
-  out_glyph_info->OffsetX = Face->glyph->bitmap_left;
-  out_glyph_info->OffsetY = -Face->glyph->bitmap_top;
-  out_glyph_info->AdvanceX = (float)FT_CEIL(slot->advance.x);
-  out_glyph_info->IsColored = (ft_bitmap->pixel_mode == FT_PIXEL_MODE_BGRA);
-
-  return ft_bitmap;
-}
-
-void FreeTypeFont::BlitGlyph(const FT_Bitmap *ft_bitmap,
-                             uint32_t *dst,
-                             uint32_t dst_pitch,
-                             unsigned char *multiply_table)
-{
-  ANCHOR_ASSERT(ft_bitmap != NULL);
-  const uint32_t w = ft_bitmap->width;
-  const uint32_t h = ft_bitmap->rows;
-  const uint8_t *src = ft_bitmap->buffer;
-  const uint32_t src_pitch = ft_bitmap->pitch;
-
-  switch (ft_bitmap->pixel_mode)
+  void FreeTypeFont::CloseFont()
   {
-    case FT_PIXEL_MODE_GRAY:  // Grayscale image, 1 byte per pixel.
+    if (Face)
     {
-      if (multiply_table == NULL)
-      {
-        for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
-          for (uint32_t x = 0; x < w; x++)
-            dst[x] = ANCHOR_COL32(255, 255, 255, src[x]);
-      }
-      else
-      {
-        for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
-          for (uint32_t x = 0; x < w; x++)
-            dst[x] = ANCHOR_COL32(255, 255, 255, multiply_table[src[x]]);
-      }
-      break;
+      FT_Done_Face(Face);
+      Face = NULL;
     }
-    case FT_PIXEL_MODE_MONO:  // Monochrome image, 1 bit per pixel. The bits in each byte are
-                              // ordered from MSB to LSB.
+  }
+
+  void FreeTypeFont::SetPixelHeight(int pixel_height)
+  {
+    // Vuhdo: I'm not sure how to deal with font sizes properly. As far as I understand, currently
+    // Anchor assumes that the 'pixel_height' is a maximum height of an any given glyph, i.e. it's the
+    // sum of font's ascender and descender. Seems strange to me. NB: FT_Set_Pixel_Sizes() doesn't
+    // seem to get us the same result.
+    FT_Size_RequestRec req;
+    req.type = (UserFlags & AnchorFreeTypeBuilderFlags_Bitmap) ? FT_SIZE_REQUEST_TYPE_NOMINAL :
+                                                                 FT_SIZE_REQUEST_TYPE_REAL_DIM;
+    req.width = 0;
+    req.height = (uint32_t)pixel_height * 64;
+    req.horiResolution = 0;
+    req.vertResolution = 0;
+    FT_Request_Size(Face, &req);
+
+    // Update font info
+    FT_Size_Metrics metrics = Face->size->metrics;
+    Info.PixelHeight = (uint32_t)pixel_height;
+    Info.Ascender = (float)FT_CEIL(metrics.ascender);
+    Info.Descender = (float)FT_CEIL(metrics.descender);
+    Info.LineSpacing = (float)FT_CEIL(metrics.height);
+    Info.LineGap = (float)FT_CEIL(metrics.height - metrics.ascender + metrics.descender);
+    Info.MaxAdvanceWidth = (float)FT_CEIL(metrics.max_advance);
+  }
+
+  const FT_Glyph_Metrics *FreeTypeFont::LoadGlyph(uint32_t codepoint)
+  {
+    uint32_t glyph_index = FT_Get_Char_Index(Face, codepoint);
+    if (glyph_index == 0)
+      return NULL;
+    FT_Error error = FT_Load_Glyph(Face, glyph_index, LoadFlags);
+    if (error)
+      return NULL;
+
+    // Need an outline for this to work
+    FT_GlyphSlot slot = Face->glyph;
+    ANCHOR_ASSERT(slot->format == FT_GLYPH_FORMAT_OUTLINE || slot->format == FT_GLYPH_FORMAT_BITMAP);
+
+    // Apply convenience transform (this is not picking from real "Bold"/"Italic" fonts! Merely
+    // applying FreeType helper transform. Oblique == Slanting)
+    if (UserFlags & AnchorFreeTypeBuilderFlags_Bold)
+      FT_GlyphSlot_Embolden(slot);
+    if (UserFlags & AnchorFreeTypeBuilderFlags_Oblique)
     {
-      uint8_t color0 = multiply_table ? multiply_table[0] : 0;
-      uint8_t color1 = multiply_table ? multiply_table[255] : 255;
-      for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
+      FT_GlyphSlot_Oblique(slot);
+      // FT_BBox bbox;
+      // FT_Outline_Get_BBox(&slot->outline, &bbox);
+      // slot->metrics.width = bbox.xMax - bbox.xMin;
+      // slot->metrics.height = bbox.yMax - bbox.yMin;
+    }
+
+    return &slot->metrics;
+  }
+
+  const FT_Bitmap *FreeTypeFont::RenderGlyphAndGetInfo(GlyphInfo *out_glyph_info)
+  {
+    FT_GlyphSlot slot = Face->glyph;
+    FT_Error error = FT_Render_Glyph(slot, RenderMode);
+    if (error != 0)
+      return NULL;
+
+    FT_Bitmap *ft_bitmap = &Face->glyph->bitmap;
+    out_glyph_info->Width = (int)ft_bitmap->width;
+    out_glyph_info->Height = (int)ft_bitmap->rows;
+    out_glyph_info->OffsetX = Face->glyph->bitmap_left;
+    out_glyph_info->OffsetY = -Face->glyph->bitmap_top;
+    out_glyph_info->AdvanceX = (float)FT_CEIL(slot->advance.x);
+    out_glyph_info->IsColored = (ft_bitmap->pixel_mode == FT_PIXEL_MODE_BGRA);
+
+    return ft_bitmap;
+  }
+
+  void FreeTypeFont::BlitGlyph(const FT_Bitmap *ft_bitmap,
+                               uint32_t *dst,
+                               uint32_t dst_pitch,
+                               unsigned char *multiply_table)
+  {
+    ANCHOR_ASSERT(ft_bitmap != NULL);
+    const uint32_t w = ft_bitmap->width;
+    const uint32_t h = ft_bitmap->rows;
+    const uint8_t *src = ft_bitmap->buffer;
+    const uint32_t src_pitch = ft_bitmap->pitch;
+
+    switch (ft_bitmap->pixel_mode)
+    {
+      case FT_PIXEL_MODE_GRAY:  // Grayscale image, 1 byte per pixel.
       {
-        uint8_t bits = 0;
-        const uint8_t *bits_ptr = src;
-        for (uint32_t x = 0; x < w; x++, bits <<= 1)
+        if (multiply_table == NULL)
         {
-          if ((x & 7) == 0)
-            bits = *bits_ptr++;
-          dst[x] = ANCHOR_COL32(255, 255, 255, (bits & 0x80) ? color1 : color0);
+          for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
+            for (uint32_t x = 0; x < w; x++)
+              dst[x] = ANCHOR_COL32(255, 255, 255, src[x]);
+        } else
+        {
+          for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
+            for (uint32_t x = 0; x < w; x++)
+              dst[x] = ANCHOR_COL32(255, 255, 255, multiply_table[src[x]]);
         }
+        break;
       }
-      break;
-    }
-    case FT_PIXEL_MODE_BGRA: {
+      case FT_PIXEL_MODE_MONO:  // Monochrome image, 1 bit per pixel. The bits in each byte are
+                                // ordered from MSB to LSB.
+      {
+        uint8_t color0 = multiply_table ? multiply_table[0] : 0;
+        uint8_t color1 = multiply_table ? multiply_table[255] : 255;
+        for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
+        {
+          uint8_t bits = 0;
+          const uint8_t *bits_ptr = src;
+          for (uint32_t x = 0; x < w; x++, bits <<= 1)
+          {
+            if ((x & 7) == 0)
+              bits = *bits_ptr++;
+            dst[x] = ANCHOR_COL32(255, 255, 255, (bits & 0x80) ? color1 : color0);
+          }
+        }
+        break;
+      }
+      case FT_PIXEL_MODE_BGRA: {
 // FIXME: Converting pre-multiplied alpha to straight. Doesn't smell good.
 #define DE_MULTIPLY(color, alpha) (AnchorU32)(255.0f * (float)color / (float)alpha + 0.5f)
-      if (multiply_table == NULL)
-      {
-        for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
-          for (uint32_t x = 0; x < w; x++)
-          {
-            uint8_t r = src[x * 4 + 2], g = src[x * 4 + 1], b = src[x * 4], a = src[x * 4 + 3];
-            dst[x] = ANCHOR_COL32(DE_MULTIPLY(r, a), DE_MULTIPLY(g, a), DE_MULTIPLY(b, a), a);
-          }
-      }
-      else
-      {
-        for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
+        if (multiply_table == NULL)
         {
-          for (uint32_t x = 0; x < w; x++)
+          for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
+            for (uint32_t x = 0; x < w; x++)
+            {
+              uint8_t r = src[x * 4 + 2], g = src[x * 4 + 1], b = src[x * 4], a = src[x * 4 + 3];
+              dst[x] = ANCHOR_COL32(DE_MULTIPLY(r, a), DE_MULTIPLY(g, a), DE_MULTIPLY(b, a), a);
+            }
+        } else
+        {
+          for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
           {
-            uint8_t r = src[x * 4 + 2], g = src[x * 4 + 1], b = src[x * 4], a = src[x * 4 + 3];
-            dst[x] = ANCHOR_COL32(multiply_table[DE_MULTIPLY(r, a)],
-                                  multiply_table[DE_MULTIPLY(g, a)],
-                                  multiply_table[DE_MULTIPLY(b, a)],
-                                  multiply_table[a]);
+            for (uint32_t x = 0; x < w; x++)
+            {
+              uint8_t r = src[x * 4 + 2], g = src[x * 4 + 1], b = src[x * 4], a = src[x * 4 + 3];
+              dst[x] = ANCHOR_COL32(multiply_table[DE_MULTIPLY(r, a)],
+                                    multiply_table[DE_MULTIPLY(g, a)],
+                                    multiply_table[DE_MULTIPLY(b, a)],
+                                    multiply_table[a]);
+            }
           }
         }
-      }
 #undef DE_MULTIPLY
-      break;
+        break;
+      }
+      default:
+        ANCHOR_ASSERT(0 && "FreeTypeFont::BlitGlyph(): Unknown bitmap pixel mode!");
     }
-    default:
-      ANCHOR_ASSERT(0 && "FreeTypeFont::BlitGlyph(): Unknown bitmap pixel mode!");
   }
-}
 }  // namespace
 
 #ifndef STB_RECT_PACK_IMPLEMENTATION
 #  ifndef ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION
 #    define STBRP_ASSERT(x) \
-      do \
-      { \
-        ANCHOR_ASSERT(x); \
+      do                    \
+      {                     \
+        ANCHOR_ASSERT(x);   \
       } while (0)
 #    define STBRP_STATIC
 #    define STB_RECT_PACK_IMPLEMENTATION
@@ -610,8 +611,10 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
       // Blit rasterized pixels to our temporary buffer and keep a pointer to it.
       src_glyph.BitmapData = (unsigned int *)(buf_bitmap_buffers.back() + buf_bitmap_current_used_bytes);
       buf_bitmap_current_used_bytes += bitmap_size_in_bytes;
-      src_tmp.Font.BlitGlyph(
-        ft_bitmap, src_glyph.BitmapData, src_glyph.Info.Width, multiply_enabled ? multiply_table : NULL);
+      src_tmp.Font.BlitGlyph(ft_bitmap,
+                             src_glyph.BitmapData,
+                             src_glyph.Info.Width,
+                             multiply_enabled ? multiply_table : NULL);
 
       src_tmp.Rects[glyph_i].w = (stbrp_coord)(src_glyph.Info.Width + padding);
       src_tmp.Rects[glyph_i].h = (stbrp_coord)(src_glyph.Info.Height + padding);
@@ -629,9 +632,9 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
     atlas->TexWidth = atlas->TexDesiredWidth;
   else
     atlas->TexWidth = (surface_sqrt >= 4096 * 0.7f) ? 4096 :
-                                                      (surface_sqrt >= 2048 * 0.7f) ? 2048 :
-                                                                                      (surface_sqrt >= 1024 * 0.7f) ? 1024 :
-                                                                                                                      512;
+                      (surface_sqrt >= 2048 * 0.7f) ? 2048 :
+                      (surface_sqrt >= 1024 * 0.7f) ? 1024 :
+                                                      512;
 
   // 5. Start packing
   // Pack our extra data rectangles first, so it will be on the upper-left corner of our texture
@@ -671,8 +674,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   {
     atlas->TexPixelsRGBA32 = (unsigned int *)ANCHOR_ALLOC(atlas->TexWidth * atlas->TexHeight * 4);
     memset(atlas->TexPixelsRGBA32, 0, atlas->TexWidth * atlas->TexHeight * 4);
-  }
-  else
+  } else
   {
     atlas->TexPixelsAlpha8 = (unsigned char *)ANCHOR_ALLOC(atlas->TexWidth * atlas->TexHeight);
     memset(atlas->TexPixelsAlpha8, 0, atlas->TexWidth * atlas->TexHeight);
@@ -724,8 +726,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
         for (int y = 0; y < info.Height; y++, blit_dst += blit_dst_stride, blit_src += blit_src_stride)
           for (int x = 0; x < info.Width; x++)
             blit_dst[x] = (unsigned char)((blit_src[x] >> ANCHOR_COL32_A_SHIFT) & 0xFF);
-      }
-      else
+      } else
       {
         unsigned int *blit_dst = atlas->TexPixelsRGBA32 + (ty * blit_dst_stride) + tx;
         for (int y = 0; y < info.Height; y++, blit_dst += blit_dst_stride, blit_src += blit_src_stride)
@@ -742,8 +743,8 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
       float v0 = (ty) / (float)atlas->TexHeight;
       float u1 = (tx + info.Width) / (float)atlas->TexWidth;
       float v1 = (ty + info.Height) / (float)atlas->TexHeight;
-      dst_font->AddGlyph(
-        &cfg, (AnchorWChar)src_glyph.Codepoint, x0, y0, x1, y1, u0, v0, u1, v1, info.AdvanceX);
+      dst_font
+        ->AddGlyph(&cfg, (AnchorWChar)src_glyph.Codepoint, x0, y0, x1, y1, u0, v0, u1, v1, info.AdvanceX);
 
       AnchorFontGlyph *dst_glyph = &dst_font->Glyphs.back();
       ANCHOR_ASSERT(dst_glyph->Codepoint == src_glyph.Codepoint);

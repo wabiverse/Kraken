@@ -143,14 +143,15 @@ UsdAttribute UsdGeomBasisCurves::CreateWrapAttr(VtValue const &defaultValue, boo
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -188,12 +189,10 @@ static size_t _GetVStepForBasis(const TfToken &basis)
   if (basis == UsdGeomTokens->bezier)
   {
     return 3;
-  }
-  else if (basis == UsdGeomTokens->bspline)
+  } else if (basis == UsdGeomTokens->bspline)
   {
     return 1;
-  }
-  else if (basis == UsdGeomTokens->catmullRom)
+  } else if (basis == UsdGeomTokens->catmullRom)
   {
     return 1;
   }
@@ -224,8 +223,7 @@ static size_t _ComputeVaryingDataSize(const UsdGeomBasisCurves &basisCurves,
       {
         result += *itr;
       }
-    }
-    else
+    } else
     {
       TF_FOR_ALL (itr, curveVertexCts)
       {
@@ -247,8 +245,7 @@ static size_t _ComputeVaryingDataSize(const UsdGeomBasisCurves &basisCurves,
       {
         result += (*itr - 4) / vstep + 2;
       }
-    }
-    else
+    } else
     {
       TF_FOR_ALL (itr, curveVertexCts)
       {
@@ -272,13 +269,12 @@ static size_t _ComputeVertexDataSize(const VtIntArray &curveVertexCounts)
   return result;
 }
 
-#define RETURN_OR_APPEND_INFO(interpToken, val, expected) \
-  if (val == expected) \
-  { \
-    return interpToken; \
-  } \
-  else if (info) \
-  { \
+#define RETURN_OR_APPEND_INFO(interpToken, val, expected)   \
+  if (val == expected)                                      \
+  {                                                         \
+    return interpToken;                                     \
+  } else if (info)                                          \
+  {                                                         \
     info->push_back(std::make_pair(interpToken, expected)); \
   }
 

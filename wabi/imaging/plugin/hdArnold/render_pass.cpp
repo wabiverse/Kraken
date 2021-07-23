@@ -95,284 +95,280 @@ TF_DEFINE_ENV_SETTING(HDARNOLD_default_filter_attributes, "", "Default filter at
 namespace
 {
 
-template<typename T>
-T _GetOptionalSetting(const decltype(HdRenderPassAovBinding::aovSettings) &settings,
-                      const TfToken &settingName,
-                      const T &defaultValue)
-{
-  const auto it = settings.find(settingName);
-  if (it == settings.end())
+  template<typename T>
+  T _GetOptionalSetting(const decltype(HdRenderPassAovBinding::aovSettings) &settings,
+                        const TfToken &settingName,
+                        const T &defaultValue)
   {
-    return defaultValue;
-  }
-  return it->second.IsHolding<T>() ? it->second.UncheckedGet<T>() : defaultValue;
-}
-
-struct ArnoldAOVType
-{
-  const char *outputString;
-  const AtString writer;
-  const AtString reader;
-
-  ArnoldAOVType(const char *_outputString, const AtString &_writer, const AtString &_reader)
-    : outputString(_outputString),
-      writer(_writer),
-      reader(_reader)
-  {}
-};
-
-const ArnoldAOVType AOVTypeINT{"INT", str::aov_write_int, str::user_data_int};
-const ArnoldAOVType AOVTypeFLOAT{"FLOAT", str::aov_write_float, str::user_data_float};
-const ArnoldAOVType AOVTypeVECTOR{"VECTOR", str::aov_write_vector, str::user_data_rgb};
-const ArnoldAOVType AOVTypeVECTOR2{"VECTOR2", str::aov_write_vector, str::user_data_rgb};
-const ArnoldAOVType AOVTypeRGB{"RGB", str::aov_write_rgb, str::user_data_rgb};
-const ArnoldAOVType AOVTypeRGBA{"RGBA", str::aov_write_rgba, str::user_data_rgba};
-
-// The rules here:
-// - Anything with 4 components                                           -> RGBA
-// - Anything with a single floating point component                      -> FLOAT
-// - Anything with a single integer-like or boolean component             -> INT
-// - Anything with 3 floating point components and "color" in the name    -> RGB
-// - Anything with 3 floating point components but no "color" in the name -> VECTOR
-// - Anything with 2 components                                           -> VECTOR2
-const std::unordered_map<TfToken, const ArnoldAOVType *, TfToken::HashFunctor> ArnoldAOVTypeMap{{
-  {_tokens->_bool, &AOVTypeINT},
-  {_tokens->_int, &AOVTypeINT},
-  {_tokens->int64, &AOVTypeINT},
-  {_tokens->_float, &AOVTypeFLOAT},
-  {_tokens->_double, &AOVTypeFLOAT},
-  {_tokens->half2, &AOVTypeVECTOR2},
-  {_tokens->float2, &AOVTypeVECTOR2},
-  {_tokens->double2, &AOVTypeVECTOR2},
-  {_tokens->int3, &AOVTypeVECTOR},
-  {_tokens->half3, &AOVTypeVECTOR},
-  {_tokens->float3, &AOVTypeVECTOR},
-  {_tokens->double3, &AOVTypeVECTOR},
-  {_tokens->point3f, &AOVTypeVECTOR},
-  {_tokens->point3d, &AOVTypeVECTOR},
-  {_tokens->normal3f, &AOVTypeVECTOR},
-  {_tokens->normal3d, &AOVTypeVECTOR},
-  {_tokens->vector3f, &AOVTypeVECTOR},
-  {_tokens->vector3d, &AOVTypeVECTOR},
-  {_tokens->color3f, &AOVTypeRGB},
-  {_tokens->color3d, &AOVTypeRGB},
-  {_tokens->color4f, &AOVTypeRGBA},
-  {_tokens->color4d, &AOVTypeRGBA},
-  {_tokens->texCoord2f, &AOVTypeVECTOR2},
-  {_tokens->texCoord3f, &AOVTypeVECTOR},
-  {_tokens->int4, &AOVTypeRGBA},
-  {_tokens->half4, &AOVTypeRGBA},
-  {_tokens->float4, &AOVTypeRGBA},
-  {_tokens->double4, &AOVTypeRGBA},
-  {_tokens->quath, &AOVTypeRGBA},
-  {_tokens->quatf, &AOVTypeRGBA},
-  {_tokens->quatd, &AOVTypeRGBA},
-  {_tokens->color2f, &AOVTypeVECTOR2},
-  {_tokens->half, &AOVTypeFLOAT},
-  {_tokens->float16, &AOVTypeFLOAT},
-  {_tokens->color2h, &AOVTypeVECTOR2},
-  {_tokens->color3h, &AOVTypeVECTOR},
-  {_tokens->color4h, &AOVTypeRGBA},
-  {_tokens->u8, &AOVTypeINT},
-  {_tokens->uint8, &AOVTypeINT},
-  {_tokens->color2u8, &AOVTypeVECTOR2},
-  {_tokens->color3u8, &AOVTypeVECTOR},
-  {_tokens->color4u8, &AOVTypeRGBA},
-  {_tokens->i8, &AOVTypeINT},
-  {_tokens->int8, &AOVTypeINT},
-  {_tokens->color2i8, &AOVTypeVECTOR2},
-  {_tokens->color3i8, &AOVTypeVECTOR},
-  {_tokens->color4i8, &AOVTypeRGBA},
-  {_tokens->int2, &AOVTypeVECTOR2},
-  {_tokens->uint, &AOVTypeINT},
-  {_tokens->uint2, &AOVTypeVECTOR2},
-  {_tokens->uint3, &AOVTypeVECTOR},
-  {_tokens->uint4, &AOVTypeRGBA},
-}};
-
-// Using an unordered_map would be nicer.
-const ArnoldAOVType &_GetArnoldAOVTypeFromTokenType(const TfToken &type)
-{
-  const auto iter = ArnoldAOVTypeMap.find(type);
-  return iter == ArnoldAOVTypeMap.end() ? AOVTypeRGB : *iter->second;
-}
-
-const TfToken _GetTokenFromHdFormat(HdFormat format)
-{
-  switch (format)
-  {
-    case HdFormatUNorm8:
-      return _tokens->uint8;
-    case HdFormatUNorm8Vec2:
-      return _tokens->color2u8;
-    case HdFormatUNorm8Vec3:
-      return _tokens->color3u8;
-    case HdFormatUNorm8Vec4:
-      return _tokens->color4u8;
-    case HdFormatSNorm8:
-      return _tokens->int8;
-    case HdFormatSNorm8Vec2:
-      return _tokens->color2i8;
-    case HdFormatSNorm8Vec3:
-      return _tokens->color3i8;
-    case HdFormatSNorm8Vec4:
-      return _tokens->color4i8;
-    case HdFormatFloat16:
-      return _tokens->half;
-    case HdFormatFloat16Vec2:
-      return _tokens->half2;
-    case HdFormatFloat16Vec3:
-      return _tokens->half3;
-    case HdFormatFloat16Vec4:
-      return _tokens->half4;
-    case HdFormatFloat32:
-      return _tokens->_float;
-    case HdFormatFloat32Vec2:
-      return _tokens->float2;
-    case HdFormatFloat32Vec3:
-      // We prefer RGB aovs instead of AI_TYPE_VECTOR.
-      return _tokens->color3f;
-    case HdFormatFloat32Vec4:
-      return _tokens->float4;
-    case HdFormatInt32:
-      return _tokens->_int;
-    case HdFormatInt32Vec2:
-      return _tokens->int2;
-    case HdFormatInt32Vec3:
-      return _tokens->int3;
-    case HdFormatInt32Vec4:
-      return _tokens->int4;
-    default:
-      return _tokens->color4f;
-  }
-}
-
-const TfToken _GetTokenFromRenderBufferType(const HdRenderBuffer *buffer)
-{
-  // Use a wide type to make sure all components are set.
-  if (Ai_unlikely(buffer == nullptr))
-  {
-    return _tokens->color4f;
-  }
-  return _GetTokenFromHdFormat(buffer->GetFormat());
-}
-
-GfRect2i _GetDataWindow(const HdRenderPassStateSharedPtr &renderPassState)
-{
-  const auto &framing = renderPassState->GetFraming();
-  if (framing.IsValid())
-  {
-    return framing.dataWindow;
-  }
-  else
-  {
-    // For applications that use the old viewport API instead of
-    // the new camera framing API.
-    const auto &vp = renderPassState->GetViewport();
-    return GfRect2i(GfVec2i(0), int(vp[2]), int(vp[3]));
-  }
-}
-
-void _ReadNodeParameters(AtNode *node, const TfToken &prefix, const HdAovSettingsMap &settings)
-{
-  const AtNodeEntry *nodeEntry = AiNodeGetNodeEntry(node);
-  for (const auto &setting : settings)
-  {
-    if (TfStringStartsWith(setting.first, prefix))
+    const auto it = settings.find(settingName);
+    if (it == settings.end())
     {
-      const AtString parameterName(setting.first.GetText() + prefix.size());
-      // name is special in arnold
-      if (parameterName == str::name)
-      {
-        continue;
-      }
-      const auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, parameterName);
-      if (paramEntry != nullptr)
-      {
-        HdArnoldSetParameter(node, paramEntry, setting.second);
-      }
+      return defaultValue;
+    }
+    return it->second.IsHolding<T>() ? it->second.UncheckedGet<T>() : defaultValue;
+  }
+
+  struct ArnoldAOVType
+  {
+    const char *outputString;
+    const AtString writer;
+    const AtString reader;
+
+    ArnoldAOVType(const char *_outputString, const AtString &_writer, const AtString &_reader)
+      : outputString(_outputString),
+        writer(_writer),
+        reader(_reader)
+    {}
+  };
+
+  const ArnoldAOVType AOVTypeINT{"INT", str::aov_write_int, str::user_data_int};
+  const ArnoldAOVType AOVTypeFLOAT{"FLOAT", str::aov_write_float, str::user_data_float};
+  const ArnoldAOVType AOVTypeVECTOR{"VECTOR", str::aov_write_vector, str::user_data_rgb};
+  const ArnoldAOVType AOVTypeVECTOR2{"VECTOR2", str::aov_write_vector, str::user_data_rgb};
+  const ArnoldAOVType AOVTypeRGB{"RGB", str::aov_write_rgb, str::user_data_rgb};
+  const ArnoldAOVType AOVTypeRGBA{"RGBA", str::aov_write_rgba, str::user_data_rgba};
+
+  // The rules here:
+  // - Anything with 4 components                                           -> RGBA
+  // - Anything with a single floating point component                      -> FLOAT
+  // - Anything with a single integer-like or boolean component             -> INT
+  // - Anything with 3 floating point components and "color" in the name    -> RGB
+  // - Anything with 3 floating point components but no "color" in the name -> VECTOR
+  // - Anything with 2 components                                           -> VECTOR2
+  const std::unordered_map<TfToken, const ArnoldAOVType *, TfToken::HashFunctor> ArnoldAOVTypeMap{{
+    {_tokens->_bool, &AOVTypeINT},
+    {_tokens->_int, &AOVTypeINT},
+    {_tokens->int64, &AOVTypeINT},
+    {_tokens->_float, &AOVTypeFLOAT},
+    {_tokens->_double, &AOVTypeFLOAT},
+    {_tokens->half2, &AOVTypeVECTOR2},
+    {_tokens->float2, &AOVTypeVECTOR2},
+    {_tokens->double2, &AOVTypeVECTOR2},
+    {_tokens->int3, &AOVTypeVECTOR},
+    {_tokens->half3, &AOVTypeVECTOR},
+    {_tokens->float3, &AOVTypeVECTOR},
+    {_tokens->double3, &AOVTypeVECTOR},
+    {_tokens->point3f, &AOVTypeVECTOR},
+    {_tokens->point3d, &AOVTypeVECTOR},
+    {_tokens->normal3f, &AOVTypeVECTOR},
+    {_tokens->normal3d, &AOVTypeVECTOR},
+    {_tokens->vector3f, &AOVTypeVECTOR},
+    {_tokens->vector3d, &AOVTypeVECTOR},
+    {_tokens->color3f, &AOVTypeRGB},
+    {_tokens->color3d, &AOVTypeRGB},
+    {_tokens->color4f, &AOVTypeRGBA},
+    {_tokens->color4d, &AOVTypeRGBA},
+    {_tokens->texCoord2f, &AOVTypeVECTOR2},
+    {_tokens->texCoord3f, &AOVTypeVECTOR},
+    {_tokens->int4, &AOVTypeRGBA},
+    {_tokens->half4, &AOVTypeRGBA},
+    {_tokens->float4, &AOVTypeRGBA},
+    {_tokens->double4, &AOVTypeRGBA},
+    {_tokens->quath, &AOVTypeRGBA},
+    {_tokens->quatf, &AOVTypeRGBA},
+    {_tokens->quatd, &AOVTypeRGBA},
+    {_tokens->color2f, &AOVTypeVECTOR2},
+    {_tokens->half, &AOVTypeFLOAT},
+    {_tokens->float16, &AOVTypeFLOAT},
+    {_tokens->color2h, &AOVTypeVECTOR2},
+    {_tokens->color3h, &AOVTypeVECTOR},
+    {_tokens->color4h, &AOVTypeRGBA},
+    {_tokens->u8, &AOVTypeINT},
+    {_tokens->uint8, &AOVTypeINT},
+    {_tokens->color2u8, &AOVTypeVECTOR2},
+    {_tokens->color3u8, &AOVTypeVECTOR},
+    {_tokens->color4u8, &AOVTypeRGBA},
+    {_tokens->i8, &AOVTypeINT},
+    {_tokens->int8, &AOVTypeINT},
+    {_tokens->color2i8, &AOVTypeVECTOR2},
+    {_tokens->color3i8, &AOVTypeVECTOR},
+    {_tokens->color4i8, &AOVTypeRGBA},
+    {_tokens->int2, &AOVTypeVECTOR2},
+    {_tokens->uint, &AOVTypeINT},
+    {_tokens->uint2, &AOVTypeVECTOR2},
+    {_tokens->uint3, &AOVTypeVECTOR},
+    {_tokens->uint4, &AOVTypeRGBA},
+  }};
+
+  // Using an unordered_map would be nicer.
+  const ArnoldAOVType &_GetArnoldAOVTypeFromTokenType(const TfToken &type)
+  {
+    const auto iter = ArnoldAOVTypeMap.find(type);
+    return iter == ArnoldAOVTypeMap.end() ? AOVTypeRGB : *iter->second;
+  }
+
+  const TfToken _GetTokenFromHdFormat(HdFormat format)
+  {
+    switch (format)
+    {
+      case HdFormatUNorm8:
+        return _tokens->uint8;
+      case HdFormatUNorm8Vec2:
+        return _tokens->color2u8;
+      case HdFormatUNorm8Vec3:
+        return _tokens->color3u8;
+      case HdFormatUNorm8Vec4:
+        return _tokens->color4u8;
+      case HdFormatSNorm8:
+        return _tokens->int8;
+      case HdFormatSNorm8Vec2:
+        return _tokens->color2i8;
+      case HdFormatSNorm8Vec3:
+        return _tokens->color3i8;
+      case HdFormatSNorm8Vec4:
+        return _tokens->color4i8;
+      case HdFormatFloat16:
+        return _tokens->half;
+      case HdFormatFloat16Vec2:
+        return _tokens->half2;
+      case HdFormatFloat16Vec3:
+        return _tokens->half3;
+      case HdFormatFloat16Vec4:
+        return _tokens->half4;
+      case HdFormatFloat32:
+        return _tokens->_float;
+      case HdFormatFloat32Vec2:
+        return _tokens->float2;
+      case HdFormatFloat32Vec3:
+        // We prefer RGB aovs instead of AI_TYPE_VECTOR.
+        return _tokens->color3f;
+      case HdFormatFloat32Vec4:
+        return _tokens->float4;
+      case HdFormatInt32:
+        return _tokens->_int;
+      case HdFormatInt32Vec2:
+        return _tokens->int2;
+      case HdFormatInt32Vec3:
+        return _tokens->int3;
+      case HdFormatInt32Vec4:
+        return _tokens->int4;
+      default:
+        return _tokens->color4f;
     }
   }
-};
 
-AtNode *_CreateFilter(HdArnoldRenderDelegate *renderDelegate, const HdAovSettingsMap &aovSettings)
-{
-  // We need to make sure that it's holding a string, then try to create it to make sure
-  // it's a node type supported by Arnold.
-  const auto filterType = _GetOptionalSetting(aovSettings, _tokens->aovSettingFilter, std::string{});
-  if (filterType.empty())
+  const TfToken _GetTokenFromRenderBufferType(const HdRenderBuffer *buffer)
   {
-    return nullptr;
+    // Use a wide type to make sure all components are set.
+    if (Ai_unlikely(buffer == nullptr))
+    {
+      return _tokens->color4f;
+    }
+    return _GetTokenFromHdFormat(buffer->GetFormat());
   }
-  AtNode *filter = AiNode(renderDelegate->GetUniverse(), AtString(filterType.c_str()));
-  if (filter == nullptr)
+
+  GfRect2i _GetDataWindow(const HdRenderPassStateSharedPtr &renderPassState)
   {
+    const auto &framing = renderPassState->GetFraming();
+    if (framing.IsValid())
+    {
+      return framing.dataWindow;
+    } else
+    {
+      // For applications that use the old viewport API instead of
+      // the new camera framing API.
+      const auto &vp = renderPassState->GetViewport();
+      return GfRect2i(GfVec2i(0), int(vp[2]), int(vp[3]));
+    }
+  }
+
+  void _ReadNodeParameters(AtNode *node, const TfToken &prefix, const HdAovSettingsMap &settings)
+  {
+    const AtNodeEntry *nodeEntry = AiNodeGetNodeEntry(node);
+    for (const auto &setting : settings)
+    {
+      if (TfStringStartsWith(setting.first, prefix))
+      {
+        const AtString parameterName(setting.first.GetText() + prefix.size());
+        // name is special in arnold
+        if (parameterName == str::name)
+        {
+          continue;
+        }
+        const auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, parameterName);
+        if (paramEntry != nullptr)
+        {
+          HdArnoldSetParameter(node, paramEntry, setting.second);
+        }
+      }
+    }
+  };
+
+  AtNode *_CreateFilter(HdArnoldRenderDelegate *renderDelegate, const HdAovSettingsMap &aovSettings)
+  {
+    // We need to make sure that it's holding a string, then try to create it to make sure
+    // it's a node type supported by Arnold.
+    const auto filterType = _GetOptionalSetting(aovSettings, _tokens->aovSettingFilter, std::string{});
+    if (filterType.empty())
+    {
+      return nullptr;
+    }
+    AtNode *filter = AiNode(renderDelegate->GetUniverse(), AtString(filterType.c_str()));
+    if (filter == nullptr)
+    {
+      return filter;
+    }
+    const auto filterNameStr = renderDelegate->GetLocalNodeName(
+      AtString{TfStringPrintf("HdArnoldRenderPass_filter_%p", filter).c_str()});
+    AiNodeSetStr(filter, str::name, filterNameStr);
+    // We are first checking for the filter parameters prefixed with "arnold:", then doing a second
+    // loop to check for "arnold:filter_type:" prefixed parameters. The reason for two loops is
+    // we want the second version to overwrite the first one, and with unordered_map, we are not
+    // getting any sort of ordering.
+    _ReadNodeParameters(filter, _tokens->aovSetting, aovSettings);
+    _ReadNodeParameters(filter,
+                        TfToken{TfStringPrintf("%s%s:", _tokens->aovSetting.GetText(), filterType.c_str())},
+                        aovSettings);
     return filter;
   }
-  const auto filterNameStr = renderDelegate->GetLocalNodeName(
-    AtString{TfStringPrintf("HdArnoldRenderPass_filter_%p", filter).c_str()});
-  AiNodeSetStr(filter, str::name, filterNameStr);
-  // We are first checking for the filter parameters prefixed with "arnold:", then doing a second
-  // loop to check for "arnold:filter_type:" prefixed parameters. The reason for two loops is
-  // we want the second version to overwrite the first one, and with unordered_map, we are not
-  // getting any sort of ordering.
-  _ReadNodeParameters(filter, _tokens->aovSetting, aovSettings);
-  _ReadNodeParameters(filter,
-                      TfToken{TfStringPrintf("%s%s:", _tokens->aovSetting.GetText(), filterType.c_str())},
-                      aovSettings);
-  return filter;
-}
 
-const std::string _CreateAOV(HdArnoldRenderDelegate *renderDelegate,
-                             const ArnoldAOVType &arnoldTypes,
-                             const std::string &name,
-                             const TfToken &sourceType,
-                             const std::string &sourceName,
-                             AtNode *&writer,
-                             AtNode *&reader,
-                             std::vector<AtString> &lightPathExpressions,
-                             std::vector<AtNode *> &aovShaders)
-{
-  if (sourceType == _tokens->lpe)
+  const std::string _CreateAOV(HdArnoldRenderDelegate *renderDelegate,
+                               const ArnoldAOVType &arnoldTypes,
+                               const std::string &name,
+                               const TfToken &sourceType,
+                               const std::string &sourceName,
+                               AtNode *&writer,
+                               AtNode *&reader,
+                               std::vector<AtString> &lightPathExpressions,
+                               std::vector<AtNode *> &aovShaders)
   {
-    // We have to add the light path expression to the outputs node in the format of:
-    // "aov_name lpe" like "beauty C.*"
-    lightPathExpressions.emplace_back(TfStringPrintf("%s %s", name.c_str(), sourceName.c_str()).c_str());
-    return name;
-  }
-  else if (sourceType == _tokens->primvar)
-  {
-    // We need to add a aov write shader to the list of aov_shaders on the options node. Each
-    // of this shader will be executed on every surface.
-    writer = AiNode(renderDelegate->GetUniverse(), arnoldTypes.writer);
-    if (sourceName == "st" || sourceName == "uv")
-    {  // st and uv are written to the built-in UV
-      reader = AiNode(renderDelegate->GetUniverse(), str::utility);
-      AiNodeSetStr(reader, str::color_mode, str::uv);
-      AiNodeSetStr(reader, str::shade_mode, str::flat);
-    }
-    else
+    if (sourceType == _tokens->lpe)
     {
-      reader = AiNode(renderDelegate->GetUniverse(), arnoldTypes.reader);
-      AiNodeSetStr(reader, str::attribute, AtString(sourceName.c_str()));
+      // We have to add the light path expression to the outputs node in the format of:
+      // "aov_name lpe" like "beauty C.*"
+      lightPathExpressions.emplace_back(TfStringPrintf("%s %s", name.c_str(), sourceName.c_str()).c_str());
+      return name;
+    } else if (sourceType == _tokens->primvar)
+    {
+      // We need to add a aov write shader to the list of aov_shaders on the options node. Each
+      // of this shader will be executed on every surface.
+      writer = AiNode(renderDelegate->GetUniverse(), arnoldTypes.writer);
+      if (sourceName == "st" || sourceName == "uv")
+      {  // st and uv are written to the built-in UV
+        reader = AiNode(renderDelegate->GetUniverse(), str::utility);
+        AiNodeSetStr(reader, str::color_mode, str::uv);
+        AiNodeSetStr(reader, str::shade_mode, str::flat);
+      } else
+      {
+        reader = AiNode(renderDelegate->GetUniverse(), arnoldTypes.reader);
+        AiNodeSetStr(reader, str::attribute, AtString(sourceName.c_str()));
+      }
+      const auto writerName = renderDelegate->GetLocalNodeName(
+        AtString{TfStringPrintf("HdArnoldRenderPass_aov_writer_%p", writer).c_str()});
+      const auto readerName = renderDelegate->GetLocalNodeName(
+        AtString{TfStringPrintf("HdArnoldRenderPass_aov_reader_%p", reader).c_str()});
+      AiNodeSetStr(writer, str::name, writerName);
+      AiNodeSetStr(reader, str::name, readerName);
+      AiNodeSetStr(writer, str::aov_name, AtString(name.c_str()));
+      AiNodeSetBool(writer, str::blend_opacity, false);
+      AiNodeLink(reader, str::aov_input, writer);
+      aovShaders.push_back(writer);
+      return name;
+    } else
+    {
+      return sourceName;
     }
-    const auto writerName = renderDelegate->GetLocalNodeName(
-      AtString{TfStringPrintf("HdArnoldRenderPass_aov_writer_%p", writer).c_str()});
-    const auto readerName = renderDelegate->GetLocalNodeName(
-      AtString{TfStringPrintf("HdArnoldRenderPass_aov_reader_%p", reader).c_str()});
-    AiNodeSetStr(writer, str::name, writerName);
-    AiNodeSetStr(reader, str::name, readerName);
-    AiNodeSetStr(writer, str::aov_name, AtString(name.c_str()));
-    AiNodeSetBool(writer, str::blend_opacity, false);
-    AiNodeLink(reader, str::aov_input, writer);
-    aovShaders.push_back(writer);
-    return name;
   }
-  else
-  {
-    return sourceName;
-  }
-}
 
 }  // namespace
 
@@ -489,8 +485,7 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
       renderParam->Interrupt();
       AiNodeSetPtr(AiUniverseGetOptions(_renderDelegate->GetUniverse()), str::camera, _camera);
     }
-  }
-  else
+  } else
   {
     currentCamera = camera->GetCamera();
     if (currentUniverseCamera != currentCamera)
@@ -557,8 +552,7 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
                          }
                        }
                        return true;
-                     }
-                     else
+                     } else
                      {
                        return false;
                      }
@@ -613,8 +607,7 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
       _fallbackDepth.Allocate({_width, _height, 1}, HdFormatFloat32, false);
       _fallbackPrimId.Allocate({_width, _height, 1}, HdFormatInt32, false);
     }
-  }
-  else
+  } else
   {
 #endif
     // AOV bindings exists, so first we are checking if anything has changed.
@@ -671,18 +664,15 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
         {
           output = AtString{TfStringPrintf("RGBA RGBA %s %s", filterName, mainDriverName).c_str()};
           AiNodeSetPtr(_mainDriver, str::color_pointer, binding.renderBuffer);
-        }
-        else if (isRaw && sourceName == HdAovTokens->depth)
+        } else if (isRaw && sourceName == HdAovTokens->depth)
         {
           output = AtString{TfStringPrintf("P VECTOR %s %s", filterGeoName, mainDriverName).c_str()};
           AiNodeSetPtr(_mainDriver, str::depth_pointer, binding.renderBuffer);
-        }
-        else if (isRaw && sourceName == HdAovTokens->primId)
+        } else if (isRaw && sourceName == HdAovTokens->primId)
         {
           output = AtString{TfStringPrintf("ID UINT %s %s", filterGeoName, mainDriverName).c_str()};
           AiNodeSetPtr(_mainDriver, str::id_pointer, binding.renderBuffer);
-        }
-        else
+        } else
         {
           // Querying the data format from USD, with a default value of color3f.
           const auto format = _GetOptionalSetting<TfToken>(
@@ -702,8 +692,7 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
             // "aov_name lpe" like "beauty C.*"
             lightPathExpressions.emplace_back(
               TfStringPrintf("%s %s", binding.aovName.GetText(), sourceName.c_str()).c_str());
-          }
-          else if (sourceType == _tokens->primvar)
+          } else if (sourceType == _tokens->primvar)
           {
             aovName = binding.aovName.GetText();
             // We need to add a aov write shader to the list of aov_shaders on the options node.
@@ -714,8 +703,7 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
               buffer.reader = AiNode(_renderDelegate->GetUniverse(), str::utility);
               AiNodeSetStr(buffer.reader, str::color_mode, str::uv);
               AiNodeSetStr(buffer.reader, str::shade_mode, str::flat);
-            }
-            else
+            } else
             {
               buffer.reader = AiNode(_renderDelegate->GetUniverse(), arnoldTypes.reader);
               AiNodeSetStr(buffer.reader, str::attribute, AtString(sourceName.c_str()));
@@ -730,8 +718,7 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
             AiNodeSetBool(buffer.writer, str::blend_opacity, false);
             AiNodeLink(buffer.reader, str::aov_input, buffer.writer);
             aovShaders.push_back(buffer.writer);
-          }
-          else
+          } else
           {
             aovName = sourceName.c_str();
           }
@@ -795,18 +782,15 @@ void HdArnoldRenderPass::_Execute(const HdRenderPassStateSharedPtr &renderPassSt
             {
               deepRenderVar.output = AtString{
                 TfStringPrintf("RGBA RGBA %s %s", filterName, deepDriverName.c_str()).c_str()};
-            }
-            else if (isRaw && renderVar.sourceName == HdAovTokens->depth)
+            } else if (isRaw && renderVar.sourceName == HdAovTokens->depth)
             {
               deepRenderVar.output = AtString{
                 TfStringPrintf("Z FLOAT %s %s", filterName, deepDriverName.c_str()).c_str()};
-            }
-            else if (isRaw && renderVar.sourceName == HdAovTokens->primId)
+            } else if (isRaw && renderVar.sourceName == HdAovTokens->primId)
             {
               deepRenderVar.output = AtString{
                 TfStringPrintf("ID UINT %s %s", filterName, deepDriverName.c_str()).c_str()};
-            }
-            else
+            } else
             {
               // Querying the data format from USD, with a default value of color3f.
               const auto format = _GetOptionalSetting<TfToken>(

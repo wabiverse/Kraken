@@ -83,7 +83,8 @@ static void _PcpComposeSiteReferencesOrPayloads(TfToken const &field,
       // relative to the layer where they were expressed and combines
       // layer offsets.
       curListOp.ApplyOperations(
-        result, [&layer, layerOffset, &infoMap](SdfListOpType opType, const RefOrPayloadType &refOrPayload) {
+        result,
+        [&layer, layerOffset, &infoMap](SdfListOpType opType, const RefOrPayloadType &refOrPayload) {
           // Fill in the result reference of payload with the anchored
           // asset path instead of the authored asset path. This
           // ensures that references or payloads with the same

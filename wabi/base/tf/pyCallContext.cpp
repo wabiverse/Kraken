@@ -36,11 +36,11 @@ using namespace std;
 
 namespace
 {
-struct _Cache
-{
-  tbb::spin_mutex lock;
-  set<string> data;
-};
+  struct _Cache
+  {
+    tbb::spin_mutex lock;
+    set<string> data;
+  };
 }  // namespace
 
 WABI_NAMESPACE_BEGIN

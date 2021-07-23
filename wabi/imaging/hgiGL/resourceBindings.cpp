@@ -79,16 +79,14 @@ void HgiGLResourceBindings::BindResources()
       HgiTextureHandle const &texHandle = texDesc.textures.front();
       HgiGLTexture *glTex = static_cast<HgiGLTexture *>(texHandle.Get());
       textures[texDesc.bindingIndex] = glTex->GetTextureId();
-    }
-    else if (texDesc.resourceType == HgiBindResourceTypeStorageImage)
+    } else if (texDesc.resourceType == HgiBindResourceTypeStorageImage)
     {
       // Image load/store (usually for compute pipeline)
       hasImage = true;
       HgiTextureHandle const &texHandle = texDesc.textures.front();
       HgiGLTexture *glTex = static_cast<HgiGLTexture *>(texHandle.Get());
       images[texDesc.bindingIndex] = glTex->GetTextureId();
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Unsupported texture bind resource type");
     }
@@ -100,8 +98,7 @@ void HgiGLResourceBindings::BindResources()
       HgiSamplerHandle const &smpHandle = texDesc.samplers.front();
       HgiGLSampler *glSmp = static_cast<HgiGLSampler *>(smpHandle.Get());
       samplers[texDesc.bindingIndex] = glSmp->GetSamplerId();
-    }
-    else
+    } else
     {
       // A sampler MUST be provided for sampler image textures (Hgi rule).
       TF_VERIFY(texDesc.resourceType != HgiBindResourceTypeSampledImage);
@@ -149,12 +146,10 @@ void HgiGLResourceBindings::BindResources()
     if (bufDesc.resourceType == HgiBindResourceTypeUniformBuffer)
     {
       dst = &ubos;
-    }
-    else if (bufDesc.resourceType == HgiBindResourceTypeStorageBuffer)
+    } else if (bufDesc.resourceType == HgiBindResourceTypeStorageBuffer)
     {
       dst = &sbos;
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Unknown buffer type to bind");
       continue;

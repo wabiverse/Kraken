@@ -569,7 +569,7 @@ class UsdClipsAPI : public UsdAPISchemaBase
 
 /// \hideinitializer
 #define USDCLIPS_INFO_KEYS \
-  (active)(assetPaths)( \
+  (active)(assetPaths)(    \
     interpolateMissingClipValues)(manifestAssetPath)(primPath)(templateAssetPath)(templateEndTime)(templateStartTime)(templateStride)(templateActiveOffset)(times)
 
 /// \anchor UsdClipsAPIInfoKeys

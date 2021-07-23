@@ -39,60 +39,60 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-using _PathIndexMap = std::unordered_map<SdfPath, int, SdfPath::Hash>;
+  using _PathIndexMap = std::unordered_map<SdfPath, int, SdfPath::Hash>;
 
-int _GetParentIndex(const _PathIndexMap &pathMap, const SdfPath &path)
-{
-  if (path.IsPrimPath())
+  int _GetParentIndex(const _PathIndexMap &pathMap, const SdfPath &path)
   {
-    // Recurse over all ancestor paths, not just the direct parent.
-    // For instance, if the map includes only paths 'a' and 'a/b/c',
-    // 'a' will be treated as the parent of 'a/b/c'.
-    const auto range = path.GetAncestorsRange();
-    auto it = range.begin();
-    for (++it; it != range.end(); ++it)
+    if (path.IsPrimPath())
     {
-      const auto mapIt = pathMap.find(*it);
-      if (mapIt != pathMap.end())
+      // Recurse over all ancestor paths, not just the direct parent.
+      // For instance, if the map includes only paths 'a' and 'a/b/c',
+      // 'a' will be treated as the parent of 'a/b/c'.
+      const auto range = path.GetAncestorsRange();
+      auto it = range.begin();
+      for (++it; it != range.end(); ++it)
       {
-        return mapIt->second;
+        const auto mapIt = pathMap.find(*it);
+        if (mapIt != pathMap.end())
+        {
+          return mapIt->second;
+        }
       }
     }
+    return -1;
   }
-  return -1;
-}
 
-VtIntArray _ComputeParentIndicesFromPaths(TfSpan<const SdfPath> paths)
-{
-  TRACE_FUNCTION();
-
-  _PathIndexMap pathMap;
-  for (size_t i = 0; i < paths.size(); ++i)
+  VtIntArray _ComputeParentIndicesFromPaths(TfSpan<const SdfPath> paths)
   {
-    pathMap[paths[i]] = static_cast<int>(i);
+    TRACE_FUNCTION();
+
+    _PathIndexMap pathMap;
+    for (size_t i = 0; i < paths.size(); ++i)
+    {
+      pathMap[paths[i]] = static_cast<int>(i);
+    }
+
+    VtIntArray parentIndices;
+    parentIndices.assign(paths.size(), -1);
+
+    const auto parentIndicesSpan = TfMakeSpan(parentIndices);
+    for (size_t i = 0; i < paths.size(); ++i)
+    {
+      parentIndicesSpan[i] = _GetParentIndex(pathMap, paths[i]);
+    }
+    return parentIndices;
   }
 
-  VtIntArray parentIndices;
-  parentIndices.assign(paths.size(), -1);
-
-  const auto parentIndicesSpan = TfMakeSpan(parentIndices);
-  for (size_t i = 0; i < paths.size(); ++i)
+  VtIntArray _ComputeParentIndicesFromTokens(TfSpan<const TfToken> tokens)
   {
-    parentIndicesSpan[i] = _GetParentIndex(pathMap, paths[i]);
+    // Convert tokens to paths.
+    SdfPathVector paths(tokens.size());
+    for (size_t i = 0; i < tokens.size(); ++i)
+    {
+      paths[i] = SdfPath(tokens[i].GetString());
+    }
+    return _ComputeParentIndicesFromPaths(paths);
   }
-  return parentIndices;
-}
-
-VtIntArray _ComputeParentIndicesFromTokens(TfSpan<const TfToken> tokens)
-{
-  // Convert tokens to paths.
-  SdfPathVector paths(tokens.size());
-  for (size_t i = 0; i < tokens.size(); ++i)
-  {
-    paths[i] = SdfPath(tokens[i].GetString());
-  }
-  return _ComputeParentIndicesFromPaths(paths);
-}
 
 }  // namespace
 

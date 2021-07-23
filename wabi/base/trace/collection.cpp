@@ -41,8 +41,7 @@ void TraceCollection::AddToCollection(const TraceThreadId &id, EventListPtr &&ev
   if (it == _eventsPerThread.end())
   {
     _eventsPerThread.emplace(id, std::move(events));
-  }
-  else
+  } else
   {
     it->second->Append(std::move(*events));
   }
@@ -86,8 +85,7 @@ void TraceCollection::_Iterate(Visitor &visitor, bool doReverse) const
     if (doReverse)
     {
       _IterateEvents(visitor, cache, threadIndex, events->rbegin(), events->rend());
-    }
-    else
+    } else
     {
       _IterateEvents(visitor, cache, threadIndex, events->begin(), events->end());
     }

@@ -41,100 +41,94 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
-
-#define WRAP_CUSTOM                                                     \
-    template <class Cls> static void _CustomWrapCode(Cls &_class)
-
-// fwd decl.
-WRAP_CUSTOM;
-
-        
-static UsdAttribute
-_CreateApproximationAttr(UsdPhysicsMeshCollisionAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateApproximationAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
-
-static std::string
-_Repr(const UsdPhysicsMeshCollisionAPI &self)
+namespace
 {
+
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
+
+  // fwd decl.
+  WRAP_CUSTOM;
+
+
+  static UsdAttribute _CreateApproximationAttr(UsdPhysicsMeshCollisionAPI &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateApproximationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                        writeSparsely);
+  }
+
+  static std::string _Repr(const UsdPhysicsMeshCollisionAPI &self)
+  {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf(
-        "UsdPhysics.MeshCollisionAPI(%s)",
-        primRepr.c_str());
-}
+    return TfStringPrintf("UsdPhysics.MeshCollisionAPI(%s)", primRepr.c_str());
+  }
 
-struct UsdPhysicsMeshCollisionAPI_CanApplyResult : 
-    public TfPyAnnotatedBoolResult<std::string>
-{
-    UsdPhysicsMeshCollisionAPI_CanApplyResult(bool val, std::string const &msg) :
-        TfPyAnnotatedBoolResult<std::string>(val, msg) {}
-};
+  struct UsdPhysicsMeshCollisionAPI_CanApplyResult : public TfPyAnnotatedBoolResult<std::string>
+  {
+    UsdPhysicsMeshCollisionAPI_CanApplyResult(bool val, std::string const &msg)
+      : TfPyAnnotatedBoolResult<std::string>(val, msg)
+    {}
+  };
 
-static UsdPhysicsMeshCollisionAPI_CanApplyResult
-_WrapCanApply(const UsdPrim& prim)
-{
+  static UsdPhysicsMeshCollisionAPI_CanApplyResult _WrapCanApply(const UsdPrim &prim)
+  {
     std::string whyNot;
     bool result = UsdPhysicsMeshCollisionAPI::CanApply(prim, &whyNot);
     return UsdPhysicsMeshCollisionAPI_CanApplyResult(result, whyNot);
-}
+  }
 
-} // anonymous namespace
+}  // anonymous namespace
 
 void wrapUsdPhysicsMeshCollisionAPI()
 {
-    typedef UsdPhysicsMeshCollisionAPI This;
+  typedef UsdPhysicsMeshCollisionAPI This;
 
-    UsdPhysicsMeshCollisionAPI_CanApplyResult::Wrap<UsdPhysicsMeshCollisionAPI_CanApplyResult>(
-        "_CanApplyResult", "whyNot");
+  UsdPhysicsMeshCollisionAPI_CanApplyResult::Wrap<UsdPhysicsMeshCollisionAPI_CanApplyResult>(
+    "_CanApplyResult",
+    "whyNot");
 
-    class_<This, bases<UsdAPISchemaBase> >
-        cls("MeshCollisionAPI");
+  class_<This, bases<UsdAPISchemaBase>> cls("MeshCollisionAPI");
 
-    cls
-        .def(init<UsdPrim>(arg("prim")))
-        .def(init<UsdSchemaBase const&>(arg("schemaObj")))
-        .def(TfTypePythonClass())
+  cls.def(init<UsdPrim>(arg("prim")))
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-        .def("Get", &This::Get, (arg("stage"), arg("path")))
-        .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-        .def("CanApply", &_WrapCanApply, (arg("prim")))
-        .staticmethod("CanApply")
+    .def("CanApply", &_WrapCanApply, (arg("prim")))
+    .staticmethod("CanApply")
 
-        .def("Apply", &This::Apply, (arg("prim")))
-        .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-        .def("GetSchemaAttributeNames",
-             &This::GetSchemaAttributeNames,
-             arg("includeInherited")=true,
-             return_value_policy<TfPySequenceToList>())
-        .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-        .def("GetStaticTfType", (TfType const &(*)()) TfType::Find<This>,
-             return_value_policy<return_by_value>())
-        .staticmethod("GetStaticTfType")
+    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("GetStaticTfType")
 
-        .def(!self)
+    .def(!self)
 
-        
-        .def("GetApproximationAttr",
-             &This::GetApproximationAttr)
-        .def("CreateApproximationAttr",
-             &_CreateApproximationAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
 
-        .def("__repr__", ::_Repr)
-    ;
+    .def("GetApproximationAttr", &This::GetApproximationAttr)
+    .def("CreateApproximationAttr",
+         &_CreateApproximationAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-    _CustomWrapCode(cls);
+    .def("__repr__", ::_Repr);
+
+  _CustomWrapCode(cls);
 }
 
 // ===================================================================== //
-// Feel free to add custom code below this line, it will be preserved by 
+// Feel free to add custom code below this line, it will be preserved by
 // the code generator.  The entry point for your custom code should look
 // minimally like the following:
 //
@@ -145,16 +139,17 @@ void wrapUsdPhysicsMeshCollisionAPI()
 // }
 //
 // Of course any other ancillary or support code may be provided.
-// 
+//
 // Just remember to wrap code in the appropriate delimiters:
 // 'namespace {', '}'.
 //
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
-WRAP_CUSTOM {
-}
+  WRAP_CUSTOM
+  {}
 
-}
+}  // namespace

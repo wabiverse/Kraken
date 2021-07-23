@@ -72,8 +72,7 @@
     inverse._mtx[0][1] = {{SCALAR_CAST("_mtx[0][1]*-rcp")}};
     inverse._mtx[1][0] = {{SCALAR_CAST("_mtx[1][0]*-rcp")}};
     inverse._mtx[1][1] = {{SCALAR_CAST("_mtx[0][0]*rcp")}};
-  }
-  else
+  } else
   {
     inverse.SetDiagonal(FLT_MAX);
   }

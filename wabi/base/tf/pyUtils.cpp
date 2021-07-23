@@ -116,8 +116,7 @@ void Tf_PyLoadScriptModule(std::string const &moduleName)
       TfPyPrintError();
       // CODE_COVERAGE_ON
     }
-  }
-  else
+  } else
   {
     // CODE_COVERAGE_OFF
     TF_WARN("Attempted to load module '%s' but Python is not initialized.", moduleName.c_str());
@@ -203,7 +202,8 @@ int64_t TfPyNormalizeIndex(int64_t index, uint64_t size, bool throwError)
     TfPyThrowIndexError("Index out of range.");
   }
 
-  return index < 0 ? 0 : static_cast<uint64_t>(index) >= size ? size - 1 : index;
+  return index < 0 ? 0 : static_cast<uint64_t>(index) >= size ? size - 1 :
+                                                                index;
 }
 
 TF_API void Tf_PyWrapOnceImpl(boost::python::type_info const &type,
@@ -450,8 +450,7 @@ void Tf_PyObjectError(bool printError)
   if (printError)
   {
     PyErr_Print();
-  }
-  else
+  } else
   {
     PyErr_Clear();
   }

@@ -253,8 +253,7 @@ bool HdBbAttributeSource::_CheckBuffersSize() const
     if (element == ccl::ATTR_ELEMENT_OBJECT)
     {
       return value.IsArrayValued() ? value.GetArraySize() : 1;
-    }
-    else
+    } else
     {
       return value.GetArraySize();
     }
@@ -340,8 +339,7 @@ VtValue HdBbAttributeSource::UncheckedCastToFloat(const VtValue &input_value)
       value.Cast<VtVec3fArray>();
     else if (count == 4)
       value.Cast<VtVec4fArray>();
-  }
-  else
+  } else
   {
     if (count == 1)
       value.Cast<float>();
@@ -424,8 +422,7 @@ bool HdBbAttributeSource::ResolveAsArray()
   }
 
   // copy source to destination with respecting stride for both buffers
-  for (size_t src_off = 0, dst_off = 0; src_off < src_size;
-       src_off += num_src_comp, dst_off += num_dst_comp)
+  for (size_t src_off = 0, dst_off = 0; src_off < src_size; src_off += num_src_comp, dst_off += num_dst_comp)
   {
     for (size_t comp = 0; comp < num_src_comp; ++comp)
     {
@@ -497,26 +494,26 @@ HdTupleType HdBbAttributeSource::GetTupleType(const ccl::TypeDesc &type_desc)
 namespace
 {
 
-ccl::AttributeElement interpolation_to_pointcloud_element(const HdInterpolation &interpolation)
-{
-  switch (interpolation)
+  ccl::AttributeElement interpolation_to_pointcloud_element(const HdInterpolation &interpolation)
   {
-    case HdInterpolationConstant:
-      return ccl::AttributeElement::ATTR_ELEMENT_OBJECT;
-    case HdInterpolationUniform:
-      return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
-    case HdInterpolationVarying:
-      return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
-    case HdInterpolationVertex:
-      return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
-    case HdInterpolationFaceVarying:
-      return ccl::AttributeElement::ATTR_ELEMENT_NONE;  // not supported
-    case HdInterpolationInstance:
-      return ccl::AttributeElement::ATTR_ELEMENT_NONE;  // not supported
-    default:
-      return ccl::AttributeElement::ATTR_ELEMENT_NONE;
+    switch (interpolation)
+    {
+      case HdInterpolationConstant:
+        return ccl::AttributeElement::ATTR_ELEMENT_OBJECT;
+      case HdInterpolationUniform:
+        return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
+      case HdInterpolationVarying:
+        return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
+      case HdInterpolationVertex:
+        return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
+      case HdInterpolationFaceVarying:
+        return ccl::AttributeElement::ATTR_ELEMENT_NONE;  // not supported
+      case HdInterpolationInstance:
+        return ccl::AttributeElement::ATTR_ELEMENT_NONE;  // not supported
+      default:
+        return ccl::AttributeElement::ATTR_ELEMENT_NONE;
+    }
   }
-}
 
 }  // namespace
 
@@ -565,81 +562,82 @@ HdCyclesPointCloudAttributeSource::HdCyclesPointCloudAttributeSource(TfToken nam
 namespace
 {
 
-template<typename Dst, typename Src>
-Dst cast_vec_to_vec(const Src &src)
-{
-  static_assert(GfIsGfVec<Src>::value, "Src must be GfVec");
-  static_assert(GfIsGfVec<Dst>::value, "Dst must be GfVec");
-
-  constexpr size_t src_size = Src::dimension;
-  constexpr size_t dst_size = Dst::dimension;
-  static_assert(src_size == dst_size,
-                "Only GfVec with same size can be converted");  // can be reduced
-
-  constexpr size_t size = std::min(src_size, dst_size);
-  Dst res{};
-  for (size_t i = 0; i < size; ++i)
+  template<typename Dst, typename Src>
+  Dst cast_vec_to_vec(const Src &src)
   {
-    res[i] = static_cast<typename Dst::ScalarType>(src[i]);
+    static_assert(GfIsGfVec<Src>::value, "Src must be GfVec");
+    static_assert(GfIsGfVec<Dst>::value, "Dst must be GfVec");
+
+    constexpr size_t src_size = Src::dimension;
+    constexpr size_t dst_size = Dst::dimension;
+    static_assert(src_size == dst_size,
+                  "Only GfVec with same size can be converted");  // can be reduced
+
+    constexpr size_t size = std::min(src_size, dst_size);
+    Dst res{};
+    for (size_t i = 0; i < size; ++i)
+    {
+      res[i] = static_cast<typename Dst::ScalarType>(src[i]);
+    }
+    return res;
   }
-  return res;
-}
 
-template<typename Dst, typename Src>
-VtValue cast_arr_vec_to_arr_vec(const VtValue &input)
-{
-  auto &array = input.UncheckedGet<VtArray<Src>>();
-
-  VtArray<Dst> output(array.size());
-  std::transform(array.begin(), array.end(), output.begin(), [](const Src &val) -> Dst {
-    return cast_vec_to_vec<Dst>(val);
-  });
-  return VtValue{output};
-}
-
-template<typename Dst, typename Src>
-VtValue cast_arr_to_arr(const VtValue &input)
-{
-  auto &array = input.UncheckedGet<VtArray<Src>>();
-
-  VtArray<Dst> output(array.size());
-  std::transform(
-    array.begin(), array.end(), output.begin(), [](const Src &val) -> Dst { return static_cast<Dst>(val); });
-  return VtValue{output};
-}
-
-template<typename Dst, typename Src>
-bool CanCast()
-{
-  return VtValue::CanCastFromTypeidToTypeid(typeid(Src), typeid(Dst));
-}
-
-template<typename Dst, typename Src, typename Fn>
-void TryRegisterCast(Fn fn)
-{
-  if (!CanCast<Dst, Src>())
+  template<typename Dst, typename Src>
+  VtValue cast_arr_vec_to_arr_vec(const VtValue &input)
   {
-    VtValue::RegisterCast<Src, Dst>(fn);
+    auto &array = input.UncheckedGet<VtArray<Src>>();
+
+    VtArray<Dst> output(array.size());
+    std::transform(array.begin(), array.end(), output.begin(), [](const Src &val) -> Dst {
+      return cast_vec_to_vec<Dst>(val);
+    });
+    return VtValue{output};
   }
-}
 
-template<typename Dst, typename Src>
-void TryRegisterValCast()
-{
-  TryRegisterCast<Dst, Src>(&cast_vec_to_vec<Dst, Src>);
-}
+  template<typename Dst, typename Src>
+  VtValue cast_arr_to_arr(const VtValue &input)
+  {
+    auto &array = input.UncheckedGet<VtArray<Src>>();
 
-template<typename Dst, typename Src>
-void TryRegisterValArrayCast()
-{
-  TryRegisterCast<VtArray<Dst>, VtArray<Src>>(&cast_arr_to_arr<float, Src>);
-}
+    VtArray<Dst> output(array.size());
+    std::transform(array.begin(), array.end(), output.begin(), [](const Src &val) -> Dst {
+      return static_cast<Dst>(val);
+    });
+    return VtValue{output};
+  }
 
-template<typename Dst, typename Src>
-void TryRegisterVecArrayCast()
-{
-  TryRegisterCast<VtArray<Dst>, VtArray<Src>>(&cast_arr_vec_to_arr_vec<Dst, Src>);
-}
+  template<typename Dst, typename Src>
+  bool CanCast()
+  {
+    return VtValue::CanCastFromTypeidToTypeid(typeid(Src), typeid(Dst));
+  }
+
+  template<typename Dst, typename Src, typename Fn>
+  void TryRegisterCast(Fn fn)
+  {
+    if (!CanCast<Dst, Src>())
+    {
+      VtValue::RegisterCast<Src, Dst>(fn);
+    }
+  }
+
+  template<typename Dst, typename Src>
+  void TryRegisterValCast()
+  {
+    TryRegisterCast<Dst, Src>(&cast_vec_to_vec<Dst, Src>);
+  }
+
+  template<typename Dst, typename Src>
+  void TryRegisterValArrayCast()
+  {
+    TryRegisterCast<VtArray<Dst>, VtArray<Src>>(&cast_arr_to_arr<float, Src>);
+  }
+
+  template<typename Dst, typename Src>
+  void TryRegisterVecArrayCast()
+  {
+    TryRegisterCast<VtArray<Dst>, VtArray<Src>>(&cast_arr_vec_to_arr_vec<Dst, Src>);
+  }
 
 #if 0
 template<typename Dst, typename Src>

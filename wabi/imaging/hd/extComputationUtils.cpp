@@ -160,72 +160,70 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationConstPtrVector computations,
-                                                              HdSceneDelegate *sceneDelegate)
-{
-  HD_TRACE_FUNCTION();
-
-  HdExtComputationUtils::ValueStore valueStore;
-  for (auto const &comp : computations)
+  static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationConstPtrVector computations,
+                                                                HdSceneDelegate *sceneDelegate)
   {
-    SdfPath const &compId = comp->GetId();
+    HD_TRACE_FUNCTION();
 
-    // Add all the scene inputs to the value store
-    for (TfToken const &input : comp->GetSceneInputNames())
+    HdExtComputationUtils::ValueStore valueStore;
+    for (auto const &comp : computations)
     {
-      valueStore[input] = sceneDelegate->GetExtComputationInput(compId, input);
-    }
+      SdfPath const &compId = comp->GetId();
 
-    if (comp->IsInputAggregation())
-    {
-      // An aggregator computation produces no output, and thus
-      // doesn't need to be executed.
-      continue;
-    }
-
-    // Populate the context with all the inputs (scene, computed) from
-    // the value store.
-    Hd_ExtComputationContextInternal context;
-    for (auto const &sceneInput : comp->GetSceneInputNames())
-    {
-      context.SetInputValue(sceneInput, valueStore.at(sceneInput));
-    }
-
-    for (auto const &computedInput : comp->GetComputationInputs())
-    {
-      context.SetInputValue(computedInput.name, valueStore.at(computedInput.sourceComputationOutputName));
-    }
-
-    sceneDelegate->InvokeExtComputation(compId, &context);
-
-    if (context.HasComputationError())
-    {
-      // We could bail here, or choose to execute other computations.
-      // Choose the latter.
-      TF_WARN("Error invoking computation %s.\n", compId.GetText());
-    }
-    else
-    {
-      // Add outputs to the value store (subsequent computations may need
-      // them as computation inputs)
-      TfTokenVector const &outputNames = comp->GetOutputNames();
-      for (auto const &name : outputNames)
+      // Add all the scene inputs to the value store
+      for (TfToken const &input : comp->GetSceneInputNames())
       {
-        VtValue value;
-        if (!context.GetOutputValue(name, &value))
+        valueStore[input] = sceneDelegate->GetExtComputationInput(compId, input);
+      }
+
+      if (comp->IsInputAggregation())
+      {
+        // An aggregator computation produces no output, and thus
+        // doesn't need to be executed.
+        continue;
+      }
+
+      // Populate the context with all the inputs (scene, computed) from
+      // the value store.
+      Hd_ExtComputationContextInternal context;
+      for (auto const &sceneInput : comp->GetSceneInputNames())
+      {
+        context.SetInputValue(sceneInput, valueStore.at(sceneInput));
+      }
+
+      for (auto const &computedInput : comp->GetComputationInputs())
+      {
+        context.SetInputValue(computedInput.name, valueStore.at(computedInput.sourceComputationOutputName));
+      }
+
+      sceneDelegate->InvokeExtComputation(compId, &context);
+
+      if (context.HasComputationError())
+      {
+        // We could bail here, or choose to execute other computations.
+        // Choose the latter.
+        TF_WARN("Error invoking computation %s.\n", compId.GetText());
+      } else
+      {
+        // Add outputs to the value store (subsequent computations may need
+        // them as computation inputs)
+        TfTokenVector const &outputNames = comp->GetOutputNames();
+        for (auto const &name : outputNames)
         {
-          TF_WARN("Error getting out %s for computation %s.\n", name.GetText(), compId.GetText());
-        }
-        else
-        {
-          valueStore[name] = value;
+          VtValue value;
+          if (!context.GetOutputValue(name, &value))
+          {
+            TF_WARN("Error getting out %s for computation %s.\n", name.GetText(), compId.GetText());
+          } else
+          {
+            valueStore[name] = value;
+          }
         }
       }
-    }
-  }  // for each computation
+    }  // for each computation
 
-  return valueStore;
-}
+    return valueStore;
+  }
 
 }  // namespace
 
@@ -286,8 +284,7 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
     {
       independentComps.emplace_back(comp);
       it = cdm.erase(it);
-    }
-    else
+    } else
     {
       it++;
     }
@@ -323,8 +320,7 @@ static HdExtComputationUtils::ValueStore _ExecuteComputations(HdExtComputationCo
 
         // Remove it from the graph, so we don't revisit it again.
         it = cdm.erase(it);
-      }
-      else
+      } else
       {
         it++;
       }

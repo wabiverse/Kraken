@@ -178,8 +178,7 @@ class SdfPyWrapListProxy
     {
       // Replace contiguous sequence with values.
       x._Edit(start, count, values);
-    }
-    else
+    } else
     {
       // Replace exactly the selected items.
       if (count != values.size())
@@ -189,12 +188,10 @@ class SdfPyWrapListProxy
                                            values.size(),
                                            count)
                               .c_str());
-      }
-      else if (step == 1)
+      } else if (step == 1)
       {
         x._Edit(start, count, values);
-      }
-      else
+      } else
       {
         SdfChangeBlock block;
         for (size_t i = 0, j = start; i != count; j += step, ++i)
@@ -228,8 +225,7 @@ class SdfPyWrapListProxy
         if (step == 1)
         {
           x._Edit(start, count, value_vector_type());
-        }
-        else
+        } else
         {
           SdfChangeBlock block;
           value_vector_type empty;
@@ -251,8 +247,7 @@ class SdfPyWrapListProxy
     if (x._Validate())
     {
       return static_cast<int>(x.Find(value));
-    }
-    else
+    } else
     {
       return -1;
     }

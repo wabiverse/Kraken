@@ -214,20 +214,16 @@ HdRprim *HdCyclesRenderDelegate::CreateRprim(const TfToken &typeId, const SdfPat
   if (typeId == HdPrimTypeTokens->mesh)
   {
     return new HdCyclesMesh(this, rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->basisCurves)
+  } else if (typeId == HdPrimTypeTokens->basisCurves)
   {
     return new HdCyclesBasisCurves(this, rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->points)
+  } else if (typeId == HdPrimTypeTokens->points)
   {
     return new HdCyclesPoints(this, rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->volume)
+  } else if (typeId == HdPrimTypeTokens->volume)
   {
     return new HdCyclesVolume(this, rprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Rprim type=%s id=%s", typeId.GetText(), rprimId.GetText());
   }
@@ -270,14 +266,12 @@ HdSprim *HdCyclesRenderDelegate::CreateFallbackSprim(TfToken const &typeId)
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdCyclesCamera(SdfPath::EmptyPath(), this);
-  }
-  else if (typeId == HdPrimTypeTokens->material)
+  } else if (typeId == HdPrimTypeTokens->material)
   {
     return new HdCyclesMaterial(SdfPath::EmptyPath(), this);
-  }
-  else if (typeId == HdPrimTypeTokens->distantLight || typeId == HdPrimTypeTokens->domeLight ||
-           typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->diskLight ||
-           typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->sphereLight)
+  } else if (typeId == HdPrimTypeTokens->distantLight || typeId == HdPrimTypeTokens->domeLight ||
+             typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->diskLight ||
+             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->sphereLight)
   {
     return new HdCyclesLight(SdfPath::EmptyPath(), typeId, this);
   }
@@ -363,25 +357,21 @@ HdAovDescriptor HdCyclesRenderDelegate::GetDefaultAovDescriptor(TfToken const &n
   if (name == HdAovTokens->color || name == HdCyclesAovTokens->DiffDir)
   {
     return HdAovDescriptor(colorFormat, false, VtValue(GfVec4f(0.0f)));
-  }
-  else if (name == HdAovTokens->normal)
+  } else if (name == HdAovTokens->normal)
   {
     if (use_tiles)
     {
       colorFormat = HdFormatFloat32Vec3;
     }
     return HdAovDescriptor(colorFormat, false, VtValue(GfVec4f(0.0f)));
-  }
-  else if (name == HdAovTokens->depth)
+  } else if (name == HdAovTokens->depth)
   {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(1.0f));
-  }
-  else if (name == HdAovTokens->primId || name == HdAovTokens->instanceId ||
-           name == HdAovTokens->elementId || name == HdCyclesAovTokens->IndexMA)
+  } else if (name == HdAovTokens->primId || name == HdAovTokens->instanceId ||
+             name == HdAovTokens->elementId || name == HdCyclesAovTokens->IndexMA)
   {
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
-  }
-  else if (name == HdCyclesAovTokens->DiffDir)
+  } else if (name == HdCyclesAovTokens->DiffDir)
   {
     return HdAovDescriptor(colorFormat, false, VtValue(GfVec4f(0.0f)));
   }

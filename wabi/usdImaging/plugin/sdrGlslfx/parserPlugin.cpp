@@ -104,8 +104,7 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
         }
         *sdrType = SdrPropertyTypes->Matrix;
         return VtValue(retMat);
-      }
-      else if (anyVec[0].IsHolding<float>())
+      } else if (anyVec[0].IsHolding<float>())
       {
         GfMatrix4f retMat;
         float *m = retMat.GetArray();
@@ -115,15 +114,13 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
         }
         *sdrType = SdrPropertyTypes->Matrix;
         return VtValue(retMat);
-      }
-      else
+      } else
       {
         return VtValue();
       }
 
       // support for vectors length 1
-    }
-    else if (anyVec.size() == 1)
+    } else if (anyVec.size() == 1)
     {
       if (anyVec[0].IsHolding<double>())
       {
@@ -132,16 +129,14 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
         *sdrType = SdrPropertyTypes->Float;
         *sdrType = SdrPropertyTypes->Float;
         return VtValue((float)anyVec[0].UncheckedGet<double>());
-      }
-      else if (anyVec[0].IsHolding<float>())
+      } else if (anyVec[0].IsHolding<float>())
       {
         *sdrType = SdrPropertyTypes->Float;
         return VtValue(anyVec[0].UncheckedGet<float>());
       }
 
       // support for vectors length 2
-    }
-    else if (anyVec.size() == 2)
+    } else if (anyVec.size() == 2)
     {
       VtFloatArray retVec(2);
       for (int i = 0; i < 2; i++)
@@ -149,12 +144,10 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
         if (anyVec[i].IsHolding<double>())
         {
           retVec[i] = anyVec[i].UncheckedGet<double>();
-        }
-        else if (anyVec[i].IsHolding<float>())
+        } else if (anyVec[i].IsHolding<float>())
         {
           retVec[i] = anyVec[i].UncheckedGet<float>();
-        }
-        else
+        } else
         {
           return VtValue();
         }
@@ -163,8 +156,7 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
       *sdrType = SdrPropertyTypes->Float;
       *arraySize = 2;
       return VtValue(retVec);
-    }
-    else if (anyVec.size() == 3)
+    } else if (anyVec.size() == 3)
     {
       // support for vectors length 3
       GfVec3f retVec;
@@ -173,12 +165,10 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
         if (anyVec[i].IsHolding<double>())
         {
           retVec[i] = anyVec[i].UncheckedGet<double>();
-        }
-        else if (anyVec[i].IsHolding<float>())
+        } else if (anyVec[i].IsHolding<float>())
         {
           retVec[i] = anyVec[i].UncheckedGet<float>();
-        }
-        else
+        } else
         {
           return VtValue();
         }
@@ -188,8 +178,7 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
       return VtValue(retVec);
 
       // support for vectors length 4
-    }
-    else if (anyVec.size() == 4)
+    } else if (anyVec.size() == 4)
     {
       VtFloatArray retVec(4);
       for (int i = 0; i < 4; i++)
@@ -197,12 +186,10 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
         if (anyVec[i].IsHolding<double>())
         {
           retVec[i] = anyVec[i].UncheckedGet<double>();
-        }
-        else if (anyVec[i].IsHolding<float>())
+        } else if (anyVec[i].IsHolding<float>())
         {
           retVec[i] = anyVec[i].UncheckedGet<float>();
-        }
-        else
+        } else
         {
           return VtValue();
         }
@@ -212,26 +199,22 @@ static VtValue ConvertToSdrCompatibleValueAndType(VtValue any, size_t *arraySize
       *arraySize = 4;
       return VtValue(retVec);
     }
-  }
-  else if (any.IsHolding<double>())
+  } else if (any.IsHolding<double>())
   {
     // Sdr has no doubles, converting them to floats
     *sdrType = SdrPropertyTypes->Float;
     *sdrType = SdrPropertyTypes->Float;
     *sdrType = SdrPropertyTypes->Float;
     return VtValue((float)any.UncheckedGet<double>());
-  }
-  else if (any.IsHolding<float>())
+  } else if (any.IsHolding<float>())
   {
     *sdrType = SdrPropertyTypes->Float;
     return VtValue(any.UncheckedGet<float>());
-  }
-  else if (any.IsHolding<int>())
+  } else if (any.IsHolding<int>())
   {
     *sdrType = SdrPropertyTypes->Int;
     return VtValue(any.UncheckedGet<int>());
-  }
-  else if (any.IsHolding<bool>())
+  } else if (any.IsHolding<bool>())
   {
     // Sdr has no bool, converting them to int
     *sdrType = SdrPropertyTypes->Int;
@@ -267,13 +250,11 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
 #endif
 
     glslfx = std::make_unique<HioGlslfx>(discoveryResult.resolvedUri);
-  }
-  else if (!discoveryResult.sourceCode.empty())
+  } else if (!discoveryResult.sourceCode.empty())
   {
     std::istringstream sourceCodeStream(discoveryResult.sourceCode);
     glslfx = std::make_unique<HioGlslfx>(sourceCodeStream);
-  }
-  else
+  } else
   {
     TF_WARN(
       "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
@@ -286,8 +267,9 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
   std::string errorString;
   if (!glslfx->IsValid(&errorString))
   {
-    TF_WARN(
-      "Failed to parse glslfx at URI [%s] error [%s]", discoveryResult.uri.c_str(), errorString.c_str());
+    TF_WARN("Failed to parse glslfx at URI [%s] error [%s]",
+            discoveryResult.uri.c_str(),
+            errorString.c_str());
   }
 
   NdrPropertyUniquePtrVec nodeProperties;
@@ -303,8 +285,14 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
     NdrTokenMap hints;
     NdrOptionVec options;
     NdrTokenMap localMetadata;
-    nodeProperties.push_back(std::make_unique<SdrShaderProperty>(
-      TfToken(p.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options));
+    nodeProperties.push_back(std::make_unique<SdrShaderProperty>(TfToken(p.name),
+                                                                 sdrType,
+                                                                 defaultValue,
+                                                                 false,
+                                                                 arraySize,
+                                                                 localMetadata,
+                                                                 hints,
+                                                                 options));
   }
 
   HioGlslfxConfig::Textures textures = glslfx->GetTextures();
@@ -325,8 +313,14 @@ NdrNodeUniquePtr SdrGlslfxParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
     NdrTokenMap hints;
     NdrOptionVec options;
     NdrTokenMap localMetadata;
-    nodeProperties.push_back(std::make_unique<SdrShaderProperty>(
-      TfToken(t.name), sdrType, defaultValue, false, arraySize, localMetadata, hints, options));
+    nodeProperties.push_back(std::make_unique<SdrShaderProperty>(TfToken(t.name),
+                                                                 sdrType,
+                                                                 defaultValue,
+                                                                 false,
+                                                                 arraySize,
+                                                                 localMetadata,
+                                                                 hints,
+                                                                 options));
   }
 
   NdrTokenMap metadata = discoveryResult.metadata;

@@ -44,9 +44,7 @@ class HdPrmanLight final : public HdLight
   virtual ~HdPrmanLight();
 
   /// Synchronizes state from the delegate to this object.
-  void Sync(HdSceneDelegate *sceneDelegate,
-            HdRenderParam *renderParam,
-            HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.

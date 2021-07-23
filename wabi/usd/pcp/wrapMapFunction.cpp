@@ -40,54 +40,54 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Repr(const PcpMapFunction &f)
-{
-  if (f.IsIdentity())
+  static string _Repr(const PcpMapFunction &f)
   {
-    return "Pcp.MapFunction.Identity()";
-  }
-  string s = "Pcp.MapFunction(";
-  if (!f.IsNull())
-  {
-    const boost::python::dict sourceToTargetMap = TfPyCopyMapToDictionary(f.GetSourceToTargetMap());
-
-    s += TfPyObjectRepr(sourceToTargetMap);
-    if (f.GetTimeOffset() != SdfLayerOffset())
+    if (f.IsIdentity())
     {
-      s += ", ";
-      s += TfPyRepr(f.GetTimeOffset());
+      return "Pcp.MapFunction.Identity()";
     }
+    string s = "Pcp.MapFunction(";
+    if (!f.IsNull())
+    {
+      const boost::python::dict sourceToTargetMap = TfPyCopyMapToDictionary(f.GetSourceToTargetMap());
+
+      s += TfPyObjectRepr(sourceToTargetMap);
+      if (f.GetTimeOffset() != SdfLayerOffset())
+      {
+        s += ", ";
+        s += TfPyRepr(f.GetTimeOffset());
+      }
+    }
+    s += ")";
+    return s;
   }
-  s += ")";
-  return s;
-}
 
-static string _Str(const PcpMapFunction &f)
-{
-  return f.GetString();
-}
-
-static PcpMapFunction *_Create(const boost::python::dict &sourceToTargetMap, SdfLayerOffset offset)
-{
-  PcpMapFunction::PathMap pathMap;
-  boost::python::list keys = sourceToTargetMap.keys();
-  for (int i = 0; i < boost::python::len(keys); ++i)
+  static string _Str(const PcpMapFunction &f)
   {
-    // Just blindly try to extract SdfPaths.
-    // If the dict is not holding the right types,
-    // we'll raise a boost exception, which boost
-    // will turn into a suitable TypeError.
-    SdfPath source = boost::python::extract<SdfPath>(keys[i]);
-    SdfPath target = boost::python::extract<SdfPath>(sourceToTargetMap[keys[i]]);
-    pathMap[source] = target;
+    return f.GetString();
   }
 
-  PcpMapFunction mapFunction = PcpMapFunction::Create(pathMap, offset);
+  static PcpMapFunction *_Create(const boost::python::dict &sourceToTargetMap, SdfLayerOffset offset)
+  {
+    PcpMapFunction::PathMap pathMap;
+    boost::python::list keys = sourceToTargetMap.keys();
+    for (int i = 0; i < boost::python::len(keys); ++i)
+    {
+      // Just blindly try to extract SdfPaths.
+      // If the dict is not holding the right types,
+      // we'll raise a boost exception, which boost
+      // will turn into a suitable TypeError.
+      SdfPath source = boost::python::extract<SdfPath>(keys[i]);
+      SdfPath target = boost::python::extract<SdfPath>(sourceToTargetMap[keys[i]]);
+      pathMap[source] = target;
+    }
 
-  // Return a newly allocated instance.  boost::python will free this
-  // object when the holding python object expires.
-  return new PcpMapFunction(mapFunction);
-}
+    PcpMapFunction mapFunction = PcpMapFunction::Create(pathMap, offset);
+
+    // Return a newly allocated instance.  boost::python will free this
+    // object when the holding python object expires.
+    return new PcpMapFunction(mapFunction);
+  }
 
 }  // anonymous namespace
 

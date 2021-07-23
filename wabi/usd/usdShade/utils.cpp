@@ -123,14 +123,14 @@ bool _FollowConnectionSourceRecursive(UsdShadeConnectionSourceInfo const &source
     {
       attrs.push_back(connectedOutput.GetAttr());
       return true;
-    }
-    else
+    } else
     {
-      return _GetValueProducingAttributesRecursive(
-        connectedOutput, foundAttributes, attrs, shaderOutputsOnly);
+      return _GetValueProducingAttributesRecursive(connectedOutput,
+                                                   foundAttributes,
+                                                   attrs,
+                                                   shaderOutputsOnly);
     }
-  }
-  else
+  } else
   {  // sourceType == UsdShadeAttributeType::Input
     UsdShadeInput connectedInput = sourceInfo.source.GetInput(sourceInfo.sourceName);
     if (!sourceInfo.source.IsContainer())
@@ -139,11 +139,12 @@ bool _FollowConnectionSourceRecursive(UsdShadeConnectionSourceInfo const &source
       // chain. Since we started on an input to either a
       // Shader or a container we cannot legally connect to an
       // input on a non-container.
-    }
-    else
+    } else
     {
-      return _GetValueProducingAttributesRecursive(
-        connectedInput, foundAttributes, attrs, shaderOutputsOnly);
+      return _GetValueProducingAttributesRecursive(connectedInput,
+                                                   foundAttributes,
+                                                   attrs,
+                                                   shaderOutputsOnly);
     }
   }
 
@@ -197,16 +198,19 @@ bool _GetValueProducingAttributesRecursive(UsdShadeInOutput const &inoutput,
       // multiple connections.
       _SmallSdfPathVector localFoundAttrs = *foundAttributes;
 
-      foundValidAttr |= _FollowConnectionSourceRecursive(
-        sourceInfo, &localFoundAttrs, attrs, shaderOutputsOnly);
+      foundValidAttr |= _FollowConnectionSourceRecursive(sourceInfo,
+                                                         &localFoundAttrs,
+                                                         attrs,
+                                                         shaderOutputsOnly);
     }
-  }
-  else if (!sourceInfos.empty())
+  } else if (!sourceInfos.empty())
   {
     // Follow the one connection it until we reach an output attribute on an
     // actual shader node or an input attribute with a value
-    foundValidAttr = _FollowConnectionSourceRecursive(
-      sourceInfos[0], foundAttributes, attrs, shaderOutputsOnly);
+    foundValidAttr = _FollowConnectionSourceRecursive(sourceInfos[0],
+                                                      foundAttributes,
+                                                      attrs,
+                                                      shaderOutputsOnly);
   }
 
   // If our trace should accept attributes with authored values, check if this

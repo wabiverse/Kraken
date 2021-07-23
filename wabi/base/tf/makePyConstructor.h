@@ -109,252 +109,252 @@ WABI_NAMESPACE_BEGIN
 namespace Tf_MakePyConstructor
 {
 
-namespace bp = boost::python;
+  namespace bp = boost::python;
 
-template<typename CTOR>
-struct InitVisitor : bp::def_visitor<InitVisitor<CTOR>>
-{
-  friend class bp::def_visitor_access;
-  const std::string _doc;
-  InitVisitor(const std::string &doc = std::string())
-    : _doc(doc)
-  {}
-
-  template<typename CLS>
-  void visit(CLS &c) const
+  template<typename CTOR>
+  struct InitVisitor : bp::def_visitor<InitVisitor<CTOR>>
   {
-    c.def("__init__", CTOR::template init_callable<CLS>(), _doc.c_str());
-  }
+    friend class bp::def_visitor_access;
+    const std::string _doc;
+    InitVisitor(const std::string &doc = std::string())
+      : _doc(doc)
+    {}
 
-  template<class CLS, class Options>
-  void visit(CLS &c, char const *name, Options &options) const
-  {
-    // Note: we ignore options.doc() in favor of _doc
-    c.def(name, CTOR::template init_callable<CLS>(options), _doc.c_str());
-  }
-};
-
-bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */);
-
-template<typename CTOR>
-struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>>
-{
-  friend class bp::def_visitor_access;
-  const std::string _doc;
-  NewVisitor(const std::string &doc = std::string())
-    : _doc(doc)
-  {}
-
-  template<typename CLS>
-  void visit(CLS &c) const
-  {
-    // If there's already a __new__ method, look through the staticmethod to
-    // get the underlying function, replace __new__ with that, then add the
-    // overload, and recreate the staticmethod.  This is required because
-    // boost python needs to have all overloads exported before you say
-    // .staticmethod.
-
-    // Note that it looks like this should do nothing, but it actually does
-    // something!  Here's what it does: looking up __new__ on c doesn't
-    // actually produce the staticmethod object -- it does a "descriptor
-    // __get__" which produces the underlying function.  Replacing __new__
-    // with that underlying thing has the effect of unwrapping the
-    // staticmethod, which is exactly what we want.
-    if (PyObject_HasAttrString(c.ptr(), "__new__"))
-      c.attr("__new__") = c.attr("__new__");
-    c.def("__new__", CTOR::template __new__<CLS>, _doc.c_str());
-    c.staticmethod("__new__");
-
-    // c.def("__init__", CTOR::template __init__<CLS>, _doc.c_str());
-    c.def("__init__", bp::raw_function(_DummyInit));
-  }
-
-  template<class CLS, class Options>
-  void visit(CLS &c, char const *name, Options &options) const
-  {
-    // If there's already a __new__ method, look through the staticmethod to
-    // get the underlying function, replace __new__ with that, then add the
-    // overload, and recreate the staticmethod.  This is required because
-    // boost python needs to have all overloads exported before you say
-    // .staticmethod.
-
-    // Note that it looks like this should do nothing, but it actually does
-    // something!  Here's what it does: looking up __new__ on c doesn't
-    // actually produce the staticmethod object -- it does a "descriptor
-    // __get__" which produces the underlying function.  Replacing __new__
-    // with that underlying thing has the effect of unwrapping the
-    // staticmethod, which is exactly what we want.
-    if (PyObject_HasAttrString(c.ptr(), "__new__"))
-      c.attr("__new__") = c.attr("__new__");
-    c.def("__new__",
-          CTOR::template __new__<CLS>,
-          // Note: we ignore options.doc() in favor of _doc
-          _doc.c_str(),
-          options.keywords(),
-          options.policies());
-    c.staticmethod("__new__");
-
-    // c.def("__init__", CTOR::template __init__<CLS>, _doc.c_str());
-    c.def("__init__", bp::raw_function(_DummyInit));
-  }
-};
-
-typedef bp::object object;
-
-template<typename T>
-struct InstallPolicy
-{
-  static void PostInstall(object const &self, T const &t, const void *)
-  {}
-};
-
-// Specialize install policy for refptrs.
-template<typename T>
-struct InstallPolicy<TfRefPtr<T>>
-{
-  static_assert(Tf_SupportsUniqueChanged<T>::Value,
-                "Type T must support refcount unique changed notification.");
-  static void PostInstall(object const &self, TfRefPtr<T> const &ptr, const void *uniqueId)
-  {
-    // Stash a self-reference ref ptr into the python object that will
-    // keep the object alive.  Need to get a ref ptr to the held type,
-    // since that's what's wrapped.
-    Tf_PyAddPythonOwnership(ptr, uniqueId, self.ptr());
-  }
-};
-
-template<typename CLS, typename T>
-void Install(object const &self, T const &t, TfErrorMark const &m)
-{
-  // Stick the weakptr into the python object self to complete
-  // construction.
-  typedef typename CLS::metadata::holder Holder;
-  typedef typename bp::objects::instance<Holder> instance_t;
-  typedef InstallPolicy<T> Policy;
-  typedef typename CLS::metadata::held_type HeldType;
-
-  // CODE_COVERAGE_OFF
-  void *memory = Holder::
-    // CODE_COVERAGE_ON
-    allocate(self.ptr(), offsetof(instance_t, storage), sizeof(Holder));
-  try
-  {
-    HeldType held(t);
-    Holder *holder = (new (memory) Holder(held));
-    // If there was a TfError, raise that back to python.
-    if (TfPyConvertTfErrorsToPythonException(m))
-      bp::throw_error_already_set();
-    // If no TfError, but object construction failed, raise a generic error
-    // back to python.
-    if (!held)
-      TfPyThrowRuntimeError("could not construct " + ArchGetDemangled(typeid(HeldType)));
-    bp::detail::initialize_wrapper(self.ptr(), &(*(held.operator->())));
-    holder->install(self.ptr());
-
-    // Set object identity
-    Tf_PySetPythonIdentity(held, self.ptr());
-
-    Policy::PostInstall(self, t, held.GetUniqueIdentifier());
-  }
-  catch (...)
-  {
-    Holder::deallocate(self.ptr(), memory);
-    throw;
-  }
-}
-
-template<typename WeakPtr, typename P>
-struct _RefPtrFactoryConverter
-{
-  typedef typename boost::remove_reference<P>::type Ptr;
-  bool convertible() const
-  {
-    // FIXME should actually check here...  It's not really horrible because
-    // if the conversion will fail, we'll just get a runtime error down
-    // below when we try to create the resulting object.  That's basically
-    // what we want anyway.
-    return true;
-  }
-  PyObject *operator()(Ptr const &p) const
-  {
-    typedef InstallPolicy<Ptr> Policy;
-    WeakPtr ptr(static_cast<typename WeakPtr::DataType *>(get_pointer(p)));
-
-    // If resulting pointer is null, return None.
-    if (!ptr)
-      return bp::incref(Py_None);
-
-    // The to-python converter will set identity here.
-    object result(ptr);
-
-    Policy::PostInstall(result, p, ptr.GetUniqueIdentifier());
-    return bp::incref(result.ptr());
-  }
-  // Required for boost.python signature generator, in play when
-  // BOOST_PYTHON_NO_PY_SIGNATURES is undefined.
-  PyTypeObject const *get_pytype() const
-  {
-    return boost::python::objects::registered_class_object(
-             boost::python::type_id<typename WeakPtr::DataType>())
-      .get();
-  }
-};
-
-template<typename WeakPtr = void>
-struct RefPtrFactory
-{
-  template<typename FactoryResultPtr>
-  struct apply
-  {
-    typedef typename boost::mpl::if_<boost::is_same<WeakPtr, void>,
-                                     TfWeakPtr<typename FactoryResultPtr::DataType>,
-                                     WeakPtr>::type WeakPtrType;
-    typedef _RefPtrFactoryConverter<WeakPtrType, FactoryResultPtr> type;
-  };
-};
-
-template<typename SIG>
-struct CtorBase
-{
-  typedef SIG Sig;
-  static Sig *_func;
-  static void SetFunc(Sig *func)
-  {
-    if (!_func)
-      _func = func;
-    else
+    template<typename CLS>
+    void visit(CLS &c) const
     {
-      // CODE_COVERAGE_OFF
-      TF_CODING_ERROR(
-        "Ctor with signature '%s' is already registered.  "
-        "Duplicate will be ignored.",
-        ArchGetDemangled(typeid(Sig)).c_str());
+      c.def("__init__", CTOR::template init_callable<CLS>(), _doc.c_str());
+    }
+
+    template<class CLS, class Options>
+    void visit(CLS &c, char const *name, Options &options) const
+    {
+      // Note: we ignore options.doc() in favor of _doc
+      c.def(name, CTOR::template init_callable<CLS>(options), _doc.c_str());
+    }
+  };
+
+  bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */);
+
+  template<typename CTOR>
+  struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>>
+  {
+    friend class bp::def_visitor_access;
+    const std::string _doc;
+    NewVisitor(const std::string &doc = std::string())
+      : _doc(doc)
+    {}
+
+    template<typename CLS>
+    void visit(CLS &c) const
+    {
+      // If there's already a __new__ method, look through the staticmethod to
+      // get the underlying function, replace __new__ with that, then add the
+      // overload, and recreate the staticmethod.  This is required because
+      // boost python needs to have all overloads exported before you say
+      // .staticmethod.
+
+      // Note that it looks like this should do nothing, but it actually does
+      // something!  Here's what it does: looking up __new__ on c doesn't
+      // actually produce the staticmethod object -- it does a "descriptor
+      // __get__" which produces the underlying function.  Replacing __new__
+      // with that underlying thing has the effect of unwrapping the
+      // staticmethod, which is exactly what we want.
+      if (PyObject_HasAttrString(c.ptr(), "__new__"))
+        c.attr("__new__") = c.attr("__new__");
+      c.def("__new__", CTOR::template __new__<CLS>, _doc.c_str());
+      c.staticmethod("__new__");
+
+      // c.def("__init__", CTOR::template __init__<CLS>, _doc.c_str());
+      c.def("__init__", bp::raw_function(_DummyInit));
+    }
+
+    template<class CLS, class Options>
+    void visit(CLS &c, char const *name, Options &options) const
+    {
+      // If there's already a __new__ method, look through the staticmethod to
+      // get the underlying function, replace __new__ with that, then add the
+      // overload, and recreate the staticmethod.  This is required because
+      // boost python needs to have all overloads exported before you say
+      // .staticmethod.
+
+      // Note that it looks like this should do nothing, but it actually does
+      // something!  Here's what it does: looking up __new__ on c doesn't
+      // actually produce the staticmethod object -- it does a "descriptor
+      // __get__" which produces the underlying function.  Replacing __new__
+      // with that underlying thing has the effect of unwrapping the
+      // staticmethod, which is exactly what we want.
+      if (PyObject_HasAttrString(c.ptr(), "__new__"))
+        c.attr("__new__") = c.attr("__new__");
+      c.def("__new__",
+            CTOR::template __new__<CLS>,
+            // Note: we ignore options.doc() in favor of _doc
+            _doc.c_str(),
+            options.keywords(),
+            options.policies());
+      c.staticmethod("__new__");
+
+      // c.def("__init__", CTOR::template __init__<CLS>, _doc.c_str());
+      c.def("__init__", bp::raw_function(_DummyInit));
+    }
+  };
+
+  typedef bp::object object;
+
+  template<typename T>
+  struct InstallPolicy
+  {
+    static void PostInstall(object const &self, T const &t, const void *)
+    {}
+  };
+
+  // Specialize install policy for refptrs.
+  template<typename T>
+  struct InstallPolicy<TfRefPtr<T>>
+  {
+    static_assert(Tf_SupportsUniqueChanged<T>::Value,
+                  "Type T must support refcount unique changed notification.");
+    static void PostInstall(object const &self, TfRefPtr<T> const &ptr, const void *uniqueId)
+    {
+      // Stash a self-reference ref ptr into the python object that will
+      // keep the object alive.  Need to get a ref ptr to the held type,
+      // since that's what's wrapped.
+      Tf_PyAddPythonOwnership(ptr, uniqueId, self.ptr());
+    }
+  };
+
+  template<typename CLS, typename T>
+  void Install(object const &self, T const &t, TfErrorMark const &m)
+  {
+    // Stick the weakptr into the python object self to complete
+    // construction.
+    typedef typename CLS::metadata::holder Holder;
+    typedef typename bp::objects::instance<Holder> instance_t;
+    typedef InstallPolicy<T> Policy;
+    typedef typename CLS::metadata::held_type HeldType;
+
+    // CODE_COVERAGE_OFF
+    void *memory = Holder::
       // CODE_COVERAGE_ON
+      allocate(self.ptr(), offsetof(instance_t, storage), sizeof(Holder));
+    try
+    {
+      HeldType held(t);
+      Holder *holder = (new (memory) Holder(held));
+      // If there was a TfError, raise that back to python.
+      if (TfPyConvertTfErrorsToPythonException(m))
+        bp::throw_error_already_set();
+      // If no TfError, but object construction failed, raise a generic error
+      // back to python.
+      if (!held)
+        TfPyThrowRuntimeError("could not construct " + ArchGetDemangled(typeid(HeldType)));
+      bp::detail::initialize_wrapper(self.ptr(), &(*(held.operator->())));
+      holder->install(self.ptr());
+
+      // Set object identity
+      Tf_PySetPythonIdentity(held, self.ptr());
+
+      Policy::PostInstall(self, t, held.GetUniqueIdentifier());
+    }
+    catch (...)
+    {
+      Holder::deallocate(self.ptr(), memory);
+      throw;
     }
   }
-};
 
-template<typename SIG>
-SIG *CtorBase<SIG>::_func = 0;
+  template<typename WeakPtr, typename P>
+  struct _RefPtrFactoryConverter
+  {
+    typedef typename boost::remove_reference<P>::type Ptr;
+    bool convertible() const
+    {
+      // FIXME should actually check here...  It's not really horrible because
+      // if the conversion will fail, we'll just get a runtime error down
+      // below when we try to create the resulting object.  That's basically
+      // what we want anyway.
+      return true;
+    }
+    PyObject *operator()(Ptr const &p) const
+    {
+      typedef InstallPolicy<Ptr> Policy;
+      WeakPtr ptr(static_cast<typename WeakPtr::DataType *>(get_pointer(p)));
 
-// The following preprocessor code repeatedly includes this file to generate
-// specializations of Ctor taking 0 through TF_MAX_ARITY parameters.
-template<typename SIG>
-struct InitCtor;
-template<typename SIG>
-struct InitCtorWithBackReference;
-template<typename SIG>
-struct InitCtorWithVarArgs;
-template<typename SIG>
-struct NewCtor;
-template<typename SIG>
-struct NewCtorWithClassReference;
+      // If resulting pointer is null, return None.
+      if (!ptr)
+        return bp::incref(Py_None);
+
+      // The to-python converter will set identity here.
+      object result(ptr);
+
+      Policy::PostInstall(result, p, ptr.GetUniqueIdentifier());
+      return bp::incref(result.ptr());
+    }
+    // Required for boost.python signature generator, in play when
+    // BOOST_PYTHON_NO_PY_SIGNATURES is undefined.
+    PyTypeObject const *get_pytype() const
+    {
+      return boost::python::objects::registered_class_object(
+               boost::python::type_id<typename WeakPtr::DataType>())
+        .get();
+    }
+  };
+
+  template<typename WeakPtr = void>
+  struct RefPtrFactory
+  {
+    template<typename FactoryResultPtr>
+    struct apply
+    {
+      typedef typename boost::mpl::if_<boost::is_same<WeakPtr, void>,
+                                       TfWeakPtr<typename FactoryResultPtr::DataType>,
+                                       WeakPtr>::type WeakPtrType;
+      typedef _RefPtrFactoryConverter<WeakPtrType, FactoryResultPtr> type;
+    };
+  };
+
+  template<typename SIG>
+  struct CtorBase
+  {
+    typedef SIG Sig;
+    static Sig *_func;
+    static void SetFunc(Sig *func)
+    {
+      if (!_func)
+        _func = func;
+      else
+      {
+        // CODE_COVERAGE_OFF
+        TF_CODING_ERROR(
+          "Ctor with signature '%s' is already registered.  "
+          "Duplicate will be ignored.",
+          ArchGetDemangled(typeid(Sig)).c_str());
+        // CODE_COVERAGE_ON
+      }
+    }
+  };
+
+  template<typename SIG>
+  SIG *CtorBase<SIG>::_func = 0;
+
+  // The following preprocessor code repeatedly includes this file to generate
+  // specializations of Ctor taking 0 through TF_MAX_ARITY parameters.
+  template<typename SIG>
+  struct InitCtor;
+  template<typename SIG>
+  struct InitCtorWithBackReference;
+  template<typename SIG>
+  struct InitCtorWithVarArgs;
+  template<typename SIG>
+  struct NewCtor;
+  template<typename SIG>
+  struct NewCtorWithClassReference;
 #    define BOOST_PP_ITERATION_LIMITS (0, TF_MAX_ARITY)
 #    define BOOST_PP_FILENAME_1 "wabi/base/tf/makePyConstructor.h"
 #    include BOOST_PP_ITERATE()
-/* comment needed for scons dependency scanner
-#include "wabi/base/tf/makePyConstructor.h"
-*/
+  /* comment needed for scons dependency scanner
+  #include "wabi/base/tf/makePyConstructor.h"
+  */
 
 }  // namespace Tf_MakePyConstructor
 
@@ -539,9 +539,9 @@ struct NewCtor<SIGNATURE> : CtorBase<SIGNATURE>
 #  define FORMAT_STR(z, n, data) "%s, "
 #  define ARG_TYPE_STR_A(z, n, data) bp::type_id<A##n>().name()
 
-#  define EXTRACT_REQ_ARG_A(z, n, data) \
+#  define EXTRACT_REQ_ARG_A(z, n, data)                                   \
     /* The n'th required arg is stored at n + 1 in the positional args */ \
-    /* tuple as the 0'th element is always the self object */ \
+    /* tuple as the 0'th element is always the self object */             \
     bp::extract<typename boost::remove_reference<A##n>::type>(data[n + 1])
 
 template<typename R BOOST_PP_ENUM_TRAILING_PARAMS(N, typename A)>

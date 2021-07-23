@@ -180,8 +180,7 @@ void Usd_InstanceCache::ProcessChanges(Usd_InstanceChanges *changes)
       _PrimIndexPaths &primIndexes = _pendingAddedPrimIndexes[key];
       _CreateOrUpdatePrototypeForInstances(key, &primIndexes, changes, prototypeToOldSourceIndexPath);
     }
-  }
-  else
+  } else
   {
     for (_InstanceKeyToPrimIndexesMap::value_type &v : _pendingAddedPrimIndexes)
     {
@@ -239,8 +238,7 @@ void Usd_InstanceCache::_CreateOrUpdatePrototypeForInstances(
         newPrototypePath.GetString().c_str(),
         sourcePrimIndexPath.GetString().c_str(),
         TfStringify(key).c_str());
-  }
-  else
+  } else
   {
     // Otherwise, if a prototype prim for this instance already exists
     // but no source prim index has been assigned, do so here. This
@@ -288,12 +286,12 @@ void Usd_InstanceCache::_CreateOrUpdatePrototypeForInstances(
   if (primIndexesForPrototype.empty())
   {
     primIndexesForPrototype.swap(*primIndexPaths);
-  }
-  else
+  } else
   {
     const size_t oldNumPrimIndexes = primIndexesForPrototype.size();
-    primIndexesForPrototype.insert(
-      primIndexesForPrototype.end(), primIndexPaths->begin(), primIndexPaths->end());
+    primIndexesForPrototype.insert(primIndexesForPrototype.end(),
+                                   primIndexPaths->begin(),
+                                   primIndexPaths->end());
 
     _PrimIndexPaths::iterator newlyAddedIt = primIndexesForPrototype.begin() + oldNumPrimIndexes;
     std::inplace_merge(primIndexesForPrototype.begin(), newlyAddedIt, primIndexesForPrototype.end());
@@ -333,8 +331,9 @@ void Usd_InstanceCache::_RemoveInstances(
   _PrimIndexPaths &primIndexesForPrototype = _prototypeToPrimIndexesMap[prototypePath];
   for (const SdfPath &path : primIndexPaths)
   {
-    _PrimIndexPaths::iterator it = std::find(
-      primIndexesForPrototype.begin(), primIndexesForPrototype.end(), path);
+    _PrimIndexPaths::iterator it = std::find(primIndexesForPrototype.begin(),
+                                             primIndexesForPrototype.end(),
+                                             path);
     if (it != primIndexesForPrototype.end())
     {
       TF_DEBUG(USD_INSTANCING)
@@ -390,8 +389,7 @@ void Usd_InstanceCache::_RemoveInstances(
 
       changes->changedPrototypePrims.push_back(prototypePath);
       changes->changedPrototypePrimIndexes.push_back(newSourceIndexPath);
-    }
-    else
+    } else
     {
       // Fill a data structure with the removedPrototypePrimIndexPath
       // for the prototype so that we can fill in the right "before" path
@@ -617,8 +615,7 @@ bool Usd_InstanceCache::_PrototypeUsesPrimIndexPath(const SdfPath &primIndexPath
       if (prototypePaths)
       {
         prototypePaths->push_back(primIndexPath.ReplacePrefix(sourcePrimIndexPath, prototypePath));
-      }
-      else
+      } else
       {
         break;
       }
@@ -705,8 +702,7 @@ SdfPath Usd_InstanceCache::GetPathInPrototypeForInstancePath(const SdfPath &prim
         primIndexPath = p;
       }
     }
-  }
-  else
+  } else
   {
     primIndexPath = primPath;
   }

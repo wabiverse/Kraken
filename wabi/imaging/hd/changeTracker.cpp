@@ -71,8 +71,7 @@ void HdChangeTracker::_LogCacheAccess(TfToken const &cacheName, SdfPath const &i
   if (hit)
   {
     HD_PERF_CACHE_HIT(cacheName, id);
-  }
-  else
+  } else
   {
     HD_PERF_CACHE_MISS(cacheName, id);
   }
@@ -703,24 +702,19 @@ bool HdChangeTracker::IsPrimvarDirty(HdDirtyBits dirtyBits, SdfPath const &id, T
   if (name == HdTokens->points)
   {
     isDirty = (dirtyBits & DirtyPoints) != 0;
-  }
-  else if (name == HdTokens->velocities)
+  } else if (name == HdTokens->velocities)
   {
     isDirty = (dirtyBits & DirtyPoints) != 0;
-  }
-  else if (name == HdTokens->accelerations)
+  } else if (name == HdTokens->accelerations)
   {
     isDirty = (dirtyBits & DirtyPoints) != 0;
-  }
-  else if (name == HdTokens->normals)
+  } else if (name == HdTokens->normals)
   {
     isDirty = (dirtyBits & DirtyNormals) != 0;
-  }
-  else if (name == HdTokens->widths)
+  } else if (name == HdTokens->widths)
   {
     isDirty = (dirtyBits & DirtyWidths) != 0;
-  }
-  else
+  } else
   {
     isDirty = (dirtyBits & DirtyPrimvar) != 0;
   }
@@ -827,16 +821,13 @@ void HdChangeTracker::MarkPrimvarDirty(HdDirtyBits *dirtyBits, TfToken const &na
   if (name == HdTokens->points)
   {
     setBits = DirtyPoints;
-  }
-  else if (name == HdTokens->normals)
+  } else if (name == HdTokens->normals)
   {
     setBits = DirtyNormals;
-  }
-  else if (name == HdTokens->widths)
+  } else if (name == HdTokens->widths)
   {
     setBits = DirtyWidths;
-  }
-  else
+  } else
   {
     setBits = DirtyPrimvar;
   }
@@ -906,8 +897,7 @@ void HdChangeTracker::AddState(TfToken const &name)
   {
     // mark state dirty
     ++it->second;
-  }
-  else
+  } else
   {
     _generalState[name] = 1;
   }
@@ -919,8 +909,7 @@ void HdChangeTracker::MarkStateDirty(TfToken const &name)
   if (it != _generalState.end())
   {
     ++it->second;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Change Tracker unable to find state %s", name.GetText());
   }
@@ -932,8 +921,7 @@ unsigned HdChangeTracker::GetStateVersion(TfToken const &name) const
   if (it != _generalState.end())
   {
     return it->second;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Change Tracker unable to find state %s", name.GetText());
     return 0;

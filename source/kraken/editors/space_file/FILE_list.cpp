@@ -40,8 +40,7 @@ static bool file_is_pixar_backup(const char *str)
   if (a == 0 || usd >= a)
   {
     /* pass */
-  }
-  else
+  } else
   {
     const char *locusd;
 
@@ -62,8 +61,7 @@ static bool file_is_pixar_backup(const char *str)
   if (a == 0 || usdx >= a)
   {
     /* pass */
-  }
-  else
+  } else
   {
     const char *locusdx;
 

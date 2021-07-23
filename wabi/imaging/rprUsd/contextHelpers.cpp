@@ -40,10 +40,10 @@ limitations under the License.
 
 #include <map>
 
-#define PRINT_CONTEXT_CREATION_DEBUG_INFO(format, ...) \
+#define PRINT_CONTEXT_CREATION_DEBUG_INFO(format, ...)                       \
   if (!TfDebug::IsEnabled(RPR_USD_DEBUG_CORE_UNSUPPORTED_ERROR)) /* empty */ \
-    ; \
-  else \
+    ;                                                                        \
+  else                                                                       \
     TfDebug::Helper().Msg(format, ##__VA_ARGS__)
 
 WABI_NAMESPACE_BEGIN
@@ -57,206 +57,209 @@ namespace
 {
 
 #if defined __APPLE__
-const char *k_RadeonProRenderLibName = "libRadeonProRender64.dylib";
+  const char *k_RadeonProRenderLibName = "libRadeonProRender64.dylib";
 #elif defined(__linux__)
-const char *k_RadeonProRenderLibName = "libRadeonProRender64.so";
+  const char *k_RadeonProRenderLibName = "libRadeonProRender64.so";
 #endif
 
-std::string GetRprSdkPath()
-{
+  std::string GetRprSdkPath()
+  {
 #ifdef __APPLE__
-  uint32_t count = _dyld_image_count();
-  std::string pathToRpr;
-  for (uint32_t i = 0; i < count; ++i)
-  {
-    const mach_header *header = _dyld_get_image_header(i);
-    if (!header)
+    uint32_t count = _dyld_image_count();
+    std::string pathToRpr;
+    for (uint32_t i = 0; i < count; ++i)
     {
-      break;
-    }
-    char *code_ptr = NULL;
-    uint64_t size;
-    code_ptr = getsectdatafromheader_64((const mach_header_64 *)header, SEG_TEXT, SECT_TEXT, &size);
-    if (!code_ptr)
-    {
-      continue;
-    }
-    const uintptr_t slide = _dyld_get_image_vmaddr_slide(i);
-    const uintptr_t start = (const uintptr_t)code_ptr + slide;
-    Dl_info info;
-    if (dladdr((const void *)start, &info))
-    {
-      std::string dlpath(info.dli_fname);
-      std::size_t found = dlpath.find(k_RadeonProRenderLibName);
-      if (found != std::string::npos)
+      const mach_header *header = _dyld_get_image_header(i);
+      if (!header)
       {
-        return dlpath.substr(0, found);
+        break;
       }
-    }
-  }
-
-  PRINT_CONTEXT_CREATION_DEBUG_INFO("Path to RPR SDK with %s not found", k_RadeonProRenderLibName);
-#elif defined(__linux__)
-  if (auto handle = dlopen(nullptr, RTLD_NOW))
-  {
-    link_map *map = nullptr;
-    if (dlinfo(handle, RTLD_DI_LINKMAP, &map))
-    {
-      const char *errorStr = "unknown reason";
-      if (auto error = dlerror())
+      char *code_ptr = NULL;
+      uint64_t size;
+      code_ptr = getsectdatafromheader_64((const mach_header_64 *)header, SEG_TEXT, SECT_TEXT, &size);
+      if (!code_ptr)
       {
-        errorStr = error;
+        continue;
       }
-      PRINT_CONTEXT_CREATION_DEBUG_INFO("Failed to query RPR SDK path: %s", errorStr);
-    }
-    else
-    {
-      for (auto head = map; head != nullptr; head = head->l_next)
+      const uintptr_t slide = _dyld_get_image_vmaddr_slide(i);
+      const uintptr_t start = (const uintptr_t)code_ptr + slide;
+      Dl_info info;
+      if (dladdr((const void *)start, &info))
       {
-        if (auto dlpath = std::strstr(head->l_name, k_RadeonProRenderLibName))
+        std::string dlpath(info.dli_fname);
+        std::size_t found = dlpath.find(k_RadeonProRenderLibName);
+        if (found != std::string::npos)
         {
-          return std::string(head->l_name, dlpath - head->l_name);
+          return dlpath.substr(0, found);
         }
       }
     }
-  }
+
+    PRINT_CONTEXT_CREATION_DEBUG_INFO("Path to RPR SDK with %s not found", k_RadeonProRenderLibName);
+#elif defined(__linux__)
+    if (auto handle = dlopen(nullptr, RTLD_NOW))
+    {
+      link_map *map = nullptr;
+      if (dlinfo(handle, RTLD_DI_LINKMAP, &map))
+      {
+        const char *errorStr = "unknown reason";
+        if (auto error = dlerror())
+        {
+          errorStr = error;
+        }
+        PRINT_CONTEXT_CREATION_DEBUG_INFO("Failed to query RPR SDK path: %s", errorStr);
+      } else
+      {
+        for (auto head = map; head != nullptr; head = head->l_next)
+        {
+          if (auto dlpath = std::strstr(head->l_name, k_RadeonProRenderLibName))
+          {
+            return std::string(head->l_name, dlpath - head->l_name);
+          }
+        }
+      }
+    }
 #endif  // __APPLE__
 
-  return std::string();
-}
-
-void SetupRprTracing()
-{
-  if (RprUsdIsTracingEnabled())
-  {
-    RPR_ERROR_CHECK(rprContextSetParameterByKey1u(nullptr, RPR_CONTEXT_TRACING_ENABLED, 1),
-                    "Failed to set context tracing parameter");
-
-    auto tracingDir = TfGetEnvSetting(RPRUSD_TRACING_DIR);
-    if (!tracingDir.empty())
-    {
-      printf("RPR tracing directory: %s\n", tracingDir.c_str());
-    }
-    RPR_ERROR_CHECK(rprContextSetParameterByKeyString(nullptr, RPR_CONTEXT_TRACING_PATH, tracingDir.c_str()),
-                    "Failed to set tracing directory parameter");
+    return std::string();
   }
-}
 
-const std::map<RprUsdPluginType, const char *> kPluginLibNames = {
-#ifdef WIN32
-  {kPluginTahoe, "Tahoe64.dll"},
-  {kPluginNorthstar, "Northstar64.dll"},
-  {kPluginHybrid, "Hybrid.dll"},
-#elif defined __linux__
-  {kPluginNorthstar, "libNorthstar64.so"},
-  {kPluginTahoe, "libTahoe64.so"},
-  {kPluginHybrid, "Hybrid.so"},
-#elif defined __APPLE__
-  {kPluginTahoe, "libTahoe64.dylib"},
-  {kPluginNorthstar, "libNorthstar64.dylib"},
-#endif
-};
-
-rpr::CreationFlags getAllCompatibleGpuFlags(rpr_int pluginID, const char *cachePath)
-{
-  rpr::CreationFlags additionalFlags = 0x0;
-
-#if defined(__APPLE__)
-  additionalFlags |= RPR_CREATION_FLAGS_ENABLE_METAL;
-#endif
-
-  auto contextIsCreatable = [additionalFlags, pluginID, cachePath](rpr::CreationFlags creationFlag,
-                                                                   rpr_context_info contextInfo) {
-    rpr_context temporaryContext = nullptr;
-    rpr_int id = pluginID;
-    auto status = rprCreateContext(
-      RPR_API_VERSION, &id, 1, creationFlag | additionalFlags, nullptr, cachePath, &temporaryContext);
-    if (status == RPR_SUCCESS)
+  void SetupRprTracing()
+  {
+    if (RprUsdIsTracingEnabled())
     {
-      size_t size = 0;
-      auto infoStatus = rprContextGetInfo(temporaryContext, contextInfo, 0, 0, &size);
-      if (infoStatus == RPR_SUCCESS)
-      {
-        std::string deviceName;
-        deviceName.resize(size);
-        infoStatus = rprContextGetInfo(temporaryContext, contextInfo, size, &deviceName[0], 0);
-        if (infoStatus == RPR_SUCCESS)
-        {
-          PRINT_CONTEXT_CREATION_DEBUG_INFO("%s\n", deviceName.c_str());
-        }
-      }
-      if (infoStatus != RPR_SUCCESS)
-      {
-        PRINT_CONTEXT_CREATION_DEBUG_INFO("Failed to query device name: %d\n", infoStatus);
-        return false;
-      }
+      RPR_ERROR_CHECK(rprContextSetParameterByKey1u(nullptr, RPR_CONTEXT_TRACING_ENABLED, 1),
+                      "Failed to set context tracing parameter");
 
-      rprObjectDelete(temporaryContext);
+      auto tracingDir = TfGetEnvSetting(RPRUSD_TRACING_DIR);
+      if (!tracingDir.empty())
+      {
+        printf("RPR tracing directory: %s\n", tracingDir.c_str());
+      }
+      RPR_ERROR_CHECK(
+        rprContextSetParameterByKeyString(nullptr, RPR_CONTEXT_TRACING_PATH, tracingDir.c_str()),
+        "Failed to set tracing directory parameter");
     }
-    return status == RPR_SUCCESS;
+  }
+
+  const std::map<RprUsdPluginType, const char *> kPluginLibNames = {
+#ifdef WIN32
+    {kPluginTahoe,     "Tahoe64.dll"    },
+    {kPluginNorthstar, "Northstar64.dll"},
+    {kPluginHybrid,    "Hybrid.dll"     },
+#elif defined __linux__
+    {kPluginNorthstar, "libNorthstar64.so"},
+    {kPluginTahoe, "libTahoe64.so"},
+    {kPluginHybrid, "Hybrid.so"},
+#elif defined __APPLE__
+    {kPluginTahoe, "libTahoe64.dylib"},
+    {kPluginNorthstar, "libNorthstar64.dylib"},
+#endif
   };
 
-  PRINT_CONTEXT_CREATION_DEBUG_INFO("GPUs:\n");
-
-  rpr::CreationFlags creationFlags = 0x0;
-#define TEST_GPU_COMPATIBILITY(index) \
-  if (contextIsCreatable(RPR_CREATION_FLAGS_ENABLE_GPU##index, RPR_CONTEXT_GPU##index##_NAME)) \
-  { \
-    creationFlags |= RPR_CREATION_FLAGS_ENABLE_GPU##index; \
-  }
-
-  TEST_GPU_COMPATIBILITY(0);
-  TEST_GPU_COMPATIBILITY(1);
-  TEST_GPU_COMPATIBILITY(2);
-  TEST_GPU_COMPATIBILITY(3);
-  TEST_GPU_COMPATIBILITY(4);
-  TEST_GPU_COMPATIBILITY(5);
-  TEST_GPU_COMPATIBILITY(6);
-  TEST_GPU_COMPATIBILITY(7);
-  TEST_GPU_COMPATIBILITY(8);
-  TEST_GPU_COMPATIBILITY(9);
-  TEST_GPU_COMPATIBILITY(10);
-  TEST_GPU_COMPATIBILITY(11);
-  TEST_GPU_COMPATIBILITY(12);
-  TEST_GPU_COMPATIBILITY(13);
-  TEST_GPU_COMPATIBILITY(14);
-  TEST_GPU_COMPATIBILITY(15);
-
-  if (!creationFlags)
+  rpr::CreationFlags getAllCompatibleGpuFlags(rpr_int pluginID, const char *cachePath)
   {
-    PRINT_CONTEXT_CREATION_DEBUG_INFO("None\n");
-  }
+    rpr::CreationFlags additionalFlags = 0x0;
 
-  return creationFlags;
-}
-
-rpr::CreationFlags getRprCreationFlags(RprUsdRenderDeviceType renderDevice,
-                                       rpr_int pluginID,
-                                       const char *cachePath)
-{
-  rpr::CreationFlags flags = 0x0;
-
-  if (RprUsdRenderDeviceType::CPU == renderDevice)
-  {
-    PRINT_CONTEXT_CREATION_DEBUG_INFO("RPR CPU context\n");
-    flags = RPR_CREATION_FLAGS_ENABLE_CPU;
-  }
-  else if (RprUsdRenderDeviceType::GPU == renderDevice)
-  {
-    PRINT_CONTEXT_CREATION_DEBUG_INFO("RPR GPU context\n");
-    flags = getAllCompatibleGpuFlags(pluginID, cachePath);
-  }
-  else
-  {
-    return 0x0;
-  }
-
-#if __APPLE__
-  flags |= RPR_CREATION_FLAGS_ENABLE_METAL;
+#if defined(__APPLE__)
+    additionalFlags |= RPR_CREATION_FLAGS_ENABLE_METAL;
 #endif
 
-  return flags;
-}
+    auto contextIsCreatable = [additionalFlags, pluginID, cachePath](rpr::CreationFlags creationFlag,
+                                                                     rpr_context_info contextInfo) {
+      rpr_context temporaryContext = nullptr;
+      rpr_int id = pluginID;
+      auto status = rprCreateContext(RPR_API_VERSION,
+                                     &id,
+                                     1,
+                                     creationFlag | additionalFlags,
+                                     nullptr,
+                                     cachePath,
+                                     &temporaryContext);
+      if (status == RPR_SUCCESS)
+      {
+        size_t size = 0;
+        auto infoStatus = rprContextGetInfo(temporaryContext, contextInfo, 0, 0, &size);
+        if (infoStatus == RPR_SUCCESS)
+        {
+          std::string deviceName;
+          deviceName.resize(size);
+          infoStatus = rprContextGetInfo(temporaryContext, contextInfo, size, &deviceName[0], 0);
+          if (infoStatus == RPR_SUCCESS)
+          {
+            PRINT_CONTEXT_CREATION_DEBUG_INFO("%s\n", deviceName.c_str());
+          }
+        }
+        if (infoStatus != RPR_SUCCESS)
+        {
+          PRINT_CONTEXT_CREATION_DEBUG_INFO("Failed to query device name: %d\n", infoStatus);
+          return false;
+        }
+
+        rprObjectDelete(temporaryContext);
+      }
+      return status == RPR_SUCCESS;
+    };
+
+    PRINT_CONTEXT_CREATION_DEBUG_INFO("GPUs:\n");
+
+    rpr::CreationFlags creationFlags = 0x0;
+#define TEST_GPU_COMPATIBILITY(index)                                                          \
+  if (contextIsCreatable(RPR_CREATION_FLAGS_ENABLE_GPU##index, RPR_CONTEXT_GPU##index##_NAME)) \
+  {                                                                                            \
+    creationFlags |= RPR_CREATION_FLAGS_ENABLE_GPU##index;                                     \
+  }
+
+    TEST_GPU_COMPATIBILITY(0);
+    TEST_GPU_COMPATIBILITY(1);
+    TEST_GPU_COMPATIBILITY(2);
+    TEST_GPU_COMPATIBILITY(3);
+    TEST_GPU_COMPATIBILITY(4);
+    TEST_GPU_COMPATIBILITY(5);
+    TEST_GPU_COMPATIBILITY(6);
+    TEST_GPU_COMPATIBILITY(7);
+    TEST_GPU_COMPATIBILITY(8);
+    TEST_GPU_COMPATIBILITY(9);
+    TEST_GPU_COMPATIBILITY(10);
+    TEST_GPU_COMPATIBILITY(11);
+    TEST_GPU_COMPATIBILITY(12);
+    TEST_GPU_COMPATIBILITY(13);
+    TEST_GPU_COMPATIBILITY(14);
+    TEST_GPU_COMPATIBILITY(15);
+
+    if (!creationFlags)
+    {
+      PRINT_CONTEXT_CREATION_DEBUG_INFO("None\n");
+    }
+
+    return creationFlags;
+  }
+
+  rpr::CreationFlags getRprCreationFlags(RprUsdRenderDeviceType renderDevice,
+                                         rpr_int pluginID,
+                                         const char *cachePath)
+  {
+    rpr::CreationFlags flags = 0x0;
+
+    if (RprUsdRenderDeviceType::CPU == renderDevice)
+    {
+      PRINT_CONTEXT_CREATION_DEBUG_INFO("RPR CPU context\n");
+      flags = RPR_CREATION_FLAGS_ENABLE_CPU;
+    } else if (RprUsdRenderDeviceType::GPU == renderDevice)
+    {
+      PRINT_CONTEXT_CREATION_DEBUG_INFO("RPR GPU context\n");
+      flags = getAllCompatibleGpuFlags(pluginID, cachePath);
+    } else
+    {
+      return 0x0;
+    }
+
+#if __APPLE__
+    flags |= RPR_CREATION_FLAGS_ENABLE_METAL;
+#endif
+
+    return flags;
+  }
 
 }  // namespace
 
@@ -281,8 +284,9 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
   rpr_int pluginID = rprRegisterPlugin(pluginPath.c_str());
   if (pluginID == -1)
   {
-    PRINT_CONTEXT_CREATION_DEBUG_INFO(
-      "Failed to register %s plugin located at \"%s\"", pluginLibName, pluginPath.c_str());
+    PRINT_CONTEXT_CREATION_DEBUG_INFO("Failed to register %s plugin located at \"%s\"",
+                                      pluginLibName,
+                                      pluginPath.c_str());
     return nullptr;
   }
 
@@ -295,8 +299,7 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
     //   2) Hybrid is working only on GPU
     //   3) MultiGPU can be enabled only through vulkan interop
     flags = RPR_CREATION_FLAGS_ENABLE_GPU0;
-  }
-  else
+  } else
   {
     flags = getRprCreationFlags(metadata->renderDeviceType, pluginID, cachePath.c_str());
     if (!flags)
@@ -310,8 +313,7 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
       {
         PRINT_CONTEXT_CREATION_DEBUG_INFO("Could not find compatible device");
         return nullptr;
-      }
-      else
+      } else
       {
         PRINT_CONTEXT_CREATION_DEBUG_INFO("Using %s for render computations",
                                           isGpuIncompatible ? "CPU" : "GPU");
@@ -325,13 +327,11 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
     {
       PRINT_CONTEXT_CREATION_DEBUG_INFO("GL interop could not be used with CPU rendering or Hybrid plugin");
       metadata->isGlInteropEnabled = false;
-    }
-    else if (!RprUsdInitGLApi())
+    } else if (!RprUsdInitGLApi())
     {
       PRINT_CONTEXT_CREATION_DEBUG_INFO("Failed to init GL API. Disabling GL interop");
       metadata->isGlInteropEnabled = false;
-    }
-    else
+    } else
     {
       metadata->isGlInteropEnabled = true;
     }
@@ -370,8 +370,13 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
   contextProperties.push_back(nullptr);
 
   rpr::Status status;
-  rpr::Context *context = rpr::Context::Create(
-    RPR_API_VERSION, &pluginID, 1, flags, contextProperties.data(), cachePath.c_str(), &status);
+  rpr::Context *context = rpr::Context::Create(RPR_API_VERSION,
+                                               &pluginID,
+                                               1,
+                                               flags,
+                                               contextProperties.data(),
+                                               cachePath.c_str(),
+                                               &status);
 
   if (context)
   {
@@ -380,8 +385,7 @@ rpr::Context *RprUsdCreateContext(RprUsdContextMetadata *metadata)
       delete context;
       return nullptr;
     }
-  }
-  else
+  } else
   {
     RPR_ERROR_CHECK(status, "Failed to create RPR context");
   }

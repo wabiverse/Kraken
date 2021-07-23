@@ -61,40 +61,40 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 namespace
 {
 
-// We have to subclass SdrShaderProperty, because it tries to read the SdfType
-// from a token, and it doesn't support all the parameter types arnold does,
-// like the 4 component color. Besides this, we also guarantee that the default
-// value will match the SdfType, as the SdfType comes from the default value.
-class ArnoldShaderProperty : public SdrShaderProperty
-{
- public:
-  ArnoldShaderProperty(const TfToken &name,
-                       const SdfValueTypeName &typeName,
-                       const VtValue &defaultValue,
-                       bool isOutput,
-                       size_t arraySize,
-                       const NdrTokenMap &metadata,
-                       const NdrTokenMap &hints,
-                       const NdrOptionVec &options)
-    : SdrShaderProperty(name,
-                        typeName.GetAsToken(),
-                        defaultValue,
-                        isOutput,
-                        arraySize,
-                        metadata,
-                        hints,
-                        options),
-      _typeName(typeName)
-  {}
-
-  const SdfTypeIndicator GetTypeAsSdfType() const override
+  // We have to subclass SdrShaderProperty, because it tries to read the SdfType
+  // from a token, and it doesn't support all the parameter types arnold does,
+  // like the 4 component color. Besides this, we also guarantee that the default
+  // value will match the SdfType, as the SdfType comes from the default value.
+  class ArnoldShaderProperty : public SdrShaderProperty
   {
-    return {_typeName, _typeName.GetAsToken()};
-  }
+   public:
+    ArnoldShaderProperty(const TfToken &name,
+                         const SdfValueTypeName &typeName,
+                         const VtValue &defaultValue,
+                         bool isOutput,
+                         size_t arraySize,
+                         const NdrTokenMap &metadata,
+                         const NdrTokenMap &hints,
+                         const NdrOptionVec &options)
+      : SdrShaderProperty(name,
+                          typeName.GetAsToken(),
+                          defaultValue,
+                          isOutput,
+                          arraySize,
+                          metadata,
+                          hints,
+                          options),
+        _typeName(typeName)
+    {}
 
- private:
-  SdfValueTypeName _typeName;
-};
+    const SdfTypeIndicator GetTypeAsSdfType() const override
+    {
+      return {_typeName, _typeName.GetAsToken()};
+    }
+
+   private:
+    SdfValueTypeName _typeName;
+  };
 
 }  // namespace
 
@@ -115,8 +115,7 @@ NdrNodeUniquePtr NdrArnoldParserPlugin::Parse(const NdrNodeDiscoveryResult &disc
   {
     prim = shaderDefs->GetPrimAtPath(
       SdfPath(TfStringPrintf("/%s", discoveryResult.identifier.GetText() + _tokens->arnoldPrefix.size())));
-  }
-  else
+  } else
   {
     prim = shaderDefs->GetPrimAtPath(SdfPath(TfStringPrintf("/%s", discoveryResult.identifier.GetText())));
   }

@@ -67,21 +67,19 @@ static HdCompareFunction HdxDrawTargetTask_GetResolvedDepthFunc(HdCompareFunctio
       HdCmpFuncGreater,   // HdCmpFuncGreater
       HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
       HdCmpFuncGEqual,    // HdCmpFuncGEqual
-      HdCmpFuncAlways,    // HdCmpFuncAlways
-    },
+      HdCmpFuncAlways,    // HdCmpFuncAlways},
 
-    // HdDepthPriorityFarthest
-    {
-      HdCmpFuncNever,     // HdCmpFuncNever
-      HdCmpFuncGEqual,    // HdCmpFuncLess
-      HdCmpFuncEqual,     // HdCmpFuncEqual
-      HdCmpFuncGreater,   // HdCmpFuncLEqual
-      HdCmpFuncLEqual,    // HdCmpFuncGreater
-      HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
-      HdCmpFuncLess,      // HdCmpFuncGEqual
-      HdCmpFuncAlways,    // HdCmpFuncAlways
-    },
-  };
+      // HdDepthPriorityFarthest
+      {
+        HdCmpFuncNever,     // HdCmpFuncNever
+        HdCmpFuncGEqual,    // HdCmpFuncLess
+        HdCmpFuncEqual,     // HdCmpFuncEqual
+        HdCmpFuncGreater,   // HdCmpFuncLEqual
+        HdCmpFuncLEqual,    // HdCmpFuncGreater
+        HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
+        HdCmpFuncLess,      // HdCmpFuncGEqual
+        HdCmpFuncAlways,    // HdCmpFuncAlways},
+      };
 
   return ResolvedDepthFunc[priority][depthFunc];
 }
@@ -109,159 +107,159 @@ HdxDrawTargetTask::~HdxDrawTargetTask() = default;
 namespace
 {
 
-//
-// Topological sorting of the draw targets based on their
-// inter-dependencies.
-//
+  //
+  // Topological sorting of the draw targets based on their
+  // inter-dependencies.
+  //
 
-bool _DoesCollectionContainPath(HdRprimCollection const &collection, SdfPath const &path)
-{
-  for (SdfPath const &excludePath : collection.GetExcludePaths())
+  bool _DoesCollectionContainPath(HdRprimCollection const &collection, SdfPath const &path)
   {
-    if (path.HasPrefix(excludePath))
+    for (SdfPath const &excludePath : collection.GetExcludePaths())
     {
-      return false;
-    }
-  }
-  for (SdfPath const &rootPath : collection.GetRootPaths())
-  {
-    if (path.HasPrefix(rootPath))
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
-// Determines whether the collection of the first draw target contains
-// the path of the second draw target.
-//
-// This is used as a simple heuristic to determine the dependencies
-// between draw targets. In theory, one could imagine a scenaria where
-// this is not correct: a draw target collection includes a piece of
-// geometry but not the draw target that serves as texture for the
-// geometry. See HYD-1833.
-//
-// Once we have better tracking of the prim depedencies in hydra,
-// we can address this in a better way.
-bool _IsDependentOn(HdPhDrawTarget const *drawTarget, HdPhDrawTarget const *otherDrawTarget)
-{
-  return drawTarget && otherDrawTarget && drawTarget != otherDrawTarget &&
-         _DoesCollectionContainPath(drawTarget->GetCollection(), otherDrawTarget->GetId());
-}
-
-// Information returned by topological sort
-struct _DrawTargetEntry
-{
-  // Index in draw target vector created by namespace traversal
-  size_t originalIndex;
-  // The draw target
-  HdPhDrawTarget *drawTarget;
-};
-
-using _DrawTargetEntryVector = std::vector<_DrawTargetEntry>;
-
-// Topologically sort draw targets.
-static void _SortDrawTargets(HdPhDrawTargetPtrVector const &drawTargets, _DrawTargetEntryVector *result)
-{
-  TRACE_FUNCTION();
-
-  if (drawTargets.empty())
-  {
-    return;
-  }
-
-  // Number of draw targets
-  const size_t n = drawTargets.size();
-
-  // Index of draw target to indices of draw targets it depends on
-  std::vector<std::set<size_t>> indexToDependencies(n);
-  // Index of draw target to indices of draw targets that depend on it
-  std::vector<std::vector<size_t>> indexToDependents(n);
-
-  {
-    TRACE_FUNCTION_SCOPE("Computing drawtarget dependencies");
-
-    // Determine which draw target depends on which
-    for (size_t dependent = 0; dependent < n; dependent++)
-    {
-      for (size_t dependency = 0; dependency < n; dependency++)
+      if (path.HasPrefix(excludePath))
       {
-        if (_IsDependentOn(drawTargets[dependent], drawTargets[dependency]))
+        return false;
+      }
+    }
+    for (SdfPath const &rootPath : collection.GetRootPaths())
+    {
+      if (path.HasPrefix(rootPath))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Determines whether the collection of the first draw target contains
+  // the path of the second draw target.
+  //
+  // This is used as a simple heuristic to determine the dependencies
+  // between draw targets. In theory, one could imagine a scenaria where
+  // this is not correct: a draw target collection includes a piece of
+  // geometry but not the draw target that serves as texture for the
+  // geometry. See HYD-1833.
+  //
+  // Once we have better tracking of the prim depedencies in hydra,
+  // we can address this in a better way.
+  bool _IsDependentOn(HdPhDrawTarget const *drawTarget, HdPhDrawTarget const *otherDrawTarget)
+  {
+    return drawTarget && otherDrawTarget && drawTarget != otherDrawTarget &&
+           _DoesCollectionContainPath(drawTarget->GetCollection(), otherDrawTarget->GetId());
+  }
+
+  // Information returned by topological sort
+  struct _DrawTargetEntry
+  {
+    // Index in draw target vector created by namespace traversal
+    size_t originalIndex;
+    // The draw target
+    HdPhDrawTarget *drawTarget;
+  };
+
+  using _DrawTargetEntryVector = std::vector<_DrawTargetEntry>;
+
+  // Topologically sort draw targets.
+  static void _SortDrawTargets(HdPhDrawTargetPtrVector const &drawTargets, _DrawTargetEntryVector *result)
+  {
+    TRACE_FUNCTION();
+
+    if (drawTargets.empty())
+    {
+      return;
+    }
+
+    // Number of draw targets
+    const size_t n = drawTargets.size();
+
+    // Index of draw target to indices of draw targets it depends on
+    std::vector<std::set<size_t>> indexToDependencies(n);
+    // Index of draw target to indices of draw targets that depend on it
+    std::vector<std::vector<size_t>> indexToDependents(n);
+
+    {
+      TRACE_FUNCTION_SCOPE("Computing drawtarget dependencies");
+
+      // Determine which draw target depends on which
+      for (size_t dependent = 0; dependent < n; dependent++)
+      {
+        for (size_t dependency = 0; dependency < n; dependency++)
         {
-          indexToDependencies[dependent].insert(dependency);
-          indexToDependents[dependency].push_back(dependent);
+          if (_IsDependentOn(drawTargets[dependent], drawTargets[dependency]))
+          {
+            indexToDependencies[dependent].insert(dependency);
+            indexToDependents[dependency].push_back(dependent);
+          }
         }
       }
     }
-  }
 
-  {
-    TRACE_FUNCTION_SCOPE("Topological sort");
-
-    // Start by scheduling draw targets that do not depend on
-    // any other draw target.
-    result->reserve(n);
-    for (size_t dependent = 0; dependent < n; dependent++)
     {
-      if (indexToDependencies[dependent].empty())
-      {
-        result->push_back({dependent, drawTargets[dependent]});
-      }
-    }
+      TRACE_FUNCTION_SCOPE("Topological sort");
 
-    // Iterate through all scheduled draw targets (while scheduling
-    // new draw targets).
-    for (size_t i = 0; i < result->size(); i++)
-    {
-      _DrawTargetEntry &entry = (*result)[i];
-      const size_t dependency = entry.originalIndex;
-      // For each draw target that depends on this draw target.
-      for (const size_t dependent : indexToDependents[dependency])
+      // Start by scheduling draw targets that do not depend on
+      // any other draw target.
+      result->reserve(n);
+      for (size_t dependent = 0; dependent < n; dependent++)
       {
-        // Since this draw target has been scheduled, remove it as
-        // dependency.
-        indexToDependencies[dependent].erase(dependency);
-        // If this was the last dependency of the other draw
-        // target, we can schedule the other draw target.
         if (indexToDependencies[dependent].empty())
         {
           result->push_back({dependent, drawTargets[dependent]});
         }
       }
-    }
 
-    // Infinite mirrors and Droste cocoa pictures!
-    //
-    // If there are any cycles, the above process didn't schedule
-    // the involved draw targets.
-    if (result->size() < n)
-    {
-      // Schedule them now in the order they were given originally.
-      for (size_t i = 0; i < n; i++)
+      // Iterate through all scheduled draw targets (while scheduling
+      // new draw targets).
+      for (size_t i = 0; i < result->size(); i++)
       {
-        if (!indexToDependencies[i].empty())
+        _DrawTargetEntry &entry = (*result)[i];
+        const size_t dependency = entry.originalIndex;
+        // For each draw target that depends on this draw target.
+        for (const size_t dependent : indexToDependents[dependency])
         {
-          result->push_back({i, drawTargets[i]});
+          // Since this draw target has been scheduled, remove it as
+          // dependency.
+          indexToDependencies[dependent].erase(dependency);
+          // If this was the last dependency of the other draw
+          // target, we can schedule the other draw target.
+          if (indexToDependencies[dependent].empty())
+          {
+            result->push_back({dependent, drawTargets[dependent]});
+          }
         }
       }
-    }
 
-    if (result->size() != drawTargets.size())
-    {
-      TF_CODING_ERROR("Mismatch");
+      // Infinite mirrors and Droste cocoa pictures!
+      //
+      // If there are any cycles, the above process didn't schedule
+      // the involved draw targets.
+      if (result->size() < n)
+      {
+        // Schedule them now in the order they were given originally.
+        for (size_t i = 0; i < n; i++)
+        {
+          if (!indexToDependencies[i].empty())
+          {
+            result->push_back({i, drawTargets[i]});
+          }
+        }
+      }
+
+      if (result->size() != drawTargets.size())
+      {
+        TF_CODING_ERROR("Mismatch");
+      }
     }
   }
-}
 
-// Retrieve draw targets from render index and perform topoogical sort
-void _GetSortedDrawTargets(HdRenderIndex *renderIndex, _DrawTargetEntryVector *result)
-{
-  HdPhDrawTargetPtrVector unsortedDrawTargets;
-  HdPhDrawTarget::GetDrawTargets(renderIndex, &unsortedDrawTargets);
+  // Retrieve draw targets from render index and perform topoogical sort
+  void _GetSortedDrawTargets(HdRenderIndex *renderIndex, _DrawTargetEntryVector *result)
+  {
+    HdPhDrawTargetPtrVector unsortedDrawTargets;
+    HdPhDrawTarget::GetDrawTargets(renderIndex, &unsortedDrawTargets);
 
-  _SortDrawTargets(unsortedDrawTargets, result);
-}
+    _SortDrawTargets(unsortedDrawTargets, result);
+  }
 
 }  // namespace
 
@@ -321,9 +319,8 @@ HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(const HdRen
 
   static const GfMatrix4d yflip = GfMatrix4d().SetScale(GfVec3d(1.0, -1.0, 1.0));
 
-  const GfMatrix4d projectionMatrix = CameraUtilConformedWindow(
-                                        camera->GetProjectionMatrix(), camera->GetWindowPolicy(), aspect) *
-                                      yflip;
+  const GfMatrix4d projectionMatrix =
+    CameraUtilConformedWindow(camera->GetProjectionMatrix(), camera->GetWindowPolicy(), aspect) * yflip;
 
   return {camera->GetViewMatrix(), projectionMatrix, viewport, camera->GetClipPlanes()};
 }
@@ -348,8 +345,10 @@ void HdxDrawTargetTask::_UpdateRenderPassState(const HdRenderIndex &renderIndex,
 
   state->SetLightingShader(lightingShader);
 
-  state->SetCameraFramingState(
-    cameraInfo.viewMatrix, cameraInfo.projectionMatrix, cameraInfo.viewport, cameraInfo.clipPlanes);
+  state->SetCameraFramingState(cameraInfo.viewMatrix,
+                               cameraInfo.projectionMatrix,
+                               cameraInfo.viewport,
+                               cameraInfo.clipPlanes);
 
   state->Prepare(renderIndex.GetResourceRegistry());
 }
@@ -447,8 +446,9 @@ void HdxDrawTargetTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
 
     const _CameraInfo cameraInfo = _ComputeCameraInfo(renderIndex, renderPassInfo.target);
 
-    _UpdateLightingContext(
-      cameraInfo, srcLightingContext, renderPassInfo.simpleLightingShader->GetLightingContext());
+    _UpdateLightingContext(cameraInfo,
+                           srcLightingContext,
+                           renderPassInfo.simpleLightingShader->GetLightingContext());
 
     _UpdateRenderPassState(renderIndex,
                            cameraInfo,
@@ -481,8 +481,7 @@ void HdxDrawTargetTask::Execute(HdTaskContext *ctx)
     {
       glEnable(GL_POLYGON_OFFSET_FILL);
       glPolygonOffset(_depthBiasSlopeFactor, _depthBiasConstantFactor);
-    }
-    else
+    } else
     {
       glDisable(GL_POLYGON_OFFSET_FILL);
     }

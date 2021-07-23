@@ -65,8 +65,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     if (HdRprIsPrimvarExists(HdTokens->points, primvarDescsPerInterpolation))
     {
       m_points = sceneDelegate->Get(id, HdTokens->points).Get<VtVec3fArray>();
-    }
-    else
+    } else
     {
       m_points = VtVec3fArray();
     }
@@ -90,8 +89,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     if (HdRprIsPrimvarExists(HdTokens->widths, primvarDescsPerInterpolation, &m_widthsInterpolation))
     {
       m_widths = sceneDelegate->Get(id, HdTokens->widths).Get<VtFloatArray>();
-    }
-    else
+    } else
     {
       m_widths = VtFloatArray(1, 1.0f);
       m_widthsInterpolation = HdInterpolationConstant;
@@ -127,8 +125,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     if (HdRprIsPrimvarExists(*uvPrimvarName, primvarDescsPerInterpolation, &m_uvsInterpolation))
     {
       m_uvs = sceneDelegate->Get(id, *uvPrimvarName).Get<VtVec2fArray>();
-    }
-    else
+    } else
     {
       m_uvs = VtVec2fArray();
     }
@@ -167,46 +164,40 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     if (m_points.empty())
     {
       TF_RUNTIME_ERROR("[%s] Curve could not be created: missing points", id.GetText());
-    }
-    else if (m_widths.empty())
+    } else if (m_widths.empty())
     {
       TF_RUNTIME_ERROR("[%s] Curve could not be created: missing width", id.GetText());
-    }
-    else if (m_topology.GetCurveWrap() != HdTokens->segmented &&
-             m_topology.GetCurveWrap() != HdTokens->nonperiodic &&
-             m_topology.GetCurveWrap() != HdTokens->periodic)
+    } else if (m_topology.GetCurveWrap() != HdTokens->segmented &&
+               m_topology.GetCurveWrap() != HdTokens->nonperiodic &&
+               m_topology.GetCurveWrap() != HdTokens->periodic)
     {
       TF_RUNTIME_ERROR("[%s] Curve could not be created: unsupported curve wrap type - %s",
                        id.GetText(),
                        m_topology.GetCurveWrap().GetText());
-    }
-    else if (m_topology.GetCurveType() != HdTokens->linear && m_topology.GetCurveType() != HdTokens->cubic)
+    } else if (m_topology.GetCurveType() != HdTokens->linear && m_topology.GetCurveType() != HdTokens->cubic)
     {
       TF_RUNTIME_ERROR("[%s] Curve could not be created: unsupported basis curve type - %s",
                        id.GetText(),
                        m_topology.GetCurveType().GetText());
-    }
-    else if (!HdRprIsValidPrimvarSize(m_widths.size(),
-                                      m_widthsInterpolation,
-                                      m_topology.GetCurveVertexCounts().size(),
-                                      m_points.size()))
+    } else if (!HdRprIsValidPrimvarSize(m_widths.size(),
+                                        m_widthsInterpolation,
+                                        m_topology.GetCurveVertexCounts().size(),
+                                        m_points.size()))
     {
       TF_RUNTIME_ERROR(
         "[%s] Curve could not be created: mismatch in number of widths and requested "
         "interpolation type",
         id.GetText());
-    }
-    else if (!m_uvs.empty() && !HdRprIsValidPrimvarSize(m_uvs.size(),
-                                                        m_uvsInterpolation,
-                                                        m_topology.GetCurveVertexCounts().size(),
-                                                        m_points.size()))
+    } else if (!m_uvs.empty() && !HdRprIsValidPrimvarSize(m_uvs.size(),
+                                                          m_uvsInterpolation,
+                                                          m_topology.GetCurveVertexCounts().size(),
+                                                          m_points.size()))
     {
       TF_RUNTIME_ERROR(
         "[%s] Curve could not be created: mismatch in number of uvs and requested interpolation "
         "type",
         id.GetText());
-    }
-    else
+    } else
     {
       HdRprFillPrimvarDescsPerInterpolation(sceneDelegate, id, &primvarDescsPerInterpolation);
       if (HdRprIsPrimvarExists(HdTokens->normals, primvarDescsPerInterpolation))
@@ -233,9 +224,8 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
       if (isLinear)
       {
         m_rprCurve = CreateLinearRprCurve(rprApi);
-      }
-      else if (m_topology.GetCurveType() == HdTokens->cubic &&
-               m_topology.GetCurveBasis() == HdTokens->bezier)
+      } else if (m_topology.GetCurveType() == HdTokens->cubic &&
+                 m_topology.GetCurveBasis() == HdTokens->bezier)
       {
         m_rprCurve = CreateBezierRprCurve(rprApi);
       }
@@ -254,8 +244,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
       if (material && material->GetRprMaterialObject())
       {
         rprApi->SetCurveMaterial(m_rprCurve, material->GetRprMaterialObject());
-      }
-      else
+      } else
       {
         GfVec3f color(0.18f);
 
@@ -271,8 +260,7 @@ void HdRprBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
               {
                 color = colors[0];
               }
-            }
-            else if (val.IsHolding<GfVec3f>())
+            } else if (val.IsHolding<GfVec3f>())
             {
               color = val.UncheckedGet<GfVec3f>();
             }
@@ -335,8 +323,7 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
       sampleTaperRadius = [this](int iSegment, bool front) {
         return 0.5f * m_widths[iSegment + (front ? 0 : 1)];
       };
-    }
-    else if (m_widthsInterpolation == HdInterpolationVertex)
+    } else if (m_widthsInterpolation == HdInterpolationVertex)
     {
       sampleTaperRadius = [=](int iSegment, bool front) {
         return 0.5f * m_widths[iSegment * kVstep + (front ? 0 : (kNumPointsPerSegment - 1))];
@@ -348,8 +335,7 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
   if (m_indices.empty())
   {
     indexSampler = [](int idx) { return idx; };
-  }
-  else
+  } else
   {
     indexSampler = [this](int idx) { return m_indices.cdata()[idx]; };
   }
@@ -397,8 +383,7 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
     {
       numRadiuses += numSegments * 2;
       numIndices += numSegments * 4;
-    }
-    else
+    } else
     {
       if (m_widthsInterpolation == HdInterpolationUniform ||
           m_widthsInterpolation == HdInterpolationConstant)
@@ -457,8 +442,7 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
         rprRadiuses.push_back(sampleTaperRadius(iSegment, true));
         rprRadiuses.push_back(sampleTaperRadius(iSegment, false));
       }
-    }
-    else
+    } else
     {
       for (int iSegment = 0; iSegment < numSegments; ++iSegment)
       {
@@ -486,8 +470,7 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
       if (m_widthsInterpolation == HdInterpolationUniform)
       {
         rprRadiuses.push_back(m_widths[iCurve] * 0.5f);
-      }
-      else if (m_widthsInterpolation == HdInterpolationConstant)
+      } else if (m_widthsInterpolation == HdInterpolationConstant)
       {
         rprRadiuses.push_back(m_widths[0] * 0.5f);
       }
@@ -503,8 +486,7 @@ rpr::Curve *HdRprBasisCurves::CreateLinearRprCurve(HdRprApi *rprApi)
     if (m_uvsInterpolation == HdInterpolationUniform)
     {
       rprUvs = m_uvs;
-    }
-    else if (m_uvsInterpolation == HdInterpolationConstant)
+    } else if (m_uvsInterpolation == HdInterpolationConstant)
     {
       rprUvs = VtVec2fArray(rprSegmentPerCurve.size(), m_uvs[0]);
     }
@@ -545,8 +527,7 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
       sampleTaperRadius = [this](int iSegment, bool front) {
         return 0.5f * m_widths[iSegment + (front ? 0 : 1)];
       };
-    }
-    else if (m_widthsInterpolation == HdInterpolationVertex)
+    } else if (m_widthsInterpolation == HdInterpolationVertex)
     {
       sampleTaperRadius = [=](int iSegment, bool front) {
         return 0.5f * m_widths[iSegment * kVstep + (front ? 0 : (kNumPointsPerSegment - 1))];
@@ -558,8 +539,7 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
   if (m_indices.empty())
   {
     indexSampler = [](int idx) { return idx; };
-  }
-  else
+  } else
   {
     indexSampler = [this](int idx) { return m_indices.cdata()[idx]; };
   }
@@ -602,8 +582,7 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
     if (isCurveTapered)
     {
       numRadiuses += numSegments * 2;
-    }
-    else
+    } else
     {
       if (m_widthsInterpolation == HdInterpolationUniform ||
           m_widthsInterpolation == HdInterpolationConstant)
@@ -664,8 +643,7 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
       if (m_widthsInterpolation == HdInterpolationUniform)
       {
         rprRadiuses.push_back(m_widths[iCurve] * 0.5f);
-      }
-      else if (m_widthsInterpolation == HdInterpolationConstant)
+      } else if (m_widthsInterpolation == HdInterpolationConstant)
       {
         rprRadiuses.push_back(m_widths[0] * 0.5f);
       }
@@ -679,8 +657,7 @@ rpr::Curve *HdRprBasisCurves::CreateBezierRprCurve(HdRprApi *rprApi)
     if (m_uvsInterpolation == HdInterpolationUniform)
     {
       rprUvs = m_uvs;
-    }
-    else if (m_uvsInterpolation == HdInterpolationConstant)
+    } else if (m_uvsInterpolation == HdInterpolationConstant)
     {
       rprUvs = VtVec2fArray(rprSegmentPerCurve.size(), m_uvs[0]);
     }

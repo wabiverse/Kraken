@@ -73,10 +73,10 @@ static PyObject *kpy_lib_exit(KPy_Library *self, PyObject *args);
 static PyObject *kpy_lib_dir(KPy_Library *self);
 
 static PyMethodDef kpy_lib_methods[] = {
-  {"__enter__", (PyCFunction)kpy_lib_enter, METH_NOARGS},
-  {"__exit__", (PyCFunction)kpy_lib_exit, METH_VARARGS},
-  {"__dir__", (PyCFunction)kpy_lib_dir, METH_NOARGS},
-  {NULL} /* sentinel */
+  {"__enter__",   (PyCFunction)kpy_lib_enter, METH_NOARGS},
+  {"__exit__",  (PyCFunction)kpy_lib_exit, METH_VARARGS},
+  {"__dir__",    (PyCFunction)kpy_lib_dir, METH_NOARGS},
+  {NULL}  /* sentinel */
 };
 
 static void kpy_lib_dealloc(KPy_Library *self)
@@ -164,21 +164,20 @@ static PyTypeObject kpy_lib_Type = {
   NULL,
 };
 
-PyDoc_STRVAR(
-  kpy_lib_load_doc,
-  ".. method:: load(filepath, link=False, relative=False, assets_only=False)\n"
-  "\n"
-  "   Returns a context manager which exposes 2 library objects on entering.\n"
-  "   Each object has attributes matching kpy.data which are lists of strings to be linked.\n"
-  "\n"
-  "   :arg filepath: The path to a blend file.\n"
-  "   :type filepath: string\n"
-  "   :arg link: When False reference to the original file is lost.\n"
-  "   :type link: bool\n"
-  "   :arg relative: When True the path is stored relative to the open blend file.\n"
-  "   :type relative: bool\n"
-  "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
-  "   :type assets_only: bool\n");
+PyDoc_STRVAR(kpy_lib_load_doc,
+             ".. method:: load(filepath, link=False, relative=False, assets_only=False)\n"
+             "\n"
+             "   Returns a context manager which exposes 2 library objects on entering.\n"
+             "   Each object has attributes matching kpy.data which are lists of strings to be linked.\n"
+             "\n"
+             "   :arg filepath: The path to a blend file.\n"
+             "   :type filepath: string\n"
+             "   :arg link: When False reference to the original file is lost.\n"
+             "   :type link: bool\n"
+             "   :arg relative: When True the path is stored relative to the open blend file.\n"
+             "   :type relative: bool\n"
+             "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
+             "   :type assets_only: bool\n");
 static PyObject *kpy_lib_load(KPy_PropertyLUXO *self, PyObject *args, PyObject *kw)
 {
   Main *kmain_base = CTX_data_main(KPY_context_get());
@@ -240,7 +239,7 @@ static PyObject *_kpy_names(KPy_Library *self, const SdfPath &prim)
   if (!paths.empty())
   {
     int counter = 0;
-    UNIVERSE_FOR_ALL(sdf_path, paths)
+    UNIVERSE_FOR_ALL (sdf_path, paths)
     {
       PyList_SET_ITEM(list, counter, PyUnicode_FromString(CHARALL(sdf_path.GetName())));
       counter++;
@@ -274,7 +273,7 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
 
   SdfLayer::RootPrimsView prims = self->kr_handle->sdf_handle->GetRootPrims();
 
-  UNIVERSE_FOR_ALL(prim, prims)
+  UNIVERSE_FOR_ALL (prim, prims)
   {
     PyObject *str = PyUnicode_FromString(CHARALL(prim->GetName()));
     PyObject *item;

@@ -41,33 +41,33 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-class Tf_TestPyContainerConversions
-{
- public:
-  static vector<double> GetVectorTimesTwo(const vector<int> &inVec)
+  class Tf_TestPyContainerConversions
   {
-    vector<double> ret;
-    for (size_t i = 0; i < inVec.size(); i++)
+   public:
+    static vector<double> GetVectorTimesTwo(const vector<int> &inVec)
     {
-      ret.push_back(inVec[i] * 2.0);
+      vector<double> ret;
+      for (size_t i = 0; i < inVec.size(); i++)
+      {
+        ret.push_back(inVec[i] * 2.0);
+      }
+
+      return ret;
     }
 
-    return ret;
-  }
+    static pair<double, double> GetPairTimesTwo(const pair<int, int> &inPair)
+    {
+      return pair<double, double>(inPair.first * 2.0, inPair.second * 2.0);
+    }
 
-  static pair<double, double> GetPairTimesTwo(const pair<int, int> &inPair)
-  {
-    return pair<double, double>(inPair.first * 2.0, inPair.second * 2.0);
-  }
-
-  // This method simply returns the vector of tokens its given.
-  // It's purpose is to allow testing container conversions both to and
-  // from Python.
-  static vector<TfToken> GetTokens(const vector<TfToken> &inTokens)
-  {
-    return inTokens;
-  }
-};
+    // This method simply returns the vector of tokens its given.
+    // It's purpose is to allow testing container conversions both to and
+    // from Python.
+    static vector<TfToken> GetTokens(const vector<TfToken> &inTokens)
+    {
+      return inTokens;
+    }
+  };
 
 }  // anonymous namespace
 

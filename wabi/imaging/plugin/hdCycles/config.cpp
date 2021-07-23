@@ -80,8 +80,8 @@ TF_DEFINE_ENV_SETTING(CYCLES_ENABLE_LOGGING, false, "Enable HdCycles Logging")
 TF_DEFINE_ENV_SETTING(CYCLES_LOGGING_SEVERITY, 1, "Enable HdCycles progress reporting")
 
 TF_DEFINE_ENV_SETTING(CYCLES_DUMP_SHADER_GRAPH_DIR,
-                      "",
-                      "Valid, existing directory to dump shader graphs for render")
+                        "",
+                        "Valid, existing directory to dump shader graphs for render")
 
 TF_DEFINE_ENV_SETTING(HD_CYCLES_ENABLE_LOGGING, false, "Enable HdCycles Logging")
 
@@ -172,7 +172,7 @@ HdCyclesConfig::HdCyclesConfig()
   subsurface_samples = HdCyclesEnvValue<int>("HD_CYCLES_SUBSURFACE_SAMPLES", 1);
   volume_samples = HdCyclesEnvValue<int>("HD_CYCLES_VOLUME_SAMPLES", 1);
   adaptive_min_samples = HdCyclesEnvValue<int>("HD_CYCLES_VOLUME_SAMPLES", 1);
-}
+}  // TF_DEFINE_ENV_SETTING(CYCLES_ENABLE_LOGGING)
 
 const HdCyclesConfig &HdCyclesConfig::GetInstance()
 {

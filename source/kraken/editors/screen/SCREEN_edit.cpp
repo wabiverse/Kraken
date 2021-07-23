@@ -64,11 +64,8 @@ bool ED_screen_change(kContext *C, kScreen *screen)
 
   /* Get the actual layout/screen to be activated (guaranteed to be unused, even if that means
    * having to duplicate an existing one). */
-  WorkSpaceLayout *layout_new = ED_workspace_screen_change_ensure_unused_layout(kmain,
-                                                                                workspace,
-                                                                                layout,
-                                                                                layout,
-                                                                                win);
+  WorkSpaceLayout *layout_new =
+    ED_workspace_screen_change_ensure_unused_layout(kmain, workspace, layout, layout, win);
   kScreen *screen_new = KKE_workspace_layout_screen_get(layout_new);
 
   // screen_change_prepare(screen_old, screen_new, kmain, C, win);
@@ -130,7 +127,7 @@ void ED_area_exit(kContext *C, ScrArea *area)
 
   CTX_wm_area_set(C, area);
 
-  UNIVERSE_FOR_ALL(region, area->regions)
+  UNIVERSE_FOR_ALL (region, area->regions)
   {
     ED_region_exit(C, region);
   }
@@ -150,17 +147,17 @@ void ED_screen_exit(kContext *C, wmWindow *window, kScreen *screen)
 
   screen->active_region = NULL;
 
-  UNIVERSE_FOR_ALL(region, screen->regions)
+  UNIVERSE_FOR_ALL (region, screen->regions)
   {
     ED_region_exit(C, region);
   }
 
-  UNIVERSE_FOR_ALL(area, screen->areas)
+  UNIVERSE_FOR_ALL (area, screen->areas)
   {
     ED_area_exit(C, area);
   }
 
-  UNIVERSE_FOR_ALL(area, window->global_areas.areas)
+  UNIVERSE_FOR_ALL (area, window->global_areas.areas)
   {
     ED_area_exit(C, area);
   }
@@ -172,8 +169,7 @@ void ED_screen_exit(kContext *C, wmWindow *window, kScreen *screen)
   {
     /* use previous window if possible */
     CTX_wm_window_set(C, prevwin);
-  }
-  else
+  } else
   {
     /* none otherwise */
     CTX_wm_window_set(C, NULL);
@@ -202,13 +198,13 @@ static int find_free_areaid(kContext *C)
    * of much concern, users are not likely to have
    * any more than a MAX of about 8 or so areas per
    * screen.
-   * 
+   *
    * Though of course, users should be allowed to
    * create any number of screen areas without them
    * noticing a performance impact. */
-  UNIVERSE_FOR_ALL(screen, kmain->screens)
+  UNIVERSE_FOR_ALL (screen, kmain->screens)
   {
-    UNIVERSE_FOR_ALL(area, screen->areas)
+    UNIVERSE_FOR_ALL (area, screen->areas)
     {
       if (id <= area->areaid)
       {

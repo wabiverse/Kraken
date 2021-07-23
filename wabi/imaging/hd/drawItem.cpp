@@ -36,8 +36,7 @@ static size_t _GetVersion(HdBufferArrayRangeSharedPtr const &bar)
   if (bar)
   {
     return bar->GetVersion();
-  }
-  else
+  } else
   {
     return 0;
   }
@@ -48,8 +47,7 @@ static size_t _GetElementOffset(HdBufferArrayRangeSharedPtr const &bar)
   if (bar)
   {
     return bar->GetElementOffset();
-  }
-  else
+  } else
   {
     return 0;
   }
@@ -118,8 +116,7 @@ bool HdDrawItem::IntersectsViewVolume(GfMatrix4d const &viewProjMatrix) const
   {
     // XXX: need to test intersections of the bound of all instances.
     return true;
-  }
-  else
+  } else
   {
     return GfFrustum::IntersectsViewVolume(GetBounds(), viewProjMatrix);
   }

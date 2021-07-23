@@ -35,17 +35,17 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-struct Tf_TestAnnotatedBoolResult : TfPyAnnotatedBoolResult<std::string>
-{
-  Tf_TestAnnotatedBoolResult(bool value, const std::string &annotation)
-    : TfPyAnnotatedBoolResult<std::string>(value, annotation)
-  {}
-};
+  struct Tf_TestAnnotatedBoolResult : TfPyAnnotatedBoolResult<std::string>
+  {
+    Tf_TestAnnotatedBoolResult(bool value, const std::string &annotation)
+      : TfPyAnnotatedBoolResult<std::string>(value, annotation)
+    {}
+  };
 
-static Tf_TestAnnotatedBoolResult _TestAnnotatedBoolResult(bool value, const std::string &annotation)
-{
-  return Tf_TestAnnotatedBoolResult(value, annotation);
-}
+  static Tf_TestAnnotatedBoolResult _TestAnnotatedBoolResult(bool value, const std::string &annotation)
+  {
+    return Tf_TestAnnotatedBoolResult(value, annotation);
+  }
 
 }  // anonymous namespace
 

@@ -112,7 +112,8 @@ std::vector<std::string> SdfVariantSpec::GetVariantNames(const std::string &name
 
   SdfPath variantSetPath = GetPath().AppendVariantSelection(name, "");
   std::vector<TfToken> variantNameTokens = GetLayer()->GetFieldAs<std::vector<TfToken>>(
-    variantSetPath, SdfChildrenKeys->VariantChildren);
+    variantSetPath,
+    SdfChildrenKeys->VariantChildren);
 
   variantNames.reserve(variantNameTokens.size());
   TF_FOR_ALL (i, variantNameTokens)

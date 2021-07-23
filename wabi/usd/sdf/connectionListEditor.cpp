@@ -144,8 +144,10 @@ void Sdf_AttributeConnectionListEditor::_OnEdit(SdfListOpType op,
                                                 const std::vector<SdfPath> &oldItems,
                                                 const std::vector<SdfPath> &newItems) const
 {
-  return Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy>::_OnEditShared(
-    op, SdfSpecTypeConnection, oldItems, newItems);
+  return Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy>::_OnEditShared(op,
+                                                                                     SdfSpecTypeConnection,
+                                                                                     oldItems,
+                                                                                     newItems);
 }
 
 ////////////////////////////////////////
@@ -164,7 +166,10 @@ void Sdf_RelationshipTargetListEditor::_OnEdit(SdfListOpType op,
                                                const std::vector<SdfPath> &newItems) const
 {
   return Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy>::_OnEditShared(
-    op, SdfSpecTypeRelationshipTarget, oldItems, newItems);
+    op,
+    SdfSpecTypeRelationshipTarget,
+    oldItems,
+    newItems);
 }
 
 WABI_NAMESPACE_END

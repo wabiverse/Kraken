@@ -38,10 +38,10 @@
 
 namespace ccl
 {
-class Mesh;
-class Scene;
-class Object;
-class Geometry;
+  class Mesh;
+  class Scene;
+  class Object;
+  class Geometry;
 }  // namespace ccl
 
 WABI_NAMESPACE_BEGIN

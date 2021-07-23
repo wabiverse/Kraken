@@ -50,78 +50,81 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateDayAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDayAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
-}
+  static UsdAttribute _CreateDayAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDayAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+  }
 
-static UsdAttribute _CreateHazinessAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateHazinessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateHazinessAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateHazinessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateHourAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateHourAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateHourAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateHourAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateLatitudeAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateLatitudeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateLatitudeAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateLatitudeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateLongitudeAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateLongitudeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateLongitudeAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateLongitudeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateMonthAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateMonthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
-}
+  static UsdAttribute _CreateMonthAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateMonthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+  }
 
-static UsdAttribute _CreateSkyTintAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSkyTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
-}
+  static UsdAttribute _CreateSkyTintAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSkyTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
+  }
 
-static UsdAttribute _CreateSunDirectionAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSunDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreateSunDirectionAttr(UsdRiPxrEnvDayLight &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreateSunDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateSunSizeAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSunSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateSunSizeAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSunSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateSunTintAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSunTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
-}
+  static UsdAttribute _CreateSunTintAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSunTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
+  }
 
-static UsdAttribute _CreateYearAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateYearAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
-}
+  static UsdAttribute _CreateYearAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateYearAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+  }
 
-static UsdAttribute _CreateZoneAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateZoneAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateZoneAttr(UsdRiPxrEnvDayLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateZoneAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static std::string _Repr(const UsdRiPxrEnvDayLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.PxrEnvDayLight(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiPxrEnvDayLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.PxrEnvDayLight(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -174,8 +177,9 @@ void wrapUsdRiPxrEnvDayLight()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetMonthAttr", &This::GetMonthAttr)
-    .def(
-      "CreateMonthAttr", &_CreateMonthAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateMonthAttr",
+         &_CreateMonthAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetSkyTintAttr", &This::GetSkyTintAttr)
     .def("CreateSkyTintAttr",
@@ -230,7 +234,7 @@ void wrapUsdRiPxrEnvDayLight()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

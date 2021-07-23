@@ -91,7 +91,8 @@ void SetObjItemIncrementInfo(PyObject *app_info, int pos)
 #define SetObjItem(obj) PyStructSequence_SET_ITEM(app_info, pos++, obj)
 
   SetObjItem(PyC_Tuple_Pack_I32(KRAKEN_VERSION / 100, KRAKEN_VERSION % 100, KRAKEN_VERSION_PATCH));
-  SetObjItem(PyC_Tuple_Pack_I32(KRAKEN_FILE_VERSION / 100, KRAKEN_FILE_VERSION % 100, KRAKEN_FILE_SUBVERSION));
+  SetObjItem(
+    PyC_Tuple_Pack_I32(KRAKEN_FILE_VERSION / 100, KRAKEN_FILE_VERSION % 100, KRAKEN_FILE_SUBVERSION));
 }
 
 void SetObjItemBoolIncrementInfo(PyObject *app_info, int pos, bool val)

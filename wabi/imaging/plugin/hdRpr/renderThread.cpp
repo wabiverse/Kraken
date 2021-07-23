@@ -174,8 +174,7 @@ void HdRprRenderThread::RenderLoop()
       m_stopRequested = false;
       m_rendering.store(false);
       m_requestedState = StateIdle;
-    }
-    else if (m_requestedState == StateTerminated)
+    } else if (m_requestedState == StateTerminated)
     {
       break;
     }

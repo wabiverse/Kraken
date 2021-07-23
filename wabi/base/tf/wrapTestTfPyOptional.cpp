@@ -43,35 +43,35 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// ////////////////////////////////
-// // optional
+  // ////////////////////////////////
+  // // optional
 
-static tuple _TakesOptional(const boost::optional<string> &optString,
-                            const boost::optional<vector<string>> &optStrvec)
-{
-  object strObj;
-  if (optString)
+  static tuple _TakesOptional(const boost::optional<string> &optString,
+                              const boost::optional<vector<string>> &optStrvec)
   {
-    strObj = object(*optString);
+    object strObj;
+    if (optString)
+    {
+      strObj = object(*optString);
+    }
+    object vecObj;
+    if (optStrvec)
+    {
+      vecObj = object(TfPyCopySequenceToList(*optStrvec));
+    }
+    return make_tuple(strObj, vecObj);
   }
-  object vecObj;
-  if (optStrvec)
+
+  template<typename T>
+  static boost::optional<T> _TestOptional(const boost::optional<T> &opt)
   {
-    vecObj = object(TfPyCopySequenceToList(*optStrvec));
+    fprintf(stderr, "TestOptional<%s>\n", ArchGetDemangled<T>().c_str());
+    return opt;
   }
-  return make_tuple(strObj, vecObj);
-}
 
-template<typename T>
-static boost::optional<T> _TestOptional(const boost::optional<T> &opt)
-{
-  fprintf(stderr, "TestOptional<%s>\n", ArchGetDemangled<T>().c_str());
-  return opt;
-}
-
-struct Tf_TestPyOptional
-{
-};
+  struct Tf_TestPyOptional
+  {
+  };
 
 }  // anonymous namespace
 

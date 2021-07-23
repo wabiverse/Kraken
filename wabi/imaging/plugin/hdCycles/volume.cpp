@@ -165,32 +165,28 @@ void HdCyclesVolume::_PopulateVolume(const SdfPath &id, HdSceneDelegate *delegat
         if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_DENSITY))
         {
           std = ccl::ATTR_STD_VOLUME_DENSITY;
-        }
-        else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_COLOR))
+        } else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_COLOR))
         {
           std = ccl::ATTR_STD_VOLUME_COLOR;
-        }
-        else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_FLAME))
+        } else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_FLAME))
         {
           std = ccl::ATTR_STD_VOLUME_FLAME;
-        }
-        else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_HEAT))
+        } else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_HEAT))
         {
           std = ccl::ATTR_STD_VOLUME_HEAT;
-        }
-        else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_TEMPERATURE))
+        } else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_TEMPERATURE))
         {
           std = ccl::ATTR_STD_VOLUME_TEMPERATURE;
-        }
-        else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_VELOCITY))
+        } else if (name == ccl::Attribute::standard_name(ccl::ATTR_STD_VOLUME_VELOCITY))
         {
           std = ccl::ATTR_STD_VOLUME_VELOCITY;
         }
 
         ccl::Attribute *attr = (std != ccl::ATTR_STD_NONE) ?
                                  m_cyclesVolume->attributes.add(std) :
-                                 m_cyclesVolume->attributes.add(
-                                   name, ccl::TypeDesc::TypeFloat, ccl::ATTR_ELEMENT_VOXEL);
+                                 m_cyclesVolume->attributes.add(name,
+                                                                ccl::TypeDesc::TypeFloat,
+                                                                ccl::ATTR_ELEMENT_VOXEL);
         ccl::ImageLoader *loader = new HdCyclesVolumeLoader(filepath.c_str(), name.c_str());
         ccl::ImageParams params;
         params.frame = 0.0f;
@@ -272,8 +268,7 @@ void HdCyclesVolume::Sync(HdSceneDelegate *sceneDelegate,
     if (sceneDelegate->GetVisible(id))
     {
       m_cyclesObject->visibility |= ccl::PATH_RAY_ALL_VISIBILITY;
-    }
-    else
+    } else
     {
       m_cyclesObject->visibility &= ~ccl::PATH_RAY_ALL_VISIBILITY;
     }
@@ -304,8 +299,7 @@ void HdCyclesVolume::Sync(HdSceneDelegate *sceneDelegate,
       {
         m_usedShaders.push_back(material->GetCyclesShader());
         material->GetCyclesShader()->tag_update(scene);
-      }
-      else
+      } else
       {
         m_usedShaders.push_back(scene->default_volume);
       }
@@ -318,8 +312,13 @@ void HdCyclesVolume::Sync(HdSceneDelegate *sceneDelegate,
   {
     for (auto &pv : primvarDescsEntry.second)
     {
-      m_useMotionBlur = _HdCyclesGetVolumeParam<bool>(
-        pv, dirtyBits, id, this, sceneDelegate, HdCyclesTokens->primvarsCyclesObjectMblur, m_useMotionBlur);
+      m_useMotionBlur = _HdCyclesGetVolumeParam<bool>(pv,
+                                                      dirtyBits,
+                                                      id,
+                                                      this,
+                                                      sceneDelegate,
+                                                      HdCyclesTokens->primvarsCyclesObjectMblur,
+                                                      m_useMotionBlur);
 
       m_cyclesObject->velocity_scale = _HdCyclesGetVolumeParam<float>(
         pv,

@@ -104,8 +104,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
     glEnable(GL_DEPTH_TEST);
     GLenum depthFn = HgiGLConversions::GetDepthCompareFunction(_descriptor.depthState.depthCompareFn);
     glDepthFunc(depthFn);
-  }
-  else
+  } else
   {
     glDisable(GL_DEPTH_TEST);
   }
@@ -115,8 +114,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
   if (_descriptor.depthState.stencilTestEnabled)
   {
     TF_CODING_ERROR("Missing implementation stencil mask enabled");
-  }
-  else
+  } else
   {
     glStencilMaskSeparate(GL_FRONT, 0);
     glStencilMaskSeparate(GL_BACK, 0);
@@ -129,8 +127,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
   {
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
     glEnable(GL_SAMPLE_ALPHA_TO_ONE);
-  }
-  else
+  } else
   {
     glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
     glDisable(GL_SAMPLE_ALPHA_TO_ONE);
@@ -143,8 +140,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
   if (cullMode == GL_NONE)
   {
     glDisable(GL_CULL_FACE);
-  }
-  else
+  } else
   {
     glEnable(GL_CULL_FACE);
     glCullFace(cullMode);
@@ -156,8 +152,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
   if (_descriptor.rasterizationState.winding == HgiWindingClockwise)
   {
     glFrontFace(GL_CW);
-  }
-  else
+  } else
   {
     glFrontFace(GL_CCW);
   }
@@ -170,8 +165,7 @@ void HgiGLGraphicsPipeline::BindPipeline()
   if (_descriptor.rasterizationState.rasterizerEnabled)
   {
     glDisable(GL_RASTERIZER_DISCARD);
-  }
-  else
+  } else
   {
     glEnable(GL_RASTERIZER_DISCARD);
   }

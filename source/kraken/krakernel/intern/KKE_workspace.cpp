@@ -45,10 +45,9 @@
 WABI_NAMESPACE_BEGIN
 
 
-static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace,
-                                                   const kScreen *screen)
+static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace, const kScreen *screen)
 {
-  UNIVERSE_FOR_ALL(layout, workspace->layouts)
+  UNIVERSE_FOR_ALL (layout, workspace->layouts)
   {
     if (layout->screen == screen)
     {
@@ -74,10 +73,11 @@ static void workspace_relation_add(WorkSpaceDataRelationVector relation_list,
 }
 
 
-static WorkSpaceLayout *workspace_relation_get_data_matching_parent(const WorkSpaceDataRelationVector relation_list,
-                                                                    const WorkSpaceInstanceHook *parent)
+static WorkSpaceLayout *workspace_relation_get_data_matching_parent(
+  const WorkSpaceDataRelationVector relation_list,
+  const WorkSpaceInstanceHook *parent)
 {
-  UNIVERSE_FOR_ALL(relation, relation_list)
+  UNIVERSE_FOR_ALL (relation, relation_list)
   {
     if (relation->parent == parent)
     {
@@ -97,19 +97,21 @@ static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relati
   if (relation_list.begin() != relation_list.end())
   {
 
-    auto relation = std::find_if(relation_list.begin(), relation_list.end(), [&](WorkSpaceDataRelation *r) -> bool {
-      if (r->parentid == parentid)
-      {
-        r->parent = parent;
-        r->value = layout;
-        return true;
-      }
+    auto relation = std::find_if(relation_list.begin(),
+                                 relation_list.end(),
+                                 [&](WorkSpaceDataRelation *r) -> bool {
+                                   if (r->parentid == parentid)
+                                   {
+                                     r->parent = parent;
+                                     r->value = layout;
+                                     return true;
+                                   }
 
-      else
-      {
-        return false;
-      }
-    });
+                                   else
+                                   {
+                                     return false;
+                                   }
+                                 });
 
     /* reinsert at the head of the list, so that more commonly used relations are found faster. */
     if (relation != relation_list.end())
@@ -125,7 +127,7 @@ static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relati
 
 static bool workspaces_is_screen_used(const Main *kmain, kScreen *screen)
 {
-  UNIVERSE_FOR_ALL(workspace, kmain->workspaces)
+  UNIVERSE_FOR_ALL (workspace, kmain->workspaces)
   {
     if (workspace_layout_find_exec(workspace, screen))
     {
@@ -136,15 +138,13 @@ static bool workspaces_is_screen_used(const Main *kmain, kScreen *screen)
   return false;
 }
 
-static void workspace_layout_name_set(WorkSpace *workspace,
-                                      WorkSpaceLayout *layout,
-                                      const char *new_name)
+static void workspace_layout_name_set(WorkSpace *workspace, WorkSpaceLayout *layout, const char *new_name)
 {
   TfToken new_token(new_name);
   layout->name.Swap(new_token);
 
   std::vector<void *> void_vec;
-  UNIVERSE_FOR_ALL(alayout, workspace->layouts)
+  UNIVERSE_FOR_ALL (alayout, workspace->layouts)
   {
     void_vec.push_back(alayout);
   }
@@ -178,7 +178,7 @@ WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *kmain,
     *r_workspace = nullptr;
   }
 
-  UNIVERSE_FOR_ALL(workspace, kmain->workspaces)
+  UNIVERSE_FOR_ALL (workspace, kmain->workspaces)
   {
     if ((layout = workspace_layout_find_exec(workspace, screen)))
     {
@@ -272,9 +272,9 @@ WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, con
   WorkSpaceInstanceHook *hook = new WorkSpaceInstanceHook();
 
   /* set an active screen-layout for each possible window/workspace combination */
-  UNIVERSE_FOR_ALL(workspace, kmain->workspaces)
+  UNIVERSE_FOR_ALL (workspace, kmain->workspaces)
   {
-    UNIVERSE_FOR_ALL(layout, workspace->layouts)
+    UNIVERSE_FOR_ALL (layout, workspace->layouts)
     {
       KKE_workspace_active_layout_set(hook, winid, workspace, layout);
     }
@@ -294,7 +294,8 @@ void KKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace)
   hook->active = workspace;
   if (workspace)
   {
-    WorkSpaceLayout *layout = workspace_relation_get_data_matching_parent(workspace->hook_layout_relations, hook);
+    WorkSpaceLayout *layout = workspace_relation_get_data_matching_parent(workspace->hook_layout_relations,
+                                                                          hook);
     if (layout)
     {
       hook->act_layout = layout;

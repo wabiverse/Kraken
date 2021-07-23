@@ -129,8 +129,7 @@ static GfVec4i _FlipViewport(const GfVec4i &viewport, const GfVec3i &framebuffer
   if (height > 0)
   {
     return GfVec4i(viewport[0], height - (viewport[1] + viewport[3]), viewport[2], viewport[3]);
-  }
-  else
+  } else
   {
     return viewport;
   }
@@ -161,8 +160,7 @@ static GfVec4i _ComputeViewport(HdRenderPassStateSharedPtr const &renderPassStat
       // Note that in OpenGL, the coordinates for the viewport
       // are y-Up but the camera framing is y-Down.
       return _FlipViewport(viewport, _GetFramebufferSize(desc));
-    }
-    else
+    } else
     {
       return viewport;
     }
@@ -227,8 +225,7 @@ void HdPh_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
       _ExecuteDraw(cmdBuffer, stRenderPassState, resourceRegistry);
     };
     glGfxCmds->InsertFunctionOp(executeDrawOp);
-  }
-  else
+  } else
   {
     _ExecuteDraw(cmdBuffer, stRenderPassState, resourceRegistry);
   }
@@ -285,13 +282,15 @@ void HdPh_RenderPass::_PrepareDrawItems(TfTokenVector const &renderTags)
 
       if (renderTagsChanged)
       {
-        TfDebug::Helper::Msg(
-          "RenderTagsChanged (version = %d -> %d)\n", _renderTagVersion, renderTagVersion);
+        TfDebug::Helper::Msg("RenderTagsChanged (version = %d -> %d)\n",
+                             _renderTagVersion,
+                             renderTagVersion);
       }
       if (materialTagsChanged)
       {
-        TfDebug::Helper::Msg(
-          "MaterialTagsChanged (version = %d -> %d)\n", _materialTagsVersion, materialTagsVersion);
+        TfDebug::Helper::Msg("MaterialTagsChanged (version = %d -> %d)\n",
+                             _materialTagsVersion,
+                             materialTagsVersion);
       }
     }
 
@@ -335,8 +334,7 @@ void HdPh_RenderPass::_PrepareCommandBuffer(TfTokenVector const &renderTags)
     _drawItemsChanged = false;
     size_t itemCount = _cmdBuffer.GetTotalSize();
     HD_PERF_COUNTER_SET(HdTokens->totalItemCount, itemCount);
-  }
-  else
+  } else
   {
     // validate command buffer to not include expired drawItems,
     // which could be produced by migrating BARs at the new repr creation.
@@ -352,7 +350,8 @@ void HdPh_RenderPass::_PrepareCommandBuffer(TfTokenVector const &renderTags)
   {
     _lastSettingsVersion = currentSettingsVersion;
     _useTinyPrimCulling = renderDelegate->GetRenderSetting<bool>(
-      HdPhRenderSettingsTokens->enableTinyPrimCulling, false);
+      HdPhRenderSettingsTokens->enableTinyPrimCulling,
+      false);
   }
 
   _cmdBuffer.SetEnableTinyPrimCulling(_useTinyPrimCulling);
@@ -378,8 +377,7 @@ void HdPh_RenderPass::_FrustumCullCPU(HdPhRenderPassStateSharedPtr const &render
     _cmdBuffer.SyncDrawItemVisibility(tracker.GetVisibilityChangeCount());
 
     TF_DEBUG(HD_DRAWITEMS_CULLED).Msg("CULLED: skipped\n");
-  }
-  else
+  } else
   {
     if (!freezeCulling)
     {

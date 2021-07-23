@@ -160,8 +160,7 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
   {
     typeIndex = (uint32_t)info._UnitTypeIndicesTable.size();
     info._UnitTypeIndicesTable[unit.GetType().name()] = typeIndex;
-  }
-  else
+  } else
   {
     typeIndex = i->second;
   }
@@ -173,19 +172,19 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
 #define _ADD_UNIT_ENUM(r, category, elem) \
   TF_ADD_ENUM_NAME(BOOST_PP_CAT(Sdf##category##Unit, _SDF_UNIT_TAG(elem)), _SDF_UNIT_NAME(elem));
 
-#define _REGISTRY_FUNCTION(r, unused, elem) \
-  TF_REGISTRY_FUNCTION_WITH_TAG(TfEnum, _SDF_UNITSLIST_CATEGORY(elem)) \
-  { \
+#define _REGISTRY_FUNCTION(r, unused, elem)                                                            \
+  TF_REGISTRY_FUNCTION_WITH_TAG(TfEnum, _SDF_UNITSLIST_CATEGORY(elem))                                 \
+  {                                                                                                    \
     BOOST_PP_SEQ_FOR_EACH(_ADD_UNIT_ENUM, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem)); \
   }
 
 BOOST_PP_LIST_FOR_EACH(_REGISTRY_FUNCTION, ~, _SDF_UNITS)
 
-#define _ADD_UNIT_TO_MAPS(r, category, elem) \
-  _AddToUnitsMaps(*info, \
+#define _ADD_UNIT_TO_MAPS(r, category, elem)                              \
+  _AddToUnitsMaps(*info,                                                  \
                   BOOST_PP_CAT(Sdf##category##Unit, _SDF_UNIT_TAG(elem)), \
-                  _SDF_UNIT_NAME(elem), \
-                  _SDF_UNIT_SCALE(elem), \
+                  _SDF_UNIT_NAME(elem),                                   \
+                  _SDF_UNIT_SCALE(elem),                                  \
                   #category);
 
 #define _POPULATE_UNIT_MAPS(r, unused, elem) \
@@ -207,14 +206,14 @@ static _UnitsInfo &_GetUnitsInfo()
 #undef _REGISTRY_FUNCTION
 #undef _PROCESS_ENUMERANT
 
-#define _REGISTRY_FUNCTION(r, unused, elem) \
-  TF_REGISTRY_FUNCTION_WITH_TAG(TfType, BOOST_PP_CAT(Type, _SDF_UNITSLIST_CATEGORY(elem))) \
-  { \
-    TfType::Define<_SDF_UNITSLIST_ENUM(elem)>(); \
-  } \
+#define _REGISTRY_FUNCTION(r, unused, elem)                                                  \
+  TF_REGISTRY_FUNCTION_WITH_TAG(TfType, BOOST_PP_CAT(Type, _SDF_UNITSLIST_CATEGORY(elem)))   \
+  {                                                                                          \
+    TfType::Define<_SDF_UNITSLIST_ENUM(elem)>();                                             \
+  }                                                                                          \
   TF_REGISTRY_FUNCTION_WITH_TAG(VtValue, BOOST_PP_CAT(Value, _SDF_UNITSLIST_CATEGORY(elem))) \
-  { \
-    _RegisterEnumWithVtValue<_SDF_UNITSLIST_ENUM(elem)>(); \
+  {                                                                                          \
+    _RegisterEnumWithVtValue<_SDF_UNITSLIST_ENUM(elem)>();                                   \
   }
 BOOST_PP_LIST_FOR_EACH(_REGISTRY_FUNCTION, ~, _SDF_UNITS)
 #undef _REGISTRY_FUNCTION
@@ -410,8 +409,7 @@ bool _ValueVectorToVtArray(VtValue *value,
                        _GetKeyPathText(*keyPath).c_str(),
                        ArchGetDemangled<T>().c_str()));
       allValid = false;
-    }
-    else
+    } else
     {
       cast.Swap(*e++);
     }
@@ -477,8 +475,7 @@ static bool _ValueVectorToAnyVtArray(VtValue *value,
   if (SdfValueHasValidType(valVec.front()))
   {
     return _GetTypedValueVectorToVtArrayFn(valVec.front().GetType())(value, errMsgs, keyPath);
-  }
-  else
+  } else
   {
     _AddInvalidTypeError("first vector/list element ", valVec.front(), errMsgs, keyPath);
     *value = VtValue();
@@ -528,8 +525,7 @@ bool _PySeqToVtArray(VtValue *value,
                        _GetKeyPathText(*keyPath).c_str(),
                        ArchGetDemangled<ElemType>().c_str()));
       allValid = false;
-    }
-    else
+    } else
     {
       *elem++ = e();
     }
@@ -623,8 +619,7 @@ static bool _PyObjToAnyVtArray(VtValue *value,
   if (SdfValueHasValidType(firstVal))
   {
     return _GetTypedPySeqToVtArrayFn(firstVal.GetType())(value, errMsgs, keyPath);
-  }
-  else
+  } else
   {
     _AddInvalidTypeError("first sequence element ", firstVal, errMsgs, keyPath);
     *value = VtValue();
@@ -653,8 +648,7 @@ static bool _ConvertToValidMetadataDictValueInternal(VtValue *value,
       keyPath->pop_back();
     }
     value->UncheckedSwap(d);
-  }
-  else if (value->IsHolding<std::vector<VtValue>>())
+  } else if (value->IsHolding<std::vector<VtValue>>())
   {
     allValid &= _ValueVectorToAnyVtArray(value, errMsgs, keyPath);
   }

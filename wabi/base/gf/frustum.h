@@ -181,8 +181,7 @@ class GfFrustum
     if (auto *planes = o._planes.load(std::memory_order_relaxed))
     {
       _planes.store(new std::array<GfPlane, 6>(*planes), std::memory_order_relaxed);
-    }
-    else
+    } else
     {
       _planes.store(nullptr, std::memory_order_relaxed);
     }

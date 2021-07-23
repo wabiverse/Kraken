@@ -44,8 +44,8 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-TF_INSTANTIATE_NOTICE_WRAPPER(PlugNotice::Base, TfNotice);
-TF_INSTANTIATE_NOTICE_WRAPPER(PlugNotice::DidRegisterPlugins, PlugNotice::Base);
+  TF_INSTANTIATE_NOTICE_WRAPPER(PlugNotice::Base, TfNotice);
+  TF_INSTANTIATE_NOTICE_WRAPPER(PlugNotice::DidRegisterPlugins, PlugNotice::Base);
 
 }  // anonymous namespace
 

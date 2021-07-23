@@ -180,8 +180,7 @@ void UsdDracoExportAttribute<T>::GetFromMesh(const UsdGeomMesh &usdMesh, size_t 
     _usePositionIndex = primvar.GetInterpolation() == UsdGeomTokens->vertex;
     if (_indices.empty() && _usePositionIndex && _values.size() == numPositions)
       _MakeRange(&_indices, numPositions);
-  }
-  else
+  } else
   {
     // Get data from an attribute.
     UsdAttribute attribute = usdMesh.GetPrim().GetAttribute(_descriptor.GetName());

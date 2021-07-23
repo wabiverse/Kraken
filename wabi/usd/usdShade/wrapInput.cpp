@@ -44,55 +44,55 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static bool _Set(const UsdShadeInput &self, object val, const UsdTimeCode &time)
-{
-  return self.Set(UsdPythonToSdfType(val, self.GetTypeName()), time);
-}
-
-static TfPyObjWrapper _Get(const UsdShadeInput &self, UsdTimeCode time)
-{
-  VtValue val;
-  self.Get(&val, time);
-  return UsdVtValueToPython(val);
-}
-
-static object _GetConnectedSources(const UsdShadeInput &self)
-{
-  SdfPathVector invalidSourcePaths;
-  UsdShadeInput::SourceInfoVector sources = self.GetConnectedSources(&invalidSourcePaths);
-  return boost::python::make_tuple(std::vector<UsdShadeConnectionSourceInfo>(sources.begin(), sources.end()),
-                                   invalidSourcePaths);
-}
-
-static object _GetConnectedSource(const UsdShadeInput &self)
-{
-  UsdShadeConnectableAPI source;
-  TfToken sourceName;
-  UsdShadeAttributeType sourceType;
-
-  if (self.GetConnectedSource(&source, &sourceName, &sourceType))
+  static bool _Set(const UsdShadeInput &self, object val, const UsdTimeCode &time)
   {
-    return boost::python::make_tuple(source, sourceName, sourceType);
+    return self.Set(UsdPythonToSdfType(val, self.GetTypeName()), time);
   }
-  else
+
+  static TfPyObjWrapper _Get(const UsdShadeInput &self, UsdTimeCode time)
   {
-    return object();
+    VtValue val;
+    self.Get(&val, time);
+    return UsdVtValueToPython(val);
   }
-}
 
-static SdfPathVector _GetRawConnectedSourcePaths(const UsdShadeInput &self)
-{
-  SdfPathVector sourcePaths;
-  self.GetRawConnectedSourcePaths(&sourcePaths);
-  return sourcePaths;
-}
+  static object _GetConnectedSources(const UsdShadeInput &self)
+  {
+    SdfPathVector invalidSourcePaths;
+    UsdShadeInput::SourceInfoVector sources = self.GetConnectedSources(&invalidSourcePaths);
+    return boost::python::make_tuple(
+      std::vector<UsdShadeConnectionSourceInfo>(sources.begin(), sources.end()),
+      invalidSourcePaths);
+  }
 
-static object _GetValueProducingAttribute(const UsdShadeInput &self)
-{
-  UsdShadeAttributeType attrType;
-  UsdAttribute attr = self.GetValueProducingAttribute(&attrType);
-  return boost::python::make_tuple(attr, attrType);
-}
+  static object _GetConnectedSource(const UsdShadeInput &self)
+  {
+    UsdShadeConnectableAPI source;
+    TfToken sourceName;
+    UsdShadeAttributeType sourceType;
+
+    if (self.GetConnectedSource(&source, &sourceName, &sourceType))
+    {
+      return boost::python::make_tuple(source, sourceName, sourceType);
+    } else
+    {
+      return object();
+    }
+  }
+
+  static SdfPathVector _GetRawConnectedSourcePaths(const UsdShadeInput &self)
+  {
+    SdfPathVector sourcePaths;
+    self.GetRawConnectedSourcePaths(&sourcePaths);
+    return sourcePaths;
+  }
+
+  static object _GetValueProducingAttribute(const UsdShadeInput &self)
+  {
+    UsdShadeAttributeType attrType;
+    UsdAttribute attr = self.GetValueProducingAttribute(&attrType);
+    return boost::python::make_tuple(attr, attrType);
+  }
 
 }  // anonymous namespace
 
@@ -100,9 +100,10 @@ void wrapUsdShadeInput()
 {
   typedef UsdShadeInput Input;
 
-  bool (Input::*ConnectToSource_1)(
-    UsdShadeConnectableAPI const &, TfToken const &, UsdShadeAttributeType const, SdfValueTypeName)
-    const = &Input::ConnectToSource;
+  bool (Input::*ConnectToSource_1)(UsdShadeConnectableAPI const &,
+                                   TfToken const &,
+                                   UsdShadeAttributeType const,
+                                   SdfValueTypeName) const = &Input::ConnectToSource;
 
   bool (Input::*ConnectToSource_2)(SdfPath const &) const = &Input::ConnectToSource;
 
@@ -152,8 +153,9 @@ void wrapUsdShadeInput()
     .def("GetConnectability", &Input::GetConnectability)
     .def("ClearConnectability", &Input::ClearConnectability)
 
-    .def(
-      "GetValueProducingAttributes", &Input::GetValueProducingAttributes, (arg("shaderOutputsOnly") = false))
+    .def("GetValueProducingAttributes",
+         &Input::GetValueProducingAttributes,
+         (arg("shaderOutputsOnly") = false))
     .def("GetValueProducingAttribute", _GetValueProducingAttribute)
 
     .def("GetAttr", &Input::GetAttr, return_value_policy<return_by_value>())
@@ -177,8 +179,9 @@ void wrapUsdShadeInput()
 
     .def("GetConnectedSources", _GetConnectedSources)
     .def("GetConnectedSource", _GetConnectedSource)
-    .def(
-      "GetRawConnectedSourcePaths", _GetRawConnectedSourcePaths, return_value_policy<TfPySequenceToList>())
+    .def("GetRawConnectedSourcePaths",
+         _GetRawConnectedSourcePaths,
+         return_value_policy<TfPySequenceToList>())
     .def("HasConnectedSource", &Input::HasConnectedSource)
     .def("IsSourceConnectionFromBaseMaterial", &Input::IsSourceConnectionFromBaseMaterial)
     .def("DisconnectSource", &Input::DisconnectSource, (arg("sourceAttr") = UsdAttribute()))

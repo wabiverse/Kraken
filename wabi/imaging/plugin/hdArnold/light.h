@@ -44,59 +44,59 @@ WABI_NAMESPACE_BEGIN
 namespace HdArnoldLight
 {
 
-/// Returns an instance of HdArnoldLight for handling point lights.
-///
-/// @param renderDelegate Pointer to the Render Delegate.
-/// @param id Path to the Hydra Primitive.
-/// @return Instance of HdArnoldLight.
-HDARNOLD_API
-HdLight *CreatePointLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
+  /// Returns an instance of HdArnoldLight for handling point lights.
+  ///
+  /// @param renderDelegate Pointer to the Render Delegate.
+  /// @param id Path to the Hydra Primitive.
+  /// @return Instance of HdArnoldLight.
+  HDARNOLD_API
+  HdLight *CreatePointLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
 
-/// Returns an instance of HdArnoldLight for handling distant lights.
-///
-/// @param renderDelegate Pointer to the Render Delegate.
-/// @param id Path to the Hydra Primitive.
-/// @return Instance of HdArnoldLight.
-HDARNOLD_API
-HdLight *CreateDistantLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
+  /// Returns an instance of HdArnoldLight for handling distant lights.
+  ///
+  /// @param renderDelegate Pointer to the Render Delegate.
+  /// @param id Path to the Hydra Primitive.
+  /// @return Instance of HdArnoldLight.
+  HDARNOLD_API
+  HdLight *CreateDistantLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
 
-/// Returns an instance of HdArnoldLight for handling disk lights.
-///
-/// @param renderDelegate Pointer to the Render Delegate.
-/// @param id Path to the Hydra Primitive.
-/// @return Instance of HdArnoldLight.
-HDARNOLD_API
-HdLight *CreateDiskLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
+  /// Returns an instance of HdArnoldLight for handling disk lights.
+  ///
+  /// @param renderDelegate Pointer to the Render Delegate.
+  /// @param id Path to the Hydra Primitive.
+  /// @return Instance of HdArnoldLight.
+  HDARNOLD_API
+  HdLight *CreateDiskLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
 
-/// Returns an instance of HdArnoldLight for handling rect lights.
-///
-/// @param renderDelegate Pointer to the Render Delegate.
-/// @param id Path to the Hydra Primitive.
-/// @return Instance of HdArnoldLight.
-HDARNOLD_API
-HdLight *CreateRectLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
+  /// Returns an instance of HdArnoldLight for handling rect lights.
+  ///
+  /// @param renderDelegate Pointer to the Render Delegate.
+  /// @param id Path to the Hydra Primitive.
+  /// @return Instance of HdArnoldLight.
+  HDARNOLD_API
+  HdLight *CreateRectLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
 
-/// Returns an instance of HdArnoldLight for handling cylinder lights.
-///
-/// @param renderDelegate Pointer to the Render Delegate.
-/// @param id Path to the Hydra Primitive.
-/// @return Instance of HdArnoldLight.
-HDARNOLD_API
-HdLight *CreateCylinderLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
+  /// Returns an instance of HdArnoldLight for handling cylinder lights.
+  ///
+  /// @param renderDelegate Pointer to the Render Delegate.
+  /// @param id Path to the Hydra Primitive.
+  /// @return Instance of HdArnoldLight.
+  HDARNOLD_API
+  HdLight *CreateCylinderLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
 
-/// Returns an instance of HdArnoldLight for handling dome lights.
-///
-/// @param renderDelegate Pointer to the Render Delegate.
-/// @param id Path to the Hydra Primitive.
-/// @return Instance of HdArnoldLight.
-HDARNOLD_API
-HdLight *CreateDomeLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
+  /// Returns an instance of HdArnoldLight for handling dome lights.
+  ///
+  /// @param renderDelegate Pointer to the Render Delegate.
+  /// @param id Path to the Hydra Primitive.
+  /// @return Instance of HdArnoldLight.
+  HDARNOLD_API
+  HdLight *CreateDomeLight(HdArnoldRenderDelegate *renderDelegate, const SdfPath &id);
 
-/// Returns the Arnold light node for any HdLight.
-///
-/// @param light Pointer to the HdLight.
-/// @return Pointer to the Arnold Light, can be nullptr.
-AtNode *GetLightNode(const HdLight *light);
+  /// Returns the Arnold light node for any HdLight.
+  ///
+  /// @param light Pointer to the HdLight.
+  /// @return Pointer to the Arnold Light, can be nullptr.
+  AtNode *GetLightNode(const HdLight *light);
 
 }  // namespace HdArnoldLight
 

@@ -35,20 +35,20 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _GetFileString(TfCallContext const &cc)
-{
-  return string(cc.GetFile());
-}
+  static string _GetFileString(TfCallContext const &cc)
+  {
+    return string(cc.GetFile());
+  }
 
-static string _GetFunctionString(TfCallContext const &cc)
-{
-  return string(cc.GetFunction());
-}
+  static string _GetFunctionString(TfCallContext const &cc)
+  {
+    return string(cc.GetFunction());
+  }
 
-static string _GetPrettyFunctionString(TfCallContext const &cc)
-{
-  return string(cc.GetPrettyFunction());
-}
+  static string _GetPrettyFunctionString(TfCallContext const &cc)
+  {
+    return string(cc.GetPrettyFunction());
+  }
 
 }  // anonymous namespace
 

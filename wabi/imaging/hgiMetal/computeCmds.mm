@@ -106,8 +106,7 @@ void HgiMetalComputeCmds::Dispatch(int dimX, int dimY)
   {
     thread_width = (maxTotalThreads / exeWidth) * exeWidth;
     thread_height = 1;
-  }
-  else
+  } else
   {
     thread_width = exeWidth;
     thread_height = maxTotalThreads / exeWidth;
@@ -158,8 +157,7 @@ bool HgiMetalComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
     if (_secondaryCommandBuffer)
     {
       _hgi->CommitSecondaryCommandBuffer(_commandBuffer, waitType);
-    }
-    else
+    } else
     {
       _hgi->CommitPrimaryCommandBuffer(waitType);
     }

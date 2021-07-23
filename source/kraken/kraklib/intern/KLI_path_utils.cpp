@@ -247,8 +247,7 @@ size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *pat
           break;
         }
       }
-    }
-    else
+    } else
     {
       has_trailing_slash = (path_init != path);
     }
@@ -388,8 +387,7 @@ void KLI_split_dirfile(const char *string, char *dir, char *file, const size_t d
     {
       /* +1 to include the slash and the last char */
       KLI_strncpy(dir, string, MIN2(dirlen, lslash + 1));
-    }
-    else
+    } else
     {
       dir[0] = '\0';
     }
@@ -475,8 +473,7 @@ bool KLI_path_abs(char *path, const char *basepath)
       p++;
     }
     strcat(tmp, p);
-  }
-  else
+  } else
   {
     KLI_strncpy(tmp, path, FILE_MAX);
   }
@@ -532,14 +529,12 @@ bool KLI_path_abs(char *path, const char *basepath)
       memcpy(tmp, base, baselen);                              /* prefix with base up to last "/" */
       KLI_strncpy(tmp + baselen, path, sizeof(tmp) - baselen); /* append path after "//" */
       KLI_strncpy(path, tmp, FILE_MAX);                        /* return as result */
-    }
-    else
+    } else
     {
       /* base doesn't seem to be a directory--ignore it and just strip "//" prefix on path */
       KLI_strncpy(path, tmp + 2, FILE_MAX);
     }
-  }
-  else
+  } else
   {
     /* base ignored */
     KLI_strncpy(path, tmp, FILE_MAX);
@@ -576,8 +571,7 @@ void KLI_path_normalize(const char *relabase, char *path)
   if (relabase)
   {
     KLI_path_abs(path, relabase);
-  }
-  else
+  } else
   {
     if (path[0] == '/' && path[1] == '/')
     {
@@ -613,8 +607,7 @@ void KLI_path_normalize(const char *relabase, char *path)
     if (a < 0)
     {
       break;
-    }
-    else
+    } else
     {
       memmove(path + a, eind, strlen(eind) + 1);
     }
@@ -646,8 +639,7 @@ void KLI_path_normalize(const char *relabase, char *path)
         a--;
       }
       memmove(path + a, eind, strlen(eind) + 1);
-    }
-    else
+    } else
     {
       /* support for odd paths: eg /../home/me --> /home/me
        * this is a valid path in blender but we can't handle this the usual way below
@@ -743,8 +735,7 @@ bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *na
         memcpy(filename, path, temp - path);
         filename[temp - path] = 0;
         path = temp + 1;
-      }
-      else
+      } else
       {
         KLI_strncpy(filename, path, sizeof(filename));
       }
@@ -829,8 +820,7 @@ void KLI_path_slash_rstrip(char *string)
     {
       string[len - 1] = '\0';
       len--;
-    }
-    else
+    } else
     {
       break;
     }
@@ -886,8 +876,7 @@ bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen)
         }
       } while ((ext = ext_next));
     }
-  }
-  else
+  } else
   {
     retval = true;
   }

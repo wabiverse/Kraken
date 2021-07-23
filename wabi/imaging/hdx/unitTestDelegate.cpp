@@ -80,36 +80,36 @@ static void _CreateGrid(int nx, int ny, VtVec3fArray *points, VtIntArray *numVer
 
 namespace
 {
-class ShadowMatrix : public HdxShadowMatrixComputation
-{
- public:
-  ShadowMatrix(GlfSimpleLight const &light)
+  class ShadowMatrix : public HdxShadowMatrixComputation
   {
-    GfFrustum frustum;
-    frustum.SetProjectionType(GfFrustum::Orthographic);
-    frustum.SetWindow(GfRange2d(GfVec2d(-10, -10), GfVec2d(10, 10)));
-    frustum.SetNearFar(GfRange1d(0, 100));
-    const GfVec4d pos = light.GetPosition();
-    frustum.SetPosition(GfVec3d(0, 0, 10));
-    frustum.SetRotation(GfRotation(GfVec3d(0, 0, 1), GfVec3d(pos[0], pos[1], pos[2])));
+   public:
+    ShadowMatrix(GlfSimpleLight const &light)
+    {
+      GfFrustum frustum;
+      frustum.SetProjectionType(GfFrustum::Orthographic);
+      frustum.SetWindow(GfRange2d(GfVec2d(-10, -10), GfVec2d(10, 10)));
+      frustum.SetNearFar(GfRange1d(0, 100));
+      const GfVec4d pos = light.GetPosition();
+      frustum.SetPosition(GfVec3d(0, 0, 10));
+      frustum.SetRotation(GfRotation(GfVec3d(0, 0, 1), GfVec3d(pos[0], pos[1], pos[2])));
 
-    _shadowMatrix = frustum.ComputeViewMatrix() * frustum.ComputeProjectionMatrix();
-  }
+      _shadowMatrix = frustum.ComputeViewMatrix() * frustum.ComputeProjectionMatrix();
+    }
 
-  std::vector<GfMatrix4d> Compute(const GfVec4f &viewport, CameraUtilConformWindowPolicy policy) override
-  {
-    return {_shadowMatrix};
-  }
+    std::vector<GfMatrix4d> Compute(const GfVec4f &viewport, CameraUtilConformWindowPolicy policy) override
+    {
+      return {_shadowMatrix};
+    }
 
-  std::vector<GfMatrix4d> Compute(const CameraUtilFraming &framing,
-                                  CameraUtilConformWindowPolicy policy) override
-  {
-    return {_shadowMatrix};
-  }
+    std::vector<GfMatrix4d> Compute(const CameraUtilFraming &framing,
+                                    CameraUtilConformWindowPolicy policy) override
+    {
+      return {_shadowMatrix};
+    }
 
- private:
-  GfMatrix4d _shadowMatrix;
-};
+   private:
+    GfMatrix4d _shadowMatrix;
+  };
 
 }  // namespace
 
@@ -202,12 +202,10 @@ void Hdx_UnitTestDelegate::SetLight(SdfPath const &id, TfToken const &key, VtVal
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id,
                                                        HdLight::DirtyParams | HdLight::DirtyShadowParams);
     cache[HdLightTokens->shadowParams] = shadowParams;
-  }
-  else if (key == HdTokens->transform)
+  } else if (key == HdTokens->transform)
   {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdLight::DirtyTransform);
-  }
-  else if (key == HdLightTokens->shadowCollection)
+  } else if (key == HdLightTokens->shadowCollection)
   {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdLight::DirtyCollection);
   }
@@ -284,24 +282,19 @@ void Hdx_UnitTestDelegate::SetDrawTarget(SdfPath const &id, TfToken const &key, 
   if (key == HdPhDrawTargetTokens->enable)
   {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdPhDrawTarget::DirtyDTEnable);
-  }
-  else if (key == HdPhDrawTargetTokens->camera)
+  } else if (key == HdPhDrawTargetTokens->camera)
   {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdPhDrawTarget::DirtyDTCamera);
-  }
-  else if (key == HdPhDrawTargetTokens->resolution)
+  } else if (key == HdPhDrawTargetTokens->resolution)
   {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdPhDrawTarget::DirtyDTResolution);
-  }
-  else if (key == HdPhDrawTargetTokens->aovBindings)
+  } else if (key == HdPhDrawTargetTokens->aovBindings)
   {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdPhDrawTarget::DirtyDTAovBindings);
-  }
-  else if (key == HdPhDrawTargetTokens->depthPriority)
+  } else if (key == HdPhDrawTargetTokens->depthPriority)
   {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdPhDrawTarget::DirtyDTDepthPriority);
-  }
-  else if (key == HdPhDrawTargetTokens->collection)
+  } else if (key == HdPhDrawTargetTokens->collection)
   {
     GetRenderIndex().GetChangeTracker().MarkSprimDirty(id, HdPhDrawTarget::DirtyDTCollection);
   }
@@ -385,8 +378,7 @@ void Hdx_UnitTestDelegate::SetTaskParam(SdfPath const &id, TfToken const &name, 
   if (name == HdTokens->collection)
   {
     GetRenderIndex().GetChangeTracker().MarkTaskDirty(id, HdChangeTracker::DirtyCollection);
-  }
-  else if (name == HdTokens->params)
+  } else if (name == HdTokens->params)
   {
     GetRenderIndex().GetChangeTracker().MarkTaskDirty(id, HdChangeTracker::DirtyParams);
   }
@@ -588,8 +580,7 @@ void Hdx_UnitTestDelegate::AddCube(SdfPath const &id,
             guide,
             instancerId,
             scheme);
-  }
-  else
+  } else
   {
     int numVerts[] = {4, 4, 4, 4, 4, 4};
     int verts[] = {
@@ -744,8 +735,10 @@ HdMeshTopology Hdx_UnitTestDelegate::GetMeshTopology(SdfPath const &id)
   HdMeshTopology topology;
   const _Mesh &mesh = _meshes[id];
 
-  return HdMeshTopology(
-    PxOsdOpenSubdivTokens->catmullClark, HdTokens->rightHanded, mesh.numVerts, mesh.verts);
+  return HdMeshTopology(PxOsdOpenSubdivTokens->catmullClark,
+                        HdTokens->rightHanded,
+                        mesh.numVerts,
+                        mesh.verts);
 }
 
 VtValue Hdx_UnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
@@ -765,36 +758,31 @@ VtValue Hdx_UnitTestDelegate::Get(SdfPath const &id, TfToken const &key)
     {
       return VtValue(_meshes[id].points);
     }
-  }
-  else if (key == HdTokens->displayColor)
+  } else if (key == HdTokens->displayColor)
   {
     if (_meshes.find(id) != _meshes.end())
     {
       return VtValue(_meshes[id].color);
     }
-  }
-  else if (key == HdTokens->displayOpacity)
+  } else if (key == HdTokens->displayOpacity)
   {
     if (_meshes.find(id) != _meshes.end())
     {
       return VtValue(_meshes[id].opacity);
     }
-  }
-  else if (key == HdInstancerTokens->scale)
+  } else if (key == HdInstancerTokens->scale)
   {
     if (_instancers.find(id) != _instancers.end())
     {
       return VtValue(_instancers[id].scale);
     }
-  }
-  else if (key == HdInstancerTokens->rotate)
+  } else if (key == HdInstancerTokens->rotate)
   {
     if (_instancers.find(id) != _instancers.end())
     {
       return VtValue(_instancers[id].rotate);
     }
-  }
-  else if (key == HdInstancerTokens->translate)
+  } else if (key == HdInstancerTokens->translate)
   {
     if (_instancers.find(id) != _instancers.end())
     {

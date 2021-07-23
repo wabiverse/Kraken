@@ -83,8 +83,9 @@ HioImageSharedPtr HioImageRegistry::_ConstructImage(std::string const &filename)
   {
     // Unknown prim type.
     TF_DEBUG(HIO_DEBUG_TEXTURE_IMAGE_PLUGINS)
-      .Msg(
-        "[PluginLoad] Unknown image type '%s' for file '%s'\n", fileExtension.GetText(), filename.c_str());
+      .Msg("[PluginLoad] Unknown image type '%s' for file '%s'\n",
+           fileExtension.GetText(),
+           filename.c_str());
     return NULL_IMAGE;
   }
 

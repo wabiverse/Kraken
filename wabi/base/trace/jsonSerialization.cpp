@@ -123,28 +123,22 @@ static TraceEvent::EventType _EventTypeFromString(const std::string &s)
   if (s == "Begin")
   {
     return TraceEvent::EventType::Begin;
-  }
-  else if (s == "End")
+  } else if (s == "End")
   {
     return TraceEvent::EventType::End;
-  }
-  else if (s == "CounterDelta")
+  } else if (s == "CounterDelta")
   {
     return TraceEvent::EventType::CounterDelta;
-  }
-  else if (s == "CounterValue")
+  } else if (s == "CounterValue")
   {
     return TraceEvent::EventType::CounterValue;
-  }
-  else if (s == "Timespan")
+  } else if (s == "Timespan")
   {
     return TraceEvent::EventType::Timespan;
-  }
-  else if (s == "Data")
+  } else if (s == "Data")
   {
     return TraceEvent::EventType::ScopeData;
-  }
-  else if (s == "Mark")
+  } else if (s == "Mark")
   {
     return TraceEvent::EventType::Marker;
   }
@@ -283,8 +277,11 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
         boost::optional<TraceEvent::TimeStamp> end = _JsGetValue<TraceEvent::TimeStamp>(js, "end");
         if (start && end)
         {
-          unorderedEvents.emplace_back(
-            TraceEvent::Timespan, list.CacheKey(*keyStr), *start, *end, *category);
+          unorderedEvents.emplace_back(TraceEvent::Timespan,
+                                       list.CacheKey(*keyStr),
+                                       *start,
+                                       *end,
+                                       *category);
         }
       }
       break;
@@ -321,32 +318,34 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
-            }
-            else if (dataValue->Is<double>())
+            } else if (dataValue->Is<double>())
             {
-              TraceEvent event(
-                TraceEvent::Data, list.CacheKey(*keyStr), dataValue->Get<double>(), *category);
+              TraceEvent event(TraceEvent::Data,
+                               list.CacheKey(*keyStr),
+                               dataValue->Get<double>(),
+                               *category);
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
-            }
-            else if (dataValue->Is<uint64_t>())
+            } else if (dataValue->Is<uint64_t>())
             {
-              TraceEvent event(
-                TraceEvent::Data, list.CacheKey(*keyStr), dataValue->Get<uint64_t>(), *category);
+              TraceEvent event(TraceEvent::Data,
+                               list.CacheKey(*keyStr),
+                               dataValue->Get<uint64_t>(),
+                               *category);
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
-            }
-            else if (dataValue->Is<int64_t>())
+            } else if (dataValue->Is<int64_t>())
             {
-              TraceEvent event(
-                TraceEvent::Data, list.CacheKey(*keyStr), dataValue->Get<int64_t>(), *category);
+              TraceEvent event(TraceEvent::Data,
+                               list.CacheKey(*keyStr),
+                               dataValue->Get<int64_t>(),
+                               *category);
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
-            }
-            else if (dataValue->Is<std::string>())
+            } else if (dataValue->Is<std::string>())
             {
               TraceEvent event(TraceEvent::Data,
                                list.CacheKey(*keyStr),
@@ -366,64 +365,64 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
 namespace
 {
 
-// This class writes a JSON array of JSON objects per thread in the collection
-// which has Counter events and Data events. This data is need in addition to
-// the Chrome Format JSON to fully reconstruct a TraceCollection.
-class _WriteCollectionEventsToJson : public TraceCollection::Visitor
-{
- public:
-  void CreateThreadsObject(JsWriter &js) const
+  // This class writes a JSON array of JSON objects per thread in the collection
+  // which has Counter events and Data events. This data is need in addition to
+  // the Chrome Format JSON to fully reconstruct a TraceCollection.
+  class _WriteCollectionEventsToJson : public TraceCollection::Visitor
   {
-    JsArray threads;
-    js.WriteArray(_eventsPerThread, [](JsWriter &js, ThreadToEventMap::const_reference p) {
-      js.WriteObject("thread", p.first, "events", [&p](JsWriter &js) {
-        js.WriteArray(p.second, [](JsWriter &js, const EventPair &e) {
-          _WriteTraceEventToJSON(js, e.first, *e.second);
+   public:
+    void CreateThreadsObject(JsWriter &js) const
+    {
+      JsArray threads;
+      js.WriteArray(_eventsPerThread, [](JsWriter &js, ThreadToEventMap::const_reference p) {
+        js.WriteObject("thread", p.first, "events", [&p](JsWriter &js) {
+          js.WriteArray(p.second, [](JsWriter &js, const EventPair &e) {
+            _WriteTraceEventToJSON(js, e.first, *e.second);
+          });
         });
       });
-    });
-  }
-
-  virtual bool AcceptsCategory(TraceCategoryId categoryId) override
-  {
-    return true;
-  }
-
-  virtual void OnEvent(const TraceThreadId &threadId, const TfToken &key, const TraceEvent &event) override
-  {
-
-    // Only convert Counter and Data events. The other types will be in the
-    // chrome format.
-    switch (event.GetType())
-    {
-      case TraceEvent::EventType::ScopeData:
-      case TraceEvent::EventType::CounterDelta:
-      case TraceEvent::EventType::CounterValue:
-        _eventsPerThread[threadId.ToString()].emplace_back(key, &event);
-        break;
-      case TraceEvent::EventType::Begin:
-      case TraceEvent::EventType::End:
-      case TraceEvent::EventType::Timespan:
-      case TraceEvent::EventType::Marker:
-      case TraceEvent::EventType::Unknown:
-        break;
     }
-  }
 
-  virtual void OnBeginCollection() override
-  {}
-  virtual void OnEndCollection() override
-  {}
-  virtual void OnBeginThread(const TraceThreadId &threadId) override
-  {}
-  virtual void OnEndThread(const TraceThreadId &threadId) override
-  {}
+    virtual bool AcceptsCategory(TraceCategoryId categoryId) override
+    {
+      return true;
+    }
 
- private:
-  using EventPair = std::pair<TfToken, const TraceEvent *>;
-  using ThreadToEventMap = std::map<std::string, std::vector<EventPair>>;
-  ThreadToEventMap _eventsPerThread;
-};
+    virtual void OnEvent(const TraceThreadId &threadId, const TfToken &key, const TraceEvent &event) override
+    {
+
+      // Only convert Counter and Data events. The other types will be in the
+      // chrome format.
+      switch (event.GetType())
+      {
+        case TraceEvent::EventType::ScopeData:
+        case TraceEvent::EventType::CounterDelta:
+        case TraceEvent::EventType::CounterValue:
+          _eventsPerThread[threadId.ToString()].emplace_back(key, &event);
+          break;
+        case TraceEvent::EventType::Begin:
+        case TraceEvent::EventType::End:
+        case TraceEvent::EventType::Timespan:
+        case TraceEvent::EventType::Marker:
+        case TraceEvent::EventType::Unknown:
+          break;
+      }
+    }
+
+    virtual void OnBeginCollection() override
+    {}
+    virtual void OnEndCollection() override
+    {}
+    virtual void OnBeginThread(const TraceThreadId &threadId) override
+    {}
+    virtual void OnEndThread(const TraceThreadId &threadId) override
+    {}
+
+   private:
+    using EventPair = std::pair<TfToken, const TraceEvent *>;
+    using ThreadToEventMap = std::map<std::string, std::vector<EventPair>>;
+    ThreadToEventMap _eventsPerThread;
+  };
 
 }  // namespace
 
@@ -515,21 +514,22 @@ static void _ImportChromeEvents(const JsArray &traceEvents, ChromeConstructionMa
         if (*ph == "B")
         {
           TraceKey key = output[*tid].eventList.CacheKey(*name);
-          output[*tid].unorderedEvents.emplace_back(
-            TraceEvent::Begin, key, _MicrosecondsToTicks(*ts), *catId);
-        }
-        else if (*ph == "E")
+          output[*tid].unorderedEvents.emplace_back(TraceEvent::Begin,
+                                                    key,
+                                                    _MicrosecondsToTicks(*ts),
+                                                    *catId);
+        } else if (*ph == "E")
         {
           TraceKey key = output[*tid].eventList.CacheKey(*name);
           output[*tid].unorderedEvents.emplace_back(TraceEvent::End, key, _MicrosecondsToTicks(*ts), *catId);
-        }
-        else if (*ph == "R" || *ph == "I" || *ph == "i")
+        } else if (*ph == "R" || *ph == "I" || *ph == "i")
         {
           TraceKey key = output[*tid].eventList.CacheKey(*name);
-          output[*tid].unorderedEvents.emplace_back(
-            TraceEvent::Marker, key, _MicrosecondsToTicks(*ts), *catId);
-        }
-        else if (*ph == "X")
+          output[*tid].unorderedEvents.emplace_back(TraceEvent::Marker,
+                                                    key,
+                                                    _MicrosecondsToTicks(*ts),
+                                                    *catId);
+        } else if (*ph == "X")
         {
           // dur field might be a double or an int.
           boost::optional<double> dur = _JsGetValue<double>(*eventObj, "dur");
@@ -598,8 +598,7 @@ std::unique_ptr<TraceCollection> Trace_JSONSerialization::CollectionFromJSON(con
   if (traceObj)
   {
     chromeEvents = _JsGetValue<JsArray>(*traceObj, "traceEvents");
-  }
-  else
+  } else
   {
     chromeEvents = _JsGet<JsArray>(jsValue);
   }

@@ -57,8 +57,10 @@ HdBufferArraySharedPtr HdPhVBOMemoryManager::CreateBufferArray(TfToken const &ro
                                                                HdBufferSpecVector const &bufferSpecs,
                                                                HdBufferArrayUsageHint usageHint)
 {
-  return std::make_shared<HdPhVBOMemoryManager::_StripedBufferArray>(
-    _resourceRegistry, role, bufferSpecs, usageHint);
+  return std::make_shared<HdPhVBOMemoryManager::_StripedBufferArray>(_resourceRegistry,
+                                                                     role,
+                                                                     bufferSpecs,
+                                                                     usageHint);
 }
 
 HdBufferArrayRangeSharedPtr HdPhVBOMemoryManager::CreateBufferArrayRange()
@@ -117,8 +119,7 @@ size_t HdPhVBOMemoryManager::GetResourceAllocation(HdBufferArraySharedPtr const 
       {
         size_t currentSize = result[role].Get<size_t>();
         result[role] = VtValue(currentSize + size);
-      }
-      else
+      } else
       {
         result[role] = VtValue(size);
       }
@@ -209,8 +210,10 @@ HdPhBufferResourceSharedPtr HdPhVBOMemoryManager::_StripedBufferArray::_AddResou
     }
   }
 
-  HdPhBufferResourceSharedPtr bufferRes = std::make_shared<HdPhBufferResource>(
-    GetRole(), tupleType, offset, stride);
+  HdPhBufferResourceSharedPtr bufferRes = std::make_shared<HdPhBufferResource>(GetRole(),
+                                                                               tupleType,
+                                                                               offset,
+                                                                               stride);
   _resourceList.emplace_back(name, bufferRes);
   return bufferRes;
 }
@@ -653,8 +656,10 @@ void HdPhVBOMemoryManager::_StripedBufferArrayRange::CopyData(HdBufferSourceShar
   size_t srcSize = bufferSource->GetNumElements() * HdDataSizeOfTupleType(bufferSource->GetTupleType());
   if (srcSize > dstSize)
   {
-    TF_WARN(
-      "%s: size %ld is larger than the range (%ld)", bufferSource->GetName().GetText(), srcSize, dstSize);
+    TF_WARN("%s: size %ld is larger than the range (%ld)",
+            bufferSource->GetName().GetText(),
+            srcSize,
+            dstSize);
     srcSize = dstSize;
   }
   size_t vboOffset = bytesPerElement * _elementOffset;

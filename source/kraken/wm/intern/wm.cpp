@@ -93,7 +93,9 @@ void wm_add_default(Main *kmain, kContext *C)
 
   if (!workspace)
   {
-    workspace = new WorkSpace(C, SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(SdfPath("Layout")));
+    workspace = new WorkSpace(
+      C,
+      SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(SdfPath("Layout")));
 
     if (!layout)
     {
@@ -213,7 +215,6 @@ void WM_check(kContext *C)
 
 /* wait until every job ended */
 void WM_jobs_kill_all(wmWindowManager *wm)
-{
-}
+{}
 
 WABI_NAMESPACE_END

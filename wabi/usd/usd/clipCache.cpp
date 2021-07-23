@@ -134,8 +134,7 @@ static Usd_ClipSetRefPtr _CreateClipSetFromDefinition(const SdfPath &usdPrimPath
     if (!clipSet)
     {
       TF_WARN("Invalid clips specified for prim <%s>: %s", usdPrimPath.GetString().c_str(), status.c_str());
-    }
-    else
+    } else
     {
       TF_DEBUG(USD_CLIPS).Msg("%s (on prim <%s>)\n", status.c_str(), usdPrimPath.GetText());
     }
@@ -330,8 +329,7 @@ void Usd_ClipCache::Reload()
       {
         SdfLayerRefPtr newManifest = Usd_GenerateClipManifest(clipSet->valueClips, clipSet->clipPrimPath);
         manifestLayer->TransferContent(newManifest);
-      }
-      else
+      } else
       {
         manifestLayer->Reload();
       }

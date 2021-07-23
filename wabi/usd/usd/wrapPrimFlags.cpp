@@ -97,24 +97,24 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// Hash implementations.
-size_t __hash__Term(const Usd_Term &t)
-{
-  size_t h = static_cast<size_t>(t.flag);
-  boost::hash_combine(h, t.negated);
-  return h;
-}
+  // Hash implementations.
+  size_t __hash__Term(const Usd_Term &t)
+  {
+    size_t h = static_cast<size_t>(t.flag);
+    boost::hash_combine(h, t.negated);
+    return h;
+  }
 
-size_t __hash__Predicate(const Usd_PrimFlagsPredicate &p)
-{
-  return hash_value(p);
-}
+  size_t __hash__Predicate(const Usd_PrimFlagsPredicate &p)
+  {
+    return hash_value(p);
+  }
 
-// Call implementations.
-bool __call__Predicate(const Usd_PrimFlagsPredicate &p, const UsdPrim &prim)
-{
-  return p(prim);
-}
+  // Call implementations.
+  bool __call__Predicate(const Usd_PrimFlagsPredicate &p, const UsdPrim &prim)
+  {
+    return p(prim);
+  }
 
 }  // anonymous namespace
 

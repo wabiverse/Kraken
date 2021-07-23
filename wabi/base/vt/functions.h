@@ -221,57 +221,54 @@ bool VtAllTrue(VtArray<T> const &a)
 //    The scalar is compared to all the elements in the array.
 // *) array and scalar:
 //    The same as scalar and array.
-#    define VTFUNCTION_BOOL(funcname, op) \
-      template<typename T> \
-      VtArray<bool> funcname(T const &scalar, VtArray<T> const &vec) \
-      { \
-        VtArray<bool> ret(vec.size()); \
-        for (size_t i = 0, n = vec.size(); i != n; ++i) \
-        { \
-          ret[i] = (scalar op vec[i]); \
-        } \
-        return ret; \
-      } \
-      template<typename T> \
-      VtArray<bool> funcname(VtArray<T> const &vec, T const &scalar) \
-      { \
-        VtArray<bool> ret(vec.size()); \
-        for (size_t i = 0, n = vec.size(); i != n; ++i) \
-        { \
-          ret[i] = (vec[i] op scalar); \
-        } \
-        return ret; \
-      } \
-      template<typename T> \
+#    define VTFUNCTION_BOOL(funcname, op)                              \
+      template<typename T>                                             \
+      VtArray<bool> funcname(T const &scalar, VtArray<T> const &vec)   \
+      {                                                                \
+        VtArray<bool> ret(vec.size());                                 \
+        for (size_t i = 0, n = vec.size(); i != n; ++i)                \
+        {                                                              \
+          ret[i] = (scalar op vec[i]);                                 \
+        }                                                              \
+        return ret;                                                    \
+      }                                                                \
+      template<typename T>                                             \
+      VtArray<bool> funcname(VtArray<T> const &vec, T const &scalar)   \
+      {                                                                \
+        VtArray<bool> ret(vec.size());                                 \
+        for (size_t i = 0, n = vec.size(); i != n; ++i)                \
+        {                                                              \
+          ret[i] = (vec[i] op scalar);                                 \
+        }                                                              \
+        return ret;                                                    \
+      }                                                                \
+      template<typename T>                                             \
       VtArray<bool> funcname(VtArray<T> const &a, VtArray<T> const &b) \
-      { \
-        if (a.empty() || b.empty()) \
-        { \
-          return VtArray<bool>(); \
-        } \
-\
-        if (a.size() == 1) \
-        { \
-          return funcname(a[0], b); \
-        } \
-        else if (b.size() == 1) \
-        { \
-          return funcname(a, b[0]); \
-        } \
-        else if (a.size() == b.size()) \
-        { \
-          VtArray<bool> ret(a.size()); \
-          for (size_t i = 0, n = a.size(); i != n; ++i) \
-          { \
-            ret[i] = (a[i] op b[i]); \
-          } \
-          return ret; \
-        } \
-        else \
-        { \
-          TF_CODING_ERROR("Non-conforming inputs."); \
-          return VtArray<bool>(); \
-        } \
+      {                                                                \
+        if (a.empty() || b.empty())                                    \
+        {                                                              \
+          return VtArray<bool>();                                      \
+        }                                                              \
+                                                                       \
+        if (a.size() == 1)                                             \
+        {                                                              \
+          return funcname(a[0], b);                                    \
+        } else if (b.size() == 1)                                      \
+        {                                                              \
+          return funcname(a, b[0]);                                    \
+        } else if (a.size() == b.size())                               \
+        {                                                              \
+          VtArray<bool> ret(a.size());                                 \
+          for (size_t i = 0, n = a.size(); i != n; ++i)                \
+          {                                                            \
+            ret[i] = (a[i] op b[i]);                                   \
+          }                                                            \
+          return ret;                                                  \
+        } else                                                         \
+        {                                                              \
+          TF_CODING_ERROR("Non-conforming inputs.");                   \
+          return VtArray<bool>();                                      \
+        }                                                              \
       }
 
 VTFUNCTION_BOOL(VtEqual, ==)
@@ -298,9 +295,9 @@ WABI_NAMESPACE_END
 #  if BOOST_PP_ITERATION_FLAGS() == 0  // VtCat
 
 #    define VtCat_SIZE(dummy, n, dummy2) newSize += s##n.size();
-#    define VtCat_COPY(dummy, n, dummy2) \
+#    define VtCat_COPY(dummy, n, dummy2)       \
       for (size_t i = 0; i < s##n.size(); ++i) \
-        ret[offset + i] = s##n[i]; \
+        ret[offset + i] = s##n[i];             \
       offset += s##n.size();
 
 // real documentation is above (for doxygen purposes)

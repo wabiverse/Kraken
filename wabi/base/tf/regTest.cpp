@@ -127,13 +127,11 @@ int TfRegTest::_Main(int argc, char *argv[])
     }
     TfErrorMark m;
     return _HandleErrors(m, (*_functionTable[testName])());
-  }
-  else if (_functionTableWithArgs.find(testName) != _functionTableWithArgs.end())
+  } else if (_functionTableWithArgs.find(testName) != _functionTableWithArgs.end())
   {
     TfErrorMark m;
     return _HandleErrors(m, (*_functionTableWithArgs[testName])(argc - 1, argv + 1));
-  }
-  else
+  } else
   {
     cerr << progName << ": unknown test function " << testName << ".\n";
     _PrintTestNames();

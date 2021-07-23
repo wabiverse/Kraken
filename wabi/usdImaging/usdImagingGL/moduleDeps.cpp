@@ -43,9 +43,29 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
 {
   // List of direct dependencies for this library.
   const std::vector<TfToken> reqs = {
-    TfToken("ar"), TfToken("garch"), TfToken("gf"), TfToken("glf"), TfToken("hd"), TfToken("hdx"), TfToken("hio"), TfToken("plug"), TfToken("pxOsd"), TfToken("sdf"), TfToken("sdr"), TfToken("tf"), TfToken("trace"), TfToken("usd"), TfToken("usdGeom"), TfToken("usdHydra"), TfToken("usdImaging"), TfToken("usdShade"), TfToken("vt"), TfToken("work")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(
-    TfToken("usdImagingGL"), TfToken("wabi.UsdImagingGL"), reqs);
+    TfToken("ar"),
+    TfToken("garch"),
+    TfToken("gf"),
+    TfToken("glf"),
+    TfToken("hd"),
+    TfToken("hdx"),
+    TfToken("hio"),
+    TfToken("plug"),
+    TfToken("pxOsd"),
+    TfToken("sdf"),
+    TfToken("sdr"),
+    TfToken("tf"),
+    TfToken("trace"),
+    TfToken("usd"),
+    TfToken("usdGeom"),
+    TfToken("usdHydra"),
+    TfToken("usdImaging"),
+    TfToken("usdShade"),
+    TfToken("vt"),
+    TfToken("work")};
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdImagingGL"),
+                                                      TfToken("wabi.UsdImagingGL"),
+                                                      reqs);
 }
 
 WABI_NAMESPACE_END

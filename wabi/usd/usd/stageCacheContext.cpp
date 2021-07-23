@@ -53,12 +53,10 @@ vector<const UsdStageCache *> UsdStageCacheContext::_GetReadOnlyCaches()
     if (ctx->_blockType == UsdBlockStageCaches)
     {
       break;
-    }
-    else if (ctx->_blockType == UsdBlockStageCachePopulation)
+    } else if (ctx->_blockType == UsdBlockStageCachePopulation)
     {
       continue;
-    }
-    else if (ctx->_isReadOnlyCache)
+    } else if (ctx->_isReadOnlyCache)
     {
       caches.push_back(ctx->_roCache);
     }
@@ -78,12 +76,10 @@ vector<const UsdStageCache *> UsdStageCacheContext::_GetReadableCaches()
     if (ctx->_blockType == UsdBlockStageCaches)
     {
       break;
-    }
-    else if (ctx->_blockType == UsdBlockStageCachePopulation)
+    } else if (ctx->_blockType == UsdBlockStageCachePopulation)
     {
       continue;
-    }
-    else
+    } else
     {
       caches.push_back(ctx->_isReadOnlyCache ? ctx->_roCache : ctx->_rwCache);
     }
@@ -103,8 +99,7 @@ std::vector<UsdStageCache *> UsdStageCacheContext::_GetWritableCaches()
     if (ctx->_blockType == UsdBlockStageCaches || ctx->_blockType == UsdBlockStageCachePopulation)
     {
       break;
-    }
-    else if (!ctx->_isReadOnlyCache)
+    } else if (!ctx->_isReadOnlyCache)
     {
       caches.push_back(ctx->_rwCache);
     }

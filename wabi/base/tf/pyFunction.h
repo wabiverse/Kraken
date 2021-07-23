@@ -138,8 +138,7 @@ struct TfPyFunctionFromPython<Ret(Args...)>
     if (src == Py_None)
     {
       new (storage) FuncType();
-    }
-    else
+    } else
     {
 
       // In the case of instance methods, holding a strong reference will
@@ -181,21 +180,18 @@ struct TfPyFunctionFromPython<Ret(Args...)>
             TfPyObjWrapper(cls)
 #endif
         });
-      }
-      else if (PyObject_HasAttrString(pyCallable, "__name__") &&
-               extract<string>(callable.attr("__name__"))() == "<lambda>")
+      } else if (PyObject_HasAttrString(pyCallable, "__name__") &&
+                 extract<string>(callable.attr("__name__"))() == "<lambda>")
       {
         // Explicitly hold on to strong references to lambdas.
         new (storage) FuncType(Call{TfPyObjWrapper(callable)});
-      }
-      else
+      } else
       {
         // Attempt to get a weak reference to the callable.
         if (PyObject *weakCallable = PyWeakref_NewRef(pyCallable, NULL))
         {
           new (storage) FuncType(CallWeak{TfPyObjWrapper(object(handle<>(weakCallable)))});
-        }
-        else
+        } else
         {
           // Fall back to taking a strong reference.
           PyErr_Clear();

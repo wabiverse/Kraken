@@ -154,8 +154,7 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
       if (_passes[shadowId])
       {
         _passes[shadowId]->SetRprimCollection(newColDefault);
-      }
-      else
+      } else
       {
         _passes[shadowId] = std::make_shared<HdPh_RenderPass>(&renderIndex, newColDefault);
       }
@@ -164,8 +163,7 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
       if (_passes[shadowId + numShadowMaps])
       {
         _passes[shadowId + numShadowMaps]->SetRprimCollection(newColMasked);
-      }
-      else
+      } else
       {
         _passes[shadowId + numShadowMaps] = std::make_shared<HdPh_RenderPass>(&renderIndex, newColMasked);
       }

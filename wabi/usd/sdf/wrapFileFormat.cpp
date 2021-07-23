@@ -41,59 +41,59 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// File format factory wrapper.  Python will give us a file format type
-// and we must provide a factory to return instances of it.
-class Sdf_PyFileFormatFactory : public Sdf_FileFormatFactoryBase
-{
- public:
-  typedef std::unique_ptr<Sdf_PyFileFormatFactory> Ptr;
-
-  static Ptr New(const object &classObject)
+  // File format factory wrapper.  Python will give us a file format type
+  // and we must provide a factory to return instances of it.
+  class Sdf_PyFileFormatFactory : public Sdf_FileFormatFactoryBase
   {
-    return Ptr(new Sdf_PyFileFormatFactory(classObject));
-  }
+   public:
+    typedef std::unique_ptr<Sdf_PyFileFormatFactory> Ptr;
 
-  virtual SdfFileFormatRefPtr New() const
+    static Ptr New(const object &classObject)
+    {
+      return Ptr(new Sdf_PyFileFormatFactory(classObject));
+    }
+
+    virtual SdfFileFormatRefPtr New() const
+    {
+      return _factory();
+    }
+
+   private:
+    Sdf_PyFileFormatFactory(const object &classObject)
+      : _factory(classObject)
+    {
+      // Do nothing
+    }
+
+   private:
+    // XXX -- TfPyCall::operator() should be const.
+    mutable TfPyCall<SdfFileFormatRefPtr> _factory;
+  };
+
+  // Helper function for registering a file format from Python.
+  // Shamelessly stolen from Mf/wrapMapper.cpp and Mf/wrapExpression.cpp.
+  void _RegisterFileFormat(object classObject)
   {
-    return _factory();
+    std::string typeName = extract<std::string>(classObject.attr("__name__"));
+
+    TfType fileFormatType = TfType_DefinePythonTypeAndBases(classObject);
+
+    if (fileFormatType.IsUnknown())
+    {
+      // CODE_COVERAGE_OFF - The code above registers this TfType, and
+      // currently never fails.
+      TF_CODING_ERROR("Could not define Python type for %s.", typeName.c_str());
+      return;
+      // CODE_COVERAGE_ON
+    }
+
+    // Set an type alias under MfPrim with the module-less name of the
+    // Python class.
+    fileFormatType.AddAlias(TfType::Find<SdfFileFormat>(), typeName);
+
+    // Register the factory function with the type.
+    fileFormatType.SetFactory(Sdf_PyFileFormatFactory::New(classObject));
   }
-
- private:
-  Sdf_PyFileFormatFactory(const object &classObject)
-    : _factory(classObject)
-  {
-    // Do nothing
-  }
-
- private:
-  // XXX -- TfPyCall::operator() should be const.
-  mutable TfPyCall<SdfFileFormatRefPtr> _factory;
-};
-
-// Helper function for registering a file format from Python.
-// Shamelessly stolen from Mf/wrapMapper.cpp and Mf/wrapExpression.cpp.
-void _RegisterFileFormat(object classObject)
-{
-  std::string typeName = extract<std::string>(classObject.attr("__name__"));
-
-  TfType fileFormatType = TfType_DefinePythonTypeAndBases(classObject);
-
-  if (fileFormatType.IsUnknown())
-  {
-    // CODE_COVERAGE_OFF - The code above registers this TfType, and
-    // currently never fails.
-    TF_CODING_ERROR("Could not define Python type for %s.", typeName.c_str());
-    return;
-    // CODE_COVERAGE_ON
-  }
-
-  // Set an type alias under MfPrim with the module-less name of the
-  // Python class.
-  fileFormatType.AddAlias(TfType::Find<SdfFileFormat>(), typeName);
-
-  // Register the factory function with the type.
-  fileFormatType.SetFactory(Sdf_PyFileFormatFactory::New(classObject));
-}
 
 }  // anonymous namespace
 

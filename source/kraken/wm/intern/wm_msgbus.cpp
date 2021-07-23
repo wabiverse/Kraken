@@ -72,8 +72,7 @@ MsgBusCallback::MsgBusCallback(wmNotifier *notice)
     note(notice)
 {}
 
-void MsgBusCallback::wmCOMM(const TfNotice &notice,
-                            MsgBus const &sender)
+void MsgBusCallback::wmCOMM(const TfNotice &notice, MsgBus const &sender)
 {
   TF_DEBUG(KRAKEN_DEBUG_MSGBUS).Msg("MsgBus\n");
 
@@ -191,8 +190,7 @@ MsgBusCallback::MsgBusCallback(wmOperatorType *ot)
     op({.type = ot})
 {}
 
-void MsgBusCallback::OperatorCOMM(const TfNotice &notice,
-                                  MsgBus const &sender)
+void MsgBusCallback::OperatorCOMM(const TfNotice &notice, MsgBus const &sender)
 {
   TF_DEBUG(KRAKEN_DEBUG_MSGBUS).Msg("MsgBus\n");
   TF_DEBUG(KRAKEN_DEBUG_MSGBUS).Msg("  Type: Operator\n");

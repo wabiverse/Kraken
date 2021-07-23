@@ -49,12 +49,10 @@ static boost::python::object _GetEnvSettingByName(std::string const &name)
   if (std::string const *value = boost::get<std::string>(variantValue))
   {
     return boost::python::object(*value);
-  }
-  else if (bool const *value = boost::get<bool>(variantValue))
+  } else if (bool const *value = boost::get<bool>(variantValue))
   {
     return boost::python::object(*value);
-  }
-  else if (int const *value = boost::get<int>(variantValue))
+  } else if (int const *value = boost::get<int>(variantValue))
   {
     return boost::python::object(*value);
   }

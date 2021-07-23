@@ -62,8 +62,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
     if (auto image = cacheValue.Lock(key))
     {
       return image;
-    }
-    else
+    } else
     {
       m_cache.erase(it);
       it = m_cache.end();
@@ -85,8 +84,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
   if (key.colorspace == "srgb")
   {
     gamma = 2.2f;
-  }
-  else if (key.colorspace.empty())
+  } else if (key.colorspace.empty())
   {
     // Figure out gamma from the internal format.
     // Assume that all tiles have the same colorspace
@@ -99,8 +97,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
       // XXX(RPR): sRGB formula is different from straight pow decoding, but it's the best we can
       // do without OCIO
       gamma = 2.2f;
-    }
-    else
+    } else
     {
       gamma = 1.0f;
     }
@@ -125,8 +122,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
       auto tilePath = TfStringPrintf(formatString.c_str(), tile.id);
       cacheValue.tileModificationTimes.emplace_back(tile.id, GetModificationTime(tilePath));
     }
-  }
-  else
+  } else
   {
     cacheValue.tileModificationTimes.emplace_back(0, GetModificationTime(path));
   }
@@ -171,8 +167,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::CacheValue::Lock(CacheKey con
     if (tileId == 0)
     {
       currentModificationTime = GetModificationTime(key.path);
-    }
-    else
+    } else
     {
       if (udimFormatString.empty())
       {

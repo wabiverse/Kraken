@@ -78,8 +78,7 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     if (HdRprIsPrimvarExists(HdTokens->widths, primvarDescsPerInterpolation, &m_widthsInterpolation))
     {
       m_widths = sceneDelegate->Get(id, HdTokens->widths).Get<VtFloatArray>();
-    }
-    else
+    } else
     {
       m_widths = VtFloatArray(1, 1.0f);
       m_widthsInterpolation = HdInterpolationConstant;
@@ -95,8 +94,7 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     if (HdRprIsPrimvarExists(HdTokens->displayColor, primvarDescsPerInterpolation, &m_colorsInterpolation))
     {
       m_colors = sceneDelegate->Get(GetId(), HdTokens->displayColor).Get<VtVec3fArray>();
-    }
-    else
+    } else
     {
       m_colors = VtVec3fArray(1, GfVec3f(1, 0, 1));
       m_colorsInterpolation = HdInterpolationConstant;
@@ -150,8 +148,7 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     if (m_colorsInterpolation == HdInterpolationVertex)
     {
       m_material = rprApi->CreatePointsMaterial(m_colors);
-    }
-    else if (!m_colors.empty())
+    } else if (!m_colors.empty())
     {
       m_material = rprApi->CreateDiffuseMaterial(m_colors[0]);
     }
@@ -170,8 +167,7 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
     {
       rprApi->Release(m_prototypeMesh);
       m_prototypeMesh = nullptr;
-    }
-    else
+    } else
     {
       auto &topology = UsdImagingGetUnitSphereMeshTopology();
       auto &points = UsdImagingGetUnitSphereMeshPoints();
@@ -202,8 +198,7 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
         rprApi->Release(m_instances[i]);
       }
       m_instances.resize(m_points.size());
-    }
-    else
+    } else
     {
       m_instances.reserve(m_points.size());
       for (size_t i = m_instances.size(); i < m_points.size(); ++i)
@@ -240,12 +235,10 @@ void HdRprPoints::Sync(HdSceneDelegate *sceneDelegate,
       if (m_widthsInterpolation == HdInterpolationVertex)
       {
         sampleWidth = [this](size_t idx) { return m_widths[idx]; };
-      }
-      else if (m_widthsInterpolation == HdInterpolationConstant)
+      } else if (m_widthsInterpolation == HdInterpolationConstant)
       {
         sampleWidth = [this](size_t) { return m_widths[0]; };
-      }
-      else
+      } else
       {
         sampleWidth = [](size_t) { return 1.0f; };
         TF_WARN(

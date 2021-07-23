@@ -93,7 +93,8 @@ class TraceCounterAccumulator : private TraceCollection::Visitor
   virtual void OnEndCollection() override;
   virtual void OnBeginThread(const TraceThreadId &) override;
   virtual void OnEndThread(const TraceThreadId &) override;
-  virtual bool AcceptsCategory(TraceCategoryId) override;
+  virtual bool AcceptsCategory(TraceCategoryId)
+  override;
   virtual void OnEvent(const TraceThreadId &, const TfToken &, const TraceEvent &) override;
 
   struct _CounterValue

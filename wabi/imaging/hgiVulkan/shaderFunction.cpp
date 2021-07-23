@@ -71,16 +71,19 @@ HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device, HgiSha
     shaderCreateInfo.codeSize = _spirvByteSize;
     shaderCreateInfo.pCode = (uint32_t *)spirv.data();
 
-    TF_VERIFY(vkCreateShaderModule(
-                device->GetVulkanDevice(), &shaderCreateInfo, HgiVulkanAllocator(), &_vkShaderModule) ==
-              VK_SUCCESS);
+    TF_VERIFY(vkCreateShaderModule(device->GetVulkanDevice(),
+                                   &shaderCreateInfo,
+                                   HgiVulkanAllocator(),
+                                   &_vkShaderModule) == VK_SUCCESS);
 
     // Debug label
     if (!_descriptor.debugName.empty())
     {
       std::string debugLabel = "ShaderModule " + _descriptor.debugName;
-      HgiVulkanSetDebugName(
-        device, (uint64_t)_vkShaderModule, VK_OBJECT_TYPE_SHADER_MODULE, debugLabel.c_str());
+      HgiVulkanSetDebugName(device,
+                            (uint64_t)_vkShaderModule,
+                            VK_OBJECT_TYPE_SHADER_MODULE,
+                            debugLabel.c_str());
     }
 
     // Perform reflection on spirv to create descriptor set info for

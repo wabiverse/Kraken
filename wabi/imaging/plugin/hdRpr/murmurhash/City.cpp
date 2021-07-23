@@ -217,13 +217,11 @@ uint64 CityHash64(const char *s, size_t len)
     if (len <= 16)
     {
       return HashLen0to16(s, len);
-    }
-    else
+    } else
     {
       return HashLen17to32(s, len);
     }
-  }
-  else if (len <= 64)
+  } else if (len <= 64)
   {
     return HashLen33to64(s, len);
   }
@@ -279,8 +277,7 @@ static uint128 CityMurmur(const char *s, size_t len, uint128 seed)
     a = ShiftMix(a * k1) * k1;
     c = b * k1 + HashLen0to16(s, len);
     d = ShiftMix(a + (len >= 8 ? Fetch64(s) : c));
-  }
-  else
+  } else
   {  // len > 16
     c = HashLen16(Fetch64(s + len - 8) + k1, a);
     d = HashLen16(b + len, c + Fetch64(s + len - 16));
@@ -369,12 +366,10 @@ uint128 CityHash128(const char *s, size_t len)
   if (len >= 16)
   {
     return CityHash128WithSeed(s + 16, len - 16, uint128(Fetch64(s) ^ k3, Fetch64(s + 8)));
-  }
-  else if (len >= 8)
+  } else if (len >= 8)
   {
     return CityHash128WithSeed(NULL, 0, uint128(Fetch64(s) ^ (len * k0), Fetch64(s + len - 8) ^ k1));
-  }
-  else
+  } else
   {
     return CityHash128WithSeed(s, len, uint128(k0, k1));
   }
@@ -403,21 +398,21 @@ static void CityHashCrc256Long(const char *s, size_t len, uint32 seed, uint64 *r
   len -= iters * 240;
   do
   {
-#  define CHUNK(multiplier, z) \
-    { \
-      uint64 old_a = a; \
-      a = Rotate(b, 41 ^ z) * multiplier + Fetch64(s); \
-      b = Rotate(c, 27 ^ z) * multiplier + Fetch64(s + 8); \
+#  define CHUNK(multiplier, z)                              \
+    {                                                       \
+      uint64 old_a = a;                                     \
+      a = Rotate(b, 41 ^ z) * multiplier + Fetch64(s);      \
+      b = Rotate(c, 27 ^ z) * multiplier + Fetch64(s + 8);  \
       c = Rotate(d, 41 ^ z) * multiplier + Fetch64(s + 16); \
       d = Rotate(e, 33 ^ z) * multiplier + Fetch64(s + 24); \
       e = Rotate(t, 25 ^ z) * multiplier + Fetch64(s + 32); \
-      t = old_a; \
-    } \
-    f = _mm_crc32_u64(f, a); \
-    g = _mm_crc32_u64(g, b); \
-    h = _mm_crc32_u64(h, c); \
-    i = _mm_crc32_u64(i, d); \
-    j = _mm_crc32_u64(j, e); \
+      t = old_a;                                            \
+    }                                                       \
+    f = _mm_crc32_u64(f, a);                                \
+    g = _mm_crc32_u64(g, b);                                \
+    h = _mm_crc32_u64(h, c);                                \
+    i = _mm_crc32_u64(i, d);                                \
+    j = _mm_crc32_u64(j, e);                                \
     s += 40
 
     CHUNK(1, 1);
@@ -472,8 +467,7 @@ void CityHashCrc256(const char *s, size_t len, uint64 *result)
   if (LIKELY(len >= 240))
   {
     CityHashCrc256Long(s, len, 0, result);
-  }
-  else
+  } else
   {
     CityHashCrc256Short(s, len, result);
   }
@@ -484,8 +478,7 @@ uint128 CityHashCrc128WithSeed(const char *s, size_t len, uint128 seed)
   if (len <= 900)
   {
     return CityHash128WithSeed(s, len, seed);
-  }
-  else
+  } else
   {
     uint64 result[4];
     CityHashCrc256(s, len, result);
@@ -500,8 +493,7 @@ uint128 CityHashCrc128(const char *s, size_t len)
   if (len <= 900)
   {
     return CityHash128(s, len);
-  }
-  else
+  } else
   {
     uint64 result[4];
     CityHashCrc256(s, len, result);

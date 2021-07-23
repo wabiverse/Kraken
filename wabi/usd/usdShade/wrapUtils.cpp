@@ -40,20 +40,22 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static object _GetBaseNameAndType(const TfToken &fullName)
-{
-  const auto &result = UsdShadeUtils::GetBaseNameAndType(fullName);
-  return make_tuple(result.first, result.second);
-}
+  static object _GetBaseNameAndType(const TfToken &fullName)
+  {
+    const auto &result = UsdShadeUtils::GetBaseNameAndType(fullName);
+    return make_tuple(result.first, result.second);
+  }
 
 }  // anonymous namespace
 
 void wrapUsdShadeUtils()
 {
   UsdShadeAttributeVector (*GetValueProducingAttributes_Input)(
-    const UsdShadeInput &input, bool includeAuthoredValues) = &UsdShadeUtils::GetValueProducingAttributes;
+    const UsdShadeInput &input,
+    bool includeAuthoredValues) = &UsdShadeUtils::GetValueProducingAttributes;
   UsdShadeAttributeVector (*GetValueProducingAttributes_Output)(
-    const UsdShadeOutput &output, bool includeAuthoredValues) = &UsdShadeUtils::GetValueProducingAttributes;
+    const UsdShadeOutput &output,
+    bool includeAuthoredValues) = &UsdShadeUtils::GetValueProducingAttributes;
 
   scope thisScope = class_<UsdShadeUtils>("Utils", no_init)
                       .def("GetPrefixForAttributeType", UsdShadeUtils::GetPrefixForAttributeType)

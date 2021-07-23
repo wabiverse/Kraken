@@ -142,8 +142,7 @@ void WorkSetConcurrencyLimit(unsigned n)
     // setting always wins over the specified value n, but only if the
     // setting has been set to a non-zero value.
     threadLimit = Work_OverrideConcurrencyLimit(n, settingVal);
-  }
-  else
+  } else
   {
     // Use the current thread limit.
     threadLimit = WorkGetConcurrencyLimit();
@@ -165,8 +164,7 @@ void WorkSetConcurrencyLimit(unsigned n)
       _tbbArena->terminate();
       _tbbArena->initialize(threadLimit);
     }
-  }
-  else
+  } else
   {
     _tbbArena = std::make_unique<tbb::task_arena>(threadLimit);
   }

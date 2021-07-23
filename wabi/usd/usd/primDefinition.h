@@ -337,8 +337,7 @@ class UsdPrimDefinition
     if (it.second)
     {
       _properties.push_back(name);
-    }
-    else
+    } else
     {
       it.first->second = schemaPath;
     }

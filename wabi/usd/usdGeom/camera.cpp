@@ -311,14 +311,15 @@ UsdAttribute UsdGeomCamera::CreateExposureAttr(VtValue const &defaultValue, bool
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -439,50 +440,55 @@ GfCamera UsdGeomCamera::GetCamera(const UsdTimeCode &time) const
 
   camera.SetTransform(ComputeLocalToWorldTransform(time));
 
-  if (const boost::optional<TfToken> projection = _GetValue<TfToken>(
-        GetPrim(), UsdGeomTokens->projection, time))
+  if (const boost::optional<TfToken> projection = _GetValue<TfToken>(GetPrim(),
+                                                                     UsdGeomTokens->projection,
+                                                                     time))
   {
     camera.SetProjection(_TokenToProjection(*projection));
   }
 
-  if (const boost::optional<float> horizontalAperture = _GetValue<float>(
-        GetPrim(), UsdGeomTokens->horizontalAperture, time))
+  if (const boost::optional<float> horizontalAperture = _GetValue<float>(GetPrim(),
+                                                                         UsdGeomTokens->horizontalAperture,
+                                                                         time))
   {
     camera.SetHorizontalAperture(*horizontalAperture);
   }
 
-  if (const boost::optional<float> verticalAperture = _GetValue<float>(
-        GetPrim(), UsdGeomTokens->verticalAperture, time))
+  if (const boost::optional<float> verticalAperture = _GetValue<float>(GetPrim(),
+                                                                       UsdGeomTokens->verticalAperture,
+                                                                       time))
   {
     camera.SetVerticalAperture(*verticalAperture);
   }
 
-  if (const boost::optional<float> horizontalApertureOffset = _GetValue<float>(
-        GetPrim(), UsdGeomTokens->horizontalApertureOffset, time))
+  if (const boost::optional<float> horizontalApertureOffset =
+        _GetValue<float>(GetPrim(), UsdGeomTokens->horizontalApertureOffset, time))
   {
     camera.SetHorizontalApertureOffset(*horizontalApertureOffset);
   }
 
-  if (const boost::optional<float> verticalApertureOffset = _GetValue<float>(
-        GetPrim(), UsdGeomTokens->verticalApertureOffset, time))
+  if (const boost::optional<float> verticalApertureOffset =
+        _GetValue<float>(GetPrim(), UsdGeomTokens->verticalApertureOffset, time))
   {
     camera.SetVerticalApertureOffset(*verticalApertureOffset);
   }
 
-  if (const boost::optional<float> focalLength = _GetValue<float>(
-        GetPrim(), UsdGeomTokens->focalLength, time))
+  if (const boost::optional<float> focalLength = _GetValue<float>(GetPrim(),
+                                                                  UsdGeomTokens->focalLength,
+                                                                  time))
   {
     camera.SetFocalLength(*focalLength);
   }
 
-  if (const boost::optional<GfVec2f> clippingRange = _GetValue<GfVec2f>(
-        GetPrim(), UsdGeomTokens->clippingRange, time))
+  if (const boost::optional<GfVec2f> clippingRange = _GetValue<GfVec2f>(GetPrim(),
+                                                                        UsdGeomTokens->clippingRange,
+                                                                        time))
   {
     camera.SetClippingRange(_Vec2fToRange1f(*clippingRange));
   }
 
-  if (const boost::optional<VtArray<GfVec4f>> clippingPlanes = _GetValue<VtArray<GfVec4f>>(
-        GetPrim(), UsdGeomTokens->clippingPlanes, time))
+  if (const boost::optional<VtArray<GfVec4f>> clippingPlanes =
+        _GetValue<VtArray<GfVec4f>>(GetPrim(), UsdGeomTokens->clippingPlanes, time))
   {
 
     camera.SetClippingPlanes(_VtArrayVec4fToVector(*clippingPlanes));
@@ -493,8 +499,9 @@ GfCamera UsdGeomCamera::GetCamera(const UsdTimeCode &time) const
     camera.SetFStop(*fStop);
   }
 
-  if (const boost::optional<float> focusDistance = _GetValue<float>(
-        GetPrim(), UsdGeomTokens->focusDistance, time))
+  if (const boost::optional<float> focusDistance = _GetValue<float>(GetPrim(),
+                                                                    UsdGeomTokens->focusDistance,
+                                                                    time))
   {
     camera.SetFocusDistance(*focusDistance);
   }

@@ -63,8 +63,7 @@ HoudiniOpenvdbLoader::HoudiniOpenvdbLoader()
       {
         TF_RUNTIME_ERROR("USD_SopVol missing required symbol: SOPgetVDBVolumePrimitive");
       }
-    }
-    else
+    } else
     {
       auto err = ArchLibraryError();
       if (err.empty())

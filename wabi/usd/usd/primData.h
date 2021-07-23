@@ -307,6 +307,7 @@ class Usd_PrimData
   // --------------------------------------------------------------------- //
   // Private Members
   // --------------------------------------------------------------------- //
+
  private:
   USD_API
   Usd_PrimData(UsdStage *stage, const SdfPath &path);
@@ -624,12 +625,10 @@ inline bool Usd_MoveToNextSiblingOrParent(PrimDataPtr &p,
     if (p == end)
     {
       proxyPrimPath = SdfPath();
-    }
-    else if (p == next)
+    } else if (p == next)
     {
       proxyPrimPath = proxyPrimPath.GetParentPath().AppendChild(p->GetName());
-    }
-    else
+    } else
     {
       proxyPrimPath = proxyPrimPath.GetParentPath();
       if (p && p->IsPrototype())

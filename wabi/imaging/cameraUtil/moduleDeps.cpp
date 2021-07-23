@@ -43,8 +43,9 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
 {
   // List of direct dependencies for this library.
   const std::vector<TfToken> reqs = {TfToken("gf"), TfToken("tf")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(
-    TfToken("cameraUtil"), TfToken("wabi.CameraUtil"), reqs);
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("cameraUtil"),
+                                                      TfToken("wabi.CameraUtil"),
+                                                      reqs);
 }
 
 WABI_NAMESPACE_END

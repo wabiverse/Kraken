@@ -8,43 +8,43 @@ class Timer;
 namespace Zep
 {
 
-struct SpanInfo;
+  struct SpanInfo;
 
-enum class VimMotion
-{
-  LineBegin,
-  LineEnd,
-  NonWhiteSpaceBegin,
-  NonWhiteSpaceEnd
-};
-
-class ZepMode_Vim : public ZepMode
-{
- public:
-  ZepMode_Vim(ZepEditor &editor);
-  virtual ~ZepMode_Vim();
-
-  static const char *StaticName()
+  enum class VimMotion
   {
-    return "Vim";
-  }
+    LineBegin,
+    LineEnd,
+    NonWhiteSpaceBegin,
+    NonWhiteSpaceEnd
+  };
 
-  // Zep Mode
-  virtual void Init() override;
-  virtual void Begin(ZepWindow *pWindow) override;
-  virtual const char *Name() const override
+  class ZepMode_Vim : public ZepMode
   {
-    return StaticName();
-  }
-  virtual EditorMode DefaultMode() const override
-  {
-    return EditorMode::Normal;
-  }
-  virtual void PreDisplay(ZepWindow &win) override;
-  virtual void SetupKeyMaps();
-  virtual void AddOverStrikeMaps();
-  virtual void AddCopyMaps();
-  virtual void AddPasteMaps();
-};
+   public:
+    ZepMode_Vim(ZepEditor &editor);
+    virtual ~ZepMode_Vim();
+
+    static const char *StaticName()
+    {
+      return "Vim";
+    }
+
+    // Zep Mode
+    virtual void Init() override;
+    virtual void Begin(ZepWindow *pWindow) override;
+    virtual const char *Name() const override
+    {
+      return StaticName();
+    }
+    virtual EditorMode DefaultMode() const override
+    {
+      return EditorMode::Normal;
+    }
+    virtual void PreDisplay(ZepWindow &win) override;
+    virtual void SetupKeyMaps();
+    virtual void AddOverStrikeMaps();
+    virtual void AddCopyMaps();
+    virtual void AddPasteMaps();
+  };
 
 }  // namespace Zep

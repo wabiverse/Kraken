@@ -296,14 +296,12 @@ void HdPrmanInstancer::GetInstancePrimvars(SdfPath const &prototypeId,
     if (!strncmp(entry.first.GetText(), userPrefix, strlen(userPrefix)))
     {
       name = RtUString(entry.first.GetText());
-    }
-    else if (!strncmp(entry.first.GetText(), riAttrPrefix, strlen(riAttrPrefix)))
+    } else if (!strncmp(entry.first.GetText(), riAttrPrefix, strlen(riAttrPrefix)))
     {
       const char *strippedName = entry.first.GetText();
       strippedName += strlen(riAttrPrefix);
       name = RtUString(strippedName);
-    }
-    else
+    } else
     {
       std::string mangled = TfStringPrintf("user:%s", entry.first.GetText());
       name = RtUString(mangled.c_str());
@@ -313,53 +311,43 @@ void HdPrmanInstancer::GetInstancePrimvars(SdfPath const &prototypeId,
     {
       const VtArray<float> &v = val.UncheckedGet<VtArray<float>>();
       attrs.SetFloat(name, v[instanceIndex]);
-    }
-    else if (val.IsHolding<VtArray<int>>())
+    } else if (val.IsHolding<VtArray<int>>())
     {
       const VtArray<int> &v = val.UncheckedGet<VtArray<int>>();
       attrs.SetInteger(name, v[instanceIndex]);
-    }
-    else if (val.IsHolding<VtArray<GfVec2f>>())
+    } else if (val.IsHolding<VtArray<GfVec2f>>())
     {
       const VtArray<GfVec2f> &v = val.UncheckedGet<VtArray<GfVec2f>>();
       attrs.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 2);
-    }
-    else if (val.IsHolding<VtArray<GfVec3f>>())
+    } else if (val.IsHolding<VtArray<GfVec3f>>())
     {
       const GfVec3f &v = val.UncheckedGet<VtArray<GfVec3f>>()[instanceIndex];
       if (primvar.role == HdPrimvarRoleTokens->color)
       {
         attrs.SetColor(name, RtColorRGB(v[0], v[1], v[2]));
-      }
-      else if (primvar.role == HdPrimvarRoleTokens->point)
+      } else if (primvar.role == HdPrimvarRoleTokens->point)
       {
         attrs.SetPoint(name, RtPoint3(v[0], v[1], v[2]));
-      }
-      else if (primvar.role == HdPrimvarRoleTokens->normal)
+      } else if (primvar.role == HdPrimvarRoleTokens->normal)
       {
         attrs.SetPoint(name, RtNormal3(v[0], v[1], v[2]));
-      }
-      else
+      } else
       {
         attrs.SetVector(name, RtVector3(v[0], v[1], v[2]));
       }
-    }
-    else if (val.IsHolding<VtArray<GfVec4f>>())
+    } else if (val.IsHolding<VtArray<GfVec4f>>())
     {
       const VtArray<GfVec4f> &v = val.UncheckedGet<VtArray<GfVec4f>>();
       attrs.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 4);
-    }
-    else if (val.IsHolding<VtArray<GfMatrix4d>>())
+    } else if (val.IsHolding<VtArray<GfMatrix4d>>())
     {
       const VtArray<GfMatrix4d> &v = val.UncheckedGet<VtArray<GfMatrix4d>>();
       attrs.SetMatrix(name, HdPrman_GfMatrixToRtMatrix(v[instanceIndex]));
-    }
-    else if (val.IsHolding<VtArray<std::string>>())
+    } else if (val.IsHolding<VtArray<std::string>>())
     {
       const VtArray<std::string> &v = val.UncheckedGet<VtArray<std::string>>();
       attrs.SetString(name, RtUString(v[instanceIndex].c_str()));
-    }
-    else if (val.IsHolding<VtArray<TfToken>>())
+    } else if (val.IsHolding<VtArray<TfToken>>())
     {
       const VtArray<TfToken> &v = val.UncheckedGet<VtArray<TfToken>>();
       attrs.SetString(name, RtUString(v[instanceIndex].GetText()));

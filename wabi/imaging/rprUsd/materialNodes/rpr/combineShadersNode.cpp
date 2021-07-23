@@ -56,14 +56,12 @@ class RprUsd_RprCombineShadersNode : public RprUsd_MaterialNode
       {
         m_outputs[inputId] = value;
         return true;
-      }
-      else
+      } else
       {
         TF_RUNTIME_ERROR("Invalid input for Combine Shaders node: must be of shader type, type=%s",
                          value.GetTypeName().c_str());
       }
-    }
-    else
+    } else
     {
       TF_RUNTIME_ERROR(
         "Invalid input for Combine Shaders node: must be `surface` or `displacement` or "

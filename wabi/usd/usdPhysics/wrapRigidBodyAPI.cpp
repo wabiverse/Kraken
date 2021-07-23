@@ -41,161 +41,148 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
-
-#define WRAP_CUSTOM                                                     \
-    template <class Cls> static void _CustomWrapCode(Cls &_class)
-
-// fwd decl.
-WRAP_CUSTOM;
-
-        
-static UsdAttribute
-_CreateRigidBodyEnabledAttr(UsdPhysicsRigidBodyAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateRigidBodyEnabledAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
-        
-static UsdAttribute
-_CreateKinematicEnabledAttr(UsdPhysicsRigidBodyAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateKinematicEnabledAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
-        
-static UsdAttribute
-_CreateStartsAsleepAttr(UsdPhysicsRigidBodyAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateStartsAsleepAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
-        
-static UsdAttribute
-_CreateVelocityAttr(UsdPhysicsRigidBodyAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateVelocityAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f), writeSparsely);
-}
-        
-static UsdAttribute
-_CreateAngularVelocityAttr(UsdPhysicsRigidBodyAPI &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateAngularVelocityAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f), writeSparsely);
-}
-
-static std::string
-_Repr(const UsdPhysicsRigidBodyAPI &self)
+namespace
 {
+
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
+
+  // fwd decl.
+  WRAP_CUSTOM;
+
+
+  static UsdAttribute _CreateRigidBodyEnabledAttr(UsdPhysicsRigidBodyAPI &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
+  {
+    return self.CreateRigidBodyEnabledAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                           writeSparsely);
+  }
+
+  static UsdAttribute _CreateKinematicEnabledAttr(UsdPhysicsRigidBodyAPI &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
+  {
+    return self.CreateKinematicEnabledAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                           writeSparsely);
+  }
+
+  static UsdAttribute _CreateStartsAsleepAttr(UsdPhysicsRigidBodyAPI &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreateStartsAsleepAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                       writeSparsely);
+  }
+
+  static UsdAttribute _CreateVelocityAttr(UsdPhysicsRigidBodyAPI &self,
+                                          object defaultVal,
+                                          bool writeSparsely)
+  {
+    return self.CreateVelocityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f),
+                                   writeSparsely);
+  }
+
+  static UsdAttribute _CreateAngularVelocityAttr(UsdPhysicsRigidBodyAPI &self,
+                                                 object defaultVal,
+                                                 bool writeSparsely)
+  {
+    return self.CreateAngularVelocityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f),
+                                          writeSparsely);
+  }
+
+  static std::string _Repr(const UsdPhysicsRigidBodyAPI &self)
+  {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf(
-        "UsdPhysics.RigidBodyAPI(%s)",
-        primRepr.c_str());
-}
+    return TfStringPrintf("UsdPhysics.RigidBodyAPI(%s)", primRepr.c_str());
+  }
 
-struct UsdPhysicsRigidBodyAPI_CanApplyResult : 
-    public TfPyAnnotatedBoolResult<std::string>
-{
-    UsdPhysicsRigidBodyAPI_CanApplyResult(bool val, std::string const &msg) :
-        TfPyAnnotatedBoolResult<std::string>(val, msg) {}
-};
+  struct UsdPhysicsRigidBodyAPI_CanApplyResult : public TfPyAnnotatedBoolResult<std::string>
+  {
+    UsdPhysicsRigidBodyAPI_CanApplyResult(bool val, std::string const &msg)
+      : TfPyAnnotatedBoolResult<std::string>(val, msg)
+    {}
+  };
 
-static UsdPhysicsRigidBodyAPI_CanApplyResult
-_WrapCanApply(const UsdPrim& prim)
-{
+  static UsdPhysicsRigidBodyAPI_CanApplyResult _WrapCanApply(const UsdPrim &prim)
+  {
     std::string whyNot;
     bool result = UsdPhysicsRigidBodyAPI::CanApply(prim, &whyNot);
     return UsdPhysicsRigidBodyAPI_CanApplyResult(result, whyNot);
-}
+  }
 
-} // anonymous namespace
+}  // anonymous namespace
 
 void wrapUsdPhysicsRigidBodyAPI()
 {
-    typedef UsdPhysicsRigidBodyAPI This;
+  typedef UsdPhysicsRigidBodyAPI This;
 
-    UsdPhysicsRigidBodyAPI_CanApplyResult::Wrap<UsdPhysicsRigidBodyAPI_CanApplyResult>(
-        "_CanApplyResult", "whyNot");
+  UsdPhysicsRigidBodyAPI_CanApplyResult::Wrap<UsdPhysicsRigidBodyAPI_CanApplyResult>("_CanApplyResult",
+                                                                                     "whyNot");
 
-    class_<This, bases<UsdAPISchemaBase> >
-        cls("RigidBodyAPI");
+  class_<This, bases<UsdAPISchemaBase>> cls("RigidBodyAPI");
 
-    cls
-        .def(init<UsdPrim>(arg("prim")))
-        .def(init<UsdSchemaBase const&>(arg("schemaObj")))
-        .def(TfTypePythonClass())
+  cls.def(init<UsdPrim>(arg("prim")))
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-        .def("Get", &This::Get, (arg("stage"), arg("path")))
-        .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-        .def("CanApply", &_WrapCanApply, (arg("prim")))
-        .staticmethod("CanApply")
+    .def("CanApply", &_WrapCanApply, (arg("prim")))
+    .staticmethod("CanApply")
 
-        .def("Apply", &This::Apply, (arg("prim")))
-        .staticmethod("Apply")
+    .def("Apply", &This::Apply, (arg("prim")))
+    .staticmethod("Apply")
 
-        .def("GetSchemaAttributeNames",
-             &This::GetSchemaAttributeNames,
-             arg("includeInherited")=true,
-             return_value_policy<TfPySequenceToList>())
-        .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-        .def("GetStaticTfType", (TfType const &(*)()) TfType::Find<This>,
-             return_value_policy<return_by_value>())
-        .staticmethod("GetStaticTfType")
+    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("GetStaticTfType")
 
-        .def(!self)
+    .def(!self)
 
-        
-        .def("GetRigidBodyEnabledAttr",
-             &This::GetRigidBodyEnabledAttr)
-        .def("CreateRigidBodyEnabledAttr",
-             &_CreateRigidBodyEnabledAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
-        
-        .def("GetKinematicEnabledAttr",
-             &This::GetKinematicEnabledAttr)
-        .def("CreateKinematicEnabledAttr",
-             &_CreateKinematicEnabledAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
-        
-        .def("GetStartsAsleepAttr",
-             &This::GetStartsAsleepAttr)
-        .def("CreateStartsAsleepAttr",
-             &_CreateStartsAsleepAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
-        
-        .def("GetVelocityAttr",
-             &This::GetVelocityAttr)
-        .def("CreateVelocityAttr",
-             &_CreateVelocityAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
-        
-        .def("GetAngularVelocityAttr",
-             &This::GetAngularVelocityAttr)
-        .def("CreateAngularVelocityAttr",
-             &_CreateAngularVelocityAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
 
-        
-        .def("GetSimulationOwnerRel",
-             &This::GetSimulationOwnerRel)
-        .def("CreateSimulationOwnerRel",
-             &This::CreateSimulationOwnerRel)
-        .def("__repr__", ::_Repr)
-    ;
+    .def("GetRigidBodyEnabledAttr", &This::GetRigidBodyEnabledAttr)
+    .def("CreateRigidBodyEnabledAttr",
+         &_CreateRigidBodyEnabledAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-    _CustomWrapCode(cls);
+    .def("GetKinematicEnabledAttr", &This::GetKinematicEnabledAttr)
+    .def("CreateKinematicEnabledAttr",
+         &_CreateKinematicEnabledAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("GetStartsAsleepAttr", &This::GetStartsAsleepAttr)
+    .def("CreateStartsAsleepAttr",
+         &_CreateStartsAsleepAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("GetVelocityAttr", &This::GetVelocityAttr)
+    .def("CreateVelocityAttr",
+         &_CreateVelocityAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("GetAngularVelocityAttr", &This::GetAngularVelocityAttr)
+    .def("CreateAngularVelocityAttr",
+         &_CreateAngularVelocityAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+
+    .def("GetSimulationOwnerRel", &This::GetSimulationOwnerRel)
+    .def("CreateSimulationOwnerRel", &This::CreateSimulationOwnerRel)
+    .def("__repr__", ::_Repr);
+
+  _CustomWrapCode(cls);
 }
 
 // ===================================================================== //
-// Feel free to add custom code below this line, it will be preserved by 
+// Feel free to add custom code below this line, it will be preserved by
 // the code generator.  The entry point for your custom code should look
 // minimally like the following:
 //
@@ -206,16 +193,17 @@ void wrapUsdPhysicsRigidBodyAPI()
 // }
 //
 // Of course any other ancillary or support code may be provided.
-// 
+//
 // Just remember to wrap code in the appropriate delimiters:
 // 'namespace {', '}'.
 //
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
-WRAP_CUSTOM {
-}
+  WRAP_CUSTOM
+  {}
 
-}
+}  // namespace

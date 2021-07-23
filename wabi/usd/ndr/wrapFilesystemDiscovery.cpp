@@ -49,44 +49,44 @@ using namespace TfPyContainerConversions;
 namespace
 {
 
-static _NdrFilesystemDiscoveryPluginRefPtr New()
-{
-  return TfCreateRefPtr(new _NdrFilesystemDiscoveryPlugin());
-}
-
-static _NdrFilesystemDiscoveryPluginRefPtr NewWithFilter(_NdrFilesystemDiscoveryPlugin::Filter filter)
-{
-  return TfCreateRefPtr(new _NdrFilesystemDiscoveryPlugin(std::move(filter)));
-}
-
-// This is testing discovery from Python.  We need a discovery context
-// but Python can't normally create one.  We implement a dummy context
-// for just that purpose.
-class _Context : public NdrDiscoveryPluginContext
-{
- public:
-  ~_Context() override = default;
-
-  TfToken GetSourceType(const TfToken &discoveryType) const override
+  static _NdrFilesystemDiscoveryPluginRefPtr New()
   {
-    return discoveryType;
+    return TfCreateRefPtr(new _NdrFilesystemDiscoveryPlugin());
   }
 
-  static TfRefPtr<_Context> New()
+  static _NdrFilesystemDiscoveryPluginRefPtr NewWithFilter(_NdrFilesystemDiscoveryPlugin::Filter filter)
   {
-    return TfCreateRefPtr(new _Context);
+    return TfCreateRefPtr(new _NdrFilesystemDiscoveryPlugin(std::move(filter)));
   }
-};
 
-void wrapFilesystemDiscoveryContext()
-{
-  typedef _Context This;
-  typedef TfWeakPtr<_Context> ThisPtr;
+  // This is testing discovery from Python.  We need a discovery context
+  // but Python can't normally create one.  We implement a dummy context
+  // for just that purpose.
+  class _Context : public NdrDiscoveryPluginContext
+  {
+   public:
+    ~_Context() override = default;
 
-  class_<This, ThisPtr, bases<NdrDiscoveryPluginContext>, boost::noncopyable>("Context", no_init)
-    .def(TfPyRefAndWeakPtr())
-    .def(TfMakePyConstructor(This::New));
-}
+    TfToken GetSourceType(const TfToken &discoveryType) const override
+    {
+      return discoveryType;
+    }
+
+    static TfRefPtr<_Context> New()
+    {
+      return TfCreateRefPtr(new _Context);
+    }
+  };
+
+  void wrapFilesystemDiscoveryContext()
+  {
+    typedef _Context This;
+    typedef TfWeakPtr<_Context> ThisPtr;
+
+    class_<This, ThisPtr, bases<NdrDiscoveryPluginContext>, boost::noncopyable>("Context", no_init)
+      .def(TfPyRefAndWeakPtr())
+      .def(TfMakePyConstructor(This::New));
+  }
 
 }  // namespace
 
@@ -101,7 +101,8 @@ void wrapFilesystemDiscovery()
   TfPyFunctionFromPython<bool(NdrNodeDiscoveryResult &)>();
 
   scope s = class_<This, ThisPtr, bases<NdrDiscoveryPlugin>, boost::noncopyable>(
-              "_FilesystemDiscoveryPlugin", no_init)
+              "_FilesystemDiscoveryPlugin",
+              no_init)
               .def(TfPyRefAndWeakPtr())
               .def(TfMakePyConstructor(New))
               .def(TfMakePyConstructor(NewWithFilter))

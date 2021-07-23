@@ -53,9 +53,9 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 
 #define VT_FLOATING_POINT_BUILTIN_VALUE_TYPES ((double, Double))((float, Float))((GfHalf, Half))
 
-#define VT_INTEGRAL_BUILTIN_VALUE_TYPES \
-  ((bool, Bool))((char, Char))((unsigned char, UChar))((short, Short))((unsigned short, UShort))(( \
-    int, Int))((unsigned int, UInt))((int64_t, Int64))((uint64_t, UInt64))
+#define VT_INTEGRAL_BUILTIN_VALUE_TYPES                                                           \
+  ((bool, Bool))((char, Char))((unsigned char, UChar))((short, Short))((unsigned short, UShort))( \
+    (int, Int))((unsigned int, UInt))((int64_t, Int64))((uint64_t, UInt64))
 
 #define VT_VEC_INT_VALUE_TYPES ((GfVec4i, Vec4i))((GfVec3i, Vec3i))((GfVec2i, Vec2i))
 
@@ -66,8 +66,8 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 #define VT_VEC_DOUBLE_VALUE_TYPES ((GfVec4d, Vec4d))((GfVec3d, Vec3d))((GfVec2d, Vec2d))
 
 #define VT_VEC_VALUE_TYPES \
-  VT_VEC_INT_VALUE_TYPES \
-  VT_VEC_HALF_VALUE_TYPES \
+  VT_VEC_INT_VALUE_TYPES   \
+  VT_VEC_HALF_VALUE_TYPES  \
   VT_VEC_FLOAT_VALUE_TYPES \
   VT_VEC_DOUBLE_VALUE_TYPES
 
@@ -79,11 +79,11 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
   VT_MATRIX_FLOAT_VALUE_TYPES \
   VT_MATRIX_DOUBLE_VALUE_TYPES
 
-#define VT_GFRANGE_VALUE_TYPES \
-  ((GfRange3f, Range3f))((GfRange3d, Range3d))( \
-    (GfRange2f, Range2f))((GfRange2d, Range2d))((GfRange1f, Range1f))((GfRange1d, Range1d))
+#define VT_GFRANGE_VALUE_TYPES                                                              \
+  ((GfRange3f, Range3f))((GfRange3d, Range3d))((GfRange2f, Range2f))((GfRange2d, Range2d))( \
+    (GfRange1f, Range1f))((GfRange1d, Range1d))
 
-#define VT_RANGE_VALUE_TYPES \
+#define VT_RANGE_VALUE_TYPES                     \
   VT_GFRANGE_VALUE_TYPES((GfInterval, Interval)) \
   ((GfRect2i, Rect2i))
 
@@ -104,9 +104,9 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 #define VT_BUILTIN_VALUE_TYPES VT_BUILTIN_NUMERIC_VALUE_TYPES VT_STRING_VALUE_TYPES
 
 #define VT_SCALAR_CLASS_VALUE_TYPES \
-  VT_VEC_VALUE_TYPES \
-  VT_MATRIX_VALUE_TYPES \
-  VT_RANGE_VALUE_TYPES \
+  VT_VEC_VALUE_TYPES                \
+  VT_MATRIX_VALUE_TYPES             \
+  VT_RANGE_VALUE_TYPES              \
   VT_QUATERNION_VALUE_TYPES
 
 #define VT_SCALAR_VALUE_TYPES VT_SCALAR_CLASS_VALUE_TYPES VT_BUILTIN_VALUE_TYPES
@@ -143,7 +143,9 @@ struct Vt_ShapeData
 {
   unsigned int GetRank() const
   {
-    return otherDims[0] == 0 ? 1 : otherDims[1] == 0 ? 2 : otherDims[2] == 0 ? 3 : 4;
+    return otherDims[0] == 0 ? 1 : otherDims[1] == 0 ? 2 :
+                                 otherDims[2] == 0   ? 3 :
+                                                       4;
   }
   bool operator==(Vt_ShapeData const &other) const
   {

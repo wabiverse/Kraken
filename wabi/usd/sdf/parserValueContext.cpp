@@ -61,7 +61,8 @@ bool Sdf_ParserValueContext::SetupFactory(const std::string &typeName)
   if (typeName != lastTypeName)
   {
     const Sdf_ParserHelpers::ValueFactory &factory = Sdf_ParserHelpers::GetValueFactoryForMenvaName(
-      typeName, &valueTypeIsValid);
+      typeName,
+      &valueTypeIsValid);
 
     valueTypeName = typeName;
 
@@ -70,8 +71,7 @@ bool Sdf_ParserValueContext::SetupFactory(const std::string &typeName)
       valueFunc = Sdf_ParserHelpers::ValueFactoryFunc();
       valueIsShaped = false;
       valueTupleDimensions = SdfTupleDimensions();
-    }
-    else
+    } else
     {
       valueFunc = factory.func;
       valueIsShaped = factory.isShaped;
@@ -90,8 +90,7 @@ VtValue Sdf_ParserValueContext::ProduceValue(std::string *errStrPtr)
   if (_isRecordingString)
   {
     ret = SdfUnregisteredValue(GetRecordedString());
-  }
-  else
+  } else
   {
     if (!valueFunc)
     {
@@ -155,8 +154,7 @@ void Sdf_ParserValueContext::AppendValue(const Value &value)
     Sdf_ToStringVisitor v;
     _recordedString += value.ApplyVisitor(v);
     _needComma = true;
-  }
-  else
+  } else
   {
     vars.push_back(value);
   }
@@ -164,8 +162,7 @@ void Sdf_ParserValueContext::AppendValue(const Value &value)
   if (pushDim == -1)
   {
     pushDim = dim;
-  }
-  else
+  } else
   {
     if (pushDim != dim)
     {
@@ -240,8 +237,7 @@ void Sdf_ParserValueContext::EndList()
       return;
       // CODE_COVERAGE_ON
     }
-  }
-  else
+  } else
   {
     // We've seen a run in this dimension before, so check
     // that the size is the same as before.

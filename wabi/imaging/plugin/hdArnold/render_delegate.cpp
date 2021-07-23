@@ -85,314 +85,297 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 namespace
 {
 
-VtValue _GetNodeParamValue(AtNode *node, const AtParamEntry *pentry)
-{
-  if (Ai_unlikely(pentry == nullptr))
+  VtValue _GetNodeParamValue(AtNode *node, const AtParamEntry *pentry)
   {
+    if (Ai_unlikely(pentry == nullptr))
+    {
+      return {};
+    }
+    const auto ptype = AiParamGetType(pentry);
+    if (ptype == AI_TYPE_INT)
+    {
+      return VtValue(AiNodeGetInt(node, AiParamGetName(pentry)));
+    } else if (ptype == AI_TYPE_FLOAT)
+    {
+      return VtValue(AiNodeGetFlt(node, AiParamGetName(pentry)));
+    } else if (ptype == AI_TYPE_BOOLEAN)
+    {
+      return VtValue(AiNodeGetBool(node, AiParamGetName(pentry)));
+    } else if (ptype == AI_TYPE_STRING || ptype == AI_TYPE_ENUM)
+    {
+      return VtValue(std::string(AiNodeGetStr(node, AiParamGetName(pentry))));
+    }
     return {};
   }
-  const auto ptype = AiParamGetType(pentry);
-  if (ptype == AI_TYPE_INT)
-  {
-    return VtValue(AiNodeGetInt(node, AiParamGetName(pentry)));
-  }
-  else if (ptype == AI_TYPE_FLOAT)
-  {
-    return VtValue(AiNodeGetFlt(node, AiParamGetName(pentry)));
-  }
-  else if (ptype == AI_TYPE_BOOLEAN)
-  {
-    return VtValue(AiNodeGetBool(node, AiParamGetName(pentry)));
-  }
-  else if (ptype == AI_TYPE_STRING || ptype == AI_TYPE_ENUM)
-  {
-    return VtValue(std::string(AiNodeGetStr(node, AiParamGetName(pentry))));
-  }
-  return {};
-}
 
-void _SetNodeParam(AtNode *node, const TfToken &key, const VtValue &value)
-{
-  // Some applications might send integers instead of booleans.
-  if (value.IsHolding<int>())
+  void _SetNodeParam(AtNode *node, const TfToken &key, const VtValue &value)
   {
-    const auto *nodeEntry = AiNodeGetNodeEntry(node);
-    auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
-    if (paramEntry != nullptr)
+    // Some applications might send integers instead of booleans.
+    if (value.IsHolding<int>())
     {
-      const auto paramType = AiParamGetType(paramEntry);
-      if (paramType == AI_TYPE_INT)
+      const auto *nodeEntry = AiNodeGetNodeEntry(node);
+      auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
+      if (paramEntry != nullptr)
       {
-        AiNodeSetInt(node, AtString(key.GetText()), value.UncheckedGet<int>());
+        const auto paramType = AiParamGetType(paramEntry);
+        if (paramType == AI_TYPE_INT)
+        {
+          AiNodeSetInt(node, AtString(key.GetText()), value.UncheckedGet<int>());
+        } else if (paramType == AI_TYPE_BOOLEAN)
+        {
+          AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<int>() != 0);
+        }
       }
-      else if (paramType == AI_TYPE_BOOLEAN)
-      {
-        AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<int>() != 0);
-      }
-    }
-    // Or longs.
-  }
-  else if (value.IsHolding<long>())
-  {
-    const auto *nodeEntry = AiNodeGetNodeEntry(node);
-    auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
-    if (paramEntry != nullptr)
+      // Or longs.
+    } else if (value.IsHolding<long>())
     {
-      const auto paramType = AiParamGetType(paramEntry);
-      if (paramType == AI_TYPE_INT)
+      const auto *nodeEntry = AiNodeGetNodeEntry(node);
+      auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
+      if (paramEntry != nullptr)
       {
-        AiNodeSetInt(node, AtString(key.GetText()), static_cast<int>(value.UncheckedGet<long>()));
+        const auto paramType = AiParamGetType(paramEntry);
+        if (paramType == AI_TYPE_INT)
+        {
+          AiNodeSetInt(node, AtString(key.GetText()), static_cast<int>(value.UncheckedGet<long>()));
+        } else if (paramType == AI_TYPE_BOOLEAN)
+        {
+          AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<long>() != 0);
+        }
       }
-      else if (paramType == AI_TYPE_BOOLEAN)
-      {
-        AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<long>() != 0);
-      }
-    }
-    // Or long longs.
-  }
-  else if (value.IsHolding<long long>())
-  {
-    const auto *nodeEntry = AiNodeGetNodeEntry(node);
-    auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
-    if (paramEntry != nullptr)
+      // Or long longs.
+    } else if (value.IsHolding<long long>())
     {
-      const auto paramType = AiParamGetType(paramEntry);
-      if (paramType == AI_TYPE_INT)
+      const auto *nodeEntry = AiNodeGetNodeEntry(node);
+      auto *paramEntry = AiNodeEntryLookUpParameter(nodeEntry, AtString(key.GetText()));
+      if (paramEntry != nullptr)
       {
-        AiNodeSetInt(node, AtString(key.GetText()), static_cast<int>(value.UncheckedGet<long long>()));
+        const auto paramType = AiParamGetType(paramEntry);
+        if (paramType == AI_TYPE_INT)
+        {
+          AiNodeSetInt(node, AtString(key.GetText()), static_cast<int>(value.UncheckedGet<long long>()));
+        } else if (paramType == AI_TYPE_BOOLEAN)
+        {
+          AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<long long>() != 0);
+        }
       }
-      else if (paramType == AI_TYPE_BOOLEAN)
-      {
-        AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<long long>() != 0);
-      }
+    } else if (value.IsHolding<float>())
+    {
+      AiNodeSetFlt(node, AtString(key.GetText()), value.UncheckedGet<float>());
+    } else if (value.IsHolding<double>())
+    {
+      AiNodeSetFlt(node, AtString(key.GetText()), static_cast<float>(value.UncheckedGet<double>()));
+    } else if (value.IsHolding<bool>())
+    {
+      AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<bool>());
+    } else if (value.IsHolding<std::string>())
+    {
+      AiNodeSetStr(node, AtString(key.GetText()), AtString(value.UncheckedGet<std::string>().c_str()));
+    } else if (value.IsHolding<TfToken>())
+    {
+      AiNodeSetStr(node, AtString(key.GetText()), AtString(value.UncheckedGet<TfToken>().GetText()));
     }
   }
-  else if (value.IsHolding<float>())
+
+  inline const TfTokenVector &_SupportedSprimTypes()
   {
-    AiNodeSetFlt(node, AtString(key.GetText()), value.UncheckedGet<float>());
+    static const TfTokenVector r{HdPrimTypeTokens->camera,
+                                 HdPrimTypeTokens->material,
+                                 HdPrimTypeTokens->distantLight,
+                                 HdPrimTypeTokens->sphereLight,
+                                 HdPrimTypeTokens->diskLight,
+                                 HdPrimTypeTokens->rectLight,
+                                 HdPrimTypeTokens->cylinderLight,
+                                 HdPrimTypeTokens->domeLight,
+                                 HdPrimTypeTokens->extComputation
+                                 /*HdPrimTypeTokens->simpleLight*/};
+    return r;
   }
-  else if (value.IsHolding<double>())
+
+  inline const TfTokenVector &_SupportedBprimTypes()
   {
-    AiNodeSetFlt(node, AtString(key.GetText()), static_cast<float>(value.UncheckedGet<double>()));
+    static const TfTokenVector r{HdPrimTypeTokens->renderBuffer, _tokens->openvdbAsset};
+    return r;
   }
-  else if (value.IsHolding<bool>())
+
+  struct SupportedRenderSetting
   {
-    AiNodeSetBool(node, AtString(key.GetText()), value.UncheckedGet<bool>());
-  }
-  else if (value.IsHolding<std::string>())
+    /// Constructor with no default value.
+    SupportedRenderSetting(const char *_label)
+      : label(_label)
+    {}
+
+    /// Constructor with a default value.
+    template<typename T>
+    SupportedRenderSetting(const char *_label, const T &_defaultValue)
+      : label(_label),
+        defaultValue(_defaultValue)
+    {}
+
+    TfToken label;
+    VtValue defaultValue;
+  };
+
+  using SupportedRenderSettings = std::vector<std::pair<TfToken, SupportedRenderSetting>>;
+
+  const SupportedRenderSettings &_GetSupportedRenderSettings()
   {
-    AiNodeSetStr(node, AtString(key.GetText()), AtString(value.UncheckedGet<std::string>().c_str()));
-  }
-  else if (value.IsHolding<TfToken>())
-  {
-    AiNodeSetStr(node, AtString(key.GetText()), AtString(value.UncheckedGet<TfToken>().GetText()));
-  }
-}
-
-inline const TfTokenVector &_SupportedSprimTypes()
-{
-  static const TfTokenVector r{HdPrimTypeTokens->camera,
-                               HdPrimTypeTokens->material,
-                               HdPrimTypeTokens->distantLight,
-                               HdPrimTypeTokens->sphereLight,
-                               HdPrimTypeTokens->diskLight,
-                               HdPrimTypeTokens->rectLight,
-                               HdPrimTypeTokens->cylinderLight,
-                               HdPrimTypeTokens->domeLight,
-                               HdPrimTypeTokens->extComputation
-                               /*HdPrimTypeTokens->simpleLight*/};
-  return r;
-}
-
-inline const TfTokenVector &_SupportedBprimTypes()
-{
-  static const TfTokenVector r{HdPrimTypeTokens->renderBuffer, _tokens->openvdbAsset};
-  return r;
-}
-
-struct SupportedRenderSetting
-{
-  /// Constructor with no default value.
-  SupportedRenderSetting(const char *_label)
-    : label(_label)
-  {}
-
-  /// Constructor with a default value.
-  template<typename T>
-  SupportedRenderSetting(const char *_label, const T &_defaultValue)
-    : label(_label),
-      defaultValue(_defaultValue)
-  {}
-
-  TfToken label;
-  VtValue defaultValue;
-};
-
-using SupportedRenderSettings = std::vector<std::pair<TfToken, SupportedRenderSetting>>;
-
-const SupportedRenderSettings &_GetSupportedRenderSettings()
-{
-  static const auto &config = HdArnoldConfig::GetInstance();
-  static const SupportedRenderSettings data{
-    // Global settings to control rendering
-    {str::t_enable_progressive_render, {"Enable Progressive Render", config.enable_progressive_render}},
-    {str::t_progressive_min_AA_samples,
-     {"Progressive Render Minimum AA Samples", config.progressive_min_AA_samples}},
-    {str::t_enable_adaptive_sampling, {"Enable Adaptive Sampling", config.enable_adaptive_sampling}},
+    static const auto &config = HdArnoldConfig::GetInstance();
+    static const SupportedRenderSettings data{
+  // Global settings to control rendering
+      {str::t_enable_progressive_render,  {"Enable Progressive Render", config.enable_progressive_render}      },
+      {str::t_progressive_min_AA_samples,
+       {"Progressive Render Minimum AA Samples", config.progressive_min_AA_samples}                            },
+      {str::t_enable_adaptive_sampling,   {"Enable Adaptive Sampling", config.enable_adaptive_sampling}        },
 #ifndef __APPLE__
-    {str::t_enable_gpu_rendering, {"Enable GPU Rendering", config.enable_gpu_rendering}},
+      {str::t_enable_gpu_rendering,       {"Enable GPU Rendering", config.enable_gpu_rendering}                },
 #endif
-    {str::t_interactive_target_fps, {"Target FPS for Interactive Rendering", config.interactive_target_fps}},
-    {str::t_interactive_target_fps_min,
-     {"Minimum Target FPS for Interactive Rendering", config.interactive_target_fps_min}},
-    {str::t_interactive_fps_min, {"Minimum FPS for Interactive Rendering", config.interactive_fps_min}},
-    // Threading settings
-    {str::t_threads, {"Number of Threads", config.threads}},
-    // Sampling settings
-    {str::t_AA_samples, {"AA Samples", config.AA_samples}},
-    {str::t_AA_samples_max, {"AA Samples Max"}},
-    {str::t_GI_diffuse_samples, {"Diffuse Samples", config.GI_diffuse_samples}},
-    {str::t_GI_specular_samples, {"Specular Samples", config.GI_specular_samples}},
-    {str::t_GI_transmission_samples, {"Transmission Samples", config.GI_transmission_samples}},
-    {str::t_GI_sss_samples, {"SubSurface Scattering Samples", config.GI_sss_samples}},
-    {str::t_GI_volume_samples, {"Volume Samples", config.GI_volume_samples}},
-    // Depth settings
-    {str::t_auto_transparency_depth, {"Auto Transparency Depth"}},
-    {str::t_GI_diffuse_depth, {"Diffuse Depth", config.GI_diffuse_depth}},
-    {str::t_GI_specular_depth, {"Specular Depth", config.GI_specular_depth}},
-    {str::t_GI_transmission_depth, {"Transmission Depth"}},
-    {str::t_GI_volume_depth, {"Volume Depth"}},
-    {str::t_GI_total_depth, {"Total Depth"}},
-    // Ignore settings
-    {str::t_ignore_textures, {"Ignore Textures"}},
-    {str::t_ignore_shaders, {"Ignore Shaders"}},
-    {str::t_ignore_atmosphere, {"Ignore Atmosphere"}},
-    {str::t_ignore_lights, {"Ignore Lights"}},
-    {str::t_ignore_shadows, {"Ignore Shadows"}},
-    {str::t_ignore_subdivision, {"Ignore Subdivision"}},
-    {str::t_ignore_displacement, {"Ignore Displacement"}},
-    {str::t_ignore_bump, {"Ignore Bump"}},
-    {str::t_ignore_motion, {"Ignore Motion"}},
-    {str::t_ignore_motion_blur, {"Ignore Motion Blur"}},
-    {str::t_ignore_dof, {"Ignore Depth of Field"}},
-    {str::t_ignore_smoothing, {"Ignore Smoothing"}},
-    {str::t_ignore_sss, {"Ignore SubSurface Scattering"}},
-    {str::t_ignore_operators, {"Ignore Operators"}},
-    // Log Settings
-    {str::t_log_verbosity, {"Log Verbosity (0-5)", config.log_verbosity}},
-    {str::t_log_file, {"Log File Path", config.log_file}},
-    // Profiling Settings
-    {str::t_profile_file, {"File Output for Profiling", config.profile_file}},
-    // Search paths
-    {str::t_texture_searchpath, {"Texture search path.", config.texture_searchpath}},
-    {str::t_plugin_searchpath, {"Plugin search path.", config.plugin_searchpath}},
-    {str::t_procedural_searchpath, {"Procedural search path.", config.procedural_searchpath}},
-    {str::t_osl_includepath, {"OSL include path.", config.osl_includepath}},
-  };
-  return data;
-}
-
-int _GetLogFlagsFromVerbosity(int verbosity)
-{
-  if (verbosity <= 0)
-  {
-    return 0;
-  }
-  if (verbosity >= 5)
-  {
-    return AI_LOG_ALL & ~AI_LOG_COLOR;
+      {str::t_interactive_target_fps,
+       {"Target FPS for Interactive Rendering", config.interactive_target_fps}                                 },
+      {str::t_interactive_target_fps_min,
+       {"Minimum Target FPS for Interactive Rendering", config.interactive_target_fps_min}                     },
+      {str::t_interactive_fps_min,        {"Minimum FPS for Interactive Rendering", config.interactive_fps_min}},
+ // Threading settings
+      {str::t_threads,                    {"Number of Threads", config.threads}                                },
+ // Sampling settings
+      {str::t_AA_samples,                 {"AA Samples", config.AA_samples}                                    },
+      {str::t_AA_samples_max,             {"AA Samples Max"}                                                   },
+      {str::t_GI_diffuse_samples,         {"Diffuse Samples", config.GI_diffuse_samples}                       },
+      {str::t_GI_specular_samples,        {"Specular Samples", config.GI_specular_samples}                     },
+      {str::t_GI_transmission_samples,    {"Transmission Samples", config.GI_transmission_samples}             },
+      {str::t_GI_sss_samples,             {"SubSurface Scattering Samples", config.GI_sss_samples}             },
+      {str::t_GI_volume_samples,          {"Volume Samples", config.GI_volume_samples}                         },
+ // Depth settings
+      {str::t_auto_transparency_depth,    {"Auto Transparency Depth"}                                          },
+      {str::t_GI_diffuse_depth,           {"Diffuse Depth", config.GI_diffuse_depth}                           },
+      {str::t_GI_specular_depth,          {"Specular Depth", config.GI_specular_depth}                         },
+      {str::t_GI_transmission_depth,      {"Transmission Depth"}                                               },
+      {str::t_GI_volume_depth,            {"Volume Depth"}                                                     },
+      {str::t_GI_total_depth,             {"Total Depth"}                                                      },
+ // Ignore settings
+      {str::t_ignore_textures,            {"Ignore Textures"}                                                  },
+      {str::t_ignore_shaders,             {"Ignore Shaders"}                                                   },
+      {str::t_ignore_atmosphere,          {"Ignore Atmosphere"}                                                },
+      {str::t_ignore_lights,              {"Ignore Lights"}                                                    },
+      {str::t_ignore_shadows,             {"Ignore Shadows"}                                                   },
+      {str::t_ignore_subdivision,         {"Ignore Subdivision"}                                               },
+      {str::t_ignore_displacement,        {"Ignore Displacement"}                                              },
+      {str::t_ignore_bump,                {"Ignore Bump"}                                                      },
+      {str::t_ignore_motion,              {"Ignore Motion"}                                                    },
+      {str::t_ignore_motion_blur,         {"Ignore Motion Blur"}                                               },
+      {str::t_ignore_dof,                 {"Ignore Depth of Field"}                                            },
+      {str::t_ignore_smoothing,           {"Ignore Smoothing"}                                                 },
+      {str::t_ignore_sss,                 {"Ignore SubSurface Scattering"}                                     },
+      {str::t_ignore_operators,           {"Ignore Operators"}                                                 },
+ // Log Settings
+      {str::t_log_verbosity,              {"Log Verbosity (0-5)", config.log_verbosity}                        },
+      {str::t_log_file,                   {"Log File Path", config.log_file}                                   },
+ // Profiling Settings
+      {str::t_profile_file,               {"File Output for Profiling", config.profile_file}                   },
+ // Search paths
+      {str::t_texture_searchpath,         {"Texture search path.", config.texture_searchpath}                  },
+      {str::t_plugin_searchpath,          {"Plugin search path.", config.plugin_searchpath}                    },
+      {str::t_procedural_searchpath,      {"Procedural search path.", config.procedural_searchpath}            },
+      {str::t_osl_includepath,            {"OSL include path.", config.osl_includepath}                        },
+    };
+    return data;
   }
 
-  int flags = AI_LOG_ERRORS | AI_LOG_TIMESTAMP | AI_LOG_MEMORY | AI_LOG_BACKTRACE;
-
-  if (verbosity >= 2)
+  int _GetLogFlagsFromVerbosity(int verbosity)
   {
-    flags |= AI_LOG_WARNINGS;
-    if (verbosity >= 3)
+    if (verbosity <= 0)
     {
-      // Don't want progress without info, as otherwise it never prints a
-      // "render done" message!
-      flags |= AI_LOG_INFO | AI_LOG_PROGRESS;
-      if (verbosity >= 4)
+      return 0;
+    }
+    if (verbosity >= 5)
+    {
+      return AI_LOG_ALL & ~AI_LOG_COLOR;
+    }
+
+    int flags = AI_LOG_ERRORS | AI_LOG_TIMESTAMP | AI_LOG_MEMORY | AI_LOG_BACKTRACE;
+
+    if (verbosity >= 2)
+    {
+      flags |= AI_LOG_WARNINGS;
+      if (verbosity >= 3)
       {
-        flags |= AI_LOG_STATS | AI_LOG_PLUGINS;
+        // Don't want progress without info, as otherwise it never prints a
+        // "render done" message!
+        flags |= AI_LOG_INFO | AI_LOG_PROGRESS;
+        if (verbosity >= 4)
+        {
+          flags |= AI_LOG_STATS | AI_LOG_PLUGINS;
+        }
       }
     }
+    return flags;
   }
-  return flags;
-}
 
-int _GetLogVerbosityFromFlags(int flags)
-{
-  // This isn't an exact mapping, as verbosity can't emcompass all possible
-  // flag combinations... so we just check for certain flags, and assume
-  if (flags == 0)
+  int _GetLogVerbosityFromFlags(int flags)
   {
-    return 0;
-  };
-  if (flags & AI_LOG_DEBUG)
-  {
-    return 5;
+    // This isn't an exact mapping, as verbosity can't emcompass all possible
+    // flag combinations... so we just check for certain flags, and assume
+    if (flags == 0)
+    {
+      return 0;
+    };
+    if (flags & AI_LOG_DEBUG)
+    {
+      return 5;
+    }
+    if (flags & (AI_LOG_STATS | AI_LOG_PLUGINS))
+    {
+      return 4;
+    }
+    if (flags & (AI_LOG_INFO | AI_LOG_PROGRESS))
+    {
+      return 3;
+    }
+    if (flags & (AI_LOG_WARNINGS))
+    {
+      return 2;
+    }
+    return 1;
   }
-  if (flags & (AI_LOG_STATS | AI_LOG_PLUGINS))
-  {
-    return 4;
-  }
-  if (flags & (AI_LOG_INFO | AI_LOG_PROGRESS))
-  {
-    return 3;
-  }
-  if (flags & (AI_LOG_WARNINGS))
-  {
-    return 2;
-  }
-  return 1;
-}
 
-template<typename F>
-void _CheckForBoolValue(const VtValue &value, F &&f)
-{
-  if (value.IsHolding<bool>())
+  template<typename F>
+  void _CheckForBoolValue(const VtValue &value, F &&f)
   {
-    f(value.UncheckedGet<bool>());
+    if (value.IsHolding<bool>())
+    {
+      f(value.UncheckedGet<bool>());
+    } else if (value.IsHolding<int>())
+    {
+      f(value.UncheckedGet<int>() != 0);
+    } else if (value.IsHolding<long>())
+    {
+      f(value.UncheckedGet<long>() != 0);
+    } else if (value.IsHolding<long long>())
+    {
+      f(value.UncheckedGet<long long>() != 0);
+    }
   }
-  else if (value.IsHolding<int>())
-  {
-    f(value.UncheckedGet<int>() != 0);
-  }
-  else if (value.IsHolding<long>())
-  {
-    f(value.UncheckedGet<long>() != 0);
-  }
-  else if (value.IsHolding<long long>())
-  {
-    f(value.UncheckedGet<long long>() != 0);
-  }
-}
 
-template<typename F>
-void _CheckForIntValue(const VtValue &value, F &&f)
-{
-  if (value.IsHolding<int>())
+  template<typename F>
+  void _CheckForIntValue(const VtValue &value, F &&f)
   {
-    f(value.UncheckedGet<int>());
+    if (value.IsHolding<int>())
+    {
+      f(value.UncheckedGet<int>());
+    } else if (value.IsHolding<long>())
+    {
+      f(static_cast<int>(value.UncheckedGet<long>()));
+    } else if (value.IsHolding<long long>())
+    {
+      f(static_cast<int>(value.UncheckedGet<long long>()));
+    }
   }
-  else if (value.IsHolding<long>())
-  {
-    f(static_cast<int>(value.UncheckedGet<long>()));
-  }
-  else if (value.IsHolding<long long>())
-  {
-    f(static_cast<int>(value.UncheckedGet<long long>()));
-  }
-}
 
-void _RemoveArnoldGlobalPrefix(const TfToken &key, TfToken &key_new)
-{
-  key_new = TfStringStartsWith(key, _tokens->arnoldGlobal) ?
-              TfToken{key.GetText() + _tokens->arnoldGlobal.size()} :
-              key;
-}
+  void _RemoveArnoldGlobalPrefix(const TfToken &key, TfToken &key_new)
+  {
+    key_new = TfStringStartsWith(key, _tokens->arnoldGlobal) ?
+                TfToken{key.GetText() + _tokens->arnoldGlobal.size()} :
+                key;
+  }
 
 }  // namespace
 
@@ -419,8 +402,7 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context)
   {
     _ignoreVerbosityLogFlags = true;
     AiMsgSetConsoleFlags(config.log_flags_console);
-  }
-  else
+  } else
   {
     AiMsgSetConsoleFlags(_verbosityLogFlags);
   }
@@ -452,7 +434,7 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context)
       {
         continue;
       }
-      
+
       paramList.emplace(TfToken{TfStringPrintf("arnold:%s", paramName.c_str())}, param);
     }
 
@@ -477,8 +459,9 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context)
   }
 
   _fallbackShader = AiNode(_universe, str::utility);
-  AiNodeSetStr(
-    _fallbackShader, str::name, AtString(TfStringPrintf("fallbackShader_%p", _fallbackShader).c_str()));
+  AiNodeSetStr(_fallbackShader,
+               str::name,
+               AtString(TfStringPrintf("fallbackShader_%p", _fallbackShader).c_str()));
   AiNodeSetStr(_fallbackShader, str::shade_mode, str::ambocc);
   AiNodeSetStr(_fallbackShader, str::color_mode, str::color);
   auto *userDataReader = AiNode(_universe, str::user_data_rgb);
@@ -501,8 +484,7 @@ HdArnoldRenderDelegate::HdArnoldRenderDelegate(HdArnoldRenderContext context)
   {
     AiRenderSetHintBool(str::progressive, false);
     AiNodeSetBool(_options, str::enable_progressive_render, false);
-  }
-  else
+  } else
   {
     AiRenderSetHintBool(str::progressive_show_all_outputs, true);
   }
@@ -566,8 +548,7 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
       AiNodeSetStr(_options, str::render_device, b ? str::GPU : str::CPU);
       AiDeviceAutoSelect();
     });
-  }
-  else if (key == str::t_log_verbosity)
+  } else if (key == str::t_log_verbosity)
   {
     if (value.IsHolding<int>())
     {
@@ -577,16 +558,14 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
         AiMsgSetConsoleFlags(_verbosityLogFlags);
       }
     }
-  }
-  else if (key == str::t_log_file)
+  } else if (key == str::t_log_file)
   {
     if (value.IsHolding<std::string>())
     {
       _logFile = value.UncheckedGet<std::string>();
       AiMsgSetLogFileName(_logFile.c_str());
     }
-  }
-  else if (key == str::t_enable_progressive_render)
+  } else if (key == str::t_enable_progressive_render)
   {
     if (_context != HdArnoldRenderContext::Husk)
     {
@@ -595,15 +574,13 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
         AiNodeSetBool(_options, str::enable_progressive_render, b);
       });
     }
-  }
-  else if (key == str::t_progressive_min_AA_samples)
+  } else if (key == str::t_progressive_min_AA_samples)
   {
     if (_context != HdArnoldRenderContext::Husk)
     {
       _CheckForIntValue(value, [&](const int i) { AiRenderSetHintInt(str::progressive_min_AA_samples, i); });
     }
-  }
-  else if (key == str::t_interactive_target_fps)
+  } else if (key == str::t_interactive_target_fps)
   {
     if (_context != HdArnoldRenderContext::Husk)
     {
@@ -612,8 +589,7 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
         AiRenderSetHintFlt(str::interactive_target_fps, value.UncheckedGet<float>());
       }
     }
-  }
-  else if (key == str::t_interactive_target_fps_min)
+  } else if (key == str::t_interactive_target_fps_min)
   {
     if (_context != HdArnoldRenderContext::Husk)
     {
@@ -622,8 +598,7 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
         AiRenderSetHintFlt(str::interactive_target_fps_min, value.UncheckedGet<float>());
       }
     }
-  }
-  else if (key == str::t_interactive_fps_min)
+  } else if (key == str::t_interactive_fps_min)
   {
     if (_context != HdArnoldRenderContext::Husk)
     {
@@ -632,19 +607,16 @@ void HdArnoldRenderDelegate::_SetRenderSetting(const TfToken &_key, const VtValu
         AiRenderSetHintFlt(str::interactive_fps_min, value.UncheckedGet<float>());
       }
     }
-  }
-  else if (key == str::t_profile_file)
+  } else if (key == str::t_profile_file)
   {
     if (value.IsHolding<std::string>())
     {
       AiProfileSetFileName(value.UncheckedGet<std::string>().c_str());
     }
-  }
-  else if (key == _tokens->instantaneousShutter)
+  } else if (key == _tokens->instantaneousShutter)
   {
     _CheckForBoolValue(value, [&](const bool b) { AiNodeSetBool(_options, str::ignore_motion_blur, b); });
-  }
-  else
+  } else
   {
     auto *optionsEntry = AiNodeGetNodeEntry(_options);
     // Sometimes the Render Delegate receives parameters that don't exist
@@ -727,37 +699,30 @@ void HdArnoldRenderDelegate::_ParseDelegateRenderProducts(const VtValue &value)
                 if (aovName->IsHolding<std::string>())
                 {
                   renderVar.name = aovName->UncheckedGet<std::string>();
-                }
-                else if (aovName->IsHolding<TfToken>())
+                } else if (aovName->IsHolding<TfToken>())
                 {
                   renderVar.name = aovName->UncheckedGet<TfToken>().GetString();
                 }
               }
-            }
-            else if (renderVarElem.first == _tokens->sourceName &&
-                     renderVarElem.second.IsHolding<std::string>())
+            } else if (renderVarElem.first == _tokens->sourceName &&
+                       renderVarElem.second.IsHolding<std::string>())
             {
               renderVar.sourceName = renderVarElem.second.UncheckedGet<std::string>();
-            }
-            else if (renderVarElem.first == _tokens->sourceType &&
-                     renderVarElem.second.IsHolding<TfToken>())
+            } else if (renderVarElem.first == _tokens->sourceType &&
+                       renderVarElem.second.IsHolding<TfToken>())
             {
               renderVar.sourceType = renderVarElem.second.UncheckedGet<TfToken>();
-            }
-            else if (renderVarElem.first == _tokens->dataType && renderVarElem.second.IsHolding<TfToken>())
+            } else if (renderVarElem.first == _tokens->dataType && renderVarElem.second.IsHolding<TfToken>())
             {
               renderVar.dataType = renderVarElem.second.UncheckedGet<TfToken>();
-            }
-            else if (renderVarElem.first == _tokens->format && renderVarElem.second.IsHolding<HdFormat>())
+            } else if (renderVarElem.first == _tokens->format && renderVarElem.second.IsHolding<HdFormat>())
             {
               renderVar.format = renderVarElem.second.UncheckedGet<HdFormat>();
-            }
-            else if (renderVarElem.first == _tokens->clearValue)
+            } else if (renderVarElem.first == _tokens->clearValue)
             {
               renderVar.clearValue = renderVarElem.second;
-            }
-            else if (renderVarElem.first == _tokens->multiSampled &&
-                     renderVarElem.second.IsHolding<bool>())
+            } else if (renderVarElem.first == _tokens->multiSampled &&
+                       renderVarElem.second.IsHolding<bool>())
             {
               renderVar.multiSampled = renderVarElem.second.UncheckedGet<bool>();
             }
@@ -768,8 +733,7 @@ void HdArnoldRenderDelegate::_ParseDelegateRenderProducts(const VtValue &value)
             product.renderVars.emplace_back(std::move(renderVar));
           }
         }
-      }
-      else
+      } else
       {
         // It's a setting describing the RenderProduct.
         product.settings.insert({productElem.first, productElem.second});
@@ -793,46 +757,38 @@ VtValue HdArnoldRenderDelegate::GetRenderSetting(const TfToken &_key) const
   if (key == str::t_enable_gpu_rendering)
   {
     return VtValue(AiNodeGetStr(_options, str::render_device) == str::GPU);
-  }
-  else if (key == str::t_enable_progressive_render)
+  } else if (key == str::t_enable_progressive_render)
   {
     bool v = true;
     AiRenderGetHintBool(str::progressive, v);
     return VtValue(v);
-  }
-  else if (key == str::t_progressive_min_AA_samples)
+  } else if (key == str::t_progressive_min_AA_samples)
   {
     int v = -4;
     AiRenderGetHintInt(str::progressive_min_AA_samples, v);
     return VtValue(v);
-  }
-  else if (key == str::t_log_verbosity)
+  } else if (key == str::t_log_verbosity)
   {
     return VtValue(_GetLogVerbosityFromFlags(_verbosityLogFlags));
-  }
-  else if (key == str::t_log_file)
+  } else if (key == str::t_log_file)
   {
     return VtValue(_logFile);
-  }
-  else if (key == str::t_interactive_target_fps)
+  } else if (key == str::t_interactive_target_fps)
   {
     float v = 1.0f;
     AiRenderGetHintFlt(str::interactive_target_fps, v);
     return VtValue(v);
-  }
-  else if (key == str::t_interactive_target_fps_min)
+  } else if (key == str::t_interactive_target_fps_min)
   {
     float v = 1.0f;
     AiRenderGetHintFlt(str::interactive_target_fps_min, v);
     return VtValue(v);
-  }
-  else if (key == str::t_interactive_fps_min)
+  } else if (key == str::t_interactive_fps_min)
   {
     float v = 1.0f;
     AiRenderGetHintFlt(str::interactive_fps_min, v);
     return VtValue(v);
-  }
-  else if (key == str::t_profile_file)
+  } else if (key == str::t_profile_file)
   {
     return VtValue(std::string(AiProfileGetFileName().c_str()));
   }
@@ -856,8 +812,7 @@ HdRenderSettingDescriptorList HdArnoldRenderDelegate::GetRenderSettingDescriptor
     {
       const auto *pentry = AiNodeEntryLookUpParameter(nentry, AtString(it.first.GetText()));
       desc.defaultValue = _GetNodeParamValue(_options, pentry);
-    }
-    else
+    } else
     {
       desc.defaultValue = it.second.defaultValue;
     }
@@ -1110,39 +1065,32 @@ HdAovDescriptor HdArnoldRenderDelegate::GetDefaultAovDescriptor(const TfToken &n
 #else
     return HdAovDescriptor(HdFormatUNorm8Vec4, false, VtValue(GfVec4f(0.0f, 0.0f, 0.0f, 0.0f)));
 #endif
-  }
-  else if (name == HdAovTokens->depth)
+  } else if (name == HdAovTokens->depth)
   {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(1.0f));
-  }
-  else if (name == HdAovTokens->primId)
+  } else if (name == HdAovTokens->primId)
   {
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
-  }
-  else if (name == HdAovTokens->instanceId || name == HdAovTokens->elementId ||
-           name == HdAovTokens->pointId)
+  } else if (name == HdAovTokens->instanceId || name == HdAovTokens->elementId ||
+             name == HdAovTokens->pointId)
   {
     // We are only supporting the prim id buffer for now.
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
-  }
-  else if (name == HdAovTokens->normal || name == HdAovTokens->Neye ||
-           name == "linearDepth" ||  // This was changed to cameraDepth after 0.19.11.
-           name == "cameraDepth")
+  } else if (name == HdAovTokens->normal || name == HdAovTokens->Neye ||
+             name == "linearDepth" ||  // This was changed to cameraDepth after 0.19.11.
+             name == "cameraDepth")
   {
     // More built-in aovs.
     return HdAovDescriptor();
-  }
-  else if (TfStringStartsWith(name.GetString(), HdAovTokens->primvars))
+  } else if (TfStringStartsWith(name.GetString(), HdAovTokens->primvars))
   {
     // Primvars.
     return HdAovDescriptor();
-  }
-  else if (TfStringStartsWith(name.GetString(), HdAovTokens->lpe))
+  } else if (TfStringStartsWith(name.GetString(), HdAovTokens->lpe))
   {
     // LPEs
     return HdAovDescriptor();
-  }
-  else
+  } else
   {
     // Anything else. The colorize task does not display custom aovs properly for now.
     // TODO(pal): Query the available AOV types and their format from arnold.
@@ -1163,8 +1111,7 @@ void HdArnoldRenderDelegate::RegisterLightLinking(const TfToken &name, HdLight *
       _lightLinkingChanged.store(true, std::memory_order_release);
     }
     links.emplace(name, std::vector<HdLight *>{light});
-  }
-  else
+  } else
   {
     if (std::find(it->second.begin(), it->second.end(), light) == it->second.end())
     {
@@ -1258,11 +1205,11 @@ void HdArnoldRenderDelegate::ApplyLightLinking(AtNode *shape, const VtArray<TfTo
     if (lights.empty())
     {
       AiNodeResetParameter(shape, group);
-    }
-    else
+    } else
     {
-      AiNodeSetArray(
-        shape, group, AiArrayConvert(static_cast<uint32_t>(lights.size()), 1, AI_TYPE_NODE, lights.data()));
+      AiNodeSetArray(shape,
+                     group,
+                     AiArrayConvert(static_cast<uint32_t>(lights.size()), 1, AI_TYPE_NODE, lights.data()));
     }
     AiNodeSetBool(shape, useGroup, true);
   };
@@ -1328,8 +1275,7 @@ bool HdArnoldRenderDelegate::ShouldSkipIteration(HdRenderIndex *renderIndex,
       if (it == _materialToShapeMap.end())
       {
         _materialToShapeMap.insert({material, {shapeChange.shape}});
-      }
-      else
+      } else
       {
         it->second.insert(shapeChange.shape);
       }

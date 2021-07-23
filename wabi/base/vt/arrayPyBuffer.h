@@ -43,10 +43,10 @@ template<class T>
 boost::optional<VtArray<T>> VtArrayFromPyBuffer(TfPyObjWrapper const &obj, std::string *err = nullptr);
 
 /// The set of types for which it's valid to call VtArrayFromPyBuffer().
-#define VT_ARRAY_PYBUFFER_TYPES \
-  VT_BUILTIN_NUMERIC_VALUE_TYPES \
-  VT_VEC_VALUE_TYPES \
-  VT_MATRIX_VALUE_TYPES \
+#define VT_ARRAY_PYBUFFER_TYPES              \
+  VT_BUILTIN_NUMERIC_VALUE_TYPES             \
+  VT_VEC_VALUE_TYPES                         \
+  VT_MATRIX_VALUE_TYPES                      \
   VT_GFRANGE_VALUE_TYPES((GfRect2i, Rect2i)) \
   ((GfQuath, Quath))((GfQuatf, Quatf))((GfQuatd, Quatd))
 

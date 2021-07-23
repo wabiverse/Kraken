@@ -64,8 +64,7 @@ HdRprimCollection::HdRprimCollection(TfToken const &name,
   {
     TF_CODING_ERROR("Root path must be absolute");
     _rootPaths.push_back(SdfPath::AbsoluteRootPath());
-  }
-  else
+  } else
   {
     _rootPaths.push_back(rootPath);
   }

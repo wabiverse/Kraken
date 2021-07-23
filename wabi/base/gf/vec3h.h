@@ -468,8 +468,9 @@ GF_API void GfBuildOrthonormalFrame(GfVec3h const &v0, GfVec3h *v1, GfVec3h *v2,
 /// Returns the cross product of \p v1 and \p v2.
 inline GfVec3h GfCross(GfVec3h const &v1, GfVec3h const &v2)
 {
-  return GfVec3h(
-    v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]);
+  return GfVec3h(v1[1] * v2[2] - v1[2] * v2[1],
+                 v1[2] * v2[0] - v1[0] * v2[2],
+                 v1[0] * v2[1] - v1[1] * v2[0]);
 }
 
 /// Returns the cross product of \p v1 and \p v2.

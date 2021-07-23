@@ -97,8 +97,8 @@ bool HdRprSamplePrimvar(SdfPath const &id,
   std::vector<float> sampleTimes(maxSampleCount);
   std::vector<VtValue> sampleVtValues(maxSampleCount);
 
-  size_t authoredSampleCount = sceneDelegate->SamplePrimvar(
-    id, key, maxSampleCount, sampleTimes.data(), sampleVtValues.data());
+  size_t authoredSampleCount =
+    sceneDelegate->SamplePrimvar(id, key, maxSampleCount, sampleTimes.data(), sampleVtValues.data());
   if (!authoredSampleCount)
   {
     return false;
@@ -139,15 +139,14 @@ bool HdRprSamplePrimvar(SdfPath const &id,
       if (i == 0)
       {
         baselineSize = sampleValues[i].size();
-      }
-      else if (baselineSize != sampleValues[i].size())
+      } else if (baselineSize != sampleValues[i].size())
       {
-        TF_RUNTIME_ERROR(
-          "[%s] RPR does not support non-uniform sub-frame samples - %s", id.GetText(), key.GetText());
+        TF_RUNTIME_ERROR("[%s] RPR does not support non-uniform sub-frame samples - %s",
+                         id.GetText(),
+                         key.GetText());
         return false;
       }
-    }
-    else
+    } else
     {
       TF_RUNTIME_ERROR("[%s] Failed to sample %s primvar data: unexpected underlying type - %s",
                        id.GetText(),
@@ -203,8 +202,7 @@ inline void HdRprGetPrimvarIndices(HdInterpolation interpolation,
     {
       out_indices->push_back(i);
     }
-  }
-  else if (interpolation == HdInterpolationConstant)
+  } else if (interpolation == HdInterpolationConstant)
   {
     *out_indices = VtIntArray(faceIndices.size(), 0);
   }

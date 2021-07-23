@@ -180,18 +180,12 @@ class AnchorWindowSDL : public AnchorSystemWindow
    * @return A boolean success indicator. */
   eAnchorStatus swapBuffers();
 
-  void screenToClient(AnchorS32 inX,
-                      AnchorS32 inY,
-                      AnchorS32 &outX,
-                      AnchorS32 &outY) const;
+  void screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const;
 
   void setTitle(const char *title);
   void setIcon(const char *icon);
 
-  void clientToScreen(AnchorS32 inX,
-                      AnchorS32 inY,
-                      AnchorS32 &outX,
-                      AnchorS32 &outY) const;
+  void clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const;
 
   eAnchorStatus setClientSize(AnchorU32 width, AnchorU32 height);
 

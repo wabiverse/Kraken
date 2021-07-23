@@ -86,8 +86,7 @@ std::string ArDefaultResolverContext::GetAsString() const
   if (_searchPath.empty())
   {
     result += "[ ]";
-  }
-  else
+  } else
   {
     result += "[\n    ";
     result += TfStringJoin(_searchPath, "\n    ");

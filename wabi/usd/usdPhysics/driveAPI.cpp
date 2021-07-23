@@ -34,349 +34,289 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsDriveAPI,
-        TfType::Bases< UsdAPISchemaBase > >();
-    
+  TfType::Define<UsdPhysicsDriveAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _schemaTokens,
-    (PhysicsDriveAPI)
-    (drive)
-);
+TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsDriveAPI)(drive));
 
 /* virtual */
 UsdPhysicsDriveAPI::~UsdPhysicsDriveAPI()
+{}
+
+/* static */
+UsdPhysicsDriveAPI UsdPhysicsDriveAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsDriveAPI();
+  }
+  TfToken name;
+  if (!IsPhysicsDriveAPIPath(path, &name))
+  {
+    TF_CODING_ERROR("Invalid drive path <%s>.", path.GetText());
+    return UsdPhysicsDriveAPI();
+  }
+  return UsdPhysicsDriveAPI(stage->GetPrimAtPath(path.GetPrimPath()), name);
+}
+
+UsdPhysicsDriveAPI UsdPhysicsDriveAPI::Get(const UsdPrim &prim, const TfToken &name)
+{
+  return UsdPhysicsDriveAPI(prim, name);
+}
+
+
+/* static */
+bool UsdPhysicsDriveAPI::IsSchemaPropertyBaseName(const TfToken &baseName)
+{
+  static TfTokenVector attrsAndRels = {
+    UsdPhysicsTokens->physicsType,
+    UsdPhysicsTokens->physicsMaxForce,
+    UsdPhysicsTokens->physicsTargetPosition,
+    UsdPhysicsTokens->physicsTargetVelocity,
+    UsdPhysicsTokens->physicsDamping,
+    UsdPhysicsTokens->physicsStiffness,
+  };
+
+  return find(attrsAndRels.begin(), attrsAndRels.end(), baseName) != attrsAndRels.end();
 }
 
 /* static */
-UsdPhysicsDriveAPI
-UsdPhysicsDriveAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+bool UsdPhysicsDriveAPI::IsPhysicsDriveAPIPath(const SdfPath &path, TfToken *name)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsDriveAPI();
-    }
-    TfToken name;
-    if (!IsPhysicsDriveAPIPath(path, &name)) {
-        TF_CODING_ERROR("Invalid drive path <%s>.", path.GetText());
-        return UsdPhysicsDriveAPI();
-    }
-    return UsdPhysicsDriveAPI(stage->GetPrimAtPath(path.GetPrimPath()), name);
-}
-
-UsdPhysicsDriveAPI
-UsdPhysicsDriveAPI::Get(const UsdPrim &prim, const TfToken &name)
-{
-    return UsdPhysicsDriveAPI(prim, name);
-}
-
-
-/* static */
-bool 
-UsdPhysicsDriveAPI::IsSchemaPropertyBaseName(const TfToken &baseName)
-{
-    static TfTokenVector attrsAndRels = {
-        UsdPhysicsTokens->physicsType,
-        UsdPhysicsTokens->physicsMaxForce,
-        UsdPhysicsTokens->physicsTargetPosition,
-        UsdPhysicsTokens->physicsTargetVelocity,
-        UsdPhysicsTokens->physicsDamping,
-        UsdPhysicsTokens->physicsStiffness,
-    };
-
-    return find(attrsAndRels.begin(), attrsAndRels.end(), baseName)
-            != attrsAndRels.end();
-}
-
-/* static */
-bool
-UsdPhysicsDriveAPI::IsPhysicsDriveAPIPath(
-    const SdfPath &path, TfToken *name)
-{
-    if (!path.IsPropertyPath()) {
-        return false;
-    }
-
-    std::string propertyName = path.GetName();
-    TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(propertyName);
-
-    // The baseName of the  path can't be one of the 
-    // schema properties. We should validate this in the creation (or apply)
-    // API.
-    TfToken baseName = *tokens.rbegin();
-    if (IsSchemaPropertyBaseName(baseName)) {
-        return false;
-    }
-
-    if (tokens.size() >= 2
-        && tokens[0] == _schemaTokens->drive) {
-        *name = TfToken(propertyName.substr(
-            _schemaTokens->drive.GetString().size() + 1));
-        return true;
-    }
-
+  if (!path.IsPropertyPath())
+  {
     return false;
+  }
+
+  std::string propertyName = path.GetName();
+  TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(propertyName);
+
+  // The baseName of the  path can't be one of the
+  // schema properties. We should validate this in the creation (or apply)
+  // API.
+  TfToken baseName = *tokens.rbegin();
+  if (IsSchemaPropertyBaseName(baseName))
+  {
+    return false;
+  }
+
+  if (tokens.size() >= 2 && tokens[0] == _schemaTokens->drive)
+  {
+    *name = TfToken(propertyName.substr(_schemaTokens->drive.GetString().size() + 1));
+    return true;
+  }
+
+  return false;
 }
 
 /* virtual */
 UsdSchemaKind UsdPhysicsDriveAPI::GetSchemaKind() const
 {
-    return UsdPhysicsDriveAPI::schemaKind;
+  return UsdPhysicsDriveAPI::schemaKind;
 }
 
 /* static */
-bool
-UsdPhysicsDriveAPI::CanApply(
-    const UsdPrim &prim, const TfToken &name, std::string *whyNot)
+bool UsdPhysicsDriveAPI::CanApply(const UsdPrim &prim, const TfToken &name, std::string *whyNot)
 {
-    return prim.CanApplyAPI<UsdPhysicsDriveAPI>(name, whyNot);
+  return prim.CanApplyAPI<UsdPhysicsDriveAPI>(name, whyNot);
 }
 
 /* static */
-UsdPhysicsDriveAPI
-UsdPhysicsDriveAPI::Apply(const UsdPrim &prim, const TfToken &name)
+UsdPhysicsDriveAPI UsdPhysicsDriveAPI::Apply(const UsdPrim &prim, const TfToken &name)
 {
-    // Ensure that the instance name is valid.
-    TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(name);
+  // Ensure that the instance name is valid.
+  TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(name);
 
-    if (tokens.empty()) {
-        TF_CODING_ERROR("Invalid PhysicsDriveAPI name '%s'.", 
-                        name.GetText());
-        return UsdPhysicsDriveAPI();
-    }
-
-    const TfToken &baseName = tokens.back();
-    if (IsSchemaPropertyBaseName(baseName)) {
-        TF_CODING_ERROR("Invalid PhysicsDriveAPI name '%s'. "
-                        "The base-name '%s' is a schema property name.", 
-                        name.GetText(), baseName.GetText());
-        return UsdPhysicsDriveAPI();
-    }
-
-    if (prim.ApplyAPI<UsdPhysicsDriveAPI>(name)) {
-        return UsdPhysicsDriveAPI(prim, name);
-    }
+  if (tokens.empty())
+  {
+    TF_CODING_ERROR("Invalid PhysicsDriveAPI name '%s'.", name.GetText());
     return UsdPhysicsDriveAPI();
+  }
+
+  const TfToken &baseName = tokens.back();
+  if (IsSchemaPropertyBaseName(baseName))
+  {
+    TF_CODING_ERROR(
+      "Invalid PhysicsDriveAPI name '%s'. "
+      "The base-name '%s' is a schema property name.",
+      name.GetText(),
+      baseName.GetText());
+    return UsdPhysicsDriveAPI();
+  }
+
+  if (prim.ApplyAPI<UsdPhysicsDriveAPI>(name))
+  {
+    return UsdPhysicsDriveAPI(prim, name);
+  }
+  return UsdPhysicsDriveAPI();
 }
 
 /* static */
-const TfType &
-UsdPhysicsDriveAPI::GetStaticTfType()
+const TfType &UsdPhysicsDriveAPI::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsDriveAPI>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsDriveAPI>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsDriveAPI::IsTypedSchema()
+bool UsdPhysicsDriveAPI::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsDriveAPI::GetTfType() const
+const TfType &UsdPhysicsDriveAPI::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /// Returns the property name prefixed with the correct namespace prefix, which
 /// is composed of the the API's propertyNamespacePrefix metadata and the
 /// instance name of the API.
-static inline
-TfToken
-_GetNamespacedPropertyName(const TfToken instanceName, const TfToken propName)
+static inline TfToken _GetNamespacedPropertyName(const TfToken instanceName, const TfToken propName)
 {
-    TfTokenVector identifiers =
-        {_schemaTokens->drive, instanceName, propName};
-    return TfToken(SdfPath::JoinIdentifier(identifiers));
+  TfTokenVector identifiers = {_schemaTokens->drive, instanceName, propName};
+  return TfToken(SdfPath::JoinIdentifier(identifiers));
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::GetTypeAttr() const
+UsdAttribute UsdPhysicsDriveAPI::GetTypeAttr() const
 {
-    return GetPrim().GetAttribute(
-        _GetNamespacedPropertyName(
-            GetName(),
-            UsdPhysicsTokens->physicsType));
+  return GetPrim().GetAttribute(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsType));
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::CreateTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsDriveAPI::CreateTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(
-                       _GetNamespacedPropertyName(
-                            GetName(),
-                           UsdPhysicsTokens->physicsType),
-                       SdfValueTypeNames->Token,
-                       /* custom = */ false,
-                       SdfVariabilityUniform,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsType),
+                                    SdfValueTypeNames->Token,
+                                    /* custom = */ false,
+                                    SdfVariabilityUniform,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::GetMaxForceAttr() const
+UsdAttribute UsdPhysicsDriveAPI::GetMaxForceAttr() const
 {
-    return GetPrim().GetAttribute(
-        _GetNamespacedPropertyName(
-            GetName(),
-            UsdPhysicsTokens->physicsMaxForce));
+  return GetPrim().GetAttribute(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsMaxForce));
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::CreateMaxForceAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsDriveAPI::CreateMaxForceAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(
-                       _GetNamespacedPropertyName(
-                            GetName(),
-                           UsdPhysicsTokens->physicsMaxForce),
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsMaxForce),
+                                    SdfValueTypeNames->Float,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::GetTargetPositionAttr() const
+UsdAttribute UsdPhysicsDriveAPI::GetTargetPositionAttr() const
 {
-    return GetPrim().GetAttribute(
-        _GetNamespacedPropertyName(
-            GetName(),
-            UsdPhysicsTokens->physicsTargetPosition));
+  return GetPrim().GetAttribute(
+    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsTargetPosition));
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::CreateTargetPositionAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsDriveAPI::CreateTargetPositionAttr(VtValue const &defaultValue,
+                                                          bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(
-                       _GetNamespacedPropertyName(
-                            GetName(),
-                           UsdPhysicsTokens->physicsTargetPosition),
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(
+    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsTargetPosition),
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityVarying,
+    defaultValue,
+    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::GetTargetVelocityAttr() const
+UsdAttribute UsdPhysicsDriveAPI::GetTargetVelocityAttr() const
 {
-    return GetPrim().GetAttribute(
-        _GetNamespacedPropertyName(
-            GetName(),
-            UsdPhysicsTokens->physicsTargetVelocity));
+  return GetPrim().GetAttribute(
+    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsTargetVelocity));
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::CreateTargetVelocityAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsDriveAPI::CreateTargetVelocityAttr(VtValue const &defaultValue,
+                                                          bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(
-                       _GetNamespacedPropertyName(
-                            GetName(),
-                           UsdPhysicsTokens->physicsTargetVelocity),
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(
+    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsTargetVelocity),
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityVarying,
+    defaultValue,
+    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::GetDampingAttr() const
+UsdAttribute UsdPhysicsDriveAPI::GetDampingAttr() const
 {
-    return GetPrim().GetAttribute(
-        _GetNamespacedPropertyName(
-            GetName(),
-            UsdPhysicsTokens->physicsDamping));
+  return GetPrim().GetAttribute(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsDamping));
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::CreateDampingAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsDriveAPI::CreateDampingAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(
-                       _GetNamespacedPropertyName(
-                            GetName(),
-                           UsdPhysicsTokens->physicsDamping),
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsDamping),
+                                    SdfValueTypeNames->Float,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::GetStiffnessAttr() const
+UsdAttribute UsdPhysicsDriveAPI::GetStiffnessAttr() const
 {
-    return GetPrim().GetAttribute(
-        _GetNamespacedPropertyName(
-            GetName(),
-            UsdPhysicsTokens->physicsStiffness));
+  return GetPrim().GetAttribute(_GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsStiffness));
 }
 
-UsdAttribute
-UsdPhysicsDriveAPI::CreateStiffnessAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsDriveAPI::CreateStiffnessAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(
-                       _GetNamespacedPropertyName(
-                            GetName(),
-                           UsdPhysicsTokens->physicsStiffness),
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(
+    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsStiffness),
+    SdfValueTypeNames->Float,
+    /* custom = */ false,
+    SdfVariabilityVarying,
+    defaultValue,
+    writeSparsely);
 }
 
-namespace {
-static inline TfTokenVector
-_ConcatenateAttributeNames(
-    const TfToken instanceName,
-    const TfTokenVector& left,
-    const TfTokenVector& right)
+namespace
 {
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfToken instanceName,
+                                                         const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
     TfTokenVector result;
     result.reserve(left.size() + right.size());
     result.insert(result.end(), left.begin(), left.end());
 
-    for (const TfToken attrName : right) {
-        result.push_back(
-            _GetNamespacedPropertyName(instanceName, attrName));
+    for (const TfToken attrName : right)
+    {
+      result.push_back(_GetNamespacedPropertyName(instanceName, attrName));
     }
     result.insert(result.end(), right.begin(), right.end());
     return result;
-}
-}
+  }
+}  // namespace
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsDriveAPI::GetSchemaAttributeNames(
-    bool includeInherited, const TfToken instanceName)
+const TfTokenVector &UsdPhysicsDriveAPI::GetSchemaAttributeNames(bool includeInherited,
+                                                                 const TfToken instanceName)
 {
-    static TfTokenVector localNames = {
-        UsdPhysicsTokens->physicsType,
-        UsdPhysicsTokens->physicsMaxForce,
-        UsdPhysicsTokens->physicsTargetPosition,
-        UsdPhysicsTokens->physicsTargetVelocity,
-        UsdPhysicsTokens->physicsDamping,
-        UsdPhysicsTokens->physicsStiffness,
-    };
-    static TfTokenVector allNames =
-        _ConcatenateAttributeNames(
-            instanceName,
-            UsdAPISchemaBase::GetSchemaAttributeNames(true),
-            localNames);
+  static TfTokenVector localNames = {
+    UsdPhysicsTokens->physicsType,
+    UsdPhysicsTokens->physicsMaxForce,
+    UsdPhysicsTokens->physicsTargetPosition,
+    UsdPhysicsTokens->physicsTargetVelocity,
+    UsdPhysicsTokens->physicsDamping,
+    UsdPhysicsTokens->physicsStiffness,
+  };
+  static TfTokenVector allNames = _ConcatenateAttributeNames(instanceName,
+                                                             UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END

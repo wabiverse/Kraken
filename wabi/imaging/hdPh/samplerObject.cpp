@@ -212,8 +212,7 @@ static void _ResolveSamplerParameter(const HdWrap textureOpinion, HdWrap *const 
       // Use repeat if there is no opinion on either the
       // texture node or in the texture file.
       *parameter = HdWrapRepeat;
-    }
-    else
+    } else
     {
       *parameter = textureOpinion;
     }

@@ -39,28 +39,28 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string __str__(UsdStagePopulationMask const &self)
-{
-  return boost::lexical_cast<std::string>(self);
-}
+  static std::string __str__(UsdStagePopulationMask const &self)
+  {
+    return boost::lexical_cast<std::string>(self);
+  }
 
-static string __repr__(UsdStagePopulationMask const &self)
-{
-  return TF_PY_REPR_PREFIX + "StagePopulationMask(" + TfPyRepr(self.GetPaths()) + ")";
-}
+  static string __repr__(UsdStagePopulationMask const &self)
+  {
+    return TF_PY_REPR_PREFIX + "StagePopulationMask(" + TfPyRepr(self.GetPaths()) + ")";
+  }
 
-static size_t __hash__(UsdStagePopulationMask const &self)
-{
-  return hash_value(self);
-}
+  static size_t __hash__(UsdStagePopulationMask const &self)
+  {
+    return hash_value(self);
+  }
 
-static std::pair<bool, std::vector<TfToken>> _GetIncludedChildNames(UsdStagePopulationMask const &self,
-                                                                    SdfPath const &path)
-{
-  TfTokenVector names;
-  const bool result = self.GetIncludedChildNames(path, &names);
-  return std::make_pair(result, std::move(names));
-}
+  static std::pair<bool, std::vector<TfToken>> _GetIncludedChildNames(UsdStagePopulationMask const &self,
+                                                                      SdfPath const &path)
+  {
+    TfTokenVector names;
+    const bool result = self.GetIncludedChildNames(path, &names);
+    return std::make_pair(result, std::move(names));
+  }
 
 }  // anonymous namespace
 
@@ -93,11 +93,11 @@ void wrapUsdStagePopulationMask()
          arg("other"))
 
     .def("Includes",
-         (bool (UsdStagePopulationMask::*)(UsdStagePopulationMask const &) const) &
+         (bool(UsdStagePopulationMask::*)(UsdStagePopulationMask const &) const) &
            UsdStagePopulationMask::Includes,
          arg("other"))
     .def("Includes",
-         (bool (UsdStagePopulationMask::*)(SdfPath const &) const) & UsdStagePopulationMask::Includes,
+         (bool(UsdStagePopulationMask::*)(SdfPath const &) const) & UsdStagePopulationMask::Includes,
          arg("path"))
 
     .def("IncludesSubtree", &UsdStagePopulationMask::IncludesSubtree, arg("path"))
@@ -114,8 +114,10 @@ void wrapUsdStagePopulationMask()
            UsdStagePopulationMask::Add,
          return_self<>())
 
-    .def(
-      "GetIncludedChildNames", &_GetIncludedChildNames, arg("path"), return_value_policy<TfPyPairToTuple>())
+    .def("GetIncludedChildNames",
+         &_GetIncludedChildNames,
+         arg("path"),
+         return_value_policy<TfPyPairToTuple>())
 
     .def("GetPaths", &UsdStagePopulationMask::GetPaths)
 

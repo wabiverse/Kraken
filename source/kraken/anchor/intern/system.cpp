@@ -60,8 +60,7 @@ eAnchorStatus AnchorSystem::init()
   if (m_windowManager && m_eventManager)
   {
     return ANCHOR_SUCCESS;
-  }
-  else
+  } else
   {
     return ANCHOR_FAILURE;
   }
@@ -116,19 +115,19 @@ eAnchorStatus AnchorSystem::beginFullScreen(const ANCHOR_DisplaySetting &setting
   {
     if (!m_windowManager->getFullScreen())
     {
-      m_displayManager->getCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
-                                                 m_preFullScreenSetting);
+      m_displayManager->getCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay, m_preFullScreenSetting);
 
       success = m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay, setting);
       if (success == ANCHOR_FAILURE)
       {
-        success = createFullScreenWindow(
-          (AnchorSystemWindow **)window, setting, stereoVisual, alphaBackground);
+        success = createFullScreenWindow((AnchorSystemWindow **)window,
+                                         setting,
+                                         stereoVisual,
+                                         alphaBackground);
         if (success == ANCHOR_FAILURE)
         {
           m_windowManager->beginFullScreen(*window, stereoVisual);
-        }
-        else
+        } else
         {
           m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
                                                      m_preFullScreenSetting);
@@ -153,8 +152,7 @@ eAnchorStatus AnchorSystem::endFullScreen(void)
     ANCHOR_ASSERT(m_displayManager);
     success = m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
                                                          m_preFullScreenSetting);
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }
@@ -167,8 +165,7 @@ bool AnchorSystem::getFullScreen(void)
   if (m_windowManager)
   {
     fullScreen = m_windowManager->getFullScreen();
-  }
-  else
+  } else
   {
     fullScreen = false;
   }
@@ -194,8 +191,7 @@ eAnchorStatus AnchorSystem::addEventConsumer(AnchorIEventConsumer *consumer)
   if (m_eventManager)
   {
     success = m_eventManager->addConsumer(consumer);
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }
@@ -208,8 +204,7 @@ eAnchorStatus AnchorSystem::removeEventConsumer(AnchorIEventConsumer *consumer)
   if (m_eventManager)
   {
     success = m_eventManager->removeConsumer(consumer);
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }
@@ -222,8 +217,7 @@ eAnchorStatus AnchorSystem::pushEvent(AnchorIEvent *event)
   if (m_eventManager)
   {
     success = m_eventManager->pushEvent(event);
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }

@@ -227,12 +227,12 @@ uint64_t MurmurHash64B(const void *key, int len, uint64_t seed)
 // more amenable to incremental implementations.
 
 #define mmix(h, k) \
-  { \
-    k *= m; \
-    k ^= k >> r; \
-    k *= m; \
-    h *= m; \
-    h ^= k; \
+  {                \
+    k *= m;        \
+    k ^= k >> r;   \
+    k *= m;        \
+    h *= m;        \
+    h ^= k;        \
   }
 
 uint32_t MurmurHash2A(const void *key, int len, uint32_t seed)
@@ -425,12 +425,12 @@ uint32_t MurmurHashNeutral2(const void *key, int len, uint32_t seed)
 // Performance will be lower than MurmurHash2
 
 #define MIX(h, k, m) \
-  { \
-    k *= m; \
-    k ^= k >> r; \
-    k *= m; \
-    h *= m; \
-    h ^= k; \
+  {                  \
+    k *= m;          \
+    k ^= k >> r;     \
+    k *= m;          \
+    h *= m;          \
+    h ^= k;          \
   }
 
 uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
@@ -520,8 +520,7 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
           h ^= data[0];
           h *= m;
       };
-    }
-    else
+    } else
     {
       switch (len)
       {
@@ -542,8 +541,7 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
     h ^= h >> 15;
 
     return h;
-  }
-  else
+  } else
   {
     while (len >= 4)
     {

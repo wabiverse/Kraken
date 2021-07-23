@@ -16,20 +16,16 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(
-  HdRprGeometryPrimvarTokens,
-  ((id, "rpr:id"))((subdivisionLevel, "rpr:subdivisionLevel"))((ignoreContour, "rpr:ignoreContour"))((
-    cryptomatteName,
-    "rpr:cryptomatteName"))((geomSamples, "rpr:geomSamples"))((visibilityPrimary, "rpr:visibilityPrimary"))((
-    visibilityShadow,
-    "rpr:visibilityShadow"))((visibilityReflection, "rpr:visibilityReflection"))((
-    visibilityGlossyReflection,
-    "rpr:visibilityGlossyReflection"))((visibilityRefraction,
-                                        "rpr:visibilityRefraction"))((visibilityGlossyRefraction,
-                                                                      "rpr:visibilityGlossyRefraction"))((
-    visibilityDiffuse,
-    "rpr:visibilityDiffuse"))((visibilityTransparent,
-                               "rpr:visibilityTransparent"))((visibilityLight, "rpr:visibilityLight")));
+TF_DEFINE_PRIVATE_TOKENS(HdRprGeometryPrimvarTokens,
+                         ((id, "rpr:id"))((subdivisionLevel, "rpr:subdivisionLevel"))((ignoreContour, "rpr:ignoreContour"))(
+                           (cryptomatteName, "rpr:cryptomatteName"))((geomSamples, "rpr:geomSamples"))((visibilityPrimary,
+                                                                                                        "rpr:visibilityPrimary"))(
+                           (visibilityShadow, "rpr:visibilityShadow"))((visibilityReflection, "rpr:visibilityReflection"))(
+                           (visibilityGlossyReflection, "rpr:visibilityGlossyReflection"))((visibilityRefraction,
+                                                                                            "rpr:visibilityRefraction"))(
+                           (visibilityGlossyRefraction, "rpr:visibilityGlossyRefraction"))((visibilityDiffuse,
+                                                                                            "rpr:visibilityDiffuse"))(
+                           (visibilityTransparent, "rpr:visibilityTransparent"))((visibilityLight, "rpr:visibilityLight")));
 
 void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
                                 SdfPath const &id,
@@ -48,8 +44,7 @@ void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
     if (toggle)
     {
       geomSettings->visibilityMask |= flag;
-    }
-    else
+    } else
     {
       geomSettings->visibilityMask &= ~flag;
     }
@@ -60,65 +55,60 @@ void HdRprParseGeometrySettings(HdSceneDelegate *sceneDelegate,
     if (desc.name == HdRprGeometryPrimvarTokens->id)
     {
       HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->id, sceneDelegate, id, &geomSettings->id);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->subdivisionLevel)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->subdivisionLevel)
     {
       int subdivisionLevel;
-      if (HdRprGetConstantPrimvar(
-            HdRprGeometryPrimvarTokens->subdivisionLevel, sceneDelegate, id, &subdivisionLevel))
+      if (HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->subdivisionLevel,
+                                  sceneDelegate,
+                                  id,
+                                  &subdivisionLevel))
       {
         geomSettings->subdivisionLevel = std::max(0, std::min(subdivisionLevel, 7));
       }
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->ignoreContour)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->ignoreContour)
     {
-      HdRprGetConstantPrimvar(
-        HdRprGeometryPrimvarTokens->ignoreContour, sceneDelegate, id, &geomSettings->ignoreContour);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->cryptomatteName)
+      HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->ignoreContour,
+                              sceneDelegate,
+                              id,
+                              &geomSettings->ignoreContour);
+    } else if (desc.name == HdRprGeometryPrimvarTokens->cryptomatteName)
     {
-      HdRprGetConstantPrimvar(
-        HdRprGeometryPrimvarTokens->cryptomatteName, sceneDelegate, id, &geomSettings->cryptomatteName);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->geomSamples)
+      HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->cryptomatteName,
+                              sceneDelegate,
+                              id,
+                              &geomSettings->cryptomatteName);
+    } else if (desc.name == HdRprGeometryPrimvarTokens->geomSamples)
     {
-      HdRprGetConstantPrimvar(
-        HdRprGeometryPrimvarTokens->geomSamples, sceneDelegate, id, &geomSettings->numGeometrySamples);
+      HdRprGetConstantPrimvar(HdRprGeometryPrimvarTokens->geomSamples,
+                              sceneDelegate,
+                              id,
+                              &geomSettings->numGeometrySamples);
       geomSettings->numGeometrySamples = std::max(1, geomSettings->numGeometrySamples);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityPrimary)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityPrimary)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityPrimary, kVisiblePrimary);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityShadow)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityShadow)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityShadow, kVisibleShadow);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityReflection)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityReflection)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityReflection, kVisibleReflection);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyReflection)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyReflection)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityGlossyReflection, kVisibleGlossyReflection);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityRefraction)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityRefraction)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityRefraction, kVisibleRefraction);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyRefraction)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityGlossyRefraction)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityGlossyRefraction, kVisibleGlossyRefraction);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityDiffuse)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityDiffuse)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityDiffuse, kVisibleDiffuse);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityTransparent)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityTransparent)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityTransparent, kVisibleTransparent);
-    }
-    else if (desc.name == HdRprGeometryPrimvarTokens->visibilityLight)
+    } else if (desc.name == HdRprGeometryPrimvarTokens->visibilityLight)
     {
       setVisibilityFlag(HdRprGeometryPrimvarTokens->visibilityLight, kVisibleLight);
     }

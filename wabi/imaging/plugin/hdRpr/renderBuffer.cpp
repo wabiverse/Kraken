@@ -73,8 +73,7 @@ bool HdRprRenderBuffer::Allocate(GfVec3i const &dimensions, HdFormat format, boo
   {
     m_mappedBuffer.reserve(dataByteSize);
     std::memset(m_mappedBuffer.data(), 0, dataByteSize);
-  }
-  else
+  } else
   {
     m_mappedBuffer = std::vector<uint8_t>();
   }

@@ -64,8 +64,7 @@ int ArchCloseAllFiles(int nExcept, const int *exceptFds)
   if (limits.rlim_cur == RLIM_INFINITY)
   {
     maxfd = NOFILE;
-  }
-  else
+  } else
   {
     maxfd = (int)limits.rlim_cur;
   }

@@ -123,8 +123,7 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor
     if (path == SdfPath::AbsoluteRootPath())
     {
       // Ignore.
-    }
-    else
+    } else
     {
       fprintf(stdout, "%*s", 2 * int(path.GetPathElementCount() - 1), "");
       if (path.IsPropertyPath())
@@ -133,8 +132,7 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor
         if (custom.IsHolding<bool>())
         {
           fprintf(stdout, "%s", custom.UncheckedGet<bool>() ? "custom " : "");
-        }
-        else if (!custom.IsEmpty())
+        } else if (!custom.IsEmpty())
         {
           fprintf(stdout, "!BAD_CUSTOM ");
         }
@@ -143,8 +141,7 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor
         if (typeName.IsHolding<TfToken>())
         {
           fprintf(stdout, "%s ", TfStringify(typeName).c_str());
-        }
-        else if (!typeName.IsEmpty())
+        } else if (!typeName.IsEmpty())
         {
           fprintf(stdout, "!BAD_TYPE ");
         }
@@ -188,14 +185,12 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor
           if (times.size() <= 1)
           {
             // Expected.
-          }
-          else
+          } else
           {
             fprintf(stdout, "%*s", 2 * int(path.GetPathElementCount() - 1), "");
             fprintf(stdout, "!NO_SAMPLES, want %zd\n", times.size());
           }
-        }
-        else if (samples.IsHolding<SdfTimeSampleMap>())
+        } else if (samples.IsHolding<SdfTimeSampleMap>())
         {
           const SdfTimeSampleMap &samplesMap = samples.UncheckedGet<SdfTimeSampleMap>();
           if (times.size() != samplesMap.size())
@@ -206,8 +201,7 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor
                     "have %zd vs want %zd\n",
                     samplesMap.size(),
                     times.size());
-          }
-          else
+          } else
           {
             // XXX: Should compare times in samplesMap and
             //      times.
@@ -219,8 +213,7 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor
             }
             fprintf(stdout, "]\n");
           }
-        }
-        else
+        } else
         {
           fprintf(stdout, "%*s", 2 * int(path.GetPathElementCount() - 1), "");
           fprintf(stdout, "!BAD_SAMPLES\n");
@@ -247,16 +240,14 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor
                     TfStringify(value).c_str());
           }
         }
-      }
-      else
+      } else
       {
         VtValue specifier = data.Get(path, SdfFieldKeys->Specifier);
         if (specifier.IsHolding<SdfSpecifier>())
         {
           static const char *spec[] = {"def", "over", "class"};
           fprintf(stdout, "%s ", spec[specifier.UncheckedGet<SdfSpecifier>()]);
-        }
-        else
+        } else
         {
           fprintf(stdout, "!BAD_SPEC ");
         }
@@ -265,8 +256,7 @@ struct UsdAbc_AlembicWriteVisitor : public SdfAbstractDataSpecVisitor
         if (typeName.IsHolding<TfToken>())
         {
           fprintf(stdout, "%s ", TfStringify(typeName).c_str());
-        }
-        else if (!typeName.IsEmpty())
+        } else if (!typeName.IsEmpty())
         {
           fprintf(stdout, "!BAD_TYPE ");
         }
@@ -344,8 +334,7 @@ bool UsdAbc_TestAlembic(const std::string &pathname)
           if (data->QueryTimeSample(path, t, &value))
           {
             fprintf(stdout, "  %f: %s\n", t, TfStringify(value).c_str());
-          }
-          else
+          } else
           {
             fprintf(stdout, "  %f: <no value>\n", t);
           }
@@ -370,13 +359,11 @@ bool UsdAbc_TestAlembic(const std::string &pathname)
       }
 
       return true;
-    }
-    else
+    } else
     {
       fprintf(stderr, "Can't open Alembic file \"%s\"\n", pathname.c_str());
     }
-  }
-  else
+  } else
   {
     fprintf(stderr, "Can't create Alembic data\n");
   }

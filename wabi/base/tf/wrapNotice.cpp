@@ -68,147 +68,151 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// TfNotice is passed for both the type and the base to indicate the root of the
-// hierarchy.
-TF_INSTANTIATE_NOTICE_WRAPPER(TfNotice, TfNotice);
+  // TfNotice is passed for both the type and the base to indicate the root of the
+  // hierarchy.
+  TF_INSTANTIATE_NOTICE_WRAPPER(TfNotice, TfNotice);
 
-class Tf_PyNoticeInternal
-{
- public:
-  struct Listener : public TfWeakBase, public boost::noncopyable
+  class Tf_PyNoticeInternal
   {
-
-    typedef void CallbackSig(object const &, handle<> const &);
-    typedef std::function<CallbackSig> Callback;
-
-    static Listener *New(TfType const &noticeType, Callback const &callback, TfAnyWeakPtr const &sender)
-    {
-      if (noticeType.IsA<TfNotice>())
-        return new Listener(noticeType, callback, sender);
-
-      // Fail -- unknown notice type.
-      TfPyThrowTypeError("not registering for '" + noticeType.GetTypeName() +
-                         "' because it is not a known TfNotice type");
-      // CODE_COVERAGE_OFF The above throws, so this is unreachable.
-      return 0;
-      // CODE_COVERAGE_ON
-    }
-
-    ~Listener()
-    {
-      Revoke();
-    }
-    void Revoke()
-    {
-      TfNotice::Revoke(_key);
-    }
-
-   private:
-    Listener(TfType const &noticeType, Callback const &callback, TfAnyWeakPtr const &sender)
-      : _callback(callback),
-        _noticeType(noticeType)
+   public:
+    struct Listener : public TfWeakBase, public boost::noncopyable
     {
 
-      _key = TfNotice::Register(TfCreateWeakPtr(this), &Listener::_HandleNotice, noticeType, sender);
-    }
+      typedef void CallbackSig(object const &, handle<> const &);
+      typedef std::function<CallbackSig> Callback;
 
-    object _GetDeliverableNotice(TfNotice const &notice, TfType const &noticeType)
-    {
-      // If the notice type is not wrapped, return the type name in a
-      // string.
-      TfPyLock lock;
-      /// XXX noticeType is incorrect when the notice is
-      /// python-implemented.  We should fix this when TfType optimization
-      /// work is done.
-      object noticeClass = TfPyGetClassObject(typeid(notice));
-      if (TfPyIsNone(noticeClass))
-        return object(TfType::Find(notice).GetTypeName());
-
-      // If it's a python notice, use the embedded python object.
-      if (TfPyNoticeWrapperBase const *pyNotice = TfSafeDynamic_cast<TfPyNoticeWrapperBase const *>(&notice))
-        return object(pyNotice->GetNoticePythonObject());
-
-      // Otherwise convert the notice to python like normal.  We
-      // can't just use object(notice) because that won't produce
-      // a notice of the correct derived type.
-      return Tf_PyNoticeObjectGenerator::Invoke(notice);
-    }
-
-    void _HandleNotice(TfNotice const &notice,
-                       TfType const &type,
-                       TfWeakBase *sender,
-                       void const *senderUniqueId,
-                       const std::type_info &)
-    {
-      TfPyLock lock;
-      object pyNotice = _GetDeliverableNotice(notice, type);
-      if (!TfPyIsNone(pyNotice))
+      static Listener *New(TfType const &noticeType, Callback const &callback, TfAnyWeakPtr const &sender)
       {
-        // Get the python sender.
-        handle<> pySender = sender ? handle<>(allow_null(Tf_PyIdentityHelper::Get(senderUniqueId))) :
-                                     handle<>();
-        _callback(pyNotice, pySender);
+        if (noticeType.IsA<TfNotice>())
+          return new Listener(noticeType, callback, sender);
+
+        // Fail -- unknown notice type.
+        TfPyThrowTypeError("not registering for '" + noticeType.GetTypeName() +
+                           "' because it is not a known TfNotice type");
+        // CODE_COVERAGE_OFF The above throws, so this is unreachable.
+        return 0;
+        // CODE_COVERAGE_ON
       }
+
+      ~Listener()
+      {
+        Revoke();
+      }
+      void Revoke()
+      {
+        TfNotice::Revoke(_key);
+      }
+
+     private:
+      Listener(TfType const &noticeType, Callback const &callback, TfAnyWeakPtr const &sender)
+        : _callback(callback),
+          _noticeType(noticeType)
+      {
+
+        _key = TfNotice::Register(TfCreateWeakPtr(this), &Listener::_HandleNotice, noticeType, sender);
+      }
+
+      object _GetDeliverableNotice(TfNotice const &notice, TfType const &noticeType)
+      {
+        // If the notice type is not wrapped, return the type name in a
+        // string.
+        TfPyLock lock;
+        /// XXX noticeType is incorrect when the notice is
+        /// python-implemented.  We should fix this when TfType optimization
+        /// work is done.
+        object noticeClass = TfPyGetClassObject(typeid(notice));
+        if (TfPyIsNone(noticeClass))
+          return object(TfType::Find(notice).GetTypeName());
+
+        // If it's a python notice, use the embedded python object.
+        if (TfPyNoticeWrapperBase const *pyNotice = TfSafeDynamic_cast<TfPyNoticeWrapperBase const *>(
+              &notice))
+          return object(pyNotice->GetNoticePythonObject());
+
+        // Otherwise convert the notice to python like normal.  We
+        // can't just use object(notice) because that won't produce
+        // a notice of the correct derived type.
+        return Tf_PyNoticeObjectGenerator::Invoke(notice);
+      }
+
+      void _HandleNotice(TfNotice const &notice,
+                         TfType const &type,
+                         TfWeakBase *sender,
+                         void const *senderUniqueId,
+                         const std::type_info &)
+      {
+        TfPyLock lock;
+        object pyNotice = _GetDeliverableNotice(notice, type);
+        if (!TfPyIsNone(pyNotice))
+        {
+          // Get the python sender.
+          handle<> pySender = sender ? handle<>(allow_null(Tf_PyIdentityHelper::Get(senderUniqueId))) :
+                                       handle<>();
+          _callback(pyNotice, pySender);
+        }
+      }
+
+      Callback _callback;
+      TfNotice::Key _key;
+      TfType _noticeType;
+    };
+
+    static Listener *RegisterWithAnyWeakPtrSender(TfType const &noticeType,
+                                                  Listener::Callback const &cb,
+                                                  TfAnyWeakPtr const &sender)
+    {
+      return Listener::New(noticeType, cb, sender);
     }
 
-    Callback _callback;
-    TfNotice::Key _key;
-    TfType _noticeType;
+    static Listener *RegisterWithPythonSender(TfType const &noticeType,
+                                              Listener::Callback const &cb,
+                                              object const &sender)
+    {
+      Tf_PyWeakObjectPtr weakSender = Tf_PyWeakObject::GetOrCreate(sender);
+      if (!weakSender)
+        TfPyThrowTypeError(
+          "Cannot register to listen to notices from the "
+          "provided sender.  The sender must support "
+          "python weak references.");
+
+      TfAnyWeakPtr holder(weakSender);
+      return RegisterWithAnyWeakPtrSender(noticeType, cb, holder);
+    }
+
+    static Listener *RegisterGlobally(TfType const &noticeType, Listener::Callback const &cb)
+    {
+      return RegisterWithAnyWeakPtrSender(noticeType, cb, TfAnyWeakPtr());
+    }
+
+    static size_t SendWithAnyWeakPtrSender(TfNotice const &self, TfAnyWeakPtr const &sender)
+    {
+      return Tf_PyNotice::SendWithType(self,
+                                       TfType::Find(&self),
+                                       sender.GetWeakBase(),
+                                       sender.GetUniqueIdentifier(),
+                                       sender.GetTypeInfo());
+    }
+
+    static size_t SendWithPythonSender(TfNotice const &self, object const &sender)
+    {
+      // Get a "WeakObjectPtr" corresponding to the sender -- this is a
+      // TfWeakPtr to an object which holds a python weak reference.  This
+      // object expires when the python object expires.  This is what lets us
+      // use arbitrary python objects as senders in the notice system.
+      Tf_PyWeakObjectPtr weakSender = Tf_PyWeakObject::GetOrCreate(sender);
+      if (!weakSender)
+        TfPyThrowTypeError(
+          "Cannot send notice from the provided sender.  "
+          "Sender must support python weak references.");
+      TfAnyWeakPtr holder(weakSender);
+      return SendWithAnyWeakPtrSender(self, holder);
+    }
+
+    static size_t SendGlobally(TfNotice const &self)
+    {
+      return Tf_PyNotice::SendWithType(self, TfType::Find(&self), 0, 0, typeid(void));
+    }
   };
-
-  static Listener *RegisterWithAnyWeakPtrSender(TfType const &noticeType,
-                                                Listener::Callback const &cb,
-                                                TfAnyWeakPtr const &sender)
-  {
-    return Listener::New(noticeType, cb, sender);
-  }
-
-  static Listener *RegisterWithPythonSender(TfType const &noticeType,
-                                            Listener::Callback const &cb,
-                                            object const &sender)
-  {
-    Tf_PyWeakObjectPtr weakSender = Tf_PyWeakObject::GetOrCreate(sender);
-    if (!weakSender)
-      TfPyThrowTypeError(
-        "Cannot register to listen to notices from the "
-        "provided sender.  The sender must support "
-        "python weak references.");
-
-    TfAnyWeakPtr holder(weakSender);
-    return RegisterWithAnyWeakPtrSender(noticeType, cb, holder);
-  }
-
-  static Listener *RegisterGlobally(TfType const &noticeType, Listener::Callback const &cb)
-  {
-    return RegisterWithAnyWeakPtrSender(noticeType, cb, TfAnyWeakPtr());
-  }
-
-  static size_t SendWithAnyWeakPtrSender(TfNotice const &self, TfAnyWeakPtr const &sender)
-  {
-    return Tf_PyNotice::SendWithType(
-      self, TfType::Find(&self), sender.GetWeakBase(), sender.GetUniqueIdentifier(), sender.GetTypeInfo());
-  }
-
-  static size_t SendWithPythonSender(TfNotice const &self, object const &sender)
-  {
-    // Get a "WeakObjectPtr" corresponding to the sender -- this is a
-    // TfWeakPtr to an object which holds a python weak reference.  This
-    // object expires when the python object expires.  This is what lets us
-    // use arbitrary python objects as senders in the notice system.
-    Tf_PyWeakObjectPtr weakSender = Tf_PyWeakObject::GetOrCreate(sender);
-    if (!weakSender)
-      TfPyThrowTypeError(
-        "Cannot send notice from the provided sender.  "
-        "Sender must support python weak references.");
-    TfAnyWeakPtr holder(weakSender);
-    return SendWithAnyWeakPtrSender(self, holder);
-  }
-
-  static size_t SendGlobally(TfNotice const &self)
-  {
-    return Tf_PyNotice::SendWithType(self, TfType::Find(&self), 0, 0, typeid(void));
-  }
-};
 
 }  // anonymous namespace
 

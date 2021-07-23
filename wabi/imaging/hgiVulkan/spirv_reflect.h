@@ -1248,683 +1248,697 @@ const char *spvReflectSourceLanguage(SpvSourceLanguage source_lang);
 namespace spv_reflect
 {
 
-/*! \class ShaderModule
+  /*! \class ShaderModule
 
-*/
-class ShaderModule
-{
- public:
-  ShaderModule();
-  ShaderModule(size_t size, const void *p_code);
-  ShaderModule(const std::vector<uint8_t> &code);
-  ShaderModule(const std::vector<uint32_t> &code);
-  ~ShaderModule();
-
-  SpvReflectResult GetResult() const;
-
-  const SpvReflectShaderModule &GetShaderModule() const;
-
-  uint32_t GetCodeSize() const;
-  const uint32_t *GetCode() const;
-
-  const char *GetEntryPointName() const;
-
-  const char *GetSourceFile() const;
-
-  uint32_t GetEntryPointCount() const;
-  const char *GetEntryPointName(uint32_t index) const;
-
-  SpvReflectShaderStageFlagBits GetShaderStage() const;
-  SPV_REFLECT_DEPRECATED("Renamed to GetShaderStage")
-  SpvReflectShaderStageFlagBits GetVulkanShaderStage() const
+  */
+  class ShaderModule
   {
-    return GetShaderStage();
+   public:
+    ShaderModule();
+    ShaderModule(size_t size, const void *p_code);
+    ShaderModule(const std::vector<uint8_t> &code);
+    ShaderModule(const std::vector<uint32_t> &code);
+    ~ShaderModule();
+
+    SpvReflectResult GetResult() const;
+
+    const SpvReflectShaderModule &GetShaderModule() const;
+
+    uint32_t GetCodeSize() const;
+    const uint32_t *GetCode() const;
+
+    const char *GetEntryPointName() const;
+
+    const char *GetSourceFile() const;
+
+    uint32_t GetEntryPointCount() const;
+    const char *GetEntryPointName(uint32_t index) const;
+
+    SpvReflectShaderStageFlagBits GetShaderStage() const;
+    SPV_REFLECT_DEPRECATED("Renamed to GetShaderStage")
+    SpvReflectShaderStageFlagBits GetVulkanShaderStage() const
+    {
+      return GetShaderStage();
+    }
+
+    SpvReflectResult EnumerateDescriptorBindings(uint32_t *p_count,
+                                                 SpvReflectDescriptorBinding **pp_bindings) const;
+    SpvReflectResult EnumerateEntryPointDescriptorBindings(const char *entry_point,
+                                                           uint32_t *p_count,
+                                                           SpvReflectDescriptorBinding **pp_bindings) const;
+    SpvReflectResult EnumerateDescriptorSets(uint32_t *p_count, SpvReflectDescriptorSet **pp_sets) const;
+    SpvReflectResult EnumerateEntryPointDescriptorSets(const char *entry_point,
+                                                       uint32_t *p_count,
+                                                       SpvReflectDescriptorSet **pp_sets) const;
+    SpvReflectResult EnumerateInputVariables(uint32_t *p_count,
+                                             SpvReflectInterfaceVariable **pp_variables) const;
+    SpvReflectResult EnumerateEntryPointInputVariables(const char *entry_point,
+                                                       uint32_t *p_count,
+                                                       SpvReflectInterfaceVariable **pp_variables) const;
+    SpvReflectResult EnumerateOutputVariables(uint32_t *p_count,
+                                              SpvReflectInterfaceVariable **pp_variables) const;
+    SpvReflectResult EnumerateEntryPointOutputVariables(const char *entry_point,
+                                                        uint32_t *p_count,
+                                                        SpvReflectInterfaceVariable **pp_variables) const;
+    SpvReflectResult EnumeratePushConstantBlocks(uint32_t *p_count,
+                                                 SpvReflectBlockVariable **pp_blocks) const;
+    SpvReflectResult EnumerateEntryPointPushConstantBlocks(const char *entry_point,
+                                                           uint32_t *p_count,
+                                                           SpvReflectBlockVariable **pp_blocks) const;
+    SPV_REFLECT_DEPRECATED("Renamed to EnumeratePushConstantBlocks")
+    SpvReflectResult EnumeratePushConstants(uint32_t *p_count, SpvReflectBlockVariable **pp_blocks) const
+    {
+      return EnumeratePushConstantBlocks(p_count, pp_blocks);
+    }
+
+    const SpvReflectDescriptorBinding *GetDescriptorBinding(uint32_t binding_number,
+                                                            uint32_t set_number,
+                                                            SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectDescriptorBinding *GetEntryPointDescriptorBinding(
+      const char *entry_point,
+      uint32_t binding_number,
+      uint32_t set_number,
+      SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectDescriptorSet *GetDescriptorSet(uint32_t set_number,
+                                                    SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectDescriptorSet *GetEntryPointDescriptorSet(const char *entry_point,
+                                                              uint32_t set_number,
+                                                              SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectInterfaceVariable *GetInputVariableByLocation(
+      uint32_t location,
+      SpvReflectResult *p_result = nullptr) const;
+    SPV_REFLECT_DEPRECATED("Renamed to GetInputVariableByLocation")
+    const SpvReflectInterfaceVariable *GetInputVariable(uint32_t location,
+                                                        SpvReflectResult *p_result = nullptr) const
+    {
+      return GetInputVariableByLocation(location, p_result);
+    }
+    const SpvReflectInterfaceVariable *GetEntryPointInputVariableByLocation(
+      const char *entry_point,
+      uint32_t location,
+      SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectInterfaceVariable *GetInputVariableBySemantic(
+      const char *semantic,
+      SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectInterfaceVariable *GetEntryPointInputVariableBySemantic(
+      const char *entry_point,
+      const char *semantic,
+      SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectInterfaceVariable *GetOutputVariableByLocation(
+      uint32_t location,
+      SpvReflectResult *p_result = nullptr) const;
+    SPV_REFLECT_DEPRECATED("Renamed to GetOutputVariableByLocation")
+    const SpvReflectInterfaceVariable *GetOutputVariable(uint32_t location,
+                                                         SpvReflectResult *p_result = nullptr) const
+    {
+      return GetOutputVariableByLocation(location, p_result);
+    }
+    const SpvReflectInterfaceVariable *GetEntryPointOutputVariableByLocation(
+      const char *entry_point,
+      uint32_t location,
+      SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectInterfaceVariable *GetOutputVariableBySemantic(
+      const char *semantic,
+      SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectInterfaceVariable *GetEntryPointOutputVariableBySemantic(
+      const char *entry_point,
+      const char *semantic,
+      SpvReflectResult *p_result = nullptr) const;
+    const SpvReflectBlockVariable *GetPushConstantBlock(uint32_t index,
+                                                        SpvReflectResult *p_result = nullptr) const;
+    SPV_REFLECT_DEPRECATED("Renamed to GetPushConstantBlock")
+    const SpvReflectBlockVariable *GetPushConstant(uint32_t index,
+                                                   SpvReflectResult *p_result = nullptr) const
+    {
+      return GetPushConstantBlock(index, p_result);
+    }
+    const SpvReflectBlockVariable *GetEntryPointPushConstantBlock(
+      const char *entry_point,
+      SpvReflectResult *p_result = nullptr) const;
+
+    SpvReflectResult ChangeDescriptorBindingNumbers(
+      const SpvReflectDescriptorBinding *p_binding,
+      uint32_t new_binding_number = SPV_REFLECT_BINDING_NUMBER_DONT_CHANGE,
+      uint32_t optional_new_set_number = SPV_REFLECT_SET_NUMBER_DONT_CHANGE);
+    SPV_REFLECT_DEPRECATED("Renamed to ChangeDescriptorBindingNumbers")
+    SpvReflectResult ChangeDescriptorBindingNumber(
+      const SpvReflectDescriptorBinding *p_binding,
+      uint32_t new_binding_number = SPV_REFLECT_BINDING_NUMBER_DONT_CHANGE,
+      uint32_t new_set_number = SPV_REFLECT_SET_NUMBER_DONT_CHANGE)
+    {
+      return ChangeDescriptorBindingNumbers(p_binding, new_binding_number, new_set_number);
+    }
+    SpvReflectResult ChangeDescriptorSetNumber(const SpvReflectDescriptorSet *p_set,
+                                               uint32_t new_set_number = SPV_REFLECT_SET_NUMBER_DONT_CHANGE);
+    SpvReflectResult ChangeInputVariableLocation(const SpvReflectInterfaceVariable *p_input_variable,
+                                                 uint32_t new_location);
+    SpvReflectResult ChangeOutputVariableLocation(const SpvReflectInterfaceVariable *p_output_variable,
+                                                  uint32_t new_location);
+
+   private:
+    mutable SpvReflectResult m_result = SPV_REFLECT_RESULT_NOT_READY;
+    SpvReflectShaderModule m_module = {};
+  };
+
+  // =================================================================================================
+  // ShaderModule
+  // =================================================================================================
+
+  /*! @fn ShaderModule
+
+  */
+  inline ShaderModule::ShaderModule()
+  {}
+
+  /*! @fn ShaderModule
+
+    @param  size
+    @param  p_code
+
+  */
+  inline ShaderModule::ShaderModule(size_t size, const void *p_code)
+  {
+    m_result = spvReflectCreateShaderModule(size, p_code, &m_module);
   }
 
-  SpvReflectResult EnumerateDescriptorBindings(uint32_t *p_count,
-                                               SpvReflectDescriptorBinding **pp_bindings) const;
-  SpvReflectResult EnumerateEntryPointDescriptorBindings(const char *entry_point,
-                                                         uint32_t *p_count,
-                                                         SpvReflectDescriptorBinding **pp_bindings) const;
-  SpvReflectResult EnumerateDescriptorSets(uint32_t *p_count, SpvReflectDescriptorSet **pp_sets) const;
-  SpvReflectResult EnumerateEntryPointDescriptorSets(const char *entry_point,
-                                                     uint32_t *p_count,
-                                                     SpvReflectDescriptorSet **pp_sets) const;
-  SpvReflectResult EnumerateInputVariables(uint32_t *p_count,
-                                           SpvReflectInterfaceVariable **pp_variables) const;
-  SpvReflectResult EnumerateEntryPointInputVariables(const char *entry_point,
-                                                     uint32_t *p_count,
-                                                     SpvReflectInterfaceVariable **pp_variables) const;
-  SpvReflectResult EnumerateOutputVariables(uint32_t *p_count,
-                                            SpvReflectInterfaceVariable **pp_variables) const;
-  SpvReflectResult EnumerateEntryPointOutputVariables(const char *entry_point,
-                                                      uint32_t *p_count,
-                                                      SpvReflectInterfaceVariable **pp_variables) const;
-  SpvReflectResult EnumeratePushConstantBlocks(uint32_t *p_count, SpvReflectBlockVariable **pp_blocks) const;
-  SpvReflectResult EnumerateEntryPointPushConstantBlocks(const char *entry_point,
-                                                         uint32_t *p_count,
-                                                         SpvReflectBlockVariable **pp_blocks) const;
-  SPV_REFLECT_DEPRECATED("Renamed to EnumeratePushConstantBlocks")
-  SpvReflectResult EnumeratePushConstants(uint32_t *p_count, SpvReflectBlockVariable **pp_blocks) const
+  /*! @fn ShaderModule
+
+    @param  code
+
+  */
+  inline ShaderModule::ShaderModule(const std::vector<uint8_t> &code)
   {
-    return EnumeratePushConstantBlocks(p_count, pp_blocks);
+    m_result = spvReflectCreateShaderModule(code.size(), code.data(), &m_module);
   }
 
-  const SpvReflectDescriptorBinding *GetDescriptorBinding(uint32_t binding_number,
-                                                          uint32_t set_number,
-                                                          SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectDescriptorBinding *GetEntryPointDescriptorBinding(
+  /*! @fn ShaderModule
+
+    @param  code
+
+  */
+  inline ShaderModule::ShaderModule(const std::vector<uint32_t> &code)
+  {
+    m_result = spvReflectCreateShaderModule(code.size() * sizeof(uint32_t), code.data(), &m_module);
+  }
+
+  /*! @fn  ~ShaderModule
+
+  */
+  inline ShaderModule::~ShaderModule()
+  {
+    spvReflectDestroyShaderModule(&m_module);
+  }
+
+  /*! @fn GetResult
+
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::GetResult() const
+  {
+    return m_result;
+  }
+
+  /*! @fn GetShaderModule
+
+    @return
+
+  */
+  inline const SpvReflectShaderModule &ShaderModule::GetShaderModule() const
+  {
+    return m_module;
+  }
+
+  /*! @fn GetCodeSize
+
+    @return
+
+    */
+  inline uint32_t ShaderModule::GetCodeSize() const
+  {
+    return spvReflectGetCodeSize(&m_module);
+  }
+
+  /*! @fn GetCode
+
+    @return
+
+  */
+  inline const uint32_t *ShaderModule::GetCode() const
+  {
+    return spvReflectGetCode(&m_module);
+  }
+
+  /*! @fn GetEntryPoint
+
+    @return Returns entry point
+
+  */
+  inline const char *ShaderModule::GetEntryPointName() const
+  {
+    return this->GetEntryPointName(0);
+  }
+
+  /*! @fn GetEntryPoint
+
+    @return Returns entry point
+
+  */
+  inline const char *ShaderModule::GetSourceFile() const
+  {
+    return m_module.source_file;
+  }
+
+  /*! @fn GetEntryPointCount
+
+    @param
+    @return
+  */
+  inline uint32_t ShaderModule::GetEntryPointCount() const
+  {
+    return m_module.entry_point_count;
+  }
+
+  /*! @fn GetEntryPointName
+
+    @param index
+    @return
+  */
+  inline const char *ShaderModule::GetEntryPointName(uint32_t index) const
+  {
+    return m_module.entry_points[index].name;
+  }
+
+  /*! @fn GetShaderStage
+
+    @return Returns Vulkan shader stage
+
+  */
+  inline SpvReflectShaderStageFlagBits ShaderModule::GetShaderStage() const
+  {
+    return m_module.shader_stage;
+  }
+
+  /*! @fn EnumerateDescriptorBindings
+
+    @param  count
+    @param  p_binding_numbers
+    @param  pp_bindings
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateDescriptorBindings(
+    uint32_t *p_count,
+    SpvReflectDescriptorBinding **pp_bindings) const
+  {
+    m_result = spvReflectEnumerateDescriptorBindings(&m_module, p_count, pp_bindings);
+    return m_result;
+  }
+
+  /*! @fn EnumerateEntryPointDescriptorBindings
+
+    @param  entry_point
+    @param  count
+    @param  pp_bindings
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateEntryPointDescriptorBindings(
+    const char *entry_point,
+    uint32_t *p_count,
+    SpvReflectDescriptorBinding **pp_bindings) const
+  {
+    m_result = spvReflectEnumerateEntryPointDescriptorBindings(&m_module, entry_point, p_count, pp_bindings);
+    return m_result;
+  }
+
+  /*! @fn EnumerateDescriptorSets
+
+    @param  count
+    @param  pp_sets
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateDescriptorSets(uint32_t *p_count,
+                                                                SpvReflectDescriptorSet **pp_sets) const
+  {
+    m_result = spvReflectEnumerateDescriptorSets(&m_module, p_count, pp_sets);
+    return m_result;
+  }
+
+  /*! @fn EnumerateEntryPointDescriptorSets
+
+    @param  entry_point
+    @param  count
+    @param  pp_sets
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateEntryPointDescriptorSets(
+    const char *entry_point,
+    uint32_t *p_count,
+    SpvReflectDescriptorSet **pp_sets) const
+  {
+    m_result = spvReflectEnumerateEntryPointDescriptorSets(&m_module, entry_point, p_count, pp_sets);
+    return m_result;
+  }
+
+  /*! @fn EnumerateInputVariables
+
+    @param  count
+    @param  pp_variables
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateInputVariables(
+    uint32_t *p_count,
+    SpvReflectInterfaceVariable **pp_variables) const
+  {
+    m_result = spvReflectEnumerateInputVariables(&m_module, p_count, pp_variables);
+    return m_result;
+  }
+
+  /*! @fn EnumerateEntryPointInputVariables
+
+    @param  entry_point
+    @param  count
+    @param  pp_variables
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateEntryPointInputVariables(
+    const char *entry_point,
+    uint32_t *p_count,
+    SpvReflectInterfaceVariable **pp_variables) const
+  {
+    m_result = spvReflectEnumerateEntryPointInputVariables(&m_module, entry_point, p_count, pp_variables);
+    return m_result;
+  }
+
+  /*! @fn EnumerateOutputVariables
+
+    @param  count
+    @param  pp_variables
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateOutputVariables(
+    uint32_t *p_count,
+    SpvReflectInterfaceVariable **pp_variables) const
+  {
+    m_result = spvReflectEnumerateOutputVariables(&m_module, p_count, pp_variables);
+    return m_result;
+  }
+
+  /*! @fn EnumerateEntryPointOutputVariables
+
+    @param  entry_point
+    @param  count
+    @param  pp_variables
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateEntryPointOutputVariables(
+    const char *entry_point,
+    uint32_t *p_count,
+    SpvReflectInterfaceVariable **pp_variables) const
+  {
+    m_result = spvReflectEnumerateEntryPointOutputVariables(&m_module, entry_point, p_count, pp_variables);
+    return m_result;
+  }
+
+  /*! @fn EnumeratePushConstantBlocks
+
+    @param  count
+    @param  pp_blocks
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumeratePushConstantBlocks(
+    uint32_t *p_count,
+    SpvReflectBlockVariable **pp_blocks) const
+  {
+    m_result = spvReflectEnumeratePushConstantBlocks(&m_module, p_count, pp_blocks);
+    return m_result;
+  }
+
+  /*! @fn EnumerateEntryPointPushConstantBlocks
+
+    @param  entry_point
+    @param  count
+    @param  pp_blocks
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::EnumerateEntryPointPushConstantBlocks(
+    const char *entry_point,
+    uint32_t *p_count,
+    SpvReflectBlockVariable **pp_blocks) const
+  {
+    m_result = spvReflectEnumerateEntryPointPushConstantBlocks(&m_module, entry_point, p_count, pp_blocks);
+    return m_result;
+  }
+
+  /*! @fn GetDescriptorBinding
+
+    @param  binding_number
+    @param  set_number
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectDescriptorBinding *ShaderModule::GetDescriptorBinding(
+    uint32_t binding_number,
+    uint32_t set_number,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetDescriptorBinding(&m_module, binding_number, set_number, p_result);
+  }
+
+  /*! @fn GetEntryPointDescriptorBinding
+
+    @param  entry_point
+    @param  binding_number
+    @param  set_number
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectDescriptorBinding *ShaderModule::GetEntryPointDescriptorBinding(
     const char *entry_point,
     uint32_t binding_number,
     uint32_t set_number,
-    SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectDescriptorSet *GetDescriptorSet(uint32_t set_number,
-                                                  SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectDescriptorSet *GetEntryPointDescriptorSet(const char *entry_point,
-                                                            uint32_t set_number,
-                                                            SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectInterfaceVariable *GetInputVariableByLocation(uint32_t location,
-                                                                SpvReflectResult *p_result = nullptr) const;
-  SPV_REFLECT_DEPRECATED("Renamed to GetInputVariableByLocation")
-  const SpvReflectInterfaceVariable *GetInputVariable(uint32_t location,
-                                                      SpvReflectResult *p_result = nullptr) const
+    SpvReflectResult *p_result) const
   {
-    return GetInputVariableByLocation(location, p_result);
+    return spvReflectGetEntryPointDescriptorBinding(&m_module,
+                                                    entry_point,
+                                                    binding_number,
+                                                    set_number,
+                                                    p_result);
   }
-  const SpvReflectInterfaceVariable *GetEntryPointInputVariableByLocation(
-    const char *entry_point,
-    uint32_t location,
-    SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectInterfaceVariable *GetInputVariableBySemantic(const char *semantic,
-                                                                SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectInterfaceVariable *GetEntryPointInputVariableBySemantic(
-    const char *entry_point,
-    const char *semantic,
-    SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectInterfaceVariable *GetOutputVariableByLocation(uint32_t location,
-                                                                 SpvReflectResult *p_result = nullptr) const;
-  SPV_REFLECT_DEPRECATED("Renamed to GetOutputVariableByLocation")
-  const SpvReflectInterfaceVariable *GetOutputVariable(uint32_t location,
-                                                       SpvReflectResult *p_result = nullptr) const
-  {
-    return GetOutputVariableByLocation(location, p_result);
-  }
-  const SpvReflectInterfaceVariable *GetEntryPointOutputVariableByLocation(
-    const char *entry_point,
-    uint32_t location,
-    SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectInterfaceVariable *GetOutputVariableBySemantic(const char *semantic,
-                                                                 SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectInterfaceVariable *GetEntryPointOutputVariableBySemantic(
-    const char *entry_point,
-    const char *semantic,
-    SpvReflectResult *p_result = nullptr) const;
-  const SpvReflectBlockVariable *GetPushConstantBlock(uint32_t index,
-                                                      SpvReflectResult *p_result = nullptr) const;
-  SPV_REFLECT_DEPRECATED("Renamed to GetPushConstantBlock")
-  const SpvReflectBlockVariable *GetPushConstant(uint32_t index, SpvReflectResult *p_result = nullptr) const
-  {
-    return GetPushConstantBlock(index, p_result);
-  }
-  const SpvReflectBlockVariable *GetEntryPointPushConstantBlock(const char *entry_point,
-                                                                SpvReflectResult *p_result = nullptr) const;
 
-  SpvReflectResult ChangeDescriptorBindingNumbers(
-    const SpvReflectDescriptorBinding *p_binding,
-    uint32_t new_binding_number = SPV_REFLECT_BINDING_NUMBER_DONT_CHANGE,
-    uint32_t optional_new_set_number = SPV_REFLECT_SET_NUMBER_DONT_CHANGE);
-  SPV_REFLECT_DEPRECATED("Renamed to ChangeDescriptorBindingNumbers")
-  SpvReflectResult ChangeDescriptorBindingNumber(
-    const SpvReflectDescriptorBinding *p_binding,
-    uint32_t new_binding_number = SPV_REFLECT_BINDING_NUMBER_DONT_CHANGE,
-    uint32_t new_set_number = SPV_REFLECT_SET_NUMBER_DONT_CHANGE)
-  {
-    return ChangeDescriptorBindingNumbers(p_binding, new_binding_number, new_set_number);
-  }
-  SpvReflectResult ChangeDescriptorSetNumber(const SpvReflectDescriptorSet *p_set,
-                                             uint32_t new_set_number = SPV_REFLECT_SET_NUMBER_DONT_CHANGE);
-  SpvReflectResult ChangeInputVariableLocation(const SpvReflectInterfaceVariable *p_input_variable,
-                                               uint32_t new_location);
-  SpvReflectResult ChangeOutputVariableLocation(const SpvReflectInterfaceVariable *p_output_variable,
-                                                uint32_t new_location);
+  /*! @fn GetDescriptorSet
 
- private:
-  mutable SpvReflectResult m_result = SPV_REFLECT_RESULT_NOT_READY;
-  SpvReflectShaderModule m_module = {};
-};
-
-// =================================================================================================
-// ShaderModule
-// =================================================================================================
-
-/*! @fn ShaderModule
-
-*/
-inline ShaderModule::ShaderModule()
-{}
-
-/*! @fn ShaderModule
-
-  @param  size
-  @param  p_code
-
-*/
-inline ShaderModule::ShaderModule(size_t size, const void *p_code)
-{
-  m_result = spvReflectCreateShaderModule(size, p_code, &m_module);
-}
-
-/*! @fn ShaderModule
-
-  @param  code
-
-*/
-inline ShaderModule::ShaderModule(const std::vector<uint8_t> &code)
-{
-  m_result = spvReflectCreateShaderModule(code.size(), code.data(), &m_module);
-}
-
-/*! @fn ShaderModule
-
-  @param  code
-
-*/
-inline ShaderModule::ShaderModule(const std::vector<uint32_t> &code)
-{
-  m_result = spvReflectCreateShaderModule(code.size() * sizeof(uint32_t), code.data(), &m_module);
-}
-
-/*! @fn  ~ShaderModule
-
-*/
-inline ShaderModule::~ShaderModule()
-{
-  spvReflectDestroyShaderModule(&m_module);
-}
-
-/*! @fn GetResult
-
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::GetResult() const
-{
-  return m_result;
-}
-
-/*! @fn GetShaderModule
-
-  @return
-
-*/
-inline const SpvReflectShaderModule &ShaderModule::GetShaderModule() const
-{
-  return m_module;
-}
-
-/*! @fn GetCodeSize
-
-  @return
+    @param  set_number
+    @param  p_result
+    @return
 
   */
-inline uint32_t ShaderModule::GetCodeSize() const
-{
-  return spvReflectGetCodeSize(&m_module);
-}
-
-/*! @fn GetCode
-
-  @return
-
-*/
-inline const uint32_t *ShaderModule::GetCode() const
-{
-  return spvReflectGetCode(&m_module);
-}
-
-/*! @fn GetEntryPoint
-
-  @return Returns entry point
-
-*/
-inline const char *ShaderModule::GetEntryPointName() const
-{
-  return this->GetEntryPointName(0);
-}
-
-/*! @fn GetEntryPoint
-
-  @return Returns entry point
-
-*/
-inline const char *ShaderModule::GetSourceFile() const
-{
-  return m_module.source_file;
-}
-
-/*! @fn GetEntryPointCount
-
-  @param
-  @return
-*/
-inline uint32_t ShaderModule::GetEntryPointCount() const
-{
-  return m_module.entry_point_count;
-}
-
-/*! @fn GetEntryPointName
-
-  @param index
-  @return
-*/
-inline const char *ShaderModule::GetEntryPointName(uint32_t index) const
-{
-  return m_module.entry_points[index].name;
-}
-
-/*! @fn GetShaderStage
-
-  @return Returns Vulkan shader stage
-
-*/
-inline SpvReflectShaderStageFlagBits ShaderModule::GetShaderStage() const
-{
-  return m_module.shader_stage;
-}
-
-/*! @fn EnumerateDescriptorBindings
-
-  @param  count
-  @param  p_binding_numbers
-  @param  pp_bindings
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateDescriptorBindings(
-  uint32_t *p_count,
-  SpvReflectDescriptorBinding **pp_bindings) const
-{
-  m_result = spvReflectEnumerateDescriptorBindings(&m_module, p_count, pp_bindings);
-  return m_result;
-}
-
-/*! @fn EnumerateEntryPointDescriptorBindings
-
-  @param  entry_point
-  @param  count
-  @param  pp_bindings
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateEntryPointDescriptorBindings(
-  const char *entry_point,
-  uint32_t *p_count,
-  SpvReflectDescriptorBinding **pp_bindings) const
-{
-  m_result = spvReflectEnumerateEntryPointDescriptorBindings(&m_module, entry_point, p_count, pp_bindings);
-  return m_result;
-}
-
-/*! @fn EnumerateDescriptorSets
-
-  @param  count
-  @param  pp_sets
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateDescriptorSets(uint32_t *p_count,
-                                                              SpvReflectDescriptorSet **pp_sets) const
-{
-  m_result = spvReflectEnumerateDescriptorSets(&m_module, p_count, pp_sets);
-  return m_result;
-}
-
-/*! @fn EnumerateEntryPointDescriptorSets
-
-  @param  entry_point
-  @param  count
-  @param  pp_sets
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateEntryPointDescriptorSets(
-  const char *entry_point,
-  uint32_t *p_count,
-  SpvReflectDescriptorSet **pp_sets) const
-{
-  m_result = spvReflectEnumerateEntryPointDescriptorSets(&m_module, entry_point, p_count, pp_sets);
-  return m_result;
-}
-
-/*! @fn EnumerateInputVariables
-
-  @param  count
-  @param  pp_variables
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateInputVariables(
-  uint32_t *p_count,
-  SpvReflectInterfaceVariable **pp_variables) const
-{
-  m_result = spvReflectEnumerateInputVariables(&m_module, p_count, pp_variables);
-  return m_result;
-}
-
-/*! @fn EnumerateEntryPointInputVariables
-
-  @param  entry_point
-  @param  count
-  @param  pp_variables
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateEntryPointInputVariables(
-  const char *entry_point,
-  uint32_t *p_count,
-  SpvReflectInterfaceVariable **pp_variables) const
-{
-  m_result = spvReflectEnumerateEntryPointInputVariables(&m_module, entry_point, p_count, pp_variables);
-  return m_result;
-}
-
-/*! @fn EnumerateOutputVariables
-
-  @param  count
-  @param  pp_variables
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateOutputVariables(
-  uint32_t *p_count,
-  SpvReflectInterfaceVariable **pp_variables) const
-{
-  m_result = spvReflectEnumerateOutputVariables(&m_module, p_count, pp_variables);
-  return m_result;
-}
-
-/*! @fn EnumerateEntryPointOutputVariables
-
-  @param  entry_point
-  @param  count
-  @param  pp_variables
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateEntryPointOutputVariables(
-  const char *entry_point,
-  uint32_t *p_count,
-  SpvReflectInterfaceVariable **pp_variables) const
-{
-  m_result = spvReflectEnumerateEntryPointOutputVariables(&m_module, entry_point, p_count, pp_variables);
-  return m_result;
-}
-
-/*! @fn EnumeratePushConstantBlocks
-
-  @param  count
-  @param  pp_blocks
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumeratePushConstantBlocks(uint32_t *p_count,
-                                                                  SpvReflectBlockVariable **pp_blocks) const
-{
-  m_result = spvReflectEnumeratePushConstantBlocks(&m_module, p_count, pp_blocks);
-  return m_result;
-}
-
-/*! @fn EnumerateEntryPointPushConstantBlocks
-
-  @param  entry_point
-  @param  count
-  @param  pp_blocks
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::EnumerateEntryPointPushConstantBlocks(
-  const char *entry_point,
-  uint32_t *p_count,
-  SpvReflectBlockVariable **pp_blocks) const
-{
-  m_result = spvReflectEnumerateEntryPointPushConstantBlocks(&m_module, entry_point, p_count, pp_blocks);
-  return m_result;
-}
-
-/*! @fn GetDescriptorBinding
-
-  @param  binding_number
-  @param  set_number
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectDescriptorBinding *ShaderModule::GetDescriptorBinding(
-  uint32_t binding_number,
-  uint32_t set_number,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetDescriptorBinding(&m_module, binding_number, set_number, p_result);
-}
-
-/*! @fn GetEntryPointDescriptorBinding
-
-  @param  entry_point
-  @param  binding_number
-  @param  set_number
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectDescriptorBinding *ShaderModule::GetEntryPointDescriptorBinding(
-  const char *entry_point,
-  uint32_t binding_number,
-  uint32_t set_number,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetEntryPointDescriptorBinding(
-    &m_module, entry_point, binding_number, set_number, p_result);
-}
-
-/*! @fn GetDescriptorSet
-
-  @param  set_number
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectDescriptorSet *ShaderModule::GetDescriptorSet(uint32_t set_number,
-                                                                     SpvReflectResult *p_result) const
-{
-  return spvReflectGetDescriptorSet(&m_module, set_number, p_result);
-}
-
-/*! @fn GetEntryPointDescriptorSet
-
-  @param  entry_point
-  @param  set_number
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectDescriptorSet *ShaderModule::GetEntryPointDescriptorSet(
-  const char *entry_point,
-  uint32_t set_number,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetEntryPointDescriptorSet(&m_module, entry_point, set_number, p_result);
-}
-
-/*! @fn GetInputVariable
-
-  @param  location
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectInterfaceVariable *ShaderModule::GetInputVariableByLocation(
-  uint32_t location,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetInputVariableByLocation(&m_module, location, p_result);
-}
-inline const SpvReflectInterfaceVariable *ShaderModule::GetInputVariableBySemantic(
-  const char *semantic,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetInputVariableBySemantic(&m_module, semantic, p_result);
-}
-
-/*! @fn GetEntryPointInputVariable
-
-  @param  entry_point
-  @param  location
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectInterfaceVariable *ShaderModule::GetEntryPointInputVariableByLocation(
-  const char *entry_point,
-  uint32_t location,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetEntryPointInputVariableByLocation(&m_module, entry_point, location, p_result);
-}
-inline const SpvReflectInterfaceVariable *ShaderModule::GetEntryPointInputVariableBySemantic(
-  const char *entry_point,
-  const char *semantic,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetEntryPointInputVariableBySemantic(&m_module, entry_point, semantic, p_result);
-}
-
-/*! @fn GetOutputVariable
-
-  @param  location
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectInterfaceVariable *ShaderModule::GetOutputVariableByLocation(
-  uint32_t location,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetOutputVariableByLocation(&m_module, location, p_result);
-}
-inline const SpvReflectInterfaceVariable *ShaderModule::GetOutputVariableBySemantic(
-  const char *semantic,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetOutputVariableBySemantic(&m_module, semantic, p_result);
-}
-
-/*! @fn GetEntryPointOutputVariable
-
-  @param  entry_point
-  @param  location
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectInterfaceVariable *ShaderModule::GetEntryPointOutputVariableByLocation(
-  const char *entry_point,
-  uint32_t location,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetEntryPointOutputVariableByLocation(&m_module, entry_point, location, p_result);
-}
-inline const SpvReflectInterfaceVariable *ShaderModule::GetEntryPointOutputVariableBySemantic(
-  const char *entry_point,
-  const char *semantic,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetEntryPointOutputVariableBySemantic(&m_module, entry_point, semantic, p_result);
-}
-
-/*! @fn GetPushConstant
-
-  @param  index
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectBlockVariable *ShaderModule::GetPushConstantBlock(uint32_t index,
-                                                                         SpvReflectResult *p_result) const
-{
-  return spvReflectGetPushConstantBlock(&m_module, index, p_result);
-}
-
-/*! @fn GetEntryPointPushConstant
-
-  @param  entry_point
-  @param  index
-  @param  p_result
-  @return
-
-*/
-inline const SpvReflectBlockVariable *ShaderModule::GetEntryPointPushConstantBlock(
-  const char *entry_point,
-  SpvReflectResult *p_result) const
-{
-  return spvReflectGetEntryPointPushConstantBlock(&m_module, entry_point, p_result);
-}
-
-/*! @fn ChangeDescriptorBindingNumbers
-
-  @param  p_binding
-  @param  new_binding_number
-  @param  new_set_number
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::ChangeDescriptorBindingNumbers(
-  const SpvReflectDescriptorBinding *p_binding,
-  uint32_t new_binding_number,
-  uint32_t new_set_number)
-{
-  return spvReflectChangeDescriptorBindingNumbers(&m_module, p_binding, new_binding_number, new_set_number);
-}
-
-/*! @fn ChangeDescriptorSetNumber
-
-  @param  p_set
-  @param  new_set_number
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::ChangeDescriptorSetNumber(const SpvReflectDescriptorSet *p_set,
-                                                                uint32_t new_set_number)
-{
-  return spvReflectChangeDescriptorSetNumber(&m_module, p_set, new_set_number);
-}
-
-/*! @fn ChangeInputVariableLocation
-
-  @param  p_input_variable
-  @param  new_location
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::ChangeInputVariableLocation(
-  const SpvReflectInterfaceVariable *p_input_variable,
-  uint32_t new_location)
-{
-  return spvReflectChangeInputVariableLocation(&m_module, p_input_variable, new_location);
-}
-
-/*! @fn ChangeOutputVariableLocation
-
-  @param  p_input_variable
-  @param  new_location
-  @return
-
-*/
-inline SpvReflectResult ShaderModule::ChangeOutputVariableLocation(
-  const SpvReflectInterfaceVariable *p_output_variable,
-  uint32_t new_location)
-{
-  return spvReflectChangeOutputVariableLocation(&m_module, p_output_variable, new_location);
-}
+  inline const SpvReflectDescriptorSet *ShaderModule::GetDescriptorSet(uint32_t set_number,
+                                                                       SpvReflectResult *p_result) const
+  {
+    return spvReflectGetDescriptorSet(&m_module, set_number, p_result);
+  }
+
+  /*! @fn GetEntryPointDescriptorSet
+
+    @param  entry_point
+    @param  set_number
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectDescriptorSet *ShaderModule::GetEntryPointDescriptorSet(
+    const char *entry_point,
+    uint32_t set_number,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetEntryPointDescriptorSet(&m_module, entry_point, set_number, p_result);
+  }
+
+  /*! @fn GetInputVariable
+
+    @param  location
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectInterfaceVariable *ShaderModule::GetInputVariableByLocation(
+    uint32_t location,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetInputVariableByLocation(&m_module, location, p_result);
+  }
+  inline const SpvReflectInterfaceVariable *ShaderModule::GetInputVariableBySemantic(
+    const char *semantic,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetInputVariableBySemantic(&m_module, semantic, p_result);
+  }
+
+  /*! @fn GetEntryPointInputVariable
+
+    @param  entry_point
+    @param  location
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectInterfaceVariable *ShaderModule::GetEntryPointInputVariableByLocation(
+    const char *entry_point,
+    uint32_t location,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetEntryPointInputVariableByLocation(&m_module, entry_point, location, p_result);
+  }
+  inline const SpvReflectInterfaceVariable *ShaderModule::GetEntryPointInputVariableBySemantic(
+    const char *entry_point,
+    const char *semantic,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetEntryPointInputVariableBySemantic(&m_module, entry_point, semantic, p_result);
+  }
+
+  /*! @fn GetOutputVariable
+
+    @param  location
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectInterfaceVariable *ShaderModule::GetOutputVariableByLocation(
+    uint32_t location,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetOutputVariableByLocation(&m_module, location, p_result);
+  }
+  inline const SpvReflectInterfaceVariable *ShaderModule::GetOutputVariableBySemantic(
+    const char *semantic,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetOutputVariableBySemantic(&m_module, semantic, p_result);
+  }
+
+  /*! @fn GetEntryPointOutputVariable
+
+    @param  entry_point
+    @param  location
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectInterfaceVariable *ShaderModule::GetEntryPointOutputVariableByLocation(
+    const char *entry_point,
+    uint32_t location,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetEntryPointOutputVariableByLocation(&m_module, entry_point, location, p_result);
+  }
+  inline const SpvReflectInterfaceVariable *ShaderModule::GetEntryPointOutputVariableBySemantic(
+    const char *entry_point,
+    const char *semantic,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetEntryPointOutputVariableBySemantic(&m_module, entry_point, semantic, p_result);
+  }
+
+  /*! @fn GetPushConstant
+
+    @param  index
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectBlockVariable *ShaderModule::GetPushConstantBlock(uint32_t index,
+                                                                           SpvReflectResult *p_result) const
+  {
+    return spvReflectGetPushConstantBlock(&m_module, index, p_result);
+  }
+
+  /*! @fn GetEntryPointPushConstant
+
+    @param  entry_point
+    @param  index
+    @param  p_result
+    @return
+
+  */
+  inline const SpvReflectBlockVariable *ShaderModule::GetEntryPointPushConstantBlock(
+    const char *entry_point,
+    SpvReflectResult *p_result) const
+  {
+    return spvReflectGetEntryPointPushConstantBlock(&m_module, entry_point, p_result);
+  }
+
+  /*! @fn ChangeDescriptorBindingNumbers
+
+    @param  p_binding
+    @param  new_binding_number
+    @param  new_set_number
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::ChangeDescriptorBindingNumbers(
+    const SpvReflectDescriptorBinding *p_binding,
+    uint32_t new_binding_number,
+    uint32_t new_set_number)
+  {
+    return spvReflectChangeDescriptorBindingNumbers(&m_module,
+                                                    p_binding,
+                                                    new_binding_number,
+                                                    new_set_number);
+  }
+
+  /*! @fn ChangeDescriptorSetNumber
+
+    @param  p_set
+    @param  new_set_number
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::ChangeDescriptorSetNumber(const SpvReflectDescriptorSet *p_set,
+                                                                  uint32_t new_set_number)
+  {
+    return spvReflectChangeDescriptorSetNumber(&m_module, p_set, new_set_number);
+  }
+
+  /*! @fn ChangeInputVariableLocation
+
+    @param  p_input_variable
+    @param  new_location
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::ChangeInputVariableLocation(
+    const SpvReflectInterfaceVariable *p_input_variable,
+    uint32_t new_location)
+  {
+    return spvReflectChangeInputVariableLocation(&m_module, p_input_variable, new_location);
+  }
+
+  /*! @fn ChangeOutputVariableLocation
+
+    @param  p_input_variable
+    @param  new_location
+    @return
+
+  */
+  inline SpvReflectResult ShaderModule::ChangeOutputVariableLocation(
+    const SpvReflectInterfaceVariable *p_output_variable,
+    uint32_t new_location)
+  {
+    return spvReflectChangeOutputVariableLocation(&m_module, p_output_variable, new_location);
+  }
 
 }  // namespace spv_reflect
 #endif  // defined(__cplusplus)

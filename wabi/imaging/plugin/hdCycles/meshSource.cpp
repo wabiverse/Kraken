@@ -27,26 +27,26 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-ccl::AttributeElement interpolation_to_mesh_element(const HdInterpolation &interpolation)
-{
-  switch (interpolation)
+  ccl::AttributeElement interpolation_to_mesh_element(const HdInterpolation &interpolation)
   {
-    case HdInterpolationConstant:
-      return ccl::AttributeElement::ATTR_ELEMENT_OBJECT;
-    case HdInterpolationUniform:
-      return ccl::AttributeElement::ATTR_ELEMENT_FACE;
-    case HdInterpolationVarying:
-      return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
-    case HdInterpolationVertex:
-      return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
-    case HdInterpolationFaceVarying:
-      return ccl::AttributeElement::ATTR_ELEMENT_CORNER;
-    case HdInterpolationInstance:
-      return ccl::AttributeElement::ATTR_ELEMENT_NONE;  // not supported
-    default:
-      return ccl::AttributeElement::ATTR_ELEMENT_NONE;
+    switch (interpolation)
+    {
+      case HdInterpolationConstant:
+        return ccl::AttributeElement::ATTR_ELEMENT_OBJECT;
+      case HdInterpolationUniform:
+        return ccl::AttributeElement::ATTR_ELEMENT_FACE;
+      case HdInterpolationVarying:
+        return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
+      case HdInterpolationVertex:
+        return ccl::AttributeElement::ATTR_ELEMENT_VERTEX;
+      case HdInterpolationFaceVarying:
+        return ccl::AttributeElement::ATTR_ELEMENT_CORNER;
+      case HdInterpolationInstance:
+        return ccl::AttributeElement::ATTR_ELEMENT_NONE;  // not supported
+      default:
+        return ccl::AttributeElement::ATTR_ELEMENT_NONE;
+    }
   }
-}
 
 }  // namespace
 
@@ -76,8 +76,10 @@ bool HdBbMeshAttributeSource::Resolve()
   // refine attribute
   const ccl::TypeDesc &source_type_desc = GetSourceTypeDesc();
   const VtValue source_value = m_value;
-  m_value = m_topology->GetRefiner()->Refine(
-    GetName(), GetRole(source_type_desc), source_value, GetInterpolation());
+  m_value = m_topology->GetRefiner()->Refine(GetName(),
+                                             GetRole(source_type_desc),
+                                             source_value,
+                                             GetInterpolation());
 
   // late size check, since it is only known after refining
   if (!_CheckBuffersSize())

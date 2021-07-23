@@ -18,7 +18,7 @@ limitations under the License.
 
 namespace rpr
 {
-class Context;
+  class Context;
 }
 
 class RPRMtlxLoader;

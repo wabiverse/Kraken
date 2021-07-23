@@ -49,9 +49,9 @@ using HdBindingRequestVector = std::vector<class HdBindingRequest>;
 
 /// Suffixes appended to material param names for a binding name.
 ///
-#define HDPH_RESOURCE_BINDING_SUFFIX_TOKENS \
-  ((fallback, "_fallback"))((samplingTransform, "_samplingTransform"))( \
-    (layout, "_layout"))((texture, "_texture"))((valid, "_valid"))
+#define HDPH_RESOURCE_BINDING_SUFFIX_TOKENS                                                  \
+  ((fallback, "_fallback"))((samplingTransform, "_samplingTransform"))((layout, "_layout"))( \
+    (texture, "_texture"))((valid, "_valid"))
 
 TF_DECLARE_PUBLIC_TOKENS(HdPh_ResourceBindingSuffixTokens, HDPH_RESOURCE_BINDING_SUFFIX_TOKENS);
 

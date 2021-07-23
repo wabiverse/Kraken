@@ -131,21 +131,18 @@ static PtDspyError HydraDspyImageData(PtDspyImageHandle handle,
           {
             aovData[0] = (data_i32[dataIdx++] - 1);
             primIdVal = aovData[0];
-          }
-          else if ((it->name == HdAovTokens->instanceId || it->name == HdAovTokens->elementId) &&
-                   // Note, this will always fail if primId
-                   // isn't in the AOV list"
-                   primIdVal == -1)
+          } else if ((it->name == HdAovTokens->instanceId || it->name == HdAovTokens->elementId) &&
+                     // Note, this will always fail if primId
+                     // isn't in the AOV list"
+                     primIdVal == -1)
           {
             aovData[0] = -1;
             dataIdx++;
-          }
-          else
+          } else
           {
             aovData[0] = data_i32[dataIdx++];
           }
-        }
-        else
+        } else
         {
           float *aovData = reinterpret_cast<float *>(&it->pixels[offset * cc + pixelOffset * cc]);
           if (it->name == HdAovTokens->depth)
@@ -153,13 +150,11 @@ static PtDspyError HydraDspyImageData(PtDspyImageHandle handle,
             if (std::isfinite(data_f32[dataIdx]))
             {
               aovData[0] = buf->proj.Transform(GfVec3f(0, 0, -data_f32[dataIdx++]))[2];
-            }
-            else
+            } else
             {
               aovData[0] = -1.0f;
             }
-          }
-          else if (cc == 4)
+          } else if (cc == 4)
           {
             // Premultiply color with alpha
             // to blend pixels with background.
@@ -169,8 +164,7 @@ static PtDspyError HydraDspyImageData(PtDspyImageHandle handle,
             aovData[1] = data_f32[dataIdx++] + (alphaInv)*clear[1];  // G
             aovData[2] = data_f32[dataIdx++] + (alphaInv)*clear[2];  // B
             aovData[3] = data_f32[dataIdx++];                        // A
-          }
-          else
+          } else
           {
             aovData[0] = data_f32[dataIdx++];
             if (cc >= 3)
@@ -339,8 +333,7 @@ void HdxPrmanFramebuffer::Clear()
       {
         data[i] = clear;
       }
-    }
-    else
+    } else
     {
       float *data = reinterpret_cast<float *>(it->pixels.data());
       int cc = HdGetComponentCount(it->format);
@@ -351,8 +344,7 @@ void HdxPrmanFramebuffer::Clear()
         {
           data[i] = clear;
         }
-      }
-      else if (cc == 3)
+      } else if (cc == 3)
       {
         GfVec3f const &clear = it->clearValue.Get<GfVec3f>();
         for (int i = 0; i < size; i++)
@@ -361,8 +353,7 @@ void HdxPrmanFramebuffer::Clear()
           data[i * cc + 1] = clear[1];
           data[i * cc + 2] = clear[2];
         }
-      }
-      else if (cc == 4)
+      } else if (cc == 4)
       {
         GfVec4f const &clear = it->clearValue.Get<GfVec4f>();
         for (int i = 0; i < size; i++)

@@ -123,8 +123,7 @@ UsdUtilsTimeCodeRange UsdUtilsTimeCodeRange::CreateFromFrameSpec(const std::stri
       TF_CODING_ERROR("Invalid FrameSpec: \"%s\"", frameSpec.c_str());
       return UsdUtilsTimeCodeRange();
     }
-  }
-  else
+  } else
   {
     if (endTimeCode < startTimeCode)
     {

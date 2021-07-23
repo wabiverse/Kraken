@@ -94,8 +94,9 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   const uint32_t maxDevices = 64;
   VkPhysicalDevice physicalDevices[maxDevices];
   uint32_t physicalDeviceCount = maxDevices;
-  TF_VERIFY(vkEnumeratePhysicalDevices(
-              instance->GetVulkanInstance(), &physicalDeviceCount, physicalDevices) == VK_SUCCESS);
+  TF_VERIFY(vkEnumeratePhysicalDevices(instance->GetVulkanInstance(),
+                                       &physicalDeviceCount,
+                                       physicalDevices) == VK_SUCCESS);
 
   for (uint32_t i = 0; i < physicalDeviceCount; i++)
   {
@@ -124,8 +125,7 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
       _vkPhysicalDevice = physicalDevices[i];
       _vkGfxsQueueFamilyIndex = familyIndex;
       break;
-    }
-    else if (!_vkPhysicalDevice)
+    } else if (!_vkPhysicalDevice)
     {
       _vkPhysicalDevice = physicalDevices[i];
       _vkGfxsQueueFamilyIndex = familyIndex;
@@ -148,8 +148,10 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
 
   _vkExtensions.resize(extensionCount);
 
-  TF_VERIFY(vkEnumerateDeviceExtensionProperties(
-              _vkPhysicalDevice, nullptr, &extensionCount, _vkExtensions.data()) == VK_SUCCESS);
+  TF_VERIFY(vkEnumerateDeviceExtensionProperties(_vkPhysicalDevice,
+                                                 nullptr,
+                                                 &extensionCount,
+                                                 _vkExtensions.data()) == VK_SUCCESS);
 
   //
   // Create Device
@@ -205,8 +207,7 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   if (_IsSupportedExtension(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME))
   {
     extensions.push_back(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME);
-  }
-  else
+  } else
   {
     TF_WARN(
       "Unsupported VK_EXT_scalar_block_layout."

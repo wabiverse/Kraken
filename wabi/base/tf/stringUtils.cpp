@@ -545,8 +545,9 @@ vector<string> TfQuotedStringTokenize(const string &source, const char *delimite
       {
         if (errors != NULL)
         {
-          *errors = TfStringPrintf(
-            "String is missing an end-quote (\'%s\'): %s", quote.c_str(), source.c_str());
+          *errors = TfStringPrintf("String is missing an end-quote (\'%s\'): %s",
+                                   quote.c_str(),
+                                   source.c_str());
         }
         resultVec.clear();
         return resultVec;
@@ -666,8 +667,7 @@ vector<string> TfMatchedStringTokenize(const string &source,
           openIndex = index;
           nextIndex = index;
         }
-      }
-      else if (!sameDelimiters && (source[nextIndex] == openDelimiter))
+      } else if (!sameDelimiters && (source[nextIndex] == openDelimiter))
         openCount++;
       else
         closeCount++;
@@ -702,24 +702,24 @@ vector<string> TfMatchedStringTokenize(const string &source,
 namespace
 {  // helpers for DictionaryLess
 
-inline bool IsDigit(char ch)
-{
-  return '0' <= ch && ch <= '9';
-}
-inline char Lower(char ch)
-{
-  return ('A' <= ch && ch <= 'Z') ? ch | 32 : ch;
-}
-
-inline long AtoL(char const *&s)
-{
-  long value = 0;
-  do
+  inline bool IsDigit(char ch)
   {
-    value = value * 10 + (*s++ - '0');
-  } while (IsDigit(*s));
-  return value;
-}
+    return '0' <= ch && ch <= '9';
+  }
+  inline char Lower(char ch)
+  {
+    return ('A' <= ch && ch <= 'Z') ? ch | 32 : ch;
+  }
+
+  inline long AtoL(char const *&s)
+  {
+    long value = 0;
+    do
+    {
+      value = value * 10 + (*s++ - '0');
+    } while (IsDigit(*s));
+    return value;
+  }
 
 }  // namespace
 
@@ -1023,8 +1023,7 @@ std::string TfMakeValidIdentifier(const std::string &in)
   if (!(('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z') || *p == '_'))
   {
     result.push_back('_');
-  }
-  else
+  } else
   {
     result.push_back(*p);
   }
@@ -1034,8 +1033,7 @@ std::string TfMakeValidIdentifier(const std::string &in)
     if (!(('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z') || ('0' <= *p && *p <= '9') || *p == '_'))
     {
       result.push_back('_');
-    }
-    else
+    } else
     {
       result.push_back(*p);
     }

@@ -52,62 +52,65 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static boost::python::tuple _TestIntersection(UsdImagingGLEngine &self,
-                                              const GfMatrix4d &viewMatrix,
-                                              const GfMatrix4d &projectionMatrix,
-                                              const UsdPrim &root,
-                                              UsdImagingGLRenderParams params)
-{
-  GfVec3d hitPoint;
-  GfVec3d hitNormal;
-  SdfPath hitPrimPath;
-  SdfPath hitInstancerPath;
-  int hitInstanceIndex;
-  HdInstancerContext hitInstancerContext;
-
-  self.TestIntersection(viewMatrix,
-                        projectionMatrix,
-                        root,
-                        params,
-                        &hitPoint,
-                        &hitNormal,
-                        &hitPrimPath,
-                        &hitInstancerPath,
-                        &hitInstanceIndex,
-                        &hitInstancerContext);
-
-  SdfPath topLevelPath = SdfPath::EmptyPath();
-  int topLevelInstanceIndex = -1;
-  if (hitInstancerContext.size() > 0)
+  static boost::python::tuple _TestIntersection(UsdImagingGLEngine &self,
+                                                const GfMatrix4d &viewMatrix,
+                                                const GfMatrix4d &projectionMatrix,
+                                                const UsdPrim &root,
+                                                UsdImagingGLRenderParams params)
   {
-    topLevelPath = hitInstancerContext[0].first;
-    topLevelInstanceIndex = hitInstancerContext[0].second;
+    GfVec3d hitPoint;
+    GfVec3d hitNormal;
+    SdfPath hitPrimPath;
+    SdfPath hitInstancerPath;
+    int hitInstanceIndex;
+    HdInstancerContext hitInstancerContext;
+
+    self.TestIntersection(viewMatrix,
+                          projectionMatrix,
+                          root,
+                          params,
+                          &hitPoint,
+                          &hitNormal,
+                          &hitPrimPath,
+                          &hitInstancerPath,
+                          &hitInstanceIndex,
+                          &hitInstancerContext);
+
+    SdfPath topLevelPath = SdfPath::EmptyPath();
+    int topLevelInstanceIndex = -1;
+    if (hitInstancerContext.size() > 0)
+    {
+      topLevelPath = hitInstancerContext[0].first;
+      topLevelInstanceIndex = hitInstancerContext[0].second;
+    }
+
+    return boost::python::make_tuple(hitPoint,
+                                     hitNormal,
+                                     hitPrimPath,
+                                     hitInstanceIndex,
+                                     topLevelPath,
+                                     topLevelInstanceIndex);
   }
 
-  return boost::python::make_tuple(
-    hitPoint, hitNormal, hitPrimPath, hitInstanceIndex, topLevelPath, topLevelInstanceIndex);
-}
-
-static void _SetLightingState(UsdImagingGLEngine &self,
-                              GlfSimpleLightVector const &lights,
-                              GlfSimpleMaterial const &material,
-                              GfVec4f const &sceneAmbient)
-{
-  self.SetLightingState(lights, material, sceneAmbient);
-}
-
-void _SetOverrideWindowPolicy(UsdImagingGLEngine &self, const object &pyObj)
-{
-  extract<CameraUtilConformWindowPolicy> extractor(pyObj);
-  if (extractor.check())
+  static void _SetLightingState(UsdImagingGLEngine &self,
+                                GlfSimpleLightVector const &lights,
+                                GlfSimpleMaterial const &material,
+                                GfVec4f const &sceneAmbient)
   {
-    self.SetOverrideWindowPolicy({true, extractor()});
+    self.SetLightingState(lights, material, sceneAmbient);
   }
-  else
+
+  void _SetOverrideWindowPolicy(UsdImagingGLEngine &self, const object &pyObj)
   {
-    self.SetOverrideWindowPolicy({false, CameraUtilFit});
+    extract<CameraUtilConformWindowPolicy> extractor(pyObj);
+    if (extractor.check())
+    {
+      self.SetOverrideWindowPolicy({true, extractor()});
+    } else
+    {
+      self.SetOverrideWindowPolicy({false, CameraUtilFit});
+    }
   }
-}
 
 }  // anonymous namespace
 

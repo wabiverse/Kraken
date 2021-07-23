@@ -135,8 +135,7 @@ bool UsdSkelSkeletonQuery::_ComputeJointLocalTransforms(VtArray<Matrix4> *xforms
   if (_animQuery.ComputeJointLocalTransforms(&animXforms, time))
   {
     return _animToSkelMapper.RemapTransforms(animXforms, xforms);
-  }
-  else
+  } else
   {
     // Failed to compute anim xforms.
     // Fall back to our rest transforms.
@@ -210,17 +209,17 @@ bool UsdSkelSkeletonQuery::_ComputeJointSkelTransforms(VtArray<Matrix4> *xforms,
 namespace
 {
 
-/// Compute `out = a * b`.
-template<typename Matrix4>
-void _MultTransforms(TfSpan<const Matrix4> a, TfSpan<const Matrix4> b, TfSpan<Matrix4> out)
-{
-  TF_DEV_AXIOM(a.size() == b.size() && a.size() == out.size());
-
-  for (size_t i = 0; i < out.size(); ++i)
+  /// Compute `out = a * b`.
+  template<typename Matrix4>
+  void _MultTransforms(TfSpan<const Matrix4> a, TfSpan<const Matrix4> b, TfSpan<Matrix4> out)
   {
-    out[i] = a[i] * b[i];
+    TF_DEV_AXIOM(a.size() == b.size() && a.size() == out.size());
+
+    for (size_t i = 0; i < out.size(); ++i)
+    {
+      out[i] = a[i] * b[i];
+    }
   }
-}
 
 }  // namespace
 
@@ -261,8 +260,7 @@ bool UsdSkelSkeletonQuery::ComputeJointRestRelativeTransforms(VtArray<Matrix4> *
             return true;
           }
         }
-      }
-      else
+      } else
       {
         TF_WARN(
           "%s -- Failed computing rest-relative transforms: "
@@ -270,8 +268,7 @@ bool UsdSkelSkeletonQuery::ComputeJointRestRelativeTransforms(VtArray<Matrix4> *
           "or do not have a matching number of joints.",
           GetSkeleton().GetPrim().GetPath().GetText());
       }
-    }
-    else
+    } else
     {
       // No bound animation, so rest relative transforms are identity.
       xforms->assign(GetTopology().size(), Matrix4(1));
@@ -377,8 +374,7 @@ bool UsdSkelSkeletonQuery::_ComputeSkinningTransforms(VtArray<Matrix4> *xforms, 
       // xforms = inverseBindXforms * xforms
       _MultTransforms<Matrix4>(inverseBindXforms, *xforms, *xforms);
       return true;
-    }
-    else
+    } else
     {
       TF_WARN(
         "%s -- Size of computed joints transforms [%zu] does not "

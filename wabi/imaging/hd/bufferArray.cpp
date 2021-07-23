@@ -115,8 +115,7 @@ void HdBufferArray::RemoveUnusedRanges()
       HD_PERF_COUNTER_INCR(_garbageCollectionPerfToken);
       // Don't increment idx as we need to check the value we just moved
       // into the slot.
-    }
-    else
+    } else
     {
       ++idx;
     }

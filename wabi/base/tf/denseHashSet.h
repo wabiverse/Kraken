@@ -257,8 +257,7 @@ class TfDenseHashSet
 
       if (!res.second)
         return insert_result(_vec().begin() + res.first->second, false);
-    }
-    else
+    } else
     {
 
       // Bail if already inserted.
@@ -303,8 +302,7 @@ class TfDenseHashSet
     {
       _vec().assign(begin, end);
       _CreateTableIfNeeded();
-    }
-    else
+    } else
     {
       // Just insert, since duplicate checking will use the hash.
       insert(begin, end);
@@ -390,8 +388,7 @@ class TfDenseHashSet
     {
 
       _h.reset();
-    }
-    else
+    } else
     {
 
       // Otherwise, allocate a new hash map with the optimal size.

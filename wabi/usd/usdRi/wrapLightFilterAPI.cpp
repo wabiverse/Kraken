@@ -50,55 +50,61 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateRiCombineModeAttr(UsdRiLightFilterAPI &self,
+  static UsdAttribute _CreateRiCombineModeAttr(UsdRiLightFilterAPI &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateRiCombineModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                        writeSparsely);
+  }
+
+  static UsdAttribute _CreateRiDensityAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRiDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
+
+  static UsdAttribute _CreateRiInvertAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRiInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  }
+
+  static UsdAttribute _CreateRiIntensityAttr(UsdRiLightFilterAPI &self,
                                              object defaultVal,
                                              bool writeSparsely)
-{
-  return self.CreateRiCombineModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+  {
+    return self.CreateRiIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                       writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateRiDensityAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRiExposureAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRiExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                     writeSparsely);
+  }
 
-static UsdAttribute _CreateRiInvertAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateRiDiffuseAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRiDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateRiIntensityAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRiSpecularAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRiSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                     writeSparsely);
+  }
 
-static UsdAttribute _CreateRiExposureAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateRiDiffuseAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateRiSpecularAttr(UsdRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static std::string _Repr(const UsdRiLightFilterAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.LightFilterAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiLightFilterAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.LightFilterAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -191,7 +197,7 @@ void wrapUsdRiLightFilterAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

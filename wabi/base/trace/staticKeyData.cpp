@@ -43,14 +43,12 @@ static bool _StrEqual(const char *a, const char *b)
   if (a == b)
   {
     return true;
-  }
-  else
+  } else
   {
     if (a && b)
     {
       return std::strcmp(a, b) == 0;
-    }
-    else
+    } else
     {
       return false;
     }
@@ -71,13 +69,11 @@ std::string TraceStaticKeyData::GetString() const
     if (_name)
     {
       s = ArchGetPrettierFunctionName(_funcName, _prettyFuncName) + " (" + _name + ")";
-    }
-    else
+    } else
     {
       s = ArchGetPrettierFunctionName(_funcName, _prettyFuncName);
     }
-  }
-  else
+  } else
   {
     s = _name;
   }

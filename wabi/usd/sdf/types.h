@@ -219,16 +219,16 @@ enum SdfAuthoringError
 // default unit for the unit category (which has a relative size of 1.0).
 // Dimensionless quantities use a special 'Dimensionless' unit category
 // represented by the enum SdfDimensionlessUnit.
-#define _SDF_LENGTH_UNITS \
-  ((Millimeter, "mm", 0.001))((Centimeter, "cm", 0.01))( \
-    (Decimeter, "dm", 0.1))((Meter, "m", 1.0))((Kilometer, "km", 1000.0))((Inch, "in", 0.0254))(( \
-    Foot, "ft", 0.3048))((Yard, "yd", 0.9144))((Mile, "mi", 1609.344))
+#define _SDF_LENGTH_UNITS                                                                           \
+  ((Millimeter, "mm", 0.001))((Centimeter, "cm", 0.01))((Decimeter, "dm", 0.1))((Meter, "m", 1.0))( \
+    (Kilometer, "km", 1000.0))((Inch, "in", 0.0254))((Foot, "ft", 0.3048))((Yard, "yd", 0.9144))(   \
+    (Mile, "mi", 1609.344))
 
 #define _SDF_ANGULAR_UNITS ((Degrees, "deg", 1.0))((Radians, "rad", 57.2957795130823208768))
 
 #define _SDF_DIMENSIONLESS_UNITS ((Percent, "%", 0.01))((Default, "default", 1.0))
 
-#define _SDF_UNITS \
+#define _SDF_UNITS              \
   ((Length, _SDF_LENGTH_UNITS), \
    ((Angular, _SDF_ANGULAR_UNITS), ((Dimensionless, _SDF_DIMENSIONLESS_UNITS), BOOST_PP_NIL)))
 
@@ -242,11 +242,12 @@ enum SdfAuthoringError
 
 #define _SDF_DECLARE_UNIT_ENUMERANT(r, tag, elem) BOOST_PP_CAT(Sdf##tag##Unit, _SDF_UNIT_TAG(elem)),
 
-#define _SDF_DECLARE_UNIT_ENUM(r, unused, elem) \
-  enum _SDF_UNITSLIST_ENUM(elem) \
-  { \
-    BOOST_PP_SEQ_FOR_EACH( \
-      _SDF_DECLARE_UNIT_ENUMERANT, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem)) \
+#define _SDF_DECLARE_UNIT_ENUM(r, unused, elem)          \
+  enum _SDF_UNITSLIST_ENUM(elem)                         \
+  {                                                      \
+    BOOST_PP_SEQ_FOR_EACH(_SDF_DECLARE_UNIT_ENUMERANT,   \
+                          _SDF_UNITSLIST_CATEGORY(elem), \
+                          _SDF_UNITSLIST_TUPLES(elem))   \
   };
 BOOST_PP_LIST_FOR_EACH(_SDF_DECLARE_UNIT_ENUM, ~, _SDF_UNITS)
 
@@ -327,21 +328,21 @@ SDF_API TfToken SdfGetRoleNameForValueTypeName(TfToken const &typeName);
 // When doing so, the type must be declared using the SDF_DECLARE_VALUE_TYPE
 // macro below. The type must also be registered in the associated schema using
 // SdfSchema::_RegisterValueType(s).
-#define _SDF_SCALAR_VALUE_TYPES \
-  ((Bool, bool, bool, ()))((UChar, uchar, unsigned char, ()))( \
-    (Int, int, int, ()))((UInt, uint, unsigned int, ()))((Int64, int64, int64_t, ()))(( \
-    UInt64, uint64, uint64_t, ()))((Half, half, GfHalf, ()))((Float, float, float, ()))(( \
-    Double, double, double, ()))((TimeCode, timecode, SdfTimeCode, ()))(( \
-    String, string, std::string, ()))((Token, token, TfToken, ()))((Asset, asset, SdfAssetPath, ()))
+#define _SDF_SCALAR_VALUE_TYPES                                                                             \
+  ((Bool, bool, bool, ()))((UChar, uchar, unsigned char, ()))((Int, int, int, ()))(                         \
+    (UInt, uint, unsigned int, ()))((Int64, int64, int64_t, ()))((UInt64, uint64, uint64_t, ()))(           \
+    (Half, half, GfHalf, ()))((Float, float, float, ()))((Double, double, double, ()))(                     \
+    (TimeCode, timecode, SdfTimeCode, ()))((String, string, std::string, ()))((Token, token, TfToken, ()))( \
+    (Asset, asset, SdfAssetPath, ()))
 
-#define _SDF_DIMENSIONED_VALUE_TYPES \
-  ((Matrix2d, matrix2d, GfMatrix2d, (2, 2)))((Matrix3d, matrix3d, GfMatrix3d, (3, 3)))( \
-    (Matrix4d, matrix4d, GfMatrix4d, (4, 4)))((Quath, quath, GfQuath, (4)))((Quatf, quatf, GfQuatf, (4)))(( \
-    Quatd, quatd, GfQuatd, (4)))((Int2, int2, GfVec2i, (2)))((Half2, half2, GfVec2h, (2)))(( \
-    Float2, float2, GfVec2f, (2)))((Double2, double2, GfVec2d, (2)))((Int3, int3, GfVec3i, (3)))(( \
-    Half3, half3, GfVec3h, (3)))((Float3, float3, GfVec3f, (3)))((Double3, double3, GfVec3d, (3)))(( \
-    Int4, int4, GfVec4i, (4)))((Half4, half4, GfVec4h, (4)))((Float4, float4, GfVec4f, (4)))(( \
-    Double4, double4, GfVec4d, (4)))
+#define _SDF_DIMENSIONED_VALUE_TYPES                                                                       \
+  ((Matrix2d, matrix2d, GfMatrix2d, (2, 2)))((Matrix3d, matrix3d, GfMatrix3d, (3, 3)))(                    \
+    (Matrix4d, matrix4d, GfMatrix4d, (4, 4)))((Quath, quath, GfQuath, (4)))((Quatf, quatf, GfQuatf, (4)))( \
+    (Quatd, quatd, GfQuatd, (4)))((Int2, int2, GfVec2i, (2)))((Half2, half2, GfVec2h, (2)))(               \
+    (Float2, float2, GfVec2f, (2)))((Double2, double2, GfVec2d, (2)))((Int3, int3, GfVec3i, (3)))(         \
+    (Half3, half3, GfVec3h, (3)))((Float3, float3, GfVec3f, (3)))((Double3, double3, GfVec3d, (3)))(       \
+    (Int4, int4, GfVec4i, (4)))((Half4, half4, GfVec4h, (4)))((Float4, float4, GfVec4f, (4)))(             \
+    (Double4, double4, GfVec4d, (4)))
 
 #define SDF_VALUE_TYPES _SDF_SCALAR_VALUE_TYPES _SDF_DIMENSIONED_VALUE_TYPES
 
@@ -363,16 +364,16 @@ struct SdfValueTypeTraits<char[N]>
   static const bool IsValueType = true;
 };
 
-#define SDF_DECLARE_VALUE_TYPE_TRAITS(r, unused, elem) \
-  template<> \
-  struct SdfValueTypeTraits<SDF_VALUE_CPP_TYPE(elem)> \
-  { \
-    static const bool IsValueType = true; \
-  }; \
-  template<> \
+#define SDF_DECLARE_VALUE_TYPE_TRAITS(r, unused, elem)      \
+  template<>                                                \
+  struct SdfValueTypeTraits<SDF_VALUE_CPP_TYPE(elem)>       \
+  {                                                         \
+    static const bool IsValueType = true;                   \
+  };                                                        \
+  template<>                                                \
   struct SdfValueTypeTraits<SDF_VALUE_CPP_ARRAY_TYPE(elem)> \
-  { \
-    static const bool IsValueType = true; \
+  {                                                         \
+    static const bool IsValueType = true;                   \
   };
 
 BOOST_PP_SEQ_FOR_EACH(SDF_DECLARE_VALUE_TYPE_TRAITS, ~, SDF_VALUE_TYPES);

@@ -88,7 +88,12 @@ GfMatrix4f::GfMatrix4f(const GfMatrix4d &m)
 
 GfMatrix4f::GfMatrix4f(const std::vector<std::vector<double>> &v)
 {
-  float m[4][4] = {{1.0, 0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0}, {0.0, 0.0, 0.0, 1.0}};
+  float m[4][4] = {
+    {1.0, 0.0, 0.0, 0.0},
+    {0.0, 1.0, 0.0, 0.0},
+    {0.0, 0.0, 1.0, 0.0},
+    {0.0, 0.0, 0.0, 1.0}
+  };
   for (size_t row = 0; row < 4 && row < v.size(); ++row)
   {
     for (size_t col = 0; col < 4 && col < v[row].size(); ++col)
@@ -101,7 +106,12 @@ GfMatrix4f::GfMatrix4f(const std::vector<std::vector<double>> &v)
 
 GfMatrix4f::GfMatrix4f(const std::vector<std::vector<float>> &v)
 {
-  float m[4][4] = {{1.0, 0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0}, {0.0, 0.0, 0.0, 1.0}};
+  float m[4][4] = {
+    {1.0, 0.0, 0.0, 0.0},
+    {0.0, 1.0, 0.0, 0.0},
+    {0.0, 0.0, 1.0, 0.0},
+    {0.0, 0.0, 0.0, 1.0}
+  };
   for (size_t row = 0; row < 4 && row < v.size(); ++row)
   {
     for (size_t col = 0; col < 4 && col < v[row].size(); ++col)
@@ -117,7 +127,12 @@ GfMatrix4f::GfMatrix4f(const std::vector<double> &r0,
                        const std::vector<double> &r2,
                        const std::vector<double> &r3)
 {
-  float m[4][4] = {{1.0, 0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0}, {0.0, 0.0, 0.0, 1.0}};
+  float m[4][4] = {
+    {1.0, 0.0, 0.0, 0.0},
+    {0.0, 1.0, 0.0, 0.0},
+    {0.0, 0.0, 1.0, 0.0},
+    {0.0, 0.0, 0.0, 1.0}
+  };
 
   for (size_t col = 0; col < 4 && col < r0.size(); ++col)
   {
@@ -147,7 +162,12 @@ GfMatrix4f::GfMatrix4f(const std::vector<float> &r0,
                        const std::vector<float> &r2,
                        const std::vector<float> &r3)
 {
-  float m[4][4] = {{1.0, 0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0}, {0.0, 0.0, 0.0, 1.0}};
+  float m[4][4] = {
+    {1.0, 0.0, 0.0, 0.0},
+    {0.0, 1.0, 0.0, 0.0},
+    {0.0, 0.0, 1.0, 0.0},
+    {0.0, 0.0, 0.0, 1.0}
+  };
 
   for (size_t col = 0; col < 4 && col < r0.size(); ++col)
   {
@@ -397,8 +417,7 @@ GfMatrix4f GfMatrix4f::GetInverse(double *detPtr, double eps) const
     inverse._mtx[2][3] = static_cast<float>(z32 * rcp);
     inverse._mtx[3][2] = static_cast<float>(z23 * rcp);
     inverse._mtx[3][3] = static_cast<float>(z33 * rcp);
-  }
-  else
+  } else
   {
     inverse.SetScale(FLT_MAX);
   }
@@ -922,8 +941,7 @@ bool GfMatrix4f::Factor(GfMatrix4f *r, GfVec3f *s, GfMatrix4f *u, GfVec3f *t, Gf
     if (eigenvalues[i] < eps)
     {
       (*s)[i] = detSign * eps;
-    }
-    else
+    } else
     {
       (*s)[i] = detSign * sqrt(eigenvalues[i]);
     }
@@ -984,8 +1002,7 @@ void GfMatrix4f::_Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const
           if (GfAbs(h) + g == GfAbs(h))
           {
             t = a._mtx[p][q] / h;
-          }
-          else
+          } else
           {
             double theta = 0.5 * h / a._mtx[p][q];
             t = 1.0 / (GfAbs(theta) + sqrt(1.0 + theta * theta));
@@ -1085,8 +1102,7 @@ GfQuatf GfMatrix4f::ExtractRotationQuat() const
     im.Set((_mtx[1][2] - _mtx[2][1]) / (4.0 * r),
            (_mtx[2][0] - _mtx[0][2]) / (4.0 * r),
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
-  }
-  else
+  } else
   {
     int j = (i + 1) % 3;
     int k = (i + 2) % 3;

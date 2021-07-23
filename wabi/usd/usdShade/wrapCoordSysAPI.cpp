@@ -43,17 +43,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static std::string _Repr(const UsdShadeCoordSysAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdShade.CoordSysAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdShadeCoordSysAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdShade.CoordSysAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -108,33 +109,34 @@ void wrapUsdShadeCoordSysAPI()
 namespace
 {
 
-struct _BindingToTuple
-{
-  static PyObject *convert(UsdShadeCoordSysAPI::Binding const &b)
+  struct _BindingToTuple
   {
-    boost::python::tuple result = boost::python::make_tuple(b.name, b.bindingRelPath, b.coordSysPrimPath);
-    return boost::python::incref(result.ptr());
+    static PyObject *convert(UsdShadeCoordSysAPI::Binding const &b)
+    {
+      boost::python::tuple result = boost::python::make_tuple(b.name, b.bindingRelPath, b.coordSysPrimPath);
+      return boost::python::incref(result.ptr());
+    }
+  };
+
+  WRAP_CUSTOM
+  {
+    _class.def("HasLocalBindings", &UsdShadeCoordSysAPI::HasLocalBindings)
+      .def("GetLocalBindings",
+           &UsdShadeCoordSysAPI::GetLocalBindings,
+           return_value_policy<TfPySequenceToList>())
+      .def("FindBindingsWithInheritance",
+           &UsdShadeCoordSysAPI::FindBindingsWithInheritance,
+           return_value_policy<TfPySequenceToList>())
+      .def("Bind", &UsdShadeCoordSysAPI::Bind)
+      .def("ClearBinding", &UsdShadeCoordSysAPI::ClearBinding)
+      .def("BlockBinding", &UsdShadeCoordSysAPI::BlockBinding)
+      .def("GetCoordSysRelationshipName", &UsdShadeCoordSysAPI::GetCoordSysRelationshipName)
+      .staticmethod("GetCoordSysRelationshipName")
+      .def("CanContainPropertyName", &UsdShadeCoordSysAPI::CanContainPropertyName, arg("name"))
+      .staticmethod("CanContainPropertyName");
+
+    // Register to and from python conversion for parameter pairs
+    to_python_converter<UsdShadeCoordSysAPI::Binding, _BindingToTuple>();
   }
-};
-
-WRAP_CUSTOM
-{
-  _class.def("HasLocalBindings", &UsdShadeCoordSysAPI::HasLocalBindings)
-    .def(
-      "GetLocalBindings", &UsdShadeCoordSysAPI::GetLocalBindings, return_value_policy<TfPySequenceToList>())
-    .def("FindBindingsWithInheritance",
-         &UsdShadeCoordSysAPI::FindBindingsWithInheritance,
-         return_value_policy<TfPySequenceToList>())
-    .def("Bind", &UsdShadeCoordSysAPI::Bind)
-    .def("ClearBinding", &UsdShadeCoordSysAPI::ClearBinding)
-    .def("BlockBinding", &UsdShadeCoordSysAPI::BlockBinding)
-    .def("GetCoordSysRelationshipName", &UsdShadeCoordSysAPI::GetCoordSysRelationshipName)
-    .staticmethod("GetCoordSysRelationshipName")
-    .def("CanContainPropertyName", &UsdShadeCoordSysAPI::CanContainPropertyName, arg("name"))
-    .staticmethod("CanContainPropertyName");
-
-  // Register to and from python conversion for parameter pairs
-  to_python_converter<UsdShadeCoordSysAPI::Binding, _BindingToTuple>();
-}
 
 }  // namespace

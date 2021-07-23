@@ -75,145 +75,145 @@
 #  pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif
 
-/** 
+/**
  * Store 1-bit per value */
 struct AnchorBitVector;
-/** 
-  * An axis-aligned rectangle (2 points) */
+/**
+ * An axis-aligned rectangle (2 points) */
 struct AnchorBBox;
-/** 
-  * Helper to build a AnchorDrawData instance */
+/**
+ * Helper to build a AnchorDrawData instance */
 struct AnchorDrawDataBuilder;
-/** 
-  * Data shared between all AnchorDrawList instances */
+/**
+ * Data shared between all AnchorDrawList instances */
 struct AnchorDrawListSharedData;
-/** 
-  * Stacked color modifier, backup of modified data so we can restore it */
+/**
+ * Stacked color modifier, backup of modified data so we can restore it */
 struct AnchorColorMod;
-/** 
-  * Main ANCHOR context */
+/**
+ * Main ANCHOR context */
 struct AnchorContext;
-/** 
-  * Hook for extensions like ANCHORTestEngine */
+/**
+ * Hook for extensions like ANCHORTestEngine */
 struct AnchorContextHook;
-/** 
-  * Type information associated to a AnchorDataType enum */
+/**
+ * Type information associated to a AnchorDataType enum */
 struct AnchorDataTypeInfo;
-/** 
-  * Stacked storage data for BeginGroup()/EndGroup() */
+/**
+ * Stacked storage data for BeginGroup()/EndGroup() */
 struct AnchorGroupData;
-/** 
-  * Internal state of the currently focused/edited text input box */
+/**
+ * Internal state of the currently focused/edited text input box */
 struct AnchorInputTextState;
-/** 
-  * Backup and restore IsItemHovered() internal data */
+/**
+ * Backup and restore IsItemHovered() internal data */
 struct AnchorLastItemDataBackup;
-/** 
-  * Simple column measurement, currently used for MenuItem() only */
+/**
+ * Simple column measurement, currently used for MenuItem() only */
 struct AnchorMenuColumns;
-/** 
-  * Result of a gamepad/keyboard directional navigation move query result */
+/**
+ * Result of a gamepad/keyboard directional navigation move query result */
 struct AnchorNavItemData;
-/** 
-  * Storage for ShowMetricsWindow() and DebugNodeXXX() functions */
+/**
+ * Storage for ShowMetricsWindow() and DebugNodeXXX() functions */
 struct AnchorMetricsConfig;
-/** 
-  * Storage for SetNextWindow** functions */
+/**
+ * Storage for SetNextWindow** functions */
 struct AnchorNextWindowData;
-/** 
-  * Storage for SetNextItem** functions */
+/**
+ * Storage for SetNextItem** functions */
 struct AnchorNextItemData;
-/** 
-  * Storage data for a single column for legacy Columns() api */
+/**
+ * Storage data for a single column for legacy Columns() api */
 struct AnchorOldColumnData;
-/** 
-  * Storage data for a columns set for legacy Columns() api */
+/**
+ * Storage data for a columns set for legacy Columns() api */
 struct AnchorOldColumns;
-/** 
-  * Storage for current popup stack */
+/**
+ * Storage for current popup stack */
 struct AnchorPopupData;
-/** 
-  * Storage for one type registered in the .ini file */
+/**
+ * Storage for one type registered in the .ini file */
 struct AnchorSettingsHandler;
-/** 
-  * Storage of stack sizes for debugging/asserting */
+/**
+ * Storage of stack sizes for debugging/asserting */
 struct AnchorStackSizes;
-/** 
-  * Stacked style modifier, backup of modified data so we can restore it */
+/**
+ * Stacked style modifier, backup of modified data so we can restore it */
 struct AnchorStyleMod;
-/** 
-  * Storage for a tab bar */
+/**
+ * Storage for a tab bar */
 struct AnchorTabBar;
-/** 
-  * Storage for a tab item (within a tab bar) */
+/**
+ * Storage for a tab item (within a tab bar) */
 struct AnchorTabItem;
-/** 
-  * Storage for a table */
+/**
+ * Storage for a table */
 struct AnchorTable;
-/** 
-  * Storage for one column of a table */
+/**
+ * Storage for one column of a table */
 struct AnchorTableColumn;
-/** 
-  * Temporary storage for one table (one per table in the stack), shared between tables. */
+/**
+ * Temporary storage for one table (one per table in the stack), shared between tables. */
 struct AnchorTableTempData;
-/** 
-  * Storage for a table .ini settings */
+/**
+ * Storage for a table .ini settings */
 struct AnchorTableSettings;
-/** 
-  * Storage for a column .ini settings */
+/**
+ * Storage for a column .ini settings */
 struct AnchorTableColumnsSettings;
-/** 
-  * Storage for one window */
+/**
+ * Storage for one window */
 struct AnchorWindow;
-/** 
-  * Temporary storage for one window */
+/**
+ * Temporary storage for one window */
 struct AnchorWindowTempData;
-/** 
-  * Storage for a window .ini settings */
+/**
+ * Storage for a window .ini settings */
 struct AnchorWindowSettings;
 
 /**
  * Use your programming IDE "Go to definition"
  * facility on the names of the center columns
  * to find the actual flags/enum lists. */
-/** 
-  * -> enum AnchorLayoutType_           Enum: Horizontal or vertical */
+/**
+ * -> enum AnchorLayoutType_           Enum: Horizontal or vertical */
 typedef int AnchorLayoutType;
-/** 
-  * -> enum AnchorItemFlags_            Flags: for PushItemFlag() */
+/**
+ * -> enum AnchorItemFlags_            Flags: for PushItemFlag() */
 typedef int AnchorItemFlags;
-/** 
-  * -> enum AnchorItemAddFlags_         Flags: for ItemAdd() */
+/**
+ * -> enum AnchorItemAddFlags_         Flags: for ItemAdd() */
 typedef int AnchorItemAddFlags;
-/** 
-  * -> enum AnchorItemStatusFlags_      Flags: for DC.LastItemStatusFlags */
+/**
+ * -> enum AnchorItemStatusFlags_      Flags: for DC.LastItemStatusFlags */
 typedef int AnchorItemStatusFlags;
-/** 
-  * -> enum AnchorOldColumnFlags_       Flags: for BeginColumns() */
+/**
+ * -> enum AnchorOldColumnFlags_       Flags: for BeginColumns() */
 typedef int AnchorOldColumnFlags;
-/** 
-  * -> enum AnchorNavHighlightFlags_    Flags: for RenderNavHighlight() */
+/**
+ * -> enum AnchorNavHighlightFlags_    Flags: for RenderNavHighlight() */
 typedef int AnchorNavHighlightFlags;
-/** 
-  * -> enum AnchorNavDirSourceFlags_    Flags: for GetNavInputAmount2d() */
+/**
+ * -> enum AnchorNavDirSourceFlags_    Flags: for GetNavInputAmount2d() */
 typedef int AnchorNavDirSourceFlags;
-/** 
-  * -> enum AnchorNavMoveFlags_         Flags: for navigation requests */
+/**
+ * -> enum AnchorNavMoveFlags_         Flags: for navigation requests */
 typedef int AnchorNavMoveFlags;
-/** 
-  * -> enum AnchorNextItemDataFlags_    Flags: for SetNextItemXXX() functions */
+/**
+ * -> enum AnchorNextItemDataFlags_    Flags: for SetNextItemXXX() functions */
 typedef int AnchorNextItemDataFlags;
-/** 
-  * -> enum AnchorNextWindowDataFlags_  Flags: for SetNextWindowXXX() functions */
+/**
+ * -> enum AnchorNextWindowDataFlags_  Flags: for SetNextWindowXXX() functions */
 typedef int AnchorNextWindowDataFlags;
-/** 
-  * -> enum AnchorSeparatorFlags_       Flags: for SeparatorEx() */
+/**
+ * -> enum AnchorSeparatorFlags_       Flags: for SeparatorEx() */
 typedef int AnchorSeparatorFlags;
-/** 
-  * -> enum AnchorTextFlags_            Flags: for TextEx() */
+/**
+ * -> enum AnchorTextFlags_            Flags: for TextEx() */
 typedef int AnchorTextFlags;
-/** 
-  * -> enum AnchorTooltipFlags_         Flags: for BeginTooltipEx() */
+/**
+ * -> enum AnchorTooltipFlags_         Flags: for BeginTooltipEx() */
 typedef int AnchorTooltipFlags;
 
 typedef void (*AnchorErrorLogCallback)(void *user_data, const char *fmt, ...);
@@ -237,91 +237,91 @@ namespace AnchorStb
 #define STB_TEXTEDIT_UNDOCHARCOUNT 999
 #define STB_TEXTEDIT_POSITIONTYPE int
 
-typedef struct
-{
-  /**
-   * private data */
-  STB_TEXTEDIT_POSITIONTYPE where;
-  STB_TEXTEDIT_POSITIONTYPE insert_length;
-  STB_TEXTEDIT_POSITIONTYPE delete_length;
-  int char_storage;
-} StbUndoRecord;
+  typedef struct
+  {
+    /**
+     * private data */
+    STB_TEXTEDIT_POSITIONTYPE where;
+    STB_TEXTEDIT_POSITIONTYPE insert_length;
+    STB_TEXTEDIT_POSITIONTYPE delete_length;
+    int char_storage;
+  } StbUndoRecord;
 
-typedef struct
-{
-  /**
-   * private data */
-  StbUndoRecord undo_rec[STB_TEXTEDIT_UNDOSTATECOUNT];
-  STB_TEXTEDIT_CHARTYPE undo_char[STB_TEXTEDIT_UNDOCHARCOUNT];
-  short undo_point, redo_point;
-  int undo_char_point, redo_char_point;
-} StbUndoState;
+  typedef struct
+  {
+    /**
+     * private data */
+    StbUndoRecord undo_rec[STB_TEXTEDIT_UNDOSTATECOUNT];
+    STB_TEXTEDIT_CHARTYPE undo_char[STB_TEXTEDIT_UNDOCHARCOUNT];
+    short undo_point, redo_point;
+    int undo_char_point, redo_char_point;
+  } StbUndoState;
 
-typedef struct
-{
-  /**
-   * position of the text cursor within the string */
-  int cursor;
+  typedef struct
+  {
+    /**
+     * position of the text cursor within the string */
+    int cursor;
 
-  /**
-   * selection start and end point in characters;
-   * if equal, no selection. note that start may
-   * be less than or greater than end (e.g. when
-   * dragging the mouse, start is where the first
-   * initial click was, and you can drag in either
-   * direction) */
-  int select_start;
-  int select_end;
+    /**
+     * selection start and end point in characters;
+     * if equal, no selection. note that start may
+     * be less than or greater than end (e.g. when
+     * dragging the mouse, start is where the first
+     * initial click was, and you can drag in either
+     * direction) */
+    int select_start;
+    int select_end;
 
-  /**
-   * each textfield keeps its own insert
-   * mode state. to keep an application
-   * wide insert mode, copy this value
-   * in/out of the app state */
-  unsigned char insert_mode;
+    /**
+     * each textfield keeps its own insert
+     * mode state. to keep an application
+     * wide insert mode, copy this value
+     * in/out of the app state */
+    unsigned char insert_mode;
 
-  /**
-   * page size in number of row.
-   * this value MUST be set to >0
-   * for pageup or pagedown within
-   * multilines documents. */
-  int row_count_per_page;
+    /**
+     * page size in number of row.
+     * this value MUST be set to >0
+     * for pageup or pagedown within
+     * multilines documents. */
+    int row_count_per_page;
 
-  /**
-   * private data */
-  unsigned char cursor_at_end_of_line;
-  unsigned char initialized;
-  unsigned char has_preferred_x;
-  unsigned char single_line;
-  unsigned char padding1, padding2, padding3;
-  float preferred_x;
-  StbUndoState undostate;
-} STB_TexteditState;
+    /**
+     * private data */
+    unsigned char cursor_at_end_of_line;
+    unsigned char initialized;
+    unsigned char has_preferred_x;
+    unsigned char single_line;
+    unsigned char padding1, padding2, padding3;
+    float preferred_x;
+    StbUndoState undostate;
+  } STB_TexteditState;
 
-typedef struct
-{
-  /**
-   * result of layout query */
+  typedef struct
+  {
+    /**
+     * result of layout query */
 
-  /**
-   * starting x location,
-   * end x location which
-   * allows for align=right,
-   * etc) */
-  float x0, x1;
+    /**
+     * starting x location,
+     * end x location which
+     * allows for align=right,
+     * etc) */
+    float x0, x1;
 
-  /**
-   * position of baseline relative 
-   * to previous row's baseline */
-  float baseline_y_delta;
+    /**
+     * position of baseline relative
+     * to previous row's baseline */
+    float baseline_y_delta;
 
-  /**
-   * height of row above
-   * and below baseline. */
-  float ymin, ymax;
+    /**
+     * height of row above
+     * and below baseline. */
+    float ymin, ymax;
 
-  int num_chars;
-} StbTexteditRow;
+    int num_chars;
+  } StbTexteditRow;
 
 } /* namespace AnchorStb */
 
@@ -378,12 +378,9 @@ typedef struct
 #  define ANCHOR_NEWLINE "\n"
 #endif
 #define IM_TABSIZE (4)
-#define ANCHOR_MEMALIGN(_OFF, _ALIGN) \
-  (((_OFF) + (_ALIGN - 1)) & ~(_ALIGN - 1))
-#define IM_F32_TO_INT8_UNBOUND(_VAL) \
-  ((int)((_VAL)*255.0f + ((_VAL) >= 0 ? 0.5f : -0.5f)))
-#define IM_F32_TO_INT8_SAT(_VAL) \
-  ((int)(AnchorSaturate(_VAL) * 255.0f + 0.5f))
+#define ANCHOR_MEMALIGN(_OFF, _ALIGN) (((_OFF) + (_ALIGN - 1)) & ~(_ALIGN - 1))
+#define IM_F32_TO_INT8_UNBOUND(_VAL) ((int)((_VAL)*255.0f + ((_VAL) >= 0 ? 0.5f : -0.5f)))
+#define IM_F32_TO_INT8_SAT(_VAL) ((int)(AnchorSaturate(_VAL) * 255.0f + 0.5f))
 #define ANCHOR_FLOOR(_VAL) ((float)(int)(_VAL))
 #define IM_ROUND(_VAL) ((float)(int)((_VAL) + 0.5f))
 
@@ -409,7 +406,7 @@ typedef struct
 
 /**
  * Debug Tools
- * 
+ *
  * - Use 'Metrics->Tools->Item Picker' to
  *   break into the call-stack of a specific
  *   item. */
@@ -483,7 +480,8 @@ ANCHOR_API const char *AnchorStristr(const char *haystack,
 ANCHOR_API void AnchorTrimBlanks(char *str);
 ANCHOR_API const char *AnchorStrSkipBlank(const char *str);
 ANCHOR_API int AnchorFormatString(char *buf, size_t buf_size, const char *fmt, ...) ANCHOR_FMTARGS(3);
-ANCHOR_API int AnchorFormatStringV(char *buf, size_t buf_size, const char *fmt, va_list args) ANCHOR_FMTLIST(3);
+ANCHOR_API int AnchorFormatStringV(char *buf, size_t buf_size, const char *fmt, va_list args)
+  ANCHOR_FMTLIST(3);
 ANCHOR_API const char *AnchorFormatFindStart(const char *format);
 ANCHOR_API const char *AnchorParseFormatFindEnd(const char *format);
 ANCHOR_API const char *AnchorParseFormatTrimDecorations(const char *format, char *buf, size_t buf_size);
@@ -682,7 +680,8 @@ static inline T AnchorMax(T lhs, T rhs)
 template<typename T>
 static inline T AnchorClamp(T v, T mn, T mx)
 {
-  return (v < mn) ? mn : (v > mx) ? mx : v;
+  return (v < mn) ? mn : (v > mx) ? mx :
+                                    v;
 }
 template<typename T>
 static inline T AnchorLerp(T a, T b, float t)
@@ -727,28 +726,33 @@ static inline wabi::GfVec2f AnchorMax(const wabi::GfVec2f &lhs, const wabi::GfVe
 static inline wabi::GfVec2f AnchorClamp(const wabi::GfVec2f &v, const wabi::GfVec2f &mn, wabi::GfVec2f mx)
 {
   return wabi::GfVec2f((v[0] < mn[0]) ? mn[0] :
-                                        (v[0] > mx[0]) ? mx[0] :
-                                                         v[0],
+                       (v[0] > mx[0]) ? mx[0] :
+                                        v[0],
                        (v[1] < mn[1]) ? mn[1] :
-                                        (v[1] > mx[1]) ? mx[1] :
-                                                         v[1]);
+                       (v[1] > mx[1]) ? mx[1] :
+                                        v[1]);
 }
 static inline wabi::GfVec2f AnchorLerp(const wabi::GfVec2f &a, const wabi::GfVec2f &b, float t)
 {
   return wabi::GfVec2f(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t);
 }
-static inline wabi::GfVec2f AnchorLerp(const wabi::GfVec2f &a, const wabi::GfVec2f &b, const wabi::GfVec2f &t)
+static inline wabi::GfVec2f AnchorLerp(const wabi::GfVec2f &a,
+                                       const wabi::GfVec2f &b,
+                                       const wabi::GfVec2f &t)
 {
   return wabi::GfVec2f(a[0] + (b[0] - a[0]) * t[0], a[1] + (b[1] - a[1]) * t[1]);
 }
 static inline wabi::GfVec4f AnchorLerp(const wabi::GfVec4f &a, const wabi::GfVec4f &b, float t)
 {
-  return wabi::GfVec4f(
-    a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t);
+  return wabi::GfVec4f(a[0] + (b[0] - a[0]) * t,
+                       a[1] + (b[1] - a[1]) * t,
+                       a[2] + (b[2] - a[2]) * t,
+                       a[3] + (b[3] - a[3]) * t);
 }
 static inline float AnchorSaturate(float f)
 {
-  return (f < 0.0f) ? 0.0f : (f > 1.0f) ? 1.0f : f;
+  return (f < 0.0f) ? 0.0f : (f > 1.0f) ? 1.0f :
+                                          f;
 }
 static inline float AnchorLengthSqr(const wabi::GfVec2f &lhs)
 {
@@ -1027,7 +1031,7 @@ struct ANCHOR_API AnchorBBox
     Min = AnchorClamp(Min, r.Min, r.Max);
     Max = AnchorClamp(Max, r.Min, r.Max);
   }
-  /** 
+  /**
    * Full version, ensure both
    * points are fully clipped */
   void Floor()
@@ -1242,7 +1246,7 @@ struct AnchorSpan
 
 /**
  * Helper: AnchorSpanAllocator<>
- * 
+ *
  * Facilitate storing multiple chunks into a single large block (the "arena")
  * - Usage: call Reserve() N times, allocate GetArenaSizeInBytes() worth, pass it to
  * SetArenaBasePtr(), call GetSpan() N times to retrieve the aligned ranges. */
@@ -1295,7 +1299,7 @@ struct AnchorSpanAllocator
 
 /**
  * Helper: AnchorPool<>
- * 
+ *
  * Basic keyed storage for contiguous instances,
  * slow/amortized insertion, O(1) indexable, O(Log N)
  * queries by ID over a dense/hot buffer, Honor ctor,
@@ -1365,8 +1369,7 @@ struct ANCHOR_API AnchorPool
     {
       Buf.resize(Buf.Size + 1);
       FreeIdx++;
-    }
-    else
+    } else
     {
       FreeIdx = *(int *)&Buf[idx];
     }
@@ -1398,7 +1401,7 @@ struct ANCHOR_API AnchorPool
 
 /**
  * Helper: AnchorChunkStream<>
- * 
+ *
  * Build and iterate a contiguous stream of variable-sized structures.
  * This is used by Settings to store persistent data while reducing
  * allocation count. We store the chunk size first, and align the
@@ -1475,7 +1478,7 @@ struct ANCHOR_API AnchorChunkStream
 /**
  * AnchorDrawList: Helper function to calculate a circle's\
  * segment count given its radius and a "maximum error" value.
- * 
+ *
  * Estimation of number of circle segment based on error is then
  * derived using method described in the following URL posted on:
  * https://stackoverflow.com/a/2244088/15194693 Number of segments
@@ -1493,10 +1496,11 @@ struct ANCHOR_API AnchorChunkStream
 #define ANCHOR_ROUNDUP_TO_EVEN(_V) ((((_V) + 1) / 2) * 2)
 #define ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN 4
 #define ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX 512
-#define ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(_RAD, _MAXERROR) \
-  AnchorClamp(ANCHOR_ROUNDUP_TO_EVEN((int)ImCeil(IM_PI / AnchorAcos(1 - AnchorMin((_MAXERROR), (_RAD)) / (_RAD)))), \
-              ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN, \
-              ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX)
+#define ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(_RAD, _MAXERROR)                                         \
+  AnchorClamp(                                                                                            \
+    ANCHOR_ROUNDUP_TO_EVEN((int)ImCeil(IM_PI / AnchorAcos(1 - AnchorMin((_MAXERROR), (_RAD)) / (_RAD)))), \
+    ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN,                                                              \
+    ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX)
 
 /**
  * Raw equation from ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC
@@ -1533,7 +1537,7 @@ struct ANCHOR_API AnchorDrawListSharedData
    * Current/default font (optional,
    * for simplified AddText overload) */
   AnchorFont *Font;
-  /** 
+  /**
    * Current/default font size (optional,
    * for simplified  AddText  overload)  */
   float FontSize;
@@ -1560,7 +1564,7 @@ struct ANCHOR_API AnchorDrawListSharedData
 
   /**
    * [Internal] Lookup tables
-   * 
+   *
    * Sample points on the quarter of the circle.
    * Cutoff radius after which arc drawing will
    * fallback to slower PathArcTo() precomputed
@@ -1642,7 +1646,7 @@ enum AnchorItemFlags_
   AnchorItemFlags_SelectableDontClosePopup = 1 << 5,
 
   /**
-   * false [BETA] Represent a mixed or 
+   * false [BETA] Represent a mixed or
    * indeterminate value, generally duo
    * multi-selection where values differ.
    * Currently only supported Checkbox() */
@@ -1658,7 +1662,7 @@ enum AnchorItemFlags_
 
 /**
  * Flags for ItemAdd()
- * 
+ *
  * FIXME-NAV: _Focusable is _ALMOST_
  * what you would expect to be called
  * '_TabStop' but SetKeyboardFocusHere()
@@ -1666,18 +1670,18 @@ enum AnchorItemFlags_
  * distinguish Focusable from TabStop. */
 enum AnchorItemAddFlags_
 {
-  /** 
-  * FIXME-NAV: In current/legacy scheme, Focusable
-  * + TabStop support are opt-in by widgets. We will
-  * transition it toward being opt-out, so this flag
-  * is expected to eventually disappear. */
+  /**
+   * FIXME-NAV: In current/legacy scheme, Focusable
+   * + TabStop support are opt-in by widgets. We will
+   * transition it toward being opt-out, so this flag
+   * is expected to eventually disappear. */
   AnchorItemAddFlags_None = 0,
   AnchorItemAddFlags_Focusable = 1 << 0
 };
 
 enum AnchorItemStatusFlags_
 {
-  /** 
+  /**
    * Storage for LastItem data */
   AnchorItemStatusFlags_None = 0,
   /**
@@ -1685,7 +1689,7 @@ enum AnchorItemStatusFlags_
    * (does NOT mean that the window is in the
    * correct z-order and can be hovered, this
    * is only one part of the most-common of
-   * IsItemHovered test)  additionally  the 
+   * IsItemHovered test)  additionally  the
    * window->DC.LastItemDisplayRect is valid
    * Value exposed by item was edited in the
    * current frame (should match the bool
@@ -1743,19 +1747,17 @@ enum AnchorInputTextFlagsPrivate_
   // [Internal]
   AnchorInputTextFlags_Multiline = 1 << 26,  // For internal use by InputTextMultiline()
   AnchorInputTextFlags_NoMarkEdited =
-    1 << 27,  // For internal use by functions using InputText() before reformatting data
-  AnchorInputTextFlags_MergedItem =
-    1 << 28  // For internal use by TempInputText(), will skip calling ItemAdd(). Require
-             // bounding-box to strictly match.
+    1 << 27,                                 // For internal use by functions using InputText() before reformatting data
+  AnchorInputTextFlags_MergedItem = 1 << 28  // For internal use by TempInputText(), will skip calling
+                                             // ItemAdd(). Require bounding-box to strictly match.
 };
 
 // Extend AnchorButtonFlags_
 enum AnchorButtonFlagsPrivate_
 {
-  AnchorButtonFlags_PressedOnClick = 1 << 4,  // return true on click (mouse down event)
-  AnchorButtonFlags_PressedOnClickRelease = 1
-                                            << 5,  // [Default] return true on click + release on same item
-                                                   // <-- this is what the majority of Button are using
+  AnchorButtonFlags_PressedOnClick = 1 << 4,         // return true on click (mouse down event)
+  AnchorButtonFlags_PressedOnClickRelease = 1 << 5,  // [Default] return true on click + release on same item
+                                                     // <-- this is what the majority of Button are using
   AnchorButtonFlags_PressedOnClickReleaseAnywhere =
     1 << 6,                                     // return true on click + release even if the release event is not done while
                                                 // hovering the item
@@ -2476,9 +2478,8 @@ struct AnchorSettingsHandler
   ANCHOR_ID TypeHash;    // == AnchorHashStr(TypeName)
   void (*ClearAllFn)(AnchorContext *ctx,
                      AnchorSettingsHandler *handler);  // Clear all settings data
-  void (*ReadInitFn)(
-    AnchorContext *ctx,
-    AnchorSettingsHandler *handler);  // Read: Called before reading (in registration order)
+  void (*ReadInitFn)(AnchorContext *ctx,
+                     AnchorSettingsHandler *handler);  // Read: Called before reading (in registration order)
   void *(*ReadOpenFn)(
     AnchorContext *ctx,
     AnchorSettingsHandler *handler,
@@ -3375,9 +3376,9 @@ enum AnchorTabBarFlagsPrivate_
   AnchorTabBarFlags_DockNode = 1 << 20,  // Part of a dock node [we don't use this in the master branch but
                                          // it facilitate branch syncing to keep this around]
   AnchorTabBarFlags_IsFocused = 1 << 21,
-  AnchorTabBarFlags_SaveSettings = 1
-                                   << 22  // FIXME: Settings are handled by the docking system, this only
-                                          // request the tab bar to mark settings dirty when reordering tabs
+  AnchorTabBarFlags_SaveSettings =
+    1 << 22  // FIXME: Settings are handled by the docking system, this only
+             // request the tab bar to mark settings dirty when reordering tabs
 };
 
 // Extend AnchorTabItemFlags_
@@ -3574,9 +3575,8 @@ struct AnchorTable
 {
   ANCHOR_ID ID;
   AnchorTableFlags Flags;
-  void *RawData;  // Single allocation to hold Columns[], DisplayOrderToIndex[] and RowCellData[]
-  AnchorTableTempData
-    *TempData;                            // Transient data while table is active. Point within g.CurrentTableStack[]
+  void *RawData;                          // Single allocation to hold Columns[], DisplayOrderToIndex[] and RowCellData[]
+  AnchorTableTempData *TempData;          // Transient data while table is active. Point within g.CurrentTableStack[]
   AnchorSpan<AnchorTableColumn> Columns;  // Point within RawData[]
   AnchorSpan<AnchorTableColumnIdx>
     DisplayOrderToIndex;  // Point within RawData[]. Store display order of columns (when not
@@ -3818,773 +3818,780 @@ struct AnchorTableSettings
 
 namespace ANCHOR
 {
-// Windows
-// We should always have a CurrentWindow in the stack (there is an implicit "Debug" window)
-// If this ever crash because g.CurrentWindow is NULL it means that either
-// - ANCHOR::NewFrame() has never been called, which is illegal.
-// - You are calling ANCHOR functions after ANCHOR::EndFrame()/ANCHOR::Render() and before the next
-// ANCHOR::NewFrame(), which is also illegal.
-inline AnchorWindow *GetCurrentWindowRead()
-{
-  AnchorContext &g = *G_CTX;
-  return g.CurrentWindow;
-}
-inline AnchorWindow *GetCurrentWindow()
-{
-  AnchorContext &g = *G_CTX;
-  g.CurrentWindow->WriteAccessed = true;
-  return g.CurrentWindow;
-}
-ANCHOR_API AnchorWindow *FindWindowByID(ANCHOR_ID id);
-ANCHOR_API AnchorWindow *FindWindowByName(const char *name);
-ANCHOR_API void UpdateWindowParentAndRootLinks(AnchorWindow *window,
-                                               AnchorWindowFlags flags,
-                                               AnchorWindow *parent_window);
-ANCHOR_API wabi::GfVec2f CalcWindowNextAutoFitSize(AnchorWindow *window);
-ANCHOR_API bool IsWindowChildOf(AnchorWindow *window, AnchorWindow *potential_parent);
-ANCHOR_API bool IsWindowAbove(AnchorWindow *potential_above, AnchorWindow *potential_below);
-ANCHOR_API bool IsWindowNavFocusable(AnchorWindow *window);
-ANCHOR_API void SetWindowPos(AnchorWindow *window, const wabi::GfVec2f &pos, AnchorCond cond = 0);
-ANCHOR_API void SetWindowSize(AnchorWindow *window, const wabi::GfVec2f &size, AnchorCond cond = 0);
-ANCHOR_API void SetWindowCollapsed(AnchorWindow *window, bool collapsed, AnchorCond cond = 0);
-ANCHOR_API void SetWindowHitTestHole(AnchorWindow *window,
-                                     const wabi::GfVec2f &pos,
-                                     const wabi::GfVec2f &size);
+  // Windows
+  // We should always have a CurrentWindow in the stack (there is an implicit "Debug" window)
+  // If this ever crash because g.CurrentWindow is NULL it means that either
+  // - ANCHOR::NewFrame() has never been called, which is illegal.
+  // - You are calling ANCHOR functions after ANCHOR::EndFrame()/ANCHOR::Render() and before the next
+  // ANCHOR::NewFrame(), which is also illegal.
+  inline AnchorWindow *GetCurrentWindowRead()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.CurrentWindow;
+  }
+  inline AnchorWindow *GetCurrentWindow()
+  {
+    AnchorContext &g = *G_CTX;
+    g.CurrentWindow->WriteAccessed = true;
+    return g.CurrentWindow;
+  }
+  ANCHOR_API AnchorWindow *FindWindowByID(ANCHOR_ID id);
+  ANCHOR_API AnchorWindow *FindWindowByName(const char *name);
+  ANCHOR_API void UpdateWindowParentAndRootLinks(AnchorWindow *window,
+                                                 AnchorWindowFlags flags,
+                                                 AnchorWindow *parent_window);
+  ANCHOR_API wabi::GfVec2f CalcWindowNextAutoFitSize(AnchorWindow *window);
+  ANCHOR_API bool IsWindowChildOf(AnchorWindow *window, AnchorWindow *potential_parent);
+  ANCHOR_API bool IsWindowAbove(AnchorWindow *potential_above, AnchorWindow *potential_below);
+  ANCHOR_API bool IsWindowNavFocusable(AnchorWindow *window);
+  ANCHOR_API void SetWindowPos(AnchorWindow *window, const wabi::GfVec2f &pos, AnchorCond cond = 0);
+  ANCHOR_API void SetWindowSize(AnchorWindow *window, const wabi::GfVec2f &size, AnchorCond cond = 0);
+  ANCHOR_API void SetWindowCollapsed(AnchorWindow *window, bool collapsed, AnchorCond cond = 0);
+  ANCHOR_API void SetWindowHitTestHole(AnchorWindow *window,
+                                       const wabi::GfVec2f &pos,
+                                       const wabi::GfVec2f &size);
 
-// Windows: Display Order and Focus Order
-ANCHOR_API void FocusWindow(AnchorWindow *window);
-ANCHOR_API void FocusTopMostWindowUnderOne(AnchorWindow *under_this_window, AnchorWindow *ignore_window);
-ANCHOR_API void BringWindowToFocusFront(AnchorWindow *window);
-ANCHOR_API void BringWindowToDisplayFront(AnchorWindow *window);
-ANCHOR_API void BringWindowToDisplayBack(AnchorWindow *window);
+  // Windows: Display Order and Focus Order
+  ANCHOR_API void FocusWindow(AnchorWindow *window);
+  ANCHOR_API void FocusTopMostWindowUnderOne(AnchorWindow *under_this_window, AnchorWindow *ignore_window);
+  ANCHOR_API void BringWindowToFocusFront(AnchorWindow *window);
+  ANCHOR_API void BringWindowToDisplayFront(AnchorWindow *window);
+  ANCHOR_API void BringWindowToDisplayBack(AnchorWindow *window);
 
-// Fonts, drawing
-ANCHOR_API void SetCurrentFont(AnchorFont *font);
-inline AnchorFont *GetDefaultFont()
-{
-  AnchorContext &g = *G_CTX;
-  return g.IO.FontDefault ? g.IO.FontDefault : g.IO.Fonts->Fonts[0];
-}
-inline AnchorDrawList *GetForegroundDrawList(AnchorWindow *window)
-{
-  TF_UNUSED(window);
-  // This seemingly unnecessary wrapper simplifies compatibility between the 'master' and
-  // 'docking' branches.
-  return GetForegroundDrawList();
-}
+  // Fonts, drawing
+  ANCHOR_API void SetCurrentFont(AnchorFont *font);
+  inline AnchorFont *GetDefaultFont()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.IO.FontDefault ? g.IO.FontDefault : g.IO.Fonts->Fonts[0];
+  }
+  inline AnchorDrawList *GetForegroundDrawList(AnchorWindow *window)
+  {
+    TF_UNUSED(window);
+    // This seemingly unnecessary wrapper simplifies compatibility between the 'master' and
+    // 'docking' branches.
+    return GetForegroundDrawList();
+  }
 
-// get background draw list for the given viewport. this draw list
-// will be the first rendering one. Useful to quickly draw
-// shapes/text behind ANCHOR contents.
-ANCHOR_API AnchorDrawList *GetBackgroundDrawList(AnchorViewport *viewport);
-// get foreground draw list for the given viewport. this draw list will be the
-// last rendered one. Useful to quickly draw shapes/text over ANCHOR contents.
-ANCHOR_API AnchorDrawList *GetForegroundDrawList(AnchorViewport *viewport);
+  // get background draw list for the given viewport. this draw list
+  // will be the first rendering one. Useful to quickly draw
+  // shapes/text behind ANCHOR contents.
+  ANCHOR_API AnchorDrawList *GetBackgroundDrawList(AnchorViewport *viewport);
+  // get foreground draw list for the given viewport. this draw list will be the
+  // last rendered one. Useful to quickly draw shapes/text over ANCHOR contents.
+  ANCHOR_API AnchorDrawList *GetForegroundDrawList(AnchorViewport *viewport);
 
-// Init
-ANCHOR_API void Initialize(AnchorContext *context);
-ANCHOR_API void Shutdown(AnchorContext *context);  // Since 1.60 this is a _private_ function. You
-                                                   // can call DestroyContext() to destroy the
-                                                   // context created by CreateContext().
+  // Init
+  ANCHOR_API void Initialize(AnchorContext *context);
+  ANCHOR_API void Shutdown(AnchorContext *context);  // Since 1.60 this is a _private_ function. You
+                                                     // can call DestroyContext() to destroy the
+                                                     // context created by CreateContext().
 
-// NewFrame
-ANCHOR_API void UpdateHoveredWindowAndCaptureFlags();
-ANCHOR_API void StartMouseMovingWindow(AnchorWindow *window);
-ANCHOR_API void UpdateMouseMovingWindowNewFrame();
-ANCHOR_API void UpdateMouseMovingWindowEndFrame();
+  // NewFrame
+  ANCHOR_API void UpdateHoveredWindowAndCaptureFlags();
+  ANCHOR_API void StartMouseMovingWindow(AnchorWindow *window);
+  ANCHOR_API void UpdateMouseMovingWindowNewFrame();
+  ANCHOR_API void UpdateMouseMovingWindowEndFrame();
 
-// Generic context hooks
-ANCHOR_API ANCHOR_ID AddContextHook(AnchorContext *context, const AnchorContextHook *hook);
-ANCHOR_API void RemoveContextHook(AnchorContext *context, ANCHOR_ID hook_to_remove);
-ANCHOR_API void CallContextHooks(AnchorContext *context, AnchorContextHookType type);
+  // Generic context hooks
+  ANCHOR_API ANCHOR_ID AddContextHook(AnchorContext *context, const AnchorContextHook *hook);
+  ANCHOR_API void RemoveContextHook(AnchorContext *context, ANCHOR_ID hook_to_remove);
+  ANCHOR_API void CallContextHooks(AnchorContext *context, AnchorContextHookType type);
 
-// Settings
-ANCHOR_API void MarkIniSettingsDirty();
-ANCHOR_API void MarkIniSettingsDirty(AnchorWindow *window);
-ANCHOR_API void ClearIniSettings();
-ANCHOR_API AnchorWindowSettings *CreateNewWindowSettings(const char *name);
-ANCHOR_API AnchorWindowSettings *FindWindowSettings(ANCHOR_ID id);
-ANCHOR_API AnchorWindowSettings *FindOrCreateWindowSettings(const char *name);
-ANCHOR_API AnchorSettingsHandler *FindSettingsHandler(const char *type_name);
+  // Settings
+  ANCHOR_API void MarkIniSettingsDirty();
+  ANCHOR_API void MarkIniSettingsDirty(AnchorWindow *window);
+  ANCHOR_API void ClearIniSettings();
+  ANCHOR_API AnchorWindowSettings *CreateNewWindowSettings(const char *name);
+  ANCHOR_API AnchorWindowSettings *FindWindowSettings(ANCHOR_ID id);
+  ANCHOR_API AnchorWindowSettings *FindOrCreateWindowSettings(const char *name);
+  ANCHOR_API AnchorSettingsHandler *FindSettingsHandler(const char *type_name);
 
-// Scrolling
-ANCHOR_API void SetNextWindowScroll(const wabi::GfVec2f &scroll);  // Use -1.0f on one axis to leave as-is
-ANCHOR_API void SetScrollX(AnchorWindow *window, float scroll_x);
-ANCHOR_API void SetScrollY(AnchorWindow *window, float scroll_y);
-ANCHOR_API void SetScrollFromPosX(AnchorWindow *window, float local_x, float center_x_ratio);
-ANCHOR_API void SetScrollFromPosY(AnchorWindow *window, float local_y, float center_y_ratio);
-ANCHOR_API wabi::GfVec2f ScrollToBringRectIntoView(AnchorWindow *window, const AnchorBBox &item_rect);
+  // Scrolling
+  ANCHOR_API void SetNextWindowScroll(const wabi::GfVec2f &scroll);  // Use -1.0f on one axis to leave as-is
+  ANCHOR_API void SetScrollX(AnchorWindow *window, float scroll_x);
+  ANCHOR_API void SetScrollY(AnchorWindow *window, float scroll_y);
+  ANCHOR_API void SetScrollFromPosX(AnchorWindow *window, float local_x, float center_x_ratio);
+  ANCHOR_API void SetScrollFromPosY(AnchorWindow *window, float local_y, float center_y_ratio);
+  ANCHOR_API wabi::GfVec2f ScrollToBringRectIntoView(AnchorWindow *window, const AnchorBBox &item_rect);
 
-// Basic Accessors
-inline ANCHOR_ID GetItemID()
-{
-  AnchorContext &g = *G_CTX;
-  return g.CurrentWindow->DC.LastItemId;
-}  // Get ID of last item (~~ often same ANCHOR::GetID(label) beforehand)
-inline AnchorItemStatusFlags GetItemStatusFlags()
-{
-  AnchorContext &g = *G_CTX;
-  return g.CurrentWindow->DC.LastItemStatusFlags;
-}
-inline ANCHOR_ID GetActiveID()
-{
-  AnchorContext &g = *G_CTX;
-  return g.ActiveId;
-}
-inline ANCHOR_ID GetFocusID()
-{
-  AnchorContext &g = *G_CTX;
-  return g.NavId;
-}
-inline AnchorItemFlags GetItemFlags()
-{
-  AnchorContext &g = *G_CTX;
-  return g.CurrentItemFlags;
-}
-ANCHOR_API void SetActiveID(ANCHOR_ID id, AnchorWindow *window);
-ANCHOR_API void SetFocusID(ANCHOR_ID id, AnchorWindow *window);
-ANCHOR_API void ClearActiveID();
-ANCHOR_API ANCHOR_ID GetHoveredID();
-ANCHOR_API void SetHoveredID(ANCHOR_ID id);
-ANCHOR_API void KeepAliveID(ANCHOR_ID id);
+  // Basic Accessors
+  inline ANCHOR_ID GetItemID()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.CurrentWindow->DC.LastItemId;
+  }  // Get ID of last item (~~ often same ANCHOR::GetID(label) beforehand)
+  inline AnchorItemStatusFlags GetItemStatusFlags()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.CurrentWindow->DC.LastItemStatusFlags;
+  }
+  inline ANCHOR_ID GetActiveID()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.ActiveId;
+  }
+  inline ANCHOR_ID GetFocusID()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.NavId;
+  }
+  inline AnchorItemFlags GetItemFlags()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.CurrentItemFlags;
+  }
+  ANCHOR_API void SetActiveID(ANCHOR_ID id, AnchorWindow *window);
+  ANCHOR_API void SetFocusID(ANCHOR_ID id, AnchorWindow *window);
+  ANCHOR_API void ClearActiveID();
+  ANCHOR_API ANCHOR_ID GetHoveredID();
+  ANCHOR_API void SetHoveredID(ANCHOR_ID id);
+  ANCHOR_API void KeepAliveID(ANCHOR_ID id);
 
-// Mark data associated to given item as "edited",
-// used by IsItemDeactivatedAfterEdit() function.
-ANCHOR_API void MarkItemEdited(ANCHOR_ID id);
+  // Mark data associated to given item as "edited",
+  // used by IsItemDeactivatedAfterEdit() function.
+  ANCHOR_API void MarkItemEdited(ANCHOR_ID id);
 
-// Push given value as-is at the top of the ID stack
-// (whereas PushID combines old and new hashes)
-ANCHOR_API void PushOverrideID(ANCHOR_ID id);
-ANCHOR_API ANCHOR_ID GetIDWithSeed(const char *str_id_begin, const char *str_id_end, ANCHOR_ID seed);
+  // Push given value as-is at the top of the ID stack
+  // (whereas PushID combines old and new hashes)
+  ANCHOR_API void PushOverrideID(ANCHOR_ID id);
+  ANCHOR_API ANCHOR_ID GetIDWithSeed(const char *str_id_begin, const char *str_id_end, ANCHOR_ID seed);
 
-// Basic Helpers for widget code
-ANCHOR_API void ItemSize(const wabi::GfVec2f &size, float text_baseline_y = -1.0f);
-ANCHOR_API void ItemSize(const AnchorBBox &bb, float text_baseline_y = -1.0f);
-ANCHOR_API bool ItemAdd(const AnchorBBox &bb,
-                        ANCHOR_ID id,
-                        const AnchorBBox *nav_bb = NULL,
-                        AnchorItemAddFlags flags = 0);
-ANCHOR_API bool ItemHoverable(const AnchorBBox &bb, ANCHOR_ID id);
-ANCHOR_API void ItemFocusable(AnchorWindow *window, ANCHOR_ID id);
-ANCHOR_API bool IsClippedEx(const AnchorBBox &bb, ANCHOR_ID id, bool clip_even_when_logged);
-ANCHOR_API void SetLastItemData(AnchorWindow *window,
-                                ANCHOR_ID item_id,
-                                AnchorItemStatusFlags status_flags,
-                                const AnchorBBox &item_rect);
-ANCHOR_API wabi::GfVec2f CalcItemSize(wabi::GfVec2f size, float default_w, float default_h);
-ANCHOR_API float CalcWrapWidthForPos(const wabi::GfVec2f &pos, float wrap_pos_x);
-ANCHOR_API void PushMultiItemsWidths(int components, float width_full);
-ANCHOR_API void PushItemFlag(AnchorItemFlags option, bool enabled);
-ANCHOR_API void PopItemFlag();
+  // Basic Helpers for widget code
+  ANCHOR_API void ItemSize(const wabi::GfVec2f &size, float text_baseline_y = -1.0f);
+  ANCHOR_API void ItemSize(const AnchorBBox &bb, float text_baseline_y = -1.0f);
+  ANCHOR_API bool ItemAdd(const AnchorBBox &bb,
+                          ANCHOR_ID id,
+                          const AnchorBBox *nav_bb = NULL,
+                          AnchorItemAddFlags flags = 0);
+  ANCHOR_API bool ItemHoverable(const AnchorBBox &bb, ANCHOR_ID id);
+  ANCHOR_API void ItemFocusable(AnchorWindow *window, ANCHOR_ID id);
+  ANCHOR_API bool IsClippedEx(const AnchorBBox &bb, ANCHOR_ID id, bool clip_even_when_logged);
+  ANCHOR_API void SetLastItemData(AnchorWindow *window,
+                                  ANCHOR_ID item_id,
+                                  AnchorItemStatusFlags status_flags,
+                                  const AnchorBBox &item_rect);
+  ANCHOR_API wabi::GfVec2f CalcItemSize(wabi::GfVec2f size, float default_w, float default_h);
+  ANCHOR_API float CalcWrapWidthForPos(const wabi::GfVec2f &pos, float wrap_pos_x);
+  ANCHOR_API void PushMultiItemsWidths(int components, float width_full);
+  ANCHOR_API void PushItemFlag(AnchorItemFlags option, bool enabled);
+  ANCHOR_API void PopItemFlag();
 
-// Was the last item selection toggled? (after
-// Selectable(), TreeNode() etc. We only returns toggle
-// _event_ in order to handle clipping correctly)
-ANCHOR_API bool IsItemToggledSelection();
-ANCHOR_API wabi::GfVec2f GetContentRegionMaxAbs();
-ANCHOR_API void ShrinkWidths(ANCHOR_ShrinkWidthItem *items, int count, float width_excess);
+  // Was the last item selection toggled? (after
+  // Selectable(), TreeNode() etc. We only returns toggle
+  // _event_ in order to handle clipping correctly)
+  ANCHOR_API bool IsItemToggledSelection();
+  ANCHOR_API wabi::GfVec2f GetContentRegionMaxAbs();
+  ANCHOR_API void ShrinkWidths(ANCHOR_ShrinkWidthItem *items, int count, float width_excess);
 
 #ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
 
-inline bool FocusableItemRegister(AnchorWindow *window, ANCHOR_ID id)
-{
-  ANCHOR_ASSERT(0);
-  TF_UNUSED(window);
-  TF_UNUSED(id);
-  return false;
-}  // -> pass AnchorItemAddFlags_Focusable flag to ItemAdd()
-inline void FocusableItemUnregister(AnchorWindow *window)
-{
-  ANCHOR_ASSERT(0);
-  TF_UNUSED(window);
-}  // -> unnecessary: TempInputText() uses AnchorInputTextFlags_MergedItem
+  inline bool FocusableItemRegister(AnchorWindow *window, ANCHOR_ID id)
+  {
+    ANCHOR_ASSERT(0);
+    TF_UNUSED(window);
+    TF_UNUSED(id);
+    return false;
+  }  // -> pass AnchorItemAddFlags_Focusable flag to ItemAdd()
+  inline void FocusableItemUnregister(AnchorWindow *window)
+  {
+    ANCHOR_ASSERT(0);
+    TF_UNUSED(window);
+  }  // -> unnecessary: TempInputText() uses AnchorInputTextFlags_MergedItem
 #endif
 
-// Logging/Capture
-// -> BeginCapture() when we design v2 api, for now
-// stay under the radar by using the old name.
-ANCHOR_API void LogBegin(ANCHORLogType type, int auto_open_depth);
-// Start logging/capturing to internal buffer
-ANCHOR_API void LogToBuffer(int auto_open_depth = -1);
-ANCHOR_API void LogRenderedText(const wabi::GfVec2f *ref_pos, const char *text, const char *text_end = NULL);
-ANCHOR_API void LogSetNextTextDecoration(const char *prefix, const char *suffix);
-
-// Popups, Modals, Tooltips
-ANCHOR_API bool BeginChildEx(const char *name,
-                             ANCHOR_ID id,
-                             const wabi::GfVec2f &size_arg,
-                             bool border,
-                             AnchorWindowFlags flags);
-ANCHOR_API void OpenPopupEx(ANCHOR_ID id, AnchorPopupFlags popup_flags = AnchorPopupFlags_None);
-ANCHOR_API void ClosePopupToLevel(int remaining, bool restore_focus_to_window_under_popup);
-ANCHOR_API void ClosePopupsOverWindow(AnchorWindow *ref_window, bool restore_focus_to_window_under_popup);
-ANCHOR_API bool IsPopupOpen(ANCHOR_ID id, AnchorPopupFlags popup_flags);
-ANCHOR_API bool BeginPopupEx(ANCHOR_ID id, AnchorWindowFlags extra_flags);
-ANCHOR_API void BeginTooltipEx(AnchorWindowFlags extra_flags, AnchorTooltipFlags tooltip_flags);
-ANCHOR_API AnchorBBox GetPopupAllowedExtentRect(AnchorWindow *window);
-ANCHOR_API AnchorWindow *GetTopMostPopupModal();
-ANCHOR_API wabi::GfVec2f FindBestWindowPosForPopup(AnchorWindow *window);
-ANCHOR_API wabi::GfVec2f FindBestWindowPosForPopupEx(const wabi::GfVec2f &ref_pos,
-                                                     const wabi::GfVec2f &size,
-                                                     AnchorDir *last_dir,
-                                                     const AnchorBBox &r_outer,
-                                                     const AnchorBBox &r_avoid,
-                                                     ANCHORPopupPositionPolicy policy);
-ANCHOR_API bool BeginViewportSideBar(const char *name,
-                                     AnchorViewport *viewport,
-                                     AnchorDir dir,
-                                     float size,
-                                     AnchorWindowFlags window_flags);
-
-// Combos
-ANCHOR_API bool BeginComboPopup(ANCHOR_ID popup_id, const AnchorBBox &bb, AnchorComboFlags flags);
-
-// Gamepad/Keyboard Navigation
-ANCHOR_API void NavInitWindow(AnchorWindow *window, bool force_reinit);
-ANCHOR_API bool NavMoveRequestButNoResultYet();
-ANCHOR_API void NavMoveRequestCancel();
-ANCHOR_API void NavMoveRequestForward(AnchorDir move_dir,
-                                      AnchorDir clip_dir,
-                                      const AnchorBBox &bb_rel,
-                                      AnchorNavMoveFlags move_flags);
-ANCHOR_API void NavMoveRequestTryWrapping(AnchorWindow *window, AnchorNavMoveFlags move_flags);
-ANCHOR_API float GetNavInputAmount(AnchorNavInput n, ANCHOR_InputReadMode mode);
-ANCHOR_API wabi::GfVec2f GetNavInputAmount2d(AnchorNavDirSourceFlags dir_sources,
-                                             ANCHOR_InputReadMode mode,
-                                             float slow_factor = 0.0f,
-                                             float fast_factor = 0.0f);
-ANCHOR_API int CalcTypematicRepeatAmount(float t0, float t1, float repeat_delay, float repeat_rate);
-// Remotely activate a button, checkbox, tree node etc. given its unique ID.
-// activation is queued and processed on the next frame when the item is
-// encountered again.
-ANCHOR_API void ActivateItem(ANCHOR_ID id);
-ANCHOR_API void SetNavID(ANCHOR_ID id,
-                         ANCHORNavLayer nav_layer,
-                         ANCHOR_ID focus_scope_id,
-                         const AnchorBBox &rect_rel);
-
-// Focus Scope (WIP)
-// This is generally used to identify a selection set (multiple of which may be in the same
-// window), as selection patterns generally need to react (e.g. clear selection) when landing on an
-// item of the set.
-ANCHOR_API void PushFocusScope(ANCHOR_ID id);
-ANCHOR_API void PopFocusScope();
-inline ANCHOR_ID GetFocusedFocusScope()
-{
-  AnchorContext &g = *G_CTX;
-  return g.NavFocusScopeId;
-}  // Focus scope which is actually active
-inline ANCHOR_ID GetFocusScope()
-{
-  AnchorContext &g = *G_CTX;
-  return g.CurrentWindow->DC.NavFocusScopeIdCurrent;
-}  // Focus scope we are outputting into, set by PushFocusScope()
-
-// Inputs
-// FIXME: Eventually we should aim to move e.g. IsActiveIdUsingKey() into IsKeyXXX functions.
-ANCHOR_API void SetItemUsingMouseWheel();
-inline bool IsActiveIdUsingNavDir(AnchorDir dir)
-{
-  AnchorContext &g = *G_CTX;
-  return (g.ActiveIdUsingNavDirMask & (1 << dir)) != 0;
-}
-inline bool IsActiveIdUsingNavInput(AnchorNavInput input)
-{
-  AnchorContext &g = *G_CTX;
-  return (g.ActiveIdUsingNavInputMask & (1 << input)) != 0;
-}
-inline bool IsActiveIdUsingKey(AnchorKey key)
-{
-  AnchorContext &g = *G_CTX;
-  ANCHOR_ASSERT(key < 64);
-  return (g.ActiveIdUsingKeyInputMask & ((AnchorU64)1 << key)) != 0;
-}
-ANCHOR_API bool IsMouseDragPastThreshold(AnchorMouseButton button, float lock_threshold = -1.0f);
-inline bool IsKeyPressedMap(AnchorKey key, bool repeat = true)
-{
-  AnchorContext &g = *G_CTX;
-  const int key_index = g.IO.KeyMap[key];
-  return (key_index >= 0) ? IsKeyPressed(key_index, repeat) : false;
-}
-inline bool IsNavInputDown(AnchorNavInput n)
-{
-  AnchorContext &g = *G_CTX;
-  return g.IO.NavInputs[n] > 0.0f;
-}
-inline bool IsNavInputTest(AnchorNavInput n, ANCHOR_InputReadMode rm)
-{
-  return (GetNavInputAmount(n, rm) > 0.0f);
-}
-ANCHOR_API AnchorKeyModFlags GetMergedKeyModFlags();
-
-// Drag and Drop
-ANCHOR_API bool BeginDragDropTargetCustom(const AnchorBBox &bb, ANCHOR_ID id);
-ANCHOR_API void ClearDragDrop();
-ANCHOR_API bool IsDragDropPayloadBeingAccepted();
-
-// Internal Columns API (this is not exposed because we will encourage transitioning to the Tables
-// API)
-ANCHOR_API void SetWindowClipRectBeforeSetChannel(AnchorWindow *window, const AnchorBBox &clip_rect);
-ANCHOR_API void BeginColumns(
-  const char *str_id,
-  int count,
-  AnchorOldColumnFlags flags = 0);  // setup number of columns. use an identifier to distinguish
-                                    // multiple column sets. close with EndColumns().
-ANCHOR_API void EndColumns();       // close columns
-ANCHOR_API void PushColumnClipRect(int column_index);
-ANCHOR_API void PushColumnsBackground();
-ANCHOR_API void PopColumnsBackground();
-ANCHOR_API ANCHOR_ID GetColumnsID(const char *str_id, int count);
-ANCHOR_API AnchorOldColumns *FindOrCreateColumns(AnchorWindow *window, ANCHOR_ID id);
-ANCHOR_API float GetColumnOffsetFromNorm(const AnchorOldColumns *columns, float offset_norm);
-ANCHOR_API float GetColumnNormFromOffset(const AnchorOldColumns *columns, float offset);
-
-// Tables: Candidates for public API
-ANCHOR_API void TableOpenContextMenu(int column_n = -1);
-ANCHOR_API void TableSetColumnWidth(int column_n, float width);
-ANCHOR_API void TableSetColumnSortDirection(int column_n,
-                                            AnchorSortDirection sort_direction,
-                                            bool append_to_sort_specs);
-ANCHOR_API int TableGetHoveredColumn();  // May use (TableGetColumnFlags() &
-                                         // AnchorTableColumnFlags_IsHovered) instead. Return
-                                         // hovered column. return -1 when table is not hovered.
-                                         // return columns_count if the unused space at the right
-                                         // of visible columns is hovered.
-ANCHOR_API float TableGetHeaderRowHeight();
-ANCHOR_API void TablePushBackgroundChannel();
-ANCHOR_API void TablePopBackgroundChannel();
-
-// Tables: Internals
-inline AnchorTable *GetCurrentTable()
-{
-  AnchorContext &g = *G_CTX;
-  return g.CurrentTable;
-}
-ANCHOR_API AnchorTable *TableFindByID(ANCHOR_ID id);
-ANCHOR_API bool BeginTableEx(const char *name,
-                             ANCHOR_ID id,
-                             int columns_count,
-                             AnchorTableFlags flags = 0,
-                             const wabi::GfVec2f &outer_size = wabi::GfVec2f(0, 0),
-                             float inner_width = 0.0f);
-ANCHOR_API void TableBeginInitMemory(AnchorTable *table, int columns_count);
-ANCHOR_API void TableBeginApplyRequests(AnchorTable *table);
-ANCHOR_API void TableSetupDrawChannels(AnchorTable *table);
-ANCHOR_API void TableUpdateLayout(AnchorTable *table);
-ANCHOR_API void TableUpdateBorders(AnchorTable *table);
-ANCHOR_API void TableUpdateColumnsWeightFromWidth(AnchorTable *table);
-ANCHOR_API void TableDrawBorders(AnchorTable *table);
-ANCHOR_API void TableDrawContextMenu(AnchorTable *table);
-ANCHOR_API void TableMergeDrawChannels(AnchorTable *table);
-ANCHOR_API void TableSortSpecsSanitize(AnchorTable *table);
-ANCHOR_API void TableSortSpecsBuild(AnchorTable *table);
-ANCHOR_API AnchorSortDirection TableGetColumnNextSortDirection(AnchorTableColumn *column);
-ANCHOR_API void TableFixColumnSortDirection(AnchorTable *table, AnchorTableColumn *column);
-ANCHOR_API float TableGetColumnWidthAuto(AnchorTable *table, AnchorTableColumn *column);
-ANCHOR_API void TableBeginRow(AnchorTable *table);
-ANCHOR_API void TableEndRow(AnchorTable *table);
-ANCHOR_API void TableBeginCell(AnchorTable *table, int column_n);
-ANCHOR_API void TableEndCell(AnchorTable *table);
-ANCHOR_API AnchorBBox TableGetCellBgRect(const AnchorTable *table, int column_n);
-ANCHOR_API const char *TableGetColumnName(const AnchorTable *table, int column_n);
-ANCHOR_API ANCHOR_ID TableGetColumnResizeID(const AnchorTable *table, int column_n, int instance_no = 0);
-ANCHOR_API float TableGetMaxColumnWidth(const AnchorTable *table, int column_n);
-ANCHOR_API void TableSetColumnWidthAutoSingle(AnchorTable *table, int column_n);
-ANCHOR_API void TableSetColumnWidthAutoAll(AnchorTable *table);
-ANCHOR_API void TableRemove(AnchorTable *table);
-ANCHOR_API void TableGcCompactTransientBuffers(AnchorTable *table);
-ANCHOR_API void TableGcCompactTransientBuffers(AnchorTableTempData *table);
-ANCHOR_API void TableGcCompactSettings();
-
-// Tables: Settings
-ANCHOR_API void TableLoadSettings(AnchorTable *table);
-ANCHOR_API void TableSaveSettings(AnchorTable *table);
-ANCHOR_API void TableResetSettings(AnchorTable *table);
-ANCHOR_API AnchorTableSettings *TableGetBoundSettings(AnchorTable *table);
-ANCHOR_API void TableSettingsInstallHandler(AnchorContext *context);
-ANCHOR_API AnchorTableSettings *TableSettingsCreate(ANCHOR_ID id, int columns_count);
-ANCHOR_API AnchorTableSettings *TableSettingsFindByID(ANCHOR_ID id);
-
-// Tab Bars
-ANCHOR_API bool BeginTabBarEx(AnchorTabBar *tab_bar, const AnchorBBox &bb, AnchorTabBarFlags flags);
-ANCHOR_API AnchorTabItem *TabBarFindTabByID(AnchorTabBar *tab_bar, ANCHOR_ID tab_id);
-ANCHOR_API void TabBarRemoveTab(AnchorTabBar *tab_bar, ANCHOR_ID tab_id);
-ANCHOR_API void TabBarCloseTab(AnchorTabBar *tab_bar, AnchorTabItem *tab);
-ANCHOR_API void TabBarQueueReorder(AnchorTabBar *tab_bar, const AnchorTabItem *tab, int offset);
-ANCHOR_API void TabBarQueueReorderFromMousePos(AnchorTabBar *tab_bar,
-                                               const AnchorTabItem *tab,
-                                               wabi::GfVec2f mouse_pos);
-ANCHOR_API bool TabBarProcessReorder(AnchorTabBar *tab_bar);
-ANCHOR_API bool TabItemEx(AnchorTabBar *tab_bar,
-                          const char *label,
-                          bool *p_open,
-                          AnchorTabItemFlags flags);
-ANCHOR_API wabi::GfVec2f TabItemCalcSize(const char *label, bool has_close_button);
-ANCHOR_API void TabItemBackground(AnchorDrawList *draw_list,
-                                  const AnchorBBox &bb,
-                                  AnchorTabItemFlags flags,
-                                  AnchorU32 col);
-ANCHOR_API void TabItemLabelAndCloseButton(AnchorDrawList *draw_list,
-                                           const AnchorBBox &bb,
-                                           AnchorTabItemFlags flags,
-                                           wabi::GfVec2f frame_padding,
-                                           const char *label,
-                                           ANCHOR_ID tab_id,
-                                           ANCHOR_ID close_button_id,
-                                           bool is_contents_visible,
-                                           bool *out_just_closed,
-                                           bool *out_text_clipped);
-
-// Render helpers
-// AVOID USING OUTSIDE OF ANCHOR.CPP! NOT FOR PUBLIC CONSUMPTION. THOSE FUNCTIONS ARE A MESS. THEIR
-// SIGNATURE AND BEHAVIOR WILL CHANGE, THEY NEED TO BE REFACTORED INTO SOMETHING DECENT. NB: All
-// position are in absolute pixels coordinates (we are never using window coordinates internally)
-ANCHOR_API void RenderText(wabi::GfVec2f pos,
-                           const char *text,
-                           const char *text_end = NULL,
-                           bool hide_text_after_hash = true);
-ANCHOR_API void RenderTextWrapped(wabi::GfVec2f pos,
+  // Logging/Capture
+  // -> BeginCapture() when we design v2 api, for now
+  // stay under the radar by using the old name.
+  ANCHOR_API void LogBegin(ANCHORLogType type, int auto_open_depth);
+  // Start logging/capturing to internal buffer
+  ANCHOR_API void LogToBuffer(int auto_open_depth = -1);
+  ANCHOR_API void LogRenderedText(const wabi::GfVec2f *ref_pos,
                                   const char *text,
-                                  const char *text_end,
-                                  float wrap_width);
-ANCHOR_API void RenderTextClipped(const wabi::GfVec2f &pos_min,
-                                  const wabi::GfVec2f &pos_max,
-                                  const char *text,
-                                  const char *text_end,
-                                  const wabi::GfVec2f *text_size_if_known,
-                                  const wabi::GfVec2f &align = wabi::GfVec2f(0, 0),
-                                  const AnchorBBox *clip_rect = NULL);
-ANCHOR_API void RenderTextClippedEx(AnchorDrawList *draw_list,
-                                    const wabi::GfVec2f &pos_min,
+                                  const char *text_end = NULL);
+  ANCHOR_API void LogSetNextTextDecoration(const char *prefix, const char *suffix);
+
+  // Popups, Modals, Tooltips
+  ANCHOR_API bool BeginChildEx(const char *name,
+                               ANCHOR_ID id,
+                               const wabi::GfVec2f &size_arg,
+                               bool border,
+                               AnchorWindowFlags flags);
+  ANCHOR_API void OpenPopupEx(ANCHOR_ID id, AnchorPopupFlags popup_flags = AnchorPopupFlags_None);
+  ANCHOR_API void ClosePopupToLevel(int remaining, bool restore_focus_to_window_under_popup);
+  ANCHOR_API void ClosePopupsOverWindow(AnchorWindow *ref_window, bool restore_focus_to_window_under_popup);
+  ANCHOR_API bool IsPopupOpen(ANCHOR_ID id, AnchorPopupFlags popup_flags);
+  ANCHOR_API bool BeginPopupEx(ANCHOR_ID id, AnchorWindowFlags extra_flags);
+  ANCHOR_API void BeginTooltipEx(AnchorWindowFlags extra_flags, AnchorTooltipFlags tooltip_flags);
+  ANCHOR_API AnchorBBox GetPopupAllowedExtentRect(AnchorWindow *window);
+  ANCHOR_API AnchorWindow *GetTopMostPopupModal();
+  ANCHOR_API wabi::GfVec2f FindBestWindowPosForPopup(AnchorWindow *window);
+  ANCHOR_API wabi::GfVec2f FindBestWindowPosForPopupEx(const wabi::GfVec2f &ref_pos,
+                                                       const wabi::GfVec2f &size,
+                                                       AnchorDir *last_dir,
+                                                       const AnchorBBox &r_outer,
+                                                       const AnchorBBox &r_avoid,
+                                                       ANCHORPopupPositionPolicy policy);
+  ANCHOR_API bool BeginViewportSideBar(const char *name,
+                                       AnchorViewport *viewport,
+                                       AnchorDir dir,
+                                       float size,
+                                       AnchorWindowFlags window_flags);
+
+  // Combos
+  ANCHOR_API bool BeginComboPopup(ANCHOR_ID popup_id, const AnchorBBox &bb, AnchorComboFlags flags);
+
+  // Gamepad/Keyboard Navigation
+  ANCHOR_API void NavInitWindow(AnchorWindow *window, bool force_reinit);
+  ANCHOR_API bool NavMoveRequestButNoResultYet();
+  ANCHOR_API void NavMoveRequestCancel();
+  ANCHOR_API void NavMoveRequestForward(AnchorDir move_dir,
+                                        AnchorDir clip_dir,
+                                        const AnchorBBox &bb_rel,
+                                        AnchorNavMoveFlags move_flags);
+  ANCHOR_API void NavMoveRequestTryWrapping(AnchorWindow *window, AnchorNavMoveFlags move_flags);
+  ANCHOR_API float GetNavInputAmount(AnchorNavInput n, ANCHOR_InputReadMode mode);
+  ANCHOR_API wabi::GfVec2f GetNavInputAmount2d(AnchorNavDirSourceFlags dir_sources,
+                                               ANCHOR_InputReadMode mode,
+                                               float slow_factor = 0.0f,
+                                               float fast_factor = 0.0f);
+  ANCHOR_API int CalcTypematicRepeatAmount(float t0, float t1, float repeat_delay, float repeat_rate);
+  // Remotely activate a button, checkbox, tree node etc. given its unique ID.
+  // activation is queued and processed on the next frame when the item is
+  // encountered again.
+  ANCHOR_API void ActivateItem(ANCHOR_ID id);
+  ANCHOR_API void SetNavID(ANCHOR_ID id,
+                           ANCHORNavLayer nav_layer,
+                           ANCHOR_ID focus_scope_id,
+                           const AnchorBBox &rect_rel);
+
+  // Focus Scope (WIP)
+  // This is generally used to identify a selection set (multiple of which may be in the same
+  // window), as selection patterns generally need to react (e.g. clear selection) when landing on an
+  // item of the set.
+  ANCHOR_API void PushFocusScope(ANCHOR_ID id);
+  ANCHOR_API void PopFocusScope();
+  inline ANCHOR_ID GetFocusedFocusScope()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.NavFocusScopeId;
+  }  // Focus scope which is actually active
+  inline ANCHOR_ID GetFocusScope()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.CurrentWindow->DC.NavFocusScopeIdCurrent;
+  }  // Focus scope we are outputting into, set by PushFocusScope()
+
+  // Inputs
+  // FIXME: Eventually we should aim to move e.g. IsActiveIdUsingKey() into IsKeyXXX functions.
+  ANCHOR_API void SetItemUsingMouseWheel();
+  inline bool IsActiveIdUsingNavDir(AnchorDir dir)
+  {
+    AnchorContext &g = *G_CTX;
+    return (g.ActiveIdUsingNavDirMask & (1 << dir)) != 0;
+  }
+  inline bool IsActiveIdUsingNavInput(AnchorNavInput input)
+  {
+    AnchorContext &g = *G_CTX;
+    return (g.ActiveIdUsingNavInputMask & (1 << input)) != 0;
+  }
+  inline bool IsActiveIdUsingKey(AnchorKey key)
+  {
+    AnchorContext &g = *G_CTX;
+    ANCHOR_ASSERT(key < 64);
+    return (g.ActiveIdUsingKeyInputMask & ((AnchorU64)1 << key)) != 0;
+  }
+  ANCHOR_API bool IsMouseDragPastThreshold(AnchorMouseButton button, float lock_threshold = -1.0f);
+  inline bool IsKeyPressedMap(AnchorKey key, bool repeat = true)
+  {
+    AnchorContext &g = *G_CTX;
+    const int key_index = g.IO.KeyMap[key];
+    return (key_index >= 0) ? IsKeyPressed(key_index, repeat) : false;
+  }
+  inline bool IsNavInputDown(AnchorNavInput n)
+  {
+    AnchorContext &g = *G_CTX;
+    return g.IO.NavInputs[n] > 0.0f;
+  }
+  inline bool IsNavInputTest(AnchorNavInput n, ANCHOR_InputReadMode rm)
+  {
+    return (GetNavInputAmount(n, rm) > 0.0f);
+  }
+  ANCHOR_API AnchorKeyModFlags GetMergedKeyModFlags();
+
+  // Drag and Drop
+  ANCHOR_API bool BeginDragDropTargetCustom(const AnchorBBox &bb, ANCHOR_ID id);
+  ANCHOR_API void ClearDragDrop();
+  ANCHOR_API bool IsDragDropPayloadBeingAccepted();
+
+  // Internal Columns API (this is not exposed because we will encourage transitioning to the Tables
+  // API)
+  ANCHOR_API void SetWindowClipRectBeforeSetChannel(AnchorWindow *window, const AnchorBBox &clip_rect);
+  ANCHOR_API void BeginColumns(
+    const char *str_id,
+    int count,
+    AnchorOldColumnFlags flags = 0);  // setup number of columns. use an identifier to distinguish
+                                      // multiple column sets. close with EndColumns().
+  ANCHOR_API void EndColumns();       // close columns
+  ANCHOR_API void PushColumnClipRect(int column_index);
+  ANCHOR_API void PushColumnsBackground();
+  ANCHOR_API void PopColumnsBackground();
+  ANCHOR_API ANCHOR_ID GetColumnsID(const char *str_id, int count);
+  ANCHOR_API AnchorOldColumns *FindOrCreateColumns(AnchorWindow *window, ANCHOR_ID id);
+  ANCHOR_API float GetColumnOffsetFromNorm(const AnchorOldColumns *columns, float offset_norm);
+  ANCHOR_API float GetColumnNormFromOffset(const AnchorOldColumns *columns, float offset);
+
+  // Tables: Candidates for public API
+  ANCHOR_API void TableOpenContextMenu(int column_n = -1);
+  ANCHOR_API void TableSetColumnWidth(int column_n, float width);
+  ANCHOR_API void TableSetColumnSortDirection(int column_n,
+                                              AnchorSortDirection sort_direction,
+                                              bool append_to_sort_specs);
+  ANCHOR_API int TableGetHoveredColumn();  // May use (TableGetColumnFlags() &
+                                           // AnchorTableColumnFlags_IsHovered) instead. Return
+                                           // hovered column. return -1 when table is not hovered.
+                                           // return columns_count if the unused space at the right
+                                           // of visible columns is hovered.
+  ANCHOR_API float TableGetHeaderRowHeight();
+  ANCHOR_API void TablePushBackgroundChannel();
+  ANCHOR_API void TablePopBackgroundChannel();
+
+  // Tables: Internals
+  inline AnchorTable *GetCurrentTable()
+  {
+    AnchorContext &g = *G_CTX;
+    return g.CurrentTable;
+  }
+  ANCHOR_API AnchorTable *TableFindByID(ANCHOR_ID id);
+  ANCHOR_API bool BeginTableEx(const char *name,
+                               ANCHOR_ID id,
+                               int columns_count,
+                               AnchorTableFlags flags = 0,
+                               const wabi::GfVec2f &outer_size = wabi::GfVec2f(0, 0),
+                               float inner_width = 0.0f);
+  ANCHOR_API void TableBeginInitMemory(AnchorTable *table, int columns_count);
+  ANCHOR_API void TableBeginApplyRequests(AnchorTable *table);
+  ANCHOR_API void TableSetupDrawChannels(AnchorTable *table);
+  ANCHOR_API void TableUpdateLayout(AnchorTable *table);
+  ANCHOR_API void TableUpdateBorders(AnchorTable *table);
+  ANCHOR_API void TableUpdateColumnsWeightFromWidth(AnchorTable *table);
+  ANCHOR_API void TableDrawBorders(AnchorTable *table);
+  ANCHOR_API void TableDrawContextMenu(AnchorTable *table);
+  ANCHOR_API void TableMergeDrawChannels(AnchorTable *table);
+  ANCHOR_API void TableSortSpecsSanitize(AnchorTable *table);
+  ANCHOR_API void TableSortSpecsBuild(AnchorTable *table);
+  ANCHOR_API AnchorSortDirection TableGetColumnNextSortDirection(AnchorTableColumn *column);
+  ANCHOR_API void TableFixColumnSortDirection(AnchorTable *table, AnchorTableColumn *column);
+  ANCHOR_API float TableGetColumnWidthAuto(AnchorTable *table, AnchorTableColumn *column);
+  ANCHOR_API void TableBeginRow(AnchorTable *table);
+  ANCHOR_API void TableEndRow(AnchorTable *table);
+  ANCHOR_API void TableBeginCell(AnchorTable *table, int column_n);
+  ANCHOR_API void TableEndCell(AnchorTable *table);
+  ANCHOR_API AnchorBBox TableGetCellBgRect(const AnchorTable *table, int column_n);
+  ANCHOR_API const char *TableGetColumnName(const AnchorTable *table, int column_n);
+  ANCHOR_API ANCHOR_ID TableGetColumnResizeID(const AnchorTable *table, int column_n, int instance_no = 0);
+  ANCHOR_API float TableGetMaxColumnWidth(const AnchorTable *table, int column_n);
+  ANCHOR_API void TableSetColumnWidthAutoSingle(AnchorTable *table, int column_n);
+  ANCHOR_API void TableSetColumnWidthAutoAll(AnchorTable *table);
+  ANCHOR_API void TableRemove(AnchorTable *table);
+  ANCHOR_API void TableGcCompactTransientBuffers(AnchorTable *table);
+  ANCHOR_API void TableGcCompactTransientBuffers(AnchorTableTempData *table);
+  ANCHOR_API void TableGcCompactSettings();
+
+  // Tables: Settings
+  ANCHOR_API void TableLoadSettings(AnchorTable *table);
+  ANCHOR_API void TableSaveSettings(AnchorTable *table);
+  ANCHOR_API void TableResetSettings(AnchorTable *table);
+  ANCHOR_API AnchorTableSettings *TableGetBoundSettings(AnchorTable *table);
+  ANCHOR_API void TableSettingsInstallHandler(AnchorContext *context);
+  ANCHOR_API AnchorTableSettings *TableSettingsCreate(ANCHOR_ID id, int columns_count);
+  ANCHOR_API AnchorTableSettings *TableSettingsFindByID(ANCHOR_ID id);
+
+  // Tab Bars
+  ANCHOR_API bool BeginTabBarEx(AnchorTabBar *tab_bar, const AnchorBBox &bb, AnchorTabBarFlags flags);
+  ANCHOR_API AnchorTabItem *TabBarFindTabByID(AnchorTabBar *tab_bar, ANCHOR_ID tab_id);
+  ANCHOR_API void TabBarRemoveTab(AnchorTabBar *tab_bar, ANCHOR_ID tab_id);
+  ANCHOR_API void TabBarCloseTab(AnchorTabBar *tab_bar, AnchorTabItem *tab);
+  ANCHOR_API void TabBarQueueReorder(AnchorTabBar *tab_bar, const AnchorTabItem *tab, int offset);
+  ANCHOR_API void TabBarQueueReorderFromMousePos(AnchorTabBar *tab_bar,
+                                                 const AnchorTabItem *tab,
+                                                 wabi::GfVec2f mouse_pos);
+  ANCHOR_API bool TabBarProcessReorder(AnchorTabBar *tab_bar);
+  ANCHOR_API bool TabItemEx(AnchorTabBar *tab_bar,
+                            const char *label,
+                            bool *p_open,
+                            AnchorTabItemFlags flags);
+  ANCHOR_API wabi::GfVec2f TabItemCalcSize(const char *label, bool has_close_button);
+  ANCHOR_API void TabItemBackground(AnchorDrawList *draw_list,
+                                    const AnchorBBox &bb,
+                                    AnchorTabItemFlags flags,
+                                    AnchorU32 col);
+  ANCHOR_API void TabItemLabelAndCloseButton(AnchorDrawList *draw_list,
+                                             const AnchorBBox &bb,
+                                             AnchorTabItemFlags flags,
+                                             wabi::GfVec2f frame_padding,
+                                             const char *label,
+                                             ANCHOR_ID tab_id,
+                                             ANCHOR_ID close_button_id,
+                                             bool is_contents_visible,
+                                             bool *out_just_closed,
+                                             bool *out_text_clipped);
+
+  // Render helpers
+  // AVOID USING OUTSIDE OF ANCHOR.CPP! NOT FOR PUBLIC CONSUMPTION. THOSE FUNCTIONS ARE A MESS. THEIR
+  // SIGNATURE AND BEHAVIOR WILL CHANGE, THEY NEED TO BE REFACTORED INTO SOMETHING DECENT. NB: All
+  // position are in absolute pixels coordinates (we are never using window coordinates internally)
+  ANCHOR_API void RenderText(wabi::GfVec2f pos,
+                             const char *text,
+                             const char *text_end = NULL,
+                             bool hide_text_after_hash = true);
+  ANCHOR_API void RenderTextWrapped(wabi::GfVec2f pos,
+                                    const char *text,
+                                    const char *text_end,
+                                    float wrap_width);
+  ANCHOR_API void RenderTextClipped(const wabi::GfVec2f &pos_min,
                                     const wabi::GfVec2f &pos_max,
                                     const char *text,
                                     const char *text_end,
                                     const wabi::GfVec2f *text_size_if_known,
                                     const wabi::GfVec2f &align = wabi::GfVec2f(0, 0),
                                     const AnchorBBox *clip_rect = NULL);
-ANCHOR_API void RenderTextEllipsis(AnchorDrawList *draw_list,
-                                   const wabi::GfVec2f &pos_min,
-                                   const wabi::GfVec2f &pos_max,
-                                   float clip_max_x,
-                                   float ellipsis_max_x,
-                                   const char *text,
-                                   const char *text_end,
-                                   const wabi::GfVec2f *text_size_if_known);
-ANCHOR_API void RenderFrame(wabi::GfVec2f p_min,
-                            wabi::GfVec2f p_max,
-                            AnchorU32 fill_col,
-                            bool border = true,
-                            float rounding = 0.0f);
-ANCHOR_API void RenderFrameBorder(wabi::GfVec2f p_min, wabi::GfVec2f p_max, float rounding = 0.0f);
-ANCHOR_API void RenderColorRectWithAlphaCheckerboard(AnchorDrawList *draw_list,
-                                                     wabi::GfVec2f p_min,
-                                                     wabi::GfVec2f p_max,
-                                                     AnchorU32 fill_col,
-                                                     float grid_step,
-                                                     wabi::GfVec2f grid_off,
-                                                     float rounding = 0.0f,
-                                                     AnchorDrawFlags flags = 0);
-ANCHOR_API void RenderNavHighlight(
-  const AnchorBBox &bb,
-  ANCHOR_ID id,
-  AnchorNavHighlightFlags flags = AnchorNavHighlightFlags_TypeDefault);  // Navigation highlight
-ANCHOR_API const char *FindRenderedTextEnd(
-  const char *text,
-  const char *text_end = NULL);  // Find the optional ## from which we stop displaying text.
+  ANCHOR_API void RenderTextClippedEx(AnchorDrawList *draw_list,
+                                      const wabi::GfVec2f &pos_min,
+                                      const wabi::GfVec2f &pos_max,
+                                      const char *text,
+                                      const char *text_end,
+                                      const wabi::GfVec2f *text_size_if_known,
+                                      const wabi::GfVec2f &align = wabi::GfVec2f(0, 0),
+                                      const AnchorBBox *clip_rect = NULL);
+  ANCHOR_API void RenderTextEllipsis(AnchorDrawList *draw_list,
+                                     const wabi::GfVec2f &pos_min,
+                                     const wabi::GfVec2f &pos_max,
+                                     float clip_max_x,
+                                     float ellipsis_max_x,
+                                     const char *text,
+                                     const char *text_end,
+                                     const wabi::GfVec2f *text_size_if_known);
+  ANCHOR_API void RenderFrame(wabi::GfVec2f p_min,
+                              wabi::GfVec2f p_max,
+                              AnchorU32 fill_col,
+                              bool border = true,
+                              float rounding = 0.0f);
+  ANCHOR_API void RenderFrameBorder(wabi::GfVec2f p_min, wabi::GfVec2f p_max, float rounding = 0.0f);
+  ANCHOR_API void RenderColorRectWithAlphaCheckerboard(AnchorDrawList *draw_list,
+                                                       wabi::GfVec2f p_min,
+                                                       wabi::GfVec2f p_max,
+                                                       AnchorU32 fill_col,
+                                                       float grid_step,
+                                                       wabi::GfVec2f grid_off,
+                                                       float rounding = 0.0f,
+                                                       AnchorDrawFlags flags = 0);
+  ANCHOR_API void RenderNavHighlight(
+    const AnchorBBox &bb,
+    ANCHOR_ID id,
+    AnchorNavHighlightFlags flags = AnchorNavHighlightFlags_TypeDefault);  // Navigation highlight
+  ANCHOR_API const char *FindRenderedTextEnd(
+    const char *text,
+    const char *text_end = NULL);  // Find the optional ## from which we stop displaying text.
 
-// Render helpers (those functions don't access any ANCHOR state!)
-ANCHOR_API void RenderArrow(AnchorDrawList *draw_list,
-                            wabi::GfVec2f pos,
-                            AnchorU32 col,
-                            AnchorDir dir,
-                            float scale = 1.0f);
-ANCHOR_API void RenderBullet(AnchorDrawList *draw_list, wabi::GfVec2f pos, AnchorU32 col);
-ANCHOR_API void RenderCheckMark(AnchorDrawList *draw_list, wabi::GfVec2f pos, AnchorU32 col, float sz);
-ANCHOR_API void RenderMouseCursor(AnchorDrawList *draw_list,
-                                  wabi::GfVec2f pos,
-                                  float scale,
-                                  AnchorMouseCursor mouse_cursor,
-                                  AnchorU32 col_fill,
-                                  AnchorU32 col_border,
-                                  AnchorU32 col_shadow);
-ANCHOR_API void RenderArrowPointingAt(AnchorDrawList *draw_list,
-                                      wabi::GfVec2f pos,
-                                      wabi::GfVec2f half_sz,
-                                      AnchorDir direction,
-                                      AnchorU32 col);
-ANCHOR_API void RenderRectFilledRangeH(AnchorDrawList *draw_list,
-                                       const AnchorBBox &rect,
-                                       AnchorU32 col,
-                                       float x_start_norm,
-                                       float x_end_norm,
-                                       float rounding);
-ANCHOR_API void RenderRectFilledWithHole(AnchorDrawList *draw_list,
-                                         AnchorBBox outer,
-                                         AnchorBBox inner,
+  // Render helpers (those functions don't access any ANCHOR state!)
+  ANCHOR_API void RenderArrow(AnchorDrawList *draw_list,
+                              wabi::GfVec2f pos,
+                              AnchorU32 col,
+                              AnchorDir dir,
+                              float scale = 1.0f);
+  ANCHOR_API void RenderBullet(AnchorDrawList *draw_list, wabi::GfVec2f pos, AnchorU32 col);
+  ANCHOR_API void RenderCheckMark(AnchorDrawList *draw_list, wabi::GfVec2f pos, AnchorU32 col, float sz);
+  ANCHOR_API void RenderMouseCursor(AnchorDrawList *draw_list,
+                                    wabi::GfVec2f pos,
+                                    float scale,
+                                    AnchorMouseCursor mouse_cursor,
+                                    AnchorU32 col_fill,
+                                    AnchorU32 col_border,
+                                    AnchorU32 col_shadow);
+  ANCHOR_API void RenderArrowPointingAt(AnchorDrawList *draw_list,
+                                        wabi::GfVec2f pos,
+                                        wabi::GfVec2f half_sz,
+                                        AnchorDir direction,
+                                        AnchorU32 col);
+  ANCHOR_API void RenderRectFilledRangeH(AnchorDrawList *draw_list,
+                                         const AnchorBBox &rect,
                                          AnchorU32 col,
+                                         float x_start_norm,
+                                         float x_end_norm,
                                          float rounding);
+  ANCHOR_API void RenderRectFilledWithHole(AnchorDrawList *draw_list,
+                                           AnchorBBox outer,
+                                           AnchorBBox inner,
+                                           AnchorU32 col,
+                                           float rounding);
 
 #ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
-// [1.71: 2019/06/07: Updating prototypes of some of the internal functions. Leaving those for
-// reference for a short while]
-inline void RenderArrow(wabi::GfVec2f pos, AnchorDir dir, float scale = 1.0f)
-{
-  AnchorWindow *window = GetCurrentWindow();
-  RenderArrow(window->DrawList, pos, GetColorU32(AnchorCol_Text), dir, scale);
-}
-inline void RenderBullet(wabi::GfVec2f pos)
-{
-  AnchorWindow *window = GetCurrentWindow();
-  RenderBullet(window->DrawList, pos, GetColorU32(AnchorCol_Text));
-}
+  // [1.71: 2019/06/07: Updating prototypes of some of the internal functions. Leaving those for
+  // reference for a short while]
+  inline void RenderArrow(wabi::GfVec2f pos, AnchorDir dir, float scale = 1.0f)
+  {
+    AnchorWindow *window = GetCurrentWindow();
+    RenderArrow(window->DrawList, pos, GetColorU32(AnchorCol_Text), dir, scale);
+  }
+  inline void RenderBullet(wabi::GfVec2f pos)
+  {
+    AnchorWindow *window = GetCurrentWindow();
+    RenderBullet(window->DrawList, pos, GetColorU32(AnchorCol_Text));
+  }
 #endif
 
-// Widgets
-ANCHOR_API void TextEx(const char *text, const char *text_end = NULL, AnchorTextFlags flags = 0);
-ANCHOR_API bool ButtonEx(const char *label,
-                         const wabi::GfVec2f &size_arg = wabi::GfVec2f(0, 0),
-                         AnchorButtonFlags flags = 0);
-ANCHOR_API bool CloseButton(ANCHOR_ID id, const wabi::GfVec2f &pos);
-ANCHOR_API bool CollapseButton(ANCHOR_ID id, const wabi::GfVec2f &pos);
-ANCHOR_API bool ArrowButtonEx(const char *str_id,
-                              AnchorDir dir,
-                              wabi::GfVec2f size_arg,
-                              AnchorButtonFlags flags = 0);
-ANCHOR_API void Scrollbar(ANCHOR_Axis axis);
-ANCHOR_API bool ScrollbarEx(const AnchorBBox &bb,
-                            ANCHOR_ID id,
-                            ANCHOR_Axis axis,
-                            float *p_scroll_v,
-                            float avail_v,
-                            float contents_v,
-                            AnchorDrawFlags flags);
-ANCHOR_API bool ImageButtonEx(ANCHOR_ID id,
-                              AnchorTextureID texture_id,
-                              const wabi::GfVec2f &size,
-                              const wabi::GfVec2f &uv0,
-                              const wabi::GfVec2f &uv1,
-                              const wabi::GfVec2f &padding,
-                              const wabi::GfVec4f &bg_col,
-                              const wabi::GfVec4f &tint_col);
-ANCHOR_API AnchorBBox GetWindowScrollbarRect(AnchorWindow *window, ANCHOR_Axis axis);
-ANCHOR_API ANCHOR_ID GetWindowScrollbarID(AnchorWindow *window, ANCHOR_Axis axis);
-ANCHOR_API ANCHOR_ID GetWindowResizeCornerID(AnchorWindow *window, int n);  // 0..3: corners
-ANCHOR_API ANCHOR_ID GetWindowResizeBorderID(AnchorWindow *window, AnchorDir dir);
-ANCHOR_API void SeparatorEx(AnchorSeparatorFlags flags);
-ANCHOR_API bool CheckboxFlags(const char *label, AnchorS64 *flags, AnchorS64 flags_value);
-ANCHOR_API bool CheckboxFlags(const char *label, AnchorU64 *flags, AnchorU64 flags_value);
+  // Widgets
+  ANCHOR_API void TextEx(const char *text, const char *text_end = NULL, AnchorTextFlags flags = 0);
+  ANCHOR_API bool ButtonEx(const char *label,
+                           const wabi::GfVec2f &size_arg = wabi::GfVec2f(0, 0),
+                           AnchorButtonFlags flags = 0);
+  ANCHOR_API bool CloseButton(ANCHOR_ID id, const wabi::GfVec2f &pos);
+  ANCHOR_API bool CollapseButton(ANCHOR_ID id, const wabi::GfVec2f &pos);
+  ANCHOR_API bool ArrowButtonEx(const char *str_id,
+                                AnchorDir dir,
+                                wabi::GfVec2f size_arg,
+                                AnchorButtonFlags flags = 0);
+  ANCHOR_API void Scrollbar(ANCHOR_Axis axis);
+  ANCHOR_API bool ScrollbarEx(const AnchorBBox &bb,
+                              ANCHOR_ID id,
+                              ANCHOR_Axis axis,
+                              float *p_scroll_v,
+                              float avail_v,
+                              float contents_v,
+                              AnchorDrawFlags flags);
+  ANCHOR_API bool ImageButtonEx(ANCHOR_ID id,
+                                AnchorTextureID texture_id,
+                                const wabi::GfVec2f &size,
+                                const wabi::GfVec2f &uv0,
+                                const wabi::GfVec2f &uv1,
+                                const wabi::GfVec2f &padding,
+                                const wabi::GfVec4f &bg_col,
+                                const wabi::GfVec4f &tint_col);
+  ANCHOR_API AnchorBBox GetWindowScrollbarRect(AnchorWindow *window, ANCHOR_Axis axis);
+  ANCHOR_API ANCHOR_ID GetWindowScrollbarID(AnchorWindow *window, ANCHOR_Axis axis);
+  ANCHOR_API ANCHOR_ID GetWindowResizeCornerID(AnchorWindow *window, int n);  // 0..3: corners
+  ANCHOR_API ANCHOR_ID GetWindowResizeBorderID(AnchorWindow *window, AnchorDir dir);
+  ANCHOR_API void SeparatorEx(AnchorSeparatorFlags flags);
+  ANCHOR_API bool CheckboxFlags(const char *label, AnchorS64 *flags, AnchorS64 flags_value);
+  ANCHOR_API bool CheckboxFlags(const char *label, AnchorU64 *flags, AnchorU64 flags_value);
 
-// Widgets low-level behaviors
-ANCHOR_API bool ButtonBehavior(const AnchorBBox &bb,
-                               ANCHOR_ID id,
-                               bool *out_hovered,
-                               bool *out_held,
-                               AnchorButtonFlags flags = 0);
-ANCHOR_API bool DragBehavior(ANCHOR_ID id,
-                             AnchorDataType data_type,
-                             void *p_v,
-                             float v_speed,
-                             const void *p_min,
-                             const void *p_max,
-                             const char *format,
-                             AnchorSliderFlags flags);
-ANCHOR_API bool SliderBehavior(const AnchorBBox &bb,
-                               ANCHOR_ID id,
+  // Widgets low-level behaviors
+  ANCHOR_API bool ButtonBehavior(const AnchorBBox &bb,
+                                 ANCHOR_ID id,
+                                 bool *out_hovered,
+                                 bool *out_held,
+                                 AnchorButtonFlags flags = 0);
+  ANCHOR_API bool DragBehavior(ANCHOR_ID id,
                                AnchorDataType data_type,
                                void *p_v,
+                               float v_speed,
                                const void *p_min,
                                const void *p_max,
                                const char *format,
-                               AnchorSliderFlags flags,
-                               AnchorBBox *out_grab_bb);
-ANCHOR_API bool SplitterBehavior(const AnchorBBox &bb,
+                               AnchorSliderFlags flags);
+  ANCHOR_API bool SliderBehavior(const AnchorBBox &bb,
                                  ANCHOR_ID id,
-                                 ANCHOR_Axis axis,
-                                 float *size1,
-                                 float *size2,
-                                 float min_size1,
-                                 float min_size2,
-                                 float hover_extend = 0.0f,
-                                 float hover_visibility_delay = 0.0f);
-ANCHOR_API bool TreeNodeBehavior(ANCHOR_ID id,
-                                 AnchorTreeNodeFlags flags,
-                                 const char *label,
-                                 const char *label_end = NULL);
-// Consume previous SetNextItemOpen() data, if any. May return true when logging
-ANCHOR_API bool TreeNodeBehaviorIsOpen(ANCHOR_ID id, AnchorTreeNodeFlags flags = 0);
-ANCHOR_API void TreePushOverrideID(ANCHOR_ID id);
+                                 AnchorDataType data_type,
+                                 void *p_v,
+                                 const void *p_min,
+                                 const void *p_max,
+                                 const char *format,
+                                 AnchorSliderFlags flags,
+                                 AnchorBBox *out_grab_bb);
+  ANCHOR_API bool SplitterBehavior(const AnchorBBox &bb,
+                                   ANCHOR_ID id,
+                                   ANCHOR_Axis axis,
+                                   float *size1,
+                                   float *size2,
+                                   float min_size1,
+                                   float min_size2,
+                                   float hover_extend = 0.0f,
+                                   float hover_visibility_delay = 0.0f);
+  ANCHOR_API bool TreeNodeBehavior(ANCHOR_ID id,
+                                   AnchorTreeNodeFlags flags,
+                                   const char *label,
+                                   const char *label_end = NULL);
+  // Consume previous SetNextItemOpen() data, if any. May return true when logging
+  ANCHOR_API bool TreeNodeBehaviorIsOpen(ANCHOR_ID id, AnchorTreeNodeFlags flags = 0);
+  ANCHOR_API void TreePushOverrideID(ANCHOR_ID id);
 
-// Template functions are instantiated in ANCHOR_widgets.cpp for a finite number of types.
-// To use them externally (for custom widget) you may need an "extern template" statement in your
-// code in order to link to existing instances and silence Clang warnings (see #2036). e.g. "
-// extern template ANCHOR_API float RoundScalarWithFormatT<float, float>(const char* format,
-// AnchorDataType data_type, float v); "
-template<typename T, typename SIGNED_T, typename FLOAT_T>
-ANCHOR_API float ScaleRatioFromValueT(AnchorDataType data_type,
-                                      T v,
-                                      T v_min,
-                                      T v_max,
-                                      bool is_logarithmic,
-                                      float logarithmic_zero_epsilon,
-                                      float zero_deadzone_size);
-template<typename T, typename SIGNED_T, typename FLOAT_T>
-ANCHOR_API T ScaleValueFromRatioT(AnchorDataType data_type,
-                                  float t,
-                                  T v_min,
-                                  T v_max,
-                                  bool is_logarithmic,
-                                  float logarithmic_zero_epsilon,
-                                  float zero_deadzone_size);
-template<typename T, typename SIGNED_T, typename FLOAT_T>
-ANCHOR_API bool DragBehaviorT(AnchorDataType data_type,
-                              T *v,
-                              float v_speed,
-                              T v_min,
-                              T v_max,
-                              const char *format,
-                              AnchorSliderFlags flags);
-template<typename T, typename SIGNED_T, typename FLOAT_T>
-ANCHOR_API bool SliderBehaviorT(const AnchorBBox &bb,
-                                ANCHOR_ID id,
-                                AnchorDataType data_type,
+  // Template functions are instantiated in ANCHOR_widgets.cpp for a finite number of types.
+  // To use them externally (for custom widget) you may need an "extern template" statement in your
+  // code in order to link to existing instances and silence Clang warnings (see #2036). e.g. "
+  // extern template ANCHOR_API float RoundScalarWithFormatT<float, float>(const char* format,
+  // AnchorDataType data_type, float v); "
+  template<typename T, typename SIGNED_T, typename FLOAT_T>
+  ANCHOR_API float ScaleRatioFromValueT(AnchorDataType data_type,
+                                        T v,
+                                        T v_min,
+                                        T v_max,
+                                        bool is_logarithmic,
+                                        float logarithmic_zero_epsilon,
+                                        float zero_deadzone_size);
+  template<typename T, typename SIGNED_T, typename FLOAT_T>
+  ANCHOR_API T ScaleValueFromRatioT(AnchorDataType data_type,
+                                    float t,
+                                    T v_min,
+                                    T v_max,
+                                    bool is_logarithmic,
+                                    float logarithmic_zero_epsilon,
+                                    float zero_deadzone_size);
+  template<typename T, typename SIGNED_T, typename FLOAT_T>
+  ANCHOR_API bool DragBehaviorT(AnchorDataType data_type,
                                 T *v,
+                                float v_speed,
                                 T v_min,
                                 T v_max,
                                 const char *format,
-                                AnchorSliderFlags flags,
-                                AnchorBBox *out_grab_bb);
-template<typename T, typename SIGNED_T>
-ANCHOR_API T RoundScalarWithFormatT(const char *format, AnchorDataType data_type, T v);
-template<typename T>
-ANCHOR_API bool CheckboxFlagsT(const char *label, T *flags, T flags_value);
+                                AnchorSliderFlags flags);
+  template<typename T, typename SIGNED_T, typename FLOAT_T>
+  ANCHOR_API bool SliderBehaviorT(const AnchorBBox &bb,
+                                  ANCHOR_ID id,
+                                  AnchorDataType data_type,
+                                  T *v,
+                                  T v_min,
+                                  T v_max,
+                                  const char *format,
+                                  AnchorSliderFlags flags,
+                                  AnchorBBox *out_grab_bb);
+  template<typename T, typename SIGNED_T>
+  ANCHOR_API T RoundScalarWithFormatT(const char *format, AnchorDataType data_type, T v);
+  template<typename T>
+  ANCHOR_API bool CheckboxFlagsT(const char *label, T *flags, T flags_value);
 
-// Data type helpers
-ANCHOR_API const AnchorDataTypeInfo *DataTypeGetInfo(AnchorDataType data_type);
-ANCHOR_API int DataTypeFormatString(char *buf,
-                                    int buf_size,
-                                    AnchorDataType data_type,
-                                    const void *p_data,
-                                    const char *format);
-ANCHOR_API void DataTypeApplyOp(AnchorDataType data_type,
-                                int op,
-                                void *output,
-                                const void *arg_1,
-                                const void *arg_2);
-ANCHOR_API bool DataTypeApplyOpFromText(const char *buf,
-                                        const char *initial_value_buf,
-                                        AnchorDataType data_type,
-                                        void *p_data,
-                                        const char *format);
-ANCHOR_API int DataTypeCompare(AnchorDataType data_type, const void *arg_1, const void *arg_2);
-ANCHOR_API bool DataTypeClamp(AnchorDataType data_type, void *p_data, const void *p_min, const void *p_max);
+  // Data type helpers
+  ANCHOR_API const AnchorDataTypeInfo *DataTypeGetInfo(AnchorDataType data_type);
+  ANCHOR_API int DataTypeFormatString(char *buf,
+                                      int buf_size,
+                                      AnchorDataType data_type,
+                                      const void *p_data,
+                                      const char *format);
+  ANCHOR_API void DataTypeApplyOp(AnchorDataType data_type,
+                                  int op,
+                                  void *output,
+                                  const void *arg_1,
+                                  const void *arg_2);
+  ANCHOR_API bool DataTypeApplyOpFromText(const char *buf,
+                                          const char *initial_value_buf,
+                                          AnchorDataType data_type,
+                                          void *p_data,
+                                          const char *format);
+  ANCHOR_API int DataTypeCompare(AnchorDataType data_type, const void *arg_1, const void *arg_2);
+  ANCHOR_API bool DataTypeClamp(AnchorDataType data_type,
+                                void *p_data,
+                                const void *p_min,
+                                const void *p_max);
 
-// InputText
-ANCHOR_API bool InputTextEx(const char *label,
-                            const char *hint,
-                            char *buf,
-                            int buf_size,
-                            const wabi::GfVec2f &size_arg,
-                            AnchorInputTextFlags flags,
-                            ANCHORInputTextCallback callback = NULL,
-                            void *user_data = NULL);
-ANCHOR_API bool TempInputText(const AnchorBBox &bb,
-                              ANCHOR_ID id,
-                              const char *label,
+  // InputText
+  ANCHOR_API bool InputTextEx(const char *label,
+                              const char *hint,
                               char *buf,
                               int buf_size,
-                              AnchorInputTextFlags flags);
-ANCHOR_API bool TempInputScalar(const AnchorBBox &bb,
+                              const wabi::GfVec2f &size_arg,
+                              AnchorInputTextFlags flags,
+                              ANCHORInputTextCallback callback = NULL,
+                              void *user_data = NULL);
+  ANCHOR_API bool TempInputText(const AnchorBBox &bb,
                                 ANCHOR_ID id,
                                 const char *label,
-                                AnchorDataType data_type,
-                                void *p_data,
-                                const char *format,
-                                const void *p_clamp_min = NULL,
-                                const void *p_clamp_max = NULL);
-inline bool TempInputIsActive(ANCHOR_ID id)
-{
-  AnchorContext &g = *G_CTX;
-  return (g.ActiveId == id && g.TempInputId == id);
-}
-inline AnchorInputTextState *GetInputTextState(ANCHOR_ID id)
-{
-  AnchorContext &g = *G_CTX;
-  return (g.InputTextState.ID == id) ? &g.InputTextState : NULL;
-}  // Get input text state if active
+                                char *buf,
+                                int buf_size,
+                                AnchorInputTextFlags flags);
+  ANCHOR_API bool TempInputScalar(const AnchorBBox &bb,
+                                  ANCHOR_ID id,
+                                  const char *label,
+                                  AnchorDataType data_type,
+                                  void *p_data,
+                                  const char *format,
+                                  const void *p_clamp_min = NULL,
+                                  const void *p_clamp_max = NULL);
+  inline bool TempInputIsActive(ANCHOR_ID id)
+  {
+    AnchorContext &g = *G_CTX;
+    return (g.ActiveId == id && g.TempInputId == id);
+  }
+  inline AnchorInputTextState *GetInputTextState(ANCHOR_ID id)
+  {
+    AnchorContext &g = *G_CTX;
+    return (g.InputTextState.ID == id) ? &g.InputTextState : NULL;
+  }  // Get input text state if active
 
-// Color
-ANCHOR_API void ColorTooltip(const char *text, const float *col, AnchorColorEditFlags flags);
-ANCHOR_API void ColorEditOptionsPopup(const float *col, AnchorColorEditFlags flags);
-ANCHOR_API void ColorPickerOptionsPopup(const float *ref_col, AnchorColorEditFlags flags);
+  // Color
+  ANCHOR_API void ColorTooltip(const char *text, const float *col, AnchorColorEditFlags flags);
+  ANCHOR_API void ColorEditOptionsPopup(const float *col, AnchorColorEditFlags flags);
+  ANCHOR_API void ColorPickerOptionsPopup(const float *ref_col, AnchorColorEditFlags flags);
 
-// Plot
-ANCHOR_API int PlotEx(ANCHORPlotType plot_type,
-                      const char *label,
-                      float (*values_getter)(void *data, int idx),
-                      void *data,
-                      int values_count,
-                      int values_offset,
-                      const char *overlay_text,
-                      float scale_min,
-                      float scale_max,
-                      wabi::GfVec2f frame_size);
+  // Plot
+  ANCHOR_API int PlotEx(ANCHORPlotType plot_type,
+                        const char *label,
+                        float (*values_getter)(void *data, int idx),
+                        void *data,
+                        int values_count,
+                        int values_offset,
+                        const char *overlay_text,
+                        float scale_min,
+                        float scale_max,
+                        wabi::GfVec2f frame_size);
 
-// Shade functions (write over already created vertices)
-ANCHOR_API void ShadeVertsLinearColorGradientKeepAlpha(AnchorDrawList *draw_list,
-                                                       int vert_start_idx,
-                                                       int vert_end_idx,
-                                                       wabi::GfVec2f gradient_p0,
-                                                       wabi::GfVec2f gradient_p1,
-                                                       AnchorU32 col0,
-                                                       AnchorU32 col1);
-ANCHOR_API void ShadeVertsLinearUV(AnchorDrawList *draw_list,
-                                   int vert_start_idx,
-                                   int vert_end_idx,
-                                   const wabi::GfVec2f &a,
-                                   const wabi::GfVec2f &b,
-                                   const wabi::GfVec2f &uv_a,
-                                   const wabi::GfVec2f &uv_b,
-                                   bool clamp);
+  // Shade functions (write over already created vertices)
+  ANCHOR_API void ShadeVertsLinearColorGradientKeepAlpha(AnchorDrawList *draw_list,
+                                                         int vert_start_idx,
+                                                         int vert_end_idx,
+                                                         wabi::GfVec2f gradient_p0,
+                                                         wabi::GfVec2f gradient_p1,
+                                                         AnchorU32 col0,
+                                                         AnchorU32 col1);
+  ANCHOR_API void ShadeVertsLinearUV(AnchorDrawList *draw_list,
+                                     int vert_start_idx,
+                                     int vert_end_idx,
+                                     const wabi::GfVec2f &a,
+                                     const wabi::GfVec2f &b,
+                                     const wabi::GfVec2f &uv_a,
+                                     const wabi::GfVec2f &uv_b,
+                                     bool clamp);
 
-// Garbage collection
-ANCHOR_API void GcCompactTransientMiscBuffers();
-ANCHOR_API void GcCompactTransientWindowBuffers(AnchorWindow *window);
-ANCHOR_API void GcAwakeTransientWindowBuffers(AnchorWindow *window);
+  // Garbage collection
+  ANCHOR_API void GcCompactTransientMiscBuffers();
+  ANCHOR_API void GcCompactTransientWindowBuffers(AnchorWindow *window);
+  ANCHOR_API void GcAwakeTransientWindowBuffers(AnchorWindow *window);
 
-// Debug Tools
-ANCHOR_API void ErrorCheckEndFrameRecover(AnchorErrorLogCallback log_callback, void *user_data = NULL);
-inline void DebugDrawItemRect(AnchorU32 col = ANCHOR_COL32(255, 0, 0, 255))
-{
-  AnchorContext &g = *G_CTX;
-  AnchorWindow *window = g.CurrentWindow;
-  GetForegroundDrawList(window)->AddRect(window->DC.LastItemRect.Min, window->DC.LastItemRect.Max, col);
-}
-inline void DebugStartItemPicker()
-{
-  AnchorContext &g = *G_CTX;
-  g.DebugItemPickerActive = true;
-}
+  // Debug Tools
+  ANCHOR_API void ErrorCheckEndFrameRecover(AnchorErrorLogCallback log_callback, void *user_data = NULL);
+  inline void DebugDrawItemRect(AnchorU32 col = ANCHOR_COL32(255, 0, 0, 255))
+  {
+    AnchorContext &g = *G_CTX;
+    AnchorWindow *window = g.CurrentWindow;
+    GetForegroundDrawList(window)->AddRect(window->DC.LastItemRect.Min, window->DC.LastItemRect.Max, col);
+  }
+  inline void DebugStartItemPicker()
+  {
+    AnchorContext &g = *G_CTX;
+    g.DebugItemPickerActive = true;
+  }
 
-ANCHOR_API void ShowFontAtlas(AnchorFontAtlas *atlas);
-ANCHOR_API void DebugNodeColumns(AnchorOldColumns *columns);
-ANCHOR_API void DebugNodeDrawList(AnchorWindow *window, const AnchorDrawList *draw_list, const char *label);
-ANCHOR_API void DebugNodeDrawCmdShowMeshAndBoundingBox(AnchorDrawList *out_draw_list,
-                                                       const AnchorDrawList *draw_list,
-                                                       const AnchorDrawCmd *draw_cmd,
-                                                       bool show_mesh,
-                                                       bool show_aabb);
-ANCHOR_API void DebugNodeFont(AnchorFont *font);
-ANCHOR_API void DebugNodeStorage(AnchorStorage *storage, const char *label);
-ANCHOR_API void DebugNodeTabBar(AnchorTabBar *tab_bar, const char *label);
-ANCHOR_API void DebugNodeTable(AnchorTable *table);
-ANCHOR_API void DebugNodeTableSettings(AnchorTableSettings *settings);
-ANCHOR_API void DebugNodeWindow(AnchorWindow *window, const char *label);
-ANCHOR_API void DebugNodeWindowSettings(AnchorWindowSettings *settings);
-ANCHOR_API void DebugNodeWindowsList(AnchorVector<AnchorWindow *> *windows, const char *label);
-ANCHOR_API void DebugNodeViewport(AnchorViewportP *viewport);
-ANCHOR_API void DebugRenderViewportThumbnail(AnchorDrawList *draw_list,
-                                             AnchorViewportP *viewport,
-                                             const AnchorBBox &bb);
+  ANCHOR_API void ShowFontAtlas(AnchorFontAtlas *atlas);
+  ANCHOR_API void DebugNodeColumns(AnchorOldColumns *columns);
+  ANCHOR_API void DebugNodeDrawList(AnchorWindow *window,
+                                    const AnchorDrawList *draw_list,
+                                    const char *label);
+  ANCHOR_API void DebugNodeDrawCmdShowMeshAndBoundingBox(AnchorDrawList *out_draw_list,
+                                                         const AnchorDrawList *draw_list,
+                                                         const AnchorDrawCmd *draw_cmd,
+                                                         bool show_mesh,
+                                                         bool show_aabb);
+  ANCHOR_API void DebugNodeFont(AnchorFont *font);
+  ANCHOR_API void DebugNodeStorage(AnchorStorage *storage, const char *label);
+  ANCHOR_API void DebugNodeTabBar(AnchorTabBar *tab_bar, const char *label);
+  ANCHOR_API void DebugNodeTable(AnchorTable *table);
+  ANCHOR_API void DebugNodeTableSettings(AnchorTableSettings *settings);
+  ANCHOR_API void DebugNodeWindow(AnchorWindow *window, const char *label);
+  ANCHOR_API void DebugNodeWindowSettings(AnchorWindowSettings *settings);
+  ANCHOR_API void DebugNodeWindowsList(AnchorVector<AnchorWindow *> *windows, const char *label);
+  ANCHOR_API void DebugNodeViewport(AnchorViewportP *viewport);
+  ANCHOR_API void DebugRenderViewportThumbnail(AnchorDrawList *draw_list,
+                                               AnchorViewportP *viewport,
+                                               const AnchorBBox &bb);
 
 }  // namespace ANCHOR
 
@@ -4651,41 +4658,43 @@ extern void ANCHORTestEngineHook_IdInfo(AnchorContext *ctx,
                                         const void *data_id_end);
 extern void ANCHORTestEngineHook_Log(AnchorContext *ctx, const char *fmt, ...);
 #  define ANCHOR_TEST_ENGINE_ITEM_ADD(_BB, _ID) \
-    if (g.TestEngineHookItems) \
+    if (g.TestEngineHookItems)                  \
     ANCHORTestEngineHook_ItemAdd(&g, _BB, _ID)  // Register item bounding box
 #  define ANCHOR_TEST_ENGINE_ITEM_INFO(_ID, _LABEL, _FLAGS) \
-    if (g.TestEngineHookItems) \
-    ANCHORTestEngineHook_ItemInfo( \
-      &g, _ID, _LABEL, _FLAGS)  // Register item label and status flags (optional)
+    if (g.TestEngineHookItems)                              \
+    ANCHORTestEngineHook_ItemInfo(&g,                       \
+                                  _ID,                      \
+                                  _LABEL,                   \
+                                  _FLAGS)  // Register item label and status flags (optional)
 #  define ANCHOR_TEST_ENGINE_LOG(_FMT, ...) \
-    if (g.TestEngineHookItems) \
+    if (g.TestEngineHookItems)              \
     ANCHORTestEngineHook_Log(&g, _FMT, __VA_ARGS__)  // Custom log entry from user land into test log
 #  define ANCHOR_TEST_ENGINE_ID_INFO(_ID, _TYPE, _DATA) \
-    if (g.TestEngineHookIdInfo == id) \
+    if (g.TestEngineHookIdInfo == id)                   \
       ANCHORTestEngineHook_IdInfo(&g, _TYPE, _ID, (const void *)(_DATA));
 #  define ANCHOR_TEST_ENGINE_ID_INFO2(_ID, _TYPE, _DATA, _DATA2) \
-    if (g.TestEngineHookIdInfo == id) \
+    if (g.TestEngineHookIdInfo == id)                            \
       ANCHORTestEngineHook_IdInfo(&g, _TYPE, _ID, (const void *)(_DATA), (const void *)(_DATA2));
 #else
 #  define ANCHOR_TEST_ENGINE_ITEM_ADD(_BB, _ID) \
-    do \
-    { \
+    do                                          \
+    {                                           \
     } while (0)
 #  define ANCHOR_TEST_ENGINE_ITEM_INFO(_ID, _LABEL, _FLAGS) \
-    do \
-    { \
+    do                                                      \
+    {                                                       \
     } while (0)
 #  define ANCHOR_TEST_ENGINE_LOG(_FMT, ...) \
-    do \
-    { \
+    do                                      \
+    {                                       \
     } while (0)
 #  define ANCHOR_TEST_ENGINE_ID_INFO(_ID, _TYPE, _DATA) \
-    do \
-    { \
+    do                                                  \
+    {                                                   \
     } while (0)
 #  define ANCHOR_TEST_ENGINE_ID_INFO2(_ID, _TYPE, _DATA, _DATA2) \
-    do \
-    { \
+    do                                                           \
+    {                                                            \
     } while (0)
 #endif
 

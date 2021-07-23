@@ -255,8 +255,7 @@ class TfDebug
       {
         str = name;
         TfDebug::_ScopedOutput(true, str);
-      }
-      else
+      } else
         str = NULL;
     }
 
@@ -430,23 +429,23 @@ struct TfDebug::TimedScopeHelper<false>
 /// and generated code pays no cost for them.
 ///
 /// \hideinitializer
-#define TF_CONDITIONALLY_COMPILE_TIME_ENABLED_DEBUG_CODES(condition, ...) \
-  enum _TF_DEBUG_ENUM_NAME(__VA_ARGS__) \
-  { \
-    __VA_ARGS__, \
-    TF_PP_CAT(_TF_DEBUG_ENUM_NAME(__VA_ARGS__), __PAST_END) \
-  }; \
-  template<> \
-  struct TfDebug::_Traits<_TF_DEBUG_ENUM_NAME(__VA_ARGS__)> \
-  { \
-    static constexpr bool IsDeclared = true; \
+#define TF_CONDITIONALLY_COMPILE_TIME_ENABLED_DEBUG_CODES(condition, ...)                    \
+  enum _TF_DEBUG_ENUM_NAME(__VA_ARGS__)                                                      \
+  {                                                                                          \
+    __VA_ARGS__,                                                                             \
+    TF_PP_CAT(_TF_DEBUG_ENUM_NAME(__VA_ARGS__), __PAST_END)                                  \
+  };                                                                                         \
+  template<>                                                                                 \
+  struct TfDebug::_Traits<_TF_DEBUG_ENUM_NAME(__VA_ARGS__)>                                  \
+  {                                                                                          \
+    static constexpr bool IsDeclared = true;                                                 \
     static constexpr int NumCodes = TF_PP_CAT(_TF_DEBUG_ENUM_NAME(__VA_ARGS__), __PAST_END); \
-    static constexpr bool CompileTimeEnabled = (condition); \
-  }; \
-  inline char const *Tf_DebugGetEnumName(_TF_DEBUG_ENUM_NAME(__VA_ARGS__) val) \
-  { \
+    static constexpr bool CompileTimeEnabled = (condition);                                  \
+  };                                                                                         \
+  inline char const *Tf_DebugGetEnumName(_TF_DEBUG_ENUM_NAME(__VA_ARGS__) val)               \
+  {                                                                                          \
     constexpr char const *CStrings[] = {TF_PP_FOR_EACH(_TF_DEBUG_MAKE_STRING, __VA_ARGS__)}; \
-    return CStrings[static_cast<int>(val)]; \
+    return CStrings[static_cast<int>(val)];                                                  \
   };
 
 #define _TF_DEBUG_MAKE_STRING(x) #x,
@@ -480,10 +479,10 @@ struct TfDebug::TimedScopeHelper<false>
 /// \endcode
 ///
 /// \hideinitializer
-#define TF_DEBUG_MSG(enumVal, ...) \
+#define TF_DEBUG_MSG(enumVal, ...)              \
   if (!TfDebug::IsEnabled(enumVal)) /* empty */ \
-    ; \
-  else \
+    ;                                           \
+  else                                          \
     TfDebug::Helper().Msg(__VA_ARGS__)
 
 /// Evaluate and print debugging message \c msg if \c enumVal is enabled for
@@ -518,10 +517,10 @@ struct TfDebug::TimedScopeHelper<false>
 /// \sa TF_DEBUG_MSG()
 ///
 /// \hideinitializer
-#define TF_DEBUG(enumVal) \
+#define TF_DEBUG(enumVal)                       \
   if (!TfDebug::IsEnabled(enumVal)) /* empty */ \
-    ; \
-  else \
+    ;                                           \
+  else                                          \
     TfDebug::Helper()
 
 /// Evaluate and print diagnostic messages intended for end-users.
@@ -560,9 +559,9 @@ struct TfDebug::TimedScopeHelper<false>
 /// that are called in very tight loops, in final released code.
 ///
 /// \hideinitializer
-#define TF_DEBUG_TIMED_SCOPE(enumVal, ...) \
+#define TF_DEBUG_TIMED_SCOPE(enumVal, ...)                                                             \
   TfDebug::TimedScopeHelper<TfDebug::_Traits<std::decay<decltype(enumVal)>::type>::CompileTimeEnabled> \
-    TF_PP_CAT(local__TfScopeDebugSwObject, __LINE__)(TfDebug::IsEnabled(enumVal), __VA_ARGS__)
+  TF_PP_CAT(local__TfScopeDebugSwObject, __LINE__)(TfDebug::IsEnabled(enumVal), __VA_ARGS__)
 
 /// Register description strings with enum symbols for debugging.
 ///
@@ -582,11 +581,11 @@ struct TfDebug::TimedScopeHelper<false>
 /// \endcode
 ///
 /// \hideinitializer
-#define TF_DEBUG_ENVIRONMENT_SYMBOL(VAL, descrip) \
+#define TF_DEBUG_ENVIRONMENT_SYMBOL(VAL, descrip)                            \
   if (TfDebug::_Traits<std::decay<decltype(VAL)>::type>::CompileTimeEnabled) \
-  { \
-    TF_ADD_ENUM_NAME(VAL); \
-    TfDebug::_RegisterDebugSymbol(VAL, #VAL, descrip); \
+  {                                                                          \
+    TF_ADD_ENUM_NAME(VAL);                                                   \
+    TfDebug::_RegisterDebugSymbol(VAL, #VAL, descrip);                       \
   }
 
 ///@}

@@ -43,29 +43,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static void _Warn(string const &msg,
-                  string const &moduleName,
-                  string const &functionName,
-                  string const &fileName,
-                  int lineNo)
-{
-  TfDiagnosticMgr::WarningHelper(
-    Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
-    TF_DIAGNOSTIC_WARNING_TYPE,
-    TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_WARNING_TYPE)).c_str())
-    .Post(msg);
-}
+  static void _Warn(string const &msg,
+                    string const &moduleName,
+                    string const &functionName,
+                    string const &fileName,
+                    int lineNo)
+  {
+    TfDiagnosticMgr::WarningHelper(
+      Tf_PythonCallContext(fileName.c_str(), moduleName.c_str(), functionName.c_str(), lineNo),
+      TF_DIAGNOSTIC_WARNING_TYPE,
+      TfEnum::GetName(TfEnum(TF_DIAGNOSTIC_WARNING_TYPE)).c_str())
+      .Post(msg);
+  }
 
-static string TfWarning__repr__(TfWarning const &self)
-{
-  string ret = TfStringPrintf("Warning in '%s' at line %zu in file %s : '%s'",
-                              self.GetSourceFunction().c_str(),
-                              self.GetSourceLineNumber(),
-                              self.GetSourceFileName().c_str(),
-                              self.GetCommentary().c_str());
+  static string TfWarning__repr__(TfWarning const &self)
+  {
+    string ret = TfStringPrintf("Warning in '%s' at line %zu in file %s : '%s'",
+                                self.GetSourceFunction().c_str(),
+                                self.GetSourceLineNumber(),
+                                self.GetSourceFileName().c_str(),
+                                self.GetCommentary().c_str());
 
-  return ret;
-}
+    return ret;
+  }
 
 }  // anonymous namespace
 

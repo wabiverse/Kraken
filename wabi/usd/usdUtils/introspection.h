@@ -44,8 +44,8 @@ WABI_NAMESPACE_BEGIN
 
 SDF_DECLARE_HANDLES(SdfLayer);
 
-#define USDUTILS_USDSTAGE_STATS \
-  (approxMemoryInMb)(totalPrimCount)( \
+#define USDUTILS_USDSTAGE_STATS                                                                                                                            \
+  (approxMemoryInMb)(totalPrimCount)(                                                                                                                      \
     modelCount)(instancedModelCount)(assetCount)(prototypeCount)(totalInstanceCount)(usedLayerCount)(primary)(prototypes)(primCounts) /*(totalPrimCount)*/ \
     (activePrimCount)(inactivePrimCount)(pureOverCount)(instanceCount)(primCountsByType)(untyped)
 

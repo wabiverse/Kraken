@@ -85,8 +85,7 @@ static int kli_compare(struct direntry *entry1, struct direntry *entry2)
     {
       return -1;
     }
-  }
-  else
+  } else
   {
     if (S_ISDIR(entry2->type))
     {
@@ -100,8 +99,7 @@ static int kli_compare(struct direntry *entry1, struct direntry *entry2)
     {
       return -1;
     }
-  }
-  else
+  } else
   {
     if (S_ISREG(entry2->type))
     {
@@ -165,8 +163,7 @@ static void kli_builddir(struct BuildDirCtx *dir_ctx, const char *dirname)
         if (FILENAME_IS_PARENT(dlink->name))
         {
           has_parent = true;
-        }
-        else if (FILENAME_IS_CURRENT(dlink->name))
+        } else if (FILENAME_IS_CURRENT(dlink->name))
         {
           has_current = true;
         }
@@ -210,8 +207,7 @@ static void kli_builddir(struct BuildDirCtx *dir_ctx, const char *dirname)
         if (tmp)
         {
           dir_ctx->files = (struct direntry *)tmp;
-        }
-        else
+        } else
         { /* realloc fail */
           free(dir_ctx->files);
           dir_ctx->files = NULL;
@@ -237,8 +233,7 @@ static void kli_builddir(struct BuildDirCtx *dir_ctx, const char *dirname)
           if (KLI_stat(fullname, &file->s) != -1)
           {
             file->type = file->s.st_mode;
-          }
-          else if (FILENAME_IS_CURRPAR(file->relname))
+          } else if (FILENAME_IS_CURRPAR(file->relname))
           {
             /* Hack around for UNC paths on windows:
              * does not support stat on '\\SERVER\foo\..', sigh... */
@@ -248,8 +243,7 @@ static void kli_builddir(struct BuildDirCtx *dir_ctx, const char *dirname)
           file++;
           dlink = dlink->next;
         }
-      }
-      else
+      } else
       {
         printf("Couldn't get memory for dir\n");
         exit(1);
@@ -263,15 +257,13 @@ static void kli_builddir(struct BuildDirCtx *dir_ctx, const char *dirname)
               sizeof(struct direntry),
               (int (*)(const void *, const void *))kli_compare);
       }
-    }
-    else
+    } else
     {
       printf("%s empty directory\n", dirname);
     }
 
     closedir(dir);
-  }
-  else
+  } else
   {
     printf("%s non-existent directory\n", dirname);
   }
@@ -295,8 +287,7 @@ unsigned int KLI_filelist_dir_contents(const char *dirname, struct direntry **r_
   if (dir_ctx.files)
   {
     *r_filelist = dir_ctx.files;
-  }
-  else
+  } else
   {
     /* Keep Kraken happy. Kraken stores this in a variable
      * where 0 has special meaning..... */

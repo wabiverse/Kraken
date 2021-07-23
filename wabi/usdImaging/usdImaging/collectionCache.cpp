@@ -60,8 +60,7 @@ TfToken UsdImaging_CollectionCache::UpdateCollection(UsdCollectionAPI const &c)
     _idForQuery[query] = id;
     _queryForId[id] = query;
     TF_DEBUG(USDIMAGING_COLLECTIONS).Msg("UsdImaging_CollectionCache: Assigned new id '%s'\n", id.GetText());
-  }
-  else
+  } else
   {
     // Share an existing query id.
     id = idForQueryEntry->second;

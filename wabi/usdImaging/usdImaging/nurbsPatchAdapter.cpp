@@ -186,8 +186,10 @@ VtValue UsdImagingNurbsPatchAdapter::GetMeshTopology(UsdPrim const &prim, UsdTim
   }
 
   // Create the mesh topology
-  HdMeshTopology topo = HdMeshTopology(
-    PxOsdOpenSubdivTokens->catmullClark, orientation, vertsPerFace, indices);
+  HdMeshTopology topo = HdMeshTopology(PxOsdOpenSubdivTokens->catmullClark,
+                                       orientation,
+                                       vertsPerFace,
+                                       indices);
 
   return VtValue(topo);
 }

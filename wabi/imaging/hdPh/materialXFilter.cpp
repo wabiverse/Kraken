@@ -192,8 +192,7 @@ static void _GetHdTextureParameters(std::string const &mxInputName,
   else if (mxInputName == "uaddressmode")
   {
     (*hdTextureParams)[HdPhTextureTokens->wrapS] = _GetHdSamplerValue(mxInputValue);
-  }
-  else if (mxInputName == "vaddressmode")
+  } else if (mxInputName == "vaddressmode")
   {
     (*hdTextureParams)[HdPhTextureTokens->wrapT] = _GetHdSamplerValue(mxInputValue);
   }
@@ -288,7 +287,8 @@ static void _GetTextureCoordinateName(HdMaterialNetwork2 *hdNetwork,
     // Get the sdr node for the mxTexture node
     SdrRegistry &sdrRegistry = SdrRegistry::GetInstance();
     const SdrShaderNodeConstPtr sdrTextureNode = sdrRegistry.GetShaderNodeByIdentifierAndType(
-      hdTextureNode->nodeTypeId, _tokens->mtlx);
+      hdTextureNode->nodeTypeId,
+      _tokens->mtlx);
 
     if (sdrTextureNode)
     {
@@ -435,7 +435,8 @@ void HdPh_ApplyMaterialXFilter(HdMaterialNetwork2 *hdNetwork,
   // Check if the Terminal is a MaterialX Node
   SdrRegistry &sdrRegistry = SdrRegistry::GetInstance();
   const SdrShaderNodeConstPtr mtlxSdrNode = sdrRegistry.GetShaderNodeByIdentifierAndType(
-    terminalNode.nodeTypeId, _tokens->mtlx);
+    terminalNode.nodeTypeId,
+    _tokens->mtlx);
 
   if (mtlxSdrNode)
   {

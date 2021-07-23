@@ -180,13 +180,15 @@ class Tf_EnvSettingRegistry;
 /// Define an env setting named \p envVar with default value \p defValue and a
 /// descriptive string \p description.
 /// \hideinitializer
-#define TF_DEFINE_ENV_SETTING(envVar, defValue, description) \
-  std::atomic<decltype(Tf_ChooseEnvSettingType(defValue)) *> envVar##_value; \
-  TfEnvSetting<decltype(Tf_ChooseEnvSettingType(defValue))> envVar = { \
-    &envVar##_value, defValue, #envVar, description}; \
-  TF_REGISTRY_FUNCTION_WITH_TAG(Tf_EnvSettingRegistry, envVar) \
-  { \
-    (void)TfGetEnvSetting(envVar); \
+#define TF_DEFINE_ENV_SETTING(envVar, defValue, description)                           \
+  std::atomic<decltype(Tf_ChooseEnvSettingType(defValue)) *> envVar##_value;           \
+  TfEnvSetting<decltype(Tf_ChooseEnvSettingType(defValue))> envVar = {&envVar##_value, \
+                                                                      defValue,        \
+                                                                      #envVar,         \
+                                                                      description};    \
+  TF_REGISTRY_FUNCTION_WITH_TAG(Tf_EnvSettingRegistry, envVar)                         \
+  {                                                                                    \
+    (void)TfGetEnvSetting(envVar);                                                     \
   }
 
 WABI_NAMESPACE_END

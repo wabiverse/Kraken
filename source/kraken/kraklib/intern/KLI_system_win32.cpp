@@ -201,30 +201,25 @@ static bool KLI_windows_system_backtrace_run_trace(FILE *fp, HANDLE hThread, PCO
           IMAGEHLP_LINE lineinfo;
           lineinfo.SizeOfStruct = sizeof(lineinfo);
           DWORD displacement = 0;
-          if (SymGetLineFromAddr(
-                GetCurrentProcess(), (DWORD64)(frame.AddrPC.Offset), &displacement, &lineinfo))
+          if (SymGetLineFromAddr(GetCurrentProcess(),
+                                 (DWORD64)(frame.AddrPC.Offset),
+                                 &displacement,
+                                 &lineinfo))
           {
             fprintf(fp, " %s:%d", lineinfo.FileName, lineinfo.LineNumber);
           }
           fprintf(fp, "\n");
-        }
-        else
+        } else
         {
-          fprintf(fp,
-                  "%-20s:0x%p  %s\n",
-                  module,
-                  (LPVOID)frame.AddrPC.Offset,
-                  "Symbols not available");
+          fprintf(fp, "%-20s:0x%p  %s\n", module, (LPVOID)frame.AddrPC.Offset, "Symbols not available");
           result = false;
           break;
         }
-      }
-      else
+      } else
       {
         break;
       }
-    }
-    else
+    } else
     {
       break;
     }
@@ -238,9 +233,7 @@ static void kli_windows_system_backtrace_exception_record(FILE *fp, PEXCEPTION_R
 {
   char module[MAX_PATH];
   fprintf(fp, "Exception Record:\n\n");
-  fprintf(fp,
-          "ExceptionCode         : %s\n",
-          kli_windows_get_exception_description(record->ExceptionCode));
+  fprintf(fp, "ExceptionCode         : %s\n", kli_windows_get_exception_description(record->ExceptionCode));
   fprintf(fp, "Exception Address     : 0x%p\n", record->ExceptionAddress);
   kli_windows_get_module_name(record->ExceptionAddress, module, sizeof(module));
   fprintf(fp, "Exception Module      : %s\n", module);
@@ -274,8 +267,7 @@ static bool kli_windows_system_backtrace_stack_thread(FILE *fp, HANDLE hThread)
       fprintf(fp, "Cannot get thread context : 0x0%.8x\n", GetLastError());
       return false;
     }
-  }
-  else
+  } else
   {
     RtlCaptureContext(&context);
   }
@@ -292,8 +284,7 @@ static bool KLI_windows_system_backtrace_stack(FILE *fp)
      * modifications give the backtrace a copy to work on. */
     CONTEXT TempContext = *current_exception->ContextRecord;
     return KLI_windows_system_backtrace_run_trace(fp, GetCurrentThread(), &TempContext);
-  }
-  else
+  } else
   {
     /* If there is no current exception or the address is not set, walk the current stack. */
     return kli_windows_system_backtrace_stack_thread(fp, GetCurrentThread());
@@ -409,8 +400,7 @@ static void kli_windows_system_backtrace_modules(FILE *fp)
                 me32.szModule,
                 m64.LoadedPdbName,
                 m64.PdbUnmatched ? "[unmatched]" : "");
-      }
-      else
+      } else
       {
         fprintf(fp, "0x%p %-20s %s\n", me32.modBaseAddr, version, me32.szModule);
       }

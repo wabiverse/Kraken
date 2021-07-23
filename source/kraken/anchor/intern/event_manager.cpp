@@ -71,8 +71,7 @@ eAnchorStatus AnchorEventManager::pushEvent(AnchorIEvent *event)
   {
     m_events.push_front(event);
     success = ANCHOR_SUCCESS;
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }
@@ -123,8 +122,7 @@ eAnchorStatus AnchorEventManager::addConsumer(AnchorIEventConsumer *consumer)
      * Add the consumer. */
     m_consumers.push_back(consumer);
     success = ANCHOR_SUCCESS;
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }
@@ -146,8 +144,7 @@ eAnchorStatus AnchorEventManager::removeConsumer(AnchorIEventConsumer *consumer)
      * Remove the consumer. */
     m_consumers.erase(iter);
     success = ANCHOR_SUCCESS;
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }

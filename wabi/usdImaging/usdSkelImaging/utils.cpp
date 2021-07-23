@@ -41,44 +41,44 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-/*
-  Bones are constructed from child to parent as a pyramid-shaped
-  object with square base at the parent and tip at the child.
+  /*
+    Bones are constructed from child to parent as a pyramid-shaped
+    object with square base at the parent and tip at the child.
 
-  PERFORMANCE: This current implementation is sub-optimal in several ways:
+    PERFORMANCE: This current implementation is sub-optimal in several ways:
 
-  1. At scale (thousands of skels), it's more efficient to construct
-     bones on the GPU. Eg., via a geometry shader, with lines as input.
-     In addition to benefiting from additional parallelism, this
-     could greatly reduce the amount of data sent to the GPU.
+    1. At scale (thousands of skels), it's more efficient to construct
+       bones on the GPU. Eg., via a geometry shader, with lines as input.
+       In addition to benefiting from additional parallelism, this
+       could greatly reduce the amount of data sent to the GPU.
 
-  2. Even though all faces are tris, we waste time and memory passing
-     along a face vertex counts array. Hydra then must then spend
-     extra time attempting to triangulate that data.
-     It would be more efficient if HdMeshTopology had an additional
-     flag to indicate that its data is pure-tris, removing the
-     need for both re-triangulation as well as the construction of
-     the face vertex counts array.
-*/
+    2. Even though all faces are tris, we waste time and memory passing
+       along a face vertex counts array. Hydra then must then spend
+       extra time attempting to triangulate that data.
+       It would be more efficient if HdMeshTopology had an additional
+       flag to indicate that its data is pure-tris, removing the
+       need for both re-triangulation as well as the construction of
+       the face vertex counts array.
+  */
 
-const int _boneVerts[] = {0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 1, 4};
-const int _boneNumVerts = 12;
-const int _boneNumVertsPerFace = 3;
-const int _boneNumFaces = 4;
-const int _boneNumPoints = 5;
+  const int _boneVerts[] = {0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 1, 4};
+  const int _boneNumVerts = 12;
+  const int _boneNumVertsPerFace = 3;
+  const int _boneNumFaces = 4;
+  const int _boneNumPoints = 5;
 
-size_t _ComputeBoneCount(const UsdSkelTopology &topology)
-{
-  int numJoints = static_cast<int>(topology.GetNumJoints());
-
-  size_t numBones = 0;
-  for (size_t i = 0; i < topology.GetNumJoints(); ++i)
+  size_t _ComputeBoneCount(const UsdSkelTopology &topology)
   {
-    int parent = topology.GetParent(i);
-    numBones += (parent >= 0 && parent < numJoints);
+    int numJoints = static_cast<int>(topology.GetNumJoints());
+
+    size_t numBones = 0;
+    for (size_t i = 0; i < topology.GetNumJoints(); ++i)
+    {
+      int parent = topology.GetParent(i);
+      numBones += (parent >= 0 && parent < numJoints);
+    }
+    return numBones;
   }
-  return numBones;
-}
 
 }  // namespace
 
@@ -112,8 +112,10 @@ bool UsdSkelImagingComputeBoneTopology(const UsdSkelTopology &skelTopology,
     }
   }
 
-  *meshTopology = HdMeshTopology(
-    PxOsdOpenSubdivTokens->none, HdTokens->rightHanded, faceVertexCounts, faceVertexIndices);
+  *meshTopology = HdMeshTopology(PxOsdOpenSubdivTokens->none,
+                                 HdTokens->rightHanded,
+                                 faceVertexCounts,
+                                 faceVertexIndices);
 
   *numPoints = numBones * _boneNumPoints;
 
@@ -123,74 +125,73 @@ bool UsdSkelImagingComputeBoneTopology(const UsdSkelTopology &skelTopology,
 namespace
 {
 
-/// Wrapper for parallel loops that execs in serial if \p count
-/// is below a reasonable threading threshold.
-template<typename Fn>
-void _ParallelForN(size_t count, Fn &&callback)
-{
-  // XXX: Profiling shows that most of our loops only benefit
-  // from parallelism past this threshold.
-  size_t threshold = 1000;
-
-  if (count < threshold)
+  /// Wrapper for parallel loops that execs in serial if \p count
+  /// is below a reasonable threading threshold.
+  template<typename Fn>
+  void _ParallelForN(size_t count, Fn &&callback)
   {
-    WorkSerialForN(count, callback);
+    // XXX: Profiling shows that most of our loops only benefit
+    // from parallelism past this threshold.
+    size_t threshold = 1000;
+
+    if (count < threshold)
+    {
+      WorkSerialForN(count, callback);
+    } else
+    {
+      WorkParallelForN(count, callback);
+    }
   }
-  else
+
+  /// Return the index of the basis of \p mx that is best aligned with \p dir.
+  /// This assumes that \p mx is orthogonal.
+  int _FindBestAlignedBasis(const GfMatrix4d &mx, const GfVec3d &dir)
   {
-    WorkParallelForN(count, callback);
+    const float PI_4 = static_cast<float>(M_PI) / 4.0f;
+
+    for (int i = 0; i < 2; ++i)
+    {
+      // If the transform is orthogonal, the best aligned
+      // basis has an absolute dot product > PI/4.
+      if (std::abs(GfDot(mx.GetRow3(i), dir)) > PI_4)
+        return i;
+    }
+    // Assume it's the last basis...
+    return 2;
   }
-}
 
-/// Return the index of the basis of \p mx that is best aligned with \p dir.
-/// This assumes that \p mx is orthogonal.
-int _FindBestAlignedBasis(const GfMatrix4d &mx, const GfVec3d &dir)
-{
-  const float PI_4 = static_cast<float>(M_PI) / 4.0f;
-
-  for (int i = 0; i < 2; ++i)
+  void _ComputePointsForSingleBone(GfVec3f *points, const GfMatrix4d &xform, const GfMatrix4d &parentXform)
   {
-    // If the transform is orthogonal, the best aligned
-    // basis has an absolute dot product > PI/4.
-    if (std::abs(GfDot(mx.GetRow3(i), dir)) > PI_4)
-      return i;
+    GfVec3f end = GfVec3f(xform.ExtractTranslation());
+    GfVec3f start = GfVec3f(parentXform.ExtractTranslation());
+
+    // Need local basis vectors along which to displace the
+    // base of the bone. Use whichever basis vectors of the
+    // target xform are best aligned with the direction of the bone.
+    GfVec3f boneDir = end - start;
+
+    static const int iAxis[] = {1, 0, 0};
+    static const int jAxis[] = {2, 2, 1};
+
+    // XXX: This is pretty expensive at scale. Alternatives?
+    int principleAxis = _FindBestAlignedBasis(parentXform, boneDir.GetNormalized());
+
+    GfVec3f i = GfVec3f(parentXform.GetRow3(iAxis[principleAxis])).GetNormalized();
+    GfVec3f j = GfVec3f(parentXform.GetRow3(jAxis[principleAxis])).GetNormalized();
+
+    // Determine a size (thickness) of bones in proportion to their length.
+    // TODO: Later, may be worth considering allowing a UsdSkelSkeleton
+    // to provide per-bone size information.
+    float size = boneDir.GetLength() * 0.1;
+    i *= size;
+    j *= size;
+
+    points[0] = end;
+    points[1] = start + i + j;
+    points[2] = start + i - j;
+    points[3] = start - i - j;
+    points[4] = start - i + j;
   }
-  // Assume it's the last basis...
-  return 2;
-}
-
-void _ComputePointsForSingleBone(GfVec3f *points, const GfMatrix4d &xform, const GfMatrix4d &parentXform)
-{
-  GfVec3f end = GfVec3f(xform.ExtractTranslation());
-  GfVec3f start = GfVec3f(parentXform.ExtractTranslation());
-
-  // Need local basis vectors along which to displace the
-  // base of the bone. Use whichever basis vectors of the
-  // target xform are best aligned with the direction of the bone.
-  GfVec3f boneDir = end - start;
-
-  static const int iAxis[] = {1, 0, 0};
-  static const int jAxis[] = {2, 2, 1};
-
-  // XXX: This is pretty expensive at scale. Alternatives?
-  int principleAxis = _FindBestAlignedBasis(parentXform, boneDir.GetNormalized());
-
-  GfVec3f i = GfVec3f(parentXform.GetRow3(iAxis[principleAxis])).GetNormalized();
-  GfVec3f j = GfVec3f(parentXform.GetRow3(jAxis[principleAxis])).GetNormalized();
-
-  // Determine a size (thickness) of bones in proportion to their length.
-  // TODO: Later, may be worth considering allowing a UsdSkelSkeleton
-  // to provide per-bone size information.
-  float size = boneDir.GetLength() * 0.1;
-  i *= size;
-  j *= size;
-
-  points[0] = end;
-  points[1] = start + i + j;
-  points[2] = start + i - j;
-  points[3] = start - i - j;
-  points[4] = start - i + j;
-}
 
 }  // namespace
 
@@ -211,8 +212,7 @@ bool UsdSkelImagingComputeBonePoints(const UsdSkelTopology &topology,
     points->resize(numPoints);
 
     return UsdSkelImagingComputeBonePoints(topology, jointSkelXforms.cdata(), points->data(), numPoints);
-  }
-  else
+  } else
   {
     TF_WARN("jointSkelXforms.size() [%zu] != number of joints [%zu].",
             jointSkelXforms.size(),
@@ -330,8 +330,7 @@ bool UsdSkelImagingComputeBoneJointIndices(const UsdSkelTopology &topology,
         }
 
         offset += _boneNumPoints;
-      }
-      else
+      } else
       {
         TF_WARN(
           "Incorrect number of points for bone "

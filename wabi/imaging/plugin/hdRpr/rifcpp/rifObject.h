@@ -23,36 +23,36 @@ WABI_NAMESPACE_BEGIN
 namespace rif
 {
 
-class Context;
+  class Context;
 
-class Object
-{
- public:
-  Object(void *objectHandle)
-    : m_rifObjectHandle(objectHandle)
-  {}
-
-  Object() = default;
-  Object(Object const &) = delete;
-  Object &operator=(Object const &) = delete;
-
-  void Delete()
+  class Object
   {
-    if (m_rifObjectHandle)
+   public:
+    Object(void *objectHandle)
+      : m_rifObjectHandle(objectHandle)
+    {}
+
+    Object() = default;
+    Object(Object const &) = delete;
+    Object &operator=(Object const &) = delete;
+
+    void Delete()
     {
-      rifObjectDelete(m_rifObjectHandle);
+      if (m_rifObjectHandle)
+      {
+        rifObjectDelete(m_rifObjectHandle);
+      }
+      m_rifObjectHandle = nullptr;
     }
-    m_rifObjectHandle = nullptr;
-  }
 
-  ~Object()
-  {
-    Delete();
-  }
+    ~Object()
+    {
+      Delete();
+    }
 
- protected:
-  void *m_rifObjectHandle = nullptr;
-};
+   protected:
+    void *m_rifObjectHandle = nullptr;
+  };
 
 }  // namespace rif
 

@@ -47,53 +47,53 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static vector<double> _GetTimeSamples(const UsdAttributeQuery &query)
-{
-  vector<double> result;
-  query.GetTimeSamples(&result);
-  return result;
-}
-
-static vector<double> _GetTimeSamplesInInterval(const UsdAttributeQuery &query, const GfInterval &interval)
-{
-  vector<double> result;
-  query.GetTimeSamplesInInterval(interval, &result);
-  return result;
-}
-
-static vector<double> _GetUnionedTimeSamples(const vector<UsdAttributeQuery> &attrQueries)
-{
-  vector<double> result;
-  UsdAttributeQuery::GetUnionedTimeSamples(attrQueries, &result);
-  return result;
-}
-
-static vector<double> _GetUnionedTimeSamplesInInterval(const vector<UsdAttributeQuery> &attrQueries,
-                                                       const GfInterval &interval)
-{
-  vector<double> result;
-  UsdAttributeQuery::GetUnionedTimeSamplesInInterval(attrQueries, interval, &result);
-  return result;
-}
-
-static object _GetBracketingTimeSamples(const UsdAttributeQuery &self, double desiredTime)
-{
-  double lower = 0.0, upper = 0.0;
-  bool hasTimeSamples = false;
-
-  if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples))
+  static vector<double> _GetTimeSamples(const UsdAttributeQuery &query)
   {
-    return hasTimeSamples ? make_tuple(lower, upper) : make_tuple();
+    vector<double> result;
+    query.GetTimeSamples(&result);
+    return result;
   }
-  return object();
-}
 
-static TfPyObjWrapper _Get(const UsdAttributeQuery &self, UsdTimeCode time)
-{
-  VtValue val;
-  self.Get(&val, time);
-  return UsdVtValueToPython(val);
-}
+  static vector<double> _GetTimeSamplesInInterval(const UsdAttributeQuery &query, const GfInterval &interval)
+  {
+    vector<double> result;
+    query.GetTimeSamplesInInterval(interval, &result);
+    return result;
+  }
+
+  static vector<double> _GetUnionedTimeSamples(const vector<UsdAttributeQuery> &attrQueries)
+  {
+    vector<double> result;
+    UsdAttributeQuery::GetUnionedTimeSamples(attrQueries, &result);
+    return result;
+  }
+
+  static vector<double> _GetUnionedTimeSamplesInInterval(const vector<UsdAttributeQuery> &attrQueries,
+                                                         const GfInterval &interval)
+  {
+    vector<double> result;
+    UsdAttributeQuery::GetUnionedTimeSamplesInInterval(attrQueries, interval, &result);
+    return result;
+  }
+
+  static object _GetBracketingTimeSamples(const UsdAttributeQuery &self, double desiredTime)
+  {
+    double lower = 0.0, upper = 0.0;
+    bool hasTimeSamples = false;
+
+    if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples))
+    {
+      return hasTimeSamples ? make_tuple(lower, upper) : make_tuple();
+    }
+    return object();
+  }
+
+  static TfPyObjWrapper _Get(const UsdAttributeQuery &self, UsdTimeCode time)
+  {
+    VtValue val;
+    self.Get(&val, time);
+    return UsdVtValueToPython(val);
+  }
 
 }  // anonymous namespace
 

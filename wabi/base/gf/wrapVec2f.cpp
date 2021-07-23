@@ -70,366 +70,363 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-////////////////////////////////////////////////////////////////////////
-// Python buffer protocol support.
+  ////////////////////////////////////////////////////////////////////////
+  // Python buffer protocol support.
 
 #if PY_MAJOR_VERSION == 2
-// Python's getreadbuf interface function.
-static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
-{
-  if (segment != 0)
+  // Python's getreadbuf interface function.
+  static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
-    // Always one-segment.
-    PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
-    return -1;
-  }
-  GfVec2f &vec = extract<GfVec2f &>(self);
-  *ptrptr = static_cast<void *>(vec.data());
-  // Return size in bytes.
-  return sizeof(GfVec2f);
-}
-
-// Python's getwritebuf interface function.
-static Py_ssize_t getwritebuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
-{
-  PyErr_SetString(PyExc_ValueError,
-                  "writable buffers supported only with "
-                  "new-style buffer protocol.");
-  return -1;
-}
-
-// Python's getsegcount interface function.
-static Py_ssize_t getsegcount(PyObject *self, Py_ssize_t *lenp)
-{
-  if (lenp)
-    *lenp = sizeof(GfVec2f);
-  return 1;  // Always one contiguous segment.
-}
-
-// Python's getcharbuf interface function.
-static Py_ssize_t getcharbuf(PyObject *self, Py_ssize_t segment, const char **ptrptr)
-{
-  PyErr_SetString(PyExc_ValueError, "cannot treat binary data as text");
-  return -1;
-}
-#endif
-
-// Python's getbuffer interface function.
-static int getbuffer(PyObject *self, Py_buffer *view, int flags)
-{
-  if (view == NULL)
-  {
-    PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
-    return -1;
-  }
-
-  // We don't support fortran order.
-  if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
-  {
-    PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
-    return -1;
-  }
-
-  GfVec2f &vec = extract<GfVec2f &>(self);
-
-  view->obj = self;
-  view->buf = static_cast<void *>(vec.data());
-  view->len = sizeof(GfVec2f);
-  view->readonly = 0;
-  view->itemsize = sizeof(float);
-  if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
-  {
-    view->format = Gf_GetPyBufferFmtFor<float>();
-  }
-  else
-  {
-    view->format = NULL;
-  }
-  if ((flags & PyBUF_ND) == PyBUF_ND)
-  {
-    view->ndim = 1;
-    static Py_ssize_t shape = 2;
-    view->shape = &shape;
-  }
-  else
-  {
-    view->ndim = 0;
-    view->shape = NULL;
-  }
-  if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
-  {
-    static Py_ssize_t strides = sizeof(float);
-    view->strides = &strides;
-  }
-  else
-  {
-    view->strides = NULL;
-  }
-  view->suboffsets = NULL;
-  view->internal = NULL;
-
-  Py_INCREF(self);  // need to retain a reference to self.
-  return 0;
-}
-
-// This structure serves to instantiate a PyBufferProcs instance with pointers
-// to the right buffer protocol functions.
-static PyBufferProcs bufferProcs = {
-#if PY_MAJOR_VERSION == 2
-  (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
-  (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
-  (segcountproc)getsegcount,    /*bf_getsegcount*/
-  (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
-#endif
-  (getbufferproc)getbuffer,
-  (releasebufferproc)0,
-};
-
-// End python buffer protocol support.
-////////////////////////////////////////////////////////////////////////
-
-static string __repr__(GfVec2f const &self)
-{
-  string elems;
-  for (size_t i = 0; i < self.dimension; ++i)
-    elems += (i ? ", " : "") + TfPyRepr(self[i]);
-
-  return TF_PY_REPR_PREFIX + "Vec2f(" + elems + ")";
-}
-
-static size_t __hash__(GfVec2f const &self)
-{
-  return boost::hash<GfVec2f>()(self);
-}
-
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(VecGetNormalized_overloads, GetNormalized, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(VecNormalize_overloads, Normalize, 0, 1);
-BOOST_PYTHON_FUNCTION_OVERLOADS(GetNormalized_overloads, GfGetNormalized, 1, 2);
-
-static float NormalizeHelper(GfVec2f *vec, float eps = GF_MIN_VECTOR_LENGTH)
-{
-  return GfNormalize(vec, eps);
-}
-
-BOOST_PYTHON_FUNCTION_OVERLOADS(Normalize_overloads, NormalizeHelper, 1, 2);
-
-static int normalizeIndex(int index)
-{
-  return TfPyNormalizeIndex(index, 2, true /*throw error*/);
-}
-
-static int __len__(const GfVec2f &self)
-{
-  return 2;
-}
-
-// Implements __getitem__ for a single index
-static float __getitem__(const GfVec2f &self, int index)
-{
-  return self[normalizeIndex(index)];
-}
-
-// Implements __getitem__ for a slice
-static list __getslice__(const GfVec2f &self, slice indices)
-{
-  list result;
-
-  const float *begin = self.data();
-  const float *end = begin + 2;
-
-  slice::range<const float *> bounds;
-  try
-  {
-    // This appears to be a typo in the boost headers.  The method
-    // name should be "get_indices".
-    //
-    bounds = indices.get_indicies<>(begin, end);
-  }
-  catch (std::invalid_argument &)
-  {
-    return result;
-  }
-
-  while (bounds.start != bounds.stop)
-  {
-    result.append(*bounds.start);
-    bounds.start += bounds.step;
-  }
-  // Unlike STL ranges, bounds represents a *closed* interval.  This
-  // means that we must append exactly one more item at the end of
-  // the list.
-  //
-  result.append(*bounds.start);
-
-  return result;
-}
-
-static void __setitem__(GfVec2f &self, int index, float value)
-{
-  self[normalizeIndex(index)] = value;
-}
-
-// Handles refcounting & extraction for PySequence_GetItem.
-static float _SequenceGetItem(PyObject *seq, Py_ssize_t i)
-{
-  boost::python::handle<> h(PySequence_GetItem(seq, i));
-  return extract<float>(boost::python::object(h));
-}
-
-static bool _SequenceCheckItem(PyObject *seq, Py_ssize_t i)
-{
-  boost::python::handle<> h(PySequence_GetItem(seq, i));
-  extract<float> e((boost::python::object(h)));
-  return e.check();
-}
-
-static void __setslice__(GfVec2f &self, slice indices, object values)
-{
-  // Verify our arguments
-  //
-  PyObject *valuesObj = values.ptr();
-
-  if (!PySequence_Check(valuesObj))
-  {
-    TfPyThrowTypeError("value must be a sequence");
-  }
-
-  float *begin = self.data();
-  float *end = begin + 2;
-
-  Py_ssize_t sliceLength = -1;
-
-  slice::range<float *> bounds;
-
-  // Convince g++ that we're not using uninitialized values.
-  //
-  bounds.start = 0;
-  bounds.stop = 0;
-  bounds.step = 0;
-
-  try
-  {
-    // This appears to be a typo in the boost headers.  The method
-    // name should be "get_indices".
-    //
-    bounds = indices.get_indicies<>(begin, end);
-  }
-  catch (std::invalid_argument &)
-  {
-    sliceLength = 0;
-  }
-
-  // If sliceLength was not set in the exception handling code above,
-  // figure out how long it really is.
-  //
-  if (sliceLength == -1)
-  {
-    sliceLength = ((bounds.stop - bounds.start) / bounds.step) + 1;
-  }
-
-  if (PySequence_Length(valuesObj) != sliceLength)
-  {
-    TfPyThrowValueError(TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
-                                       PySequence_Length(valuesObj),
-                                       sliceLength));
-  }
-
-  // Short circuit for empty slices
-  //
-  if (sliceLength == 0)
-  {
-    return;
-  }
-
-  // Make sure that all items can be extracted before changing the GfVec2f.
-  //
-  for (Py_ssize_t i = 0; i < sliceLength; ++i)
-  {
-    // This will throw a TypeError if any of the items cannot be converted.
-    _SequenceGetItem(valuesObj, i);
-  }
-
-  for (Py_ssize_t i = 0; i < sliceLength; ++i)
-  {
-    *bounds.start = _SequenceGetItem(valuesObj, i);
-    bounds.start += bounds.step;
-  }
-}
-
-static bool __contains__(const GfVec2f &self, float value)
-{
-  for (size_t i = 0; i < 2; ++i)
-  {
-    if (self[i] == value)
-      return true;
-  }
-  return false;
-}
-
-#if PY_MAJOR_VERSION == 2
-static GfVec2f __truediv__(const GfVec2f &self, float value)
-{
-  return self / value;
-}
-
-static GfVec2f __itruediv__(GfVec2f &self, float value)
-{
-  return self /= value;
-}
-#endif
-
-template<class V>
-static V *__init__()
-{
-  // Default contstructor zero-initializes from python.
-  return new V(0);
-}
-
-struct FromPythonTuple
-{
-  FromPythonTuple()
-  {
-    converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<GfVec2f>());
-  }
-
- private:
-  static void *_convertible(PyObject *obj_ptr)
-  {
-    // If this object is a GfVec already, disregard.
-    if (PyObject_HasAttrString(obj_ptr, "__isGfVec"))
-      return 0;
-
-    typedef float Scalar;
-
-    // XXX: Would like to allow general sequences, but currently clients
-    // depend on this behavior.
-    if ((PyTuple_Check(obj_ptr) || PyList_Check(obj_ptr)) && PySequence_Size(obj_ptr) == 2 &&
-        _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1))
+    if (segment != 0)
     {
-      return obj_ptr;
+      // Always one-segment.
+      PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
+      return -1;
     }
+    GfVec2f &vec = extract<GfVec2f &>(self);
+    *ptrptr = static_cast<void *>(vec.data());
+    // Return size in bytes.
+    return sizeof(GfVec2f);
+  }
+
+  // Python's getwritebuf interface function.
+  static Py_ssize_t getwritebuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
+  {
+    PyErr_SetString(PyExc_ValueError,
+                    "writable buffers supported only with "
+                    "new-style buffer protocol.");
+    return -1;
+  }
+
+  // Python's getsegcount interface function.
+  static Py_ssize_t getsegcount(PyObject *self, Py_ssize_t *lenp)
+  {
+    if (lenp)
+      *lenp = sizeof(GfVec2f);
+    return 1;  // Always one contiguous segment.
+  }
+
+  // Python's getcharbuf interface function.
+  static Py_ssize_t getcharbuf(PyObject *self, Py_ssize_t segment, const char **ptrptr)
+  {
+    PyErr_SetString(PyExc_ValueError, "cannot treat binary data as text");
+    return -1;
+  }
+#endif
+
+  // Python's getbuffer interface function.
+  static int getbuffer(PyObject *self, Py_buffer *view, int flags)
+  {
+    if (view == NULL)
+    {
+      PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
+      return -1;
+    }
+
+    // We don't support fortran order.
+    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
+    {
+      PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
+      return -1;
+    }
+
+    GfVec2f &vec = extract<GfVec2f &>(self);
+
+    view->obj = self;
+    view->buf = static_cast<void *>(vec.data());
+    view->len = sizeof(GfVec2f);
+    view->readonly = 0;
+    view->itemsize = sizeof(float);
+    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
+    {
+      view->format = Gf_GetPyBufferFmtFor<float>();
+    } else
+    {
+      view->format = NULL;
+    }
+    if ((flags & PyBUF_ND) == PyBUF_ND)
+    {
+      view->ndim = 1;
+      static Py_ssize_t shape = 2;
+      view->shape = &shape;
+    } else
+    {
+      view->ndim = 0;
+      view->shape = NULL;
+    }
+    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
+    {
+      static Py_ssize_t strides = sizeof(float);
+      view->strides = &strides;
+    } else
+    {
+      view->strides = NULL;
+    }
+    view->suboffsets = NULL;
+    view->internal = NULL;
+
+    Py_INCREF(self);  // need to retain a reference to self.
     return 0;
   }
 
-  static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
-  {
-    typedef float Scalar;
-    void *storage = ((converter::rvalue_from_python_storage<GfVec2f> *)data)->storage.bytes;
-    new (storage) GfVec2f(_SequenceGetItem(obj_ptr, 0), _SequenceGetItem(obj_ptr, 1));
-    data->convertible = storage;
-  }
-};
+  // This structure serves to instantiate a PyBufferProcs instance with pointers
+  // to the right buffer protocol functions.
+  static PyBufferProcs bufferProcs = {
+#if PY_MAJOR_VERSION == 2
+    (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
+    (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
+    (segcountproc)getsegcount,    /*bf_getsegcount*/
+    (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
+#endif
+    (getbufferproc)getbuffer,
+    (releasebufferproc)0,
+  };
 
-// This adds support for python's builtin pickling library
-// This is used by our Shake plugins which need to pickle entire classes
-// (including code), which we don't support in pxml.
-struct PickleSuite : boost::python::pickle_suite
-{
-  static boost::python::tuple getinitargs(const GfVec2f &v)
+  // End python buffer protocol support.
+  ////////////////////////////////////////////////////////////////////////
+
+  static string __repr__(GfVec2f const &self)
   {
-    return boost::python::make_tuple(v[0], v[1]);
+    string elems;
+    for (size_t i = 0; i < self.dimension; ++i)
+      elems += (i ? ", " : "") + TfPyRepr(self[i]);
+
+    return TF_PY_REPR_PREFIX + "Vec2f(" + elems + ")";
   }
-};
+
+  static size_t __hash__(GfVec2f const &self)
+  {
+    return boost::hash<GfVec2f>()(self);
+  }
+
+  BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(VecGetNormalized_overloads, GetNormalized, 0, 1);
+  BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(VecNormalize_overloads, Normalize, 0, 1);
+  BOOST_PYTHON_FUNCTION_OVERLOADS(GetNormalized_overloads, GfGetNormalized, 1, 2);
+
+  static float NormalizeHelper(GfVec2f *vec, float eps = GF_MIN_VECTOR_LENGTH)
+  {
+    return GfNormalize(vec, eps);
+  }
+
+  BOOST_PYTHON_FUNCTION_OVERLOADS(Normalize_overloads, NormalizeHelper, 1, 2);
+
+  static int normalizeIndex(int index)
+  {
+    return TfPyNormalizeIndex(index, 2, true /*throw error*/);
+  }
+
+  static int __len__(const GfVec2f &self)
+  {
+    return 2;
+  }
+
+  // Implements __getitem__ for a single index
+  static float __getitem__(const GfVec2f &self, int index)
+  {
+    return self[normalizeIndex(index)];
+  }
+
+  // Implements __getitem__ for a slice
+  static list __getslice__(const GfVec2f &self, slice indices)
+  {
+    list result;
+
+    const float *begin = self.data();
+    const float *end = begin + 2;
+
+    slice::range<const float *> bounds;
+    try
+    {
+      // This appears to be a typo in the boost headers.  The method
+      // name should be "get_indices".
+      //
+      bounds = indices.get_indicies<>(begin, end);
+    }
+    catch (std::invalid_argument &)
+    {
+      return result;
+    }
+
+    while (bounds.start != bounds.stop)
+    {
+      result.append(*bounds.start);
+      bounds.start += bounds.step;
+    }
+    // Unlike STL ranges, bounds represents a *closed* interval.  This
+    // means that we must append exactly one more item at the end of
+    // the list.
+    //
+    result.append(*bounds.start);
+
+    return result;
+  }
+
+  static void __setitem__(GfVec2f &self, int index, float value)
+  {
+    self[normalizeIndex(index)] = value;
+  }
+
+  // Handles refcounting & extraction for PySequence_GetItem.
+  static float _SequenceGetItem(PyObject *seq, Py_ssize_t i)
+  {
+    boost::python::handle<> h(PySequence_GetItem(seq, i));
+    return extract<float>(boost::python::object(h));
+  }
+
+  static bool _SequenceCheckItem(PyObject *seq, Py_ssize_t i)
+  {
+    boost::python::handle<> h(PySequence_GetItem(seq, i));
+    extract<float> e((boost::python::object(h)));
+    return e.check();
+  }
+
+  static void __setslice__(GfVec2f &self, slice indices, object values)
+  {
+    // Verify our arguments
+    //
+    PyObject *valuesObj = values.ptr();
+
+    if (!PySequence_Check(valuesObj))
+    {
+      TfPyThrowTypeError("value must be a sequence");
+    }
+
+    float *begin = self.data();
+    float *end = begin + 2;
+
+    Py_ssize_t sliceLength = -1;
+
+    slice::range<float *> bounds;
+
+    // Convince g++ that we're not using uninitialized values.
+    //
+    bounds.start = 0;
+    bounds.stop = 0;
+    bounds.step = 0;
+
+    try
+    {
+      // This appears to be a typo in the boost headers.  The method
+      // name should be "get_indices".
+      //
+      bounds = indices.get_indicies<>(begin, end);
+    }
+    catch (std::invalid_argument &)
+    {
+      sliceLength = 0;
+    }
+
+    // If sliceLength was not set in the exception handling code above,
+    // figure out how long it really is.
+    //
+    if (sliceLength == -1)
+    {
+      sliceLength = ((bounds.stop - bounds.start) / bounds.step) + 1;
+    }
+
+    if (PySequence_Length(valuesObj) != sliceLength)
+    {
+      TfPyThrowValueError(TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
+                                         PySequence_Length(valuesObj),
+                                         sliceLength));
+    }
+
+    // Short circuit for empty slices
+    //
+    if (sliceLength == 0)
+    {
+      return;
+    }
+
+    // Make sure that all items can be extracted before changing the GfVec2f.
+    //
+    for (Py_ssize_t i = 0; i < sliceLength; ++i)
+    {
+      // This will throw a TypeError if any of the items cannot be converted.
+      _SequenceGetItem(valuesObj, i);
+    }
+
+    for (Py_ssize_t i = 0; i < sliceLength; ++i)
+    {
+      *bounds.start = _SequenceGetItem(valuesObj, i);
+      bounds.start += bounds.step;
+    }
+  }
+
+  static bool __contains__(const GfVec2f &self, float value)
+  {
+    for (size_t i = 0; i < 2; ++i)
+    {
+      if (self[i] == value)
+        return true;
+    }
+    return false;
+  }
+
+#if PY_MAJOR_VERSION == 2
+  static GfVec2f __truediv__(const GfVec2f &self, float value)
+  {
+    return self / value;
+  }
+
+  static GfVec2f __itruediv__(GfVec2f &self, float value)
+  {
+    return self /= value;
+  }
+#endif
+
+  template<class V>
+  static V *__init__()
+  {
+    // Default contstructor zero-initializes from python.
+    return new V(0);
+  }
+
+  struct FromPythonTuple
+  {
+    FromPythonTuple()
+    {
+      converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<GfVec2f>());
+    }
+
+   private:
+    static void *_convertible(PyObject *obj_ptr)
+    {
+      // If this object is a GfVec already, disregard.
+      if (PyObject_HasAttrString(obj_ptr, "__isGfVec"))
+        return 0;
+
+      typedef float Scalar;
+
+      // XXX: Would like to allow general sequences, but currently clients
+      // depend on this behavior.
+      if ((PyTuple_Check(obj_ptr) || PyList_Check(obj_ptr)) && PySequence_Size(obj_ptr) == 2 &&
+          _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1))
+      {
+        return obj_ptr;
+      }
+      return 0;
+    }
+
+    static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
+    {
+      typedef float Scalar;
+      void *storage = ((converter::rvalue_from_python_storage<GfVec2f> *)data)->storage.bytes;
+      new (storage) GfVec2f(_SequenceGetItem(obj_ptr, 0), _SequenceGetItem(obj_ptr, 1));
+      data->convertible = storage;
+    }
+  };
+
+  // This adds support for python's builtin pickling library
+  // This is used by our Shake plugins which need to pickle entire classes
+  // (including code), which we don't support in pxml.
+  struct PickleSuite : boost::python::pickle_suite
+  {
+    static boost::python::tuple getinitargs(const GfVec2f &v)
+    {
+      return boost::python::make_tuple(v[0], v[1]);
+    }
+  };
 
 }  // anonymous namespace
 

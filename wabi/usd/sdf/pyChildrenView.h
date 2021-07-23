@@ -198,8 +198,7 @@ class SdfPyWrapChildrenView
     {
       TfPyThrowIndexError(TfPyRepr(key));
       return value_type();
-    }
-    else
+    } else
     {
       return *i;
     }

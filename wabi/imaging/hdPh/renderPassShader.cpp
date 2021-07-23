@@ -53,70 +53,70 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-struct _NamedTextureIdentifier
-{
-  TfToken name;
-  HdPhTextureIdentifier id;
-};
-
-using _NamedTextureIdentifiers = std::vector<_NamedTextureIdentifier>;
-
-TfToken _GetInputName(const TfToken &aovName)
-{
-  return TfToken(aovName.GetString() + "Readback");
-}
-
-// An AOV is backed by a render buffer. And Phoenix backs a render buffer
-// by a texture. The identifier for this texture can be obtained from
-// the HdPhRenderBuffer.
-_NamedTextureIdentifiers _GetNamedTextureIdentifiers(HdRenderPassAovBindingVector const &aovInputBindings,
-                                                     HdRenderIndex *const renderIndex)
-{
-  _NamedTextureIdentifiers result;
-  result.reserve(aovInputBindings.size());
-
-  for (const HdRenderPassAovBinding &aovBinding : aovInputBindings)
+  struct _NamedTextureIdentifier
   {
-    if (HdPhRenderBuffer *const renderBuffer = dynamic_cast<HdPhRenderBuffer *>(
-          renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, aovBinding.renderBufferId)))
+    TfToken name;
+    HdPhTextureIdentifier id;
+  };
+
+  using _NamedTextureIdentifiers = std::vector<_NamedTextureIdentifier>;
+
+  TfToken _GetInputName(const TfToken &aovName)
+  {
+    return TfToken(aovName.GetString() + "Readback");
+  }
+
+  // An AOV is backed by a render buffer. And Phoenix backs a render buffer
+  // by a texture. The identifier for this texture can be obtained from
+  // the HdPhRenderBuffer.
+  _NamedTextureIdentifiers _GetNamedTextureIdentifiers(HdRenderPassAovBindingVector const &aovInputBindings,
+                                                       HdRenderIndex *const renderIndex)
+  {
+    _NamedTextureIdentifiers result;
+    result.reserve(aovInputBindings.size());
+
+    for (const HdRenderPassAovBinding &aovBinding : aovInputBindings)
     {
-      result.push_back(_NamedTextureIdentifier{_GetInputName(aovBinding.aovName),
-                                               renderBuffer->GetTextureIdentifier(
-                                                 /* multiSampled = */ false)});
+      if (HdPhRenderBuffer *const renderBuffer = dynamic_cast<HdPhRenderBuffer *>(
+            renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, aovBinding.renderBufferId)))
+      {
+        result.push_back(_NamedTextureIdentifier{_GetInputName(aovBinding.aovName),
+                                                 renderBuffer->GetTextureIdentifier(
+                                                   /* multiSampled = */ false)});
+      }
     }
+
+    return result;
   }
 
-  return result;
-}
-
-// Check whether the given named texture handles match the given
-// named texture identifiers.
-bool _AreHandlesValid(const HdPhShaderCode::NamedTextureHandleVector &namedTextureHandles,
-                      const _NamedTextureIdentifiers &namedTextureIdentifiers)
-{
-  if (namedTextureHandles.size() != namedTextureIdentifiers.size())
+  // Check whether the given named texture handles match the given
+  // named texture identifiers.
+  bool _AreHandlesValid(const HdPhShaderCode::NamedTextureHandleVector &namedTextureHandles,
+                        const _NamedTextureIdentifiers &namedTextureIdentifiers)
   {
-    return false;
-  }
-
-  for (size_t i = 0; i < namedTextureHandles.size(); i++)
-  {
-    const HdPhShaderCode::NamedTextureHandle namedTextureHandle = namedTextureHandles[i];
-    const _NamedTextureIdentifier namedTextureIdentifier = namedTextureIdentifiers[i];
-
-    if (namedTextureHandle.name != namedTextureIdentifier.name)
+    if (namedTextureHandles.size() != namedTextureIdentifiers.size())
     {
       return false;
     }
-    const HdPhTextureObjectSharedPtr &textureObject = namedTextureHandle.handle->GetTextureObject();
-    if (textureObject->GetTextureIdentifier() != namedTextureIdentifier.id)
-    {
-      return false;
-    }
-  }
 
-  return true;
-}
+    for (size_t i = 0; i < namedTextureHandles.size(); i++)
+    {
+      const HdPhShaderCode::NamedTextureHandle namedTextureHandle = namedTextureHandles[i];
+      const _NamedTextureIdentifier namedTextureIdentifier = namedTextureIdentifiers[i];
+
+      if (namedTextureHandle.name != namedTextureIdentifier.name)
+      {
+        return false;
+      }
+      const HdPhTextureObjectSharedPtr &textureObject = namedTextureHandle.handle->GetTextureObject();
+      if (textureObject->GetTextureIdentifier() != namedTextureIdentifier.id)
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
 }  // namespace
 
@@ -312,8 +312,11 @@ void HdPhRenderPassShader::UpdateAovInputTextures(HdRenderPassAovBindingVector c
 
   for (const auto &namedTextureIdentifier : namedTextureIdentifiers)
   {
-    static const HdSamplerParameters samplerParameters{
-      HdWrapClamp, HdWrapClamp, HdWrapClamp, HdMinFilterNearest, HdMagFilterNearest};
+    static const HdSamplerParameters samplerParameters{HdWrapClamp,
+                                                       HdWrapClamp,
+                                                       HdWrapClamp,
+                                                       HdMinFilterNearest,
+                                                       HdMagFilterNearest};
 
     // Allocate texture handle for given identifier.
     HdPhTextureHandleSharedPtr textureHandle = resourceRegistry->AllocateTextureHandle(
@@ -332,8 +335,9 @@ void HdPhRenderPassShader::UpdateAovInputTextures(HdRenderPassAovBindingVector c
 
     // Add a corresponding param so that codegen is
     // generating the accessor HdGet_AOVNAMEReadback().
-    _params.emplace_back(
-      HdPh_MaterialParam::ParamTypeTexture, namedTextureIdentifier.name, VtValue(GfVec4f(0, 0, 0, 0)));
+    _params.emplace_back(HdPh_MaterialParam::ParamTypeTexture,
+                         namedTextureIdentifier.name,
+                         VtValue(GfVec4f(0, 0, 0, 0)));
   }
 }
 

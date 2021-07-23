@@ -40,7 +40,106 @@ WABI_NAMESPACE_BEGIN
 const PxOsdMeshTopology &UsdImagingGetUnitSphereMeshTopology()
 {
   static const VtIntArray numVerts{
-    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3};
   static const VtIntArray verts{// Quads
                                 0,
                                 1,
@@ -423,8 +522,10 @@ const PxOsdMeshTopology &UsdImagingGetUnitSphereMeshTopology()
                                 89,
                                 80,
                                 91};
-  static const PxOsdMeshTopology sphereTopo(
-    PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
+  static const PxOsdMeshTopology sphereTopo(PxOsdOpenSubdivTokens->catmullClark,
+                                            PxOsdOpenSubdivTokens->rightHanded,
+                                            numVerts,
+                                            verts);
 
   return sphereTopo;
 }
@@ -442,8 +543,10 @@ const PxOsdMeshTopology &UsdImagingGetUnitCubeMeshTopology()
 {
   static const VtIntArray numVerts{4, 4, 4, 4, 4, 4};
   static const VtIntArray verts{0, 1, 2, 3, 4, 5, 6, 7, 0, 6, 5, 1, 4, 7, 3, 2, 0, 3, 7, 6, 4, 2, 1, 5};
-  static const PxOsdMeshTopology cubeTopo(
-    PxOsdOpenSubdivTokens->bilinear, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
+  static const PxOsdMeshTopology cubeTopo(PxOsdOpenSubdivTokens->bilinear,
+                                          PxOsdOpenSubdivTokens->rightHanded,
+                                          numVerts,
+                                          verts);
 
   return cubeTopo;
 }
@@ -539,8 +642,10 @@ const PxOsdMeshTopology &UsdImagingGetUnitConeMeshTopology()
                                 11,
                                 21,
                                 30};
-  static const PxOsdMeshTopology coneTopo(
-    PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
+  static const PxOsdMeshTopology coneTopo(PxOsdOpenSubdivTokens->catmullClark,
+                                          PxOsdOpenSubdivTokens->rightHanded,
+                                          numVerts,
+                                          verts);
 
   return coneTopo;
 }
@@ -663,8 +768,10 @@ const PxOsdMeshTopology &UsdImagingGetUnitCylinderMeshTopology()
                                 40,
                                 31,
                                 41};
-  static const PxOsdMeshTopology cylinderTopo(
-    PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, numVerts, verts);
+  static const PxOsdMeshTopology cylinderTopo(PxOsdOpenSubdivTokens->catmullClark,
+                                              PxOsdOpenSubdivTokens->rightHanded,
+                                              numVerts,
+                                              verts);
 
   return cylinderTopo;
 }
@@ -747,8 +854,10 @@ const PxOsdMeshTopology &UsdImagingGetCapsuleMeshTopology()
 
     TF_VERIFY(face == numCounts && index == numIndices);
 
-    return PxOsdMeshTopology(
-      PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->rightHanded, countsArray, indicesArray);
+    return PxOsdMeshTopology(PxOsdOpenSubdivTokens->catmullClark,
+                             PxOsdOpenSubdivTokens->rightHanded,
+                             countsArray,
+                             indicesArray);
   }();
 
   return capsuleTopo;
@@ -770,14 +879,12 @@ VtVec3fArray UsdImagingGenerateCapsuleMeshPoints(const double height,
     u = GfVec3f::YAxis();
     v = GfVec3f::ZAxis();
     spine = GfVec3f::XAxis();
-  }
-  else if (axis == UsdGeomTokens->y)
+  } else if (axis == UsdGeomTokens->y)
   {
     u = GfVec3f::ZAxis();
     v = GfVec3f::XAxis();
     spine = GfVec3f::YAxis();
-  }
-  else
+  } else
   {  // (axis == UsdGeomTokens->z)
     u = GfVec3f::XAxis();
     v = GfVec3f::YAxis();
@@ -859,18 +966,58 @@ GfMatrix4d UsdImagingGenerateConeOrCylinderTransform(const double height,
   const double diameter = 2.0 * radius;
   if (axis == UsdGeomTokens->x)
   {
-    return GfMatrix4d(
-      0.0, diameter, 0.0, 0.0, 0.0, 0.0, diameter, 0.0, height, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-  }
-  else if (axis == UsdGeomTokens->y)
+    return GfMatrix4d(0.0,
+                      diameter,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      diameter,
+                      0.0,
+                      height,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0);
+  } else if (axis == UsdGeomTokens->y)
   {
-    return GfMatrix4d(
-      0.0, 0.0, diameter, 0.0, diameter, 0.0, 0.0, 0.0, 0.0, height, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-  }
-  else
+    return GfMatrix4d(0.0,
+                      0.0,
+                      diameter,
+                      0.0,
+                      diameter,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      height,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0);
+  } else
   {  // (axis == UsdGeomTokens->z)
-    return GfMatrix4d(
-      diameter, 0.0, 0.0, 0.0, 0.0, diameter, 0.0, 0.0, 0.0, 0.0, height, 0.0, 0.0, 0.0, 0.0, 1.0);
+    return GfMatrix4d(diameter,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      diameter,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      height,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1.0);
   }
 }
 

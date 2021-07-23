@@ -257,8 +257,7 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfPathEditorProxy *ed
     }
     // Get the inherit path editor from the prim spec.
     *editor = _GetIntroducingPrimSpec(*this, info)->GetInheritPathList();
-  }
-  else
+  } else
   {
     // Compose the specialize paths on the introducing node.
     if (!_GetIntroducingComposeInfo<SdfPath>(*this, &PcpComposeSiteSpecializes, &info, path))

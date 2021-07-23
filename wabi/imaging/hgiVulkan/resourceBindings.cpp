@@ -45,7 +45,7 @@ WABI_NAMESPACE_BEGIN
 
 namespace
 {
-static const uint8_t _descriptorSetCnt = 1;
+  static const uint8_t _descriptorSetCnt = 1;
 }
 
 static VkDescriptorSetLayout _CreateDescriptorSetLayout(
@@ -60,15 +60,18 @@ static VkDescriptorSetLayout _CreateDescriptorSetLayout(
   setCreateInfo.pNext = nullptr;
 
   VkDescriptorSetLayout layout = nullptr;
-  TF_VERIFY(vkCreateDescriptorSetLayout(
-              device->GetVulkanDevice(), &setCreateInfo, HgiVulkanAllocator(), &layout) == VK_SUCCESS);
+  TF_VERIFY(
+    vkCreateDescriptorSetLayout(device->GetVulkanDevice(), &setCreateInfo, HgiVulkanAllocator(), &layout) ==
+    VK_SUCCESS);
 
   // Debug label
   if (!debugName.empty())
   {
     std::string debugLabel = "DescriptorSetLayout " + debugName;
-    HgiVulkanSetDebugName(
-      device, (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, debugLabel.c_str());
+    HgiVulkanSetDebugName(device,
+                          (uint64_t)layout,
+                          VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT,
+                          debugLabel.c_str());
   }
 
   return layout;
@@ -180,16 +183,19 @@ HgiVulkanResourceBindings::HgiVulkanResourceBindings(HgiVulkanDevice *device,
   pool_info.poolSizeCount = (uint32_t)poolSizes.size();
   pool_info.pPoolSizes = poolSizes.data();
 
-  TF_VERIFY(vkCreateDescriptorPool(
-              _device->GetVulkanDevice(), &pool_info, HgiVulkanAllocator(), &_vkDescriptorPool) ==
-            VK_SUCCESS);
+  TF_VERIFY(vkCreateDescriptorPool(_device->GetVulkanDevice(),
+                                   &pool_info,
+                                   HgiVulkanAllocator(),
+                                   &_vkDescriptorPool) == VK_SUCCESS);
 
   // Debug label
   if (!_descriptor.debugName.empty())
   {
     std::string debugLabel = "Descriptor Pool " + _descriptor.debugName;
-    HgiVulkanSetDebugName(
-      device, (uint64_t)_vkDescriptorPool, VK_OBJECT_TYPE_DESCRIPTOR_POOL, debugLabel.c_str());
+    HgiVulkanSetDebugName(device,
+                          (uint64_t)_vkDescriptorPool,
+                          VK_OBJECT_TYPE_DESCRIPTOR_POOL,
+                          debugLabel.c_str());
   }
 
   //
@@ -208,8 +214,10 @@ HgiVulkanResourceBindings::HgiVulkanResourceBindings(HgiVulkanDevice *device,
   if (!_descriptor.debugName.empty())
   {
     std::string dbgLbl = "Descriptor Set Buffers " + _descriptor.debugName;
-    HgiVulkanSetDebugName(
-      _device, (uint64_t)_vkDescriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET, dbgLbl.c_str());
+    HgiVulkanSetDebugName(_device,
+                          (uint64_t)_vkDescriptorSet,
+                          VK_OBJECT_TYPE_DESCRIPTOR_SET,
+                          dbgLbl.c_str());
   }
 
   //
@@ -219,12 +227,13 @@ HgiVulkanResourceBindings::HgiVulkanResourceBindings(HgiVulkanDevice *device,
   VkPhysicalDeviceLimits const &limits = devProps.limits;
 
   uint32_t bindLimits[HgiBindResourceTypeCount][2] = {
-    {HgiBindResourceTypeSampler, limits.maxPerStageDescriptorSamplers},
-    {HgiBindResourceTypeSampledImage, limits.maxPerStageDescriptorSampledImages},
-    {HgiBindResourceTypeCombinedSamplerImage, limits.maxPerStageDescriptorSampledImages},
-    {HgiBindResourceTypeStorageImage, limits.maxPerStageDescriptorStorageImages},
-    {HgiBindResourceTypeUniformBuffer, limits.maxPerStageDescriptorUniformBuffers},
-    {HgiBindResourceTypeStorageBuffer, limits.maxPerStageDescriptorStorageBuffers}};
+    {HgiBindResourceTypeSampler,              limits.maxPerStageDescriptorSamplers      },
+    {HgiBindResourceTypeSampledImage,         limits.maxPerStageDescriptorSampledImages },
+    {HgiBindResourceTypeCombinedSamplerImage, limits.maxPerStageDescriptorSampledImages },
+    {HgiBindResourceTypeStorageImage,         limits.maxPerStageDescriptorStorageImages },
+    {HgiBindResourceTypeUniformBuffer,        limits.maxPerStageDescriptorUniformBuffers},
+    {HgiBindResourceTypeStorageBuffer,        limits.maxPerStageDescriptorStorageBuffers}
+  };
   static_assert(HgiBindResourceTypeCount == 6, "");
 
   //

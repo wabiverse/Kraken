@@ -50,35 +50,38 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateOffsetsAttr(UsdSkelBlendShape &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateOffsetsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                writeSparsely);
-}
+  static UsdAttribute _CreateOffsetsAttr(UsdSkelBlendShape &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateOffsetsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+                                  writeSparsely);
+  }
 
-static UsdAttribute _CreateNormalOffsetsAttr(UsdSkelBlendShape &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateNormalOffsetsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateNormalOffsetsAttr(UsdSkelBlendShape &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateNormalOffsetsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreatePointIndicesAttr(UsdSkelBlendShape &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreatePointIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreatePointIndicesAttr(UsdSkelBlendShape &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreatePointIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                       writeSparsely);
+  }
 
-static std::string _Repr(const UsdSkelBlendShape &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdSkel.BlendShape(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdSkelBlendShape &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdSkel.BlendShape(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -151,27 +154,27 @@ void wrapUsdSkelBlendShape()
 namespace
 {
 
-tuple _ValidatePointIndices(TfSpan<const int> pointIndices, size_t numPoints)
-{
-  std::string reason;
-  bool valid = UsdSkelBlendShape::ValidatePointIndices(pointIndices, numPoints, &reason);
-  return boost::python::make_tuple(valid, reason);
-}
+  tuple _ValidatePointIndices(TfSpan<const int> pointIndices, size_t numPoints)
+  {
+    std::string reason;
+    bool valid = UsdSkelBlendShape::ValidatePointIndices(pointIndices, numPoints, &reason);
+    return boost::python::make_tuple(valid, reason);
+  }
 
-WRAP_CUSTOM
-{
+  WRAP_CUSTOM
+  {
 
-  using This = UsdSkelBlendShape;
+    using This = UsdSkelBlendShape;
 
-  _class.def("CreateInbetween", &This::CreateInbetween, arg("name"))
-    .def("GetInbetween", &This::GetInbetween, arg("name"))
-    .def("HasInbetween", &This::HasInbetween, arg("name"))
+    _class.def("CreateInbetween", &This::CreateInbetween, arg("name"))
+      .def("GetInbetween", &This::GetInbetween, arg("name"))
+      .def("HasInbetween", &This::HasInbetween, arg("name"))
 
-    .def("GetInbetweens", &This::GetInbetweens, return_value_policy<TfPySequenceToList>())
-    .def("GetAuthoredInbetweens", &This::GetAuthoredInbetweens, return_value_policy<TfPySequenceToList>())
+      .def("GetInbetweens", &This::GetInbetweens, return_value_policy<TfPySequenceToList>())
+      .def("GetAuthoredInbetweens", &This::GetAuthoredInbetweens, return_value_policy<TfPySequenceToList>())
 
-    .def("ValidatePointIndices", &_ValidatePointIndices, (arg("pointIndices"), arg("numPoints")))
-    .staticmethod("ValidatePointIndices");
-}
+      .def("ValidatePointIndices", &_ValidatePointIndices, (arg("pointIndices"), arg("numPoints")))
+      .staticmethod("ValidatePointIndices");
+  }
 
 }  // namespace

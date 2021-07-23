@@ -80,57 +80,53 @@ class FormFactory
   UsdTimeCode m_time;
 };
 
-/** 
- * Creates Properties at runtime. 
- * 
+/**
+ * Creates Properties at runtime.
+ *
  * - @param id Path to Owning Stage Object.
  * - @param pgroup group of properties.
  * - @param r_ptr A new Universe Object. */
 namespace CreationFactory
 {
-namespace PTR
-{
-inline void New(SdfPath id, KrakenPrim *type, void *data, PointerLUXO *r_ptr)
-{
-  r_ptr = new KrakenPrim();
-  r_ptr->path = id;
-  r_ptr->type = type;
-}
-}  // namespace PTR
-namespace STR
-{
-inline void Set(PointerLUXO *ptr, const std::string &name, const std::string &value)
-{
-  PropertyLUXO strprop;
-  strprop.name = TfToken(name);
-  strprop.type = SdfValueTypeNames->String;
-  strprop.variability = SdfVariabilityUniform;
-  strprop.custom = false;
+  namespace PTR
+  {
+    inline void New(SdfPath id, KrakenPrim *type, void *data, PointerLUXO *r_ptr)
+    {
+      r_ptr = new KrakenPrim();
+      r_ptr->path = id;
+      r_ptr->type = type;
+    }
+  }  // namespace PTR
+  namespace STR
+  {
+    inline void Set(PointerLUXO *ptr, const std::string &name, const std::string &value)
+    {
+      PropertyLUXO strprop;
+      strprop.name = TfToken(name);
+      strprop.type = SdfValueTypeNames->String;
+      strprop.variability = SdfVariabilityUniform;
+      strprop.custom = false;
 
-  UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name,
-                                                     strprop.type,
-                                                     strprop.variability);
-  attr.Set(std::string(value));
-  ptr->props.push_back(attr);
-}
-}  // namespace STR
-namespace BOOL
-{
-inline void Set(PointerLUXO *ptr, const std::string &name, const bool &value)
-{
-  PropertyLUXO strprop;
-  strprop.name = TfToken(name);
-  strprop.type = SdfValueTypeNames->Bool;
-  strprop.variability = SdfVariabilityUniform;
-  strprop.custom = false;
+      UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name, strprop.type, strprop.variability);
+      attr.Set(std::string(value));
+      ptr->props.push_back(attr);
+    }
+  }  // namespace STR
+  namespace BOOL
+  {
+    inline void Set(PointerLUXO *ptr, const std::string &name, const bool &value)
+    {
+      PropertyLUXO strprop;
+      strprop.name = TfToken(name);
+      strprop.type = SdfValueTypeNames->Bool;
+      strprop.variability = SdfVariabilityUniform;
+      strprop.custom = false;
 
-  UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name,
-                                                     strprop.type,
-                                                     strprop.variability);
-  attr.Set(bool(value));
-  ptr->props.push_back(attr);
-}
-}  // namespace BOOL
+      UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name, strprop.type, strprop.variability);
+      attr.Set(bool(value));
+      ptr->props.push_back(attr);
+    }
+  }  // namespace BOOL
 }  // namespace CreationFactory
 
 template<>

@@ -216,8 +216,7 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     equation[0] = 1.0;
     equation[1] = leastSquaresEstimate[0];
     equation[2] = leastSquaresEstimate[1];
-  }
-  else if (det2 > 0.0 && det2 > det3)
+  } else if (det2 > 0.0 && det2 > det3)
   {
     // A^T B = {{\sum (x_i) (-y_i)},
     //          {\sum (z_i) (-y_i)}}
@@ -227,8 +226,7 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     equation[0] = leastSquaresEstimate[0];
     equation[1] = 1.0;
     equation[2] = leastSquaresEstimate[1];
-  }
-  else if (det3 > 0.0)
+  } else if (det3 > 0.0)
   {
     // A^T B = {{\sum (x_i) (z_i)},
     //          {\sum (y_i) (z_i)}}
@@ -238,8 +236,7 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     equation[0] = leastSquaresEstimate[0];
     equation[1] = leastSquaresEstimate[1];
     equation[2] = 1.0;
-  }
-  else
+  } else
   {
     // In all cases, det(A^T A) is zero. This happens when the points are
     // collinear and a plane can't be fitted, for example.

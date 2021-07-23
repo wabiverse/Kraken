@@ -481,25 +481,25 @@ inline GenericStringRef<CharType> StringRef(const std::basic_string<CharType> &s
 namespace internal
 {
 
-template<typename T, typename Encoding = void, typename Allocator = void>
-struct IsGenericValueImpl : FalseType
-{
-};
+  template<typename T, typename Encoding = void, typename Allocator = void>
+  struct IsGenericValueImpl : FalseType
+  {
+  };
 
-// select candidates according to nested encoding and allocator types
-template<typename T>
-struct IsGenericValueImpl<T,
-                          typename Void<typename T::EncodingType>::Type,
-                          typename Void<typename T::AllocatorType>::Type>
-  : IsBaseOf<GenericValue<typename T::EncodingType, typename T::AllocatorType>, T>::Type
-{
-};
+  // select candidates according to nested encoding and allocator types
+  template<typename T>
+  struct IsGenericValueImpl<T,
+                            typename Void<typename T::EncodingType>::Type,
+                            typename Void<typename T::AllocatorType>::Type>
+    : IsBaseOf<GenericValue<typename T::EncodingType, typename T::AllocatorType>, T>::Type
+  {
+  };
 
-// helper to match arbitrary GenericValue instantiations, including derived classes
-template<typename T>
-struct IsGenericValue : IsGenericValueImpl<T>::Type
-{
-};
+  // helper to match arbitrary GenericValue instantiations, including derived classes
+  template<typename T>
+  struct IsGenericValue : IsGenericValueImpl<T>::Type
+  {
+  };
 
 }  // namespace internal
 
@@ -509,271 +509,271 @@ struct IsGenericValue : IsGenericValueImpl<T>::Type
 namespace internal
 {
 
-template<typename ValueType, typename T>
-struct TypeHelper
-{
-};
+  template<typename ValueType, typename T>
+  struct TypeHelper
+  {
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, bool>
-{
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, bool>
   {
-    return v.IsBool();
-  }
-  static bool Get(const ValueType &v)
-  {
-    return v.GetBool();
-  }
-  static ValueType &Set(ValueType &v, bool data)
-  {
-    return v.SetBool(data);
-  }
-  static ValueType &Set(ValueType &v, bool data, typename ValueType::AllocatorType &)
-  {
-    return v.SetBool(data);
-  }
-};
+    static bool Is(const ValueType &v)
+    {
+      return v.IsBool();
+    }
+    static bool Get(const ValueType &v)
+    {
+      return v.GetBool();
+    }
+    static ValueType &Set(ValueType &v, bool data)
+    {
+      return v.SetBool(data);
+    }
+    static ValueType &Set(ValueType &v, bool data, typename ValueType::AllocatorType &)
+    {
+      return v.SetBool(data);
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, int>
-{
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, int>
   {
-    return v.IsInt();
-  }
-  static int Get(const ValueType &v)
-  {
-    return v.GetInt();
-  }
-  static ValueType &Set(ValueType &v, int data)
-  {
-    return v.SetInt(data);
-  }
-  static ValueType &Set(ValueType &v, int data, typename ValueType::AllocatorType &)
-  {
-    return v.SetInt(data);
-  }
-};
+    static bool Is(const ValueType &v)
+    {
+      return v.IsInt();
+    }
+    static int Get(const ValueType &v)
+    {
+      return v.GetInt();
+    }
+    static ValueType &Set(ValueType &v, int data)
+    {
+      return v.SetInt(data);
+    }
+    static ValueType &Set(ValueType &v, int data, typename ValueType::AllocatorType &)
+    {
+      return v.SetInt(data);
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, unsigned>
-{
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, unsigned>
   {
-    return v.IsUint();
-  }
-  static unsigned Get(const ValueType &v)
-  {
-    return v.GetUint();
-  }
-  static ValueType &Set(ValueType &v, unsigned data)
-  {
-    return v.SetUint(data);
-  }
-  static ValueType &Set(ValueType &v, unsigned data, typename ValueType::AllocatorType &)
-  {
-    return v.SetUint(data);
-  }
-};
+    static bool Is(const ValueType &v)
+    {
+      return v.IsUint();
+    }
+    static unsigned Get(const ValueType &v)
+    {
+      return v.GetUint();
+    }
+    static ValueType &Set(ValueType &v, unsigned data)
+    {
+      return v.SetUint(data);
+    }
+    static ValueType &Set(ValueType &v, unsigned data, typename ValueType::AllocatorType &)
+    {
+      return v.SetUint(data);
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, int64_t>
-{
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, int64_t>
   {
-    return v.IsInt64();
-  }
-  static int64_t Get(const ValueType &v)
-  {
-    return v.GetInt64();
-  }
-  static ValueType &Set(ValueType &v, int64_t data)
-  {
-    return v.SetInt64(data);
-  }
-  static ValueType &Set(ValueType &v, int64_t data, typename ValueType::AllocatorType &)
-  {
-    return v.SetInt64(data);
-  }
-};
+    static bool Is(const ValueType &v)
+    {
+      return v.IsInt64();
+    }
+    static int64_t Get(const ValueType &v)
+    {
+      return v.GetInt64();
+    }
+    static ValueType &Set(ValueType &v, int64_t data)
+    {
+      return v.SetInt64(data);
+    }
+    static ValueType &Set(ValueType &v, int64_t data, typename ValueType::AllocatorType &)
+    {
+      return v.SetInt64(data);
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, uint64_t>
-{
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, uint64_t>
   {
-    return v.IsUint64();
-  }
-  static uint64_t Get(const ValueType &v)
-  {
-    return v.GetUint64();
-  }
-  static ValueType &Set(ValueType &v, uint64_t data)
-  {
-    return v.SetUint64(data);
-  }
-  static ValueType &Set(ValueType &v, uint64_t data, typename ValueType::AllocatorType &)
-  {
-    return v.SetUint64(data);
-  }
-};
+    static bool Is(const ValueType &v)
+    {
+      return v.IsUint64();
+    }
+    static uint64_t Get(const ValueType &v)
+    {
+      return v.GetUint64();
+    }
+    static ValueType &Set(ValueType &v, uint64_t data)
+    {
+      return v.SetUint64(data);
+    }
+    static ValueType &Set(ValueType &v, uint64_t data, typename ValueType::AllocatorType &)
+    {
+      return v.SetUint64(data);
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, double>
-{
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, double>
   {
-    return v.IsDouble();
-  }
-  static double Get(const ValueType &v)
-  {
-    return v.GetDouble();
-  }
-  static ValueType &Set(ValueType &v, double data)
-  {
-    return v.SetDouble(data);
-  }
-  static ValueType &Set(ValueType &v, double data, typename ValueType::AllocatorType &)
-  {
-    return v.SetDouble(data);
-  }
-};
+    static bool Is(const ValueType &v)
+    {
+      return v.IsDouble();
+    }
+    static double Get(const ValueType &v)
+    {
+      return v.GetDouble();
+    }
+    static ValueType &Set(ValueType &v, double data)
+    {
+      return v.SetDouble(data);
+    }
+    static ValueType &Set(ValueType &v, double data, typename ValueType::AllocatorType &)
+    {
+      return v.SetDouble(data);
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, float>
-{
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, float>
   {
-    return v.IsFloat();
-  }
-  static float Get(const ValueType &v)
-  {
-    return v.GetFloat();
-  }
-  static ValueType &Set(ValueType &v, float data)
-  {
-    return v.SetFloat(data);
-  }
-  static ValueType &Set(ValueType &v, float data, typename ValueType::AllocatorType &)
-  {
-    return v.SetFloat(data);
-  }
-};
+    static bool Is(const ValueType &v)
+    {
+      return v.IsFloat();
+    }
+    static float Get(const ValueType &v)
+    {
+      return v.GetFloat();
+    }
+    static ValueType &Set(ValueType &v, float data)
+    {
+      return v.SetFloat(data);
+    }
+    static ValueType &Set(ValueType &v, float data, typename ValueType::AllocatorType &)
+    {
+      return v.SetFloat(data);
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, const typename ValueType::Ch *>
-{
-  typedef const typename ValueType::Ch *StringType;
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, const typename ValueType::Ch *>
   {
-    return v.IsString();
-  }
-  static StringType Get(const ValueType &v)
-  {
-    return v.GetString();
-  }
-  static ValueType &Set(ValueType &v, const StringType data)
-  {
-    return v.SetString(typename ValueType::StringRefType(data));
-  }
-  static ValueType &Set(ValueType &v, const StringType data, typename ValueType::AllocatorType &a)
-  {
-    return v.SetString(data, a);
-  }
-};
+    typedef const typename ValueType::Ch *StringType;
+    static bool Is(const ValueType &v)
+    {
+      return v.IsString();
+    }
+    static StringType Get(const ValueType &v)
+    {
+      return v.GetString();
+    }
+    static ValueType &Set(ValueType &v, const StringType data)
+    {
+      return v.SetString(typename ValueType::StringRefType(data));
+    }
+    static ValueType &Set(ValueType &v, const StringType data, typename ValueType::AllocatorType &a)
+    {
+      return v.SetString(data, a);
+    }
+  };
 
 #if RAPIDJSON_HAS_STDSTRING
-template<typename ValueType>
-struct TypeHelper<ValueType, std::basic_string<typename ValueType::Ch>>
-{
-  typedef std::basic_string<typename ValueType::Ch> StringType;
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, std::basic_string<typename ValueType::Ch>>
   {
-    return v.IsString();
-  }
-  static StringType Get(const ValueType &v)
-  {
-    return v.GetString();
-  }
-  static ValueType &Set(ValueType &v, const StringType &data, typename ValueType::AllocatorType &a)
-  {
-    return v.SetString(data, a);
-  }
-};
+    typedef std::basic_string<typename ValueType::Ch> StringType;
+    static bool Is(const ValueType &v)
+    {
+      return v.IsString();
+    }
+    static StringType Get(const ValueType &v)
+    {
+      return v.GetString();
+    }
+    static ValueType &Set(ValueType &v, const StringType &data, typename ValueType::AllocatorType &a)
+    {
+      return v.SetString(data, a);
+    }
+  };
 #endif
 
-template<typename ValueType>
-struct TypeHelper<ValueType, typename ValueType::Array>
-{
-  typedef typename ValueType::Array ArrayType;
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, typename ValueType::Array>
   {
-    return v.IsArray();
-  }
-  static ArrayType Get(ValueType &v)
-  {
-    return v.GetArray();
-  }
-  static ValueType &Set(ValueType &v, ArrayType data)
-  {
-    return v = data;
-  }
-  static ValueType &Set(ValueType &v, ArrayType data, typename ValueType::AllocatorType &)
-  {
-    return v = data;
-  }
-};
+    typedef typename ValueType::Array ArrayType;
+    static bool Is(const ValueType &v)
+    {
+      return v.IsArray();
+    }
+    static ArrayType Get(ValueType &v)
+    {
+      return v.GetArray();
+    }
+    static ValueType &Set(ValueType &v, ArrayType data)
+    {
+      return v = data;
+    }
+    static ValueType &Set(ValueType &v, ArrayType data, typename ValueType::AllocatorType &)
+    {
+      return v = data;
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, typename ValueType::ConstArray>
-{
-  typedef typename ValueType::ConstArray ArrayType;
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, typename ValueType::ConstArray>
   {
-    return v.IsArray();
-  }
-  static ArrayType Get(const ValueType &v)
-  {
-    return v.GetArray();
-  }
-};
+    typedef typename ValueType::ConstArray ArrayType;
+    static bool Is(const ValueType &v)
+    {
+      return v.IsArray();
+    }
+    static ArrayType Get(const ValueType &v)
+    {
+      return v.GetArray();
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, typename ValueType::Object>
-{
-  typedef typename ValueType::Object ObjectType;
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, typename ValueType::Object>
   {
-    return v.IsObject();
-  }
-  static ObjectType Get(ValueType &v)
-  {
-    return v.GetObject();
-  }
-  static ValueType &Set(ValueType &v, ObjectType data)
-  {
-    return v = data;
-  }
-  static ValueType &Set(ValueType &v, ObjectType data, typename ValueType::AllocatorType &)
-  {
-    v = data;
-  }
-};
+    typedef typename ValueType::Object ObjectType;
+    static bool Is(const ValueType &v)
+    {
+      return v.IsObject();
+    }
+    static ObjectType Get(ValueType &v)
+    {
+      return v.GetObject();
+    }
+    static ValueType &Set(ValueType &v, ObjectType data)
+    {
+      return v = data;
+    }
+    static ValueType &Set(ValueType &v, ObjectType data, typename ValueType::AllocatorType &)
+    {
+      v = data;
+    }
+  };
 
-template<typename ValueType>
-struct TypeHelper<ValueType, typename ValueType::ConstObject>
-{
-  typedef typename ValueType::ConstObject ObjectType;
-  static bool Is(const ValueType &v)
+  template<typename ValueType>
+  struct TypeHelper<ValueType, typename ValueType::ConstObject>
   {
-    return v.IsObject();
-  }
-  static ObjectType Get(const ValueType &v)
-  {
-    return v.GetObject();
-  }
-};
+    typedef typename ValueType::ConstObject ObjectType;
+    static bool Is(const ValueType &v)
+    {
+      return v.IsObject();
+    }
+    static ObjectType Get(const ValueType &v)
+    {
+      return v.GetObject();
+    }
+  };
 
 }  // namespace internal
 
@@ -858,8 +858,8 @@ class GenericValue
   */
   explicit GenericValue(Type type) RAPIDJSON_NOEXCEPT : data_()
   {
-    static const uint16_t defaultFlags[7] = {
-      kNullFlag, kFalseFlag, kTrueFlag, kObjectFlag, kArrayFlag, kShortStringFlag, kNumberAnyFlag};
+    static const uint16_t defaultFlags[7] =
+      {kNullFlag, kFalseFlag, kTrueFlag, kObjectFlag, kArrayFlag, kShortStringFlag, kNumberAnyFlag};
     RAPIDJSON_ASSERT(type <= kNumberType);
     data_.f.flags = defaultFlags[type];
 
@@ -923,8 +923,7 @@ class GenericValue
         data_.f.flags |= kUintFlag;
       if (!(static_cast<uint64_t>(i64) & RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000)))
         data_.f.flags |= kIntFlag;
-    }
-    else if (i64 >= static_cast<int64_t>(RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000)))
+    } else if (i64 >= static_cast<int64_t>(RAPIDJSON_UINT64_C2(0xFFFFFFFF, 0x80000000)))
       data_.f.flags |= kIntFlag;
   }
 
@@ -1193,8 +1192,7 @@ class GenericValue
           double a = GetDouble();      // May convert from integer to double.
           double b = rhs.GetDouble();  // Ditto
           return a >= b && a <= b;     // Prevent -Wfloat-equal
-        }
-        else
+        } else
           return data_.n.u64 == rhs.data_.n.u64;
 
       default:
@@ -1667,13 +1665,13 @@ class GenericValue
       {
         o.capacity = kDefaultObjectCapacity;
         SetMembersPointer(reinterpret_cast<Member *>(allocator.Malloc(o.capacity * sizeof(Member))));
-      }
-      else
+      } else
       {
         SizeType oldCapacity = o.capacity;
         o.capacity += (oldCapacity + 1) / 2;  // grow by factor 1.5
-        SetMembersPointer(reinterpret_cast<Member *>(allocator.Realloc(
-          GetMembersPointer(), oldCapacity * sizeof(Member), o.capacity * sizeof(Member))));
+        SetMembersPointer(reinterpret_cast<Member *>(allocator.Realloc(GetMembersPointer(),
+                                                                       oldCapacity * sizeof(Member),
+                                                                       o.capacity * sizeof(Member))));
       }
     }
     Member *members = GetMembersPointer();
@@ -1860,8 +1858,7 @@ class GenericValue
     {
       RemoveMember(m);
       return true;
-    }
-    else
+    } else
       return false;
   }
 
@@ -1955,8 +1952,7 @@ class GenericValue
     {
       EraseMember(m);
       return true;
-    }
-    else
+    } else
       return false;
   }
 
@@ -2073,8 +2069,10 @@ class GenericValue
     RAPIDJSON_ASSERT(IsArray());
     if (newCapacity > data_.a.capacity)
     {
-      SetElementsPointer(reinterpret_cast<GenericValue *>(allocator.Realloc(
-        GetElementsPointer(), data_.a.capacity * sizeof(GenericValue), newCapacity * sizeof(GenericValue))));
+      SetElementsPointer(
+        reinterpret_cast<GenericValue *>(allocator.Realloc(GetElementsPointer(),
+                                                           data_.a.capacity * sizeof(GenericValue),
+                                                           newCapacity * sizeof(GenericValue))));
       data_.a.capacity = newCapacity;
     }
     return *this;
@@ -2449,8 +2447,9 @@ class GenericValue
         for (ConstMemberIterator m = MemberBegin(); m != MemberEnd(); ++m)
         {
           RAPIDJSON_ASSERT(m->name.IsString());  // User may change the type of name by MemberIterator.
-          if (RAPIDJSON_UNLIKELY(!handler.Key(
-                m->name.GetString(), m->name.GetStringLength(), (m->name.data_.f.flags & kCopyFlag) != 0)))
+          if (RAPIDJSON_UNLIKELY(!handler.Key(m->name.GetString(),
+                                              m->name.GetStringLength(),
+                                              (m->name.data_.f.flags & kCopyFlag) != 0)))
             return false;
           if (RAPIDJSON_UNLIKELY(!m->value.Accept(handler)))
             return false;
@@ -2668,8 +2667,7 @@ class GenericValue
       GenericValue *e = static_cast<GenericValue *>(allocator.Malloc(count * sizeof(GenericValue)));
       SetElementsPointer(e);
       std::memcpy(e, values, count * sizeof(GenericValue));
-    }
-    else
+    } else
       SetElementsPointer(0);
     data_.a.size = data_.a.capacity = count;
   }
@@ -2683,8 +2681,7 @@ class GenericValue
       Member *m = static_cast<Member *>(allocator.Malloc(count * sizeof(Member)));
       SetMembersPointer(m);
       std::memcpy(m, members, count * sizeof(Member));
-    }
-    else
+    } else
       SetMembersPointer(0);
     data_.o.size = data_.o.capacity = count;
   }
@@ -2706,8 +2703,7 @@ class GenericValue
       data_.f.flags = kShortStringFlag;
       data_.ss.SetLength(s.length);
       str = data_.ss.str;
-    }
-    else
+    } else
     {
       data_.f.flags = kCopyStringFlag;
       data_.s.length = s.length;
@@ -3274,8 +3270,7 @@ inline GenericValue<Encoding, Allocator>::GenericValue(const GenericValue<Encodi
       {
         data_.f.flags = rhs.data_.f.flags;
         data_ = *reinterpret_cast<const Data *>(&rhs.data_);
-      }
-      else
+      } else
       {
         SetStringRaw(StringRef(rhs.GetString(), rhs.GetStringLength()), allocator);
       }

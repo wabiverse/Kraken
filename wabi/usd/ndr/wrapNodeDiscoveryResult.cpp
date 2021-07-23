@@ -44,123 +44,123 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string _Repr(const NdrNodeDiscoveryResult &x)
-{
-  std::vector<std::string> args = {TfPyRepr(x.identifier),
-                                   TfPyRepr(x.version),
-                                   TfPyRepr(x.name),
-                                   TfPyRepr(x.family),
-                                   TfPyRepr(x.discoveryType),
-                                   TfPyRepr(x.sourceType),
-                                   TfPyRepr(x.uri),
-                                   TfPyRepr(x.resolvedUri)};
+  static std::string _Repr(const NdrNodeDiscoveryResult &x)
+  {
+    std::vector<std::string> args = {TfPyRepr(x.identifier),
+                                     TfPyRepr(x.version),
+                                     TfPyRepr(x.name),
+                                     TfPyRepr(x.family),
+                                     TfPyRepr(x.discoveryType),
+                                     TfPyRepr(x.sourceType),
+                                     TfPyRepr(x.uri),
+                                     TfPyRepr(x.resolvedUri)};
 
 #define ADD_KW_ARG(kwArgs, propName) \
   kwArgs.push_back(TfStringPrintf(#propName "=%s", TfPyRepr(x.propName).c_str()));
 
-  if (!x.sourceCode.empty())
-  {
-    ADD_KW_ARG(args, sourceCode);
-  };
-  if (!x.metadata.empty())
-  {
-    ADD_KW_ARG(args, metadata);
-  };
-  if (!x.blindData.empty())
-  {
-    ADD_KW_ARG(args, blindData);
-  };
-  if (!x.subIdentifier.IsEmpty())
-  {
-    ADD_KW_ARG(args, subIdentifier);
-  };
-  if (!x.aliases.empty())
-  {
-    ADD_KW_ARG(args, aliases);
-  };
+    if (!x.sourceCode.empty())
+    {
+      ADD_KW_ARG(args, sourceCode);
+    };
+    if (!x.metadata.empty())
+    {
+      ADD_KW_ARG(args, metadata);
+    };
+    if (!x.blindData.empty())
+    {
+      ADD_KW_ARG(args, blindData);
+    };
+    if (!x.subIdentifier.IsEmpty())
+    {
+      ADD_KW_ARG(args, subIdentifier);
+    };
+    if (!x.aliases.empty())
+    {
+      ADD_KW_ARG(args, aliases);
+    };
 
 #undef ADD_KW_ARG
 
-  return TF_PY_REPR_PREFIX + TfStringPrintf("NodeDiscoveryResult(%s)", TfStringJoin(args, ", ").c_str());
-}
-
-// XXX: WBN if Tf provided this sort of converter for stl maps.
-template<typename MAP>
-struct MapConverter
-{
-  typedef MAP Map;
-  typedef typename Map::key_type Key;
-  typedef typename Map::mapped_type Value;
-
-  MapConverter()
-  {
-    boost::python::type_info info = boost::python::type_id<Map>();
-    boost::python::converter::registry::push_back(&convertible, &construct, info);
-
-    const boost::python::converter::registration *reg = boost::python::converter::registry::query(info);
-    if (reg == NULL || reg->m_to_python == NULL)
-    {
-      boost::python::to_python_converter<Map, MapConverter<Map>>();
-    }
-  }
-  static PyObject *convert(const Map &map)
-  {
-    boost::python::dict result;
-    for (const auto &entry : map)
-    {
-      result[entry.first] = entry.second;
-    }
-    return boost::python::incref(result.ptr());
+    return TF_PY_REPR_PREFIX + TfStringPrintf("NodeDiscoveryResult(%s)", TfStringJoin(args, ", ").c_str());
   }
 
-  static void *convertible(PyObject *obj_ptr)
+  // XXX: WBN if Tf provided this sort of converter for stl maps.
+  template<typename MAP>
+  struct MapConverter
   {
-    if (!PyDict_Check(obj_ptr))
+    typedef MAP Map;
+    typedef typename Map::key_type Key;
+    typedef typename Map::mapped_type Value;
+
+    MapConverter()
     {
-      return nullptr;
+      boost::python::type_info info = boost::python::type_id<Map>();
+      boost::python::converter::registry::push_back(&convertible, &construct, info);
+
+      const boost::python::converter::registration *reg = boost::python::converter::registry::query(info);
+      if (reg == NULL || reg->m_to_python == NULL)
+      {
+        boost::python::to_python_converter<Map, MapConverter<Map>>();
+      }
+    }
+    static PyObject *convert(const Map &map)
+    {
+      boost::python::dict result;
+      for (const auto &entry : map)
+      {
+        result[entry.first] = entry.second;
+      }
+      return boost::python::incref(result.ptr());
     }
 
-    boost::python::dict map = boost::python::extract<boost::python::dict>(obj_ptr);
-    boost::python::list keys = map.keys();
-    boost::python::list values = map.values();
-    for (int i = 0; i < len(keys); ++i)
+    static void *convertible(PyObject *obj_ptr)
     {
-
-      boost::python::object keyObj = keys[i];
-      if (!boost::python::extract<Key>(keyObj).check())
+      if (!PyDict_Check(obj_ptr))
       {
         return nullptr;
       }
 
-      boost::python::object valueObj = values[i];
-      if (!boost::python::extract<Value>(valueObj).check())
+      boost::python::dict map = boost::python::extract<boost::python::dict>(obj_ptr);
+      boost::python::list keys = map.keys();
+      boost::python::list values = map.values();
+      for (int i = 0; i < len(keys); ++i)
       {
-        return nullptr;
+
+        boost::python::object keyObj = keys[i];
+        if (!boost::python::extract<Key>(keyObj).check())
+        {
+          return nullptr;
+        }
+
+        boost::python::object valueObj = values[i];
+        if (!boost::python::extract<Value>(valueObj).check())
+        {
+          return nullptr;
+        }
+      }
+
+      return obj_ptr;
+    }
+    static void construct(PyObject *obj_ptr, boost::python::converter::rvalue_from_python_stage1_data *data)
+    {
+      void *storage = ((boost::python::converter::rvalue_from_python_storage<Map> *)data)->storage.bytes;
+      new (storage) Map();
+      data->convertible = storage;
+
+      Map &result = *((Map *)storage);
+
+      boost::python::dict map = boost::python::extract<boost::python::dict>(obj_ptr);
+      boost::python::list keys = map.keys();
+      boost::python::list values = map.values();
+      for (int i = 0; i < len(keys); ++i)
+      {
+
+        boost::python::object keyObj = keys[i];
+        boost::python::object valueObj = values[i];
+        result.emplace(boost::python::extract<Key>(keyObj), boost::python::extract<Value>(valueObj));
       }
     }
-
-    return obj_ptr;
-  }
-  static void construct(PyObject *obj_ptr, boost::python::converter::rvalue_from_python_stage1_data *data)
-  {
-    void *storage = ((boost::python::converter::rvalue_from_python_storage<Map> *)data)->storage.bytes;
-    new (storage) Map();
-    data->convertible = storage;
-
-    Map &result = *((Map *)storage);
-
-    boost::python::dict map = boost::python::extract<boost::python::dict>(obj_ptr);
-    boost::python::list keys = map.keys();
-    boost::python::list values = map.values();
-    for (int i = 0; i < len(keys); ++i)
-    {
-
-      boost::python::object keyObj = keys[i];
-      boost::python::object valueObj = values[i];
-      result.emplace(boost::python::extract<Key>(keyObj), boost::python::extract<Value>(valueObj));
-    }
-  }
-};
+  };
 
 }  // namespace
 

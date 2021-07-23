@@ -40,9 +40,9 @@ WABI_NAMESPACE_USING
 
 namespace
 {
-struct _DummyScope
-{
-};
+  struct _DummyScope
+  {
+  };
 }  // namespace
 
 void wrapTf_TestPyStaticTokens()

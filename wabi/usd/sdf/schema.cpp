@@ -335,14 +335,14 @@ static SdfAllowed _ValidateIsSceneDescriptionValue(const SdfSchemaBase &schema, 
   return schema.IsValidValue(value);
 }
 
-#define SDF_VALIDATE_WRAPPER(name_, expectedType_) \
+#define SDF_VALIDATE_WRAPPER(name_, expectedType_)                                      \
   static SdfAllowed _Validate##name_(const SdfSchemaBase &schema, const VtValue &value) \
-  { \
-    if (!value.IsHolding<expectedType_>()) \
-    { \
-      return SdfAllowed("Expected value of type " #expectedType_); \
-    } \
-    return SdfSchemaBase::IsValid##name_(value.Get<expectedType_>()); \
+  {                                                                                     \
+    if (!value.IsHolding<expectedType_>())                                              \
+    {                                                                                   \
+      return SdfAllowed("Expected value of type " #expectedType_);                      \
+    }                                                                                   \
+    return SdfSchemaBase::IsValid##name_(value.Get<expectedType_>());                   \
   }
 
 SDF_VALIDATE_WRAPPER(AttributeConnectionPath, SdfPath);
@@ -1047,8 +1047,7 @@ SdfAllowed SdfSchemaBase::IsValidValue(const VtValue &value) const
       if (SdfAllowed valueStatus = IsValidValue(it->second))
       {
         // Value is OK, so do nothing.
-      }
-      else
+      } else
       {
         const std::string error = TfStringPrintf(
           "Value for key '%s' does not have a valid scene "
@@ -1058,8 +1057,7 @@ SdfAllowed SdfSchemaBase::IsValidValue(const VtValue &value) const
         return SdfAllowed(error);
       }
     }
-  }
-  else if (!FindType(value))
+  } else if (!FindType(value))
   {
     return SdfAllowed(
       "Value does not have a valid scene description type "
@@ -1197,8 +1195,7 @@ SdfAllowed SdfSchemaBase::IsValidAttributeConnectionPath(const SdfPath &path)
   if (path.IsAbsolutePath() && (path.IsPropertyPath() || path.IsPrimPath()))
   {
     return true;
-  }
-  else
+  } else
   {
     return SdfAllowed(
       TfStringPrintf("Connection paths must be absolute prim or "
@@ -1218,8 +1215,7 @@ SdfAllowed SdfSchemaBase::IsValidRelationshipTargetPath(const SdfPath &path)
   if (path.IsAbsolutePath() && (path.IsPropertyPath() || path.IsPrimPath() || path.IsMapperPath()))
   {
     return true;
-  }
-  else
+  } else
   {
     return SdfAllowed(
       "Relationship target paths must be absolute prim, "
@@ -1290,8 +1286,7 @@ static bool _AccumulateTypedValues(const JsValue &value, std::deque<Value> *valu
       values->push_back(v);
     }
     return true;
-  }
-  else if (value.Is<T>())
+  } else if (value.Is<T>())
   {
     values->push_back(value.Get<T>());
     return true;
@@ -1313,8 +1308,7 @@ static void _AddValuesToValueContext(std::deque<Value> *values,
       context->AppendValue(values->front());
       values->pop_front();
     }
-  }
-  else if (static_cast<size_t>(level) < context->valueTupleDimensions.size)
+  } else if (static_cast<size_t>(level) < context->valueTupleDimensions.size)
   {
     context->BeginTuple();
     for (size_t i = 0; i < context->valueTupleDimensions.d[level]; i++)
@@ -1322,8 +1316,7 @@ static void _AddValuesToValueContext(std::deque<Value> *values,
       _AddValuesToValueContext(values, context, level + 1);
     }
     context->EndTuple();
-  }
-  else if (!values->empty())
+  } else if (!values->empty())
   {
     context->AppendValue(values->front());
     values->pop_front();
@@ -1406,24 +1399,21 @@ static VtValue _GetDefaultValueForListOp(const std::string &valueTypeName)
   if (valueTypeName == "intlistop")
   {
     return VtValue(SdfIntListOp());
-  }
-  else if (valueTypeName == "int64listop")
+  } else if (valueTypeName == "int64listop")
   {
     return VtValue(SdfInt64ListOp());
   }
   if (valueTypeName == "uintlistop")
   {
     return VtValue(SdfUIntListOp());
-  }
-  else if (valueTypeName == "uint64listop")
+  } else if (valueTypeName == "uint64listop")
   {
     return VtValue(SdfUInt64ListOp());
   }
   if (valueTypeName == "stringlistop")
   {
     return VtValue(SdfStringListOp());
-  }
-  else if (valueTypeName == "tokenlistop")
+  } else if (valueTypeName == "tokenlistop")
   {
     return VtValue(SdfTokenListOp());
   }
@@ -1471,8 +1461,7 @@ static VtValue _GetDefaultMetadataValue(const SdfSchemaBase &schema,
     if (defaultValue.IsNull())
     {
       return valueType.GetDefaultValue();
-    }
-    else
+    } else
     {
       std::string errorText;
       const VtValue parsedValue = _ParseValue(valueTypeName, defaultValue, &errorText);
@@ -1575,8 +1564,7 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
               "(at \"%s\" in plugin \"%s\")",
               fieldName.GetText(),
               plug->GetPath().c_str());
-          }
-          else
+          } else
           {
             TF_CODING_ERROR(
               "Error parsing default value for "
@@ -1585,8 +1573,7 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
               plug->GetPath().c_str());
           }
           continue;
-        }
-        else
+        } else
         {
           // We can drop errors that had been issued from
           // _GetDefaultMetadataValue (e.g., due to this metadata
@@ -1616,8 +1603,7 @@ const std::vector<const SdfSchemaBase::FieldDefinition *> SdfSchemaBase::_Update
         {
           const vector<string> vec = val.GetArrayOf<string>();
           appliesTo.insert(vec.begin(), vec.end());
-        }
-        else if (val.Is<string>())
+        } else if (val.Is<string>())
         {
           appliesTo.insert(val.Get<string>());
         }

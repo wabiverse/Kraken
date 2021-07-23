@@ -79,8 +79,7 @@ SdfLayerOffset SdfLayerOffset::GetInverse() const
   if (_scale != 0.0)
   {
     newScale = 1.0 / _scale;
-  }
-  else
+  } else
   {
     newScale = std::numeric_limits<double>::infinity();
   }
@@ -124,13 +123,11 @@ bool SdfLayerOffset::operator<(const SdfLayerOffset &rhs) const
     if (GfIsClose(_offset, rhs._offset, EPSILON))
     {
       return false;
-    }
-    else
+    } else
     {
       return _offset < rhs._offset;
     }
-  }
-  else
+  } else
   {
     return _scale < rhs._scale;
   }

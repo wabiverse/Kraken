@@ -57,40 +57,40 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static GfVec3d _NoTranslation()
-{
-  return GfVec3d(0, 0, 0);
-}
-static GfVec3d _IdentityScale()
-{
-  return GfVec3d(1, 1, 1);
-}
-static GfRotation _NoRotation()
-{
-  return GfRotation(GfVec3d::XAxis(), 0.0);
-}
+  static GfVec3d _NoTranslation()
+  {
+    return GfVec3d(0, 0, 0);
+  }
+  static GfVec3d _IdentityScale()
+  {
+    return GfVec3d(1, 1, 1);
+  }
+  static GfRotation _NoRotation()
+  {
+    return GfRotation(GfVec3d::XAxis(), 0.0);
+  }
 
-static string _Repr(GfTransform const &self)
-{
-  string prefix = TF_PY_REPR_PREFIX + "Transform(";
-  string indent(prefix.size(), ' ');
+  static string _Repr(GfTransform const &self)
+  {
+    string prefix = TF_PY_REPR_PREFIX + "Transform(";
+    string indent(prefix.size(), ' ');
 
-  // Use keyword args for clarity.
-  // Only use args that do not match the defaults.
-  vector<string> kwargs;
-  if (self.GetTranslation() != _NoTranslation())
-    kwargs.push_back("translation = " + TfPyRepr(self.GetTranslation()));
-  if (self.GetRotation() != _NoRotation())
-    kwargs.push_back("rotation = " + TfPyRepr(self.GetRotation()));
-  if (self.GetScale() != _IdentityScale())
-    kwargs.push_back("scale = " + TfPyRepr(self.GetScale()));
-  if (self.GetPivotPosition() != _NoTranslation())
-    kwargs.push_back("pivotPosition = " + TfPyRepr(self.GetPivotPosition()));
-  if (self.GetPivotOrientation() != _NoRotation())
-    kwargs.push_back("pivotOrientation = " + TfPyRepr(self.GetPivotOrientation()));
+    // Use keyword args for clarity.
+    // Only use args that do not match the defaults.
+    vector<string> kwargs;
+    if (self.GetTranslation() != _NoTranslation())
+      kwargs.push_back("translation = " + TfPyRepr(self.GetTranslation()));
+    if (self.GetRotation() != _NoRotation())
+      kwargs.push_back("rotation = " + TfPyRepr(self.GetRotation()));
+    if (self.GetScale() != _IdentityScale())
+      kwargs.push_back("scale = " + TfPyRepr(self.GetScale()));
+    if (self.GetPivotPosition() != _NoTranslation())
+      kwargs.push_back("pivotPosition = " + TfPyRepr(self.GetPivotPosition()));
+    if (self.GetPivotOrientation() != _NoRotation())
+      kwargs.push_back("pivotOrientation = " + TfPyRepr(self.GetPivotOrientation()));
 
-  return prefix + TfStringJoin(kwargs, string(", \n" + indent).c_str()) + ")";
-}
+    return prefix + TfStringJoin(kwargs, string(", \n" + indent).c_str()) + ")";
+  }
 
 }  // anonymous namespace
 
@@ -163,8 +163,9 @@ void wrapTransform()
                   make_function(&This::GetRotation, return_value_policy<return_by_value>()),
                   &This::SetRotation)
 
-    .add_property(
-      "scale", make_function(&This::GetScale, return_value_policy<return_by_value>()), &This::SetScale)
+    .add_property("scale",
+                  make_function(&This::GetScale, return_value_policy<return_by_value>()),
+                  &This::SetScale)
 
     .add_property("pivotPosition",
                   make_function(&This::GetPivotPosition, return_value_policy<return_by_value>()),

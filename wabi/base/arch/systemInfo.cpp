@@ -90,30 +90,30 @@ std::string ArchGetCwd()
 namespace
 {
 
-// Getting the executable path requires a dynamically allocated buffer
-// on all platforms.  This helper function handles the allocation.
-static std::string _DynamicSizedRead(size_t initialSize,
-                                     const std::function<bool(char *, size_t *)> &callback)
-{
-  // Make a buffer for the data.
-  std::unique_ptr<char[]> buffer;
-  buffer.reset(new char[initialSize]);
-
-  // Repeatedly invoke the callback with our buffer until it's big enough.
-  size_t size = initialSize;
-  while (!callback(buffer.get(), &size))
+  // Getting the executable path requires a dynamically allocated buffer
+  // on all platforms.  This helper function handles the allocation.
+  static std::string _DynamicSizedRead(size_t initialSize,
+                                       const std::function<bool(char *, size_t *)> &callback)
   {
-    if (size == std::numeric_limits<size_t>::max())
-    {
-      // callback is never going to succeed.
-      return std::string();
-    }
-    buffer.reset(new char[size]);
-  }
+    // Make a buffer for the data.
+    std::unique_ptr<char[]> buffer;
+    buffer.reset(new char[initialSize]);
 
-  // Make a string.
-  return std::string(buffer.get());
-}
+    // Repeatedly invoke the callback with our buffer until it's big enough.
+    size_t size = initialSize;
+    while (!callback(buffer.get(), &size))
+    {
+      if (size == std::numeric_limits<size_t>::max())
+      {
+        // callback is never going to succeed.
+        return std::string();
+      }
+      buffer.reset(new char[size]);
+    }
+
+    // Make a string.
+    return std::string(buffer.get());
+  }
 
 }  // namespace
 
@@ -132,23 +132,20 @@ std::string ArchGetExecutablePath()
         "executable path");
       *size = std::numeric_limits<size_t>::max();
       return false;
-    }
-    else if (static_cast<size_t>(n) >= *size)
+    } else if (static_cast<size_t>(n) >= *size)
     {
       // Find out how much space we need.
       struct stat sb;
       if (lstat("/proc/self/exe", &sb) == 0)
       {
         *size = sb.st_size + 1;
-      }
-      else
+      } else
       {
         // Try iterating on the size.
         *size *= 2;
       }
       return false;
-    }
-    else
+    } else
     {
       buffer[n] = '\0';
       return true;
@@ -165,8 +162,7 @@ std::string ArchGetExecutablePath()
       // We're told the correct size.
       *size = bufsize;
       return false;
-    }
-    else
+    } else
     {
       return true;
     }
@@ -185,14 +181,12 @@ std::string ArchGetExecutablePath()
         "executable path");
       *size = std::numeric_limits<size_t>::max();
       return false;
-    }
-    else if (n >= nSize)
+    } else if (n >= nSize)
     {
       // We have to iterate to find a suitable size.
       *size *= 2;
       return false;
-    }
-    else
+    } else
     {
       return true;
     }

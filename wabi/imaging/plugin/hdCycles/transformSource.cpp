@@ -27,57 +27,57 @@
 namespace
 {
 
-///
-/// Hashable helper class for motion sample overlap elimination
-///
-struct HdCyclesIndexedTimeSample
-{
-  using index_type = ccl::uint;
-  using time_type = float;
-
-  static constexpr time_type epsilon = static_cast<time_type>(1e-5);
-  static constexpr index_type resolution = static_cast<index_type>(static_cast<time_type>(1.0) / epsilon);
-
-  HdCyclesIndexedTimeSample(index_type _index, time_type _time)
-    : index{_index},
-      time{_time}
+  ///
+  /// Hashable helper class for motion sample overlap elimination
+  ///
+  struct HdCyclesIndexedTimeSample
   {
-    assert(time >= static_cast<time_type>(-1.0) && time <= static_cast<time_type>(1.0));
+    using index_type = ccl::uint;
+    using time_type = float;
+
+    static constexpr time_type epsilon = static_cast<time_type>(1e-5);
+    static constexpr index_type resolution = static_cast<index_type>(static_cast<time_type>(1.0) / epsilon);
+
+    HdCyclesIndexedTimeSample(index_type _index, time_type _time)
+      : index{_index},
+        time{_time}
+    {
+      assert(time >= static_cast<time_type>(-1.0) && time <= static_cast<time_type>(1.0));
+    }
+
+    std::size_t Hash() const
+    {
+      return static_cast<size_t>(resolution + time * resolution);
+    }
+
+    index_type index;
+    time_type time;
+  };
+
+  bool operator<(const HdCyclesIndexedTimeSample &lhs, const HdCyclesIndexedTimeSample &rhs)
+  {
+    return lhs.time < rhs.time;
   }
 
-  std::size_t Hash() const
+  bool operator==(const HdCyclesIndexedTimeSample &lhs, const HdCyclesIndexedTimeSample &rhs)
   {
-    return static_cast<size_t>(resolution + time * resolution);
+    return std::abs(lhs.time - rhs.time) <= HdCyclesIndexedTimeSample::epsilon;
   }
-
-  index_type index;
-  time_type time;
-};
-
-bool operator<(const HdCyclesIndexedTimeSample &lhs, const HdCyclesIndexedTimeSample &rhs)
-{
-  return lhs.time < rhs.time;
-}
-
-bool operator==(const HdCyclesIndexedTimeSample &lhs, const HdCyclesIndexedTimeSample &rhs)
-{
-  return std::abs(lhs.time - rhs.time) <= HdCyclesIndexedTimeSample::epsilon;
-}
 
 }  // namespace
 
 namespace std
 {
 
-template<>
-struct hash<HdCyclesIndexedTimeSample>
-{
-  using This = HdCyclesIndexedTimeSample;
-  std::size_t operator()(const This &s) const noexcept
+  template<>
+  struct hash<HdCyclesIndexedTimeSample>
   {
-    return s.Hash();
-  }
-};
+    using This = HdCyclesIndexedTimeSample;
+    std::size_t operator()(const This &s) const noexcept
+    {
+      return s.Hash();
+    }
+  };
 
 }  // namespace std
 
@@ -86,63 +86,63 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-template<typename TYPE, unsigned int CAPACITY>
-HdTimeSampleArray<TYPE, CAPACITY> HdCyclesTimeSamplesRemoveOverlaps(
-  const HdTimeSampleArray<TYPE, CAPACITY> &samples)
-{
-  if (samples.count == 1)
+  template<typename TYPE, unsigned int CAPACITY>
+  HdTimeSampleArray<TYPE, CAPACITY> HdCyclesTimeSamplesRemoveOverlaps(
+    const HdTimeSampleArray<TYPE, CAPACITY> &samples)
   {
-    return samples;
+    if (samples.count == 1)
+    {
+      return samples;
+    }
+
+    // 2x number of buckets to cover negative and positive time samples
+    std::unordered_set<HdCyclesIndexedTimeSample> unique{2 * HdCyclesIndexedTimeSample::resolution};
+    for (unsigned int i = 0; i < samples.count; ++i)
+    {
+      using index_type = HdCyclesIndexedTimeSample::index_type;
+      unique.insert(HdCyclesIndexedTimeSample{static_cast<index_type>(i), samples.times[i]});
+    }
+
+    TfSmallVector<HdCyclesIndexedTimeSample, CAPACITY> sorted{unique.begin(), unique.end()};
+    std::sort(sorted.begin(), sorted.end());
+
+    HdTimeSampleArray<TYPE, CAPACITY> result;
+    result.Resize(static_cast<unsigned int>(unique.size()));
+
+    using size_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::size_type;
+    for (size_type i = 0; i < sorted.size(); ++i)
+    {
+      result.times[i] = sorted[i].time;
+      result.values[i] = samples.values[sorted[i].index];
+    }
+
+    return result;
   }
 
-  // 2x number of buckets to cover negative and positive time samples
-  std::unordered_set<HdCyclesIndexedTimeSample> unique{2 * HdCyclesIndexedTimeSample::resolution};
-  for (unsigned int i = 0; i < samples.count; ++i)
+  template<typename TYPE, unsigned int CAPACITY>
+  bool HdCyclesAreTimeSamplesUniformlyDistributed(const HdTimeSampleArray<TYPE, CAPACITY> &array)
   {
-    using index_type = HdCyclesIndexedTimeSample::index_type;
-    unique.insert(HdCyclesIndexedTimeSample{static_cast<index_type>(i), samples.times[i]});
-  }
+    if (array.count < 3)
+    {
+      return true;
+    }
 
-  TfSmallVector<HdCyclesIndexedTimeSample, CAPACITY> sorted{unique.begin(), unique.end()};
-  std::sort(sorted.begin(), sorted.end());
+    using size_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::size_type;
+    using value_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::value_type;
 
-  HdTimeSampleArray<TYPE, CAPACITY> result;
-  result.Resize(static_cast<unsigned int>(unique.size()));
+    // reference segment - samples must be sorted in ascending order
+    const value_type ref_segment = array.times[1] - array.times[0];
+    for (size_type i = 2; i < array.count; ++i)
+    {
+      auto l = array.times[i] - array.times[i - 1];
+      if (std::abs(l - ref_segment) > HdCyclesIndexedTimeSample::epsilon)
+      {
+        return false;
+      }
+    }
 
-  using size_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::size_type;
-  for (size_type i = 0; i < sorted.size(); ++i)
-  {
-    result.times[i] = sorted[i].time;
-    result.values[i] = samples.values[sorted[i].index];
-  }
-
-  return result;
-}
-
-template<typename TYPE, unsigned int CAPACITY>
-bool HdCyclesAreTimeSamplesUniformlyDistributed(const HdTimeSampleArray<TYPE, CAPACITY> &array)
-{
-  if (array.count < 3)
-  {
     return true;
   }
-
-  using size_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::size_type;
-  using value_type = typename decltype(HdTimeSampleArray<TYPE, CAPACITY>::times)::value_type;
-
-  // reference segment - samples must be sorted in ascending order
-  const value_type ref_segment = array.times[1] - array.times[0];
-  for (size_type i = 2; i < array.count; ++i)
-  {
-    auto l = array.times[i] - array.times[i - 1];
-    if (std::abs(l - ref_segment) > HdCyclesIndexedTimeSample::epsilon)
-    {
-      return false;
-    }
-  }
-
-  return true;
-}
 
 }  // namespace
 
@@ -314,8 +314,7 @@ bool HdCyclesTransformSource::Resolve()
   if (requires_resampling)
   {
     motion_transforms = ResampleUniform(m_samples, num_req_samples);
-  }
-  else
+  } else
   {
     motion_transforms.Resize(num_req_samples);
     for (unsigned int i = 0; i < num_req_samples; ++i)

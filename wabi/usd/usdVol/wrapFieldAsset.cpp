@@ -50,46 +50,47 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateFilePathAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
+  static UsdAttribute _CreateFilePathAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
+  }
 
-static UsdAttribute _CreateFieldNameAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFieldNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateFieldNameAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFieldNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static UsdAttribute _CreateFieldIndexAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFieldIndexAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
-}
+  static UsdAttribute _CreateFieldIndexAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFieldIndexAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+  }
 
-static UsdAttribute _CreateFieldDataTypeAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFieldDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateFieldDataTypeAttr(UsdVolFieldAsset &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFieldDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateVectorDataRoleHintAttr(UsdVolFieldAsset &self,
-                                                  object defaultVal,
-                                                  bool writeSparsely)
-{
-  return self.CreateVectorDataRoleHintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                           writeSparsely);
-}
+  static UsdAttribute _CreateVectorDataRoleHintAttr(UsdVolFieldAsset &self,
+                                                    object defaultVal,
+                                                    bool writeSparsely)
+  {
+    return self.CreateVectorDataRoleHintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                             writeSparsely);
+  }
 
-static std::string _Repr(const UsdVolFieldAsset &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdVol.FieldAsset(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdVolFieldAsset &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdVol.FieldAsset(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -169,7 +170,7 @@ void wrapUsdVolFieldAsset()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

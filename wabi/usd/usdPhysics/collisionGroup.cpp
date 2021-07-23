@@ -33,101 +33,90 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsCollisionGroup,
-        TfType::Bases< UsdTyped > >();
-    
-    // Register the usd prim typename as an alias under UsdSchemaBase. This
-    // enables one to call
-    // TfType::Find<UsdSchemaBase>().FindDerivedByName("PhysicsCollisionGroup")
-    // to find TfType<UsdPhysicsCollisionGroup>, which is how IsA queries are
-    // answered.
-    TfType::AddAlias<UsdSchemaBase, UsdPhysicsCollisionGroup>("PhysicsCollisionGroup");
+  TfType::Define<UsdPhysicsCollisionGroup, TfType::Bases<UsdTyped>>();
+
+  // Register the usd prim typename as an alias under UsdSchemaBase. This
+  // enables one to call
+  // TfType::Find<UsdSchemaBase>().FindDerivedByName("PhysicsCollisionGroup")
+  // to find TfType<UsdPhysicsCollisionGroup>, which is how IsA queries are
+  // answered.
+  TfType::AddAlias<UsdSchemaBase, UsdPhysicsCollisionGroup>("PhysicsCollisionGroup");
 }
 
 /* virtual */
 UsdPhysicsCollisionGroup::~UsdPhysicsCollisionGroup()
+{}
+
+/* static */
+UsdPhysicsCollisionGroup UsdPhysicsCollisionGroup::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsCollisionGroup();
+  }
+  return UsdPhysicsCollisionGroup(stage->GetPrimAtPath(path));
 }
 
 /* static */
-UsdPhysicsCollisionGroup
-UsdPhysicsCollisionGroup::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsCollisionGroup UsdPhysicsCollisionGroup::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsCollisionGroup();
-    }
-    return UsdPhysicsCollisionGroup(stage->GetPrimAtPath(path));
-}
-
-/* static */
-UsdPhysicsCollisionGroup
-UsdPhysicsCollisionGroup::Define(
-    const UsdStagePtr &stage, const SdfPath &path)
-{
-    static TfToken usdPrimTypeName("PhysicsCollisionGroup");
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsCollisionGroup();
-    }
-    return UsdPhysicsCollisionGroup(
-        stage->DefinePrim(path, usdPrimTypeName));
+  static TfToken usdPrimTypeName("PhysicsCollisionGroup");
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsCollisionGroup();
+  }
+  return UsdPhysicsCollisionGroup(stage->DefinePrim(path, usdPrimTypeName));
 }
 
 /* virtual */
 UsdSchemaKind UsdPhysicsCollisionGroup::GetSchemaKind() const
 {
-    return UsdPhysicsCollisionGroup::schemaKind;
+  return UsdPhysicsCollisionGroup::schemaKind;
 }
 
 /* static */
-const TfType &
-UsdPhysicsCollisionGroup::GetStaticTfType()
+const TfType &UsdPhysicsCollisionGroup::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsCollisionGroup>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsCollisionGroup>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsCollisionGroup::IsTypedSchema()
+bool UsdPhysicsCollisionGroup::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsCollisionGroup::GetTfType() const
+const TfType &UsdPhysicsCollisionGroup::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
-UsdRelationship
-UsdPhysicsCollisionGroup::GetFilteredGroupsRel() const
+UsdRelationship UsdPhysicsCollisionGroup::GetFilteredGroupsRel() const
 {
-    return GetPrim().GetRelationship(UsdPhysicsTokens->physicsFilteredGroups);
+  return GetPrim().GetRelationship(UsdPhysicsTokens->physicsFilteredGroups);
 }
 
-UsdRelationship
-UsdPhysicsCollisionGroup::CreateFilteredGroupsRel() const
+UsdRelationship UsdPhysicsCollisionGroup::CreateFilteredGroupsRel() const
 {
-    return GetPrim().CreateRelationship(UsdPhysicsTokens->physicsFilteredGroups,
-                       /* custom = */ false);
+  return GetPrim().CreateRelationship(UsdPhysicsTokens->physicsFilteredGroups,
+                                      /* custom = */ false);
 }
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsCollisionGroup::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdPhysicsCollisionGroup::GetSchemaAttributeNames(bool includeInherited)
 {
-    static TfTokenVector localNames;
-    static TfTokenVector allNames =
-        UsdTyped::GetSchemaAttributeNames(true);
+  static TfTokenVector localNames;
+  static TfTokenVector allNames = UsdTyped::GetSchemaAttributeNames(true);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END
@@ -144,10 +133,9 @@ WABI_NAMESPACE_END
 WABI_NAMESPACE_BEGIN
 
 
-UsdCollectionAPI
-UsdPhysicsCollisionGroup::GetCollidersCollectionAPI() const
+UsdCollectionAPI UsdPhysicsCollisionGroup::GetCollidersCollectionAPI() const
 {
-    return UsdCollectionAPI(GetPrim(), UsdPhysicsTokens->colliders);
+  return UsdCollectionAPI(GetPrim(), UsdPhysicsTokens->colliders);
 }
 
 WABI_NAMESPACE_END

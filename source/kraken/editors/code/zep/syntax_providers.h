@@ -3,7 +3,7 @@
 namespace Zep
 {
 
-class ZepEditor;
-void RegisterSyntaxProviders(ZepEditor &editor);
+  class ZepEditor;
+  void RegisterSyntaxProviders(ZepEditor &editor);
 
 }  // namespace Zep

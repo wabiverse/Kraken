@@ -187,18 +187,18 @@ PcpMapExpression::VariableUniquePtr PcpMapExpression::NewVariable(Value &&initia
 namespace
 {
 
-template<class Key>
-struct _KeyHashEq
-{
-  inline bool equal(const Key &l, const Key &r) const
+  template<class Key>
+  struct _KeyHashEq
   {
-    return l == r;
-  }
-  inline size_t hash(const Key &k) const
-  {
-    return k.GetHash();
-  }
-};
+    inline bool equal(const Key &l, const Key &r) const
+    {
+      return l == r;
+    }
+    inline size_t hash(const Key &k) const
+    {
+      return k.GetHash();
+    }
+  };
 
 }  // namespace
 
@@ -368,8 +368,7 @@ void PcpMapExpression::_Node::_Invalidate()
       tbb::spin_mutex::scoped_lock lock(dep->_mutex);
       dep->_Invalidate();
     }
-  }
-  else
+  } else
   {
     // This node is already invalid so dependent nodes are already invalid.
   }

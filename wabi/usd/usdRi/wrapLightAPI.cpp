@@ -50,59 +50,65 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateRiSamplingFixedSampleCountAttr(UsdRiLightAPI &self,
-                                                          object defaultVal,
-                                                          bool writeSparsely)
-{
-  return self.CreateRiSamplingFixedSampleCountAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
-                                                   writeSparsely);
-}
+  static UsdAttribute _CreateRiSamplingFixedSampleCountAttr(UsdRiLightAPI &self,
+                                                            object defaultVal,
+                                                            bool writeSparsely)
+  {
+    return self.CreateRiSamplingFixedSampleCountAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
+                                                     writeSparsely);
+  }
 
-static UsdAttribute _CreateRiSamplingImportanceMultiplierAttr(UsdRiLightAPI &self,
-                                                              object defaultVal,
-                                                              bool writeSparsely)
-{
-  return self.CreateRiSamplingImportanceMultiplierAttr(
-    UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRiSamplingImportanceMultiplierAttr(UsdRiLightAPI &self,
+                                                                object defaultVal,
+                                                                bool writeSparsely)
+  {
+    return self.CreateRiSamplingImportanceMultiplierAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
+  }
 
-static UsdAttribute _CreateRiIntensityNearDistAttr(UsdRiLightAPI &self,
+  static UsdAttribute _CreateRiIntensityNearDistAttr(UsdRiLightAPI &self,
+                                                     object defaultVal,
+                                                     bool writeSparsely)
+  {
+    return self.CreateRiIntensityNearDistAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                              writeSparsely);
+  }
+
+  static UsdAttribute _CreateRiLightGroupAttr(UsdRiLightAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRiLightGroupAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String),
+                                       writeSparsely);
+  }
+
+  static UsdAttribute _CreateRiShadowThinShadowAttr(UsdRiLightAPI &self,
+                                                    object defaultVal,
+                                                    bool writeSparsely)
+  {
+    return self.CreateRiShadowThinShadowAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                             writeSparsely);
+  }
+
+  static UsdAttribute _CreateRiTraceLightPathsAttr(UsdRiLightAPI &self,
                                                    object defaultVal,
                                                    bool writeSparsely)
-{
-  return self.CreateRiIntensityNearDistAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateRiTraceLightPathsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                             writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateRiLightGroupAttr(UsdRiLightAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiLightGroupAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String),
-                                     writeSparsely);
-}
-
-static UsdAttribute _CreateRiShadowThinShadowAttr(UsdRiLightAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiShadowThinShadowAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                           writeSparsely);
-}
-
-static UsdAttribute _CreateRiTraceLightPathsAttr(UsdRiLightAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiTraceLightPathsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                          writeSparsely);
-}
-
-static std::string _Repr(const UsdRiLightAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.LightAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiLightAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.LightAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -190,7 +196,7 @@ void wrapUsdRiLightAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

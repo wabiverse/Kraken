@@ -34,11 +34,11 @@
 
 #ifndef WABI_BASE_GF_{{UPPER(QUAT)[2 : ] } } _H
 #define WABI_BASE_GF_ \
-  { \
-    { \
+  {                   \
+    {                 \
       UPPER(QUAT)[2:] \
-    } \
-  } \
+    }                 \
+  }                   \
   _H
 
 /// \file gf/quat{{ SUFFIX }}.h
@@ -165,7 +165,7 @@ class
   }
   /// {{ "Implicitly convert" if ALLOW_IMPLICIT_CONVERSION(S, SCL) else "Construct" }} from {{
   /// QUATNAME(S) }}.
-  GF_API{{ '' if ALLOW_IMPLICIT_CONVERSION(S, SCL) else 'explicit '}} {{QUAT}}(class {
+  GF_API{{ '' if ALLOW_IMPLICIT_CONVERSION (S, SCL) else 'explicit '}} {{QUAT}}(class {
     {
       QUATNAME(S)
     }

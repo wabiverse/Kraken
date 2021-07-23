@@ -94,14 +94,15 @@ UsdAttribute UsdGeomXformable::CreateXformOpOrderAttr(VtValue const &defaultValu
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -194,8 +195,7 @@ UsdGeomXformOp UsdGeomXformable::AddXformOp(UsdGeomXformOp::Type const opType,
     }
 
     result = UsdGeomXformOp(xformOpAttr, isInverseOp);
-  }
-  else
+  } else
   {
     result = UsdGeomXformOp(GetPrim(), opType, precision, opSuffix, isInverseOp);
   }
@@ -204,8 +204,7 @@ UsdGeomXformOp UsdGeomXformable::AddXformOp(UsdGeomXformOp::Type const opType,
   {
     xformOpOrder.push_back(result.GetOpName());
     CreateXformOpOrderAttr().Set(xformOpOrder);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR(
       "Unable to add xform op of type %s and precision %s on "
@@ -338,8 +337,7 @@ bool UsdGeomXformable::SetResetXformStack(bool resetXformStack) const
       newOpOrderVec[i + 1] = opOrderVec[i];
 
     result = CreateXformOpOrderAttr().Set(newOpOrderVec);
-  }
-  else
+  } else
   {
     VtTokenArray newOpOrderVec;
     bool foundResetXformStack = false;
@@ -349,8 +347,7 @@ bool UsdGeomXformable::SetResetXformStack(bool resetXformStack) const
       {
         foundResetXformStack = true;
         newOpOrderVec.clear();
-      }
-      else if (foundResetXformStack)
+      } else if (foundResetXformStack)
       {
         newOpOrderVec.push_back(opOrderVec[i]);
       }
@@ -359,8 +356,7 @@ bool UsdGeomXformable::SetResetXformStack(bool resetXformStack) const
     if (foundResetXformStack)
     {
       result = CreateXformOpOrderAttr().Set(newOpOrderVec);
-    }
-    else
+    } else
     {
       // This is a no-op if "!resetXformStack!" isn't present in
       // xformOpOrder.
@@ -395,8 +391,7 @@ bool UsdGeomXformable::SetXformOpOrder(vector<UsdGeomXformOp> const &orderedXfor
     if (it->GetAttr().GetPrim() == GetPrim())
     {
       ops.push_back(it->GetOpName());
-    }
-    else
+    } else
     {
       TF_CODING_ERROR(
         "XformOp attribute <%s> does not belong to schema "
@@ -434,8 +429,7 @@ vector<UsdGeomXformOp> UsdGeomXformable::_GetOrderedXformOps(bool *resetsXformSt
   if (resetsXformStack)
   {
     *resetsXformStack = false;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("resetsXformStack is NULL.");
   }
@@ -469,8 +463,7 @@ vector<UsdGeomXformOp> UsdGeomXformable::_GetOrderedXformOps(bool *resetsXformSt
         *resetsXformStack = true;
       }
       result.clear();
-    }
-    else
+    } else
     {
       bool isInverseOp = false;
       UsdAttribute attr = UsdGeomXformOp::_GetXformOpAttr(thisPrim, opName, &isInverseOp);
@@ -481,8 +474,7 @@ vector<UsdGeomXformOp> UsdGeomXformable::_GetOrderedXformOps(bool *resetsXformSt
         if (m.IsClean())
         {
           result.emplace_back(std::move(query), isInverseOp, UsdGeomXformOp::_ValidAttributeTagType{});
-        }
-        else
+        } else
         {
           // Skip invalid xform ops that appear in xformOpOrder, but
           // issue a warning.
@@ -494,16 +486,14 @@ vector<UsdGeomXformOp> UsdGeomXformable::_GetOrderedXformOps(bool *resetsXformSt
             opName.GetText(),
             GetPrim().GetPath().GetText());
         }
-      }
-      else
+      } else
       {
         if (attr)
         {
           // Only add valid xform ops.  We pass _ValidAttributeTag here
           // since we've pre-checked the validity of attr above.
           result.emplace_back(attr, isInverseOp, UsdGeomXformOp::_ValidAttributeTagType{});
-        }
-        else
+        } else
         {
           // Skip invalid xform ops that appear in xformOpOrder, but
           // issue a warning.
@@ -574,8 +564,7 @@ bool UsdGeomXformable::TransformMightBeTimeVarying() const
     if (opName == UsdGeomXformOpTypes->resetXformStack)
     {
       return false;
-    }
-    else
+    } else
     {
       bool isInverseOp = false;
       if (UsdAttribute attr = UsdGeomXformOp::_GetXformOpAttr(GetPrim(), opName, &isInverseOp))
@@ -707,8 +696,7 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
   if (transform)
   {
     *transform = GfMatrix4d(1.);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("transform is NULL.");
     return false;
@@ -717,8 +705,7 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
   if (resetsXformStack)
   {
     *resetsXformStack = false;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("resetsXformStack is NULL.");
     return false;
@@ -756,8 +743,7 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
     {
       *resetsXformStack = true;
       break;
-    }
-    else
+    } else
     {
       bool isInverseOp = false;
       if (UsdAttribute attr = UsdGeomXformOp::_GetXformOpAttr(GetPrim(), opName, &isInverseOp))
@@ -773,8 +759,7 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
             (*transform) *= opTransform;
           }
         }
-      }
-      else
+      } else
       {
         // Skip invalid xform ops that appear in xformOpOrder, but issue
         // a warning.
@@ -801,8 +786,7 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
   if (resetsXformStack)
   {
     *resetsXformStack = GetResetXformStack();
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("resetsXformStack is NULL.");
   }
@@ -847,8 +831,7 @@ bool UsdGeomXformable::GetLocalTransformation(GfMatrix4d *transform,
   {
     *transform = xform;
     return true;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("'transform' pointer is NULL.");
   }

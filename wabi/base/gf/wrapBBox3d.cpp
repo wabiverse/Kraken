@@ -51,10 +51,11 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-string _Repr(GfBBox3d const &self)
-{
-  return TF_PY_REPR_PREFIX + "BBox3d(" + TfPyRepr(self.GetRange()) + ", " + TfPyRepr(self.GetMatrix()) + ")";
-}
+  string _Repr(GfBBox3d const &self)
+  {
+    return TF_PY_REPR_PREFIX + "BBox3d(" + TfPyRepr(self.GetRange()) + ", " + TfPyRepr(self.GetMatrix()) +
+           ")";
+  }
 
 }  // anonymous namespace
 
@@ -71,8 +72,9 @@ void wrapBBox3d()
 
     .def("Set", &This::Set, return_self<>())
 
-    .add_property(
-      "box", make_function(&This::GetRange, return_value_policy<copy_const_reference>()), &This::SetRange)
+    .add_property("box",
+                  make_function(&This::GetRange, return_value_policy<copy_const_reference>()),
+                  &This::SetRange)
 
     .add_property("matrix",
                   make_function(&This::GetMatrix, return_value_policy<copy_const_reference>()),

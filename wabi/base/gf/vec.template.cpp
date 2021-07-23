@@ -86,7 +86,7 @@ bool
 { % endfor % }
 
 {
-  % if IS_FLOATING_POINT(SCL) and DIM == 3 %
+  % if IS_FLOATING_POINT (SCL) and DIM == 3 %
 }
 
 bool
@@ -144,8 +144,7 @@ bool GfOrthogonalizeBasis({{VEC}} * tx, {{VEC}} * ty, {{VEC}} * tz, bool normali
     ax = *tx;
     ay = *ty;
     az = *tz;
-  }
-  else
+  } else
   {
     ax = *tx;
     ay = *ty;
@@ -271,8 +270,7 @@ void GfBuildOrthonormalFrame(
   if (len == 0.)
   {
     *v1 = *v2 = {{VEC}}(0);
-  }
-  else
+  } else
   {
     {
       {

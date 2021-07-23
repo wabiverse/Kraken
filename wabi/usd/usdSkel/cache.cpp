@@ -86,13 +86,13 @@ UsdSkelSkinningQuery UsdSkelCache::GetSkinningQuery(const UsdPrim &prim) const
 namespace
 {
 
-struct _CompareSkels
-{
-  bool operator()(const UsdSkelSkeleton &a, const UsdSkelSkeleton &b) const
+  struct _CompareSkels
   {
-    return a.GetPrim() < b.GetPrim();
-  }
-};
+    bool operator()(const UsdSkelSkeleton &a, const UsdSkelSkeleton &b) const
+    {
+      return a.GetPrim() < b.GetPrim();
+    }
+  };
 
 }  // namespace
 
@@ -152,8 +152,7 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
       if (TF_VERIFY(!skelStack.empty()))
       {
         skelStack.pop_back();
-      }
-      else
+      } else
       {
         return false;
       }
@@ -166,8 +165,7 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
     if (!binding.GetSkeleton(&skel))
     {
       skel = skelStack.back();
-    }
-    else
+    } else
     {
       TF_DEBUG(USDSKEL_CACHE)
         .Msg(
@@ -262,8 +260,7 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
       if (TF_VERIFY(!skelStack.empty()))
       {
         skelStack.pop_back();
-      }
-      else
+      } else
       {
         return false;
       }
@@ -276,8 +273,7 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
     if (!binding.GetSkeleton(&boundSkel))
     {
       boundSkel = skelStack.back();
-    }
-    else
+    } else
     {
       TF_DEBUG(USDSKEL_CACHE)
         .Msg(

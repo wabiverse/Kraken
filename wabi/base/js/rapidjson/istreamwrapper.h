@@ -67,8 +67,7 @@ class BasicIStreamWrapper
     {
       count_++;
       return static_cast<Ch>(c);
-    }
-    else
+    } else
       return '\0';
   }
 

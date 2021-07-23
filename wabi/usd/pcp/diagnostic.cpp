@@ -170,8 +170,11 @@ std::string PcpDump(const PcpNodeRef &rootNode, bool includeInheritOriginInfo, b
   };
 
   _Collector c(rootNode);
-  return Pcp_Dump(
-    rootNode, c.nodeToStrengthMap, _NodeToPrimSpecsMap(), includeInheritOriginInfo, includeMaps);
+  return Pcp_Dump(rootNode,
+                  c.nodeToStrengthMap,
+                  _NodeToPrimSpecsMap(),
+                  includeInheritOriginInfo,
+                  includeMaps);
 }
 
 std::string PcpDump(const PcpPrimIndex &primIndex, bool includeInheritOriginInfo, bool includeMaps)
@@ -197,8 +200,11 @@ std::string PcpDump(const PcpPrimIndex &primIndex, bool includeInheritOriginInfo
     }
   }
 
-  return Pcp_Dump(
-    primIndex.GetRootNode(), nodeToIndexMap, nodeToSpecsMap, includeInheritOriginInfo, includeMaps);
+  return Pcp_Dump(primIndex.GetRootNode(),
+                  nodeToIndexMap,
+                  nodeToSpecsMap,
+                  includeInheritOriginInfo,
+                  includeMaps);
 }
 
 static void _WriteGraphHeader(std::ostream &out)
@@ -379,8 +385,7 @@ void PcpDumpDotGraph(const PcpNodeRef &node,
     _WriteGraphHeader(f);
     _WriteGraph(f, node, includeInheritOriginInfo, includeMaps);
     _WriteGraphFooter(f);
-  }
-  else
+  } else
   {
     TF_RUNTIME_ERROR("Could not write to %s\n", filename);
   }
@@ -657,8 +662,9 @@ class Pcp_IndexingOutputManager
 
       // Generate the left side of the label, which shows the current
       // phase and any associated messages.
-      std::string infoAboutCurrentPhase = TfStringPrintf(
-        "%d. %s\n", numPhases--, currentPhase.description.c_str());
+      std::string infoAboutCurrentPhase = TfStringPrintf("%d. %s\n",
+                                                         numPhases--,
+                                                         currentPhase.description.c_str());
 
       TF_FOR_ALL (msgIt, currentPhase.messages)
       {
@@ -693,11 +699,13 @@ class Pcp_IndexingOutputManager
         }
       }
 
-      infoAboutPendingPhases = TfStringReplace(
-        TfGetXmlEscapedString(infoAboutPendingPhases), "\n", "<br/>\n");
+      infoAboutPendingPhases = TfStringReplace(TfGetXmlEscapedString(infoAboutPendingPhases),
+                                               "\n",
+                                               "<br/>\n");
 
-      currentIndex.dotGraphLabel = TfStringPrintf(
-        tableFormat.c_str(), infoAboutCurrentPhase.c_str(), infoAboutPendingPhases.c_str());
+      currentIndex.dotGraphLabel = TfStringPrintf(tableFormat.c_str(),
+                                                  infoAboutCurrentPhase.c_str(),
+                                                  infoAboutPendingPhases.c_str());
       currentIndex.needsOutput = true;
     }
 

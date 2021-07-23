@@ -79,97 +79,94 @@ bool UsdSkelIsSkinnablePrim(const UsdPrim &prim)
 namespace
 {
 
-/// Wrapper for parallel loops that execs in serial based on the
-/// \p inSerial flag, as well as the grain size.
-template<typename Fn>
-void _ParallelForN(size_t count, bool inSerial, Fn &&callback, size_t grainSize = 1000)
-{
-  if (inSerial || count < grainSize)
+  /// Wrapper for parallel loops that execs in serial based on the
+  /// \p inSerial flag, as well as the grain size.
+  template<typename Fn>
+  void _ParallelForN(size_t count, bool inSerial, Fn &&callback, size_t grainSize = 1000)
   {
-    WorkSerialForN(count, callback);
-  }
-  else
-  {
-    WorkParallelForN(count, callback, grainSize);
-  }
-}
-
-template<typename Matrix4>
-void _InvertTransforms(TfSpan<const Matrix4> xforms, TfSpan<Matrix4> inverseXforms)
-{
-  TF_DEV_AXIOM(xforms.size() == inverseXforms.size());
-
-  _ParallelForN(
-    xforms.size(),
-    false,
-    [&](size_t start, size_t end) {
-      for (size_t i = start; i < end; ++i)
-      {
-        inverseXforms[i] = xforms[i].GetInverse();
-      }
-    },
-    /*grainSize*/ 1000);
-}
-
-template<typename Matrix4>
-bool UsdSkel_ConcatJointTransforms(const UsdSkelTopology &topology,
-                                   TfSpan<const Matrix4> jointLocalXforms,
-                                   TfSpan<Matrix4> xforms,
-                                   const Matrix4 *rootXform)
-{
-  TRACE_FUNCTION();
-
-  if (ARCH_UNLIKELY(jointLocalXforms.size() != topology.size()))
-  {
-    TF_WARN(
-      "Size of jointLocalXforms [%zu] != number of joints [%zu]", jointLocalXforms.size(), topology.size());
-    return false;
-  }
-  if (ARCH_UNLIKELY(xforms.size() != topology.size()))
-  {
-    TF_WARN("Size of xforms [%zu] != number of joints [%zu]", xforms.size(), topology.size());
-    return false;
-  }
-
-  for (size_t i = 0; i < topology.size(); ++i)
-  {
-    const int parent = topology.GetParent(i);
-    if (parent >= 0)
+    if (inSerial || count < grainSize)
     {
-      if (static_cast<size_t>(parent) < i)
-      {
-        xforms[i] = jointLocalXforms[i] * xforms[parent];
-      }
-      else
-      {
-        if (static_cast<size_t>(parent) == i)
-        {
-          TF_WARN("Joint %zu has itself as its parent.", i);
-        }
-        else
-        {
-          TF_WARN(
-            "Joint %zu has mis-ordered parent %d. Joints are "
-            "expected to be ordered with parent joints always "
-            "coming before children.",
-            i,
-            parent);
-        }
-        return false;
-      }
-    }
-    else
+      WorkSerialForN(count, callback);
+    } else
     {
-      // Root joint.
-      xforms[i] = jointLocalXforms[i];
-      if (rootXform)
-      {
-        xforms[i] *= (*rootXform);
-      }
+      WorkParallelForN(count, callback, grainSize);
     }
   }
-  return true;
-}
+
+  template<typename Matrix4>
+  void _InvertTransforms(TfSpan<const Matrix4> xforms, TfSpan<Matrix4> inverseXforms)
+  {
+    TF_DEV_AXIOM(xforms.size() == inverseXforms.size());
+
+    _ParallelForN(
+      xforms.size(),
+      false,
+      [&](size_t start, size_t end) {
+        for (size_t i = start; i < end; ++i)
+        {
+          inverseXforms[i] = xforms[i].GetInverse();
+        }
+      },
+      /*grainSize*/ 1000);
+  }
+
+  template<typename Matrix4>
+  bool UsdSkel_ConcatJointTransforms(const UsdSkelTopology &topology,
+                                     TfSpan<const Matrix4> jointLocalXforms,
+                                     TfSpan<Matrix4> xforms,
+                                     const Matrix4 *rootXform)
+  {
+    TRACE_FUNCTION();
+
+    if (ARCH_UNLIKELY(jointLocalXforms.size() != topology.size()))
+    {
+      TF_WARN("Size of jointLocalXforms [%zu] != number of joints [%zu]",
+              jointLocalXforms.size(),
+              topology.size());
+      return false;
+    }
+    if (ARCH_UNLIKELY(xforms.size() != topology.size()))
+    {
+      TF_WARN("Size of xforms [%zu] != number of joints [%zu]", xforms.size(), topology.size());
+      return false;
+    }
+
+    for (size_t i = 0; i < topology.size(); ++i)
+    {
+      const int parent = topology.GetParent(i);
+      if (parent >= 0)
+      {
+        if (static_cast<size_t>(parent) < i)
+        {
+          xforms[i] = jointLocalXforms[i] * xforms[parent];
+        } else
+        {
+          if (static_cast<size_t>(parent) == i)
+          {
+            TF_WARN("Joint %zu has itself as its parent.", i);
+          } else
+          {
+            TF_WARN(
+              "Joint %zu has mis-ordered parent %d. Joints are "
+              "expected to be ordered with parent joints always "
+              "coming before children.",
+              i,
+              parent);
+          }
+          return false;
+        }
+      } else
+      {
+        // Root joint.
+        xforms[i] = jointLocalXforms[i];
+        if (rootXform)
+        {
+          xforms[i] *= (*rootXform);
+        }
+      }
+    }
+    return true;
+  }
 
 }  // namespace
 
@@ -219,88 +216,92 @@ bool UsdSkelConcatJointTransforms(const UsdSkelTopology &topology,
 namespace
 {
 
-template<typename Matrix4>
-bool UsdSkel_ComputeJointLocalTransforms(const UsdSkelTopology &topology,
-                                         TfSpan<const Matrix4> xforms,
-                                         TfSpan<const Matrix4> inverseXforms,
-                                         TfSpan<Matrix4> jointLocalXforms,
-                                         const Matrix4 *rootInverseXform)
-{
-  TRACE_FUNCTION();
+  template<typename Matrix4>
+  bool UsdSkel_ComputeJointLocalTransforms(const UsdSkelTopology &topology,
+                                           TfSpan<const Matrix4> xforms,
+                                           TfSpan<const Matrix4> inverseXforms,
+                                           TfSpan<Matrix4> jointLocalXforms,
+                                           const Matrix4 *rootInverseXform)
+  {
+    TRACE_FUNCTION();
 
-  if (ARCH_UNLIKELY(xforms.size() != topology.size()))
-  {
-    TF_WARN("Size of xforms [%zu] != number of joints [%zu]", xforms.size(), topology.size());
-    return false;
-  }
-  if (ARCH_UNLIKELY(inverseXforms.size() != topology.size()))
-  {
-    TF_WARN("Size of inverseXforms [%zu] != number of joints [%zu]", inverseXforms.size(), topology.size());
-    return false;
-  }
-  if (ARCH_UNLIKELY(jointLocalXforms.size() != topology.size()))
-  {
-    TF_WARN(
-      "Size of jointLocalXforms [%zu] != number of joints [%zu]", jointLocalXforms.size(), topology.size());
-    return false;
-  }
-
-  // Skel-space transforms are computed as:
-  //     skelXform = jointLocalXform*parentSkelXform
-  // So we want:
-  //     jointLocalXform = skelXform*inv(parentSkelXform)
-
-  for (size_t i = 0; i < topology.size(); ++i)
-  {
-    const int parent = topology.GetParent(i);
-    if (parent >= 0)
+    if (ARCH_UNLIKELY(xforms.size() != topology.size()))
     {
-      if (static_cast<size_t>(parent) < i)
+      TF_WARN("Size of xforms [%zu] != number of joints [%zu]", xforms.size(), topology.size());
+      return false;
+    }
+    if (ARCH_UNLIKELY(inverseXforms.size() != topology.size()))
+    {
+      TF_WARN("Size of inverseXforms [%zu] != number of joints [%zu]",
+              inverseXforms.size(),
+              topology.size());
+      return false;
+    }
+    if (ARCH_UNLIKELY(jointLocalXforms.size() != topology.size()))
+    {
+      TF_WARN("Size of jointLocalXforms [%zu] != number of joints [%zu]",
+              jointLocalXforms.size(),
+              topology.size());
+      return false;
+    }
+
+    // Skel-space transforms are computed as:
+    //     skelXform = jointLocalXform*parentSkelXform
+    // So we want:
+    //     jointLocalXform = skelXform*inv(parentSkelXform)
+
+    for (size_t i = 0; i < topology.size(); ++i)
+    {
+      const int parent = topology.GetParent(i);
+      if (parent >= 0)
       {
-        jointLocalXforms[i] = xforms[i] * inverseXforms[parent];
-      }
-      else
-      {
-        if (static_cast<size_t>(parent) == i)
+        if (static_cast<size_t>(parent) < i)
         {
-          TF_WARN("Joint %zu has itself as its parent.", i);
+          jointLocalXforms[i] = xforms[i] * inverseXforms[parent];
+        } else
+        {
+          if (static_cast<size_t>(parent) == i)
+          {
+            TF_WARN("Joint %zu has itself as its parent.", i);
+            return false;
+          }
+          TF_WARN(
+            "Joint %zu has mis-ordered parent %d. Joints are "
+            "expected to be ordered with parent joints always "
+            "coming before children.",
+            i,
+            parent);
           return false;
         }
-        TF_WARN(
-          "Joint %zu has mis-ordered parent %d. Joints are "
-          "expected to be ordered with parent joints always "
-          "coming before children.",
-          i,
-          parent);
-        return false;
-      }
-    }
-    else
-    {
-      // Root joint.
-      jointLocalXforms[i] = xforms[i];
-      if (rootInverseXform)
+      } else
       {
-        jointLocalXforms[i] *= (*rootInverseXform);
+        // Root joint.
+        jointLocalXforms[i] = xforms[i];
+        if (rootInverseXform)
+        {
+          jointLocalXforms[i] *= (*rootInverseXform);
+        }
       }
     }
+    return true;
   }
-  return true;
-}
 
-template<typename Matrix4>
-bool UsdSkel_ComputeJointLocalTransforms(const UsdSkelTopology &topology,
-                                         TfSpan<const Matrix4> xforms,
-                                         TfSpan<Matrix4> jointLocalXforms,
-                                         const Matrix4 *rootInverseXform)
-{
-  TRACE_FUNCTION();
+  template<typename Matrix4>
+  bool UsdSkel_ComputeJointLocalTransforms(const UsdSkelTopology &topology,
+                                           TfSpan<const Matrix4> xforms,
+                                           TfSpan<Matrix4> jointLocalXforms,
+                                           const Matrix4 *rootInverseXform)
+  {
+    TRACE_FUNCTION();
 
-  std::vector<Matrix4> inverseXforms(xforms.size());
-  _InvertTransforms<Matrix4>(xforms, inverseXforms);
-  return UsdSkel_ComputeJointLocalTransforms<Matrix4>(
-    topology, xforms, inverseXforms, jointLocalXforms, rootInverseXform);
-}
+    std::vector<Matrix4> inverseXforms(xforms.size());
+    _InvertTransforms<Matrix4>(xforms, inverseXforms);
+    return UsdSkel_ComputeJointLocalTransforms<Matrix4>(topology,
+                                                        xforms,
+                                                        inverseXforms,
+                                                        jointLocalXforms,
+                                                        rootInverseXform);
+  }
 
 }  // namespace
 
@@ -310,8 +311,11 @@ bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
                                         TfSpan<GfMatrix4d> jointLocalXforms,
                                         const GfMatrix4d *rootInverseXform)
 {
-  return UsdSkel_ComputeJointLocalTransforms(
-    topology, xforms, inverseXforms, jointLocalXforms, rootInverseXform);
+  return UsdSkel_ComputeJointLocalTransforms(topology,
+                                             xforms,
+                                             inverseXforms,
+                                             jointLocalXforms,
+                                             rootInverseXform);
 }
 
 bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
@@ -320,8 +324,11 @@ bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
                                         TfSpan<GfMatrix4f> jointLocalXforms,
                                         const GfMatrix4f *rootInverseXform)
 {
-  return UsdSkel_ComputeJointLocalTransforms(
-    topology, xforms, inverseXforms, jointLocalXforms, rootInverseXform);
+  return UsdSkel_ComputeJointLocalTransforms(topology,
+                                             xforms,
+                                             inverseXforms,
+                                             jointLocalXforms,
+                                             rootInverseXform);
 }
 
 bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
@@ -353,8 +360,11 @@ bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
     return false;
   }
   jointLocalXforms->resize(topology.size());
-  return UsdSkelComputeJointLocalTransforms(
-    topology, xforms, inverseXforms, *jointLocalXforms, rootInverseXform);
+  return UsdSkelComputeJointLocalTransforms(topology,
+                                            xforms,
+                                            inverseXforms,
+                                            *jointLocalXforms,
+                                            rootInverseXform);
 }
 
 // deprecated
@@ -389,63 +399,63 @@ bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
 namespace
 {
 
-/// Helper to return the GfVec3 type with the same precision
-/// as the given matrix type.
-template<typename T>
-struct _Vec3MatchingMatrix4
-{
-};
-
-template<>
-struct _Vec3MatchingMatrix4<GfMatrix4d>
-{
-  using type = GfVec3d;
-};
-
-template<>
-struct _Vec3MatchingMatrix4<GfMatrix4f>
-{
-  using type = GfVec3f;
-};
-
-template<class Matrix4>
-bool _DecomposeTransform(const Matrix4 &xform, GfVec3f *translate, Matrix4 *rotate, GfVec3h *scale)
-{
-  // XXX: GfMatrix4x::Factor() may crash if the value isn't properly aligned.
-  TF_DEV_AXIOM(size_t(&xform) % alignof(Matrix4) == 0);
-
-  // Decomposition must account for handedness changes due to negative scales.
-  // This is similar to GfMatrix4d::RemoveScaleShear().
-  Matrix4 scaleOrient, perspMat;
-
-  using Vec3 = typename _Vec3MatchingMatrix4<Matrix4>::type;
-
-  Vec3 factoredScale, factoredTranslate;
-  ;
-  if (xform.Factor(&scaleOrient, &factoredScale, rotate, &factoredTranslate, &perspMat))
+  /// Helper to return the GfVec3 type with the same precision
+  /// as the given matrix type.
+  template<typename T>
+  struct _Vec3MatchingMatrix4
   {
+  };
 
-    if (rotate->Orthonormalize())
+  template<>
+  struct _Vec3MatchingMatrix4<GfMatrix4d>
+  {
+    using type = GfVec3d;
+  };
+
+  template<>
+  struct _Vec3MatchingMatrix4<GfMatrix4f>
+  {
+    using type = GfVec3f;
+  };
+
+  template<class Matrix4>
+  bool _DecomposeTransform(const Matrix4 &xform, GfVec3f *translate, Matrix4 *rotate, GfVec3h *scale)
+  {
+    // XXX: GfMatrix4x::Factor() may crash if the value isn't properly aligned.
+    TF_DEV_AXIOM(size_t(&xform) % alignof(Matrix4) == 0);
+
+    // Decomposition must account for handedness changes due to negative scales.
+    // This is similar to GfMatrix4d::RemoveScaleShear().
+    Matrix4 scaleOrient, perspMat;
+
+    using Vec3 = typename _Vec3MatchingMatrix4<Matrix4>::type;
+
+    Vec3 factoredScale, factoredTranslate;
+    ;
+    if (xform.Factor(&scaleOrient, &factoredScale, rotate, &factoredTranslate, &perspMat))
     {
-      *scale = GfVec3h(factoredScale);
-      *translate = GfVec3f(factoredTranslate);
+
+      if (rotate->Orthonormalize())
+      {
+        *scale = GfVec3h(factoredScale);
+        *translate = GfVec3f(factoredTranslate);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  template<typename Matrix4>
+  bool _DecomposeTransform(const Matrix4 &xform, GfVec3f *translate, GfQuatf *rotate, GfVec3h *scale)
+  {
+    Matrix4 rotateMx;
+    if (_DecomposeTransform(xform, translate, &rotateMx, scale))
+    {
+      *rotate = rotateMx.ExtractRotationQuat();
       return true;
     }
+    return false;
   }
-  return false;
-}
-
-template<typename Matrix4>
-bool _DecomposeTransform(const Matrix4 &xform, GfVec3f *translate, GfQuatf *rotate, GfVec3h *scale)
-{
-  Matrix4 rotateMx;
-  if (_DecomposeTransform(xform, translate, &rotateMx, scale))
-  {
-    *rotate = rotateMx.ExtractRotationQuat();
-    return true;
-  }
-  return false;
-}
 
 }  // namespace
 
@@ -518,56 +528,55 @@ template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4f &, GfVec3f 
 namespace
 {
 
-template<typename Matrix4>
-bool UsdSkel_DecomposeTransforms(TfSpan<const Matrix4> xforms,
-                                 TfSpan<GfVec3f> translations,
-                                 TfSpan<GfQuatf> rotations,
-                                 TfSpan<GfVec3h> scales)
-{
-  TRACE_FUNCTION();
-
-  if (translations.size() != xforms.size())
+  template<typename Matrix4>
+  bool UsdSkel_DecomposeTransforms(TfSpan<const Matrix4> xforms,
+                                   TfSpan<GfVec3f> translations,
+                                   TfSpan<GfQuatf> rotations,
+                                   TfSpan<GfVec3h> scales)
   {
-    TF_WARN("Size of translations [%zu] != size of xforms [%zu]", translations.size(), xforms.size());
-    return false;
-  }
-  if (rotations.size() != xforms.size())
-  {
-    TF_WARN("Size of rotations [%zu] != size of xforms [%zu]", rotations.size(), xforms.size());
-    return false;
-  }
-  if (scales.size() != xforms.size())
-  {
-    TF_WARN("Size of scales [%zu] != size of xforms [%zu]", scales.size(), xforms.size());
-    return false;
-  }
+    TRACE_FUNCTION();
 
-  // Flag for marking error state from within threads.
-  std::atomic_bool errors(false);
-
-  _ParallelForN(xforms.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
-    Matrix4 rotateMx;
-    for (size_t i = start; i < end; ++i)
+    if (translations.size() != xforms.size())
     {
-
-      if (_DecomposeTransform(xforms[i], &translations[i], &rotateMx, &scales[i]))
-      {
-        rotations[i] = GfQuatf(rotateMx.ExtractRotationQuat());
-      }
-      else
-      {
-        TF_WARN(
-          "Failed decomposing transform %zu. "
-          "The source transform may be singular.",
-          i);
-        errors = true;
-        return;
-      }
+      TF_WARN("Size of translations [%zu] != size of xforms [%zu]", translations.size(), xforms.size());
+      return false;
     }
-  });
+    if (rotations.size() != xforms.size())
+    {
+      TF_WARN("Size of rotations [%zu] != size of xforms [%zu]", rotations.size(), xforms.size());
+      return false;
+    }
+    if (scales.size() != xforms.size())
+    {
+      TF_WARN("Size of scales [%zu] != size of xforms [%zu]", scales.size(), xforms.size());
+      return false;
+    }
 
-  return !errors;
-}
+    // Flag for marking error state from within threads.
+    std::atomic_bool errors(false);
+
+    _ParallelForN(xforms.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
+      Matrix4 rotateMx;
+      for (size_t i = start; i < end; ++i)
+      {
+
+        if (_DecomposeTransform(xforms[i], &translations[i], &rotateMx, &scales[i]))
+        {
+          rotations[i] = GfQuatf(rotateMx.ExtractRotationQuat());
+        } else
+        {
+          TF_WARN(
+            "Failed decomposing transform %zu. "
+            "The source transform may be singular.",
+            i);
+          errors = true;
+          return;
+        }
+      }
+    });
+
+    return !errors;
+  }
 
 }  // namespace
 
@@ -657,8 +666,7 @@ void UsdSkelMakeTransform(const GfVec3f &translate,
                      translate[1],
                      translate[2],
                      1);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("'xform' is null");
   }
@@ -696,36 +704,36 @@ template USDSKEL_API void UsdSkelMakeTransform(const GfVec3f &,
 namespace
 {
 
-template<typename Matrix4>
-bool UsdSkel_MakeTransforms(TfSpan<const GfVec3f> translations,
-                            TfSpan<const GfQuatf> rotations,
-                            TfSpan<const GfVec3h> scales,
-                            TfSpan<Matrix4> xforms)
-{
-  TRACE_FUNCTION();
+  template<typename Matrix4>
+  bool UsdSkel_MakeTransforms(TfSpan<const GfVec3f> translations,
+                              TfSpan<const GfQuatf> rotations,
+                              TfSpan<const GfVec3h> scales,
+                              TfSpan<Matrix4> xforms)
+  {
+    TRACE_FUNCTION();
 
-  if (ARCH_UNLIKELY(translations.size() != xforms.size()))
-  {
-    TF_WARN("Size of translations [%zu] != size of xforms [%zu]", translations.size(), xforms.size());
-    return false;
-  }
-  if (ARCH_UNLIKELY(rotations.size() != xforms.size()))
-  {
-    TF_WARN("Size of rotations [%zu] != size of xforms [%zu]", rotations.size(), xforms.size());
-    return false;
-  }
-  if (ARCH_UNLIKELY(scales.size() != xforms.size()))
-  {
-    TF_WARN("Size of scales [%zu] != size of xforms [%zu]", scales.size(), xforms.size());
-    return false;
-  }
+    if (ARCH_UNLIKELY(translations.size() != xforms.size()))
+    {
+      TF_WARN("Size of translations [%zu] != size of xforms [%zu]", translations.size(), xforms.size());
+      return false;
+    }
+    if (ARCH_UNLIKELY(rotations.size() != xforms.size()))
+    {
+      TF_WARN("Size of rotations [%zu] != size of xforms [%zu]", rotations.size(), xforms.size());
+      return false;
+    }
+    if (ARCH_UNLIKELY(scales.size() != xforms.size()))
+    {
+      TF_WARN("Size of scales [%zu] != size of xforms [%zu]", scales.size(), xforms.size());
+      return false;
+    }
 
-  for (size_t i = 0; i < xforms.size(); ++i)
-  {
-    UsdSkelMakeTransform(translations[i], rotations[i], scales[i], &xforms[i]);
+    for (size_t i = 0; i < xforms.size(); ++i)
+    {
+      UsdSkelMakeTransform(translations[i], rotations[i], scales[i], &xforms[i]);
+    }
+    return true;
   }
-  return true;
-}
 
 }  // namespace
 
@@ -835,8 +843,10 @@ bool UsdSkelComputeJointsExtent(const GfMatrix4d *xforms,
                                 const GfMatrix4d *rootXform)
 {
   GfRange3f range;
-  if (UsdSkelComputeJointsExtent<GfMatrix4d>(
-        TfSpan<const GfMatrix4d>(xforms, count), &range, pad, rootXform))
+  if (UsdSkelComputeJointsExtent<GfMatrix4d>(TfSpan<const GfMatrix4d>(xforms, count),
+                                             &range,
+                                             pad,
+                                             rootXform))
   {
     extent->resize(2);
     (*extent)[0] = range.GetMin();
@@ -849,35 +859,33 @@ bool UsdSkelComputeJointsExtent(const GfMatrix4d *xforms,
 namespace
 {
 
-/// Validate the size of a weight/index array for a given
-/// number of influences per component.
-/// Throws a warning for failed validation.
-bool _ValidateArrayShape(size_t size, int numInfluencesPerComponent)
-{
-  if (numInfluencesPerComponent > 0)
+  /// Validate the size of a weight/index array for a given
+  /// number of influences per component.
+  /// Throws a warning for failed validation.
+  bool _ValidateArrayShape(size_t size, int numInfluencesPerComponent)
   {
-    if (size % numInfluencesPerComponent == 0)
+    if (numInfluencesPerComponent > 0)
     {
-      return true;
-    }
-    else
+      if (size % numInfluencesPerComponent == 0)
+      {
+        return true;
+      } else
+      {
+        TF_WARN(
+          "Unexpected array size [%zu]: Size must be a multiple of "
+          "the number of influences per component [%d].",
+          size,
+          numInfluencesPerComponent);
+      }
+    } else
     {
       TF_WARN(
-        "Unexpected array size [%zu]: Size must be a multiple of "
-        "the number of influences per component [%d].",
-        size,
+        "Invalid number of influences per component (%d): "
+        "number of influences must be greater than zero.",
         numInfluencesPerComponent);
     }
+    return false;
   }
-  else
-  {
-    TF_WARN(
-      "Invalid number of influences per component (%d): "
-      "number of influences must be greater than zero.",
-      numInfluencesPerComponent);
-  }
-  return false;
-}
 
 }  // namespace
 
@@ -910,8 +918,7 @@ bool UsdSkelNormalizeWeights(TfSpan<float> weights, int numInfluencesPerComponen
         {
           weightSet[j] /= sum;
         }
-      }
-      else
+      } else
       {
         for (int j = 0; j < numInfluencesPerComponent; ++j)
         {
@@ -1003,32 +1010,31 @@ bool UsdSkelSortInfluences(VtIntArray *indices, VtFloatArray *weights, int numIn
 namespace
 {
 
-template<typename T>
-bool _ExpandConstantArray(T *array, size_t size)
-{
-  if (!array)
+  template<typename T>
+  bool _ExpandConstantArray(T *array, size_t size)
   {
-    TF_CODING_ERROR("'array' pointer is null.");
-    return false;
-  }
-
-  if (size == 0)
-  {
-    array->clear();
-  }
-  else
-  {
-    size_t numInfluencesPerComponent = array->size();
-    array->resize(numInfluencesPerComponent * size);
-
-    auto *data = array->data();
-    for (size_t i = 1; i < size; ++i)
+    if (!array)
     {
-      std::copy(data, data + numInfluencesPerComponent, data + i * numInfluencesPerComponent);
+      TF_CODING_ERROR("'array' pointer is null.");
+      return false;
     }
+
+    if (size == 0)
+    {
+      array->clear();
+    } else
+    {
+      size_t numInfluencesPerComponent = array->size();
+      array->resize(numInfluencesPerComponent * size);
+
+      auto *data = array->data();
+      for (size_t i = 1; i < size; ++i)
+      {
+        std::copy(data, data + numInfluencesPerComponent, data + i * numInfluencesPerComponent);
+      }
+    }
+    return true;
   }
-  return true;
-}
 
 }  // namespace
 
@@ -1045,72 +1051,71 @@ bool UsdSkelExpandConstantInfluencesToVarying(VtFloatArray *weights, size_t size
 namespace
 {
 
-template<typename T>
-bool _ResizeInfluences(VtArray<T> *array,
-                       int srcNumInfluencesPerComponent,
-                       int newNumInfluencesPerComponent,
-                       T defaultVal)
-{
-  if (srcNumInfluencesPerComponent == newNumInfluencesPerComponent)
-    return true;
-
-  if (!array)
+  template<typename T>
+  bool _ResizeInfluences(VtArray<T> *array,
+                         int srcNumInfluencesPerComponent,
+                         int newNumInfluencesPerComponent,
+                         T defaultVal)
   {
-    TF_CODING_ERROR("'array' pointer is null.");
-    return false;
-  }
+    if (srcNumInfluencesPerComponent == newNumInfluencesPerComponent)
+      return true;
 
-  if (!_ValidateArrayShape(array->size(), srcNumInfluencesPerComponent))
-    return false;
-
-  size_t numComponents = array->size() / srcNumInfluencesPerComponent;
-  if (numComponents == 0)
-    return true;
-
-  if (newNumInfluencesPerComponent < srcNumInfluencesPerComponent)
-  {
-    // Truncate influences in-place.
-    auto *data = array->data();
-    for (size_t i = 1; i < numComponents; ++i)
+    if (!array)
     {
-      size_t srcStart = i * srcNumInfluencesPerComponent;
-      size_t srcEnd = srcStart + newNumInfluencesPerComponent;
-      size_t dstStart = i * newNumInfluencesPerComponent;
-
-      TF_DEV_AXIOM(srcEnd <= array->size());
-      TF_DEV_AXIOM((dstStart + (srcEnd - srcStart)) <= array->size());
-      std::copy(data + srcStart, data + srcEnd, data + dstStart);
+      TF_CODING_ERROR("'array' pointer is null.");
+      return false;
     }
-    array->resize(numComponents * newNumInfluencesPerComponent);
-  }
-  else
-  {
-    // Expand influences in-place.
-    // This is possible IFF all elements are copied in *reverse order*
-    array->resize(numComponents * newNumInfluencesPerComponent);
 
-    auto *data = array->data();
-    for (size_t i = 0; i < numComponents; ++i)
+    if (!_ValidateArrayShape(array->size(), srcNumInfluencesPerComponent))
+      return false;
+
+    size_t numComponents = array->size() / srcNumInfluencesPerComponent;
+    if (numComponents == 0)
+      return true;
+
+    if (newNumInfluencesPerComponent < srcNumInfluencesPerComponent)
     {
-      // Reverse the order.
-      size_t idx = numComponents - i - 1;
-
-      // Copy source values (*reverse order*)
-      for (int j = (srcNumInfluencesPerComponent - 1); j >= 0; --j)
+      // Truncate influences in-place.
+      auto *data = array->data();
+      for (size_t i = 1; i < numComponents; ++i)
       {
-        TF_DEV_AXIOM((idx * newNumInfluencesPerComponent + j) < array->size());
+        size_t srcStart = i * srcNumInfluencesPerComponent;
+        size_t srcEnd = srcStart + newNumInfluencesPerComponent;
+        size_t dstStart = i * newNumInfluencesPerComponent;
 
-        data[idx * newNumInfluencesPerComponent + j] = data[idx * srcNumInfluencesPerComponent + j];
+        TF_DEV_AXIOM(srcEnd <= array->size());
+        TF_DEV_AXIOM((dstStart + (srcEnd - srcStart)) <= array->size());
+        std::copy(data + srcStart, data + srcEnd, data + dstStart);
       }
-      // Initialize values not filled by copying from src.
-      TF_DEV_AXIOM((idx + 1) * newNumInfluencesPerComponent <= array->size());
-      std::fill(data + idx * newNumInfluencesPerComponent + srcNumInfluencesPerComponent,
-                data + (idx + 1) * newNumInfluencesPerComponent,
-                defaultVal);
+      array->resize(numComponents * newNumInfluencesPerComponent);
+    } else
+    {
+      // Expand influences in-place.
+      // This is possible IFF all elements are copied in *reverse order*
+      array->resize(numComponents * newNumInfluencesPerComponent);
+
+      auto *data = array->data();
+      for (size_t i = 0; i < numComponents; ++i)
+      {
+        // Reverse the order.
+        size_t idx = numComponents - i - 1;
+
+        // Copy source values (*reverse order*)
+        for (int j = (srcNumInfluencesPerComponent - 1); j >= 0; --j)
+        {
+          TF_DEV_AXIOM((idx * newNumInfluencesPerComponent + j) < array->size());
+
+          data[idx * newNumInfluencesPerComponent + j] = data[idx * srcNumInfluencesPerComponent + j];
+        }
+        // Initialize values not filled by copying from src.
+        TF_DEV_AXIOM((idx + 1) * newNumInfluencesPerComponent <= array->size());
+        std::fill(data + idx * newNumInfluencesPerComponent + srcNumInfluencesPerComponent,
+                  data + (idx + 1) * newNumInfluencesPerComponent,
+                  defaultVal);
+      }
     }
+    return true;
   }
-  return true;
-}
 
 }  // namespace
 
@@ -1170,185 +1175,193 @@ bool UsdSkelInterleaveInfluences(const TfSpan<const int> &indices,
 namespace
 {
 
-/// Functor for extracting influence indices and weights from influences
-/// stored on separate index and weight arrays.
-struct _NonInterleavedInfluencesFn
-{
-  TfSpan<const int> indices;
-  TfSpan<const float> weights;
-
-  int GetIndex(size_t index) const
+  /// Functor for extracting influence indices and weights from influences
+  /// stored on separate index and weight arrays.
+  struct _NonInterleavedInfluencesFn
   {
-    return indices[index];
-  }
-  float GetWeight(size_t index) const
-  {
-    return weights[index];
-  }
-  size_t size() const
-  {
-    return indices.size();
-  }
-};
+    TfSpan<const int> indices;
+    TfSpan<const float> weights;
 
-/// Functor for extracting influence indices and weights from
-/// interleaved influences, stored as an array of (index,weight) vectors.
-struct _InterleavedInfluencesFn
-{
-  TfSpan<const GfVec2f> influences;
-
-  int GetIndex(size_t index) const
-  {
-    return static_cast<int>(influences[index][0]);
-  }
-
-  float GetWeight(size_t index) const
-  {
-    return influences[index][1];
-  }
-
-  size_t size() const
-  {
-    return influences.size();
-  }
-};
-
-template<typename Matrix4, typename InfluenceFn>
-bool _SkinPointsLBS(const Matrix4 &geomBindTransform,
-                    TfSpan<const Matrix4> jointXforms,
-                    const InfluenceFn &influenceFn,
-                    int numInfluencesPerPoint,
-                    TfSpan<GfVec3f> points,
-                    bool inSerial)
-{
-  TRACE_FUNCTION();
-
-  // Flag for marking error state from within threads.
-  std::atomic_bool errors(false);
-
-  _ParallelForN(points.size(), /* inSerial = */ inSerial, [&](size_t start, size_t end) {
-    for (size_t pi = start; pi < end; ++pi)
+    int GetIndex(size_t index) const
     {
-
-      const GfVec3f initialP = geomBindTransform.Transform(points[pi]);
-      GfVec3f p(0, 0, 0);
-
-      for (int wi = 0; wi < numInfluencesPerPoint; ++wi)
-      {
-        const size_t influenceIdx = pi * numInfluencesPerPoint + wi;
-        const int jointIdx = influenceFn.GetIndex(influenceIdx);
-
-        if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
-        {
-
-          const float w = influenceFn.GetWeight(influenceIdx);
-          if (w != 0.0f)
-          {
-            // Since joint transforms are encoded in terms of
-            // t,r,s components, it shouldn't be possible to
-            // encode non-affine transforms, except for the rest
-            // pose (which, according to the schema, should
-            // be affine!). Safe to assume affine transforms.
-            p += jointXforms[jointIdx].TransformAffine(initialP) * w;
-          }
-
-          // XXX: Possible optimization at this point:
-          // If joint weights were required to be ordered, and
-          // null weights are encountered, we can break out of
-          // the inner loop early. I.e.,
-          //
-          // if (weightIsNull)
-          //     break;
-          //
-          // This can potentially greatly reduce the number of
-          // operations when the number of influences is high, but
-          // most points have few influences.
-          // This optimization is not being applied now because
-          // the schema does not (yet) require sorted influences.
-        }
-        else
-        {
-
-          // XXX: Generally, if one joint index is bad, an asset
-          // has probably gotten out of sync, and probably many
-          // other indices will be invalid, too.
-          // We could attempt to continue silently, but would
-          // likely end up with scrambled points.
-          // Bail out early.
-
-          TF_WARN(
-            "Out of range joint index %d at index %zu"
-            " (num joints = %zu).",
-            jointIdx,
-            influenceIdx,
-            jointXforms.size());
-          errors = true;
-          return;
-        }
-      }
-
-      points[pi] = p;
+      return indices[index];
     }
-  });
+    float GetWeight(size_t index) const
+    {
+      return weights[index];
+    }
+    size_t size() const
+    {
+      return indices.size();
+    }
+  };
 
-  return !errors;
-}
-
-template<typename Matrix4>
-bool _InterleavedSkinPointsLBS(const Matrix4 &geomBindTransform,
-                               TfSpan<const Matrix4> jointXforms,
-                               TfSpan<const GfVec2f> influences,
-                               int numInfluencesPerPoint,
-                               TfSpan<GfVec3f> points,
-                               bool inSerial)
-{
-  if (influences.size() != (points.size() * numInfluencesPerPoint))
+  /// Functor for extracting influence indices and weights from
+  /// interleaved influences, stored as an array of (index,weight) vectors.
+  struct _InterleavedInfluencesFn
   {
-    TF_WARN(
-      "Size of influences [%zu] != "
-      "(points.size() [%zu] * numInfluencesPerPoint [%d]).",
-      influences.size(),
-      points.size(),
-      numInfluencesPerPoint);
-    return false;
+    TfSpan<const GfVec2f> influences;
+
+    int GetIndex(size_t index) const
+    {
+      return static_cast<int>(influences[index][0]);
+    }
+
+    float GetWeight(size_t index) const
+    {
+      return influences[index][1];
+    }
+
+    size_t size() const
+    {
+      return influences.size();
+    }
+  };
+
+  template<typename Matrix4, typename InfluenceFn>
+  bool _SkinPointsLBS(const Matrix4 &geomBindTransform,
+                      TfSpan<const Matrix4> jointXforms,
+                      const InfluenceFn &influenceFn,
+                      int numInfluencesPerPoint,
+                      TfSpan<GfVec3f> points,
+                      bool inSerial)
+  {
+    TRACE_FUNCTION();
+
+    // Flag for marking error state from within threads.
+    std::atomic_bool errors(false);
+
+    _ParallelForN(points.size(), /* inSerial = */ inSerial, [&](size_t start, size_t end) {
+      for (size_t pi = start; pi < end; ++pi)
+      {
+
+        const GfVec3f initialP = geomBindTransform.Transform(points[pi]);
+        GfVec3f p(0, 0, 0);
+
+        for (int wi = 0; wi < numInfluencesPerPoint; ++wi)
+        {
+          const size_t influenceIdx = pi * numInfluencesPerPoint + wi;
+          const int jointIdx = influenceFn.GetIndex(influenceIdx);
+
+          if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
+          {
+
+            const float w = influenceFn.GetWeight(influenceIdx);
+            if (w != 0.0f)
+            {
+              // Since joint transforms are encoded in terms of
+              // t,r,s components, it shouldn't be possible to
+              // encode non-affine transforms, except for the rest
+              // pose (which, according to the schema, should
+              // be affine!). Safe to assume affine transforms.
+              p += jointXforms[jointIdx].TransformAffine(initialP) * w;
+            }
+
+            // XXX: Possible optimization at this point:
+            // If joint weights were required to be ordered, and
+            // null weights are encountered, we can break out of
+            // the inner loop early. I.e.,
+            //
+            // if (weightIsNull)
+            //     break;
+            //
+            // This can potentially greatly reduce the number of
+            // operations when the number of influences is high, but
+            // most points have few influences.
+            // This optimization is not being applied now because
+            // the schema does not (yet) require sorted influences.
+          } else
+          {
+
+            // XXX: Generally, if one joint index is bad, an asset
+            // has probably gotten out of sync, and probably many
+            // other indices will be invalid, too.
+            // We could attempt to continue silently, but would
+            // likely end up with scrambled points.
+            // Bail out early.
+
+            TF_WARN(
+              "Out of range joint index %d at index %zu"
+              " (num joints = %zu).",
+              jointIdx,
+              influenceIdx,
+              jointXforms.size());
+            errors = true;
+            return;
+          }
+        }
+
+        points[pi] = p;
+      }
+    });
+
+    return !errors;
   }
 
-  const _InterleavedInfluencesFn influenceFn{influences};
-  return _SkinPointsLBS(
-    geomBindTransform, jointXforms, influenceFn, numInfluencesPerPoint, points, inSerial);
-}
-
-template<typename Matrix4>
-bool _NonInterleavedSkinPointsLBS(const Matrix4 &geomBindTransform,
-                                  TfSpan<const Matrix4> jointXforms,
-                                  TfSpan<const int> jointIndices,
-                                  TfSpan<const float> jointWeights,
-                                  int numInfluencesPerPoint,
-                                  TfSpan<GfVec3f> points,
-                                  bool inSerial)
-{
-  if (jointIndices.size() != jointWeights.size())
+  template<typename Matrix4>
+  bool _InterleavedSkinPointsLBS(const Matrix4 &geomBindTransform,
+                                 TfSpan<const Matrix4> jointXforms,
+                                 TfSpan<const GfVec2f> influences,
+                                 int numInfluencesPerPoint,
+                                 TfSpan<GfVec3f> points,
+                                 bool inSerial)
   {
-    TF_WARN(
-      "Size of jointIndices [%zu] != size of jointWeights [%zu]", jointIndices.size(), jointWeights.size());
-    return false;
+    if (influences.size() != (points.size() * numInfluencesPerPoint))
+    {
+      TF_WARN(
+        "Size of influences [%zu] != "
+        "(points.size() [%zu] * numInfluencesPerPoint [%d]).",
+        influences.size(),
+        points.size(),
+        numInfluencesPerPoint);
+      return false;
+    }
+
+    const _InterleavedInfluencesFn influenceFn{influences};
+    return _SkinPointsLBS(geomBindTransform,
+                          jointXforms,
+                          influenceFn,
+                          numInfluencesPerPoint,
+                          points,
+                          inSerial);
   }
 
-  if (jointIndices.size() != (points.size() * numInfluencesPerPoint))
+  template<typename Matrix4>
+  bool _NonInterleavedSkinPointsLBS(const Matrix4 &geomBindTransform,
+                                    TfSpan<const Matrix4> jointXforms,
+                                    TfSpan<const int> jointIndices,
+                                    TfSpan<const float> jointWeights,
+                                    int numInfluencesPerPoint,
+                                    TfSpan<GfVec3f> points,
+                                    bool inSerial)
   {
-    TF_WARN(
-      "Size of jointIndices [%zu] != "
-      "(points.size() [%zu] * numInfluencesPerPoint [%d]).",
-      jointIndices.size(),
-      points.size(),
-      numInfluencesPerPoint);
-    return false;
-  }
+    if (jointIndices.size() != jointWeights.size())
+    {
+      TF_WARN("Size of jointIndices [%zu] != size of jointWeights [%zu]",
+              jointIndices.size(),
+              jointWeights.size());
+      return false;
+    }
 
-  const _NonInterleavedInfluencesFn influenceFn{jointIndices, jointWeights};
-  return _SkinPointsLBS(
-    geomBindTransform, jointXforms, influenceFn, numInfluencesPerPoint, points, inSerial);
-}
+    if (jointIndices.size() != (points.size() * numInfluencesPerPoint))
+    {
+      TF_WARN(
+        "Size of jointIndices [%zu] != "
+        "(points.size() [%zu] * numInfluencesPerPoint [%d]).",
+        jointIndices.size(),
+        points.size(),
+        numInfluencesPerPoint);
+      return false;
+    }
+
+    const _NonInterleavedInfluencesFn influenceFn{jointIndices, jointWeights};
+    return _SkinPointsLBS(geomBindTransform,
+                          jointXforms,
+                          influenceFn,
+                          numInfluencesPerPoint,
+                          points,
+                          inSerial);
+  }
 
 }  // namespace
 
@@ -1360,8 +1373,13 @@ bool UsdSkelSkinPointsLBS(const GfMatrix4d &geomBindTransform,
                           TfSpan<GfVec3f> points,
                           bool inSerial)
 {
-  return _NonInterleavedSkinPointsLBS(
-    geomBindTransform, jointXforms, jointIndices, jointWeights, numInfluencesPerPoint, points, inSerial);
+  return _NonInterleavedSkinPointsLBS(geomBindTransform,
+                                      jointXforms,
+                                      jointIndices,
+                                      jointWeights,
+                                      numInfluencesPerPoint,
+                                      points,
+                                      inSerial);
 }
 
 bool UsdSkelSkinPointsLBS(const GfMatrix4f &geomBindTransform,
@@ -1372,8 +1390,13 @@ bool UsdSkelSkinPointsLBS(const GfMatrix4f &geomBindTransform,
                           TfSpan<GfVec3f> points,
                           bool inSerial)
 {
-  return _NonInterleavedSkinPointsLBS(
-    geomBindTransform, jointXforms, jointIndices, jointWeights, numInfluencesPerPoint, points, inSerial);
+  return _NonInterleavedSkinPointsLBS(geomBindTransform,
+                                      jointXforms,
+                                      jointIndices,
+                                      jointWeights,
+                                      numInfluencesPerPoint,
+                                      points,
+                                      inSerial);
 }
 
 bool UsdSkelSkinPointsLBS(const GfMatrix4d &geomBindTransform,
@@ -1383,8 +1406,12 @@ bool UsdSkelSkinPointsLBS(const GfMatrix4d &geomBindTransform,
                           TfSpan<GfVec3f> points,
                           bool inSerial)
 {
-  return _InterleavedSkinPointsLBS(
-    geomBindTransform, jointXforms, influences, numInfluencesPerPoint, points, inSerial);
+  return _InterleavedSkinPointsLBS(geomBindTransform,
+                                   jointXforms,
+                                   influences,
+                                   numInfluencesPerPoint,
+                                   points,
+                                   inSerial);
 }
 
 bool UsdSkelSkinPointsLBS(const GfMatrix4f &geomBindTransform,
@@ -1394,8 +1421,12 @@ bool UsdSkelSkinPointsLBS(const GfMatrix4f &geomBindTransform,
                           TfSpan<GfVec3f> points,
                           bool inSerial)
 {
-  return _InterleavedSkinPointsLBS(
-    geomBindTransform, jointXforms, influences, numInfluencesPerPoint, points, inSerial);
+  return _InterleavedSkinPointsLBS(geomBindTransform,
+                                   jointXforms,
+                                   influences,
+                                   numInfluencesPerPoint,
+                                   points,
+                                   inSerial);
 }
 
 // deprecated
@@ -1433,136 +1464,148 @@ bool UsdSkelSkinPointsLBS(const GfMatrix4d &geomBindTransform,
     return false;
   }
 
-  return UsdSkelSkinPointsLBS(
-    geomBindTransform, jointXforms, jointIndices, jointWeights, numInfluencesPerPoint, *points);
+  return UsdSkelSkinPointsLBS(geomBindTransform,
+                              jointXforms,
+                              jointIndices,
+                              jointWeights,
+                              numInfluencesPerPoint,
+                              *points);
 }
 
 namespace
 {
 
-template<typename Matrix3, typename InfluenceFn>
-bool _SkinNormalsLBS(const Matrix3 &geomBindTransform,
-                     TfSpan<const Matrix3> jointXforms,
-                     const InfluenceFn &influenceFn,
-                     int numInfluencesPerPoint,
-                     TfSpan<GfVec3f> normals,
-                     bool inSerial)
-{
-  TRACE_FUNCTION();
+  template<typename Matrix3, typename InfluenceFn>
+  bool _SkinNormalsLBS(const Matrix3 &geomBindTransform,
+                       TfSpan<const Matrix3> jointXforms,
+                       const InfluenceFn &influenceFn,
+                       int numInfluencesPerPoint,
+                       TfSpan<GfVec3f> normals,
+                       bool inSerial)
+  {
+    TRACE_FUNCTION();
 
-  // Flag for marking error state from within threads.
-  std::atomic_bool errors(false);
+    // Flag for marking error state from within threads.
+    std::atomic_bool errors(false);
 
-  _ParallelForN(normals.size(), inSerial, [&](size_t start, size_t end) {
-    // XXX: We skin normals by summing the weighted normals as posed
-    // for each influence, in the same manner as point skinning.
-    // This is a very common, though flawed approach. There are more
-    // accurate algorithms for skinning normals that should be
-    // considered in the future (E.g, Accurate and Efficient
-    // Lighting for Skinned Models, Tarini, et. al.)
+    _ParallelForN(normals.size(), inSerial, [&](size_t start, size_t end) {
+      // XXX: We skin normals by summing the weighted normals as posed
+      // for each influence, in the same manner as point skinning.
+      // This is a very common, though flawed approach. There are more
+      // accurate algorithms for skinning normals that should be
+      // considered in the future (E.g, Accurate and Efficient
+      // Lighting for Skinned Models, Tarini, et. al.)
 
-    for (size_t pi = start; pi < end; ++pi)
-    {
-
-      const GfVec3f initialN = normals[pi] * geomBindTransform;
-
-      GfVec3f n(0, 0, 0);
-
-      for (int wi = 0; wi < numInfluencesPerPoint; ++wi)
+      for (size_t pi = start; pi < end; ++pi)
       {
-        const size_t influenceIdx = pi * numInfluencesPerPoint + wi;
-        const int jointIdx = influenceFn.GetIndex(influenceIdx);
 
-        if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
+        const GfVec3f initialN = normals[pi] * geomBindTransform;
+
+        GfVec3f n(0, 0, 0);
+
+        for (int wi = 0; wi < numInfluencesPerPoint; ++wi)
         {
+          const size_t influenceIdx = pi * numInfluencesPerPoint + wi;
+          const int jointIdx = influenceFn.GetIndex(influenceIdx);
 
-          const float w = influenceFn.GetWeight(influenceIdx);
-          if (w != 0.0f)
+          if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
           {
-            n += (initialN * jointXforms[jointIdx]) * w;
+
+            const float w = influenceFn.GetWeight(influenceIdx);
+            if (w != 0.0f)
+            {
+              n += (initialN * jointXforms[jointIdx]) * w;
+            }
+          } else
+          {
+            // XXX: Generally, if one joint index is bad, an asset
+            // has probably gotten out of sync, and probably many
+            // other indices will be invalid, too.
+            // We could attempt to continue silently, but would
+            // likely end up with scrambled normals.
+            // Bail out early.
+
+            TF_WARN(
+              "Out of range joint index %d at index %zu"
+              " (num joints = %zu).",
+              jointIdx,
+              influenceIdx,
+              jointXforms.size());
+            errors = true;
+            return;
           }
         }
-        else
-        {
-          // XXX: Generally, if one joint index is bad, an asset
-          // has probably gotten out of sync, and probably many
-          // other indices will be invalid, too.
-          // We could attempt to continue silently, but would
-          // likely end up with scrambled normals.
-          // Bail out early.
-
-          TF_WARN(
-            "Out of range joint index %d at index %zu"
-            " (num joints = %zu).",
-            jointIdx,
-            influenceIdx,
-            jointXforms.size());
-          errors = true;
-          return;
-        }
+        normals[pi] = n.GetNormalized();
       }
-      normals[pi] = n.GetNormalized();
+    });
+
+    return !errors;
+  }
+
+  template<typename Matrix3>
+  bool _InterleavedSkinNormalsLBS(const Matrix3 &geomBindTransform,
+                                  TfSpan<const Matrix3> jointXforms,
+                                  TfSpan<const GfVec2f> influences,
+                                  int numInfluencesPerPoint,
+                                  TfSpan<GfVec3f> normals,
+                                  bool inSerial)
+  {
+    if (influences.size() != (normals.size() * numInfluencesPerPoint))
+    {
+      TF_WARN(
+        "Size of influences [%zu] != "
+        "(normals.size() [%zu] * numInfluencesPerPoint [%d]).",
+        influences.size(),
+        normals.size(),
+        numInfluencesPerPoint);
+      return false;
     }
-  });
 
-  return !errors;
-}
-
-template<typename Matrix3>
-bool _InterleavedSkinNormalsLBS(const Matrix3 &geomBindTransform,
-                                TfSpan<const Matrix3> jointXforms,
-                                TfSpan<const GfVec2f> influences,
-                                int numInfluencesPerPoint,
-                                TfSpan<GfVec3f> normals,
-                                bool inSerial)
-{
-  if (influences.size() != (normals.size() * numInfluencesPerPoint))
-  {
-    TF_WARN(
-      "Size of influences [%zu] != "
-      "(normals.size() [%zu] * numInfluencesPerPoint [%d]).",
-      influences.size(),
-      normals.size(),
-      numInfluencesPerPoint);
-    return false;
+    const _InterleavedInfluencesFn influenceFn{influences};
+    return _SkinNormalsLBS(geomBindTransform,
+                           jointXforms,
+                           influenceFn,
+                           numInfluencesPerPoint,
+                           normals,
+                           inSerial);
   }
 
-  const _InterleavedInfluencesFn influenceFn{influences};
-  return _SkinNormalsLBS(
-    geomBindTransform, jointXforms, influenceFn, numInfluencesPerPoint, normals, inSerial);
-}
-
-template<typename Matrix3>
-bool _NonInterleavedSkinNormalsLBS(const Matrix3 &geomBindTransform,
-                                   TfSpan<const Matrix3> jointXforms,
-                                   TfSpan<const int> jointIndices,
-                                   TfSpan<const float> jointWeights,
-                                   int numInfluencesPerPoint,
-                                   TfSpan<GfVec3f> normals,
-                                   bool inSerial)
-{
-  if (jointIndices.size() != jointWeights.size())
+  template<typename Matrix3>
+  bool _NonInterleavedSkinNormalsLBS(const Matrix3 &geomBindTransform,
+                                     TfSpan<const Matrix3> jointXforms,
+                                     TfSpan<const int> jointIndices,
+                                     TfSpan<const float> jointWeights,
+                                     int numInfluencesPerPoint,
+                                     TfSpan<GfVec3f> normals,
+                                     bool inSerial)
   {
-    TF_WARN(
-      "Size of jointIndices [%zu] != size of jointWeights [%zu]", jointIndices.size(), jointWeights.size());
-    return false;
-  }
+    if (jointIndices.size() != jointWeights.size())
+    {
+      TF_WARN("Size of jointIndices [%zu] != size of jointWeights [%zu]",
+              jointIndices.size(),
+              jointWeights.size());
+      return false;
+    }
 
-  if (jointIndices.size() != (normals.size() * numInfluencesPerPoint))
-  {
-    TF_WARN(
-      "Size of jointIndices [%zu] != "
-      "(normals.size() [%zu] * numInfluencesPerPoint [%d]).",
-      jointIndices.size(),
-      normals.size(),
-      numInfluencesPerPoint);
-    return false;
-  }
+    if (jointIndices.size() != (normals.size() * numInfluencesPerPoint))
+    {
+      TF_WARN(
+        "Size of jointIndices [%zu] != "
+        "(normals.size() [%zu] * numInfluencesPerPoint [%d]).",
+        jointIndices.size(),
+        normals.size(),
+        numInfluencesPerPoint);
+      return false;
+    }
 
-  const _NonInterleavedInfluencesFn influenceFn{jointIndices, jointWeights};
-  return _SkinNormalsLBS(
-    geomBindTransform, jointXforms, influenceFn, numInfluencesPerPoint, normals, inSerial);
-}
+    const _NonInterleavedInfluencesFn influenceFn{jointIndices, jointWeights};
+    return _SkinNormalsLBS(geomBindTransform,
+                           jointXforms,
+                           influenceFn,
+                           numInfluencesPerPoint,
+                           normals,
+                           inSerial);
+  }
 
 }  // namespace
 
@@ -1574,8 +1617,13 @@ bool UsdSkelSkinNormalsLBS(const GfMatrix3d &geomBindTransform,
                            TfSpan<GfVec3f> normals,
                            bool inSerial)
 {
-  return _NonInterleavedSkinNormalsLBS(
-    geomBindTransform, jointXforms, jointIndices, jointWeights, numInfluencesPerPoint, normals, inSerial);
+  return _NonInterleavedSkinNormalsLBS(geomBindTransform,
+                                       jointXforms,
+                                       jointIndices,
+                                       jointWeights,
+                                       numInfluencesPerPoint,
+                                       normals,
+                                       inSerial);
 }
 
 bool UsdSkelSkinNormalsLBS(const GfMatrix3f &geomBindTransform,
@@ -1586,8 +1634,13 @@ bool UsdSkelSkinNormalsLBS(const GfMatrix3f &geomBindTransform,
                            TfSpan<GfVec3f> normals,
                            bool inSerial)
 {
-  return _NonInterleavedSkinNormalsLBS(
-    geomBindTransform, jointXforms, jointIndices, jointWeights, numInfluencesPerPoint, normals, inSerial);
+  return _NonInterleavedSkinNormalsLBS(geomBindTransform,
+                                       jointXforms,
+                                       jointIndices,
+                                       jointWeights,
+                                       numInfluencesPerPoint,
+                                       normals,
+                                       inSerial);
 }
 
 bool UsdSkelSkinNormalsLBS(const GfMatrix3d &geomBindTransform,
@@ -1597,8 +1650,12 @@ bool UsdSkelSkinNormalsLBS(const GfMatrix3d &geomBindTransform,
                            TfSpan<GfVec3f> points,
                            bool inSerial)
 {
-  return _InterleavedSkinNormalsLBS(
-    geomBindTransform, jointXforms, influences, numInfluencesPerPoint, points, inSerial);
+  return _InterleavedSkinNormalsLBS(geomBindTransform,
+                                    jointXforms,
+                                    influences,
+                                    numInfluencesPerPoint,
+                                    points,
+                                    inSerial);
 }
 
 bool UsdSkelSkinNormalsLBS(const GfMatrix3f &geomBindTransform,
@@ -1608,128 +1665,131 @@ bool UsdSkelSkinNormalsLBS(const GfMatrix3f &geomBindTransform,
                            TfSpan<GfVec3f> points,
                            bool inSerial)
 {
-  return _InterleavedSkinNormalsLBS(
-    geomBindTransform, jointXforms, influences, numInfluencesPerPoint, points, inSerial);
+  return _InterleavedSkinNormalsLBS(geomBindTransform,
+                                    jointXforms,
+                                    influences,
+                                    numInfluencesPerPoint,
+                                    points,
+                                    inSerial);
 }
 
 namespace
 {
 
-template<typename Matrix4, typename InfluencesFn>
-bool UsdSkel_SkinTransformLBS(const Matrix4 &geomBindTransform,
-                              TfSpan<const Matrix4> jointXforms,
-                              const InfluencesFn &influencesFn,
-                              Matrix4 *xform)
-{
-  TRACE_FUNCTION();
-
-  if (!xform)
+  template<typename Matrix4, typename InfluencesFn>
+  bool UsdSkel_SkinTransformLBS(const Matrix4 &geomBindTransform,
+                                TfSpan<const Matrix4> jointXforms,
+                                const InfluencesFn &influencesFn,
+                                Matrix4 *xform)
   {
-    TF_CODING_ERROR("'xform' is null");
-    return false;
-  }
+    TRACE_FUNCTION();
 
-  // Early-out for the common case where an object is rigidly
-  // bound to a single joint.
-  if (influencesFn.size() == 1 && GfIsClose(influencesFn.GetWeight(0), 1.0f, 1e-6))
-  {
-    const int jointIdx = influencesFn.GetIndex(0);
-    if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
+    if (!xform)
     {
-      *xform = geomBindTransform * jointXforms[jointIdx];
-      return true;
-    }
-    else
-    {
-      TF_WARN(
-        "Out of range joint index %d at index 0"
-        " (num joints = %zu).",
-        jointIdx,
-        jointXforms.size());
+      TF_CODING_ERROR("'xform' is null");
       return false;
     }
-  }
 
-  // One option for skinning transforms would be to decompose the transforms
-  // into translate,rotate,scale components, and compute the weighted
-  // combination of those components.
-  // The transformation decomposition that this requires, however,
-  // is relatively expensive.
-  // What we do instead is compute a 4-point frame to describe the transform,
-  // apply normal point deformations, and then derive a skinned transform
-  // from the deformed frame points.
-
-  const GfVec3f pivot(geomBindTransform.ExtractTranslation());
-
-  // XXX: Note that if precision becomes an issue, the offset applied to
-  // produce the points that represent each of the basis vectors can be scaled
-  // up to improve precision, provided that the inverse scale is applied when
-  // constructing the final matrix.
-  GfVec3f framePoints[4] = {
-    pivot + GfVec3f(geomBindTransform.GetRow3(0)),  // i basis
-    pivot + GfVec3f(geomBindTransform.GetRow3(1)),  // j basis
-    pivot + GfVec3f(geomBindTransform.GetRow3(2)),  // k basis
-    pivot,                                          // translate
-  };
-
-  for (int pi = 0; pi < 4; ++pi)
-  {
-    const GfVec3f initialP = framePoints[pi];
-
-    GfVec3f p(0, 0, 0);
-    for (size_t wi = 0; wi < influencesFn.size(); ++wi)
+    // Early-out for the common case where an object is rigidly
+    // bound to a single joint.
+    if (influencesFn.size() == 1 && GfIsClose(influencesFn.GetWeight(0), 1.0f, 1e-6))
     {
-      const int jointIdx = influencesFn.GetIndex(wi);
+      const int jointIdx = influencesFn.GetIndex(0);
       if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
       {
-        const float w = influencesFn.GetWeight(wi);
-        if (w != 0.0f)
-        {
-          // XXX: See the notes from _SkinPointsLBS():
-          // affine transforms should be okay.
-          p += jointXforms[jointIdx].TransformAffine(initialP) * w;
-        }
-      }
-      else
+        *xform = geomBindTransform * jointXforms[jointIdx];
+        return true;
+      } else
       {
         TF_WARN(
-          "Out of range joint index %d at index %zu"
+          "Out of range joint index %d at index 0"
           " (num joints = %zu).",
           jointIdx,
-          wi,
           jointXforms.size());
         return false;
       }
     }
-    framePoints[pi] = p;
+
+    // One option for skinning transforms would be to decompose the transforms
+    // into translate,rotate,scale components, and compute the weighted
+    // combination of those components.
+    // The transformation decomposition that this requires, however,
+    // is relatively expensive.
+    // What we do instead is compute a 4-point frame to describe the transform,
+    // apply normal point deformations, and then derive a skinned transform
+    // from the deformed frame points.
+
+    const GfVec3f pivot(geomBindTransform.ExtractTranslation());
+
+    // XXX: Note that if precision becomes an issue, the offset applied to
+    // produce the points that represent each of the basis vectors can be scaled
+    // up to improve precision, provided that the inverse scale is applied when
+    // constructing the final matrix.
+    GfVec3f framePoints[4] = {
+      pivot + GfVec3f(geomBindTransform.GetRow3(0)),  // i basis
+      pivot + GfVec3f(geomBindTransform.GetRow3(1)),  // j basis
+      pivot + GfVec3f(geomBindTransform.GetRow3(2)),  // k basis
+      pivot,                                          // translate
+    };
+
+    for (int pi = 0; pi < 4; ++pi)
+    {
+      const GfVec3f initialP = framePoints[pi];
+
+      GfVec3f p(0, 0, 0);
+      for (size_t wi = 0; wi < influencesFn.size(); ++wi)
+      {
+        const int jointIdx = influencesFn.GetIndex(wi);
+        if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
+        {
+          const float w = influencesFn.GetWeight(wi);
+          if (w != 0.0f)
+          {
+            // XXX: See the notes from _SkinPointsLBS():
+            // affine transforms should be okay.
+            p += jointXforms[jointIdx].TransformAffine(initialP) * w;
+          }
+        } else
+        {
+          TF_WARN(
+            "Out of range joint index %d at index %zu"
+            " (num joints = %zu).",
+            jointIdx,
+            wi,
+            jointXforms.size());
+          return false;
+        }
+      }
+      framePoints[pi] = p;
+    }
+
+    const GfVec3f skinnedPivot = framePoints[3];
+    xform->SetTranslate(skinnedPivot);
+    for (int i = 0; i < 3; ++i)
+    {
+      xform->SetRow3(i, (framePoints[i] - skinnedPivot));
+    }
+    return true;
   }
 
-  const GfVec3f skinnedPivot = framePoints[3];
-  xform->SetTranslate(skinnedPivot);
-  for (int i = 0; i < 3; ++i)
+  template<typename Matrix4>
+  bool UsdSkel_NonInterleavedSkinTransformLBS(const Matrix4 &geomBindTransform,
+                                              TfSpan<const Matrix4> jointXforms,
+                                              TfSpan<const int> jointIndices,
+                                              TfSpan<const float> jointWeights,
+                                              Matrix4 *xform)
   {
-    xform->SetRow3(i, (framePoints[i] - skinnedPivot));
-  }
-  return true;
-}
+    if (jointIndices.size() != jointWeights.size())
+    {
+      TF_WARN("Size of jointIndices [%zu] != size of jointWeights [%zu]",
+              jointIndices.size(),
+              jointWeights.size());
+      return false;
+    }
 
-template<typename Matrix4>
-bool UsdSkel_NonInterleavedSkinTransformLBS(const Matrix4 &geomBindTransform,
-                                            TfSpan<const Matrix4> jointXforms,
-                                            TfSpan<const int> jointIndices,
-                                            TfSpan<const float> jointWeights,
-                                            Matrix4 *xform)
-{
-  if (jointIndices.size() != jointWeights.size())
-  {
-    TF_WARN(
-      "Size of jointIndices [%zu] != size of jointWeights [%zu]", jointIndices.size(), jointWeights.size());
-    return false;
+    const _NonInterleavedInfluencesFn influencesFn{jointIndices, jointWeights};
+    return UsdSkel_SkinTransformLBS(geomBindTransform, jointXforms, influencesFn, xform);
   }
-
-  const _NonInterleavedInfluencesFn influencesFn{jointIndices, jointWeights};
-  return UsdSkel_SkinTransformLBS(geomBindTransform, jointXforms, influencesFn, xform);
-}
 
 }  // namespace
 
@@ -1739,8 +1799,11 @@ bool UsdSkelSkinTransformLBS(const GfMatrix4d &geomBindTransform,
                              TfSpan<const float> jointWeights,
                              GfMatrix4d *xform)
 {
-  return UsdSkel_NonInterleavedSkinTransformLBS(
-    geomBindTransform, jointXforms, jointIndices, jointWeights, xform);
+  return UsdSkel_NonInterleavedSkinTransformLBS(geomBindTransform,
+                                                jointXforms,
+                                                jointIndices,
+                                                jointWeights,
+                                                xform);
 }
 
 bool UsdSkelSkinTransformLBS(const GfMatrix4f &geomBindTransform,
@@ -1749,8 +1812,11 @@ bool UsdSkelSkinTransformLBS(const GfMatrix4f &geomBindTransform,
                              TfSpan<const float> jointWeights,
                              GfMatrix4f *xform)
 {
-  return UsdSkel_NonInterleavedSkinTransformLBS(
-    geomBindTransform, jointXforms, jointIndices, jointWeights, xform);
+  return UsdSkel_NonInterleavedSkinTransformLBS(geomBindTransform,
+                                                jointXforms,
+                                                jointIndices,
+                                                jointWeights,
+                                                xform);
 }
 
 bool UsdSkelSkinTransformLBS(const GfMatrix4d &geomBindTransform,
@@ -1790,54 +1856,53 @@ bool UsdSkelSkinTransformLBS(const GfMatrix4d &geomBindTransform,
 namespace
 {
 
-/// Apply indexed offsets to \p points.
-bool UsdSkel_ApplyIndexedBlendShape(const float weight,
-                                    const TfSpan<const GfVec3f> offsets,
-                                    const TfSpan<const int> indices,
-                                    TfSpan<GfVec3f> points)
-{
-  TRACE_FUNCTION();
+  /// Apply indexed offsets to \p points.
+  bool UsdSkel_ApplyIndexedBlendShape(const float weight,
+                                      const TfSpan<const GfVec3f> offsets,
+                                      const TfSpan<const int> indices,
+                                      TfSpan<GfVec3f> points)
+  {
+    TRACE_FUNCTION();
 
-  // Flag for marking error state from within threads.
-  std::atomic_bool errors(false);
+    // Flag for marking error state from within threads.
+    std::atomic_bool errors(false);
 
-  _ParallelForN(offsets.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
-    for (size_t i = start; i < end; ++i)
-    {
-      const int index = indices[i];
-      if (index >= 0 && static_cast<size_t>(index) < points.size())
+    _ParallelForN(offsets.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
+      for (size_t i = start; i < end; ++i)
       {
-        points[index] += offsets[i] * weight;
+        const int index = indices[i];
+        if (index >= 0 && static_cast<size_t>(index) < points.size())
+        {
+          points[index] += offsets[i] * weight;
+        } else
+        {
+          // XXX: If one offset index is bad, an asset has probably
+          // gotten out of sync, and probably many other indices
+          // will be invalid, too. Bail out early.
+          TF_WARN("Out of range point index %d (num points = %zu).", index, points.size());
+          errors = true;
+          return;
+        }
       }
-      else
+    });
+
+    return !errors;
+  }
+
+  /// Apply non-indexed offsets to \p points.
+  void UsdSkel_ApplyNonIndexedBlendShape(const float weight,
+                                         const TfSpan<const GfVec3f> offsets,
+                                         TfSpan<GfVec3f> points)
+  {
+    TRACE_FUNCTION();
+
+    _ParallelForN(points.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
+      for (size_t i = start; i < end; ++i)
       {
-        // XXX: If one offset index is bad, an asset has probably
-        // gotten out of sync, and probably many other indices
-        // will be invalid, too. Bail out early.
-        TF_WARN("Out of range point index %d (num points = %zu).", index, points.size());
-        errors = true;
-        return;
+        points[i] += offsets[i] * weight;
       }
-    }
-  });
-
-  return !errors;
-}
-
-/// Apply non-indexed offsets to \p points.
-void UsdSkel_ApplyNonIndexedBlendShape(const float weight,
-                                       const TfSpan<const GfVec3f> offsets,
-                                       TfSpan<GfVec3f> points)
-{
-  TRACE_FUNCTION();
-
-  _ParallelForN(points.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
-    for (size_t i = start; i < end; ++i)
-    {
-      points[i] += offsets[i] * weight;
-    }
-  });
-}
+    });
+  }
 
 }  // namespace
 
@@ -1858,22 +1923,19 @@ bool UsdSkelApplyBlendShape(const float weight,
     if (offsets.size() == points.size())
     {
       UsdSkel_ApplyNonIndexedBlendShape(weight, offsets, points);
-    }
-    else
+    } else
     {
       TF_WARN("Size of non-indexed offsets [%zu] != size of points [%zu]", offsets.size(), points.size());
       return false;
     }
-  }
-  else
+  } else
   {
 
     if (offsets.size() == indices.size())
     {
 
       return UsdSkel_ApplyIndexedBlendShape(weight, offsets, indices, points);
-    }
-    else
+    } else
     {
       TF_WARN("Size of indexed offsets [%zu] != size of indices [%zu]", offsets.size(), indices.size());
       return false;

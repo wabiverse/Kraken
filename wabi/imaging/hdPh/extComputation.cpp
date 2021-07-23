@@ -73,7 +73,9 @@ static HdBufferArrayRangeSharedPtr _AllocateComputationDataRange(
   HdBufferSpec::GetBufferSpecs(inputs, &bufferSpecs);
 
   HdBufferArrayRangeSharedPtr inputRange = resourceRegistry->AllocateShaderStorageBufferArrayRange(
-    HdPrimTypeTokens->extComputation, bufferSpecs, HdBufferArrayUsageHint());
+    HdPrimTypeTokens->extComputation,
+    bufferSpecs,
+    HdBufferArrayUsageHint());
   resourceRegistry->AddSources(inputRange, std::move(inputs));
 
   return inputRange;
@@ -116,13 +118,13 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
   {
     VtValue inputValue = sceneDelegate->GetExtComputationInput(GetId(), inputName);
     size_t arraySize = inputValue.IsArrayValued() ? inputValue.GetArraySize() : 1;
-    HdBufferSourceSharedPtr inputSource = std::make_shared<HdVtBufferSource>(
-      inputName, inputValue, arraySize);
+    HdBufferSourceSharedPtr inputSource = std::make_shared<HdVtBufferSource>(inputName,
+                                                                             inputValue,
+                                                                             arraySize);
     if (inputSource->IsValid())
     {
       inputs.push_back(inputSource);
-    }
-    else
+    } else
     {
       TF_WARN("Unsupported type %s for source %s in extComputation %s.",
               inputValue.GetType().GetTypeName().c_str(),
@@ -153,8 +155,7 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
           .Msg("Allocated shared ExtComputation buffer range: %s: %p\n",
                GetId().GetText(),
                (void *)_inputRange.get());
-      }
-      else
+      } else
       {
         // Share the existing buffer range for this input key
         _inputRange = barInstance.GetValue();
@@ -164,8 +165,7 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
                GetId().GetText(),
                (void *)_inputRange.get());
       }
-    }
-    else
+    } else
     {
       // We're not sharing.
 
@@ -184,8 +184,7 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
           .Msg("Allocated unshared ExtComputation buffer range: %s: %p\n",
                GetId().GetText(),
                (void *)_inputRange.get());
-      }
-      else
+      } else
       {
         HdBufferSpecVector inputSpecs;
         HdBufferSpec::GetBufferSpecs(inputs, &inputSpecs);
@@ -204,8 +203,7 @@ void HdPhExtComputation::Sync(HdSceneDelegate *sceneDelegate,
               "%s: %p\n",
               GetId().GetText(),
               (void *)_inputRange.get());
-        }
-        else
+        } else
         {
           _inputRange = _AllocateComputationDataRange(std::move(inputs), resourceRegistry);
           TF_DEBUG(HD_SHARED_EXT_COMPUTATION_DATA)

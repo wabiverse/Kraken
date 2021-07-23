@@ -159,6 +159,6 @@ extern "C" ARCH_EXPORT PyObject *BOOST_PP_CAT(PyInit_lib, MFB_PACKAGE_NAME)()
 #define TF_WRAP_MODULE static void WrapModule()
 
 // Declares and calls the class wrapper for x
-#define TF_WRAP(x) \
+#define TF_WRAP(x)            \
   ARCH_HIDDEN void wrap##x(); \
   wrap##x()

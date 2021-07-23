@@ -50,18 +50,19 @@ WABI_NAMESPACE_USING
 
 namespace
 {
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-/**
- * fwds ->. */
-WRAP_CUSTOM;
+  /**
+   * fwds ->. */
+  WRAP_CUSTOM;
 
-static std::string _Repr(const UsdModelAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("Usd.ModelAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdModelAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("Usd.ModelAPI(%s)", primRepr.c_str());
+  }
 
 }  // namespace
 
@@ -121,51 +122,51 @@ void wrapUsdModelAPI()
 namespace
 {
 
-static TfToken _GetKind(const UsdModelAPI &self)
-{
-  TfToken result;
-  self.GetKind(&result);
-  return result;
-}
+  static TfToken _GetKind(const UsdModelAPI &self)
+  {
+    TfToken result;
+    self.GetKind(&result);
+    return result;
+  }
 
-static SdfAssetPath _GetAssetIdentifier(const UsdModelAPI &self)
-{
-  SdfAssetPath identifier;
-  self.GetAssetIdentifier(&identifier);
-  return identifier;
-}
+  static SdfAssetPath _GetAssetIdentifier(const UsdModelAPI &self)
+  {
+    SdfAssetPath identifier;
+    self.GetAssetIdentifier(&identifier);
+    return identifier;
+  }
 
-static std::string _GetAssetName(const UsdModelAPI &self)
-{
-  std::string assetName;
-  self.GetAssetName(&assetName);
-  return assetName;
-}
+  static std::string _GetAssetName(const UsdModelAPI &self)
+  {
+    std::string assetName;
+    self.GetAssetName(&assetName);
+    return assetName;
+  }
 
-static std::string _GetAssetVersion(const UsdModelAPI &self)
-{
-  std::string version;
-  self.GetAssetVersion(&version);
-  return version;
-}
+  static std::string _GetAssetVersion(const UsdModelAPI &self)
+  {
+    std::string version;
+    self.GetAssetVersion(&version);
+    return version;
+  }
 
-static VtArray<SdfAssetPath> _GetPayloadAssetDependencies(const UsdModelAPI &self)
-{
-  VtArray<SdfAssetPath> assetDeps;
-  self.GetPayloadAssetDependencies(&assetDeps);
-  return assetDeps;
-}
+  static VtArray<SdfAssetPath> _GetPayloadAssetDependencies(const UsdModelAPI &self)
+  {
+    VtArray<SdfAssetPath> assetDeps;
+    self.GetPayloadAssetDependencies(&assetDeps);
+    return assetDeps;
+  }
 
-static VtDictionary _GetAssetInfo(const UsdModelAPI &self)
-{
-  VtDictionary info;
-  self.GetAssetInfo(&info);
-  return info;
-}
+  static VtDictionary _GetAssetInfo(const UsdModelAPI &self)
+  {
+    VtDictionary info;
+    self.GetAssetInfo(&info);
+    return info;
+  }
 
-WRAP_CUSTOM
-{
-  /* clang-format off */
+  WRAP_CUSTOM
+  {
+    /* clang-format off */
   TF_PY_WRAP_PUBLIC_TOKENS("AssetInfoKeys", UsdModelAPIAssetInfoKeys, USDMODEL_ASSET_INFO_KEYS);
   {
     scope parent = _class;
@@ -193,7 +194,7 @@ WRAP_CUSTOM
       .def("GetAssetInfo", _GetAssetInfo)
       .def("SetAssetInfo", &UsdModelAPI::SetAssetInfo);
   }
-  /* clang-format on */
-}
+    /* clang-format on */
+  }
 
 }  // namespace

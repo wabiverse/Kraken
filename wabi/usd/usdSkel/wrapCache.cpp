@@ -54,24 +54,24 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-std::vector<UsdSkelBinding> _ComputeSkelBindings(const UsdSkelCache &self,
-                                                 const UsdSkelRoot &skelRoot,
-                                                 const Usd_PrimFlagsPredicate predicate)
-{
-  std::vector<UsdSkelBinding> bindings;
-  self.ComputeSkelBindings(skelRoot, &bindings, predicate);
-  return bindings;
-}
+  std::vector<UsdSkelBinding> _ComputeSkelBindings(const UsdSkelCache &self,
+                                                   const UsdSkelRoot &skelRoot,
+                                                   const Usd_PrimFlagsPredicate predicate)
+  {
+    std::vector<UsdSkelBinding> bindings;
+    self.ComputeSkelBindings(skelRoot, &bindings, predicate);
+    return bindings;
+  }
 
-UsdSkelBinding _ComputeSkelBinding(const UsdSkelCache &self,
-                                   const UsdSkelRoot &skelRoot,
-                                   const UsdSkelSkeleton &skel,
-                                   const Usd_PrimFlagsPredicate predicate)
-{
-  UsdSkelBinding binding;
-  self.ComputeSkelBinding(skelRoot, skel, &binding, predicate);
-  return binding;
-}
+  UsdSkelBinding _ComputeSkelBinding(const UsdSkelCache &self,
+                                     const UsdSkelRoot &skelRoot,
+                                     const UsdSkelSkeleton &skel,
+                                     const Usd_PrimFlagsPredicate predicate)
+  {
+    UsdSkelBinding binding;
+    self.ComputeSkelBinding(skelRoot, skel, &binding, predicate);
+    return binding;
+  }
 
 }  // namespace
 

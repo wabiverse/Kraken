@@ -52,21 +52,21 @@ WABI_NAMESPACE_BEGIN
 /// USD camera schema and GfCamera (with the exception of window
 /// policy). All spatial units are in world units though and
 /// projection is HdCamera::Projection rather than a token.
-#define HD_CAMERA_TOKENS \
-  /* frustum */ \
-  (projection)(horizontalAperture)( \
+#define HD_CAMERA_TOKENS                                                                                        \
+  /* frustum */                                                                                                 \
+  (projection)(horizontalAperture)(                                                                             \
     verticalAperture)(horizontalApertureOffset)(verticalApertureOffset)(focalLength)(clippingRange)(clipPlanes) \
-\
-    /* depth of field */ \
-    (fStop)(focusDistance) \
-\
-    /* shutter/lighting */ \
-    (shutterOpen)(shutterClose)(exposure) \
-\
-    /* how to match window with different aspect */ \
-    (windowPolicy) \
-\
-    /* OpenGL-style matrices, deprecated */ \
+                                                                                                                \
+    /* depth of field */                                                                                        \
+    (fStop)(focusDistance)                                                                                      \
+                                                                                                                \
+    /* shutter/lighting */                                                                                      \
+    (shutterOpen)(shutterClose)(exposure)                                                                       \
+                                                                                                                \
+    /* how to match window with different aspect */                                                             \
+    (windowPolicy)                                                                                              \
+                                                                                                                \
+    /* OpenGL-style matrices, deprecated */                                                                     \
     (worldToViewMatrix)(projectionMatrix)
 
 TF_DECLARE_PUBLIC_TOKENS(HdCameraTokens, HD_API, HD_CAMERA_TOKENS);

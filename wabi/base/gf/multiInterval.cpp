@@ -71,8 +71,7 @@ GfInterval GfMultiInterval::GetBounds() const
     const GfInterval &first = *_set.begin();
     const GfInterval &last = *_set.rbegin();
     return GfInterval(first.GetMin(), last.GetMax(), first.IsMinClosed(), last.IsMaxClosed());
-  }
-  else
+  } else
   {
     return GfInterval();
   }
@@ -174,8 +173,7 @@ GfMultiInterval::const_iterator GfMultiInterval::GetPriorNonContainingInterval(d
     --i;
     TF_AXIOM(!i->Contains(x));
     return i;
-  }
-  else
+  } else
   {
     // No prior intervals left.
     return _set.end();

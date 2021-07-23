@@ -50,57 +50,61 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateFilePathAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
+  static UsdAttribute _CreateFilePathAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
+  }
 
-static UsdAttribute _CreateAuralModeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateAuralModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateAuralModeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateAuralModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static UsdAttribute _CreatePlaybackModeAttr(UsdMediaSpatialAudio &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
-{
-  return self.CreatePlaybackModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreatePlaybackModeAttr(UsdMediaSpatialAudio &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreatePlaybackModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateStartTimeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateStartTimeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TimeCode),
-                                  writeSparsely);
-}
-
-static UsdAttribute _CreateEndTimeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateEndTimeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TimeCode), writeSparsely);
-}
-
-static UsdAttribute _CreateMediaOffsetAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateMediaOffsetAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
+  static UsdAttribute _CreateStartTimeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateStartTimeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TimeCode),
                                     writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateGainAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateGainAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
-}
+  static UsdAttribute _CreateEndTimeAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateEndTimeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TimeCode),
+                                  writeSparsely);
+  }
 
-static std::string _Repr(const UsdMediaSpatialAudio &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdMedia.SpatialAudio(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateMediaOffsetAttr(UsdMediaSpatialAudio &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
+  {
+    return self.CreateMediaOffsetAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
+                                      writeSparsely);
+  }
+
+  static UsdAttribute _CreateGainAttr(UsdMediaSpatialAudio &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateGainAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
+  }
+
+  static std::string _Repr(const UsdMediaSpatialAudio &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdMedia.SpatialAudio(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -191,7 +195,7 @@ void wrapUsdMediaSpatialAudio()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

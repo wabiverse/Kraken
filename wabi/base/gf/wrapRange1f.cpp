@@ -56,29 +56,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static const int _dimension = 1;
+  static const int _dimension = 1;
 
-static string _Repr(GfRange1f const &self)
-{
-  return TF_PY_REPR_PREFIX + "Range1f(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
-}
+  static string _Repr(GfRange1f const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Range1f(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
+  }
 
 #if PY_MAJOR_VERSION == 2
-static GfRange1f __truediv__(const GfRange1f &self, double value)
-{
-  return self / value;
-}
+  static GfRange1f __truediv__(const GfRange1f &self, double value)
+  {
+    return self / value;
+  }
 
-static GfRange1f __itruediv__(GfRange1f &self, double value)
-{
-  return self /= value;
-}
+  static GfRange1f __itruediv__(GfRange1f &self, double value)
+  {
+    return self /= value;
+  }
 #endif
 
-static size_t __hash__(GfRange1f const &r)
-{
-  return hash_value(r);
-}
+  static size_t __hash__(GfRange1f const &r)
+  {
+    return hash_value(r);
+  }
 
 }  // anonymous namespace
 
@@ -112,8 +112,8 @@ void wrapRange1f()
 
     .def("SetEmpty", &GfRange1f::SetEmpty)
 
-    .def("Contains", (bool (GfRange1f::*)(float) const) & GfRange1f::Contains)
-    .def("Contains", (bool (GfRange1f::*)(const GfRange1f &) const) & GfRange1f::Contains)
+    .def("Contains", (bool(GfRange1f::*)(float) const) & GfRange1f::Contains)
+    .def("Contains", (bool(GfRange1f::*)(const GfRange1f &) const) & GfRange1f::Contains)
 
     .def("GetUnion", &GfRange1f::GetUnion)
     .staticmethod("GetUnion")

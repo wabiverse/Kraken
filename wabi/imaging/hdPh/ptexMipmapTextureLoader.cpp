@@ -83,7 +83,12 @@ void HdPhPtexMipmapTextureLoader::Block::guttering(HdPhPtexMipmapTextureLoader *
   // fix corner pixels
   int numchannels = ptex->numChannels();
   float *accumPixel = new float[numchannels];
-  int uv[4][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+  int uv[4][2] = {
+    {0, 0},
+    {1, 0},
+    {1, 1},
+    {0, 1}
+  };
 
   for (int edge = 0; edge < numEdges; edge++)
   {
@@ -145,8 +150,7 @@ void HdPhPtexMipmapTextureLoader::Block::guttering(HdPhPtexMipmapTextureLoader *
         dv += hei;
       unsigned char *d = pptr + dv * stride + du * bpp;
       Ptex::ConvertFromFloat(d, accumPixel, ptex->dataType(), numchannels);
-    }
-    else
+    } else
     {
       // case 3, set accumPixel to the corner 4 pixels
       if (edge == 1 || edge == 2)
@@ -403,7 +407,12 @@ class HdPhPtexMipmapTextureLoader::CornerIterator
     // limit to the maximum ptex resolution
     r = std::min(std::min(r, _currentInfo.res.ulog2), _currentInfo.res.vlog2);
     Ptex::Res res(r, r);
-    int uv[4][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+    int uv[4][2] = {
+      {0, 0},
+      {1, 0},
+      {1, 1},
+      {0, 1}
+    };
     int u = uv[_currentEdge][0] * (res.u() - 1);
     int v = uv[_currentEdge][1] * (res.v() - 1);
 
@@ -441,20 +450,17 @@ class HdPhPtexMipmapTextureLoader::CornerIterator
         _currentFace = _ptex->getFaceInfo(_currentFace).adjface(2);
         _currentEdge = 1;
         _mid = false;
-      }
-      else if (info.isSubface() && (!_ptex->getFaceInfo(_currentFace).isSubface()) && _currentEdge == 3)
+      } else if (info.isSubface() && (!_ptex->getFaceInfo(_currentFace).isSubface()) && _currentEdge == 3)
       {
         _mid = true;
         _currentEdge = info.adjedge(_currentEdge);
-      }
-      else
+      } else
       {
         _mid = false;
         _currentEdge = info.adjedge(_currentEdge);
         _currentEdge = (_currentEdge + 1) % 4;
       }
-    }
-    else
+    } else
     {
       _currentFace = info.adjface((_currentEdge + 3) % 4);
       _currentEdge = info.adjedge((_currentEdge + 3) % 4);
@@ -470,8 +476,7 @@ class HdPhPtexMipmapTextureLoader::CornerIterator
         _currentFace = sinfo.adjface((_startEdge + 3) % 4);
         _currentEdge = sinfo.adjedge((_startEdge + 3) % 4);
         _clockWise = false;
-      }
-      else
+      } else
       {
         // end
         _done = true;
@@ -549,8 +554,7 @@ HdPhPtexMipmapTextureLoader::HdPhPtexMipmapTextureLoader(PtexTexture *ptex,
       // need to squarize ptex face
       unsigned char s = std::min(faceInfo.res.ulog2, faceInfo.res.vlog2);
       _blocks[i].SetSize(s, s, _maxLevels != 0);
-    }
-    else
+    } else
     {
       _blocks[i].SetSize(faceInfo.res.ulog2, faceInfo.res.vlog2, _maxLevels != 0);
     }
@@ -609,18 +613,15 @@ int HdPhPtexMipmapTextureLoader::resampleBorder(int face,
       {
         u = edgeLength - 1 - (i + srcOffset);
         v = 0;
-      }
-      else if (edgeId == Ptex::e_right)
+      } else if (edgeId == Ptex::e_right)
       {
         u = res.u() - 1;
         v = edgeLength - 1 - (i + srcOffset);
-      }
-      else if (edgeId == Ptex::e_top)
+      } else if (edgeId == Ptex::e_top)
       {
         u = i + srcOffset;
         v = res.v() - 1;
-      }
-      else if (edgeId == Ptex::e_left)
+      } else if (edgeId == Ptex::e_left)
       {
         u = 0;
         v = i + srcOffset;
@@ -638,8 +639,7 @@ int HdPhPtexMipmapTextureLoader::resampleBorder(int face,
     }
     delete[] border;
     data->release();
-  }
-  else
+  } else
   {
     // down sampling
     while (srcLength > dstLength && res.ulog2 && res.vlog2)
@@ -670,18 +670,15 @@ int HdPhPtexMipmapTextureLoader::resampleBorder(int face,
       {
         u = edgeLength - 1 - (i + srcOffset);
         v = 0;
-      }
-      else if (edgeId == Ptex::e_right)
+      } else if (edgeId == Ptex::e_right)
       {
         u = res.u() - 1;
         v = edgeLength - 1 - (i + srcOffset);
-      }
-      else if (edgeId == Ptex::e_top)
+      } else if (edgeId == Ptex::e_top)
       {
         u = i + srcOffset;
         v = res.v() - 1;
-      }
-      else if (edgeId == Ptex::e_left)
+      } else if (edgeId == Ptex::e_left)
       {
         u = 0;
         v = i + srcOffset;
@@ -743,13 +740,11 @@ void HdPhPtexMipmapTextureLoader::sampleNeighbor(unsigned char *border,
         adjface = sfi1.adjface((ae + 3) % 4);
         ae = (sfi1.adjedge((ae + 3) % 4) + 3) % 4;
         resampleBorder(adjface, ae, border + (length / 2 * bpp), length / 2, bpp);
-      }
-      else
+      } else
       {
         TF_WARN("Assuming quad mesh format");
       }
-    }
-    else if (fi.isSubface() && !_ptex->getFaceInfo(adjface).isSubface())
+    } else if (fi.isSubface() && !_ptex->getFaceInfo(adjface).isSubface())
     {
       /* subface -> nonsubface (0.5:1).   two possible configuration
                case 1                    case 2
@@ -769,18 +764,15 @@ void HdPhPtexMipmapTextureLoader::sampleNeighbor(unsigned char *border,
         if (f == adjface && e == ae)
         {  // case 1
           resampleBorder(adjface, ae, border, length, bpp, 0.0, 0.5);
-        }
-        else
+        } else
         {  // case 2
           resampleBorder(adjface, ae, border, length, bpp, 0.5, 1.0);
         }
-      }
-      else
+      } else
       {
         TF_WARN("Assuming quad mesh format");
       }
-    }
-    else
+    } else
     {
       /*  ordinary case (1:1 match)
           +------------------+
@@ -791,8 +783,7 @@ void HdPhPtexMipmapTextureLoader::sampleNeighbor(unsigned char *border,
       */
       resampleBorder(adjface, ae, border, length, bpp);
     }
-  }
-  else
+  } else
   {
     /* border edge. duplicate itself
        +-----------------+
@@ -846,18 +837,15 @@ bool HdPhPtexMipmapTextureLoader::getCornerPixel(float *resultPixel,
       {
         uv[0] = res.u() / 2;
         uv[1] = 0;
-      }
-      else if (adjedge == 1)
+      } else if (adjedge == 1)
       {
         uv[0] = res.u() - 1;
         uv[1] = res.v() / 2;
-      }
-      else if (adjedge == 2)
+      } else if (adjedge == 2)
       {
         uv[0] = res.u() / 2 - 1;
         uv[1] = res.v() - 1;
-      }
-      else
+      } else
       {
         uv[0] = 0;
         uv[1] = res.v() / 2 - 1;
@@ -895,18 +883,15 @@ bool HdPhPtexMipmapTextureLoader::getCornerPixel(float *resultPixel,
       {
         uv[0] = res.u() / 2 - 1;
         uv[1] = 0;
-      }
-      else if (adjedge == 1)
+      } else if (adjedge == 1)
       {
         uv[0] = res.u() - 1;
         uv[1] = res.v() / 2 - 1;
-      }
-      else if (adjedge == 2)
+      } else if (adjedge == 2)
       {
         uv[0] = res.u() / 2;
         uv[1] = res.v() - 1;
-      }
-      else
+      } else
       {
         uv[0] = 0;
         uv[1] = res.v() / 2;
@@ -1004,8 +989,7 @@ void HdPhPtexMipmapTextureLoader::optimizePacking(int maxNumPages, size_t target
       if (block->ulog2 < 2 || block->vlog2 < 2)
       {
         // these blocks can't be reduced in size, skip.
-      }
-      else
+      } else
       {
         candidateBlocks.push_back(block);
       }
@@ -1028,8 +1012,7 @@ void HdPhPtexMipmapTextureLoader::optimizePacking(int maxNumPages, size_t target
         // 'blocks' master list we can just make sure it is removed
         // from the candidate list.
         continue;
-      }
-      else
+      } else
       {
         // move it to the back of the list so we reduce other candidates
         // before coming back to this one.
@@ -1128,8 +1111,7 @@ void HdPhPtexMipmapTextureLoader::optimizePacking(int maxNumPages, size_t target
         if (page->IsFull())
         {
           _pages.push_back(page);
-        }
-        else
+        } else
         {
           // not full yet but likely much more full than the next page
           // in line so move it to the back
@@ -1147,8 +1129,7 @@ void HdPhPtexMipmapTextureLoader::optimizePacking(int maxNumPages, size_t target
       if (page->IsFull())
       {
         _pages.push_back(page);
-      }
-      else
+      } else
       {
         openPages.push_back(page);
       }
@@ -1218,8 +1199,7 @@ void HdPhPtexMipmapTextureLoader::generateBuffers()
   for (int i = 0; i < numPages; ++i)
   {
     Page *page = _pages[i];
-    for (Page::BlockList::const_iterator it = page->GetBlocks().begin(); it != page->GetBlocks().end();
-         ++it)
+    for (Page::BlockList::const_iterator it = page->GetBlocks().begin(); it != page->GetBlocks().end(); ++it)
     {
       int ptexIndex = (*it)->index;
       uint16_t *p = (uint16_t *)(_layoutBuffer + sizeof(uint16_t) * 6 * ptexIndex);

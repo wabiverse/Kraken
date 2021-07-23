@@ -299,18 +299,15 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
         if (_PrimInsert(value, size()))
         {
           return std::make_pair(find(_view.key(value)), true);
-        }
-        else
+        } else
         {
           return std::make_pair(end(), false);
         }
-      }
-      else
+      } else
       {
         return std::make_pair(i, false);
       }
-    }
-    else
+    } else
     {
       return std::make_pair(iterator(), false);
     }
@@ -416,8 +413,7 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
     if (_view.IsValid())
     {
       return true;
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Accessing expired %s", _type.c_str());
       return false;
@@ -438,12 +434,10 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
     if (~_permission & permission & CanSet)
     {
       op = "replace";
-    }
-    else if (~_permission & permission & CanInsert)
+    } else if (~_permission & permission & CanInsert)
     {
       op = "insert";
-    }
-    else if (~_permission & permission & CanErase)
+    } else if (~_permission & permission & CanErase)
     {
       op = "remove";
     }

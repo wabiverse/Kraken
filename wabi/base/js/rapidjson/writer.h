@@ -351,8 +351,7 @@ class Writer
       PutUnsafe(*os_, 'r');
       PutUnsafe(*os_, 'u');
       PutUnsafe(*os_, 'e');
-    }
-    else
+    } else
     {
       PutReserve(*os_, 5);
       PutUnsafe(*os_, 'f');
@@ -419,8 +418,8 @@ class Writer
 
   bool WriteString(const Ch *str, SizeType length)
   {
-    static const typename TargetEncoding::Ch hexDigits[16] = {
-      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    static const typename TargetEncoding::Ch hexDigits[16] =
+      {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     static const char escape[256] = {
 #define Z16 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       // 0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
@@ -527,8 +526,7 @@ class Writer
           PutUnsafe(*os_, hexDigits[(codepoint >> 8) & 15]);
           PutUnsafe(*os_, hexDigits[(codepoint >> 4) & 15]);
           PutUnsafe(*os_, hexDigits[(codepoint)&15]);
-        }
-        else
+        } else
         {
           RAPIDJSON_ASSERT(codepoint >= 0x010000 && codepoint <= 0x10FFFF);
           // Surrogate pair
@@ -546,9 +544,8 @@ class Writer
           PutUnsafe(*os_, hexDigits[(trail >> 4) & 15]);
           PutUnsafe(*os_, hexDigits[(trail)&15]);
         }
-      }
-      else if ((sizeof(Ch) == 1 || static_cast<unsigned>(c) < 256) &&
-               RAPIDJSON_UNLIKELY(escape[static_cast<unsigned char>(c)]))
+      } else if ((sizeof(Ch) == 1 || static_cast<unsigned>(c) < 256) &&
+                 RAPIDJSON_UNLIKELY(escape[static_cast<unsigned char>(c)]))
       {
         is.Take();
         PutUnsafe(*os_, '\\');
@@ -560,11 +557,10 @@ class Writer
           PutUnsafe(*os_, hexDigits[static_cast<unsigned char>(c) >> 4]);
           PutUnsafe(*os_, hexDigits[static_cast<unsigned char>(c) & 0xF]);
         }
-      }
-      else if (RAPIDJSON_UNLIKELY(
-                 !(writeFlags & kWriteValidateEncodingFlag ?
-                     Transcoder<SourceEncoding, TargetEncoding>::Validate(is, *os_) :
-                     Transcoder<SourceEncoding, TargetEncoding>::TranscodeUnsafe(is, *os_))))
+      } else if (RAPIDJSON_UNLIKELY(
+                   !(writeFlags & kWriteValidateEncodingFlag ?
+                       Transcoder<SourceEncoding, TargetEncoding>::Validate(is, *os_) :
+                       Transcoder<SourceEncoding, TargetEncoding>::TranscodeUnsafe(is, *os_))))
         return false;
     }
     PutUnsafe(*os_, '\"');
@@ -624,8 +620,7 @@ class Writer
       if (!level->inArray && level->valueCount % 2 == 0)
         RAPIDJSON_ASSERT(type == kStringType);  // if it's in object, then even number should be a name
       level->valueCount++;
-    }
-    else
+    } else
     {
       RAPIDJSON_ASSERT(!hasRoot_);  // Should only has one and only one root.
       hasRoot_ = true;
@@ -717,17 +712,16 @@ inline bool Writer<StringBuffer>::ScanWriteUnescapedString(StringStream &is, siz
     {
       is.src_ = p;
       return RAPIDJSON_LIKELY(is.Tell() < length);
-    }
-    else
+    } else
       os_->PutUnsafe(*p++);
 
   // The rest of string using SIMD
-  static const char dquote[16] = {
-    '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"'};
-  static const char bslash[16] = {
-    '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\'};
-  static const char space[16] = {
-    0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19};
+  static const char dquote[16] =
+    {'\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"'};
+  static const char bslash[16] =
+    {'\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\'};
+  static const char space[16] =
+    {0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19};
   const __m128i dq = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&dquote[0]));
   const __m128i bs = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&bslash[0]));
   const __m128i sp = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&space[0]));

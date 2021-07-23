@@ -123,8 +123,7 @@ void Tf_PyIdHandle::Release() const
     _isAcquired = false;
     TfPyLock lock;
     Py_DECREF(ptr);
-  }
-  else
+  } else
   {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
@@ -151,8 +150,7 @@ void Tf_PyIdHandle::Acquire() const
     _isAcquired = true;
     TfPyLock lock;
     Py_INCREF(ptr);
-  }
-  else
+  } else
   {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
@@ -271,8 +269,7 @@ void Tf_PyIdentityHelper::Set(void const *key, PyObject *obj)
   {
     _identityMap[key] = Tf_PyIdHandle(obj);
     _RecordEstablishedIdentityStack(key);
-  }
-  else if (i->second.Ptr() != obj)
+  } else if (i->second.Ptr() != obj)
   {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
@@ -419,8 +416,7 @@ void Tf_PyOwnershipRefBaseUniqueChanged(TfRefBase const *refBase, bool isNowUniq
     TF_CODING_ERROR("Couldn't get uniqueId associated with refBase!");
     TfLogStackTrace("RefBase Unique Changed Error");
     // CODE_COVERAGE_ON
-  }
-  else
+  } else
   {
     if (isNowUnique)
       Tf_PyIdentityHelper::Release(uniqueId);

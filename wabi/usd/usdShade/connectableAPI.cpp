@@ -174,12 +174,10 @@ bool UsdShadeConnectableAPI::ConnectToSource(UsdAttribute const &shadingAttr,
   if (mod == ConnectionModification::Replace)
   {
     return shadingAttr.SetConnections(SdfPathVector{sourceAttr.GetPath()});
-  }
-  else if (mod == ConnectionModification::Prepend)
+  } else if (mod == ConnectionModification::Prepend)
   {
     return shadingAttr.AddConnection(sourceAttr.GetPath(), UsdListPositionFrontOfPrependList);
-  }
-  else if (mod == ConnectionModification::Append)
+  } else if (mod == ConnectionModification::Append)
   {
     return shadingAttr.AddConnection(sourceAttr.GetPath(), UsdListPositionBackOfAppendList);
   }
@@ -470,8 +468,7 @@ bool UsdShadeConnectableAPI::DisconnectSource(UsdAttribute const &shadingAttr,
   if (sourceAttr)
   {
     return shadingAttr.RemoveConnection(sourceAttr.GetPath());
-  }
-  else
+  } else
   {
     return shadingAttr.SetConnections({});
   }
@@ -506,8 +503,7 @@ std::vector<UsdShadeOutput> UsdShadeConnectableAPI::GetOutputs(bool onlyAuthored
   if (onlyAuthored)
   {
     props = GetPrim().GetAuthoredPropertiesInNamespace(UsdShadeTokens->outputs);
-  }
-  else
+  } else
   {
     props = GetPrim().GetPropertiesInNamespace(UsdShadeTokens->outputs);
   }
@@ -549,8 +545,7 @@ std::vector<UsdShadeInput> UsdShadeConnectableAPI::GetInputs(bool onlyAuthored) 
   if (onlyAuthored)
   {
     props = GetPrim().GetAuthoredPropertiesInNamespace(UsdShadeTokens->inputs);
-  }
-  else
+  } else
   {
     props = GetPrim().GetPropertiesInNamespace(UsdShadeTokens->inputs);
   }

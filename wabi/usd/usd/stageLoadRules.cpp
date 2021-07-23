@@ -85,8 +85,7 @@ void UsdStageLoadRules::LoadAndUnload(const SdfPathSet &loadSet,
     if (policy == UsdLoadWithDescendants)
     {
       LoadWithDescendants(path);
-    }
-    else if (policy == UsdLoadWithoutDescendants)
+    } else if (policy == UsdLoadWithoutDescendants)
     {
       LoadWithoutDescendants(path);
     }
@@ -99,8 +98,7 @@ void UsdStageLoadRules::AddRule(SdfPath const &path, Rule rule)
   if (iter != _rules.end() && iter->first == path)
   {
     iter->second = rule;
-  }
-  else
+  } else
   {
     _rules.emplace(iter, path, rule);
   }
@@ -153,8 +151,7 @@ void UsdStageLoadRules::Minimize()
       // Remove this rule.
       _rules.erase(_rules.begin() + i);
       --i;
-    }
-    else
+    } else
     {
       // This rule is kept and becomes the next parent.
       parentIdxStack.push_back(i);
@@ -307,27 +304,29 @@ std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>>::const_iterator UsdStag
   SdfPath const &path) const
 {
   return std::lower_bound(
-    _rules.begin(), _rules.end(), path, [](std::pair<SdfPath, Rule> const &elem, SdfPath const &path) {
-      return elem.first < path;
-    });
+    _rules.begin(),
+    _rules.end(),
+    path,
+    [](std::pair<SdfPath, Rule> const &elem, SdfPath const &path) { return elem.first < path; });
 }
 
 std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>>::iterator UsdStageLoadRules::_LowerBound(
   SdfPath const &path)
 {
   return std::lower_bound(
-    _rules.begin(), _rules.end(), path, [](std::pair<SdfPath, Rule> const &elem, SdfPath const &path) {
-      return elem.first < path;
-    });
+    _rules.begin(),
+    _rules.end(),
+    path,
+    [](std::pair<SdfPath, Rule> const &elem, SdfPath const &path) { return elem.first < path; });
 }
 
 std::ostream &operator<<(std::ostream &os, std::pair<SdfPath, UsdStageLoadRules::Rule> const &p)
 {
   return os << "(<" << p.first << ">, "
-            << (p.second == UsdStageLoadRules::AllRule ? "AllRule" :
-                                                         p.second == UsdStageLoadRules::OnlyRule ? "OnlyRule" :
-                                                                                                   p.second == UsdStageLoadRules::NoneRule ? "NoneRule" :
-                                                                                                                                             "<invalid value>")
+            << (p.second == UsdStageLoadRules::AllRule  ? "AllRule" :
+                p.second == UsdStageLoadRules::OnlyRule ? "OnlyRule" :
+                p.second == UsdStageLoadRules::NoneRule ? "NoneRule" :
+                                                          "<invalid value>")
             << ")";
 }
 

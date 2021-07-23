@@ -62,148 +62,148 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-typedef TfWeakPtr<PlugRegistry> PlugRegistryPtr;
+  typedef TfWeakPtr<PlugRegistry> PlugRegistryPtr;
 
-static PlugPluginPtrVector _RegisterPlugins(PlugRegistryPtr self, string path)
-{
-  return self->RegisterPlugins(path);
-}
-
-static PlugPluginPtrVector _RegisterPluginsList(PlugRegistryPtr self, vector<string> paths)
-{
-  return self->RegisterPlugins(paths);
-}
-
-// Disambiguate vs. the template
-static PlugPluginPtr _GetPluginForType(PlugRegistry &reg, const TfType &t)
-{
-  return reg.GetPluginForType(t);
-}
-
-static std::string _GetStringFromPluginMetaData(PlugRegistry &reg,
-                                                const TfType &type,
-                                                const std::string &key)
-{
-  return reg.GetStringFromPluginMetaData(type, key);
-}
-
-static std::vector<TfType> _GetAllDerivedTypes(TfType const &type)
-{
-  std::set<TfType> types;
-  PlugRegistry::GetAllDerivedTypes(type, &types);
-  return vector<TfType>(types.begin(), types.end());
-}
-
-// For testing -- load plugins in parallel.
-
-typedef bool PluginPredicateSig(PlugPluginPtr);
-typedef std::function<PluginPredicateSig> PluginPredicateFn;
-
-struct SharedState : boost::noncopyable
-{
-
-  void ThreadTask()
+  static PlugPluginPtrVector _RegisterPlugins(PlugRegistryPtr self, string path)
   {
-    while (true)
+    return self->RegisterPlugins(path);
+  }
+
+  static PlugPluginPtrVector _RegisterPluginsList(PlugRegistryPtr self, vector<string> paths)
+  {
+    return self->RegisterPlugins(paths);
+  }
+
+  // Disambiguate vs. the template
+  static PlugPluginPtr _GetPluginForType(PlugRegistry &reg, const TfType &t)
+  {
+    return reg.GetPluginForType(t);
+  }
+
+  static std::string _GetStringFromPluginMetaData(PlugRegistry &reg,
+                                                  const TfType &type,
+                                                  const std::string &key)
+  {
+    return reg.GetStringFromPluginMetaData(type, key);
+  }
+
+  static std::vector<TfType> _GetAllDerivedTypes(TfType const &type)
+  {
+    std::set<TfType> types;
+    PlugRegistry::GetAllDerivedTypes(type, &types);
+    return vector<TfType>(types.begin(), types.end());
+  }
+
+  // For testing -- load plugins in parallel.
+
+  typedef bool PluginPredicateSig(PlugPluginPtr);
+  typedef std::function<PluginPredicateSig> PluginPredicateFn;
+
+  struct SharedState : boost::noncopyable
+  {
+
+    void ThreadTask()
     {
-      // Try to take the next plugin to load.
-      size_t cur = nextAvailable;
-      while (cur != plugins.size() && !nextAvailable.compare_exchange_strong(cur, cur + 1))
+      while (true)
       {
-        cur = nextAvailable;
+        // Try to take the next plugin to load.
+        size_t cur = nextAvailable;
+        while (cur != plugins.size() && !nextAvailable.compare_exchange_strong(cur, cur + 1))
+        {
+          cur = nextAvailable;
+        }
+
+        // No more plugins to load?
+        if (cur == plugins.size())
+          return;
+
+        // Otherwise we load plugins[cur].
+        printf("Loading '%s'\n", plugins[cur]->GetName().c_str());
+        plugins[cur]->Load();
       }
+    }
 
-      // No more plugins to load?
-      if (cur == plugins.size())
-        return;
+    PlugPluginPtrVector plugins;
+    std::atomic<size_t> nextAvailable;
+  };
 
-      // Otherwise we load plugins[cur].
-      printf("Loading '%s'\n", plugins[cur]->GetName().c_str());
-      plugins[cur]->Load();
+  template<class Range>
+  string PluginNames(Range const &range)
+  {
+    using std::distance;
+    vector<string> names(distance(boost::begin(range), boost::end(range)));
+    transform(boost::begin(range), boost::end(range), names.begin(), [](PlugPluginPtr const &plug) {
+      return plug->GetName();
+    });
+    return TfStringJoin(names.begin(), names.end(), ", ");
+  }
+
+  void _LoadPluginsConcurrently(PluginPredicateFn pred, size_t numThreads, bool verbose)
+  {
+    TF_PY_ALLOW_THREADS_IN_SCOPE();
+
+    // Take all unloaded plugins for which pred(plugin) is true.
+    PlugPluginPtrVector plugins = PlugRegistry::GetInstance().GetAllPlugins();
+
+    // Remove all plugins which fail the predicate.
+    plugins.erase(partition(plugins.begin(), plugins.end(), pred), plugins.end());
+
+    // Shuffle all already loaded plugins to the end.
+    PlugPluginPtrVector::iterator alreadyLoaded =
+      partition(plugins.begin(), plugins.end(), [](PlugPluginPtr const &plug) { return !plug->IsLoaded(); });
+
+    // Report any already loaded plugins as skipped.
+    if (verbose && alreadyLoaded != plugins.end())
+    {
+      printf("Skipping already-loaded plugins: %s\n",
+             PluginNames(make_pair(alreadyLoaded, plugins.end())).c_str());
+    }
+
+    // Trim the already loaded plugins from the vector.
+    plugins.erase(alreadyLoaded, plugins.end());
+
+    if (plugins.empty())
+    {
+      if (verbose)
+        printf("No plugins to load.\n");
+      return;
+    }
+
+    // Determine number of threads to use.  If caller specified a value, use it.
+    // Otherwise use the min of the machine's physical threads and the number of
+    // plugins we're loading.
+    unsigned int hwThreads = std::thread::hardware_concurrency();
+    numThreads = numThreads ? numThreads : std::min(hwThreads, (unsigned int)plugins.size());
+
+    // Report what we're doing.
+    if (verbose)
+    {
+      printf("Loading %zu plugins concurrently: %s\n", plugins.size(), PluginNames(plugins).c_str());
+    }
+
+    // Establish shared state.
+    SharedState state;
+    state.plugins.swap(plugins);
+    state.nextAvailable = 0;
+
+    // Load in multiple threads.
+    std::vector<std::thread> threads;
+    for (size_t i = 0; i != numThreads; ++i)
+    {
+      threads.emplace_back([&state]() { state.ThreadTask(); });
+    }
+
+    // Wait for threads.
+    for (auto &thread : threads)
+    {
+      thread.join();
+    }
+
+    if (verbose)
+    {
+      printf("Used %zu threads.\n", numThreads);
     }
   }
-
-  PlugPluginPtrVector plugins;
-  std::atomic<size_t> nextAvailable;
-};
-
-template<class Range>
-string PluginNames(Range const &range)
-{
-  using std::distance;
-  vector<string> names(distance(boost::begin(range), boost::end(range)));
-  transform(boost::begin(range), boost::end(range), names.begin(), [](PlugPluginPtr const &plug) {
-    return plug->GetName();
-  });
-  return TfStringJoin(names.begin(), names.end(), ", ");
-}
-
-void _LoadPluginsConcurrently(PluginPredicateFn pred, size_t numThreads, bool verbose)
-{
-  TF_PY_ALLOW_THREADS_IN_SCOPE();
-
-  // Take all unloaded plugins for which pred(plugin) is true.
-  PlugPluginPtrVector plugins = PlugRegistry::GetInstance().GetAllPlugins();
-
-  // Remove all plugins which fail the predicate.
-  plugins.erase(partition(plugins.begin(), plugins.end(), pred), plugins.end());
-
-  // Shuffle all already loaded plugins to the end.
-  PlugPluginPtrVector::iterator alreadyLoaded = partition(
-    plugins.begin(), plugins.end(), [](PlugPluginPtr const &plug) { return !plug->IsLoaded(); });
-
-  // Report any already loaded plugins as skipped.
-  if (verbose && alreadyLoaded != plugins.end())
-  {
-    printf("Skipping already-loaded plugins: %s\n",
-           PluginNames(make_pair(alreadyLoaded, plugins.end())).c_str());
-  }
-
-  // Trim the already loaded plugins from the vector.
-  plugins.erase(alreadyLoaded, plugins.end());
-
-  if (plugins.empty())
-  {
-    if (verbose)
-      printf("No plugins to load.\n");
-    return;
-  }
-
-  // Determine number of threads to use.  If caller specified a value, use it.
-  // Otherwise use the min of the machine's physical threads and the number of
-  // plugins we're loading.
-  unsigned int hwThreads = std::thread::hardware_concurrency();
-  numThreads = numThreads ? numThreads : std::min(hwThreads, (unsigned int)plugins.size());
-
-  // Report what we're doing.
-  if (verbose)
-  {
-    printf("Loading %zu plugins concurrently: %s\n", plugins.size(), PluginNames(plugins).c_str());
-  }
-
-  // Establish shared state.
-  SharedState state;
-  state.plugins.swap(plugins);
-  state.nextAvailable = 0;
-
-  // Load in multiple threads.
-  std::vector<std::thread> threads;
-  for (size_t i = 0; i != numThreads; ++i)
-  {
-    threads.emplace_back([&state]() { state.ThreadTask(); });
-  }
-
-  // Wait for threads.
-  for (auto &thread : threads)
-  {
-    thread.join();
-  }
-
-  if (verbose)
-  {
-    printf("Used %zu threads.\n", numThreads);
-  }
-}
 
 }  // anonymous namespace
 
@@ -227,8 +227,9 @@ void wrapRegistry()
     .def("FindDerivedTypeByName", (TfType(*)(TfType, std::string const &))This::FindDerivedTypeByName)
     .staticmethod("FindDerivedTypeByName")
 
-    .def(
-      "GetDirectlyDerivedTypes", This::GetDirectlyDerivedTypes, return_value_policy<TfPySequenceToTuple>())
+    .def("GetDirectlyDerivedTypes",
+         This::GetDirectlyDerivedTypes,
+         return_value_policy<TfPySequenceToTuple>())
     .staticmethod("GetDirectlyDerivedTypes")
 
     .def("GetAllDerivedTypes", _GetAllDerivedTypes, return_value_policy<TfPySequenceToTuple>())

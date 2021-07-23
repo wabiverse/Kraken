@@ -491,8 +491,7 @@ struct TfPyWrapEnum
         // If scoped enum, enum values appear on the enumClass ...
         boost::python::scope s(enumClass);
         Tf_PyEnumAddAttribute(s, valueName, pyValue);
-      }
-      else
+      } else
       {
         // ... otherwise, enum values appear on the enclosing scope.
         boost::python::scope s;

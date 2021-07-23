@@ -104,8 +104,10 @@ bool HdPhExtCompGpuComputationResource::Resolve()
 
     // let resourcebinder resolve bindings and populate metadata
     // which is owned by codegen.
-    _resourceBinder.ResolveComputeBindings(
-      _outputBufferSpecs, inputBufferSpecs, shaders, codeGen.GetMetaData());
+    _resourceBinder.ResolveComputeBindings(_outputBufferSpecs,
+                                           inputBufferSpecs,
+                                           shaders,
+                                           codeGen.GetMetaData());
 
     HdPhGLSLProgram::ID registryID = codeGen.ComputeHash();
 

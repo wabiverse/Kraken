@@ -112,7 +112,7 @@ class WorkDispatcher
   }
 
   template<class Callable, class A0, class... Args>
-  inline void Run(Callable &&c, A0 &&a0, Args &&... args)
+  inline void Run(Callable &&c, A0 &&a0, Args &&...args)
   {
     Run(std::bind(std::forward<Callable>(c), std::forward<A0>(a0), std::forward<Args>(args)...));
   }

@@ -108,8 +108,7 @@ PcpDependencyFlags PcpClassifyNodeDependency(const PcpNodeRef &node)
     if (p.IsDueToAncestor())
     {
       anyAncestral = true;
-    }
-    else
+    } else
     {
       anyDirect = true;
     }
@@ -123,13 +122,11 @@ PcpDependencyFlags PcpClassifyNodeDependency(const PcpNodeRef &node)
     if (anyAncestral)
     {
       flags |= PcpDependencyTypePartlyDirect;
-    }
-    else
+    } else
     {
       flags |= PcpDependencyTypePurelyDirect;
     }
-  }
-  else
+  } else
   {
     if (anyAncestral)
     {

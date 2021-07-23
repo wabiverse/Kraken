@@ -335,8 +335,7 @@ class GenericPointer
     {
       Token token = {reinterpret_cast<Ch *>(buffer), length, index};
       return Append(token, allocator);
-    }
-    else
+    } else
     {
       Ch name[21];
       for (size_t i = 0; i <= length; i++)
@@ -506,15 +505,13 @@ class GenericPointer
         v->PushBack(ValueType().Move(), allocator);
         v = &((*v)[v->Size() - 1]);
         exist = false;
-      }
-      else
+      } else
       {
         if (t->index == kPointerInvalidIndex)
         {  // must be object name
           if (!v->IsObject())
             v->SetObject();  // Change to Object
-        }
-        else
+        } else
         {  // object name or array index
           if (!v->IsArray() && !v->IsObject())
             v->SetArray();  // Change to Array
@@ -530,8 +527,7 @@ class GenericPointer
             exist = false;
           }
           v = &((*v)[t->index]);
-        }
-        else
+        } else
         {
           typename ValueType::MemberIterator m = v->FindMember(GenericStringRef<Ch>(t->name, t->length));
           if (m == v->MemberEnd())
@@ -539,8 +535,7 @@ class GenericPointer
             v->AddMember(ValueType(t->name, t->length, allocator).Move(), ValueType().Move(), allocator);
             v = &(--v->MemberEnd())->value;  // Assumes AddMember() appends at the end
             exist = false;
-          }
-          else
+          } else
             v = &m->value;
         }
       }
@@ -1030,8 +1025,7 @@ class GenericPointer
               i++;
               continue;
             }
-          }
-          else if (NeedPercentEncode(c))
+          } else if (NeedPercentEncode(c))
           {
             parseErrorCode_ = kPointerParseErrorCharacterMustPercentEncode;
             goto error;
@@ -1056,8 +1050,7 @@ class GenericPointer
               goto error;
             }
             i++;
-          }
-          else
+          } else
           {
             parseErrorCode_ = kPointerParseErrorInvalidEscape;
             goto error;
@@ -1135,13 +1128,11 @@ class GenericPointer
         {
           os.Put('~');
           os.Put('0');
-        }
-        else if (c == '/')
+        } else if (c == '/')
         {
           os.Put('~');
           os.Put('1');
-        }
-        else if (uriFragment && NeedPercentEncode(c))
+        } else if (uriFragment && NeedPercentEncode(c))
         {
           // Transcode to UTF8 sequence
           GenericStringStream<typename ValueType::EncodingType> source(&t->name[j]);
@@ -1149,8 +1140,7 @@ class GenericPointer
           if (!Transcoder<EncodingType, UTF8<>>().Validate(source, target))
             return false;
           j += source.Tell() - 1;
-        }
-        else
+        } else
           os.Put(c);
       }
     }
@@ -1236,8 +1226,8 @@ class GenericPointer
     void Put(char c)
     {  // UTF-8 must be byte
       unsigned char u = static_cast<unsigned char>(c);
-      static const char hexDigits[16] = {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+      static const char hexDigits[16] =
+        {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
       os_.Put('%');
       os_.Put(hexDigits[u >> 4]);
       os_.Put(hexDigits[u & 15]);

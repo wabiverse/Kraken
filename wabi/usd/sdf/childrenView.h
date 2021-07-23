@@ -136,6 +136,7 @@ class Sdf_ChildrenViewTraits<_Owner,
                              SdfChildrenViewTrivialPredicate<typename _Owner::ChildPolicy::ValueType>>
 {
  private:
+
  public:
   typedef _InnerIterator const_iterator;
 
@@ -195,8 +196,7 @@ class SdfChildrenView
   // knowing anything about the specific data storage that's used,
   // which is important for providing both Gd and Lsd backed storage.
   class _InnerIterator
-    : public boost::
-        iterator_facade<_InnerIterator, value_type, std::random_access_iterator_tag, value_type>
+    : public boost::iterator_facade<_InnerIterator, value_type, std::random_access_iterator_tag, value_type>
   {
    public:
     typedef value_type reference;

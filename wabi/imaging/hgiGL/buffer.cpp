@@ -58,17 +58,17 @@ HgiGLBuffer::HgiGLBuffer(HgiBufferDesc const &desc)
       (_descriptor.usage & HgiBufferUsageUniform))
   {
     glNamedBufferData(_bufferId, _descriptor.byteSize, _descriptor.initialData, GL_STATIC_DRAW);
-  }
-  else if (_descriptor.usage & HgiBufferUsageStorage)
+  } else if (_descriptor.usage & HgiBufferUsageStorage)
   {
     GLbitfield flags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 
-    glNamedBufferStorage(
-      _bufferId, _descriptor.byteSize, _descriptor.initialData, flags | GL_DYNAMIC_STORAGE_BIT);
+    glNamedBufferStorage(_bufferId,
+                         _descriptor.byteSize,
+                         _descriptor.initialData,
+                         flags | GL_DYNAMIC_STORAGE_BIT);
 
     _mapped = glMapNamedBufferRange(_bufferId, 0, desc.byteSize, flags);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown HgiBufferUsage bit");
   }

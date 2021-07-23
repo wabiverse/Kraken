@@ -144,22 +144,19 @@ bool UsdPythonToMetadataValue(const TfToken &key,
     if (fallback.IsHolding<TfTokenVector>())
     {
       value = extract<TfTokenVector>(pyVal.Get())();
-    }
-    else if (fallback.IsHolding<std::vector<std::string>>())
+    } else if (fallback.IsHolding<std::vector<std::string>>())
     {
       extract<std::vector<std::string>> getVecString(pyVal.Get());
       extract<VtStringArray> getStringArray(pyVal.Get());
       if (getVecString.check())
       {
         value = getVecString();
-      }
-      else if (getStringArray.check())
+      } else if (getStringArray.check())
       {
         VtStringArray a = getStringArray();
         value = std::vector<std::string>(a.begin(), a.end());
       }
-    }
-    else
+    } else
     {
       value.CastToTypeOf(fallback);
     }

@@ -145,13 +145,11 @@ HdAovDescriptor HdxPrmanRenderDelegate::GetDefaultAovDescriptor(TfToken const &n
   if (name == HdAovTokens->color)
   {
     return HdAovDescriptor(HdFormatFloat32Vec4, false, VtValue(GfVec4f(0.0f)));
-  }
-  else if (name == HdAovTokens->depth)
+  } else if (name == HdAovTokens->depth)
   {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(1.0f));
-  }
-  else if (name == HdAovTokens->primId || name == HdAovTokens->instanceId ||
-           name == HdAovTokens->elementId)
+  } else if (name == HdAovTokens->primId || name == HdAovTokens->instanceId ||
+             name == HdAovTokens->elementId)
   {
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
   }

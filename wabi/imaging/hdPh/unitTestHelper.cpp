@@ -124,8 +124,7 @@ HdPh_TestDriver::HdPh_TestDriver()
       TfGetenv("HD_ENABLE_SMOOTH_NORMALS", "CPU") == "GPU")
   {
     _Init(HdReprSelector(HdReprTokens->smoothHull));
-  }
-  else
+  } else
   {
     _Init(HdReprSelector(HdReprTokens->hull));
   }

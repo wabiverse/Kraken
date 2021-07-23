@@ -41,52 +41,53 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static bool _Set(const UsdGeomXformOp &self, TfPyObjWrapper pyVal, UsdTimeCode time)
-{
-  VtValue val = UsdPythonToSdfType(pyVal, self.GetTypeName());
-  return self.Set(val, time);
-}
+  static bool _Set(const UsdGeomXformOp &self, TfPyObjWrapper pyVal, UsdTimeCode time)
+  {
+    VtValue val = UsdPythonToSdfType(pyVal, self.GetTypeName());
+    return self.Set(val, time);
+  }
 
-static TfPyObjWrapper _Get(const UsdGeomXformOp &self, UsdTimeCode time)
-{
-  VtValue retValue;
-  self.Get(&retValue, time);
-  return UsdVtValueToPython(retValue);
-}
+  static TfPyObjWrapper _Get(const UsdGeomXformOp &self, UsdTimeCode time)
+  {
+    VtValue retValue;
+    self.Get(&retValue, time);
+    return UsdVtValueToPython(retValue);
+  }
 
-static std::vector<double> _GetTimeSamples(const UsdGeomXformOp &self)
-{
-  std::vector<double> result;
-  self.GetTimeSamples(&result);
-  return result;
-}
+  static std::vector<double> _GetTimeSamples(const UsdGeomXformOp &self)
+  {
+    std::vector<double> result;
+    self.GetTimeSamples(&result);
+    return result;
+  }
 
-static std::vector<double> _GetTimeSamplesInInterval(const UsdGeomXformOp &self, const GfInterval &interval)
-{
-  std::vector<double> result;
-  self.GetTimeSamplesInInterval(interval, &result);
-  return result;
-}
+  static std::vector<double> _GetTimeSamplesInInterval(const UsdGeomXformOp &self,
+                                                       const GfInterval &interval)
+  {
+    std::vector<double> result;
+    self.GetTimeSamplesInInterval(interval, &result);
+    return result;
+  }
 
-static GfMatrix4d _GetOpTransform(const UsdGeomXformOp &self, UsdTimeCode time)
-{
-  return self.GetOpTransform(time);
-}
+  static GfMatrix4d _GetOpTransform(const UsdGeomXformOp &self, UsdTimeCode time)
+  {
+    return self.GetOpTransform(time);
+  }
 
-static TfToken _GetOpName(const UsdGeomXformOp &self)
-{
-  return self.GetOpName();
-}
+  static TfToken _GetOpName(const UsdGeomXformOp &self)
+  {
+    return self.GetOpName();
+  }
 
-static TfToken _GetOpTypeToken(const UsdGeomXformOp::Type &opType)
-{
-  return UsdGeomXformOp::GetOpTypeToken(opType);
-}
+  static TfToken _GetOpTypeToken(const UsdGeomXformOp::Type &opType)
+  {
+    return UsdGeomXformOp::GetOpTypeToken(opType);
+  }
 
-static UsdGeomXformOp::Type _GetOpTypeEnum(const TfToken &opTypeToken)
-{
-  return UsdGeomXformOp::GetOpTypeEnum(opTypeToken);
-}
+  static UsdGeomXformOp::Type _GetOpTypeEnum(const TfToken &opTypeToken)
+  {
+    return UsdGeomXformOp::GetOpTypeEnum(opTypeToken);
+  }
 
 }  // anonymous namespace
 
@@ -118,8 +119,7 @@ static object __getattribute__(object selfObj, const char *name)
   {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
-  }
-  else
+  } else
   {
     // Otherwise raise a runtime error.
     TfPyThrowRuntimeError(TfStringPrintf("Accessed schema on invalid prim"));

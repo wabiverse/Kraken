@@ -128,7 +128,7 @@ class TfPyOverride : public TfPyObjWrapper
   /// Call the override.
   /// Clients need not hold the GIL to invoke the call operator.
   template<typename... Args>
-  TfPyMethodResult operator()(Args const &... args) const
+  TfPyMethodResult operator()(Args const &...args) const
   {
     TfPyLock lock;
     // Use the Args parameter pack together with the _PyObjArg helper to

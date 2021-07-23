@@ -70,8 +70,7 @@ void *TfDlopen(const std::string &filename, int flag, std::string *error, bool l
     {
       *error = std::move(err);
     }
-  }
-  else
+  } else
   {
     if (error)
     {

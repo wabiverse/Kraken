@@ -90,8 +90,7 @@ static int kpy_class_call(kContext *C, KrakenPrim *ptr, void *func, UsdAttribute
 }
 
 static void kpy_class_free(void *pyob_ptr)
-{
-}
+{}
 
 struct KPy_TypesModule_State
 {
@@ -264,9 +263,9 @@ PyTypeObject pyuni_object_Type = {
   NULL, /* iternextfunc tp_iternext; */
 
   /*** Attribute descriptor and subclassing stuff ***/
-  NULL,  //pyuni_object_methods,   /* struct PyMethodDef *tp_methods; */
+  NULL,  // pyuni_object_methods,   /* struct PyMethodDef *tp_methods; */
   NULL,  /* struct PyMemberDef *tp_members; */
-  NULL,  //pyuni_object_getseters, /* struct PyGetSetDef *tp_getset; */
+  NULL,  // pyuni_object_getseters, /* struct PyGetSetDef *tp_getset; */
   NULL,  /* struct _typeobject *tp_base; */
   NULL,  /* PyObject *tp_dict; */
   NULL,  /* descrgetfunc tp_descr_get; */
@@ -274,7 +273,7 @@ PyTypeObject pyuni_object_Type = {
   0,     /* long tp_dictoffset; */
   NULL,  /* initproc tp_init; */
   NULL,  /* allocfunc tp_alloc; */
-  NULL,  //pyuni_object_new,       /* newfunc tp_new; */
+  NULL,  // pyuni_object_new,       /* newfunc tp_new; */
   /*  Low-level free-memory routine */
   NULL, /* freefunc tp_free; */
   /* For PyObject_IS_GC */
@@ -289,9 +288,9 @@ PyTypeObject pyuni_object_Type = {
 };
 
 static struct PyMethodDef kpy_types_module_methods[] = {
-  {"__getattr__", (PyCFunction)kpy_types_module_getattro, METH_O, NULL},
-  {"__dir__", (PyCFunction)kpy_types_module_dir, METH_NOARGS, NULL},
-  {NULL, NULL, 0, NULL},
+  {"__getattr__", (PyCFunction)kpy_types_module_getattro, METH_O,      NULL},
+  {"__dir__",     (PyCFunction)kpy_types_module_dir,      METH_NOARGS, NULL},
+  {NULL,          NULL,                                   0,           NULL},
 };
 
 PyDoc_STRVAR(kpy_types_module_doc, "Access to internal Kraken types");
@@ -414,11 +413,10 @@ PyDoc_STRVAR(pyuni_register_class_doc,
              "\n"
              "      If the class has a *register* class method it will be called\n"
              "      before registration.\n");
-PyMethodDef meth_kpy_register_class = {
-  "register_class",
-  pyuni_register_class,
-  METH_O,
-  pyuni_register_class_doc};
+PyMethodDef meth_kpy_register_class = {"register_class",
+                                       pyuni_register_class,
+                                       METH_O,
+                                       pyuni_register_class_doc};
 static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class)
 {
   kContext *C = nullptr;
@@ -520,8 +518,7 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
       if (ret)
       {
         Py_DECREF(ret);
-      }
-      else
+      } else
       {
         return NULL;
       }
@@ -557,11 +554,10 @@ static void pyuni_object_reference_set(KPy_KrakenPrim *self, PyObject *reference
 #ifdef USE_PYUNI_INVALIDATE_WEAKREF
 static RHash *id_weakref_pool = nullptr;
 static PyObject *id_free_weakref_cb(PyObject *weakinfo_pair, PyObject *weakref);
-static PyMethodDef id_free_weakref_cb_def = {
-  "id_free_weakref_cb",
-  (PyCFunction)id_free_weakref_cb,
-  METH_O,
-  NULL};
+static PyMethodDef id_free_weakref_cb_def = {"id_free_weakref_cb",
+                                             (PyCFunction)id_free_weakref_cb,
+                                             METH_O,
+                                             NULL};
 
 static RHash *id_weakref_pool_get(const SdfPath &id)
 {
@@ -570,8 +566,7 @@ static RHash *id_weakref_pool_get(const SdfPath &id)
   if (id_weakref_pool)
   {
     weakinfo_hash = (RHash *)KKE_rhash_lookup(id_weakref_pool, id.GetAsToken());
-  }
-  else
+  } else
   {
     /* First time, allocate pool. */
     // id_weakref_pool = KLI_rhash_ptr_new("uni_global_pool");
@@ -931,7 +926,7 @@ PyObject *pyuni_object_CreatePyObject(PointerLUXO *ptr)
   // pyuni = (KPy_KrakenPrim *)tp->tp_alloc(tp, 0);
   // #ifdef USE_PYUNI_OBJECT_REFERENCE
   /* #PyType_GenericAlloc will have set tracking.
-       * We only want tracking when `StructRNA.reference` has been set. */
+   * We only want tracking when `StructRNA.reference` has been set. */
   // if (pyuni != NULL) {
   // PyObject_GC_UnTrack(pyuni);
   // }
@@ -1003,12 +998,10 @@ static PyObject *pyuni_kr_owner_id_set(PyObject *UNUSED(self), PyObject *value)
   if (value == Py_None)
   {
     name = NULL;
-  }
-  else if (PyUnicode_Check(value))
+  } else if (PyUnicode_Check(value))
   {
     name = PyUnicode_AsUTF8(value);
-  }
-  else
+  } else
   {
     PyErr_Format(PyExc_ValueError,
                  "owner_set(...): "

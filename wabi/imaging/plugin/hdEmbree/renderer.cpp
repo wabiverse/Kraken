@@ -317,18 +317,15 @@ void HdEmbreeRenderer::Clear()
     {
       GfVec4f clearColor = _GetClearColor(_aovBindings[i].clearValue);
       rb->Clear(4, clearColor.data());
-    }
-    else if (rb->GetFormat() == HdFormatInt32)
+    } else if (rb->GetFormat() == HdFormatInt32)
     {
       int32_t clearValue = _aovBindings[i].clearValue.Get<int32_t>();
       rb->Clear(1, &clearValue);
-    }
-    else if (rb->GetFormat() == HdFormatFloat32)
+    } else if (rb->GetFormat() == HdFormatFloat32)
     {
       float clearValue = _aovBindings[i].clearValue.Get<float>();
       rb->Clear(1, &clearValue);
-    }
-    else if (rb->GetFormat() == HdFormatFloat32Vec3)
+    } else if (rb->GetFormat() == HdFormatFloat32Vec3)
     {
       GfVec3f clearValue = _aovBindings[i].clearValue.Get<GfVec3f>();
       rb->Clear(3, clearValue.data());
@@ -398,8 +395,7 @@ void HdEmbreeRenderer::Render(HdRenderThread *renderThread)
     {
       _width = _aovBindings[i].renderBuffer->GetWidth();
       _height = _aovBindings[i].renderBuffer->GetHeight();
-    }
-    else
+    } else
     {
       if (_width != _aovBindings[i].renderBuffer->GetWidth() ||
           _height != _aovBindings[i].renderBuffer->GetHeight())
@@ -577,8 +573,7 @@ void HdEmbreeRenderer::_RenderTiles(HdRenderThread *renderThread, size_t tileSta
           // from the near plane trace.
           origin = nearPlaneTrace;
           dir = GfVec3f(0, 0, -1);
-        }
-        else
+        } else
         {
           // Otherwise, assume this is a perspective projection;
           // project from the camera origin through the
@@ -689,9 +684,8 @@ void HdEmbreeRenderer::_TraceRay(unsigned int x,
       GfVec4f clearColor = _GetClearColor(_aovBindings[i].clearValue);
       GfVec4f sample = _ComputeColor(rayHit, random, clearColor);
       renderBuffer->Write(GfVec3i(x, y, 1), 4, sample.data());
-    }
-    else if ((_aovNames[i].name == HdAovTokens->cameraDepth || _aovNames[i].name == HdAovTokens->depth) &&
-             renderBuffer->GetFormat() == HdFormatFloat32)
+    } else if ((_aovNames[i].name == HdAovTokens->cameraDepth || _aovNames[i].name == HdAovTokens->depth) &&
+               renderBuffer->GetFormat() == HdFormatFloat32)
     {
       float depth;
       bool clip = (_aovNames[i].name == HdAovTokens->depth);
@@ -699,19 +693,17 @@ void HdEmbreeRenderer::_TraceRay(unsigned int x,
       {
         renderBuffer->Write(GfVec3i(x, y, 1), 1, &depth);
       }
-    }
-    else if ((_aovNames[i].name == HdAovTokens->primId || _aovNames[i].name == HdAovTokens->elementId ||
-              _aovNames[i].name == HdAovTokens->instanceId) &&
-             renderBuffer->GetFormat() == HdFormatInt32)
+    } else if ((_aovNames[i].name == HdAovTokens->primId || _aovNames[i].name == HdAovTokens->elementId ||
+                _aovNames[i].name == HdAovTokens->instanceId) &&
+               renderBuffer->GetFormat() == HdFormatInt32)
     {
       int32_t id;
       if (_ComputeId(rayHit, _aovNames[i].name, &id))
       {
         renderBuffer->Write(GfVec3i(x, y, 1), 1, &id);
       }
-    }
-    else if ((_aovNames[i].name == HdAovTokens->Neye || _aovNames[i].name == HdAovTokens->normal) &&
-             renderBuffer->GetFormat() == HdFormatFloat32Vec3)
+    } else if ((_aovNames[i].name == HdAovTokens->Neye || _aovNames[i].name == HdAovTokens->normal) &&
+               renderBuffer->GetFormat() == HdFormatFloat32Vec3)
     {
       GfVec3f normal;
       bool eye = (_aovNames[i].name == HdAovTokens->Neye);
@@ -719,8 +711,7 @@ void HdEmbreeRenderer::_TraceRay(unsigned int x,
       {
         renderBuffer->Write(GfVec3i(x, y, 1), 3, normal.data());
       }
-    }
-    else if (_aovNames[i].isPrimvar && renderBuffer->GetFormat() == HdFormatFloat32Vec3)
+    } else if (_aovNames[i].isPrimvar && renderBuffer->GetFormat() == HdFormatFloat32Vec3)
     {
       GfVec3f value;
       if (_ComputePrimvar(rayHit, _aovNames[i].name, &value))
@@ -750,24 +741,20 @@ bool HdEmbreeRenderer::_ComputeId(RTCRayHit const &rayHit, TfToken const &idType
   if (idType == HdAovTokens->primId)
   {
     *id = prototypeContext->rprim->GetPrimId();
-  }
-  else if (idType == HdAovTokens->elementId)
+  } else if (idType == HdAovTokens->elementId)
   {
     if (prototypeContext->primitiveParams.empty())
     {
       *id = rayHit.hit.primID;
-    }
-    else
+    } else
     {
       *id = HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(
         prototypeContext->primitiveParams[rayHit.hit.primID]);
     }
-  }
-  else if (idType == HdAovTokens->instanceId)
+  } else if (idType == HdAovTokens->instanceId)
   {
     *id = instanceContext->instanceId;
-  }
-  else
+  } else
   {
     return false;
   }
@@ -793,8 +780,7 @@ bool HdEmbreeRenderer::_ComputeDepth(RTCRayHit const &rayHit, float *depth, bool
 
     // For the depth range transform, we assume [0,1].
     *depth = (hitPos[2] + 1.0f) / 2.0f;
-  }
-  else
+  } else
   {
     *depth = rayHit.ray.tfar;
   }
@@ -972,8 +958,7 @@ float HdEmbreeRenderer::_ComputeAmbientOcclusion(GfVec3f const &position,
   if (fabsf(GfDot(normal, GfVec3f(0, 0, 1))) < 0.9f)
   {
     xAxis = GfCross(normal, GfVec3f(0, 0, 1));
-  }
-  else
+  } else
   {
     xAxis = GfCross(normal, GfVec3f(0, 1, 0));
   }

@@ -36,51 +36,51 @@ WABI_NAMESPACE_BEGIN
 namespace Tf_PyClassMethod
 {
 
-using namespace boost::python;
+  using namespace boost::python;
 
-// Visitor for wrapping functions as Python class methods.
-// See typedef below for docs.
-// This is very similar to the staticmethod() method on boost::python::class,
-// except it uses PyClassMethod_New() instead of PyStaticMethod_New().
-struct _TfPyClassMethod : def_visitor<_TfPyClassMethod>
-{
-  friend class def_visitor_access;
-
-  _TfPyClassMethod(const std::string &methodName)
-    : _methodName(methodName)
-  {}
-  explicit _TfPyClassMethod(const char *methodName)
-    : _methodName(methodName)
-  {}
-
-  template<typename CLS>
-  void visit(CLS &c) const
+  // Visitor for wrapping functions as Python class methods.
+  // See typedef below for docs.
+  // This is very similar to the staticmethod() method on boost::python::class,
+  // except it uses PyClassMethod_New() instead of PyStaticMethod_New().
+  struct _TfPyClassMethod : def_visitor<_TfPyClassMethod>
   {
-    PyTypeObject *self = downcast<PyTypeObject>(c.ptr());
-    dict d((handle<>(borrowed(self->tp_dict))));
+    friend class def_visitor_access;
 
-    object method(d[_methodName]);
+    _TfPyClassMethod(const std::string &methodName)
+      : _methodName(methodName)
+    {}
+    explicit _TfPyClassMethod(const char *methodName)
+      : _methodName(methodName)
+    {}
 
-    c.attr(_methodName.c_str()) = object(handle<>(PyClassMethod_New((_CallableCheck)(method.ptr()))));
-  }
+    template<typename CLS>
+    void visit(CLS &c) const
+    {
+      PyTypeObject *self = downcast<PyTypeObject>(c.ptr());
+      dict d((handle<>(borrowed(self->tp_dict))));
 
- private:
-  PyObject *_CallableCheck(PyObject *callable) const
-  {
-    if (PyCallable_Check(expect_non_null(callable)))
-      return callable;
+      object method(d[_methodName]);
 
-    PyErr_Format(PyExc_TypeError,
-                 "classmethod expects callable object; got an object of type %s, "
-                 "which is not callable",
-                 callable->ob_type->tp_name);
+      c.attr(_methodName.c_str()) = object(handle<>(PyClassMethod_New((_CallableCheck)(method.ptr()))));
+    }
 
-    throw_error_already_set();
-    return 0;
-  }
+   private:
+    PyObject *_CallableCheck(PyObject *callable) const
+    {
+      if (PyCallable_Check(expect_non_null(callable)))
+        return callable;
 
-  const std::string _methodName;
-};
+      PyErr_Format(PyExc_TypeError,
+                   "classmethod expects callable object; got an object of type %s, "
+                   "which is not callable",
+                   callable->ob_type->tp_name);
+
+      throw_error_already_set();
+      return 0;
+    }
+
+    const std::string _methodName;
+  };
 
 }  // namespace Tf_PyClassMethod
 

@@ -178,7 +178,9 @@ void HgiVulkanBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
     // before submitting the cmd buf. So we can't just use the start
     // of the staging buffer each time.
     const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-      texDesc.format, texDesc.dimensions, 1 /*HgiTextureCpuToGpuOp does one layer at a time*/);
+      texDesc.format,
+      texDesc.dimensions,
+      1 /*HgiTextureCpuToGpuOp does one layer at a time*/);
 
     if (mipInfos.size() > copyOp.mipLevel)
     {
@@ -197,8 +199,10 @@ void HgiVulkanBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
   HgiVulkanBuffer *stagingBuffer = dstTexture->GetStagingBuffer();
   if (TF_VERIFY(stagingBuffer, "Invalid staging buffer for texture"))
   {
-    dstTexture->CopyBufferToTexture(
-      _commandBuffer, dstTexture->GetStagingBuffer(), copyOp.destinationTexelOffset, copyOp.mipLevel);
+    dstTexture->CopyBufferToTexture(_commandBuffer,
+                                    dstTexture->GetStagingBuffer(),
+                                    copyOp.destinationTexelOffset,
+                                    copyOp.mipLevel);
   }
 }
 

@@ -50,17 +50,21 @@ HgiGLSampler::HgiGLSampler(HgiSamplerDesc const &desc)
     HgiGLObjectLabel(GL_SAMPLER, _samplerId, _descriptor.debugName);
   }
 
-  glSamplerParameteri(
-    _samplerId, GL_TEXTURE_WRAP_S, HgiGLConversions::GetSamplerAddressMode(desc.addressModeU));
+  glSamplerParameteri(_samplerId,
+                      GL_TEXTURE_WRAP_S,
+                      HgiGLConversions::GetSamplerAddressMode(desc.addressModeU));
 
-  glSamplerParameteri(
-    _samplerId, GL_TEXTURE_WRAP_T, HgiGLConversions::GetSamplerAddressMode(desc.addressModeV));
+  glSamplerParameteri(_samplerId,
+                      GL_TEXTURE_WRAP_T,
+                      HgiGLConversions::GetSamplerAddressMode(desc.addressModeV));
 
-  glSamplerParameteri(
-    _samplerId, GL_TEXTURE_WRAP_R, HgiGLConversions::GetSamplerAddressMode(desc.addressModeW));
+  glSamplerParameteri(_samplerId,
+                      GL_TEXTURE_WRAP_R,
+                      HgiGLConversions::GetSamplerAddressMode(desc.addressModeW));
 
-  glSamplerParameteri(
-    _samplerId, GL_TEXTURE_MIN_FILTER, HgiGLConversions::GetMinFilter(desc.minFilter, desc.mipFilter));
+  glSamplerParameteri(_samplerId,
+                      GL_TEXTURE_MIN_FILTER,
+                      HgiGLConversions::GetMinFilter(desc.minFilter, desc.mipFilter));
 
   glSamplerParameteri(_samplerId, GL_TEXTURE_MAG_FILTER, HgiGLConversions::GetMagFilter(desc.magFilter));
 

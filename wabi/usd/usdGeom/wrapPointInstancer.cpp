@@ -43,80 +43,85 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateProtoIndicesAttr(UsdGeomPointInstancer &self,
+  static UsdAttribute _CreateProtoIndicesAttr(UsdGeomPointInstancer &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreateProtoIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                       writeSparsely);
+  }
+
+  static UsdAttribute _CreateIdsAttr(UsdGeomPointInstancer &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array), writeSparsely);
+  }
+
+  static UsdAttribute _CreatePositionsAttr(UsdGeomPointInstancer &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
+  {
+    return self.CreatePositionsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3fArray),
+                                    writeSparsely);
+  }
+
+  static UsdAttribute _CreateOrientationsAttr(UsdGeomPointInstancer &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreateOrientationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->QuathArray),
+                                       writeSparsely);
+  }
+
+  static UsdAttribute _CreateScalesAttr(UsdGeomPointInstancer &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateScalesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
+                                 writeSparsely);
+  }
+
+  static UsdAttribute _CreateVelocitiesAttr(UsdGeomPointInstancer &self,
                                             object defaultVal,
                                             bool writeSparsely)
-{
-  return self.CreateProtoIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+  {
+    return self.CreateVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
                                      writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateIdsAttr(UsdGeomPointInstancer &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array), writeSparsely);
-}
+  static UsdAttribute _CreateAccelerationsAttr(UsdGeomPointInstancer &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateAccelerationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreatePositionsAttr(UsdGeomPointInstancer &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreatePositionsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3fArray),
-                                  writeSparsely);
-}
+  static UsdAttribute _CreateAngularVelocitiesAttr(UsdGeomPointInstancer &self,
+                                                   object defaultVal,
+                                                   bool writeSparsely)
+  {
+    return self.CreateAngularVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+                                            writeSparsely);
+  }
 
-static UsdAttribute _CreateOrientationsAttr(UsdGeomPointInstancer &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
-{
-  return self.CreateOrientationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->QuathArray),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreateInvisibleIdsAttr(UsdGeomPointInstancer &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreateInvisibleIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateScalesAttr(UsdGeomPointInstancer &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateScalesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
-                               writeSparsely);
-}
-
-static UsdAttribute _CreateVelocitiesAttr(UsdGeomPointInstancer &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                   writeSparsely);
-}
-
-static UsdAttribute _CreateAccelerationsAttr(UsdGeomPointInstancer &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreateAccelerationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                      writeSparsely);
-}
-
-static UsdAttribute _CreateAngularVelocitiesAttr(UsdGeomPointInstancer &self,
-                                                 object defaultVal,
-                                                 bool writeSparsely)
-{
-  return self.CreateAngularVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                          writeSparsely);
-}
-
-static UsdAttribute _CreateInvisibleIdsAttr(UsdGeomPointInstancer &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
-{
-  return self.CreateInvisibleIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array),
-                                     writeSparsely);
-}
-
-static std::string _Repr(const UsdGeomPointInstancer &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.PointInstancer(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdGeomPointInstancer &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.PointInstancer(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -166,8 +171,9 @@ void wrapUsdGeomPointInstancer()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetScalesAttr", &This::GetScalesAttr)
-    .def(
-      "CreateScalesAttr", &_CreateScalesAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateScalesAttr",
+         &_CreateScalesAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetVelocitiesAttr", &This::GetVelocitiesAttr)
     .def("CreateVelocitiesAttr",
@@ -220,122 +226,122 @@ void wrapUsdGeomPointInstancer()
 namespace
 {
 
-static boost::python::list _ComputeMaskAtTime(const UsdGeomPointInstancer &self, const UsdTimeCode time)
-{
-  boost::python::list items;
-  for (const auto &b : self.ComputeMaskAtTime(time))
+  static boost::python::list _ComputeMaskAtTime(const UsdGeomPointInstancer &self, const UsdTimeCode time)
   {
-    items.append(static_cast<bool>(b));
+    boost::python::list items;
+    for (const auto &b : self.ComputeMaskAtTime(time))
+    {
+      items.append(static_cast<bool>(b));
+    }
+
+    return items;
   }
 
-  return items;
-}
+  static VtMatrix4dArray _ComputeInstanceTransformsAtTime(
+    const UsdGeomPointInstancer &self,
+    const UsdTimeCode time,
+    const UsdTimeCode baseTime,
+    const UsdGeomPointInstancer::ProtoXformInclusion doProtoXforms,
+    const UsdGeomPointInstancer::MaskApplication applyMask)
+  {
+    VtMatrix4dArray xforms;
 
-static VtMatrix4dArray _ComputeInstanceTransformsAtTime(
-  const UsdGeomPointInstancer &self,
-  const UsdTimeCode time,
-  const UsdTimeCode baseTime,
-  const UsdGeomPointInstancer::ProtoXformInclusion doProtoXforms,
-  const UsdGeomPointInstancer::MaskApplication applyMask)
-{
-  VtMatrix4dArray xforms;
+    // On error we'll be returning an empty array.
+    self.ComputeInstanceTransformsAtTime(&xforms, time, baseTime, doProtoXforms, applyMask);
 
-  // On error we'll be returning an empty array.
-  self.ComputeInstanceTransformsAtTime(&xforms, time, baseTime, doProtoXforms, applyMask);
+    return xforms;
+  }
 
-  return xforms;
-}
+  static std::vector<VtMatrix4dArray> _ComputeInstanceTransformsAtTimes(
+    const UsdGeomPointInstancer &self,
+    const std::vector<UsdTimeCode> &times,
+    const UsdTimeCode baseTime,
+    const UsdGeomPointInstancer::ProtoXformInclusion doProtoXforms,
+    const UsdGeomPointInstancer::MaskApplication applyMask)
+  {
+    std::vector<VtMatrix4dArray> xforms;
 
-static std::vector<VtMatrix4dArray> _ComputeInstanceTransformsAtTimes(
-  const UsdGeomPointInstancer &self,
-  const std::vector<UsdTimeCode> &times,
-  const UsdTimeCode baseTime,
-  const UsdGeomPointInstancer::ProtoXformInclusion doProtoXforms,
-  const UsdGeomPointInstancer::MaskApplication applyMask)
-{
-  std::vector<VtMatrix4dArray> xforms;
+    // On error we'll be returning an empty array.
+    self.ComputeInstanceTransformsAtTimes(&xforms, times, baseTime, doProtoXforms, applyMask);
 
-  // On error we'll be returning an empty array.
-  self.ComputeInstanceTransformsAtTimes(&xforms, times, baseTime, doProtoXforms, applyMask);
+    return xforms;
+  }
 
-  return xforms;
-}
+  static VtVec3fArray _ComputeExtentAtTime(const UsdGeomPointInstancer &self,
+                                           const UsdTimeCode time,
+                                           const UsdTimeCode baseTime)
+  {
+    VtVec3fArray extent;
 
-static VtVec3fArray _ComputeExtentAtTime(const UsdGeomPointInstancer &self,
-                                         const UsdTimeCode time,
-                                         const UsdTimeCode baseTime)
-{
-  VtVec3fArray extent;
+    // On error we'll be returning an empty array.
+    self.ComputeExtentAtTime(&extent, time, baseTime);
 
-  // On error we'll be returning an empty array.
-  self.ComputeExtentAtTime(&extent, time, baseTime);
+    return extent;
+  }
 
-  return extent;
-}
+  static std::vector<VtVec3fArray> _ComputeExtentAtTimes(const UsdGeomPointInstancer &self,
+                                                         const std::vector<UsdTimeCode> &times,
+                                                         const UsdTimeCode baseTime)
+  {
+    std::vector<VtVec3fArray> extents;
 
-static std::vector<VtVec3fArray> _ComputeExtentAtTimes(const UsdGeomPointInstancer &self,
-                                                       const std::vector<UsdTimeCode> &times,
-                                                       const UsdTimeCode baseTime)
-{
-  std::vector<VtVec3fArray> extents;
+    // On error we'll be returning an empty array.
+    self.ComputeExtentAtTimes(&extents, times, baseTime);
 
-  // On error we'll be returning an empty array.
-  self.ComputeExtentAtTimes(&extents, times, baseTime);
+    return extents;
+  }
 
-  return extents;
-}
+  WRAP_CUSTOM
+  {
 
-WRAP_CUSTOM
-{
+    typedef UsdGeomPointInstancer This;
 
-  typedef UsdGeomPointInstancer This;
+    // class needs to be in-scope for enums to get wrapped properly
+    scope obj = _class;
 
-  // class needs to be in-scope for enums to get wrapped properly
-  scope obj = _class;
+    TfPyWrapEnum<This::MaskApplication>();
 
-  TfPyWrapEnum<This::MaskApplication>();
+    TfPyWrapEnum<This::ProtoXformInclusion>();
 
-  TfPyWrapEnum<This::ProtoXformInclusion>();
+    _class.def("ActivateId", &This::ActivateId, (arg("id")))
+      .def("ActivateIds", &This::ActivateIds, (arg("ids")))
+      .def("ActivateAllIds", &This::ActivateAllIds)
+      .def("DeactivateId", &This::DeactivateId, (arg("id")))
+      .def("DeactivateIds", &This::DeactivateIds, (arg("ids")))
 
-  _class.def("ActivateId", &This::ActivateId, (arg("id")))
-    .def("ActivateIds", &This::ActivateIds, (arg("ids")))
-    .def("ActivateAllIds", &This::ActivateAllIds)
-    .def("DeactivateId", &This::DeactivateId, (arg("id")))
-    .def("DeactivateIds", &This::DeactivateIds, (arg("ids")))
+      .def("VisId", &This::VisId, (arg("id"), arg("time")))
+      .def("VisIds", &This::VisIds, (arg("ids"), arg("time")))
+      .def("VisAllIds", &This::VisAllIds, (arg("time")))
+      .def("InvisId", &This::InvisId, (arg("id"), arg("time")))
+      .def("InvisIds", &This::InvisIds, (arg("ids"), arg("time")))
 
-    .def("VisId", &This::VisId, (arg("id"), arg("time")))
-    .def("VisIds", &This::VisIds, (arg("ids"), arg("time")))
-    .def("VisAllIds", &This::VisAllIds, (arg("time")))
-    .def("InvisId", &This::InvisId, (arg("id"), arg("time")))
-    .def("InvisIds", &This::InvisIds, (arg("ids"), arg("time")))
+      // The cost to fetch 'ids' is likely dwarfed by python marshalling
+      // costs, so let's not worry about the 'ids' optional arg
+      .def("ComputeMaskAtTime", &_ComputeMaskAtTime, (arg("time")))
 
-    // The cost to fetch 'ids' is likely dwarfed by python marshalling
-    // costs, so let's not worry about the 'ids' optional arg
-    .def("ComputeMaskAtTime", &_ComputeMaskAtTime, (arg("time")))
+      .def("ComputeInstanceTransformsAtTime",
+           &_ComputeInstanceTransformsAtTime,
+           (arg("time"),
+            arg("baseTime"),
+            arg("doProtoXforms") = This::IncludeProtoXform,
+            arg("applyMask") = This::ApplyMask))
+      .def("ComputeInstanceTransformsAtTimes",
+           &_ComputeInstanceTransformsAtTimes,
+           (arg("times"),
+            arg("baseTime"),
+            arg("doProtoXforms") = This::IncludeProtoXform,
+            arg("applyMask") = This::ApplyMask))
 
-    .def("ComputeInstanceTransformsAtTime",
-         &_ComputeInstanceTransformsAtTime,
-         (arg("time"),
-          arg("baseTime"),
-          arg("doProtoXforms") = This::IncludeProtoXform,
-          arg("applyMask") = This::ApplyMask))
-    .def("ComputeInstanceTransformsAtTimes",
-         &_ComputeInstanceTransformsAtTimes,
-         (arg("times"),
-          arg("baseTime"),
-          arg("doProtoXforms") = This::IncludeProtoXform,
-          arg("applyMask") = This::ApplyMask))
+      .def("ComputeExtentAtTime", &_ComputeExtentAtTime, (arg("time"), arg("baseTime")))
+      .def("ComputeExtentAtTimes", &_ComputeExtentAtTimes, (arg("times"), arg("baseTime")))
 
-    .def("ComputeExtentAtTime", &_ComputeExtentAtTime, (arg("time"), arg("baseTime")))
-    .def("ComputeExtentAtTimes", &_ComputeExtentAtTimes, (arg("times"), arg("baseTime")))
-
-    .def("GetInstanceCount",
-         &UsdGeomPointInstancer::GetInstanceCount,
-         arg("timeCode") = UsdTimeCode::Default());
-  TfPyRegisterStlSequencesFromPython<UsdTimeCode>();
-  to_python_converter<std::vector<VtArray<GfMatrix4d>>,
-                      TfPySequenceToPython<std::vector<VtArray<GfMatrix4d>>>>();
-  to_python_converter<std::vector<VtVec3fArray>, TfPySequenceToPython<std::vector<VtVec3fArray>>>();
-}
+      .def("GetInstanceCount",
+           &UsdGeomPointInstancer::GetInstanceCount,
+           arg("timeCode") = UsdTimeCode::Default());
+    TfPyRegisterStlSequencesFromPython<UsdTimeCode>();
+    to_python_converter<std::vector<VtArray<GfMatrix4d>>,
+                        TfPySequenceToPython<std::vector<VtArray<GfMatrix4d>>>>();
+    to_python_converter<std::vector<VtVec3fArray>, TfPySequenceToPython<std::vector<VtVec3fArray>>>();
+  }
 
 }  // anonymous namespace

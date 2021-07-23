@@ -227,8 +227,7 @@ std::ostream &operator<<(std::ostream &s, const PcpLayerStackIdentifier &x)
   {
     return s << "@" << Pcp_FormatIdentifier(s, x.rootLayer) << "@,"
              << "@" << Pcp_FormatIdentifier(s, x.sessionLayer) << "@" << PcpIdentifierFormatIdentifier;
-  }
-  else
+  } else
   {
     return s << "@" << Pcp_FormatIdentifier(s, x.rootLayer) << "@" << PcpIdentifierFormatIdentifier;
   }
@@ -241,8 +240,7 @@ std::ostream &operator<<(std::ostream &s, const PcpLayerStackIdentifierStr &x)
   {
     return s << "@" << Pcp_FormatIdentifier(s, x.rootLayerId) << "@,"
              << "@" << Pcp_FormatIdentifier(s, x.sessionLayerId) << "@" << PcpIdentifierFormatIdentifier;
-  }
-  else
+  } else
   {
     return s << "@" << Pcp_FormatIdentifier(s, x.rootLayerId) << "@" << PcpIdentifierFormatIdentifier;
   }

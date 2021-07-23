@@ -79,8 +79,7 @@ class HdPh_TextureHandleRegistry::_TextureToHandlesMap
       if (it == _map.end())
       {
         result = true;
-      }
-      else
+      } else
       {
         if (_GarbageCollect(it->second.get()))
         {
@@ -183,10 +182,15 @@ HdPhTextureHandleSharedPtr HdPh_TextureHandleRegistry::AllocateTextureHandle(
 
   // Allocate texture (CPU only)
   HdPhTextureObjectSharedPtr const textureObject = _textureObjectRegistry->AllocateTextureObject(
-    textureId, textureType);
+    textureId,
+    textureType);
 
-  HdPhTextureHandleSharedPtr const result = std::make_shared<HdPhTextureHandle>(
-    textureObject, samplerParams, memoryRequest, createBindlessHandle, shaderCode, this);
+  HdPhTextureHandleSharedPtr const result = std::make_shared<HdPhTextureHandle>(textureObject,
+                                                                                samplerParams,
+                                                                                memoryRequest,
+                                                                                createBindlessHandle,
+                                                                                shaderCode,
+                                                                                this);
 
   // Keep track and mark dirty
   _textureToHandlesMap->Insert(textureObject, result);
@@ -312,8 +316,7 @@ bool HdPh_TextureHandleRegistry::_GarbageCollectHandlesAndComputeTargetMemory()
   {
     _ComputeAllMemoryRequests();
     _textureTypeToMemoryRequestChanged = false;
-  }
-  else
+  } else
   {
     _ComputeMemoryRequests(dirtyTextures);
   }

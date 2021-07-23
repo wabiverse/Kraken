@@ -145,8 +145,7 @@ unsigned int MurmurHash1Aligned(const void *key, int len, unsigned int seed)
 
     data += pack;
     len -= pack;
-  }
-  else
+  } else
   {
     while (len >= 4)
     {

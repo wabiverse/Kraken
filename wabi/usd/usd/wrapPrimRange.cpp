@@ -39,195 +39,195 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-class Usd_PyPrimRangeIterator;
+  class Usd_PyPrimRangeIterator;
 
-class Usd_PyPrimRange
-{
- public:
-  Usd_PyPrimRange(UsdPrim root)
-    : _rng(root),
-      _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
-  {}
-
-  Usd_PyPrimRange(UsdPrim root, Usd_PrimFlagsPredicate predicate)
-    : _rng(root, predicate),
-      _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
-  {}
-
-  static Usd_PyPrimRange PreAndPostVisit(UsdPrim root)
+  class Usd_PyPrimRange
   {
-    return Usd_PyPrimRange(UsdPrimRange::PreAndPostVisit(root));
-  }
+   public:
+    Usd_PyPrimRange(UsdPrim root)
+      : _rng(root),
+        _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
+    {}
 
-  static Usd_PyPrimRange PreAndPostVisit(UsdPrim root, Usd_PrimFlagsPredicate predicate)
-  {
-    return Usd_PyPrimRange(UsdPrimRange::PreAndPostVisit(root, predicate));
-  }
+    Usd_PyPrimRange(UsdPrim root, Usd_PrimFlagsPredicate predicate)
+      : _rng(root, predicate),
+        _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
+    {}
 
-  static Usd_PyPrimRange AllPrims(UsdPrim root)
-  {
-    return Usd_PyPrimRange(UsdPrimRange::AllPrims(root));
-  }
-
-  static Usd_PyPrimRange AllPrimsPreAndPostVisit(UsdPrim root)
-  {
-    return Usd_PyPrimRange(UsdPrimRange::AllPrimsPreAndPostVisit(root));
-  }
-
-  static Usd_PyPrimRange Stage(const UsdStagePtr &stage)
-  {
-    return Usd_PyPrimRange(UsdPrimRange::Stage(stage));
-  }
-
-  static Usd_PyPrimRange Stage(const UsdStagePtr &stage, const Usd_PrimFlagsPredicate &predicate)
-  {
-    return Usd_PyPrimRange(UsdPrimRange::Stage(stage, predicate));
-  }
-
-  bool IsValid() const
-  {
-    return _startPrim && !_rng.empty();
-  }
-
-  operator bool() const
-  {
-    return IsValid();
-  }
-
-  bool operator==(Usd_PyPrimRange const &other) const
-  {
-    return _startPrim == other._startPrim && _rng == other._rng;
-  }
-  bool operator!=(Usd_PyPrimRange const &other) const
-  {
-    return !(*this == other);
-  }
-
-  Usd_PyPrimRangeIterator __iter__() const;
-
-  static void RegisterConversions()
-  {
-    // to-python
-    to_python_converter<UsdPrimRange, Usd_PyPrimRange>();
-    // from-python
-    converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<UsdPrimRange>());
-  }
-
-  // to-python conversion of UsdPrimRange.
-  static PyObject *convert(const UsdPrimRange &primRange)
-  {
-    TfPyLock lock;
-    // (extra parens to avoid 'most vexing parse')
-    boost::python::object obj((Usd_PyPrimRange(primRange)));
-    PyObject *ret = obj.ptr();
-    Py_INCREF(ret);
-    return ret;
-  }
-
- private:
-  friend class Usd_PyPrimRangeIterator;
-
-  explicit Usd_PyPrimRange(const UsdPrimRange &range)
-    : _rng(range),
-      _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
-  {}
-
-  static void *_convertible(PyObject *obj_ptr)
-  {
-    extract<Usd_PyPrimRange> extractor(obj_ptr);
-    return extractor.check() ? obj_ptr : nullptr;
-  }
-
-  static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
-  {
-    void *storage = ((converter::rvalue_from_python_storage<Usd_PyPrimRange> *)data)->storage.bytes;
-    Usd_PyPrimRange pyIter = extract<Usd_PyPrimRange>(obj_ptr);
-    new (storage) UsdPrimRange(pyIter._rng);
-    data->convertible = storage;
-  }
-
-  UsdPrimRange _rng;
-  UsdPrim _startPrim;
-};
-
-class Usd_PyPrimRangeIterator
-{
- public:
-  explicit Usd_PyPrimRangeIterator(Usd_PyPrimRange const *range)
-    : range(range),
-      iter(range->_rng.begin()),
-      curPrim(iter != range->_rng.end() ? *iter : UsdPrim())
-  {}
-
-  bool IsPostVisit() const
-  {
-    return iter.IsPostVisit();
-  }
-  void PruneChildren()
-  {
-    iter.PruneChildren();
-  }
-  bool IsValid() const
-  {
-    return curPrim && iter != range->_rng.end();
-  }
-  UsdPrim GetCurrentPrim() const
-  {
-    return curPrim;
-  }
-
-  UsdPrim next()
-  {
-    // If the current prim is invalid, we can't use iter and must raise an
-    // exception.
-    _RaiseIfAtEnd();
-    if (!curPrim)
+    static Usd_PyPrimRange PreAndPostVisit(UsdPrim root)
     {
-      PyErr_SetString(PyExc_RuntimeError,
-                      TfStringPrintf("Iterator points to %s", curPrim.GetDescription().c_str()).c_str());
-      throw_error_already_set();
+      return Usd_PyPrimRange(UsdPrimRange::PreAndPostVisit(root));
     }
-    if (didFirst)
+
+    static Usd_PyPrimRange PreAndPostVisit(UsdPrim root, Usd_PrimFlagsPredicate predicate)
     {
-      ++iter;
+      return Usd_PyPrimRange(UsdPrimRange::PreAndPostVisit(root, predicate));
+    }
+
+    static Usd_PyPrimRange AllPrims(UsdPrim root)
+    {
+      return Usd_PyPrimRange(UsdPrimRange::AllPrims(root));
+    }
+
+    static Usd_PyPrimRange AllPrimsPreAndPostVisit(UsdPrim root)
+    {
+      return Usd_PyPrimRange(UsdPrimRange::AllPrimsPreAndPostVisit(root));
+    }
+
+    static Usd_PyPrimRange Stage(const UsdStagePtr &stage)
+    {
+      return Usd_PyPrimRange(UsdPrimRange::Stage(stage));
+    }
+
+    static Usd_PyPrimRange Stage(const UsdStagePtr &stage, const Usd_PrimFlagsPredicate &predicate)
+    {
+      return Usd_PyPrimRange(UsdPrimRange::Stage(stage, predicate));
+    }
+
+    bool IsValid() const
+    {
+      return _startPrim && !_rng.empty();
+    }
+
+    operator bool() const
+    {
+      return IsValid();
+    }
+
+    bool operator==(Usd_PyPrimRange const &other) const
+    {
+      return _startPrim == other._startPrim && _rng == other._rng;
+    }
+    bool operator!=(Usd_PyPrimRange const &other) const
+    {
+      return !(*this == other);
+    }
+
+    Usd_PyPrimRangeIterator __iter__() const;
+
+    static void RegisterConversions()
+    {
+      // to-python
+      to_python_converter<UsdPrimRange, Usd_PyPrimRange>();
+      // from-python
+      converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<UsdPrimRange>());
+    }
+
+    // to-python conversion of UsdPrimRange.
+    static PyObject *convert(const UsdPrimRange &primRange)
+    {
+      TfPyLock lock;
+      // (extra parens to avoid 'most vexing parse')
+      boost::python::object obj((Usd_PyPrimRange(primRange)));
+      PyObject *ret = obj.ptr();
+      Py_INCREF(ret);
+      return ret;
+    }
+
+   private:
+    friend class Usd_PyPrimRangeIterator;
+
+    explicit Usd_PyPrimRange(const UsdPrimRange &range)
+      : _rng(range),
+        _startPrim(!_rng.empty() ? *_rng.begin() : UsdPrim())
+    {}
+
+    static void *_convertible(PyObject *obj_ptr)
+    {
+      extract<Usd_PyPrimRange> extractor(obj_ptr);
+      return extractor.check() ? obj_ptr : nullptr;
+    }
+
+    static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
+    {
+      void *storage = ((converter::rvalue_from_python_storage<Usd_PyPrimRange> *)data)->storage.bytes;
+      Usd_PyPrimRange pyIter = extract<Usd_PyPrimRange>(obj_ptr);
+      new (storage) UsdPrimRange(pyIter._rng);
+      data->convertible = storage;
+    }
+
+    UsdPrimRange _rng;
+    UsdPrim _startPrim;
+  };
+
+  class Usd_PyPrimRangeIterator
+  {
+   public:
+    explicit Usd_PyPrimRangeIterator(Usd_PyPrimRange const *range)
+      : range(range),
+        iter(range->_rng.begin()),
+        curPrim(iter != range->_rng.end() ? *iter : UsdPrim())
+    {}
+
+    bool IsPostVisit() const
+    {
+      return iter.IsPostVisit();
+    }
+    void PruneChildren()
+    {
+      iter.PruneChildren();
+    }
+    bool IsValid() const
+    {
+      return curPrim && iter != range->_rng.end();
+    }
+    UsdPrim GetCurrentPrim() const
+    {
+      return curPrim;
+    }
+
+    UsdPrim next()
+    {
+      // If the current prim is invalid, we can't use iter and must raise an
+      // exception.
       _RaiseIfAtEnd();
+      if (!curPrim)
+      {
+        PyErr_SetString(PyExc_RuntimeError,
+                        TfStringPrintf("Iterator points to %s", curPrim.GetDescription().c_str()).c_str());
+        throw_error_already_set();
+      }
+      if (didFirst)
+      {
+        ++iter;
+        _RaiseIfAtEnd();
+      }
+      didFirst = true;
+      curPrim = *iter;
+      TF_VERIFY(curPrim);
+      return curPrim;
     }
-    didFirst = true;
-    curPrim = *iter;
-    TF_VERIFY(curPrim);
-    return curPrim;
-  }
 
-  void _RaiseIfAtEnd() const
-  {
-    if (iter == range->_rng.end())
+    void _RaiseIfAtEnd() const
     {
-      PyErr_SetString(PyExc_StopIteration, "PrimRange at end");
-      throw_error_already_set();
+      if (iter == range->_rng.end())
+      {
+        PyErr_SetString(PyExc_StopIteration, "PrimRange at end");
+        throw_error_already_set();
+      }
     }
-  }
 
-  Usd_PyPrimRange const *range;
-  UsdPrimRange::iterator iter;
-  UsdPrim curPrim;
-  bool didFirst = false;
-};
+    Usd_PyPrimRange const *range;
+    UsdPrimRange::iterator iter;
+    UsdPrim curPrim;
+    bool didFirst = false;
+  };
 
-Usd_PyPrimRangeIterator Usd_PyPrimRange::__iter__() const
-{
-  if (!_rng.empty() && !_startPrim)
+  Usd_PyPrimRangeIterator Usd_PyPrimRange::__iter__() const
   {
-    PyErr_SetString(
-      PyExc_RuntimeError,
-      TfStringPrintf("Invalid range starting with %s", _startPrim.GetDescription().c_str()).c_str());
+    if (!_rng.empty() && !_startPrim)
+    {
+      PyErr_SetString(
+        PyExc_RuntimeError,
+        TfStringPrintf("Invalid range starting with %s", _startPrim.GetDescription().c_str()).c_str());
+    }
+    return Usd_PyPrimRangeIterator(this);
   }
-  return Usd_PyPrimRangeIterator(this);
-}
 
-static UsdPrimRange _TestPrimRangeRoundTrip(const UsdPrimRange &primRange)
-{
-  return primRange;
-}
+  static UsdPrimRange _TestPrimRangeRoundTrip(const UsdPrimRange &primRange)
+  {
+    return primRange;
+  }
 
 }  // anonymous namespace
 
@@ -239,8 +239,9 @@ void wrapUsdPrimRange()
         .def(init<UsdPrim>(arg("root")))
         .def(init<UsdPrim, Usd_PrimFlagsPredicate>((arg("root"), arg("predicate"))))
 
-        .def(
-          "PreAndPostVisit", (Usd_PyPrimRange(*)(UsdPrim)) & Usd_PyPrimRange::PreAndPostVisit, arg("root"))
+        .def("PreAndPostVisit",
+             (Usd_PyPrimRange(*)(UsdPrim)) & Usd_PyPrimRange::PreAndPostVisit,
+             arg("root"))
         .def("PreAndPostVisit",
              (Usd_PyPrimRange(*)(UsdPrim, Usd_PrimFlagsPredicate)) & Usd_PyPrimRange::PreAndPostVisit,
              (arg("root"), arg("predicate")))

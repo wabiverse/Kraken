@@ -73,20 +73,24 @@ class UsdSchemaBase
   /// inherit from UsdTyped can impart a typename on a UsdPrim.
   bool IsTyped() const
   {
-    return GetSchemaKind() == UsdSchemaKind::ConcreteTyped || GetSchemaKind() == UsdSchemaKind::AbstractTyped;
+    return GetSchemaKind() == UsdSchemaKind::ConcreteTyped ||
+           GetSchemaKind() == UsdSchemaKind::AbstractTyped;
   }
 
   /// Returns whether this is an API schema or not.
   bool IsAPISchema() const
   {
-    return GetSchemaKind() == UsdSchemaKind::NonAppliedAPI || GetSchemaKind() == UsdSchemaKind::SingleApplyAPI || GetSchemaKind() == UsdSchemaKind::MultipleApplyAPI;
+    return GetSchemaKind() == UsdSchemaKind::NonAppliedAPI ||
+           GetSchemaKind() == UsdSchemaKind::SingleApplyAPI ||
+           GetSchemaKind() == UsdSchemaKind::MultipleApplyAPI;
   }
 
   /// Returns whether this is an applied API schema or not. If this returns
   /// true this class will have an Apply() method
   bool IsAppliedAPISchema() const
   {
-    return GetSchemaKind() == UsdSchemaKind::SingleApplyAPI || GetSchemaKind() == UsdSchemaKind::MultipleApplyAPI;
+    return GetSchemaKind() == UsdSchemaKind::SingleApplyAPI ||
+           GetSchemaKind() == UsdSchemaKind::MultipleApplyAPI;
   }
 
   /// Returns whether this is an applied API schema or not. If this returns
@@ -130,8 +134,7 @@ class UsdSchemaBase
     if (!_proxyPrimPath.IsEmpty())
     {
       return _proxyPrimPath;
-    }
-    else if (Usd_PrimDataConstPtr p = get_pointer(_primData))
+    } else if (Usd_PrimDataConstPtr p = get_pointer(_primData))
     {
       return p->GetPath();
     }
@@ -152,8 +155,7 @@ class UsdSchemaBase
 
   //@}
 
-  static const TfTokenVector &
-  GetSchemaAttributeNames(bool includeInherited = true)
+  static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true)
   {
     /* This only exists for consistency */
     static TfTokenVector names;

@@ -58,10 +58,10 @@ void kpy_intern_string_init(void)
 {
   uint i = 0;
 
-#define KPY_INTERN_STR(var, str) \
-  { \
+#define KPY_INTERN_STR(var, str)                               \
+  {                                                            \
     var = kpy_intern_str_arr[i++] = PyUnicode_FromString(str); \
-  } \
+  }                                                            \
   (void)0
 
   KPY_INTERN_STR(kpy_intern_str___annotations__, "__annotations__");

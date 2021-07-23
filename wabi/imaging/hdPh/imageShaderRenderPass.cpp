@@ -86,8 +86,8 @@ void HdPh_ImageShaderRenderPass::_SetupVertexPrimvarBAR(HdPhResourceRegistryShar
   HdBufferSpecVector bufferSpecs;
   HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 
-  HdBufferArrayRangeSharedPtr vertexPrimvarRange = registry->AllocateNonUniformBufferArrayRange(
-    HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
+  HdBufferArrayRangeSharedPtr vertexPrimvarRange =
+    registry->AllocateNonUniformBufferArrayRange(HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
 
   registry->AddSources(vertexPrimvarRange, std::move(sources));
 
@@ -166,8 +166,7 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
       _ExecuteDraw(batch, stRenderPassState, resourceRegistry);
     };
     glGfxCmds->InsertFunctionOp(executeDrawOp);
-  }
-  else
+  } else
   {
     _ExecuteDraw(batch, stRenderPassState, resourceRegistry);
   }

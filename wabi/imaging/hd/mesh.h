@@ -35,7 +35,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-#define HD_MESH_REPR_DESC_TOKENS \
+#define HD_MESH_REPR_DESC_TOKENS       \
   (surfaceShader)(surfaceShaderUnlit)( \
     surfaceShaderSheer)(surfaceShaderOutline)(constantColor)(hullColor)(pointColor)
 

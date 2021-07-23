@@ -49,33 +49,33 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-struct Tf_TokenFromPythonString
-{
-  Tf_TokenFromPythonString()
+  struct Tf_TokenFromPythonString
   {
-    bp::converter::registry::insert(&convertible, &construct, bp::type_id<TfToken>());
-  }
-  static void *convertible(PyObject *obj)
-  {
-    bp::extract<std::string> s(obj);
-    return s.check() ? obj : 0;
-  }
-  static void construct(PyObject *src, bp::converter::rvalue_from_python_stage1_data *data)
-  {
-    bp::extract<std::string> s(src);
-    void *storage = ((bp::converter::rvalue_from_python_storage<TfToken> *)data)->storage.bytes;
-    new (storage) TfToken(s());
-    data->convertible = storage;
-  }
-};
+    Tf_TokenFromPythonString()
+    {
+      bp::converter::registry::insert(&convertible, &construct, bp::type_id<TfToken>());
+    }
+    static void *convertible(PyObject *obj)
+    {
+      bp::extract<std::string> s(obj);
+      return s.check() ? obj : 0;
+    }
+    static void construct(PyObject *src, bp::converter::rvalue_from_python_stage1_data *data)
+    {
+      bp::extract<std::string> s(src);
+      void *storage = ((bp::converter::rvalue_from_python_storage<TfToken> *)data)->storage.bytes;
+      new (storage) TfToken(s());
+      data->convertible = storage;
+    }
+  };
 
-struct Tf_TokenToPythonString
-{
-  static PyObject *convert(TfToken const &val)
+  struct Tf_TokenToPythonString
   {
-    return bp::incref(bp::str(val.GetString()).ptr());
-  }
-};
+    static PyObject *convert(TfToken const &val)
+    {
+      return bp::incref(bp::str(val.GetString()).ptr());
+    }
+  };
 
 }  // anonymous namespace
 

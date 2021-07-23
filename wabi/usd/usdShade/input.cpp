@@ -365,8 +365,7 @@ UsdAttribute UsdShadeInput::GetValueProducingAttribute(UsdShadeAttributeType *at
       *attrType = UsdShadeAttributeType::Invalid;
     }
     return UsdAttribute();
-  }
-  else
+  } else
   {
     // If we have valid connections extract the first one
     if (valueAttrs.size() > 1)

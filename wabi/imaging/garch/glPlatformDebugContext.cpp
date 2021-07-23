@@ -128,8 +128,7 @@ GarchGLPlatformDebugContextPrivate::GarchGLPlatformDebugContextPrivate(int major
   if (createContextAttribs)
   {
     _ctx = (*createContextAttribs)(shareDisplay, configs[0], shareContext, directRendering, attribs);
-  }
-  else
+  } else
   {
     TF_WARN("Unable to create GL debug context.");
     XVisualInfo *vis = glXGetVisualFromFBConfig(shareDisplay, configs[0]);
@@ -270,8 +269,7 @@ void *GarchGLPlatformDebugContext::chooseMacVisual()
   if (_coreProfile || GarchGLPlatformDebugContext::IsEnabledCoreProfile())
   {
     return GarchSelectCoreProfileMacVisual();
-  }
-  else
+  } else
   {
     return nullptr;
   }

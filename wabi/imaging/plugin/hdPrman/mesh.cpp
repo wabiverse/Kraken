@@ -53,26 +53,28 @@ WABI_NAMESPACE_BEGIN
 
 HdPrman_Mesh::HdPrman_Mesh(SdfPath const &id)
   : BASE(id)
-{
-}
+{}
 
-HdDirtyBits
-HdPrman_Mesh::GetInitialDirtyBitsMask() const
+HdDirtyBits HdPrman_Mesh::GetInitialDirtyBitsMask() const
 {
   // The initial dirty bits control what data is available on the first
   // run through _PopulateRtMesh(), so it should list every data item
   // that _PopluateRtMesh requests.
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyCullStyle | HdChangeTracker::DirtyDoubleSided | HdChangeTracker::DirtySubdivTags | HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyMaterialId | HdChangeTracker::DirtyInstancer;
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTopology |
+             HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+             HdChangeTracker::DirtyCullStyle | HdChangeTracker::DirtyDoubleSided |
+             HdChangeTracker::DirtySubdivTags | HdChangeTracker::DirtyPrimvar |
+             HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyMaterialId |
+             HdChangeTracker::DirtyInstancer;
 
   return (HdDirtyBits)mask;
 }
 
-RtPrimVarList
-HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
-                               HdSceneDelegate *sceneDelegate,
-                               const SdfPath &id,
-                               RtUString *primType,
-                               HdGeomSubsets *geomSubsets)
+RtPrimVarList HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
+                                             HdSceneDelegate *sceneDelegate,
+                                             const SdfPath &id,
+                                             RtUString *primType,
+                                             HdGeomSubsets *geomSubsets)
 {
   // Pull topology.
   const HdMeshTopology topology = GetMeshTopology(sceneDelegate);
@@ -110,9 +112,7 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
       unusedSubset.materialId = SdfPath();
       unusedSubset.indices.resize(numUnusedFaces);
       size_t count = 0;
-      for (size_t i = 0;
-           i < faceMask.size() && count < numUnusedFaces;
-           ++i)
+      for (size_t i = 0; i < faceMask.size() && count < numUnusedFaces; ++i)
       {
         if (faceMask[i])
         {
@@ -123,11 +123,10 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
     }
   }
 
-  RtPrimVarList primvars(
-    nverts.size(), /* uniform */
-    npoints,       /* vertex */
-    npoints,       /* varying */
-    verts.size() /* facevarying */);
+  RtPrimVarList primvars(nverts.size(), /* uniform */
+                         npoints,       /* vertex */
+                         npoints,       /* varying */
+                         verts.size() /* facevarying */);
 
   //
   // Point positions (P)
@@ -144,13 +143,8 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
   {
     if (points.values[i].size() == npoints)
     {
-      primvars.SetPointDetail(
-        RixStr.k_P,
-        (RtPoint3 *)points.values[i].cdata(),
-        RtDetailType::k_vertex,
-        i);
-    }
-    else
+      primvars.SetPointDetail(RixStr.k_P, (RtPoint3 *)points.values[i].cdata(), RtDetailType::k_vertex, i);
+    } else
     {
       TF_WARN(
         "<%s> primvar 'points' size (%zu) did not match "
@@ -168,25 +162,21 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
   {
     *primType = RixStr.k_Ri_SubdivisionMesh;
     primvars.SetString(RixStr.k_Ri_scheme, RixStr.k_catmullclark);
-  }
-  else if (topology.GetScheme() == PxOsdOpenSubdivTokens->loop)
+  } else if (topology.GetScheme() == PxOsdOpenSubdivTokens->loop)
   {
     *primType = RixStr.k_Ri_SubdivisionMesh;
     primvars.SetString(RixStr.k_Ri_scheme, RixStr.k_loop);
-  }
-  else if (topology.GetScheme() == PxOsdOpenSubdivTokens->bilinear)
+  } else if (topology.GetScheme() == PxOsdOpenSubdivTokens->bilinear)
   {
     *primType = RixStr.k_Ri_SubdivisionMesh;
     primvars.SetString(RixStr.k_Ri_scheme, RixStr.k_bilinear);
-  }
-  else
+  } else
   {  // if scheme == PxOsdOpenSubdivTokens->none
     *primType = RixStr.k_Ri_PolygonMesh;
   }
 
   VtIntArray holeIndices = topology.GetHoleIndices();
-  if (*primType == RixStr.k_Ri_PolygonMesh &&
-      !holeIndices.empty())
+  if (*primType == RixStr.k_Ri_PolygonMesh && !holeIndices.empty())
   {
     // Poly meshes with holes are promoted to bilinear subdivs, to
     // make riley respect the holes.
@@ -205,8 +195,7 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
   if (topology.GetOrientation() == PxOsdOpenSubdivTokens->leftHanded)
   {
     primvars.SetString(RixStr.k_Ri_Orientation, RixStr.k_rh);
-  }
-  else
+  } else
   {
     primvars.SetString(RixStr.k_Ri_Orientation, RixStr.k_lh);
   }
@@ -227,9 +216,7 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
       tagArgCounts.push_back(holeIndices.size());  // num int args
       tagArgCounts.push_back(0);                   // num float args
       tagArgCounts.push_back(0);                   // num str args
-      tagIntArgs.insert(tagIntArgs.end(),
-                        holeIndices.begin(),
-                        holeIndices.end());
+      tagIntArgs.insert(tagIntArgs.end(), holeIndices.begin(), holeIndices.end());
     }
 
     PxOsdSubdivTags osdTags = GetSubdivTags(sceneDelegate);
@@ -247,12 +234,8 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
         tagArgCounts.push_back(1);             // num float args
         tagArgCounts.push_back(0);             // num str args
       }
-      tagIntArgs.insert(tagIntArgs.end(),
-                        creaseIndices.begin(),
-                        creaseIndices.end());
-      tagFloatArgs.insert(tagFloatArgs.end(),
-                          creaseWeights.begin(),
-                          creaseWeights.end());
+      tagIntArgs.insert(tagIntArgs.end(), creaseIndices.begin(), creaseIndices.end());
+      tagFloatArgs.insert(tagFloatArgs.end(), creaseWeights.begin(), creaseWeights.end());
     }
 
     // Corners
@@ -264,12 +247,8 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
       tagArgCounts.push_back(cornerIndices.size());  // num int args
       tagArgCounts.push_back(cornerWeights.size());  // num float args
       tagArgCounts.push_back(0);                     // num str args
-      tagIntArgs.insert(tagIntArgs.end(),
-                        cornerIndices.begin(),
-                        cornerIndices.end());
-      tagFloatArgs.insert(tagFloatArgs.end(),
-                          cornerWeights.begin(),
-                          cornerWeights.end());
+      tagIntArgs.insert(tagIntArgs.end(), cornerIndices.begin(), cornerIndices.end());
+      tagFloatArgs.insert(tagFloatArgs.end(), cornerWeights.begin(), cornerWeights.end());
     }
 
     // Vertex Interpolation (aka interpolateboundary)
@@ -296,8 +275,7 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
     tagArgCounts.push_back(1);  // num int args
     tagArgCounts.push_back(0);  // num float args
     tagArgCounts.push_back(0);  // num str args
-    tagIntArgs.push_back(
-      UsdRiConvertToRManFaceVaryingLinearInterpolation(fvInterp));
+    tagIntArgs.push_back(UsdRiConvertToRManFaceVaryingLinearInterpolation(fvInterp));
 
     // Triangle subdivision rule
     TfToken triSubdivRule = osdTags.GetTriangleSubdivision();
@@ -307,21 +285,12 @@ HdPrman_Mesh::_ConvertGeometry(HdPrman_Context *context,
       tagArgCounts.push_back(1);  // num int args
       tagArgCounts.push_back(0);  // num float args
       tagArgCounts.push_back(0);  // num str args
-      tagIntArgs.push_back(
-        UsdRiConvertToRManTriangleSubdivisionRule(triSubdivRule));
+      tagIntArgs.push_back(UsdRiConvertToRManTriangleSubdivisionRule(triSubdivRule));
     }
-    primvars.SetStringArray(RixStr.k_Ri_subdivtags,
-                            &tagNames[0],
-                            tagNames.size());
-    primvars.SetIntegerArray(RixStr.k_Ri_subdivtagnargs,
-                             &tagArgCounts[0],
-                             tagArgCounts.size());
-    primvars.SetFloatArray(RixStr.k_Ri_subdivtagfloatargs,
-                           &tagFloatArgs[0],
-                           tagFloatArgs.size());
-    primvars.SetIntegerArray(RixStr.k_Ri_subdivtagintargs,
-                             &tagIntArgs[0],
-                             tagIntArgs.size());
+    primvars.SetStringArray(RixStr.k_Ri_subdivtags, &tagNames[0], tagNames.size());
+    primvars.SetIntegerArray(RixStr.k_Ri_subdivtagnargs, &tagArgCounts[0], tagArgCounts.size());
+    primvars.SetFloatArray(RixStr.k_Ri_subdivtagfloatargs, &tagFloatArgs[0], tagFloatArgs.size());
+    primvars.SetIntegerArray(RixStr.k_Ri_subdivtagintargs, &tagIntArgs[0], tagIntArgs.size());
   }
 
   // Set element ID.

@@ -81,8 +81,10 @@ HgiVulkanCommandQueue::HgiVulkanCommandQueue(HgiVulkanDevice *device)
 {
   // Acquire the graphics queue
   const uint32_t firstQueueInFamily = 0;
-  vkGetDeviceQueue(
-    device->GetVulkanDevice(), device->GetGfxQueueFamilyIndex(), firstQueueInFamily, &_vkGfxQueue);
+  vkGetDeviceQueue(device->GetVulkanDevice(),
+                   device->GetGfxQueueFamilyIndex(),
+                   firstQueueInFamily,
+                   &_vkGfxQueue);
 }
 
 HgiVulkanCommandQueue::~HgiVulkanCommandQueue()
@@ -252,8 +254,7 @@ HgiVulkanCommandQueue::HgiVulkan_CommandPool *HgiVulkanCommandQueue::_AcquireThr
     HgiVulkan_CommandPool *newPool = _CreateCommandPool(_device);
     _commandPools[threadId] = newPool;
     return newPool;
-  }
-  else
+  } else
   {
     return it->second;
   }
@@ -288,8 +289,7 @@ void HgiVulkanCommandQueue::_SetInflightBit(uint8_t id, bool enabled)
     {
       expect &= ~(1 << id);
     }
-  }
-  else
+  } else
   {
     while (!_inflightBits.compare_exchange_weak(expect, expect & ~(1ULL << id)))
       ;

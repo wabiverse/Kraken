@@ -47,11 +47,11 @@ WABI_NAMESPACE_BEGIN
 /// Register a discovery plugin (`DiscoveryPluginClass`) with the plugin system.
 /// If registered, the discovery plugin will execute its discovery process when
 /// the registry is instantiated.
-#define NDR_REGISTER_DISCOVERY_PLUGIN(DiscoveryPluginClass) \
-  TF_REGISTRY_FUNCTION(TfType) \
-  { \
+#define NDR_REGISTER_DISCOVERY_PLUGIN(DiscoveryPluginClass)                   \
+  TF_REGISTRY_FUNCTION(TfType)                                                \
+  {                                                                           \
     TfType::Define<DiscoveryPluginClass, TfType::Bases<NdrDiscoveryPlugin>>() \
-      .SetFactory<NdrDiscoveryPluginFactory<DiscoveryPluginClass>>(); \
+      .SetFactory<NdrDiscoveryPluginFactory<DiscoveryPluginClass>>();         \
   }
 
 TF_DECLARE_WEAK_AND_REF_PTRS(NdrDiscoveryPluginContext);

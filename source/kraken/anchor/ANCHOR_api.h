@@ -722,9 +722,9 @@ typedef unsigned long long AnchorU64;  // 64-bit unsigned integer (post C++11)
 /**
  * Platform agnostic handles to backends. */
 #define ANCHOR_DECLARE_HANDLE(name) \
-  typedef struct name##__ \
-  { \
-    int unused; \
+  typedef struct name##__           \
+  {                                 \
+    int unused;                     \
   } * name
 
 /**
@@ -881,1893 +881,1895 @@ struct ANCHOR_DisplaySetting
 
 namespace ANCHOR
 {
-/**
- * Context creation and access.
- *  - Each context create its own AnchorFontAtlas by default.
- *    you may instance one yourself and pass it to CreateContext()
- *    to share a font atlas between contexts.
- *  - DLL users: heaps and globals are not shared across DLL boundaries!
- *    you will need to call SetCurrentContext() + SetAllocatorFunctions()
- *    for each static/DLL boundary you are calling from. Read "Context and
- *    Memory Allocators" section of ANCHOR.cpp for details. */
-
-ANCHOR_API
-AnchorContext *CreateContext(AnchorFontAtlas *shared_font_atlas = NULL);
-
-/**
- * NULL = destroy current context */
-ANCHOR_API
-void DestroyContext(AnchorContext *ctx = NULL);
-
-ANCHOR_API
-AnchorContext *GetCurrentContext();
-
-ANCHOR_API
-void SetCurrentContext(AnchorContext *ctx);
-
-/**
- * ⚓︎ Anchor :: Main -------------------- */
-
-/**
- * Process Events (User Actions).
- *
- *  - mouse
- *  - keyboard
- *  - gamepad inputs
- *  - time
- *
- * @param systemhandle: Handle to backend system.
- * @param waitForEvent: To indicate that this call
- * should wait (block) until the next event before
- * returning.
- * @return Indication of the presence of events. */
-
-ANCHOR_API
-bool ProcessEvents(AnchorSystemHandle systemhandle, bool waitForEvent);
-
-/**
- * Dispatch Events
- *
- * Retrieves events from the queue and
- * sends them to the  event consumers.
- * @param systemhandle: The handle to the system. */
-ANCHOR_API
-void DispatchEvents(AnchorSystemHandle systemhandle);
-
-ANCHOR_API
-AnchorU64 GetMilliSeconds(AnchorSystemHandle systemhandle);
-
-/**
- * Event Type
- *
- * Retrieves the event type
- * for a given event handle.
- * @param eventhandle: The handle to the system. */
-ANCHOR_API
-eAnchorEventType GetEventType(AnchorEventHandle eventhandle);
-
-/**
- * Event Window
- *
- * Find an active window to
- * display quiet dialog in.
- * @param eventhandle: The handle to the system. */
-ANCHOR_API
-AnchorSystemWindowHandle GetEventWindow(AnchorEventHandle eventhandle);
-
-ANCHOR_API
-AnchorEventDataPtr GetEventData(AnchorEventHandle eventhandle);
-
-ANCHOR_API
-int ValidWindow(AnchorSystemHandle systemhandle, AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-ANCHOR_UserPtr GetWindowUserData(AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-void SetWindowUserData(AnchorSystemWindowHandle windowhandle, ANCHOR_UserPtr userdata);
-
-ANCHOR_API
-int ToggleConsole(int action);
-
-ANCHOR_API
-AnchorU16 GetDPIHint(AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-int UseNativePixels(void);
-
-ANCHOR_API
-void UseWindowFocus(int use_focus);
-
-ANCHOR_API
-float GetNativePixelSize(AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-void GetMainDisplayDimensions(AnchorSystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height);
-
-ANCHOR_API
-eAnchorStatus DestroySystem(AnchorSystemHandle systemhandle);
-
-/**
- * Initialize Anchor System Window.
- *
- * @param systemhandle: Handle to backend system.
- * @return Indication of the presence of events. */
-ANCHOR_API
-AnchorSystemWindowHandle CreateSystemWindow(AnchorSystemHandle systemhandle,
-                                            AnchorSystemWindowHandle parent_windowhandle,
-                                            const char *title,
-                                            const char *icon,
-                                            AnchorS32 left,
-                                            AnchorS32 top,
-                                            AnchorU32 width,
-                                            AnchorU32 height,
-                                            eAnchorWindowState state,
-                                            bool is_dialog,
-                                            eAnchorDrawingContextType type,
-                                            int vkSettings);
-
-ANCHOR_API
-AnchorU8 GetNumDisplays(AnchorSystemHandle systemhandle);
-
-ANCHOR_API
-void SetTitle(AnchorSystemWindowHandle windowhandle, const char *title);
-
-/**
- * Preforms a swap on the swapchain.
- *
- * This is what one may refer to as
- * the "display update" which takes
- * all old 'cache', and swaps it to
- * the new 'cache'. This is intended
- * to be called at a bare minium of
- * a monitor's refresh rate. Any bit
- * slower than that and a user will
- * experience graphics 'lag'.
- *
- * @param windowhandle: Handle to the window.
- * @return Indication of success. */
-ANCHOR_API
-eAnchorStatus SwapChain(AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-eAnchorStatus ActivateWindowDrawingContext(AnchorSystemWindowHandle windowhandle);
-
-/**
- * Adds a given event consumer to anchor.
- *
- * An event consumer is a client who
- * recieves Anchor events on the stack
- * usually in the form of a callback
- * function.
- *
- * @param systemhandle: Handle to the system.
- * @param consumerhandle: The event consumer to add.
- * @return Indication of success. */
-ANCHOR_API
-eAnchorStatus AddEventConsumer(AnchorSystemHandle systemhandle, AnchorEventConsumerHandle consumerhandle);
-
-ANCHOR_API
-eAnchorWindowState GetWindowState(AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-eAnchorStatus SetWindowState(AnchorSystemWindowHandle windowhandle, eAnchorWindowState state);
-
-ANCHOR_API
-eAnchorStatus SetWindowOrder(AnchorSystemWindowHandle windowhandle, eAnchorWindowOrder order);
-
-ANCHOR_API
-int IsDialogWindow(AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-void ClientToScreen(AnchorSystemWindowHandle windowhandle,
-                    AnchorS32 inX,
-                    AnchorS32 inY,
-                    AnchorS32 *outX,
-                    AnchorS32 *outY);
-
-ANCHOR_API
-eAnchorStatus GetModifierKeyState(AnchorSystemHandle systemhandle,
-                                  eAnchorModifierKeyMask mask,
-                                  int *isDown);
-
-ANCHOR_API
-void ScreenToClient(AnchorSystemWindowHandle windowhandle,
-                    AnchorS32 inX,
-                    AnchorS32 inY,
-                    AnchorS32 *outX,
-                    AnchorS32 *outY);
-
-ANCHOR_API
-eAnchorStatus GetCursorPosition(AnchorSystemHandle systemhandle,
-                                AnchorS32 *x,
-                                AnchorS32 *y);
-
-/**
- * Access the Pixar Hydra Driver.
- *
- *  - Central Shared GPU resources in which
- *    Kraken (and plugins) share. Because they
- *    are all shared, and because you can
- *    activate any number of rendering engines
- *    at once ↓
- *  → This is the basis for Hybrid Rendering:
- *      - Arnold     →  Human
- *      - Cycles     →  House
- *      - Renderman  →  Glass
- *      - Phoenix    →  Sky
- *  → Each individual engine rendering their
- *    own respective Prims in a single scene.
- *  → All within the same active viewport.
- *  → All within @em Real-Time. */
-ANCHOR_API
-wabi::HdDriver &GetPixarDriver();
-
-ANCHOR_API
-char *GetTitle(AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-eAnchorStatus SetClientSize(AnchorSystemWindowHandle windowhandle,
-                            AnchorU32 width,
-                            AnchorU32 height);
-
-ANCHOR_API
-AnchorRectangleHandle GetClientBounds(AnchorSystemWindowHandle windowhandle);
-
-ANCHOR_API
-AnchorS32 GetHeightRectangle(AnchorRectangleHandle rectanglehandle);
-
-ANCHOR_API
-AnchorS32 GetWidthRectangle(AnchorRectangleHandle rectanglehandle);
-
-ANCHOR_API
-void GetRectangle(AnchorRectangleHandle rectanglehandle,
-                  AnchorS32 *l,
-                  AnchorS32 *t,
-                  AnchorS32 *r,
-                  AnchorS32 *b);
-
-ANCHOR_API
-void DisposeRectangle(AnchorRectangleHandle rectanglehandle);
-
-ANCHOR_API
-void GetAllDisplayDimensions(AnchorSystemHandle systemhandle,
-                             AnchorU32 *width,
-                             AnchorU32 *height);
-
-/**
- * Access the Hydra Engine.
- *
- *  - The Hydra Engine is responsible
- *    for locating Render Engine Plugins
- *    such as Arnold, Renderman, Cycles,
- *    Phoenix, etc. And allowing you to
- *    interface with all of them using
- *    the same underlying agnostic API.
- *  - Hydra Engines can be specialized,
- *    Apollo is a General Purpose engine
- *    for general scene layout and
- *    animation purposes.
- *  - @em Specialization-Engines created
- *    & optimized for:
- *      - VFX (pyro, physics)
- *      - Rigging (AAA animation)
- *      - Hair & Fur
- *      - Game Engine (RTX)
- *      - Misc. */
-ANCHOR_API
-APOLLO_EnginePtr GetEngineApollo();
-
-/**
- * Access the IO structure.
- *
- *  - mouse
- *  - keyboard
- *  - gamepad inputs
- *  - time
- *  - config options/flags */
-ANCHOR_API
-AnchorIO &GetIO();
-
-/**
- * Access the Style structure (colors, sizes).
- *
- * Always use:
- *  - PushStyleCol()
- *  - PushStyleVar()
- * to modify style mid-frame! */
-ANCHOR_API
-AnchorStyle &GetStyle();
-
-/**
- * Start a new ANCHOR frame.
- *
- * You can submit any command
- * from this point until
- * Render() / EndFrame(). */
-ANCHOR_API
-void NewFrame();
-
-/**
- * Ends the ANCHOR frame.
- *
- * Automatically called by Render().
- * If you don't need to render data
- * (skipping rendering) you may call
- * EndFrame() without Render()... but
- * you'll have wasted CPU already! If
- * you don't need to render, better to
- * not create any windows and not call
- * NewFrame() at all! */
-ANCHOR_API
-void EndFrame();
-
-/**
- * Ends the ANCHOR frame,
- *
- * finalize the draw data.
- * You can then get call
- * GetDrawData(). */
-ANCHOR_API
-void Render();
-
-/**
- * Draw Data.
- *
- * Valid after Render() and
- * until the next call to
- * NewFrame(). This is what
- * you have to render. */
-ANCHOR_API
-AnchorDrawData *GetDrawData();
-
-/**
- * Diagnostic, Debug Window.
- *
- * Demonstrate most ANCHOR
- * features. Call this to
- * learn about the library! */
-ANCHOR_API
-void ShowDemoWindow(bool *p_open = NULL);
-
-/**
- * Create Metrics/Debugger window.
- *
- * Display ANCHOR internals: windows,
- * draw commands, various internal
- * state, etc. */
-ANCHOR_API
-void ShowMetricsWindow(bool *p_open = NULL);
-
-/**
- * Create About window.
- *
- * Display ANCHOR version,
- * credits and build/system
- * information. */
-ANCHOR_API
-void ShowAboutWindow(bool *p_open = NULL);
-
-/**
- * Add style editor block (not a window).
- *
- * You can pass in a reference AnchorStyle
- * structure to compare to, revert to and
- * save to (else it uses the default style) */
-ANCHOR_API
-void ShowStyleEditor(AnchorStyle *ref = NULL);
-
-/**
- * Add style selector block (not a window)
- *
- * Essentially a combo listing the default
- * styles. */
-ANCHOR_API
-bool ShowStyleSelector(const char *label);
-
-/**
- * Add font selector block (not a window)
- *
- * Essentially a combo listing the loaded
- * system fonts. */
-ANCHOR_API
-void ShowFontSelector(const char *label);
-
-/**
- * Add basic help/info block (not a window)
- *
- * How to manipulate ANCHOR as a end-user
- * (mouse/keyboard controls). */
-ANCHOR_API
-void ShowUserGuide();
-
-/**
- * Get the compiled version string
- *
- *  - e.g. "1.80 WIP"
- *  - (The value for ANCHOR_VERSION) */
-ANCHOR_API
-const char *GetVersion();
-
-/**
- * ⚓︎ Anchor :: Styles -------------------- */
-
-/**
- * Kraken Default (Recommended).
- *
- * Kraken default color theme.
- * For all your digital content
- * creation needs. */
-ANCHOR_API
-void StyleColorsDefault(AnchorStyle *dst = NULL);
-
-/**
- * Dark Side.
- *
- * It's 2021 and everyone
- * needs a dark mode. */
-ANCHOR_API
-void StyleColorsDark(AnchorStyle *dst = NULL);
-
-/**
- * Jedi.
- *
- * Best used with borders
- * and a custom, thicker
- * font */
-ANCHOR_API
-void StyleColorsLight(AnchorStyle *dst = NULL);
-
-/**
- * ⚓︎ Anchor :: Windowing -------------------- */
-
-/**
- * Windows
- *  - Begin() = push window to the stack and start appending to it.
- *  - End() = pop window from the stack.
- *  - Passing 'bool* p_open != NULL' shows a window-closing widget
- *    in the upper-right corner of the window, which clicking will
- *    set the boolean to false when clicked.
- *  - You may append multiple times to the same window during the
- *    same frame by calling Begin() / End() pairs multiple times.
- *  - Some information such as 'flags' or 'p_open' will only be
- *    considered by the first call to Begin().
- *  - Begin() return false to indicate the window is collapsed or
- *    fully clipped, so you  may early out  and omit  submitting
- *    anything to the window. Always call a matching End() for each
- *    Begin() call, regardless of its return value! [Important: due
- *    to legacy reason, this is inconsistent with most other functions
- *    such as BeginMenu / EndMenu, BeginPopup/EndPopup, etc. where the
- *    EndXXX call should only be called if the corresponding BeginXXX
- *    function returned true. Begin and BeginChild are the only odd
- *    ones out. Will be fixed in a future update.]
- *  - Note that the bottom of window stack always contains a window
- *    called "Debug". */
-ANCHOR_API
-bool Begin(const char *name, bool *p_open = NULL, AnchorWindowFlags flags = 0);
-
-ANCHOR_API
-void End();
-
-// Child Windows
-// - Use child windows to begin into a self-contained independent scrolling/clipping regions within
-// a host window. Child windows can embed their own child.
-// - For each independent axis of 'size': ==0.0f: use remaining host window size / >0.0f: fixed
-// size / <0.0f: use remaining window size minus abs(size) / Each axis can use a different mode,
-// e.g. wabi::GfVec2f(0,400).
-// - BeginChild() returns false to indicate the window is collapsed or fully clipped, so you may
-// early out and omit submitting anything to the window.
-//   Always call a matching EndChild() for each BeginChild() call, regardless of its return value.
-//   [Important: due to legacy reason, this is inconsistent with most other functions such as
-//   BeginMenu/EndMenu,
-//    BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding
-//    BeginXXX function returned true. Begin and BeginChild are the only odd ones out. Will be
-//    fixed in a future update.]
-ANCHOR_API bool BeginChild(const char *str_id,
-                           const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
-                           bool border = false,
-                           AnchorWindowFlags flags = 0);
-ANCHOR_API bool BeginChild(ANCHOR_ID id,
-                           const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
-                           bool border = false,
-                           AnchorWindowFlags flags = 0);
-ANCHOR_API void EndChild();
-
-// Windows Utilities
-// - 'current window' = the window we are appending into while inside a Begin()/End() block. 'next
-// window' = next window we will Begin() into.
-ANCHOR_API bool IsWindowAppearing();
-ANCHOR_API bool IsWindowCollapsed();
-// is current window focused? or its root/child, depending on
-// flags. see flags for options.
-ANCHOR_API bool IsWindowFocused(AnchorFocusedFlags flags = 0);
-
-// is current window hovered (and typically: not blocked by a popup/modal)? see flags
-// for options. NB: If you are trying to check whether your mouse should be dispatched
-// to ANCHOR or to your app, you should use the 'io.WantCaptureMouse' boolean for
-// that! Please read the FAQ!
-ANCHOR_API bool IsWindowHovered(AnchorHoveredFlags flags = 0);
-
-// get draw list associated to the current window, to
-// append your own drawing primitives
-ANCHOR_API AnchorDrawList *GetWindowDrawList();
-// get current window position in screen space (useful if
-// you want to do your own drawing via the DrawList API)
-ANCHOR_API wabi::GfVec2f GetWindowPos();
-// get current window size
-ANCHOR_API wabi::GfVec2f GetWindowSize();
-// get current window width (shortcut for GetWindowSize()[0])
-ANCHOR_API float GetWindowWidth();
-// get current window height (shortcut for GetWindowSize()[1])
-ANCHOR_API float GetWindowHeight();
-
-// Prefer using SetNextXXX functions (before Begin) rather that SetXXX functions (after Begin).
-ANCHOR_API void SetNextWindowPos(
-  const wabi::GfVec2f &pos,
-  AnchorCond cond = 0,
-  const wabi::GfVec2f &pivot = wabi::GfVec2f(0,
-                                             0));  // set next window position. call before Begin(). use
-                                                   // pivot=(0.5f,0.5f) to center on given point, etc.
-ANCHOR_API void SetNextWindowSize(const wabi::GfVec2f &size,
-                                  AnchorCond cond = 0);  // set next window size. set axis to 0.0f to force
-                                                         // an auto-fit on this axis. call before Begin()
-ANCHOR_API void SetNextWindowSizeConstraints(
-  const wabi::GfVec2f &size_min,
-  const wabi::GfVec2f &size_max,
-  ANCHORSizeCallback custom_callback = NULL,
-  void *custom_callback_data = NULL);  // set next window size limits. use -1,-1 on either X/Y axis to
-                                       // preserve the current size. Sizes will be rounded down. Use callback
-                                       // to apply non-trivial programmatic constraints.
-ANCHOR_API void SetNextWindowContentSize(
-  const wabi::GfVec2f
-    &size);  // set next window content size (~ scrollable client area, which enforce the range
-             // of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor
-             // WindowPadding. set an axis to 0.0f to leave it automatic. call before Begin()
-ANCHOR_API void SetNextWindowCollapsed(
-  bool collapsed,
-  AnchorCond cond = 0);                // set next window collapsed state. call before Begin()
-ANCHOR_API void SetNextWindowFocus();  // set next window to be focused / top-most. call before
-                                       // Begin()
-ANCHOR_API void SetNextWindowBgAlpha(
-  float alpha);  // set next window background color alpha. helper to easily override the Alpha
-                 // component of AnchorCol_WindowBg/ChildBg/PopupBg. you may also use
-                 // AnchorWindowFlags_NoBackground.
-ANCHOR_API void SetWindowPos(
-  const wabi::GfVec2f &pos,
-  AnchorCond cond = 0);  // (not recommended) set current window position - call within Begin()/End().
-                         // prefer using SetNextWindowPos(), as this may incur tearing and side-effects.
-ANCHOR_API void SetWindowSize(
-  const wabi::GfVec2f &size,
-  AnchorCond cond = 0);  // (not recommended) set current window size - call within Begin()/End().
-                         // set to wabi::GfVec2f(0, 0) to force an auto-fit. prefer using
-                         // SetNextWindowSize(), as this may incur tearing and minor side-effects.
-ANCHOR_API void SetWindowCollapsed(bool collapsed,
-                                   AnchorCond cond = 0);  // (not recommended) set current window collapsed
-                                                          // state. prefer using SetNextWindowCollapsed().
-ANCHOR_API void SetWindowFocus();                         // (not recommended) set current window to be focused /
-                                                          // top-most. prefer using SetNextWindowFocus().
-ANCHOR_API void SetWindowFontScale(
-  float scale);  // set font scale. Adjust IO.FontGlobalScale if you want to scale all windows.
-                 // This is an old API! For correct scaling, prefer to reload font + rebuild
-                 // AnchorFontAtlas + call style.ScaleAllSizes().
-ANCHOR_API void SetWindowPos(const char *name,
-                             const wabi::GfVec2f &pos,
-                             AnchorCond cond = 0);  // set named window position.
-ANCHOR_API void SetWindowSize(const char *name,
-                              const wabi::GfVec2f &size,
-                              AnchorCond cond = 0);  // set named window size. set axis to 0.0f to
-                                                     // force an auto-fit on this axis.
-ANCHOR_API void SetWindowCollapsed(const char *name,
-                                   bool collapsed,
-                                   AnchorCond cond = 0);  // set named window collapsed state
-ANCHOR_API void SetWindowFocus(
-  const char *name);  // set named window to be focused / top-most. use NULL to remove focus.
-
-// Content region
-// - Retrieve available space from a given point. GetContentRegionAvail() is frequently useful.
-// - Those functions are bound to be redesigned (they are confusing, incomplete and the Min/Max
-// return values are in local window coordinates which increases confusion)
-ANCHOR_API wabi::GfVec2f GetContentRegionAvail();      // == GetContentRegionMax() - GetCursorPos()
-ANCHOR_API wabi::GfVec2f GetContentRegionMax();        // current content boundaries (typically window
-                                                       // boundaries including scrolling, or current
-                                                       // column boundaries), in windows coordinates
-ANCHOR_API wabi::GfVec2f GetWindowContentRegionMin();  // content boundaries min (roughly
-                                                       // (0,0)-Scroll), in window coordinates
-ANCHOR_API wabi::GfVec2f GetWindowContentRegionMax();  // content boundaries max (roughly
-                                                       // (0,0)+Size-Scroll) where Size can be
-                                                       // override with SetNextWindowContentSize(),
-                                                       // in window coordinates
-ANCHOR_API float GetWindowContentRegionWidth();        //
-
-// Windows Scrolling
-ANCHOR_API float GetScrollX();               // get scrolling amount [0 .. GetScrollMaxX()]
-ANCHOR_API float GetScrollY();               // get scrolling amount [0 .. GetScrollMaxY()]
-ANCHOR_API void SetScrollX(float scroll_x);  // set scrolling amount [0 .. GetScrollMaxX()]
-ANCHOR_API void SetScrollY(float scroll_y);  // set scrolling amount [0 .. GetScrollMaxY()]
-ANCHOR_API float GetScrollMaxX();            // get maximum scrolling amount ~~ ContentSize[0] -
-                                             // WindowSize[0] - DecorationsSize[0]
-ANCHOR_API float GetScrollMaxY();            // get maximum scrolling amount ~~ ContentSize[1] -
-                                             // WindowSize[1] - DecorationsSize[1]
-ANCHOR_API void SetScrollHereX(
-  float center_x_ratio =
-    0.5f);  // adjust scrolling amount to make current cursor position visible.
-            // center_x_ratio=0.0: left, 0.5: center, 1.0: right. When using to make a
-            // "default/current item" visible, consider using SetItemDefaultFocus() instead.
-ANCHOR_API void SetScrollHereY(
-  float center_y_ratio =
-    0.5f);  // adjust scrolling amount to make current cursor position visible.
-            // center_y_ratio=0.0: top, 0.5: center, 1.0: bottom. When using to make a
-            // "default/current item" visible, consider using SetItemDefaultFocus() instead.
-ANCHOR_API void SetScrollFromPosX(
-  float local_x,
-  float center_x_ratio = 0.5f);  // adjust scrolling amount to make given position visible. Generally
-                                 // GetCursorStartPos() + offset to compute a valid position.
-ANCHOR_API void SetScrollFromPosY(
-  float local_y,
-  float center_y_ratio = 0.5f);  // adjust scrolling amount to make given position visible. Generally
-                                 // GetCursorStartPos() + offset to compute a valid position.
-
-// Parameters stacks (shared)
-ANCHOR_API void PushFont(AnchorFont *font);  // use NULL as a shortcut to push default font
-ANCHOR_API void PopFont();
-ANCHOR_API void PushStyleColor(AnchorCol idx,
-                               AnchorU32 col);  // modify a style color. always use this if you
-                                                // modify the style after NewFrame().
-ANCHOR_API void PushStyleColor(AnchorCol idx, const wabi::GfVec4f &col);
-ANCHOR_API void PopStyleColor(int count = 1);
-ANCHOR_API void PushStyleVar(AnchorStyleVar idx,
-                             float val);  // modify a style float variable. always use this if you
-                                          // modify the style after NewFrame().
-ANCHOR_API void PushStyleVar(AnchorStyleVar idx,
-                             const wabi::GfVec2f &val);  // modify a style wabi::GfVec2f variable. always use
-                                                         // this if you modify the style after NewFrame().
-ANCHOR_API void PopStyleVar(int count = 1);
-ANCHOR_API void PushAllowKeyboardFocus(
-  bool allow_keyboard_focus);  // == tab stop enable. Allow focusing using TAB/Shift-TAB, enabled
-                               // by default but you can disable it for certain widgets
-ANCHOR_API void PopAllowKeyboardFocus();
-ANCHOR_API void PushButtonRepeat(
-  bool repeat);  // in 'repeat' mode, Button*() functions return repeated true in a typematic
-                 // manner (using io.KeyRepeatDelay/io.KeyRepeatRate setting). Note that you can
-                 // call IsItemActive() after any Button() to tell if the button is held in the
-                 // current frame.
-ANCHOR_API void PopButtonRepeat();
-
-// Parameters stacks (current window)
-ANCHOR_API void PushItemWidth(
-  float item_width);  // push width of items for common large "item+label" widgets. >0.0f: width
-                      // in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN
-                      // always align width to the right side).
-ANCHOR_API void PopItemWidth();
-ANCHOR_API void SetNextItemWidth(
-  float item_width);               // set width of the _next_ common large "item+label" widget. >0.0f: width
-                                   // in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN
-                                   // always align width to the right side)
-ANCHOR_API float CalcItemWidth();  // width of item given pushed settings and current cursor
-                                   // position. NOT necessarily the width of last item unlike most
-                                   // 'Item' functions.
-ANCHOR_API void PushTextWrapPos(
-  float wrap_local_pos_x = 0.0f);  // push word-wrapping position for Text*() commands. < 0.0f:
-                                   // no wrapping; 0.0f: wrap to end of window (or column); >
-                                   // 0.0f: wrap at 'wrap_pos_x' position in window local space
-ANCHOR_API void PopTextWrapPos();
-
-// Style read access
-ANCHOR_API AnchorFont *GetFont();                   // get current font
-ANCHOR_API float GetFontSize();                     // get current font size (= height in pixels) of current font with
-                                                    // current scale applied
-ANCHOR_API wabi::GfVec2f GetFontTexUvWhitePixel();  // get UV coordinate for a while pixel, useful
-                                                    // to draw custom shapes via the AnchorDrawList API
-ANCHOR_API AnchorU32 GetColorU32(
-  AnchorCol idx,
-  float alpha_mul = 1.0f);  // retrieve given style color with style alpha applied and optional extra
-                            // alpha multiplier, packed as a 32-bit value suitable for AnchorDrawList
-ANCHOR_API AnchorU32
-GetColorU32(const wabi::GfVec4f &col);            // retrieve given color with style alpha applied, packed as
-                                                  // a 32-bit value suitable for AnchorDrawList
-ANCHOR_API AnchorU32 GetColorU32(AnchorU32 col);  // retrieve given color with style alpha applied, packed as
-                                                  // a 32-bit value suitable for AnchorDrawList
-ANCHOR_API const wabi::GfVec4f &GetStyleColorVec4(
-  AnchorCol idx);  // retrieve style color as stored in AnchorStyle structure. use to feed back
-                   // into PushStyleColor(), otherwise use GetColorU32() to get style color with
-                   // style alpha baked in.
-
-// Cursor / Layout
-// - By "cursor" we mean the current output position.
-// - The typical widget behavior is to output themselves at the current cursor position, then move
-// the cursor one line down.
-// - You can call SameLine() between widgets to undo the last carriage return and output at the
-// right of the preceding widget.
-// - Attention! We currently have inconsistencies between window-local and absolute positions we
-// will aim to fix with future API:
-//    Window-local coordinates:   SameLine(), GetCursorPos(), SetCursorPos(), GetCursorStartPos(),
-//    GetContentRegionMax(), GetWindowContentRegion*(), PushTextWrapPos() Absolute coordinate:
-//    GetCursorScreenPos(), SetCursorScreenPos(), all AnchorDrawList:: functions.
-ANCHOR_API void Separator();  // separator, generally horizontal. inside a menu bar or in
-                              // horizontal layout mode, this becomes a vertical separator.
-ANCHOR_API void SameLine(float offset_from_start_x = 0.0f,
-                         float spacing = -1.0f);  // call between widgets or groups to layout them
-                                                  // horizontally. X position given in window coordinates.
-ANCHOR_API void NewLine();                        // undo a SameLine() or force a new line when in an horizontal-layout
-                                                  // context.
-ANCHOR_API void Spacing();                        // add vertical spacing.
-ANCHOR_API void Dummy(
-  const wabi::GfVec2f &size);                     // add a dummy item of given size. unlike InvisibleButton(),
-                                                  // Dummy() won't take the mouse click or be navigable into.
-ANCHOR_API void Indent(float indent_w = 0.0f);    // move content position toward the right, by indent_w, or
-                                                  // style.IndentSpacing if indent_w <= 0
-ANCHOR_API void Unindent(float indent_w = 0.0f);  // move content position back to the left, by indent_w, or
-                                                  // style.IndentSpacing if indent_w <= 0
-ANCHOR_API void BeginGroup();                     // lock horizontal starting position
-ANCHOR_API void EndGroup();                       // unlock horizontal starting position + capture the whole group
-                                                  // bounding box into one "item" (so you can use IsItemHovered() or
-                                                  // layout primitives such as SameLine() on whole group, etc.)
-ANCHOR_API wabi::GfVec2f GetCursorPos();          // cursor position in window coordinates (relative to
-                                                  // window position)
-ANCHOR_API float GetCursorPosX();                 //   (some functions are using window-relative coordinates, such
-                                                  //   as: GetCursorPos, GetCursorStartPos, GetContentRegionMax,
-                                                  //   GetWindowContentRegion* etc.
-ANCHOR_API float GetCursorPosY();                 //    other functions such as GetCursorScreenPos or everything
-                                                  //    in AnchorDrawList::
-ANCHOR_API void SetCursorPos(
-  const wabi::GfVec2f &local_pos);  //    are using the main, absolute coordinate system.
-ANCHOR_API void SetCursorPosX(
-  float local_x);                                              //    GetWindowPos() + GetCursorPos() == GetCursorScreenPos() etc.)
-ANCHOR_API void SetCursorPosY(float local_y);                  //
-ANCHOR_API wabi::GfVec2f GetCursorStartPos();                  // initial cursor position in window coordinates
-ANCHOR_API wabi::GfVec2f GetCursorScreenPos();                 // cursor position in absolute coordinates (useful
-                                                               // to work with AnchorDrawList API). generally top-left
-                                                               // == GetMainViewport()->Pos == (0,0) in single
-                                                               // viewport mode, and bottom-right ==
-                                                               // GetMainViewport()->Pos+Size == io.DisplaySize in
-                                                               // single-viewport mode.
-ANCHOR_API void SetCursorScreenPos(const wabi::GfVec2f &pos);  // cursor position in absolute coordinates
-ANCHOR_API void AlignTextToFramePadding();                     // vertically align upcoming text baseline to
-                                                               // FramePadding[1] so that it will align properly to
-                                                               // regularly framed items (call if you have text on a
-                                                               // line before a framed item)
-ANCHOR_API float GetTextLineHeight();                          // ~ FontSize
-ANCHOR_API float GetTextLineHeightWithSpacing();               // ~ FontSize + style.ItemSpacing[1] (distance in
-                                                               // pixels between 2 consecutive lines of text)
-ANCHOR_API float GetFrameHeight();                             // ~ FontSize + style.FramePadding[1] * 2
-ANCHOR_API float GetFrameHeightWithSpacing();                  // ~ FontSize + style.FramePadding[1] * 2 +
-                                                               // style.ItemSpacing[1] (distance in pixels between
-                                                               // 2 consecutive lines of framed widgets)
-
-// ID stack/scopes
-// - Read the FAQ for more details about how ID are handled in ANCHOR. If you are creating widgets
-// in a loop you most
-//   likely want to push a unique identifier (e.g. object pointer, loop index) to uniquely
-//   differentiate them.
-// - The resulting ID are hashes of the entire stack.
-// - You can also use the "Label##foobar" syntax within widget label to distinguish them from each
-// others.
-// - In this header file we use the "label"/"name" terminology to denote a string that will be
-// displayed and used as an ID,
-//   whereas "str_id" denote a string that is only used as an ID and not normally displayed.
-ANCHOR_API void PushID(const char *str_id);  // push string into the ID stack (will hash string).
-ANCHOR_API void PushID(const char *str_id_begin,
-                       const char *str_id_end);  // push string into the ID stack (will hash string).
-ANCHOR_API void PushID(const void *ptr_id);      // push pointer into the ID stack (will hash pointer).
-ANCHOR_API void PushID(int int_id);              // push integer into the ID stack (will hash integer).
-ANCHOR_API void PopID();                         // pop from the ID stack.
-ANCHOR_API ANCHOR_ID
-GetID(const char *str_id);  // calculate unique ID (hash of whole ID stack + given parameter). e.g.
-                            // if you want to query into AnchorStorage yourself
-ANCHOR_API ANCHOR_ID GetID(const char *str_id_begin, const char *str_id_end);
-ANCHOR_API ANCHOR_ID GetID(const void *ptr_id);
-
-// Widgets: Text
-ANCHOR_API void TextUnformatted(
-  const char *text,
-  const char *text_end = NULL);                                // raw text without formatting. Roughly equivalent to Text("%s", text) but:
-                                                               // A) doesn't require null terminated string if 'text_end' is specified, B)
-                                                               // it's faster, no memory copy is done, no buffer size limits, recommended
-                                                               // for long chunks of text.
-ANCHOR_API void Text(const char *fmt, ...) ANCHOR_FMTARGS(1);  // formatted text
-ANCHOR_API void TextV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
-ANCHOR_API void TextColored(const wabi::GfVec4f &col, const char *fmt, ...)
-  ANCHOR_FMTARGS(2);  // shortcut for PushStyleColor(AnchorCol_Text, col); Text(fmt, ...); PopStyleColor();
-ANCHOR_API void TextColoredV(const wabi::GfVec4f &col, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
-ANCHOR_API void TextDisabled(const char *fmt, ...)
-  ANCHOR_FMTARGS(1);  // shortcut for PushStyleColor(AnchorCol_Text,
-                      // style.Colors[AnchorCol_TextDisabled]); Text(fmt, ...); PopStyleColor();
-ANCHOR_API void TextDisabledV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
-ANCHOR_API void TextWrapped(const char *fmt, ...)
-  ANCHOR_FMTARGS(1);  // shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that
-                      // this won't work on an auto-resizing window if there's no other widgets to extend the
-                      // window width, yoy may need to set a size using SetNextWindowSize().
-ANCHOR_API void TextWrappedV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
-ANCHOR_API void LabelText(const char *label, const char *fmt, ...)
-  ANCHOR_FMTARGS(2);  // display text+label aligned the same way as value+label widgets
-ANCHOR_API void LabelTextV(const char *label, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
-ANCHOR_API void BulletText(const char *fmt, ...) ANCHOR_FMTARGS(1);  // shortcut for Bullet()+Text()
-ANCHOR_API void BulletTextV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
-
-// Widgets: Main
-// - Most widgets return true when the value has been changed or when pressed/selected
-// - You may also use one of the many IsItemXXX functions (e.g. IsItemActive, IsItemHovered, etc.)
-// to query widget state.
-ANCHOR_API bool Button(const char *label, const wabi::GfVec2f &size = wabi::GfVec2f(0, 0));  // button
-ANCHOR_API bool SmallButton(
-  const char *label);  // button with FramePadding=(0,0) to easily embed within text
-ANCHOR_API bool InvisibleButton(
-  const char *str_id,
-  const wabi::GfVec2f &size,
-  AnchorButtonFlags flags =
-    0);  // flexible button behavior without the visuals, frequently useful to build custom
-         // behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)
-ANCHOR_API bool ArrowButton(const char *str_id,
-                            AnchorDir dir);  // square button with an arrow shape
-ANCHOR_API void Image(AnchorTextureID user_texture_id,
-                      const wabi::GfVec2f &size,
-                      const wabi::GfVec2f &uv0 = wabi::GfVec2f(0, 0),
-                      const wabi::GfVec2f &uv1 = wabi::GfVec2f(1, 1),
-                      const wabi::GfVec4f &tint_col = wabi::GfVec4f(1, 1, 1, 1),
-                      const wabi::GfVec4f &border_col = wabi::GfVec4f(0, 0, 0, 0));
-ANCHOR_API bool ImageButton(
-  AnchorTextureID user_texture_id,
-  const wabi::GfVec2f &size,
-  const wabi::GfVec2f &uv0 = wabi::GfVec2f(0, 0),
-  const wabi::GfVec2f &uv1 = wabi::GfVec2f(1, 1),
-  int frame_padding = -1,
-  const wabi::GfVec4f &bg_col = wabi::GfVec4f(0, 0, 0, 0),
-  const wabi::GfVec4f &tint_col = wabi::GfVec4f(1, 1, 1, 1));  // <0 frame_padding uses default frame
-                                                               // padding settings. 0 for no padding
-ANCHOR_API bool Checkbox(const char *label, bool *v);
-ANCHOR_API bool CheckboxFlags(const char *label, int *flags, int flags_value);
-ANCHOR_API bool CheckboxFlags(const char *label, unsigned int *flags, unsigned int flags_value);
-ANCHOR_API bool RadioButton(
-  const char *label,
-  bool active);  // use with e.g. if (RadioButton("one", my_value==1)) { my_value = 1; }
-ANCHOR_API bool RadioButton(const char *label,
-                            int *v,
-                            int v_button);  // shortcut to handle the above pattern when value is an integer
-ANCHOR_API void ProgressBar(float fraction,
-                            const wabi::GfVec2f &size_arg = wabi::GfVec2f(-FLT_MIN, 0),
-                            const char *overlay = NULL);
-ANCHOR_API void Bullet();  // draw a small circle + keep the cursor on the same line. advance
-                           // cursor x position by GetTreeNodeToLabelSpacing(), same distance that
-                           // TreeNode() uses
-
-// Widgets: Combo Box
-// - The BeginCombo()/EndCombo() api allows you to manage your contents and selection state however
-// you want it, by creating e.g. Selectable() items.
-// - The old Combo() api are helpers over BeginCombo()/EndCombo() which are kept available for
-// convenience purpose. This is analogous to how ListBox are created.
-ANCHOR_API bool BeginCombo(const char *label, const char *preview_value, AnchorComboFlags flags = 0);
-ANCHOR_API void EndCombo();  // only call EndCombo() if BeginCombo() returns true!
-ANCHOR_API bool Combo(const char *label,
-                      int *current_item,
-                      const char *const items[],
-                      int items_count,
-                      int popup_max_height_in_items = -1);
-ANCHOR_API bool Combo(const char *label,
-                      int *current_item,
-                      const char *items_separated_by_zeros,
-                      int popup_max_height_in_items = -1);  // Separate items with \0 within a string, end
-                                                            // item-list with \0\0. e.g. "One\0Two\0Three\0"
-ANCHOR_API bool Combo(const char *label,
-                      int *current_item,
-                      bool (*items_getter)(void *data, int idx, const char **out_text),
-                      void *data,
-                      int items_count,
-                      int popup_max_height_in_items = -1);
-
-// Widgets: Drag Sliders
-// - CTRL+Click on any drag box to turn them into an input box. Manually input values aren't
-// clamped and can go off-bounds.
-// - For all the Float2/Float3/Float4/Int2/Int3/Int4 versions of every functions, note that a
-// 'float v[X]' function argument is the same as 'float* v', the array syntax is just a way to
-// document the number of elements that are expected to be accessible. You can pass address of your
-// first element out of a contiguous set, e.g. &myvector[0]
-// - Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and
-// display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit:
-// 1; etc.
-// - Format string may also be set to NULL or use the default format ("%f" or "%d").
-// - Speed are per-pixel of mouse movement (v_speed=0.2f: mouse needs to move by 5 pixels to
-// increase value by 1). For gamepad/keyboard navigation, minimum speed is Max(v_speed,
-// minimum_step_at_given_precision).
-// - Use v_min < v_max to clamp edits to given limits. Note that CTRL+Click manual input can
-// override those limits.
-// - Use v_max = FLT_MAX / INT_MAX etc to avoid clamping to a maximum, same with v_min = -FLT_MAX /
-// INT_MIN to avoid clamping to a minimum.
-// - We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the
-// same and it makes it easier to swap them.
-// - Legacy: Pre-1.78 there are DragXXX() function signatures that takes a final `float power=1.0f'
-// argument instead of the `AnchorSliderFlags flags=0' argument.
-//   If you get a warning converting a float to AnchorSliderFlags, read
-//   https://github.com/ocornut/ANCHOR/issues/3361
-ANCHOR_API bool DragFloat(const char *label,
-                          float *v,
-                          float v_speed = 1.0f,
-                          float v_min = 0.0f,
-                          float v_max = 0.0f,
-                          const char *format = "%.3f",
-                          AnchorSliderFlags flags = 0);  // If v_min >= v_max we have no bound
-ANCHOR_API bool DragFloat2(const char *label,
-                           float v[2],
-                           float v_speed = 1.0f,
-                           float v_min = 0.0f,
-                           float v_max = 0.0f,
-                           const char *format = "%.3f",
-                           AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragFloat3(const char *label,
-                           float v[3],
-                           float v_speed = 1.0f,
-                           float v_min = 0.0f,
-                           float v_max = 0.0f,
-                           const char *format = "%.3f",
-                           AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragFloat4(const char *label,
-                           float v[4],
-                           float v_speed = 1.0f,
-                           float v_min = 0.0f,
-                           float v_max = 0.0f,
-                           const char *format = "%.3f",
-                           AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragFloatRange2(const char *label,
-                                float *v_current_min,
-                                float *v_current_max,
-                                float v_speed = 1.0f,
-                                float v_min = 0.0f,
-                                float v_max = 0.0f,
-                                const char *format = "%.3f",
-                                const char *format_max = NULL,
-                                AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragInt(const char *label,
-                        int *v,
-                        float v_speed = 1.0f,
-                        int v_min = 0,
-                        int v_max = 0,
-                        const char *format = "%d",
-                        AnchorSliderFlags flags = 0);  // If v_min >= v_max we have no bound
-ANCHOR_API bool DragInt2(const char *label,
-                         int v[2],
-                         float v_speed = 1.0f,
-                         int v_min = 0,
-                         int v_max = 0,
-                         const char *format = "%d",
-                         AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragInt3(const char *label,
-                         int v[3],
-                         float v_speed = 1.0f,
-                         int v_min = 0,
-                         int v_max = 0,
-                         const char *format = "%d",
-                         AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragInt4(const char *label,
-                         int v[4],
-                         float v_speed = 1.0f,
-                         int v_min = 0,
-                         int v_max = 0,
-                         const char *format = "%d",
-                         AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragIntRange2(const char *label,
-                              int *v_current_min,
-                              int *v_current_max,
-                              float v_speed = 1.0f,
-                              int v_min = 0,
-                              int v_max = 0,
-                              const char *format = "%d",
-                              const char *format_max = NULL,
-                              AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragScalar(const char *label,
-                           AnchorDataType data_type,
-                           void *p_data,
-                           float v_speed = 1.0f,
-                           const void *p_min = NULL,
-                           const void *p_max = NULL,
-                           const char *format = NULL,
-                           AnchorSliderFlags flags = 0);
-ANCHOR_API bool DragScalarN(const char *label,
-                            AnchorDataType data_type,
-                            void *p_data,
-                            int components,
-                            float v_speed = 1.0f,
-                            const void *p_min = NULL,
-                            const void *p_max = NULL,
-                            const char *format = NULL,
-                            AnchorSliderFlags flags = 0);
-
-// Widgets: Regular Sliders
-// - CTRL+Click on any slider to turn them into an input box. Manually input values aren't clamped
-// and can go off-bounds.
-// - Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and
-// display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit:
-// 1; etc.
-// - Format string may also be set to NULL or use the default format ("%f" or "%d").
-// - Legacy: Pre-1.78 there are SliderXXX() function signatures that takes a final `float
-// power=1.0f' argument instead of the `AnchorSliderFlags flags=0' argument.
-//   If you get a warning converting a float to AnchorSliderFlags, read
-//   https://github.com/ocornut/ANCHOR/issues/3361
-ANCHOR_API bool SliderFloat(
-  const char *label,
-  float *v,
-  float v_min,
-  float v_max,
-  const char *format = "%.3f",
-  AnchorSliderFlags flags = 0);  // adjust format to decorate the value with a prefix or a
-                                 // suffix for in-slider labels or unit display.
-ANCHOR_API bool SliderFloat2(const char *label,
-                             float v[2],
-                             float v_min,
-                             float v_max,
-                             const char *format = "%.3f",
-                             AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderFloat3(const char *label,
-                             float v[3],
-                             float v_min,
-                             float v_max,
-                             const char *format = "%.3f",
-                             AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderFloat4(const char *label,
-                             float v[4],
-                             float v_min,
-                             float v_max,
-                             const char *format = "%.3f",
-                             AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderAngle(const char *label,
-                            float *v_rad,
-                            float v_degrees_min = -360.0f,
-                            float v_degrees_max = +360.0f,
-                            const char *format = "%.0f deg",
-                            AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderInt(const char *label,
-                          int *v,
-                          int v_min,
-                          int v_max,
-                          const char *format = "%d",
-                          AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderInt2(const char *label,
-                           int v[2],
-                           int v_min,
-                           int v_max,
-                           const char *format = "%d",
-                           AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderInt3(const char *label,
-                           int v[3],
-                           int v_min,
-                           int v_max,
-                           const char *format = "%d",
-                           AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderInt4(const char *label,
-                           int v[4],
-                           int v_min,
-                           int v_max,
-                           const char *format = "%d",
-                           AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderScalar(const char *label,
-                             AnchorDataType data_type,
-                             void *p_data,
-                             const void *p_min,
-                             const void *p_max,
-                             const char *format = NULL,
-                             AnchorSliderFlags flags = 0);
-ANCHOR_API bool SliderScalarN(const char *label,
-                              AnchorDataType data_type,
-                              void *p_data,
-                              int components,
-                              const void *p_min,
-                              const void *p_max,
-                              const char *format = NULL,
-                              AnchorSliderFlags flags = 0);
-ANCHOR_API bool VSliderFloat(const char *label,
-                             const wabi::GfVec2f &size,
-                             float *v,
-                             float v_min,
-                             float v_max,
-                             const char *format = "%.3f",
-                             AnchorSliderFlags flags = 0);
-ANCHOR_API bool VSliderInt(const char *label,
-                           const wabi::GfVec2f &size,
-                           int *v,
-                           int v_min,
-                           int v_max,
-                           const char *format = "%d",
-                           AnchorSliderFlags flags = 0);
-ANCHOR_API bool VSliderScalar(const char *label,
-                              const wabi::GfVec2f &size,
-                              AnchorDataType data_type,
-                              void *p_data,
-                              const void *p_min,
-                              const void *p_max,
-                              const char *format = NULL,
-                              AnchorSliderFlags flags = 0);
-
-// Widgets: Input with Keyboard
-// - If you want to use InputText() with std::string or any custom dynamic string type, see
-// misc/cpp/ANCHOR_stdlib.h and comments in ANCHOR_demo.cpp.
-// - Most of the AnchorInputTextFlags flags are only useful for InputText() and not for
-// InputFloatX, InputIntX, InputDouble etc.
-ANCHOR_API bool InputText(const char *label,
-                          char *buf,
-                          size_t buf_size,
-                          AnchorInputTextFlags flags = 0,
-                          ANCHORInputTextCallback callback = NULL,
-                          void *user_data = NULL);
-ANCHOR_API bool InputTextMultiline(const char *label,
-                                   char *buf,
-                                   size_t buf_size,
-                                   const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
-                                   AnchorInputTextFlags flags = 0,
-                                   ANCHORInputTextCallback callback = NULL,
-                                   void *user_data = NULL);
-ANCHOR_API bool InputTextWithHint(const char *label,
-                                  const char *hint,
-                                  char *buf,
-                                  size_t buf_size,
-                                  AnchorInputTextFlags flags = 0,
-                                  ANCHORInputTextCallback callback = NULL,
-                                  void *user_data = NULL);
-ANCHOR_API bool InputFloat(const char *label,
-                           float *v,
-                           float step = 0.0f,
-                           float step_fast = 0.0f,
-                           const char *format = "%.3f",
-                           AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputFloat2(const char *label,
-                            float v[2],
-                            const char *format = "%.3f",
-                            AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputFloat3(const char *label,
-                            float v[3],
-                            const char *format = "%.3f",
-                            AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputFloat4(const char *label,
-                            float v[4],
-                            const char *format = "%.3f",
-                            AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputInt(const char *label,
-                         int *v,
-                         int step = 1,
-                         int step_fast = 100,
-                         AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputInt2(const char *label, int v[2], AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputInt3(const char *label, int v[3], AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputInt4(const char *label, int v[4], AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputDouble(const char *label,
-                            double *v,
-                            double step = 0.0,
-                            double step_fast = 0.0,
-                            const char *format = "%.6f",
-                            AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputScalar(const char *label,
-                            AnchorDataType data_type,
-                            void *p_data,
-                            const void *p_step = NULL,
-                            const void *p_step_fast = NULL,
-                            const char *format = NULL,
-                            AnchorInputTextFlags flags = 0);
-ANCHOR_API bool InputScalarN(const char *label,
-                             AnchorDataType data_type,
-                             void *p_data,
-                             int components,
-                             const void *p_step = NULL,
-                             const void *p_step_fast = NULL,
-                             const char *format = NULL,
-                             AnchorInputTextFlags flags = 0);
-
-// Widgets: Color Editor/Picker (tip: the ColorEdit* functions have a little color square that can
-// be left-clicked to open a picker, and right-clicked to open an option menu.)
-// - Note that in C++ a 'float v[X]' function argument is the _same_ as 'float* v', the array
-// syntax is just a way to document the number of elements that are expected to be accessible.
-// - You can pass the address of a first float element out of a contiguous structure, e.g.
-// &myvector[0]
-ANCHOR_API bool ColorEdit3(const char *label, float col[3], AnchorColorEditFlags flags = 0);
-ANCHOR_API bool ColorEdit4(const char *label, float col[4], AnchorColorEditFlags flags = 0);
-ANCHOR_API bool ColorPicker3(const char *label, float col[3], AnchorColorEditFlags flags = 0);
-ANCHOR_API bool ColorPicker4(const char *label,
-                             float col[4],
-                             AnchorColorEditFlags flags = 0,
-                             const float *ref_col = NULL);
-ANCHOR_API bool ColorButton(
-  const char *desc_id,
-  const wabi::GfVec4f &col,
-  AnchorColorEditFlags flags = 0,
-  wabi::GfVec2f size =
-    wabi::GfVec2f(0,
-                  0));  // display a color square/button, hover for details, return true when pressed.
-ANCHOR_API void SetColorEditOptions(
-  AnchorColorEditFlags flags);  // initialize current options (generally on application startup) if you want
-                                // to select a default format, picker type, etc. User will be able to change
-                                // many settings, unless you pass the _NoOptions flag to your calls.
-
-// Widgets: Trees
-// - TreeNode functions return true when the node is open, in which case you need to also call
-// TreePop() when you are finished displaying the tree node contents.
-ANCHOR_API bool TreeNode(const char *label);
-ANCHOR_API bool TreeNode(const char *str_id, const char *fmt, ...)
-  ANCHOR_FMTARGS(2);                                                                   // helper variation to easily decorelate the id from the displayed string.
-                                                                                       // Read the FAQ about why and how to use ID. to align arbitrary text at the
-                                                                                       // same level as a TreeNode() you can use Bullet().
-ANCHOR_API bool TreeNode(const void *ptr_id, const char *fmt, ...) ANCHOR_FMTARGS(2);  // "
-ANCHOR_API bool TreeNodeV(const char *str_id, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
-ANCHOR_API bool TreeNodeV(const void *ptr_id, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
-ANCHOR_API bool TreeNodeEx(const char *label, AnchorTreeNodeFlags flags = 0);
-ANCHOR_API bool TreeNodeEx(const char *str_id, AnchorTreeNodeFlags flags, const char *fmt, ...)
-  ANCHOR_FMTARGS(3);
-ANCHOR_API bool TreeNodeEx(const void *ptr_id, AnchorTreeNodeFlags flags, const char *fmt, ...)
-  ANCHOR_FMTARGS(3);
-ANCHOR_API bool TreeNodeExV(const char *str_id, AnchorTreeNodeFlags flags, const char *fmt, va_list args)
-  ANCHOR_FMTLIST(3);
-ANCHOR_API bool TreeNodeExV(const void *ptr_id, AnchorTreeNodeFlags flags, const char *fmt, va_list args)
-  ANCHOR_FMTLIST(3);
-ANCHOR_API void TreePush(
-  const char *str_id);                                // ~ Indent()+PushId(). Already called by TreeNode() when returning true,
-                                                      // but you can call TreePush/TreePop yourself if desired.
-ANCHOR_API void TreePush(const void *ptr_id = NULL);  // "
-ANCHOR_API void TreePop();                            // ~ Unindent()+PopId()
-ANCHOR_API float GetTreeNodeToLabelSpacing();         // horizontal distance preceding label when using
-                                                      // TreeNode*() or Bullet() == (g.FontSize +
-                                                      // style.FramePadding[0]*2) for a regular unframed
-                                                      // TreeNode
-ANCHOR_API bool CollapsingHeader(
-  const char *label,
-  AnchorTreeNodeFlags flags = 0);  // if returning 'true' the header is open. doesn't indent nor
-                                   // push on ID stack. user doesn't have to call TreePop().
-ANCHOR_API bool CollapsingHeader(
-  const char *label,
-  bool *p_visible,
-  AnchorTreeNodeFlags flags =
-    0);  // when 'p_visible != NULL': if '*p_visible==true' display an additional small close
-         // button on upper right of the header which will set the bool to false when clicked,
-         // if '*p_visible==false' don't display the header.
-ANCHOR_API void SetNextItemOpen(bool is_open,
-                                AnchorCond cond = 0);  // set next TreeNode/CollapsingHeader open state.
-
-// Widgets: Selectables
-// - A selectable highlights when hovered, and can display another color when selected.
-// - Neighbors selectable extend their highlight bounds in order to leave no gap between them. This
-// is so a series of selected Selectable appear contiguous.
-ANCHOR_API bool Selectable(const char *label,
-                           bool selected = false,
-                           AnchorSelectableFlags flags = 0,
-                           const wabi::GfVec2f &size = wabi::GfVec2f(
-                             0,
-                             0));  // "bool selected" carry the selection state (read-only). Selectable()
-                                   // is clicked is returns true so you can modify your selection state.
-                                   // size[0]==0.0: use remaining width, size[0]>0.0: specify width.
-                                   // size[1]==0.0: use label height, size[1]>0.0: specify height
-ANCHOR_API bool Selectable(
-  const char *label,
-  bool *p_selected,
-  AnchorSelectableFlags flags = 0,
-  const wabi::GfVec2f &size = wabi::GfVec2f(0,
-                                            0));  // "bool* p_selected" point to the selection
-                                                  // state (read-write), as a convenient helper.
-
-// Widgets: List Boxes
-// - This is essentially a thin wrapper to using BeginChild/EndChild with some stylistic changes.
-// - The BeginListBox()/EndListBox() api allows you to manage your contents and selection state
-// however you want it, by creating e.g. Selectable() or any items.
-// - The simplified/old ListBox() api are helpers over BeginListBox()/EndListBox() which are kept
-// available for convenience purpose. This is analoguous to how Combos are created.
-// - Choose frame width:   size[0] > 0.0f: custom  /  size[0] < 0.0f or -FLT_MIN: right-align   /
-// size[0] = 0.0f (default): use current ItemWidth
-// - Choose frame height:  size[1] > 0.0f: custom  /  size[1] < 0.0f or -FLT_MIN: bottom-align  /
-// size[1] = 0.0f (default): arbitrary default height which can fit ~7 items
-ANCHOR_API bool BeginListBox(
-  const char *label,
-  const wabi::GfVec2f &size = wabi::GfVec2f(0, 0));  // open a framed scrolling region
-ANCHOR_API void EndListBox();                        // only call EndListBox() if BeginListBox() returned true!
-ANCHOR_API bool ListBox(const char *label,
+  /**
+   * Context creation and access.
+   *  - Each context create its own AnchorFontAtlas by default.
+   *    you may instance one yourself and pass it to CreateContext()
+   *    to share a font atlas between contexts.
+   *  - DLL users: heaps and globals are not shared across DLL boundaries!
+   *    you will need to call SetCurrentContext() + SetAllocatorFunctions()
+   *    for each static/DLL boundary you are calling from. Read "Context and
+   *    Memory Allocators" section of ANCHOR.cpp for details. */
+
+  ANCHOR_API
+  AnchorContext *CreateContext(AnchorFontAtlas *shared_font_atlas = NULL);
+
+  /**
+   * NULL = destroy current context */
+  ANCHOR_API
+  void DestroyContext(AnchorContext *ctx = NULL);
+
+  ANCHOR_API
+  AnchorContext *GetCurrentContext();
+
+  ANCHOR_API
+  void SetCurrentContext(AnchorContext *ctx);
+
+  /**
+   * ⚓︎ Anchor :: Main -------------------- */
+
+  /**
+   * Process Events (User Actions).
+   *
+   *  - mouse
+   *  - keyboard
+   *  - gamepad inputs
+   *  - time
+   *
+   * @param systemhandle: Handle to backend system.
+   * @param waitForEvent: To indicate that this call
+   * should wait (block) until the next event before
+   * returning.
+   * @return Indication of the presence of events. */
+
+  ANCHOR_API
+  bool ProcessEvents(AnchorSystemHandle systemhandle, bool waitForEvent);
+
+  /**
+   * Dispatch Events
+   *
+   * Retrieves events from the queue and
+   * sends them to the  event consumers.
+   * @param systemhandle: The handle to the system. */
+  ANCHOR_API
+  void DispatchEvents(AnchorSystemHandle systemhandle);
+
+  ANCHOR_API
+  AnchorU64 GetMilliSeconds(AnchorSystemHandle systemhandle);
+
+  /**
+   * Event Type
+   *
+   * Retrieves the event type
+   * for a given event handle.
+   * @param eventhandle: The handle to the system. */
+  ANCHOR_API
+  eAnchorEventType GetEventType(AnchorEventHandle eventhandle);
+
+  /**
+   * Event Window
+   *
+   * Find an active window to
+   * display quiet dialog in.
+   * @param eventhandle: The handle to the system. */
+  ANCHOR_API
+  AnchorSystemWindowHandle GetEventWindow(AnchorEventHandle eventhandle);
+
+  ANCHOR_API
+  AnchorEventDataPtr GetEventData(AnchorEventHandle eventhandle);
+
+  ANCHOR_API
+  int ValidWindow(AnchorSystemHandle systemhandle, AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  ANCHOR_UserPtr GetWindowUserData(AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  void SetWindowUserData(AnchorSystemWindowHandle windowhandle, ANCHOR_UserPtr userdata);
+
+  ANCHOR_API
+  int ToggleConsole(int action);
+
+  ANCHOR_API
+  AnchorU16 GetDPIHint(AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  int UseNativePixels(void);
+
+  ANCHOR_API
+  void UseWindowFocus(int use_focus);
+
+  ANCHOR_API
+  float GetNativePixelSize(AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  void GetMainDisplayDimensions(AnchorSystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height);
+
+  ANCHOR_API
+  eAnchorStatus DestroySystem(AnchorSystemHandle systemhandle);
+
+  /**
+   * Initialize Anchor System Window.
+   *
+   * @param systemhandle: Handle to backend system.
+   * @return Indication of the presence of events. */
+  ANCHOR_API
+  AnchorSystemWindowHandle CreateSystemWindow(AnchorSystemHandle systemhandle,
+                                              AnchorSystemWindowHandle parent_windowhandle,
+                                              const char *title,
+                                              const char *icon,
+                                              AnchorS32 left,
+                                              AnchorS32 top,
+                                              AnchorU32 width,
+                                              AnchorU32 height,
+                                              eAnchorWindowState state,
+                                              bool is_dialog,
+                                              eAnchorDrawingContextType type,
+                                              int vkSettings);
+
+  ANCHOR_API
+  AnchorU8 GetNumDisplays(AnchorSystemHandle systemhandle);
+
+  ANCHOR_API
+  void SetTitle(AnchorSystemWindowHandle windowhandle, const char *title);
+
+  /**
+   * Preforms a swap on the swapchain.
+   *
+   * This is what one may refer to as
+   * the "display update" which takes
+   * all old 'cache', and swaps it to
+   * the new 'cache'. This is intended
+   * to be called at a bare minium of
+   * a monitor's refresh rate. Any bit
+   * slower than that and a user will
+   * experience graphics 'lag'.
+   *
+   * @param windowhandle: Handle to the window.
+   * @return Indication of success. */
+  ANCHOR_API
+  eAnchorStatus SwapChain(AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  eAnchorStatus ActivateWindowDrawingContext(AnchorSystemWindowHandle windowhandle);
+
+  /**
+   * Adds a given event consumer to anchor.
+   *
+   * An event consumer is a client who
+   * recieves Anchor events on the stack
+   * usually in the form of a callback
+   * function.
+   *
+   * @param systemhandle: Handle to the system.
+   * @param consumerhandle: The event consumer to add.
+   * @return Indication of success. */
+  ANCHOR_API
+  eAnchorStatus AddEventConsumer(AnchorSystemHandle systemhandle, AnchorEventConsumerHandle consumerhandle);
+
+  ANCHOR_API
+  eAnchorWindowState GetWindowState(AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  eAnchorStatus SetWindowState(AnchorSystemWindowHandle windowhandle, eAnchorWindowState state);
+
+  ANCHOR_API
+  eAnchorStatus SetWindowOrder(AnchorSystemWindowHandle windowhandle, eAnchorWindowOrder order);
+
+  ANCHOR_API
+  int IsDialogWindow(AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  void ClientToScreen(AnchorSystemWindowHandle windowhandle,
+                      AnchorS32 inX,
+                      AnchorS32 inY,
+                      AnchorS32 *outX,
+                      AnchorS32 *outY);
+
+  ANCHOR_API
+  eAnchorStatus GetModifierKeyState(AnchorSystemHandle systemhandle,
+                                    eAnchorModifierKeyMask mask,
+                                    int *isDown);
+
+  ANCHOR_API
+  void ScreenToClient(AnchorSystemWindowHandle windowhandle,
+                      AnchorS32 inX,
+                      AnchorS32 inY,
+                      AnchorS32 *outX,
+                      AnchorS32 *outY);
+
+  ANCHOR_API
+  eAnchorStatus GetCursorPosition(AnchorSystemHandle systemhandle, AnchorS32 *x, AnchorS32 *y);
+
+  /**
+   * Access the Pixar Hydra Driver.
+   *
+   *  - Central Shared GPU resources in which
+   *    Kraken (and plugins) share. Because they
+   *    are all shared, and because you can
+   *    activate any number of rendering engines
+   *    at once ↓
+   *  → This is the basis for Hybrid Rendering:
+   *      - Arnold     →  Human
+   *      - Cycles     →  House
+   *      - Renderman  →  Glass
+   *      - Phoenix    →  Sky
+   *  → Each individual engine rendering their
+   *    own respective Prims in a single scene.
+   *  → All within the same active viewport.
+   *  → All within @em Real-Time. */
+  ANCHOR_API
+  wabi::HdDriver &GetPixarDriver();
+
+  ANCHOR_API
+  char *GetTitle(AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  eAnchorStatus SetClientSize(AnchorSystemWindowHandle windowhandle, AnchorU32 width, AnchorU32 height);
+
+  ANCHOR_API
+  AnchorRectangleHandle GetClientBounds(AnchorSystemWindowHandle windowhandle);
+
+  ANCHOR_API
+  AnchorS32 GetHeightRectangle(AnchorRectangleHandle rectanglehandle);
+
+  ANCHOR_API
+  AnchorS32 GetWidthRectangle(AnchorRectangleHandle rectanglehandle);
+
+  ANCHOR_API
+  void GetRectangle(AnchorRectangleHandle rectanglehandle,
+                    AnchorS32 *l,
+                    AnchorS32 *t,
+                    AnchorS32 *r,
+                    AnchorS32 *b);
+
+  ANCHOR_API
+  void DisposeRectangle(AnchorRectangleHandle rectanglehandle);
+
+  ANCHOR_API
+  void GetAllDisplayDimensions(AnchorSystemHandle systemhandle, AnchorU32 *width, AnchorU32 *height);
+
+  /**
+   * Access the Hydra Engine.
+   *
+   *  - The Hydra Engine is responsible
+   *    for locating Render Engine Plugins
+   *    such as Arnold, Renderman, Cycles,
+   *    Phoenix, etc. And allowing you to
+   *    interface with all of them using
+   *    the same underlying agnostic API.
+   *  - Hydra Engines can be specialized,
+   *    Apollo is a General Purpose engine
+   *    for general scene layout and
+   *    animation purposes.
+   *  - @em Specialization-Engines created
+   *    & optimized for:
+   *      - VFX (pyro, physics)
+   *      - Rigging (AAA animation)
+   *      - Hair & Fur
+   *      - Game Engine (RTX)
+   *      - Misc. */
+  ANCHOR_API
+  APOLLO_EnginePtr GetEngineApollo();
+
+  /**
+   * Access the IO structure.
+   *
+   *  - mouse
+   *  - keyboard
+   *  - gamepad inputs
+   *  - time
+   *  - config options/flags */
+  ANCHOR_API
+  AnchorIO &GetIO();
+
+  /**
+   * Access the Style structure (colors, sizes).
+   *
+   * Always use:
+   *  - PushStyleCol()
+   *  - PushStyleVar()
+   * to modify style mid-frame! */
+  ANCHOR_API
+  AnchorStyle &GetStyle();
+
+  /**
+   * Start a new ANCHOR frame.
+   *
+   * You can submit any command
+   * from this point until
+   * Render() / EndFrame(). */
+  ANCHOR_API
+  void NewFrame();
+
+  /**
+   * Ends the ANCHOR frame.
+   *
+   * Automatically called by Render().
+   * If you don't need to render data
+   * (skipping rendering) you may call
+   * EndFrame() without Render()... but
+   * you'll have wasted CPU already! If
+   * you don't need to render, better to
+   * not create any windows and not call
+   * NewFrame() at all! */
+  ANCHOR_API
+  void EndFrame();
+
+  /**
+   * Ends the ANCHOR frame,
+   *
+   * finalize the draw data.
+   * You can then get call
+   * GetDrawData(). */
+  ANCHOR_API
+  void Render();
+
+  /**
+   * Draw Data.
+   *
+   * Valid after Render() and
+   * until the next call to
+   * NewFrame(). This is what
+   * you have to render. */
+  ANCHOR_API
+  AnchorDrawData *GetDrawData();
+
+  /**
+   * Diagnostic, Debug Window.
+   *
+   * Demonstrate most ANCHOR
+   * features. Call this to
+   * learn about the library! */
+  ANCHOR_API
+  void ShowDemoWindow(bool *p_open = NULL);
+
+  /**
+   * Create Metrics/Debugger window.
+   *
+   * Display ANCHOR internals: windows,
+   * draw commands, various internal
+   * state, etc. */
+  ANCHOR_API
+  void ShowMetricsWindow(bool *p_open = NULL);
+
+  /**
+   * Create About window.
+   *
+   * Display ANCHOR version,
+   * credits and build/system
+   * information. */
+  ANCHOR_API
+  void ShowAboutWindow(bool *p_open = NULL);
+
+  /**
+   * Add style editor block (not a window).
+   *
+   * You can pass in a reference AnchorStyle
+   * structure to compare to, revert to and
+   * save to (else it uses the default style) */
+  ANCHOR_API
+  void ShowStyleEditor(AnchorStyle *ref = NULL);
+
+  /**
+   * Add style selector block (not a window)
+   *
+   * Essentially a combo listing the default
+   * styles. */
+  ANCHOR_API
+  bool ShowStyleSelector(const char *label);
+
+  /**
+   * Add font selector block (not a window)
+   *
+   * Essentially a combo listing the loaded
+   * system fonts. */
+  ANCHOR_API
+  void ShowFontSelector(const char *label);
+
+  /**
+   * Add basic help/info block (not a window)
+   *
+   * How to manipulate ANCHOR as a end-user
+   * (mouse/keyboard controls). */
+  ANCHOR_API
+  void ShowUserGuide();
+
+  /**
+   * Get the compiled version string
+   *
+   *  - e.g. "1.80 WIP"
+   *  - (The value for ANCHOR_VERSION) */
+  ANCHOR_API
+  const char *GetVersion();
+
+  /**
+   * ⚓︎ Anchor :: Styles -------------------- */
+
+  /**
+   * Kraken Default (Recommended).
+   *
+   * Kraken default color theme.
+   * For all your digital content
+   * creation needs. */
+  ANCHOR_API
+  void StyleColorsDefault(AnchorStyle *dst = NULL);
+
+  /**
+   * Dark Side.
+   *
+   * It's 2021 and everyone
+   * needs a dark mode. */
+  ANCHOR_API
+  void StyleColorsDark(AnchorStyle *dst = NULL);
+
+  /**
+   * Jedi.
+   *
+   * Best used with borders
+   * and a custom, thicker
+   * font */
+  ANCHOR_API
+  void StyleColorsLight(AnchorStyle *dst = NULL);
+
+  /**
+   * ⚓︎ Anchor :: Windowing -------------------- */
+
+  /**
+   * Windows
+   *  - Begin() = push window to the stack and start appending to it.
+   *  - End() = pop window from the stack.
+   *  - Passing 'bool* p_open != NULL' shows a window-closing widget
+   *    in the upper-right corner of the window, which clicking will
+   *    set the boolean to false when clicked.
+   *  - You may append multiple times to the same window during the
+   *    same frame by calling Begin() / End() pairs multiple times.
+   *  - Some information such as 'flags' or 'p_open' will only be
+   *    considered by the first call to Begin().
+   *  - Begin() return false to indicate the window is collapsed or
+   *    fully clipped, so you  may early out  and omit  submitting
+   *    anything to the window. Always call a matching End() for each
+   *    Begin() call, regardless of its return value! [Important: due
+   *    to legacy reason, this is inconsistent with most other functions
+   *    such as BeginMenu / EndMenu, BeginPopup/EndPopup, etc. where the
+   *    EndXXX call should only be called if the corresponding BeginXXX
+   *    function returned true. Begin and BeginChild are the only odd
+   *    ones out. Will be fixed in a future update.]
+   *  - Note that the bottom of window stack always contains a window
+   *    called "Debug". */
+  ANCHOR_API
+  bool Begin(const char *name, bool *p_open = NULL, AnchorWindowFlags flags = 0);
+
+  ANCHOR_API
+  void End();
+
+  // Child Windows
+  // - Use child windows to begin into a self-contained independent scrolling/clipping regions within
+  // a host window. Child windows can embed their own child.
+  // - For each independent axis of 'size': ==0.0f: use remaining host window size / >0.0f: fixed
+  // size / <0.0f: use remaining window size minus abs(size) / Each axis can use a different mode,
+  // e.g. wabi::GfVec2f(0,400).
+  // - BeginChild() returns false to indicate the window is collapsed or fully clipped, so you may
+  // early out and omit submitting anything to the window.
+  //   Always call a matching EndChild() for each BeginChild() call, regardless of its return value.
+  //   [Important: due to legacy reason, this is inconsistent with most other functions such as
+  //   BeginMenu/EndMenu,
+  //    BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding
+  //    BeginXXX function returned true. Begin and BeginChild are the only odd ones out. Will be
+  //    fixed in a future update.]
+  ANCHOR_API bool BeginChild(const char *str_id,
+                             const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
+                             bool border = false,
+                             AnchorWindowFlags flags = 0);
+  ANCHOR_API bool BeginChild(ANCHOR_ID id,
+                             const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
+                             bool border = false,
+                             AnchorWindowFlags flags = 0);
+  ANCHOR_API void EndChild();
+
+  // Windows Utilities
+  // - 'current window' = the window we are appending into while inside a Begin()/End() block. 'next
+  // window' = next window we will Begin() into.
+  ANCHOR_API bool IsWindowAppearing();
+  ANCHOR_API bool IsWindowCollapsed();
+  // is current window focused? or its root/child, depending on
+  // flags. see flags for options.
+  ANCHOR_API bool IsWindowFocused(AnchorFocusedFlags flags = 0);
+
+  // is current window hovered (and typically: not blocked by a popup/modal)? see flags
+  // for options. NB: If you are trying to check whether your mouse should be dispatched
+  // to ANCHOR or to your app, you should use the 'io.WantCaptureMouse' boolean for
+  // that! Please read the FAQ!
+  ANCHOR_API bool IsWindowHovered(AnchorHoveredFlags flags = 0);
+
+  // get draw list associated to the current window, to
+  // append your own drawing primitives
+  ANCHOR_API AnchorDrawList *GetWindowDrawList();
+  // get current window position in screen space (useful if
+  // you want to do your own drawing via the DrawList API)
+  ANCHOR_API wabi::GfVec2f GetWindowPos();
+  // get current window size
+  ANCHOR_API wabi::GfVec2f GetWindowSize();
+  // get current window width (shortcut for GetWindowSize()[0])
+  ANCHOR_API float GetWindowWidth();
+  // get current window height (shortcut for GetWindowSize()[1])
+  ANCHOR_API float GetWindowHeight();
+
+  // Prefer using SetNextXXX functions (before Begin) rather that SetXXX functions (after Begin).
+  ANCHOR_API void SetNextWindowPos(
+    const wabi::GfVec2f &pos,
+    AnchorCond cond = 0,
+    const wabi::GfVec2f &pivot = wabi::GfVec2f(0,
+                                               0));  // set next window position. call before Begin(). use
+                                                     // pivot=(0.5f,0.5f) to center on given point, etc.
+  ANCHOR_API void SetNextWindowSize(const wabi::GfVec2f &size,
+                                    AnchorCond cond = 0);  // set next window size. set axis to 0.0f to force
+                                                           // an auto-fit on this axis. call before Begin()
+  ANCHOR_API void SetNextWindowSizeConstraints(
+    const wabi::GfVec2f &size_min,
+    const wabi::GfVec2f &size_max,
+    ANCHORSizeCallback custom_callback = NULL,
+    void *custom_callback_data = NULL);  // set next window size limits. use -1,-1 on either X/Y axis to
+                                         // preserve the current size. Sizes will be rounded down. Use
+                                         // callback to apply non-trivial programmatic constraints.
+  ANCHOR_API void SetNextWindowContentSize(
+    const wabi::GfVec2f
+      &size);  // set next window content size (~ scrollable client area, which enforce the range
+               // of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor
+               // WindowPadding. set an axis to 0.0f to leave it automatic. call before Begin()
+  ANCHOR_API void SetNextWindowCollapsed(
+    bool collapsed,
+    AnchorCond cond = 0);                // set next window collapsed state. call before Begin()
+  ANCHOR_API void SetNextWindowFocus();  // set next window to be focused / top-most. call before
+                                         // Begin()
+  ANCHOR_API void SetNextWindowBgAlpha(
+    float alpha);  // set next window background color alpha. helper to easily override the Alpha
+                   // component of AnchorCol_WindowBg/ChildBg/PopupBg. you may also use
+                   // AnchorWindowFlags_NoBackground.
+  ANCHOR_API void SetWindowPos(
+    const wabi::GfVec2f &pos,
+    AnchorCond cond = 0);  // (not recommended) set current window position - call within Begin()/End().
+                           // prefer using SetNextWindowPos(), as this may incur tearing and side-effects.
+  ANCHOR_API void SetWindowSize(
+    const wabi::GfVec2f &size,
+    AnchorCond cond = 0);  // (not recommended) set current window size - call within Begin()/End().
+                           // set to wabi::GfVec2f(0, 0) to force an auto-fit. prefer using
+                           // SetNextWindowSize(), as this may incur tearing and minor side-effects.
+  ANCHOR_API void SetWindowCollapsed(bool collapsed,
+                                     AnchorCond cond = 0);  // (not recommended) set current window collapsed
+                                                            // state. prefer using SetNextWindowCollapsed().
+  ANCHOR_API void SetWindowFocus();                         // (not recommended) set current window to be focused /
+                                                            // top-most. prefer using SetNextWindowFocus().
+  ANCHOR_API void SetWindowFontScale(
+    float scale);  // set font scale. Adjust IO.FontGlobalScale if you want to scale all windows.
+                   // This is an old API! For correct scaling, prefer to reload font + rebuild
+                   // AnchorFontAtlas + call style.ScaleAllSizes().
+  ANCHOR_API void SetWindowPos(const char *name,
+                               const wabi::GfVec2f &pos,
+                               AnchorCond cond = 0);  // set named window position.
+  ANCHOR_API void SetWindowSize(const char *name,
+                                const wabi::GfVec2f &size,
+                                AnchorCond cond = 0);  // set named window size. set axis to 0.0f to
+                                                       // force an auto-fit on this axis.
+  ANCHOR_API void SetWindowCollapsed(const char *name,
+                                     bool collapsed,
+                                     AnchorCond cond = 0);  // set named window collapsed state
+  ANCHOR_API void SetWindowFocus(
+    const char *name);  // set named window to be focused / top-most. use NULL to remove focus.
+
+  // Content region
+  // - Retrieve available space from a given point. GetContentRegionAvail() is frequently useful.
+  // - Those functions are bound to be redesigned (they are confusing, incomplete and the Min/Max
+  // return values are in local window coordinates which increases confusion)
+  ANCHOR_API wabi::GfVec2f GetContentRegionAvail();      // == GetContentRegionMax() - GetCursorPos()
+  ANCHOR_API wabi::GfVec2f GetContentRegionMax();        // current content boundaries (typically window
+                                                         // boundaries including scrolling, or current
+                                                         // column boundaries), in windows coordinates
+  ANCHOR_API wabi::GfVec2f GetWindowContentRegionMin();  // content boundaries min (roughly
+                                                         // (0,0)-Scroll), in window coordinates
+  ANCHOR_API wabi::GfVec2f GetWindowContentRegionMax();  // content boundaries max (roughly
+                                                         // (0,0)+Size-Scroll) where Size can be
+                                                         // override with SetNextWindowContentSize(),
+                                                         // in window coordinates
+  ANCHOR_API float GetWindowContentRegionWidth();        //
+
+  // Windows Scrolling
+  ANCHOR_API float GetScrollX();               // get scrolling amount [0 .. GetScrollMaxX()]
+  ANCHOR_API float GetScrollY();               // get scrolling amount [0 .. GetScrollMaxY()]
+  ANCHOR_API void SetScrollX(float scroll_x);  // set scrolling amount [0 .. GetScrollMaxX()]
+  ANCHOR_API void SetScrollY(float scroll_y);  // set scrolling amount [0 .. GetScrollMaxY()]
+  ANCHOR_API float GetScrollMaxX();            // get maximum scrolling amount ~~ ContentSize[0] -
+                                               // WindowSize[0] - DecorationsSize[0]
+  ANCHOR_API float GetScrollMaxY();            // get maximum scrolling amount ~~ ContentSize[1] -
+                                               // WindowSize[1] - DecorationsSize[1]
+  ANCHOR_API void SetScrollHereX(
+    float center_x_ratio =
+      0.5f);  // adjust scrolling amount to make current cursor position visible.
+              // center_x_ratio=0.0: left, 0.5: center, 1.0: right. When using to make a
+              // "default/current item" visible, consider using SetItemDefaultFocus() instead.
+  ANCHOR_API void SetScrollHereY(
+    float center_y_ratio =
+      0.5f);  // adjust scrolling amount to make current cursor position visible.
+              // center_y_ratio=0.0: top, 0.5: center, 1.0: bottom. When using to make a
+              // "default/current item" visible, consider using SetItemDefaultFocus() instead.
+  ANCHOR_API void SetScrollFromPosX(
+    float local_x,
+    float center_x_ratio = 0.5f);  // adjust scrolling amount to make given position visible. Generally
+                                   // GetCursorStartPos() + offset to compute a valid position.
+  ANCHOR_API void SetScrollFromPosY(
+    float local_y,
+    float center_y_ratio = 0.5f);  // adjust scrolling amount to make given position visible. Generally
+                                   // GetCursorStartPos() + offset to compute a valid position.
+
+  // Parameters stacks (shared)
+  ANCHOR_API void PushFont(AnchorFont *font);  // use NULL as a shortcut to push default font
+  ANCHOR_API void PopFont();
+  ANCHOR_API void PushStyleColor(AnchorCol idx,
+                                 AnchorU32 col);  // modify a style color. always use this if you
+                                                  // modify the style after NewFrame().
+  ANCHOR_API void PushStyleColor(AnchorCol idx, const wabi::GfVec4f &col);
+  ANCHOR_API void PopStyleColor(int count = 1);
+  ANCHOR_API void PushStyleVar(AnchorStyleVar idx,
+                               float val);  // modify a style float variable. always use this if you
+                                            // modify the style after NewFrame().
+  ANCHOR_API void PushStyleVar(
+    AnchorStyleVar idx,
+    const wabi::GfVec2f &val);  // modify a style wabi::GfVec2f variable. always use
+                                // this if you modify the style after NewFrame().
+  ANCHOR_API void PopStyleVar(int count = 1);
+  ANCHOR_API void PushAllowKeyboardFocus(
+    bool allow_keyboard_focus);  // == tab stop enable. Allow focusing using TAB/Shift-TAB, enabled
+                                 // by default but you can disable it for certain widgets
+  ANCHOR_API void PopAllowKeyboardFocus();
+  ANCHOR_API void PushButtonRepeat(
+    bool repeat);  // in 'repeat' mode, Button*() functions return repeated true in a typematic
+                   // manner (using io.KeyRepeatDelay/io.KeyRepeatRate setting). Note that you can
+                   // call IsItemActive() after any Button() to tell if the button is held in the
+                   // current frame.
+  ANCHOR_API void PopButtonRepeat();
+
+  // Parameters stacks (current window)
+  ANCHOR_API void PushItemWidth(
+    float item_width);  // push width of items for common large "item+label" widgets. >0.0f: width
+                        // in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN
+                        // always align width to the right side).
+  ANCHOR_API void PopItemWidth();
+  ANCHOR_API void SetNextItemWidth(
+    float item_width);               // set width of the _next_ common large "item+label" widget. >0.0f: width
+                                     // in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN
+                                     // always align width to the right side)
+  ANCHOR_API float CalcItemWidth();  // width of item given pushed settings and current cursor
+                                     // position. NOT necessarily the width of last item unlike most
+                                     // 'Item' functions.
+  ANCHOR_API void PushTextWrapPos(
+    float wrap_local_pos_x = 0.0f);  // push word-wrapping position for Text*() commands. < 0.0f:
+                                     // no wrapping; 0.0f: wrap to end of window (or column); >
+                                     // 0.0f: wrap at 'wrap_pos_x' position in window local space
+  ANCHOR_API void PopTextWrapPos();
+
+  // Style read access
+  ANCHOR_API AnchorFont *GetFont();                   // get current font
+  ANCHOR_API float GetFontSize();                     // get current font size (= height in pixels) of current font with
+                                                      // current scale applied
+  ANCHOR_API wabi::GfVec2f GetFontTexUvWhitePixel();  // get UV coordinate for a while pixel, useful
+                                                      // to draw custom shapes via the AnchorDrawList API
+  ANCHOR_API AnchorU32 GetColorU32(
+    AnchorCol idx,
+    float alpha_mul = 1.0f);  // retrieve given style color with style alpha applied and optional extra
+                              // alpha multiplier, packed as a 32-bit value suitable for AnchorDrawList
+  ANCHOR_API AnchorU32
+  GetColorU32(const wabi::GfVec4f &col);            // retrieve given color with style alpha applied, packed as
+                                                    // a 32-bit value suitable for AnchorDrawList
+  ANCHOR_API AnchorU32 GetColorU32(AnchorU32 col);  // retrieve given color with style alpha applied, packed
+                                                    // as a 32-bit value suitable for AnchorDrawList
+  ANCHOR_API const wabi::GfVec4f &GetStyleColorVec4(
+    AnchorCol idx);  // retrieve style color as stored in AnchorStyle structure. use to feed back
+                     // into PushStyleColor(), otherwise use GetColorU32() to get style color with
+                     // style alpha baked in.
+
+  // Cursor / Layout
+  // - By "cursor" we mean the current output position.
+  // - The typical widget behavior is to output themselves at the current cursor position, then move
+  // the cursor one line down.
+  // - You can call SameLine() between widgets to undo the last carriage return and output at the
+  // right of the preceding widget.
+  // - Attention! We currently have inconsistencies between window-local and absolute positions we
+  // will aim to fix with future API:
+  //    Window-local coordinates:   SameLine(), GetCursorPos(), SetCursorPos(), GetCursorStartPos(),
+  //    GetContentRegionMax(), GetWindowContentRegion*(), PushTextWrapPos() Absolute coordinate:
+  //    GetCursorScreenPos(), SetCursorScreenPos(), all AnchorDrawList:: functions.
+  ANCHOR_API void Separator();  // separator, generally horizontal. inside a menu bar or in
+                                // horizontal layout mode, this becomes a vertical separator.
+  ANCHOR_API void SameLine(float offset_from_start_x = 0.0f,
+                           float spacing = -1.0f);  // call between widgets or groups to layout them
+                                                    // horizontally. X position given in window coordinates.
+  ANCHOR_API void NewLine();                        // undo a SameLine() or force a new line when in an horizontal-layout
+                                                    // context.
+  ANCHOR_API void Spacing();                        // add vertical spacing.
+  ANCHOR_API void Dummy(
+    const wabi::GfVec2f &size);                     // add a dummy item of given size. unlike InvisibleButton(),
+                                                    // Dummy() won't take the mouse click or be navigable into.
+  ANCHOR_API void Indent(float indent_w = 0.0f);    // move content position toward the right, by indent_w, or
+                                                    // style.IndentSpacing if indent_w <= 0
+  ANCHOR_API void Unindent(float indent_w = 0.0f);  // move content position back to the left, by indent_w,
+                                                    // or style.IndentSpacing if indent_w <= 0
+  ANCHOR_API void BeginGroup();                     // lock horizontal starting position
+  ANCHOR_API void EndGroup();                       // unlock horizontal starting position + capture the whole group
+                                                    // bounding box into one "item" (so you can use IsItemHovered() or
+                                                    // layout primitives such as SameLine() on whole group, etc.)
+  ANCHOR_API wabi::GfVec2f GetCursorPos();          // cursor position in window coordinates (relative to
+                                                    // window position)
+  ANCHOR_API float GetCursorPosX();                 //   (some functions are using window-relative coordinates, such
+                                                    //   as: GetCursorPos, GetCursorStartPos, GetContentRegionMax,
+                                                    //   GetWindowContentRegion* etc.
+  ANCHOR_API float GetCursorPosY();                 //    other functions such as GetCursorScreenPos or everything
+                                                    //    in AnchorDrawList::
+  ANCHOR_API void SetCursorPos(
+    const wabi::GfVec2f &local_pos);  //    are using the main, absolute coordinate system.
+  ANCHOR_API void SetCursorPosX(
+    float local_x);                                              //    GetWindowPos() + GetCursorPos() == GetCursorScreenPos() etc.)
+  ANCHOR_API void SetCursorPosY(float local_y);                  //
+  ANCHOR_API wabi::GfVec2f GetCursorStartPos();                  // initial cursor position in window coordinates
+  ANCHOR_API wabi::GfVec2f GetCursorScreenPos();                 // cursor position in absolute coordinates (useful
+                                                                 // to work with AnchorDrawList API). generally top-left
+                                                                 // == GetMainViewport()->Pos == (0,0) in single
+                                                                 // viewport mode, and bottom-right ==
+                                                                 // GetMainViewport()->Pos+Size == io.DisplaySize in
+                                                                 // single-viewport mode.
+  ANCHOR_API void SetCursorScreenPos(const wabi::GfVec2f &pos);  // cursor position in absolute coordinates
+  ANCHOR_API void AlignTextToFramePadding();                     // vertically align upcoming text baseline to
+                                                                 // FramePadding[1] so that it will align properly to
+                                                                 // regularly framed items (call if you have text on a
+                                                                 // line before a framed item)
+  ANCHOR_API float GetTextLineHeight();                          // ~ FontSize
+  ANCHOR_API float GetTextLineHeightWithSpacing();               // ~ FontSize + style.ItemSpacing[1] (distance in
+                                                                 // pixels between 2 consecutive lines of text)
+  ANCHOR_API float GetFrameHeight();                             // ~ FontSize + style.FramePadding[1] * 2
+  ANCHOR_API float GetFrameHeightWithSpacing();                  // ~ FontSize + style.FramePadding[1] * 2 +
+                                                                 // style.ItemSpacing[1] (distance in pixels between
+                                                                 // 2 consecutive lines of framed widgets)
+
+  // ID stack/scopes
+  // - Read the FAQ for more details about how ID are handled in ANCHOR. If you are creating widgets
+  // in a loop you most
+  //   likely want to push a unique identifier (e.g. object pointer, loop index) to uniquely
+  //   differentiate them.
+  // - The resulting ID are hashes of the entire stack.
+  // - You can also use the "Label##foobar" syntax within widget label to distinguish them from each
+  // others.
+  // - In this header file we use the "label"/"name" terminology to denote a string that will be
+  // displayed and used as an ID,
+  //   whereas "str_id" denote a string that is only used as an ID and not normally displayed.
+  ANCHOR_API void PushID(const char *str_id);  // push string into the ID stack (will hash string).
+  ANCHOR_API void PushID(const char *str_id_begin,
+                         const char *str_id_end);  // push string into the ID stack (will hash string).
+  ANCHOR_API void PushID(const void *ptr_id);      // push pointer into the ID stack (will hash pointer).
+  ANCHOR_API void PushID(int int_id);              // push integer into the ID stack (will hash integer).
+  ANCHOR_API void PopID();                         // pop from the ID stack.
+  ANCHOR_API ANCHOR_ID
+  GetID(const char *str_id);  // calculate unique ID (hash of whole ID stack + given parameter). e.g.
+                              // if you want to query into AnchorStorage yourself
+  ANCHOR_API ANCHOR_ID GetID(const char *str_id_begin, const char *str_id_end);
+  ANCHOR_API ANCHOR_ID GetID(const void *ptr_id);
+
+  // Widgets: Text
+  ANCHOR_API void TextUnformatted(
+    const char *text,
+    const char *text_end = NULL);                                // raw text without formatting. Roughly equivalent to Text("%s", text)
+                                                                 // but: A) doesn't require null terminated string if 'text_end' is
+                                                                 // specified, B) it's faster, no memory copy is done, no buffer size
+                                                                 // limits, recommended for long chunks of text.
+  ANCHOR_API void Text(const char *fmt, ...) ANCHOR_FMTARGS(1);  // formatted text
+  ANCHOR_API void TextV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
+  ANCHOR_API void TextColored(const wabi::GfVec4f &col, const char *fmt, ...)
+    ANCHOR_FMTARGS(2);  // shortcut for PushStyleColor(AnchorCol_Text, col); Text(fmt, ...); PopStyleColor();
+  ANCHOR_API void TextColoredV(const wabi::GfVec4f &col, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
+  ANCHOR_API void TextDisabled(const char *fmt, ...)
+    ANCHOR_FMTARGS(1);  // shortcut for PushStyleColor(AnchorCol_Text,
+                        // style.Colors[AnchorCol_TextDisabled]); Text(fmt, ...); PopStyleColor();
+  ANCHOR_API void TextDisabledV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
+  ANCHOR_API void TextWrapped(const char *fmt, ...)
+    ANCHOR_FMTARGS(1);  // shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that
+                        // this won't work on an auto-resizing window if there's no other widgets to extend
+                        // the window width, yoy may need to set a size using SetNextWindowSize().
+  ANCHOR_API void TextWrappedV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
+  ANCHOR_API void LabelText(const char *label, const char *fmt, ...)
+    ANCHOR_FMTARGS(2);  // display text+label aligned the same way as value+label widgets
+  ANCHOR_API void LabelTextV(const char *label, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
+  ANCHOR_API void BulletText(const char *fmt, ...) ANCHOR_FMTARGS(1);  // shortcut for Bullet()+Text()
+  ANCHOR_API void BulletTextV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
+
+  // Widgets: Main
+  // - Most widgets return true when the value has been changed or when pressed/selected
+  // - You may also use one of the many IsItemXXX functions (e.g. IsItemActive, IsItemHovered, etc.)
+  // to query widget state.
+  ANCHOR_API bool Button(const char *label, const wabi::GfVec2f &size = wabi::GfVec2f(0, 0));  // button
+  ANCHOR_API bool SmallButton(
+    const char *label);  // button with FramePadding=(0,0) to easily embed within text
+  ANCHOR_API bool InvisibleButton(
+    const char *str_id,
+    const wabi::GfVec2f &size,
+    AnchorButtonFlags flags =
+      0);  // flexible button behavior without the visuals, frequently useful to build custom
+           // behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)
+  ANCHOR_API bool ArrowButton(const char *str_id,
+                              AnchorDir dir);  // square button with an arrow shape
+  ANCHOR_API void Image(AnchorTextureID user_texture_id,
+                        const wabi::GfVec2f &size,
+                        const wabi::GfVec2f &uv0 = wabi::GfVec2f(0, 0),
+                        const wabi::GfVec2f &uv1 = wabi::GfVec2f(1, 1),
+                        const wabi::GfVec4f &tint_col = wabi::GfVec4f(1, 1, 1, 1),
+                        const wabi::GfVec4f &border_col = wabi::GfVec4f(0, 0, 0, 0));
+  ANCHOR_API bool ImageButton(
+    AnchorTextureID user_texture_id,
+    const wabi::GfVec2f &size,
+    const wabi::GfVec2f &uv0 = wabi::GfVec2f(0, 0),
+    const wabi::GfVec2f &uv1 = wabi::GfVec2f(1, 1),
+    int frame_padding = -1,
+    const wabi::GfVec4f &bg_col = wabi::GfVec4f(0, 0, 0, 0),
+    const wabi::GfVec4f &tint_col = wabi::GfVec4f(1, 1, 1, 1));  // <0 frame_padding uses default frame
+                                                                 // padding settings. 0 for no padding
+  ANCHOR_API bool Checkbox(const char *label, bool *v);
+  ANCHOR_API bool CheckboxFlags(const char *label, int *flags, int flags_value);
+  ANCHOR_API bool CheckboxFlags(const char *label, unsigned int *flags, unsigned int flags_value);
+  ANCHOR_API bool RadioButton(
+    const char *label,
+    bool active);  // use with e.g. if (RadioButton("one", my_value==1)) { my_value = 1; }
+  ANCHOR_API bool RadioButton(
+    const char *label,
+    int *v,
+    int v_button);  // shortcut to handle the above pattern when value is an integer
+  ANCHOR_API void ProgressBar(float fraction,
+                              const wabi::GfVec2f &size_arg = wabi::GfVec2f(-FLT_MIN, 0),
+                              const char *overlay = NULL);
+  ANCHOR_API void Bullet();  // draw a small circle + keep the cursor on the same line. advance
+                             // cursor x position by GetTreeNodeToLabelSpacing(), same distance that
+                             // TreeNode() uses
+
+  // Widgets: Combo Box
+  // - The BeginCombo()/EndCombo() api allows you to manage your contents and selection state however
+  // you want it, by creating e.g. Selectable() items.
+  // - The old Combo() api are helpers over BeginCombo()/EndCombo() which are kept available for
+  // convenience purpose. This is analogous to how ListBox are created.
+  ANCHOR_API bool BeginCombo(const char *label, const char *preview_value, AnchorComboFlags flags = 0);
+  ANCHOR_API void EndCombo();  // only call EndCombo() if BeginCombo() returns true!
+  ANCHOR_API bool Combo(const char *label,
                         int *current_item,
                         const char *const items[],
                         int items_count,
-                        int height_in_items = -1);
-ANCHOR_API bool ListBox(const char *label,
+                        int popup_max_height_in_items = -1);
+  ANCHOR_API bool Combo(
+    const char *label,
+    int *current_item,
+    const char *items_separated_by_zeros,
+    int popup_max_height_in_items = -1);  // Separate items with \0 within a string, end
+                                          // item-list with \0\0. e.g. "One\0Two\0Three\0"
+  ANCHOR_API bool Combo(const char *label,
                         int *current_item,
                         bool (*items_getter)(void *data, int idx, const char **out_text),
                         void *data,
                         int items_count,
-                        int height_in_items = -1);
+                        int popup_max_height_in_items = -1);
 
-// Widgets: Data Plotting
-// - Consider using ImPlot (https://github.com/epezent/implot)
-ANCHOR_API void PlotLines(const char *label,
-                          const float *values,
-                          int values_count,
-                          int values_offset = 0,
-                          const char *overlay_text = NULL,
-                          float scale_min = FLT_MAX,
-                          float scale_max = FLT_MAX,
-                          wabi::GfVec2f graph_size = wabi::GfVec2f(0, 0),
-                          int stride = sizeof(float));
-ANCHOR_API void PlotLines(const char *label,
-                          float (*values_getter)(void *data, int idx),
+  // Widgets: Drag Sliders
+  // - CTRL+Click on any drag box to turn them into an input box. Manually input values aren't
+  // clamped and can go off-bounds.
+  // - For all the Float2/Float3/Float4/Int2/Int3/Int4 versions of every functions, note that a
+  // 'float v[X]' function argument is the same as 'float* v', the array syntax is just a way to
+  // document the number of elements that are expected to be accessible. You can pass address of your
+  // first element out of a contiguous set, e.g. &myvector[0]
+  // - Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and
+  // display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit:
+  // 1; etc.
+  // - Format string may also be set to NULL or use the default format ("%f" or "%d").
+  // - Speed are per-pixel of mouse movement (v_speed=0.2f: mouse needs to move by 5 pixels to
+  // increase value by 1). For gamepad/keyboard navigation, minimum speed is Max(v_speed,
+  // minimum_step_at_given_precision).
+  // - Use v_min < v_max to clamp edits to given limits. Note that CTRL+Click manual input can
+  // override those limits.
+  // - Use v_max = FLT_MAX / INT_MAX etc to avoid clamping to a maximum, same with v_min = -FLT_MAX /
+  // INT_MIN to avoid clamping to a minimum.
+  // - We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the
+  // same and it makes it easier to swap them.
+  // - Legacy: Pre-1.78 there are DragXXX() function signatures that takes a final `float power=1.0f'
+  // argument instead of the `AnchorSliderFlags flags=0' argument.
+  //   If you get a warning converting a float to AnchorSliderFlags, read
+  //   https://github.com/ocornut/ANCHOR/issues/3361
+  ANCHOR_API bool DragFloat(const char *label,
+                            float *v,
+                            float v_speed = 1.0f,
+                            float v_min = 0.0f,
+                            float v_max = 0.0f,
+                            const char *format = "%.3f",
+                            AnchorSliderFlags flags = 0);  // If v_min >= v_max we have no bound
+  ANCHOR_API bool DragFloat2(const char *label,
+                             float v[2],
+                             float v_speed = 1.0f,
+                             float v_min = 0.0f,
+                             float v_max = 0.0f,
+                             const char *format = "%.3f",
+                             AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragFloat3(const char *label,
+                             float v[3],
+                             float v_speed = 1.0f,
+                             float v_min = 0.0f,
+                             float v_max = 0.0f,
+                             const char *format = "%.3f",
+                             AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragFloat4(const char *label,
+                             float v[4],
+                             float v_speed = 1.0f,
+                             float v_min = 0.0f,
+                             float v_max = 0.0f,
+                             const char *format = "%.3f",
+                             AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragFloatRange2(const char *label,
+                                  float *v_current_min,
+                                  float *v_current_max,
+                                  float v_speed = 1.0f,
+                                  float v_min = 0.0f,
+                                  float v_max = 0.0f,
+                                  const char *format = "%.3f",
+                                  const char *format_max = NULL,
+                                  AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragInt(const char *label,
+                          int *v,
+                          float v_speed = 1.0f,
+                          int v_min = 0,
+                          int v_max = 0,
+                          const char *format = "%d",
+                          AnchorSliderFlags flags = 0);  // If v_min >= v_max we have no bound
+  ANCHOR_API bool DragInt2(const char *label,
+                           int v[2],
+                           float v_speed = 1.0f,
+                           int v_min = 0,
+                           int v_max = 0,
+                           const char *format = "%d",
+                           AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragInt3(const char *label,
+                           int v[3],
+                           float v_speed = 1.0f,
+                           int v_min = 0,
+                           int v_max = 0,
+                           const char *format = "%d",
+                           AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragInt4(const char *label,
+                           int v[4],
+                           float v_speed = 1.0f,
+                           int v_min = 0,
+                           int v_max = 0,
+                           const char *format = "%d",
+                           AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragIntRange2(const char *label,
+                                int *v_current_min,
+                                int *v_current_max,
+                                float v_speed = 1.0f,
+                                int v_min = 0,
+                                int v_max = 0,
+                                const char *format = "%d",
+                                const char *format_max = NULL,
+                                AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragScalar(const char *label,
+                             AnchorDataType data_type,
+                             void *p_data,
+                             float v_speed = 1.0f,
+                             const void *p_min = NULL,
+                             const void *p_max = NULL,
+                             const char *format = NULL,
+                             AnchorSliderFlags flags = 0);
+  ANCHOR_API bool DragScalarN(const char *label,
+                              AnchorDataType data_type,
+                              void *p_data,
+                              int components,
+                              float v_speed = 1.0f,
+                              const void *p_min = NULL,
+                              const void *p_max = NULL,
+                              const char *format = NULL,
+                              AnchorSliderFlags flags = 0);
+
+  // Widgets: Regular Sliders
+  // - CTRL+Click on any slider to turn them into an input box. Manually input values aren't clamped
+  // and can go off-bounds.
+  // - Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and
+  // display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit:
+  // 1; etc.
+  // - Format string may also be set to NULL or use the default format ("%f" or "%d").
+  // - Legacy: Pre-1.78 there are SliderXXX() function signatures that takes a final `float
+  // power=1.0f' argument instead of the `AnchorSliderFlags flags=0' argument.
+  //   If you get a warning converting a float to AnchorSliderFlags, read
+  //   https://github.com/ocornut/ANCHOR/issues/3361
+  ANCHOR_API bool SliderFloat(
+    const char *label,
+    float *v,
+    float v_min,
+    float v_max,
+    const char *format = "%.3f",
+    AnchorSliderFlags flags = 0);  // adjust format to decorate the value with a prefix or a
+                                   // suffix for in-slider labels or unit display.
+  ANCHOR_API bool SliderFloat2(const char *label,
+                               float v[2],
+                               float v_min,
+                               float v_max,
+                               const char *format = "%.3f",
+                               AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderFloat3(const char *label,
+                               float v[3],
+                               float v_min,
+                               float v_max,
+                               const char *format = "%.3f",
+                               AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderFloat4(const char *label,
+                               float v[4],
+                               float v_min,
+                               float v_max,
+                               const char *format = "%.3f",
+                               AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderAngle(const char *label,
+                              float *v_rad,
+                              float v_degrees_min = -360.0f,
+                              float v_degrees_max = +360.0f,
+                              const char *format = "%.0f deg",
+                              AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderInt(const char *label,
+                            int *v,
+                            int v_min,
+                            int v_max,
+                            const char *format = "%d",
+                            AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderInt2(const char *label,
+                             int v[2],
+                             int v_min,
+                             int v_max,
+                             const char *format = "%d",
+                             AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderInt3(const char *label,
+                             int v[3],
+                             int v_min,
+                             int v_max,
+                             const char *format = "%d",
+                             AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderInt4(const char *label,
+                             int v[4],
+                             int v_min,
+                             int v_max,
+                             const char *format = "%d",
+                             AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderScalar(const char *label,
+                               AnchorDataType data_type,
+                               void *p_data,
+                               const void *p_min,
+                               const void *p_max,
+                               const char *format = NULL,
+                               AnchorSliderFlags flags = 0);
+  ANCHOR_API bool SliderScalarN(const char *label,
+                                AnchorDataType data_type,
+                                void *p_data,
+                                int components,
+                                const void *p_min,
+                                const void *p_max,
+                                const char *format = NULL,
+                                AnchorSliderFlags flags = 0);
+  ANCHOR_API bool VSliderFloat(const char *label,
+                               const wabi::GfVec2f &size,
+                               float *v,
+                               float v_min,
+                               float v_max,
+                               const char *format = "%.3f",
+                               AnchorSliderFlags flags = 0);
+  ANCHOR_API bool VSliderInt(const char *label,
+                             const wabi::GfVec2f &size,
+                             int *v,
+                             int v_min,
+                             int v_max,
+                             const char *format = "%d",
+                             AnchorSliderFlags flags = 0);
+  ANCHOR_API bool VSliderScalar(const char *label,
+                                const wabi::GfVec2f &size,
+                                AnchorDataType data_type,
+                                void *p_data,
+                                const void *p_min,
+                                const void *p_max,
+                                const char *format = NULL,
+                                AnchorSliderFlags flags = 0);
+
+  // Widgets: Input with Keyboard
+  // - If you want to use InputText() with std::string or any custom dynamic string type, see
+  // misc/cpp/ANCHOR_stdlib.h and comments in ANCHOR_demo.cpp.
+  // - Most of the AnchorInputTextFlags flags are only useful for InputText() and not for
+  // InputFloatX, InputIntX, InputDouble etc.
+  ANCHOR_API bool InputText(const char *label,
+                            char *buf,
+                            size_t buf_size,
+                            AnchorInputTextFlags flags = 0,
+                            ANCHORInputTextCallback callback = NULL,
+                            void *user_data = NULL);
+  ANCHOR_API bool InputTextMultiline(const char *label,
+                                     char *buf,
+                                     size_t buf_size,
+                                     const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
+                                     AnchorInputTextFlags flags = 0,
+                                     ANCHORInputTextCallback callback = NULL,
+                                     void *user_data = NULL);
+  ANCHOR_API bool InputTextWithHint(const char *label,
+                                    const char *hint,
+                                    char *buf,
+                                    size_t buf_size,
+                                    AnchorInputTextFlags flags = 0,
+                                    ANCHORInputTextCallback callback = NULL,
+                                    void *user_data = NULL);
+  ANCHOR_API bool InputFloat(const char *label,
+                             float *v,
+                             float step = 0.0f,
+                             float step_fast = 0.0f,
+                             const char *format = "%.3f",
+                             AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputFloat2(const char *label,
+                              float v[2],
+                              const char *format = "%.3f",
+                              AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputFloat3(const char *label,
+                              float v[3],
+                              const char *format = "%.3f",
+                              AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputFloat4(const char *label,
+                              float v[4],
+                              const char *format = "%.3f",
+                              AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputInt(const char *label,
+                           int *v,
+                           int step = 1,
+                           int step_fast = 100,
+                           AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputInt2(const char *label, int v[2], AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputInt3(const char *label, int v[3], AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputInt4(const char *label, int v[4], AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputDouble(const char *label,
+                              double *v,
+                              double step = 0.0,
+                              double step_fast = 0.0,
+                              const char *format = "%.6f",
+                              AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputScalar(const char *label,
+                              AnchorDataType data_type,
+                              void *p_data,
+                              const void *p_step = NULL,
+                              const void *p_step_fast = NULL,
+                              const char *format = NULL,
+                              AnchorInputTextFlags flags = 0);
+  ANCHOR_API bool InputScalarN(const char *label,
+                               AnchorDataType data_type,
+                               void *p_data,
+                               int components,
+                               const void *p_step = NULL,
+                               const void *p_step_fast = NULL,
+                               const char *format = NULL,
+                               AnchorInputTextFlags flags = 0);
+
+  // Widgets: Color Editor/Picker (tip: the ColorEdit* functions have a little color square that can
+  // be left-clicked to open a picker, and right-clicked to open an option menu.)
+  // - Note that in C++ a 'float v[X]' function argument is the _same_ as 'float* v', the array
+  // syntax is just a way to document the number of elements that are expected to be accessible.
+  // - You can pass the address of a first float element out of a contiguous structure, e.g.
+  // &myvector[0]
+  ANCHOR_API bool ColorEdit3(const char *label, float col[3], AnchorColorEditFlags flags = 0);
+  ANCHOR_API bool ColorEdit4(const char *label, float col[4], AnchorColorEditFlags flags = 0);
+  ANCHOR_API bool ColorPicker3(const char *label, float col[3], AnchorColorEditFlags flags = 0);
+  ANCHOR_API bool ColorPicker4(const char *label,
+                               float col[4],
+                               AnchorColorEditFlags flags = 0,
+                               const float *ref_col = NULL);
+  ANCHOR_API bool ColorButton(
+    const char *desc_id,
+    const wabi::GfVec4f &col,
+    AnchorColorEditFlags flags = 0,
+    wabi::GfVec2f size =
+      wabi::GfVec2f(0,
+                    0));  // display a color square/button, hover for details, return true when pressed.
+  ANCHOR_API void SetColorEditOptions(
+    AnchorColorEditFlags flags);  // initialize current options (generally on application startup) if you
+                                  // want to select a default format, picker type, etc. User will be able to
+                                  // change many settings, unless you pass the _NoOptions flag to your calls.
+
+  // Widgets: Trees
+  // - TreeNode functions return true when the node is open, in which case you need to also call
+  // TreePop() when you are finished displaying the tree node contents.
+  ANCHOR_API bool TreeNode(const char *label);
+  ANCHOR_API bool TreeNode(const char *str_id, const char *fmt, ...)
+    ANCHOR_FMTARGS(2);                                                                   // helper variation to easily decorelate the id from the displayed string.
+                                                                                         // Read the FAQ about why and how to use ID. to align arbitrary text at the
+                                                                                         // same level as a TreeNode() you can use Bullet().
+  ANCHOR_API bool TreeNode(const void *ptr_id, const char *fmt, ...) ANCHOR_FMTARGS(2);  // "
+  ANCHOR_API bool TreeNodeV(const char *str_id, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
+  ANCHOR_API bool TreeNodeV(const void *ptr_id, const char *fmt, va_list args) ANCHOR_FMTLIST(2);
+  ANCHOR_API bool TreeNodeEx(const char *label, AnchorTreeNodeFlags flags = 0);
+  ANCHOR_API bool TreeNodeEx(const char *str_id, AnchorTreeNodeFlags flags, const char *fmt, ...)
+    ANCHOR_FMTARGS(3);
+  ANCHOR_API bool TreeNodeEx(const void *ptr_id, AnchorTreeNodeFlags flags, const char *fmt, ...)
+    ANCHOR_FMTARGS(3);
+  ANCHOR_API bool TreeNodeExV(const char *str_id, AnchorTreeNodeFlags flags, const char *fmt, va_list args)
+    ANCHOR_FMTLIST(3);
+  ANCHOR_API bool TreeNodeExV(const void *ptr_id, AnchorTreeNodeFlags flags, const char *fmt, va_list args)
+    ANCHOR_FMTLIST(3);
+  ANCHOR_API void TreePush(
+    const char *str_id);                                // ~ Indent()+PushId(). Already called by TreeNode() when returning true,
+                                                        // but you can call TreePush/TreePop yourself if desired.
+  ANCHOR_API void TreePush(const void *ptr_id = NULL);  // "
+  ANCHOR_API void TreePop();                            // ~ Unindent()+PopId()
+  ANCHOR_API float GetTreeNodeToLabelSpacing();         // horizontal distance preceding label when using
+                                                        // TreeNode*() or Bullet() == (g.FontSize +
+                                                        // style.FramePadding[0]*2) for a regular unframed
+                                                        // TreeNode
+  ANCHOR_API bool CollapsingHeader(
+    const char *label,
+    AnchorTreeNodeFlags flags = 0);  // if returning 'true' the header is open. doesn't indent nor
+                                     // push on ID stack. user doesn't have to call TreePop().
+  ANCHOR_API bool CollapsingHeader(
+    const char *label,
+    bool *p_visible,
+    AnchorTreeNodeFlags flags =
+      0);  // when 'p_visible != NULL': if '*p_visible==true' display an additional small close
+           // button on upper right of the header which will set the bool to false when clicked,
+           // if '*p_visible==false' don't display the header.
+  ANCHOR_API void SetNextItemOpen(bool is_open,
+                                  AnchorCond cond = 0);  // set next TreeNode/CollapsingHeader open state.
+
+  // Widgets: Selectables
+  // - A selectable highlights when hovered, and can display another color when selected.
+  // - Neighbors selectable extend their highlight bounds in order to leave no gap between them. This
+  // is so a series of selected Selectable appear contiguous.
+  ANCHOR_API bool Selectable(const char *label,
+                             bool selected = false,
+                             AnchorSelectableFlags flags = 0,
+                             const wabi::GfVec2f &size = wabi::GfVec2f(
+                               0,
+                               0));  // "bool selected" carry the selection state (read-only). Selectable()
+                                     // is clicked is returns true so you can modify your selection state.
+                                     // size[0]==0.0: use remaining width, size[0]>0.0: specify width.
+                                     // size[1]==0.0: use label height, size[1]>0.0: specify height
+  ANCHOR_API bool Selectable(
+    const char *label,
+    bool *p_selected,
+    AnchorSelectableFlags flags = 0,
+    const wabi::GfVec2f &size = wabi::GfVec2f(0,
+                                              0));  // "bool* p_selected" point to the selection
+                                                    // state (read-write), as a convenient helper.
+
+  // Widgets: List Boxes
+  // - This is essentially a thin wrapper to using BeginChild/EndChild with some stylistic changes.
+  // - The BeginListBox()/EndListBox() api allows you to manage your contents and selection state
+  // however you want it, by creating e.g. Selectable() or any items.
+  // - The simplified/old ListBox() api are helpers over BeginListBox()/EndListBox() which are kept
+  // available for convenience purpose. This is analoguous to how Combos are created.
+  // - Choose frame width:   size[0] > 0.0f: custom  /  size[0] < 0.0f or -FLT_MIN: right-align   /
+  // size[0] = 0.0f (default): use current ItemWidth
+  // - Choose frame height:  size[1] > 0.0f: custom  /  size[1] < 0.0f or -FLT_MIN: bottom-align  /
+  // size[1] = 0.0f (default): arbitrary default height which can fit ~7 items
+  ANCHOR_API bool BeginListBox(
+    const char *label,
+    const wabi::GfVec2f &size = wabi::GfVec2f(0, 0));  // open a framed scrolling region
+  ANCHOR_API void EndListBox();                        // only call EndListBox() if BeginListBox() returned true!
+  ANCHOR_API bool ListBox(const char *label,
+                          int *current_item,
+                          const char *const items[],
+                          int items_count,
+                          int height_in_items = -1);
+  ANCHOR_API bool ListBox(const char *label,
+                          int *current_item,
+                          bool (*items_getter)(void *data, int idx, const char **out_text),
                           void *data,
-                          int values_count,
-                          int values_offset = 0,
-                          const char *overlay_text = NULL,
-                          float scale_min = FLT_MAX,
-                          float scale_max = FLT_MAX,
-                          wabi::GfVec2f graph_size = wabi::GfVec2f(0, 0));
-ANCHOR_API void PlotHistogram(const char *label,
-                              const float *values,
-                              int values_count,
-                              int values_offset = 0,
-                              const char *overlay_text = NULL,
-                              float scale_min = FLT_MAX,
-                              float scale_max = FLT_MAX,
-                              wabi::GfVec2f graph_size = wabi::GfVec2f(0, 0),
-                              int stride = sizeof(float));
-ANCHOR_API void PlotHistogram(const char *label,
-                              float (*values_getter)(void *data, int idx),
-                              void *data,
-                              int values_count,
-                              int values_offset = 0,
-                              const char *overlay_text = NULL,
-                              float scale_min = FLT_MAX,
-                              float scale_max = FLT_MAX,
-                              wabi::GfVec2f graph_size = wabi::GfVec2f(0, 0));
+                          int items_count,
+                          int height_in_items = -1);
 
-// Widgets: Value() Helpers.
-// - Those are merely shortcut to calling Text() with a format string. Output single value in
-// "name: value" format (tip: freely declare more in your code to handle your types. you can add
-// functions to the ANCHOR namespace)
-ANCHOR_API void Value(const char *prefix, bool b);
-ANCHOR_API void Value(const char *prefix, int v);
-ANCHOR_API void Value(const char *prefix, unsigned int v);
-ANCHOR_API void Value(const char *prefix, float v, const char *float_format = NULL);
+  // Widgets: Data Plotting
+  // - Consider using ImPlot (https://github.com/epezent/implot)
+  ANCHOR_API void PlotLines(const char *label,
+                            const float *values,
+                            int values_count,
+                            int values_offset = 0,
+                            const char *overlay_text = NULL,
+                            float scale_min = FLT_MAX,
+                            float scale_max = FLT_MAX,
+                            wabi::GfVec2f graph_size = wabi::GfVec2f(0, 0),
+                            int stride = sizeof(float));
+  ANCHOR_API void PlotLines(const char *label,
+                            float (*values_getter)(void *data, int idx),
+                            void *data,
+                            int values_count,
+                            int values_offset = 0,
+                            const char *overlay_text = NULL,
+                            float scale_min = FLT_MAX,
+                            float scale_max = FLT_MAX,
+                            wabi::GfVec2f graph_size = wabi::GfVec2f(0, 0));
+  ANCHOR_API void PlotHistogram(const char *label,
+                                const float *values,
+                                int values_count,
+                                int values_offset = 0,
+                                const char *overlay_text = NULL,
+                                float scale_min = FLT_MAX,
+                                float scale_max = FLT_MAX,
+                                wabi::GfVec2f graph_size = wabi::GfVec2f(0, 0),
+                                int stride = sizeof(float));
+  ANCHOR_API void PlotHistogram(const char *label,
+                                float (*values_getter)(void *data, int idx),
+                                void *data,
+                                int values_count,
+                                int values_offset = 0,
+                                const char *overlay_text = NULL,
+                                float scale_min = FLT_MAX,
+                                float scale_max = FLT_MAX,
+                                wabi::GfVec2f graph_size = wabi::GfVec2f(0, 0));
 
-// Widgets: Menus
-// - Use BeginMenuBar() on a window AnchorWindowFlags_MenuBar to append to its menu bar.
-// - Use BeginMainMenuBar() to create a menu bar at the top of the screen and append to it.
-// - Use BeginMenu() to create a menu. You can call BeginMenu() multiple time with the same
-// identifier to append more items to it.
-// - Not that MenuItem() keyboardshortcuts are displayed as a convenience but _not processed_ by
-// ANCHOR at the moment.
-ANCHOR_API bool BeginMenuBar();      // append to menu-bar of current window (requires
-                                     // AnchorWindowFlags_MenuBar flag set on parent window).
-ANCHOR_API void EndMenuBar();        // only call EndMenuBar() if BeginMenuBar() returns true!
-ANCHOR_API bool BeginMainMenuBar();  // create and append to a full screen menu-bar.
-ANCHOR_API void EndMainMenuBar();    // only call EndMainMenuBar() if BeginMainMenuBar() returns
-                                     // true!
-ANCHOR_API bool BeginMenu(
-  const char *label,
-  bool enabled = true);     // create a sub-menu entry. only call EndMenu() if this returns true!
-ANCHOR_API void EndMenu();  // only call EndMenu() if BeginMenu() returns true!
-ANCHOR_API bool MenuItem(const char *label,
-                         const char *shortcut = NULL,
-                         bool selected = false,
-                         bool enabled = true);  // return true when activated.
-ANCHOR_API bool MenuItem(const char *label,
-                         const char *shortcut,
-                         bool *p_selected,
-                         bool enabled = true);  // return true when activated + toggle
-                                                // (*p_selected) if p_selected != NULL
+  // Widgets: Value() Helpers.
+  // - Those are merely shortcut to calling Text() with a format string. Output single value in
+  // "name: value" format (tip: freely declare more in your code to handle your types. you can add
+  // functions to the ANCHOR namespace)
+  ANCHOR_API void Value(const char *prefix, bool b);
+  ANCHOR_API void Value(const char *prefix, int v);
+  ANCHOR_API void Value(const char *prefix, unsigned int v);
+  ANCHOR_API void Value(const char *prefix, float v, const char *float_format = NULL);
 
-// Tooltips
-// - Tooltip are windows following the mouse. They do not take focus away.
-ANCHOR_API void BeginTooltip();  // begin/append a tooltip window. to create full-featured tooltip
-                                 // (with any kind of items).
-ANCHOR_API void EndTooltip();
-ANCHOR_API void SetTooltip(const char *fmt, ...)
-  ANCHOR_FMTARGS(1);  // set a text-only tooltip, typically use with ANCHOR::IsItemHovered().
-                      // override any previous call to SetTooltip().
-ANCHOR_API void SetTooltipV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
+  // Widgets: Menus
+  // - Use BeginMenuBar() on a window AnchorWindowFlags_MenuBar to append to its menu bar.
+  // - Use BeginMainMenuBar() to create a menu bar at the top of the screen and append to it.
+  // - Use BeginMenu() to create a menu. You can call BeginMenu() multiple time with the same
+  // identifier to append more items to it.
+  // - Not that MenuItem() keyboardshortcuts are displayed as a convenience but _not processed_ by
+  // ANCHOR at the moment.
+  ANCHOR_API bool BeginMenuBar();      // append to menu-bar of current window (requires
+                                       // AnchorWindowFlags_MenuBar flag set on parent window).
+  ANCHOR_API void EndMenuBar();        // only call EndMenuBar() if BeginMenuBar() returns true!
+  ANCHOR_API bool BeginMainMenuBar();  // create and append to a full screen menu-bar.
+  ANCHOR_API void EndMainMenuBar();    // only call EndMainMenuBar() if BeginMainMenuBar() returns
+                                       // true!
+  ANCHOR_API bool BeginMenu(
+    const char *label,
+    bool enabled = true);     // create a sub-menu entry. only call EndMenu() if this returns true!
+  ANCHOR_API void EndMenu();  // only call EndMenu() if BeginMenu() returns true!
+  ANCHOR_API bool MenuItem(const char *label,
+                           const char *shortcut = NULL,
+                           bool selected = false,
+                           bool enabled = true);  // return true when activated.
+  ANCHOR_API bool MenuItem(const char *label,
+                           const char *shortcut,
+                           bool *p_selected,
+                           bool enabled = true);  // return true when activated + toggle
+                                                  // (*p_selected) if p_selected != NULL
 
-// Popups, Modals
-//  - They block normal mouse hovering detection (and therefore most mouse interactions) behind
-//  them.
-//  - If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE.
-//  - Their visibility state (~bool) is held internally instead of being held by the programmer as
-//  we are used to with regular Begin*() calls.
-//  - The 3 properties above are related: we need to retain popup visibility state in the library
-//  because popups may be closed as any time.
-//  - You can bypass the hovering restriction by using AnchorHoveredFlags_AllowWhenBlockedByPopup
-//  when calling IsItemHovered() or IsWindowHovered().
-//  - IMPORTANT: Popup identifiers are relative to the current ID stack, so OpenPopup and
-//  BeginPopup generally needs to be at the same level of the stack.
-//    This is sometimes leading to confusing mistakes. May rework this in the future.
-// Popups: begin/end functions
-//  - BeginPopup(): query popup state, if open start appending into the window. Call EndPopup()
-//  afterwards. AnchorWindowFlags are forwarded to the window.
-//  - BeginPopupModal(): block every interactions behind the window, cannot be closed by user, add
-//  a dimming background, has a title bar.
-ANCHOR_API bool BeginPopup(const char *str_id,
-                           AnchorWindowFlags flags = 0);  // return true if the popup is open, and
-                                                          // you can start outputting to it.
-ANCHOR_API bool BeginPopupModal(
-  const char *name,
-  bool *p_open = NULL,
-  AnchorWindowFlags flags = 0);  // return true if the modal is open, and you can start outputting to it.
-ANCHOR_API void EndPopup();      // only call EndPopup() if BeginPopupXXX() returns true!
-// Popups: open/close functions
-//  - OpenPopup(): set popup state to open. AnchorPopupFlags are available for opening options.
-//  - If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE.
-//  - CloseCurrentPopup(): use inside the BeginPopup()/EndPopup() scope to close manually.
-//  - CloseCurrentPopup() is called by default by Selectable()/MenuItem() when activated (FIXME:
-//  need some options).
-//  - Use AnchorPopupFlags_NoOpenOverExistingPopup to avoid opening a popup if there's already one
-//  at the same level. This is equivalent to e.g. testing for !IsAnyPopupOpen() prior to
-//  OpenPopup().
-//  - Use IsWindowAppearing() after BeginPopup() to tell if a window just opened.
-ANCHOR_API void OpenPopup(
-  const char *str_id,
-  AnchorPopupFlags popup_flags = 0);  // call to mark popup as open (don't call every frame!).
-ANCHOR_API void OpenPopup(
-  ANCHOR_ID id,
-  AnchorPopupFlags popup_flags = 0);  // id overload to facilitate calling from nested stacks
-ANCHOR_API void OpenPopupOnItemClick(
-  const char *str_id = NULL,
-  AnchorPopupFlags popup_flags = 1);  // helper to open popup when clicked on last item. Default to
-                                      // AnchorPopupFlags_MouseButtonRight == 1. (note: actually triggers on
-                                      // the mouse _released_ event to be consistent with popup behaviors)
-ANCHOR_API void CloseCurrentPopup();  // manually close the popup we have begin-ed into.
-// Popups: open+begin combined functions helpers
-//  - Helpers to do OpenPopup+BeginPopup where the Open action is triggered by e.g. hovering an
-//  item and right-clicking.
-//  - They are convenient to easily create context menus, hence the name.
-//  - IMPORTANT: Notice that BeginPopupContextXXX takes AnchorPopupFlags just like OpenPopup() and
-//  unlike BeginPopup(). For full consistency, we may add AnchorWindowFlags to the
-//  BeginPopupContextXXX functions in the future.
-//  - IMPORTANT: we exceptionally default their flags to 1 (== AnchorPopupFlags_MouseButtonRight)
-//  for backward compatibility with older API taking 'int mouse_button = 1' parameter, so if you
-//  add other flags remember to re-add the AnchorPopupFlags_MouseButtonRight.
-ANCHOR_API bool BeginPopupContextItem(
-  const char *str_id = NULL,
-  AnchorPopupFlags popup_flags =
-    1);  // open+begin popup when clicked on last item. Use str_id==NULL to associate the popup
-         // to previous item. If you want to use that on a non-interactive item such as Text()
-         // you need to pass in an explicit ID here. read comments in .cpp!
-ANCHOR_API bool BeginPopupContextWindow(
-  const char *str_id = NULL,
-  AnchorPopupFlags popup_flags = 1);  // open+begin popup when clicked on current window.
-ANCHOR_API bool BeginPopupContextVoid(
-  const char *str_id = NULL,
-  AnchorPopupFlags popup_flags = 1);  // open+begin popup when clicked in void (where there are no windows).
-// Popups: query functions
-//  - IsPopupOpen(): return true if the popup is open at the current BeginPopup() level of the
-//  popup stack.
-//  - IsPopupOpen() with AnchorPopupFlags_AnyPopupId: return true if any popup is open at the
-//  current BeginPopup() level of the popup stack.
-//  - IsPopupOpen() with AnchorPopupFlags_AnyPopupId + AnchorPopupFlags_AnyPopupLevel: return true
-//  if any popup is open.
-ANCHOR_API bool IsPopupOpen(const char *str_id,
-                            AnchorPopupFlags flags = 0);  // return true if the popup is open.
+  // Tooltips
+  // - Tooltip are windows following the mouse. They do not take focus away.
+  ANCHOR_API void BeginTooltip();  // begin/append a tooltip window. to create full-featured tooltip
+                                   // (with any kind of items).
+  ANCHOR_API void EndTooltip();
+  ANCHOR_API void SetTooltip(const char *fmt, ...)
+    ANCHOR_FMTARGS(1);  // set a text-only tooltip, typically use with ANCHOR::IsItemHovered().
+                        // override any previous call to SetTooltip().
+  ANCHOR_API void SetTooltipV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
 
-// Tables
-// [BETA API] API may evolve slightly! If you use this, please update to the next version when it
-// comes out!
-// - Full-featured replacement for old Columns API.
-// - See Demo->Tables for demo code.
-// - See top of ANCHOR_tables.cpp for general commentary.
-// - See AnchorTableFlags_ and AnchorTableColumnFlags_ enums for a description of available
-// flags. The typical call flow is:
-// - 1. Call BeginTable().
-// - 2. Optionally call TableSetupColumn() to submit column name/flags/defaults.
-// - 3. Optionally call TableSetupScrollFreeze() to request scroll freezing of columns/rows.
-// - 4. Optionally call TableHeadersRow() to submit a header row. Names are pulled from
-// TableSetupColumn() data.
-// - 5. Populate contents:
-//    - In most situations you can use TableNextRow() + TableSetColumnIndex(N) to start appending
-//    into a column.
-//    - If you are using tables as a sort of grid, where every columns is holding the same type of
-//    contents,
-//      you may prefer using TableNextColumn() instead of TableNextRow() + TableSetColumnIndex().
-//      TableNextColumn() will automatically wrap-around into the next row if needed.
-//    - IMPORTANT: Comparatively to the old Columns() API, we need to call TableNextColumn() for
-//    the first column!
-//    - Summary of possible call flow:
-//        --------------------------------------------------------------------------------------------------------
-//        TableNextRow() -> TableSetColumnIndex(0) -> Text("Hello 0") -> TableSetColumnIndex(1) ->
-//        Text("Hello 1")  // OK TableNextRow() -> TableNextColumn()      -> Text("Hello 0") ->
-//        TableNextColumn()      -> Text("Hello 1")  // OK
-//                          TableNextColumn()      -> Text("Hello 0") -> TableNextColumn()      ->
-//                          Text("Hello 1")  // OK: TableNextColumn() automatically gets to next
-//                          row!
-//        TableNextRow()                           -> Text("Hello 0") // Not OK! Missing
-//        TableSetColumnIndex() or TableNextColumn()! Text will not appear!
-//        --------------------------------------------------------------------------------------------------------
-// - 5. Call EndTable()
-ANCHOR_API bool BeginTable(const char *str_id,
-                           int column,
-                           AnchorTableFlags flags = 0,
-                           const wabi::GfVec2f &outer_size = wabi::GfVec2f(0.0f, 0.0f),
-                           float inner_width = 0.0f);
-ANCHOR_API void EndTable();  // only call EndTable() if BeginTable() returns true!
-ANCHOR_API void TableNextRow(AnchorTableRowFlags row_flags = 0,
-                             float min_row_height = 0.0f);  // append into the first cell of a new row.
-ANCHOR_API bool TableNextColumn();                          // append into the next column (or first column of next row if
-                                                            // currently in last column). Return true when column is
-                                                            // visible.
-ANCHOR_API bool TableSetColumnIndex(
-  int column_n);  // append into the specified column. Return true when column is visible.
-// Tables: Headers & Columns declaration
-// - Use TableSetupColumn() to specify label, resizing policy, default width/weight, id, various
-// other flags etc.
-// - Use TableHeadersRow() to create a header row and automatically submit a TableHeader() for each
-// column.
-//   Headers are required to perform: reordering, sorting, and opening the context menu.
-//   The context menu can also be made available in columns body using
-//   AnchorTableFlags_ContextMenuInBody.
-// - You may manually submit headers using TableNextRow() + TableHeader() calls, but this is only
-// useful in
-//   some advanced use cases (e.g. adding custom widgets in header row).
-// - Use TableSetupScrollFreeze() to lock columns/rows so they stay visible when scrolled.
-ANCHOR_API void TableSetupColumn(const char *label,
-                                 AnchorTableColumnFlags flags = 0,
-                                 float init_width_or_weight = 0.0f,
-                                 ANCHOR_ID user_id = 0);
-ANCHOR_API void TableSetupScrollFreeze(int cols,
-                                       int rows);  // lock columns/rows so they stay visible when scrolled.
-ANCHOR_API void TableHeadersRow();                 // submit all headers cells based on data provided to
-                                                   // TableSetupColumn() + submit context menu
-ANCHOR_API void TableHeader(const char *label);    // submit one header cell manually (rarely used)
-// Tables: Sorting
-// - Call TableGetSortSpecs() to retrieve latest sort specs for the table. NULL when not sorting.
-// - When 'SpecsDirty == true' you should sort your data. It will be true when sorting specs have
-// changed
-//   since last call, or the first time. Make sure to set 'SpecsDirty = false' after sorting, else
-//   you may wastefully sort your data every frame!
-// - Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to
-// BeginTable().
-ANCHOR_API AnchorTableSortSpecs *TableGetSortSpecs();  // get latest sort specs for the table
-                                                       // (NULL if not sorting).
-// Tables: Miscellaneous functions
-// - Functions args 'int column_n' treat the default value of -1 as the same as passing the current
-// column index.
-ANCHOR_API int TableGetColumnCount();  // return number of columns (value passed to BeginTable)
-ANCHOR_API int TableGetColumnIndex();  // return current column index.
-ANCHOR_API int TableGetRowIndex();     // return current row index.
-ANCHOR_API const char *TableGetColumnName(
-  int column_n = -1);  // return "" if column didn't have a name declared by TableSetupColumn().
-                       // Pass -1 to use current column.
-ANCHOR_API AnchorTableColumnFlags TableGetColumnFlags(
-  int column_n = -1);  // return column flags so you can query their Enabled/Visible/Sorted/Hovered
-                       // status flags. Pass -1 to use current column.
-ANCHOR_API void TableSetColumnEnabled(
-  int column_n,
-  bool v);  // change enabled/disabled state of a column, set to false to hide the column. Note
-            // that end-user can use the context menu to change this themselves (right-click in
-            // headers, or right-click in columns body with AnchorTableFlags_ContextMenuInBody)
-ANCHOR_API void TableSetBgColor(AnchorTableBGTarget target,
-                                AnchorU32 color,
-                                int column_n = -1);  // change the color of a cell, row, or column. See
-                                                     // AnchorTableBGTarget_ flags for details.
+  // Popups, Modals
+  //  - They block normal mouse hovering detection (and therefore most mouse interactions) behind
+  //  them.
+  //  - If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE.
+  //  - Their visibility state (~bool) is held internally instead of being held by the programmer as
+  //  we are used to with regular Begin*() calls.
+  //  - The 3 properties above are related: we need to retain popup visibility state in the library
+  //  because popups may be closed as any time.
+  //  - You can bypass the hovering restriction by using AnchorHoveredFlags_AllowWhenBlockedByPopup
+  //  when calling IsItemHovered() or IsWindowHovered().
+  //  - IMPORTANT: Popup identifiers are relative to the current ID stack, so OpenPopup and
+  //  BeginPopup generally needs to be at the same level of the stack.
+  //    This is sometimes leading to confusing mistakes. May rework this in the future.
+  // Popups: begin/end functions
+  //  - BeginPopup(): query popup state, if open start appending into the window. Call EndPopup()
+  //  afterwards. AnchorWindowFlags are forwarded to the window.
+  //  - BeginPopupModal(): block every interactions behind the window, cannot be closed by user, add
+  //  a dimming background, has a title bar.
+  ANCHOR_API bool BeginPopup(const char *str_id,
+                             AnchorWindowFlags flags = 0);  // return true if the popup is open, and
+                                                            // you can start outputting to it.
+  ANCHOR_API bool BeginPopupModal(
+    const char *name,
+    bool *p_open = NULL,
+    AnchorWindowFlags flags = 0);  // return true if the modal is open, and you can start outputting to it.
+  ANCHOR_API void EndPopup();      // only call EndPopup() if BeginPopupXXX() returns true!
+  // Popups: open/close functions
+  //  - OpenPopup(): set popup state to open. AnchorPopupFlags are available for opening options.
+  //  - If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE.
+  //  - CloseCurrentPopup(): use inside the BeginPopup()/EndPopup() scope to close manually.
+  //  - CloseCurrentPopup() is called by default by Selectable()/MenuItem() when activated (FIXME:
+  //  need some options).
+  //  - Use AnchorPopupFlags_NoOpenOverExistingPopup to avoid opening a popup if there's already one
+  //  at the same level. This is equivalent to e.g. testing for !IsAnyPopupOpen() prior to
+  //  OpenPopup().
+  //  - Use IsWindowAppearing() after BeginPopup() to tell if a window just opened.
+  ANCHOR_API void OpenPopup(
+    const char *str_id,
+    AnchorPopupFlags popup_flags = 0);  // call to mark popup as open (don't call every frame!).
+  ANCHOR_API void OpenPopup(
+    ANCHOR_ID id,
+    AnchorPopupFlags popup_flags = 0);  // id overload to facilitate calling from nested stacks
+  ANCHOR_API void OpenPopupOnItemClick(
+    const char *str_id = NULL,
+    AnchorPopupFlags popup_flags =
+      1);                               // helper to open popup when clicked on last item. Default to
+                                        // AnchorPopupFlags_MouseButtonRight == 1. (note: actually triggers on
+                                        // the mouse _released_ event to be consistent with popup behaviors)
+  ANCHOR_API void CloseCurrentPopup();  // manually close the popup we have begin-ed into.
+  // Popups: open+begin combined functions helpers
+  //  - Helpers to do OpenPopup+BeginPopup where the Open action is triggered by e.g. hovering an
+  //  item and right-clicking.
+  //  - They are convenient to easily create context menus, hence the name.
+  //  - IMPORTANT: Notice that BeginPopupContextXXX takes AnchorPopupFlags just like OpenPopup() and
+  //  unlike BeginPopup(). For full consistency, we may add AnchorWindowFlags to the
+  //  BeginPopupContextXXX functions in the future.
+  //  - IMPORTANT: we exceptionally default their flags to 1 (== AnchorPopupFlags_MouseButtonRight)
+  //  for backward compatibility with older API taking 'int mouse_button = 1' parameter, so if you
+  //  add other flags remember to re-add the AnchorPopupFlags_MouseButtonRight.
+  ANCHOR_API bool BeginPopupContextItem(
+    const char *str_id = NULL,
+    AnchorPopupFlags popup_flags =
+      1);  // open+begin popup when clicked on last item. Use str_id==NULL to associate the popup
+           // to previous item. If you want to use that on a non-interactive item such as Text()
+           // you need to pass in an explicit ID here. read comments in .cpp!
+  ANCHOR_API bool BeginPopupContextWindow(
+    const char *str_id = NULL,
+    AnchorPopupFlags popup_flags = 1);  // open+begin popup when clicked on current window.
+  ANCHOR_API bool BeginPopupContextVoid(
+    const char *str_id = NULL,
+    AnchorPopupFlags popup_flags =
+      1);  // open+begin popup when clicked in void (where there are no windows).
+  // Popups: query functions
+  //  - IsPopupOpen(): return true if the popup is open at the current BeginPopup() level of the
+  //  popup stack.
+  //  - IsPopupOpen() with AnchorPopupFlags_AnyPopupId: return true if any popup is open at the
+  //  current BeginPopup() level of the popup stack.
+  //  - IsPopupOpen() with AnchorPopupFlags_AnyPopupId + AnchorPopupFlags_AnyPopupLevel: return true
+  //  if any popup is open.
+  ANCHOR_API bool IsPopupOpen(const char *str_id,
+                              AnchorPopupFlags flags = 0);  // return true if the popup is open.
 
-// Legacy Columns API (2020: prefer using Tables!)
-// - You can also use SameLine(pos_x) to mimic simplified columns.
-ANCHOR_API void Columns(int count = 1, const char *id = NULL, bool border = true);
-ANCHOR_API void NextColumn();     // next column, defaults to current row or next row if the current
-                                  // row is finished
-ANCHOR_API int GetColumnIndex();  // get current column index
-ANCHOR_API float GetColumnWidth(
-  int column_index = -1);  // get column width (in pixels). pass -1 to use current column
-ANCHOR_API void SetColumnWidth(int column_index,
-                               float width);  // set column width (in pixels). pass -1 to use current column
-ANCHOR_API float GetColumnOffset(
-  int column_index = -1);  // get position of column line (in pixels, from the left side of the
-                           // contents region). pass -1 to use current column, otherwise
-                           // 0..GetColumnsCount() inclusive. column 0 is typically 0.0f
-ANCHOR_API void SetColumnOffset(
-  int column_index,
-  float offset_x);  // set position of column line (in pixels, from the left side of the contents
-                    // region). pass -1 to use current column
-ANCHOR_API int GetColumnsCount();
+  // Tables
+  // [BETA API] API may evolve slightly! If you use this, please update to the next version when it
+  // comes out!
+  // - Full-featured replacement for old Columns API.
+  // - See Demo->Tables for demo code.
+  // - See top of ANCHOR_tables.cpp for general commentary.
+  // - See AnchorTableFlags_ and AnchorTableColumnFlags_ enums for a description of available
+  // flags. The typical call flow is:
+  // - 1. Call BeginTable().
+  // - 2. Optionally call TableSetupColumn() to submit column name/flags/defaults.
+  // - 3. Optionally call TableSetupScrollFreeze() to request scroll freezing of columns/rows.
+  // - 4. Optionally call TableHeadersRow() to submit a header row. Names are pulled from
+  // TableSetupColumn() data.
+  // - 5. Populate contents:
+  //    - In most situations you can use TableNextRow() + TableSetColumnIndex(N) to start appending
+  //    into a column.
+  //    - If you are using tables as a sort of grid, where every columns is holding the same type of
+  //    contents,
+  //      you may prefer using TableNextColumn() instead of TableNextRow() + TableSetColumnIndex().
+  //      TableNextColumn() will automatically wrap-around into the next row if needed.
+  //    - IMPORTANT: Comparatively to the old Columns() API, we need to call TableNextColumn() for
+  //    the first column!
+  //    - Summary of possible call flow:
+  //        --------------------------------------------------------------------------------------------------------
+  //        TableNextRow() -> TableSetColumnIndex(0) -> Text("Hello 0") -> TableSetColumnIndex(1) ->
+  //        Text("Hello 1")  // OK TableNextRow() -> TableNextColumn()      -> Text("Hello 0") ->
+  //        TableNextColumn()      -> Text("Hello 1")  // OK
+  //                          TableNextColumn()      -> Text("Hello 0") -> TableNextColumn()      ->
+  //                          Text("Hello 1")  // OK: TableNextColumn() automatically gets to next
+  //                          row!
+  //        TableNextRow()                           -> Text("Hello 0") // Not OK! Missing
+  //        TableSetColumnIndex() or TableNextColumn()! Text will not appear!
+  //        --------------------------------------------------------------------------------------------------------
+  // - 5. Call EndTable()
+  ANCHOR_API bool BeginTable(const char *str_id,
+                             int column,
+                             AnchorTableFlags flags = 0,
+                             const wabi::GfVec2f &outer_size = wabi::GfVec2f(0.0f, 0.0f),
+                             float inner_width = 0.0f);
+  ANCHOR_API void EndTable();  // only call EndTable() if BeginTable() returns true!
+  ANCHOR_API void TableNextRow(AnchorTableRowFlags row_flags = 0,
+                               float min_row_height = 0.0f);  // append into the first cell of a new row.
+  ANCHOR_API bool TableNextColumn();                          // append into the next column (or first column of next row if
+                                                              // currently in last column). Return true when column is
+                                                              // visible.
+  ANCHOR_API bool TableSetColumnIndex(
+    int column_n);  // append into the specified column. Return true when column is visible.
+  // Tables: Headers & Columns declaration
+  // - Use TableSetupColumn() to specify label, resizing policy, default width/weight, id, various
+  // other flags etc.
+  // - Use TableHeadersRow() to create a header row and automatically submit a TableHeader() for each
+  // column.
+  //   Headers are required to perform: reordering, sorting, and opening the context menu.
+  //   The context menu can also be made available in columns body using
+  //   AnchorTableFlags_ContextMenuInBody.
+  // - You may manually submit headers using TableNextRow() + TableHeader() calls, but this is only
+  // useful in
+  //   some advanced use cases (e.g. adding custom widgets in header row).
+  // - Use TableSetupScrollFreeze() to lock columns/rows so they stay visible when scrolled.
+  ANCHOR_API void TableSetupColumn(const char *label,
+                                   AnchorTableColumnFlags flags = 0,
+                                   float init_width_or_weight = 0.0f,
+                                   ANCHOR_ID user_id = 0);
+  ANCHOR_API void TableSetupScrollFreeze(int cols,
+                                         int rows);  // lock columns/rows so they stay visible when scrolled.
+  ANCHOR_API void TableHeadersRow();                 // submit all headers cells based on data provided to
+                                                     // TableSetupColumn() + submit context menu
+  ANCHOR_API void TableHeader(const char *label);    // submit one header cell manually (rarely used)
+  // Tables: Sorting
+  // - Call TableGetSortSpecs() to retrieve latest sort specs for the table. NULL when not sorting.
+  // - When 'SpecsDirty == true' you should sort your data. It will be true when sorting specs have
+  // changed
+  //   since last call, or the first time. Make sure to set 'SpecsDirty = false' after sorting, else
+  //   you may wastefully sort your data every frame!
+  // - Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to
+  // BeginTable().
+  ANCHOR_API AnchorTableSortSpecs *TableGetSortSpecs();  // get latest sort specs for the table
+                                                         // (NULL if not sorting).
+  // Tables: Miscellaneous functions
+  // - Functions args 'int column_n' treat the default value of -1 as the same as passing the current
+  // column index.
+  ANCHOR_API int TableGetColumnCount();  // return number of columns (value passed to BeginTable)
+  ANCHOR_API int TableGetColumnIndex();  // return current column index.
+  ANCHOR_API int TableGetRowIndex();     // return current row index.
+  ANCHOR_API const char *TableGetColumnName(
+    int column_n = -1);  // return "" if column didn't have a name declared by TableSetupColumn().
+                         // Pass -1 to use current column.
+  ANCHOR_API AnchorTableColumnFlags TableGetColumnFlags(
+    int column_n = -1);  // return column flags so you can query their Enabled/Visible/Sorted/Hovered
+                         // status flags. Pass -1 to use current column.
+  ANCHOR_API void TableSetColumnEnabled(
+    int column_n,
+    bool v);  // change enabled/disabled state of a column, set to false to hide the column. Note
+              // that end-user can use the context menu to change this themselves (right-click in
+              // headers, or right-click in columns body with AnchorTableFlags_ContextMenuInBody)
+  ANCHOR_API void TableSetBgColor(AnchorTableBGTarget target,
+                                  AnchorU32 color,
+                                  int column_n = -1);  // change the color of a cell, row, or column. See
+                                                       // AnchorTableBGTarget_ flags for details.
 
-// Tab Bars, Tabs
-ANCHOR_API bool BeginTabBar(const char *str_id,
-                            AnchorTabBarFlags flags = 0);  // create and append into a TabBar
-ANCHOR_API void EndTabBar();                               // only call EndTabBar() if BeginTabBar() returns true!
-ANCHOR_API bool BeginTabItem(
-  const char *label,
-  bool *p_open = NULL,
-  AnchorTabItemFlags flags = 0);  // create a Tab. Returns true if the Tab is selected.
-ANCHOR_API void EndTabItem();     // only call EndTabItem() if BeginTabItem() returns true!
-ANCHOR_API bool TabItemButton(
-  const char *label,
-  AnchorTabItemFlags flags = 0);  // create a Tab behaving like a button. return true when
-                                  // clicked. cannot be selected in the tab bar.
-ANCHOR_API void SetTabItemClosed(
-  const char *tab_or_docked_window_label);  // notify TabBar or Docking system of a closed tab/window
-                                            // ahead (useful to reduce visual flicker on reorderable tab
-                                            // bars). For tab-bar: call after BeginTabBar() and before
-                                            // Tab submissions. Otherwise call with a window name.
+  // Legacy Columns API (2020: prefer using Tables!)
+  // - You can also use SameLine(pos_x) to mimic simplified columns.
+  ANCHOR_API void Columns(int count = 1, const char *id = NULL, bool border = true);
+  ANCHOR_API void NextColumn();     // next column, defaults to current row or next row if the current
+                                    // row is finished
+  ANCHOR_API int GetColumnIndex();  // get current column index
+  ANCHOR_API float GetColumnWidth(
+    int column_index = -1);  // get column width (in pixels). pass -1 to use current column
+  ANCHOR_API void SetColumnWidth(
+    int column_index,
+    float width);  // set column width (in pixels). pass -1 to use current column
+  ANCHOR_API float GetColumnOffset(
+    int column_index = -1);  // get position of column line (in pixels, from the left side of the
+                             // contents region). pass -1 to use current column, otherwise
+                             // 0..GetColumnsCount() inclusive. column 0 is typically 0.0f
+  ANCHOR_API void SetColumnOffset(
+    int column_index,
+    float offset_x);  // set position of column line (in pixels, from the left side of the contents
+                      // region). pass -1 to use current column
+  ANCHOR_API int GetColumnsCount();
 
-// Logging/Capture
-// - All text output from the interface can be captured into tty/file/clipboard. By default, tree
-// nodes are automatically opened during logging.
-ANCHOR_API void LogToTTY(int auto_open_depth = -1);  // start logging to tty (stdout)
-ANCHOR_API void LogToFile(int auto_open_depth = -1,
-                          const char *filename = NULL);    // start logging to file
-ANCHOR_API void LogToClipboard(int auto_open_depth = -1);  // start logging to OS clipboard
-ANCHOR_API void LogFinish();                               // stop logging (close file, etc.)
-ANCHOR_API void LogButtons();                              // helper to display buttons for logging to tty/file/clipboard
-ANCHOR_API void LogText(const char *fmt, ...)
-  ANCHOR_FMTARGS(1);  // pass text data straight to log (without being displayed)
-ANCHOR_API void LogTextV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
+  // Tab Bars, Tabs
+  ANCHOR_API bool BeginTabBar(const char *str_id,
+                              AnchorTabBarFlags flags = 0);  // create and append into a TabBar
+  ANCHOR_API void EndTabBar();                               // only call EndTabBar() if BeginTabBar() returns true!
+  ANCHOR_API bool BeginTabItem(
+    const char *label,
+    bool *p_open = NULL,
+    AnchorTabItemFlags flags = 0);  // create a Tab. Returns true if the Tab is selected.
+  ANCHOR_API void EndTabItem();     // only call EndTabItem() if BeginTabItem() returns true!
+  ANCHOR_API bool TabItemButton(
+    const char *label,
+    AnchorTabItemFlags flags = 0);  // create a Tab behaving like a button. return true when
+                                    // clicked. cannot be selected in the tab bar.
+  ANCHOR_API void SetTabItemClosed(
+    const char *tab_or_docked_window_label);  // notify TabBar or Docking system of a closed tab/window
+                                              // ahead (useful to reduce visual flicker on reorderable tab
+                                              // bars). For tab-bar: call after BeginTabBar() and before
+                                              // Tab submissions. Otherwise call with a window name.
 
-// Drag and Drop
-// - On source items, call BeginDragDropSource(), if it returns true also call SetDragDropPayload()
-// + EndDragDropSource().
-// - On target candidates, call BeginDragDropTarget(), if it returns true also call
-// AcceptDragDropPayload() + EndDragDropTarget().
-// - If you stop calling BeginDragDropSource() the payload is preserved however it won't have a
-// preview tooltip (we currently display a fallback "..." tooltip, see #1725)
-// - An item can be both drag source and drop target.
-ANCHOR_API bool BeginDragDropSource(
-  AnchorDragDropFlags flags = 0);  // call after submitting an item which may be dragged. when this return
-                                   // true, you can call SetDragDropPayload() + EndDragDropSource()
-ANCHOR_API bool SetDragDropPayload(
-  const char *type,
-  const void *data,
-  size_t sz,
-  AnchorCond cond = 0);                 // type is a user defined string of maximum 32 characters. Strings starting with
-                                        // '_' are reserved for ANCHOR internal types. Data is copied and held by ANCHOR.
-ANCHOR_API void EndDragDropSource();    // only call EndDragDropSource() if BeginDragDropSource()
-                                        // returns true!
-ANCHOR_API bool BeginDragDropTarget();  // call after submitting an item that may receive a
-                                        // payload. If this returns true, you can call
-                                        // AcceptDragDropPayload() + EndDragDropTarget()
-ANCHOR_API const AnchorPayload *AcceptDragDropPayload(
-  const char *type,
-  AnchorDragDropFlags flags =
-    0);                                                // accept contents of a given type. If AnchorDragDropFlags_AcceptBeforeDelivery is set
-                                                       // you can peek into the payload before the mouse button is released.
-ANCHOR_API void EndDragDropTarget();                   // only call EndDragDropTarget() if BeginDragDropTarget()
-                                                       // returns true!
-ANCHOR_API const AnchorPayload *GetDragDropPayload();  // peek directly into the current payload
-                                                       // from anywhere. may return NULL. use
-                                                       // AnchorPayload::IsDataType() to test for
-                                                       // the payload type.
+  // Logging/Capture
+  // - All text output from the interface can be captured into tty/file/clipboard. By default, tree
+  // nodes are automatically opened during logging.
+  ANCHOR_API void LogToTTY(int auto_open_depth = -1);  // start logging to tty (stdout)
+  ANCHOR_API void LogToFile(int auto_open_depth = -1,
+                            const char *filename = NULL);    // start logging to file
+  ANCHOR_API void LogToClipboard(int auto_open_depth = -1);  // start logging to OS clipboard
+  ANCHOR_API void LogFinish();                               // stop logging (close file, etc.)
+  ANCHOR_API void LogButtons();                              // helper to display buttons for logging to tty/file/clipboard
+  ANCHOR_API void LogText(const char *fmt, ...)
+    ANCHOR_FMTARGS(1);  // pass text data straight to log (without being displayed)
+  ANCHOR_API void LogTextV(const char *fmt, va_list args) ANCHOR_FMTLIST(1);
 
-// Clipping
-// - Mouse hovering is affected by ANCHOR::PushClipRect() calls, unlike direct calls to
-// AnchorDrawList::PushClipRect() which are render only.
-ANCHOR_API void PushClipRect(const wabi::GfVec2f &clip_rect_min,
-                             const wabi::GfVec2f &clip_rect_max,
-                             bool intersect_with_current_clip_rect);
-ANCHOR_API void PopClipRect();
+  // Drag and Drop
+  // - On source items, call BeginDragDropSource(), if it returns true also call SetDragDropPayload()
+  // + EndDragDropSource().
+  // - On target candidates, call BeginDragDropTarget(), if it returns true also call
+  // AcceptDragDropPayload() + EndDragDropTarget().
+  // - If you stop calling BeginDragDropSource() the payload is preserved however it won't have a
+  // preview tooltip (we currently display a fallback "..." tooltip, see #1725)
+  // - An item can be both drag source and drop target.
+  ANCHOR_API bool BeginDragDropSource(
+    AnchorDragDropFlags flags = 0);  // call after submitting an item which may be dragged. when this return
+                                     // true, you can call SetDragDropPayload() + EndDragDropSource()
+  ANCHOR_API bool SetDragDropPayload(
+    const char *type,
+    const void *data,
+    size_t sz,
+    AnchorCond cond = 0);                 // type is a user defined string of maximum 32 characters. Strings starting with
+                                          // '_' are reserved for ANCHOR internal types. Data is copied and held by ANCHOR.
+  ANCHOR_API void EndDragDropSource();    // only call EndDragDropSource() if BeginDragDropSource()
+                                          // returns true!
+  ANCHOR_API bool BeginDragDropTarget();  // call after submitting an item that may receive a
+                                          // payload. If this returns true, you can call
+                                          // AcceptDragDropPayload() + EndDragDropTarget()
+  ANCHOR_API const AnchorPayload *AcceptDragDropPayload(
+    const char *type,
+    AnchorDragDropFlags flags =
+      0);                                                // accept contents of a given type. If AnchorDragDropFlags_AcceptBeforeDelivery is set
+                                                         // you can peek into the payload before the mouse button is released.
+  ANCHOR_API void EndDragDropTarget();                   // only call EndDragDropTarget() if BeginDragDropTarget()
+                                                         // returns true!
+  ANCHOR_API const AnchorPayload *GetDragDropPayload();  // peek directly into the current payload
+                                                         // from anywhere. may return NULL. use
+                                                         // AnchorPayload::IsDataType() to test for
+                                                         // the payload type.
 
-// Focus, Activation
-// - Prefer using "SetItemDefaultFocus()" over "if (IsWindowAppearing()) SetScrollHereY()" when
-// applicable to signify "this is the default item"
-ANCHOR_API void SetItemDefaultFocus();  // make last item the default focused item of a window.
-ANCHOR_API void SetKeyboardFocusHere(
-  int offset = 0);  // focus keyboard on the next widget. Use positive 'offset' to access sub
-                    // components of a multiple component widget. Use -1 to access previous widget.
+  // Clipping
+  // - Mouse hovering is affected by ANCHOR::PushClipRect() calls, unlike direct calls to
+  // AnchorDrawList::PushClipRect() which are render only.
+  ANCHOR_API void PushClipRect(const wabi::GfVec2f &clip_rect_min,
+                               const wabi::GfVec2f &clip_rect_max,
+                               bool intersect_with_current_clip_rect);
+  ANCHOR_API void PopClipRect();
 
-// Item/Widgets Utilities and Query Functions
-// - Most of the functions are referring to the previous Item that has been submitted.
-// - See Demo Window under "Widgets->Querying Status" for an interactive visualization of most of
-// those functions.
-ANCHOR_API bool IsItemHovered(
-  AnchorHoveredFlags flags = 0);  // is the last item hovered? (and usable, aka not blocked by a
-                                  // popup, etc.). See AnchorHoveredFlags for more options.
-ANCHOR_API bool IsItemActive();   // is the last item active? (e.g. button being held, text field
-                                  // being edited. This will continuously return true while holding
-                                  // mouse button on an item. Items that don't interact will always
-                                  // return false)
-ANCHOR_API bool IsItemFocused();  // is the last item focused for keyboard/gamepad navigation?
-ANCHOR_API bool IsItemClicked(
-  AnchorMouseButton mouse_button =
-    0);                                        // is the last item hovered and mouse clicked on? (**)  ==
-                                               // IsMouseClicked(mouse_button) && IsItemHovered()Important. (**) this it NOT
-                                               // equivalent to the behavior of e.g. Button(). Read comments in function definition.
-ANCHOR_API bool IsItemVisible();               // is the last item visible? (items may be out of sight because
-                                               // of clipping/scrolling)
-ANCHOR_API bool IsItemEdited();                // did the last item modify its underlying value this frame? or
-                                               // was pressed? This is generally the same as the "bool" return
-                                               // value of many widgets.
-ANCHOR_API bool IsItemActivated();             // was the last item just made active (item was previously
-                                               // inactive).
-ANCHOR_API bool IsItemDeactivated();           // was the last item just made inactive (item was previously
-                                               // active). Useful for Undo/Redo patterns with widgets that
-                                               // requires continuous editing.
-ANCHOR_API bool IsItemDeactivatedAfterEdit();  // was the last item just made inactive and made a
-                                               // value change when it was active? (e.g.
-                                               // Slider/Drag moved). Useful for Undo/Redo patterns
-                                               // with widgets that requires continuous editing.
-                                               // Note that you may get false positives (some
-                                               // widgets such as Combo()/ListBox()/Selectable()
-                                               // will return true even when clicking an already
-                                               // selected item).
-ANCHOR_API bool IsItemToggledOpen();           // was the last item open state toggled? set by TreeNode().
-ANCHOR_API bool IsAnyItemHovered();            // is any item hovered?
-ANCHOR_API bool IsAnyItemActive();             // is any item active?
-ANCHOR_API bool IsAnyItemFocused();            // is any item focused?
-ANCHOR_API wabi::GfVec2f GetItemRectMin();     // get upper-left bounding rectangle of the last item
-                                               // (screen space)
-ANCHOR_API wabi::GfVec2f GetItemRectMax();     // get lower-right bounding rectangle of the last item
-                                               // (screen space)
-ANCHOR_API wabi::GfVec2f GetItemRectSize();    // get size of last item
-ANCHOR_API void SetItemAllowOverlap();         // allow last item to be overlapped by a subsequent item.
-                                               // sometimes useful with invisible buttons, selectables,
-                                               // etc. to catch unused area.
+  // Focus, Activation
+  // - Prefer using "SetItemDefaultFocus()" over "if (IsWindowAppearing()) SetScrollHereY()" when
+  // applicable to signify "this is the default item"
+  ANCHOR_API void SetItemDefaultFocus();  // make last item the default focused item of a window.
+  ANCHOR_API void SetKeyboardFocusHere(
+    int offset = 0);  // focus keyboard on the next widget. Use positive 'offset' to access sub
+                      // components of a multiple component widget. Use -1 to access previous widget.
 
-// Viewports
-// - Currently represents the Platform Window created by the application which is hosting our
-// ANCHOR windows.
-// - In 'docking' branch with multi-viewport enabled, we extend this concept to have multiple
-// active viewports.
-// - In the future we will extend this concept further to also represent Platform Monitor and
-// support a "no main platform window" operation mode.
-ANCHOR_API AnchorViewport *GetMainViewport();  // return primary/default viewport. This can never
-                                               // be NULL.
+  // Item/Widgets Utilities and Query Functions
+  // - Most of the functions are referring to the previous Item that has been submitted.
+  // - See Demo Window under "Widgets->Querying Status" for an interactive visualization of most of
+  // those functions.
+  ANCHOR_API bool IsItemHovered(
+    AnchorHoveredFlags flags = 0);  // is the last item hovered? (and usable, aka not blocked by a
+                                    // popup, etc.). See AnchorHoveredFlags for more options.
+  ANCHOR_API bool IsItemActive();   // is the last item active? (e.g. button being held, text field
+                                    // being edited. This will continuously return true while holding
+                                    // mouse button on an item. Items that don't interact will always
+                                    // return false)
+  ANCHOR_API bool IsItemFocused();  // is the last item focused for keyboard/gamepad navigation?
+  ANCHOR_API bool IsItemClicked(
+    AnchorMouseButton mouse_button =
+      0);                                        // is the last item hovered and mouse clicked on? (**)  ==
+                                                 // IsMouseClicked(mouse_button) && IsItemHovered()Important. (**) this it NOT
+                                                 // equivalent to the behavior of e.g. Button(). Read comments in function definition.
+  ANCHOR_API bool IsItemVisible();               // is the last item visible? (items may be out of sight because
+                                                 // of clipping/scrolling)
+  ANCHOR_API bool IsItemEdited();                // did the last item modify its underlying value this frame? or
+                                                 // was pressed? This is generally the same as the "bool" return
+                                                 // value of many widgets.
+  ANCHOR_API bool IsItemActivated();             // was the last item just made active (item was previously
+                                                 // inactive).
+  ANCHOR_API bool IsItemDeactivated();           // was the last item just made inactive (item was previously
+                                                 // active). Useful for Undo/Redo patterns with widgets that
+                                                 // requires continuous editing.
+  ANCHOR_API bool IsItemDeactivatedAfterEdit();  // was the last item just made inactive and made a
+                                                 // value change when it was active? (e.g.
+                                                 // Slider/Drag moved). Useful for Undo/Redo patterns
+                                                 // with widgets that requires continuous editing.
+                                                 // Note that you may get false positives (some
+                                                 // widgets such as Combo()/ListBox()/Selectable()
+                                                 // will return true even when clicking an already
+                                                 // selected item).
+  ANCHOR_API bool IsItemToggledOpen();           // was the last item open state toggled? set by TreeNode().
+  ANCHOR_API bool IsAnyItemHovered();            // is any item hovered?
+  ANCHOR_API bool IsAnyItemActive();             // is any item active?
+  ANCHOR_API bool IsAnyItemFocused();            // is any item focused?
+  ANCHOR_API wabi::GfVec2f GetItemRectMin();     // get upper-left bounding rectangle of the last item
+                                                 // (screen space)
+  ANCHOR_API wabi::GfVec2f GetItemRectMax();     // get lower-right bounding rectangle of the last item
+                                                 // (screen space)
+  ANCHOR_API wabi::GfVec2f GetItemRectSize();    // get size of last item
+  ANCHOR_API void SetItemAllowOverlap();         // allow last item to be overlapped by a subsequent item.
+                                                 // sometimes useful with invisible buttons, selectables,
+                                                 // etc. to catch unused area.
 
-// Miscellaneous Utilities
-ANCHOR_API bool IsRectVisible(const wabi::GfVec2f &size);  // test if rectangle (of given size, starting from
-                                                           // cursor position) is visible / not clipped.
-ANCHOR_API bool IsRectVisible(
-  const wabi::GfVec2f &rect_min,
-  const wabi::GfVec2f &rect_max);                              // test if rectangle (in screen space) is visible / not
-                                                               // clipped. to perform coarse clipping on user's side.
-ANCHOR_API double GetTime();                                   // get global ANCHOR time. incremented by io.DeltaTime every frame.
-ANCHOR_API int GetFrameCount();                                // get global ANCHOR frame count. incremented by 1 every frame.
-ANCHOR_API AnchorDrawList *GetBackgroundDrawList();            // this draw list will be the first rendering one.
-                                                               // Useful to quickly draw shapes/text behind
-                                                               // ANCHOR contents.
-ANCHOR_API AnchorDrawList *GetForegroundDrawList();            // this draw list will be the last rendered one.
-                                                               // Useful to quickly draw shapes/text over ANCHOR
-                                                               // contents.
-ANCHOR_API AnchorDrawListSharedData *GetDrawListSharedData();  // you may use this when creating your
-                                                               // own AnchorDrawList instances.
-ANCHOR_API const char *GetStyleColorName(
-  AnchorCol idx);  // get a string corresponding to the enum value (for display, saving, etc.).
-ANCHOR_API void SetStateStorage(
-  AnchorStorage *storage);  // replace current window storage with our own (if you want to
-                            // manipulate it yourself, typically clear subsection of it)
-ANCHOR_API AnchorStorage *GetStateStorage();
-ANCHOR_API void CalcListClipping(
-  int items_count,
-  float items_height,
-  int *out_items_display_start,
-  int *out_items_display_end);  // calculate coarse clipping for large list of evenly sized
-                                // items. Prefer using the AnchorListClipper higher-level helper
-                                // if you can.
-ANCHOR_API bool BeginChildFrame(
-  ANCHOR_ID id,
-  const wabi::GfVec2f &size,
-  AnchorWindowFlags flags = 0);   // helper to create a child window / scrolling region that
-                                  // looks like a normal widget frame
-ANCHOR_API void EndChildFrame();  // always call EndChildFrame() regardless of BeginChildFrame()
-                                  // return values (which indicates a collapsed/clipped window)
+  // Viewports
+  // - Currently represents the Platform Window created by the application which is hosting our
+  // ANCHOR windows.
+  // - In 'docking' branch with multi-viewport enabled, we extend this concept to have multiple
+  // active viewports.
+  // - In the future we will extend this concept further to also represent Platform Monitor and
+  // support a "no main platform window" operation mode.
+  ANCHOR_API AnchorViewport *GetMainViewport();  // return primary/default viewport. This can never
+                                                 // be NULL.
 
-// Text Utilities
-ANCHOR_API wabi::GfVec2f CalcTextSize(const char *text,
-                                      const char *text_end = NULL,
-                                      bool hide_text_after_double_hash = false,
-                                      float wrap_width = -1.0f);
+  // Miscellaneous Utilities
+  ANCHOR_API bool IsRectVisible(
+    const wabi::GfVec2f &size);  // test if rectangle (of given size, starting from
+                                 // cursor position) is visible / not clipped.
+  ANCHOR_API bool IsRectVisible(
+    const wabi::GfVec2f &rect_min,
+    const wabi::GfVec2f &rect_max);                              // test if rectangle (in screen space) is visible / not
+                                                                 // clipped. to perform coarse clipping on user's side.
+  ANCHOR_API double GetTime();                                   // get global ANCHOR time. incremented by io.DeltaTime every frame.
+  ANCHOR_API int GetFrameCount();                                // get global ANCHOR frame count. incremented by 1 every frame.
+  ANCHOR_API AnchorDrawList *GetBackgroundDrawList();            // this draw list will be the first rendering one.
+                                                                 // Useful to quickly draw shapes/text behind
+                                                                 // ANCHOR contents.
+  ANCHOR_API AnchorDrawList *GetForegroundDrawList();            // this draw list will be the last rendered one.
+                                                                 // Useful to quickly draw shapes/text over ANCHOR
+                                                                 // contents.
+  ANCHOR_API AnchorDrawListSharedData *GetDrawListSharedData();  // you may use this when creating your
+                                                                 // own AnchorDrawList instances.
+  ANCHOR_API const char *GetStyleColorName(
+    AnchorCol idx);  // get a string corresponding to the enum value (for display, saving, etc.).
+  ANCHOR_API void SetStateStorage(
+    AnchorStorage *storage);  // replace current window storage with our own (if you want to
+                              // manipulate it yourself, typically clear subsection of it)
+  ANCHOR_API AnchorStorage *GetStateStorage();
+  ANCHOR_API void CalcListClipping(
+    int items_count,
+    float items_height,
+    int *out_items_display_start,
+    int *out_items_display_end);  // calculate coarse clipping for large list of evenly sized
+                                  // items. Prefer using the AnchorListClipper higher-level helper
+                                  // if you can.
+  ANCHOR_API bool BeginChildFrame(
+    ANCHOR_ID id,
+    const wabi::GfVec2f &size,
+    AnchorWindowFlags flags = 0);   // helper to create a child window / scrolling region that
+                                    // looks like a normal widget frame
+  ANCHOR_API void EndChildFrame();  // always call EndChildFrame() regardless of BeginChildFrame()
+                                    // return values (which indicates a collapsed/clipped window)
 
-// Color Utilities
-ANCHOR_API wabi::GfVec4f ColorConvertU32ToFloat4(AnchorU32 in);
-ANCHOR_API AnchorU32 ColorConvertFloat4ToU32(const wabi::GfVec4f &in);
-ANCHOR_API void ColorConvertRGBtoHSV(float r, float g, float b, float &out_h, float &out_s, float &out_v);
-ANCHOR_API void ColorConvertHSVtoRGB(float h, float s, float v, float &out_r, float &out_g, float &out_b);
+  // Text Utilities
+  ANCHOR_API wabi::GfVec2f CalcTextSize(const char *text,
+                                        const char *text_end = NULL,
+                                        bool hide_text_after_double_hash = false,
+                                        float wrap_width = -1.0f);
 
-// Inputs Utilities: Keyboard
-// - For 'int user_key_index' you can use your own indices/enums according to how your
-// backend/engine stored them in io.KeysDown[].
-// - We don't know the meaning of those value. You can use GetKeyIndex() to map a AnchorKey_ value
-// into the user index.
-ANCHOR_API int GetKeyIndex(
-  AnchorKey ANCHOR_key);                        // map AnchorKey_* values into user's key index. == io.KeyMap[key]
-ANCHOR_API bool IsKeyDown(int user_key_index);  // is key being held. == io.KeysDown[user_key_index].
-ANCHOR_API bool IsKeyPressed(int user_key_index,
-                             bool repeat = true);   // was key pressed (went from !Down to Down)? if
-                                                    // repeat=true, uses io.KeyRepeatDelay / KeyRepeatRate
-ANCHOR_API bool IsKeyReleased(int user_key_index);  // was key released (went from Down to !Down)?
-ANCHOR_API int GetKeyPressedAmount(
-  int key_index,
-  float repeat_delay,
-  float rate);  // uses provided repeat rate/delay. return a count, most often 0 or 1 but might
-                // be >1 if RepeatRate is small enough that DeltaTime > RepeatRate
-ANCHOR_API void CaptureKeyboardFromApp(
-  bool want_capture_keyboard_value =
-    true);  // attention: misleading name! manually override io.WantCaptureKeyboard flag next
-            // frame (said flag is entirely left for your application to handle). e.g. force
-            // capture keyboard when your widget is being hovered. This is equivalent to
-            // setting "io.WantCaptureKeyboard = want_capture_keyboard_value"; after the next
-            // NewFrame() call.
+  // Color Utilities
+  ANCHOR_API wabi::GfVec4f ColorConvertU32ToFloat4(AnchorU32 in);
+  ANCHOR_API AnchorU32 ColorConvertFloat4ToU32(const wabi::GfVec4f &in);
+  ANCHOR_API void ColorConvertRGBtoHSV(float r, float g, float b, float &out_h, float &out_s, float &out_v);
+  ANCHOR_API void ColorConvertHSVtoRGB(float h, float s, float v, float &out_r, float &out_g, float &out_b);
 
-// Inputs Utilities: Mouse
-// - To refer to a mouse button, you may use named enums in your code e.g. AnchorMouseButton_Left,
-// AnchorMouseButton_Right.
-// - You can also use regular integer: it is forever guaranteed that 0=Left, 1=Right, 2=Middle.
-// - Dragging operations are only reported after mouse has moved a certain distance away from the
-// initial clicking position (see 'lock_threshold' and 'io.MouseDraggingThreshold')
-ANCHOR_API bool IsMouseDown(AnchorMouseButton button);  // is mouse button held?
-ANCHOR_API bool IsMouseClicked(AnchorMouseButton button,
-                               bool repeat = false);  // did mouse button clicked? (went from !Down to Down)
-ANCHOR_API bool IsMouseReleased(
-  AnchorMouseButton button);  // did mouse button released? (went from Down to !Down)
-ANCHOR_API bool IsMouseDoubleClicked(
-  AnchorMouseButton button);  // did mouse button double-clicked? (note that a double-click will
-                              // also report IsMouseClicked() == true)
-ANCHOR_API bool IsMouseHoveringRect(
-  const wabi::GfVec2f &r_min,
-  const wabi::GfVec2f &r_max,
-  bool clip = true);  // is mouse hovering given bounding rect (in screen space). clipped by
-                      // current clipping settings, but disregarding of other consideration of
-                      // focus/window ordering/popup-block.
-ANCHOR_API bool IsMousePosValid(
-  const wabi::GfVec2f *mouse_pos = NULL);                     // by convention we use (-FLT_MAX,-FLT_MAX) to denote
-                                                              // that there is no mouse available
-ANCHOR_API bool IsAnyMouseDown();                             // is any mouse button held?
-ANCHOR_API wabi::GfVec2f GetMousePos();                       // shortcut to ANCHOR::GetIO().MousePos provided by user,
-                                                              // to be consistent with other calls
-ANCHOR_API wabi::GfVec2f GetMousePosOnOpeningCurrentPopup();  // retrieve mouse position at the
-                                                              // time of opening popup we have
-                                                              // BeginPopup() into (helper to avoid
-                                                              // user backing that value
-                                                              // themselves)
-ANCHOR_API bool IsMouseDragging(AnchorMouseButton button,
-                                float lock_threshold = -1.0f);  // is mouse dragging? (if lock_threshold <
-                                                                // -1.0f, uses io.MouseDraggingThreshold)
-ANCHOR_API wabi::GfVec2f GetMouseDragDelta(
-  AnchorMouseButton button = 0,
-  float lock_threshold = -1.0f);                                    // return the delta from the initial clicking position while the mouse
-                                                                    // button is pressed or was just released. This is locked and return 0.0f
-                                                                    // until the mouse moves past a distance threshold at least once (if
-                                                                    // lock_threshold < -1.0f, uses io.MouseDraggingThreshold)
-ANCHOR_API void ResetMouseDragDelta(AnchorMouseButton button = 0);  //
-ANCHOR_API AnchorMouseCursor
-GetMouseCursor();                                               // get desired cursor type, reset in ANCHOR::NewFrame(), this is updated during
-                                                                // the frame. valid before Render(). If you use software rendering by setting
-                                                                // io.MouseDrawCursor ANCHOR will render those for you
-ANCHOR_API void SetMouseCursor(AnchorMouseCursor cursor_type);  // set desired cursor type
-ANCHOR_API void CaptureMouseFromApp(
-  bool want_capture_mouse_value =
-    true);  // attention: misleading name! manually override io.WantCaptureMouse flag next
-            // frame (said flag is entirely left for your application to handle). This is
-            // equivalent to setting "io.WantCaptureMouse = want_capture_mouse_value;" after
-            // the next NewFrame() call.
+  // Inputs Utilities: Keyboard
+  // - For 'int user_key_index' you can use your own indices/enums according to how your
+  // backend/engine stored them in io.KeysDown[].
+  // - We don't know the meaning of those value. You can use GetKeyIndex() to map a AnchorKey_ value
+  // into the user index.
+  ANCHOR_API int GetKeyIndex(
+    AnchorKey ANCHOR_key);                        // map AnchorKey_* values into user's key index. == io.KeyMap[key]
+  ANCHOR_API bool IsKeyDown(int user_key_index);  // is key being held. == io.KeysDown[user_key_index].
+  ANCHOR_API bool IsKeyPressed(int user_key_index,
+                               bool repeat = true);   // was key pressed (went from !Down to Down)? if
+                                                      // repeat=true, uses io.KeyRepeatDelay / KeyRepeatRate
+  ANCHOR_API bool IsKeyReleased(int user_key_index);  // was key released (went from Down to !Down)?
+  ANCHOR_API int GetKeyPressedAmount(
+    int key_index,
+    float repeat_delay,
+    float rate);  // uses provided repeat rate/delay. return a count, most often 0 or 1 but might
+                  // be >1 if RepeatRate is small enough that DeltaTime > RepeatRate
+  ANCHOR_API void CaptureKeyboardFromApp(
+    bool want_capture_keyboard_value =
+      true);  // attention: misleading name! manually override io.WantCaptureKeyboard flag next
+              // frame (said flag is entirely left for your application to handle). e.g. force
+              // capture keyboard when your widget is being hovered. This is equivalent to
+              // setting "io.WantCaptureKeyboard = want_capture_keyboard_value"; after the next
+              // NewFrame() call.
 
-// Clipboard Utilities
-// - Also see the LogToClipboard() function to capture GUI into clipboard, or easily output text
-// data to the clipboard.
-ANCHOR_API const char *GetClipboardText();
-ANCHOR_API void SetClipboardText(const char *text);
+  // Inputs Utilities: Mouse
+  // - To refer to a mouse button, you may use named enums in your code e.g. AnchorMouseButton_Left,
+  // AnchorMouseButton_Right.
+  // - You can also use regular integer: it is forever guaranteed that 0=Left, 1=Right, 2=Middle.
+  // - Dragging operations are only reported after mouse has moved a certain distance away from the
+  // initial clicking position (see 'lock_threshold' and 'io.MouseDraggingThreshold')
+  ANCHOR_API bool IsMouseDown(AnchorMouseButton button);  // is mouse button held?
+  ANCHOR_API bool IsMouseClicked(
+    AnchorMouseButton button,
+    bool repeat = false);  // did mouse button clicked? (went from !Down to Down)
+  ANCHOR_API bool IsMouseReleased(
+    AnchorMouseButton button);  // did mouse button released? (went from Down to !Down)
+  ANCHOR_API bool IsMouseDoubleClicked(
+    AnchorMouseButton button);  // did mouse button double-clicked? (note that a double-click will
+                                // also report IsMouseClicked() == true)
+  ANCHOR_API bool IsMouseHoveringRect(
+    const wabi::GfVec2f &r_min,
+    const wabi::GfVec2f &r_max,
+    bool clip = true);  // is mouse hovering given bounding rect (in screen space). clipped by
+                        // current clipping settings, but disregarding of other consideration of
+                        // focus/window ordering/popup-block.
+  ANCHOR_API bool IsMousePosValid(
+    const wabi::GfVec2f *mouse_pos = NULL);                     // by convention we use (-FLT_MAX,-FLT_MAX) to denote
+                                                                // that there is no mouse available
+  ANCHOR_API bool IsAnyMouseDown();                             // is any mouse button held?
+  ANCHOR_API wabi::GfVec2f GetMousePos();                       // shortcut to ANCHOR::GetIO().MousePos provided by user,
+                                                                // to be consistent with other calls
+  ANCHOR_API wabi::GfVec2f GetMousePosOnOpeningCurrentPopup();  // retrieve mouse position at the
+                                                                // time of opening popup we have
+                                                                // BeginPopup() into (helper to avoid
+                                                                // user backing that value
+                                                                // themselves)
+  ANCHOR_API bool IsMouseDragging(AnchorMouseButton button,
+                                  float lock_threshold = -1.0f);  // is mouse dragging? (if lock_threshold <
+                                                                  // -1.0f, uses io.MouseDraggingThreshold)
+  ANCHOR_API wabi::GfVec2f GetMouseDragDelta(
+    AnchorMouseButton button = 0,
+    float lock_threshold = -1.0f);                                    // return the delta from the initial clicking position while the mouse
+                                                                      // button is pressed or was just released. This is locked and return 0.0f
+                                                                      // until the mouse moves past a distance threshold at least once (if
+                                                                      // lock_threshold < -1.0f, uses io.MouseDraggingThreshold)
+  ANCHOR_API void ResetMouseDragDelta(AnchorMouseButton button = 0);  //
+  ANCHOR_API AnchorMouseCursor
+  GetMouseCursor();                                               // get desired cursor type, reset in ANCHOR::NewFrame(), this is updated during
+                                                                  // the frame. valid before Render(). If you use software rendering by setting
+                                                                  // io.MouseDrawCursor ANCHOR will render those for you
+  ANCHOR_API void SetMouseCursor(AnchorMouseCursor cursor_type);  // set desired cursor type
+  ANCHOR_API void CaptureMouseFromApp(
+    bool want_capture_mouse_value =
+      true);  // attention: misleading name! manually override io.WantCaptureMouse flag next
+              // frame (said flag is entirely left for your application to handle). This is
+              // equivalent to setting "io.WantCaptureMouse = want_capture_mouse_value;" after
+              // the next NewFrame() call.
 
-// Settings/.Ini Utilities
-// - The disk functions are automatically called if io.IniFilename != NULL (default is
-// "ANCHOR.ini").
-// - Set io.IniFilename to NULL to load/save manually. Read io.WantSaveIniSettings description
-// about handling .ini saving manually.
-ANCHOR_API void LoadIniSettingsFromDisk(
-  const char *ini_filename);  // call after CreateContext() and before the first call to NewFrame().
-                              // NewFrame() automatically calls LoadIniSettingsFromDisk(io.IniFilename).
-ANCHOR_API void LoadIniSettingsFromMemory(
-  const char *ini_data,
-  size_t ini_size = 0);  // call after CreateContext() and before the first call to NewFrame() to
-                         // provide .ini data from your own data source.
-ANCHOR_API void SaveIniSettingsToDisk(
-  const char *ini_filename);  // this is automatically called (if io.IniFilename is not empty) a
-                              // few seconds after any modification that should be reflected in
-                              // the .ini file (and also by DestroyContext).
-ANCHOR_API const char *SaveIniSettingsToMemory(
-  size_t *out_ini_size = NULL);  // return a zero-terminated string with the .ini data which you can save by
-                                 // your own mean. call when io.WantSaveIniSettings is set, then save data by
-                                 // your own mean and clear io.WantSaveIniSettings.
+  // Clipboard Utilities
+  // - Also see the LogToClipboard() function to capture GUI into clipboard, or easily output text
+  // data to the clipboard.
+  ANCHOR_API const char *GetClipboardText();
+  ANCHOR_API void SetClipboardText(const char *text);
 
-// Debug Utilities
-// - This is used by the ANCHOR_CHECKVERSION() macro.
-ANCHOR_API bool DebugCheckVersionAndDataLayout(
-  const char *version_str,
-  size_t sz_io,
-  size_t sz_style,
-  size_t sz_vec2,
-  size_t sz_vec4,
-  size_t sz_drawvert,
-  size_t sz_drawidx);  // This is called by ANCHOR_CHECKVERSION() macro.
+  // Settings/.Ini Utilities
+  // - The disk functions are automatically called if io.IniFilename != NULL (default is
+  // "ANCHOR.ini").
+  // - Set io.IniFilename to NULL to load/save manually. Read io.WantSaveIniSettings description
+  // about handling .ini saving manually.
+  ANCHOR_API void LoadIniSettingsFromDisk(
+    const char *ini_filename);  // call after CreateContext() and before the first call to NewFrame().
+                                // NewFrame() automatically calls LoadIniSettingsFromDisk(io.IniFilename).
+  ANCHOR_API void LoadIniSettingsFromMemory(
+    const char *ini_data,
+    size_t ini_size = 0);  // call after CreateContext() and before the first call to NewFrame() to
+                           // provide .ini data from your own data source.
+  ANCHOR_API void SaveIniSettingsToDisk(
+    const char *ini_filename);  // this is automatically called (if io.IniFilename is not empty) a
+                                // few seconds after any modification that should be reflected in
+                                // the .ini file (and also by DestroyContext).
+  ANCHOR_API const char *SaveIniSettingsToMemory(
+    size_t *out_ini_size = NULL);  // return a zero-terminated string with the .ini data which you can save
+                                   // by your own mean. call when io.WantSaveIniSettings is set, then save
+                                   // data by your own mean and clear io.WantSaveIniSettings.
 
-// Memory Allocators
-// - Those functions are not reliant on the current context.
-// - DLL users: heaps and globals are not shared across DLL boundaries! You will need to call
-// SetCurrentContext() + SetAllocatorFunctions()
-//   for each static/DLL boundary you are calling from. Read "Context and Memory Allocators"
-//   section of ANCHOR.cpp for more details.
-ANCHOR_API void SetAllocatorFunctions(ANCHORMemAllocFunc alloc_func,
-                                      ANCHORMemFreeFunc free_func,
-                                      void *user_data = NULL);
-ANCHOR_API void GetAllocatorFunctions(ANCHORMemAllocFunc *p_alloc_func,
-                                      ANCHORMemFreeFunc *p_free_func,
-                                      void **p_user_data);
-ANCHOR_API void *MemAlloc(size_t size);
-ANCHOR_API void MemFree(void *ptr);
+  // Debug Utilities
+  // - This is used by the ANCHOR_CHECKVERSION() macro.
+  ANCHOR_API bool DebugCheckVersionAndDataLayout(
+    const char *version_str,
+    size_t sz_io,
+    size_t sz_style,
+    size_t sz_vec2,
+    size_t sz_vec4,
+    size_t sz_drawvert,
+    size_t sz_drawidx);  // This is called by ANCHOR_CHECKVERSION() macro.
+
+  // Memory Allocators
+  // - Those functions are not reliant on the current context.
+  // - DLL users: heaps and globals are not shared across DLL boundaries! You will need to call
+  // SetCurrentContext() + SetAllocatorFunctions()
+  //   for each static/DLL boundary you are calling from. Read "Context and Memory Allocators"
+  //   section of ANCHOR.cpp for more details.
+  ANCHOR_API void SetAllocatorFunctions(ANCHORMemAllocFunc alloc_func,
+                                        ANCHORMemFreeFunc free_func,
+                                        void *user_data = NULL);
+  ANCHOR_API void GetAllocatorFunctions(ANCHORMemAllocFunc *p_alloc_func,
+                                        ANCHORMemFreeFunc *p_free_func,
+                                        void **p_user_data);
+  ANCHOR_API void *MemAlloc(size_t size);
+  ANCHOR_API void MemFree(void *ptr);
 
 }  // namespace ANCHOR
 
@@ -2926,8 +2928,7 @@ enum AnchorTreeNodeFlags_
               // (items submitted between TreeNode and TreePop)
   // AnchorTreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll
   // on TreePop() if node got just open and contents is not visible
-  AnchorTreeNodeFlags_CollapsingHeader = AnchorTreeNodeFlags_Framed |
-                                         AnchorTreeNodeFlags_NoTreePushOnOpen |
+  AnchorTreeNodeFlags_CollapsingHeader = AnchorTreeNodeFlags_Framed | AnchorTreeNodeFlags_NoTreePushOnOpen |
                                          AnchorTreeNodeFlags_NoAutoOpenOnLog
 };
 
@@ -2947,13 +2948,12 @@ enum AnchorTreeNodeFlags_
 enum AnchorPopupFlags_
 {
   AnchorPopupFlags_None = 0,
-  AnchorPopupFlags_MouseButtonLeft = 0,   // For BeginPopupContext*(): open on Left Mouse release. Guaranteed
-                                          // to always be == 0 (same as AnchorMouseButton_Left)
-  AnchorPopupFlags_MouseButtonRight = 1,  // For BeginPopupContext*(): open on Right Mouse release.
-                                          // Guaranteed to always be == 1 (same as AnchorMouseButton_Right)
-  AnchorPopupFlags_MouseButtonMiddle =
-    2,  // For BeginPopupContext*(): open on Middle Mouse release. Guaranteed to always be == 2
-        // (same as AnchorMouseButton_Middle)
+  AnchorPopupFlags_MouseButtonLeft = 0,    // For BeginPopupContext*(): open on Left Mouse release. Guaranteed
+                                           // to always be == 0 (same as AnchorMouseButton_Left)
+  AnchorPopupFlags_MouseButtonRight = 1,   // For BeginPopupContext*(): open on Right Mouse release.
+                                           // Guaranteed to always be == 1 (same as AnchorMouseButton_Right)
+  AnchorPopupFlags_MouseButtonMiddle = 2,  // For BeginPopupContext*(): open on Middle Mouse release.
+                                           // Guaranteed to always be == 2 (same as AnchorMouseButton_Middle)
   AnchorPopupFlags_MouseButtonMask_ = 0x1F,
   AnchorPopupFlags_MouseButtonDefault_ = 1,
   AnchorPopupFlags_NoOpenOverExistingPopup =
@@ -3007,15 +3007,14 @@ enum AnchorTabBarFlags_
   AnchorTabBarFlags_AutoSelectNewTabs = 1 << 1,   // Automatically select new tabs when they appear
   AnchorTabBarFlags_TabListPopupButton = 1 << 2,  // Disable buttons to open the tab list popup
   AnchorTabBarFlags_NoCloseWithMiddleMouseButton =
-    1 << 3,  // Disable behavior of closing tabs (that are submitted with p_open != NULL) with
-             // middle mouse button. You can still repro this behavior on user's side with if
-             // (IsItemHovered() && IsMouseClicked(2)) *p_open = false.
-  AnchorTabBarFlags_NoTabListScrollingButtons = 1
-                                                << 4,  // Disable scrolling buttons (apply when fitting
-                                                       // policy is AnchorTabBarFlags_FittingPolicyScroll)
-  AnchorTabBarFlags_NoTooltip = 1 << 5,                // Disable tooltips when hovering a tab
-  AnchorTabBarFlags_FittingPolicyResizeDown = 1 << 6,  // Resize tabs when they don't fit
-  AnchorTabBarFlags_FittingPolicyScroll = 1 << 7,      // Add scroll buttons when tabs don't fit
+    1 << 3,                                              // Disable behavior of closing tabs (that are submitted with p_open != NULL) with
+                                                         // middle mouse button. You can still repro this behavior on user's side with if
+                                                         // (IsItemHovered() && IsMouseClicked(2)) *p_open = false.
+  AnchorTabBarFlags_NoTabListScrollingButtons = 1 << 4,  // Disable scrolling buttons (apply when fitting
+                                                         // policy is AnchorTabBarFlags_FittingPolicyScroll)
+  AnchorTabBarFlags_NoTooltip = 1 << 5,                  // Disable tooltips when hovering a tab
+  AnchorTabBarFlags_FittingPolicyResizeDown = 1 << 6,    // Resize tabs when they don't fit
+  AnchorTabBarFlags_FittingPolicyScroll = 1 << 7,        // Add scroll buttons when tabs don't fit
   AnchorTabBarFlags_FittingPolicyMask_ = AnchorTabBarFlags_FittingPolicyResizeDown |
                                          AnchorTabBarFlags_FittingPolicyScroll,
   AnchorTabBarFlags_FittingPolicyDefault_ = AnchorTabBarFlags_FittingPolicyResizeDown
@@ -3032,11 +3031,10 @@ enum AnchorTabItemFlags_
   AnchorTabItemFlags_SetSelected = 1 << 1,  // Trigger flag to programmatically make the tab
                                             // selected when calling BeginTabItem()
   AnchorTabItemFlags_NoCloseWithMiddleMouseButton =
-    1 << 2,  // Disable behavior of closing tabs (that are submitted with p_open != NULL) with
-             // middle mouse button. You can still repro this behavior on user's side with if
-             // (IsItemHovered() && IsMouseClicked(2)) *p_open = false.
-  AnchorTabItemFlags_NoPushId =
-    1 << 3,                               // Don't call PushID(tab->ID)/PopID() on BeginTabItem()/EndTabItem()
+    1 << 2,                               // Disable behavior of closing tabs (that are submitted with p_open != NULL) with
+                                          // middle mouse button. You can still repro this behavior on user's side with if
+                                          // (IsItemHovered() && IsMouseClicked(2)) *p_open = false.
+  AnchorTabItemFlags_NoPushId = 1 << 3,   // Don't call PushID(tab->ID)/PopID() on BeginTabItem()/EndTabItem()
   AnchorTabItemFlags_NoTooltip = 1 << 4,  // Disable tooltip for the given tab
   AnchorTabItemFlags_NoReorder =
     1 << 5,                             // Disable reordering this tab or having another tab cross over this tab
@@ -3084,23 +3082,20 @@ enum AnchorTableFlags_
 {
   // Features
   AnchorTableFlags_None = 0,
-  AnchorTableFlags_Resizable = 1 << 0,  // Enable resizing columns.
-  AnchorTableFlags_Reorderable =
-    1 << 1,                            // Enable reordering columns in header row (need calling TableSetupColumn() +
-                                       // TableHeadersRow() to display headers)
-  AnchorTableFlags_Hideable = 1 << 2,  // Enable hiding/disabling columns in context menu.
-  AnchorTableFlags_Sortable =
-    1 << 3,  // Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see
-             // AnchorTableFlags_SortMulti and AnchorTableFlags_SortTristate.
+  AnchorTableFlags_Resizable = 1 << 0,    // Enable resizing columns.
+  AnchorTableFlags_Reorderable = 1 << 1,  // Enable reordering columns in header row (need calling
+                                          // TableSetupColumn() + TableHeadersRow() to display headers)
+  AnchorTableFlags_Hideable = 1 << 2,     // Enable hiding/disabling columns in context menu.
+  AnchorTableFlags_Sortable = 1 << 3,     // Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also
+                                          // see AnchorTableFlags_SortMulti and AnchorTableFlags_SortTristate.
   AnchorTableFlags_NoSavedSettings =
     1 << 4,  // Disable persisting columns order, width and sort settings in the .ini file.
   AnchorTableFlags_ContextMenuInBody =
-    1 << 5,  // Right-click on columns body/contents will display table context menu. By default
-             // it is available in TableHeadersRow(). Decorations
-  AnchorTableFlags_RowBg =
-    1 << 6,                                  // Set each RowBg color with AnchorCol_TableRowBg or AnchorCol_TableRowBgAlt
-                                             // (equivalent of calling TableSetBgColor with AnchorTableBgFlags_RowBg0 on each
-                                             // row manually)
+    1 << 5,                                  // Right-click on columns body/contents will display table context menu. By default
+                                             // it is available in TableHeadersRow(). Decorations
+  AnchorTableFlags_RowBg = 1 << 6,           // Set each RowBg color with AnchorCol_TableRowBg or
+                                             // AnchorCol_TableRowBgAlt (equivalent of calling TableSetBgColor with
+                                             // AnchorTableBgFlags_RowBg0 on each row manually)
   AnchorTableFlags_BordersInnerH = 1 << 7,   // Draw horizontal borders between rows.
   AnchorTableFlags_BordersOuterH = 1 << 8,   // Draw horizontal borders at the top and bottom.
   AnchorTableFlags_BordersInnerV = 1 << 9,   // Draw vertical borders between columns.
@@ -3115,23 +3110,20 @@ enum AnchorTableFlags_
                                   AnchorTableFlags_BordersOuterH,  // Draw outer borders.
   AnchorTableFlags_Borders = AnchorTableFlags_BordersInner |
                              AnchorTableFlags_BordersOuter,  // Draw all borders.
-  AnchorTableFlags_NoBordersInBody =
-    1 << 11,  // [ALPHA] Disable vertical borders in columns Body (borders will always appears in
-              // Headers). -> May move to style
+  AnchorTableFlags_NoBordersInBody = 1 << 11,                // [ALPHA] Disable vertical borders in columns Body (borders
+                                                             // will always appears in Headers). -> May move to style
   AnchorTableFlags_NoBordersInBodyUntilResize =
-    1 << 12,  // [ALPHA] Disable vertical borders in columns Body until hovered for resize
-              // (borders will always appears in Headers). -> May move to style Sizing Policy
-              // (read above for defaults)
-  AnchorTableFlags_SizingFixedFit =
-    1 << 13,  // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable),
-              // matching contents width.
+    1 << 12,                                  // [ALPHA] Disable vertical borders in columns Body until hovered for resize
+                                              // (borders will always appears in Headers). -> May move to style Sizing Policy
+                                              // (read above for defaults)
+  AnchorTableFlags_SizingFixedFit = 1 << 13,  // Columns default to _WidthFixed or _WidthAuto (if resizable
+                                              // or not resizable), matching contents width.
   AnchorTableFlags_SizingFixedSame =
-    2 << 13,  // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable),
-              // matching the maximum contents width of all columns. Implicitly enable
-              // AnchorTableFlags_NoKeepColumnsVisible.
-  AnchorTableFlags_SizingStretchProp =
-    3 << 13,  // Columns default to _WidthStretch with default weights proportional to each
-              // columns contents widths.
+    2 << 13,                                     // Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable),
+                                                 // matching the maximum contents width of all columns. Implicitly enable
+                                                 // AnchorTableFlags_NoKeepColumnsVisible.
+  AnchorTableFlags_SizingStretchProp = 3 << 13,  // Columns default to _WidthStretch with default weights
+                                                 // proportional to each columns contents widths.
   AnchorTableFlags_SizingStretchSame =
     4 << 13,  // Columns default to _WidthStretch with default weights all equal, unless
               // overridden by TableSetupColumn(). Sizing Extra Options
@@ -3146,14 +3138,13 @@ enum AnchorTableFlags_
     1 << 18,  // Disable keeping column always minimally visible when ScrollX is off and table
               // gets too small. Not recommended if columns are resizable.
   AnchorTableFlags_PreciseWidths =
-    1 << 19,  // Disable distributing remainder width to stretched columns (width allocation on a
-              // 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag:
-              // 33,33,33). With larger number of columns, resizing will appear to be less
-              // smooth. Clipping
-  AnchorTableFlags_NoClip =
-    1 << 20,                               // Disable clipping rectangle for every individual columns (reduce draw command
-                                           // count, items will be able to overflow into other columns). Generally
-                                           // incompatible with TableSetupScrollFreeze(). Padding
+    1 << 19,                               // Disable distributing remainder width to stretched columns (width allocation on a
+                                           // 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag:
+                                           // 33,33,33). With larger number of columns, resizing will appear to be less
+                                           // smooth. Clipping
+  AnchorTableFlags_NoClip = 1 << 20,       // Disable clipping rectangle for every individual columns (reduce draw
+                                           // command count, items will be able to overflow into other columns).
+                                           // Generally incompatible with TableSetupScrollFreeze(). Padding
   AnchorTableFlags_PadOuterX = 1 << 21,    // Default if BordersOuterV is on. Enable outer-most
                                            // padding. Generally desirable if you have headers.
   AnchorTableFlags_NoPadOuterX = 1 << 22,  // Default if BordersOuterV is off. Disable outer-most padding.
@@ -3161,18 +3152,15 @@ enum AnchorTableFlags_
     1 << 23,  // Disable inner padding between columns (double inner padding if BordersOuterV is
               // on, single inner padding if BordersOuterV is off). Scrolling
   AnchorTableFlags_ScrollX =
-    1 << 24,  // Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to
-              // specify the container size. Changes default sizing policy. Because this create a
-              // child window, ScrollY is currently generally recommended when using ScrollX.
-  AnchorTableFlags_ScrollY =
-    1 << 25,  // Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to
-              // specify the container size. Sorting
-  AnchorTableFlags_SortMulti =
-    1 << 26,  // Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs()
-              // may return specs where (SpecsCount > 1).
-  AnchorTableFlags_SortTristate =
-    1 << 27,  // Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs
-              // where (SpecsCount == 0).
+    1 << 24,                                // Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to
+                                            // specify the container size. Changes default sizing policy. Because this create a
+                                            // child window, ScrollY is currently generally recommended when using ScrollX.
+  AnchorTableFlags_ScrollY = 1 << 25,       // Enable vertical scrolling. Require 'outer_size' parameter of
+                                            // BeginTable() to specify the container size. Sorting
+  AnchorTableFlags_SortMulti = 1 << 26,     // Hold shift when clicking headers to sort on multiple column.
+                                            // TableGetSortSpecs() may return specs where (SpecsCount > 1).
+  AnchorTableFlags_SortTristate = 1 << 27,  // Allow no sorting, disable default sorting. TableGetSortSpecs()
+                                            // may return specs where (SpecsCount == 0).
 
   // [Internal] Combinations and masks
   AnchorTableFlags_SizingMask_ = AnchorTableFlags_SizingFixedFit | AnchorTableFlags_SizingFixedSame |
@@ -3199,25 +3187,22 @@ enum AnchorTableColumnFlags_
     1 << 2,  // Column will stretch. Preferable with horizontal scrolling disabled (default if
              // table sizing policy is _SizingStretchSame or _SizingStretchProp).
   AnchorTableColumnFlags_WidthFixed =
-    1 << 3,                                  // Column will not stretch. Preferable with horizontal scrolling enabled (default if
-                                             // table sizing policy is _SizingFixedFit and table is resizable).
-  AnchorTableColumnFlags_NoResize = 1 << 4,  // Disable manual resizing.
-  AnchorTableColumnFlags_NoReorder =
-    1 << 5,                                         // Disable manual reordering this column, this will also prevent other columns from
-                                                    // crossing over this column.
-  AnchorTableColumnFlags_NoHide = 1 << 6,           // Disable ability to hide/disable this column.
-  AnchorTableColumnFlags_NoClip = 1 << 7,           // Disable clipping for this column (all NoClip columns
-                                                    // will render in a same draw command).
-  AnchorTableColumnFlags_NoSort = 1 << 8,           // Disable ability to sort on this field (even if
-                                                    // AnchorTableFlags_Sortable is set on the table).
-  AnchorTableColumnFlags_NoSortAscending = 1 << 9,  // Disable ability to sort in the ascending direction.
-  AnchorTableColumnFlags_NoSortDescending = 1
-                                            << 10,  // Disable ability to sort in the descending direction.
+    1 << 3,                                           // Column will not stretch. Preferable with horizontal scrolling enabled (default if
+                                                      // table sizing policy is _SizingFixedFit and table is resizable).
+  AnchorTableColumnFlags_NoResize = 1 << 4,           // Disable manual resizing.
+  AnchorTableColumnFlags_NoReorder = 1 << 5,          // Disable manual reordering this column, this will also
+                                                      // prevent other columns from crossing over this column.
+  AnchorTableColumnFlags_NoHide = 1 << 6,             // Disable ability to hide/disable this column.
+  AnchorTableColumnFlags_NoClip = 1 << 7,             // Disable clipping for this column (all NoClip columns
+                                                      // will render in a same draw command).
+  AnchorTableColumnFlags_NoSort = 1 << 8,             // Disable ability to sort on this field (even if
+                                                      // AnchorTableFlags_Sortable is set on the table).
+  AnchorTableColumnFlags_NoSortAscending = 1 << 9,    // Disable ability to sort in the ascending direction.
+  AnchorTableColumnFlags_NoSortDescending = 1 << 10,  // Disable ability to sort in the descending direction.
   AnchorTableColumnFlags_NoHeaderWidth =
-    1 << 11,  // Disable header text width contribution to automatic column width.
-  AnchorTableColumnFlags_PreferSortAscending =
-    1 << 12,  // Make the initial sort direction Ascending when first sorting on this column
-              // (default).
+    1 << 11,                                             // Disable header text width contribution to automatic column width.
+  AnchorTableColumnFlags_PreferSortAscending = 1 << 12,  // Make the initial sort direction Ascending when
+                                                         // first sorting on this column (default).
   AnchorTableColumnFlags_PreferSortDescending =
     1 << 13,  // Make the initial sort direction Descending when first sorting on this column.
   AnchorTableColumnFlags_IndentEnable =
@@ -3227,9 +3212,8 @@ enum AnchorTableColumnFlags_
               // Indentation changes _within_ the cell will still be honored.
 
   // Output status flags, read-only via TableGetColumnFlags()
-  AnchorTableColumnFlags_IsEnabled =
-    1 << 20,  // Status: is enabled == not hidden by user/api (referred to as "Hide" in
-              // _DefaultHide and _NoHide) flags.
+  AnchorTableColumnFlags_IsEnabled = 1 << 20,  // Status: is enabled == not hidden by user/api (referred to
+                                               // as "Hide" in _DefaultHide and _NoHide) flags.
   AnchorTableColumnFlags_IsVisible =
     1 << 21,                                   // Status: is visible == is enabled AND not clipped by scrolling.
   AnchorTableColumnFlags_IsSorted = 1 << 22,   // Status: is currently part of the sort specs
@@ -3240,8 +3224,7 @@ enum AnchorTableColumnFlags_
                                       AnchorTableColumnFlags_WidthFixed,
   AnchorTableColumnFlags_IndentMask_ = AnchorTableColumnFlags_IndentEnable |
                                        AnchorTableColumnFlags_IndentDisable,
-  AnchorTableColumnFlags_StatusMask_ = AnchorTableColumnFlags_IsEnabled |
-                                       AnchorTableColumnFlags_IsVisible |
+  AnchorTableColumnFlags_StatusMask_ = AnchorTableColumnFlags_IsEnabled | AnchorTableColumnFlags_IsVisible |
                                        AnchorTableColumnFlags_IsSorted | AnchorTableColumnFlags_IsHovered,
   AnchorTableColumnFlags_NoDirectResize_ =
     1 << 30  // [Internal] Disable user resizing this column directly (it may however we resized
@@ -3731,15 +3714,13 @@ enum AnchorColorEditFlags_
   // that you probably don't want to override them in most of your calls. Let the user choose via
   // the option menu and/or call SetColorEditOptions() once during startup.
   AnchorColorEditFlags__OptionsDefault = AnchorColorEditFlags_Uint8 | AnchorColorEditFlags_DisplayRGB |
-                                         AnchorColorEditFlags_InputRGB |
-                                         AnchorColorEditFlags_PickerHueBar,
+                                         AnchorColorEditFlags_InputRGB | AnchorColorEditFlags_PickerHueBar,
 
   // [Internal] Masks
   AnchorColorEditFlags__DisplayMask = AnchorColorEditFlags_DisplayRGB | AnchorColorEditFlags_DisplayHSV |
                                       AnchorColorEditFlags_DisplayHex,
   AnchorColorEditFlags__DataTypeMask = AnchorColorEditFlags_Uint8 | AnchorColorEditFlags_Float,
-  AnchorColorEditFlags__PickerMask = AnchorColorEditFlags_PickerHueWheel |
-                                     AnchorColorEditFlags_PickerHueBar,
+  AnchorColorEditFlags__PickerMask = AnchorColorEditFlags_PickerHueWheel | AnchorColorEditFlags_PickerHueBar,
   AnchorColorEditFlags__InputMask = AnchorColorEditFlags_InputRGB | AnchorColorEditFlags_InputHSV
 
 // Obsolete names (will be removed)
@@ -3766,11 +3747,10 @@ enum AnchorSliderFlags_
     1 << 6,  // Disable rounding underlying value to match precision of the display format string
              // (e.g. %.3f values are rounded to those 3 digits)
   AnchorSliderFlags_NoInput =
-    1 << 7,  // Disable CTRL+Click or Enter key allowing to input text directly into the widget
-  AnchorSliderFlags_InvalidMask_ =
-    0x7000000F  // [Internal] We treat using those bits as being potentially a 'float power'
-                // argument from the previous API that has got miscast to this enum, and will
-                // trigger an assert if needed.
+    1 << 7,                                    // Disable CTRL+Click or Enter key allowing to input text directly into the widget
+  AnchorSliderFlags_InvalidMask_ = 0x7000000F  // [Internal] We treat using those bits as being potentially a
+                                               // 'float power' argument from the previous API that has got
+                                               // miscast to this enum, and will trigger an assert if needed.
 
 // Obsolete names (will be removed)
 #ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
@@ -4903,7 +4883,7 @@ struct AnchorListClipper
 #  define ANCHOR_COL32_A_SHIFT 24
 #  define ANCHOR_COL32_A_MASK 0xFF000000
 #endif
-#define ANCHOR_COL32(R, G, B, A) \
+#define ANCHOR_COL32(R, G, B, A)                                                         \
   (((AnchorU32)(A) << ANCHOR_COL32_A_SHIFT) | ((AnchorU32)(B) << ANCHOR_COL32_B_SHIFT) | \
    ((AnchorU32)(G) << ANCHOR_COL32_G_SHIFT) | ((AnchorU32)(R) << ANCHOR_COL32_R_SHIFT))
 #define ANCHOR_COL32_WHITE ANCHOR_COL32(255, 255, 255, 255)  // Opaque white = 0xFFFFFFFF
@@ -4977,9 +4957,10 @@ struct AnchorColor
 };
 
 //-----------------------------------------------------------------------------
-// [SECTION] Drawing API (AnchorDrawCmd, AnchorDrawIdx, AnchorDrawVert, AnchorDrawChannel, AnchorDrawListSplitter,
-// AnchorDrawListFlags, AnchorDrawList, AnchorDrawData) Hold a series of drawing commands. The user provides a
-// renderer for AnchorDrawData which essentially contains an array of AnchorDrawList.
+// [SECTION] Drawing API (AnchorDrawCmd, AnchorDrawIdx, AnchorDrawVert, AnchorDrawChannel,
+// AnchorDrawListSplitter, AnchorDrawListFlags, AnchorDrawList, AnchorDrawData) Hold a series of drawing
+// commands. The user provides a renderer for AnchorDrawData which essentially contains an array of
+// AnchorDrawList.
 //-----------------------------------------------------------------------------
 
 // The maximum line width to bake anti-aliased textures for. Build atlas with
@@ -5020,8 +5001,8 @@ typedef void (*AnchorDrawCallback)(const AnchorDrawList *parent_list, const Anch
 // is asserted for).
 struct AnchorDrawCmd
 {
-  wabi::GfVec4f ClipRect;           // 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract AnchorDrawData->DisplayPos to
-                                    // get clipping rectangle in "viewport" coordinates
+  wabi::GfVec4f ClipRect;           // 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract
+                                    // AnchorDrawData->DisplayPos to get clipping rectangle in "viewport" coordinates
   AnchorTextureID TextureId;        // 4-8  // User-provided texture ID. Set by user in
                                     // AnchorAtlas::SetTexID() for fonts or passed to Image*() functions.
                                     // Ignore if never using images or multiple fonts atlas.
@@ -5146,14 +5127,21 @@ enum AnchorDrawFlags_
   AnchorDrawFlags_RoundCornersNone =
     1 << 8,  // AddRect(), AddRectFilled(), PathRect(): disable rounding on all corners (when
              // rounding > 0.0f). This is NOT zero, NOT an implicit flag!
-  AnchorDrawFlags_RoundCornersTop = AnchorDrawFlags_RoundCornersTopLeft | AnchorDrawFlags_RoundCornersTopRight,
-  AnchorDrawFlags_RoundCornersBottom = AnchorDrawFlags_RoundCornersBottomLeft | AnchorDrawFlags_RoundCornersBottomRight,
-  AnchorDrawFlags_RoundCornersLeft = AnchorDrawFlags_RoundCornersBottomLeft | AnchorDrawFlags_RoundCornersTopLeft,
-  AnchorDrawFlags_RoundCornersRight = AnchorDrawFlags_RoundCornersBottomRight | AnchorDrawFlags_RoundCornersTopRight,
-  AnchorDrawFlags_RoundCornersAll = AnchorDrawFlags_RoundCornersTopLeft | AnchorDrawFlags_RoundCornersTopRight |
-                                    AnchorDrawFlags_RoundCornersBottomLeft | AnchorDrawFlags_RoundCornersBottomRight,
-  AnchorDrawFlags_RoundCornersDefault_ = AnchorDrawFlags_RoundCornersAll,  // Default to ALL corners if none of the
-                                                                           // _RoundCornersXX flags are specified.
+  AnchorDrawFlags_RoundCornersTop = AnchorDrawFlags_RoundCornersTopLeft |
+                                    AnchorDrawFlags_RoundCornersTopRight,
+  AnchorDrawFlags_RoundCornersBottom = AnchorDrawFlags_RoundCornersBottomLeft |
+                                       AnchorDrawFlags_RoundCornersBottomRight,
+  AnchorDrawFlags_RoundCornersLeft = AnchorDrawFlags_RoundCornersBottomLeft |
+                                     AnchorDrawFlags_RoundCornersTopLeft,
+  AnchorDrawFlags_RoundCornersRight = AnchorDrawFlags_RoundCornersBottomRight |
+                                      AnchorDrawFlags_RoundCornersTopRight,
+  AnchorDrawFlags_RoundCornersAll = AnchorDrawFlags_RoundCornersTopLeft |
+                                    AnchorDrawFlags_RoundCornersTopRight |
+                                    AnchorDrawFlags_RoundCornersBottomLeft |
+                                    AnchorDrawFlags_RoundCornersBottomRight,
+  AnchorDrawFlags_RoundCornersDefault_ =
+    AnchorDrawFlags_RoundCornersAll,  // Default to ALL corners if none of the
+                                      // _RoundCornersXX flags are specified.
   AnchorDrawFlags_RoundCornersMask_ = AnchorDrawFlags_RoundCornersAll | AnchorDrawFlags_RoundCornersNone
 };
 
@@ -5190,11 +5178,13 @@ enum AnchorDrawListFlags_
 struct AnchorDrawList
 {
   // This is what you have to render
-  AnchorVector<AnchorDrawCmd> CmdBuffer;   // Draw commands. Typically 1 command = 1 GPU draw call,
-                                           // unless the command is a callback.
-  AnchorVector<AnchorDrawIdx> IdxBuffer;   // Index buffer. Each command consume AnchorDrawCmd::ElemCount of those
+  AnchorVector<AnchorDrawCmd> CmdBuffer;  // Draw commands. Typically 1 command = 1 GPU draw call,
+                                          // unless the command is a callback.
+  AnchorVector<AnchorDrawIdx>
+    IdxBuffer;                             // Index buffer. Each command consume AnchorDrawCmd::ElemCount of those
   AnchorVector<AnchorDrawVert> VtxBuffer;  // Vertex buffer.
-  AnchorDrawListFlags Flags;               // Flags, you may poke into these to adjust anti-aliasing settings per-primitive.
+  AnchorDrawListFlags
+    Flags;  // Flags, you may poke into these to adjust anti-aliasing settings per-primitive.
 
   // [Internal, used while building lists]
   unsigned int _VtxCurrentIdx;  // [Internal] generally == VtxBuffer.Size unless we are past 64K
@@ -5895,16 +5885,17 @@ struct AnchorFontAtlas
   //-------------------------------------------
 
   AnchorFontAtlasFlags Flags;  // Build flags (see AnchorFontAtlasFlags_)
-  AnchorTextureID TexID;       // User data to refer to the texture once it has been uploaded to user's graphic
-                               // systems. It is passed back to you during rendering via the AnchorDrawCmd structure.
-  int TexDesiredWidth;         // Texture width desired by user before Build(). Must be a power-of-two. If
-                               // have many glyphs your graphics API have texture size restrictions you
-                               // may want to increase texture width to decrease height.
-  int TexGlyphPadding;         // Padding between glyphs within texture in pixels. Defaults to 1. If your
-                               // rendering method doesn't rely on bilinear filtering you may set this to
-                               // 0.
-  bool Locked;                 // Marked as Locked by ANCHOR::NewFrame() so attempt to modify the atlas will
-                               // assert.
+  AnchorTextureID
+    TexID;              // User data to refer to the texture once it has been uploaded to user's graphic
+                        // systems. It is passed back to you during rendering via the AnchorDrawCmd structure.
+  int TexDesiredWidth;  // Texture width desired by user before Build(). Must be a power-of-two. If
+                        // have many glyphs your graphics API have texture size restrictions you
+                        // may want to increase texture width to decrease height.
+  int TexGlyphPadding;  // Padding between glyphs within texture in pixels. Defaults to 1. If your
+                        // rendering method doesn't rely on bilinear filtering you may set this to
+                        // 0.
+  bool Locked;          // Marked as Locked by ANCHOR::NewFrame() so attempt to modify the atlas will
+                        // assert.
 
   // [Internal]
   // NB: Access texture data via GetTexData*() calls! Which will setup a default font for you.
@@ -6118,158 +6109,158 @@ struct AnchorViewport
 #ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
 namespace ANCHOR
 {
-// OBSOLETED in 1.81 (from February 2021)
-ANCHOR_API bool ListBoxHeader(
-  const char *label,
-  int items_count,
-  int height_in_items = -1);  // Helper to calculate size from items_count and height_in_items
-static inline bool ListBoxHeader(const char *label, const wabi::GfVec2f &size = wabi::GfVec2f(0, 0))
-{
-  return BeginListBox(label, size);
-}
-static inline void ListBoxFooter()
-{
-  EndListBox();
-}
-// OBSOLETED in 1.79 (from August 2020)
-static inline void OpenPopupContextItem(const char *str_id = NULL, AnchorMouseButton mb = 1)
-{
-  OpenPopupOnItemClick(str_id, mb);
-}
+  // OBSOLETED in 1.81 (from February 2021)
+  ANCHOR_API bool ListBoxHeader(
+    const char *label,
+    int items_count,
+    int height_in_items = -1);  // Helper to calculate size from items_count and height_in_items
+  static inline bool ListBoxHeader(const char *label, const wabi::GfVec2f &size = wabi::GfVec2f(0, 0))
+  {
+    return BeginListBox(label, size);
+  }
+  static inline void ListBoxFooter()
+  {
+    EndListBox();
+  }
+  // OBSOLETED in 1.79 (from August 2020)
+  static inline void OpenPopupContextItem(const char *str_id = NULL, AnchorMouseButton mb = 1)
+  {
+    OpenPopupOnItemClick(str_id, mb);
+  }
 
-ANCHOR_API bool DragScalar(const char *label,
-                           AnchorDataType data_type,
-                           void *p_data,
-                           float v_speed,
-                           const void *p_min,
-                           const void *p_max,
-                           const char *format,
-                           float power);
-ANCHOR_API bool DragScalarN(const char *label,
-                            AnchorDataType data_type,
-                            void *p_data,
-                            int components,
-                            float v_speed,
-                            const void *p_min,
-                            const void *p_max,
-                            const char *format,
-                            float power);
-static inline bool DragFloat(const char *label,
-                             float *v,
-                             float v_speed,
-                             float v_min,
-                             float v_max,
-                             const char *format,
-                             float power)
-{
-  return DragScalar(label, AnchorDataType_Float, v, v_speed, &v_min, &v_max, format, power);
-}
-static inline bool DragFloat2(const char *label,
-                              float v[2],
-                              float v_speed,
-                              float v_min,
-                              float v_max,
-                              const char *format,
-                              float power)
-{
-  return DragScalarN(label, AnchorDataType_Float, v, 2, v_speed, &v_min, &v_max, format, power);
-}
-static inline bool DragFloat3(const char *label,
-                              float v[3],
-                              float v_speed,
-                              float v_min,
-                              float v_max,
-                              const char *format,
-                              float power)
-{
-  return DragScalarN(label, AnchorDataType_Float, v, 3, v_speed, &v_min, &v_max, format, power);
-}
-static inline bool DragFloat4(const char *label,
-                              float v[4],
-                              float v_speed,
-                              float v_min,
-                              float v_max,
-                              const char *format,
-                              float power)
-{
-  return DragScalarN(label, AnchorDataType_Float, v, 4, v_speed, &v_min, &v_max, format, power);
-}
-ANCHOR_API bool SliderScalar(const char *label,
+  ANCHOR_API bool DragScalar(const char *label,
                              AnchorDataType data_type,
                              void *p_data,
+                             float v_speed,
                              const void *p_min,
                              const void *p_max,
                              const char *format,
                              float power);
-ANCHOR_API bool SliderScalarN(const char *label,
+  ANCHOR_API bool DragScalarN(const char *label,
                               AnchorDataType data_type,
                               void *p_data,
                               int components,
+                              float v_speed,
                               const void *p_min,
                               const void *p_max,
                               const char *format,
                               float power);
-static inline bool SliderFloat(const char *label,
+  static inline bool DragFloat(const char *label,
                                float *v,
+                               float v_speed,
                                float v_min,
                                float v_max,
                                const char *format,
                                float power)
-{
-  return SliderScalar(label, AnchorDataType_Float, v, &v_min, &v_max, format, power);
-}
-static inline bool SliderFloat2(const char *label,
+  {
+    return DragScalar(label, AnchorDataType_Float, v, v_speed, &v_min, &v_max, format, power);
+  }
+  static inline bool DragFloat2(const char *label,
                                 float v[2],
+                                float v_speed,
                                 float v_min,
                                 float v_max,
                                 const char *format,
                                 float power)
-{
-  return SliderScalarN(label, AnchorDataType_Float, v, 2, &v_min, &v_max, format, power);
-}
-static inline bool SliderFloat3(const char *label,
+  {
+    return DragScalarN(label, AnchorDataType_Float, v, 2, v_speed, &v_min, &v_max, format, power);
+  }
+  static inline bool DragFloat3(const char *label,
                                 float v[3],
+                                float v_speed,
                                 float v_min,
                                 float v_max,
                                 const char *format,
                                 float power)
-{
-  return SliderScalarN(label, AnchorDataType_Float, v, 3, &v_min, &v_max, format, power);
-}
-static inline bool SliderFloat4(const char *label,
+  {
+    return DragScalarN(label, AnchorDataType_Float, v, 3, v_speed, &v_min, &v_max, format, power);
+  }
+  static inline bool DragFloat4(const char *label,
                                 float v[4],
+                                float v_speed,
                                 float v_min,
                                 float v_max,
                                 const char *format,
                                 float power)
-{
-  return SliderScalarN(label, AnchorDataType_Float, v, 4, &v_min, &v_max, format, power);
-}
-// OBSOLETED in 1.77 (from June 2020)
-static inline bool BeginPopupContextWindow(const char *str_id, AnchorMouseButton mb, bool over_items)
-{
-  return BeginPopupContextWindow(str_id, mb | (over_items ? 0 : AnchorPopupFlags_NoOpenOverItems));
-}
-// OBSOLETED in 1.72 (from April 2019)
-static inline void TreeAdvanceToLabelPos()
-{
-  SetCursorPosX(GetCursorPosX() + GetTreeNodeToLabelSpacing());
-}
-// OBSOLETED in 1.71 (from June 2019)
-static inline void SetNextTreeNodeOpen(bool open, AnchorCond cond = 0)
-{
-  SetNextItemOpen(open, cond);
-}
-// OBSOLETED in 1.70 (from May 2019)
-static inline float GetContentRegionAvailWidth()
-{
-  return GetContentRegionAvail()[0];
-}
-// OBSOLETED in 1.69 (from Mar 2019)
-static inline AnchorDrawList *GetOverlayDrawList()
-{
-  return GetForegroundDrawList();
-}
+  {
+    return DragScalarN(label, AnchorDataType_Float, v, 4, v_speed, &v_min, &v_max, format, power);
+  }
+  ANCHOR_API bool SliderScalar(const char *label,
+                               AnchorDataType data_type,
+                               void *p_data,
+                               const void *p_min,
+                               const void *p_max,
+                               const char *format,
+                               float power);
+  ANCHOR_API bool SliderScalarN(const char *label,
+                                AnchorDataType data_type,
+                                void *p_data,
+                                int components,
+                                const void *p_min,
+                                const void *p_max,
+                                const char *format,
+                                float power);
+  static inline bool SliderFloat(const char *label,
+                                 float *v,
+                                 float v_min,
+                                 float v_max,
+                                 const char *format,
+                                 float power)
+  {
+    return SliderScalar(label, AnchorDataType_Float, v, &v_min, &v_max, format, power);
+  }
+  static inline bool SliderFloat2(const char *label,
+                                  float v[2],
+                                  float v_min,
+                                  float v_max,
+                                  const char *format,
+                                  float power)
+  {
+    return SliderScalarN(label, AnchorDataType_Float, v, 2, &v_min, &v_max, format, power);
+  }
+  static inline bool SliderFloat3(const char *label,
+                                  float v[3],
+                                  float v_min,
+                                  float v_max,
+                                  const char *format,
+                                  float power)
+  {
+    return SliderScalarN(label, AnchorDataType_Float, v, 3, &v_min, &v_max, format, power);
+  }
+  static inline bool SliderFloat4(const char *label,
+                                  float v[4],
+                                  float v_min,
+                                  float v_max,
+                                  const char *format,
+                                  float power)
+  {
+    return SliderScalarN(label, AnchorDataType_Float, v, 4, &v_min, &v_max, format, power);
+  }
+  // OBSOLETED in 1.77 (from June 2020)
+  static inline bool BeginPopupContextWindow(const char *str_id, AnchorMouseButton mb, bool over_items)
+  {
+    return BeginPopupContextWindow(str_id, mb | (over_items ? 0 : AnchorPopupFlags_NoOpenOverItems));
+  }
+  // OBSOLETED in 1.72 (from April 2019)
+  static inline void TreeAdvanceToLabelPos()
+  {
+    SetCursorPosX(GetCursorPosX() + GetTreeNodeToLabelSpacing());
+  }
+  // OBSOLETED in 1.71 (from June 2019)
+  static inline void SetNextTreeNodeOpen(bool open, AnchorCond cond = 0)
+  {
+    SetNextItemOpen(open, cond);
+  }
+  // OBSOLETED in 1.70 (from May 2019)
+  static inline float GetContentRegionAvailWidth()
+  {
+    return GetContentRegionAvail()[0];
+  }
+  // OBSOLETED in 1.69 (from Mar 2019)
+  static inline AnchorDrawList *GetOverlayDrawList()
+  {
+    return GetForegroundDrawList();
+  }
 }  // namespace ANCHOR
 
 // OBSOLETED in 1.82 (from Mars 2021): flags for AddRect(), AddRectFilled(), AddImageRounded(),
@@ -6278,15 +6269,19 @@ typedef AnchorDrawFlags AnchorDrawCornerFlags;
 enum AnchorDrawCornerFlags_
 {
   AnchorDrawCornerFlags_None =
-    AnchorDrawFlags_RoundCornersNone,                                        // Was == 0 prior to 1.82, this is now ==
-                                                                             // AnchorDrawFlags_RoundCornersNone which is != 0 and not implicit
-  AnchorDrawCornerFlags_TopLeft = AnchorDrawFlags_RoundCornersTopLeft,       // Was == 0x01 (1 << 0) prior to 1.82. Order
-                                                                             // matches AnchorDrawFlags_NoRoundCorner* flag
-                                                                             // (we exploit this internally).
-  AnchorDrawCornerFlags_TopRight = AnchorDrawFlags_RoundCornersTopRight,     // Was == 0x02 (1 << 1) prior to 1.82.
-  AnchorDrawCornerFlags_BotLeft = AnchorDrawFlags_RoundCornersBottomLeft,    // Was == 0x04 (1 << 2) prior to 1.82.
-  AnchorDrawCornerFlags_BotRight = AnchorDrawFlags_RoundCornersBottomRight,  // Was == 0x08 (1 << 3) prior to 1.82.
-  AnchorDrawCornerFlags_All = AnchorDrawFlags_RoundCornersAll,               // Was == 0x0F prior to 1.82
+    AnchorDrawFlags_RoundCornersNone,  // Was == 0 prior to 1.82, this is now ==
+                                       // AnchorDrawFlags_RoundCornersNone which is != 0 and not implicit
+  AnchorDrawCornerFlags_TopLeft =
+    AnchorDrawFlags_RoundCornersTopLeft,  // Was == 0x01 (1 << 0) prior to 1.82. Order
+                                          // matches AnchorDrawFlags_NoRoundCorner* flag
+                                          // (we exploit this internally).
+  AnchorDrawCornerFlags_TopRight =
+    AnchorDrawFlags_RoundCornersTopRight,  // Was == 0x02 (1 << 1) prior to 1.82.
+  AnchorDrawCornerFlags_BotLeft =
+    AnchorDrawFlags_RoundCornersBottomLeft,  // Was == 0x04 (1 << 2) prior to 1.82.
+  AnchorDrawCornerFlags_BotRight =
+    AnchorDrawFlags_RoundCornersBottomRight,                    // Was == 0x08 (1 << 3) prior to 1.82.
+  AnchorDrawCornerFlags_All = AnchorDrawFlags_RoundCornersAll,  // Was == 0x0F prior to 1.82
   AnchorDrawCornerFlags_Top = AnchorDrawCornerFlags_TopLeft | AnchorDrawCornerFlags_TopRight,
   AnchorDrawCornerFlags_Bot = AnchorDrawCornerFlags_BotLeft | AnchorDrawCornerFlags_BotRight,
   AnchorDrawCornerFlags_Left = AnchorDrawCornerFlags_TopLeft | AnchorDrawCornerFlags_BotLeft,

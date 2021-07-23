@@ -47,7 +47,7 @@ WABI_NAMESPACE_BEGIN
 /// Arrays are not wrapped but their components are.
 ///
 /// \hideinitializer
-#define TF_PY_WRAP_PUBLIC_TOKENS(name, key, seq) \
+#define TF_PY_WRAP_PUBLIC_TOKENS(name, key, seq)                                                       \
   boost::python::class_<_TF_TOKENS_STRUCT_NAME(key), boost::noncopyable>(name, boost::python::no_init) \
     _TF_PY_TOKENS_WRAP_SEQ(key, _TF_PY_TOKENS_EXPAND(seq))
 
@@ -84,14 +84,14 @@ class _TfPyWrapStaticToken
 #define _TF_PY_TOKENS_WRAP_ATTR_MEMBER(r, key, name) \
   boost::python::scope().attr(TF_PP_STRINGIZE(name)) = key->name.GetString();
 
-#define _TF_PY_TOKENS_WRAP_MEMBER(r, key, name) \
-  .add_static_property( \
-    TF_PP_STRINGIZE(name), \
-    boost::python::make_function(_TfPyWrapStaticToken((&key->name)), \
+#define _TF_PY_TOKENS_WRAP_MEMBER(r, key, name)                                                        \
+  .add_static_property(                                                                                \
+    TF_PP_STRINGIZE(name),                                                                             \
+    boost::python::make_function(_TfPyWrapStaticToken((&key->name)),                                   \
                                  boost::python::return_value_policy<boost::python::return_by_value>(), \
                                  boost::mpl::vector1<std::string>()))
 
-#define _TF_PY_TOKENS_EXPAND(seq) \
+#define _TF_PY_TOKENS_EXPAND(seq)                      \
   BOOST_PP_SEQ_FILTER(_TF_TOKENS_IS_NOT_ARRAY, ~, seq) \
   _TF_TOKENS_EXPAND_ARRAY_ELEMENTS(seq)
 

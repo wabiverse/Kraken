@@ -73,8 +73,7 @@ void WorkRunDetachedTask(Fn &&fn)
   {
     Work_GetDetachedDispatcher().Run(std::move(task));
     Work_EnsureDetachedTaskProgress();
-  }
-  else
+  } else
   {
     task();
   }

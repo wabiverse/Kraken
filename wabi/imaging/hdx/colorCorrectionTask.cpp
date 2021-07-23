@@ -46,9 +46,8 @@ namespace OCIO = OCIO_NAMESPACE;
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((colorCorrectionVertex,
-                           "ColorCorrectionVertex"))((colorCorrectionFragment,
-                                                      "ColorCorrectionFragment"))(colorCorrectionShader));
+                         ((colorCorrectionVertex, "ColorCorrectionVertex"))(
+                           (colorCorrectionFragment, "ColorCorrectionFragment"))(colorCorrectionShader));
 
 static const int HDX_DEFAULT_LUT3D_SIZE_OCIO = 65;
 
@@ -143,8 +142,7 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
     if (cs)
     {
       inputColorSpace = cs->getName();
-    }
-    else
+    } else
     {
       inputColorSpace = OCIO::ROLE_SCENE_LINEAR;
     }
@@ -159,8 +157,7 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
   {
     transform->setLooksOverride(_looksOCIO.c_str());
     transform->setLooksOverrideEnabled(true);
-  }
-  else
+  } else
   {
     transform->setLooksOverrideEnabled(false);
   }
@@ -292,9 +289,17 @@ bool HdxColorCorrectionTask::_CreateBufferResources()
   }
 
   // A larger-than screen triangle made to fit the screen.
-  constexpr float vertDataGL[][6] = {{-1, 3, 0, 1, 0, 2}, {-1, -1, 0, 1, 0, 0}, {3, -1, 0, 1, 2, 0}};
+  constexpr float vertDataGL[][6] = {
+    {-1, 3,  0, 1, 0, 2},
+    {-1, -1, 0, 1, 0, 0},
+    {3,  -1, 0, 1, 2, 0}
+  };
 
-  constexpr float vertDataOther[][6] = {{-1, 3, 0, 1, 0, -1}, {-1, -1, 0, 1, 0, 1}, {3, -1, 0, 1, 2, 1}};
+  constexpr float vertDataOther[][6] = {
+    {-1, 3,  0, 1, 0, -1},
+    {-1, -1, 0, 1, 0, 1 },
+    {3,  -1, 0, 1, 2, 1 }
+  };
 
   HgiBufferDesc vboDesc;
   vboDesc.debugName = "HdxColorCorrectionTask VertexBuffer";
@@ -349,8 +354,7 @@ bool HdxColorCorrectionTask::_CreateResourceBindings(HgiTextureHandle const &aov
     if (desc == resourceDesc)
     {
       return true;
-    }
-    else
+    } else
     {
       _GetHgi()->DestroyResourceBindings(&_resourceBindings);
     }

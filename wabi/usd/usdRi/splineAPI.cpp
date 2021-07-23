@@ -195,8 +195,7 @@ bool UsdRiSplineAPI::Validate(std::string *reason) const
   UsdAttribute posAttr = GetPositionsAttr();
   UsdAttribute valAttr = GetValuesAttr();
 
-  if (_valuesTypeName != SdfValueTypeNames->FloatArray &&
-      _valuesTypeName != SdfValueTypeNames->Color3fArray)
+  if (_valuesTypeName != SdfValueTypeNames->FloatArray && _valuesTypeName != SdfValueTypeNames->Color3fArray)
   {
     *reason += "SplineAPI is configured for an unsupported value type '" +
                _valuesTypeName.GetAsToken().GetString() + "'";
@@ -247,8 +246,7 @@ bool UsdRiSplineAPI::Validate(std::string *reason) const
     VtFloatArray vals;
     valAttr.Get(&vals);
     numValues = vals.size();
-  }
-  else if (_valuesTypeName == SdfValueTypeNames->Color3fArray)
+  } else if (_valuesTypeName == SdfValueTypeNames->Color3fArray)
   {
     VtVec3fArray vals;
     valAttr.Get(&vals);

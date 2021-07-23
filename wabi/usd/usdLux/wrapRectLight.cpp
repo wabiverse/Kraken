@@ -50,32 +50,34 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateWidthAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateWidthAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateHeightAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateHeightAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateTextureFileAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
+  static UsdAttribute _CreateTextureFileAttr(UsdLuxRectLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+                                      writeSparsely);
+  }
 
-static std::string _Repr(const UsdLuxRectLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.RectLight(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdLuxRectLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.RectLight(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -107,12 +109,14 @@ void wrapUsdLuxRectLight()
     .def(!self)
 
     .def("GetWidthAttr", &This::GetWidthAttr)
-    .def(
-      "CreateWidthAttr", &_CreateWidthAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateWidthAttr",
+         &_CreateWidthAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetHeightAttr", &This::GetHeightAttr)
-    .def(
-      "CreateHeightAttr", &_CreateHeightAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateHeightAttr",
+         &_CreateHeightAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetTextureFileAttr", &This::GetTextureFileAttr)
     .def("CreateTextureFileAttr",
@@ -146,7 +150,7 @@ void wrapUsdLuxRectLight()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

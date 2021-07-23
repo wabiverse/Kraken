@@ -87,8 +87,9 @@ void HdPhTextureHandle::ReallocateSamplerIfNecessary()
   HdPh_SamplerObjectRegistry *const samplerObjectRegistry =
     _textureHandleRegistry->GetSamplerObjectRegistry();
 
-  _samplerObject = samplerObjectRegistry->AllocateSampler(
-    _textureObject, _samplerParams, _createBindlessHandle);
+  _samplerObject = samplerObjectRegistry->AllocateSampler(_textureObject,
+                                                          _samplerParams,
+                                                          _createBindlessHandle);
 }
 
 WABI_NAMESPACE_END

@@ -43,100 +43,106 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateProjectionAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateProjectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateProjectionAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateProjectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                     writeSparsely);
+  }
 
-static UsdAttribute _CreateHorizontalApertureAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateHorizontalApertureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  static UsdAttribute _CreateHorizontalApertureAttr(UsdGeomCamera &self,
+                                                    object defaultVal,
+                                                    bool writeSparsely)
+  {
+    return self.CreateHorizontalApertureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                             writeSparsely);
+  }
+
+  static UsdAttribute _CreateVerticalApertureAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateVerticalApertureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                            writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateVerticalApertureAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateVerticalApertureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                         writeSparsely);
-}
+  static UsdAttribute _CreateHorizontalApertureOffsetAttr(UsdGeomCamera &self,
+                                                          object defaultVal,
+                                                          bool writeSparsely)
+  {
+    return self.CreateHorizontalApertureOffsetAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                   writeSparsely);
+  }
 
-static UsdAttribute _CreateHorizontalApertureOffsetAttr(UsdGeomCamera &self,
+  static UsdAttribute _CreateVerticalApertureOffsetAttr(UsdGeomCamera &self,
                                                         object defaultVal,
                                                         bool writeSparsely)
-{
-  return self.CreateHorizontalApertureOffsetAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateVerticalApertureOffsetAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                                  writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateVerticalApertureOffsetAttr(UsdGeomCamera &self,
-                                                      object defaultVal,
-                                                      bool writeSparsely)
-{
-  return self.CreateVerticalApertureOffsetAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                               writeSparsely);
-}
-
-static UsdAttribute _CreateFocalLengthAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFocalLengthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateClippingRangeAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateClippingRangeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2),
+  static UsdAttribute _CreateFocalLengthAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFocalLengthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                       writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateClippingPlanesAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateClippingPlanesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4Array),
-                                       writeSparsely);
-}
+  static UsdAttribute _CreateClippingRangeAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateClippingRangeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateFStopAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFStopAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateClippingPlanesAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateClippingPlanesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float4Array),
+                                         writeSparsely);
+  }
 
-static UsdAttribute _CreateFocusDistanceAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFocusDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateFStopAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFStopAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateStereoRoleAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateStereoRoleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateFocusDistanceAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFocusDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateShutterOpenAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateShutterOpenAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
-                                    writeSparsely);
-}
-
-static UsdAttribute _CreateShutterCloseAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateShutterCloseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
+  static UsdAttribute _CreateStereoRoleAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateStereoRoleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                      writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateExposureAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateShutterOpenAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateShutterOpenAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
+                                      writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomCamera &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.Camera(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateShutterCloseAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateShutterCloseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
+                                       writeSparsely);
+  }
+
+  static UsdAttribute _CreateExposureAttr(UsdGeomCamera &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
+
+  static std::string _Repr(const UsdGeomCamera &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.Camera(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -208,8 +214,9 @@ void wrapUsdGeomCamera()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetFStopAttr", &This::GetFStopAttr)
-    .def(
-      "CreateFStopAttr", &_CreateFStopAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateFStopAttr",
+         &_CreateFStopAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetFocusDistanceAttr", &This::GetFocusDistanceAttr)
     .def("CreateFocusDistanceAttr",
@@ -263,11 +270,12 @@ void wrapUsdGeomCamera()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def("GetCamera", &UsdGeomCamera::GetCamera, (arg("time") = UsdTimeCode::Default()))
-    .def(
-      "SetFromCamera", &UsdGeomCamera::SetFromCamera, (arg("camera"), arg("time") = UsdTimeCode::Default()));
-}
+  WRAP_CUSTOM
+  {
+    _class.def("GetCamera", &UsdGeomCamera::GetCamera, (arg("time") = UsdTimeCode::Default()))
+      .def("SetFromCamera",
+           &UsdGeomCamera::SetFromCamera,
+           (arg("camera"), arg("time") = UsdTimeCode::Default()));
+  }
 
 }  // anonymous namespace

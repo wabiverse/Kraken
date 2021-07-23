@@ -191,13 +191,11 @@ bool GfRay::Intersect(const GfVec3d &p0,
   {
     axis0 = 1;
     axis1 = 2;
-  }
-  else if (yAbs > zAbs)
+  } else if (yAbs > zAbs)
   {
     axis0 = 2;
     axis1 = 0;
-  }
-  else
+  } else
   {
     axis0 = 0;
     axis1 = 1;
@@ -308,8 +306,7 @@ bool GfRay::Intersect(const GfRange3d &box, double *enterDistance, double *exitD
       if (GetStartPoint()[i] < box.GetMin()[i] || GetStartPoint()[i] > box.GetMax()[i])
       {
         return false;
-      }
-      else
+      } else
       {
         continue;
       }
@@ -458,8 +455,7 @@ bool GfRay::Intersect(const GfVec3d &origin,
   if (!enterValid)
   {
     *enterDistance = *exitDistance;
-  }
-  else if (!exitValid)
+  } else if (!exitValid)
   {
     *exitDistance = *enterDistance;
   }

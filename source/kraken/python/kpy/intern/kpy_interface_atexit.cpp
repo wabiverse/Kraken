@@ -68,8 +68,7 @@ static void atexit_func_call(const char *func_name, PyObject *atexit_func_arg)
   if (ret)
   {
     Py_DECREF(ret);
-  }
-  else
+  } else
   { /* should never happen */
     PyErr_Print();
   }

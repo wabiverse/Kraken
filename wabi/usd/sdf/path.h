@@ -1190,8 +1190,9 @@ std::pair<ForwardIterator, ForwardIterator> SdfPathFindPrefixedRange(ForwardIter
 
   // Next, find end of range starting from the lower bound, using the
   // prefixing condition to define the boundary.
-  result.second = TfFindBoundary(
-    result.first, end, [&prefix, &getPath](IterRef iterRef) { return getPath(iterRef).HasPrefix(prefix); });
+  result.second = TfFindBoundary(result.first, end, [&prefix, &getPath](IterRef iterRef) {
+    return getPath(iterRef).HasPrefix(prefix);
+  });
 
   return result;
 }
@@ -1354,8 +1355,10 @@ Iter Sdf_PathFindLongestPrefixImpl(MapParam map,
   // recurse looking for it or its longest prefix in the preceding range.  We
   // always pass strictPrefix=false, since now we're operating on prefixes of
   // the original caller's path.
-  return Sdf_PathFindLongestPrefixImpl<Iter, MapParam>(
-    map, path.GetCommonPrefix(getPath(*result)), /*strictPrefix=*/false, getPath);
+  return Sdf_PathFindLongestPrefixImpl<Iter, MapParam>(map,
+                                                       path.GetCommonPrefix(getPath(*result)),
+                                                       /*strictPrefix=*/false,
+                                                       getPath);
 }
 
 /// Return an iterator pointing to the element of \a set whose key is the
@@ -1373,15 +1376,20 @@ typename std::map<SdfPath, T>::const_iterator SdfPathFindLongestPrefix(std::map<
                                                                        SdfPath const &path)
 {
   return Sdf_PathFindLongestPrefixImpl<typename std::map<SdfPath, T>::const_iterator,
-                                       std::map<SdfPath, T> const &>(
-    map, path, /*strictPrefix=*/false, TfGet<0>());
+                                       std::map<SdfPath, T> const &>(map,
+                                                                     path,
+                                                                     /*strictPrefix=*/false,
+                                                                     TfGet<0>());
 }
 template<class T>
 typename std::map<SdfPath, T>::iterator SdfPathFindLongestPrefix(std::map<SdfPath, T> &map,
                                                                  SdfPath const &path)
 {
   return Sdf_PathFindLongestPrefixImpl<typename std::map<SdfPath, T>::iterator, std::map<SdfPath, T> &>(
-    map, path, /*strictPrefix=*/false, TfGet<0>());
+    map,
+    path,
+    /*strictPrefix=*/false,
+    TfGet<0>());
 }
 
 /// Return an iterator pointing to the element of \a set whose key is the
@@ -1399,15 +1407,20 @@ typename std::map<SdfPath, T>::const_iterator SdfPathFindLongestStrictPrefix(std
                                                                              SdfPath const &path)
 {
   return Sdf_PathFindLongestPrefixImpl<typename std::map<SdfPath, T>::const_iterator,
-                                       std::map<SdfPath, T> const &>(
-    map, path, /*strictPrefix=*/true, TfGet<0>());
+                                       std::map<SdfPath, T> const &>(map,
+                                                                     path,
+                                                                     /*strictPrefix=*/true,
+                                                                     TfGet<0>());
 }
 template<class T>
 typename std::map<SdfPath, T>::iterator SdfPathFindLongestStrictPrefix(std::map<SdfPath, T> &map,
                                                                        SdfPath const &path)
 {
   return Sdf_PathFindLongestPrefixImpl<typename std::map<SdfPath, T>::iterator, std::map<SdfPath, T> &>(
-    map, path, /*strictPrefix=*/true, TfGet<0>());
+    map,
+    path,
+    /*strictPrefix=*/true,
+    TfGet<0>());
 }
 
 WABI_NAMESPACE_END

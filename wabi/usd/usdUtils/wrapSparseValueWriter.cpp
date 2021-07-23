@@ -70,8 +70,9 @@ void wrapSparseValueWriter()
     .def("SetTimeSample", _WrapSetTimeSample, (arg("value"), arg("time")));
 
   class_<UsdUtilsSparseValueWriter>("SparseValueWriter", init<>())
-    .def(
-      "SetAttribute", _WrapSetAttribute, (arg("attr"), arg("value"), arg("time") = UsdTimeCode::Default()))
+    .def("SetAttribute",
+         _WrapSetAttribute,
+         (arg("attr"), arg("value"), arg("time") = UsdTimeCode::Default()))
 
     .def("GetSparseAttrValueWriters", _WrapGetSparseAttrValueWriters);
 

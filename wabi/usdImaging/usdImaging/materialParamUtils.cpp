@@ -85,8 +85,7 @@ static SdfAssetPath _ResolveAssetSymlinks(const SdfAssetPath &assetPath)
   if (_ResolveSymlinks(p, &p))
   {
     return SdfAssetPath(assetPath.GetAssetPath(), p);
-  }
-  else
+  } else
   {
     return assetPath;
   }
@@ -120,8 +119,7 @@ static std::string _ResolvedPathForFirstTile(const std::pair<std::string, std::s
       if (_ResolveSymlinks(path, &realPath))
       {
         return realPath;
-      }
-      else
+      } else
       {
         return path;
       }
@@ -247,8 +245,7 @@ static TfToken _GetPrimvarNameAttributeValue(SdrShaderNodeConstPtr const &sdrNod
   if (vtName.IsHolding<TfToken>())
   {
     return vtName.UncheckedGet<TfToken>();
-  }
-  else if (vtName.IsHolding<std::string>())
+  } else if (vtName.IsHolding<std::string>())
   {
     return TfToken(vtName.UncheckedGet<std::string>());
   }
@@ -352,8 +349,11 @@ static void _WalkGraph(UsdShadeConnectableAPI const &shadeNode,
     {
       // If it is an output on a shading node we visit the node and also
       // create a relationship in the network
-      _WalkGraph(
-        UsdShadeConnectableAPI(attr.GetPrim()), materialNetwork, visitedNodes, shaderSourceTypes, time);
+      _WalkGraph(UsdShadeConnectableAPI(attr.GetPrim()),
+                 materialNetwork,
+                 visitedNodes,
+                 shaderSourceTypes,
+                 time);
 
       HdMaterialRelationship relationship;
       relationship.outputId = node.path;
@@ -361,8 +361,7 @@ static void _WalkGraph(UsdShadeConnectableAPI const &shadeNode,
       relationship.inputId = attr.GetPrim().GetPath();
       relationship.inputName = UsdShadeOutput(attr).GetBaseName();
       materialNetwork->relationships.push_back(relationship);
-    }
-    else if (attrType == UsdShadeAttributeType::Input)
+    } else if (attrType == UsdShadeAttributeType::Input)
     {
       // If it is an input attribute we get the authored value.
       //
@@ -461,8 +460,7 @@ static bool _IsGraphTimeVarying(UsdShadeConnectableAPI const &shadeNode, _PathSe
       {
         return true;
       }
-    }
-    else if (attrType == UsdShadeAttributeType::Input)
+    } else if (attrType == UsdShadeAttributeType::Input)
     {
       // If it is an input attribute we get the authored value.
       if (attr.ValueMightBeTimeVarying())

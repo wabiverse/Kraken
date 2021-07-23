@@ -38,23 +38,21 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static void _SetOutputFile(object const &file)
-{
-  int filefd = PyObject_AsFileDescriptor(file.ptr());
-  if (filefd == ArchFileNo(stdout))
+  static void _SetOutputFile(object const &file)
   {
-    TfDebug::SetOutputFile(stdout);
+    int filefd = PyObject_AsFileDescriptor(file.ptr());
+    if (filefd == ArchFileNo(stdout))
+    {
+      TfDebug::SetOutputFile(stdout);
+    } else if (filefd == ArchFileNo(stderr))
+    {
+      TfDebug::SetOutputFile(stderr);
+    } else
+    {
+      // reports an error indicating correct usage, either stdout or stderr
+      TfDebug::SetOutputFile(NULL);
+    }
   }
-  else if (filefd == ArchFileNo(stderr))
-  {
-    TfDebug::SetOutputFile(stderr);
-  }
-  else
-  {
-    // reports an error indicating correct usage, either stdout or stderr
-    TfDebug::SetOutputFile(NULL);
-  }
-}
 
 }  // anonymous namespace
 

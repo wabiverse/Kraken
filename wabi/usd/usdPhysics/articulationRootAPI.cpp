@@ -34,92 +34,80 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsArticulationRootAPI,
-        TfType::Bases< UsdAPISchemaBase > >();
-    
+  TfType::Define<UsdPhysicsArticulationRootAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _schemaTokens,
-    (PhysicsArticulationRootAPI)
-);
+TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsArticulationRootAPI));
 
 /* virtual */
 UsdPhysicsArticulationRootAPI::~UsdPhysicsArticulationRootAPI()
-{
-}
+{}
 
 /* static */
-UsdPhysicsArticulationRootAPI
-UsdPhysicsArticulationRootAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsArticulationRootAPI UsdPhysicsArticulationRootAPI::Get(const UsdStagePtr &stage,
+                                                                 const SdfPath &path)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsArticulationRootAPI();
-    }
-    return UsdPhysicsArticulationRootAPI(stage->GetPrimAtPath(path));
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsArticulationRootAPI();
+  }
+  return UsdPhysicsArticulationRootAPI(stage->GetPrimAtPath(path));
 }
 
 
 /* virtual */
 UsdSchemaKind UsdPhysicsArticulationRootAPI::GetSchemaKind() const
 {
-    return UsdPhysicsArticulationRootAPI::schemaKind;
+  return UsdPhysicsArticulationRootAPI::schemaKind;
 }
 
 /* static */
-bool
-UsdPhysicsArticulationRootAPI::CanApply(
-    const UsdPrim &prim, std::string *whyNot)
+bool UsdPhysicsArticulationRootAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 {
-    return prim.CanApplyAPI<UsdPhysicsArticulationRootAPI>(whyNot);
+  return prim.CanApplyAPI<UsdPhysicsArticulationRootAPI>(whyNot);
 }
 
 /* static */
-UsdPhysicsArticulationRootAPI
-UsdPhysicsArticulationRootAPI::Apply(const UsdPrim &prim)
+UsdPhysicsArticulationRootAPI UsdPhysicsArticulationRootAPI::Apply(const UsdPrim &prim)
 {
-    if (prim.ApplyAPI<UsdPhysicsArticulationRootAPI>()) {
-        return UsdPhysicsArticulationRootAPI(prim);
-    }
-    return UsdPhysicsArticulationRootAPI();
+  if (prim.ApplyAPI<UsdPhysicsArticulationRootAPI>())
+  {
+    return UsdPhysicsArticulationRootAPI(prim);
+  }
+  return UsdPhysicsArticulationRootAPI();
 }
 
 /* static */
-const TfType &
-UsdPhysicsArticulationRootAPI::GetStaticTfType()
+const TfType &UsdPhysicsArticulationRootAPI::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsArticulationRootAPI>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsArticulationRootAPI>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsArticulationRootAPI::IsTypedSchema()
+bool UsdPhysicsArticulationRootAPI::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsArticulationRootAPI::GetTfType() const
+const TfType &UsdPhysicsArticulationRootAPI::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsArticulationRootAPI::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdPhysicsArticulationRootAPI::GetSchemaAttributeNames(bool includeInherited)
 {
-    static TfTokenVector localNames;
-    static TfTokenVector allNames =
-        UsdAPISchemaBase::GetSchemaAttributeNames(true);
+  static TfTokenVector localNames;
+  static TfTokenVector allNames = UsdAPISchemaBase::GetSchemaAttributeNames(true);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END

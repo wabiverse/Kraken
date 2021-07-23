@@ -133,8 +133,16 @@ void HdPh_UnitTestWindow::OnPaintGL()
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   glBindFramebuffer(GL_READ_FRAMEBUFFER, _drawTarget->GetFramebufferId());
 
-  glBlitFramebuffer(
-    0, 0, GetWidth(), GetHeight(), 0, 0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+  glBlitFramebuffer(0,
+                    0,
+                    GetWidth(),
+                    GetHeight(),
+                    0,
+                    0,
+                    GetWidth(),
+                    GetHeight(),
+                    GL_COLOR_BUFFER_BIT,
+                    GL_NEAREST);
 
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
@@ -241,8 +249,7 @@ void HdPh_UnitTestGLDrawing::RunTest(int argc, char *argv[])
     if (std::string(argv[i]) == "--offscreen")
     {
       offscreen = true;
-    }
-    else if (std::string(argv[i]) == "--animate")
+    } else if (std::string(argv[i]) == "--animate")
     {
       animate = true;
     }
@@ -257,8 +264,7 @@ void HdPh_UnitTestGLDrawing::RunTest(int argc, char *argv[])
   {
     // no GUI mode (automated test)
     RunOffscreenTest();
-  }
-  else
+  } else
   {
     // Interactive mode
     if (animate)
@@ -310,13 +316,11 @@ void HdPh_UnitTestGLDrawing::MouseMove(int x, int y, int modKeys)
     {
       _rotate[1] += dx;
       _rotate[0] += dy;
-    }
-    else if (_mouseButton[1])
+    } else if (_mouseButton[1])
     {
       _translate[0] += 0.1 * dx;
       _translate[1] -= 0.1 * dy;
-    }
-    else if (_mouseButton[2])
+    } else if (_mouseButton[2])
     {
       _translate[2] += 0.1 * dx;
     }

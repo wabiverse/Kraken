@@ -45,8 +45,7 @@ static UsdStagePopulationMask _MakeMaskRelativeTo(SdfPath const &path, UsdStageP
     if (maskPath.HasPrefix(path))
     {
       maskPath = maskPath.ReplacePrefix(path, absRoot);
-    }
-    else
+    } else
     {
       maskPath = SdfPath();
     }
@@ -69,12 +68,10 @@ static UsdStageLoadRules _MakeLoadRulesRelativeTo(SdfPath const &path, UsdStageL
     {
       p.first = absRoot;
       p.second = rootRule;
-    }
-    else if (p.first.HasPrefix(path))
+    } else if (p.first.HasPrefix(path))
     {
       p.first = p.first.ReplacePrefix(path, absRoot);
-    }
-    else
+    } else
     {
       p.first = SdfPath();
     }
@@ -90,8 +87,7 @@ static UsdStageLoadRules _MakeLoadRulesRelativeTo(SdfPath const &path, UsdStageL
   if (elems.empty() || elems.front().first != absRoot)
   {
     elems.emplace(elems.begin(), absRoot, rootRule);
-  }
-  else
+  } else
   {
     elems.front().second = rootRule;
   }
@@ -119,8 +115,7 @@ Usd_InstanceKey::Usd_InstanceKey(const PcpPrimIndex &instance,
   if (!mask)
   {
     _mask = UsdStagePopulationMask::All();
-  }
-  else
+  } else
   {
     _mask = _MakeMaskRelativeTo(instance.GetPath(), *mask);
   }

@@ -43,29 +43,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-class _PyResolverScopedCache : public boost::noncopyable
-{
- public:
-  _PyResolverScopedCache()
-  {}
-
-  void Enter()
+  class _PyResolverScopedCache : public boost::noncopyable
   {
-    _scopedCache.reset(new ArResolverScopedCache);
-  }
+   public:
+    _PyResolverScopedCache()
+    {}
 
-  bool Exit(boost::python::object & /* exc_type */,
-            boost::python::object & /* exc_val  */,
-            boost::python::object & /* exc_tb   */)
-  {
-    _scopedCache.reset(0);
-    // Re-raise exceptions.
-    return false;
-  }
+    void Enter()
+    {
+      _scopedCache.reset(new ArResolverScopedCache);
+    }
 
- private:
-  std::unique_ptr<ArResolverScopedCache> _scopedCache;
-};
+    bool Exit(boost::python::object & /* exc_type */,
+              boost::python::object & /* exc_val  */,
+              boost::python::object & /* exc_tb   */)
+    {
+      _scopedCache.reset(0);
+      // Re-raise exceptions.
+      return false;
+    }
+
+   private:
+    std::unique_ptr<ArResolverScopedCache> _scopedCache;
+  };
 
 }  // anonymous namespace
 

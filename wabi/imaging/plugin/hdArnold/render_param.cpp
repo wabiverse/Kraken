@@ -70,8 +70,7 @@ HdArnoldRenderParam::Status HdArnoldRenderParam::Render()
     {
       _paused.store(false, std::memory_order_release);
       AiRenderRestart();
-    }
-    else if (!_paused.load(std::memory_order_acquire))
+    } else if (!_paused.load(std::memory_order_acquire))
     {
       AiRenderResume();
     }
@@ -92,36 +91,28 @@ HdArnoldRenderParam::Status HdArnoldRenderParam::Render()
     if (errorCode == AI_ABORT)
     {
       TF_WARN("[arnold-usd] Render was aborted.");
-    }
-    else if (errorCode == AI_ERROR_NO_CAMERA)
+    } else if (errorCode == AI_ERROR_NO_CAMERA)
     {
       TF_WARN("[arnold-usd] Camera not defined.");
-    }
-    else if (errorCode == AI_ERROR_BAD_CAMERA)
+    } else if (errorCode == AI_ERROR_BAD_CAMERA)
     {
       TF_WARN("[arnold-usd] Bad camera data.");
-    }
-    else if (errorCode == AI_ERROR_VALIDATION)
+    } else if (errorCode == AI_ERROR_VALIDATION)
     {
       TF_WARN("[arnold-usd] Usage not validated.");
-    }
-    else if (errorCode == AI_ERROR_RENDER_REGION)
+    } else if (errorCode == AI_ERROR_RENDER_REGION)
     {
       TF_WARN("[arnold-usd] Invalid render region.");
-    }
-    else if (errorCode == AI_INTERRUPT)
+    } else if (errorCode == AI_INTERRUPT)
     {
       TF_WARN("[arnold-usd] Render interrupted by user.");
-    }
-    else if (errorCode == AI_ERROR_NO_OUTPUTS)
+    } else if (errorCode == AI_ERROR_NO_OUTPUTS)
     {
       TF_WARN("[arnold-usd] No rendering outputs.");
-    }
-    else if (errorCode == AI_ERROR_UNAVAILABLE_DEVICE)
+    } else if (errorCode == AI_ERROR_UNAVAILABLE_DEVICE)
     {
       TF_WARN("[arnold-usd] Cannot create GPU context.");
-    }
-    else if (errorCode == AI_ERROR)
+    } else if (errorCode == AI_ERROR)
     {
       TF_WARN("[arnold-usd] Generic error.");
     }

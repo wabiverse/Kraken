@@ -44,414 +44,414 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// Metafunction that determines if a T instance can be read/written by simple
-// bitwise copy.
-//
-// XXX: This could be std::is_trivially_copyable, but that isn't implemented in
-//      older versions of gcc.
-template<class T>
-struct _IsBitwiseReadWrite
-{
-  static const bool value = std::is_enum<T>::value || std::is_arithmetic<T>::value ||
-                            std::is_trivial<T>::value;
-};
-
-struct _InputStream
-{
-  _InputStream(const char *buffer, size_t size, size_t offset = 0)
-    : _cur(buffer + offset),
-      _size(size),
-      _buffer(buffer)
-  {}
-
-  size_t RemainingSize() const
-  {
-    return _size - (_cur - _buffer);
-  }
-
+  // Metafunction that determines if a T instance can be read/written by simple
+  // bitwise copy.
+  //
+  // XXX: This could be std::is_trivially_copyable, but that isn't implemented in
+  //      older versions of gcc.
   template<class T>
-  void Read(T *dest)
+  struct _IsBitwiseReadWrite
   {
-    static_assert(_IsBitwiseReadWrite<T>::value, "Cannot memcpy to non-trivially-copyable type");
-    memcpy(reinterpret_cast<char *>(dest), _cur, sizeof(T));
-    _cur += sizeof(T);
-  }
-
-  inline void Read(void *dest, size_t nBytes)
-  {
-    memcpy(dest, _cur, nBytes);
-    _cur += nBytes;
-  }
-
-  inline void Advance(size_t offset)
-  {
-    _cur += offset;
-  }
-
-  inline size_t Tell() const
-  {
-    return (_cur - _buffer);
-  }
-
-  inline const char *TellMemoryAddress() const
-  {
-    return _cur;
-  }
-
- private:
-  const char *_cur;
-  size_t _size;
-  const char *_buffer;
-};
-
-struct _OutputStream
-{
-  _OutputStream(FILE *f)
-    : _f(f)
-  {}
-
-  template<class T>
-  inline void Write(const T &value)
-  {
-    static_assert(_IsBitwiseReadWrite<T>::value, "Cannot fwrite non-trivially-copyable type");
-    fwrite(&value, sizeof(T), 1, _f);
-  }
-
-  inline void Write(const char *buffer, size_t numBytes)
-  {
-    fwrite(buffer, /* size = */ 1, /* count = */ numBytes, _f);
-  }
-
-  inline long Tell() const
-  {
-    return ftell(_f);
-  }
-
- private:
-  FILE *_f;
-};
-
-// ------------------------------------------------------------
-
-// Local file header for each file in the zip archive.
-//
-// See section 4.3.7 in zip file specification for more details.
-struct _LocalFileHeader
-{
-  static const uint32_t Signature = 0x04034b50;
-
-  struct Fixed
-  {
-    uint32_t signature;
-    uint16_t versionForExtract;
-    uint16_t bits;
-    uint16_t compressionMethod;
-    uint16_t lastModTime;
-    uint16_t lastModDate;
-    uint32_t crc32;
-    uint32_t compressedSize;
-    uint32_t uncompressedSize;
-    uint16_t filenameLength;
-    uint16_t extraFieldLength;
+    static const bool value = std::is_enum<T>::value || std::is_arithmetic<T>::value ||
+                              std::is_trivial<T>::value;
   };
 
-  static const size_t FixedSize = sizeof(uint32_t) * 4 + sizeof(uint16_t) * 7;
-  static_assert(sizeof(Fixed) >= FixedSize, "");
-
-  // Fixed-length header
-  Fixed f;
-
-  // NOTE:
-  // const char* values below do not point to null-terminated strings.
-  // Use indicated memory ranges.
-
-  // Filename in [filenameStart, filenameStart + f.filenameLength)
-  const char *filenameStart;
-  // Extra data in [extraFieldStart, extraFieldStart + f.extraFieldLength)
-  const char *extraFieldStart;
-  // File data in [dataStart, dataStart + f.compressedSize)
-  const char *dataStart;
-
-  // Return true if the required signature is stored in this header.
-  bool IsValid() const
+  struct _InputStream
   {
-    return f.signature == Signature;
-  }
-};
+    _InputStream(const char *buffer, size_t size, size_t offset = 0)
+      : _cur(buffer + offset),
+        _size(size),
+        _buffer(buffer)
+    {}
 
-// Read _LocalFileHeader from input stream. Returns an invalid _LocalFileHeader
-// if an error occurs or the input stream is too small.
-_LocalFileHeader _ReadLocalFileHeader(_InputStream &src)
-{
-  // If the source does not have enough bytes to accommodate the
-  // fixed-sized portion of the header, bail out so we don't try to
-  // read off the end of the source.
-  if (src.RemainingSize() < _LocalFileHeader::FixedSize)
-  {
-    return _LocalFileHeader();
-  }
+    size_t RemainingSize() const
+    {
+      return _size - (_cur - _buffer);
+    }
 
-  _LocalFileHeader h;
+    template<class T>
+    void Read(T *dest)
+    {
+      static_assert(_IsBitwiseReadWrite<T>::value, "Cannot memcpy to non-trivially-copyable type");
+      memcpy(reinterpret_cast<char *>(dest), _cur, sizeof(T));
+      _cur += sizeof(T);
+    }
 
-  // If signature is not the expected value, reset the source back to
-  // its original position and bail.
-  src.Read(&h.f.signature);
-  if (!h.IsValid())
-  {
-    src.Advance(-sizeof(decltype(h.f.signature)));
-    return _LocalFileHeader();
-  }
+    inline void Read(void *dest, size_t nBytes)
+    {
+      memcpy(dest, _cur, nBytes);
+      _cur += nBytes;
+    }
 
-  src.Read(&h.f.versionForExtract);
-  src.Read(&h.f.bits);
-  src.Read(&h.f.compressionMethod);
-  src.Read(&h.f.lastModTime);
-  src.Read(&h.f.lastModDate);
-  src.Read(&h.f.crc32);
-  src.Read(&h.f.compressedSize);
-  src.Read(&h.f.uncompressedSize);
-  src.Read(&h.f.filenameLength);
-  src.Read(&h.f.extraFieldLength);
+    inline void Advance(size_t offset)
+    {
+      _cur += offset;
+    }
 
-  if (src.RemainingSize() < h.f.filenameLength)
-  {
-    return _LocalFileHeader();
-  }
+    inline size_t Tell() const
+    {
+      return (_cur - _buffer);
+    }
 
-  h.filenameStart = src.TellMemoryAddress();
-  src.Advance(h.f.filenameLength);
+    inline const char *TellMemoryAddress() const
+    {
+      return _cur;
+    }
 
-  if (src.RemainingSize() < h.f.extraFieldLength)
-  {
-    return _LocalFileHeader();
-  }
-
-  h.extraFieldStart = src.TellMemoryAddress();
-  src.Advance(h.f.extraFieldLength);
-
-  if (src.RemainingSize() < h.f.compressedSize)
-  {
-    return _LocalFileHeader();
-  }
-
-  h.dataStart = src.TellMemoryAddress();
-  src.Advance(h.f.compressedSize);
-
-  return h;
-}
-
-// Write given _LocalFileHeader to given output stream.
-void _WriteLocalFileHeader(_OutputStream &out, const _LocalFileHeader &h)
-{
-  out.Write(h.f.signature);
-  out.Write(h.f.versionForExtract);
-  out.Write(h.f.bits);
-  out.Write(h.f.compressionMethod);
-  out.Write(h.f.lastModTime);
-  out.Write(h.f.lastModDate);
-  out.Write(h.f.crc32);
-  out.Write(h.f.compressedSize);
-  out.Write(h.f.uncompressedSize);
-  out.Write(h.f.filenameLength);
-  out.Write(h.f.extraFieldLength);
-  out.Write(h.filenameStart, h.f.filenameLength);
-  out.Write(h.extraFieldStart, h.f.extraFieldLength);
-  out.Write(h.dataStart, h.f.compressedSize);
-}
-
-// ------------------------------------------------------------
-
-// Central directory header for each file in the zip archive. These headers
-// are stored after the data for the last file.
-//
-// See section 4.3.12 in zip file specification for more details.
-struct _CentralDirectoryHeader
-{
-  static const uint32_t Signature = 0x02014b50;
-
-  struct Fixed
-  {
-    uint32_t signature;
-    uint16_t versionMadeBy;
-    uint16_t versionForExtract;
-    uint16_t bits;
-    uint16_t compressionMethod;
-    uint16_t lastModTime;
-    uint16_t lastModDate;
-    uint32_t crc32;
-    uint32_t compressedSize;
-    uint32_t uncompressedSize;
-    uint16_t filenameLength;
-    uint16_t extraFieldLength;
-    uint16_t commentLength;
-    uint16_t diskNumberStart;
-    uint16_t internalAttrs;
-    uint32_t externalAttrs;
-    uint32_t localHeaderOffset;
+   private:
+    const char *_cur;
+    size_t _size;
+    const char *_buffer;
   };
 
-  static const size_t FixedSize = sizeof(uint32_t) * 6 + sizeof(uint16_t) * 11;
-  static_assert(sizeof(Fixed) >= FixedSize, "");
-
-  // Fixed-length header
-  Fixed f;
-
-  // NOTE:
-  // const char* values below do not point to null-terminated strings.
-  // Use indicated memory ranges.
-
-  // Filename in [filenameStart, filenameStart + f.filenameLength)
-  const char *filenameStart;
-  // Extra data in [extraFieldStart, extraFieldStart + f.extraFieldLength)
-  const char *extraFieldStart;
-  // Comment in [commentStart, commentStart + f.commentLength)
-  const char *commentStart;
-
-  // Return true if the required signature is stored in this header.
-  bool IsValid() const
+  struct _OutputStream
   {
-    return f.signature == Signature;
-  }
-};
+    _OutputStream(FILE *f)
+      : _f(f)
+    {}
 
-// Write given _CentralDirectoryHeader to given output stream.
-void _WriteCentralDirectoryHeader(_OutputStream &out, const _CentralDirectoryHeader &h)
-{
-  out.Write(h.f.signature);
-  out.Write(h.f.versionMadeBy);
-  out.Write(h.f.versionForExtract);
-  out.Write(h.f.bits);
-  out.Write(h.f.compressionMethod);
-  out.Write(h.f.lastModTime);
-  out.Write(h.f.lastModDate);
-  out.Write(h.f.crc32);
-  out.Write(h.f.compressedSize);
-  out.Write(h.f.uncompressedSize);
-  out.Write(h.f.filenameLength);
-  out.Write(h.f.extraFieldLength);
-  out.Write(h.f.commentLength);
-  out.Write(h.f.diskNumberStart);
-  out.Write(h.f.internalAttrs);
-  out.Write(h.f.externalAttrs);
-  out.Write(h.f.localHeaderOffset);
-  out.Write(h.filenameStart, h.f.filenameLength);
-  out.Write(h.extraFieldStart, h.f.extraFieldLength);
-  out.Write(h.commentStart, h.f.commentLength);
-}
+    template<class T>
+    inline void Write(const T &value)
+    {
+      static_assert(_IsBitwiseReadWrite<T>::value, "Cannot fwrite non-trivially-copyable type");
+      fwrite(&value, sizeof(T), 1, _f);
+    }
 
-// ------------------------------------------------------------
+    inline void Write(const char *buffer, size_t numBytes)
+    {
+      fwrite(buffer, /* size = */ 1, /* count = */ numBytes, _f);
+    }
 
-// End of central directory record for zip archive. This header is stored
-// after the last central directory header.
-struct _EndOfCentralDirectoryRecord
-{
-  static const uint32_t Signature = 0x06054b50;
+    inline long Tell() const
+    {
+      return ftell(_f);
+    }
 
-  struct Fixed
-  {
-    uint32_t signature;
-    uint16_t diskNumber;
-    uint16_t diskNumberForCentralDir;
-    uint16_t numCentralDirEntriesOnDisk;
-    uint16_t numCentralDirEntries;
-    uint32_t centralDirLength;
-    uint32_t centralDirOffset;
-    uint16_t commentLength;
+   private:
+    FILE *_f;
   };
 
-  static const size_t FixedSize = sizeof(uint32_t) * 3 + sizeof(uint16_t) * 5;
-  static_assert(sizeof(Fixed) >= FixedSize, "");
+  // ------------------------------------------------------------
 
-  // Fixed-length header
-  Fixed f;
-
-  // NOTE:
-  // const char* values below do not point to null-terminated strings.
-  // Use indicated memory ranges.
-
-  // Comment in [commentStart, commentStart + f.commentLength)
-  const char *commentStart;
-
-  // Return true if the required signature is stored in this header.
-  bool IsValid() const
+  // Local file header for each file in the zip archive.
+  //
+  // See section 4.3.7 in zip file specification for more details.
+  struct _LocalFileHeader
   {
-    return f.signature == Signature;
-  }
-};
+    static const uint32_t Signature = 0x04034b50;
 
-// Write given _EndOfCentralDirectoryRecord to given output stream.
-void _WriteEndOfCentralDirectoryRecord(_OutputStream &out, const _EndOfCentralDirectoryRecord &r)
-{
-  out.Write(r.f.signature);
-  out.Write(r.f.diskNumber);
-  out.Write(r.f.diskNumberForCentralDir);
-  out.Write(r.f.numCentralDirEntriesOnDisk);
-  out.Write(r.f.numCentralDirEntries);
-  out.Write(r.f.centralDirLength);
-  out.Write(r.f.centralDirOffset);
-  out.Write(r.f.commentLength);
-  out.Write(r.commentStart, r.f.commentLength);
-}
+    struct Fixed
+    {
+      uint32_t signature;
+      uint16_t versionForExtract;
+      uint16_t bits;
+      uint16_t compressionMethod;
+      uint16_t lastModTime;
+      uint16_t lastModDate;
+      uint32_t crc32;
+      uint32_t compressedSize;
+      uint32_t uncompressedSize;
+      uint16_t filenameLength;
+      uint16_t extraFieldLength;
+    };
 
-// ------------------------------------------------------------
+    static const size_t FixedSize = sizeof(uint32_t) * 4 + sizeof(uint16_t) * 7;
+    static_assert(sizeof(Fixed) >= FixedSize, "");
 
-// Per usdz specifications, file data must be aligned to 64 byte boundaries.
-// UsdZipFileWriter adds padding bytes to the 'extra' extensible data field
-// described in section 4.5 of the zip specification to achieve this. This
-// is complicated by the requirement that each entry in the 'extra' field
-// be preceded by a 4 byte header.
+    // Fixed-length header
+    Fixed f;
 
-struct _ExtraFieldHeader
-{
-  uint16_t headerId;
-  uint16_t dataSize;
-};
+    // NOTE:
+    // const char* values below do not point to null-terminated strings.
+    // Use indicated memory ranges.
 
-constexpr size_t _HeaderSize = sizeof(uint16_t) * 2;
-constexpr size_t _DataAlignment = 64;
+    // Filename in [filenameStart, filenameStart + f.filenameLength)
+    const char *filenameStart;
+    // Extra data in [extraFieldStart, extraFieldStart + f.extraFieldLength)
+    const char *extraFieldStart;
+    // File data in [dataStart, dataStart + f.compressedSize)
+    const char *dataStart;
 
-// Maximum size of buffer needed for padding bytes.
-constexpr size_t _PaddingBufferSize = _HeaderSize + _DataAlignment;
+    // Return true if the required signature is stored in this header.
+    bool IsValid() const
+    {
+      return f.signature == Signature;
+    }
+  };
 
-// Compute the number of padding bytes (including header) needed to align
-// data at the given offset to the required alignment.
-uint16_t _ComputeExtraFieldPaddingSize(size_t offset)
-{
-  uint16_t requiredPadding = _DataAlignment - (offset % _DataAlignment);
-  if (requiredPadding == _DataAlignment)
+  // Read _LocalFileHeader from input stream. Returns an invalid _LocalFileHeader
+  // if an error occurs or the input stream is too small.
+  _LocalFileHeader _ReadLocalFileHeader(_InputStream &src)
   {
-    requiredPadding = 0;
+    // If the source does not have enough bytes to accommodate the
+    // fixed-sized portion of the header, bail out so we don't try to
+    // read off the end of the source.
+    if (src.RemainingSize() < _LocalFileHeader::FixedSize)
+    {
+      return _LocalFileHeader();
+    }
+
+    _LocalFileHeader h;
+
+    // If signature is not the expected value, reset the source back to
+    // its original position and bail.
+    src.Read(&h.f.signature);
+    if (!h.IsValid())
+    {
+      src.Advance(-sizeof(decltype(h.f.signature)));
+      return _LocalFileHeader();
+    }
+
+    src.Read(&h.f.versionForExtract);
+    src.Read(&h.f.bits);
+    src.Read(&h.f.compressionMethod);
+    src.Read(&h.f.lastModTime);
+    src.Read(&h.f.lastModDate);
+    src.Read(&h.f.crc32);
+    src.Read(&h.f.compressedSize);
+    src.Read(&h.f.uncompressedSize);
+    src.Read(&h.f.filenameLength);
+    src.Read(&h.f.extraFieldLength);
+
+    if (src.RemainingSize() < h.f.filenameLength)
+    {
+      return _LocalFileHeader();
+    }
+
+    h.filenameStart = src.TellMemoryAddress();
+    src.Advance(h.f.filenameLength);
+
+    if (src.RemainingSize() < h.f.extraFieldLength)
+    {
+      return _LocalFileHeader();
+    }
+
+    h.extraFieldStart = src.TellMemoryAddress();
+    src.Advance(h.f.extraFieldLength);
+
+    if (src.RemainingSize() < h.f.compressedSize)
+    {
+      return _LocalFileHeader();
+    }
+
+    h.dataStart = src.TellMemoryAddress();
+    src.Advance(h.f.compressedSize);
+
+    return h;
   }
-  else if (requiredPadding < _HeaderSize)
+
+  // Write given _LocalFileHeader to given output stream.
+  void _WriteLocalFileHeader(_OutputStream &out, const _LocalFileHeader &h)
   {
-    // If the amount of padding needed is too small to contain the header,
-    // bump the size up while maintaining the required alignment.
-    requiredPadding += _DataAlignment;
+    out.Write(h.f.signature);
+    out.Write(h.f.versionForExtract);
+    out.Write(h.f.bits);
+    out.Write(h.f.compressionMethod);
+    out.Write(h.f.lastModTime);
+    out.Write(h.f.lastModDate);
+    out.Write(h.f.crc32);
+    out.Write(h.f.compressedSize);
+    out.Write(h.f.uncompressedSize);
+    out.Write(h.f.filenameLength);
+    out.Write(h.f.extraFieldLength);
+    out.Write(h.filenameStart, h.f.filenameLength);
+    out.Write(h.extraFieldStart, h.f.extraFieldLength);
+    out.Write(h.dataStart, h.f.compressedSize);
   }
-  return requiredPadding;
-}
 
-// Fill the given extraFieldBuffer to accommodate the specified number of
-// padding bytes. For convenience, returns extraFieldBuffer.
-const char *_PrepareExtraFieldPadding(char (&extraFieldBuffer)[_PaddingBufferSize], uint16_t numPaddingBytes)
-{
-  if (numPaddingBytes == 0)
+  // ------------------------------------------------------------
+
+  // Central directory header for each file in the zip archive. These headers
+  // are stored after the data for the last file.
+  //
+  // See section 4.3.12 in zip file specification for more details.
+  struct _CentralDirectoryHeader
   {
-    return nullptr;
+    static const uint32_t Signature = 0x02014b50;
+
+    struct Fixed
+    {
+      uint32_t signature;
+      uint16_t versionMadeBy;
+      uint16_t versionForExtract;
+      uint16_t bits;
+      uint16_t compressionMethod;
+      uint16_t lastModTime;
+      uint16_t lastModDate;
+      uint32_t crc32;
+      uint32_t compressedSize;
+      uint32_t uncompressedSize;
+      uint16_t filenameLength;
+      uint16_t extraFieldLength;
+      uint16_t commentLength;
+      uint16_t diskNumberStart;
+      uint16_t internalAttrs;
+      uint32_t externalAttrs;
+      uint32_t localHeaderOffset;
+    };
+
+    static const size_t FixedSize = sizeof(uint32_t) * 6 + sizeof(uint16_t) * 11;
+    static_assert(sizeof(Fixed) >= FixedSize, "");
+
+    // Fixed-length header
+    Fixed f;
+
+    // NOTE:
+    // const char* values below do not point to null-terminated strings.
+    // Use indicated memory ranges.
+
+    // Filename in [filenameStart, filenameStart + f.filenameLength)
+    const char *filenameStart;
+    // Extra data in [extraFieldStart, extraFieldStart + f.extraFieldLength)
+    const char *extraFieldStart;
+    // Comment in [commentStart, commentStart + f.commentLength)
+    const char *commentStart;
+
+    // Return true if the required signature is stored in this header.
+    bool IsValid() const
+    {
+      return f.signature == Signature;
+    }
+  };
+
+  // Write given _CentralDirectoryHeader to given output stream.
+  void _WriteCentralDirectoryHeader(_OutputStream &out, const _CentralDirectoryHeader &h)
+  {
+    out.Write(h.f.signature);
+    out.Write(h.f.versionMadeBy);
+    out.Write(h.f.versionForExtract);
+    out.Write(h.f.bits);
+    out.Write(h.f.compressionMethod);
+    out.Write(h.f.lastModTime);
+    out.Write(h.f.lastModDate);
+    out.Write(h.f.crc32);
+    out.Write(h.f.compressedSize);
+    out.Write(h.f.uncompressedSize);
+    out.Write(h.f.filenameLength);
+    out.Write(h.f.extraFieldLength);
+    out.Write(h.f.commentLength);
+    out.Write(h.f.diskNumberStart);
+    out.Write(h.f.internalAttrs);
+    out.Write(h.f.externalAttrs);
+    out.Write(h.f.localHeaderOffset);
+    out.Write(h.filenameStart, h.f.filenameLength);
+    out.Write(h.extraFieldStart, h.f.extraFieldLength);
+    out.Write(h.commentStart, h.f.commentLength);
   }
 
-  TF_VERIFY(numPaddingBytes >= _HeaderSize);
-  TF_VERIFY(numPaddingBytes <= sizeof(extraFieldBuffer));
+  // ------------------------------------------------------------
 
-  _ExtraFieldHeader header;
-  header.headerId = 0x1986;  // Arbitrarily chosen, unreserved ID.
-  header.dataSize = numPaddingBytes - _HeaderSize;
+  // End of central directory record for zip archive. This header is stored
+  // after the last central directory header.
+  struct _EndOfCentralDirectoryRecord
+  {
+    static const uint32_t Signature = 0x06054b50;
 
-  memcpy(extraFieldBuffer, &header.headerId, sizeof(header.headerId));
-  memcpy(extraFieldBuffer + sizeof(header.headerId), &header.dataSize, sizeof(header.dataSize));
+    struct Fixed
+    {
+      uint32_t signature;
+      uint16_t diskNumber;
+      uint16_t diskNumberForCentralDir;
+      uint16_t numCentralDirEntriesOnDisk;
+      uint16_t numCentralDirEntries;
+      uint32_t centralDirLength;
+      uint32_t centralDirOffset;
+      uint16_t commentLength;
+    };
 
-  return extraFieldBuffer;
-}
+    static const size_t FixedSize = sizeof(uint32_t) * 3 + sizeof(uint16_t) * 5;
+    static_assert(sizeof(Fixed) >= FixedSize, "");
+
+    // Fixed-length header
+    Fixed f;
+
+    // NOTE:
+    // const char* values below do not point to null-terminated strings.
+    // Use indicated memory ranges.
+
+    // Comment in [commentStart, commentStart + f.commentLength)
+    const char *commentStart;
+
+    // Return true if the required signature is stored in this header.
+    bool IsValid() const
+    {
+      return f.signature == Signature;
+    }
+  };
+
+  // Write given _EndOfCentralDirectoryRecord to given output stream.
+  void _WriteEndOfCentralDirectoryRecord(_OutputStream &out, const _EndOfCentralDirectoryRecord &r)
+  {
+    out.Write(r.f.signature);
+    out.Write(r.f.diskNumber);
+    out.Write(r.f.diskNumberForCentralDir);
+    out.Write(r.f.numCentralDirEntriesOnDisk);
+    out.Write(r.f.numCentralDirEntries);
+    out.Write(r.f.centralDirLength);
+    out.Write(r.f.centralDirOffset);
+    out.Write(r.f.commentLength);
+    out.Write(r.commentStart, r.f.commentLength);
+  }
+
+  // ------------------------------------------------------------
+
+  // Per usdz specifications, file data must be aligned to 64 byte boundaries.
+  // UsdZipFileWriter adds padding bytes to the 'extra' extensible data field
+  // described in section 4.5 of the zip specification to achieve this. This
+  // is complicated by the requirement that each entry in the 'extra' field
+  // be preceded by a 4 byte header.
+
+  struct _ExtraFieldHeader
+  {
+    uint16_t headerId;
+    uint16_t dataSize;
+  };
+
+  constexpr size_t _HeaderSize = sizeof(uint16_t) * 2;
+  constexpr size_t _DataAlignment = 64;
+
+  // Maximum size of buffer needed for padding bytes.
+  constexpr size_t _PaddingBufferSize = _HeaderSize + _DataAlignment;
+
+  // Compute the number of padding bytes (including header) needed to align
+  // data at the given offset to the required alignment.
+  uint16_t _ComputeExtraFieldPaddingSize(size_t offset)
+  {
+    uint16_t requiredPadding = _DataAlignment - (offset % _DataAlignment);
+    if (requiredPadding == _DataAlignment)
+    {
+      requiredPadding = 0;
+    } else if (requiredPadding < _HeaderSize)
+    {
+      // If the amount of padding needed is too small to contain the header,
+      // bump the size up while maintaining the required alignment.
+      requiredPadding += _DataAlignment;
+    }
+    return requiredPadding;
+  }
+
+  // Fill the given extraFieldBuffer to accommodate the specified number of
+  // padding bytes. For convenience, returns extraFieldBuffer.
+  const char *_PrepareExtraFieldPadding(char (&extraFieldBuffer)[_PaddingBufferSize],
+                                        uint16_t numPaddingBytes)
+  {
+    if (numPaddingBytes == 0)
+    {
+      return nullptr;
+    }
+
+    TF_VERIFY(numPaddingBytes >= _HeaderSize);
+    TF_VERIFY(numPaddingBytes <= sizeof(extraFieldBuffer));
+
+    _ExtraFieldHeader header;
+    header.headerId = 0x1986;  // Arbitrarily chosen, unreserved ID.
+    header.dataSize = numPaddingBytes - _HeaderSize;
+
+    memcpy(extraFieldBuffer, &header.headerId, sizeof(header.headerId));
+    memcpy(extraFieldBuffer + sizeof(header.headerId), &header.dataSize, sizeof(header.dataSize));
+
+    return extraFieldBuffer;
+  }
 
 }  // end anonymous namespace
 
@@ -585,8 +585,7 @@ UsdZipFile::Iterator &UsdZipFile::Iterator::operator++()
   if (newHeader.IsValid())
   {
     _offset = newOffset;
-  }
-  else
+  } else
   {
     *this = Iterator();
   }
@@ -635,61 +634,61 @@ UsdZipFile::FileInfo UsdZipFile::Iterator::GetFileInfo() const
 
 namespace
 {
-// Compute last modified date and time for given file in MS-DOS format.
-std::pair<uint16_t, uint16_t> _ModTimeAndDate(const std::string &filename)
-{
-  double mtime = 0;
-  ArchGetModificationTime(filename.c_str(), &mtime);
+  // Compute last modified date and time for given file in MS-DOS format.
+  std::pair<uint16_t, uint16_t> _ModTimeAndDate(const std::string &filename)
+  {
+    double mtime = 0;
+    ArchGetModificationTime(filename.c_str(), &mtime);
 
-  const std::time_t t = static_cast<std::time_t>(mtime);
-  const std::tm *localTime = std::localtime(&t);
+    const std::time_t t = static_cast<std::time_t>(mtime);
+    const std::tm *localTime = std::localtime(&t);
 
-  // MS-DOS time encoding is a 16-bit value where:
-  // - bits 0-4: second divided by 2
-  // - bits 5-10: minute (0-59)
-  // - bits 11-15: hour (0-23)
-  uint16_t modTime = static_cast<uint16_t>(localTime->tm_hour) << 11 |
-                     static_cast<uint16_t>(localTime->tm_min) << 5 |
-                     static_cast<uint16_t>(localTime->tm_sec / 2);
+    // MS-DOS time encoding is a 16-bit value where:
+    // - bits 0-4: second divided by 2
+    // - bits 5-10: minute (0-59)
+    // - bits 11-15: hour (0-23)
+    uint16_t modTime = static_cast<uint16_t>(localTime->tm_hour) << 11 |
+                       static_cast<uint16_t>(localTime->tm_min) << 5 |
+                       static_cast<uint16_t>(localTime->tm_sec / 2);
 
-  // MS-DOS date encoding is a 16-bit value where:
-  // - bits 0-4: day of the month (1-31)
-  // - bits 5-8: month (1-12)
-  // - bits 9-15: year offset from 1980
-  uint16_t modDate = static_cast<uint16_t>(localTime->tm_year - 80) << 9 |
-                     static_cast<uint16_t>(localTime->tm_mon + 1) << 5 |
-                     static_cast<uint16_t>(localTime->tm_mday);
+    // MS-DOS date encoding is a 16-bit value where:
+    // - bits 0-4: day of the month (1-31)
+    // - bits 5-8: month (1-12)
+    // - bits 9-15: year offset from 1980
+    uint16_t modDate = static_cast<uint16_t>(localTime->tm_year - 80) << 9 |
+                       static_cast<uint16_t>(localTime->tm_mon + 1) << 5 |
+                       static_cast<uint16_t>(localTime->tm_mday);
 
-  return std::make_pair(modTime, modDate);
-}
+    return std::make_pair(modTime, modDate);
+  }
 
-// Compute CRC32 checksum for given file per zip specification
-uint32_t _Crc32(const ArchConstFileMapping &file)
-{
-  boost::crc_32_type result;
-  result.process_block(file.get(), file.get() + ArchGetFileMappingLength(file));
-  return result.checksum();
-}
+  // Compute CRC32 checksum for given file per zip specification
+  uint32_t _Crc32(const ArchConstFileMapping &file)
+  {
+    boost::crc_32_type result;
+    result.process_block(file.get(), file.get() + ArchGetFileMappingLength(file));
+    return result.checksum();
+  }
 
-// Sanitize the given path to conform to zip file specifications:
-//
-//   4.4.17.1 The name of the file, with optional relative path.
-//   The path stored MUST not contain a drive or
-//   device letter, or a leading slash.  All slashes
-//   MUST be forward slashes '/' as opposed to
-//   backwards slashes '\' for compatibility with Amiga
-//   and UNIX file systems etc.  If input came from standard
-//   input, there is no file name field.
-std::string _ZipFilePath(const std::string &filePath)
-{
-  // TfNormPath will flip all backslashes to forward slashes and
-  // strip drive letters.
-  std::string result = TfNormPath(filePath, /* stripDriveSpecifier = */ true);
+  // Sanitize the given path to conform to zip file specifications:
+  //
+  //   4.4.17.1 The name of the file, with optional relative path.
+  //   The path stored MUST not contain a drive or
+  //   device letter, or a leading slash.  All slashes
+  //   MUST be forward slashes '/' as opposed to
+  //   backwards slashes '\' for compatibility with Amiga
+  //   and UNIX file systems etc.  If input came from standard
+  //   input, there is no file name field.
+  std::string _ZipFilePath(const std::string &filePath)
+  {
+    // TfNormPath will flip all backslashes to forward slashes and
+    // strip drive letters.
+    std::string result = TfNormPath(filePath, /* stripDriveSpecifier = */ true);
 
-  // Strip off any initial slashes.
-  result = TfStringTrimLeft(result, "/");
-  return result;
-}
+    // Strip off any initial slashes.
+    result = TfStringTrimLeft(result, "/");
+    return result;
+  }
 
 }  // end anonymous namespace
 
@@ -766,10 +765,10 @@ std::string UsdZipFileWriter::AddFile(const std::string &filePath, const std::st
 
   // Check if this file has already been written to this zip archive; if so,
   // just skip it.
-  if (std::find_if(
-        _impl->addedFiles.begin(), _impl->addedFiles.end(), [&zipFilePath](const _Impl::_Record &r) {
-          return std::get<0>(r) == zipFilePath;
-        }) != _impl->addedFiles.end())
+  if (std::find_if(_impl->addedFiles.begin(),
+                   _impl->addedFiles.end(),
+                   [&zipFilePath](const _Impl::_Record &r) { return std::get<0>(r) == zipFilePath; }) !=
+      _impl->addedFiles.end())
   {
     return zipFilePath;
   }

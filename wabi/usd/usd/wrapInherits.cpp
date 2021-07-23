@@ -43,8 +43,9 @@ void wrapUsdInherits()
     .def("RemoveInherit", &UsdInherits::RemoveInherit, arg("primPath"))
     .def("ClearInherits", &UsdInherits::ClearInherits)
     .def("SetInherits", &UsdInherits::SetInherits)
-    .def(
-      "GetAllDirectInherits", &UsdInherits::GetAllDirectInherits, return_value_policy<TfPySequenceToList>())
+    .def("GetAllDirectInherits",
+         &UsdInherits::GetAllDirectInherits,
+         return_value_policy<TfPySequenceToList>())
     .def("GetPrim", (UsdPrim(UsdInherits::*)()) & UsdInherits::GetPrim)
     .def(!self);
 }

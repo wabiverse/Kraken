@@ -34,22 +34,17 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-  TfType::Define<UsdPhysicsCollisionAPI,
-                 TfType::Bases<UsdAPISchemaBase>>();
+  TfType::Define<UsdPhysicsCollisionAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _schemaTokens,
-  (PhysicsCollisionAPI));
+TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsCollisionAPI));
 
 /* virtual */
 UsdPhysicsCollisionAPI::~UsdPhysicsCollisionAPI()
-{
-}
+{}
 
 /* static */
-UsdPhysicsCollisionAPI
-UsdPhysicsCollisionAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsCollisionAPI UsdPhysicsCollisionAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
   if (!stage)
   {
@@ -67,16 +62,13 @@ UsdSchemaKind UsdPhysicsCollisionAPI::GetSchemaKind() const
 }
 
 /* static */
-bool UsdPhysicsCollisionAPI::CanApply(
-  const UsdPrim &prim,
-  std::string *whyNot)
+bool UsdPhysicsCollisionAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 {
   return prim.CanApplyAPI<UsdPhysicsCollisionAPI>(whyNot);
 }
 
 /* static */
-UsdPhysicsCollisionAPI
-UsdPhysicsCollisionAPI::Apply(const UsdPrim &prim)
+UsdPhysicsCollisionAPI UsdPhysicsCollisionAPI::Apply(const UsdPrim &prim)
 {
   if (prim.ApplyAPI<UsdPhysicsCollisionAPI>())
   {
@@ -86,8 +78,7 @@ UsdPhysicsCollisionAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &
-UsdPhysicsCollisionAPI::GetStaticTfType()
+const TfType &UsdPhysicsCollisionAPI::GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsCollisionAPI>();
   return tfType;
@@ -101,20 +92,18 @@ bool UsdPhysicsCollisionAPI::IsTypedSchema()
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsCollisionAPI::GetTfType() const
+const TfType &UsdPhysicsCollisionAPI::GetTfType() const
 {
   return GetStaticTfType();
 }
 
-UsdAttribute
-UsdPhysicsCollisionAPI::GetCollisionEnabledAttr() const
+UsdAttribute UsdPhysicsCollisionAPI::GetCollisionEnabledAttr() const
 {
   return GetPrim().GetAttribute(UsdPhysicsTokens->physicsCollisionEnabled);
 }
 
-UsdAttribute
-UsdPhysicsCollisionAPI::CreateCollisionEnabledAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsCollisionAPI::CreateCollisionEnabledAttr(VtValue const &defaultValue,
+                                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsCollisionEnabled,
                                     SdfValueTypeNames->Bool,
@@ -124,14 +113,12 @@ UsdPhysicsCollisionAPI::CreateCollisionEnabledAttr(VtValue const &defaultValue, 
                                     writeSparsely);
 }
 
-UsdRelationship
-UsdPhysicsCollisionAPI::GetSimulationOwnerRel() const
+UsdRelationship UsdPhysicsCollisionAPI::GetSimulationOwnerRel() const
 {
   return GetPrim().GetRelationship(UsdPhysicsTokens->physicsSimulationOwner);
 }
 
-UsdRelationship
-UsdPhysicsCollisionAPI::CreateSimulationOwnerRel() const
+UsdRelationship UsdPhysicsCollisionAPI::CreateSimulationOwnerRel() const
 {
   return GetPrim().CreateRelationship(UsdPhysicsTokens->physicsSimulationOwner,
                                       /* custom = */ false);
@@ -139,28 +126,25 @@ UsdPhysicsCollisionAPI::CreateSimulationOwnerRel() const
 
 namespace
 {
-static inline TfTokenVector
-_ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
-const TfTokenVector &
-UsdPhysicsCollisionAPI::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdPhysicsCollisionAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
     UsdPhysicsTokens->physicsCollisionEnabled,
   };
-  static TfTokenVector allNames =
-    _ConcatenateAttributeNames(
-      UsdAPISchemaBase::GetSchemaAttributeNames(true),
-      localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;

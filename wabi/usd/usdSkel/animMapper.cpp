@@ -42,19 +42,19 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-enum _MapFlags
-{
-  _NullMap = 0,
+  enum _MapFlags
+  {
+    _NullMap = 0,
 
-  _SomeSourceValuesMapToTarget = 0x1,
-  _AllSourceValuesMapToTarget = 0x2,
-  _SourceOverridesAllTargetValues = 0x4,
-  _OrderedMap = 0x8,
+    _SomeSourceValuesMapToTarget = 0x1,
+    _AllSourceValuesMapToTarget = 0x2,
+    _SourceOverridesAllTargetValues = 0x4,
+    _OrderedMap = 0x8,
 
-  _IdentityMap = (_AllSourceValuesMapToTarget | _SourceOverridesAllTargetValues | _OrderedMap),
+    _IdentityMap = (_AllSourceValuesMapToTarget | _SourceOverridesAllTargetValues | _OrderedMap),
 
-  _NonNullMap = (_SomeSourceValuesMapToTarget | _AllSourceValuesMapToTarget)
-};
+    _NonNullMap = (_SomeSourceValuesMapToTarget | _AllSourceValuesMapToTarget)
+  };
 
 }  // namespace
 
@@ -134,8 +134,7 @@ UsdSkelAnimMapper::UsdSkelAnimMapper(const TfToken *sourceOrder,
       indexMap[i] = it->second;
       targetMapped[it->second] = true;
       ++mappedCount;
-    }
-    else
+    } else
     {
       indexMap[i] = -1;
     }
@@ -185,8 +184,7 @@ bool UsdSkelAnimMapper::_UntypedRemap(const VtValue &source,
   if (target->IsEmpty())
   {
     *target = VtArray<T>();
-  }
-  else if (!target->IsHolding<VtArray<T>>())
+  } else if (!target->IsHolding<VtArray<T>>())
   {
     TF_CODING_ERROR(
       "Type of 'target' [%s] did not match the type of "
@@ -202,8 +200,7 @@ bool UsdSkelAnimMapper::_UntypedRemap(const VtValue &source,
     if (defaultValue.IsHolding<T>())
     {
       defaultValueT = &defaultValue.UncheckedGet<T>();
-    }
-    else
+    } else
     {
       TF_CODING_ERROR(
         "Unexpected type [%s] for defaultValue: expecting "
@@ -229,9 +226,9 @@ bool UsdSkelAnimMapper::Remap(const VtValue &source,
                               int elementSize,
                               const VtValue &defaultValue) const
 {
-#define _UNTYPED_REMAP(r, unused, elem) \
-  if (source.IsHolding<SDF_VALUE_CPP_ARRAY_TYPE(elem)>()) \
-  { \
+#define _UNTYPED_REMAP(r, unused, elem)                                                        \
+  if (source.IsHolding<SDF_VALUE_CPP_ARRAY_TYPE(elem)>())                                      \
+  {                                                                                            \
     return _UntypedRemap<SDF_VALUE_CPP_TYPE(elem)>(source, target, elementSize, defaultValue); \
   }
 

@@ -80,26 +80,22 @@ static inline bool _GetBracketingTimes(const vector<double> &times,
   {
     // No samples.
     return false;
-  }
-  else if (time <= times.front())
+  } else if (time <= times.front())
   {
     // Time is at-or-before the first sample.
     *tLower = *tUpper = times.front();
-  }
-  else if (time >= times.back())
+  } else if (time >= times.back())
   {
     // Time is at-or-after the last sample.
     *tLower = *tUpper = times.back();
-  }
-  else
+  } else
   {
     auto i = lower_bound(times.begin(), times.end(), time);
     if (*i == time)
     {
       // Time is exactly on a sample.
       *tLower = *tUpper = *i;
-    }
-    else
+    } else
     {
       // Time is in-between samples; return the bracketing times.
       *tUpper = *i;
@@ -160,8 +156,7 @@ class Usd_CrateDataImpl
       {
         sortedPaths.push_back(p.first);
       }
-    }
-    else
+    } else
     {
       for (auto const &p : _flatData)
       {
@@ -199,8 +194,7 @@ class Usd_CrateDataImpl
           auto iter = _hashData->find(p);
           packer.PackSpec(p, iter->second.specType, iter->second.fields.Get());
         }
-      }
-      else
+      } else
       {
         for (auto const &p : sortedPaths)
         {
@@ -250,8 +244,7 @@ class Usd_CrateDataImpl
       if (Has(path, SdfFieldKeys->TargetPaths, &targetPaths))
       {
         specType = SdfSpecTypeRelationship;
-      }
-      else if (Has(path, SdfFieldKeys->ConnectionPaths, &targetPaths))
+      } else if (Has(path, SdfFieldKeys->ConnectionPaths, &targetPaths))
       {
         specType = SdfSpecTypeAttribute;
       }
@@ -285,8 +278,7 @@ class Usd_CrateDataImpl
       {
         auto const &items = listOp.GetExplicitItems();
         return find(items.begin(), items.end(), targetPath) != items.end();
-      }
-      else
+      } else
       {
         auto const &added = listOp.GetAddedItems();
         auto const &prepended = listOp.GetPrependedItems();
@@ -319,8 +311,7 @@ class Usd_CrateDataImpl
     {
       _hashLastSet = nullptr;
       TF_VERIFY(_hashData->erase(path), "%s", path.GetText());
-    }
-    else
+    } else
     {
       auto iter = _flatData.find(path);
       size_t index = iter - _flatData.begin();
@@ -351,8 +342,7 @@ class Usd_CrateDataImpl
       if (!TF_VERIFY(inserted))
         return;
       _hashData->erase(oldIter);
-    }
-    else
+    } else
     {
       auto oldIter = _flatData.find(oldPath);
       if (!TF_VERIFY(oldIter != _flatData.end()))
@@ -390,8 +380,7 @@ class Usd_CrateDataImpl
         if (parentSpecType == SdfSpecTypeRelationship)
         {
           return SdfSpecTypeRelationshipTarget;
-        }
-        else if (parentSpecType == SdfSpecTypeAttribute)
+        } else if (parentSpecType == SdfSpecTypeAttribute)
         {
           return SdfSpecTypeConnection;
         }
@@ -424,8 +413,7 @@ class Usd_CrateDataImpl
       // No need to blow the _hashLastSet cache here, since inserting into
       // the table won't invalidate existing references.
       (*_hashData)[path].specType = specType;
-    }
-    else
+    } else
     {
       _flatLastSet = nullptr;
       auto iresult = _flatData.emplace(path, _FlatSpecData());
@@ -433,8 +421,7 @@ class Usd_CrateDataImpl
       if (iresult.second)
       {
         _flatTypes.insert(_flatTypes.begin() + index, _SpecType(specType));
-      }
-      else
+      } else
       {
         _flatTypes[index].type = specType;
       }
@@ -460,8 +447,7 @@ class Usd_CrateDataImpl
           if (listOp.IsExplicit())
           {
             specs = listOp.GetExplicitItems();
-          }
-          else
+          } else
           {
             auto const &added = listOp.GetAddedItems();
             auto const &prepended = listOp.GetPrependedItems();
@@ -496,8 +482,7 @@ class Usd_CrateDataImpl
           return;
         }
       }
-    }
-    else
+    } else
     {
       size_t index = 0;
       for (auto const &p : _flatData)
@@ -527,8 +512,7 @@ class Usd_CrateDataImpl
           // Special case, convert internal TimeSamples to
           // SdfTimeSampleMap.
           val = _MakeTimeSampleMap(val);
-        }
-        else if (field == SdfFieldKeys->Payload)
+        } else if (field == SdfFieldKeys->Payload)
         {
           // Special case, the payload field is expected to be a list
           // op but can be represented in crate files as a single
@@ -538,9 +522,8 @@ class Usd_CrateDataImpl
         return value->StoreValue(val);
       }
       return true;
-    }
-    else if (ARCH_UNLIKELY(field == SdfChildrenKeys->ConnectionChildren ||
-                           field == SdfChildrenKeys->RelationshipTargetChildren))
+    } else if (ARCH_UNLIKELY(field == SdfChildrenKeys->ConnectionChildren ||
+                             field == SdfChildrenKeys->RelationshipTargetChildren))
     {
       return _HasConnectionOrTargetChildren(path, field, value);
     }
@@ -563,8 +546,7 @@ class Usd_CrateDataImpl
           // Special case, convert internal TimeSamples to
           // SdfTimeSampleMap.
           *value = _MakeTimeSampleMap(*value);
-        }
-        else if (field == SdfFieldKeys->Payload)
+        } else if (field == SdfFieldKeys->Payload)
         {
           // Special case, the payload field is expected to be a list
           // op but can be represented in crate files as a single
@@ -573,9 +555,8 @@ class Usd_CrateDataImpl
         }
       }
       return true;
-    }
-    else if (ARCH_UNLIKELY(field == SdfChildrenKeys->ConnectionChildren ||
-                           field == SdfChildrenKeys->RelationshipTargetChildren))
+    } else if (ARCH_UNLIKELY(field == SdfChildrenKeys->ConnectionChildren ||
+                             field == SdfChildrenKeys->RelationshipTargetChildren))
     {
       return _HasConnectionOrTargetChildren(path, field, value);
     }
@@ -657,8 +638,7 @@ class Usd_CrateDataImpl
         if (specType == SdfSpecTypeRelationship)
         {
           out.push_back(SdfChildrenKeys->RelationshipTargetChildren);
-        }
-        else if (specType == SdfSpecTypeAttribute)
+        } else if (specType == SdfSpecTypeAttribute)
         {
           out.push_back(SdfChildrenKeys->ConnectionChildren);
         }
@@ -708,8 +688,7 @@ class Usd_CrateDataImpl
     {
       convertedVal = _Make_TimeSamples(value);
       valPtr = &convertedVal;
-    }
-    else if (fieldName == SdfFieldKeys->Payload)
+    } else if (fieldName == SdfFieldKeys->Payload)
     {
       // Special case. Some payload list op values can be represented as
       // a single SdfPayload which is compatible with crate file software
@@ -882,8 +861,7 @@ class Usd_CrateDataImpl
       _crateFile->MakeTimeSampleTimesAndValuesMutable(newSamples);
       newSamples.times.GetMutable().insert(newSamples.times.GetMutable().begin() + index, time);
       newSamples.values.insert(newSamples.values.begin() + index, value);
-    }
-    else
+    } else
     {
       // Make the values mutable, then modify.
       _crateFile->MakeTimeSampleValuesMutable(newSamples);
@@ -893,8 +871,7 @@ class Usd_CrateDataImpl
     if (fieldValue)
     {
       fieldValue->UncheckedSwap(newSamples);
-    }
-    else
+    } else
     {
       Set(path, SdfDataTokens->TimeSamples, VtValue::Take(newSamples));
     }
@@ -909,8 +886,7 @@ class Usd_CrateDataImpl
     if (fieldValue && fieldValue->IsHolding<TimeSamples>())
     {
       fieldValue->UncheckedSwap(newSamples);
-    }
-    else
+    } else
     {
       return;
     }
@@ -925,8 +901,7 @@ class Usd_CrateDataImpl
     if (newSamples.times.Get().size() == 1)
     {
       Erase(path, SdfDataTokens->TimeSamples);
-    }
-    else
+    } else
     {
       // Otherwise remove just the one sample.
       auto index = iter - newSamples.times.Get().begin();
@@ -940,6 +915,7 @@ class Usd_CrateDataImpl
   }
 
   ////////////////////////////////////////////////////////////////////////
+
  private:
   bool _PopulateFromCrateFile()
   {
@@ -969,11 +945,12 @@ class Usd_CrateDataImpl
       // Sort by path fast-less-than, need same order that _Table will
       // store.
       dispatcher.Run([this, &specs]() {
-        tbb::parallel_sort(
-          specs.begin(), specs.end(), [this](CrateFile::Spec const &l, CrateFile::Spec const &r) {
-            SdfPath::FastLessThan flt;
-            return flt(_crateFile->GetPath(l.pathIndex), _crateFile->GetPath(r.pathIndex));
-          });
+        tbb::parallel_sort(specs.begin(),
+                           specs.end(),
+                           [this](CrateFile::Spec const &l, CrateFile::Spec const &r) {
+                             SdfPath::FastLessThan flt;
+                             return flt(_crateFile->GetPath(l.pathIndex), _crateFile->GetPath(r.pathIndex));
+                           });
       });
       dispatcher.Wait();
 
@@ -1083,8 +1060,7 @@ class Usd_CrateDataImpl
     if (rep.IsInlined() || rep.GetType() == TypeEnum::TimeSamples)
     {
       ret = _crateFile->UnpackValue(rep);
-    }
-    else
+    } else
     {
       ret = rep;
     }
@@ -1174,8 +1150,7 @@ class Usd_CrateDataImpl
       {
         // Explicitly empty payload list
         result.ClearAndMakeExplicit();
-      }
-      else
+      } else
       {
         // Explicit payload list containing the single payload.
         result.SetExplicitItems(SdfPayloadVector(1, payload));
@@ -1203,8 +1178,7 @@ class Usd_CrateDataImpl
           // If the list is explicitly empty, it is equivalent to a
           // default SdfPayload.
           return VtValue(SdfPayload());
-        }
-        else if (listOp.GetExplicitItems().size() == 1)
+        } else if (listOp.GetExplicitItems().size() == 1)
         {
           // Otherwise an explicit list of one payload may be
           // convertible. Even if we have a single explicit payload,
@@ -1404,8 +1378,7 @@ bool Usd_CrateData::Save(string const &fileName)
   if (_impl->CanIncrementalSave(fileName))
   {
     return _impl->Save(fileName);
-  }
-  else
+  } else
   {
     // We copy to a temporary data and save that.
     Usd_CrateData tmp;

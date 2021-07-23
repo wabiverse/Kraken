@@ -34,125 +34,111 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsMeshCollisionAPI,
-        TfType::Bases< UsdAPISchemaBase > >();
-    
+  TfType::Define<UsdPhysicsMeshCollisionAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _schemaTokens,
-    (PhysicsMeshCollisionAPI)
-);
+TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsMeshCollisionAPI));
 
 /* virtual */
 UsdPhysicsMeshCollisionAPI::~UsdPhysicsMeshCollisionAPI()
-{
-}
+{}
 
 /* static */
-UsdPhysicsMeshCollisionAPI
-UsdPhysicsMeshCollisionAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsMeshCollisionAPI UsdPhysicsMeshCollisionAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsMeshCollisionAPI();
-    }
-    return UsdPhysicsMeshCollisionAPI(stage->GetPrimAtPath(path));
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsMeshCollisionAPI();
+  }
+  return UsdPhysicsMeshCollisionAPI(stage->GetPrimAtPath(path));
 }
 
 
 /* virtual */
 UsdSchemaKind UsdPhysicsMeshCollisionAPI::GetSchemaKind() const
 {
-    return UsdPhysicsMeshCollisionAPI::schemaKind;
+  return UsdPhysicsMeshCollisionAPI::schemaKind;
 }
 
 /* static */
-bool
-UsdPhysicsMeshCollisionAPI::CanApply(
-    const UsdPrim &prim, std::string *whyNot)
+bool UsdPhysicsMeshCollisionAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 {
-    return prim.CanApplyAPI<UsdPhysicsMeshCollisionAPI>(whyNot);
+  return prim.CanApplyAPI<UsdPhysicsMeshCollisionAPI>(whyNot);
 }
 
 /* static */
-UsdPhysicsMeshCollisionAPI
-UsdPhysicsMeshCollisionAPI::Apply(const UsdPrim &prim)
+UsdPhysicsMeshCollisionAPI UsdPhysicsMeshCollisionAPI::Apply(const UsdPrim &prim)
 {
-    if (prim.ApplyAPI<UsdPhysicsMeshCollisionAPI>()) {
-        return UsdPhysicsMeshCollisionAPI(prim);
-    }
-    return UsdPhysicsMeshCollisionAPI();
+  if (prim.ApplyAPI<UsdPhysicsMeshCollisionAPI>())
+  {
+    return UsdPhysicsMeshCollisionAPI(prim);
+  }
+  return UsdPhysicsMeshCollisionAPI();
 }
 
 /* static */
-const TfType &
-UsdPhysicsMeshCollisionAPI::GetStaticTfType()
+const TfType &UsdPhysicsMeshCollisionAPI::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsMeshCollisionAPI>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsMeshCollisionAPI>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsMeshCollisionAPI::IsTypedSchema()
+bool UsdPhysicsMeshCollisionAPI::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsMeshCollisionAPI::GetTfType() const
+const TfType &UsdPhysicsMeshCollisionAPI::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
-UsdAttribute
-UsdPhysicsMeshCollisionAPI::GetApproximationAttr() const
+UsdAttribute UsdPhysicsMeshCollisionAPI::GetApproximationAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsApproximation);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsApproximation);
 }
 
-UsdAttribute
-UsdPhysicsMeshCollisionAPI::CreateApproximationAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsMeshCollisionAPI::CreateApproximationAttr(VtValue const &defaultValue,
+                                                                 bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsApproximation,
-                       SdfValueTypeNames->Token,
-                       /* custom = */ false,
-                       SdfVariabilityUniform,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsApproximation,
+                                    SdfValueTypeNames->Token,
+                                    /* custom = */ false,
+                                    SdfVariabilityUniform,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-namespace {
-static inline TfTokenVector
-_ConcatenateAttributeNames(const TfTokenVector& left,const TfTokenVector& right)
+namespace
 {
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
     TfTokenVector result;
     result.reserve(left.size() + right.size());
     result.insert(result.end(), left.begin(), left.end());
     result.insert(result.end(), right.begin(), right.end());
     return result;
-}
-}
+  }
+}  // namespace
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsMeshCollisionAPI::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdPhysicsMeshCollisionAPI::GetSchemaAttributeNames(bool includeInherited)
 {
-    static TfTokenVector localNames = {
-        UsdPhysicsTokens->physicsApproximation,
-    };
-    static TfTokenVector allNames =
-        _ConcatenateAttributeNames(
-            UsdAPISchemaBase::GetSchemaAttributeNames(true),
-            localNames);
+  static TfTokenVector localNames = {
+    UsdPhysicsTokens->physicsApproximation,
+  };
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END

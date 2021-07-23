@@ -38,68 +38,68 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-template<class T>
-constexpr char PyFmtFor();
-template<>
-constexpr char PyFmtFor<bool>()
-{
-  return '?';
-}
-template<>
-constexpr char PyFmtFor<char>()
-{
-  return 'b';
-}
-template<>
-constexpr char PyFmtFor<unsigned char>()
-{
-  return 'B';
-}
-template<>
-constexpr char PyFmtFor<short>()
-{
-  return 'h';
-}
-template<>
-constexpr char PyFmtFor<unsigned short>()
-{
-  return 'H';
-}
-template<>
-constexpr char PyFmtFor<int>()
-{
-  return 'i';
-}
-template<>
-constexpr char PyFmtFor<unsigned int>()
-{
-  return 'I';
-}
-template<>
-constexpr char PyFmtFor<long>()
-{
-  return 'l';
-}
-template<>
-constexpr char PyFmtFor<unsigned long>()
-{
-  return 'L';
-}
-template<>
-constexpr char PyFmtFor<GfHalf>()
-{
-  return 'e';
-}
-template<>
-constexpr char PyFmtFor<float>()
-{
-  return 'f';
-}
-template<>
-constexpr char PyFmtFor<double>()
-{
-  return 'd';
-}
+  template<class T>
+  constexpr char PyFmtFor();
+  template<>
+  constexpr char PyFmtFor<bool>()
+  {
+    return '?';
+  }
+  template<>
+  constexpr char PyFmtFor<char>()
+  {
+    return 'b';
+  }
+  template<>
+  constexpr char PyFmtFor<unsigned char>()
+  {
+    return 'B';
+  }
+  template<>
+  constexpr char PyFmtFor<short>()
+  {
+    return 'h';
+  }
+  template<>
+  constexpr char PyFmtFor<unsigned short>()
+  {
+    return 'H';
+  }
+  template<>
+  constexpr char PyFmtFor<int>()
+  {
+    return 'i';
+  }
+  template<>
+  constexpr char PyFmtFor<unsigned int>()
+  {
+    return 'I';
+  }
+  template<>
+  constexpr char PyFmtFor<long>()
+  {
+    return 'l';
+  }
+  template<>
+  constexpr char PyFmtFor<unsigned long>()
+  {
+    return 'L';
+  }
+  template<>
+  constexpr char PyFmtFor<GfHalf>()
+  {
+    return 'e';
+  }
+  template<>
+  constexpr char PyFmtFor<float>()
+  {
+    return 'f';
+  }
+  template<>
+  constexpr char PyFmtFor<double>()
+  {
+    return 'd';
+  }
 
 }  // namespace
 

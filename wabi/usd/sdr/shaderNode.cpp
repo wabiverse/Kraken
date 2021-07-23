@@ -255,8 +255,7 @@ void SdrShaderNode::_InitializePrimvars()
       if (input && (input->GetType() == SdrPropertyTypes->String))
       {
         primvarNamingProperties.emplace_back(TfToken(std::move(propertyName)));
-      }
-      else
+      } else
       {
         TF_DEBUG(NDR_PARSING)
           .Msg(
@@ -266,8 +265,7 @@ void SdrShaderNode::_InitializePrimvars()
             GetName().c_str(),
             primvar.c_str());
       }
-    }
-    else
+    } else
     {
       primvars.emplace_back(TfToken(primvar));
     }

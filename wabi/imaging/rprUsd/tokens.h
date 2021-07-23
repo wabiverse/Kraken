@@ -20,7 +20,7 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-#define RPRUSD_TOKENS \
+#define RPRUSD_TOKENS        \
   (rpr) /* UsdShadeShader */ \
     ((id, "rpr:id"))((cryptomatteName, "rpr:cryptomatteName"))
 

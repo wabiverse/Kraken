@@ -64,17 +64,17 @@ bool UsdUsdzFileFormat::IsPackage() const
 namespace
 {
 
-std::string _GetFirstFileInZipFile(const std::string &zipFilePath)
-{
-  const UsdZipFile zipFile = Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(zipFilePath).second;
-  if (!zipFile)
+  std::string _GetFirstFileInZipFile(const std::string &zipFilePath)
   {
-    return std::string();
-  }
+    const UsdZipFile zipFile = Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(zipFilePath).second;
+    if (!zipFile)
+    {
+      return std::string();
+    }
 
-  const UsdZipFile::Iterator firstFileIt = zipFile.begin();
-  return (firstFileIt == zipFile.end()) ? std::string() : *firstFileIt;
-}
+    const UsdZipFile::Iterator firstFileIt = zipFile.begin();
+    return (firstFileIt == zipFile.end()) ? std::string() : *firstFileIt;
+  }
 
 }  // end anonymous namespace
 

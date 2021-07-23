@@ -53,31 +53,31 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GetNormalized_overloads, GetNormalized, 0, 1);
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Normalize_overloads, Normalize, 0, 1);
+  BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GetNormalized_overloads, GetNormalized, 0, 1);
+  BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Normalize_overloads, Normalize, 0, 1);
 
 #if PY_MAJOR_VERSION == 2
-static GfQuaternion __truediv__(const GfQuaternion &self, double value)
-{
-  return self / value;
-}
+  static GfQuaternion __truediv__(const GfQuaternion &self, double value)
+  {
+    return self / value;
+  }
 
-static GfQuaternion __itruediv__(GfQuaternion &self, double value)
-{
-  return self /= value;
-}
+  static GfQuaternion __itruediv__(GfQuaternion &self, double value)
+  {
+    return self /= value;
+  }
 #endif
 
-static string _Repr(GfQuaternion const &self)
-{
-  return TF_PY_REPR_PREFIX + "Quaternion(" + TfPyRepr(self.GetReal()) + ", " +
-         TfPyRepr(self.GetImaginary()) + ")";
-}
+  static string _Repr(GfQuaternion const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Quaternion(" + TfPyRepr(self.GetReal()) + ", " +
+           TfPyRepr(self.GetImaginary()) + ")";
+  }
 
-static size_t __hash__(GfQuaternion const &self)
-{
-  return hash_value(self);
-}
+  static size_t __hash__(GfQuaternion const &self)
+  {
+    return hash_value(self);
+  }
 
 }  // anonymous namespace
 

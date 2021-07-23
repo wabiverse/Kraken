@@ -30,7 +30,7 @@
 #define USED_USD_MINOR_VERSION 20
 #define USED_USD_PATCH_VERSION 11
 
-#define USED_USD_VERSION_GREATER_EQ(x, y) \
+#define USED_USD_VERSION_GREATER_EQ(x, y)                                                       \
   (USED_USD_MINOR_VERSION >= x && USED_USD_PATCH_VERSION >= y) || USED_USD_MINOR_VERSION > x || \
     USED_USD_MAJOR_VERSION > 0
 

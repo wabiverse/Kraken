@@ -156,12 +156,10 @@ class ArResolverContext
         return _context->LessThan(*rhs._context);
       }
       return (std::string(_context->GetTypeid().name()) < std::string(rhs._context->GetTypeid().name()));
-    }
-    else if (_context && !rhs._context)
+    } else if (_context && !rhs._context)
     {
       return false;
-    }
-    else if (!_context && rhs._context)
+    } else if (!_context && rhs._context)
     {
       return true;
     }

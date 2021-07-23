@@ -29,100 +29,85 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  ((baseGLSLFX, "mesh.glslfx"))
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         ((baseGLSLFX, "mesh.glslfx"))
 
-  // normal mixins
-  ((normalsScene, "MeshNormal.Scene"))((normalsScenePatches, "MeshNormal.Scene.Patches"))((
-    normalsSmooth,
-    "MeshNormal.Smooth"))((normalsFlat, "MeshNormal.Flat"))((normalsPass, "MeshNormal.Pass"))
+                         // normal mixins
+                         ((normalsScene, "MeshNormal.Scene"))((normalsScenePatches, "MeshNormal.Scene.Patches"))(
+                           (normalsSmooth, "MeshNormal.Smooth"))((normalsFlat, "MeshNormal.Flat"))((normalsPass, "MeshNormal.Pass"))
 
-    ((normalsGeometryFlat, "MeshNormal.Geometry.Flat"))((normalsGeometryNoFlat,
-                                                         "MeshNormal.Geometry.NoFlat"))
+                           ((normalsGeometryFlat, "MeshNormal.Geometry.Flat"))((normalsGeometryNoFlat,
+                                                                                "MeshNormal.Geometry.NoFlat"))
 
-      ((normalsDoubleSidedFS, "MeshNormal.Fragment.DoubleSided"))((normalsSingleSidedFS,
-                                                                   "MeshNormal.Fragment.SingleSided"))
+                             ((normalsDoubleSidedFS, "MeshNormal.Fragment.DoubleSided"))((normalsSingleSidedFS,
+                                                                                          "MeshNormal.Fragment.SingleSided"))
 
-        ((faceCullHardwareFS, "MeshFaceCull.Fragment.None"))((
-          faceCullSingleSidedFS,
-          "MeshFaceCull.Fragment.SingleSided"))((faceCullDoubleSidedFS, "MeshFaceCull.Fragment.DoubleSided"))
+                               ((faceCullHardwareFS, "MeshFaceCull.Fragment.None"))((faceCullSingleSidedFS,
+                                                                                     "MeshFaceCull.Fragment.SingleSided"))(
+                                 (faceCullDoubleSidedFS, "MeshFaceCull.Fragment.DoubleSided"))
 
-  // wireframe mixins
-  ((edgeNoneGS, "MeshWire.Geometry.NoEdge"))((edgeNoneFS, "MeshWire.Fragment.NoEdge"))
+                         // wireframe mixins
+                         ((edgeNoneGS, "MeshWire.Geometry.NoEdge"))((edgeNoneFS, "MeshWire.Fragment.NoEdge"))
 
-    ((edgeMaskTriangleFS, "MeshWire.Fragment.EdgeMaskTriangle"))((edgeMaskQuadFS,
-                                                                  "MeshWire.Fragment.EdgeMaskQuad"))((
-      edgeMaskRefinedQuadFS,
-      "MeshWire.Fragment.EdgeMaskRefinedQuad"))((edgeMaskNoneFS, "MeshWire.Fragment.EdgeMaskNone"))
+                           ((edgeMaskTriangleFS, "MeshWire.Fragment.EdgeMaskTriangle"))((edgeMaskQuadFS,
+                                                                                         "MeshWire.Fragment.EdgeMaskQuad"))(
+                             (edgeMaskRefinedQuadFS, "MeshWire.Fragment.EdgeMaskRefinedQuad"))((edgeMaskNoneFS,
+                                                                                                "MeshWire.Fragment.EdgeMaskNone"))
 
-      ((edgeCommonFS, "MeshWire.Fragment.EdgeCommon"))
+                             ((edgeCommonFS, "MeshWire.Fragment.EdgeCommon"))
 
-        ((edgeOnlyGS, "MeshWire.Geometry.Edge"))((edgeOnlyBlendFS, "MeshWire.Fragment.EdgeOnlyBlendColor"))((
-          edgeOnlyNoBlendFS,
-          "MeshWire.Fragment.EdgeOnlyNoBlend"))
+                               ((edgeOnlyGS, "MeshWire.Geometry.Edge"))((edgeOnlyBlendFS, "MeshWire.Fragment.EdgeOnlyBlendColor"))(
+                                 (edgeOnlyNoBlendFS, "MeshWire.Fragment.EdgeOnlyNoBlend"))
 
-          ((edgeOnSurfGS, "MeshWire.Geometry.Edge"))((edgeOnSurfFS, "MeshWire.Fragment.EdgeOnSurface"))((
-            patchEdgeTriangleFS,
-            "MeshPatchWire.Fragment.PatchEdgeTriangle"))((patchEdgeQuadFS,
-                                                          "MeshPatchWire.Fragment.PatchEdgeQuad"))((
-            patchEdgeOnlyFS,
-            "MeshPatchWire.Fragment.EdgeOnly"))((patchEdgeOnSurfFS, "MeshPatchWire.Fragment.EdgeOnSurface"))
+                                 ((edgeOnSurfGS, "MeshWire.Geometry.Edge"))((edgeOnSurfFS, "MeshWire.Fragment.EdgeOnSurface"))(
+                                   (patchEdgeTriangleFS, "MeshPatchWire.Fragment.PatchEdgeTriangle"))(
+                                   (patchEdgeQuadFS, "MeshPatchWire.Fragment.PatchEdgeQuad"))(
+                                   (patchEdgeOnlyFS, "MeshPatchWire.Fragment.EdgeOnly"))((patchEdgeOnSurfFS,
+                                                                                          "MeshPatchWire.Fragment.EdgeOnSurface"))
 
-            ((selWireOffsetGS, "Selection.Geometry.WireSelOffset"))((selWireNoOffsetGS,
-                                                                     "Selection.Geometry.WireSelNoOffset"))
+                                   ((selWireOffsetGS, "Selection.Geometry.WireSelOffset"))((selWireNoOffsetGS,
+                                                                                            "Selection.Geometry.WireSelNoOffset"))
 
-  // selection decoding
-  ((selDecodeUtils,
-    "Selection.DecodeUtils"))((selPointSelVS,
-                               "Selection.Vertex.PointSel"))((selElementSelGS,
-                                                              "Selection.Geometry.ElementSel"))
+                         // selection decoding
+                         ((selDecodeUtils, "Selection.DecodeUtils"))((selPointSelVS, "Selection.Vertex.PointSel"))(
+                           (selElementSelGS, "Selection.Geometry.ElementSel"))
 
-  // edge id mixins (for edge picking & selection)
-  ((edgeIdNoneGS, "EdgeId.Geometry.None"))((edgeIdEdgeParamGS, "EdgeId.Geometry.EdgeParam"))((
-    edgeIdFallbackFS,
-    "EdgeId.Fragment.Fallback"))((edgeIdCommonFS, "EdgeId.Fragment.Common"))((
-    edgeIdTriangleSurfFS,
-    "EdgeId.Fragment.TriangleSurface"))((edgeIdTriangleLineFS, "EdgeId.Fragment.TriangleLines"))((
-    edgeIdTriangleParamFS,
-    "EdgeId.Fragment.TriangleParam"))((edgeIdQuadSurfFS, "EdgeId.Fragment.QuadSurface"))((
-    edgeIdQuadLineFS,
-    "EdgeId.Fragment.QuadLines"))((edgeIdQuadParamFS, "EdgeId.Fragment.QuadParam"))
+                         // edge id mixins (for edge picking & selection)
+                         ((edgeIdNoneGS, "EdgeId.Geometry.None"))((edgeIdEdgeParamGS, "EdgeId.Geometry.EdgeParam"))(
+                           (edgeIdFallbackFS, "EdgeId.Fragment.Fallback"))((edgeIdCommonFS, "EdgeId.Fragment.Common"))(
+                           (edgeIdTriangleSurfFS, "EdgeId.Fragment.TriangleSurface"))((edgeIdTriangleLineFS,
+                                                                                       "EdgeId.Fragment.TriangleLines"))(
+                           (edgeIdTriangleParamFS, "EdgeId.Fragment.TriangleParam"))((edgeIdQuadSurfFS,
+                                                                                      "EdgeId.Fragment.QuadSurface"))(
+                           (edgeIdQuadLineFS, "EdgeId.Fragment.QuadLines"))((edgeIdQuadParamFS, "EdgeId.Fragment.QuadParam"))
 
-  // point id mixins (for point picking & selection)
-  ((pointIdNoneVS, "PointId.Vertex.None"))((pointIdVS, "PointId.Vertex.PointParam"))((
-    pointIdFallbackFS,
-    "PointId.Fragment.Fallback"))((pointIdFS, "PointId.Fragment.PointParam"))
+                         // point id mixins (for point picking & selection)
+                         ((pointIdNoneVS, "PointId.Vertex.None"))((pointIdVS, "PointId.Vertex.PointParam"))(
+                           (pointIdFallbackFS, "PointId.Fragment.Fallback"))((pointIdFS, "PointId.Fragment.PointParam"))
 
-  // visibility mixin (for face and point visibility)
-  ((topVisFallbackFS, "Visibility.Fragment.Fallback"))((topVisFS, "Visibility.Fragment.Topology"))
+                         // visibility mixin (for face and point visibility)
+                         ((topVisFallbackFS, "Visibility.Fragment.Fallback"))((topVisFS, "Visibility.Fragment.Topology"))
 
-  // main for all the shader stages
-  ((mainVS, "Mesh.Vertex"))((mainBSplineQuadTCS, "Mesh.TessControl.BSplineQuad"))((
-    mainBezierQuadTES,
-    "Mesh.TessEval.BezierQuad"))((mainBoxSplineTriangleTCS,
-                                  "Mesh.TessControl.BoxSplineTriangle"))((mainBezierTriangleTES,
-                                                                          "Mesh.TessEval.BezierTriangle"))((
-    mainVaryingInterpTES,
-    "Mesh.TessEval.VaryingInterpolation"))((mainTriangleTessGS, "Mesh.Geometry.TriangleTess"))((
-    mainTriangleGS,
-    "Mesh.Geometry.Triangle"))((mainQuadGS, "Mesh.Geometry.Quad"))((mainFS, "Mesh.Fragment"))
+                         // main for all the shader stages
+                         ((mainVS, "Mesh.Vertex"))((mainBSplineQuadTCS, "Mesh.TessControl.BSplineQuad"))(
+                           (mainBezierQuadTES, "Mesh.TessEval.BezierQuad"))((mainBoxSplineTriangleTCS,
+                                                                             "Mesh.TessControl.BoxSplineTriangle"))(
+                           (mainBezierTriangleTES, "Mesh.TessEval.BezierTriangle"))((mainVaryingInterpTES,
+                                                                                     "Mesh.TessEval.VaryingInterpolation"))(
+                           (mainTriangleTessGS, "Mesh.Geometry.TriangleTess"))((mainTriangleGS, "Mesh.Geometry.Triangle"))(
+                           (mainQuadGS, "Mesh.Geometry.Quad"))((mainFS, "Mesh.Fragment"))
 
-  // instancing related mixins
-  ((instancing, "Instancing.Transform"))
+                         // instancing related mixins
+                         ((instancing, "Instancing.Transform"))
 
-  // terminals
-  ((customDisplacementGS, "Geometry.CustomDisplacement"))((
-    noCustomDisplacementGS,
-    "Geometry.NoCustomDisplacement"))((commonFS, "Fragment.CommonTerminals"))((surfaceFS,
-                                                                               "Fragment.Surface"))((
-    surfaceUnlitFS,
-    "Fragment.SurfaceUnlit"))((surfaceSheerFS, "Fragment.SurfaceSheer"))((surfaceOutlineFS,
-                                                                          "Fragment.SurfaceOutline"))((
-    constantColorFS,
-    "Fragment.ConstantColor"))((hullColorFS, "Fragment.HullColor"))((pointColorFS, "Fragment.PointColor"))((
-    scalarOverrideFS,
-    "Fragment.ScalarOverride"))((noScalarOverrideFS, "Fragment.NoScalarOverride")));
+                         // terminals
+                         ((customDisplacementGS, "Geometry.CustomDisplacement"))(
+                           (noCustomDisplacementGS, "Geometry.NoCustomDisplacement"))((commonFS, "Fragment.CommonTerminals"))(
+                           (surfaceFS, "Fragment.Surface"))((surfaceUnlitFS, "Fragment.SurfaceUnlit"))((surfaceSheerFS,
+                                                                                                        "Fragment.SurfaceSheer"))(
+                           (surfaceOutlineFS, "Fragment.SurfaceOutline"))((constantColorFS, "Fragment.ConstantColor"))(
+                           (hullColorFS, "Fragment.HullColor"))((pointColorFS, "Fragment.PointColor"))(
+                           (scalarOverrideFS, "Fragment.ScalarOverride"))((noScalarOverrideFS, "Fragment.NoScalarOverride")));
 
 HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primitiveType,
                                        TfToken shadingTerminal,
@@ -202,8 +187,7 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
     VS[vsIndex++] = _tokens->pointIdVS;
     VS[vsIndex++] = _tokens->selDecodeUtils;
     VS[vsIndex++] = _tokens->selPointSelVS;
-  }
-  else
+  } else
   {
     VS[vsIndex++] = _tokens->pointIdNoneVS;
   }
@@ -240,7 +224,7 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
 
   GS[gsIndex++] = ((geomStyle == HdMeshGeomStyleEdgeOnly || geomStyle == HdMeshGeomStyleHullEdgeOnly) ?
                      _tokens->edgeOnlyGS :
-                     (geomStyle == HdMeshGeomStyleEdgeOnSurf || geomStyle == HdMeshGeomStyleHullEdgeOnSurf) ?
+                   (geomStyle == HdMeshGeomStyleEdgeOnSurf || geomStyle == HdMeshGeomStyleHullEdgeOnSurf) ?
                      _tokens->edgeOnSurfGS :
                      _tokens->edgeNoneGS);
 
@@ -257,8 +241,7 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
     GS[gsIndex++] = _tokens->selDecodeUtils;
     GS[gsIndex++] = _tokens->selElementSelGS;
     GS[gsIndex++] = _tokens->selWireOffsetGS;
-  }
-  else
+  } else
   {
     GS[gsIndex++] = _tokens->selWireNoOffsetGS;
   }
@@ -314,17 +297,14 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
       if (isPrimTypeQuads)
       {
         FS[fsIndex++] = _tokens->edgeMaskRefinedQuadFS;
-      }
-      else
+      } else
       {
         FS[fsIndex++] = _tokens->edgeMaskNoneFS;
       }
-    }
-    else if (isPrimTypeTris)
+    } else if (isPrimTypeTris)
     {
       FS[fsIndex++] = _tokens->edgeMaskTriangleFS;
-    }
-    else
+    } else
     {
       FS[fsIndex++] = _tokens->edgeMaskQuadFS;
     }
@@ -332,13 +312,11 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
     if (isPrimTypePatches)
     {
       FS[fsIndex++] = _tokens->patchEdgeOnlyFS;
-    }
-    else
+    } else
     {
       FS[fsIndex++] = blendWireframeColor ? _tokens->edgeOnlyBlendFS : _tokens->edgeOnlyNoBlendFS;
     }
-  }
-  else if ((geomStyle == HdMeshGeomStyleEdgeOnSurf || geomStyle == HdMeshGeomStyleHullEdgeOnSurf))
+  } else if ((geomStyle == HdMeshGeomStyleEdgeOnSurf || geomStyle == HdMeshGeomStyleHullEdgeOnSurf))
   {
 
     if (isPrimTypeRefinedMesh)
@@ -346,17 +324,14 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
       if (isPrimTypeQuads)
       {
         FS[fsIndex++] = _tokens->edgeMaskRefinedQuadFS;
-      }
-      else
+      } else
       {
         FS[fsIndex++] = _tokens->edgeMaskNoneFS;
       }
-    }
-    else if (isPrimTypeTris)
+    } else if (isPrimTypeTris)
     {
       FS[fsIndex++] = _tokens->edgeMaskTriangleFS;
-    }
-    else
+    } else
     {
       FS[fsIndex++] = _tokens->edgeMaskQuadFS;
     }
@@ -364,21 +339,18 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
     if (isPrimTypeTris || isPrimTypePatchesBoxSplineTriangle)
     {
       FS[fsIndex++] = _tokens->patchEdgeTriangleFS;
-    }
-    else
+    } else
     {
       FS[fsIndex++] = _tokens->patchEdgeQuadFS;
     }
     if (isPrimTypePatches)
     {
       FS[fsIndex++] = _tokens->patchEdgeOnSurfFS;
-    }
-    else
+    } else
     {
       FS[fsIndex++] = _tokens->edgeOnSurfFS;
     }
-  }
-  else
+  } else
   {
     FS[fsIndex++] = _tokens->edgeNoneFS;
   }
@@ -388,36 +360,28 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
   if (shadingTerminal == HdMeshReprDescTokens->surfaceShader)
   {
     terminalFS = _tokens->surfaceFS;
-  }
-  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderUnlit)
+  } else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderUnlit)
   {
     terminalFS = _tokens->surfaceUnlitFS;
-  }
-  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderSheer)
+  } else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderSheer)
   {
     terminalFS = _tokens->surfaceSheerFS;
-  }
-  else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderOutline)
+  } else if (shadingTerminal == HdMeshReprDescTokens->surfaceShaderOutline)
   {
     terminalFS = _tokens->surfaceOutlineFS;
-  }
-  else if (shadingTerminal == HdMeshReprDescTokens->constantColor)
+  } else if (shadingTerminal == HdMeshReprDescTokens->constantColor)
   {
     terminalFS = _tokens->constantColorFS;
-  }
-  else if (shadingTerminal == HdMeshReprDescTokens->hullColor)
+  } else if (shadingTerminal == HdMeshReprDescTokens->hullColor)
   {
     terminalFS = _tokens->hullColorFS;
-  }
-  else if (shadingTerminal == HdMeshReprDescTokens->pointColor)
+  } else if (shadingTerminal == HdMeshReprDescTokens->pointColor)
   {
     terminalFS = _tokens->pointColorFS;
-  }
-  else if (!shadingTerminal.IsEmpty())
+  } else if (!shadingTerminal.IsEmpty())
   {
     terminalFS = shadingTerminal;
-  }
-  else
+  } else
   {
     terminalFS = _tokens->surfaceFS;
   }
@@ -438,27 +402,23 @@ HdPh_MeshShaderKey::HdPh_MeshShaderKey(HdPh_GeometricShader::PrimitiveType primi
       if (polygonMode == HdPolygonModeLine)
       {
         FS[fsIndex++] = _tokens->edgeIdTriangleLineFS;
-      }
-      else
+      } else
       {
         FS[fsIndex++] = _tokens->edgeIdTriangleSurfFS;
       }
       FS[fsIndex++] = _tokens->edgeIdTriangleParamFS;
-    }
-    else
+    } else
     {
       if (polygonMode == HdPolygonModeLine)
       {
         FS[fsIndex++] = _tokens->edgeIdQuadLineFS;
-      }
-      else
+      } else
       {
         FS[fsIndex++] = _tokens->edgeIdQuadSurfFS;
       }
       FS[fsIndex++] = _tokens->edgeIdQuadParamFS;
     }
-  }
-  else
+  } else
   {
     // the GS stage is skipped if we're dealing with points or triangles.
     // (see "Optimization" above)

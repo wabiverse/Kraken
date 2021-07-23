@@ -41,40 +41,37 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Repr(const SdfPayload &self)
-{
-  string args;
-  bool useKeywordArgs = false;
+  static string _Repr(const SdfPayload &self)
+  {
+    string args;
+    bool useKeywordArgs = false;
 
-  if (!self.GetAssetPath().empty())
-  {
-    args += TfPyRepr(self.GetAssetPath());
-  }
-  else
-  {
-    useKeywordArgs = true;
-  }
-  if (!self.GetPrimPath().IsEmpty())
-  {
-    args += (args.empty() ? "" : ", ");
-    args += (useKeywordArgs ? "primPath=" : "") + TfPyRepr(self.GetPrimPath());
-  }
-  else
-  {
-    useKeywordArgs = true;
-  }
-  if (!self.GetLayerOffset().IsIdentity())
-  {
-    args += (args.empty() ? "" : ", ");
-    args += (useKeywordArgs ? "layerOffset=" : "") + TfPyRepr(self.GetLayerOffset());
-  }
-  else
-  {
-    useKeywordArgs = true;
-  }
+    if (!self.GetAssetPath().empty())
+    {
+      args += TfPyRepr(self.GetAssetPath());
+    } else
+    {
+      useKeywordArgs = true;
+    }
+    if (!self.GetPrimPath().IsEmpty())
+    {
+      args += (args.empty() ? "" : ", ");
+      args += (useKeywordArgs ? "primPath=" : "") + TfPyRepr(self.GetPrimPath());
+    } else
+    {
+      useKeywordArgs = true;
+    }
+    if (!self.GetLayerOffset().IsIdentity())
+    {
+      args += (args.empty() ? "" : ", ");
+      args += (useKeywordArgs ? "layerOffset=" : "") + TfPyRepr(self.GetLayerOffset());
+    } else
+    {
+      useKeywordArgs = true;
+    }
 
-  return TF_PY_REPR_PREFIX + "Payload(" + args + ")";
-}
+    return TF_PY_REPR_PREFIX + "Payload(" + args + ")";
+  }
 
 }  // anonymous namespace
 

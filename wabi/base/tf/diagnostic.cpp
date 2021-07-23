@@ -43,13 +43,13 @@ WABI_NAMESPACE_BEGIN
 
 TF_REGISTRY_FUNCTION(TfEnum)
 {
-  /** 
+  /**
    * 'GUI/User Friendly' Message Logging. */
   TF_ADD_ENUM_NAME(TF_DIAGNOSTIC_MSG_TYPE, "Info");
   TF_ADD_ENUM_NAME(TF_DIAGNOSTIC_MSG_ERROR_TYPE, "Error");
   TF_ADD_ENUM_NAME(TF_DIAGNOSTIC_MSG_SUCCESS_TYPE, "Success");
   TF_ADD_ENUM_NAME(TF_DIAGNOSTIC_MSG_WARNING_TYPE, "Warning");
-  /** 
+  /**
    * 'Internal/Developer' Verbose Message Logging. */
   TF_ADD_ENUM_NAME(TF_DIAGNOSTIC_CODING_ERROR_TYPE, "Coding Error");
   TF_ADD_ENUM_NAME(TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE, "Fatal Coding Error");
@@ -84,8 +84,7 @@ bool Tf_FailedVerifyHelper(const TfCallContext &context, char const *condition, 
   if (TfGetenvBool("TF_FATAL_VERIFY", false))
   {
     Tf_DiagnosticHelper(context, TF_DIAGNOSTIC_FATAL_ERROR_TYPE).IssueFatalError(errorMsg);
-  }
-  else
+  } else
   {
     Tf_PostErrorHelper(context, TF_DIAGNOSTIC_CODING_ERROR_TYPE, errorMsg);
   }

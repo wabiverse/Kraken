@@ -188,8 +188,9 @@ class ArnoldUsdCurvesData
       float originalVertexFloor = 0;
       const auto originalVertexFrac = modff(originalVertex, &originalVertexFloor);
       const auto originalVertexFloorInt = static_cast<int>(originalVertexFloor);
-      remapped = AiLerp(
-        originalVertexFrac, original[originalVertexFloorInt], original[originalVertexFloorInt + 1]);
+      remapped = AiLerp(originalVertexFrac,
+                        original[originalVertexFloorInt],
+                        original[originalVertexFloorInt + 1]);
     }
   };
 };

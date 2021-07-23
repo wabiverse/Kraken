@@ -75,12 +75,10 @@ void HdArnoldCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
       if (value.IsHolding<float>())
       {
         return value.UncheckedGet<float>();
-      }
-      else if (value.IsHolding<double>())
+      } else if (value.IsHolding<double>())
       {
         return static_cast<float>(value.UncheckedGet<double>());
-      }
-      else
+      } else
       {
         return defaultValue;
       }
@@ -91,8 +89,7 @@ void HdArnoldCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
     if (GfIsClose(fStop, 0.0f, AI_EPSILON))
     {
       AiNodeSetFlt(_camera, str::aperture_size, 0.0f);
-    }
-    else
+    } else
     {
       AiNodeSetFlt(_camera, str::aperture_size, focalLength / (2.0f * fStop));
       AiNodeSetFlt(_camera,
@@ -105,8 +102,7 @@ void HdArnoldCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
       const auto &range = clippingRange.UncheckedGet<GfRange1f>();
       AiNodeSetFlt(_camera, str::near_clip, range.GetMin());
       AiNodeSetFlt(_camera, str::far_clip, range.GetMax());
-    }
-    else
+    } else
     {
       AiNodeSetFlt(_camera, str::near_clip, 0.0f);
       AiNodeSetFlt(_camera, str::far_clip, AI_INFINITE);

@@ -47,19 +47,19 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-struct Tf_AnyWeakPtrToPython
-{
-
-  Tf_AnyWeakPtrToPython()
+  struct Tf_AnyWeakPtrToPython
   {
-    to_python_converter<TfAnyWeakPtr, Tf_AnyWeakPtrToPython>();
-  }
 
-  static PyObject *convert(TfAnyWeakPtr const &any)
-  {
-    return incref(Tf_GetPythonObjectFromAnyWeakPtr(any).ptr());
-  }
-};
+    Tf_AnyWeakPtrToPython()
+    {
+      to_python_converter<TfAnyWeakPtr, Tf_AnyWeakPtrToPython>();
+    }
+
+    static PyObject *convert(TfAnyWeakPtr const &any)
+    {
+      return incref(Tf_GetPythonObjectFromAnyWeakPtr(any).ptr());
+    }
+  };
 
 }  // anonymous namespace
 

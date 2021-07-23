@@ -1095,8 +1095,7 @@ bool UsdGeomPointInstancer::ApplyMaskToArray(std::vector<bool> const &mask,
   if (maskSize == 0 || dataArray->size() == (size_t)elementSize)
   {
     return true;
-  }
-  else if ((maskSize * elementSize) != dataArray->size())
+  } else if ((maskSize * elementSize) != dataArray->size())
   {
     TF_WARN(
       "Input mask's size (%zu) is not compatible with the "

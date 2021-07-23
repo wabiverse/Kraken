@@ -59,7 +59,8 @@ struct KRAKEN_PATH_DEFAULTS
   const inline static TfToken KRAKEN_WINDOW = TfToken("/WabiAnimationStudios/Internal/Kraken/MainWindow");
 
   /** Kraken :: MainWindow :: Workspaces Root. */
-  const inline static TfToken KRAKEN_WORKSPACES = TfToken("/WabiAnimationStudios/Internal/Kraken/Workspaces");
+  const inline static TfToken KRAKEN_WORKSPACES = TfToken(
+    "/WabiAnimationStudios/Internal/Kraken/Workspaces");
 };
 
 WABI_NAMESPACE_END

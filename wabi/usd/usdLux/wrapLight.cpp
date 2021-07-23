@@ -50,61 +50,62 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateIntensityAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateIntensityAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateExposureAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateExposureAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateDiffuseAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateDiffuseAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateSpecularAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateSpecularAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateNormalizeAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateNormalizeAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  }
 
-static UsdAttribute _CreateColorAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
-}
+  static UsdAttribute _CreateColorAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
+  }
 
-static UsdAttribute _CreateEnableColorTemperatureAttr(UsdLuxLight &self,
-                                                      object defaultVal,
-                                                      bool writeSparsely)
-{
-  return self.CreateEnableColorTemperatureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                               writeSparsely);
-}
+  static UsdAttribute _CreateEnableColorTemperatureAttr(UsdLuxLight &self,
+                                                        object defaultVal,
+                                                        bool writeSparsely)
+  {
+    return self.CreateEnableColorTemperatureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                                 writeSparsely);
+  }
 
-static UsdAttribute _CreateColorTemperatureAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateColorTemperatureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                         writeSparsely);
-}
+  static UsdAttribute _CreateColorTemperatureAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateColorTemperatureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                           writeSparsely);
+  }
 
-static std::string _Repr(const UsdLuxLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.Light(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdLuxLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.Light(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -158,8 +159,9 @@ void wrapUsdLuxLight()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetColorAttr", &This::GetColorAttr)
-    .def(
-      "CreateColorAttr", &_CreateColorAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateColorAttr",
+         &_CreateColorAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetEnableColorTemperatureAttr", &This::GetEnableColorTemperatureAttr)
     .def("CreateEnableColorTemperatureAttr",
@@ -202,28 +204,28 @@ void wrapUsdLuxLight()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
-    .def("ConnectableAPI", &UsdLuxLight::ConnectableAPI)
+  WRAP_CUSTOM
+  {
+    _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
+      .def("ConnectableAPI", &UsdLuxLight::ConnectableAPI)
 
-    .def("CreateOutput", &UsdLuxLight::CreateOutput, (arg("name"), arg("type")))
-    .def("GetOutput", &UsdLuxLight::GetOutput, arg("name"))
-    .def("GetOutputs",
-         &UsdLuxLight::GetOutputs,
-         (arg("onlyAuthored") = true),
-         return_value_policy<TfPySequenceToList>())
+      .def("CreateOutput", &UsdLuxLight::CreateOutput, (arg("name"), arg("type")))
+      .def("GetOutput", &UsdLuxLight::GetOutput, arg("name"))
+      .def("GetOutputs",
+           &UsdLuxLight::GetOutputs,
+           (arg("onlyAuthored") = true),
+           return_value_policy<TfPySequenceToList>())
 
-    .def("CreateInput", &UsdLuxLight::CreateInput, (arg("name"), arg("type")))
-    .def("GetInput", &UsdLuxLight::GetInput, arg("name"))
-    .def("GetInputs",
-         &UsdLuxLight::GetInputs,
-         (arg("onlyAuthored") = true),
-         return_value_policy<TfPySequenceToList>())
+      .def("CreateInput", &UsdLuxLight::CreateInput, (arg("name"), arg("type")))
+      .def("GetInput", &UsdLuxLight::GetInput, arg("name"))
+      .def("GetInputs",
+           &UsdLuxLight::GetInputs,
+           (arg("onlyAuthored") = true),
+           return_value_policy<TfPySequenceToList>())
 
-    .def("ComputeBaseEmission", &UsdLuxLight::ComputeBaseEmission)
-    .def("GetLightLinkCollectionAPI", &UsdLuxLight::GetLightLinkCollectionAPI)
-    .def("GetShadowLinkCollectionAPI", &UsdLuxLight::GetShadowLinkCollectionAPI);
-}
+      .def("ComputeBaseEmission", &UsdLuxLight::ComputeBaseEmission)
+      .def("GetLightLinkCollectionAPI", &UsdLuxLight::GetLightLinkCollectionAPI)
+      .def("GetShadowLinkCollectionAPI", &UsdLuxLight::GetShadowLinkCollectionAPI);
+  }
 
 }  // namespace

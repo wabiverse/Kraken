@@ -71,59 +71,59 @@ TF_DEFINE_ENV_SETTING(USDIMAGINGGL_ENGINE_DEBUG_SCENE_DELEGATE_ID,
 namespace
 {
 
-bool _GetHydraEnabledEnvVar()
-{
-  // XXX: Note that we don't cache the result here.  This is primarily because
-  // of the way usdview currently interacts with this setting.  This should
-  // be cleaned up, and the new class hierarchy around UsdImagingGLEngine
-  // makes it much easier to do so.
-  return TfGetenv("HD_ENABLED", "1") == "1";
-}
-
-SdfPath const &_GetUsdImagingDelegateId()
-{
-  static SdfPath const delegateId = SdfPath(TfGetEnvSetting(USDIMAGINGGL_ENGINE_DEBUG_SCENE_DELEGATE_ID));
-
-  return delegateId;
-}
-
-void _InitGL()
-{
-  static std::once_flag initFlag;
-
-  std::call_once(initFlag, [] {
-    // Initialize GL library for GL Extensions if needed
-    GarchGLApiLoad();
-
-    // Initialize if needed and switch to shared GL context.
-    GlfSharedGLContextScopeHolder sharedContext;
-
-    // Initialize GL context caps based on shared context
-    GlfContextCaps::InitInstance();
-  });
-}
-
-bool _IsHydraEnabled()
-{
-  // Make sure there is an OpenGL context when
-  // trying to initialize Hydra/Reference
-  GlfGLContextSharedPtr context = GlfGLContext::GetCurrentGLContext();
-  if (!context || !context->IsValid())
+  bool _GetHydraEnabledEnvVar()
   {
-    TF_CODING_ERROR("OpenGL context required, using reference renderer");
-    return false;
+    // XXX: Note that we don't cache the result here.  This is primarily because
+    // of the way usdview currently interacts with this setting.  This should
+    // be cleaned up, and the new class hierarchy around UsdImagingGLEngine
+    // makes it much easier to do so.
+    return TfGetenv("HD_ENABLED", "1") == "1";
   }
 
-  if (!_GetHydraEnabledEnvVar())
+  SdfPath const &_GetUsdImagingDelegateId()
   {
-    return false;
+    static SdfPath const delegateId = SdfPath(TfGetEnvSetting(USDIMAGINGGL_ENGINE_DEBUG_SCENE_DELEGATE_ID));
+
+    return delegateId;
   }
 
-  // Check to see if we have a default plugin for the renderer
-  TfToken defaultPlugin = HdRendererPluginRegistry::GetInstance().GetDefaultPluginId();
+  void _InitGL()
+  {
+    static std::once_flag initFlag;
 
-  return !defaultPlugin.IsEmpty();
-}
+    std::call_once(initFlag, [] {
+      // Initialize GL library for GL Extensions if needed
+      GarchGLApiLoad();
+
+      // Initialize if needed and switch to shared GL context.
+      GlfSharedGLContextScopeHolder sharedContext;
+
+      // Initialize GL context caps based on shared context
+      GlfContextCaps::InitInstance();
+    });
+  }
+
+  bool _IsHydraEnabled()
+  {
+    // Make sure there is an OpenGL context when
+    // trying to initialize Hydra/Reference
+    GlfGLContextSharedPtr context = GlfGLContext::GetCurrentGLContext();
+    if (!context || !context->IsValid())
+    {
+      TF_CODING_ERROR("OpenGL context required, using reference renderer");
+      return false;
+    }
+
+    if (!_GetHydraEnabledEnvVar())
+    {
+      return false;
+    }
+
+    // Check to see if we have a default plugin for the renderer
+    TfToken defaultPlugin = HdRendererPluginRegistry::GetInstance().GetDefaultPluginId();
+
+    return !defaultPlugin.IsEmpty();
+  }
 
 }  // anonymous namespace
 
@@ -174,8 +174,7 @@ UsdImagingGLEngine::UsdImagingGLEngine(const SdfPath &rootPath,
         "No renderer plugins found! "
         "Check before creation.");
     }
-  }
-  else
+  } else
   {
 
     // In the legacy implementation, both excluded paths and invised paths
@@ -903,8 +902,10 @@ TfTokenVector UsdImagingGLEngine::GetRendererAovs() const
   if (_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer))
   {
 
-    static const TfToken candidates[] = {
-      HdAovTokens->primId, HdAovTokens->depth, HdAovTokens->normal, HdAovTokensMakePrimvar(TfToken("st"))};
+    static const TfToken candidates[] = {HdAovTokens->primId,
+                                         HdAovTokens->depth,
+                                         HdAovTokens->normal,
+                                         HdAovTokensMakePrimvar(TfToken("st"))};
 
     TfTokenVector aovs = {HdAovTokens->color};
     for (auto const &aov : candidates)
@@ -975,20 +976,16 @@ UsdImagingGLRendererSettingsList UsdImagingGLEngine::GetRendererSettingsList() c
     if (r.defValue.IsHolding<bool>())
     {
       r.type = UsdImagingGLRendererSetting::TYPE_FLAG;
-    }
-    else if (r.defValue.IsHolding<int>() || r.defValue.IsHolding<unsigned int>())
+    } else if (r.defValue.IsHolding<int>() || r.defValue.IsHolding<unsigned int>())
     {
       r.type = UsdImagingGLRendererSetting::TYPE_INT;
-    }
-    else if (r.defValue.IsHolding<float>())
+    } else if (r.defValue.IsHolding<float>())
     {
       r.type = UsdImagingGLRendererSetting::TYPE_FLOAT;
-    }
-    else if (r.defValue.IsHolding<std::string>())
+    } else if (r.defValue.IsHolding<std::string>())
     {
       r.type = UsdImagingGLRendererSetting::TYPE_STRING;
-    }
-    else
+    } else
     {
       TF_WARN(
         "Setting '%s' with type '%s' doesn't have a UI"
@@ -1260,8 +1257,7 @@ void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params, HdTask
     // explicitly manage per-GL context state.
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-  }
-  else
+  } else
   {
     glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_DEPTH_BUFFER_BIT);
   }
@@ -1271,8 +1267,7 @@ void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params, HdTask
   if (params.flipFrontFacing)
   {
     glFrontFace(GL_CW);  // < State is pushed via GL_POLYGON_BIT
-  }
-  else
+  } else
   {
     glFrontFace(GL_CCW);  // < State is pushed via GL_POLYGON_BIT
   }
@@ -1305,8 +1300,7 @@ void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params, HdTask
     // currently must because it is GL Context state and we do not control
     // the context.
     glDeleteVertexArrays(1, &vao);
-  }
-  else
+  } else
   {
     glPopAttrib();  // GL_ENABLE_BIT | GL_POLYGON_BIT | GL_DEPTH_BUFFER_BIT
   }
@@ -1348,40 +1342,31 @@ static int _GetRefineLevel(float c)
   if (1.0f <= c && c < 1.1f)
   {
     refineLevel = 0;
-  }
-  else if (1.1f <= c && c < 1.2f)
+  } else if (1.1f <= c && c < 1.2f)
   {
     refineLevel = 1;
-  }
-  else if (1.2f <= c && c < 1.3f)
+  } else if (1.2f <= c && c < 1.3f)
   {
     refineLevel = 2;
-  }
-  else if (1.3f <= c && c < 1.4f)
+  } else if (1.3f <= c && c < 1.4f)
   {
     refineLevel = 3;
-  }
-  else if (1.4f <= c && c < 1.5f)
+  } else if (1.4f <= c && c < 1.5f)
   {
     refineLevel = 4;
-  }
-  else if (1.5f <= c && c < 1.6f)
+  } else if (1.5f <= c && c < 1.6f)
   {
     refineLevel = 5;
-  }
-  else if (1.6f <= c && c < 1.7f)
+  } else if (1.6f <= c && c < 1.7f)
   {
     refineLevel = 6;
-  }
-  else if (1.7f <= c && c < 1.8f)
+  } else if (1.7f <= c && c < 1.8f)
   {
     refineLevel = 7;
-  }
-  else if (1.8f <= c && c <= 2.0f)
+  } else if (1.8f <= c && c <= 2.0f)
   {
     refineLevel = 8;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Invalid complexity %f, expected range is [1.0,2.0]\n", c);
   }
@@ -1424,24 +1409,20 @@ bool UsdImagingGLEngine::_UpdateHydraCollection(HdRprimCollection *collection,
   if (params.drawMode == UsdImagingGLDrawMode::DRAW_POINTS)
   {
     reprSelector = HdReprSelector(HdReprTokens->points);
-  }
-  else if (params.drawMode == UsdImagingGLDrawMode::DRAW_GEOM_FLAT ||
-           params.drawMode == UsdImagingGLDrawMode::DRAW_SHADED_FLAT)
+  } else if (params.drawMode == UsdImagingGLDrawMode::DRAW_GEOM_FLAT ||
+             params.drawMode == UsdImagingGLDrawMode::DRAW_SHADED_FLAT)
   {
     // Flat shading
     reprSelector = HdReprSelector(HdReprTokens->hull);
-  }
-  else if (params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME_ON_SURFACE)
+  } else if (params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME_ON_SURFACE)
   {
     // Wireframe on surface
     reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWireOnSurf : HdReprTokens->wireOnSurf);
-  }
-  else if (params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME)
+  } else if (params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME)
   {
     // Wireframe
     reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWire : HdReprTokens->wire);
-  }
-  else
+  } else
   {
     // Smooth shading
     reprSelector = HdReprSelector(refined ? HdReprTokens->refined : HdReprTokens->smoothHull);
@@ -1512,8 +1493,7 @@ HdxRenderTaskParams UsdImagingGLEngine::_MakeHydraUsdImagingGLRenderParams(
       renderParams.drawMode == UsdImagingGLDrawMode::DRAW_POINTS)
   {
     params.enableLighting = false;
-  }
-  else
+  } else
   {
     params.enableLighting = renderParams.enableLighting && !renderParams.enableIdRender;
   }
@@ -1528,8 +1508,7 @@ HdxRenderTaskParams UsdImagingGLEngine::_MakeHydraUsdImagingGLRenderParams(
   if (renderParams.alphaThreshold < 0.0)
   {
     params.alphaThreshold = renderParams.enableSampleAlphaToCoverage ? 0.1f : 0.5f;
-  }
-  else
+  } else
   {
     params.alphaThreshold = renderParams.alphaThreshold;
   }

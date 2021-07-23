@@ -74,7 +74,8 @@ class Trace_EventTreeBuilder : protected TraceCollection::Visitor
   /// @{
   virtual void OnBeginCollection() override;
   virtual void OnEndCollection() override;
-  virtual bool AcceptsCategory(TraceCategoryId) override;
+  virtual bool AcceptsCategory(TraceCategoryId)
+  override;
   virtual void OnBeginThread(const TraceThreadId &) override;
   virtual void OnEndThread(const TraceThreadId &) override;
   virtual void OnEvent(const TraceThreadId &, const TfToken &, const TraceEvent &) override;
@@ -136,7 +137,8 @@ class Trace_EventTreeBuilder : protected TraceCollection::Visitor
   class _CounterAccumulator : public TraceCounterAccumulator
   {
    protected:
-    bool _AcceptsCategory(TraceCategoryId) override;
+    bool _AcceptsCategory(TraceCategoryId)
+    override;
   };
   _CounterAccumulator _counterAccum;
 

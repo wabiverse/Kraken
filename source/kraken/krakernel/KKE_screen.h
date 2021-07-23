@@ -141,10 +141,7 @@ struct SpaceType
   kContextDataCallback context;
 
   /* Used when we want to replace an ID by another (or NULL). */
-  void (*id_remap)(ScrArea *area,
-                   struct SpaceLink *sl,
-                   TfToken old_id,
-                   TfToken new_id);
+  void (*id_remap)(ScrArea *area, struct SpaceLink *sl, TfToken old_id, TfToken new_id);
 
   int (*space_subtype_get)(ScrArea *area);
   void (*space_subtype_set)(ScrArea *area, int value);

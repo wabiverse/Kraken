@@ -47,21 +47,25 @@ class Usd_InstanceChanges
  public:
   void AppendChanges(const Usd_InstanceChanges &c)
   {
-    newPrototypePrims.insert(
-      newPrototypePrims.end(), c.newPrototypePrims.begin(), c.newPrototypePrims.end());
+    newPrototypePrims.insert(newPrototypePrims.end(),
+                             c.newPrototypePrims.begin(),
+                             c.newPrototypePrims.end());
 
-    newPrototypePrimIndexes.insert(
-      newPrototypePrimIndexes.end(), c.newPrototypePrimIndexes.begin(), c.newPrototypePrimIndexes.end());
+    newPrototypePrimIndexes.insert(newPrototypePrimIndexes.end(),
+                                   c.newPrototypePrimIndexes.begin(),
+                                   c.newPrototypePrimIndexes.end());
 
-    changedPrototypePrims.insert(
-      changedPrototypePrims.end(), c.changedPrototypePrims.begin(), c.changedPrototypePrims.end());
+    changedPrototypePrims.insert(changedPrototypePrims.end(),
+                                 c.changedPrototypePrims.begin(),
+                                 c.changedPrototypePrims.end());
 
     changedPrototypePrimIndexes.insert(changedPrototypePrimIndexes.end(),
                                        c.changedPrototypePrimIndexes.begin(),
                                        c.changedPrototypePrimIndexes.end());
 
-    deadPrototypePrims.insert(
-      deadPrototypePrims.end(), c.deadPrototypePrims.begin(), c.deadPrototypePrims.end());
+    deadPrototypePrims.insert(deadPrototypePrims.end(),
+                              c.deadPrototypePrims.begin(),
+                              c.deadPrototypePrims.end());
   }
 
   /// List of new prototype prims and their corresponding source

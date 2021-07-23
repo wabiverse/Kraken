@@ -51,189 +51,188 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static vector<SdfPath> GetPrefixesHelper(const SdfPath &path)
-{
-  return path.GetPrefixes();
-}
-
-static string _Repr(const SdfPath &self)
-{
-  if (self.IsEmpty())
+  static vector<SdfPath> GetPrefixesHelper(const SdfPath &path)
   {
-    return TF_PY_REPR_PREFIX + "Path.emptyPath";
+    return path.GetPrefixes();
   }
-  else
+
+  static string _Repr(const SdfPath &self)
   {
-    return string(TF_PY_REPR_PREFIX + "Path(") + TfPyRepr(self.GetAsString()) + ")";
-  }
-}
-
-static SdfPathVector _RemoveDescendentPaths(SdfPathVector paths)
-{
-  SdfPath::RemoveDescendentPaths(&paths);
-  return paths;
-}
-
-static SdfPathVector _RemoveAncestorPaths(SdfPathVector paths)
-{
-  SdfPath::RemoveAncestorPaths(&paths);
-  return paths;
-}
-
-static object _FindPrefixedRange(SdfPathVector const &paths, SdfPath const &prefix)
-{
-  pair<SdfPathVector::const_iterator, SdfPathVector::const_iterator> result = SdfPathFindPrefixedRange(
-    paths.begin(), paths.end(), prefix);
-  object start(result.first - paths.begin());
-  object stop(result.second - paths.begin());
-  handle<> slice(PySlice_New(start.ptr(), stop.ptr(), NULL));
-  return object(slice);
-}
-
-static object _FindLongestPrefix(SdfPathVector const &paths, SdfPath const &path)
-{
-  SdfPathVector::const_iterator result = SdfPathFindLongestPrefix(paths.begin(), paths.end(), path);
-  if (result == paths.end())
-    return object();
-  return object(*result);
-}
-
-static object _FindLongestStrictPrefix(SdfPathVector const &paths, SdfPath const &path)
-{
-  SdfPathVector::const_iterator result = SdfPathFindLongestStrictPrefix(paths.begin(), paths.end(), path);
-  if (result == paths.end())
-    return object();
-  return object(*result);
-}
-
-struct Sdf_PathIsValidPathStringResult : public TfPyAnnotatedBoolResult<string>
-{
-  Sdf_PathIsValidPathStringResult(bool val, string const &msg)
-    : TfPyAnnotatedBoolResult<string>(val, msg)
-  {}
-};
-
-static Sdf_PathIsValidPathStringResult _IsValidPathString(string const &pathString)
-{
-  string errMsg;
-  bool valid = SdfPath::IsValidPathString(pathString, &errMsg);
-  return Sdf_PathIsValidPathStringResult(valid, errMsg);
-}
-
-static SdfPathVector _WrapGetAllTargetPathsRecursively(SdfPath const self)
-{
-  SdfPathVector result;
-  self.GetAllTargetPathsRecursively(&result);
-  return result;
-}
-
-static bool __nonzero__(SdfPath const &self)
-{
-  return !self.IsEmpty();
-}
-
-constexpr size_t NumStressPaths = 1 << 28;
-constexpr size_t NumStressThreads = 16;
-constexpr size_t StressIters = 3;
-constexpr size_t MaxStressPathSize = 16;
-
-static void _PathStressTask(size_t index, std::vector<SdfPath> &paths)
-{
-  auto pathsPerThread = NumStressPaths / NumStressThreads;
-  auto begin = paths.begin() + pathsPerThread * index;
-  auto end = begin + pathsPerThread;
-
-  for (size_t stressIter = 0; stressIter != StressIters; ++stressIter)
-  {
-    for (auto i = begin; i != end; ++i)
+    if (self.IsEmpty())
     {
-      SdfPath p = SdfPath::AbsoluteRootPath();
-      // size_t offset = (i - begin) * index + stressIter;
-      for (size_t j = 0; j != (rand() % MaxStressPathSize); ++j)
+      return TF_PY_REPR_PREFIX + "Path.emptyPath";
+    } else
+    {
+      return string(TF_PY_REPR_PREFIX + "Path(") + TfPyRepr(self.GetAsString()) + ")";
+    }
+  }
+
+  static SdfPathVector _RemoveDescendentPaths(SdfPathVector paths)
+  {
+    SdfPath::RemoveDescendentPaths(&paths);
+    return paths;
+  }
+
+  static SdfPathVector _RemoveAncestorPaths(SdfPathVector paths)
+  {
+    SdfPath::RemoveAncestorPaths(&paths);
+    return paths;
+  }
+
+  static object _FindPrefixedRange(SdfPathVector const &paths, SdfPath const &prefix)
+  {
+    pair<SdfPathVector::const_iterator, SdfPathVector::const_iterator> result =
+      SdfPathFindPrefixedRange(paths.begin(), paths.end(), prefix);
+    object start(result.first - paths.begin());
+    object stop(result.second - paths.begin());
+    handle<> slice(PySlice_New(start.ptr(), stop.ptr(), NULL));
+    return object(slice);
+  }
+
+  static object _FindLongestPrefix(SdfPathVector const &paths, SdfPath const &path)
+  {
+    SdfPathVector::const_iterator result = SdfPathFindLongestPrefix(paths.begin(), paths.end(), path);
+    if (result == paths.end())
+      return object();
+    return object(*result);
+  }
+
+  static object _FindLongestStrictPrefix(SdfPathVector const &paths, SdfPath const &path)
+  {
+    SdfPathVector::const_iterator result = SdfPathFindLongestStrictPrefix(paths.begin(), paths.end(), path);
+    if (result == paths.end())
+      return object();
+    return object(*result);
+  }
+
+  struct Sdf_PathIsValidPathStringResult : public TfPyAnnotatedBoolResult<string>
+  {
+    Sdf_PathIsValidPathStringResult(bool val, string const &msg)
+      : TfPyAnnotatedBoolResult<string>(val, msg)
+    {}
+  };
+
+  static Sdf_PathIsValidPathStringResult _IsValidPathString(string const &pathString)
+  {
+    string errMsg;
+    bool valid = SdfPath::IsValidPathString(pathString, &errMsg);
+    return Sdf_PathIsValidPathStringResult(valid, errMsg);
+  }
+
+  static SdfPathVector _WrapGetAllTargetPathsRecursively(SdfPath const self)
+  {
+    SdfPathVector result;
+    self.GetAllTargetPathsRecursively(&result);
+    return result;
+  }
+
+  static bool __nonzero__(SdfPath const &self)
+  {
+    return !self.IsEmpty();
+  }
+
+  constexpr size_t NumStressPaths = 1 << 28;
+  constexpr size_t NumStressThreads = 16;
+  constexpr size_t StressIters = 3;
+  constexpr size_t MaxStressPathSize = 16;
+
+  static void _PathStressTask(size_t index, std::vector<SdfPath> &paths)
+  {
+    auto pathsPerThread = NumStressPaths / NumStressThreads;
+    auto begin = paths.begin() + pathsPerThread * index;
+    auto end = begin + pathsPerThread;
+
+    for (size_t stressIter = 0; stressIter != StressIters; ++stressIter)
+    {
+      for (auto i = begin; i != end; ++i)
       {
-        char name[2];
-        name[0] = 'a' + (rand() % 26);
-        name[1] = '\0';
-        p = p.AppendChild(TfToken(name));
+        SdfPath p = SdfPath::AbsoluteRootPath();
+        // size_t offset = (i - begin) * index + stressIter;
+        for (size_t j = 0; j != (rand() % MaxStressPathSize); ++j)
+        {
+          char name[2];
+          name[0] = 'a' + (rand() % 26);
+          name[1] = '\0';
+          p = p.AppendChild(TfToken(name));
+        }
+        // if ((i-begin) % 1000 == 0) {
+        // printf("%zu: storing path %zu: <%s>\n",
+        //       (i-begin), index, p.GetText());
+        //}
+        *i = p;
       }
-      // if ((i-begin) % 1000 == 0) {
-      // printf("%zu: storing path %zu: <%s>\n",
-      //       (i-begin), index, p.GetText());
-      //}
-      *i = p;
+      printf("%zu did iter %zu\n", index, stressIter);
     }
-    printf("%zu did iter %zu\n", index, stressIter);
   }
-}
 
-static void _PathStress()
-{
-  TF_PY_ALLOW_THREADS_IN_SCOPE();
-
-  std::vector<SdfPath> manyPaths(NumStressPaths);
-  std::vector<std::thread> threads(NumStressThreads);
-
-  size_t index = 0;
-  for (auto &t : threads)
+  static void _PathStress()
   {
-    t = std::thread(_PathStressTask, index++, std::ref(manyPaths));
-  }
-  for (auto &t : threads)
-  {
-    t.join();
-  }
-}
+    TF_PY_ALLOW_THREADS_IN_SCOPE();
 
-struct Sdf_PyPathAncestorsRangeIterator
-{
-  Sdf_PyPathAncestorsRangeIterator(const SdfPathAncestorsRange::iterator &begin,
-                                   const SdfPathAncestorsRange::iterator &end)
-    : _it(begin),
-      _end(end)
-  {}
+    std::vector<SdfPath> manyPaths(NumStressPaths);
+    std::vector<std::thread> threads(NumStressThreads);
 
-  SdfPath next()
-  {
-    _RaiseIfAtEnd();
-    if (_didFirst)
+    size_t index = 0;
+    for (auto &t : threads)
     {
-      ++_it;
+      t = std::thread(_PathStressTask, index++, std::ref(manyPaths));
+    }
+    for (auto &t : threads)
+    {
+      t.join();
+    }
+  }
+
+  struct Sdf_PyPathAncestorsRangeIterator
+  {
+    Sdf_PyPathAncestorsRangeIterator(const SdfPathAncestorsRange::iterator &begin,
+                                     const SdfPathAncestorsRange::iterator &end)
+      : _it(begin),
+        _end(end)
+    {}
+
+    SdfPath next()
+    {
       _RaiseIfAtEnd();
+      if (_didFirst)
+      {
+        ++_it;
+        _RaiseIfAtEnd();
+      }
+      _didFirst = true;
+      return *_it;
     }
-    _didFirst = true;
-    return *_it;
-  }
 
- private:
-  void _RaiseIfAtEnd() const
-  {
-    if (_it == _end)
+   private:
+    void _RaiseIfAtEnd() const
     {
-      PyErr_SetString(PyExc_StopIteration, "Iterator at end");
-      throw_error_already_set();
+      if (_it == _end)
+      {
+        PyErr_SetString(PyExc_StopIteration, "Iterator at end");
+        throw_error_already_set();
+      }
     }
+
+    SdfPathAncestorsRange::iterator _it, _end;
+    bool _didFirst = false;
+  };
+
+  Sdf_PyPathAncestorsRangeIterator Sdf_GetIterator(const SdfPathAncestorsRange &range)
+  {
+    return {range.begin(), range.end()};
   }
 
-  SdfPathAncestorsRange::iterator _it, _end;
-  bool _didFirst = false;
-};
+  void Sdf_wrapAncestorsRange()
+  {
+    using This = SdfPathAncestorsRange;
 
-Sdf_PyPathAncestorsRangeIterator Sdf_GetIterator(const SdfPathAncestorsRange &range)
-{
-  return {range.begin(), range.end()};
-}
+    scope s = class_<This>("AncestorsRange", init<const SdfPath &>())
+                .def("GetPath", &This::GetPath, return_value_policy<return_by_value>())
+                .def("__iter__", &Sdf_GetIterator);
 
-void Sdf_wrapAncestorsRange()
-{
-  using This = SdfPathAncestorsRange;
-
-  scope s = class_<This>("AncestorsRange", init<const SdfPath &>())
-              .def("GetPath", &This::GetPath, return_value_policy<return_by_value>())
-              .def("__iter__", &Sdf_GetIterator);
-
-  using Iter = Sdf_PyPathAncestorsRangeIterator;
-  class_<Iter>("_iterator", no_init).def(TfPyIteratorNextMethodName, &Iter::next);
-}
+    using Iter = Sdf_PyPathAncestorsRangeIterator;
+    class_<Iter>("_iterator", no_init).def(TfPyIteratorNextMethodName, &Iter::next);
+  }
 
 }  // anonymous namespace
 
@@ -259,10 +258,12 @@ void wrapPath()
                     "The relative path representing 'self' (<.>).")
       .def_readonly("emptyPath", &SdfPath::EmptyPath(), "The empty path.")
 
-      .add_property(
-        "pathElementCount", &This::GetPathElementCount, "The number of path elements in this path.")
-      .add_property(
-        "pathString", make_function(&This::GetAsString), "The string representation of this path.")
+      .add_property("pathElementCount",
+                    &This::GetPathElementCount,
+                    "The number of path elements in this path.")
+      .add_property("pathString",
+                    make_function(&This::GetAsString),
+                    "The string representation of this path.")
       .add_property("name",
                     make_function(&This::GetName, return_value_policy<copy_const_reference>()),
                     "The name of the prim, property or relational\n"
@@ -349,8 +350,9 @@ void wrapPath()
       .def("MakeAbsolutePath", &This::MakeAbsolutePath)
       .def("MakeRelativePath", &This::MakeRelativePath)
 
-      .def(
-        "GetConciseRelativePaths", &This::GetConciseRelativePaths, return_value_policy<TfPySequenceToList>())
+      .def("GetConciseRelativePaths",
+           &This::GetConciseRelativePaths,
+           return_value_policy<TfPySequenceToList>())
       .staticmethod("GetConciseRelativePaths")
 
       .def("RemoveDescendentPaths", _RemoveDescendentPaths, return_value_policy<TfPySequenceToList>())

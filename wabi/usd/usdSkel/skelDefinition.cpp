@@ -39,40 +39,40 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-enum _Flags
-{
-  _HaveBindPose = 1 << 0,
-  _HaveRestPose = 1 << 1,
-  // Matrix4dArray computations
-  _SkelRestXforms4dComputed = 1 << 2,
-  _WorldInverseBindXforms4dComputed = 1 << 3,
-  _LocalInverseRestXforms4dComputed = 1 << 4,
-  // Matrix4fArray computations
-  _SkelRestXforms4fComputed = 1 << 5,
-  _WorldInverseBindXforms4fComputed = 1 << 6,
-  _LocalInverseRestXforms4fComputed = 1 << 7,
-};
-
-template<typename Matrix4>
-void _InvertTransforms(const VtArray<Matrix4> &xforms, VtArray<Matrix4> *inverseXforms)
-{
-  inverseXforms->resize(xforms.size());
-  Matrix4 *dst = inverseXforms->data();
-  for (size_t i = 0; i < xforms.size(); ++i)
+  enum _Flags
   {
-    dst[i] = xforms[i].GetInverse();
-  }
-}
+    _HaveBindPose = 1 << 0,
+    _HaveRestPose = 1 << 1,
+    // Matrix4dArray computations
+    _SkelRestXforms4dComputed = 1 << 2,
+    _WorldInverseBindXforms4dComputed = 1 << 3,
+    _LocalInverseRestXforms4dComputed = 1 << 4,
+    // Matrix4fArray computations
+    _SkelRestXforms4fComputed = 1 << 5,
+    _WorldInverseBindXforms4fComputed = 1 << 6,
+    _LocalInverseRestXforms4fComputed = 1 << 7,
+  };
 
-void _Convert4dXformsTo4f(const VtMatrix4dArray &matrix4dArray, VtMatrix4fArray *matrix4fArray)
-{
-  matrix4fArray->resize(matrix4dArray.size());
-  GfMatrix4f *dst = matrix4fArray->data();
-  for (size_t i = 0; i < matrix4dArray.size(); ++i)
+  template<typename Matrix4>
+  void _InvertTransforms(const VtArray<Matrix4> &xforms, VtArray<Matrix4> *inverseXforms)
   {
-    dst[i] = GfMatrix4f(matrix4dArray[i]);
+    inverseXforms->resize(xforms.size());
+    Matrix4 *dst = inverseXforms->data();
+    for (size_t i = 0; i < xforms.size(); ++i)
+    {
+      dst[i] = xforms[i].GetInverse();
+    }
   }
-}
+
+  void _Convert4dXformsTo4f(const VtMatrix4dArray &matrix4dArray, VtMatrix4fArray *matrix4fArray)
+  {
+    matrix4fArray->resize(matrix4dArray.size());
+    GfMatrix4f *dst = matrix4fArray->data();
+    for (size_t i = 0; i < matrix4dArray.size(); ++i)
+    {
+      dst[i] = GfMatrix4f(matrix4dArray[i]);
+    }
+  }
 
 }  // namespace
 
@@ -109,8 +109,7 @@ bool UsdSkel_SkelDefinition::_Init(const UsdSkelSkeleton &skel)
   if (_jointWorldBindXforms.size() == _jointOrder.size())
   {
     _flags = _flags | _HaveBindPose;
-  }
-  else
+  } else
   {
     TF_WARN(
       "%s -- size of 'bindTransforms' attr [%zu] does not "
@@ -124,8 +123,7 @@ bool UsdSkel_SkelDefinition::_Init(const UsdSkelSkeleton &skel)
   if (_jointLocalRestXforms.size() == _jointOrder.size())
   {
     _flags = _flags | _HaveRestPose;
-  }
-  else
+  } else
   {
     TF_WARN(
       "%s -- size of 'restTransforms' attr [%zu] does not "

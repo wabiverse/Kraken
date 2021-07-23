@@ -49,20 +49,20 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Repr(GfInterval const &self)
-{
-  string r = TF_PY_REPR_PREFIX + "Interval(";
-  if (!self.IsEmpty())
+  static string _Repr(GfInterval const &self)
   {
-    r += TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax());
-    if (!self.IsMinClosed() || !self.IsMaxClosed())
+    string r = TF_PY_REPR_PREFIX + "Interval(";
+    if (!self.IsEmpty())
     {
-      r += ", " + TfPyRepr(self.IsMinClosed()) + ", " + TfPyRepr(self.IsMaxClosed());
+      r += TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax());
+      if (!self.IsMinClosed() || !self.IsMaxClosed())
+      {
+        r += ", " + TfPyRepr(self.IsMinClosed()) + ", " + TfPyRepr(self.IsMaxClosed());
+      }
     }
+    r += ")";
+    return r;
   }
-  r += ")";
-  return r;
-}
 
 }  // anonymous namespace
 
@@ -92,14 +92,14 @@ void wrapInterval()
     .add_property("size", &This::GetSize, "The width of the interval.")
 
     .def("Contains",
-         (bool (This::*)(const GfInterval &) const) & This::Contains,
+         (bool(This::*)(const GfInterval &) const) & This::Contains,
          "Returns true if x is inside the interval.")
     .def("Contains",
-         (bool (This::*)(double) const) & This::Contains,
+         (bool(This::*)(double) const) & This::Contains,
          "Returns true if x is inside the interval.")
 
     // For 2x compatibility
-    .def("In", (bool (This::*)(double) const) & This::Contains, "Returns true if x is inside the interval.")
+    .def("In", (bool(This::*)(double) const) & This::Contains, "Returns true if x is inside the interval.")
 
     .def("GetFullInterval", &This::GetFullInterval)
     .staticmethod("GetFullInterval")
@@ -123,14 +123,14 @@ void wrapInterval()
 
     .def("GetSize", &This::GetSize, "The width of the interval")
 
-    .def("SetMax", (void (This::*)(double)) & This::SetMax, "Set the maximum value.")
+    .def("SetMax", (void(This::*)(double)) & This::SetMax, "Set the maximum value.")
     .def("SetMax",
-         (void (This::*)(double, bool)) & This::SetMax,
+         (void(This::*)(double, bool)) & This::SetMax,
          "Set the maximum value and boundary condition.")
 
-    .def("SetMin", (void (This::*)(double)) & This::SetMin, "Set the minimum value.")
+    .def("SetMin", (void(This::*)(double)) & This::SetMin, "Set the minimum value.")
     .def("SetMin",
-         (void (This::*)(double, bool)) & This::SetMin,
+         (void(This::*)(double, bool)) & This::SetMin,
          "Set the minimum value and boundary condition.")
 
     // ring_operators

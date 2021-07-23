@@ -188,7 +188,8 @@ std::unique_ptr<UsdDracoExportAttributeInterface> UsdDracoExportTranslator::Crea
 {
   // Create generic attribute descriptor from USD primvar.
   const UsdDracoAttributeDescriptor descriptor = UsdDracoAttributeDescriptor::FromUsdPrimvar(
-    primvar, draco::GeometryAttribute::GENERIC);
+    primvar,
+    draco::GeometryAttribute::GENERIC);
 
   // Skip unsupported primvars, e.g., with constant interpolation.
   if (descriptor.GetStatus() != UsdDracoAttributeDescriptor::VALID)
@@ -197,7 +198,8 @@ std::unique_ptr<UsdDracoExportAttributeInterface> UsdDracoExportTranslator::Crea
   // Create export attribute from attribute descriptor.
   const ExportAttributeCreator creator;
   return UsdDracoAttributeFactory::CreateAttribute<UsdDracoExportAttributeInterface, ExportAttributeCreator>(
-    descriptor, creator);
+    descriptor,
+    creator);
 }
 
 void UsdDracoExportTranslator::_GetConnectivityFromMesh()
@@ -270,8 +272,7 @@ void UsdDracoExportTranslator::_ConfigureHelperAttributes(UsdDracoFlag<bool> pre
       {
         _posOrder.Clear();
       }
-    }
-    else
+    } else
     {
       if (!_SubdivisionRefersToPositions())
       {
@@ -287,8 +288,7 @@ void UsdDracoExportTranslator::_ConfigureHelperAttributes(UsdDracoFlag<bool> pre
     {
       _holeFaces.Clear();
     }
-  }
-  else
+  } else
   {
     if (!_SubdivisionRefersToFaces())
     {

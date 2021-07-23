@@ -48,26 +48,26 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// We return primInfo by unrolling it into a single tuple.  This allows
-// python clients to extract the information 40% faster than if we were
-// to wrap out UsdviewqUtils::PrimInfo directly.
-static tuple _GetPrimInfo(UsdPrim const &prim, UsdTimeCode time)
-{
-  UsdviewqUtils::PrimInfo info = UsdviewqUtils::GetPrimInfo(prim, time);
+  // We return primInfo by unrolling it into a single tuple.  This allows
+  // python clients to extract the information 40% faster than if we were
+  // to wrap out UsdviewqUtils::PrimInfo directly.
+  static tuple _GetPrimInfo(UsdPrim const &prim, UsdTimeCode time)
+  {
+    UsdviewqUtils::PrimInfo info = UsdviewqUtils::GetPrimInfo(prim, time);
 
-  return boost::python::make_tuple(info.hasCompositionArcs,
-                                   info.isActive,
-                                   info.isImageable,
-                                   info.isDefined,
-                                   info.isAbstract,
-                                   info.isInPrototype,
-                                   info.isInstance,
-                                   info.supportsDrawMode,
-                                   info.isVisibilityInherited,
-                                   info.visVaries,
-                                   info.name,
-                                   info.typeName);
-}
+    return boost::python::make_tuple(info.hasCompositionArcs,
+                                     info.isActive,
+                                     info.isImageable,
+                                     info.isDefined,
+                                     info.isAbstract,
+                                     info.isInPrototype,
+                                     info.isInstance,
+                                     info.supportsDrawMode,
+                                     info.isVisibilityInherited,
+                                     info.visVaries,
+                                     info.name,
+                                     info.typeName);
+  }
 
 }  // anonymous namespace
 

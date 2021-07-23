@@ -83,8 +83,7 @@ size_t TfFastCompression::CompressToBuffer(char const *input, char *compressed, 
     compressed[0] = 0;  // < zero byte means one chunk.
     compressed += 1 +
                   LZ4_compress_default(input, compressed + 1, inputSize, GetCompressedBufferSize(inputSize));
-  }
-  else
+  } else
   {
     size_t nWholeChunks = inputSize / LZ4_MAX_INPUT_SIZE;
     size_t partChunkSz = inputSize % LZ4_MAX_INPUT_SIZE;
@@ -130,8 +129,7 @@ size_t TfFastCompression::DecompressFromBuffer(char const *compressed,
       return 0;
     }
     return nDecompressed;
-  }
-  else
+  } else
   {
     // Do each chunk.
     size_t totalDecompressed = 0;
@@ -140,8 +138,10 @@ size_t TfFastCompression::DecompressFromBuffer(char const *compressed,
       int32_t chunkSize = 0;
       memcpy(&chunkSize, compressed, sizeof(chunkSize));
       compressed += sizeof(chunkSize);
-      int nDecompressed = LZ4_decompress_safe(
-        compressed, output, chunkSize, std::min<size_t>(LZ4_MAX_INPUT_SIZE, maxOutputSize));
+      int nDecompressed = LZ4_decompress_safe(compressed,
+                                              output,
+                                              chunkSize,
+                                              std::min<size_t>(LZ4_MAX_INPUT_SIZE, maxOutputSize));
       if (nDecompressed < 0)
       {
         TF_RUNTIME_ERROR(

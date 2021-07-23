@@ -96,7 +96,8 @@ void HdCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, 
     }
 
     const VtValue vHorizontalAperture = sceneDelegate->GetCameraParamValue(
-      id, HdCameraTokens->horizontalAperture);
+      id,
+      HdCameraTokens->horizontalAperture);
     if (!vHorizontalAperture.IsEmpty())
     {
       _horizontalAperture = vHorizontalAperture.Get<float>();
@@ -110,14 +111,16 @@ void HdCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, 
     }
 
     const VtValue vHorizontalApertureOffset = sceneDelegate->GetCameraParamValue(
-      id, HdCameraTokens->horizontalApertureOffset);
+      id,
+      HdCameraTokens->horizontalApertureOffset);
     if (!vHorizontalApertureOffset.IsEmpty())
     {
       _horizontalApertureOffset = vHorizontalApertureOffset.Get<float>();
     }
 
     const VtValue vVerticalApertureOffset = sceneDelegate->GetCameraParamValue(
-      id, HdCameraTokens->verticalApertureOffset);
+      id,
+      HdCameraTokens->verticalApertureOffset);
     if (!vVerticalApertureOffset.IsEmpty())
     {
       _verticalApertureOffset = vVerticalApertureOffset.Get<float>();

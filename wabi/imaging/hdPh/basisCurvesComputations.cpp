@@ -46,8 +46,7 @@ void HdPh_BasisCurvesIndexBuilderComputation::GetBufferSpecs(HdBufferSpecVector 
   if (!_forceLines && _topology->GetCurveType() == HdTokens->cubic)
   {
     specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32Vec4, 1});
-  }
-  else
+  } else
   {
     specs->emplace_back(HdTokens->indices, HdTupleType{HdTypeInt32Vec2, 1});
   }
@@ -85,8 +84,7 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
   if (!_topology->HasIndices())
   {
     std::copy(indices.begin(), indices.end(), finalIndices.begin());
-  }
-  else
+  } else
   {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
     size_t lineCount = indices.size();
@@ -160,8 +158,7 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
   if (!_topology->HasIndices())
   {
     std::copy(indices.begin(), indices.end(), finalIndices.begin());
-  }
-  else
+  } else
   {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
     size_t lineCount = indices.size();
@@ -238,8 +235,7 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
   if (basis == HdTokens->bezier)
   {
     vStep = 3;
-  }
-  else
+  } else
   {
     vStep = 1;
   }
@@ -258,8 +254,7 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
     if (wrap)
     {
       numSegs = count / vStep;
-    }
-    else
+    } else
     {
       numSegs = ((count - 4) / vStep) + 1;
     }
@@ -291,8 +286,7 @@ HdPh_BasisCurvesIndexBuilderComputation::IndexAndPrimIndex HdPh_BasisCurvesIndex
   if (!_topology->HasIndices())
   {
     std::copy(indices.begin(), indices.end(), finalIndices.begin());
-  }
-  else
+  } else
   {
     VtIntArray const &curveIndices = _topology->GetCurveIndices();
     size_t lineCount = indices.size();
@@ -334,14 +328,12 @@ bool HdPh_BasisCurvesIndexBuilderComputation::Resolve()
   if (!_forceLines && _topology->GetCurveType() == HdTokens->cubic)
   {
     result = _BuildCubicIndexArray();
-  }
-  else
+  } else
   {
     if (_topology->GetCurveWrap() == HdTokens->segmented)
     {
       result = _BuildLinesIndexArray();
-    }
-    else
+    } else
     {
       result = _BuildLineSegmentIndexArray();
     }

@@ -101,8 +101,7 @@ class Sdf_PropertyChildPolicy : public Sdf_TokenChildPolicy<SdfPropertySpecHandl
     if (parentPath.IsTargetPath())
     {
       return parentPath.AppendRelationalAttribute(key);
-    }
-    else
+    } else
     {
       return parentPath.AppendProperty(key);
     }
@@ -127,8 +126,7 @@ class Sdf_AttributeChildPolicy : public Sdf_TokenChildPolicy<SdfAttributeSpecHan
     if (parentPath.IsTargetPath())
     {
       return parentPath.AppendRelationalAttribute(key);
-    }
-    else
+    } else
     {
       return parentPath.AppendProperty(key);
     }

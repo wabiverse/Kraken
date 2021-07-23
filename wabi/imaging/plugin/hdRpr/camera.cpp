@@ -23,38 +23,38 @@ TF_DEFINE_PRIVATE_TOKENS(HdRprCameraTokens, (apertureBlades));
 namespace
 {
 
-template<typename T>
-bool EvalCameraParam(T *value,
-                     const TfToken &paramName,
-                     HdSceneDelegate *sceneDelegate,
-                     const SdfPath &primPath,
-                     T defaultValue)
-{
-  VtValue vtval = sceneDelegate->GetCameraParamValue(primPath, paramName);
-  if (vtval.IsEmpty())
+  template<typename T>
+  bool EvalCameraParam(T *value,
+                       const TfToken &paramName,
+                       HdSceneDelegate *sceneDelegate,
+                       const SdfPath &primPath,
+                       T defaultValue)
   {
-    *value = defaultValue;
-    return false;
-  }
-  if (!vtval.IsHolding<T>())
-  {
-    *value = defaultValue;
-    TF_CODING_ERROR("%s: type mismatch - %s", paramName.GetText(), vtval.GetTypeName().c_str());
-    return false;
+    VtValue vtval = sceneDelegate->GetCameraParamValue(primPath, paramName);
+    if (vtval.IsEmpty())
+    {
+      *value = defaultValue;
+      return false;
+    }
+    if (!vtval.IsHolding<T>())
+    {
+      *value = defaultValue;
+      TF_CODING_ERROR("%s: type mismatch - %s", paramName.GetText(), vtval.GetTypeName().c_str());
+      return false;
+    }
+
+    *value = vtval.UncheckedGet<T>();
+    return true;
   }
 
-  *value = vtval.UncheckedGet<T>();
-  return true;
-}
-
-template<typename T>
-bool EvalCameraParam(T *value,
-                     const TfToken &paramName,
-                     HdSceneDelegate *sceneDelegate,
-                     const SdfPath &primPath)
-{
-  return EvalCameraParam(value, paramName, sceneDelegate, primPath, std::numeric_limits<T>::quiet_NaN());
-}
+  template<typename T>
+  bool EvalCameraParam(T *value,
+                       const TfToken &paramName,
+                       HdSceneDelegate *sceneDelegate,
+                       const SdfPath &primPath)
+  {
+    return EvalCameraParam(value, paramName, sceneDelegate, primPath, std::numeric_limits<T>::quiet_NaN());
+  }
 
 }  // namespace
 
@@ -94,8 +94,10 @@ void HdRprCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPara
 
     EvalCameraParam(&m_horizontalAperture, HdCameraTokens->horizontalAperture, sceneDelegate, id);
     EvalCameraParam(&m_verticalAperture, HdCameraTokens->verticalAperture, sceneDelegate, id);
-    EvalCameraParam(
-      &m_horizontalApertureOffset, HdCameraTokens->horizontalApertureOffset, sceneDelegate, id);
+    EvalCameraParam(&m_horizontalApertureOffset,
+                    HdCameraTokens->horizontalApertureOffset,
+                    sceneDelegate,
+                    id);
     EvalCameraParam(&m_verticalApertureOffset, HdCameraTokens->verticalApertureOffset, sceneDelegate, id);
 
     EvalCameraParam(&m_fStop, HdCameraTokens->fStop, sceneDelegate, id);

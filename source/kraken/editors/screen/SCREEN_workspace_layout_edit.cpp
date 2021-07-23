@@ -51,7 +51,7 @@ WABI_NAMESPACE_BEGIN
 
 static kScreen *screen_fullscreen_find_associated_normal_screen(const Main *kmain, kScreen *screen)
 {
-  UNIVERSE_FOR_ALL(screen_iter, kmain->screens)
+  UNIVERSE_FOR_ALL (screen_iter, kmain->screens)
   {
     if ((screen_iter != screen))
     {
@@ -103,10 +103,7 @@ WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *kmain,
 }
 
 
-WorkSpaceLayout *ED_workspace_layout_add(kContext *C,
-                                         WorkSpace *workspace,
-                                         wmWindow *win,
-                                         const char *name)
+WorkSpaceLayout *ED_workspace_layout_add(kContext *C, WorkSpace *workspace, wmWindow *win, const char *name)
 {
   kScreen *screen;
   GfRect2i screen_rect;

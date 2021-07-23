@@ -57,9 +57,9 @@ WABI_NAMESPACE_BEGIN
 #  define AR_DEFINE_PACKAGE_RESOLVER(PackageResolverClass, BaseClass1, ...)
 #else
 
-#  define AR_DEFINE_PACKAGE_RESOLVER(...) \
-    TF_REGISTRY_FUNCTION(TfType) \
-    { \
+#  define AR_DEFINE_PACKAGE_RESOLVER(...)      \
+    TF_REGISTRY_FUNCTION(TfType)               \
+    {                                          \
       Ar_DefinePackageResolver<__VA_ARGS__>(); \
     }
 

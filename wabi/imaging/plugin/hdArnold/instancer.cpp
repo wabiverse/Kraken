@@ -31,15 +31,15 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 namespace
 {
 
-template<typename T1, typename T2>
-void _AccumulateSampleTimes(const HdArnoldSampledType<T1> &in, HdArnoldSampledType<T2> &out)
-{
-  if (in.count > out.count)
+  template<typename T1, typename T2>
+  void _AccumulateSampleTimes(const HdArnoldSampledType<T1> &in, HdArnoldSampledType<T2> &out)
   {
-    out.Resize(in.count);
-    out.times = in.times;
+    if (in.count > out.count)
+    {
+      out.Resize(in.count);
+      out.times = in.times;
+    }
   }
-}
 
 }  // namespace
 
@@ -87,26 +87,22 @@ void HdArnoldInstancer::_SyncPrimvars(HdDirtyBits dirtyBits)
         HdArnoldSampledPrimvarType sample;
         GetDelegate()->SamplePrimvar(id, _tokens->instanceTransform, &sample);
         _transforms.UnboxFrom(sample);
-      }
-      else if (primvar.name == _tokens->rotate)
+      } else if (primvar.name == _tokens->rotate)
       {
         HdArnoldSampledPrimvarType sample;
         GetDelegate()->SamplePrimvar(id, _tokens->rotate, &sample);
         _rotates.UnboxFrom(sample);
-      }
-      else if (primvar.name == _tokens->scale)
+      } else if (primvar.name == _tokens->scale)
       {
         HdArnoldSampledPrimvarType sample;
         GetDelegate()->SamplePrimvar(id, _tokens->scale, &sample);
         _scales.UnboxFrom(sample);
-      }
-      else if (primvar.name == _tokens->translate)
+      } else if (primvar.name == _tokens->translate)
       {
         HdArnoldSampledPrimvarType sample;
         GetDelegate()->SamplePrimvar(id, _tokens->translate, &sample);
         _translates.UnboxFrom(sample);
-      }
-      else
+      } else
       {
         HdArnoldInsertPrimvar(_primvars,
                               primvar.name,

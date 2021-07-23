@@ -102,13 +102,11 @@ HgiGLOpsFn HgiGLOps::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
       // to set the format to GL_STENCIL_INDEX separately..
       glFormat = GL_DEPTH_COMPONENT;
       glPixelType = GL_FLOAT;
-    }
-    else if (texDesc.usage & HgiTextureUsageBitsStencilTarget)
+    } else if (texDesc.usage & HgiTextureUsageBitsStencilTarget)
     {
       TF_WARN("Copying a stencil-only texture is unsupported currently\n");
       return;
-    }
-    else
+    } else
     {
       HgiGLConversions::GetFormat(texDesc.format, &glFormat, &glPixelType);
     }
@@ -169,8 +167,7 @@ HgiGLOpsFn HgiGLOps::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
                                         format,
                                         copyOp.bufferByteSize,
                                         copyOp.cpuSourceBuffer);
-        }
-        else
+        } else
         {
           glTextureSubImage2D(dstTexture->GetTextureId(),
                               copyOp.mipLevel,
@@ -197,8 +194,7 @@ HgiGLOpsFn HgiGLOps::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
                                         format,
                                         copyOp.bufferByteSize,
                                         copyOp.cpuSourceBuffer);
-        }
-        else
+        } else
         {
           glTextureSubImage3D(dstTexture->GetTextureId(),
                               copyOp.mipLevel,
@@ -354,14 +350,17 @@ HgiGLOpsFn HgiGLOps::CopyTextureToBuffer(HgiTextureToBufferOp const &copyOp)
     if (HgiIsCompressed(texDesc.format))
     {
       glGetCompressedTextureImage(srcTexture->GetTextureId(), copyOp.mipLevel, copyOp.byteSize, byteOffset);
-    }
-    else
+    } else
     {
       GLenum format = 0;
       GLenum type = 0;
       HgiGLConversions::GetFormat(texDesc.format, &format, &type);
-      glGetTextureImage(
-        srcTexture->GetTextureId(), copyOp.mipLevel, format, type, copyOp.byteSize, byteOffset);
+      glGetTextureImage(srcTexture->GetTextureId(),
+                        copyOp.mipLevel,
+                        format,
+                        type,
+                        copyOp.byteSize,
+                        byteOffset);
     }
     glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 
@@ -429,8 +428,7 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
                                         format,
                                         copyOp.byteSize,
                                         byteOffset);
-        }
-        else
+        } else
         {
           glTextureSubImage2D(dstTexture->GetTextureId(),
                               copyOp.mipLevel,
@@ -457,8 +455,7 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
                                         format,
                                         copyOp.byteSize,
                                         byteOffset);
-        }
-        else
+        } else
         {
           glTextureSubImage3D(dstTexture->GetTextureId(),
                               copyOp.mipLevel,
@@ -604,8 +601,10 @@ HgiGLOpsFn HgiGLOps::Draw(HgiPrimitiveType primitiveType,
     TRACE_SCOPE("HgiGLOps::Draw");
     TF_VERIFY(instanceCount > 0);
 
-    glDrawArraysInstanced(
-      HgiGLConversions::GetPrimitiveType(primitiveType), firstVertex, vertexCount, instanceCount);
+    glDrawArraysInstanced(HgiGLConversions::GetPrimitiveType(primitiveType),
+                          firstVertex,
+                          vertexCount,
+                          instanceCount);
 
     HGIGL_POST_PENDING_GL_ERRORS();
   };
@@ -770,8 +769,7 @@ HgiGLOpsFn HgiGLOps::BindFramebufferOp(HgiGLDevice *device, HgiGraphicsCmdsDesc 
       if (depthAttachment.usage & HgiTextureUsageBitsStencilTarget)
       {
         glClearBufferfi(GL_DEPTH_STENCIL, 0, depthAttachment.clearValue[0], depthAttachment.clearValue[1]);
-      }
-      else
+      } else
       {
         glClearBufferfv(GL_DEPTH, 0, depthAttachment.clearValue.data());
       }
@@ -781,8 +779,7 @@ HgiGLOpsFn HgiGLOps::BindFramebufferOp(HgiGLDevice *device, HgiGraphicsCmdsDesc 
     if (blendEnabled)
     {
       glEnable(GL_BLEND);
-    }
-    else
+    } else
     {
       glDisable(GL_BLEND);
     }

@@ -63,15 +63,16 @@ void HdCyclesResourceRegistry::_Commit()
 
   // * commit all pending object resources
   using ValueType = HdInstanceRegistry<HdCyclesObjectSourceSharedPtr>::const_iterator::value_type;
-  WorkParallelForEach(
-    m_objects.begin(), m_objects.end(), [&requires_reset, scene](const ValueType &object_source) {
-      // resolve per object
-      size_t num_resolved_sources = object_source.second.value->ResolvePendingSources();
-      if (num_resolved_sources > 0)
-      {
-        requires_reset = true;
-      }
-    });
+  WorkParallelForEach(m_objects.begin(),
+                      m_objects.end(),
+                      [&requires_reset, scene](const ValueType &object_source) {
+                        // resolve per object
+                        size_t num_resolved_sources = object_source.second.value->ResolvePendingSources();
+                        if (num_resolved_sources > 0)
+                        {
+                          requires_reset = true;
+                        }
+                      });
 
   // * notify session that new resources have been committed and reset is required
   if (requires_reset)

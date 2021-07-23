@@ -36,52 +36,52 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-class Sdf_PythonChangeBlock
-{
- public:
-  Sdf_PythonChangeBlock()
-    : _block(0)
+  class Sdf_PythonChangeBlock
   {
-    // Do nothing.
-  }
-
-  ~Sdf_PythonChangeBlock()
-  {
-    delete _block;
-  }
-
-  void Open()
-  {
-    if (!TF_VERIFY(_block == 0))
+   public:
+    Sdf_PythonChangeBlock()
+      : _block(0)
     {
-      return;
+      // Do nothing.
     }
-    _block = new SdfChangeBlock;
-  }
 
-  void Close(object, object, object)
-  {
-    if (!TF_VERIFY(_block != 0))
+    ~Sdf_PythonChangeBlock()
     {
-      return;
+      delete _block;
     }
-    delete _block;
-    _block = 0;
+
+    void Open()
+    {
+      if (!TF_VERIFY(_block == 0))
+      {
+        return;
+      }
+      _block = new SdfChangeBlock;
+    }
+
+    void Close(object, object, object)
+    {
+      if (!TF_VERIFY(_block != 0))
+      {
+        return;
+      }
+      delete _block;
+      _block = 0;
+    }
+
+   private:
+    SdfChangeBlock *_block;
+  };
+
+  static void _BeginBlock()
+  {
+    Sdf_ChangeManager::Get().OpenChangeBlock();
   }
 
- private:
-  SdfChangeBlock *_block;
-};
-
-static void _BeginBlock()
-{
-  Sdf_ChangeManager::Get().OpenChangeBlock();
-}
-
-static void _EndBlock()
-{
-  Sdf_ChangeManager::Get().CloseChangeBlock();
-}
+  static void _EndBlock()
+  {
+    Sdf_ChangeManager::Get().CloseChangeBlock();
+  }
 
 }  // anonymous namespace
 

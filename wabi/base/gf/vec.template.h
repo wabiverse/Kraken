@@ -34,11 +34,11 @@
 
 #ifndef WABI_BASE_GF_{{UPPER(VEC)[2 : ] } } _H
 #define WABI_BASE_GF_ \
-  { \
-    { \
-      UPPER(VEC)[2:] \
-    } \
-  } \
+  {                   \
+    {                 \
+      UPPER(VEC)[2:]  \
+    }                 \
+  }                   \
   _H
 
 /// \file gf/vec{{ SUFFIX }}.h
@@ -50,7 +50,7 @@
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/wabi.h"
 {
-  % if IS_FLOATING_POINT(SCL) - %
+  % if IS_FLOATING_POINT (SCL) - %
 }
 #include "wabi/base/gf/math.h"
 {
@@ -65,7 +65,7 @@
 
 #include <cstddef>
 {
-  % if IS_FLOATING_POINT(SCL) - %
+  % if IS_FLOATING_POINT (SCL) - %
 }
 #include <cmath>
 {
@@ -137,14 +137,14 @@ class
   constexpr explicit {{VEC}}(Scl const *p)
     : _data{{{LIST("p[%(i)s]")}}} {}
   {
-    % if IS_FLOATING_POINT(SCL) %
+    % if IS_FLOATING_POINT (SCL) %
   }
   {% for S in SCALARS if S != SCL %
   }
 
   /// {{ "Implicitly convert" if ALLOW_IMPLICIT_CONVERSION(S, SCL) else "Construct" }} from {{
   /// VECNAME(DIM, S) }}.
-  {{ '' if ALLOW_IMPLICIT_CONVERSION(S, SCL) else 'explicit '}} {{VEC}}(class {
+  {{ '' if ALLOW_IMPLICIT_CONVERSION (S, SCL) else 'explicit '}} {{VEC}}(class {
     {
       VECNAME(DIM, S)
     }
@@ -418,7 +418,7 @@ class
   }
 
   {
-    % if IS_FLOATING_POINT(SCL) %
+    % if IS_FLOATING_POINT (SCL) %
   }
   /// Division by scalar.
   // TODO should divide by the scalar type.
@@ -532,7 +532,7 @@ class
   }
 
   {
-    % if IS_FLOATING_POINT(SCL) %
+    % if IS_FLOATING_POINT (SCL) %
   }
   /// Length
   {
@@ -611,8 +611,11 @@ class
   /// iteration limit. Colinear vectors will be unaltered, and the method
   /// will return false.
   GF_API
-  static bool OrthogonalizeBasis(
-    {{VEC}} * tx, {{VEC}} * ty, {{VEC}} * tz, const bool normalize, double eps = GF_MIN_ORTHO_TOLERANCE);
+  static bool OrthogonalizeBasis({{VEC}} * tx,
+                                 {{VEC}} * ty,
+                                 {{VEC}} * tz,
+                                 const bool normalize,
+                                 double eps = GF_MIN_ORTHO_TOLERANCE);
 
   /// Sets \c v1 and \c v2 to unit vectors such that v1, v2 and *this are
   /// mutually orthogonal.  If the length L of *this is smaller than \c eps,
@@ -647,7 +650,7 @@ GF_API std::ostream &operator<<(std::ostream &, {
 } const &);
 
 {
-  % if IS_FLOATING_POINT(SCL) %
+  % if IS_FLOATING_POINT (SCL) %
 }
 
 WABI_NAMESPACE_END
@@ -743,7 +746,7 @@ GfDot(
 }
 
 {
-  % if IS_FLOATING_POINT(SCL) %
+  % if IS_FLOATING_POINT (SCL) %
 }
 
 /// Returns the geometric length of \c v.
@@ -921,8 +924,8 @@ GfCross(
     }
   } const &v2)
 {
-  return {{VEC}}(
-    v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]);
+  return {
+    {VEC}}(v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]);
 }
 
 /// Returns the cross product of \p v1 and \p v2.

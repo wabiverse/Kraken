@@ -37,18 +37,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _DependencyRepr(const PcpDependency &dep)
-{
-  return TF_PY_REPR_PREFIX + "Cache.Dependency(" + TfPyRepr(dep.indexPath) + ", " + TfPyRepr(dep.sitePath) +
-         ", " + TfPyRepr(dep.mapFunc) + ")";
-}
+  static string _DependencyRepr(const PcpDependency &dep)
+  {
+    return TF_PY_REPR_PREFIX + "Cache.Dependency(" + TfPyRepr(dep.indexPath) + ", " +
+           TfPyRepr(dep.sitePath) + ", " + TfPyRepr(dep.mapFunc) + ")";
+  }
 
-static PcpDependency *_DependencyInit(const SdfPath &indexPath,
-                                      const SdfPath &sitePath,
-                                      const PcpMapFunction &mapFunc)
-{
-  return new PcpDependency{indexPath, sitePath, mapFunc};
-}
+  static PcpDependency *_DependencyInit(const SdfPath &indexPath,
+                                        const SdfPath &sitePath,
+                                        const PcpMapFunction &mapFunc)
+  {
+    return new PcpDependency{indexPath, sitePath, mapFunc};
+  }
 
 }  // anonymous namespace
 

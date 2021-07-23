@@ -34,8 +34,7 @@ bool CreateMatrixWithDefault(UsdGeomXformable const &gprim, GfMatrix4d const &de
   if (UsdGeomXformOp transform = gprim.MakeMatrixXform())
   {
     return transform.Set(defValue, UsdTimeCode::Default());
-  }
-  else
+  } else
   {
     return false;
   }
@@ -85,8 +84,7 @@ bool CreateSRTWithDefaults(UsdGeomXformable const &gprim,
                                  defPivot,
                                  UsdGeomXformCommonAPI::RotationOrderXYZ,
                                  UsdTimeCode::Default());
-  }
-  else
+  } else
   {
     return false;
   }

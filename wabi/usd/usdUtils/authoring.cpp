@@ -126,8 +126,7 @@ static SdfPathVector _GetPathsToExcludeBelowCommonAncestor(const UsdUtilsPathHas
         pathsToExclude.erase(parentPath);
       }
       primIt.PruneChildren();
-    }
-    else
+    } else
     {
       pathsToExclude.insert(primPath);
     }
@@ -158,8 +157,9 @@ static bool _ComputePathsToIncludeAndExclude(const UsdUtilsPathHashSet &included
 
   // Find the minimal set of paths that must be excluded, if we were
   // to include all of the subtree rooted at commonPrefix.
-  SdfPathVector pathsToExcludeBelowCommonAncestor = _GetPathsToExcludeBelowCommonAncestor(
-    includedRootPaths, commonAncestor, pathsToIgnore);
+  SdfPathVector pathsToExcludeBelowCommonAncestor = _GetPathsToExcludeBelowCommonAncestor(includedRootPaths,
+                                                                                          commonAncestor,
+                                                                                          pathsToIgnore);
 
   SdfPath commonAncestorParentPath = commonAncestor.GetPath().GetParentPath();
 
@@ -224,8 +224,7 @@ static bool _ComputePathsToIncludeAndExclude(const UsdUtilsPathHashSet &included
         // Prune the subtree once an ancestor path has been included.
         primIt.PruneChildren();
       }
-    }
-    else
+    } else
     {
       // Prune subtrees that don't have any included paths.
       primIt.PruneChildren();
@@ -374,7 +373,8 @@ std::vector<UsdCollectionAPI> UsdUtilsCreateCollections(
 
   // Compute the set of collections to author in parallel.
   std::vector<std::pair<SdfPathVector, SdfPathVector>> collectionIncludesAndExcludes(
-    assignments.size(), std::make_pair(SdfPathVector(), SdfPathVector()));
+    assignments.size(),
+    std::make_pair(SdfPathVector(), SdfPathVector()));
 
   WorkParallelForN(assignments.size(), [&](size_t start, size_t end) {
     for (size_t i = start; i < end; ++i)
@@ -400,8 +400,10 @@ std::vector<UsdCollectionAPI> UsdUtilsCreateCollections(
     const TfToken &collectionName = assignments[i].first;
     const auto &includesAndExcludes = collectionIncludesAndExcludes[i];
 
-    UsdCollectionAPI coll = UsdUtilsAuthorCollection(
-      collectionName, usdPrim, includesAndExcludes.first, includesAndExcludes.second);
+    UsdCollectionAPI coll = UsdUtilsAuthorCollection(collectionName,
+                                                     usdPrim,
+                                                     includesAndExcludes.first,
+                                                     includesAndExcludes.second);
 
     result.push_back(coll);
   }
@@ -413,8 +415,9 @@ USDUTILS_API
 SdfLayerHandleVector UsdUtilsGetDirtyLayers(UsdStagePtr stage, bool includeClipLayers)
 {
   SdfLayerHandleVector usedLayers = stage->GetUsedLayers(includeClipLayers);
-  auto newEnd = std::remove_if(
-    usedLayers.begin(), usedLayers.end(), [](const SdfLayerHandle &layer) { return !layer->IsDirty(); });
+  auto newEnd = std::remove_if(usedLayers.begin(), usedLayers.end(), [](const SdfLayerHandle &layer) {
+    return !layer->IsDirty();
+  });
   usedLayers.erase(newEnd, usedLayers.end());
   return usedLayers;
 }

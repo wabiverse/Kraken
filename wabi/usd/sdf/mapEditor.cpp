@@ -70,8 +70,7 @@ class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
       if (dataVal.IsHolding<T>())
       {
         _data = dataVal.Get<T>();
-      }
-      else
+      } else
       {
         TF_CODING_ERROR("%s does not hold value of expected type.", GetLocation().c_str());
       }
@@ -165,8 +164,7 @@ class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
       if (_data.empty())
       {
         _owner->ClearField(_field);
-      }
-      else
+      } else
       {
         _owner->SetField(_field, _data);
       }
@@ -193,9 +191,9 @@ boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &own
 // Template instantiations
 //
 
-#define SDF_INSTANTIATE_MAP_EDITOR(MapType) \
-  template class Sdf_MapEditor<MapType>; \
-  template class Sdf_LsdMapEditor<MapType>; \
+#define SDF_INSTANTIATE_MAP_EDITOR(MapType)                                                     \
+  template class Sdf_MapEditor<MapType>;                                                        \
+  template class Sdf_LsdMapEditor<MapType>;                                                     \
   template boost::shared_ptr<Sdf_MapEditor<MapType>> Sdf_CreateMapEditor(const SdfSpecHandle &, \
                                                                          const TfToken &);
 

@@ -47,145 +47,144 @@ TF_DEFINE_PRIVATE_TOKENS(
 namespace
 {
 
-/// For a single vstruct placeholder input/output, this describes mappings from:
-/// 1) associated member input/output -> member name (or names via alias)
-/// 2) member name -> associated member input/output
-/// 3) associated member input/output -> parsed conditional expression
-struct _VstructInfoEntry
-{
-  typedef std::shared_ptr<_VstructInfoEntry> Ptr;
-
-  typedef std::unordered_map<TfToken, std::vector<TfToken>, TfToken::HashFunctor> MemberMap;
-  typedef std::unordered_map<TfToken, TfToken, TfToken::HashFunctor> ReverseMemberMap;
-  typedef std::unordered_map<TfToken, MatfiltVstructConditionalEvaluator::Ptr, TfToken::HashFunctor>
-    ConditionalMap;
-
-  MemberMap members;
-  ReverseMemberMap reverseMembers;
-  ConditionalMap conditionals;
-};
-
-/// For a single shader, this stores mappings from:
-/// 1) vstruct placeholder input/output -> _VstructInfoEntry
-///
-/// These are typically built once per shader type and cached as it requires
-/// interpretation of metadata which would be wasteful to do repeatedly.
-struct _ShaderInfoEntry
-{
-  typedef std::shared_ptr<_ShaderInfoEntry> Ptr;
-  typedef std::map<TfToken, _VstructInfoEntry::Ptr> VstructInfoMap;
-
-  VstructInfoMap vstructs;
-
-  /// Constructs a _ShaderInfoEntry::Ptr for a single shader without caching
-  static Ptr Build(const TfToken &nodeTypeId, const NdrTokenVec &shaderTypePriority)
+  /// For a single vstruct placeholder input/output, this describes mappings from:
+  /// 1) associated member input/output -> member name (or names via alias)
+  /// 2) member name -> associated member input/output
+  /// 3) associated member input/output -> parsed conditional expression
+  struct _VstructInfoEntry
   {
-    auto result = Ptr(new _ShaderInfoEntry);
-    if (auto sdrShader = SdrRegistry::GetInstance().GetShaderNodeByIdentifier(nodeTypeId,
-                                                                              shaderTypePriority))
-    {
-      for (const auto &inputName : sdrShader->GetInputNames())
-      {
-        auto sdrInput = sdrShader->GetShaderInput(inputName);
-        if (!sdrInput)
-        {
-          continue;
-        }
-        _ProcessProperty(result, sdrInput);
-      }
-      for (const auto &outputName : sdrShader->GetOutputNames())
-      {
-        auto sdrOutput = sdrShader->GetShaderOutput(outputName);
-        if (!sdrOutput)
-        {
-          continue;
-        }
-        _ProcessProperty(result, sdrOutput);
-      }
-    }
+    typedef std::shared_ptr<_VstructInfoEntry> Ptr;
 
-    return result;
-  }
+    typedef std::unordered_map<TfToken, std::vector<TfToken>, TfToken::HashFunctor> MemberMap;
+    typedef std::unordered_map<TfToken, TfToken, TfToken::HashFunctor> ReverseMemberMap;
+    typedef std::unordered_map<TfToken, MatfiltVstructConditionalEvaluator::Ptr, TfToken::HashFunctor>
+      ConditionalMap;
 
-  /// Constructs and caches a _ShaderInfoEntry::Ptr for a single shader
-  static Ptr Get(const TfToken &nodeTypeId, const NdrTokenVec &shaderTypePriority)
+    MemberMap members;
+    ReverseMemberMap reverseMembers;
+    ConditionalMap conditionals;
+  };
+
+  /// For a single shader, this stores mappings from:
+  /// 1) vstruct placeholder input/output -> _VstructInfoEntry
+  ///
+  /// These are typically built once per shader type and cached as it requires
+  /// interpretation of metadata which would be wasteful to do repeatedly.
+  struct _ShaderInfoEntry
   {
-    std::lock_guard<std::mutex> lock(_cachedEntryMutex);
+    typedef std::shared_ptr<_ShaderInfoEntry> Ptr;
+    typedef std::map<TfToken, _VstructInfoEntry::Ptr> VstructInfoMap;
 
-    auto I = _cachedEntries.find(nodeTypeId);
-    if (I == _cachedEntries.end())
+    VstructInfoMap vstructs;
+
+    /// Constructs a _ShaderInfoEntry::Ptr for a single shader without caching
+    static Ptr Build(const TfToken &nodeTypeId, const NdrTokenVec &shaderTypePriority)
     {
-      auto result = Build(nodeTypeId, shaderTypePriority);
-      _cachedEntries[nodeTypeId] = result;
+      auto result = Ptr(new _ShaderInfoEntry);
+      if (auto sdrShader = SdrRegistry::GetInstance().GetShaderNodeByIdentifier(nodeTypeId,
+                                                                                shaderTypePriority))
+      {
+        for (const auto &inputName : sdrShader->GetInputNames())
+        {
+          auto sdrInput = sdrShader->GetShaderInput(inputName);
+          if (!sdrInput)
+          {
+            continue;
+          }
+          _ProcessProperty(result, sdrInput);
+        }
+        for (const auto &outputName : sdrShader->GetOutputNames())
+        {
+          auto sdrOutput = sdrShader->GetShaderOutput(outputName);
+          if (!sdrOutput)
+          {
+            continue;
+          }
+          _ProcessProperty(result, sdrOutput);
+        }
+      }
+
       return result;
     }
-    return (*I).second;
-  }
 
- private:
-  static std::unordered_map<TfToken, Ptr, TfToken::HashFunctor> _cachedEntries;
-  static std::mutex _cachedEntryMutex;
-
-  static void _ProcessProperty(Ptr result, SdrShaderPropertyConstPtr prop)
-  {
-    if (!prop->IsVStructMember())
+    /// Constructs and caches a _ShaderInfoEntry::Ptr for a single shader
+    static Ptr Get(const TfToken &nodeTypeId, const NdrTokenVec &shaderTypePriority)
     {
-      return;
-    }
+      std::lock_guard<std::mutex> lock(_cachedEntryMutex);
 
-    const TfToken &vsName = prop->GetVStructMemberOf();
-    const TfToken &vsMemberName = prop->GetVStructMemberName();
-    if (vsName.IsEmpty() || vsMemberName.IsEmpty())
-    {
-      return;
-    }
-
-    _VstructInfoEntry::Ptr entry;
-    auto I = result->vstructs.find(vsName);
-    if (I != result->vstructs.end())
-    {
-      entry = (*I).second;
-    }
-    else
-    {
-      entry.reset(new _VstructInfoEntry);
-      result->vstructs[vsName] = entry;
-    }
-
-    TfToken vsMemberAlias;
-
-    const auto &metadata = prop->GetMetadata();
-    {
-      auto I = metadata.find(_tokens->vstructmemberaliases);
-      if (I != metadata.end())
+      auto I = _cachedEntries.find(nodeTypeId);
+      if (I == _cachedEntries.end())
       {
-        vsMemberAlias = TfToken((*I).second);
+        auto result = Build(nodeTypeId, shaderTypePriority);
+        _cachedEntries[nodeTypeId] = result;
+        return result;
+      }
+      return (*I).second;
+    }
+
+   private:
+    static std::unordered_map<TfToken, Ptr, TfToken::HashFunctor> _cachedEntries;
+    static std::mutex _cachedEntryMutex;
+
+    static void _ProcessProperty(Ptr result, SdrShaderPropertyConstPtr prop)
+    {
+      if (!prop->IsVStructMember())
+      {
+        return;
+      }
+
+      const TfToken &vsName = prop->GetVStructMemberOf();
+      const TfToken &vsMemberName = prop->GetVStructMemberName();
+      if (vsName.IsEmpty() || vsMemberName.IsEmpty())
+      {
+        return;
+      }
+
+      _VstructInfoEntry::Ptr entry;
+      auto I = result->vstructs.find(vsName);
+      if (I != result->vstructs.end())
+      {
+        entry = (*I).second;
+      } else
+      {
+        entry.reset(new _VstructInfoEntry);
+        result->vstructs[vsName] = entry;
+      }
+
+      TfToken vsMemberAlias;
+
+      const auto &metadata = prop->GetMetadata();
+      {
+        auto I = metadata.find(_tokens->vstructmemberaliases);
+        if (I != metadata.end())
+        {
+          vsMemberAlias = TfToken((*I).second);
+        }
+      }
+
+      auto &memberNames = entry->members[prop->GetName()];
+      memberNames.push_back(vsMemberName);
+
+      entry->reverseMembers[vsMemberName] = prop->GetName();
+
+      if (!vsMemberAlias.IsEmpty())
+      {
+        memberNames.push_back(vsMemberAlias);
+        entry->reverseMembers[vsMemberAlias] = prop->GetName();
+      }
+
+      const TfToken &condExpr = prop->GetVStructConditionalExpr();
+
+      if (!condExpr.IsEmpty())
+      {
+        entry->conditionals[prop->GetName()] = MatfiltVstructConditionalEvaluator::Parse(condExpr.data());
       }
     }
+  };
 
-    auto &memberNames = entry->members[prop->GetName()];
-    memberNames.push_back(vsMemberName);
+  std::unordered_map<TfToken, _ShaderInfoEntry::Ptr, TfToken::HashFunctor> _ShaderInfoEntry::_cachedEntries;
 
-    entry->reverseMembers[vsMemberName] = prop->GetName();
-
-    if (!vsMemberAlias.IsEmpty())
-    {
-      memberNames.push_back(vsMemberAlias);
-      entry->reverseMembers[vsMemberAlias] = prop->GetName();
-    }
-
-    const TfToken &condExpr = prop->GetVStructConditionalExpr();
-
-    if (!condExpr.IsEmpty())
-    {
-      entry->conditionals[prop->GetName()] = MatfiltVstructConditionalEvaluator::Parse(condExpr.data());
-    }
-  }
-};
-
-std::unordered_map<TfToken, _ShaderInfoEntry::Ptr, TfToken::HashFunctor> _ShaderInfoEntry::_cachedEntries;
-
-std::mutex _ShaderInfoEntry::_cachedEntryMutex;
+  std::mutex _ShaderInfoEntry::_cachedEntryMutex;
 
 }  // anonymous namespace
 
@@ -302,12 +301,12 @@ static void _ResolveVstructsForNode(HdMaterialNetwork2 &network,
                               upstreamMemberOutputName,
                               shaderTypePriority,
                               network);
-        }
-        else
+        } else
         {
           // no condition, just connect
           node.inputConnections[memberInputName] = {
-            {upstreamConnection.upstreamNode, upstreamMemberOutputName}};
+            {upstreamConnection.upstreamNode, upstreamMemberOutputName}
+          };
           TF_DEBUG(HDPRMAN_VSTRUCTS)
             .Msg("Connected condition-less %s.%s to %s.%s\n",
                  nodeId.GetText(),

@@ -144,14 +144,15 @@ UsdAttribute UsdRiMaterialAPI::CreateVolumeAttr(VtValue const &defaultValue, boo
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -188,18 +189,17 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
-  ((defaultOutputName, "outputs:out"))
+                         ((defaultOutputName, "outputs:out"))
 
-  // These tokens are required for backwards compatibility. They're
-  // redefined here so we can stop relying on UsdRiLookAPI entirely.
-  (ri)((riLookDisplacement, "riLook:displacement"))((riLookSurface, "riLook:surface"))((riLookVolume,
-                                                                                        "riLook:volume"))
+                         // These tokens are required for backwards compatibility. They're
+                         // redefined here so we can stop relying on UsdRiLookAPI entirely.
+                         (ri)((riLookDisplacement, "riLook:displacement"))((riLookSurface, "riLook:surface"))((riLookVolume,
+                                                                                                               "riLook:volume"))
 
-  // deprecated tokens for handling backwards compatibility.
-  ((bxdfOutputName, "ri:bxdf"))((bxdfOutputAttrName, "outputs:ri:bxdf"))((riLookBxdf, "riLook:bxdf")));
+                         // deprecated tokens for handling backwards compatibility.
+                         ((bxdfOutputName, "ri:bxdf"))((bxdfOutputAttrName, "outputs:ri:bxdf"))((riLookBxdf, "riLook:bxdf")));
 
 TF_DEFINE_ENV_SETTING(USD_RI_WRITE_BXDF_OUTPUT,
                       false,

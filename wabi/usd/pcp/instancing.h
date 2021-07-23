@@ -157,8 +157,9 @@ inline void Pcp_TraverseInstanceableStrongToWeak(const PcpPrimIndex &primIndex, 
   TF_FOR_ALL (childIt, Pcp_GetChildrenRange(rootNode))
   {
     const PcpNodeRef &childNode = *childIt;
-    Pcp_TraverseInstanceableStrongToWeakHelper(
-      childNode, visitor, /* hasAnyDirectArcsInNodeChain = */ false);
+    Pcp_TraverseInstanceableStrongToWeakHelper(childNode,
+                                               visitor,
+                                               /* hasAnyDirectArcsInNodeChain = */ false);
   }
 }
 
@@ -193,8 +194,9 @@ inline void Pcp_TraverseInstanceableWeakToStrong(const PcpPrimIndex &primIndex, 
   TF_REVERSE_FOR_ALL(childIt, Pcp_GetChildrenRange(rootNode))
   {
     const PcpNodeRef &childNode = *childIt;
-    Pcp_TraverseInstanceableWeakToStrongHelper(
-      childNode, visitor, /* hasAnyDirectArcsInNodeChain = */ false);
+    Pcp_TraverseInstanceableWeakToStrongHelper(childNode,
+                                               visitor,
+                                               /* hasAnyDirectArcsInNodeChain = */ false);
   }
 
   visitor->Visit(rootNode, /* nodeIsInstanceable = */ false);

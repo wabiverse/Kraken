@@ -50,51 +50,63 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateRiCombineModeAttr(UsdRiRiLightFilterAPI &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreateRiCombineModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateRiCombineModeAttr(UsdRiRiLightFilterAPI &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateRiCombineModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateRiDensityAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateRiInvertAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
-
-static UsdAttribute _CreateRiIntensityAttr(UsdRiRiLightFilterAPI &self,
+  static UsdAttribute _CreateRiDensityAttr(UsdRiRiLightFilterAPI &self,
                                            object defaultVal,
                                            bool writeSparsely)
-{
-  return self.CreateRiIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  {
+    return self.CreateRiDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateRiExposureAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRiInvertAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRiInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  }
 
-static UsdAttribute _CreateRiDiffuseAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRiIntensityAttr(UsdRiRiLightFilterAPI &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
+  {
+    return self.CreateRiIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                      writeSparsely);
+  }
 
-static UsdAttribute _CreateRiSpecularAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRiExposureAttr(UsdRiRiLightFilterAPI &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
+  {
+    return self.CreateRiExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                     writeSparsely);
+  }
+
+  static UsdAttribute _CreateRiDiffuseAttr(UsdRiRiLightFilterAPI &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
+  {
+    return self.CreateRiDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
+
+  static UsdAttribute _CreateRiSpecularAttr(UsdRiRiLightFilterAPI &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
+  {
+    return self.CreateRiSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                     writeSparsely);
+  }
 
 }  // anonymous namespace
 
@@ -184,7 +196,7 @@ void wrapUsdRiRiLightFilterAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

@@ -122,9 +122,7 @@ PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier
   return NULL;
 }
 
-void LUXO_property_collection_begin(PointerLUXO *ptr,
-                                    PropertyLUXO *prop,
-                                    CollectionPropertyLUXO iter)
+void LUXO_property_collection_begin(PointerLUXO *ptr, PropertyLUXO *prop, CollectionPropertyLUXO iter)
 {
   iter.push_back(prop);
   iter.begin();

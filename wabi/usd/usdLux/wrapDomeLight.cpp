@@ -50,28 +50,30 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateTextureFileAttr(UsdLuxDomeLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
-
-static UsdAttribute _CreateTextureFormatAttr(UsdLuxDomeLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateTextureFormatAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+  static UsdAttribute _CreateTextureFileAttr(UsdLuxDomeLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
                                       writeSparsely);
-}
+  }
 
-static std::string _Repr(const UsdLuxDomeLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.DomeLight(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateTextureFormatAttr(UsdLuxDomeLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateTextureFormatAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                        writeSparsely);
+  }
+
+  static std::string _Repr(const UsdLuxDomeLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.DomeLight(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -141,9 +143,9 @@ void wrapUsdLuxDomeLight()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def("OrientToStageUpAxis", &UsdLuxDomeLight::OrientToStageUpAxis);
-}
+  WRAP_CUSTOM
+  {
+    _class.def("OrientToStageUpAxis", &UsdLuxDomeLight::OrientToStageUpAxis);
+  }
 
 }  // namespace

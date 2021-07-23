@@ -74,8 +74,7 @@ std::vector<GfMatrix4d> HdxSimpleLightTask::_ComputeShadowMatrices(
     CameraUtilConformWindowPolicy const policy = _overrideWindowPolicy.first ? _overrideWindowPolicy.second :
                                                                                camPolicy;
     return computation->Compute(_framing, policy);
-  }
-  else
+  } else
   {
     return computation->Compute(_viewport, camPolicy);
   }
@@ -152,8 +151,8 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
                                            HdPrimTypeTokens->sphereLight,
                                            HdPrimTypeTokens->rectLight};
   _lightIds.clear();
-  _numLights = _AppendLightsOfType(
-    renderIndex, lightTypes, _lightIncludePaths, _lightExcludePaths, &_lightIds);
+  _numLights =
+    _AppendLightsOfType(renderIndex, lightTypes, _lightIncludePaths, _lightExcludePaths, &_lightIds);
 
   // We rebuild the lights array every time, but avoid reallocating
   // the array every frame as this was showing up as a significant portion
@@ -242,7 +241,8 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
         }
 
         const std::vector<GfMatrix4d> shadowMatrices = _ComputeShadowMatrices(
-          camera, lightShadowParams.shadowMatrix);
+          camera,
+          lightShadowParams.shadowMatrix);
 
         if (shadowMatrices.empty())
         {
@@ -284,8 +284,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
   if (useBindlessShadowMaps)
   {
     shadows->SetShadowMapResolutions(shadowMapResolutions);
-  }
-  else
+  } else
   {
     // Bindful shadow maps use a texture array, and hence are limited to
     // a single resolution. Use the maximum authored resolution.

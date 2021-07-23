@@ -69,8 +69,7 @@ bool TfPatternMatcher::Match(const string &query, string *errorMsg) const
     }
 
     return _regex.Match(query);
-  }
-  else
+  } else
   {
     if (errorMsg)
     {

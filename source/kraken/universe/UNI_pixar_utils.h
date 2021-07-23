@@ -49,7 +49,9 @@ WABI_NAMESPACE_BEGIN
  * @param path: filepath to (usd|usdc|usdz) file.
  * @param format: the file format to convert to (usd|usdc|usdz)
  * @param verbose: whether to log status to console. */
-void UNI_pixutil_convert_usd(const fs::path &path, const TfToken &format = UsdUsdaFileFormatTokens->Id, bool verbose = false);
+void UNI_pixutil_convert_usd(const fs::path &path,
+                             const TfToken &format = UsdUsdaFileFormatTokens->Id,
+                             bool verbose = false);
 
 /**
  * Uses Pixar's Asset Resolver to resolve a path to a given asset path.

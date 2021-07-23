@@ -98,8 +98,9 @@ void wrapUsdPrimCompositionQuery()
               .def("GetDirectRootLayerArcs", &This::GetDirectRootLayerArcs)
               .staticmethod("GetDirectRootLayerArcs")
               .add_property("filter", &This::GetFilter, &This::SetFilter)
-              .def(
-                "GetCompositionArcs", &This::GetCompositionArcs, return_value_policy<TfPySequenceToList>());
+              .def("GetCompositionArcs",
+                   &This::GetCompositionArcs,
+                   return_value_policy<TfPySequenceToList>());
 
   enum_<This::ArcIntroducedFilter>("ArcIntroducedFilter")
     .value("All", This::ArcIntroducedFilter::All)

@@ -228,8 +228,7 @@ std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename
     gridParams.clear();
 
     // loop over all grids in the file
-    for (openvdb::io::File::NameIterator nameIter = file.beginName(); nameIter != file.endName();
-         ++nameIter)
+    for (openvdb::io::File::NameIterator nameIter = file.beginName(); nameIter != file.endName(); ++nameIter)
     {
       // read grid name from file
       std::string gridName = nameIter.gridName();

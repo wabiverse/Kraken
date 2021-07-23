@@ -248,7 +248,7 @@ class TraceEventContainer
   /// \name Subset of stl container interface.
   /// @{
   template<class... Args>
-  TraceEvent &emplace_back(Args &&... args)
+  TraceEvent &emplace_back(Args &&...args)
   {
     TraceEvent *event = new (_nextEvent++) TraceEvent(std::forward<Args>(args)...);
     _back->ClaimEventEntry();

@@ -38,12 +38,12 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// The python wrapping of ComputeInWorldSpace does not take an xform cache.
-static GfMatrix4d _ComputeInWorldSpace(const UsdGeomConstraintTarget &self,
-                                       const UsdTimeCode &time = UsdTimeCode::Default())
-{
-  return self.ComputeInWorldSpace(time);
-}
+  // The python wrapping of ComputeInWorldSpace does not take an xform cache.
+  static GfMatrix4d _ComputeInWorldSpace(const UsdGeomConstraintTarget &self,
+                                         const UsdTimeCode &time = UsdTimeCode::Default())
+  {
+    return self.ComputeInWorldSpace(time);
+  }
 
 }  // anonymous namespace
 

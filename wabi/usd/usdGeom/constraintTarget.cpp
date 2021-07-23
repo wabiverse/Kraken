@@ -112,8 +112,7 @@ GfMatrix4d UsdGeomConstraintTarget::ComputeInWorldSpace(UsdTimeCode time, UsdGeo
   {
     xfCache->SetTime(time);
     localToWorld = xfCache->GetLocalToWorldTransform(modelPrim);
-  }
-  else
+  } else
   {
     UsdGeomXformCache cache;
     cache.SetTime(time);

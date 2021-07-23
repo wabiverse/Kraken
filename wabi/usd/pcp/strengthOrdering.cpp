@@ -130,8 +130,7 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
       {
         // a was copied from its origin, so it's weaker than b.
         return 1;
-      }
-      else if (b.GetSite() == bOrigin.GetSite())
+      } else if (b.GetSite() == bOrigin.GetSite())
       {
         // b was copied from its origin, so it's weaker than a.
         return -1;
@@ -176,8 +175,7 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
         if (aOriginRoot.second > bOriginRoot.second)
         {
           return -1;
-        }
-        else if (bOriginRoot.second > aOriginRoot.second)
+        } else if (bOriginRoot.second > aOriginRoot.second)
         {
           return 1;
         }
@@ -185,24 +183,21 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
         TF_VERIFY(aOriginRoot.second != bOriginRoot.second,
                   "Should not have sibling specializes nodes with same "
                   "origin root and distance to origin root.");
-      }
-      else
+      } else
       {
         // Otherwise, stronger origin root is stronger.
         int result = _OriginIsStronger(a.GetRootNode(), aOriginRoot.first, bOriginRoot.first);
         if (result < 0)
         {
           return -1;
-        }
-        else if (result > 0)
+        } else if (result > 0)
         {
           return 1;
         }
         TF_VERIFY(false, "Did not find either origin");
       }
     }
-  }
-  else
+  } else
   {
     // Origin namespace depth.
     // Higher values (deeper opinions) are stronger.
@@ -224,8 +219,7 @@ int PcpCompareSiblingNodeStrength(const PcpNodeRef &a, const PcpNodeRef &b)
       if (result < 0)
       {
         return -1;
-      }
-      else if (result > 0)
+      } else if (result > 0)
       {
         return 1;
       }

@@ -87,7 +87,7 @@ void WM_exit_ex(kContext *C, const bool do_python)
   {
     WM_jobs_kill_all(wm);
 
-    UNIVERSE_FOR_ALL(win, wm->windows)
+    UNIVERSE_FOR_ALL (win, wm->windows)
     {
       CTX_wm_window_set(C, VALUE(win));
       WM_event_remove_handlers(C, VALUE(win)->modalhandlers);
@@ -253,7 +253,8 @@ static void wait_for_console_key(void)
 {
   HANDLE hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
 
-  if (((hConsoleInput != NULL) || (hConsoleInput != INVALID_HANDLE_VALUE)) && FlushConsoleInputBuffer(hConsoleInput))
+  if (((hConsoleInput != NULL) || (hConsoleInput != INVALID_HANDLE_VALUE)) &&
+      FlushConsoleInputBuffer(hConsoleInput))
   {
     for (;;)
     {

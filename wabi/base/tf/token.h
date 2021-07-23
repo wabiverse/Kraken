@@ -392,8 +392,7 @@ class TfToken
         if (_rep->_refCount.load(std::memory_order_relaxed) == 1)
         {
           _PossiblyDestroyRep();
-        }
-        else
+        } else
         {
           /*
            * This is deliberately racy.  It's possible the statement
@@ -410,8 +409,7 @@ class TfToken
            */
           _rep->_refCount.fetch_sub(1, std::memory_order_relaxed);
         }
-      }
-      else
+      } else
       {
         // Our belief is wrong, update our cache of countedness.
         _rep.SetBits(false);

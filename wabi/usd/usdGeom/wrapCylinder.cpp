@@ -43,38 +43,39 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateHeightAttr(UsdGeomCylinder &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
-}
+  static UsdAttribute _CreateHeightAttr(UsdGeomCylinder &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
+  }
 
-static UsdAttribute _CreateRadiusAttr(UsdGeomCylinder &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
-}
+  static UsdAttribute _CreateRadiusAttr(UsdGeomCylinder &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
+  }
 
-static UsdAttribute _CreateAxisAttr(UsdGeomCylinder &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateAxisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateAxisAttr(UsdGeomCylinder &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateAxisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static UsdAttribute _CreateExtentAttr(UsdGeomCylinder &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateExtentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
-                               writeSparsely);
-}
+  static UsdAttribute _CreateExtentAttr(UsdGeomCylinder &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateExtentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
+                                 writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomCylinder &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.Cylinder(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdGeomCylinder &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.Cylinder(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -106,19 +107,22 @@ void wrapUsdGeomCylinder()
     .def(!self)
 
     .def("GetHeightAttr", &This::GetHeightAttr)
-    .def(
-      "CreateHeightAttr", &_CreateHeightAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateHeightAttr",
+         &_CreateHeightAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetRadiusAttr", &This::GetRadiusAttr)
-    .def(
-      "CreateRadiusAttr", &_CreateRadiusAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateRadiusAttr",
+         &_CreateRadiusAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetAxisAttr", &This::GetAxisAttr)
     .def("CreateAxisAttr", &_CreateAxisAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetExtentAttr", &This::GetExtentAttr)
-    .def(
-      "CreateExtentAttr", &_CreateExtentAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateExtentAttr",
+         &_CreateExtentAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("__repr__", ::_Repr);
 
@@ -147,7 +151,7 @@ void wrapUsdGeomCylinder()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // anonymous namespace

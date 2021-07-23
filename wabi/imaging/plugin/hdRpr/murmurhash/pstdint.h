@@ -190,9 +190,9 @@
  *  do nothing else.  On the Mac OS X version of gcc this is _STDINT_H_.
  */
 
-#if ((defined(__STDC__) && __STDC__ && __STDC_VERSION__ >= 199901L) || \
+#if ((defined(__STDC__) && __STDC__ && __STDC_VERSION__ >= 199901L) ||                 \
      (defined(__WATCOMC__) && (defined(_STDINT_H_INCLUDED) || __WATCOMC__ >= 1250)) || \
-     (defined(__GNUC__) && (defined(_STDINT_H) || defined(_STDINT_H_)))) && \
+     (defined(__GNUC__) && (defined(_STDINT_H) || defined(_STDINT_H_)))) &&            \
   !defined(_PSTDINT_H_INCLUDED)
 #  include <stdint.h>
 #  define _PSTDINT_H_INCLUDED
@@ -477,7 +477,7 @@ typedef unsigned long long uint64_t;
 #      ifndef PRINTF_INT64_MODIFIER
 #        define PRINTF_INT64_MODIFIER "ll"
 #      endif
-#    elif (defined(__WATCOMC__) && defined(__WATCOM_INT64__)) || \
+#    elif (defined(__WATCOMC__) && defined(__WATCOM_INT64__)) ||                                            \
       (defined(_MSC_VER) && _INTEGRAL_MAX_BITS >= 64) || (defined(__BORLANDC__) && __BORLANDC__ > 0x460) || \
       defined(__alpha) || defined(__DECC)
 #      define stdint_int64_defined
@@ -717,8 +717,10 @@ typedef uint_least64_t uint_fast64_t;
 #      ifndef UINTPTR_C
 #        define UINTPTR_C(x) stdint_intptr_glue3(UINT, stdint_intptr_bits, _C)(x)
 #      endif
-typedef stdint_intptr_glue3(uint, stdint_intptr_bits, _t) uintptr_t;
-typedef stdint_intptr_glue3(int, stdint_intptr_bits, _t) intptr_t;
+typedef stdint_intptr_glue3(uint, stdint_intptr_bits, _t)
+uintptr_t;
+typedef stdint_intptr_glue3(int, stdint_intptr_bits, _t)
+intptr_t;
 #    else
 /* TODO -- This following is likely wrong for some platforms, and does
    nothing for the definition of uintptr_t. */
@@ -756,8 +758,8 @@ typedef ptrdiff_t intptr_t;
 
 #  define DECL(us, bits) glue3(DECL, us, )(bits)
 
-#  define TESTUMAX(bits) \
-    glue3(u, bits, =) glue3(~, u, bits); \
+#  define TESTUMAX(bits)                            \
+    glue3(u, bits, =) glue3(~, u, bits);            \
     if (glue3(UINT, bits, _MAX) glue3(!=, u, bits)) \
     printf("Something wrong with UINT%d_MAX\n", bits)
 

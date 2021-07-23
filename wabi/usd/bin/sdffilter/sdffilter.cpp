@@ -97,642 +97,622 @@ TF_REGISTRY_FUNCTION(TfType)
 namespace
 {
 
-// the basename of the executable.
-string progName;
+  // the basename of the executable.
+  string progName;
 
-// print/error utilities.
-void VErr(char const *fmt, va_list ap)
-{
-  fprintf(stderr, "%s: Error - %s\n", progName.c_str(), ArchVStringPrintf(fmt, ap).c_str());
-}
+  // print/error utilities.
+  void VErr(char const *fmt, va_list ap)
+  {
+    fprintf(stderr, "%s: Error - %s\n", progName.c_str(), ArchVStringPrintf(fmt, ap).c_str());
+  }
 
-void Err(char const *fmt, ...) ARCH_PRINTF_FUNCTION(1, 2);
-void Err(char const *fmt, ...)
-{
-  va_list ap;
-  va_start(ap, fmt);
-  VErr(fmt, ap);
-  va_end(ap);
-}
+  void Err(char const *fmt, ...) ARCH_PRINTF_FUNCTION(1, 2);
+  void Err(char const *fmt, ...)
+  {
+    va_list ap;
+    va_start(ap, fmt);
+    VErr(fmt, ap);
+    va_end(ap);
+  }
 
-void ErrExit(char const *fmt, ...) ARCH_PRINTF_FUNCTION(1, 2);
-void ErrExit(char const *fmt, ...)
-{
-  va_list ap;
-  va_start(ap, fmt);
-  VErr(fmt, ap);
-  va_end(ap);
-  exit(1);
-}
+  void ErrExit(char const *fmt, ...) ARCH_PRINTF_FUNCTION(1, 2);
+  void ErrExit(char const *fmt, ...)
+  {
+    va_list ap;
+    va_start(ap, fmt);
+    VErr(fmt, ap);
+    va_end(ap);
+    exit(1);
+  }
 
-// The sorting key for 'outline' output.
-enum SortKey
-{
-  SortByPath,
-  SortByField
-};
+  // The sorting key for 'outline' output.
+  enum SortKey
+  {
+    SortByPath,
+    SortByField
+  };
 
-std::ostream &operator<<(std::ostream &os, SortKey key)
-{
-  if (key == SortByPath)
+  std::ostream &operator<<(std::ostream &os, SortKey key)
   {
-    return os << "path";
-  }
-  else if (key == SortByField)
-  {
-    return os << "field";
-  }
-  TF_CODING_ERROR("Invalid value for SortKey (%d)", static_cast<int>(key));
-  return os << "invalid";
-}
-
-std::istream &operator>>(std::istream &is, SortKey &key)
-{
-  std::string txt;
-  is >> txt;
-  if (txt == "path")
-  {
-    key = SortByPath;
-  }
-  else if (txt == "field")
-  {
-    key = SortByField;
-  }
-  else
-  {
-    is.setstate(std::ios_base::failbit);
-  }
-  return is;
-}
-
-// An enum representing the type of output to produce.
-enum OutputType
-{
-  OutputValidity,     // only check file validity by reading all values.
-  OutputSummary,      // report a brief summary with file statistics.
-  OutputOutline,      // report as an outilne, either by path or by field.
-  OutputPseudoLayer,  // report as human readable text, as close to a
-                      // valid layer as possible
-  OutputLayer         // produce a valid layer as output.
-};
-
-std::ostream &operator<<(std::ostream &os, OutputType outputType)
-{
-  if (outputType == OutputValidity)
-  {
-    return os << "validity";
-  }
-  else if (outputType == OutputSummary)
-  {
-    return os << "summary";
-  }
-  else if (outputType == OutputOutline)
-  {
-    return os << "outline";
-  }
-  else if (outputType == OutputPseudoLayer)
-  {
-    return os << "pseudoLayer";
-  }
-  else if (outputType == OutputLayer)
-  {
-    return os << "layer";
-  }
-  TF_CODING_ERROR("Invalid value for OutputType (%d)", static_cast<int>(outputType));
-  return os << "invalid";
-}
-
-std::istream &operator>>(std::istream &is, OutputType &outputType)
-{
-  std::string txt;
-  is >> txt;
-  if (txt == "validity")
-  {
-    outputType = OutputValidity;
-  }
-  else if (txt == "summary")
-  {
-    outputType = OutputSummary;
-  }
-  else if (txt == "outline")
-  {
-    outputType = OutputOutline;
-  }
-  else if (txt == "pseudoLayer")
-  {
-    outputType = OutputPseudoLayer;
-  }
-  else if (txt == "layer")
-  {
-    outputType = OutputLayer;
-  }
-  else
-  {
-    is.setstate(std::ios_base::failbit);
-  }
-  return is;
-}
-
-// We use this structure to represent all the parameters for reporting.  We fill
-// this using command-line args.
-struct ReportParams
-{
-  std::shared_ptr<TfPatternMatcher> pathMatcher;
-  std::shared_ptr<TfPatternMatcher> fieldMatcher;
-
-  OutputType outputType;
-  std::string outputFile;
-  std::string outputFormat;
-
-  std::vector<double> literalTimes;
-  std::vector<std::pair<double, double>> timeRanges;
-  double timeTolerance;
-
-  SortKey sortKey = SortByPath;
-  int64_t arraySizeLimit = -1;
-  int64_t timeSamplesSizeLimit = -1;
-  bool showValues = true;
-};
-
-// Summary statistics for 'summary' output.
-struct SummaryStats
-{
-  size_t numSpecs = 0;
-  size_t numPrimSpecs = 0;
-  size_t numPropertySpecs = 0;
-  size_t numFields = 0;
-  size_t numSampleTimes = 0;
-};
-
-// Parse times and time ranges in timeSpecs, throw an exception if something
-// goes wrong.
-void ParseTimes(vector<string> const &timeSpecs,
-                vector<double> *literalTimes,
-                vector<pair<double, double>> *timeRanges)
-{
-  for (auto const &spec : timeSpecs)
-  {
-    try
+    if (key == SortByPath)
     {
-      if (TfStringContains(spec, ".."))
+      return os << "path";
+    } else if (key == SortByField)
+    {
+      return os << "field";
+    }
+    TF_CODING_ERROR("Invalid value for SortKey (%d)", static_cast<int>(key));
+    return os << "invalid";
+  }
+
+  std::istream &operator>>(std::istream &is, SortKey &key)
+  {
+    std::string txt;
+    is >> txt;
+    if (txt == "path")
+    {
+      key = SortByPath;
+    } else if (txt == "field")
+    {
+      key = SortByField;
+    } else
+    {
+      is.setstate(std::ios_base::failbit);
+    }
+    return is;
+  }
+
+  // An enum representing the type of output to produce.
+  enum OutputType
+  {
+    OutputValidity,     // only check file validity by reading all values.
+    OutputSummary,      // report a brief summary with file statistics.
+    OutputOutline,      // report as an outilne, either by path or by field.
+    OutputPseudoLayer,  // report as human readable text, as close to a
+                        // valid layer as possible
+    OutputLayer         // produce a valid layer as output.
+  };
+
+  std::ostream &operator<<(std::ostream &os, OutputType outputType)
+  {
+    if (outputType == OutputValidity)
+    {
+      return os << "validity";
+    } else if (outputType == OutputSummary)
+    {
+      return os << "summary";
+    } else if (outputType == OutputOutline)
+    {
+      return os << "outline";
+    } else if (outputType == OutputPseudoLayer)
+    {
+      return os << "pseudoLayer";
+    } else if (outputType == OutputLayer)
+    {
+      return os << "layer";
+    }
+    TF_CODING_ERROR("Invalid value for OutputType (%d)", static_cast<int>(outputType));
+    return os << "invalid";
+  }
+
+  std::istream &operator>>(std::istream &is, OutputType &outputType)
+  {
+    std::string txt;
+    is >> txt;
+    if (txt == "validity")
+    {
+      outputType = OutputValidity;
+    } else if (txt == "summary")
+    {
+      outputType = OutputSummary;
+    } else if (txt == "outline")
+    {
+      outputType = OutputOutline;
+    } else if (txt == "pseudoLayer")
+    {
+      outputType = OutputPseudoLayer;
+    } else if (txt == "layer")
+    {
+      outputType = OutputLayer;
+    } else
+    {
+      is.setstate(std::ios_base::failbit);
+    }
+    return is;
+  }
+
+  // We use this structure to represent all the parameters for reporting.  We fill
+  // this using command-line args.
+  struct ReportParams
+  {
+    std::shared_ptr<TfPatternMatcher> pathMatcher;
+    std::shared_ptr<TfPatternMatcher> fieldMatcher;
+
+    OutputType outputType;
+    std::string outputFile;
+    std::string outputFormat;
+
+    std::vector<double> literalTimes;
+    std::vector<std::pair<double, double>> timeRanges;
+    double timeTolerance;
+
+    SortKey sortKey = SortByPath;
+    int64_t arraySizeLimit = -1;
+    int64_t timeSamplesSizeLimit = -1;
+    bool showValues = true;
+  };
+
+  // Summary statistics for 'summary' output.
+  struct SummaryStats
+  {
+    size_t numSpecs = 0;
+    size_t numPrimSpecs = 0;
+    size_t numPropertySpecs = 0;
+    size_t numFields = 0;
+    size_t numSampleTimes = 0;
+  };
+
+  // Parse times and time ranges in timeSpecs, throw an exception if something
+  // goes wrong.
+  void ParseTimes(vector<string> const &timeSpecs,
+                  vector<double> *literalTimes,
+                  vector<pair<double, double>> *timeRanges)
+  {
+    for (auto const &spec : timeSpecs)
+    {
+      try
       {
-        auto elts = TfStringSplit(spec, "..");
-        if (elts.size() != 2)
+        if (TfStringContains(spec, ".."))
         {
-          throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
+          auto elts = TfStringSplit(spec, "..");
+          if (elts.size() != 2)
+          {
+            throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
+          }
+          timeRanges->emplace_back(boost::lexical_cast<double>(elts[0]),
+                                   boost::lexical_cast<double>(elts[1]));
+        } else
+        {
+          literalTimes->emplace_back(boost::lexical_cast<double>(spec));
         }
-        timeRanges->emplace_back(boost::lexical_cast<double>(elts[0]), boost::lexical_cast<double>(elts[1]));
       }
-      else
+      catch (boost::bad_lexical_cast const &)
       {
-        literalTimes->emplace_back(boost::lexical_cast<double>(spec));
+        throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
       }
     }
-    catch (boost::bad_lexical_cast const &)
+    sort(literalTimes->begin(), literalTimes->end());
+    literalTimes->erase(unique(literalTimes->begin(), literalTimes->end()), literalTimes->end());
+    sort(timeRanges->begin(), timeRanges->end());
+    timeRanges->erase(unique(timeRanges->begin(), timeRanges->end()), timeRanges->end());
+  }
+
+  // Find all the paths in layer that match, or all paths if matcher is null.
+  std::vector<SdfPath> CollectMatchingSpecPaths(SdfLayerHandle const &layer, TfPatternMatcher const *matcher)
+  {
+    std::vector<SdfPath> result;
+    layer->Traverse(SdfPath::AbsoluteRootPath(), [&result, &matcher](SdfPath const &path) {
+      if (!matcher || matcher->Match(path.GetString()))
+        result.push_back(path);
+    });
+    return result;
+  }
+
+  // Find all the fields for the given path that match, or all fields if matcher
+  // is null.
+  std::vector<TfToken> CollectMatchingFields(SdfLayerHandle const &layer,
+                                             SdfPath const &path,
+                                             TfPatternMatcher const *matcher)
+  {
+    std::vector<TfToken> fields = layer->ListFields(path);
+    fields.erase(
+      remove_if(fields.begin(),
+                fields.end(),
+                [&matcher](TfToken const &f) { return matcher && !matcher->Match(f.GetString()); }),
+      fields.end());
+    return fields;
+  }
+
+  // Closeness check with relative tolerance.
+  bool IsClose(double a, double b, double tol)
+  {
+    double absDiff = fabs(a - b);
+    return absDiff <= fabs(tol * a) || absDiff < fabs(tol * b);
+  }
+
+  // Get a suitable value for the report specified by p.  In particular, for
+  // non-layer output, make a value that shows only array type & size for large
+  // arrays.
+  VtValue GetReportValue(VtValue const &value, ReportParams const &p)
+  {
+    if (p.outputType != OutputLayer && p.arraySizeLimit >= 0 && value.IsArrayValued() &&
+        value.GetArraySize() > static_cast<uint64_t>(p.arraySizeLimit))
     {
-      throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
+      return VtValue(SdfHumanReadableValue(TfStringPrintf("%s[%zu]",
+                                                          ArchGetDemangled(value.GetElementTypeid()).c_str(),
+                                                          value.GetArraySize())));
     }
+    return value;
   }
-  sort(literalTimes->begin(), literalTimes->end());
-  literalTimes->erase(unique(literalTimes->begin(), literalTimes->end()), literalTimes->end());
-  sort(timeRanges->begin(), timeRanges->end());
-  timeRanges->erase(unique(timeRanges->begin(), timeRanges->end()), timeRanges->end());
-}
 
-// Find all the paths in layer that match, or all paths if matcher is null.
-std::vector<SdfPath> CollectMatchingSpecPaths(SdfLayerHandle const &layer, TfPatternMatcher const *matcher)
-{
-  std::vector<SdfPath> result;
-  layer->Traverse(SdfPath::AbsoluteRootPath(), [&result, &matcher](SdfPath const &path) {
-    if (!matcher || matcher->Match(path.GetString()))
-      result.push_back(path);
-  });
-  return result;
-}
-
-// Find all the fields for the given path that match, or all fields if matcher
-// is null.
-std::vector<TfToken> CollectMatchingFields(SdfLayerHandle const &layer,
-                                           SdfPath const &path,
-                                           TfPatternMatcher const *matcher)
-{
-  std::vector<TfToken> fields = layer->ListFields(path);
-  fields.erase(remove_if(fields.begin(),
-                         fields.end(),
-                         [&matcher](TfToken const &f) { return matcher && !matcher->Match(f.GetString()); }),
-               fields.end());
-  return fields;
-}
-
-// Closeness check with relative tolerance.
-bool IsClose(double a, double b, double tol)
-{
-  double absDiff = fabs(a - b);
-  return absDiff <= fabs(tol * a) || absDiff < fabs(tol * b);
-}
-
-// Get a suitable value for the report specified by p.  In particular, for
-// non-layer output, make a value that shows only array type & size for large
-// arrays.
-VtValue GetReportValue(VtValue const &value, ReportParams const &p)
-{
-  if (p.outputType != OutputLayer && p.arraySizeLimit >= 0 && value.IsArrayValued() &&
-      value.GetArraySize() > static_cast<uint64_t>(p.arraySizeLimit))
+  // Get a suitable value for timeSamples for the report specified by p.  In
+  // particular, for non-layer output, make a value that shows number of samples
+  // and their time range.
+  VtValue GetReportTimeSamplesValue(SdfLayerHandle const &layer, SdfPath const &path, ReportParams const &p)
   {
-    return VtValue(SdfHumanReadableValue(
-      TfStringPrintf("%s[%zu]", ArchGetDemangled(value.GetElementTypeid()).c_str(), value.GetArraySize())));
-  }
-  return value;
-}
+    bool takeAllTimes = p.literalTimes.empty() && p.timeRanges.empty();
+    auto times = layer->ListTimeSamplesForPath(path);
+    std::vector<double> selectedTimes;
+    selectedTimes.reserve(times.size());
 
-// Get a suitable value for timeSamples for the report specified by p.  In
-// particular, for non-layer output, make a value that shows number of samples
-// and their time range.
-VtValue GetReportTimeSamplesValue(SdfLayerHandle const &layer, SdfPath const &path, ReportParams const &p)
-{
-  bool takeAllTimes = p.literalTimes.empty() && p.timeRanges.empty();
-  auto times = layer->ListTimeSamplesForPath(path);
-  std::vector<double> selectedTimes;
-  selectedTimes.reserve(times.size());
-
-  if (takeAllTimes)
-  {
-    selectedTimes.assign(times.begin(), times.end());
-  }
-  else
-  {
-    for (auto time : times)
+    if (takeAllTimes)
     {
-      // Check literalTimes.
-      auto rng = equal_range(p.literalTimes.begin(), p.literalTimes.end(), time, [&p](double a, double b) {
-        return IsClose(a, b, p.timeTolerance) ? false : a < b;
-      });
-      if (rng.first != rng.second)
-        selectedTimes.push_back(time);
-
-      // Check ranges.
-      for (auto const &range : p.timeRanges)
+      selectedTimes.assign(times.begin(), times.end());
+    } else
+    {
+      for (auto time : times)
       {
-        if (range.first <= time && time <= range.second)
+        // Check literalTimes.
+        auto rng = equal_range(p.literalTimes.begin(), p.literalTimes.end(), time, [&p](double a, double b) {
+          return IsClose(a, b, p.timeTolerance) ? false : a < b;
+        });
+        if (rng.first != rng.second)
           selectedTimes.push_back(time);
-      }
-    }
-  }
 
-  if (selectedTimes.empty())
-    return VtValue();
-
-  SdfTimeSampleMap result;
-
-  VtValue val;
-  if (p.outputType != OutputLayer && p.timeSamplesSizeLimit >= 0 &&
-      selectedTimes.size() > static_cast<uint64_t>(p.timeSamplesSizeLimit))
-  {
-    return VtValue(SdfHumanReadableValue(TfStringPrintf("%zu samples in [%s, %s]",
-                                                        times.size(),
-                                                        TfStringify(*times.begin()).c_str(),
-                                                        TfStringify(*(--times.end())).c_str())));
-  }
-  else
-  {
-    for (auto time : selectedTimes)
-    {
-      TF_VERIFY(layer->QueryTimeSample(path, time, &val));
-      result[time] = GetReportValue(val, p);
-    }
-  }
-  return VtValue(result);
-}
-
-// Get a suitable value for the report specified by p.  In particular, for
-// non-layer output, make a value that shows only array type & size for large
-// arrays or number of time samples and time range for large timeSamples.
-VtValue GetReportFieldValue(SdfLayerHandle const &layer,
-                            SdfPath const &path,
-                            TfToken const &field,
-                            ReportParams const &p)
-{
-  VtValue result;
-  // Handle timeSamples specially:
-  if (field == SdfFieldKeys->TimeSamples)
-  {
-    result = GetReportTimeSamplesValue(layer, path, p);
-  }
-  else
-  {
-    TF_VERIFY(layer->HasField(path, field, &result));
-    result = GetReportValue(result, p);
-  }
-  return result;
-}
-
-// Produce the 'outline' output report by path.
-void GetReportByPath(SdfLayerHandle const &layer, ReportParams const &p, std::vector<std::string> &report)
-{
-  std::vector<SdfPath> paths = CollectMatchingSpecPaths(layer, p.pathMatcher.get());
-  sort(paths.begin(), paths.end());
-  for (auto const &path : paths)
-  {
-    SdfSpecType specType = layer->GetSpecType(path);
-    report.push_back(TfStringPrintf("<%s> : %s", path.GetText(), TfStringify(specType).c_str()));
-
-    std::vector<TfToken> fields = CollectMatchingFields(layer, path, p.fieldMatcher.get());
-    if (fields.empty())
-      continue;
-    for (auto const &field : fields)
-    {
-      if (p.showValues)
-      {
-        report.push_back(TfStringPrintf(
-          "  %s: %s", field.GetText(), TfStringify(GetReportFieldValue(layer, path, field, p)).c_str()));
-      }
-      else
-      {
-        report.push_back(TfStringPrintf("  %s", field.GetText()));
-      }
-    }
-  }
-}
-
-// Produce the 'outline' output report by field.
-void GetReportByField(SdfLayerHandle const &layer, ReportParams const &p, std::vector<std::string> &report)
-{
-  std::vector<SdfPath> paths = CollectMatchingSpecPaths(layer, p.pathMatcher.get());
-  std::unordered_map<std::string, std::vector<std::string>> pathsByFieldString;
-  std::unordered_set<std::string> allFieldStrings;
-  sort(paths.begin(), paths.end());
-  for (auto const &path : paths)
-  {
-    std::vector<TfToken> fields = CollectMatchingFields(layer, path, p.fieldMatcher.get());
-    if (fields.empty())
-      continue;
-    for (auto const &field : fields)
-    {
-      std::string fieldString;
-      if (p.showValues)
-      {
-        fieldString = TfStringPrintf(
-          "%s: %s", field.GetText(), TfStringify(GetReportFieldValue(layer, path, field, p)).c_str());
-      }
-      else
-      {
-        fieldString = TfStringPrintf("%s", field.GetText());
-      }
-      pathsByFieldString[fieldString].push_back(TfStringPrintf("  <%s>", path.GetText()));
-      allFieldStrings.insert(fieldString);
-    }
-  }
-  std::vector<std::string> fsvec(allFieldStrings.begin(), allFieldStrings.end());
-  sort(fsvec.begin(), fsvec.end());
-
-  for (auto const &fs : fsvec)
-  {
-    report.push_back(fs);
-    auto const &ps = pathsByFieldString[fs];
-    report.insert(report.end(), ps.begin(), ps.end());
-  }
-}
-
-// Compute and return the summary statistics for the given layer.
-SummaryStats GetSummaryStats(SdfLayerHandle const &layer)
-{
-  SummaryStats stats;
-  layer->Traverse(SdfPath::AbsoluteRootPath(), [&stats, &layer](SdfPath const &path) {
-    ++stats.numSpecs;
-    stats.numPrimSpecs += path.IsPrimPath();
-    stats.numPropertySpecs += path.IsPropertyPath();
-    stats.numFields += layer->ListFields(path).size();
-  });
-  stats.numSampleTimes = layer->ListAllTimeSamples().size();
-  return stats;
-}
-
-// Utility function to filter a layer by the params p.  This copies fields,
-// replacing large arrays and timeSamples with human readable values if
-// appropriate, and skipping paths and fields that do not match the matchers in
-// p.
-void FilterLayer(SdfLayerHandle const &inLayer, SdfLayerHandle const &outLayer, ReportParams const &p)
-{
-  namespace ph = std::placeholders;
-  auto copyValueFn = [&p](SdfSpecType specType,
-                          TfToken const &field,
-                          SdfLayerHandle const &srcLayer,
-                          const SdfPath &srcPath,
-                          bool fieldInSrc,
-                          const SdfLayerHandle &dstLayer,
-                          const SdfPath &dstPath,
-                          bool fieldInDst,
-                          boost::optional<VtValue> *valueToCopy) {
-    if (!p.fieldMatcher || p.fieldMatcher->Match(field.GetString()))
-    {
-      *valueToCopy = GetReportFieldValue(srcLayer, srcPath, field, p);
-      return !(*valueToCopy)->IsEmpty();
-    }
-    else
-    {
-      return false;
-    }
-  };
-
-  vector<SdfPath> paths = CollectMatchingSpecPaths(inLayer, p.pathMatcher.get());
-  for (auto const &path : paths)
-  {
-    if (path == SdfPath::AbsoluteRootPath() || path.IsPrimOrPrimVariantSelectionPath())
-    {
-      SdfPrimSpecHandle outPrim = SdfCreatePrimInLayer(outLayer, path);
-      SdfCopySpec(inLayer,
-                  path,
-                  outLayer,
-                  path,
-                  copyValueFn,
-                  std::bind(SdfShouldCopyChildren,
-                            std::cref(path),
-                            std::cref(path),
-                            ph::_1,
-                            ph::_2,
-                            ph::_3,
-                            ph::_4,
-                            ph::_5,
-                            ph::_6,
-                            ph::_7,
-                            ph::_8,
-                            ph::_9));
-    }
-  }
-}
-
-// Attempt to validate a layer by reading all field values from all paths.
-void Validate(SdfLayerHandle const &layer, ReportParams const &p, string &report)
-{
-  TfErrorMark m;
-  TF_DESCRIBE_SCOPE("Collecting paths in @%s@", layer->GetIdentifier().c_str());
-  vector<SdfPath> paths;
-  layer->Traverse(SdfPath::AbsoluteRootPath(), [&paths, layer](SdfPath const &path) {
-    TF_DESCRIBE_SCOPE("Collecting path <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
-    paths.push_back(path);
-  });
-  sort(paths.begin(), paths.end());
-  for (auto const &path : paths)
-  {
-    TF_DESCRIBE_SCOPE("Collecting fields for <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
-    vector<TfToken> fields = layer->ListFields(path);
-    if (fields.empty())
-      continue;
-    for (auto const &field : fields)
-    {
-      VtValue value;
-      if (field == SdfFieldKeys->TimeSamples)
-      {
-        // Pull each sample value individually.
-        TF_DESCRIBE_SCOPE("Getting sample times for '%s' on <%s> in @%s@",
-                          field.GetText(),
-                          path.GetText(),
-                          layer->GetIdentifier().c_str());
-        auto times = layer->ListTimeSamplesForPath(path);
-
-        for (auto time : times)
+        // Check ranges.
+        for (auto const &range : p.timeRanges)
         {
-          TF_DESCRIBE_SCOPE(
-            "Getting sample value at time "
-            "%f for '%s' on <%s> in @%s@",
-            time,
-            field.GetText(),
-            path.GetText(),
-            layer->GetIdentifier().c_str());
-          layer->QueryTimeSample(path, time, &value);
+          if (range.first <= time && time <= range.second)
+            selectedTimes.push_back(time);
         }
       }
-      else
+    }
+
+    if (selectedTimes.empty())
+      return VtValue();
+
+    SdfTimeSampleMap result;
+
+    VtValue val;
+    if (p.outputType != OutputLayer && p.timeSamplesSizeLimit >= 0 &&
+        selectedTimes.size() > static_cast<uint64_t>(p.timeSamplesSizeLimit))
+    {
+      return VtValue(SdfHumanReadableValue(TfStringPrintf("%zu samples in [%s, %s]",
+                                                          times.size(),
+                                                          TfStringify(*times.begin()).c_str(),
+                                                          TfStringify(*(--times.end())).c_str())));
+    } else
+    {
+      for (auto time : selectedTimes)
       {
-        // Just pull value.
-        TF_DESCRIBE_SCOPE("Getting value for '%s' on <%s> in @%s@",
-                          field.GetText(),
-                          path.GetText(),
-                          layer->GetIdentifier().c_str());
-        layer->HasField(path, field, &value);
+        TF_VERIFY(layer->QueryTimeSample(path, time, &val));
+        result[time] = GetReportValue(val, p);
+      }
+    }
+    return VtValue(result);
+  }
+
+  // Get a suitable value for the report specified by p.  In particular, for
+  // non-layer output, make a value that shows only array type & size for large
+  // arrays or number of time samples and time range for large timeSamples.
+  VtValue GetReportFieldValue(SdfLayerHandle const &layer,
+                              SdfPath const &path,
+                              TfToken const &field,
+                              ReportParams const &p)
+  {
+    VtValue result;
+    // Handle timeSamples specially:
+    if (field == SdfFieldKeys->TimeSamples)
+    {
+      result = GetReportTimeSamplesValue(layer, path, p);
+    } else
+    {
+      TF_VERIFY(layer->HasField(path, field, &result));
+      result = GetReportValue(result, p);
+    }
+    return result;
+  }
+
+  // Produce the 'outline' output report by path.
+  void GetReportByPath(SdfLayerHandle const &layer, ReportParams const &p, std::vector<std::string> &report)
+  {
+    std::vector<SdfPath> paths = CollectMatchingSpecPaths(layer, p.pathMatcher.get());
+    sort(paths.begin(), paths.end());
+    for (auto const &path : paths)
+    {
+      SdfSpecType specType = layer->GetSpecType(path);
+      report.push_back(TfStringPrintf("<%s> : %s", path.GetText(), TfStringify(specType).c_str()));
+
+      std::vector<TfToken> fields = CollectMatchingFields(layer, path, p.fieldMatcher.get());
+      if (fields.empty())
+        continue;
+      for (auto const &field : fields)
+      {
+        if (p.showValues)
+        {
+          report.push_back(TfStringPrintf("  %s: %s",
+                                          field.GetText(),
+                                          TfStringify(GetReportFieldValue(layer, path, field, p)).c_str()));
+        } else
+        {
+          report.push_back(TfStringPrintf("  %s", field.GetText()));
+        }
       }
     }
   }
-  report += m.IsClean() ? "OK" : "ERROR";
-}
 
-// Output helper struct.  Manages fclosing the file handle, and appending output
-// for multi-layer inputs.
-struct OutputFile
-{
-  struct Closer
+  // Produce the 'outline' output report by field.
+  void GetReportByField(SdfLayerHandle const &layer, ReportParams const &p, std::vector<std::string> &report)
   {
-    void operator()(FILE *f) const
+    std::vector<SdfPath> paths = CollectMatchingSpecPaths(layer, p.pathMatcher.get());
+    std::unordered_map<std::string, std::vector<std::string>> pathsByFieldString;
+    std::unordered_set<std::string> allFieldStrings;
+    sort(paths.begin(), paths.end());
+    for (auto const &path : paths)
     {
-      if (f && f != stdout)
+      std::vector<TfToken> fields = CollectMatchingFields(layer, path, p.fieldMatcher.get());
+      if (fields.empty())
+        continue;
+      for (auto const &field : fields)
       {
-        fclose(f);
+        std::string fieldString;
+        if (p.showValues)
+        {
+          fieldString = TfStringPrintf("%s: %s",
+                                       field.GetText(),
+                                       TfStringify(GetReportFieldValue(layer, path, field, p)).c_str());
+        } else
+        {
+          fieldString = TfStringPrintf("%s", field.GetText());
+        }
+        pathsByFieldString[fieldString].push_back(TfStringPrintf("  <%s>", path.GetText()));
+        allFieldStrings.insert(fieldString);
       }
     }
+    std::vector<std::string> fsvec(allFieldStrings.begin(), allFieldStrings.end());
+    sort(fsvec.begin(), fsvec.end());
+
+    for (auto const &fs : fsvec)
+    {
+      report.push_back(fs);
+      auto const &ps = pathsByFieldString[fs];
+      report.insert(report.end(), ps.begin(), ps.end());
+    }
+  }
+
+  // Compute and return the summary statistics for the given layer.
+  SummaryStats GetSummaryStats(SdfLayerHandle const &layer)
+  {
+    SummaryStats stats;
+    layer->Traverse(SdfPath::AbsoluteRootPath(), [&stats, &layer](SdfPath const &path) {
+      ++stats.numSpecs;
+      stats.numPrimSpecs += path.IsPrimPath();
+      stats.numPropertySpecs += path.IsPropertyPath();
+      stats.numFields += layer->ListFields(path).size();
+    });
+    stats.numSampleTimes = layer->ListAllTimeSamples().size();
+    return stats;
+  }
+
+  // Utility function to filter a layer by the params p.  This copies fields,
+  // replacing large arrays and timeSamples with human readable values if
+  // appropriate, and skipping paths and fields that do not match the matchers in
+  // p.
+  void FilterLayer(SdfLayerHandle const &inLayer, SdfLayerHandle const &outLayer, ReportParams const &p)
+  {
+    namespace ph = std::placeholders;
+    auto copyValueFn = [&p](SdfSpecType specType,
+                            TfToken const &field,
+                            SdfLayerHandle const &srcLayer,
+                            const SdfPath &srcPath,
+                            bool fieldInSrc,
+                            const SdfLayerHandle &dstLayer,
+                            const SdfPath &dstPath,
+                            bool fieldInDst,
+                            boost::optional<VtValue> *valueToCopy) {
+      if (!p.fieldMatcher || p.fieldMatcher->Match(field.GetString()))
+      {
+        *valueToCopy = GetReportFieldValue(srcLayer, srcPath, field, p);
+        return !(*valueToCopy)->IsEmpty();
+      } else
+      {
+        return false;
+      }
+    };
+
+    vector<SdfPath> paths = CollectMatchingSpecPaths(inLayer, p.pathMatcher.get());
+    for (auto const &path : paths)
+    {
+      if (path == SdfPath::AbsoluteRootPath() || path.IsPrimOrPrimVariantSelectionPath())
+      {
+        SdfPrimSpecHandle outPrim = SdfCreatePrimInLayer(outLayer, path);
+        SdfCopySpec(inLayer,
+                    path,
+                    outLayer,
+                    path,
+                    copyValueFn,
+                    std::bind(SdfShouldCopyChildren,
+                              std::cref(path),
+                              std::cref(path),
+                              ph::_1,
+                              ph::_2,
+                              ph::_3,
+                              ph::_4,
+                              ph::_5,
+                              ph::_6,
+                              ph::_7,
+                              ph::_8,
+                              ph::_9));
+      }
+    }
+  }
+
+  // Attempt to validate a layer by reading all field values from all paths.
+  void Validate(SdfLayerHandle const &layer, ReportParams const &p, string &report)
+  {
+    TfErrorMark m;
+    TF_DESCRIBE_SCOPE("Collecting paths in @%s@", layer->GetIdentifier().c_str());
+    vector<SdfPath> paths;
+    layer->Traverse(SdfPath::AbsoluteRootPath(), [&paths, layer](SdfPath const &path) {
+      TF_DESCRIBE_SCOPE("Collecting path <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
+      paths.push_back(path);
+    });
+    sort(paths.begin(), paths.end());
+    for (auto const &path : paths)
+    {
+      TF_DESCRIBE_SCOPE("Collecting fields for <%s> in @%s@",
+                        path.GetText(),
+                        layer->GetIdentifier().c_str());
+      vector<TfToken> fields = layer->ListFields(path);
+      if (fields.empty())
+        continue;
+      for (auto const &field : fields)
+      {
+        VtValue value;
+        if (field == SdfFieldKeys->TimeSamples)
+        {
+          // Pull each sample value individually.
+          TF_DESCRIBE_SCOPE("Getting sample times for '%s' on <%s> in @%s@",
+                            field.GetText(),
+                            path.GetText(),
+                            layer->GetIdentifier().c_str());
+          auto times = layer->ListTimeSamplesForPath(path);
+
+          for (auto time : times)
+          {
+            TF_DESCRIBE_SCOPE(
+              "Getting sample value at time "
+              "%f for '%s' on <%s> in @%s@",
+              time,
+              field.GetText(),
+              path.GetText(),
+              layer->GetIdentifier().c_str());
+            layer->QueryTimeSample(path, time, &value);
+          }
+        } else
+        {
+          // Just pull value.
+          TF_DESCRIBE_SCOPE("Getting value for '%s' on <%s> in @%s@",
+                            field.GetText(),
+                            path.GetText(),
+                            layer->GetIdentifier().c_str());
+          layer->HasField(path, field, &value);
+        }
+      }
+    }
+    report += m.IsClean() ? "OK" : "ERROR";
+  }
+
+  // Output helper struct.  Manages fclosing the file handle, and appending output
+  // for multi-layer inputs.
+  struct OutputFile
+  {
+    struct Closer
+    {
+      void operator()(FILE *f) const
+      {
+        if (f && f != stdout)
+        {
+          fclose(f);
+        }
+      }
+    };
+    explicit OutputFile(ReportParams const &p)
+    {
+      if (!p.outputFile.empty())
+      {
+        if (p.outputType != OutputLayer)
+        {
+          _file.reset(fopen(p.outputFile.c_str(), "a"));
+        }
+      } else
+      {
+        _file.reset(stdout);
+      }
+    }
+    void Write(string const &text) const
+    {
+      fputs(text.c_str(), _file.get());
+    }
+    std::unique_ptr<FILE, Closer> _file;
   };
-  explicit OutputFile(ReportParams const &p)
+
+  // Top level processing function; dispatches to various output implementations.
+  void Process(SdfLayerHandle layer, ReportParams const &p)
   {
-    if (!p.outputFile.empty())
+    OutputFile output(p);
+    if (p.outputType == OutputValidity)
     {
-      if (p.outputType != OutputLayer)
+      std::string validateText;
+      Validate(layer, p, validateText);
+      output.Write(TfStringPrintf("@%s@ - %s\n", layer->GetIdentifier().c_str(), validateText.c_str()));
+    } else if (p.outputType == OutputSummary)
+    {
+      auto stats = GetSummaryStats(layer);
+      output.Write(
+        TfStringPrintf("@%s@\n"
+                       "  %zu specs, %zu prim specs, %zu property specs, %zu fields, "
+                       "%zu sample times\n",
+                       layer->GetIdentifier().c_str(),
+                       stats.numSpecs,
+                       stats.numPrimSpecs,
+                       stats.numPropertySpecs,
+                       stats.numFields,
+                       stats.numSampleTimes));
+    } else if (p.outputType == OutputOutline)
+    {
+      vector<string> report;
+      if (p.sortKey == SortByPath)
       {
-        _file.reset(fopen(p.outputFile.c_str(), "a"));
+        GetReportByPath(layer, p, report);
+      } else if (p.sortKey == SortByField)
+      {
+        GetReportByField(layer, p, report);
+      }
+      TfStringPrintf("@%s@\n", layer->GetIdentifier().c_str());
+      for (string const &line : report)
+      {
+        output.Write(line);
+        output.Write("\n");
+      }
+    } else if (p.outputType == OutputPseudoLayer || p.outputType == OutputLayer)
+    {
+      // Make the layer and copy into it, then export.
+      SdfLayerRefPtr outputLayer;
+      SdfFileFormatConstRefPtr fmt;
+      if (p.outputType == OutputPseudoLayer)
+      {
+        fmt = TfCreateRefPtr(
+          new SdfFilterPseudoFileFormat(TfStringPrintf("from @%s@", layer->GetIdentifier().c_str())));
+        outputLayer = SdfLayer::CreateAnonymous(".pseudosdf", fmt);
+      } else
+      {
+        SdfLayer::FileFormatArguments formatArgs;
+        if (!p.outputFormat.empty())
+        {
+          formatArgs["format"] = p.outputFormat;
+        }
+        outputLayer = !p.outputFile.empty() ?
+                        SdfLayer::CreateNew(p.outputFile, formatArgs) :
+                        SdfLayer::CreateAnonymous(
+                          p.outputFormat.empty() ? string() : TfStringPrintf(".%s", p.outputFormat.c_str()));
+      }
+
+      // Generate the layer content.
+      FilterLayer(layer, outputLayer, p);
+
+      // If this layer is anonymous, it means we're writing to stdout.
+      if (outputLayer->IsAnonymous())
+      {
+        string txt;
+        outputLayer->ExportToString(&txt);
+        output.Write(txt);
+      } else
+      {
+        outputLayer->Save();
       }
     }
-    else
-    {
-      _file.reset(stdout);
-    }
   }
-  void Write(string const &text) const
-  {
-    fputs(text.c_str(), _file.get());
-  }
-  std::unique_ptr<FILE, Closer> _file;
-};
-
-// Top level processing function; dispatches to various output implementations.
-void Process(SdfLayerHandle layer, ReportParams const &p)
-{
-  OutputFile output(p);
-  if (p.outputType == OutputValidity)
-  {
-    std::string validateText;
-    Validate(layer, p, validateText);
-    output.Write(TfStringPrintf("@%s@ - %s\n", layer->GetIdentifier().c_str(), validateText.c_str()));
-  }
-  else if (p.outputType == OutputSummary)
-  {
-    auto stats = GetSummaryStats(layer);
-    output.Write(
-      TfStringPrintf("@%s@\n"
-                     "  %zu specs, %zu prim specs, %zu property specs, %zu fields, "
-                     "%zu sample times\n",
-                     layer->GetIdentifier().c_str(),
-                     stats.numSpecs,
-                     stats.numPrimSpecs,
-                     stats.numPropertySpecs,
-                     stats.numFields,
-                     stats.numSampleTimes));
-  }
-  else if (p.outputType == OutputOutline)
-  {
-    vector<string> report;
-    if (p.sortKey == SortByPath)
-    {
-      GetReportByPath(layer, p, report);
-    }
-    else if (p.sortKey == SortByField)
-    {
-      GetReportByField(layer, p, report);
-    }
-    TfStringPrintf("@%s@\n", layer->GetIdentifier().c_str());
-    for (string const &line : report)
-    {
-      output.Write(line);
-      output.Write("\n");
-    }
-  }
-  else if (p.outputType == OutputPseudoLayer || p.outputType == OutputLayer)
-  {
-    // Make the layer and copy into it, then export.
-    SdfLayerRefPtr outputLayer;
-    SdfFileFormatConstRefPtr fmt;
-    if (p.outputType == OutputPseudoLayer)
-    {
-      fmt = TfCreateRefPtr(
-        new SdfFilterPseudoFileFormat(TfStringPrintf("from @%s@", layer->GetIdentifier().c_str())));
-      outputLayer = SdfLayer::CreateAnonymous(".pseudosdf", fmt);
-    }
-    else
-    {
-      SdfLayer::FileFormatArguments formatArgs;
-      if (!p.outputFormat.empty())
-      {
-        formatArgs["format"] = p.outputFormat;
-      }
-      outputLayer = !p.outputFile.empty() ?
-                      SdfLayer::CreateNew(p.outputFile, formatArgs) :
-                      SdfLayer::CreateAnonymous(
-                        p.outputFormat.empty() ? string() : TfStringPrintf(".%s", p.outputFormat.c_str()));
-    }
-
-    // Generate the layer content.
-    FilterLayer(layer, outputLayer, p);
-
-    // If this layer is anonymous, it means we're writing to stdout.
-    if (outputLayer->IsAnonymous())
-    {
-      string txt;
-      outputLayer->ExportToString(&txt);
-      output.Write(txt);
-    }
-    else
-    {
-      outputLayer->Save();
-    }
-  }
-}
 
 }  // namespace
 
@@ -759,39 +739,57 @@ int main(int argc, char const *argv[])
   bool noValues = false;
 
   po::options_description argOpts("Options");
-  argOpts.add_options()("help,h", "Show help message.")("path,p", po::value<string>(&pathRegex)->value_name("regex"),
-                                                        "Report only paths matching this regex.  For 'layer' and "
-                                                        "'pseudoLayer' output types, include all descendants of matching "
-                                                        "paths.")("field,f", po::value<string>(&fieldRegex)->value_name("regex"), "Report only fields matching this regex.")("time,t", po::value<vector<string>>(&timeSpecs)->multitoken()->value_name("n or ff..lf"), "Report only these times or time ranges for 'timeSamples' fields.")("timeTolerance", po::value<double>(&timeTolerance)->default_value(timeTolerance)->value_name("tol"),
-                                                                                                                                                                                                                                                                                                                                           "Report times that are close to those requested within this "
-                                                                                                                                                                                                                                                                                                                                           "relative tolerance.")("arraySizeLimit", po::value<int64_t>(&arraySizeLimit)->value_name("N"),
-                                                                                                                                                                                                                                                                                                                                                                  "Truncate arrays with more than this many elements.  If -1, do not "
-                                                                                                                                                                                                                                                                                                                                                                  "truncate arrays.  Default: 0 for 'outline' output, 8 for "
-                                                                                                                                                                                                                                                                                                                                                                  "'pseudoLayer' output, and -1 for 'layer' output.")("timeSamplesSizeLimit",
-                                                                                                                                                                                                                                                                                                                                                                                                                      po::value<int64_t>(&timeSamplesSizeLimit)->value_name("N"),
-                                                                                                                                                                                                                                                                                                                                                                                                                      "Truncate timeSamples with more than this many values.  If -1, do not "
-                                                                                                                                                                                                                                                                                                                                                                                                                      "truncate timeSamples.  Default: 0 for 'outline' output, 8 for "
-                                                                                                                                                                                                                                                                                                                                                                                                                      "'pseudoLayer' output, and -1 for 'layer' output.  Truncation "
-                                                                                                                                                                                                                                                                                                                                                                                                                      "performed after initial filtering by --time arguments.")("out,o",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                po::value<string>(&outputFile)->default_value(std::string())->value_name("outputFile"),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "Direct output to this file.  Use the "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "'outputFormat' for finer control over the underlying format for "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "output formats that are not uniquely determined by file extension.")("outputType",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      po::value<OutputType>(&outputType)->default_value(outputType)->value_name("validity|summary|outline|pseudoLayer|layer"),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "Specify output format; 'summary' reports overall statistics, "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "'outline' is a flat text report of paths and fields, "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "'pseudoLayer' is similar to the sdf file format but with truncated "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "array values and timeSamples for human readability, and 'layer' is "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "true layer output, with the format controlled by the 'outputFile' "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "and 'outputFormat' arguments.")("outputFormat",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       po::value<string>(&outputFormat)->value_name("format"),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "Supply this as the 'format' entry of SdfFileFormatArguments for "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "'layer' output to a file.  Requires both 'layer' output and a "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "specified 'outputFile'.")("sortBy", po::value<SortKey>(&sortKey)->default_value(sortKey)->value_name("path|field"),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "Group 'outline' output by either path or field.  Ignored for other "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "output types.")("noValues", po::bool_switch(&noValues),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "Do not report field values for 'outline' output.  Ignored for other "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "output types.");
+  argOpts.add_options()("help,h", "Show help message.")(
+    "path,p",
+    po::value<string>(&pathRegex)->value_name("regex"),
+    "Report only paths matching this regex.  For 'layer' and "
+    "'pseudoLayer' output types, include all descendants of matching "
+    "paths.")("field,f",
+              po::value<string>(&fieldRegex)->value_name("regex"),
+              "Report only fields matching this regex.")(
+    "time,t",
+    po::value<vector<string>>(&timeSpecs)->multitoken()->value_name("n or ff..lf"),
+    "Report only these times or time ranges for 'timeSamples' fields.")(
+    "timeTolerance",
+    po::value<double>(&timeTolerance)->default_value(timeTolerance)->value_name("tol"),
+    "Report times that are close to those requested within this "
+    "relative tolerance.")("arraySizeLimit",
+                           po::value<int64_t>(&arraySizeLimit)->value_name("N"),
+                           "Truncate arrays with more than this many elements.  If -1, do not "
+                           "truncate arrays.  Default: 0 for 'outline' output, 8 for "
+                           "'pseudoLayer' output, and -1 for 'layer' output.")(
+    "timeSamplesSizeLimit",
+    po::value<int64_t>(&timeSamplesSizeLimit)->value_name("N"),
+    "Truncate timeSamples with more than this many values.  If -1, do not "
+    "truncate timeSamples.  Default: 0 for 'outline' output, 8 for "
+    "'pseudoLayer' output, and -1 for 'layer' output.  Truncation "
+    "performed after initial filtering by --time arguments.")(
+    "out,o",
+    po::value<string>(&outputFile)->default_value(std::string())->value_name("outputFile"),
+    "Direct output to this file.  Use the "
+    "'outputFormat' for finer control over the underlying format for "
+    "output formats that are not uniquely determined by file extension.")(
+    "outputType",
+    po::value<OutputType>(&outputType)
+      ->default_value(outputType)
+      ->value_name("validity|summary|outline|pseudoLayer|layer"),
+    "Specify output format; 'summary' reports overall statistics, "
+    "'outline' is a flat text report of paths and fields, "
+    "'pseudoLayer' is similar to the sdf file format but with truncated "
+    "array values and timeSamples for human readability, and 'layer' is "
+    "true layer output, with the format controlled by the 'outputFile' "
+    "and 'outputFormat' arguments.")("outputFormat",
+                                     po::value<string>(&outputFormat)->value_name("format"),
+                                     "Supply this as the 'format' entry of SdfFileFormatArguments for "
+                                     "'layer' output to a file.  Requires both 'layer' output and a "
+                                     "specified 'outputFile'.")(
+    "sortBy",
+    po::value<SortKey>(&sortKey)->default_value(sortKey)->value_name("path|field"),
+    "Group 'outline' output by either path or field.  Ignored for other "
+    "output types.")("noValues",
+                     po::bool_switch(&noValues),
+                     "Do not report field values for 'outline' output.  Ignored for other "
+                     "output types.");
 
   po::options_description inputFile("Input");
   inputFile.add_options()("input-file", po::value<vector<string>>(&inputFiles), "input files");
@@ -886,11 +884,13 @@ int main(int argc, char const *argv[])
   // Set defaults for arraySizeLimit and timeSamplesSizeLimit.
   if (arraySizeLimit == -2 /* unset */)
   {
-    arraySizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 : 0;
+    arraySizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 :
+                                                                                       0;
   }
   if (timeSamplesSizeLimit == -2 /* unset */)
   {
-    timeSamplesSizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 : 0;
+    timeSamplesSizeLimit = outputType == OutputPseudoLayer ? 8 : outputType == OutputLayer ? -1 :
+                                                                                             0;
   }
 
   ReportParams params;
@@ -917,8 +917,7 @@ int main(int argc, char const *argv[])
     if (!layer)
     {
       Err("failed to open layer <%s>", file.c_str());
-    }
-    else
+    } else
     {
       Process(layer, params);
     }

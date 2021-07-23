@@ -60,8 +60,7 @@ UsdStagePopulationMask UsdStagePopulationMask::Union(UsdStagePopulationMask cons
         ++rcur;
       } while (rcur != rend && rcur->HasPrefix(*lcur));
       ++lcur;
-    }
-    else if (lcur->HasPrefix(*rcur))
+    } else if (lcur->HasPrefix(*rcur))
     {
       result._paths.push_back(*rcur);
       do
@@ -69,14 +68,12 @@ UsdStagePopulationMask UsdStagePopulationMask::Union(UsdStagePopulationMask cons
         ++lcur;
       } while (lcur != lend && lcur->HasPrefix(*rcur));
       ++rcur;
-    }
-    else
+    } else
     {
       if (*lcur < *rcur)
       {
         result._paths.push_back(*lcur++);
-      }
-      else
+      } else
       {
         result._paths.push_back(*rcur++);
       }
@@ -133,22 +130,19 @@ UsdStagePopulationMask UsdStagePopulationMask::Intersection(UsdStagePopulationMa
         result._paths.push_back(*rcur++);
       } while (rcur != rend && rcur->HasPrefix(*lcur));
       ++lcur;
-    }
-    else if (lcur->HasPrefix(*rcur))
+    } else if (lcur->HasPrefix(*rcur))
     {
       do
       {
         result._paths.push_back(*lcur++);
       } while (lcur != lend && lcur->HasPrefix(*rcur));
       ++rcur;
-    }
-    else
+    } else
     {
       if (*lcur < *rcur)
       {
         ++lcur;
-      }
-      else
+      } else
       {
         ++rcur;
       }
@@ -186,24 +180,24 @@ bool UsdStagePopulationMask::Includes(SdfPath const &path) const
 
 namespace
 {
-// Return pair where the first element is true if the mask represented by
-// paths includes the subtree rooted at path, false otherwise. The second
-// element is the result of calling lower_bound on paths with path.
-std::pair<bool, std::vector<SdfPath>::const_iterator> _IncludesSubtree(std::vector<SdfPath> const &paths,
-                                                                       SdfPath const &path)
-{
-  if (paths.empty())
-    return {false, paths.end()};
+  // Return pair where the first element is true if the mask represented by
+  // paths includes the subtree rooted at path, false otherwise. The second
+  // element is the result of calling lower_bound on paths with path.
+  std::pair<bool, std::vector<SdfPath>::const_iterator> _IncludesSubtree(std::vector<SdfPath> const &paths,
+                                                                         SdfPath const &path)
+  {
+    if (paths.empty())
+      return {false, paths.end()};
 
-  // If this path is in paths, or if an element in paths prefixes path, then
-  // the subtree rooted at path is included.
-  auto iter = lower_bound(paths.begin(), paths.end(), path);
+    // If this path is in paths, or if an element in paths prefixes path, then
+    // the subtree rooted at path is included.
+    auto iter = lower_bound(paths.begin(), paths.end(), path);
 
-  SdfPath const *prev = iter == paths.begin() ? nullptr : &iter[-1];
-  SdfPath const *cur = iter == paths.end() ? nullptr : &iter[0];
+    SdfPath const *prev = iter == paths.begin() ? nullptr : &iter[-1];
+    SdfPath const *cur = iter == paths.end() ? nullptr : &iter[0];
 
-  return {(cur && *cur == path) || (prev && path.HasPrefix(*prev)), iter};
-}
+    return {(cur && *cur == path) || (prev && path.HasPrefix(*prev)), iter};
+  }
 }  // namespace
 
 bool UsdStagePopulationMask::IncludesSubtree(SdfPath const &path) const
@@ -213,19 +207,19 @@ bool UsdStagePopulationMask::IncludesSubtree(SdfPath const &path) const
 
 namespace
 {
-// Return the name of the child prim that appears in \p fullPath
-// immediately after the prefix \p path.
-TfToken _GetChildNameBeneathPath(SdfPath const &fullPath, SdfPath const &path)
-{
-  for (SdfPath p = fullPath; !p.IsEmpty(); p = p.GetParentPath())
+  // Return the name of the child prim that appears in \p fullPath
+  // immediately after the prefix \p path.
+  TfToken _GetChildNameBeneathPath(SdfPath const &fullPath, SdfPath const &path)
   {
-    if (p.GetParentPath() == path)
+    for (SdfPath p = fullPath; !p.IsEmpty(); p = p.GetParentPath())
     {
-      return p.GetNameToken();
+      if (p.GetParentPath() == path)
+      {
+        return p.GetNameToken();
+      }
     }
+    return TfToken();
   }
-  return TfToken();
-}
 }  // namespace
 
 bool UsdStagePopulationMask::GetIncludedChildNames(SdfPath const &path, std::vector<TfToken> *names) const

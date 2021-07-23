@@ -75,23 +75,22 @@ void HdPh_DrawBatch::SetEnableTinyPrimCulling(bool tinyPrimCulling)
 
 namespace
 {
-inline bool isAggregated(HdBufferArrayRangeSharedPtr const &rangeA,
-                         HdBufferArrayRangeSharedPtr const &rangeB)
-{
-  if (rangeA)
+  inline bool isAggregated(HdBufferArrayRangeSharedPtr const &rangeA,
+                           HdBufferArrayRangeSharedPtr const &rangeB)
   {
-    return rangeA->IsAggregatedWith(rangeB);
-  }
-  else
-  {
-    if (!rangeB)
+    if (rangeA)
     {
-      // can batch together if both ranges are empty.
-      return true;
+      return rangeA->IsAggregatedWith(rangeB);
+    } else
+    {
+      if (!rangeB)
+      {
+        // can batch together if both ranges are empty.
+        return true;
+      }
     }
+    return false;
   }
-  return false;
-}
 }  // namespace
 
 bool HdPh_DrawBatch::Append(HdPhDrawItemInstance *drawItemInstance)
@@ -115,8 +114,7 @@ bool HdPh_DrawBatch::Append(HdPhDrawItemInstance *drawItemInstance)
     drawItemInstance->SetBatch(this);
     _drawItemInstances.push_back(drawItemInstance);
     return true;
-  }
-  else
+  } else
   {
     return false;
   }
@@ -303,8 +301,8 @@ bool HdPh_DrawBatch::_DrawingProgram::CompileShader(HdPhDrawItem const *drawItem
 
   // let resourcebinder resolve bindings and populate metadata
   // which is owned by codegen.
-  _resourceBinder.ResolveBindings(
-    drawItem, shaders, codeGen.GetMetaData(), indirect, instanceDraw, customBindings);
+  _resourceBinder
+    .ResolveBindings(drawItem, shaders, codeGen.GetMetaData(), indirect, instanceDraw, customBindings);
 
   HdPhGLSLProgram::ID hash = codeGen.ComputeHash();
 
@@ -327,8 +325,7 @@ bool HdPh_DrawBatch::_DrawingProgram::CompileShader(HdPhDrawItem const *drawItem
     if (_glslProgram)
     {
       _resourceBinder.IntrospectBindings(_glslProgram->GetProgram());
-    }
-    else
+    } else
     {
       // Failed to compile and link a valid glsl program.
       return false;

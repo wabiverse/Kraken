@@ -261,8 +261,7 @@ struct Tf_TokenRegistry
           ++rep->_refCount;
       }
       return _RepPtrAndBits(rep, isCounted);
-    }
-    else
+    } else
     {
       // No entry present, add a new entry.
       TfAutoMallocTag noname("TfToken");

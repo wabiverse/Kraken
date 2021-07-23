@@ -160,8 +160,7 @@ size_t HdBasisCurvesTopology::CalculateNeededNumberOfVaryingControlPoints() cons
   if (GetCurveBasis() == HdTokens->bezier)
   {
     vStep = 3;
-  }
-  else
+  } else
   {
     vStep = 1;
   }
@@ -184,8 +183,7 @@ size_t HdBasisCurvesTopology::CalculateNeededNumberOfVaryingControlPoints() cons
     if (wrap)
     {
       numSegs = *itCounts / vStep;
-    }
-    else
+    } else
     {
       numSegs = ((*itCounts - 4) / vStep) + 1;
     }

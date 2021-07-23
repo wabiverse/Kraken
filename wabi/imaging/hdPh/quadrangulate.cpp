@@ -53,56 +53,56 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-enum
-{
-  BufferBinding_Uniforms,
-  BufferBinding_Primvar,
-  BufferBinding_Quadinfo,
-};
-
-HgiResourceBindingsSharedPtr _CreateResourceBindings(Hgi *hgi,
-                                                     HgiBufferHandle const &primvar,
-                                                     HgiBufferHandle const &quadrangulateTable)
-{
-  // Begin the resource set
-  HgiResourceBindingsDesc resourceDesc;
-  resourceDesc.debugName = "Quadrangulate";
-
-  if (primvar)
+  enum
   {
-    HgiBufferBindDesc bufBind0;
-    bufBind0.bindingIndex = BufferBinding_Primvar;
-    bufBind0.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind0.stageUsage = HgiShaderStageCompute;
-    bufBind0.offsets.push_back(0);
-    bufBind0.buffers.push_back(primvar);
-    resourceDesc.buffers.push_back(std::move(bufBind0));
+    BufferBinding_Uniforms,
+    BufferBinding_Primvar,
+    BufferBinding_Quadinfo,
+  };
+
+  HgiResourceBindingsSharedPtr _CreateResourceBindings(Hgi *hgi,
+                                                       HgiBufferHandle const &primvar,
+                                                       HgiBufferHandle const &quadrangulateTable)
+  {
+    // Begin the resource set
+    HgiResourceBindingsDesc resourceDesc;
+    resourceDesc.debugName = "Quadrangulate";
+
+    if (primvar)
+    {
+      HgiBufferBindDesc bufBind0;
+      bufBind0.bindingIndex = BufferBinding_Primvar;
+      bufBind0.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind0.stageUsage = HgiShaderStageCompute;
+      bufBind0.offsets.push_back(0);
+      bufBind0.buffers.push_back(primvar);
+      resourceDesc.buffers.push_back(std::move(bufBind0));
+    }
+
+    if (quadrangulateTable)
+    {
+      HgiBufferBindDesc bufBind1;
+      bufBind1.bindingIndex = BufferBinding_Quadinfo;
+      bufBind1.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind1.stageUsage = HgiShaderStageCompute;
+      bufBind1.offsets.push_back(0);
+      bufBind1.buffers.push_back(quadrangulateTable);
+      resourceDesc.buffers.push_back(std::move(bufBind1));
+    }
+
+    return std::make_shared<HgiResourceBindingsHandle>(hgi->CreateResourceBindings(resourceDesc));
   }
 
-  if (quadrangulateTable)
+  HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
+                                              uint32_t constantValuesSize,
+                                              HgiShaderProgramHandle const &program)
   {
-    HgiBufferBindDesc bufBind1;
-    bufBind1.bindingIndex = BufferBinding_Quadinfo;
-    bufBind1.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind1.stageUsage = HgiShaderStageCompute;
-    bufBind1.offsets.push_back(0);
-    bufBind1.buffers.push_back(quadrangulateTable);
-    resourceDesc.buffers.push_back(std::move(bufBind1));
+    HgiComputePipelineDesc desc;
+    desc.debugName = "Quadrangulate";
+    desc.shaderProgram = program;
+    desc.shaderConstantsDesc.byteSize = constantValuesSize;
+    return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
   }
-
-  return std::make_shared<HgiResourceBindingsHandle>(hgi->CreateResourceBindings(resourceDesc));
-}
-
-HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
-                                            uint32_t constantValuesSize,
-                                            HgiShaderProgramHandle const &program)
-{
-  HgiComputePipelineDesc desc;
-  desc.debugName = "Quadrangulate";
-  desc.shaderProgram = program;
-  desc.shaderConstantsDesc.byteSize = constantValuesSize;
-  return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
-}
 
 }  // Anonymous namespace
 
@@ -266,8 +266,7 @@ bool HdPh_QuadrangulateTableComputation::Resolve()
     HdBufferSourceSharedPtr table = std::make_shared<HdVtBufferSource>(HdTokens->quadInfo, VtValue(array));
 
     _SetResult(table);
-  }
-  else
+  } else
   {
     _topology->ClearQuadrangulateTableRange();
   }
@@ -334,14 +333,16 @@ bool HdPh_QuadrangulateComputation::Resolve()
 
   VtValue result;
   HdMeshUtil meshUtil(_topology, _id);
-  if (meshUtil.ComputeQuadrangulatedPrimvar(
-        quadInfo, _source->GetData(), _source->GetNumElements(), _source->GetTupleType().type, &result))
+  if (meshUtil.ComputeQuadrangulatedPrimvar(quadInfo,
+                                            _source->GetData(),
+                                            _source->GetNumElements(),
+                                            _source->GetTupleType().type,
+                                            &result))
   {
     HD_PERF_COUNTER_ADD(HdPerfTokens->quadrangulatedVerts, quadInfo->numAdditionalPoints);
 
     _SetResult(std::make_shared<HdVtBufferSource>(_source->GetName(), result));
-  }
-  else
+  } else
   {
     _SetResult(_source);
   }
@@ -405,12 +406,13 @@ bool HdPh_QuadrangulateFaceVaryingComputation::Resolve()
 
   VtValue result;
   HdMeshUtil meshUtil(_topology, _id);
-  if (meshUtil.ComputeQuadrangulatedFaceVaryingPrimvar(
-        _source->GetData(), _source->GetNumElements(), _source->GetTupleType().type, &result))
+  if (meshUtil.ComputeQuadrangulatedFaceVaryingPrimvar(_source->GetData(),
+                                                       _source->GetNumElements(),
+                                                       _source->GetTupleType().type,
+                                                       &result))
   {
     _SetResult(std::make_shared<HdVtBufferSource>(_source->GetName(), result));
-  }
-  else
+  } else
   {
     _SetResult(_source);
   }
@@ -492,14 +494,15 @@ void HdPh_QuadrangulateComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
 
   HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
   HdPhGLSLProgramSharedPtr computeProgram = HdPhGLSLProgram::GetComputeProgram(
-    shaderToken, hdPhResourceRegistry, [&](HgiShaderFunctionDesc &computeDesc) {
+    shaderToken,
+    hdPhResourceRegistry,
+    [&](HgiShaderFunctionDesc &computeDesc) {
       computeDesc.debugName = shaderToken.GetString();
       computeDesc.shaderStage = HgiShaderStageCompute;
       if (shaderToken == HdPhGLSLProgramTokens->quadrangulateFloat)
       {
         HgiShaderFunctionAddBuffer(&computeDesc, "primvar", HdPhTokens->_float);
-      }
-      else
+      } else
       {
         HgiShaderFunctionAddBuffer(&computeDesc, "primvar", HdPhTokens->_double);
       }
@@ -519,8 +522,10 @@ void HdPh_QuadrangulateComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
       {
         HgiShaderFunctionAddConstantParam(&computeDesc, param, HdPhTokens->_int);
       }
-      HgiShaderFunctionAddStageInput(
-        &computeDesc, "hd_GlobalInvocationID", "uvec3", HgiShaderKeywordTokens->hdGlobalInvocationID);
+      HgiShaderFunctionAddStageInput(&computeDesc,
+                                     "hd_GlobalInvocationID",
+                                     "uvec3",
+                                     HgiShaderKeywordTokens->hdGlobalInvocationID);
     });
   if (!computeProgram)
     return;
@@ -573,8 +578,9 @@ void HdPh_QuadrangulateComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
     hdPhResourceRegistry->RegisterResourceBindings(rbHash);
   if (resourceBindingsInstance.IsFirstInstance())
   {
-    HgiResourceBindingsSharedPtr rb = _CreateResourceBindings(
-      hgi, primvar->GetHandle(), quadrangulateTable->GetHandle());
+    HgiResourceBindingsSharedPtr rb = _CreateResourceBindings(hgi,
+                                                              primvar->GetHandle(),
+                                                              quadrangulateTable->GetHandle());
     resourceBindingsInstance.SetValue(rb);
   }
 

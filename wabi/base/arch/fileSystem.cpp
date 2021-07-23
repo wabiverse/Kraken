@@ -73,10 +73,10 @@ using std::string;
 #if defined(ARCH_OS_WINDOWS)
 namespace
 {
-static inline HANDLE _FileToWinHANDLE(FILE *file)
-{
-  return reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(file)));
-}
+  static inline HANDLE _FileToWinHANDLE(FILE *file)
+  {
+    return reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(file)));
+  }
 }  // namespace
 #endif  // ARCH_OS_WINDOWS
 
@@ -144,172 +144,170 @@ double ArchGetModificationTime(const ArchStatType &st)
 namespace
 {  // Helpers for ArchNormPath.
 
-enum TokenType
-{
-  Dot,
-  DotDot,
-  Elem
-};
-
-typedef pair<string::const_iterator, string::const_iterator> Token;
-typedef pair<string::reverse_iterator, string::reverse_iterator> RToken;
-
-template<class Iter>
-inline pair<Iter, Iter> _NextToken(Iter i, Iter end)
-{
-  pair<Iter, Iter> t;
-  for (t.first = i; t.first != end && *t.first == '/'; ++t.first)
+  enum TokenType
   {
-  }
-  for (t.second = t.first; t.second != end && *t.second != '/'; ++t.second)
+    Dot,
+    DotDot,
+    Elem
+  };
+
+  typedef pair<string::const_iterator, string::const_iterator> Token;
+  typedef pair<string::reverse_iterator, string::reverse_iterator> RToken;
+
+  template<class Iter>
+  inline pair<Iter, Iter> _NextToken(Iter i, Iter end)
   {
-  }
-  return t;
-}
-
-template<class Iter>
-inline TokenType _GetTokenType(pair<Iter, Iter> t)
-{
-  size_t len = distance(t.first, t.second);
-  if (len == 1 && t.first[0] == '.')
-    return Dot;
-  if (len == 2 && t.first[0] == '.' && t.first[1] == '.')
-    return DotDot;
-  return Elem;
-}
-
-string _NormPath(string const &inPath)
-{
-  // We take one pass through the string, transforming it into a normalized
-  // path in-place.  This works since the normalized path never grows, except
-  // in the trivial case of '' -> '.'.  In all other cases, every
-  // transformation we make either shrinks the string or maintains its size.
-  //
-  // We track a current 'write' iterator, indicating the end of the normalized
-  // path we've built so far and a current token 't', the next slash-delimited
-  // path element we will process.  For example, let's walk through the steps
-  // we take to normalize the input '/foo/../bar' to produce '/bar'.  To
-  // start, the state looks like the following, with the write iterator past
-  // any leading slashes, and 't' at the first path token.
-  //
-  // /foo/../bar
-  //  w            <------ 'write' iterator
-  //  [  ]         <------ next token 't'
-  //
-  // We look at the token 't' to determine its type: one of DotDot, Dot, or
-  // Elem.  In this case, it's a regular path Elem 'foo' so we simply copy it
-  // to the 'write' iterator and advance 't' to the next token.  Then the
-  // state looks like:
-  //
-  // /foo/../bar
-  //      w
-  //      [ ]
-  //
-  // Now 't' is a DotDot token '..', so we remove the last path element in the
-  // normalized result by scanning backwards from 'w' resetting 'w' to that
-  // location to effectively remove the element, then advance 't' to the next
-  // token.  Now the state looks like:
-  //
-  // /foo/../bar
-  //  w      [  ]
-  //
-  // The final token is the regular path Elem 'bar' so we copy it and trim the
-  // string to produce the final result '/bar'.
-  //
-
-  // This code is fairly optimized for libstdc++'s copy-on-write string.  It
-  // takes a copy of 'inPath' to start (refcount bump) but it avoids doing any
-  // mutating operation on 'path' until it actually has to.  Doing a mutating
-  // operation (even grabbing a non-const iterator) will pay for the malloc
-  // and deep copy so we want to avoid that in the common case where the input
-  // path is already normalized.
-
-  string path(inPath);
-
-  // Find the first path token.
-  Token t = _NextToken(inPath.begin(), inPath.end());
-
-  // Allow zero, one, or two leading slashes, per POSIX.  Three or more get
-  // collapsed to one.
-  const size_t numLeadingSlashes = distance(inPath.begin(), t.first);
-  size_t writeIdx = numLeadingSlashes >= 3 ? 1 : numLeadingSlashes;
-
-  // Save a reverse iterator at where we start the output, we'll use this when
-  // scanning backward to handle DotDot tokens.
-  size_t firstWriteIdx = writeIdx;
-
-  // Now walk through the string, copying tokens, looking for slashes and dots
-  // to handle.
-  for (; t.first != inPath.end(); t = _NextToken(t.second, inPath.end()))
-  {
-    switch (_GetTokenType(t))
+    pair<Iter, Iter> t;
+    for (t.first = i; t.first != end && *t.first == '/'; ++t.first)
     {
-      case Elem:
-        // Copy the elem.  We avoid mutating 'path' if we've made no changes
-        // to the output yet, which is true if the write head is in the same
-        // place in the output as it is in the input.
-        if (inPath.begin() + writeIdx == t.first)
-        {
-          writeIdx += distance(t.first, t.second);
-          t.first = t.second;
-          if (writeIdx != path.size())
-            ++writeIdx;
-        }
-        else
-        {
-          while (t.first != t.second)
-            path[writeIdx++] = *t.first++;
-          if (writeIdx != path.size())
-            path[writeIdx++] = '/';
-        }
-        break;
-      case Dot:
-        // Do nothing, Dots are simply ignored.
-        break;
-      case DotDot: {
-        // Here we are very likely to be modifying the string, so we use
-        // non-const iterators and mutate.
-        string::reverse_iterator rstart(path.begin() + firstWriteIdx), rwrite(path.begin() + writeIdx);
-        // Find the last token of the output by finding the next token in
-        // reverse.
-        RToken backToken = _NextToken(rwrite, rstart);
-        // If there are no more Elems to consume with DotDots and this is a
-        // relative path, or this token is already a DotDot, then copy it to
-        // the output.
-        if ((rstart == path.rend() && backToken.first == rstart) || _GetTokenType(backToken) == DotDot)
-        {
-          path[writeIdx++] = '.';
-          path[writeIdx++] = '.';
-          if (writeIdx != path.size())
-            path[writeIdx++] = '/';
-        }
-        else if (backToken.first != rstart)
-        {
-          // Otherwise, consume the last elem by moving writeIdx back to
-          // before the elem.
-          writeIdx = distance(path.begin(), backToken.second.base());
-        }
-      }
-      break;
-    };
+    }
+    for (t.second = t.first; t.second != end && *t.second != '/'; ++t.second)
+    {
+    }
+    return t;
   }
 
-  // Remove a trailing slash if we wrote one.  We're careful to use const
-  // iterators here to avoid incurring a string copy if it's not necessary (in
-  // the case of libstdc++'s copy-on-write basic_string)
-  if (writeIdx > firstWriteIdx && path.cbegin()[writeIdx - 1] == '/')
-    --writeIdx;
+  template<class Iter>
+  inline TokenType _GetTokenType(pair<Iter, Iter> t)
+  {
+    size_t len = distance(t.first, t.second);
+    if (len == 1 && t.first[0] == '.')
+      return Dot;
+    if (len == 2 && t.first[0] == '.' && t.first[1] == '.')
+      return DotDot;
+    return Elem;
+  }
 
-  // Trim the string to length if necessary.
-  if (writeIdx != path.size())
-    path.erase(writeIdx);
+  string _NormPath(string const &inPath)
+  {
+    // We take one pass through the string, transforming it into a normalized
+    // path in-place.  This works since the normalized path never grows, except
+    // in the trivial case of '' -> '.'.  In all other cases, every
+    // transformation we make either shrinks the string or maintains its size.
+    //
+    // We track a current 'write' iterator, indicating the end of the normalized
+    // path we've built so far and a current token 't', the next slash-delimited
+    // path element we will process.  For example, let's walk through the steps
+    // we take to normalize the input '/foo/../bar' to produce '/bar'.  To
+    // start, the state looks like the following, with the write iterator past
+    // any leading slashes, and 't' at the first path token.
+    //
+    // /foo/../bar
+    //  w            <------ 'write' iterator
+    //  [  ]         <------ next token 't'
+    //
+    // We look at the token 't' to determine its type: one of DotDot, Dot, or
+    // Elem.  In this case, it's a regular path Elem 'foo' so we simply copy it
+    // to the 'write' iterator and advance 't' to the next token.  Then the
+    // state looks like:
+    //
+    // /foo/../bar
+    //      w
+    //      [ ]
+    //
+    // Now 't' is a DotDot token '..', so we remove the last path element in the
+    // normalized result by scanning backwards from 'w' resetting 'w' to that
+    // location to effectively remove the element, then advance 't' to the next
+    // token.  Now the state looks like:
+    //
+    // /foo/../bar
+    //  w      [  ]
+    //
+    // The final token is the regular path Elem 'bar' so we copy it and trim the
+    // string to produce the final result '/bar'.
+    //
 
-  // If the resulting path is empty, return "."
-  if (path.empty())
-    path.assign(".");
+    // This code is fairly optimized for libstdc++'s copy-on-write string.  It
+    // takes a copy of 'inPath' to start (refcount bump) but it avoids doing any
+    // mutating operation on 'path' until it actually has to.  Doing a mutating
+    // operation (even grabbing a non-const iterator) will pay for the malloc
+    // and deep copy so we want to avoid that in the common case where the input
+    // path is already normalized.
 
-  return path;
-}
+    string path(inPath);
+
+    // Find the first path token.
+    Token t = _NextToken(inPath.begin(), inPath.end());
+
+    // Allow zero, one, or two leading slashes, per POSIX.  Three or more get
+    // collapsed to one.
+    const size_t numLeadingSlashes = distance(inPath.begin(), t.first);
+    size_t writeIdx = numLeadingSlashes >= 3 ? 1 : numLeadingSlashes;
+
+    // Save a reverse iterator at where we start the output, we'll use this when
+    // scanning backward to handle DotDot tokens.
+    size_t firstWriteIdx = writeIdx;
+
+    // Now walk through the string, copying tokens, looking for slashes and dots
+    // to handle.
+    for (; t.first != inPath.end(); t = _NextToken(t.second, inPath.end()))
+    {
+      switch (_GetTokenType(t))
+      {
+        case Elem:
+          // Copy the elem.  We avoid mutating 'path' if we've made no changes
+          // to the output yet, which is true if the write head is in the same
+          // place in the output as it is in the input.
+          if (inPath.begin() + writeIdx == t.first)
+          {
+            writeIdx += distance(t.first, t.second);
+            t.first = t.second;
+            if (writeIdx != path.size())
+              ++writeIdx;
+          } else
+          {
+            while (t.first != t.second)
+              path[writeIdx++] = *t.first++;
+            if (writeIdx != path.size())
+              path[writeIdx++] = '/';
+          }
+          break;
+        case Dot:
+          // Do nothing, Dots are simply ignored.
+          break;
+        case DotDot: {
+          // Here we are very likely to be modifying the string, so we use
+          // non-const iterators and mutate.
+          string::reverse_iterator rstart(path.begin() + firstWriteIdx), rwrite(path.begin() + writeIdx);
+          // Find the last token of the output by finding the next token in
+          // reverse.
+          RToken backToken = _NextToken(rwrite, rstart);
+          // If there are no more Elems to consume with DotDots and this is a
+          // relative path, or this token is already a DotDot, then copy it to
+          // the output.
+          if ((rstart == path.rend() && backToken.first == rstart) || _GetTokenType(backToken) == DotDot)
+          {
+            path[writeIdx++] = '.';
+            path[writeIdx++] = '.';
+            if (writeIdx != path.size())
+              path[writeIdx++] = '/';
+          } else if (backToken.first != rstart)
+          {
+            // Otherwise, consume the last elem by moving writeIdx back to
+            // before the elem.
+            writeIdx = distance(path.begin(), backToken.second.base());
+          }
+        }
+        break;
+      };
+    }
+
+    // Remove a trailing slash if we wrote one.  We're careful to use const
+    // iterators here to avoid incurring a string copy if it's not necessary (in
+    // the case of libstdc++'s copy-on-write basic_string)
+    if (writeIdx > firstWriteIdx && path.cbegin()[writeIdx - 1] == '/')
+      --writeIdx;
+
+    // Trim the string to length if necessary.
+    if (writeIdx != path.size())
+      path.erase(writeIdx);
+
+    // If the resulting path is empty, return "."
+    if (path.empty())
+      path.assign(".");
+
+    return path;
+  }
 }  // namespace
 
 #if defined(ARCH_OS_WINDOWS)
@@ -358,8 +356,7 @@ string ArchAbsPath(const string &path)
   if (GetFullPathName(path.c_str(), ARCH_PATH_MAX, buffer, nullptr))
   {
     return buffer;
-  }
-  else
+  } else
   {
     return path;
   }
@@ -428,11 +425,11 @@ double ArchGetStatusChangeTime(const struct stat &st)
 
 namespace
 {
-int64_t _GetFileLength(HANDLE handle)
-{
-  LARGE_INTEGER sz;
-  return GetFileSizeEx(handle, &sz) ? static_cast<int64_t>(sz.QuadPart) : -1;
-}
+  int64_t _GetFileLength(HANDLE handle)
+  {
+    LARGE_INTEGER sz;
+    return GetFileSizeEx(handle, &sz) ? static_cast<int64_t>(sz.QuadPart) : -1;
+  }
 }  // anonymous namespace
 
 #endif
@@ -504,8 +501,14 @@ string ArchGetFileName(FILE *file)
   string result;
   if (GetFileInformationByHandleEx(hfile, FileNameInfo, static_cast<void *>(fileNameInfo), bufSize))
   {
-    size_t outSize = WideCharToMultiByte(
-      CP_UTF8, 0, fileNameInfo->FileName, fileNameInfo->FileNameLength / sizeof(WCHAR), NULL, 0, NULL, NULL);
+    size_t outSize = WideCharToMultiByte(CP_UTF8,
+                                         0,
+                                         fileNameInfo->FileName,
+                                         fileNameInfo->FileNameLength / sizeof(WCHAR),
+                                         NULL,
+                                         0,
+                                         NULL,
+                                         NULL);
     result.resize(outSize);
     WideCharToMultiByte(CP_UTF8,
                         0,
@@ -550,41 +553,41 @@ int ArchMakeTmpFile(const std::string &prefix, std::string *pathname)
 
 namespace
 {
-std::string MakeUnique(const std::string &sTemplate,
-                       std::function<bool(const char *name)> func,
-                       int maxRetry = 1000)
-{
-  static const bool init = (srand(GetTickCount()), true);
-
-  // Copy template to a writable buffer.
-  const auto length = sTemplate.size();
-  char *cTemplate = reinterpret_cast<char *>(alloca(length + 1));
-  strcpy(cTemplate, sTemplate.c_str());
-
-  // Fill template with random characters from table.
-  const char *table = "abcdefghijklmnopqrstuvwxyz123456";
-  std::string::size_type offset = length - 6;
-  int retry = 0;
-  do
+  std::string MakeUnique(const std::string &sTemplate,
+                         std::function<bool(const char *name)> func,
+                         int maxRetry = 1000)
   {
-    unsigned int x = (static_cast<unsigned int>(rand()) << 15) + rand();
-    cTemplate[offset + 0] = table[(x >> 25) & 31];
-    cTemplate[offset + 1] = table[(x >> 20) & 31];
-    cTemplate[offset + 2] = table[(x >> 15) & 31];
-    cTemplate[offset + 3] = table[(x >> 10) & 31];
-    cTemplate[offset + 4] = table[(x >> 5) & 31];
-    cTemplate[offset + 5] = table[(x)&31];
+    static const bool init = (srand(GetTickCount()), true);
 
-    // Invoke callback and if successful return the path.  Otherwise
-    // repeat with a different random name for up to maxRetry times.
-    if (func(cTemplate))
+    // Copy template to a writable buffer.
+    const auto length = sTemplate.size();
+    char *cTemplate = reinterpret_cast<char *>(alloca(length + 1));
+    strcpy(cTemplate, sTemplate.c_str());
+
+    // Fill template with random characters from table.
+    const char *table = "abcdefghijklmnopqrstuvwxyz123456";
+    std::string::size_type offset = length - 6;
+    int retry = 0;
+    do
     {
-      return cTemplate;
-    }
-  } while (++retry < maxRetry);
+      unsigned int x = (static_cast<unsigned int>(rand()) << 15) + rand();
+      cTemplate[offset + 0] = table[(x >> 25) & 31];
+      cTemplate[offset + 1] = table[(x >> 20) & 31];
+      cTemplate[offset + 2] = table[(x >> 15) & 31];
+      cTemplate[offset + 3] = table[(x >> 10) & 31];
+      cTemplate[offset + 4] = table[(x >> 5) & 31];
+      cTemplate[offset + 5] = table[(x)&31];
 
-  return std::string();
-}
+      // Invoke callback and if successful return the path.  Otherwise
+      // repeat with a different random name for up to maxRetry times.
+      if (func(cTemplate))
+      {
+        return cTemplate;
+      }
+    } while (++retry < maxRetry);
+
+    return std::string();
+  }
 
 }  // namespace
 
@@ -686,8 +689,7 @@ void Arch_InitTmpDir()
     // Arch_InitConfig. If this is called more than once when TMPDIR is
     // set, the following call will leak a string.
     _TmpDir = strdup(tmpdir.c_str());
-  }
-  else
+  } else
   {
 #  if defined(ARCH_OS_DARWIN)
     _TmpDir = "/tmp";
@@ -759,14 +761,12 @@ static inline Mapping Arch_MapFileImpl(FILE *file, std::string *errMsg)
     if (err == EINVAL)
     {
       *errMsg = "bad arguments to mmap()";
-    }
-    else if (err == EMFILE || err == ENOMEM)
+    } else if (err == EMFILE || err == ENOMEM)
     {
       *errMsg =
         "system limit on mapped regions exceeded, "
         "or out of memory";
-    }
-    else
+    } else
     {
       *errMsg = ArchStrerror();
     }
@@ -788,18 +788,18 @@ ArchMutableFileMapping ArchMapFileReadWrite(FILE *file, std::string *errMsg)
 namespace
 {
 
-struct _Fcloser
-{
-  void operator()(FILE *f) const
+  struct _Fcloser
   {
-    if (f)
+    void operator()(FILE *f) const
     {
-      fclose(f);
+      if (f)
+      {
+        fclose(f);
+      }
     }
-  }
-};
+  };
 
-using _UniqueFILE = std::unique_ptr<FILE, _Fcloser>;
+  using _UniqueFILE = std::unique_ptr<FILE, _Fcloser>;
 
 }  // end anonymous namespace
 
@@ -846,8 +846,9 @@ void ArchMemAdvise(void const *addr, size_t len, ArchMemAdvice adv)
                      /* ArchMemAdviceDontNeed     = */ POSIX_MADV_DONTNEED,
                      /* ArchMemAdviceRandomAccess = */ POSIX_MADV_RANDOM};
 
-  int rval = posix_madvise(
-    reinterpret_cast<void *>(alignedAddrInt), len + (addrInt - alignedAddrInt), adviceMap[adv]);
+  int rval = posix_madvise(reinterpret_cast<void *>(alignedAddrInt),
+                           len + (addrInt - alignedAddrInt),
+                           adviceMap[adv]);
   if (rval != 0)
   {
     fprintf(stderr,
@@ -869,8 +870,9 @@ bool ArchQueryMappedMemoryResidency(void const *addr, size_t len, unsigned char 
   return ret == 0;
 #elif defined(ARCH_OS_DARWIN)
   // On darwin the addr param is 'caddr_t' and the vec param is 'char *'.
-  int ret = mincore(
-    reinterpret_cast<caddr_t>(const_cast<void *>(addr)), len, reinterpret_cast<char *>(pageMap));
+  int ret = mincore(reinterpret_cast<caddr_t>(const_cast<void *>(addr)),
+                    len,
+                    reinterpret_cast<char *>(pageMap));
   return ret == 0;
 #endif
   // XXX: Not implemented for other platforms yet.
@@ -1119,8 +1121,7 @@ int ArchFileAccess(const char *path, int mode)
       if (accessStatus)
       {
         result = true;
-      }
-      else
+      } else
       {
         errno = EACCES;
       }
@@ -1184,8 +1185,7 @@ std::string ArchReadLink(const char *path)
   std::unique_ptr<unsigned char[]> buffer(new unsigned char[MAX_REPARSE_DATA_SIZE]);
   REPARSE_DATA_BUFFER *reparse = (REPARSE_DATA_BUFFER *)buffer.get();
 
-  if (!DeviceIoControl(
-        handle, FSCTL_GET_REPARSE_POINT, NULL, 0, reparse, MAX_REPARSE_DATA_SIZE, NULL, NULL))
+  if (!DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, NULL, 0, reparse, MAX_REPARSE_DATA_SIZE, NULL, NULL))
   {
     CloseHandle(handle);
     return std::string();
@@ -1225,8 +1225,7 @@ std::string ArchReadLink(const char *path)
       }
 
       return str;
-    }
-    else if (reparse->ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
+    } else if (reparse->ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
     {
       const size_t length = reparse->MountPointReparseBuffer.PrintNameLength / sizeof(WCHAR);
       std::unique_ptr<WCHAR[]> reparsePath(new WCHAR[length + 1]);
@@ -1281,21 +1280,18 @@ std::string ArchReadLink(const char *path)
     {
       // We can't read the link.
       return std::string();
-    }
-    else if (n >= size)
+    } else if (n >= size)
     {
       // We don't have enough space.  Find out how much space we need.
       struct stat sb;
       if (lstat(path, &sb) == 0)
       {
         size = sb.st_size + 1;
-      }
-      else
+      } else
       {
         size *= 2;
       }
-    }
-    else
+    } else
     {
       // Success.  readlink() doesn't NUL terminate.
       buffer.get()[n] = '\0';

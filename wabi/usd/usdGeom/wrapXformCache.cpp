@@ -33,21 +33,23 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static tuple _GetLocalTransformation(UsdGeomXformCache &self, const UsdPrim &prim)
-{
-  bool resetsXformStack;
-  GfMatrix4d localXform = self.GetLocalTransformation(prim, &resetsXformStack);
+  static tuple _GetLocalTransformation(UsdGeomXformCache &self, const UsdPrim &prim)
+  {
+    bool resetsXformStack;
+    GfMatrix4d localXform = self.GetLocalTransformation(prim, &resetsXformStack);
 
-  return make_tuple(localXform, resetsXformStack);
-}
+    return make_tuple(localXform, resetsXformStack);
+  }
 
-static tuple _ComputeRelativeTransform(UsdGeomXformCache &self, const UsdPrim &prim, const UsdPrim &ancestor)
-{
-  bool resetXformStack;
-  GfMatrix4d xform = self.ComputeRelativeTransform(prim, ancestor, &resetXformStack);
+  static tuple _ComputeRelativeTransform(UsdGeomXformCache &self,
+                                         const UsdPrim &prim,
+                                         const UsdPrim &ancestor)
+  {
+    bool resetXformStack;
+    GfMatrix4d xform = self.ComputeRelativeTransform(prim, ancestor, &resetXformStack);
 
-  return make_tuple(xform, resetXformStack);
-}
+    return make_tuple(xform, resetXformStack);
+  }
 
 }  // anonymous namespace
 

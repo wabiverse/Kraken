@@ -34,18 +34,18 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-template<typename C, typename V>
-bool IsValueIn(const C &container, V value)
-{
-  for (const auto &element : container)
+  template<typename C, typename V>
+  bool IsValueIn(const C &container, V value)
   {
-    if (element == value)
+    for (const auto &element : container)
     {
-      return true;
+      if (element == value)
+      {
+        return true;
+      }
     }
+    return false;
   }
-  return false;
-}
 
 }  // anonymous namespace
 

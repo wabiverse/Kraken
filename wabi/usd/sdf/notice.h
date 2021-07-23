@@ -99,8 +99,9 @@ class SdfNotice
 
     const_iterator find(SdfLayerHandle const &layer) const
     {
-      return std::find_if(
-        begin(), end(), [&layer](SdfLayerChangeListVec::value_type const &p) { return p.first == layer; });
+      return std::find_if(begin(), end(), [&layer](SdfLayerChangeListVec::value_type const &p) {
+        return p.first == layer;
+      });
     }
 
     bool count(SdfLayerHandle const &layer) const

@@ -137,8 +137,7 @@ void GfFrustum::SetPerspective(double fieldOfView,
     yDist = tan(GfDegreesToRadians(fieldOfView / 2.0)) * GetReferencePlaneDepth();
     // horizontal is determined by aspect ratio
     xDist = yDist * aspectRatio;
-  }
-  else
+  } else
   {
     // horizontal is taken from the given field of view
     xDist = tan(GfDegreesToRadians(fieldOfView / 2.0)) * GetReferencePlaneDepth();
@@ -176,8 +175,7 @@ bool GfFrustum::GetPerspective(bool isFovVertical,
   if (isFovVertical)
   {
     *fieldOfView = 2.0 * GfRadiansToDegrees(atan(winSize[1] / (2.0 * GetReferencePlaneDepth())));
-  }
-  else
+  } else
   {
     *fieldOfView = 2.0 * GfRadiansToDegrees(atan(winSize[0] / (2.0 * GetReferencePlaneDepth())));
   }
@@ -257,8 +255,7 @@ void GfFrustum::FitToSphere(const GfVec3d &center, double radius, double slack)
     _viewDistance = radius + slack;
     // Set the camera window to enclose the sphere.
     _window = GfRange2d(GfVec2d(-radius, -radius), GfVec2d(radius, radius));
-  }
-  else
+  } else
   {
     // Find the plane coordinate to use to compute the view.
     // Assuming symmetry, it should be the half-size of the
@@ -273,18 +270,15 @@ void GfFrustum::FitToSphere(const GfVec3d &center, double radius, double slack)
     if (min > 0.0)
     {
       halfSize = max;
-    }
-    else if (max < 0.0)
+    } else if (max < 0.0)
     {
       // CODE_COVERAGE_OFF_GCOV_BUG - seems to be hit but gcov disagrees
       halfSize = min;
       // CODE_COVERAGE_ON_GCOV_BUG
-    }
-    else if (-min > max)
+    } else if (-min > max)
     {
       halfSize = min;
-    }
-    else
+    } else
     {
       halfSize = max;
     }
@@ -292,8 +286,7 @@ void GfFrustum::FitToSphere(const GfVec3d &center, double radius, double slack)
     if (halfSize < 0.0)
     {
       halfSize = -halfSize;
-    }
-    else if (halfSize == 0.0)
+    } else if (halfSize == 0.0)
     {
       halfSize = 1.0;  // Why not?
     }
@@ -586,8 +579,7 @@ GfMatrix4d GfFrustum::ComputeProjectionMatrix() const
     matrix[3][0] = -(r + l) / rl;
     matrix[3][1] = -(t + b) / tb;
     matrix[3][2] = -(f + n) / fn;
-  }
-  else
+  } else
   {
     // Perspective:
     // The window coordinates are specified with respect to the
@@ -647,8 +639,7 @@ vector<GfVec3d> GfFrustum::ComputeCorners() const
     corners.push_back(GfVec3d(far * winMax[0], far * winMin[1], -far));
     corners.push_back(GfVec3d(far * winMin[0], far * winMax[1], -far));
     corners.push_back(GfVec3d(far * winMax[0], far * winMax[1], -far));
-  }
-  else
+  } else
   {
     // Just use the reference plane rectangle as is, translated to
     // the near and far planes.
@@ -686,8 +677,7 @@ vector<GfVec3d> GfFrustum::ComputeCornersAtDistance(double d) const
     corners.push_back(GfVec3d(d * winMax[0], d * winMin[1], -d));
     corners.push_back(GfVec3d(d * winMin[0], d * winMax[1], -d));
     corners.push_back(GfVec3d(d * winMax[0], d * winMax[1], -d));
-  }
-  else
+  } else
   {
     corners.push_back(GfVec3d(winMin[0], winMin[1], -d));
     corners.push_back(GfVec3d(winMax[0], winMin[1], -d));
@@ -784,8 +774,7 @@ static GfRay _ComputeUntransformedRay(GfFrustum::ProjectionType projectionType,
   {
     pos = GfVec3d(0);
     dir = GfVec3d(winX, winY, -1.0).GetNormalized();
-  }
-  else
+  } else
   {
     pos.Set(winX, winY, 0.0);
     dir = -GfVec3d::ZAxis();
@@ -826,8 +815,7 @@ GfRay GfFrustum::ComputeRay(const GfVec3d &worldSpacePos) const
   {
     pos = GfVec3d(0);
     dir = camSpaceToPos.GetNormalized();
-  }
-  else
+  } else
   {
     pos.Set(camSpaceToPos[0], camSpaceToPos[1], 0.0);
     dir = -GfVec3d::ZAxis();
@@ -854,8 +842,7 @@ GfRay GfFrustum::ComputePickRay(const GfVec3d &worldSpacePos) const
   {
     pos = GfVec3d(0);
     dir = camSpaceToPos.GetNormalized();
-  }
-  else
+  } else
   {
     pos.Set(camSpaceToPos[0], camSpaceToPos[1], 0.0);
     dir = -GfVec3d::ZAxis();
@@ -993,8 +980,7 @@ bool GfFrustum::_SegmentIntersects(GfVec3d const &p0,
     {
       if (t < t1)
         t1 = t;
-    }
-    else
+    } else
     {
       if (t > t0)
         t0 = t;
@@ -1017,8 +1003,10 @@ bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1) const
   // Compute the intersection masks for each point. There is one bit
   // in each mask for each of the 6 planes.
   auto const &planes = *_planes;
-  return _SegmentIntersects(
-    p0, _CalcIntersectionBitMask(planes, p0), p1, _CalcIntersectionBitMask(planes, p1));
+  return _SegmentIntersects(p0,
+                            _CalcIntersectionBitMask(planes, p0),
+                            p1,
+                            _CalcIntersectionBitMask(planes, p1));
 }
 
 bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &p2) const
@@ -1084,9 +1072,9 @@ bool GfFrustum::Intersects(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &
   for (size_t i = 0; i < numCornersToCheck; ++i)
   {
     GfVec2d pickPoint = (i == 0) ? GfVec2d(-1.0, -1.0) :
-                                   (i == 1) ? GfVec2d(-1.0, 1.0) :
-                                              (i == 2) ? GfVec2d(1.0, 1.0) :
-                                                         GfVec2d(1.0, -1.0);
+                        (i == 1) ? GfVec2d(-1.0, 1.0) :
+                        (i == 2) ? GfVec2d(1.0, 1.0) :
+                                   GfVec2d(1.0, -1.0);
     GfRay pickRay = ComputePickRay(pickPoint);
     double distance;
     if (pickRay.Intersect(p0, p1, p2, &distance, NULL, NULL))

@@ -82,8 +82,7 @@ void HdSelection::AddElements(HdSelection::HighlightMode const &mode,
     _selMap[mode][path].fullySelected = true;
     TF_DEBUG(HD_SELECTION_UPDATE)
       .Msg("Adding Rprim (via AddElements) %s to HdSelection (mode %d)", path.GetText(), mode);
-  }
-  else
+  } else
   {
     _selMap[mode][path].elementIndices.push_back(elementIndices);
     TF_DEBUG(HD_SELECTION_UPDATE)
@@ -143,8 +142,7 @@ void HdSelection::AddPoints(HdSelection::HighlightMode const &mode,
   {
     pointColorId = _selectedPointColors.size();
     _selectedPointColors.push_back(pointColor);
-  }
-  else
+  } else
   {
     pointColorId = std::distance(_selectedPointColors.begin(), pointColorIt);
   }
@@ -165,8 +163,7 @@ HdSelection::PrimSelectionState const *HdSelection::GetPrimSelectionState(
   if (it != _selMap[mode].end())
   {
     return &(it->second);
-  }
-  else
+  } else
   {
     return nullptr;
   }

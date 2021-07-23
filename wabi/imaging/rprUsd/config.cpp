@@ -25,158 +25,157 @@ TF_DEFINE_ENV_SETTING(HDRPR_CACHE_PATH_OVERRIDE, "", "Set this to override shade
 namespace
 {
 
-bool ArchCreateDirectory(const char *path)
-{
-#ifdef WIN32
-  return CreateDirectory(path, NULL) == TRUE;
-#else
-  return mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
-#endif
-}
-
-bool ArchDirectoryExists(const char *path)
-{
-#ifdef WIN32
-  DWORD ftyp = GetFileAttributesA(path);
-  if (ftyp == INVALID_FILE_ATTRIBUTES)
-    return false;  // something is wrong with your path!
-
-  if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
-    return true;  // this is a directory!
-
-  return false;  // this is not a directory!
-#else
-  throw std::runtime_error("ArchDirectoryExists not implemented for this platform");
-  return false;
-#endif
-}
-
-std::string GetAppDataPath()
-{
-#ifdef WIN32
-  char appDataPath[MAX_PATH];
-  if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, appDataPath)))
+  bool ArchCreateDirectory(const char *path)
   {
-    return appDataPath;
+#ifdef WIN32
+    return CreateDirectory(path, NULL) == TRUE;
+#else
+    return mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
+#endif
   }
+
+  bool ArchDirectoryExists(const char *path)
+  {
+#ifdef WIN32
+    DWORD ftyp = GetFileAttributesA(path);
+    if (ftyp == INVALID_FILE_ATTRIBUTES)
+      return false;  // something is wrong with your path!
+
+    if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+      return true;  // this is a directory!
+
+    return false;  // this is not a directory!
+#else
+    throw std::runtime_error("ArchDirectoryExists not implemented for this platform");
+    return false;
+#endif
+  }
+
+  std::string GetAppDataPath()
+  {
+#ifdef WIN32
+    char appDataPath[MAX_PATH];
+    if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, appDataPath)))
+    {
+      return appDataPath;
+    }
 #elif defined(__linux__)
-  auto homeEnv = ArchGetEnv("XDG_DATA_HOME");
-  if (!homeEnv.empty() && homeEnv[0] == '/')
-  {
-    return homeEnv;
-  }
+    auto homeEnv = ArchGetEnv("XDG_DATA_HOME");
+    if (!homeEnv.empty() && homeEnv[0] == '/')
+    {
+      return homeEnv;
+    }
 
-  int uid = getuid();
-  homeEnv = ArchGetEnv("HOME");
-  if (uid != 0 && !homeEnv.empty())
-  {
-    return homeEnv + "/.config";
-  }
+    int uid = getuid();
+    homeEnv = ArchGetEnv("HOME");
+    if (uid != 0 && !homeEnv.empty())
+    {
+      return homeEnv + "/.config";
+    }
 
 #elif defined(__APPLE__)
-  auto homeEnv = ArchGetEnv("HOME");
-  if (!homeEnv.empty() && homeEnv[0] == '/')
-  {
-    return homeEnv + "/Library/Application Support";
-  }
+    auto homeEnv = ArchGetEnv("HOME");
+    if (!homeEnv.empty() && homeEnv[0] == '/')
+    {
+      return homeEnv + "/Library/Application Support";
+    }
 #else
 #  error "Unknown platform"
 #endif
 
-  return ".";
-}
+    return ".";
+  }
 
-std::string GetDefaultCacheDir(const char *cacheType)
-{
-  // Return HDRPR_CACHE_PATH_OVERRIDE if provided
-  auto overriddenCacheDir = TfGetEnvSetting(HDRPR_CACHE_PATH_OVERRIDE);
-  if (!overriddenCacheDir.empty())
+  std::string GetDefaultCacheDir(const char *cacheType)
   {
-    overriddenCacheDir = overriddenCacheDir + ARCH_PATH_SEP + cacheType;
-
-    bool directoryExists = ArchDirectoryExists(overriddenCacheDir.c_str());
-    if (!directoryExists)
+    // Return HDRPR_CACHE_PATH_OVERRIDE if provided
+    auto overriddenCacheDir = TfGetEnvSetting(HDRPR_CACHE_PATH_OVERRIDE);
+    if (!overriddenCacheDir.empty())
     {
-      bool succeeded = ArchCreateDirectory(overriddenCacheDir.c_str());
-      if (!succeeded)
+      overriddenCacheDir = overriddenCacheDir + ARCH_PATH_SEP + cacheType;
+
+      bool directoryExists = ArchDirectoryExists(overriddenCacheDir.c_str());
+      if (!directoryExists)
       {
-        TF_RUNTIME_ERROR("Can't create shader cache directory at: %s", overriddenCacheDir.c_str());
+        bool succeeded = ArchCreateDirectory(overriddenCacheDir.c_str());
+        if (!succeeded)
+        {
+          TF_RUNTIME_ERROR("Can't create shader cache directory at: %s", overriddenCacheDir.c_str());
+        }
+      }
+
+      return overriddenCacheDir;
+    }
+
+    auto cacheDir = ArchGetEnv("RPR");
+    if (cacheDir.empty())
+    {
+      // Fallback to AppData
+      cacheDir = GetAppDataPath() + (ARCH_PATH_SEP "hdRpr");
+      ArchCreateDirectory(cacheDir.c_str());
+    }
+
+    cacheDir += (ARCH_PATH_SEP "cache");
+    ArchCreateDirectory(cacheDir.c_str());
+
+    cacheDir = cacheDir + ARCH_PATH_SEP + cacheType;
+    ArchCreateDirectory(cacheDir.c_str());
+
+    return cacheDir;
+  }
+
+  template<typename T>
+  bool InitJsonProperty(const char *propertyName, T const &defaultValue, json *json)
+  {
+    bool setDefaultValue = false;
+
+    auto it = json->find(propertyName);
+    if (it == json->end())
+    {
+      setDefaultValue = true;
+    } else
+    {
+      try
+      {
+        it->get<T>();
+      }
+      catch (json::exception &e)
+      {
+        TF_UNUSED(e);
+        setDefaultValue = true;
       }
     }
 
-    return overriddenCacheDir;
-  }
-
-  auto cacheDir = ArchGetEnv("RPR");
-  if (cacheDir.empty())
-  {
-    // Fallback to AppData
-    cacheDir = GetAppDataPath() + (ARCH_PATH_SEP "hdRpr");
-    ArchCreateDirectory(cacheDir.c_str());
-  }
-
-  cacheDir += (ARCH_PATH_SEP "cache");
-  ArchCreateDirectory(cacheDir.c_str());
-
-  cacheDir = cacheDir + ARCH_PATH_SEP + cacheType;
-  ArchCreateDirectory(cacheDir.c_str());
-
-  return cacheDir;
-}
-
-template<typename T>
-bool InitJsonProperty(const char *propertyName, T const &defaultValue, json *json)
-{
-  bool setDefaultValue = false;
-
-  auto it = json->find(propertyName);
-  if (it == json->end())
-  {
-    setDefaultValue = true;
-  }
-  else
-  {
-    try
+    if (setDefaultValue)
     {
-      it->get<T>();
+      (*json)[propertyName] = defaultValue;
     }
-    catch (json::exception &e)
-    {
-      TF_UNUSED(e);
-      setDefaultValue = true;
-    }
+    return setDefaultValue;
   }
 
-  if (setDefaultValue)
+  template<typename T>
+  bool GetJsonProperty(const char *propertyName, json const &json, T *property)
   {
-    (*json)[propertyName] = defaultValue;
-  }
-  return setDefaultValue;
-}
+    auto it = json.find(propertyName);
+    if (it != json.end())
+    {
+      try
+      {
+        *property = it->get<T>();
+        return true;
+      }
+      catch (json::exception &e)
+      {
+        TF_UNUSED(e);
+      }
+    }
 
-template<typename T>
-bool GetJsonProperty(const char *propertyName, json const &json, T *property)
-{
-  auto it = json.find(propertyName);
-  if (it != json.end())
-  {
-    try
-    {
-      *property = it->get<T>();
-      return true;
-    }
-    catch (json::exception &e)
-    {
-      TF_UNUSED(e);
-    }
+    return false;
   }
 
-  return false;
-}
-
-const char *kShowRestartRequiredMessage = "ShowRestartRequiredMessage";
-const char *kTextureCacheDir = "TextureCacheDir";
-const char *kKernelCacheDir = "KernelCacheDir";
+  const char *kShowRestartRequiredMessage = "ShowRestartRequiredMessage";
+  const char *kTextureCacheDir = "TextureCacheDir";
+  const char *kKernelCacheDir = "KernelCacheDir";
 
 }  // namespace
 

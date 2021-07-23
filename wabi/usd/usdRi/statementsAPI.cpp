@@ -139,14 +139,11 @@ TF_DEFINE_ENV_SETTING(USDRI_STATEMENTS_READ_OLD_ATTR_ENCODING,
                       "If on, UsdRiStatementsAPI will read old-style attributes.  "
                       "Otherwise, primvars in the ri: namespace will be read instead.");
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  ((fullAttributeNamespace, "ri:attributes:"))((primvarAttrNamespace,
-                                                "primvars:ri:attributes:"))((rootNamespace, "ri"))((
-    attributeNamespace,
-    "attributes"))((coordsys, "ri:coordinateSystem"))((scopedCoordsys, "ri:scopedCoordinateSystem"))((
-    modelCoordsys,
-    "ri:modelCoordinateSystems"))((modelScopedCoordsys, "ri:modelScopedCoordinateSystems")));
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         ((fullAttributeNamespace, "ri:attributes:"))((primvarAttrNamespace, "primvars:ri:attributes:"))(
+                           (rootNamespace, "ri"))((attributeNamespace, "attributes"))((coordsys, "ri:coordinateSystem"))(
+                           (scopedCoordsys, "ri:scopedCoordinateSystem"))((modelCoordsys, "ri:modelCoordinateSystems"))(
+                           (modelScopedCoordsys, "ri:modelScopedCoordinateSystems")));
 
 static TfToken _MakeRiAttrNamespace(const string &nameSpace, const string &attrName)
 {
@@ -162,8 +159,7 @@ UsdAttribute UsdRiStatementsAPI::CreateRiAttribute(const TfToken &name,
   if (TfGetEnvSetting(USDRI_STATEMENTS_WRITE_NEW_ATTR_ENCODING))
   {
     return UsdGeomPrimvarsAPI(GetPrim()).CreatePrimvar(fullName, usdType).GetAttr();
-  }
-  else
+  } else
   {
     UsdAttribute attr = GetPrim().CreateAttribute(fullName,
                                                   usdType,
@@ -185,8 +181,7 @@ UsdAttribute UsdRiStatementsAPI::CreateRiAttribute(const TfToken &name,
   if (TfGetEnvSetting(USDRI_STATEMENTS_WRITE_NEW_ATTR_ENCODING))
   {
     return UsdGeomPrimvarsAPI(GetPrim()).CreatePrimvar(fullName, usdType).GetAttr();
-  }
-  else
+  } else
   {
     UsdAttribute attr = GetPrim().CreateAttribute(fullName,
                                                   usdType,

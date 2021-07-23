@@ -63,7 +63,10 @@ GfMatrix2f::GfMatrix2f(const GfMatrix2d &m)
 
 GfMatrix2f::GfMatrix2f(const std::vector<std::vector<double>> &v)
 {
-  float m[2][2] = {{1.0, 0.0}, {0.0, 1.0}};
+  float m[2][2] = {
+    {1.0, 0.0},
+    {0.0, 1.0}
+  };
   for (size_t row = 0; row < 2 && row < v.size(); ++row)
   {
     for (size_t col = 0; col < 2 && col < v[row].size(); ++col)
@@ -76,7 +79,10 @@ GfMatrix2f::GfMatrix2f(const std::vector<std::vector<double>> &v)
 
 GfMatrix2f::GfMatrix2f(const std::vector<std::vector<float>> &v)
 {
-  float m[2][2] = {{1.0, 0.0}, {0.0, 1.0}};
+  float m[2][2] = {
+    {1.0, 0.0},
+    {0.0, 1.0}
+  };
   for (size_t row = 0; row < 2 && row < v.size(); ++row)
   {
     for (size_t col = 0; col < 2 && col < v[row].size(); ++col)
@@ -159,8 +165,7 @@ GfMatrix2f GfMatrix2f::GetInverse(double *detPtr, double eps) const
     inverse._mtx[0][1] = static_cast<float>(_mtx[0][1] * -rcp);
     inverse._mtx[1][0] = static_cast<float>(_mtx[1][0] * -rcp);
     inverse._mtx[1][1] = static_cast<float>(_mtx[0][0] * rcp);
-  }
-  else
+  } else
   {
     inverse.SetDiagonal(FLT_MAX);
   }

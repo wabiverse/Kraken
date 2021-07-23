@@ -169,13 +169,11 @@ void GfCamera::SetOrthographicFromAspectRatioAndSize(float aspectRatio,
     if (aspectRatio > 0.0)
     {
       _verticalAperture = _horizontalAperture / aspectRatio;
-    }
-    else
+    } else
     {
       _verticalAperture = _horizontalAperture;
     }
-  }
-  else
+  } else
   {
     // We are given the height, determine the width by multiplying
     _verticalAperture = orthographicSize / GfCamera::APERTURE_UNIT;
@@ -211,8 +209,7 @@ void GfCamera::SetFromViewAndProjectionMatrix(const GfMatrix4d &viewMatrix,
     _verticalApertureOffset = 0.5 * _verticalAperture * projMatrix[2][1];
     _clippingRange = GfRange1f(projMatrix[3][2] / (projMatrix[2][2] - 1.0),
                                projMatrix[3][2] / (projMatrix[2][2] + 1.0));
-  }
-  else
+  } else
   {
     if (!(fabs(projMatrix[2][3]) < 1e-6))
     {

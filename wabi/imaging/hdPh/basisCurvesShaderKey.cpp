@@ -47,75 +47,65 @@ TF_REGISTRY_FUNCTION(TfEnum)
   TF_ADD_ENUM_NAME(HdPh_BasisCurvesShaderKey::ROUND);
 };
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  ((baseGLSLFX, "basisCurves.glslfx"))
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         ((baseGLSLFX, "basisCurves.glslfx"))
 
-  // normal related mixins
-  ((curvesVertexNormalOriented, "Curves.Vertex.Normal.Oriented"))((curvesVertexNormalImplicit,
-                                                                   "Curves.Vertex.Normal.Implicit"))
+                         // normal related mixins
+                         ((curvesVertexNormalOriented, "Curves.Vertex.Normal.Oriented"))((curvesVertexNormalImplicit,
+                                                                                          "Curves.Vertex.Normal.Implicit"))
 
-  // basis mixins
-  ((curvesBezier, "Curves.BezierBasis"))((curvesBspline, "Curves.BsplineBasis"))((
-    curvesCatmullRom,
-    "Curves.CatmullRomBasis"))((curvesFallback, "Curves.LinearBasis"))
+                         // basis mixins
+                         ((curvesBezier, "Curves.BezierBasis"))((curvesBspline, "Curves.BsplineBasis"))(
+                           (curvesCatmullRom, "Curves.CatmullRomBasis"))((curvesFallback, "Curves.LinearBasis"))
 
-  // point id mixins (for point picking & selection)
-  ((pointIdNoneVS, "PointId.Vertex.None"))((pointIdVS,
-                                            "PointId.Vertex.PointParam"))((pointIdSelDecodeUtilsVS,
-                                                                           "Selection.DecodeUtils"))((
-    pointIdSelPointSelVS,
-    "Selection.Vertex.PointSel"))((pointIdFallbackFS,
-                                   "PointId.Fragment.Fallback"))((pointIdFS, "PointId.Fragment.PointParam"))
+                         // point id mixins (for point picking & selection)
+                         ((pointIdNoneVS, "PointId.Vertex.None"))((pointIdVS, "PointId.Vertex.PointParam"))(
+                           (pointIdSelDecodeUtilsVS, "Selection.DecodeUtils"))((pointIdSelPointSelVS, "Selection.Vertex.PointSel"))(
+                           (pointIdFallbackFS, "PointId.Fragment.Fallback"))((pointIdFS, "PointId.Fragment.PointParam"))
 
-  // visibility mixin (for curve and point visibility)
-  ((topVisFallbackFS, "Visibility.Fragment.Fallback"))((topVisFS, "Visibility.Fragment.Topology"))
+                         // visibility mixin (for curve and point visibility)
+                         ((topVisFallbackFS, "Visibility.Fragment.Fallback"))((topVisFS, "Visibility.Fragment.Topology"))
 
-  // helper mixins
-  ((curveCubicWidthsBasis, "Curves.Cubic.Widths.Basis"))((curveCubicWidthsLinear,
-                                                          "Curves.Cubic.Widths.Linear"))((
-    curveCubicNormalsBasis,
-    "Curves.Cubic.Normals.Basis"))((curveCubicNormalsLinear, "Curves.Cubic.Normals.Linear"))((
-    curvesLinearVaryingInterp,
-    "Curves.Linear.VaryingInterpolation"))((curvesCubicVaryingInterp, "Curves.Cubic.VaryingInterpolation"))
+                         // helper mixins
+                         ((curveCubicWidthsBasis, "Curves.Cubic.Widths.Basis"))((curveCubicWidthsLinear,
+                                                                                 "Curves.Cubic.Widths.Linear"))(
+                           (curveCubicNormalsBasis, "Curves.Cubic.Normals.Basis"))((curveCubicNormalsLinear,
+                                                                                    "Curves.Cubic.Normals.Linear"))(
+                           (curvesLinearVaryingInterp, "Curves.Linear.VaryingInterpolation"))((curvesCubicVaryingInterp,
+                                                                                               "Curves.Cubic.VaryingInterpolation"))
 
-    ((curvesTessControlShared, "Curves.TessControl.Shared"))((curvesTessControlLinearRibbon,
-                                                              "Curves.TessControl.Linear.Ribbon"))((
-      curvesTessControlLinearHalfTube,
-      "Curves.TessControl.Linear.HalfTube"))((curvesTessControlCubicRibbon,
-                                              "Curves.TessControl.Cubic.Ribbon"))((
-      curvesTessControlCubicHalfTube,
-      "Curves.TessControl.Cubic.HalfTube"))((curvesTessEvalLinearPatch, "Curves.TessEval.Linear.Patch"))((
-      curvesTessEvalCubicWire,
-      "Curves.TessEval.Cubic.Wire"))((curvesTessEvalCubicPatch, "Curves.TessEval.Cubic.Patch"))((
-      curvesTessEvalRibbonImplicit,
-      "Curves.TessEval.Ribbon.Implicit"))((curvesTessEvalRibbonOriented,
-                                           "Curves.TessEval.Ribbon.Oriented"))((curvesTessEvalHalfTube,
-                                                                                "Curves.TessEval.HalfTube"))
+                           ((curvesTessControlShared, "Curves.TessControl.Shared"))((curvesTessControlLinearRibbon,
+                                                                                     "Curves.TessControl.Linear.Ribbon"))(
+                             (curvesTessControlLinearHalfTube, "Curves.TessControl.Linear.HalfTube"))(
+                             (curvesTessControlCubicRibbon, "Curves.TessControl.Cubic.Ribbon"))(
+                             (curvesTessControlCubicHalfTube, "Curves.TessControl.Cubic.HalfTube"))(
+                             (curvesTessEvalLinearPatch, "Curves.TessEval.Linear.Patch"))((curvesTessEvalCubicWire,
+                                                                                           "Curves.TessEval.Cubic.Wire"))(
+                             (curvesTessEvalCubicPatch, "Curves.TessEval.Cubic.Patch"))((curvesTessEvalRibbonImplicit,
+                                                                                         "Curves.TessEval.Ribbon.Implicit"))(
+                             (curvesTessEvalRibbonOriented, "Curves.TessEval.Ribbon.Oriented"))((curvesTessEvalHalfTube,
+                                                                                                 "Curves.TessEval.HalfTube"))
 
-      ((curvesFragmentHalfTube, "Curves.Fragment.HalfTube"))((curvesFragmentRibbonRound,
-                                                              "Curves.Fragment.Ribbon.Round"))((
-        curvesFragmentRibbonOriented,
-        "Curves.Fragment.Ribbon.Oriented"))((curvesFragmentHair, "Curves.Fragment.Hair"))
+                             ((curvesFragmentHalfTube, "Curves.Fragment.HalfTube"))((curvesFragmentRibbonRound,
+                                                                                     "Curves.Fragment.Ribbon.Round"))(
+                               (curvesFragmentRibbonOriented, "Curves.Fragment.Ribbon.Oriented"))((curvesFragmentHair,
+                                                                                                   "Curves.Fragment.Hair"))
 
-  // main for all the shader stages
-  ((curvesVertexPatch, "Curves.Vertex.Patch"))((curvesVertexWire,
-                                                "Curves.Vertex.Wire"))((curvesTessControlLinearPatch,
-                                                                        "Curves.TessControl.Linear.Patch"))((
-    curvesTessControlCubicWire,
-    "Curves.TessControl.Cubic.Wire"))((curvesTessControlCubicPatch, "Curves.TessControl.Cubic.Patch"))((
-    curvesTessEvalPatch,
-    "Curves.TessEval.Patch"))((curvesFragmentWire, "Curves.Fragment.Wire"))((curvesFragmentPatch,
-                                                                             "Curves.Fragment.Patch"))
+                         // main for all the shader stages
+                         ((curvesVertexPatch, "Curves.Vertex.Patch"))((curvesVertexWire, "Curves.Vertex.Wire"))(
+                           (curvesTessControlLinearPatch, "Curves.TessControl.Linear.Patch"))((curvesTessControlCubicWire,
+                                                                                               "Curves.TessControl.Cubic.Wire"))(
+                           (curvesTessControlCubicPatch, "Curves.TessControl.Cubic.Patch"))((curvesTessEvalPatch,
+                                                                                             "Curves.TessEval.Patch"))(
+                           (curvesFragmentWire, "Curves.Fragment.Wire"))((curvesFragmentPatch, "Curves.Fragment.Patch"))
 
-  // instancing related mixins
-  ((instancing, "Instancing.Transform"))
+                         // instancing related mixins
+                         ((instancing, "Instancing.Transform"))
 
-  // terminals
-  ((surfaceFS, "Fragment.Surface"))((hullColorFS, "Fragment.HullColor"))((
-    pointColorFS,
-    "Fragment.PointColor"))((commonFS, "Fragment.CommonTerminals"))((scalarOverrideFS,
-                                                                     "Fragment.ScalarOverride")));
+                         // terminals
+                         ((surfaceFS, "Fragment.Surface"))((hullColorFS, "Fragment.HullColor"))((pointColorFS,
+                                                                                                 "Fragment.PointColor"))(
+                           (commonFS, "Fragment.CommonTerminals"))((scalarOverrideFS, "Fragment.ScalarOverride")));
 
 static TfToken HdPh_BasisToShaderKey(const TfToken &basis)
 {
@@ -149,18 +139,15 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
   if (drawStyle == HdPh_BasisCurvesShaderKey::POINTS)
   {
     primType = HdPh_GeometricShader::PrimitiveType::PRIM_POINTS;
-  }
-  else if (cubic)
+  } else if (cubic)
   {
     // cubic curves get drawn via isolines in a tessellation shader
     // even in wire mode.
     primType = HdPh_GeometricShader::PrimitiveType::PRIM_BASIS_CURVES_CUBIC_PATCHES;
-  }
-  else if (drawThick)
+  } else if (drawThick)
   {
     primType = HdPh_GeometricShader::PrimitiveType::PRIM_BASIS_CURVES_LINEAR_PATCHES;
-  }
-  else
+  } else
   {
     primType = HdPh_GeometricShader::PrimitiveType::PRIM_BASIS_CURVES_LINES;
   }
@@ -181,8 +168,7 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
     VS[vsIndex++] = _tokens->pointIdVS;
     VS[vsIndex++] = _tokens->pointIdSelDecodeUtilsVS;
     VS[vsIndex++] = _tokens->pointIdSelPointSelVS;
-  }
-  else
+  } else
   {
     VS[vsIndex++] = _tokens->pointIdNoneVS;
   }
@@ -232,8 +218,7 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
       default:
         TF_CODING_ERROR("Unhandled drawstyle for basis curves");
     }
-  }
-  else
+  } else
   {  // cubic
     switch (drawStyle)
     {
@@ -302,12 +287,10 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
   if (shadingTerminal == HdBasisCurvesReprDescTokens->hullColor)
   {
     FS[fsIndex++] = _tokens->hullColorFS;
-  }
-  else if (shadingTerminal == HdBasisCurvesReprDescTokens->pointColor)
+  } else if (shadingTerminal == HdBasisCurvesReprDescTokens->pointColor)
   {
     FS[fsIndex++] = _tokens->pointColorFS;
-  }
-  else
+  } else
   {
     FS[fsIndex++] = _tokens->surfaceFS;
   }
@@ -321,43 +304,37 @@ HdPh_BasisCurvesShaderKey::HdPh_BasisCurvesShaderKey(TfToken const &type,
   {
     FS[fsIndex++] = _tokens->curvesFragmentWire;
     FS[fsIndex++] = TfToken();
-  }
-  else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
-           normalStyle == HdPh_BasisCurvesShaderKey::ORIENTED)
+  } else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
+             normalStyle == HdPh_BasisCurvesShaderKey::ORIENTED)
   {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentRibbonOriented;
     FS[fsIndex++] = TfToken();
-  }
-  else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
-           normalStyle == HdPh_BasisCurvesShaderKey::ROUND)
+  } else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
+             normalStyle == HdPh_BasisCurvesShaderKey::ROUND)
   {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentRibbonRound;
     FS[fsIndex++] = TfToken();
-  }
-  else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
-           normalStyle == HdPh_BasisCurvesShaderKey::HAIR)
+  } else if (drawStyle == HdPh_BasisCurvesShaderKey::RIBBON &&
+             normalStyle == HdPh_BasisCurvesShaderKey::HAIR)
   {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentHair;
     FS[fsIndex++] = TfToken();
-  }
-  else if (drawStyle == HdPh_BasisCurvesShaderKey::HALFTUBE &&
-           normalStyle == HdPh_BasisCurvesShaderKey::ROUND)
+  } else if (drawStyle == HdPh_BasisCurvesShaderKey::HALFTUBE &&
+             normalStyle == HdPh_BasisCurvesShaderKey::ROUND)
   {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentHalfTube;
     FS[fsIndex++] = TfToken();
-  }
-  else if (drawStyle == HdPh_BasisCurvesShaderKey::HALFTUBE &&
-           normalStyle == HdPh_BasisCurvesShaderKey::HAIR)
+  } else if (drawStyle == HdPh_BasisCurvesShaderKey::HALFTUBE &&
+             normalStyle == HdPh_BasisCurvesShaderKey::HAIR)
   {
     FS[fsIndex++] = _tokens->curvesFragmentPatch;
     FS[fsIndex++] = _tokens->curvesFragmentHair;
     FS[fsIndex++] = TfToken();
-  }
-  else
+  } else
   {
     TF_WARN(
       "Cannot setup fragment shaders for invalid combination of \

@@ -38,8 +38,7 @@ bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollis
       {
         count++;
         continue;
-      }
-      else
+      } else
       {
         if (count > 1)
         {
@@ -52,8 +51,7 @@ bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollis
             printbits((unsigned char *)&kp, sizeof(kp));
             printf(" - %4.2f%%\n", pct);
           }
-        }
-        else
+        } else
         {
           ignore++;
         }
@@ -72,8 +70,7 @@ bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollis
         printbits((unsigned char *)&kp, sizeof(kp));
         printf(" - %4.2f%%\n", pct);
       }
-    }
-    else
+    } else
     {
       ignore++;
     }

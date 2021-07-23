@@ -50,8 +50,9 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
                                      TfToken("usd"),
                                      TfToken("usdGeom"),
                                      TfToken("usdImagingGL")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(
-    TfToken("usdAppUtils"), TfToken("wabi.UsdAppUtils"), reqs);
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdAppUtils"),
+                                                      TfToken("wabi.UsdAppUtils"),
+                                                      reqs);
 }
 
 WABI_NAMESPACE_END

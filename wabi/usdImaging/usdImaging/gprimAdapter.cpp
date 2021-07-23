@@ -162,8 +162,7 @@ SdfPath UsdImagingGprimAdapter::_AddRprim(TfToken const &primType,
         // XXX: Eventually, it would be great to push this into hydra.
         index->AddDependency(cachePath, materialPrim);
       }
-    }
-    else
+    } else
     {
       TF_WARN(
         "Gprim <%s> has illegal material reference to "
@@ -224,8 +223,10 @@ void UsdImagingGprimAdapter::TrackVariability(UsdPrim const &prim,
              false);
 
   // Discover time-varying transforms.
-  _IsTransformVarying(
-    prim, HdChangeTracker::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
+  _IsTransformVarying(prim,
+                      HdChangeTracker::DirtyTransform,
+                      UsdImagingTokens->usdVaryingXform,
+                      timeVaryingBits);
 
   // Discover time-varying visibility.
   _IsVarying(prim,
@@ -335,8 +336,7 @@ void UsdImagingGprimAdapter::UpdateForTime(UsdPrim const &prim,
                     _UsdToHdInterpolation(colorInterp),
                     HdPrimvarRoleTokens->color,
                     !colorIndices.empty());
-    }
-    else
+    } else
     {
       UsdGeomPrimvar pv = _GetInheritedPrimvar(prim, HdTokens->displayColor);
       if (pv)
@@ -355,8 +355,7 @@ void UsdImagingGprimAdapter::UpdateForTime(UsdPrim const &prim,
                     _UsdToHdInterpolation(opacityInterp),
                     TfToken(),
                     !opacityIndices.empty());
-    }
-    else
+    } else
     {
       UsdGeomPrimvar pv = _GetInheritedPrimvar(prim, HdTokens->displayOpacity);
       if (pv)
@@ -547,8 +546,7 @@ GfRange3d UsdImagingGprimAdapter::GetExtent(UsdPrim const &prim,
     // Usd stores extent as 2 float vecs. We do an implicit
     // conversion to doubles
     return GfRange3d(extent[0], extent[1]);
-  }
-  else
+  } else
   {
     // Return empty range if no value was found, or the wrong number of
     // extent values were provided.
@@ -622,8 +620,7 @@ VtValue UsdImagingGprimAdapter::Get(UsdPrim const &prim,
         pv.GetIndices(outIndices, time);
         return value;
       }
-    }
-    else if (pv && pv.ComputeFlattened(&value, time))
+    } else if (pv && pv.ComputeFlattened(&value, time))
     {
       return value;
     }
@@ -632,8 +629,7 @@ VtValue UsdImagingGprimAdapter::Get(UsdPrim const &prim,
     VtVec3fArray vec(1, GfVec3f(.5, .5, .5));
     value = vec;
     return value;
-  }
-  else if (key == HdTokens->displayOpacity)
+  } else if (key == HdTokens->displayOpacity)
   {
     // First we try to obtain color from the prim,
     // if not present, we try to get if through inheritance,
@@ -653,8 +649,7 @@ VtValue UsdImagingGprimAdapter::Get(UsdPrim const &prim,
         pv.GetIndices(outIndices, time);
         return value;
       }
-    }
-    else if (pv && pv.ComputeFlattened(&value, time))
+    } else if (pv && pv.ComputeFlattened(&value, time))
     {
       return value;
     }
@@ -663,26 +658,22 @@ VtValue UsdImagingGprimAdapter::Get(UsdPrim const &prim,
     VtFloatArray vec(1, 1.0f);
     value = VtValue(vec);
     return value;
-  }
-  else if (key == HdTokens->normals)
+  } else if (key == HdTokens->normals)
   {
     // Fallback
     VtVec3fArray vec(1, GfVec3f(0, 0, 0));
     value = VtValue(vec);
     return value;
-  }
-  else if (key == HdTokens->widths)
+  } else if (key == HdTokens->widths)
   {
     // Fallback
     VtFloatArray vec(1, 1.0f);
     value = VtValue(vec);
     return value;
-  }
-  else if (key == HdTokens->points)
+  } else if (key == HdTokens->points)
   {
     return GetPoints(prim, time);
-  }
-  else if (key == HdTokens->velocities)
+  } else if (key == HdTokens->velocities)
   {
     UsdGeomPointBased pointBased(prim);
     VtVec3fArray velocities;
@@ -690,8 +681,7 @@ VtValue UsdImagingGprimAdapter::Get(UsdPrim const &prim,
     {
       return VtValue(velocities);
     }
-  }
-  else if (key == HdTokens->accelerations)
+  } else if (key == HdTokens->accelerations)
   {
     // Acceleration information is expected to be authored @ the same sample
     // rate as points data, so use the points dirty bit to let us know when
@@ -702,8 +692,7 @@ VtValue UsdImagingGprimAdapter::Get(UsdPrim const &prim,
     {
       return VtValue(accelerations);
     }
-  }
-  else if (UsdGeomPrimvar pv = gprim.GetPrimvar(key))
+  } else if (UsdGeomPrimvar pv = gprim.GetPrimvar(key))
   {
     if (outIndices)
     {
@@ -712,13 +701,11 @@ VtValue UsdImagingGprimAdapter::Get(UsdPrim const &prim,
         pv.GetIndices(outIndices, time);
         return value;
       }
-    }
-    else if (pv && pv.ComputeFlattened(&value, time))
+    } else if (pv && pv.ComputeFlattened(&value, time))
     {
       return value;
     }
-  }
-  else if (UsdGeomPrimvar pv = _GetInheritedPrimvar(prim, key))
+  } else if (UsdGeomPrimvar pv = _GetInheritedPrimvar(prim, key))
   {
     if (outIndices)
     {
@@ -727,8 +714,7 @@ VtValue UsdImagingGprimAdapter::Get(UsdPrim const &prim,
         pv.GetIndices(outIndices, time);
         return value;
       }
-    }
-    else if (pv && pv.ComputeFlattened(&value, time))
+    } else if (pv && pv.ComputeFlattened(&value, time))
     {
       return value;
     }
@@ -814,8 +800,7 @@ bool UsdImagingGprimAdapter::GetColor(UsdPrim const &prim,
             colorIndices = VtIntArray(1, 0);
           }
         }
-      }
-      else if (primvar.ComputeFlattened(&result, time))
+      } else if (primvar.ComputeFlattened(&result, time))
       {
         hasAuthoredColor = true;
 
@@ -829,16 +814,14 @@ bool UsdImagingGprimAdapter::GetColor(UsdPrim const &prim,
             primvar.GetName().GetText());
           result.resize(1);
         }
-      }
-      else if (primvar.HasAuthoredValue())
+      } else if (primvar.HasAuthoredValue())
       {
         // If the primvar exists and ComputeFlattened returns false,
         // the value authored is None, in which case, we return an empty
         // array.
         hasAuthoredColor = true;
         result = VtVec3fArray();
-      }
-      else
+      } else
       {
         // All UsdGeomPointBased prims have the displayColor primvar
         // by default. Suppress unauthored ones from being
@@ -943,8 +926,7 @@ bool UsdImagingGprimAdapter::GetOpacity(UsdPrim const &prim,
             opacityIndices = VtIntArray(1, 0);
           }
         }
-      }
-      else if (primvar.ComputeFlattened(&result, time))
+      } else if (primvar.ComputeFlattened(&result, time))
       {
         hasAuthoredOpacity = true;
 
@@ -958,16 +940,14 @@ bool UsdImagingGprimAdapter::GetOpacity(UsdPrim const &prim,
             primvar.GetName().GetText());
           result.resize(1);
         }
-      }
-      else if (primvar.HasAuthoredValue())
+      } else if (primvar.HasAuthoredValue())
       {
         // If the primvar exists and ComputeFlattened returns false,
         // the value authored is None, in which case, we return an empty
         // array,
         hasAuthoredOpacity = true;
         result = VtFloatArray();
-      }
-      else
+      } else
       {
         // All UsdGeomPointBased prims have the displayOpacity primvar
         // by default. Suppress unauthored ones from being

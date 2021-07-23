@@ -90,16 +90,19 @@ HgiVulkanComputePipeline::HgiVulkanComputePipeline(HgiVulkanDevice *device,
   pipeLayCreateInfo.setLayoutCount = (uint32_t)_vkDescriptorSetLayouts.size();
   pipeLayCreateInfo.pSetLayouts = _vkDescriptorSetLayouts.data();
 
-  TF_VERIFY(vkCreatePipelineLayout(
-              _device->GetVulkanDevice(), &pipeLayCreateInfo, HgiVulkanAllocator(), &_vkPipelineLayout) ==
-            VK_SUCCESS);
+  TF_VERIFY(vkCreatePipelineLayout(_device->GetVulkanDevice(),
+                                   &pipeLayCreateInfo,
+                                   HgiVulkanAllocator(),
+                                   &_vkPipelineLayout) == VK_SUCCESS);
 
   // Debug label
   if (!desc.debugName.empty())
   {
     std::string debugLabel = "PipelineLayout " + desc.debugName;
-    HgiVulkanSetDebugName(
-      device, (uint64_t)_vkPipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, debugLabel.c_str());
+    HgiVulkanSetDebugName(device,
+                          (uint64_t)_vkPipelineLayout,
+                          VK_OBJECT_TYPE_PIPELINE_LAYOUT,
+                          debugLabel.c_str());
   }
 
   pipeCreateInfo.layout = _vkPipelineLayout;

@@ -82,8 +82,15 @@ static void _GlTextureSubImageND(const HgiTextureType textureType,
       glTextureSubImage1D(texture, level, offsets[0], dimensions[0], format, type, pixels);
       break;
     case HgiTextureType2D:
-      glTextureSubImage2D(
-        texture, level, offsets[0], offsets[1], dimensions[0], dimensions[1], format, type, pixels);
+      glTextureSubImage2D(texture,
+                          level,
+                          offsets[0],
+                          offsets[1],
+                          dimensions[0],
+                          dimensions[1],
+                          format,
+                          type,
+                          pixels);
       break;
     case HgiTextureType3D:
       glTextureSubImage3D(texture,
@@ -99,8 +106,15 @@ static void _GlTextureSubImageND(const HgiTextureType textureType,
                           pixels);
       break;
     case HgiTextureType1DArray:
-      glTextureSubImage2D(
-        texture, level, offsets[0], offsets[1], dimensions[0], layerCount, format, type, pixels);
+      glTextureSubImage2D(texture,
+                          level,
+                          offsets[0],
+                          offsets[1],
+                          dimensions[0],
+                          layerCount,
+                          format,
+                          type,
+                          pixels);
       break;
     case HgiTextureType2DArray:
       glTextureSubImage3D(texture,
@@ -133,8 +147,15 @@ static void _GlCompressedTextureSubImageND(const HgiTextureType textureType,
   switch (textureType)
   {
     case HgiTextureType2D:
-      glCompressedTextureSubImage2D(
-        texture, level, offsets[0], offsets[1], dimensions[0], dimensions[1], format, imageSize, pixels);
+      glCompressedTextureSubImage2D(texture,
+                                    level,
+                                    offsets[0],
+                                    offsets[1],
+                                    dimensions[0],
+                                    dimensions[1],
+                                    format,
+                                    imageSize,
+                                    pixels);
       break;
     case HgiTextureType3D:
       glCompressedTextureSubImage3D(texture,
@@ -202,15 +223,13 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc)
     {
       glFormat = GL_DEPTH_STENCIL;
       glInternalFormat = GL_DEPTH32F_STENCIL8;
-    }
-    else
+    } else
     {
       glFormat = GL_DEPTH_COMPONENT;
       glInternalFormat = GL_DEPTH_COMPONENT32F;
     }
     glPixelType = GL_FLOAT;
-  }
-  else
+  } else
   {
     HgiGLConversions::GetFormat(desc.format, &glFormat, &glPixelType, &glInternalFormat);
   }
@@ -223,8 +242,7 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc)
   if (desc.sampleCount == HgiSampleCount1)
   {
     glCreateTextures(HgiGLConversions::GetTextureType(desc.type), 1, &_textureId);
-  }
-  else
+  } else
   {
     if (desc.type != HgiTextureType2D)
     {
@@ -261,8 +279,10 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc)
     if (desc.initialData && desc.pixelsByteSize > 0)
     {
       // Upload each (available) mip
-      const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-        desc.format, desc.dimensions, desc.layerCount, desc.pixelsByteSize);
+      const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(desc.format,
+                                                              desc.dimensions,
+                                                              desc.layerCount,
+                                                              desc.pixelsByteSize);
       const size_t mipLevels = std::min(mipInfos.size(), size_t(desc.mipLevels));
       const char *const initialData = reinterpret_cast<const char *>(desc.initialData);
 
@@ -280,8 +300,7 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc)
                                          glInternalFormat,
                                          mipInfo.byteSizePerLayer * desc.layerCount,
                                          initialData + mipInfo.byteOffset);
-        }
-        else
+        } else
         {
           _GlTextureSubImageND(desc.type,
                                _textureId,
@@ -295,12 +314,15 @@ HgiGLTexture::HgiGLTexture(HgiTextureDesc const &desc)
         }
       }
     }
-  }
-  else
+  } else
   {
     // Note: Setting sampler state values on multi-sample texture is invalid
-    glTextureStorage2DMultisample(
-      _textureId, desc.sampleCount, glInternalFormat, desc.dimensions[0], desc.dimensions[1], GL_TRUE);
+    glTextureStorage2DMultisample(_textureId,
+                                  desc.sampleCount,
+                                  glInternalFormat,
+                                  desc.dimensions[0],
+                                  desc.dimensions[1],
+                                  GL_TRUE);
   }
 
   const GLint swizzleMask[] = {GLint(HgiGLConversions::GetComponentSwizzle(desc.componentMapping.r)),
@@ -333,13 +355,11 @@ HgiGLTexture::HgiGLTexture(HgiTextureViewDesc const &desc)
     if (desc.format == HgiFormatFloat32UInt8)
     {
       glInternalFormat = GL_DEPTH32F_STENCIL8;
-    }
-    else
+    } else
     {
       glInternalFormat = GL_DEPTH_COMPONENT32F;
     }
-  }
-  else
+  } else
   {
     GLenum glFormat = 0;
     GLenum glPixelType = 0;

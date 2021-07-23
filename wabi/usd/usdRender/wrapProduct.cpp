@@ -50,27 +50,30 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateProductTypeAttr(UsdRenderProduct &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateProductTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateProductTypeAttr(UsdRenderProduct &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateProductTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                      writeSparsely);
+  }
 
-static UsdAttribute _CreateProductNameAttr(UsdRenderProduct &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateProductNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateProductNameAttr(UsdRenderProduct &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateProductNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                      writeSparsely);
+  }
 
-static std::string _Repr(const UsdRenderProduct &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRender.Product(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRenderProduct &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRender.Product(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -140,7 +143,7 @@ void wrapUsdRenderProduct()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

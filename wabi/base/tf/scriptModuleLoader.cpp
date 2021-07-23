@@ -267,8 +267,7 @@ void TfScriptModuleLoader::_LoadUpTo(TfToken const &name)
   if (name.IsEmpty())
   {
     _TopologicalSort(&order);
-  }
-  else
+  } else
   {
     _GetOrderedDependencies(vector<TfToken>(1, name), &order);
   }
@@ -369,9 +368,8 @@ void TfScriptModuleLoader::_LoadModulesFor(TfToken const &inName)
     // request is not to load everything (empty token) and it's also not a
     // (transitive) dependency of the library we're currently working on,
     // then load it immediately.
-  }
-  else if (!_remainingLoadWork.back().IsEmpty() &&
-           !_HasTransitiveSuccessor(_remainingLoadWork.front(), _remainingLoadWork.back()))
+  } else if (!_remainingLoadWork.back().IsEmpty() &&
+             !_HasTransitiveSuccessor(_remainingLoadWork.front(), _remainingLoadWork.back()))
   {
     TfToken name = _remainingLoadWork.back();
     _remainingLoadWork.pop_back();

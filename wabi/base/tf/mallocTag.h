@@ -560,39 +560,39 @@ typedef TfMallocTag::Auto2 TfAutoMallocTag2;
 //
 WABI_NAMESPACE_END
 
-#define TF_MALLOC_TAG_NEW(name1, name2) \
-  /* this is for STL purposes */ \
-  inline void *operator new(::std::size_t, void *ptr) \
-  { \
-    return ptr; \
-  } \
-\
-  inline void *operator new(::std::size_t s) \
-  { \
-    WABI_NS::TfAutoMallocTag tag1(name1); \
-    WABI_NS::TfAutoMallocTag tag2(name2); \
-    return malloc(s); \
-  } \
-\
-  inline void *operator new[](::std::size_t s) \
-  { \
-    WABI_NS::TfAutoMallocTag tag1(name1); \
-    WABI_NS::TfAutoMallocTag tag2(name2); \
-    return malloc(s); \
-  } \
-\
+#define TF_MALLOC_TAG_NEW(name1, name2)                   \
+  /* this is for STL purposes */                          \
+  inline void *operator new(::std::size_t, void *ptr)     \
+  {                                                       \
+    return ptr;                                           \
+  }                                                       \
+                                                          \
+  inline void *operator new(::std::size_t s)              \
+  {                                                       \
+    WABI_NS::TfAutoMallocTag tag1(name1);                 \
+    WABI_NS::TfAutoMallocTag tag2(name2);                 \
+    return malloc(s);                                     \
+  }                                                       \
+                                                          \
+  inline void *operator new[](::std::size_t s)            \
+  {                                                       \
+    WABI_NS::TfAutoMallocTag tag1(name1);                 \
+    WABI_NS::TfAutoMallocTag tag2(name2);                 \
+    return malloc(s);                                     \
+  }                                                       \
+                                                          \
   /* Required due to the placement-new override above. */ \
-  inline void operator delete(void *ptr, void *place) \
-  {} \
-\
-  inline void operator delete(void *ptr, size_t) \
-  { \
-    free(ptr); \
-  } \
-\
-  inline void operator delete[](void *ptr, size_t) \
-  { \
-    free(ptr); \
+  inline void operator delete(void *ptr, void *place)     \
+  {}                                                      \
+                                                          \
+  inline void operator delete(void *ptr, size_t)          \
+  {                                                       \
+    free(ptr);                                            \
+  }                                                       \
+                                                          \
+  inline void operator delete[](void *ptr, size_t)        \
+  {                                                       \
+    free(ptr);                                            \
   }
 
 #endif

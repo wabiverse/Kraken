@@ -99,8 +99,9 @@ bool HdEmbreeUniformSampler::Sample(unsigned int element,
   {
     return false;
   }
-  return _sampler.Sample(
-    HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(_primitiveParams[element]), value, dataType);
+  return _sampler.Sample(HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(_primitiveParams[element]),
+                         value,
+                         dataType);
 }
 
 // HdEmbreeTriangleVertexSampler
@@ -122,8 +123,9 @@ bool HdEmbreeTriangleVertexSampler::Sample(unsigned int element,
   {
     return false;
   }
-  void *samples[3] = {
-    static_cast<void *>(&corners[0]), static_cast<void *>(&corners[1]), static_cast<void *>(&corners[2])};
+  void *samples[3] = {static_cast<void *>(&corners[0]),
+                      static_cast<void *>(&corners[1]),
+                      static_cast<void *>(&corners[2])};
   // Embree specification of triangle interpolation:
   // t_uv = (1-u-v)*t0 + u*t1 + v*t2
   float weights[3] = {1.0f - u - v, u, v};
@@ -145,8 +147,9 @@ bool HdEmbreeTriangleFaceVaryingSampler::Sample(unsigned int element,
   {
     return false;
   }
-  void *samples[3] = {
-    static_cast<void *>(&corners[0]), static_cast<void *>(&corners[1]), static_cast<void *>(&corners[2])};
+  void *samples[3] = {static_cast<void *>(&corners[0]),
+                      static_cast<void *>(&corners[1]),
+                      static_cast<void *>(&corners[2])};
   // Embree specification of triangle interpolation:
   // t_uv = (1-u-v)*t0 + u*t1 + v*t2
   float weights[3] = {1.0f - u - v, u, v};
@@ -159,8 +162,10 @@ bool HdEmbreeTriangleFaceVaryingSampler::Sample(unsigned int element,
 {
   HdVtBufferSource buffer(name, value);
   VtValue triangulated;
-  if (!meshUtil.ComputeTriangulatedFaceVaryingPrimvar(
-        buffer.GetData(), buffer.GetNumElements(), buffer.GetTupleType().type, &triangulated))
+  if (!meshUtil.ComputeTriangulatedFaceVaryingPrimvar(buffer.GetData(),
+                                                      buffer.GetNumElements(),
+                                                      buffer.GetTupleType().type,
+                                                      &triangulated))
   {
     TF_CODING_ERROR("[%s] Could not triangulate face-varying data.", name.GetText());
     return VtValue();

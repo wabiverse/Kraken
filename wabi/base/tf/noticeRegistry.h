@@ -198,8 +198,7 @@ class Tf_NoticeRegistry : boost::noncopyable
     if (i != c->_perSenderTable.end())
     {
       return _DelivererListEntry(&(i->second), i->second.begin());
-    }
-    else
+    } else
     {
       return _DelivererListEntry((_DelivererList *)0, _DelivererList::iterator());
     }

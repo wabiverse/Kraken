@@ -43,32 +43,33 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateTypeAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateTypeAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static UsdAttribute _CreateBasisAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateBasisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateBasisAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateBasisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static UsdAttribute _CreateWrapAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateWrapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateWrapAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateWrapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomBasisCurves &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.BasisCurves(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdGeomBasisCurves &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.BasisCurves(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -103,8 +104,9 @@ void wrapUsdGeomBasisCurves()
     .def("CreateTypeAttr", &_CreateTypeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetBasisAttr", &This::GetBasisAttr)
-    .def(
-      "CreateBasisAttr", &_CreateBasisAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateBasisAttr",
+         &_CreateBasisAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetWrapAttr", &This::GetWrapAttr)
     .def("CreateWrapAttr", &_CreateWrapAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
@@ -136,21 +138,21 @@ void wrapUsdGeomBasisCurves()
 namespace
 {
 
-static TfToken _ComputeInterpolationForSize(const UsdGeomBasisCurves &curvesSchema,
-                                            size_t n,
-                                            const UsdTimeCode &timeCode)
-{
-  return curvesSchema.ComputeInterpolationForSize(n, timeCode, NULL);
-}
+  static TfToken _ComputeInterpolationForSize(const UsdGeomBasisCurves &curvesSchema,
+                                              size_t n,
+                                              const UsdTimeCode &timeCode)
+  {
+    return curvesSchema.ComputeInterpolationForSize(n, timeCode, NULL);
+  }
 
-WRAP_CUSTOM
-{
-  typedef UsdGeomBasisCurves This;
+  WRAP_CUSTOM
+  {
+    typedef UsdGeomBasisCurves This;
 
-  _class.def("ComputeInterpolationForSize", _ComputeInterpolationForSize)
-    .def("ComputeUniformDataSize", &This::ComputeUniformDataSize)
-    .def("ComputeVaryingDataSize", &This::ComputeVaryingDataSize)
-    .def("ComputeVertexDataSize", &This::ComputeVertexDataSize);
-}
+    _class.def("ComputeInterpolationForSize", _ComputeInterpolationForSize)
+      .def("ComputeUniformDataSize", &This::ComputeUniformDataSize)
+      .def("ComputeVaryingDataSize", &This::ComputeVaryingDataSize)
+      .def("ComputeVertexDataSize", &This::ComputeVertexDataSize);
+  }
 
 }  // anonymous namespace

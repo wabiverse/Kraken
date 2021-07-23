@@ -35,8 +35,7 @@ void KKE_reports_init(ReportList *reports, int flag);
 void KKE_reports_clear(ReportList *reports);
 
 void KKE_report(ReportList *reports, eReportType type, const char *_message);
-void KKE_reportf(ReportList *reports, eReportType type, const char *_format, ...)
-  ATTR_PRINTF_FORMAT(3, 4);
+void KKE_reportf(ReportList *reports, eReportType type, const char *_format, ...) ATTR_PRINTF_FORMAT(3, 4);
 
 char *KKE_reports_string(ReportList *reports, eReportType level);
 

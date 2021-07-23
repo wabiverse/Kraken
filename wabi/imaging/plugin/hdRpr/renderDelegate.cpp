@@ -56,20 +56,17 @@ class HdRprDiagnosticMgrDelegate : public TfDiagnosticMgr::Delegate
     if (logFile == "stderr")
     {
       m_output = stderr;
-    }
-    else if (logFile == "stdout")
+    } else if (logFile == "stdout")
     {
       m_output = stdout;
-    }
-    else
+    } else
     {
       m_outputFile = fopen(logFile.c_str(), "a+");
       if (!m_outputFile)
       {
         TF_RUNTIME_ERROR("Failed to open error output file: \"%s\". Defaults to stderr\n", logFile.c_str());
         m_output = stderr;
-      }
-      else
+      } else
       {
         m_output = m_outputFile;
       }
@@ -181,11 +178,12 @@ HdRprDelegate::HdRprDelegate(HdRenderSettingsMap const &renderSettings)
   auto errorOutputFile = TfGetenv("HD_RPR_ERROR_OUTPUT_FILE");
   if (!errorOutputFile.empty())
   {
-    m_diagnosticMgrDelegate = DiagnostMgrDelegatePtr(
-      new HdRprDiagnosticMgrDelegate(errorOutputFile), [](HdRprDiagnosticMgrDelegate *delegate) {
-        TfDiagnosticMgr::GetInstance().RemoveDelegate(delegate);
-        delete delegate;
-      });
+    m_diagnosticMgrDelegate = DiagnostMgrDelegatePtr(new HdRprDiagnosticMgrDelegate(errorOutputFile),
+                                                     [](HdRprDiagnosticMgrDelegate *delegate) {
+                                                       TfDiagnosticMgr::GetInstance().RemoveDelegate(
+                                                         delegate);
+                                                       delete delegate;
+                                                     });
     TfDiagnosticMgr::GetInstance().AddDelegate(m_diagnosticMgrDelegate.get());
   }
 }
@@ -262,12 +260,10 @@ HdRprim *HdRprDelegate::CreateRprim(TfToken const &typeId,
   if (typeId == HdPrimTypeTokens->mesh)
   {
     return new HdRprMesh(rprimId HDRPR_INSTANCER_ID_ARG);
-  }
-  else if (typeId == HdPrimTypeTokens->basisCurves)
+  } else if (typeId == HdPrimTypeTokens->basisCurves)
   {
     return new HdRprBasisCurves(rprimId HDRPR_INSTANCER_ID_ARG);
-  }
-  else if (typeId == HdPrimTypeTokens->points)
+  } else if (typeId == HdPrimTypeTokens->points)
   {
     return new HdRprPoints(rprimId HDRPR_INSTANCER_ID_ARG);
   }
@@ -292,25 +288,20 @@ HdSprim *HdRprDelegate::CreateSprim(TfToken const &typeId, SdfPath const &sprimI
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdRprCamera(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->domeLight)
+  } else if (typeId == HdPrimTypeTokens->domeLight)
   {
     return new HdRprDomeLight(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->distantLight)
+  } else if (typeId == HdPrimTypeTokens->distantLight)
   {
     return new HdRprDistantLight(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->sphereLight ||
-           typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->diskLight)
+  } else if (typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->sphereLight ||
+             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->diskLight)
   {
     return new HdRprLight(sprimId, typeId);
-  }
-  else if (typeId == HdPrimTypeTokens->material)
+  } else if (typeId == HdPrimTypeTokens->material)
   {
     return new HdRprMaterial(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->extComputation)
+  } else if (typeId == HdPrimTypeTokens->extComputation)
   {
     return new HdExtComputation(sprimId);
   }
@@ -326,25 +317,20 @@ HdSprim *HdRprDelegate::CreateFallbackSprim(TfToken const &typeId)
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdRprCamera(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->domeLight)
+  } else if (typeId == HdPrimTypeTokens->domeLight)
   {
     return new HdRprDomeLight(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->sphereLight ||
-           typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->diskLight)
+  } else if (typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->sphereLight ||
+             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->diskLight)
   {
     return new HdRprLight(SdfPath::EmptyPath(), typeId);
-  }
-  else if (typeId == HdPrimTypeTokens->distantLight)
+  } else if (typeId == HdPrimTypeTokens->distantLight)
   {
     return new HdRprDistantLight(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->material)
+  } else if (typeId == HdPrimTypeTokens->material)
   {
     return new HdRprMaterial(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->extComputation)
+  } else if (typeId == HdPrimTypeTokens->extComputation)
   {
     return new HdExtComputation(SdfPath::EmptyPath());
   }

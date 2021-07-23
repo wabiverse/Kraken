@@ -85,10 +85,10 @@ constexpr char const *PlugPlugin::_GetPluginTypeDisplayName(_Type type)
 {
   return type == LibraryType ? "shared library" :
 #ifdef WITH_PYTHON
-                               type == PythonType ? "python module" :
+         type == PythonType ? "python module" :
 #endif  // WITH_PYTHON
-                                                    type == ResourceType ? "resource" :
-                                                                           "<invalid enum value>";
+         type == ResourceType ? "resource" :
+                                "<invalid enum value>";
 }
 
 template<class PluginMap>
@@ -136,8 +136,11 @@ pair<PlugPluginPtr, bool> PlugPlugin::_NewPlugin(const Plug_RegistrationMetadata
          metadata.pluginName.c_str(),
          pluginCreationPath.c_str());
 
-  PlugPluginRefPtr plugin = TfCreateRefPtr(new PlugPlugin(
-    pluginCreationPath, metadata.pluginName, metadata.resourcePath, metadata.plugInfo, pluginType));
+  PlugPluginRefPtr plugin = TfCreateRefPtr(new PlugPlugin(pluginCreationPath,
+                                                          metadata.pluginName,
+                                                          metadata.resourcePath,
+                                                          metadata.plugInfo,
+                                                          pluginType));
 
   if (TfDebug::IsEnabled(PLUG_REGISTRATION) && !metadata.pluginPath.empty() &&
       !TfIsFile(pluginCreationPath, /* resolveSymlinks =*/true))
@@ -237,8 +240,7 @@ bool PlugPlugin::_Load()
   if (false)
   {
 #endif  // WITH_PYTHON
-  }
-  else if (!IsResource())
+  } else if (!IsResource())
   {
     // This plugin's library path may be empty if the plugin isn't
     // separately loadable, e.g. it's part of a monolithic USD build
@@ -246,8 +248,7 @@ bool PlugPlugin::_Load()
     if (_path.empty())
     {
       TF_DEBUG(PLUG_LOAD).Msg("No path to library for '%s'.\n", _name.c_str());
-    }
-    else
+    } else
     {
       string dsoError;
       {
@@ -256,8 +257,10 @@ bool PlugPlugin::_Load()
       }
       if (!_handle)
       {
-        TF_CODING_ERROR(
-          "Failed to load plugin '%s': %s in '%s'", _name.c_str(), dsoError.c_str(), _path.c_str());
+        TF_CODING_ERROR("Failed to load plugin '%s': %s in '%s'",
+                        _name.c_str(),
+                        dsoError.c_str(),
+                        _path.c_str());
         isLoaded = false;
       }
     }
@@ -593,8 +596,7 @@ void PlugPlugin::_DeclareType(const std::string &typeName, const JsObject &typeD
     {
       basesVec.push_back(TfType::Declare(name));
     }
-  }
-  else if (!bases.IsNull())
+  } else if (!bases.IsNull())
   {
     TF_CODING_ERROR(
       "Invalid bases for type %s specified by plugin %s. "
@@ -620,8 +622,7 @@ void PlugPlugin::_DeclareType(const std::string &typeName, const JsObject &typeD
     // If there were no bases previously declared, simply declare with known
     // bases.
     TfType::Declare(typeName, basesVec, cb);
-  }
-  else
+  } else
   {
     // Make sure that the bases mentioned in the plugin
     // metadata are among them.

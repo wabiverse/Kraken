@@ -52,16 +52,15 @@ TF_DEFINE_ENV_SETTING(USD_FORCE_DEFAULT_MATERIALS_SCOPE_NAME,
                       "This is primarily used for unit testing purposes as a way to ignore any "
                       "site-based configuration.");
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
-  (UsdUtilsPipeline)(MaterialsScopeName)(PrimaryCameraName)(RegisteredVariantSets)(selectionExportPolicy)
-  // lowerCamelCase of the enums.
-  (never)(ifAuthored)(always)
+                         (UsdUtilsPipeline)(MaterialsScopeName)(PrimaryCameraName)(RegisteredVariantSets)(selectionExportPolicy)
+                         // lowerCamelCase of the enums.
+                         (never)(ifAuthored)(always)
 
-    ((DefaultMaterialsScopeName, "Looks"))((DefaultPrimaryCameraName, "main_cam"))
+                           ((DefaultMaterialsScopeName, "Looks"))((DefaultPrimaryCameraName, "main_cam"))
 
-      (pref)(st));
+                             (pref)(st));
 
 TfToken UsdUtilsGetAlphaAttributeNameForColor(TfToken const &colorAttrName)
 {
@@ -150,16 +149,13 @@ TF_MAKE_STATIC_DATA(std::set<UsdUtilsRegisteredVariantSet>, _regVarSets)
           if (variantSetType == _tokens->never)
           {
             selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::Never;
-          }
-          else if (variantSetType == _tokens->ifAuthored)
+          } else if (variantSetType == _tokens->ifAuthored)
           {
             selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::IfAuthored;
-          }
-          else if (variantSetType == _tokens->always)
+          } else if (variantSetType == _tokens->always)
           {
             selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::Always;
-          }
-          else
+          } else
           {
             TF_CODING_ERROR("%s[UsdUtilsPipeline][RegisteredVariantSets][%s] was not valid.",
                             plug->GetName().c_str(),
@@ -329,8 +325,9 @@ TfToken UsdUtilsGetMaterialsScopeName(const bool forceDefault)
     return _tokens->DefaultMaterialsScopeName;
   }
 
-  return TfMapLookupByValue(
-    *_pipelineIdentifiersMap, _tokens->MaterialsScopeName, _tokens->DefaultMaterialsScopeName);
+  return TfMapLookupByValue(*_pipelineIdentifiersMap,
+                            _tokens->MaterialsScopeName,
+                            _tokens->DefaultMaterialsScopeName);
 }
 
 TfToken UsdUtilsGetPrimaryCameraName(const bool forceDefault)
@@ -340,8 +337,9 @@ TfToken UsdUtilsGetPrimaryCameraName(const bool forceDefault)
     return _tokens->DefaultPrimaryCameraName;
   }
 
-  return TfMapLookupByValue(
-    *_pipelineIdentifiersMap, _tokens->PrimaryCameraName, _tokens->DefaultPrimaryCameraName);
+  return TfMapLookupByValue(*_pipelineIdentifiersMap,
+                            _tokens->PrimaryCameraName,
+                            _tokens->DefaultPrimaryCameraName);
 }
 
 WABI_NAMESPACE_END

@@ -303,8 +303,7 @@ class GfRange3d
     {
       _min *= m;
       _max *= m;
-    }
-    else
+    } else
     {
       GfVec3d tmp = _min;
       _min = _max * m;

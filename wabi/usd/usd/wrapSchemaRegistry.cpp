@@ -40,10 +40,9 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-static UsdPrimDefinition *
-_WrapBuildComposedPrimDefinition(const UsdSchemaRegistry &self,
-                                 const TfToken &primType,
-                                 const TfTokenVector &appliedAPISchemas)
+static UsdPrimDefinition *_WrapBuildComposedPrimDefinition(const UsdSchemaRegistry &self,
+                                                           const TfToken &primType,
+                                                           const TfTokenVector &appliedAPISchemas)
 {
   return self.BuildComposedPrimDefinition(primType, appliedAPISchemas).release();
 }
@@ -56,9 +55,7 @@ void wrapUsdSchemaRegistry()
   class_<This, ThisPtr, boost::noncopyable>("SchemaRegistry", no_init)
     .def(TfPySingleton())
 
-    .def("GetSchemaTypeName",
-         (TfToken(*)(const TfType &)) & This::GetSchemaTypeName,
-         (arg("schemaType")))
+    .def("GetSchemaTypeName", (TfToken(*)(const TfType &)) & This::GetSchemaTypeName, (arg("schemaType")))
     .staticmethod("GetSchemaTypeName")
     .def("GetConcreteSchemaTypeName",
          (TfToken(*)(const TfType &)) & This::GetConcreteSchemaTypeName,
@@ -69,48 +66,28 @@ void wrapUsdSchemaRegistry()
          (arg("schemaType")))
     .staticmethod("GetAPISchemaTypeName")
 
-    .def("GetTypeFromSchemaTypeName",
-         &This::GetTypeFromSchemaTypeName,
-         (arg("typeName")))
+    .def("GetTypeFromSchemaTypeName", &This::GetTypeFromSchemaTypeName, (arg("typeName")))
     .staticmethod("GetTypeFromSchemaTypeName")
-    .def("GetConcreteTypeFromSchemaTypeName",
-         &This::GetConcreteTypeFromSchemaTypeName,
-         (arg("typeName")))
+    .def("GetConcreteTypeFromSchemaTypeName", &This::GetConcreteTypeFromSchemaTypeName, (arg("typeName")))
     .staticmethod("GetConcreteTypeFromSchemaTypeName")
-    .def("GetAPITypeFromSchemaTypeName",
-         &This::GetAPITypeFromSchemaTypeName,
-         (arg("typeName")))
+    .def("GetAPITypeFromSchemaTypeName", &This::GetAPITypeFromSchemaTypeName, (arg("typeName")))
     .staticmethod("GetAPITypeFromSchemaTypeName")
 
-    .def("IsDisallowedField",
-         &This::IsDisallowedField,
-         (arg("fieldName")))
+    .def("IsDisallowedField", &This::IsDisallowedField, (arg("fieldName")))
     .staticmethod("IsDisallowedField")
 
-    .def("IsTyped",
-         &This::IsTyped,
-         (arg("primType")))
+    .def("IsTyped", &This::IsTyped, (arg("primType")))
     .staticmethod("IsTyped")
 
-    .def("GetSchemaKind",
-         (UsdSchemaKind(*)(const TfType &)) & This::GetSchemaKind,
-         (arg("primType")))
-    .def("GetSchemaKind",
-         (UsdSchemaKind(*)(const TfToken &)) & This::GetSchemaKind,
-         (arg("primType")))
+    .def("GetSchemaKind", (UsdSchemaKind(*)(const TfType &)) & This::GetSchemaKind, (arg("primType")))
+    .def("GetSchemaKind", (UsdSchemaKind(*)(const TfToken &)) & This::GetSchemaKind, (arg("primType")))
     .staticmethod("GetSchemaKind")
 
-    .def("IsConcrete",
-         (bool (*)(const TfType &)) & This::IsConcrete,
-         (arg("primType")))
-    .def("IsConcrete",
-         (bool (*)(const TfToken &)) & This::IsConcrete,
-         (arg("primType")))
+    .def("IsConcrete", (bool (*)(const TfType &)) & This::IsConcrete, (arg("primType")))
+    .def("IsConcrete", (bool (*)(const TfToken &)) & This::IsConcrete, (arg("primType")))
     .staticmethod("IsConcrete")
 
-    .def("IsAppliedAPISchema",
-         (bool (*)(const TfType &)) & This::IsAppliedAPISchema,
-         (arg("apiSchemaType")))
+    .def("IsAppliedAPISchema", (bool (*)(const TfType &)) & This::IsAppliedAPISchema, (arg("apiSchemaType")))
     .def("IsAppliedAPISchema",
          (bool (*)(const TfToken &)) & This::IsAppliedAPISchema,
          (arg("apiSchemaType")))
@@ -127,7 +104,10 @@ void wrapUsdSchemaRegistry()
     .def("GetTypeFromName", &This::GetTypeFromName, (arg("typeName")))
     .staticmethod("GetTypeFromName")
 
-    .def("GetTypeNameAndInstance", &This::GetTypeNameAndInstance, (arg("typeName")), return_value_policy<TfPyPairToTuple>())
+    .def("GetTypeNameAndInstance",
+         &This::GetTypeNameAndInstance,
+         (arg("typeName")),
+         return_value_policy<TfPyPairToTuple>())
     .staticmethod("GetTypeNameAndInstance")
 
     .def("IsAllowedAPISchemaInstanceName",
@@ -156,9 +136,7 @@ void wrapUsdSchemaRegistry()
          (arg("typeName")),
          return_internal_reference<>())
 
-    .def("GetEmptyPrimDefinition",
-         &This::GetEmptyPrimDefinition,
-         return_internal_reference<>())
+    .def("GetEmptyPrimDefinition", &This::GetEmptyPrimDefinition, return_internal_reference<>())
 
     .def("BuildComposedPrimDefinition",
          &_WrapBuildComposedPrimDefinition,

@@ -68,8 +68,7 @@ class Sdf_PyListEditorUtils
         if (e.check())
         {
           return boost::optional<V>(e());
-        }
-        else
+        } else
         {
           TF_CODING_ERROR(
             "ApplyEditsToList callback has "
@@ -106,8 +105,7 @@ class Sdf_PyListEditorUtils
         if (e.check())
         {
           return boost::optional<V>(e());
-        }
-        else
+        } else
         {
           TF_CODING_ERROR(
             "ModifyItemEdits callback has "

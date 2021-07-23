@@ -566,8 +566,7 @@ void const *VtValue::_FailGet(Vt_DefaultValueHolder (*factory)(), std::type_info
       "Attempted to get value of type '%s' from "
       "empty VtValue.",
       ArchGetDemangled(queryType).c_str());
-  }
-  else
+  } else
   {
     TF_CODING_ERROR(
       "Attempted to get value of type '%s' from "
@@ -596,12 +595,12 @@ std::ostream &VtStreamOut(vector<VtValue> const &val, std::ostream &stream)
   return stream;
 }
 
-#define _VT_IMPLEMENT_ZERO_VALUE_FACTORY(r, unused, elem) \
-  template<> \
+#define _VT_IMPLEMENT_ZERO_VALUE_FACTORY(r, unused, elem)               \
+  template<>                                                            \
   Vt_DefaultValueHolder Vt_DefaultValueFactory<VT_TYPE(elem)>::Invoke() \
-  { \
-    return Vt_DefaultValueHolder::Create(VtZero<VT_TYPE(elem)>()); \
-  } \
+  {                                                                     \
+    return Vt_DefaultValueHolder::Create(VtZero<VT_TYPE(elem)>());      \
+  }                                                                     \
   template struct Vt_DefaultValueFactory<VT_TYPE(elem)>;
 
 BOOST_PP_SEQ_FOR_EACH(_VT_IMPLEMENT_ZERO_VALUE_FACTORY,

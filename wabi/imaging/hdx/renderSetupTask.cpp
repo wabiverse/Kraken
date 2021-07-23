@@ -100,8 +100,7 @@ void HdxRenderSetupTask::_SetRenderpassShadersForPhoenix(HdxRenderTaskParams con
   if (params.enableIdRender)
   {
     renderPassState->SetRenderPassShader(_idRenderPassShader);
-  }
-  else
+  } else
   {
     renderPassState->SetRenderPassShader(_colorRenderPassShader);
   }
@@ -217,8 +216,7 @@ void HdxRenderSetupTask::PrepareCamera(HdRenderIndex *renderIndex)
   if (_framing.IsValid())
   {
     renderPassState->SetCameraAndFraming(camera, _framing, _overrideWindowPolicy);
-  }
-  else
+  } else
   {
     renderPassState->SetCameraAndViewport(camera, _viewport);
   }

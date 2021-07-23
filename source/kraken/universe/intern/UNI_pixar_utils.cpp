@@ -45,11 +45,10 @@ void UNI_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool v
   /**
    * Open the path as an SdfLayer & Convert. */
   SdfLayerRefPtr layer = SdfLayer::FindOrOpen(path.string());
-  const bool success = layer->Export(usda_path.string(),
-                                     TfStringPrintf("Kraken v%d.%d",
-                                                    KRAKEN_VERSION_MAJOR,
-                                                    KRAKEN_VERSION_MINOR),
-                                     args);
+  const bool success = layer->Export(
+    usda_path.string(),
+    TfStringPrintf("Kraken v%d.%d", KRAKEN_VERSION_MAJOR, KRAKEN_VERSION_MINOR),
+    args);
 
   if (verbose)
   {
@@ -75,8 +74,7 @@ std::string UNI_pixutil_resolve_asset(const std::string &asset, bool verbose)
     if (!resolved_asset.empty())
     {
       TF_MSG_SUCCESS("Asset Resolved Path: %s", CHARALL(resolved_asset));
-    }
-    else
+    } else
     {
       TF_MSG_ERROR("Asset %s does not exist.", CHARALL(asset));
     }

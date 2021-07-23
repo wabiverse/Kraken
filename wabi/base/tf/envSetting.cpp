@@ -165,8 +165,7 @@ class Tf_EnvSettingRegistry
         "assistance.  (duplicate '%s')",
         varName.c_str());
       return false;
-    }
-    else
+    } else
     {
       return _printAlerts;
     }

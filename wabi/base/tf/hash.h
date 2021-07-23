@@ -205,7 +205,7 @@ class Tf_HashStateAPI
  public:
   // Append several objects to the hash state.
   template<class... Args>
-  void Append(Args &&... args)
+  void Append(Args &&...args)
   {
     _AppendImpl(args...);
   }
@@ -232,7 +232,7 @@ class Tf_HashStateAPI
 
  private:
   template<class T, class... Args>
-  void _AppendImpl(T &&obj, Args &&... rest)
+  void _AppendImpl(T &&obj, Args &&...rest)
   {
     this->_AsDerived()._Append(std::forward<T>(obj));
     _AppendImpl(rest...);
@@ -274,8 +274,7 @@ class Tf_HashState : public Tf_HashStateAPI<Tf_HashState>
     {
       _state = i;
       _didOne = true;
-    }
-    else
+    } else
     {
       _state = _Combine(_state, i);
     }
@@ -481,7 +480,7 @@ class TfHash
 
   /// Produce a hash code by combining the hash codes of several objects.
   template<class... Args>
-  static size_t Combine(Args &&... args)
+  static size_t Combine(Args &&...args)
   {
     Tf_HashState h;
     _CombineImpl(h, args...);
@@ -490,7 +489,7 @@ class TfHash
 
  private:
   template<class HashState, class T, class... Args>
-  static void _CombineImpl(HashState &h, T &&obj, Args &&... rest)
+  static void _CombineImpl(HashState &h, T &&obj, Args &&...rest)
   {
     Tf_HashImpl(h, std::forward<T>(obj), 0);
     _CombineImpl(h, rest...);

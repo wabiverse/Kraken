@@ -136,8 +136,7 @@ void Sdf_LayerRegistry::InsertOrUpdate(const SdfLayerHandle &layer)
       // layer object is already in the registry. All we need to do is
       // update the indices so it can be found.
       _layers.modify(result.first, update_index_only());
-    }
-    else
+    } else
     {
       // We failed to insert the layer into the registry because there
       // is a realPath conflict. This can happen when the same layer is
@@ -171,8 +170,7 @@ SdfLayerHandle Sdf_LayerRegistry::Find(const string &inputLayerPath, const strin
   if (Sdf_IsAnonLayerIdentifier(inputLayerPath))
   {
     foundLayer = FindByIdentifier(inputLayerPath);
-  }
-  else
+  } else
   {
     ArResolver &resolver = ArGetResolver();
 
@@ -220,8 +218,9 @@ SdfLayerHandle Sdf_LayerRegistry::Find(const string &inputLayerPath, const strin
       foundLayer = FindByRealPath(layerPath, resolvedPath);
   }
 
-  TF_DEBUG(SDF_LAYER).Msg(
-    "Sdf_LayerRegistry::Find('%s') => %s\n", inputLayerPath.c_str(), Sdf_LayerDebugRepr(foundLayer).c_str());
+  TF_DEBUG(SDF_LAYER).Msg("Sdf_LayerRegistry::Find('%s') => %s\n",
+                          inputLayerPath.c_str(),
+                          Sdf_LayerDebugRepr(foundLayer).c_str());
 
   return foundLayer;
 }

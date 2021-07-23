@@ -22,7 +22,7 @@ limitations under the License.
 
 namespace rpr
 {
-class DirectionalLight;
+  class DirectionalLight;
 }
 
 WABI_NAMESPACE_BEGIN

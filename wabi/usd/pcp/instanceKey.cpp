@@ -114,8 +114,7 @@ std::string PcpInstanceKey::GetString() const
   if (_arcs.empty())
   {
     s += "  (none)\n";
-  }
-  else
+  } else
   {
     for (const auto &arc : _arcs)
     {
@@ -134,8 +133,7 @@ std::string PcpInstanceKey::GetString() const
   if (_variantSelection.empty())
   {
     s += "  (none)";
-  }
-  else
+  } else
   {
     for (const auto &vsel : _variantSelection)
     {

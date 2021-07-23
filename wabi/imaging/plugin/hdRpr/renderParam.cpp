@@ -47,8 +47,7 @@ void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDeleg
         // Does not make sense right now because Hydra removes and creates
         // from scratch all HdFields whenever one of them is changed (e.g added/removed/edited
         // primvar) (USD 20.02)
-      }
-      else
+      } else
       {
         std::swap(subscriptions[i], subscriptions.back());
         subscriptions.pop_back();
@@ -57,8 +56,7 @@ void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDeleg
     if (subscriptions.empty())
     {
       subscriptionsIt = m_subscribedVolumes.erase(subscriptionsIt);
-    }
-    else
+    } else
     {
       ++subscriptionsIt;
     }

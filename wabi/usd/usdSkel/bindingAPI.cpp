@@ -208,14 +208,15 @@ UsdRelationship UsdSkelBindingAPI::CreateBlendShapeTargetsRel() const
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -302,48 +303,48 @@ bool UsdSkelBindingAPI::SetRigidJointInfluence(int jointIndex, float weight) con
 namespace
 {
 
-bool _HasInactiveAncestor(const UsdStagePtr &stage, const SdfPath &path)
-{
-  if (path.IsAbsolutePath() && path.IsPrimPath())
+  bool _HasInactiveAncestor(const UsdStagePtr &stage, const SdfPath &path)
   {
-    for (SdfPath p = path.GetParentPath(); p != SdfPath::AbsoluteRootPath(); p = p.GetParentPath())
+    if (path.IsAbsolutePath() && path.IsPrimPath())
     {
-      if (UsdPrim prim = stage->GetPrimAtPath(p))
+      for (SdfPath p = path.GetParentPath(); p != SdfPath::AbsoluteRootPath(); p = p.GetParentPath())
       {
-        return !prim.IsActive();
+        if (UsdPrim prim = stage->GetPrimAtPath(p))
+        {
+          return !prim.IsActive();
+        }
       }
     }
+    return false;
   }
-  return false;
-}
 
-/// Return the a resolved prim for a target in \p targets.
-UsdPrim _GetFirstTargetPrimForRel(const UsdRelationship &rel, const SdfPathVector &targets)
-{
-  if (targets.size() > 0)
+  /// Return the a resolved prim for a target in \p targets.
+  UsdPrim _GetFirstTargetPrimForRel(const UsdRelationship &rel, const SdfPathVector &targets)
   {
-    if (targets.size() > 1)
+    if (targets.size() > 0)
     {
-      TF_WARN(
-        "%s -- relationship has more than one target. "
-        "Only the first will be used.",
-        rel.GetPath().GetText());
-    }
-    const SdfPath &target = targets.front();
-    if (UsdPrim prim = rel.GetStage()->GetPrimAtPath(target))
-      return prim;
+      if (targets.size() > 1)
+      {
+        TF_WARN(
+          "%s -- relationship has more than one target. "
+          "Only the first will be used.",
+          rel.GetPath().GetText());
+      }
+      const SdfPath &target = targets.front();
+      if (UsdPrim prim = rel.GetStage()->GetPrimAtPath(target))
+        return prim;
 
-    // Should throw a warning about an invalid target.
-    // However, we may not be able to access the prim because one of its
-    // ancestors may be inactive. If so, failing to retrieve the prim is
-    // expected, so we should avoid warning spam.
-    if (!_HasInactiveAncestor(rel.GetStage(), target))
-    {
-      TF_WARN("%s -- Invalid target <%s>.", rel.GetPath().GetText(), target.GetText());
+      // Should throw a warning about an invalid target.
+      // However, we may not be able to access the prim because one of its
+      // ancestors may be inactive. If so, failing to retrieve the prim is
+      // expected, so we should avoid warning spam.
+      if (!_HasInactiveAncestor(rel.GetStage(), target))
+      {
+        TF_WARN("%s -- Invalid target <%s>.", rel.GetPath().GetText(), target.GetText());
+      }
     }
+    return UsdPrim();
   }
-  return UsdPrim();
-}
 
 }  // namespace
 
@@ -462,8 +463,10 @@ bool UsdSkelBindingAPI::ValidateJointIndices(TfSpan<const int> indices,
     {
       if (reason)
       {
-        *reason = TfStringPrintf(
-          "Index [%d] at element %td is not in the range [0,%zu)", jointIndex, i, numJoints);
+        *reason = TfStringPrintf("Index [%d] at element %td is not in the range [0,%zu)",
+                                 jointIndex,
+                                 i,
+                                 numJoints);
       }
       return false;
     }

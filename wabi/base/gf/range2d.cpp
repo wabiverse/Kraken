@@ -62,8 +62,7 @@ double GfRange2d::GetDistanceSquared(const GfVec2d &p) const
   {
     // p is left of box
     dist += GfSqr(_min[0] - p[0]);
-  }
-  else if (p[0] > _max[0])
+  } else if (p[0] > _max[0])
   {
     // p is right of box
     dist += GfSqr(p[0] - _max[0]);
@@ -72,8 +71,7 @@ double GfRange2d::GetDistanceSquared(const GfVec2d &p) const
   {
     // p is front of box
     dist += GfSqr(_min[1] - p[1]);
-  }
-  else if (p[1] > _max[1])
+  } else if (p[1] > _max[1])
   {
     // p is back of box
     dist += GfSqr(p[1] - _max[1]);

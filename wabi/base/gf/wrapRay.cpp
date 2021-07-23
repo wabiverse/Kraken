@@ -58,100 +58,100 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static void SetStartPointHelper(GfRay &self, const GfVec3d &startPoint)
-{
-  self.SetPointAndDirection(startPoint, self.GetDirection());
-}
+  static void SetStartPointHelper(GfRay &self, const GfVec3d &startPoint)
+  {
+    self.SetPointAndDirection(startPoint, self.GetDirection());
+  }
 
-static void SetDirectionHelper(GfRay &self, const GfVec3d &direction)
-{
-  self.SetPointAndDirection(self.GetStartPoint(), direction);
-}
+  static void SetDirectionHelper(GfRay &self, const GfVec3d &direction)
+  {
+    self.SetPointAndDirection(self.GetStartPoint(), direction);
+  }
 
-static tuple FindClosestPointHelper(const GfRay &self, const GfVec3d &point)
-{
-  double rayDist;
-  GfVec3d result = self.FindClosestPoint(point, &rayDist);
-  return make_tuple(result, rayDist);
-}
+  static tuple FindClosestPointHelper(const GfRay &self, const GfVec3d &point)
+  {
+    double rayDist;
+    GfVec3d result = self.FindClosestPoint(point, &rayDist);
+    return make_tuple(result, rayDist);
+  }
 
-static tuple FindClosestPointsHelper1(const GfRay &l1, const GfLine &l2)
-{
-  GfVec3d p1(0), p2(0);
-  double t1 = 0.0, t2 = 0.0;
-  bool result = GfFindClosestPoints(l1, l2, &p1, &p2, &t1, &t2);
-  return make_tuple(result, p1, p2, t1, t2);
-}
+  static tuple FindClosestPointsHelper1(const GfRay &l1, const GfLine &l2)
+  {
+    GfVec3d p1(0), p2(0);
+    double t1 = 0.0, t2 = 0.0;
+    bool result = GfFindClosestPoints(l1, l2, &p1, &p2, &t1, &t2);
+    return make_tuple(result, p1, p2, t1, t2);
+  }
 
-static tuple FindClosestPointsHelper2(const GfRay &l1, const GfLineSeg &l2)
-{
-  GfVec3d p1(0), p2(0);
-  double t1 = 0.0, t2 = 0.0;
-  bool result = GfFindClosestPoints(l1, l2, &p1, &p2, &t1, &t2);
-  return make_tuple(result, p1, p2, t1, t2);
-}
+  static tuple FindClosestPointsHelper2(const GfRay &l1, const GfLineSeg &l2)
+  {
+    GfVec3d p1(0), p2(0);
+    double t1 = 0.0, t2 = 0.0;
+    bool result = GfFindClosestPoints(l1, l2, &p1, &p2, &t1, &t2);
+    return make_tuple(result, p1, p2, t1, t2);
+  }
 
-static tuple IntersectHelper1(const GfRay &self, const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &p2)
-{
-  double dist = 0;
-  GfVec3d barycentricCoords(0);
-  bool frontFacing = false;
-  bool result = self.Intersect(p0, p1, p2, &dist, &barycentricCoords, &frontFacing);
-  return make_tuple(result, dist, barycentricCoords, frontFacing);
-}
+  static tuple IntersectHelper1(const GfRay &self, const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &p2)
+  {
+    double dist = 0;
+    GfVec3d barycentricCoords(0);
+    bool frontFacing = false;
+    bool result = self.Intersect(p0, p1, p2, &dist, &barycentricCoords, &frontFacing);
+    return make_tuple(result, dist, barycentricCoords, frontFacing);
+  }
 
-static tuple IntersectHelper2(const GfRay &self, const GfPlane &plane)
-{
-  double dist = 0;
-  bool frontFacing = false;
-  bool result = self.Intersect(plane, &dist, &frontFacing);
-  return make_tuple(result, dist, frontFacing);
-}
+  static tuple IntersectHelper2(const GfRay &self, const GfPlane &plane)
+  {
+    double dist = 0;
+    bool frontFacing = false;
+    bool result = self.Intersect(plane, &dist, &frontFacing);
+    return make_tuple(result, dist, frontFacing);
+  }
 
-static tuple IntersectHelper3(const GfRay &self, const GfRange3d &box)
-{
-  double enterDist = 0, exitDist = 0;
-  bool result = self.Intersect(box, &enterDist, &exitDist);
-  return make_tuple(result, enterDist, exitDist);
-}
+  static tuple IntersectHelper3(const GfRay &self, const GfRange3d &box)
+  {
+    double enterDist = 0, exitDist = 0;
+    bool result = self.Intersect(box, &enterDist, &exitDist);
+    return make_tuple(result, enterDist, exitDist);
+  }
 
-static tuple IntersectHelper4(const GfRay &self, const GfBBox3d &box)
-{
-  double enterDist = 0, exitDist = 0;
-  bool result = self.Intersect(box, &enterDist, &exitDist);
-  return make_tuple(result, enterDist, exitDist);
-}
+  static tuple IntersectHelper4(const GfRay &self, const GfBBox3d &box)
+  {
+    double enterDist = 0, exitDist = 0;
+    bool result = self.Intersect(box, &enterDist, &exitDist);
+    return make_tuple(result, enterDist, exitDist);
+  }
 
-static tuple IntersectHelper5(const GfRay &self, const GfVec3d &center, double radius)
-{
-  double enterDist = 0, exitDist = 0;
-  bool result = self.Intersect(center, radius, &enterDist, &exitDist);
-  return make_tuple(result, enterDist, exitDist);
-}
+  static tuple IntersectHelper5(const GfRay &self, const GfVec3d &center, double radius)
+  {
+    double enterDist = 0, exitDist = 0;
+    bool result = self.Intersect(center, radius, &enterDist, &exitDist);
+    return make_tuple(result, enterDist, exitDist);
+  }
 
-static tuple IntersectHelper6(const GfRay &self, const GfVec3d &origin, const GfVec3d &axis, double radius)
-{
-  double enter = 0, exit = 0;
-  bool result = self.Intersect(origin, axis, radius, &enter, &exit);
-  return make_tuple(result, enter, exit);
-}
+  static tuple IntersectHelper6(const GfRay &self, const GfVec3d &origin, const GfVec3d &axis, double radius)
+  {
+    double enter = 0, exit = 0;
+    bool result = self.Intersect(origin, axis, radius, &enter, &exit);
+    return make_tuple(result, enter, exit);
+  }
 
-static tuple IntersectHelper7(const GfRay &self,
-                              const GfVec3d &origin,
-                              const GfVec3d &axis,
-                              double radius,
-                              double height)
-{
-  double enter = 0, exit = 0;
-  bool result = self.Intersect(origin, axis, radius, height, &enter, &exit);
-  return make_tuple(result, enter, exit);
-}
+  static tuple IntersectHelper7(const GfRay &self,
+                                const GfVec3d &origin,
+                                const GfVec3d &axis,
+                                double radius,
+                                double height)
+  {
+    double enter = 0, exit = 0;
+    bool result = self.Intersect(origin, axis, radius, height, &enter, &exit);
+    return make_tuple(result, enter, exit);
+  }
 
-static string _Repr(GfRay const &self)
-{
-  return TF_PY_REPR_PREFIX + "Ray(" + TfPyRepr(self.GetStartPoint()) + ", " + TfPyRepr(self.GetDirection()) +
-         ")";
-}
+  static string _Repr(GfRay const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Ray(" + TfPyRepr(self.GetStartPoint()) + ", " +
+           TfPyRepr(self.GetDirection()) + ")";
+  }
 
 }  // anonymous namespace
 

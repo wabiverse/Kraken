@@ -66,8 +66,7 @@ static SdfLayerOffset _GetLayerOffsetToRoot(const PcpNodeRef &pcpNode, const Sdf
   // PERFORMANCE: GetLayerOffsetForLayer() is seems fairly cheap (because the
   // offsets are cached), however it requires iterating over every layer in
   // the stack calling SdfLayerOffset::IsIdentity.
-  if (const SdfLayerOffset *layerToRootLayerOffset = pcpNode.GetLayerStack()->GetLayerOffsetForLayer(
-        layer))
+  if (const SdfLayerOffset *layerToRootLayerOffset = pcpNode.GetLayerStack()->GetLayerOffsetForLayer(layer))
   {
     localOffset = localOffset * (*layerToRootLayerOffset);
   }
@@ -96,17 +95,19 @@ static void _ApplyLayerOffsetToExternalTimes(const SdfLayerOffset &layerOffset, 
 template<typename V>
 static void _ClipDerivationMsg(const TfToken &metadataName, const V &v, const SdfPath &usdPrimPath)
 {
-  TF_DEBUG(USD_CLIPS).Msg(
-    "%s for prim <%s> derived: %s\n", metadataName.GetText(), usdPrimPath.GetText(), TfStringify(v).c_str());
+  TF_DEBUG(USD_CLIPS).Msg("%s for prim <%s> derived: %s\n",
+                          metadataName.GetText(),
+                          usdPrimPath.GetText(),
+                          TfStringify(v).c_str());
 }
 
 namespace
 {
-struct _ClipTimeString
-{
-  std::string integerPortion;
-  std::string decimalPortion;
-};
+  struct _ClipTimeString
+  {
+    std::string integerPortion;
+    std::string decimalPortion;
+  };
 }  // namespace
 
 static _ClipTimeString _DeriveClipTimeString(const double currentClipTime,
@@ -198,8 +199,7 @@ static void _DeriveClipInfo(const std::string &templateAssetPath,
       {
         numIntegerHashes = token.size();
         integerHashSectionIndex = tokenIndex;
-      }
-      else
+      } else
       {
         numDecimalHashes = token.size();
         decimalHashSectionIndex = tokenIndex;
@@ -286,8 +286,7 @@ static void _DeriveClipInfo(const std::string &templateAssetPath,
       {
         const double offsetTime = (t + (activeOffset * (double)promotion)) / (double)promotion;
         (*clipActive)->push_back(GfVec2d(offsetTime, clipActiveIndex));
-      }
-      else
+      } else
       {
         (*clipActive)->push_back(GfVec2d(clipTime, clipActiveIndex));
       }
@@ -312,24 +311,24 @@ static void _DeriveClipInfo(const std::string &templateAssetPath,
 
 namespace
 {
-struct _ClipSet
-{
-  explicit _ClipSet(const std::string &name_)
-    : name(name_)
-  {}
-
-  struct _AnchorInfo
+  struct _ClipSet
   {
-    PcpLayerStackPtr layerStack;
-    SdfPath primPath;
-    size_t layerIndex;
-    size_t layerStackOrder;
-    SdfLayerOffset offset;
+    explicit _ClipSet(const std::string &name_)
+      : name(name_)
+    {}
+
+    struct _AnchorInfo
+    {
+      PcpLayerStackPtr layerStack;
+      SdfPath primPath;
+      size_t layerIndex;
+      size_t layerStackOrder;
+      SdfLayerOffset offset;
+    };
+    _AnchorInfo anchorInfo;
+    VtDictionary clipInfo;
+    std::string name;
   };
-  _AnchorInfo anchorInfo;
-  VtDictionary clipInfo;
-  std::string name;
-};
 }  // namespace
 
 template<class T>
@@ -499,8 +498,7 @@ static void _ResolveClipSetsInNode(const PcpNodeRef &node, std::map<std::string,
     if (addedIt == addedClipSets.end())
     {
       it = clipSetsInNode.erase(it);
-    }
-    else
+    } else
     {
       // If no anchor info is found, this clip set will be removed
       // later on.
@@ -550,8 +548,7 @@ void Usd_ComputeClipSetDefinitionsForPrimIndex(const PcpPrimIndex &primIndex,
     if (!it->second.anchorInfo.layerStack)
     {
       it = composedClipSets.erase(it);
-    }
-    else
+    } else
     {
       ++it;
     }
@@ -607,9 +604,8 @@ void Usd_ComputeClipSetDefinitionsForPrimIndex(const PcpPrimIndex &primIndex,
     {
       _SetInfo(clipInfo, UsdClipsAPIInfoKeys->active, &out.clipActive);
       _SetInfo(clipInfo, UsdClipsAPIInfoKeys->times, &out.clipTimes);
-    }
-    else if (const std::string *templateAssetPath = _GetInfo<std::string>(
-               clipInfo, UsdClipsAPIInfoKeys->templateAssetPath))
+    } else if (const std::string *templateAssetPath =
+                 _GetInfo<std::string>(clipInfo, UsdClipsAPIInfoKeys->templateAssetPath))
     {
 
       const double *templateActiveOffset = _GetInfo<double>(clipInfo,

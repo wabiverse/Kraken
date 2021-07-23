@@ -119,8 +119,9 @@ void HdPrmanRenderDelegate::_Initialize()
 
   _settingDescriptors.resize(5);
 
-  _settingDescriptors[0] = {
-    std::string("Integrator"), HdPrmanRenderSettingsTokens->integratorName, VtValue(integrator)};
+  _settingDescriptors[0] = {std::string("Integrator"),
+                            HdPrmanRenderSettingsTokens->integratorName,
+                            VtValue(integrator)};
 
   _settingDescriptors[1] = {std::string("Interactive Integrator"),
                             HdPrmanRenderSettingsTokens->interactiveIntegrator,
@@ -132,11 +133,13 @@ void HdPrmanRenderDelegate::_Initialize()
                             HdPrmanRenderSettingsTokens->interactiveIntegratorTimeout,
                             VtValue(200)};
 
-  _settingDescriptors[3] = {
-    std::string("Max Samples"), HdRenderSettingsTokens->convergedSamplesPerPixel, VtValue(maxSamples)};
+  _settingDescriptors[3] = {std::string("Max Samples"),
+                            HdRenderSettingsTokens->convergedSamplesPerPixel,
+                            VtValue(maxSamples)};
 
-  _settingDescriptors[4] = {
-    std::string("Variance Threshold"), HdRenderSettingsTokens->convergedVariance, VtValue(pixelVariance)};
+  _settingDescriptors[4] = {std::string("Variance Threshold"),
+                            HdRenderSettingsTokens->convergedVariance,
+                            VtValue(pixelVariance)};
 
   _PopulateDefaultSettings(_settingDescriptors);
 }
@@ -214,20 +217,16 @@ HdRprim *HdPrmanRenderDelegate::CreateRprim(TfToken const &typeId, SdfPath const
   if (typeId == HdPrimTypeTokens->mesh)
   {
     return new HdPrman_Mesh(rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->basisCurves)
+  } else if (typeId == HdPrimTypeTokens->basisCurves)
   {
     return new HdPrman_BasisCurves(rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->points)
+  } else if (typeId == HdPrimTypeTokens->points)
   {
     return new HdPrman_Points(rprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->volume)
+  } else if (typeId == HdPrimTypeTokens->volume)
   {
     return new HdPrman_Volume(rprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Rprim Type %s", typeId.GetText());
   }
@@ -245,30 +244,24 @@ HdSprim *HdPrmanRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath const
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdPrmanCamera(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->material)
+  } else if (typeId == HdPrimTypeTokens->material)
   {
     return new HdPrmanMaterial(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->coordSys)
+  } else if (typeId == HdPrimTypeTokens->coordSys)
   {
     return new HdPrmanCoordSys(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->lightFilter)
+  } else if (typeId == HdPrimTypeTokens->lightFilter)
   {
     return new HdPrmanLightFilter(sprimId, typeId);
-  }
-  else if (typeId == HdPrimTypeTokens->distantLight || typeId == HdPrimTypeTokens->domeLight ||
-           typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->diskLight ||
-           typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->sphereLight)
+  } else if (typeId == HdPrimTypeTokens->distantLight || typeId == HdPrimTypeTokens->domeLight ||
+             typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->diskLight ||
+             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->sphereLight)
   {
     return new HdPrmanLight(sprimId, typeId);
-  }
-  else if (typeId == HdPrimTypeTokens->extComputation)
+  } else if (typeId == HdPrimTypeTokens->extComputation)
   {
     return new HdExtComputation(sprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
@@ -283,30 +276,24 @@ HdSprim *HdPrmanRenderDelegate::CreateFallbackSprim(TfToken const &typeId)
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdPrmanCamera(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->material)
+  } else if (typeId == HdPrimTypeTokens->material)
   {
     return new HdPrmanMaterial(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->coordSys)
+  } else if (typeId == HdPrimTypeTokens->coordSys)
   {
     return new HdPrmanCoordSys(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->lightFilter)
+  } else if (typeId == HdPrimTypeTokens->lightFilter)
   {
     return new HdPrmanLightFilter(SdfPath::EmptyPath(), typeId);
-  }
-  else if (typeId == HdPrimTypeTokens->distantLight || typeId == HdPrimTypeTokens->domeLight ||
-           typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->diskLight ||
-           typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->sphereLight)
+  } else if (typeId == HdPrimTypeTokens->distantLight || typeId == HdPrimTypeTokens->domeLight ||
+             typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->diskLight ||
+             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->sphereLight)
   {
     return new HdPrmanLight(SdfPath::EmptyPath(), typeId);
-  }
-  else if (typeId == HdPrimTypeTokens->extComputation)
+  } else if (typeId == HdPrimTypeTokens->extComputation)
   {
     return new HdExtComputation(SdfPath::EmptyPath());
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
@@ -324,8 +311,7 @@ HdBprim *HdPrmanRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath const
   if (typeId == _tokens->openvdbAsset || typeId == _tokens->field3dAsset)
   {
     return new HdPrman_Field(typeId, bprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
@@ -337,8 +323,7 @@ HdBprim *HdPrmanRenderDelegate::CreateFallbackBprim(TfToken const &typeId)
   if (typeId == _tokens->openvdbAsset || typeId == _tokens->field3dAsset)
   {
     return new HdPrman_Field(typeId, SdfPath::EmptyPath());
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
@@ -388,8 +373,7 @@ void HdPrmanRenderDelegate::SetRenderSetting(TfToken const &key, VtValue const &
     {
       _settingsVersion++;
     }
-  }
-  else
+  } else
   {
     _settingsVersion++;
   }

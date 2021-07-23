@@ -204,8 +204,7 @@ void HfPluginRegistry::_DiscoverPlugins()
     if (displayName.empty() || !priorityValue.IsInt())
     {
       TF_WARN("Plugin %s type information incomplete", pluginType.GetTypeName().c_str());
-    }
-    else
+    } else
     {
       int priority = priorityValue.GetInt();
 

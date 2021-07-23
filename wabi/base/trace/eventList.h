@@ -98,7 +98,7 @@ class TraceEventList
   /// Construct a TraceEvent at the end on the list.
   /// Returns a reference to the newly constructed event.
   template<class... Args>
-  const TraceEvent &EmplaceBack(Args &&... args)
+  const TraceEvent &EmplaceBack(Args &&...args)
   {
     return _events.emplace_back(std::forward<Args>(args)...);
   }

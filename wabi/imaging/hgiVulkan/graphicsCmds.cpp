@@ -119,7 +119,10 @@ void HgiVulkanGraphicsCmds::SetScissor(GfVec4i const &sc)
   _pendingUpdates.push_back([this, sc] {
     uint32_t w(sc[2]);
     uint32_t h(sc[3]);
-    VkRect2D scissor = {{sc[0], sc[1]}, {w, h}};
+    VkRect2D scissor = {
+      {sc[0], sc[1]},
+      {w,     h    }
+    };
     vkCmdSetScissor(_commandBuffer->GetVulkanCommandBuffer(), 0, 1, &scissor);
   });
 }

@@ -51,49 +51,49 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-VtMatrix4dArray _ComputeJointLocalTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
-{
-  VtMatrix4dArray xforms;
-  self.ComputeJointLocalTransforms(&xforms, time, atRest);
-  return xforms;
-}
+  VtMatrix4dArray _ComputeJointLocalTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
+  {
+    VtMatrix4dArray xforms;
+    self.ComputeJointLocalTransforms(&xforms, time, atRest);
+    return xforms;
+  }
 
-VtMatrix4dArray _ComputeJointSkelTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
-{
-  VtMatrix4dArray xforms;
-  self.ComputeJointSkelTransforms(&xforms, time, atRest);
-  return xforms;
-}
+  VtMatrix4dArray _ComputeJointSkelTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
+  {
+    VtMatrix4dArray xforms;
+    self.ComputeJointSkelTransforms(&xforms, time, atRest);
+    return xforms;
+  }
 
-VtMatrix4dArray _ComputeJointWorldTransforms(UsdSkelSkeletonQuery &self,
-                                             UsdGeomXformCache &xfCache,
-                                             bool atRest)
-{
-  VtMatrix4dArray xforms;
-  self.ComputeJointWorldTransforms(&xforms, &xfCache, atRest);
-  return xforms;
-}
+  VtMatrix4dArray _ComputeJointWorldTransforms(UsdSkelSkeletonQuery &self,
+                                               UsdGeomXformCache &xfCache,
+                                               bool atRest)
+  {
+    VtMatrix4dArray xforms;
+    self.ComputeJointWorldTransforms(&xforms, &xfCache, atRest);
+    return xforms;
+  }
 
-VtMatrix4dArray _ComputeSkinningTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time)
-{
-  VtMatrix4dArray xforms;
-  self.ComputeSkinningTransforms(&xforms, time);
-  return xforms;
-}
+  VtMatrix4dArray _ComputeSkinningTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time)
+  {
+    VtMatrix4dArray xforms;
+    self.ComputeSkinningTransforms(&xforms, time);
+    return xforms;
+  }
 
-VtMatrix4dArray _GetJointWorldBindTransforms(UsdSkelSkeletonQuery &self)
-{
-  VtMatrix4dArray xforms;
-  self.GetJointWorldBindTransforms(&xforms);
-  return xforms;
-}
+  VtMatrix4dArray _GetJointWorldBindTransforms(UsdSkelSkeletonQuery &self)
+  {
+    VtMatrix4dArray xforms;
+    self.GetJointWorldBindTransforms(&xforms);
+    return xforms;
+  }
 
-VtMatrix4dArray _ComputeJointRestRelativeTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time)
-{
-  VtMatrix4dArray xforms;
-  self.ComputeJointRestRelativeTransforms(&xforms, time);
-  return xforms;
-}
+  VtMatrix4dArray _ComputeJointRestRelativeTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time)
+  {
+    VtMatrix4dArray xforms;
+    self.ComputeJointRestRelativeTransforms(&xforms, time);
+    return xforms;
+  }
 
 }  // namespace
 

@@ -50,17 +50,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static std::string _Repr(const UsdLuxLightFilter &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.LightFilter(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdLuxLightFilter &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.LightFilter(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -120,26 +121,26 @@ void wrapUsdLuxLightFilter()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
-    .def("ConnectableAPI", &UsdLuxLightFilter::ConnectableAPI)
+  WRAP_CUSTOM
+  {
+    _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
+      .def("ConnectableAPI", &UsdLuxLightFilter::ConnectableAPI)
 
-    .def("CreateOutput", &UsdLuxLightFilter::CreateOutput, (arg("name"), arg("type")))
-    .def("GetOutput", &UsdLuxLightFilter::GetOutput, arg("name"))
-    .def("GetOutputs",
-         &UsdLuxLightFilter::GetOutputs,
-         (arg("onlyAuthored") = true),
-         return_value_policy<TfPySequenceToList>())
+      .def("CreateOutput", &UsdLuxLightFilter::CreateOutput, (arg("name"), arg("type")))
+      .def("GetOutput", &UsdLuxLightFilter::GetOutput, arg("name"))
+      .def("GetOutputs",
+           &UsdLuxLightFilter::GetOutputs,
+           (arg("onlyAuthored") = true),
+           return_value_policy<TfPySequenceToList>())
 
-    .def("CreateInput", &UsdLuxLightFilter::CreateInput, (arg("name"), arg("type")))
-    .def("GetInput", &UsdLuxLightFilter::GetInput, arg("name"))
-    .def("GetInputs",
-         &UsdLuxLightFilter::GetInputs,
-         (arg("onlyAuthored") = true),
-         return_value_policy<TfPySequenceToList>())
+      .def("CreateInput", &UsdLuxLightFilter::CreateInput, (arg("name"), arg("type")))
+      .def("GetInput", &UsdLuxLightFilter::GetInput, arg("name"))
+      .def("GetInputs",
+           &UsdLuxLightFilter::GetInputs,
+           (arg("onlyAuthored") = true),
+           return_value_policy<TfPySequenceToList>())
 
-    .def("GetFilterLinkCollectionAPI", &UsdLuxLightFilter::GetFilterLinkCollectionAPI);
-}
+      .def("GetFilterLinkCollectionAPI", &UsdLuxLightFilter::GetFilterLinkCollectionAPI);
+  }
 
 }  // namespace

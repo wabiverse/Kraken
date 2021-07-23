@@ -33,157 +33,144 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsSphericalJoint,
-        TfType::Bases< UsdPhysicsJoint > >();
-    
-    // Register the usd prim typename as an alias under UsdSchemaBase. This
-    // enables one to call
-    // TfType::Find<UsdSchemaBase>().FindDerivedByName("PhysicsSphericalJoint")
-    // to find TfType<UsdPhysicsSphericalJoint>, which is how IsA queries are
-    // answered.
-    TfType::AddAlias<UsdSchemaBase, UsdPhysicsSphericalJoint>("PhysicsSphericalJoint");
+  TfType::Define<UsdPhysicsSphericalJoint, TfType::Bases<UsdPhysicsJoint>>();
+
+  // Register the usd prim typename as an alias under UsdSchemaBase. This
+  // enables one to call
+  // TfType::Find<UsdSchemaBase>().FindDerivedByName("PhysicsSphericalJoint")
+  // to find TfType<UsdPhysicsSphericalJoint>, which is how IsA queries are
+  // answered.
+  TfType::AddAlias<UsdSchemaBase, UsdPhysicsSphericalJoint>("PhysicsSphericalJoint");
 }
 
 /* virtual */
 UsdPhysicsSphericalJoint::~UsdPhysicsSphericalJoint()
+{}
+
+/* static */
+UsdPhysicsSphericalJoint UsdPhysicsSphericalJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsSphericalJoint();
+  }
+  return UsdPhysicsSphericalJoint(stage->GetPrimAtPath(path));
 }
 
 /* static */
-UsdPhysicsSphericalJoint
-UsdPhysicsSphericalJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsSphericalJoint UsdPhysicsSphericalJoint::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsSphericalJoint();
-    }
-    return UsdPhysicsSphericalJoint(stage->GetPrimAtPath(path));
-}
-
-/* static */
-UsdPhysicsSphericalJoint
-UsdPhysicsSphericalJoint::Define(
-    const UsdStagePtr &stage, const SdfPath &path)
-{
-    static TfToken usdPrimTypeName("PhysicsSphericalJoint");
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsSphericalJoint();
-    }
-    return UsdPhysicsSphericalJoint(
-        stage->DefinePrim(path, usdPrimTypeName));
+  static TfToken usdPrimTypeName("PhysicsSphericalJoint");
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsSphericalJoint();
+  }
+  return UsdPhysicsSphericalJoint(stage->DefinePrim(path, usdPrimTypeName));
 }
 
 /* virtual */
 UsdSchemaKind UsdPhysicsSphericalJoint::GetSchemaKind() const
 {
-    return UsdPhysicsSphericalJoint::schemaKind;
+  return UsdPhysicsSphericalJoint::schemaKind;
 }
 
 /* static */
-const TfType &
-UsdPhysicsSphericalJoint::GetStaticTfType()
+const TfType &UsdPhysicsSphericalJoint::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsSphericalJoint>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsSphericalJoint>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsSphericalJoint::IsTypedSchema()
+bool UsdPhysicsSphericalJoint::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsSphericalJoint::GetTfType() const
+const TfType &UsdPhysicsSphericalJoint::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
-UsdAttribute
-UsdPhysicsSphericalJoint::GetAxisAttr() const
+UsdAttribute UsdPhysicsSphericalJoint::GetAxisAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAxis);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAxis);
 }
 
-UsdAttribute
-UsdPhysicsSphericalJoint::CreateAxisAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsSphericalJoint::CreateAxisAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAxis,
-                       SdfValueTypeNames->Token,
-                       /* custom = */ false,
-                       SdfVariabilityUniform,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAxis,
+                                    SdfValueTypeNames->Token,
+                                    /* custom = */ false,
+                                    SdfVariabilityUniform,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsSphericalJoint::GetConeAngle0LimitAttr() const
+UsdAttribute UsdPhysicsSphericalJoint::GetConeAngle0LimitAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsConeAngle0Limit);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsConeAngle0Limit);
 }
 
-UsdAttribute
-UsdPhysicsSphericalJoint::CreateConeAngle0LimitAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsSphericalJoint::CreateConeAngle0LimitAttr(VtValue const &defaultValue,
+                                                                 bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsConeAngle0Limit,
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsConeAngle0Limit,
+                                    SdfValueTypeNames->Float,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsSphericalJoint::GetConeAngle1LimitAttr() const
+UsdAttribute UsdPhysicsSphericalJoint::GetConeAngle1LimitAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsConeAngle1Limit);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsConeAngle1Limit);
 }
 
-UsdAttribute
-UsdPhysicsSphericalJoint::CreateConeAngle1LimitAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsSphericalJoint::CreateConeAngle1LimitAttr(VtValue const &defaultValue,
+                                                                 bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsConeAngle1Limit,
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsConeAngle1Limit,
+                                    SdfValueTypeNames->Float,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-namespace {
-static inline TfTokenVector
-_ConcatenateAttributeNames(const TfTokenVector& left,const TfTokenVector& right)
+namespace
 {
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
     TfTokenVector result;
     result.reserve(left.size() + right.size());
     result.insert(result.end(), left.begin(), left.end());
     result.insert(result.end(), right.begin(), right.end());
     return result;
-}
-}
+  }
+}  // namespace
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsSphericalJoint::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdPhysicsSphericalJoint::GetSchemaAttributeNames(bool includeInherited)
 {
-    static TfTokenVector localNames = {
-        UsdPhysicsTokens->physicsAxis,
-        UsdPhysicsTokens->physicsConeAngle0Limit,
-        UsdPhysicsTokens->physicsConeAngle1Limit,
-    };
-    static TfTokenVector allNames =
-        _ConcatenateAttributeNames(
-            UsdPhysicsJoint::GetSchemaAttributeNames(true),
-            localNames);
+  static TfTokenVector localNames = {
+    UsdPhysicsTokens->physicsAxis,
+    UsdPhysicsTokens->physicsConeAngle0Limit,
+    UsdPhysicsTokens->physicsConeAngle1Limit,
+  };
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdPhysicsJoint::GetSchemaAttributeNames(true),
+                                                             localNames);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END

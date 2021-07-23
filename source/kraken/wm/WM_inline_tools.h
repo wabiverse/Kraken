@@ -29,7 +29,7 @@
 #include <wabi/usd/usdUI/tokens.h>
 
 /**
- * Just some quick & handy inline tools, 
+ * Just some quick & handy inline tools,
  * out of the way of the main WindowManager
  * logic. */
 
@@ -40,68 +40,52 @@ inline TfToken wm_verify_spacetype(const TfToken &query)
   if (query == UsdUITokens->spaceView3D)
   {
     return UsdUITokens->spaceView3D;
-  }
-  else if (query == UsdUITokens->spaceGraph)
+  } else if (query == UsdUITokens->spaceGraph)
   {
     return UsdUITokens->spaceGraph;
-  }
-  else if (query == UsdUITokens->spaceOutliner)
+  } else if (query == UsdUITokens->spaceOutliner)
   {
     return UsdUITokens->spaceOutliner;
-  }
-  else if (query == UsdUITokens->spaceProperties)
+  } else if (query == UsdUITokens->spaceProperties)
   {
     return UsdUITokens->spaceProperties;
-  }
-  else if (query == UsdUITokens->spaceFile)
+  } else if (query == UsdUITokens->spaceFile)
   {
     return UsdUITokens->spaceFile;
-  }
-  else if (query == UsdUITokens->spaceImage)
+  } else if (query == UsdUITokens->spaceImage)
   {
     return UsdUITokens->spaceImage;
-  }
-  else if (query == UsdUITokens->spaceInfo)
+  } else if (query == UsdUITokens->spaceInfo)
   {
     return UsdUITokens->spaceInfo;
-  }
-  else if (query == UsdUITokens->spaceSequence)
+  } else if (query == UsdUITokens->spaceSequence)
   {
     return UsdUITokens->spaceSequence;
-  }
-  else if (query == UsdUITokens->spaceText)
+  } else if (query == UsdUITokens->spaceText)
   {
     return UsdUITokens->spaceText;
-  }
-  else if (query == UsdUITokens->spaceNode)
+  } else if (query == UsdUITokens->spaceNode)
   {
     return UsdUITokens->spaceNode;
-  }
-  else if (query == UsdUITokens->spaceConsole)
+  } else if (query == UsdUITokens->spaceConsole)
   {
     return UsdUITokens->spaceConsole;
-  }
-  else if (query == UsdUITokens->spacePref)
+  } else if (query == UsdUITokens->spacePref)
   {
     return UsdUITokens->spacePref;
-  }
-  else if (query == UsdUITokens->spaceClip)
+  } else if (query == UsdUITokens->spaceClip)
   {
     return UsdUITokens->spaceClip;
-  }
-  else if (query == UsdUITokens->spaceTopbar)
+  } else if (query == UsdUITokens->spaceTopbar)
   {
     return UsdUITokens->spaceTopbar;
-  }
-  else if (query == UsdUITokens->spaceStatusbar)
+  } else if (query == UsdUITokens->spaceStatusbar)
   {
     return UsdUITokens->spaceStatusbar;
-  }
-  else if (query == UsdUITokens->spaceSpreadsheet)
+  } else if (query == UsdUITokens->spaceSpreadsheet)
   {
     return UsdUITokens->spaceSpreadsheet;
-  }
-  else
+  } else
   {
     return UsdUITokens->spaceEmpty;
   }

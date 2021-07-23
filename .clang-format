@@ -4,6 +4,8 @@
 #
 # Tested to work with versions: 8 to 11.
 
+Standard: c++20
+
 # This causes parameters on continuations to align to the opening brace.
 #
 #   like_this_long_name(parameter_one,
@@ -11,8 +13,8 @@
 #                       parameter_three);
 #
 AlignAfterOpenBracket: Align
-AlignArrayOfStructures: Left
-AlignEscapedNewlines: DontAlign
+AllowShortFunctionsOnASingleLine: Empty
+
 
 # Disallow short functions on one line; break them up.
 AllowShortBlocksOnASingleLine: false
@@ -37,14 +39,7 @@ BinPackArguments: false
 BinPackParameters: false
 
 # Line width (don't exceed 110).
-# We still want to wrap at 109, so to leverage this,
-# we format once at ColumnLimit then leave it default
-# off...
-
-# Swap these out before formatting large swaths of code.
-# Then swap them back and format everything again.
-ColumnLimit: 109
-#ColumnLimit: 0
+ColumnLimit: 0
 
 # Setup preferred inheritance list to break before the colon and after the
 # commas
@@ -73,36 +68,29 @@ ConstructorInitializerIndentWidth: 2
 
 # Make access modifier slightly more visible.
 AccessModifierOffset: -1
-EmptyLineBeforeAccessModifier: Always
 
 # This will unfortunately use spaces in some cases where it's not desired (like
 # function calls) but the overall result is better since it will allow
 # alignment to work properly with different tab width settings.
 ContinuationIndentWidth: 2
 
+# This tries to match Blender's style as much as possible. One
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel: false
   AfterClass: true
   AfterControlStatement: true
   AfterEnum: true
-  AfterExternBlock: false
   AfterFunction: true
   AfterNamespace: true
   AfterStruct: true
   AfterUnion: true
-  BeforeCatch: false
-  BeforeWhile: false
+  BeforeCatch: true
   BeforeElse: false
-  BeforeLambdaBody: false
   IndentBraces: false
+  SplitEmptyNamespace: false
   SplitEmptyFunction: false
   SplitEmptyRecord: false
-  SplitEmptyNamespace: false
   AfterObjCDeclaration: true
-
-# Always indent within all namespaces.
-NamespaceIndentation: All
 
 # For switch statements, indent the cases.
 IndentCaseLabels: true
@@ -112,11 +100,11 @@ IndentPPDirectives: AfterHash
 
 BreakBeforeTernaryOperators: false
 
-AlwaysBreakTemplateDeclarations: Yes
 SpaceAfterTemplateKeyword: false
 
 # Handy comment at the end of each C++ name space.
 FixNamespaceComments: true
+NamespaceIndentation: All
 
 # Use "if (...)" instead of "if(...)", but have function calls like foo().
 SpaceBeforeParens: ControlStatements
@@ -138,8 +126,6 @@ UseTab: Never
 TabWidth: 2
 IndentWidth: 2
 
-AlwaysBreakAfterReturnType: None
-
 # Add a big penalty on breaking after the return type of functions. For example,
 #
 #   static void foo(...)
@@ -149,7 +135,7 @@ AlwaysBreakAfterReturnType: None
 #   static void
 #   foo(very long content here that maybe could be stacked)
 #
-PenaltyReturnTypeOnItsOwnLine: 1000000
+PenaltyReturnTypeOnItsOwnLine: 10000
 
 # Avoid having function calls broken onto a new line:
 #
@@ -163,9 +149,16 @@ PenaltyReturnTypeOnItsOwnLine: 1000000
 #
 PenaltyBreakAssignment: 110
 
+AllowAllArgumentsOnNextLine: false
 AllowShortFunctionsOnASingleLine: None
 
 SortIncludes: false
+
+
+AlignEscapedNewlines: Left
+AlignArrayOfStructures: Left
+
+EmptyLineBeforeAccessModifier: Always
 
 # Always break:
 #
@@ -199,9 +192,7 @@ PenaltyBreakString: 1000000
 #
 # To find these use multi-line regex search:
 # "^\s+[A-Z][A-Z0-9_]+\s*\([^\n]*\)\n\s*\{"
-ForEachMacros:
-  - TF_FOR_ALL
-  - foreach
 
-StatementMacros:
-  - PyObject_VAR_HEAD
+ForEachMacros: ['TF_FOR_ALL', 'UNIVERSE_FOR_ALL', 'foreach']
+
+WhitespaceSensitiveMacros: ['TF_DEFINE_PRIVATE_TOKENS', 'TF_DEFINE_PUBLIC_TOKENS', 'TF_DEFINE_ENV_SETTING', 'PP_CAT']

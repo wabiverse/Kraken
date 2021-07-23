@@ -213,8 +213,7 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
       return true;
     }
     return false;
-  }
-  else if (inputConnectability == UsdShadeTokens->interfaceOnly)
+  } else if (inputConnectability == UsdShadeTokens->interfaceOnly)
   {
     if (UsdShadeInput::IsInput(source))
     {
@@ -226,8 +225,7 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
           return true;
         }
         return false;
-      }
-      else
+      } else
       {
         if (reason)
         {
@@ -237,8 +235,7 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
         }
         return false;
       }
-    }
-    else
+    } else
     {
       if (reason)
       {
@@ -248,8 +245,7 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectInputToSource(const UsdShadeInpu
         return false;
       }
     }
-  }
-  else
+  } else
   {
     if (reason)
     {
@@ -319,8 +315,7 @@ bool UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(const UsdShadeOut
       return false;
     }
     return true;
-  }
-  else
+  } else
   {  // Source is an output
     // output can connect to other node's output directly encapsulated by
     // it.
@@ -367,171 +362,172 @@ bool UsdShadeConnectableAPIBehavior::IsContainer() const
 namespace
 {
 
-// This registry is closely modeled after the one in UsdGeomBoundableComputeExtent.
-class _BehaviorRegistry : public TfWeakBase
-{
- public:
-  static _BehaviorRegistry &GetInstance()
+  // This registry is closely modeled after the one in UsdGeomBoundableComputeExtent.
+  class _BehaviorRegistry : public TfWeakBase
   {
-    return TfSingleton<_BehaviorRegistry>::GetInstance();
-  }
-
-  _BehaviorRegistry()
-    : _initialized(false)
-  {
-    // Calling SubscribeTo may cause functions to be registered
-    // while we're still in the c'tor, so make sure to call
-    // SetInstanceConstructed to allow reentrancy.
-    TfSingleton<_BehaviorRegistry>::SetInstanceConstructed(*this);
-    TfRegistryManager::GetInstance().SubscribeTo<UsdShadeConnectableAPI>();
-
-    // Mark initialization as completed for waiting consumers.
-    _initialized.store(true, std::memory_order_release);
-
-    // Register for new plugins being registered so we can invalidate
-    // this registry.
-    TfNotice::Register(TfCreateWeakPtr(this), &_BehaviorRegistry::_DidRegisterPlugins);
-  }
-
-  void RegisterBehavior(const TfType &connectablePrimType,
-                        const std::shared_ptr<UsdShadeConnectableAPIBehavior> &behavior)
-  {
-    bool didInsert = false;
+   public:
+    static _BehaviorRegistry &GetInstance()
     {
-      _RWMutex::scoped_lock lock(_mutex, /* write = */ true);
-      didInsert = _registry.emplace(connectablePrimType, behavior).second;
+      return TfSingleton<_BehaviorRegistry>::GetInstance();
     }
 
-    if (!didInsert)
+    _BehaviorRegistry()
+      : _initialized(false)
     {
-      TF_CODING_ERROR(
-        "UsdShade Connectable behavior already registered for "
-        "prim type '%s'",
-        connectablePrimType.GetTypeName().c_str());
-    }
-  }
+      // Calling SubscribeTo may cause functions to be registered
+      // while we're still in the c'tor, so make sure to call
+      // SetInstanceConstructed to allow reentrancy.
+      TfSingleton<_BehaviorRegistry>::SetInstanceConstructed(*this);
+      TfRegistryManager::GetInstance().SubscribeTo<UsdShadeConnectableAPI>();
 
-  bool HasBehaviorForType(const TfType &type)
-  {
-    _WaitUntilInitialized();
-    _RWMutex::scoped_lock lock(_mutex, /* write = */ false);
-    return TfMapLookupPtr(_registry, type);
-  }
+      // Mark initialization as completed for waiting consumers.
+      _initialized.store(true, std::memory_order_release);
 
-  UsdShadeConnectableAPIBehavior *GetBehavior(const UsdPrim &prim)
-  {
-    _WaitUntilInitialized();
-
-    // Get the actual schema type from the prim definition.
-    const TfType &primSchemaType = prim.GetPrimTypeInfo().GetSchemaType();
-    if (!primSchemaType)
-    {
-      TF_CODING_ERROR("Could not find prim type '%s' for prim %s",
-                      prim.GetTypeName().GetText(),
-                      UsdDescribe(prim).c_str());
-      return nullptr;
+      // Register for new plugins being registered so we can invalidate
+      // this registry.
+      TfNotice::Register(TfCreateWeakPtr(this), &_BehaviorRegistry::_DidRegisterPlugins);
     }
 
-    std::shared_ptr<UsdShadeConnectableAPIBehavior> behavior;
-    if (_FindBehaviorForType(primSchemaType, &behavior))
+    void RegisterBehavior(const TfType &connectablePrimType,
+                          const std::shared_ptr<UsdShadeConnectableAPIBehavior> &behavior)
     {
-      return behavior.get();
-    }
-
-    std::vector<TfType> primSchemaTypeAndBases;
-    primSchemaType.GetAllAncestorTypes(&primSchemaTypeAndBases);
-
-    auto i = primSchemaTypeAndBases.cbegin();
-    for (auto e = primSchemaTypeAndBases.cend(); i != e; ++i)
-    {
-      const TfType &type = *i;
-      if (_FindBehaviorForType(type, &behavior))
+      bool didInsert = false;
       {
-        break;
+        _RWMutex::scoped_lock lock(_mutex, /* write = */ true);
+        didInsert = _registry.emplace(connectablePrimType, behavior).second;
       }
 
-      if (_LoadPluginForType(type))
+      if (!didInsert)
       {
-        // If we loaded the plugin for this type, a new function may
-        // have been registered so look again.
+        TF_CODING_ERROR(
+          "UsdShade Connectable behavior already registered for "
+          "prim type '%s'",
+          connectablePrimType.GetTypeName().c_str());
+      }
+    }
+
+    bool HasBehaviorForType(const TfType &type)
+    {
+      _WaitUntilInitialized();
+      _RWMutex::scoped_lock lock(_mutex, /* write = */ false);
+      return TfMapLookupPtr(_registry, type);
+    }
+
+    UsdShadeConnectableAPIBehavior *GetBehavior(const UsdPrim &prim)
+    {
+      _WaitUntilInitialized();
+
+      // Get the actual schema type from the prim definition.
+      const TfType &primSchemaType = prim.GetPrimTypeInfo().GetSchemaType();
+      if (!primSchemaType)
+      {
+        TF_CODING_ERROR("Could not find prim type '%s' for prim %s",
+                        prim.GetTypeName().GetText(),
+                        UsdDescribe(prim).c_str());
+        return nullptr;
+      }
+
+      std::shared_ptr<UsdShadeConnectableAPIBehavior> behavior;
+      if (_FindBehaviorForType(primSchemaType, &behavior))
+      {
+        return behavior.get();
+      }
+
+      std::vector<TfType> primSchemaTypeAndBases;
+      primSchemaType.GetAllAncestorTypes(&primSchemaTypeAndBases);
+
+      auto i = primSchemaTypeAndBases.cbegin();
+      for (auto e = primSchemaTypeAndBases.cend(); i != e; ++i)
+      {
+        const TfType &type = *i;
         if (_FindBehaviorForType(type, &behavior))
         {
           break;
         }
+
+        if (_LoadPluginForType(type))
+        {
+          // If we loaded the plugin for this type, a new function may
+          // have been registered so look again.
+          if (_FindBehaviorForType(type, &behavior))
+          {
+            break;
+          }
+        }
+      }
+
+      // behavior should point to the functions to use for all types in the
+      // range [primSchemaTypeAndBases.begin(), i). Note it may
+      // also be nullptr if no function was found; we cache this
+      // as well to avoid looking it up again.
+      _RWMutex::scoped_lock lock(_mutex, /* write = */ true);
+      for (auto it = primSchemaTypeAndBases.cbegin(); it != i; ++it)
+      {
+        _registry.emplace(*it, behavior);
+      }
+
+      return behavior.get();
+    }
+
+   private:
+    // Wait until initialization of the singleton is completed.
+    void _WaitUntilInitialized()
+    {
+      while (ARCH_UNLIKELY(!_initialized.load(std::memory_order_acquire)))
+      {
+        std::this_thread::yield();
       }
     }
 
-    // behavior should point to the functions to use for all types in the
-    // range [primSchemaTypeAndBases.begin(), i). Note it may
-    // also be nullptr if no function was found; we cache this
-    // as well to avoid looking it up again.
-    _RWMutex::scoped_lock lock(_mutex, /* write = */ true);
-    for (auto it = primSchemaTypeAndBases.cbegin(); it != i; ++it)
+    // Load the plugin for the given type if it supplies connectable behavior.
+    bool _LoadPluginForType(const TfType &type) const
     {
-      _registry.emplace(*it, behavior);
+      PlugRegistry &plugReg = PlugRegistry::GetInstance();
+
+      const JsValue implementsUsdShadeConnectableAPIBehavior = plugReg.GetDataFromPluginMetaData(
+        type,
+        "implementsUsdShadeConnectableAPIBehavior");
+      if (!implementsUsdShadeConnectableAPIBehavior.Is<bool>() ||
+          !implementsUsdShadeConnectableAPIBehavior.Get<bool>())
+      {
+        return false;
+      }
+
+      const PlugPluginPtr pluginForType = plugReg.GetPluginForType(type);
+      if (!pluginForType)
+      {
+        TF_CODING_ERROR("Could not find plugin for '%s'", type.GetTypeName().c_str());
+        return false;
+      }
+
+      return pluginForType->Load();
     }
 
-    return behavior.get();
-  }
-
- private:
-  // Wait until initialization of the singleton is completed.
-  void _WaitUntilInitialized()
-  {
-    while (ARCH_UNLIKELY(!_initialized.load(std::memory_order_acquire)))
+    void _DidRegisterPlugins(const PlugNotice::DidRegisterPlugins &n)
     {
-      std::this_thread::yield();
-    }
-  }
-
-  // Load the plugin for the given type if it supplies connectable behavior.
-  bool _LoadPluginForType(const TfType &type) const
-  {
-    PlugRegistry &plugReg = PlugRegistry::GetInstance();
-
-    const JsValue implementsUsdShadeConnectableAPIBehavior = plugReg.GetDataFromPluginMetaData(
-      type, "implementsUsdShadeConnectableAPIBehavior");
-    if (!implementsUsdShadeConnectableAPIBehavior.Is<bool>() ||
-        !implementsUsdShadeConnectableAPIBehavior.Get<bool>())
-    {
-      return false;
+      // Invalidate the registry, since newly-registered plugins may
+      // provide functions that we did not see previously. This is
+      // a heavy hammer but we expect this situation to be uncommon.
+      _RWMutex::scoped_lock lock(_mutex, /* write = */ true);
+      _registry.clear();
     }
 
-    const PlugPluginPtr pluginForType = plugReg.GetPluginForType(type);
-    if (!pluginForType)
+    bool _FindBehaviorForType(const TfType &type,
+                              std::shared_ptr<UsdShadeConnectableAPIBehavior> *behavior) const
     {
-      TF_CODING_ERROR("Could not find plugin for '%s'", type.GetTypeName().c_str());
-      return false;
+      _RWMutex::scoped_lock lock(_mutex, /* write = */ false);
+      return TfMapLookup(_registry, type, behavior);
     }
 
-    return pluginForType->Load();
-  }
+   private:
+    using _RWMutex = tbb::queuing_rw_mutex;
+    mutable _RWMutex _mutex;
 
-  void _DidRegisterPlugins(const PlugNotice::DidRegisterPlugins &n)
-  {
-    // Invalidate the registry, since newly-registered plugins may
-    // provide functions that we did not see previously. This is
-    // a heavy hammer but we expect this situation to be uncommon.
-    _RWMutex::scoped_lock lock(_mutex, /* write = */ true);
-    _registry.clear();
-  }
+    using _Registry = std::unordered_map<TfType, std::shared_ptr<UsdShadeConnectableAPIBehavior>, TfHash>;
+    _Registry _registry;
 
-  bool _FindBehaviorForType(const TfType &type,
-                            std::shared_ptr<UsdShadeConnectableAPIBehavior> *behavior) const
-  {
-    _RWMutex::scoped_lock lock(_mutex, /* write = */ false);
-    return TfMapLookup(_registry, type, behavior);
-  }
-
- private:
-  using _RWMutex = tbb::queuing_rw_mutex;
-  mutable _RWMutex _mutex;
-
-  using _Registry = std::unordered_map<TfType, std::shared_ptr<UsdShadeConnectableAPIBehavior>, TfHash>;
-  _Registry _registry;
-
-  std::atomic<bool> _initialized;
-};
+    std::atomic<bool> _initialized;
+  };
 
 }  // namespace
 

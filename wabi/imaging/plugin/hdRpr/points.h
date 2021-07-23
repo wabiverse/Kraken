@@ -22,7 +22,7 @@ limitations under the License.
 
 namespace rpr
 {
-class Shape;
+  class Shape;
 }
 
 WABI_NAMESPACE_BEGIN

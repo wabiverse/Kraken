@@ -52,31 +52,31 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Repr(GfLine const &self)
-{
-  return TF_PY_REPR_PREFIX + "Line(" + TfPyRepr(self.GetPoint(0.0)) + ", " + TfPyRepr(self.GetDirection()) +
-         ")";
-}
+  static string _Repr(GfLine const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Line(" + TfPyRepr(self.GetPoint(0.0)) + ", " +
+           TfPyRepr(self.GetDirection()) + ")";
+  }
 
-static tuple FindClosestPointsHelper(const GfLine &l1, const GfLine &l2)
-{
-  GfVec3d p1(0), p2(0);
-  double t1 = 0.0, t2 = 0.0;
-  bool result = GfFindClosestPoints(l1, l2, &p1, &p2, &t1, &t2);
-  return boost::python::make_tuple(result, p1, p2, t1, t2);
-}
+  static tuple FindClosestPointsHelper(const GfLine &l1, const GfLine &l2)
+  {
+    GfVec3d p1(0), p2(0);
+    double t1 = 0.0, t2 = 0.0;
+    bool result = GfFindClosestPoints(l1, l2, &p1, &p2, &t1, &t2);
+    return boost::python::make_tuple(result, p1, p2, t1, t2);
+  }
 
-static tuple FindClosestPointHelper(const GfLine &self, const GfVec3d &point)
-{
-  double t;
-  GfVec3d result = self.FindClosestPoint(point, &t);
-  return boost::python::make_tuple(result, t);
-}
+  static tuple FindClosestPointHelper(const GfLine &self, const GfVec3d &point)
+  {
+    double t;
+    GfVec3d result = self.FindClosestPoint(point, &t);
+    return boost::python::make_tuple(result, t);
+  }
 
-static void SetDirectionHelper(GfLine &self, const GfVec3d &dir)
-{
-  self.Set(self.GetPoint(0.0), dir);
-}
+  static void SetDirectionHelper(GfLine &self, const GfVec3d &dir)
+  {
+    self.Set(self.GetPoint(0.0), dir);
+  }
 
 }  // anonymous namespace
 

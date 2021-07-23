@@ -31,21 +31,21 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static size_t __hash__(Tf_PyEnumWrapper const &self)
-{
-  return TfHash()(self.value);
-}
-
-static boost::python::object _GetValueFromFullName(const std::string &fullName)
-{
-  bool found = false;
-  const TfEnum value = TfEnum::GetValueFromFullName(fullName, &found);
-  if (found)
+  static size_t __hash__(Tf_PyEnumWrapper const &self)
   {
-    return boost::python::object(value);
+    return TfHash()(self.value);
   }
-  return boost::python::object();
-}
+
+  static boost::python::object _GetValueFromFullName(const std::string &fullName)
+  {
+    bool found = false;
+    const TfEnum value = TfEnum::GetValueFromFullName(fullName, &found);
+    if (found)
+    {
+      return boost::python::object(value);
+    }
+    return boost::python::object();
+  }
 
 }  // anonymous namespace
 

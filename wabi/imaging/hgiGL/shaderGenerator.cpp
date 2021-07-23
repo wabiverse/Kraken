@@ -62,10 +62,16 @@ void HgiGLShaderGenerator::_WriteTextures(const HgiShaderFunctionTextureDescVect
   for (size_t i = 0; i < textures.size(); i++)
   {
     const HgiShaderFunctionTextureDesc &textureDescription = textures[i];
-    const HgiShaderSectionAttributeVector attrs = {HgiShaderSectionAttribute{"binding", std::to_string(i)}};
+    const HgiShaderSectionAttributeVector attrs = {
+      HgiShaderSectionAttribute{"binding", std::to_string(i)}
+    };
 
-    GetShaderSections()->push_back(std::make_unique<HgiGLTextureShaderSection>(
-      textureDescription.nameInShader, i, textureDescription.dimensions, textureDescription.format, attrs));
+    GetShaderSections()->push_back(
+      std::make_unique<HgiGLTextureShaderSection>(textureDescription.nameInShader,
+                                                  i,
+                                                  textureDescription.dimensions,
+                                                  textureDescription.format,
+                                                  attrs));
   }
 }
 
@@ -76,10 +82,14 @@ void HgiGLShaderGenerator::_WriteBuffers(const HgiShaderFunctionBufferDescVector
   {
     const HgiShaderFunctionBufferDesc &bufferDescription = buffers[i];
     const HgiShaderSectionAttributeVector attrs = {
-      HgiShaderSectionAttribute{"std430", ""}, HgiShaderSectionAttribute{"binding", std::to_string(i + 1)}};
+      HgiShaderSectionAttribute{"std430",  ""                   },
+      HgiShaderSectionAttribute{"binding", std::to_string(i + 1)}
+    };
 
-    GetShaderSections()->push_back(std::make_unique<HgiGLBufferShaderSection>(
-      bufferDescription.nameInShader, i + 1, bufferDescription.type, attrs));
+    GetShaderSections()->push_back(std::make_unique<HgiGLBufferShaderSection>(bufferDescription.nameInShader,
+                                                                              i + 1,
+                                                                              bufferDescription.type,
+                                                                              attrs));
   }
 }
 
@@ -102,8 +112,9 @@ void HgiGLShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVector &
   // taken in opengl we ignore them
   const static std::set<std::string> takenOutParams{"gl_Position", "gl_FragColor", "gl_FragDepth"};
   const static std::map<std::string, std::string> takenInParams{
-    {HgiShaderKeywordTokens->hdPosition, "gl_Postiion"},
-    {HgiShaderKeywordTokens->hdGlobalInvocationID, "gl_GlobalInvocationID"}};
+    {HgiShaderKeywordTokens->hdPosition,           "gl_Postiion"          },
+    {HgiShaderKeywordTokens->hdGlobalInvocationID, "gl_GlobalInvocationID"}
+  };
 
   const bool in_qualifier = qualifier == "in";
   const bool out_qualifier = qualifier == "out";
@@ -128,7 +139,8 @@ void HgiGLShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVector &
     }
 
     const HgiShaderSectionAttributeVector attrs{
-      HgiShaderSectionAttribute{"location", std::to_string(counter)}};
+      HgiShaderSectionAttribute{"location", std::to_string(counter)}
+    };
 
     GetShaderSections()->push_back(
       std::make_unique<HgiGLMemberShaderSection>(paramName, param.type, attrs, qualifier));

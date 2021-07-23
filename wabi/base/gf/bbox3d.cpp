@@ -97,8 +97,7 @@ GfRange3d GfBBox3d::ComputeAlignedRange() const
       {
         alignedMin[j] += a;
         alignedMax[j] += b;
-      }
-      else
+      } else
       {
         alignedMin[j] += b;
         alignedMax[j] += a;
@@ -128,8 +127,7 @@ GfBBox3d GfBBox3d::Combine(const GfBBox3d &b1, const GfBBox3d &b2)
       result = GfBBox3d(GfRange3d::GetUnion(b1.ComputeAlignedRange(), b2.ComputeAlignedRange()));
     else
       result = _CombineInOrder(b2, b1);
-  }
-  else if (b2._isDegenerate)
+  } else if (b2._isDegenerate)
     result = _CombineInOrder(b1, b2);
 
   // Non-degenerate case: Neither box is empty and they are in

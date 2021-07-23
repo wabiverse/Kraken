@@ -262,8 +262,8 @@ void numaAPI_Free(void *start, size_t size);
 //
 // For access to standard POSIXish features use OS_POSIX instead of a
 // more specific macro.
-#if OS_AIX || OS_ANDROID || OS_ASMJS || OS_FREEBSD || OS_LINUX || OS_MACOSX || \
-  OS_NACL || OS_NETBSD || OS_OPENBSD || OS_QNX || OS_SOLARIS
+#if OS_AIX || OS_ANDROID || OS_ASMJS || OS_FREEBSD || OS_LINUX || OS_MACOSX || OS_NACL || OS_NETBSD || \
+  OS_OPENBSD || OS_QNX || OS_SOLARIS
 #  define OS_POSIX 1
 #else
 #  define OS_POSIX 0
@@ -318,8 +318,7 @@ void numaAPI_Free(void *start, size_t size);
 // particular case, that warning might be helpful to catch errors elsewhere.
 
 // C++11 check.
-#if ((defined(__cplusplus) && (__cplusplus > 199711L)) || \
-     (defined(_MSC_VER) && (_MSC_VER >= 1800)))
+#if ((defined(__cplusplus) && (__cplusplus > 199711L)) || (defined(_MSC_VER) && (_MSC_VER >= 1800)))
 #  define COMPILER_SUPPORTS_CXX11 1
 #else
 #  define COMPILER_SUPPORTS_CXX11 0

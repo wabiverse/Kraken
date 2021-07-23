@@ -57,67 +57,66 @@ namespace
 {
 
 #if defined(ARCH_OS_WINDOWS)
-// Expands symlinks in path.  Used on Windows as a partial replacement
-// for realpath(), partial because is doesn't handle /./, /../ and
-// duplicate slashes.
-std::string _ExpandSymlinks(const std::string &path)
-{
-  // Find the first directory in path that's a symbolic link, if any,
-  // and the remaining part of the path.
-  std::string::size_type i = path.find_first_of("/\\");
-  while (i != std::string::npos)
+  // Expands symlinks in path.  Used on Windows as a partial replacement
+  // for realpath(), partial because is doesn't handle /./, /../ and
+  // duplicate slashes.
+  std::string _ExpandSymlinks(const std::string &path)
   {
-    std::string prefix = path.substr(0, i);
-    // If the prefix is "X:", this will access the "current" directory on
-    // drive X, when what we really want is the root of drive X, so append
-    // a backslash. Also check that i>0. An i==0 value can happen if the
-    // passed in path is a non-canonical Windows path such as "/tmp/foo".
-    if (i > 0 && prefix.at(i - 1) == ':')
+    // Find the first directory in path that's a symbolic link, if any,
+    // and the remaining part of the path.
+    std::string::size_type i = path.find_first_of("/\\");
+    while (i != std::string::npos)
     {
-      prefix.push_back('\\');
+      std::string prefix = path.substr(0, i);
+      // If the prefix is "X:", this will access the "current" directory on
+      // drive X, when what we really want is the root of drive X, so append
+      // a backslash. Also check that i>0. An i==0 value can happen if the
+      // passed in path is a non-canonical Windows path such as "/tmp/foo".
+      if (i > 0 && prefix.at(i - 1) == ':')
+      {
+        prefix.push_back('\\');
+      }
+      if (TfIsLink(prefix))
+      {
+        // Expand the link and repeat with the new path.
+        return _ExpandSymlinks(TfReadLink(prefix) + path.substr(i));
+      } else
+      {
+        i = path.find_first_of("/\\", i + 1);
+      }
     }
-    if (TfIsLink(prefix))
-    {
-      // Expand the link and repeat with the new path.
-      return _ExpandSymlinks(TfReadLink(prefix) + path.substr(i));
-    }
-    else
-    {
-      i = path.find_first_of("/\\", i + 1);
-    }
-  }
 
-  // No ancestral symlinks.
-  if (TfIsLink(path))
-  {
-    return _ExpandSymlinks(TfReadLink(path));
-  }
+    // No ancestral symlinks.
+    if (TfIsLink(path))
+    {
+      return _ExpandSymlinks(TfReadLink(path));
+    }
 
-  // No links at all.
-  return path;
-}
+    // No links at all.
+    return path;
+  }
 #endif
 
-void _ClearError()
-{
-#if defined(ARCH_OS_WINDOWS)
-  SetLastError(ERROR_SUCCESS);
-#else
-  errno = 0;
-#endif
-}
-
-void _GetError(std::string *err)
-{
-  if (err->empty())
+  void _ClearError()
   {
 #if defined(ARCH_OS_WINDOWS)
-    *err = ArchStrSysError(GetLastError());
+    SetLastError(ERROR_SUCCESS);
 #else
-    *err = errno ? ArchStrerror() : std::string();
+    errno = 0;
 #endif
   }
-}
+
+  void _GetError(std::string *err)
+  {
+    if (err->empty())
+    {
+#if defined(ARCH_OS_WINDOWS)
+      *err = ArchStrSysError(GetLastError());
+#else
+      *err = errno ? ArchStrerror() : std::string();
+#endif
+    }
+  }
 
 }  // anonymous namespace
 
@@ -215,8 +214,7 @@ string::size_type TfFindLongestAccessiblePrefix(string const &path, string *erro
         {
           *err = "encountered dangling symbolic link";
         }
-      }
-      else
+      } else
       {
         _GetError(err);
       }
@@ -334,71 +332,70 @@ vector<string> TfGlob(vector<string> const &paths, unsigned int flags)
 namespace
 {
 
-static void Tf_Glob(vector<string> *result,
-                    const std::string &prefix,
-                    const std::string &pattern,
-                    unsigned int flags)
-{
-  // Search for the first wildcard in pattern.
-  const string::size_type i = pattern.find_first_of("*?");
-
-  if (i == string::npos)
+  static void Tf_Glob(vector<string> *result,
+                      const std::string &prefix,
+                      const std::string &pattern,
+                      unsigned int flags)
   {
-    // No more patterns so we simply need to see if the file exists.
-    // Conveniently GetFileAttributes() works on paths with a trailing
-    // backslash.
-    string path = prefix + pattern;
-    const DWORD attributes = GetFileAttributes(path.c_str());
-    if (attributes != INVALID_FILE_ATTRIBUTES)
-    {
-      // File exists.
+    // Search for the first wildcard in pattern.
+    const string::size_type i = pattern.find_first_of("*?");
 
-      // Append directory mark if necessary.
-      if (attributes & FILE_ATTRIBUTE_DIRECTORY)
+    if (i == string::npos)
+    {
+      // No more patterns so we simply need to see if the file exists.
+      // Conveniently GetFileAttributes() works on paths with a trailing
+      // backslash.
+      string path = prefix + pattern;
+      const DWORD attributes = GetFileAttributes(path.c_str());
+      if (attributes != INVALID_FILE_ATTRIBUTES)
       {
-        if ((flags & ARCH_GLOB_MARK) && path.back() != '\\')
+        // File exists.
+
+        // Append directory mark if necessary.
+        if (attributes & FILE_ATTRIBUTE_DIRECTORY)
         {
-          path.push_back('\\');
+          if ((flags & ARCH_GLOB_MARK) && path.back() != '\\')
+          {
+            path.push_back('\\');
+          }
         }
+
+        result->push_back(path);
+      }
+    } else
+    {
+      // There are additional patterns to glob.  Find the next directory
+      // after the wildcard.
+      string::size_type j = pattern.find_first_of('\\', i);
+      if (j == string::npos)
+      {
+        // We've bottomed out on the pattern.
+        j = pattern.size();
       }
 
-      result->push_back(path);
-    }
-  }
-  else
-  {
-    // There are additional patterns to glob.  Find the next directory
-    // after the wildcard.
-    string::size_type j = pattern.find_first_of('\\', i);
-    if (j == string::npos)
-    {
-      // We've bottomed out on the pattern.
-      j = pattern.size();
-    }
+      // Construct the remaining pattern, if any.
+      const string remainingPattern = pattern.substr(j);
 
-    // Construct the remaining pattern, if any.
-    const string remainingPattern = pattern.substr(j);
+      // Construct the leftmost pattern.
+      const string leftmostPattern = prefix + pattern.substr(0, j);
 
-    // Construct the leftmost pattern.
-    const string leftmostPattern = prefix + pattern.substr(0, j);
+      // Construct the leftmost pattern's directory.
+      const string leftmostDir = TfGetPathName(leftmostPattern);
 
-    // Construct the leftmost pattern's directory.
-    const string leftmostDir = TfGetPathName(leftmostPattern);
-
-    // Glob the leftmost pattern.
-    WIN32_FIND_DATA data;
-    HANDLE find = FindFirstFile(leftmostPattern.c_str(), &data);
-    if (find != INVALID_HANDLE_VALUE)
-    {
-      do
+      // Glob the leftmost pattern.
+      WIN32_FIND_DATA data;
+      HANDLE find = FindFirstFile(leftmostPattern.c_str(), &data);
+      if (find != INVALID_HANDLE_VALUE)
       {
-        // Recurse with next pattern.
-        Tf_Glob(result, leftmostDir + data.cFileName, remainingPattern, flags);
-      } while (FindNextFile(find, &data));
-      FindClose(find);
+        do
+        {
+          // Recurse with next pattern.
+          Tf_Glob(result, leftmostDir + data.cFileName, remainingPattern, flags);
+        } while (FindNextFile(find, &data));
+        FindClose(find);
+      }
     }
   }
-}
 
 }  // namespace
 

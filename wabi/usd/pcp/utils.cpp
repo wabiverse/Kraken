@@ -63,7 +63,9 @@ SdfLayer::FileFormatArguments Pcp_GetArgumentsForFileFormatTarget(const std::str
   {
     return {};
   }
-  return {{SdfFileFormatTokens->TargetArg, target}};
+  return {
+    {SdfFileFormatTokens->TargetArg, target}
+  };
 }
 
 const SdfLayer::FileFormatArguments &Pcp_GetArgumentsForFileFormatTarget(

@@ -79,7 +79,7 @@ static void region_align_info_from_area(ScrArea *area, RegionTypeAlignInfo *r_al
     r_align_info->by_type[index].hidden = true;
   }
 
-  UNIVERSE_FOR_ALL(region, area->regions)
+  UNIVERSE_FOR_ALL (region, area->regions)
   {
     const int index = region->regiontype;
     if ((uint)index < RGN_TYPE_LEN)
@@ -137,7 +137,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
 
     /* check previously stored space */
     SpaceLink *sl = POINTER_ZERO;
-    UNIVERSE_FOR_ALL(sl_iter, area->spacedata)
+    UNIVERSE_FOR_ALL (sl_iter, area->spacedata)
     {
       if (sl_iter->spacetype == type.Hash())
       {
@@ -172,8 +172,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
 
       // area->spacedata.erase(sl);
       area->spacedata.insert(area->spacedata.begin(), sl);
-    }
-    else
+    } else
     {
       /* new space */
       if (st)

@@ -50,328 +50,338 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateCookieModeAttr(UsdRiPxrCookieLightFilter &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
-{
-  return self.CreateCookieModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
-
-static UsdAttribute _CreateWidthAttr(UsdRiPxrCookieLightFilter &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateHeightAttr(UsdRiPxrCookieLightFilter &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateTextureMapAttr(UsdRiPxrCookieLightFilter &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
-{
-  return self.CreateTextureMapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
-
-static UsdAttribute _CreateTextureWrapModeAttr(UsdRiPxrCookieLightFilter &self,
-                                               object defaultVal,
-                                               bool writeSparsely)
-{
-  return self.CreateTextureWrapModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                        writeSparsely);
-}
-
-static UsdAttribute _CreateTextureFillColorAttr(UsdRiPxrCookieLightFilter &self,
-                                                object defaultVal,
-                                                bool writeSparsely)
-{
-  return self.CreateTextureFillColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
-                                         writeSparsely);
-}
-
-static UsdAttribute _CreateTexturePremultipliedAlphaAttr(UsdRiPxrCookieLightFilter &self,
-                                                         object defaultVal,
-                                                         bool writeSparsely)
-{
-  return self.CreateTexturePremultipliedAlphaAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                                  writeSparsely);
-}
-
-static UsdAttribute _CreateTextureInvertUAttr(UsdRiPxrCookieLightFilter &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
-{
-  return self.CreateTextureInvertUAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                       writeSparsely);
-}
-
-static UsdAttribute _CreateTextureInvertVAttr(UsdRiPxrCookieLightFilter &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
-{
-  return self.CreateTextureInvertVAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                       writeSparsely);
-}
-
-static UsdAttribute _CreateTextureScaleUAttr(UsdRiPxrCookieLightFilter &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreateTextureScaleUAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                      writeSparsely);
-}
-
-static UsdAttribute _CreateTextureScaleVAttr(UsdRiPxrCookieLightFilter &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreateTextureScaleVAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                      writeSparsely);
-}
-
-static UsdAttribute _CreateTextureOffsetUAttr(UsdRiPxrCookieLightFilter &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
-{
-  return self.CreateTextureOffsetUAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                       writeSparsely);
-}
-
-static UsdAttribute _CreateTextureOffsetVAttr(UsdRiPxrCookieLightFilter &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
-{
-  return self.CreateTextureOffsetVAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                       writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticDirectionalAttr(UsdRiPxrCookieLightFilter &self,
-                                                   object defaultVal,
-                                                   bool writeSparsely)
-{
-  return self.CreateAnalyticDirectionalAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                            writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticShearXAttr(UsdRiPxrCookieLightFilter &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
-{
-  return self.CreateAnalyticShearXAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                       writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticShearYAttr(UsdRiPxrCookieLightFilter &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
-{
-  return self.CreateAnalyticShearYAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                       writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticApexAttr(UsdRiPxrCookieLightFilter &self,
+  static UsdAttribute _CreateCookieModeAttr(UsdRiPxrCookieLightFilter &self,
                                             object defaultVal,
                                             bool writeSparsely)
-{
-  return self.CreateAnalyticApexAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateCookieModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                      writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateAnalyticUseLightDirectionAttr(UsdRiPxrCookieLightFilter &self,
-                                                         object defaultVal,
-                                                         bool writeSparsely)
-{
-  return self.CreateAnalyticUseLightDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                                  writeSparsely);
-}
+  static UsdAttribute _CreateWidthAttr(UsdRiPxrCookieLightFilter &self,
+                                       object defaultVal,
+                                       bool writeSparsely)
+  {
+    return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateAnalyticBlurAmountAttr(UsdRiPxrCookieLightFilter &self,
+  static UsdAttribute _CreateHeightAttr(UsdRiPxrCookieLightFilter &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
+  {
+    return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
+
+  static UsdAttribute _CreateTextureMapAttr(UsdRiPxrCookieLightFilter &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
+  {
+    return self.CreateTextureMapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+                                     writeSparsely);
+  }
+
+  static UsdAttribute _CreateTextureWrapModeAttr(UsdRiPxrCookieLightFilter &self,
+                                                 object defaultVal,
+                                                 bool writeSparsely)
+  {
+    return self.CreateTextureWrapModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                          writeSparsely);
+  }
+
+  static UsdAttribute _CreateTextureFillColorAttr(UsdRiPxrCookieLightFilter &self,
                                                   object defaultVal,
                                                   bool writeSparsely)
-{
-  return self.CreateAnalyticBlurAmountAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateTextureFillColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
                                            writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateAnalyticBlurSMultAttr(UsdRiPxrCookieLightFilter &self,
-                                                 object defaultVal,
-                                                 bool writeSparsely)
-{
-  return self.CreateAnalyticBlurSMultAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                          writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticBlurTMultAttr(UsdRiPxrCookieLightFilter &self,
-                                                 object defaultVal,
-                                                 bool writeSparsely)
-{
-  return self.CreateAnalyticBlurTMultAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                          writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticBlurNearDistanceAttr(UsdRiPxrCookieLightFilter &self,
-                                                        object defaultVal,
-                                                        bool writeSparsely)
-{
-  return self.CreateAnalyticBlurNearDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                 writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticBlurMidpointAttr(UsdRiPxrCookieLightFilter &self,
-                                                    object defaultVal,
-                                                    bool writeSparsely)
-{
-  return self.CreateAnalyticBlurMidpointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                             writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticBlurFarDistanceAttr(UsdRiPxrCookieLightFilter &self,
-                                                       object defaultVal,
-                                                       bool writeSparsely)
-{
-  return self.CreateAnalyticBlurFarDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticBlurNearValueAttr(UsdRiPxrCookieLightFilter &self,
-                                                     object defaultVal,
-                                                     bool writeSparsely)
-{
-  return self.CreateAnalyticBlurNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                              writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticBlurMidValueAttr(UsdRiPxrCookieLightFilter &self,
-                                                    object defaultVal,
-                                                    bool writeSparsely)
-{
-  return self.CreateAnalyticBlurMidValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                             writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticBlurFarValueAttr(UsdRiPxrCookieLightFilter &self,
-                                                    object defaultVal,
-                                                    bool writeSparsely)
-{
-  return self.CreateAnalyticBlurFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                             writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticBlurExponentAttr(UsdRiPxrCookieLightFilter &self,
-                                                    object defaultVal,
-                                                    bool writeSparsely)
-{
-  return self.CreateAnalyticBlurExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                             writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticDensityNearDistanceAttr(UsdRiPxrCookieLightFilter &self,
+  static UsdAttribute _CreateTexturePremultipliedAlphaAttr(UsdRiPxrCookieLightFilter &self,
                                                            object defaultVal,
                                                            bool writeSparsely)
-{
-  return self.CreateAnalyticDensityNearDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateTexturePremultipliedAlphaAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                                     writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateAnalyticDensityMidpointAttr(UsdRiPxrCookieLightFilter &self,
-                                                       object defaultVal,
-                                                       bool writeSparsely)
-{
-  return self.CreateAnalyticDensityMidpointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                writeSparsely);
-}
+  static UsdAttribute _CreateTextureInvertUAttr(UsdRiPxrCookieLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateTextureInvertUAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                         writeSparsely);
+  }
 
-static UsdAttribute _CreateAnalyticDensityFarDistanceAttr(UsdRiPxrCookieLightFilter &self,
+  static UsdAttribute _CreateTextureInvertVAttr(UsdRiPxrCookieLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateTextureInvertVAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateTextureScaleUAttr(UsdRiPxrCookieLightFilter &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateTextureScaleUAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                        writeSparsely);
+  }
+
+  static UsdAttribute _CreateTextureScaleVAttr(UsdRiPxrCookieLightFilter &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateTextureScaleVAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                        writeSparsely);
+  }
+
+  static UsdAttribute _CreateTextureOffsetUAttr(UsdRiPxrCookieLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateTextureOffsetUAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateTextureOffsetVAttr(UsdRiPxrCookieLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateTextureOffsetVAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDirectionalAttr(UsdRiPxrCookieLightFilter &self,
+                                                     object defaultVal,
+                                                     bool writeSparsely)
+  {
+    return self.CreateAnalyticDirectionalAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                              writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticShearXAttr(UsdRiPxrCookieLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateAnalyticShearXAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticShearYAttr(UsdRiPxrCookieLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateAnalyticShearYAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticApexAttr(UsdRiPxrCookieLightFilter &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreateAnalyticApexAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                       writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticUseLightDirectionAttr(UsdRiPxrCookieLightFilter &self,
+                                                           object defaultVal,
+                                                           bool writeSparsely)
+  {
+    return self.CreateAnalyticUseLightDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                                    writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticBlurAmountAttr(UsdRiPxrCookieLightFilter &self,
+                                                    object defaultVal,
+                                                    bool writeSparsely)
+  {
+    return self.CreateAnalyticBlurAmountAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                             writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticBlurSMultAttr(UsdRiPxrCookieLightFilter &self,
+                                                   object defaultVal,
+                                                   bool writeSparsely)
+  {
+    return self.CreateAnalyticBlurSMultAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                            writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticBlurTMultAttr(UsdRiPxrCookieLightFilter &self,
+                                                   object defaultVal,
+                                                   bool writeSparsely)
+  {
+    return self.CreateAnalyticBlurTMultAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                            writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticBlurNearDistanceAttr(UsdRiPxrCookieLightFilter &self,
                                                           object defaultVal,
                                                           bool writeSparsely)
-{
-  return self.CreateAnalyticDensityFarDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateAnalyticBlurNearDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                                    writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateAnalyticDensityNearValueAttr(UsdRiPxrCookieLightFilter &self,
-                                                        object defaultVal,
-                                                        bool writeSparsely)
-{
-  return self.CreateAnalyticDensityNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                 writeSparsely);
-}
+  static UsdAttribute _CreateAnalyticBlurMidpointAttr(UsdRiPxrCookieLightFilter &self,
+                                                      object defaultVal,
+                                                      bool writeSparsely)
+  {
+    return self.CreateAnalyticBlurMidpointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                               writeSparsely);
+  }
 
-static UsdAttribute _CreateAnalyticDensityMidValueAttr(UsdRiPxrCookieLightFilter &self,
+  static UsdAttribute _CreateAnalyticBlurFarDistanceAttr(UsdRiPxrCookieLightFilter &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateAnalyticBlurFarDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                  writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticBlurNearValueAttr(UsdRiPxrCookieLightFilter &self,
                                                        object defaultVal,
                                                        bool writeSparsely)
-{
-  return self.CreateAnalyticDensityMidValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateAnalyticBlurNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                                 writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateAnalyticDensityFarValueAttr(UsdRiPxrCookieLightFilter &self,
-                                                       object defaultVal,
-                                                       bool writeSparsely)
-{
-  return self.CreateAnalyticDensityFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                writeSparsely);
-}
+  static UsdAttribute _CreateAnalyticBlurMidValueAttr(UsdRiPxrCookieLightFilter &self,
+                                                      object defaultVal,
+                                                      bool writeSparsely)
+  {
+    return self.CreateAnalyticBlurMidValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                               writeSparsely);
+  }
 
-static UsdAttribute _CreateAnalyticDensityExponentAttr(UsdRiPxrCookieLightFilter &self,
-                                                       object defaultVal,
-                                                       bool writeSparsely)
-{
-  return self.CreateAnalyticDensityExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                writeSparsely);
-}
+  static UsdAttribute _CreateAnalyticBlurFarValueAttr(UsdRiPxrCookieLightFilter &self,
+                                                      object defaultVal,
+                                                      bool writeSparsely)
+  {
+    return self.CreateAnalyticBlurFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                               writeSparsely);
+  }
 
-static UsdAttribute _CreateColorSaturationAttr(UsdRiPxrCookieLightFilter &self,
+  static UsdAttribute _CreateAnalyticBlurExponentAttr(UsdRiPxrCookieLightFilter &self,
+                                                      object defaultVal,
+                                                      bool writeSparsely)
+  {
+    return self.CreateAnalyticBlurExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                               writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityNearDistanceAttr(UsdRiPxrCookieLightFilter &self,
+                                                             object defaultVal,
+                                                             bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityNearDistanceAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityMidpointAttr(UsdRiPxrCookieLightFilter &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityMidpointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                  writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityFarDistanceAttr(UsdRiPxrCookieLightFilter &self,
+                                                            object defaultVal,
+                                                            bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityFarDistanceAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityNearValueAttr(UsdRiPxrCookieLightFilter &self,
+                                                          object defaultVal,
+                                                          bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                   writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityMidValueAttr(UsdRiPxrCookieLightFilter &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityMidValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                  writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityFarValueAttr(UsdRiPxrCookieLightFilter &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                  writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityExponentAttr(UsdRiPxrCookieLightFilter &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                  writeSparsely);
+  }
+
+  static UsdAttribute _CreateColorSaturationAttr(UsdRiPxrCookieLightFilter &self,
+                                                 object defaultVal,
+                                                 bool writeSparsely)
+  {
+    return self.CreateColorSaturationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                          writeSparsely);
+  }
+
+  static UsdAttribute _CreateColorMidpointAttr(UsdRiPxrCookieLightFilter &self,
                                                object defaultVal,
                                                bool writeSparsely)
-{
-  return self.CreateColorSaturationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateColorMidpointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                         writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateColorMidpointAttr(UsdRiPxrCookieLightFilter &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreateColorMidpointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                      writeSparsely);
-}
-
-static UsdAttribute _CreateColorContrastAttr(UsdRiPxrCookieLightFilter &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreateColorContrastAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                      writeSparsely);
-}
-
-static UsdAttribute _CreateColorWhitepointAttr(UsdRiPxrCookieLightFilter &self,
+  static UsdAttribute _CreateColorContrastAttr(UsdRiPxrCookieLightFilter &self,
                                                object defaultVal,
                                                bool writeSparsely)
-{
-  return self.CreateColorWhitepointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateColorContrastAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                         writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateColorTintAttr(UsdRiPxrCookieLightFilter &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
-{
-  return self.CreateColorTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
-}
+  static UsdAttribute _CreateColorWhitepointAttr(UsdRiPxrCookieLightFilter &self,
+                                                 object defaultVal,
+                                                 bool writeSparsely)
+  {
+    return self.CreateColorWhitepointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                          writeSparsely);
+  }
 
-static std::string _Repr(const UsdRiPxrCookieLightFilter &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.PxrCookieLightFilter(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateColorTintAttr(UsdRiPxrCookieLightFilter &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
+  {
+    return self.CreateColorTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
+                                    writeSparsely);
+  }
+
+  static std::string _Repr(const UsdRiPxrCookieLightFilter &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.PxrCookieLightFilter(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -408,12 +418,14 @@ void wrapUsdRiPxrCookieLightFilter()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetWidthAttr", &This::GetWidthAttr)
-    .def(
-      "CreateWidthAttr", &_CreateWidthAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateWidthAttr",
+         &_CreateWidthAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetHeightAttr", &This::GetHeightAttr)
-    .def(
-      "CreateHeightAttr", &_CreateHeightAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateHeightAttr",
+         &_CreateHeightAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetTextureMapAttr", &This::GetTextureMapAttr)
     .def("CreateTextureMapAttr",
@@ -627,7 +639,7 @@ void wrapUsdRiPxrCookieLightFilter()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

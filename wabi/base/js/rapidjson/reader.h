@@ -55,11 +55,11 @@ RAPIDJSON_DIAG_OFF(effc++)
 #define RAPIDJSON_NOTHING /* deliberately empty */
 #ifndef RAPIDJSON_PARSE_ERROR_EARLY_RETURN
 #  define RAPIDJSON_PARSE_ERROR_EARLY_RETURN(value) \
-    RAPIDJSON_MULTILINEMACRO_BEGIN \
-    if (RAPIDJSON_UNLIKELY(HasParseError())) \
-    { \
-      return value; \
-    } \
+    RAPIDJSON_MULTILINEMACRO_BEGIN                  \
+    if (RAPIDJSON_UNLIKELY(HasParseError()))        \
+    {                                               \
+      return value;                                 \
+    }                                               \
     RAPIDJSON_MULTILINEMACRO_END
 #endif
 #define RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID RAPIDJSON_PARSE_ERROR_EARLY_RETURN(RAPIDJSON_NOTHING)
@@ -96,10 +96,10 @@ RAPIDJSON_DIAG_OFF(effc++)
     \see RAPIDJSON_PARSE_ERROR, rapidjson::GenericReader::Parse
  */
 #ifndef RAPIDJSON_PARSE_ERROR_NORETURN
-#  define RAPIDJSON_PARSE_ERROR_NORETURN(parseErrorCode, offset) \
-    RAPIDJSON_MULTILINEMACRO_BEGIN \
+#  define RAPIDJSON_PARSE_ERROR_NORETURN(parseErrorCode, offset)              \
+    RAPIDJSON_MULTILINEMACRO_BEGIN                                            \
     RAPIDJSON_ASSERT(!HasParseError()); /* Error can only be assigned once */ \
-    SetParseError(parseErrorCode, offset); \
+    SetParseError(parseErrorCode, offset);                                    \
     RAPIDJSON_MULTILINEMACRO_END
 #endif
 
@@ -115,10 +115,10 @@ RAPIDJSON_DIAG_OFF(effc++)
     \hideinitializer
  */
 #ifndef RAPIDJSON_PARSE_ERROR
-#  define RAPIDJSON_PARSE_ERROR(parseErrorCode, offset) \
-    RAPIDJSON_MULTILINEMACRO_BEGIN \
+#  define RAPIDJSON_PARSE_ERROR(parseErrorCode, offset)     \
+    RAPIDJSON_MULTILINEMACRO_BEGIN                          \
     RAPIDJSON_PARSE_ERROR_NORETURN(parseErrorCode, offset); \
-    RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID; \
+    RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;                \
     RAPIDJSON_MULTILINEMACRO_END
 #endif
 
@@ -271,45 +271,45 @@ struct BaseReaderHandler
 namespace internal
 {
 
-template<typename Stream, int = StreamTraits<Stream>::copyOptimization>
-class StreamLocalCopy;
+  template<typename Stream, int = StreamTraits<Stream>::copyOptimization>
+  class StreamLocalCopy;
 
-//! Do copy optimization.
-template<typename Stream>
-class StreamLocalCopy<Stream, 1>
-{
- public:
-  StreamLocalCopy(Stream &original)
-    : s(original),
-      original_(original)
-  {}
-  ~StreamLocalCopy()
+  //! Do copy optimization.
+  template<typename Stream>
+  class StreamLocalCopy<Stream, 1>
   {
-    original_ = s;
-  }
+   public:
+    StreamLocalCopy(Stream &original)
+      : s(original),
+        original_(original)
+    {}
+    ~StreamLocalCopy()
+    {
+      original_ = s;
+    }
 
-  Stream s;
+    Stream s;
 
- private:
-  StreamLocalCopy &operator=(const StreamLocalCopy &) /* = delete */;
+   private:
+    StreamLocalCopy &operator=(const StreamLocalCopy &) /* = delete */;
 
-  Stream &original_;
-};
+    Stream &original_;
+  };
 
-//! Keep reference.
-template<typename Stream>
-class StreamLocalCopy<Stream, 0>
-{
- public:
-  StreamLocalCopy(Stream &original)
-    : s(original)
-  {}
+  //! Keep reference.
+  template<typename Stream>
+  class StreamLocalCopy<Stream, 0>
+  {
+   public:
+    StreamLocalCopy(Stream &original)
+      : s(original)
+    {}
 
-  Stream &s;
+    Stream &s;
 
- private:
-  StreamLocalCopy &operator=(const StreamLocalCopy &) /* = delete */;
-};
+   private:
+    StreamLocalCopy &operator=(const StreamLocalCopy &) /* = delete */;
+  };
 
 }  // namespace internal
 
@@ -431,8 +431,8 @@ inline const char *SkipWhitespace_SIMD(const char *p)
       return p;
 
 // The rest of string
-#  define C16(c) \
-    { \
+#  define C16(c)                                     \
+    {                                                \
       c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c \
     }
   static const char whitespaces[4][16] = {C16(' '), C16('\n'), C16('\r'), C16('\t')};
@@ -473,8 +473,8 @@ inline const char *SkipWhitespace_SIMD(const char *p, const char *end)
     return p;
 
 // The rest of string
-#  define C16(c) \
-    { \
+#  define C16(c)                                     \
+    {                                                \
       c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c \
     }
   static const char whitespaces[4][16] = {C16(' '), C16('\n'), C16('\r'), C16('\t')};
@@ -592,8 +592,7 @@ class GenericReader
     {
       RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorDocumentEmpty, is.Tell());
       RAPIDJSON_PARSE_ERROR_EARLY_RETURN(parseResult_);
-    }
-    else
+    } else
     {
       ParseValue<parseFlags>(is, handler);
       RAPIDJSON_PARSE_ERROR_EARLY_RETURN(parseResult_);
@@ -697,12 +696,10 @@ class GenericReader
             {
               if (Consume(is, '/'))
                 break;
-            }
-            else
+            } else
               is.Take();
           }
-        }
-        else if (RAPIDJSON_LIKELY(Consume(is, '/')))
+        } else if (RAPIDJSON_LIKELY(Consume(is, '/')))
           while (is.Peek() != '\0' && is.Take() != '\n')
             ;
         else
@@ -810,14 +807,12 @@ class GenericReader
       {
         SkipWhitespaceAndComments<parseFlags>(is);
         RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
-      }
-      else if (Consume(is, ']'))
+      } else if (Consume(is, ']'))
       {
         if (RAPIDJSON_UNLIKELY(!handler.EndArray(elementCount)))
           RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
         return;
-      }
-      else
+      } else
         RAPIDJSON_PARSE_ERROR(kParseErrorArrayMissCommaOrSquareBracket, is.Tell());
     }
   }
@@ -832,8 +827,7 @@ class GenericReader
     {
       if (RAPIDJSON_UNLIKELY(!handler.Null()))
         RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
-    }
-    else
+    } else
       RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, is.Tell());
   }
 
@@ -847,8 +841,7 @@ class GenericReader
     {
       if (RAPIDJSON_UNLIKELY(!handler.Bool(true)))
         RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
-    }
-    else
+    } else
       RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, is.Tell());
   }
 
@@ -862,8 +855,7 @@ class GenericReader
     {
       if (RAPIDJSON_UNLIKELY(!handler.Bool(false)))
         RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
-    }
-    else
+    } else
       RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, is.Tell());
   }
 
@@ -874,8 +866,7 @@ class GenericReader
     {
       is.Take();
       return true;
-    }
-    else
+    } else
       return false;
   }
 
@@ -966,8 +957,7 @@ class GenericReader
       const typename TargetEncoding::Ch *const str = reinterpret_cast<typename TargetEncoding::Ch *>(head);
       success = (isKey ? handler.Key(str, SizeType(length), false) :
                          handler.String(str, SizeType(length), false));
-    }
-    else
+    } else
     {
       StackStream<typename TargetEncoding::Ch> stackStream(stack_);
       ParseStringToStream<parseFlags, SourceEncoding, TargetEncoding>(s, stackStream);
@@ -993,7 +983,82 @@ class GenericReader
 //!@cond RAPIDJSON_HIDDEN_FROM_DOXYGEN
 #define Z16 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     static const char escape[256] = {
-      Z16, Z16, 0, 0, '\"', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '/', Z16, Z16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '\\', 0, 0, 0, 0, 0, '\b', 0, 0, 0, '\f', 0, 0, 0, 0, 0, 0, 0, '\n', 0, 0, 0, '\r', 0, '\t', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Z16, Z16, Z16, Z16, Z16, Z16, Z16, Z16};
+      Z16,
+      Z16,
+      0,
+      0,
+      '\"',
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      '/',
+      Z16,
+      Z16,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      '\\',
+      0,
+      0,
+      0,
+      0,
+      0,
+      '\b',
+      0,
+      0,
+      0,
+      '\f',
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      '\n',
+      0,
+      0,
+      0,
+      '\r',
+      0,
+      '\t',
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      Z16,
+      Z16,
+      Z16,
+      Z16,
+      Z16,
+      Z16,
+      Z16,
+      Z16};
 #undef Z16
     //!@endcond
 
@@ -1014,8 +1079,7 @@ class GenericReader
         {
           is.Take();
           os.Put(static_cast<typename TEncoding::Ch>(escape[static_cast<unsigned char>(e)]));
-        }
-        else if (RAPIDJSON_LIKELY(e == 'u'))
+        } else if (RAPIDJSON_LIKELY(e == 'u'))
         {  // Unicode
           is.Take();
           unsigned codepoint = ParseHex4(is, escapeOffset);
@@ -1032,25 +1096,20 @@ class GenericReader
             codepoint = (((codepoint - 0xD800) << 10) | (codepoint2 - 0xDC00)) + 0x10000;
           }
           TEncoding::Encode(os, codepoint);
-        }
-        else
+        } else
           RAPIDJSON_PARSE_ERROR(kParseErrorStringEscapeInvalid, escapeOffset);
-      }
-      else if (RAPIDJSON_UNLIKELY(c == '"'))
+      } else if (RAPIDJSON_UNLIKELY(c == '"'))
       {  // Closing double quote
         is.Take();
         os.Put('\0');  // null-terminate the string
         return;
-      }
-      else if (RAPIDJSON_UNLIKELY(static_cast<unsigned>(c) <
-                                  0x20))
+      } else if (RAPIDJSON_UNLIKELY(static_cast<unsigned>(c) < 0x20))
       {  // RFC 4627: unescaped = %x20-21 / %x23-5B / %x5D-10FFFF
         if (c == '\0')
           RAPIDJSON_PARSE_ERROR(kParseErrorStringMissQuotationMark, is.Tell());
         else
           RAPIDJSON_PARSE_ERROR(kParseErrorStringEscapeInvalid, is.Tell());
-      }
-      else
+      } else
       {
         size_t offset = is.Tell();
         if (RAPIDJSON_UNLIKELY((parseFlags & kParseValidateEncodingFlag ?
@@ -1082,17 +1141,16 @@ class GenericReader
       {
         is.src_ = p;
         return;
-      }
-      else
+      } else
         os.Put(*p++);
 
     // The rest of string using SIMD
-    static const char dquote[16] = {
-      '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"'};
-    static const char bslash[16] = {
-      '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\'};
-    static const char space[16] = {
-      0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19};
+    static const char dquote[16] =
+      {'\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"'};
+    static const char bslash[16] =
+      {'\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\'};
+    static const char space[16] =
+      {0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19};
     const __m128i dq = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&dquote[0]));
     const __m128i bs = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&bslash[0]));
     const __m128i sp = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&space[0]));
@@ -1154,17 +1212,16 @@ class GenericReader
         is.src_ = p;
         is.dst_ = q;
         return;
-      }
-      else
+      } else
         *q++ = *p++;
 
     // The rest of string using SIMD
-    static const char dquote[16] = {
-      '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"'};
-    static const char bslash[16] = {
-      '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\'};
-    static const char space[16] = {
-      0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19};
+    static const char dquote[16] =
+      {'\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"'};
+    static const char bslash[16] =
+      {'\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\'};
+    static const char space[16] =
+      {0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19};
     const __m128i dq = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&dquote[0]));
     const __m128i bs = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&bslash[0]));
     const __m128i sp = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&space[0]));
@@ -1217,12 +1274,12 @@ class GenericReader
       }
 
     // The rest of string using SIMD
-    static const char dquote[16] = {
-      '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"'};
-    static const char bslash[16] = {
-      '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\'};
-    static const char space[16] = {
-      0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19};
+    static const char dquote[16] =
+      {'\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"'};
+    static const char bslash[16] =
+      {'\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\'};
+    static const char space[16] =
+      {0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19};
     const __m128i dq = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&dquote[0]));
     const __m128i bs = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&bslash[0]));
     const __m128i sp = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&space[0]));
@@ -1369,8 +1426,7 @@ class GenericReader
     {
       i = 0;
       s.TakePush();
-    }
-    else if (RAPIDJSON_LIKELY(s.Peek() >= '1' && s.Peek() <= '9'))
+    } else if (RAPIDJSON_LIKELY(s.Peek() >= '1' && s.Peek() <= '9'))
     {
       i = static_cast<unsigned>(s.TakePush() - '0');
 
@@ -1404,8 +1460,7 @@ class GenericReader
           i = i * 10 + static_cast<unsigned>(s.TakePush() - '0');
           significandDigit++;
         }
-    }
-    else
+    } else
       RAPIDJSON_PARSE_ERROR(kParseErrorValueInvalid, s.Tell());
 
     // Parse 64bit int
@@ -1504,12 +1559,10 @@ class GenericReader
           --expFrac;
           if (RAPIDJSON_LIKELY(d > 0.0))
             significandDigit++;
-        }
-        else
+        } else
           s.TakePush();
       }
-    }
-    else
+    } else
       decimalPosition = s.Length();  // decimal position at the end of integer.
 
     // Parse exp = e [ minus / plus ] 1*DIGIT
@@ -1547,8 +1600,7 @@ class GenericReader
                 s.Take();
             }
           }
-        }
-        else
+        } else
         {  // positive exp
           int maxExp = 308 - expFrac;
           while (RAPIDJSON_LIKELY(s.Peek() >= '0' && s.Peek() <= '9'))
@@ -1558,8 +1610,7 @@ class GenericReader
               RAPIDJSON_PARSE_ERROR(kParseErrorNumberTooBig, startOffset);
           }
         }
-      }
-      else
+      } else
         RAPIDJSON_PARSE_ERROR(kParseErrorNumberMissExponent, s.Tell());
 
       if (expMinus)
@@ -1580,8 +1631,7 @@ class GenericReader
         // unable to insert the \0 character here, it will erase the comma after this number
         const typename TargetEncoding::Ch *const str = reinterpret_cast<typename TargetEncoding::Ch *>(head);
         cont = handler.RawNumber(str, SizeType(length), false);
-      }
-      else
+      } else
       {
         StackStream<typename TargetEncoding::Ch> stackStream(stack_);
         SizeType numCharsToCopy = static_cast<SizeType>(s.Length());
@@ -1594,8 +1644,7 @@ class GenericReader
         const SizeType length = static_cast<SizeType>(stackStream.Length()) - 1;
         cont = handler.RawNumber(str, SizeType(length), true);
       }
-    }
-    else
+    } else
     {
       size_t length = s.Length();
       const char *decimal = s.Pop();  // Pop stack no matter if it will be used or not.
@@ -1609,8 +1658,7 @@ class GenericReader
           d = internal::StrtodNormalPrecision(d, p);
 
         cont = handler.Double(minus ? -d : d);
-      }
-      else
+      } else
       {
         if (use64bit)
         {
@@ -1618,8 +1666,7 @@ class GenericReader
             cont = handler.Int64(static_cast<int64_t>(~i64 + 1));
           else
             cont = handler.Uint64(i64);
-        }
-        else
+        } else
         {
           if (minus)
             cont = handler.Int(static_cast<int32_t>(~i + 1));
@@ -1841,180 +1888,171 @@ class GenericReader
         IterativeParsingValueState,          // False
         IterativeParsingValueState,          // True
         IterativeParsingValueState,          // Null
-        IterativeParsingValueState           // Number
-      },
-      // Finish(sink state)
-      {IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState},
-      // Error(sink state)
-      {IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState},
-      // ObjectInitial
-      {
-        IterativeParsingErrorState,         // Left bracket
-        IterativeParsingErrorState,         // Right bracket
-        IterativeParsingErrorState,         // Left curly bracket
-        IterativeParsingObjectFinishState,  // Right curly bracket
-        IterativeParsingErrorState,         // Comma
-        IterativeParsingErrorState,         // Colon
-        IterativeParsingMemberKeyState,     // String
-        IterativeParsingErrorState,         // False
-        IterativeParsingErrorState,         // True
-        IterativeParsingErrorState,         // Null
-        IterativeParsingErrorState          // Number
-      },
-      // MemberKey
-      {
-        IterativeParsingErrorState,              // Left bracket
-        IterativeParsingErrorState,              // Right bracket
-        IterativeParsingErrorState,              // Left curly bracket
-        IterativeParsingErrorState,              // Right curly bracket
-        IterativeParsingErrorState,              // Comma
-        IterativeParsingKeyValueDelimiterState,  // Colon
-        IterativeParsingErrorState,              // String
-        IterativeParsingErrorState,              // False
-        IterativeParsingErrorState,              // True
-        IterativeParsingErrorState,              // Null
-        IterativeParsingErrorState               // Number
-      },
-      // KeyValueDelimiter
-      {
-        IterativeParsingArrayInitialState,   // Left bracket(push MemberValue state)
-        IterativeParsingErrorState,          // Right bracket
-        IterativeParsingObjectInitialState,  // Left curly bracket(push MemberValue state)
-        IterativeParsingErrorState,          // Right curly bracket
-        IterativeParsingErrorState,          // Comma
-        IterativeParsingErrorState,          // Colon
-        IterativeParsingMemberValueState,    // String
-        IterativeParsingMemberValueState,    // False
-        IterativeParsingMemberValueState,    // True
-        IterativeParsingMemberValueState,    // Null
-        IterativeParsingMemberValueState     // Number
-      },
-      // MemberValue
-      {
-        IterativeParsingErrorState,            // Left bracket
-        IterativeParsingErrorState,            // Right bracket
-        IterativeParsingErrorState,            // Left curly bracket
-        IterativeParsingObjectFinishState,     // Right curly bracket
-        IterativeParsingMemberDelimiterState,  // Comma
-        IterativeParsingErrorState,            // Colon
-        IterativeParsingErrorState,            // String
-        IterativeParsingErrorState,            // False
-        IterativeParsingErrorState,            // True
-        IterativeParsingErrorState,            // Null
-        IterativeParsingErrorState             // Number
-      },
-      // MemberDelimiter
-      {
-        IterativeParsingErrorState,      // Left bracket
-        IterativeParsingErrorState,      // Right bracket
-        IterativeParsingErrorState,      // Left curly bracket
-        IterativeParsingErrorState,      // Right curly bracket
-        IterativeParsingErrorState,      // Comma
-        IterativeParsingErrorState,      // Colon
-        IterativeParsingMemberKeyState,  // String
-        IterativeParsingErrorState,      // False
-        IterativeParsingErrorState,      // True
-        IterativeParsingErrorState,      // Null
-        IterativeParsingErrorState       // Number
-      },
-      // ObjectFinish(sink state)
-      {IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState},
-      // ArrayInitial
-      {
-        IterativeParsingArrayInitialState,   // Left bracket(push Element state)
-        IterativeParsingArrayFinishState,    // Right bracket
-        IterativeParsingObjectInitialState,  // Left curly bracket(push Element state)
-        IterativeParsingErrorState,          // Right curly bracket
-        IterativeParsingErrorState,          // Comma
-        IterativeParsingErrorState,          // Colon
-        IterativeParsingElementState,        // String
-        IterativeParsingElementState,        // False
-        IterativeParsingElementState,        // True
-        IterativeParsingElementState,        // Null
-        IterativeParsingElementState         // Number
-      },
-      // Element
-      {
-        IterativeParsingErrorState,             // Left bracket
-        IterativeParsingArrayFinishState,       // Right bracket
-        IterativeParsingErrorState,             // Left curly bracket
-        IterativeParsingErrorState,             // Right curly bracket
-        IterativeParsingElementDelimiterState,  // Comma
-        IterativeParsingErrorState,             // Colon
-        IterativeParsingErrorState,             // String
-        IterativeParsingErrorState,             // False
-        IterativeParsingErrorState,             // True
-        IterativeParsingErrorState,             // Null
-        IterativeParsingErrorState              // Number
-      },
-      // ElementDelimiter
-      {
-        IterativeParsingArrayInitialState,   // Left bracket(push Element state)
-        IterativeParsingErrorState,          // Right bracket
-        IterativeParsingObjectInitialState,  // Left curly bracket(push Element state)
-        IterativeParsingErrorState,          // Right curly bracket
-        IterativeParsingErrorState,          // Comma
-        IterativeParsingErrorState,          // Colon
-        IterativeParsingElementState,        // String
-        IterativeParsingElementState,        // False
-        IterativeParsingElementState,        // True
-        IterativeParsingElementState,        // Null
-        IterativeParsingElementState         // Number
-      },
-      // ArrayFinish(sink state)
-      {IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState},
-      // Single Value (sink state)
-      {IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState,
-       IterativeParsingErrorState}};  // End of G
+        IterativeParsingValueState           // Number                                                                                                                                                                                                                                                                                                                                                                         },
+                                             // Finish(sink state)
+        {IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState},
+        // Error(sink state)
+        {IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState,
+         IterativeParsingErrorState},
+        // ObjectInitial
+        {
+          IterativeParsingErrorState,         // Left bracket
+          IterativeParsingErrorState,         // Right bracket
+          IterativeParsingErrorState,         // Left curly bracket
+          IterativeParsingObjectFinishState,  // Right curly bracket
+          IterativeParsingErrorState,         // Comma
+          IterativeParsingErrorState,         // Colon
+          IterativeParsingMemberKeyState,     // String
+          IterativeParsingErrorState,         // False
+          IterativeParsingErrorState,         // True
+          IterativeParsingErrorState,         // Null
+          IterativeParsingErrorState          // Number       },
+                                              // MemberKey
+          {
+            IterativeParsingErrorState,              // Left bracket
+            IterativeParsingErrorState,              // Right bracket
+            IterativeParsingErrorState,              // Left curly bracket
+            IterativeParsingErrorState,              // Right curly bracket
+            IterativeParsingErrorState,              // Comma
+            IterativeParsingKeyValueDelimiterState,  // Colon
+            IterativeParsingErrorState,              // String
+            IterativeParsingErrorState,              // False
+            IterativeParsingErrorState,              // True
+            IterativeParsingErrorState,              // Null
+            IterativeParsingErrorState               // Number       },
+                                                     // KeyValueDelimiter
+            {
+              IterativeParsingArrayInitialState,   // Left bracket(push MemberValue state)
+              IterativeParsingErrorState,          // Right bracket
+              IterativeParsingObjectInitialState,  // Left curly bracket(push MemberValue state)
+              IterativeParsingErrorState,          // Right curly bracket
+              IterativeParsingErrorState,          // Comma
+              IterativeParsingErrorState,          // Colon
+              IterativeParsingMemberValueState,    // String
+              IterativeParsingMemberValueState,    // False
+              IterativeParsingMemberValueState,    // True
+              IterativeParsingMemberValueState,    // Null
+              IterativeParsingMemberValueState     // Number},
+                                                   // MemberValue
+              {
+                IterativeParsingErrorState,            // Left bracket
+                IterativeParsingErrorState,            // Right bracket
+                IterativeParsingErrorState,            // Left curly bracket
+                IterativeParsingObjectFinishState,     // Right curly bracket
+                IterativeParsingMemberDelimiterState,  // Comma
+                IterativeParsingErrorState,            // Colon
+                IterativeParsingErrorState,            // String
+                IterativeParsingErrorState,            // False
+                IterativeParsingErrorState,            // True
+                IterativeParsingErrorState,            // Null
+                IterativeParsingErrorState             // Number       },
+                                                       // MemberDelimiter
+                {
+                  IterativeParsingErrorState,      // Left bracket
+                  IterativeParsingErrorState,      // Right bracket
+                  IterativeParsingErrorState,      // Left curly bracket
+                  IterativeParsingErrorState,      // Right curly bracket
+                  IterativeParsingErrorState,      // Comma
+                  IterativeParsingErrorState,      // Colon
+                  IterativeParsingMemberKeyState,  // String
+                  IterativeParsingErrorState,      // False
+                  IterativeParsingErrorState,      // True
+                  IterativeParsingErrorState,      // Null
+                  IterativeParsingErrorState       // Number       },
+                                                   // ObjectFinish(sink state)
+                  {IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState,
+                   IterativeParsingErrorState},
+                  // ArrayInitial
+                  {
+                    IterativeParsingArrayInitialState,   // Left bracket(push Element state)
+                    IterativeParsingArrayFinishState,    // Right bracket
+                    IterativeParsingObjectInitialState,  // Left curly bracket(push Element state)
+                    IterativeParsingErrorState,          // Right curly bracket
+                    IterativeParsingErrorState,          // Comma
+                    IterativeParsingErrorState,          // Colon
+                    IterativeParsingElementState,        // String
+                    IterativeParsingElementState,        // False
+                    IterativeParsingElementState,        // True
+                    IterativeParsingElementState,        // Null
+                    IterativeParsingElementState         // Number},
+                                                         // Element
+                    {
+                      IterativeParsingErrorState,             // Left bracket
+                      IterativeParsingArrayFinishState,       // Right bracket
+                      IterativeParsingErrorState,             // Left curly bracket
+                      IterativeParsingErrorState,             // Right curly bracket
+                      IterativeParsingElementDelimiterState,  // Comma
+                      IterativeParsingErrorState,             // Colon
+                      IterativeParsingErrorState,             // String
+                      IterativeParsingErrorState,             // False
+                      IterativeParsingErrorState,             // True
+                      IterativeParsingErrorState,             // Null
+                      IterativeParsingErrorState              // Number       },
+                                                              // ElementDelimiter
+                      {
+                        IterativeParsingArrayInitialState,   // Left bracket(push Element state)
+                        IterativeParsingErrorState,          // Right bracket
+                        IterativeParsingObjectInitialState,  // Left curly bracket(push Element state)
+                        IterativeParsingErrorState,          // Right curly bracket
+                        IterativeParsingErrorState,          // Comma
+                        IterativeParsingErrorState,          // Colon
+                        IterativeParsingElementState,        // String
+                        IterativeParsingElementState,        // False
+                        IterativeParsingElementState,        // True
+                        IterativeParsingElementState,        // Null
+                        IterativeParsingElementState         // Number},
+                                                             // ArrayFinish(sink state)
+                        {IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState},
+                        // Single Value (sink state)
+                        {IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState,
+                         IterativeParsingErrorState}};  // End of G
 
     return static_cast<IterativeParsingState>(G[state][token]);
   }
@@ -2056,8 +2094,7 @@ class GenericReader
         {
           RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, is.Tell());
           return IterativeParsingErrorState;
-        }
-        else
+        } else
         {
           is.Take();
           return dst;
@@ -2119,8 +2156,7 @@ class GenericReader
         {
           RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, is.Tell());
           return IterativeParsingErrorState;
-        }
-        else
+        } else
         {
           is.Take();
           return n;
@@ -2145,8 +2181,7 @@ class GenericReader
         {
           RAPIDJSON_PARSE_ERROR_NORETURN(kParseErrorTermination, is.Tell());
           return IterativeParsingErrorState;
-        }
-        else
+        } else
         {
           is.Take();
           return n;

@@ -463,7 +463,8 @@ TfTokenVector HdEmbreeMesh::_UpdateComputedPrimvarSources(HdSceneDelegate *scene
   }
 
   HdExtComputationUtils::ValueStore valueStore = HdExtComputationUtils::GetComputedPrimvarValues(
-    dirtyCompPrimvars, sceneDelegate);
+    dirtyCompPrimvars,
+    sceneDelegate);
 
   TfTokenVector compPrimvarNames;
   // Update local primvar map and track the ones that were computed
@@ -480,8 +481,7 @@ TfTokenVector HdEmbreeMesh::_UpdateComputedPrimvarSources(HdSceneDelegate *scene
     {
       _points = it->second.Get<VtVec3fArray>();
       _normalsValid = false;
-    }
-    else
+    } else
     {
       _primvarSourceMap[compPrimvar.name] = {it->second, compPrimvar.interpolation};
     }
@@ -515,8 +515,7 @@ void HdEmbreeMesh::_CreatePrimvarSampler(TfToken const &name,
       if (refined)
       {
         sampler = new HdEmbreeUniformSampler(name, data);
-      }
-      else
+      } else
       {
         sampler = new HdEmbreeUniformSampler(name, data, _trianglePrimitiveParams);
       }
@@ -524,10 +523,9 @@ void HdEmbreeMesh::_CreatePrimvarSampler(TfToken const &name,
     case HdInterpolationVertex:
       if (refined)
       {
-        sampler = new HdEmbreeSubdivVertexSampler(
-          name, data, _rtcMeshScene, _rtcMeshId, &_embreeBufferAllocator);
-      }
-      else
+        sampler =
+          new HdEmbreeSubdivVertexSampler(name, data, _rtcMeshScene, _rtcMeshId, &_embreeBufferAllocator);
+      } else
       {
         sampler = new HdEmbreeTriangleVertexSampler(name, data, _triangulatedIndices);
       }
@@ -538,10 +536,9 @@ void HdEmbreeMesh::_CreatePrimvarSampler(TfToken const &name,
         // XXX: Fixme! This isn't strictly correct, as "varying" in
         // the context of subdiv meshes means bilinear interpolation,
         // not reconstruction from the subdivision basis.
-        sampler = new HdEmbreeSubdivVertexSampler(
-          name, data, _rtcMeshScene, _rtcMeshId, &_embreeBufferAllocator);
-      }
-      else
+        sampler =
+          new HdEmbreeSubdivVertexSampler(name, data, _rtcMeshScene, _rtcMeshId, &_embreeBufferAllocator);
+      } else
       {
         sampler = new HdEmbreeTriangleVertexSampler(name, data, _triangulatedIndices);
       }
@@ -554,8 +551,7 @@ void HdEmbreeMesh::_CreatePrimvarSampler(TfToken const &name,
         TF_WARN(
           "HdEmbreeMesh doesn't support face-varying primvars"
           " on refined meshes.");
-      }
-      else
+      } else
       {
         HdMeshUtil meshUtil(&_topology, GetId());
         sampler = new HdEmbreeTriangleFaceVaryingSampler(name, data, meshUtil);
@@ -726,8 +722,7 @@ void HdEmbreeMesh::_PopulateRtMesh(HdSceneDelegate *sceneDelegate,
     if (doRefine)
     {
       _geometry = _CreateEmbreeSubdivMesh(_rtcMeshScene, device);
-    }
-    else
+    } else
     {
       _geometry = _CreateEmbreeTriangleMesh(_rtcMeshScene, device);
     }
@@ -789,16 +784,13 @@ void HdEmbreeMesh::_PopulateRtMesh(HdSceneDelegate *sceneDelegate,
       if (vertexRule == PxOsdOpenSubdivTokens->none)
       {
         rtcSetGeometrySubdivisionMode(_geometry, 0, RTC_SUBDIVISION_MODE_NO_BOUNDARY);
-      }
-      else if (vertexRule == PxOsdOpenSubdivTokens->edgeOnly)
+      } else if (vertexRule == PxOsdOpenSubdivTokens->edgeOnly)
       {
         rtcSetGeometrySubdivisionMode(_geometry, 0, RTC_SUBDIVISION_MODE_SMOOTH_BOUNDARY);
-      }
-      else if (vertexRule == PxOsdOpenSubdivTokens->edgeAndCorner)
+      } else if (vertexRule == PxOsdOpenSubdivTokens->edgeAndCorner)
       {
         rtcSetGeometrySubdivisionMode(_geometry, 0, RTC_SUBDIVISION_MODE_PIN_CORNERS);
-      }
-      else
+      } else
       {
         if (!vertexRule.IsEmpty())
         {
@@ -875,8 +867,7 @@ void HdEmbreeMesh::_PopulateRtMesh(HdSceneDelegate *sceneDelegate,
   if (_sharedData.visible)
   {
     rtcEnableGeometry(_geometry);
-  }
-  else
+  } else
   {
     rtcDisableGeometry(_geometry);
   }
@@ -900,8 +891,7 @@ void HdEmbreeMesh::_PopulateRtMesh(HdSceneDelegate *sceneDelegate,
   // geometries. Un-instanced prims are treated here as a special case.
   // Instance geometries read from the instancer (for per-instance transform)
   // and the rprim transform, which gets added to the per instance transform.
-  if (HdChangeTracker::IsInstancerDirty(*dirtyBits, id) ||
-      HdChangeTracker::IsTransformDirty(*dirtyBits, id))
+  if (HdChangeTracker::IsInstancerDirty(*dirtyBits, id) || HdChangeTracker::IsTransformDirty(*dirtyBits, id))
   {
 
     VtMatrix4dArray transforms;
@@ -911,8 +901,7 @@ void HdEmbreeMesh::_PopulateRtMesh(HdSceneDelegate *sceneDelegate,
       HdRenderIndex &renderIndex = sceneDelegate->GetRenderIndex();
       HdInstancer *instancer = renderIndex.GetInstancer(GetInstancerId());
       transforms = static_cast<HdEmbreeInstancer *>(instancer)->ComputeInstanceTransforms(GetId());
-    }
-    else
+    } else
     {
       // If there's no instancer, add a single instance with transform I.
       transforms.push_back(GfMatrix4d(1.0));
@@ -957,8 +946,10 @@ void HdEmbreeMesh::_PopulateRtMesh(HdSceneDelegate *sceneDelegate,
       GfMatrix4f matf = _transform * GfMatrix4f(transforms[i]);
 
       // Update the transform in the BVH.
-      rtcSetGeometryTransform(
-        rtcGetGeometry(scene, _rtcInstanceIds[i]), 0, RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR, matf.GetArray());
+      rtcSetGeometryTransform(rtcGetGeometry(scene, _rtcInstanceIds[i]),
+                              0,
+                              RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR,
+                              matf.GetArray());
       // // Update the transform in the instance context.
       _GetInstanceContext(scene, i)->objectToWorldMatrix = matf;
       // // Mark the instance as updated in the BVH.

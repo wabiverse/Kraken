@@ -74,8 +74,7 @@ static void _InvokeTraceFns(TfPyTraceInfo const &info)
     {
       (*ptr)(info);
       ++i;
-    }
-    else
+    } else
     {
       local.erase(i++);
     }
@@ -100,8 +99,7 @@ static void _SetTraceFnEnabled(bool enable)
   {
     _traceFnInstalled = true;
     PyEval_SetTrace(_TracePythonFn, NULL);
-  }
-  else if (!enable && _traceFnInstalled)
+  } else if (!enable && _traceFnInstalled)
   {
     _traceFnInstalled = false;
     PyEval_SetTrace(NULL, NULL);

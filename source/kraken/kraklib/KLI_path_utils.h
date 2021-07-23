@@ -39,62 +39,48 @@ WABI_NAMESPACE_BEGIN
 #  define MAXPATHLEN MAX_PATH
 #endif /* _WIN32 */
 
-int KLI_access(const char *filename, int mode)
-  ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
+int KLI_access(const char *filename, int mode) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
 
-const char *KLI_getenv(const char *env)
-  ATTR_NONNULL(1);
+const char *KLI_getenv(const char *env) ATTR_NONNULL(1);
 
-size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *path, ...)
-  ATTR_NONNULL(1, 3) ATTR_SENTINEL(0);
+size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *path, ...) ATTR_NONNULL(1, 3)
+  ATTR_SENTINEL(0);
 
-const char *KLI_path_basename(const char *path)
-  ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
+const char *KLI_path_basename(const char *path) ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
 
 void KLI_join_dirfile(char *__restrict dst,
                       const size_t maxlen,
                       const char *__restrict dir,
-                      const char *__restrict file)
-  ATTR_NONNULL();
+                      const char *__restrict file) ATTR_NONNULL();
 
-bool KLI_path_is_rel(const char *path)
-  ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
+bool KLI_path_is_rel(const char *path) ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
 
 bool KLI_path_is_unc(const char *name);
 
-bool KLI_path_extension_check(const char *str, const char *ext)
-  ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
+bool KLI_path_extension_check(const char *str, const char *ext) ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
 
-bool KLI_path_extension_check_n(const char *str, ...)
-  ATTR_NONNULL(1) ATTR_SENTINEL(0);
+bool KLI_path_extension_check_n(const char *str, ...) ATTR_NONNULL(1) ATTR_SENTINEL(0);
 
 bool KLI_path_extension_check_array(const std::string &str, const char **ext_array)
   ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
 
-void KLI_path_append(char *__restrict dst, const size_t maxlen, const char *__restrict file)
-  ATTR_NONNULL();
+void KLI_path_append(char *__restrict dst, const size_t maxlen, const char *__restrict file) ATTR_NONNULL();
 
 bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *name);
 
-int KLI_path_slash_ensure(char *string)
-  ATTR_NONNULL();
+int KLI_path_slash_ensure(char *string) ATTR_NONNULL();
 
-const char *KLI_path_slash_rfind(const char *string)
-  ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
+const char *KLI_path_slash_rfind(const char *string) ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
 
-void KLI_path_slash_rstrip(char *string)
-  ATTR_NONNULL();
+void KLI_path_slash_rstrip(char *string) ATTR_NONNULL();
 
 /* Go back one directory. */
-bool KLI_path_parent_dir(char *path)
-  ATTR_NONNULL();
+bool KLI_path_parent_dir(char *path) ATTR_NONNULL();
 
 /* Go back until the directory is found. */
-bool KLI_path_parent_dir_until_exists(char *path)
-  ATTR_NONNULL();
+bool KLI_path_parent_dir_until_exists(char *path) ATTR_NONNULL();
 
-void KLI_path_normalize(const char *relabase, char *path)
-  ATTR_NONNULL(2);
+void KLI_path_normalize(const char *relabase, char *path) ATTR_NONNULL(2);
 
 void KLI_split_dirfile(const char *string, char *dir, char *file, const size_t dirlen, const size_t filelen);
 void KLI_split_dir_part(const char *string, char *dir, const size_t dirlen);

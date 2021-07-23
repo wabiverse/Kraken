@@ -52,12 +52,12 @@ WABI_NAMESPACE_BEGIN
 //
 #define HIO_GLSLFX_API_VERSION 1
 
-#define HIO_GLSLFX_TOKENS \
-  (glslfx) \
-\
-    (fragmentShader)( \
+#define HIO_GLSLFX_TOKENS                                                                                                        \
+  (glslfx)                                                                                                                       \
+                                                                                                                                 \
+    (fragmentShader)(                                                                                                            \
       geometryShader)(geometryShaderInjection)(preamble)(tessControlShader)(tessEvalShader)(vertexShader)(vertexShaderInjection) \
-\
+                                                                                                                                 \
       (surfaceShader)(displacementShader)(volumeShader)((defVal, "default"))
 
 TF_DECLARE_PUBLIC_TOKENS(HioGlslfxTokens, HIO_API, HIO_GLSLFX_TOKENS);

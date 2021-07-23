@@ -44,21 +44,21 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-std::string _Repr(const CameraUtilFraming &self)
-{
-  static const std::string prefix = TF_PY_REPR_PREFIX + "Framing(";
-  static const std::string separator = ",\n" + std::string(prefix.size(), ' ');
-
-  std::vector<std::string> kwargs;
-  kwargs.push_back("displayWindow = " + TfPyRepr(self.displayWindow));
-  kwargs.push_back("dataWindow = " + TfPyRepr(self.dataWindow));
-  if (self.pixelAspectRatio != 1.0f)
+  std::string _Repr(const CameraUtilFraming &self)
   {
-    kwargs.push_back("pixelAspectRatio = " + TfPyRepr(self.pixelAspectRatio));
-  }
+    static const std::string prefix = TF_PY_REPR_PREFIX + "Framing(";
+    static const std::string separator = ",\n" + std::string(prefix.size(), ' ');
 
-  return prefix + TfStringJoin(kwargs, separator.c_str()) + ")";
-}
+    std::vector<std::string> kwargs;
+    kwargs.push_back("displayWindow = " + TfPyRepr(self.displayWindow));
+    kwargs.push_back("dataWindow = " + TfPyRepr(self.dataWindow));
+    if (self.pixelAspectRatio != 1.0f)
+    {
+      kwargs.push_back("pixelAspectRatio = " + TfPyRepr(self.pixelAspectRatio));
+    }
+
+    return prefix + TfStringJoin(kwargs, separator.c_str()) + ")";
+  }
 
 }  // namespace
 

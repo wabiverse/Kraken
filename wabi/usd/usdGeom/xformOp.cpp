@@ -63,20 +63,19 @@ TF_REGISTRY_FUNCTION(TfEnum)
   TF_ADD_ENUM_NAME(UsdGeomXformOp::PrecisionHalf, "Half");
 };
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  ((xformOpPrefix, "xformOp:"))((inverseXformOpPrefix, "!invert!xformOp:"))((invertPrefix, "!invert!"))
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         ((xformOpPrefix, "xformOp:"))((inverseXformOpPrefix, "!invert!xformOp:"))((invertPrefix, "!invert!"))
 
-  // This following tokens are not used here, but they're listed so they
-  // become immortal and are not ref-counted.
-  // Tokens for the xformOps that are missing here (eg, RotateXYZ, translate,
-  // scale etc.)are added in UsdGeomXformCommonAPI.
-  ((xformOpTransform, "xformOp:transform"))((xformOpRotateX, "xformOp:rotateX"))((
-    xformOpRotateY,
-    "xformOp:rotateY"))((xformOpRotateZ, "xformOp:rotateZ"))((xformOpOrient, "xformOp:orient"))
+                         // This following tokens are not used here, but they're listed so they
+                         // become immortal and are not ref-counted.
+                         // Tokens for the xformOps that are missing here (eg, RotateXYZ, translate,
+                         // scale etc.)are added in UsdGeomXformCommonAPI.
+                         ((xformOpTransform, "xformOp:transform"))((xformOpRotateX, "xformOp:rotateX"))(
+                           (xformOpRotateY, "xformOp:rotateY"))((xformOpRotateZ, "xformOp:rotateZ"))((xformOpOrient,
+                                                                                                      "xformOp:orient"))
 
-  // XXX: backwards compatibility
-  (transform)
+                         // XXX: backwards compatibility
+                         (transform)
 
 );
 
@@ -118,8 +117,7 @@ UsdGeomXformOp::UsdGeomXformOp(const UsdAttribute &attr, bool isInverseOp)
   if (_IsNamespaced(name))
   {
     _opType = GetOpTypeEnum(TfToken(opNameComponents[1]));
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Invalid xform op: <%s>.", attr.GetPath().GetText());
   }
@@ -486,12 +484,10 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
     if (opVal.IsHolding<GfMatrix4d>())
     {
       mat = opVal.UncheckedGet<GfMatrix4d>();
-    }
-    else if (opVal.IsHolding<GfMatrix4f>())
+    } else if (opVal.IsHolding<GfMatrix4f>())
     {
       mat = GfMatrix4d(opVal.UncheckedGet<GfMatrix4f>());
-    }
-    else
+    } else
     {
       isMatrixVal = false;
       TF_CODING_ERROR(
@@ -524,16 +520,13 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
   if (opVal.IsHolding<double>())
   {
     doubleVal = opVal.UncheckedGet<double>();
-  }
-  else if (opVal.IsHolding<float>())
+  } else if (opVal.IsHolding<float>())
   {
     doubleVal = opVal.UncheckedGet<float>();
-  }
-  else if (opVal.IsHolding<GfHalf>())
+  } else if (opVal.IsHolding<GfHalf>())
   {
     doubleVal = opVal.UncheckedGet<GfHalf>();
-  }
-  else
+  } else
   {
     isScalarVal = false;
   }
@@ -546,12 +539,10 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
     if (opType == TypeRotateX)
     {
       return GfMatrix4d(1.).SetRotate(GfRotation(GfVec3d::XAxis(), doubleVal));
-    }
-    else if (opType == TypeRotateY)
+    } else if (opType == TypeRotateY)
     {
       return GfMatrix4d(1.).SetRotate(GfRotation(GfVec3d::YAxis(), doubleVal));
-    }
-    else if (opType == TypeRotateZ)
+    } else if (opType == TypeRotateZ)
     {
       return GfMatrix4d(1.).SetRotate(GfRotation(GfVec3d::ZAxis(), doubleVal));
     }
@@ -562,16 +553,13 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
   if (opVal.IsHolding<GfVec3f>())
   {
     vec3dVal = opVal.UncheckedGet<GfVec3f>();
-  }
-  else if (opVal.IsHolding<GfVec3d>())
+  } else if (opVal.IsHolding<GfVec3d>())
   {
     vec3dVal = opVal.UncheckedGet<GfVec3d>();
-  }
-  else if (opVal.IsHolding<GfVec3h>())
+  } else if (opVal.IsHolding<GfVec3h>())
   {
     vec3dVal = opVal.UncheckedGet<GfVec3h>();
-  }
-  else
+  } else
   {
     isVecVal = false;
   }
@@ -641,8 +629,7 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
     {
       const GfQuatf &quatf = opVal.UncheckedGet<GfQuatf>();
       quatVal = GfQuatd(quatf.GetReal(), quatf.GetImaginary());
-    }
-    else if (opVal.IsHolding<GfQuath>())
+    } else if (opVal.IsHolding<GfQuath>())
     {
       const GfQuath &quath = opVal.UncheckedGet<GfQuath>();
       quatVal = GfQuatd(quath.GetReal(), quath.GetImaginary());

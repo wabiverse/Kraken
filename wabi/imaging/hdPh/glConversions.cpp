@@ -307,8 +307,7 @@ static bool _IsIdentiferGLSLCompatible(std::string const &in)
     if (isalnum(*p))
     {
       p++;
-    }
-    else
+    } else
     {
       // _ is allowed, but __ isn't
       if (*p == '_' && *(p - 1) != '_')
@@ -316,8 +315,7 @@ static bool _IsIdentiferGLSLCompatible(std::string const &in)
         // checking the last character is safe here, because of the
         // earlier check for leading non-alpha characters.
         p++;
-      }
-      else
+      } else
       {
         return false;
       }
@@ -365,12 +363,10 @@ TfToken HdPhGLConversions::GetGLSLIdentifier(TfToken const &identifier)
       {
         result.push_back('_');
       }
-    }
-    else if (*p == '_' && result.back() == '_')
+    } else if (*p == '_' && result.back() == '_')
     {
       // no-op to skip consecutive _
-    }
-    else
+    } else
     {
       result.push_back(*p);
     }

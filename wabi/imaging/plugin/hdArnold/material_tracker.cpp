@@ -67,8 +67,7 @@ void HdArnoldMaterialTracker::TrackSingleMaterial(HdArnoldRenderDelegate *render
     _materials.assign(1, materialId);
     renderDelegate->TrackShapeMaterials(shapeId, _materials);
     // We already have a single material stored, check if it has changed.
-  }
-  else
+  } else
   {
     if (_materials.cdata()[0] != materialId)
     {

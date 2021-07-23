@@ -27,10 +27,10 @@
 
 namespace ccl
 {
-class Object;
-class Shader;
-class ShaderNode;
-class ShaderGraph;
+  class Object;
+  class Shader;
+  class ShaderNode;
+  class ShaderGraph;
 }  // namespace ccl
 
 WABI_NAMESPACE_BEGIN

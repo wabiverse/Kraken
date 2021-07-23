@@ -78,8 +78,7 @@ bool Tf_AtomicRenameFileOver(std::string const &srcFileName,
   if (stat(dstFileName.c_str(), &st) != -1)
   {
     fileMode = st.st_mode & DEFFILEMODE;
-  }
-  else
+  } else
   {
     const mode_t mask = umask(0);
     umask(mask);
@@ -128,8 +127,9 @@ int Tf_CreateSiblingTempFile(std::string fileName,
                                         &realPathError);
   if (realFilePath.empty())
   {
-    *error = TfStringPrintf(
-      "Unable to determine the real path for '%s': %s", fileName.c_str(), realPathError.c_str());
+    *error = TfStringPrintf("Unable to determine the real path for '%s': %s",
+                            fileName.c_str(),
+                            realPathError.c_str());
     return result;
   }
 
@@ -172,8 +172,9 @@ int Tf_CreateSiblingTempFile(std::string fileName,
   result = ArchMakeTmpFile(dirPath, tmpFilePrefix, &tmpFN);
   if (result == -1)
   {
-    *error = TfStringPrintf(
-      "Unable to create temporary file '%s': %s", tmpFN.c_str(), ArchStrerror(errno).c_str());
+    *error = TfStringPrintf("Unable to create temporary file '%s': %s",
+                            tmpFN.c_str(),
+                            ArchStrerror(errno).c_str());
     return result;
   }
 

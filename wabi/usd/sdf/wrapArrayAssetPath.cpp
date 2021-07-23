@@ -31,11 +31,11 @@ WABI_NAMESPACE_BEGIN
 
 namespace Vt_WrapArray
 {
-template<>
-std::string GetVtArrayName<VtArray<SdfAssetPath>>()
-{
-  return "AssetPathArray";
-}
+  template<>
+  std::string GetVtArrayName<VtArray<SdfAssetPath>>()
+  {
+    return "AssetPathArray";
+  }
 }  // namespace Vt_WrapArray
 
 template<>

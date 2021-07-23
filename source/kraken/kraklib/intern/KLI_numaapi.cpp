@@ -56,8 +56,7 @@ static HMODULE kernel_lib;
 // NUMA function types.
 typedef BOOL t_GetNumaHighestNodeNumber(PULONG highest_node_number);
 typedef BOOL t_GetNumaNodeProcessorMask(UCHAR node, ULONGLONG *processor_mask);
-typedef BOOL t_GetNumaNodeProcessorMaskEx(USHORT node,
-                                          GROUP_AFFINITY *processor_mask);
+typedef BOOL t_GetNumaNodeProcessorMaskEx(USHORT node, GROUP_AFFINITY *processor_mask);
 typedef BOOL t_GetNumaProcessorNode(UCHAR processor, UCHAR *node_number);
 typedef void *t_VirtualAllocExNuma(HANDLE process_handle,
                                    LPVOID address,
@@ -67,13 +66,11 @@ typedef void *t_VirtualAllocExNuma(HANDLE process_handle,
                                    DWORD preferred);
 typedef BOOL t_VirtualFree(void *address, SIZE_T size, DWORD free_type);
 // Threading function types.
-typedef BOOL t_SetProcessAffinityMask(HANDLE process_handle,
-                                      DWORD_PTR process_affinity_mask);
+typedef BOOL t_SetProcessAffinityMask(HANDLE process_handle, DWORD_PTR process_affinity_mask);
 typedef BOOL t_SetThreadGroupAffinity(HANDLE thread_handle,
                                       const GROUP_AFFINITY *group_affinity,
                                       GROUP_AFFINITY *PreviousGroupAffinity);
-typedef BOOL t_GetThreadGroupAffinity(HANDLE thread_handle,
-                                      GROUP_AFFINITY *group_affinity);
+typedef BOOL t_GetThreadGroupAffinity(HANDLE thread_handle, GROUP_AFFINITY *group_affinity);
 typedef DWORD t_GetCurrentProcessorNumber(void);
 typedef void t_GetCurrentProcessorNumberEx(PROCESSOR_NUMBER *proc_number);
 typedef DWORD t_GetActiveProcessorCount(WORD group_number);
@@ -120,9 +117,9 @@ static NUMAAPI_Result loadNumaSymbols(void)
   kernel_lib = LoadLibraryA("Kernel32.dll");
   // Load symbols.
 
-#  define _LIBRARY_FIND(lib, name) \
-    do \
-    { \
+#  define _LIBRARY_FIND(lib, name)                      \
+    do                                                  \
+    {                                                   \
       _##name = (t_##name *)GetProcAddress(lib, #name); \
     } while (0)
 #  define KERNEL_LIBRARY_FIND(name) _LIBRARY_FIND(kernel_lib, name)
@@ -240,8 +237,7 @@ int numaAPI_GetNumCurrentNodesProcessors(void)
   // First, count number of possible bits in the affinity mask.
   const int num_processors = countNumSetBits(group_affinity.Mask);
   // Then check that it's not exceeding number of processors in tjhe group.
-  const int num_group_processors =
-    _GetActiveProcessorCount(group_affinity.Group);
+  const int num_group_processors = _GetActiveProcessorCount(group_affinity.Group);
   if (num_group_processors < num_processors)
   {
     return num_group_processors;
@@ -343,10 +339,8 @@ typedef void *tnuma_alloc_onnode(size_t size, int node);
 typedef void *tnuma_alloc_local(size_t size);
 typedef void tnuma_free(void *start, size_t size);
 typedef struct bitmask *tnuma_bitmask_clearall(struct bitmask *bitmask);
-typedef int tnuma_bitmask_isbitset(const struct bitmask *bitmask,
-                                   unsigned int n);
-typedef struct bitmask *tnuma_bitmask_setbit(struct bitmask *bitmask,
-                                             unsigned int n);
+typedef int tnuma_bitmask_isbitset(const struct bitmask *bitmask, unsigned int n);
+typedef struct bitmask *tnuma_bitmask_setbit(struct bitmask *bitmask, unsigned int n);
 typedef unsigned int tnuma_bitmask_nbytes(struct bitmask *bitmask);
 typedef void tnuma_bitmask_free(struct bitmask *bitmask);
 typedef struct bitmask *tnuma_allocate_cpumask(void);
@@ -419,10 +413,7 @@ static NUMAAPI_Result loadNumaSymbols(void)
   }
   initialized = true;
   // Find appropriate .so library.
-  const char *numa_paths[] = {
-    "libnuma.so.1",
-    "libnuma.so",
-    NULL};
+  const char *numa_paths[] = {"libnuma.so.1", "libnuma.so", NULL};
   // Register de-initialization.
   const int error = atexit(numaExit);
   if (error)
@@ -439,9 +430,9 @@ static NUMAAPI_Result loadNumaSymbols(void)
   }
   // Load symbols.
 
-#    define _LIBRARY_FIND(lib, name) \
-      do \
-      { \
+#    define _LIBRARY_FIND(lib, name)         \
+      do                                     \
+      {                                      \
         name = (t##name *)dlsym(lib, #name); \
       } while (0)
 #    define NUMA_LIBRARY_FIND(name) _LIBRARY_FIND(numa_lib, name)
@@ -528,8 +519,7 @@ int numaAPI_GetNumNodeProcessors(int node)
   if (numa_free_cpumask != NULL)
   {
     numa_free_cpumask(cpu_mask);
-  }
-  else
+  } else
   {
     numa_bitmask_free(cpu_mask);
   }
@@ -588,8 +578,7 @@ bool numaAPI_RunThreadOnNode(int node)
   if (numa_free_nodemask != NULL)
   {
     numa_free_nodemask(node_mask);
-  }
-  else
+  } else
   {
     numa_bitmask_free(node_mask);
   }

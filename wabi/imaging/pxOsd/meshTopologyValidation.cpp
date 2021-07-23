@@ -98,14 +98,16 @@ void PxOsdMeshTopologyValidation::_ValidateToken(PxOsdMeshTopologyValidation::Co
 void PxOsdMeshTopologyValidation::_ValidateScheme(PxOsdMeshTopology const &topology)
 {
   static const std::array<TfToken, 3> validSchemes = {
-    {PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->loop, PxOsdOpenSubdivTokens->bilinear}};
+    {PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->loop, PxOsdOpenSubdivTokens->bilinear}
+  };
   _ValidateToken(Code::InvalidScheme, "scheme", topology.GetScheme(), validSchemes);
 }
 
 void PxOsdMeshTopologyValidation::_ValidateOrientation(PxOsdMeshTopology const &topology)
 {
   static const std::array<TfToken, 2> validOrientations = {
-    {PxOsdOpenSubdivTokens->rightHanded, PxOsdOpenSubdivTokens->leftHanded}};
+    {PxOsdOpenSubdivTokens->rightHanded, PxOsdOpenSubdivTokens->leftHanded}
+  };
   _ValidateToken(Code::InvalidOrientation, "orientation", topology.GetOrientation(), validOrientations);
 }
 
@@ -113,7 +115,8 @@ void PxOsdMeshTopologyValidation::_ValidateTriangleSubdivision(PxOsdMeshTopology
 {
   static const TfToken empty;
   static const std::array<TfToken, 3> validTriangleSubdivision = {
-    {PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->smooth, empty}};
+    {PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->smooth, empty}
+  };
   _ValidateToken(Code::InvalidTriangleSubdivision,
                  "triangle subdivision",
                  topology.GetSubdivTags().GetTriangleSubdivision(),
@@ -123,10 +126,12 @@ void PxOsdMeshTopologyValidation::_ValidateTriangleSubdivision(PxOsdMeshTopology
 void PxOsdMeshTopologyValidation::_ValidateVertexInterpolation(PxOsdMeshTopology const &topology)
 {
   static const TfToken empty;
-  static const std::array<TfToken, 4> validVertexInterpolation = {{PxOsdOpenSubdivTokens->none,
-                                                                   PxOsdOpenSubdivTokens->edgeAndCorner,
-                                                                   PxOsdOpenSubdivTokens->edgeOnly,
-                                                                   empty}};
+  static const std::array<TfToken, 4> validVertexInterpolation = {
+    {PxOsdOpenSubdivTokens->none,
+     PxOsdOpenSubdivTokens->edgeAndCorner,
+     PxOsdOpenSubdivTokens->edgeOnly,
+     empty}
+  };
   _ValidateToken(Code::InvalidVertexInterpolationRule,
                  "vertex interpolation rule",
                  topology.GetSubdivTags().GetVertexInterpolationRule(),
@@ -136,13 +141,15 @@ void PxOsdMeshTopologyValidation::_ValidateVertexInterpolation(PxOsdMeshTopology
 void PxOsdMeshTopologyValidation::_ValidateFaceVaryingInterpolation(PxOsdMeshTopology const &topology)
 {
   static const TfToken empty;
-  static const std::array<TfToken, 7> validFaceVaryingInterpolation = {{PxOsdOpenSubdivTokens->none,
-                                                                        PxOsdOpenSubdivTokens->all,
-                                                                        PxOsdOpenSubdivTokens->boundaries,
-                                                                        PxOsdOpenSubdivTokens->cornersOnly,
-                                                                        PxOsdOpenSubdivTokens->cornersPlus1,
-                                                                        PxOsdOpenSubdivTokens->cornersPlus2,
-                                                                        empty}};
+  static const std::array<TfToken, 7> validFaceVaryingInterpolation = {
+    {PxOsdOpenSubdivTokens->none,
+     PxOsdOpenSubdivTokens->all,
+     PxOsdOpenSubdivTokens->boundaries,
+     PxOsdOpenSubdivTokens->cornersOnly,
+     PxOsdOpenSubdivTokens->cornersPlus1,
+     PxOsdOpenSubdivTokens->cornersPlus2,
+     empty}
+  };
   _ValidateToken(Code::InvalidFaceVaryingInterpolationRule,
                  "face varying interpolation rule",
                  topology.GetSubdivTags().GetFaceVaryingInterpolationRule(),
@@ -153,7 +160,8 @@ void PxOsdMeshTopologyValidation::_ValidateCreaseMethod(PxOsdMeshTopology const 
 {
   static const TfToken empty;
   static const std::array<TfToken, 3> validCreaseMethod = {
-    {PxOsdOpenSubdivTokens->uniform, PxOsdOpenSubdivTokens->chaikin, empty}};
+    {PxOsdOpenSubdivTokens->uniform, PxOsdOpenSubdivTokens->chaikin, empty}
+  };
   _ValidateToken(Code::InvalidCreaseMethod,
                  "crease method",
                  topology.GetSubdivTags().GetCreaseMethod(),
@@ -168,8 +176,9 @@ void PxOsdMeshTopologyValidation::_ValidateCreasesAndCorners(PxOsdMeshTopology c
   const auto &cornerIndices = topology.GetSubdivTags().GetCornerIndices();
   const auto &cornerSharpness = topology.GetSubdivTags().GetCornerWeights();
 
-  if (std::any_of(
-        creaseLengths.cbegin(), creaseLengths.cend(), [](int creaseLength) { return creaseLength < 2; }))
+  if (std::any_of(creaseLengths.cbegin(), creaseLengths.cend(), [](int creaseLength) {
+        return creaseLength < 2;
+      }))
   {
     _AppendInvalidation(
       {Code::InvalidCreaseLengthElement, "Crease lengths must be greater than or equal to 2."});
@@ -202,14 +211,16 @@ void PxOsdMeshTopologyValidation::_ValidateCreasesAndCorners(PxOsdMeshTopology c
                                         cornerSharpness.size())});
   }
 
-  if (std::any_of(
-        creaseSharpness.cbegin(), creaseSharpness.cend(), [](float weight) { return weight < 0.0f; }))
+  if (std::any_of(creaseSharpness.cbegin(), creaseSharpness.cend(), [](float weight) {
+        return weight < 0.0f;
+      }))
   {
     _AppendInvalidation({Code::NegativeCreaseWeights, "Negative crease weights."});
   }
 
-  if (std::any_of(
-        cornerSharpness.cbegin(), cornerSharpness.cend(), [](float weight) { return weight < 0.0f; }))
+  if (std::any_of(cornerSharpness.cbegin(), cornerSharpness.cend(), [](float weight) {
+        return weight < 0.0f;
+      }))
   {
     _AppendInvalidation({Code::NegativeCornerWeights, "Negative corner weights."});
   }

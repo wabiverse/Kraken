@@ -209,8 +209,7 @@ class PcpMapFunction
       if (numPairs <= _MaxLocalPairs)
       {
         std::uninitialized_copy(begin, end, localPairs);
-      }
-      else
+      } else
       {
         new (&remotePairs)
           std::shared_ptr<PathPair>(new PathPair[numPairs], std::default_delete<PathPair[]>());
@@ -225,8 +224,7 @@ class PcpMapFunction
       if (numPairs <= _MaxLocalPairs)
       {
         std::uninitialized_copy(other.localPairs, other.localPairs + other.numPairs, localPairs);
-      }
-      else
+      } else
       {
         new (&remotePairs) std::shared_ptr<PathPair>(other.remotePairs);
       }
@@ -244,8 +242,7 @@ class PcpMapFunction
         {
           ::new (static_cast<void *>(std::addressof(*dst))) PathPair(std::move(*src));
         }
-      }
-      else
+      } else
       {
         new (&remotePairs) std::shared_ptr<PathPair>(std::move(other.remotePairs));
       }
@@ -276,8 +273,7 @@ class PcpMapFunction
         {
           p->~PathPair();
         }
-      }
-      else
+      } else
       {
         remotePairs.~shared_ptr<PathPair>();
       }

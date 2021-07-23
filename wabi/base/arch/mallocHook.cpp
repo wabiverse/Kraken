@@ -184,8 +184,7 @@ static bool _GetSymbol(T *addr, const char *name, string *errMsg)
   {
     *addr = (T)symbol;
     return true;
-  }
-  else
+  } else
   {
     *errMsg = "lookup for symbol '" + string(name) + "' failed";
     return false;
@@ -214,15 +213,13 @@ static Arch_MallocFunctionNames _GetUnderlyingMallocFunctionNames()
     names.reallocFn = "__pxmalloc_realloc";
     names.memalignFn = "__pxmalloc_memalign";
     names.freeFn = "__pxmalloc_free";
-  }
-  else if (ArchIsPtmallocActive())
+  } else if (ArchIsPtmallocActive())
   {
     names.mallocFn = "__ptmalloc3_malloc";
     names.reallocFn = "__ptmalloc3_realloc";
     names.memalignFn = "__ptmalloc3_memalign";
     names.freeFn = "__ptmalloc3_free";
-  }
-  else if (ArchIsJemallocActive())
+  } else if (ArchIsJemallocActive())
   {
     names.mallocFn = "__jemalloc_malloc";
     names.reallocFn = "__jemalloc_realloc";

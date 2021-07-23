@@ -112,35 +112,28 @@ HdFormat HdEmbreeRenderBuffer::_GetSampleFormat(HdFormat format)
     if (arity == 1)
     {
       return HdFormatFloat32;
-    }
-    else if (arity == 2)
+    } else if (arity == 2)
     {
       return HdFormatFloat32Vec2;
-    }
-    else if (arity == 3)
+    } else if (arity == 3)
     {
       return HdFormatFloat32Vec3;
-    }
-    else if (arity == 4)
+    } else if (arity == 4)
     {
       return HdFormatFloat32Vec4;
     }
-  }
-  else if (component == HdFormatInt32)
+  } else if (component == HdFormatInt32)
   {
     if (arity == 1)
     {
       return HdFormatInt32;
-    }
-    else if (arity == 2)
+    } else if (arity == 2)
     {
       return HdFormatInt32Vec2;
-    }
-    else if (arity == 3)
+    } else if (arity == 3)
     {
       return HdFormatInt32Vec3;
-    }
-    else if (arity == 4)
+    } else if (arity == 4)
     {
       return HdFormatInt32Vec4;
     }
@@ -191,8 +184,7 @@ static void _WriteSample(HdFormat format, uint8_t *dst, size_t valueComponents, 
     if (componentFormat == HdFormatInt32)
     {
       ((int32_t *)dst)[c] += (c < valueComponents) ? (int32_t)(value[c]) : 0;
-    }
-    else
+    } else
     {
       ((float *)dst)[c] += (c < valueComponents) ? (float)(value[c]) : 0.0f;
     }
@@ -210,20 +202,16 @@ static void _WriteOutput(HdFormat format, uint8_t *dst, size_t valueComponents, 
     if (componentFormat == HdFormatInt32)
     {
       ((int32_t *)dst)[c] = (c < valueComponents) ? (int32_t)(value[c]) : 0;
-    }
-    else if (componentFormat == HdFormatFloat16)
+    } else if (componentFormat == HdFormatFloat16)
     {
       ((uint16_t *)dst)[c] = (c < valueComponents) ? GfHalf(value[c]).bits() : 0;
-    }
-    else if (componentFormat == HdFormatFloat32)
+    } else if (componentFormat == HdFormatFloat32)
     {
       ((float *)dst)[c] = (c < valueComponents) ? (float)(value[c]) : 0.0f;
-    }
-    else if (componentFormat == HdFormatUNorm8)
+    } else if (componentFormat == HdFormatUNorm8)
     {
       ((uint8_t *)dst)[c] = (c < valueComponents) ? (uint8_t)(value[c] * 255.0f) : 0.0f;
-    }
-    else if (componentFormat == HdFormatSNorm8)
+    } else if (componentFormat == HdFormatSNorm8)
     {
       ((int8_t *)dst)[c] = (c < valueComponents) ? (int8_t)(value[c] * 127.0f) : 0.0f;
     }
@@ -239,8 +227,7 @@ void HdEmbreeRenderBuffer::Write(GfVec3i const &pixel, size_t numComponents, flo
     uint8_t *dst = &_sampleBuffer[idx * formatSize];
     _WriteSample(_format, dst, numComponents, value);
     _sampleCount[idx]++;
-  }
-  else
+  } else
   {
     size_t formatSize = HdDataSizeOfFormat(_format);
     uint8_t *dst = &_buffer[idx * formatSize];
@@ -257,8 +244,7 @@ void HdEmbreeRenderBuffer::Write(GfVec3i const &pixel, size_t numComponents, int
     uint8_t *dst = &_sampleBuffer[idx * formatSize];
     _WriteSample(_format, dst, numComponents, value);
     _sampleCount[idx]++;
-  }
-  else
+  } else
   {
     size_t formatSize = HdDataSizeOfFormat(_format);
     uint8_t *dst = &_buffer[idx * formatSize];
@@ -331,20 +317,16 @@ void HdEmbreeRenderBuffer::Resolve()
       if (componentFormat == HdFormatInt32)
       {
         ((int32_t *)dst)[c] = ((int32_t *)src)[c] / sampleCount;
-      }
-      else if (componentFormat == HdFormatFloat16)
+      } else if (componentFormat == HdFormatFloat16)
       {
         ((uint16_t *)dst)[c] = GfHalf(((float *)src)[c] / sampleCount).bits();
-      }
-      else if (componentFormat == HdFormatFloat32)
+      } else if (componentFormat == HdFormatFloat32)
       {
         ((float *)dst)[c] = ((float *)src)[c] / sampleCount;
-      }
-      else if (componentFormat == HdFormatUNorm8)
+      } else if (componentFormat == HdFormatUNorm8)
       {
         ((uint8_t *)dst)[c] = (uint8_t)(((float *)src)[c] * 255.0f / sampleCount);
-      }
-      else if (componentFormat == HdFormatSNorm8)
+      } else if (componentFormat == HdFormatSNorm8)
       {
         ((int8_t *)dst)[c] = (int8_t)(((float *)src)[c] * 127.0f / sampleCount);
       }

@@ -67,11 +67,11 @@ class HdEmbreeTypeHelper
 
 // Define template specializations of HdEmbreeTypeHelper methods for
 // all our supported types...
-#define TYPE_HELPER(T, type) \
-  template<> \
+#define TYPE_HELPER(T, type)                               \
+  template<>                                               \
   inline HdTupleType HdEmbreeTypeHelper::GetTupleType<T>() \
-  { \
-    return HdTupleType{type, 1}; \
+  {                                                        \
+    return HdTupleType{type, 1};                           \
   }
 
 TYPE_HELPER(bool, HdTypeBool)

@@ -31,9 +31,8 @@ WABI_NAMESPACE_BEGIN
 // RprUsd_UsdPreviewSurface
 //------------------------------------------------------------------------------
 
-TF_DEFINE_PRIVATE_TOKENS(
-  UsdPreviewSurfaceTokens,
-  (diffuseColor)(emissiveColor)(useSpecularWorkflow)(specularColor)(metallic)(roughness)(clearcoat)(clearcoatRoughness)(opacity)(opacityThreshold)(ior)(displacement)(normal));
+TF_DEFINE_PRIVATE_TOKENS(UsdPreviewSurfaceTokens,
+                         (diffuseColor)(emissiveColor)(useSpecularWorkflow)(specularColor)(metallic)(roughness)(clearcoat)(clearcoatRoughness)(opacity)(opacityThreshold)(ior)(displacement)(normal));
 
 RprUsd_UsdPreviewSurface::RprUsd_UsdPreviewSurface(RprUsd_MaterialBuilderContext *ctx,
                                                    std::map<TfToken, VtValue> const &hydraParameters)
@@ -48,8 +47,7 @@ RprUsd_UsdPreviewSurface::RprUsd_UsdPreviewSurface(RprUsd_MaterialBuilderContext
     if (it == hydraParameters.end())
     {
       SetInput(id, defaultValue);
-    }
-    else
+    } else
     {
       SetInput(id, it->second);
     }
@@ -77,8 +75,7 @@ bool RprUsd_UsdPreviewSurface::SetInput(TfToken const &inputId, VtValue const &v
     m_albedo = value;
     return (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_DIFFUSE_COLOR, value) == RPR_SUCCESS) &&
            (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_REFRACTION_COLOR, value) == RPR_SUCCESS);
-  }
-  else if (UsdPreviewSurfaceTokens->emissiveColor == inputId)
+  } else if (UsdPreviewSurfaceTokens->emissiveColor == inputId)
   {
     if (!m_emissiveWeightNode)
     {
@@ -91,36 +88,29 @@ bool RprUsd_UsdPreviewSurface::SetInput(TfToken const &inputId, VtValue const &v
     return (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_EMISSION_WEIGHT, emissionWeight) ==
             RPR_SUCCESS) &&
            (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_EMISSION_COLOR, value) == RPR_SUCCESS);
-  }
-  else if (UsdPreviewSurfaceTokens->useSpecularWorkflow == inputId)
+  } else if (UsdPreviewSurfaceTokens->useSpecularWorkflow == inputId)
   {
     m_useSpecular = value.Get<int>();
-  }
-  else if (UsdPreviewSurfaceTokens->specularColor == inputId)
+  } else if (UsdPreviewSurfaceTokens->specularColor == inputId)
   {
     m_reflection = value;
-  }
-  else if (UsdPreviewSurfaceTokens->metallic == inputId)
+  } else if (UsdPreviewSurfaceTokens->metallic == inputId)
   {
     return SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_REFLECTION_METALNESS, value) == RPR_SUCCESS;
-  }
-  else if (UsdPreviewSurfaceTokens->roughness == inputId)
+  } else if (UsdPreviewSurfaceTokens->roughness == inputId)
   {
     return (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_DIFFUSE_ROUGHNESS, value) == RPR_SUCCESS) &&
            (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_REFLECTION_ROUGHNESS, value) ==
             RPR_SUCCESS) &&
            (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_REFRACTION_ROUGHNESS, value) ==
             RPR_SUCCESS);
-  }
-  else if (UsdPreviewSurfaceTokens->clearcoat == inputId)
+  } else if (UsdPreviewSurfaceTokens->clearcoat == inputId)
   {
     return SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_COATING_WEIGHT, value) == RPR_SUCCESS;
-  }
-  else if (UsdPreviewSurfaceTokens->clearcoatRoughness == inputId)
+  } else if (UsdPreviewSurfaceTokens->clearcoatRoughness == inputId)
   {
     return SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_COATING_ROUGHNESS, value) == RPR_SUCCESS;
-  }
-  else if (UsdPreviewSurfaceTokens->opacity == inputId)
+  } else if (UsdPreviewSurfaceTokens->opacity == inputId)
   {
     if (!m_refractionWeightNode)
     {
@@ -133,22 +123,18 @@ bool RprUsd_UsdPreviewSurface::SetInput(TfToken const &inputId, VtValue const &v
     return (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_DIFFUSE_WEIGHT, value) == RPR_SUCCESS) &&
            (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_REFRACTION_WEIGHT, refractionWeight) ==
             RPR_SUCCESS);
-  }
-  else if (UsdPreviewSurfaceTokens->opacityThreshold == inputId)
+  } else if (UsdPreviewSurfaceTokens->opacityThreshold == inputId)
   {
-  }
-  else if (UsdPreviewSurfaceTokens->ior == inputId)
+  } else if (UsdPreviewSurfaceTokens->ior == inputId)
   {
     return SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_REFRACTION_IOR, value) == RPR_SUCCESS;
-  }
-  else if (UsdPreviewSurfaceTokens->displacement == inputId)
+  } else if (UsdPreviewSurfaceTokens->displacement == inputId)
   {
     if (value.IsHolding<RprMaterialNodePtr>())
     {
       m_displaceNode = nullptr;
       m_displacementOutput = value;
-    }
-    else
+    } else
     {
       auto vec = GetRprFloat(value);
       if (!GfIsEqual(vec, GfVec4f(0.0f)))
@@ -160,15 +146,13 @@ bool RprUsd_UsdPreviewSurface::SetInput(TfToken const &inputId, VtValue const &v
 
         m_displaceNode->SetInput(RPR_MATERIAL_INPUT_VALUE, value);
         m_displacementOutput = m_displaceNode->GetOutput(TfToken());
-      }
-      else
+      } else
       {
         m_displaceNode = nullptr;
         m_displacementOutput = VtValue();
       }
     }
-  }
-  else if (UsdPreviewSurfaceTokens->normal == inputId)
+  } else if (UsdPreviewSurfaceTokens->normal == inputId)
   {
     if (value.IsHolding<RprMaterialNodePtr>())
     {
@@ -192,17 +176,16 @@ bool RprUsd_UsdPreviewSurface::SetInput(TfToken const &inputId, VtValue const &v
               RPR_SUCCESS) &&
              (SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_REFLECTION_NORMAL, normalMapOutput) ==
               RPR_SUCCESS);
-    }
-    else
+    } else
     {
       TF_RUNTIME_ERROR("`normal` input should be of material node type - %s", value.GetTypeName().c_str());
       return false;
     }
-  }
-  else
+  } else
   {
-    TF_CODING_ERROR(
-      "Unknown UsdPreviewSurface parameter %s: %s", inputId.GetText(), value.GetTypeName().c_str());
+    TF_CODING_ERROR("Unknown UsdPreviewSurface parameter %s: %s",
+                    inputId.GetText(),
+                    value.GetTypeName().c_str());
     return false;
   }
 
@@ -219,8 +202,7 @@ VtValue RprUsd_UsdPreviewSurface::GetOutput(TfToken const &outputId)
         m_rprNode->SetInput(RPR_MATERIAL_INPUT_UBER_REFLECTION_MODE, RPR_UBER_MATERIAL_IOR_MODE_PBR),
         "Failed to set material input");
       SetRprInput(m_rprNode.get(), RPR_MATERIAL_INPUT_UBER_REFLECTION_COLOR, m_reflection);
-    }
-    else
+    } else
     {
       RPR_ERROR_CHECK(
         m_rprNode->SetInput(RPR_MATERIAL_INPUT_UBER_REFLECTION_MODE, RPR_UBER_MATERIAL_IOR_MODE_METALNESS),
@@ -229,8 +211,7 @@ VtValue RprUsd_UsdPreviewSurface::GetOutput(TfToken const &outputId)
     }
 
     return RprUsd_BaseRuntimeNode::GetOutput(outputId);
-  }
-  else if (HdMaterialTerminalTokens->displacement == outputId)
+  } else if (HdMaterialTerminalTokens->displacement == outputId)
   {
     return m_displacementOutput;
   }
@@ -247,35 +228,31 @@ TF_DEFINE_PUBLIC_TOKENS(RprUsd_UsdUVTextureTokens, RPRUSD_USD_UV_TEXTURE_TOKENS)
 namespace
 {
 
-rpr::ImageWrapType GetWrapType(VtValue const &value)
-{
-  if (value.IsHolding<TfToken>())
+  rpr::ImageWrapType GetWrapType(VtValue const &value)
   {
-    auto &id = value.UncheckedGet<TfToken>();
-    if (id == RprUsd_UsdUVTextureTokens->black)
+    if (value.IsHolding<TfToken>())
     {
-      return RPR_IMAGE_WRAP_TYPE_CLAMP_ZERO;
+      auto &id = value.UncheckedGet<TfToken>();
+      if (id == RprUsd_UsdUVTextureTokens->black)
+      {
+        return RPR_IMAGE_WRAP_TYPE_CLAMP_ZERO;
+      } else if (id == RprUsd_UsdUVTextureTokens->clamp)
+      {
+        return RPR_IMAGE_WRAP_TYPE_CLAMP_TO_EDGE;
+      } else if (id == RprUsd_UsdUVTextureTokens->mirror)
+      {
+        return RPR_IMAGE_WRAP_TYPE_MIRRORED_REPEAT;
+      } else if (id == RprUsd_UsdUVTextureTokens->repeat)
+      {
+        return RPR_IMAGE_WRAP_TYPE_REPEAT;
+      } else
+      {
+        TF_CODING_ERROR("Unknown image wrap type: %s", id.GetText());
+      }
     }
-    else if (id == RprUsd_UsdUVTextureTokens->clamp)
-    {
-      return RPR_IMAGE_WRAP_TYPE_CLAMP_TO_EDGE;
-    }
-    else if (id == RprUsd_UsdUVTextureTokens->mirror)
-    {
-      return RPR_IMAGE_WRAP_TYPE_MIRRORED_REPEAT;
-    }
-    else if (id == RprUsd_UsdUVTextureTokens->repeat)
-    {
-      return RPR_IMAGE_WRAP_TYPE_REPEAT;
-    }
-    else
-    {
-      TF_CODING_ERROR("Unknown image wrap type: %s", id.GetText());
-    }
-  }
 
-  return {};
-}
+    return {};
+  }
 
 }  // namespace
 
@@ -298,8 +275,7 @@ RprUsd_UsdUVTexture::RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx,
     if (assetPath.GetResolvedPath().empty())
     {
       textureCommit.filepath = assetPath.GetAssetPath();
-    }
-    else
+    } else
     {
       textureCommit.filepath = assetPath.GetResolvedPath();
     }
@@ -319,16 +295,13 @@ RprUsd_UsdUVTexture::RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx,
       if (colorSpace == RprUsd_UsdUVTextureTokens->sRGB)
       {
         textureCommit.colorspace = "srgb";
-      }
-      else if (colorSpace == RprUsd_UsdUVTextureTokens->raw)
+      } else if (colorSpace == RprUsd_UsdUVTextureTokens->raw)
       {
         textureCommit.colorspace = "raw";
-      }
-      else if (colorSpace == RprUsd_UsdUVTextureTokens->colorSpaceAuto)
+      } else if (colorSpace == RprUsd_UsdUVTextureTokens->colorSpaceAuto)
       {
         textureCommit.colorspace = "";
-      }
-      else
+      } else
       {
         textureCommit.colorspace = colorSpace.GetString();
       }
@@ -386,24 +359,19 @@ RprUsd_UsdUVTexture::RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx,
         if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->rgba)
         {
           numComponentsRequired = 4;
-        }
-        else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->rgb)
+        } else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->rgb)
         {
           numComponentsRequired = 3;
-        }
-        else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->r)
+        } else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->r)
         {
           numComponentsRequired = 1;
-        }
-        else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->g)
+        } else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->g)
         {
           numComponentsRequired = 2;
-        }
-        else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->b)
+        } else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->b)
         {
           numComponentsRequired = 3;
-        }
-        else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->a)
+        } else if (connection.second.upstreamOutputName == RprUsd_UsdUVTextureTokens->a)
         {
           numComponentsRequired = 4;
         }
@@ -440,8 +408,7 @@ RprUsd_UsdUVTexture::RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx,
             !m_scaleNode->SetInput(1, scaleIt->second) || m_scaleNode->GetOutput().IsEmpty())
         {
           m_scaleNode = nullptr;
-        }
-        else
+        } else
         {
           m_outputs[RprUsd_UsdUVTextureTokens->rgba] = m_scaleNode->GetOutput();
         }
@@ -462,8 +429,7 @@ RprUsd_UsdUVTexture::RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx,
             !m_biasNode->SetInput(1, biasIt->second) || m_biasNode->GetOutput().IsEmpty())
         {
           m_biasNode = nullptr;
-        }
-        else
+        } else
         {
           m_outputs[RprUsd_UsdUVTextureTokens->rgba] = m_biasNode->GetOutput();
         }
@@ -489,20 +455,16 @@ VtValue RprUsd_UsdUVTexture::GetOutput(TfToken const &outputId)
   if (outputId == RprUsd_UsdUVTextureTokens->r)
   {
     channel = RPR_MATERIAL_NODE_OP_SELECT_X;
-  }
-  else if (outputId == RprUsd_UsdUVTextureTokens->g)
+  } else if (outputId == RprUsd_UsdUVTextureTokens->g)
   {
     channel = RPR_MATERIAL_NODE_OP_SELECT_Y;
-  }
-  else if (outputId == RprUsd_UsdUVTextureTokens->b)
+  } else if (outputId == RprUsd_UsdUVTextureTokens->b)
   {
     channel = RPR_MATERIAL_NODE_OP_SELECT_Z;
-  }
-  else if (outputId == RprUsd_UsdUVTextureTokens->a)
+  } else if (outputId == RprUsd_UsdUVTextureTokens->a)
   {
     channel = RPR_MATERIAL_NODE_OP_SELECT_W;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Invalid outputId requested: %s", outputId.GetText());
     return VtValue();
@@ -517,13 +479,11 @@ VtValue RprUsd_UsdUVTexture::GetOutput(TfToken const &outputId)
       auto output = selectChannelNode->GetOutput();
       m_outputs[outputId] = output;
       return output;
-    }
-    else
+    } else
     {
       TF_RUNTIME_ERROR("Failed to set select node inputs");
     }
-  }
-  else
+  } else
   {
     TF_RUNTIME_ERROR("Failed to create select node");
   }
@@ -536,8 +496,7 @@ bool RprUsd_UsdUVTexture::SetInput(TfToken const &inputId, VtValue const &value)
   if (inputId == RprUsd_UsdUVTextureTokens->st)
   {
     return SetRprInput(m_imageNode.get(), RPR_MATERIAL_INPUT_UV, value) == RPR_SUCCESS;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("UsdUVTexture accepts only `st` input");
     return false;
@@ -579,8 +538,7 @@ RprUsd_UsdPrimvarReader::RprUsd_UsdPrimvarReader(RprUsd_MaterialBuilderContext *
       {
         ctx->uvPrimvarName = varname.GetString();
       }
-    }
-    else if (varnameNameIt->second.IsHolding<std::string>())
+    } else if (varnameNameIt->second.IsHolding<std::string>())
     {
       auto &varname = varnameNameIt->second.UncheckedGet<std::string>();
       if (!varname.empty())

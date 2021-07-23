@@ -349,8 +349,7 @@ void HgiMetal::CommitSecondaryCommandBuffer(id<MTLCommandBuffer> commandBuffer,
   if (waitType == CommitCommandBuffer_WaitUntilScheduled)
   {
     [commandBuffer waitUntilScheduled];
-  }
-  else if (waitType == CommitCommandBuffer_WaitUntilCompleted)
+  } else if (waitType == CommitCommandBuffer_WaitUntilCompleted)
   {
     [commandBuffer waitUntilCompleted];
   }

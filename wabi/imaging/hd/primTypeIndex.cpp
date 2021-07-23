@@ -100,8 +100,9 @@ void Hd_PrimTypeIndex<PrimType>::InsertPrim(const TfToken &typeId,
   SdfPath const &sceneDelegateId = sceneDelegate->GetDelegateID();
   if (!primId.HasPrefix(sceneDelegateId))
   {
-    TF_CODING_ERROR(
-      "Scene Delegate Id (%s) must prefix prim Id (%s)", sceneDelegateId.GetText(), primId.GetText());
+    TF_CODING_ERROR("Scene Delegate Id (%s) must prefix prim Id (%s)",
+                    sceneDelegateId.GetText(),
+                    primId.GetText());
     return;
   }
 
@@ -124,8 +125,7 @@ void Hd_PrimTypeIndex<PrimType>::InsertPrim(const TfToken &typeId,
   {
     // Only add the primId if this is the first instance in the map.
     typeEntry.primIds.Insert(primId);
-  }
-  else
+  } else
   {
     // The emplace failed so we should destroy the render prim.
     _RenderDelegateDestroyPrim(renderDelegate, prim);
@@ -209,8 +209,7 @@ void Hd_PrimTypeIndex<PrimType>::RemoveSubtree(const SdfPath &root,
         if (primIt == typeEntry.primMap.end())
         {
           TF_CODING_ERROR("Prim in id list not in info map: %s", primId.GetText());
-        }
-        else
+        } else
         {
           _PrimInfo &primInfo = primIt->second;
 
@@ -221,8 +220,7 @@ void Hd_PrimTypeIndex<PrimType>::RemoveSubtree(const SdfPath &root,
             primInfo.prim = nullptr;
 
             typeEntry.primMap.erase(primIt);
-          }
-          else
+          } else
           {
             if (currentRangeStart < primIdIdx)
             {

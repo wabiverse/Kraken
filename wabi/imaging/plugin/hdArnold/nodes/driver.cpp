@@ -40,35 +40,35 @@ AI_DRIVER_NODE_EXPORT_METHODS(HdArnoldDriverMtd);
 
 namespace
 {
-const char *supportedExtensions[] = {nullptr};
+  const char *supportedExtensions[] = {nullptr};
 
-struct BucketData
-{
-  TfToken name;
-  int type;
-  const void *data;
+  struct BucketData
+  {
+    TfToken name;
+    int type;
+    const void *data;
 
-  BucketData(const TfToken &_name, int _type, const void *_data)
-    : name(_name),
-      type(_type),
-      data(_data)
-  {}
-};
+    BucketData(const TfToken &_name, int _type, const void *_data)
+      : name(_name),
+        type(_type),
+        data(_data)
+    {}
+  };
 
-struct DriverData
-{
-  GfMatrix4f projMtx;
-  GfMatrix4f viewMtx;
-  HdArnoldRenderBufferStorage *renderBuffers;
-  // Local storage for converting from P to depth.
-  std::vector<float> depths[AI_MAX_THREADS];
-  // Local storage for the id remapping.
-  std::vector<int> ids[AI_MAX_THREADS];
-  // Local storage for the color buffer.
-  std::vector<AtRGBA> colors[AI_MAX_THREADS];
-  // Local storage for bucket data.
-  std::vector<BucketData> buckets[AI_MAX_THREADS];
-};
+  struct DriverData
+  {
+    GfMatrix4f projMtx;
+    GfMatrix4f viewMtx;
+    HdArnoldRenderBufferStorage *renderBuffers;
+    // Local storage for converting from P to depth.
+    std::vector<float> depths[AI_MAX_THREADS];
+    // Local storage for the id remapping.
+    std::vector<int> ids[AI_MAX_THREADS];
+    // Local storage for the color buffer.
+    std::vector<AtRGBA> colors[AI_MAX_THREADS];
+    // Local storage for bucket data.
+    std::vector<BucketData> buckets[AI_MAX_THREADS];
+  };
 
 }  // namespace
 
@@ -140,8 +140,7 @@ driver_process_bucket
     {
       // TODO(pal): Push back to P too if the buffer P exists.
       buckets.emplace_back(HdAovTokens->depth, AI_TYPE_VECTOR, bucketData);
-    }
-    else if (pixelType == AI_TYPE_UINT && strcmp(outputName, "ID") == 0)
+    } else if (pixelType == AI_TYPE_UINT && strcmp(outputName, "ID") == 0)
     {
       const auto it = driverData->renderBuffers->find(HdAovTokens->primId);
       if (it != driverData->renderBuffers->end())
@@ -152,15 +151,15 @@ driver_process_bucket
         {
           ids[i] = static_cast<int>(in[i]) - 1;
         }
-        it->second.buffer->WriteBucket(
-          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatInt32, ids.data());
+        it->second.buffer
+          ->WriteBucket(bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatInt32, ids.data());
       }
-    }
-    else if (pixelType == AI_TYPE_RGB || pixelType == AI_TYPE_RGBA)
+    } else if (pixelType == AI_TYPE_RGB || pixelType == AI_TYPE_RGBA)
     {
       // TODO(pal): Push back to RGBA too if the buffer RGBA exists.
-      buckets.emplace_back(
-        strcmp(outputName, "RGBA") == 0 ? HdAovTokens->color : TfToken{outputName}, pixelType, bucketData);
+      buckets.emplace_back(strcmp(outputName, "RGBA") == 0 ? HdAovTokens->color : TfToken{outputName},
+                           pixelType,
+                           bucketData);
     }
   }
   for (const auto &bucket : buckets)
@@ -182,26 +181,23 @@ driver_process_bucket
           const auto p = driverData->projMtx.Transform(driverData->viewMtx.Transform(in[i]));
           depth[i] = std::max(-1.0f, std::min(1.0f, p[2]));
         }
-      }
-      else
+      } else
       {
         for (auto i = decltype(pixelCount){0}; i < pixelCount; i += 1)
         {
           if (ids[i] == -1)
           {
             depth[i] = 1.0f;
-          }
-          else
+          } else
           {
             const auto p = driverData->projMtx.Transform(driverData->viewMtx.Transform(in[i]));
             depth[i] = std::max(-1.0f, std::min(1.0f, p[2]));
           }
         }
       }
-      it->second.buffer->WriteBucket(
-        bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32, depth.data());
-    }
-    else if (bucket.name == HdAovTokens->color)
+      it->second.buffer
+        ->WriteBucket(bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32, depth.data());
+    } else if (bucket.name == HdAovTokens->color)
     {
       const auto it = driverData->renderBuffers->find(bucket.name);
       if (it == driverData->renderBuffers->end())
@@ -210,10 +206,9 @@ driver_process_bucket
       }
       if (ids.empty())
       {
-        it->second.buffer->WriteBucket(
-          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, bucketData);
-      }
-      else
+        it->second.buffer
+          ->WriteBucket(bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, bucketData);
+      } else
       {
         auto &color = driverData->colors[tid];
         color.resize(pixelCount, AI_RGBA_ZERO);
@@ -223,23 +218,29 @@ driver_process_bucket
           if (ids[i] == -1)
           {
             color[i] = AI_RGBA_ZERO;
-          }
-          else
+          } else
           {
             color[i] = in[i];
           }
         }
-        it->second.buffer->WriteBucket(
-          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, color.data());
+        it->second.buffer->WriteBucket(bucket_xo,
+                                       bucket_yo,
+                                       bucket_size_x,
+                                       bucket_size_y,
+                                       HdFormatFloat32Vec4,
+                                       color.data());
       }
-    }
-    else if (bucket.type == AI_TYPE_RGB)
+    } else if (bucket.type == AI_TYPE_RGB)
     {
       const auto it = driverData->renderBuffers->find(bucket.name);
       if (it != driverData->renderBuffers->end())
       {
-        it->second.buffer->WriteBucket(
-          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec3, bucket.data);
+        it->second.buffer->WriteBucket(bucket_xo,
+                                       bucket_yo,
+                                       bucket_size_x,
+                                       bucket_size_y,
+                                       HdFormatFloat32Vec3,
+                                       bucket.data);
       }
     }
   }

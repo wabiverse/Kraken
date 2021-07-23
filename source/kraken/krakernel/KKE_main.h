@@ -90,8 +90,8 @@ enum
   G_DEBUG_STAGE_PRETTY = (1 << 13),
   /* UsdStage SdfPath and Asset Resolution messages */
   G_DEBUG_STAGE_PATHS = (1 << 14),
-  G_DEBUG_STAGE = (G_DEBUG_STAGE_BUILD | G_DEBUG_STAGE_EVAL | G_DEBUG_STAGE_TAG |
-                   G_DEBUG_STAGE_TIME | G_DEBUG_STAGE_PATHS),
+  G_DEBUG_STAGE = (G_DEBUG_STAGE_BUILD | G_DEBUG_STAGE_EVAL | G_DEBUG_STAGE_TAG | G_DEBUG_STAGE_TIME |
+                   G_DEBUG_STAGE_PATHS),
   /* sim debug data display */
   G_DEBUG_SIMDATA = (1 << 15),
   /* gpu debug */
@@ -108,7 +108,7 @@ enum
   G_DEBUG_ANCHOR = (1 << 21),
 };
 
-#define G_DEBUG_ALL \
+#define G_DEBUG_ALL                                                                         \
   (G_DEBUG | G_DEBUG_FFMPEG | G_DEBUG_PYTHON | G_DEBUG_EVENTS | G_DEBUG_WM | G_DEBUG_JOBS | \
    G_DEBUG_FREESTYLE | G_DEBUG_STAGE | G_DEBUG_IO | G_DEBUG_ANCHOR)
 
@@ -138,9 +138,9 @@ struct Global
 
   int f;
 
-  /** 
+  /**
    *   Debug Flag
-   * 
+   *
    * - #G_DEBUG,
    * - #G_DEBUG_PYTHON & friends,
    * - set python or command line args */

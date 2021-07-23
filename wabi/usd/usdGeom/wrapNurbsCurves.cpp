@@ -43,33 +43,35 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateOrderAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray), writeSparsely);
-}
+  static UsdAttribute _CreateOrderAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray), writeSparsely);
+  }
 
-static UsdAttribute _CreateKnotsAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray), writeSparsely);
-}
+  static UsdAttribute _CreateKnotsAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
+                                writeSparsely);
+  }
 
-static UsdAttribute _CreateRangesAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRangesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2Array),
-                               writeSparsely);
-}
+  static UsdAttribute _CreateRangesAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRangesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2Array),
+                                 writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomNurbsCurves &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.NurbsCurves(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdGeomNurbsCurves &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.NurbsCurves(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -101,16 +103,19 @@ void wrapUsdGeomNurbsCurves()
     .def(!self)
 
     .def("GetOrderAttr", &This::GetOrderAttr)
-    .def(
-      "CreateOrderAttr", &_CreateOrderAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateOrderAttr",
+         &_CreateOrderAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetKnotsAttr", &This::GetKnotsAttr)
-    .def(
-      "CreateKnotsAttr", &_CreateKnotsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateKnotsAttr",
+         &_CreateKnotsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetRangesAttr", &This::GetRangesAttr)
-    .def(
-      "CreateRangesAttr", &_CreateRangesAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateRangesAttr",
+         &_CreateRangesAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("__repr__", ::_Repr);
 
@@ -139,7 +144,7 @@ void wrapUsdGeomNurbsCurves()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // anonymous namespace

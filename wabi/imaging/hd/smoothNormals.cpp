@@ -107,8 +107,10 @@ VtArray<GfVec3f> Hd_SmoothNormals::ComputeSmoothNormals(Hd_VertexAdjacency const
                                                         int numPoints,
                                                         GfVec3f const *pointsPtr)
 {
-  return _ComputeSmoothNormals(
-    numPoints, pointsPtr, adjacency->GetAdjacencyTable(), adjacency->GetNumPoints());
+  return _ComputeSmoothNormals(numPoints,
+                               pointsPtr,
+                               adjacency->GetAdjacencyTable(),
+                               adjacency->GetNumPoints());
 }
 
 /* static */
@@ -116,8 +118,10 @@ VtArray<GfVec3d> Hd_SmoothNormals::ComputeSmoothNormals(Hd_VertexAdjacency const
                                                         int numPoints,
                                                         GfVec3d const *pointsPtr)
 {
-  return _ComputeSmoothNormals(
-    numPoints, pointsPtr, adjacency->GetAdjacencyTable(), adjacency->GetNumPoints());
+  return _ComputeSmoothNormals(numPoints,
+                               pointsPtr,
+                               adjacency->GetAdjacencyTable(),
+                               adjacency->GetNumPoints());
 }
 
 /* static */
@@ -126,8 +130,10 @@ VtArray<HdVec4f_2_10_10_10_REV> Hd_SmoothNormals::ComputeSmoothNormalsPacked(
   int numPoints,
   GfVec3f const *pointsPtr)
 {
-  return _ComputeSmoothNormals<GfVec3f, HdVec4f_2_10_10_10_REV>(
-    numPoints, pointsPtr, adjacency->GetAdjacencyTable(), adjacency->GetNumPoints());
+  return _ComputeSmoothNormals<GfVec3f, HdVec4f_2_10_10_10_REV>(numPoints,
+                                                                pointsPtr,
+                                                                adjacency->GetAdjacencyTable(),
+                                                                adjacency->GetNumPoints());
 }
 
 /* static */
@@ -136,8 +142,10 @@ VtArray<HdVec4f_2_10_10_10_REV> Hd_SmoothNormals::ComputeSmoothNormalsPacked(
   int numPoints,
   GfVec3d const *pointsPtr)
 {
-  return _ComputeSmoothNormals<GfVec3d, HdVec4f_2_10_10_10_REV>(
-    numPoints, pointsPtr, adjacency->GetAdjacencyTable(), adjacency->GetNumPoints());
+  return _ComputeSmoothNormals<GfVec3d, HdVec4f_2_10_10_10_REV>(numPoints,
+                                                                pointsPtr,
+                                                                adjacency->GetAdjacencyTable(),
+                                                                adjacency->GetNumPoints());
 }
 
 Hd_SmoothNormalsComputation::Hd_SmoothNormalsComputation(Hd_VertexAdjacency const *adjacency,
@@ -196,14 +204,17 @@ bool Hd_SmoothNormalsComputation::Resolve()
         normals = HdBufferSourceSharedPtr(
           new HdVtBufferSource(_dstName,
                                VtValue(Hd_SmoothNormals::ComputeSmoothNormalsPacked(
-                                 _adjacency, numPoints, static_cast<const GfVec3f *>(_points->GetData())))));
-      }
-      else
+                                 _adjacency,
+                                 numPoints,
+                                 static_cast<const GfVec3f *>(_points->GetData())))));
+      } else
       {
         normals = HdBufferSourceSharedPtr(
           new HdVtBufferSource(_dstName,
                                VtValue(Hd_SmoothNormals::ComputeSmoothNormals(
-                                 _adjacency, numPoints, static_cast<const GfVec3f *>(_points->GetData())))));
+                                 _adjacency,
+                                 numPoints,
+                                 static_cast<const GfVec3f *>(_points->GetData())))));
       }
       break;
     case HdTypeDoubleVec3:
@@ -212,14 +223,17 @@ bool Hd_SmoothNormalsComputation::Resolve()
         normals = HdBufferSourceSharedPtr(
           new HdVtBufferSource(_dstName,
                                VtValue(Hd_SmoothNormals::ComputeSmoothNormalsPacked(
-                                 _adjacency, numPoints, static_cast<const GfVec3d *>(_points->GetData())))));
-      }
-      else
+                                 _adjacency,
+                                 numPoints,
+                                 static_cast<const GfVec3d *>(_points->GetData())))));
+      } else
       {
         normals = HdBufferSourceSharedPtr(
           new HdVtBufferSource(_dstName,
                                VtValue(Hd_SmoothNormals::ComputeSmoothNormals(
-                                 _adjacency, numPoints, static_cast<const GfVec3d *>(_points->GetData())))));
+                                 _adjacency,
+                                 numPoints,
+                                 static_cast<const GfVec3d *>(_points->GetData())))));
       }
       break;
     default:

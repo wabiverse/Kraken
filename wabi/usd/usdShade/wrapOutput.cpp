@@ -44,41 +44,41 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static bool _Set(const UsdShadeOutput &self, object val, const UsdTimeCode &time)
-{
-  return self.Set(UsdPythonToSdfType(val, self.GetTypeName()), time);
-}
-
-static object _GetConnectedSources(const UsdShadeOutput &self)
-{
-  SdfPathVector invalidSourcePaths;
-  UsdShadeOutput::SourceInfoVector sources = self.GetConnectedSources(&invalidSourcePaths);
-  return boost::python::make_tuple(std::vector<UsdShadeConnectionSourceInfo>(sources.begin(), sources.end()),
-                                   invalidSourcePaths);
-}
-
-static object _GetConnectedSource(const UsdShadeOutput &self)
-{
-  UsdShadeConnectableAPI source;
-  TfToken sourceName;
-  UsdShadeAttributeType sourceType;
-
-  if (self.GetConnectedSource(&source, &sourceName, &sourceType))
+  static bool _Set(const UsdShadeOutput &self, object val, const UsdTimeCode &time)
   {
-    return boost::python::make_tuple(source, sourceName, sourceType);
+    return self.Set(UsdPythonToSdfType(val, self.GetTypeName()), time);
   }
-  else
-  {
-    return object();
-  }
-}
 
-static SdfPathVector _GetRawConnectedSourcePaths(const UsdShadeOutput &self)
-{
-  SdfPathVector sourcePaths;
-  self.GetRawConnectedSourcePaths(&sourcePaths);
-  return sourcePaths;
-}
+  static object _GetConnectedSources(const UsdShadeOutput &self)
+  {
+    SdfPathVector invalidSourcePaths;
+    UsdShadeOutput::SourceInfoVector sources = self.GetConnectedSources(&invalidSourcePaths);
+    return boost::python::make_tuple(
+      std::vector<UsdShadeConnectionSourceInfo>(sources.begin(), sources.end()),
+      invalidSourcePaths);
+  }
+
+  static object _GetConnectedSource(const UsdShadeOutput &self)
+  {
+    UsdShadeConnectableAPI source;
+    TfToken sourceName;
+    UsdShadeAttributeType sourceType;
+
+    if (self.GetConnectedSource(&source, &sourceName, &sourceType))
+    {
+      return boost::python::make_tuple(source, sourceName, sourceType);
+    } else
+    {
+      return object();
+    }
+  }
+
+  static SdfPathVector _GetRawConnectedSourcePaths(const UsdShadeOutput &self)
+  {
+    SdfPathVector sourcePaths;
+    self.GetRawConnectedSourcePaths(&sourcePaths);
+    return sourcePaths;
+  }
 
 }  // anonymous namespace
 
@@ -86,9 +86,10 @@ void wrapUsdShadeOutput()
 {
   typedef UsdShadeOutput Output;
 
-  bool (Output::*ConnectToSource_1)(
-    UsdShadeConnectableAPI const &, TfToken const &, UsdShadeAttributeType const, SdfValueTypeName)
-    const = &Output::ConnectToSource;
+  bool (Output::*ConnectToSource_1)(UsdShadeConnectableAPI const &,
+                                    TfToken const &,
+                                    UsdShadeAttributeType const,
+                                    SdfValueTypeName) const = &Output::ConnectToSource;
 
   bool (Output::*ConnectToSource_2)(SdfPath const &) const = &Output::ConnectToSource;
 
@@ -150,8 +151,9 @@ void wrapUsdShadeOutput()
 
     .def("GetConnectedSources", _GetConnectedSources)
     .def("GetConnectedSource", _GetConnectedSource)
-    .def(
-      "GetRawConnectedSourcePaths", _GetRawConnectedSourcePaths, return_value_policy<TfPySequenceToList>())
+    .def("GetRawConnectedSourcePaths",
+         _GetRawConnectedSourcePaths,
+         return_value_policy<TfPySequenceToList>())
     .def("HasConnectedSource", &Output::HasConnectedSource)
     .def("IsSourceConnectionFromBaseMaterial", &Output::IsSourceConnectionFromBaseMaterial)
     .def("DisconnectSource", &Output::DisconnectSource, (arg("sourceAttr") = UsdAttribute()))

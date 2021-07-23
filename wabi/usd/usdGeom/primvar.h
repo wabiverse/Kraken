@@ -853,8 +853,7 @@ bool UsdGeomPrimvar::_ComputeFlattenedHelper(const VtArray<ScalarType> &authored
     if (index >= 0 && (size_t)index < authored.size())
     {
       (*value)[i] = authored[index];
-    }
-    else
+    } else
     {
       invalidIndexPositions.push_back(i);
       success = false;

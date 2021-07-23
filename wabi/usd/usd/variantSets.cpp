@@ -217,8 +217,7 @@ SdfVariantSetSpecHandle UsdVariantSet::_AddVariantSet(UsdListPosition position)
     if (SdfSpecHandle spec = layer->GetObjectAtPath(varSetPath))
     {
       result = TfDynamic_cast<SdfVariantSetSpecHandle>(spec);
-    }
-    else
+    } else
     {
       result = SdfVariantSetSpec::New(primSpec, _variantSetName);
     }

@@ -132,8 +132,7 @@ void ArnoldUsdCurvesData::SetRadiusFromValue(AtNode *node, const VtValue &value)
     auto *out = static_cast<float *>(AiArrayMap(arr));
     std::transform(values.begin(), values.end(), out, [](const float w) -> float { return w * 0.5f; });
     AiArrayUnmap(arr);
-  }
-  else if (value.IsHolding<VtDoubleArray>())
+  } else if (value.IsHolding<VtDoubleArray>())
   {
     const auto &values = value.UncheckedGet<VtDoubleArray>();
     arr = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
@@ -142,8 +141,7 @@ void ArnoldUsdCurvesData::SetRadiusFromValue(AtNode *node, const VtValue &value)
       return static_cast<float>(w * 0.5);
     });
     AiArrayUnmap(arr);
-  }
-  else if (value.IsHolding<VtHalfArray>())
+  } else if (value.IsHolding<VtHalfArray>())
   {
     const auto &values = value.UncheckedGet<VtHalfArray>();
     arr = AiArrayAllocate(values.size(), 1, AI_TYPE_FLOAT);
@@ -152,20 +150,16 @@ void ArnoldUsdCurvesData::SetRadiusFromValue(AtNode *node, const VtValue &value)
       return static_cast<float>(w) * 0.5f;
     });
     AiArrayUnmap(arr);
-  }
-  else if (value.IsHolding<float>())
+  } else if (value.IsHolding<float>())
   {
     arr = AiArray(1, 1, AI_TYPE_FLOAT, value.UncheckedGet<float>() / 2.0f);
-  }
-  else if (value.IsHolding<double>())
+  } else if (value.IsHolding<double>())
   {
     arr = AiArray(1, 1, AI_TYPE_FLOAT, static_cast<float>(value.UncheckedGet<double>() / 2.0));
-  }
-  else if (value.IsHolding<GfHalf>())
+  } else if (value.IsHolding<GfHalf>())
   {
     arr = AiArray(1, 1, AI_TYPE_FLOAT, static_cast<float>(value.UncheckedGet<GfHalf>()) / 2.0f);
-  }
-  else
+  } else
   {
     return;
   }

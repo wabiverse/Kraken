@@ -50,31 +50,34 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateRiPortalIntensityAttr(UsdRiLightPortalAPI &self,
-                                                 object defaultVal,
-                                                 bool writeSparsely)
-{
-  return self.CreateRiPortalIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                          writeSparsely);
-}
+  static UsdAttribute _CreateRiPortalIntensityAttr(UsdRiLightPortalAPI &self,
+                                                   object defaultVal,
+                                                   bool writeSparsely)
+  {
+    return self.CreateRiPortalIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                            writeSparsely);
+  }
 
-static UsdAttribute _CreateRiPortalTintAttr(UsdRiLightPortalAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRiPortalTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreateRiPortalTintAttr(UsdRiLightPortalAPI &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreateRiPortalTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
+                                       writeSparsely);
+  }
 
-static std::string _Repr(const UsdRiLightPortalAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.LightPortalAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiLightPortalAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.LightPortalAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -142,7 +145,7 @@ void wrapUsdRiLightPortalAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

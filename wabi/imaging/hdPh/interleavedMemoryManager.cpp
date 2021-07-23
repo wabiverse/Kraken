@@ -94,8 +94,7 @@ size_t HdPhInterleavedMemoryManager::GetResourceAllocation(HdBufferArraySharedPt
       {
         size_t currentSize = result[role].Get<size_t>();
         result[role] = VtValue(currentSize + size);
-      }
-      else
+      } else
       {
         result[role] = VtValue(size);
       }
@@ -302,8 +301,11 @@ HdPhInterleavedMemoryManager::_StripedInterleavedBuffer::_StripedInterleavedBuff
 
     _AddResource(it->name, it->tupleType, offset, _stride);
 
-    TF_DEBUG_MSG(
-      HD_BUFFER_ARRAY_INFO, "  %s : offset = %d, alignment = %d\n", it->name.GetText(), offset, alignment);
+    TF_DEBUG_MSG(HD_BUFFER_ARRAY_INFO,
+                 "  %s : offset = %d, alignment = %d\n",
+                 it->name.GetText(),
+                 offset,
+                 alignment);
 
     offset += HdDataSizeOfTupleType(it->tupleType);
   }
@@ -331,8 +333,10 @@ HdPhBufferResourceSharedPtr HdPhInterleavedMemoryManager::_StripedInterleavedBuf
     }
   }
 
-  HdPhBufferResourceSharedPtr bufferRes = std::make_shared<HdPhBufferResource>(
-    GetRole(), tupleType, offset, stride);
+  HdPhBufferResourceSharedPtr bufferRes = std::make_shared<HdPhBufferResource>(GetRole(),
+                                                                               tupleType,
+                                                                               offset,
+                                                                               stride);
 
   _resourceList.emplace_back(name, bufferRes);
   return bufferRes;
@@ -477,8 +481,7 @@ void HdPhInterleavedMemoryManager::_StripedInterleavedBuffer::Reallocate(
 
     // buffer copy
     relocator.Commit(blitCmds);
-  }
-  else
+  } else
   {
     // just set index
     int index = 0;
@@ -685,8 +688,7 @@ void HdPhInterleavedMemoryManager::StageBufferCopy(HgiBufferCpuToGpuOp const &co
     {
       // Accumulate the copy
       bufferEntry.end += copyOp.byteSize;
-    }
-    else
+    } else
     {
       // This buffer copy doesn't contiguously extend the queued copy
       // Submit the accumulated work to date
@@ -702,8 +704,7 @@ void HdPhInterleavedMemoryManager::StageBufferCopy(HgiBufferCpuToGpuOp const &co
       bufferEntry.start = copyOp.destinationByteOffset;
       bufferEntry.end = copyOp.destinationByteOffset + copyOp.byteSize;
     }
-  }
-  else
+  } else
   {
     uint64_t const start = copyOp.destinationByteOffset;
     uint64_t const end = copyOp.destinationByteOffset + copyOp.byteSize;

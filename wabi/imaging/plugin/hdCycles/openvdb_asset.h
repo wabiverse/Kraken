@@ -74,8 +74,7 @@ class HdCyclesVolumeLoader : public ccl::VDBImageLoader
       {
         TF_RUNTIME_ERROR("Error updating grid: %s", e.what());
       }
-    }
-    else
+    } else
     {
       TF_WARN("Volume file path is empty!");
     }

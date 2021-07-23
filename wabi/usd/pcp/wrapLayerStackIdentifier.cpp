@@ -38,14 +38,14 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string _Repr(const PcpLayerStackIdentifier &x)
-{
-  return TfStringPrintf("%sLayerStackIdentifier(%s, %s, %s)",
-                        TF_PY_REPR_PREFIX.c_str(),
-                        TfPyRepr(x.rootLayer).c_str(),
-                        TfPyRepr(x.sessionLayer).c_str(),
-                        TfPyRepr(x.pathResolverContext).c_str());
-}
+  static std::string _Repr(const PcpLayerStackIdentifier &x)
+  {
+    return TfStringPrintf("%sLayerStackIdentifier(%s, %s, %s)",
+                          TF_PY_REPR_PREFIX.c_str(),
+                          TfPyRepr(x.rootLayer).c_str(),
+                          TfPyRepr(x.sessionLayer).c_str(),
+                          TfPyRepr(x.pathResolverContext).c_str());
+  }
 
 }  // anonymous namespace
 

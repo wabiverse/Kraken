@@ -41,8 +41,7 @@ static T *_ExtractValue(object &pyObject, T *varPtr)
   {
     *varPtr = extractor();
     return varPtr;
-  }
-  else
+  } else
   {
     return NULL;
   }

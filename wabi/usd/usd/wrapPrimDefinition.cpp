@@ -106,6 +106,6 @@ void wrapUsdPrimDefinition()
          (UsdPrim(This::*)(const UsdPrim &, const TfToken &, SdfSpecifier) const) & This::FlattenTo,
          (arg("parent"), arg("name"), arg("newSpecSpecifier") = SdfSpecifierOver))
     .def("FlattenTo",
-         (bool (This::*)(const SdfLayerHandle &, const SdfPath &, SdfSpecifier) const) & This::FlattenTo,
+         (bool(This::*)(const SdfLayerHandle &, const SdfPath &, SdfSpecifier) const) & This::FlattenTo,
          (arg("layer"), arg("path"), arg("newSpecSpecifier") = SdfSpecifierOver));
 }

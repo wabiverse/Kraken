@@ -105,8 +105,7 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
 
   VkFormatFeatureFlags formatValidationFlags = HgiVulkanConversions::GetFormatFeature(desc.usage);
 
-  if (!_CheckFormatSupport(
-        device->GetVulkanPhysicalDevice(), imageCreateInfo.format, formatValidationFlags))
+  if (!_CheckFormatSupport(device->GetVulkanPhysicalDevice(), imageCreateInfo.format, formatValidationFlags))
   {
     TF_CODING_ERROR("Image format / usage combo not supported on device");
     return;
@@ -385,8 +384,10 @@ void HgiVulkanTexture::CopyBufferToTexture(HgiVulkanCommandBuffer *cb,
 
   std::vector<VkBufferImageCopy> bufferCopyRegions;
 
-  const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-    _descriptor.format, _descriptor.dimensions, _descriptor.layerCount, srcBuffer->GetDescriptor().byteSize);
+  const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(_descriptor.format,
+                                                          _descriptor.dimensions,
+                                                          _descriptor.layerCount,
+                                                          srcBuffer->GetDescriptor().byteSize);
 
   const size_t mipLevels = std::min(mipInfos.size(), size_t(_descriptor.mipLevels));
 
@@ -478,8 +479,16 @@ void HgiVulkanTexture::TransitionImageBarrier(HgiVulkanCommandBuffer *cb,
   // Insert a memory dependency at the proper pipeline stages that will
   // execute the image layout transition.
 
-  vkCmdPipelineBarrier(
-    cb->GetVulkanCommandBuffer(), producerStage, consumerStage, 0, 0, NULL, 0, NULL, 1, barrier);
+  vkCmdPipelineBarrier(cb->GetVulkanCommandBuffer(),
+                       producerStage,
+                       consumerStage,
+                       0,
+                       0,
+                       NULL,
+                       0,
+                       NULL,
+                       1,
+                       barrier);
 
   tex->_vkImageLayout = newLayout;
 }
@@ -495,16 +504,13 @@ VkImageLayout HgiVulkanTexture::GetDefaultImageLayout(HgiTextureUsage usage)
   {
     // Assume the ShaderWrite means its a storage image.
     return VK_IMAGE_LAYOUT_GENERAL;
-  }
-  else if (usage & HgiTextureUsageBitsShaderRead)
+  } else if (usage & HgiTextureUsageBitsShaderRead)
   {
     return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-  }
-  else if (usage & HgiTextureUsageBitsDepthTarget)
+  } else if (usage & HgiTextureUsageBitsDepthTarget)
   {
     return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-  }
-  else if (usage & HgiTextureUsageBitsColorTarget)
+  } else if (usage & HgiTextureUsageBitsColorTarget)
   {
     return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
   }
@@ -522,12 +528,10 @@ VkAccessFlags HgiVulkanTexture::GetDefaultAccessFlags(HgiTextureUsage usage)
   if (usage & HgiTextureUsageBitsShaderRead)
   {
     return VK_ACCESS_SHADER_READ_BIT;
-  }
-  else if (usage & HgiTextureUsageBitsDepthTarget)
+  } else if (usage & HgiTextureUsageBitsDepthTarget)
   {
     return VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-  }
-  else if (usage & HgiTextureUsageBitsColorTarget)
+  } else if (usage & HgiTextureUsageBitsColorTarget)
   {
     return VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
   }

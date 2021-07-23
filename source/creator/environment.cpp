@@ -41,5 +41,4 @@
  * to our installation. */
 
 void CREATOR_kraken_env_init()
-{
-}
+{}

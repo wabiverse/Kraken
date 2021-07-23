@@ -128,70 +128,70 @@ std::string Usd_UsdzResolver::Resolve(const std::string &packagePath, const std:
 namespace
 {
 
-class _Asset : public ArAsset
-{
- private:
-  std::shared_ptr<ArAsset> _sourceAsset;
-  UsdZipFile _zipFile;
-  const char *_dataInZipFile;
-  size_t _offsetInZipFile;
-  size_t _sizeInZipFile;
-
- public:
-  explicit _Asset(std::shared_ptr<ArAsset> &&sourceAsset,
-                  UsdZipFile &&zipFile,
-                  const char *dataInZipFile,
-                  size_t offsetInZipFile,
-                  size_t sizeInZipFile)
-    : _sourceAsset(std::move(sourceAsset)),
-      _zipFile(std::move(zipFile)),
-      _dataInZipFile(dataInZipFile),
-      _offsetInZipFile(offsetInZipFile),
-      _sizeInZipFile(sizeInZipFile)
-  {}
-
-  size_t GetSize() override
+  class _Asset : public ArAsset
   {
-    return _sizeInZipFile;
-  }
+   private:
+    std::shared_ptr<ArAsset> _sourceAsset;
+    UsdZipFile _zipFile;
+    const char *_dataInZipFile;
+    size_t _offsetInZipFile;
+    size_t _sizeInZipFile;
 
-  std::shared_ptr<const char> GetBuffer() override
-  {
-    struct _Deleter
+   public:
+    explicit _Asset(std::shared_ptr<ArAsset> &&sourceAsset,
+                    UsdZipFile &&zipFile,
+                    const char *dataInZipFile,
+                    size_t offsetInZipFile,
+                    size_t sizeInZipFile)
+      : _sourceAsset(std::move(sourceAsset)),
+        _zipFile(std::move(zipFile)),
+        _dataInZipFile(dataInZipFile),
+        _offsetInZipFile(offsetInZipFile),
+        _sizeInZipFile(sizeInZipFile)
+    {}
+
+    size_t GetSize() override
     {
-      void operator()(const char *b)
+      return _sizeInZipFile;
+    }
+
+    std::shared_ptr<const char> GetBuffer() override
+    {
+      struct _Deleter
       {
-        zipFile = UsdZipFile();
+        void operator()(const char *b)
+        {
+          zipFile = UsdZipFile();
+        }
+        UsdZipFile zipFile;
+      };
+
+      _Deleter d;
+      d.zipFile = _zipFile;
+
+      return std::shared_ptr<const char>(_dataInZipFile, d);
+    }
+
+    size_t Read(void *buffer, size_t count, size_t offset) override
+    {
+      if (ARCH_UNLIKELY(offset + count > _sizeInZipFile))
+      {
+        return 0;
       }
-      UsdZipFile zipFile;
-    };
-
-    _Deleter d;
-    d.zipFile = _zipFile;
-
-    return std::shared_ptr<const char>(_dataInZipFile, d);
-  }
-
-  size_t Read(void *buffer, size_t count, size_t offset) override
-  {
-    if (ARCH_UNLIKELY(offset + count > _sizeInZipFile))
-    {
-      return 0;
+      memcpy(buffer, _dataInZipFile + offset, count);
+      return count;
     }
-    memcpy(buffer, _dataInZipFile + offset, count);
-    return count;
-  }
 
-  std::pair<FILE *, size_t> GetFileUnsafe() override
-  {
-    std::pair<FILE *, size_t> result = _sourceAsset->GetFileUnsafe();
-    if (result.first)
+    std::pair<FILE *, size_t> GetFileUnsafe() override
     {
-      result.second += _offsetInZipFile;
+      std::pair<FILE *, size_t> result = _sourceAsset->GetFileUnsafe();
+      if (result.first)
+      {
+        result.second += _offsetInZipFile;
+      }
+      return result;
     }
-    return result;
-  }
-};
+  };
 
 }  // end anonymous namespace
 
@@ -217,15 +217,17 @@ std::shared_ptr<ArAsset> Usd_UsdzResolver::OpenAsset(const std::string &packageP
 
   if (info.compressionMethod != 0)
   {
-    TF_RUNTIME_ERROR(
-      "Cannot open %s in %s: compressed files are not supported", packagedPath.c_str(), packagePath.c_str());
+    TF_RUNTIME_ERROR("Cannot open %s in %s: compressed files are not supported",
+                     packagedPath.c_str(),
+                     packagePath.c_str());
     return nullptr;
   }
 
   if (info.encrypted)
   {
-    TF_RUNTIME_ERROR(
-      "Cannot open %s in %s: encrypted files are not supported", packagedPath.c_str(), packagePath.c_str());
+    TF_RUNTIME_ERROR("Cannot open %s in %s: encrypted files are not supported",
+                     packagedPath.c_str(),
+                     packagePath.c_str());
     return nullptr;
   }
 

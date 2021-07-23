@@ -55,8 +55,7 @@ GfRect2i GfRect2i::GetNormalized() const
   {
     min[0] = _max[0];
     max[0] = _min[0];
-  }
-  else
+  } else
   {
     min[0] = _min[0];
     max[0] = _max[0];
@@ -66,8 +65,7 @@ GfRect2i GfRect2i::GetNormalized() const
   {
     min[1] = _max[1];
     max[1] = _min[1];
-  }
-  else
+  } else
   {
     min[1] = _min[1];
     max[1] = _max[1];

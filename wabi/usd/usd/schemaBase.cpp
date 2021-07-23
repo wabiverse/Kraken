@@ -56,14 +56,12 @@ UsdSchemaBase::~UsdSchemaBase()
   // define new members.
 }
 
-const UsdPrimDefinition *
-UsdSchemaBase::GetSchemaClassPrimDefinition() const
+const UsdPrimDefinition *UsdSchemaBase::GetSchemaClassPrimDefinition() const
 {
   const UsdSchemaRegistry &reg = UsdSchemaRegistry::GetInstance();
   const TfToken usdTypeName = reg.GetSchemaTypeName(_GetType());
-  return IsAppliedAPISchema() ?
-           reg.FindAppliedAPIPrimDefinition(usdTypeName) :
-           reg.FindConcretePrimDefinition(usdTypeName);
+  return IsAppliedAPISchema() ? reg.FindAppliedAPIPrimDefinition(usdTypeName) :
+                                reg.FindConcretePrimDefinition(usdTypeName);
 }
 
 bool UsdSchemaBase::_IsCompatible() const
@@ -76,19 +74,17 @@ TF_MAKE_STATIC_DATA(TfType, _tfType)
 {
   *_tfType = TfType::Find<UsdSchemaBase>();
 }
-const TfType &
-UsdSchemaBase::GetTfType() const
+const TfType &UsdSchemaBase::GetTfType() const
 {
   return *_tfType;
 }
 
-UsdAttribute
-UsdSchemaBase::_CreateAttr(TfToken const &attrName,
-                           SdfValueTypeName const &typeName,
-                           bool custom,
-                           SdfVariability variability,
-                           VtValue const &defaultValue,
-                           bool writeSparsely) const
+UsdAttribute UsdSchemaBase::_CreateAttr(TfToken const &attrName,
+                                        SdfValueTypeName const &typeName,
+                                        bool custom,
+                                        SdfVariability variability,
+                                        VtValue const &defaultValue,
+                                        bool writeSparsely) const
 {
   UsdPrim prim(GetPrim());
 

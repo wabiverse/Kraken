@@ -96,18 +96,18 @@ TF_DEFINE_PRIVATE_TOKENS(
 
 namespace
 {
-enum AxesMask : uint8_t
-{
-  xPos = (1 << 0),
-  yPos = (1 << 1),
-  zPos = (1 << 2),
-  xNeg = (1 << 3),
-  yNeg = (1 << 4),
-  zNeg = (1 << 5),
-  xAxis = (xPos | xNeg),
-  yAxis = (yPos | yNeg),
-  zAxis = (zPos | zNeg),
-};
+  enum AxesMask : uint8_t
+  {
+    xPos = (1 << 0),
+    yPos = (1 << 1),
+    zPos = (1 << 2),
+    xNeg = (1 << 3),
+    yNeg = (1 << 4),
+    zNeg = (1 << 5),
+    xAxis = (xPos | xNeg),
+    yAxis = (yPos | yNeg),
+    zAxis = (zPos | zNeg),
+  };
 }  // namespace
 
 TF_REGISTRY_FUNCTION(TfType)
@@ -211,8 +211,7 @@ SdfPath UsdApolloDrawModeAdapter::Populate(UsdPrim const &prim,
     }
     index->InsertRprim(HdPrimTypeTokens->basisCurves, cachePath, cachePrim, rprimAdapter);
     HD_PERF_COUNTER_INCR(UsdImagingTokens->usdPopulatedPrimCount);
-  }
-  else if (drawMode == UsdGeomTokens->cards)
+  } else if (drawMode == UsdGeomTokens->cards)
   {
     /**
      * Cards draw as a mesh. */
@@ -223,11 +222,11 @@ SdfPath UsdApolloDrawModeAdapter::Populate(UsdPrim const &prim,
     }
     index->InsertRprim(HdPrimTypeTokens->mesh, cachePath, cachePrim, rprimAdapter);
     HD_PERF_COUNTER_INCR(UsdImagingTokens->usdPopulatedPrimCount);
-  }
-  else
+  } else
   {
-    TF_CODING_ERROR(
-      "Model <%s> has unsupported drawMode '%s'", prim.GetPath().GetText(), drawMode.GetText());
+    TF_CODING_ERROR("Model <%s> has unsupported drawMode '%s'",
+                    prim.GetPath().GetText(),
+                    drawMode.GetText());
     return SdfPath();
   }
 
@@ -268,8 +267,7 @@ void UsdApolloDrawModeAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingI
   if (_IsMaterialPath(cachePath))
   {
     index->RemoveSprim(HdPrimTypeTokens->material, cachePath);
-  }
-  else
+  } else
   {
     m_drawModeMap.erase(cachePath);
     index->RemoveRprim(cachePath);
@@ -284,8 +282,7 @@ void UsdApolloDrawModeAdapter::MarkDirty(UsdPrim const &prim,
   if (_IsMaterialPath(cachePath))
   {
     index->MarkSprimDirty(cachePath, dirty);
-  }
-  else
+  } else
   {
     index->MarkRprimDirty(cachePath, dirty);
   }
@@ -318,8 +315,7 @@ void UsdApolloDrawModeAdapter::MarkMaterialDirty(UsdPrim const &prim,
   if (_IsMaterialPath(cachePath))
   {
     index->MarkSprimDirty(cachePath, HdMaterial::DirtyResource);
-  }
-  else
+  } else
   {
     /**
      * If the Usd material changed, it could mean the primvar set also
@@ -358,13 +354,11 @@ void UsdApolloDrawModeAdapter::_ComputeGeometryData(UsdPrim const &prim,
   {
     *extent = _ComputeExtent(prim, _HasVaryingExtent(prim) ? time : UsdTimeCode::EarliestTime());
     _GenerateOriginGeometry(topology, points, *extent);
-  }
-  else if (drawMode == UsdGeomTokens->bounds)
+  } else if (drawMode == UsdGeomTokens->bounds)
   {
     *extent = _ComputeExtent(prim, _HasVaryingExtent(prim) ? time : UsdTimeCode::EarliestTime());
     _GenerateBoundsGeometry(topology, points, *extent);
-  }
-  else if (drawMode == UsdGeomTokens->cards)
+  } else if (drawMode == UsdGeomTokens->cards)
   {
     UsdGeomModelAPI model(prim);
     if (!model)
@@ -383,8 +377,7 @@ void UsdApolloDrawModeAdapter::_ComputeGeometryData(UsdPrim const &prim,
        * In "fromTexture" mode, read all the geometry data in from
        * the textures. */
       _GenerateCardsFromTextureGeometry(topology, points, uv, assign, extent, prim);
-    }
-    else
+    } else
     {
       /**
        * First compute the extents. */
@@ -435,15 +428,14 @@ void UsdApolloDrawModeAdapter::_ComputeGeometryData(UsdPrim const &prim,
       if (cardGeometry == UsdGeomTokens->cross)
       {
         _GenerateCardsCrossGeometry(topology, points, *extent, axes_mask);
-      }
-      else if (cardGeometry == UsdGeomTokens->box)
+      } else if (cardGeometry == UsdGeomTokens->box)
       {
         _GenerateCardsBoxGeometry(topology, points, *extent, axes_mask);
-      }
-      else
+      } else
       {
-        TF_CODING_ERROR(
-          "<%s> Unexpected card geometry mode %s", cachePath.GetText(), cardGeometry.GetText());
+        TF_CODING_ERROR("<%s> Unexpected card geometry mode %s",
+                        cachePath.GetText(),
+                        cardGeometry.GetText());
       }
 
       /**
@@ -451,8 +443,7 @@ void UsdApolloDrawModeAdapter::_ComputeGeometryData(UsdPrim const &prim,
        * drawing. */
       _SanityCheckFaceSizes(cachePath, *extent, axes_mask);
     }
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("<%s> Unexpected draw mode %s", cachePath.GetText(), drawMode.GetText());
   }
@@ -533,16 +524,14 @@ VtValue UsdApolloDrawModeAdapter::Get(UsdPrim const &prim,
     if (model)
     {
       model.GetModelDrawModeColorAttr().Get(&drawModeColor);
-    }
-    else
+    } else
     {
       drawModeColor = m_schemaColor;
     }
 
     color[0] = drawModeColor;
     value = color;
-  }
-  else if (key == HdTokens->displayOpacity)
+  } else if (key == HdTokens->displayOpacity)
   {
     VtFloatArray opacity = VtFloatArray(1);
 
@@ -550,14 +539,12 @@ VtValue UsdApolloDrawModeAdapter::Get(UsdPrim const &prim,
      * Full opacity. */
     opacity[0] = 1.0f;
     value = opacity;
-  }
-  else if (key == HdTokens->widths)
+  } else if (key == HdTokens->widths)
   {
     VtFloatArray widths = VtFloatArray(1);
     widths[0] = 1.0f;
     value = widths;
-  }
-  else if (key == HdTokens->points)
+  } else if (key == HdTokens->points)
   {
     TRACE_FUNCTION_SCOPE("points");
     TfToken drawMode = UsdGeomTokens->default_;
@@ -574,8 +561,7 @@ VtValue UsdApolloDrawModeAdapter::Get(UsdPrim const &prim,
     GfRange3d extent;
     _ComputeGeometryData(prim, cachePath, time, drawMode, &topology, &points, &extent, &uv, &assign);
     return points;
-  }
-  else if (key == _tokens->cardsUv)
+  } else if (key == _tokens->cardsUv)
   {
     TRACE_FUNCTION_SCOPE("cardsUV");
     TfToken drawMode = UsdGeomTokens->default_;
@@ -592,8 +578,7 @@ VtValue UsdApolloDrawModeAdapter::Get(UsdPrim const &prim,
     GfRange3d extent;
     _ComputeGeometryData(prim, cachePath, time, drawMode, &topology, &points, &extent, &uv, &assign);
     return uv;
-  }
-  else if (key == _tokens->cardsTexAssign)
+  } else if (key == _tokens->cardsTexAssign)
   {
     TRACE_FUNCTION_SCOPE("cardsTexAssign");
     TfToken drawMode = UsdGeomTokens->default_;
@@ -610,8 +595,7 @@ VtValue UsdApolloDrawModeAdapter::Get(UsdPrim const &prim,
     GfRange3d extent;
     _ComputeGeometryData(prim, cachePath, time, drawMode, &topology, &points, &extent, &uv, &assign);
     return assign;
-  }
-  else if (key == _tokens->displayRoughness)
+  } else if (key == _tokens->displayRoughness)
   {
     return VtValue(1.0f);
   }
@@ -642,8 +626,10 @@ VtValue UsdApolloDrawModeAdapter::GetMaterialResource(UsdPrim const &prim,
   SdfAssetPath path(UsdApolloPackageDrawModeShader());
 
   SdrRegistry &shaderReg = SdrRegistry::GetInstance();
-  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeFromAsset(
-    path, NdrTokenMap(), TfToken(), HioGlslfxTokens->glslfx);
+  SdrShaderNodeConstPtr sdrNode = shaderReg.GetShaderNodeFromAsset(path,
+                                                                   NdrTokenMap(),
+                                                                   TfToken(),
+                                                                   HioGlslfxTokens->glslfx);
 
   /**
    * An sdr node representing the drawCards.glslfx should be added
@@ -733,15 +719,13 @@ VtValue UsdApolloDrawModeAdapter::GetMaterialResource(UsdPrim const &prim,
         /**
          * Insert texture node. */
         network.nodes.emplace_back(std::move(textureNode));
-      }
-      else
+      } else
       {
         terminal.parameters[textureNames[i]] = drawModeColor;
         terminal.parameters[textureNames[i + 6]] = VtValue(1.f);
       }
     }
-  }
-  else
+  } else
   {
     for (int i = 0; i < 6; ++i)
     {
@@ -820,8 +804,10 @@ void UsdApolloDrawModeAdapter::TrackVariability(UsdPrim const &prim,
    * and master roots always have identity transform. */
   if (!prim.IsInstance())
   {
-    _IsTransformVarying(
-      prim, HdChangeTracker::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
+    _IsTransformVarying(prim,
+                        HdChangeTracker::DirtyTransform,
+                        UsdImagingTokens->usdVaryingXform,
+                        timeVaryingBits);
   }
 
   /**
@@ -994,8 +980,11 @@ void UsdApolloDrawModeAdapter::_GenerateOriginGeometry(VtValue *topo,
     curveIndices[i] = indices[i];
   }
 
-  HdBasisCurvesTopology topology(
-    HdTokens->linear, HdTokens->bezier, HdTokens->segmented, curveVertexCounts, curveIndices);
+  HdBasisCurvesTopology topology(HdTokens->linear,
+                                 HdTokens->bezier,
+                                 HdTokens->segmented,
+                                 curveVertexCounts,
+                                 curveIndices);
   *topo = VtValue(topology);
 }
 
@@ -1046,8 +1035,11 @@ void UsdApolloDrawModeAdapter::_GenerateBoundsGeometry(VtValue *topo,
     curveIndices[i] = indices[i];
   }
 
-  HdBasisCurvesTopology topology(
-    HdTokens->linear, HdTokens->bezier, HdTokens->segmented, curveVertexCounts, curveIndices);
+  HdBasisCurvesTopology topology(HdTokens->linear,
+                                 HdTokens->bezier,
+                                 HdTokens->segmented,
+                                 curveVertexCounts,
+                                 curveIndices);
   *topo = VtValue(topology);
 }
 
@@ -1135,8 +1127,11 @@ void UsdApolloDrawModeAdapter::_GenerateCardsCrossGeometry(VtValue *topo,
 
   VtIntArray holeIndices(0);
 
-  HdMeshTopology topology(
-    PxOsdOpenSubdivTokens->none, PxOsdOpenSubdivTokens->rightHanded, faceCounts, faceIndices, holeIndices);
+  HdMeshTopology topology(PxOsdOpenSubdivTokens->none,
+                          PxOsdOpenSubdivTokens->rightHanded,
+                          faceCounts,
+                          faceIndices,
+                          holeIndices);
 
   *points = VtValue(pt);
   *topo = VtValue(topology);
@@ -1264,8 +1259,11 @@ void UsdApolloDrawModeAdapter::_GenerateCardsBoxGeometry(VtValue *topo,
 
   VtIntArray holeIndices(0);
 
-  HdMeshTopology topology(
-    UsdGeomTokens->none, UsdGeomTokens->rightHanded, faceCounts, faceIndices, holeIndices);
+  HdMeshTopology topology(UsdGeomTokens->none,
+                          UsdGeomTokens->rightHanded,
+                          faceCounts,
+                          faceIndices,
+                          holeIndices);
 
   *points = VtValue(pt);
   *topo = VtValue(topology);
@@ -1305,8 +1303,10 @@ void UsdApolloDrawModeAdapter::_GenerateCardsFromTextureGeometry(VtValue *topo,
   VtIntArray faceCounts = VtIntArray(faces.size());
   VtIntArray faceIndices = VtIntArray(faces.size() * 4);
 
-  static const std::array<GfVec3f, 4> corners = {
-    GfVec3f(-1, -1, 0), GfVec3f(-1, 1, 0), GfVec3f(1, 1, 0), GfVec3f(1, -1, 0)};
+  static const std::array<GfVec3f, 4> corners = {GfVec3f(-1, -1, 0),
+                                                 GfVec3f(-1, 1, 0),
+                                                 GfVec3f(1, 1, 0),
+                                                 GfVec3f(1, -1, 0)};
   static const std::array<GfVec2f, 4> std_uvs = std::array<GfVec2f, 4>(
     {GfVec2f(0, 1), GfVec2f(0, 0), GfVec2f(1, 0), GfVec2f(1, 1)});
 
@@ -1326,8 +1326,11 @@ void UsdApolloDrawModeAdapter::_GenerateCardsFromTextureGeometry(VtValue *topo,
   /**
    * Create the topology object, and put our buffers in the out-values. */
   VtIntArray holeIndices(0);
-  HdMeshTopology topology(
-    UsdGeomTokens->none, UsdGeomTokens->rightHanded, faceCounts, faceIndices, holeIndices);
+  HdMeshTopology topology(UsdGeomTokens->none,
+                          UsdGeomTokens->rightHanded,
+                          faceCounts,
+                          faceIndices,
+                          holeIndices);
 
   *topo = VtValue(topology);
   *points = VtValue(arr_pt);
@@ -1346,33 +1349,33 @@ void UsdApolloDrawModeAdapter::_GenerateCardsFromTextureGeometry(VtValue *topo,
 namespace
 {
 
-template<class Vec>
-bool _ConvertToMatrix(const Vec &mvec, GfMatrix4d *mat)
-{
-  if (mvec.size() == 16)
+  template<class Vec>
+  bool _ConvertToMatrix(const Vec &mvec, GfMatrix4d *mat)
   {
-    mat->Set(mvec[0],
-             mvec[1],
-             mvec[2],
-             mvec[3],
-             mvec[4],
-             mvec[5],
-             mvec[6],
-             mvec[7],
-             mvec[8],
-             mvec[9],
-             mvec[10],
-             mvec[11],
-             mvec[12],
-             mvec[13],
-             mvec[14],
-             mvec[15]);
-    return true;
-  }
+    if (mvec.size() == 16)
+    {
+      mat->Set(mvec[0],
+               mvec[1],
+               mvec[2],
+               mvec[3],
+               mvec[4],
+               mvec[5],
+               mvec[6],
+               mvec[7],
+               mvec[8],
+               mvec[9],
+               mvec[10],
+               mvec[11],
+               mvec[12],
+               mvec[13],
+               mvec[14],
+               mvec[15]);
+      return true;
+    }
 
-  TF_WARN("worldtoscreen metadata expected 16 values, got %zu", mvec.size());
-  return false;
-};
+    TF_WARN("worldtoscreen metadata expected 16 values, got %zu", mvec.size());
+    return false;
+  };
 
 } /* namespace */
 
@@ -1418,22 +1421,18 @@ bool UsdApolloDrawModeAdapter::_GetMatrixFromImageMetadata(UsdAttribute const &a
     if (worldtoscreen.IsHolding<std::vector<float>>())
     {
       return _ConvertToMatrix(worldtoscreen.UncheckedGet<std::vector<float>>(), mat);
-    }
-    else if (worldtoscreen.IsHolding<std::vector<double>>())
+    } else if (worldtoscreen.IsHolding<std::vector<double>>())
     {
       return _ConvertToMatrix(worldtoscreen.UncheckedGet<std::vector<double>>(), mat);
-    }
-    else if (worldtoscreen.IsHolding<GfMatrix4f>())
+    } else if (worldtoscreen.IsHolding<GfMatrix4f>())
     {
       *mat = GfMatrix4d(worldtoscreen.UncheckedGet<GfMatrix4f>());
       return true;
-    }
-    else if (worldtoscreen.IsHolding<GfMatrix4d>())
+    } else if (worldtoscreen.IsHolding<GfMatrix4d>())
     {
       *mat = worldtoscreen.UncheckedGet<GfMatrix4d>();
       return true;
-    }
-    else
+    } else
     {
       TF_WARN("worldtoscreen metadata holding unexpected type '%s'", worldtoscreen.GetTypeName().c_str());
     }
@@ -1518,8 +1517,7 @@ GfRange3d UsdApolloDrawModeAdapter::_ComputeExtent(UsdPrim const &prim, const Us
   {
     UsdGeomBBoxCache bboxCache(timecode, purposes, true);
     return bboxCache.ComputeUntransformedBound(prim).ComputeAlignedBox();
-  }
-  else
+  } else
   {
     GfRange3d extent;
     UsdAttribute attr;
@@ -1532,9 +1530,8 @@ GfRange3d UsdApolloDrawModeAdapter::_ComputeExtent(UsdPrim const &prim, const Us
         attr.Get(&extentsHint, timecode) && extentsHint.size() == 2)
     {
       extent = GfRange3d(extentsHint[0], extentsHint[1]);
-    }
-    else if ((attr = UsdGeomModelAPI(prim).GetExtentsHintAttr()) && attr.Get(&extentsHint, timecode) &&
-             extentsHint.size() >= 2)
+    } else if ((attr = UsdGeomModelAPI(prim).GetExtentsHintAttr()) && attr.Get(&extentsHint, timecode) &&
+               extentsHint.size() >= 2)
     {
       /**
        * XXX: This code to merge the extentsHint values over a set of
@@ -1588,8 +1585,7 @@ GfMatrix4d UsdApolloDrawModeAdapter::GetTransform(UsdPrim const &prim,
   if (prim.IsInstance())
   {
     return GfMatrix4d(1.0);
-  }
-  else
+  } else
   {
     return BaseAdapter::GetTransform(prim, prim.GetPath(), time, ignoreRootTransform);
   }

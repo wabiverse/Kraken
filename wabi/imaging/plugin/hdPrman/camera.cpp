@@ -94,8 +94,7 @@ void HdPrmanCamera::SetRileyCameraParams(RtParamList &camParams, RtParamList &pr
   if (GetFStop() > 0)
   {
     projParams.SetFloat(RixStr.k_fStop, fStop);
-  }
-  else
+  } else
   {
     projParams.SetFloat(RixStr.k_fStop, RI_INFINITY);
   }

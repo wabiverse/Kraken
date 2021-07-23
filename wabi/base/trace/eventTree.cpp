@@ -83,8 +83,7 @@ void TraceEventTree::Merge(const TraceEventTreeRefPtr &tree)
       }
       // Update the thread times from the newly added children.
       (*it)->SetBeginAndEndTimesFromChildren();
-    }
-    else
+    } else
     {
       // Add the thread if it wasn't already in the tree.
       _root->Append(newThreadNode);
@@ -99,8 +98,7 @@ void TraceEventTree::Merge(const TraceEventTreeRefPtr &tree)
     {
       // Add new counter values;
       _counters.insert(p);
-    }
-    else
+    } else
     {
       // Merge new counter values to existing counter values.
       const size_t originalSize = it->second.size();
@@ -117,8 +115,7 @@ void TraceEventTree::Merge(const TraceEventTreeRefPtr &tree)
     {
       // Add new markers values;
       _markers.insert(p);
-    }
-    else
+    } else
     {
       // Merge new marker values to existing marker values.
       const size_t originalSize = it->second.size();
@@ -182,8 +179,7 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
         {
           js.WriteKey(range.first->first.GetString());
           range.first->second.WriteJson(js);
-        }
-        else
+        } else
         {
           js.WriteKey(it.first.GetString());
           js.WriteArray(range.first, range.second, [](JsWriter &js, AttrItr i) { i->second.WriteJson(js); });
@@ -198,8 +194,7 @@ static void TraceEventTree_WriteToJsonArray(const TraceEventNodeRefPtr &node,
     js.WriteKeyValue("ph", "X");  // Complete event
     js.WriteKeyValue("dur", _TimeStampToChromeTraceValue(node->GetEndTime() - node->GetBeginTime()));
     js.EndObject();
-  }
-  else
+  } else
   {
     js.WriteKeyValue("ph", "B");  // begin event
     js.EndObject();

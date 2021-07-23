@@ -49,12 +49,12 @@
 // Place rapidjson into a namespace to prevent conflicts with d2.
 #define RAPIDJSON_NAMESPACE PXRJS::rapidjson
 #define RAPIDJSON_NAMESPACE_BEGIN \
-  namespace PXRJS \
-  { \
-  namespace rapidjson \
-  {
+  namespace PXRJS                 \
+  {                               \
+    namespace rapidjson           \
+    {
 #define RAPIDJSON_NAMESPACE_END \
-  } \
+  }                             \
   }
 
 #include "rapidjson/allocators.h"
@@ -69,114 +69,114 @@ namespace rj = RAPIDJSON_NAMESPACE;
 
 namespace
 {
-WABI_NAMESPACE_USING
+  WABI_NAMESPACE_USING
 
-struct _InputHandler : public rj::BaseReaderHandler<rj::UTF8<>, _InputHandler>
-{
-  bool Null()
+  struct _InputHandler : public rj::BaseReaderHandler<rj::UTF8<>, _InputHandler>
   {
-    values.emplace_back();
-    return true;
-  }
-  bool Bool(bool b)
-  {
-    values.emplace_back(b);
-    return true;
-  }
-  bool Int(int i)
-  {
-    values.emplace_back(i);
-    return true;
-  }
-  bool Uint(unsigned u)
-  {
-    values.emplace_back(static_cast<uint64_t>(u));
-    return true;
-  }
-  bool Int64(int64_t i)
-  {
-    values.emplace_back(i);
-    return true;
-  }
-  bool Uint64(uint64_t u)
-  {
-    values.emplace_back(u);
-    return true;
-  }
-  bool Double(double d)
-  {
-    values.emplace_back(d);
-    return true;
-  }
-  bool String(const char *str, rj::SizeType length, bool /* copy */)
-  {
-    values.emplace_back(std::string(str, length));
-    return true;
-  }
-  bool Key(const char *str, rj::SizeType length, bool /* copy */)
-  {
-    keys.emplace_back(str, length);
-    return true;
-  }
-  bool StartObject()
-  {
-    return true;
-  }
-  bool EndObject(rj::SizeType memberCount)
-  {
-    const size_t kstart = keys.size() - memberCount;
-    const size_t vstart = values.size() - memberCount;
-
-    JsObject object;
-    for (size_t i = 0; i < memberCount; ++i)
+    bool Null()
     {
-      object.insert(std::make_pair(std::move(keys[kstart + i]), std::move(values[vstart + i])));
+      values.emplace_back();
+      return true;
+    }
+    bool Bool(bool b)
+    {
+      values.emplace_back(b);
+      return true;
+    }
+    bool Int(int i)
+    {
+      values.emplace_back(i);
+      return true;
+    }
+    bool Uint(unsigned u)
+    {
+      values.emplace_back(static_cast<uint64_t>(u));
+      return true;
+    }
+    bool Int64(int64_t i)
+    {
+      values.emplace_back(i);
+      return true;
+    }
+    bool Uint64(uint64_t u)
+    {
+      values.emplace_back(u);
+      return true;
+    }
+    bool Double(double d)
+    {
+      values.emplace_back(d);
+      return true;
+    }
+    bool String(const char *str, rj::SizeType length, bool /* copy */)
+    {
+      values.emplace_back(std::string(str, length));
+      return true;
+    }
+    bool Key(const char *str, rj::SizeType length, bool /* copy */)
+    {
+      keys.emplace_back(str, length);
+      return true;
+    }
+    bool StartObject()
+    {
+      return true;
+    }
+    bool EndObject(rj::SizeType memberCount)
+    {
+      const size_t kstart = keys.size() - memberCount;
+      const size_t vstart = values.size() - memberCount;
+
+      JsObject object;
+      for (size_t i = 0; i < memberCount; ++i)
+      {
+        object.insert(std::make_pair(std::move(keys[kstart + i]), std::move(values[vstart + i])));
+      }
+
+      keys.resize(kstart);
+      values.resize(vstart);
+
+      values.emplace_back(std::move(object));
+      return true;
+    }
+    bool BeginArray()
+    {
+      return true;
+    }
+    bool EndArray(rj::SizeType elementCount)
+    {
+      std::vector<JsValue> valueArray(values.end() - elementCount, values.end());
+      values.resize(values.size() - elementCount);
+      values.emplace_back(std::move(valueArray));
+      return true;
     }
 
-    keys.resize(kstart);
-    values.resize(vstart);
+   public:
+    std::vector<JsObject::key_type> keys;
+    std::vector<JsObject::mapped_type> values;
+  };
 
-    values.emplace_back(std::move(object));
-    return true;
-  }
-  bool BeginArray()
+  // This class is needed to override writing out doubles. There is a bug in
+  // rapidJSON when writing out some double values. These classes uses the Tf
+  // library to do the conversion instead.
+  // See: https://github.com/Tencent/rapidjson/issues/954
+
+  template<class TBase>
+  class _WriterFix : public TBase
   {
-    return true;
-  }
-  bool EndArray(rj::SizeType elementCount)
-  {
-    std::vector<JsValue> valueArray(values.end() - elementCount, values.end());
-    values.resize(values.size() - elementCount);
-    values.emplace_back(std::move(valueArray));
-    return true;
-  }
+   public:
+    using Base = TBase;
+    using Base::Base;
 
- public:
-  std::vector<JsObject::key_type> keys;
-  std::vector<JsObject::mapped_type> values;
-};
+    bool Double(double d)
+    {
+      constexpr int bufferSize = 32;
+      char buffer[bufferSize];
+      TfDoubleToString(d, buffer, bufferSize, true);
 
-// This class is needed to override writing out doubles. There is a bug in
-// rapidJSON when writing out some double values. These classes uses the Tf
-// library to do the conversion instead.
-// See: https://github.com/Tencent/rapidjson/issues/954
-
-template<class TBase>
-class _WriterFix : public TBase
-{
- public:
-  using Base = TBase;
-  using Base::Base;
-
-  bool Double(double d)
-  {
-    constexpr int bufferSize = 32;
-    char buffer[bufferSize];
-    TfDoubleToString(d, buffer, bufferSize, true);
-
-    return Base::RawValue(buffer, strlen(buffer), rj::kNumberType);
-  }
-};
+      return Base::RawValue(buffer, strlen(buffer), rj::kNumberType);
+    }
+  };
 
 }  // namespace
 
@@ -189,8 +189,9 @@ static rj::Value _ToImplObjectValue(const JsObject &object, Allocator &allocator
 
   for (const auto &p : object)
   {
-    value.AddMember(
-      rj::Value(p.first.c_str(), allocator).Move(), _JsValueToImplValue(p.second, allocator), allocator);
+    value.AddMember(rj::Value(p.first.c_str(), allocator).Move(),
+                    _JsValueToImplValue(p.second, allocator),
+                    allocator);
   }
 
   return value;
@@ -342,8 +343,7 @@ void JsWriteValue(JsWriter *writer, const JsValue &js)
       JsWriteValue(writer, field.second);
     }
     writer->EndObject();
-  }
-  else if (js.IsArray())
+  } else if (js.IsArray())
   {
     const JsArray &array = js.GetJsArray();
     writer->BeginArray();
@@ -352,28 +352,22 @@ void JsWriteValue(JsWriter *writer, const JsValue &js)
       JsWriteValue(writer, elem);
     }
     writer->EndArray();
-  }
-  else if (js.IsUInt64())
+  } else if (js.IsUInt64())
   {
     writer->WriteValue(js.GetUInt64());
-  }
-  else if (js.IsString())
+  } else if (js.IsString())
   {
     writer->WriteValue(js.GetString());
-  }
-  else if (js.IsBool())
+  } else if (js.IsBool())
   {
     writer->WriteValue(js.GetBool());
-  }
-  else if (js.IsReal())
+  } else if (js.IsReal())
   {
     writer->WriteValue(js.GetReal());
-  }
-  else if (js.IsInt())
+  } else if (js.IsInt())
   {
     writer->WriteValue(js.GetInt64());
-  }
-  else if (js.IsNull())
+  } else if (js.IsNull())
   {
     writer->WriteValue(nullptr);
   }
@@ -386,90 +380,90 @@ void JsWriteValue(JsWriter *writer, const JsValue &js)
 namespace
 {
 
-// This helper interface is to wrap rapidJSON Writer and PrettyWriter so we can
-// choose which writer to use at runtime.
-class Js_PolymorphicWriterInterface
-{
- public:
-  virtual ~Js_PolymorphicWriterInterface();
-  virtual bool Null() = 0;
-  virtual bool Bool(bool b) = 0;
-  virtual bool Int(int i) = 0;
-  virtual bool Uint(unsigned u) = 0;
-  virtual bool Int64(int64_t i64) = 0;
-  virtual bool Uint64(uint64_t u64) = 0;
-  virtual bool Double(double d) = 0;
-  virtual bool String(const char *str, size_t length) = 0;
-  virtual bool StartObject() = 0;
-  virtual bool Key(const char *str, size_t length) = 0;
-  virtual bool EndObject() = 0;
-  virtual bool StartArray() = 0;
-  virtual bool EndArray() = 0;
-};
+  // This helper interface is to wrap rapidJSON Writer and PrettyWriter so we can
+  // choose which writer to use at runtime.
+  class Js_PolymorphicWriterInterface
+  {
+   public:
+    virtual ~Js_PolymorphicWriterInterface();
+    virtual bool Null() = 0;
+    virtual bool Bool(bool b) = 0;
+    virtual bool Int(int i) = 0;
+    virtual bool Uint(unsigned u) = 0;
+    virtual bool Int64(int64_t i64) = 0;
+    virtual bool Uint64(uint64_t u64) = 0;
+    virtual bool Double(double d) = 0;
+    virtual bool String(const char *str, size_t length) = 0;
+    virtual bool StartObject() = 0;
+    virtual bool Key(const char *str, size_t length) = 0;
+    virtual bool EndObject() = 0;
+    virtual bool StartArray() = 0;
+    virtual bool EndArray() = 0;
+  };
 
-Js_PolymorphicWriterInterface::~Js_PolymorphicWriterInterface() = default;
+  Js_PolymorphicWriterInterface::~Js_PolymorphicWriterInterface() = default;
 
-// Wraps the rapidJSON class and exposes its interface via virtual functions.
-template<class TWriter>
-class Js_PolymorphicWriter : public Js_PolymorphicWriterInterface, public TWriter
-{
- public:
-  using Writer = TWriter;
-  using Writer::Writer;
+  // Wraps the rapidJSON class and exposes its interface via virtual functions.
+  template<class TWriter>
+  class Js_PolymorphicWriter : public Js_PolymorphicWriterInterface, public TWriter
+  {
+   public:
+    using Writer = TWriter;
+    using Writer::Writer;
 
-  bool Null() override
-  {
-    return Writer::Null();
-  }
-  bool Bool(bool b) override
-  {
-    return Writer::Bool(b);
-  }
-  bool Int(int i) override
-  {
-    return Writer::Int(i);
-  }
-  bool Uint(unsigned u) override
-  {
-    return Writer::Uint(u);
-  }
-  bool Int64(int64_t i64) override
-  {
-    return Writer::Int64(i64);
-  }
-  bool Uint64(uint64_t u64) override
-  {
-    return Writer::Uint64(u64);
-  }
-  bool Double(double d) override
-  {
-    return Writer::Double(d);
-  }
-  bool String(const char *str, size_t length) override
-  {
-    return Writer::String(str, length);
-  }
-  bool StartObject() override
-  {
-    return Writer::StartObject();
-  }
-  bool Key(const char *str, size_t length) override
-  {
-    return Writer::Key(str, length);
-  }
-  bool EndObject() override
-  {
-    return Writer::EndObject();
-  }
-  bool StartArray() override
-  {
-    return Writer::StartArray();
-  }
-  bool EndArray() override
-  {
-    return Writer::EndArray();
-  }
-};
+    bool Null() override
+    {
+      return Writer::Null();
+    }
+    bool Bool(bool b) override
+    {
+      return Writer::Bool(b);
+    }
+    bool Int(int i) override
+    {
+      return Writer::Int(i);
+    }
+    bool Uint(unsigned u) override
+    {
+      return Writer::Uint(u);
+    }
+    bool Int64(int64_t i64) override
+    {
+      return Writer::Int64(i64);
+    }
+    bool Uint64(uint64_t u64) override
+    {
+      return Writer::Uint64(u64);
+    }
+    bool Double(double d) override
+    {
+      return Writer::Double(d);
+    }
+    bool String(const char *str, size_t length) override
+    {
+      return Writer::String(str, length);
+    }
+    bool StartObject() override
+    {
+      return Writer::StartObject();
+    }
+    bool Key(const char *str, size_t length) override
+    {
+      return Writer::Key(str, length);
+    }
+    bool EndObject() override
+    {
+      return Writer::EndObject();
+    }
+    bool StartArray() override
+    {
+      return Writer::StartArray();
+    }
+    bool EndArray() override
+    {
+      return Writer::EndArray();
+    }
+  };
 
 }  // namespace
 

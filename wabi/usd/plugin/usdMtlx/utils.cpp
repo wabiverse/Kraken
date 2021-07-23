@@ -59,32 +59,32 @@ TF_DEFINE_PUBLIC_TOKENS(UsdMtlxTokens, USD_MTLX_TOKENS);
 namespace
 {
 
-using DocumentCache = std::map<std::string, mx::DocumentPtr>;
+  using DocumentCache = std::map<std::string, mx::DocumentPtr>;
 
-static DocumentCache &_GetCache()
-{
-  static DocumentCache cache;
-  return cache;
-}
-
-// This exists in 1.35.5 and later as method copyContentFrom on Element.
-static void _CopyContent(mx::ElementPtr dst, const mx::ConstElementPtr &source)
-{
-  dst->setSourceUri(source->getSourceUri());
-  for (auto &&name : source->getAttributeNames())
+  static DocumentCache &_GetCache()
   {
-    dst->setAttribute(name, source->getAttribute(name));
+    static DocumentCache cache;
+    return cache;
   }
-  for (auto &&child : source->getChildren())
-  {
-    _CopyContent(dst->addChildOfCategory(child->getCategory(), child->getName()), child);
-  }
-}
 
-VtValue _GetUsdValue(const std::string &valueString, const std::string &type)
-{
-  static const std::string filename("filename");
-  static const std::string geomname("geomname");
+  // This exists in 1.35.5 and later as method copyContentFrom on Element.
+  static void _CopyContent(mx::ElementPtr dst, const mx::ConstElementPtr &source)
+  {
+    dst->setSourceUri(source->getSourceUri());
+    for (auto &&name : source->getAttributeNames())
+    {
+      dst->setAttribute(name, source->getAttribute(name));
+    }
+    for (auto &&child : source->getChildren())
+    {
+      _CopyContent(dst->addChildOfCategory(child->getCategory(), child->getName()), child);
+    }
+  }
+
+  VtValue _GetUsdValue(const std::string &valueString, const std::string &type)
+  {
+    static const std::string filename("filename");
+    static const std::string geomname("geomname");
 
 #define CAST(Type, Cast) \
   if (value->isA<Type>()) \
@@ -129,62 +129,62 @@ VtValue _GetUsdValue(const std::string &valueString, const std::string &type)
     return VtValue(result); \
   }
 
-  if (valueString.empty())
-  {
-    return VtValue();
-  }
-
-  // Get the value.
-  if (auto value = mx::Value::createValueFromStrings(valueString, type))
-  {
-    CAST(bool, bool)
-    CAST(int, int)
-    CAST(float, float)
-    if (value->isA<std::string>())
+    if (valueString.empty())
     {
-      if (type == filename)
-      {
-        return VtValue(SdfAssetPath(value->asA<std::string>()));
-      }
-      if (type == geomname)
-      {
-        // XXX -- Check string is a valid path, maybe do some
-        //        translations.  Also this result must be used
-        //        as a relationship target;  SdfPath is not a
-        //        valid value type.
-        return VtValue(value->asA<std::string>());
-      }
-      return VtValue(value->asA<std::string>());
+      return VtValue();
     }
 
-    CASTA(bool, bool)
-    CASTA(int, int)
-    CASTA(float, float)
-    CASTA(std::string, std::string)
+    // Get the value.
+    if (auto value = mx::Value::createValueFromStrings(valueString, type))
+    {
+      CAST(bool, bool)
+      CAST(int, int)
+      CAST(float, float)
+      if (value->isA<std::string>())
+      {
+        if (type == filename)
+        {
+          return VtValue(SdfAssetPath(value->asA<std::string>()));
+        }
+        if (type == geomname)
+        {
+          // XXX -- Check string is a valid path, maybe do some
+          //        translations.  Also this result must be used
+          //        as a relationship target;  SdfPath is not a
+          //        valid value type.
+          return VtValue(value->asA<std::string>());
+        }
+        return VtValue(value->asA<std::string>());
+      }
 
-    CASTV(mx::Color3, GfVec3f)
-    CASTV(mx::Color4, GfVec4f)
-    CASTV(mx::Vector2, GfVec2f)
-    CASTV(mx::Vector3, GfVec3f)
-    CASTV(mx::Vector4, GfVec4f)
+      CASTA(bool, bool)
+      CASTA(int, int)
+      CASTA(float, float)
+      CASTA(std::string, std::string)
 
-    CASTM(mx::Matrix33, GfMatrix3d)
-    CASTM(mx::Matrix44, GfMatrix4d)
+      CASTV(mx::Color3, GfVec3f)
+      CASTV(mx::Color4, GfVec4f)
+      CASTV(mx::Vector2, GfVec2f)
+      CASTV(mx::Vector3, GfVec3f)
+      CASTV(mx::Vector4, GfVec4f)
 
-    // Aliases.
-    CAST(long, int)
-    CAST(double, float)
+      CASTM(mx::Matrix33, GfMatrix3d)
+      CASTM(mx::Matrix44, GfMatrix4d)
 
-    TF_WARN("MaterialX unsupported type %s", type.c_str());
-  }
+      // Aliases.
+      CAST(long, int)
+      CAST(double, float)
 
-  return VtValue();
+      TF_WARN("MaterialX unsupported type %s", type.c_str());
+    }
+
+    return VtValue();
 
 #undef CAST
 #undef CASTV
 #undef CASTM
 #undef CASTA
-}
+  }
 
 }  // anonymous namespace
 
@@ -286,8 +286,7 @@ mx::ConstDocumentPtr UsdMtlxGetDocument(const std::string &resolvedUri)
         continue;
       }
     }
-  }
-  else
+  } else
   {
     try
     {
@@ -316,14 +315,12 @@ NdrVersion UsdMtlxGetVersion(const mx::ConstInterfaceElementPtr &mtlx, bool *imp
   if (versionString.empty())
   {
     // No version specified.  Use the default.
-  }
-  else
+  } else
   {
     if (auto tmp = NdrVersion(versionString))
     {
       version = tmp;
-    }
-    else
+    } else
     {
       // Invalid version.  Use the default instead of failing.
     }
@@ -337,8 +334,7 @@ NdrVersion UsdMtlxGetVersion(const mx::ConstInterfaceElementPtr &mtlx, bool *imp
     {
       *implicitDefault = false;
       version = version.GetAsDefault();
-    }
-    else
+    } else
     {
       // No opinion means implicitly a (potential) default.
       *implicitDefault = true;

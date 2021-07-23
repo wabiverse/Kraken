@@ -43,43 +43,44 @@ WABI_NAMESPACE_USING;
 namespace
 {
 
-boost::python::tuple _ComputeSubShapeWeights(const UsdSkelBlendShapeQuery &self, const VtFloatArray &weights)
-{
-  VtFloatArray subShapeWeights;
-  VtUIntArray blendShapeIndices;
-  VtUIntArray subShapeIndices;
-
-  self.ComputeSubShapeWeights(weights, &subShapeWeights, &blendShapeIndices, &subShapeIndices);
-
-  return boost::python::make_tuple(subShapeWeights, blendShapeIndices, subShapeIndices);
-}
-
-template<typename T>
-std::vector<T> _PyListToVector(const list &l)
-{
-  std::vector<T> vec(len(l));
-  for (size_t i = 0; i < vec.size(); ++i)
+  boost::python::tuple _ComputeSubShapeWeights(const UsdSkelBlendShapeQuery &self,
+                                               const VtFloatArray &weights)
   {
-    vec[i] = extract<T>(l[i]);
-  }
-  return vec;
-}
+    VtFloatArray subShapeWeights;
+    VtUIntArray blendShapeIndices;
+    VtUIntArray subShapeIndices;
 
-bool _ComputeDeformedPoints(const UsdSkelBlendShapeQuery &self,
-                            const TfSpan<const float> subShapeWeights,
-                            const TfSpan<const unsigned> blendShapeIndices,
-                            const TfSpan<const unsigned> subShapeIndices,
-                            const list &blendShapePointIndices,
-                            const list &subShapePointOffsets,
-                            TfSpan<GfVec3f> points)
-{
-  return self.ComputeDeformedPoints(subShapeWeights,
-                                    blendShapeIndices,
-                                    subShapeIndices,
-                                    _PyListToVector<VtIntArray>(blendShapePointIndices),
-                                    _PyListToVector<VtVec3fArray>(subShapePointOffsets),
-                                    points);
-}
+    self.ComputeSubShapeWeights(weights, &subShapeWeights, &blendShapeIndices, &subShapeIndices);
+
+    return boost::python::make_tuple(subShapeWeights, blendShapeIndices, subShapeIndices);
+  }
+
+  template<typename T>
+  std::vector<T> _PyListToVector(const list &l)
+  {
+    std::vector<T> vec(len(l));
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+      vec[i] = extract<T>(l[i]);
+    }
+    return vec;
+  }
+
+  bool _ComputeDeformedPoints(const UsdSkelBlendShapeQuery &self,
+                              const TfSpan<const float> subShapeWeights,
+                              const TfSpan<const unsigned> blendShapeIndices,
+                              const TfSpan<const unsigned> subShapeIndices,
+                              const list &blendShapePointIndices,
+                              const list &subShapePointOffsets,
+                              TfSpan<GfVec3f> points)
+  {
+    return self.ComputeDeformedPoints(subShapeWeights,
+                                      blendShapeIndices,
+                                      subShapeIndices,
+                                      _PyListToVector<VtIntArray>(blendShapePointIndices),
+                                      _PyListToVector<VtVec3fArray>(subShapePointOffsets),
+                                      points);
+  }
 
 }  // namespace
 

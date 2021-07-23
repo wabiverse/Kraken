@@ -63,159 +63,155 @@ class SdfAssetPath;
 ///
 class UsdPhysicsMeshCollisionAPI : public UsdAPISchemaBase
 {
-public:
-    /// Compile time constant representing what kind of schema this class is.
-    ///
-    /// \sa UsdSchemaKind
-    static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
+ public:
+  /// Compile time constant representing what kind of schema this class is.
+  ///
+  /// \sa UsdSchemaKind
+  static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
-    /// Construct a UsdPhysicsMeshCollisionAPI on UsdPrim \p prim .
-    /// Equivalent to UsdPhysicsMeshCollisionAPI::Get(prim.GetStage(), prim.GetPath())
-    /// for a \em valid \p prim, but will not immediately throw an error for
-    /// an invalid \p prim
-    explicit UsdPhysicsMeshCollisionAPI(const UsdPrim& prim=UsdPrim())
-        : UsdAPISchemaBase(prim)
-    {
-    }
+  /// Construct a UsdPhysicsMeshCollisionAPI on UsdPrim \p prim .
+  /// Equivalent to UsdPhysicsMeshCollisionAPI::Get(prim.GetStage(), prim.GetPath())
+  /// for a \em valid \p prim, but will not immediately throw an error for
+  /// an invalid \p prim
+  explicit UsdPhysicsMeshCollisionAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
+  {}
 
-    /// Construct a UsdPhysicsMeshCollisionAPI on the prim held by \p schemaObj .
-    /// Should be preferred over UsdPhysicsMeshCollisionAPI(schemaObj.GetPrim()),
-    /// as it preserves SchemaBase state.
-    explicit UsdPhysicsMeshCollisionAPI(const UsdSchemaBase& schemaObj)
-        : UsdAPISchemaBase(schemaObj)
-    {
-    }
+  /// Construct a UsdPhysicsMeshCollisionAPI on the prim held by \p schemaObj .
+  /// Should be preferred over UsdPhysicsMeshCollisionAPI(schemaObj.GetPrim()),
+  /// as it preserves SchemaBase state.
+  explicit UsdPhysicsMeshCollisionAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
+  {}
 
-    /// Destructor.
-    USDPHYSICS_API
-    virtual ~UsdPhysicsMeshCollisionAPI();
+  /// Destructor.
+  USDPHYSICS_API
+  virtual ~UsdPhysicsMeshCollisionAPI();
 
-    /// Return a vector of names of all pre-declared attributes for this schema
-    /// class and all its ancestor classes.  Does not include attributes that
-    /// may be authored by custom/extended methods of the schemas involved.
-    USDPHYSICS_API
-    static const TfTokenVector &
-    GetSchemaAttributeNames(bool includeInherited=true);
+  /// Return a vector of names of all pre-declared attributes for this schema
+  /// class and all its ancestor classes.  Does not include attributes that
+  /// may be authored by custom/extended methods of the schemas involved.
+  USDPHYSICS_API
+  static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true);
 
-    /// Return a UsdPhysicsMeshCollisionAPI holding the prim adhering to this
-    /// schema at \p path on \p stage.  If no prim exists at \p path on
-    /// \p stage, or if the prim at that path does not adhere to this schema,
-    /// return an invalid schema object.  This is shorthand for the following:
-    ///
-    /// \code
-    /// UsdPhysicsMeshCollisionAPI(stage->GetPrimAtPath(path));
-    /// \endcode
-    ///
-    USDPHYSICS_API
-    static UsdPhysicsMeshCollisionAPI
-    Get(const UsdStagePtr &stage, const SdfPath &path);
+  /// Return a UsdPhysicsMeshCollisionAPI holding the prim adhering to this
+  /// schema at \p path on \p stage.  If no prim exists at \p path on
+  /// \p stage, or if the prim at that path does not adhere to this schema,
+  /// return an invalid schema object.  This is shorthand for the following:
+  ///
+  /// \code
+  /// UsdPhysicsMeshCollisionAPI(stage->GetPrimAtPath(path));
+  /// \endcode
+  ///
+  USDPHYSICS_API
+  static UsdPhysicsMeshCollisionAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
 
-    /// Returns true if this <b>single-apply</b> API schema can be applied to 
-    /// the given \p prim. If this schema can not be a applied to the prim, 
-    /// this returns false and, if provided, populates \p whyNot with the 
-    /// reason it can not be applied.
-    /// 
-    /// Note that if CanApply returns false, that does not necessarily imply
-    /// that calling Apply will fail. Callers are expected to call CanApply
-    /// before calling Apply if they want to ensure that it is valid to 
-    /// apply a schema.
-    /// 
-    /// \sa UsdPrim::GetAppliedSchemas()
-    /// \sa UsdPrim::HasAPI()
-    /// \sa UsdPrim::CanApplyAPI()
-    /// \sa UsdPrim::ApplyAPI()
-    /// \sa UsdPrim::RemoveAPI()
-    ///
-    USDPHYSICS_API
-    static bool 
-    CanApply(const UsdPrim &prim, std::string *whyNot=nullptr);
+  /// Returns true if this <b>single-apply</b> API schema can be applied to
+  /// the given \p prim. If this schema can not be a applied to the prim,
+  /// this returns false and, if provided, populates \p whyNot with the
+  /// reason it can not be applied.
+  ///
+  /// Note that if CanApply returns false, that does not necessarily imply
+  /// that calling Apply will fail. Callers are expected to call CanApply
+  /// before calling Apply if they want to ensure that it is valid to
+  /// apply a schema.
+  ///
+  /// \sa UsdPrim::GetAppliedSchemas()
+  /// \sa UsdPrim::HasAPI()
+  /// \sa UsdPrim::CanApplyAPI()
+  /// \sa UsdPrim::ApplyAPI()
+  /// \sa UsdPrim::RemoveAPI()
+  ///
+  USDPHYSICS_API
+  static bool CanApply(const UsdPrim &prim, std::string *whyNot = nullptr);
 
-    /// Applies this <b>single-apply</b> API schema to the given \p prim.
-    /// This information is stored by adding "PhysicsMeshCollisionAPI" to the 
-    /// token-valued, listOp metadata \em apiSchemas on the prim.
-    /// 
-    /// \return A valid UsdPhysicsMeshCollisionAPI object is returned upon success. 
-    /// An invalid (or empty) UsdPhysicsMeshCollisionAPI object is returned upon 
-    /// failure. See \ref UsdPrim::ApplyAPI() for conditions 
-    /// resulting in failure. 
-    /// 
-    /// \sa UsdPrim::GetAppliedSchemas()
-    /// \sa UsdPrim::HasAPI()
-    /// \sa UsdPrim::CanApplyAPI()
-    /// \sa UsdPrim::ApplyAPI()
-    /// \sa UsdPrim::RemoveAPI()
-    ///
-    USDPHYSICS_API
-    static UsdPhysicsMeshCollisionAPI 
-    Apply(const UsdPrim &prim);
+  /// Applies this <b>single-apply</b> API schema to the given \p prim.
+  /// This information is stored by adding "PhysicsMeshCollisionAPI" to the
+  /// token-valued, listOp metadata \em apiSchemas on the prim.
+  ///
+  /// \return A valid UsdPhysicsMeshCollisionAPI object is returned upon success.
+  /// An invalid (or empty) UsdPhysicsMeshCollisionAPI object is returned upon
+  /// failure. See \ref UsdPrim::ApplyAPI() for conditions
+  /// resulting in failure.
+  ///
+  /// \sa UsdPrim::GetAppliedSchemas()
+  /// \sa UsdPrim::HasAPI()
+  /// \sa UsdPrim::CanApplyAPI()
+  /// \sa UsdPrim::ApplyAPI()
+  /// \sa UsdPrim::RemoveAPI()
+  ///
+  USDPHYSICS_API
+  static UsdPhysicsMeshCollisionAPI Apply(const UsdPrim &prim);
 
-protected:
-    /// Returns the kind of schema this class belongs to.
-    ///
-    /// \sa UsdSchemaKind
-    USDPHYSICS_API
-    UsdSchemaKind GetSchemaKind() const override;
+ protected:
+  /// Returns the kind of schema this class belongs to.
+  ///
+  /// \sa UsdSchemaKind
+  USDPHYSICS_API
+  UsdSchemaKind GetSchemaKind() const override;
 
-private:
-    // needs to invoke GetStaticTfType.
-    friend class UsdSchemaRegistry;
-    USDPHYSICS_API
-    static const TfType &GetStaticTfType();
+ private:
+  // needs to invoke GetStaticTfType.
+  friend class UsdSchemaRegistry;
+  USDPHYSICS_API
+  static const TfType &GetStaticTfType();
 
-    static bool IsTypedSchema();
+  static bool IsTypedSchema();
 
-    // override SchemaBase virtuals.
-    USDPHYSICS_API
-    const TfType &GetTfType() const override;
+  // override SchemaBase virtuals.
+  USDPHYSICS_API
+  const TfType &GetTfType() const override;
 
-public:
-    // --------------------------------------------------------------------- //
-    // APPROXIMATION 
-    // --------------------------------------------------------------------- //
-    /// Determines the mesh's collision approximation:
-    /// "none" - The mesh geometry is used directly as a collider without any 
-    /// approximation.
-    /// "convexDecomposition" - A convex mesh decomposition is performed. This 
-    /// results in a set of convex mesh colliders.
-    /// "convexHull" - A convex hull of the mesh is generated and used as the 
-    /// collider.
-    /// "boundingSphere" - A bounding sphere is computed around the mesh and used 
-    /// as a collider.
-    /// "boundingCube" - An optimally fitting box collider is computed around the 
-    /// mesh.
-    /// "meshSimplification" - A mesh simplification step is performed, resulting 
-    /// in a simplified triangle mesh collider.
-    ///
-    /// | ||
-    /// | -- | -- |
-    /// | Declaration | `uniform token physics:approximation = "none"` |
-    /// | C++ Type | TfToken |
-    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
-    /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
-    /// | \ref UsdPhysicsTokens "Allowed Values" | none, convexDecomposition, convexHull, boundingSphere, boundingCube, meshSimplification |
-    USDPHYSICS_API
-    UsdAttribute GetApproximationAttr() const;
+ public:
+  // --------------------------------------------------------------------- //
+  // APPROXIMATION
+  // --------------------------------------------------------------------- //
+  /// Determines the mesh's collision approximation:
+  /// "none" - The mesh geometry is used directly as a collider without any
+  /// approximation.
+  /// "convexDecomposition" - A convex mesh decomposition is performed. This
+  /// results in a set of convex mesh colliders.
+  /// "convexHull" - A convex hull of the mesh is generated and used as the
+  /// collider.
+  /// "boundingSphere" - A bounding sphere is computed around the mesh and used
+  /// as a collider.
+  /// "boundingCube" - An optimally fitting box collider is computed around the
+  /// mesh.
+  /// "meshSimplification" - A mesh simplification step is performed, resulting
+  /// in a simplified triangle mesh collider.
+  ///
+  /// | ||
+  /// | -- | -- |
+  /// | Declaration | `uniform token physics:approximation = "none"` |
+  /// | C++ Type | TfToken |
+  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
+  /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
+  /// | \ref UsdPhysicsTokens "Allowed Values" | none, convexDecomposition, convexHull, boundingSphere,
+  /// boundingCube, meshSimplification |
+  USDPHYSICS_API
+  UsdAttribute GetApproximationAttr() const;
 
-    /// See GetApproximationAttr(), and also 
-    /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
-    /// If specified, author \p defaultValue as the attribute's default,
-    /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
-    /// the default for \p writeSparsely is \c false.
-    USDPHYSICS_API
-    UsdAttribute CreateApproximationAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
+  /// See GetApproximationAttr(), and also
+  /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
+  /// If specified, author \p defaultValue as the attribute's default,
+  /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
+  /// the default for \p writeSparsely is \c false.
+  USDPHYSICS_API
+  UsdAttribute CreateApproximationAttr(VtValue const &defaultValue = VtValue(),
+                                       bool writeSparsely = false) const;
 
-public:
-    // ===================================================================== //
-    // Feel free to add custom code below this line, it will be preserved by 
-    // the code generator. 
-    //
-    // Just remember to: 
-    //  - Close the class declaration with }; 
-    //  - Close the namespace with WABI_NAMESPACE_END
-    //  - Close the include guard with #endif
-    // ===================================================================== //
-    // --(BEGIN CUSTOM CODE)--
+ public:
+  // ===================================================================== //
+  // Feel free to add custom code below this line, it will be preserved by
+  // the code generator.
+  //
+  // Just remember to:
+  //  - Close the class declaration with };
+  //  - Close the namespace with WABI_NAMESPACE_END
+  //  - Close the include guard with #endif
+  // ===================================================================== //
+  // --(BEGIN CUSTOM CODE)--
 };
 
 WABI_NAMESPACE_END

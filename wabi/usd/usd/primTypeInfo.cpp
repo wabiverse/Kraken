@@ -75,15 +75,15 @@ const UsdPrimDefinition *UsdPrimTypeInfo::_FindOrCreatePrimDefinition() const
     // will be constant. Thus, we don't have to check if another thread
     // cached it first as all threads would store the same pointer.
     _primDefinition.store(primDef, std::memory_order_relaxed);
-  }
-  else
+  } else
   {
     // If we have applied schemas, then we need ask the schema registry to
     // compose a prim definition for us from the list of types. The schema
     // registry does NOT take ownership of this new prim definition; this
     // type info will own it instead.
     std::unique_ptr<UsdPrimDefinition> composedPrimDef = reg.BuildComposedPrimDefinition(
-      _schemaTypeName, _typeId.appliedAPISchemas);
+      _schemaTypeName,
+      _typeId.appliedAPISchemas);
     // Try to cache the new prim definition, but if another thread beat us
     // to it, we'll use its definition instead and just let ours get
     // deleted.

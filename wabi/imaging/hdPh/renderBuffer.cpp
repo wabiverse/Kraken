@@ -157,8 +157,7 @@ bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions, const HdFormat format
         return false;
       }
     }
-  }
-  else
+  } else
   {
     // De-allocate texture object
     _textureMSAAObject = nullptr;
@@ -270,8 +269,7 @@ static VtValue _GetResource(const HdPhDynamicUvTextureObjectSharedPtr &textureOb
   if (textureObject)
   {
     return VtValue(textureObject->GetTexture());
-  }
-  else
+  } else
   {
     return VtValue();
   }
@@ -282,8 +280,7 @@ VtValue HdPhRenderBuffer::GetResource(const bool multiSampled) const
   if (multiSampled)
   {
     return _GetResource(_textureMSAAObject);
-  }
-  else
+  } else
   {
     return _GetResource(_textureObject);
   }

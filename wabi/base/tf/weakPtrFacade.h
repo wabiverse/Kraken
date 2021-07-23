@@ -100,7 +100,7 @@ WABI_NAMESPACE_END
 // previous overload in the boost namespace.
 namespace boost
 {
-using WABI_NS::get_pointer;
+  using WABI_NS::get_pointer;
 };
 
 WABI_NAMESPACE_BEGIN
@@ -190,7 +190,7 @@ class TfWeakPtrFacade : public TfWeakPtrFacadeBase
     return !(*this < p);
   }
 
-  using UnspecifiedBoolType = DataType *(TfWeakPtrFacade::*)(void)const;
+  using UnspecifiedBoolType = DataType *(TfWeakPtrFacade::*)(void) const;
 
   operator UnspecifiedBoolType() const
   {
@@ -431,9 +431,8 @@ struct TfTypeFunctions<Ptr<T>,
 };
 
 template<template<class> class Ptr, class T>
-struct TfTypeFunctions<
-  Ptr<const T>,
-  typename boost::enable_if<boost::is_base_of<TfWeakPtrFacadeBase, Ptr<const T>>>::type>
+struct TfTypeFunctions<Ptr<const T>,
+                       typename boost::enable_if<boost::is_base_of<TfWeakPtrFacadeBase, Ptr<const T>>>::type>
 {
   static const T *GetRawPtr(const Ptr<const T> &t)
   {

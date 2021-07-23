@@ -42,8 +42,11 @@ WABI_NAMESPACE_BEGIN
 TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
 {
   // List of direct dependencies for this library.
-  const std::vector<TfToken> reqs = {
-    TfToken("arch"), TfToken("js"), TfToken("tf"), TfToken("trace"), TfToken("work")};
+  const std::vector<TfToken> reqs = {TfToken("arch"),
+                                     TfToken("js"),
+                                     TfToken("tf"),
+                                     TfToken("trace"),
+                                     TfToken("work")};
   TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("plug"), TfToken("wabi.Plug"), reqs);
 }
 

@@ -50,33 +50,34 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateSurfaceAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSurfaceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateSurfaceAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSurfaceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static UsdAttribute _CreateDisplacementAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDisplacementAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                     writeSparsely);
-}
+  static UsdAttribute _CreateDisplacementAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDisplacementAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateVolumeAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateVolumeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateVolumeAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateVolumeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static std::string _Repr(const UsdRiMaterialAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.MaterialAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiMaterialAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.MaterialAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -118,8 +119,9 @@ void wrapUsdRiMaterialAPI()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetVolumeAttr", &This::GetVolumeAttr)
-    .def(
-      "CreateVolumeAttr", &_CreateVolumeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateVolumeAttr",
+         &_CreateVolumeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("__repr__", ::_Repr);
 
@@ -148,28 +150,28 @@ void wrapUsdRiMaterialAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  typedef UsdRiMaterialAPI This;
-  _class
-    .def(init<UsdShadeMaterial>(arg("material")))
+  WRAP_CUSTOM
+  {
+    typedef UsdRiMaterialAPI This;
+    _class
+      .def(init<UsdShadeMaterial>(arg("material")))
 
-    .def("GetSurface", &This::GetSurface, (arg("ignoreBaseMaterial") = false))
-    .def("GetDisplacement", &This::GetDisplacement, (arg("ignoreBaseMaterial") = false))
-    .def("GetVolume", &This::GetVolume, (arg("ignoreBaseMaterial") = false))
+      .def("GetSurface", &This::GetSurface, (arg("ignoreBaseMaterial") = false))
+      .def("GetDisplacement", &This::GetDisplacement, (arg("ignoreBaseMaterial") = false))
+      .def("GetVolume", &This::GetVolume, (arg("ignoreBaseMaterial") = false))
 
-    .def("GetSurfaceOutput", &This::GetSurfaceOutput)
-    .def("GetDisplacementOutput", &This::GetDisplacementOutput)
-    .def("GetVolumeOutput", &This::GetVolumeOutput)
+      .def("GetSurfaceOutput", &This::GetSurfaceOutput)
+      .def("GetDisplacementOutput", &This::GetDisplacementOutput)
+      .def("GetVolumeOutput", &This::GetVolumeOutput)
 
-    .def("SetSurfaceSource", &This::SetSurfaceSource)
-    .def("SetDisplacementSource", &This::SetDisplacementSource)
-    .def("SetVolumeSource", &This::SetVolumeSource)
+      .def("SetSurfaceSource", &This::SetSurfaceSource)
+      .def("SetDisplacementSource", &This::SetDisplacementSource)
+      .def("SetVolumeSource", &This::SetVolumeSource)
 
-    .def("ComputeInterfaceInputConsumersMap",
-         &This::ComputeInterfaceInputConsumersMap,
-         (arg("computeTransitiveConsumers") = false),
-         return_value_policy<TfPyMapToDictionary>());
-}
+      .def("ComputeInterfaceInputConsumersMap",
+           &This::ComputeInterfaceInputConsumersMap,
+           (arg("computeTransitiveConsumers") = false),
+           return_value_policy<TfPyMapToDictionary>());
+  }
 
 }  // anonymous namespace

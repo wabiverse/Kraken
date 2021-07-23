@@ -132,10 +132,7 @@ class AnchorISystemWindow
    * @param inY: The y-coordinate on the screen.
    * @param outX: The x-coordinate in the client rectangle.
    * @param outY: The y-coordinate in the client rectangle. */
-  virtual void screenToClient(AnchorS32 inX,
-                              AnchorS32 inY,
-                              AnchorS32 &outX,
-                              AnchorS32 &outY) const = 0;
+  virtual void screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const = 0;
 
   /**
    * Converts a point in screen coordinates to client rectangle coordinates
@@ -143,10 +140,7 @@ class AnchorISystemWindow
    * @param inY: The y-coordinate in the client rectangle.
    * @param outX: The x-coordinate on the screen.
    * @param outY: The y-coordinate on the screen. */
-  virtual void clientToScreen(AnchorS32 inX,
-                              AnchorS32 inY,
-                              AnchorS32 &outX,
-                              AnchorS32 &outY) const = 0;
+  virtual void clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const = 0;
 
   /**
    * Returns the client rectangle dimensions.

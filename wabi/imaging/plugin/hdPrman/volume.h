@@ -77,11 +77,10 @@ class HdPrman_Volume final : public HdPrman_Gprim<HdVolume>
   /// the RtParamList list with the k_Ri_type (name of the blobbydso) and any
   /// parameters to this plugin (k_blobbydso_stringargs). The function is also
   /// responsible for declaring the primvar for each field.
-  using HdPrman_VolumeTypeEmitter =
-    void (*)(HdSceneDelegate *sceneDelegate,
-             SdfPath const &id,
-             HdVolumeFieldDescriptorVector const &fields,
-             RtPrimVarList *primvars);
+  using HdPrman_VolumeTypeEmitter = void (*)(HdSceneDelegate *sceneDelegate,
+                                             SdfPath const &id,
+                                             HdVolumeFieldDescriptorVector const &fields,
+                                             RtPrimVarList *primvars);
 
   /// Registers a new volume emitter. Returns true if the handler was
   /// registered as the new handler. When \p overrideExisting is false, then
@@ -109,20 +108,16 @@ class HdPrman_Volume final : public HdPrman_Gprim<HdVolume>
   };
 
   /// Helper method for emitter functions to declare a primvar for a field
-  static void DeclareFieldPrimvar(RtPrimVarList *primvars,
-                                  RtUString const &fieldName,
-                                  FieldType type);
+  static void DeclareFieldPrimvar(RtPrimVarList *primvars, RtUString const &fieldName, FieldType type);
 
  protected:
-  virtual RtPrimVarList
-  _ConvertGeometry(HdPrman_Context *context,
-                   HdSceneDelegate *sceneDelegate,
-                   const SdfPath &id,
-                   RtUString *primType,
-                   std::vector<HdGeomSubset> *geomSubsets) override;
+  virtual RtPrimVarList _ConvertGeometry(HdPrman_Context *context,
+                                         HdSceneDelegate *sceneDelegate,
+                                         const SdfPath &id,
+                                         RtUString *primType,
+                                         std::vector<HdGeomSubset> *geomSubsets) override;
 
-  virtual riley::MaterialId
-  _GetFallbackMaterial(HdPrman_Context *context) override
+  virtual riley::MaterialId _GetFallbackMaterial(HdPrman_Context *context) override
   {
     return context->fallbackVolumeMaterial;
   }

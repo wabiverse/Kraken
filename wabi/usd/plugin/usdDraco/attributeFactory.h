@@ -73,18 +73,18 @@ class UsdDracoAttributeFactory
 };
 
 // Macros to make the switch cases below more compact.
-#define CASE_FOR_ATTRIBUTE_TYPE(dracoType, valueType) \
-  { \
-    case dracoType: \
+#define CASE_FOR_ATTRIBUTE_TYPE(dracoType, valueType)                 \
+  {                                                                   \
+    case dracoType:                                                   \
       return creator.template CreateAttribute<valueType>(descriptor); \
   }
 
-#define CASE_FOR_ATTRIBUTE_HALF(dracoType, valueType) \
-  { \
-    case dracoType: \
-      if (descriptor.GetIsHalf()) \
+#define CASE_FOR_ATTRIBUTE_HALF(dracoType, valueType)                   \
+  {                                                                     \
+    case dracoType:                                                     \
+      if (descriptor.GetIsHalf())                                       \
         return creator.template CreateAttribute<valueType>(descriptor); \
-      break; \
+      break;                                                            \
   }
 
 template<class InterfaceT, class CreatorT>

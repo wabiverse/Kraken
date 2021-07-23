@@ -40,8 +40,9 @@ void wrapPipeline()
 {
   def("GetAlphaAttributeNameForColor", UsdUtilsGetAlphaAttributeNameForColor, arg("colorAttrName"));
   def("GetModelNameFromRootLayer", UsdUtilsGetModelNameFromRootLayer);
-  def(
-    "GetRegisteredVariantSets", UsdUtilsGetRegisteredVariantSets, return_value_policy<TfPySequenceToList>());
+  def("GetRegisteredVariantSets",
+      UsdUtilsGetRegisteredVariantSets,
+      return_value_policy<TfPySequenceToList>());
   def("GetPrimAtPathWithForwarding", UsdUtilsGetPrimAtPathWithForwarding, (arg("stage"), arg("path")));
   def("UninstancePrimAtPath", UsdUtilsUninstancePrimAtPath, (arg("stage"), arg("path")));
   def("GetPrimaryUVSetName", UsdUtilsGetPrimaryUVSetName, return_value_policy<return_by_value>());

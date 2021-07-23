@@ -112,8 +112,7 @@ struct UserDef : public UsdUIUserPref, KrakenPrim
 
   int uiflag;
 
-  inline UserDef(kContext *C,
-                 const SdfPath &stagepath = SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_USERPREFS));
+  inline UserDef(kContext *C, const SdfPath &stagepath = SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_USERPREFS));
 };
 
 UserDef::UserDef(kContext *C, const SdfPath &stagepath)

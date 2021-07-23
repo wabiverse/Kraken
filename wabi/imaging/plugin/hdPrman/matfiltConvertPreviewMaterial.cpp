@@ -125,31 +125,30 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
 
       nodesToAdd[pxrSurfacePath] = HdMaterialNode2{
         _tokens->PxrSurface,
-        // parameters:
+ // parameters:
         {
-          {_tokens->allowPresenceWithGlass, VtValue(1)},
-        },
-        // connections:
+         {_tokens->allowPresenceWithGlass, VtValue(1)},
+         },
+ // connections:
         {
-          {_tokens->bumpNormal, {{nodePath, _tokens->bumpNormalOut}}},
-          {_tokens->diffuseColor, {{nodePath, _tokens->diffuseColorOut}}},
-          {_tokens->diffuseGain, {{nodePath, _tokens->diffuseGainOut}}},
-          {_tokens->glassIor, {{nodePath, _tokens->glassIorOut}}},
-          {_tokens->glowColor, {{nodePath, _tokens->glowColorOut}}},
-          {_tokens->glowGain, {{nodePath, _tokens->glowGainOut}}},
-          {_tokens->refractionGain, {{nodePath, _tokens->refractionGainOut}}},
-          {_tokens->specularFaceColor, {{nodePath, _tokens->specularFaceColorOut}}},
-          {_tokens->specularEdgeColor, {{nodePath, _tokens->specularEdgeColorOut}}},
-          {_tokens->specularRoughness, {{nodePath, _tokens->specularRoughnessOut}}},
-          {_tokens->specularIor, {{nodePath, _tokens->specularIorOut}}},
-          {_tokens->clearcoatFaceColor, {{nodePath, _tokens->clearcoatFaceColorOut}}},
-          {_tokens->clearcoatEdgeColor, {{nodePath, _tokens->clearcoatEdgeColorOut}}},
-          {_tokens->clearcoatRoughness, {{nodePath, _tokens->clearcoatRoughnessOut}}},
-          {_tokens->presence, {{nodePath, _tokens->presenceOut}}},
-        },
+         {_tokens->bumpNormal, {{nodePath, _tokens->bumpNormalOut}}},
+         {_tokens->diffuseColor, {{nodePath, _tokens->diffuseColorOut}}},
+         {_tokens->diffuseGain, {{nodePath, _tokens->diffuseGainOut}}},
+         {_tokens->glassIor, {{nodePath, _tokens->glassIorOut}}},
+         {_tokens->glowColor, {{nodePath, _tokens->glowColorOut}}},
+         {_tokens->glowGain, {{nodePath, _tokens->glowGainOut}}},
+         {_tokens->refractionGain, {{nodePath, _tokens->refractionGainOut}}},
+         {_tokens->specularFaceColor, {{nodePath, _tokens->specularFaceColorOut}}},
+         {_tokens->specularEdgeColor, {{nodePath, _tokens->specularEdgeColorOut}}},
+         {_tokens->specularRoughness, {{nodePath, _tokens->specularRoughnessOut}}},
+         {_tokens->specularIor, {{nodePath, _tokens->specularIorOut}}},
+         {_tokens->clearcoatFaceColor, {{nodePath, _tokens->clearcoatFaceColorOut}}},
+         {_tokens->clearcoatEdgeColor, {{nodePath, _tokens->clearcoatEdgeColorOut}}},
+         {_tokens->clearcoatRoughness, {{nodePath, _tokens->clearcoatRoughnessOut}}},
+         {_tokens->presence, {{nodePath, _tokens->presenceOut}}},
+         },
       };
-    }
-    else if (node.nodeTypeId == _tokens->UsdUVTexture)
+    } else if (node.nodeTypeId == _tokens->UsdUVTexture)
     {
       // Update texture nodes that use non-native texture formats
       // to read them via a Renderman texture plugin.
@@ -188,7 +187,9 @@ void MatfiltConvertPreviewMaterial(const SdfPath &networkId,
   if (!pxrSurfacePath.IsEmpty())
   {
     // Use PxrSurface as sole terminal.  Displacement is not supported.
-    network.terminals = {{HdMaterialTerminalTokens->surface, {pxrSurfacePath, TfToken()}}};
+    network.terminals = {
+      {HdMaterialTerminalTokens->surface, {pxrSurfacePath, TfToken()}}
+    };
   }
 }
 

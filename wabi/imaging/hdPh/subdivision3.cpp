@@ -403,9 +403,9 @@ void HdPh_Osd3Subdivision::RefineCPU(HdBufferSourceSharedPtr const &source,
   }
 
   OpenSubdiv::Far::StencilTable const *stencilTable =
-    (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) ? _vertexStencils :
-                                                               (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ? _varyingStencils :
-                                                                                                                           _faceVaryingStencils[fvarChannel];
+    (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX)  ? _vertexStencils :
+    (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ? _varyingStencils :
+                                                                _faceVaryingStencils[fvarChannel];
 
   if (!TF_VERIFY(stencilTable))
     return;
@@ -451,8 +451,11 @@ void HdPh_Osd3Subdivision::RefineCPU(HdBufferSourceSharedPtr const &source,
   OpenSubdiv::Osd::BufferDescriptor srcDesc(0, stride, stride);
   OpenSubdiv::Osd::BufferDescriptor dstDesc(numElements * stride, stride, stride);
 
-  OpenSubdiv::Osd::CpuEvaluator::EvalStencils(
-    osdVertexBuffer, srcDesc, osdVertexBuffer, dstDesc, stencilTable);
+  OpenSubdiv::Osd::CpuEvaluator::EvalStencils(osdVertexBuffer,
+                                              srcDesc,
+                                              osdVertexBuffer,
+                                              dstDesc,
+                                              stencilTable);
 }
 
 /*virtual*/
@@ -476,9 +479,9 @@ void HdPh_Osd3Subdivision::RefineGPU(HdBufferArrayRangeSharedPtr const &range,
   }
 
   OpenSubdiv::Far::StencilTable const *stencilTable =
-    (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) ? _vertexStencils :
-                                                               (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ? _varyingStencils :
-                                                                                                                           _faceVaryingStencils[fvarChannel];
+    (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX)  ? _vertexStencils :
+    (interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING) ? _varyingStencils :
+                                                                _faceVaryingStencils[fvarChannel];
 
   if (!TF_VERIFY(stencilTable))
   {
@@ -510,12 +513,15 @@ void HdPh_Osd3Subdivision::RefineGPU(HdBufferArrayRangeSharedPtr const &range,
   static OpenSubdiv::Osd::EvaluatorCacheT<HdPh_OsdGpuEvaluator> evaluatorCache;
 
   HdPh_OsdGpuEvaluator const *instance = OpenSubdiv::Osd::GetEvaluator<HdPh_OsdGpuEvaluator>(
-    &evaluatorCache, srcDesc, dstDesc, (void *)NULL /*deviceContext*/);
+    &evaluatorCache,
+    srcDesc,
+    dstDesc,
+    (void *)NULL /*deviceContext*/);
 
   HdPh_OsdGpuStencilTable const *gpuStencilTable = (interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX) ?
                                                      _GetGpuVertexStencilTable() :
-                                                     (interpolation ==
-                                                      HdPh_MeshTopology::INTERPOLATE_VARYING) ?
+                                                   (interpolation ==
+                                                    HdPh_MeshTopology::INTERPOLATE_VARYING) ?
                                                      _GetGpuVaryingStencilTable() :
                                                      _GetGpuFaceVaryingStencilTable(fvarChannel);
 
@@ -559,8 +565,11 @@ HdBufferSourceSharedPtr HdPh_Osd3Subdivision::CreateRefineComputation(
   HdPh_MeshTopology::Interpolation interpolation,
   int fvarChannel)
 {
-  return std::make_shared<HdPh_OsdRefineComputation<HdPh_OsdCpuVertexBuffer>>(
-    topology, source, osdTopology, interpolation, fvarChannel);
+  return std::make_shared<HdPh_OsdRefineComputation<HdPh_OsdCpuVertexBuffer>>(topology,
+                                                                              source,
+                                                                              osdTopology,
+                                                                              interpolation,
+                                                                              fvarChannel);
 }
 
 /*virtual*/
@@ -571,8 +580,11 @@ HdComputationSharedPtr HdPh_Osd3Subdivision::CreateRefineComputationGPU(
   HdPh_MeshTopology::Interpolation interpolation,
   int fvarChannel)
 {
-  return std::make_shared<HdPh_OsdRefineComputationGPU>(
-    topology, name, dataType, interpolation, fvarChannel);
+  return std::make_shared<HdPh_OsdRefineComputationGPU>(topology,
+                                                        name,
+                                                        dataType,
+                                                        interpolation,
+                                                        fvarChannel);
 }
 
 #if HDPH_ENABLE_GPU_SUBDIVISION
@@ -662,11 +674,11 @@ bool HdPh_Osd3TopologyComputation::Resolve()
   if (_topology->GetFaceVertexCounts().size() == 0)
   {
     // leave refiner empty
-  }
-  else
+  } else
   {
-    refiner = PxOsdRefinerFactory::Create(
-      _topology->GetPxOsdMeshTopology(), _topology->GetFvarTopologies(), TfToken(_id.GetText()));
+    refiner = PxOsdRefinerFactory::Create(_topology->GetPxOsdMeshTopology(),
+                                          _topology->GetFvarTopologies(),
+                                          TfToken(_id.GetText()));
     numFvarChannels = refiner->GetNumFVarChannels();
   }
 
@@ -714,8 +726,7 @@ bool HdPh_Osd3TopologyComputation::Resolve()
         adaptiveOptions = patchOptions.GetRefineAdaptiveOptions();
 #endif
         refiner->RefineAdaptive(adaptiveOptions);
-      }
-      else
+      } else
       {
         refiner->RefineUniform(_level);
       }
@@ -749,8 +760,9 @@ bool HdPh_Osd3TopologyComputation::Resolve()
   {
     // append stencils
     if (Far::StencilTable const *vertexStencilsWithLocalPoints =
-          Far::StencilTableFactory::AppendLocalPointStencilTable(
-            *refiner, vertexStencils, patchTable->GetLocalPointStencilTable()))
+          Far::StencilTableFactory::AppendLocalPointStencilTable(*refiner,
+                                                                 vertexStencils,
+                                                                 patchTable->GetLocalPointStencilTable()))
     {
       delete vertexStencils;
       vertexStencils = vertexStencilsWithLocalPoints;
@@ -761,7 +773,9 @@ bool HdPh_Osd3TopologyComputation::Resolve()
     // append stencils
     if (Far::StencilTable const *varyingStencilsWithLocalPoints =
           Far::StencilTableFactory::AppendLocalPointStencilTableVarying(
-            *refiner, varyingStencils, patchTable->GetLocalPointVaryingStencilTable()))
+            *refiner,
+            varyingStencils,
+            patchTable->GetLocalPointVaryingStencilTable()))
     {
       delete varyingStencils;
       varyingStencils = varyingStencilsWithLocalPoints;
@@ -774,7 +788,10 @@ bool HdPh_Osd3TopologyComputation::Resolve()
       // append stencils
       if (Far::StencilTable const *faceVaryingStencilsWithLocalPoints =
             Far::StencilTableFactory::AppendLocalPointStencilTableFaceVarying(
-              *refiner, faceVaryingStencils[i], patchTable->GetLocalPointFaceVaryingStencilTable(i), i))
+              *refiner,
+              faceVaryingStencils[i],
+              patchTable->GetLocalPointFaceVaryingStencilTable(i),
+              i))
       {
         delete faceVaryingStencils[i];
         faceVaryingStencils[i] = faceVaryingStencilsWithLocalPoints;
@@ -784,8 +801,11 @@ bool HdPh_Osd3TopologyComputation::Resolve()
 
   // set tables to topology
   // HdPh_Subdivision takes an ownership of stencilTables and patchTable.
-  _subdivision->SetRefinementTables(
-    vertexStencils, varyingStencils, faceVaryingStencils, patchTable, _adaptive);
+  _subdivision->SetRefinementTables(vertexStencils,
+                                    varyingStencils,
+                                    faceVaryingStencils,
+                                    patchTable,
+                                    _adaptive);
 
   _SetResolved();
   return true;
@@ -847,14 +867,14 @@ bool HdPh_Osd3IndexComputation::Resolve()
     VtArray<int> indices(ptableSize);
     memcpy(indices.data(), firstIndex, ptableSize * sizeof(int));
 
-    HdBufferSourceSharedPtr patchIndices = std::make_shared<HdVtBufferSource>(
-      HdTokens->indices, VtValue(indices), arraySize);
+    HdBufferSourceSharedPtr patchIndices = std::make_shared<HdVtBufferSource>(HdTokens->indices,
+                                                                              VtValue(indices),
+                                                                              arraySize);
 
     _SetResult(patchIndices);
 
     _PopulatePatchPrimitiveBuffer(patchTable);
-  }
-  else if (HdPh_Subdivision::RefinesToTriangles(scheme))
+  } else if (HdPh_Subdivision::RefinesToTriangles(scheme))
   {
     // populate refined triangle indices.
     VtArray<GfVec3i> indices(ptableSize / 3);
@@ -865,8 +885,7 @@ bool HdPh_Osd3IndexComputation::Resolve()
     _SetResult(triIndices);
 
     _PopulateUniformPrimitiveBuffer(patchTable);
-  }
-  else
+  } else
   {
     // populate refined quad indices.
     VtArray<GfVec4i> indices(ptableSize / 4);
@@ -919,8 +938,7 @@ void HdPh_Osd3IndexComputation::_CreateBaseFaceMapping(
       info.baseFaceParam = HdMeshUtil::EncodeCoarseFaceParam(i, /*edgeFlag=*/0);
       info.baseFaceEdgeIndices = GfVec2i(ev, 0);
       result->push_back(info);
-    }
-    else if (nv < 3)
+    } else if (nv < 3)
     {
       int const numBaseFaces = (regFaceSize == 4) ? nv : nv - 2;
       for (int f = 0; f < numBaseFaces; ++f)
@@ -930,8 +948,7 @@ void HdPh_Osd3IndexComputation::_CreateBaseFaceMapping(
         info.baseFaceEdgeIndices = GfVec2i(-1, -1);
         result->push_back(info);
       }
-    }
-    else
+    } else
     {
       for (int j = 0; j < nv; ++j)
       {
@@ -939,12 +956,10 @@ void HdPh_Osd3IndexComputation::_CreateBaseFaceMapping(
         if (j == 0)
         {
           edgeFlag = 1;
-        }
-        else if (j == nv - 1)
+        } else if (j == nv - 1)
         {
           edgeFlag = 2;
-        }
-        else
+        } else
         {
           edgeFlag = 3;
         }
@@ -1094,13 +1109,13 @@ bool HdPh_Osd3FvarIndexComputation::Resolve()
     VtIntArray indices(arraySize * numPatches);
     memcpy(indices.data(), firstIndex, arraySize * numPatches * sizeof(int));
 
-    HdBufferSourceSharedPtr patchIndices = std::make_shared<HdVtBufferSource>(
-      _indicesName, VtValue(indices), arraySize);
+    HdBufferSourceSharedPtr patchIndices = std::make_shared<HdVtBufferSource>(_indicesName,
+                                                                              VtValue(indices),
+                                                                              arraySize);
 
     _SetResult(patchIndices);
     _PopulateFvarPatchParamBuffer(patchTable);
-  }
-  else if (HdPh_Subdivision::RefinesToTriangles(scheme))
+  } else if (HdPh_Subdivision::RefinesToTriangles(scheme))
   {
     // populate refined triangle indices.
     VtArray<GfVec3i> indices(numPatches);
@@ -1108,8 +1123,7 @@ bool HdPh_Osd3FvarIndexComputation::Resolve()
 
     HdBufferSourceSharedPtr triIndices = std::make_shared<HdVtBufferSource>(_indicesName, VtValue(indices));
     _SetResult(triIndices);
-  }
-  else
+  } else
   {
     // populate refined quad indices.
     VtArray<GfVec4i> indices(numPatches);
@@ -1155,19 +1169,16 @@ void HdPh_Osd3FvarIndexComputation::GetBufferSpecs(HdBufferSpecVector *specs) co
     // bi-cubic bspline patches
     specs->emplace_back(_indicesName, HdTupleType{HdTypeInt32, 16});
     specs->emplace_back(_patchParamName, HdTupleType{HdTypeInt32Vec2, 1});
-  }
-  else if (_topology->RefinesToBoxSplineTrianglePatches())
+  } else if (_topology->RefinesToBoxSplineTrianglePatches())
   {
     // quartic box spline triangle patches
     specs->emplace_back(_indicesName, HdTupleType{HdTypeInt32, 12});
     specs->emplace_back(_patchParamName, HdTupleType{HdTypeInt32Vec2, 1});
-  }
-  else if (HdPh_Subdivision::RefinesToTriangles(_topology->GetScheme()))
+  } else if (HdPh_Subdivision::RefinesToTriangles(_topology->GetScheme()))
   {
     // triangles (loop)
     specs->emplace_back(_indicesName, HdTupleType{HdTypeInt32Vec3, 1});
-  }
-  else
+  } else
   {
     // quads (catmark, bilinear)
     specs->emplace_back(_indicesName, HdTupleType{HdTypeInt32Vec4, 1});
@@ -1184,8 +1195,7 @@ HdBufferSourceSharedPtrVector HdPh_Osd3FvarIndexComputation::GetChainedBuffers()
   if (_topology->RefinesToBSplinePatches() || _topology->RefinesToBoxSplineTrianglePatches())
   {
     return {_fvarPatchParamBuffer};
-  }
-  else
+  } else
   {
     return {};
   }

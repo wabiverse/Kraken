@@ -60,8 +60,7 @@ bool RprUsdMaterial::AttachTo(rpr::Shape *mesh, bool displacementEnabled) const
       fail |= RPR_ERROR_CHECK(mesh->SetDisplacementScale(displacementScale[0], displacementScale[1]),
                               "Failed to set shape displacement scale");
     }
-  }
-  else
+  } else
   {
     fail |= RPR_ERROR_CHECK(mesh->SetDisplacementMaterial(nullptr),
                             "Failed to unset shape displacement material");

@@ -40,22 +40,22 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string _Repr(const SdfLayerOffset &self)
-{
-  double offset = self.GetOffset();
-  double scale = self.GetScale();
-
-  std::stringstream s;
-  s << TF_PY_REPR_PREFIX + "LayerOffset(";
-  if (offset != 0.0 || scale != 1.0)
+  static std::string _Repr(const SdfLayerOffset &self)
   {
-    s << offset;
-    if (scale != 1.0)
-      s << ", " << scale;
+    double offset = self.GetOffset();
+    double scale = self.GetScale();
+
+    std::stringstream s;
+    s << TF_PY_REPR_PREFIX + "LayerOffset(";
+    if (offset != 0.0 || scale != 1.0)
+    {
+      s << offset;
+      if (scale != 1.0)
+        s << ", " << scale;
+    }
+    s << ")";
+    return s.str();
   }
-  s << ")";
-  return s.str();
-}
 
 }  // anonymous namespace
 

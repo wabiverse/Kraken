@@ -52,69 +52,69 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-enum
-{
-  BufferBinding_Uniforms,
-  BufferBinding_Points,
-  BufferBinding_Normals,
-  BufferBinding_Adjacency,
-};
-
-HgiResourceBindingsSharedPtr _CreateResourceBindings(Hgi *hgi,
-                                                     HgiBufferHandle const &points,
-                                                     HgiBufferHandle const &normals,
-                                                     HgiBufferHandle const &adjacency)
-{
-  // Begin the resource set
-  HgiResourceBindingsDesc resourceDesc;
-  resourceDesc.debugName = "SmoothNormals";
-
-  if (points)
+  enum
   {
-    HgiBufferBindDesc bufBind0;
-    bufBind0.bindingIndex = BufferBinding_Points;
-    bufBind0.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind0.stageUsage = HgiShaderStageCompute;
-    bufBind0.offsets.push_back(0);
-    bufBind0.buffers.push_back(points);
-    resourceDesc.buffers.push_back(std::move(bufBind0));
+    BufferBinding_Uniforms,
+    BufferBinding_Points,
+    BufferBinding_Normals,
+    BufferBinding_Adjacency,
+  };
+
+  HgiResourceBindingsSharedPtr _CreateResourceBindings(Hgi *hgi,
+                                                       HgiBufferHandle const &points,
+                                                       HgiBufferHandle const &normals,
+                                                       HgiBufferHandle const &adjacency)
+  {
+    // Begin the resource set
+    HgiResourceBindingsDesc resourceDesc;
+    resourceDesc.debugName = "SmoothNormals";
+
+    if (points)
+    {
+      HgiBufferBindDesc bufBind0;
+      bufBind0.bindingIndex = BufferBinding_Points;
+      bufBind0.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind0.stageUsage = HgiShaderStageCompute;
+      bufBind0.offsets.push_back(0);
+      bufBind0.buffers.push_back(points);
+      resourceDesc.buffers.push_back(std::move(bufBind0));
+    }
+
+    if (normals)
+    {
+      HgiBufferBindDesc bufBind1;
+      bufBind1.bindingIndex = BufferBinding_Normals;
+      bufBind1.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind1.stageUsage = HgiShaderStageCompute;
+      bufBind1.offsets.push_back(0);
+      bufBind1.buffers.push_back(normals);
+      resourceDesc.buffers.push_back(std::move(bufBind1));
+    }
+
+    if (adjacency)
+    {
+      HgiBufferBindDesc bufBind2;
+      bufBind2.bindingIndex = BufferBinding_Adjacency;
+      bufBind2.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind2.stageUsage = HgiShaderStageCompute;
+      bufBind2.offsets.push_back(0);
+      bufBind2.buffers.push_back(adjacency);
+      resourceDesc.buffers.push_back(std::move(bufBind2));
+    }
+
+    return std::make_shared<HgiResourceBindingsHandle>(hgi->CreateResourceBindings(resourceDesc));
   }
 
-  if (normals)
+  HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
+                                              uint32_t constantValuesSize,
+                                              HgiShaderProgramHandle const &program)
   {
-    HgiBufferBindDesc bufBind1;
-    bufBind1.bindingIndex = BufferBinding_Normals;
-    bufBind1.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind1.stageUsage = HgiShaderStageCompute;
-    bufBind1.offsets.push_back(0);
-    bufBind1.buffers.push_back(normals);
-    resourceDesc.buffers.push_back(std::move(bufBind1));
+    HgiComputePipelineDesc desc;
+    desc.debugName = "SmoothNormals";
+    desc.shaderProgram = program;
+    desc.shaderConstantsDesc.byteSize = constantValuesSize;
+    return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
   }
-
-  if (adjacency)
-  {
-    HgiBufferBindDesc bufBind2;
-    bufBind2.bindingIndex = BufferBinding_Adjacency;
-    bufBind2.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind2.stageUsage = HgiShaderStageCompute;
-    bufBind2.offsets.push_back(0);
-    bufBind2.buffers.push_back(adjacency);
-    resourceDesc.buffers.push_back(std::move(bufBind2));
-  }
-
-  return std::make_shared<HgiResourceBindingsHandle>(hgi->CreateResourceBindings(resourceDesc));
-}
-
-HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
-                                            uint32_t constantValuesSize,
-                                            HgiShaderProgramHandle const &program)
-{
-  HgiComputePipelineDesc desc;
-  desc.debugName = "SmoothNormals";
-  desc.shaderProgram = program;
-  desc.shaderConstantsDesc.byteSize = constantValuesSize;
-  return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
-}
 
 }  // Anonymous namespace
 
@@ -160,19 +160,16 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
     if (_dstDataType == HdTypeFloatVec3)
     {
       shaderToken = HdPhGLSLProgramTokens->smoothNormalsFloatToFloat;
-    }
-    else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
+    } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
     {
       shaderToken = HdPhGLSLProgramTokens->smoothNormalsFloatToPacked;
     }
-  }
-  else if (_srcDataType == HdTypeDoubleVec3)
+  } else if (_srcDataType == HdTypeDoubleVec3)
   {
     if (_dstDataType == HdTypeDoubleVec3)
     {
       shaderToken = HdPhGLSLProgramTokens->smoothNormalsDoubleToDouble;
-    }
-    else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
+    } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
     {
       shaderToken = HdPhGLSLProgramTokens->smoothNormalsDoubleToPacked;
     }
@@ -192,7 +189,9 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
 
   HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
   HdPhGLSLProgramSharedPtr computeProgram = HdPhGLSLProgram::GetComputeProgram(
-    shaderToken, hdPhResourceRegistry, [&](HgiShaderFunctionDesc &computeDesc) {
+    shaderToken,
+    hdPhResourceRegistry,
+    [&](HgiShaderFunctionDesc &computeDesc) {
       computeDesc.debugName = shaderToken.GetString();
       computeDesc.shaderStage = HgiShaderStageCompute;
 
@@ -201,8 +200,7 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
       if (_srcDataType == HdTypeFloatVec3)
       {
         srcType = HdPhTokens->_float;
-      }
-      else
+      } else
       {
         srcType = HdPhTokens->_double;
       }
@@ -210,12 +208,10 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
       if (_dstDataType == HdTypeFloatVec3)
       {
         dstType = HdPhTokens->_float;
-      }
-      else if (_dstDataType == HdTypeDoubleVec3)
+      } else if (_dstDataType == HdTypeDoubleVec3)
       {
         dstType = HdPhTokens->_double;
-      }
-      else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
       {
         dstType = HdPhTokens->_int;
       }
@@ -236,8 +232,10 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
       {
         HgiShaderFunctionAddConstantParam(&computeDesc, param, HdPhTokens->_int);
       }
-      HgiShaderFunctionAddStageInput(
-        &computeDesc, "hd_GlobalInvocationID", "uvec3", HgiShaderKeywordTokens->hdGlobalInvocationID);
+      HgiShaderFunctionAddStageInput(&computeDesc,
+                                     "hd_GlobalInvocationID",
+                                     "uvec3",
+                                     HgiShaderKeywordTokens->hdGlobalInvocationID);
     });
 
   if (!computeProgram)
@@ -289,8 +287,9 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
 
   // Generate hash for resource bindings and pipeline.
   // XXX Needs fingerprint hash to avoid collisions
-  uint64_t rbHash = (uint64_t)TfHash::Combine(
-    points->GetHandle().Get(), normals->GetHandle().Get(), adjacency->GetHandle().Get());
+  uint64_t rbHash = (uint64_t)TfHash::Combine(points->GetHandle().Get(),
+                                              normals->GetHandle().Get(),
+                                              adjacency->GetHandle().Get());
 
   uint64_t pHash = (uint64_t)TfHash::Combine(computeProgram->GetProgram().Get(), sizeof(uniform));
 
@@ -299,8 +298,10 @@ void HdPh_SmoothNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const
     hdPhResourceRegistry->RegisterResourceBindings(rbHash);
   if (resourceBindingsInstance.IsFirstInstance())
   {
-    HgiResourceBindingsSharedPtr rb = _CreateResourceBindings(
-      hgi, points->GetHandle(), normals->GetHandle(), adjacency->GetHandle());
+    HgiResourceBindingsSharedPtr rb = _CreateResourceBindings(hgi,
+                                                              points->GetHandle(),
+                                                              normals->GetHandle(),
+                                                              adjacency->GetHandle());
     resourceBindingsInstance.SetValue(rb);
   }
 

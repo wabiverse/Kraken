@@ -46,14 +46,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-#define HDX_PICK_TOKENS \
-  /* Task context */ \
-  (pickParams) \
-\
-    /* Pick target */ \
+#define HDX_PICK_TOKENS                                       \
+  /* Task context */                                          \
+  (pickParams)                                                \
+                                                              \
+    /* Pick target */                                         \
     (pickPrimsAndInstances)(pickFaces)(pickEdges)(pickPoints) \
-\
-    /* Resolve mode */ \
+                                                              \
+    /* Resolve mode */                                        \
     (resolveNearestToCamera)(resolveNearestToCenter)(resolveUnique)(resolveAll)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxPickTokens, HDX_API, HDX_PICK_TOKENS);

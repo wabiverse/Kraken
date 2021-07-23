@@ -230,8 +230,7 @@ class Usd_LinearInterpolator : public Usd_InterpolatorBase
     if (!Usd_QueryTimeSample(src, path, lower, &lowerInterpolator, &lowerValue))
     {
       return false;
-    }
-    else if (!Usd_QueryTimeSample(src, path, upper, &upperInterpolator, &upperValue))
+    } else if (!Usd_QueryTimeSample(src, path, upper, &upperInterpolator, &upperValue))
     {
       upperValue = lowerValue;
     }
@@ -290,8 +289,7 @@ class Usd_LinearInterpolator<VtArray<T>> : public Usd_InterpolatorBase
     if (!Usd_QueryTimeSample(src, path, lower, &lowerInterpolator, &lowerValue))
     {
       return false;
-    }
-    else if (!Usd_QueryTimeSample(src, path, upper, &upperInterpolator, &upperValue))
+    } else if (!Usd_QueryTimeSample(src, path, upper, &upperInterpolator, &upperValue))
     {
       upperValue = lowerValue;
     }
@@ -312,13 +310,11 @@ class Usd_LinearInterpolator<VtArray<T>> : public Usd_InterpolatorBase
     if (parametricTime == 0.0)
     {
       // do nothing.
-    }
-    else if (parametricTime == 1.0)
+    } else if (parametricTime == 1.0)
     {
       // just swap the upper value in.
       _result->swap(upperValue);
-    }
-    else
+    } else
     {
       // must actually calculate interpolated values.
       T *rptr = _result->data();

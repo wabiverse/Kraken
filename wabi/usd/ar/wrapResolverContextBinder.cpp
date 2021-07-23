@@ -43,31 +43,31 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-class _PyResolverContextBinder : public boost::noncopyable
-{
- public:
-  _PyResolverContextBinder(const ArResolverContext &context)
-    : _context(context)
-  {}
-
-  void Enter()
+  class _PyResolverContextBinder : public boost::noncopyable
   {
-    _binder.reset(new ArResolverContextBinder(_context));
-  }
+   public:
+    _PyResolverContextBinder(const ArResolverContext &context)
+      : _context(context)
+    {}
 
-  bool Exit(boost::python::object & /* exc_type */,
-            boost::python::object & /* exc_val  */,
-            boost::python::object & /* exc_tb   */)
-  {
-    _binder.reset(0);
-    // Re-raise exceptions.
-    return false;
-  }
+    void Enter()
+    {
+      _binder.reset(new ArResolverContextBinder(_context));
+    }
 
- private:
-  ArResolverContext _context;
-  std::unique_ptr<ArResolverContextBinder> _binder;
-};
+    bool Exit(boost::python::object & /* exc_type */,
+              boost::python::object & /* exc_val  */,
+              boost::python::object & /* exc_tb   */)
+    {
+      _binder.reset(0);
+      // Re-raise exceptions.
+      return false;
+    }
+
+   private:
+    ArResolverContext _context;
+    std::unique_ptr<ArResolverContextBinder> _binder;
+  };
 
 }  // anonymous namespace
 

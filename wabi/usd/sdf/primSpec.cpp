@@ -74,8 +74,10 @@ SdfPrimSpecHandle SdfPrimSpec::New(const SdfLayerHandle &parentLayer,
 {
   TRACE_FUNCTION();
 
-  return _New(
-    parentLayer ? parentLayer->GetPseudoRoot() : TfNullPtr, TfToken(name), spec, TfToken(typeName));
+  return _New(parentLayer ? parentLayer->GetPseudoRoot() : TfNullPtr,
+              TfToken(name),
+              spec,
+              TfToken(typeName));
 }
 
 SdfPrimSpecHandle SdfPrimSpec::New(const SdfPrimSpecHandle &parentPrim,
@@ -147,8 +149,7 @@ bool SdfPrimSpec::_ValidateEdit(const TfToken &key) const
   {
     TF_CODING_ERROR("Cannot edit %s on a pseudo-root", key.GetText());
     return false;
-  }
-  else
+  } else
   {
     return true;
   }
@@ -530,8 +531,7 @@ void SdfPrimSpec::SetTypeName(const std::string &value)
   if (value.empty() && GetSpecifier() != SdfSpecifierOver)
   {
     TF_CODING_ERROR("Cannot set empty type name on prim '%s'", GetPath().GetText());
-  }
-  else
+  } else
   {
     if (_ValidateEdit(SdfFieldKeys->TypeName))
     {
@@ -655,7 +655,8 @@ std::vector<std::string> SdfPrimSpec::GetVariantNames(const std::string &name) c
   }
   SdfPath variantSetPath = GetPath().AppendVariantSelection(name, "");
   std::vector<TfToken> variantNameTokens = GetLayer()->GetFieldAs<std::vector<TfToken>>(
-    variantSetPath, SdfChildrenKeys->VariantChildren);
+    variantSetPath,
+    SdfChildrenKeys->VariantChildren);
 
   variantNames.reserve(variantNameTokens.size());
   TF_FOR_ALL (i, variantNameTokens)
@@ -686,8 +687,7 @@ SdfVariantSelectionProxy SdfPrimSpec::GetVariantSelections() const
   if (!_IsPseudoRoot())
   {
     return SdfVariantSelectionProxy(SdfCreateHandle(this), SdfFieldKeys->VariantSelection);
-  }
-  else
+  } else
   {
     return SdfVariantSelectionProxy();
   }
@@ -703,8 +703,7 @@ void SdfPrimSpec::SetVariantSelection(const std::string &variantSetName, const s
       if (variantName.empty())
       {
         proxy.erase(variantSetName);
-      }
-      else
+      } else
       {
         SdfChangeBlock block;
         proxy[variantSetName] = variantName;
@@ -735,8 +734,7 @@ SdfRelocatesMapProxy SdfPrimSpec::GetRelocates() const
   if (!_IsPseudoRoot())
   {
     return SdfRelocatesMapProxy(SdfCreateHandle(this), SdfFieldKeys->Relocates);
-  }
-  else
+  } else
   {
     return SdfRelocatesMapProxy();
   }
@@ -853,44 +851,43 @@ static bool _IsValidPath(const SdfPath &path)
 namespace
 {
 
-// This structure exists so that we can support relative paths to
-// SdfCreatePrimInLayer/SdfJustCreatePrimInLayer without doing any path copies
-// or refcount operations in the common case where we are given an absolute
-// path.
-struct _AbsPathHelper
-{
-  // Construct with \p inPath.  If \p inPath is an absolute path, then
-  // GetAbsPath() returns \p inPath.  Otherwise \p inPath is made absolute by
-  // MakeAbsolutePath(SdfPath::AbsoluteRootPath()), stored in a member
-  // variable and returned by GetAbsPath().
-  explicit _AbsPathHelper(SdfPath const &inPath)
-    : _inPath(inPath)
+  // This structure exists so that we can support relative paths to
+  // SdfCreatePrimInLayer/SdfJustCreatePrimInLayer without doing any path copies
+  // or refcount operations in the common case where we are given an absolute
+  // path.
+  struct _AbsPathHelper
   {
-    if (ARCH_LIKELY(_inPath.IsAbsolutePath()))
+    // Construct with \p inPath.  If \p inPath is an absolute path, then
+    // GetAbsPath() returns \p inPath.  Otherwise \p inPath is made absolute by
+    // MakeAbsolutePath(SdfPath::AbsoluteRootPath()), stored in a member
+    // variable and returned by GetAbsPath().
+    explicit _AbsPathHelper(SdfPath const &inPath)
+      : _inPath(inPath)
     {
-      _absPath = &_inPath;
+      if (ARCH_LIKELY(_inPath.IsAbsolutePath()))
+      {
+        _absPath = &_inPath;
+      } else
+      {
+        _tmpPath = _inPath.MakeAbsolutePath(SdfPath::AbsoluteRootPath());
+        _absPath = &_tmpPath;
+      }
     }
-    else
+    explicit _AbsPathHelper(SdfPath &&inPath) = delete;
+    inline SdfPath const &GetAbsPath() const
     {
-      _tmpPath = _inPath.MakeAbsolutePath(SdfPath::AbsoluteRootPath());
-      _absPath = &_tmpPath;
+      return *_absPath;
     }
-  }
-  explicit _AbsPathHelper(SdfPath &&inPath) = delete;
-  inline SdfPath const &GetAbsPath() const
-  {
-    return *_absPath;
-  }
-  inline SdfPath const &GetOriginalPath() const
-  {
-    return _inPath;
-  }
+    inline SdfPath const &GetOriginalPath() const
+    {
+      return _inPath;
+    }
 
- private:
-  SdfPath const &_inPath;
-  SdfPath const *_absPath;  // points to either _inPath or _tmpPath.
-  SdfPath _tmpPath;
-};
+   private:
+    SdfPath const &_inPath;
+    SdfPath const *_absPath;  // points to either _inPath or _tmpPath.
+    SdfPath _tmpPath;
+  };
 
 }  // namespace
 
@@ -925,12 +922,13 @@ bool Sdf_UncheckedCreatePrimInLayer(SdfLayer *layerPtr, const SdfPath &primPath)
       {
         return false;
       }
-    }
-    else
+    } else
     {
       // Ordinary prim child case.
-      if (ARCH_UNLIKELY(!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CreateSpec(
-            layerPtr, ancPath, SdfSpecTypePrim, /*inert=*/true)))
+      if (ARCH_UNLIKELY(!Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CreateSpec(layerPtr,
+                                                                            ancPath,
+                                                                            SdfSpecTypePrim,
+                                                                            /*inert=*/true)))
       {
         TF_RUNTIME_ERROR(
           "Failed to create prim at path '%s' in "

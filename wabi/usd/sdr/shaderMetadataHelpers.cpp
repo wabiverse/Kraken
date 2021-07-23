@@ -52,192 +52,193 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
 namespace ShaderMetadataHelpers
 {
-bool IsTruthy(const TfToken &propName, const NdrTokenMap &metadata)
-{
-  // Absence of the option implies false
-  if (metadata.count(propName) == 0)
+  bool IsTruthy(const TfToken &propName, const NdrTokenMap &metadata)
   {
-    return false;
-  }
+    // Absence of the option implies false
+    if (metadata.count(propName) == 0)
+    {
+      return false;
+    }
 
-  std::string boolStr = metadata.at(propName);
+    std::string boolStr = metadata.at(propName);
 
-  // Presence of the option without a value implies true
-  if (boolStr.empty())
-  {
+    // Presence of the option without a value implies true
+    if (boolStr.empty())
+    {
+      return true;
+    }
+
+    // Turn into a lower case string
+    std::transform(boolStr.begin(), boolStr.end(), boolStr.begin(), ::tolower);
+
+    if ((boolStr == "0") || (boolStr == "false") || (boolStr == "f"))
+    {
+      return false;
+    }
+
     return true;
   }
 
-  // Turn into a lower case string
-  std::transform(boolStr.begin(), boolStr.end(), boolStr.begin(), ::tolower);
+  // -------------------------------------------------------------------------
 
-  if ((boolStr == "0") || (boolStr == "false") || (boolStr == "f"))
+  std::string StringVal(const TfToken &propName,
+                        const NdrTokenMap &metadata,
+                        const std::string &defaultValue)
   {
+    const NdrTokenMap::const_iterator search = metadata.find(propName);
+
+    if (search != metadata.end())
+    {
+      return search->second;
+    }
+
+    return defaultValue;
+  }
+
+  // -------------------------------------------------------------------------
+
+  TfToken TokenVal(const TfToken &propName, const NdrTokenMap &metadata, const TfToken &defaultValue)
+  {
+    const NdrTokenMap::const_iterator search = metadata.find(propName);
+
+    if (search != metadata.end())
+    {
+      return TfToken(search->second);
+    }
+
+    return defaultValue;
+  }
+
+  // -------------------------------------------------------------------------
+
+  NdrStringVec StringVecVal(const TfToken &propName, const NdrTokenMap &metadata)
+  {
+    const NdrTokenMap::const_iterator search = metadata.find(propName);
+
+    if (search != metadata.end())
+    {
+      return TfStringSplit(search->second, "|");
+    }
+
+    return NdrStringVec();
+  }
+
+  // -------------------------------------------------------------------------
+
+  NdrTokenVec TokenVecVal(const TfToken &propName, const NdrTokenMap &metadata)
+  {
+    const NdrStringVec untokenized = StringVecVal(propName, metadata);
+    NdrTokenVec tokenized;
+
+    for (const std::string &item : untokenized)
+    {
+      tokenized.emplace_back(TfToken(item));
+    }
+
+    return tokenized;
+  }
+
+  // -------------------------------------------------------------------------
+
+  NdrOptionVec OptionVecVal(const std::string &optionStr)
+  {
+    std::vector<std::string> tokens = TfStringSplit(optionStr, "|");
+
+    // The input string should be formatted as one of the following:
+    //
+    //     list:   "option1|option2|option3|..."
+    //     mapper: "key1:value1|key2:value2|..."
+    //
+    // If it's a mapper, return the result as a list of key-value tuples to
+    // preserve order.
+
+    NdrOptionVec options;
+
+    for (const std::string &token : tokens)
+    {
+      size_t colonPos = token.find(':');
+
+      if (colonPos != std::string::npos)
+      {
+        options.emplace_back(
+          std::make_pair(TfToken(token.substr(0, colonPos)), TfToken(token.substr(colonPos + 1))));
+      } else
+      {
+        options.emplace_back(std::make_pair(TfToken(token), TfToken()));
+      }
+    }
+
+    return options;
+  }
+
+  // -------------------------------------------------------------------------
+
+  std::string CreateStringFromStringVec(const NdrStringVec &stringVec)
+  {
+    return TfStringJoin(stringVec, "|");
+  }
+
+  // -------------------------------------------------------------------------
+
+  bool IsPropertyAnAssetIdentifier(const NdrTokenMap &metadata)
+  {
+    const NdrTokenMap::const_iterator widgetSearch = metadata.find(SdrPropertyMetadata->Widget);
+
+    if (widgetSearch != metadata.end())
+    {
+      const TfToken widget = TfToken(widgetSearch->second);
+
+      if ((widget == _tokens->assetIdInput) || (widget == _tokens->filename) ||
+          (widget == _tokens->fileInput))
+      {
+        return true;
+      }
+    }
+
     return false;
   }
 
-  return true;
-}
+  // -------------------------------------------------------------------------
 
-// -------------------------------------------------------------------------
-
-std::string StringVal(const TfToken &propName, const NdrTokenMap &metadata, const std::string &defaultValue)
-{
-  const NdrTokenMap::const_iterator search = metadata.find(propName);
-
-  if (search != metadata.end())
+  bool IsPropertyATerminal(const NdrTokenMap &metadata)
   {
-    return search->second;
-  }
+    const NdrTokenMap::const_iterator renderTypeSearch = metadata.find(SdrPropertyMetadata->RenderType);
 
-  return defaultValue;
-}
-
-// -------------------------------------------------------------------------
-
-TfToken TokenVal(const TfToken &propName, const NdrTokenMap &metadata, const TfToken &defaultValue)
-{
-  const NdrTokenMap::const_iterator search = metadata.find(propName);
-
-  if (search != metadata.end())
-  {
-    return TfToken(search->second);
-  }
-
-  return defaultValue;
-}
-
-// -------------------------------------------------------------------------
-
-NdrStringVec StringVecVal(const TfToken &propName, const NdrTokenMap &metadata)
-{
-  const NdrTokenMap::const_iterator search = metadata.find(propName);
-
-  if (search != metadata.end())
-  {
-    return TfStringSplit(search->second, "|");
-  }
-
-  return NdrStringVec();
-}
-
-// -------------------------------------------------------------------------
-
-NdrTokenVec TokenVecVal(const TfToken &propName, const NdrTokenMap &metadata)
-{
-  const NdrStringVec untokenized = StringVecVal(propName, metadata);
-  NdrTokenVec tokenized;
-
-  for (const std::string &item : untokenized)
-  {
-    tokenized.emplace_back(TfToken(item));
-  }
-
-  return tokenized;
-}
-
-// -------------------------------------------------------------------------
-
-NdrOptionVec OptionVecVal(const std::string &optionStr)
-{
-  std::vector<std::string> tokens = TfStringSplit(optionStr, "|");
-
-  // The input string should be formatted as one of the following:
-  //
-  //     list:   "option1|option2|option3|..."
-  //     mapper: "key1:value1|key2:value2|..."
-  //
-  // If it's a mapper, return the result as a list of key-value tuples to
-  // preserve order.
-
-  NdrOptionVec options;
-
-  for (const std::string &token : tokens)
-  {
-    size_t colonPos = token.find(':');
-
-    if (colonPos != std::string::npos)
+    if (renderTypeSearch != metadata.end())
     {
-      options.emplace_back(
-        std::make_pair(TfToken(token.substr(0, colonPos)), TfToken(token.substr(colonPos + 1))));
+      // If the property is a SdrPropertyTypes->Terminal, then the
+      // renderType value will be "terminal <terminalName>", where the
+      // <terminalName> is the specific kind of terminal.  To identify
+      // the property as a terminal, we only need to check that the first
+      // string in the renderType value specifies "terminal"
+      if (TfStringStartsWith(renderTypeSearch->second, _tokens->terminal))
+      {
+        return true;
+      }
     }
-    else
-    {
-      options.emplace_back(std::make_pair(TfToken(token), TfToken()));
-    }
+
+    return false;
   }
 
-  return options;
-}
+  // -------------------------------------------------------------------------
 
-// -------------------------------------------------------------------------
-
-std::string CreateStringFromStringVec(const NdrStringVec &stringVec)
-{
-  return TfStringJoin(stringVec, "|");
-}
-
-// -------------------------------------------------------------------------
-
-bool IsPropertyAnAssetIdentifier(const NdrTokenMap &metadata)
-{
-  const NdrTokenMap::const_iterator widgetSearch = metadata.find(SdrPropertyMetadata->Widget);
-
-  if (widgetSearch != metadata.end())
+  TfToken GetRoleFromMetadata(const NdrTokenMap &metadata)
   {
-    const TfToken widget = TfToken(widgetSearch->second);
+    const NdrTokenMap::const_iterator roleSearch = metadata.find(SdrPropertyMetadata->Role);
 
-    if ((widget == _tokens->assetIdInput) || (widget == _tokens->filename) ||
-        (widget == _tokens->fileInput))
+    if (roleSearch != metadata.end())
     {
-      return true;
+      // If the value found is an allowed value, then we can return it
+      const TfToken role = TfToken(roleSearch->second);
+      if (std::find(SdrPropertyRole->allTokens.begin(), SdrPropertyRole->allTokens.end(), role) !=
+          SdrPropertyRole->allTokens.end())
+      {
+        return role;
+      }
     }
+    // Return an empty token if no "role" metadata or acceptable value found
+    return TfToken();
   }
-
-  return false;
-}
-
-// -------------------------------------------------------------------------
-
-bool IsPropertyATerminal(const NdrTokenMap &metadata)
-{
-  const NdrTokenMap::const_iterator renderTypeSearch = metadata.find(SdrPropertyMetadata->RenderType);
-
-  if (renderTypeSearch != metadata.end())
-  {
-    // If the property is a SdrPropertyTypes->Terminal, then the
-    // renderType value will be "terminal <terminalName>", where the
-    // <terminalName> is the specific kind of terminal.  To identify
-    // the property as a terminal, we only need to check that the first
-    // string in the renderType value specifies "terminal"
-    if (TfStringStartsWith(renderTypeSearch->second, _tokens->terminal))
-    {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// -------------------------------------------------------------------------
-
-TfToken GetRoleFromMetadata(const NdrTokenMap &metadata)
-{
-  const NdrTokenMap::const_iterator roleSearch = metadata.find(SdrPropertyMetadata->Role);
-
-  if (roleSearch != metadata.end())
-  {
-    // If the value found is an allowed value, then we can return it
-    const TfToken role = TfToken(roleSearch->second);
-    if (std::find(SdrPropertyRole->allTokens.begin(), SdrPropertyRole->allTokens.end(), role) !=
-        SdrPropertyRole->allTokens.end())
-    {
-      return role;
-    }
-  }
-  // Return an empty token if no "role" metadata or acceptable value found
-  return TfToken();
-}
 }  // namespace ShaderMetadataHelpers
 
 WABI_NAMESPACE_END

@@ -121,8 +121,12 @@ void HgiGLGraphicsCmds::DrawIndexed(HgiBufferHandle const &indexBuffer,
                                     uint32_t vertexOffset,
                                     uint32_t instanceCount)
 {
-  _ops.push_back(HgiGLOps::DrawIndexed(
-    _primitiveType, indexBuffer, indexCount, indexBufferByteOffset, vertexOffset, instanceCount));
+  _ops.push_back(HgiGLOps::DrawIndexed(_primitiveType,
+                                       indexBuffer,
+                                       indexCount,
+                                       indexBufferByteOffset,
+                                       vertexOffset,
+                                       instanceCount));
 }
 
 void HgiGLGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuffer,
@@ -131,8 +135,12 @@ void HgiGLGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuffer,
                                             uint32_t drawCount,
                                             uint32_t stride)
 {
-  _ops.push_back(HgiGLOps::DrawIndexedIndirect(
-    _primitiveType, indexBuffer, drawParameterBuffer, drawBufferOffset, drawCount, stride));
+  _ops.push_back(HgiGLOps::DrawIndexedIndirect(_primitiveType,
+                                               indexBuffer,
+                                               drawParameterBuffer,
+                                               drawBufferOffset,
+                                               drawCount,
+                                               stride));
 }
 
 void HgiGLGraphicsCmds::PushDebugGroup(const char *label)

@@ -42,49 +42,51 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-struct Ar_ResolverContextToPython
-{
-  Ar_ResolverContextToPython()
+  struct Ar_ResolverContextToPython
   {
-    to_python_converter<ArResolverContext, Ar_ResolverContextToPython>();
-  }
-
-  static PyObject *convert(const ArResolverContext &context)
-  {
-    return incref(Ar_ConvertResolverContextToPython(context).ptr());
-  }
-};
-
-struct Ar_ResolverContextFromPython
-{
-  Ar_ResolverContextFromPython()
-  {
-    converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<ArResolverContext>());
-  }
-
-  static void *_convertible(PyObject *obj_ptr)
-  {
-    if (obj_ptr == Py_None || Ar_CanConvertResolverContextFromPython(obj_ptr))
+    Ar_ResolverContextToPython()
     {
-      return obj_ptr;
-    }
-    return 0;
-  }
-
-  static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
-  {
-    void *storage = ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
-
-    ArResolverContext context;
-    if (obj_ptr != Py_None)
-    {
-      context = Ar_ConvertResolverContextFromPython(obj_ptr);
+      to_python_converter<ArResolverContext, Ar_ResolverContextToPython>();
     }
 
-    new (storage) ArResolverContext(context);
-    data->convertible = storage;
-  }
-};
+    static PyObject *convert(const ArResolverContext &context)
+    {
+      return incref(Ar_ConvertResolverContextToPython(context).ptr());
+    }
+  };
+
+  struct Ar_ResolverContextFromPython
+  {
+    Ar_ResolverContextFromPython()
+    {
+      converter::registry::push_back(&_convertible,
+                                     &_construct,
+                                     boost::python::type_id<ArResolverContext>());
+    }
+
+    static void *_convertible(PyObject *obj_ptr)
+    {
+      if (obj_ptr == Py_None || Ar_CanConvertResolverContextFromPython(obj_ptr))
+      {
+        return obj_ptr;
+      }
+      return 0;
+    }
+
+    static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
+    {
+      void *storage = ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
+
+      ArResolverContext context;
+      if (obj_ptr != Py_None)
+      {
+        context = Ar_ConvertResolverContextFromPython(obj_ptr);
+      }
+
+      new (storage) ArResolverContext(context);
+      data->convertible = storage;
+    }
+  };
 
 }  // anonymous namespace
 

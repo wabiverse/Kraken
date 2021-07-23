@@ -35,16 +35,16 @@ WABI_NAMESPACE_BEGIN
 namespace Tf_PySingleton
 {
 
-bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */)
-{
-  return bp::object();
-}
+  bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */)
+  {
+    return bp::object();
+  }
 
-string _Repr(bp::object const &self, string const &prefix)
-{
-  string name(bp::extract<string>(self.attr("__class__").attr("__name__")));
-  return prefix + name + "()";
-}
+  string _Repr(bp::object const &self, string const &prefix)
+  {
+    string name(bp::extract<string>(self.attr("__class__").attr("__name__")));
+    return prefix + name + "()";
+  }
 
 }  // namespace Tf_PySingleton
 

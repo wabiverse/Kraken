@@ -59,14 +59,14 @@ ARCH_PRAGMA_MACRO_REDEFINITION  // due to Python copysign
 
       OIIO_NAMESPACE_USING
 
-        // _ioProxySupportedExtensions is a list of hardcoded file extensions that
-        // support ioProxy. Although OIIO has an api call for checking whether or
-        // not a file type supports ioProxy, version 2.0.9 does not include this
-        // for EXR's, even though EXR's support ioProxy. This issue was fixed in
-        // commit 7677d498b599295fa8277d050ef994efbd297b55. Thus, for now we check
-        // whether or not a file extension is included in our hardcoded list of
-        // extensions we know to support ioProxy.
-        TF_MAKE_STATIC_DATA(std::vector<std::string>, _ioProxySupportedExtensions)
+      // _ioProxySupportedExtensions is a list of hardcoded file extensions that
+      // support ioProxy. Although OIIO has an api call for checking whether or
+      // not a file type supports ioProxy, version 2.0.9 does not include this
+      // for EXR's, even though EXR's support ioProxy. This issue was fixed in
+      // commit 7677d498b599295fa8277d050ef994efbd297b55. Thus, for now we check
+      // whether or not a file extension is included in our hardcoded list of
+      // extensions we know to support ioProxy.
+      TF_MAKE_STATIC_DATA(std::vector<std::string>, _ioProxySupportedExtensions)
 {
   _ioProxySupportedExtensions->push_back("exr");
 }
@@ -300,13 +300,11 @@ static std::string _TranslateMetadataKey(std::string const &metadataKey, bool *c
   {
     *convertMatrixTypes = true;
     return "worldtoscreen";
-  }
-  else if (metadataKey == "Nl")
+  } else if (metadataKey == "Nl")
   {
     *convertMatrixTypes = true;
     return "worldtocamera";
-  }
-  else
+  } else
   {
     return metadataKey;
   }
@@ -354,8 +352,7 @@ static VtValue _FindAttribute(ImageSpec const &spec, std::string const &metadata
           {
             GfMatrix4d doubleMatrix(*((GfMatrix4f *)param->data()));
             return VtValue(doubleMatrix);
-          }
-          else
+          } else
           {
             return VtValue(*((GfMatrix4f *)param->data()));
           }
@@ -376,44 +373,35 @@ static void _SetAttribute(ImageSpec *spec, std::string const &metadataKey, VtVal
   if (value.IsHolding<std::string>())
   {
     spec->attribute(key, TypeDesc(TypeDesc::STRING, TypeDesc::SCALAR), value.Get<std::string>().c_str());
-  }
-  else if (value.IsHolding<char>())
+  } else if (value.IsHolding<char>())
   {
     spec->attribute(key, TypeDesc(TypeDesc::INT8, TypeDesc::SCALAR), &value.Get<char>());
-  }
-  else if (value.IsHolding<unsigned char>())
+  } else if (value.IsHolding<unsigned char>())
   {
     spec->attribute(key, TypeDesc(TypeDesc::UINT8, TypeDesc::SCALAR), &value.Get<unsigned char>());
-  }
-  else if (value.IsHolding<int>())
+  } else if (value.IsHolding<int>())
   {
     spec->attribute(key, TypeDesc(TypeDesc::INT32, TypeDesc::SCALAR), &value.Get<int>());
-  }
-  else if (value.IsHolding<unsigned int>())
+  } else if (value.IsHolding<unsigned int>())
   {
     spec->attribute(key, TypeDesc(TypeDesc::UINT32, TypeDesc::SCALAR), &value.Get<unsigned int>());
-  }
-  else if (value.IsHolding<float>())
+  } else if (value.IsHolding<float>())
   {
     spec->attribute(key, TypeDesc(TypeDesc::FLOAT, TypeDesc::SCALAR), &value.Get<float>());
-  }
-  else if (value.IsHolding<double>())
+  } else if (value.IsHolding<double>())
   {
     spec->attribute(key, TypeDesc(TypeDesc::DOUBLE, TypeDesc::SCALAR), &value.Get<double>());
-  }
-  else if (value.IsHolding<GfMatrix4f>())
+  } else if (value.IsHolding<GfMatrix4f>())
   {
     spec->attribute(key, TypeDesc(TypeDesc::FLOAT, TypeDesc::MATRIX44), &value.Get<GfMatrix4f>());
-  }
-  else if (value.IsHolding<GfMatrix4d>())
+  } else if (value.IsHolding<GfMatrix4d>())
   {
     // For compatibility with Ice/Imr write double matrix as float matrix
     if (convertMatrixTypes)
     {
       GfMatrix4f floatMatrix(value.Get<GfMatrix4d>());
       spec->attribute(key, TypeDesc(TypeDesc::FLOAT, TypeDesc::MATRIX44), &floatMatrix);
-    }
-    else
+    } else
     {
       spec->attribute(key, TypeDesc(TypeDesc::DOUBLE, TypeDesc::MATRIX44), &value.Get<GfMatrix4d>());
     }
@@ -616,8 +604,7 @@ bool HioOIIO_Image::_OpenForReading(std::string const &filename,
     std::string inputFileName("in.");
     inputFileName.append(extension);
     imageInput = ImageInput::open(inputFileName, &config);
-  }
-  else
+  } else
   {
     imageInput = ImageInput::open(_filename);
   }
@@ -682,8 +669,7 @@ bool HioOIIO_Image::ReadCropped(int const cropTop,
     inputFileName.append(extension);
 
     imageInput = ImageInput::open(inputFileName, &config);
-  }
-  else
+  } else
   {
     imageInput = ImageInput::open(_filename);
   }
@@ -717,8 +703,7 @@ bool HioOIIO_Image::ReadCropped(int const cropTop,
   if (imageInput->spec().format == TypeDesc::DOUBLE)
   {
     imageInput->read_image(TypeDesc::FLOAT, start, AutoStride, readStride, AutoStride);
-  }
-  else
+  } else
   {
     imageInput->read_image(imageInput->spec().format, start, AutoStride, readStride, AutoStride);
   }

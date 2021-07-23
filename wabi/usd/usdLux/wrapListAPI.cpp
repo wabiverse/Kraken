@@ -50,25 +50,26 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateLightListCacheBehaviorAttr(UsdLuxListAPI &self,
-                                                      object defaultVal,
-                                                      bool writeSparsely)
-{
-  return self.CreateLightListCacheBehaviorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                               writeSparsely);
-}
+  static UsdAttribute _CreateLightListCacheBehaviorAttr(UsdLuxListAPI &self,
+                                                        object defaultVal,
+                                                        bool writeSparsely)
+  {
+    return self.CreateLightListCacheBehaviorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                                 writeSparsely);
+  }
 
-static std::string _Repr(const UsdLuxListAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.ListAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdLuxListAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.ListAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -136,16 +137,16 @@ void wrapUsdLuxListAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def("ComputeLightList", &UsdLuxListAPI::ComputeLightList)
-    .def("StoreLightList", &UsdLuxListAPI::StoreLightList)
-    .def("InvalidateLightList", &UsdLuxListAPI::InvalidateLightList)
-    //        .def("IsLightListValid", &UsdLuxListAPI::IsLightListValid)
-    ;
+  WRAP_CUSTOM
+  {
+    _class.def("ComputeLightList", &UsdLuxListAPI::ComputeLightList)
+      .def("StoreLightList", &UsdLuxListAPI::StoreLightList)
+      .def("InvalidateLightList", &UsdLuxListAPI::InvalidateLightList)
+      //        .def("IsLightListValid", &UsdLuxListAPI::IsLightListValid)
+      ;
 
-  scope s = _class;
-  TfPyWrapEnum<UsdLuxListAPI::ComputeMode>();
-}
+    scope s = _class;
+    TfPyWrapEnum<UsdLuxListAPI::ComputeMode>();
+  }
 
 }  // namespace

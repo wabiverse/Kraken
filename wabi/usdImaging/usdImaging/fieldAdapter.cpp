@@ -67,8 +67,10 @@ void UsdImagingFieldAdapter::TrackVariability(UsdPrim const &prim,
                                               UsdImagingInstancerContext const *instancerContext) const
 {
   // Discover time-varying transforms.
-  _IsTransformVarying(
-    prim, HdField::DirtyBits::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
+  _IsTransformVarying(prim,
+                      HdField::DirtyBits::DirtyTransform,
+                      UsdImagingTokens->usdVaryingXform,
+                      timeVaryingBits);
 
   // If any of the field attributes is time varying
   // we will assume all field params are time-varying.
@@ -141,8 +143,9 @@ VtValue UsdImagingFieldAdapter::Get(UsdPrim const &prim,
     return VtValue(0.0f);
   }
 
-  TF_CODING_ERROR(
-    "Property %s not supported for fields by UsdImaging, path: %s", key.GetText(), cachePath.GetText());
+  TF_CODING_ERROR("Property %s not supported for fields by UsdImaging, path: %s",
+                  key.GetText(),
+                  cachePath.GetText());
   return VtValue();
 }
 

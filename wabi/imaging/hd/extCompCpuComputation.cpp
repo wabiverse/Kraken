@@ -97,19 +97,25 @@ HdExtCompCpuComputationSharedPtr HdExtCompCpuComputation::CreateComputation(
         continue;
       }
 
-      HdExtCompCpuComputationSharedPtr sourceComputation = CreateComputation(
-        sceneDelegate, *sourceComp, computationSources);
+      HdExtCompCpuComputationSharedPtr sourceComputation = CreateComputation(sceneDelegate,
+                                                                             *sourceComp,
+                                                                             computationSources);
 
-      Hd_ExtCompInputSourceSharedPtr inputSource(new Hd_CompExtCompInputSource(
-        compInput.name, sourceComputation, compInput.sourceComputationOutputName));
+      Hd_ExtCompInputSourceSharedPtr inputSource(
+        new Hd_CompExtCompInputSource(compInput.name,
+                                      sourceComputation,
+                                      compInput.sourceComputationOutputName));
 
       computationSources->push_back(inputSource);
       inputs.push_back(inputSource);
     }
   }
 
-  HdExtCompCpuComputationSharedPtr result(new HdExtCompCpuComputation(
-    id, inputs, computation.GetOutputNames(), computation.GetElementCount(), sceneDelegate));
+  HdExtCompCpuComputationSharedPtr result(new HdExtCompCpuComputation(id,
+                                                                      inputs,
+                                                                      computation.GetOutputNames(),
+                                                                      computation.GetElementCount(),
+                                                                      sceneDelegate));
 
   computationSources->push_back(result);
 
@@ -136,8 +142,7 @@ bool HdExtCompCpuComputation::Resolve()
       }
 
       inputError |= _inputs[inputNum]->HasResolveError();
-    }
-    else
+    } else
     {
       inputError = true;
     }

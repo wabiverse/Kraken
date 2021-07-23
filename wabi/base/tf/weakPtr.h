@@ -460,10 +460,10 @@ struct Tf_SupportsWeakPtr
 
 #define TF_DECLARE_WEAK_POINTABLE_INTERFACE virtual TfWeakBase const &__GetTfWeakBase__() const = 0
 
-#define TF_IMPLEMENT_WEAK_POINTABLE_INTERFACE \
+#define TF_IMPLEMENT_WEAK_POINTABLE_INTERFACE         \
   virtual TfWeakBase const &__GetTfWeakBase__() const \
-  { \
-    return *this; \
+  {                                                   \
+    return *this;                                     \
   }
 
 WABI_NAMESPACE_END

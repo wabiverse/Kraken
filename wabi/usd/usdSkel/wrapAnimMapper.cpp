@@ -49,27 +49,27 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-TfPyObjWrapper _Remap(const UsdSkelAnimMapper &self,
-                      const VtValue &source,
-                      const VtValue &target,
-                      int elementSize,
-                      const VtValue &defaultValue)
-{
-  VtValue output(target);
-  self.Remap(source, &output, elementSize, defaultValue);
-  return UsdVtValueToPython(output);
-}
+  TfPyObjWrapper _Remap(const UsdSkelAnimMapper &self,
+                        const VtValue &source,
+                        const VtValue &target,
+                        int elementSize,
+                        const VtValue &defaultValue)
+  {
+    VtValue output(target);
+    self.Remap(source, &output, elementSize, defaultValue);
+    return UsdVtValueToPython(output);
+  }
 
-template<typename Matrix4>
-VtArray<Matrix4> _RemapTransforms(const UsdSkelAnimMapper &self,
-                                  const VtArray<Matrix4> &source,
-                                  const VtArray<Matrix4> &target,
-                                  int elementSize)
-{
-  VtArray<Matrix4> output(target);
-  self.RemapTransforms(source, &output, elementSize);
-  return output;
-}
+  template<typename Matrix4>
+  VtArray<Matrix4> _RemapTransforms(const UsdSkelAnimMapper &self,
+                                    const VtArray<Matrix4> &source,
+                                    const VtArray<Matrix4> &target,
+                                    int elementSize)
+  {
+    VtArray<Matrix4> output(target);
+    self.RemapTransforms(source, &output, elementSize);
+    return output;
+  }
 
 }  // namespace
 

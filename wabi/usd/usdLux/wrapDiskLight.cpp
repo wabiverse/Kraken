@@ -50,22 +50,23 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateRadiusAttr(UsdLuxDiskLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRadiusAttr(UsdLuxDiskLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static std::string _Repr(const UsdLuxDiskLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.DiskLight(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdLuxDiskLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.DiskLight(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -97,8 +98,9 @@ void wrapUsdLuxDiskLight()
     .def(!self)
 
     .def("GetRadiusAttr", &This::GetRadiusAttr)
-    .def(
-      "CreateRadiusAttr", &_CreateRadiusAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateRadiusAttr",
+         &_CreateRadiusAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("__repr__", ::_Repr);
 
@@ -127,7 +129,7 @@ void wrapUsdLuxDiskLight()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

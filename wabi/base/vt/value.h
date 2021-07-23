@@ -117,10 +117,10 @@ class VtValue;
 VT_API std::ostream &VtStreamOut(std::vector<VtValue> const &val, std::ostream &);
 
 #define VT_VALUE_SET_STORED_TYPE(SRC, DST) \
-  template<> \
-  struct Vt_ValueStoredType<SRC> \
-  { \
-    typedef DST Type; \
+  template<>                               \
+  struct Vt_ValueStoredType<SRC>           \
+  {                                        \
+    typedef DST Type;                      \
   }
 
 template<class T>
@@ -1462,8 +1462,7 @@ class VtValue
     if (src._IsLocalAndTriviallyCopyable())
     {
       dst._storage = src._storage;
-    }
-    else
+    } else
     {
       dst._info->CopyInit(src._storage, dst._storage);
     }
@@ -1482,8 +1481,7 @@ class VtValue
     if (src._IsLocalAndTriviallyCopyable())
     {
       dst._storage = src._storage;
-    }
-    else
+    } else
     {
       dst._info->Move(src._storage, dst._storage);
     }
@@ -1636,7 +1634,7 @@ struct Vt_ValueShapeDataAccess
 // the factory for these types.
 //
 #  define _VT_DECLARE_ZERO_VALUE_FACTORY(r, unused, elem) \
-    template<> \
+    template<>                                            \
     VT_API Vt_DefaultValueHolder Vt_DefaultValueFactory<VT_TYPE(elem)>::Invoke();
 
 BOOST_PP_SEQ_FOR_EACH(_VT_DECLARE_ZERO_VALUE_FACTORY,

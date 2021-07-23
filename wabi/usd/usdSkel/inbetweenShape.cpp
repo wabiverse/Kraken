@@ -88,8 +88,7 @@ TfToken UsdSkelInbetweenShape::_MakeNamespaced(const TfToken &name, bool quiet)
   if (_IsNamespaced(name))
   {
     result = name;
-  }
-  else
+  } else
   {
     result = TfToken(_tokens->inbetweensPrefix.GetString() + name.GetString());
   }
@@ -119,8 +118,7 @@ UsdAttribute UsdSkelInbetweenShape::_GetNormalOffsetsAttr(bool create) const
   if (!create)
   {
     return _attr.GetPrim().GetAttribute(normalOffsetsName);
-  }
-  else
+  } else
   {
     return _attr.GetPrim().CreateAttribute(normalOffsetsName,
                                            SdfValueTypeNames->Vector3fArray,

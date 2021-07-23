@@ -84,15 +84,13 @@ const AnchorU8 *AnchorSystemPathsUnix::getUserDir(int version, const char *versi
       if (home)
       {
         user_path = string(home) + "/.kraken/" + versionstr;
-      }
-      else
+      } else
       {
         return NULL;
       }
     }
     return (AnchorU8 *)user_path.c_str();
-  }
-  else
+  } else
   {
     if (user_path.empty() || last_version != version)
     {
@@ -103,8 +101,7 @@ const AnchorU8 *AnchorSystemPathsUnix::getUserDir(int version, const char *versi
       if (home)
       {
         user_path = string(home) + "/kraken/" + versionstr;
-      }
-      else
+      } else
       {
         home = getenv("HOME");
 
@@ -144,8 +141,7 @@ const AnchorU8 *AnchorSystemPathsUnix::getUserSpecialDir(eAnchorUserSpecialDirTy
       type_str = "VIDEOS";
       break;
     default:
-      TF_CODING_ERROR(
-        "AnchorSystemPathsUnix::getUserSpecialDir(): Invalid enum value for type parameter\n");
+      TF_CODING_ERROR("AnchorSystemPathsUnix::getUserSpecialDir(): Invalid enum value for type parameter\n");
       return NULL;
   }
 
@@ -197,12 +193,10 @@ void AnchorSystemPathsUnix::addToSystemRecentFiles(const char * /*filename*/) co
 #  include <shlobj.h>
 
 AnchorSystemPathsWin32::AnchorSystemPathsWin32()
-{
-}
+{}
 
 AnchorSystemPathsWin32::~AnchorSystemPathsWin32()
-{
-}
+{}
 
 const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr) const
 {
@@ -210,8 +204,7 @@ const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr
   static char knownpath[MAX_PATH * 3 + 128] = {0};
   PWSTR knownpath_16 = NULL;
 
-  HRESULT hResult = SHGetKnownFolderPath(
-    FOLDERID_ProgramData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
+  HRESULT hResult = SHGetKnownFolderPath(FOLDERID_ProgramData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
 
   if (hResult == S_OK)
   {
@@ -230,8 +223,7 @@ const AnchorU8 *AnchorSystemPathsWin32::getUserDir(int, const char *versionstr) 
   static char knownpath[MAX_PATH * 3 + 128] = {0};
   PWSTR knownpath_16 = NULL;
 
-  HRESULT hResult = SHGetKnownFolderPath(
-    FOLDERID_RoamingAppData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
+  HRESULT hResult = SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
 
   if (hResult == S_OK)
   {
@@ -331,8 +323,7 @@ eAnchorStatus AnchorISystemPaths::create()
 #  endif
 #endif
     success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }
@@ -346,8 +337,7 @@ eAnchorStatus AnchorISystemPaths::dispose()
   {
     delete m_systemPaths;
     m_systemPaths = NULL;
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }

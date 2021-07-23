@@ -50,27 +50,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateRadiusAttr(UsdLuxSphereLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRadiusAttr(UsdLuxSphereLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateTreatAsPointAttr(UsdLuxSphereLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateTreatAsPointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateTreatAsPointAttr(UsdLuxSphereLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateTreatAsPointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                       writeSparsely);
+  }
 
-static std::string _Repr(const UsdLuxSphereLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.SphereLight(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdLuxSphereLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.SphereLight(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -102,8 +104,9 @@ void wrapUsdLuxSphereLight()
     .def(!self)
 
     .def("GetRadiusAttr", &This::GetRadiusAttr)
-    .def(
-      "CreateRadiusAttr", &_CreateRadiusAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateRadiusAttr",
+         &_CreateRadiusAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetTreatAsPointAttr", &This::GetTreatAsPointAttr)
     .def("CreateTreatAsPointAttr",
@@ -137,7 +140,7 @@ void wrapUsdLuxSphereLight()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

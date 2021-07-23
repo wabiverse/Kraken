@@ -38,107 +38,108 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-float GetDiskLightNormalization(GfMatrix4f const &transform, float radius)
-{
-  const double sx = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * radius;
-  const double sy = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
-
-  float scaleFactor = 1.0f;
-  if (sx != 0.0 && sy != 0.0)
+  float GetDiskLightNormalization(GfMatrix4f const &transform, float radius)
   {
-    constexpr float unitDiskArea = M_PI;
-    float diskArea = M_PI * sx * sy;
-    scaleFactor = diskArea / unitDiskArea;
+    const double sx = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * radius;
+    const double sy = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
+
+    float scaleFactor = 1.0f;
+    if (sx != 0.0 && sy != 0.0)
+    {
+      constexpr float unitDiskArea = M_PI;
+      float diskArea = M_PI * sx * sy;
+      scaleFactor = diskArea / unitDiskArea;
+    }
+    return scaleFactor;
   }
-  return scaleFactor;
-}
 
-float GetSphereLightNormalization(GfMatrix4f const &transform, float radius)
-{
-  const double sx = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * radius;
-  const double sy = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
-  const double sz = GfVec3d(transform[0][2], transform[1][2], transform[2][2]).GetLength() * radius;
-
-  float scaleFactor = 1.0f;
-  if (sx != 0.0 && sy != 0.0 && sz != 0.0)
+  float GetSphereLightNormalization(GfMatrix4f const &transform, float radius)
   {
-    if (sx == sy && sy == sz)
-    {
-      // Can use the simple formula for surface area of a sphere
-      scaleFactor = static_cast<float>(sx * sx);
-    }
-    else
-    {
-      // Approximating the area of a stretched ellipsoid using the Knud Thomsen formula:
-      // http://www.numericana.com/answer/ellipsoid.htm
-      constexpr const double p = 1.6075;
-      constexpr const double pinv = 1. / 1.6075;
-      double sx_p = pow(sx, p);
-      double sy_p = pow(sy, p);
-      double sz_p = pow(sz, p);
+    const double sx = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * radius;
+    const double sy = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
+    const double sz = GfVec3d(transform[0][2], transform[1][2], transform[2][2]).GetLength() * radius;
 
-      scaleFactor = 1.0f / pow(3. / (sx_p * sy_p + sx_p * sz_p + sy_p * sz_p), pinv);
+    float scaleFactor = 1.0f;
+    if (sx != 0.0 && sy != 0.0 && sz != 0.0)
+    {
+      if (sx == sy && sy == sz)
+      {
+        // Can use the simple formula for surface area of a sphere
+        scaleFactor = static_cast<float>(sx * sx);
+      } else
+      {
+        // Approximating the area of a stretched ellipsoid using the Knud Thomsen formula:
+        // http://www.numericana.com/answer/ellipsoid.htm
+        constexpr const double p = 1.6075;
+        constexpr const double pinv = 1. / 1.6075;
+        double sx_p = pow(sx, p);
+        double sy_p = pow(sy, p);
+        double sz_p = pow(sz, p);
+
+        scaleFactor = 1.0f / pow(3. / (sx_p * sy_p + sx_p * sz_p + sy_p * sz_p), pinv);
+      }
     }
+    return scaleFactor;
   }
-  return scaleFactor;
-}
 
-float GetRectLightNormalization(GfMatrix4f const &transform, float width, float height)
-{
-  const GfVec4f ox(width, 0., 0., 0.);
-  const GfVec4f oy(0., height, 0., 0.);
-
-  const GfVec4f oxTrans = ox * transform;
-  const GfVec4f oyTrans = oy * transform;
-
-  float scaleFactor = oxTrans.GetLength() * oyTrans.GetLength();
-  if (scaleFactor == 0.0f)
+  float GetRectLightNormalization(GfMatrix4f const &transform, float width, float height)
   {
-    scaleFactor = 1.0f;
+    const GfVec4f ox(width, 0., 0., 0.);
+    const GfVec4f oy(0., height, 0., 0.);
+
+    const GfVec4f oxTrans = ox * transform;
+    const GfVec4f oyTrans = oy * transform;
+
+    float scaleFactor = oxTrans.GetLength() * oyTrans.GetLength();
+    if (scaleFactor == 0.0f)
+    {
+      scaleFactor = 1.0f;
+    }
+    return scaleFactor;
   }
-  return scaleFactor;
-}
 
-float GetCylinderLightNormalization(GfMatrix4f const &transform, float length, float radius)
-{
-  const auto scaledLength = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() * length;
-  const auto scaledRadiusX = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() * radius;
-  const auto scaledRadiusY = GfVec3d(transform[0][2], transform[1][2], transform[2][2]).GetLength() * radius;
-
-  float scaleFactor = 1.0f;
-  if (scaledRadiusX != 0.0 && scaledRadiusY != 0.0 && scaledLength != 0.0)
+  float GetCylinderLightNormalization(GfMatrix4f const &transform, float length, float radius)
   {
-    constexpr float unitCylinderArea = /* 2 * capArea */ 2.0f * M_PI + /* sideArea */ 2.0f * M_PI;
+    const auto scaledLength = GfVec3d(transform[0][0], transform[1][0], transform[2][0]).GetLength() *
+                              length;
+    const auto scaledRadiusX = GfVec3d(transform[0][1], transform[1][1], transform[2][1]).GetLength() *
+                               radius;
+    const auto scaledRadiusY = GfVec3d(transform[0][2], transform[1][2], transform[2][2]).GetLength() *
+                               radius;
 
-    float cylinderArea = 1.0f;
-    if (std::abs(scaledRadiusX - scaledRadiusY) < 1e4)
+    float scaleFactor = 1.0f;
+    if (scaledRadiusX != 0.0 && scaledRadiusY != 0.0 && scaledLength != 0.0)
     {
-      float capArea = M_PI * scaledRadiusX * scaledRadiusX;
-      float sideArea = 2.0f * M_PI * scaledRadiusX * scaledLength;
-      cylinderArea = 2.0f * capArea + sideArea;
-    }
-    else
-    {
-      float capArea = M_PI * scaledRadiusX * scaledRadiusY;
-      // Use Ramanujan approximation to calculate ellipse circumference
-      float h = (scaledRadiusX - scaledRadiusY) /
-                (scaledRadiusX + scaledRadiusY);  // might be unstable due to finite precision,
-                                                  // consider formula transformation
-      float circumference = M_PI * (scaledRadiusX + scaledRadiusY) *
-                            (1.0f + (3.0f * h) / (10.0f + std::sqrt(4.0f - 3.0f * h)));
-      float sideArea = circumference * scaledLength;
-      cylinderArea = 2.0f * capArea + sideArea;
-    }
+      constexpr float unitCylinderArea = /* 2 * capArea */ 2.0f * M_PI + /* sideArea */ 2.0f * M_PI;
 
-    scaleFactor = cylinderArea / unitCylinderArea;
+      float cylinderArea = 1.0f;
+      if (std::abs(scaledRadiusX - scaledRadiusY) < 1e4)
+      {
+        float capArea = M_PI * scaledRadiusX * scaledRadiusX;
+        float sideArea = 2.0f * M_PI * scaledRadiusX * scaledLength;
+        cylinderArea = 2.0f * capArea + sideArea;
+      } else
+      {
+        float capArea = M_PI * scaledRadiusX * scaledRadiusY;
+        // Use Ramanujan approximation to calculate ellipse circumference
+        float h = (scaledRadiusX - scaledRadiusY) /
+                  (scaledRadiusX + scaledRadiusY);  // might be unstable due to finite precision,
+                                                    // consider formula transformation
+        float circumference = M_PI * (scaledRadiusX + scaledRadiusY) *
+                              (1.0f + (3.0f * h) / (10.0f + std::sqrt(4.0f - 3.0f * h)));
+        float sideArea = circumference * scaledLength;
+        cylinderArea = 2.0f * capArea + sideArea;
+      }
+
+      scaleFactor = cylinderArea / unitCylinderArea;
+    }
+    return scaleFactor;
   }
-  return scaleFactor;
-}
 
-float ComputeLightIntensity(float intensity, float exposure)
-{
-  return intensity * exp2(exposure);
-}
+  float ComputeLightIntensity(float intensity, float exposure)
+  {
+    return intensity * exp2(exposure);
+  }
 
 }  // namespace
 
@@ -172,8 +173,14 @@ rpr::Shape *HdRprLight::CreateDiskLightMesh(HdRprApi *rprApi)
     pointIndices.push_back(centerPointIndex);
   }
 
-  return rprApi->CreateMesh(
-    points, pointIndices, normals, normalIndices, VtVec2fArray(), VtIntArray(), vpf, HdTokens->rightHanded);
+  return rprApi->CreateMesh(points,
+                            pointIndices,
+                            normals,
+                            normalIndices,
+                            VtVec2fArray(),
+                            VtIntArray(),
+                            vpf,
+                            HdTokens->rightHanded);
 }
 
 rpr::Shape *HdRprLight::CreateRectLightMesh(HdRprApi *rprApi,
@@ -253,14 +260,12 @@ void HdRprLight::SyncAreaLightGeomParams(HdSceneDelegate *sceneDelegate, float *
       if (m_lightType == HdPrimTypeTokens->diskLight)
       {
         (*intensity) /= GetDiskLightNormalization(m_transform, radius);
-      }
-      else
+      } else
       {
         (*intensity) /= GetSphereLightNormalization(m_transform, radius);
       }
     }
-  }
-  else if (m_lightType == HdPrimTypeTokens->rectLight)
+  } else if (m_lightType == HdPrimTypeTokens->rectLight)
   {
     float width = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->width).Get<float>());
     float height = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->height).Get<float>());
@@ -271,8 +276,7 @@ void HdRprLight::SyncAreaLightGeomParams(HdSceneDelegate *sceneDelegate, float *
     {
       (*intensity) /= GetRectLightNormalization(m_transform, width, height);
     }
-  }
-  else if (m_lightType == HdPrimTypeTokens->cylinderLight)
+  } else if (m_lightType == HdPrimTypeTokens->cylinderLight)
   {
     float radius = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->radius).Get<float>());
     float length = std::abs(sceneDelegate->GetLightParamValue(GetId(), HdLightTokens->length).Get<float>());
@@ -297,16 +301,13 @@ void HdRprLight::CreateAreaLightMesh(HdRprApi *rprApi, HdSceneDelegate *sceneDel
     if (m_lightType == HdPrimTypeTokens->diskLight)
     {
       mesh = CreateDiskLightMesh(rprApi);
-    }
-    else if (m_lightType == HdPrimTypeTokens->rectLight)
+    } else if (m_lightType == HdPrimTypeTokens->rectLight)
     {
       mesh = CreateRectLightMesh(rprApi);
-    }
-    else if (m_lightType == HdPrimTypeTokens->cylinderLight)
+    } else if (m_lightType == HdPrimTypeTokens->cylinderLight)
     {
       mesh = CreateCylinderLightMesh(rprApi);
-    }
-    else if (m_lightType == HdPrimTypeTokens->sphereLight)
+    } else if (m_lightType == HdPrimTypeTokens->sphereLight)
     {
       mesh = CreateSphereLightMesh(rprApi);
     }
@@ -315,8 +316,7 @@ void HdRprLight::CreateAreaLightMesh(HdRprApi *rprApi, HdSceneDelegate *sceneDel
     {
       light->meshes.push_back(mesh);
     }
-  }
-  else
+  } else
   {
     if (m_lightType == HdPrimTypeTokens->rectLight)
     {
@@ -324,19 +324,18 @@ void HdRprLight::CreateAreaLightMesh(HdRprApi *rprApi, HdSceneDelegate *sceneDel
       {
         light->meshes.push_back(mesh);
       }
-    }
-    else if (m_lightType == HdPrimTypeTokens->diskLight)
+    } else if (m_lightType == HdPrimTypeTokens->diskLight)
     {
       // Rescale rect so that total emission power equals to emission power of approximated shape
       // (area equality) pi*(R/2)^2 = a^2 -> a = R * sqrt(pi) / 2
-      if (auto mesh = CreateRectLightMesh(
-            rprApi, true, GfMatrix4f(1.0f).SetScale(GfVec3f(sqrt(M_PI) / 2.0))))
+      if (auto mesh = CreateRectLightMesh(rprApi,
+                                          true,
+                                          GfMatrix4f(1.0f).SetScale(GfVec3f(sqrt(M_PI) / 2.0))))
       {
         light->meshes.push_back(mesh);
       }
-    }
-    else if (m_lightType == HdPrimTypeTokens->sphereLight ||
-             m_lightType == HdPrimTypeTokens->cylinderLight)
+    } else if (m_lightType == HdPrimTypeTokens->sphereLight ||
+               m_lightType == HdPrimTypeTokens->cylinderLight)
     {
       // Approximate sphere and cylinder lights via cube
       constexpr float kHalfSize = 0.5f;
@@ -367,8 +366,7 @@ void HdRprLight::CreateAreaLightMesh(HdRprApi *rprApi, HdSceneDelegate *sceneDel
       {
         // 4*pi*(R/2)^2 = 6*a^2 -> a = R * sqrt(pi/6)
         scale.SetScale(GfVec3f(sqrt(M_PI / 6.0)));
-      }
-      else
+      } else
       {
         // 2*pi*(R/2)^2+2*pi*(R/2)*L = 6*a^2 -> a = sqrt(pi/6 * (R^2/2+R*L)) = sqrt(pi/6 * 3/2)
         scale.SetScale(GfVec3f(sqrt(M_PI / 4.0)));
@@ -543,8 +541,7 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam
           newLight = true;
         }
       }
-    }
-    else
+    } else
     {
       auto coneAngle = sceneDelegate->GetLightParamValue(id, USD_LUX_TOKEN_SHAPING_CONE_ANGLE);
       auto coneSoftness = sceneDelegate->GetLightParamValue(id, USD_LUX_TOKEN_SHAPING_CONE_SOFTNESS);
@@ -556,16 +553,14 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam
           m_light = light;
           newLight = true;
         }
-      }
-      else if (sceneDelegate->GetLightParamValue(id, UsdLuxTokens->treatAsPoint).GetWithDefault(false))
+      } else if (sceneDelegate->GetLightParamValue(id, UsdLuxTokens->treatAsPoint).GetWithDefault(false))
       {
         if (auto light = rprApi->CreatePointLight())
         {
           m_light = light;
           newLight = true;
         }
-      }
-      else
+      } else
       {
         if (rprApi->IsSphereAndDiskLightSupported() &&
             (m_lightType == HdPrimTypeTokens->sphereLight || m_lightType == HdPrimTypeTokens->diskLight))
@@ -580,8 +575,7 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam
               m_light = light;
               newLight = true;
             }
-          }
-          else
+          } else
           {
             if (auto light = rprApi->CreateDiskLight())
             {
@@ -592,8 +586,7 @@ void HdRprLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam
               newLight = true;
             }
           }
-        }
-        else
+        } else
         {
           CreateAreaLightMesh(rprApi, sceneDelegate);
           newLight = true;

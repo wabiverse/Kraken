@@ -56,8 +56,7 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
   if (desc.usage & HgiTextureUsageBitsColorTarget)
   {
     usage = MTLTextureUsageRenderTarget;
-  }
-  else if (desc.usage & HgiTextureUsageBitsDepthTarget)
+  } else if (desc.usage & HgiTextureUsageBitsDepthTarget)
   {
     TF_VERIFY(desc.format == HgiFormatFloat32 || desc.format == HgiFormatFloat32UInt8);
 
@@ -65,8 +64,7 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
     if (desc.usage & HgiTextureUsageBitsStencilTarget)
     {
       mtlFormat = MTLPixelFormatDepth32Float_Stencil8;
-    }
-    else
+    } else
     {
       mtlFormat = MTLPixelFormatDepth32Float;
     }
@@ -108,8 +106,7 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
     {
       MTLTextureSwizzle s = HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.r);
       texDesc.swizzle = MTLTextureSwizzleChannelsMake(s, s, s, s);
-    }
-    else
+    } else
     {
       texDesc.swizzle = MTLTextureSwizzleChannelsMake(
         HgiMetalConversions::GetComponentSwizzle(desc.componentMapping.r),
@@ -124,16 +121,13 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
   {
     texDesc.depth = depth;
     texDesc.textureType = MTLTextureType3D;
-  }
-  else if (desc.type == HgiTextureType2DArray)
+  } else if (desc.type == HgiTextureType2DArray)
   {
     texDesc.textureType = MTLTextureType2DArray;
-  }
-  else if (desc.type == HgiTextureType1D)
+  } else if (desc.type == HgiTextureType1D)
   {
     texDesc.textureType = MTLTextureType1D;
-  }
-  else if (desc.type == HgiTextureType1DArray)
+  } else if (desc.type == HgiTextureType1DArray)
   {
     texDesc.textureType = MTLTextureType1DArray;
   }
@@ -151,8 +145,10 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
     size_t perPixelSize = HgiGetDataSizeOfFormat(desc.format);
 
     // Upload each (available) mip
-    const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(
-      desc.format, desc.dimensions, desc.layerCount, desc.pixelsByteSize);
+    const std::vector<HgiMipInfo> mipInfos = HgiGetMipInfos(desc.format,
+                                                            desc.dimensions,
+                                                            desc.layerCount,
+                                                            desc.pixelsByteSize);
     const size_t mipLevels = std::min(mipInfos.size(), size_t(desc.mipLevels));
     const char *const initialData = reinterpret_cast<const char *>(desc.initialData);
 
@@ -170,15 +166,13 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
                       mipmapLevel:mip
                         withBytes:initialData + mipInfo.byteOffset
                       bytesPerRow:bytesPerRow];
-      }
-      else if (desc.type == HgiTextureType2D)
+      } else if (desc.type == HgiTextureType2D)
       {
         [_textureId replaceRegion:MTLRegionMake2D(0, 0, width, height)
                       mipmapLevel:mip
                         withBytes:initialData + mipInfo.byteOffset
                       bytesPerRow:bytesPerRow];
-      }
-      else if (desc.type == HgiTextureType3D)
+      } else if (desc.type == HgiTextureType3D)
       {
         const size_t depth = mipInfo.dimensions[2];
         const size_t imageBytes = bytesPerRow * height;
@@ -192,8 +186,7 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
                         bytesPerRow:bytesPerRow
                       bytesPerImage:0];
         }
-      }
-      else if (desc.type == HgiTextureType2DArray)
+      } else if (desc.type == HgiTextureType2DArray)
       {
         const size_t imageBytes = bytesPerRow * height;
         for (int slice = 0; slice < desc.layerCount; slice++)
@@ -208,8 +201,7 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
                         bytesPerRow:bytesPerRow
                       bytesPerImage:0];
         }
-      }
-      else if (desc.type == HgiTextureType1DArray)
+      } else if (desc.type == HgiTextureType1DArray)
       {
         const size_t imageBytes = bytesPerRow;
         for (int slice = 0; slice < desc.layerCount; slice++)
@@ -224,8 +216,7 @@ HgiMetalTexture::HgiMetalTexture(HgiMetal *hgi, HgiTextureDesc const &desc)
                         bytesPerRow:bytesPerRow
                       bytesPerImage:0];
         }
-      }
-      else
+      } else
       {
         TF_CODING_ERROR("Missing Texture upload implementation");
       }

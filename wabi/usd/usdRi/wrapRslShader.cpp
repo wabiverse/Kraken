@@ -50,22 +50,23 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateSloPathAttr(UsdRiRslShader &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSloPathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
+  static UsdAttribute _CreateSloPathAttr(UsdRiRslShader &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSloPathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
+  }
 
-static std::string _Repr(const UsdRiRslShader &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.RslShader(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiRslShader &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.RslShader(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -128,7 +129,7 @@ void wrapUsdRiRslShader()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // anonymous namespace

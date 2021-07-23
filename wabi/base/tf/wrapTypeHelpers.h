@@ -38,31 +38,31 @@ WABI_NAMESPACE_BEGIN
 namespace TfType_WrapHelpers
 {
 
-using namespace boost::python;
+  using namespace boost::python;
 
-struct _PythonClass : def_visitor<_PythonClass>
-{
-  friend class def_visitor_access;
-
- private:
-  template<class CLS, class T>
-  void _Visit(CLS &c, T *) const
+  struct _PythonClass : def_visitor<_PythonClass>
   {
-    if (TfType t = TfType::Find<T>())
-      t.DefinePythonClass(c);
-  }
+    friend class def_visitor_access;
 
- public:
-  template<class CLS>
-  void visit(CLS &c) const
-  {
-    // Use function template resolution to wrap the type
-    // appropriately depending on whether it is a polymorphic
-    // wrapper<> type.
-    typedef typename CLS::wrapped_type Type;
-    _Visit(c, detail::unwrap_wrapper((Type *)0));
-  }
-};
+   private:
+    template<class CLS, class T>
+    void _Visit(CLS &c, T *) const
+    {
+      if (TfType t = TfType::Find<T>())
+        t.DefinePythonClass(c);
+    }
+
+   public:
+    template<class CLS>
+    void visit(CLS &c) const
+    {
+      // Use function template resolution to wrap the type
+      // appropriately depending on whether it is a polymorphic
+      // wrapper<> type.
+      typedef typename CLS::wrapped_type Type;
+      _Visit(c, detail::unwrap_wrapper((Type *)0));
+    }
+  };
 
 }  // namespace TfType_WrapHelpers
 

@@ -120,14 +120,15 @@ UsdRelationship UsdGeomImageable::CreateProxyPrimRel() const
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -215,8 +216,10 @@ bool UsdGeomImageable::HasPrimvar(const TfToken &name) const
 /* static */
 const TfTokenVector &UsdGeomImageable::GetOrderedPurposeTokens()
 {
-  static const TfTokenVector purposeTokens = {
-    UsdGeomTokens->default_, UsdGeomTokens->render, UsdGeomTokens->proxy, UsdGeomTokens->guide};
+  static const TfTokenVector purposeTokens = {UsdGeomTokens->default_,
+                                              UsdGeomTokens->render,
+                                              UsdGeomTokens->proxy,
+                                              UsdGeomTokens->guide};
 
   return purposeTokens;
 }
@@ -428,8 +431,7 @@ UsdGeomImageable::PurposeInfo UsdGeomImageable::ComputePurposeInfo() const
     if (inheritableParentPurpose.IsEmpty())
     {
       return PurposeInfo(_ComputeFallbackPurpose(*this), false);
-    }
-    else
+    } else
     {
       return PurposeInfo(inheritableParentPurpose, true);
     }
@@ -449,8 +451,7 @@ UsdGeomImageable::PurposeInfo UsdGeomImageable::ComputePurposeInfo(
     if (parentPurposeInfo.isInheritable)
     {
       return parentPurposeInfo;
-    }
-    else
+    } else
     {
       return PurposeInfo(_ComputeFallbackPurpose(*this), false);
     }
@@ -501,8 +502,7 @@ UsdPrim UsdGeomImageable::ComputeProxyPrim(UsdPrim *renderPrim) const
           }
           return proxy;
         }
-      }
-      else if (target.size() > 1)
+      } else if (target.size() > 1)
       {
         TF_WARN(
           "Found multiple targets for proxyPrim rel on "

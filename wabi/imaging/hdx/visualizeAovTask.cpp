@@ -47,12 +47,9 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          (aovIn)(depthIn)(idIn)(normalIn)
 
                          // shader mixins
-                         ((visualizeAovVertex,
-                           "VisualizeVertex"))((visualizeAovFragmentDepth,
-                                                "VisualizeFragmentDepth"))((visualizeAovFragmentFallback,
-                                                                            "VisualizeFragmentFallback"))((
-                           visualizeAovFragmentId,
-                           "VisualizeFragmentId"))((visualizeAovFragmentNormal, "VisualizeFragmentNormal"))
+                         ((visualizeAovVertex, "VisualizeVertex"))((visualizeAovFragmentDepth, "VisualizeFragmentDepth"))(
+                           (visualizeAovFragmentFallback, "VisualizeFragmentFallback"))(
+                           (visualizeAovFragmentId, "VisualizeFragmentId"))((visualizeAovFragmentNormal, "VisualizeFragmentNormal"))
 
                            ((empty, "")));
 
@@ -119,16 +116,13 @@ bool HdxVisualizeAovTask::_UpdateVizKernel(TfToken const &aovName)
   if (aovName == HdAovTokens->color)
   {
     vk = VizKernelNone;
-  }
-  else if (HdAovHasDepthSemantic(aovName))
+  } else if (HdAovHasDepthSemantic(aovName))
   {
     vk = VizKernelDepth;
-  }
-  else if (_IsIdAov(aovName))
+  } else if (_IsIdAov(aovName))
   {
     vk = VizKernelId;
-  }
-  else if (aovName == HdAovTokens->normal)
+  } else if (aovName == HdAovTokens->normal)
   {
     vk = VizKernelNormal;
   }
@@ -266,9 +260,17 @@ bool HdxVisualizeAovTask::_CreateBufferResources()
   }
 
   // A larger-than screen triangle made to fit the screen.
-  constexpr float vertDataGL[][6] = {{-1, 3, 0, 1, 0, 2}, {-1, -1, 0, 1, 0, 0}, {3, -1, 0, 1, 2, 0}};
+  constexpr float vertDataGL[][6] = {
+    {-1, 3,  0, 1, 0, 2},
+    {-1, -1, 0, 1, 0, 0},
+    {3,  -1, 0, 1, 2, 0}
+  };
 
-  constexpr float vertDataOther[][6] = {{-1, 3, 0, 1, 0, -1}, {-1, -1, 0, 1, 0, 1}, {3, -1, 0, 1, 2, 1}};
+  constexpr float vertDataOther[][6] = {
+    {-1, 3,  0, 1, 0, -1},
+    {-1, -1, 0, 1, 0, 1 },
+    {3,  -1, 0, 1, 2, 1 }
+  };
 
   HgiBufferDesc vboDesc;
   vboDesc.debugName = "HdxVisualizeAovTask VertexBuffer";
@@ -310,8 +312,7 @@ bool HdxVisualizeAovTask::_CreateResourceBindings(HgiTextureHandle const &inputA
     if (desc == resourceDesc)
     {
       return true;
-    }
-    else
+    } else
     {
       _GetHgi()->DestroyResourceBindings(&_resourceBindings);
     }
@@ -551,8 +552,7 @@ void HdxVisualizeAovTask::_ApplyVisualizationKernel(HgiTextureHandle const &outp
     data.minMaxDepth[1] = _minMaxDepth[1];
 
     gfxCmds->SetConstantValues(_pipeline, HgiShaderStageFragment, 0, sizeof(data), &data);
-  }
-  else
+  } else
   {
     gfxCmds->SetConstantValues(_pipeline, HgiShaderStageFragment, 0, sizeof(_screenSize), &_screenSize);
   }
@@ -672,8 +672,7 @@ void HdxVisualizeAovTask::Execute(HdTaskContext *ctx)
     // Swap the handles on the task context so that future downstream tasks
     // can use HdxAovTokens->color to get the output of this task.
     _ToggleRenderTarget(ctx);
-  }
-  else
+  } else
   {
     (*ctx)[HdAovTokens->color] = VtValue(_outputTexture);
   }

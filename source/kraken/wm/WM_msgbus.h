@@ -63,13 +63,11 @@ struct MsgBusCallback : public TfWeakBase
 {
   /** Kraken WM Notifications. */
   MsgBusCallback(wmNotifier *note);
-  void wmCOMM(const TfNotice &notice,
-              MsgBus const &sender);
+  void wmCOMM(const TfNotice &notice, MsgBus const &sender);
 
   /** Kraken Operators. */
   MsgBusCallback(wmOperatorType *ot);
-  void OperatorCOMM(const TfNotice &notice,
-                    MsgBus const &sender);
+  void OperatorCOMM(const TfNotice &notice, MsgBus const &sender);
 
   /** Reference Count. */
   tbb::atomic<int> ref;

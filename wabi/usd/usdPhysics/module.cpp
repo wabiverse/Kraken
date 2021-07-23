@@ -35,30 +35,30 @@ WABI_NAMESPACE_USING
 
 TF_WRAP_MODULE
 {
-	TF_WRAP(UsdPhysicsTokens);
+  TF_WRAP(UsdPhysicsTokens);
 
-	TF_WRAP(UsdPhysicsRigidBodyAPI);
-	TF_WRAP(UsdPhysicsCollisionAPI);
-	TF_WRAP(UsdPhysicsMeshCollisionAPI);
-	TF_WRAP(UsdPhysicsMaterialAPI);
-	TF_WRAP(UsdPhysicsScene);	
+  TF_WRAP(UsdPhysicsRigidBodyAPI);
+  TF_WRAP(UsdPhysicsCollisionAPI);
+  TF_WRAP(UsdPhysicsMeshCollisionAPI);
+  TF_WRAP(UsdPhysicsMaterialAPI);
+  TF_WRAP(UsdPhysicsScene);
 
-	// Mass
-	TF_WRAP(UsdPhysicsMassAPI);
+  // Mass
+  TF_WRAP(UsdPhysicsMassAPI);
 
-	// Joints
-	TF_WRAP(UsdPhysicsArticulationRootAPI);	
-	TF_WRAP(UsdPhysicsJoint);
-	TF_WRAP(UsdPhysicsRevoluteJoint);
-	TF_WRAP(UsdPhysicsPrismaticJoint);
-	TF_WRAP(UsdPhysicsSphericalJoint);
-	TF_WRAP(UsdPhysicsDistanceJoint);
-	TF_WRAP(UsdPhysicsFixedJoint);
-	TF_WRAP(UsdPhysicsLimitAPI);
-	TF_WRAP(UsdPhysicsDriveAPI);
+  // Joints
+  TF_WRAP(UsdPhysicsArticulationRootAPI);
+  TF_WRAP(UsdPhysicsJoint);
+  TF_WRAP(UsdPhysicsRevoluteJoint);
+  TF_WRAP(UsdPhysicsPrismaticJoint);
+  TF_WRAP(UsdPhysicsSphericalJoint);
+  TF_WRAP(UsdPhysicsDistanceJoint);
+  TF_WRAP(UsdPhysicsFixedJoint);
+  TF_WRAP(UsdPhysicsLimitAPI);
+  TF_WRAP(UsdPhysicsDriveAPI);
 
 
-	// collision group
-	TF_WRAP(UsdPhysicsCollisionGroup);
-	TF_WRAP(UsdPhysicsFilteredPairsAPI);	
+  // collision group
+  TF_WRAP(UsdPhysicsCollisionGroup);
+  TF_WRAP(UsdPhysicsFilteredPairsAPI);
 }

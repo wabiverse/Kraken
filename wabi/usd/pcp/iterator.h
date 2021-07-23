@@ -277,90 +277,90 @@ class PcpPropertyReverseIterator : public boost::reverse_iterator<PcpPropertyIte
 // Helper macro for defining iterator ranges, which are simply pairs of
 // iterators denoting the [start, end) of a series of values. These ranges
 // may be used with TF_FOR_ALL and TF_REVERSE_FOR_ALL.
-#define PCP_DEFINE_RANGE(Range, Iterator, ReverseIterator) \
-  typedef std::pair<Iterator, Iterator> Range; \
-\
-  inline Iterator begin(Range &range) \
-  { \
-    return range.first; \
-  } \
-  inline Iterator begin(const Range &range) \
-  { \
-    return range.first; \
-  } \
-  inline Iterator end(Range &range) \
-  { \
-    return range.second; \
-  } \
-  inline Iterator end(const Range &range) \
-  { \
-    return range.second; \
-  } \
-\
-  template<> \
-  struct Tf_IteratorInterface<Range, false> \
-  { \
-    typedef Iterator IteratorType; \
-    static IteratorType Begin(Range &c) \
-    { \
-      return c.first; \
-    } \
-    static IteratorType End(Range &c) \
-    { \
-      return c.second; \
-    } \
-  }; \
-\
-  template<> \
-  struct Tf_IteratorInterface<const Range, false> \
-  { \
-    typedef Iterator IteratorType; \
-    static IteratorType Begin(Range const &c) \
-    { \
-      return c.first; \
-    } \
-    static IteratorType End(Range const &c) \
-    { \
-      return c.second; \
-    } \
-  }; \
-\
-  template<> \
-  struct Tf_IteratorInterface<Range, true> \
-  { \
-    typedef ReverseIterator IteratorType; \
-    static IteratorType Begin(Range &c) \
-    { \
-      return IteratorType(c.second); \
-    } \
-    static IteratorType End(Range &c) \
-    { \
-      return IteratorType(c.first); \
-    } \
-  }; \
-\
-  template<> \
-  struct Tf_IteratorInterface<const Range, true> \
-  { \
-    typedef ReverseIterator IteratorType; \
-    static IteratorType Begin(Range const &c) \
-    { \
-      return IteratorType(c.second); \
-    } \
-    static IteratorType End(Range const &c) \
-    { \
-      return IteratorType(c.first); \
-    } \
-  }; \
-\
-  template<> \
-  struct Tf_ShouldIterateOverCopy<Range> : boost::true_type \
-  { \
-  }; \
-\
-  template<> \
+#define PCP_DEFINE_RANGE(Range, Iterator, ReverseIterator)        \
+  typedef std::pair<Iterator, Iterator> Range;                    \
+                                                                  \
+  inline Iterator begin(Range &range)                             \
+  {                                                               \
+    return range.first;                                           \
+  }                                                               \
+  inline Iterator begin(const Range &range)                       \
+  {                                                               \
+    return range.first;                                           \
+  }                                                               \
+  inline Iterator end(Range &range)                               \
+  {                                                               \
+    return range.second;                                          \
+  }                                                               \
+  inline Iterator end(const Range &range)                         \
+  {                                                               \
+    return range.second;                                          \
+  }                                                               \
+                                                                  \
+  template<>                                                      \
+  struct Tf_IteratorInterface<Range, false>                       \
+  {                                                               \
+    typedef Iterator IteratorType;                                \
+    static IteratorType Begin(Range &c)                           \
+    {                                                             \
+      return c.first;                                             \
+    }                                                             \
+    static IteratorType End(Range &c)                             \
+    {                                                             \
+      return c.second;                                            \
+    }                                                             \
+  };                                                              \
+                                                                  \
+  template<>                                                      \
+  struct Tf_IteratorInterface<const Range, false>                 \
+  {                                                               \
+    typedef Iterator IteratorType;                                \
+    static IteratorType Begin(Range const &c)                     \
+    {                                                             \
+      return c.first;                                             \
+    }                                                             \
+    static IteratorType End(Range const &c)                       \
+    {                                                             \
+      return c.second;                                            \
+    }                                                             \
+  };                                                              \
+                                                                  \
+  template<>                                                      \
+  struct Tf_IteratorInterface<Range, true>                        \
+  {                                                               \
+    typedef ReverseIterator IteratorType;                         \
+    static IteratorType Begin(Range &c)                           \
+    {                                                             \
+      return IteratorType(c.second);                              \
+    }                                                             \
+    static IteratorType End(Range &c)                             \
+    {                                                             \
+      return IteratorType(c.first);                               \
+    }                                                             \
+  };                                                              \
+                                                                  \
+  template<>                                                      \
+  struct Tf_IteratorInterface<const Range, true>                  \
+  {                                                               \
+    typedef ReverseIterator IteratorType;                         \
+    static IteratorType Begin(Range const &c)                     \
+    {                                                             \
+      return IteratorType(c.second);                              \
+    }                                                             \
+    static IteratorType End(Range const &c)                       \
+    {                                                             \
+      return IteratorType(c.first);                               \
+    }                                                             \
+  };                                                              \
+                                                                  \
+  template<>                                                      \
+  struct Tf_ShouldIterateOverCopy<Range> : boost::true_type       \
+  {                                                               \
+  };                                                              \
+                                                                  \
+  template<>                                                      \
   struct Tf_ShouldIterateOverCopy<const Range> : boost::true_type \
-  { \
+  {                                                               \
   }
 
 PCP_DEFINE_RANGE(PcpNodeRange, PcpNodeIterator, PcpNodeReverseIterator);

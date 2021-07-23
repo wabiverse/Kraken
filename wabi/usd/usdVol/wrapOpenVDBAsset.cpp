@@ -50,28 +50,32 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateFieldDataTypeAttr(UsdVolOpenVDBAsset &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFieldDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateFieldDataTypeAttr(UsdVolOpenVDBAsset &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateFieldDataTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateFieldClassAttr(UsdVolOpenVDBAsset &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFieldClassAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateFieldClassAttr(UsdVolOpenVDBAsset &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFieldClassAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                     writeSparsely);
+  }
 
-static std::string _Repr(const UsdVolOpenVDBAsset &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdVol.OpenVDBAsset(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdVolOpenVDBAsset &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdVol.OpenVDBAsset(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -139,7 +143,7 @@ void wrapUsdVolOpenVDBAsset()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

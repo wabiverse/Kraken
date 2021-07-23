@@ -192,8 +192,7 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
   if (desc.depthState.stencilTestEnabled)
   {
     TF_CODING_ERROR("Missing implementation stencil mask enabled");
-  }
-  else
+  } else
   {
     depthStencilState.back.failOp = VK_STENCIL_OP_KEEP;
     depthStencilState.back.passOp = VK_STENCIL_OP_KEEP;
@@ -274,16 +273,19 @@ HgiVulkanGraphicsPipeline::HgiVulkanGraphicsPipeline(HgiVulkanDevice *device,
   pipeLayCreateInfo.setLayoutCount = (uint32_t)_vkDescriptorSetLayouts.size();
   pipeLayCreateInfo.pSetLayouts = _vkDescriptorSetLayouts.data();
 
-  TF_VERIFY(vkCreatePipelineLayout(
-              _device->GetVulkanDevice(), &pipeLayCreateInfo, HgiVulkanAllocator(), &_vkPipelineLayout) ==
-            VK_SUCCESS);
+  TF_VERIFY(vkCreatePipelineLayout(_device->GetVulkanDevice(),
+                                   &pipeLayCreateInfo,
+                                   HgiVulkanAllocator(),
+                                   &_vkPipelineLayout) == VK_SUCCESS);
 
   // Debug label
   if (!desc.debugName.empty())
   {
     std::string debugLabel = "PipelineLayout " + desc.debugName;
-    HgiVulkanSetDebugName(
-      device, (uint64_t)_vkPipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, debugLabel.c_str());
+    HgiVulkanSetDebugName(device,
+                          (uint64_t)_vkPipelineLayout,
+                          VK_OBJECT_TYPE_PIPELINE_LAYOUT,
+                          debugLabel.c_str());
   }
 
   pipeCreateInfo.layout = _vkPipelineLayout;
@@ -414,16 +416,19 @@ VkFramebuffer HgiVulkanGraphicsPipeline::AcquireVulkanFramebuffer(HgiGraphicsCmd
   fbCreateInfo.height = framebuffer.dimensions[1];
   fbCreateInfo.layers = 1;
 
-  TF_VERIFY(vkCreateFramebuffer(
-              _device->GetVulkanDevice(), &fbCreateInfo, HgiVulkanAllocator(), &framebuffer.vkFramebuffer) ==
-            VK_SUCCESS);
+  TF_VERIFY(vkCreateFramebuffer(_device->GetVulkanDevice(),
+                                &fbCreateInfo,
+                                HgiVulkanAllocator(),
+                                &framebuffer.vkFramebuffer) == VK_SUCCESS);
 
   // Debug label
   if (!_descriptor.debugName.empty())
   {
     std::string debugLabel = "Framebuffer " + _descriptor.debugName;
-    HgiVulkanSetDebugName(
-      _device, (uint64_t)framebuffer.vkFramebuffer, VK_OBJECT_TYPE_FRAMEBUFFER, debugLabel.c_str());
+    HgiVulkanSetDebugName(_device,
+                          (uint64_t)framebuffer.vkFramebuffer,
+                          VK_OBJECT_TYPE_FRAMEBUFFER,
+                          debugLabel.c_str());
   }
 
   TF_VERIFY(framebuffer.dimensions[0] > 0 && framebuffer.dimensions[1] > 0);
@@ -657,9 +662,10 @@ void HgiVulkanGraphicsPipeline::_CreateRenderPass()
   vkCreateRenderPass2KHR = (PFN_vkCreateRenderPass2KHR)vkGetDeviceProcAddr(_device->GetVulkanDevice(),
                                                                            "vkCreateRenderPass2KHR");
 
-  TF_VERIFY(vkCreateRenderPass2KHR(
-              _device->GetVulkanDevice(), &renderPassInfo, HgiVulkanAllocator(), &_vkRenderPass) ==
-            VK_SUCCESS);
+  TF_VERIFY(vkCreateRenderPass2KHR(_device->GetVulkanDevice(),
+                                   &renderPassInfo,
+                                   HgiVulkanAllocator(),
+                                   &_vkRenderPass) == VK_SUCCESS);
 
   // Debug label
   if (!_descriptor.debugName.empty())

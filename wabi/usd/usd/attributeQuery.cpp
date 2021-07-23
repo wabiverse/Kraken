@@ -90,8 +90,10 @@ bool UsdAttributeQuery::Get(VtValue *value, UsdTimeCode time) const
 
 bool UsdAttributeQuery::GetTimeSamples(std::vector<double> *times) const
 {
-  return _attr._GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(
-    _resolveInfo, _attr, GfInterval::GetFullInterval(), times);
+  return _attr._GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(_resolveInfo,
+                                                                     _attr,
+                                                                     GfInterval::GetFullInterval(),
+                                                                     times);
 }
 
 bool UsdAttributeQuery::GetTimeSamplesInInterval(const GfInterval &interval,
@@ -136,8 +138,10 @@ bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(const std::vector<UsdAtt
 
     // This will work even if the attributes belong to different
     // USD stages.
-    success = attr.GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(
-                attrQuery._resolveInfo, attr, interval, &attrSampleTimes) &&
+    success = attr.GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(attrQuery._resolveInfo,
+                                                                        attr,
+                                                                        interval,
+                                                                        &attrSampleTimes) &&
               success;
 
     // Merge attrSamplesTimes into the times vector.
@@ -157,8 +161,13 @@ bool UsdAttributeQuery::GetBracketingTimeSamples(double desiredTime,
                                                  double *upper,
                                                  bool *hasTimeSamples) const
 {
-  return _attr._GetStage()->_GetBracketingTimeSamplesFromResolveInfo(
-    _resolveInfo, _attr, desiredTime, /* authoredOnly */ false, lower, upper, hasTimeSamples);
+  return _attr._GetStage()->_GetBracketingTimeSamplesFromResolveInfo(_resolveInfo,
+                                                                     _attr,
+                                                                     desiredTime,
+                                                                     /* authoredOnly */ false,
+                                                                     lower,
+                                                                     upper,
+                                                                     hasTimeSamples);
 }
 
 bool UsdAttributeQuery::HasValue() const
@@ -191,7 +200,7 @@ ARCH_PRAGMA_INSTANTIATION_AFTER_SPECIALIZATION
 
 // Explicitly instantiate templated getters for all Sdf value
 // types.
-#define _INSTANTIATE_GET(r, unused, elem) \
+#define _INSTANTIATE_GET(r, unused, elem)                                                       \
   template USD_API bool UsdAttributeQuery::_Get(SDF_VALUE_CPP_TYPE(elem) *, UsdTimeCode) const; \
   template USD_API bool UsdAttributeQuery::_Get(SDF_VALUE_CPP_ARRAY_TYPE(elem) *, UsdTimeCode) const;
 

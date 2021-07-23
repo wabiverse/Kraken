@@ -48,27 +48,27 @@ TF_REGISTRY_FUNCTION(VtValue)
 namespace
 {
 
-static std::string _Str(SdfTimeCode const &self)
-{
-  return boost::lexical_cast<std::string>(self);
-}
+  static std::string _Str(SdfTimeCode const &self)
+  {
+    return boost::lexical_cast<std::string>(self);
+  }
 
-static std::string _Repr(SdfTimeCode const &self)
-{
-  std::ostringstream repr;
-  repr << TF_PY_REPR_PREFIX << "TimeCode(" << self << ")";
-  return repr.str();
-}
+  static std::string _Repr(SdfTimeCode const &self)
+  {
+    std::ostringstream repr;
+    repr << TF_PY_REPR_PREFIX << "TimeCode(" << self << ")";
+    return repr.str();
+  }
 
-static bool _Nonzero(SdfTimeCode const &self)
-{
-  return self != SdfTimeCode(0.0);
-}
+  static bool _Nonzero(SdfTimeCode const &self)
+  {
+    return self != SdfTimeCode(0.0);
+  }
 
-static double _Float(SdfTimeCode const &self)
-{
-  return double(self);
-}
+  static double _Float(SdfTimeCode const &self)
+  {
+    return double(self);
+  }
 
 }  // anonymous namespace
 

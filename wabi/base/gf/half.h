@@ -51,12 +51,12 @@ using GfHalf = wabi_half::half;
 
 namespace wabi_half
 {
-/// Overload hash_value for half.
-template<typename Half>
-inline typename std::enable_if<std::is_same<Half, half>::value, size_t>::type hash_value(const Half &h)
-{
-  return h.bits();
-}
+  /// Overload hash_value for half.
+  template<typename Half>
+  inline typename std::enable_if<std::is_same<Half, half>::value, size_t>::type hash_value(const Half &h)
+  {
+    return h.bits();
+  }
 }  // namespace wabi_half
 
 template<>

@@ -40,19 +40,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static object _WrapSplitShaderIdentifier(const TfToken &identifier)
-{
-  TfToken familyName, shaderName;
-  NdrVersion version;
-  if (UsdShadeShaderDefUtils::SplitShaderIdentifier(identifier, &familyName, &shaderName, &version))
+  static object _WrapSplitShaderIdentifier(const TfToken &identifier)
   {
-    return boost::python::make_tuple(familyName, shaderName, version);
+    TfToken familyName, shaderName;
+    NdrVersion version;
+    if (UsdShadeShaderDefUtils::SplitShaderIdentifier(identifier, &familyName, &shaderName, &version))
+    {
+      return boost::python::make_tuple(familyName, shaderName, version);
+    } else
+    {
+      return object();
+    }
   }
-  else
-  {
-    return object();
-  }
-}
 
 }  // namespace
 

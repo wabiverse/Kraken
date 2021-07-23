@@ -128,14 +128,15 @@ UsdAttribute UsdGeomPoints::CreateIdsAttr(VtValue const &defaultValue, bool writ
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -146,7 +147,8 @@ const TfTokenVector &UsdGeomPoints::GetSchemaAttributeNames(bool includeInherite
     UsdGeomTokens->ids,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-    UsdGeomPointBased::GetSchemaAttributeNames(true), localNames);
+    UsdGeomPointBased::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -241,8 +243,7 @@ static bool _ComputeExtent(const VtVec3fArray &points,
       GfVec3f transformedPoint = transform->Transform(*pointsItr);
       bbox.UnionWith(transformedPoint + sphereExtent[0]);
       bbox.UnionWith(transformedPoint + sphereExtent[1]);
-    }
-    else
+    } else
     {
       GfVec3f widthVec(halfWidth);
       bbox.UnionWith(*pointsItr + widthVec);
@@ -296,8 +297,7 @@ static bool _ComputeExtentForPoints(const UsdGeomBoundable &boundable,
     if (transform)
     {
       return UsdGeomPointBased::ComputeExtent(points, *transform, extent);
-    }
-    else
+    } else
     {
       return UsdGeomPointBased::ComputeExtent(points, extent);
     }
@@ -306,8 +306,7 @@ static bool _ComputeExtentForPoints(const UsdGeomBoundable &boundable,
   if (transform)
   {
     return UsdGeomPoints::ComputeExtent(points, widths, *transform, extent);
-  }
-  else
+  } else
   {
     return UsdGeomPoints::ComputeExtent(points, widths, extent);
   }

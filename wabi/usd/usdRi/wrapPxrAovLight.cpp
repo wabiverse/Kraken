@@ -50,61 +50,65 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateAovNameAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateAovNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String), writeSparsely);
-}
+  static UsdAttribute _CreateAovNameAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateAovNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String), writeSparsely);
+  }
 
-static UsdAttribute _CreateInPrimaryHitAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateInPrimaryHitAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateInPrimaryHitAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateInPrimaryHitAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateInReflectionAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateInReflectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateInReflectionAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateInReflectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateInRefractionAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateInRefractionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateInRefractionAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateInRefractionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                       writeSparsely);
+  }
 
-static UsdAttribute _CreateInvertAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateInvertAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  }
 
-static UsdAttribute _CreateOnVolumeBoundariesAttr(UsdRiPxrAovLight &self,
-                                                  object defaultVal,
-                                                  bool writeSparsely)
-{
-  return self.CreateOnVolumeBoundariesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                           writeSparsely);
-}
+  static UsdAttribute _CreateOnVolumeBoundariesAttr(UsdRiPxrAovLight &self,
+                                                    object defaultVal,
+                                                    bool writeSparsely)
+  {
+    return self.CreateOnVolumeBoundariesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                             writeSparsely);
+  }
 
-static UsdAttribute _CreateUseColorAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateUseColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateUseColorAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateUseColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+  }
 
-static UsdAttribute _CreateUseThroughputAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateUseThroughputAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateUseThroughputAttr(UsdRiPxrAovLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateUseThroughputAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                        writeSparsely);
+  }
 
-static std::string _Repr(const UsdRiPxrAovLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.PxrAovLight(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiPxrAovLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.PxrAovLight(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -156,8 +160,9 @@ void wrapUsdRiPxrAovLight()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetInvertAttr", &This::GetInvertAttr)
-    .def(
-      "CreateInvertAttr", &_CreateInvertAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateInvertAttr",
+         &_CreateInvertAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetOnVolumeBoundariesAttr", &This::GetOnVolumeBoundariesAttr)
     .def("CreateOnVolumeBoundariesAttr",
@@ -201,7 +206,7 @@ void wrapUsdRiPxrAovLight()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

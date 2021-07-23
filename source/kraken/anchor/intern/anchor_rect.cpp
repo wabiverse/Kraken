@@ -33,8 +33,7 @@ void AnchorRect::inset(AnchorS32 i)
     m_r += i;
     m_t -= i;
     m_b += i;
-  }
-  else if (i < 0)
+  } else if (i < 0)
   {
     // Shrink the rectangle, check for insets larger than half the size
     AnchorS32 i2 = i * 2;
@@ -42,8 +41,7 @@ void AnchorRect::inset(AnchorS32 i)
     {
       m_l += i;
       m_r -= i;
-    }
-    else
+    } else
     {
       m_l = m_l + ((m_r - m_l) / 2);
       m_r = m_l;
@@ -52,8 +50,7 @@ void AnchorRect::inset(AnchorS32 i)
     {
       m_t += i;
       m_b -= i;
-    }
-    else
+    } else
     {
       m_t = m_t + ((m_b - m_t) / 2);
       m_b = m_t;
@@ -72,21 +69,18 @@ eAnchorVisibility AnchorRect::getVisibility(AnchorRect &r) const
   {
     // All points inside, rectangle is inside this
     v = ANCHOR_FullyVisible;
-  }
-  else if (!(lt || rt || lb || rb))
+  } else if (!(lt || rt || lb || rb))
   {
     // None of the points inside
     // Check to see whether the rectangle is larger than this one
     if ((r.m_l < m_l) && (r.m_t < m_t) && (r.m_r > m_r) && (r.m_b > m_b))
     {
       v = ANCHOR_PartiallyVisible;
-    }
-    else
+    } else
     {
       v = ANCHOR_NotVisible;
     }
-  }
-  else
+  } else
   {
     // Some of the points inside, rectangle is partially inside
     v = ANCHOR_PartiallyVisible;

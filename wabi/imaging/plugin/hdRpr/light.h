@@ -24,12 +24,12 @@ limitations under the License.
 
 namespace rpr
 {
-class Shape;
-class PointLight;
-class SpotLight;
-class IESLight;
-class DiskLight;
-class SphereLight;
+  class Shape;
+  class PointLight;
+  class SpotLight;
+  class IESLight;
+  class DiskLight;
+  class SphereLight;
 }  // namespace rpr
 
 WABI_NAMESPACE_BEGIN

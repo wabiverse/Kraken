@@ -41,72 +41,68 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static VtValue _WrapGetInfo(SdfSpec &self, const TfToken &name)
-{
-  return self.GetInfo(name);
-}
-
-static bool _WrapIsInertProperty(SdfSpec &self)
-{
-  return self.IsInert();
-}
-
-static void _WrapSetInfo(SdfSpec &self, const TfToken &name, const object &pyObj)
-{
-  VtValue fallback;
-  if (!self.GetSchema().IsRegistered(name, &fallback))
+  static VtValue _WrapGetInfo(SdfSpec &self, const TfToken &name)
   {
-    TF_CODING_ERROR("Invalid info key: %s", name.GetText());
-    return;
+    return self.GetInfo(name);
   }
 
-  VtValue value;
-  if (fallback.IsEmpty())
+  static bool _WrapIsInertProperty(SdfSpec &self)
   {
-    value = extract<VtValue>(pyObj)();
+    return self.IsInert();
   }
-  else
+
+  static void _WrapSetInfo(SdfSpec &self, const TfToken &name, const object &pyObj)
   {
-    // We have to handle a few things as special cases to disambiguate
-    // types from Python.
-    if (fallback.IsHolding<SdfPath>())
+    VtValue fallback;
+    if (!self.GetSchema().IsRegistered(name, &fallback))
     {
-      value = extract<SdfPath>(pyObj)();
+      TF_CODING_ERROR("Invalid info key: %s", name.GetText());
+      return;
     }
-    else if (fallback.IsHolding<TfTokenVector>())
-    {
-      value = extract<TfTokenVector>(pyObj)();
-    }
-    else if (fallback.IsHolding<SdfVariantSelectionMap>())
-    {
-      value = extract<SdfVariantSelectionMap>(pyObj)();
-    }
-    else
+
+    VtValue value;
+    if (fallback.IsEmpty())
     {
       value = extract<VtValue>(pyObj)();
-      value.CastToTypeOf(fallback);
+    } else
+    {
+      // We have to handle a few things as special cases to disambiguate
+      // types from Python.
+      if (fallback.IsHolding<SdfPath>())
+      {
+        value = extract<SdfPath>(pyObj)();
+      } else if (fallback.IsHolding<TfTokenVector>())
+      {
+        value = extract<TfTokenVector>(pyObj)();
+      } else if (fallback.IsHolding<SdfVariantSelectionMap>())
+      {
+        value = extract<SdfVariantSelectionMap>(pyObj)();
+      } else
+      {
+        value = extract<VtValue>(pyObj)();
+        value.CastToTypeOf(fallback);
+      }
     }
+
+    if (value.IsEmpty())
+    {
+      TfPyThrowTypeError("Invalid type for key");
+      return;
+    }
+
+    self.SetInfo(name, value);
   }
 
-  if (value.IsEmpty())
+  static std::string _GetAsText(const SdfSpecHandle &self)
   {
-    TfPyThrowTypeError("Invalid type for key");
-    return;
+    if (!self)
+    {
+      return TfPyRepr(self);
+    }
+    std::stringstream stream;
+    self->WriteToStream(stream);
+    return stream.str();
   }
-
-  self.SetInfo(name, value);
-}
-
-static std::string _GetAsText(const SdfSpecHandle &self)
-{
-  if (!self)
-  {
-    return TfPyRepr(self);
-  }
-  std::stringstream stream;
-  self->WriteToStream(stream);
-  return stream.str();
-}
 
 }  // anonymous namespace
 

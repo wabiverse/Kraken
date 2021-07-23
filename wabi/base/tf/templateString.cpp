@@ -35,9 +35,9 @@ using std::vector;
 
 WABI_NAMESPACE_BEGIN
 
-#define _ERROR(ptr, ...) \
-  if (ptr) \
-  { \
+#define _ERROR(ptr, ...)                         \
+  if (ptr)                                       \
+  {                                              \
     ptr->push_back(TfStringPrintf(__VA_ARGS__)); \
   }
 
@@ -132,8 +132,7 @@ bool TfTemplateString::_FindNextPlaceHolder(size_t *pos, vector<string> *errors)
     // This is a $$ escape sequence.
     _data->placeholders.push_back(_PlaceHolder("$", *pos, 2));
     *pos = *pos + 2;
-  }
-  else if (_data->template_[nextpos] == _OpenQuote)
+  } else if (_data->template_[nextpos] == _OpenQuote)
   {
     // If the character after the sigil was the open quote character, look
     // for the matching close quote character.
@@ -146,13 +145,11 @@ bool TfTemplateString::_FindNextPlaceHolder(size_t *pos, vector<string> *errors)
              "at pos %zu",
              *pos);
       *pos = nextpos;
-    }
-    else if (_data->template_[endpos] != _CloseQuote)
+    } else if (_data->template_[endpos] != _CloseQuote)
     {
       _ERROR(errors, "Invalid character '%c' in identifier at pos %zu", _data->template_[endpos], endpos);
       *pos = endpos;
-    }
-    else
+    } else
     {
       // len includes the sigil and quote characters.
       size_t len = endpos - *pos + 1;
@@ -160,15 +157,13 @@ bool TfTemplateString::_FindNextPlaceHolder(size_t *pos, vector<string> *errors)
       if (!name.empty())
       {
         _data->placeholders.push_back(_PlaceHolder(name, *pos, len));
-      }
-      else
+      } else
       {
         _ERROR(errors, "Empty placeholder at pos %zu", *pos);
       }
       *pos = *pos + len;
     }
-  }
-  else
+  } else
   {
     // Find the next character not valid within an identifier.
     size_t endpos = _data->template_.find_first_not_of(_IdentChars, nextpos);
@@ -177,8 +172,7 @@ bool TfTemplateString::_FindNextPlaceHolder(size_t *pos, vector<string> *errors)
     if (!name.empty())
     {
       _data->placeholders.push_back(_PlaceHolder(name, *pos, len));
-    }
-    else
+    } else
     {
       // If we find what appears to be a place holder, but the next
       // character is not legal in a place holder, we just skip it.
@@ -217,19 +211,18 @@ string TfTemplateString::_Evaluate(const Mapping &mapping, vector<string> *error
     if (it->name[0] == _Sigil)
     {
       result.insert(result.end(), _Sigil);
-    }
-    else
+    } else
     {
       Mapping::const_iterator mit = mapping.find(it->name);
       if (mit != mapping.end())
       {
         result.insert(result.end(), mit->second.begin(), mit->second.end());
-      }
-      else
+      } else
       {
         // Insert the placeholder into the result.
-        result.insert(
-          result.end(), _data->template_.begin() + it->pos, _data->template_.begin() + it->pos + it->len);
+        result.insert(result.end(),
+                      _data->template_.begin() + it->pos,
+                      _data->template_.begin() + it->pos + it->len);
         _ERROR(errors, "No mapping found for placeholder '%s'", it->name.c_str());
       }
     }

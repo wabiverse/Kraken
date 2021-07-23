@@ -119,8 +119,7 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   if (_restoreAlphaToCoverage)
   {
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-  }
-  else
+  } else
   {
     glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   }
@@ -128,21 +127,21 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   if (_restoreSampleAlphaToOne)
   {
     glEnable(GL_SAMPLE_ALPHA_TO_ONE);
-  }
-  else
+  } else
   {
     glDisable(GL_SAMPLE_ALPHA_TO_ONE);
   }
 
-  glBlendFuncSeparate(
-    _restoreColorSrcFnOp, _restoreColorDstFnOp, _restoreAlphaSrcFnOp, _restoreAlphaDstFnOp);
+  glBlendFuncSeparate(_restoreColorSrcFnOp,
+                      _restoreColorDstFnOp,
+                      _restoreAlphaSrcFnOp,
+                      _restoreAlphaDstFnOp);
   glBlendEquationSeparate(_restoreColorOp, _restoreAlphaOp);
 
   if (_restoreblendEnabled)
   {
     glEnable(GL_BLEND);
-  }
-  else
+  } else
   {
     glDisable(GL_BLEND);
   }
@@ -154,8 +153,7 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   if (_restoreDepthTest)
   {
     glEnable(GL_DEPTH_TEST);
-  }
-  else
+  } else
   {
     glDisable(GL_DEPTH_TEST);
   }
@@ -167,8 +165,7 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   if (_cullFace)
   {
     glEnable(GL_CULL_FACE);
-  }
-  else
+  } else
   {
     glDisable(GL_CULL_FACE);
   }
@@ -178,8 +175,7 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   if (_rasterizerDiscard)
   {
     glEnable(GL_RASTERIZER_DISCARD);
-  }
-  else
+  } else
   {
     glDisable(GL_RASTERIZER_DISCARD);
   }
@@ -187,8 +183,7 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   if (_restoreFramebufferSRGB)
   {
     glEnable(GL_FRAMEBUFFER_SRGB);
-  }
-  else
+  } else
   {
     glDisable(GL_FRAMEBUFFER_SRGB);
   }

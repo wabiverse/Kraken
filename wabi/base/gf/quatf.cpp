@@ -192,8 +192,7 @@ GfQuatf GfSlerp(double alpha, const GfQuatf &q0, const GfQuatf &q1)
 
     scale0 = sin((1.0 - alpha) * theta) / sinTheta;
     scale1 = sin(alpha * theta) / sinTheta;
-  }
-  else
+  } else
   {
     // rot0 and rot1 very close - just do linear interp and renormalize.
     scale0 = 1.0 - alpha;

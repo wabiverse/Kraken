@@ -233,14 +233,12 @@ bool UsdSkelAnimMapper::Remap(const Container &source,
   if (IsNull())
   {
     return true;
-  }
-  else if (_IsOrdered())
+  } else if (_IsOrdered())
   {
 
     size_t copyCount = std::min(source.size(), targetArraySize - _offset * elementSize);
     std::copy(source.cdata(), source.cdata() + copyCount, target->data() + _offset * elementSize);
-  }
-  else
+  } else
   {
 
     const _ValueType *sourceData = source.cdata();

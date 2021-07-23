@@ -57,8 +57,7 @@ HgiMetalBuffer::HgiMetalBuffer(HgiMetal *hgi, HgiBufferDesc const &desc)
     _bufferId = [hgi->GetPrimaryDevice() newBufferWithBytes:desc.initialData
                                                      length:desc.byteSize
                                                     options:options];
-  }
-  else
+  } else
   {
     _bufferId = [hgi->GetPrimaryDevice() newBufferWithLength:desc.byteSize options:options];
   }

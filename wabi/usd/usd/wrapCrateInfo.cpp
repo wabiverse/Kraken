@@ -40,8 +40,9 @@ void wrapUsdCrateInfo()
                       .def("Open", &UsdCrateInfo::Open, arg("fileName"))
                       .staticmethod("Open")
                       .def("GetSummaryStats", &UsdCrateInfo::GetSummaryStats)
-                      .def(
-                        "GetSections", &UsdCrateInfo::GetSections, return_value_policy<TfPySequenceToList>())
+                      .def("GetSections",
+                           &UsdCrateInfo::GetSections,
+                           return_value_policy<TfPySequenceToList>())
                       .def("GetFileVersion", &UsdCrateInfo::GetFileVersion)
                       .def("GetSoftwareVersion", &UsdCrateInfo::GetSoftwareVersion)
                       .def(!self);

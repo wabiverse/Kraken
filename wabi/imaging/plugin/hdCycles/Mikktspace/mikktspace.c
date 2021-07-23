@@ -210,8 +210,7 @@ static STSpace AvgTSpace(const STSpace *pTS0, const STSpace *pTS1)
     ts_res.fMagT = pTS0->fMagT;
     ts_res.vOs = pTS0->vOs;
     ts_res.vOt = pTS0->vOt;
-  }
-  else
+  } else
   {
     ts_res.fMagS = 0.5f * (pTS0->fMagS + pTS1->fMagS);
     ts_res.fMagT = 0.5f * (pTS0->fMagT + pTS1->fMagT);
@@ -346,8 +345,8 @@ tbool genTangSpace(const SMikkTSpaceContext *pContext, const float fAngularThres
     return TFALSE;
   }
   // printf("gen 4rule groups begin\n");
-  iNrActiveGroups = Build4RuleGroups(
-    pTriInfos, pGroups, piGroupTrianglesBuffer, piTriListIn, iNrTrianglesIn);
+  iNrActiveGroups =
+    Build4RuleGroups(pTriInfos, pGroups, piGroupTrianglesBuffer, piTriListIn, iNrTrianglesIn);
   // printf("gen 4rule groups end\n");
 
   //
@@ -438,11 +437,14 @@ if (psTspace[index].iCounter == 0)	// tspace was not derived from a group
       float tang[] = {pTSpace->vOs.x, pTSpace->vOs.y, pTSpace->vOs.z};
       float bitang[] = {pTSpace->vOt.x, pTSpace->vOt.y, pTSpace->vOt.z};
       if (pContext->m_pInterface->m_setTSpace != NULL)
-        pContext->m_pInterface->m_setTSpace(
-          pContext, tang, bitang, pTSpace->fMagS, pTSpace->fMagT, pTSpace->bOrient, f, i);
+        pContext->m_pInterface
+          ->m_setTSpace(pContext, tang, bitang, pTSpace->fMagS, pTSpace->fMagT, pTSpace->bOrient, f, i);
       if (pContext->m_pInterface->m_setTSpaceBasic != NULL)
-        pContext->m_pInterface->m_setTSpaceBasic(
-          pContext, tang, pTSpace->bOrient == TTRUE ? 1.0f : (-1.0f), f, i);
+        pContext->m_pInterface->m_setTSpaceBasic(pContext,
+                                                 tang,
+                                                 pTSpace->bOrient == TTRUE ? 1.0f : (-1.0f),
+                                                 f,
+                                                 i);
 
       ++index;
     }
@@ -530,8 +532,7 @@ static void GenerateSharedVerticesIndexList(int piTriList_in_and_out[],
   {
     iChannel = 1;
     fMin = vMin.y, fMax = vMax.y;
-  }
-  else if (vDim.z > vDim.x)
+  } else if (vDim.z > vDim.x)
   {
     iChannel = 2;
     fMin = vMin.z, fMax = vMax.z;
@@ -620,8 +621,7 @@ static void GenerateSharedVerticesIndexList(int piTriList_in_and_out[],
         pTmpVert[e].index = i;
       }
       MergeVertsFast(piTriList_in_and_out, pTmpVert, pContext, 0, iEntries - 1);
-    }
-    else
+    } else
       MergeVertsSlow(piTriList_in_and_out, pContext, pTable, iEntries);
   }
 
@@ -704,8 +704,7 @@ static void MergeVertsFast(int piTriList_in_and_out[],
       if (!bNotFound)
         piTriList_in_and_out[i] = piTriList_in_and_out[i2rec];
     }
-  }
-  else
+  } else
   {
     int iL = iL_in, iR = iR_in;
     assert((iR_in - iL_in) > 0);  // at least 2 entries
@@ -876,8 +875,7 @@ static int GenerateInitialVerticesIndexList(STriInfo pTriInfos[],
       piTriList_out[iDstTriIndex * 3 + 1] = MakeIndex(f, 1);
       piTriList_out[iDstTriIndex * 3 + 2] = MakeIndex(f, 2);
       ++iDstTriIndex;  // next
-    }
-    else
+    } else
     {
       {
         pTriInfos[iDstTriIndex + 1].iOrgFaceNumber = f;
@@ -937,8 +935,7 @@ static int GenerateInitialVerticesIndexList(STriInfo pTriInfos[],
           piTriList_out[iDstTriIndex * 3 + 1] = i2;
           piTriList_out[iDstTriIndex * 3 + 2] = i3;
           ++iDstTriIndex;  // next
-        }
-        else
+        } else
         {
           {
             unsigned char *pVerts_A = pTriInfos[iDstTriIndex].vert_num;
@@ -1161,8 +1158,7 @@ static void InitTriInfo(STriInfo pTriInfos[],
         }
       }
       t += 2;
-    }
-    else
+    } else
       ++t;
   }
 
@@ -1223,8 +1219,10 @@ static int Build4RuleGroups(STriInfo pTriInfos[],
         neigh_indexR = pTriInfos[f].FaceNeighbors[i > 0 ? (i - 1) : 2];
         if (neigh_indexL >= 0)  // neighbor
         {
-          const tbool bAnswer = AssignRecur(
-            piTriListIn, pTriInfos, neigh_indexL, pTriInfos[f].AssignedGroup[i]);
+          const tbool bAnswer = AssignRecur(piTriListIn,
+                                            pTriInfos,
+                                            neigh_indexL,
+                                            pTriInfos[f].AssignedGroup[i]);
 
           const tbool bOrPre2 = (pTriInfos[neigh_indexL].iFlag & ORIENT_PRESERVING) != 0 ? TTRUE : TFALSE;
           const tbool bDiff = bOrPre != bOrPre2 ? TTRUE : TFALSE;
@@ -1233,8 +1231,10 @@ static int Build4RuleGroups(STriInfo pTriInfos[],
         }
         if (neigh_indexR >= 0)  // neighbor
         {
-          const tbool bAnswer = AssignRecur(
-            piTriListIn, pTriInfos, neigh_indexR, pTriInfos[f].AssignedGroup[i]);
+          const tbool bAnswer = AssignRecur(piTriListIn,
+                                            pTriInfos,
+                                            neigh_indexR,
+                                            pTriInfos[f].AssignedGroup[i]);
 
           const tbool bOrPre2 = (pTriInfos[neigh_indexR].iFlag & ORIENT_PRESERVING) != 0 ? TTRUE : TFALSE;
           const tbool bDiff = bOrPre != bOrPre2 ? TTRUE : TFALSE;
@@ -1473,8 +1473,12 @@ static tbool GenerateTSpaces(STSpace psTspace[],
         pUniSubGroups[iUniqueSubGroups].iNrFaces = iMembers;
         pUniSubGroups[iUniqueSubGroups].pTriMembers = pIndices;
         memcpy(pIndices, tmp_group.pTriMembers, iMembers * sizeof(int));
-        pSubGroupTspace[iUniqueSubGroups] = EvalTspace(
-          tmp_group.pTriMembers, iMembers, piTriListIn, pTriInfos, pContext, pGroup->iVertexRepresentitive);
+        pSubGroupTspace[iUniqueSubGroups] = EvalTspace(tmp_group.pTriMembers,
+                                                       iMembers,
+                                                       piTriListIn,
+                                                       pTriInfos,
+                                                       pContext,
+                                                       pGroup->iVertexRepresentitive);
         ++iUniqueSubGroups;
       }
 
@@ -1490,8 +1494,7 @@ static tbool GenerateTSpaces(STSpace psTspace[],
           *pTS_out = AvgTSpace(pTS_out, &pSubGroupTspace[l]);
           pTS_out->iCounter = 2;  // update counter
           pTS_out->bOrient = pGroup->bOrientPreservering;
-        }
-        else
+        } else
         {
           assert(pTS_out->iCounter == 0);
           *pTS_out = pSubGroupTspace[l];
@@ -1907,15 +1910,13 @@ static void GetEdge(int *i0_out,
       edgenum_out[0] = 0;  // first edge
       i0_out[0] = indices[0];
       i1_out[0] = indices[1];
-    }
-    else
+    } else
     {
       edgenum_out[0] = 2;  // third edge
       i0_out[0] = indices[2];
       i1_out[0] = indices[0];
     }
-  }
-  else
+  } else
   {
     // only second and third index is on the edge
     edgenum_out[0] = 1;  // second edge
@@ -1951,8 +1952,7 @@ static void DegenPrologue(STriInfo pTriInfos[],
         pTriInfos[t + 1].iFlag |= QUAD_ONE_DEGEN_TRI;
       }
       t += 2;
-    }
-    else
+    } else
       ++t;
   }
 
@@ -1968,8 +1968,7 @@ static void DegenPrologue(STriInfo pTriInfos[],
     {
       if (iNextGoodTriangleSearchIndex < (t + 2))
         iNextGoodTriangleSearchIndex = t + 2;
-    }
-    else
+    } else
     {
       int t0, t1;
       // search for the first good triangle.
@@ -2005,8 +2004,7 @@ static void DegenPrologue(STriInfo pTriInfos[],
           pTriInfos[t0] = pTriInfos[t1];
           pTriInfos[t1] = tri_info;
         }
-      }
-      else
+      } else
         bStillFindingGoodOnes = TFALSE;  // this is not supposed to happen
     }
 
@@ -2100,8 +2098,7 @@ static void DegenEpilogue(STSpace psTspace[],
           const int iOffs = pTriInfos[t].iTSpacesOffs;
           psTspace[iOffs + iMissingIndex] = psTspace[iOffs + iVert];
           bNotFound = TFALSE;
-        }
-        else
+        } else
           ++i;
       }
       assert(!bNotFound);

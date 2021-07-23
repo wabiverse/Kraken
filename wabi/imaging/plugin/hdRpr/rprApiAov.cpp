@@ -24,38 +24,38 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-bool ReadRifImage(rif_image image, void *dstBuffer, size_t dstBufferSize)
-{
-  if (!image || !dstBuffer)
+  bool ReadRifImage(rif_image image, void *dstBuffer, size_t dstBufferSize)
   {
-    return false;
+    if (!image || !dstBuffer)
+    {
+      return false;
+    }
+
+    size_t size;
+    size_t dummy;
+    auto rifStatus = rifImageGetInfo(image, RIF_IMAGE_DATA_SIZEBYTE, sizeof(size), &size, &dummy);
+    if (rifStatus != RIF_SUCCESS || dstBufferSize < size)
+    {
+      return false;
+    }
+
+    void *data = nullptr;
+    rifStatus = rifImageMap(image, RIF_IMAGE_MAP_READ, &data);
+    if (rifStatus != RIF_SUCCESS)
+    {
+      return false;
+    }
+
+    std::memcpy(dstBuffer, data, size);
+
+    rifStatus = rifImageUnmap(image, data);
+    if (rifStatus != RIF_SUCCESS)
+    {
+      TF_WARN("Failed to unmap rif image");
+    }
+
+    return true;
   }
-
-  size_t size;
-  size_t dummy;
-  auto rifStatus = rifImageGetInfo(image, RIF_IMAGE_DATA_SIZEBYTE, sizeof(size), &size, &dummy);
-  if (rifStatus != RIF_SUCCESS || dstBufferSize < size)
-  {
-    return false;
-  }
-
-  void *data = nullptr;
-  rifStatus = rifImageMap(image, RIF_IMAGE_MAP_READ, &data);
-  if (rifStatus != RIF_SUCCESS)
-  {
-    return false;
-  }
-
-  std::memcpy(dstBuffer, data, size);
-
-  rifStatus = rifImageUnmap(image, data);
-  if (rifStatus != RIF_SUCCESS)
-  {
-    TF_WARN("Failed to unmap rif image");
-  }
-
-  return true;
-}
 
 }  // namespace
 
@@ -263,8 +263,7 @@ void HdRprApiColorAov::SetFilter(Filter filter, bool enable)
     if (enable)
     {
       m_enabledFilters |= filter;
-    }
-    else
+    } else
     {
       m_enabledFilters &= ~filter;
     }
@@ -351,8 +350,7 @@ void HdRprApiColorAov::SetDenoise(bool enable, HdRprApi const *rprApi, rif::Cont
   {
     SetFilter(m_denoiseFilterType, enable);
     SetFilter(m_denoiseFilterType == kFilterAIDenoise ? kFilterEAWDenoise : kFilterAIDenoise, false);
-  }
-  else
+  } else
   {
     SetFilter(kFilterAIDenoise, false);
     SetFilter(kFilterEAWDenoise, false);
@@ -379,8 +377,7 @@ void HdRprApiColorAov::SetTonemap(TonemapParams const &params)
       if (m_mainFilterType == kFilterTonemap)
       {
         SetTonemapFilterParams(m_filter.get());
-      }
-      else
+      } else
       {
         for (auto &entry : m_auxFilters)
         {
@@ -452,13 +449,13 @@ void HdRprApiColorAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
                                            std::function<std::unique_ptr<rif::Filter>()> filterCreator) {
         std::unique_ptr<rif::Filter> filter;
 
-        auto it = std::find_if(
-          filterPool.begin(), filterPool.end(), [type](auto &entry) { return type == entry.first; });
+        auto it = std::find_if(filterPool.begin(), filterPool.end(), [type](auto &entry) {
+          return type == entry.first;
+        });
         if (it != filterPool.end())
         {
           filter = std::move(it->second);
-        }
-        else
+        } else
         {
           filter = filterCreator();
         }
@@ -505,8 +502,7 @@ void HdRprApiColorAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
           return filter;
         });
       }
-    }
-    else if (m_enabledFilters & kFilterResample)
+    } else if (m_enabledFilters & kFilterResample)
     {
       m_filter = rif::Filter::CreateCustom(RIF_IMAGE_FILTER_RESAMPLE, rifContext);
       m_filter->SetParam("interpOperator", (int)RIF_IMAGE_INTERPOLATION_NEAREST);
@@ -540,13 +536,11 @@ bool HdRprApiColorAov::GetData(void *dstBuffer, size_t dstBufferSize)
     if (auto resolvedRawColorFb = m_retainedRawColor->GetResolvedFb())
     {
       return resolvedRawColorFb->GetData(dstBuffer, dstBufferSize);
-    }
-    else
+    } else
     {
       return false;
     }
-  }
-  else
+  } else
   {
     return HdRprApiAov::GetData(dstBuffer, dstBufferSize);
   }
@@ -585,16 +579,13 @@ void HdRprApiColorAov::ResizeFilter(int width, int height, Filter filterType, ri
         filter->SetInput(static_cast<rif::FilterInputType>(i), retainedInput->GetResolvedFb());
       }
     }
-  }
-  else if (filterType == kFilterComposeOpacity)
+  } else if (filterType == kFilterComposeOpacity)
   {
     filter->SetInput("alphaImage", m_retainedOpacity->GetResolvedFb());
-  }
-  else if (filterType == kFilterResample)
+  } else if (filterType == kFilterResample)
   {
     filter->SetParam("outSize", GfVec2i(width, height));
-  }
-  else if (filterType == kFilterTonemap)
+  } else if (filterType == kFilterTonemap)
   {
     SetTonemapFilterParams(filter);
   }
@@ -615,8 +606,7 @@ void HdRprApiColorAov::OnSizeChange(rif::Context *rifContext)
                  m_mainFilterType,
                  m_filter.get(),
                  m_retainedRawColor->GetResolvedFb());
-  }
-  else
+  } else
   {
     // Ideally we would use "Filter combining" functionality, but it does not work with
     // user-defined filter So we attach each filter separately
@@ -630,8 +620,11 @@ void HdRprApiColorAov::OnSizeChange(rif::Context *rifContext)
     for (int i = 1; i < m_auxFilters.size(); ++i)
     {
       auto filterInput = m_auxFilters[i - 1].second->GetOutput();
-      ResizeFilter(
-        fbDesc.fb_width, fbDesc.fb_height, m_auxFilters[i].first, m_auxFilters[i].second.get(), filterInput);
+      ResizeFilter(fbDesc.fb_width,
+                   fbDesc.fb_height,
+                   m_auxFilters[i].first,
+                   m_auxFilters[i].second.get(),
+                   filterInput);
     }
     ResizeFilter(fbDesc.fb_width,
                  fbDesc.fb_height,
@@ -737,8 +730,7 @@ void HdRprApiDepthAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
       m_ndcFilter->SetOutput(rif::Image::GetDesc(m_width, m_height, m_format));
       m_remapFilter->SetInput(rif::Color, m_ndcFilter->GetOutput());
       m_remapFilter->SetOutput(rif::Image::GetDesc(m_width, m_height, m_format));
-    }
-    else
+    } else
     {
       m_ndcFilter->SetInput(rif::Color, m_retainedWorldCoordinateAov->GetResolvedFb());
       m_ndcFilter->SetOutput(rif::Image::GetDesc(m_width, m_height, m_format));

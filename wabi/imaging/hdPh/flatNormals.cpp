@@ -51,82 +51,82 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-enum
-{
-  BufferBinding_Uniforms,
-  BufferBinding_Points,
-  BufferBinding_Normals,
-  BufferBinding_Indices,
-  BufferBinding_PrimitiveParam
-};
-
-HgiResourceBindingsSharedPtr _CreateResourceBindings(Hgi *hgi,
-                                                     HgiBufferHandle const &points,
-                                                     HgiBufferHandle const &normals,
-                                                     HgiBufferHandle const &indices,
-                                                     HgiBufferHandle const &primitiveParam)
-{
-  // Begin the resource set
-  HgiResourceBindingsDesc resourceDesc;
-  resourceDesc.debugName = "FlatNormals";
-
-  if (points)
+  enum
   {
-    HgiBufferBindDesc bufBind0;
-    bufBind0.bindingIndex = BufferBinding_Points;
-    bufBind0.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind0.stageUsage = HgiShaderStageCompute;
-    bufBind0.offsets.push_back(0);
-    bufBind0.buffers.push_back(points);
-    resourceDesc.buffers.push_back(std::move(bufBind0));
+    BufferBinding_Uniforms,
+    BufferBinding_Points,
+    BufferBinding_Normals,
+    BufferBinding_Indices,
+    BufferBinding_PrimitiveParam
+  };
+
+  HgiResourceBindingsSharedPtr _CreateResourceBindings(Hgi *hgi,
+                                                       HgiBufferHandle const &points,
+                                                       HgiBufferHandle const &normals,
+                                                       HgiBufferHandle const &indices,
+                                                       HgiBufferHandle const &primitiveParam)
+  {
+    // Begin the resource set
+    HgiResourceBindingsDesc resourceDesc;
+    resourceDesc.debugName = "FlatNormals";
+
+    if (points)
+    {
+      HgiBufferBindDesc bufBind0;
+      bufBind0.bindingIndex = BufferBinding_Points;
+      bufBind0.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind0.stageUsage = HgiShaderStageCompute;
+      bufBind0.offsets.push_back(0);
+      bufBind0.buffers.push_back(points);
+      resourceDesc.buffers.push_back(std::move(bufBind0));
+    }
+
+    if (normals)
+    {
+      HgiBufferBindDesc bufBind1;
+      bufBind1.bindingIndex = BufferBinding_Normals;
+      bufBind1.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind1.stageUsage = HgiShaderStageCompute;
+      bufBind1.offsets.push_back(0);
+      bufBind1.buffers.push_back(normals);
+      resourceDesc.buffers.push_back(std::move(bufBind1));
+    }
+
+    if (indices)
+    {
+      HgiBufferBindDesc bufBind2;
+      bufBind2.bindingIndex = BufferBinding_Indices;
+      bufBind2.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind2.stageUsage = HgiShaderStageCompute;
+      bufBind2.offsets.push_back(0);
+      bufBind2.buffers.push_back(indices);
+      resourceDesc.buffers.push_back(std::move(bufBind2));
+    }
+
+    if (primitiveParam)
+    {
+      HgiBufferBindDesc bufBind3;
+      bufBind3.bindingIndex = BufferBinding_PrimitiveParam;
+      bufBind3.resourceType = HgiBindResourceTypeStorageBuffer;
+      bufBind3.stageUsage = HgiShaderStageCompute;
+      bufBind3.offsets.push_back(0);
+      bufBind3.buffers.push_back(primitiveParam);
+      resourceDesc.buffers.push_back(std::move(bufBind3));
+    }
+
+    return std::make_shared<HgiResourceBindingsHandle>(hgi->CreateResourceBindings(resourceDesc));
   }
 
-  if (normals)
+  HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
+                                              uint32_t constantValuesSize,
+                                              HgiShaderProgramHandle const &program)
   {
-    HgiBufferBindDesc bufBind1;
-    bufBind1.bindingIndex = BufferBinding_Normals;
-    bufBind1.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind1.stageUsage = HgiShaderStageCompute;
-    bufBind1.offsets.push_back(0);
-    bufBind1.buffers.push_back(normals);
-    resourceDesc.buffers.push_back(std::move(bufBind1));
+    HgiComputePipelineDesc desc;
+    desc.debugName = "FlatNormals";
+    desc.shaderProgram = program;
+    desc.shaderConstantsDesc.byteSize = constantValuesSize;
+    return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
   }
-
-  if (indices)
-  {
-    HgiBufferBindDesc bufBind2;
-    bufBind2.bindingIndex = BufferBinding_Indices;
-    bufBind2.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind2.stageUsage = HgiShaderStageCompute;
-    bufBind2.offsets.push_back(0);
-    bufBind2.buffers.push_back(indices);
-    resourceDesc.buffers.push_back(std::move(bufBind2));
-  }
-
-  if (primitiveParam)
-  {
-    HgiBufferBindDesc bufBind3;
-    bufBind3.bindingIndex = BufferBinding_PrimitiveParam;
-    bufBind3.resourceType = HgiBindResourceTypeStorageBuffer;
-    bufBind3.stageUsage = HgiShaderStageCompute;
-    bufBind3.offsets.push_back(0);
-    bufBind3.buffers.push_back(primitiveParam);
-    resourceDesc.buffers.push_back(std::move(bufBind3));
-  }
-
-  return std::make_shared<HgiResourceBindingsHandle>(hgi->CreateResourceBindings(resourceDesc));
-}
-
-HgiComputePipelineSharedPtr _CreatePipeline(Hgi *hgi,
-                                            uint32_t constantValuesSize,
-                                            HgiShaderProgramHandle const &program)
-{
-  HgiComputePipelineDesc desc;
-  desc.debugName = "FlatNormals";
-  desc.shaderProgram = program;
-  desc.shaderConstantsDesc.byteSize = constantValuesSize;
-  return std::make_shared<HgiComputePipelineHandle>(hgi->CreateComputePipeline(desc));
-}
 
 }  // Anonymous namespace
 
@@ -189,44 +189,37 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
       if (_dstDataType == HdTypeFloatVec3)
       {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsTriFloatToFloat;
-      }
-      else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
       {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsTriFloatToPacked;
       }
-    }
-    else if (_srcDataType == HdTypeDoubleVec3)
+    } else if (_srcDataType == HdTypeDoubleVec3)
     {
       if (_dstDataType == HdTypeDoubleVec3)
       {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsTriDoubleToDouble;
-      }
-      else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
       {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsTriDoubleToPacked;
       }
     }
-  }
-  else if (indexArity == 4)
+  } else if (indexArity == 4)
   {
     if (_srcDataType == HdTypeFloatVec3)
     {
       if (_dstDataType == HdTypeFloatVec3)
       {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsQuadFloatToFloat;
-      }
-      else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
       {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsQuadFloatToPacked;
       }
-    }
-    else if (_srcDataType == HdTypeDoubleVec3)
+    } else if (_srcDataType == HdTypeDoubleVec3)
     {
       if (_dstDataType == HdTypeDoubleVec3)
       {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsQuadDoubleToDouble;
-      }
-      else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
       {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsQuadDoubleToPacked;
       }
@@ -252,7 +245,9 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
 
   HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
   HdPhGLSLProgramSharedPtr computeProgram = HdPhGLSLProgram::GetComputeProgram(
-    shaderToken, hdPhResourceRegistry, [&](HgiShaderFunctionDesc &computeDesc) {
+    shaderToken,
+    hdPhResourceRegistry,
+    [&](HgiShaderFunctionDesc &computeDesc) {
       computeDesc.debugName = shaderToken.GetString();
       computeDesc.shaderStage = HgiShaderStageCompute;
 
@@ -261,8 +256,7 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
       if (_srcDataType == HdTypeFloatVec3)
       {
         srcType = HdPhTokens->_float;
-      }
-      else
+      } else
       {
         srcType = HdPhTokens->_double;
       }
@@ -270,12 +264,10 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
       if (_dstDataType == HdTypeFloatVec3)
       {
         dstType = HdPhTokens->_float;
-      }
-      else if (_dstDataType == HdTypeDoubleVec3)
+      } else if (_dstDataType == HdTypeDoubleVec3)
       {
         dstType = HdPhTokens->_double;
-      }
-      else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
       {
         dstType = HdPhTokens->_int;
       }
@@ -302,8 +294,10 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
       {
         HgiShaderFunctionAddConstantParam(&computeDesc, param, HdPhTokens->_int);
       }
-      HgiShaderFunctionAddStageInput(
-        &computeDesc, "hd_GlobalInvocationID", "uvec3", HgiShaderKeywordTokens->hdGlobalInvocationID);
+      HgiShaderFunctionAddStageInput(&computeDesc,
+                                     "hd_GlobalInvocationID",
+                                     "uvec3",
+                                     HgiShaderKeywordTokens->hdGlobalInvocationID);
     });
   if (!computeProgram)
     return;
@@ -358,8 +352,11 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
     hdPhResourceRegistry->RegisterResourceBindings(rbHash);
   if (resourceBindingsInstance.IsFirstInstance())
   {
-    HgiResourceBindingsSharedPtr rb = _CreateResourceBindings(
-      hgi, points->GetHandle(), normals->GetHandle(), indices->GetHandle(), primitiveParam->GetHandle());
+    HgiResourceBindingsSharedPtr rb = _CreateResourceBindings(hgi,
+                                                              points->GetHandle(),
+                                                              normals->GetHandle(),
+                                                              indices->GetHandle(),
+                                                              primitiveParam->GetHandle());
     resourceBindingsInstance.SetValue(rb);
   }
 

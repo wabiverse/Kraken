@@ -78,16 +78,14 @@ void WM_cursor_grab_enable(wmWindow *win, int wrap, bool hide, int bounds[4])
   if (hide)
   {
     mode = ANCHOR_GrabHide;
-  }
-  else if (wrap)
+  } else if (wrap)
   {
     mode = ANCHOR_GrabWrap;
 
     if (wrap == WM_CURSOR_WRAP_X)
     {
       mode_axis = ANCHOR_GrabAxisX;
-    }
-    else if (wrap == WM_CURSOR_WRAP_Y)
+    } else if (wrap == WM_CURSOR_WRAP_Y)
     {
       mode_axis = ANCHOR_GrabAxisY;
     }

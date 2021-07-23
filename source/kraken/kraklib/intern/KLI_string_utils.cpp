@@ -259,8 +259,7 @@ static int left_number_strcmp(const char *s1, const char *s2, int *tiebreaker)
     if (numzero1 > numzero2)
     {
       *tiebreaker = 1;
-    }
-    else if (numzero1 < numzero2)
+    } else if (numzero1 < numzero2)
     {
       *tiebreaker = -1;
     }
@@ -323,16 +322,13 @@ int KLI_strcasecmp_natural(const char *s1, const char *s2)
     else if (c1 == '.')
     {
       return -1;
-    }
-    else if (c2 == '.')
+    } else if (c2 == '.')
     {
       return 1;
-    }
-    else if (c1 < c2)
+    } else if (c1 < c2)
     {
       return -1;
-    }
-    else if (c1 > c2)
+    } else if (c1 > c2)
     {
       return 1;
     }
@@ -638,35 +634,35 @@ static const size_t utf8_skip_data[256] = {
   1,
 };
 
-#define KLI_STR_UTF8_CPY(dst, src, maxncpy) \
-  { \
-    size_t utf8_size; \
+#define KLI_STR_UTF8_CPY(dst, src, maxncpy)                              \
+  {                                                                      \
+    size_t utf8_size;                                                    \
     while (*src != '\0' && (utf8_size = utf8_skip_data[*src]) < maxncpy) \
-    { \
-      maxncpy -= utf8_size; \
-      switch (utf8_size) \
-      { \
-        case 6: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 5: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 4: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 3: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 2: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 1: \
-          *dst++ = *src++; \
-      } \
-    } \
-    *dst = '\0'; \
-  } \
+    {                                                                    \
+      maxncpy -= utf8_size;                                              \
+      switch (utf8_size)                                                 \
+      {                                                                  \
+        case 6:                                                          \
+          *dst++ = *src++;                                               \
+          ATTR_FALLTHROUGH;                                              \
+        case 5:                                                          \
+          *dst++ = *src++;                                               \
+          ATTR_FALLTHROUGH;                                              \
+        case 4:                                                          \
+          *dst++ = *src++;                                               \
+          ATTR_FALLTHROUGH;                                              \
+        case 3:                                                          \
+          *dst++ = *src++;                                               \
+          ATTR_FALLTHROUGH;                                              \
+        case 2:                                                          \
+          *dst++ = *src++;                                               \
+          ATTR_FALLTHROUGH;                                              \
+        case 1:                                                          \
+          *dst++ = *src++;                                               \
+      }                                                                  \
+    }                                                                    \
+    *dst = '\0';                                                         \
+  }                                                                      \
   (void)0
 
 /**
@@ -714,9 +710,7 @@ size_t KLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, s
   return (size_t)(dst - r_dst);
 }
 
-size_t KLI_strncpy_wchar_as_utf8(char *__restrict dst,
-                                 const wchar_t *__restrict src,
-                                 const size_t maxncpy)
+size_t KLI_strncpy_wchar_as_utf8(char *__restrict dst, const wchar_t *__restrict src, const size_t maxncpy)
 {
   const size_t maxlen = maxncpy - 1;
   /* 6 is max utf8 length of an unicode char. */
@@ -772,7 +766,7 @@ void KLI_str_replace_char(char *str, char src, char dst)
   }
 }
 
-/** 
+/**
  * @name Join Strings
  *
  * For non array versions of these functions, use the macros:
@@ -780,10 +774,7 @@ void KLI_str_replace_char(char *str, char src, char dst)
  * - #KLI_string_joinN
  * - #KLI_string_join_by_sep_charN
  * - #KLI_string_join_by_sep_char_with_tableN */
-char *KLI_string_join_array(char *result,
-                            size_t result_len,
-                            const char *strings[],
-                            uint strings_len)
+char *KLI_string_join_array(char *result, size_t result_len, const char *strings[], uint strings_len)
 {
   char *c = result;
   char *c_end = &result[result_len - 1];
@@ -835,28 +826,23 @@ size_t KLI_str_utf8_from_unicode(uint c, char *outbuf)
   {
     first = 0;
     len = 1;
-  }
-  else if (c < 0x800)
+  } else if (c < 0x800)
   {
     first = 0xc0;
     len = 2;
-  }
-  else if (c < 0x10000)
+  } else if (c < 0x10000)
   {
     first = 0xe0;
     len = 3;
-  }
-  else if (c < 0x200000)
+  } else if (c < 0x200000)
   {
     first = 0xf0;
     len = 4;
-  }
-  else if (c < 0x4000000)
+  } else if (c < 0x4000000)
   {
     first = 0xf8;
     len = 5;
-  }
-  else
+  } else
   {
     first = 0xfc;
     len = 6;
@@ -918,8 +904,7 @@ size_t KLI_vsnprintf(char *__restrict buffer, size_t maxncpy, const char *__rest
   if (n != -1 && n < maxncpy)
   {
     buffer[n] = '\0';
-  }
-  else
+  } else
   {
     buffer[maxncpy - 1] = '\0';
   }
@@ -951,8 +936,7 @@ size_t KLI_vsnprintf_rlen(char *__restrict buffer,
   if (n != -1 && n < maxncpy)
   {
     /* pass */
-  }
-  else
+  } else
   {
     n = maxncpy - 1;
   }
@@ -1118,7 +1102,12 @@ static bool uniquename_unique_check(void *arg, const char *name)
   return uniquename_find_dupe(data->lb, data->vlink, name, data->name_offset);
 }
 
-bool KLI_uniquename(std::vector<void *> list, void *vlink, const char *defname, char delim, int name_offset, size_t name_len)
+bool KLI_uniquename(std::vector<void *> list,
+                    void *vlink,
+                    const char *defname,
+                    char delim,
+                    int name_offset,
+                    size_t name_len)
 {
   struct Data
   {
@@ -1197,8 +1186,7 @@ bool KLI_uniquename_cb(UniquenameCheckCallback unique_check,
       {
         /* number is know not to be utf-8 */
         KLI_strncpy(tempname, numstr, name_len);
-      }
-      else
+      } else
       {
         char *tempname_buf;
         tempname_buf = tempname + KLI_strncpy_utf8_rlen(tempname, left, name_len - numlen);
@@ -1236,8 +1224,7 @@ std::string KLI_str_CapSpaceAmmender(std::string str)
       if (i == 0)
       {
         ret += toupper(str[i]);
-      }
-      else
+      } else
       {
         ret += str[i];
       }
@@ -1262,13 +1249,11 @@ std::string KLI_str_UpperCamel(std::string str)
       {
         ret += std::toupper(str[i]);
         active = false;
-      }
-      else
+      } else
       {
         ret += std::tolower(str[i]);
       }
-    }
-    else if (str[i] == ' ')
+    } else if (str[i] == ' ')
     {
       active = true;
     }

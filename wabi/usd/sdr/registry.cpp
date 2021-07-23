@@ -41,21 +41,22 @@ TF_INSTANTIATE_SINGLETON(SdrRegistry);
 
 namespace
 {
-SdrShaderNodeConstPtr NdrNodeToShaderNode(NdrNodeConstPtr node)
-{
-  return dynamic_cast<SdrShaderNodeConstPtr>(node);
-}
+  SdrShaderNodeConstPtr NdrNodeToShaderNode(NdrNodeConstPtr node)
+  {
+    return dynamic_cast<SdrShaderNodeConstPtr>(node);
+  }
 
-SdrShaderNodePtrVec NdrNodeVecToShaderNodeVec(NdrNodeConstPtrVec nodeVec)
-{
-  SdrShaderNodePtrVec sdrNodes;
+  SdrShaderNodePtrVec NdrNodeVecToShaderNodeVec(NdrNodeConstPtrVec nodeVec)
+  {
+    SdrShaderNodePtrVec sdrNodes;
 
-  std::transform(nodeVec.begin(), nodeVec.end(), std::back_inserter(sdrNodes), [](NdrNodeConstPtr baseNode) {
-    return SdrShaderNodeConstPtr(baseNode);
-  });
+    std::transform(nodeVec.begin(),
+                   nodeVec.end(),
+                   std::back_inserter(sdrNodes),
+                   [](NdrNodeConstPtr baseNode) { return SdrShaderNodeConstPtr(baseNode); });
 
-  return sdrNodes;
-}
+    return sdrNodes;
+  }
 }  // namespace
 
 SdrRegistry::SdrRegistry()

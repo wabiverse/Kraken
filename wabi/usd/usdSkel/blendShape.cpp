@@ -151,14 +151,15 @@ UsdAttribute UsdSkelBlendShape::CreatePointIndicesAttr(VtValue const &defaultVal
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -259,8 +260,7 @@ bool UsdSkelBlendShape::ValidatePointIndices(TfSpan<const int> indices,
         }
         return false;
       }
-    }
-    else
+    } else
     {
       if (reason)
       {

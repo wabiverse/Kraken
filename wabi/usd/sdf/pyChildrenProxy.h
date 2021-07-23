@@ -242,8 +242,7 @@ class SdfPyChildrenProxy
     {
       TfPyThrowIndexError(TfPyRepr(key));
       return mapped_type();
-    }
-    else
+    } else
     {
       return *i;
     }
@@ -265,8 +264,7 @@ class SdfPyChildrenProxy
     if (!TfPyIsNone(slice.start()) || !TfPyIsNone(slice.stop()) || !TfPyIsNone(slice.step()))
     {
       TfPyThrowIndexError("can only assign to full slice [:]");
-    }
-    else
+    } else
     {
       _proxy._Copy(values);
     }

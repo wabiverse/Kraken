@@ -47,11 +47,11 @@ WABI_NAMESPACE_BEGIN
 struct NdrNodeDiscoveryResult;
 
 /// Register a parser plugin with the plugin system.
-#define NDR_REGISTER_PARSER_PLUGIN(ParserPluginClass) \
-  TF_REGISTRY_FUNCTION(TfType) \
-  { \
+#define NDR_REGISTER_PARSER_PLUGIN(ParserPluginClass)                   \
+  TF_REGISTRY_FUNCTION(TfType)                                          \
+  {                                                                     \
     TfType::Define<ParserPluginClass, TfType::Bases<NdrParserPlugin>>() \
-      .SetFactory<NdrParserPluginFactory<ParserPluginClass>>(); \
+      .SetFactory<NdrParserPluginFactory<ParserPluginClass>>();         \
   }
 
 /// \class NdrParserPlugin

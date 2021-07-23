@@ -36,17 +36,17 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// Cache of string keys (currently representing variant selections) to session
-// layers.
-typedef TfHashMap<std::string, SdfLayerRefPtr, TfHash> _SessionLayerMap;
+  // Cache of string keys (currently representing variant selections) to session
+  // layers.
+  typedef TfHashMap<std::string, SdfLayerRefPtr, TfHash> _SessionLayerMap;
 
-_SessionLayerMap &GetSessionLayerMap()
-{
-  // Heap-allocate and deliberately leak this static cache to avoid
-  // problems with static destruction order.
-  static _SessionLayerMap *sessionLayerMap = new _SessionLayerMap();
-  return *sessionLayerMap;
-}
+  _SessionLayerMap &GetSessionLayerMap()
+  {
+    // Heap-allocate and deliberately leak this static cache to avoid
+    // problems with static destruction order.
+    static _SessionLayerMap *sessionLayerMap = new _SessionLayerMap();
+    return *sessionLayerMap;
+  }
 
 }  // namespace
 
@@ -94,8 +94,7 @@ SdfLayerRefPtr UsdUtilsStageCache::GetSessionLayerForVariantSelections(
       }
       sessionLayerMap[sessionKey] = layer;
       ret = layer;
-    }
-    else
+    } else
     {
       ret = itr->second;
     }

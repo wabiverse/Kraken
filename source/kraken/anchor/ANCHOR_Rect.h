@@ -40,15 +40,13 @@ class AnchorRect
       m_t(t),
       m_r(r),
       m_b(b)
-  {
-  }
+  {}
 
   /**
    * Destructor.
    */
   virtual ~AnchorRect()
-  {
-  }
+  {}
 
   /**
    * Access to rectangle width.
@@ -103,10 +101,7 @@ class AnchorRect
    * Grows the rectangle to included a point.
    * @param x: The x-coordinate of the point.
    * @param y: The y-coordinate of the point. */
-  virtual inline void wrapPoint(AnchorS32 &x,
-                                AnchorS32 &y,
-                                AnchorS32 ofs,
-                                eAnchorAxisFlag axis);
+  virtual inline void wrapPoint(AnchorS32 &x, AnchorS32 &y, AnchorS32 ofs, eAnchorAxisFlag axis);
 
   /**
    * Returns whether the point is inside this rectangle.
@@ -209,10 +204,7 @@ inline void AnchorRect::unionPoint(AnchorS32 x, AnchorS32 y)
     m_b = y;
 }
 
-inline void AnchorRect::wrapPoint(AnchorS32 &x,
-                                  AnchorS32 &y,
-                                  AnchorS32 ofs,
-                                  eAnchorAxisFlag axis)
+inline void AnchorRect::wrapPoint(AnchorS32 &x, AnchorS32 &y, AnchorS32 ofs, eAnchorAxisFlag axis)
 {
   AnchorS32 w = getWidth();
   AnchorS32 h = getHeight();

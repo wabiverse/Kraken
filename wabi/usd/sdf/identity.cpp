@@ -93,8 +93,7 @@ Sdf_IdentityRefPtr Sdf_IdentityRegistry::Identify(const SdfPath &path)
       // Since we just acquired a reference here, we know the
       // node cannot expire before we return it.
       return true;
-    }
-    else
+    } else
     {
       // The identity has expired but not yet been removed from
       // the registry map, due to the registry destructor racing

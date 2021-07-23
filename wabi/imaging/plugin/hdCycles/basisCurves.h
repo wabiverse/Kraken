@@ -36,12 +36,12 @@
 
 namespace ccl
 {
-class Mesh;
-class Scene;
-class Object;
-class Camera;
-class Hair;
-class Geometry;
+  class Mesh;
+  class Scene;
+  class Object;
+  class Camera;
+  class Hair;
+  class Geometry;
 }  // namespace ccl
 
 WABI_NAMESPACE_BEGIN

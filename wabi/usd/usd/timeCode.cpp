@@ -47,12 +47,10 @@ std::ostream &operator<<(std::ostream &os, const UsdTimeCode &time)
   if (time.IsDefault())
   {
     os << UsdTimeCodeTokens->DEFAULT;
-  }
-  else if (time.IsEarliestTime())
+  } else if (time.IsEarliestTime())
   {
     os << UsdTimeCodeTokens->EARLIEST;
-  }
-  else
+  } else
   {
     os << time.GetValue();
   }
@@ -69,12 +67,10 @@ std::istream &operator>>(std::istream &is, UsdTimeCode &time)
   if (valueToken == UsdTimeCodeTokens->DEFAULT)
   {
     time = UsdTimeCode::Default();
-  }
-  else if (valueToken == UsdTimeCodeTokens->EARLIEST)
+  } else if (valueToken == UsdTimeCodeTokens->EARLIEST)
   {
     time = UsdTimeCode::EarliestTime();
-  }
-  else
+  } else
   {
     try
     {

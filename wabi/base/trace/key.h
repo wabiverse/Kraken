@@ -57,8 +57,7 @@ class TraceKey
     if (_ptr == other._ptr)
     {
       return true;
-    }
-    else
+    } else
     {
       return *_ptr == *other._ptr;
     }

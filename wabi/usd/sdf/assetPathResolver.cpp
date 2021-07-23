@@ -161,8 +161,7 @@ Sdf_AssetInfo *Sdf_ComputeAssetInfoFromIdentifier(const string &identifier,
     // normalize, and also don't set any of the other assetInfo fields.
     // Anonymous layers do not have repository, overlay, or real paths.
     assetInfo->identifier = identifier;
-  }
-  else
+  } else
   {
 #if AR_VERSION == 1
     assetInfo->identifier = ArGetResolver().ComputeNormalizedPath(identifier);
@@ -175,8 +174,7 @@ Sdf_AssetInfo *Sdf_ComputeAssetInfoFromIdentifier(const string &identifier,
       string layerPath, arguments;
       Sdf_SplitIdentifier(assetInfo->identifier, &layerPath, &arguments);
       assetInfo->resolvedPath = Sdf_ComputeFilePath(layerPath, &resolveInfo);
-    }
-    else
+    } else
     {
       assetInfo->resolvedPath = ArResolvedPath(filePath);
     }
@@ -184,8 +182,10 @@ Sdf_AssetInfo *Sdf_ComputeAssetInfoFromIdentifier(const string &identifier,
 #if AR_VERSION == 1
     assetInfo->resolvedPath = ArResolvedPath(Sdf_CanonicalizeRealPath(assetInfo->resolvedPath));
 
-    ArGetResolver().UpdateAssetInfo(
-      assetInfo->identifier, assetInfo->resolvedPath, fileVersion, &resolveInfo);
+    ArGetResolver().UpdateAssetInfo(assetInfo->identifier,
+                                    assetInfo->resolvedPath,
+                                    fileVersion,
+                                    &resolveInfo);
 #else
     resolveInfo = ArGetResolver().GetAssetInfo(assetInfo->identifier, assetInfo->resolvedPath);
 #endif
@@ -304,8 +304,7 @@ static bool Sdf_DecodeArguments(const string &argString, SdfLayer::FileFormatArg
     {
       tmpArgs[key] = argString.substr(startIdx);
       break;
-    }
-    else
+    } else
     {
       tmpArgs[key] = argString.substr(startIdx, sepIdx - startIdx);
       startIdx = sepIdx + 1;

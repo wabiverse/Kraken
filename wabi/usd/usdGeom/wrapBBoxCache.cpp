@@ -58,8 +58,11 @@ static object _ComputePointInstanceRelativeBounds(UsdGeomBBoxCache &self,
   boost::python::stl_input_iterator<int64_t> begin(instanceIds), end;
   std::vector<int64_t> ids(begin, end);
   std::vector<GfBBox3d> boxes(ids.size());
-  if (!self.ComputePointInstanceRelativeBounds(
-        instancer, ids.data(), ids.size(), relativeToAncestorPrim, boxes.data()))
+  if (!self.ComputePointInstanceRelativeBounds(instancer,
+                                               ids.data(),
+                                               ids.size(),
+                                               relativeToAncestorPrim,
+                                               boxes.data()))
   {
     return object();
   }
@@ -114,9 +117,10 @@ void wrapUsdGeomBBoxCache()
     const SdfPathSet &,
     const TfHashMap<SdfPath, GfMatrix4d, SdfPath::Hash> &) = &BBoxCache::ComputeUntransformedBound;
 
-  class_<BBoxCache>("BBoxCache",
-                    init<UsdTimeCode, TfTokenVector, optional<bool, bool>>((
-                      arg("time"), arg("includedPurposes"), arg("useExtentsHint"), arg("ignoreVisibility"))))
+  class_<BBoxCache>(
+    "BBoxCache",
+    init<UsdTimeCode, TfTokenVector, optional<bool, bool>>(
+      (arg("time"), arg("includedPurposes"), arg("useExtentsHint"), arg("ignoreVisibility"))))
     .def("ComputeWorldBound", &BBoxCache::ComputeWorldBound, arg("prim"))
     .def("ComputeLocalBound", &BBoxCache::ComputeLocalBound, arg("prim"))
     .def("ComputeRelativeBound", &BBoxCache::ComputeRelativeBound, (arg("prim"), arg("relativeRootPrim")))

@@ -221,8 +221,7 @@ void Pcp_Dependencies::Remove(const PcpPrimIndex &primIndex, PcpLifeboat *lifebo
           {
             TF_DEBUG(PCP_DEPENDENCIES).Msg("    Removing empty parent entry <%s>\n", p.GetText());
             siteDepMap.erase(iBegin);
-          }
-          else
+          } else
           {
             break;
           }
@@ -266,8 +265,7 @@ void Pcp_Dependencies::Remove(const PcpPrimIndex &primIndex, PcpLifeboat *lifebo
           if (fieldIt->second <= 1)
           {
             _possibleDynamicFileFormatArgumentFields.erase(fieldIt);
-          }
-          else
+          } else
           {
             fieldIt->second--;
           }

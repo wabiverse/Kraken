@@ -120,8 +120,7 @@ SdfFileFormatConstPtr Sdf_FileFormatRegistry::FindByExtension(const string &s, c
     _ExtensionIndex::const_iterator it = _extensionIndex.find(ext);
     if (it != _extensionIndex.end())
       formatInfo = it->second;
-  }
-  else
+  } else
   {
     _FullExtensionIndex::const_iterator it = _fullExtensionIndex.find(ext);
     if (it != _fullExtensionIndex.end())
@@ -377,8 +376,7 @@ void Sdf_FileFormatRegistry::_RegisterFormatPlugins()
           "registered for extension '%s', skipping.",
           info->target.GetText(),
           ext.c_str());
-      }
-      else
+      } else
       {
         infosForExt.push_back(info);
       }
@@ -400,8 +398,7 @@ void Sdf_FileFormatRegistry::_RegisterFormatPlugins()
     if (infos.size() == 1)
     {
       primaryFormatInfo = infos.front();
-    }
-    else
+    } else
     {
       TF_FOR_ALL (infoIt, infos)
       {
@@ -431,8 +428,7 @@ void Sdf_FileFormatRegistry::_RegisterFormatPlugins()
             // finding the primary format; allow the loop to
             // continue so we flag the error case where an
             // extension has multiple primary formats.
-          }
-          else
+          } else
           {
             primaryFormatInfo = _InfoSharedPtr();
             if (errorExtensions.insert(ext).second)

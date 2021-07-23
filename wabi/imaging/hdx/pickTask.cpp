@@ -263,8 +263,7 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
                         /*sFail*/ HdStencilOpKeep,
                         /*sPassZFail*/ HdStencilOpKeep,
                         /*sPassZPass*/ HdStencilOpKeep);
-    }
-    else
+    } else
     {
       state->SetStencilEnabled(false);
     }
@@ -284,8 +283,10 @@ void HdxPickTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBit
     // let's setup the override shader
     if (HdPhRenderPassState *extState = dynamic_cast<HdPhRenderPassState *>(state.get()))
     {
-      extState->SetCameraFramingState(
-        _contextParams.viewMatrix, _contextParams.projectionMatrix, viewport, _contextParams.clipPlanes);
+      extState->SetCameraFramingState(_contextParams.viewMatrix,
+                                      _contextParams.projectionMatrix,
+                                      viewport,
+                                      _contextParams.clipPlanes);
       extState->SetUseSceneMaterials(_params.enableSceneMaterials);
     }
   }
@@ -481,20 +482,16 @@ void HdxPickTask::Execute(HdTaskContext *ctx)
   if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCenter)
   {
     result.ResolveNearestToCenter(_contextParams.outHits);
-  }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCamera)
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCamera)
   {
     result.ResolveNearestToCamera(_contextParams.outHits);
-  }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveUnique)
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveUnique)
   {
     result.ResolveUnique(_contextParams.outHits);
-  }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveAll)
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveAll)
   {
     result.ResolveAll(_contextParams.outHits);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unrecognized interesection mode '%s'", _contextParams.resolveMode.GetText());
   }
@@ -583,8 +580,9 @@ bool HdxPickResult::_ResolveHit(int index, int x, int y, float z, HdxPickHit *hi
     return false;
   }
 
-  bool rprimValid = _index->GetSceneDelegateAndInstancerIds(
-    hit->objectId, &(hit->delegateId), &(hit->instancerId));
+  bool rprimValid = _index->GetSceneDelegateAndInstancerIds(hit->objectId,
+                                                            &(hit->delegateId),
+                                                            &(hit->instancerId));
 
   if (!TF_VERIFY(rprimValid, "%s\n", hit->objectId.GetText()))
   {

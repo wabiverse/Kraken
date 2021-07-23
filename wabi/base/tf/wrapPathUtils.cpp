@@ -38,32 +38,32 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _RealPath(string const &path, bool allowInaccessibleSuffix, bool raiseOnError)
-{
-  string error;
-  string realPath = TfRealPath(path, allowInaccessibleSuffix, &error);
-  if (raiseOnError && !error.empty())
+  static string _RealPath(string const &path, bool allowInaccessibleSuffix, bool raiseOnError)
   {
-    TF_RUNTIME_ERROR(error);
-  }
-  return realPath;
-}
-
-static string::size_type _FindLongestAccessiblePrefix(string const &path)
-{
-  // For python, we convert npos into path's length, which makes the return
-  // value correct to use in slices.
-  string error;
-  string::size_type result = TfFindLongestAccessiblePrefix(path, &error);
-
-  if (!error.empty())
-  {
-    PyErr_SetString(PyExc_OSError, error.c_str());
-    throw_error_already_set();
+    string error;
+    string realPath = TfRealPath(path, allowInaccessibleSuffix, &error);
+    if (raiseOnError && !error.empty())
+    {
+      TF_RUNTIME_ERROR(error);
+    }
+    return realPath;
   }
 
-  return result;
-}
+  static string::size_type _FindLongestAccessiblePrefix(string const &path)
+  {
+    // For python, we convert npos into path's length, which makes the return
+    // value correct to use in slices.
+    string error;
+    string::size_type result = TfFindLongestAccessiblePrefix(path, &error);
+
+    if (!error.empty())
+    {
+      PyErr_SetString(PyExc_OSError, error.c_str());
+      throw_error_already_set();
+    }
+
+    return result;
+  }
 
 }  // anonymous namespace
 

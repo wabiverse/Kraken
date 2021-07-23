@@ -58,8 +58,7 @@ struct Tf_MapLookupHelper
     if (i == map.end())
     {
       return false;
-    }
-    else
+    } else
     {
       *valuePtr = i->second;
       return true;
@@ -120,8 +119,7 @@ const Result TfMapLookupByValue(Container const &map, Key const &key, const Resu
   if (i == map.end())
   {
     return defaultValue;
-  }
-  else
+  } else
   {
     return i->second;
   }
@@ -374,8 +372,7 @@ static inline ForwardIterator TfFindBoundary(ForwardIterator first,
       first = middle;
       ++first;
       len = len - half - 1;
-    }
-    else
+    } else
       len = half;
   }
   return first;

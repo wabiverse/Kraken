@@ -141,8 +141,9 @@ void HgiVulkanComputeCmds::_BindResources()
 
     if (rb)
     {
-      rb->BindResources(
-        _commandBuffer->GetVulkanCommandBuffer(), VK_PIPELINE_BIND_POINT_COMPUTE, _pipelineLayout);
+      rb->BindResources(_commandBuffer->GetVulkanCommandBuffer(),
+                        VK_PIPELINE_BIND_POINT_COMPUTE,
+                        _pipelineLayout);
     }
 
     // Make sure we bind only once

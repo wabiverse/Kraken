@@ -36,7 +36,7 @@
 
 namespace ccl
 {
-class Camera;
+  class Camera;
 }
 
 WABI_NAMESPACE_BEGIN

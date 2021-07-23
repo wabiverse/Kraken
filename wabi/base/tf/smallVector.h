@@ -533,7 +533,7 @@ class TfSmallVector : public TfSmallVectorBase
   /// Emplace an entry at the back of the vector.
   ///
   template<typename... Args>
-  void emplace_back(Args &&... args)
+  void emplace_back(Args &&...args)
   {
     if (size() == capacity())
     {
@@ -616,8 +616,7 @@ class TfSmallVector : public TfSmallVectorBase
       _FreeStorage();
       _data.SetRemoteStorage(newStorage);
       _capacity = nextCapacity;
-    }
-    else
+    } else
     {
       // Insert in-place requires handling four ranges.
       //

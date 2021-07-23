@@ -52,8 +52,7 @@ bool VerificationTest(pfHash hash, const int hashbits, uint32_t expected, bool v
     if (verbose)
       printf("Verification value 0x%08X : Failed! (Expected 0x%08x)\n", verification, expected);
     return false;
-  }
-  else
+  } else
   {
     if (verbose)
       printf("Verification value 0x%08X : Passed!\n", verification);
@@ -143,8 +142,7 @@ bool SanityTest(pfHash hash, const int hashbits)
   if (result == false)
   {
     printf("*********FAIL*********\n");
-  }
-  else
+  } else
   {
     printf("PASS\n");
   }

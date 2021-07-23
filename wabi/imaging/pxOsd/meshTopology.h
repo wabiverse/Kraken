@@ -186,8 +186,12 @@ class PxOsdMeshTopology
   /// Return a copy of the topology, changing only the subdiv tags.
   PXOSD_API PxOsdMeshTopology WithSubdivTags(PxOsdSubdivTags const &tags) const
   {
-    return PxOsdMeshTopology(
-      GetScheme(), GetOrientation(), GetFaceVertexCounts(), GetFaceVertexIndices(), GetHoleIndices(), tags);
+    return PxOsdMeshTopology(GetScheme(),
+                             GetOrientation(),
+                             GetFaceVertexCounts(),
+                             GetFaceVertexIndices(),
+                             GetHoleIndices(),
+                             tags);
   }
 
   /// Return a copy of the topology, changing only the hole indices.

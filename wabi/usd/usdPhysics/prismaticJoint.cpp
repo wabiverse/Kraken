@@ -33,157 +33,144 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsPrismaticJoint,
-        TfType::Bases< UsdPhysicsJoint > >();
-    
-    // Register the usd prim typename as an alias under UsdSchemaBase. This
-    // enables one to call
-    // TfType::Find<UsdSchemaBase>().FindDerivedByName("PhysicsPrismaticJoint")
-    // to find TfType<UsdPhysicsPrismaticJoint>, which is how IsA queries are
-    // answered.
-    TfType::AddAlias<UsdSchemaBase, UsdPhysicsPrismaticJoint>("PhysicsPrismaticJoint");
+  TfType::Define<UsdPhysicsPrismaticJoint, TfType::Bases<UsdPhysicsJoint>>();
+
+  // Register the usd prim typename as an alias under UsdSchemaBase. This
+  // enables one to call
+  // TfType::Find<UsdSchemaBase>().FindDerivedByName("PhysicsPrismaticJoint")
+  // to find TfType<UsdPhysicsPrismaticJoint>, which is how IsA queries are
+  // answered.
+  TfType::AddAlias<UsdSchemaBase, UsdPhysicsPrismaticJoint>("PhysicsPrismaticJoint");
 }
 
 /* virtual */
 UsdPhysicsPrismaticJoint::~UsdPhysicsPrismaticJoint()
+{}
+
+/* static */
+UsdPhysicsPrismaticJoint UsdPhysicsPrismaticJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsPrismaticJoint();
+  }
+  return UsdPhysicsPrismaticJoint(stage->GetPrimAtPath(path));
 }
 
 /* static */
-UsdPhysicsPrismaticJoint
-UsdPhysicsPrismaticJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsPrismaticJoint UsdPhysicsPrismaticJoint::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsPrismaticJoint();
-    }
-    return UsdPhysicsPrismaticJoint(stage->GetPrimAtPath(path));
-}
-
-/* static */
-UsdPhysicsPrismaticJoint
-UsdPhysicsPrismaticJoint::Define(
-    const UsdStagePtr &stage, const SdfPath &path)
-{
-    static TfToken usdPrimTypeName("PhysicsPrismaticJoint");
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsPrismaticJoint();
-    }
-    return UsdPhysicsPrismaticJoint(
-        stage->DefinePrim(path, usdPrimTypeName));
+  static TfToken usdPrimTypeName("PhysicsPrismaticJoint");
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsPrismaticJoint();
+  }
+  return UsdPhysicsPrismaticJoint(stage->DefinePrim(path, usdPrimTypeName));
 }
 
 /* virtual */
 UsdSchemaKind UsdPhysicsPrismaticJoint::GetSchemaKind() const
 {
-    return UsdPhysicsPrismaticJoint::schemaKind;
+  return UsdPhysicsPrismaticJoint::schemaKind;
 }
 
 /* static */
-const TfType &
-UsdPhysicsPrismaticJoint::GetStaticTfType()
+const TfType &UsdPhysicsPrismaticJoint::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsPrismaticJoint>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsPrismaticJoint>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsPrismaticJoint::IsTypedSchema()
+bool UsdPhysicsPrismaticJoint::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsPrismaticJoint::GetTfType() const
+const TfType &UsdPhysicsPrismaticJoint::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
-UsdAttribute
-UsdPhysicsPrismaticJoint::GetAxisAttr() const
+UsdAttribute UsdPhysicsPrismaticJoint::GetAxisAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAxis);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAxis);
 }
 
-UsdAttribute
-UsdPhysicsPrismaticJoint::CreateAxisAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsPrismaticJoint::CreateAxisAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAxis,
-                       SdfValueTypeNames->Token,
-                       /* custom = */ false,
-                       SdfVariabilityUniform,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAxis,
+                                    SdfValueTypeNames->Token,
+                                    /* custom = */ false,
+                                    SdfVariabilityUniform,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsPrismaticJoint::GetLowerLimitAttr() const
+UsdAttribute UsdPhysicsPrismaticJoint::GetLowerLimitAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsLowerLimit);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsLowerLimit);
 }
 
-UsdAttribute
-UsdPhysicsPrismaticJoint::CreateLowerLimitAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsPrismaticJoint::CreateLowerLimitAttr(VtValue const &defaultValue,
+                                                            bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsLowerLimit,
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsLowerLimit,
+                                    SdfValueTypeNames->Float,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsPrismaticJoint::GetUpperLimitAttr() const
+UsdAttribute UsdPhysicsPrismaticJoint::GetUpperLimitAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsUpperLimit);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsUpperLimit);
 }
 
-UsdAttribute
-UsdPhysicsPrismaticJoint::CreateUpperLimitAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsPrismaticJoint::CreateUpperLimitAttr(VtValue const &defaultValue,
+                                                            bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsUpperLimit,
-                       SdfValueTypeNames->Float,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsUpperLimit,
+                                    SdfValueTypeNames->Float,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-namespace {
-static inline TfTokenVector
-_ConcatenateAttributeNames(const TfTokenVector& left,const TfTokenVector& right)
+namespace
 {
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
     TfTokenVector result;
     result.reserve(left.size() + right.size());
     result.insert(result.end(), left.begin(), left.end());
     result.insert(result.end(), right.begin(), right.end());
     return result;
-}
-}
+  }
+}  // namespace
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsPrismaticJoint::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdPhysicsPrismaticJoint::GetSchemaAttributeNames(bool includeInherited)
 {
-    static TfTokenVector localNames = {
-        UsdPhysicsTokens->physicsAxis,
-        UsdPhysicsTokens->physicsLowerLimit,
-        UsdPhysicsTokens->physicsUpperLimit,
-    };
-    static TfTokenVector allNames =
-        _ConcatenateAttributeNames(
-            UsdPhysicsJoint::GetSchemaAttributeNames(true),
-            localNames);
+  static TfTokenVector localNames = {
+    UsdPhysicsTokens->physicsAxis,
+    UsdPhysicsTokens->physicsLowerLimit,
+    UsdPhysicsTokens->physicsUpperLimit,
+  };
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdPhysicsJoint::GetSchemaAttributeNames(true),
+                                                             localNames);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END

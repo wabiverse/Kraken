@@ -58,152 +58,150 @@ using LockGuard = std::lock_guard<std::mutex>;
 namespace
 {
 
-typedef UsdStageCache::Id Id;
+  typedef UsdStageCache::Id Id;
 
-std::atomic_long idCounter(9223000);
+  std::atomic_long idCounter(9223000);
 
-Id GetNextId()
-{
-  return Id::FromLongInt(++idCounter);
-}
-
-struct Entry
-{
-  Entry()
-  {}
-  Entry(const UsdStageRefPtr &stage, Id id)
-    : stage(stage),
-      id(id)
-  {}
-  UsdStageRefPtr stage;
-  Id id;
-};
-
-struct ById
-{
-};
-
-struct ByStage
-{
-};
-
-struct ByRootLayer
-{
-  static SdfLayerHandle Get(const Entry &entry)
+  Id GetNextId()
   {
-    return entry.stage->GetRootLayer();
+    return Id::FromLongInt(++idCounter);
   }
-};
 
-typedef boost::multi_index::multi_index_container<
-
-  Entry,
-
-  boost::multi_index::indexed_by<
-
-    boost::multi_index::hashed_unique<boost::multi_index::tag<ById>,
-                                      boost::multi_index::member<Entry, Id, &Entry::id>>,
-
-    boost::multi_index::hashed_unique<boost::multi_index::tag<ByStage>,
-                                      boost::multi_index::member<Entry, UsdStageRefPtr, &Entry::stage>>,
-
-    boost::multi_index::hashed_non_unique<
-      boost::multi_index::tag<ByRootLayer>,
-      boost::multi_index::global_fun<const Entry &, SdfLayerHandle, &ByRootLayer::Get>>>>
-  StageContainer;
-
-typedef StageContainer::index<ById>::type StagesById;
-typedef StageContainer::index<ByStage>::type StagesByStage;
-typedef StageContainer::index<ByRootLayer>::type StagesByRootLayer;
-
-// Walk range, which must be from index, applying pred() to every element.  For
-// those elements where pred(element) is true, erase the element from the index
-// and invoke out->push_back(element) if out is not null.  Return the number of
-// elements erased.
-template<class Index, class Range, class Pred, class BackIns>
-size_t EraseIf(Index &index, Range range, Pred pred, BackIns *out)
-{
-  size_t numErased = 0;
-  while (range.first != range.second)
+  struct Entry
   {
-    if (pred(*range.first))
+    Entry()
+    {}
+    Entry(const UsdStageRefPtr &stage, Id id)
+      : stage(stage),
+        id(id)
+    {}
+    UsdStageRefPtr stage;
+    Id id;
+  };
+
+  struct ById
+  {
+  };
+
+  struct ByStage
+  {
+  };
+
+  struct ByRootLayer
+  {
+    static SdfLayerHandle Get(const Entry &entry)
     {
-      if (out)
-        out->push_back(*range.first);
-      index.erase(range.first++);
-      ++numErased;
+      return entry.stage->GetRootLayer();
     }
-    else
+  };
+
+  typedef boost::multi_index::multi_index_container<
+
+    Entry,
+
+    boost::multi_index::indexed_by<
+
+      boost::multi_index::hashed_unique<boost::multi_index::tag<ById>,
+                                        boost::multi_index::member<Entry, Id, &Entry::id>>,
+
+      boost::multi_index::hashed_unique<boost::multi_index::tag<ByStage>,
+                                        boost::multi_index::member<Entry, UsdStageRefPtr, &Entry::stage>>,
+
+      boost::multi_index::hashed_non_unique<
+        boost::multi_index::tag<ByRootLayer>,
+        boost::multi_index::global_fun<const Entry &, SdfLayerHandle, &ByRootLayer::Get>>>>
+    StageContainer;
+
+  typedef StageContainer::index<ById>::type StagesById;
+  typedef StageContainer::index<ByStage>::type StagesByStage;
+  typedef StageContainer::index<ByRootLayer>::type StagesByRootLayer;
+
+  // Walk range, which must be from index, applying pred() to every element.  For
+  // those elements where pred(element) is true, erase the element from the index
+  // and invoke out->push_back(element) if out is not null.  Return the number of
+  // elements erased.
+  template<class Index, class Range, class Pred, class BackIns>
+  size_t EraseIf(Index &index, Range range, Pred pred, BackIns *out)
+  {
+    size_t numErased = 0;
+    while (range.first != range.second)
     {
-      ++range.first;
-    }
-  }
-  return numErased;
-}
-
-struct DebugHelper
-{
-  explicit DebugHelper(const UsdStageCache &cache, const char *prefix = "")
-    : _cache(cache),
-      _prefix(prefix),
-      _enabled(TfDebug::IsEnabled(USD_STAGE_CACHE))
-  {}
-
-  ~DebugHelper()
-  {
-    if (IsEnabled())
-      IssueMessage();
-  }
-
-  bool IsEnabled() const
-  {
-    return _enabled;
-  }
-
-  template<class Range>
-  void AddEntries(const Range &rng)
-  {
-    if (IsEnabled())
-      _entries.insert(_entries.end(), boost::begin(rng), boost::end(rng));
-  }
-
-  void AddEntry(const Entry &entry)
-  {
-    if (IsEnabled())
-      _entries.push_back(entry);
-  }
-
-  void IssueMessage() const
-  {
-    if (_entries.size() == 1)
-    {
-      DBG("%s %s %s (id=%s)\n",
-          UsdDescribe(_cache).c_str(),
-          _prefix,
-          UsdDescribe(_entries.front().stage).c_str(),
-          _entries.front().id.ToString().c_str());
-    }
-    else if (_entries.size() > 1)
-    {
-      DBG("%s %s %zu entries:\n", UsdDescribe(_cache).c_str(), _prefix, _entries.size());
-      for (auto const &entry : _entries)
+      if (pred(*range.first))
       {
-        DBG("      %s (id=%s)\n", UsdDescribe(entry.stage).c_str(), entry.id.ToString().c_str());
+        if (out)
+          out->push_back(*range.first);
+        index.erase(range.first++);
+        ++numErased;
+      } else
+      {
+        ++range.first;
       }
     }
+    return numErased;
   }
 
-  vector<Entry> *GetEntryVec()
+  struct DebugHelper
   {
-    return IsEnabled() ? &_entries : nullptr;
-  }
+    explicit DebugHelper(const UsdStageCache &cache, const char *prefix = "")
+      : _cache(cache),
+        _prefix(prefix),
+        _enabled(TfDebug::IsEnabled(USD_STAGE_CACHE))
+    {}
 
- private:
-  vector<Entry> _entries;
-  const UsdStageCache &_cache;
-  const char *_prefix;
-  bool _enabled;
-};
+    ~DebugHelper()
+    {
+      if (IsEnabled())
+        IssueMessage();
+    }
+
+    bool IsEnabled() const
+    {
+      return _enabled;
+    }
+
+    template<class Range>
+    void AddEntries(const Range &rng)
+    {
+      if (IsEnabled())
+        _entries.insert(_entries.end(), boost::begin(rng), boost::end(rng));
+    }
+
+    void AddEntry(const Entry &entry)
+    {
+      if (IsEnabled())
+        _entries.push_back(entry);
+    }
+
+    void IssueMessage() const
+    {
+      if (_entries.size() == 1)
+      {
+        DBG("%s %s %s (id=%s)\n",
+            UsdDescribe(_cache).c_str(),
+            _prefix,
+            UsdDescribe(_entries.front().stage).c_str(),
+            _entries.front().id.ToString().c_str());
+      } else if (_entries.size() > 1)
+      {
+        DBG("%s %s %zu entries:\n", UsdDescribe(_cache).c_str(), _prefix, _entries.size());
+        for (auto const &entry : _entries)
+        {
+          DBG("      %s (id=%s)\n", UsdDescribe(entry.stage).c_str(), entry.id.ToString().c_str());
+        }
+      }
+    }
+
+    vector<Entry> *GetEntryVec()
+    {
+      return IsEnabled() ? &_entries : nullptr;
+    }
+
+   private:
+    vector<Entry> _entries;
+    const UsdStageCache &_cache;
+    const char *_prefix;
+    bool _enabled;
+  };
 
 }  // namespace
 

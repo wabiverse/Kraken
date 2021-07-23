@@ -43,39 +43,42 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateDisplayColorAttr(UsdGeomGprim &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDisplayColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3fArray),
-                                     writeSparsely);
-}
-
-static UsdAttribute _CreateDisplayOpacityAttr(UsdGeomGprim &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDisplayOpacityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+  static UsdAttribute _CreateDisplayColorAttr(UsdGeomGprim &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDisplayColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3fArray),
                                        writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateDoubleSidedAttr(UsdGeomGprim &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateDoubleSidedAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateDisplayOpacityAttr(UsdGeomGprim &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDisplayOpacityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+                                         writeSparsely);
+  }
 
-static UsdAttribute _CreateOrientationAttr(UsdGeomGprim &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateOrientationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateDoubleSidedAttr(UsdGeomGprim &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDoubleSidedAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                      writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomGprim &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.Gprim(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateOrientationAttr(UsdGeomGprim &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateOrientationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                      writeSparsely);
+  }
+
+  static std::string _Repr(const UsdGeomGprim &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.Gprim(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -150,16 +153,16 @@ void wrapUsdGeomGprim()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def("GetDisplayColorPrimvar", &UsdGeomGprim::GetDisplayColorPrimvar)
-    .def("CreateDisplayColorPrimvar",
-         &UsdGeomGprim::CreateDisplayColorPrimvar,
-         (arg("interpolation") = TfToken(), arg("elementSize") = -1))
-    .def("GetDisplayOpacityPrimvar", &UsdGeomGprim::GetDisplayOpacityPrimvar)
-    .def("CreateDisplayOpacityPrimvar",
-         &UsdGeomGprim::CreateDisplayOpacityPrimvar,
-         (arg("interpolation") = TfToken(), arg("elementSize") = -1));
-}
+  WRAP_CUSTOM
+  {
+    _class.def("GetDisplayColorPrimvar", &UsdGeomGprim::GetDisplayColorPrimvar)
+      .def("CreateDisplayColorPrimvar",
+           &UsdGeomGprim::CreateDisplayColorPrimvar,
+           (arg("interpolation") = TfToken(), arg("elementSize") = -1))
+      .def("GetDisplayOpacityPrimvar", &UsdGeomGprim::GetDisplayOpacityPrimvar)
+      .def("CreateDisplayOpacityPrimvar",
+           &UsdGeomGprim::CreateDisplayOpacityPrimvar,
+           (arg("interpolation") = TfToken(), arg("elementSize") = -1));
+  }
 
 }  // anonymous namespace

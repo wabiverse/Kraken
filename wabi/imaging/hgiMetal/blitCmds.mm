@@ -90,8 +90,7 @@ void HgiMetalBlitCmds::PushDebugGroup(const char *label)
   if (_blitEncoder)
   {
     HGIMETAL_DEBUG_LABEL(_blitEncoder, label)
-  }
-  else if (HgiMetalDebugEnabled())
+  } else if (HgiMetalDebugEnabled())
   {
     _label = [@(label) copy];
   }
@@ -123,13 +122,11 @@ void HgiMetalBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
   if (texDesc.usage & HgiTextureUsageBitsColorTarget)
   {
     metalFormat = HgiMetalConversions::GetPixelFormat(texDesc.format);
-  }
-  else if (texDesc.usage & HgiTextureUsageBitsDepthTarget)
+  } else if (texDesc.usage & HgiTextureUsageBitsDepthTarget)
   {
     TF_VERIFY(texDesc.format == HgiFormatFloat32);
     metalFormat = MTLPixelFormatDepth32Float;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown HgTextureUsage bit");
   }
@@ -206,15 +203,13 @@ void HgiMetalBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
                                   mipmapLevel:copyOp.mipLevel
                                     withBytes:copyOp.cpuSourceBuffer
                                   bytesPerRow:copyOp.bufferByteSize];
-  }
-  else if (texDesc.type == HgiTextureType2D)
+  } else if (texDesc.type == HgiTextureType2D)
   {
     [dstTexture->GetTextureId() replaceRegion:MTLRegionMake2D(offsets[0], offsets[1], width, height)
                                   mipmapLevel:copyOp.mipLevel
                                     withBytes:copyOp.cpuSourceBuffer
                                   bytesPerRow:copyOp.bufferByteSize / height];
-  }
-  else
+  } else
   {
     [dstTexture->GetTextureId()
       replaceRegion:MTLRegionMake3D(offsets[0], offsets[1], depthOffset, width, height, depth)
@@ -292,7 +287,7 @@ void HgiMetalBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
 
     ARCH_PRAGMA_PUSH
     ARCH_PRAGMA_INSTANCE_METHOD_NOT_FOUND
-      [resource didModifyRange:range];
+    [resource didModifyRange:range];
     ARCH_PRAGMA_POP
   }
 }
@@ -375,8 +370,7 @@ bool HgiMetalBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
     if (_secondaryCommandBuffer)
     {
       _hgi->CommitSecondaryCommandBuffer(_commandBuffer, waitType);
-    }
-    else
+    } else
     {
       _hgi->CommitPrimaryCommandBuffer(waitType);
     }

@@ -33,7 +33,7 @@
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usdPhysics/tokens.h"
 
-#include "wabi/usd/usd/collectionAPI.h" 
+#include "wabi/usd/usd/collectionAPI.h"
 
 #include "wabi/base/vt/value.h"
 
@@ -54,140 +54,135 @@ class SdfAssetPath;
 
 /// \class UsdPhysicsCollisionGroup
 ///
-/// Defines a collision group for coarse filtering. When a collision 
+/// Defines a collision group for coarse filtering. When a collision
 /// occurs between two objects that have a PhysicsCollisionGroup assigned,
-/// they will collide with each other unless this PhysicsCollisionGroup pair 
+/// they will collide with each other unless this PhysicsCollisionGroup pair
 /// is filtered. See filteredGroups attribute.
-/// 
-/// A CollectionAPI:colliders maintains a list of PhysicsCollisionAPI rel-s that 
+///
+/// A CollectionAPI:colliders maintains a list of PhysicsCollisionAPI rel-s that
 /// defines the members of this Collisiongroup.
-/// 
+///
 ///
 class UsdPhysicsCollisionGroup : public UsdTyped
 {
-public:
-    /// Compile time constant representing what kind of schema this class is.
-    ///
-    /// \sa UsdSchemaKind
-    static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
+ public:
+  /// Compile time constant representing what kind of schema this class is.
+  ///
+  /// \sa UsdSchemaKind
+  static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
-    /// Construct a UsdPhysicsCollisionGroup on UsdPrim \p prim .
-    /// Equivalent to UsdPhysicsCollisionGroup::Get(prim.GetStage(), prim.GetPath())
-    /// for a \em valid \p prim, but will not immediately throw an error for
-    /// an invalid \p prim
-    explicit UsdPhysicsCollisionGroup(const UsdPrim& prim=UsdPrim())
-        : UsdTyped(prim)
-    {
-    }
+  /// Construct a UsdPhysicsCollisionGroup on UsdPrim \p prim .
+  /// Equivalent to UsdPhysicsCollisionGroup::Get(prim.GetStage(), prim.GetPath())
+  /// for a \em valid \p prim, but will not immediately throw an error for
+  /// an invalid \p prim
+  explicit UsdPhysicsCollisionGroup(const UsdPrim &prim = UsdPrim())
+    : UsdTyped(prim)
+  {}
 
-    /// Construct a UsdPhysicsCollisionGroup on the prim held by \p schemaObj .
-    /// Should be preferred over UsdPhysicsCollisionGroup(schemaObj.GetPrim()),
-    /// as it preserves SchemaBase state.
-    explicit UsdPhysicsCollisionGroup(const UsdSchemaBase& schemaObj)
-        : UsdTyped(schemaObj)
-    {
-    }
+  /// Construct a UsdPhysicsCollisionGroup on the prim held by \p schemaObj .
+  /// Should be preferred over UsdPhysicsCollisionGroup(schemaObj.GetPrim()),
+  /// as it preserves SchemaBase state.
+  explicit UsdPhysicsCollisionGroup(const UsdSchemaBase &schemaObj)
+    : UsdTyped(schemaObj)
+  {}
 
-    /// Destructor.
-    USDPHYSICS_API
-    virtual ~UsdPhysicsCollisionGroup();
+  /// Destructor.
+  USDPHYSICS_API
+  virtual ~UsdPhysicsCollisionGroup();
 
-    /// Return a vector of names of all pre-declared attributes for this schema
-    /// class and all its ancestor classes.  Does not include attributes that
-    /// may be authored by custom/extended methods of the schemas involved.
-    USDPHYSICS_API
-    static const TfTokenVector &
-    GetSchemaAttributeNames(bool includeInherited=true);
+  /// Return a vector of names of all pre-declared attributes for this schema
+  /// class and all its ancestor classes.  Does not include attributes that
+  /// may be authored by custom/extended methods of the schemas involved.
+  USDPHYSICS_API
+  static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true);
 
-    /// Return a UsdPhysicsCollisionGroup holding the prim adhering to this
-    /// schema at \p path on \p stage.  If no prim exists at \p path on
-    /// \p stage, or if the prim at that path does not adhere to this schema,
-    /// return an invalid schema object.  This is shorthand for the following:
-    ///
-    /// \code
-    /// UsdPhysicsCollisionGroup(stage->GetPrimAtPath(path));
-    /// \endcode
-    ///
-    USDPHYSICS_API
-    static UsdPhysicsCollisionGroup
-    Get(const UsdStagePtr &stage, const SdfPath &path);
+  /// Return a UsdPhysicsCollisionGroup holding the prim adhering to this
+  /// schema at \p path on \p stage.  If no prim exists at \p path on
+  /// \p stage, or if the prim at that path does not adhere to this schema,
+  /// return an invalid schema object.  This is shorthand for the following:
+  ///
+  /// \code
+  /// UsdPhysicsCollisionGroup(stage->GetPrimAtPath(path));
+  /// \endcode
+  ///
+  USDPHYSICS_API
+  static UsdPhysicsCollisionGroup Get(const UsdStagePtr &stage, const SdfPath &path);
 
-    /// Attempt to ensure a \a UsdPrim adhering to this schema at \p path
-    /// is defined (according to UsdPrim::IsDefined()) on this stage.
-    ///
-    /// If a prim adhering to this schema at \p path is already defined on this
-    /// stage, return that prim.  Otherwise author an \a SdfPrimSpec with
-    /// \a specifier == \a SdfSpecifierDef and this schema's prim type name for
-    /// the prim at \p path at the current EditTarget.  Author \a SdfPrimSpec s
-    /// with \p specifier == \a SdfSpecifierDef and empty typeName at the
-    /// current EditTarget for any nonexistent, or existing but not \a Defined
-    /// ancestors.
-    ///
-    /// The given \a path must be an absolute prim path that does not contain
-    /// any variant selections.
-    ///
-    /// If it is impossible to author any of the necessary PrimSpecs, (for
-    /// example, in case \a path cannot map to the current UsdEditTarget's
-    /// namespace) issue an error and return an invalid \a UsdPrim.
-    ///
-    /// Note that this method may return a defined prim whose typeName does not
-    /// specify this schema class, in case a stronger typeName opinion overrides
-    /// the opinion at the current EditTarget.
-    ///
-    USDPHYSICS_API
-    static UsdPhysicsCollisionGroup
-    Define(const UsdStagePtr &stage, const SdfPath &path);
+  /// Attempt to ensure a \a UsdPrim adhering to this schema at \p path
+  /// is defined (according to UsdPrim::IsDefined()) on this stage.
+  ///
+  /// If a prim adhering to this schema at \p path is already defined on this
+  /// stage, return that prim.  Otherwise author an \a SdfPrimSpec with
+  /// \a specifier == \a SdfSpecifierDef and this schema's prim type name for
+  /// the prim at \p path at the current EditTarget.  Author \a SdfPrimSpec s
+  /// with \p specifier == \a SdfSpecifierDef and empty typeName at the
+  /// current EditTarget for any nonexistent, or existing but not \a Defined
+  /// ancestors.
+  ///
+  /// The given \a path must be an absolute prim path that does not contain
+  /// any variant selections.
+  ///
+  /// If it is impossible to author any of the necessary PrimSpecs, (for
+  /// example, in case \a path cannot map to the current UsdEditTarget's
+  /// namespace) issue an error and return an invalid \a UsdPrim.
+  ///
+  /// Note that this method may return a defined prim whose typeName does not
+  /// specify this schema class, in case a stronger typeName opinion overrides
+  /// the opinion at the current EditTarget.
+  ///
+  USDPHYSICS_API
+  static UsdPhysicsCollisionGroup Define(const UsdStagePtr &stage, const SdfPath &path);
 
-protected:
-    /// Returns the kind of schema this class belongs to.
-    ///
-    /// \sa UsdSchemaKind
-    USDPHYSICS_API
-    UsdSchemaKind GetSchemaKind() const override;
+ protected:
+  /// Returns the kind of schema this class belongs to.
+  ///
+  /// \sa UsdSchemaKind
+  USDPHYSICS_API
+  UsdSchemaKind GetSchemaKind() const override;
 
-private:
-    // needs to invoke GetStaticTfType.
-    friend class UsdSchemaRegistry;
-    USDPHYSICS_API
-    static const TfType &GetStaticTfType();
+ private:
+  // needs to invoke GetStaticTfType.
+  friend class UsdSchemaRegistry;
+  USDPHYSICS_API
+  static const TfType &GetStaticTfType();
 
-    static bool IsTypedSchema();
+  static bool IsTypedSchema();
 
-    // override SchemaBase virtuals.
-    USDPHYSICS_API
-    const TfType &GetTfType() const override;
+  // override SchemaBase virtuals.
+  USDPHYSICS_API
+  const TfType &GetTfType() const override;
 
-public:
-    // --------------------------------------------------------------------- //
-    // FILTEREDGROUPS 
-    // --------------------------------------------------------------------- //
-    /// References a list of PhysicsCollisionGroups with which 
-    /// collisions should be ignored.
-    ///
-    USDPHYSICS_API
-    UsdRelationship GetFilteredGroupsRel() const;
+ public:
+  // --------------------------------------------------------------------- //
+  // FILTEREDGROUPS
+  // --------------------------------------------------------------------- //
+  /// References a list of PhysicsCollisionGroups with which
+  /// collisions should be ignored.
+  ///
+  USDPHYSICS_API
+  UsdRelationship GetFilteredGroupsRel() const;
 
-    /// See GetFilteredGroupsRel(), and also 
-    /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create
-    USDPHYSICS_API
-    UsdRelationship CreateFilteredGroupsRel() const;
+  /// See GetFilteredGroupsRel(), and also
+  /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create
+  USDPHYSICS_API
+  UsdRelationship CreateFilteredGroupsRel() const;
 
-public:
-    // ===================================================================== //
-    // Feel free to add custom code below this line, it will be preserved by 
-    // the code generator. 
-    //
-    // Just remember to: 
-    //  - Close the class declaration with }; 
-    //  - Close the namespace with WABI_NAMESPACE_END
-    //  - Close the include guard with #endif
-    // ===================================================================== //
-    // --(BEGIN CUSTOM CODE)--
+ public:
+  // ===================================================================== //
+  // Feel free to add custom code below this line, it will be preserved by
+  // the code generator.
+  //
+  // Just remember to:
+  //  - Close the class declaration with };
+  //  - Close the namespace with WABI_NAMESPACE_END
+  //  - Close the include guard with #endif
+  // ===================================================================== //
+  // --(BEGIN CUSTOM CODE)--
 
-    /// Return the UsdCollectionAPI interface used for defining
-    /// what colliders belong to the CollisionGroup.
-    USDPHYSICS_API
-    UsdCollectionAPI GetCollidersCollectionAPI() const;    
+  /// Return the UsdCollectionAPI interface used for defining
+  /// what colliders belong to the CollisionGroup.
+  USDPHYSICS_API
+  UsdCollectionAPI GetCollidersCollectionAPI() const;
 };
 
 WABI_NAMESPACE_END

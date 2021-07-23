@@ -38,12 +38,12 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-typedef SdfPyChildrenProxy<SdfVariantSetView> VariantSetProxy;
+  typedef SdfPyChildrenProxy<SdfVariantSetView> VariantSetProxy;
 
-static VariantSetProxy _WrapGetVariantSetsProxy(const SdfVariantSpec &owner)
-{
-  return VariantSetProxy(owner.GetVariantSets());
-}
+  static VariantSetProxy _WrapGetVariantSetsProxy(const SdfVariantSpec &owner)
+  {
+    return VariantSetProxy(owner.GetVariantSets());
+  }
 
 }  // anonymous namespace
 
@@ -59,8 +59,9 @@ void wrapVariantSpec()
 
     .add_property("primSpec", &This::GetPrimSpec, "The root prim of this variant.")
     .add_property("owner", &This::GetOwner, "The variant set that this variant belongs to.")
-    .add_property(
-      "name", make_function(&This::GetName, return_value_policy<return_by_value>()), "The variant's name.")
+    .add_property("name",
+                  make_function(&This::GetName, return_value_policy<return_by_value>()),
+                  "The variant's name.")
     .add_property("variantSets", &_WrapGetVariantSetsProxy)
     .def("GetVariantNames", &This::GetVariantNames);
 }

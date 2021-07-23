@@ -63,26 +63,26 @@ enum AnchorFreeTypeBuilderFlags
 
 namespace AnchorFreeType
 {
-// If you need to dynamically select between multiple builders:
-// - you can manually assign this builder with 'atlas->FontBuilderIO =
-// AnchorFreeType::GetBuilderForFreeType()'
-// - prefer deep-copying this into your own AnchorFontBuilderIO instance if you use hot-reloading
-// that messes up static data.
-ANCHOR_API const AnchorFontBuilderIO *GetBuilderForFreeType();
+  // If you need to dynamically select between multiple builders:
+  // - you can manually assign this builder with 'atlas->FontBuilderIO =
+  // AnchorFreeType::GetBuilderForFreeType()'
+  // - prefer deep-copying this into your own AnchorFontBuilderIO instance if you use hot-reloading
+  // that messes up static data.
+  ANCHOR_API const AnchorFontBuilderIO *GetBuilderForFreeType();
 
-// Override allocators. By default AnchorFreeType will use ANCHOR_ALLOC()/ANCHOR_FREE()
-// However, as FreeType does lots of allocations we provide a way for the user to redirect it to a
-// separate memory heap if desired.
-ANCHOR_API void SetAllocatorFunctions(void *(*alloc_func)(size_t sz, void *user_data),
-                                      void (*free_func)(void *ptr, void *user_data),
-                                      void *user_data = NULL);
+  // Override allocators. By default AnchorFreeType will use ANCHOR_ALLOC()/ANCHOR_FREE()
+  // However, as FreeType does lots of allocations we provide a way for the user to redirect it to a
+  // separate memory heap if desired.
+  ANCHOR_API void SetAllocatorFunctions(void *(*alloc_func)(size_t sz, void *user_data),
+                                        void (*free_func)(void *ptr, void *user_data),
+                                        void *user_data = NULL);
 
 #ifndef ANCHOR_DISABLE_OBSOLETE_FUNCTIONS
-static inline bool BuildFontAtlas(AnchorFontAtlas *atlas, unsigned int flags = 0)
-{
-  atlas->FontBuilderIO = GetBuilderForFreeType();
-  atlas->FontBuilderFlags = flags;
-  return atlas->Build();
-}
+  static inline bool BuildFontAtlas(AnchorFontAtlas *atlas, unsigned int flags = 0)
+  {
+    atlas->FontBuilderIO = GetBuilderForFreeType();
+    atlas->FontBuilderFlags = flags;
+    return atlas->Build();
+  }
 #endif
 }  // namespace AnchorFreeType

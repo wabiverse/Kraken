@@ -226,21 +226,21 @@ UsdRelationship UsdCollectionAPI::CreateExcludesRel() const
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfToken instanceName,
-                                                       const TfTokenVector &left,
-                                                       const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-
-  for (const auto &attrName : right)
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfToken instanceName,
+                                                         const TfTokenVector &left,
+                                                         const TfTokenVector &right)
   {
-    result.push_back(_GetNamespacedPropertyName(instanceName, attrName));
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+
+    for (const auto &attrName : right)
+    {
+      result.push_back(_GetNamespacedPropertyName(instanceName, attrName));
+    }
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
   }
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
 }  // namespace
 
 /*static*/
@@ -251,8 +251,9 @@ const TfTokenVector &UsdCollectionAPI::GetSchemaAttributeNames(bool includeInher
     UsdTokens->expansionRule,
     UsdTokens->includeRoot,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-    instanceName, UsdAPISchemaBase::GetSchemaAttributeNames(true), localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(instanceName,
+                                                             UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
   if (includeInherited)
     return allNames;
@@ -551,8 +552,7 @@ void UsdCollectionAPI::_ComputeMembershipQueryImpl(UsdCollectionMembershipQuery 
         if (foundCircularDependency)
         {
           *foundCircularDependency = true;
-        }
-        else
+        } else
         {
           // Issue a warning message if the clients of this method
           // don't care about knowing if there's a circular
@@ -599,8 +599,9 @@ void UsdCollectionAPI::_ComputeMembershipQueryImpl(UsdCollectionMembershipQuery 
       SdfPathSet seenCollectionPaths = chainedCollectionPaths;
       seenCollectionPaths.insert(includedPath);
       UsdCollectionMembershipQuery includedQuery;
-      includedCollection._ComputeMembershipQueryImpl(
-        &includedQuery, seenCollectionPaths, foundCircularDependency);
+      includedCollection._ComputeMembershipQueryImpl(&includedQuery,
+                                                     seenCollectionPaths,
+                                                     foundCircularDependency);
 
       const PathExpansionRuleMap &includedMap = includedQuery.GetAsPathExpansionRuleMap();
 
@@ -617,8 +618,7 @@ void UsdCollectionAPI::_ComputeMembershipQueryImpl(UsdCollectionMembershipQuery 
 
       const SdfPathSet &includedCollections = includedQuery.GetIncludedCollections();
       collections.insert(includedCollections.begin(), includedCollections.end());
-    }
-    else
+    } else
     {
       // Append included path
       map[includedPath] = expRule;

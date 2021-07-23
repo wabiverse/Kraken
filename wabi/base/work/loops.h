@@ -104,8 +104,7 @@ void WorkParallelForN(size_t n, Fn &&callback, size_t grainSize)
     // parent context, so we create an isolated task group context.
     tbb::task_group_context ctx(tbb::task_group_context::isolated);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, n, grainSize), Work_ParallelForN_TBB(callback), ctx);
-  }
-  else
+  } else
   {
 
     // If concurrency is limited to 1, execute serially.

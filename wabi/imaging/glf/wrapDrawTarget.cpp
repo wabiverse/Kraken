@@ -46,15 +46,15 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static GlfDrawTargetRefPtr _NewDrawTarget(GfVec2i const &size)
-{
-  return GlfDrawTarget::New(size);
-}
+  static GlfDrawTargetRefPtr _NewDrawTarget(GfVec2i const &size)
+  {
+    return GlfDrawTarget::New(size);
+  }
 
-static GlfDrawTargetRefPtr _NewDrawTarget2(unsigned int width, unsigned int height)
-{
-  return GlfDrawTarget::New(GfVec2i(width, height));
-}
+  static GlfDrawTargetRefPtr _NewDrawTarget2(unsigned int width, unsigned int height)
+  {
+    return GlfDrawTarget::New(GfVec2i(width, height));
+  }
 
 }  // anonymous namespace
 

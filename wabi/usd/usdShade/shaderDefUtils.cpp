@@ -71,22 +71,19 @@ bool UsdShadeShaderDefUtils::SplitShaderIdentifier(const TfToken &identifier,
     *familyName = identifier;
     *implementationName = identifier;
     *version = NdrVersion();
-  }
-  else if (tokens.size() == 2)
+  } else if (tokens.size() == 2)
   {
     if (_IsNumber(tokens[tokens.size() - 1]))
     {
       int major = std::stoi(*tokens.rbegin());
       *version = NdrVersion(major);
       *implementationName = *familyName;
-    }
-    else
+    } else
     {
       *version = NdrVersion();
       *implementationName = identifier;
     }
-  }
-  else if (tokens.size() > 2)
+  } else if (tokens.size() > 2)
   {
     bool lastTokenIsNumber = _IsNumber(tokens[tokens.size() - 1]);
     bool penultimateTokenIsNumber = _IsNumber(tokens[tokens.size() - 2]);
@@ -101,13 +98,11 @@ bool UsdShadeShaderDefUtils::SplitShaderIdentifier(const TfToken &identifier,
     {
       *version = NdrVersion(std::stoi(tokens[tokens.size() - 2]), std::stoi(tokens[tokens.size() - 1]));
       *implementationName = TfToken(TfStringJoin(tokens.begin(), tokens.begin() + (tokens.size() - 2), "_"));
-    }
-    else if (lastTokenIsNumber)
+    } else if (lastTokenIsNumber)
     {
       *version = NdrVersion(std::stoi(tokens[tokens.size() - 1]));
       *implementationName = TfToken(TfStringJoin(tokens.begin(), tokens.begin() + (tokens.size() - 1), "_"));
-    }
-    else
+    } else
     {
       // No version information is available.
       *implementationName = identifier;
@@ -195,8 +190,7 @@ NdrNodeDiscoveryResultVec UsdShadeShaderDefUtils::GetNodeDiscoveryResults(const 
                             sourceType,
                             /* uri */ sourceUri,
                             /* resolvedUri */ sourceUri);
-      }
-      else
+      } else
       {
         TF_WARN(
           "Unable to resolve info:sourceAsset <%s> with value "
@@ -227,8 +221,7 @@ static void _ConformStringTypeDefaultValue(const SdfValueTypeName &typeName, VtV
         const TfToken &tokenVal = defaultValue->UncheckedGet<TfToken>();
         *defaultValue = VtValue(tokenVal.GetString());
       }
-    }
-    else if (typeName == SdfValueTypeNames->TokenArray)
+    } else if (typeName == SdfValueTypeNames->TokenArray)
     {
       if (defaultValue->IsHolding<VtArray<TfToken>>())
       {
@@ -262,8 +255,7 @@ static void _ConformIntTypeDefaultValue(const SdfValueTypeName &typeName, VtValu
         const bool &boolVal = defaultValue->UncheckedGet<bool>();
         *defaultValue = VtValue(boolVal ? 1 : 0);
       }
-    }
-    else if (typeName == SdfValueTypeNames->BoolArray)
+    } else if (typeName == SdfValueTypeNames->BoolArray)
     {
       if (defaultValue->IsHolding<VtArray<bool>>())
       {
@@ -316,51 +308,40 @@ static std::pair<TfToken, size_t> _GetShaderPropertyTypeAndArraySize(const SdfVa
   {
     _ConformIntTypeDefaultValue(typeName, defaultValue);
     return std::make_pair(SdrPropertyTypes->Int, _GetArraySize(defaultValue));
-  }
-  else if (typeName == SdfValueTypeNames->String || typeName == SdfValueTypeNames->Token ||
-           typeName == SdfValueTypeNames->Asset || typeName == SdfValueTypeNames->StringArray ||
-           typeName == SdfValueTypeNames->TokenArray || typeName == SdfValueTypeNames->AssetArray)
+  } else if (typeName == SdfValueTypeNames->String || typeName == SdfValueTypeNames->Token ||
+             typeName == SdfValueTypeNames->Asset || typeName == SdfValueTypeNames->StringArray ||
+             typeName == SdfValueTypeNames->TokenArray || typeName == SdfValueTypeNames->AssetArray)
   {
     _ConformStringTypeDefaultValue(typeName, defaultValue);
     return std::make_pair(SdrPropertyTypes->String, _GetArraySize(defaultValue));
-  }
-  else if (typeName == SdfValueTypeNames->Float || typeName == SdfValueTypeNames->FloatArray)
+  } else if (typeName == SdfValueTypeNames->Float || typeName == SdfValueTypeNames->FloatArray)
   {
     return std::make_pair(SdrPropertyTypes->Float, _GetArraySize(defaultValue));
-  }
-  else if (typeName == SdfValueTypeNames->Float2 || typeName == SdfValueTypeNames->Float2Array)
+  } else if (typeName == SdfValueTypeNames->Float2 || typeName == SdfValueTypeNames->Float2Array)
   {
     return std::make_pair(SdrPropertyTypes->Float, 2);
-  }
-  else if (typeName == SdfValueTypeNames->Float3 || typeName == SdfValueTypeNames->Float3Array)
+  } else if (typeName == SdfValueTypeNames->Float3 || typeName == SdfValueTypeNames->Float3Array)
   {
     return std::make_pair(SdrPropertyTypes->Float, 3);
-  }
-  else if (typeName == SdfValueTypeNames->Float4 || typeName == SdfValueTypeNames->Float4Array)
+  } else if (typeName == SdfValueTypeNames->Float4 || typeName == SdfValueTypeNames->Float4Array)
   {
     return std::make_pair(SdrPropertyTypes->Float, 4);
-  }
-  else if (typeName == SdfValueTypeNames->Color3f || typeName == SdfValueTypeNames->Color3fArray)
+  } else if (typeName == SdfValueTypeNames->Color3f || typeName == SdfValueTypeNames->Color3fArray)
   {
     return std::make_pair(SdrPropertyTypes->Color, _GetArraySize(defaultValue));
-  }
-  else if (typeName == SdfValueTypeNames->Point3f || typeName == SdfValueTypeNames->Point3fArray)
+  } else if (typeName == SdfValueTypeNames->Point3f || typeName == SdfValueTypeNames->Point3fArray)
   {
     return std::make_pair(SdrPropertyTypes->Point, _GetArraySize(defaultValue));
-  }
-  else if (typeName == SdfValueTypeNames->Vector3f || typeName == SdfValueTypeNames->Vector3fArray)
+  } else if (typeName == SdfValueTypeNames->Vector3f || typeName == SdfValueTypeNames->Vector3fArray)
   {
     return std::make_pair(SdrPropertyTypes->Vector, _GetArraySize(defaultValue));
-  }
-  else if (typeName == SdfValueTypeNames->Normal3f || typeName == SdfValueTypeNames->Normal3fArray)
+  } else if (typeName == SdfValueTypeNames->Normal3f || typeName == SdfValueTypeNames->Normal3fArray)
   {
     return std::make_pair(SdrPropertyTypes->Normal, _GetArraySize(defaultValue));
-  }
-  else if (typeName == SdfValueTypeNames->Matrix4d || typeName == SdfValueTypeNames->Matrix4dArray)
+  } else if (typeName == SdfValueTypeNames->Matrix4d || typeName == SdfValueTypeNames->Matrix4dArray)
   {
     return std::make_pair(SdrPropertyTypes->Matrix, _GetArraySize(defaultValue));
-  }
-  else
+  } else
   {
     TF_RUNTIME_ERROR("Shader property has unsupported type '%s'", typeName.GetAsToken().GetText());
     return std::make_pair(SdrPropertyTypes->Unknown, 0);
@@ -388,8 +369,9 @@ static SdrShaderPropertyUniquePtr _CreateSdrShaderProperty(const ShaderProperty 
 
   TfToken propertyType;
   size_t arraySize;
-  std::tie(propertyType, arraySize) = _GetShaderPropertyTypeAndArraySize(
-    shaderProperty.GetTypeName(), shaderMetadata, &defaultValue);
+  std::tie(propertyType, arraySize) = _GetShaderPropertyTypeAndArraySize(shaderProperty.GetTypeName(),
+                                                                         shaderMetadata,
+                                                                         &defaultValue);
 
   return SdrShaderPropertyUniquePtr(new SdrShaderProperty(shaderProperty.GetBaseName(),
                                                           propertyType,

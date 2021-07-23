@@ -43,7 +43,7 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-const std::thread::id _mainThreadId = std::this_thread::get_id();
+  const std::thread::id _mainThreadId = std::this_thread::get_id();
 
 }  // anonymous namespace
 

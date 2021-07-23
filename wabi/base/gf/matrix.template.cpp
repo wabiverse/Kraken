@@ -162,8 +162,10 @@
   {
     {
       {
-        MATRIX(
-          fmt = "_mtx[%(i)s][%(j)s] = 0.0;", diagFmt = "_mtx[%(i)s][%(j)s] = s;", sep = "\n    ", indent = 4)
+        MATRIX(fmt = "_mtx[%(i)s][%(j)s] = 0.0;",
+               diagFmt = "_mtx[%(i)s][%(j)s] = s;",
+               sep = "\n    ",
+               indent = 4)
       }
     }
     return *this;
@@ -388,7 +390,8 @@
     }
   }
   f operator*(
-    const {{MAT}} & m, const GfVec {
+    const {{MAT}} & m,
+    const GfVec {
       {
         DIM
       }

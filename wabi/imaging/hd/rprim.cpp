@@ -194,12 +194,14 @@ void HdRprim::UpdateReprSelector(HdSceneDelegate *delegate, HdDirtyBits *dirtyBi
 // -------------------------------------------------------------------------- //
 HdReprSharedPtr const &HdRprim::_GetRepr(TfToken const &reprToken) const
 {
-  _ReprVector::const_iterator reprIt = std::find_if(
-    _reprs.begin(), _reprs.end(), _ReprComparator(reprToken));
+  _ReprVector::const_iterator reprIt = std::find_if(_reprs.begin(),
+                                                    _reprs.end(),
+                                                    _ReprComparator(reprToken));
   if (reprIt == _reprs.end())
   {
-    TF_CODING_ERROR(
-      "_InitRepr() should be called for repr %s on prim %s.", reprToken.GetText(), GetId().GetText());
+    TF_CODING_ERROR("_InitRepr() should be called for repr %s on prim %s.",
+                    reprToken.GetText(),
+                    GetId().GetText());
     static const HdReprSharedPtr ERROR_RETURN;
     return ERROR_RETURN;
   }
@@ -253,8 +255,7 @@ VtMatrix4dArray HdRprim::GetInstancerTransforms(HdSceneDelegate *delegate)
     if (instancer)
     {
       instancerId = instancer->GetParentId();
-    }
-    else
+    } else
     {
       instancerId = SdfPath();
     }

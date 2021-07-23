@@ -47,74 +47,74 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string _FrameSpec(const UsdUtilsTimeCodeRange &timeCodeRange)
-{
-  std::ostringstream ostream;
-  ostream << timeCodeRange;
-  return ostream.str();
-}
-
-static std::string _Repr(const UsdUtilsTimeCodeRange &timeCodeRange)
-{
-  if (timeCodeRange.empty())
+  static std::string _FrameSpec(const UsdUtilsTimeCodeRange &timeCodeRange)
   {
-    return TF_PY_REPR_PREFIX + "TimeCodeRange()";
+    std::ostringstream ostream;
+    ostream << timeCodeRange;
+    return ostream.str();
   }
 
-  return TF_PY_REPR_PREFIX + "TimeCodeRange.CreateFromFrameSpec('" + _FrameSpec(timeCodeRange) + "')";
-}
-
-class UsdUtils_PyTimeCodeRangeIterator
-{
- public:
-  explicit UsdUtils_PyTimeCodeRangeIterator(const UsdUtilsTimeCodeRange &timeCodeRange)
-    : _iter(timeCodeRange.begin()),
-      _end(timeCodeRange.end()),
-      _currTimeCode(_iter != _end ? *_iter : UsdTimeCode()),
-      _didFirst(false)
-  {}
-
-  UsdUtils_PyTimeCodeRangeIterator iter(const UsdUtils_PyTimeCodeRangeIterator &iter)
+  static std::string _Repr(const UsdUtilsTimeCodeRange &timeCodeRange)
   {
-    return iter;
-  }
-
-  UsdTimeCode next()
-  {
-    _RaiseIfAtEnd();
-
-    if (_didFirst)
+    if (timeCodeRange.empty())
     {
-      ++_iter;
+      return TF_PY_REPR_PREFIX + "TimeCodeRange()";
+    }
+
+    return TF_PY_REPR_PREFIX + "TimeCodeRange.CreateFromFrameSpec('" + _FrameSpec(timeCodeRange) + "')";
+  }
+
+  class UsdUtils_PyTimeCodeRangeIterator
+  {
+   public:
+    explicit UsdUtils_PyTimeCodeRangeIterator(const UsdUtilsTimeCodeRange &timeCodeRange)
+      : _iter(timeCodeRange.begin()),
+        _end(timeCodeRange.end()),
+        _currTimeCode(_iter != _end ? *_iter : UsdTimeCode()),
+        _didFirst(false)
+    {}
+
+    UsdUtils_PyTimeCodeRangeIterator iter(const UsdUtils_PyTimeCodeRangeIterator &iter)
+    {
+      return iter;
+    }
+
+    UsdTimeCode next()
+    {
       _RaiseIfAtEnd();
+
+      if (_didFirst)
+      {
+        ++_iter;
+        _RaiseIfAtEnd();
+      }
+
+      _didFirst = true;
+      _currTimeCode = *_iter;
+      return _currTimeCode;
     }
 
-    _didFirst = true;
-    _currTimeCode = *_iter;
-    return _currTimeCode;
-  }
-
- private:
-  void _RaiseIfAtEnd() const
-  {
-    if (_iter == _end)
+   private:
+    void _RaiseIfAtEnd() const
     {
-      PyErr_SetString(PyExc_StopIteration, "UsdUtilsTimeCodeRange at end");
-      throw_error_already_set();
+      if (_iter == _end)
+      {
+        PyErr_SetString(PyExc_StopIteration, "UsdUtilsTimeCodeRange at end");
+        throw_error_already_set();
+      }
     }
+
+    UsdUtilsTimeCodeRange::iterator _iter;
+    const UsdUtilsTimeCodeRange::iterator _end;
+    UsdTimeCode _currTimeCode;
+    bool _didFirst;
+  };
+
+  static UsdUtils_PyTimeCodeRangeIterator UsdUtils_PyTimeCodeRangeIteratorCreate(
+    const UsdUtilsTimeCodeRange &timeCodeRange)
+  {
+    return UsdUtils_PyTimeCodeRangeIterator(timeCodeRange);
   }
-
-  UsdUtilsTimeCodeRange::iterator _iter;
-  const UsdUtilsTimeCodeRange::iterator _end;
-  UsdTimeCode _currTimeCode;
-  bool _didFirst;
-};
-
-static UsdUtils_PyTimeCodeRangeIterator UsdUtils_PyTimeCodeRangeIteratorCreate(
-  const UsdUtilsTimeCodeRange &timeCodeRange)
-{
-  return UsdUtils_PyTimeCodeRangeIterator(timeCodeRange);
-}
 
 }  // anonymous namespace
 

@@ -116,8 +116,9 @@ static void _AddRelocateEditsForLayerStack(PcpNamespaceEdits *result,
       if (_RelocatesMapContainsPrimOrDescendant(prim->GetRelocates(), oldRelocatePath))
       {
 
-        PcpNamespaceEdits::LayerStackSites &layerStackSites = _GetLayerStackSitesForEdit(
-          result, oldRelocatePath, newRelocatePath);
+        PcpNamespaceEdits::LayerStackSites &layerStackSites = _GetLayerStackSitesForEdit(result,
+                                                                                         oldRelocatePath,
+                                                                                         newRelocatePath);
 
         layerStackSites.resize(layerStackSites.size() + 1);
         PcpNamespaceEdits::LayerStackSite &site = layerStackSites.back();
@@ -236,23 +237,27 @@ static void _TranslatePathsAndEditRelocates(PcpNamespaceEdits *result,
       // to indicate that relocations that involve prims at and
       // below oldParentPath need to be fixed.
       _AddRelocateEditsForLayerStack(result, layerStack, cacheIndex, oldParentPath, newParentPath);
-    }
-    else if (oldNodePath->GetParentPath() != newNodePath->GetParentPath())
+    } else if (oldNodePath->GetParentPath() != newNodePath->GetParentPath())
     {
       // Reparenting within the arc's root.  We'll fix the
       // relocation source but not the target.
-      _AddRelocateEditsForLayerStack(
-        result, layerStack, cacheIndex, unrelocatedOldParentPath, unrelocatedNewParentPath);
+      _AddRelocateEditsForLayerStack(result,
+                                     layerStack,
+                                     cacheIndex,
+                                     unrelocatedOldParentPath,
+                                     unrelocatedNewParentPath);
 
       reloTargetNeedsEdit = false;
-    }
-    else
+    } else
     {
       // Renaming.  We must fix the relocation source path,
       // and potentially also the relocation target path
       // (if the relocation keeps the prim name).
-      _AddRelocateEditsForLayerStack(
-        result, layerStack, cacheIndex, unrelocatedOldParentPath, unrelocatedNewParentPath);
+      _AddRelocateEditsForLayerStack(result,
+                                     layerStack,
+                                     cacheIndex,
+                                     unrelocatedOldParentPath,
+                                     unrelocatedNewParentPath);
 
       // If the prim being renamed was the target of a relocation
       // in this layer stack (i.e., oldParentPath == reloTargetPath)
@@ -260,15 +265,13 @@ static void _TranslatePathsAndEditRelocates(PcpNamespaceEdits *result,
       // we'll fix the relocation by changing the final prim
       // name in both the source and target.  So the new parent
       // path is the old parent path with the name changed.
-      if (reloTargetPath == oldParentPath &&
-          reloSourcePath.GetNameToken() == reloTargetPath.GetNameToken())
+      if (reloTargetPath == oldParentPath && reloSourcePath.GetNameToken() == reloTargetPath.GetNameToken())
       {
         // Relocate the new path.
         newParentPath = reloTargetPath.ReplaceName(newNodePath->GetNameToken());
 
         _AddRelocateEditsForLayerStack(result, layerStack, cacheIndex, reloTargetPath, newParentPath);
-      }
-      else
+      } else
       {
         // The relocation changes the prim name.  We've no
         // reason to try to adjust the target's name but we
@@ -287,8 +290,7 @@ static void _TranslatePathsAndEditRelocates(PcpNamespaceEdits *result,
       // setting newParentPath = oldParentPath.
       newParentPath = oldParentPath;
     }
-  }
-  else
+  } else
   {
     // In this case, oldParentPath and newParentPath do not refer to a
     // relocated prim.  However, there may be descendants of oldParentPath
@@ -326,16 +328,14 @@ static bool _AddLayerStackSite(PcpNamespaceEdits *result,
     *newNodePath = newPath;
     TF_DEBUG(PCP_NAMESPACE_EDIT).Msg("  - not final. skipping relocate\n");
     return final;
-  }
-  else if (*oldNodePath == *newNodePath)
+  } else if (*oldNodePath == *newNodePath)
   {
     // The edit is absorbed by this layer stack, so there's
     // no need to propagate the edit any further.
     TF_DEBUG(PCP_NAMESPACE_EDIT).Msg("  - final.  stopping at node where path is unaffected\n");
     final = true;
     return final;
-  }
-  else if (oldNodePath->IsPrimPath() && !node.IsDueToAncestor())
+  } else if (oldNodePath->IsPrimPath() && !node.IsDueToAncestor())
   {
     final = true;
     TF_DEBUG(PCP_NAMESPACE_EDIT).Msg("  - final.  direct arc fixup\n");
@@ -366,8 +366,7 @@ static bool _AddLayerStackSite(PcpNamespaceEdits *result,
         TF_VERIFY(false, "Unexpected arc type %d", node.GetArcType());
         return final;
     }
-  }
-  else
+  } else
   {
     // NamespaceEditPath the parent.
     type = PcpNamespaceEdits::EditPath;
@@ -378,8 +377,9 @@ static bool _AddLayerStackSite(PcpNamespaceEdits *result,
   if (result)
   {
     // Add a new layer stack site element at the end.
-    PcpNamespaceEdits::LayerStackSites &layerStackSites = _GetLayerStackSitesForEdit(
-      result, oldPath, newPath);
+    PcpNamespaceEdits::LayerStackSites &layerStackSites = _GetLayerStackSitesForEdit(result,
+                                                                                     oldPath,
+                                                                                     newPath);
 
     layerStackSites.resize(layerStackSites.size() + 1);
     PcpNamespaceEdits::LayerStackSite &site = layerStackSites.back();
@@ -501,8 +501,7 @@ PcpNamespaceEdits PcpComputeNamespaceEdits(const PcpCache *primaryCache,
         Pcp_ForEachDependentNode(dep.sitePath, relocatesLayer, dep.indexPath, *cache, visitNodeFn);
       }
     }
-  }
-  else
+  } else
   {
     // We find dependent sites by looking for used prim specs.
     for (size_t cacheIndex = 0, n = caches.size(); cacheIndex != n; ++cacheIndex)

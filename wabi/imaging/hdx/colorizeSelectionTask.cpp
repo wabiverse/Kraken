@@ -253,12 +253,10 @@ GfVec4f HdxColorizeSelectionTask::_GetColorForMode(int mode) const
   if (mode == 0)
   {
     return _params.selectionColor;
-  }
-  else if (mode == 1)
+  } else if (mode == 1)
   {
     return _params.locateColor;
-  }
-  else
+  } else
   {
     return GfVec4f(0);
   }

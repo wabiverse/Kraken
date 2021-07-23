@@ -59,33 +59,33 @@ void HdxSelectionTracker::_IncrementVersion()
 
 namespace
 {
-template<class T>
-void _DebugPrintArray(std::string const &name, T const &array, bool withIndex = true)
-{
-  if (ARCH_UNLIKELY(TfDebug::IsEnabled(HDX_SELECTION_SETUP)))
+  template<class T>
+  void _DebugPrintArray(std::string const &name, T const &array, bool withIndex = true)
   {
-    std::stringstream out;
-    out << name << ": [ ";
-    for (auto const &i : array)
+    if (ARCH_UNLIKELY(TfDebug::IsEnabled(HDX_SELECTION_SETUP)))
     {
-      out << std::setfill(' ') << std::setw(3) << i << " ";
-    }
-    out << "] (offsets)" << std::endl;
-
-    if (withIndex)
-    {
-      // Print the indices
+      std::stringstream out;
       out << name << ": [ ";
-      for (size_t i = 0; i < array.size(); i++)
+      for (auto const &i : array)
       {
         out << std::setfill(' ') << std::setw(3) << i << " ";
       }
-      out << "] (indices)" << std::endl;
-      out << std::endl;
-      std::cout << out.str();
+      out << "] (offsets)" << std::endl;
+
+      if (withIndex)
+      {
+        // Print the indices
+        out << name << ": [ ";
+        for (size_t i = 0; i < array.size(); i++)
+        {
+          out << std::setfill(' ') << std::setw(3) << i << " ";
+        }
+        out << "] (indices)" << std::endl;
+        out << std::endl;
+        std::cout << out.str();
+      }
     }
   }
-}
 }  // namespace
 
 /*virtual*/
@@ -154,8 +154,10 @@ bool HdxSelectionTracker::GetSelectionOffsetBuffer(HdRenderIndex const *index,
   {
 
     std::vector<int> output;
-    bool modeHasSelection = _GetSelectionOffsets(
-      static_cast<HdSelection::HighlightMode>(mode), index, copyOffset, &output);
+    bool modeHasSelection = _GetSelectionOffsets(static_cast<HdSelection::HighlightMode>(mode),
+                                                 index,
+                                                 copyOffset,
+                                                 &output);
     hasSelection = hasSelection || modeHasSelection;
 
     (*offsets)[mode + 1] = modeHasSelection ? copyOffset : SELECT_NONE;
@@ -326,7 +328,7 @@ static bool _FillPointSelOffsets(int type,
 namespace
 {
 
-constexpr int INVALID = -1;
+  constexpr int INVALID = -1;
 
 }
 
@@ -357,8 +359,7 @@ bool HdxSelectionTracker::_GetSelectionOffsets(HdSelection::HighlightMode const 
       if (auto const &rprim = index->GetRprim(selectedPrims[i]))
       {
         ids[i] = rprim->GetPrimId();
-      }
-      else
+      } else
       {
         // silently ignore non-existing prim
         ids[i] = INVALID;

@@ -41,74 +41,74 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-class Pcp_PyTestChangeProcessor : public TfWeakBase, public boost::noncopyable
-{
- public:
-  Pcp_PyTestChangeProcessor(const PcpCache *cache)
-    : _cache(cache)
-  {}
-
-  void Enter()
+  class Pcp_PyTestChangeProcessor : public TfWeakBase, public boost::noncopyable
   {
-    _layerChangedNoticeKey = TfNotice::Register(TfCreateWeakPtr(this),
-                                                &Pcp_PyTestChangeProcessor::_HandleLayerDidChange);
-  }
+   public:
+    Pcp_PyTestChangeProcessor(const PcpCache *cache)
+      : _cache(cache)
+    {}
 
-  void Exit(const object &, const object &, const object &)
-  {
-    TfNotice::Revoke(_layerChangedNoticeKey);
-    _changes = PcpChanges();
-  }
-
-  SdfPathVector GetSignificantChanges() const
-  {
-    TF_FOR_ALL (it, _changes.GetCacheChanges())
+    void Enter()
     {
-      if (it->first == _cache)
-      {
-        return SdfPathVector(it->second.didChangeSignificantly.begin(),
-                             it->second.didChangeSignificantly.end());
-      }
+      _layerChangedNoticeKey = TfNotice::Register(TfCreateWeakPtr(this),
+                                                  &Pcp_PyTestChangeProcessor::_HandleLayerDidChange);
     }
-    return SdfPathVector();
-  }
 
-  SdfPathVector GetSpecChanges() const
-  {
-    TF_FOR_ALL (it, _changes.GetCacheChanges())
+    void Exit(const object &, const object &, const object &)
     {
-      if (it->first == _cache)
-      {
-        return SdfPathVector(it->second.didChangeSpecs.begin(), it->second.didChangeSpecs.end());
-      }
+      TfNotice::Revoke(_layerChangedNoticeKey);
+      _changes = PcpChanges();
     }
-    return SdfPathVector();
-  }
 
-  SdfPathVector GetPrimChanges() const
-  {
-    TF_FOR_ALL (it, _changes.GetCacheChanges())
+    SdfPathVector GetSignificantChanges() const
     {
-      if (it->first == _cache)
+      TF_FOR_ALL (it, _changes.GetCacheChanges())
       {
-        return SdfPathVector(it->second.didChangePrims.begin(), it->second.didChangePrims.end());
+        if (it->first == _cache)
+        {
+          return SdfPathVector(it->second.didChangeSignificantly.begin(),
+                               it->second.didChangeSignificantly.end());
+        }
       }
+      return SdfPathVector();
     }
-    return SdfPathVector();
-  }
 
- private:
-  void _HandleLayerDidChange(const SdfNotice::LayersDidChange &n)
-  {
-    _changes.DidChange(TfSpan<const PcpCache *>(&_cache, 1), n.GetChangeListVec());
-    _changes.Apply();
-  }
+    SdfPathVector GetSpecChanges() const
+    {
+      TF_FOR_ALL (it, _changes.GetCacheChanges())
+      {
+        if (it->first == _cache)
+        {
+          return SdfPathVector(it->second.didChangeSpecs.begin(), it->second.didChangeSpecs.end());
+        }
+      }
+      return SdfPathVector();
+    }
 
- private:
-  const PcpCache *_cache;
-  TfNotice::Key _layerChangedNoticeKey;
-  PcpChanges _changes;
-};
+    SdfPathVector GetPrimChanges() const
+    {
+      TF_FOR_ALL (it, _changes.GetCacheChanges())
+      {
+        if (it->first == _cache)
+        {
+          return SdfPathVector(it->second.didChangePrims.begin(), it->second.didChangePrims.end());
+        }
+      }
+      return SdfPathVector();
+    }
+
+   private:
+    void _HandleLayerDidChange(const SdfNotice::LayersDidChange &n)
+    {
+      _changes.DidChange(TfSpan<const PcpCache *>(&_cache, 1), n.GetChangeListVec());
+      _changes.Apply();
+    }
+
+   private:
+    const PcpCache *_cache;
+    TfNotice::Key _layerChangedNoticeKey;
+    PcpChanges _changes;
+  };
 
 }  // anonymous namespace
 

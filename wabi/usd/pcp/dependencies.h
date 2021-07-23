@@ -150,8 +150,7 @@ class Pcp_Dependencies
           fn(primIndexPath, iter->first);
         }
       }
-    }
-    else
+    } else
     {
       _SiteDepMap::const_iterator j = siteDepMap.find(sitePath);
       if (j != siteDepMap.end())

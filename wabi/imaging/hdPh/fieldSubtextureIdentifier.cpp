@@ -62,8 +62,9 @@ HdPhField3DAssetSubtextureIdentifier::~HdPhField3DAssetSubtextureIdentifier() = 
 
 std::unique_ptr<HdPhSubtextureIdentifier> HdPhField3DAssetSubtextureIdentifier::Clone() const
 {
-  return std::make_unique<HdPhField3DAssetSubtextureIdentifier>(
-    GetFieldName(), GetFieldIndex(), GetFieldPurpose());
+  return std::make_unique<HdPhField3DAssetSubtextureIdentifier>(GetFieldName(),
+                                                                GetFieldIndex(),
+                                                                GetFieldPurpose());
 }
 
 HdPhSubtextureIdentifier::ID HdPhField3DAssetSubtextureIdentifier::_Hash() const

@@ -71,17 +71,14 @@ int UsdRiConvertToRManFaceVaryingLinearInterpolation(TfToken const &token)
   if (token == UsdGeomTokens->all)
   {
     return 0;
-  }
-  else if (token == UsdGeomTokens->cornersOnly || token == UsdGeomTokens->cornersPlus1 ||
-           token == UsdGeomTokens->cornersPlus2)
+  } else if (token == UsdGeomTokens->cornersOnly || token == UsdGeomTokens->cornersPlus1 ||
+             token == UsdGeomTokens->cornersPlus2)
   {
     return 1;
-  }
-  else if (token == UsdGeomTokens->none)
+  } else if (token == UsdGeomTokens->none)
   {
     return 2;
-  }
-  else if (token == UsdGeomTokens->boundaries)
+  } else if (token == UsdGeomTokens->boundaries)
   {
     return 3;
   }
@@ -117,8 +114,7 @@ int UsdRiConvertToRManTriangleSubdivisionRule(TfToken const &token)
   if (token == UsdGeomTokens->catmullClark)
   {
     return 0;
-  }
-  else if (token == UsdGeomTokens->smooth)
+  } else if (token == UsdGeomTokens->smooth)
     return 2;
   else
   {

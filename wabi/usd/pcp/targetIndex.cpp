@@ -124,12 +124,12 @@ static bool _TargetInClassAndTargetsInstance(const SdfPath &connectionPathInNode
 namespace
 {
 
-enum Pcp_PathTranslationError
-{
-  NoError = 0,
-  PermissionDenied,
-  InvalidTarget
-};
+  enum Pcp_PathTranslationError
+  {
+    NoError = 0,
+    PermissionDenied,
+    InvalidTarget
+  };
 
 }
 
@@ -247,7 +247,8 @@ static Pcp_PathTranslationError _TargetIsPermitted(const SdfPath &connectionPath
   // authored.
   const SdfPath owningPrimInNodeNS = connectionPathInNodeNS.GetPrimPath();
   const PcpLayerStackSite owningPrimSiteWhereConnectionWasAuthored(
-    nodeWhereConnectionWasAuthored.GetLayerStack(), owningPrimInNodeNS);
+    nodeWhereConnectionWasAuthored.GetLayerStack(),
+    owningPrimInNodeNS);
 
   PcpNodeRef owningPrimNodeWhereConnectionWasAuthored;
   for (const PcpNodeRef &node : owningPrimIndex.GetNodeRange())

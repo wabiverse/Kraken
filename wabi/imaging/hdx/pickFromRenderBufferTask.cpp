@@ -91,8 +91,7 @@ GfMatrix4d HdxPickFromRenderBufferTask::_ComputeProjectionMatrix() const
                                                    _params.overrideWindowPolicy.second :
                                                    _camera->GetWindowPolicy();
     return _params.framing.ApplyToProjectionMatrix(_camera->GetProjectionMatrix(), policy);
-  }
-  else
+  } else
   {
     const double aspect = _params.viewport[3] != 0.0 ? _params.viewport[2] / _params.viewport[3] : 1.0;
     return CameraUtilConformedWindow(_camera->GetProjectionMatrix(), _camera->GetWindowPolicy(), aspect);
@@ -243,20 +242,16 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
   if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCenter)
   {
     result.ResolveNearestToCenter(_contextParams.outHits);
-  }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCamera)
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCamera)
   {
     result.ResolveNearestToCamera(_contextParams.outHits);
-  }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveUnique)
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveUnique)
   {
     result.ResolveUnique(_contextParams.outHits);
-  }
-  else if (_contextParams.resolveMode == HdxPickTokens->resolveAll)
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveAll)
   {
     result.ResolveAll(_contextParams.outHits);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unrecognized interesection mode '%s'", _contextParams.resolveMode.GetText());
   }

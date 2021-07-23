@@ -232,37 +232,37 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
 
 namespace
 {
-// Enumeration of queries stored for each cached entry that varies
-// over time.
-enum _Queries
-{
-  Extent = 0,
+  // Enumeration of queries stored for each cached entry that varies
+  // over time.
+  enum _Queries
+  {
+    Extent = 0,
 
-  // Note: code in _ResolvePrim relies on ExtentsHint being last.
-  ExtentsHint,
-  NumQueries
-};
+    // Note: code in _ResolvePrim relies on ExtentsHint being last.
+    ExtentsHint,
+    NumQueries
+  };
 }  // namespace
 
-#define DEFINE_QUERY_ACCESSOR(Name, Schema) \
+#define DEFINE_QUERY_ACCESSOR(Name, Schema)                                                            \
   static const UsdAttributeQuery &_GetOrCreate##Name##Query(const UsdPrim &prim, UsdAttributeQuery *q) \
-  { \
-    if (!*q) \
-    { \
-      if (Schema s = Schema(prim)) \
-      { \
-        UsdAttribute attr = s.Get##Name##Attr(); \
-        if (TF_VERIFY(attr, \
-                      "Unable to get attribute '%s' on prim " \
-                      "at path <%s>", \
-                      #Name, \
-                      prim.GetPath().GetText())) \
-        { \
-          *q = UsdAttributeQuery(attr); \
-        } \
-      } \
-    } \
-    return *q; \
+  {                                                                                                    \
+    if (!*q)                                                                                           \
+    {                                                                                                  \
+      if (Schema s = Schema(prim))                                                                     \
+      {                                                                                                \
+        UsdAttribute attr = s.Get##Name##Attr();                                                       \
+        if (TF_VERIFY(attr,                                                                            \
+                      "Unable to get attribute '%s' on prim "                                          \
+                      "at path <%s>",                                                                  \
+                      #Name,                                                                           \
+                      prim.GetPath().GetText()))                                                       \
+        {                                                                                              \
+          *q = UsdAttributeQuery(attr);                                                                \
+        }                                                                                              \
+      }                                                                                                \
+    }                                                                                                  \
+    return *q;                                                                                         \
   }
 
 DEFINE_QUERY_ACCESSOR(Extent, UsdGeomBoundable);
@@ -493,8 +493,7 @@ GfBBox3d UsdGeomBBoxCache::ComputeUntransformedBound(
     if (!foundAncestorWithOverride)
     {
       bbox = ComputeRelativeBound(p, prim);
-    }
-    else
+    } else
     {
       // Compute bound relative to the path for which we know the
       // corrected prim-relative CTM.
@@ -590,8 +589,11 @@ bool UsdGeomBBoxCache::ComputePointInstanceWorldBounds(UsdGeomPointInstancer con
                                                        size_t numIds,
                                                        GfBBox3d *result)
 {
-  return _ComputePointInstanceBoundsHelper(
-    instancer, instanceIdBegin, numIds, _ctmCache.GetLocalToWorldTransform(instancer.GetPrim()), result);
+  return _ComputePointInstanceBoundsHelper(instancer,
+                                           instanceIdBegin,
+                                           numIds,
+                                           _ctmCache.GetLocalToWorldTransform(instancer.GetPrim()),
+                                           result);
 }
 
 bool UsdGeomBBoxCache::ComputePointInstanceRelativeBounds(const UsdGeomPointInstancer &instancer,
@@ -867,15 +869,13 @@ void UsdGeomBBoxCache::_ComputePurposeInfo(_Entry *entry, const _PrimContext &pr
       // prototype prim context won't provide an inheritable purpose to
       // its children either.
       entry->purposeInfo = UsdGeomImageable::PurposeInfo(UsdGeomTokens->default_, false);
-    }
-    else
+    } else
     {
       // Otherwise this prototype can provide the instancing prim's
       // inheritable pupose to its children.
       entry->purposeInfo = UsdGeomImageable::PurposeInfo(primContext.instanceInheritablePurpose, true);
     }
-  }
-  else
+  } else
   {
     UsdGeomImageable img(prim);
     UsdPrim parentPrim = prim.GetParent();
@@ -900,8 +900,7 @@ void UsdGeomBBoxCache::_ComputePurposeInfo(_Entry *entry, const _PrimContext &pr
           _ComputePurposeInfo<IsRecursive>(parentEntry, parentPrimContext);
           entry->purposeInfo = img.ComputePurposeInfo(parentEntry->purposeInfo);
           return;
-        }
-        else
+        } else
         {
           // Not recursive. just check that the parent purpose has
           // been computed.
@@ -1302,8 +1301,7 @@ void UsdGeomBBoxCache::_ResolvePrim(_BBoxTask *task,
         {
           successGettingExtent = _ComputeExtent(boundableObj, &extent);
         }
-      }
-      else
+      } else
       {
 
         successGettingExtent = _ComputeExtent(boundableObj, &extent);
@@ -1374,8 +1372,7 @@ void UsdGeomBBoxCache::_ResolvePrim(_BBoxTask *task,
       // prototype's children so they inherit the correct purpose for this
       // instance if needed.
       childInheritableInstancePurpose = entry->purposeInfo.GetInheritablePurpose();
-    }
-    else
+    } else
     {
       children = prim.GetFilteredChildren(UsdPrimIsActive && UsdPrimIsDefined && !UsdPrimIsAbstract);
       // Otherwise for standard children that are not across an instance
@@ -1441,8 +1438,7 @@ void UsdGeomBBoxCache::_ResolvePrim(_BBoxTask *task,
         // for these prims should already have been computed in
         // _Resolve, so we don't need to schedule an additional task.
         included.push_back(std::make_pair(childPrimContext, _BBoxTask()));
-      }
-      else
+      } else
       {
         included.emplace_back(
           childPrimContext,
@@ -1520,8 +1516,7 @@ void UsdGeomBBoxCache::_ResolvePrim(_BBoxTask *task,
           bool resetsXf = false;
           childLocalToComponentXform = xfCache.GetLocalTransformation(childPrim, &resetsXf) *
                                        localToComponentXform;
-        }
-        else
+        } else
         {
           childLocalToComponentXform = xfCache.GetLocalToWorldTransform(childPrim) *
                                        inverseEnclosingComponentCtm;
@@ -1583,8 +1578,7 @@ std::string UsdGeomBBoxCache::_PrimContext::ToString() const
   if (instanceInheritablePurpose.IsEmpty())
   {
     return prim.GetPath().GetString();
-  }
-  else
+  } else
   {
     return TfStringPrintf("[%s]%s", instanceInheritablePurpose.GetText(), prim.GetPath().GetText());
   }

@@ -129,8 +129,7 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
     AiNodeResetParameter(_instancer, str::instance_matrix);
     AiNodeResetParameter(_instancer, str::node_idxs);
     AiNodeResetParameter(_instancer, str::instance_visibility);
-  }
-  else
+  } else
   {
     const auto sampleCount = instanceMatrices.count;
     const auto instanceCount = instanceMatrices.values.front().size();
@@ -154,8 +153,7 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
       if (ARCH_UNLIKELY(instanceMatrices.values[sample].size() != instanceCount))
       {
         std::copy(matrices, matrices + instanceCount, matrices + sample * instanceCount);
-      }
-      else
+      } else
       {
         convertMatrices(sample);
       }
@@ -171,8 +169,7 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
     {
       setMotionParam(str::instance_motion_start, instanceMatrices.times.front());
       setMotionParam(str::instance_motion_end, instanceMatrices.times[sampleCount - 1]);
-    }
-    else
+    } else
     {
       setMotionParam(str::instance_motion_start, 0.0f);
       setMotionParam(str::instance_motion_end, 1.0f);

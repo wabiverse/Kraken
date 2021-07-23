@@ -51,133 +51,127 @@ class SdfAssetPath;
 
 /// \class UsdPhysicsArticulationRootAPI
 ///
-/// PhysicsArticulationRootAPI can be applied to a scene graph node, 
-/// and marks the subtree rooted here for inclusion in one or more reduced 
+/// PhysicsArticulationRootAPI can be applied to a scene graph node,
+/// and marks the subtree rooted here for inclusion in one or more reduced
 /// coordinate articulations. For floating articulations, this should be on
-/// the root body. For fixed articulations (robotics jargon for e.g. a robot 
-/// arm for welding that is bolted to the floor), this API can be on a direct 
-/// or indirect parent of the root joint which is connected to the world, or 
+/// the root body. For fixed articulations (robotics jargon for e.g. a robot
+/// arm for welding that is bolted to the floor), this API can be on a direct
+/// or indirect parent of the root joint which is connected to the world, or
 /// on the joint itself..
 ///
 class UsdPhysicsArticulationRootAPI : public UsdAPISchemaBase
 {
-public:
-    /// Compile time constant representing what kind of schema this class is.
-    ///
-    /// \sa UsdSchemaKind
-    static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
+ public:
+  /// Compile time constant representing what kind of schema this class is.
+  ///
+  /// \sa UsdSchemaKind
+  static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
-    /// Construct a UsdPhysicsArticulationRootAPI on UsdPrim \p prim .
-    /// Equivalent to UsdPhysicsArticulationRootAPI::Get(prim.GetStage(), prim.GetPath())
-    /// for a \em valid \p prim, but will not immediately throw an error for
-    /// an invalid \p prim
-    explicit UsdPhysicsArticulationRootAPI(const UsdPrim& prim=UsdPrim())
-        : UsdAPISchemaBase(prim)
-    {
-    }
+  /// Construct a UsdPhysicsArticulationRootAPI on UsdPrim \p prim .
+  /// Equivalent to UsdPhysicsArticulationRootAPI::Get(prim.GetStage(), prim.GetPath())
+  /// for a \em valid \p prim, but will not immediately throw an error for
+  /// an invalid \p prim
+  explicit UsdPhysicsArticulationRootAPI(const UsdPrim &prim = UsdPrim())
+    : UsdAPISchemaBase(prim)
+  {}
 
-    /// Construct a UsdPhysicsArticulationRootAPI on the prim held by \p schemaObj .
-    /// Should be preferred over UsdPhysicsArticulationRootAPI(schemaObj.GetPrim()),
-    /// as it preserves SchemaBase state.
-    explicit UsdPhysicsArticulationRootAPI(const UsdSchemaBase& schemaObj)
-        : UsdAPISchemaBase(schemaObj)
-    {
-    }
+  /// Construct a UsdPhysicsArticulationRootAPI on the prim held by \p schemaObj .
+  /// Should be preferred over UsdPhysicsArticulationRootAPI(schemaObj.GetPrim()),
+  /// as it preserves SchemaBase state.
+  explicit UsdPhysicsArticulationRootAPI(const UsdSchemaBase &schemaObj)
+    : UsdAPISchemaBase(schemaObj)
+  {}
 
-    /// Destructor.
-    USDPHYSICS_API
-    virtual ~UsdPhysicsArticulationRootAPI();
+  /// Destructor.
+  USDPHYSICS_API
+  virtual ~UsdPhysicsArticulationRootAPI();
 
-    /// Return a vector of names of all pre-declared attributes for this schema
-    /// class and all its ancestor classes.  Does not include attributes that
-    /// may be authored by custom/extended methods of the schemas involved.
-    USDPHYSICS_API
-    static const TfTokenVector &
-    GetSchemaAttributeNames(bool includeInherited=true);
+  /// Return a vector of names of all pre-declared attributes for this schema
+  /// class and all its ancestor classes.  Does not include attributes that
+  /// may be authored by custom/extended methods of the schemas involved.
+  USDPHYSICS_API
+  static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true);
 
-    /// Return a UsdPhysicsArticulationRootAPI holding the prim adhering to this
-    /// schema at \p path on \p stage.  If no prim exists at \p path on
-    /// \p stage, or if the prim at that path does not adhere to this schema,
-    /// return an invalid schema object.  This is shorthand for the following:
-    ///
-    /// \code
-    /// UsdPhysicsArticulationRootAPI(stage->GetPrimAtPath(path));
-    /// \endcode
-    ///
-    USDPHYSICS_API
-    static UsdPhysicsArticulationRootAPI
-    Get(const UsdStagePtr &stage, const SdfPath &path);
+  /// Return a UsdPhysicsArticulationRootAPI holding the prim adhering to this
+  /// schema at \p path on \p stage.  If no prim exists at \p path on
+  /// \p stage, or if the prim at that path does not adhere to this schema,
+  /// return an invalid schema object.  This is shorthand for the following:
+  ///
+  /// \code
+  /// UsdPhysicsArticulationRootAPI(stage->GetPrimAtPath(path));
+  /// \endcode
+  ///
+  USDPHYSICS_API
+  static UsdPhysicsArticulationRootAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
 
-    /// Returns true if this <b>single-apply</b> API schema can be applied to 
-    /// the given \p prim. If this schema can not be a applied to the prim, 
-    /// this returns false and, if provided, populates \p whyNot with the 
-    /// reason it can not be applied.
-    /// 
-    /// Note that if CanApply returns false, that does not necessarily imply
-    /// that calling Apply will fail. Callers are expected to call CanApply
-    /// before calling Apply if they want to ensure that it is valid to 
-    /// apply a schema.
-    /// 
-    /// \sa UsdPrim::GetAppliedSchemas()
-    /// \sa UsdPrim::HasAPI()
-    /// \sa UsdPrim::CanApplyAPI()
-    /// \sa UsdPrim::ApplyAPI()
-    /// \sa UsdPrim::RemoveAPI()
-    ///
-    USDPHYSICS_API
-    static bool 
-    CanApply(const UsdPrim &prim, std::string *whyNot=nullptr);
+  /// Returns true if this <b>single-apply</b> API schema can be applied to
+  /// the given \p prim. If this schema can not be a applied to the prim,
+  /// this returns false and, if provided, populates \p whyNot with the
+  /// reason it can not be applied.
+  ///
+  /// Note that if CanApply returns false, that does not necessarily imply
+  /// that calling Apply will fail. Callers are expected to call CanApply
+  /// before calling Apply if they want to ensure that it is valid to
+  /// apply a schema.
+  ///
+  /// \sa UsdPrim::GetAppliedSchemas()
+  /// \sa UsdPrim::HasAPI()
+  /// \sa UsdPrim::CanApplyAPI()
+  /// \sa UsdPrim::ApplyAPI()
+  /// \sa UsdPrim::RemoveAPI()
+  ///
+  USDPHYSICS_API
+  static bool CanApply(const UsdPrim &prim, std::string *whyNot = nullptr);
 
-    /// Applies this <b>single-apply</b> API schema to the given \p prim.
-    /// This information is stored by adding "PhysicsArticulationRootAPI" to the 
-    /// token-valued, listOp metadata \em apiSchemas on the prim.
-    /// 
-    /// \return A valid UsdPhysicsArticulationRootAPI object is returned upon success. 
-    /// An invalid (or empty) UsdPhysicsArticulationRootAPI object is returned upon 
-    /// failure. See \ref UsdPrim::ApplyAPI() for conditions 
-    /// resulting in failure. 
-    /// 
-    /// \sa UsdPrim::GetAppliedSchemas()
-    /// \sa UsdPrim::HasAPI()
-    /// \sa UsdPrim::CanApplyAPI()
-    /// \sa UsdPrim::ApplyAPI()
-    /// \sa UsdPrim::RemoveAPI()
-    ///
-    USDPHYSICS_API
-    static UsdPhysicsArticulationRootAPI 
-    Apply(const UsdPrim &prim);
+  /// Applies this <b>single-apply</b> API schema to the given \p prim.
+  /// This information is stored by adding "PhysicsArticulationRootAPI" to the
+  /// token-valued, listOp metadata \em apiSchemas on the prim.
+  ///
+  /// \return A valid UsdPhysicsArticulationRootAPI object is returned upon success.
+  /// An invalid (or empty) UsdPhysicsArticulationRootAPI object is returned upon
+  /// failure. See \ref UsdPrim::ApplyAPI() for conditions
+  /// resulting in failure.
+  ///
+  /// \sa UsdPrim::GetAppliedSchemas()
+  /// \sa UsdPrim::HasAPI()
+  /// \sa UsdPrim::CanApplyAPI()
+  /// \sa UsdPrim::ApplyAPI()
+  /// \sa UsdPrim::RemoveAPI()
+  ///
+  USDPHYSICS_API
+  static UsdPhysicsArticulationRootAPI Apply(const UsdPrim &prim);
 
-protected:
-    /// Returns the kind of schema this class belongs to.
-    ///
-    /// \sa UsdSchemaKind
-    USDPHYSICS_API
-    UsdSchemaKind GetSchemaKind() const override;
+ protected:
+  /// Returns the kind of schema this class belongs to.
+  ///
+  /// \sa UsdSchemaKind
+  USDPHYSICS_API
+  UsdSchemaKind GetSchemaKind() const override;
 
-private:
-    // needs to invoke GetStaticTfType.
-    friend class UsdSchemaRegistry;
-    USDPHYSICS_API
-    static const TfType &GetStaticTfType();
+ private:
+  // needs to invoke GetStaticTfType.
+  friend class UsdSchemaRegistry;
+  USDPHYSICS_API
+  static const TfType &GetStaticTfType();
 
-    static bool IsTypedSchema();
+  static bool IsTypedSchema();
 
-    // override SchemaBase virtuals.
-    USDPHYSICS_API
-    const TfType &GetTfType() const override;
+  // override SchemaBase virtuals.
+  USDPHYSICS_API
+  const TfType &GetTfType() const override;
 
-public:
-    // ===================================================================== //
-    // Feel free to add custom code below this line, it will be preserved by 
-    // the code generator. 
-    //
-    // Just remember to: 
-    //  - Close the class declaration with }; 
-    //  - Close the namespace with WABI_NAMESPACE_END
-    //  - Close the include guard with #endif
-    // ===================================================================== //
-    // --(BEGIN CUSTOM CODE)--
+ public:
+  // ===================================================================== //
+  // Feel free to add custom code below this line, it will be preserved by
+  // the code generator.
+  //
+  // Just remember to:
+  //  - Close the class declaration with };
+  //  - Close the namespace with WABI_NAMESPACE_END
+  //  - Close the include guard with #endif
+  // ===================================================================== //
+  // --(BEGIN CUSTOM CODE)--
 };
 
 WABI_NAMESPACE_END

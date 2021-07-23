@@ -68,8 +68,7 @@ static HdPh_DrawBatchSharedPtr _NewDrawBatch(HdPhDrawItemInstance *drawItemInsta
   if (caps.multiDrawIndirectEnabled)
   {
     return std::make_shared<HdPh_IndirectDrawBatch>(drawItemInstance);
-  }
-  else
+  } else
   {
     return std::make_shared<HdPh_ImmediateDrawBatch>(drawItemInstance);
   }
@@ -293,8 +292,7 @@ void HdPhCommandBuffer::_RebuildDrawBatches()
       {
         HdPh_DrawBatchSharedPtrVector &batches = batchIter->second;
         batches.emplace_back(batch);
-      }
-      else
+      } else
       {
         batchMap[key] = HdPh_DrawBatchSharedPtrVector({batch});
       }
@@ -394,8 +392,7 @@ void HdPhCommandBuffer::FrustumCull(GfMatrix4d const &viewProjMatrix)
                                std::cref(viewProjMatrix),
                                std::placeholders::_1,
                                std::placeholders::_2));
-  }
-  else
+  } else
   {
     _Worker::cull(&_drawItemInstances, viewProjMatrix, 0, _drawItemInstances.size());
   }

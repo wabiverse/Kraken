@@ -108,12 +108,10 @@ NdrNodeUniquePtr UsdLux_LightDefParserPlugin::Parse(const NdrNodeDiscoveryResult
   if (prim.IsA<UsdLuxLight>())
   {
     context = SdrNodeContext->Light;
-  }
-  else if (prim.IsA<UsdLuxLightFilter>())
+  } else if (prim.IsA<UsdLuxLightFilter>())
   {
     context = SdrNodeContext->LightFilter;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR(
       "Cannot parse a USD shader node for schema type '%s'; "

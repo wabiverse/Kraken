@@ -67,8 +67,7 @@ NdrNode::NdrNode(const NdrIdentifier &identifier,
     {
       _outputNames.push_back(propertyName);
       _outputs.insert({propertyName, property});
-    }
-    else
+    } else
     {
       _inputNames.push_back(propertyName);
       _inputs.insert({propertyName, property});

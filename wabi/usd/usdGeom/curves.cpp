@@ -110,14 +110,15 @@ UsdAttribute UsdGeomCurves::CreateWidthsAttr(VtValue const &defaultValue, bool w
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -128,7 +129,8 @@ const TfTokenVector &UsdGeomCurves::GetSchemaAttributeNames(bool includeInherite
     UsdGeomTokens->widths,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-    UsdGeomPointBased::GetSchemaAttributeNames(true), localNames);
+    UsdGeomPointBased::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -276,8 +278,7 @@ static bool _ComputeExtentForCurves(const UsdGeomBoundable &boundable,
   if (transform)
   {
     return UsdGeomCurves::ComputeExtent(points, widths, *transform, extent);
-  }
-  else
+  } else
   {
     return UsdGeomCurves::ComputeExtent(points, widths, extent);
   }

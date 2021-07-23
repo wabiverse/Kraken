@@ -43,11 +43,11 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-static std::map<HWND, Garch_GLPlatformDebugWindow *> &_GetWindowsMap()
-{
-  static std::map<HWND, Garch_GLPlatformDebugWindow *> windows;
-  return windows;
-}
+  static std::map<HWND, Garch_GLPlatformDebugWindow *> &_GetWindowsMap()
+  {
+    static std::map<HWND, Garch_GLPlatformDebugWindow *> windows;
+    return windows;
+  }
 
 }  // namespace
 
@@ -194,27 +194,45 @@ LRESULT WINAPI Garch_GLPlatformDebugWindow::_MsgProc(HWND hWnd, UINT msg, WPARAM
       break;
     case WM_LBUTTONDOWN:
       window->_callback->OnMousePress(
-        /*button=*/0, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/0,
+        x,
+        y,
+        Garch_GetModifierKeys(wParam));
       break;
     case WM_MBUTTONDOWN:
       window->_callback->OnMousePress(
-        /*button=*/1, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/1,
+        x,
+        y,
+        Garch_GetModifierKeys(wParam));
       break;
     case WM_RBUTTONDOWN:
       window->_callback->OnMousePress(
-        /*button=*/2, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/2,
+        x,
+        y,
+        Garch_GetModifierKeys(wParam));
       break;
     case WM_LBUTTONUP:
       window->_callback->OnMouseRelease(
-        /*button=*/0, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/0,
+        x,
+        y,
+        Garch_GetModifierKeys(wParam));
       break;
     case WM_MBUTTONUP:
       window->_callback->OnMouseRelease(
-        /*button=*/1, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/1,
+        x,
+        y,
+        Garch_GetModifierKeys(wParam));
       break;
     case WM_RBUTTONUP:
       window->_callback->OnMouseRelease(
-        /*button=*/2, x, y, Garch_GetModifierKeys(wParam));
+        /*button=*/2,
+        x,
+        y,
+        Garch_GetModifierKeys(wParam));
       break;
     case WM_MOUSEMOVE:
       window->_callback->OnMouseMove(x, y, Garch_GetModifierKeys(wParam));
@@ -248,8 +266,7 @@ void Garch_GLPlatformDebugWindow::Run()
     {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
-    }
-    else
+    } else
     {
       // make current
       wglMakeCurrent(_hDC, _hGLRC);

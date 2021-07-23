@@ -140,7 +140,8 @@ int CREATOR_parse_args(int argc, const char **argv)
 
   if (resolve_asset.size() > 2)
   {
-    !UNI_pixutil_resolve_asset(resolve_asset, /*verbose==*/true).empty() ? exit(KRAKEN_SUCCESS) : exit(KRAKEN_ERROR);
+    !UNI_pixutil_resolve_asset(resolve_asset, /*verbose==*/true).empty() ? exit(KRAKEN_SUCCESS) :
+                                                                           exit(KRAKEN_ERROR);
   }
 
   return 0;

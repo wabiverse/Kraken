@@ -108,176 +108,180 @@ bool NdrRegistry_ValidateProperty(const NdrNodeConstPtr &node,
 namespace
 {
 
-// Helpers to allow template functions to treat discovery results and
-// nodes equally.
-template<typename T>
-struct _NdrObjectAccess
-{
-};
-template<>
-struct _NdrObjectAccess<NdrNodeDiscoveryResult>
-{
-  typedef NdrNodeDiscoveryResult Type;
-  static const std::string &GetName(const Type &x)
+  // Helpers to allow template functions to treat discovery results and
+  // nodes equally.
+  template<typename T>
+  struct _NdrObjectAccess
   {
-    return x.name;
-  }
-  static const TfToken &GetFamily(const Type &x)
+  };
+  template<>
+  struct _NdrObjectAccess<NdrNodeDiscoveryResult>
   {
-    return x.family;
-  }
-  static NdrVersion GetVersion(const Type &x)
+    typedef NdrNodeDiscoveryResult Type;
+    static const std::string &GetName(const Type &x)
+    {
+      return x.name;
+    }
+    static const TfToken &GetFamily(const Type &x)
+    {
+      return x.family;
+    }
+    static NdrVersion GetVersion(const Type &x)
+    {
+      return x.version;
+    }
+  };
+  template<>
+  struct _NdrObjectAccess<NdrNodeUniquePtr>
   {
-    return x.version;
-  }
-};
-template<>
-struct _NdrObjectAccess<NdrNodeUniquePtr>
-{
-  typedef NdrNodeUniquePtr Type;
-  static const std::string &GetName(const Type &x)
-  {
-    return x->GetName();
-  }
-  static const TfToken &GetFamily(const Type &x)
-  {
-    return x->GetFamily();
-  }
-  static NdrVersion GetVersion(const Type &x)
-  {
-    return x->GetVersion();
-  }
-};
+    typedef NdrNodeUniquePtr Type;
+    static const std::string &GetName(const Type &x)
+    {
+      return x->GetName();
+    }
+    static const TfToken &GetFamily(const Type &x)
+    {
+      return x->GetFamily();
+    }
+    static NdrVersion GetVersion(const Type &x)
+    {
+      return x->GetVersion();
+    }
+  };
 
-template<typename T>
-static bool _MatchesFamilyAndFilter(const T &object, const TfToken &family, NdrVersionFilter filter)
-{
-  using Access = _NdrObjectAccess<T>;
-
-  // Check the family.
-  if (!family.IsEmpty() && family != Access::GetFamily(object))
+  template<typename T>
+  static bool _MatchesFamilyAndFilter(const T &object, const TfToken &family, NdrVersionFilter filter)
   {
-    return false;
-  }
+    using Access = _NdrObjectAccess<T>;
 
-  // Check the filter.
-  switch (filter)
-  {
-    case NdrVersionFilterDefaultOnly:
-      if (!Access::GetVersion(object).IsDefault())
-      {
-        return false;
-      }
-      break;
+    // Check the family.
+    if (!family.IsEmpty() && family != Access::GetFamily(object))
+    {
+      return false;
+    }
 
-    default:
-      break;
-  }
+    // Check the filter.
+    switch (filter)
+    {
+      case NdrVersionFilterDefaultOnly:
+        if (!Access::GetVersion(object).IsDefault())
+        {
+          return false;
+        }
+        break;
 
-  return true;
-}
+      default:
+        break;
+    }
 
-static NdrIdentifier _GetIdentifierForAsset(const SdfAssetPath &asset,
-                                            const NdrTokenMap &metadata,
-                                            const TfToken &subIdentifier,
-                                            const TfToken &sourceType)
-{
-  size_t h = 0;
-  boost::hash_combine(h, asset);
-  for (const auto &i : metadata)
-  {
-    boost::hash_combine(h, i.first.GetString());
-    boost::hash_combine(h, i.second);
+    return true;
   }
 
-  return NdrIdentifier(
-    TfStringPrintf("%s<%s><%s>", std::to_string(h).c_str(), subIdentifier.GetText(), sourceType.GetText()));
-}
-
-static NdrIdentifier _GetIdentifierForSourceCode(const std::string &sourceCode, const NdrTokenMap &metadata)
-{
-  size_t h = 0;
-  boost::hash_combine(h, sourceCode);
-  for (const auto &i : metadata)
+  static NdrIdentifier _GetIdentifierForAsset(const SdfAssetPath &asset,
+                                              const NdrTokenMap &metadata,
+                                              const TfToken &subIdentifier,
+                                              const TfToken &sourceType)
   {
-    boost::hash_combine(h, i.first.GetString());
-    boost::hash_combine(h, i.second);
-  }
-  return NdrIdentifier(std::to_string(h));
-}
+    size_t h = 0;
+    boost::hash_combine(h, asset);
+    for (const auto &i : metadata)
+    {
+      boost::hash_combine(h, i.first.GetString());
+      boost::hash_combine(h, i.second);
+    }
 
-static bool _ValidateProperty(const NdrNodeConstPtr &node, const NdrPropertyConstPtr &property)
-{
-  std::string errorMessage;
-  if (!NdrRegistry_ValidateProperty(node, property, &errorMessage))
-  {
-    // This warning may eventually want to be a runtime error and return
-    // false to indicate an invalid node, but we didn't want to introduce
-    // unexpected behaviors by introducing this error.
-    TF_WARN(errorMessage);
-  }
-  return true;
-}
-
-static bool _ValidateNode(const NdrNodeUniquePtr &newNode, const NdrNodeDiscoveryResult &dr)
-{
-  // Validate the node.
-  if (!newNode)
-  {
-    TF_RUNTIME_ERROR(
-      "Parser for asset @%s@ of type %s returned null", dr.resolvedUri.c_str(), dr.discoveryType.GetText());
-    return false;
+    return NdrIdentifier(TfStringPrintf("%s<%s><%s>",
+                                        std::to_string(h).c_str(),
+                                        subIdentifier.GetText(),
+                                        sourceType.GetText()));
   }
 
-  // The node is invalid; continue without further error checking.
-  //
-  // XXX -- WBN if these were just automatically copied and parser plugins
-  //        didn't have to deal with them.
-  if (newNode->IsValid() && !(newNode->GetIdentifier() == dr.identifier && newNode->GetName() == dr.name &&
-                              newNode->GetVersion() == dr.version && newNode->GetFamily() == dr.family &&
-                              newNode->GetSourceType() == dr.sourceType))
+  static NdrIdentifier _GetIdentifierForSourceCode(const std::string &sourceCode,
+                                                   const NdrTokenMap &metadata)
   {
-    TF_RUNTIME_ERROR(
-      "Parsed node %s:%s:%s:%s:%s doesn't match discovery result "
-      "created for asset @%s@ - "
-      "%s:%s:%s:%s:%s (identifier:version:name:family:source type); "
-      "discarding.",
-      NdrGetIdentifierString(newNode->GetIdentifier()).c_str(),
-      newNode->GetVersion().GetString().c_str(),
-      newNode->GetName().c_str(),
-      newNode->GetFamily().GetText(),
-      newNode->GetSourceType().GetText(),
-      dr.resolvedUri.c_str(),
-      NdrGetIdentifierString(dr.identifier).c_str(),
-      dr.version.GetString().c_str(),
-      dr.name.c_str(),
-      dr.family.GetText(),
-      dr.sourceType.GetText());
-    return false;
+    size_t h = 0;
+    boost::hash_combine(h, sourceCode);
+    for (const auto &i : metadata)
+    {
+      boost::hash_combine(h, i.first.GetString());
+      boost::hash_combine(h, i.second);
+    }
+    return NdrIdentifier(std::to_string(h));
   }
 
-  // It is safe to get the raw pointer from the unique pointer here since
-  // this raw pointer will not be passed beyond the scope of this function.
-  NdrNodeConstPtr node = newNode.get();
-
-  // Validate the node's properties.  Always validate each property even if
-  // we have already found an invalid property because we want to report
-  // errors on all properties.
-  bool valid = true;
-  for (const TfToken &inputName : newNode->GetInputNames())
+  static bool _ValidateProperty(const NdrNodeConstPtr &node, const NdrPropertyConstPtr &property)
   {
-    const NdrPropertyConstPtr &input = newNode->GetInput(inputName);
-    valid &= _ValidateProperty(node, input);
+    std::string errorMessage;
+    if (!NdrRegistry_ValidateProperty(node, property, &errorMessage))
+    {
+      // This warning may eventually want to be a runtime error and return
+      // false to indicate an invalid node, but we didn't want to introduce
+      // unexpected behaviors by introducing this error.
+      TF_WARN(errorMessage);
+    }
+    return true;
   }
 
-  for (const TfToken &outputName : newNode->GetOutputNames())
+  static bool _ValidateNode(const NdrNodeUniquePtr &newNode, const NdrNodeDiscoveryResult &dr)
   {
-    const NdrPropertyConstPtr &output = newNode->GetOutput(outputName);
-    valid &= _ValidateProperty(node, output);
-  }
+    // Validate the node.
+    if (!newNode)
+    {
+      TF_RUNTIME_ERROR("Parser for asset @%s@ of type %s returned null",
+                       dr.resolvedUri.c_str(),
+                       dr.discoveryType.GetText());
+      return false;
+    }
 
-  return valid;
-}
+    // The node is invalid; continue without further error checking.
+    //
+    // XXX -- WBN if these were just automatically copied and parser plugins
+    //        didn't have to deal with them.
+    if (newNode->IsValid() && !(newNode->GetIdentifier() == dr.identifier && newNode->GetName() == dr.name &&
+                                newNode->GetVersion() == dr.version && newNode->GetFamily() == dr.family &&
+                                newNode->GetSourceType() == dr.sourceType))
+    {
+      TF_RUNTIME_ERROR(
+        "Parsed node %s:%s:%s:%s:%s doesn't match discovery result "
+        "created for asset @%s@ - "
+        "%s:%s:%s:%s:%s (identifier:version:name:family:source type); "
+        "discarding.",
+        NdrGetIdentifierString(newNode->GetIdentifier()).c_str(),
+        newNode->GetVersion().GetString().c_str(),
+        newNode->GetName().c_str(),
+        newNode->GetFamily().GetText(),
+        newNode->GetSourceType().GetText(),
+        dr.resolvedUri.c_str(),
+        NdrGetIdentifierString(dr.identifier).c_str(),
+        dr.version.GetString().c_str(),
+        dr.name.c_str(),
+        dr.family.GetText(),
+        dr.sourceType.GetText());
+      return false;
+    }
+
+    // It is safe to get the raw pointer from the unique pointer here since
+    // this raw pointer will not be passed beyond the scope of this function.
+    NdrNodeConstPtr node = newNode.get();
+
+    // Validate the node's properties.  Always validate each property even if
+    // we have already found an invalid property because we want to report
+    // errors on all properties.
+    bool valid = true;
+    for (const TfToken &inputName : newNode->GetInputNames())
+    {
+      const NdrPropertyConstPtr &input = newNode->GetInput(inputName);
+      valid &= _ValidateProperty(node, input);
+    }
+
+    for (const TfToken &outputName : newNode->GetOutputNames())
+    {
+      const NdrPropertyConstPtr &output = newNode->GetOutput(outputName);
+      valid &= _ValidateProperty(node, output);
+    }
+
+    return valid;
+  }
 
 }  // anonymous namespace
 
@@ -583,8 +587,9 @@ NdrStringVec NdrRegistry::GetSearchURIs() const
   {
     NdrStringVec uris = dp->GetSearchURIs();
 
-    searchURIs.insert(
-      searchURIs.end(), std::make_move_iterator(uris.begin()), std::make_move_iterator(uris.end()));
+    searchURIs.insert(searchURIs.end(),
+                      std::make_move_iterator(uris.begin()),
+                      std::make_move_iterator(uris.end()));
   }
 
   return searchURIs;

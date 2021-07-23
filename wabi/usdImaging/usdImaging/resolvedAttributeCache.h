@@ -394,8 +394,7 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
   {
     entry->value = value;
     entry->version = _GetValidVersion();
-  }
-  else
+  } else
   {
     while (entry->version != _GetValidVersion())
     {
@@ -454,8 +453,7 @@ UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetValue(const UsdPrim &
   if (it != _valueOverrides.end())
   {
     _SetCacheEntryForPrim(prim, it->second, entry);
-  }
-  else
+  } else
   {
     _SetCacheEntryForPrim(prim, Strategy::Compute(this, prim, &entry->query), entry);
   }
@@ -526,8 +524,7 @@ struct UsdImaging_XfStrategy
       {
         ctm *= overIt->second;
         break;
-      }
-      else if (UsdGeomXformable xf = UsdGeomXformable(p))
+      } else if (UsdGeomXformable xf = UsdGeomXformable(p))
       {
         if (xf.GetLocalTransformation(&localXf, &reset, time))
           ctm *= localXf;
@@ -754,8 +751,9 @@ struct UsdImaging_MaterialStrategy
 
   static query_type MakeQuery(UsdPrim const &prim, ImplData *implData)
   {
-    return UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(
-      &implData->GetBindingsCache(), &implData->GetCollectionQueryCache(), implData->GetMaterialPurpose());
+    return UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(&implData->GetBindingsCache(),
+                                                                 &implData->GetCollectionQueryCache(),
+                                                                 implData->GetMaterialPurpose());
   }
 
   static value_type Compute(UsdImaging_MaterialBindingCache const *owner,

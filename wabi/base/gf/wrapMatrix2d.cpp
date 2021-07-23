@@ -64,252 +64,247 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-////////////////////////////////////////////////////////////////////////
-// Python buffer protocol support.
+  ////////////////////////////////////////////////////////////////////////
+  // Python buffer protocol support.
 
 #if PY_MAJOR_VERSION == 2
-// Python's getreadbuf interface function.
-static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
-{
-  if (segment != 0)
+  // Python's getreadbuf interface function.
+  static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
-    // Always one-segment.
-    PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
+    if (segment != 0)
+    {
+      // Always one-segment.
+      PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
+      return -1;
+    }
+    GfMatrix2d &mat = extract<GfMatrix2d &>(self);
+    *ptrptr = static_cast<void *>(mat.GetArray());
+    // Return size in bytes.
+    return sizeof(GfMatrix2d);
+  }
+
+  // Python's getwritebuf interface function.
+  static Py_ssize_t getwritebuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
+  {
+    PyErr_SetString(PyExc_ValueError,
+                    "writable buffers supported only with "
+                    "new-style buffer protocol.");
     return -1;
   }
-  GfMatrix2d &mat = extract<GfMatrix2d &>(self);
-  *ptrptr = static_cast<void *>(mat.GetArray());
-  // Return size in bytes.
-  return sizeof(GfMatrix2d);
-}
 
-// Python's getwritebuf interface function.
-static Py_ssize_t getwritebuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
-{
-  PyErr_SetString(PyExc_ValueError,
-                  "writable buffers supported only with "
-                  "new-style buffer protocol.");
-  return -1;
-}
+  // Python's getsegcount interface function.
+  static Py_ssize_t getsegcount(PyObject *self, Py_ssize_t *lenp)
+  {
+    if (lenp)
+      *lenp = sizeof(GfMatrix2d);
+    return 1;  // Always one contiguous segment.
+  }
 
-// Python's getsegcount interface function.
-static Py_ssize_t getsegcount(PyObject *self, Py_ssize_t *lenp)
-{
-  if (lenp)
-    *lenp = sizeof(GfMatrix2d);
-  return 1;  // Always one contiguous segment.
-}
-
-// Python's getcharbuf interface function.
-static Py_ssize_t getcharbuf(PyObject *self, Py_ssize_t segment, const char **ptrptr)
-{
-  PyErr_SetString(PyExc_ValueError, "cannot treat binary data as text");
-  return -1;
-}
+  // Python's getcharbuf interface function.
+  static Py_ssize_t getcharbuf(PyObject *self, Py_ssize_t segment, const char **ptrptr)
+  {
+    PyErr_SetString(PyExc_ValueError, "cannot treat binary data as text");
+    return -1;
+  }
 #endif
 
-// Python's getbuffer interface function.
-static int getbuffer(PyObject *self, Py_buffer *view, int flags)
-{
-  if (view == NULL)
+  // Python's getbuffer interface function.
+  static int getbuffer(PyObject *self, Py_buffer *view, int flags)
   {
-    PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
-    return -1;
+    if (view == NULL)
+    {
+      PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
+      return -1;
+    }
+
+    // We don't support fortran order.
+    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
+    {
+      PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
+      return -1;
+    }
+
+    GfMatrix2d &mat = extract<GfMatrix2d &>(self);
+
+    view->obj = self;
+    view->buf = static_cast<void *>(mat.GetArray());
+    view->len = sizeof(GfMatrix2d);
+    view->readonly = 0;
+    view->itemsize = sizeof(double);
+    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
+    {
+      view->format = Gf_GetPyBufferFmtFor<double>();
+    } else
+    {
+      view->format = NULL;
+    }
+    if ((flags & PyBUF_ND) == PyBUF_ND)
+    {
+      view->ndim = 2;
+      static Py_ssize_t shape[] = {2, 2};
+      view->shape = shape;
+    } else
+    {
+      view->ndim = 0;
+      view->shape = NULL;
+    }
+    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
+    {
+      static Py_ssize_t strides[] = {2 * sizeof(double), sizeof(double)};
+      view->strides = strides;
+    } else
+    {
+      view->strides = NULL;
+    }
+    view->suboffsets = NULL;
+    view->internal = NULL;
+
+    Py_INCREF(self);  // need to retain a reference to self.
+    return 0;
   }
 
-  // We don't support fortran order.
-  if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
-  {
-    PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
-    return -1;
-  }
-
-  GfMatrix2d &mat = extract<GfMatrix2d &>(self);
-
-  view->obj = self;
-  view->buf = static_cast<void *>(mat.GetArray());
-  view->len = sizeof(GfMatrix2d);
-  view->readonly = 0;
-  view->itemsize = sizeof(double);
-  if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
-  {
-    view->format = Gf_GetPyBufferFmtFor<double>();
-  }
-  else
-  {
-    view->format = NULL;
-  }
-  if ((flags & PyBUF_ND) == PyBUF_ND)
-  {
-    view->ndim = 2;
-    static Py_ssize_t shape[] = {2, 2};
-    view->shape = shape;
-  }
-  else
-  {
-    view->ndim = 0;
-    view->shape = NULL;
-  }
-  if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
-  {
-    static Py_ssize_t strides[] = {2 * sizeof(double), sizeof(double)};
-    view->strides = strides;
-  }
-  else
-  {
-    view->strides = NULL;
-  }
-  view->suboffsets = NULL;
-  view->internal = NULL;
-
-  Py_INCREF(self);  // need to retain a reference to self.
-  return 0;
-}
-
-// This structure serves to instantiate a PyBufferProcs instance with pointers
-// to the right buffer protocol functions.
-static PyBufferProcs bufferProcs = {
+  // This structure serves to instantiate a PyBufferProcs instance with pointers
+  // to the right buffer protocol functions.
+  static PyBufferProcs bufferProcs = {
 #if PY_MAJOR_VERSION == 2
-  (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
-  (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
-  (segcountproc)getsegcount,    /*bf_getsegcount*/
-  (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
+    (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
+    (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
+    (segcountproc)getsegcount,    /*bf_getsegcount*/
+    (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
 #endif
-  (getbufferproc)getbuffer,
-  (releasebufferproc)0,
-};
+    (getbufferproc)getbuffer,
+    (releasebufferproc)0,
+  };
 
-// End python buffer protocol support.
-////////////////////////////////////////////////////////////////////////
+  // End python buffer protocol support.
+  ////////////////////////////////////////////////////////////////////////
 
-static string _Repr(GfMatrix2d const &self)
-{
-  static char newline[] = ",\n            ";
-  return TF_PY_REPR_PREFIX + "Matrix2d(" + TfPyRepr(self[0][0]) + ", " + TfPyRepr(self[0][1]) + newline +
-         TfPyRepr(self[1][0]) + ", " + TfPyRepr(self[1][1]) + ")";
-}
-
-static GfMatrix2d GetInverseWrapper(const GfMatrix2d &self)
-{
-  return self.GetInverse();
-}
-
-static void throwIndexErr(const char *msg)
-{
-  PyErr_SetString(PyExc_IndexError, msg);
-  boost::python::throw_error_already_set();
-}
-
-static int normalizeIndex(int index)
-{
-  return TfPyNormalizeIndex(index, 2, true /*throw error*/);
-}
-
-// Return number of rows
-static int __len__(GfMatrix2d const &self)
-{
-  return 2;
-}
-
-static double __getitem__double(GfMatrix2d const &self, tuple index)
-{
-  int i1 = 0, i2 = 0;
-  if (len(index) == 2)
+  static string _Repr(GfMatrix2d const &self)
   {
-    i1 = normalizeIndex(extract<int>(index[0]));
-    i2 = normalizeIndex(extract<int>(index[1]));
+    static char newline[] = ",\n            ";
+    return TF_PY_REPR_PREFIX + "Matrix2d(" + TfPyRepr(self[0][0]) + ", " + TfPyRepr(self[0][1]) + newline +
+           TfPyRepr(self[1][0]) + ", " + TfPyRepr(self[1][1]) + ")";
   }
-  else
-    throwIndexErr("Index has incorrect size.");
 
-  return self[i1][i2];
-}
-
-static GfVec2d __getitem__vector(GfMatrix2d const &self, int index)
-{
-  return GfVec2d(self[normalizeIndex(index)]);
-}
-
-static void __setitem__double(GfMatrix2d &self, tuple index, double value)
-{
-  int i1 = 0, i2 = 0;
-  if (len(index) == 2)
+  static GfMatrix2d GetInverseWrapper(const GfMatrix2d &self)
   {
-    i1 = normalizeIndex(extract<int>(index[0]));
-    i2 = normalizeIndex(extract<int>(index[1]));
+    return self.GetInverse();
   }
-  else
-    throwIndexErr("Index has incorrect size.");
 
-  self[i1][i2] = value;
-}
+  static void throwIndexErr(const char *msg)
+  {
+    PyErr_SetString(PyExc_IndexError, msg);
+    boost::python::throw_error_already_set();
+  }
 
-static void __setitem__vector(GfMatrix2d &self, int index, GfVec2d value)
-{
-  int ni = normalizeIndex(index);
-  self[ni][0] = value[0];
-  self[ni][1] = value[1];
-}
+  static int normalizeIndex(int index)
+  {
+    return TfPyNormalizeIndex(index, 2, true /*throw error*/);
+  }
 
-static bool __contains__double(const GfMatrix2d &self, double value)
-{
-  for (int i = 0; i < 2; ++i)
-    for (int j = 0; j < 2; ++j)
-      if (self[i][j] == value)
+  // Return number of rows
+  static int __len__(GfMatrix2d const &self)
+  {
+    return 2;
+  }
+
+  static double __getitem__double(GfMatrix2d const &self, tuple index)
+  {
+    int i1 = 0, i2 = 0;
+    if (len(index) == 2)
+    {
+      i1 = normalizeIndex(extract<int>(index[0]));
+      i2 = normalizeIndex(extract<int>(index[1]));
+    } else
+      throwIndexErr("Index has incorrect size.");
+
+    return self[i1][i2];
+  }
+
+  static GfVec2d __getitem__vector(GfMatrix2d const &self, int index)
+  {
+    return GfVec2d(self[normalizeIndex(index)]);
+  }
+
+  static void __setitem__double(GfMatrix2d &self, tuple index, double value)
+  {
+    int i1 = 0, i2 = 0;
+    if (len(index) == 2)
+    {
+      i1 = normalizeIndex(extract<int>(index[0]));
+      i2 = normalizeIndex(extract<int>(index[1]));
+    } else
+      throwIndexErr("Index has incorrect size.");
+
+    self[i1][i2] = value;
+  }
+
+  static void __setitem__vector(GfMatrix2d &self, int index, GfVec2d value)
+  {
+    int ni = normalizeIndex(index);
+    self[ni][0] = value[0];
+    self[ni][1] = value[1];
+  }
+
+  static bool __contains__double(const GfMatrix2d &self, double value)
+  {
+    for (int i = 0; i < 2; ++i)
+      for (int j = 0; j < 2; ++j)
+        if (self[i][j] == value)
+          return true;
+    return false;
+  }
+
+  // Check rows against GfVec
+  static bool __contains__vector(const GfMatrix2d &self, GfVec2d value)
+  {
+    for (int i = 0; i < 2; ++i)
+      if (self.GetRow(i) == value)
         return true;
-  return false;
-}
-
-// Check rows against GfVec
-static bool __contains__vector(const GfMatrix2d &self, GfVec2d value)
-{
-  for (int i = 0; i < 2; ++i)
-    if (self.GetRow(i) == value)
-      return true;
-  return false;
-}
+    return false;
+  }
 
 #if PY_MAJOR_VERSION == 2
-static GfMatrix2d __truediv__(const GfMatrix2d &self, GfMatrix2d value)
-{
-  return self / value;
-}
+  static GfMatrix2d __truediv__(const GfMatrix2d &self, GfMatrix2d value)
+  {
+    return self / value;
+  }
 #endif
 
-static GfMatrix2d *__init__()
-{
-  // Default constructor produces identity from python.
-  return new GfMatrix2d(1);
-}
-
-// This adds support for python's builtin pickling library
-// This is used by our Shake plugins which need to pickle entire classes
-// (including code), which we don't support in pxml.
-struct GfMatrix2d_Pickle_Suite : boost::python::pickle_suite
-{
-  static boost::python::tuple getinitargs(const GfMatrix2d &m)
+  static GfMatrix2d *__init__()
   {
-    return boost::python::make_tuple(m[0][0], m[0][1], m[1][0], m[1][1]);
+    // Default constructor produces identity from python.
+    return new GfMatrix2d(1);
   }
-};
 
-static size_t __hash__(GfMatrix2d const &m)
-{
-  return hash_value(m);
-}
+  // This adds support for python's builtin pickling library
+  // This is used by our Shake plugins which need to pickle entire classes
+  // (including code), which we don't support in pxml.
+  struct GfMatrix2d_Pickle_Suite : boost::python::pickle_suite
+  {
+    static boost::python::tuple getinitargs(const GfMatrix2d &m)
+    {
+      return boost::python::make_tuple(m[0][0], m[0][1], m[1][0], m[1][1]);
+    }
+  };
 
-static boost::python::tuple get_dimension()
-{
-  // At one time this was a constant static tuple we returned for
-  // dimension. With boost building for python 3 that results in
-  // a segfault at shutdown. Building for python 2 with a static
-  // tuple returned here seems to work fine.
-  //
-  // It seems likely that this has to do with the order of
-  // destruction of these objects when deinitializing, but we did
-  // not dig deeply into this difference.
-  return make_tuple(2, 2);
-}
+  static size_t __hash__(GfMatrix2d const &m)
+  {
+    return hash_value(m);
+  }
+
+  static boost::python::tuple get_dimension()
+  {
+    // At one time this was a constant static tuple we returned for
+    // dimension. With boost building for python 3 that results in
+    // a segfault at shutdown. Building for python 2 with a static
+    // tuple returned here seems to work fine.
+    //
+    // It seems likely that this has to do with the order of
+    // destruction of these objects when deinitializing, but we did
+    // not dig deeply into this difference.
+    return make_tuple(2, 2);
+  }
 
 }  // anonymous namespace
 

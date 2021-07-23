@@ -152,27 +152,27 @@ using Sdf_ParserHelpers::Value;
 //--------------------------------------------------------------------
 
 #define ABORT_IF_ERROR(seenError) \
-  if (seenError) \
+  if (seenError)                  \
   YYABORT
 #define Err(context, ...) textFileFormatYyerror(context, TfStringPrintf(__VA_ARGS__).c_str())
 
-#define ERROR_IF_NOT_ALLOWED(context, allowed) \
-  { \
-    const SdfAllowed allow = allowed; \
-    if (!allow) \
-    { \
+#define ERROR_IF_NOT_ALLOWED(context, allowed)       \
+  {                                                  \
+    const SdfAllowed allow = allowed;                \
+    if (!allow)                                      \
+    {                                                \
       Err(context, "%s", allow.GetWhyNot().c_str()); \
-    } \
+    }                                                \
   }
 
 #define ERROR_AND_RETURN_IF_NOT_ALLOWED(context, allowed) \
-  { \
-    const SdfAllowed allow = allowed; \
-    if (!allow) \
-    { \
-      Err(context, "%s", allow.GetWhyNot().c_str()); \
-      return; \
-    } \
+  {                                                       \
+    const SdfAllowed allow = allowed;                     \
+    if (!allow)                                           \
+    {                                                     \
+      Err(context, "%s", allow.GetWhyNot().c_str());      \
+      return;                                             \
+    }                                                     \
   }
 
 //--------------------------------------------------------------------
@@ -225,16 +225,16 @@ static bool _HasDuplicates(const std::vector<T> &v)
 
 namespace
 {
-template<class T>
-const std::vector<T> &_ToItemVector(const std::vector<T> &v)
-{
-  return v;
-}
-template<class T>
-std::vector<T> _ToItemVector(const VtArray<T> &v)
-{
-  return std::vector<T>(v.begin(), v.end());
-}
+  template<class T>
+  const std::vector<T> &_ToItemVector(const std::vector<T> &v)
+  {
+    return v;
+  }
+  template<class T>
+  std::vector<T> _ToItemVector(const VtArray<T> &v)
+  {
+    return std::vector<T>(v.begin(), v.end());
+  }
 }  // namespace
 
 // Set a single ListOp vector in the list op for the current
@@ -315,11 +315,12 @@ static void _MatchMagicIdentifier(const Value &arg1, Sdf_TextParserContext *cont
         cookie.substr(expected.length()).c_str(),
         context->versionString.c_str());
     }
-  }
-  else
+  } else
   {
-    Err(
-      context, "Magic Cookie '%s'. Expected prefix of '%s'", TfStringTrim(cookie).c_str(), expected.c_str());
+    Err(context,
+        "Magic Cookie '%s'. Expected prefix of '%s'",
+        TfStringTrim(cookie).c_str(),
+        expected.c_str());
   }
 }
 
@@ -328,12 +329,10 @@ static SdfPermission _GetPermissionFromString(const std::string &str, Sdf_TextPa
   if (str == "public")
   {
     return SdfPermissionPublic;
-  }
-  else if (str == "private")
+  } else if (str == "private")
   {
     return SdfPermissionPrivate;
-  }
-  else
+  } else
   {
     Err(context, "'%s' is not a valid permission constant", str.c_str());
     return SdfPermissionPublic;
@@ -564,8 +563,7 @@ static void _PrimSetVariantSelection(Sdf_TextParserContext *context)
     {
       Err(context, "variant name must be a string");
       return;
-    }
-    else
+    } else
     {
       const std::string variantName = it->second.Get<std::string>();
       ERROR_AND_RETURN_IF_NOT_ALLOWED(context, SdfSchema::IsValidVariantIdentifier(variantName));
@@ -715,8 +713,7 @@ static void _PrimInitAttribute(const Value &arg1, Sdf_TextParserContext *context
           oldType.GetText(),
           newType.GetText());
     }
-  }
-  else
+  } else
   {
     _SetField(context->path, SdfFieldKeys->TypeName, newType, context);
   }
@@ -738,8 +735,7 @@ static void _PrimInitAttribute(const Value &arg1, Sdf_TextParserContext *context
           TfEnum::GetName(oldVariability.Get<SdfVariability>()).c_str(),
           TfEnum::GetName(variability).c_str());
     }
-  }
-  else
+  } else
   {
     _SetField(context->path, SdfFieldKeys->Variability, variability, context);
   }
@@ -913,7 +909,8 @@ static void _PrimEndRelationship(Sdf_TextParserContext *context)
   if (!context->relParsingNewTargetChildren.empty())
   {
     std::vector<SdfPath> children = context->data->GetAs<std::vector<SdfPath>>(
-      context->path, SdfChildrenKeys->RelationshipTargetChildren);
+      context->path,
+      SdfChildrenKeys->RelationshipTargetChildren);
 
     children.insert(children.end(),
                     context->relParsingNewTargetChildren.begin(),
@@ -1057,13 +1054,11 @@ static void _GenericMetadataStart(const Value &name, SdfSpecType specType, Sdf_T
     if (_IsGenericMetadataListOpType(fieldType, &itemArrayType))
     {
       _SetupValue(schema.FindType(itemArrayType).GetAsToken().GetString(), context);
-    }
-    else
+    } else
     {
       _SetupValue(schema.FindType(fieldDef.GetFallbackValue()).GetAsToken().GetString(), context);
     }
-  }
-  else
+  } else
   {
     // Prepare to parse only the string representation of this metadata
     // value, since it's an unregistered field.
@@ -1086,30 +1081,25 @@ static void _GenericMetadataEnd(SdfSpecType specType, Sdf_TextParserContext *con
       if (!fieldDef.IsValidListValue(context->currentValue))
       {
         Err(context, "invalid value for field \"%s\"", context->genericMetadataKey.GetText());
-      }
-      else
+      } else
       {
         _SetGenericMetadataListOpItems(fieldType, context);
       }
-    }
-    else
+    } else
     {
       if (!fieldDef.IsValidValue(context->currentValue) || context->currentValue.IsEmpty())
       {
         Err(context, "invalid value for field \"%s\"", context->genericMetadataKey.GetText());
-      }
-      else
+      } else
       {
         _SetField(context->path, context->genericMetadataKey, context->currentValue, context);
       }
     }
-  }
-  else if (specDef.IsValidField(context->genericMetadataKey))
+  } else if (specDef.IsValidField(context->genericMetadataKey))
   {
     // Prevent the user from overwriting fields that aren't metadata
     Err(context, "\"%s\" is registered as a non-metadata field", context->genericMetadataKey.GetText());
-  }
-  else
+  } else
   {
     // Stuff unknown fields into a SdfUnregisteredValue so they can pass
     // through loading and saving unmodified
@@ -1119,8 +1109,7 @@ static void _GenericMetadataEnd(SdfSpecType specType, Sdf_TextParserContext *con
       // If we parsed a dictionary, store it's actual value. Dictionaries
       // can be parsed fully because they contain type information.
       value = SdfUnregisteredValue(context->currentValue.Get<VtDictionary>());
-    }
-    else
+    } else
     {
       // Otherwise, we parsed a simple value or a shaped list of simple
       // values. We want to store the parsed string, but we need to
@@ -1132,8 +1121,7 @@ static void _GenericMetadataEnd(SdfSpecType specType, Sdf_TextParserContext *con
             TF_VERIFY(v.IsHolding<SdfUnregisteredValue>()))
         {
           v = v.UncheckedGet<SdfUnregisteredValue>().GetValue();
-        }
-        else
+        } else
         {
           v = VtValue();
         }
@@ -1170,8 +1158,7 @@ static void _GenericMetadataEnd(SdfSpecType specType, Sdf_TextParserContext *con
         // We just store the recorded string directly, as that's the
         // simplest thing to do.
         value = SdfUnregisteredValue(context->values.GetRecordedString());
-      }
-      else if (oldValue.IsEmpty() || oldValue.IsHolding<SdfUnregisteredValueListOp>())
+      } else if (oldValue.IsEmpty() || oldValue.IsHolding<SdfUnregisteredValueListOp>())
       {
         // In this case, we've parsed a list op statement so unpack
         // it into a list op unless we've already parsed something
@@ -1179,8 +1166,7 @@ static void _GenericMetadataEnd(SdfSpecType specType, Sdf_TextParserContext *con
         SdfUnregisteredValueListOp listOp = oldValue.GetWithDefault<SdfUnregisteredValueListOp>();
         listOp.SetItems(getRecordedStringAsUnregisteredValue(), context->listOpType);
         value = SdfUnregisteredValue(listOp);
-      }
-      else
+      } else
       {
         // If we've parsed a list op statement but have a non-list op
         // stored in this field, leave that value in place and ignore
@@ -1380,7 +1366,8 @@ typedef short int yytype_int16;
 #  if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 static int YYID(int yyi)
 #  else
-static int YYID(yyi) int yyi;
+static int YYID(yyi)
+int yyi;
 #  endif
 {
   return yyi;
@@ -1418,9 +1405,9 @@ static int YYID(yyi) int yyi;
 #  ifdef YYSTACK_ALLOC
 /* Pacify GCC's `empty if-body' warning.  */
 #    define YYSTACK_FREE(Ptr) \
-      do \
-      { /* empty */ \
-        ; \
+      do                      \
+      { /* empty */           \
+        ;                     \
       } while (YYID(0))
 #    ifndef YYSTACK_ALLOC_MAXIMUM
 /* The OS might guarantee only one guard page at the bottom of the stack,
@@ -1481,12 +1468,12 @@ union yyalloc
 #    if defined __GNUC__ && 1 < __GNUC__
 #      define YYCOPY(To, From, Count) __builtin_memcpy(To, From, (Count) * sizeof(*(From)))
 #    else
-#      define YYCOPY(To, From, Count) \
-        do \
-        { \
-          YYSIZE_T yyi; \
+#      define YYCOPY(To, From, Count)         \
+        do                                    \
+        {                                     \
+          YYSIZE_T yyi;                       \
           for (yyi = 0; yyi < (Count); yyi++) \
-            (To)[yyi] = (From)[yyi]; \
+            (To)[yyi] = (From)[yyi];          \
         } while (YYID(0))
 #    endif
 #  endif
@@ -1496,14 +1483,14 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-#  define YYSTACK_RELOCATE(Stack_alloc, Stack) \
-    do \
-    { \
-      YYSIZE_T yynewbytes; \
-      YYCOPY(&yyptr->Stack_alloc, Stack, yysize); \
-      Stack = &yyptr->Stack_alloc; \
+#  define YYSTACK_RELOCATE(Stack_alloc, Stack)                         \
+    do                                                                 \
+    {                                                                  \
+      YYSIZE_T yynewbytes;                                             \
+      YYCOPY(&yyptr->Stack_alloc, Stack, yysize);                      \
+      Stack = &yyptr->Stack_alloc;                                     \
       yynewbytes = yystacksize * sizeof(*Stack) + YYSTACK_GAP_MAXIMUM; \
-      yyptr += yynewbytes / sizeof(*yyptr); \
+      yyptr += yynewbytes / sizeof(*yyptr);                            \
     } while (YYID(0))
 
 #endif
@@ -10539,21 +10526,20 @@ static const yytype_uint16 yystos[] = {
 
 #define YYRECOVERING() (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value) \
-  do \
-    if (yychar == YYEMPTY && yylen == 1) \
-    { \
-      yychar = (Token); \
-      yylval = (Value); \
-      yytoken = YYTRANSLATE(yychar); \
-      YYPOPSTACK(1); \
-      goto yybackup; \
-    } \
-    else \
-    { \
+#define YYBACKUP(Token, Value)                               \
+  do                                                         \
+    if (yychar == YYEMPTY && yylen == 1)                     \
+    {                                                        \
+      yychar = (Token);                                      \
+      yylval = (Value);                                      \
+      yytoken = YYTRANSLATE(yychar);                         \
+      YYPOPSTACK(1);                                         \
+      goto yybackup;                                         \
+    } else                                                   \
+    {                                                        \
       yyerror(context, YY_("syntax error: cannot back up")); \
-      YYERROR; \
-    } \
+      YYERROR;                                               \
+    }                                                        \
   while (YYID(0))
 
 #define YYTERROR 1
@@ -10565,20 +10551,19 @@ static const yytype_uint16 yystos[] = {
 
 #define YYRHSLOC(Rhs, K) ((Rhs)[K])
 #ifndef YYLLOC_DEFAULT
-#  define YYLLOC_DEFAULT(Current, Rhs, N) \
-    do \
-      if (YYID(N)) \
-      { \
-        (Current).first_line = YYRHSLOC(Rhs, 1).first_line; \
-        (Current).first_column = YYRHSLOC(Rhs, 1).first_column; \
-        (Current).last_line = YYRHSLOC(Rhs, N).last_line; \
-        (Current).last_column = YYRHSLOC(Rhs, N).last_column; \
-      } \
-      else \
-      { \
-        (Current).first_line = (Current).last_line = YYRHSLOC(Rhs, 0).last_line; \
+#  define YYLLOC_DEFAULT(Current, Rhs, N)                                              \
+    do                                                                                 \
+      if (YYID(N))                                                                     \
+      {                                                                                \
+        (Current).first_line = YYRHSLOC(Rhs, 1).first_line;                            \
+        (Current).first_column = YYRHSLOC(Rhs, 1).first_column;                        \
+        (Current).last_line = YYRHSLOC(Rhs, N).last_line;                              \
+        (Current).last_column = YYRHSLOC(Rhs, N).last_column;                          \
+      } else                                                                           \
+      {                                                                                \
+        (Current).first_line = (Current).last_line = YYRHSLOC(Rhs, 0).last_line;       \
         (Current).first_column = (Current).last_column = YYRHSLOC(Rhs, 0).last_column; \
-      } \
+      }                                                                                \
     while (YYID(0))
 #endif
 
@@ -10612,21 +10597,21 @@ static const yytype_uint16 yystos[] = {
 #  endif
 
 #  define YYDPRINTF(Args) \
-    do \
-    { \
-      if (yydebug) \
-        YYFPRINTF Args; \
+    do                    \
+    {                     \
+      if (yydebug)        \
+        YYFPRINTF Args;   \
     } while (YYID(0))
 
 #  define YY_SYMBOL_PRINT(Title, Type, Value, Location) \
-    do \
-    { \
-      if (yydebug) \
-      { \
-        YYFPRINTF(stderr, "%s ", Title); \
-        yy_symbol_print(stderr, Type, Value, context); \
-        YYFPRINTF(stderr, "\n"); \
-      } \
+    do                                                  \
+    {                                                   \
+      if (yydebug)                                      \
+      {                                                 \
+        YYFPRINTF(stderr, "%s ", Title);                \
+        yy_symbol_print(stderr, Type, Value, context);  \
+        YYFPRINTF(stderr, "\n");                        \
+      }                                                 \
     } while (YYID(0))
 
 /*--------------------------------.
@@ -10640,7 +10625,8 @@ static void yy_symbol_value_print(FILE *yyoutput,
                                   YYSTYPE const *const yyvaluep,
                                   Sdf_TextParserContext *context)
 #  else
-static void yy_symbol_value_print(yyoutput, yytype, yyvaluep, context) FILE *yyoutput;
+static void yy_symbol_value_print(yyoutput, yytype, yyvaluep, context)
+FILE *yyoutput;
 int yytype;
 YYSTYPE const *const yyvaluep;
 Sdf_TextParserContext *context;
@@ -10672,7 +10658,8 @@ static void yy_symbol_print(FILE *yyoutput,
                             YYSTYPE const *const yyvaluep,
                             Sdf_TextParserContext *context)
 #  else
-static void yy_symbol_print(yyoutput, yytype, yyvaluep, context) FILE *yyoutput;
+static void yy_symbol_print(yyoutput, yytype, yyvaluep, context)
+FILE *yyoutput;
 int yytype;
 YYSTYPE const *const yyvaluep;
 Sdf_TextParserContext *context;
@@ -10695,7 +10682,8 @@ Sdf_TextParserContext *context;
 #  if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 static void yy_stack_print(yytype_int16 *yybottom, yytype_int16 *yytop)
 #  else
-static void yy_stack_print(yybottom, yytop) yytype_int16 *yybottom;
+static void yy_stack_print(yybottom, yytop)
+yytype_int16 *yybottom;
 yytype_int16 *yytop;
 #  endif
 {
@@ -10708,10 +10696,10 @@ yytype_int16 *yytop;
   YYFPRINTF(stderr, "\n");
 }
 
-#  define YY_STACK_PRINT(Bottom, Top) \
-    do \
-    { \
-      if (yydebug) \
+#  define YY_STACK_PRINT(Bottom, Top)    \
+    do                                   \
+    {                                    \
+      if (yydebug)                       \
         yy_stack_print((Bottom), (Top)); \
     } while (YYID(0))
 
@@ -10722,7 +10710,8 @@ yytype_int16 *yytop;
 #  if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 static void yy_reduce_print(YYSTYPE *yyvsp, int yyrule, Sdf_TextParserContext *context)
 #  else
-static void yy_reduce_print(yyvsp, yyrule, context) YYSTYPE *yyvsp;
+static void yy_reduce_print(yyvsp, yyrule, context)
+YYSTYPE *yyvsp;
 int yyrule;
 Sdf_TextParserContext *context;
 #  endif
@@ -10740,10 +10729,10 @@ Sdf_TextParserContext *context;
   }
 }
 
-#  define YY_REDUCE_PRINT(Rule) \
-    do \
-    { \
-      if (yydebug) \
+#  define YY_REDUCE_PRINT(Rule)                \
+    do                                         \
+    {                                          \
+      if (yydebug)                             \
         yy_reduce_print(yyvsp, Rule, context); \
     } while (YYID(0))
 
@@ -10803,7 +10792,8 @@ static YYSIZE_T yystrlen(yystr) const char *yystr;
 #      if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 static char *yystpcpy(char *yydest, const char *yysrc)
 #      else
-static char *yystpcpy(yydest, yysrc) char *yydest;
+static char *yystpcpy(yydest, yysrc)
+char *yydest;
 const char *yysrc;
 #      endif
 {
@@ -10961,8 +10951,7 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
         {
           yyp += yytnamerr(yyp, yyarg[yyi++]);
           yyf += 2;
-        }
-        else
+        } else
         {
           yyp++;
           yyf++;
@@ -11032,7 +11021,8 @@ int yyparse(YYPARSE_PARAM) void *YYPARSE_PARAM;
 #  if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 int yyparse(Sdf_TextParserContext *context)
 #  else
-int yyparse(context) Sdf_TextParserContext *context;
+int yyparse(context)
+Sdf_TextParserContext *context;
 #  endif
 #endif
 {
@@ -11215,8 +11205,7 @@ yybackup:
   {
     yychar = yytoken = YYEOF;
     YYDPRINTF((stderr, "Now at end of input.\n"));
-  }
-  else
+  } else
   {
     yytoken = YYTRANSLATE(yychar);
     YY_SYMBOL_PRINT("Next token is", yytoken, &yylval, &yylloc);
@@ -11492,8 +11481,10 @@ yyreduce:
 #line 1414 "wabi/usd/sdf/textFileFormat.yy"
     {
       _SetField(SdfPath::AbsoluteRootPath(), SdfFieldKeys->SubLayers, context->subLayerPaths, context);
-      _SetField(
-        SdfPath::AbsoluteRootPath(), SdfFieldKeys->SubLayerOffsets, context->subLayerOffsets, context);
+      _SetField(SdfPath::AbsoluteRootPath(),
+                SdfFieldKeys->SubLayerOffsets,
+                context->subLayerOffsets,
+                context);
 
       context->subLayerPaths.clear();
       context->subLayerOffsets.clear();
@@ -11660,8 +11651,7 @@ yyreduce:
       if (_HasSpec(context->path, context))
       {
         Err(context, "Duplicate prim '%s'", context->path.GetText());
-      }
-      else
+      } else
       {
         // Record the existence of this prim.
         _CreateSpec(context->path, SdfSpecTypePrim, context);
@@ -11696,8 +11686,10 @@ yyreduce:
       // Store the names of our properties, if there are any
       if (!context->propertiesStack.back().empty())
       {
-        _SetField(
-          context->path, SdfChildrenKeys->PropertyChildren, context->propertiesStack.back(), context);
+        _SetField(context->path,
+                  SdfChildrenKeys->PropertyChildren,
+                  context->propertiesStack.back(),
+                  context);
       }
 
       context->nameChildrenStack.pop_back();
@@ -12556,8 +12548,7 @@ yyreduce:
       if (!(yyvsp[(1) - (3)]).Get<std::string>().empty())
       {
         _PathSetPrim((yyvsp[(1) - (3)]), context);
-      }
-      else
+      } else
       {
         context->savedPath = SdfPath::EmptyPath();
       }
@@ -12611,8 +12602,7 @@ yyreduce:
       if (!(yyvsp[(1) - (3)]).Get<std::string>().empty())
       {
         _PathSetPrim((yyvsp[(1) - (3)]), context);
-      }
-      else
+      } else
       {
         context->savedPath = SdfPath::EmptyPath();
       }
@@ -12722,8 +12712,9 @@ yyreduce:
         _CreateSpec(variantSetPath, SdfSpecTypeVariantSet, context);
 
         // Add the name of this variant set to the VariantSets field
-        _AppendVectorItem(
-          SdfChildrenKeys->VariantSetChildren, TfToken(context->currentVariantSetNames.back()), context);
+        _AppendVectorItem(SdfChildrenKeys->VariantSetChildren,
+                          TfToken(context->currentVariantSetNames.back()),
+                          context);
       }
 
       // Author the variant set's variants
@@ -12775,8 +12766,10 @@ yyreduce:
       }
       if (!context->propertiesStack.back().empty())
       {
-        _SetField(
-          context->path, SdfChildrenKeys->PropertyChildren, context->propertiesStack.back(), context);
+        _SetField(context->path,
+                  SdfChildrenKeys->PropertyChildren,
+                  context->propertiesStack.back(),
+                  context);
       }
 
       context->nameChildrenStack.pop_back();
@@ -14208,8 +14201,7 @@ yyerrlab:
       {
         (void)yysyntax_error(yymsg, yystate, yychar);
         yyerror(context, yymsg);
-      }
-      else
+      } else
       {
         yyerror(context, YY_("syntax error"));
         if (yysize != 0)
@@ -14229,8 +14221,7 @@ yyerrlab:
       /* Return failure if at end of input.  */
       if (yychar == YYEOF)
         YYABORT;
-    }
-    else
+    } else
     {
       yydestruct("Error: discarding", yytoken, &yylval, context);
       yychar = YYEMPTY;
@@ -14467,21 +14458,21 @@ static int yydebug;
 
 namespace
 {
-struct _DebugContext
-{
-  explicit _DebugContext(bool state = true)
-    : _old(yydebug)
+  struct _DebugContext
   {
-    yydebug = state;
-  }
-  ~_DebugContext()
-  {
-    yydebug = _old;
-  }
+    explicit _DebugContext(bool state = true)
+      : _old(yydebug)
+    {
+      yydebug = state;
+    }
+    ~_DebugContext()
+    {
+      yydebug = _old;
+    }
 
- private:
-  bool _old;
-};
+   private:
+    bool _old;
+  };
 }  // namespace
 
 /// Parse a text layer into an SdfData

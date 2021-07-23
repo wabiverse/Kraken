@@ -42,101 +42,100 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static tuple _GetDeclarationInfo(const UsdGeomPrimvar &self)
-{
-  TfToken name, interpolation;
-  SdfValueTypeName typeName;
-  int elementSize;
-  self.GetDeclarationInfo(&name, &typeName, &interpolation, &elementSize);
-  return make_tuple(name, object(typeName), interpolation, elementSize);
-}
-
-static bool _Set(const UsdGeomPrimvar &self, TfPyObjWrapper pyVal, UsdTimeCode time)
-{
-  VtValue val = UsdPythonToSdfType(pyVal, self.GetTypeName());
-  return self.Set(val, time);
-}
-
-static TfPyObjWrapper _Get(const UsdGeomPrimvar &self, UsdTimeCode time = UsdTimeCode::Default())
-{
-  VtValue retValue;
-  self.Get(&retValue, time);
-  return UsdVtValueToPython(retValue);
-}
-
-static VtIntArray _GetIndices(const UsdGeomPrimvar &self, UsdTimeCode time = UsdTimeCode::Default())
-{
-  VtIntArray indices;
-  self.GetIndices(&indices, time);
-  return indices;
-}
-
-static TfPyObjWrapper _ComputeFlattened(const UsdGeomPrimvar &self,
-                                        UsdTimeCode time = UsdTimeCode::Default())
-{
-  VtValue retValue;
-  self.ComputeFlattened(&retValue, time);
-  return UsdVtValueToPython(retValue);
-}
-
-static vector<double> _GetTimeSamples(const UsdGeomPrimvar &self)
-{
-  vector<double> result;
-  self.GetTimeSamples(&result);
-  return result;
-}
-
-static vector<double> _GetTimeSamplesInInterval(const UsdGeomPrimvar &self, const GfInterval &interval)
-{
-  vector<double> result;
-  self.GetTimeSamplesInInterval(interval, &result);
-  return result;
-}
-
-static size_t __hash__(const UsdGeomPrimvar &self)
-{
-  return hash_value(self);
-}
-
-// We override __getattribute__ for UsdGeomPrimvar to check object validity
-// and raise an exception instead of crashing from Python.
-
-// Store the original __getattribute__ so we can dispatch to it after verifying
-// validity.
-static TfStaticData<TfPyObjWrapper> _object__getattribute__;
-
-// This function gets wrapped as __getattribute__ on UsdGeomPrimvar.
-static object __getattribute__(object selfObj, const char *name)
-{
-
-  // Allow attribute lookups if the attribute name starts with '__', or
-  // if the object's prim and attribute are both valid, or allow a few
-  // methods if just the prim is valid, or an even smaller subset if neither
-  // are valid.
-  if ((name[0] == '_' && name[1] == '_') ||
-      // prim and attr are valid, let everything through.
-      (extract<UsdGeomPrimvar &>(selfObj)().GetAttr().IsValid() &&
-       extract<UsdGeomPrimvar &>(selfObj)().GetAttr().GetPrim().IsValid()) ||
-      // prim is valid, but attr is invalid, let a few things through.
-      (extract<UsdGeomPrimvar &>(selfObj)().GetAttr().GetPrim().IsValid() &&
-       (strcmp(name, "HasValue") == 0 || strcmp(name, "HasAuthoredValue") == 0 ||
-        strcmp(name, "GetName") == 0 || strcmp(name, "GetPrimvarName") == 0 ||
-        strcmp(name, "NameContainsNamespaces") == 0 || strcmp(name, "GetBaseName") == 0 ||
-        strcmp(name, "GetNamespace") == 0 || strcmp(name, "SplitName") == 0)) ||
-      // prim and attr are both invalid, let almost nothing through.
-      strcmp(name, "IsDefined") == 0 || strcmp(name, "GetAttr") == 0)
+  static tuple _GetDeclarationInfo(const UsdGeomPrimvar &self)
   {
-    // Dispatch to object's __getattribute__.
-    return (*_object__getattribute__)(selfObj, name);
+    TfToken name, interpolation;
+    SdfValueTypeName typeName;
+    int elementSize;
+    self.GetDeclarationInfo(&name, &typeName, &interpolation, &elementSize);
+    return make_tuple(name, object(typeName), interpolation, elementSize);
   }
-  else
+
+  static bool _Set(const UsdGeomPrimvar &self, TfPyObjWrapper pyVal, UsdTimeCode time)
   {
-    // Otherwise raise a runtime error.
-    TfPyThrowRuntimeError(TfStringPrintf("Accessed invalid attribute as a primvar"));
+    VtValue val = UsdPythonToSdfType(pyVal, self.GetTypeName());
+    return self.Set(val, time);
   }
-  // Unreachable.
-  return object();
-}
+
+  static TfPyObjWrapper _Get(const UsdGeomPrimvar &self, UsdTimeCode time = UsdTimeCode::Default())
+  {
+    VtValue retValue;
+    self.Get(&retValue, time);
+    return UsdVtValueToPython(retValue);
+  }
+
+  static VtIntArray _GetIndices(const UsdGeomPrimvar &self, UsdTimeCode time = UsdTimeCode::Default())
+  {
+    VtIntArray indices;
+    self.GetIndices(&indices, time);
+    return indices;
+  }
+
+  static TfPyObjWrapper _ComputeFlattened(const UsdGeomPrimvar &self,
+                                          UsdTimeCode time = UsdTimeCode::Default())
+  {
+    VtValue retValue;
+    self.ComputeFlattened(&retValue, time);
+    return UsdVtValueToPython(retValue);
+  }
+
+  static vector<double> _GetTimeSamples(const UsdGeomPrimvar &self)
+  {
+    vector<double> result;
+    self.GetTimeSamples(&result);
+    return result;
+  }
+
+  static vector<double> _GetTimeSamplesInInterval(const UsdGeomPrimvar &self, const GfInterval &interval)
+  {
+    vector<double> result;
+    self.GetTimeSamplesInInterval(interval, &result);
+    return result;
+  }
+
+  static size_t __hash__(const UsdGeomPrimvar &self)
+  {
+    return hash_value(self);
+  }
+
+  // We override __getattribute__ for UsdGeomPrimvar to check object validity
+  // and raise an exception instead of crashing from Python.
+
+  // Store the original __getattribute__ so we can dispatch to it after verifying
+  // validity.
+  static TfStaticData<TfPyObjWrapper> _object__getattribute__;
+
+  // This function gets wrapped as __getattribute__ on UsdGeomPrimvar.
+  static object __getattribute__(object selfObj, const char *name)
+  {
+
+    // Allow attribute lookups if the attribute name starts with '__', or
+    // if the object's prim and attribute are both valid, or allow a few
+    // methods if just the prim is valid, or an even smaller subset if neither
+    // are valid.
+    if ((name[0] == '_' && name[1] == '_') ||
+        // prim and attr are valid, let everything through.
+        (extract<UsdGeomPrimvar &>(selfObj)().GetAttr().IsValid() &&
+         extract<UsdGeomPrimvar &>(selfObj)().GetAttr().GetPrim().IsValid()) ||
+        // prim is valid, but attr is invalid, let a few things through.
+        (extract<UsdGeomPrimvar &>(selfObj)().GetAttr().GetPrim().IsValid() &&
+         (strcmp(name, "HasValue") == 0 || strcmp(name, "HasAuthoredValue") == 0 ||
+          strcmp(name, "GetName") == 0 || strcmp(name, "GetPrimvarName") == 0 ||
+          strcmp(name, "NameContainsNamespaces") == 0 || strcmp(name, "GetBaseName") == 0 ||
+          strcmp(name, "GetNamespace") == 0 || strcmp(name, "SplitName") == 0)) ||
+        // prim and attr are both invalid, let almost nothing through.
+        strcmp(name, "IsDefined") == 0 || strcmp(name, "GetAttr") == 0)
+    {
+      // Dispatch to object's __getattribute__.
+      return (*_object__getattribute__)(selfObj, name);
+    } else
+    {
+      // Otherwise raise a runtime error.
+      TfPyThrowRuntimeError(TfStringPrintf("Accessed invalid attribute as a primvar"));
+    }
+    // Unreachable.
+    return object();
+  }
 
 }  // anonymous namespace
 

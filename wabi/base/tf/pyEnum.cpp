@@ -93,8 +93,7 @@ void Tf_PyEnumAddAttribute(boost::python::scope &s,
       "Ignoring enum value '%s'; an attribute with that "
       "name already exists in that scope.",
       name.c_str());
-  }
-  else
+  } else
   {
     s.attr(name.c_str()) = value;
   }

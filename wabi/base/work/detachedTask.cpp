@@ -66,8 +66,7 @@ void Work_EnsureDetachedTaskProgress()
         }
       }));
       newThread->detach();
-    }
-    else
+    } else
     {
       // We lost the race, so delete our temporary thread.
       delete newThread;

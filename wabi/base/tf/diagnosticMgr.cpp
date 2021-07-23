@@ -57,43 +57,42 @@ WABI_NAMESPACE_BEGIN
 
 namespace
 {
-// Helper RAII struct for ensuring we protect functions
-// that we wish to not have reentrant behaviors from delegates
-// that we call out to.
-struct _ReentrancyGuard
-{
- public:
-  _ReentrancyGuard(bool *reentrancyGuardValue)
-    : _reentrancyGuardValue(reentrancyGuardValue),
-      _scopeWasReentered(false)
+  // Helper RAII struct for ensuring we protect functions
+  // that we wish to not have reentrant behaviors from delegates
+  // that we call out to.
+  struct _ReentrancyGuard
   {
-    if (!*_reentrancyGuardValue)
+   public:
+    _ReentrancyGuard(bool *reentrancyGuardValue)
+      : _reentrancyGuardValue(reentrancyGuardValue),
+        _scopeWasReentered(false)
     {
-      *_reentrancyGuardValue = true;
+      if (!*_reentrancyGuardValue)
+      {
+        *_reentrancyGuardValue = true;
+      } else
+      {
+        _scopeWasReentered = true;
+      }
     }
-    else
+
+    bool ScopeWasReentered()
     {
-      _scopeWasReentered = true;
+      return _scopeWasReentered;
     }
-  }
 
-  bool ScopeWasReentered()
-  {
-    return _scopeWasReentered;
-  }
-
-  ~_ReentrancyGuard()
-  {
-    if (!_scopeWasReentered)
+    ~_ReentrancyGuard()
     {
-      *_reentrancyGuardValue = false;
+      if (!_scopeWasReentered)
+      {
+        *_reentrancyGuardValue = false;
+      }
     }
-  }
 
- private:
-  bool *_reentrancyGuardValue;
-  bool _scopeWasReentered;
-};
+   private:
+    bool *_reentrancyGuardValue;
+    bool _scopeWasReentered;
+  };
 }  // end anonymous namespace
 
 // Helper function for printing a diagnostic message when a delegate is not
@@ -180,8 +179,7 @@ void TfDiagnosticMgr::AppendError(TfError const &e)
   if (!HasActiveErrorMark())
   {
     _ReportError(e);
-  }
-  else
+  } else
   {
     ErrorList &errorList = _errorList.local();
     errorList.push_back(e);
@@ -198,8 +196,7 @@ void TfDiagnosticMgr::_SpliceErrors(ErrorList &src)
     {
       _ReportError(*i);
     }
-  }
-  else
+  } else
   {
     // Reassign new serial numbers to the errors.
     size_t serial = _nextSerial.fetch_add(src.size());
@@ -425,17 +422,14 @@ void TfDiagnosticMgr::PostFatal(TfCallContext const &context,
               context.GetFunction(),
               context.GetFile(),
               context.GetLine());
-    }
-    else if (statusCode == TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE)
+    } else if (statusCode == TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE)
     {
       fprintf(stderr, "Fatal error: %s [%s].\n", msg.c_str(), ArchGetProgramNameForErrors());
       exit(1);
-    }
-    else if (statusCode == TF_DIAGNOSTIC_MSG_TYPE || statusCode == TF_DIAGNOSTIC_MSG_ERROR_TYPE)
+    } else if (statusCode == TF_DIAGNOSTIC_MSG_TYPE || statusCode == TF_DIAGNOSTIC_MSG_ERROR_TYPE)
     {
       fprintf(stderr, "%s\n", msg.c_str());
-    }
-    else
+    } else
     {
       // Report and log information about the fatal error
       TfLogCrash("FATAL ERROR", msg, std::string() /*additionalInfo*/, context, true /*logToDB*/);
@@ -497,8 +491,8 @@ void TfDiagnosticMgr::ErrorHelper::PostWithInfo(const string &msg, TfDiagnosticI
 
 void TfDiagnosticMgr::ErrorHelper::Post(const string &msg) const
 {
-  TfDiagnosticMgr::GetInstance().PostError(
-    _errorCode, _errorCodeString, _context, msg, TfDiagnosticInfo(), false);
+  TfDiagnosticMgr::GetInstance()
+    .PostError(_errorCode, _errorCodeString, _context, msg, TfDiagnosticInfo(), false);
 }
 
 void TfDiagnosticMgr::ErrorHelper::PostQuietly(const string &msg, TfDiagnosticInfo info) const
@@ -532,8 +526,8 @@ void TfDiagnosticMgr::WarningHelper::Post(const char *fmt, ...) const
 
 void TfDiagnosticMgr::WarningHelper::Post(const string &msg) const
 {
-  TfDiagnosticMgr::GetInstance().PostWarning(
-    _warningCode, _warningCodeString, _context, msg, TfDiagnosticInfo(), false);
+  TfDiagnosticMgr::GetInstance()
+    .PostWarning(_warningCode, _warningCodeString, _context, msg, TfDiagnosticInfo(), false);
 }
 
 void TfDiagnosticMgr::WarningHelper::PostWithInfo(const string &msg, TfDiagnosticInfo info) const
@@ -551,8 +545,8 @@ void TfDiagnosticMgr::StatusHelper::Post(const char *fmt, ...) const
 
 void TfDiagnosticMgr::StatusHelper::Post(const string &msg) const
 {
-  TfDiagnosticMgr::GetInstance().PostStatus(
-    _statusCode, _statusCodeString, _context, msg, TfDiagnosticInfo(), false);
+  TfDiagnosticMgr::GetInstance()
+    .PostStatus(_statusCode, _statusCodeString, _context, msg, TfDiagnosticInfo(), false);
 }
 
 void TfDiagnosticMgr::StatusHelper::PostWithInfo(const string &msg, TfDiagnosticInfo info) const
@@ -659,16 +653,14 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",
                             msg.c_str());
-  }
-  else if (context.IsHidden() || !strcmp(context.GetFunction(), "") || !strcmp(context.GetFile(), ""))
+  } else if (context.IsHidden() || !strcmp(context.GetFunction(), "") || !strcmp(context.GetFile(), ""))
   {
     output = TfStringPrintf("%s%s: %s [%s]\n",
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",
                             msg.c_str(),
                             ArchGetProgramNameForErrors());
-  }
-  else
+  } else
   {
     output = TfStringPrintf("%s%s: in %s at line %zu of %s -- %s\n",
                             codeName.c_str(),

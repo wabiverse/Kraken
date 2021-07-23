@@ -115,8 +115,7 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
   {
     stateDesc.fragmentFunction = fragFunction;
     stateDesc.rasterizationEnabled = YES;
-  }
-  else
+  } else
   {
     stateDesc.rasterizationEnabled = NO;
   }
@@ -147,8 +146,7 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
         hgiColorAttachment.colorBlendOp);
       metalColorAttachment.alphaBlendOperation = HgiMetalConversions::GetBlendEquation(
         hgiColorAttachment.alphaBlendOp);
-    }
-    else
+    } else
     {
       metalColorAttachment.blendingEnabled = NO;
     }
@@ -162,8 +160,7 @@ void HgiMetalGraphicsPipeline::_CreateRenderPipelineState(id<MTLDevice> device)
   if (_descriptor.multiSampleState.alphaToCoverageEnable)
   {
     stateDesc.alphaToCoverageEnabled = YES;
-  }
-  else
+  } else
   {
     stateDesc.alphaToCoverageEnabled = NO;
   }
@@ -190,8 +187,7 @@ void HgiMetalGraphicsPipeline::_CreateDepthStencilState(id<MTLDevice> device)
   if (_descriptor.depthState.depthWriteEnabled)
   {
     depthStencilStateDescriptor.depthWriteEnabled = YES;
-  }
-  else
+  } else
   {
     depthStencilStateDescriptor.depthWriteEnabled = NO;
   }
@@ -200,8 +196,7 @@ void HgiMetalGraphicsPipeline::_CreateDepthStencilState(id<MTLDevice> device)
     MTLCompareFunction depthFn = HgiMetalConversions::GetDepthCompareFunction(
       _descriptor.depthState.depthCompareFn);
     depthStencilStateDescriptor.depthCompareFunction = depthFn;
-  }
-  else
+  } else
   {
     // Even if there is no depth attachment, some drivers may still perform
     // the depth test. So we pick Always over Never.
@@ -211,8 +206,7 @@ void HgiMetalGraphicsPipeline::_CreateDepthStencilState(id<MTLDevice> device)
   if (_descriptor.depthState.stencilTestEnabled)
   {
     TF_CODING_ERROR("Missing implementation stencil mask enabled");
-  }
-  else
+  } else
   {
     depthStencilStateDescriptor.backFaceStencil = nil;
     depthStencilStateDescriptor.frontFaceStencil = nil;

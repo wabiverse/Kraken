@@ -228,8 +228,7 @@ inline void RprUsdMaterialRegistry::Register(TfToken const &id,
   if (!status.second)
   {
     TF_CODING_ERROR("Failed to register %s: already registered", id.GetText());
-  }
-  else
+  } else
   {
     m_registeredNodes.push_back(std::move(desc));
   }

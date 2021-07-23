@@ -76,39 +76,39 @@ PcpNodeRef PcpNodeRef::GetOriginRootNode() const
   return root;
 }
 
-#define PCP_DEFINE_GET_API(typeName, getter, varName) \
-  typeName PcpNodeRef::getter() const \
-  { \
+#define PCP_DEFINE_GET_API(typeName, getter, varName)                        \
+  typeName PcpNodeRef::getter() const                                        \
+  {                                                                          \
     const PcpPrimIndex_Graph::_Node &graphNode = _graph->_GetNode(_nodeIdx); \
-    return graphNode.varName; \
+    return graphNode.varName;                                                \
   }
 
 // Same as PCP_DEFINE_GET_API() except specifically for retrieving
 // node indices. Consumers expect this to return -1 for an invalid
 // node, so we need to specifically check for the _invalidNodeIndex
 // value.
-#define PCP_DEFINE_GET_NODE_API(typeName, getter, varName) \
-  typeName PcpNodeRef::getter() const \
-  { \
+#define PCP_DEFINE_GET_NODE_API(typeName, getter, varName)                   \
+  typeName PcpNodeRef::getter() const                                        \
+  {                                                                          \
     const PcpPrimIndex_Graph::_Node &graphNode = _graph->_GetNode(_nodeIdx); \
-    if (graphNode.varName == PcpPrimIndex_Graph::_Node::_invalidNodeIndex) \
-      return (typeName)-1; \
-    return graphNode.varName; \
+    if (graphNode.varName == PcpPrimIndex_Graph::_Node::_invalidNodeIndex)   \
+      return (typeName)-1;                                                   \
+    return graphNode.varName;                                                \
   }
 
-#define PCP_DEFINE_SET_API(typeName, setter, varName) \
-  void PcpNodeRef::setter(typeName val) \
-  { \
-    const PcpPrimIndex_Graph::_Node &graphNode = _graph->_GetNode(_nodeIdx); \
-    if (graphNode.varName != val) \
-    { \
+#define PCP_DEFINE_SET_API(typeName, setter, varName)                                      \
+  void PcpNodeRef::setter(typeName val)                                                    \
+  {                                                                                        \
+    const PcpPrimIndex_Graph::_Node &graphNode = _graph->_GetNode(_nodeIdx);               \
+    if (graphNode.varName != val)                                                          \
+    {                                                                                      \
       PcpPrimIndex_Graph::_Node &writeableGraphNode = _graph->_GetWriteableNode(_nodeIdx); \
-      writeableGraphNode.varName = val; \
-    } \
+      writeableGraphNode.varName = val;                                                    \
+    }                                                                                      \
   }
 
 #define PCP_DEFINE_API(typeName, getter, setter, varName) \
-  PCP_DEFINE_GET_API(typeName, getter, varName) \
+  PCP_DEFINE_GET_API(typeName, getter, varName)           \
   PCP_DEFINE_SET_API(typeName, setter, varName)
 
 PCP_DEFINE_GET_API(PcpArcType, GetArcType, smallInts.arcType);
@@ -293,8 +293,7 @@ PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(const Pcp
   if (_index == PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
   {
     _index = _node._graph->_GetNode(_node).smallInts.lastChildIndex;
-  }
-  else
+  } else
   {
     increment();
   }
@@ -329,8 +328,7 @@ static inline int _GetNonVariantPathElementCount(const SdfPath &path)
     for (; cur.ContainsPrimVariantSelection(); cur = cur.GetParentPath())
       result += (!cur.IsPrimVariantSelectionPath());
     return result + static_cast<int>(cur.GetPathElementCount());
-  }
-  else
+  } else
   {
     return static_cast<int>(path.GetPathElementCount());
   }

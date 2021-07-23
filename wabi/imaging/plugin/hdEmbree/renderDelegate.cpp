@@ -162,8 +162,10 @@ void HdEmbreeRenderDelegate::_Initialize()
 
   // Store top-level embree objects inside a render param that can be
   // passed to prims during Sync(). Also pass a handle to the render thread.
-  _renderParam = std::make_shared<HdEmbreeRenderParam>(
-    _rtcDevice, _rtcScene, &_renderThread, &_sceneVersion);
+  _renderParam = std::make_shared<HdEmbreeRenderParam>(_rtcDevice,
+                                                       _rtcScene,
+                                                       &_renderThread,
+                                                       &_sceneVersion);
 
   // Pass the scene handle to the renderer.
   _renderer.SetScene(_rtcScene);
@@ -240,25 +242,20 @@ HdAovDescriptor HdEmbreeRenderDelegate::GetDefaultAovDescriptor(TfToken const &n
   if (name == HdAovTokens->color)
   {
     return HdAovDescriptor(HdFormatUNorm8Vec4, true, VtValue(GfVec4f(0.0f)));
-  }
-  else if (name == HdAovTokens->normal || name == HdAovTokens->Neye)
+  } else if (name == HdAovTokens->normal || name == HdAovTokens->Neye)
   {
     return HdAovDescriptor(HdFormatFloat32Vec3, false, VtValue(GfVec3f(-1.0f)));
-  }
-  else if (name == HdAovTokens->depth)
+  } else if (name == HdAovTokens->depth)
   {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(1.0f));
-  }
-  else if (name == HdAovTokens->cameraDepth)
+  } else if (name == HdAovTokens->cameraDepth)
   {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(0.0f));
-  }
-  else if (name == HdAovTokens->primId || name == HdAovTokens->instanceId ||
-           name == HdAovTokens->elementId)
+  } else if (name == HdAovTokens->primId || name == HdAovTokens->instanceId ||
+             name == HdAovTokens->elementId)
   {
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
-  }
-  else
+  } else
   {
     HdParsedAovToken aovId(name);
     if (aovId.isPrimvar)
@@ -316,8 +313,7 @@ HdRprim *HdEmbreeRenderDelegate::CreateRprim(TfToken const &typeId, SdfPath cons
   if (typeId == HdPrimTypeTokens->mesh)
   {
     return new HdEmbreeMesh(rprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Rprim Type %s", typeId.GetText());
   }
@@ -335,12 +331,10 @@ HdSprim *HdEmbreeRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath cons
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdCamera(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->extComputation)
+  } else if (typeId == HdPrimTypeTokens->extComputation)
   {
     return new HdExtComputation(sprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
@@ -355,12 +349,10 @@ HdSprim *HdEmbreeRenderDelegate::CreateFallbackSprim(TfToken const &typeId)
   if (typeId == HdPrimTypeTokens->camera)
   {
     return new HdCamera(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->extComputation)
+  } else if (typeId == HdPrimTypeTokens->extComputation)
   {
     return new HdExtComputation(SdfPath::EmptyPath());
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
@@ -378,8 +370,7 @@ HdBprim *HdEmbreeRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath cons
   if (typeId == HdPrimTypeTokens->renderBuffer)
   {
     return new HdEmbreeRenderBuffer(bprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
@@ -391,8 +382,7 @@ HdBprim *HdEmbreeRenderDelegate::CreateFallbackBprim(TfToken const &typeId)
   if (typeId == HdPrimTypeTokens->renderBuffer)
   {
     return new HdEmbreeRenderBuffer(SdfPath::EmptyPath());
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }

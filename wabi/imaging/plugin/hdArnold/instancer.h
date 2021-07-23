@@ -89,7 +89,7 @@ class HdArnoldInstancer : public HdInstancer
   HdArnoldSampledType<VtVec3fArray> _translates;     ///< Sampled instance translate values.
   // Newer versions use GfQuatH arrays instead of GfVec4f arrays.
   HdArnoldSampledType<VtQuathArray> _rotates;  ///< Sampled instance rotate values.
-  HdArnoldSampledType<VtVec3fArray> _scales;  ///< Sampled instance scale values.
+  HdArnoldSampledType<VtVec3fArray> _scales;   ///< Sampled instance scale values.
 };
 
 WABI_NAMESPACE_END

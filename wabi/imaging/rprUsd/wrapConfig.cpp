@@ -26,28 +26,29 @@ WABI_NAMESPACE_USING
 void wrapConfig()
 {
 
-#define CONFIG_SETTER(setter, type) \
-  .def( \
-    #setter, \
-    +[](type value) { \
-      RprUsdConfig *config; \
+#define CONFIG_SETTER(setter, type)                         \
+  .def(                                                     \
+    #setter,                                                \
+    +[](type value) {                                       \
+      RprUsdConfig *config;                                 \
       auto configLock = RprUsdConfig::GetInstance(&config); \
-      config->setter(value); \
-    }) \
+      config->setter(value);                                \
+    })                                                      \
     .staticmethod(#setter)
 
-#define CONFIG_GETTER(getter) \
-  .def( \
-    #getter, \
-    +[]() { \
-      RprUsdConfig *config; \
+#define CONFIG_GETTER(getter)                               \
+  .def(                                                     \
+    #getter,                                                \
+    +[]() {                                                 \
+      RprUsdConfig *config;                                 \
       auto configLock = RprUsdConfig::GetInstance(&config); \
-      return config->getter(); \
-    }) \
+      return config->getter();                              \
+    })                                                      \
     .staticmethod(#getter)
 
   scope s = class_<RprUsdConfig, BOOST_NS::noncopyable>("Config", no_init)
     CONFIG_SETTER(SetRestartWarning, bool) CONFIG_SETTER(SetTextureCacheDir, std::string)
       CONFIG_SETTER(SetKernelCacheDir, std::string) CONFIG_GETTER(IsRestartWarningEnabled)
-        CONFIG_GETTER(GetTextureCacheDir) CONFIG_GETTER(GetKernelCacheDir);
+  CONFIG_GETTER(GetTextureCacheDir)
+  CONFIG_GETTER(GetKernelCacheDir);
 }

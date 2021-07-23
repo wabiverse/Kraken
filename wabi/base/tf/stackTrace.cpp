@@ -112,8 +112,7 @@ void TfLogStackTrace(const std::string &reason, bool logtodb)
     {
       ArchLogSessionInfo(tmpFile.c_str());
     }
-  }
-  else
+  } else
   {
     // we couldn't open the tmp file, so write the stack trace to stderr
     fprintf(stderr,

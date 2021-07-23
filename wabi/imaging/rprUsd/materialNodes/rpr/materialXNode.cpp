@@ -45,8 +45,7 @@ static bool ReadInput(TfToken const &inputId, VtValue const &inputValue, T *dst)
   {
     *dst = inputValue.UncheckedGet<T>();
     return true;
-  }
-  else
+  } else
   {
     TF_RUNTIME_ERROR("[%s] %s input should be of %s type: %s",
                      RprUsdRprMaterialXNodeTokens->rpr_materialx_node.GetText(),
@@ -81,8 +80,7 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
       {
         return VtValue(m_surfaceNode);
       }
-    }
-    else if (outputId == HdMaterialTerminalTokens->displacement)
+    } else if (outputId == HdMaterialTerminalTokens->displacement)
     {
       if (m_displacementNode)
       {
@@ -105,16 +103,14 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
         ResetNodeOutput();
 
         return true;
-      }
-      else
+      } else
       {
         TF_RUNTIME_ERROR("[%s] file input should be of SdfAssetPath type: %s",
                          RprUsdRprMaterialXNodeTokens->rpr_materialx_node.GetText(),
                          value.GetTypeName().c_str());
         return false;
       }
-    }
-    else if (inputId == RprUsdRprMaterialXNodeTokens->string)
+    } else if (inputId == RprUsdRprMaterialXNodeTokens->string)
     {
       bool ret = ReadInput(inputId, value, &m_mtlxString);
       if (ret)
@@ -122,8 +118,7 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
         ResetNodeOutput();
       }
       return ret;
-    }
-    else if (inputId == RprUsdRprMaterialXNodeTokens->basePath)
+    } else if (inputId == RprUsdRprMaterialXNodeTokens->basePath)
     {
       bool ret = ReadInput(inputId, value, &m_mtlxBasePath);
       if (ret)
@@ -131,16 +126,13 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
         ResetNodeOutput();
       }
       return ret;
-    }
-    else if (inputId == RprUsdRprMaterialXNodeTokens->surfaceElement)
+    } else if (inputId == RprUsdRprMaterialXNodeTokens->surfaceElement)
     {
       return SetRenderElement(RPRMtlxLoader::kOutputSurface, value);
-    }
-    else if (inputId == RprUsdRprMaterialXNodeTokens->displacementElement)
+    } else if (inputId == RprUsdRprMaterialXNodeTokens->displacementElement)
     {
       return SetRenderElement(RPRMtlxLoader::kOutputDisplacement, value);
-    }
-    else if (inputId == RprUsdRprMaterialXNodeTokens->stPrimvarName)
+    } else if (inputId == RprUsdRprMaterialXNodeTokens->stPrimvarName)
     {
       return ReadInput(inputId, value, &m_ctx->uvPrimvarName);
     }
@@ -203,8 +195,10 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
         mtlxDoc->importLibrary(m_ctx->mtlxLoader->GetStdlib());
 
         rpr_material_system matSys;
-        if (RPR_ERROR_CHECK(m_ctx->rprContext->GetInfo(
-                              RPR_CONTEXT_LIST_CREATED_MATERIALSYSTEM, sizeof(matSys), &matSys, nullptr),
+        if (RPR_ERROR_CHECK(m_ctx->rprContext->GetInfo(RPR_CONTEXT_LIST_CREATED_MATERIALSYSTEM,
+                                                       sizeof(matSys),
+                                                       &matSys,
+                                                       nullptr),
                             "Failed to get rpr material system"))
         {
           return false;
@@ -295,8 +289,7 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
         };
         m_surfaceNode = createOutputWrapNode(RPRMtlxLoader::kOutputSurface);
         m_displacementNode = createOutputWrapNode(RPRMtlxLoader::kOutputDisplacement);
-      }
-      else
+      } else
       {
         // Find the only existing output
         RPRMtlxLoader::OutputType outputType = RPRMtlxLoader::kOutputNone;
@@ -330,8 +323,7 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
         if (outputType == RPRMtlxLoader::kOutputSurface)
         {
           m_surfaceNode = std::move(wrapNode);
-        }
-        else if (outputType == RPRMtlxLoader::kOutputDisplacement)
+        } else if (outputType == RPRMtlxLoader::kOutputDisplacement)
         {
           m_displacementNode = std::move(wrapNode);
         }
@@ -365,12 +357,10 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
             if (addressmode == "constant")
             {
               TF_WARN("The constant uv address mode is not supported. Falling back to periodic.");
-            }
-            else if (addressmode == "clamp")
+            } else if (addressmode == "clamp")
             {
               textureCommit.wrapType = RPR_IMAGE_WRAP_TYPE_CLAMP_TO_EDGE;
-            }
-            else if (addressmode == "mirror")
+            } else if (addressmode == "mirror")
             {
               textureCommit.wrapType = RPR_IMAGE_WRAP_TYPE_MIRRORED_REPEAT;
             }
@@ -379,20 +369,16 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
           if (mtlxImageNode.type == "float")
           {
             textureCommit.numComponentsRequired = 1;
-          }
-          else if (mtlxImageNode.type == "vector2" || mtlxImageNode.type == "color2")
+          } else if (mtlxImageNode.type == "vector2" || mtlxImageNode.type == "color2")
           {
             textureCommit.numComponentsRequired = 2;
-          }
-          else if (mtlxImageNode.type == "vector3" || mtlxImageNode.type == "color3")
+          } else if (mtlxImageNode.type == "vector3" || mtlxImageNode.type == "color3")
           {
             textureCommit.numComponentsRequired = 3;
-          }
-          else if (mtlxImageNode.type == "vector4" || mtlxImageNode.type == "color4")
+          } else if (mtlxImageNode.type == "vector4" || mtlxImageNode.type == "color4")
           {
             textureCommit.numComponentsRequired = 4;
-          }
-          else
+          } else
           {
             TF_WARN("Invalid image materialX type: %s", mtlxImageNode.type.c_str());
           }
@@ -431,10 +417,10 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
     rpr::Status status;
     if (!m_mtlxString.empty())
     {
-      m_surfaceNode.reset(m_ctx->rprContext->CreateMaterialXNode(
-        m_mtlxString.c_str(), basePath.c_str(), 0, nullptr, nullptr, &status));
-    }
-    else
+      m_surfaceNode.reset(
+        m_ctx->rprContext
+          ->CreateMaterialXNode(m_mtlxString.c_str(), basePath.c_str(), 0, nullptr, nullptr, &status));
+    } else
     {
       std::ifstream mtlxFile(m_mtlxFilepath);
       if (!mtlxFile.good())
@@ -455,8 +441,9 @@ class RprUsd_RprMaterialXNode : public RprUsd_MaterialNode
       mtlxFile.seekg(0);
       mtlxFile.read(&xmlData[0], fileSize);
 
-      m_surfaceNode.reset(m_ctx->rprContext->CreateMaterialXNode(
-        xmlData.get(), basePath.c_str(), 0, nullptr, nullptr, &status));
+      m_surfaceNode.reset(
+        m_ctx->rprContext
+          ->CreateMaterialXNode(xmlData.get(), basePath.c_str(), 0, nullptr, nullptr, &status));
     }
 
     if (!m_surfaceNode)

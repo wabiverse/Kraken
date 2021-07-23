@@ -22,18 +22,18 @@ WABI_NAMESPACE_BEGIN
 namespace rif
 {
 
-class Image : public Object
-{
- public:
-  static rif_image_desc GetDesc(uint32_t width, uint32_t height, HdFormat format);
-
-  explicit Image(rif_image imageHandle);
-
-  rif_image GetHandle()
+  class Image : public Object
   {
-    return static_cast<rif_image>(m_rifObjectHandle);
-  }
-};
+   public:
+    static rif_image_desc GetDesc(uint32_t width, uint32_t height, HdFormat format);
+
+    explicit Image(rif_image imageHandle);
+
+    rif_image GetHandle()
+    {
+      return static_cast<rif_image>(m_rifObjectHandle);
+    }
+  };
 
 }  // namespace rif
 

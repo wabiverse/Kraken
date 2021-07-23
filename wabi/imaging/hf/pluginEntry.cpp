@@ -127,12 +127,10 @@ bool Hf_PluginEntry::operator<(const Hf_PluginEntry &other) const
   if (aPriority < bPriority)
   {
     return true;
-  }
-  else if (aPriority > bPriority)
+  } else if (aPriority > bPriority)
   {
     return false;
-  }
-  else
+  } else
   {
     // Use TypeName string rather than machine name token
     // as we want to sort alphabetically not hash order.

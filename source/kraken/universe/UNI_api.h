@@ -57,7 +57,8 @@
 
 #define KRAKEN_LUXOVERSE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
 #define KRAKEN_LUXOVERSE_CREATE(g) Define(CTX_data_stage(g), stagepath)
-#define KRAKEN_PRIM_OPERATOR_CREATE(x, y) CTX_data_stage(x)->DefinePrim(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_OPERATORS).AppendPath(SdfPath(y)))
+#define KRAKEN_PRIM_OPERATOR_CREATE(x, y) \
+  CTX_data_stage(x)->DefinePrim(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_OPERATORS).AppendPath(SdfPath(y)))
 
 #define GET_X(x) x[0]
 #define GET_Y(y) y[1]

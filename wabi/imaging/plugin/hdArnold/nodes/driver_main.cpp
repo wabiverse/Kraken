@@ -40,22 +40,22 @@ AI_DRIVER_NODE_EXPORT_METHODS(HdArnoldDriverMainMtd);
 
 namespace
 {
-const char *supportedExtensions[] = {nullptr};
+  const char *supportedExtensions[] = {nullptr};
 
-struct DriverData
-{
-  GfMatrix4f projMtx;
-  GfMatrix4f viewMtx;
-  HdArnoldRenderBuffer *colorBuffer = nullptr;
-  HdArnoldRenderBuffer *depthBuffer = nullptr;
-  HdArnoldRenderBuffer *idBuffer = nullptr;
-  // Local storage for converting from P to depth.
-  std::vector<float> depths[AI_MAX_THREADS];
-  // Local storage for the id remapping.
-  std::vector<int> ids[AI_MAX_THREADS];
-  // Local storage for the color buffer.
-  std::vector<AtRGBA> colors[AI_MAX_THREADS];
-};
+  struct DriverData
+  {
+    GfMatrix4f projMtx;
+    GfMatrix4f viewMtx;
+    HdArnoldRenderBuffer *colorBuffer = nullptr;
+    HdArnoldRenderBuffer *depthBuffer = nullptr;
+    HdArnoldRenderBuffer *idBuffer = nullptr;
+    // Local storage for converting from P to depth.
+    std::vector<float> depths[AI_MAX_THREADS];
+    // Local storage for the id remapping.
+    std::vector<int> ids[AI_MAX_THREADS];
+    // Local storage for the color buffer.
+    std::vector<AtRGBA> colors[AI_MAX_THREADS];
+  };
 
 }  // namespace
 
@@ -125,8 +125,7 @@ driver_process_bucket
     if (pixelType == AI_TYPE_VECTOR && strcmp(outputName, "P") == 0)
     {
       positionData = bucketData;
-    }
-    else if (pixelType == AI_TYPE_UINT && strcmp(outputName, "ID") == 0)
+    } else if (pixelType == AI_TYPE_UINT && strcmp(outputName, "ID") == 0)
     {
       if (driverData->idBuffer)
       {
@@ -136,11 +135,10 @@ driver_process_bucket
         {
           ids[i] = static_cast<int>(in[i]) - 1;
         }
-        driverData->idBuffer->WriteBucket(
-          bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatInt32, ids.data());
+        driverData->idBuffer
+          ->WriteBucket(bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatInt32, ids.data());
       }
-    }
-    else if (pixelType == AI_TYPE_RGBA && strcmp(outputName, "RGBA") == 0)
+    } else if (pixelType == AI_TYPE_RGBA && strcmp(outputName, "RGBA") == 0)
     {
       colorData = bucketData;
     }
@@ -161,16 +159,14 @@ driver_process_bucket
         depth[i] = std::max(-1.0f, std::min(1.0f, p[2]));
 #endif
       }
-    }
-    else
+    } else
     {
       for (auto i = decltype(pixelCount){0}; i < pixelCount; i += 1)
       {
         if (ids[i] == -1)
         {
           depth[i] = 1.0f;
-        }
-        else
+        } else
         {
           const auto p = driverData->projMtx.Transform(driverData->viewMtx.Transform(in[i]));
 #ifdef USD_HAS_ZERO_TO_ONE_DEPTH
@@ -181,17 +177,16 @@ driver_process_bucket
         }
       }
     }
-    driverData->depthBuffer->WriteBucket(
-      bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32, depth.data());
+    driverData->depthBuffer
+      ->WriteBucket(bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32, depth.data());
   }
   if (colorData != nullptr && driverData->colorBuffer)
   {
     if (ids.empty())
     {
-      driverData->colorBuffer->WriteBucket(
-        bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, colorData);
-    }
-    else
+      driverData->colorBuffer
+        ->WriteBucket(bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, colorData);
+    } else
     {
       auto &color = driverData->colors[tid];
       color.resize(pixelCount, AI_RGBA_ZERO);
@@ -204,8 +199,8 @@ driver_process_bucket
           color[i].a = 0.0f;
         }
       }
-      driverData->colorBuffer->WriteBucket(
-        bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, color.data());
+      driverData->colorBuffer
+        ->WriteBucket(bucket_xo, bucket_yo, bucket_size_x, bucket_size_y, HdFormatFloat32Vec4, color.data());
     }
   }
 }

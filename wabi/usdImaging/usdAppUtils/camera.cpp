@@ -70,8 +70,7 @@ UsdGeomCamera UsdAppUtilsGetCameraAtPath(const UsdStagePtr &stage, const SdfPath
         "instead: \"%s\"",
         cameraPath.GetText(),
         usdCameraPath.GetText());
-    }
-    else
+    } else
     {
       // Search for the camera by name.
       UsdPrimRange primRange = UsdPrimRange::Stage(stage, UsdTraverseInstanceProxies());

@@ -44,7 +44,7 @@ WABI_NAMESPACE_BEGIN
 #if defined(ARCH_OS_WINDOWS)
 namespace
 {
-DWORD arch_lastLibraryError = 0;
+  DWORD arch_lastLibraryError = 0;
 }
 #endif
 
@@ -55,8 +55,7 @@ void *ArchLibraryOpen(const std::string &filename, int flag)
   if (void *result = LoadLibrary(filename.c_str()))
   {
     return result;
-  }
-  else
+  } else
   {
     arch_lastLibraryError = GetLastError();
     return nullptr;

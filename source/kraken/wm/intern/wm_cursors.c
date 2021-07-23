@@ -39,10 +39,10 @@ typedef struct CCursor
 static CCursor *KrakenCursor[WM_CURSOR_NUM] = {0};
 
 #define BEGIN_CURSOR_BLOCK \
-  { \
+  {                        \
     ((void)0)
 #define END_CURSOR_BLOCK \
-  } \
+  }                      \
   ((void)0)
 
 void WM_init_cursor_data(void)

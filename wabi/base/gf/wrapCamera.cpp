@@ -47,54 +47,54 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static float _GetHorizontalFieldOfView(const GfCamera &camera)
-{
-  return camera.GetFieldOfView(GfCamera::FOVHorizontal);
-}
+  static float _GetHorizontalFieldOfView(const GfCamera &camera)
+  {
+    return camera.GetFieldOfView(GfCamera::FOVHorizontal);
+  }
 
-static float _GetVerticalFieldOfView(const GfCamera &camera)
-{
-  return camera.GetFieldOfView(GfCamera::FOVVertical);
-}
+  static float _GetVerticalFieldOfView(const GfCamera &camera)
+  {
+    return camera.GetFieldOfView(GfCamera::FOVVertical);
+  }
 
-// Required because CamCamera::GetClippingPlane returns const &std::vector
-// and add_property does not allow one to specify a return_value policy.
-static std::vector<GfVec4f> _GetClippingPlanes(const GfCamera &camera)
-{
-  return camera.GetClippingPlanes();
-}
+  // Required because CamCamera::GetClippingPlane returns const &std::vector
+  // and add_property does not allow one to specify a return_value policy.
+  static std::vector<GfVec4f> _GetClippingPlanes(const GfCamera &camera)
+  {
+    return camera.GetClippingPlanes();
+  }
 
-static std::string _Repr(GfCamera const &self)
-{
-  const std::string prefix = TF_PY_REPR_PREFIX + "Camera(";
-  const std::string indent(prefix.size(), ' ');
-  const std::string seperator = ",\n" + indent;
+  static std::string _Repr(GfCamera const &self)
+  {
+    const std::string prefix = TF_PY_REPR_PREFIX + "Camera(";
+    const std::string indent(prefix.size(), ' ');
+    const std::string seperator = ",\n" + indent;
 
-  // Use keyword args for clarity.
-  // Only supply some arguments when different from default.
-  std::vector<std::string> kwargs;
-  if (self.GetTransform() != GfMatrix4d(1.0))
-    kwargs.push_back("transform = " + TfPyRepr(self.GetTransform()));
+    // Use keyword args for clarity.
+    // Only supply some arguments when different from default.
+    std::vector<std::string> kwargs;
+    if (self.GetTransform() != GfMatrix4d(1.0))
+      kwargs.push_back("transform = " + TfPyRepr(self.GetTransform()));
 
-  kwargs.push_back("projection = " + TfPyRepr(self.GetProjection()));
-  kwargs.push_back("horizontalAperture = " + TfPyRepr(self.GetHorizontalAperture()));
-  kwargs.push_back("verticalAperture = " + TfPyRepr(self.GetVerticalAperture()));
-  if (self.GetHorizontalApertureOffset() != 0.0)
-    kwargs.push_back("horizontalApertureOffset = " + TfPyRepr(self.GetHorizontalApertureOffset()));
-  if (self.GetVerticalApertureOffset() != 0.0)
-    kwargs.push_back("verticalApertureOffset = " + TfPyRepr(self.GetVerticalApertureOffset()));
-  kwargs.push_back("focalLength = " + TfPyRepr(self.GetFocalLength()));
-  if (self.GetClippingRange() != GfRange1f(1, 1000000))
-    kwargs.push_back("clippingRange = " + TfPyRepr(self.GetClippingRange()));
-  if (!self.GetClippingPlanes().empty())
-    kwargs.push_back("clippingPlanes = " + TfPyRepr(self.GetClippingPlanes()));
-  if (self.GetFStop() != 0.0)
-    kwargs.push_back("fStop = " + TfPyRepr(self.GetFStop()));
-  if (self.GetFocusDistance() != 0.0)
-    kwargs.push_back("focusDistance = " + TfPyRepr(self.GetFocusDistance()));
+    kwargs.push_back("projection = " + TfPyRepr(self.GetProjection()));
+    kwargs.push_back("horizontalAperture = " + TfPyRepr(self.GetHorizontalAperture()));
+    kwargs.push_back("verticalAperture = " + TfPyRepr(self.GetVerticalAperture()));
+    if (self.GetHorizontalApertureOffset() != 0.0)
+      kwargs.push_back("horizontalApertureOffset = " + TfPyRepr(self.GetHorizontalApertureOffset()));
+    if (self.GetVerticalApertureOffset() != 0.0)
+      kwargs.push_back("verticalApertureOffset = " + TfPyRepr(self.GetVerticalApertureOffset()));
+    kwargs.push_back("focalLength = " + TfPyRepr(self.GetFocalLength()));
+    if (self.GetClippingRange() != GfRange1f(1, 1000000))
+      kwargs.push_back("clippingRange = " + TfPyRepr(self.GetClippingRange()));
+    if (!self.GetClippingPlanes().empty())
+      kwargs.push_back("clippingPlanes = " + TfPyRepr(self.GetClippingPlanes()));
+    if (self.GetFStop() != 0.0)
+      kwargs.push_back("fStop = " + TfPyRepr(self.GetFStop()));
+    if (self.GetFocusDistance() != 0.0)
+      kwargs.push_back("focusDistance = " + TfPyRepr(self.GetFocusDistance()));
 
-  return prefix + TfStringJoin(kwargs, seperator.c_str()) + ")";
-}
+    return prefix + TfStringJoin(kwargs, seperator.c_str()) + ")";
+  }
 
 }  // anonymous namespace
 
@@ -135,10 +135,12 @@ void wrapCamera()
     .add_property("projection", &This::GetProjection, &This::SetProjection)
     .add_property("horizontalAperture", &This::GetHorizontalAperture, &This::SetHorizontalAperture)
     .add_property("verticalAperture", &This::GetVerticalAperture, &This::SetVerticalAperture)
-    .add_property(
-      "horizontalApertureOffset", &This::GetHorizontalApertureOffset, &This::SetHorizontalApertureOffset)
-    .add_property(
-      "verticalApertureOffset", &This::GetVerticalApertureOffset, &This::SetVerticalApertureOffset)
+    .add_property("horizontalApertureOffset",
+                  &This::GetHorizontalApertureOffset,
+                  &This::SetHorizontalApertureOffset)
+    .add_property("verticalApertureOffset",
+                  &This::GetVerticalApertureOffset,
+                  &This::SetVerticalApertureOffset)
     .add_property("aspectRatio", &This::GetAspectRatio)
     .add_property("focalLength", &This::GetFocalLength, &This::SetFocalLength)
     .add_property("clippingRange", &This::GetClippingRange, &This::SetClippingRange)

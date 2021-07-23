@@ -55,8 +55,7 @@ void TraceCounterAccumulator::OnEndCollection()
       if (v.second.isDelta)
       {
         curValue += v.second.value;
-      }
-      else
+      } else
       {
         curValue = v.second.value;
       }

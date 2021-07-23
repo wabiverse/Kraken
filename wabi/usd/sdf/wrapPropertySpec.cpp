@@ -42,26 +42,26 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static void _WrapSetName(SdfPropertySpec &self, const std::string &newName)
-{
-  // Always validate the new name from python.
-  self.SetName(newName, true);
-}
+  static void _WrapSetName(SdfPropertySpec &self, const std::string &newName)
+  {
+    // Always validate the new name from python.
+    self.SetName(newName, true);
+  }
 
-static void _SetSymmetryArguments(SdfPropertySpec const &self, VtDictionary const &dictionary)
-{
-  self.GetSymmetryArguments() = dictionary;
-}
+  static void _SetSymmetryArguments(SdfPropertySpec const &self, VtDictionary const &dictionary)
+  {
+    self.GetSymmetryArguments() = dictionary;
+  }
 
-static void _SetCustomData(SdfPropertySpec const &self, VtDictionary const &dictionary)
-{
-  self.GetCustomData() = dictionary;
-}
+  static void _SetCustomData(SdfPropertySpec const &self, VtDictionary const &dictionary)
+  {
+    self.GetCustomData() = dictionary;
+  }
 
-static void _SetAssetInfo(SdfPropertySpec const &self, VtDictionary const &dictionary)
-{
-  self.GetAssetInfo() = dictionary;
-}
+  static void _SetAssetInfo(SdfPropertySpec const &self, VtDictionary const &dictionary)
+  {
+    self.GetAssetInfo() = dictionary;
+  }
 
 }  // anonymous namespace
 
@@ -92,13 +92,19 @@ void wrapPropertySpec()
 
     .add_property("comment", &This::GetComment, &This::SetComment, "A comment describing the property.")
 
-    .add_property(
-      "documentation", &This::GetDocumentation, &This::SetDocumentation, "Documentation for the property.")
+    .add_property("documentation",
+                  &This::GetDocumentation,
+                  &This::SetDocumentation,
+                  "Documentation for the property.")
 
-    .add_property(
-      "displayGroup", &This::GetDisplayGroup, &This::SetDisplayGroup, "DisplayGroup for the property.")
-    .add_property(
-      "displayName", &This::GetDisplayName, &This::SetDisplayName, "DisplayName for the property.")
+    .add_property("displayGroup",
+                  &This::GetDisplayGroup,
+                  &This::SetDisplayGroup,
+                  "DisplayGroup for the property.")
+    .add_property("displayName",
+                  &This::GetDisplayName,
+                  &This::SetDisplayName,
+                  "DisplayName for the property.")
     .add_property("prefix", &This::GetPrefix, &This::SetPrefix, "Prefix for the property.")
 
     .add_property("variability",
@@ -122,14 +128,20 @@ void wrapPropertySpec()
                   "Prims determine the values of their Computed attributes through\n"
                   "Prim-specific computation.  They may not be connected.")
 
-    .add_property(
-      "hidden", &This::GetHidden, &This::SetHidden, "Whether this property will be hidden in browsers.")
+    .add_property("hidden",
+                  &This::GetHidden,
+                  &This::SetHidden,
+                  "Whether this property will be hidden in browsers.")
 
-    .add_property(
-      "permission", &This::GetPermission, &This::SetPermission, "The property's permission restriction.")
+    .add_property("permission",
+                  &This::GetPermission,
+                  &This::SetPermission,
+                  "The property's permission restriction.")
 
-    .add_property(
-      "custom", &This::IsCustom, &This::SetCustom, "Whether this property spec declares a custom attribute.")
+    .add_property("custom",
+                  &This::IsCustom,
+                  &This::SetCustom,
+                  "Whether this property spec declares a custom attribute.")
 
     .add_property("symmetryFunction",
                   &This::GetSymmetryFunction,
@@ -143,8 +155,10 @@ void wrapPropertySpec()
                   "Although this property is marked read-only, you can "
                   "modify the contents to add, change, and clear symmetry arguments.")
 
-    .add_property(
-      "symmetricPeer", &This::GetSymmetricPeer, &This::SetSymmetricPeer, "The property's symmetric peer.")
+    .add_property("symmetricPeer",
+                  &This::GetSymmetricPeer,
+                  &This::SetSymmetricPeer,
+                  "The property's symmetric peer.")
 
     .add_property("customData",
                   &This::GetCustomData,
@@ -174,8 +188,10 @@ void wrapPropertySpec()
 
     .add_property("owner", &This::GetOwner, "The owner of this property.  Either a relationship or a prim.")
 
-    .add_property(
-      "default", &This::GetDefaultValue, &This::SetDefaultValue, "The default value of this property.")
+    .add_property("default",
+                  &This::GetDefaultValue,
+                  &This::SetDefaultValue,
+                  "The default value of this property.")
 
     .def("HasDefaultValue", &This::HasDefaultValue)
     .def("ClearDefaultValue", &This::ClearDefaultValue)

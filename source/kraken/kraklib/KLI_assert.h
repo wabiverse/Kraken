@@ -56,8 +56,8 @@ void KLI_system_backtrace(FILE *fp);
 #  else
 #    define _KLI_ASSERT_ABORT() (void)0
 #  endif
-#  define KLI_assert(a) \
-    (void)((!(a)) ? \
+#  define KLI_assert(a)                                                                               \
+    (void)((!(a)) ?                                                                                   \
              ((_KLI_assert_print_backtrace(), _KLI_ASSERT_PRINT_POS(a), _KLI_ASSERT_ABORT(), NULL)) : \
              NULL)
 #else
@@ -83,11 +83,11 @@ void KLI_system_backtrace(FILE *fp);
 #define KLI_STATIC_ASSERT_ALIGN(st, align) \
   KLI_STATIC_ASSERT((sizeof(st) % (align) == 0), "Structure must be strictly aligned")
 
-#define KLI_assert_unreachable() \
-  { \
-    _KLI_assert_unreachable_print(__FILE__, __LINE__, __func__); \
+#define KLI_assert_unreachable()                                   \
+  {                                                                \
+    _KLI_assert_unreachable_print(__FILE__, __LINE__, __func__);   \
     KLI_assert(!"This line of code is marked to be unreachable."); \
-  } \
+  }                                                                \
   ((void)0)
 
 #ifdef __cplusplus

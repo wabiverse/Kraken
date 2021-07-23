@@ -58,15 +58,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-
-                         (dispatchBuffer)
-
-                           (drawCommandIndex)(drawIndirect)(drawIndirectCull)(drawIndirectResult)
-
-                             (instanceCountInput)
-
-                               (ulocCullParams));
+TF_DEFINE_PRIVATE_TOKENS(
+  _tokens,
+  (dispatchBuffer)
+  (drawCommandIndex)
+  (drawIndirect)
+  (drawIndirectCull)
+  (drawIndirectResult)
+  (instanceCountInput)
+  (ulocCullParams)
+);
 
 TF_DEFINE_ENV_SETTING(HD_ENABLE_GPU_FRUSTUM_CULLING, true, "Enable GPU frustum culling");
 TF_DEFINE_ENV_SETTING(HD_ENABLE_GPU_COUNT_VISIBLE_INSTANCES,
@@ -140,8 +141,9 @@ HdPh_IndirectDrawBatch::_CullingProgram &HdPh_IndirectDrawBatch::_GetCullingProg
   if (!_cullingProgram.GetGLSLProgram() || _dirtyCullingProgram)
   {
     // create a culling shader key
-    HdPh_CullingShaderKey shaderKey(
-      _useGpuInstanceCulling, _useTinyPrimCulling, IsEnabledGPUCountVisibleInstances());
+    HdPh_CullingShaderKey shaderKey(_useGpuInstanceCulling,
+                                    _useTinyPrimCulling,
+                                    IsEnabledGPUCountVisibleInstances());
 
     // sharing the culling geometric shader for the same configuration.
     HdPh_GeometricShaderSharedPtr cullShader = HdPh_GeometricShader::Create(shaderKey, resourceRegistry);
@@ -474,8 +476,7 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
         *cmdIt++ = vertexDC;
         *cmdIt++ = topologyVisibilityDC;
         *cmdIt++ = varyingDC;
-      }
-      else
+      } else
       {
         *cmdIt++ = vertexCount;
         *cmdIt++ = instanceCount;
@@ -493,8 +494,7 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
         *cmdIt++ = topologyVisibilityDC;
         *cmdIt++ = varyingDC;
       }
-    }
-    else
+    } else
     {
       if (_useGpuInstanceCulling)
       {
@@ -517,8 +517,7 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
         *cmdIt++ = vertexDC;
         *cmdIt++ = topologyVisibilityDC;
         *cmdIt++ = varyingDC;
-      }
-      else
+      } else
       {
         *cmdIt++ = indicesCount;
         *cmdIt++ = instanceCount;
@@ -568,22 +567,26 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
   TF_VERIFY(cmdIt == _drawCommandBuffer.end());
 
   // allocate draw dispatch buffer
-  _dispatchBuffer = resourceRegistry->RegisterDispatchBuffer(
-    _tokens->drawIndirect, drawCount, commandNumUints);
+  _dispatchBuffer = resourceRegistry->RegisterDispatchBuffer(_tokens->drawIndirect,
+                                                             drawCount,
+                                                             commandNumUints);
   // define binding views
   if (_useDrawArrays)
   {
     if (_useGpuInstanceCulling)
     {
       // draw indirect command
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawArraysInstanceCullCommand, count));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawDispatch,
+                                             {HdTypeInt32, 1},
+                                             offsetof(_DrawArraysInstanceCullCommand, count));
       // drawing coords 0
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord0, {HdTypeInt32Vec4, 1}, offsetof(_DrawArraysInstanceCullCommand, modelDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord0,
+                                             {HdTypeInt32Vec4, 1},
+                                             offsetof(_DrawArraysInstanceCullCommand, modelDC));
       // drawing coords 1
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord1, {HdTypeInt32Vec4, 1}, offsetof(_DrawArraysInstanceCullCommand, fvarDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord1,
+                                             {HdTypeInt32Vec4, 1},
+                                             offsetof(_DrawArraysInstanceCullCommand, fvarDC));
       // drawing coords 2
       _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord2,
                                              {HdTypeInt32Vec2, 1},
@@ -595,42 +598,48 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
                                                {HdTypeInt32, instancerNumLevels},
                                                sizeof(_DrawArraysInstanceCullCommand));
       }
-    }
-    else
+    } else
     {
       // draw indirect command
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawArraysCommand, count));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawDispatch,
+                                             {HdTypeInt32, 1},
+                                             offsetof(_DrawArraysCommand, count));
       // drawing coords 0
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord0, {HdTypeInt32Vec4, 1}, offsetof(_DrawArraysCommand, modelDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord0,
+                                             {HdTypeInt32Vec4, 1},
+                                             offsetof(_DrawArraysCommand, modelDC));
       // drawing coords 1
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord1, {HdTypeInt32Vec4, 1}, offsetof(_DrawArraysCommand, fvarDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord1,
+                                             {HdTypeInt32Vec4, 1},
+                                             offsetof(_DrawArraysCommand, fvarDC));
       // drawing coords 2
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord2, {HdTypeInt32Vec2, 1}, offsetof(_DrawArraysCommand, topologyVisibilityDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord2,
+                                             {HdTypeInt32Vec2, 1},
+                                             offsetof(_DrawArraysCommand, topologyVisibilityDC));
       // instance drawing coords
       if (instancerNumLevels > 0)
       {
-        _dispatchBuffer->AddBufferResourceView(
-          HdTokens->drawingCoordI, {HdTypeInt32, instancerNumLevels}, sizeof(_DrawArraysCommand));
+        _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoordI,
+                                               {HdTypeInt32, instancerNumLevels},
+                                               sizeof(_DrawArraysCommand));
       }
     }
-  }
-  else
+  } else
   {
     if (_useGpuInstanceCulling)
     {
       // draw indirect command
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawElementsInstanceCullCommand, count));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawDispatch,
+                                             {HdTypeInt32, 1},
+                                             offsetof(_DrawElementsInstanceCullCommand, count));
       // drawing coords 0
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord0, {HdTypeInt32Vec4, 1}, offsetof(_DrawElementsInstanceCullCommand, modelDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord0,
+                                             {HdTypeInt32Vec4, 1},
+                                             offsetof(_DrawElementsInstanceCullCommand, modelDC));
       // drawing coords 1
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord1, {HdTypeInt32Vec4, 1}, offsetof(_DrawElementsInstanceCullCommand, fvarDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord1,
+                                             {HdTypeInt32Vec4, 1},
+                                             offsetof(_DrawElementsInstanceCullCommand, fvarDC));
       // drawing coords 2
       _dispatchBuffer->AddBufferResourceView(
         HdTokens->drawingCoord2,
@@ -643,26 +652,30 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
                                                {HdTypeInt32, instancerNumLevels},
                                                sizeof(_DrawElementsInstanceCullCommand));
       }
-    }
-    else
+    } else
     {
       // draw indirect command
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawElementsCommand, count));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawDispatch,
+                                             {HdTypeInt32, 1},
+                                             offsetof(_DrawElementsCommand, count));
       // drawing coords 0
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord0, {HdTypeInt32Vec4, 1}, offsetof(_DrawElementsCommand, modelDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord0,
+                                             {HdTypeInt32Vec4, 1},
+                                             offsetof(_DrawElementsCommand, modelDC));
       // drawing coords 1
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord1, {HdTypeInt32Vec4, 1}, offsetof(_DrawElementsCommand, fvarDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord1,
+                                             {HdTypeInt32Vec4, 1},
+                                             offsetof(_DrawElementsCommand, fvarDC));
       // drawing coords 2
-      _dispatchBuffer->AddBufferResourceView(
-        HdTokens->drawingCoord2, {HdTypeInt32Vec2, 1}, offsetof(_DrawElementsCommand, topologyVisibilityDC));
+      _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoord2,
+                                             {HdTypeInt32Vec2, 1},
+                                             offsetof(_DrawElementsCommand, topologyVisibilityDC));
       // instance drawing coords
       if (instancerNumLevels > 0)
       {
-        _dispatchBuffer->AddBufferResourceView(
-          HdTokens->drawingCoordI, {HdTypeInt32, instancerNumLevels}, sizeof(_DrawElementsCommand));
+        _dispatchBuffer->AddBufferResourceView(HdTokens->drawingCoordI,
+                                               {HdTypeInt32, instancerNumLevels},
+                                               sizeof(_DrawElementsCommand));
       }
     }
   }
@@ -677,8 +690,9 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
     // both reading and xform feedback). We use only the instanceCount
     // and drawingCoord parameters, but it is simplest to just make
     // a copy.
-    _dispatchBufferCullInput = resourceRegistry->RegisterDispatchBuffer(
-      _tokens->drawIndirectCull, drawCount, commandNumUints);
+    _dispatchBufferCullInput = resourceRegistry->RegisterDispatchBuffer(_tokens->drawIndirectCull,
+                                                                        drawCount,
+                                                                        commandNumUints);
 
     // define binding views
     //
@@ -717,11 +731,13 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
       if (_useGpuInstanceCulling)
       {
         // cull indirect command
-        _dispatchBufferCullInput->AddBufferResourceView(
-          HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawArraysInstanceCullCommand, cullCount));
+        _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawDispatch,
+                                                        {HdTypeInt32, 1},
+                                                        offsetof(_DrawArraysInstanceCullCommand, cullCount));
         // cull drawing coord 0
-        _dispatchBufferCullInput->AddBufferResourceView(
-          HdTokens->drawingCoord0, {HdTypeInt32Vec4, 1}, offsetof(_DrawArraysInstanceCullCommand, modelDC));
+        _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawingCoord0,
+                                                        {HdTypeInt32Vec4, 1},
+                                                        offsetof(_DrawArraysInstanceCullCommand, modelDC));
         // cull drawing coord 1
         _dispatchBufferCullInput->AddBufferResourceView(
           // see the comment above
@@ -740,30 +756,34 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
           _tokens->drawCommandIndex,
           {HdTypeInt32, 1},
           offsetof(_DrawArraysInstanceCullCommand, baseInstance));
-      }
-      else
+      } else
       {
         // cull indirect command
-        _dispatchBufferCullInput->AddBufferResourceView(
-          HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawArraysCommand, count));
+        _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawDispatch,
+                                                        {HdTypeInt32, 1},
+                                                        offsetof(_DrawArraysCommand, count));
         // cull drawing coord 0
-        _dispatchBufferCullInput->AddBufferResourceView(
-          HdTokens->drawingCoord0, {HdTypeInt32Vec4, 1}, offsetof(_DrawArraysCommand, modelDC));
+        _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawingCoord0,
+                                                        {HdTypeInt32Vec4, 1},
+                                                        offsetof(_DrawArraysCommand, modelDC));
         // cull draw index
-        _dispatchBufferCullInput->AddBufferResourceView(
-          _tokens->drawCommandIndex, {HdTypeInt32, 1}, offsetof(_DrawArraysCommand, baseInstance));
+        _dispatchBufferCullInput->AddBufferResourceView(_tokens->drawCommandIndex,
+                                                        {HdTypeInt32, 1},
+                                                        offsetof(_DrawArraysCommand, baseInstance));
         // cull instance count input
-        _dispatchBufferCullInput->AddBufferResourceView(
-          _tokens->instanceCountInput, {HdTypeInt32, 1}, offsetof(_DrawArraysCommand, instanceCount));
+        _dispatchBufferCullInput->AddBufferResourceView(_tokens->instanceCountInput,
+                                                        {HdTypeInt32, 1},
+                                                        offsetof(_DrawArraysCommand, instanceCount));
       }
-    }
-    else
+    } else
     {
       if (_useGpuInstanceCulling)
       {
         // cull indirect command
         _dispatchBufferCullInput->AddBufferResourceView(
-          HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawElementsInstanceCullCommand, cullCount));
+          HdTokens->drawDispatch,
+          {HdTypeInt32, 1},
+          offsetof(_DrawElementsInstanceCullCommand, cullCount));
         // cull drawing coord 0
         _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawingCoord0,
                                                         {HdTypeInt32Vec4, 1},
@@ -786,21 +806,24 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
           _tokens->drawCommandIndex,
           {HdTypeInt32, 1},
           offsetof(_DrawElementsInstanceCullCommand, baseInstance));
-      }
-      else
+      } else
       {
         // cull indirect command
-        _dispatchBufferCullInput->AddBufferResourceView(
-          HdTokens->drawDispatch, {HdTypeInt32, 1}, offsetof(_DrawElementsCommand, count));
+        _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawDispatch,
+                                                        {HdTypeInt32, 1},
+                                                        offsetof(_DrawElementsCommand, count));
         // cull drawing coord 0
-        _dispatchBufferCullInput->AddBufferResourceView(
-          HdTokens->drawingCoord0, {HdTypeInt32Vec4, 1}, offsetof(_DrawElementsCommand, modelDC));
+        _dispatchBufferCullInput->AddBufferResourceView(HdTokens->drawingCoord0,
+                                                        {HdTypeInt32Vec4, 1},
+                                                        offsetof(_DrawElementsCommand, modelDC));
         // cull draw index
-        _dispatchBufferCullInput->AddBufferResourceView(
-          _tokens->drawCommandIndex, {HdTypeInt32, 1}, offsetof(_DrawElementsCommand, baseInstance));
+        _dispatchBufferCullInput->AddBufferResourceView(_tokens->drawCommandIndex,
+                                                        {HdTypeInt32, 1},
+                                                        offsetof(_DrawElementsCommand, baseInstance));
         // cull instance count input
-        _dispatchBufferCullInput->AddBufferResourceView(
-          _tokens->instanceCountInput, {HdTypeInt32, 1}, offsetof(_DrawElementsCommand, instanceCount));
+        _dispatchBufferCullInput->AddBufferResourceView(_tokens->instanceCountInput,
+                                                        {HdTypeInt32, 1},
+                                                        offsetof(_DrawElementsCommand, instanceCount));
       }
     }
 
@@ -817,22 +840,19 @@ void HdPh_IndirectDrawBatch::_CompileBatch(HdPhResourceRegistrySharedPtr const &
       _instanceCountOffset = offsetof(_DrawArraysInstanceCullCommand, instanceCount) / sizeof(uint32_t);
       _cullInstanceCountOffset = offsetof(_DrawArraysInstanceCullCommand, cullInstanceCount) /
                                  sizeof(uint32_t);
-    }
-    else
+    } else
     {
       _instanceCountOffset = _cullInstanceCountOffset = offsetof(_DrawArraysCommand, instanceCount) /
                                                         sizeof(uint32_t);
     }
-  }
-  else
+  } else
   {
     if (_useGpuInstanceCulling)
     {
       _instanceCountOffset = offsetof(_DrawElementsInstanceCullCommand, instanceCount) / sizeof(uint32_t);
       _cullInstanceCountOffset = offsetof(_DrawElementsInstanceCullCommand, cullInstanceCount) /
                                  sizeof(uint32_t);
-    }
-    else
+    } else
     {
       _instanceCountOffset = _cullInstanceCountOffset = offsetof(_DrawElementsCommand, instanceCount) /
                                                         sizeof(uint32_t);
@@ -1065,8 +1085,7 @@ void HdPh_IndirectDrawBatch::PrepareDraw(HdPhRenderPassStateSharedPtr const &ren
                                  GfMatrix4f(renderPassState->GetCullMatrix()),
                                  renderPassState->GetDrawingRangeNDC(),
                                  resourceRegistry);
-    }
-    else
+    } else
     {
       _GPUFrustumNonInstanceCulling(batchItem,
                                     GfMatrix4f(renderPassState->GetCullMatrix()),
@@ -1246,8 +1265,7 @@ void HdPh_IndirectDrawBatch::ExecuteDraw(HdPhRenderPassStateSharedPtr const &ren
                               0,  // draw command always starts with 0
                               batchCount,
                               _dispatchBuffer->GetCommandNumUints() * sizeof(uint32_t));
-  }
-  else
+  } else
   {
     TF_DEBUG(HD_MDI).Msg(
       "MDI Drawing Elements:\n"
@@ -1437,8 +1455,9 @@ void HdPh_IndirectDrawBatch::_GPUFrustumInstanceCulling(
   {
     Hgi *hgi = resourceRegistry->GetHgi();
 
-    HgiGraphicsPipelineSharedPtr const &pso = _GetCullPipeline(
-      resourceRegistry, glslProgram, sizeof(Uniforms));
+    HgiGraphicsPipelineSharedPtr const &pso = _GetCullPipeline(resourceRegistry,
+                                                               glslProgram,
+                                                               sizeof(Uniforms));
     HgiGraphicsPipelineHandle psoHandle = *pso.get();
 
     // Get the bind index for the 'cullParams' uniform block
@@ -1568,8 +1587,9 @@ void HdPh_IndirectDrawBatch::_GPUFrustumNonInstanceCulling(
 
   Hgi *hgi = resourceRegistry->GetHgi();
 
-  HgiGraphicsPipelineSharedPtr const &pso = _GetCullPipeline(
-    resourceRegistry, glslProgram, sizeof(Uniforms));
+  HgiGraphicsPipelineSharedPtr const &pso = _GetCullPipeline(resourceRegistry,
+                                                             glslProgram,
+                                                             sizeof(Uniforms));
   HgiGraphicsPipelineHandle psoHandle = *pso.get();
 
   // Get the bind index for the 'resetPass' uniform
@@ -1737,8 +1757,7 @@ void HdPh_IndirectDrawBatch::_CullingProgram::_GetCustomBindings(HdBindingReques
   if (_useInstanceCulling)
   {
     customBindings->push_back(HdBindingRequest(HdBinding::DRAW_INDEX_INSTANCE, _tokens->drawCommandIndex));
-  }
-  else
+  } else
   {
     // non-instance culling
     customBindings->push_back(HdBindingRequest(HdBinding::DRAW_INDEX, _tokens->drawCommandIndex));

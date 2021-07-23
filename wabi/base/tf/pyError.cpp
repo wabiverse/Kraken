@@ -77,14 +77,12 @@ bool TfPyConvertTfErrorsToPythonException(TfErrorMark const &m)
           //      Tf errors.
           m.Clear();
           return true;
-        }
-        else
+        } else
         {
           // abort? should perhaps use polymorphic_downcast workalike
           // instead? throw a python error...
         }
-      }
-      else
+      } else
         args.append(*e);
     }
     // make and set a python exception
@@ -116,8 +114,7 @@ void TfPyConvertPythonExceptionToTfErrors()
         TF_FOR_ALL (e, errs)
           TfDiagnosticMgr::GetInstance().AppendError(*e);
       }
-    }
-    else
+    } else
     {
       TF_ERROR(exc, TF_PYTHON_EXCEPTION, "Tf Python Exception");
     }

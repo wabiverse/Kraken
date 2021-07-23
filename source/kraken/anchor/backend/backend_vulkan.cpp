@@ -108,64 +108,64 @@ void ANCHOR_ImplVulkanH_CreateWindowCommandBuffers(VkPhysicalDevice physical_dev
 // Vulkan prototypes for use with custom loaders
 // (see description of ANCHOR_IMPL_VULKAN_NO_PROTOTYPES in anchor_impl_vulkan.h
 #ifdef VK_NO_PROTOTYPES
-#  define ANCHOR_VULKAN_FUNC_MAP(ANCHOR_VULKAN_FUNC_MAP_MACRO) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkAllocateCommandBuffers) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkAllocateDescriptorSets) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkAllocateMemory) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkBindBufferMemory) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkBindImageMemory) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdBindDescriptorSets) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdBindIndexBuffer) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdBindPipeline) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdBindVertexBuffers) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdCopyBufferToImage) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdDrawIndexed) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdPipelineBarrier) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdPushConstants) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdSetScissor) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdSetViewport) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateBuffer) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateCommandPool) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateDescriptorSetLayout) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateFence) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateFramebuffer) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateGraphicsPipelines) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateImage) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateImageView) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreatePipelineLayout) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateRenderPass) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateSampler) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateSemaphore) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateShaderModule) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateSwapchainKHR) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyBuffer) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyCommandPool) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyDescriptorSetLayout) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyFence) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyFramebuffer) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyImage) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyImageView) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyPipeline) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyPipelineLayout) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyRenderPass) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroySampler) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroySemaphore) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyShaderModule) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroySurfaceKHR) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroySwapchainKHR) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDeviceWaitIdle) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkFlushMappedMemoryRanges) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkFreeCommandBuffers) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkFreeMemory) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetBufferMemoryRequirements) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetImageMemoryRequirements) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetPhysicalDeviceMemoryProperties) \
+#  define ANCHOR_VULKAN_FUNC_MAP(ANCHOR_VULKAN_FUNC_MAP_MACRO)              \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkAllocateCommandBuffers)                  \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkAllocateDescriptorSets)                  \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkAllocateMemory)                          \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkBindBufferMemory)                        \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkBindImageMemory)                         \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdBindDescriptorSets)                   \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdBindIndexBuffer)                      \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdBindPipeline)                         \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdBindVertexBuffers)                    \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdCopyBufferToImage)                    \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdDrawIndexed)                          \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdPipelineBarrier)                      \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdPushConstants)                        \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdSetScissor)                           \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCmdSetViewport)                          \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateBuffer)                            \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateCommandPool)                       \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateDescriptorSetLayout)               \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateFence)                             \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateFramebuffer)                       \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateGraphicsPipelines)                 \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateImage)                             \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateImageView)                         \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreatePipelineLayout)                    \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateRenderPass)                        \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateSampler)                           \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateSemaphore)                         \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateShaderModule)                      \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkCreateSwapchainKHR)                      \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyBuffer)                           \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyCommandPool)                      \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyDescriptorSetLayout)              \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyFence)                            \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyFramebuffer)                      \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyImage)                            \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyImageView)                        \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyPipeline)                         \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyPipelineLayout)                   \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyRenderPass)                       \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroySampler)                          \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroySemaphore)                        \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroyShaderModule)                     \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroySurfaceKHR)                       \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDestroySwapchainKHR)                     \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkDeviceWaitIdle)                          \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkFlushMappedMemoryRanges)                 \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkFreeCommandBuffers)                      \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkFreeMemory)                              \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetBufferMemoryRequirements)             \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetImageMemoryRequirements)              \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetPhysicalDeviceMemoryProperties)       \
     ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetPhysicalDeviceSurfaceCapabilitiesKHR) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetPhysicalDeviceSurfaceFormatsKHR) \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetPhysicalDeviceSurfaceFormatsKHR)      \
     ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetPhysicalDeviceSurfacePresentModesKHR) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetSwapchainImagesKHR) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkMapMemory) \
-    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkUnmapMemory) \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkGetSwapchainImagesKHR)                   \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkMapMemory)                               \
+    ANCHOR_VULKAN_FUNC_MAP_MACRO(vkUnmapMemory)                             \
     ANCHOR_VULKAN_FUNC_MAP_MACRO(vkUpdateDescriptorSets)
 
 // Define function pointers
@@ -803,8 +803,14 @@ static void ANCHOR_ImplVulkan_SetupRenderState(AnchorDrawData *draw_data,
   {
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
     VkDescriptorSet desc_set[1] = {g_DescriptorSet};
-    vkCmdBindDescriptorSets(
-      command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, g_PipelineLayout, 0, 1, desc_set, 0, NULL);
+    vkCmdBindDescriptorSets(command_buffer,
+                            VK_PIPELINE_BIND_POINT_GRAPHICS,
+                            g_PipelineLayout,
+                            0,
+                            1,
+                            desc_set,
+                            0,
+                            NULL);
   }
 
   // Bind Vertex And Index Buffer:
@@ -908,8 +914,8 @@ void ANCHOR_ImplVulkan_RenderDrawData(AnchorDrawData *draw_data,
     // Upload vertex/index data into a single contiguous GPU buffer
     AnchorDrawVert *vtx_dst = NULL;
     AnchorDrawIdx *idx_dst = NULL;
-    VkResult err = vkMapMemory(
-      v->Device, rb->VertexBufferMemory, 0, rb->VertexBufferSize, 0, (void **)(&vtx_dst));
+    VkResult err =
+      vkMapMemory(v->Device, rb->VertexBufferMemory, 0, rb->VertexBufferSize, 0, (void **)(&vtx_dst));
     check_vk_result(err);
     err = vkMapMemory(v->Device, rb->IndexBufferMemory, 0, rb->IndexBufferSize, 0, (void **)(&idx_dst));
     check_vk_result(err);
@@ -961,8 +967,7 @@ void ANCHOR_ImplVulkan_RenderDrawData(AnchorDrawData *draw_data,
           ANCHOR_ImplVulkan_SetupRenderState(draw_data, pipeline, command_buffer, rb, fb_width, fb_height);
         else
           pcmd->UserCallback(cmd_list, pcmd);
-      }
-      else
+      } else
       {
         // Project scissor/clipping rectangles into framebuffer space
         GfVec4f clip_rect;
@@ -1144,8 +1149,12 @@ bool ANCHOR_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer)
     region.imageExtent.width = width;
     region.imageExtent.height = height;
     region.imageExtent.depth = 1;
-    vkCmdCopyBufferToImage(
-      command_buffer, g_UploadBuffer, g_FontImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+    vkCmdCopyBufferToImage(command_buffer,
+                           g_UploadBuffer,
+                           g_FontImage,
+                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                           1,
+                           &region);
 
     VkImageMemoryBarrier use_barrier[1] = {};
     use_barrier[0].sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -1443,8 +1452,13 @@ bool ANCHOR_ImplVulkan_CreateDeviceObjects()
     check_vk_result(err);
   }
 
-  ANCHOR_ImplVulkan_CreatePipeline(
-    v->Device, v->Allocator, v->PipelineCache, g_RenderPass, v->MSAASamples, &g_Pipeline, g_Subpass);
+  ANCHOR_ImplVulkan_CreatePipeline(v->Device,
+                                   v->Allocator,
+                                   v->PipelineCache,
+                                   g_RenderPass,
+                                   v->MSAASamples,
+                                   &g_Pipeline,
+                                   g_Subpass);
 
   return true;
 }
@@ -1527,9 +1541,9 @@ bool ANCHOR_ImplVulkan_LoadFunctions(PFN_vkVoidFunction (*loader_func)(const cha
   //      vkGetInstanceProcAddr(your_vk_isntance, function_name); });
   // But this would be equivalent to not setting VK_NO_PROTOTYPES.
 #ifdef VK_NO_PROTOTYPES
-#  define ANCHOR_VULKAN_FUNC_LOAD(func) \
+#  define ANCHOR_VULKAN_FUNC_LOAD(func)                                     \
     func = reinterpret_cast<decltype(func)>(loader_func(#func, user_data)); \
-    if (func == NULL) \
+    if (func == NULL)                                                       \
       return false;
   ANCHOR_VULKAN_FUNC_MAP(ANCHOR_VULKAN_FUNC_LOAD)
 #  undef ANCHOR_VULKAN_FUNC_LOAD
@@ -1644,14 +1658,12 @@ VkSurfaceFormatKHR ANCHOR_ImplVulkanH_SelectSurfaceFormat(VkPhysicalDevice physi
       ret.format = request_formats[0];
       ret.colorSpace = request_color_space;
       return ret;
-    }
-    else
+    } else
     {
       // No point in searching another format
       return avail_format[0];
     }
-  }
-  else
+  } else
   {
     // Request several formats, the first found will be used
     for (int request_i = 0; request_i < request_formats_count; request_i++)
@@ -1822,8 +1834,7 @@ void ANCHOR_ImplVulkanH_CreateWindowSwapChain(VkPhysicalDevice physical_device,
     {
       info.imageExtent.width = wd->Width = w;
       info.imageExtent.height = wd->Height = h;
-    }
-    else
+    } else
     {
       info.imageExtent.width = wd->Width = cap.currentExtent.width;
       info.imageExtent.height = wd->Height = cap.currentExtent.height;
@@ -1949,8 +1960,13 @@ void ANCHOR_ImplVulkanH_CreateOrResizeWindow(VkInstance instance,
                 "Need to call ANCHOR_ImplVulkan_LoadFunctions() if "
                 "ANCHOR_IMPL_VULKAN_NO_PROTOTYPES or VK_NO_PROTOTYPES are set!");
   (void)instance;
-  ANCHOR_ImplVulkanH_CreateWindowSwapChain(
-    physical_device, device, wd, allocator, width, height, min_image_count);
+  ANCHOR_ImplVulkanH_CreateWindowSwapChain(physical_device,
+                                           device,
+                                           wd,
+                                           allocator,
+                                           width,
+                                           height,
+                                           min_image_count);
   ANCHOR_ImplVulkanH_CreateWindowCommandBuffers(physical_device, device, wd, queue_family, allocator);
 }
 

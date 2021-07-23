@@ -103,8 +103,8 @@ shader UsdUVTexture[[string category = "generator"]](
 
   // Read the texture
 
-  color resultColor = texture(
-    file, st[0], st[1], "swrap", swrap, "twrap", twrap, "missingcolor", fallbackColor);
+  color resultColor =
+    texture(file, st[0], st[1], "swrap", swrap, "twrap", twrap, "missingcolor", fallbackColor);
 
   float resultAlpha = texture(file,
                               st[0],

@@ -61,8 +61,7 @@ static std::string _ValidationRepr(PxOsdMeshTopologyValidation const &validation
   if (validation)
   {
     repr << "PxOsd.MeshTopologyValidation()";
-  }
-  else
+  } else
   {
     repr << "PxOsd.MeshTopologyValidation<";
     for (auto const &element : validation)

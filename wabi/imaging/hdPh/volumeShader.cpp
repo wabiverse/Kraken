@@ -39,11 +39,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  (stepSize)(stepSizeLighting)
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         (stepSize)(stepSizeLighting)
 
-    (sampleDistance)(volumeBBoxInverseTransform)(volumeBBoxLocalMin)(volumeBBoxLocalMax));
+                           (sampleDistance)(volumeBBoxInverseTransform)(volumeBBoxLocalMin)(volumeBBoxLocalMax));
 
 HdPh_VolumeShader::HdPh_VolumeShader(HdRenderDelegate *const renderDelegate)
   : _renderDelegate(renderDelegate),
@@ -76,7 +75,8 @@ void HdPh_VolumeShader::BindResources(const int program,
     _stepSize = _renderDelegate->GetRenderSetting<float>(HdPhRenderSettingsTokens->volumeRaymarchingStepSize,
                                                          HdPhVolume::defaultStepSize);
     _stepSizeLighting = _renderDelegate->GetRenderSetting<float>(
-      HdPhRenderSettingsTokens->volumeRaymarchingStepSizeLighting, HdPhVolume::defaultStepSizeLighting);
+      HdPhRenderSettingsTokens->volumeRaymarchingStepSizeLighting,
+      HdPhVolume::defaultStepSizeLighting);
   }
 
   binder.BindUniformf(_tokens->stepSize, 1, &_stepSize);
@@ -110,24 +110,27 @@ void HdPh_VolumeShader::GetParamsAndBufferSpecsForBBoxAndSampleDistance(
   HdBufferSpecVector *const specs)
 {
   {
-    params->emplace_back(
-      HdPh_MaterialParam::ParamTypeFallback, _tokens->volumeBBoxInverseTransform, VtValue(GfMatrix4d()));
+    params->emplace_back(HdPh_MaterialParam::ParamTypeFallback,
+                         _tokens->volumeBBoxInverseTransform,
+                         VtValue(GfMatrix4d()));
 
     static const TfToken sourceName(_ConcatFallback(_tokens->volumeBBoxInverseTransform));
     specs->emplace_back(sourceName, HdTupleType{HdTypeDoubleMat4, 1});
   }
 
   {
-    params->emplace_back(
-      HdPh_MaterialParam::ParamTypeFallback, _tokens->volumeBBoxLocalMin, VtValue(GfVec3d()));
+    params->emplace_back(HdPh_MaterialParam::ParamTypeFallback,
+                         _tokens->volumeBBoxLocalMin,
+                         VtValue(GfVec3d()));
 
     static const TfToken sourceName(_ConcatFallback(_tokens->volumeBBoxLocalMin));
     specs->emplace_back(sourceName, HdTupleType{HdTypeDoubleVec3, 1});
   }
 
   {
-    params->emplace_back(
-      HdPh_MaterialParam::ParamTypeFallback, _tokens->volumeBBoxLocalMax, VtValue(GfVec3d()));
+    params->emplace_back(HdPh_MaterialParam::ParamTypeFallback,
+                         _tokens->volumeBBoxLocalMax,
+                         VtValue(GfVec3d()));
 
     static const TfToken sourceName(_ConcatFallback(_tokens->volumeBBoxLocalMax));
     specs->emplace_back(sourceName, HdTupleType{HdTypeDoubleVec3, 1});
@@ -192,89 +195,89 @@ GfVec3d HdPh_VolumeShader::GetSafeMax(const GfRange3d &range)
 namespace
 {
 
-// Square of length of a 3-vector
-float _SqrLengthThreeVector(const double *const v)
-{
-  return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-}
-
-// Assuming the bounding box comes from a grid (range is the
-// bounding box of active voxels and matrix the grid transform),
-// compute the distance between samples.
-//
-// Note that this assumes that the bounding box transform is an
-// affine transformation obtained by composing scales with rotation.
-// (More generally, we would need to take the minimum of the singular
-// values from the SVD of the 3x3-matrix).
-float _ComputeSampleDistance(const GfBBox3d &bbox)
-{
-  const GfMatrix4d &m = bbox.GetMatrix();
-
-  // Take minimum of lengths of images of the x-, y-, and z-vector.
-  return sqrt(
-    std::min({_SqrLengthThreeVector(m[0]), _SqrLengthThreeVector(m[1]), _SqrLengthThreeVector(m[2])}));
-}
-
-// Compute the bounding box and sample distance from all the fields in
-// this volume.
-std::pair<GfBBox3d, float> _ComputeBBoxAndSampleDistance(
-  const HdPhShaderCode::NamedTextureHandleVector &textures)
-{
-  // Computed by combining all bounding boxes.
-  GfBBox3d bbox;
-  // Computes as minimum of all sampling distances.
-  // (Initialized to large value rather than IEEE754-infinity which might
-  // not be converted to correctly to GLSL: if there is
-  // no texture, the ray marcher simply obtains a point outside the
-  // bounding box after one step and stops).
-  float sampleDistance = 1000000.0;
-
-  for (const HdPhShaderCode::NamedTextureHandle &texture : textures)
+  // Square of length of a 3-vector
+  float _SqrLengthThreeVector(const double *const v)
   {
-    HdPhTextureObjectSharedPtr const &textureObject = texture.handle->GetTextureObject();
-
-    if (const HdPhFieldTextureObject *const fieldTex = dynamic_cast<HdPhFieldTextureObject *>(
-          textureObject.get()))
-    {
-      const GfBBox3d &fieldBbox = fieldTex->GetBoundingBox();
-      bbox = GfBBox3d::Combine(bbox, fieldBbox);
-      sampleDistance = std::min(sampleDistance, _ComputeSampleDistance(fieldBbox));
-    }
+    return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
   }
 
-  return {bbox, sampleDistance};
-}
-
-// Compute 8 vertices of a bounding box.
-
-VtValue _ComputePoints(const GfBBox3d &bbox)
-{
-  VtVec3fArray points(8);
-
-  size_t i = 0;
-
-  const GfMatrix4d &transform = bbox.GetMatrix();
-  const GfRange3d &range = bbox.GetRange();
-
-  // Use vertices of a cube shrunk to point for empty bounding box
-  // (to avoid min and max being large floating point numbers).
-  const GfVec3d min = HdPh_VolumeShader::GetSafeMin(range);
-  const GfVec3d max = HdPh_VolumeShader::GetSafeMax(range);
-
-  for (const double x : {min[0], max[0]})
+  // Assuming the bounding box comes from a grid (range is the
+  // bounding box of active voxels and matrix the grid transform),
+  // compute the distance between samples.
+  //
+  // Note that this assumes that the bounding box transform is an
+  // affine transformation obtained by composing scales with rotation.
+  // (More generally, we would need to take the minimum of the singular
+  // values from the SVD of the 3x3-matrix).
+  float _ComputeSampleDistance(const GfBBox3d &bbox)
   {
-    for (const double y : {min[1], max[1]})
+    const GfMatrix4d &m = bbox.GetMatrix();
+
+    // Take minimum of lengths of images of the x-, y-, and z-vector.
+    return sqrt(
+      std::min({_SqrLengthThreeVector(m[0]), _SqrLengthThreeVector(m[1]), _SqrLengthThreeVector(m[2])}));
+  }
+
+  // Compute the bounding box and sample distance from all the fields in
+  // this volume.
+  std::pair<GfBBox3d, float> _ComputeBBoxAndSampleDistance(
+    const HdPhShaderCode::NamedTextureHandleVector &textures)
+  {
+    // Computed by combining all bounding boxes.
+    GfBBox3d bbox;
+    // Computes as minimum of all sampling distances.
+    // (Initialized to large value rather than IEEE754-infinity which might
+    // not be converted to correctly to GLSL: if there is
+    // no texture, the ray marcher simply obtains a point outside the
+    // bounding box after one step and stops).
+    float sampleDistance = 1000000.0;
+
+    for (const HdPhShaderCode::NamedTextureHandle &texture : textures)
     {
-      for (const double z : {min[2], max[2]})
+      HdPhTextureObjectSharedPtr const &textureObject = texture.handle->GetTextureObject();
+
+      if (const HdPhFieldTextureObject *const fieldTex = dynamic_cast<HdPhFieldTextureObject *>(
+            textureObject.get()))
       {
-        points[i] = GfVec3f(transform.Transform(GfVec3d(x, y, z)));
-        i++;
+        const GfBBox3d &fieldBbox = fieldTex->GetBoundingBox();
+        bbox = GfBBox3d::Combine(bbox, fieldBbox);
+        sampleDistance = std::min(sampleDistance, _ComputeSampleDistance(fieldBbox));
       }
     }
+
+    return {bbox, sampleDistance};
   }
 
-  return VtValue(points);
-}
+  // Compute 8 vertices of a bounding box.
+
+  VtValue _ComputePoints(const GfBBox3d &bbox)
+  {
+    VtVec3fArray points(8);
+
+    size_t i = 0;
+
+    const GfMatrix4d &transform = bbox.GetMatrix();
+    const GfRange3d &range = bbox.GetRange();
+
+    // Use vertices of a cube shrunk to point for empty bounding box
+    // (to avoid min and max being large floating point numbers).
+    const GfVec3d min = HdPh_VolumeShader::GetSafeMin(range);
+    const GfVec3d max = HdPh_VolumeShader::GetSafeMax(range);
+
+    for (const double x : {min[0], max[0]})
+    {
+      for (const double y : {min[1], max[1]})
+      {
+        for (const double z : {min[2], max[2]})
+        {
+          points[i] = GfVec3f(transform.Transform(GfVec3d(x, y, z)));
+          i++;
+        }
+      }
+    }
+
+    return VtValue(points);
+  }
 
 }  // end anonymous namespace
 
@@ -286,8 +289,9 @@ void HdPh_VolumeShader::AddResourcesFromTextures(ResourceContext &ctx) const
 
   // Fills in sampling transforms for textures and also texture
   // handles for bindless textures.
-  HdPh_TextureBinder::ComputeBufferSources(
-    GetNamedTextureHandles(), bindlessTextureEnabled, &shaderBarSources);
+  HdPh_TextureBinder::ComputeBufferSources(GetNamedTextureHandles(),
+                                           bindlessTextureEnabled,
+                                           &shaderBarSources);
 
   if (_fillsPointsBar)
   {
@@ -348,12 +352,19 @@ void HdPh_VolumeShader::UpdateTextureHandles(HdSceneDelegate *const sceneDelegat
                                                                     HdPhTextureIdentifier();
     const HdTextureType textureType = textureHandles[i].type;
     const size_t textureMemory = TF_VERIFY(fieldPrim) ? fieldPrim->GetTextureMemory() : 0;
-    static const HdSamplerParameters samplerParams{
-      HdWrapBlack, HdWrapBlack, HdWrapBlack, HdMinFilterLinear, HdMagFilterLinear};
+    static const HdSamplerParameters samplerParams{HdWrapBlack,
+                                                   HdWrapBlack,
+                                                   HdWrapBlack,
+                                                   HdMinFilterLinear,
+                                                   HdMagFilterLinear};
 
     // allocate texture handle and assign it.
-    textureHandles[i].handle = resourceRegistry->AllocateTextureHandle(
-      textureId, textureType, samplerParams, textureMemory, bindlessTextureEnabled, shared_from_this());
+    textureHandles[i].handle = resourceRegistry->AllocateTextureHandle(textureId,
+                                                                       textureType,
+                                                                       samplerParams,
+                                                                       textureMemory,
+                                                                       bindlessTextureEnabled,
+                                                                       shared_from_this());
   }
 
   // And update!

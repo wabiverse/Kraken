@@ -37,7 +37,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-TF_INSTANTIATE_NOTICE_WRAPPER(TfPyModuleWasLoaded, TfNotice);
+  TF_INSTANTIATE_NOTICE_WRAPPER(TfPyModuleWasLoaded, TfNotice);
 
 }  // anonymous namespace
 

@@ -79,16 +79,14 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
     if (collection.GetName().IsEmpty())
     {
       _pass.reset();
-    }
-    else
+    } else
     {
       if (!_pass)
       {
         HdRenderIndex &index = delegate->GetRenderIndex();
         HdRenderDelegate *renderDelegate = index.GetRenderDelegate();
         _pass = renderDelegate->CreateRenderPass(&index, collection);
-      }
-      else
+      } else
       {
         _pass->SetRprimCollection(collection);
       }
@@ -118,8 +116,7 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
       }
 
       _setupTask->SyncParams(delegate, params);
-    }
-    else
+    } else
     {
       // If params are not set, expect the renderpass state to be passed
       // in the task context.
@@ -195,8 +192,7 @@ HdRenderPassStateSharedPtr HdxRenderTask::_GetRenderPassState(HdTaskContext *ctx
     // internal HdxRenderSetupTask in _Sync, to sync and unpack the params,
     // and we should use the resulting resources.
     return _setupTask->GetRenderPassState();
-  }
-  else
+  } else
   {
     // Otherwise, we expect an application-created HdxRenderSetupTask to
     // have run and put the renderpass resources in the task context.
@@ -212,8 +208,7 @@ bool HdxRenderTask::_HasDrawItems() const
   if (HdPh_RenderPass *hdPhRenderPass = dynamic_cast<HdPh_RenderPass *>(_pass.get()))
   {
     return hdPhRenderPass->GetDrawItemCount() > 0;
-  }
-  else
+  } else
   {
     // Non-Phoenix backends don't typically use the draw item subsystem.
     // Return true to signify that there is rendering work to do.
@@ -261,8 +256,7 @@ void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx, HdPhRenderPassSt
                                                         HdxTokens->selectionPointColors,
                                                         cbar,
                                                         /*interleave*/ false));
-  }
-  else
+  } else
   {
     renderPassShader->RemoveBufferBinding(HdxTokens->selectionOffsets);
     renderPassShader->RemoveBufferBinding(HdxTokens->selectionUniforms);

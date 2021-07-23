@@ -43,8 +43,7 @@ TraceThreadId::TraceThreadId()
   if (std::this_thread::get_id() == ArchGetMainThreadId())
   {
     _id = "Main Thread";
-  }
-  else
+  } else
   {
     std::ostringstream threadName;
     threadName << "Thread " << std::this_thread::get_id();

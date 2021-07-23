@@ -138,7 +138,7 @@ static bool _IsClose(const VtArray<T> &a, const VtArray<T> &b)
   return true;
 }
 
-#define CHECK_IS_HOLDING_AND_IS_CLOSE(a, b, objType) \
+#define CHECK_IS_HOLDING_AND_IS_CLOSE(a, b, objType)    \
   if (a.IsHolding<objType>() && b.IsHolding<objType>()) \
     return _IsClose(a.UncheckedGet<objType>(), b.UncheckedGet<objType>());
 
@@ -225,8 +225,7 @@ void UsdUtilsSparseAttrValueWriter::_InitializeSparseAuthoring(VtValue *defaultV
     {
       _attr.Set(*defaultValue);
     }
-  }
-  else if (!defaultValue->IsEmpty())
+  } else if (!defaultValue->IsEmpty())
   {
     _attr.Set(*defaultValue);
   }
@@ -237,8 +236,7 @@ void UsdUtilsSparseAttrValueWriter::_InitializeSparseAuthoring(VtValue *defaultV
   if (!defaultValue->IsEmpty())
   {
     _prevValue.Swap(*defaultValue);
-  }
-  else
+  } else
   {
     _prevValue.Swap(existingDefault);
   }
@@ -284,8 +282,7 @@ bool UsdUtilsSparseAttrValueWriter::SetTimeSample(const VtValue &value, const Us
     // Setting _didWritePrevValue to true indicates the start of a new
     // run of similar values.
     _didWritePrevValue = true;
-  }
-  else
+  } else
   {
     _didWritePrevValue = false;
   }
@@ -337,8 +334,7 @@ bool UsdUtilsSparseAttrValueWriter::SetTimeSample(VtValue *value, const UsdTimeC
     // Setting _didWritePrevValue to true indicates the start of a new
     // run of similar values.
     _didWritePrevValue = true;
-  }
-  else
+  } else
   {
     _didWritePrevValue = false;
   }
@@ -374,15 +370,13 @@ bool UsdUtilsSparseValueWriter::_SetAttributeImpl(const UsdAttribute &attr, T &v
     {
       _attrValueWriterMap.emplace(attr, UsdUtilsSparseAttrValueWriter(attr, value));
       return true;
-    }
-    else
+    } else
     {
       auto iterAndDidInsert = _attrValueWriterMap.emplace(attr, UsdUtilsSparseAttrValueWriter(attr));
       UsdUtilsSparseAttrValueWriter &vw = iterAndDidInsert.first->second;
       return vw.SetTimeSample(value, time);
     }
-  }
-  else
+  } else
   {
     return it->second.SetTimeSample(value, time);
   }
@@ -392,8 +386,10 @@ std::vector<UsdUtilsSparseAttrValueWriter> UsdUtilsSparseValueWriter::GetSparseA
 {
   std::vector<UsdUtilsSparseAttrValueWriter> sparseValueWriterVec;
   sparseValueWriterVec.reserve(_attrValueWriterMap.size());
-  std::transform(
-    _attrValueWriterMap.begin(), _attrValueWriterMap.end(), back_inserter(sparseValueWriterVec), TfGet<1>());
+  std::transform(_attrValueWriterMap.begin(),
+                 _attrValueWriterMap.end(),
+                 back_inserter(sparseValueWriterVec),
+                 TfGet<1>());
   return sparseValueWriterVec;
 }
 

@@ -136,328 +136,328 @@ struct _VSCGConditionalBase
 namespace  // anonymous
 {
 
-struct ConditionalParamBase : public _VSCGConditionalBase
-{
-  ConditionalParamBase(const TfToken &name)
-    : paramName(name)
-  {}
-
-  TfToken paramName;
-};
-
-struct ConditionalParamIsConnected : public ConditionalParamBase
-{
-  ConditionalParamIsConnected(const TfToken &name)
-    : ConditionalParamBase(name)
-  {}
-
-  bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
+  struct ConditionalParamBase : public _VSCGConditionalBase
   {
+    ConditionalParamBase(const TfToken &name)
+      : paramName(name)
+    {}
 
-    auto I = node.inputConnections.find(paramName);
-    if (I == node.inputConnections.end())
-    {
-      return false;
-    }
+    TfToken paramName;
+  };
 
-    return !(*I).second.empty();
-  }
-};
-
-struct ConditionalParamIsNotConnected : public ConditionalParamBase
-{
-  ConditionalParamIsNotConnected(const TfToken &name)
-    : ConditionalParamBase(name)
-  {}
-
-  bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
+  struct ConditionalParamIsConnected : public ConditionalParamBase
   {
-    auto I = node.inputConnections.find(paramName);
-    if (I == node.inputConnections.end())
+    ConditionalParamIsConnected(const TfToken &name)
+      : ConditionalParamBase(name)
+    {}
+
+    bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
     {
-      return true;
-    }
 
-    return (*I).second.empty();
-  }
-};
-
-struct ConditionalParamIsSet : public ConditionalParamBase
-{
-  ConditionalParamIsSet(const TfToken &name)
-    : ConditionalParamBase(name)
-  {}
-
-  bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
-  {
-    return (node.parameters.find(paramName) != node.parameters.end());
-  }
-};
-
-struct ConditionalParamIsNotSet : public ConditionalParamBase
-{
-  ConditionalParamIsNotSet(const TfToken &name)
-    : ConditionalParamBase(name)
-  {}
-
-  bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
-  {
-    return (node.parameters.find(paramName) == node.parameters.end());
-  }
-};
-
-struct ConditionalParamCmpBase : public ConditionalParamBase
-{
-  ConditionalParamCmpBase(const TfToken &name, const VtValue &v)
-    : ConditionalParamBase(name),
-      value(v)
-  {}
-
-  VtValue value;
-
-  static bool ValueAsNumber(const VtValue v, double *result)
-  {
-    if (v.IsHolding<float>())
-    {
-      *result = v.UncheckedGet<float>();
-      return true;
-    }
-
-    if (v.IsHolding<int>())
-    {
-      *result = v.UncheckedGet<int>();
-      return true;
-    }
-
-    if (v.IsHolding<double>())
-    {
-      *result = v.UncheckedGet<double>();
-      return true;
-    }
-
-    if (v.IsHolding<bool>())
-    {
-      *result = v.UncheckedGet<bool>();
-      return true;
-    }
-
-    // TODO check color?
-
-    return false;
-  }
-
-  static bool GetParameterValue(const HdMaterialNode2 &node,
-                                const TfToken &paramName,
-                                const NdrTokenVec &shaderTypePriority,
-                                VtValue *result)
-  {
-
-    auto I = node.parameters.find(paramName);
-    if (I != node.parameters.end())
-    {
-      *result = (*I).second;
-      return true;
-    }
-
-    // check for a default
-    auto &reg = SdrRegistry::GetInstance();
-
-    if (SdrShaderNodeConstPtr sdrNode = reg.GetShaderNodeByIdentifier(node.nodeTypeId, shaderTypePriority))
-    {
-      if (NdrPropertyConstPtr ndrProp = sdrNode->GetInput(paramName))
+      auto I = node.inputConnections.find(paramName);
+      if (I == node.inputConnections.end())
       {
-        *result = ndrProp->GetDefaultValue();
+        return false;
+      }
+
+      return !(*I).second.empty();
+    }
+  };
+
+  struct ConditionalParamIsNotConnected : public ConditionalParamBase
+  {
+    ConditionalParamIsNotConnected(const TfToken &name)
+      : ConditionalParamBase(name)
+    {}
+
+    bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
+    {
+      auto I = node.inputConnections.find(paramName);
+      if (I == node.inputConnections.end())
+      {
         return true;
       }
+
+      return (*I).second.empty();
     }
+  };
 
-    return false;
-  }
-
-  virtual bool CompareNumber(double v1, double v2) = 0;
-  virtual bool CompareString(const std::string &v1, const std::string &v2) = 0;
-
-  bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
+  struct ConditionalParamIsSet : public ConditionalParamBase
   {
-    VtValue paramValue;
-    if (!GetParameterValue(node, paramName, shaderTypePriority, &paramValue))
-    {
-      return false;
-    }
+    ConditionalParamIsSet(const TfToken &name)
+      : ConditionalParamBase(name)
+    {}
 
-    if (value.IsHolding<std::string>())
+    bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
     {
-      if (paramValue.IsHolding<std::string>())
+      return (node.parameters.find(paramName) != node.parameters.end());
+    }
+  };
+
+  struct ConditionalParamIsNotSet : public ConditionalParamBase
+  {
+    ConditionalParamIsNotSet(const TfToken &name)
+      : ConditionalParamBase(name)
+    {}
+
+    bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
+    {
+      return (node.parameters.find(paramName) == node.parameters.end());
+    }
+  };
+
+  struct ConditionalParamCmpBase : public ConditionalParamBase
+  {
+    ConditionalParamCmpBase(const TfToken &name, const VtValue &v)
+      : ConditionalParamBase(name),
+        value(v)
+    {}
+
+    VtValue value;
+
+    static bool ValueAsNumber(const VtValue v, double *result)
+    {
+      if (v.IsHolding<float>())
       {
-        return CompareString(value.UncheckedGet<std::string>(), paramValue.UncheckedGet<std::string>());
+        *result = v.UncheckedGet<float>();
+        return true;
       }
+
+      if (v.IsHolding<int>())
+      {
+        *result = v.UncheckedGet<int>();
+        return true;
+      }
+
+      if (v.IsHolding<double>())
+      {
+        *result = v.UncheckedGet<double>();
+        return true;
+      }
+
+      if (v.IsHolding<bool>())
+      {
+        *result = v.UncheckedGet<bool>();
+        return true;
+      }
+
+      // TODO check color?
+
       return false;
     }
 
-    double d1 = 0, d2 = 0;
-
-    if (ValueAsNumber(paramValue, &d1) && ValueAsNumber(value, &d2))
+    static bool GetParameterValue(const HdMaterialNode2 &node,
+                                  const TfToken &paramName,
+                                  const NdrTokenVec &shaderTypePriority,
+                                  VtValue *result)
     {
 
-      // std::cerr << d1 << " " << d2 << std::endl;
-      return CompareNumber(d1, d2);
+      auto I = node.parameters.find(paramName);
+      if (I != node.parameters.end())
+      {
+        *result = (*I).second;
+        return true;
+      }
+
+      // check for a default
+      auto &reg = SdrRegistry::GetInstance();
+
+      if (SdrShaderNodeConstPtr sdrNode = reg.GetShaderNodeByIdentifier(node.nodeTypeId, shaderTypePriority))
+      {
+        if (NdrPropertyConstPtr ndrProp = sdrNode->GetInput(paramName))
+        {
+          *result = ndrProp->GetDefaultValue();
+          return true;
+        }
+      }
+
+      return false;
     }
 
-    return false;
-  }
-};
+    virtual bool CompareNumber(double v1, double v2) = 0;
+    virtual bool CompareString(const std::string &v1, const std::string &v2) = 0;
 
-struct ConditionalParamCmpEqualTo : public ConditionalParamCmpBase
-{
-  ConditionalParamCmpEqualTo(const TfToken &name, const VtValue &v)
-    : ConditionalParamCmpBase(name, v)
-  {}
+    bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
+    {
+      VtValue paramValue;
+      if (!GetParameterValue(node, paramName, shaderTypePriority, &paramValue))
+      {
+        return false;
+      }
 
-  bool CompareNumber(double v1, double v2) override
+      if (value.IsHolding<std::string>())
+      {
+        if (paramValue.IsHolding<std::string>())
+        {
+          return CompareString(value.UncheckedGet<std::string>(), paramValue.UncheckedGet<std::string>());
+        }
+        return false;
+      }
+
+      double d1 = 0, d2 = 0;
+
+      if (ValueAsNumber(paramValue, &d1) && ValueAsNumber(value, &d2))
+      {
+
+        // std::cerr << d1 << " " << d2 << std::endl;
+        return CompareNumber(d1, d2);
+      }
+
+      return false;
+    }
+  };
+
+  struct ConditionalParamCmpEqualTo : public ConditionalParamCmpBase
   {
-    return v1 == v2;
-  }
+    ConditionalParamCmpEqualTo(const TfToken &name, const VtValue &v)
+      : ConditionalParamCmpBase(name, v)
+    {}
 
-  bool CompareString(const std::string &v1, const std::string &v2) override
+    bool CompareNumber(double v1, double v2) override
+    {
+      return v1 == v2;
+    }
+
+    bool CompareString(const std::string &v1, const std::string &v2) override
+    {
+      return v1 == v2;
+    }
+  };
+
+  struct ConditionalParamCmpNotEqualTo : public ConditionalParamCmpBase
   {
-    return v1 == v2;
-  }
-};
+    ConditionalParamCmpNotEqualTo(const TfToken &name, const VtValue &v)
+      : ConditionalParamCmpBase(name, v)
+    {}
 
-struct ConditionalParamCmpNotEqualTo : public ConditionalParamCmpBase
-{
-  ConditionalParamCmpNotEqualTo(const TfToken &name, const VtValue &v)
-    : ConditionalParamCmpBase(name, v)
-  {}
+    bool CompareNumber(double v1, double v2) override
+    {
+      return v1 != v2;
+    }
 
-  bool CompareNumber(double v1, double v2) override
+    bool CompareString(const std::string &v1, const std::string &v2) override
+    {
+      return v1 != v2;
+    }
+  };
+
+  struct ConditionalParamCmpGreaterThan : public ConditionalParamCmpBase
   {
-    return v1 != v2;
-  }
+    ConditionalParamCmpGreaterThan(const TfToken &name, const VtValue &v)
+      : ConditionalParamCmpBase(name, v)
+    {}
 
-  bool CompareString(const std::string &v1, const std::string &v2) override
+    bool CompareNumber(double v1, double v2) override
+    {
+      return v1 > v2;
+    }
+
+    bool CompareString(const std::string &v1, const std::string &v2) override
+    {
+      return false;
+    }
+  };
+
+  struct ConditionalParamCmpLessThan : public ConditionalParamCmpBase
   {
-    return v1 != v2;
-  }
-};
+    ConditionalParamCmpLessThan(const TfToken &name, const VtValue &v)
+      : ConditionalParamCmpBase(name, v)
+    {}
 
-struct ConditionalParamCmpGreaterThan : public ConditionalParamCmpBase
-{
-  ConditionalParamCmpGreaterThan(const TfToken &name, const VtValue &v)
-    : ConditionalParamCmpBase(name, v)
-  {}
+    bool CompareNumber(double v1, double v2) override
+    {
+      return v1 < v2;
+    }
 
-  bool CompareNumber(double v1, double v2) override
+    bool CompareString(const std::string &v1, const std::string &v2) override
+    {
+      return false;
+    }
+  };
+
+  struct ConditionalParamCmpGreaterThanOrEqualTo : public ConditionalParamCmpBase
   {
-    return v1 > v2;
-  }
+    ConditionalParamCmpGreaterThanOrEqualTo(const TfToken &name, const VtValue &v)
+      : ConditionalParamCmpBase(name, v)
+    {}
 
-  bool CompareString(const std::string &v1, const std::string &v2) override
+    bool CompareNumber(double v1, double v2) override
+    {
+      return v1 >= v2;
+    }
+
+    bool CompareString(const std::string &v1, const std::string &v2) override
+    {
+      return false;
+    }
+  };
+
+  struct ConditionalParamCmpLessThanOrEqualTo : public ConditionalParamCmpBase
   {
-    return false;
-  }
-};
+    ConditionalParamCmpLessThanOrEqualTo(const TfToken &name, const VtValue &v)
+      : ConditionalParamCmpBase(name, v)
+    {}
 
-struct ConditionalParamCmpLessThan : public ConditionalParamCmpBase
-{
-  ConditionalParamCmpLessThan(const TfToken &name, const VtValue &v)
-    : ConditionalParamCmpBase(name, v)
-  {}
+    bool CompareNumber(double v1, double v2) override
+    {
+      return v1 <= v2;
+    }
 
-  bool CompareNumber(double v1, double v2) override
+    bool CompareString(const std::string &v1, const std::string &v2) override
+    {
+      return false;
+    }
+  };
+
+  struct ConditionalAnd : _VSCGConditionalBase
   {
-    return v1 < v2;
-  }
+    ConditionalAnd(_VSCGConditionalBase *left, _VSCGConditionalBase *right)
+      : _VSCGConditionalBase(),
+        left(left),
+        right(right)
+    {}
 
-  bool CompareString(const std::string &v1, const std::string &v2) override
+    bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
+    {
+
+      return (left && left->Eval(node, shaderTypePriority)) &&
+             (right && right->Eval(node, shaderTypePriority));
+    }
+
+    ~ConditionalAnd()
+    {
+      delete left;
+      delete right;
+    }
+
+    _VSCGConditionalBase *left;
+    _VSCGConditionalBase *right;
+  };
+
+  struct ConditionalOr : _VSCGConditionalBase
   {
-    return false;
-  }
-};
+    ConditionalOr(_VSCGConditionalBase *left, _VSCGConditionalBase *right)
+      : _VSCGConditionalBase(),
+        left(left),
+        right(right)
+    {}
 
-struct ConditionalParamCmpGreaterThanOrEqualTo : public ConditionalParamCmpBase
-{
-  ConditionalParamCmpGreaterThanOrEqualTo(const TfToken &name, const VtValue &v)
-    : ConditionalParamCmpBase(name, v)
-  {}
+    ~ConditionalOr()
+    {
+      delete left;
+      delete right;
+    }
+    bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
+    {
+      return (left && left->Eval(node, shaderTypePriority)) ||
+             (right && right->Eval(node, shaderTypePriority));
+    }
 
-  bool CompareNumber(double v1, double v2) override
-  {
-    return v1 >= v2;
-  }
+    _VSCGConditionalBase *left;
+    _VSCGConditionalBase *right;
+  };
 
-  bool CompareString(const std::string &v1, const std::string &v2) override
-  {
-    return false;
-  }
-};
-
-struct ConditionalParamCmpLessThanOrEqualTo : public ConditionalParamCmpBase
-{
-  ConditionalParamCmpLessThanOrEqualTo(const TfToken &name, const VtValue &v)
-    : ConditionalParamCmpBase(name, v)
-  {}
-
-  bool CompareNumber(double v1, double v2) override
-  {
-    return v1 <= v2;
-  }
-
-  bool CompareString(const std::string &v1, const std::string &v2) override
-  {
-    return false;
-  }
-};
-
-struct ConditionalAnd : _VSCGConditionalBase
-{
-  ConditionalAnd(_VSCGConditionalBase *left, _VSCGConditionalBase *right)
-    : _VSCGConditionalBase(),
-      left(left),
-      right(right)
-  {}
-
-  bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
-  {
-
-    return (left && left->Eval(node, shaderTypePriority)) &&
-           (right && right->Eval(node, shaderTypePriority));
-  }
-
-  ~ConditionalAnd()
-  {
-    delete left;
-    delete right;
-  }
-
-  _VSCGConditionalBase *left;
-  _VSCGConditionalBase *right;
-};
-
-struct ConditionalOr : _VSCGConditionalBase
-{
-  ConditionalOr(_VSCGConditionalBase *left, _VSCGConditionalBase *right)
-    : _VSCGConditionalBase(),
-      left(left),
-      right(right)
-  {}
-
-  ~ConditionalOr()
-  {
-    delete left;
-    delete right;
-  }
-  bool Eval(const HdMaterialNode2 &node, const NdrTokenVec &shaderTypePriority) override
-  {
-    return (left && left->Eval(node, shaderTypePriority)) ||
-           (right && right->Eval(node, shaderTypePriority));
-  }
-
-  _VSCGConditionalBase *left;
-  _VSCGConditionalBase *right;
-};
-
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 
 }  // namespace
 
@@ -731,7 +731,8 @@ typedef short int yytype_int16;
 #  if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 static int YYID(int yyi)
 #  else
-static int YYID(yyi) int yyi;
+static int YYID(yyi)
+int yyi;
 #  endif
 {
   return yyi;
@@ -769,9 +770,9 @@ static int YYID(yyi) int yyi;
 #  ifdef YYSTACK_ALLOC
 /* Pacify GCC's `empty if-body' warning.  */
 #    define YYSTACK_FREE(Ptr) \
-      do \
-      { /* empty */ \
-        ; \
+      do                      \
+      { /* empty */           \
+        ;                     \
       } while (YYID(0))
 #    ifndef YYSTACK_ALLOC_MAXIMUM
 /* The OS might guarantee only one guard page at the bottom of the stack,
@@ -835,12 +836,12 @@ union yyalloc
 #    if defined __GNUC__ && 1 < __GNUC__
 #      define YYCOPY(To, From, Count) __builtin_memcpy(To, From, (Count) * sizeof(*(From)))
 #    else
-#      define YYCOPY(To, From, Count) \
-        do \
-        { \
-          YYSIZE_T yyi; \
+#      define YYCOPY(To, From, Count)         \
+        do                                    \
+        {                                     \
+          YYSIZE_T yyi;                       \
           for (yyi = 0; yyi < (Count); yyi++) \
-            (To)[yyi] = (From)[yyi]; \
+            (To)[yyi] = (From)[yyi];          \
         } while (YYID(0))
 #    endif
 #  endif
@@ -850,14 +851,14 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-#  define YYSTACK_RELOCATE(Stack_alloc, Stack) \
-    do \
-    { \
-      YYSIZE_T yynewbytes; \
-      YYCOPY(&yyptr->Stack_alloc, Stack, yysize); \
-      Stack = &yyptr->Stack_alloc; \
+#  define YYSTACK_RELOCATE(Stack_alloc, Stack)                         \
+    do                                                                 \
+    {                                                                  \
+      YYSIZE_T yynewbytes;                                             \
+      YYCOPY(&yyptr->Stack_alloc, Stack, yysize);                      \
+      Stack = &yyptr->Stack_alloc;                                     \
       yynewbytes = yystacksize * sizeof(*Stack) + YYSTACK_GAP_MAXIMUM; \
-      yyptr += yynewbytes / sizeof(*yyptr); \
+      yyptr += yynewbytes / sizeof(*yyptr);                            \
     } while (YYID(0))
 
 #endif
@@ -3628,21 +3629,20 @@ static const yytype_uint8 yystos[] = {
 
 #define YYRECOVERING() (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value) \
-  do \
-    if (yychar == YYEMPTY && yylen == 1) \
-    { \
-      yychar = (Token); \
-      yylval = (Value); \
-      yytoken = YYTRANSLATE(yychar); \
-      YYPOPSTACK(1); \
-      goto yybackup; \
-    } \
-    else \
-    { \
+#define YYBACKUP(Token, Value)                                     \
+  do                                                               \
+    if (yychar == YYEMPTY && yylen == 1)                           \
+    {                                                              \
+      yychar = (Token);                                            \
+      yylval = (Value);                                            \
+      yytoken = YYTRANSLATE(yychar);                               \
+      YYPOPSTACK(1);                                               \
+      goto yybackup;                                               \
+    } else                                                         \
+    {                                                              \
       yyerror(&yylloc, data, YY_("syntax error: cannot back up")); \
-      YYERROR; \
-    } \
+      YYERROR;                                                     \
+    }                                                              \
   while (YYID(0))
 
 #define YYTERROR 1
@@ -3654,20 +3654,19 @@ static const yytype_uint8 yystos[] = {
 
 #define YYRHSLOC(Rhs, K) ((Rhs)[K])
 #ifndef YYLLOC_DEFAULT
-#  define YYLLOC_DEFAULT(Current, Rhs, N) \
-    do \
-      if (YYID(N)) \
-      { \
-        (Current).first_line = YYRHSLOC(Rhs, 1).first_line; \
-        (Current).first_column = YYRHSLOC(Rhs, 1).first_column; \
-        (Current).last_line = YYRHSLOC(Rhs, N).last_line; \
-        (Current).last_column = YYRHSLOC(Rhs, N).last_column; \
-      } \
-      else \
-      { \
-        (Current).first_line = (Current).last_line = YYRHSLOC(Rhs, 0).last_line; \
+#  define YYLLOC_DEFAULT(Current, Rhs, N)                                              \
+    do                                                                                 \
+      if (YYID(N))                                                                     \
+      {                                                                                \
+        (Current).first_line = YYRHSLOC(Rhs, 1).first_line;                            \
+        (Current).first_column = YYRHSLOC(Rhs, 1).first_column;                        \
+        (Current).last_line = YYRHSLOC(Rhs, N).last_line;                              \
+        (Current).last_column = YYRHSLOC(Rhs, N).last_column;                          \
+      } else                                                                           \
+      {                                                                                \
+        (Current).first_line = (Current).last_line = YYRHSLOC(Rhs, 0).last_line;       \
         (Current).first_column = (Current).last_column = YYRHSLOC(Rhs, 0).last_column; \
-      } \
+      }                                                                                \
     while (YYID(0))
 #endif
 
@@ -3701,21 +3700,21 @@ static const yytype_uint8 yystos[] = {
 #  endif
 
 #  define YYDPRINTF(Args) \
-    do \
-    { \
-      if (yydebug) \
-        YYFPRINTF Args; \
+    do                    \
+    {                     \
+      if (yydebug)        \
+        YYFPRINTF Args;   \
     } while (YYID(0))
 
-#  define YY_SYMBOL_PRINT(Title, Type, Value, Location) \
-    do \
-    { \
-      if (yydebug) \
-      { \
-        YYFPRINTF(stderr, "%s ", Title); \
+#  define YY_SYMBOL_PRINT(Title, Type, Value, Location)       \
+    do                                                        \
+    {                                                         \
+      if (yydebug)                                            \
+      {                                                       \
+        YYFPRINTF(stderr, "%s ", Title);                      \
         yy_symbol_print(stderr, Type, Value, Location, data); \
-        YYFPRINTF(stderr, "\n"); \
-      } \
+        YYFPRINTF(stderr, "\n");                              \
+      }                                                       \
     } while (YYID(0))
 
 /*--------------------------------.
@@ -3730,7 +3729,8 @@ static void yy_symbol_value_print(FILE *yyoutput,
                                   YYLTYPE const *const yylocationp,
                                   _VSCGParserData *data)
 #  else
-static void yy_symbol_value_print(yyoutput, yytype, yyvaluep, yylocationp, data) FILE *yyoutput;
+static void yy_symbol_value_print(yyoutput, yytype, yyvaluep, yylocationp, data)
+FILE *yyoutput;
 int yytype;
 YYSTYPE const *const yyvaluep;
 YYLTYPE const *const yylocationp;
@@ -3765,7 +3765,8 @@ static void yy_symbol_print(FILE *yyoutput,
                             YYLTYPE const *const yylocationp,
                             _VSCGParserData *data)
 #  else
-static void yy_symbol_print(yyoutput, yytype, yyvaluep, yylocationp, data) FILE *yyoutput;
+static void yy_symbol_print(yyoutput, yytype, yyvaluep, yylocationp, data)
+FILE *yyoutput;
 int yytype;
 YYSTYPE const *const yyvaluep;
 YYLTYPE const *const yylocationp;
@@ -3791,7 +3792,8 @@ _VSCGParserData *data;
 #  if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 static void yy_stack_print(yytype_int16 *yybottom, yytype_int16 *yytop)
 #  else
-static void yy_stack_print(yybottom, yytop) yytype_int16 *yybottom;
+static void yy_stack_print(yybottom, yytop)
+yytype_int16 *yybottom;
 yytype_int16 *yytop;
 #  endif
 {
@@ -3804,10 +3806,10 @@ yytype_int16 *yytop;
   YYFPRINTF(stderr, "\n");
 }
 
-#  define YY_STACK_PRINT(Bottom, Top) \
-    do \
-    { \
-      if (yydebug) \
+#  define YY_STACK_PRINT(Bottom, Top)    \
+    do                                   \
+    {                                    \
+      if (yydebug)                       \
         yy_stack_print((Bottom), (Top)); \
     } while (YYID(0))
 
@@ -3818,7 +3820,8 @@ yytype_int16 *yytop;
 #  if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 static void yy_reduce_print(YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, _VSCGParserData *data)
 #  else
-static void yy_reduce_print(yyvsp, yylsp, yyrule, data) YYSTYPE *yyvsp;
+static void yy_reduce_print(yyvsp, yylsp, yyrule, data)
+YYSTYPE *yyvsp;
 YYLTYPE *yylsp;
 int yyrule;
 _VSCGParserData *data;
@@ -3841,10 +3844,10 @@ _VSCGParserData *data;
   }
 }
 
-#  define YY_REDUCE_PRINT(Rule) \
-    do \
-    { \
-      if (yydebug) \
+#  define YY_REDUCE_PRINT(Rule)                    \
+    do                                             \
+    {                                              \
+      if (yydebug)                                 \
         yy_reduce_print(yyvsp, yylsp, Rule, data); \
     } while (YYID(0))
 
@@ -3904,7 +3907,8 @@ static YYSIZE_T yystrlen(yystr) const char *yystr;
 #      if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 static char *yystpcpy(char *yydest, const char *yysrc)
 #      else
-static char *yystpcpy(yydest, yysrc) char *yydest;
+static char *yystpcpy(yydest, yysrc)
+char *yydest;
 const char *yysrc;
 #      endif
 {
@@ -4062,8 +4066,7 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
         {
           yyp += yytnamerr(yyp, yyarg[yyi++]);
           yyf += 2;
-        }
-        else
+        } else
         {
           yyp++;
           yyf++;
@@ -4214,7 +4217,8 @@ int yyparse(YYPARSE_PARAM) void *YYPARSE_PARAM;
 #  if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
 int yyparse(_VSCGParserData *data)
 #  else
-int yyparse(data) _VSCGParserData *data;
+int yyparse(data)
+_VSCGParserData *data;
 #  endif
 #endif
 {
@@ -4424,8 +4428,7 @@ yybackup:
   {
     yychar = yytoken = YYEOF;
     YYDPRINTF((stderr, "Now at end of input.\n"));
-  }
-  else
+  } else
   {
     yytoken = YYTRANSLATE(yychar);
     YY_SYMBOL_PRINT("Next token is", yytoken, &yylval, &yylloc);
@@ -4665,8 +4668,9 @@ yyreduce:
 #line 614 "hdPrman/virtualStructConditionalGrammar.yy"
     {
 
-      (yyval.condition) = data->NewCondition(new ConditionalParamCmpNotEqualTo(
-        TfToken((yyvsp[(1) - (3)].string)), (yyvsp[(3) - (3)].value)->value));
+      (yyval.condition) = data->NewCondition(
+        new ConditionalParamCmpNotEqualTo(TfToken((yyvsp[(1) - (3)].string)),
+                                          (yyvsp[(3) - (3)].value)->value));
 
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
@@ -4810,8 +4814,9 @@ yyreduce:
 #line 687 "hdPrman/virtualStructConditionalGrammar.yy"
     {
 
-      (yyval.condition) = data->NewCondition(new ConditionalParamCmpGreaterThan(
-        TfToken((yyvsp[(1) - (3)].string)), (yyvsp[(3) - (3)].value)->value));
+      (yyval.condition) = data->NewCondition(
+        new ConditionalParamCmpGreaterThan(TfToken((yyvsp[(1) - (3)].string)),
+                                           (yyvsp[(3) - (3)].value)->value));
 
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
@@ -4955,8 +4960,9 @@ yyreduce:
 #line 760 "hdPrman/virtualStructConditionalGrammar.yy"
     {
 
-      (yyval.condition) = data->NewCondition(new ConditionalParamCmpLessThan(
-        TfToken((yyvsp[(1) - (3)].string)), (yyvsp[(3) - (3)].value)->value));
+      (yyval.condition) = data->NewCondition(
+        new ConditionalParamCmpLessThan(TfToken((yyvsp[(1) - (3)].string)),
+                                        (yyvsp[(3) - (3)].value)->value));
 
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
@@ -5100,8 +5106,9 @@ yyreduce:
 #line 831 "hdPrman/virtualStructConditionalGrammar.yy"
     {
 
-      (yyval.condition) = data->NewCondition(new ConditionalParamCmpGreaterThanOrEqualTo(
-        TfToken((yyvsp[(1) - (3)].string)), (yyvsp[(3) - (3)].value)->value));
+      (yyval.condition) = data->NewCondition(
+        new ConditionalParamCmpGreaterThanOrEqualTo(TfToken((yyvsp[(1) - (3)].string)),
+                                                    (yyvsp[(3) - (3)].value)->value));
 
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
@@ -5245,8 +5252,9 @@ yyreduce:
 #line 914 "hdPrman/virtualStructConditionalGrammar.yy"
     {
 
-      (yyval.condition) = data->NewCondition(new ConditionalParamCmpLessThanOrEqualTo(
-        TfToken((yyvsp[(1) - (3)].string)), (yyvsp[(3) - (3)].value)->value));
+      (yyval.condition) = data->NewCondition(
+        new ConditionalParamCmpLessThanOrEqualTo(TfToken((yyvsp[(1) - (3)].string)),
+                                                 (yyvsp[(3) - (3)].value)->value));
 
       free((yyvsp[(1) - (3)].string));
       delete (yyvsp[(3) - (3)].value);
@@ -5993,8 +6001,7 @@ yyreduce:
       if ((yyvsp[(1) - (3)].action)->action == _VSCGAction::Ignore)
       {
         data->fallbackAction = new _VSCGAction(_VSCGAction::Connect);
-      }
-      else
+      } else
       {
         data->fallbackAction = new _VSCGAction(_VSCGAction::Ignore);
       }
@@ -6103,8 +6110,7 @@ yyerrlab:
       {
         (void)yysyntax_error(yymsg, yystate, yychar);
         yyerror(&yylloc, data, yymsg);
-      }
-      else
+      } else
       {
         yyerror(&yylloc, data, YY_("syntax error"));
         if (yysize != 0)
@@ -6126,8 +6132,7 @@ yyerrlab:
       /* Return failure if at end of input.  */
       if (yychar == YYEOF)
         YYABORT;
-    }
-    else
+    } else
     {
       yydestruct("Error: discarding", yytoken, &yylval, &yylloc, data);
       yychar = YYEMPTY;
@@ -6293,8 +6298,7 @@ MatfiltVstructConditionalEvaluator::Ptr MatfiltVstructConditionalEvaluator::Pars
     data.rootCondition = nullptr;
     data.action = nullptr;
     data.fallbackAction = nullptr;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("_VSCGParser: Error parsing '%s'", inputExpr.c_str());
   }
@@ -6358,13 +6362,11 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
     if (_impl->condition->Eval(upstreamNode, shaderTypePriority))
     {
       chosenAction = _impl->action;
-    }
-    else
+    } else
     {
       chosenAction = _impl->fallbackAction;
     }
-  }
-  else
+  } else
   {
     chosenAction = _impl->action;
   }
@@ -6380,7 +6382,9 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
     case _VSCGAction::Ignore:
       break;
     case _VSCGAction::Connect:
-      node.inputConnections[nodeInput] = {{upstreamNodeId, upstreamNodeOutput}};
+      node.inputConnections[nodeInput] = {
+        {upstreamNodeId, upstreamNodeOutput}
+      };
       break;
     case _VSCGAction::SetConstant: {
       // convert the constant to the expected type
@@ -6404,8 +6408,7 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
         if (inputType == SdrPropertyTypes->String)
         {
           node.parameters[nodeInput] = value;
-        }
-        else
+        } else
         {
           TF_CODING_ERROR(
             "MatfiltVstructConditionalEvaluator: "
@@ -6413,8 +6416,7 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
             inputType.GetText());
           break;
         }
-      }
-      else if (value.IsHolding<double>())
+      } else if (value.IsHolding<double>())
       {
         // parser always stores numbers as double.
         double doubleValue = value.UncheckedGet<double>();
@@ -6422,24 +6424,21 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
         if (inputType == SdrPropertyTypes->Int)
         {
           resultValue = VtValue(static_cast<int>(doubleValue));
-        }
-        else if (inputType == SdrPropertyTypes->Float)
+        } else if (inputType == SdrPropertyTypes->Float)
         {
           resultValue = VtValue(static_cast<float>(doubleValue));
         }
         if (!resultValue.IsEmpty())
         {
           node.parameters[nodeInput] = resultValue;
-        }
-        else
+        } else
         {
           TF_CODING_ERROR(
             "MatfiltVstructConditionalEvaluator: "
             "Empty result");
         }
         break;
-      }
-      else
+      } else
       {
         TF_CODING_ERROR(
           "MatfiltVstructConditionalEvaluator: "
@@ -6483,14 +6482,12 @@ void MatfiltVstructConditionalEvaluator::Evaluate(const SdfPath &nodeId,
           {
             // authored value
             node.parameters[nodeInput] = (*I).second;
-          }
-          else
+          } else
           {
             // use default
             node.parameters[nodeInput] = ndrUpstreamProp->GetDefaultValue();
           }
-        }
-        else
+        } else
         {
           // TODO warn?
         }

@@ -158,8 +158,7 @@ void GlfBindingMap::_AddActiveAttributeBindings(GLuint program)
     if (it == _attribBindings.end())
     {
       _attribBindings[token] = location;
-    }
-    else if (it->second != location)
+    } else if (it->second != location)
     {
       TF_RUNTIME_ERROR("Inconsistent attribute binding detected.");
     }

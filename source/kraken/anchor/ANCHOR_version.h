@@ -34,11 +34,11 @@
 #define ANCHOR_VERSION "1.84 WIP"
 #define ANCHOR_VERSION_NUM 18302
 
-#define ANCHOR_CHECKVERSION() \
-  ANCHOR::DebugCheckVersionAndDataLayout(ANCHOR_VERSION, \
-                                         sizeof(AnchorIO), \
-                                         sizeof(AnchorStyle), \
-                                         sizeof(wabi::GfVec2f), \
-                                         sizeof(wabi::GfVec4f), \
+#define ANCHOR_CHECKVERSION()                                    \
+  ANCHOR::DebugCheckVersionAndDataLayout(ANCHOR_VERSION,         \
+                                         sizeof(AnchorIO),       \
+                                         sizeof(AnchorStyle),    \
+                                         sizeof(wabi::GfVec2f),  \
+                                         sizeof(wabi::GfVec4f),  \
                                          sizeof(AnchorDrawVert), \
                                          sizeof(AnchorDrawIdx))

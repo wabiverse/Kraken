@@ -52,76 +52,76 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-object _ComputeJointInfluences(const UsdSkelSkinningQuery &self, UsdTimeCode time)
-{
-  VtIntArray indices;
-  VtFloatArray weights;
-  if (self.ComputeJointInfluences(&indices, &weights, time))
+  object _ComputeJointInfluences(const UsdSkelSkinningQuery &self, UsdTimeCode time)
   {
-    return boost::python::make_tuple(indices, weights);
+    VtIntArray indices;
+    VtFloatArray weights;
+    if (self.ComputeJointInfluences(&indices, &weights, time))
+    {
+      return boost::python::make_tuple(indices, weights);
+    }
+    return object();
   }
-  return object();
-}
 
-object _ComputeVaryingJointInfluences(const UsdSkelSkinningQuery &self, size_t numPoints, UsdTimeCode time)
-{
-  VtIntArray indices;
-  VtFloatArray weights;
-  if (self.ComputeVaryingJointInfluences(numPoints, &indices, &weights, time))
+  object _ComputeVaryingJointInfluences(const UsdSkelSkinningQuery &self, size_t numPoints, UsdTimeCode time)
   {
-    return boost::python::make_tuple(indices, weights);
+    VtIntArray indices;
+    VtFloatArray weights;
+    if (self.ComputeVaryingJointInfluences(numPoints, &indices, &weights, time))
+    {
+      return boost::python::make_tuple(indices, weights);
+    }
+    return object();
   }
-  return object();
-}
 
-std::vector<double> _GetTimeSamples(const UsdSkelSkinningQuery &self)
-{
-  std::vector<double> times;
-  self.GetTimeSamples(&times);
-  return times;
-}
+  std::vector<double> _GetTimeSamples(const UsdSkelSkinningQuery &self)
+  {
+    std::vector<double> times;
+    self.GetTimeSamples(&times);
+    return times;
+  }
 
-std::vector<double> _GetTimeSamplesInInterval(const UsdSkelSkinningQuery &self, const GfInterval &interval)
-{
-  std::vector<double> times;
-  self.GetTimeSamplesInInterval(interval, &times);
-  return times;
-}
+  std::vector<double> _GetTimeSamplesInInterval(const UsdSkelSkinningQuery &self, const GfInterval &interval)
+  {
+    std::vector<double> times;
+    self.GetTimeSamplesInInterval(interval, &times);
+    return times;
+  }
 
-object _GetJointOrder(const UsdSkelSkinningQuery &self)
-{
-  VtTokenArray jointOrder;
-  if (self.GetJointOrder(&jointOrder))
-    return object(jointOrder);
-  return {};
-}
+  object _GetJointOrder(const UsdSkelSkinningQuery &self)
+  {
+    VtTokenArray jointOrder;
+    if (self.GetJointOrder(&jointOrder))
+      return object(jointOrder);
+    return {};
+  }
 
-object _GetBlendShapeOrder(const UsdSkelSkinningQuery &self)
-{
-  VtTokenArray blendShapeOrder;
-  if (self.GetBlendShapeOrder(&blendShapeOrder))
-    return object(blendShapeOrder);
-  return {};
-}
+  object _GetBlendShapeOrder(const UsdSkelSkinningQuery &self)
+  {
+    VtTokenArray blendShapeOrder;
+    if (self.GetBlendShapeOrder(&blendShapeOrder))
+      return object(blendShapeOrder);
+    return {};
+  }
 
-template<typename Matrix4>
-bool _ComputeSkinnedPoints(const UsdSkelSkinningQuery &self,
-                           const VtArray<Matrix4> &xforms,
-                           VtVec3fArray &points,
-                           UsdTimeCode time)
-{
-  return self.ComputeSkinnedPoints(xforms, &points, time);
-}
+  template<typename Matrix4>
+  bool _ComputeSkinnedPoints(const UsdSkelSkinningQuery &self,
+                             const VtArray<Matrix4> &xforms,
+                             VtVec3fArray &points,
+                             UsdTimeCode time)
+  {
+    return self.ComputeSkinnedPoints(xforms, &points, time);
+  }
 
-template<typename Matrix4>
-Matrix4 _ComputeSkinnedTransform(const UsdSkelSkinningQuery &self,
-                                 const VtArray<Matrix4> &xforms,
-                                 UsdTimeCode time)
-{
-  Matrix4 xform;
-  self.ComputeSkinnedTransform(xforms, &xform, time);
-  return xform;
-}
+  template<typename Matrix4>
+  Matrix4 _ComputeSkinnedTransform(const UsdSkelSkinningQuery &self,
+                                   const VtArray<Matrix4> &xforms,
+                                   UsdTimeCode time)
+  {
+    Matrix4 xform;
+    self.ComputeSkinnedTransform(xforms, &xform, time);
+    return xform;
+  }
 
 }  // namespace
 

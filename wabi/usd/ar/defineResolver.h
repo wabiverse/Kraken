@@ -56,9 +56,9 @@ WABI_NAMESPACE_BEGIN
 #ifdef doxygen
 #  define AR_DEFINE_RESOLVER(ResolverClass, BaseClass1, ...)
 #else
-#  define AR_DEFINE_RESOLVER(...) \
-    TF_REGISTRY_FUNCTION(TfType) \
-    { \
+#  define AR_DEFINE_RESOLVER(...)       \
+    TF_REGISTRY_FUNCTION(TfType)        \
+    {                                   \
       Ar_DefineResolver<__VA_ARGS__>(); \
     }
 #endif  // doxygen

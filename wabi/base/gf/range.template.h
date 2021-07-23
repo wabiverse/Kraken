@@ -34,11 +34,11 @@
 
 #ifndef WABI_BASE_GF_{{UPPER(RNG)[2 : ] } } _H
 #define WABI_BASE_GF_ \
-  { \
-    { \
-      UPPER(RNG)[2:] \
-    } \
-  } \
+  {                   \
+    {                 \
+      UPPER(RNG)[2:]  \
+    }                 \
+  }                   \
   _H
 
 /// \file gf/range{{ SUFFIX }}.h
@@ -496,8 +496,7 @@ class
     {
       _min *= m;
       _max *= m;
-    }
-    else
+    } else
     {
       {
         {

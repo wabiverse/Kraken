@@ -44,21 +44,21 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-std::string _Replace(std::string &&s, const std::string &from, const std::string &to)
-{
-  std::string::size_type pos = 0;
-  while ((pos = s.find(from, pos)) != std::string::npos)
+  std::string _Replace(std::string &&s, const std::string &from, const std::string &to)
   {
-    s.replace(pos, from.size(), to);
-    pos += to.size();
+    std::string::size_type pos = 0;
+    while ((pos = s.find(from, pos)) != std::string::npos)
+    {
+      s.replace(pos, from.size(), to);
+      pos += to.size();
+    }
+    return std::move(s);
   }
-  return std::move(s);
-}
 
-std::string _GlobToRegex(std::string pattern)
-{
-  return _Replace(_Replace(_Replace(std::move(pattern), ".", "\\."), "*", ".*"), "?", ".");
-}
+  std::string _GlobToRegex(std::string pattern)
+  {
+    return _Replace(_Replace(_Replace(std::move(pattern), ".", "\\."), "*", ".*"), "?", ".");
+  }
 
 }  // anonymous namespace
 
@@ -167,12 +167,10 @@ ArchRegex::ArchRegex(const std::string &pattern, unsigned int flags)
     if (pattern.empty())
     {
       _error = "empty pattern";
-    }
-    else if (flags & GLOB)
+    } else if (flags & GLOB)
     {
       _impl.reset(new _Impl(_GlobToRegex(pattern), _flags, &_error));
-    }
-    else
+    } else
     {
       _impl.reset(new _Impl(pattern, _flags, &_error));
     }

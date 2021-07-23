@@ -376,8 +376,7 @@ void UsdImagingPointInstancerAdapter::_PopulatePrototype(int protoIndex,
                                           instancerContext->instanceInheritablePurpose,
                                           UsdImagingPrimAdapterSharedPtr()};
         protoPath = adapter->Populate(*iter, index, &ctx);
-      }
-      else
+      } else
       {
         TfToken protoName(
           TfStringPrintf("proto%d_%s_id%d", protoIndex, iter->GetPath().GetName().c_str(), protoID++));
@@ -483,8 +482,10 @@ void UsdImagingPointInstancerAdapter::TrackVariability(
       UsdPrim protoRootPrim = _GetPrim(proto.protoRootPath);
       for (size_t i = 0; i < proto.paths.size() - 1; ++i)
       {
-        _ComputeProtoVisibility(
-          _GetPrim(proto.paths[i + 1]).GetPrototype(), _GetPrim(proto.paths[i + 0]), time, &proto.visible);
+        _ComputeProtoVisibility(_GetPrim(proto.paths[i + 1]).GetPrototype(),
+                                _GetPrim(proto.paths[i + 0]),
+                                time,
+                                &proto.visible);
       }
       _ComputeProtoVisibility(protoRootPrim, _GetPrim(proto.paths.back()), time, &proto.visible);
     }
@@ -499,8 +500,7 @@ void UsdImagingPointInstancerAdapter::TrackVariability(
                true);
 
     return;
-  }
-  else if (_InstancerData const *instrData = TfMapLookupPtr(_instancerData, cachePath))
+  } else if (_InstancerData const *instrData = TfMapLookupPtr(_instancerData, cachePath))
   {
 
     // Mark instance indices as time varying if any of the following is
@@ -519,8 +519,10 @@ void UsdImagingPointInstancerAdapter::TrackVariability(
                  false);
 
     // this is for instancer transform.
-    _IsTransformVarying(
-      prim, HdChangeTracker::DirtyTransform, UsdImagingTokens->usdVaryingXform, timeVaryingBits);
+    _IsTransformVarying(prim,
+                        HdChangeTracker::DirtyTransform,
+                        UsdImagingTokens->usdVaryingXform,
+                        timeVaryingBits);
 
     // instancer visibility
     HdDirtyBits visBits;
@@ -538,8 +540,7 @@ void UsdImagingPointInstancerAdapter::TrackVariability(
       // We should let this be initialized by the first UpdateForTime...
       instrData->visible = _GetInstancerVisible(cachePath, _GetTimeWithOffset(0.0));
       instrData->variableVisibility = false;
-    }
-    else
+    } else
     {
       instrData->variableVisibility = true;
     }
@@ -612,8 +613,7 @@ void UsdImagingPointInstancerAdapter::UpdateForTime(UsdPrim const &prim,
       UsdPrim protoPrim = _GetProtoUsdPrim(proto);
       proto.adapter->UpdateForTime(protoPrim, cachePath, time, requestedBits);
     }
-  }
-  else if (_instancerData.find(cachePath) != _instancerData.end())
+  } else if (_instancerData.find(cachePath) != _instancerData.end())
   {
     // For the instancer itself, we only send translate, rotate and scale
     // back as primvars, which all fall into the DirtyPrimvar bucket
@@ -715,18 +715,19 @@ HdDirtyBits UsdImagingPointInstancerAdapter::ProcessPropertyChange(UsdPrim const
     if (propertyName == UsdGeomTokens->positions)
     {
       primvarName = _tokens->translate;
-    }
-    else if (propertyName == UsdGeomTokens->orientations)
+    } else if (propertyName == UsdGeomTokens->orientations)
     {
       primvarName = _tokens->rotate;
-    }
-    else if (propertyName == UsdGeomTokens->scales)
+    } else if (propertyName == UsdGeomTokens->scales)
     {
       primvarName = _tokens->scale;
     }
 
-    return _ProcessNonPrefixedPrimvarPropertyChange(
-      prim, cachePath, propertyName, primvarName, HdInterpolationInstance);
+    return _ProcessNonPrefixedPrimvarPropertyChange(prim,
+                                                    cachePath,
+                                                    propertyName,
+                                                    primvarName,
+                                                    HdInterpolationInstance);
   }
 
   if (propertyName == UsdGeomTokens->protoIndices || propertyName == UsdGeomTokens->invisibleIds)
@@ -780,8 +781,7 @@ void UsdImagingPointInstancerAdapter::_ProcessPrimRemoval(SdfPath const &cachePa
   if (IsChildPath(cachePath))
   {
     affectedInstancer = cachePath.GetParentPath();
-  }
-  else
+  } else
   {
     affectedInstancer = cachePath;
   }
@@ -858,8 +858,7 @@ void UsdImagingPointInstancerAdapter::MarkDirty(UsdPrim const &prim,
     _ProtoPrim const &proto = _GetProtoPrim(instancerPath, cachePath);
 
     proto.adapter->MarkDirty(prim, cachePath, dirty, index);
-  }
-  else
+  } else
   {
     index->MarkInstancerDirty(cachePath, dirty);
   }
@@ -937,8 +936,7 @@ void UsdImagingPointInstancerAdapter::MarkTransformDirty(UsdPrim const &prim,
     _ProtoPrim const &proto = _GetProtoPrim(instancerPath, cachePath);
 
     proto.adapter->MarkTransformDirty(prim, cachePath, index);
-  }
-  else
+  } else
   {
     static const HdDirtyBits transformDirty = HdChangeTracker::DirtyTransform;
 
@@ -958,8 +956,7 @@ void UsdImagingPointInstancerAdapter::MarkVisibilityDirty(UsdPrim const &prim,
     _ProtoPrim const &proto = _GetProtoPrim(instancerPath, cachePath);
 
     proto.adapter->MarkVisibilityDirty(prim, cachePath, index);
-  }
-  else
+  } else
   {
     static const HdDirtyBits visibilityDirty = HdChangeTracker::DirtyVisibility;
 
@@ -1042,8 +1039,7 @@ bool UsdImagingPointInstancerAdapter::_GetProtoPrimForChild(UsdPrim const &usdPr
     ctx->instanceInheritablePurpose = TfToken();
     ctx->instancerAdapter = const_cast<UsdImagingPointInstancerAdapter *>(this)->shared_from_this();
     return true;
-  }
-  else
+  } else
   {
     return false;
   }
@@ -1074,8 +1070,9 @@ const UsdPrim UsdImagingPointInstancerAdapter::_GetProtoUsdPrim(_ProtoPrim const
 bool UsdImagingPointInstancerAdapter::_GetInstancerVisible(SdfPath const &instancerPath,
                                                            UsdTimeCode time) const
 {
-  bool visible = UsdImagingPrimAdapter::GetVisible(
-    _GetPrim(instancerPath.GetPrimPath()), instancerPath, time);
+  bool visible = UsdImagingPrimAdapter::GetVisible(_GetPrim(instancerPath.GetPrimPath()),
+                                                   instancerPath,
+                                                   time);
 
   if (visible)
   {
@@ -1254,8 +1251,7 @@ SdfPath UsdImagingPointInstancerAdapter::GetScenePrimPath(SdfPath const &cachePa
   if (IsChildPath(cachePath))
   {
     instancerPath = cachePath.GetParentPath();
-  }
-  else
+  } else
   {
     // If the prototype is a PI, then cache path will be in the prim map
     // of one of the instancers.  If it's a UsdGeomPointInstancer, we can
@@ -1265,8 +1261,7 @@ SdfPath UsdImagingPointInstancerAdapter::GetScenePrimPath(SdfPath const &cachePa
     if (it != _instancerData.end())
     {
       instancerPath = it->second.parentInstancerCachePath;
-    }
-    else
+    } else
     {
       for (auto const &pair : _instancerData)
       {
@@ -1324,8 +1319,10 @@ SdfPath UsdImagingPointInstancerAdapter::GetScenePrimPath(SdfPath const &cachePa
   SdfPath parentPath = it->second.parentInstancerCachePath;
 
   // Compute the local & parent instance index.
-  VtValue indicesValue = GetInstanceIndices(
-    _GetPrim(instancerPath), instancerPath, cachePath, _GetTimeWithOffset(0.0));
+  VtValue indicesValue = GetInstanceIndices(_GetPrim(instancerPath),
+                                            instancerPath,
+                                            cachePath,
+                                            _GetTimeWithOffset(0.0));
 
   if (!indicesValue.IsHolding<VtIntArray>())
   {
@@ -1443,8 +1440,7 @@ GfMatrix4d UsdImagingPointInstancerAdapter::GetInstancerTransform(UsdPrim const 
     // lookup and delegate adapter to compute the instancer
     // transform.
     return adapter->GetRelativeInstancerTransform(parentInstancerCachePath, instancerPath, time);
-  }
-  else
+  } else
   {
     // If not nested, simply output the transform of the instancer.
     return GetRelativeInstancerTransform(parentInstancerCachePath, instancerPath, time);
@@ -1460,13 +1456,11 @@ SdfPath UsdImagingPointInstancerAdapter::GetInstancerId(UsdPrim const &usdPrim,
     // If this is called on behalf of an rprim, the rprim's name will be
     // /path/to/instancer.name_of_proto, so just take the parent path.
     return cachePath.GetParentPath();
-  }
-  else if (_InstancerData const *instrData = TfMapLookupPtr(_instancerData, cachePath))
+  } else if (_InstancerData const *instrData = TfMapLookupPtr(_instancerData, cachePath))
   {
     // Otherwise, look up the parent in the instancer data.
     return instrData->parentInstancerCachePath;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unexpected path <%s>", cachePath.GetText());
     return SdfPath::EmptyPath();
@@ -1484,8 +1478,7 @@ SdfPathVector UsdImagingPointInstancerAdapter::GetInstancerPrototypes(UsdPrim co
     _ProtoPrim const &proto = _GetProtoPrim(usdPrim.GetPath(), cachePath);
     UsdPrim protoPrim = _GetProtoUsdPrim(proto);
     return proto.adapter->GetInstancerPrototypes(protoPrim, cachePath);
-  }
-  else
+  } else
   {
     SdfPathVector prototypes;
     if (const _InstancerData *instancerData = TfMapLookupPtr(_instancerData, cachePath))
@@ -1544,11 +1537,11 @@ size_t UsdImagingPointInstancerAdapter::SampleInstancerTransform(UsdPrim const &
     for (size_t i = 0; i < numSamplesToEvaluate; ++i)
     {
       sampleTimes[i] = timeSamples[i] - time.GetValue();
-      sampleValues[i] = adapter->GetRelativeInstancerTransform(
-        parentInstancerCachePath, instancerPath, timeSamples[i]);
+      sampleValues[i] = adapter->GetRelativeInstancerTransform(parentInstancerCachePath,
+                                                               instancerPath,
+                                                               timeSamples[i]);
     }
-  }
-  else
+  } else
   {
     numSamples = _GatherAuthoredTransformTimeSamples(_GetPrim(instancerPath), interval, &timeSamples);
 
@@ -1556,8 +1549,9 @@ size_t UsdImagingPointInstancerAdapter::SampleInstancerTransform(UsdPrim const &
     for (size_t i = 0; i < numSamplesToEvaluate; ++i)
     {
       sampleTimes[i] = timeSamples[i] - time.GetValue();
-      sampleValues[i] = GetRelativeInstancerTransform(
-        parentInstancerCachePath, instancerPath, timeSamples[i]);
+      sampleValues[i] = GetRelativeInstancerTransform(parentInstancerCachePath,
+                                                      instancerPath,
+                                                      timeSamples[i]);
     }
   }
   return numSamples;
@@ -1648,27 +1642,36 @@ size_t UsdImagingPointInstancerAdapter::SamplePrimvar(UsdPrim const &usdPrim,
     // Delegate to prototype adapter and USD prim.
     _ProtoPrim const &proto = _GetProtoPrim(usdPrim.GetPath(), cachePath);
     UsdPrim protoPrim = _GetProtoUsdPrim(proto);
-    return proto.adapter->SamplePrimvar(
-      protoPrim, cachePath, key, time, maxNumSamples, sampleTimes, sampleValues, sampleIndices);
-  }
-  else
+    return proto.adapter->SamplePrimvar(protoPrim,
+                                        cachePath,
+                                        key,
+                                        time,
+                                        maxNumSamples,
+                                        sampleTimes,
+                                        sampleValues,
+                                        sampleIndices);
+  } else
   {
     // Map Hydra-PI transform keys to their USD equivalents.
     TfToken usdKey = key;
     if (key == _tokens->translate)
     {
       usdKey = UsdGeomTokens->positions;
-    }
-    else if (key == _tokens->scale)
+    } else if (key == _tokens->scale)
     {
       usdKey = UsdGeomTokens->scales;
-    }
-    else if (key == _tokens->rotate)
+    } else if (key == _tokens->rotate)
     {
       usdKey = UsdGeomTokens->orientations;
     }
-    return UsdImagingPrimAdapter::SamplePrimvar(
-      usdPrim, cachePath, usdKey, time, maxNumSamples, sampleTimes, sampleValues, sampleIndices);
+    return UsdImagingPrimAdapter::SamplePrimvar(usdPrim,
+                                                cachePath,
+                                                usdKey,
+                                                time,
+                                                maxNumSamples,
+                                                sampleTimes,
+                                                sampleValues,
+                                                sampleIndices);
   }
 }
 
@@ -1713,16 +1716,17 @@ bool UsdImagingPointInstancerAdapter::GetVisible(UsdPrim const &prim,
       // visibility (it does not vary over time), we can use the
       // pre-cached visibility.
       vis = vis && proto.visible;
-    }
-    else if (vis)
+    } else if (vis)
     {
       // The instancer is visible and the prototype has varying
       // visibility, we must compute visibility from the proto
       // prim to the model instance root.
       for (size_t i = 0; i < proto.paths.size() - 1; ++i)
       {
-        _ComputeProtoVisibility(
-          _GetPrim(proto.paths[i + 1]).GetPrototype(), _GetPrim(proto.paths[i + 0]), time, &vis);
+        _ComputeProtoVisibility(_GetPrim(proto.paths[i + 1]).GetPrototype(),
+                                _GetPrim(proto.paths[i + 0]),
+                                time,
+                                &vis);
       }
       _ComputeProtoVisibility(_GetPrim(proto.protoRootPath), _GetPrim(proto.paths.back()), time, &vis);
     }
@@ -1866,8 +1870,7 @@ VtValue UsdImagingPointInstancerAdapter::Get(UsdPrim const &usdPrim,
     _ProtoPrim const &proto = _GetProtoPrim(usdPrim.GetPath(), cachePath);
     UsdPrim protoPrim = _GetProtoUsdPrim(proto);
     return proto.adapter->Get(protoPrim, cachePath, key, time, outIndices);
-  }
-  else if (_InstancerData const *instrData = TfMapLookupPtr(_instancerData, cachePath))
+  } else if (_InstancerData const *instrData = TfMapLookupPtr(_instancerData, cachePath))
   {
     TF_UNUSED(instrData);
 
@@ -1879,8 +1882,7 @@ VtValue UsdImagingPointInstancerAdapter::Get(UsdPrim const &usdPrim,
       {
         return VtValue(positions);
       }
-    }
-    else if (key == _tokens->rotate)
+    } else if (key == _tokens->rotate)
     {
       UsdGeomPointInstancer instancer(usdPrim);
       VtQuathArray orientations;
@@ -1901,8 +1903,7 @@ VtValue UsdImagingPointInstancerAdapter::Get(UsdPrim const &usdPrim,
         }
         return VtValue(rotations);
       }
-    }
-    else if (key == _tokens->scale)
+    } else if (key == _tokens->scale)
     {
       UsdGeomPointInstancer instancer(usdPrim);
       VtVec3fArray scales;
@@ -1910,8 +1911,7 @@ VtValue UsdImagingPointInstancerAdapter::Get(UsdPrim const &usdPrim,
       {
         return VtValue(scales);
       }
-    }
-    else
+    } else
     {
       UsdGeomPrimvarsAPI primvars(usdPrim);
       if (UsdGeomPrimvar pv = primvars.GetPrimvar(key))
@@ -1924,8 +1924,7 @@ VtValue UsdImagingPointInstancerAdapter::Get(UsdPrim const &usdPrim,
             pv.GetIndices(outIndices, time);
             return value;
           }
-        }
-        else if (pv && pv.ComputeFlattened(&value, time))
+        } else if (pv && pv.ComputeFlattened(&value, time))
         {
           return value;
         }
@@ -1981,8 +1980,10 @@ HdExtComputationPrimvarDescriptorVector UsdImagingPointInstancerAdapter::GetExtC
   if (_GetProtoPrimForChild(usdPrim, cachePath, &proto, &ctx))
   {
 
-    return proto->adapter->GetExtComputationPrimvars(
-      _GetProtoUsdPrim(*proto), cachePath, interpolation, &ctx);
+    return proto->adapter->GetExtComputationPrimvars(_GetProtoUsdPrim(*proto),
+                                                     cachePath,
+                                                     interpolation,
+                                                     &ctx);
   }
   return BaseAdapter::GetExtComputationPrimvars(usdPrim, cachePath, interpolation, nullptr);
 }
@@ -2017,8 +2018,10 @@ VtValue UsdImagingPointInstancerAdapter::GetInstanceIndices(UsdPrim const &insta
     _ProtoPrim const *proto;
     if (_GetProtoPrimForChild(instancerPrim, instancerCachePath, &proto, &ctx))
     {
-      return proto->adapter->GetInstanceIndices(
-        _GetProtoUsdPrim(*proto), instancerCachePath, prototypeCachePath, time);
+      return proto->adapter->GetInstanceIndices(_GetProtoUsdPrim(*proto),
+                                                instancerCachePath,
+                                                prototypeCachePath,
+                                                time);
     }
   }
 
@@ -2140,8 +2143,10 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
       }
 
       // XXX: Using _GetTimeWithOffset here is a bit of a hack?
-      VtValue indicesValue = GetInstanceIndices(
-        _GetPrim(instancerPath), instancerPath, cachePath, _GetTimeWithOffset(0.0));
+      VtValue indicesValue = GetInstanceIndices(_GetPrim(instancerPath),
+                                                instancerPath,
+                                                cachePath,
+                                                _GetTimeWithOffset(0.0));
       if (!indicesValue.IsHolding<VtIntArray>())
       {
         return false;
@@ -2163,10 +2168,9 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
     // cachePath.GetPrimPath, since that's guaranteed to exist and be a
     // prefix...
     UsdPrim prefixPrim = _GetPrim(cachePath.GetAbsoluteRootOrPrimPath());
-    return proto.adapter->PopulateSelection(
-      highlightMode, cachePath, prefixPrim, hydraInstanceIndex, instanceIndices, result);
-  }
-  else
+    return proto.adapter
+      ->PopulateSelection(highlightMode, cachePath, prefixPrim, hydraInstanceIndex, instanceIndices, result);
+  } else
   {
     _InstancerData const *instrData = TfMapLookupPtr(_instancerData, cachePath);
     if (instrData == nullptr)
@@ -2209,8 +2213,10 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
       bool added = false;
       for (auto const &pair : instrData->protoPrimMap)
       {
-        VtValue indicesValue = GetInstanceIndices(
-          _GetPrim(cachePath), cachePath, pair.first, _GetTimeWithOffset(0.0));
+        VtValue indicesValue = GetInstanceIndices(_GetPrim(cachePath),
+                                                  cachePath,
+                                                  pair.first,
+                                                  _GetTimeWithOffset(0.0));
 
         if (!indicesValue.IsHolding<VtIntArray>())
         {
@@ -2238,15 +2244,18 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
           {
             instanceIndices.push_back(pi * indices.size() + foundIndex);
           }
-        }
-        else
+        } else
         {
           instanceIndices.push_back(foundIndex);
         }
         UsdPrim selectionPrim = _GetPrim(pair.first.GetAbsoluteRootOrPrimPath());
 
-        added |= pair.second.adapter->PopulateSelection(
-          highlightMode, pair.first, selectionPrim, -1, instanceIndices, result);
+        added |= pair.second.adapter->PopulateSelection(highlightMode,
+                                                        pair.first,
+                                                        selectionPrim,
+                                                        -1,
+                                                        instanceIndices,
+                                                        result);
       }
       return added;
     }
@@ -2267,16 +2276,14 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
         if (pair.second.paths[instanceIdx].HasPrefix(selectionPathVec[selectionCount]))
         {
           ++selectionCount;
-        }
-        else if (selectionPathVec[selectionCount].HasPrefix(pair.second.paths[instanceIdx]))
+        } else if (selectionPathVec[selectionCount].HasPrefix(pair.second.paths[instanceIdx]))
         {
           // If the selection path is a suffix of the prototype path,
           // leave the rest of the selection path to be used as
           // a selection prim for the child adapter.
           ++instanceCount;
           break;
-        }
-        else if (selectionCount != 0)
+        } else if (selectionCount != 0)
         {
           // The paths don't match; setting "selectionCount = 0"
           // is telling the below code "no match", which is an
@@ -2292,8 +2299,7 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
         // If we've accounted for the whole selection path, fully
         // populate this prototype.
         selectionPrim = _GetPrim(pair.first.GetAbsoluteRootOrPrimPath());
-      }
-      else if (selectionCount != 0 && instanceCount == pair.second.paths.size())
+      } else if (selectionCount != 0 && instanceCount == pair.second.paths.size())
       {
         // If the selection path goes past the end of the instance path,
         // compose the remainder of the selection path into a
@@ -2302,8 +2308,7 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
         SdfPathVector residualPathVec(selectionPathVec.rbegin(), selectionPathVec.rend() - selectionCount);
         SdfPath residualPath = _GetPrimPathFromInstancerChain(residualPathVec);
         selectionPrim = _GetPrim(residualPath);
-      }
-      else
+      } else
       {
         continue;
       }
@@ -2311,8 +2316,10 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
       // Compose instance indices.
       VtIntArray instanceIndices;
 
-      VtValue indicesValue = GetInstanceIndices(
-        _GetPrim(cachePath), cachePath, pair.first, _GetTimeWithOffset(0.0));
+      VtValue indicesValue = GetInstanceIndices(_GetPrim(cachePath),
+                                                cachePath,
+                                                pair.first,
+                                                _GetTimeWithOffset(0.0));
 
       if (!indicesValue.IsHolding<VtIntArray>())
       {
@@ -2329,8 +2336,7 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
             instanceIndices.push_back(pi * indices.size() + i);
           }
         }
-      }
-      else
+      } else
       {
         for (size_t i = 0; i < indices.size(); ++i)
         {
@@ -2338,8 +2344,12 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(HdSelection::HighlightMo
         }
       }
 
-      added |= pair.second.adapter->PopulateSelection(
-        highlightMode, pair.first, selectionPrim, hydraInstanceIndex, instanceIndices, result);
+      added |= pair.second.adapter->PopulateSelection(highlightMode,
+                                                      pair.first,
+                                                      selectionPrim,
+                                                      hydraInstanceIndex,
+                                                      instanceIndices,
+                                                      result);
     }
 
     return added;
@@ -2360,8 +2370,7 @@ HdVolumeFieldDescriptorVector UsdImagingPointInstancerAdapter::GetVolumeFieldDes
     _ProtoPrim const &proto = _GetProtoPrim(usdPrim.GetPath(), id);
     UsdPrim protoPrim = _GetProtoUsdPrim(proto);
     return proto.adapter->GetVolumeFieldDescriptors(protoPrim, id, time);
-  }
-  else
+  } else
   {
     return UsdImagingPrimAdapter::GetVolumeFieldDescriptors(usdPrim, id, time);
   }
@@ -2401,8 +2410,7 @@ GfMatrix4d UsdImagingPointInstancerAdapter::GetRelativeInstancerTransform(
     {
       // this instancer is a proto root.
       isProtoRoot = true;
-    }
-    else
+    } else
     {
       // this means instancer(cachePath) is a member of a
       // prototype of the parent instacer, but not a proto root.
@@ -2417,8 +2425,7 @@ GfMatrix4d UsdImagingPointInstancerAdapter::GetRelativeInstancerTransform(
         // native instancer which instances that parent)
         // has delegate's root transform.
         transformRoot = GetRootTransform();
-      }
-      else
+      } else
       {
         // set the target root to proto root.
         transformRoot = BaseAdapter::GetTransform(_GetPrim(proto.protoRootPath), proto.protoRootPath, time);
@@ -2431,8 +2438,7 @@ GfMatrix4d UsdImagingPointInstancerAdapter::GetRelativeInstancerTransform(
     // instancer is a protoroot of parent instancer.
     // ignore instancer transform.
     return GfMatrix4d(1);
-  }
-  else
+  } else
   {
     // set protoRoot-to-instancer relative transform
 

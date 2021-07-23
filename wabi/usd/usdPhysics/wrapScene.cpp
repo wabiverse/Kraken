@@ -40,93 +40,86 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace {
-
-#define WRAP_CUSTOM                                                     \
-    template <class Cls> static void _CustomWrapCode(Cls &_class)
-
-// fwd decl.
-WRAP_CUSTOM;
-
-        
-static UsdAttribute
-_CreateGravityDirectionAttr(UsdPhysicsScene &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateGravityDirectionAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f), writeSparsely);
-}
-        
-static UsdAttribute
-_CreateGravityMagnitudeAttr(UsdPhysicsScene &self,
-                                      object defaultVal, bool writeSparsely) {
-    return self.CreateGravityMagnitudeAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static std::string
-_Repr(const UsdPhysicsScene &self)
+namespace
 {
-    std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf(
-        "UsdPhysics.Scene(%s)",
-        primRepr.c_str());
-}
 
-} // anonymous namespace
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
+
+  // fwd decl.
+  WRAP_CUSTOM;
+
+
+  static UsdAttribute _CreateGravityDirectionAttr(UsdPhysicsScene &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
+  {
+    return self.CreateGravityDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f),
+                                           writeSparsely);
+  }
+
+  static UsdAttribute _CreateGravityMagnitudeAttr(UsdPhysicsScene &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
+  {
+    return self.CreateGravityMagnitudeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                           writeSparsely);
+  }
+
+  static std::string _Repr(const UsdPhysicsScene &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdPhysics.Scene(%s)", primRepr.c_str());
+  }
+
+}  // anonymous namespace
 
 void wrapUsdPhysicsScene()
 {
-    typedef UsdPhysicsScene This;
+  typedef UsdPhysicsScene This;
 
-    class_<This, bases<UsdTyped> >
-        cls("Scene");
+  class_<This, bases<UsdTyped>> cls("Scene");
 
-    cls
-        .def(init<UsdPrim>(arg("prim")))
-        .def(init<UsdSchemaBase const&>(arg("schemaObj")))
-        .def(TfTypePythonClass())
+  cls.def(init<UsdPrim>(arg("prim")))
+    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
+    .def(TfTypePythonClass())
 
-        .def("Get", &This::Get, (arg("stage"), arg("path")))
-        .staticmethod("Get")
+    .def("Get", &This::Get, (arg("stage"), arg("path")))
+    .staticmethod("Get")
 
-        .def("Define", &This::Define, (arg("stage"), arg("path")))
-        .staticmethod("Define")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
-        .def("GetSchemaAttributeNames",
-             &This::GetSchemaAttributeNames,
-             arg("includeInherited")=true,
-             return_value_policy<TfPySequenceToList>())
-        .staticmethod("GetSchemaAttributeNames")
+    .def("GetSchemaAttributeNames",
+         &This::GetSchemaAttributeNames,
+         arg("includeInherited") = true,
+         return_value_policy<TfPySequenceToList>())
+    .staticmethod("GetSchemaAttributeNames")
 
-        .def("GetStaticTfType", (TfType const &(*)()) TfType::Find<This>,
-             return_value_policy<return_by_value>())
-        .staticmethod("GetStaticTfType")
+    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .staticmethod("GetStaticTfType")
 
-        .def(!self)
+    .def(!self)
 
-        
-        .def("GetGravityDirectionAttr",
-             &This::GetGravityDirectionAttr)
-        .def("CreateGravityDirectionAttr",
-             &_CreateGravityDirectionAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
-        
-        .def("GetGravityMagnitudeAttr",
-             &This::GetGravityMagnitudeAttr)
-        .def("CreateGravityMagnitudeAttr",
-             &_CreateGravityMagnitudeAttr,
-             (arg("defaultValue")=object(),
-              arg("writeSparsely")=false))
 
-        .def("__repr__", ::_Repr)
-    ;
+    .def("GetGravityDirectionAttr", &This::GetGravityDirectionAttr)
+    .def("CreateGravityDirectionAttr",
+         &_CreateGravityDirectionAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-    _CustomWrapCode(cls);
+    .def("GetGravityMagnitudeAttr", &This::GetGravityMagnitudeAttr)
+    .def("CreateGravityMagnitudeAttr",
+         &_CreateGravityMagnitudeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("__repr__", ::_Repr);
+
+  _CustomWrapCode(cls);
 }
 
 // ===================================================================== //
-// Feel free to add custom code below this line, it will be preserved by 
+// Feel free to add custom code below this line, it will be preserved by
 // the code generator.  The entry point for your custom code should look
 // minimally like the following:
 //
@@ -137,16 +130,17 @@ void wrapUsdPhysicsScene()
 // }
 //
 // Of course any other ancillary or support code may be provided.
-// 
+//
 // Just remember to wrap code in the appropriate delimiters:
 // 'namespace {', '}'.
 //
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace {
+namespace
+{
 
-WRAP_CUSTOM {
-}
+  WRAP_CUSTOM
+  {}
 
-}
+}  // namespace

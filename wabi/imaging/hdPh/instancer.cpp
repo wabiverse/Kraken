@@ -78,8 +78,7 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
         // VtArray<GfMatrix4d> to ensure we properly convert to
         // the appropriate floating-point matrix type.
         source.reset(new HdVtBufferSource(primvar.name, value.UncheckedGet<VtArray<GfMatrix4d>>()));
-      }
-      else
+      } else
       {
         source.reset(new HdVtBufferSource(primvar.name, value));
       }
@@ -131,8 +130,10 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
     if (hasDirtyPrimvarDesc)
     {
       TfTokenVector internallyGeneratedPrimvars;  // none
-      removedSpecs = HdPhGetRemovedPrimvarBufferSpecs(
-        _instancePrimvarRange, primvars, internallyGeneratedPrimvars, instancerId);
+      removedSpecs = HdPhGetRemovedPrimvarBufferSpecs(_instancePrimvarRange,
+                                                      primvars,
+                                                      internallyGeneratedPrimvars,
+                                                      instancerId);
     }
 
     HdBufferSpecVector bufferSpecs;
@@ -142,8 +143,11 @@ void HdPhInstancer::_SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *d
       sceneDelegate->GetRenderIndex().GetResourceRegistry());
 
     // Update local primvar range.
-    _instancePrimvarRange = resourceRegistry->UpdateNonUniformBufferArrayRange(
-      HdTokens->primvar, _instancePrimvarRange, bufferSpecs, removedSpecs, HdBufferArrayUsageHint());
+    _instancePrimvarRange = resourceRegistry->UpdateNonUniformBufferArrayRange(HdTokens->primvar,
+                                                                               _instancePrimvarRange,
+                                                                               bufferSpecs,
+                                                                               removedSpecs,
+                                                                               HdBufferArrayUsageHint());
 
     TF_VERIFY(_instancePrimvarRange->IsValid());
 

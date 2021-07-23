@@ -53,10 +53,8 @@ WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *kmain,
                                                                  WorkSpaceLayout *layout_new,
                                                                  const WorkSpaceLayout *layout_fallback_base,
                                                                  wmWindow *win);
-WorkSpaceLayout *ED_workspace_layout_add(kContext *C,
-                                         WorkSpace *workspace,
-                                         wmWindow *win,
-                                         const char *name) ATTR_NONNULL();
+WorkSpaceLayout *ED_workspace_layout_add(kContext *C, WorkSpace *workspace, wmWindow *win, const char *name)
+  ATTR_NONNULL();
 
 kScreen *screen_add(kContext *C, const char *name, const GfRect2i *rect);
 ScrVert *screen_geom_vertex_add_ex(ScrAreaMap *area_map, short x, short y);

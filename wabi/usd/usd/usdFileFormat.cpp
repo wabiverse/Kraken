@@ -135,8 +135,7 @@ static SdfFileFormatConstPtr _GetFileFormatForArguments(const SdfFileFormat::Fil
     if (format == UsdUsdaFileFormatTokens->Id)
     {
       return _GetFileFormat(UsdUsdaFileFormatTokens->Id);
-    }
-    else if (format == UsdUsdcFileFormatTokens->Id)
+    } else if (format == UsdUsdcFileFormatTokens->Id)
     {
       return _GetFileFormat(UsdUsdcFileFormatTokens->Id);
     }

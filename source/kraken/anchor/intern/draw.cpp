@@ -117,9 +117,9 @@ namespace ANCHOR_STB_NAMESPACE
 #  ifndef ANCHOR_DISABLE_STB_RECT_PACK_IMPLEMENTATION
 #    define STBRP_STATIC
 #    define STBRP_ASSERT(x) \
-      do \
-      { \
-        ANCHOR_ASSERT(x); \
+      do                    \
+      {                     \
+        ANCHOR_ASSERT(x);   \
       } while (0)
 #    define STBRP_SORT ImQsort
 #    define STB_RECT_PACK_IMPLEMENTATION
@@ -136,9 +136,9 @@ namespace ANCHOR_STB_NAMESPACE
 #    define STBTT_malloc(x, u) ((void)(u), ANCHOR_ALLOC(x))
 #    define STBTT_free(x, u) ((void)(u), ANCHOR_FREE(x))
 #    define STBTT_assert(x) \
-      do \
-      { \
-        ANCHOR_ASSERT(x); \
+      do                    \
+      {                     \
+        ANCHOR_ASSERT(x);   \
       } while (0)
 #    define STBTT_fmod(x, y) AnchorFmod(x, y)
 #    define STBTT_sqrt(x) AnchorSqrt(x)
@@ -217,11 +217,13 @@ void ANCHOR::StyleColorsDark(AnchorStyle *dst)
   colors[AnchorCol_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
   colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header], colors[AnchorCol_TitleBgActive], 0.80f);
   colors[AnchorCol_TabHovered] = colors[AnchorCol_HeaderHovered];
-  colors[AnchorCol_TabActive] = AnchorLerp(
-    colors[AnchorCol_HeaderActive], colors[AnchorCol_TitleBgActive], 0.60f);
+  colors[AnchorCol_TabActive] = AnchorLerp(colors[AnchorCol_HeaderActive],
+                                           colors[AnchorCol_TitleBgActive],
+                                           0.60f);
   colors[AnchorCol_TabUnfocused] = AnchorLerp(colors[AnchorCol_Tab], colors[AnchorCol_TitleBg], 0.80f);
-  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(
-    colors[AnchorCol_TabActive], colors[AnchorCol_TitleBg], 0.40f);
+  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(colors[AnchorCol_TabActive],
+                                                    colors[AnchorCol_TitleBg],
+                                                    0.40f);
   colors[AnchorCol_PlotLines] = GfVec4f(0.61f, 0.61f, 0.61f, 1.00f);
   colors[AnchorCol_PlotLinesHovered] = GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
   colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
@@ -279,11 +281,13 @@ void ANCHOR::StyleColorsDefault(AnchorStyle *dst)
   colors[AnchorCol_ResizeGripActive] = GfVec4f(0.78f, 0.82f, 1.00f, 0.90f);
   colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header], colors[AnchorCol_TitleBgActive], 0.80f);
   colors[AnchorCol_TabHovered] = colors[AnchorCol_HeaderHovered];
-  colors[AnchorCol_TabActive] = AnchorLerp(
-    colors[AnchorCol_HeaderActive], colors[AnchorCol_TitleBgActive], 0.60f);
+  colors[AnchorCol_TabActive] = AnchorLerp(colors[AnchorCol_HeaderActive],
+                                           colors[AnchorCol_TitleBgActive],
+                                           0.60f);
   colors[AnchorCol_TabUnfocused] = AnchorLerp(colors[AnchorCol_Tab], colors[AnchorCol_TitleBg], 0.80f);
-  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(
-    colors[AnchorCol_TabActive], colors[AnchorCol_TitleBg], 0.40f);
+  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(colors[AnchorCol_TabActive],
+                                                    colors[AnchorCol_TitleBg],
+                                                    0.40f);
   colors[AnchorCol_PlotLines] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
   colors[AnchorCol_PlotLinesHovered] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
   colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
@@ -342,11 +346,13 @@ void ANCHOR::StyleColorsLight(AnchorStyle *dst)
   colors[AnchorCol_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
   colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header], colors[AnchorCol_TitleBgActive], 0.90f);
   colors[AnchorCol_TabHovered] = colors[AnchorCol_HeaderHovered];
-  colors[AnchorCol_TabActive] = AnchorLerp(
-    colors[AnchorCol_HeaderActive], colors[AnchorCol_TitleBgActive], 0.60f);
+  colors[AnchorCol_TabActive] = AnchorLerp(colors[AnchorCol_HeaderActive],
+                                           colors[AnchorCol_TitleBgActive],
+                                           0.60f);
   colors[AnchorCol_TabUnfocused] = AnchorLerp(colors[AnchorCol_Tab], colors[AnchorCol_TitleBg], 0.80f);
-  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(
-    colors[AnchorCol_TabActive], colors[AnchorCol_TitleBg], 0.40f);
+  colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(colors[AnchorCol_TabActive],
+                                                    colors[AnchorCol_TitleBg],
+                                                    0.40f);
   colors[AnchorCol_PlotLines] = GfVec4f(0.39f, 0.39f, 0.39f, 1.00f);
   colors[AnchorCol_PlotLinesHovered] = GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
   colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
@@ -765,29 +771,29 @@ void AnchorDrawList::PrimQuadUV(const GfVec2f &a,
 // On AddPolyline() and AddConvexPolyFilled() we intentionally avoid using GfVec2f and superfluous
 // function calls to optimize debug/non-inlined builds. Those macros expects l-values.
 #define IM_NORMALIZE2F_OVER_ZERO(VX, VY) \
-  do \
-  { \
-    float d2 = VX * VX + VY * VY; \
-    if (d2 > 0.0f) \
-    { \
-      float inv_len = AnchorRsqrt(d2); \
-      VX *= inv_len; \
-      VY *= inv_len; \
-    } \
+  do                                     \
+  {                                      \
+    float d2 = VX * VX + VY * VY;        \
+    if (d2 > 0.0f)                       \
+    {                                    \
+      float inv_len = AnchorRsqrt(d2);   \
+      VX *= inv_len;                     \
+      VY *= inv_len;                     \
+    }                                    \
   } while (0)
 #define IM_FIXNORMAL2F_MAX_INVLEN2 100.0f  // 500.0f (see #4053, #3366)
-#define IM_FIXNORMAL2F(VX, VY) \
-  do \
-  { \
-    float d2 = VX * VX + VY * VY; \
-    if (d2 > 0.000001f) \
-    { \
-      float inv_len2 = 1.0f / d2; \
+#define IM_FIXNORMAL2F(VX, VY)                   \
+  do                                             \
+  {                                              \
+    float d2 = VX * VX + VY * VY;                \
+    if (d2 > 0.000001f)                          \
+    {                                            \
+      float inv_len2 = 1.0f / d2;                \
       if (inv_len2 > IM_FIXNORMAL2F_MAX_INVLEN2) \
-        inv_len2 = IM_FIXNORMAL2F_MAX_INVLEN2; \
-      VX *= inv_len2; \
-      VY *= inv_len2; \
-    } \
+        inv_len2 = IM_FIXNORMAL2F_MAX_INVLEN2;   \
+      VX *= inv_len2;                            \
+      VY *= inv_len2;                            \
+    }                                            \
   } while (0)
 
 // TODO: Thickness anti-aliased lines cap are missing their AA fringe.
@@ -922,8 +928,7 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
           _IdxWritePtr[4] = (AnchorDrawIdx)(idx1 + 1);
           _IdxWritePtr[5] = (AnchorDrawIdx)(idx2 + 0);  // Left tri
           _IdxWritePtr += 6;
-        }
-        else
+        } else
         {
           // Add indexes for four triangles
           _IdxWritePtr[0] = (AnchorDrawIdx)(idx2 + 0);
@@ -970,8 +975,7 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
           _VtxWritePtr[1].col = col;  // Right-side outer edge
           _VtxWritePtr += 2;
         }
-      }
-      else
+      } else
       {
         // If we're not using a texture, we need the center vertex as well
         for (int i = 0; i < points_count; i++)
@@ -988,8 +992,7 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
           _VtxWritePtr += 3;
         }
       }
-    }
-    else
+    } else
     {
       // [PATH 2] Non texture-based lines (thick): we need to draw the solid line core and thus
       // require four vertices per point
@@ -1089,8 +1092,7 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
       }
     }
     _VtxCurrentIdx += (AnchorDrawIdx)vtx_count;
-  }
-  else
+  } else
   {
     // [PATH 4] Non texture-based, Non anti-aliased lines
     const int idx_count = count * 6;
@@ -1213,8 +1215,7 @@ void AnchorDrawList::AddConvexPolyFilled(const GfVec2f *points, const int points
       _IdxWritePtr += 6;
     }
     _VtxCurrentIdx += (AnchorDrawIdx)vtx_count;
-  }
-  else
+  } else
   {
     // Non Anti-aliased Fill
     const int idx_count = (points_count - 2) * 3;
@@ -1292,8 +1293,7 @@ void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
 
   if (a_max_sample >= a_min_sample)
   {
-    for (int a = a_min_sample; a <= a_max_sample;
-         a += a_step, sample_index += a_step, a_step = a_next_step)
+    for (int a = a_min_sample; a <= a_max_sample; a += a_step, sample_index += a_step, a_step = a_next_step)
     {
       // a_step is clamped to ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will
       // not wrap over range twice or more
@@ -1305,11 +1305,9 @@ void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
       out_ptr->data()[1] = center[1] + s[1] * radius;
       out_ptr++;
     }
-  }
-  else
+  } else
   {
-    for (int a = a_min_sample; a >= a_max_sample;
-         a -= a_step, sample_index -= a_step, a_step = a_next_step)
+    for (int a = a_min_sample; a >= a_max_sample; a -= a_step, sample_index -= a_step, a_step = a_next_step)
     {
       // a_step is clamped to ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX, so we have guaranteed that it will
       // not wrap over range twice or more
@@ -1338,7 +1336,11 @@ void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
   ANCHOR_ASSERT_PARANOID(_Path.Data + _Path.Size == out_ptr);
 }
 
-void AnchorDrawList::_PathArcToN(const GfVec2f &center, float radius, float a_min, float a_max, int num_segments)
+void AnchorDrawList::_PathArcToN(const GfVec2f &center,
+                                 float radius,
+                                 float a_min,
+                                 float a_max,
+                                 int num_segments)
 {
   if (radius <= 0.0f)
   {
@@ -1371,7 +1373,11 @@ void AnchorDrawList::PathArcToFast(const GfVec2f &center, float radius, int a_mi
                    0);
 }
 
-void AnchorDrawList::PathArcTo(const GfVec2f &center, float radius, float a_min, float a_max, int num_segments)
+void AnchorDrawList::PathArcTo(const GfVec2f &center,
+                               float radius,
+                               float a_min,
+                               float a_max,
+                               int num_segments)
 {
   if (radius <= 0.0f)
   {
@@ -1395,8 +1401,10 @@ void AnchorDrawList::PathArcTo(const GfVec2f &center, float radius, float a_min,
     const float a_min_sample_f = ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX * a_min / (IM_PI * 2.0f);
     const float a_max_sample_f = ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX * a_max / (IM_PI * 2.0f);
 
-    const int a_min_sample = a_is_reverse ? (int)AnchorFloorSigned(a_min_sample_f) : (int)ImCeil(a_min_sample_f);
-    const int a_max_sample = a_is_reverse ? (int)ImCeil(a_max_sample_f) : (int)AnchorFloorSigned(a_max_sample_f);
+    const int a_min_sample = a_is_reverse ? (int)AnchorFloorSigned(a_min_sample_f) :
+                                            (int)ImCeil(a_min_sample_f);
+    const int a_max_sample = a_is_reverse ? (int)ImCeil(a_max_sample_f) :
+                                            (int)AnchorFloorSigned(a_max_sample_f);
     const int a_mid_samples = a_is_reverse ? AnchorMax(a_min_sample - a_max_sample, 0) :
                                              AnchorMax(a_max_sample - a_min_sample, 0);
 
@@ -1412,8 +1420,7 @@ void AnchorDrawList::PathArcTo(const GfVec2f &center, float radius, float a_min,
       _PathArcToFastEx(center, radius, a_min_sample, a_max_sample, 0);
     if (a_emit_end)
       _Path.push_back(GfVec2f(center[0] + AnchorCos(a_max) * radius, center[1] + AnchorSin(a_max) * radius));
-  }
-  else
+  } else
   {
     const float arc_length = AnchorAbs(a_max - a_min);
     const int circle_segment_count = _CalcCircleAutoSegmentCount(radius);
@@ -1469,8 +1476,7 @@ static void PathBezierCubicCurveToCasteljau(AnchorVector<GfVec2f> *path,
   if ((d2 + d3) * (d2 + d3) < tess_tol * (dx * dx + dy * dy))
   {
     path->push_back(GfVec2f(x4, y4));
-  }
-  else if (level < 10)
+  } else if (level < 10)
   {
     float x12 = (x1 + x2) * 0.5f, y12 = (y1 + y2) * 0.5f;
     float x23 = (x2 + x3) * 0.5f, y23 = (y2 + y3) * 0.5f;
@@ -1498,8 +1504,7 @@ static void PathBezierQuadraticCurveToCasteljau(AnchorVector<GfVec2f> *path,
   if (det * det * 4.0f < tess_tol * (dx * dx + dy * dy))
   {
     path->push_back(GfVec2f(x3, y3));
-  }
-  else if (level < 10)
+  } else if (level < 10)
   {
     float x12 = (x1 + x2) * 0.5f, y12 = (y1 + y2) * 0.5f;
     float x23 = (x2 + x3) * 0.5f, y23 = (y2 + y3) * 0.5f;
@@ -1528,8 +1533,7 @@ void AnchorDrawList::PathBezierCubicCurveTo(const GfVec2f &p2,
                                     p4[1],
                                     _Data->CurveTessellationTol,
                                     0);  // Auto-tessellated
-  }
-  else
+  } else
   {
     float t_step = 1.0f / (float)num_segments;
     for (int i_step = 1; i_step <= num_segments; i_step++)
@@ -1551,8 +1555,7 @@ void AnchorDrawList::PathBezierQuadraticCurveTo(const GfVec2f &p2, const GfVec2f
                                         p3[1],
                                         _Data->CurveTessellationTol,
                                         0);  // Auto-tessellated
-  }
-  else
+  } else
   {
     float t_step = 1.0f / (float)num_segments;
     for (int i_step = 1; i_step <= num_segments; i_step++)
@@ -1599,20 +1602,22 @@ static inline AnchorDrawFlags FixRectCornerFlags(AnchorDrawFlags flags)
 void AnchorDrawList::PathRect(const GfVec2f &a, const GfVec2f &b, float rounding, AnchorDrawFlags flags)
 {
   flags = FixRectCornerFlags(flags);
-  rounding = AnchorMin(rounding,
-                       AnchorFabs(b[0] - a[0]) *
-                           (((flags & AnchorDrawFlags_RoundCornersTop) == AnchorDrawFlags_RoundCornersTop) ||
-                                ((flags & AnchorDrawFlags_RoundCornersBottom) == AnchorDrawFlags_RoundCornersBottom) ?
-                              0.5f :
-                              1.0f) -
-                         1.0f);
-  rounding = AnchorMin(rounding,
-                       AnchorFabs(b[1] - a[1]) *
-                           (((flags & AnchorDrawFlags_RoundCornersLeft) == AnchorDrawFlags_RoundCornersLeft) ||
-                                ((flags & AnchorDrawFlags_RoundCornersRight) == AnchorDrawFlags_RoundCornersRight) ?
-                              0.5f :
-                              1.0f) -
-                         1.0f);
+  rounding = AnchorMin(
+    rounding,
+    AnchorFabs(b[0] - a[0]) *
+        (((flags & AnchorDrawFlags_RoundCornersTop) == AnchorDrawFlags_RoundCornersTop) ||
+             ((flags & AnchorDrawFlags_RoundCornersBottom) == AnchorDrawFlags_RoundCornersBottom) ?
+           0.5f :
+           1.0f) -
+      1.0f);
+  rounding = AnchorMin(
+    rounding,
+    AnchorFabs(b[1] - a[1]) *
+        (((flags & AnchorDrawFlags_RoundCornersLeft) == AnchorDrawFlags_RoundCornersLeft) ||
+             ((flags & AnchorDrawFlags_RoundCornersRight) == AnchorDrawFlags_RoundCornersRight) ?
+           0.5f :
+           1.0f) -
+      1.0f);
 
   if (rounding <= 0.0f || (flags & AnchorDrawFlags_RoundCornersMask_) == AnchorDrawFlags_RoundCornersNone)
   {
@@ -1620,8 +1625,7 @@ void AnchorDrawList::PathRect(const GfVec2f &a, const GfVec2f &b, float rounding
     PathLineTo(GfVec2f(b[0], a[1]));
     PathLineTo(b);
     PathLineTo(GfVec2f(a[0], b[1]));
-  }
-  else
+  } else
   {
     const float rounding_tl = (flags & AnchorDrawFlags_RoundCornersTopLeft) ? rounding : 0.0f;
     const float rounding_tr = (flags & AnchorDrawFlags_RoundCornersTopRight) ? rounding : 0.0f;
@@ -1676,8 +1680,7 @@ void AnchorDrawList::AddRectFilled(const GfVec2f &p_min,
   {
     PrimReserve(6, 4);
     PrimRect(p_min, p_max, col);
-  }
-  else
+  } else
   {
     PathRect(p_min, p_max, rounding, flags);
     PathFillConvex(col);
@@ -1757,7 +1760,10 @@ void AnchorDrawList::AddTriangle(const GfVec2f &p1,
   PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
-void AnchorDrawList::AddTriangleFilled(const GfVec2f &p1, const GfVec2f &p2, const GfVec2f &p3, AnchorU32 col)
+void AnchorDrawList::AddTriangleFilled(const GfVec2f &p1,
+                                       const GfVec2f &p2,
+                                       const GfVec2f &p3,
+                                       AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -1782,8 +1788,7 @@ void AnchorDrawList::AddCircle(const GfVec2f &center,
   {
     // Automatic segment count
     num_segments = _CalcCircleAutoSegmentCount(radius);
-  }
-  else
+  } else
   {
     // Explicit segment count (still clamp to avoid drawing insanely tessellated shapes)
     num_segments = AnchorClamp(num_segments, 3, ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
@@ -1808,8 +1813,7 @@ void AnchorDrawList::AddCircleFilled(const GfVec2f &center, float radius, Anchor
   {
     // Automatic segment count
     num_segments = _CalcCircleAutoSegmentCount(radius);
-  }
-  else
+  } else
   {
     // Explicit segment count (still clamp to avoid drawing insanely tessellated shapes)
     num_segments = AnchorClamp(num_segments, 3, ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX);
@@ -1920,8 +1924,15 @@ void AnchorDrawList::AddText(const AnchorFont *font,
     clip_rect[2] = AnchorMin(clip_rect[2], cpu_fine_clip_rect->data()[2]);
     clip_rect[3] = AnchorMin(clip_rect[3], cpu_fine_clip_rect->data()[3]);
   }
-  font->RenderText(
-    this, font_size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip_rect != NULL);
+  font->RenderText(this,
+                   font_size,
+                   pos,
+                   col,
+                   clip_rect,
+                   text_begin,
+                   text_end,
+                   wrap_width,
+                   cpu_fine_clip_rect != NULL);
 }
 
 void AnchorDrawList::AddText(const GfVec2f &pos, AnchorU32 col, const char *text_begin, const char *text_end)
@@ -2056,8 +2067,7 @@ void AnchorDrawListSplitter::Split(AnchorDrawList *draw_list, int channels_count
     {
       ANCHOR_PLACEMENT_NEW(&_Channels[i])
       AnchorDrawChannel();
-    }
-    else
+    } else
     {
       _Channels[i]._CmdBuffer.resize(0);
       _Channels[i]._IdxBuffer.resize(0);
@@ -2078,7 +2088,8 @@ void AnchorDrawListSplitter::Merge(AnchorDrawList *draw_list)
   // Calculate our final buffer sizes. Also fix the incorrect IdxOffset values in each command.
   int new_cmd_buffer_count = 0;
   int new_idx_buffer_count = 0;
-  AnchorDrawCmd *last_cmd = (_Count > 0 && draw_list->CmdBuffer.Size > 0) ? &draw_list->CmdBuffer.back() : NULL;
+  AnchorDrawCmd *last_cmd = (_Count > 0 && draw_list->CmdBuffer.Size > 0) ? &draw_list->CmdBuffer.back() :
+                                                                            NULL;
   int idx_offset = last_cmd ? last_cmd->IdxOffset + last_cmd->ElemCount : 0;
   for (int i = 1; i < _Count; i++)
   {
@@ -2277,9 +2288,10 @@ void ANCHOR::ShadeVertsLinearUV(AnchorDrawList *draw_list,
     const GfVec2f min = AnchorMin(uv_a, uv_b);
     const GfVec2f max = AnchorMax(uv_a, uv_b);
     for (AnchorDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
-      vertex->uv = AnchorClamp(uv_a + AnchorMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale), min, max);
-  }
-  else
+      vertex->uv = AnchorClamp(uv_a + AnchorMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale),
+                               min,
+                               max);
+  } else
   {
     for (AnchorDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
       vertex->uv = uv_a + AnchorMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale);
@@ -2369,14 +2381,14 @@ static const char
 
 static const GfVec2f FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ANCHOR_StandardCursorNumCursors][3] = {
   // Pos ........ Size ......... Offset ......
-  {GfVec2f(0, 3), GfVec2f(12, 19), GfVec2f(0, 0)},     // ANCHOR_StandardCursorDefault
-  {GfVec2f(13, 0), GfVec2f(7, 16), GfVec2f(1, 8)},     // ANCHOR_StandardCursorText
-  {GfVec2f(31, 0), GfVec2f(23, 23), GfVec2f(11, 11)},  // ANCHOR_StandardCursorNSEWScroll
-  {GfVec2f(21, 0), GfVec2f(9, 23), GfVec2f(4, 11)},    // ANCHOR_StandardCursorNSScroll
-  {GfVec2f(55, 18), GfVec2f(23, 9), GfVec2f(11, 4)},   // ANCHOR_StandardCursorEWScroll
-  {GfVec2f(73, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // ANCHOR_StandardCursorBottomLeftCorner
-  {GfVec2f(55, 0), GfVec2f(17, 17), GfVec2f(8, 8)},    // ANCHOR_StandardCursorBottomRightCorner
-  {GfVec2f(91, 0), GfVec2f(17, 22), GfVec2f(5, 0)},    // ANCHOR_StandardCursorMove
+  {GfVec2f(0,  3),  GfVec2f(12, 19), GfVec2f(0,  0) }, // ANCHOR_StandardCursorDefault
+  {GfVec2f(13, 0),  GfVec2f(7,  16), GfVec2f(1,  8) }, // ANCHOR_StandardCursorText
+  {GfVec2f(31, 0),  GfVec2f(23, 23), GfVec2f(11, 11)}, // ANCHOR_StandardCursorNSEWScroll
+  {GfVec2f(21, 0),  GfVec2f(9,  23), GfVec2f(4,  11)}, // ANCHOR_StandardCursorNSScroll
+  {GfVec2f(55, 18), GfVec2f(23, 9),  GfVec2f(11, 4) }, // ANCHOR_StandardCursorEWScroll
+  {GfVec2f(73, 0),  GfVec2f(17, 17), GfVec2f(8,  8) }, // ANCHOR_StandardCursorBottomLeftCorner
+  {GfVec2f(55, 0),  GfVec2f(17, 17), GfVec2f(8,  8) }, // ANCHOR_StandardCursorBottomRightCorner
+  {GfVec2f(91, 0),  GfVec2f(17, 22), GfVec2f(5,  0) }, // ANCHOR_StandardCursorMove
 };
 
 AnchorFontAtlas::AnchorFontAtlas()
@@ -2407,8 +2419,7 @@ void AnchorFontAtlas::ClearInputData()
   // When clearing this we lose access to the font name and other information used to build the
   // font.
   for (int i = 0; i < Fonts.Size; i++)
-    if (Fonts[i]->ConfigData >= ConfigData.Data &&
-        Fonts[i]->ConfigData < ConfigData.Data + ConfigData.Size)
+    if (Fonts[i]->ConfigData >= ConfigData.Data && Fonts[i]->ConfigData < ConfigData.Data + ConfigData.Size)
     {
       Fonts[i]->ConfigData = NULL;
       Fonts[i]->ConfigDataCount = 0;
@@ -2574,16 +2585,20 @@ AnchorFont *AnchorFontAtlas::AddFontDefault(const AnchorFontConfig *font_cfg_tem
   if (font_cfg.SizePixels <= 0.0f)
     font_cfg.SizePixels = 13.0f * 1.0f;
   if (font_cfg.Name[0] == '\0')
-    AnchorFormatString(
-      font_cfg.Name, ANCHOR_ARRAYSIZE(font_cfg.Name), "ProggyClean.ttf, %dpx", (int)font_cfg.SizePixels);
+    AnchorFormatString(font_cfg.Name,
+                       ANCHOR_ARRAYSIZE(font_cfg.Name),
+                       "ProggyClean.ttf, %dpx",
+                       (int)font_cfg.SizePixels);
   font_cfg.EllipsisChar = (AnchorWChar)0x0085;
   font_cfg.GlyphOffset[1] = 1.0f * ANCHOR_FLOOR(font_cfg.SizePixels / 13.0f);  // Add +1 offset per 13 units
 
   const char *ttf_compressed_base85 = GetDefaultCompressedFontDataTTFBase85();
   const AnchorWChar *glyph_ranges = font_cfg.GlyphRanges != NULL ? font_cfg.GlyphRanges :
                                                                    GetGlyphRangesDefault();
-  AnchorFont *font = AddFontFromMemoryCompressedBase85TTF(
-    ttf_compressed_base85, font_cfg.SizePixels, &font_cfg, glyph_ranges);
+  AnchorFont *font = AddFontFromMemoryCompressedBase85TTF(ttf_compressed_base85,
+                                                          font_cfg.SizePixels,
+                                                          &font_cfg,
+                                                          glyph_ranges);
   return font;
 }
 
@@ -2644,14 +2659,18 @@ AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedTTF(const void *compress
   const unsigned int buf_decompressed_size = stb_decompress_length(
     (const unsigned char *)compressed_ttf_data);
   unsigned char *buf_decompressed_data = (unsigned char *)ANCHOR_ALLOC(buf_decompressed_size);
-  stb_decompress(
-    buf_decompressed_data, (const unsigned char *)compressed_ttf_data, (unsigned int)compressed_ttf_size);
+  stb_decompress(buf_decompressed_data,
+                 (const unsigned char *)compressed_ttf_data,
+                 (unsigned int)compressed_ttf_size);
 
   AnchorFontConfig font_cfg = font_cfg_template ? *font_cfg_template : AnchorFontConfig();
   ANCHOR_ASSERT(font_cfg.FontData == NULL);
   font_cfg.FontDataOwnedByAtlas = true;
-  return AddFontFromMemoryTTF(
-    buf_decompressed_data, (int)buf_decompressed_size, size_pixels, &font_cfg, glyph_ranges);
+  return AddFontFromMemoryTTF(buf_decompressed_data,
+                              (int)buf_decompressed_size,
+                              size_pixels,
+                              &font_cfg,
+                              glyph_ranges);
 }
 
 AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedBase85TTF(const char *compressed_ttf_data_base85,
@@ -2662,8 +2681,8 @@ AnchorFont *AnchorFontAtlas::AddFontFromMemoryCompressedBase85TTF(const char *co
   int compressed_ttf_size = (((int)strlen(compressed_ttf_data_base85) + 4) / 5) * 4;
   void *compressed_ttf = ANCHOR_ALLOC((size_t)compressed_ttf_size);
   Decode85((const unsigned char *)compressed_ttf_data_base85, (unsigned char *)compressed_ttf);
-  AnchorFont *font = AddFontFromMemoryCompressedTTF(
-    compressed_ttf, compressed_ttf_size, size_pixels, font_cfg, glyph_ranges);
+  AnchorFont *font =
+    AddFontFromMemoryCompressedTTF(compressed_ttf, compressed_ttf_size, size_pixels, font_cfg, glyph_ranges);
   ANCHOR_FREE(compressed_ttf);
   return font;
 }
@@ -3001,9 +3020,9 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
     atlas->TexWidth = atlas->TexDesiredWidth;
   else
     atlas->TexWidth = (surface_sqrt >= 4096 * 0.7f) ? 4096 :
-                                                      (surface_sqrt >= 2048 * 0.7f) ? 2048 :
-                                                                                      (surface_sqrt >= 1024 * 0.7f) ? 1024 :
-                                                                                                                      512;
+                      (surface_sqrt >= 2048 * 0.7f) ? 2048 :
+                      (surface_sqrt >= 1024 * 0.7f) ? 1024 :
+                                                      512;
 
   // 5. Start packing
   // Pack our extra data rectangles first, so it will be on the upper-left corner of our texture
@@ -3059,8 +3078,13 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
       stbrp_rect *r = &src_tmp.Rects[0];
       for (int glyph_i = 0; glyph_i < src_tmp.GlyphsCount; glyph_i++, r++)
         if (r->was_packed)
-          AnchorFontAtlasBuildMultiplyRectAlpha8(
-            multiply_table, atlas->TexPixelsAlpha8, r->x, r->y, r->w, r->h, atlas->TexWidth * 1);
+          AnchorFontAtlasBuildMultiplyRectAlpha8(multiply_table,
+                                                 atlas->TexPixelsAlpha8,
+                                                 r->x,
+                                                 r->y,
+                                                 r->w,
+                                                 r->h,
+                                                 atlas->TexWidth * 1);
     }
     src_tmp.Rects = NULL;
   }
@@ -3099,8 +3123,14 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
       const stbtt_packedchar &pc = src_tmp.PackedChars[glyph_i];
       stbtt_aligned_quad q;
       float unused_x = 0.0f, unused_y = 0.0f;
-      stbtt_GetPackedQuad(
-        src_tmp.PackedChars, atlas->TexWidth, atlas->TexHeight, glyph_i, &unused_x, &unused_y, &q, 0);
+      stbtt_GetPackedQuad(src_tmp.PackedChars,
+                          atlas->TexWidth,
+                          atlas->TexHeight,
+                          glyph_i,
+                          &unused_x,
+                          &unused_y,
+                          &q,
+                          0);
       dst_font->AddGlyph(&cfg,
                          (AnchorWChar)codepoint,
                          q.x0 + font_off_x,
@@ -3243,8 +3273,7 @@ static void AnchorFontAtlasBuildRenderDefaultTexData(AnchorFontAtlas *atlas)
                                                    FONT_ATLAS_DEFAULT_TEX_DATA_PIXELS,
                                                    'X',
                                                    0xFF);
-    }
-    else
+    } else
     {
       AnchorFontAtlasBuildRender32bppRectFromString(atlas,
                                                     x_for_white,
@@ -3263,8 +3292,7 @@ static void AnchorFontAtlasBuildRenderDefaultTexData(AnchorFontAtlas *atlas)
                                                     'X',
                                                     ANCHOR_COL32_WHITE);
     }
-  }
-  else
+  } else
   {
     // Render 4 white pixels
     ANCHOR_ASSERT(r->Width == 2 && r->Height == 2);
@@ -3273,8 +3301,7 @@ static void AnchorFontAtlasBuildRenderDefaultTexData(AnchorFontAtlas *atlas)
     {
       atlas->TexPixelsAlpha8[offset] = atlas->TexPixelsAlpha8[offset + 1] =
         atlas->TexPixelsAlpha8[offset + w] = atlas->TexPixelsAlpha8[offset + w + 1] = 0xFF;
-    }
-    else
+    } else
     {
       atlas->TexPixelsRGBA32[offset] = atlas->TexPixelsRGBA32[offset + 1] =
         atlas->TexPixelsRGBA32[offset + w] = atlas->TexPixelsRGBA32[offset + w + 1] = ANCHOR_COL32_WHITE;
@@ -3293,7 +3320,8 @@ static void AnchorFontAtlasBuildRenderLinesTexData(AnchorFontAtlas *atlas)
   // of each other to allow interpolation between them
   AnchorFontAtlasCustomRect *r = atlas->GetCustomRectByIndex(atlas->PackIdLines);
   ANCHOR_ASSERT(r->IsPacked());
-  for (unsigned int n = 0; n < ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX + 1; n++)  // +1 because of the zero-width row
+  for (unsigned int n = 0; n < ANCHOR_DRAWLIST_TEX_LINES_WIDTH_MAX + 1;
+       n++)  // +1 because of the zero-width row
   {
     // Each line consists of at least two empty pixels at the ends, with a line of solid pixels in
     // the middle
@@ -3317,8 +3345,7 @@ static void AnchorFontAtlasBuildRenderLinesTexData(AnchorFontAtlas *atlas)
 
       for (unsigned int i = 0; i < pad_right; i++)
         *(write_ptr + pad_left + line_width + i) = 0x00;
-    }
-    else
+    } else
     {
       unsigned int *write_ptr = &atlas->TexPixelsRGBA32[r->X + ((r->Y + y) * atlas->TexWidth)];
       for (unsigned int i = 0; i < pad_left; i++)
@@ -3501,7 +3528,2506 @@ const AnchorWChar *AnchorFontAtlas::GetGlyphRangesChineseSimplifiedCommon()
   // initial unicode codepoint 0x4E00. This encoding is designed to helps us compact the source
   // code size.)
   static const short accumulative_offsets_from_0x4E00[] = {
-    0, 1, 2, 4, 1, 1, 1, 1, 2, 1, 3, 2, 1, 2, 2, 1, 1, 1, 1, 1, 5, 2, 1, 2, 3, 3, 3, 2, 2, 4, 1, 1, 1, 2, 1, 5, 2, 3, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 4, 1, 1, 1, 1, 5, 10, 1, 2, 19, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 5, 1, 6, 3, 2, 1, 2, 2, 1, 1, 1, 4, 8, 5, 1, 1, 4, 1, 1, 3, 1, 2, 1, 5, 1, 2, 1, 1, 1, 10, 1, 1, 5, 2, 4, 6, 1, 4, 2, 2, 2, 12, 2, 1, 1, 6, 1, 1, 1, 4, 1, 1, 4, 6, 5, 1, 4, 2, 2, 4, 10, 7, 1, 1, 4, 2, 4, 2, 1, 4, 3, 6, 10, 12, 5, 7, 2, 14, 2, 9, 1, 1, 6, 7, 10, 4, 7, 13, 1, 5, 4, 8, 4, 1, 1, 2, 28, 5, 6, 1, 1, 5, 2, 5, 20, 2, 2, 9, 8, 11, 2, 9, 17, 1, 8, 6, 8, 27, 4, 6, 9, 20, 11, 27, 6, 68, 2, 2, 1, 1, 1, 2, 1, 2, 2, 7, 6, 11, 3, 3, 1, 1, 3, 1, 2, 1, 1, 1, 1, 1, 3, 1, 1, 8, 3, 4, 1, 5, 7, 2, 1, 4, 4, 8, 4, 2, 1, 2, 1, 1, 4, 5, 6, 3, 6, 2, 12, 3, 1, 3, 9, 2, 4, 3, 4, 1, 5, 3, 3, 1, 3, 7, 1, 5, 1, 1, 1, 1, 2, 3, 4, 5, 2, 3, 2, 6, 1, 1, 2, 1, 7, 1, 7, 3, 4, 5, 15, 2, 2, 1, 5, 3, 22, 19, 2, 1, 1, 1, 1, 2, 5, 1, 1, 1, 6, 1, 1, 12, 8, 2, 9, 18, 22, 4, 1, 1, 5, 1, 16, 1, 2, 7, 10, 15, 1, 1, 6, 2, 4, 1, 2, 4, 1, 6, 1, 1, 3, 2, 4, 1, 6, 4, 5, 1, 2, 1, 1, 2, 1, 10, 3, 1, 3, 2, 1, 9, 3, 2, 5, 7, 2, 19, 4, 3, 6, 1, 1, 1, 1, 1, 4, 3, 2, 1, 1, 1, 2, 5, 3, 1, 1, 1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 3, 1, 1, 1, 3, 7, 1, 4, 1, 1, 2, 1, 1, 2, 1, 2, 4, 4, 3, 8, 1, 1, 1, 2, 1, 3, 5, 1, 3, 1, 3, 4, 6, 2, 2, 14, 4, 6, 6, 11, 9, 1, 15, 3, 1, 28, 5, 2, 5, 5, 3, 1, 3, 4, 5, 4, 6, 14, 3, 2, 3, 5, 21, 2, 7, 20, 10, 1, 2, 19, 2, 4, 28, 28, 2, 3, 2, 1, 14, 4, 1, 26, 28, 42, 12, 40, 3, 52, 79, 5, 14, 17, 3, 2, 2, 11, 3, 4, 6, 3, 1, 8, 2, 23, 4, 5, 8, 10, 4, 2, 7, 3, 5, 1, 1, 6, 3, 1, 2, 2, 2, 5, 28, 1, 1, 7, 7, 20, 5, 3, 29, 3, 17, 26, 1, 8, 4, 27, 3, 6, 11, 23, 5, 3, 4, 6, 13, 24, 16, 6, 5, 10, 25, 35, 7, 3, 2, 3, 3, 14, 3, 6, 2, 6, 1, 4, 2, 3, 8, 2, 1, 1, 3, 3, 3, 4, 1, 1, 13, 2, 2, 4, 5, 2, 1, 14, 14, 1, 2, 2, 1, 4, 5, 2, 3, 1, 14, 3, 12, 3, 17, 2, 16, 5, 1, 2, 1, 8, 9, 3, 19, 4, 2, 2, 4, 17, 25, 21, 20, 28, 75, 1, 10, 29, 103, 4, 1, 2, 1, 1, 4, 2, 4, 1, 2, 3, 24, 2, 2, 2, 1, 1, 2, 1, 3, 8, 1, 1, 1, 2, 1, 1, 3, 1, 1, 1, 6, 1, 5, 3, 1, 1, 1, 3, 4, 1, 1, 5, 2, 1, 5, 6, 13, 9, 16, 1, 1, 1, 1, 3, 2, 3, 2, 4, 5, 2, 5, 2, 2, 3, 7, 13, 7, 2, 2, 1, 1, 1, 1, 2, 3, 3, 2, 1, 6, 4, 9, 2, 1, 14, 2, 14, 2, 1, 18, 3, 4, 14, 4, 11, 41, 15, 23, 15, 23, 176, 1, 3, 4, 1, 1, 1, 1, 5, 3, 1, 2, 3, 7, 3, 1, 1, 2, 1, 2, 4, 4, 6, 2, 4, 1, 9, 7, 1, 10, 5, 8, 16, 29, 1, 1, 2, 2, 3, 1, 3, 5, 2, 4, 5, 4, 1, 1, 2, 2, 3, 3, 7, 1, 6, 10, 1, 17, 1, 44, 4, 6, 2, 1, 1, 6, 5, 4, 2, 10, 1, 6, 9, 2, 8, 1, 24, 1, 2, 13, 7, 8, 8, 2, 1, 4, 1, 3, 1, 3, 3, 5, 2, 5, 10, 9, 4, 9, 12, 2, 1, 6, 1, 10, 1, 1, 7, 7, 4, 10, 8, 3, 1, 13, 4, 3, 1, 6, 1, 3, 5, 2, 1, 2, 17, 16, 5, 2, 16, 6, 1, 4, 2, 1, 3, 3, 6, 8, 5, 11, 11, 1, 3, 3, 2, 4, 6, 10, 9, 5, 7, 4, 7, 4, 7, 1, 1, 4, 2, 1, 3, 6, 8, 7, 1, 6, 11, 5, 5, 3, 24, 9, 4, 2, 7, 13, 5, 1, 8, 82, 16, 61, 1, 1, 1, 4, 2, 2, 16, 10, 3, 8, 1, 1, 6, 4, 2, 1, 3, 1, 1, 1, 4, 3, 8, 4, 2, 2, 1, 1, 1, 1, 1, 6, 3, 5, 1, 1, 4, 6, 9, 2, 1, 1, 1, 2, 1, 7, 2, 1, 6, 1, 5, 4, 4, 3, 1, 8, 1, 3, 3, 1, 3, 2, 2, 2, 2, 3, 1, 6, 1, 2, 1, 2, 1, 3, 7, 1, 8, 2, 1, 2, 1, 5, 2, 5, 3, 5, 10, 1, 2, 1, 1, 3, 2, 5, 11, 3, 9, 3, 5, 1, 1, 5, 9, 1, 2, 1, 5, 7, 9, 9, 8, 1, 3, 3, 3, 6, 8, 2, 3, 2, 1, 1, 32, 6, 1, 2, 15, 9, 3, 7, 13, 1, 3, 10, 13, 2, 14, 1, 13, 10, 2, 1, 3, 10, 4, 15, 2, 15, 15, 10, 1, 3, 9, 6, 9, 32, 25, 26, 47, 7, 3, 2, 3, 1, 6, 3, 4, 3, 2, 8, 5, 4, 1, 9, 4, 2, 2, 19, 10, 6, 2, 3, 8, 1, 2, 2, 4, 2, 1, 9, 4, 4, 4, 6, 4, 8, 9, 2, 3, 1, 1, 1, 1, 3, 5, 5, 1, 3, 8, 4, 6, 2, 1, 4, 12, 1, 5, 3, 7, 13, 2, 5, 8, 1, 6, 1, 2, 5, 14, 6, 1, 5, 2, 4, 8, 15, 5, 1, 23, 6, 62, 2, 10, 1, 1, 8, 1, 2, 2, 10, 4, 2, 2, 9, 2, 1, 1, 3, 2, 3, 1, 5, 3, 3, 2, 1, 3, 8, 1, 1, 1, 11, 3, 1, 1, 4, 3, 7, 1, 14, 1, 2, 3, 12, 5, 2, 5, 1, 6, 7, 5, 7, 14, 11, 1, 3, 1, 8, 9, 12, 2, 1, 11, 8, 4, 4, 2, 6, 10, 9, 13, 1, 1, 3, 1, 5, 1, 3, 2, 4, 4, 1, 18, 2, 3, 14, 11, 4, 29, 4, 2, 7, 1, 3, 13, 9, 2, 2, 5, 3, 5, 20, 7, 16, 8, 5, 72, 34, 6, 4, 22, 12, 12, 28, 45, 36, 9, 7, 39, 9, 191, 1, 1, 1, 4, 11, 8, 4, 9, 2, 3, 22, 1, 1, 1, 1, 4, 17, 1, 7, 7, 1, 11, 31, 10, 2, 4, 8, 2, 3, 2, 1, 4, 2, 16, 4, 32, 2, 3, 19, 13, 4, 9, 1, 5, 2, 14, 8, 1, 1, 3, 6, 19, 6, 5, 1, 16, 6, 2, 10, 8, 5, 1, 2, 3, 1, 5, 5, 1, 11, 6, 6, 1, 3, 3, 2, 6, 3, 8, 1, 1, 4, 10, 7, 5, 7, 7, 5, 8, 9, 2, 1, 3, 4, 1, 1, 3, 1, 3, 3, 2, 6, 16, 1, 4, 6, 3, 1, 10, 6, 1, 3, 15, 2, 9, 2, 10, 25, 13, 9, 16, 6, 2, 2, 10, 11, 4, 3, 9, 1, 2, 6, 6, 5, 4, 30, 40, 1, 10, 7, 12, 14, 33, 6, 3, 6, 7, 3, 1, 3, 1, 11, 14, 4, 9, 5, 12, 11, 49, 18, 51, 31, 140, 31, 2, 2, 1, 5, 1, 8, 1, 10, 1, 4, 4, 3, 24, 1, 10, 1, 3, 6, 6, 16, 3, 4, 5, 2, 1, 4, 2, 57, 10, 6, 22, 2, 22, 3, 7, 22, 6, 10, 11, 36, 18, 16, 33, 36, 2, 5, 5, 1, 1, 1, 4, 10, 1, 4, 13, 2, 7, 5, 2, 9, 3, 4, 1, 7, 43, 3, 7, 3, 9, 14, 7, 9, 1, 11, 1, 1, 3, 7, 4, 18, 13, 1, 14, 1, 3, 6, 10, 73, 2, 2, 30, 6, 1, 11, 18, 19, 13, 22, 3, 46, 42, 37, 89, 7, 3, 16, 34, 2, 2, 3, 9, 1, 7, 1, 1, 1, 2, 2, 4, 10, 7, 3, 10, 3, 9, 5, 28, 9, 2, 6, 13, 7, 3, 1, 3, 10, 2, 7, 2, 11, 3, 6, 21, 54, 85, 2, 1, 4, 2, 2, 1, 39, 3, 21, 2, 2, 5, 1, 1, 1, 4, 1, 1, 3, 4, 15, 1, 3, 2, 4, 4, 2, 3, 8, 2, 20, 1, 8, 7, 13, 4, 1, 26, 6, 2, 9, 34, 4, 21, 52, 10, 4, 4, 1, 5, 12, 2, 11, 1, 7, 2, 30, 12, 44, 2, 30, 1, 1, 3, 6, 16, 9, 17, 39, 82, 2, 2, 24, 7, 1, 7, 3, 16, 9, 14, 44, 2, 1, 2, 1, 2, 3, 5, 2, 4, 1, 6, 7, 5, 3, 2, 6, 1, 11, 5, 11, 2, 1, 18, 19, 8, 1, 3, 24, 29, 2, 1, 3, 5, 2, 2, 1, 13, 6, 5, 1, 46, 11, 3, 5, 1, 1, 5, 8, 2, 10, 6, 12, 6, 3, 7, 11, 2, 4, 16, 13, 2, 5, 1, 1, 2, 2, 5, 2, 28, 5, 2, 23, 10, 8, 4, 4, 22, 39, 95, 38, 8, 14, 9, 5, 1, 13, 5, 4, 3, 13, 12, 11, 1, 9, 1, 27, 37, 2, 5, 4, 4, 63, 211, 95, 2, 2, 2, 1, 3, 5, 2, 1, 1, 2, 2, 1, 1, 1, 3, 2, 4, 1, 2, 1, 1, 5, 2, 2, 1, 1, 2, 3, 1, 3, 1, 1, 1, 3, 1, 4, 2, 1, 3, 6, 1, 1, 3, 7, 15, 5, 3, 2, 5, 3, 9, 11, 4, 2, 22, 1, 6, 3, 8, 7, 1, 4, 28, 4, 16, 3, 3, 25, 4, 4, 27, 27, 1, 4, 1, 2, 2, 7, 1, 3, 5, 2, 28, 8, 2, 14, 1, 8, 6, 16, 25, 3, 3, 3, 14, 3, 3, 1, 1, 2, 1, 4, 6, 3, 8, 4, 1, 1, 1, 2, 3, 6, 10, 6, 2, 3, 18, 3, 2, 5, 5, 4, 3, 1, 5, 2, 5, 4, 23, 7, 6, 12, 6, 4, 17, 11, 9, 5, 1, 1, 10, 5, 12, 1, 1, 11, 26, 33, 7, 3, 6, 1, 17, 7, 1, 5, 12, 1, 11, 2, 4, 1, 8, 14, 17, 23, 1, 2, 1, 7, 8, 16, 11, 9, 6, 5, 2, 6, 4, 16, 2, 8, 14, 1, 11, 8, 9, 1, 1, 1, 9, 25, 4, 11, 19, 7, 2, 15, 2, 12, 8, 52, 7, 5, 19, 2, 16, 4, 36, 8, 1, 16, 8, 24, 26, 4, 6, 2, 9, 5, 4, 36, 3, 28, 12, 25, 15, 37, 27, 17, 12, 59, 38, 5, 32, 127, 1, 2, 9, 17, 14, 4, 1, 2, 1, 1, 8, 11, 50, 4, 14, 2, 19, 16, 4, 17, 5, 4, 5, 26, 12, 45, 2, 23, 45, 104, 30, 12, 8, 3, 10, 2, 2, 3, 3, 1, 4, 20, 7, 2, 9, 6, 15, 2, 20, 1, 3, 16, 4, 11, 15, 6, 134, 2, 5, 59, 1, 2, 2, 2, 1, 9, 17, 3, 26, 137, 10, 211, 59, 1, 2, 4, 1, 4, 1, 1, 1, 2, 6, 2, 3, 1, 1, 2, 3, 2, 3, 1, 3, 4, 4, 2, 3, 3, 1, 4, 3, 1, 7, 2, 2, 3, 1, 2, 1, 3, 3, 3, 2, 2, 3, 2, 1, 3, 14, 6, 1, 3, 2, 9, 6, 15, 27, 9, 34, 145, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 2, 2, 3, 1, 2, 1, 1, 1, 2, 3, 5, 8, 3, 5, 2, 4, 1, 3, 2, 2, 2, 12, 4, 1, 1, 1, 10, 4, 5, 1, 20, 4, 16, 1, 15, 9, 5, 12, 2, 9, 2, 5, 4, 2, 26, 19, 7, 1, 26, 4, 30, 12, 15, 42, 1, 6, 8, 172, 1, 1, 4, 2, 1, 1, 11, 2, 2, 4, 2, 1, 2, 1, 10, 8, 1, 2, 1, 4, 5, 1, 2, 5, 1, 8, 4, 1, 3, 4, 2, 1, 6, 2, 1, 3, 4, 1, 2, 1, 1, 1, 1, 12, 5, 7, 2, 4, 3, 1, 1, 1, 3, 3, 6, 1, 2, 2, 3, 3, 3, 2, 1, 2, 12, 14, 11, 6, 6, 4, 12, 2, 8, 1, 7, 10, 1, 35, 7, 4, 13, 15, 4, 3, 23, 21, 28, 52, 5, 26, 5, 6, 1, 7, 10, 2, 7, 53, 3, 2, 1, 1, 1, 2, 163, 532, 1, 10, 11, 1, 3, 3, 4, 8, 2, 8, 6, 2, 2, 23, 22, 4, 2, 2, 4, 2, 1, 3, 1, 3, 3, 5, 9, 8, 2, 1, 2, 8, 1, 10, 2, 12, 21, 20, 15, 105, 2, 3, 1, 1, 3, 2, 3, 1, 1, 2, 5, 1, 4, 15, 11, 19, 1, 1, 1, 1, 5, 4, 5, 1, 1, 2, 5, 3, 5, 12, 1, 2, 5, 1, 11, 1, 1, 15, 9, 1, 4, 5, 3, 26, 8, 2, 1, 3, 1, 1, 15, 19, 2, 12, 1, 2, 5, 2, 7, 2, 19, 2, 20, 6, 26, 7, 5, 2, 2, 7, 34, 21, 13, 70, 2, 128, 1, 1, 2, 1, 1, 2, 1, 1, 3, 2, 2, 2, 15, 1, 4, 1, 3, 4, 42, 10, 6, 1, 49, 85, 8, 1, 2, 1, 1, 4, 4, 2, 3, 6, 1, 5, 7, 4, 3, 211, 4, 1, 2, 1, 2, 5, 1, 2, 4, 2, 2, 6, 5, 6, 10, 3, 4, 48, 100, 6, 2, 16, 296, 5, 27, 387, 2, 2, 3, 7, 16, 8, 5, 38, 15, 39, 21, 9, 10, 3, 7, 59, 13, 27, 21, 47, 5, 21, 6};
+    0,
+    1,
+    2,
+    4,
+    1,
+    1,
+    1,
+    1,
+    2,
+    1,
+    3,
+    2,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    5,
+    2,
+    1,
+    2,
+    3,
+    3,
+    3,
+    2,
+    2,
+    4,
+    1,
+    1,
+    1,
+    2,
+    1,
+    5,
+    2,
+    3,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    4,
+    1,
+    1,
+    1,
+    1,
+    5,
+    10,
+    1,
+    2,
+    19,
+    2,
+    1,
+    2,
+    1,
+    2,
+    1,
+    2,
+    1,
+    2,
+    1,
+    5,
+    1,
+    6,
+    3,
+    2,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    4,
+    8,
+    5,
+    1,
+    1,
+    4,
+    1,
+    1,
+    3,
+    1,
+    2,
+    1,
+    5,
+    1,
+    2,
+    1,
+    1,
+    1,
+    10,
+    1,
+    1,
+    5,
+    2,
+    4,
+    6,
+    1,
+    4,
+    2,
+    2,
+    2,
+    12,
+    2,
+    1,
+    1,
+    6,
+    1,
+    1,
+    1,
+    4,
+    1,
+    1,
+    4,
+    6,
+    5,
+    1,
+    4,
+    2,
+    2,
+    4,
+    10,
+    7,
+    1,
+    1,
+    4,
+    2,
+    4,
+    2,
+    1,
+    4,
+    3,
+    6,
+    10,
+    12,
+    5,
+    7,
+    2,
+    14,
+    2,
+    9,
+    1,
+    1,
+    6,
+    7,
+    10,
+    4,
+    7,
+    13,
+    1,
+    5,
+    4,
+    8,
+    4,
+    1,
+    1,
+    2,
+    28,
+    5,
+    6,
+    1,
+    1,
+    5,
+    2,
+    5,
+    20,
+    2,
+    2,
+    9,
+    8,
+    11,
+    2,
+    9,
+    17,
+    1,
+    8,
+    6,
+    8,
+    27,
+    4,
+    6,
+    9,
+    20,
+    11,
+    27,
+    6,
+    68,
+    2,
+    2,
+    1,
+    1,
+    1,
+    2,
+    1,
+    2,
+    2,
+    7,
+    6,
+    11,
+    3,
+    3,
+    1,
+    1,
+    3,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    3,
+    1,
+    1,
+    8,
+    3,
+    4,
+    1,
+    5,
+    7,
+    2,
+    1,
+    4,
+    4,
+    8,
+    4,
+    2,
+    1,
+    2,
+    1,
+    1,
+    4,
+    5,
+    6,
+    3,
+    6,
+    2,
+    12,
+    3,
+    1,
+    3,
+    9,
+    2,
+    4,
+    3,
+    4,
+    1,
+    5,
+    3,
+    3,
+    1,
+    3,
+    7,
+    1,
+    5,
+    1,
+    1,
+    1,
+    1,
+    2,
+    3,
+    4,
+    5,
+    2,
+    3,
+    2,
+    6,
+    1,
+    1,
+    2,
+    1,
+    7,
+    1,
+    7,
+    3,
+    4,
+    5,
+    15,
+    2,
+    2,
+    1,
+    5,
+    3,
+    22,
+    19,
+    2,
+    1,
+    1,
+    1,
+    1,
+    2,
+    5,
+    1,
+    1,
+    1,
+    6,
+    1,
+    1,
+    12,
+    8,
+    2,
+    9,
+    18,
+    22,
+    4,
+    1,
+    1,
+    5,
+    1,
+    16,
+    1,
+    2,
+    7,
+    10,
+    15,
+    1,
+    1,
+    6,
+    2,
+    4,
+    1,
+    2,
+    4,
+    1,
+    6,
+    1,
+    1,
+    3,
+    2,
+    4,
+    1,
+    6,
+    4,
+    5,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    10,
+    3,
+    1,
+    3,
+    2,
+    1,
+    9,
+    3,
+    2,
+    5,
+    7,
+    2,
+    19,
+    4,
+    3,
+    6,
+    1,
+    1,
+    1,
+    1,
+    1,
+    4,
+    3,
+    2,
+    1,
+    1,
+    1,
+    2,
+    5,
+    3,
+    1,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    3,
+    1,
+    1,
+    1,
+    3,
+    7,
+    1,
+    4,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    4,
+    4,
+    3,
+    8,
+    1,
+    1,
+    1,
+    2,
+    1,
+    3,
+    5,
+    1,
+    3,
+    1,
+    3,
+    4,
+    6,
+    2,
+    2,
+    14,
+    4,
+    6,
+    6,
+    11,
+    9,
+    1,
+    15,
+    3,
+    1,
+    28,
+    5,
+    2,
+    5,
+    5,
+    3,
+    1,
+    3,
+    4,
+    5,
+    4,
+    6,
+    14,
+    3,
+    2,
+    3,
+    5,
+    21,
+    2,
+    7,
+    20,
+    10,
+    1,
+    2,
+    19,
+    2,
+    4,
+    28,
+    28,
+    2,
+    3,
+    2,
+    1,
+    14,
+    4,
+    1,
+    26,
+    28,
+    42,
+    12,
+    40,
+    3,
+    52,
+    79,
+    5,
+    14,
+    17,
+    3,
+    2,
+    2,
+    11,
+    3,
+    4,
+    6,
+    3,
+    1,
+    8,
+    2,
+    23,
+    4,
+    5,
+    8,
+    10,
+    4,
+    2,
+    7,
+    3,
+    5,
+    1,
+    1,
+    6,
+    3,
+    1,
+    2,
+    2,
+    2,
+    5,
+    28,
+    1,
+    1,
+    7,
+    7,
+    20,
+    5,
+    3,
+    29,
+    3,
+    17,
+    26,
+    1,
+    8,
+    4,
+    27,
+    3,
+    6,
+    11,
+    23,
+    5,
+    3,
+    4,
+    6,
+    13,
+    24,
+    16,
+    6,
+    5,
+    10,
+    25,
+    35,
+    7,
+    3,
+    2,
+    3,
+    3,
+    14,
+    3,
+    6,
+    2,
+    6,
+    1,
+    4,
+    2,
+    3,
+    8,
+    2,
+    1,
+    1,
+    3,
+    3,
+    3,
+    4,
+    1,
+    1,
+    13,
+    2,
+    2,
+    4,
+    5,
+    2,
+    1,
+    14,
+    14,
+    1,
+    2,
+    2,
+    1,
+    4,
+    5,
+    2,
+    3,
+    1,
+    14,
+    3,
+    12,
+    3,
+    17,
+    2,
+    16,
+    5,
+    1,
+    2,
+    1,
+    8,
+    9,
+    3,
+    19,
+    4,
+    2,
+    2,
+    4,
+    17,
+    25,
+    21,
+    20,
+    28,
+    75,
+    1,
+    10,
+    29,
+    103,
+    4,
+    1,
+    2,
+    1,
+    1,
+    4,
+    2,
+    4,
+    1,
+    2,
+    3,
+    24,
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    3,
+    8,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1,
+    3,
+    1,
+    1,
+    1,
+    6,
+    1,
+    5,
+    3,
+    1,
+    1,
+    1,
+    3,
+    4,
+    1,
+    1,
+    5,
+    2,
+    1,
+    5,
+    6,
+    13,
+    9,
+    16,
+    1,
+    1,
+    1,
+    1,
+    3,
+    2,
+    3,
+    2,
+    4,
+    5,
+    2,
+    5,
+    2,
+    2,
+    3,
+    7,
+    13,
+    7,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    2,
+    3,
+    3,
+    2,
+    1,
+    6,
+    4,
+    9,
+    2,
+    1,
+    14,
+    2,
+    14,
+    2,
+    1,
+    18,
+    3,
+    4,
+    14,
+    4,
+    11,
+    41,
+    15,
+    23,
+    15,
+    23,
+    176,
+    1,
+    3,
+    4,
+    1,
+    1,
+    1,
+    1,
+    5,
+    3,
+    1,
+    2,
+    3,
+    7,
+    3,
+    1,
+    1,
+    2,
+    1,
+    2,
+    4,
+    4,
+    6,
+    2,
+    4,
+    1,
+    9,
+    7,
+    1,
+    10,
+    5,
+    8,
+    16,
+    29,
+    1,
+    1,
+    2,
+    2,
+    3,
+    1,
+    3,
+    5,
+    2,
+    4,
+    5,
+    4,
+    1,
+    1,
+    2,
+    2,
+    3,
+    3,
+    7,
+    1,
+    6,
+    10,
+    1,
+    17,
+    1,
+    44,
+    4,
+    6,
+    2,
+    1,
+    1,
+    6,
+    5,
+    4,
+    2,
+    10,
+    1,
+    6,
+    9,
+    2,
+    8,
+    1,
+    24,
+    1,
+    2,
+    13,
+    7,
+    8,
+    8,
+    2,
+    1,
+    4,
+    1,
+    3,
+    1,
+    3,
+    3,
+    5,
+    2,
+    5,
+    10,
+    9,
+    4,
+    9,
+    12,
+    2,
+    1,
+    6,
+    1,
+    10,
+    1,
+    1,
+    7,
+    7,
+    4,
+    10,
+    8,
+    3,
+    1,
+    13,
+    4,
+    3,
+    1,
+    6,
+    1,
+    3,
+    5,
+    2,
+    1,
+    2,
+    17,
+    16,
+    5,
+    2,
+    16,
+    6,
+    1,
+    4,
+    2,
+    1,
+    3,
+    3,
+    6,
+    8,
+    5,
+    11,
+    11,
+    1,
+    3,
+    3,
+    2,
+    4,
+    6,
+    10,
+    9,
+    5,
+    7,
+    4,
+    7,
+    4,
+    7,
+    1,
+    1,
+    4,
+    2,
+    1,
+    3,
+    6,
+    8,
+    7,
+    1,
+    6,
+    11,
+    5,
+    5,
+    3,
+    24,
+    9,
+    4,
+    2,
+    7,
+    13,
+    5,
+    1,
+    8,
+    82,
+    16,
+    61,
+    1,
+    1,
+    1,
+    4,
+    2,
+    2,
+    16,
+    10,
+    3,
+    8,
+    1,
+    1,
+    6,
+    4,
+    2,
+    1,
+    3,
+    1,
+    1,
+    1,
+    4,
+    3,
+    8,
+    4,
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    6,
+    3,
+    5,
+    1,
+    1,
+    4,
+    6,
+    9,
+    2,
+    1,
+    1,
+    1,
+    2,
+    1,
+    7,
+    2,
+    1,
+    6,
+    1,
+    5,
+    4,
+    4,
+    3,
+    1,
+    8,
+    1,
+    3,
+    3,
+    1,
+    3,
+    2,
+    2,
+    2,
+    2,
+    3,
+    1,
+    6,
+    1,
+    2,
+    1,
+    2,
+    1,
+    3,
+    7,
+    1,
+    8,
+    2,
+    1,
+    2,
+    1,
+    5,
+    2,
+    5,
+    3,
+    5,
+    10,
+    1,
+    2,
+    1,
+    1,
+    3,
+    2,
+    5,
+    11,
+    3,
+    9,
+    3,
+    5,
+    1,
+    1,
+    5,
+    9,
+    1,
+    2,
+    1,
+    5,
+    7,
+    9,
+    9,
+    8,
+    1,
+    3,
+    3,
+    3,
+    6,
+    8,
+    2,
+    3,
+    2,
+    1,
+    1,
+    32,
+    6,
+    1,
+    2,
+    15,
+    9,
+    3,
+    7,
+    13,
+    1,
+    3,
+    10,
+    13,
+    2,
+    14,
+    1,
+    13,
+    10,
+    2,
+    1,
+    3,
+    10,
+    4,
+    15,
+    2,
+    15,
+    15,
+    10,
+    1,
+    3,
+    9,
+    6,
+    9,
+    32,
+    25,
+    26,
+    47,
+    7,
+    3,
+    2,
+    3,
+    1,
+    6,
+    3,
+    4,
+    3,
+    2,
+    8,
+    5,
+    4,
+    1,
+    9,
+    4,
+    2,
+    2,
+    19,
+    10,
+    6,
+    2,
+    3,
+    8,
+    1,
+    2,
+    2,
+    4,
+    2,
+    1,
+    9,
+    4,
+    4,
+    4,
+    6,
+    4,
+    8,
+    9,
+    2,
+    3,
+    1,
+    1,
+    1,
+    1,
+    3,
+    5,
+    5,
+    1,
+    3,
+    8,
+    4,
+    6,
+    2,
+    1,
+    4,
+    12,
+    1,
+    5,
+    3,
+    7,
+    13,
+    2,
+    5,
+    8,
+    1,
+    6,
+    1,
+    2,
+    5,
+    14,
+    6,
+    1,
+    5,
+    2,
+    4,
+    8,
+    15,
+    5,
+    1,
+    23,
+    6,
+    62,
+    2,
+    10,
+    1,
+    1,
+    8,
+    1,
+    2,
+    2,
+    10,
+    4,
+    2,
+    2,
+    9,
+    2,
+    1,
+    1,
+    3,
+    2,
+    3,
+    1,
+    5,
+    3,
+    3,
+    2,
+    1,
+    3,
+    8,
+    1,
+    1,
+    1,
+    11,
+    3,
+    1,
+    1,
+    4,
+    3,
+    7,
+    1,
+    14,
+    1,
+    2,
+    3,
+    12,
+    5,
+    2,
+    5,
+    1,
+    6,
+    7,
+    5,
+    7,
+    14,
+    11,
+    1,
+    3,
+    1,
+    8,
+    9,
+    12,
+    2,
+    1,
+    11,
+    8,
+    4,
+    4,
+    2,
+    6,
+    10,
+    9,
+    13,
+    1,
+    1,
+    3,
+    1,
+    5,
+    1,
+    3,
+    2,
+    4,
+    4,
+    1,
+    18,
+    2,
+    3,
+    14,
+    11,
+    4,
+    29,
+    4,
+    2,
+    7,
+    1,
+    3,
+    13,
+    9,
+    2,
+    2,
+    5,
+    3,
+    5,
+    20,
+    7,
+    16,
+    8,
+    5,
+    72,
+    34,
+    6,
+    4,
+    22,
+    12,
+    12,
+    28,
+    45,
+    36,
+    9,
+    7,
+    39,
+    9,
+    191,
+    1,
+    1,
+    1,
+    4,
+    11,
+    8,
+    4,
+    9,
+    2,
+    3,
+    22,
+    1,
+    1,
+    1,
+    1,
+    4,
+    17,
+    1,
+    7,
+    7,
+    1,
+    11,
+    31,
+    10,
+    2,
+    4,
+    8,
+    2,
+    3,
+    2,
+    1,
+    4,
+    2,
+    16,
+    4,
+    32,
+    2,
+    3,
+    19,
+    13,
+    4,
+    9,
+    1,
+    5,
+    2,
+    14,
+    8,
+    1,
+    1,
+    3,
+    6,
+    19,
+    6,
+    5,
+    1,
+    16,
+    6,
+    2,
+    10,
+    8,
+    5,
+    1,
+    2,
+    3,
+    1,
+    5,
+    5,
+    1,
+    11,
+    6,
+    6,
+    1,
+    3,
+    3,
+    2,
+    6,
+    3,
+    8,
+    1,
+    1,
+    4,
+    10,
+    7,
+    5,
+    7,
+    7,
+    5,
+    8,
+    9,
+    2,
+    1,
+    3,
+    4,
+    1,
+    1,
+    3,
+    1,
+    3,
+    3,
+    2,
+    6,
+    16,
+    1,
+    4,
+    6,
+    3,
+    1,
+    10,
+    6,
+    1,
+    3,
+    15,
+    2,
+    9,
+    2,
+    10,
+    25,
+    13,
+    9,
+    16,
+    6,
+    2,
+    2,
+    10,
+    11,
+    4,
+    3,
+    9,
+    1,
+    2,
+    6,
+    6,
+    5,
+    4,
+    30,
+    40,
+    1,
+    10,
+    7,
+    12,
+    14,
+    33,
+    6,
+    3,
+    6,
+    7,
+    3,
+    1,
+    3,
+    1,
+    11,
+    14,
+    4,
+    9,
+    5,
+    12,
+    11,
+    49,
+    18,
+    51,
+    31,
+    140,
+    31,
+    2,
+    2,
+    1,
+    5,
+    1,
+    8,
+    1,
+    10,
+    1,
+    4,
+    4,
+    3,
+    24,
+    1,
+    10,
+    1,
+    3,
+    6,
+    6,
+    16,
+    3,
+    4,
+    5,
+    2,
+    1,
+    4,
+    2,
+    57,
+    10,
+    6,
+    22,
+    2,
+    22,
+    3,
+    7,
+    22,
+    6,
+    10,
+    11,
+    36,
+    18,
+    16,
+    33,
+    36,
+    2,
+    5,
+    5,
+    1,
+    1,
+    1,
+    4,
+    10,
+    1,
+    4,
+    13,
+    2,
+    7,
+    5,
+    2,
+    9,
+    3,
+    4,
+    1,
+    7,
+    43,
+    3,
+    7,
+    3,
+    9,
+    14,
+    7,
+    9,
+    1,
+    11,
+    1,
+    1,
+    3,
+    7,
+    4,
+    18,
+    13,
+    1,
+    14,
+    1,
+    3,
+    6,
+    10,
+    73,
+    2,
+    2,
+    30,
+    6,
+    1,
+    11,
+    18,
+    19,
+    13,
+    22,
+    3,
+    46,
+    42,
+    37,
+    89,
+    7,
+    3,
+    16,
+    34,
+    2,
+    2,
+    3,
+    9,
+    1,
+    7,
+    1,
+    1,
+    1,
+    2,
+    2,
+    4,
+    10,
+    7,
+    3,
+    10,
+    3,
+    9,
+    5,
+    28,
+    9,
+    2,
+    6,
+    13,
+    7,
+    3,
+    1,
+    3,
+    10,
+    2,
+    7,
+    2,
+    11,
+    3,
+    6,
+    21,
+    54,
+    85,
+    2,
+    1,
+    4,
+    2,
+    2,
+    1,
+    39,
+    3,
+    21,
+    2,
+    2,
+    5,
+    1,
+    1,
+    1,
+    4,
+    1,
+    1,
+    3,
+    4,
+    15,
+    1,
+    3,
+    2,
+    4,
+    4,
+    2,
+    3,
+    8,
+    2,
+    20,
+    1,
+    8,
+    7,
+    13,
+    4,
+    1,
+    26,
+    6,
+    2,
+    9,
+    34,
+    4,
+    21,
+    52,
+    10,
+    4,
+    4,
+    1,
+    5,
+    12,
+    2,
+    11,
+    1,
+    7,
+    2,
+    30,
+    12,
+    44,
+    2,
+    30,
+    1,
+    1,
+    3,
+    6,
+    16,
+    9,
+    17,
+    39,
+    82,
+    2,
+    2,
+    24,
+    7,
+    1,
+    7,
+    3,
+    16,
+    9,
+    14,
+    44,
+    2,
+    1,
+    2,
+    1,
+    2,
+    3,
+    5,
+    2,
+    4,
+    1,
+    6,
+    7,
+    5,
+    3,
+    2,
+    6,
+    1,
+    11,
+    5,
+    11,
+    2,
+    1,
+    18,
+    19,
+    8,
+    1,
+    3,
+    24,
+    29,
+    2,
+    1,
+    3,
+    5,
+    2,
+    2,
+    1,
+    13,
+    6,
+    5,
+    1,
+    46,
+    11,
+    3,
+    5,
+    1,
+    1,
+    5,
+    8,
+    2,
+    10,
+    6,
+    12,
+    6,
+    3,
+    7,
+    11,
+    2,
+    4,
+    16,
+    13,
+    2,
+    5,
+    1,
+    1,
+    2,
+    2,
+    5,
+    2,
+    28,
+    5,
+    2,
+    23,
+    10,
+    8,
+    4,
+    4,
+    22,
+    39,
+    95,
+    38,
+    8,
+    14,
+    9,
+    5,
+    1,
+    13,
+    5,
+    4,
+    3,
+    13,
+    12,
+    11,
+    1,
+    9,
+    1,
+    27,
+    37,
+    2,
+    5,
+    4,
+    4,
+    63,
+    211,
+    95,
+    2,
+    2,
+    2,
+    1,
+    3,
+    5,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    1,
+    3,
+    2,
+    4,
+    1,
+    2,
+    1,
+    1,
+    5,
+    2,
+    2,
+    1,
+    1,
+    2,
+    3,
+    1,
+    3,
+    1,
+    1,
+    1,
+    3,
+    1,
+    4,
+    2,
+    1,
+    3,
+    6,
+    1,
+    1,
+    3,
+    7,
+    15,
+    5,
+    3,
+    2,
+    5,
+    3,
+    9,
+    11,
+    4,
+    2,
+    22,
+    1,
+    6,
+    3,
+    8,
+    7,
+    1,
+    4,
+    28,
+    4,
+    16,
+    3,
+    3,
+    25,
+    4,
+    4,
+    27,
+    27,
+    1,
+    4,
+    1,
+    2,
+    2,
+    7,
+    1,
+    3,
+    5,
+    2,
+    28,
+    8,
+    2,
+    14,
+    1,
+    8,
+    6,
+    16,
+    25,
+    3,
+    3,
+    3,
+    14,
+    3,
+    3,
+    1,
+    1,
+    2,
+    1,
+    4,
+    6,
+    3,
+    8,
+    4,
+    1,
+    1,
+    1,
+    2,
+    3,
+    6,
+    10,
+    6,
+    2,
+    3,
+    18,
+    3,
+    2,
+    5,
+    5,
+    4,
+    3,
+    1,
+    5,
+    2,
+    5,
+    4,
+    23,
+    7,
+    6,
+    12,
+    6,
+    4,
+    17,
+    11,
+    9,
+    5,
+    1,
+    1,
+    10,
+    5,
+    12,
+    1,
+    1,
+    11,
+    26,
+    33,
+    7,
+    3,
+    6,
+    1,
+    17,
+    7,
+    1,
+    5,
+    12,
+    1,
+    11,
+    2,
+    4,
+    1,
+    8,
+    14,
+    17,
+    23,
+    1,
+    2,
+    1,
+    7,
+    8,
+    16,
+    11,
+    9,
+    6,
+    5,
+    2,
+    6,
+    4,
+    16,
+    2,
+    8,
+    14,
+    1,
+    11,
+    8,
+    9,
+    1,
+    1,
+    1,
+    9,
+    25,
+    4,
+    11,
+    19,
+    7,
+    2,
+    15,
+    2,
+    12,
+    8,
+    52,
+    7,
+    5,
+    19,
+    2,
+    16,
+    4,
+    36,
+    8,
+    1,
+    16,
+    8,
+    24,
+    26,
+    4,
+    6,
+    2,
+    9,
+    5,
+    4,
+    36,
+    3,
+    28,
+    12,
+    25,
+    15,
+    37,
+    27,
+    17,
+    12,
+    59,
+    38,
+    5,
+    32,
+    127,
+    1,
+    2,
+    9,
+    17,
+    14,
+    4,
+    1,
+    2,
+    1,
+    1,
+    8,
+    11,
+    50,
+    4,
+    14,
+    2,
+    19,
+    16,
+    4,
+    17,
+    5,
+    4,
+    5,
+    26,
+    12,
+    45,
+    2,
+    23,
+    45,
+    104,
+    30,
+    12,
+    8,
+    3,
+    10,
+    2,
+    2,
+    3,
+    3,
+    1,
+    4,
+    20,
+    7,
+    2,
+    9,
+    6,
+    15,
+    2,
+    20,
+    1,
+    3,
+    16,
+    4,
+    11,
+    15,
+    6,
+    134,
+    2,
+    5,
+    59,
+    1,
+    2,
+    2,
+    2,
+    1,
+    9,
+    17,
+    3,
+    26,
+    137,
+    10,
+    211,
+    59,
+    1,
+    2,
+    4,
+    1,
+    4,
+    1,
+    1,
+    1,
+    2,
+    6,
+    2,
+    3,
+    1,
+    1,
+    2,
+    3,
+    2,
+    3,
+    1,
+    3,
+    4,
+    4,
+    2,
+    3,
+    3,
+    1,
+    4,
+    3,
+    1,
+    7,
+    2,
+    2,
+    3,
+    1,
+    2,
+    1,
+    3,
+    3,
+    3,
+    2,
+    2,
+    3,
+    2,
+    1,
+    3,
+    14,
+    6,
+    1,
+    3,
+    2,
+    9,
+    6,
+    15,
+    27,
+    9,
+    34,
+    145,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    3,
+    1,
+    2,
+    1,
+    1,
+    1,
+    2,
+    3,
+    5,
+    8,
+    3,
+    5,
+    2,
+    4,
+    1,
+    3,
+    2,
+    2,
+    2,
+    12,
+    4,
+    1,
+    1,
+    1,
+    10,
+    4,
+    5,
+    1,
+    20,
+    4,
+    16,
+    1,
+    15,
+    9,
+    5,
+    12,
+    2,
+    9,
+    2,
+    5,
+    4,
+    2,
+    26,
+    19,
+    7,
+    1,
+    26,
+    4,
+    30,
+    12,
+    15,
+    42,
+    1,
+    6,
+    8,
+    172,
+    1,
+    1,
+    4,
+    2,
+    1,
+    1,
+    11,
+    2,
+    2,
+    4,
+    2,
+    1,
+    2,
+    1,
+    10,
+    8,
+    1,
+    2,
+    1,
+    4,
+    5,
+    1,
+    2,
+    5,
+    1,
+    8,
+    4,
+    1,
+    3,
+    4,
+    2,
+    1,
+    6,
+    2,
+    1,
+    3,
+    4,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1,
+    12,
+    5,
+    7,
+    2,
+    4,
+    3,
+    1,
+    1,
+    1,
+    3,
+    3,
+    6,
+    1,
+    2,
+    2,
+    3,
+    3,
+    3,
+    2,
+    1,
+    2,
+    12,
+    14,
+    11,
+    6,
+    6,
+    4,
+    12,
+    2,
+    8,
+    1,
+    7,
+    10,
+    1,
+    35,
+    7,
+    4,
+    13,
+    15,
+    4,
+    3,
+    23,
+    21,
+    28,
+    52,
+    5,
+    26,
+    5,
+    6,
+    1,
+    7,
+    10,
+    2,
+    7,
+    53,
+    3,
+    2,
+    1,
+    1,
+    1,
+    2,
+    163,
+    532,
+    1,
+    10,
+    11,
+    1,
+    3,
+    3,
+    4,
+    8,
+    2,
+    8,
+    6,
+    2,
+    2,
+    23,
+    22,
+    4,
+    2,
+    2,
+    4,
+    2,
+    1,
+    3,
+    1,
+    3,
+    3,
+    5,
+    9,
+    8,
+    2,
+    1,
+    2,
+    8,
+    1,
+    10,
+    2,
+    12,
+    21,
+    20,
+    15,
+    105,
+    2,
+    3,
+    1,
+    1,
+    3,
+    2,
+    3,
+    1,
+    1,
+    2,
+    5,
+    1,
+    4,
+    15,
+    11,
+    19,
+    1,
+    1,
+    1,
+    1,
+    5,
+    4,
+    5,
+    1,
+    1,
+    2,
+    5,
+    3,
+    5,
+    12,
+    1,
+    2,
+    5,
+    1,
+    11,
+    1,
+    1,
+    15,
+    9,
+    1,
+    4,
+    5,
+    3,
+    26,
+    8,
+    2,
+    1,
+    3,
+    1,
+    1,
+    15,
+    19,
+    2,
+    12,
+    1,
+    2,
+    5,
+    2,
+    7,
+    2,
+    19,
+    2,
+    20,
+    6,
+    26,
+    7,
+    5,
+    2,
+    2,
+    7,
+    34,
+    21,
+    13,
+    70,
+    2,
+    128,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    3,
+    2,
+    2,
+    2,
+    15,
+    1,
+    4,
+    1,
+    3,
+    4,
+    42,
+    10,
+    6,
+    1,
+    49,
+    85,
+    8,
+    1,
+    2,
+    1,
+    1,
+    4,
+    4,
+    2,
+    3,
+    6,
+    1,
+    5,
+    7,
+    4,
+    3,
+    211,
+    4,
+    1,
+    2,
+    1,
+    2,
+    5,
+    1,
+    2,
+    4,
+    2,
+    2,
+    6,
+    5,
+    6,
+    10,
+    3,
+    4,
+    48,
+    100,
+    6,
+    2,
+    16,
+    296,
+    5,
+    27,
+    387,
+    2,
+    2,
+    3,
+    7,
+    16,
+    8,
+    5,
+    38,
+    15,
+    39,
+    21,
+    9,
+    10,
+    3,
+    7,
+    59,
+    13,
+    27,
+    21,
+    47,
+    5,
+    21,
+    6};
   static AnchorWChar base_ranges[] =  // not zero-terminated
     {
       0x0020,
@@ -6964,15 +9490,13 @@ const char *AnchorFont::CalcWordWrapPositionA(float scale,
       }
       blank_width += char_width;
       inside_word = false;
-    }
-    else
+    } else
     {
       word_width += char_width;
       if (inside_word)
       {
         word_end = next_s;
-      }
-      else
+      } else
       {
         prev_word_end = word_end;
         line_width += word_width + blank_width;
@@ -7048,13 +9572,11 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
           if (AnchorCharIsBlankA(c))
           {
             s++;
-          }
-          else if (c == '\n')
+          } else if (c == '\n')
           {
             s++;
             break;
-          }
-          else
+          } else
           {
             break;
           }
@@ -7069,8 +9591,7 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
     if (c < 0x80)
     {
       s += 1;
-    }
-    else
+    } else
     {
       s += AnchorTextCharFromUtf8(&c, s, text_end);
       if (c == 0)  // Malformed UTF-8?
@@ -7234,13 +9755,11 @@ void AnchorFont::RenderText(AnchorDrawList *draw_list,
           if (AnchorCharIsBlankA(c))
           {
             s++;
-          }
-          else if (c == '\n')
+          } else if (c == '\n')
           {
             s++;
             break;
-          }
-          else
+          } else
           {
             break;
           }
@@ -7254,8 +9773,7 @@ void AnchorFont::RenderText(AnchorDrawList *draw_list,
     if (c < 0x80)
     {
       s += 1;
-    }
-    else
+    } else
     {
       s += AnchorTextCharFromUtf8(&c, s, text_end);
       if (c == 0)  // Malformed UTF-8?
@@ -7469,10 +9987,18 @@ void ANCHOR::RenderMouseCursor(AnchorDrawList *draw_list,
     pos -= offset;
     AnchorTextureID tex_id = font_atlas->TexID;
     draw_list->PushTextureID(tex_id);
-    draw_list->AddImage(
-      tex_id, pos + GfVec2f(1, 0) * scale, pos + (GfVec2f(1, 0) + size) * scale, uv[2], uv[3], col_shadow);
-    draw_list->AddImage(
-      tex_id, pos + GfVec2f(2, 0) * scale, pos + (GfVec2f(2, 0) + size) * scale, uv[2], uv[3], col_shadow);
+    draw_list->AddImage(tex_id,
+                        pos + GfVec2f(1, 0) * scale,
+                        pos + (GfVec2f(1, 0) + size) * scale,
+                        uv[2],
+                        uv[3],
+                        col_shadow);
+    draw_list->AddImage(tex_id,
+                        pos + GfVec2f(2, 0) * scale,
+                        pos + (GfVec2f(2, 0) + size) * scale,
+                        uv[2],
+                        uv[3],
+                        col_shadow);
     draw_list->AddImage(tex_id, pos, pos + size * scale, uv[2], uv[3], col_border);
     draw_list->AddImage(tex_id, pos, pos + size * scale, uv[0], uv[1], col_fill);
     draw_list->PopTextureID();
@@ -7551,8 +10077,10 @@ void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
     return;
   }
 
-  rounding = AnchorClamp(
-    AnchorMin((rect.Max[0] - rect.Min[0]) * 0.5f, (rect.Max[1] - rect.Min[1]) * 0.5f) - 1.0f, 0.0f, rounding);
+  rounding = AnchorClamp(AnchorMin((rect.Max[0] - rect.Min[0]) * 0.5f, (rect.Max[1] - rect.Min[1]) * 0.5f) -
+                           1.0f,
+                         0.0f,
+                         rounding);
   const float inv_rounding = 1.0f / rounding;
   const float arc0_b = AnchorAcos01(1.0f - (p0[0] - rect.Min[0]) * inv_rounding);
   const float arc0_e = AnchorAcos01(1.0f - (p1[0] - rect.Min[0]) * inv_rounding);
@@ -7563,13 +10091,11 @@ void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
   {
     draw_list->PathLineTo(GfVec2f(x0, p1[1]));
     draw_list->PathLineTo(GfVec2f(x0, p0[1]));
-  }
-  else if (arc0_b == 0.0f && arc0_e == half_pi)
+  } else if (arc0_b == 0.0f && arc0_e == half_pi)
   {
     draw_list->PathArcToFast(GfVec2f(x0, p1[1] - rounding), rounding, 3, 6);  // BL
     draw_list->PathArcToFast(GfVec2f(x0, p0[1] + rounding), rounding, 6, 9);  // TR
-  }
-  else
+  } else
   {
     draw_list->PathArcTo(GfVec2f(x0, p1[1] - rounding), rounding, IM_PI - arc0_e, IM_PI - arc0_b, 3);  // BL
     draw_list->PathArcTo(GfVec2f(x0, p0[1] + rounding), rounding, IM_PI + arc0_b, IM_PI + arc0_e, 3);  // TR
@@ -7583,13 +10109,11 @@ void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
     {
       draw_list->PathLineTo(GfVec2f(x1, p0[1]));
       draw_list->PathLineTo(GfVec2f(x1, p1[1]));
-    }
-    else if (arc1_b == 0.0f && arc1_e == half_pi)
+    } else if (arc1_b == 0.0f && arc1_e == half_pi)
     {
       draw_list->PathArcToFast(GfVec2f(x1, p0[1] + rounding), rounding, 9, 12);  // TR
       draw_list->PathArcToFast(GfVec2f(x1, p1[1] - rounding), rounding, 0, 3);   // BR
-    }
-    else
+    } else
     {
       draw_list->PathArcTo(GfVec2f(x1, p0[1] + rounding), rounding, -arc1_e, -arc1_b, 3);  // TR
       draw_list->PathArcTo(GfVec2f(x1, p1[1] - rounding), rounding, +arc1_b, +arc1_e, 3);  // BR
@@ -7714,14 +10238,14 @@ void ANCHOR::RenderColorRectWithAlphaCheckerboard(AnchorDrawList *draw_list,
         }
 
         // Combine flags
-        cell_flags = (flags == AnchorDrawFlags_RoundCornersNone || cell_flags == AnchorDrawFlags_RoundCornersNone) ?
+        cell_flags = (flags == AnchorDrawFlags_RoundCornersNone ||
+                      cell_flags == AnchorDrawFlags_RoundCornersNone) ?
                        AnchorDrawFlags_RoundCornersNone :
                        (cell_flags & flags);
         draw_list->AddRectFilled(GfVec2f(x1, y1), GfVec2f(x2, y2), col_bg2, rounding, cell_flags);
       }
     }
-  }
-  else
+  } else
   {
     draw_list->AddRectFilled(p_min, p_max, col, rounding, flags);
   }
@@ -7794,8 +10318,7 @@ static const unsigned char *stb_decompress_token(const unsigned char *i)
       stb__match(stb__dout - (stb__in2(0) - 0x4000 + 1), i[2] + 1), i += 3;
     else /* *i >= 0x20 */
       stb__lit(i + 1, i[0] - 0x20 + 1), i += 1 + (i[0] - 0x20 + 1);
-  }
-  else
+  } else
   {  // more ifs for cases that expand large, since overhead is amortized
     if (*i >= 0x18)
       stb__match(stb__dout - (stb__in3(0) - 0x180000 + 1), i[3] + 1), i += 4;
@@ -7873,8 +10396,7 @@ static unsigned int stb_decompress(unsigned char *output, const unsigned char *i
         if (stb_adler32(1, output, olen) != (unsigned int)stb__in4(2))
           return 0;
         return olen;
-      }
-      else
+      } else
       {
         ANCHOR_ASSERT(0); /* NOTREACHED */
         return 0;

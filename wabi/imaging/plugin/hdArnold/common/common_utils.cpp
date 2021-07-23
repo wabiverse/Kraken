@@ -27,8 +27,7 @@ std::string ArnoldUsdMakeCamelCase(const std::string &in)
     if (c == '_')
     {
       capitalize = true;
-    }
-    else
+    } else
     {
       if (capitalize)
       {

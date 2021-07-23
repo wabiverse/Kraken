@@ -34,210 +34,190 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsRigidBodyAPI,
-        TfType::Bases< UsdAPISchemaBase > >();
-    
+  TfType::Define<UsdPhysicsRigidBodyAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _schemaTokens,
-    (PhysicsRigidBodyAPI)
-);
+TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsRigidBodyAPI));
 
 /* virtual */
 UsdPhysicsRigidBodyAPI::~UsdPhysicsRigidBodyAPI()
-{
-}
+{}
 
 /* static */
-UsdPhysicsRigidBodyAPI
-UsdPhysicsRigidBodyAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsRigidBodyAPI UsdPhysicsRigidBodyAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsRigidBodyAPI();
-    }
-    return UsdPhysicsRigidBodyAPI(stage->GetPrimAtPath(path));
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsRigidBodyAPI();
+  }
+  return UsdPhysicsRigidBodyAPI(stage->GetPrimAtPath(path));
 }
 
 
 /* virtual */
 UsdSchemaKind UsdPhysicsRigidBodyAPI::GetSchemaKind() const
 {
-    return UsdPhysicsRigidBodyAPI::schemaKind;
+  return UsdPhysicsRigidBodyAPI::schemaKind;
 }
 
 /* static */
-bool
-UsdPhysicsRigidBodyAPI::CanApply(
-    const UsdPrim &prim, std::string *whyNot)
+bool UsdPhysicsRigidBodyAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 {
-    return prim.CanApplyAPI<UsdPhysicsRigidBodyAPI>(whyNot);
+  return prim.CanApplyAPI<UsdPhysicsRigidBodyAPI>(whyNot);
 }
 
 /* static */
-UsdPhysicsRigidBodyAPI
-UsdPhysicsRigidBodyAPI::Apply(const UsdPrim &prim)
+UsdPhysicsRigidBodyAPI UsdPhysicsRigidBodyAPI::Apply(const UsdPrim &prim)
 {
-    if (prim.ApplyAPI<UsdPhysicsRigidBodyAPI>()) {
-        return UsdPhysicsRigidBodyAPI(prim);
-    }
-    return UsdPhysicsRigidBodyAPI();
+  if (prim.ApplyAPI<UsdPhysicsRigidBodyAPI>())
+  {
+    return UsdPhysicsRigidBodyAPI(prim);
+  }
+  return UsdPhysicsRigidBodyAPI();
 }
 
 /* static */
-const TfType &
-UsdPhysicsRigidBodyAPI::GetStaticTfType()
+const TfType &UsdPhysicsRigidBodyAPI::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsRigidBodyAPI>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsRigidBodyAPI>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsRigidBodyAPI::IsTypedSchema()
+bool UsdPhysicsRigidBodyAPI::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsRigidBodyAPI::GetTfType() const
+const TfType &UsdPhysicsRigidBodyAPI::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::GetRigidBodyEnabledAttr() const
+UsdAttribute UsdPhysicsRigidBodyAPI::GetRigidBodyEnabledAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsRigidBodyEnabled);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsRigidBodyEnabled);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::CreateRigidBodyEnabledAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsRigidBodyAPI::CreateRigidBodyEnabledAttr(VtValue const &defaultValue,
+                                                                bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsRigidBodyEnabled,
-                       SdfValueTypeNames->Bool,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsRigidBodyEnabled,
+                                    SdfValueTypeNames->Bool,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::GetKinematicEnabledAttr() const
+UsdAttribute UsdPhysicsRigidBodyAPI::GetKinematicEnabledAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsKinematicEnabled);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsKinematicEnabled);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::CreateKinematicEnabledAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsRigidBodyAPI::CreateKinematicEnabledAttr(VtValue const &defaultValue,
+                                                                bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsKinematicEnabled,
-                       SdfValueTypeNames->Bool,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsKinematicEnabled,
+                                    SdfValueTypeNames->Bool,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::GetStartsAsleepAttr() const
+UsdAttribute UsdPhysicsRigidBodyAPI::GetStartsAsleepAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsStartsAsleep);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsStartsAsleep);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::CreateStartsAsleepAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsRigidBodyAPI::CreateStartsAsleepAttr(VtValue const &defaultValue,
+                                                            bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsStartsAsleep,
-                       SdfValueTypeNames->Bool,
-                       /* custom = */ false,
-                       SdfVariabilityUniform,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsStartsAsleep,
+                                    SdfValueTypeNames->Bool,
+                                    /* custom = */ false,
+                                    SdfVariabilityUniform,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::GetVelocityAttr() const
+UsdAttribute UsdPhysicsRigidBodyAPI::GetVelocityAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsVelocity);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsVelocity);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::CreateVelocityAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsRigidBodyAPI::CreateVelocityAttr(VtValue const &defaultValue,
+                                                        bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsVelocity,
-                       SdfValueTypeNames->Vector3f,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsVelocity,
+                                    SdfValueTypeNames->Vector3f,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::GetAngularVelocityAttr() const
+UsdAttribute UsdPhysicsRigidBodyAPI::GetAngularVelocityAttr() const
 {
-    return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAngularVelocity);
+  return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAngularVelocity);
 }
 
-UsdAttribute
-UsdPhysicsRigidBodyAPI::CreateAngularVelocityAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsRigidBodyAPI::CreateAngularVelocityAttr(VtValue const &defaultValue,
+                                                               bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAngularVelocity,
-                       SdfValueTypeNames->Vector3f,
-                       /* custom = */ false,
-                       SdfVariabilityVarying,
-                       defaultValue,
-                       writeSparsely);
+  return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAngularVelocity,
+                                    SdfValueTypeNames->Vector3f,
+                                    /* custom = */ false,
+                                    SdfVariabilityVarying,
+                                    defaultValue,
+                                    writeSparsely);
 }
 
-UsdRelationship
-UsdPhysicsRigidBodyAPI::GetSimulationOwnerRel() const
+UsdRelationship UsdPhysicsRigidBodyAPI::GetSimulationOwnerRel() const
 {
-    return GetPrim().GetRelationship(UsdPhysicsTokens->physicsSimulationOwner);
+  return GetPrim().GetRelationship(UsdPhysicsTokens->physicsSimulationOwner);
 }
 
-UsdRelationship
-UsdPhysicsRigidBodyAPI::CreateSimulationOwnerRel() const
+UsdRelationship UsdPhysicsRigidBodyAPI::CreateSimulationOwnerRel() const
 {
-    return GetPrim().CreateRelationship(UsdPhysicsTokens->physicsSimulationOwner,
-                       /* custom = */ false);
+  return GetPrim().CreateRelationship(UsdPhysicsTokens->physicsSimulationOwner,
+                                      /* custom = */ false);
 }
 
-namespace {
-static inline TfTokenVector
-_ConcatenateAttributeNames(const TfTokenVector& left,const TfTokenVector& right)
+namespace
 {
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
     TfTokenVector result;
     result.reserve(left.size() + right.size());
     result.insert(result.end(), left.begin(), left.end());
     result.insert(result.end(), right.begin(), right.end());
     return result;
-}
-}
+  }
+}  // namespace
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsRigidBodyAPI::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdPhysicsRigidBodyAPI::GetSchemaAttributeNames(bool includeInherited)
 {
-    static TfTokenVector localNames = {
-        UsdPhysicsTokens->physicsRigidBodyEnabled,
-        UsdPhysicsTokens->physicsKinematicEnabled,
-        UsdPhysicsTokens->physicsStartsAsleep,
-        UsdPhysicsTokens->physicsVelocity,
-        UsdPhysicsTokens->physicsAngularVelocity,
-    };
-    static TfTokenVector allNames =
-        _ConcatenateAttributeNames(
-            UsdAPISchemaBase::GetSchemaAttributeNames(true),
-            localNames);
+  static TfTokenVector localNames = {
+    UsdPhysicsTokens->physicsRigidBodyEnabled,
+    UsdPhysicsTokens->physicsKinematicEnabled,
+    UsdPhysicsTokens->physicsStartsAsleep,
+    UsdPhysicsTokens->physicsVelocity,
+    UsdPhysicsTokens->physicsAngularVelocity,
+  };
+  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
+                                                             localNames);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END

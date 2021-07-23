@@ -56,29 +56,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static const int _dimension = 2;
+  static const int _dimension = 2;
 
-static string _Repr(GfRange2f const &self)
-{
-  return TF_PY_REPR_PREFIX + "Range2f(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
-}
+  static string _Repr(GfRange2f const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Range2f(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
+  }
 
 #if PY_MAJOR_VERSION == 2
-static GfRange2f __truediv__(const GfRange2f &self, double value)
-{
-  return self / value;
-}
+  static GfRange2f __truediv__(const GfRange2f &self, double value)
+  {
+    return self / value;
+  }
 
-static GfRange2f __itruediv__(GfRange2f &self, double value)
-{
-  return self /= value;
-}
+  static GfRange2f __itruediv__(GfRange2f &self, double value)
+  {
+    return self /= value;
+  }
 #endif
 
-static size_t __hash__(GfRange2f const &r)
-{
-  return hash_value(r);
-}
+  static size_t __hash__(GfRange2f const &r)
+  {
+    return hash_value(r);
+  }
 
 }  // anonymous namespace
 
@@ -112,8 +112,8 @@ void wrapRange2f()
 
     .def("SetEmpty", &GfRange2f::SetEmpty)
 
-    .def("Contains", (bool (GfRange2f::*)(const GfVec2f &) const) & GfRange2f::Contains)
-    .def("Contains", (bool (GfRange2f::*)(const GfRange2f &) const) & GfRange2f::Contains)
+    .def("Contains", (bool(GfRange2f::*)(const GfVec2f &) const) & GfRange2f::Contains)
+    .def("Contains", (bool(GfRange2f::*)(const GfRange2f &) const) & GfRange2f::Contains)
 
     .def("GetUnion", &GfRange2f::GetUnion)
     .staticmethod("GetUnion")

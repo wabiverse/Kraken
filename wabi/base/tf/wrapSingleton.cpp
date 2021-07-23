@@ -37,41 +37,41 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// Need an empty class to serve as the singleton base class wrapped out to
-// python.
-struct Tf_PySingleton
-{
-};
-
-static object _GetSingletonInstance(object const &classObj)
-{
-
-  // Try to get existing instance from this class.
-  object instance = classObj.attr("__dict__").attr("get")("__instance");
-
-  if (TfPyIsNone(instance))
+  // Need an empty class to serve as the singleton base class wrapped out to
+  // python.
+  struct Tf_PySingleton
   {
-    // Create instance.  Use our first base class in the method resolution
-    // order (mro) to create it.
-    instance = TfPyGetClassObject<Tf_PySingleton>().attr("__mro__")[1].attr("__new__")(classObj);
+  };
 
-    // Store singleton instance in class.
-    setattr(classObj, "__instance", instance);
+  static object _GetSingletonInstance(object const &classObj)
+  {
 
-    // If there's an 'init' method, call it.
-    if (!TfPyIsNone(getattr(instance, "init", object())))
-      instance.attr("init")();
+    // Try to get existing instance from this class.
+    object instance = classObj.attr("__dict__").attr("get")("__instance");
+
+    if (TfPyIsNone(instance))
+    {
+      // Create instance.  Use our first base class in the method resolution
+      // order (mro) to create it.
+      instance = TfPyGetClassObject<Tf_PySingleton>().attr("__mro__")[1].attr("__new__")(classObj);
+
+      // Store singleton instance in class.
+      setattr(classObj, "__instance", instance);
+
+      // If there's an 'init' method, call it.
+      if (!TfPyIsNone(getattr(instance, "init", object())))
+        instance.attr("init")();
+    }
+
+    // Return instance.
+    return instance;
   }
 
-  // Return instance.
-  return instance;
-}
-
-// Need an init method that accepts any arguments and does nothing.
-static object _DummyInit(tuple const &, dict const &)
-{
-  return object();
-}
+  // Need an init method that accepts any arguments and does nothing.
+  static object _DummyInit(tuple const &, dict const &)
+  {
+    return object();
+  }
 
 }  // anonymous namespace
 

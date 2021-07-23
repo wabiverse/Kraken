@@ -99,9 +99,7 @@ void CTX_data_prefs_set(kContext *C, UserDef *uprefs);
 void CTX_wm_operator_poll_msg_clear(kContext *C);
 void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg);
 
-typedef int (*kContextDataCallback)(const kContext *C,
-                                    const char *member,
-                                    kContextDataResult *result);
+typedef int (*kContextDataCallback)(const kContext *C, const char *member, kContextDataResult *result);
 
 struct kContextPollMsgParams
 {

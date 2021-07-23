@@ -43,17 +43,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static std::string _Repr(const UsdShadeMaterialBindingAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdShade.MaterialBindingAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdShadeMaterialBindingAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdShade.MaterialBindingAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -113,140 +114,146 @@ void wrapUsdShadeMaterialBindingAPI()
 namespace
 {
 
-static object _WrapComputeBoundMaterial(const UsdShadeMaterialBindingAPI &bindingAPI,
-                                        const TfToken &materialPurpose)
-{
-  UsdRelationship bindingRel;
-  UsdShadeMaterial mat = bindingAPI.ComputeBoundMaterial(materialPurpose, &bindingRel);
-  return boost::python::make_tuple(mat, bindingRel);
-}
+  static object _WrapComputeBoundMaterial(const UsdShadeMaterialBindingAPI &bindingAPI,
+                                          const TfToken &materialPurpose)
+  {
+    UsdRelationship bindingRel;
+    UsdShadeMaterial mat = bindingAPI.ComputeBoundMaterial(materialPurpose, &bindingRel);
+    return boost::python::make_tuple(mat, bindingRel);
+  }
 
-static object _WrapComputeBoundMaterials(const std::vector<UsdPrim> &prims, const TfToken &materialPurpose)
-{
-  std::vector<UsdRelationship> bindingRels;
-  auto materials = UsdShadeMaterialBindingAPI::ComputeBoundMaterials(prims, materialPurpose, &bindingRels);
-  return boost::python::make_tuple(materials, bindingRels);
-}
+  static object _WrapComputeBoundMaterials(const std::vector<UsdPrim> &prims, const TfToken &materialPurpose)
+  {
+    std::vector<UsdRelationship> bindingRels;
+    auto materials = UsdShadeMaterialBindingAPI::ComputeBoundMaterials(prims, materialPurpose, &bindingRels);
+    return boost::python::make_tuple(materials, bindingRels);
+  }
 
-WRAP_CUSTOM
-{
+  WRAP_CUSTOM
+  {
 
-  using This = UsdShadeMaterialBindingAPI;
+    using This = UsdShadeMaterialBindingAPI;
 
-  // Create a root scope so that CollectionBinding is scoped under
-  // UsdShade.MaterialBindingAPI.
-  scope scope_root = _class;
+    // Create a root scope so that CollectionBinding is scoped under
+    // UsdShade.MaterialBindingAPI.
+    scope scope_root = _class;
 
-  class_<This::DirectBinding> directBinding("DirectBinding");
-  directBinding.def(init<>())
-    .def(init<UsdRelationship>(arg("bindingRel")))
-    .def("GetMaterial", &This::DirectBinding::GetMaterial)
-    .def("GetBindingRel", &This::DirectBinding::GetBindingRel, return_value_policy<return_by_value>())
-    .def("GetMaterialPath", &This::DirectBinding::GetMaterialPath, return_value_policy<return_by_value>())
-    .def("GetMaterialPurpose",
-         &This::DirectBinding::GetMaterialPurpose,
-         return_value_policy<return_by_value>());
+    class_<This::DirectBinding> directBinding("DirectBinding");
+    directBinding.def(init<>())
+      .def(init<UsdRelationship>(arg("bindingRel")))
+      .def("GetMaterial", &This::DirectBinding::GetMaterial)
+      .def("GetBindingRel", &This::DirectBinding::GetBindingRel, return_value_policy<return_by_value>())
+      .def("GetMaterialPath", &This::DirectBinding::GetMaterialPath, return_value_policy<return_by_value>())
+      .def("GetMaterialPurpose",
+           &This::DirectBinding::GetMaterialPurpose,
+           return_value_policy<return_by_value>());
 
-  class_<This::CollectionBinding> collBinding("CollectionBinding");
-  collBinding.def(init<>())
-    .def(init<UsdRelationship>(arg("collBindingRel")))
-    .def("GetCollection", &This::CollectionBinding::GetCollection)
-    .def("GetMaterial", &This::CollectionBinding::GetMaterial)
-    .def("GetCollectionPath",
-         &This::CollectionBinding::GetCollectionPath,
-         return_value_policy<return_by_value>())
-    .def(
-      "GetMaterialPath", &This::CollectionBinding::GetMaterialPath, return_value_policy<return_by_value>())
-    .def("GetBindingRel", &This::CollectionBinding::GetBindingRel, return_value_policy<return_by_value>())
-    .def("IsValid", &This::CollectionBinding::IsValid);
+    class_<This::CollectionBinding> collBinding("CollectionBinding");
+    collBinding.def(init<>())
+      .def(init<UsdRelationship>(arg("collBindingRel")))
+      .def("GetCollection", &This::CollectionBinding::GetCollection)
+      .def("GetMaterial", &This::CollectionBinding::GetMaterial)
+      .def("GetCollectionPath",
+           &This::CollectionBinding::GetCollectionPath,
+           return_value_policy<return_by_value>())
+      .def("GetMaterialPath",
+           &This::CollectionBinding::GetMaterialPath,
+           return_value_policy<return_by_value>())
+      .def("GetBindingRel", &This::CollectionBinding::GetBindingRel, return_value_policy<return_by_value>())
+      .def("IsValid", &This::CollectionBinding::IsValid);
 
-  to_python_converter<This::CollectionBindingVector, TfPySequenceToPython<This::CollectionBindingVector>>();
-  TfPyRegisterStlSequencesFromPython<This::CollectionBindingVector>();
+    to_python_converter<This::CollectionBindingVector,
+                        TfPySequenceToPython<This::CollectionBindingVector>>();
+    TfPyRegisterStlSequencesFromPython<This::CollectionBindingVector>();
 
-  scope scope_materialBindingAPI =
-    _class
-      .def("GetDirectBindingRel",
-           &This::GetDirectBindingRel,
-           (arg("materialPurpose") = UsdShadeTokens->allPurpose))
+    scope scope_materialBindingAPI =
+      _class
+        .def("GetDirectBindingRel",
+             &This::GetDirectBindingRel,
+             (arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-      .def("GetCollectionBindingRel",
-           &This::GetCollectionBindingRel,
-           (arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def("GetCollectionBindingRel",
+             &This::GetCollectionBindingRel,
+             (arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-      .def("GetCollectionBindingRels",
-           &This::GetCollectionBindingRels,
-           arg("materialPurpose") = UsdShadeTokens->allPurpose,
-           return_value_policy<TfPySequenceToList>())
+        .def("GetCollectionBindingRels",
+             &This::GetCollectionBindingRels,
+             arg("materialPurpose") = UsdShadeTokens->allPurpose,
+             return_value_policy<TfPySequenceToList>())
 
-      .def("GetMaterialBindingStrength", &This::GetMaterialBindingStrength, arg("bindingRel"))
-      .staticmethod("GetMaterialBindingStrength")
+        .def("GetMaterialBindingStrength", &This::GetMaterialBindingStrength, arg("bindingRel"))
+        .staticmethod("GetMaterialBindingStrength")
 
-      .def("SetMaterialBindingStrength", &This::SetMaterialBindingStrength, arg("bindingRel"))
-      .staticmethod("SetMaterialBindingStrength")
+        .def("SetMaterialBindingStrength", &This::SetMaterialBindingStrength, arg("bindingRel"))
+        .staticmethod("SetMaterialBindingStrength")
 
-      .def(
-        "GetDirectBinding", &This::GetDirectBinding, (arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def("GetDirectBinding",
+             &This::GetDirectBinding,
+             (arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-      .def("GetCollectionBindings",
-           &This::GetCollectionBindings,
-           arg("materialPurpose") = UsdShadeTokens->allPurpose,
-           return_value_policy<TfPySequenceToList>())
+        .def("GetCollectionBindings",
+             &This::GetCollectionBindings,
+             arg("materialPurpose") = UsdShadeTokens->allPurpose,
+             return_value_policy<TfPySequenceToList>())
 
-      .def("Bind",
-           (bool (This::*)(const UsdShadeMaterial &, const TfToken &, const TfToken &) const) & This::Bind,
-           (arg("material"),
-            arg("bindingStrength") = UsdShadeTokens->fallbackStrength,
-            arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def("Bind",
+             (bool(This::*)(const UsdShadeMaterial &, const TfToken &, const TfToken &) const) & This::Bind,
+             (arg("material"),
+              arg("bindingStrength") = UsdShadeTokens->fallbackStrength,
+              arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-      .def("Bind",
-           (bool (This::*)(const UsdCollectionAPI &collection,
-                           const UsdShadeMaterial &,
-                           const TfToken &,
-                           const TfToken &,
-                           const TfToken &) const) &
-             This::Bind,
-           (arg("collection"),
-            arg("material"),
-            arg("bindingName") = TfToken(),
-            arg("bindingStrength") = UsdShadeTokens->fallbackStrength,
-            arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def("Bind",
+             (bool(This::*)(const UsdCollectionAPI &collection,
+                            const UsdShadeMaterial &,
+                            const TfToken &,
+                            const TfToken &,
+                            const TfToken &) const) &
+               This::Bind,
+             (arg("collection"),
+              arg("material"),
+              arg("bindingName") = TfToken(),
+              arg("bindingStrength") = UsdShadeTokens->fallbackStrength,
+              arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-      .def("UnbindDirectBinding",
-           &This::UnbindDirectBinding,
-           arg("materialPurpose") = UsdShadeTokens->allPurpose)
+        .def("UnbindDirectBinding",
+             &This::UnbindDirectBinding,
+             arg("materialPurpose") = UsdShadeTokens->allPurpose)
 
-      .def("UnbindCollectionBinding",
-           &This::UnbindCollectionBinding,
-           (arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def("UnbindCollectionBinding",
+             &This::UnbindCollectionBinding,
+             (arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-      .def("UnbindAllBindings", &This::UnbindAllBindings)
+        .def("UnbindAllBindings", &This::UnbindAllBindings)
 
-      .def("RemovePrimFromBindingCollection",
-           &This::RemovePrimFromBindingCollection,
-           (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def("RemovePrimFromBindingCollection",
+             &This::RemovePrimFromBindingCollection,
+             (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-      .def("AddPrimToBindingCollection",
-           &This::AddPrimToBindingCollection,
-           (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def("AddPrimToBindingCollection",
+             &This::AddPrimToBindingCollection,
+             (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-      .def("ComputeBoundMaterial",
-           &_WrapComputeBoundMaterial,
-           arg("materialPurpose") = UsdShadeTokens->allPurpose)
+        .def("ComputeBoundMaterial",
+             &_WrapComputeBoundMaterial,
+             arg("materialPurpose") = UsdShadeTokens->allPurpose)
 
-      .def("ComputeBoundMaterials",
-           &_WrapComputeBoundMaterials,
-           (arg("prims"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
-      .staticmethod("ComputeBoundMaterials")
+        .def("ComputeBoundMaterials",
+             &_WrapComputeBoundMaterials,
+             (arg("prims"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .staticmethod("ComputeBoundMaterials")
 
-      .def("CreateMaterialBindSubset",
-           &This::CreateMaterialBindSubset,
-           (arg("subsetName"), arg("indices"), arg("elementType") = UsdGeomTokens->face))
-      .def(
-        "GetMaterialBindSubsets", &This::GetMaterialBindSubsets, return_value_policy<TfPySequenceToList>())
-      .def("SetMaterialBindSubsetsFamilyType", &This::SetMaterialBindSubsetsFamilyType, (arg("familyType")))
-      .def("GetMaterialBindSubsetsFamilyType", &This::GetMaterialBindSubsetsFamilyType)
-      .def("CanContainPropertyName", &UsdShadeMaterialBindingAPI::CanContainPropertyName, arg("name"))
-      .staticmethod("CanContainPropertyName");
-}
+        .def("CreateMaterialBindSubset",
+             &This::CreateMaterialBindSubset,
+             (arg("subsetName"), arg("indices"), arg("elementType") = UsdGeomTokens->face))
+        .def("GetMaterialBindSubsets",
+             &This::GetMaterialBindSubsets,
+             return_value_policy<TfPySequenceToList>())
+        .def("SetMaterialBindSubsetsFamilyType",
+             &This::SetMaterialBindSubsetsFamilyType,
+             (arg("familyType")))
+        .def("GetMaterialBindSubsetsFamilyType", &This::GetMaterialBindSubsetsFamilyType)
+        .def("CanContainPropertyName", &UsdShadeMaterialBindingAPI::CanContainPropertyName, arg("name"))
+        .staticmethod("CanContainPropertyName");
+  }
 
 }  // namespace

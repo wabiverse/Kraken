@@ -90,14 +90,12 @@ class ArThreadLocalScopedCache
     if (cacheScopeData->IsHolding<CachePtr>())
     {
       cacheStack.push_back(cacheScopeData->UncheckedGet<CachePtr>());
-    }
-    else
+    } else
     {
       if (cacheStack.empty())
       {
         cacheStack.push_back(std::make_shared<CachedType>());
-      }
-      else
+      } else
       {
         cacheStack.push_back(cacheStack.back());
       }

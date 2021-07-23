@@ -79,8 +79,7 @@ void HgiGLPostPendingGLErrors(std::string const &where)
     if (!errorString)
     {
       errorMessage << "GL error code: 0x" << std::hex << error << std::dec;
-    }
-    else
+    } else
     {
       errorMessage << "GL error: " << errorString;
     }

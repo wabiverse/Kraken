@@ -88,8 +88,9 @@ bool TfAtomicOfstreamWrapper::Open(string *reason)
   {
     if (reason)
     {
-      *reason = TfStringPrintf(
-        "Unable to open '%s' for writing: %s", _tmpFilePath.c_str(), ArchStrerror().c_str());
+      *reason = TfStringPrintf("Unable to open '%s' for writing: %s",
+                               _tmpFilePath.c_str(),
+                               ArchStrerror().c_str());
     }
     return false;
   }
@@ -139,8 +140,9 @@ bool TfAtomicOfstreamWrapper::Cancel(string *reason)
     {
       if (reason)
       {
-        *reason = TfStringPrintf(
-          "Unable to remove temporary file '%s': %s", _tmpFilePath.c_str(), ArchStrerror(errno).c_str());
+        *reason = TfStringPrintf("Unable to remove temporary file '%s': %s",
+                                 _tmpFilePath.c_str(),
+                                 ArchStrerror(errno).c_str());
       }
       success = false;
     }

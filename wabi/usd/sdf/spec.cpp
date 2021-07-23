@@ -221,8 +221,9 @@ static bool _CanEditInfoOnSpec(const TfToken &key,
 
   if (!schema.IsValidFieldForSpec(fieldDef->GetName(), specType))
   {
-    TF_CODING_ERROR(
-      "Field '%s' is not valid for spec type %s", key.GetText(), TfStringify(specType).c_str());
+    TF_CODING_ERROR("Field '%s' is not valid for spec type %s",
+                    key.GetText(),
+                    TfStringify(specType).c_str());
     return false;
   }
 
@@ -291,8 +292,7 @@ void SdfSpec::SetInfoDictionaryValue(const TfToken &dictionaryKey,
   if (value.IsEmpty())
   {
     dict.erase(entryKey);
-  }
-  else
+  } else
   {
     dict[entryKey] = value;
   }

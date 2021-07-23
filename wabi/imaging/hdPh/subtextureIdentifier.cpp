@@ -67,8 +67,9 @@ HdPhAssetUvSubtextureIdentifier::~HdPhAssetUvSubtextureIdentifier() = default;
 
 std::unique_ptr<HdPhSubtextureIdentifier> HdPhAssetUvSubtextureIdentifier::Clone() const
 {
-  return std::make_unique<HdPhAssetUvSubtextureIdentifier>(
-    GetFlipVertically(), GetPremultiplyAlpha(), GetSourceColorSpace());
+  return std::make_unique<HdPhAssetUvSubtextureIdentifier>(GetFlipVertically(),
+                                                           GetPremultiplyAlpha(),
+                                                           GetSourceColorSpace());
 }
 
 HdPhSubtextureIdentifier::ID HdPhAssetUvSubtextureIdentifier::_Hash() const

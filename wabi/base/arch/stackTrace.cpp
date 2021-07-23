@@ -145,87 +145,86 @@ static char *_progNameForErrors = NULL;
 
 namespace
 {
-// Key-value map for program info. Stores additional
-// program info to be used when displaying error information.
-class Arch_ProgInfo
-{
- public:
-  Arch_ProgInfo()
-    : _progInfoForErrors(NULL)
-  {}
-
-  ~Arch_ProgInfo();
-
-  void SetProgramInfoForErrors(const std::string &key, const std::string &value);
-
-  std::string GetProgramInfoForErrors(const std::string &key) const;
-
-  void PrintInfoForErrors() const;
-
- private:
-  typedef std::map<std::string, std::string> _MapType;
-  _MapType _progInfoMap;
-  mutable std::mutex _progInfoForErrorsMutex;
-
-  // Printed version of _progInfo map, since we can't
-  // traverse it during an error.
-  char *_progInfoForErrors;
-};
-
-Arch_ProgInfo::~Arch_ProgInfo()
-{
-  if (_progInfoForErrors)
-    free(_progInfoForErrors);
-}
-
-void Arch_ProgInfo::SetProgramInfoForErrors(const std::string &key, const std::string &value)
-{
-  std::lock_guard<std::mutex> lock(_progInfoForErrorsMutex);
-
-  if (value.empty())
+  // Key-value map for program info. Stores additional
+  // program info to be used when displaying error information.
+  class Arch_ProgInfo
   {
-    _progInfoMap.erase(key);
-  }
-  else
+   public:
+    Arch_ProgInfo()
+      : _progInfoForErrors(NULL)
+    {}
+
+    ~Arch_ProgInfo();
+
+    void SetProgramInfoForErrors(const std::string &key, const std::string &value);
+
+    std::string GetProgramInfoForErrors(const std::string &key) const;
+
+    void PrintInfoForErrors() const;
+
+   private:
+    typedef std::map<std::string, std::string> _MapType;
+    _MapType _progInfoMap;
+    mutable std::mutex _progInfoForErrorsMutex;
+
+    // Printed version of _progInfo map, since we can't
+    // traverse it during an error.
+    char *_progInfoForErrors;
+  };
+
+  Arch_ProgInfo::~Arch_ProgInfo()
   {
-    _progInfoMap[key] = value;
+    if (_progInfoForErrors)
+      free(_progInfoForErrors);
   }
 
-  std::ostringstream ss;
-
-  // update the error info string
-  for (_MapType::iterator iter = _progInfoMap.begin(); iter != _progInfoMap.end(); ++iter)
+  void Arch_ProgInfo::SetProgramInfoForErrors(const std::string &key, const std::string &value)
   {
+    std::lock_guard<std::mutex> lock(_progInfoForErrorsMutex);
 
-    ss << iter->first << ": " << iter->second << '\n';
+    if (value.empty())
+    {
+      _progInfoMap.erase(key);
+    } else
+    {
+      _progInfoMap[key] = value;
+    }
+
+    std::ostringstream ss;
+
+    // update the error info string
+    for (_MapType::iterator iter = _progInfoMap.begin(); iter != _progInfoMap.end(); ++iter)
+    {
+
+      ss << iter->first << ": " << iter->second << '\n';
+    }
+
+    if (_progInfoForErrors)
+      free(_progInfoForErrors);
+
+    _progInfoForErrors = strdup(ss.str().c_str());
   }
 
-  if (_progInfoForErrors)
-    free(_progInfoForErrors);
-
-  _progInfoForErrors = strdup(ss.str().c_str());
-}
-
-std::string Arch_ProgInfo::GetProgramInfoForErrors(const std::string &key) const
-{
-  std::lock_guard<std::mutex> lock(_progInfoForErrorsMutex);
-
-  _MapType::const_iterator iter = _progInfoMap.find(key);
-  std::string result;
-  if (iter != _progInfoMap.end())
-    result = iter->second;
-
-  return result;
-}
-
-void Arch_ProgInfo::PrintInfoForErrors() const
-{
-  std::lock_guard<std::mutex> lock(_progInfoForErrorsMutex);
-  if (_progInfoForErrors)
+  std::string Arch_ProgInfo::GetProgramInfoForErrors(const std::string &key) const
   {
-    fprintf(stderr, "%s", _progInfoForErrors);
+    std::lock_guard<std::mutex> lock(_progInfoForErrorsMutex);
+
+    _MapType::const_iterator iter = _progInfoMap.find(key);
+    std::string result;
+    if (iter != _progInfoMap.end())
+      result = iter->second;
+
+    return result;
   }
-}
+
+  void Arch_ProgInfo::PrintInfoForErrors() const
+  {
+    std::lock_guard<std::mutex> lock(_progInfoForErrorsMutex);
+    if (_progInfoForErrors)
+    {
+      fprintf(stderr, "%s", _progInfoForErrors);
+    }
+  }
 
 }  // namespace
 
@@ -238,59 +237,58 @@ static Arch_ProgInfo &ArchStackTrace_GetProgInfo()
 namespace
 {
 
-// Key-value map for extra log info.  Stores unowned pointers to text to be
-// emitted in stack trace logs in case of fatal errors or crashes.
-class Arch_LogInfo
-{
- public:
-  void SetExtraLogInfoForErrors(const std::string &key, std::vector<std::string> const *lines);
-  void EmitAnyExtraLogInfo(FILE *outFile, size_t max = 0) const;
-
- private:
-  typedef std::map<std::string, std::vector<std::string> const *> _LogInfoMap;
-  _LogInfoMap _logInfoForErrors;
-  mutable std::mutex _logInfoForErrorsMutex;
-};
-
-void Arch_LogInfo::SetExtraLogInfoForErrors(const std::string &key, std::vector<std::string> const *lines)
-{
-  std::lock_guard<std::mutex> lock(_logInfoForErrorsMutex);
-  if (!lines || lines->empty())
+  // Key-value map for extra log info.  Stores unowned pointers to text to be
+  // emitted in stack trace logs in case of fatal errors or crashes.
+  class Arch_LogInfo
   {
-    _logInfoForErrors.erase(key);
-  }
-  else
-  {
-    _logInfoForErrors[key] = lines;
-  }
-}
+   public:
+    void SetExtraLogInfoForErrors(const std::string &key, std::vector<std::string> const *lines);
+    void EmitAnyExtraLogInfo(FILE *outFile, size_t max = 0) const;
 
-void Arch_LogInfo::EmitAnyExtraLogInfo(FILE *outFile, size_t max) const
-{
-  // This function can't cause any heap allocation, be careful.
-  // XXX -- std::string::c_str and fprintf can do allocations.
-  std::lock_guard<std::mutex> lock(_logInfoForErrorsMutex);
-  size_t n = 0;
-  for (_LogInfoMap::const_iterator i = _logInfoForErrors.begin(), end = _logInfoForErrors.end(); i != end;
-       ++i)
+   private:
+    typedef std::map<std::string, std::vector<std::string> const *> _LogInfoMap;
+    _LogInfoMap _logInfoForErrors;
+    mutable std::mutex _logInfoForErrorsMutex;
+  };
+
+  void Arch_LogInfo::SetExtraLogInfoForErrors(const std::string &key, std::vector<std::string> const *lines)
   {
-    fputs("\n", outFile);
-    fputs(i->first.c_str(), outFile);
-    fputs(":\n", outFile);
-    for (std::string const &line : *i->second)
+    std::lock_guard<std::mutex> lock(_logInfoForErrorsMutex);
+    if (!lines || lines->empty())
     {
-      if (max && n++ >= max)
-      {
-        fputs(
-          "... full diagnostics reported in the stack trace "
-          "file.\n",
-          outFile);
-        return;
-      }
-      fputs(line.c_str(), outFile);
+      _logInfoForErrors.erase(key);
+    } else
+    {
+      _logInfoForErrors[key] = lines;
     }
   }
-}
+
+  void Arch_LogInfo::EmitAnyExtraLogInfo(FILE *outFile, size_t max) const
+  {
+    // This function can't cause any heap allocation, be careful.
+    // XXX -- std::string::c_str and fprintf can do allocations.
+    std::lock_guard<std::mutex> lock(_logInfoForErrorsMutex);
+    size_t n = 0;
+    for (_LogInfoMap::const_iterator i = _logInfoForErrors.begin(), end = _logInfoForErrors.end(); i != end;
+         ++i)
+    {
+      fputs("\n", outFile);
+      fputs(i->first.c_str(), outFile);
+      fputs(":\n", outFile);
+      for (std::string const &line : *i->second)
+      {
+        if (max && n++ >= max)
+        {
+          fputs(
+            "... full diagnostics reported in the stack trace "
+            "file.\n",
+            outFile);
+          return;
+        }
+        fputs(line.c_str(), outFile);
+      }
+    }
+  }
 
 }  // namespace
 
@@ -320,380 +318,378 @@ static long _GetAppElapsedTime();
 namespace
 {
 
-// Return the length of s.
-size_t asstrlen(const char *s)
-{
-  size_t result = 0;
-  if (s)
+  // Return the length of s.
+  size_t asstrlen(const char *s)
   {
-    while (*s++)
+    size_t result = 0;
+    if (s)
     {
-      ++result;
-    }
-  }
-  return result;
-}
-
-// Copy the string at src to dst, returning a pointer to the NUL terminator
-// in dst (NOT a pointer to dst).
-//
-// ARCH_NOINLINE because old clang versions generated incorrect optimized
-// code.
-char *asstrcpy(char *dst, const char *src) ARCH_NOINLINE;
-char *asstrcpy(char *dst, const char *src)
-{
-  while ((*dst++ = *src++))
-  {
-    // Do nothing
-  }
-  return dst - 1;
-}
-
-// Compare the strings for equality.
-bool asstreq(const char *dst, const char *src)
-{
-  if (!dst || !src)
-  {
-    return dst == src;
-  }
-  while (*dst || *src)
-  {
-    if (*dst++ != *src++)
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
-// Compare the strings for equality up to n characters.
-bool asstrneq(const char *dst, const char *src, size_t n)
-{
-  if (!dst || !src)
-  {
-    return dst == src;
-  }
-  while ((*dst || *src) && n)
-  {
-    if (*dst++ != *src++)
-    {
-      return false;
-    }
-    --n;
-  }
-  return true;
-}
-
-// Returns the environment variable named name, or NULL if it doesn't exist.
-const char *asgetenv(const char *name)
-{
-  if (name)
-  {
-    const size_t len = asstrlen(name);
-    for (char **i = ArchEnviron(); *i; ++i)
-    {
-      const char *var = *i;
-      if (asstrneq(var, name, len))
+      while (*s++)
       {
-        if (var[len] == '=')
+        ++result;
+      }
+    }
+    return result;
+  }
+
+  // Copy the string at src to dst, returning a pointer to the NUL terminator
+  // in dst (NOT a pointer to dst).
+  //
+  // ARCH_NOINLINE because old clang versions generated incorrect optimized
+  // code.
+  char *asstrcpy(char *dst, const char *src) ARCH_NOINLINE;
+  char *asstrcpy(char *dst, const char *src)
+  {
+    while ((*dst++ = *src++))
+    {
+      // Do nothing
+    }
+    return dst - 1;
+  }
+
+  // Compare the strings for equality.
+  bool asstreq(const char *dst, const char *src)
+  {
+    if (!dst || !src)
+    {
+      return dst == src;
+    }
+    while (*dst || *src)
+    {
+      if (*dst++ != *src++)
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Compare the strings for equality up to n characters.
+  bool asstrneq(const char *dst, const char *src, size_t n)
+  {
+    if (!dst || !src)
+    {
+      return dst == src;
+    }
+    while ((*dst || *src) && n)
+    {
+      if (*dst++ != *src++)
+      {
+        return false;
+      }
+      --n;
+    }
+    return true;
+  }
+
+  // Returns the environment variable named name, or NULL if it doesn't exist.
+  const char *asgetenv(const char *name)
+  {
+    if (name)
+    {
+      const size_t len = asstrlen(name);
+      for (char **i = ArchEnviron(); *i; ++i)
+      {
+        const char *var = *i;
+        if (asstrneq(var, name, len))
         {
-          return var + len + 1;
+          if (var[len] == '=')
+          {
+            return var + len + 1;
+          }
         }
       }
     }
-  }
-  return nullptr;
-}
-
-// Minimum safe size for a buffer to hold a long converted to decimal ASCII.
-static constexpr int numericBufferSize = std::numeric_limits<long>::digits10 + 1  // sign
-                                         + 1                                      // overflow (digits10 doesn't necessarily count the high digit)
-                                         + 1                                      // trailing NUL
-                                         + 1;                                     // paranoia
-
-// Return the number of digits in the decimal string representation of x.
-size_t asNumDigits(long x)
-{
-  size_t result = 1;
-  if (x < 0)
-  {
-    x = -x;
-    ++result;
-  }
-  while (x >= 10)
-  {
-    ++result;
-    x /= 10;
-  }
-  return result;
-}
-
-// Write the decimal string representation of x to s, which must have
-// sufficient space available.
-char *asitoa(char *s, long x)
-{
-  // Write the minus sign.
-  if (x < 0)
-  {
-    x = -x;
-    *s = '-';
+    return nullptr;
   }
 
-  // Skip to the end and write the terminating NUL.
-  char *end = s += asNumDigits(x);
-  *s = '\0';
+  // Minimum safe size for a buffer to hold a long converted to decimal ASCII.
+  static constexpr int numericBufferSize = std::numeric_limits<long>::digits10 + 1  // sign
+                                           +
+                                           1     // overflow (digits10 doesn't necessarily count the high digit)
+                                           + 1   // trailing NUL
+                                           + 1;  // paranoia
 
-  // Write each digit, starting with the 1's column, working backwards.
-  if (x == 0)
+  // Return the number of digits in the decimal string representation of x.
+  size_t asNumDigits(long x)
   {
-    *--s = '0';
-  }
-  else
-  {
-    static const char digit[] = "0123456789";
-    while (x)
+    size_t result = 1;
+    if (x < 0)
     {
-      *--s = digit[x % 10];
+      x = -x;
+      ++result;
+    }
+    while (x >= 10)
+    {
+      ++result;
       x /= 10;
     }
-  }
-  return end;
-}
-
-// Write a string to a file descriptor.
-void aswrite(int fd, const char *msg)
-{
-  int saved = errno;
-  write(fd, msg, asstrlen(msg));
-  errno = saved;
-}
-
-int _GetStackTraceName(char *buf, size_t len)
-{
-  // Take care to avoid non-async-safe functions.
-  // NOTE: This doesn't protect against other threads changing the
-  //       temporary directory or program name for errors.
-
-  // Count the string length required.
-  size_t required = asstrlen(ArchGetTmpDir()) + 1 +                // "/"
-                    asstrlen(stackTracePrefix) + 1 +               // "_"
-                    asstrlen(ArchGetProgramNameForErrors()) + 1 +  // "."
-                    asNumDigits(getpid()) + 1;                     // "\0"
-
-  // Fill in buf with the default name.
-  char *end = buf;
-  if (len < required)
-  {
-    // No space.  Not quite an accurate error code.
-    errno = ENOMEM;
-    return -1;
-  }
-  else
-  {
-    end = asstrcpy(end, ArchGetTmpDir());
-    end = asstrcpy(end, "/");
-    end = asstrcpy(end, stackTracePrefix);
-    end = asstrcpy(end, "_");
-    end = asstrcpy(end, ArchGetProgramNameForErrors());
-    end = asstrcpy(end, ".");
-    end = asitoa(end, getpid());
+    return result;
   }
 
-  // Return a name that isn't currently in use.  Simultaneously create
-  // the empty file.
-  int suffix = 0;
-#if defined(ARCH_OS_WINDOWS)
-  int fd = _open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, _S_IREAD | _S_IWRITE);
-#else
-  int fd = open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, 0640);
-#endif
-
-  while (fd == -1 && errno == EEXIST)
+  // Write the decimal string representation of x to s, which must have
+  // sufficient space available.
+  char *asitoa(char *s, long x)
   {
-    // File exists.  Try a new suffix if there's space.
-    ++suffix;
-    if (len < required + 1 + asNumDigits(suffix))
+    // Write the minus sign.
+    if (x < 0)
+    {
+      x = -x;
+      *s = '-';
+    }
+
+    // Skip to the end and write the terminating NUL.
+    char *end = s += asNumDigits(x);
+    *s = '\0';
+
+    // Write each digit, starting with the 1's column, working backwards.
+    if (x == 0)
+    {
+      *--s = '0';
+    } else
+    {
+      static const char digit[] = "0123456789";
+      while (x)
+      {
+        *--s = digit[x % 10];
+        x /= 10;
+      }
+    }
+    return end;
+  }
+
+  // Write a string to a file descriptor.
+  void aswrite(int fd, const char *msg)
+  {
+    int saved = errno;
+    write(fd, msg, asstrlen(msg));
+    errno = saved;
+  }
+
+  int _GetStackTraceName(char *buf, size_t len)
+  {
+    // Take care to avoid non-async-safe functions.
+    // NOTE: This doesn't protect against other threads changing the
+    //       temporary directory or program name for errors.
+
+    // Count the string length required.
+    size_t required = asstrlen(ArchGetTmpDir()) + 1 +                // "/"
+                      asstrlen(stackTracePrefix) + 1 +               // "_"
+                      asstrlen(ArchGetProgramNameForErrors()) + 1 +  // "."
+                      asNumDigits(getpid()) + 1;                     // "\0"
+
+    // Fill in buf with the default name.
+    char *end = buf;
+    if (len < required)
     {
       // No space.  Not quite an accurate error code.
       errno = ENOMEM;
       return -1;
+    } else
+    {
+      end = asstrcpy(end, ArchGetTmpDir());
+      end = asstrcpy(end, "/");
+      end = asstrcpy(end, stackTracePrefix);
+      end = asstrcpy(end, "_");
+      end = asstrcpy(end, ArchGetProgramNameForErrors());
+      end = asstrcpy(end, ".");
+      end = asitoa(end, getpid());
     }
-    asstrcpy(end, ".");
-    asitoa(end + 1, suffix);
+
+    // Return a name that isn't currently in use.  Simultaneously create
+    // the empty file.
+    int suffix = 0;
 #if defined(ARCH_OS_WINDOWS)
-    fd = _open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, _S_IREAD | _S_IWRITE);
+    int fd = _open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, _S_IREAD | _S_IWRITE);
 #else
-    fd = open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, 0640);
+    int fd = open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, 0640);
 #endif
-  }
-  if (fd != -1)
-  {
-    ArchCloseFile(fd);
-    fd = 0;
-  }
-  return fd;
-}
 
-// Build an argument list (async-safe).
-static bool _MakeArgv(const char *dstArgv[],
-                      size_t maxDstArgs,
-                      const char *cmd,
-                      const char *const srcArgv[],
-                      const char *const substitutions[][2],
-                      size_t numSubstitutions)
-{
-  if (!cmd || !srcArgv)
-  {
-    return false;
-  }
-
-  // Count the maximum number of arguments needed.
-  size_t n = 1;
-  for (const char *const *i = srcArgv; *i; ++n, ++i)
-  {
-    // Do nothing
-  }
-
-  // Make sure we don't have too many arguments.
-  if (n >= maxDstArgs)
-  {
-    return false;
-  }
-
-  // Build the command line.
-  size_t j = 0;
-  for (size_t i = 0; i != n; ++i)
-  {
-    if (asstreq(srcArgv[i], "$cmd"))
+    while (fd == -1 && errno == EEXIST)
     {
-      dstArgv[j++] = cmd;
-    }
-    else
-    {
-      dstArgv[j] = srcArgv[i];
-      for (size_t k = 0; k != numSubstitutions; ++k)
+      // File exists.  Try a new suffix if there's space.
+      ++suffix;
+      if (len < required + 1 + asNumDigits(suffix))
       {
-        if (asstreq(srcArgv[i], substitutions[k][0]))
-        {
-          dstArgv[j] = substitutions[k][1];
-          break;
-        }
+        // No space.  Not quite an accurate error code.
+        errno = ENOMEM;
+        return -1;
       }
-      ++j;
+      asstrcpy(end, ".");
+      asitoa(end + 1, suffix);
+#if defined(ARCH_OS_WINDOWS)
+      fd = _open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, _S_IREAD | _S_IWRITE);
+#else
+      fd = open(buf, O_CREAT | O_WRONLY | O_TRUNC | O_EXCL, 0640);
+#endif
     }
+    if (fd != -1)
+    {
+      ArchCloseFile(fd);
+      fd = 0;
+    }
+    return fd;
   }
-  dstArgv[j] = nullptr;
 
-  return true;
-}
+  // Build an argument list (async-safe).
+  static bool _MakeArgv(const char *dstArgv[],
+                        size_t maxDstArgs,
+                        const char *cmd,
+                        const char *const srcArgv[],
+                        const char *const substitutions[][2],
+                        size_t numSubstitutions)
+  {
+    if (!cmd || !srcArgv)
+    {
+      return false;
+    }
+
+    // Count the maximum number of arguments needed.
+    size_t n = 1;
+    for (const char *const *i = srcArgv; *i; ++n, ++i)
+    {
+      // Do nothing
+    }
+
+    // Make sure we don't have too many arguments.
+    if (n >= maxDstArgs)
+    {
+      return false;
+    }
+
+    // Build the command line.
+    size_t j = 0;
+    for (size_t i = 0; i != n; ++i)
+    {
+      if (asstreq(srcArgv[i], "$cmd"))
+      {
+        dstArgv[j++] = cmd;
+      } else
+      {
+        dstArgv[j] = srcArgv[i];
+        for (size_t k = 0; k != numSubstitutions; ++k)
+        {
+          if (asstreq(srcArgv[i], substitutions[k][0]))
+          {
+            dstArgv[j] = substitutions[k][1];
+            break;
+          }
+        }
+        ++j;
+      }
+    }
+    dstArgv[j] = nullptr;
+
+    return true;
+  }
 
 #if !defined(ARCH_OS_WINDOWS)
-/* We use a 'non-locking' fork so that we won't get hung up if we've
- * had malloc corruption when we crash.  The crash recovery behavior
- * can be tested with ArchTestCrash(), which should crash with this
- * malloc corruption.
- */
-static int nonLockingFork()
-{
-  if (Arch_nonLockingFork != NULL)
+  /* We use a 'non-locking' fork so that we won't get hung up if we've
+   * had malloc corruption when we crash.  The crash recovery behavior
+   * can be tested with ArchTestCrash(), which should crash with this
+   * malloc corruption.
+   */
+  static int nonLockingFork()
   {
-    return (Arch_nonLockingFork)();
+    if (Arch_nonLockingFork != NULL)
+    {
+      return (Arch_nonLockingFork)();
+    }
+    return fork();
   }
-  return fork();
-}
 #endif
 
 #if defined(ARCH_OS_LINUX)
-static int nonLockingLinux__execve(const char *file, char *const argv[], char *const envp[])
-{
-#  if defined(ARCH_BITS_64)
-  /*
-   * We make a direct system call here, because we can't find an
-   * execve which corresponds with the non-locking fork we call
-   * (__libc_fork().)
-   *
-   * This code doesn't mess with other threads, and avoids the bug
-   * that calling regular execv after the nonLockingFork() causes
-   * hangs in a threaded app.  (We use the non-locking fork to get
-   * around problems with forking when we have had memory
-   * corruption.)  whew.
-   *
-   * %rdi, %rsi, %rdx, %rcx, %r8, %r9 are args 0-5
-   * syscall clobbers %rcx and %r11
-   *
-   * why do we put args 1, 2 into cx, dx and then move them?
-   * because it doesn't work if you directly specify them as
-   * constraints to gcc.
-   */
-
-  unsigned long result;
-  __asm__ __volatile__(
-    "mov    %0, %%rdi    \n\t"
-    "mov    %%rcx, %%rsi \n\t"
-    "mov    %%rdx, %%rdx \n\t"
-    "mov    $0x3b, %%rax \n\t"
-    "syscall             \n\t"
-    : "=a"(result)
-    : "0"(file), "c"(argv), "d"(envp)
-    : "memory", "cc", "r11");
-
-  if (result >= 0xfffffffffffff000)
+  static int nonLockingLinux__execve(const char *file, char *const argv[], char *const envp[])
   {
-    errno = -result;
-    result = (unsigned int)-1;
-  }
+#  if defined(ARCH_BITS_64)
+    /*
+     * We make a direct system call here, because we can't find an
+     * execve which corresponds with the non-locking fork we call
+     * (__libc_fork().)
+     *
+     * This code doesn't mess with other threads, and avoids the bug
+     * that calling regular execv after the nonLockingFork() causes
+     * hangs in a threaded app.  (We use the non-locking fork to get
+     * around problems with forking when we have had memory
+     * corruption.)  whew.
+     *
+     * %rdi, %rsi, %rdx, %rcx, %r8, %r9 are args 0-5
+     * syscall clobbers %rcx and %r11
+     *
+     * why do we put args 1, 2 into cx, dx and then move them?
+     * because it doesn't work if you directly specify them as
+     * constraints to gcc.
+     */
 
-  return result;
+    unsigned long result;
+    __asm__ __volatile__(
+      "mov    %0, %%rdi    \n\t"
+      "mov    %%rcx, %%rsi \n\t"
+      "mov    %%rdx, %%rdx \n\t"
+      "mov    $0x3b, %%rax \n\t"
+      "syscall             \n\t"
+      : "=a"(result)
+      : "0"(file), "c"(argv), "d"(envp)
+      : "memory", "cc", "r11");
+
+    if (result >= 0xfffffffffffff000)
+    {
+      errno = -result;
+      result = (unsigned int)-1;
+    }
+
+    return result;
 #  else
 #    error Unknown architecture
 #  endif
-}
+  }
 
 #endif
 
 #if !defined(ARCH_OS_WINDOWS)
-/* This is the corresponding execv which works with nonLockingFork().
- * currently, it's only different from execv for linux.  The crash
- * recovery behavior can be tested with ArchTestCrash().
- */
-static int nonLockingExecv(const char *path, char *const argv[])
-{
-#  if defined(ARCH_OS_LINUX)
-  return nonLockingLinux__execve(path, argv, __environ);
-#  else
-  return execv(path, argv);
-#  endif
-}
-#endif
-
-/*
- * Return the base of a filename.
- */
-
-static std::string getBase(const char *path)
-{
-#if defined(ARCH_OS_WINDOWS)
-  const std::string tmp = path;
-  std::string::size_type i = tmp.find_last_of("/\\");
-  if (i != std::string::npos)
+  /* This is the corresponding execv which works with nonLockingFork().
+   * currently, it's only different from execv for linux.  The crash
+   * recovery behavior can be tested with ArchTestCrash().
+   */
+  static int nonLockingExecv(const char *path, char *const argv[])
   {
-    std::string::size_type j = tmp.find(".exe");
-    if (j != std::string::npos)
-    {
-      return tmp.substr(i + 1, j - i - 1);
-    }
-    return tmp.substr(i + 1);
+#  if defined(ARCH_OS_LINUX)
+    return nonLockingLinux__execve(path, argv, __environ);
+#  else
+    return execv(path, argv);
+#  endif
   }
-  return tmp;
-#else
-  const char *base = strrchr(path, '/');
-  if (!base)
-    return path;
-
-  base++;
-  return strlen(base) > 0 ? base : path;
 #endif
-}
+
+  /*
+   * Return the base of a filename.
+   */
+
+  static std::string getBase(const char *path)
+  {
+#if defined(ARCH_OS_WINDOWS)
+    const std::string tmp = path;
+    std::string::size_type i = tmp.find_last_of("/\\");
+    if (i != std::string::npos)
+    {
+      std::string::size_type j = tmp.find(".exe");
+      if (j != std::string::npos)
+      {
+        return tmp.substr(i + 1, j - i - 1);
+      }
+      return tmp.substr(i + 1);
+    }
+    return tmp;
+#else
+    const char *base = strrchr(path, '/');
+    if (!base)
+      return path;
+
+    base++;
+    return strlen(base) > 0 ? base : path;
+#endif
+  }
 
 }  // anonymous namespace
 
@@ -723,7 +719,11 @@ static int _LogStackTraceForPid(const char *logfile)
   char pidBuffer[numericBufferSize], timeBuffer[numericBufferSize];
   asitoa(pidBuffer, getpid());
   asitoa(timeBuffer, _GetAppElapsedTime());
-  const char *const substitutions[3][2] = {{"$pid", pidBuffer}, {"$log", logfile}, {"$time", timeBuffer}};
+  const char *const substitutions[3][2] = {
+    {"$pid",  pidBuffer },
+    {"$log",  logfile   },
+    {"$time", timeBuffer}
+  };
 
   // Build the argument list.
   static constexpr size_t maxArgs = 32;
@@ -902,7 +902,11 @@ static void _InvokeSessionLogger(const char *progname, const char *stackTrace)
   asitoa(pidBuffer, getpid());
   asitoa(timeBuffer, _GetAppElapsedTime());
   const char *const substitutions[4][2] = {
-    {"$pid", pidBuffer}, {"$time", timeBuffer}, {"$prog", progname}, {"$stack", stackTrace}};
+    {"$pid",   pidBuffer },
+    {"$time",  timeBuffer},
+    {"$prog",  progname  },
+    {"$stack", stackTrace}
+  };
 
   // Build the argument list.
   static constexpr size_t maxArgs = 32;
@@ -1146,8 +1150,7 @@ void ArchLogStackTrace(const std::string &progname,
                                     sessionLog.empty() ? NULL : sessionLog.c_str(),
                                     false /* crashing hard? */);
     }
-  }
-  else
+  } else
   {
     /* we couldn't open the tmp file, so write the stack trace to stderr */
     fprintf(stderr,
@@ -1285,14 +1288,12 @@ static _Unwind_Reason_Code Arch_unwindcb(struct _Unwind_Context *ctx, void *data
   if (context->frames->size() >= context->maxdepth)
   {
     return _URC_END_OF_STACK;
-  }
-  else
+  } else
   {
     if (context->skip > 0)
     {
       --context->skip;
-    }
-    else
+    } else
     {
       context->frames->push_back(_Unwind_GetIP(ctx));
     }
@@ -1361,15 +1362,17 @@ static std::string Arch_DefaultStackTraceCallback(uintptr_t address)
   // here without decoding assembly instructions.)
   std::string objectPath, symbolName;
   void *baseAddress, *symbolAddress;
-  if (ArchGetAddressInfo(
-        reinterpret_cast<void *>(address - 1), &objectPath, &baseAddress, &symbolName, &symbolAddress) &&
+  if (ArchGetAddressInfo(reinterpret_cast<void *>(address - 1),
+                         &objectPath,
+                         &baseAddress,
+                         &symbolName,
+                         &symbolAddress) &&
       symbolAddress)
   {
     Arch_DemangleFunctionName(&symbolName);
     const uintptr_t symbolOffset = (uint64_t)(address - (uintptr_t)symbolAddress);
     return ArchStringPrintf("%s+%#0lx", symbolName.c_str(), symbolOffset);
-  }
-  else
+  } else
   {
     return ArchStringPrintf("%#016lx", address);
   }
@@ -1486,8 +1489,7 @@ int ArchCrashHandlerSystemv(const char *pathname,
     aswrite(2, errBuffer);
     aswrite(2, "\n");
     return -1;
-  }
-  else if (pid == 0)
+  } else if (pid == 0)
   {
     // Call setsid() in the child, which is intended to start a new
     // "session", and detach from the controlling tty.  We do this because
@@ -1515,8 +1517,7 @@ int ArchCrashHandlerSystemv(const char *pathname,
     aswrite(2, errBuffer);
     aswrite(2, "\n");
     _exit(127);
-  }
-  else
+  } else
   {
     int delta = 0;
     sigemptyset(&act.sa_mask);
@@ -1557,8 +1558,7 @@ int ArchCrashHandlerSystemv(const char *pathname,
           goto out;
         }
         /* continue below */
-      }
-      else if (child != 0)
+      } else if (child != 0)
       {
         /* child finished */
         if (WIFEXITED(status))

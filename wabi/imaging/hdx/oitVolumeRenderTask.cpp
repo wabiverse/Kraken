@@ -39,8 +39,8 @@ WABI_NAMESPACE_BEGIN
 
 HdxOitVolumeRenderTask::HdxOitVolumeRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
   : HdxRenderTask(delegate, id),
-    _oitVolumeRenderPassShader(
-      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitVolumeShader())),
+    _oitVolumeRenderPassShader(std::make_shared<HdPhRenderPassShader>(
+      HdxPackageRenderPassOitVolumeShader())),
     _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
 {}
 

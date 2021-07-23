@@ -1,5 +1,10 @@
-if EXIST %BUILD_VS_LIBDIR%\llvm\bin\clang-format.exe (
+set CF_PATH="C:\Program Files\LLVM\bin"
+
+if NOT EXIST %CF_PATH% (
     set CF_PATH=..\lib\win64_%BUILD_VS_LIBDIRPOST%\llvm\bin
+)
+
+if EXIST %CF_PATH% (
     goto detect_done
 )
 

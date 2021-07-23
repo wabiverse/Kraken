@@ -162,8 +162,7 @@ void HdRenderThread::_RenderLoop()
       _stopRequested = false;
       _rendering.store(false);
       _requestedState = StateIdle;
-    }
-    else if (_requestedState == StateTerminated)
+    } else if (_requestedState == StateTerminated)
     {
       break;
     }

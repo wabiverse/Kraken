@@ -145,35 +145,35 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
 
 /* This is the main processing body of the algorithm. It operates
  * on each full 32-bits of input. */
-#define DOBLOCK(h1, k1) \
-  do \
-  { \
-    k1 *= C1; \
-    k1 = ROTL32(k1, 15); \
-    k1 *= C2; \
-\
-    h1 ^= k1; \
-    h1 = ROTL32(h1, 13); \
+#define DOBLOCK(h1, k1)       \
+  do                          \
+  {                           \
+    k1 *= C1;                 \
+    k1 = ROTL32(k1, 15);      \
+    k1 *= C2;                 \
+                              \
+    h1 ^= k1;                 \
+    h1 = ROTL32(h1, 13);      \
     h1 = h1 * 5 + 0xe6546b64; \
   } while (0)
 
 /* Append unaligned bytes to carry, forcing hash churn if we have 4 bytes */
 /* cnt=bytes to process, h1=name of h1 var, c=carry, n=bytes in c, ptr/len=payload */
 #define DOBYTES(cnt, h1, c, n, ptr, len) \
-  do \
-  { \
-    int _i = cnt; \
-    while (_i--) \
-    { \
-      c = c >> 8 | *ptr++ << 24; \
-      n++; \
-      len--; \
-      if (n == 4) \
-      { \
-        DOBLOCK(h1, c); \
-        n = 0; \
-      } \
-    } \
+  do                                     \
+  {                                      \
+    int _i = cnt;                        \
+    while (_i--)                         \
+    {                                    \
+      c = c >> 8 | *ptr++ << 24;         \
+      n++;                               \
+      len--;                             \
+      if (n == 4)                        \
+      {                                  \
+        DOBLOCK(h1, c);                  \
+        n = 0;                           \
+      }                                  \
+    }                                    \
   } while (0)
 
 /*---------------------------------------------------------------------------*/

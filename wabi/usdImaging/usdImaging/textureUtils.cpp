@@ -53,9 +53,10 @@ std::vector<std::tuple<int, TfToken>> UsdImaging_GetUdimTiles(std::string const 
   ret.reserve(tileLimit);
   for (int t = startTile; t <= endTile; ++t)
   {
-    const std::string path = layerHandle ? SdfComputeAssetPathRelativeToLayer(
-                                             layerHandle, TfStringPrintf(formatString.c_str(), t)) :
-                                           TfStringPrintf(formatString.c_str(), t);
+    const std::string path = layerHandle ?
+                               SdfComputeAssetPathRelativeToLayer(layerHandle,
+                                                                  TfStringPrintf(formatString.c_str(), t)) :
+                               TfStringPrintf(formatString.c_str(), t);
     if (!resolver.Resolve(path).empty())
     {
       ret.emplace_back(t - startTile, TfToken(path));

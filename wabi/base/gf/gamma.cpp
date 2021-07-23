@@ -65,8 +65,9 @@ GfVec3d GfApplyGamma(const GfVec3d &v, double g)
 GfVec3h GfApplyGamma(const GfVec3h &v, double g)
 {
   // Explicitly cast half to float to avoid ambiguous call to pow(...)
-  return GfVec3h(
-    pow(static_cast<float>(v[0]), g), pow(static_cast<float>(v[1]), g), pow(static_cast<float>(v[2]), g));
+  return GfVec3h(pow(static_cast<float>(v[0]), g),
+                 pow(static_cast<float>(v[1]), g),
+                 pow(static_cast<float>(v[2]), g));
 }
 
 GfVec4f GfApplyGamma(const GfVec4f &v, double g)

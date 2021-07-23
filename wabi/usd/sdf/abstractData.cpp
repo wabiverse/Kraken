@@ -371,8 +371,7 @@ void SdfAbstractData::EraseDictValueByKey(const SdfPath &path,
     if (dict.empty())
     {
       Erase(path, fieldName);
-    }
-    else
+    } else
     {
       dictVal.Swap(dict);
       Set(path, fieldName, dictVal);

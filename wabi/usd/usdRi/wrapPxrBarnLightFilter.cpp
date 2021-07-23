@@ -50,208 +50,217 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateBarnModeAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateBarnModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateBarnModeAttr(UsdRiPxrBarnLightFilter &self,
+                                          object defaultVal,
+                                          bool writeSparsely)
+  {
+    return self.CreateBarnModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+  }
 
-static UsdAttribute _CreateWidthAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateWidthAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateHeightAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateHeightAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateRadiusAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRadiusAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateAnalyticDirectionalAttr(UsdRiPxrBarnLightFilter &self,
-                                                   object defaultVal,
-                                                   bool writeSparsely)
-{
-  return self.CreateAnalyticDirectionalAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                            writeSparsely);
-}
+  static UsdAttribute _CreateAnalyticDirectionalAttr(UsdRiPxrBarnLightFilter &self,
+                                                     object defaultVal,
+                                                     bool writeSparsely)
+  {
+    return self.CreateAnalyticDirectionalAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                              writeSparsely);
+  }
 
-static UsdAttribute _CreateAnalyticShearXAttr(UsdRiPxrBarnLightFilter &self,
+  static UsdAttribute _CreateAnalyticShearXAttr(UsdRiPxrBarnLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateAnalyticShearXAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticShearYAttr(UsdRiPxrBarnLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateAnalyticShearYAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticApexAttr(UsdRiPxrBarnLightFilter &self,
                                               object defaultVal,
                                               bool writeSparsely)
-{
-  return self.CreateAnalyticShearXAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateAnalyticApexAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                        writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateAnalyticShearYAttr(UsdRiPxrBarnLightFilter &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
-{
-  return self.CreateAnalyticShearYAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                       writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticApexAttr(UsdRiPxrBarnLightFilter &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
-{
-  return self.CreateAnalyticApexAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                     writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticUseLightDirectionAttr(UsdRiPxrBarnLightFilter &self,
-                                                         object defaultVal,
-                                                         bool writeSparsely)
-{
-  return self.CreateAnalyticUseLightDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                                  writeSparsely);
-}
-
-static UsdAttribute _CreateAnalyticDensityNearDistanceAttr(UsdRiPxrBarnLightFilter &self,
+  static UsdAttribute _CreateAnalyticUseLightDirectionAttr(UsdRiPxrBarnLightFilter &self,
                                                            object defaultVal,
                                                            bool writeSparsely)
-{
-  return self.CreateAnalyticDensityNearDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateAnalyticUseLightDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                                     writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateAnalyticDensityFarDistanceAttr(UsdRiPxrBarnLightFilter &self,
+  static UsdAttribute _CreateAnalyticDensityNearDistanceAttr(UsdRiPxrBarnLightFilter &self,
+                                                             object defaultVal,
+                                                             bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityNearDistanceAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityFarDistanceAttr(UsdRiPxrBarnLightFilter &self,
+                                                            object defaultVal,
+                                                            bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityFarDistanceAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
+  }
+
+  static UsdAttribute _CreateAnalyticDensityNearValueAttr(UsdRiPxrBarnLightFilter &self,
                                                           object defaultVal,
                                                           bool writeSparsely)
-{
-  return self.CreateAnalyticDensityFarDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateAnalyticDensityNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                                    writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateAnalyticDensityNearValueAttr(UsdRiPxrBarnLightFilter &self,
-                                                        object defaultVal,
-                                                        bool writeSparsely)
-{
-  return self.CreateAnalyticDensityNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                 writeSparsely);
-}
+  static UsdAttribute _CreateAnalyticDensityFarValueAttr(UsdRiPxrBarnLightFilter &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                  writeSparsely);
+  }
 
-static UsdAttribute _CreateAnalyticDensityFarValueAttr(UsdRiPxrBarnLightFilter &self,
-                                                       object defaultVal,
-                                                       bool writeSparsely)
-{
-  return self.CreateAnalyticDensityFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                writeSparsely);
-}
+  static UsdAttribute _CreateAnalyticDensityExponentAttr(UsdRiPxrBarnLightFilter &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateAnalyticDensityExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                                  writeSparsely);
+  }
 
-static UsdAttribute _CreateAnalyticDensityExponentAttr(UsdRiPxrBarnLightFilter &self,
-                                                       object defaultVal,
-                                                       bool writeSparsely)
-{
-  return self.CreateAnalyticDensityExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                writeSparsely);
-}
-
-static UsdAttribute _CreateEdgeThicknessAttr(UsdRiPxrBarnLightFilter &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreateEdgeThicknessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                      writeSparsely);
-}
-
-static UsdAttribute _CreatePreBarnEffectAttr(UsdRiPxrBarnLightFilter &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
-{
-  return self.CreatePreBarnEffectAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                      writeSparsely);
-}
-
-static UsdAttribute _CreateScaleWidthAttr(UsdRiPxrBarnLightFilter &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
-{
-  return self.CreateScaleWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateScaleHeightAttr(UsdRiPxrBarnLightFilter &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
-{
-  return self.CreateScaleHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateRefineTopAttr(UsdRiPxrBarnLightFilter &self,
-                                         object defaultVal,
-                                         bool writeSparsely)
-{
-  return self.CreateRefineTopAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateRefineBottomAttr(UsdRiPxrBarnLightFilter &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
-{
-  return self.CreateRefineBottomAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                     writeSparsely);
-}
-
-static UsdAttribute _CreateRefineLeftAttr(UsdRiPxrBarnLightFilter &self,
-                                          object defaultVal,
-                                          bool writeSparsely)
-{
-  return self.CreateRefineLeftAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateRefineRightAttr(UsdRiPxrBarnLightFilter &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
-{
-  return self.CreateRefineRightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
-
-static UsdAttribute _CreateEdgeScaleTopAttr(UsdRiPxrBarnLightFilter &self,
-                                            object defaultVal,
-                                            bool writeSparsely)
-{
-  return self.CreateEdgeScaleTopAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                     writeSparsely);
-}
-
-static UsdAttribute _CreateEdgeScaleBottomAttr(UsdRiPxrBarnLightFilter &self,
+  static UsdAttribute _CreateEdgeThicknessAttr(UsdRiPxrBarnLightFilter &self,
                                                object defaultVal,
                                                bool writeSparsely)
-{
-  return self.CreateEdgeScaleBottomAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateEdgeThicknessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                         writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateEdgeScaleLeftAttr(UsdRiPxrBarnLightFilter &self,
+  static UsdAttribute _CreatePreBarnEffectAttr(UsdRiPxrBarnLightFilter &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreatePreBarnEffectAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                        writeSparsely);
+  }
+
+  static UsdAttribute _CreateScaleWidthAttr(UsdRiPxrBarnLightFilter &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
+  {
+    return self.CreateScaleWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                     writeSparsely);
+  }
+
+  static UsdAttribute _CreateScaleHeightAttr(UsdRiPxrBarnLightFilter &self,
                                              object defaultVal,
                                              bool writeSparsely)
-{
-  return self.CreateEdgeScaleLeftAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateScaleHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                       writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateEdgeScaleRightAttr(UsdRiPxrBarnLightFilter &self,
+  static UsdAttribute _CreateRefineTopAttr(UsdRiPxrBarnLightFilter &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
+  {
+    return self.CreateRefineTopAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
+
+  static UsdAttribute _CreateRefineBottomAttr(UsdRiPxrBarnLightFilter &self,
                                               object defaultVal,
                                               bool writeSparsely)
-{
-  return self.CreateEdgeScaleRightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+  {
+    return self.CreateRefineBottomAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                        writeSparsely);
-}
+  }
 
-static std::string _Repr(const UsdRiPxrBarnLightFilter &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.PxrBarnLightFilter(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateRefineLeftAttr(UsdRiPxrBarnLightFilter &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
+  {
+    return self.CreateRefineLeftAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                     writeSparsely);
+  }
+
+  static UsdAttribute _CreateRefineRightAttr(UsdRiPxrBarnLightFilter &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
+  {
+    return self.CreateRefineRightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                      writeSparsely);
+  }
+
+  static UsdAttribute _CreateEdgeScaleTopAttr(UsdRiPxrBarnLightFilter &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
+  {
+    return self.CreateEdgeScaleTopAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                       writeSparsely);
+  }
+
+  static UsdAttribute _CreateEdgeScaleBottomAttr(UsdRiPxrBarnLightFilter &self,
+                                                 object defaultVal,
+                                                 bool writeSparsely)
+  {
+    return self.CreateEdgeScaleBottomAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                          writeSparsely);
+  }
+
+  static UsdAttribute _CreateEdgeScaleLeftAttr(UsdRiPxrBarnLightFilter &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
+  {
+    return self.CreateEdgeScaleLeftAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                        writeSparsely);
+  }
+
+  static UsdAttribute _CreateEdgeScaleRightAttr(UsdRiPxrBarnLightFilter &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
+  {
+    return self.CreateEdgeScaleRightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                         writeSparsely);
+  }
+
+  static std::string _Repr(const UsdRiPxrBarnLightFilter &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.PxrBarnLightFilter(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -288,16 +297,19 @@ void wrapUsdRiPxrBarnLightFilter()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetWidthAttr", &This::GetWidthAttr)
-    .def(
-      "CreateWidthAttr", &_CreateWidthAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateWidthAttr",
+         &_CreateWidthAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetHeightAttr", &This::GetHeightAttr)
-    .def(
-      "CreateHeightAttr", &_CreateHeightAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateHeightAttr",
+         &_CreateHeightAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetRadiusAttr", &This::GetRadiusAttr)
-    .def(
-      "CreateRadiusAttr", &_CreateRadiusAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateRadiusAttr",
+         &_CreateRadiusAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetAnalyticDirectionalAttr", &This::GetAnalyticDirectionalAttr)
     .def("CreateAnalyticDirectionalAttr",
@@ -436,7 +448,7 @@ void wrapUsdRiPxrBarnLightFilter()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

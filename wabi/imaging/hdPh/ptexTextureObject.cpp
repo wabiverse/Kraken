@@ -48,19 +48,19 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// Implements Deleter for std::unique_ptr calling release.
-template<typename T>
-struct _ReleaseDeleter
-{
-  void operator()(T *const obj)
+  // Implements Deleter for std::unique_ptr calling release.
+  template<typename T>
+  struct _ReleaseDeleter
   {
-    return obj->release();
-  }
-};
+    void operator()(T *const obj)
+    {
+      return obj->release();
+    }
+  };
 
-// unique_ptr calling release instead of d'tor.
-template<typename T>
-using _ReleaseUniquePtr = std::unique_ptr<T, _ReleaseDeleter<T>>;
+  // unique_ptr calling release instead of d'tor.
+  template<typename T>
+  using _ReleaseUniquePtr = std::unique_ptr<T, _ReleaseDeleter<T>>;
 
 }  // anonymous namespace
 
@@ -217,8 +217,7 @@ void HdPhPtexTextureObject::_Load()
   {
     const size_t numTexels = _texelLayers * _texelDimensions[0] * _texelDimensions[1];
     conversionFunction(loaderTexelBuffer, numTexels, _texelData.get());
-  }
-  else
+  } else
   {
     memcpy(_texelData.get(), loaderTexelBuffer, _texelDataSize);
   }

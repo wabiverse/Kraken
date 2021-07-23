@@ -50,32 +50,36 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateLengthAttr(UsdLuxCylinderLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateLengthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateLengthAttr(UsdLuxCylinderLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateLengthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateRadiusAttr(UsdLuxCylinderLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
-}
+  static UsdAttribute _CreateRadiusAttr(UsdLuxCylinderLight &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+  }
 
-static UsdAttribute _CreateTreatAsLineAttr(UsdLuxCylinderLight &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateTreatAsLineAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
-}
+  static UsdAttribute _CreateTreatAsLineAttr(UsdLuxCylinderLight &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
+  {
+    return self.CreateTreatAsLineAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                      writeSparsely);
+  }
 
-static std::string _Repr(const UsdLuxCylinderLight &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdLux.CylinderLight(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdLuxCylinderLight &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdLux.CylinderLight(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -107,12 +111,14 @@ void wrapUsdLuxCylinderLight()
     .def(!self)
 
     .def("GetLengthAttr", &This::GetLengthAttr)
-    .def(
-      "CreateLengthAttr", &_CreateLengthAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateLengthAttr",
+         &_CreateLengthAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetRadiusAttr", &This::GetRadiusAttr)
-    .def(
-      "CreateRadiusAttr", &_CreateRadiusAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateRadiusAttr",
+         &_CreateRadiusAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetTreatAsLineAttr", &This::GetTreatAsLineAttr)
     .def("CreateTreatAsLineAttr",
@@ -146,7 +152,7 @@ void wrapUsdLuxCylinderLight()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // namespace

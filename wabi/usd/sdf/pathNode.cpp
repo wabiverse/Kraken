@@ -69,7 +69,7 @@ struct Sdf_PathNodePrivateAccess
   }
 
   template<class T, class Pool, class... Args>
-  static inline typename Pool::Handle New(Sdf_PathNode const *parent, Args const &... args)
+  static inline typename Pool::Handle New(Sdf_PathNode const *parent, Args const &...args)
   {
     typename Pool::Handle h = Pool::Allocate();
     char *p = h.GetPtr();
@@ -84,136 +84,136 @@ typedef Sdf_PathNodePrivateAccess Access;
 namespace
 {
 
-template<class T>
-struct _ParentAnd
-{
-  const Sdf_PathNode *parent;
-  T value;
-};
-
-// Allow void for 'expression' path case, which has no additional data.
-template<>
-struct _ParentAnd<void>
-{
-  const Sdf_PathNode *parent;
-};
-
-template<class T>
-inline _ParentAnd<T> _MakeParentAnd(const Sdf_PathNode *parent, const T &value)
-{
-  _ParentAnd<T> ret;
-  ret.parent = parent;
-  ret.value = value;
-  return ret;
-}
-
-inline _ParentAnd<void> _MakeParentAnd(const Sdf_PathNode *parent)
-{
-  _ParentAnd<void> ret;
-  ret.parent = parent;
-  return ret;
-}
-
-inline size_t hash_value(const Sdf_PathNode *p)
-{
-  return TfHash()(p);
-}
-
-template<class T>
-struct _HashParentAnd
-{
-  inline bool equal(const T &l, const T &r) const
+  template<class T>
+  struct _ParentAnd
   {
-    return l.parent == r.parent && l.value == r.value;
+    const Sdf_PathNode *parent;
+    T value;
+  };
+
+  // Allow void for 'expression' path case, which has no additional data.
+  template<>
+  struct _ParentAnd<void>
+  {
+    const Sdf_PathNode *parent;
+  };
+
+  template<class T>
+  inline _ParentAnd<T> _MakeParentAnd(const Sdf_PathNode *parent, const T &value)
+  {
+    _ParentAnd<T> ret;
+    ret.parent = parent;
+    ret.value = value;
+    return ret;
   }
 
-  inline size_t hash(const T &t) const
+  inline _ParentAnd<void> _MakeParentAnd(const Sdf_PathNode *parent)
   {
-    size_t h = reinterpret_cast<uintptr_t>(t.parent) >> 4;
-    boost::hash_combine(h, t.value);
-    return h;
-  }
-};
-
-template<>
-struct _HashParentAnd<_ParentAnd<void>>
-{
-  inline bool equal(const _ParentAnd<void> &l, const _ParentAnd<void> &r) const
-  {
-    return l.parent == r.parent;
+    _ParentAnd<void> ret;
+    ret.parent = parent;
+    return ret;
   }
 
-  inline size_t hash(const _ParentAnd<void> &t) const
+  inline size_t hash_value(const Sdf_PathNode *p)
   {
-    return reinterpret_cast<uintptr_t>(t.parent) >> 4;
+    return TfHash()(p);
   }
-};
 
-template<class T>
-struct _PrimTable
-{
-  using Pool = Sdf_PathPrimPartPool;
-  using PoolHandle = Sdf_PathPrimHandle;
-  using NodeHandle = Sdf_PathPrimNodeHandle;
-  using Type = tbb::concurrent_hash_map<_ParentAnd<T>, PoolHandle, _HashParentAnd<_ParentAnd<T>>>;
-
-  Type map;
-};
-
-template<class T>
-struct _PropTable
-{
-  using Pool = Sdf_PathPropPartPool;
-  using PoolHandle = Sdf_PathPropHandle;
-  using NodeHandle = Sdf_PathPropNodeHandle;
-  using Type = tbb::concurrent_hash_map<_ParentAnd<T>, PoolHandle, _HashParentAnd<_ParentAnd<T>>>;
-
-  Type map;
-};
-
-using _PrimTokenTable = _PrimTable<TfToken>;
-using _PropTokenTable = _PropTable<TfToken>;
-using _PrimVarSelTable = _PrimTable<Sdf_PathNode::VariantSelectionType>;
-using _PropTargetTable = _PropTable<SdfPath>;
-using _PropVoidTable = _PropTable<void>;
-
-template<class PathNode, class Table, class... Args>
-inline typename Table::NodeHandle _FindOrCreate(Table &table,
-                                                const Sdf_PathNode *parent,
-                                                const Args &... args)
-{
-  typename Table::Type::accessor accessor;
-  if (table.map.insert(accessor, _MakeParentAnd(parent, args...)) ||
-      Access::GetRefCount(accessor->second).fetch_and_increment() == 0)
+  template<class T>
+  struct _HashParentAnd
   {
-    // Either there was no entry in the table, or there was but it had begun
-    // dying (another client dropped its refcount to 0).  We have to create
-    // a new entry in the table.  When the client that is killing the other
-    // node it looks for itself in the table, it will either not find itself
-    // or will find a different node and so won't remove it.
-    typename Table::PoolHandle newNode = Access::New<PathNode, typename Table::Pool>(parent, args...);
-    accessor->second = newNode;
-  }
-  return typename Table::NodeHandle(accessor->second, /* add_ref = */ false);
-}
+    inline bool equal(const T &l, const T &r) const
+    {
+      return l.parent == r.parent && l.value == r.value;
+    }
 
-template<class Table, class... Args>
-inline void _Remove(const Sdf_PathNode *pathNode,
-                    Table &table,
-                    const Sdf_PathNodeConstRefPtr &parent,
-                    const Args &... args)
-{
-  // If there's an entry for this key that has pathNode, erase it.  Even if
-  // there's an entry present it may not be pathNode, since another node may
-  // have been created since we decremented our refcount and started being
-  // destroyed.  If it is this node, we remove it.
-  typename Table::Type::accessor accessor;
-  if (table.map.find(accessor, _MakeParentAnd(parent.get(), args...)) &&
-      accessor->second.GetPtr() == reinterpret_cast<char const *>(pathNode))
+    inline size_t hash(const T &t) const
+    {
+      size_t h = reinterpret_cast<uintptr_t>(t.parent) >> 4;
+      boost::hash_combine(h, t.value);
+      return h;
+    }
+  };
+
+  template<>
+  struct _HashParentAnd<_ParentAnd<void>>
   {
-    table.map.erase(accessor);
+    inline bool equal(const _ParentAnd<void> &l, const _ParentAnd<void> &r) const
+    {
+      return l.parent == r.parent;
+    }
+
+    inline size_t hash(const _ParentAnd<void> &t) const
+    {
+      return reinterpret_cast<uintptr_t>(t.parent) >> 4;
+    }
+  };
+
+  template<class T>
+  struct _PrimTable
+  {
+    using Pool = Sdf_PathPrimPartPool;
+    using PoolHandle = Sdf_PathPrimHandle;
+    using NodeHandle = Sdf_PathPrimNodeHandle;
+    using Type = tbb::concurrent_hash_map<_ParentAnd<T>, PoolHandle, _HashParentAnd<_ParentAnd<T>>>;
+
+    Type map;
+  };
+
+  template<class T>
+  struct _PropTable
+  {
+    using Pool = Sdf_PathPropPartPool;
+    using PoolHandle = Sdf_PathPropHandle;
+    using NodeHandle = Sdf_PathPropNodeHandle;
+    using Type = tbb::concurrent_hash_map<_ParentAnd<T>, PoolHandle, _HashParentAnd<_ParentAnd<T>>>;
+
+    Type map;
+  };
+
+  using _PrimTokenTable = _PrimTable<TfToken>;
+  using _PropTokenTable = _PropTable<TfToken>;
+  using _PrimVarSelTable = _PrimTable<Sdf_PathNode::VariantSelectionType>;
+  using _PropTargetTable = _PropTable<SdfPath>;
+  using _PropVoidTable = _PropTable<void>;
+
+  template<class PathNode, class Table, class... Args>
+  inline typename Table::NodeHandle _FindOrCreate(Table &table,
+                                                  const Sdf_PathNode *parent,
+                                                  const Args &...args)
+  {
+    typename Table::Type::accessor accessor;
+    if (table.map.insert(accessor, _MakeParentAnd(parent, args...)) ||
+        Access::GetRefCount(accessor->second).fetch_and_increment() == 0)
+    {
+      // Either there was no entry in the table, or there was but it had begun
+      // dying (another client dropped its refcount to 0).  We have to create
+      // a new entry in the table.  When the client that is killing the other
+      // node it looks for itself in the table, it will either not find itself
+      // or will find a different node and so won't remove it.
+      typename Table::PoolHandle newNode = Access::New<PathNode, typename Table::Pool>(parent, args...);
+      accessor->second = newNode;
+    }
+    return typename Table::NodeHandle(accessor->second, /* add_ref = */ false);
   }
-}
+
+  template<class Table, class... Args>
+  inline void _Remove(const Sdf_PathNode *pathNode,
+                      Table &table,
+                      const Sdf_PathNodeConstRefPtr &parent,
+                      const Args &...args)
+  {
+    // If there's an entry for this key that has pathNode, erase it.  Even if
+    // there's an entry present it may not be pathNode, since another node may
+    // have been created since we decremented our refcount and started being
+    // destroyed.  If it is this node, we remove it.
+    typename Table::Type::accessor accessor;
+    if (table.map.find(accessor, _MakeParentAnd(parent.get(), args...)) &&
+        accessor->second.GetPtr() == reinterpret_cast<char const *>(pathNode))
+    {
+      table.map.erase(accessor);
+    }
+  }
 
 }  // namespace
 
@@ -299,8 +299,9 @@ Sdf_PathPrimNodeHandle Sdf_PathNode::FindOrCreatePrimVariantSelection(Sdf_PathNo
                                                                       const TfToken &variantSet,
                                                                       const TfToken &variant)
 {
-  return _FindOrCreate<Sdf_PrimVariantSelectionNode>(
-    *_primVarSelNodes, parent, VariantSelectionType(variantSet, variant));
+  return _FindOrCreate<Sdf_PrimVariantSelectionNode>(*_primVarSelNodes,
+                                                     parent,
+                                                     VariantSelectionType(variantSet, variant));
 }
 
 Sdf_PathPropNodeHandle Sdf_PathNode::FindOrCreateTarget(Sdf_PathNode const *parent,
@@ -349,49 +350,49 @@ const Sdf_PathNode::VariantSelectionType &Sdf_PathNode::_GetEmptyVariantSelectio
 
 namespace
 {
-// This "table" is a thread-safe mapping from property node to path token.  Each
-// entry in the _pathTokenTable points to one of these, and will have an entry
-// for the path string for the prim path itself (which will be keyed with a
-// nullptr property node pointer) plus all the properties that hang off it.
-struct _PropToTokenTable
-{
-  // Note that this function returns a TfToken lvalue reference that needs to
-  // live/be valid as long as this object is around.
-  template<class Fn>
-  TfToken const &FindOrCreate(Sdf_PathNode const *prop, Fn &&makeToken)
+  // This "table" is a thread-safe mapping from property node to path token.  Each
+  // entry in the _pathTokenTable points to one of these, and will have an entry
+  // for the path string for the prim path itself (which will be keyed with a
+  // nullptr property node pointer) plus all the properties that hang off it.
+  struct _PropToTokenTable
   {
-    _Data &d = *_data;
-    // We try first without creating the token -- if that fails we try
-    // again.  This could be made more efficient, but getting strings for
-    // paths shouldn't be a bottleneck for clients.
-    tbb::spin_mutex::scoped_lock lock(d.mutex);
-    auto iter = d.propsToToks.find(prop);
-    if (iter == d.propsToToks.end())
+    // Note that this function returns a TfToken lvalue reference that needs to
+    // live/be valid as long as this object is around.
+    template<class Fn>
+    TfToken const &FindOrCreate(Sdf_PathNode const *prop, Fn &&makeToken)
     {
-      // No entry yet.  Drop the lock, make the token, and try to insert
-      // it.  We *must* drop the lock since creating the token can
-      // re-enter here (e.g. if there are embedded target paths that have
-      // properties on the same prim).
-      lock.release();
-      TfToken tok = std::forward<Fn>(makeToken)();
-      lock.acquire(d.mutex);
-      // This may or may not actually insert the token, depending on
-      // whether or not a concurrent caller did, but it doesn't really
-      // matter.
-      iter = d.propsToToks.emplace(prop, std::move(tok)).first;
+      _Data &d = *_data;
+      // We try first without creating the token -- if that fails we try
+      // again.  This could be made more efficient, but getting strings for
+      // paths shouldn't be a bottleneck for clients.
+      tbb::spin_mutex::scoped_lock lock(d.mutex);
+      auto iter = d.propsToToks.find(prop);
+      if (iter == d.propsToToks.end())
+      {
+        // No entry yet.  Drop the lock, make the token, and try to insert
+        // it.  We *must* drop the lock since creating the token can
+        // re-enter here (e.g. if there are embedded target paths that have
+        // properties on the same prim).
+        lock.release();
+        TfToken tok = std::forward<Fn>(makeToken)();
+        lock.acquire(d.mutex);
+        // This may or may not actually insert the token, depending on
+        // whether or not a concurrent caller did, but it doesn't really
+        // matter.
+        iter = d.propsToToks.emplace(prop, std::move(tok)).first;
+      }
+      return iter->second;
     }
-    return iter->second;
-  }
 
- private:
-  struct _Data
-  {
-    std::map<Sdf_PathNode const *, TfToken> propsToToks;
-    tbb::spin_mutex mutex;
+   private:
+    struct _Data
+    {
+      std::map<Sdf_PathNode const *, TfToken> propsToToks;
+      tbb::spin_mutex mutex;
+    };
+
+    std::shared_ptr<_Data> _data{new _Data};
   };
-
-  std::shared_ptr<_Data> _data{new _Data};
-};
 
 }  // namespace
 
@@ -416,8 +417,9 @@ const TfToken &Sdf_PathNode::GetPathToken(Sdf_PathNode const *primPart, Sdf_Path
   // can cause reentry here (for embedded target paths).
   primAccessor.release();
 
-  return propToTokenTable.FindOrCreate(
-    propPart, [primPart, propPart]() { return Sdf_PathNode::_CreatePathToken(primPart, propPart); });
+  return propToTokenTable.FindOrCreate(propPart, [primPart, propPart]() {
+    return Sdf_PathNode::_CreatePathToken(primPart, propPart);
+  });
 }
 
 TfToken Sdf_PathNode::GetPathAsToken(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart)

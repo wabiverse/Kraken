@@ -123,8 +123,7 @@ struct HdDisplayStyle
     if (refineLevel_ < 0)
     {
       TF_CODING_ERROR("negative refine level is not supported");
-    }
-    else if (refineLevel_ > 8)
+    } else if (refineLevel_ > 8)
     {
       TF_CODING_ERROR("refine level > 8 is not supported");
     }
@@ -472,8 +471,10 @@ class HdSceneDelegate
     if (authoredSamples > CAPACITY)
     {
       sa->Resize(authoredSamples);
-      size_t authoredSamplesSecondAttempt = SampleTransform(
-        id, authoredSamples, sa->times.data(), sa->values.data());
+      size_t authoredSamplesSecondAttempt = SampleTransform(id,
+                                                            authoredSamples,
+                                                            sa->times.data(),
+                                                            sa->values.data());
       // Number of samples should be consisntent through multiple
       // invokations of the sampling function.
       TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);
@@ -501,13 +502,17 @@ class HdSceneDelegate
   template<unsigned int CAPACITY>
   void SampleInstancerTransform(SdfPath const &instancerId, HdTimeSampleArray<GfMatrix4d, CAPACITY> *sa)
   {
-    size_t authoredSamples = SampleInstancerTransform(
-      instancerId, CAPACITY, sa->times.data(), sa->values.data());
+    size_t authoredSamples = SampleInstancerTransform(instancerId,
+                                                      CAPACITY,
+                                                      sa->times.data(),
+                                                      sa->values.data());
     if (authoredSamples > CAPACITY)
     {
       sa->Resize(authoredSamples);
-      size_t authoredSamplesSecondAttempt = SampleInstancerTransform(
-        instancerId, authoredSamples, sa->times.data(), sa->values.data());
+      size_t authoredSamplesSecondAttempt = SampleInstancerTransform(instancerId,
+                                                                     authoredSamples,
+                                                                     sa->times.data(),
+                                                                     sa->values.data());
       // Number of samples should be consisntent through multiple
       // invokations of the sampling function.
       TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);
@@ -728,14 +733,17 @@ class HdSceneDelegate
                                  TfToken const &input,
                                  HdTimeSampleArray<VtValue, CAPACITY> *sa)
   {
-    size_t authoredSamples = SampleExtComputationInput(
-      computationId, input, CAPACITY, sa->times.data(), sa->values.data());
+    size_t authoredSamples =
+      SampleExtComputationInput(computationId, input, CAPACITY, sa->times.data(), sa->values.data());
 
     if (authoredSamples > CAPACITY)
     {
       sa->Resize(authoredSamples);
-      size_t authoredSamplesSecondAttempt = SampleExtComputationInput(
-        computationId, input, authoredSamples, sa->times.data(), sa->values.data());
+      size_t authoredSamplesSecondAttempt = SampleExtComputationInput(computationId,
+                                                                      input,
+                                                                      authoredSamples,
+                                                                      sa->times.data(),
+                                                                      sa->values.data());
       // Number of samples should be consisntent through multiple
       // invokations of the sampling function.
       TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);
@@ -794,8 +802,8 @@ void HdSceneDelegate::SamplePrimvar(SdfPath const &id,
   if (authoredSamples > CAPACITY)
   {
     sa->Resize(authoredSamples);
-    size_t authoredSamplesSecondAttempt = SamplePrimvar(
-      id, key, authoredSamples, sa->times.data(), sa->values.data());
+    size_t authoredSamplesSecondAttempt =
+      SamplePrimvar(id, key, authoredSamples, sa->times.data(), sa->values.data());
     // Number of samples should be consistent through multiple
     // invocations of the sampling function.
     TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);
@@ -808,13 +816,17 @@ void HdSceneDelegate::SampleIndexedPrimvar(SdfPath const &id,
                                            TfToken const &key,
                                            HdIndexedTimeSampleArray<VtValue, CAPACITY> *sa)
 {
-  size_t authoredSamples = SampleIndexedPrimvar(
-    id, key, CAPACITY, sa->times.data(), sa->values.data(), sa->indices.data());
+  size_t authoredSamples =
+    SampleIndexedPrimvar(id, key, CAPACITY, sa->times.data(), sa->values.data(), sa->indices.data());
   if (authoredSamples > CAPACITY)
   {
     sa->Resize(authoredSamples);
-    size_t authoredSamplesSecondAttempt = SampleIndexedPrimvar(
-      id, key, authoredSamples, sa->times.data(), sa->values.data(), sa->indices.data());
+    size_t authoredSamplesSecondAttempt = SampleIndexedPrimvar(id,
+                                                               key,
+                                                               authoredSamples,
+                                                               sa->times.data(),
+                                                               sa->values.data(),
+                                                               sa->indices.data());
     // Number of samples should be consistent through multiple
     // invocations of the sampling function.
     TF_VERIFY(authoredSamples == authoredSamplesSecondAttempt);

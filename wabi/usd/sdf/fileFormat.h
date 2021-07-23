@@ -479,8 +479,9 @@ void SdfDefineAbstractFileFormat()
 #ifdef doxygen
 #  define SDF_FILE_FORMAT_FACTORY_ACCESS
 #else
-#  define SDF_FILE_FORMAT_FACTORY_ACCESS template<typename T> \
-  friend class Sdf_FileFormatFactory
+#  define SDF_FILE_FORMAT_FACTORY_ACCESS \
+    template<typename T>                 \
+    friend class Sdf_FileFormatFactory
 #endif  // doxygen
 
 WABI_NAMESPACE_END

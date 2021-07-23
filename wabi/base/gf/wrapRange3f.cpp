@@ -56,29 +56,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static const int _dimension = 3;
+  static const int _dimension = 3;
 
-static string _Repr(GfRange3f const &self)
-{
-  return TF_PY_REPR_PREFIX + "Range3f(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
-}
+  static string _Repr(GfRange3f const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Range3f(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
+  }
 
 #if PY_MAJOR_VERSION == 2
-static GfRange3f __truediv__(const GfRange3f &self, double value)
-{
-  return self / value;
-}
+  static GfRange3f __truediv__(const GfRange3f &self, double value)
+  {
+    return self / value;
+  }
 
-static GfRange3f __itruediv__(GfRange3f &self, double value)
-{
-  return self /= value;
-}
+  static GfRange3f __itruediv__(GfRange3f &self, double value)
+  {
+    return self /= value;
+  }
 #endif
 
-static size_t __hash__(GfRange3f const &r)
-{
-  return hash_value(r);
-}
+  static size_t __hash__(GfRange3f const &r)
+  {
+    return hash_value(r);
+  }
 
 }  // anonymous namespace
 
@@ -112,8 +112,8 @@ void wrapRange3f()
 
     .def("SetEmpty", &GfRange3f::SetEmpty)
 
-    .def("Contains", (bool (GfRange3f::*)(const GfVec3f &) const) & GfRange3f::Contains)
-    .def("Contains", (bool (GfRange3f::*)(const GfRange3f &) const) & GfRange3f::Contains)
+    .def("Contains", (bool(GfRange3f::*)(const GfVec3f &) const) & GfRange3f::Contains)
+    .def("Contains", (bool(GfRange3f::*)(const GfRange3f &) const) & GfRange3f::Contains)
 
     .def("GetUnion", &GfRange3f::GetUnion)
     .staticmethod("GetUnion")

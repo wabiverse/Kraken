@@ -52,8 +52,7 @@ static void _ReadExtraSettings(UsdPrim const &prim,
         // Skip attributes built into schemas.
         continue;
       }
-    }
-    else
+    } else
     {
       bool attrIsInRequestedNS = false;
       for (std::string const &ns : namespaces)
@@ -141,20 +140,16 @@ static void _ApplyAspectRatioPolicy(UsdRenderSpec::Product *product)
   if (policy == UsdRenderTokens->adjustPixelAspectRatio)
   {
     product->pixelAspectRatio = apertureAspectRatio / resAspectRatio;
-  }
-  else if (policy == UsdRenderTokens->adjustApertureHeight)
+  } else if (policy == UsdRenderTokens->adjustApertureHeight)
   {
     adjust = Height;
-  }
-  else if (policy == UsdRenderTokens->adjustApertureWidth)
+  } else if (policy == UsdRenderTokens->adjustApertureWidth)
   {
     adjust = Width;
-  }
-  else if (policy == UsdRenderTokens->expandAperture)
+  } else if (policy == UsdRenderTokens->expandAperture)
   {
     adjust = (apertureAspectRatio > imageAspectRatio) ? Height : Width;
-  }
-  else if (policy == UsdRenderTokens->cropAperture)
+  } else if (policy == UsdRenderTokens->cropAperture)
   {
     adjust = (apertureAspectRatio > imageAspectRatio) ? Width : Height;
   }
@@ -162,8 +157,7 @@ static void _ApplyAspectRatioPolicy(UsdRenderSpec::Product *product)
   if (adjust == Width)
   {
     product->apertureSize[0] = size[1] * imageAspectRatio;
-  }
-  else if (adjust == Height)
+  } else if (adjust == Height)
   {
     product->apertureSize[1] = size[0] / imageAspectRatio;
   }
@@ -205,8 +199,7 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
         cam.GetHorizontalApertureAttr().Get(&pd.apertureSize[0]);
         cam.GetVerticalApertureAttr().Get(&pd.apertureSize[1]);
         _ApplyAspectRatioPolicy(&pd);
-      }
-      else
+      } else
       {
         TF_RUNTIME_ERROR(
           "UsdRenderSettings: Could not find camera "
@@ -252,8 +245,7 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
             // Record new render var.
             pd.renderVarIndices.push_back(rd.renderVars.size());
             rd.renderVars.emplace_back(rvd);
-          }
-          else
+          } else
           {
             TF_RUNTIME_ERROR(
               "Render product <%s> includes "

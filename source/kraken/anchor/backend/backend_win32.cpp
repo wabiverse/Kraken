@@ -142,7 +142,7 @@ struct AnchorBackendWin32Data
  * with multi-viewports (== single ANCHOR context +
  * multiple windows) instead of multiple ANCHOR
  * contexts.
- * 
+ *
  * - FIXME: multi-context support is not well
  *          tested and probably dysfunctional
  *          in this backend.
@@ -151,7 +151,8 @@ struct AnchorBackendWin32Data
  *          using multi-context. */
 static AnchorBackendWin32Data *AnchorBackendWin32GetBackendData()
 {
-  return ANCHOR::GetCurrentContext() ? (AnchorBackendWin32Data *)ANCHOR::GetIO().BackendPlatformUserData : NULL;
+  return ANCHOR::GetCurrentContext() ? (AnchorBackendWin32Data *)ANCHOR::GetIO().BackendPlatformUserData :
+                                       NULL;
 }
 
 /**
@@ -217,17 +218,16 @@ static bool AnchorBackendWin32Init(void *hwnd)
 
   /**
    * Dynamically load XInput library */
-  const char *xinput_dll_names[] = {
-    /* Windows 8+ */
-    "xinput1_4.dll",
-    /* DirectX SDK */
-    "xinput1_3.dll",
-    /* Windows Vista, Windows 7 */
-    "xinput9_1_0.dll",
-    /* DirectX SDK */
-    "xinput1_2.dll",
-    /* DirectX SDK */
-    "xinput1_1.dll"};
+  const char *xinput_dll_names[] = {/* Windows 8+ */
+                                    "xinput1_4.dll",
+                                    /* DirectX SDK */
+                                    "xinput1_3.dll",
+                                    /* Windows Vista, Windows 7 */
+                                    "xinput9_1_0.dll",
+                                    /* DirectX SDK */
+                                    "xinput1_2.dll",
+                                    /* DirectX SDK */
+                                    "xinput1_1.dll"};
 
   for (int n = 0; n < ANCHOR_ARRAYSIZE(xinput_dll_names); n++)
   {
@@ -273,7 +273,8 @@ struct AnchorBackendDXD12Data
 
 static AnchorBackendDXD12Data *AnchorBackendDXD12GetBackendData()
 {
-  return ANCHOR::GetCurrentContext() ? (AnchorBackendDXD12Data *)ANCHOR::GetIO().BackendRendererUserData : NULL;
+  return ANCHOR::GetCurrentContext() ? (AnchorBackendDXD12Data *)ANCHOR::GetIO().BackendRendererUserData :
+                                       NULL;
 }
 
 static bool AnchorBackendDXD12Init(ID3D12Device *device,
@@ -378,7 +379,8 @@ static void AnchorBackendDXD12CreateFontsTexture()
                                            NULL,
                                            IID_PPV_ARGS(&pTexture));
 
-    UINT uploadPitch = (width * 4 + D3D12_TEXTURE_DATA_PITCH_ALIGNMENT - 1u) & ~(D3D12_TEXTURE_DATA_PITCH_ALIGNMENT - 1u);
+    UINT uploadPitch = (width * 4 + D3D12_TEXTURE_DATA_PITCH_ALIGNMENT - 1u) &
+                       ~(D3D12_TEXTURE_DATA_PITCH_ALIGNMENT - 1u);
     UINT uploadSize = height * uploadPitch;
     desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
     desc.Alignment = 0;
@@ -397,7 +399,12 @@ static void AnchorBackendDXD12CreateFontsTexture()
     props.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 
     ID3D12Resource *uploadBuffer = NULL;
-    HRESULT hr = bd->d3dDevice->CreateCommittedResource(&props, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&uploadBuffer));
+    HRESULT hr = bd->d3dDevice->CreateCommittedResource(&props,
+                                                        D3D12_HEAP_FLAG_NONE,
+                                                        &desc,
+                                                        D3D12_RESOURCE_STATE_GENERIC_READ,
+                                                        NULL,
+                                                        IID_PPV_ARGS(&uploadBuffer));
     ANCHOR_ASSERT(SUCCEEDED(hr));
 
     void *mapped = NULL;
@@ -451,7 +458,11 @@ static void AnchorBackendDXD12CreateFontsTexture()
     ANCHOR_ASSERT(SUCCEEDED(hr));
 
     ID3D12GraphicsCommandList *cmdList = NULL;
-    hr = bd->d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, cmdAlloc, NULL, IID_PPV_ARGS(&cmdList));
+    hr = bd->d3dDevice->CreateCommandList(0,
+                                          D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                          cmdAlloc,
+                                          NULL,
+                                          IID_PPV_ARGS(&cmdList));
     ANCHOR_ASSERT(SUCCEEDED(hr));
 
     cmdList->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, NULL);
@@ -487,7 +498,8 @@ static void AnchorBackendDXD12CreateFontsTexture()
     bd->FontTextureResource = pTexture;
   }
 
-  static_assert(sizeof(AnchorTextureID) >= sizeof(bd->FontSrvGpuDescHandle.ptr), "Can't pack descriptor handle into TexID, 32-bit not supported yet.");
+  static_assert(sizeof(AnchorTextureID) >= sizeof(bd->FontSrvGpuDescHandle.ptr),
+                "Can't pack descriptor handle into TexID, 32-bit not supported yet.");
   io.Fonts->SetTexID((AnchorTextureID)bd->FontSrvGpuDescHandle.ptr);
 }
 
@@ -540,19 +552,15 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
     desc.pParameters = param;
     desc.NumStaticSamplers = 1;
     desc.pStaticSamplers = &staticSampler;
-    desc.Flags =
-      D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
-      D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
-      D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-      D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+    desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
+                 D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+                 D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+                 D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 
     static HINSTANCE d3d12_dll = ::GetModuleHandleA("d3d12.dll");
     if (d3d12_dll == NULL)
     {
-      const char *localD3d12Paths[] = {
-        ".\\d3d12.dll",
-        ".\\d3d12on7\\d3d12.dll",
-        ".\\12on7\\d3d12.dll"};
+      const char *localD3d12Paths[] = {".\\d3d12.dll", ".\\d3d12on7\\d3d12.dll", ".\\12on7\\d3d12.dll"};
 
       for (int i = 0; i < ANCHOR_ARRAYSIZE(localD3d12Paths); i++)
         if ((d3d12_dll = ::LoadLibraryA(localD3d12Paths[i])) != NULL)
@@ -567,7 +575,8 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
         return false;
     }
 
-    PFN_D3D12_SERIALIZE_ROOT_SIGNATURE D3D12SerializeRootSignatureFn = (PFN_D3D12_SERIALIZE_ROOT_SIGNATURE)::GetProcAddress(d3d12_dll, "D3D12SerializeRootSignature");
+    PFN_D3D12_SERIALIZE_ROOT_SIGNATURE D3D12SerializeRootSignatureFn =
+      (PFN_D3D12_SERIALIZE_ROOT_SIGNATURE)::GetProcAddress(d3d12_dll, "D3D12SerializeRootSignature");
     if (D3D12SerializeRootSignatureFn == NULL)
       return false;
 
@@ -575,7 +584,10 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
     if (D3D12SerializeRootSignatureFn(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, NULL) != S_OK)
       return false;
 
-    bd->d3dDevice->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&bd->RootSignature));
+    bd->d3dDevice->CreateRootSignature(0,
+                                       blob->GetBufferPointer(),
+                                       blob->GetBufferSize(),
+                                       IID_PPV_ARGS(&bd->RootSignature));
     blob->Release();
   }
 
@@ -624,17 +636,44 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
               return output;\
             }";
 
-    if (FAILED(D3DCompile(vertexShader, strlen(vertexShader), NULL, NULL, NULL, "main", "vs_5_0", 0, 0, &vertexShaderBlob, NULL)))
+    if (FAILED(D3DCompile(vertexShader,
+                          strlen(vertexShader),
+                          NULL,
+                          NULL,
+                          NULL,
+                          "main",
+                          "vs_5_0",
+                          0,
+                          0,
+                          &vertexShaderBlob,
+                          NULL)))
       return false;
     psoDesc.VS = {vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize()};
 
     // Create the input layout
-    static D3D12_INPUT_ELEMENT_DESC local_layout[] =
-      {
-        {"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, pos), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, uv), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, col), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-      };
+    static D3D12_INPUT_ELEMENT_DESC local_layout[] = {
+      {"POSITION",
+       0,
+       DXGI_FORMAT_R32G32_FLOAT,
+       0,
+       (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, pos),
+       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+       0},
+      {"TEXCOORD",
+       0,
+       DXGI_FORMAT_R32G32_FLOAT,
+       0,
+       (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, uv),
+       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+       0},
+      {"COLOR",
+       0,
+       DXGI_FORMAT_R8G8B8A8_UNORM,
+       0,
+       (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, col),
+       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+       0},
+    };
     psoDesc.InputLayout = {local_layout, 3};
   }
 
@@ -657,7 +696,17 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
               return out_col; \
             }";
 
-    if (FAILED(D3DCompile(pixelShader, strlen(pixelShader), NULL, NULL, NULL, "main", "ps_5_0", 0, 0, &pixelShaderBlob, NULL)))
+    if (FAILED(D3DCompile(pixelShader,
+                          strlen(pixelShader),
+                          NULL,
+                          NULL,
+                          NULL,
+                          "main",
+                          "ps_5_0",
+                          0,
+                          0,
+                          &pixelShaderBlob,
+                          NULL)))
     {
       vertexShaderBlob->Release();
       return false;
@@ -705,12 +754,15 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
     desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
     desc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
     desc.StencilEnable = false;
-    desc.FrontFace.StencilFailOp = desc.FrontFace.StencilDepthFailOp = desc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+    desc.FrontFace.StencilFailOp = desc.FrontFace.StencilDepthFailOp = desc.FrontFace.StencilPassOp =
+      D3D12_STENCIL_OP_KEEP;
     desc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
     desc.BackFace = desc.FrontFace;
   }
 
-  HRESULT result_pipeline_state = bd->d3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&bd->PipelineState));
+  HRESULT result_pipeline_state = bd->d3dDevice->CreateGraphicsPipelineState(
+    &psoDesc,
+    IID_PPV_ARGS(&bd->PipelineState));
   vertexShaderBlob->Release();
   pixelShaderBlob->Release();
   if (result_pipeline_state != S_OK)
@@ -726,7 +778,9 @@ struct VERTEX_CONSTANT_BUFFER
   float mvp[4][4];
 };
 
-static void AnchorBackendDXD12SetupRenderState(AnchorDrawData *draw_data, ID3D12GraphicsCommandList *ctx, AnchorBackendDXD12RenderBuffers *fr)
+static void AnchorBackendDXD12SetupRenderState(AnchorDrawData *draw_data,
+                                               ID3D12GraphicsCommandList *ctx,
+                                               AnchorBackendDXD12RenderBuffers *fr)
 {
   AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
 
@@ -736,13 +790,12 @@ static void AnchorBackendDXD12SetupRenderState(AnchorDrawData *draw_data, ID3D12
     float R = draw_data->DisplayPos[0] + draw_data->DisplaySize[0];
     float T = draw_data->DisplayPos[1];
     float B = draw_data->DisplayPos[1] + draw_data->DisplaySize[1];
-    float mvp[4][4] =
-      {
-        {2.0f / (R - L), 0.0f, 0.0f, 0.0f},
-        {0.0f, 2.0f / (T - B), 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.5f, 0.0f},
-        {(R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f},
-      };
+    float mvp[4][4] = {
+      {2.0f / (R - L),    0.0f,              0.0f, 0.0f},
+      {0.0f,              2.0f / (T - B),    0.0f, 0.0f},
+      {0.0f,              0.0f,              0.5f, 0.0f},
+      {(R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f},
+    };
     memcpy(&vertex_constant_buffer.mvp, mvp, sizeof(mvp));
   }
 
@@ -808,7 +861,12 @@ static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12Gr
     desc.SampleDesc.Count = 1;
     desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
     desc.Flags = D3D12_RESOURCE_FLAG_NONE;
-    if (bd->d3dDevice->CreateCommittedResource(&props, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&fr->VertexBuffer)) < 0)
+    if (bd->d3dDevice->CreateCommittedResource(&props,
+                                               D3D12_HEAP_FLAG_NONE,
+                                               &desc,
+                                               D3D12_RESOURCE_STATE_GENERIC_READ,
+                                               NULL,
+                                               IID_PPV_ARGS(&fr->VertexBuffer)) < 0)
       return;
   }
   if (fr->IndexBuffer == NULL || fr->IndexBufferSize < draw_data->TotalIdxCount)
@@ -831,7 +889,12 @@ static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12Gr
     desc.SampleDesc.Count = 1;
     desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
     desc.Flags = D3D12_RESOURCE_FLAG_NONE;
-    if (bd->d3dDevice->CreateCommittedResource(&props, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&fr->IndexBuffer)) < 0)
+    if (bd->d3dDevice->CreateCommittedResource(&props,
+                                               D3D12_HEAP_FLAG_NONE,
+                                               &desc,
+                                               D3D12_RESOURCE_STATE_GENERIC_READ,
+                                               NULL,
+                                               IID_PPV_ARGS(&fr->IndexBuffer)) < 0)
       return;
   }
 
@@ -875,15 +938,13 @@ static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12Gr
           AnchorBackendDXD12SetupRenderState(draw_data, ctx, fr);
         else
           pcmd->UserCallback(cmd_list, pcmd);
-      }
-      else
+      } else
       {
         // Apply Scissor, Bind texture, Draw
-        const D3D12_RECT r = {
-          (LONG)(pcmd->ClipRect[0] - clip_off[0]),
-          (LONG)(pcmd->ClipRect[1] - clip_off[1]),
-          (LONG)(pcmd->ClipRect[2] - clip_off[0]),
-          (LONG)(pcmd->ClipRect[3] - clip_off[1])};
+        const D3D12_RECT r = {(LONG)(pcmd->ClipRect[0] - clip_off[0]),
+                              (LONG)(pcmd->ClipRect[1] - clip_off[1]),
+                              (LONG)(pcmd->ClipRect[2] - clip_off[0]),
+                              (LONG)(pcmd->ClipRect[3] - clip_off[1])};
 
         if (r.right > r.left && r.bottom > r.top)
         {
@@ -891,7 +952,11 @@ static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12Gr
           texture_handle.ptr = (UINT64)pcmd->GetTexID();
           ctx->SetGraphicsRootDescriptorTable(1, texture_handle);
           ctx->RSSetScissorRects(1, &r);
-          ctx->DrawIndexedInstanced(pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
+          ctx->DrawIndexedInstanced(pcmd->ElemCount,
+                                    1,
+                                    pcmd->IdxOffset + global_idx_offset,
+                                    pcmd->VtxOffset + global_vtx_offset,
+                                    0);
         }
       }
     }
@@ -981,7 +1046,9 @@ static void AnchorBackendWin32UpdateGamepads()
   if (bd->WantUpdateHasGamepad)
   {
     XINPUT_CAPABILITIES caps;
-    bd->HasGamepad = bd->XInputGetCapabilities ? (bd->XInputGetCapabilities(0, XINPUT_FLAG_GAMEPAD, &caps) == ERROR_SUCCESS) : false;
+    bd->HasGamepad = bd->XInputGetCapabilities ?
+                       (bd->XInputGetCapabilities(0, XINPUT_FLAG_GAMEPAD, &caps) == ERROR_SUCCESS) :
+                       false;
     bd->WantUpdateHasGamepad = false;
   }
 
@@ -992,17 +1059,17 @@ static void AnchorBackendWin32UpdateGamepads()
     const XINPUT_GAMEPAD &gamepad = xinput_state.Gamepad;
     io.BackendFlags |= AnchorBackendFlags_HasGamepad;
 
-#define MAP_BUTTON(NAV_NO, BUTTON_ENUM) \
-  { \
+#define MAP_BUTTON(NAV_NO, BUTTON_ENUM)                                    \
+  {                                                                        \
     io.NavInputs[NAV_NO] = (gamepad.wButtons & BUTTON_ENUM) ? 1.0f : 0.0f; \
   }
-#define MAP_ANALOG(NAV_NO, VALUE, V0, V1) \
-  { \
+#define MAP_ANALOG(NAV_NO, VALUE, V0, V1)              \
+  {                                                    \
     float vn = (float)(VALUE - V0) / (float)(V1 - V0); \
-    if (vn > 1.0f) \
-      vn = 1.0f; \
-    if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) \
-      io.NavInputs[NAV_NO] = vn; \
+    if (vn > 1.0f)                                     \
+      vn = 1.0f;                                       \
+    if (vn > 0.0f && io.NavInputs[NAV_NO] < vn)        \
+      io.NavInputs[NAV_NO] = vn;                       \
   }
 
 
@@ -1114,13 +1181,21 @@ static BOOL _IsWindowsVersionOrGreater(WORD major, WORD minor, WORD)
   versionInfo.dwMinorVersion = minor;
   VER_SET_CONDITION(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
   VER_SET_CONDITION(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
-  return (RtlVerifyVersionInfoFn(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask) == 0) ? TRUE : FALSE;
+  return (RtlVerifyVersionInfoFn(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask) == 0) ?
+           TRUE :
+           FALSE;
 }
 
-#define _IsWindowsVistaOrGreater() _IsWindowsVersionOrGreater(HIBYTE(0x0600), LOBYTE(0x0600), 0)    // _WIN32_WINNT_VISTA
-#define _IsWindows8OrGreater() _IsWindowsVersionOrGreater(HIBYTE(0x0602), LOBYTE(0x0602), 0)        // _WIN32_WINNT_WIN8
-#define _IsWindows8Point1OrGreater() _IsWindowsVersionOrGreater(HIBYTE(0x0603), LOBYTE(0x0603), 0)  // _WIN32_WINNT_WINBLUE
-#define _IsWindows10OrGreater() _IsWindowsVersionOrGreater(HIBYTE(0x0A00), LOBYTE(0x0A00), 0)       // _WIN32_WINNT_WINTHRESHOLD / _WIN32_WINNT_WIN10
+#define _IsWindowsVistaOrGreater() \
+  _IsWindowsVersionOrGreater(HIBYTE(0x0600), LOBYTE(0x0600), 0)  // _WIN32_WINNT_VISTA
+#define _IsWindows8OrGreater() \
+  _IsWindowsVersionOrGreater(HIBYTE(0x0602), LOBYTE(0x0602), 0)  // _WIN32_WINNT_WIN8
+#define _IsWindows8Point1OrGreater() \
+  _IsWindowsVersionOrGreater(HIBYTE(0x0603), LOBYTE(0x0603), 0)  // _WIN32_WINNT_WINBLUE
+#define _IsWindows10OrGreater()              \
+  _IsWindowsVersionOrGreater(HIBYTE(0x0A00), \
+                             LOBYTE(0x0A00), \
+                             0)  // _WIN32_WINNT_WINTHRESHOLD / _WIN32_WINNT_WIN10
 
 #ifndef DPI_ENUMS_DECLARED
 typedef enum
@@ -1144,9 +1219,14 @@ DECLARE_HANDLE(DPI_AWARENESS_CONTEXT);
 #ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
 #  define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 (DPI_AWARENESS_CONTEXT) - 4
 #endif
-typedef HRESULT(WINAPI *PFN_SetProcessDpiAwareness)(PROCESS_DPI_AWARENESS);                      // Shcore.lib + dll, Windows 8.1+
-typedef HRESULT(WINAPI *PFN_GetDpiForMonitor)(HMONITOR, MONITOR_DPI_TYPE, UINT *, UINT *);       // Shcore.lib + dll, Windows 8.1+
-typedef DPI_AWARENESS_CONTEXT(WINAPI *PFN_SetThreadDpiAwarenessContext)(DPI_AWARENESS_CONTEXT);  // User32.lib + dll, Windows 10 v1607+ (Creators Update)
+typedef HRESULT(WINAPI *PFN_SetProcessDpiAwareness)(
+  PROCESS_DPI_AWARENESS);  // Shcore.lib + dll, Windows 8.1+
+typedef HRESULT(WINAPI *PFN_GetDpiForMonitor)(HMONITOR,
+                                              MONITOR_DPI_TYPE,
+                                              UINT *,
+                                              UINT *);  // Shcore.lib + dll, Windows 8.1+
+typedef DPI_AWARENESS_CONTEXT(WINAPI *PFN_SetThreadDpiAwarenessContext)(
+  DPI_AWARENESS_CONTEXT);  // User32.lib + dll, Windows 10 v1607+ (Creators Update)
 
 // Helper function to enable DPI awareness without setting up a manifest
 static void AnchorBackendWin32EnableDpiAwareness()
@@ -1154,7 +1234,8 @@ static void AnchorBackendWin32EnableDpiAwareness()
   if (_IsWindows10OrGreater())
   {
     static HINSTANCE user32_dll = ::LoadLibraryA("user32.dll");  // Reference counted per-process
-    if (PFN_SetThreadDpiAwarenessContext SetThreadDpiAwarenessContextFn = (PFN_SetThreadDpiAwarenessContext)::GetProcAddress(user32_dll, "SetThreadDpiAwarenessContext"))
+    if (PFN_SetThreadDpiAwarenessContext SetThreadDpiAwarenessContextFn =
+          (PFN_SetThreadDpiAwarenessContext)::GetProcAddress(user32_dll, "SetThreadDpiAwarenessContext"))
     {
       SetThreadDpiAwarenessContextFn(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
       return;
@@ -1163,7 +1244,8 @@ static void AnchorBackendWin32EnableDpiAwareness()
   if (_IsWindows8Point1OrGreater())
   {
     static HINSTANCE shcore_dll = ::LoadLibraryA("shcore.dll");  // Reference counted per-process
-    if (PFN_SetProcessDpiAwareness SetProcessDpiAwarenessFn = (PFN_SetProcessDpiAwareness)::GetProcAddress(shcore_dll, "SetProcessDpiAwareness"))
+    if (PFN_SetProcessDpiAwareness SetProcessDpiAwarenessFn =
+          (PFN_SetProcessDpiAwareness)::GetProcAddress(shcore_dll, "SetProcessDpiAwareness"))
     {
       SetProcessDpiAwarenessFn(PROCESS_PER_MONITOR_DPI_AWARE);
       return;
@@ -1238,8 +1320,7 @@ static void AnchorBackendWin32EnableAlphaCompositing(void *hwnd)
     bb.fEnable = TRUE;
     ::DwmEnableBlurBehindWindow((HWND)hwnd, &bb);
     ::DeleteObject(region);
-  }
-  else
+  } else
   {
     DWM_BLURBEHIND bb = {};
     bb.dwFlags = DWM_BB_ENABLE;
@@ -1318,8 +1399,7 @@ eAnchorStatus AnchorDisplayManagerWin32::getDisplaySetting(AnchorU8 display,
      * on the default h/w setting. */
     setting.frequency = dm.dmDisplayFrequency;
     success = ANCHOR_SUCCESS;
-  }
-  else
+  } else
   {
     success = ANCHOR_FAILURE;
   }
@@ -1553,8 +1633,7 @@ eAnchorStatus AnchorSystemWin32::getModifierKeys(AnchorModifierKeys &keys) const
   {
     keys.set(ANCHOR_ModifierKeyOS, true);
     io.KeySuper = true;
-  }
-  else
+  } else
   {
     keys.set(ANCHOR_ModifierKeyOS, false);
     io.KeySuper = false;
@@ -1627,8 +1706,7 @@ eAnchorStatus AnchorSystemWin32::init()
       TF_MSG_SUCCESS("Anchor -- High Frequency Performance Timer available");
     }
     ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
-  }
-  else
+  } else
   {
     if (TfDebug::IsEnabled(ANCHOR_WIN32))
     {
@@ -1696,8 +1774,7 @@ AnchorISystemWindow *AnchorSystemWin32::createWindow(const char *title,
      * Store the pointer to the window. */
     m_windowManager->addWindow(window);
     m_windowManager->setActiveWindow(window);
-  }
-  else
+  } else
   {
     if (TfDebug::IsEnabled(ANCHOR_WIN32))
     {
@@ -1932,9 +2009,9 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
         /* These functions were replaced by #WM_INPUT. */
         case WM_CHAR:
           /* The WM_CHAR message is posted to the window with the keyboard focus when
-         * a WM_KEYDOWN message is translated by the TranslateMessage function. WM_CHAR
-         * contains the character code of the key that was pressed.
-         */
+           * a WM_KEYDOWN message is translated by the TranslateMessage function. WM_CHAR
+           * contains the character code of the key that was pressed.
+           */
           if (wParam > 0 && wParam < 0x10000)
             io.AddInputCharacterUTF16((unsigned short)wParam);
           break;
@@ -2043,8 +2120,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
             {
               /* Some devices don't emit WT_CSRCHANGE events, so update cursor info here. */
               wt->updateCursorInfo();
-            }
-            else
+            } else
             {
               wt->leaveRange();
             }
@@ -2113,8 +2189,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
           if ((short)HIWORD(wParam) == XBUTTON1)
           {
             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton4);
-          }
-          else if ((short)HIWORD(wParam) == XBUTTON2)
+          } else if ((short)HIWORD(wParam) == XBUTTON2)
           {
             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton5);
           }
@@ -2132,8 +2207,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
           if ((short)HIWORD(wParam) == XBUTTON1)
           {
             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton4);
-          }
-          else if ((short)HIWORD(wParam) == XBUTTON2)
+          } else if ((short)HIWORD(wParam) == XBUTTON2)
           {
             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton5);
           }
@@ -2201,8 +2275,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
             window->loadCursor(window->getCursorVisibility(), window->getCursorShape());
             // Bypass call to DefWindowProc
             return 0;
-          }
-          else
+          } else
           {
             // Outside of client area show standard cursor
             window->loadCursor(true, ANCHOR_StandardCursorDefault);
@@ -2304,8 +2377,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
           {
             event = processWindowEvent(AnchorEventTypeWindowUpdate, window);
             ::ValidateRect(hwnd, NULL);
-          }
-          else
+          } else
           {
             eventHandled = true;
           }
@@ -2350,8 +2422,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
           {
             system->pushEvent(processWindowEvent(AnchorEventTypeWindowMove, window));
             system->dispatchEvents();
-          }
-          else
+          } else
           {
             event = processWindowEvent(AnchorEventTypeWindowMove, window);
           }
@@ -2474,8 +2545,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
            */
           break;
       }
-    }
-    else
+    } else
     {
       // Event found for a window before the pointer to the class has been set.
       // TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved a window event before creation\n");
@@ -2487,8 +2557,7 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
        * We let DefWindowProc do the work.
        */
     }
-  }
-  else
+  } else
   {
     // Events without valid hwnd
     TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved event without valid hwnd\n");
@@ -2514,17 +2583,14 @@ eAnchorKey AnchorSystemWin32::convertKey(short vKey, short scanCode, short exten
   {
     // VK_0 thru VK_9 are the same as ASCII '0' thru '9' (0x30 - 0x39)
     key = (eAnchorKey)(vKey - '0' + AnchorKey0);
-  }
-  else if ((vKey >= 'A') && (vKey <= 'Z'))
+  } else if ((vKey >= 'A') && (vKey <= 'Z'))
   {
     // VK_A thru VK_Z are the same as ASCII 'A' thru 'Z' (0x41 - 0x5A)
     key = (eAnchorKey)(vKey - 'A' + AnchorKeyA);
-  }
-  else if ((vKey >= VK_F1) && (vKey <= VK_F24))
+  } else if ((vKey >= VK_F1) && (vKey <= VK_F24))
   {
     key = (eAnchorKey)(vKey - VK_F1 + AnchorKeyF1);
-  }
-  else
+  } else
   {
     switch (vKey)
     {
@@ -2651,12 +2717,10 @@ eAnchorKey AnchorSystemWin32::convertKey(short vKey, short scanCode, short exten
         if (scanCode == 0x36)
         {
           key = AnchorKeyRightShift;
-        }
-        else if (scanCode == 0x2a)
+        } else if (scanCode == 0x2a)
         {
           key = AnchorKeyLeftShift;
-        }
-        else
+        } else
         {
           /* Must be a combination SHIFT (Left or Right) + a Key
            * Ignore this as the next message will contain
@@ -2821,8 +2885,7 @@ eAnchorKey AnchorSystemWin32::processSpecialKey(short vKey, short scanCode) cons
   return key;
 }
 
-AnchorEvent *AnchorSystemWin32::processWindowEvent(eAnchorEventType type,
-                                                   AnchorWindowWin32 *window)
+AnchorEvent *AnchorSystemWin32::processWindowEvent(eAnchorEventType type, AnchorWindowWin32 *window)
 {
   AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 
@@ -2834,7 +2897,10 @@ AnchorEvent *AnchorSystemWin32::processWindowEvent(eAnchorEventType type,
   return new AnchorEvent(ANCHOR::GetTime(), type, window);
 }
 
-void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool isHorizontal)
+void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window,
+                                          WPARAM wParam,
+                                          LPARAM lParam,
+                                          bool isHorizontal)
 {
   AnchorIO &io = ANCHOR::GetIO();
 
@@ -2872,7 +2938,11 @@ void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window, WPARAM wPar
   io.MouseWheel = system->m_wheelDeltaAccum;
 }
 
-void AnchorSystemWin32::processPointerEvent(UINT type, AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventHandled)
+void AnchorSystemWin32::processPointerEvent(UINT type,
+                                            AnchorWindowWin32 *window,
+                                            WPARAM wParam,
+                                            LPARAM lParam,
+                                            bool &eventHandled)
 {
   /* Pointer events might fire when changing windows for a device which is set to use Wintab,
    * even when Wintab is left enabled but set to the bottom of Wintab overlap order. */
@@ -2979,8 +3049,7 @@ AnchorEventCursor *AnchorSystemWin32::processCursorEvent(AnchorWindowWin32 *wind
        * a new event after. */
       system->setCursorPosition(x_new, y_new); /* wrap */
       window->setCursorGrabAccum(x_accum + (x_screen - x_new), y_accum + (y_screen - y_new));
-    }
-    else
+    } else
     {
       return new AnchorEventCursor(ANCHOR::GetTime(),
                                    AnchorEventTypeCursorMove,
@@ -2989,8 +3058,7 @@ AnchorEventCursor *AnchorSystemWin32::processCursorEvent(AnchorWindowWin32 *wind
                                    y_screen + y_accum,
                                    ANCHOR_TABLET_DATA_NONE);
     }
-  }
-  else
+  } else
   {
     return new AnchorEventCursor(ANCHOR::GetTime(),
                                  AnchorEventTypeCursorMove,
@@ -3017,8 +3085,8 @@ AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
     DWORD msgPos = ::GetMessagePos();
     int msgPosX = GET_X_LPARAM(msgPos);
     int msgPosY = GET_Y_LPARAM(msgPos);
-    system->pushEvent(new AnchorEventCursor(
-      ::GetMessageTime(), AnchorEventTypeCursorMove, window, msgPosX, msgPosY, td));
+    system->pushEvent(
+      new AnchorEventCursor(::GetMessageTime(), AnchorEventTypeCursorMove, window, msgPosX, msgPosY, td));
   }
 
   /**
@@ -3044,8 +3112,7 @@ AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
         ANCHOR::GetIO().MouseDown[4] = true;
         break;
     }
-  }
-  else
+  } else
   {
     switch (mask)
     {
@@ -3134,8 +3201,7 @@ eAnchorKey AnchorSystemWin32::hardKey(RAWINPUT const &raw, bool *r_keyDown, bool
     {
       modifiers.set(modifier, *r_keyDown);
       system->storeModifierKeys(modifiers);
-    }
-    else
+    } else
     {
       is_repeated_modifier = true;
     }
@@ -3156,8 +3222,7 @@ AnchorEvent *AnchorSystemWin32::processWindowSizeEvent(AnchorWindowWin32 *window
     system->pushEvent(sizeEvent);
     system->dispatchEvents();
     return NULL;
-  }
-  else
+  } else
   {
     return sizeEvent;
   }
@@ -3189,8 +3254,7 @@ AnchorEventKey *AnchorSystemWin32::processKeyEvent(AnchorWindowWin32 *window, RA
         is_repeat = true;
       }
       system->m_keycode_last_repeat_key = vk;
-    }
-    else
+    } else
     {
       if (system->m_keycode_last_repeat_key == vk)
       {
@@ -3216,15 +3280,13 @@ AnchorEventKey *AnchorSystemWin32::processKeyEvent(AnchorWindowWin32 *window, RA
     {
       // todo: ToUnicodeEx can respond with up to 4 utf16 chars (only 2 here).
       // Could be up to 24 utf8 bytes.
-      if ((r = ToUnicodeEx(
-             vk, raw.data.keyboard.MakeCode, state, utf16, 2, 0, system->m_keylayout)))
+      if ((r = ToUnicodeEx(vk, raw.data.keyboard.MakeCode, state, utf16, 2, 0, system->m_keylayout)))
       {
         if ((r > 0 && r < 3))
         {
           utf16[r] = 0;
           conv_utf_16_to_8(utf16, utf8_char, 6);
-        }
-        else if (r == -1)
+        } else if (r == -1)
         {
           utf8_char[0] = '\0';
         }
@@ -3235,8 +3297,7 @@ AnchorEventKey *AnchorSystemWin32::processKeyEvent(AnchorWindowWin32 *window, RA
     {
       utf8_char[0] = '\0';
       ascii = '\0';
-    }
-    else
+    } else
     {
       ascii = utf8_char[0] & 0x80 ? '?' : utf8_char[0];
     }
@@ -3248,8 +3309,7 @@ AnchorEventKey *AnchorSystemWin32::processKeyEvent(AnchorWindowWin32 *window, RA
                                ascii,
                                utf8_char,
                                is_repeat);
-  }
-  else
+  } else
   {
     event = NULL;
   }
@@ -3343,9 +3403,8 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
     m_frameIndex(0),
     m_fenceLastSignaledValue(0)
 {
-  DWORD style = parentWindow ?
-                  WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
-                  WS_OVERLAPPEDWINDOW;
+  DWORD style = parentWindow ? WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
+                               WS_OVERLAPPEDWINDOW;
 
   if (state == AnchorWindowStateFullScreen)
   {
@@ -3447,11 +3506,7 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
   // }
 
   /* Allow the showing of a progress bar on the taskbar. */
-  CoCreateInstance(CLSID_TaskbarList,
-                   NULL,
-                   CLSCTX_INPROC_SERVER,
-                   IID_ITaskbarList3,
-                   (LPVOID *)&m_Bar);
+  CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID *)&m_Bar);
 }
 
 AnchorWindowWin32::~AnchorWindowWin32()
@@ -3596,9 +3651,7 @@ eAnchorStatus AnchorWindowWin32::releaseNativeHandles()
   return ANCHOR_SUCCESS;
 }
 
-void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
-                                                          DWORD dwStyle,
-                                                          DWORD dwExStyle)
+void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect, DWORD dwStyle, DWORD dwExStyle)
 {
   /* Get Details of the closest monitor. */
   HMONITOR hmonitor = MonitorFromRect(win_rect, MONITOR_DEFAULTTONEAREST);
@@ -3620,7 +3673,8 @@ void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
   if (m_user32)
   {
     fpAdjustWindowRectExForDpi = (AnchorAdjustWindowRectExForDpiCallback)::GetProcAddress(
-      m_user32, "AdjustWindowRectExForDpi");
+      m_user32,
+      "AdjustWindowRectExForDpi");
   }
 
   /* Adjust to allow for caption, borders, shadows, scaling, etc. Resulting values can be
@@ -3630,8 +3684,7 @@ void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
     UINT dpiX, dpiY;
     GetDpiForMonitor(hmonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
     fpAdjustWindowRectExForDpi(win_rect, dwStyle & ~WS_OVERLAPPED, FALSE, dwExStyle, dpiX);
-  }
-  else
+  } else
   {
     AdjustWindowRectEx(win_rect, dwStyle & ~WS_OVERLAPPED, FALSE, dwExStyle);
   }
@@ -3686,8 +3739,7 @@ void AnchorWindowWin32::getClientBounds(AnchorRect &bounds) const
 
     bounds.m_r = coord.x;
     bounds.m_b = coord.y;
-  }
-  else
+  } else
   {
     bounds.m_b = 0;
     bounds.m_l = 0;
@@ -3740,8 +3792,7 @@ static void check_vk_result(VkResult err)
 
     fflush(stdout);
     exit(ANCHOR_FAILURE);
-  }
-  else if (err != VK_SUCCESS)
+  } else if (err != VK_SUCCESS)
   {
 
     TF_MSG_ERROR(
@@ -3824,14 +3875,19 @@ void AnchorWindowWin32::SetupVulkan()
   ANCHOR_ASSERT(queueCount >= 1);
 
   std::vector<VkQueueFamilyProperties> queueProperties(queueCount);
-  vkGetPhysicalDeviceQueueFamilyProperties(m_device->GetVulkanPhysicalDevice(), &queueCount, queueProperties.data());
+  vkGetPhysicalDeviceQueueFamilyProperties(m_device->GetVulkanPhysicalDevice(),
+                                           &queueCount,
+                                           queueProperties.data());
 
   uint32_t queueIndex;
 
   std::vector<VkBool32> supportsPresenting(queueCount);
   for (uint32_t i = 0; i < queueCount; i++)
   {
-    vkGetPhysicalDeviceSurfaceSupportKHR(m_device->GetVulkanPhysicalDevice(), i, surface, &supportsPresenting[i]);
+    vkGetPhysicalDeviceSurfaceSupportKHR(m_device->GetVulkanPhysicalDevice(),
+                                         i,
+                                         surface,
+                                         &supportsPresenting[i]);
 
     if ((queueProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
     {
@@ -3847,7 +3903,10 @@ void AnchorWindowWin32::SetupVulkan()
   /**
    * Select Surface Format. */
   uint32_t formatCount = 0;
-  err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->GetVulkanPhysicalDevice(), surface, &formatCount, NULL);
+  err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->GetVulkanPhysicalDevice(),
+                                             surface,
+                                             &formatCount,
+                                             NULL);
   ANCHOR_ASSERT(err == VK_SUCCESS);
   ANCHOR_ASSERT(formatCount >= 1);
 
@@ -3864,8 +3923,7 @@ void AnchorWindowWin32::SetupVulkan()
   if (formatCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED)
   {
     colorFormat = VK_FORMAT_B8G8R8A8_UNORM;
-  }
-  else
+  } else
   {
     colorFormat = surfaceFormats[0].format;
   }
@@ -3876,7 +3934,9 @@ void AnchorWindowWin32::SetupVulkan()
   m_vulkan_context->SurfaceFormat = surfaceFormats[0];
 
   VkSurfaceCapabilitiesKHR caps = {};
-  VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_device->GetVulkanPhysicalDevice(), surface, &caps);
+  VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_device->GetVulkanPhysicalDevice(),
+                                                              surface,
+                                                              &caps);
   ANCHOR_ASSERT(result == VK_SUCCESS);
 
   VkExtent2D swapchainExtent = {};
@@ -3887,8 +3947,7 @@ void AnchorWindowWin32::SetupVulkan()
   {
     swapchainExtent.width = rectBounds.getWidth();
     swapchainExtent.height = rectBounds.getHeight();
-  }
-  else
+  } else
   {
     swapchainExtent = caps.currentExtent;
   }
@@ -3954,12 +4013,18 @@ void AnchorWindowWin32::SetupVulkan()
   }
 
   VkSwapchainKHR swapchain;
-  result = vkCreateSwapchainKHR(m_device->GetVulkanDevice(), &swapchainCreateInfo, HgiVulkanAllocator(), &swapchain);
+  result = vkCreateSwapchainKHR(m_device->GetVulkanDevice(),
+                                &swapchainCreateInfo,
+                                HgiVulkanAllocator(),
+                                &swapchain);
   ANCHOR_ASSERT(result == VK_SUCCESS);
 
   m_vulkan_context->Swapchain = swapchain;
 
-  result = vkGetSwapchainImagesKHR(m_device->GetVulkanDevice(), m_vulkan_context->Swapchain, &m_vulkan_context->ImageCount, NULL);
+  result = vkGetSwapchainImagesKHR(m_device->GetVulkanDevice(),
+                                   m_vulkan_context->Swapchain,
+                                   &m_vulkan_context->ImageCount,
+                                   NULL);
   ANCHOR_ASSERT(result == VK_SUCCESS);
   ANCHOR_ASSERT(m_vulkan_context->ImageCount > 0);
 
@@ -3974,17 +4039,18 @@ void AnchorWindowWin32::SetupVulkan()
    * Create Descriptor Pool. */
   {
     VkDescriptorPoolSize pool_sizes[] = {
-      {VK_DESCRIPTOR_TYPE_SAMPLER, 1000},
+      {VK_DESCRIPTOR_TYPE_SAMPLER,                1000},
       {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
-      {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000},
-      {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000},
-      {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000},
-      {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000},
-      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000},
-      {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000},
+      {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,          1000},
+      {VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,   1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,   1000},
+      {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         1000},
+      {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1000},
       {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000},
       {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000},
-      {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000}};
+      {VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,       1000}
+    };
 
     VkDescriptorPoolCreateInfo pool_info = {};
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -4055,7 +4121,8 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
     VkMemoryAllocateInfo alloc_info = {};
     alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     alloc_info.allocationSize = req.size;
-    alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits);
+    alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                                                     req.memoryTypeBits);
     err = vkAllocateMemory(m_device->GetVulkanDevice(), &alloc_info, HgiVulkanAllocator(), &m_fontMemory);
     check_vk_result(err);
     err = vkBindImageMemory(m_device->GetVulkanDevice(), m_fontImage, m_fontMemory, 0);
@@ -4098,17 +4165,24 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
     buffer_info.size = upload_size;
     buffer_info.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    err = vkCreateBuffer(m_device->GetVulkanDevice(), &buffer_info, HgiVulkanAllocator(), &m_fontUploadBuffer);
+    err = vkCreateBuffer(m_device->GetVulkanDevice(),
+                         &buffer_info,
+                         HgiVulkanAllocator(),
+                         &m_fontUploadBuffer);
     check_vk_result(err);
     VkMemoryRequirements req;
     vkGetBufferMemoryRequirements(m_device->GetVulkanDevice(), m_fontUploadBuffer, &req);
-    m_bufferMemoryAlignment = (m_bufferMemoryAlignment > req.alignment) ? m_bufferMemoryAlignment : req.alignment;
+    m_bufferMemoryAlignment = (m_bufferMemoryAlignment > req.alignment) ? m_bufferMemoryAlignment :
+                                                                          req.alignment;
     VkMemoryAllocateInfo alloc_info = {};
     alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     alloc_info.allocationSize = req.size;
     alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
                                                      req.memoryTypeBits);
-    err = vkAllocateMemory(m_device->GetVulkanDevice(), &alloc_info, HgiVulkanAllocator(), &m_fontUploadBufferMemory);
+    err = vkAllocateMemory(m_device->GetVulkanDevice(),
+                           &alloc_info,
+                           HgiVulkanAllocator(),
+                           &m_fontUploadBufferMemory);
     check_vk_result(err);
     err = vkBindBufferMemory(m_device->GetVulkanDevice(), m_fontUploadBuffer, m_fontUploadBufferMemory, 0);
     check_vk_result(err);
@@ -4117,7 +4191,8 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
   // Upload to Buffer:
   {
     char *map = NULL;
-    err = vkMapMemory(m_device->GetVulkanDevice(), m_fontUploadBufferMemory, 0, upload_size, 0, (void **)(&map));
+    err =
+      vkMapMemory(m_device->GetVulkanDevice(), m_fontUploadBufferMemory, 0, upload_size, 0, (void **)(&map));
     check_vk_result(err);
     memcpy(map, pixels, upload_size);
     VkMappedMemoryRange range[1] = {};
@@ -4239,7 +4314,10 @@ void AnchorWindowWin32::CreateVulkanDescriptorSetLayout()
     info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     info.bindingCount = 1;
     info.pBindings = binding;
-    err = vkCreateDescriptorSetLayout(m_device->GetVulkanDevice(), &info, HgiVulkanAllocator(), &g_DescriptorSetLayout);
+    err = vkCreateDescriptorSetLayout(m_device->GetVulkanDevice(),
+                                      &info,
+                                      HgiVulkanAllocator(),
+                                      &g_DescriptorSetLayout);
     check_vk_result(err);
   }
 
@@ -4349,13 +4427,19 @@ eAnchorStatus AnchorWindowWin32::SetupD3D(HWND hWnd)
 
   for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
   {
-    if (m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_frameContext[i].CommandAllocator)) != S_OK)
+    if (m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                            IID_PPV_ARGS(&m_frameContext[i].CommandAllocator)) != S_OK)
     {
       return ANCHOR_FAILURE;
     }
   }
 
-  if (m_d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_frameContext[0].CommandAllocator, NULL, IID_PPV_ARGS(&m_d3dCommandList)) != S_OK || m_d3dCommandList->Close() != S_OK)
+  if (m_d3dDevice->CreateCommandList(0,
+                                     D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                     m_frameContext[0].CommandAllocator,
+                                     NULL,
+                                     IID_PPV_ARGS(&m_d3dCommandList)) != S_OK ||
+      m_d3dCommandList->Close() != S_OK)
   {
     return ANCHOR_FAILURE;
   }
@@ -4642,8 +4726,10 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
     VkCommandPool vkcmdpool = cmdBuf->GetVulkanCommandPool();
     VkFence vkfence = cmdBuf->GetVulkanFence();
 
-    VkSemaphore image_acquired_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
-    // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
+    VkSemaphore image_acquired_semaphore =
+      m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].ImageAcquiredSemaphore;
+    // VkSemaphore render_complete_semaphore =
+    // m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
     VkSemaphore render_complete_semaphore = cmdBuf->GetVulkanSemaphore();
 
     err = vkAcquireNextImageKHR(device->GetVulkanDevice(),
@@ -4717,8 +4803,7 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
       err = vkQueueSubmit(m_commandQueue->GetVulkanGraphicsQueue(), 1, &info, vkfence);
       check_vk_result(err);
     }
-  }
-  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
+  } else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
   {
   }
 }
@@ -4731,7 +4816,8 @@ void AnchorWindowWin32::FramePresent()
     {
       return;
     }
-    // VkSemaphore render_complete_semaphore = m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
+    // VkSemaphore render_complete_semaphore =
+    // m_vulkan_context->FrameSemaphores[m_vulkan_context->SemaphoreIndex].RenderCompleteSemaphore;
     HgiVulkanCommandBuffer *cmdBuf = m_commandQueue->AcquireCommandBuffer();
     VkSemaphore render_complete_semaphore = cmdBuf->GetVulkanSemaphore();
 
@@ -4752,8 +4838,7 @@ void AnchorWindowWin32::FramePresent()
     /**
      * Now we can use the next set of semaphores. */
     m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
-  }
-  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
+  } else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
   {
   }
 }
@@ -4763,9 +4848,7 @@ D3D12FrameContext *AnchorWindowWin32::WaitForNextD3D12FrameResources()
   UINT nextFrameIndex = m_frameIndex + 1;
   m_frameIndex = nextFrameIndex;
 
-  HANDLE waitableObjects[] = {
-    m_d3dSwapChainWaitObject,
-    NULL};
+  HANDLE waitableObjects[] = {m_d3dSwapChainWaitObject, NULL};
 
   DWORD numWaitableObjects = 1;
 
@@ -4830,7 +4913,10 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
       g_HDPARAMS_Apollo.clearColor[2] * g_HDPARAMS_Apollo.clearColor[3],
       g_HDPARAMS_Apollo.clearColor[3]};
 
-    m_d3dCommandList->ClearRenderTargetView(m_mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, NULL);
+    m_d3dCommandList->ClearRenderTargetView(m_mainRenderTargetDescriptor[backBufferIdx],
+                                            clear_color_with_alpha,
+                                            0,
+                                            NULL);
     m_d3dCommandList->OMSetRenderTargets(1, &m_mainRenderTargetDescriptor[backBufferIdx], FALSE, NULL);
     m_d3dCommandList->SetDescriptorHeaps(1, &m_d3dSrvDescriptorHeap);
     AnchorBackendDXD12RenderDrawData(ANCHOR::GetDrawData(), m_d3dCommandList);
@@ -4842,7 +4928,7 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
     m_d3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList *const *)&m_d3dCommandList);
 
     m_d3dSwapChain->Present(1, 0);  // Present with vsync
-    //g_pSwapChain->Present(0, 0); // Present without vsync
+    // g_pSwapChain->Present(0, 0); // Present without vsync
 
     UINT64 fenceValue = m_fenceLastSignaledValue + 1;
     m_d3dCommandQueue->Signal(m_fence, fenceValue);
@@ -4853,10 +4939,7 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
   return ANCHOR_SUCCESS;
 }
 
-void AnchorWindowWin32::screenToClient(AnchorS32 inX,
-                                       AnchorS32 inY,
-                                       AnchorS32 &outX,
-                                       AnchorS32 &outY) const
+void AnchorWindowWin32::screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
 {
   POINT point = {inX, inY};
   ::ScreenToClient(m_hWnd, &point);
@@ -4864,10 +4947,7 @@ void AnchorWindowWin32::screenToClient(AnchorS32 inX,
   outY = point.y;
 }
 
-void AnchorWindowWin32::clientToScreen(AnchorS32 inX,
-                                       AnchorS32 inY,
-                                       AnchorS32 &outX,
-                                       AnchorS32 &outY) const
+void AnchorWindowWin32::clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
 {
   POINT point = {inX, inY};
   ::ClientToScreen(m_hWnd, &point);
@@ -4888,8 +4968,7 @@ eAnchorStatus AnchorWindowWin32::setOrder(eAnchorWindowOrder order)
   {
     hWndInsertAfter = HWND_BOTTOM;
     hWndToRaise = ::GetWindow(m_hWnd, GW_HWNDNEXT); /* the window to raise */
-  }
-  else
+  } else
   {
     if (getState() == AnchorWindowStateMinimized)
     {
@@ -4904,8 +4983,7 @@ eAnchorStatus AnchorWindowWin32::setOrder(eAnchorWindowOrder order)
     return ANCHOR_FAILURE;
   }
 
-  if (hWndToRaise &&
-      ::SetWindowPos(hWndToRaise, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE)
+  if (hWndToRaise && ::SetWindowPos(hWndToRaise, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE)
   {
     return ANCHOR_FAILURE;
   }
@@ -4952,8 +5030,7 @@ void AnchorWindowWin32::updateMouseCapture(eAnchorMouseCaptureEventWin32 event)
   {
     ::ReleaseCapture();
     m_hasMouseCaptured = false;
-  }
-  else if ((m_nPressedButtons || m_hasGrabMouse) && !m_hasMouseCaptured)
+  } else if ((m_nPressedButtons || m_hasGrabMouse) && !m_hasMouseCaptured)
   {
     ::SetCapture(m_hWnd);
     m_hasMouseCaptured = true;
@@ -4977,8 +5054,7 @@ HCURSOR AnchorWindowWin32::getStandardCursor(eAnchorStandardCursor shape) const
       if (m_customCursor)
       {
         return m_customCursor;
-      }
-      else
+      } else
       {
         return NULL;
       }
@@ -5109,8 +5185,7 @@ void AnchorWindowWin32::loadCursor(bool visible, eAnchorStandardCursor shape) co
   {
     while (::ShowCursor(FALSE) >= 0)
       ;
-  }
-  else
+  } else
   {
     while (::ShowCursor(TRUE) < 0)
       ;
@@ -5134,11 +5209,9 @@ eAnchorStatus AnchorWindowWin32::setClientSize(AnchorU32 width, AnchorU32 height
     getWindowBounds(wBnds);
     int cx = wBnds.getWidth() + width - cBnds.getWidth();
     int cy = wBnds.getHeight() + height - cBnds.getHeight();
-    success = ::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER) ?
-                ANCHOR_SUCCESS :
-                ANCHOR_FAILURE;
-  }
-  else
+    success = ::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER) ? ANCHOR_SUCCESS :
+                                                                                          ANCHOR_FAILURE;
+  } else
   {
     success = ANCHOR_SUCCESS;
   }
@@ -5174,13 +5247,11 @@ eAnchorStatus AnchorWindowWin32::setState(eAnchorWindowState state)
       break;
     case AnchorWindowStateNormal:
     default:
-      if (curstate == AnchorWindowStateFullScreen &&
-          m_normal_state == AnchorWindowStateMaximized)
+      if (curstate == AnchorWindowStateFullScreen && m_normal_state == AnchorWindowStateMaximized)
       {
         wp.showCmd = SW_SHOWMAXIMIZED;
         m_normal_state = AnchorWindowStateNormal;
-      }
-      else
+      } else
       {
         wp.showCmd = SW_SHOWNORMAL;
       }
@@ -5197,8 +5268,7 @@ eAnchorWindowState AnchorWindowWin32::getState() const
   if (::IsIconic(m_hWnd))
   {
     return AnchorWindowStateMinimized;
-  }
-  else if (::IsZoomed(m_hWnd))
+  } else if (::IsZoomed(m_hWnd))
   {
     LONG_PTR result = ::GetWindowLongPtr(m_hWnd, GWL_STYLE);
     return (result & WS_CAPTION) ? AnchorWindowStateMaximized : AnchorWindowStateFullScreen;
@@ -5227,7 +5297,9 @@ AnchorU16 AnchorWindowWin32::getDPIHint()
 {
   if (m_user32)
   {
-    AnchorGetDpiForWindowCallback fpGetDpiForWindow = (AnchorGetDpiForWindowCallback)::GetProcAddress(m_user32, "GetDpiForWindow");
+    AnchorGetDpiForWindowCallback fpGetDpiForWindow = (AnchorGetDpiForWindowCallback)::GetProcAddress(
+      m_user32,
+      "GetDpiForWindow");
 
     if (fpGetDpiForWindow)
     {

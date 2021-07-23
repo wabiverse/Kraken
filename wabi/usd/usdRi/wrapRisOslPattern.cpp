@@ -50,27 +50,28 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateFilePathAttr(UsdRiRisOslPattern &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
+  static UsdAttribute _CreateFilePathAttr(UsdRiRisOslPattern &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFilePathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
+  }
 
-static UsdAttribute _CreateOslPathAttr(UsdRiRisOslPattern &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateOslPathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
-}
+  static UsdAttribute _CreateOslPathAttr(UsdRiRisOslPattern &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateOslPathAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset), writeSparsely);
+  }
 
-static std::string _Repr(const UsdRiRisOslPattern &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdRi.RisOslPattern(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdRiRisOslPattern &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdRi.RisOslPattern(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -138,7 +139,7 @@ void wrapUsdRiRisOslPattern()
 namespace
 {
 
-WRAP_CUSTOM
-{}
+  WRAP_CUSTOM
+  {}
 
 }  // anonymous namespace

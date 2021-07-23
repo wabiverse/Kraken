@@ -71,15 +71,14 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
       TF_CODING_ERROR("Cannot create attribute spec on <%s> with invalid name '%s'",
                       ownerPtr->GetPath().GetText(),
                       name.c_str());
-    }
-    else if (ownerPtr->GetPath() == SdfPath::AbsoluteRootPath())
+    } else if (ownerPtr->GetPath() == SdfPath::AbsoluteRootPath())
     {
       TF_CODING_ERROR("Cannot create attribute spec '%s' on the pseudo-root '/'", name.c_str());
-    }
-    else
+    } else
     {
-      TF_CODING_ERROR(
-        "Cannot create attribute spec '%s' on <%s>", name.c_str(), ownerPtr->GetPath().GetText());
+      TF_CODING_ERROR("Cannot create attribute spec '%s' on <%s>",
+                      name.c_str(),
+                      ownerPtr->GetPath().GetText());
     }
     return result;
   }
@@ -107,8 +106,10 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
   // only if they are not custom.
   const bool hasOnlyRequiredFields = (!custom);
 
-  if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CreateSpec(
-        layer, attrPath, SdfSpecTypeAttribute, hasOnlyRequiredFields))
+  if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CreateSpec(layer,
+                                                               attrPath,
+                                                               SdfSpecTypeAttribute,
+                                                               hasOnlyRequiredFields))
   {
     return result;
   }

@@ -123,14 +123,15 @@ UsdAttribute UsdShadeNodeDefAPI::CreateIdAttr(VtValue const &defaultValue, bool 
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -165,9 +166,9 @@ WABI_NAMESPACE_END
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         (info)((infoSourceAsset, "info:sourceAsset"))((
-                           infoSubIdentifier,
-                           "info:sourceAsset:subIdentifier"))((infoSourceCode, "info:sourceCode")));
+                         (info)((infoSourceAsset, "info:sourceAsset"))(
+                           (infoSubIdentifier, "info:sourceAsset:subIdentifier"))((infoSourceCode,
+                                                                                   "info:sourceCode")));
 
 TfToken UsdShadeNodeDefAPI::GetImplementationSource() const
 {
@@ -178,8 +179,7 @@ TfToken UsdShadeNodeDefAPI::GetImplementationSource() const
       implSource == UsdShadeTokens->sourceCode)
   {
     return implSource;
-  }
-  else
+  } else
   {
     TF_WARN(
       "Found invalid info:implementationSource value '%s' on shader "
@@ -384,25 +384,26 @@ SdrShaderNodeConstPtr UsdShadeNodeDefAPI::GetShaderNodeForSourceType(const TfTok
     {
       return SdrRegistry::GetInstance().GetShaderNodeByIdentifierAndType(shaderId, sourceType);
     }
-  }
-  else if (implSource == UsdShadeTokens->sourceAsset)
+  } else if (implSource == UsdShadeTokens->sourceAsset)
   {
     SdfAssetPath sourceAsset;
     if (GetSourceAsset(&sourceAsset, sourceType))
     {
       TfToken subIdentifier;
       GetSourceAssetSubIdentifier(&subIdentifier, sourceType);
-      return SdrRegistry::GetInstance().GetShaderNodeFromAsset(
-        sourceAsset, _GetSdrMetadata(GetPrim()), subIdentifier, sourceType);
+      return SdrRegistry::GetInstance().GetShaderNodeFromAsset(sourceAsset,
+                                                               _GetSdrMetadata(GetPrim()),
+                                                               subIdentifier,
+                                                               sourceType);
     }
-  }
-  else if (implSource == UsdShadeTokens->sourceCode)
+  } else if (implSource == UsdShadeTokens->sourceCode)
   {
     std::string sourceCode;
     if (GetSourceCode(&sourceCode, sourceType))
     {
-      return SdrRegistry::GetInstance().GetShaderNodeFromSourceCode(
-        sourceCode, sourceType, _GetSdrMetadata(GetPrim()));
+      return SdrRegistry::GetInstance().GetShaderNodeFromSourceCode(sourceCode,
+                                                                    sourceType,
+                                                                    _GetSdrMetadata(GetPrim()));
     }
   }
 

@@ -61,8 +61,7 @@ PcpPropertyIndex::PcpPropertyIndex(const PcpPropertyIndex &rhs)
   if (rhs._localErrors)
   {
     _localErrors.reset(new PcpErrorVector(*rhs._localErrors.get()));
-  }
-  else
+  } else
   {
     _localErrors.reset();
   }
@@ -95,8 +94,7 @@ PcpPropertyRange PcpPropertyIndex::GetPropertyRange(bool localOnly) const
 
     return PcpPropertyRange(PcpPropertyIterator(*this, foundLocalSpecs ? startIdx : 0),
                             PcpPropertyIterator(*this, foundLocalSpecs ? endIdx : 0));
-  }
-  else
+  } else
   {
     return PcpPropertyRange(PcpPropertyIterator(*this, 0),
                             PcpPropertyIterator(*this, _propertyStack.size()));
@@ -171,8 +169,7 @@ class Pcp_PropertyIndexer
       // First one, just record the property type and layer
       _firstSpec = propSpec;
       _propType = propType;
-    }
-    else if (_propType != propType)
+    } else if (_propType != propType)
     {
       // This property spec is inconsistent with the type of the
       // specs previously seen.
@@ -313,8 +310,7 @@ void Pcp_PropertyIndexer::_AddPropertySpecIfPermitted(const SdfPropertySpecHandl
     propertyInfo->push_back(Pcp_PropertyInfo(propSpec, node));
     // Accumulate permission.
     permissions->current = propSpec->GetFieldAs(SdfFieldKeys->Permission, permissions->current);
-  }
-  else
+  } else
   {
     // The previous node's property permission was private, and this
     // node also has an opinion about it. This is illegal.
@@ -363,8 +359,7 @@ void Pcp_PropertyIndexer::GatherPropertySpecs(const PcpPrimIndex &primIndex, boo
     // because we needed to do a weak-to-strong traversal for permissions.
     // Here, we reverse the results to give us the correct order.
     std::reverse(propertyInfo.begin(), propertyInfo.end());
-  }
-  else
+  } else
   {
     for (PcpNodeRef const &node : primIndex.GetNodeRange())
     {
@@ -425,8 +420,7 @@ void Pcp_PropertyIndexer::GatherRelationalAttributeSpecs(const PcpPropertyIndex 
       {
         // USD does not enforce permissions.
         propertyInfo.push_back(Pcp_PropertyInfo(relAttrSpec, curNode));
-      }
-      else
+      } else
       {
         _AddPropertySpecIfPermitted(relAttrSpec, curNode, &permissions, &propertyInfo);
       }
@@ -473,10 +467,12 @@ void PcpBuildPropertyIndex(const SdfPath &propertyPath,
 
   if (parentPath.IsPrimPath())
   {
-    PcpBuildPrimPropertyIndex(
-      propertyPath, *cache, cache->ComputePrimIndex(parentPath, allErrors), propertyIndex, allErrors);
-  }
-  else if (parentPath.IsPrimPropertyPath())
+    PcpBuildPrimPropertyIndex(propertyPath,
+                              *cache,
+                              cache->ComputePrimIndex(parentPath, allErrors),
+                              propertyIndex,
+                              allErrors);
+  } else if (parentPath.IsPrimPropertyPath())
   {
     const PcpSite propSite(cache->GetLayerStackIdentifier(), propertyPath);
     Pcp_PropertyIndexer indexer(propertyIndex, propSite, allErrors);
@@ -491,14 +487,12 @@ void PcpBuildPropertyIndex(const SdfPath &propertyPath,
       PcpPropertyIndex relIndex;
       PcpBuildPropertyIndex(parentPath, cache, &relIndex, allErrors);
       indexer.GatherRelationalAttributeSpecs(relIndex, true);
-    }
-    else
+    } else
     {
       const PcpPropertyIndex &relIndex = cache->ComputePropertyIndex(parentPath, allErrors);
       indexer.GatherRelationalAttributeSpecs(relIndex, false);
     }
-  }
-  else
+  } else
   {
     // CODE_COVERAGE_OFF
     // This should not happen.  Owner is not a prim or a

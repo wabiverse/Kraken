@@ -91,8 +91,7 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
       NSString *err = [error localizedDescription];
       TF_WARN("Failed to compile shader: \n%s", [err UTF8String]);
       TF_WARN("%s", shaderStr.c_str());
-    }
-    else
+    } else
     {
       HGIMETAL_DEBUG_LABEL(_shaderId, _descriptor.debugName.c_str());
     }

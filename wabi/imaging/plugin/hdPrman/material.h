@@ -87,10 +87,9 @@ class HdPrmanMaterial final : public HdMaterial
 /// Helper function for converting an HdMaterialNetwork into Riley shading
 /// nodes. Lights and light filters, in addition to materials, need to be able
 /// to perform this conversion.
-bool HdPrman_ConvertHdMaterialNetwork2ToRmanNodes(
-  HdMaterialNetwork2 const &network,
-  SdfPath const &nodePath,
-  std::vector<riley::ShadingNode> *result);
+bool HdPrman_ConvertHdMaterialNetwork2ToRmanNodes(HdMaterialNetwork2 const &network,
+                                                  SdfPath const &nodePath,
+                                                  std::vector<riley::ShadingNode> *result);
 
 WABI_NAMESPACE_END
 

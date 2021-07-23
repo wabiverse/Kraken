@@ -117,7 +117,9 @@ void HdPh_DomeLightComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &ra
 
   HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
   HdPhGLSLProgramSharedPtr const computeProgram = HdPhGLSLProgram::GetComputeProgram(
-    HdPhPackageDomeLightShader(), _shaderToken, static_cast<HdPhResourceRegistry *>(resourceRegistry));
+    HdPhPackageDomeLightShader(),
+    _shaderToken,
+    static_cast<HdPhResourceRegistry *>(resourceRegistry));
   if (!TF_VERIFY(computeProgram))
   {
     return;

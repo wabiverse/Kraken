@@ -115,8 +115,7 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
       if (is_ortho)
       {
         active_camera->type = ccl::CameraType::CAMERA_ORTHOGRAPHIC;
-      }
-      else
+      } else
         active_camera->type = ccl::CameraType::CAMERA_PERSPECTIVE;
 
       active_camera->tag_update();
@@ -149,8 +148,7 @@ void HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassSt
     }
 
     renderParam->Interrupt();
-  }
-  else if (aovBindingsHaveChanged)
+  } else if (aovBindingsHaveChanged)
   {
     renderParam->DirectReset();
     renderParam->Interrupt();

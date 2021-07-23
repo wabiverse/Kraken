@@ -47,8 +47,10 @@ static bool _GetAttrForTransforms(const UsdAttribute &attr,
     double sampleTimeValue = 0.0;
     double sampleUpperTimeValue = 0.0;
     bool hasSamples;
-    if (!attr.GetBracketingTimeSamples(
-          baseTime.GetValue(), &sampleTimeValue, &sampleUpperTimeValue, &hasSamples))
+    if (!attr.GetBracketingTimeSamples(baseTime.GetValue(),
+                                       &sampleTimeValue,
+                                       &sampleUpperTimeValue,
+                                       &hasSamples))
     {
       return false;
     }
@@ -72,8 +74,10 @@ static bool _GetAttrForTransforms(const UsdAttribute &attr,
     {
       double timeValueEpsilon = baseTime.GetValue() + UsdTimeCode::SafeStep();
       UsdTimeCode baseTimeEpsilon = UsdTimeCode(timeValueEpsilon);
-      if (!attr.GetBracketingTimeSamples(
-            baseTimeEpsilon.GetValue(), &sampleTimeValue, &sampleUpperTimeValue, &hasSamples))
+      if (!attr.GetBracketingTimeSamples(baseTimeEpsilon.GetValue(),
+                                         &sampleTimeValue,
+                                         &sampleUpperTimeValue,
+                                         &hasSamples))
       {
         return false;
       }
@@ -83,8 +87,7 @@ static bool _GetAttrForTransforms(const UsdAttribute &attr,
     *lowerTimeValue = sampleTimeValue;
     *upperTimeValue = sampleUpperTimeValue;
     *attrHasSamples = hasSamples;
-  }
-  else
+  } else
   {
 
     // baseTime is UsdTimeCode.Default()

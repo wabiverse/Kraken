@@ -69,8 +69,7 @@ static bool _ParseLineNumberOfError(std::string const &error, unsigned int *line
       return false;
     }
     return true;
-  }
-  else
+  } else
   {
     // Error message isn't formatted as expected.
     return false;

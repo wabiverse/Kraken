@@ -46,125 +46,124 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, ((discoveryType, "mtlx")));
+  TF_DEFINE_PRIVATE_TOKENS(_tokens, ((discoveryType, "mtlx")));
 
-// Maps a nodedef name to its NdrNode name.
-using _NameMapping = std::map<std::string, std::string>;
+  // Maps a nodedef name to its NdrNode name.
+  using _NameMapping = std::map<std::string, std::string>;
 
-// Return the name of the most-ancestral element.
-const std::string &_GetTopMostAncestralName(mx::ConstElementPtr mtlx)
-{
-  static const std::string inheritAttr("inherit");
-
-  while (true)
+  // Return the name of the most-ancestral element.
+  const std::string &_GetTopMostAncestralName(mx::ConstElementPtr mtlx)
   {
-    const std::string &inherit = mtlx->getAttribute(inheritAttr);
-    if (inherit.empty())
-    {
-      break;
-    }
-    if (auto inherited = mtlx->getRoot()->getChild(inherit))
-    {
-      mtlx = inherited;
-    }
-    else
-    {
-      break;
-    }
-  }
-  return mtlx->getName();
-}
+    static const std::string inheritAttr("inherit");
 
-// Choose an Ndr name based on compatible MaterialX nodedef names.
-_NameMapping _ComputeNameMapping(const mx::ConstDocumentPtr &doc)
-{
-  _NameMapping result;
-
-  // We use the simple heuristic of using the name of the top-most
-  // nodedef on the inheritance chain where top-most is the one
-  // that doesn't itself inherit anything.  The 1.36 spec gives
-  // guidance that this should be sufficient.
-  for (auto &&mtlxNodeDef : doc->getNodeDefs())
-  {
-    result.emplace(mtlxNodeDef->getName(), _GetTopMostAncestralName(mtlxNodeDef));
+    while (true)
+    {
+      const std::string &inherit = mtlx->getAttribute(inheritAttr);
+      if (inherit.empty())
+      {
+        break;
+      }
+      if (auto inherited = mtlx->getRoot()->getChild(inherit))
+      {
+        mtlx = inherited;
+      } else
+      {
+        break;
+      }
+    }
+    return mtlx->getName();
   }
 
-  return result;
-}
-
-// Return the Ndr name for a nodedef name.
-std::string _ChooseName(const std::string &nodeDefName, const _NameMapping &nameMapping)
-{
-  auto i = nameMapping.find(nodeDefName);
-  return i == nameMapping.end() ? nodeDefName : i->second;
-}
-
-static void _DiscoverNodes(NdrNodeDiscoveryResultVec *result,
-                           const mx::ConstDocumentPtr &doc,
-                           const NdrNodeDiscoveryResult &fileResult,
-                           const _NameMapping &nameMapping)
-{
-  static const TfToken family = TfToken();
-
-  // MaterialX allows nodes definitions through implementation
-  // and nodegraph elements.  We scan the file for those,
-  // discarding any that don't refer to node definitions, and
-  // insert into the discovery result list.
-
-  // Get the implementations.
-  for (auto &&impl : doc->getImplementations())
+  // Choose an Ndr name based on compatible MaterialX nodedef names.
+  _NameMapping _ComputeNameMapping(const mx::ConstDocumentPtr &doc)
   {
-    auto &&nodeDef = impl->getNodeDef();
-    if (!nodeDef)
+    _NameMapping result;
+
+    // We use the simple heuristic of using the name of the top-most
+    // nodedef on the inheritance chain where top-most is the one
+    // that doesn't itself inherit anything.  The 1.36 spec gives
+    // guidance that this should be sufficient.
+    for (auto &&mtlxNodeDef : doc->getNodeDefs())
     {
-      continue;
+      result.emplace(mtlxNodeDef->getName(), _GetTopMostAncestralName(mtlxNodeDef));
     }
 
-    // Ignore implementations that don't refer to a file.
-    // XXX -- Do we want to allow these?  The renderer will
-    //        be expected to provide the implementation.
-    if (impl->getFile().empty())
-    {
-      continue;
-    }
-
-    bool implicitDefault;
-    result->emplace_back(NdrIdentifier(nodeDef->getName()),
-                         UsdMtlxGetVersion(nodeDef, &implicitDefault),
-                         _ChooseName(nodeDef->getName(), nameMapping),
-                         TfToken(nodeDef->getNodeString()),
-                         fileResult.discoveryType,
-                         fileResult.sourceType,
-                         fileResult.uri,
-                         fileResult.resolvedUri,
-                         /* sourceCode */ "",
-                         /* metadata */ NdrTokenMap(),
-                         /* blindData */ impl->getName());
+    return result;
   }
 
-  // Get the nodegraphs implementing node defs.
-  for (auto &&nodeGraph : doc->getNodeGraphs())
+  // Return the Ndr name for a nodedef name.
+  std::string _ChooseName(const std::string &nodeDefName, const _NameMapping &nameMapping)
   {
-    auto &&nodeDef = nodeGraph->getNodeDef();
-    if (!nodeDef)
+    auto i = nameMapping.find(nodeDefName);
+    return i == nameMapping.end() ? nodeDefName : i->second;
+  }
+
+  static void _DiscoverNodes(NdrNodeDiscoveryResultVec *result,
+                             const mx::ConstDocumentPtr &doc,
+                             const NdrNodeDiscoveryResult &fileResult,
+                             const _NameMapping &nameMapping)
+  {
+    static const TfToken family = TfToken();
+
+    // MaterialX allows nodes definitions through implementation
+    // and nodegraph elements.  We scan the file for those,
+    // discarding any that don't refer to node definitions, and
+    // insert into the discovery result list.
+
+    // Get the implementations.
+    for (auto &&impl : doc->getImplementations())
     {
-      continue;
+      auto &&nodeDef = impl->getNodeDef();
+      if (!nodeDef)
+      {
+        continue;
+      }
+
+      // Ignore implementations that don't refer to a file.
+      // XXX -- Do we want to allow these?  The renderer will
+      //        be expected to provide the implementation.
+      if (impl->getFile().empty())
+      {
+        continue;
+      }
+
+      bool implicitDefault;
+      result->emplace_back(NdrIdentifier(nodeDef->getName()),
+                           UsdMtlxGetVersion(nodeDef, &implicitDefault),
+                           _ChooseName(nodeDef->getName(), nameMapping),
+                           TfToken(nodeDef->getNodeString()),
+                           fileResult.discoveryType,
+                           fileResult.sourceType,
+                           fileResult.uri,
+                           fileResult.resolvedUri,
+                           /* sourceCode */ "",
+                           /* metadata */ NdrTokenMap(),
+                           /* blindData */ impl->getName());
     }
 
-    bool implicitDefault;
-    result->emplace_back(NdrIdentifier(nodeDef->getName()),
-                         UsdMtlxGetVersion(nodeDef, &implicitDefault),
-                         _ChooseName(nodeDef->getName(), nameMapping),
-                         TfToken(nodeDef->getNodeString()),
-                         fileResult.discoveryType,
-                         fileResult.sourceType,
-                         fileResult.uri,
-                         fileResult.resolvedUri,
-                         /* sourceCode */ "",
-                         /* metadata */ NdrTokenMap(),
-                         /* blindData */ nodeGraph->getName());
+    // Get the nodegraphs implementing node defs.
+    for (auto &&nodeGraph : doc->getNodeGraphs())
+    {
+      auto &&nodeDef = nodeGraph->getNodeDef();
+      if (!nodeDef)
+      {
+        continue;
+      }
+
+      bool implicitDefault;
+      result->emplace_back(NdrIdentifier(nodeDef->getName()),
+                           UsdMtlxGetVersion(nodeDef, &implicitDefault),
+                           _ChooseName(nodeDef->getName(), nameMapping),
+                           TfToken(nodeDef->getNodeString()),
+                           fileResult.discoveryType,
+                           fileResult.sourceType,
+                           fileResult.uri,
+                           fileResult.resolvedUri,
+                           /* sourceCode */ "",
+                           /* metadata */ NdrTokenMap(),
+                           /* blindData */ nodeGraph->getName());
+    }
   }
-}
 
 }  // anonymous namespace
 
@@ -221,10 +220,9 @@ NdrNodeDiscoveryResultVec UsdMtlxDiscoveryPlugin::DiscoverNodes(const Context &c
   }
 
   // Find the mtlx files from other search paths.
-  for (auto &&fileResult :
-       NdrFsHelpersDiscoverNodes(_searchPaths,
-                                 UsdMtlxStandardFileExtensions(),
-                                 TfGetenvBool("USDMTLX_PLUGIN_FOLLOW_SYMLINKS", false)))
+  for (auto &&fileResult : NdrFsHelpersDiscoverNodes(_searchPaths,
+                                                     UsdMtlxStandardFileExtensions(),
+                                                     TfGetenvBool("USDMTLX_PLUGIN_FOLLOW_SYMLINKS", false)))
   {
     if (auto document = UsdMtlxGetDocument(fileResult.resolvedUri))
     {

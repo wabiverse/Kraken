@@ -43,23 +43,24 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateVelocityScaleAttr(UsdGeomMotionAPI &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateVelocityScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateVelocityScaleAttr(UsdGeomMotionAPI &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateVelocityScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                        writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomMotionAPI &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.MotionAPI(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdGeomMotionAPI &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.MotionAPI(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -122,10 +123,11 @@ void wrapUsdGeomMotionAPI()
 namespace
 {
 
-WRAP_CUSTOM
-{
-  _class.def(
-    "ComputeVelocityScale", &UsdGeomMotionAPI::ComputeVelocityScale, (arg("time") = UsdTimeCode::Default()));
-}
+  WRAP_CUSTOM
+  {
+    _class.def("ComputeVelocityScale",
+               &UsdGeomMotionAPI::ComputeVelocityScale,
+               (arg("time") = UsdTimeCode::Default()));
+  }
 
 }  // anonymous namespace

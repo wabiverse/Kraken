@@ -36,51 +36,51 @@ WABI_NAMESPACE_BEGIN
 namespace Vt_HashDetail
 {
 
-// Issue a coding error when we attempt to hash a t.
-VT_API void _IssueUnimplementedHashError(std::type_info const &t);
+  // Issue a coding error when we attempt to hash a t.
+  VT_API void _IssueUnimplementedHashError(std::type_info const &t);
 
-// We make unqualified calls, intending to pick up boost::hash_value if an
-// overload isn't found by ADL.
-using boost::hash_value;
+  // We make unqualified calls, intending to pick up boost::hash_value if an
+  // overload isn't found by ADL.
+  using boost::hash_value;
 
-// A constexpr function that determines hashability.
-template<class T, class = decltype(hash_value(std::declval<T>()))>
-constexpr bool _IsHashable(int)
-{
-  return true;
-}
-template<class T, class = decltype(TfHash()(std::declval<T>()))>
-constexpr bool _IsHashable(long)
-{
-  return true;
-}
-template<class T>
-constexpr bool _IsHashable(...)
-{
-  return false;
-}
+  // A constexpr function that determines hashability.
+  template<class T, class = decltype(hash_value(std::declval<T>()))>
+  constexpr bool _IsHashable(int)
+  {
+    return true;
+  }
+  template<class T, class = decltype(TfHash()(std::declval<T>()))>
+  constexpr bool _IsHashable(long)
+  {
+    return true;
+  }
+  template<class T>
+  constexpr bool _IsHashable(...)
+  {
+    return false;
+  }
 
-// Hash implementations -- We're using an overload resolution ordering trick
-// here (int vs long vs ...) so that we pick hash_value first, if possible,
-// otherwise we do TfHash() if possible, otherwise we issue a runtime error.
-template<class T, class = decltype(hash_value(std::declval<T>()))>
-inline size_t _HashValueImpl(T const &val, int)
-{
-  return hash_value(val);
-}
+  // Hash implementations -- We're using an overload resolution ordering trick
+  // here (int vs long vs ...) so that we pick hash_value first, if possible,
+  // otherwise we do TfHash() if possible, otherwise we issue a runtime error.
+  template<class T, class = decltype(hash_value(std::declval<T>()))>
+  inline size_t _HashValueImpl(T const &val, int)
+  {
+    return hash_value(val);
+  }
 
-template<class T, class = decltype(TfHash()(std::declval<T>()))>
-inline size_t _HashValueImpl(T const &val, long)
-{
-  return TfHash()(val);
-}
+  template<class T, class = decltype(TfHash()(std::declval<T>()))>
+  inline size_t _HashValueImpl(T const &val, long)
+  {
+    return TfHash()(val);
+  }
 
-template<class T>
-inline size_t _HashValueImpl(T const &val, ...)
-{
-  Vt_HashDetail::_IssueUnimplementedHashError(typeid(T));
-  return 0;
-}
+  template<class T>
+  inline size_t _HashValueImpl(T const &val, ...)
+  {
+    Vt_HashDetail::_IssueUnimplementedHashError(typeid(T));
+    return 0;
+  }
 
 }  // namespace Vt_HashDetail
 

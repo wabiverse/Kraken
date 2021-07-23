@@ -272,14 +272,12 @@ TfEnum TfEnum::GetValueFromFullName(const string &fullname, bool *foundIt)
     if (foundIt)
       *foundIt = true;
     return TfEnum(i->second);
-  }
-  else if (fullname.find("int::") == 0)
+  } else if (fullname.find("int::") == 0)
   {
     if (foundIt)
       *foundIt = true;
     return TfEnum(atoi(fullname.c_str() + 5));
-  }
-  else
+  } else
   {
     if (foundIt)
       *foundIt = false;

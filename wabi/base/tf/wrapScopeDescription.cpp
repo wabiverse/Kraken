@@ -46,58 +46,58 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// This class lets us expose TfScopeDescription to python for use as a "context
-// manager" object.  That is, for use with the 'with'-statement.  For example:
-//
-// with Tf.ScopeDescription("Solving the halting problem"):
-//     # Code that solves the halting problem.
-//
-// This class uses a small helper that holds a TfScopeDescription because
-// TfScopeDescription declares, but doesn't define the ordinary new/delete
-// operators to help prevent clients from creating them on the heap.
-class Tf_PyScopeDescription
-{
-  // This is used to avoid new/delete on TfScopeDescription directly, which is
-  // disallowed.
-  struct _Holder
+  // This class lets us expose TfScopeDescription to python for use as a "context
+  // manager" object.  That is, for use with the 'with'-statement.  For example:
+  //
+  // with Tf.ScopeDescription("Solving the halting problem"):
+  //     # Code that solves the halting problem.
+  //
+  // This class uses a small helper that holds a TfScopeDescription because
+  // TfScopeDescription declares, but doesn't define the ordinary new/delete
+  // operators to help prevent clients from creating them on the heap.
+  class Tf_PyScopeDescription
   {
-    explicit _Holder(string const &description)
-      : _scopeDescription(description)
-    {}
-    TfScopeDescription _scopeDescription;
-  };
-
- public:
-  // Construct with a description string.
-  Tf_PyScopeDescription(string const &description)
-    : _description(description)
-  {}
-
-  // Enter creates a description object, pushing onto the stack.
-  void __enter__()
-  {
-    _descriptionHolder.reset(new _Holder(_description));
-  }
-
-  // Exit destroys the scope description, popping from the stack.
-  void __exit__(object, object, object)
-  {
-    _descriptionHolder.reset();
-  }
-
-  void SetDescription(const string &description)
-  {
-    _description = description;
-    if (_descriptionHolder)
+    // This is used to avoid new/delete on TfScopeDescription directly, which is
+    // disallowed.
+    struct _Holder
     {
-      _descriptionHolder->_scopeDescription.SetDescription(_description);
-    }
-  }
+      explicit _Holder(string const &description)
+        : _scopeDescription(description)
+      {}
+      TfScopeDescription _scopeDescription;
+    };
 
- private:
-  std::unique_ptr<_Holder> _descriptionHolder;
-  string _description;
-};
+   public:
+    // Construct with a description string.
+    Tf_PyScopeDescription(string const &description)
+      : _description(description)
+    {}
+
+    // Enter creates a description object, pushing onto the stack.
+    void __enter__()
+    {
+      _descriptionHolder.reset(new _Holder(_description));
+    }
+
+    // Exit destroys the scope description, popping from the stack.
+    void __exit__(object, object, object)
+    {
+      _descriptionHolder.reset();
+    }
+
+    void SetDescription(const string &description)
+    {
+      _description = description;
+      if (_descriptionHolder)
+      {
+        _descriptionHolder->_scopeDescription.SetDescription(_description);
+      }
+    }
+
+   private:
+    std::unique_ptr<_Holder> _descriptionHolder;
+    string _description;
+  };
 
 }  // anonymous namespace
 

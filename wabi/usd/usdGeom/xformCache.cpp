@@ -116,8 +116,7 @@ GfMatrix4d UsdGeomXformCache::GetLocalTransformation(const UsdPrim &prim, bool *
   {
     entry->query.GetLocalTransformation(&xform, _time);
     *resetsXformStack = entry->query.GetResetXformStack();
-  }
-  else
+  } else
   {
     *resetsXformStack = false;
   }

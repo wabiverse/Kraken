@@ -45,29 +45,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string __repr__(TfTemplateString const &self)
-{
-  return TF_PY_REPR_PREFIX + "TemplateString(" +
-         (self.GetTemplate().empty() ? string() : TfPyRepr(self.GetTemplate())) + ")";
-}
+  static string __repr__(TfTemplateString const &self)
+  {
+    return TF_PY_REPR_PREFIX + "TemplateString(" +
+           (self.GetTemplate().empty() ? string() : TfPyRepr(self.GetTemplate())) + ")";
+  }
 
-static string _Substitute(TfTemplateString const &self, dict const &d)
-{
-  TfTemplateString::Mapping m;
-  list items = d.items();
-  for (int i = 0; i < len(items); ++i)
-    m[extract<string>(items[i][0])] = extract<string>(items[i][1]);
-  return self.Substitute(m);
-}
+  static string _Substitute(TfTemplateString const &self, dict const &d)
+  {
+    TfTemplateString::Mapping m;
+    list items = d.items();
+    for (int i = 0; i < len(items); ++i)
+      m[extract<string>(items[i][0])] = extract<string>(items[i][1]);
+    return self.Substitute(m);
+  }
 
-static string _SafeSubstitute(TfTemplateString const &self, dict const &d)
-{
-  TfTemplateString::Mapping m;
-  list items = d.items();
-  for (int i = 0; i < len(items); ++i)
-    m[extract<string>(items[i][0])] = extract<string>(items[i][1]);
-  return self.SafeSubstitute(m);
-}
+  static string _SafeSubstitute(TfTemplateString const &self, dict const &d)
+  {
+    TfTemplateString::Mapping m;
+    list items = d.items();
+    for (int i = 0; i < len(items); ++i)
+      m[extract<string>(items[i][0])] = extract<string>(items[i][1]);
+    return self.SafeSubstitute(m);
+  }
 
 }  // anonymous namespace
 

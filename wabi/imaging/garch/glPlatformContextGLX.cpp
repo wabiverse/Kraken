@@ -81,8 +81,7 @@ void GarchGLXContextState::MakeCurrent()
   if (IsValid())
   {
     glXMakeCurrent(display, drawable, context);
-  }
-  else if (_defaultCtor)
+  } else if (_defaultCtor)
   {
     DoneCurrent();
   }

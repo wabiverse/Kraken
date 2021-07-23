@@ -26,9 +26,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  ((baseGLSLFX, "imageShader.glslfx"))((mainVS, "ImageShader.Vertex"))((mainFS, "ImageShader.Fragment")));
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         ((baseGLSLFX, "imageShader.glslfx"))((mainVS, "ImageShader.Vertex"))((mainFS, "ImageShader.Fragment")));
 
 HdPh_ImageShaderShaderKey::HdPh_ImageShaderShaderKey()
   : glslfx(_tokens->baseGLSLFX)

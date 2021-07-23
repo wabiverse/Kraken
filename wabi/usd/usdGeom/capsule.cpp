@@ -158,14 +158,15 @@ UsdAttribute UsdGeomCapsule::CreateExtentAttr(VtValue const &defaultValue, bool 
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -211,16 +212,13 @@ static bool _ComputeExtentMax(double height, double radius, const TfToken &axis,
   if (axis == UsdGeomTokens->x)
   {
     *max = GfVec3f(halfHeightWithCap, radius, radius);
-  }
-  else if (axis == UsdGeomTokens->y)
+  } else if (axis == UsdGeomTokens->y)
   {
     *max = GfVec3f(radius, halfHeightWithCap, radius);
-  }
-  else if (axis == UsdGeomTokens->z)
+  } else if (axis == UsdGeomTokens->z)
   {
     *max = GfVec3f(radius, radius, halfHeightWithCap);
-  }
-  else
+  } else
   {
     return false;  // invalid axis
   }
@@ -300,8 +298,7 @@ static bool _ComputeExtentForCapsule(const UsdGeomBoundable &boundable,
   if (transform)
   {
     return UsdGeomCapsule::ComputeExtent(height, radius, axis, *transform, extent);
-  }
-  else
+  } else
   {
     return UsdGeomCapsule::ComputeExtent(height, radius, axis, extent);
   }

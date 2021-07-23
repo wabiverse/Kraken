@@ -59,443 +59,440 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 namespace
 {
 
-class MaterialEditContext
-{
- public:
-  MaterialEditContext() = default;
-
-  virtual ~MaterialEditContext() = default;
-
-  MaterialEditContext(const MaterialEditContext &) = delete;
-
-  MaterialEditContext(MaterialEditContext &&) = delete;
-
-  MaterialEditContext &operator=(const MaterialEditContext &) = delete;
-
-  MaterialEditContext &operator=(MaterialEditContext &&) = delete;
-
-  /// Access the value of any parameter on the material.
-  ///
-  /// This helps the remap function to make decisions about output type or
-  /// default values based on existing parameters.
-  ///
-  /// @param paramName Name of the param.
-  /// @return Value of the param wrapped in VtValue.
-  virtual VtValue GetParam(const TfToken &paramName) = 0;
-
-  /// Change the value of any parameter on the material.
-  ///
-  /// This is useful to set default values for parameters before remapping
-  /// from existing USD parameters.
-  ///
-  /// @param paramName Name of the parameter to set.
-  /// @param paramValue New value of the parameter wrapped in VtValue.
-  virtual void SetParam(const TfToken &paramName, const VtValue &paramValue) = 0;
-
-  /// Change the id of the material.
-  ///
-  /// This can be used to change the type of the node, ie, change
-  /// PxrPreviewSurface to standard_surface as part of the conversion.
-  virtual void SetNodeId(const TfToken &nodeId) = 0;
-
-  /// RenameParam's function is to remap a parameter from the USD/HYdra name
-  /// to the arnold name and remap connections.
-  ///
-  /// @param oldParamName The original, USD/Hydra parameter name.
-  /// @param newParamName The new, Arnold parameter name.
-  virtual void RenameParam(const TfToken &oldParamName, const TfToken &newParamName) = 0;
-};
-
-class HydraMaterialEditContext : public MaterialEditContext
-{
- public:
-  HydraMaterialEditContext(HdMaterialNetwork &network, HdMaterialNode &node)
-    : _network(network),
-      _node(node)
-  {}
-
-  VtValue GetParam(const TfToken &paramName) override
+  class MaterialEditContext
   {
-    const auto paramIt = _node.parameters.find(paramName);
-    return paramIt == _node.parameters.end() ? VtValue() : paramIt->second;
-  }
+   public:
+    MaterialEditContext() = default;
 
-  void SetParam(const TfToken &paramName, const VtValue &paramValue) override
-  {
-    _node.parameters[paramName] = paramValue;
-  }
+    virtual ~MaterialEditContext() = default;
 
-  void SetNodeId(const TfToken &nodeId) override
-  {
-    _node.identifier = nodeId;
-  }
+    MaterialEditContext(const MaterialEditContext &) = delete;
 
-  void RenameParam(const TfToken &oldParamName, const TfToken &newParamName) override
+    MaterialEditContext(MaterialEditContext &&) = delete;
+
+    MaterialEditContext &operator=(const MaterialEditContext &) = delete;
+
+    MaterialEditContext &operator=(MaterialEditContext &&) = delete;
+
+    /// Access the value of any parameter on the material.
+    ///
+    /// This helps the remap function to make decisions about output type or
+    /// default values based on existing parameters.
+    ///
+    /// @param paramName Name of the param.
+    /// @return Value of the param wrapped in VtValue.
+    virtual VtValue GetParam(const TfToken &paramName) = 0;
+
+    /// Change the value of any parameter on the material.
+    ///
+    /// This is useful to set default values for parameters before remapping
+    /// from existing USD parameters.
+    ///
+    /// @param paramName Name of the parameter to set.
+    /// @param paramValue New value of the parameter wrapped in VtValue.
+    virtual void SetParam(const TfToken &paramName, const VtValue &paramValue) = 0;
+
+    /// Change the id of the material.
+    ///
+    /// This can be used to change the type of the node, ie, change
+    /// PxrPreviewSurface to standard_surface as part of the conversion.
+    virtual void SetNodeId(const TfToken &nodeId) = 0;
+
+    /// RenameParam's function is to remap a parameter from the USD/HYdra name
+    /// to the arnold name and remap connections.
+    ///
+    /// @param oldParamName The original, USD/Hydra parameter name.
+    /// @param newParamName The new, Arnold parameter name.
+    virtual void RenameParam(const TfToken &oldParamName, const TfToken &newParamName) = 0;
+  };
+
+  class HydraMaterialEditContext : public MaterialEditContext
   {
-    const auto oldValue = GetParam(oldParamName);
-    if (!oldValue.IsEmpty())
+   public:
+    HydraMaterialEditContext(HdMaterialNetwork &network, HdMaterialNode &node)
+      : _network(network),
+        _node(node)
+    {}
+
+    VtValue GetParam(const TfToken &paramName) override
     {
-      _node.parameters.erase(oldParamName);
-      _node.parameters[newParamName] = oldValue;
+      const auto paramIt = _node.parameters.find(paramName);
+      return paramIt == _node.parameters.end() ? VtValue() : paramIt->second;
     }
 
-    for (auto &relationship : _network.relationships)
+    void SetParam(const TfToken &paramName, const VtValue &paramValue) override
     {
-      if (relationship.outputId == _node.path && relationship.outputName == oldParamName)
+      _node.parameters[paramName] = paramValue;
+    }
+
+    void SetNodeId(const TfToken &nodeId) override
+    {
+      _node.identifier = nodeId;
+    }
+
+    void RenameParam(const TfToken &oldParamName, const TfToken &newParamName) override
+    {
+      const auto oldValue = GetParam(oldParamName);
+      if (!oldValue.IsEmpty())
       {
-        relationship.outputName = newParamName;
+        _node.parameters.erase(oldParamName);
+        _node.parameters[newParamName] = oldValue;
+      }
+
+      for (auto &relationship : _network.relationships)
+      {
+        if (relationship.outputId == _node.path && relationship.outputName == oldParamName)
+        {
+          relationship.outputName = newParamName;
+        }
       }
     }
-  }
 
- private:
-  HdMaterialNetwork &_network;
-  HdMaterialNode &_node;
-};
+   private:
+    HdMaterialNetwork &_network;
+    HdMaterialNode &_node;
+  };
 
-using RemapNodeFunc = void (*)(MaterialEditContext *);
+  using RemapNodeFunc = void (*)(MaterialEditContext *);
 
-RemapNodeFunc previewSurfaceRemap = [](MaterialEditContext *ctx) {
-  ctx->SetNodeId(str::t_standard_surface);
-  // Defaults that are different from the PreviewSurface. We are setting these
-  // before renaming the parameter, so they'll be overwritten with existing values.
-  ctx->SetParam(str::t_base_color, VtValue(GfVec3f(0.18f, 0.18f, 0.18f)));
-  ctx->SetParam(str::t_base, VtValue(1.0f));
-  ctx->SetParam(str::t_emission, VtValue(1.0f));
-  ctx->SetParam(str::t_emission_color, VtValue(GfVec3f(0.0f, 0.0f, 0.0f)));
-  ctx->SetParam(str::t_specular_color, VtValue(GfVec3f(1.0f, 1.0f, 1.0f)));
-  ctx->SetParam(str::t_specular_roughness, VtValue(0.5f));
-  ctx->SetParam(str::t_specular_IOR, VtValue(1.5f));
-  ctx->SetParam(str::t_coat, VtValue(0.0f));
-  ctx->SetParam(str::t_coat_roughness, VtValue(0.01f));
+  RemapNodeFunc previewSurfaceRemap = [](MaterialEditContext *ctx) {
+    ctx->SetNodeId(str::t_standard_surface);
+    // Defaults that are different from the PreviewSurface. We are setting these
+    // before renaming the parameter, so they'll be overwritten with existing values.
+    ctx->SetParam(str::t_base_color, VtValue(GfVec3f(0.18f, 0.18f, 0.18f)));
+    ctx->SetParam(str::t_base, VtValue(1.0f));
+    ctx->SetParam(str::t_emission, VtValue(1.0f));
+    ctx->SetParam(str::t_emission_color, VtValue(GfVec3f(0.0f, 0.0f, 0.0f)));
+    ctx->SetParam(str::t_specular_color, VtValue(GfVec3f(1.0f, 1.0f, 1.0f)));
+    ctx->SetParam(str::t_specular_roughness, VtValue(0.5f));
+    ctx->SetParam(str::t_specular_IOR, VtValue(1.5f));
+    ctx->SetParam(str::t_coat, VtValue(0.0f));
+    ctx->SetParam(str::t_coat_roughness, VtValue(0.01f));
 
-  const auto useSpecularWorkflow = ctx->GetParam(str::t_useSpecularWorkflow);
-  // Default value is 0.
-  if (useSpecularWorkflow.IsHolding<int>() && useSpecularWorkflow.UncheckedGet<int>() == 1)
-  {
-    ctx->RenameParam(str::t_specularColor, str::t_specular_color);
-  }
-  else
-  {
-    ctx->RenameParam(str::t_metalness, str::t_metallic);
-  }
-
-  // Float opacity needs to be remapped to color.
-  const auto opacityValue = ctx->GetParam(str::t_opacity);
-  if (opacityValue.IsHolding<float>())
-  {
-    const auto opacity = opacityValue.UncheckedGet<float>();
-    ctx->SetParam(str::t_opacity, VtValue(GfVec3f(opacity, opacity, opacity)));
-  }
-
-  ctx->RenameParam(str::t_diffuseColor, str::t_base_color);
-  ctx->RenameParam(str::t_emissiveColor, str::t_emission_color);
-  ctx->RenameParam(str::t_roughness, str::t_specular_roughness);
-  ctx->RenameParam(str::t_ior, str::t_specular_IOR);
-  ctx->RenameParam(str::t_clearcoat, str::t_coat);
-  ctx->RenameParam(str::t_clearcoatRoughness, str::t_coat_roughness);
-  // We rename the normal to something that doesn't exist for now, because
-  // to handle it correctly we would need to make a normal_map node, and
-  // hook things up... but this framework doesn't allow for creation of other
-  // nodes yet.
-  ctx->RenameParam(str::t_normal, str::t_normal_nonexistant_rename);
-};
-
-RemapNodeFunc uvTextureRemap = [](MaterialEditContext *ctx) {
-  ctx->SetNodeId(str::t_image);
-  ctx->RenameParam(str::t_file, str::t_filename);
-  ctx->RenameParam(str::t_st, str::t_uvcoords);
-  ctx->RenameParam(str::t_fallback, str::t_missing_texture_color);
-  ctx->RenameParam(str::t_wrapS, str::t_swrap);
-  ctx->RenameParam(str::t_wrapT, str::t_twrap);
-  for (const auto &param : {str::t_swrap, str::t_twrap})
-  {
-    const auto value = ctx->GetParam(param);
-    if (value.IsHolding<TfToken>())
+    const auto useSpecularWorkflow = ctx->GetParam(str::t_useSpecularWorkflow);
+    // Default value is 0.
+    if (useSpecularWorkflow.IsHolding<int>() && useSpecularWorkflow.UncheckedGet<int>() == 1)
     {
-      const auto &wrap = value.UncheckedGet<TfToken>();
-      if (wrap == str::t_useMetadata)
+      ctx->RenameParam(str::t_specularColor, str::t_specular_color);
+    } else
+    {
+      ctx->RenameParam(str::t_metalness, str::t_metallic);
+    }
+
+    // Float opacity needs to be remapped to color.
+    const auto opacityValue = ctx->GetParam(str::t_opacity);
+    if (opacityValue.IsHolding<float>())
+    {
+      const auto opacity = opacityValue.UncheckedGet<float>();
+      ctx->SetParam(str::t_opacity, VtValue(GfVec3f(opacity, opacity, opacity)));
+    }
+
+    ctx->RenameParam(str::t_diffuseColor, str::t_base_color);
+    ctx->RenameParam(str::t_emissiveColor, str::t_emission_color);
+    ctx->RenameParam(str::t_roughness, str::t_specular_roughness);
+    ctx->RenameParam(str::t_ior, str::t_specular_IOR);
+    ctx->RenameParam(str::t_clearcoat, str::t_coat);
+    ctx->RenameParam(str::t_clearcoatRoughness, str::t_coat_roughness);
+    // We rename the normal to something that doesn't exist for now, because
+    // to handle it correctly we would need to make a normal_map node, and
+    // hook things up... but this framework doesn't allow for creation of other
+    // nodes yet.
+    ctx->RenameParam(str::t_normal, str::t_normal_nonexistant_rename);
+  };
+
+  RemapNodeFunc uvTextureRemap = [](MaterialEditContext *ctx) {
+    ctx->SetNodeId(str::t_image);
+    ctx->RenameParam(str::t_file, str::t_filename);
+    ctx->RenameParam(str::t_st, str::t_uvcoords);
+    ctx->RenameParam(str::t_fallback, str::t_missing_texture_color);
+    ctx->RenameParam(str::t_wrapS, str::t_swrap);
+    ctx->RenameParam(str::t_wrapT, str::t_twrap);
+    for (const auto &param : {str::t_swrap, str::t_twrap})
+    {
+      const auto value = ctx->GetParam(param);
+      if (value.IsHolding<TfToken>())
       {
-        ctx->SetParam(param, VtValue{str::t_file});
-      }
-      else if (wrap == str::t_repeat)
-      {
-        ctx->SetParam(param, VtValue{str::t_periodic});
+        const auto &wrap = value.UncheckedGet<TfToken>();
+        if (wrap == str::t_useMetadata)
+        {
+          ctx->SetParam(param, VtValue{str::t_file});
+        } else if (wrap == str::t_repeat)
+        {
+          ctx->SetParam(param, VtValue{str::t_periodic});
+        }
       }
     }
-  }
-  ctx->RenameParam(str::t_scale, str::t_multiply);
-  ctx->RenameParam(str::t_bias, str::t_offset);
-  // Arnold is using vec3 instead of vec4 for multiply and offset.
-  for (const auto &param : {str::t_multiply, str::t_offset})
-  {
-    const auto value = ctx->GetParam(param);
-    if (value.IsHolding<GfVec4f>())
+    ctx->RenameParam(str::t_scale, str::t_multiply);
+    ctx->RenameParam(str::t_bias, str::t_offset);
+    // Arnold is using vec3 instead of vec4 for multiply and offset.
+    for (const auto &param : {str::t_multiply, str::t_offset})
     {
-      const auto &v = value.UncheckedGet<GfVec4f>();
-      ctx->SetParam(param, VtValue{GfVec3f{v[0], v[1], v[2]}});
+      const auto value = ctx->GetParam(param);
+      if (value.IsHolding<GfVec4f>())
+      {
+        const auto &v = value.UncheckedGet<GfVec4f>();
+        ctx->SetParam(param,
+                      VtValue{
+                        GfVec3f{v[0], v[1], v[2]}
+        });
+      }
     }
-  }
-};
+  };
 
-RemapNodeFunc floatPrimvarRemap = [](MaterialEditContext *ctx) {
-  ctx->SetNodeId(str::t_user_data_float);
-  ctx->RenameParam(str::t_varname, str::t_attribute);
-  ctx->RenameParam(str::t_fallback, str::t__default);
-};
+  RemapNodeFunc floatPrimvarRemap = [](MaterialEditContext *ctx) {
+    ctx->SetNodeId(str::t_user_data_float);
+    ctx->RenameParam(str::t_varname, str::t_attribute);
+    ctx->RenameParam(str::t_fallback, str::t__default);
+  };
 
-// Since st and uv is set as the built-in UV parameter on the mesh, we
-// have to use a utility node instead of a user_data_rgb node.
-RemapNodeFunc float2PrimvarRemap = [](MaterialEditContext *ctx) {
-  const auto varnameValue = ctx->GetParam(str::t_varname);
-  TfToken varname;
-  if (varnameValue.IsHolding<TfToken>())
-  {
-    varname = varnameValue.UncheckedGet<TfToken>();
-  }
-  else if (varnameValue.IsHolding<std::string>())
-  {
-    varname = TfToken(varnameValue.UncheckedGet<std::string>());
-  }
+  // Since st and uv is set as the built-in UV parameter on the mesh, we
+  // have to use a utility node instead of a user_data_rgb node.
+  RemapNodeFunc float2PrimvarRemap = [](MaterialEditContext *ctx) {
+    const auto varnameValue = ctx->GetParam(str::t_varname);
+    TfToken varname;
+    if (varnameValue.IsHolding<TfToken>())
+    {
+      varname = varnameValue.UncheckedGet<TfToken>();
+    } else if (varnameValue.IsHolding<std::string>())
+    {
+      varname = TfToken(varnameValue.UncheckedGet<std::string>());
+    }
 
-  // uv and st is remapped to UV coordinates
-  if (!varname.IsEmpty() && (varname == str::t_uv || varname == str::t_st))
-  {
-    // We are reading the uv from the mesh.
-    ctx->SetNodeId(str::t_utility);
-    ctx->SetParam(str::t_color_mode, VtValue(str::t_uv));
-    ctx->SetParam(str::t_shade_mode, VtValue(str::t_flat));
-  }
-  else
-  {
+    // uv and st is remapped to UV coordinates
+    if (!varname.IsEmpty() && (varname == str::t_uv || varname == str::t_st))
+    {
+      // We are reading the uv from the mesh.
+      ctx->SetNodeId(str::t_utility);
+      ctx->SetParam(str::t_color_mode, VtValue(str::t_uv));
+      ctx->SetParam(str::t_shade_mode, VtValue(str::t_flat));
+    } else
+    {
+      ctx->SetNodeId(str::t_user_data_rgb);
+      ctx->RenameParam(str::t_varname, str::t_attribute);
+    }
+    ctx->RenameParam(str::t_fallback, str::t__default);
+  };
+
+  RemapNodeFunc float3PrimvarRemap = [](MaterialEditContext *ctx) {
     ctx->SetNodeId(str::t_user_data_rgb);
     ctx->RenameParam(str::t_varname, str::t_attribute);
-  }
-  ctx->RenameParam(str::t_fallback, str::t__default);
-};
-
-RemapNodeFunc float3PrimvarRemap = [](MaterialEditContext *ctx) {
-  ctx->SetNodeId(str::t_user_data_rgb);
-  ctx->RenameParam(str::t_varname, str::t_attribute);
-  ctx->RenameParam(str::t_fallback, str::t__default);
-};
-
-RemapNodeFunc float4PrimvarRemap = [](MaterialEditContext *ctx) {
-  ctx->SetNodeId(str::t_user_data_rgba);
-  ctx->RenameParam(str::t_varname, str::t_attribute);
-  ctx->RenameParam(str::t_fallback, str::t__default);
-};
-
-RemapNodeFunc intPrimvarRemap = [](MaterialEditContext *ctx) {
-  ctx->SetNodeId(str::t_user_data_int);
-  ctx->RenameParam(str::t_varname, str::t_attribute);
-  ctx->RenameParam(str::t_fallback, str::t__default);
-};
-
-RemapNodeFunc stringPrimvarRemap = [](MaterialEditContext *ctx) {
-  ctx->SetNodeId(str::t_user_data_string);
-  ctx->RenameParam(str::t_varname, str::t_attribute);
-  ctx->RenameParam(str::t_fallback, str::t__default);
-};
-
-RemapNodeFunc transform2dRemap = [](MaterialEditContext *ctx) {
-  ctx->SetNodeId(str::t_matrix_multiply_vector);
-  ctx->RenameParam(str::t_in, str::t_input);
-  const auto translateValue = ctx->GetParam(str::t_translation);
-  const auto scaleValue = ctx->GetParam(str::t_scale);
-  const auto rotateValue = ctx->GetParam(str::t_rotation);
-
-  GfMatrix4f texCoordTransfromMatrix(1.0);
-  GfMatrix4f m;
-  if (scaleValue.IsHolding<GfVec2f>())
-  {
-    const auto scale = scaleValue.UncheckedGet<GfVec2f>();
-    m.SetScale({scale[0], scale[1], 1.0f});
-    texCoordTransfromMatrix *= m;
-  }
-  if (rotateValue.IsHolding<float>())
-  {
-    m.SetRotate(GfRotation(GfVec3d(0.0, 0.0, 1.0), rotateValue.UncheckedGet<float>()));
-    texCoordTransfromMatrix *= m;
-  }
-  if (translateValue.IsHolding<GfVec2f>())
-  {
-    const auto translate = translateValue.UncheckedGet<GfVec2f>();
-    m.SetTranslate({translate[0], translate[1], 0.0f});
-    texCoordTransfromMatrix *= m;
-  }
-  ctx->SetParam(str::t_matrix, VtValue(texCoordTransfromMatrix));
-};
-
-using NodeRemapFuncs = std::unordered_map<TfToken, RemapNodeFunc, TfToken::HashFunctor>;
-
-const NodeRemapFuncs &_NodeRemapFuncs()
-{
-  static const NodeRemapFuncs nodeRemapFuncs{
-    {str::t_UsdPreviewSurface, previewSurfaceRemap},
-    {str::t_UsdUVTexture, uvTextureRemap},
-    {str::t_UsdPrimvarReader_float, floatPrimvarRemap},
-    {str::t_UsdPrimvarReader_float2, float2PrimvarRemap},
-    {str::t_UsdPrimvarReader_float3, float3PrimvarRemap},
-    {str::t_UsdPrimvarReader_point, float3PrimvarRemap},
-    {str::t_UsdPrimvarReader_normal, float3PrimvarRemap},
-    {str::t_UsdPrimvarReader_vector, float3PrimvarRemap},
-    {str::t_UsdPrimvarReader_float4, float4PrimvarRemap},
-    {str::t_UsdPrimvarReader_int, intPrimvarRemap},
-    {str::t_UsdPrimvarReader_string, stringPrimvarRemap},
-    {str::t_UsdTransform2d, transform2dRemap},
+    ctx->RenameParam(str::t_fallback, str::t__default);
   };
-  return nodeRemapFuncs;
-}
 
-// A single preview surface connected to surface and displacement slots is a common use case, and
-// it needs special handling when reading in the network for displacement. We need to check if the
-// output shader is a preview surface and see if there is anything connected to its displacement
-// parameter. If the displacement is empty, then we have to clear the network. The challenge here
-// is that we need to isolate the sub-network connected to the displacement parameter of a usd
-// preview surface, and remove any nodes / connections that are not part of it. Since you can mix
-// different node types and reuse connections this is not so trivial.
-void _RemapNetwork(HdMaterialNetwork &network, bool isDisplacement)
-{
-  // The last node is the output node when using HdMaterialNetworks.
-  if (isDisplacement && !network.nodes.empty() &&
-      network.nodes.back().identifier == str::t_UsdPreviewSurface)
+  RemapNodeFunc float4PrimvarRemap = [](MaterialEditContext *ctx) {
+    ctx->SetNodeId(str::t_user_data_rgba);
+    ctx->RenameParam(str::t_varname, str::t_attribute);
+    ctx->RenameParam(str::t_fallback, str::t__default);
+  };
+
+  RemapNodeFunc intPrimvarRemap = [](MaterialEditContext *ctx) {
+    ctx->SetNodeId(str::t_user_data_int);
+    ctx->RenameParam(str::t_varname, str::t_attribute);
+    ctx->RenameParam(str::t_fallback, str::t__default);
+  };
+
+  RemapNodeFunc stringPrimvarRemap = [](MaterialEditContext *ctx) {
+    ctx->SetNodeId(str::t_user_data_string);
+    ctx->RenameParam(str::t_varname, str::t_attribute);
+    ctx->RenameParam(str::t_fallback, str::t__default);
+  };
+
+  RemapNodeFunc transform2dRemap = [](MaterialEditContext *ctx) {
+    ctx->SetNodeId(str::t_matrix_multiply_vector);
+    ctx->RenameParam(str::t_in, str::t_input);
+    const auto translateValue = ctx->GetParam(str::t_translation);
+    const auto scaleValue = ctx->GetParam(str::t_scale);
+    const auto rotateValue = ctx->GetParam(str::t_rotation);
+
+    GfMatrix4f texCoordTransfromMatrix(1.0);
+    GfMatrix4f m;
+    if (scaleValue.IsHolding<GfVec2f>())
+    {
+      const auto scale = scaleValue.UncheckedGet<GfVec2f>();
+      m.SetScale({scale[0], scale[1], 1.0f});
+      texCoordTransfromMatrix *= m;
+    }
+    if (rotateValue.IsHolding<float>())
+    {
+      m.SetRotate(GfRotation(GfVec3d(0.0, 0.0, 1.0), rotateValue.UncheckedGet<float>()));
+      texCoordTransfromMatrix *= m;
+    }
+    if (translateValue.IsHolding<GfVec2f>())
+    {
+      const auto translate = translateValue.UncheckedGet<GfVec2f>();
+      m.SetTranslate({translate[0], translate[1], 0.0f});
+      texCoordTransfromMatrix *= m;
+    }
+    ctx->SetParam(str::t_matrix, VtValue(texCoordTransfromMatrix));
+  };
+
+  using NodeRemapFuncs = std::unordered_map<TfToken, RemapNodeFunc, TfToken::HashFunctor>;
+
+  const NodeRemapFuncs &_NodeRemapFuncs()
   {
-    const auto &previewId = network.nodes.back().path;
-    // Check if there is anything connected to it's displacement parameter.
-    SdfPath displacementId{};
-    for (const auto &relationship : network.relationships)
-    {
-      if (relationship.outputId == previewId && relationship.outputName == str::t_displacement &&
-          Ai_likely(relationship.inputId != previewId))
-      {
-        displacementId = relationship.inputId;
-        break;
-      }
-    }
-
-    auto clearNodes = [&]() {
-      network.nodes.clear();
-      network.relationships.clear();
+    static const NodeRemapFuncs nodeRemapFuncs{
+      {str::t_UsdPreviewSurface,       previewSurfaceRemap},
+      {str::t_UsdUVTexture,            uvTextureRemap     },
+      {str::t_UsdPrimvarReader_float,  floatPrimvarRemap  },
+      {str::t_UsdPrimvarReader_float2, float2PrimvarRemap },
+      {str::t_UsdPrimvarReader_float3, float3PrimvarRemap },
+      {str::t_UsdPrimvarReader_point,  float3PrimvarRemap },
+      {str::t_UsdPrimvarReader_normal, float3PrimvarRemap },
+      {str::t_UsdPrimvarReader_vector, float3PrimvarRemap },
+      {str::t_UsdPrimvarReader_float4, float4PrimvarRemap },
+      {str::t_UsdPrimvarReader_int,    intPrimvarRemap    },
+      {str::t_UsdPrimvarReader_string, stringPrimvarRemap },
+      {str::t_UsdTransform2d,          transform2dRemap   },
     };
-    if (displacementId.IsEmpty())
+    return nodeRemapFuncs;
+  }
+
+  // A single preview surface connected to surface and displacement slots is a common use case, and
+  // it needs special handling when reading in the network for displacement. We need to check if the
+  // output shader is a preview surface and see if there is anything connected to its displacement
+  // parameter. If the displacement is empty, then we have to clear the network. The challenge here
+  // is that we need to isolate the sub-network connected to the displacement parameter of a usd
+  // preview surface, and remove any nodes / connections that are not part of it. Since you can mix
+  // different node types and reuse connections this is not so trivial.
+  void _RemapNetwork(HdMaterialNetwork &network, bool isDisplacement)
+  {
+    // The last node is the output node when using HdMaterialNetworks.
+    if (isDisplacement && !network.nodes.empty() &&
+        network.nodes.back().identifier == str::t_UsdPreviewSurface)
     {
-      clearNodes();
-      return;
-    }
-    else
-    {
-      // Remove the preview surface.
-      network.nodes.pop_back();
-      // We need to keep any nodes that are directly or indirectly connected to the displacement
-      // node, but we don't have a graph build. We keep an ever growing list of nodes to keep, and
-      // keep iterating through the relationships, until there are no more nodes added, with an
-      // upper limit of the number of relationships.
-      const auto numRelationships = network.relationships.size();
-      std::unordered_set<SdfPath, SdfPath::Hash> requiredNodes;
-      requiredNodes.insert(displacementId);
-      // Upper limit on iterations.
-      for (auto i = decltype(numRelationships){0}; i < numRelationships; i += 1)
+      const auto &previewId = network.nodes.back().path;
+      // Check if there is anything connected to it's displacement parameter.
+      SdfPath displacementId{};
+      for (const auto &relationship : network.relationships)
       {
-        const auto numRequiredNodes = requiredNodes.size();
-        for (const auto &relationship : network.relationships)
+        if (relationship.outputId == previewId && relationship.outputName == str::t_displacement &&
+            Ai_likely(relationship.inputId != previewId))
         {
-          if (requiredNodes.find(relationship.outputId) != requiredNodes.end())
-          {
-            requiredNodes.insert(relationship.inputId);
-          }
-        }
-        // No new required node, break.
-        if (numRequiredNodes == requiredNodes.size())
-        {
+          displacementId = relationship.inputId;
           break;
         }
       }
 
-      // Clear out the relationships we don't need.
-      for (size_t i = 0; i < network.relationships.size(); i += 1)
+      auto clearNodes = [&]() {
+        network.nodes.clear();
+        network.relationships.clear();
+      };
+      if (displacementId.IsEmpty())
       {
-        if (requiredNodes.find(network.relationships[i].outputId) == requiredNodes.end())
+        clearNodes();
+        return;
+      } else
+      {
+        // Remove the preview surface.
+        network.nodes.pop_back();
+        // We need to keep any nodes that are directly or indirectly connected to the displacement
+        // node, but we don't have a graph build. We keep an ever growing list of nodes to keep, and
+        // keep iterating through the relationships, until there are no more nodes added, with an
+        // upper limit of the number of relationships.
+        const auto numRelationships = network.relationships.size();
+        std::unordered_set<SdfPath, SdfPath::Hash> requiredNodes;
+        requiredNodes.insert(displacementId);
+        // Upper limit on iterations.
+        for (auto i = decltype(numRelationships){0}; i < numRelationships; i += 1)
         {
-          network.relationships.erase(network.relationships.begin() + i);
-          i -= 1;
-        }
-      }
-      // Clear out the nodes we don't need.
-      for (size_t i = 0; i < network.nodes.size(); i += 1)
-      {
-        if (requiredNodes.find(network.nodes[i].path) == requiredNodes.end())
-        {
-          network.nodes.erase(network.nodes.begin() + i);
-          i -= 1;
-        }
-      }
-    }
-  }
-  auto isUVTexture = [&](const SdfPath &id) -> bool {
-    for (const auto &material : network.nodes)
-    {
-      if (material.path == id && material.identifier == str::t_UsdUVTexture)
-      {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  auto isSTFloat2PrimvarReader = [&](const SdfPath &id) -> bool {
-    for (const auto &material : network.nodes)
-    {
-      if (material.path == id && material.identifier == str::t_UsdPrimvarReader_float2)
-      {
-        const auto paramIt = material.parameters.find(str::t_varname);
-        TfToken token;
-
-        if (paramIt != material.parameters.end())
-        {
-          if (paramIt->second.IsHolding<TfToken>())
+          const auto numRequiredNodes = requiredNodes.size();
+          for (const auto &relationship : network.relationships)
           {
-            token = paramIt->second.UncheckedGet<TfToken>();
+            if (requiredNodes.find(relationship.outputId) != requiredNodes.end())
+            {
+              requiredNodes.insert(relationship.inputId);
+            }
           }
-          else if (paramIt->second.IsHolding<std::string>())
+          // No new required node, break.
+          if (numRequiredNodes == requiredNodes.size())
           {
-            token = TfToken(paramIt->second.UncheckedGet<std::string>());
+            break;
           }
         }
 
-        return !token.IsEmpty() && (token == str::t_uv || token == str::t_st);
+        // Clear out the relationships we don't need.
+        for (size_t i = 0; i < network.relationships.size(); i += 1)
+        {
+          if (requiredNodes.find(network.relationships[i].outputId) == requiredNodes.end())
+          {
+            network.relationships.erase(network.relationships.begin() + i);
+            i -= 1;
+          }
+        }
+        // Clear out the nodes we don't need.
+        for (size_t i = 0; i < network.nodes.size(); i += 1)
+        {
+          if (requiredNodes.find(network.nodes[i].path) == requiredNodes.end())
+          {
+            network.nodes.erase(network.nodes.begin() + i);
+            i -= 1;
+          }
+        }
       }
     }
-    return false;
-  };
-  // We are invalidating any float 2 primvar reader connection with either uv
-  // or st primvar to a usd uv texture.
-  for (auto &relationship : network.relationships)
-  {
-    if (relationship.outputName == str::t_st)
-    {
-      // We check if the node is a UsdUVTexture
-      if (isUVTexture(relationship.outputId) && isSTFloat2PrimvarReader(relationship.inputId))
+    auto isUVTexture = [&](const SdfPath &id) -> bool {
+      for (const auto &material : network.nodes)
       {
-        // We need to keep the inputId, otherwise we won't be able to find
-        // the entry point to the shader network.
-        relationship.outputId = SdfPath();
+        if (material.path == id && material.identifier == str::t_UsdUVTexture)
+        {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    auto isSTFloat2PrimvarReader = [&](const SdfPath &id) -> bool {
+      for (const auto &material : network.nodes)
+      {
+        if (material.path == id && material.identifier == str::t_UsdPrimvarReader_float2)
+        {
+          const auto paramIt = material.parameters.find(str::t_varname);
+          TfToken token;
+
+          if (paramIt != material.parameters.end())
+          {
+            if (paramIt->second.IsHolding<TfToken>())
+            {
+              token = paramIt->second.UncheckedGet<TfToken>();
+            } else if (paramIt->second.IsHolding<std::string>())
+            {
+              token = TfToken(paramIt->second.UncheckedGet<std::string>());
+            }
+          }
+
+          return !token.IsEmpty() && (token == str::t_uv || token == str::t_st);
+        }
+      }
+      return false;
+    };
+    // We are invalidating any float 2 primvar reader connection with either uv
+    // or st primvar to a usd uv texture.
+    for (auto &relationship : network.relationships)
+    {
+      if (relationship.outputName == str::t_st)
+      {
+        // We check if the node is a UsdUVTexture
+        if (isUVTexture(relationship.outputId) && isSTFloat2PrimvarReader(relationship.inputId))
+        {
+          // We need to keep the inputId, otherwise we won't be able to find
+          // the entry point to the shader network.
+          relationship.outputId = SdfPath();
+        }
       }
     }
-  }
 
-  for (auto &material : network.nodes)
-  {
-    const auto remapIt = _NodeRemapFuncs().find(material.identifier);
-    if (remapIt == _NodeRemapFuncs().end())
+    for (auto &material : network.nodes)
     {
-      continue;
-    }
+      const auto remapIt = _NodeRemapFuncs().find(material.identifier);
+      if (remapIt == _NodeRemapFuncs().end())
+      {
+        continue;
+      }
 
-    HydraMaterialEditContext editCtx(network, material);
-    remapIt->second(&editCtx);
+      HydraMaterialEditContext editCtx(network, material);
+      remapIt->second(&editCtx);
+    }
   }
-}
 
 }  // namespace
 
@@ -626,8 +623,7 @@ AtNode *HdArnoldMaterial::ReadMaterialNetwork(const HdMaterialNetwork &network)
       continue;
     }
     const auto *outputNodeEntry = AiNodeGetNodeEntry(outputNode);
-    if (AiNodeEntryLookUpParameter(outputNodeEntry, AtString(relationship.outputName.GetText())) ==
-        nullptr)
+    if (AiNodeEntryLookUpParameter(outputNodeEntry, AtString(relationship.outputName.GetText())) == nullptr)
     {
       continue;
     }
@@ -645,27 +641,25 @@ AtNode *HdArnoldMaterial::ReadMaterialNetwork(const HdMaterialNetwork &network)
       if (relationship.inputName == _tokens->x || relationship.inputName == _tokens->y)
       {
         useInputName = (inputType == AI_TYPE_VECTOR || inputType == AI_TYPE_VECTOR2);
-      }
-      else if (relationship.inputName == _tokens->z)
+      } else if (relationship.inputName == _tokens->z)
       {
         useInputName = (inputType == AI_TYPE_VECTOR);
-      }
-      else if (relationship.inputName == _tokens->r || relationship.inputName == _tokens->g ||
-               relationship.inputName == _tokens->b)
+      } else if (relationship.inputName == _tokens->r || relationship.inputName == _tokens->g ||
+                 relationship.inputName == _tokens->b)
       {
         useInputName = (inputType == AI_TYPE_RGB || inputType == AI_TYPE_RGBA);
-      }
-      else if (relationship.inputName == _tokens->a)
+      } else if (relationship.inputName == _tokens->a)
       {
         useInputName = (inputType == AI_TYPE_RGBA);
       }
     }
     if (useInputName)
     {
-      AiNodeLinkOutput(
-        inputNode, relationship.inputName.GetText(), outputNode, relationship.outputName.GetText());
-    }
-    else
+      AiNodeLinkOutput(inputNode,
+                       relationship.inputName.GetText(),
+                       outputNode,
+                       relationship.outputName.GetText());
+    } else
     {
       AiNodeLink(inputNode, relationship.outputName.GetText(), outputNode);
     }
@@ -694,8 +688,9 @@ AtNode *HdArnoldMaterial::ReadMaterial(const HdMaterialNode &material)
     const auto param = material.parameters.find(str::t_code);
     if (param != material.parameters.end())
     {
-      HdArnoldSetParameter(
-        ret, AiNodeEntryLookUpParameter(AiNodeGetNodeEntry(ret), str::code), param->second);
+      HdArnoldSetParameter(ret,
+                           AiNodeEntryLookUpParameter(AiNodeGetNodeEntry(ret), str::code),
+                           param->second);
     }
   }
   // We need to query the node entry AFTER setting the code parameter on the node.
@@ -753,8 +748,7 @@ AtNode *HdArnoldMaterial::GetLocalNode(const SdfPath &path, const AtString &node
         AiNodeDestroy(nodeIt->second.node);
       }
       _nodes.erase(nodeIt);
-    }
-    else
+    } else
     {
       TF_DEBUG(HDARNOLD_MATERIAL).Msg("  existing node found - using it\n");
       nodeIt->second.updated = true;

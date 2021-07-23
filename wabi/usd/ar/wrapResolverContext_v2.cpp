@@ -50,41 +50,43 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-// Helper struct to allow implicit conversions from None or a
-// sequence of context objects to an Ar.ResolverContext object.
-struct Ar_ResolverContextFromPython
-{
-  Ar_ResolverContextFromPython()
+  // Helper struct to allow implicit conversions from None or a
+  // sequence of context objects to an Ar.ResolverContext object.
+  struct Ar_ResolverContextFromPython
   {
-    converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<ArResolverContext>());
-  }
-
-  static void *_convertible(PyObject *obj_ptr)
-  {
-    object obj(handle<>(borrowed(obj_ptr)));
-    if (obj.is_none() || extract<std::vector<ArResolverContext>>(obj).check())
+    Ar_ResolverContextFromPython()
     {
-      return obj_ptr;
-    }
-    return 0;
-  }
-
-  static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
-  {
-    void *storage = ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
-
-    ArResolverContext context;
-
-    object obj(handle<>(borrowed(obj_ptr)));
-    if (!obj.is_none())
-    {
-      context = ArResolverContext(extract<std::vector<ArResolverContext>>(obj)());
+      converter::registry::push_back(&_convertible,
+                                     &_construct,
+                                     boost::python::type_id<ArResolverContext>());
     }
 
-    new (storage) ArResolverContext(context);
-    data->convertible = storage;
-  }
-};
+    static void *_convertible(PyObject *obj_ptr)
+    {
+      object obj(handle<>(borrowed(obj_ptr)));
+      if (obj.is_none() || extract<std::vector<ArResolverContext>>(obj).check())
+      {
+        return obj_ptr;
+      }
+      return 0;
+    }
+
+    static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
+    {
+      void *storage = ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
+
+      ArResolverContext context;
+
+      object obj(handle<>(borrowed(obj_ptr)));
+      if (!obj.is_none())
+      {
+        context = ArResolverContext(extract<std::vector<ArResolverContext>>(obj)());
+      }
+
+      new (storage) ArResolverContext(context);
+      data->convertible = storage;
+    }
+  };
 
 }  // anonymous namespace
 

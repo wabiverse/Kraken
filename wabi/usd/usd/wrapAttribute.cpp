@@ -46,73 +46,73 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static vector<double> _GetTimeSamples(const UsdAttribute &self)
-{
-  vector<double> result;
-  self.GetTimeSamples(&result);
-  return result;
-}
-
-static vector<double> _GetTimeSamplesInInterval(const UsdAttribute &self, const GfInterval &interval)
-{
-  vector<double> result;
-  self.GetTimeSamplesInInterval(interval, &result);
-  return result;
-}
-
-static vector<double> _GetUnionedTimeSamples(const vector<UsdAttribute> &attrs)
-{
-  vector<double> result;
-  UsdAttribute::GetUnionedTimeSamples(attrs, &result);
-  return result;
-}
-
-static vector<double> _GetUnionedTimeSamplesInInterval(const vector<UsdAttribute> &attrs,
-                                                       const GfInterval &interval)
-{
-  vector<double> result;
-  UsdAttribute::GetUnionedTimeSamplesInInterval(attrs, interval, &result);
-  return result;
-}
-
-static object _GetBracketingTimeSamples(const UsdAttribute &self, double desiredTime)
-{
-  double lower = 0.0, upper = 0.0;
-  bool hasTimeSamples = false;
-
-  if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples))
+  static vector<double> _GetTimeSamples(const UsdAttribute &self)
   {
-    return hasTimeSamples ? make_tuple(lower, upper) : make_tuple();
+    vector<double> result;
+    self.GetTimeSamples(&result);
+    return result;
   }
-  return object();
-}
 
-static TfPyObjWrapper _Get(const UsdAttribute &self, UsdTimeCode time)
-{
-  VtValue val;
-  self.Get(&val, time);
-  return UsdVtValueToPython(val);
-}
+  static vector<double> _GetTimeSamplesInInterval(const UsdAttribute &self, const GfInterval &interval)
+  {
+    vector<double> result;
+    self.GetTimeSamplesInInterval(interval, &result);
+    return result;
+  }
 
-static bool _Set(const UsdAttribute &self, object val, const UsdTimeCode &time)
-{
-  return self.Set(UsdPythonToSdfType(val, self.GetTypeName()), time);
-}
+  static vector<double> _GetUnionedTimeSamples(const vector<UsdAttribute> &attrs)
+  {
+    vector<double> result;
+    UsdAttribute::GetUnionedTimeSamples(attrs, &result);
+    return result;
+  }
 
-static SdfPathVector _GetConnections(const UsdAttribute &self)
-{
-  SdfPathVector result;
-  self.GetConnections(&result);
-  return result;
-}
+  static vector<double> _GetUnionedTimeSamplesInInterval(const vector<UsdAttribute> &attrs,
+                                                         const GfInterval &interval)
+  {
+    vector<double> result;
+    UsdAttribute::GetUnionedTimeSamplesInInterval(attrs, interval, &result);
+    return result;
+  }
 
-static string __repr__(const UsdAttribute &self)
-{
-  return self ? TfStringPrintf("%s.GetAttribute(%s)",
-                               TfPyRepr(self.GetPrim()).c_str(),
-                               TfPyRepr(self.GetName()).c_str()) :
-                "invalid " + self.GetDescription();
-}
+  static object _GetBracketingTimeSamples(const UsdAttribute &self, double desiredTime)
+  {
+    double lower = 0.0, upper = 0.0;
+    bool hasTimeSamples = false;
+
+    if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples))
+    {
+      return hasTimeSamples ? make_tuple(lower, upper) : make_tuple();
+    }
+    return object();
+  }
+
+  static TfPyObjWrapper _Get(const UsdAttribute &self, UsdTimeCode time)
+  {
+    VtValue val;
+    self.Get(&val, time);
+    return UsdVtValueToPython(val);
+  }
+
+  static bool _Set(const UsdAttribute &self, object val, const UsdTimeCode &time)
+  {
+    return self.Set(UsdPythonToSdfType(val, self.GetTypeName()), time);
+  }
+
+  static SdfPathVector _GetConnections(const UsdAttribute &self)
+  {
+    SdfPathVector result;
+    self.GetConnections(&result);
+    return result;
+  }
+
+  static string __repr__(const UsdAttribute &self)
+  {
+    return self ? TfStringPrintf("%s.GetAttribute(%s)",
+                                 TfPyRepr(self.GetPrim()).c_str(),
+                                 TfPyRepr(self.GetName()).c_str()) :
+                  "invalid " + self.GetDescription();
+  }
 
 }  // anonymous namespace
 

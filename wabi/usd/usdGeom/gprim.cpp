@@ -139,14 +139,15 @@ UsdAttribute UsdGeomGprim::CreateOrientationAttr(VtValue const &defaultValue, bo
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -187,8 +188,10 @@ UsdGeomPrimvar UsdGeomGprim::GetDisplayColorPrimvar() const
 
 UsdGeomPrimvar UsdGeomGprim::CreateDisplayColorPrimvar(const TfToken &interpolation, int elementSize) const
 {
-  return CreatePrimvar(
-    UsdGeomTokens->primvarsDisplayColor, SdfValueTypeNames->Color3fArray, interpolation, elementSize);
+  return CreatePrimvar(UsdGeomTokens->primvarsDisplayColor,
+                       SdfValueTypeNames->Color3fArray,
+                       interpolation,
+                       elementSize);
 }
 
 UsdGeomPrimvar UsdGeomGprim::GetDisplayOpacityPrimvar() const
@@ -198,8 +201,10 @@ UsdGeomPrimvar UsdGeomGprim::GetDisplayOpacityPrimvar() const
 
 UsdGeomPrimvar UsdGeomGprim::CreateDisplayOpacityPrimvar(const TfToken &interpolation, int elementSize) const
 {
-  return CreatePrimvar(
-    UsdGeomTokens->primvarsDisplayOpacity, SdfValueTypeNames->FloatArray, interpolation, elementSize);
+  return CreatePrimvar(UsdGeomTokens->primvarsDisplayOpacity,
+                       SdfValueTypeNames->FloatArray,
+                       interpolation,
+                       elementSize);
 }
 
 WABI_NAMESPACE_END

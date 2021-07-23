@@ -164,12 +164,13 @@ bool UsdPrim::_HasAPI(const TfType &schemaType, bool validateSchemaType, const T
     // true if we find an applied schema name that starts with "<alias>:".
     else if (isMultipleApplyAPISchema)
     {
-      return std::any_of(
-        appliedSchemas.begin(), appliedSchemas.end(), [&alias](const TfToken &appliedSchema) {
-          return TfStringStartsWith(appliedSchema, alias + UsdObject::GetNamespaceDelimiter());
-        });
-    }
-    else
+      return std::any_of(appliedSchemas.begin(),
+                         appliedSchemas.end(),
+                         [&alias](const TfToken &appliedSchema) {
+                           return TfStringStartsWith(appliedSchema,
+                                                     alias + UsdObject::GetNamespaceDelimiter());
+                         });
+    } else
     {
       // If instanceName is empty and if schemaType is not a multiple
       // apply API schema, then we can look for an exact match.
@@ -261,7 +262,8 @@ static bool _IsPrimTypeValidApplyToTarget(const TfType &primType,
 {
   // Get the list of prim types this API "can only apply to" if any.
   const TfTokenVector &canOnlyApplyToTypes = UsdSchemaRegistry::GetAPISchemaCanOnlyApplyToTypeNames(
-    apiSchemaTypeName, instanceName);
+    apiSchemaTypeName,
+    instanceName);
 
   // If no "can only apply to" types are found, the schema can be
   // applied to any prim type (including empty or invalid prims types)
@@ -369,8 +371,10 @@ bool UsdPrim::_CanApplyAPI(const TfType &apiSchemaType,
 
   // Return whether this prim's type is a valid target for applying the given
   // API schema and instance name.
-  return _IsPrimTypeValidApplyToTarget(
-    GetPrimTypeInfo().GetSchemaType(), apiSchemaTypeName, instanceName, whyNot);
+  return _IsPrimTypeValidApplyToTarget(GetPrimTypeInfo().GetSchemaType(),
+                                       apiSchemaTypeName,
+                                       instanceName,
+                                       whyNot);
 }
 
 bool UsdPrim::CanApplyAPI(const TfType &schemaType, std::string *whyNot) const
@@ -598,8 +602,7 @@ bool UsdPrim::AddAppliedSchema(const TfToken &appliedSchemaName) const
     {
       return false;
     }
-  }
-  else
+  } else
   {
     // Otherwise our name could be in the append or prepend list (we
     // purposefully ignore the "add" list which is deprecated) so we check
@@ -652,8 +655,7 @@ bool UsdPrim::RemoveAppliedSchema(const TfToken &appliedSchemaName) const
   {
     primSpec->SetInfo(UsdTokens->apiSchemas, VtValue(*result));
     return true;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR(
       "Failed to apply list op edits to 'apiSchemas' on spec "
@@ -675,8 +677,7 @@ std::vector<UsdProperty> UsdPrim::_MakeProperties(const TfTokenVector &names) co
     if (specType == SdfSpecTypeAttribute)
     {
       props.push_back(GetAttribute(propName));
-    }
-    else if (TF_VERIFY(specType == SdfSpecTypeRelationship))
+    } else if (TF_VERIFY(specType == SdfSpecTypeRelationship))
     {
       props.push_back(GetRelationship(propName));
     }
@@ -731,8 +732,7 @@ UsdProperty UsdPrim::GetProperty(const TfToken &propName) const
   if (specType == SdfSpecTypeAttribute)
   {
     return GetAttribute(propName);
-  }
-  else if (specType == SdfSpecTypeRelationship)
+  } else if (specType == SdfSpecTypeRelationship)
   {
     return GetRelationship(propName);
   }
@@ -787,8 +787,7 @@ static void _ComposePrimPropertyNames(const PcpPrimIndex &primIndex,
               names->push_back(name);
             }
           }
-        }
-        else
+        } else
         {
           names->insert(names->end(), localNames->begin(), localNames->end());
         }
@@ -840,8 +839,7 @@ TfTokenVector UsdPrim::_GetPropertyNames(bool onlyAuthored,
           names.push_back(builtInName);
         }
       }
-    }
-    else
+    } else
     {
       names = primDef.GetPropertyNames();
     }
@@ -1189,8 +1187,7 @@ struct UsdPrim_RelTargetFinder : public UsdPrim_TargetFinder<UsdRelationship, Us
   }
 };
 
-struct UsdPrim_AttrConnectionFinder
-  : public UsdPrim_TargetFinder<UsdAttribute, UsdPrim_AttrConnectionFinder>
+struct UsdPrim_AttrConnectionFinder : public UsdPrim_TargetFinder<UsdAttribute, UsdPrim_AttrConnectionFinder>
 {
   std::vector<UsdAttribute> _GetProperties(UsdPrim const &prim) const
   {
@@ -1441,11 +1438,14 @@ PcpPrimIndex UsdPrim::ComputeExpandedPrimIndex() const
   PcpCache *cache = _GetStage()->_GetPcpCache();
 
   PcpPrimIndexOutputs outputs;
-  PcpComputePrimIndex(
-    primIndexPath, cache->GetLayerStack(), cache->GetPrimIndexInputs().Cull(false), &outputs);
+  PcpComputePrimIndex(primIndexPath,
+                      cache->GetLayerStack(),
+                      cache->GetPrimIndexInputs().Cull(false),
+                      &outputs);
 
   _GetStage()->_ReportPcpErrors(
-    outputs.allErrors, TfStringPrintf("computing expanded prim index for <%s>", GetPath().GetText()));
+    outputs.allErrors,
+    TfStringPrintf("computing expanded prim index for <%s>", GetPath().GetText()));
 
   return outputs.primIndex;
 }

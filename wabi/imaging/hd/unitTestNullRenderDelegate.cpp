@@ -102,8 +102,7 @@ class Hd_NullRprim final : public HdRprim
       if (_typeId == HdPrimTypeTokens->mesh)
       {
         delegate->GetMeshTopology(id);
-      }
-      else if (_typeId == HdPrimTypeTokens->basisCurves)
+      } else if (_typeId == HdPrimTypeTokens->basisCurves)
       {
         delegate->GetBasisCurvesTopology(id);
       }
@@ -194,7 +193,8 @@ class Hd_NullRprim final : public HdRprim
          ++interpolation)
     {
       HdPrimvarDescriptorVector primvars = GetPrimvarDescriptors(
-        delegate, static_cast<HdInterpolation>(interpolation));
+        delegate,
+        static_cast<HdInterpolation>(interpolation));
 
       size_t numPrimVars = primvars.size();
       for (size_t primVarNum = 0; primVarNum < numPrimVars; ++primVarNum)
@@ -359,16 +359,13 @@ HdSprim *Hd_UnitTestNullRenderDelegate::CreateSprim(TfToken const &typeId, SdfPa
   if (typeId == HdPrimTypeTokens->material)
   {
     return new Hd_NullMaterial(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->coordSys)
+  } else if (typeId == HdPrimTypeTokens->coordSys)
   {
     return new Hd_NullCoordSys(sprimId);
-  }
-  else if (typeId == HdPrimTypeTokens->camera)
+  } else if (typeId == HdPrimTypeTokens->camera)
   {
     return new Hd_NullCamera(sprimId);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
@@ -380,16 +377,13 @@ HdSprim *Hd_UnitTestNullRenderDelegate::CreateFallbackSprim(TfToken const &typeI
   if (typeId == HdPrimTypeTokens->material)
   {
     return new Hd_NullMaterial(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->coordSys)
+  } else if (typeId == HdPrimTypeTokens->coordSys)
   {
     return new Hd_NullCoordSys(SdfPath::EmptyPath());
-  }
-  else if (typeId == HdPrimTypeTokens->camera)
+  } else if (typeId == HdPrimTypeTokens->camera)
   {
     return new Hd_NullCamera(SdfPath::EmptyPath());
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }

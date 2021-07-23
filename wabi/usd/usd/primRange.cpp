@@ -77,33 +77,28 @@ void UsdPrimRange::iterator::increment()
       {
         --_depth;
         _isPost = true;
-      }
-      else
+      } else
       {
         base = end;
         _proxyPrimPath = SdfPath();
       }
     }
-  }
-  else if (!_pruneChildrenFlag && Usd_MoveToChild(base, _proxyPrimPath, end, _range->_predicate))
+  } else if (!_pruneChildrenFlag && Usd_MoveToChild(base, _proxyPrimPath, end, _range->_predicate))
   {
     ++_depth;
-  }
-  else
+  } else
   {
     if (_range->_postOrder)
     {
       _isPost = true;
-    }
-    else
+    } else
     {
       while (Usd_MoveToNextSiblingOrParent(base, _proxyPrimPath, end, _range->_predicate))
       {
         if (_depth)
         {
           --_depth;
-        }
-        else
+        } else
         {
           base = end;
           _proxyPrimPath = SdfPath();

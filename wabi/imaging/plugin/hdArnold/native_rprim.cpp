@@ -49,8 +49,9 @@ void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
         const auto *nodeEntry = AiNodeGetNodeEntry(GetArnoldNode());
         for (const auto &param : val.UncheckedGet<ArnoldUsdParamValueList>())
         {
-          HdArnoldSetParameter(
-            GetArnoldNode(), AiNodeEntryLookUpParameter(nodeEntry, param.first), param.second);
+          HdArnoldSetParameter(GetArnoldNode(),
+                               AiNodeEntryLookUpParameter(nodeEntry, param.first),
+                               param.second);
         }
       }
     }
@@ -81,8 +82,7 @@ void HdArnoldNativeRprim::Sync(HdSceneDelegate *sceneDelegate,
     if (material != nullptr)
     {
       AiNodeSetPtr(GetArnoldNode(), str::shader, material->GetSurfaceShader());
-    }
-    else
+    } else
     {
       AiNodeResetParameter(GetArnoldNode(), str::shader);
     }

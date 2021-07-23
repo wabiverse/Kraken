@@ -60,13 +60,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  ((lightingUB, "Lighting"))((shadowUB, "Shadow"))((bindlessShadowUB,
-                                                    "BindlessShadowSamplers"))((materialUB, "Material"))((
-    postSurfaceShaderUB,
-    "PostSurfaceShaderParams"))((shadowSampler, "shadowTexture"))((shadowCompareSampler,
-                                                                   "shadowCompareTexture")));
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         ((lightingUB, "Lighting"))((shadowUB, "Shadow"))((bindlessShadowUB, "BindlessShadowSamplers"))(
+                           (materialUB, "Material"))((postSurfaceShaderUB, "PostSurfaceShaderParams"))(
+                           (shadowSampler, "shadowTexture"))((shadowCompareSampler, "shadowCompareTexture")));
 
 // XXX:
 // currently max number of lights are limited to 16 by

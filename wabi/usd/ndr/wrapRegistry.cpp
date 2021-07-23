@@ -81,8 +81,7 @@ static void _SetExtraDiscoveryPlugins(NdrRegistry &self, const list &pylist)
       {
         plugins.push_back(pluginPtr);
       }
-    }
-    else
+    } else
     {
       types.push_back(extract<TfType>(pylist[i]));
     }
@@ -152,8 +151,9 @@ void wrapRegistry()
          return_internal_reference<>())
 
     .def("GetNodesByIdentifier", &This::GetNodesByIdentifier, (args("identifier")))
-    .def(
-      "GetNodesByName", &This::GetNodesByName, (args("name"), args("filter") = NdrVersionFilterDefaultOnly))
+    .def("GetNodesByName",
+         &This::GetNodesByName,
+         (args("name"), args("filter") = NdrVersionFilterDefaultOnly))
     .def("GetNodesByFamily",
          &This::GetNodesByFamily,
          (args("family") = TfToken(), args("filter") = NdrVersionFilterDefaultOnly))

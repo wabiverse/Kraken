@@ -267,8 +267,7 @@ class Tf_TypeRegistry : boost::noncopyable
         {
           // Alias already exists; no change.
           return;
-        }
-        else
+        } else
         {
           *errMsg = TfStringPrintf(
             "Cannot set alias '%s' under '%s', because "
@@ -930,8 +929,7 @@ TfType const &TfType::Declare(const string &typeName,
         // If we don't have any bases yet, add the root type.
         t._AddBases(TypeVector(1, GetRoot()), &errorsToEmit);
       }
-    }
-    else
+    } else
     {
       // Otherwise, add the new bases.
       t._AddBases(newBases, &errorsToEmit);
@@ -1051,8 +1049,7 @@ void TfType::_AddBases(const TypeVector &newBases, vector<string> *errorsToEmit)
                        GetTypeName().c_str(),
                        haveBase.GetTypeName().c_str(),
                        newBasesStr.c_str()));
-    }
-    else
+    } else
     {
 
       // Make sure the new bases are also ordered strictly monotonically
@@ -1141,8 +1138,7 @@ void *TfType::CastToAncestor(TfType ancestor, void *addr) const
         addr = (*castFunc)(addr, true);
         t = t._info->baseTypes[0];
         continue;
-      }
-      else
+      } else
       {
         return nullptr;
       }

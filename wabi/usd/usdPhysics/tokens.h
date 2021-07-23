@@ -27,10 +27,10 @@
 /// \file usdPhysics/tokens.h
 
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// 
+//
 // This is an automatically generated file (by usdGenSchema.py).
 // Do not hand-edit!
-// 
+//
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 #include "wabi/wabi.h"
@@ -60,286 +60,295 @@ WABI_NAMESPACE_BEGIN
 /// \code
 ///     gprim.GetMyTokenValuedAttr().Set(UsdPhysicsTokens->acceleration);
 /// \endcode
-struct UsdPhysicsTokensType {
-    USDPHYSICS_API UsdPhysicsTokensType();
-    /// \brief "acceleration"
-    /// 
-    /// Possible value for UsdPhysicsDriveAPI::GetTypeAttr()
-    const TfToken acceleration;
-    /// \brief "angular"
-    /// 
-    ///  This token represents the angular degree of freedom used in Revolute Joint Drive. 
-    const TfToken angular;
-    /// \brief "boundingCube"
-    /// 
-    /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
-    const TfToken boundingCube;
-    /// \brief "boundingSphere"
-    /// 
-    /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
-    const TfToken boundingSphere;
-    /// \brief "colliders"
-    /// 
-    ///  This token represents the collection name to use with UsdCollectionAPI to represent colliders of a CollisionGroup prim. 
-    const TfToken colliders;
-    /// \brief "convexDecomposition"
-    /// 
-    /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
-    const TfToken convexDecomposition;
-    /// \brief "convexHull"
-    /// 
-    /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
-    const TfToken convexHull;
-    /// \brief "distance"
-    /// 
-    ///  This token represents the distance limit used for generic D6 joint. 
-    const TfToken distance;
-    /// \brief "drive"
-    /// 
-    /// Property namespace prefix for the UsdPhysicsDriveAPI schema.
-    const TfToken drive;
-    /// \brief "force"
-    /// 
-    /// Possible value for UsdPhysicsDriveAPI::GetTypeAttr(), Default value for UsdPhysicsDriveAPI::GetTypeAttr()
-    const TfToken force;
-    /// \brief "kilogramsPerUnit"
-    /// 
-    /// Stage-level metadata that encodes a scene's linear unit of measure as kilograms per encoded unit.
-    const TfToken kilogramsPerUnit;
-    /// \brief "limit"
-    /// 
-    /// Property namespace prefix for the UsdPhysicsLimitAPI schema.
-    const TfToken limit;
-    /// \brief "linear"
-    /// 
-    ///  This token represents the linear degree of freedom used in Prismatic Joint Drive. 
-    const TfToken linear;
-    /// \brief "meshSimplification"
-    /// 
-    /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
-    const TfToken meshSimplification;
-    /// \brief "none"
-    /// 
-    /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr(), Default value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
-    const TfToken none;
-    /// \brief "physics:angularVelocity"
-    /// 
-    /// UsdPhysicsRigidBodyAPI
-    const TfToken physicsAngularVelocity;
-    /// \brief "physics:approximation"
-    /// 
-    /// UsdPhysicsMeshCollisionAPI
-    const TfToken physicsApproximation;
-    /// \brief "physics:axis"
-    /// 
-    /// UsdPhysicsSphericalJoint, UsdPhysicsPrismaticJoint, UsdPhysicsRevoluteJoint
-    const TfToken physicsAxis;
-    /// \brief "physics:body0"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsBody0;
-    /// \brief "physics:body1"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsBody1;
-    /// \brief "physics:breakForce"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsBreakForce;
-    /// \brief "physics:breakTorque"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsBreakTorque;
-    /// \brief "physics:centerOfMass"
-    /// 
-    /// UsdPhysicsMassAPI
-    const TfToken physicsCenterOfMass;
-    /// \brief "physics:collisionEnabled"
-    /// 
-    /// UsdPhysicsJoint, UsdPhysicsCollisionAPI
-    const TfToken physicsCollisionEnabled;
-    /// \brief "physics:coneAngle0Limit"
-    /// 
-    /// UsdPhysicsSphericalJoint
-    const TfToken physicsConeAngle0Limit;
-    /// \brief "physics:coneAngle1Limit"
-    /// 
-    /// UsdPhysicsSphericalJoint
-    const TfToken physicsConeAngle1Limit;
-    /// \brief "physics:damping"
-    /// 
-    /// UsdPhysicsDriveAPI
-    const TfToken physicsDamping;
-    /// \brief "physics:density"
-    /// 
-    /// UsdPhysicsMaterialAPI, UsdPhysicsMassAPI
-    const TfToken physicsDensity;
-    /// \brief "physics:diagonalInertia"
-    /// 
-    /// UsdPhysicsMassAPI
-    const TfToken physicsDiagonalInertia;
-    /// \brief "physics:dynamicFriction"
-    /// 
-    /// UsdPhysicsMaterialAPI
-    const TfToken physicsDynamicFriction;
-    /// \brief "physics:excludeFromArticulation"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsExcludeFromArticulation;
-    /// \brief "physics:filteredGroups"
-    /// 
-    /// UsdPhysicsCollisionGroup
-    const TfToken physicsFilteredGroups;
-    /// \brief "physics:filteredPairs"
-    /// 
-    /// UsdPhysicsFilteredPairsAPI
-    const TfToken physicsFilteredPairs;
-    /// \brief "physics:gravityDirection"
-    /// 
-    /// UsdPhysicsScene
-    const TfToken physicsGravityDirection;
-    /// \brief "physics:gravityMagnitude"
-    /// 
-    /// UsdPhysicsScene
-    const TfToken physicsGravityMagnitude;
-    /// \brief "physics:high"
-    /// 
-    /// UsdPhysicsLimitAPI
-    const TfToken physicsHigh;
-    /// \brief "physics:jointEnabled"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsJointEnabled;
-    /// \brief "physics:kinematicEnabled"
-    /// 
-    /// UsdPhysicsRigidBodyAPI
-    const TfToken physicsKinematicEnabled;
-    /// \brief "physics:localPos0"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsLocalPos0;
-    /// \brief "physics:localPos1"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsLocalPos1;
-    /// \brief "physics:localRot0"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsLocalRot0;
-    /// \brief "physics:localRot1"
-    /// 
-    /// UsdPhysicsJoint
-    const TfToken physicsLocalRot1;
-    /// \brief "physics:low"
-    /// 
-    /// UsdPhysicsLimitAPI
-    const TfToken physicsLow;
-    /// \brief "physics:lowerLimit"
-    /// 
-    /// UsdPhysicsPrismaticJoint, UsdPhysicsRevoluteJoint
-    const TfToken physicsLowerLimit;
-    /// \brief "physics:mass"
-    /// 
-    /// UsdPhysicsMassAPI
-    const TfToken physicsMass;
-    /// \brief "physics:maxDistance"
-    /// 
-    /// UsdPhysicsDistanceJoint
-    const TfToken physicsMaxDistance;
-    /// \brief "physics:maxForce"
-    /// 
-    /// UsdPhysicsDriveAPI
-    const TfToken physicsMaxForce;
-    /// \brief "physics:minDistance"
-    /// 
-    /// UsdPhysicsDistanceJoint
-    const TfToken physicsMinDistance;
-    /// \brief "physics:principalAxes"
-    /// 
-    /// UsdPhysicsMassAPI
-    const TfToken physicsPrincipalAxes;
-    /// \brief "physics:restitution"
-    /// 
-    /// UsdPhysicsMaterialAPI
-    const TfToken physicsRestitution;
-    /// \brief "physics:rigidBodyEnabled"
-    /// 
-    /// UsdPhysicsRigidBodyAPI
-    const TfToken physicsRigidBodyEnabled;
-    /// \brief "physics:simulationOwner"
-    /// 
-    /// UsdPhysicsCollisionAPI, UsdPhysicsRigidBodyAPI
-    const TfToken physicsSimulationOwner;
-    /// \brief "physics:startsAsleep"
-    /// 
-    /// UsdPhysicsRigidBodyAPI
-    const TfToken physicsStartsAsleep;
-    /// \brief "physics:staticFriction"
-    /// 
-    /// UsdPhysicsMaterialAPI
-    const TfToken physicsStaticFriction;
-    /// \brief "physics:stiffness"
-    /// 
-    /// UsdPhysicsDriveAPI
-    const TfToken physicsStiffness;
-    /// \brief "physics:targetPosition"
-    /// 
-    /// UsdPhysicsDriveAPI
-    const TfToken physicsTargetPosition;
-    /// \brief "physics:targetVelocity"
-    /// 
-    /// UsdPhysicsDriveAPI
-    const TfToken physicsTargetVelocity;
-    /// \brief "physics:type"
-    /// 
-    /// UsdPhysicsDriveAPI
-    const TfToken physicsType;
-    /// \brief "physics:upperLimit"
-    /// 
-    /// UsdPhysicsPrismaticJoint, UsdPhysicsRevoluteJoint
-    const TfToken physicsUpperLimit;
-    /// \brief "physics:velocity"
-    /// 
-    /// UsdPhysicsRigidBodyAPI
-    const TfToken physicsVelocity;
-    /// \brief "rotX"
-    /// 
-    ///  This token represents the rotate around X axis degree of freedom used in Joint Limits and Drives. 
-    const TfToken rotX;
-    /// \brief "rotY"
-    /// 
-    ///  This token represents the rotate around Y axis degree of freedom used in Joint Limits and Drives. 
-    const TfToken rotY;
-    /// \brief "rotZ"
-    /// 
-    ///  This token represents the rotate around Z axis degree of freedom used in Joint Limits and Drives. 
-    const TfToken rotZ;
-    /// \brief "transX"
-    /// 
-    ///  This token represents the translate around X axis degree of freedom used in Joint Limits and Drives. 
-    const TfToken transX;
-    /// \brief "transY"
-    /// 
-    ///  This token represents the translate around Y axis degree of freedom used in Joint Limits and Drives. 
-    const TfToken transY;
-    /// \brief "transZ"
-    /// 
-    ///  This token represents the translate around Z axis degree of freedom used in Joint Limits and Drives. 
-    const TfToken transZ;
-    /// \brief "X"
-    /// 
-    /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Default value for UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for UsdPhysicsPrismaticJoint::GetAxisAttr(), Default value for UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for UsdPhysicsRevoluteJoint::GetAxisAttr(), Default value for UsdPhysicsRevoluteJoint::GetAxisAttr()
-    const TfToken x;
-    /// \brief "Y"
-    /// 
-    /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for UsdPhysicsRevoluteJoint::GetAxisAttr()
-    const TfToken y;
-    /// \brief "Z"
-    /// 
-    /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for UsdPhysicsRevoluteJoint::GetAxisAttr()
-    const TfToken z;
-    /// A vector of all of the tokens listed above.
-    const std::vector<TfToken> allTokens;
+struct UsdPhysicsTokensType
+{
+  USDPHYSICS_API UsdPhysicsTokensType();
+  /// \brief "acceleration"
+  ///
+  /// Possible value for UsdPhysicsDriveAPI::GetTypeAttr()
+  const TfToken acceleration;
+  /// \brief "angular"
+  ///
+  ///  This token represents the angular degree of freedom used in Revolute Joint Drive.
+  const TfToken angular;
+  /// \brief "boundingCube"
+  ///
+  /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
+  const TfToken boundingCube;
+  /// \brief "boundingSphere"
+  ///
+  /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
+  const TfToken boundingSphere;
+  /// \brief "colliders"
+  ///
+  ///  This token represents the collection name to use with UsdCollectionAPI to represent colliders of a
+  ///  CollisionGroup prim.
+  const TfToken colliders;
+  /// \brief "convexDecomposition"
+  ///
+  /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
+  const TfToken convexDecomposition;
+  /// \brief "convexHull"
+  ///
+  /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
+  const TfToken convexHull;
+  /// \brief "distance"
+  ///
+  ///  This token represents the distance limit used for generic D6 joint.
+  const TfToken distance;
+  /// \brief "drive"
+  ///
+  /// Property namespace prefix for the UsdPhysicsDriveAPI schema.
+  const TfToken drive;
+  /// \brief "force"
+  ///
+  /// Possible value for UsdPhysicsDriveAPI::GetTypeAttr(), Default value for
+  /// UsdPhysicsDriveAPI::GetTypeAttr()
+  const TfToken force;
+  /// \brief "kilogramsPerUnit"
+  ///
+  /// Stage-level metadata that encodes a scene's linear unit of measure as kilograms per encoded unit.
+  const TfToken kilogramsPerUnit;
+  /// \brief "limit"
+  ///
+  /// Property namespace prefix for the UsdPhysicsLimitAPI schema.
+  const TfToken limit;
+  /// \brief "linear"
+  ///
+  ///  This token represents the linear degree of freedom used in Prismatic Joint Drive.
+  const TfToken linear;
+  /// \brief "meshSimplification"
+  ///
+  /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
+  const TfToken meshSimplification;
+  /// \brief "none"
+  ///
+  /// Possible value for UsdPhysicsMeshCollisionAPI::GetApproximationAttr(), Default value for
+  /// UsdPhysicsMeshCollisionAPI::GetApproximationAttr()
+  const TfToken none;
+  /// \brief "physics:angularVelocity"
+  ///
+  /// UsdPhysicsRigidBodyAPI
+  const TfToken physicsAngularVelocity;
+  /// \brief "physics:approximation"
+  ///
+  /// UsdPhysicsMeshCollisionAPI
+  const TfToken physicsApproximation;
+  /// \brief "physics:axis"
+  ///
+  /// UsdPhysicsSphericalJoint, UsdPhysicsPrismaticJoint, UsdPhysicsRevoluteJoint
+  const TfToken physicsAxis;
+  /// \brief "physics:body0"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsBody0;
+  /// \brief "physics:body1"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsBody1;
+  /// \brief "physics:breakForce"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsBreakForce;
+  /// \brief "physics:breakTorque"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsBreakTorque;
+  /// \brief "physics:centerOfMass"
+  ///
+  /// UsdPhysicsMassAPI
+  const TfToken physicsCenterOfMass;
+  /// \brief "physics:collisionEnabled"
+  ///
+  /// UsdPhysicsJoint, UsdPhysicsCollisionAPI
+  const TfToken physicsCollisionEnabled;
+  /// \brief "physics:coneAngle0Limit"
+  ///
+  /// UsdPhysicsSphericalJoint
+  const TfToken physicsConeAngle0Limit;
+  /// \brief "physics:coneAngle1Limit"
+  ///
+  /// UsdPhysicsSphericalJoint
+  const TfToken physicsConeAngle1Limit;
+  /// \brief "physics:damping"
+  ///
+  /// UsdPhysicsDriveAPI
+  const TfToken physicsDamping;
+  /// \brief "physics:density"
+  ///
+  /// UsdPhysicsMaterialAPI, UsdPhysicsMassAPI
+  const TfToken physicsDensity;
+  /// \brief "physics:diagonalInertia"
+  ///
+  /// UsdPhysicsMassAPI
+  const TfToken physicsDiagonalInertia;
+  /// \brief "physics:dynamicFriction"
+  ///
+  /// UsdPhysicsMaterialAPI
+  const TfToken physicsDynamicFriction;
+  /// \brief "physics:excludeFromArticulation"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsExcludeFromArticulation;
+  /// \brief "physics:filteredGroups"
+  ///
+  /// UsdPhysicsCollisionGroup
+  const TfToken physicsFilteredGroups;
+  /// \brief "physics:filteredPairs"
+  ///
+  /// UsdPhysicsFilteredPairsAPI
+  const TfToken physicsFilteredPairs;
+  /// \brief "physics:gravityDirection"
+  ///
+  /// UsdPhysicsScene
+  const TfToken physicsGravityDirection;
+  /// \brief "physics:gravityMagnitude"
+  ///
+  /// UsdPhysicsScene
+  const TfToken physicsGravityMagnitude;
+  /// \brief "physics:high"
+  ///
+  /// UsdPhysicsLimitAPI
+  const TfToken physicsHigh;
+  /// \brief "physics:jointEnabled"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsJointEnabled;
+  /// \brief "physics:kinematicEnabled"
+  ///
+  /// UsdPhysicsRigidBodyAPI
+  const TfToken physicsKinematicEnabled;
+  /// \brief "physics:localPos0"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsLocalPos0;
+  /// \brief "physics:localPos1"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsLocalPos1;
+  /// \brief "physics:localRot0"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsLocalRot0;
+  /// \brief "physics:localRot1"
+  ///
+  /// UsdPhysicsJoint
+  const TfToken physicsLocalRot1;
+  /// \brief "physics:low"
+  ///
+  /// UsdPhysicsLimitAPI
+  const TfToken physicsLow;
+  /// \brief "physics:lowerLimit"
+  ///
+  /// UsdPhysicsPrismaticJoint, UsdPhysicsRevoluteJoint
+  const TfToken physicsLowerLimit;
+  /// \brief "physics:mass"
+  ///
+  /// UsdPhysicsMassAPI
+  const TfToken physicsMass;
+  /// \brief "physics:maxDistance"
+  ///
+  /// UsdPhysicsDistanceJoint
+  const TfToken physicsMaxDistance;
+  /// \brief "physics:maxForce"
+  ///
+  /// UsdPhysicsDriveAPI
+  const TfToken physicsMaxForce;
+  /// \brief "physics:minDistance"
+  ///
+  /// UsdPhysicsDistanceJoint
+  const TfToken physicsMinDistance;
+  /// \brief "physics:principalAxes"
+  ///
+  /// UsdPhysicsMassAPI
+  const TfToken physicsPrincipalAxes;
+  /// \brief "physics:restitution"
+  ///
+  /// UsdPhysicsMaterialAPI
+  const TfToken physicsRestitution;
+  /// \brief "physics:rigidBodyEnabled"
+  ///
+  /// UsdPhysicsRigidBodyAPI
+  const TfToken physicsRigidBodyEnabled;
+  /// \brief "physics:simulationOwner"
+  ///
+  /// UsdPhysicsCollisionAPI, UsdPhysicsRigidBodyAPI
+  const TfToken physicsSimulationOwner;
+  /// \brief "physics:startsAsleep"
+  ///
+  /// UsdPhysicsRigidBodyAPI
+  const TfToken physicsStartsAsleep;
+  /// \brief "physics:staticFriction"
+  ///
+  /// UsdPhysicsMaterialAPI
+  const TfToken physicsStaticFriction;
+  /// \brief "physics:stiffness"
+  ///
+  /// UsdPhysicsDriveAPI
+  const TfToken physicsStiffness;
+  /// \brief "physics:targetPosition"
+  ///
+  /// UsdPhysicsDriveAPI
+  const TfToken physicsTargetPosition;
+  /// \brief "physics:targetVelocity"
+  ///
+  /// UsdPhysicsDriveAPI
+  const TfToken physicsTargetVelocity;
+  /// \brief "physics:type"
+  ///
+  /// UsdPhysicsDriveAPI
+  const TfToken physicsType;
+  /// \brief "physics:upperLimit"
+  ///
+  /// UsdPhysicsPrismaticJoint, UsdPhysicsRevoluteJoint
+  const TfToken physicsUpperLimit;
+  /// \brief "physics:velocity"
+  ///
+  /// UsdPhysicsRigidBodyAPI
+  const TfToken physicsVelocity;
+  /// \brief "rotX"
+  ///
+  ///  This token represents the rotate around X axis degree of freedom used in Joint Limits and Drives.
+  const TfToken rotX;
+  /// \brief "rotY"
+  ///
+  ///  This token represents the rotate around Y axis degree of freedom used in Joint Limits and Drives.
+  const TfToken rotY;
+  /// \brief "rotZ"
+  ///
+  ///  This token represents the rotate around Z axis degree of freedom used in Joint Limits and Drives.
+  const TfToken rotZ;
+  /// \brief "transX"
+  ///
+  ///  This token represents the translate around X axis degree of freedom used in Joint Limits and Drives.
+  const TfToken transX;
+  /// \brief "transY"
+  ///
+  ///  This token represents the translate around Y axis degree of freedom used in Joint Limits and Drives.
+  const TfToken transY;
+  /// \brief "transZ"
+  ///
+  ///  This token represents the translate around Z axis degree of freedom used in Joint Limits and Drives.
+  const TfToken transZ;
+  /// \brief "X"
+  ///
+  /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Default value for
+  /// UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for UsdPhysicsPrismaticJoint::GetAxisAttr(),
+  /// Default value for UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for
+  /// UsdPhysicsRevoluteJoint::GetAxisAttr(), Default value for UsdPhysicsRevoluteJoint::GetAxisAttr()
+  const TfToken x;
+  /// \brief "Y"
+  ///
+  /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for
+  /// UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for UsdPhysicsRevoluteJoint::GetAxisAttr()
+  const TfToken y;
+  /// \brief "Z"
+  ///
+  /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for
+  /// UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for UsdPhysicsRevoluteJoint::GetAxisAttr()
+  const TfToken z;
+  /// A vector of all of the tokens listed above.
+  const std::vector<TfToken> allTokens;
 };
 
 /// \var UsdPhysicsTokens

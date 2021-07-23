@@ -46,25 +46,25 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static object _HasAuthoredVariantSelection(const UsdVariantSet &self)
-{
-  string value;
-  if (self.HasAuthoredVariantSelection(&value))
-    return object(value);
-  return object();
-}
+  static object _HasAuthoredVariantSelection(const UsdVariantSet &self)
+  {
+    string value;
+    if (self.HasAuthoredVariantSelection(&value))
+      return object(value);
+    return object();
+  }
 
-static vector<string> _GetNames(const UsdVariantSets &self)
-{
-  vector<string> result;
-  self.GetNames(&result);
-  return result;
-}
+  static vector<string> _GetNames(const UsdVariantSets &self)
+  {
+    vector<string> result;
+    self.GetNames(&result);
+    return result;
+  }
 
-static UsdPyEditContext _GetVariantEditContext(const UsdVariantSet &self, const SdfLayerHandle &layer)
-{
-  return UsdPyEditContext(self.GetVariantEditContext(layer));
-}
+  static UsdPyEditContext _GetVariantEditContext(const UsdVariantSet &self, const SdfLayerHandle &layer)
+  {
+    return UsdPyEditContext(self.GetVariantEditContext(layer));
+  }
 
 }  // anonymous namespace
 

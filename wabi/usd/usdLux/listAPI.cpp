@@ -126,14 +126,15 @@ UsdRelationship UsdLuxListAPI::CreateLightListRel() const
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -184,8 +185,7 @@ static void _Traverse(const UsdPrim &prim, UsdLuxListAPI::ComputeMode mode, SdfP
     TfToken cacheBehavior;
     if (listAPI.GetLightListCacheBehaviorAttr().Get(&cacheBehavior))
     {
-      if (cacheBehavior == UsdLuxTokens->consumeAndContinue ||
-          cacheBehavior == UsdLuxTokens->consumeAndHalt)
+      if (cacheBehavior == UsdLuxTokens->consumeAndContinue || cacheBehavior == UsdLuxTokens->consumeAndHalt)
       {
         // Check stored lightList.
         UsdRelationship rel = listAPI.GetLightListRel();

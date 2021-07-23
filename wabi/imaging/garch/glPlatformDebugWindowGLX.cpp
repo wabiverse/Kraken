@@ -126,8 +126,7 @@ void Garch_GLPlatformDebugWindow::Init(const char *title, int width, int height,
     _glDebugContext = GarchGLPlatformDebugContext::New(4, 5, true, true);
     _glDebugContext->makeCurrent();
     glXDestroyContext(_display, tmpCtx);
-  }
-  else
+  } else
   {
     // continue to use the GL context
     _glContext = tmpCtx;
@@ -196,8 +195,9 @@ void Garch_GLPlatformDebugWindow::Run()
                                     Garch_GetModifierKeys(event.xbutton.state));
           break;
         case MotionNotify:
-          _callback->OnMouseMove(
-            event.xmotion.x, event.xmotion.y, Garch_GetModifierKeys(event.xbutton.state));
+          _callback->OnMouseMove(event.xmotion.x,
+                                 event.xmotion.y,
+                                 Garch_GetModifierKeys(event.xbutton.state));
           break;
         case KeyRelease: {
           char key;
@@ -210,8 +210,7 @@ void Garch_GLPlatformDebugWindow::Run()
     if (_glDebugContext)
     {
       _glDebugContext->makeCurrent();
-    }
-    else
+    } else
     {
       glXMakeCurrent(_display, _window, _glContext);
     }
@@ -231,8 +230,7 @@ void Garch_GLPlatformDebugWindow::Run()
   if (_glDebugContext)
   {
     _glDebugContext.Reset();
-  }
-  else
+  } else
   {
     glXDestroyContext(_display, _glContext);
   }

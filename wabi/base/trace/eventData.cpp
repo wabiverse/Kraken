@@ -39,84 +39,84 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// Boost variant visitor to convert TraceEventData to JsValue
-class JsValue_visitor : public boost::static_visitor<void>
-{
- public:
-  JsValue_visitor(JsWriter &writer)
-    : _writer(writer)
-  {}
-
-  void operator()(int64_t i) const
+  // Boost variant visitor to convert TraceEventData to JsValue
+  class JsValue_visitor : public boost::static_visitor<void>
   {
-    _writer.WriteValue(i);
-  }
+   public:
+    JsValue_visitor(JsWriter &writer)
+      : _writer(writer)
+    {}
 
-  void operator()(uint64_t i) const
+    void operator()(int64_t i) const
+    {
+      _writer.WriteValue(i);
+    }
+
+    void operator()(uint64_t i) const
+    {
+      _writer.WriteValue(i);
+    }
+
+    void operator()(bool i) const
+    {
+      _writer.WriteValue(i);
+    }
+
+    void operator()(double v) const
+    {
+      _writer.WriteValue(v);
+    }
+
+    void operator()(const std::string &s) const
+    {
+      _writer.WriteValue(s);
+    }
+
+    template<class T>
+    void operator()(T) const
+    {
+      _writer.WriteValue(nullptr);
+    }
+
+   private:
+    JsWriter &_writer;
+  };
+
+  // Boost variant visitor to convert TraceEventData to TraceEvent::DataType
+  class Type_visitor : public boost::static_visitor<TraceEvent::DataType>
   {
-    _writer.WriteValue(i);
-  }
+   public:
+    TraceEvent::DataType operator()(int64_t i) const
+    {
+      return TraceEvent::DataType::Int;
+    }
 
-  void operator()(bool i) const
-  {
-    _writer.WriteValue(i);
-  }
+    TraceEvent::DataType operator()(uint64_t i) const
+    {
+      return TraceEvent::DataType::UInt;
+    }
 
-  void operator()(double v) const
-  {
-    _writer.WriteValue(v);
-  }
+    TraceEvent::DataType operator()(bool i) const
+    {
+      return TraceEvent::DataType::Boolean;
+    }
 
-  void operator()(const std::string &s) const
-  {
-    _writer.WriteValue(s);
-  }
+    TraceEvent::DataType operator()(double v) const
+    {
+      return TraceEvent::DataType::Float;
+    }
 
-  template<class T>
-  void operator()(T) const
-  {
-    _writer.WriteValue(nullptr);
-  }
+    TraceEvent::DataType operator()(const std::string &s) const
+    {
+      return TraceEvent::DataType::String;
+    }
 
- private:
-  JsWriter &_writer;
-};
-
-// Boost variant visitor to convert TraceEventData to TraceEvent::DataType
-class Type_visitor : public boost::static_visitor<TraceEvent::DataType>
-{
- public:
-  TraceEvent::DataType operator()(int64_t i) const
-  {
-    return TraceEvent::DataType::Int;
-  }
-
-  TraceEvent::DataType operator()(uint64_t i) const
-  {
-    return TraceEvent::DataType::UInt;
-  }
-
-  TraceEvent::DataType operator()(bool i) const
-  {
-    return TraceEvent::DataType::Boolean;
-  }
-
-  TraceEvent::DataType operator()(double v) const
-  {
-    return TraceEvent::DataType::Float;
-  }
-
-  TraceEvent::DataType operator()(const std::string &s) const
-  {
-    return TraceEvent::DataType::String;
-  }
-
-  template<class T>
-  TraceEvent::DataType operator()(T) const
-  {
-    return TraceEvent::DataType::Invalid;
-  }
-};
+    template<class T>
+    TraceEvent::DataType operator()(T) const
+    {
+      return TraceEvent::DataType::Invalid;
+    }
+  };
 
 }  // namespace
 

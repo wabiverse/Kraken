@@ -254,8 +254,7 @@ HdInstance<VALUE> HdInstanceRegistry<VALUE>::FindInstance(typename HdInstance<VA
   {
     *found = false;
     return InstanceType(key, VALUE(), std::move(lock), nullptr);
-  }
-  else
+  } else
   {
     *found = true;
     it->second.ResetRecycleCounter();
@@ -284,8 +283,7 @@ size_t HdInstanceRegistry<VALUE>::GarbageCollect(int recycleCount)
     if (isUnique && (++it->second.recycleCounter > recycleCount))
     {
       it = _dictionary.unsafe_erase(it);
-    }
-    else
+    } else
     {
       ++it;
       ++inUseCount;

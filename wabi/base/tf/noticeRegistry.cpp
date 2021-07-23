@@ -211,8 +211,7 @@ void Tf_NoticeRegistry::_Revoke(TfNotice::Key &key)
     // If no other execution context is traversing the registry, we
     // can remove the deliverer immediately.
     _FreeDeliverer(key._deliverer);
-  }
-  else
+  } else
   {
     // Otherwise deactivate it.
     key._deliverer->_Deactivate();
@@ -270,8 +269,8 @@ size_t Tf_NoticeRegistry::_Send(const TfNotice &n,
       if (s)
       {
         // Do per-sender listeners
-        nSent += _Deliver(
-          n, noticeType, s, senderUniqueId, senderType, probeList, _GetHeadForSender(container, s));
+        nSent +=
+          _Deliver(n, noticeType, s, senderUniqueId, senderType, probeList, _GetHeadForSender(container, s));
       }
       // Do "global" listeners
       nSent += _Deliver(n, noticeType, s, senderUniqueId, senderType, probeList, _GetHead(container));
@@ -327,12 +326,10 @@ int Tf_NoticeRegistry::_Deliver(const TfNotice &n,
   while (i != dlist->end())
   {
     _DelivererList::value_type deliverer = *i;
-    if (deliverer->_IsActive() &&
-        deliverer->_SendToListener(n, type, s, senderUniqueId, senderType, probes))
+    if (deliverer->_IsActive() && deliverer->_SendToListener(n, type, s, senderUniqueId, senderType, probes))
     {
       ++nSent;
-    }
-    else
+    } else
     {
       _Lock lock(_userCountMutex);
       if (!deliverer->_IsMarkedForRemoval())
@@ -369,15 +366,13 @@ void Tf_NoticeRegistry::_BadTypeFatalMsg(const TfType &t, const std::type_info &
       "Class %s (derived from TfNotice) is "
       "undefined in the TfType system",
       ArchGetDemangled(ti).c_str());
-  }
-  else if (!baseTypes.empty())
+  } else if (!baseTypes.empty())
   {
     msg = TfStringPrintf(
       "TfNotice type '%s' has multiple base types;\n"
       "it must have a unique parent in the TfType system",
       t.GetTypeName().c_str());
-  }
-  else
+  } else
   {
     msg = TfStringPrintf(
       "TfNotice type '%s' has NO base types;\n"

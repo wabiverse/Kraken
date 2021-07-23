@@ -50,25 +50,25 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string _Repr(GfMultiInterval const &self)
-{
-  string r = TF_PY_REPR_PREFIX + "MultiInterval(";
-  if (!self.IsEmpty())
+  static string _Repr(GfMultiInterval const &self)
   {
-    r += "[";
-    int count = 0;
-    TF_FOR_ALL (i, self)
+    string r = TF_PY_REPR_PREFIX + "MultiInterval(";
+    if (!self.IsEmpty())
     {
-      if (count)
-        r += ", ";
-      r += TfPyRepr(*i);
-      count++;
+      r += "[";
+      int count = 0;
+      TF_FOR_ALL (i, self)
+      {
+        if (count)
+          r += ", ";
+        r += TfPyRepr(*i);
+        count++;
+      }
+      r += "]";
     }
-    r += "]";
+    r += ")";
+    return r;
   }
-  r += ")";
-  return r;
-}
 
 }  // anonymous namespace
 
@@ -87,28 +87,28 @@ void wrapMultiInterval()
     .add_property("bounds", &This::GetBounds)
 
     .def("Contains",
-         (bool (This::*)(const GfInterval &) const) & This::Contains,
+         (bool(This::*)(const GfInterval &) const) & This::Contains,
          "Returns true if x is inside the multi-interval.")
     .def("Contains",
-         (bool (This::*)(const GfMultiInterval &) const) & This::Contains,
+         (bool(This::*)(const GfMultiInterval &) const) & This::Contains,
          "Returns true if x is inside the multi-interval.")
     .def("Contains",
-         (bool (This::*)(double) const) & This::Contains,
+         (bool(This::*)(double) const) & This::Contains,
          "Returns true if x is inside the multi-interval.")
 
     .def("Clear", &This::Clear)
     .def("GetComplement", &This::GetComplement)
 
-    .def("Add", (void (This::*)(const GfInterval &)) & This::Add)
-    .def("Add", (void (This::*)(const GfMultiInterval &)) & This::Add)
+    .def("Add", (void(This::*)(const GfInterval &)) & This::Add)
+    .def("Add", (void(This::*)(const GfMultiInterval &)) & This::Add)
 
-    .def("ArithmeticAdd", (void (This::*)(const GfInterval &)) & This::ArithmeticAdd)
+    .def("ArithmeticAdd", (void(This::*)(const GfInterval &)) & This::ArithmeticAdd)
 
-    .def("Remove", (void (This::*)(const GfInterval &)) & This::Remove)
-    .def("Remove", (void (This::*)(const GfMultiInterval &)) & This::Remove)
+    .def("Remove", (void(This::*)(const GfInterval &)) & This::Remove)
+    .def("Remove", (void(This::*)(const GfMultiInterval &)) & This::Remove)
 
-    .def("Intersect", (void (This::*)(const GfInterval &)) & This::Intersect)
-    .def("Intersect", (void (This::*)(const GfMultiInterval &)) & This::Intersect)
+    .def("Intersect", (void(This::*)(const GfInterval &)) & This::Intersect)
+    .def("Intersect", (void(This::*)(const GfMultiInterval &)) & This::Intersect)
 
     .def("IsEmpty", &This::IsEmpty)
     .def("GetSize", &This::GetSize)

@@ -61,10 +61,10 @@ void HdPhBufferResource::SetAllocation(HgiBufferHandle const &handle, size_t siz
   // https://www.opengl.org/registry/specs/NV/shader_buffer_load.txt
   if (handle && caps.bindlessBufferEnabled)
   {
-    glGetNamedBufferParameterui64vNV(
-      handle->GetRawResource(), GL_BUFFER_GPU_ADDRESS_NV, (GLuint64EXT *)&_gpuAddr);
-  }
-  else
+    glGetNamedBufferParameterui64vNV(handle->GetRawResource(),
+                                     GL_BUFFER_GPU_ADDRESS_NV,
+                                     (GLuint64EXT *)&_gpuAddr);
+  } else
   {
     _gpuAddr = 0;
   }

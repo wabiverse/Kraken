@@ -61,8 +61,10 @@ NdrProperty::~NdrProperty()
 
 std::string NdrProperty::GetInfoString() const
 {
-  return TfStringPrintf(
-    "%s (type: '%s'); %s", _name.GetText(), _type.GetText(), _isOutput ? "output" : "input");
+  return TfStringPrintf("%s (type: '%s'); %s",
+                        _name.GetText(),
+                        _type.GetText(),
+                        _isOutput ? "output" : "input");
 }
 
 bool NdrProperty::IsConnectable() const

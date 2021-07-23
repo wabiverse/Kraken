@@ -301,8 +301,7 @@ class GfRange2d
     {
       _min *= m;
       _max *= m;
-    }
-    else
+    } else
     {
       GfVec2d tmp = _min;
       _min = _max * m;

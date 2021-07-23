@@ -220,8 +220,9 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
     // Compute the final, padded extents from the skel-space
     // transforms, in the space of the SkelRoot prim.
     bool resetXformStack = false;
-    GfMatrix4d skelRootXform = xfCache.ComputeRelativeTransform(
-      binding.GetSkeleton().GetPrim(), skelRoot.GetPrim(), &resetXformStack);
+    GfMatrix4d skelRootXform = xfCache.ComputeRelativeTransform(binding.GetSkeleton().GetPrim(),
+                                                                skelRoot.GetPrim(),
+                                                                &resetXformStack);
     if (!resetXformStack && transform)
     {
       skelRootXform *= *transform;

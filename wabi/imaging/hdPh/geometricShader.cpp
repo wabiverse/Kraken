@@ -122,8 +122,7 @@ void HdPh_GeometricShader::BindResources(const int program,
         if (_hasMirroredTransform)
         {
           glCullFace(GL_BACK);
-        }
-        else
+        } else
         {
           glCullFace(GL_FRONT);
         }
@@ -135,8 +134,7 @@ void HdPh_GeometricShader::BindResources(const int program,
           if (_hasMirroredTransform)
           {
             glCullFace(GL_BACK);
-          }
-          else
+          } else
           {
             glCullFace(GL_FRONT);
           }
@@ -147,8 +145,7 @@ void HdPh_GeometricShader::BindResources(const int program,
         if (_hasMirroredTransform)
         {
           glCullFace(GL_FRONT);
-        }
-        else
+        } else
         {
           glCullFace(GL_BACK);
         }
@@ -160,8 +157,7 @@ void HdPh_GeometricShader::BindResources(const int program,
           if (_hasMirroredTransform)
           {
             glCullFace(GL_FRONT);
-          }
-          else
+          } else
           {
             glCullFace(GL_BACK);
           }
@@ -179,23 +175,20 @@ void HdPh_GeometricShader::BindResources(const int program,
                              cullstyle == HdCullStyleFrontUnlessDoubleSided))
         {
           glDisable(GL_CULL_FACE);
-        }
-        else if (_hasMirroredTransform &&
-                 (cullstyle == HdCullStyleBack || cullstyle == HdCullStyleBackUnlessDoubleSided))
+        } else if (_hasMirroredTransform &&
+                   (cullstyle == HdCullStyleBack || cullstyle == HdCullStyleBackUnlessDoubleSided))
         {
           glEnable(GL_CULL_FACE);
           glCullFace(GL_FRONT);
-        }
-        else if (_hasMirroredTransform &&
-                 (cullstyle == HdCullStyleFront || cullstyle == HdCullStyleFrontUnlessDoubleSided))
+        } else if (_hasMirroredTransform &&
+                   (cullstyle == HdCullStyleFront || cullstyle == HdCullStyleFrontUnlessDoubleSided))
         {
           glEnable(GL_CULL_FACE);
           glCullFace(GL_BACK);
         }
         break;
     }
-  }
-  else
+  } else
   {
     // Use fragment shader culling via discard.
     glDisable(GL_CULL_FACE);
@@ -204,8 +197,7 @@ void HdPh_GeometricShader::BindResources(const int program,
     {
       unsigned int cullStyle = _cullStyle;
       binder.BindUniformui(HdShaderTokens->cullStyle, 1, &cullStyle);
-    }
-    else
+    } else
     {
       // don't care -- use renderPass's fallback
     }

@@ -110,8 +110,7 @@ void HdExtComputation::_Sync(HdSceneDelegate *sceneDelegate,
     if (!vtDispatchCount.IsEmpty())
     {
       _dispatchCount = vtDispatchCount.Get<size_t>();
-    }
-    else
+    } else
     {
       _dispatchCount = 0;
     }
@@ -124,8 +123,7 @@ void HdExtComputation::_Sync(HdSceneDelegate *sceneDelegate,
     if (!vtElementCount.IsEmpty())
     {
       _elementCount = vtElementCount.Get<size_t>();
-    }
-    else
+    } else
     {
       _elementCount = 0;
     }

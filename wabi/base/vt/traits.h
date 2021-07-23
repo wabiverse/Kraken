@@ -53,10 +53,10 @@ struct VtValueTypeHasCheapCopy : boost::has_trivial_assign<T>
 {
 };
 
-#define VT_TYPE_IS_CHEAP_TO_COPY(T) \
-  template<> \
+#define VT_TYPE_IS_CHEAP_TO_COPY(T)                                    \
+  template<>                                                           \
   struct VtValueTypeHasCheapCopy<TF_PP_EAT_PARENS(T)> : std::true_type \
-  { \
+  {                                                                    \
   }
 
 // VtValue supports two kinds of "value proxy":
@@ -118,10 +118,10 @@ template<class T>
 struct VtIsTypedValueProxy : std::is_base_of<VtTypedValueProxyBase, T>
 {
 };
-#define VT_TYPE_IS_TYPED_VALUE_PROXY(T) \
-  template<> \
+#define VT_TYPE_IS_TYPED_VALUE_PROXY(T)                            \
+  template<>                                                       \
   struct VtIsTypedValueProxy<TF_PP_EAT_PARENS(T)> : std::true_type \
-  { \
+  {                                                                \
   }
 
 // Base implementation for VtGetProxiedObject (for non-proxy types).
@@ -148,10 +148,10 @@ template<class T>
 struct VtIsErasedValueProxy : std::is_base_of<VtErasedValueProxyBase, T>
 {
 };
-#define VT_TYPE_IS_ERASED_VALUE_PROXY(T) \
-  template<> \
+#define VT_TYPE_IS_ERASED_VALUE_PROXY(T)                            \
+  template<>                                                        \
   struct VtIsErasedValueProxy<TF_PP_EAT_PARENS(T)> : std::true_type \
-  { \
+  {                                                                 \
   }
 
 // Metafunction to determine whether or not a given type T is a value proxy

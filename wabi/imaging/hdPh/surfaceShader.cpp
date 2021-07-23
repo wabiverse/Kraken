@@ -80,8 +80,7 @@ void HdPhSurfaceShader::_SetSource(TfToken const &shaderStageKey, std::string co
   {
     _fragmentSource = source;
     _isValidComputedHash = false;
-  }
-  else if (shaderStageKey == HdShaderTokens->geometryShader)
+  } else if (shaderStageKey == HdShaderTokens->geometryShader)
   {
     _geometrySource = source;
     _isValidComputedHash = false;
@@ -98,8 +97,7 @@ std::string HdPhSurfaceShader::GetSource(TfToken const &shaderStageKey) const
   if (shaderStageKey == HdShaderTokens->fragmentShader)
   {
     return _fragmentSource;
-  }
-  else if (shaderStageKey == HdShaderTokens->geometryShader)
+  } else if (shaderStageKey == HdShaderTokens->geometryShader)
   {
     return _geometrySource;
   }
@@ -261,8 +259,7 @@ void HdPhSurfaceShader::SetBufferSources(HdBufferSpecVector const &bufferSpecs,
 
     _paramSpec.clear();
     _paramArray.reset();
-  }
-  else
+  } else
   {
     if (!_paramArray || _paramSpec != bufferSpecs)
     {
@@ -270,13 +267,14 @@ void HdPhSurfaceShader::SetBufferSources(HdBufferSpecVector const &bufferSpecs,
 
       // establish a buffer range
       HdBufferArrayRangeSharedPtr range = resourceRegistry->AllocateShaderStorageBufferArrayRange(
-        HdTokens->materialParams, bufferSpecs, HdBufferArrayUsageHint());
+        HdTokens->materialParams,
+        bufferSpecs,
+        HdBufferArrayUsageHint());
 
       if (!TF_VERIFY(range->IsValid()))
       {
         _paramArray.reset();
-      }
-      else
+      } else
       {
         _paramArray = range;
       }
@@ -403,19 +401,16 @@ static TfTokenVector _CollectPrimvarNames(const HdPh_MaterialParamVector &params
     if (param.IsFallback())
     {
       primvarNames.push_back(param.name);
-    }
-    else if (param.IsPrimvarRedirect())
+    } else if (param.IsPrimvarRedirect())
     {
       primvarNames.push_back(param.name);
       // primvar redirect connections are encoded as sampler coords
       primvarNames.insert(primvarNames.end(), param.samplerCoords.begin(), param.samplerCoords.end());
-    }
-    else if (param.IsTexture())
+    } else if (param.IsTexture())
     {
       // include sampler coords for textures
       primvarNames.insert(primvarNames.end(), param.samplerCoords.begin(), param.samplerCoords.end());
-    }
-    else if (param.IsAdditionalPrimvar())
+    } else if (param.IsAdditionalPrimvar())
     {
       primvarNames.push_back(param.name);
     }

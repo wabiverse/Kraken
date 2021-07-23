@@ -191,8 +191,7 @@ inline const char *rangematch(const char *pattern, char test, int flags)
 
       if ((unsigned char)c <= (unsigned char)test && (unsigned char)test <= (unsigned char)c2)
         ok = 1;
-    }
-    else if (c == test)
+    } else if (c == test)
       ok = 1;
   }
   return (ok == negate ? NULL : pattern);

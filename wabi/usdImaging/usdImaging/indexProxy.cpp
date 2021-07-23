@@ -35,8 +35,7 @@ bool UsdImagingIndexProxy::_AddHdPrimInfo(SdfPath const &cachePath,
   if (adapter)
   {
     adapterToInsert = adapter;
-  }
-  else
+  } else
   {
     adapterToInsert = _delegate->_AdapterLookup(usdPrim);
 
@@ -169,8 +168,9 @@ void UsdImagingIndexProxy::InsertRprim(TfToken const &primType,
 {
   if (_AddHdPrimInfo(cachePath, usdPrim, adapter))
   {
-    _delegate->GetRenderIndex().InsertRprim(
-      primType, _delegate, _delegate->ConvertCachePathToIndexPath(cachePath));
+    _delegate->GetRenderIndex().InsertRprim(primType,
+                                            _delegate,
+                                            _delegate->ConvertCachePathToIndexPath(cachePath));
 
     _AddTask(cachePath);
   }
@@ -183,8 +183,9 @@ void UsdImagingIndexProxy::InsertSprim(TfToken const &primType,
 {
   if (_AddHdPrimInfo(cachePath, usdPrim, adapter))
   {
-    _delegate->GetRenderIndex().InsertSprim(
-      primType, _delegate, _delegate->ConvertCachePathToIndexPath(cachePath));
+    _delegate->GetRenderIndex().InsertSprim(primType,
+                                            _delegate,
+                                            _delegate->ConvertCachePathToIndexPath(cachePath));
 
     _AddTask(cachePath);
   }
@@ -197,8 +198,9 @@ void UsdImagingIndexProxy::InsertBprim(TfToken const &primType,
 {
   if (_AddHdPrimInfo(cachePath, usdPrim, adapter))
   {
-    _delegate->GetRenderIndex().InsertBprim(
-      primType, _delegate, _delegate->ConvertCachePathToIndexPath(cachePath));
+    _delegate->GetRenderIndex().InsertBprim(primType,
+                                            _delegate,
+                                            _delegate->ConvertCachePathToIndexPath(cachePath));
 
     _AddTask(cachePath);
   }

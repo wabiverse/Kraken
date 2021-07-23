@@ -178,8 +178,7 @@ void UsdImagingNurbsCurvesAdapter::UpdateForTime(UsdPrim const &prim,
     if (pv)
     {
       _ComputeAndMergePrimvar(prim, pv, time, &primvars);
-    }
-    else
+    } else
     {
       UsdGeomNurbsCurves curves(prim);
       HdInterpolation interpolation;
@@ -187,8 +186,7 @@ void UsdImagingNurbsCurvesAdapter::UpdateForTime(UsdPrim const &prim,
       if (curves.GetWidthsAttr().Get(&widths, time))
       {
         interpolation = _UsdToHdInterpolation(curves.GetWidthsInterpolation());
-      }
-      else
+      } else
       {
         interpolation = HdInterpolationConstant;
       }
@@ -210,8 +208,7 @@ void UsdImagingNurbsCurvesAdapter::UpdateForTime(UsdPrim const &prim,
     if (pv)
     {
       _ComputeAndMergePrimvar(prim, pv, time, &primvars);
-    }
-    else
+    } else
     {
       UsdGeomNurbsCurves curves(prim);
       VtVec3fArray normals;
@@ -221,8 +218,7 @@ void UsdImagingNurbsCurvesAdapter::UpdateForTime(UsdPrim const &prim,
                       UsdGeomTokens->normals,
                       _UsdToHdInterpolation(curves.GetNormalsInterpolation()),
                       HdPrimvarRoleTokens->normal);
-      }
-      else
+      } else
       {
         _RemovePrimvar(&primvars, UsdGeomTokens->normals);
       }
@@ -237,8 +233,7 @@ HdDirtyBits UsdImagingNurbsCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
   if (propertyName == UsdGeomTokens->points)
   {
     return HdChangeTracker::DirtyPoints;
-  }
-  else if (propertyName == UsdGeomTokens->curveVertexCounts)
+  } else if (propertyName == UsdGeomTokens->curveVertexCounts)
   {
     return HdChangeTracker::DirtyTopology;
   }
@@ -253,8 +248,7 @@ HdDirtyBits UsdImagingNurbsCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
       HdTokens->widths,
       _UsdToHdInterpolation(curves.GetWidthsInterpolation()),
       HdChangeTracker::DirtyWidths);
-  }
-  else if (propertyName == UsdGeomTokens->normals)
+  } else if (propertyName == UsdGeomTokens->normals)
   {
     UsdGeomPointBased pb(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
@@ -268,13 +262,16 @@ HdDirtyBits UsdImagingNurbsCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
   // Handle prefixed primvars that use special dirty bits.
   else if (propertyName == UsdImagingTokens->primvarsWidths)
   {
-    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
-      prim, cachePath, propertyName, HdChangeTracker::DirtyWidths);
-  }
-  else if (propertyName == UsdImagingTokens->primvarsNormals)
+    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(prim,
+                                                                        cachePath,
+                                                                        propertyName,
+                                                                        HdChangeTracker::DirtyWidths);
+  } else if (propertyName == UsdImagingTokens->primvarsNormals)
   {
-    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
-      prim, cachePath, propertyName, HdChangeTracker::DirtyNormals);
+    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(prim,
+                                                                        cachePath,
+                                                                        propertyName,
+                                                                        HdChangeTracker::DirtyNormals);
   }
 
   // Allow base class to handle change processing.
@@ -331,8 +328,7 @@ VtValue UsdImagingNurbsCurvesAdapter::Get(UsdPrim const &prim,
         pv.GetIndices(outIndices, time);
         return value;
       }
-    }
-    else if (pv && pv.ComputeFlattened(&value, time))
+    } else if (pv && pv.ComputeFlattened(&value, time))
     {
       return value;
     }
@@ -346,8 +342,7 @@ VtValue UsdImagingNurbsCurvesAdapter::Get(UsdPrim const &prim,
       value = normals;
       return value;
     }
-  }
-  else if (key == HdTokens->widths)
+  } else if (key == HdTokens->widths)
   {
     // First check for "primvars:widths"
     UsdGeomPrimvarsAPI primvarsApi(prim);
@@ -367,8 +362,7 @@ VtValue UsdImagingNurbsCurvesAdapter::Get(UsdPrim const &prim,
         pv.GetIndices(outIndices, time);
         return value;
       }
-    }
-    else if (pv && pv.ComputeFlattened(&value, time))
+    } else if (pv && pv.ComputeFlattened(&value, time))
     {
       return value;
     }

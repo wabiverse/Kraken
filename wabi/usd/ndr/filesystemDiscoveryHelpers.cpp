@@ -44,85 +44,86 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// Examines the specified set of files, and determines if any of the files
-// are candidates for being parsed into a node. If a file is determined
-// to be a candidate, it is appended to \p foundNodes and
-// \p foundNodesWithTypes.
-// \param[out] foundNodes The nodes that were discovered
-// \param[out] foundNodesWithTypes The identifiers of the nodes that were
-//     discovered, along with their types (key format is '<id>-<type>')
-// \param[in]  dirPath The abs path to the directory to examine
-// \param[in]  dirFileNames The file names in the \p dirPath dir to test
-// \return `true` if the search should continue on to other paths in the
-//         search path
-bool FsHelpersExamineFiles(NdrNodeDiscoveryResultVec *foundNodes,
-                           NdrStringSet *foundNodesWithTypes,
-                           const NdrStringVec &allowedExtensions,
-                           const NdrDiscoveryPluginContext *context,
-                           const std::string &dirPath,
-                           const NdrStringVec &dirFileNames)
-{
-  for (const std::string &fileName : dirFileNames)
+  // Examines the specified set of files, and determines if any of the files
+  // are candidates for being parsed into a node. If a file is determined
+  // to be a candidate, it is appended to \p foundNodes and
+  // \p foundNodesWithTypes.
+  // \param[out] foundNodes The nodes that were discovered
+  // \param[out] foundNodesWithTypes The identifiers of the nodes that were
+  //     discovered, along with their types (key format is '<id>-<type>')
+  // \param[in]  dirPath The abs path to the directory to examine
+  // \param[in]  dirFileNames The file names in the \p dirPath dir to test
+  // \return `true` if the search should continue on to other paths in the
+  //         search path
+  bool FsHelpersExamineFiles(NdrNodeDiscoveryResultVec *foundNodes,
+                             NdrStringSet *foundNodesWithTypes,
+                             const NdrStringVec &allowedExtensions,
+                             const NdrDiscoveryPluginContext *context,
+                             const std::string &dirPath,
+                             const NdrStringVec &dirFileNames)
   {
-    std::string extension = TfStringToLower(TfGetExtension(fileName));
-
-    // Does the extension match one of the known-good extensions?
-    NdrStringVec::const_iterator extIter = std::find(
-      allowedExtensions.begin(), allowedExtensions.end(), extension);
-
-    if (extIter != allowedExtensions.end())
+    for (const std::string &fileName : dirFileNames)
     {
-      // Found a node file w/ allowed extension
-      std::string uri = TfStringCatPaths(dirPath, fileName);
-      std::string identifier = TfStringGetBeforeSuffix(fileName, '.');
-      std::string identifierAndType = identifier + "-" + extension;
+      std::string extension = TfStringToLower(TfGetExtension(fileName));
 
-      // Don't allow duplicates. A "duplicate" is considered to be a node
-      // with the same name AND discovery type.
-      if (!foundNodesWithTypes->insert(identifierAndType).second)
+      // Does the extension match one of the known-good extensions?
+      NdrStringVec::const_iterator extIter = std::find(allowedExtensions.begin(),
+                                                       allowedExtensions.end(),
+                                                       extension);
+
+      if (extIter != allowedExtensions.end())
       {
-        TF_DEBUG(NDR_DISCOVERY)
-          .Msg(
-            "Found a duplicate node with identifier [%s] "
-            "and type [%s] at URI [%s]; ignoring.\n",
-            identifier.c_str(),
-            extension.c_str(),
-            uri.c_str());
-        continue;
+        // Found a node file w/ allowed extension
+        std::string uri = TfStringCatPaths(dirPath, fileName);
+        std::string identifier = TfStringGetBeforeSuffix(fileName, '.');
+        std::string identifierAndType = identifier + "-" + extension;
+
+        // Don't allow duplicates. A "duplicate" is considered to be a node
+        // with the same name AND discovery type.
+        if (!foundNodesWithTypes->insert(identifierAndType).second)
+        {
+          TF_DEBUG(NDR_DISCOVERY)
+            .Msg(
+              "Found a duplicate node with identifier [%s] "
+              "and type [%s] at URI [%s]; ignoring.\n",
+              identifier.c_str(),
+              extension.c_str(),
+              uri.c_str());
+          continue;
+        }
+
+        const auto discoveryType = TfToken(extension);
+        foundNodes->emplace_back(
+          // Identifier
+          NdrIdentifier(identifier),
+
+          // Version.  Use a default version for the benefit of
+          // naive clients.
+          NdrVersion().GetAsDefault(),
+
+          // Name
+          identifier,
+
+          // Family
+          TfToken(),
+
+          // Discovery type
+          discoveryType,
+
+          // Source type
+          context ? context->GetSourceType(discoveryType) : TfToken(),
+
+          // URI
+          uri,
+
+          // Resolved URI
+          ArGetResolver().Resolve(uri));
       }
-
-      const auto discoveryType = TfToken(extension);
-      foundNodes->emplace_back(
-        // Identifier
-        NdrIdentifier(identifier),
-
-        // Version.  Use a default version for the benefit of
-        // naive clients.
-        NdrVersion().GetAsDefault(),
-
-        // Name
-        identifier,
-
-        // Family
-        TfToken(),
-
-        // Discovery type
-        discoveryType,
-
-        // Source type
-        context ? context->GetSourceType(discoveryType) : TfToken(),
-
-        // URI
-        uri,
-
-        // Resolved URI
-        ArGetResolver().Resolve(uri));
     }
-  }
 
-  // Continue walking directories
-  return true;
-}
+    // Continue walking directories
+    return true;
+  }
 
 }  // anonymous namespace
 

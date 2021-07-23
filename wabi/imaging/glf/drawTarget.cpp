@@ -168,8 +168,8 @@ void GlfDrawTarget::AddAttachment(std::string const &name, GLenum format, GLenum
   if (it == attachments.end())
   {
 
-    AttachmentRefPtr attachment = Attachment::New(
-      (int)attachments.size(), format, type, internalFormat, _size, _numSamples);
+    AttachmentRefPtr attachment =
+      Attachment::New((int)attachments.size(), format, type, internalFormat, _size, _numSamples);
 
     attachments.insert(AttachmentsMap::value_type(name, attachment));
 
@@ -179,8 +179,7 @@ void GlfDrawTarget::AddAttachment(std::string const &name, GLenum format, GLenum
               name.c_str());
 
     _BindAttachment(attachment);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Attachment \"" + name +
                     "\" already exists for this "
@@ -196,8 +195,7 @@ void GlfDrawTarget::DeleteAttachment(std::string const &name)
   if (it != attachments.end())
   {
     attachments.erase(it);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Attachment \"" + name +
                     "\" does not exist for this "
@@ -213,8 +211,7 @@ GlfDrawTarget::AttachmentRefPtr GlfDrawTarget::GetAttachment(std::string const &
   if (it != attachments.end())
   {
     return it->second;
-  }
-  else
+  } else
   {
     return TfNullPtr;
   }
@@ -350,12 +347,10 @@ void GlfDrawTarget::_BindAttachment(GlfDrawTarget::AttachmentRefPtr const &a)
   if (a->GetFormat() == GL_DEPTH_COMPONENT)
   {
     attachment = GL_DEPTH_ATTACHMENT;
-  }
-  else if (a->GetFormat() == GL_DEPTH_STENCIL)
+  } else if (a->GetFormat() == GL_DEPTH_STENCIL)
   {
     attachment = GL_DEPTH_STENCIL_ATTACHMENT;
-  }
-  else
+  } else
   {
     if (attach < 0)
     {
@@ -424,8 +419,7 @@ void GlfDrawTarget::Bind()
   if (HasMSAA())
   {
     glBindFramebuffer(GL_FRAMEBUFFER, _framebufferMS);
-  }
-  else
+  } else
   {
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
   }
@@ -736,8 +730,12 @@ void GlfDrawTarget::Attachment::_GenTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glTexImage2DMultisample(
-      GL_TEXTURE_2D_MULTISAMPLE, _numSamples, _internalFormat, _size[0], _size[1], GL_TRUE);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
+                            _numSamples,
+                            _internalFormat,
+                            _size[0],
+                            _size[1],
+                            GL_TRUE);
 
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
@@ -809,7 +807,8 @@ GlfTexture::BindingVector GlfDrawTarget::Attachment::GetBindings(TfToken const &
                                                                  GLuint samplerName)
 {
   return BindingVector(
-    1, Binding(identifier, GlfTextureTokens->texels, GL_TEXTURE_2D, GetGlTextureName(), samplerName));
+    1,
+    Binding(identifier, GlfTextureTokens->texels, GL_TEXTURE_2D, GetGlTextureName(), samplerName));
 }
 
 GLuint GlfDrawTarget::Attachment::GetGlTextureName()

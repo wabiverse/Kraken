@@ -20,9 +20,9 @@ limitations under the License.
 
 namespace rpr
 {
-class Shape;
-class Curve;
-class MaterialNode;
+  class Shape;
+  class Curve;
+  class MaterialNode;
 }  // namespace rpr
 
 WABI_NAMESPACE_BEGIN

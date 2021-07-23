@@ -108,8 +108,7 @@ bool GfOrthogonalizeBasis(GfVec3f *tx, GfVec3f *ty, GfVec3f *tz, bool normalize,
     ax = *tx;
     ay = *ty;
     az = *tz;
-  }
-  else
+  } else
   {
     ax = *tx;
     ay = *ty;
@@ -203,8 +202,7 @@ void GfBuildOrthonormalFrame(GfVec3f const &v0, GfVec3f *v1, GfVec3f *v2, float 
   if (len == 0.)
   {
     *v1 = *v2 = GfVec3f(0);
-  }
-  else
+  } else
   {
     GfVec3f unitDir = v0 / len;
     *v1 = GfVec3f::XAxis() ^ unitDir;

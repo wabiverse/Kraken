@@ -135,8 +135,7 @@ PcpLayerStackRefPtr Pcp_LayerStackRegistry::FindOrCreate(const PcpLayerStackIden
   if (const PcpLayerStackPtr &layerStack = _Find(identifier))
   {
     return layerStack;
-  }
-  else
+  } else
   {
     lock.release();
 
@@ -209,8 +208,7 @@ void Pcp_LayerStackRegistry::_Remove(const PcpLayerStackIdentifier &identifier,
 {
   Pcp_LayerStackRegistryData::IdentifierToLayerStack::const_iterator i = _data->identifierToLayerStack.find(
     identifier);
-  if (TF_VERIFY(i != _data->identifierToLayerStack.end()) &&
-      TF_VERIFY(i->second.operator->() == layerStack))
+  if (TF_VERIFY(i != _data->identifierToLayerStack.end()) && TF_VERIFY(i->second.operator->() == layerStack))
   {
     _data->identifierToLayerStack.erase(identifier);
   }
@@ -237,8 +235,7 @@ void Pcp_LayerStackRegistry::_SetLayers(const PcpLayerStack *layerStack)
   {
     // Don't leave empty entries hanging around.
     _data->layerStackToLayers.erase(layerStackPtr);
-  }
-  else
+  } else
   {
     layers.assign(newLayers.begin(), newLayers.end());
   }
@@ -272,8 +269,7 @@ void Pcp_LayerStackRegistry::_SetLayers(const PcpLayerStack *layerStack)
       // Don't leave empty entries hanging around.
       _data->layerStackToMutedLayerIdentifiers.erase(layerStackPtr);
     }
-  }
-  else
+  } else
   {
     if (!mutedLayerIdentifiers)
     {
@@ -307,48 +303,48 @@ const Pcp_MutedLayers &Pcp_LayerStackRegistry::_GetMutedLayers() const
 
 namespace
 {
-std::string _GetCanonicalLayerId(const SdfLayerHandle &anchorLayer, const std::string &layerId)
-{
+  std::string _GetCanonicalLayerId(const SdfLayerHandle &anchorLayer, const std::string &layerId)
+  {
 #if AR_VERSION == 1
-  const std::string computedLayerId = SdfComputeAssetPathRelativeToLayer(anchorLayer, layerId);
-  if (computedLayerId.empty())
-  {
-    return layerId;
-  }
-
-  if (SdfLayer::IsAnonymousLayerIdentifier(computedLayerId))
-  {
-    return computedLayerId;
-  }
-
-  ArResolver &resolver = ArGetResolver();
-
-  std::string canonicalPath = computedLayerId;
-  if (resolver.IsSearchPath(canonicalPath))
-  {
-    std::string resolvedSearchPath = resolver.Resolve(canonicalPath);
-    if (!resolvedSearchPath.empty())
+    const std::string computedLayerId = SdfComputeAssetPathRelativeToLayer(anchorLayer, layerId);
+    if (computedLayerId.empty())
     {
-      canonicalPath.swap(resolvedSearchPath);
+      return layerId;
     }
-  }
 
-  canonicalPath = resolver.ComputeRepositoryPath(canonicalPath);
-  return canonicalPath.empty() ? computedLayerId : canonicalPath;
+    if (SdfLayer::IsAnonymousLayerIdentifier(computedLayerId))
+    {
+      return computedLayerId;
+    }
+
+    ArResolver &resolver = ArGetResolver();
+
+    std::string canonicalPath = computedLayerId;
+    if (resolver.IsSearchPath(canonicalPath))
+    {
+      std::string resolvedSearchPath = resolver.Resolve(canonicalPath);
+      if (!resolvedSearchPath.empty())
+      {
+        canonicalPath.swap(resolvedSearchPath);
+      }
+    }
+
+    canonicalPath = resolver.ComputeRepositoryPath(canonicalPath);
+    return canonicalPath.empty() ? computedLayerId : canonicalPath;
 #else
-  if (SdfLayer::IsAnonymousLayerIdentifier(layerId))
-  {
-    return layerId;
-  }
+    if (SdfLayer::IsAnonymousLayerIdentifier(layerId))
+    {
+      return layerId;
+    }
 
-  // XXX:
-  // We may ultimately want to use the resolved path here but that's
-  // possibly a bigger change and there are questions about what happens if
-  // the muted path doesn't resolve to an existing asset and how/when to
-  // invalidate the resolved paths stored in the Pcp_MutedLayers object.
-  return ArGetResolver().CreateIdentifier(layerId, anchorLayer->GetResolvedPath());
+    // XXX:
+    // We may ultimately want to use the resolved path here but that's
+    // possibly a bigger change and there are questions about what happens if
+    // the muted path doesn't resolve to an existing asset and how/when to
+    // invalidate the resolved paths stored in the Pcp_MutedLayers object.
+    return ArGetResolver().CreateIdentifier(layerId, anchorLayer->GetResolvedPath());
 #endif
-}
+  }
 }  // namespace
 
 const std::vector<std::string> &Pcp_MutedLayers::GetMutedLayers() const

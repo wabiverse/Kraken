@@ -131,35 +131,35 @@
 /// code is executed or if the TraceScope expires.  Otherwise, the held
 /// TraceScope will be used to record begin and end events.
 
-#  define _TRACE_FUNCTION_INSTANCE(instance, name, prettyName) \
+#  define _TRACE_FUNCTION_INSTANCE(instance, name, prettyName)                                         \
     constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name, prettyName); \
     WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, instance)(TF_PP_CAT(TraceKeyData_, instance));
 
-#  define _TRACE_SCOPE_INSTANCE(instance, name) \
+#  define _TRACE_SCOPE_INSTANCE(instance, name)                                            \
     constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name); \
     WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, instance)(TF_PP_CAT(TraceKeyData_, instance));
 
-#  define _TRACE_FUNCTION_SCOPE_INSTANCE(instance, name, prettyName, scopeName) \
-    constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, \
+#  define _TRACE_FUNCTION_SCOPE_INSTANCE(instance, name, prettyName, scopeName)                    \
+    constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_,                          \
                                                            instance)(name, prettyName, scopeName); \
     WABI_NS::TraceScopeAuto TF_PP_CAT(TraceScopeAuto_, instance)(TF_PP_CAT(TraceKeyData_, instance));
 
-#  define _TRACE_MARKER_INSTANCE(instance, name) \
+#  define _TRACE_MARKER_INSTANCE(instance, name)                                           \
     constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name); \
     TraceCollector::GetInstance().MarkerEventStatic(TF_PP_CAT(TraceKeyData_, instance));
 
-#  define _TRACE_COUNTER_INSTANCE(instance, name, value, isDelta) \
-    constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name); \
-    static WABI_NS::TraceCounterHolder TF_PP_CAT(TraceCounterHolder_, \
+#  define _TRACE_COUNTER_INSTANCE(instance, name, value, isDelta)                               \
+    constexpr static WABI_NS::TraceStaticKeyData TF_PP_CAT(TraceKeyData_, instance)(name);      \
+    static WABI_NS::TraceCounterHolder TF_PP_CAT(TraceCounterHolder_,                           \
                                                  instance)(TF_PP_CAT(TraceKeyData_, instance)); \
     TF_PP_CAT(TraceCounterHolder_, instance).Record(value, isDelta);
 
-#  define _TRACE_COUNTER_CODE_INSTANCE(instance, name, code, isDelta) \
+#  define _TRACE_COUNTER_CODE_INSTANCE(instance, name, code, isDelta)                  \
     static WABI_NS::TraceCounterHolder TF_PP_CAT(TraceCounterHolder_, instance)(name); \
-    if (TF_PP_CAT(TraceCounterHolder_, instance).IsEnabled()) \
-    { \
-      double value = 0.0; \
-      code TF_PP_CAT(TraceCounterHolder_, instance).RecordDelta(value, isDelta); \
+    if (TF_PP_CAT(TraceCounterHolder_, instance).IsEnabled())                          \
+    {                                                                                  \
+      double value = 0.0;                                                              \
+      code TF_PP_CAT(TraceCounterHolder_, instance).RecordDelta(value, isDelta);       \
     }
 
 #  define _TRACE_FUNCTION_DYNAMIC_INSTANCE(instance, fnName, fnPrettyName, name) \
@@ -211,7 +211,7 @@ class TraceScopeAuto
   /// Constructor that also records scope arguments.
   ///
   template<typename... Args>
-  TraceScopeAuto(const TraceStaticKeyData &key, Args &&... args)
+  TraceScopeAuto(const TraceStaticKeyData &key, Args &&...args)
     : TraceScopeAuto(key)
   {
     if (ARCH_UNLIKELY(_key))
@@ -340,8 +340,7 @@ class TraceCounterHolder
     if (delta)
     {
       TraceCollector::GetInstance().RecordCounterDelta(_key, value);
-    }
-    else
+    } else
     {
       TraceCollector::GetInstance().RecordCounterValue(_key, value);
     }

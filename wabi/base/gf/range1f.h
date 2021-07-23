@@ -298,8 +298,7 @@ class GfRange1f
     {
       _min *= m;
       _max *= m;
-    }
-    else
+    } else
     {
       float tmp = _min;
       _min = _max * m;

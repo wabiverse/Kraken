@@ -72,11 +72,11 @@ static const char *_helpMsg =
 
 namespace
 {
-struct _CheckResult
-{
-  bool matched = false;
-  bool enabled = false;
-};
+  struct _CheckResult
+  {
+    bool matched = false;
+    bool enabled = false;
+  };
 }  // namespace
 
 static _CheckResult _CheckSymbolAgainstPatterns(char const *enumName, TfSpan<const std::string> patterns)
@@ -111,8 +111,7 @@ static _CheckResult _CheckSymbolAgainstPatterns(char const *enumName, TfSpan<con
         result.matched = true;
         result.enabled = value;
       }
-    }
-    else if (strcmp(pattern.c_str(), enumName) == 0)
+    } else if (strcmp(pattern.c_str(), enumName) == 0)
     {
       result.matched = true;
       result.enabled = value;
@@ -281,10 +280,11 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
       if (nameAndDescr.first.size() < 25)
       {
         std::string padding(25 - nameAndDescr.first.size(), ' ');
-        result += TfStringPrintf(
-          "%s%s: %s\n", nameAndDescr.first.c_str(), padding.c_str(), nameAndDescr.second.c_str());
-      }
-      else
+        result += TfStringPrintf("%s%s: %s\n",
+                                 nameAndDescr.first.c_str(),
+                                 padding.c_str(),
+                                 nameAndDescr.second.c_str());
+      } else
       {
         result += TfStringPrintf("%s:\n%s  %s\n",
                                  nameAndDescr.first.c_str(),
@@ -414,8 +414,7 @@ void TfDebug::SetOutputFile(FILE *file)
   if (file == stdout || file == stderr)
   {
     _GetOutputFile().store(file);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("TfDebug output must go to either stdout or stderr");
   }
@@ -464,8 +463,7 @@ void TfDebug::_ScopedOutput(bool start, const char *str)
   {
     fprintf(outputFile, "%*s%s --{\n", 2 * stackDepth, "", str);
     ++stackDepth;
-  }
-  else
+  } else
   {
     --stackDepth;
     fprintf(outputFile, "%*s}-- %s\n", 2 * stackDepth, "", str);
@@ -483,8 +481,7 @@ void TfDebug::_RegisterDebugSymbolImpl(_Node *addr, char const *enumNameCstr, ch
       "description argument for '%s' "
       "is NULL",
       enumName.c_str());
-  }
-  else if (descrip[0] == '\0')
+  } else if (descrip[0] == '\0')
   {
     TF_FATAL_ERROR(
       "description argument for '%s' is empty -- "

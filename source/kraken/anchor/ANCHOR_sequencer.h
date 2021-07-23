@@ -30,68 +30,78 @@ struct AnchorDrawList;
 struct AnchorBBox;
 namespace AnchorSequencer
 {
-enum SEQUENCER_OPTIONS
-{
-  SEQUENCER_EDIT_NONE = 0,
-  SEQUENCER_EDIT_STARTEND = 1 << 1,
-  SEQUENCER_CHANGE_FRAME = 1 << 3,
-  SEQUENCER_ADD = 1 << 4,
-  SEQUENCER_DEL = 1 << 5,
-  SEQUENCER_COPYPASTE = 1 << 6,
-  SEQUENCER_EDIT_ALL = SEQUENCER_EDIT_STARTEND | SEQUENCER_CHANGE_FRAME
-};
-
-struct SequenceInterface
-{
-  bool focused = false;
-  virtual int GetFrameMin() const = 0;
-  virtual int GetFrameMax() const = 0;
-  virtual int GetItemCount() const = 0;
-
-  virtual void BeginEdit(int)
-  {}
-  virtual void EndEdit()
-  {}
-  virtual int GetItemTypeCount() const
+  enum SEQUENCER_OPTIONS
   {
-    return 0;
-  }
-  virtual const char *GetItemTypeName(int) const
+    SEQUENCER_EDIT_NONE = 0,
+    SEQUENCER_EDIT_STARTEND = 1 << 1,
+    SEQUENCER_CHANGE_FRAME = 1 << 3,
+    SEQUENCER_ADD = 1 << 4,
+    SEQUENCER_DEL = 1 << 5,
+    SEQUENCER_COPYPASTE = 1 << 6,
+    SEQUENCER_EDIT_ALL = SEQUENCER_EDIT_STARTEND | SEQUENCER_CHANGE_FRAME
+  };
+
+  struct SequenceInterface
   {
-    return "";
-  }
-  virtual const char *GetItemLabel(int) const
-  {
-    return "";
-  }
+    bool focused = false;
+    virtual int GetFrameMin() const = 0;
+    virtual int GetFrameMax() const = 0;
+    virtual int GetItemCount() const = 0;
 
-  virtual void Get(int index, int **start, int **end, int *type, unsigned int *color) = 0;
-  virtual void Add(int)
-  {}
-  virtual void Del(int)
-  {}
-  virtual void Duplicate(int)
-  {}
+    virtual void BeginEdit(int)
+    {}
+    virtual void EndEdit()
+    {}
+    virtual int GetItemTypeCount() const
+    {
+      return 0;
+    }
+    virtual const char *GetItemTypeName(int) const
+    {
+      return "";
+    }
+    virtual const char *GetItemLabel(int) const
+    {
+      return "";
+    }
 
-  virtual void Copy()
-  {}
-  virtual void Paste()
-  {}
+    virtual void Get(int index, int **start, int **end, int *type, unsigned int *color) = 0;
+    virtual void Add(int)
+    {}
+    virtual void Del(int)
+    {}
+    virtual void Duplicate(int)
+    {}
 
-  virtual size_t GetCustomHeight(int)
-  {
-    return 0;
-  }
-  virtual void DoubleClick(int)
-  {}
-  virtual void CustomDraw(int, AnchorDrawList *, const AnchorBBox &, const AnchorBBox &, const AnchorBBox &, const AnchorBBox &)
-  {}
-  virtual void CustomDrawCompact(int, AnchorDrawList *, const AnchorBBox &, const AnchorBBox &)
-  {}
-};
+    virtual void Copy()
+    {}
+    virtual void Paste()
+    {}
+
+    virtual size_t GetCustomHeight(int)
+    {
+      return 0;
+    }
+    virtual void DoubleClick(int)
+    {}
+    virtual void CustomDraw(int,
+                            AnchorDrawList *,
+                            const AnchorBBox &,
+                            const AnchorBBox &,
+                            const AnchorBBox &,
+                            const AnchorBBox &)
+    {}
+    virtual void CustomDrawCompact(int, AnchorDrawList *, const AnchorBBox &, const AnchorBBox &)
+    {}
+  };
 
 
-// return true if selection is made
-bool Sequencer(SequenceInterface *sequence, int *currentFrame, bool *expanded, int *selectedEntry, int *firstFrame, int sequenceOptions);
+  // return true if selection is made
+  bool Sequencer(SequenceInterface *sequence,
+                 int *currentFrame,
+                 bool *expanded,
+                 int *selectedEntry,
+                 int *firstFrame,
+                 int sequenceOptions);
 
 }  // namespace AnchorSequencer

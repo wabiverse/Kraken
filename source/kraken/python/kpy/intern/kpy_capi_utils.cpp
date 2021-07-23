@@ -252,8 +252,7 @@ void PyC_FileAndNum(const char **r_filename, int *r_lineno)
         {
           *r_filename = PyUnicode_AsUTF8(mod_name);
           Py_DECREF(mod_file);
-        }
-        else
+        } else
         {
           PyErr_Clear();
         }
@@ -312,8 +311,7 @@ PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *for
     if (PyUnicode_Check(error_value))
     {
       PyErr_Format(exception_type_prefix, "%S, %S", error_value_prefix, error_value);
-    }
-    else
+    } else
     {
       PyErr_Format(exception_type_prefix,
                    "%S, %.200s(%S)",
@@ -321,8 +319,7 @@ PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *for
                    Py_TYPE(error_value)->tp_name,
                    error_value);
     }
-  }
-  else
+  } else
   {
     PyErr_SetObject(exception_type_prefix, error_value_prefix);
   }
@@ -365,12 +362,10 @@ PyObject *PyC_ExceptionBuffer(void)
   if (!(string_io_mod = PyImport_ImportModule("io")))
   {
     goto error_cleanup;
-  }
-  else if (!(string_io = PyObject_CallMethod(string_io_mod, "StringIO", NULL)))
+  } else if (!(string_io = PyObject_CallMethod(string_io_mod, "StringIO", NULL)))
   {
     goto error_cleanup;
-  }
-  else if (!(string_io_getvalue = PyObject_GetAttrString(string_io, "getvalue")))
+  } else if (!(string_io_getvalue = PyObject_GetAttrString(string_io, "getvalue")))
   {
     goto error_cleanup;
   }
@@ -554,8 +549,7 @@ bool KPy_errors_to_report_ex(ReportList *reports,
   if (use_full)
   {
     pystring = PyC_ExceptionBuffer();
-  }
-  else
+  } else
   {
     pystring = PyC_ExceptionBuffer_Simple();
   }
@@ -598,8 +592,7 @@ bool KPy_errors_to_report_ex(ReportList *reports,
             PyUnicode_AsUTF8(pystring),
             filename,
             lineno);
-  }
-  else
+  } else
   {
     KKE_reportf(reports, RPT_ERROR, "%s: %s", error_prefix, PyUnicode_AsUTF8(pystring));
   }

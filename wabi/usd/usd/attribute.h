@@ -615,6 +615,7 @@ class UsdAttribute : public UsdProperty
   // ---------------------------------------------------------------------- //
   // Private Methods and Members
   // ---------------------------------------------------------------------- //
+
  private:
   friend class UsdAttributeQuery;
   friend class UsdObject;

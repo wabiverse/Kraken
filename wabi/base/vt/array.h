@@ -352,8 +352,7 @@ class VtArray : public Vt_ArrayBase
     if (ARCH_LIKELY(!_foreignSource))
     {
       _GetNativeRefCount(_data).fetch_add(1, std::memory_order_relaxed);
-    }
-    else
+    } else
     {
       _foreignSource->_refCount.fetch_add(1, std::memory_order_relaxed);
     }
@@ -535,7 +534,7 @@ class VtArray : public Vt_ArrayBase
   /// \sa push_back(ElementType const&)
   /// \sa push_back(ElementType&&)
   template<typename... Args>
-  void emplace_back(Args &&... args)
+  void emplace_back(Args &&...args)
   {
     // If this is a non-pxr array with rank > 1, disallow push_back.
     if (ARCH_UNLIKELY(_shapeData.otherDims[0]))
@@ -718,8 +717,7 @@ class VtArray : public Vt_ArrayBase
       // Allocate newSize elements and initialize.
       newData = _AllocateNew(newSize);
       std::forward<FillElemsFn>(fillElems)(newData, newData + newSize);
-    }
-    else if (_IsUnique())
+    } else if (_IsUnique())
     {
       if (growing)
       {
@@ -729,8 +727,7 @@ class VtArray : public Vt_ArrayBase
         }
         // fill with newly added elements from oldSize to newSize.
         std::forward<FillElemsFn>(fillElems)(newData + oldSize, newData + newSize);
-      }
-      else
+      } else
       {
         // destroy removed elements
         for (auto *cur = newData + newSize, *end = newData + oldSize; cur != end; ++cur)
@@ -738,8 +735,7 @@ class VtArray : public Vt_ArrayBase
           cur->~value_type();
         }
       }
-    }
-    else
+    } else
     {
       newData = _AllocateCopy(_data, newSize, growing ? oldSize : newSize);
       if (growing)
@@ -771,8 +767,7 @@ class VtArray : public Vt_ArrayBase
       {
         p->~value_type();
       }
-    }
-    else
+    } else
     {
       // Detach to empty.
       _DecRef();
@@ -842,8 +837,7 @@ class VtArray : public Vt_ArrayBase
       }
       _shapeData.totalSize = newSize;
       return iterator(removeStart);
-    }
-    else
+    } else
     {
       // If the array is not unique, we want to avoid copying the
       // elements in the range we are erasing. We allocate a
@@ -1072,8 +1066,7 @@ class VtArray : public Vt_ArrayBase
         }
         free(std::addressof(_GetControlBlock(_data)));
       }
-    }
-    else
+    } else
     {
       // Drop the refcount in the foreign source.  If we take it to zero,
       // invoke the function pointer to alert the foreign source.

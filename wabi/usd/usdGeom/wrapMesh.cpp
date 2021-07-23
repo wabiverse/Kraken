@@ -43,93 +43,97 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateFaceVertexIndicesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFaceVertexIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                          writeSparsely);
-}
-
-static UsdAttribute _CreateFaceVertexCountsAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateFaceVertexCountsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                         writeSparsely);
-}
-
-static UsdAttribute _CreateSubdivisionSchemeAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateSubdivisionSchemeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                          writeSparsely);
-}
-
-static UsdAttribute _CreateInterpolateBoundaryAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateInterpolateBoundaryAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+  static UsdAttribute _CreateFaceVertexIndicesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFaceVertexIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
                                             writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateFaceVaryingLinearInterpolationAttr(UsdGeomMesh &self,
-                                                              object defaultVal,
-                                                              bool writeSparsely)
-{
-  return self.CreateFaceVaryingLinearInterpolationAttr(
-    UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
-}
+  static UsdAttribute _CreateFaceVertexCountsAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateFaceVertexCountsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                           writeSparsely);
+  }
 
-static UsdAttribute _CreateTriangleSubdivisionRuleAttr(UsdGeomMesh &self,
-                                                       object defaultVal,
-                                                       bool writeSparsely)
-{
-  return self.CreateTriangleSubdivisionRuleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                                writeSparsely);
-}
+  static UsdAttribute _CreateSubdivisionSchemeAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateSubdivisionSchemeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                            writeSparsely);
+  }
 
-static UsdAttribute _CreateHoleIndicesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateHoleIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                    writeSparsely);
-}
+  static UsdAttribute _CreateInterpolateBoundaryAttr(UsdGeomMesh &self,
+                                                     object defaultVal,
+                                                     bool writeSparsely)
+  {
+    return self.CreateInterpolateBoundaryAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                              writeSparsely);
+  }
 
-static UsdAttribute _CreateCornerIndicesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateCornerIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+  static UsdAttribute _CreateFaceVaryingLinearInterpolationAttr(UsdGeomMesh &self,
+                                                                object defaultVal,
+                                                                bool writeSparsely)
+  {
+    return self.CreateFaceVaryingLinearInterpolationAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+      writeSparsely);
+  }
+
+  static UsdAttribute _CreateTriangleSubdivisionRuleAttr(UsdGeomMesh &self,
+                                                         object defaultVal,
+                                                         bool writeSparsely)
+  {
+    return self.CreateTriangleSubdivisionRuleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                                  writeSparsely);
+  }
+
+  static UsdAttribute _CreateHoleIndicesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateHoleIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
                                       writeSparsely);
-}
+  }
 
-static UsdAttribute _CreateCornerSharpnessesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateCornerSharpnessesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                          writeSparsely);
-}
+  static UsdAttribute _CreateCornerIndicesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateCornerIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateCreaseIndicesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateCreaseIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateCornerSharpnessesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateCornerSharpnessesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+                                            writeSparsely);
+  }
 
-static UsdAttribute _CreateCreaseLengthsAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateCreaseLengthsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                      writeSparsely);
-}
+  static UsdAttribute _CreateCreaseIndicesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateCreaseIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                        writeSparsely);
+  }
 
-static UsdAttribute _CreateCreaseSharpnessesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateCreaseSharpnessesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                          writeSparsely);
-}
+  static UsdAttribute _CreateCreaseLengthsAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateCreaseLengthsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                        writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomMesh &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.Mesh(%s)", primRepr.c_str());
-}
+  static UsdAttribute _CreateCreaseSharpnessesAttr(UsdGeomMesh &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateCreaseSharpnessesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+                                            writeSparsely);
+  }
+
+  static std::string _Repr(const UsdGeomMesh &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.Mesh(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -247,28 +251,28 @@ void wrapUsdGeomMesh()
 namespace
 {
 
-tuple _ValidateTopology(const VtIntArray &faceVertexIndices,
-                        const VtIntArray &faceVertexCounts,
-                        size_t numPoints)
-{
-  std::string reason;
-  bool valid = UsdGeomMesh::ValidateTopology(faceVertexIndices, faceVertexCounts, numPoints, &reason);
-  return boost::python::make_tuple(valid, reason);
-}
+  tuple _ValidateTopology(const VtIntArray &faceVertexIndices,
+                          const VtIntArray &faceVertexCounts,
+                          size_t numPoints)
+  {
+    std::string reason;
+    bool valid = UsdGeomMesh::ValidateTopology(faceVertexIndices, faceVertexCounts, numPoints, &reason);
+    return boost::python::make_tuple(valid, reason);
+  }
 
-WRAP_CUSTOM
-{
-  typedef UsdGeomMesh This;
+  WRAP_CUSTOM
+  {
+    typedef UsdGeomMesh This;
 
-  _class
-    .def("ValidateTopology",
-         &_ValidateTopology,
-         (arg("faceVertexIndices"), arg("faceVertexCounts"), arg("numPoints")))
-    .def("GetFaceCount", &UsdGeomMesh::GetFaceCount, arg("timeCode") = UsdTimeCode::Default())
-    .staticmethod("ValidateTopology");
+    _class
+      .def("ValidateTopology",
+           &_ValidateTopology,
+           (arg("faceVertexIndices"), arg("faceVertexCounts"), arg("numPoints")))
+      .def("GetFaceCount", &UsdGeomMesh::GetFaceCount, arg("timeCode") = UsdTimeCode::Default())
+      .staticmethod("ValidateTopology");
 
-  _class.attr("SHARPNESS_INFINITE") = UsdGeomMesh::SHARPNESS_INFINITE;
-  ;
-}
+    _class.attr("SHARPNESS_INFINITE") = UsdGeomMesh::SHARPNESS_INFINITE;
+    ;
+  }
 
 }  // anonymous namespace

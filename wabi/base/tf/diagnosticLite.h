@@ -54,15 +54,15 @@ WABI_NAMESPACE_BEGIN
  * @enum TfDiagnosticType
  * Enum describing various
  * diagnostic conditions.
- * 
+ *
  * These are ordered by enum
  * value of MSDOS's ability
  * to color console messages
  * w/ SetConsoleTextAttribute
- * 
+ *
  * Those color values are as
  * follows:
- * 
+ *
  * 1: Blue
  * 2: Green
  * 3: Cyan
@@ -70,11 +70,11 @@ WABI_NAMESPACE_BEGIN
  * 5: Pink
  * 6: Yellow
  * 7: White
- * 8: Gray 
- * 
+ * 8: Gray
+ *
  * Then, these color values repeat
  * with higher vibrancies, ex:
- * 
+ *
  * 9: Light Blue
  * 10: Light Green
  * 11: Light Cyan
@@ -137,8 +137,7 @@ struct Tf_DiagnosticLiteHelper
 #  define TF_FATAL_CODING_ERROR \
     Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_CODING_ERROR_TYPE).IssueFatalError
 
-#  define TF_RUNTIME_MSG \
-    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
+#  define TF_RUNTIME_MSG Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
 
 #  define TF_RUNTIME_MSG_SUCCESS \
     Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_SUCCESS_TYPE).IssueStatus

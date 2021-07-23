@@ -103,7 +103,9 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
       HdBufferSpecVector offsetSpecs;
       offsetSpecs.emplace_back(HdxTokens->hdxSelectionBuffer, HdTupleType{HdTypeInt32, 1});
       _selOffsetBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-        /*role*/ HdxTokens->selection, offsetSpecs, HdBufferArrayUsageHint());
+        /*role*/ HdxTokens->selection,
+        offsetSpecs,
+        HdBufferArrayUsageHint());
     }
 
     if (!_selUniformBar)
@@ -113,7 +115,9 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
       uniformSpecs.emplace_back(HdxTokens->selLocateColor, HdTupleType{HdTypeFloatVec4, 1});
       uniformSpecs.emplace_back(HdxTokens->occludedSelectionOpacity, HdTupleType{HdTypeFloat, 1});
       _selUniformBar = hdPhResourceRegistry->AllocateUniformBufferArrayRange(
-        /*role*/ HdxTokens->selection, uniformSpecs, HdBufferArrayUsageHint());
+        /*role*/ HdxTokens->selection,
+        uniformSpecs,
+        HdBufferArrayUsageHint());
     }
 
     if (!_selPointColorsBar)
@@ -121,7 +125,9 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
       HdBufferSpecVector colorSpecs;
       colorSpecs.emplace_back(HdxTokens->selectionPointColors, HdTupleType{HdTypeFloatVec4, 1});
       _selPointColorsBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-        /*role*/ HdxTokens->selection, colorSpecs, HdBufferArrayUsageHint());
+        /*role*/ HdxTokens->selection,
+        colorSpecs,
+        HdBufferArrayUsageHint());
     }
 
     //
@@ -140,7 +146,8 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     VtIntArray offsets;
     _hasSelection = sel->GetSelectionOffsetBuffer(renderIndex, _params.enableSelection, &offsets);
     hdPhResourceRegistry->AddSource(
-      _selOffsetBar, std::make_shared<HdVtBufferSource>(HdxTokens->hdxSelectionBuffer, VtValue(offsets)));
+      _selOffsetBar,
+      std::make_shared<HdVtBufferSource>(HdxTokens->hdxSelectionBuffer, VtValue(offsets)));
 
     //
     // Point Colors

@@ -157,8 +157,7 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
      * Create default Pixar stage. */
     // UNI_set_defaults(C);
     // UNI_save_stage(C);
-  }
-  else
+  } else
   {
     /**
      * Open user's stage. */
@@ -168,19 +167,19 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
 
 void KKE_main_free(Main *mainvar)
 {
-  UNIVERSE_FOR_ALL(windowmanager, mainvar->wm)
+  UNIVERSE_FOR_ALL (windowmanager, mainvar->wm)
   {
     delete windowmanager;
   }
   mainvar->wm.clear();
 
-  UNIVERSE_FOR_ALL(workspace, mainvar->workspaces)
+  UNIVERSE_FOR_ALL (workspace, mainvar->workspaces)
   {
     delete workspace;
   }
   mainvar->workspaces.clear();
 
-  UNIVERSE_FOR_ALL(screen, mainvar->screens)
+  UNIVERSE_FOR_ALL (screen, mainvar->screens)
   {
     delete screen;
   }

@@ -45,8 +45,7 @@ template<typename OutputStream,
          typename TargetEncoding = UTF8<>,
          typename StackAllocator = CrtAllocator,
          unsigned writeFlags = kWriteDefaultFlags>
-class PrettyWriter
-  : public Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator, writeFlags>
+class PrettyWriter : public Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator, writeFlags>
 {
  public:
   typedef Writer<OutputStream, SourceEncoding, TargetEncoding, StackAllocator> Base;
@@ -268,8 +267,7 @@ class PrettyWriter
           Base::os_->Put('\n');
           WriteIndent();
         }
-      }
-      else
+      } else
       {  // in object
         if (level->valueCount > 0)
         {
@@ -277,14 +275,12 @@ class PrettyWriter
           {
             Base::os_->Put(',');
             Base::os_->Put('\n');
-          }
-          else
+          } else
           {
             Base::os_->Put(':');
             Base::os_->Put(' ');
           }
-        }
-        else
+        } else
           Base::os_->Put('\n');
 
         if (level->valueCount % 2 == 0)
@@ -293,8 +289,7 @@ class PrettyWriter
       if (!level->inArray && level->valueCount % 2 == 0)
         RAPIDJSON_ASSERT(type == kStringType);  // if it's in object, then even number should be a name
       level->valueCount++;
-    }
-    else
+    } else
     {
       RAPIDJSON_ASSERT(!Base::hasRoot_);  // Should only has one and only one root.
       Base::hasRoot_ = true;

@@ -51,91 +51,92 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-void SetAxisHelper(GfRotation &rotation, const GfVec3d &axis)
-{
-  rotation.SetAxisAngle(axis, rotation.GetAngle());
-}
+  void SetAxisHelper(GfRotation &rotation, const GfVec3d &axis)
+  {
+    rotation.SetAxisAngle(axis, rotation.GetAngle());
+  }
 
-void SetAngleHelper(GfRotation &rotation, double angle)
-{
-  rotation.SetAxisAngle(rotation.GetAxis(), angle);
-}
+  void SetAngleHelper(GfRotation &rotation, double angle)
+  {
+    rotation.SetAxisAngle(rotation.GetAxis(), angle);
+  }
 
-static tuple _DecomposeRotation3(const GfMatrix4d &rot,
-                                 const GfVec3d &TwAxis,
-                                 const GfVec3d &FBAxis,
-                                 const GfVec3d &LRAxis,
-                                 double handedness,
-                                 double thetaTwHint,
-                                 double thetaFBHint,
-                                 double thetaLRHint,
-                                 bool useHint)
-{
-  double angle[3] = {thetaTwHint, thetaFBHint, thetaLRHint};
+  static tuple _DecomposeRotation3(const GfMatrix4d &rot,
+                                   const GfVec3d &TwAxis,
+                                   const GfVec3d &FBAxis,
+                                   const GfVec3d &LRAxis,
+                                   double handedness,
+                                   double thetaTwHint,
+                                   double thetaFBHint,
+                                   double thetaLRHint,
+                                   bool useHint)
+  {
+    double angle[3] = {thetaTwHint, thetaFBHint, thetaLRHint};
 
-  GfRotation::DecomposeRotation(rot,
-                                TwAxis,
-                                FBAxis,
-                                LRAxis,
-                                handedness,
-                                &(angle[0]),
-                                &(angle[1]),
-                                &(angle[2]),
-                                NULL /* thetaSwHint */,
-                                useHint,
-                                NULL /* swShift */);
+    GfRotation::DecomposeRotation(rot,
+                                  TwAxis,
+                                  FBAxis,
+                                  LRAxis,
+                                  handedness,
+                                  &(angle[0]),
+                                  &(angle[1]),
+                                  &(angle[2]),
+                                  NULL /* thetaSwHint */,
+                                  useHint,
+                                  NULL /* swShift */);
 
-  return make_tuple(angle[0], angle[1], angle[2]);
-}
+    return make_tuple(angle[0], angle[1], angle[2]);
+  }
 
-static tuple _DecomposeRotation(const GfMatrix4d &rot,
-                                const GfVec3d &TwAxis,
-                                const GfVec3d &FBAxis,
-                                const GfVec3d &LRAxis,
-                                double handedness,
-                                const object &thetaTwHint,
-                                const object &thetaFBHint,
-                                const object &thetaLRHint,
-                                const object &thetaSwHint,
-                                bool useHint,
-                                const object &swShiftIn)
-{
-  double angle[4] = {thetaTwHint.ptr() != Py_None ? boost::python::extract<double>(thetaTwHint) : 0.0,
-                     thetaFBHint.ptr() != Py_None ? boost::python::extract<double>(thetaFBHint) : 0.0,
-                     thetaLRHint.ptr() != Py_None ? boost::python::extract<double>(thetaLRHint) : 0.0,
-                     thetaSwHint.ptr() != Py_None ? boost::python::extract<double>(thetaSwHint) : 0.0};
-  double swShift = swShiftIn.ptr() != Py_None ? boost::python::extract<double>(swShiftIn) : 0.0;
+  static tuple _DecomposeRotation(const GfMatrix4d &rot,
+                                  const GfVec3d &TwAxis,
+                                  const GfVec3d &FBAxis,
+                                  const GfVec3d &LRAxis,
+                                  double handedness,
+                                  const object &thetaTwHint,
+                                  const object &thetaFBHint,
+                                  const object &thetaLRHint,
+                                  const object &thetaSwHint,
+                                  bool useHint,
+                                  const object &swShiftIn)
+  {
+    double angle[4] = {thetaTwHint.ptr() != Py_None ? boost::python::extract<double>(thetaTwHint) : 0.0,
+                       thetaFBHint.ptr() != Py_None ? boost::python::extract<double>(thetaFBHint) : 0.0,
+                       thetaLRHint.ptr() != Py_None ? boost::python::extract<double>(thetaLRHint) : 0.0,
+                       thetaSwHint.ptr() != Py_None ? boost::python::extract<double>(thetaSwHint) : 0.0};
+    double swShift = swShiftIn.ptr() != Py_None ? boost::python::extract<double>(swShiftIn) : 0.0;
 
-  GfRotation::DecomposeRotation(rot,
-                                TwAxis,
-                                FBAxis,
-                                LRAxis,
-                                handedness,
-                                thetaTwHint.ptr() != Py_None ? &(angle[0]) : NULL,
-                                thetaFBHint.ptr() != Py_None ? &(angle[1]) : NULL,
-                                thetaLRHint.ptr() != Py_None ? &(angle[2]) : NULL,
-                                thetaSwHint.ptr() != Py_None ? &(angle[3]) : NULL,
-                                useHint,
-                                swShiftIn.ptr() != Py_None ? &swShift : NULL);
+    GfRotation::DecomposeRotation(rot,
+                                  TwAxis,
+                                  FBAxis,
+                                  LRAxis,
+                                  handedness,
+                                  thetaTwHint.ptr() != Py_None ? &(angle[0]) : NULL,
+                                  thetaFBHint.ptr() != Py_None ? &(angle[1]) : NULL,
+                                  thetaLRHint.ptr() != Py_None ? &(angle[2]) : NULL,
+                                  thetaSwHint.ptr() != Py_None ? &(angle[3]) : NULL,
+                                  useHint,
+                                  swShiftIn.ptr() != Py_None ? &swShift : NULL);
 
-  return make_tuple(angle[0], angle[1], angle[2], angle[3]);
-}
+    return make_tuple(angle[0], angle[1], angle[2], angle[3]);
+  }
 
-static string _Repr(GfRotation const &self)
-{
-  return TF_PY_REPR_PREFIX + "Rotation(" + TfPyRepr(self.GetAxis()) + ", " + TfPyRepr(self.GetAngle()) + ")";
-}
+  static string _Repr(GfRotation const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Rotation(" + TfPyRepr(self.GetAxis()) + ", " + TfPyRepr(self.GetAngle()) +
+           ")";
+  }
 
 #if PY_MAJOR_VERSION == 2
-static GfRotation __truediv__(const GfRotation &self, double value)
-{
-  return self / value;
-}
+  static GfRotation __truediv__(const GfRotation &self, double value)
+  {
+    return self / value;
+  }
 
-static GfRotation __itruediv__(GfRotation &self, double value)
-{
-  return self /= value;
-}
+  static GfRotation __itruediv__(GfRotation &self, double value)
+  {
+    return self /= value;
+  }
 #endif
 
 }  // anonymous namespace
@@ -159,8 +160,9 @@ void wrapRotation()
     .def("SetRotateInto", &This::SetRotateInto, return_self<>(), (args("rotateFrom"), args("rotateTo")))
     .def("SetIdentity", &This::SetIdentity, return_self<>())
 
-    .add_property(
-      "axis", make_function(&This::GetAxis, return_value_policy<copy_const_reference>()), SetAxisHelper)
+    .add_property("axis",
+                  make_function(&This::GetAxis, return_value_policy<copy_const_reference>()),
+                  SetAxisHelper)
     .add_property("angle", &This::GetAngle, SetAngleHelper)
 
     .def("GetAxis", &This::GetAxis, return_value_policy<copy_const_reference>())

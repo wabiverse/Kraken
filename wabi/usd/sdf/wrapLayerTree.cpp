@@ -37,24 +37,24 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static SdfLayerTreeHandle _NewEmpty()
-{
-  SdfLayerTreeHandleVector childTrees;
-  return SdfLayerTree::New(SdfLayerHandle(), childTrees);
-}
+  static SdfLayerTreeHandle _NewEmpty()
+  {
+    SdfLayerTreeHandleVector childTrees;
+    return SdfLayerTree::New(SdfLayerHandle(), childTrees);
+  }
 
-static SdfLayerTreeHandle _NewNoOffset(const SdfLayerHandle &layer,
-                                       const SdfLayerTreeHandleVector &childTrees)
-{
-  return SdfLayerTree::New(layer, childTrees);
-}
+  static SdfLayerTreeHandle _NewNoOffset(const SdfLayerHandle &layer,
+                                         const SdfLayerTreeHandleVector &childTrees)
+  {
+    return SdfLayerTree::New(layer, childTrees);
+  }
 
-static SdfLayerTreeHandle _New(const SdfLayerHandle &layer,
-                               const SdfLayerTreeHandleVector &childTrees,
-                               const SdfLayerOffset &cumulativeOffset)
-{
-  return SdfLayerTree::New(layer, childTrees, cumulativeOffset);
-}
+  static SdfLayerTreeHandle _New(const SdfLayerHandle &layer,
+                                 const SdfLayerTreeHandleVector &childTrees,
+                                 const SdfLayerOffset &cumulativeOffset)
+  {
+    return SdfLayerTree::New(layer, childTrees, cumulativeOffset);
+  }
 
 }  // anonymous namespace
 

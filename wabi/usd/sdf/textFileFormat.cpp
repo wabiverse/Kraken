@@ -107,24 +107,24 @@ SdfTextFileFormat::~SdfTextFileFormat()
 namespace
 {
 
-bool _CanReadImpl(const std::shared_ptr<ArAsset> &asset, const std::string &cookie)
-{
-  TfErrorMark mark;
-
-  char aLine[512];
-
-  size_t numToRead = std::min(sizeof(aLine), cookie.length());
-  if (asset->Read(aLine, numToRead, /* offset = */ 0) != numToRead)
+  bool _CanReadImpl(const std::shared_ptr<ArAsset> &asset, const std::string &cookie)
   {
-    return false;
+    TfErrorMark mark;
+
+    char aLine[512];
+
+    size_t numToRead = std::min(sizeof(aLine), cookie.length());
+    if (asset->Read(aLine, numToRead, /* offset = */ 0) != numToRead)
+    {
+      return false;
+    }
+
+    aLine[numToRead] = '\0';
+
+    // Don't allow errors to escape this function, since this function is
+    // just trying to answer whether the asset can be read.
+    return !mark.Clear() && TfStringStartsWith(aLine, cookie);
   }
-
-  aLine[numToRead] = '\0';
-
-  // Don't allow errors to escape this function, since this function is
-  // just trying to answer whether the asset can be read.
-  return !mark.Clear() && TfStringStartsWith(aLine, cookie);
-}
 
 }  // end anonymous namespace
 
@@ -224,8 +224,9 @@ static bool _WriteLayer(const SdfLayer *l,
   // Partition this layer's fields so that all fields to write out are
   // in the range [fields.begin(), metadataFieldsEnd).
   TfTokenVector fields = pseudoRoot->ListFields();
-  TfTokenVector::iterator metadataFieldsEnd = std::partition(
-    fields.begin(), fields.end(), Sdf_IsLayerMetadataField());
+  TfTokenVector::iterator metadataFieldsEnd = std::partition(fields.begin(),
+                                                             fields.end(),
+                                                             Sdf_IsLayerMetadataField());
 
   // Write comment at the top of the metadata section for readability.
   const std::string comment = commentOverride.empty() ? l->GetComment() : commentOverride;
@@ -252,8 +253,7 @@ static bool _WriteLayer(const SdfLayer *l,
         _WriteQuotedString(header, 0, l->GetDocumentation());
         _Write(header, 0, "\n");
       }
-    }
-    else if (field == SdfFieldKeys->SubLayers)
+    } else if (field == SdfFieldKeys->SubLayers)
     {
       _Write(header, 1, "subLayers = [\n");
 
@@ -265,15 +265,13 @@ static bool _WriteLayer(const SdfLayer *l,
         _Write(header, 0, (i < c - 1) ? ",\n" : "\n");
       }
       _Write(header, 1, "]\n");
-    }
-    else if (field == SdfFieldKeys->HasOwnedSubLayers)
+    } else if (field == SdfFieldKeys->HasOwnedSubLayers)
     {
       if (l->GetHasOwnedSubLayers())
       {
         _Write(header, 1, "hasOwnedSubLayers = true\n");
       }
-    }
-    else
+    } else
     {
       Sdf_WriteSimpleField(header, 1, pseudoRoot.GetSpec(), field);
     }
@@ -362,8 +360,11 @@ bool SdfTextFileFormat::ReadFromString(SdfLayer *layer, const std::string &str) 
 {
   SdfLayerHints hints;
   SdfAbstractDataRefPtr data = InitData(layer->GetFileFormatArguments());
-  if (!Sdf_ParseLayerFromString(
-        str, GetFormatId(), GetVersionString(), TfDynamic_cast<SdfDataRefPtr>(data), &hints))
+  if (!Sdf_ParseLayerFromString(str,
+                                GetFormatId(),
+                                GetVersionString(),
+                                TfDynamic_cast<SdfDataRefPtr>(data),
+                                &hints))
   {
     return false;
   }

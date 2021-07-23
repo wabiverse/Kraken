@@ -125,12 +125,10 @@ TF_MAKE_STATIC_DATA(TfToken, _fallbackUpAxis)
         if (axisStr == "Y")
         {
           axisToken = UsdGeomTokens->y;
-        }
-        else if (axisStr == "Z")
+        } else if (axisStr == "Z")
         {
           axisToken = UsdGeomTokens->z;
-        }
-        else
+        } else
         {
           TF_CODING_ERROR(
             "%s[%s][%s] had value \"%s\", but only \"Y\" and"
@@ -155,8 +153,7 @@ TF_MAKE_STATIC_DATA(TfToken, _fallbackUpAxis)
             schemaFallback.GetText());
           *_fallbackUpAxis = schemaFallback;
           return;
-        }
-        else if (upAxis.IsEmpty())
+        } else if (upAxis.IsEmpty())
         {
           definingPluginName = plug->GetName();
           upAxis = axisToken;

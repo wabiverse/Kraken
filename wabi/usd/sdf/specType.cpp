@@ -196,8 +196,7 @@ void SdfSpecTypeRegistration::_RegisterSpecType(const std::type_info &specCPPTyp
       schemaTypesForSpecType.end())
   {
     schemaTypesForSpecType.push_back(schemaTfType);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Spec type %s already registered for schema type %s",
                     specTfType.GetTypeName().c_str(),
@@ -242,8 +241,7 @@ void SdfSpecTypeRegistration::_RegisterAbstractSpecType(const std::type_info &sp
       schemaTypesForSpecType.end())
   {
     schemaTypesForSpecType.push_back(schemaTfType);
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Spec type %s already registered for schema type %s",
                     specTfType.GetTypeName().c_str(),
@@ -289,7 +287,8 @@ TfType Sdf_SpecType::Cast(const SdfSpec &from, const std::type_info &to)
   }
 
   const Sdf_SpecTypeInfo::SpecTypeToTfType *specTypeToTfType = TfMapLookupPtr(
-    specTypeInfo.schemaTypeToSpecTypes, schemaType);
+    specTypeInfo.schemaTypeToSpecTypes,
+    schemaType);
 
   // Allow casting to go through if we're trying to cast from a
   // variant spec to a prim spec.

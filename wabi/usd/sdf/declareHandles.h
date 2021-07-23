@@ -176,7 +176,7 @@ WABI_NAMESPACE_END
 namespace boost
 {
 
-using WABI_NS::get_pointer;
+  using WABI_NS::get_pointer;
 
 }
 
@@ -324,10 +324,10 @@ typedef TfRefPtr<SdfLayer> SdfLayerRefPtr;
 typedef std::vector<TfRefPtr<SdfLayer>> SdfLayerRefPtrVector;
 typedef std::set<SdfHandleTo<SdfLayer>::Handle> SdfLayerHandleSet;
 
-#define SDF_DECLARE_HANDLES(cls) \
-  typedef SdfHandleTo<class cls>::Handle cls##Handle; \
+#define SDF_DECLARE_HANDLES(cls)                                \
+  typedef SdfHandleTo<class cls>::Handle cls##Handle;           \
   typedef SdfHandleTo<class cls>::ConstHandle cls##ConstHandle; \
-  typedef SdfHandleTo<class cls>::Vector cls##HandleVector; \
+  typedef SdfHandleTo<class cls>::Vector cls##HandleVector;     \
   typedef SdfHandleTo<class cls>::ConstVector cls##ConstHandleVector
 
 WABI_NAMESPACE_END

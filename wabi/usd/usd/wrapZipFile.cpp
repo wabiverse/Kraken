@@ -88,8 +88,7 @@ static void _Exit(UsdZipFileWriter &w, const object &exc_type, const object &, c
     if (TfPyIsNone(exc_type))
     {
       w.Save();
-    }
-    else
+    } else
     {
       w.Discard();
     }

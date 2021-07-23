@@ -522,8 +522,7 @@ struct Tf_RefPtr_UniqueChangedCounter
     if (ptr->_shouldInvokeUniqueChangedListener)
     {
       return _AddRefIfNonzero(ptr);
-    }
-    else
+    } else
     {
       auto &counter = ptr->GetRefCount()._counter;
       auto val = counter.load();
@@ -1405,11 +1404,11 @@ WABI_NAMESPACE_END
 namespace boost
 {
 
-template<typename T>
-T *get_pointer(WABI_NS::TfRefPtr<T> const &p)
-{
-  return get_pointer(p);
-}
+  template<typename T>
+  T *get_pointer(WABI_NS::TfRefPtr<T> const &p)
+  {
+    return get_pointer(p);
+  }
 
 }  // end namespace boost
 
@@ -1441,14 +1440,14 @@ inline void TfHashAppend(HashState &h, const TfRefPtr<T> &ptr)
 // implementation. See here for more information:
 // https://connect.microsoft.com/VisualStudio/Feedback/Details/2852624
 
-#  define TF_REFPTR_CONST_VOLATILE_GET(x) \
-    namespace boost \
-    { \
-    template<> \
-    const volatile x *get_pointer(const volatile x *p) \
-    { \
-      return p; \
-    } \
+#  define TF_REFPTR_CONST_VOLATILE_GET(x)                \
+    namespace boost                                      \
+    {                                                    \
+      template<>                                         \
+      const volatile x *get_pointer(const volatile x *p) \
+      {                                                  \
+        return p;                                        \
+      }                                                  \
     }
 #else
 #  define TF_REFPTR_CONST_VOLATILE_GET(x)

@@ -92,8 +92,7 @@ void HdCyclesLight::_CreateCyclesLight(SdfPath const &id, HdCyclesRenderParam *r
     m_cyclesLight->type = ccl::LIGHT_BACKGROUND;
     shader->set_graph(_GetDefaultShaderGraph(true));
     renderParam->SetBackgroundShader(shader);
-  }
-  else
+  } else
   {
     if (m_hdLightType == HdPrimTypeTokens->diskLight)
     {
@@ -101,16 +100,13 @@ void HdCyclesLight::_CreateCyclesLight(SdfPath const &id, HdCyclesRenderParam *r
       m_cyclesLight->round = true;
 
       m_cyclesLight->size = 1.0f;
-    }
-    else if (m_hdLightType == HdPrimTypeTokens->sphereLight)
+    } else if (m_hdLightType == HdPrimTypeTokens->sphereLight)
     {
       m_cyclesLight->type = ccl::LIGHT_POINT;
-    }
-    else if (m_hdLightType == HdPrimTypeTokens->distantLight)
+    } else if (m_hdLightType == HdPrimTypeTokens->distantLight)
     {
       m_cyclesLight->type = ccl::LIGHT_DISTANT;
-    }
-    else if (m_hdLightType == HdPrimTypeTokens->rectLight)
+    } else if (m_hdLightType == HdPrimTypeTokens->rectLight)
     {
       m_cyclesLight->type = ccl::LIGHT_AREA;
       m_cyclesLight->round = false;
@@ -167,8 +163,7 @@ ccl::ShaderGraph *HdCyclesLight::_GetDefaultShaderGraph(bool isBackground)
 
     ccl::ShaderNode *out = graph->output();
     graph->connect(backgroundNode->output("Background"), out->input("Surface"));
-  }
-  else
+  } else
   {
     ccl::EmissionNode *emissionNode = new ccl::EmissionNode();
     emissionNode->color = ccl::make_float3(1.0f, 1.0f, 1.0f);
@@ -264,8 +259,7 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
       graph = _GetDefaultShaderGraph(m_cyclesLight->type == ccl::LIGHT_BACKGROUND);
       outNode = graph->output()->input("Surface")->link->parent;
       m_shaderGraphBits = shaderGraphBits;
-    }
-    else
+    } else
     {
       outNode = oldGraph->output()->input("Surface")->link->parent;
     }
@@ -307,8 +301,10 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
     }
 
     // Light cast shadow
-    m_cyclesLight->cast_shadow = _HdCyclesGetLightParam<bool>(
-      id, sceneDelegate, HdLightTokens->shadowEnable, true);
+    m_cyclesLight->cast_shadow = _HdCyclesGetLightParam<bool>(id,
+                                                              sceneDelegate,
+                                                              HdLightTokens->shadowEnable,
+                                                              true);
 
     // TODO:
     // These two params have no direct mapping. Kept for future implementation
@@ -343,8 +339,7 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
           graph->add(blackbodyNode);
 
           graph->connect(blackbodyNode->output("Color"), outNode->input("Color"));
-        }
-        else
+        } else
         {
           blackbodyNode = static_cast<ccl::BlackbodyNode *>(
             _FindShaderNode(oldGraph, ccl::BlackbodyNode::node_type));
@@ -377,8 +372,7 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
         graph->connect(iesTransform->output("Normal"), iesNode->input("Vector"));
 
         graph->connect(iesNode->output("Fac"), outNode->input("Strength"));
-      }
-      else
+      } else
       {
         iesNode = static_cast<ccl::IESLightNode *>(_FindShaderNode(oldGraph, ccl::IESLightNode::node_type));
       }
@@ -433,13 +427,11 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
 
             graph->disconnect(outNode->input("Color"));
             graph->connect(vecMathNode->output("Vector"), outNode->input("Color"));
-          }
-          else
+          } else
           {
             graph->connect(textureNode->output("Color"), outNode->input("Color"));
           }
-        }
-        else
+        } else
         {
           textureNode = static_cast<ccl::ImageTextureNode *>(
             _FindShaderNode(oldGraph, ccl::ImageTextureNode::node_type));
@@ -557,8 +549,7 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
             graph->connect(blackbodyNode->output("Color"), strengthNode->input("Vector1"));
           }
           graph->connect(strengthNode->output("Vector"), backgroundNode->input("Color"));
-        }
-        else
+        } else
         {
           strengthNode = static_cast<ccl::VectorMathNode *>(
             _FindShaderNode(oldGraph, ccl::VectorMathNode::node_type, ccl::ustring("strength")));
@@ -615,13 +606,11 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
 
             graph->disconnect(strengthNode->input("Vector1"));
             graph->connect(vecMathNode->output("Vector"), strengthNode->input("Vector1"));
-          }
-          else
+          } else
           {
             graph->connect(backgroundTexture->output("Color"), strengthNode->input("Vector1"));
           }
-        }
-        else
+        } else
         {
           backgroundTexture = static_cast<ccl::EnvironmentTextureNode *>(
             _FindShaderNode(oldGraph, ccl::EnvironmentTextureNode::node_type));
@@ -629,8 +618,7 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
         assert(backgroundTexture != nullptr);
         backgroundTexture->filename = filepath;
       }
-    }
-    else
+    } else
     {
       m_cyclesLight->strength *= intensity * powf(2.0f, exposure + exposureOffset) * size;
     }
@@ -641,37 +629,55 @@ void HdCyclesLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPa
     }
   }
 
-  m_cyclesLight->use_diffuse = _HdCyclesGetLightParam<bool>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightUseDiffuse, m_cyclesLight->use_diffuse);
+  m_cyclesLight->use_diffuse = _HdCyclesGetLightParam<bool>(id,
+                                                            sceneDelegate,
+                                                            HdCyclesTokens->cyclesLightUseDiffuse,
+                                                            m_cyclesLight->use_diffuse);
 
-  m_cyclesLight->use_glossy = _HdCyclesGetLightParam<bool>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightUseGlossy, m_cyclesLight->use_glossy);
+  m_cyclesLight->use_glossy = _HdCyclesGetLightParam<bool>(id,
+                                                           sceneDelegate,
+                                                           HdCyclesTokens->cyclesLightUseGlossy,
+                                                           m_cyclesLight->use_glossy);
 
-  m_cyclesLight->use_transmission = _HdCyclesGetLightParam<bool>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightUseTransmission, m_cyclesLight->use_transmission);
+  m_cyclesLight->use_transmission = _HdCyclesGetLightParam<bool>(id,
+                                                                 sceneDelegate,
+                                                                 HdCyclesTokens->cyclesLightUseTransmission,
+                                                                 m_cyclesLight->use_transmission);
 
-  m_cyclesLight->use_scatter = _HdCyclesGetLightParam<bool>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightUseScatter, m_cyclesLight->use_scatter);
+  m_cyclesLight->use_scatter = _HdCyclesGetLightParam<bool>(id,
+                                                            sceneDelegate,
+                                                            HdCyclesTokens->cyclesLightUseScatter,
+                                                            m_cyclesLight->use_scatter);
 
-  m_cyclesLight->use_mis = _HdCyclesGetLightParam<bool>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightUseMis, m_cyclesLight->use_mis);
+  m_cyclesLight->use_mis = _HdCyclesGetLightParam<bool>(id,
+                                                        sceneDelegate,
+                                                        HdCyclesTokens->cyclesLightUseMis,
+                                                        m_cyclesLight->use_mis);
 
-  m_cyclesLight->is_portal = _HdCyclesGetLightParam<bool>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightIsPortal, m_cyclesLight->is_portal);
+  m_cyclesLight->is_portal = _HdCyclesGetLightParam<bool>(id,
+                                                          sceneDelegate,
+                                                          HdCyclesTokens->cyclesLightIsPortal,
+                                                          m_cyclesLight->is_portal);
 
-  m_cyclesLight->samples = _HdCyclesGetLightParam<int>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightSamples, m_cyclesLight->samples);
+  m_cyclesLight->samples = _HdCyclesGetLightParam<int>(id,
+                                                       sceneDelegate,
+                                                       HdCyclesTokens->cyclesLightSamples,
+                                                       m_cyclesLight->samples);
 
   if (m_renderDelegate->GetCyclesRenderParam()->IsSquareSamples())
   {
     m_cyclesLight->samples *= m_cyclesLight->samples;
   }
 
-  m_cyclesLight->max_bounces = _HdCyclesGetLightParam<int>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightMaxBounces, m_cyclesLight->max_bounces);
+  m_cyclesLight->max_bounces = _HdCyclesGetLightParam<int>(id,
+                                                           sceneDelegate,
+                                                           HdCyclesTokens->cyclesLightMaxBounces,
+                                                           m_cyclesLight->max_bounces);
 
-  m_cyclesLight->map_resolution = _HdCyclesGetLightParam<int>(
-    id, sceneDelegate, HdCyclesTokens->cyclesLightMapResolution, m_cyclesLight->map_resolution);
+  m_cyclesLight->map_resolution = _HdCyclesGetLightParam<int>(id,
+                                                              sceneDelegate,
+                                                              HdCyclesTokens->cyclesLightMapResolution,
+                                                              m_cyclesLight->map_resolution);
 
   // TODO: Light is_enabled doesn't seem to have any effect
   if (*dirtyBits & HdChangeTracker::DirtyVisibility)

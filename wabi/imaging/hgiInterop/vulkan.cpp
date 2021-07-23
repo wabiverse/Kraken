@@ -151,8 +151,7 @@ static void _ConvertVulkanTextureToOpenGL(HgiVulkan *hgiVulkan,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  }
-  else
+  } else
   {
     glBindTexture(GL_TEXTURE_2D, *glDest);
   }
@@ -163,20 +162,16 @@ static void _ConvertVulkanTextureToOpenGL(HgiVulkan *hgiVulkan,
   if (texDesc.format == HgiFormatFloat32Vec4)
   {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, texels.data());
-  }
-  else if (texDesc.format == HgiFormatFloat16Vec4)
+  } else if (texDesc.format == HgiFormatFloat16Vec4)
   {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_HALF_FLOAT, texels.data());
-  }
-  else if (texDesc.format == HgiFormatUNorm8Vec4)
+  } else if (texDesc.format == HgiFormatUNorm8Vec4)
   {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texels.data());
-  }
-  else if (texDesc.format == HgiFormatFloat32)
+  } else if (texDesc.format == HgiFormatFloat32)
   {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, texels.data());
-  }
-  else
+  } else
   {
     TF_WARN("Unsupported texture format for Vulkan-GL interop");
   }
@@ -247,8 +242,7 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
       glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &restoreDrawFramebuffer);
       doRestoreDrawFramebuffer = true;
       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.UncheckedGet<uint32_t>());
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("dstFramebuffer must hold uint32_t when targeting OpenGL");
     }
@@ -305,8 +299,12 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   glEnableVertexAttribArray(locPosition);
 
   const GLint locUv = glGetAttribLocation(prg, "uvIn");
-  glVertexAttribPointer(
-    locUv, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 6, reinterpret_cast<void *>(sizeof(float) * 4));
+  glVertexAttribPointer(locUv,
+                        2,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        sizeof(float) * 6,
+                        reinterpret_cast<void *>(sizeof(float) * 4));
   glEnableVertexAttribArray(locUv);
 
   // Since we want to composite over the application's framebuffer contents,
@@ -323,8 +321,7 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
     // Note: Use LEQUAL and not LESS to ensure that fragments with only
     // translucent contribution (that don't update depth) are composited.
     glDepthFunc(GL_LEQUAL);
-  }
-  else
+  } else
   {
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -377,8 +374,7 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   if (!restoreDepthEnabled)
   {
     glDisable(GL_DEPTH_TEST);
-  }
-  else
+  } else
   {
     glEnable(GL_DEPTH_TEST);
   }

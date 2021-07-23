@@ -30,14 +30,14 @@
 
 namespace AnchorGradient
 {
-struct Delegate
-{
-  virtual size_t GetPointCount() = 0;
-  virtual wabi::GfVec4f *GetPoints() = 0;
-  virtual int EditPoint(int pointIndex, wabi::GfVec4f value) = 0;
-  virtual wabi::GfVec4f GetPoint(float t) = 0;
-  virtual void AddPoint(wabi::GfVec4f value) = 0;
-};
+  struct Delegate
+  {
+    virtual size_t GetPointCount() = 0;
+    virtual wabi::GfVec4f *GetPoints() = 0;
+    virtual int EditPoint(int pointIndex, wabi::GfVec4f value) = 0;
+    virtual wabi::GfVec4f GetPoint(float t) = 0;
+    virtual void AddPoint(wabi::GfVec4f value) = 0;
+  };
 
-bool Edit(Delegate &delegate, const wabi::GfVec2f &size, int &selection);
+  bool Edit(Delegate &delegate, const wabi::GfVec2f &size, int &selection);
 }  // namespace AnchorGradient

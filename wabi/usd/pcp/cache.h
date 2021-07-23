@@ -307,8 +307,12 @@ class PcpCache
                                     const ChildrenPredicate &childrenPred,
                                     const PayloadPredicate &payloadPred)
   {
-    ComputePrimIndexesInParallel(
-      SdfPathVector(1, path), allErrors, childrenPred, payloadPred, "Pcp", "ComputePrimIndexesInParallel");
+    ComputePrimIndexesInParallel(SdfPathVector(1, path),
+                                 allErrors,
+                                 childrenPred,
+                                 payloadPred,
+                                 "Pcp",
+                                 "ComputePrimIndexesInParallel");
   }
 
   /// \overload
@@ -322,8 +326,12 @@ class PcpCache
                                     const char *mallocTag1,
                                     const char *mallocTag2)
   {
-    ComputePrimIndexesInParallel(
-      SdfPathVector(1, path), allErrors, childrenPred, payloadPred, mallocTag1, mallocTag2);
+    ComputePrimIndexesInParallel(SdfPathVector(1, path),
+                                 allErrors,
+                                 childrenPred,
+                                 payloadPred,
+                                 mallocTag1,
+                                 mallocTag2);
   }
 
   /// Vectorized form of ComputePrimIndexesInParallel().  Equivalent to

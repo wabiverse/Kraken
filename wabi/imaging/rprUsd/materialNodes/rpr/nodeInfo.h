@@ -20,22 +20,22 @@ limitations under the License.
 namespace std
 {
 
-WABI_NAMESPACE_USING
+  WABI_NAMESPACE_USING
 
-inline std::string to_string(GfVec2f const &v)
-{
-  return TfStringPrintf("%f,%f", v[0], v[1]);
-}
+  inline std::string to_string(GfVec2f const &v)
+  {
+    return TfStringPrintf("%f,%f", v[0], v[1]);
+  }
 
-inline std::string to_string(GfVec3f const &v)
-{
-  return TfStringPrintf("%f,%f,%f", v[0], v[1], v[2]);
-}
+  inline std::string to_string(GfVec3f const &v)
+  {
+    return TfStringPrintf("%f,%f,%f", v[0], v[1], v[2]);
+  }
 
-inline std::string to_string(TfToken const &v)
-{
-  return v.GetString();
-}
+  inline std::string to_string(TfToken const &v)
+  {
+    return v.GetString();
+  }
 
 }  // namespace std
 
@@ -44,10 +44,10 @@ WABI_NAMESPACE_BEGIN
 template<typename T>
 struct ToRprUsdMaterialNodeInputType;
 
-#define DEFINE_TYPE_CONVERSION(c_type, material_type) \
-  template<> \
-  struct ToRprUsdMaterialNodeInputType<c_type> \
-  { \
+#define DEFINE_TYPE_CONVERSION(c_type, material_type)                                                 \
+  template<>                                                                                          \
+  struct ToRprUsdMaterialNodeInputType<c_type>                                                        \
+  {                                                                                                   \
     static constexpr RprUsdMaterialNodeInput::Type value = RprUsdMaterialNodeInput::k##material_type; \
   };
 
@@ -121,8 +121,7 @@ struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput
     {
       this->uiName = name.GetString();
       this->uiName[0] = ::toupper(this->uiName[0]);
-    }
-    else
+    } else
     {
       this->uiName = uiName;
     }

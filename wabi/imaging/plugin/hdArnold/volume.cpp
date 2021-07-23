@@ -61,122 +61,122 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-/// Houdini provides two function pointers to access Volume primitives via a
-/// dynamic library, removing the need for linking against Houdini libraries.
-/// HoudiniGetVdbPrimitive -> Returns a Houdini primitive to work with OpenVDB
-/// volumes.
-/// HoudiniGetVolumePrimitives -> Returns a Houdini primitive to work with
-/// native Houdini volumes.
-using HoudiniGetVdbPrimitive = void *(*)(const char *, const char *);
-using HoudiniGetVolumePrimitive = void *(*)(const char *, const char *, int);
-struct HoudiniFnSet
-{
-  HoudiniGetVdbPrimitive getVdbPrimitive = nullptr;
-  HoudiniGetVolumePrimitive getVolumePrimitive = nullptr;
-
-  /// We need to load USD_SopVol.(so|dylib|dll) to access the volume function
-  /// pointers.
-  HoudiniFnSet()
+  /// Houdini provides two function pointers to access Volume primitives via a
+  /// dynamic library, removing the need for linking against Houdini libraries.
+  /// HoudiniGetVdbPrimitive -> Returns a Houdini primitive to work with OpenVDB
+  /// volumes.
+  /// HoudiniGetVolumePrimitives -> Returns a Houdini primitive to work with
+  /// native Houdini volumes.
+  using HoudiniGetVdbPrimitive = void *(*)(const char *, const char *);
+  using HoudiniGetVolumePrimitive = void *(*)(const char *, const char *, int);
+  struct HoudiniFnSet
   {
-    constexpr auto getVdbName = "SOPgetVDBVolumePrimitive";
-    constexpr auto getVolumeName = "SOPgetHoudiniVolumePrimitive";
-    const auto HFS = ArchGetEnv("HFS");
-    const auto dsoPath = HFS + ARCH_PATH_SEP + "houdini" + ARCH_PATH_SEP + "dso" + ARCH_PATH_SEP +
-                         "USD_SopVol" + ARCH_LIBRARY_SUFFIX;
-    // We don't have to worry about unloading the library, as our library
-    // will be unloaded before Houdini exits.
-    auto *sopVol = ArchLibraryOpen(dsoPath, ARCH_LIBRARY_NOW);
-    if (sopVol == nullptr)
+    HoudiniGetVdbPrimitive getVdbPrimitive = nullptr;
+    HoudiniGetVolumePrimitive getVolumePrimitive = nullptr;
+
+    /// We need to load USD_SopVol.(so|dylib|dll) to access the volume function
+    /// pointers.
+    HoudiniFnSet()
     {
-      return;
-    }
-    getVdbPrimitive = reinterpret_cast<HoudiniGetVdbPrimitive>(GETSYM(sopVol, getVdbName));
-    getVolumePrimitive = reinterpret_cast<HoudiniGetVolumePrimitive>(GETSYM(sopVol, getVolumeName));
-  }
-};
-
-const HoudiniFnSet &_GetHoudiniFunctionSet()
-{
-  static HoudiniFnSet ret;
-  return ret;
-}
-
-using HtoAConvertPrimVdbToArnold = void (*)(void *, int, void **);
-
-/// HtoA provides a function to read data from a Houdini OpenVDB primitive
-/// and write it to a volume node storing the VDB data in-memory.
-struct HtoAFnSet
-{
-  HtoAConvertPrimVdbToArnold convertPrimVdbToArnold = nullptr;
-
-  HtoAFnSet()
-  {
-    /// The symbol is stored in _htoa_pygeo.so in python2.7libs, and
-    /// htoa is typically configured using HOUDINI_PATH. We should refine
-    /// this method in the future.
-    /// One of the current limitations is that we don't support HtoA
-    /// installed in a path containing `;` or `&`.
-    constexpr auto convertVdbName = "HtoAConvertPrimVdbToArnold";
-    const auto HOUDINI_PATH = ArchGetEnv("HOUDINI_PATH");
-    auto searchForPygeo = [&](const std::string &path) -> bool {
-      if (path == "&")
-      {
-        return false;
-      }
-      const auto dsoPath = path + ARCH_PATH_SEP + "python2.7libs" + ARCH_PATH_SEP + "_htoa_pygeo" +
-//. HTOA sets this library's extension .so on MacOS.
-#ifdef ARCH_OS_WINDOWS
-                           ".dll"
-#else
-                           ".so"
-#endif
-        ;
-      void *htoaPygeo = ArchLibraryOpen(dsoPath, ARCH_LIBRARY_NOW);
-      if (htoaPygeo == nullptr)
-      {
-        return false;
-      }
-      convertPrimVdbToArnold = reinterpret_cast<HtoAConvertPrimVdbToArnold>(
-        GETSYM(htoaPygeo, convertVdbName));
-      if (convertPrimVdbToArnold == nullptr)
-      {
-        TF_WARN("Error loading %s from %s", convertVdbName, dsoPath.c_str());
-      }
-      return true;
-    };
-    const auto houdiniPaths = TfStringSplit(HOUDINI_PATH, ARCH_PATH_LIST_SEP);
-    for (const auto &houdiniPath : houdiniPaths)
-    {
-      if (searchForPygeo(houdiniPath))
+      constexpr auto getVdbName = "SOPgetVDBVolumePrimitive";
+      constexpr auto getVolumeName = "SOPgetHoudiniVolumePrimitive";
+      const auto HFS = ArchGetEnv("HFS");
+      const auto dsoPath = HFS + ARCH_PATH_SEP + "houdini" + ARCH_PATH_SEP + "dso" + ARCH_PATH_SEP +
+                           "USD_SopVol" + ARCH_LIBRARY_SUFFIX;
+      // We don't have to worry about unloading the library, as our library
+      // will be unloaded before Houdini exits.
+      auto *sopVol = ArchLibraryOpen(dsoPath, ARCH_LIBRARY_NOW);
+      if (sopVol == nullptr)
       {
         return;
       }
-#ifndef ARCH_OS_WINDOWS
-      if (TfStringContains(houdiniPath, ";"))
-      {
-        const auto subPaths = TfStringSplit(houdiniPath, ";");
-        for (const auto &subPath : subPaths)
+      getVdbPrimitive = reinterpret_cast<HoudiniGetVdbPrimitive>(GETSYM(sopVol, getVdbName));
+      getVolumePrimitive = reinterpret_cast<HoudiniGetVolumePrimitive>(GETSYM(sopVol, getVolumeName));
+    }
+  };
+
+  const HoudiniFnSet &_GetHoudiniFunctionSet()
+  {
+    static HoudiniFnSet ret;
+    return ret;
+  }
+
+  using HtoAConvertPrimVdbToArnold = void (*)(void *, int, void **);
+
+  /// HtoA provides a function to read data from a Houdini OpenVDB primitive
+  /// and write it to a volume node storing the VDB data in-memory.
+  struct HtoAFnSet
+  {
+    HtoAConvertPrimVdbToArnold convertPrimVdbToArnold = nullptr;
+
+    HtoAFnSet()
+    {
+      /// The symbol is stored in _htoa_pygeo.so in python2.7libs, and
+      /// htoa is typically configured using HOUDINI_PATH. We should refine
+      /// this method in the future.
+      /// One of the current limitations is that we don't support HtoA
+      /// installed in a path containing `;` or `&`.
+      constexpr auto convertVdbName = "HtoAConvertPrimVdbToArnold";
+      const auto HOUDINI_PATH = ArchGetEnv("HOUDINI_PATH");
+      auto searchForPygeo = [&](const std::string &path) -> bool {
+        if (path == "&")
         {
-          if (searchForPygeo(subPath))
+          return false;
+        }
+        const auto dsoPath = path + ARCH_PATH_SEP + "python2.7libs" + ARCH_PATH_SEP + "_htoa_pygeo" +
+//. HTOA sets this library's extension .so on MacOS.
+#ifdef ARCH_OS_WINDOWS
+                             ".dll"
+#else
+                             ".so"
+#endif
+          ;
+        void *htoaPygeo = ArchLibraryOpen(dsoPath, ARCH_LIBRARY_NOW);
+        if (htoaPygeo == nullptr)
+        {
+          return false;
+        }
+        convertPrimVdbToArnold = reinterpret_cast<HtoAConvertPrimVdbToArnold>(
+          GETSYM(htoaPygeo, convertVdbName));
+        if (convertPrimVdbToArnold == nullptr)
+        {
+          TF_WARN("Error loading %s from %s", convertVdbName, dsoPath.c_str());
+        }
+        return true;
+      };
+      const auto houdiniPaths = TfStringSplit(HOUDINI_PATH, ARCH_PATH_LIST_SEP);
+      for (const auto &houdiniPath : houdiniPaths)
+      {
+        if (searchForPygeo(houdiniPath))
+        {
+          return;
+        }
+#ifndef ARCH_OS_WINDOWS
+        if (TfStringContains(houdiniPath, ";"))
+        {
+          const auto subPaths = TfStringSplit(houdiniPath, ";");
+          for (const auto &subPath : subPaths)
           {
-            return;
+            if (searchForPygeo(subPath))
+            {
+              return;
+            }
           }
         }
-      }
 #endif
+      }
+      /// TF warning, error and status functions don't show up in the terminal
+      /// when running on Linux/MacOS and Houdini 18.
+      std::cerr << "[HdArnold] Cannot load _htoa_pygeo library required for volume rendering in Solaris"
+                << std::endl;
     }
-    /// TF warning, error and status functions don't show up in the terminal
-    /// when running on Linux/MacOS and Houdini 18.
-    std::cerr << "[HdArnold] Cannot load _htoa_pygeo library required for volume rendering in Solaris"
-              << std::endl;
-  }
-};
+  };
 
-const HtoAFnSet _GetHtoAFunctionSet()
-{
-  static HtoAFnSet ret;
-  return ret;
-}
+  const HtoAFnSet _GetHtoAFunctionSet()
+  {
+    static HtoAFnSet ret;
+    return ret;
+  }
 
 }  // namespace
 
@@ -249,8 +249,7 @@ void HdArnoldVolume::Sync(HdSceneDelegate *sceneDelegate,
     if (!_volumes.empty())
     {
       visibility = _volumes.front()->GetVisibility();
-    }
-    else if (!_inMemoryVolumes.empty())
+    } else if (!_inMemoryVolumes.empty())
     {
       visibility = _inMemoryVolumes.front()->GetVisibility();
     }

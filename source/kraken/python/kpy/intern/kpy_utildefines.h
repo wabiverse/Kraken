@@ -53,14 +53,14 @@
 
 #define CHECK_TYPE_ANY(...) (void)0
 
-#define PyTuple_SET_ITEMS(op_arg, ...) \
-  { \
-    PyTupleObject *op = (PyTupleObject *)op_arg; \
-    PyObject **ob_items = op->ob_item; \
-    CHECK_TYPE_ANY(op_arg, PyObject *, PyTupleObject *); \
+#define PyTuple_SET_ITEMS(op_arg, ...)                               \
+  {                                                                  \
+    PyTupleObject *op = (PyTupleObject *)op_arg;                     \
+    PyObject **ob_items = op->ob_item;                               \
+    CHECK_TYPE_ANY(op_arg, PyObject *, PyTupleObject *);             \
     KLI_assert(VA_NARGS_COUNT(__VA_ARGS__) == PyTuple_GET_SIZE(op)); \
-    ARRAY_SET_ITEMS(ob_items, __VA_ARGS__); \
-  } \
+    ARRAY_SET_ITEMS(ob_items, __VA_ARGS__);                          \
+  }                                                                  \
   (void)0
 
 /**

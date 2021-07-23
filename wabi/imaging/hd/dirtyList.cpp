@@ -164,8 +164,7 @@ SdfPathVector const &HdDirtyList::GetDirtyRprims()
 
     // Need to invalidate the cache varying state
     _varyingStateVersion = currentVaryingStateVersion - 1;
-  }
-  else if (_varyingStateVersion != currentVaryingStateVersion)
+  } else if (_varyingStateVersion != currentVaryingStateVersion)
   {
     TF_DEBUG(HD_DIRTY_LIST)
       .Msg(

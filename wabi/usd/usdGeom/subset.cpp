@@ -143,14 +143,15 @@ UsdAttribute UsdGeomSubset::CreateFamilyNameAttr(VtValue const &defaultValue, bo
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -246,8 +247,9 @@ UsdGeomSubset UsdGeomSubset::CreateUniqueGeomSubset(const UsdGeomImageable &geom
                                                     const TfToken &familyName,
                                                     const TfToken &familyType)
 {
-  UsdGeomSubset subset = _CreateUniqueGeomSubset(
-    geom.GetPrim().GetStage(), geom.GetPath(), /*baseName*/ subsetName);
+  UsdGeomSubset subset = _CreateUniqueGeomSubset(geom.GetPrim().GetStage(),
+                                                 geom.GetPath(),
+                                                 /*baseName*/ subsetName);
 
   subset.GetElementTypeAttr().Set(elementType);
   subset.GetIndicesAttr().Set(indices);
@@ -391,8 +393,7 @@ VtIntArray UsdGeomSubset::GetUnassignedIndices(const std::vector<UsdGeomSubset> 
     result.reserve(elementCount);
     for (size_t idx = 0; idx < elementCount; ++idx)
       result.push_back(idx);
-  }
-  else
+  } else
   {
     std::vector<int> allIndices;
     allIndices.reserve(elementCount);
@@ -403,8 +404,7 @@ VtIntArray UsdGeomSubset::GetUnassignedIndices(const std::vector<UsdGeomSubset> 
     if (elementCount > lastAssigned)
     {
       result.reserve(elementCount - assignedIndices.size());
-    }
-    else
+    } else
     {
       result.reserve(std::min(elementCount, (lastAssigned + 1) - assignedIndices.size()));
     }
@@ -556,8 +556,7 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
         faceCount = faceVertexCounts.size();
       }
     }
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("Unsupported element type '%s'.", elementType.GetText());
     return false;
@@ -605,8 +604,7 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
       if (!familyIsRestricted)
       {
         indicesInFamily.insert(subsetIndices.begin(), subsetIndices.end());
-      }
-      else
+      } else
       {
         for (const int index : subsetIndices)
         {

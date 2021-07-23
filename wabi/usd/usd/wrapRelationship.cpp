@@ -41,32 +41,32 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static SdfPathVector _GetTargets(const UsdRelationship &self)
-{
-  SdfPathVector result;
-  self.GetTargets(&result);
-  return result;
-}
-
-static SdfPathVector _GetForwardedTargets(const UsdRelationship &self)
-{
-  SdfPathVector result;
-  self.GetForwardedTargets(&result);
-  return result;
-}
-
-static string __repr__(const UsdRelationship &self)
-{
-  if (self)
+  static SdfPathVector _GetTargets(const UsdRelationship &self)
   {
-    return TfStringPrintf(
-      "%s.GetRelationship(%s)", TfPyRepr(self.GetPrim()).c_str(), TfPyRepr(self.GetName()).c_str());
+    SdfPathVector result;
+    self.GetTargets(&result);
+    return result;
   }
-  else
+
+  static SdfPathVector _GetForwardedTargets(const UsdRelationship &self)
   {
-    return "invalid " + self.GetDescription();
+    SdfPathVector result;
+    self.GetForwardedTargets(&result);
+    return result;
   }
-}
+
+  static string __repr__(const UsdRelationship &self)
+  {
+    if (self)
+    {
+      return TfStringPrintf("%s.GetRelationship(%s)",
+                            TfPyRepr(self.GetPrim()).c_str(),
+                            TfPyRepr(self.GetName()).c_str());
+    } else
+    {
+      return "invalid " + self.GetDescription();
+    }
+  }
 
 }  // anonymous namespace
 

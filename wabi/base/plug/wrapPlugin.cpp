@@ -50,28 +50,28 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static dict _ConvertDict(const JsObject &dictionary)
-{
-  dict result;
-  TF_FOR_ALL (i, dictionary)
+  static dict _ConvertDict(const JsObject &dictionary)
   {
-    const string &key = i->first;
-    const JsValue &val = i->second;
+    dict result;
+    TF_FOR_ALL (i, dictionary)
+    {
+      const string &key = i->first;
+      const JsValue &val = i->second;
 
-    result[key] = JsConvertToContainerType<object, dict>(val);
+      result[key] = JsConvertToContainerType<object, dict>(val);
+    }
+    return result;
   }
-  return result;
-}
 
-static dict _GetMetadata(PlugPluginPtr plugin)
-{
-  return _ConvertDict(plugin->GetMetadata());
-}
+  static dict _GetMetadata(PlugPluginPtr plugin)
+  {
+    return _ConvertDict(plugin->GetMetadata());
+  }
 
-static dict _GetMetadataForType(PlugPluginPtr plugin, const TfType &type)
-{
-  return _ConvertDict(plugin->GetMetadataForType(type));
-}
+  static dict _GetMetadataForType(PlugPluginPtr plugin, const TfType &type)
+  {
+    return _ConvertDict(plugin->GetMetadataForType(type));
+  }
 
 }  // anonymous namespace
 

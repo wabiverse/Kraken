@@ -70,30 +70,30 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 #  define TF_NUM_ARGS(...) \
     BOOST_PP_IIF(BOOST_VMD_IS_EMPTY(__VA_ARGS__), 0, BOOST_PP_VARIADIC_SIZE(__VA_ARGS__))
 #else
-#  define TF_NUM_ARGS(...) \
-    _TF_NUM_ARGS_CHECK(__VA_ARGS__) \
-    BOOST_PP_IIF( \
-      BOOST_PP_EQUAL(1, _TF_NUM_ARGS1(__VA_ARGS__)), \
+#  define TF_NUM_ARGS(...)                                                                              \
+    _TF_NUM_ARGS_CHECK(__VA_ARGS__)                                                                     \
+    BOOST_PP_IIF(                                                                                       \
+      BOOST_PP_EQUAL(1, _TF_NUM_ARGS1(__VA_ARGS__)),                                                    \
       BOOST_PP_EXPAND(TF_ARG_2 BOOST_PP_LPAREN() BOOST_PP_EXPAND(_TF_NUM_ARGS_0X TF_ARG_1(__VA_ARGS__)( \
-        BOOST_PP_REPEAT(TF_MAX_ARITY, _TF_NUM_ARGS_REP, _TF))) BOOST_PP_COMMA() 1 BOOST_PP_RPAREN()), \
+        BOOST_PP_REPEAT(TF_MAX_ARITY, _TF_NUM_ARGS_REP, _TF))) BOOST_PP_COMMA() 1 BOOST_PP_RPAREN()),   \
       _TF_NUM_ARGS1(__VA_ARGS__))
 
-#  define _TF_NUM_ARGS_CHECK(...) \
-    BOOST_PP_IIF(_TF_EXPAND(TF_ARG_2 BOOST_PP_LPAREN() BOOST_PP_CAT( \
-                   _TF_NUM_ARGS_00, \
-                   _TF_EXPAND(BOOST_PP_CAT(TF_ARG_, BOOST_PP_INC(TF_MAX_ARITY)) \
+#  define _TF_NUM_ARGS_CHECK(...)                                                                     \
+    BOOST_PP_IIF(_TF_EXPAND(TF_ARG_2 BOOST_PP_LPAREN() BOOST_PP_CAT(                                  \
+                   _TF_NUM_ARGS_00,                                                                   \
+                   _TF_EXPAND(BOOST_PP_CAT(TF_ARG_, BOOST_PP_INC(TF_MAX_ARITY))                       \
                                 _TF_NUM_ARGS_TF(__VA_ARGS__))) BOOST_PP_COMMA() 1 BOOST_PP_RPAREN()), \
-                 _TF_MAX_ARITY_OVERFLOW_IN_TF_NUM_ARGS, \
-                 BOOST_PP_TUPLE_EAT(1)) \
+                 _TF_MAX_ARITY_OVERFLOW_IN_TF_NUM_ARGS,                                               \
+                 BOOST_PP_TUPLE_EAT(1))                                                               \
     (...)
 
 #  define _TF_NUM_ARGS_00_TF 0, 0
 #  define _TF_MAX_ARITY_OVERFLOW_IN_TF_NUM_ARGS(a, b, c)
 
-#  define _TF_NUM_ARGS_0X(a, ...) \
-    _TF_NUM_ARGS_CHECK(a, __VA_ARGS__) \
+#  define _TF_NUM_ARGS_0X(a, ...)                                             \
+    _TF_NUM_ARGS_CHECK(a, __VA_ARGS__)                                        \
     0, BOOST_PP_IIF(BOOST_PP_EQUAL(TF_MAX_ARITY, _TF_NUM_ARGS1(__VA_ARGS__)), \
-                    0, \
+                    0,                                                        \
                     1 BOOST_PP_TUPLE_EAT(BOOST_PP_INC(TF_MAX_ARITY)))
 
 #  define _TF_EXPAND(x) x  // We need this due to a bug in the preprocessor.
@@ -101,10 +101,10 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
     _TF_EXPAND(BOOST_PP_CAT(TF_ARG_, BOOST_PP_INC(TF_MAX_ARITY)) _TF_NUM_ARGS_EXT(__VA_ARGS__))
 
 #  define _TF_NUM_ARGS_DEC(z, i, n) \
-    BOOST_PP_COMMA() \
+    BOOST_PP_COMMA()                \
     BOOST_PP_SUB(n, i)
 #  define _TF_NUM_ARGS_REP(z, i, n) \
-    BOOST_PP_COMMA() \
+    BOOST_PP_COMMA()                \
     n
 
 #  define _TF_NUM_ARGS_EXT(...) \
@@ -126,9 +126,10 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 // We add the ~ after the first __VA_ARGS__ in case there are zero
 // arguments. MSVC will complain about insufficient arguments otherwise.
 // The ~ will be discarded in any case.
-#define TF_PP_EAT_PARENS(...) \
-  _TF_PP_EAT_PARENS_IFF( \
-    _TF_PP_EAT_PARENS_IS_PARENS(__VA_ARGS__ ~), _TF_PP_EAT_PARENS_EXPAND1, _TF_PP_EAT_PARENS_EXPAND) \
+#define TF_PP_EAT_PARENS(...)                                       \
+  _TF_PP_EAT_PARENS_IFF(_TF_PP_EAT_PARENS_IS_PARENS(__VA_ARGS__ ~), \
+                        _TF_PP_EAT_PARENS_EXPAND1,                  \
+                        _TF_PP_EAT_PARENS_EXPAND)                   \
   (__VA_ARGS__)
 
 /// Expand the arguments and make the result a string.
@@ -144,7 +145,7 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 // Expands to the second argument if c is 1 and the third argument if c is
 // 0.  No other values of c are allowed.  We can't use BOOST_PP_IFF() because
 // it won't expand during stringizing under MSVC.
-#define _TF_PP_EAT_PARENS_IFF(c, t, f) \
+#define _TF_PP_EAT_PARENS_IFF(c, t, f)    \
   BOOST_PP_CAT(_TF_PP_EAT_PARENS_IFF_, c) \
   (t, f)
 #define _TF_PP_EAT_PARENS_IFF_0(t, f) f
@@ -215,17 +216,17 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 /// Convert a preprocessor tuple to a preprocessor list.
 /// \ingroup group_tf_Preprocessor
 /// \hideinitializer
-#define TF_PP_TUPLE_TO_LIST(tuple) \
+#define TF_PP_TUPLE_TO_LIST(tuple)                         \
   BOOST_PP_IIF(BOOST_PP_EQUAL(TF_PP_TUPLE_SIZE(tuple), 0), \
-               BOOST_PP_LIST_NIL, \
+               BOOST_PP_LIST_NIL,                          \
                BOOST_PP_TUPLE_TO_LIST(TF_PP_TUPLE_SIZE(tuple), tuple))
 
 /// Convert a preprocessor tuple to a preprocessor sequence.
 /// \ingroup group_tf_Preprocessor
 /// \hideinitializer
-#define TF_PP_TUPLE_TO_SEQ(tuple) \
+#define TF_PP_TUPLE_TO_SEQ(tuple)                          \
   BOOST_PP_IIF(BOOST_PP_EQUAL(TF_PP_TUPLE_SIZE(tuple), 0), \
-               BOOST_PP_EMPTY(), \
+               BOOST_PP_EMPTY(),                           \
                BOOST_PP_TUPLE_TO_SEQ(TF_PP_TUPLE_SIZE(tuple), tuple))
 
 /// Create a preprocessor array.
@@ -264,27 +265,105 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 #define TF_ARG_16(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, ...) _16
 #define TF_ARG_17(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, ...) _17
 #define TF_ARG_18(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, ...) _18
-#define TF_ARG_19( \
-  _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, ...) \
+#define TF_ARG_19(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
+                  _10, \
+                  _11, \
+                  _12, \
+                  _13, \
+                  _14, \
+                  _15, \
+                  _16, \
+                  _17, \
+                  _18, \
+                  _19, \
+                  ...) \
   _19
-#define TF_ARG_20( \
-  _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, ...) \
+#define TF_ARG_20(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
+                  _10, \
+                  _11, \
+                  _12, \
+                  _13, \
+                  _14, \
+                  _15, \
+                  _16, \
+                  _17, \
+                  _18, \
+                  _19, \
+                  _20, \
+                  ...) \
   _20
-#define TF_ARG_21( \
-  _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, ...) \
+#define TF_ARG_21(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
+                  _10, \
+                  _11, \
+                  _12, \
+                  _13, \
+                  _14, \
+                  _15, \
+                  _16, \
+                  _17, \
+                  _18, \
+                  _19, \
+                  _20, \
+                  _21, \
+                  ...) \
   _21
-#define TF_ARG_22( \
-  _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, ...) \
+#define TF_ARG_22(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
+                  _10, \
+                  _11, \
+                  _12, \
+                  _13, \
+                  _14, \
+                  _15, \
+                  _16, \
+                  _17, \
+                  _18, \
+                  _19, \
+                  _20, \
+                  _21, \
+                  _22, \
+                  ...) \
   _22
-#define TF_ARG_23(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_23(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -301,15 +380,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _23, \
                   ...) \
   _23
-#define TF_ARG_24(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_24(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -327,15 +406,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _24, \
                   ...) \
   _24
-#define TF_ARG_25(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_25(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -354,15 +433,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _25, \
                   ...) \
   _25
-#define TF_ARG_26(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_26(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -382,15 +461,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _26, \
                   ...) \
   _26
-#define TF_ARG_27(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_27(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -411,15 +490,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _27, \
                   ...) \
   _27
-#define TF_ARG_28(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_28(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -441,15 +520,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _28, \
                   ...) \
   _28
-#define TF_ARG_29(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_29(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -472,15 +551,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _29, \
                   ...) \
   _29
-#define TF_ARG_30(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_30(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -504,15 +583,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _30, \
                   ...) \
   _30
-#define TF_ARG_31(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_31(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -537,15 +616,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _31, \
                   ...) \
   _31
-#define TF_ARG_32(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_32(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -571,15 +650,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _32, \
                   ...) \
   _32
-#define TF_ARG_33(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_33(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -606,15 +685,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _33, \
                   ...) \
   _33
-#define TF_ARG_34(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_34(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -642,15 +721,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _34, \
                   ...) \
   _34
-#define TF_ARG_35(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_35(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -679,15 +758,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _35, \
                   ...) \
   _35
-#define TF_ARG_36(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_36(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -717,15 +796,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _36, \
                   ...) \
   _36
-#define TF_ARG_37(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_37(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -756,15 +835,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _37, \
                   ...) \
   _37
-#define TF_ARG_38(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_38(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -796,15 +875,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _38, \
                   ...) \
   _38
-#define TF_ARG_39(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_39(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -837,15 +916,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _39, \
                   ...) \
   _39
-#define TF_ARG_40(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_40(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -879,15 +958,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _40, \
                   ...) \
   _40
-#define TF_ARG_41(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_41(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -922,15 +1001,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _41, \
                   ...) \
   _41
-#define TF_ARG_42(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_42(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -966,15 +1045,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _42, \
                   ...) \
   _42
-#define TF_ARG_43(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_43(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1011,15 +1090,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _43, \
                   ...) \
   _43
-#define TF_ARG_44(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_44(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1057,15 +1136,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _44, \
                   ...) \
   _44
-#define TF_ARG_45(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_45(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1104,15 +1183,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _45, \
                   ...) \
   _45
-#define TF_ARG_46(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_46(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1152,15 +1231,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _46, \
                   ...) \
   _46
-#define TF_ARG_47(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_47(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1201,15 +1280,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _47, \
                   ...) \
   _47
-#define TF_ARG_48(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_48(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1251,15 +1330,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _48, \
                   ...) \
   _48
-#define TF_ARG_49(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_49(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1302,15 +1381,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _49, \
                   ...) \
   _49
-#define TF_ARG_50(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_50(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1354,15 +1433,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _50, \
                   ...) \
   _50
-#define TF_ARG_51(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_51(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1407,15 +1486,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _51, \
                   ...) \
   _51
-#define TF_ARG_52(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_52(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1461,15 +1540,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _52, \
                   ...) \
   _52
-#define TF_ARG_53(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_53(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1516,15 +1595,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _53, \
                   ...) \
   _53
-#define TF_ARG_54(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_54(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1572,15 +1651,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _54, \
                   ...) \
   _54
-#define TF_ARG_55(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_55(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1629,15 +1708,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _55, \
                   ...) \
   _55
-#define TF_ARG_56(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_56(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1687,15 +1766,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _56, \
                   ...) \
   _56
-#define TF_ARG_57(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_57(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1746,15 +1825,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _57, \
                   ...) \
   _57
-#define TF_ARG_58(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_58(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1806,15 +1885,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _58, \
                   ...) \
   _58
-#define TF_ARG_59(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_59(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1867,15 +1946,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _59, \
                   ...) \
   _59
-#define TF_ARG_60(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_60(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1929,15 +2008,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _60, \
                   ...) \
   _60
-#define TF_ARG_61(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_61(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -1992,15 +2071,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _61, \
                   ...) \
   _61
-#define TF_ARG_62(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_62(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -2056,15 +2135,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _62, \
                   ...) \
   _62
-#define TF_ARG_63(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_63(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \
@@ -2121,15 +2200,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
                   _63, \
                   ...) \
   _63
-#define TF_ARG_64(_1, \
-                  _2, \
-                  _3, \
-                  _4, \
-                  _5, \
-                  _6, \
-                  _7, \
-                  _8, \
-                  _9, \
+#define TF_ARG_64(_1,  \
+                  _2,  \
+                  _3,  \
+                  _4,  \
+                  _5,  \
+                  _6,  \
+                  _7,  \
+                  _8,  \
+                  _9,  \
                   _10, \
                   _11, \
                   _12, \

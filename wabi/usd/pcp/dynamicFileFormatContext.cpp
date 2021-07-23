@@ -35,104 +35,104 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// Helper class for composing a field value from the context's inputs.
-class _ComposeValueHelper
-{
- public:
-  // Templated static function is the only public interface. ComposeFunc is
-  // expected to be a function of type void (VtValue &&)
-  template<typename ComposeFunc>
-  static bool ComposeValue(const PcpNodeRef &parentNode,
-                           PcpPrimIndex_StackFrame *previousFrame,
-                           const TfToken &fieldName,
-                           bool strongestOpinionOnly,
-                           const ComposeFunc &composeFunc)
+  // Helper class for composing a field value from the context's inputs.
+  class _ComposeValueHelper
   {
-    // Create the a new composer with the context state.
-    _ComposeValueHelper composer(parentNode, previousFrame, fieldName, strongestOpinionOnly);
-    // Initiate composition using the compose function and return if
-    // a value was found.
-    composer._ComposeOpinionFromAncestors(composeFunc);
-    return composer._foundValue;
-  }
-
- private:
-  _ComposeValueHelper(const PcpNodeRef &parentNode,
-                      PcpPrimIndex_StackFrame *&previousStackFrame,
-                      const TfToken &fieldName,
-                      bool strongestOpinionOnly)
-    : _iterator(parentNode, previousStackFrame),
-      _fieldName(fieldName),
-      _strongestOpinionOnly(strongestOpinionOnly)
-  {}
-
-  // Composes the values from the node and its subtree. Return true if
-  // composition should stop.
-  template<typename ComposeFunc>
-  bool _ComposeOpinionInSubtree(const PcpNodeRef &node, const ComposeFunc &composeFunc)
-  {
-    // Search the node's layer stack in strength order for the field on
-    // the spec.
-    for (const SdfLayerHandle &layer : node.GetLayerStack()->GetLayers())
+   public:
+    // Templated static function is the only public interface. ComposeFunc is
+    // expected to be a function of type void (VtValue &&)
+    template<typename ComposeFunc>
+    static bool ComposeValue(const PcpNodeRef &parentNode,
+                             PcpPrimIndex_StackFrame *previousFrame,
+                             const TfToken &fieldName,
+                             bool strongestOpinionOnly,
+                             const ComposeFunc &composeFunc)
     {
-      VtValue value;
-      if (layer->HasField(node.GetPath(), _fieldName, &value))
+      // Create the a new composer with the context state.
+      _ComposeValueHelper composer(parentNode, previousFrame, fieldName, strongestOpinionOnly);
+      // Initiate composition using the compose function and return if
+      // a value was found.
+      composer._ComposeOpinionFromAncestors(composeFunc);
+      return composer._foundValue;
+    }
+
+   private:
+    _ComposeValueHelper(const PcpNodeRef &parentNode,
+                        PcpPrimIndex_StackFrame *&previousStackFrame,
+                        const TfToken &fieldName,
+                        bool strongestOpinionOnly)
+      : _iterator(parentNode, previousStackFrame),
+        _fieldName(fieldName),
+        _strongestOpinionOnly(strongestOpinionOnly)
+    {}
+
+    // Composes the values from the node and its subtree. Return true if
+    // composition should stop.
+    template<typename ComposeFunc>
+    bool _ComposeOpinionInSubtree(const PcpNodeRef &node, const ComposeFunc &composeFunc)
+    {
+      // Search the node's layer stack in strength order for the field on
+      // the spec.
+      for (const SdfLayerHandle &layer : node.GetLayerStack()->GetLayers())
       {
-        // Process the value and mark found
-        composeFunc(std::move(value));
-        _foundValue = true;
-        // Stop if we only need the strongest opinion.
-        if (_strongestOpinionOnly)
+        VtValue value;
+        if (layer->HasField(node.GetPath(), _fieldName, &value))
+        {
+          // Process the value and mark found
+          composeFunc(std::move(value));
+          _foundValue = true;
+          // Stop if we only need the strongest opinion.
+          if (_strongestOpinionOnly)
+          {
+            return true;
+          }
+        }
+      }
+
+      TF_FOR_ALL (childNode, Pcp_GetChildrenRange(node))
+      {
+        if (_ComposeOpinionInSubtree(*childNode, composeFunc))
         {
           return true;
         }
       }
-    }
 
-    TF_FOR_ALL (childNode, Pcp_GetChildrenRange(node))
+      return false;
+    };
+
+    // Recursively composes opinions from ancestors of the parent node and
+    // their subtrees in strength order. Returns true if composition should
+    // stop.
+    template<typename ComposeFunc>
+    bool _ComposeOpinionFromAncestors(const ComposeFunc &composeFunc)
     {
-      if (_ComposeOpinionInSubtree(*childNode, composeFunc))
+      PcpNodeRef currentNode = _iterator.node;
+
+      // Try parent node.
+      _iterator.Next();
+      if (_iterator.node)
+      {
+        // Recurse on parent node's ancestors.
+        if (_ComposeOpinionFromAncestors(composeFunc))
+        {
+          return true;
+        }
+      }
+
+      // Otherwise compose from the current node and it subtrees.
+      if (_ComposeOpinionInSubtree(currentNode, composeFunc))
       {
         return true;
       }
-    }
+      return false;
+    };
 
-    return false;
+    // State during value composition.
+    PcpPrimIndex_StackFrameIterator _iterator;
+    const TfToken &_fieldName;
+    bool _strongestOpinionOnly;
+    bool _foundValue{false};
   };
-
-  // Recursively composes opinions from ancestors of the parent node and
-  // their subtrees in strength order. Returns true if composition should
-  // stop.
-  template<typename ComposeFunc>
-  bool _ComposeOpinionFromAncestors(const ComposeFunc &composeFunc)
-  {
-    PcpNodeRef currentNode = _iterator.node;
-
-    // Try parent node.
-    _iterator.Next();
-    if (_iterator.node)
-    {
-      // Recurse on parent node's ancestors.
-      if (_ComposeOpinionFromAncestors(composeFunc))
-      {
-        return true;
-      }
-    }
-
-    // Otherwise compose from the current node and it subtrees.
-    if (_ComposeOpinionInSubtree(currentNode, composeFunc))
-    {
-      return true;
-    }
-    return false;
-  };
-
-  // State during value composition.
-  PcpPrimIndex_StackFrameIterator _iterator;
-  const TfToken &_fieldName;
-  bool _strongestOpinionOnly;
-  bool _foundValue{false};
-};
 
 }  // anonymous namespace
 
@@ -198,8 +198,7 @@ bool PcpDynamicFileFormatContext::ComposeValue(const TfToken &field, VtValue *va
                                             {
                                               VtDictionaryOverRecursive(&composedDict,
                                                                         val.UncheckedGet<VtDictionary>());
-                                            }
-                                            else
+                                            } else
                                             {
                                               TF_CODING_ERROR("Expected value to contain VtDictionary");
                                             }
@@ -211,8 +210,7 @@ bool PcpDynamicFileFormatContext::ComposeValue(const TfToken &field, VtValue *va
       return true;
     }
     return false;
-  }
-  else
+  } else
   {
     // For all other value type we compose by just grabbing the strongest
     // opinion if it exists.

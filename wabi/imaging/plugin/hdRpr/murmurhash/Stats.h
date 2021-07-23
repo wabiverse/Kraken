@@ -87,8 +87,7 @@ int PrintCollisions(hashfunc<hashtype> hash, std::vector<keytype> &keys)
       printbits(&k1, sizeof(keytype));
       printf("B: ");
       printbits(&k2, sizeof(keytype));
-    }
-    else
+    } else
     {
       tab.insert(std::make_pair(h, k1));
     }
@@ -227,8 +226,7 @@ bool TestHashList(std::vector<hashtype> &hashes,
         printf(" !!!!! ");
         result = false;
       }
-    }
-    else
+    } else
     {
       // For all hashes larger than 32 bits, _any_ collisions are a failure.
 

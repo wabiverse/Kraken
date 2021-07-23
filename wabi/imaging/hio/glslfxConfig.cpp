@@ -43,11 +43,10 @@ WABI_NAMESPACE_BEGIN
 using std::string;
 using std::vector;
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  (attributes)(techniques)(metadata)(parameters)(parameterOrder)(textures)(documentation)(role)(color)((
-    defVal,
-    "default"))(source)(type));
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         (attributes)(techniques)(metadata)(parameters)(parameterOrder)(textures)(documentation)(role)(color)((
+                           defVal,
+                           "default"))(source)(type));
 
 TF_DEFINE_ENV_SETTING(HIO_GLSLFX_DEFAULT_VALUE_VALIDATION,
                       true,
@@ -149,11 +148,13 @@ static VtValue _GetDefaultValue(const std::string &attributeName,
     bool (*predicate)(const VtValue &);
   };
 
-  static const TypeInfo typeInfos[] = {{"float", VtValue(0.0f), _IsFloatOrDouble},
-                                       {"double", VtValue(0.0), _IsFloatOrDouble},
-                                       {"vec2", VtValue(std::vector<VtValue>(2, VtValue(0.0f))), _IsVec<2>},
-                                       {"vec3", VtValue(std::vector<VtValue>(3, VtValue(0.0f))), _IsVec<3>},
-                                       {"vec4", VtValue(std::vector<VtValue>(4, VtValue(0.0f))), _IsVec<4>}};
+  static const TypeInfo typeInfos[] = {
+    {"float",          VtValue(0.0f),    _IsFloatOrDouble},
+    {      "double",    VtValue(0.0), _IsFloatOrDouble                },
+    { "vec2", VtValue(std::vector<VtValue>(2,        VtValue(0.0f))),                 _IsVec<2>},
+    { "vec3", VtValue(std::vector<VtValue>(3,        VtValue(0.0f))),                 _IsVec<3>},
+    { "vec4", VtValue(std::vector<VtValue>(4,        VtValue(0.0f))),                 _IsVec<4>}
+  };
 
   std::string const &typeName = typeNameValue.UncheckedGet<std::string>();
 
@@ -169,8 +170,9 @@ static VtValue _GetDefaultValue(const std::string &attributeName,
         {
           return defaultValue;
         }
-        *errorStr = TfStringPrintf(
-          "Default value for %s is not of type %s", attributeName.c_str(), typeName.c_str());
+        *errorStr = TfStringPrintf("Default value for %s is not of type %s",
+                                   attributeName.c_str(),
+                                   typeName.c_str());
       }
       // If no default value, use one based on the type.
       return typeInfo.defaultValue;
@@ -267,8 +269,9 @@ HioGlslfxConfig::_SourceKeyMap HioGlslfxConfig::_GetSourceKeyMap(VtDictionary co
   // verify that it also holds a VtDictionary
   if (!techniqueSpec.IsHolding<VtDictionary>())
   {
-    *errorStr = TfStringPrintf(
-      "%s spec for %s expects a dictionary value", _tokens->techniques.GetText(), entry->first.c_str());
+    *errorStr = TfStringPrintf("%s spec for %s expects a dictionary value",
+                               _tokens->techniques.GetText(),
+                               entry->first.c_str());
     return ret;
   }
 

@@ -69,12 +69,16 @@ static GfVec2i _GetScreenSize()
   //
 
   GLint attachType = 0;
-  glGetFramebufferAttachmentParameteriv(
-    GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &attachType);
+  glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER,
+                                        GL_COLOR_ATTACHMENT0,
+                                        GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE,
+                                        &attachType);
 
   GLint attachId = 0;
-  glGetFramebufferAttachmentParameteriv(
-    GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachId);
+  glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER,
+                                        GL_COLOR_ATTACHMENT0,
+                                        GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME,
+                                        &attachId);
 
   // XXX Fallback to gl viewport in case we do not find a non-default FBO for
   // bakends that do not attach a custom FB. This is in-correct, but gl does
@@ -106,8 +110,7 @@ static GfVec2i _GetScreenSize()
       glGetNamedRenderbufferParameteriv(attachId, GL_RENDERBUFFER_HEIGHT, &h);
       return GfVec2i(w, h);
     }
-  }
-  else
+  } else
   {
     if (attachType == GL_TEXTURE)
     {
@@ -215,14 +218,18 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     HdBufferSpecVector counterSpecs;
     counterSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitCounterBuffer, HdTupleType{HdTypeInt32, 1}));
     _counterBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-      /*role*/ HdxTokens->oitCounter, counterSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitCounter,
+      counterSpecs,
+      HdBufferArrayUsageHint());
     //
     // Index Buffer
     //
     HdBufferSpecVector indexSpecs;
     indexSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitIndexBuffer, HdTupleType{HdTypeInt32, 1}));
     _indexBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-      /*role*/ HdxTokens->oitIndices, indexSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitIndices,
+      indexSpecs,
+      HdBufferArrayUsageHint());
 
     //
     // Data Buffer
@@ -230,7 +237,9 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     HdBufferSpecVector dataSpecs;
     dataSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitDataBuffer, HdTupleType{HdTypeFloatVec4, 1}));
     _dataBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-      /*role*/ HdxTokens->oitData, dataSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitData,
+      dataSpecs,
+      HdBufferArrayUsageHint());
 
     //
     // Depth Buffer
@@ -238,7 +247,9 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     HdBufferSpecVector depthSpecs;
     depthSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitDepthBuffer, HdTupleType{HdTypeFloat, 1}));
     _depthBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
-      /*role*/ HdxTokens->oitDepth, depthSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitDepth,
+      depthSpecs,
+      HdBufferArrayUsageHint());
 
     //
     // Uniforms
@@ -247,7 +258,9 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     uniformSpecs.push_back(HdBufferSpec(HdxTokens->oitScreenSize, HdTupleType{HdTypeInt32Vec2, 1}));
 
     _uniformBar = hdPhResourceRegistry->AllocateUniformBufferArrayRange(
-      /*role*/ HdxTokens->oitUniforms, uniformSpecs, HdBufferArrayUsageHint());
+      /*role*/ HdxTokens->oitUniforms,
+      uniformSpecs,
+      HdBufferArrayUsageHint());
   }
 
   // Make sure task context has our buffer each frame (in case its cleared)
@@ -276,7 +289,8 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
 
     // Update the values in the uniform buffer
     hdPhResourceRegistry->AddSource(
-      _uniformBar, std::make_shared<HdVtBufferSource>(HdxTokens->oitScreenSize, VtValue(screenSize)));
+      _uniformBar,
+      std::make_shared<HdVtBufferSource>(HdxTokens->oitScreenSize, VtValue(screenSize)));
   }
 }
 

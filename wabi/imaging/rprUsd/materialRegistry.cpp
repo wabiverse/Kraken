@@ -110,8 +110,7 @@ std::vector<RprUsdMaterialNodeDesc> const &RprUsdMaterialRegistry::GetRegistered
         if (nodeDefs.size() == 0)
         {
           TF_WARN("\"%s\" file has no node definitions", file.c_str());
-        }
-        else
+        } else
         {
           for (auto &nodeDef : nodeDefs)
           {
@@ -197,8 +196,7 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
           commitTexIndices.push_back(getUniqueTextureIndex(tilePath, tileId));
         }
       }
-    }
-    else
+    } else
     {
       commitTexIndices.push_back(getUniqueTextureIndex(commit.filepath));
     }
@@ -212,8 +210,7 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
       if (auto textureData = RprUsdTextureData::New(uniqueTextures[i].path))
       {
         uniqueTextures[i].data = textureData;
-      }
-      else
+      } else
       {
         TF_RUNTIME_ERROR("Failed to load %s texture", uniqueTextures[i].path.c_str());
       }
@@ -241,8 +238,11 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
     }
 
     auto &commit = m_textureCommits[i];
-    auto coreImage = imageCache->GetImage(
-      commit.filepath, commit.colorspace, commit.wrapType, tiles, commit.numComponentsRequired);
+    auto coreImage = imageCache->GetImage(commit.filepath,
+                                          commit.colorspace,
+                                          commit.wrapType,
+                                          tiles,
+                                          commit.numComponentsRequired);
     commit.setTextureCallback(coreImage);
   }
 
@@ -252,170 +252,168 @@ void RprUsdMaterialRegistry::CommitResources(RprUsdImageCache *imageCache)
 namespace
 {
 
-void DumpMaterialNetwork(HdMaterialNetworkMap const &networkMap)
-{
-  SdfPath const *primitivePath = nullptr;
-  if (!networkMap.terminals.empty())
+  void DumpMaterialNetwork(HdMaterialNetworkMap const &networkMap)
   {
-    primitivePath = &networkMap.terminals[0];
-  }
-  else if (!networkMap.map.empty())
-  {
-    auto &network = networkMap.map.begin()->second;
-    if (!network.nodes.empty())
+    SdfPath const *primitivePath = nullptr;
+    if (!networkMap.terminals.empty())
     {
-      primitivePath = &network.nodes[0].path;
-    }
-  }
-
-  bool closeFile = false;
-  FILE *file = stdout;
-  if (primitivePath)
-  {
-    auto materialPath = primitivePath->GetParentPath();
-    std::string filepath = materialPath.GetString();
-    for (size_t i = 0; i < filepath.size(); ++i)
+      primitivePath = &networkMap.terminals[0];
+    } else if (!networkMap.map.empty())
     {
-      if (std::strchr("/\\", filepath[i]))
+      auto &network = networkMap.map.begin()->second;
+      if (!network.nodes.empty())
       {
-        filepath[i] = '_';
+        primitivePath = &network.nodes[0].path;
       }
     }
-    file = fopen(filepath.c_str(), "w");
-    if (!file)
-    {
-      file = stdout;
-    }
-    else
-    {
-      closeFile = true;
-    }
-  }
 
-  fprintf(file, "terminals: [\n");
-  for (auto &terminal : networkMap.terminals)
-  {
-    fprintf(file, "  \"%s\",\n", terminal.GetText());
-  }
-  fprintf(file, "]\n");
-
-  fprintf(file, "map: {\n");
-  for (auto &entry : networkMap.map)
-  {
-    fprintf(file, "  \"%s\": {\n", entry.first.GetText());
-
-    auto &network = entry.second;
-    fprintf(file, "    relationships: [\n");
-    for (auto &rel : network.relationships)
+    bool closeFile = false;
+    FILE *file = stdout;
+    if (primitivePath)
     {
-      SdfPath inputId;
-      TfToken inputName;
-      SdfPath outputId;
-      TfToken outputName;
-      fprintf(file, "      {\n");
-      fprintf(file, "        inputId=%s\n", rel.inputId.GetText());
-      fprintf(file, "        inputName=%s\n", rel.inputName.GetText());
-      fprintf(file, "        outputId=%s\n", rel.outputId.GetText());
-      fprintf(file, "        outputName=%s\n", rel.outputName.GetText());
-      fprintf(file, "      },\n");
-    }
-    fprintf(file, "    ],\n");
-
-    fprintf(file, "    primvars: [\n");
-    for (auto &primvar : network.primvars)
-    {
-      fprintf(file, "      %s,\n", primvar.GetText());
-    }
-    fprintf(file, "    ]\n");
-
-    fprintf(file, "    nodes: [\n");
-    for (auto &node : network.nodes)
-    {
-      fprintf(file, "      {\n");
-      fprintf(file, "        path=%s\n", node.path.GetText());
-      fprintf(file, "        identifier=%s\n", node.identifier.GetText());
-      fprintf(file, "        parameters: {\n");
-      for (auto &param : node.parameters)
+      auto materialPath = primitivePath->GetParentPath();
+      std::string filepath = materialPath.GetString();
+      for (size_t i = 0; i < filepath.size(); ++i)
       {
-        fprintf(file, "          {%s: %s", param.first.GetText(), param.second.GetTypeName().c_str());
-        if (param.second.IsHolding<TfToken>())
+        if (std::strchr("/\\", filepath[i]))
         {
-          fprintf(file, "(\"%s\")", param.second.UncheckedGet<TfToken>().GetText());
+          filepath[i] = '_';
         }
-        else if (param.second.IsHolding<SdfAssetPath>())
-        {
-          fprintf(file, "(\"%s\")", param.second.UncheckedGet<SdfAssetPath>().GetResolvedPath().c_str());
-        }
-        else if (param.second.IsHolding<GfVec4f>())
-        {
-          auto &v = param.second.UncheckedGet<GfVec4f>();
-          fprintf(file, "(%g, %g, %g, %g)", v[0], v[1], v[2], v[3]);
-        }
-        fprintf(file, "},\n");
       }
-      fprintf(file, "        }\n");
-      fprintf(file, "      },\n");
+      file = fopen(filepath.c_str(), "w");
+      if (!file)
+      {
+        file = stdout;
+      } else
+      {
+        closeFile = true;
+      }
     }
-    fprintf(file, "    ]\n");
 
-    fprintf(file, "  }\n");
-  }
-  fprintf(file, "}\n");
-
-  if (closeFile)
-  {
-    fclose(file);
-  }
-}
-
-void ConvertLegacyHdMaterialNetwork(HdMaterialNetworkMap const &hdNetworkMap, RprUsd_MaterialNetwork *result)
-{
-
-  for (auto &entry : hdNetworkMap.map)
-  {
-    auto &terminalName = entry.first;
-    auto &hdNetwork = entry.second;
-
-    // Transfer over individual nodes
-    for (auto &node : hdNetwork.nodes)
+    fprintf(file, "terminals: [\n");
+    for (auto &terminal : networkMap.terminals)
     {
-      // Check if this node is a terminal
-      auto termIt = std::find(hdNetworkMap.terminals.begin(), hdNetworkMap.terminals.end(), node.path);
-      if (termIt != hdNetworkMap.terminals.end())
-      {
-        result->terminals.emplace(terminalName, RprUsd_MaterialNetwork::Connection{node.path, terminalName});
-      }
-
-      if (result->nodes.count(node.path))
-      {
-        continue;
-      }
-
-      auto &newNode = result->nodes[node.path];
-      newNode.nodeTypeId = node.identifier;
-      newNode.parameters = node.parameters;
+      fprintf(file, "  \"%s\",\n", terminal.GetText());
     }
+    fprintf(file, "]\n");
 
-    // Transfer relationships to inputConnections on receiving/downstream nodes.
-    for (HdMaterialRelationship const &rel : hdNetwork.relationships)
+    fprintf(file, "map: {\n");
+    for (auto &entry : networkMap.map)
     {
-      // outputId (in hdMaterial terms) is the input of the receiving node
-      auto const &iter = result->nodes.find(rel.outputId);
-      // skip connection if the destination node doesn't exist
-      if (iter == result->nodes.end())
-      {
-        continue;
-      }
-      auto &connection = iter->second.inputConnections[rel.outputName];
-      connection.upstreamNode = rel.inputId;
-      connection.upstreamOutputName = rel.inputName;
-    }
+      fprintf(file, "  \"%s\": {\n", entry.first.GetText());
 
-    // Currently unused
-    // Transfer primvars:
-    // result->primvars.insert(hdNetwork.primvars.begin(), hdNetwork.primvars.end());
+      auto &network = entry.second;
+      fprintf(file, "    relationships: [\n");
+      for (auto &rel : network.relationships)
+      {
+        SdfPath inputId;
+        TfToken inputName;
+        SdfPath outputId;
+        TfToken outputName;
+        fprintf(file, "      {\n");
+        fprintf(file, "        inputId=%s\n", rel.inputId.GetText());
+        fprintf(file, "        inputName=%s\n", rel.inputName.GetText());
+        fprintf(file, "        outputId=%s\n", rel.outputId.GetText());
+        fprintf(file, "        outputName=%s\n", rel.outputName.GetText());
+        fprintf(file, "      },\n");
+      }
+      fprintf(file, "    ],\n");
+
+      fprintf(file, "    primvars: [\n");
+      for (auto &primvar : network.primvars)
+      {
+        fprintf(file, "      %s,\n", primvar.GetText());
+      }
+      fprintf(file, "    ]\n");
+
+      fprintf(file, "    nodes: [\n");
+      for (auto &node : network.nodes)
+      {
+        fprintf(file, "      {\n");
+        fprintf(file, "        path=%s\n", node.path.GetText());
+        fprintf(file, "        identifier=%s\n", node.identifier.GetText());
+        fprintf(file, "        parameters: {\n");
+        for (auto &param : node.parameters)
+        {
+          fprintf(file, "          {%s: %s", param.first.GetText(), param.second.GetTypeName().c_str());
+          if (param.second.IsHolding<TfToken>())
+          {
+            fprintf(file, "(\"%s\")", param.second.UncheckedGet<TfToken>().GetText());
+          } else if (param.second.IsHolding<SdfAssetPath>())
+          {
+            fprintf(file, "(\"%s\")", param.second.UncheckedGet<SdfAssetPath>().GetResolvedPath().c_str());
+          } else if (param.second.IsHolding<GfVec4f>())
+          {
+            auto &v = param.second.UncheckedGet<GfVec4f>();
+            fprintf(file, "(%g, %g, %g, %g)", v[0], v[1], v[2], v[3]);
+          }
+          fprintf(file, "},\n");
+        }
+        fprintf(file, "        }\n");
+        fprintf(file, "      },\n");
+      }
+      fprintf(file, "    ]\n");
+
+      fprintf(file, "  }\n");
+    }
+    fprintf(file, "}\n");
+
+    if (closeFile)
+    {
+      fclose(file);
+    }
   }
-}
+
+  void ConvertLegacyHdMaterialNetwork(HdMaterialNetworkMap const &hdNetworkMap,
+                                      RprUsd_MaterialNetwork *result)
+  {
+
+    for (auto &entry : hdNetworkMap.map)
+    {
+      auto &terminalName = entry.first;
+      auto &hdNetwork = entry.second;
+
+      // Transfer over individual nodes
+      for (auto &node : hdNetwork.nodes)
+      {
+        // Check if this node is a terminal
+        auto termIt = std::find(hdNetworkMap.terminals.begin(), hdNetworkMap.terminals.end(), node.path);
+        if (termIt != hdNetworkMap.terminals.end())
+        {
+          result->terminals.emplace(terminalName,
+                                    RprUsd_MaterialNetwork::Connection{node.path, terminalName});
+        }
+
+        if (result->nodes.count(node.path))
+        {
+          continue;
+        }
+
+        auto &newNode = result->nodes[node.path];
+        newNode.nodeTypeId = node.identifier;
+        newNode.parameters = node.parameters;
+      }
+
+      // Transfer relationships to inputConnections on receiving/downstream nodes.
+      for (HdMaterialRelationship const &rel : hdNetwork.relationships)
+      {
+        // outputId (in hdMaterial terms) is the input of the receiving node
+        auto const &iter = result->nodes.find(rel.outputId);
+        // skip connection if the destination node doesn't exist
+        if (iter == result->nodes.end())
+        {
+          continue;
+        }
+        auto &connection = iter->second.inputConnections[rel.outputName];
+        connection.upstreamNode = rel.inputId;
+        connection.upstreamOutputName = rel.inputName;
+      }
+
+      // Currently unused
+      // Transfer primvars:
+      // result->primvars.insert(hdNetwork.primvars.begin(), hdNetwork.primvars.end());
+    }
+  }
 
 }  // namespace
 
@@ -462,8 +460,7 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
           if (terminalOutput.IsHolding<std::shared_ptr<rpr::MaterialNode>>())
           {
             return terminalOutput.UncheckedGet<std::shared_ptr<rpr::MaterialNode>>().get();
-          }
-          else
+          } else
           {
             TF_RUNTIME_ERROR("Terminal node should output material node");
           }
@@ -525,28 +522,27 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
         {
           materialNodes[nodePath].reset(materialNode);
         }
-      }
-      else if (IsHoudiniPrincipledShaderHydraNode(sceneDelegate, nodePath, &isSurfaceNode))
+      } else if (IsHoudiniPrincipledShaderHydraNode(sceneDelegate, nodePath, &isSurfaceNode))
       {
         if (isSurfaceNode)
         {
           houdiniPrincipledShaderNodePath = &nodePath;
           houdiniPrincipledShaderSurfaceParams = &node.parameters;
-        }
-        else
+        } else
         {
           houdiniPrincipledShaderDispParams = &node.parameters;
         }
-      }
-      else
+      } else
       {
         TF_WARN("Unknown node type: id=%s", node.nodeTypeId.GetText());
       }
     }
     catch (RprUsd_NodeError &e)
     {
-      TF_RUNTIME_ERROR(
-        "Failed to create %s(%s): %s", nodePath.GetText(), node.nodeTypeId.GetText(), e.what());
+      TF_RUNTIME_ERROR("Failed to create %s(%s): %s",
+                       nodePath.GetText(),
+                       node.nodeTypeId.GetText(),
+                       e.what());
     }
     catch (RprUsd_NodeEmpty &)
     {
@@ -556,8 +552,9 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
 
   if (houdiniPrincipledShaderNodePath)
   {
-    auto materialNode = new RprUsd_HoudiniPrincipledNode(
-      &context, *houdiniPrincipledShaderSurfaceParams, houdiniPrincipledShaderDispParams);
+    auto materialNode = new RprUsd_HoudiniPrincipledNode(&context,
+                                                         *houdiniPrincipledShaderSurfaceParams,
+                                                         houdiniPrincipledShaderDispParams);
     materialNodes[*houdiniPrincipledShaderNodePath].reset(materialNode);
   }
 
@@ -599,8 +596,7 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
       }
 
       return materialNode->GetOutput(nodeConnection.upstreamOutputName);
-    }
-    else
+    } else
     {
       // Rpr node can be missing in two cases:
       //   a) we failed to create the node
@@ -610,8 +606,7 @@ RprUsdMaterial *RprUsdMaterialRegistry::CreateMaterial(SdfPath const &materialId
       if (node.inputConnections.empty())
       {
         return VtValue();
-      }
-      else
+      } else
       {
         return getNodeOutput(node.inputConnections.begin()->second);
       }

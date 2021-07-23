@@ -204,7 +204,8 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
   g_MouseCursors[ANCHOR_StandardCursorNSScroll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
   g_MouseCursors[ANCHOR_StandardCursorEWScroll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
   g_MouseCursors[ANCHOR_StandardCursorBottomLeftCorner] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-  g_MouseCursors[ANCHOR_StandardCursorBottomRightCorner] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+  g_MouseCursors[ANCHOR_StandardCursorBottomRightCorner] = SDL_CreateSystemCursor(
+    SDL_SYSTEM_CURSOR_SIZENWSE);
   g_MouseCursors[ANCHOR_StandardCursorMove] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
   g_MouseCursors[ANCHOR_StandardCursorStop] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 
@@ -363,8 +364,7 @@ eAnchorStatus AnchorDisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display
   {
     /* Any mode is OK. */
     anchor_mode_to_sdl(setting, &mode);
-  }
-  else
+  } else
   {
     for (int i = 0; i < num_modes; i++)
     {
@@ -406,8 +406,7 @@ eAnchorStatus AnchorDisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display
     SDL_SetWindowFullscreen(sdl_win, SDL_TRUE);
 
     return ANCHOR_SUCCESS;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("No windows available, can't fullscreen.\n");
 
@@ -479,8 +478,7 @@ static void ANCHOR_ImplSDL2_UpdateMouseCursor()
   {
     // Hide OS mouse cursor if anchor is drawing it or if it wants no cursor
     SDL_ShowCursor(SDL_FALSE);
-  }
-  else
+  } else
   {
     // Show OS mouse cursor
     SDL_SetCursor(g_MouseCursors[anchor_cursor] ? g_MouseCursors[anchor_cursor] :
@@ -505,17 +503,17 @@ static void ANCHOR_ImplSDL2_UpdateGamepads()
   }
 
 // Update gamepad inputs
-#define MAP_BUTTON(NAV_NO, BUTTON_NO) \
-  { \
+#define MAP_BUTTON(NAV_NO, BUTTON_NO)                                                                    \
+  {                                                                                                      \
     io.NavInputs[NAV_NO] = (SDL_GameControllerGetButton(game_controller, BUTTON_NO) != 0) ? 1.0f : 0.0f; \
   }
-#define MAP_ANALOG(NAV_NO, AXIS_NO, V0, V1) \
-  { \
+#define MAP_ANALOG(NAV_NO, AXIS_NO, V0, V1)                                                          \
+  {                                                                                                  \
     float vn = (float)(SDL_GameControllerGetAxis(game_controller, AXIS_NO) - V0) / (float)(V1 - V0); \
-    if (vn > 1.0f) \
-      vn = 1.0f; \
-    if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) \
-      io.NavInputs[NAV_NO] = vn; \
+    if (vn > 1.0f)                                                                                   \
+      vn = 1.0f;                                                                                     \
+    if (vn > 0.0f && io.NavInputs[NAV_NO] < vn)                                                      \
+      io.NavInputs[NAV_NO] = vn;                                                                     \
   }
   const int thumb_dead_zone = 8000;                                           // SDL_gamecontroller.h suggests using this value.
   MAP_BUTTON(AnchorNavInput_Activate, SDL_CONTROLLER_BUTTON_A);               // Cross / A
@@ -695,8 +693,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
       g_PixarHydra = new HgiVulkan(g_PixarVkInstance = new HgiVulkanInstance(g_Instance));
       check_vk_result(err);
       free(extensions_ext);
-    }
-    else
+    } else
     {
 
       /**
@@ -915,10 +912,11 @@ static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd, VkSurfaceKHR surface
     };
     /* clang-format on */
 
-    wd->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
-      g_PhysicalDevice, wd->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
-  }
-  else
+    wd->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(g_PhysicalDevice,
+                                                           wd->Surface,
+                                                           &present_modes[0],
+                                                           ANCHOR_ARRAYSIZE(present_modes));
+  } else
   { /** Throttled FPS ~75FPS */
 
     TF_DEBUG(ANCHOR_SDL_VULKAN).Msg("[Anchor] Throttled maximum frames per second.\n");
@@ -930,8 +928,10 @@ static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd, VkSurfaceKHR surface
     };
     /* clang-format on */
 
-    wd->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(
-      g_PhysicalDevice, wd->Surface, &present_modes[0], ANCHOR_ARRAYSIZE(present_modes));
+    wd->PresentMode = ANCHOR_ImplVulkanH_SelectPresentMode(g_PhysicalDevice,
+                                                           wd->Surface,
+                                                           &present_modes[0],
+                                                           ANCHOR_ARRAYSIZE(present_modes));
   }
 
   TF_DEBUG(ANCHOR_SDL_VULKAN).Msg("[Anchor] Selected PresentMode = %d\n", wd->PresentMode);
@@ -970,8 +970,10 @@ static void CleanupVulkan()
 
 static void CleanupVulkanWindow()
 {
-  ANCHOR_ImplVulkanH_DestroyWindow(
-    g_PixarVkInstance->GetVulkanInstance(), g_Device, &g_MainWindowData, g_Allocator);
+  ANCHOR_ImplVulkanH_DestroyWindow(g_PixarVkInstance->GetVulkanInstance(),
+                                   g_Device,
+                                   &g_MainWindowData,
+                                   g_Allocator);
 }
 
 static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, AnchorDrawData *draw_data)
@@ -980,8 +982,12 @@ static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, AnchorDrawData *draw_data)
 
   VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
   VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
-  err = vkAcquireNextImageKHR(
-    g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
+  err = vkAcquireNextImageKHR(g_Device,
+                              wd->Swapchain,
+                              UINT64_MAX,
+                              image_acquired_semaphore,
+                              VK_NULL_HANDLE,
+                              &wd->FrameIndex);
   if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
   {
     g_SwapChainRebuild = true;
@@ -1185,10 +1191,7 @@ void AnchorWindowSDL::newDrawingContext(eAnchorDrawingContextType type)
   }
 }
 
-void AnchorWindowSDL::clientToScreen(AnchorS32 inX,
-                                     AnchorS32 inY,
-                                     AnchorS32 &outX,
-                                     AnchorS32 &outY) const
+void AnchorWindowSDL::clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
 {
   /* XXXSDL_WEAK_ABS_COORDS */
   int x_win, y_win;
@@ -1259,19 +1262,18 @@ void AnchorSystemSDL::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &heigh
   height = mode.h;
 }
 
-AnchorISystemWindow *AnchorSystemSDL::createWindow(
-  const char *title,
-  const char *icon,
-  AnchorS32 left,
-  AnchorS32 top,
-  AnchorU32 width,
-  AnchorU32 height,
-  eAnchorWindowState state,
-  eAnchorDrawingContextType type,
-  int vkSettings,
-  const bool exclusive,
-  const bool /* is_dialog */,
-  const AnchorISystemWindow *parentWindow)
+AnchorISystemWindow *AnchorSystemSDL::createWindow(const char *title,
+                                                   const char *icon,
+                                                   AnchorS32 left,
+                                                   AnchorS32 top,
+                                                   AnchorU32 width,
+                                                   AnchorU32 height,
+                                                   eAnchorWindowState state,
+                                                   eAnchorDrawingContextType type,
+                                                   int vkSettings,
+                                                   const bool exclusive,
+                                                   const bool /* is_dialog */,
+                                                   const AnchorISystemWindow *parentWindow)
 {
   m_sdl_window = new AnchorWindowSDL(this,
                                      title,
@@ -1304,8 +1306,7 @@ AnchorISystemWindow *AnchorSystemSDL::createWindow(
     {
       m_windowManager->addWindow(m_sdl_window);
       pushEvent(new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowSize, m_sdl_window));
-    }
-    else
+    } else
     {
       delete m_sdl_window;
       m_sdl_window = NULL;
@@ -1449,8 +1450,8 @@ eAnchorStatus AnchorSystemSDL::getButtons(AnchorButtons &buttons) const
 }
 
 #define AXMAP(k, x, y) \
-  case x: \
-    k = y; \
+  case x:              \
+    k = y;             \
     break
 
 static eAnchorKey convertSDLKey(SDL_Scancode key)
@@ -1460,20 +1461,16 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
   if ((key >= SDL_SCANCODE_A) && (key <= SDL_SCANCODE_Z))
   {
     type = eAnchorKey(key - SDL_SCANCODE_A + int(AnchorKeyA));
-  }
-  else if ((key >= SDL_SCANCODE_1) && (key <= SDL_SCANCODE_0))
+  } else if ((key >= SDL_SCANCODE_1) && (key <= SDL_SCANCODE_0))
   {
     type = (key == SDL_SCANCODE_0) ? AnchorKey0 : eAnchorKey(key - SDL_SCANCODE_1 + int(AnchorKey1));
-  }
-  else if ((key >= SDL_SCANCODE_F1) && (key <= SDL_SCANCODE_F12))
+  } else if ((key >= SDL_SCANCODE_F1) && (key <= SDL_SCANCODE_F12))
   {
     type = eAnchorKey(key - SDL_SCANCODE_F1 + int(AnchorKeyF1));
-  }
-  else if ((key >= SDL_SCANCODE_F13) && (key <= SDL_SCANCODE_F24))
+  } else if ((key >= SDL_SCANCODE_F13) && (key <= SDL_SCANCODE_F24))
   {
     type = eAnchorKey(key - SDL_SCANCODE_F13 + int(AnchorKeyF13));
-  }
-  else
+  } else
   {
     switch (key)
     {
@@ -1637,8 +1634,12 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
       AnchorS32 x_root = sdl_sub_evt.x + x_win;
       AnchorS32 y_root = sdl_sub_evt.y + y_win;
       {
-        a_event = new AnchorEventCursor(
-          ANCHOR::GetTime(), AnchorEventTypeCursorMove, window, x_root, y_root, ANCHOR_TABLET_DATA_NONE);
+        a_event = new AnchorEventCursor(ANCHOR::GetTime(),
+                                        AnchorEventTypeCursorMove,
+                                        window,
+                                        x_root,
+                                        y_root,
+                                        ANCHOR_TABLET_DATA_NONE);
       }
       break;
     }
@@ -1744,8 +1745,7 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
             sym = 0;
             break;
         }
-      }
-      else
+      } else
       {
         if (sdl_sub_evt.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT))
         {
@@ -1753,8 +1753,7 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
           if (sym >= 'a' && sym <= ('a' + 32))
           {
             sym -= 32;
-          }
-          else
+          } else
           {
             switch (sym)
             {
@@ -1904,10 +1903,7 @@ std::string AnchorWindowSDL::getTitle() const
 }
 
 
-void AnchorWindowSDL::screenToClient(AnchorS32 inX,
-                                     AnchorS32 inY,
-                                     AnchorS32 &outX,
-                                     AnchorS32 &outY) const
+void AnchorWindowSDL::screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
 {
   int x_win, y_win;
   SDL_GetWindowPosition(m_sdl_win, &x_win, &y_win);

@@ -143,14 +143,15 @@ UsdAttribute UsdShadeMaterial::CreateVolumeAttr(VtValue const &defaultValue, boo
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -162,7 +163,8 @@ const TfTokenVector &UsdShadeMaterial::GetSchemaAttributeNames(bool includeInher
     UsdShadeTokens->outputsVolume,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-    UsdShadeNodeGraph::GetSchemaAttributeNames(true), localNames);
+    UsdShadeNodeGraph::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -300,8 +302,7 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
     if (allMaterialVariants.size() == 0)
     {
       allMaterialVariants.swap(materialVariants);
-    }
-    else if (allMaterialVariants != materialVariants)
+    } else if (allMaterialVariants != materialVariants)
     {
       TF_CODING_ERROR(
         "All Material prims to be switched by master "
@@ -349,16 +350,14 @@ bool UsdShadeMaterial::CreateMasterMaterialVariant(const UsdPrim &masterPrim,
         if (material->GetPath().HasPrefix(masterPrim.GetPath()))
         {
           material->GetVariantSet(UsdShadeTokens->materialVariant).SetVariantSelection(*varName);
-        }
-        else
+        } else
         {
           SdfPath derivedPath = material->GetPrimPath().ReplacePrefix(_GetRootPath(*material),
                                                                       masterPrim.GetPath());
           if (UsdPrim over = stage->OverridePrim(derivedPath))
           {
             over.GetVariantSet(UsdShadeTokens->materialVariant).SetVariantSelection(*varName);
-          }
-          else
+          } else
           {
             TF_RUNTIME_ERROR(
               "Unable to create over for Material prim "
@@ -397,7 +396,8 @@ UsdShadeMaterial UsdShadeMaterial::GetBaseMaterial() const
 SdfPath UsdShadeMaterial::GetBaseMaterialPath() const
 {
   SdfPath parentMaterialPath = FindBaseMaterialPathInPrimIndex(
-    GetPrim().GetPrimIndex(), [this](const SdfPath &p) { return bool(_GetMaterialAtPath(GetPrim(), p)); });
+    GetPrim().GetPrimIndex(),
+    [this](const SdfPath &p) { return bool(_GetMaterialAtPath(GetPrim(), p)); });
 
   if (parentMaterialPath != SdfPath::EmptyPath())
   {
@@ -468,8 +468,7 @@ void UsdShadeMaterial::SetBaseMaterial(const UsdShadeMaterial &baseMaterial) con
   {
     SdfPath basePath = basePrim.GetPath();
     SetBaseMaterialPath(basePath);
-  }
-  else
+  } else
   {
     SetBaseMaterialPath(SdfPath());
   }
@@ -517,7 +516,8 @@ UsdShadeAttributeVector UsdShadeMaterial::_ComputeNamedOutputSources(
       // constant values, which can't be used by a renderer as a terminal
       // node of the network. This also makes this call quite a bit cheaper.
       UsdShadeAttributeVector valueAttrs = UsdShadeUtils::GetValueProducingAttributes(
-        output, /*shaderOutputsOnly*/ true);
+        output,
+        /*shaderOutputsOnly*/ true);
 
       // XXX To remove this limitation we need to change the APIs for the
       //     Compute*Source calls to forward multiple result attributes

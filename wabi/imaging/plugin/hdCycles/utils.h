@@ -57,7 +57,7 @@
 
 namespace ccl
 {
-class Mesh;
+  class Mesh;
 }
 
 WABI_NAMESPACE_BEGIN
@@ -382,12 +382,10 @@ void _CheckForBoolValue(const VtValue &value, F &&f)
   if (value.IsHolding<bool>())
   {
     f(value.UncheckedGet<bool>());
-  }
-  else if (value.IsHolding<int>())
+  } else if (value.IsHolding<int>())
   {
     f(value.UncheckedGet<int>() != 0);
-  }
-  else if (value.IsHolding<long>())
+  } else if (value.IsHolding<long>())
   {
     f(value.UncheckedGet<long>() != 0);
   }
@@ -399,8 +397,7 @@ void _CheckForIntValue(const VtValue &value, F &&f)
   if (value.IsHolding<int>())
   {
     f(value.UncheckedGet<int>());
-  }
-  else if (value.IsHolding<long>())
+  } else if (value.IsHolding<long>())
   {
     f(static_cast<int>(value.UncheckedGet<long>()));
   }
@@ -536,8 +533,7 @@ T _HdCyclesGetCurvePrimvar(const HdPrimvarDescriptor &a_pvd,
     if (v.IsHolding<T>())
     {
       return v.UncheckedGet<T>();
-    }
-    else
+    } else
     {
       return a_default;
     }

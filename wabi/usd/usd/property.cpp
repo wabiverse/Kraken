@@ -183,8 +183,9 @@ static SdfPath _MapPath(_PathMap const &map, SdfPath const &path)
     return path;
   }
 
-  auto it = SdfPathFindLongestPrefix(
-    make_transform_iterator(map.begin(), TfGet<0>()), make_transform_iterator(map.end(), TfGet<0>()), path);
+  auto it = SdfPathFindLongestPrefix(make_transform_iterator(map.begin(), TfGet<0>()),
+                                     make_transform_iterator(map.end(), TfGet<0>()),
+                                     path);
   if (it.base() != map.end())
   {
     return path.ReplacePrefix(it.base()->first, it.base()->second);
@@ -245,8 +246,7 @@ bool UsdProperty::_GetTargets(SdfSpecType specType, SdfPathVector *out, bool *fo
       if (prim.IsInstance())
       {
         prototype = prim.GetPrototype();
-      }
-      else if (prim.IsPrototype())
+      } else if (prim.IsPrototype())
       {
         prototype = prim;
       }
@@ -266,8 +266,7 @@ bool UsdProperty::_GetTargets(SdfSpecType specType, SdfPathVector *out, bool *fo
         out->pop_back();
       }
     }
-  }
-  else
+  } else
   {
     out->swap(targetIndex.paths);
   }

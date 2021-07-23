@@ -39,15 +39,15 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static SdfVariantSetSpecHandle _NewUnderPrim(const SdfPrimSpecHandle &owner, const std::string &name)
-{
-  return SdfVariantSetSpec::New(owner, name);
-}
+  static SdfVariantSetSpecHandle _NewUnderPrim(const SdfPrimSpecHandle &owner, const std::string &name)
+  {
+    return SdfVariantSetSpec::New(owner, name);
+  }
 
-static SdfVariantSetSpecHandle _NewUnderVariant(const SdfVariantSpecHandle &owner, const std::string &name)
-{
-  return SdfVariantSetSpec::New(owner, name);
-}
+  static SdfVariantSetSpecHandle _NewUnderVariant(const SdfVariantSpecHandle &owner, const std::string &name)
+  {
+    return SdfVariantSetSpec::New(owner, name);
+  }
 
 }  // anonymous namespace
 

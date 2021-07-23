@@ -42,12 +42,11 @@ class HdPrman_BasisCurves final : public HdPrman_Gprim<HdBasisCurves>
   virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
-  virtual RtPrimVarList
-  _ConvertGeometry(HdPrman_Context *context,
-                   HdSceneDelegate *sceneDelegate,
-                   const SdfPath &id,
-                   RtUString *primType,
-                   std::vector<HdGeomSubset> *geomSubsets) override;
+  virtual RtPrimVarList _ConvertGeometry(HdPrman_Context *context,
+                                         HdSceneDelegate *sceneDelegate,
+                                         const SdfPath &id,
+                                         RtUString *primType,
+                                         std::vector<HdGeomSubset> *geomSubsets) override;
 };
 
 WABI_NAMESPACE_END

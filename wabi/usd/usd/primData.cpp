@@ -125,8 +125,7 @@ void Usd_PrimData::_ComposeAndCacheFlags(Usd_PrimDataConstPtr parent, bool isPro
     _flags[Usd_PrimHasDefiningSpecifierFlag] = true;
     _flags[Usd_PrimPrototypeFlag] = isPrototypePrim;
     _flags[Usd_PrimPseudoRootFlag] = !parent;
-  }
-  else
+  } else
   {
     // Compose and cache 'active'.
     const bool active = UsdStage::_IsActive(this);
@@ -221,9 +220,9 @@ std::string Usd_DescribePrimData(const Usd_PrimData *p, SdfPath const &proxyPrim
     Usd_IsDead(p) ? "expired " : (p->_flags[Usd_PrimActiveFlag] ? "" : "inactive "),
     p->GetTypeName().IsEmpty() ? "" : TfStringPrintf("'%s' ", p->GetTypeName().GetText()).c_str(),
     // XXX: Add applied schemas to this descriptor
-    isInstance ? "instance " :
-                 isInstanceProxy ? "instance proxy " :
-                                   "",
+    isInstance      ? "instance " :
+    isInstanceProxy ? "instance proxy " :
+                      "",
     isInPrototype ? "in prototype " : "",
     isInstanceProxy ? proxyPrimPath.GetText() : p->_path.GetText(),
     (isInstanceProxy || isInstance) ?

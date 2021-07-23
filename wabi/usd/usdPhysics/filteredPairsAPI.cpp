@@ -34,105 +34,90 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-    TfType::Define<UsdPhysicsFilteredPairsAPI,
-        TfType::Bases< UsdAPISchemaBase > >();
-    
+  TfType::Define<UsdPhysicsFilteredPairsAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _schemaTokens,
-    (PhysicsFilteredPairsAPI)
-);
+TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsFilteredPairsAPI));
 
 /* virtual */
 UsdPhysicsFilteredPairsAPI::~UsdPhysicsFilteredPairsAPI()
-{
-}
+{}
 
 /* static */
-UsdPhysicsFilteredPairsAPI
-UsdPhysicsFilteredPairsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsFilteredPairsAPI UsdPhysicsFilteredPairsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-    if (!stage) {
-        TF_CODING_ERROR("Invalid stage");
-        return UsdPhysicsFilteredPairsAPI();
-    }
-    return UsdPhysicsFilteredPairsAPI(stage->GetPrimAtPath(path));
+  if (!stage)
+  {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdPhysicsFilteredPairsAPI();
+  }
+  return UsdPhysicsFilteredPairsAPI(stage->GetPrimAtPath(path));
 }
 
 
 /* virtual */
 UsdSchemaKind UsdPhysicsFilteredPairsAPI::GetSchemaKind() const
 {
-    return UsdPhysicsFilteredPairsAPI::schemaKind;
+  return UsdPhysicsFilteredPairsAPI::schemaKind;
 }
 
 /* static */
-bool
-UsdPhysicsFilteredPairsAPI::CanApply(
-    const UsdPrim &prim, std::string *whyNot)
+bool UsdPhysicsFilteredPairsAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 {
-    return prim.CanApplyAPI<UsdPhysicsFilteredPairsAPI>(whyNot);
+  return prim.CanApplyAPI<UsdPhysicsFilteredPairsAPI>(whyNot);
 }
 
 /* static */
-UsdPhysicsFilteredPairsAPI
-UsdPhysicsFilteredPairsAPI::Apply(const UsdPrim &prim)
+UsdPhysicsFilteredPairsAPI UsdPhysicsFilteredPairsAPI::Apply(const UsdPrim &prim)
 {
-    if (prim.ApplyAPI<UsdPhysicsFilteredPairsAPI>()) {
-        return UsdPhysicsFilteredPairsAPI(prim);
-    }
-    return UsdPhysicsFilteredPairsAPI();
+  if (prim.ApplyAPI<UsdPhysicsFilteredPairsAPI>())
+  {
+    return UsdPhysicsFilteredPairsAPI(prim);
+  }
+  return UsdPhysicsFilteredPairsAPI();
 }
 
 /* static */
-const TfType &
-UsdPhysicsFilteredPairsAPI::GetStaticTfType()
+const TfType &UsdPhysicsFilteredPairsAPI::GetStaticTfType()
 {
-    static TfType tfType = TfType::Find<UsdPhysicsFilteredPairsAPI>();
-    return tfType;
+  static TfType tfType = TfType::Find<UsdPhysicsFilteredPairsAPI>();
+  return tfType;
 }
 
 /* static */
-bool 
-UsdPhysicsFilteredPairsAPI::IsTypedSchema()
+bool UsdPhysicsFilteredPairsAPI::IsTypedSchema()
 {
-    static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-    return isTyped;
+  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  return isTyped;
 }
 
 /* virtual */
-const TfType &
-UsdPhysicsFilteredPairsAPI::GetTfType() const
+const TfType &UsdPhysicsFilteredPairsAPI::GetTfType() const
 {
-    return GetStaticTfType();
+  return GetStaticTfType();
 }
 
-UsdRelationship
-UsdPhysicsFilteredPairsAPI::GetFilteredPairsRel() const
+UsdRelationship UsdPhysicsFilteredPairsAPI::GetFilteredPairsRel() const
 {
-    return GetPrim().GetRelationship(UsdPhysicsTokens->physicsFilteredPairs);
+  return GetPrim().GetRelationship(UsdPhysicsTokens->physicsFilteredPairs);
 }
 
-UsdRelationship
-UsdPhysicsFilteredPairsAPI::CreateFilteredPairsRel() const
+UsdRelationship UsdPhysicsFilteredPairsAPI::CreateFilteredPairsRel() const
 {
-    return GetPrim().CreateRelationship(UsdPhysicsTokens->physicsFilteredPairs,
-                       /* custom = */ false);
+  return GetPrim().CreateRelationship(UsdPhysicsTokens->physicsFilteredPairs,
+                                      /* custom = */ false);
 }
 
 /*static*/
-const TfTokenVector&
-UsdPhysicsFilteredPairsAPI::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdPhysicsFilteredPairsAPI::GetSchemaAttributeNames(bool includeInherited)
 {
-    static TfTokenVector localNames;
-    static TfTokenVector allNames =
-        UsdAPISchemaBase::GetSchemaAttributeNames(true);
+  static TfTokenVector localNames;
+  static TfTokenVector allNames = UsdAPISchemaBase::GetSchemaAttributeNames(true);
 
-    if (includeInherited)
-        return allNames;
-    else
-        return localNames;
+  if (includeInherited)
+    return allNames;
+  else
+    return localNames;
 }
 
 WABI_NAMESPACE_END

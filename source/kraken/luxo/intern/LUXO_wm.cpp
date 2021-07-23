@@ -64,7 +64,11 @@ KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
   LUXO_ADD_ENUM_PROP(MOUSEPAN, "TRACKPADPAN", ICON_NONE, "Mouse/Trackpad Pan", "MsPan");
   LUXO_ADD_ENUM_PROP(MOUSEZOOM, "TRACKPADZOOM", ICON_NONE, "Mouse/Trackpad Zoom", "MsZoom");
   LUXO_ADD_ENUM_PROP(MOUSEROTATE, "MOUSEROTATE", ICON_NONE, "Mouse/Trackpad Rotate", "MsRot");
-  LUXO_ADD_ENUM_PROP(MOUSESMARTZOOM, "MOUSESMARTZOOM", ICON_NONE, "Mouse/Trackpad Smart Zoom", "MsSmartZoom");
+  LUXO_ADD_ENUM_PROP(MOUSESMARTZOOM,
+                     "MOUSESMARTZOOM",
+                     ICON_NONE,
+                     "Mouse/Trackpad Smart Zoom",
+                     "MsSmartZoom");
   LUXO_ADD_ENUM_PROP(WHEELUPMOUSE, "WHEELUPMOUSE", ICON_NONE, "Wheel Up", "WhUp");
   LUXO_ADD_ENUM_PROP(WHEELDOWNMOUSE, "WHEELDOWNMOUSE", ICON_NONE, "Wheel Down", "WhDown");
   LUXO_ADD_ENUM_PROP(WHEELINMOUSE, "WHEELINMOUSE", ICON_NONE, "Wheel In", "WhIn");
@@ -202,8 +206,16 @@ KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
   LUXO_ADD_ENUM_PROP(TIMERREGION, "TIMERREGION", ICON_NONE, "Timer Region", "TmrReg");
   /* Action Zones. */
   LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_AREA, "ACTIONZONE_AREA", ICON_NONE, "ActionZone Area", "AZone Area");
-  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_REGION, "ACTIONZONE_REGION", ICON_NONE, "ActionZone Region", "AZone Region");
-  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_FULLSCREEN, "ACTIONZONE_FULLSCREEN", ICON_NONE, "ActionZone Fullscreen", "AZone FullScr");
+  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_REGION,
+                     "ACTIONZONE_REGION",
+                     ICON_NONE,
+                     "ActionZone Region",
+                     "AZone Region");
+  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_FULLSCREEN,
+                     "ACTIONZONE_FULLSCREEN",
+                     ICON_NONE,
+                     "ActionZone Fullscreen",
+                     "AZone FullScr");
 }
 
 WABI_NAMESPACE_END

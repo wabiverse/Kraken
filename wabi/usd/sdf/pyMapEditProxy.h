@@ -188,8 +188,7 @@ class SdfPyWrapMapEditProxy
     if (x)
     {
       arg = TfStringPrintf("<%s>", x._Location().c_str());
-    }
-    else
+    } else
     {
       arg = "<invalid>";
     }
@@ -219,8 +218,7 @@ class SdfPyWrapMapEditProxy
     {
       TfPyThrowKeyError(TfPyRepr(key));
       return mapped_type();
-    }
-    else
+    } else
     {
       return i->second;
     }
@@ -307,8 +305,7 @@ class SdfPyWrapMapEditProxy
     {
       TfPyThrowKeyError(TfPyRepr(key));
       return mapped_type();
-    }
-    else
+    } else
     {
       mapped_type result = i->second;
       x.erase(i);
@@ -322,8 +319,7 @@ class SdfPyWrapMapEditProxy
     {
       TfPyThrowKeyError("MapEditProxy is empty");
       return boost::python::tuple();
-    }
-    else
+    } else
     {
       iterator i = x.begin();
       value_type result = *i;
@@ -338,8 +334,7 @@ class SdfPyWrapMapEditProxy
     if (i != x.end())
     {
       return i->second;
-    }
-    else
+    } else
     {
       return x[key] = def;
     }

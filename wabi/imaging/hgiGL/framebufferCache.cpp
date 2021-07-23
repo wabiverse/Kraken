@@ -44,51 +44,51 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-struct _FramebufferDesc
-{
-  _FramebufferDesc() = default;
-
-  _FramebufferDesc(HgiGraphicsCmdsDesc const &desc, bool resolved)
-    : depthFormat(desc.depthAttachmentDesc.format),
-      colorTextures(resolved && !desc.colorResolveTextures.empty() ? desc.colorResolveTextures :
-                                                                     desc.colorTextures),
-      depthTexture(resolved && desc.depthResolveTexture ? desc.depthResolveTexture : desc.depthTexture)
+  struct _FramebufferDesc
   {
-    TF_VERIFY(colorTextures.size() == desc.colorAttachmentDescs.size(),
-              "Number of attachment descriptors and textures don't match");
+    _FramebufferDesc() = default;
+
+    _FramebufferDesc(HgiGraphicsCmdsDesc const &desc, bool resolved)
+      : depthFormat(desc.depthAttachmentDesc.format),
+        colorTextures(resolved && !desc.colorResolveTextures.empty() ? desc.colorResolveTextures :
+                                                                       desc.colorTextures),
+        depthTexture(resolved && desc.depthResolveTexture ? desc.depthResolveTexture : desc.depthTexture)
+    {
+      TF_VERIFY(colorTextures.size() == desc.colorAttachmentDescs.size(),
+                "Number of attachment descriptors and textures don't match");
+    }
+
+    HgiFormat depthFormat;
+    HgiTextureHandleVector colorTextures;
+    HgiTextureHandle depthTexture;
+  };
+
+  bool operator==(const _FramebufferDesc &lhs, const _FramebufferDesc &rhs)
+  {
+    return lhs.depthFormat == rhs.depthFormat && lhs.colorTextures == rhs.colorTextures &&
+           lhs.depthTexture == rhs.depthTexture;
   }
 
-  HgiFormat depthFormat;
-  HgiTextureHandleVector colorTextures;
-  HgiTextureHandle depthTexture;
-};
-
-bool operator==(const _FramebufferDesc &lhs, const _FramebufferDesc &rhs)
-{
-  return lhs.depthFormat == rhs.depthFormat && lhs.colorTextures == rhs.colorTextures &&
-         lhs.depthTexture == rhs.depthTexture;
-}
-
-std::ostream &operator<<(std::ostream &out, const _FramebufferDesc &desc)
-{
-  out << "_FramebufferDesc: {";
-
-  for (size_t i = 0; i < desc.colorTextures.size(); i++)
+  std::ostream &operator<<(std::ostream &out, const _FramebufferDesc &desc)
   {
-    out << "colorTexture" << i << " ";
-    out << "dimensions:" << desc.colorTextures[i]->GetDescriptor().dimensions << ", ";
-  }
+    out << "_FramebufferDesc: {";
 
-  if (desc.depthTexture)
-  {
-    out << "depthFormat " << desc.depthFormat;
-    out << "depthTexture ";
-    out << "dimensions:" << desc.depthTexture->GetDescriptor().dimensions;
-  }
+    for (size_t i = 0; i < desc.colorTextures.size(); i++)
+    {
+      out << "colorTexture" << i << " ";
+      out << "dimensions:" << desc.colorTextures[i]->GetDescriptor().dimensions << ", ";
+    }
 
-  out << "}";
-  return out;
-}
+    if (desc.depthTexture)
+    {
+      out << "depthFormat " << desc.depthFormat;
+      out << "depthTexture ";
+      out << "dimensions:" << desc.depthTexture->GetDescriptor().dimensions;
+    }
+
+    out << "}";
+    return out;
+  }
 
 }  // namespace
 

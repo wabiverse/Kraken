@@ -77,8 +77,7 @@ UsdEditTarget::UsdEditTarget(const SdfLayerHandle &layer, SdfLayerOffset offset)
   if (offset.IsIdentity())
   {
     _mapping = PcpMapFunction::Identity();
-  }
-  else
+  } else
   {
     _mapping = PcpMapFunction::Create(PcpMapFunction::IdentityPathMap(), offset);
   }
@@ -95,8 +94,7 @@ UsdEditTarget::UsdEditTarget(const SdfLayerRefPtr &layer, SdfLayerOffset offset)
   if (offset.IsIdentity())
   {
     _mapping = PcpMapFunction::Identity();
-  }
-  else
+  } else
   {
     _mapping = PcpMapFunction::Create(PcpMapFunction::IdentityPathMap(), offset);
   }

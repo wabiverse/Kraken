@@ -147,8 +147,7 @@ void SpookyHash::Hash128(const void *message, size_t length, uint64 *hash1, uint
       Mix(u.p64, h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11);
       u.p64 += sc_numVars;
     }
-  }
-  else
+  } else
   {
     while (u.p64 < end)
     {
@@ -209,8 +208,7 @@ void SpookyHash::Update(const void *message, size_t length)
     h0 = h3 = h6 = h9 = m_state[0];
     h1 = h4 = h7 = h10 = m_state[1];
     h2 = h5 = h8 = h11 = sc_const;
-  }
-  else
+  } else
   {
     h0 = m_state[0];
     h1 = m_state[1];
@@ -237,8 +235,7 @@ void SpookyHash::Update(const void *message, size_t length)
     Mix(&u.p64[sc_numVars], h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11);
     u.p8 = ((const uint8 *)message) + prefix;
     length -= prefix;
-  }
-  else
+  } else
   {
     u.p8 = (const uint8 *)message;
   }
@@ -253,8 +250,7 @@ void SpookyHash::Update(const void *message, size_t length)
       Mix(u.p64, h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11);
       u.p64 += sc_numVars;
     }
-  }
-  else
+  } else
   {
     while (u.p64 < end)
     {

@@ -39,7 +39,7 @@ void WM_draw_update(kContext *C)
   Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
-  UNIVERSE_FOR_ALL(win, wm->windows)
+  UNIVERSE_FOR_ALL (win, wm->windows)
   {
     CTX_wm_window_set(C, VALUE(win));
     WM_window_swap_buffers(VALUE(win));

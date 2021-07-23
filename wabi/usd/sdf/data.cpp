@@ -164,8 +164,7 @@ const VtValue *SdfData::_GetSpecTypeAndFieldValue(const SdfPath &path,
   if (i == _data.end())
   {
     *specType = SdfSpecTypeUnknown;
-  }
-  else
+  } else
   {
     const _SpecData &spec = i->second;
     *specType = spec.specType;
@@ -359,26 +358,22 @@ static bool _GetBracketingTimeSamplesImpl(const Container &samples,
   {
     // No samples.
     return false;
-  }
-  else if (time <= getTime(*samples.begin()))
+  } else if (time <= getTime(*samples.begin()))
   {
     // Time is at-or-before the first sample.
     *tLower = *tUpper = getTime(*samples.begin());
-  }
-  else if (time >= getTime(*samples.rbegin()))
+  } else if (time >= getTime(*samples.rbegin()))
   {
     // Time is at-or-after the last sample.
     *tLower = *tUpper = getTime(*samples.rbegin());
-  }
-  else
+  } else
   {
     auto iter = samples.lower_bound(time);
     if (getTime(*iter) == time)
     {
       // Time is exactly on a sample.
       *tLower = *tUpper = getTime(*iter);
-    }
-    else
+    } else
     {
       // Time is in-between samples; return the bracketing times.
       *tUpper = getTime(*iter);
@@ -395,7 +390,11 @@ static bool _GetBracketingTimeSamples(const std::set<double> &samples,
                                       double *tUpper)
 {
   return _GetBracketingTimeSamplesImpl(
-    samples, [](double t) { return t; }, time, tLower, tUpper);
+    samples,
+    [](double t) { return t; },
+    time,
+    tLower,
+    tUpper);
 }
 
 static bool _GetBracketingTimeSamples(const SdfTimeSampleMap &samples,
@@ -404,7 +403,11 @@ static bool _GetBracketingTimeSamples(const SdfTimeSampleMap &samples,
                                       double *tUpper)
 {
   return _GetBracketingTimeSamplesImpl(
-    samples, [](SdfTimeSampleMap::value_type const &p) { return p.first; }, time, tLower, tUpper);
+    samples,
+    [](SdfTimeSampleMap::value_type const &p) { return p.first; },
+    time,
+    tLower,
+    tUpper);
 }
 
 bool SdfData::GetBracketingTimeSamples(double time, double *tLower, double *tUpper) const
@@ -496,8 +499,7 @@ void SdfData::SetTimeSample(const SdfPath &path, double time, const VtValue &val
   if (fieldValue)
   {
     fieldValue->Swap(newSamples);
-  }
-  else
+  } else
   {
     Set(path, SdfDataTokens->TimeSamples, VtValue::Take(newSamples));
   }
@@ -515,8 +517,7 @@ void SdfData::EraseTimeSample(const SdfPath &path, double time)
   if (fieldValue && fieldValue->IsHolding<SdfTimeSampleMap>())
   {
     fieldValue->UncheckedSwap(newSamples);
-  }
-  else
+  } else
   {
     return;
   }
@@ -528,8 +529,7 @@ void SdfData::EraseTimeSample(const SdfPath &path, double time)
   if (newSamples.empty())
   {
     Erase(path, SdfDataTokens->TimeSamples);
-  }
-  else
+  } else
   {
     fieldValue->UncheckedSwap(newSamples);
   }

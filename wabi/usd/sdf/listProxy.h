@@ -378,8 +378,7 @@ class SdfListProxy
     if (n > s)
     {
       _Edit(s, 0, value_vector_type(n - s, t));
-    }
-    else if (n < s)
+    } else if (n < s)
     {
       _Edit(n, s - n, value_vector_type());
     }
@@ -527,8 +526,7 @@ class SdfListProxy
     if (index != size_t(-1))
     {
       Erase(index);
-    }
-    else
+    } else
     {
       // Allow policy to raise an error even though we're not
       // doing anything.
@@ -542,8 +540,7 @@ class SdfListProxy
     if (index != size_t(-1))
     {
       _Edit(index, 1, value_vector_type(1, newValue));
-    }
-    else
+    } else
     {
       // Allow policy to raise an error even though we're not
       // doing anything.
@@ -620,12 +617,10 @@ class SdfListProxy
     if (_listEditor->IsExplicit())
     {
       return _op == SdfListOpTypeExplicit;
-    }
-    else if (_listEditor->IsOrderedOnly())
+    } else if (_listEditor->IsOrderedOnly())
     {
       return _op == SdfListOpTypeOrdered;
-    }
-    else
+    } else
     {
       return _op != SdfListOpTypeExplicit;
     }

@@ -100,8 +100,12 @@ VtArray<DstType> _ComputeFlatNormals(HdMeshTopology const *topology, SrcType con
   VtIntArray const &faceIndices = topology->GetFaceVertexIndices();
   bool flip = (topology->GetOrientation() != HdTokens->rightHanded);
 
-  _FlatNormalsWorker<SrcType, DstType> workerState(
-    faceOffsets, faceCounts, faceIndices, flip, points, normals.data());
+  _FlatNormalsWorker<SrcType, DstType> workerState(faceOffsets,
+                                                   faceCounts,
+                                                   faceIndices,
+                                                   flip,
+                                                   points,
+                                                   normals.data());
 
   WorkParallelForN(numFaces,
                    std::bind(&_FlatNormalsWorker<SrcType, DstType>::Compute,
@@ -187,8 +191,7 @@ bool Hd_FlatNormalsComputation::Resolve()
       {
         normals = Hd_FlatNormals::ComputeFlatNormalsPacked(_topology,
                                                            static_cast<const GfVec3f *>(_points->GetData()));
-      }
-      else
+      } else
       {
         normals = Hd_FlatNormals::ComputeFlatNormals(_topology,
                                                      static_cast<const GfVec3f *>(_points->GetData()));
@@ -199,8 +202,7 @@ bool Hd_FlatNormalsComputation::Resolve()
       {
         normals = Hd_FlatNormals::ComputeFlatNormalsPacked(_topology,
                                                            static_cast<const GfVec3d *>(_points->GetData()));
-      }
-      else
+      } else
       {
         normals = Hd_FlatNormals::ComputeFlatNormals(_topology,
                                                      static_cast<const GfVec3d *>(_points->GetData()));

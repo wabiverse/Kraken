@@ -165,8 +165,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
       if (!_owner)
       {
         TF_CODING_ERROR("Assignment to invalid map proxy");
-      }
-      else
+      } else
       {
         _owner->_Set(_data, _pos, other);
       }
@@ -283,8 +282,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
       if (_owner == other._owner && _pos == other._pos)
       {
         return true;
-      }
-      else
+      } else
       {
         // All iterators at the end compare equal.
         return atEnd() && other.atEnd();
@@ -519,8 +517,9 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   const_iterator lower_bound(const key_type &key) const
   {
     return _Validate() ?
-             const_iterator(
-               this, _ConstData(), _ConstData()->lower_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
+             const_iterator(this,
+                            _ConstData(),
+                            _ConstData()->lower_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
              const_iterator();
   }
 
@@ -534,8 +533,9 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   const_iterator upper_bound(const key_type &key) const
   {
     return _Validate() ?
-             const_iterator(
-               this, _ConstData(), _ConstData()->upper_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
+             const_iterator(this,
+                            _ConstData(),
+                            _ConstData()->upper_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
              const_iterator();
   }
 
@@ -546,8 +546,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
       std::pair<inner_iterator, inner_iterator> result = _Data()->equal_range(
         ValuePolicy::CanonicalizeKey(_Owner(), key));
       return std::make_pair(iterator(this, _Data(), result.first), iterator(this, _Data(), result.second));
-    }
-    else
+    } else
     {
       return std::make_pair(iterator(), iterator());
     }
@@ -561,8 +560,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
         ValuePolicy::CanonicalizeKey(_Owner(), key));
       return std::make_pair(const_iterator(this, _ConstData(), result.first),
                             const_iterator(this, _ConstData(), result.second));
-    }
-    else
+    } else
     {
       return std::make_pair(const_iterator(), const_iterator());
     }
@@ -646,8 +644,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     if (_ConstData() && !IsExpired())
     {
       return true;
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Editing an invalid map proxy");
       return false;
@@ -659,8 +656,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     if (_ConstData() && !IsExpired())
     {
       return true;
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Accessing an invalid map proxy");
       return false;
@@ -700,8 +696,9 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
     // Same size -- find the first mismatch.
     const Type &x = ValuePolicy::CanonicalizeType(_Owner(), other);
-    std::pair<const_inner_iterator, const_inner_iterator> result = std::mismatch(
-      _ConstData()->begin(), _ConstData()->end(), x.begin());
+    std::pair<const_inner_iterator, const_inner_iterator> result = std::mismatch(_ConstData()->begin(),
+                                                                                 _ConstData()->end(),
+                                                                                 x.begin());
     return result.first == _ConstData()->end();
   }
 
@@ -718,17 +715,16 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
     // Same size -- find the first mismatch.
     const Type &x = ValuePolicy::CanonicalizeType(_Owner(), other);
-    std::pair<const_inner_iterator, const_inner_iterator> result = std::mismatch(
-      _ConstData()->begin(), _ConstData()->end(), x.begin());
+    std::pair<const_inner_iterator, const_inner_iterator> result = std::mismatch(_ConstData()->begin(),
+                                                                                 _ConstData()->end(),
+                                                                                 x.begin());
     if (*result.first < *result.second)
     {
       return -1;
-    }
-    else if (*result.first > *result.second)
+    } else if (*result.first > *result.second)
     {
       return 1;
-    }
-    else
+    } else
     {
       return 0;
     }
@@ -755,8 +751,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
       if (data == _ConstData())
       {
         return i->second;
-      }
-      else
+      } else
       {
         // Data has changed since we created the iterator.
         // Look up same key in new data.
@@ -854,8 +849,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     if (SdfAllowed allowed = _editor->IsValidValue(value))
     {
       // Do nothing
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Can't set value in %s: %s", _Location().c_str(), allowed.GetWhyNot().c_str());
       return false;
@@ -873,8 +867,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
       {
         std::pair<inner_iterator, bool> status = _editor->Insert(v);
         return std::make_pair(iterator(this, _Data(), status.first), status.second);
-      }
-      else
+      } else
       {
         return std::make_pair(iterator(), false);
       }
@@ -894,8 +887,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     if (SdfAllowed allowed = _editor->IsValidKey(value.first))
     {
       // Do nothing
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Can't insert key in %s: %s", _Location().c_str(), allowed.GetWhyNot().c_str());
       return false;
@@ -904,8 +896,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     if (SdfAllowed allowed = _editor->IsValidValue(value.second))
     {
       // Do nothing
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Can't insert value in %s: %s", _Location().c_str(), allowed.GetWhyNot().c_str());
       return false;

@@ -62,8 +62,7 @@ HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(HdAggregationSt
   {
     // We just created a new entry so make sure it has a buffer in it.
     _InsertNewBufferArray(entry, HdBufferArraySharedPtr(), strategy, role, bufferSpecs, usageHint);
-  }
-  else
+  } else
   {
 
     // There's a potential multi-thread race condition where
@@ -167,8 +166,9 @@ void HdBufferArrayRegistry::ReallocateAll(HdAggregationStrategy *strategy)
           HdBufferSpecVector bufferSpecs = strategy->GetBufferSpecs(bufferArray);
           HdBufferArrayUsageHint usageHint = bufferArray->GetUsageHint();
 
-          HdBufferArraySharedPtr newBufferArray = strategy->CreateBufferArray(
-            bufferArray->GetRole(), bufferSpecs, usageHint);
+          HdBufferArraySharedPtr newBufferArray = strategy->CreateBufferArray(bufferArray->GetRole(),
+                                                                              bufferSpecs,
+                                                                              usageHint);
           newBufferArray->Reallocate(ranges, bufferArray);
 
           // bufferArrays is std::list
@@ -202,8 +202,7 @@ void HdBufferArrayRegistry::GarbageCollect()
       if ((*bufferIt)->GarbageCollect())
       {
         bufferIt = entry.bufferArrays.erase(bufferIt);
-      }
-      else
+      } else
       {
         ++bufferIt;
       }
@@ -212,8 +211,7 @@ void HdBufferArrayRegistry::GarbageCollect()
     if (entry.bufferArrays.empty())
     {
       entryIt = _entries.unsafe_erase(entryIt);
-    }
-    else
+    } else
     {
       ++entryIt;
     }
@@ -253,8 +251,7 @@ void HdBufferArrayRegistry::_InsertNewBufferArray(_Entry &entry,
       {
         return;  // Lock_guard will unlock entry
       }
-    }
-    else
+    } else
     {
       // This shouldn't ever happen, because where did the expected tail
       // come from if it wasn't in the list???

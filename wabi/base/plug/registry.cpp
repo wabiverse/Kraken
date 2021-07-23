@@ -226,22 +226,22 @@ void PlugRegistry::GetAllDerivedTypes(TfType base, std::set<TfType> *result)
 namespace
 {
 
-struct PathsInfo
-{
-  std::vector<std::string> paths;
-  std::vector<std::string> debugMessages;
-  bool pathsAreOrdered = true;
-};
+  struct PathsInfo
+  {
+    std::vector<std::string> paths;
+    std::vector<std::string> debugMessages;
+    bool pathsAreOrdered = true;
+  };
 
-// Return a static vector<string> that holds the bootstrap plugin paths.
-static PathsInfo &Plug_GetPathsInfo()
-{
-  // This is a static local variable since the function is called from
-  // ARCH_CONSTRUCTOR methods, potentially before module-level static
-  // initialization.
-  static PathsInfo pathsInfo;
-  return pathsInfo;
-}
+  // Return a static vector<string> that holds the bootstrap plugin paths.
+  static PathsInfo &Plug_GetPathsInfo()
+  {
+    // This is a static local variable since the function is called from
+    // ARCH_CONSTRUCTOR methods, potentially before module-level static
+    // initialization.
+    static PathsInfo pathsInfo;
+    return pathsInfo;
+  }
 
 }  // namespace
 

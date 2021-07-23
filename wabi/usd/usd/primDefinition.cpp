@@ -87,8 +87,7 @@ void UsdPrimDefinition::_SetPrimSpec(const SdfPrimSpecHandle &primSpec, bool pro
       _propPathMap[prop->GetNameToken()] = prop->GetPath();
       _properties.push_back(prop->GetNameToken());
     }
-  }
-  else
+  } else
   {
     for (SdfPropertySpecHandle prop : primSpec->GetProperties())
     {
@@ -113,8 +112,7 @@ void UsdPrimDefinition::_ApplyPropertiesFromPrimDef(const UsdPrimDefinition &pri
     {
       _AddProperty(it.first, it.second);
     }
-  }
-  else
+  } else
   {
     for (const auto &it : primDef._propPathMap)
     {
@@ -146,8 +144,7 @@ bool UsdPrimDefinition::FlattenTo(const SdfLayerHandle &layer,
         targetSpec->ClearInfo(fieldName);
       }
     }
-  }
-  else
+  } else
   {
     // Otherwise create a new target spec and set its specifier.
     targetSpec = SdfCreatePrimInLayer(layer, path);

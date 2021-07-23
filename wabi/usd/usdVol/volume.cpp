@@ -137,8 +137,7 @@ TfToken UsdVolVolume::_MakeNamespaced(const TfToken &name)
   if (TfStringStartsWith(name, _tokens->fieldPrefix))
   {
     result = name;
-  }
-  else
+  } else
   {
     result = TfToken(_tokens->fieldPrefix.GetString() + name.GetString());
   }
@@ -219,8 +218,7 @@ bool UsdVolVolume::BlockFieldRelationship(const TfToken &name) const
   {
     fieldRel.SetTargets({});
     return true;
-  }
-  else
+  } else
   {
     return false;
   }

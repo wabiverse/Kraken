@@ -173,8 +173,7 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
           "[PluginDiscover] 'precedence' metadata "
           "can not be read for plugin '%s'\n",
           type.GetTypeName().c_str());
-      }
-      else
+      } else
       {
         precedence = precedenceIt->second.Get<int>();
       }
@@ -188,8 +187,7 @@ void HioRankedTypeMap::Add(const mapped_type &baseType,
       // single name
       Name const &name = keyIt->second.Get<Name>();
       Add(TfToken(name), type, precedence);
-    }
-    else if (keyIt->second.IsArrayOf<Name>())
+    } else if (keyIt->second.IsArrayOf<Name>())
     {
       // list of names
       for (const auto &name : keyIt->second.GetArrayOf<Name>())

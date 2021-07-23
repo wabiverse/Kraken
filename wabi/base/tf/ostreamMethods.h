@@ -81,78 +81,78 @@ WABI_NAMESPACE_END
 namespace std
 {
 
-/// Output an STL vector using [ ] as delimiters.
-/// \ingroup group_tf_DebuggingOutput
-template<class T>
-typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
-  std::ostream &out,
-  const std::vector<T> &v)
-{
-  out << "[ ";
-  for (auto const &obj : v)
-    out << obj << " ";
-  out << "]";
+  /// Output an STL vector using [ ] as delimiters.
+  /// \ingroup group_tf_DebuggingOutput
+  template<class T>
+  typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
+    std::ostream &out,
+    const std::vector<T> &v)
+  {
+    out << "[ ";
+    for (auto const &obj : v)
+      out << obj << " ";
+    out << "]";
 
-  return out;
-}
+    return out;
+  }
 
-/// Output an STL set using ( ) as delimiters.
-/// \ingroup group_tf_DebuggingOutput
-template<class T>
-typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
-  std::ostream &out,
-  const std::set<T> &v)
-{
-  out << "( ";
-  for (auto const &obj : v)
-    out << obj << " ";
-  out << ")";
+  /// Output an STL set using ( ) as delimiters.
+  /// \ingroup group_tf_DebuggingOutput
+  template<class T>
+  typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
+    std::ostream &out,
+    const std::set<T> &v)
+  {
+    out << "( ";
+    for (auto const &obj : v)
+      out << obj << " ";
+    out << ")";
 
-  return out;
-}
+    return out;
+  }
 
-/// Output an STL list using { } as delimiters.
-/// \ingroup group_tf_DebuggingOutput
-template<class T>
-typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
-  std::ostream &out,
-  const std::list<T> &l)
-{
-  out << "{ ";
-  for (auto const &obj : l)
-    out << obj << " ";
-  out << "}";
+  /// Output an STL list using { } as delimiters.
+  /// \ingroup group_tf_DebuggingOutput
+  template<class T>
+  typename std::enable_if<WABI_NS::Tf_IsOstreamable<T>(), std::ostream &>::type operator<<(
+    std::ostream &out,
+    const std::list<T> &l)
+  {
+    out << "{ ";
+    for (auto const &obj : l)
+      out << obj << " ";
+    out << "}";
 
-  return out;
-}
+    return out;
+  }
 
-/// Output an TfHashMap using < > as delimiters.
-/// \ingroup group_tf_DebuggingOutput
-template<class K, class M, class H, class C, class A>
-typename std::enable_if<WABI_NS::Tf_IsOstreamable<K>() && WABI_NS::Tf_IsOstreamable<M>(),
-                        std::ostream &>::type
-operator<<(std::ostream &out, const WABI_NS::TfHashMap<K, M, H, C, A> &h)
-{
-  out << "< ";
-  for (auto const &p : h)
-    out << "<" << p.first << ": " << p.second << "> ";
-  out << ">";
-  return out;
-}
+  /// Output an TfHashMap using < > as delimiters.
+  /// \ingroup group_tf_DebuggingOutput
+  template<class K, class M, class H, class C, class A>
+  typename std::enable_if<WABI_NS::Tf_IsOstreamable<K>() && WABI_NS::Tf_IsOstreamable<M>(),
+                          std::ostream &>::type
+  operator<<(std::ostream &out, const WABI_NS::TfHashMap<K, M, H, C, A> &h)
+  {
+    out << "< ";
+    for (auto const &p : h)
+      out << "<" << p.first << ": " << p.second << "> ";
+    out << ">";
+    return out;
+  }
 
-/// Output an STL map using < > as delimiters.
-/// \ingroup group_tf_DebuggingOutput
-template<class K, class M>
-typename std::enable_if<WABI_NS::Tf_IsOstreamable<K>() && WABI_NS::Tf_IsOstreamable<M>(),
-                        std::ostream &>::type
-operator<<(std::ostream &out, const std::map<K, M> &h)
-{
-  out << "< ";
-  for (auto const &p : h)
-    out << "<" << p.first << ": " << p.second << "> ";
-  out << ">";
-  return out;
-}
+  /// Output an STL map using < > as delimiters.
+  /// \ingroup group_tf_DebuggingOutput
+  template<class K, class M>
+  typename std::enable_if<WABI_NS::Tf_IsOstreamable<K>() && WABI_NS::Tf_IsOstreamable<M>(),
+                          std::ostream &>::type
+  operator<<(std::ostream &out, const std::map<K, M> &h)
+  {
+    out << "< ";
+    for (auto const &p : h)
+      out << "<" << p.first << ": " << p.second << "> ";
+    out << ">";
+    return out;
+  }
 
 }  // namespace std
 

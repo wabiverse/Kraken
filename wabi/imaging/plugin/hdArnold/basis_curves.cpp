@@ -46,7 +46,6 @@ TF_DEFINE_PRIVATE_TOKENS(
 
 namespace
 {
-
 }  // namespace
 
 HdArnoldBasisCurves::HdArnoldBasisCurves(HdArnoldRenderDelegate *delegate, const SdfPath &id)
@@ -83,25 +82,21 @@ void HdArnoldBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     {
       AiNodeSetStr(GetArnoldNode(), str::basis, str::linear);
       _interpolation = HdTokens->linear;
-    }
-    else
+    } else
     {
       if (curveBasis == HdTokens->bezier)
       {
         AiNodeSetStr(GetArnoldNode(), str::basis, str::bezier);
         _interpolation = HdTokens->bezier;
-      }
-      else if (curveBasis == HdTokens->bSpline)
+      } else if (curveBasis == HdTokens->bSpline)
       {
         AiNodeSetStr(GetArnoldNode(), str::basis, str::b_spline);
         _interpolation = HdTokens->bSpline;
-      }
-      else if (curveBasis == HdTokens->catmullRom)
+      } else if (curveBasis == HdTokens->catmullRom)
       {
         AiNodeSetStr(GetArnoldNode(), str::basis, str::catmull_rom);
         _interpolation = HdTokens->catmullRom;
-      }
-      else
+      } else
       {
         AiNodeSetStr(GetArnoldNode(), str::basis, str::linear);
         _interpolation = HdTokens->linear;
@@ -113,8 +108,7 @@ void HdArnoldBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     if (_interpolation == HdTokens->linear)
     {
       decltype(_vertexCounts){}.swap(_vertexCounts);
-    }
-    else
+    } else
     {
       _vertexCounts = vertexCounts;
     }
@@ -153,8 +147,7 @@ void HdArnoldBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     if (material != nullptr)
     {
       AiNodeSetPtr(GetArnoldNode(), str::shader, material->GetSurfaceShader());
-    }
-    else
+    } else
     {
       AiNodeSetPtr(GetArnoldNode(), str::shader, GetRenderDelegate()->GetFallbackShader());
     }
@@ -187,14 +180,12 @@ void HdArnoldBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
 
           curvesData.RemapCurvesVertexPrimvar<float, double, GfHalf>(value);
           ArnoldUsdCurvesData::SetRadiusFromValue(GetArnoldNode(), value);
-        }
-        else
+        } else
         {
           ArnoldUsdCurvesData::SetRadiusFromValue(GetArnoldNode(), desc.value);
         }
         // For constant and
-      }
-      else if (desc.interpolation == HdInterpolationConstant)
+      } else if (desc.interpolation == HdInterpolationConstant)
       {
         // We skip reading the basis for now as it would require remapping the vertices, widths and
         // all the primvars.
@@ -202,8 +193,7 @@ void HdArnoldBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
         {
           HdArnoldSetConstantPrimvar(GetArnoldNode(), primvar.first, desc.role, desc.value, &visibility);
         }
-      }
-      else if (desc.interpolation == HdInterpolationUniform)
+      } else if (desc.interpolation == HdInterpolationUniform)
       {
         if (primvar.first == str::t_uv || primvar.first == str::t_st)
         {
@@ -211,43 +201,40 @@ void HdArnoldBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
           if (desc.value.IsHolding<VtVec2fArray>())
           {
             const auto &v = desc.value.UncheckedGet<VtVec2fArray>();
-            AiNodeSetArray(
-              GetArnoldNode(), str::uvs, AiArrayConvert(v.size(), 1, AI_TYPE_VECTOR2, v.data()));
-          }
-          else if (desc.value.IsHolding<VtVec3fArray>())
+            AiNodeSetArray(GetArnoldNode(),
+                           str::uvs,
+                           AiArrayConvert(v.size(), 1, AI_TYPE_VECTOR2, v.data()));
+          } else if (desc.value.IsHolding<VtVec3fArray>())
           {
             const auto &v = desc.value.UncheckedGet<VtVec3fArray>();
             auto *arr = AiArrayAllocate(v.size(), 1, AI_TYPE_VECTOR2);
-            std::transform(
-              v.begin(), v.end(), static_cast<GfVec2f *>(AiArrayMap(arr)), [](const GfVec3f &in) -> GfVec2f {
-                return {in[0], in[1]};
-              });
+            std::transform(v.begin(),
+                           v.end(),
+                           static_cast<GfVec2f *>(AiArrayMap(arr)),
+                           [](const GfVec3f &in) -> GfVec2f {
+                             return {in[0], in[1]};
+                           });
             AiArrayUnmap(arr);
             AiNodeSetArray(GetArnoldNode(), str::uvs, arr);
-          }
-          else
+          } else
           {
             // If it's an unsupported type, just set it as user data.
             HdArnoldSetUniformPrimvar(GetArnoldNode(), primvar.first, desc.role, desc.value);
           }
-        }
-        else
+        } else
         {
           HdArnoldSetUniformPrimvar(GetArnoldNode(), primvar.first, desc.role, desc.value);
         }
-      }
-      else if (desc.interpolation == HdInterpolationVertex || desc.interpolation == HdInterpolationVarying)
+      } else if (desc.interpolation == HdInterpolationVertex || desc.interpolation == HdInterpolationVarying)
       {
         if (primvar.first == HdTokens->points)
         {
           HdArnoldSetPositionFromValue(GetArnoldNode(), str::curves, desc.value);
-        }
-        else if (primvar.first == HdTokens->normals)
+        } else if (primvar.first == HdTokens->normals)
         {
           // This should be the same number as points.
           HdArnoldSetPositionFromValue(GetArnoldNode(), str::orientations, desc.value);
-        }
-        else
+        } else
         {
           auto value = desc.value;
           if (_interpolation != HdTokens->linear)
@@ -266,8 +253,7 @@ void HdArnoldBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
           }
           HdArnoldSetVertexPrimvar(GetArnoldNode(), primvar.first, desc.role, value);
         }
-      }
-      else if (desc.interpolation == HdInterpolationVarying)
+      } else if (desc.interpolation == HdInterpolationVarying)
       {
         HdArnoldSetVertexPrimvar(GetArnoldNode(), primvar.first, desc.role, desc.value);
       }

@@ -1570,7 +1570,7 @@ class UsdStage : public TfRefBase, public TfWeakBase
 
   // Helper for Open() overloads -- searches and publishes to bound caches.
   template<class... Args>
-  static UsdStageRefPtr _OpenImpl(InitialLoadSet load, Args const &... args);
+  static UsdStageRefPtr _OpenImpl(InitialLoadSet load, Args const &...args);
 
   // Releases resources used by this stage.
   void _Close();
@@ -2213,8 +2213,7 @@ bool UsdStage::GetMetadata(const TfToken &key, T *value) const
   {
     *value = result.UncheckedGet<T>();
     return true;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR(
       "Requested type %s for stage metadatum %s does not"
@@ -2246,8 +2245,7 @@ bool UsdStage::GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, 
   {
     *value = result.UncheckedGet<T>();
     return true;
-  }
-  else
+  } else
   {
     TF_CODING_ERROR(
       "Requested type %s for stage metadatum %s[%s] does not"

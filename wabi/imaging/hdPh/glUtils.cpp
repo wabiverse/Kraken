@@ -66,8 +66,7 @@ VtValue _CreateVtArray(int numElements, int arraySize, int stride, std::vector<u
   if (stride == static_cast<int>(arraySize * sizeof(T)))
   {
     memcpy(dst, src, numElements * arraySize * sizeof(T));
-  }
-  else
+  } else
   {
     // deinterleaving
     for (int i = 0; i < numElements; ++i)
@@ -119,8 +118,7 @@ VtValue HdPhGLUtils::ReadBuffer(uint64_t vbo, HdTupleType tupleType, int vboOffs
     if (caps.directStateAccessEnabled)
     {
       glGetNamedBufferSubData(vbo, vboOffset, vboSize, &tmp[0]);
-    }
-    else
+    } else
     {
       glBindBuffer(GL_ARRAY_BUFFER, vbo);
       glGetBufferSubData(GL_ARRAY_BUFFER, vboOffset, vboSize, &tmp[0]);

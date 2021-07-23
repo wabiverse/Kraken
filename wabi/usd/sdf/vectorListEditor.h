@@ -156,8 +156,7 @@ class Sdf_VectorListEditor : public Sdf_ListEditor<TypePolicy>
     if (newData.empty())
     {
       _GetOwner()->ClearField(_GetField());
-    }
-    else
+    } else
     {
       typedef Sdf_VectorFieldAdapter<FieldStorageType, value_type> ToFieldType;
       const std::vector<FieldStorageType> newFieldData = ToFieldType::Convert(newData);

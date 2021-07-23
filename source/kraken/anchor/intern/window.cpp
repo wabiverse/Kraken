@@ -78,16 +78,14 @@ eAnchorStatus AnchorSystemWindow::setDrawingContextType(eAnchorDrawingContextTyp
     if (ANCHOR::GetCurrentContext() != NULL)
     {
       m_drawingContextType = type;
-    }
-    else
+    } else
     {
       ANCHOR::CreateContext();
       m_drawingContextType = ANCHOR_DrawingContextTypeNone;
     }
 
     return (type == m_drawingContextType) ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
-  }
-  else
+  } else
   {
     return ANCHOR_SUCCESS;
   }

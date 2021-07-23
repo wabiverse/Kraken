@@ -237,8 +237,7 @@ void PcpCache::RequestPayloads(const SdfPathSet &pathsToInclude,
       {
         cacheChanges->DidChangeSignificantly(this, *path);
       }
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Path <%s> must be a prim path", path->GetText());
     }
@@ -254,8 +253,7 @@ void PcpCache::RequestPayloads(const SdfPathSet &pathsToInclude,
           cacheChanges->DidChangeSignificantly(this, *path);
         }
       }
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Path <%s> must be a prim path", path->GetText());
     }
@@ -350,8 +348,10 @@ void PcpCache::RequestLayerMuting(const std::vector<std::string> &layersToMute,
                                                typedError->resolvedAssetPath) != finalLayersToUnmute.end();
         if (assetWasUnmuted)
         {
-          cacheChanges->DidMaybeFixAsset(
-            this, typedError->site, typedError->layer, typedError->resolvedAssetPath);
+          cacheChanges->DidMaybeFixAsset(this,
+                                         typedError->site,
+                                         typedError->layer,
+                                         typedError->resolvedAssetPath);
         }
       }
     }
@@ -517,8 +517,12 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const SdfLayerHandle &layer,
   PcpDependencyVector result;
   for (const auto &layerStack : FindAllLayerStacksUsingLayer(layer))
   {
-    PcpDependencyVector deps = FindSiteDependencies(
-      layerStack, sitePath, depMask, recurseOnSite, recurseOnIndex, filterForExistingCachesOnly);
+    PcpDependencyVector deps = FindSiteDependencies(layerStack,
+                                                    sitePath,
+                                                    depMask,
+                                                    recurseOnSite,
+                                                    recurseOnIndex,
+                                                    filterForExistingCachesOnly);
     for (PcpDependency dep : deps)
     {
       // Fold in any sublayer offset.
@@ -583,16 +587,13 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const PcpLayerStackPtr &siteL
     if (!filterForExistingCachesOnly)
     {
       return true;
-    }
-    else if (indexPath.IsAbsoluteRootOrPrimPath())
+    } else if (indexPath.IsAbsoluteRootOrPrimPath())
     {
       return bool(FindPrimIndex(indexPath));
-    }
-    else if (indexPath.IsPropertyPath())
+    } else if (indexPath.IsPropertyPath())
     {
       return bool(FindPropertyIndex(indexPath));
-    }
-    else
+    } else
     {
       return false;
     }
@@ -672,9 +673,10 @@ PcpDependencyVector PcpCache::FindSiteDependencies(const PcpLayerStackPtr &siteL
         // with regular path translation.
         const PcpNodeRef parent = node.GetParentNode();
         depIndexPath = PcpTranslatePathFromNodeToRoot(
-          parent, localSitePath.ReplacePrefix(node.GetPath(), parent.GetPath()), &valid);
-      }
-      else
+          parent,
+          localSitePath.ReplacePrefix(node.GetPath(), parent.GetPath()),
+          &valid);
+      } else
       {
         depIndexPath = PcpTranslatePathFromNodeToRoot(node, localSitePath, &valid);
       }
@@ -904,8 +906,7 @@ void PcpCache::Apply(const PcpCacheChanges &changes, PcpLifeboat *lifeboat)
     _primIndexCache.clear();
     _propertyIndexCache.clear();
     _primDependencies->RemoveAll(lifeboat);
-  }
-  else
+  } else
   {
     // If layers may have changed, inform _primDependencies.
     if (changes.didMaybeChangeLayers)
@@ -920,8 +921,7 @@ void PcpCache::Apply(const PcpCacheChanges &changes, PcpLifeboat *lifeboat)
       if (path.IsPrimPath())
       {
         _RemovePrimAndPropertyCaches(path, lifeboat);
-      }
-      else
+      } else
       {
         _RemovePropertyCaches(path, lifeboat);
       }
@@ -962,12 +962,10 @@ void PcpCache::Apply(const PcpCacheChanges &changes, PcpLifeboat *lifeboat)
             _RemovePrimAndPropertyCaches(path, lifeboat);
           }
         }
-      }
-      else if (path.IsPropertyPath())
+      } else if (path.IsPropertyPath())
       {
         _RemovePropertyCache(path, lifeboat);
-      }
-      else if (path.IsTargetPath())
+      } else if (path.IsTargetPath())
       {
         // We have potentially aded or removed a relationship target
         // spec.  This invalidates the property stack for any
@@ -1034,8 +1032,7 @@ void PcpCache::Apply(const PcpCacheChanges &changes, PcpLifeboat *lifeboat)
       {
         newIncludes.push_back(j->ReplacePrefix(i->first, i->second, !fixTargetPaths));
         _includedPayloads.erase(j++);
-      }
-      else
+      } else
       {
         ++j;
       }
@@ -1321,8 +1318,7 @@ struct PcpCache::_ParallelIndexer
     if (async)
     {
       WorkMoveDestroyAsync(c);
-    }
-    else
+    } else
     {
       c.clear();
     }
@@ -1346,13 +1342,11 @@ struct PcpCache::_ParallelIndexer
       {
         // There is no cache entry for this path or any children.
         checkCache = false;
-      }
-      else if (i->second.IsValid())
+      } else if (i->second.IsValid())
       {
         // There is a valid cache entry.
         index = &i->second;
-      }
-      else
+      } else
       {
         // There is a cache entry but it is invalid.  There still
         // may be valid cache entries for children, so we must
@@ -1394,8 +1388,7 @@ struct PcpCache::_ParallelIndexer
         if (payloadState == PcpPrimIndexOutputs::IncludedByPredicate)
         {
           _cache->_includedPayloads.insert(path);
-        }
-        else
+        } else
         {
           _cache->_includedPayloads.erase(path);
         }
@@ -1503,8 +1496,9 @@ void PcpCache::_ComputePrimIndexesInParallel(const SdfPathVector &roots,
     // the call to ComputePrimIndex below is not concurrency safe.
     const PcpPrimIndex *parentIndex = rootPath == SdfPath::AbsoluteRootPath() ?
                                         nullptr :
-                                        &_ComputePrimIndexWithCompatibleInputs(
-                                          rootPath.GetParentPath(), inputs, allErrors);
+                                        &_ComputePrimIndexWithCompatibleInputs(rootPath.GetParentPath(),
+                                                                               inputs,
+                                                                               allErrors);
     indexer->ComputeIndex(parentIndex, rootPath);
   }
 

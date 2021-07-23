@@ -143,10 +143,10 @@ static PyObject *kpy_user_resource(PyObject *UNUSED(self), PyObject *args, PyObj
 {
   const struct PyC_StringEnumItems type_items[] = {
     {KRAKEN_USER_DATAFILES, "DATAFILES"},
-    {KRAKEN_USER_CONFIG, "CONFIG"},
-    {KRAKEN_USER_SCRIPTS, "SCRIPTS"},
-    {KRAKEN_USER_AUTOSAVE, "AUTOSAVE"},
-    {0, NULL},
+    {KRAKEN_USER_CONFIG,    "CONFIG"   },
+    {KRAKEN_USER_SCRIPTS,   "SCRIPTS"  },
+    {KRAKEN_USER_AUTOSAVE,  "AUTOSAVE" },
+    {0,                     NULL       },
   };
   struct PyC_StringEnum type = {type_items};
 
@@ -181,9 +181,9 @@ static PyObject *kpy_system_resource(PyObject *UNUSED(self), PyObject *args, PyO
 {
   const struct PyC_StringEnumItems type_items[] = {
     {KRAKEN_SYSTEM_DATAFILES, "DATAFILES"},
-    {KRAKEN_SYSTEM_SCRIPTS, "SCRIPTS"},
-    {KRAKEN_SYSTEM_PYTHON, "PYTHON"},
-    {0, NULL},
+    {KRAKEN_SYSTEM_SCRIPTS,   "SCRIPTS"  },
+    {KRAKEN_SYSTEM_PYTHON,    "PYTHON"   },
+    {0,                       NULL       },
   };
   struct PyC_StringEnum type = {type_items};
 
@@ -203,27 +203,26 @@ static PyObject *kpy_system_resource(PyObject *UNUSED(self), PyObject *args, PyO
   return PyC_UnicodeFromByte(path ? path : "");
 }
 
-PyDoc_STRVAR(
-  kpy_resource_path_doc,
-  ".. function:: resource_path(type, major=kpy.app.version[0], minor=kpy.app.version[1])\n"
-  "\n"
-  "   Return the base path for storing system files.\n"
-  "\n"
-  "   :arg type: string in ['USER', 'LOCAL', 'SYSTEM'].\n"
-  "   :type type: string\n"
-  "   :arg major: major version, defaults to current.\n"
-  "   :type major: int\n"
-  "   :arg minor: minor version, defaults to current.\n"
-  "   :type minor: string\n"
-  "   :return: the resource path (not necessarily existing).\n"
-  "   :rtype: string\n");
+PyDoc_STRVAR(kpy_resource_path_doc,
+             ".. function:: resource_path(type, major=kpy.app.version[0], minor=kpy.app.version[1])\n"
+             "\n"
+             "   Return the base path for storing system files.\n"
+             "\n"
+             "   :arg type: string in ['USER', 'LOCAL', 'SYSTEM'].\n"
+             "   :type type: string\n"
+             "   :arg major: major version, defaults to current.\n"
+             "   :type major: int\n"
+             "   :arg minor: minor version, defaults to current.\n"
+             "   :type minor: string\n"
+             "   :return: the resource path (not necessarily existing).\n"
+             "   :rtype: string\n");
 static PyObject *kpy_resource_path(PyObject *UNUSED(self), PyObject *args, PyObject *kw)
 {
   const struct PyC_StringEnumItems type_items[] = {
-    {KRAKEN_RESOURCE_PATH_USER, "USER"},
-    {KRAKEN_RESOURCE_PATH_LOCAL, "LOCAL"},
+    {KRAKEN_RESOURCE_PATH_USER,   "USER"  },
+    {KRAKEN_RESOURCE_PATH_LOCAL,  "LOCAL" },
     {KRAKEN_RESOURCE_PATH_SYSTEM, "SYSTEM"},
-    {0, NULL},
+    {0,                           NULL    },
   };
   struct PyC_StringEnum type = {type_items};
 
@@ -232,8 +231,7 @@ static PyObject *kpy_resource_path(PyObject *UNUSED(self), PyObject *args, PyObj
 
   static const char *_keywords[] = {"type", "major", "minor", NULL};
   static _PyArg_Parser _parser = {"O&|$ii:resource_path", _keywords, 0};
-  if (!_PyArg_ParseTupleAndKeywordsFast(
-        args, kw, &_parser, PyC_ParseStringEnum, &type, &major, &minor))
+  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &major, &minor))
   {
     return NULL;
   }
@@ -272,8 +270,7 @@ static PyObject *kpy_escape_identifier(PyObject *UNUSED(self), PyObject *value)
   {
     Py_INCREF(value);
     value_escape = value;
-  }
-  else
+  } else
   {
     value_escape = PyUnicode_FromStringAndSize(value_escape_str, value_escape_str_len);
   }
@@ -313,8 +310,7 @@ static PyObject *kpy_unescape_identifier(PyObject *UNUSED(self), PyObject *value
   {
     Py_INCREF(value);
     value_unescape = value;
-  }
-  else
+  } else
   {
     value_unescape = PyUnicode_FromStringAndSize(value_unescape_str, value_unescape_str_len);
   }
@@ -376,8 +372,7 @@ static PyObject *kpy_import_test(const char *modname)
   if (mod)
   {
     Py_DECREF(mod);
-  }
-  else
+  } else
   {
     PyErr_Print();
     PyErr_Clear();
@@ -404,13 +399,12 @@ void KPy_init_modules(struct kContext *C)
     PyObject *py_modpath = PyUnicode_FromString(modpath);
     PyList_Insert(sys_path, 0, py_modpath); /* add first */
     Py_DECREF(py_modpath);
-  }
-  else
+  } else
   {
     printf("kpy: couldn't find 'scripts/modules', kraken probably won't start.\n");
   }
   /* stand alone utility modules not related to kraken directly */
-  //IDProp_Init_Types(); /* not actually a submodule, just types */
+  // IDProp_Init_Types(); /* not actually a submodule, just types */
 
   mod = PyModule_New("_kpy");
 

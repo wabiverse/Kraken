@@ -266,8 +266,7 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPar
     if (param.IsPrimvarRedirect() || param.IsFallback() || param.IsTransform2d())
     {
       HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &specs, &sources);
-    }
-    else if (param.IsTexture())
+    } else if (param.IsTexture())
     {
       // Fallback value only supported for Uv and Field textures.
       if (param.textureType == HdTextureType::Uv || param.textureType == HdTextureType::Field)
@@ -284,8 +283,13 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPar
   // Textures created using Phoenix texture system.
   HdPhShaderCode::NamedTextureHandleVector textures;
 
-  _ProcessTextureDescriptors(
-    sceneDelegate, resourceRegistry, _surfaceShader, textureDescriptors, &textures, &specs, &sources);
+  _ProcessTextureDescriptors(sceneDelegate,
+                             resourceRegistry,
+                             _surfaceShader,
+                             textureDescriptors,
+                             &textures,
+                             &specs,
+                             &sources);
 
   // Check if the texture hash has changed; if so, we need to ask for a
   // re-batch.  We only look at NamedTextureHandles because the legacy system

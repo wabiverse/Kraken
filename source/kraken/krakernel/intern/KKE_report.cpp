@@ -72,7 +72,7 @@ char *KKE_reports_string(ReportList *reports, eReportType level)
     return NULL;
   }
 
-  UNIVERSE_FOR_ALL(rep, reports->list)
+  UNIVERSE_FOR_ALL (rep, reports->list)
   {
     if (rep->type >= level)
     {
@@ -83,8 +83,7 @@ char *KKE_reports_string(ReportList *reports, eReportType level)
   if (!text.empty())
   {
     KLI_strncpy(cstring, CHARALL(text), sizeof(CHARALL(text)));
-  }
-  else
+  } else
   {
     cstring = NULL;
   }

@@ -83,18 +83,15 @@ HdParsedAovToken::HdParsedAovToken(TfToken const &aovName)
   {
     name = TfToken(aov.substr(primvars.size()));
     isPrimvar = true;
-  }
-  else if (aov.size() > lpe.size() && aov.compare(0, lpe.size(), lpe) == 0)
+  } else if (aov.size() > lpe.size() && aov.compare(0, lpe.size(), lpe) == 0)
   {
     name = TfToken(aov.substr(lpe.size()));
     isLpe = true;
-  }
-  else if (aov.size() > shader.size() && aov.compare(0, shader.size(), shader) == 0)
+  } else if (aov.size() > shader.size() && aov.compare(0, shader.size(), shader) == 0)
   {
     name = TfToken(aov.substr(shader.size()));
     isShader = true;
-  }
-  else
+  } else
   {
     name = aovName;
   }

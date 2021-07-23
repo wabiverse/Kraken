@@ -43,23 +43,24 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static UsdAttribute _CreateExtentAttr(UsdGeomBoundable &self, object defaultVal, bool writeSparsely)
-{
-  return self.CreateExtentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
-                               writeSparsely);
-}
+  static UsdAttribute _CreateExtentAttr(UsdGeomBoundable &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateExtentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
+                                 writeSparsely);
+  }
 
-static std::string _Repr(const UsdGeomBoundable &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdGeom.Boundable(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdGeomBoundable &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdGeom.Boundable(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -88,8 +89,9 @@ void wrapUsdGeomBoundable()
     .def(!self)
 
     .def("GetExtentAttr", &This::GetExtentAttr)
-    .def(
-      "CreateExtentAttr", &_CreateExtentAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateExtentAttr",
+         &_CreateExtentAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("__repr__", ::_Repr);
 
@@ -118,35 +120,35 @@ void wrapUsdGeomBoundable()
 namespace
 {
 
-static object _ComputeExtentFromPlugins(const UsdGeomBoundable &boundable, const UsdTimeCode &time)
-{
-  VtVec3fArray extent;
-  if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, &extent))
+  static object _ComputeExtentFromPlugins(const UsdGeomBoundable &boundable, const UsdTimeCode &time)
   {
-    return object();
+    VtVec3fArray extent;
+    if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, &extent))
+    {
+      return object();
+    }
+    return object(extent);
   }
-  return object(extent);
-}
 
-static object _ComputeExtentFromPluginsWithTransform(const UsdGeomBoundable &boundable,
-                                                     const UsdTimeCode &time,
-                                                     const GfMatrix4d &transform)
-{
-  VtVec3fArray extent;
-  if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, transform, &extent))
+  static object _ComputeExtentFromPluginsWithTransform(const UsdGeomBoundable &boundable,
+                                                       const UsdTimeCode &time,
+                                                       const GfMatrix4d &transform)
   {
-    return object();
+    VtVec3fArray extent;
+    if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, transform, &extent))
+    {
+      return object();
+    }
+    return object(extent);
   }
-  return object(extent);
-}
 
-WRAP_CUSTOM
-{
-  _class.def("ComputeExtentFromPlugins", &_ComputeExtentFromPlugins, (arg("boundable"), arg("time")))
-    .def("ComputeExtentFromPlugins",
-         &_ComputeExtentFromPluginsWithTransform,
-         (arg("boundable"), arg("time"), arg("transform")))
-    .staticmethod("ComputeExtentFromPlugins");
-}
+  WRAP_CUSTOM
+  {
+    _class.def("ComputeExtentFromPlugins", &_ComputeExtentFromPlugins, (arg("boundable"), arg("time")))
+      .def("ComputeExtentFromPlugins",
+           &_ComputeExtentFromPluginsWithTransform,
+           (arg("boundable"), arg("time"), arg("transform")))
+      .staticmethod("ComputeExtentFromPlugins");
+  }
 
 }  // anonymous namespace

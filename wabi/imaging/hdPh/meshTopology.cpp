@@ -121,14 +121,17 @@ HdPh_QuadInfoBuilderComputationSharedPtr HdPh_MeshTopology::GetQuadInfoBuilderCo
     }
 
     HdBufferSourceSharedPtr quadrangulateTable = std::make_shared<HdPh_QuadrangulateTableComputation>(
-      this, builder);
+      this,
+      builder);
 
     // allocate quadrangulation table on GPU
     HdBufferSpecVector bufferSpecs;
     quadrangulateTable->GetBufferSpecs(&bufferSpecs);
 
     _quadrangulateTableRange = resourceRegistry->AllocateNonUniformBufferArrayRange(
-      HdTokens->topology, bufferSpecs, HdBufferArrayUsageHint());
+      HdTokens->topology,
+      bufferSpecs,
+      HdBufferArrayUsageHint());
 
     resourceRegistry->AddSource(_quadrangulateTableRange, quadrangulateTable);
   }
@@ -225,8 +228,10 @@ HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdTopologyComputation(SdfPath con
   bool adaptive = RefinesToBSplinePatches() || RefinesToBoxSplineTrianglePatches();
 
   // create a topology computation for HdPh_Subdivision
-  HdBufferSourceSharedPtr builder = _subdivision->CreateTopologyComputation(
-    this, adaptive, _refineLevel, id);
+  HdBufferSourceSharedPtr builder = _subdivision->CreateTopologyComputation(this,
+                                                                            adaptive,
+                                                                            _refineLevel,
+                                                                            id);
   _osdTopologyBuilder = builder;  // retain weak ptr
   return builder;
 }

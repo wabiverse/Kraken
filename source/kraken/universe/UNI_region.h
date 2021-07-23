@@ -56,7 +56,7 @@ enum eRegionType
 };
 
 #define RGN_TYPE_IS_HEADER_ANY(regiontype) \
-  (((1 << (regiontype)) & \
+  (((1 << (regiontype)) &                  \
     ((1 << RGN_TYPE_HEADER) | 1 << (RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_FOOTER))) != 0)
 
 

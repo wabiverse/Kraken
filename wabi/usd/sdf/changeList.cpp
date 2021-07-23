@@ -34,14 +34,14 @@ WABI_NAMESPACE_BEGIN
 
 namespace
 {
-struct _PathFastLessThan
-{
-  inline bool operator()(SdfChangeList::EntryList::value_type const &a,
-                         SdfChangeList::EntryList::value_type const &b) const
+  struct _PathFastLessThan
   {
-    return SdfPath::FastLessThan()(a.first, b.first);
-  }
-};
+    inline bool operator()(SdfChangeList::EntryList::value_type const &a,
+                           SdfChangeList::EntryList::value_type const &b) const
+    {
+      return SdfPath::FastLessThan()(a.first, b.first);
+    }
+  };
 }  // namespace
 
 TF_INSTANTIATE_SINGLETON(SdfChangeList);
@@ -222,12 +222,12 @@ SdfChangeList::EntryList::const_iterator SdfChangeList::FindEntry(const SdfPath 
     {
       return _entries.begin() + tableIter->second;
     }
-  }
-  else
+  } else
   {
     // Linear search the unsorted range.
-    iter = std::find_if(
-      _entries.begin(), _entries.end(), [&path](EntryList::value_type const &e) { return e.first == path; });
+    iter = std::find_if(_entries.begin(), _entries.end(), [&path](EntryList::value_type const &e) {
+      return e.first == path;
+    });
   }
   return iter;
 }
@@ -238,8 +238,7 @@ SdfChangeList::Entry &SdfChangeList::_AddNewEntry(SdfPath const &path)
   if (_entriesAccel)
   {
     _entriesAccel->emplace(path, _entries.size() - 1);
-  }
-  else if (ARCH_UNLIKELY(_entries.size() >= _AccelThreshold))
+  } else if (ARCH_UNLIKELY(_entries.size() >= _AccelThreshold))
   {
     _RebuildAccel();
   }
@@ -256,8 +255,7 @@ void SdfChangeList::_RebuildAccel()
     {
       _entriesAccel->emplace(p.first, idx++);
     }
-  }
-  else
+  } else
   {
     _entriesAccel.reset();
   }
@@ -321,8 +319,7 @@ void SdfChangeList::DidChangeInfo(const SdfPath &path,
   if (iter == entry.infoChanged.end())
   {
     entry.infoChanged.emplace_back(key, std::pair<VtValue const &, VtValue const &>(oldVal, newVal));
-  }
-  else
+  } else
   {
     // Update new val, but retain old val from previous change.
     // Produce a non-const iterator using the erase(i, i) trick.
@@ -352,8 +349,7 @@ void SdfChangeList::DidChangePrimName(const SdfPath &oldPath, const SdfPath &new
     // Clear out existing edits.
     oldEntry = Entry();
     oldEntry.flags.didRemoveNonInertPrim = true;
-  }
-  else
+  } else
   {
     // Transfer accumulated changes about oldPath to apply to newPath.
     Entry &moved = _MoveEntry(oldPath, newPath);
@@ -430,8 +426,7 @@ void SdfChangeList::DidChangePropertyName(const SdfPath &oldPath, const SdfPath 
     Entry &oldEntry = _GetEntry(oldPath);
     oldEntry = Entry();
     _GetEntry(oldPath).flags.didRemoveProperty = true;
-  }
-  else
+  } else
   {
     // Transfer accumulated changes about oldPath to apply to newPath.
     Entry &moved = _MoveEntry(oldPath, newPath);

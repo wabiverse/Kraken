@@ -105,8 +105,7 @@ void Trace_AggregateTreeBuilder::_CreateAggregateNodes()
     if (it.second >= it.first->GetChildrenRef().size())
     {
       aggStack.pop();
-    }
-    else
+    } else
     {
       // Visit the current child and then the next child.
       treeStack.push(std::make_pair(it.first, it.second + 1));
@@ -170,8 +169,7 @@ void Trace_AggregateTreeBuilder::_OnCounterEvent(const TraceThreadId &threadInde
   if (isDelta)
   {
     it->second += e.GetCounterValue();
-  }
-  else
+  } else
   {
     it->second = e.GetCounterValue();
   }
@@ -208,9 +206,9 @@ TraceAggregateNodePtr Trace_AggregateTreeBuilder::_FindAggregateNode(const Trace
   const TraceEventNodeRefPtrVector &threadNodeList = _tree->GetRoot()->GetChildrenRef();
   TfToken threadKey(threadId.ToString());
   TraceEventNodeRefPtrVector::const_iterator it = std::find_if(
-    threadNodeList.begin(), threadNodeList.end(), [&threadKey](const TraceEventNodeRefPtr &node) {
-      return node->GetKey() == threadKey;
-    });
+    threadNodeList.begin(),
+    threadNodeList.end(),
+    [&threadKey](const TraceEventNodeRefPtr &node) { return node->GetKey() == threadKey; });
   if (it == threadNodeList.end())
   {
     return nullptr;
@@ -232,8 +230,7 @@ TraceAggregateNodePtr Trace_AggregateTreeBuilder::_FindAggregateNode(const Trace
     if (childIt == node->GetChildrenRef().end())
     {
       break;
-    }
-    else
+    } else
     {
       node = *childIt;
     }

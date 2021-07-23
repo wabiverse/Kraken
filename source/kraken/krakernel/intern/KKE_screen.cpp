@@ -59,7 +59,7 @@ int find_free_screenid(kContext *C)
   int id = 1;
 
   Main *kmain = CTX_data_main(C);
-  UNIVERSE_FOR_ALL(screen, kmain->screens)
+  UNIVERSE_FOR_ALL (screen, kmain->screens)
   {
     if (id <= screen->winid)
     {
@@ -78,7 +78,7 @@ bool KKE_screen_is_used(const kScreen *screen)
 
 SpaceType *KKE_spacetype_from_id(int spaceid)
 {
-  UNIVERSE_FOR_ALL(st, spacetypes)
+  UNIVERSE_FOR_ALL (st, spacetypes)
   {
     if (st->spaceid == spaceid)
     {
@@ -94,7 +94,7 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
   ScrArea *big = nullptr;
   int maxsize = 0;
 
-  UNIVERSE_FOR_ALL(area, screen->areas)
+  UNIVERSE_FOR_ALL (area, screen->areas)
   {
     if (spacetype == SPACE_TYPE_ANY)
     {
@@ -120,7 +120,7 @@ ARegion *KKE_area_find_region_type(const ScrArea *area, int region_type)
 {
   if (area)
   {
-    UNIVERSE_FOR_ALL(region, area->regions)
+    UNIVERSE_FOR_ALL (region, area->regions)
     {
       if (region->regiontype == region_type)
       {

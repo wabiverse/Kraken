@@ -118,8 +118,7 @@ std::string PcpErrorArcCycle::ToString() const
             msg += "refers to:\n";
             break;
         }
-      }
-      else
+      } else
       {
         msg += "CANNOT ";
         switch (segment.arcType)

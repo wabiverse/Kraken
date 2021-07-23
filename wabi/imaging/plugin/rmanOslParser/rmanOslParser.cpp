@@ -162,8 +162,7 @@ NdrNodeUniquePtr RmanOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
     {
       // Attempt to parse the node
       hasErrors = sq->Open(discoveryResult.resolvedUri.c_str(), "");
-    }
-    else
+    } else
     {
       std::shared_ptr<const char> buffer;
       std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(
@@ -196,8 +195,7 @@ NdrNodeUniquePtr RmanOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
       TfDeleteFile(tmpFile);
       m.Clear();
     }
-  }
-  else
+  } else
   {
     TF_WARN(
       "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
@@ -360,8 +358,7 @@ NdrTokenMap RmanOslParserPlugin::_getPropertyMetadata(const RixShaderParameter *
           metadata[SdrPropertyMetadata->VstructMemberOf] = vstruct.substr(0, dotPos);
 
           metadata[SdrPropertyMetadata->VstructMemberName] = vstruct.substr(dotPos + 1);
-        }
-        else
+        } else
         {
           TF_DEBUG(NDR_PARSING)
             .Msg("Bad virtual structure member in %s.%s:%s",
@@ -370,8 +367,7 @@ NdrTokenMap RmanOslParserPlugin::_getPropertyMetadata(const RixShaderParameter *
                  vstruct.c_str());
         }
       }
-    }
-    else if (metaParam->Type() == RixShaderParameter::k_String)
+    } else if (metaParam->Type() == RixShaderParameter::k_String)
     {
       metadata[entryName] = std::string(*metaParam->DefaultS());
     }
@@ -551,8 +547,7 @@ VtValue RmanOslParserPlugin::_getDefaultValue(const RixShaderParameter *param,
     if (!isArray && dflt_size == 3)
     {
       return VtValue(GfVec3f(dflts[0], dflts[1], dflts[2]));
-    }
-    else if (isArray && dflt_size % 3 == 0)
+    } else if (isArray && dflt_size % 3 == 0)
     {
       int numElements = dflt_size / 3;
       VtVec3fArray array(numElements);

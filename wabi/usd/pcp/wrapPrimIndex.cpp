@@ -35,35 +35,35 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static SdfPrimSpecHandleVector _GetPrimStack(const PcpPrimIndex &self)
-{
-  const PcpPrimRange primRange = self.GetPrimRange();
-
-  SdfPrimSpecHandleVector primStack;
-  primStack.reserve(std::distance(primRange.first, primRange.second));
-  TF_FOR_ALL (it, primRange)
+  static SdfPrimSpecHandleVector _GetPrimStack(const PcpPrimIndex &self)
   {
-    primStack.push_back(SdfGetPrimAtPath(*it));
+    const PcpPrimRange primRange = self.GetPrimRange();
+
+    SdfPrimSpecHandleVector primStack;
+    primStack.reserve(std::distance(primRange.first, primRange.second));
+    TF_FOR_ALL (it, primRange)
+    {
+      primStack.push_back(SdfGetPrimAtPath(*it));
+    }
+
+    return primStack;
   }
 
-  return primStack;
-}
+  static boost::python::tuple _ComputePrimChildNames(PcpPrimIndex &index)
+  {
+    TfTokenVector nameOrder;
+    PcpTokenSet prohibitedNameSet;
+    index.ComputePrimChildNames(&nameOrder, &prohibitedNameSet);
+    TfTokenVector prohibitedNamesVector(prohibitedNameSet.begin(), prohibitedNameSet.end());
+    return boost::python::make_tuple(nameOrder, prohibitedNamesVector);
+  }
 
-static boost::python::tuple _ComputePrimChildNames(PcpPrimIndex &index)
-{
-  TfTokenVector nameOrder;
-  PcpTokenSet prohibitedNameSet;
-  index.ComputePrimChildNames(&nameOrder, &prohibitedNameSet);
-  TfTokenVector prohibitedNamesVector(prohibitedNameSet.begin(), prohibitedNameSet.end());
-  return boost::python::make_tuple(nameOrder, prohibitedNamesVector);
-}
-
-static TfTokenVector _ComputePrimPropertyNames(PcpPrimIndex &index)
-{
-  TfTokenVector result;
-  index.ComputePrimPropertyNames(&result);
-  return result;
-}
+  static TfTokenVector _ComputePrimPropertyNames(PcpPrimIndex &index)
+  {
+    TfTokenVector result;
+    index.ComputePrimPropertyNames(&result);
+    return result;
+  }
 
 }  // anonymous namespace
 

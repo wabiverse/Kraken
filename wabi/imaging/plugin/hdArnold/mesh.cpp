@@ -52,119 +52,120 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 namespace
 {
 
-template<typename UsdType, unsigned ArnoldType, typename StorageType>
-struct _ConvertValueToArnoldParameter
-{
-  inline static unsigned int f(AtNode *node, const StorageType &data, const AtString &arnoldName)
+  template<typename UsdType, unsigned ArnoldType, typename StorageType>
+  struct _ConvertValueToArnoldParameter
   {
-    return false;
-  }
-};
-
-// In most cases we are just receiving a simple VtValue holding one key,
-// in this case we simple have to convert the data.
-template<typename UsdType, unsigned ArnoldType>
-struct _ConvertValueToArnoldParameter<UsdType, ArnoldType, VtValue>
-{
-  inline static unsigned int f(AtNode *node, const VtValue &value, const AtString &arnoldName)
-  {
-    if (!value.IsHolding<VtArray<UsdType>>())
+    inline static unsigned int f(AtNode *node, const StorageType &data, const AtString &arnoldName)
     {
-      return 0;
+      return false;
     }
-    const auto &values = value.UncheckedGet<VtArray<UsdType>>();
-    const auto numValues = static_cast<unsigned int>(values.size());
-    // Data comes in as flattened and in these cases the memory layout of the USD data matches the
-    // memory layout of the Arnold data.
-    auto *valueList = AiArrayConvert(numValues, 1, ArnoldType, values.data());
-    AiNodeSetArray(node, arnoldName, valueList);
-    return numValues;
-  }
-};
+  };
 
-// In other cases, the converted value has to match the number of the keys on the positions
-// (like with normals), so we are receiving a sample primvar, and if the keys are less than
-// the maximum number of samples, we are copying the first key.
-template<typename UsdType, unsigned ArnoldType>
-struct _ConvertValueToArnoldParameter<UsdType, ArnoldType, HdArnoldSampledPrimvarType>
-{
-  inline static unsigned int f(AtNode *node,
-                               const HdArnoldSampledPrimvarType &samples,
-                               const AtString &arnoldName)
+  // In most cases we are just receiving a simple VtValue holding one key,
+  // in this case we simple have to convert the data.
+  template<typename UsdType, unsigned ArnoldType>
+  struct _ConvertValueToArnoldParameter<UsdType, ArnoldType, VtValue>
   {
-    if (samples.count == 0 ||
-#ifdef USD_HAS_UPDATED_TIME_SAMPLE_ARRAY
-        samples.values.empty() ||
-#endif
-        !samples.values[0].IsHolding<VtArray<UsdType>>())
+    inline static unsigned int f(AtNode *node, const VtValue &value, const AtString &arnoldName)
     {
-      return 0;
-    }
-    const auto &v0 = samples.values[0].UncheckedGet<VtArray<UsdType>>();
-    const auto numKeys = static_cast<unsigned int>(samples.count);
-    const auto numValues = static_cast<unsigned int>(v0.size());
-    auto *valueList = AiArrayAllocate(static_cast<unsigned int>(v0.size()), numKeys, ArnoldType);
-    AiArraySetKey(valueList, 0, v0.data());
-    for (auto index = decltype(numKeys){1}; index < numKeys; index += 1)
-    {
-      if (
-#ifdef USD_HAS_UPDATED_TIME_SAMPLE_ARRAY
-        samples.values.size()
-#else
-        samples.count
-#endif
-        > index)
+      if (!value.IsHolding<VtArray<UsdType>>())
       {
-        const auto &vti = samples.values[index];
-        if (ARCH_LIKELY(vti.IsHolding<VtArray<UsdType>>()))
+        return 0;
+      }
+      const auto &values = value.UncheckedGet<VtArray<UsdType>>();
+      const auto numValues = static_cast<unsigned int>(values.size());
+      // Data comes in as flattened and in these cases the memory layout of the USD data matches the
+      // memory layout of the Arnold data.
+      auto *valueList = AiArrayConvert(numValues, 1, ArnoldType, values.data());
+      AiNodeSetArray(node, arnoldName, valueList);
+      return numValues;
+    }
+  };
+
+  // In other cases, the converted value has to match the number of the keys on the positions
+  // (like with normals), so we are receiving a sample primvar, and if the keys are less than
+  // the maximum number of samples, we are copying the first key.
+  template<typename UsdType, unsigned ArnoldType>
+  struct _ConvertValueToArnoldParameter<UsdType, ArnoldType, HdArnoldSampledPrimvarType>
+  {
+    inline static unsigned int f(AtNode *node,
+                                 const HdArnoldSampledPrimvarType &samples,
+                                 const AtString &arnoldName)
+    {
+      if (samples.count == 0 ||
+#ifdef USD_HAS_UPDATED_TIME_SAMPLE_ARRAY
+          samples.values.empty() ||
+#endif
+          !samples.values[0].IsHolding<VtArray<UsdType>>())
+      {
+        return 0;
+      }
+      const auto &v0 = samples.values[0].UncheckedGet<VtArray<UsdType>>();
+      const auto numKeys = static_cast<unsigned int>(samples.count);
+      const auto numValues = static_cast<unsigned int>(v0.size());
+      auto *valueList = AiArrayAllocate(static_cast<unsigned int>(v0.size()), numKeys, ArnoldType);
+      AiArraySetKey(valueList, 0, v0.data());
+      for (auto index = decltype(numKeys){1}; index < numKeys; index += 1)
+      {
+        if (
+#ifdef USD_HAS_UPDATED_TIME_SAMPLE_ARRAY
+          samples.values.size()
+#else
+          samples.count
+#endif
+          > index)
         {
-          const auto &vi = vti.UncheckedGet<VtArray<UsdType>>();
-          if (vi.size() == v0.size())
+          const auto &vti = samples.values[index];
+          if (ARCH_LIKELY(vti.IsHolding<VtArray<UsdType>>()))
           {
-            AiArraySetKey(valueList, index, vi.data());
-            continue;
+            const auto &vi = vti.UncheckedGet<VtArray<UsdType>>();
+            if (vi.size() == v0.size())
+            {
+              AiArraySetKey(valueList, index, vi.data());
+              continue;
+            }
           }
         }
+        AiArraySetKey(valueList, index, v0.data());
       }
-      AiArraySetKey(valueList, index, v0.data());
+      AiNodeSetArray(node, arnoldName, valueList);
+      return numValues;
     }
-    AiNodeSetArray(node, arnoldName, valueList);
-    return numValues;
-  }
-};
+  };
 
-template<typename UsdType, unsigned ArnoldType, typename StorageType>
-inline void _ConvertVertexPrimvarToBuiltin(AtNode *node,
-                                           const StorageType &data,
-                                           const AtString &arnoldName,
-                                           const AtString &arnoldIndexName)
-{
-  // We are receiving per vertex data, the way to support this is in arnold to use the values and
-  // copy the vertex ids to the new ids for the given value.
-  if (_ConvertValueToArnoldParameter<UsdType, ArnoldType, StorageType>::f(node, data, arnoldName) == 0)
+  template<typename UsdType, unsigned ArnoldType, typename StorageType>
+  inline void _ConvertVertexPrimvarToBuiltin(AtNode *node,
+                                             const StorageType &data,
+                                             const AtString &arnoldName,
+                                             const AtString &arnoldIndexName)
   {
-    return;
+    // We are receiving per vertex data, the way to support this is in arnold to use the values and
+    // copy the vertex ids to the new ids for the given value.
+    if (_ConvertValueToArnoldParameter<UsdType, ArnoldType, StorageType>::f(node, data, arnoldName) == 0)
+    {
+      return;
+    }
+    auto *valueIdxs = AiArrayCopy(AiNodeGetArray(node, str::vidxs));
+    AiNodeSetArray(node, arnoldIndexName, valueIdxs);
   }
-  auto *valueIdxs = AiArrayCopy(AiNodeGetArray(node, str::vidxs));
-  AiNodeSetArray(node, arnoldIndexName, valueIdxs);
-}
 
-template<typename UsdType, unsigned ArnoldType, typename StorageType>
-inline void _ConvertFaceVaryingPrimvarToBuiltin(AtNode *node,
-                                                const StorageType &data,
-                                                const AtString &arnoldName,
-                                                const AtString &arnoldIndexName,
-                                                const VtIntArray *vertexCounts = nullptr,
-                                                const size_t *vertexCountSum = nullptr)
-{
-  const auto numValues = _ConvertValueToArnoldParameter<UsdType, ArnoldType, StorageType>::f(
-    node, data, arnoldName);
-  if (numValues == 0)
+  template<typename UsdType, unsigned ArnoldType, typename StorageType>
+  inline void _ConvertFaceVaryingPrimvarToBuiltin(AtNode *node,
+                                                  const StorageType &data,
+                                                  const AtString &arnoldName,
+                                                  const AtString &arnoldIndexName,
+                                                  const VtIntArray *vertexCounts = nullptr,
+                                                  const size_t *vertexCountSum = nullptr)
   {
-    return;
+    const auto numValues = _ConvertValueToArnoldParameter<UsdType, ArnoldType, StorageType>::f(node,
+                                                                                               data,
+                                                                                               arnoldName);
+    if (numValues == 0)
+    {
+      return;
+    }
+    AiNodeSetArray(node, arnoldIndexName, HdArnoldGenerateIdxs(numValues, vertexCounts, vertexCountSum));
   }
-  AiNodeSetArray(node, arnoldIndexName, HdArnoldGenerateIdxs(numValues, vertexCounts, vertexCountSum));
-}
 
 }  // namespace
 
@@ -190,8 +191,7 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
   if (_primvars.count(HdTokens->points) != 0)
   {
     _numberOfPositionKeys = 1;
-  }
-  else if (HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->points))
+  } else if (HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, HdTokens->points))
   {
     param.Interrupt();
     _numberOfPositionKeys = HdArnoldSetPositionFromPrimvar(GetArnoldNode(), id, sceneDelegate, str::vlist);
@@ -232,8 +232,7 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
         }
         _vertexCountSum += vertexCount;
       }
-    }
-    else
+    } else
     {
       // We still need _vertexCountSum as it is used to validate primvars.
       // We are manually calculating the sum of the vertex counts here, because we are filtering
@@ -258,13 +257,13 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
     if (scheme == PxOsdOpenSubdivTokens->catmullClark || scheme == _tokens->catmark)
     {
       AiNodeSetStr(GetArnoldNode(), str::subdiv_type, str::catclark);
-    }
-    else
+    } else
     {
       AiNodeSetStr(GetArnoldNode(), str::subdiv_type, str::none);
     }
-    AiNodeSetArray(
-      GetArnoldNode(), str::shidxs, HdArnoldGetShidxs(topology.GetGeomSubsets(), numFaces, _subsets));
+    AiNodeSetArray(GetArnoldNode(),
+                   str::shidxs,
+                   HdArnoldGetShidxs(topology.GetGeomSubsets(), numFaces, _subsets));
   }
 
   if (HdChangeTracker::IsVisibilityDirty(*dirtyBits, id))
@@ -278,8 +277,9 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
   {
     param.Interrupt();
     const auto displayStyle = GetDisplayStyle(sceneDelegate);
-    AiNodeSetByte(
-      GetArnoldNode(), str::subdiv_iterations, static_cast<uint8_t>(std::max(0, displayStyle.refineLevel)));
+    AiNodeSetByte(GetArnoldNode(),
+                  str::subdiv_iterations,
+                  static_cast<uint8_t>(std::max(0, displayStyle.refineLevel)));
   }
 
   auto transformDirtied = false;
@@ -329,8 +329,7 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
         shader[arrayId] = isVolume ? GetRenderDelegate()->GetFallbackVolumeShader() :
                                      GetRenderDelegate()->GetFallbackShader();
         dispMap[arrayId] = nullptr;
-      }
-      else
+      } else
       {
         shader[arrayId] = isVolume ? material->GetVolumeShader() : material->GetSurfaceShader();
         dispMap[arrayId] = material->GetDisplacementShader();
@@ -367,75 +366,87 @@ void HdArnoldMesh::Sync(HdSceneDelegate *sceneDelegate,
       if (desc.interpolation == HdInterpolationConstant)
       {
         HdArnoldSetConstantPrimvar(GetArnoldNode(), primvar.first, desc.role, desc.value, &visibility);
-      }
-      else if (desc.interpolation == HdInterpolationVertex || desc.interpolation == HdInterpolationVarying)
+      } else if (desc.interpolation == HdInterpolationVertex || desc.interpolation == HdInterpolationVarying)
       {
         if (primvar.first == _tokens->st || primvar.first == _tokens->uv)
         {
-          _ConvertVertexPrimvarToBuiltin<GfVec2f, AI_TYPE_VECTOR2>(
-            GetArnoldNode(), desc.value, str::uvlist, str::uvidxs);
-        }
-        else if (primvar.first == HdTokens->normals)
+          _ConvertVertexPrimvarToBuiltin<GfVec2f, AI_TYPE_VECTOR2>(GetArnoldNode(),
+                                                                   desc.value,
+                                                                   str::uvlist,
+                                                                   str::uvidxs);
+        } else if (primvar.first == HdTokens->normals)
         {
           if (desc.value.IsEmpty())
           {
             HdArnoldSampledPrimvarType sample;
             sceneDelegate->SamplePrimvar(id, primvar.first, &sample);
             sample.count = _numberOfPositionKeys;
-            _ConvertVertexPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(
-              GetArnoldNode(), sample, str::nlist, str::nidxs);
-          }
-          else
+            _ConvertVertexPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(GetArnoldNode(),
+                                                                    sample,
+                                                                    str::nlist,
+                                                                    str::nidxs);
+          } else
           {
-            _ConvertVertexPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(
-              GetArnoldNode(), desc.value, str::nlist, str::nidxs);
+            _ConvertVertexPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(GetArnoldNode(),
+                                                                    desc.value,
+                                                                    str::nlist,
+                                                                    str::nidxs);
           }
-        }
-        else
+        } else
         {
           // If we get to points here, it's a computed primvar, so we need to use a different
           // function.
           if (primvar.first == HdTokens->points)
           {
             HdArnoldSetPositionFromValue(GetArnoldNode(), str::vlist, desc.value);
-          }
-          else
+          } else
           {
             HdArnoldSetVertexPrimvar(GetArnoldNode(), primvar.first, desc.role, desc.value);
           }
         }
-      }
-      else if (desc.interpolation == HdInterpolationUniform)
+      } else if (desc.interpolation == HdInterpolationUniform)
       {
         HdArnoldSetUniformPrimvar(GetArnoldNode(), primvar.first, desc.role, desc.value);
-      }
-      else if (desc.interpolation == HdInterpolationFaceVarying)
+      } else if (desc.interpolation == HdInterpolationFaceVarying)
       {
         if (primvar.first == _tokens->st || primvar.first == _tokens->uv)
         {
-          _ConvertFaceVaryingPrimvarToBuiltin<GfVec2f, AI_TYPE_VECTOR2>(
-            GetArnoldNode(), desc.value, str::uvlist, str::uvidxs, &_vertexCounts, &_vertexCountSum);
-        }
-        else if (primvar.first == HdTokens->normals)
+          _ConvertFaceVaryingPrimvarToBuiltin<GfVec2f, AI_TYPE_VECTOR2>(GetArnoldNode(),
+                                                                        desc.value,
+                                                                        str::uvlist,
+                                                                        str::uvidxs,
+                                                                        &_vertexCounts,
+                                                                        &_vertexCountSum);
+        } else if (primvar.first == HdTokens->normals)
         {
           if (desc.value.IsEmpty())
           {
             HdArnoldSampledPrimvarType sample;
             sceneDelegate->SamplePrimvar(id, primvar.first, &sample);
             sample.count = _numberOfPositionKeys;
-            _ConvertFaceVaryingPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(
-              GetArnoldNode(), sample, str::nlist, str::nidxs, &_vertexCounts, &_vertexCountSum);
-          }
-          else
+            _ConvertFaceVaryingPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(GetArnoldNode(),
+                                                                         sample,
+                                                                         str::nlist,
+                                                                         str::nidxs,
+                                                                         &_vertexCounts,
+                                                                         &_vertexCountSum);
+          } else
           {
-            _ConvertFaceVaryingPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(
-              GetArnoldNode(), desc.value, str::nlist, str::nidxs, &_vertexCounts, &_vertexCountSum);
+            _ConvertFaceVaryingPrimvarToBuiltin<GfVec3f, AI_TYPE_VECTOR>(GetArnoldNode(),
+                                                                         desc.value,
+                                                                         str::nlist,
+                                                                         str::nidxs,
+                                                                         &_vertexCounts,
+                                                                         &_vertexCountSum);
           }
-        }
-        else
+        } else
         {
-          HdArnoldSetFaceVaryingPrimvar(
-            GetArnoldNode(), primvar.first, desc.role, desc.value, &_vertexCounts, &_vertexCountSum);
+          HdArnoldSetFaceVaryingPrimvar(GetArnoldNode(),
+                                        primvar.first,
+                                        desc.role,
+                                        desc.value,
+                                        &_vertexCounts,
+                                        &_vertexCountSum);
         }
       }
     }

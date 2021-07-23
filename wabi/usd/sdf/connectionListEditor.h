@@ -65,8 +65,7 @@ class Sdf_ConnectionListEditor : public Sdf_ListOpListEditor<SdfPathKeyPolicy>
 ///
 /// List editor implementation for attribute connections.
 ///
-class Sdf_AttributeConnectionListEditor
-  : public Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy>
+class Sdf_AttributeConnectionListEditor : public Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy>
 {
  public:
   virtual ~Sdf_AttributeConnectionListEditor();

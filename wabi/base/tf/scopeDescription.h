@@ -129,9 +129,10 @@ TF_API std::vector<std::string> TfGetThisThreadScopeDescriptionStack();
 
 /// Macro that accepts either a single string, or printf-style arguments and
 /// creates a scope description local variable with the resulting string.
-#define TF_DESCRIBE_SCOPE(fmt, ...) \
-  TfScopeDescription __scope_description__( \
-    BOOST_PP_IF(TF_NUM_ARGS(__VA_ARGS__), TfStringPrintf(fmt, __VA_ARGS__), fmt), TF_CALL_CONTEXT)
+#define TF_DESCRIBE_SCOPE(fmt, ...)                                               \
+  TfScopeDescription __scope_description__(                                       \
+    BOOST_PP_IF(TF_NUM_ARGS(__VA_ARGS__), TfStringPrintf(fmt, __VA_ARGS__), fmt), \
+    TF_CALL_CONTEXT)
 
 WABI_NAMESPACE_END
 

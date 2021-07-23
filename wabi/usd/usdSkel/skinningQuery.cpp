@@ -47,11 +47,11 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-enum UsdSkel_SkinningQueryFlags
-{
-  UsdSkel_HasJointInfluences = 1 << 0,
-  UsdSkel_HasBlendShapes = 1 << 1
-};
+  enum UsdSkel_SkinningQueryFlags
+  {
+    UsdSkel_HasJointInfluences = 1 << 0,
+    UsdSkel_HasBlendShapes = 1 << 1
+  };
 
 }  // namespace
 
@@ -188,8 +188,7 @@ bool UsdSkelSkinningQuery::GetJointOrder(VtTokenArray *jointOrder) const
       *jointOrder = *_jointOrder;
       return true;
     }
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("'jointOrder' pointer is null.");
   }
@@ -205,8 +204,7 @@ bool UsdSkelSkinningQuery::GetBlendShapeOrder(VtTokenArray *blendShapeOrder) con
       *blendShapeOrder = *_blendShapeOrder;
       return true;
     }
-  }
-  else
+  } else
   {
     TF_CODING_ERROR("'blendShapeOrder' pointer is null.");
   }
@@ -325,8 +323,7 @@ bool UsdSkelSkinningQuery::ComputeVaryingJointInfluences(size_t numPoints,
       }
       if (!TF_VERIFY(indices->size() == weights->size()))
         return false;
-    }
-    else if (indices->size() != numPoints * _numInfluencesPerComponent)
+    } else if (indices->size() != numPoints * _numInfluencesPerComponent)
     {
       TF_WARN(
         "Unexpected size of jointIndices and jointWeights "
@@ -373,8 +370,12 @@ bool UsdSkelSkinningQuery::ComputeSkinnedPoints(const VtArray<Matrix4> &xforms,
     }
 
     const Matrix4 geomBindXform(GetGeomBindTransform(time));
-    return UsdSkelSkinPointsLBS(
-      geomBindXform, orderedXforms, jointIndices, jointWeights, _numInfluencesPerComponent, *points);
+    return UsdSkelSkinPointsLBS(geomBindXform,
+                                orderedXforms,
+                                jointIndices,
+                                jointWeights,
+                                _numInfluencesPerComponent,
+                                *points);
   }
   return false;
 }

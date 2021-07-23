@@ -30,79 +30,83 @@ WABI_NAMESPACE_USING
 
 namespace AnchorGradient
 {
-static int DrawPoint(AnchorDrawList *draw_list, GfVec4f color, const GfVec2f size, bool editing, GfVec2f pos)
-{
-  AnchorIO &io = ANCHOR::GetIO();
-
-  GfVec2f p1 = AnchorLerp(pos, GfVec2f(pos + GfVec2f(size[0] - size[1], 0.f)), color[3]) + GfVec2f(3, 3);
-  GfVec2f p2 = AnchorLerp(pos + GfVec2f(size[1], size[1]), GfVec2f(pos + size), color[3]) - GfVec2f(3, 3);
-  AnchorBBox rc(p1, p2);
-
-  color[3] = 1.f;
-  draw_list->AddRectFilled(p1, p2, AnchorColor(color));
-  if (editing)
-    draw_list->AddRect(p1, p2, 0xFFFFFFFF, 2.f, 15, 2.5f);
-  else
-    draw_list->AddRect(p1, p2, 0x80FFFFFF, 2.f, 15, 1.25f);
-
-  if (rc.Contains(io.MousePos))
+  static int DrawPoint(AnchorDrawList *draw_list,
+                       GfVec4f color,
+                       const GfVec2f size,
+                       bool editing,
+                       GfVec2f pos)
   {
-    if (io.MouseClicked[0])
-      return 2;
-    return 1;
-  }
-  return 0;
-}
+    AnchorIO &io = ANCHOR::GetIO();
 
-bool Edit(Delegate &delegate, const GfVec2f &size, int &selection)
-{
-  bool ret = false;
-  AnchorIO &io = ANCHOR::GetIO();
-  ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0, 0));
-  ANCHOR::BeginChildFrame(137, size);
+    GfVec2f p1 = AnchorLerp(pos, GfVec2f(pos + GfVec2f(size[0] - size[1], 0.f)), color[3]) + GfVec2f(3, 3);
+    GfVec2f p2 = AnchorLerp(pos + GfVec2f(size[1], size[1]), GfVec2f(pos + size), color[3]) - GfVec2f(3, 3);
+    AnchorBBox rc(p1, p2);
 
-  AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
-  const GfVec2f offset = ANCHOR::GetCursorScreenPos();
+    color[3] = 1.f;
+    draw_list->AddRectFilled(p1, p2, AnchorColor(color));
+    if (editing)
+      draw_list->AddRect(p1, p2, 0xFFFFFFFF, 2.f, 15, 2.5f);
+    else
+      draw_list->AddRect(p1, p2, 0x80FFFFFF, 2.f, 15, 1.25f);
 
-  const GfVec4f *pts = delegate.GetPoints();
-  static int currentSelection = -1;
-  static int movingPt = -1;
-  if (currentSelection >= int(delegate.GetPointCount()))
-    currentSelection = -1;
-  if (movingPt != -1)
-  {
-    GfVec4f current = pts[movingPt];
-    current[3] += io.MouseDelta[0] / size[0];
-    current[3] = AnchorClamp(current[3], 0.f, 1.f);
-    delegate.EditPoint(movingPt, current);
-    ret = true;
-    if (!io.MouseDown[0])
-      movingPt = -1;
-  }
-  for (size_t i = 0; i < delegate.GetPointCount(); i++)
-  {
-    int ptSel = DrawPoint(draw_list, pts[i], size, i == currentSelection, offset);
-    if (ptSel == 2)
+    if (rc.Contains(io.MousePos))
     {
-      currentSelection = int(i);
+      if (io.MouseClicked[0])
+        return 2;
+      return 1;
+    }
+    return 0;
+  }
+
+  bool Edit(Delegate &delegate, const GfVec2f &size, int &selection)
+  {
+    bool ret = false;
+    AnchorIO &io = ANCHOR::GetIO();
+    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0, 0));
+    ANCHOR::BeginChildFrame(137, size);
+
+    AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
+    const GfVec2f offset = ANCHOR::GetCursorScreenPos();
+
+    const GfVec4f *pts = delegate.GetPoints();
+    static int currentSelection = -1;
+    static int movingPt = -1;
+    if (currentSelection >= int(delegate.GetPointCount()))
+      currentSelection = -1;
+    if (movingPt != -1)
+    {
+      GfVec4f current = pts[movingPt];
+      current[3] += io.MouseDelta[0] / size[0];
+      current[3] = AnchorClamp(current[3], 0.f, 1.f);
+      delegate.EditPoint(movingPt, current);
+      ret = true;
+      if (!io.MouseDown[0])
+        movingPt = -1;
+    }
+    for (size_t i = 0; i < delegate.GetPointCount(); i++)
+    {
+      int ptSel = DrawPoint(draw_list, pts[i], size, i == currentSelection, offset);
+      if (ptSel == 2)
+      {
+        currentSelection = int(i);
+        ret = true;
+      }
+      if (ptSel == 1 && io.MouseDown[0] && movingPt == -1)
+      {
+        movingPt = int(i);
+      }
+    }
+    AnchorBBox rc(offset, offset + size);
+    if (rc.Contains(io.MousePos) && io.MouseDoubleClicked[0])
+    {
+      float t = (io.MousePos[0] - offset[0]) / size[0];
+      delegate.AddPoint(delegate.GetPoint(t));
       ret = true;
     }
-    if (ptSel == 1 && io.MouseDown[0] && movingPt == -1)
-    {
-      movingPt = int(i);
-    }
-  }
-  AnchorBBox rc(offset, offset + size);
-  if (rc.Contains(io.MousePos) && io.MouseDoubleClicked[0])
-  {
-    float t = (io.MousePos[0] - offset[0]) / size[0];
-    delegate.AddPoint(delegate.GetPoint(t));
-    ret = true;
-  }
-  ANCHOR::EndChildFrame();
-  ANCHOR::PopStyleVar();
+    ANCHOR::EndChildFrame();
+    ANCHOR::PopStyleVar();
 
-  selection = currentSelection;
-  return ret;
-}
+    selection = currentSelection;
+    return ret;
+  }
 }  // namespace AnchorGradient

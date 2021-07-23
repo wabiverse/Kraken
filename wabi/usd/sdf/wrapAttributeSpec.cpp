@@ -44,18 +44,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::vector<TfToken> _WrapGetAllowedTokens(const SdfAttributeSpec &spec)
-{
-  VtTokenArray tokenArray = spec.GetAllowedTokens();
-  return std::vector<TfToken>(tokenArray.begin(), tokenArray.end());
-}
+  static std::vector<TfToken> _WrapGetAllowedTokens(const SdfAttributeSpec &spec)
+  {
+    VtTokenArray tokenArray = spec.GetAllowedTokens();
+    return std::vector<TfToken>(tokenArray.begin(), tokenArray.end());
+  }
 
-static void _WrapSetAllowedTokens(SdfAttributeSpec &spec, const std::vector<TfToken> &tokens)
-{
-  VtTokenArray tokenArray;
-  tokenArray.assign(tokens.begin(), tokens.end());
-  spec.SetAllowedTokens(tokenArray);
-}
+  static void _WrapSetAllowedTokens(SdfAttributeSpec &spec, const std::vector<TfToken> &tokens)
+  {
+    VtTokenArray tokenArray;
+    tokenArray.assign(tokens.begin(), tokens.end());
+    spec.SetAllowedTokens(tokenArray);
+  }
 
 }  // anonymous namespace
 
@@ -110,8 +110,10 @@ void wrapAttributeSpec()
 
     .add_property("roleName", &This::GetRoleName, "The roleName for this attribute's typeName.")
 
-    .add_property(
-      "displayUnit", &This::GetDisplayUnit, &This::SetDisplayUnit, "The display unit for this attribute.")
+    .add_property("displayUnit",
+                  &This::GetDisplayUnit,
+                  &This::SetDisplayUnit,
+                  "The display unit for this attribute.")
 
     .add_property("connectionPathList",
                   &This::GetConnectionPathList,

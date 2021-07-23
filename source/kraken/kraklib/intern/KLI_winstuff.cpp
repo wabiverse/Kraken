@@ -133,14 +133,12 @@ struct dirent *readdir(DIR *dp)
     dp->direntry.d_name = KLI_alloc_utf_8_from_16(dp->data.cFileName, 0);
 
     return &dp->direntry;
-  }
-  else if (FindNextFileW(dp->handle, &(dp->data)))
+  } else if (FindNextFileW(dp->handle, &(dp->data)))
   {
     dp->direntry.d_name = KLI_alloc_utf_8_from_16(dp->data.cFileName, 0);
 
     return &dp->direntry;
-  }
-  else
+  } else
   {
     return NULL;
   }
@@ -239,8 +237,8 @@ bool KLI_windows_register_pixar_extension(const bool background)
     }
   }
 
-  lresult = RegCreateKeyEx(
-    root, "pixarfile", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
+  lresult =
+    RegCreateKeyEx(root, "pixarfile", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
   if (lresult == ERROR_SUCCESS)
   {
     strcpy(buffer, "Kraken File");
@@ -295,7 +293,8 @@ bool KLI_windows_register_pixar_extension(const bool background)
     return false;
   }
 
-  lresult = RegCreateKeyEx(root, ".usd", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
+  lresult =
+    RegCreateKeyEx(root, ".usd", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
   if (lresult == ERROR_SUCCESS)
   {
     strcpy(buffer, "pixarfile");
@@ -311,8 +310,7 @@ bool KLI_windows_register_pixar_extension(const bool background)
   KLI_windows_get_executable_dir(InstallDir);
   GetSystemDirectory(SysDir, FILE_MAXDIR);
   ThumbHandlerDLL = "KrakenThumb.dll";
-  snprintf(
-    RegCmd, MAX_PATH * 2, "%s\\regsvr32 /s \"%s\\%s\"", SysDir, InstallDir, ThumbHandlerDLL);
+  snprintf(RegCmd, MAX_PATH * 2, "%s\\regsvr32 /s \"%s\\%s\"", SysDir, InstallDir, ThumbHandlerDLL);
   system(RegCmd);
 
   RegCloseKey(root);
@@ -321,8 +319,7 @@ bool KLI_windows_register_pixar_extension(const bool background)
   {
     sprintf(MBox,
             "File extension registered for %s.",
-            usr_mode ? "the current user. To register for all users, run as an administrator" :
-                       "all users");
+            usr_mode ? "the current user. To register for all users, run as an administrator" : "all users");
     MessageBox(0, MBox, "Kraken", MB_OK | MB_ICONINFORMATION);
   }
   return true;
@@ -341,8 +338,7 @@ void KLI_windows_get_default_root_dir(char *root)
     root[1] = ':';
     root[2] = '\\';
     root[3] = '\0';
-  }
-  else
+  } else
   {
     /* if GetWindowsDirectory fails, something has probably gone wrong,
      * we are trying the kraken install dir though */
@@ -355,8 +351,7 @@ void KLI_windows_get_default_root_dir(char *root)
       root[1] = ':';
       root[2] = '\\';
       root[3] = '\0';
-    }
-    else
+    } else
     {
       DWORD tmp;
       int i;

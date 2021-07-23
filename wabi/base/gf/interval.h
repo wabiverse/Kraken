@@ -258,13 +258,11 @@ class GfInterval
     if (IsEmpty())
     {
       // No change
-    }
-    else if (rhs.IsEmpty())
+    } else if (rhs.IsEmpty())
     {
       // Intersection is empty
       *this = GfInterval();
-    }
-    else
+    } else
     {
       // Intersect min edge
       if (_min.value < rhs._min.value)
@@ -287,12 +285,10 @@ class GfInterval
     if (IsEmpty())
     {
       *this = rhs;
-    }
-    else if (rhs.IsEmpty())
+    } else if (rhs.IsEmpty())
     {
       // No change
-    }
-    else
+    } else
     {
       // Expand min edge
       if (_min.value > rhs._min.value)
@@ -417,8 +413,10 @@ class GfInterval
   /// Returns the full interval (-inf, inf).
   static GfInterval GetFullInterval()
   {
-    return GfInterval(
-      -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), false, false);
+    return GfInterval(-std::numeric_limits<double>::infinity(),
+                      std::numeric_limits<double>::infinity(),
+                      false,
+                      false);
   }
 
  private:

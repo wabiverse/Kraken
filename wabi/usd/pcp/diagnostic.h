@@ -91,26 +91,26 @@ inline PcpPrimIndex const *Pcp_ToIndex(T const &obj)
 /// @{
 
 /// Opens a scope indicating a particular phase during prim indexing.
-#define PCP_INDEXING_PHASE(indexer, node, ...) \
-  auto BOOST_PP_CAT(_pcpIndexingPhase, __LINE__) = ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX)) ? \
-                                                     Pcp_IndexingPhaseScope(Pcp_ToIndex(indexer), \
-                                                                            node, \
+#define PCP_INDEXING_PHASE(indexer, node, ...)                                                             \
+  auto BOOST_PP_CAT(_pcpIndexingPhase, __LINE__) = ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX)) ?     \
+                                                     Pcp_IndexingPhaseScope(Pcp_ToIndex(indexer),          \
+                                                                            node,                          \
                                                                             TfStringPrintf(__VA_ARGS__)) : \
                                                      Pcp_IndexingPhaseScope()
 
 /// Indicates that the prim index currently being constructed has been
 /// updated.
-#define PCP_INDEXING_UPDATE(indexer, node, ...) \
-  if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX))) \
-  { \
+#define PCP_INDEXING_UPDATE(indexer, node, ...)                                  \
+  if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX)))                         \
+  {                                                                              \
     Pcp_IndexingUpdate(Pcp_ToIndex(indexer), node, TfStringPrintf(__VA_ARGS__)); \
   }
 
 /// Annotates the current phase of prim indexing with the given message.
-#define PCP_INDEXING_MSG(indexer, ...) \
+#define PCP_INDEXING_MSG(indexer, ...)                   \
   if (ARCH_UNLIKELY(TfDebug::IsEnabled(PCP_PRIM_INDEX))) \
-  { \
-    Pcp_IndexingMsg(Pcp_ToIndex(indexer), __VA_ARGS__); \
+  {                                                      \
+    Pcp_IndexingMsg(Pcp_ToIndex(indexer), __VA_ARGS__);  \
   }
 
 /// @}

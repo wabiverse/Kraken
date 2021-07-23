@@ -78,8 +78,7 @@ void UsdAppUtilsFrameRecorder::SetIncludedPurposes(const TfTokenVector &purposes
     if (_HasPurpose(allPurposes, p))
     {
       _purposes.push_back(p);
-    }
-    else if (p != UsdGeomTokens->default_)
+    } else if (p != UsdGeomTokens->default_)
     {
       // We allow "default" to be specified even though
       // it's unnecessary
@@ -107,8 +106,7 @@ static GfCamera _ComputeCameraToFrameStage(const UsdStagePtr &stage,
   if (upAxis == UsdGeomTokens->y)
   {
     plane_corner = GfVec2d(dim[0], dim[1]) / 2;
-  }
-  else
+  } else
   {
     plane_corner = GfVec2d(dim[0], dim[2]) / 2;
   }
@@ -120,8 +118,7 @@ static GfCamera _ComputeCameraToFrameStage(const UsdStagePtr &stage,
   if (upAxis == UsdGeomTokens->y)
   {
     distance += dim[2] / 2;
-  }
-  else
+  } else
   {
     distance += dim[1] / 2;
   }
@@ -130,8 +127,7 @@ static GfCamera _ComputeCameraToFrameStage(const UsdStagePtr &stage,
   if (upAxis == UsdGeomTokens->y)
   {
     xf.SetTranslate(center + GfVec3d(0, 0, distance));
-  }
-  else
+  } else
   {
     xf.SetRotate(GfRotation(GfVec3d(1, 0, 0), 90));
     xf.SetTranslateOnly(center + GfVec3d(0, -distance, 0));
@@ -241,8 +237,7 @@ bool UsdAppUtilsFrameRecorder::Record(const UsdStagePtr &stage,
   if (usdCamera)
   {
     gfCamera = usdCamera.GetCamera(timeCode);
-  }
-  else
+  } else
   {
     gfCamera = _ComputeCameraToFrameStage(stage, timeCode, _purposes);
   }
@@ -253,7 +248,8 @@ bool UsdAppUtilsFrameRecorder::Record(const UsdStagePtr &stage,
   }
 
   const size_t imageHeight = std::max<size_t>(
-    static_cast<size_t>(static_cast<float>(_imageWidth) / aspectRatio), 1u);
+    static_cast<size_t>(static_cast<float>(_imageWidth) / aspectRatio),
+    1u);
   const GfVec2i renderResolution(_imageWidth, imageHeight);
 
   const GfFrustum frustum = gfCamera.GetFrustum();

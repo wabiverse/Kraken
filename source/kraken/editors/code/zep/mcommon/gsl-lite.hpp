@@ -433,147 +433,147 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
   namespace details
   {
 
-  // C++11 emulation:
+    // C++11 emulation:
 
 #  if gsl_HAVE(ADD_CONST)
 
-  using std::add_const;
+    using std::add_const;
 
 #  elif gsl_HAVE(TR1_ADD_CONST)
 
-  using std::tr1::add_const;
+    using std::tr1::add_const;
 
 #  else
 
-  template<class T>
-  struct add_const
-  {
-    typedef const T type;
-  };
+    template<class T>
+    struct add_const
+    {
+      typedef const T type;
+    };
 
 #  endif  // gsl_HAVE( ADD_CONST )
 
 #  if gsl_HAVE(REMOVE_CONST)
 
-  using std::remove_const;
-  using std::remove_cv;
-  using std::remove_volatile;
+    using std::remove_const;
+    using std::remove_cv;
+    using std::remove_volatile;
 
 #  elif gsl_HAVE(TR1_REMOVE_CONST)
 
-  using std::tr1::remove_const;
-  using std::tr1::remove_cv;
-  using std::tr1::remove_volatile;
+    using std::tr1::remove_const;
+    using std::tr1::remove_cv;
+    using std::tr1::remove_volatile;
 
 #  else
 
-  template<class T>
-  struct remove_const
-  {
-    typedef T type;
-  };
-  template<class T>
-  struct remove_const<T const>
-  {
-    typedef T type;
-  };
+    template<class T>
+    struct remove_const
+    {
+      typedef T type;
+    };
+    template<class T>
+    struct remove_const<T const>
+    {
+      typedef T type;
+    };
 
-  template<class T>
-  struct remove_volatile
-  {
-    typedef T type;
-  };
-  template<class T>
-  struct remove_volatile<T volatile>
-  {
-    typedef T type;
-  };
+    template<class T>
+    struct remove_volatile
+    {
+      typedef T type;
+    };
+    template<class T>
+    struct remove_volatile<T volatile>
+    {
+      typedef T type;
+    };
 
-  template<class T>
-  struct remove_cv
-  {
-    typedef typename details::remove_volatile<typename details::remove_const<T>::type>::type type;
-  };
+    template<class T>
+    struct remove_cv
+    {
+      typedef typename details::remove_volatile<typename details::remove_const<T>::type>::type type;
+    };
 
 #  endif  // gsl_HAVE( REMOVE_CONST )
 
 #  if gsl_HAVE(INTEGRAL_CONSTANT)
 
-  using std::false_type;
-  using std::integral_constant;
-  using std::true_type;
+    using std::false_type;
+    using std::integral_constant;
+    using std::true_type;
 
 #  elif gsl_HAVE(TR1_INTEGRAL_CONSTANT)
 
-  using std::tr1::false_type;
-  using std::tr1::integral_constant;
-  using std::tr1::true_type;
+    using std::tr1::false_type;
+    using std::tr1::integral_constant;
+    using std::tr1::true_type;
 
 #  else
 
-  template<int v>
-  struct integral_constant
-  {
-    enum
+    template<int v>
+    struct integral_constant
     {
-      value = v
+      enum
+      {
+        value = v
+      };
     };
-  };
-  typedef integral_constant<true> true_type;
-  typedef integral_constant<false> false_type;
+    typedef integral_constant<true> true_type;
+    typedef integral_constant<false> false_type;
 
 #  endif
 
 #  if gsl_HAVE(TYPE_TRAITS)
 
-  template<class Q>
-  struct is_span_oracle : std::false_type
-  {
-  };
+    template<class Q>
+    struct is_span_oracle : std::false_type
+    {
+    };
 
-  template<class T>
-  struct is_span_oracle<span<T>> : std::true_type
-  {
-  };
+    template<class T>
+    struct is_span_oracle<span<T>> : std::true_type
+    {
+    };
 
-  template<class Q>
-  struct is_span : is_span_oracle<typename std::remove_cv<Q>::type>
-  {
-  };
+    template<class Q>
+    struct is_span : is_span_oracle<typename std::remove_cv<Q>::type>
+    {
+    };
 
-  template<class Q>
-  struct is_std_array_oracle : std::false_type
-  {
-  };
+    template<class Q>
+    struct is_std_array_oracle : std::false_type
+    {
+    };
 
 #    if gsl_HAVE(ARRAY)
 
-  template<class T, std::size_t Extent>
-  struct is_std_array_oracle<std::array<T, Extent>> : std::true_type
-  {
-  };
+    template<class T, std::size_t Extent>
+    struct is_std_array_oracle<std::array<T, Extent>> : std::true_type
+    {
+    };
 
 #    endif
 
-  template<class Q>
-  struct is_std_array : is_std_array_oracle<typename std::remove_cv<Q>::type>
-  {
-  };
+    template<class Q>
+    struct is_std_array : is_std_array_oracle<typename std::remove_cv<Q>::type>
+    {
+    };
 
-  template<class Q>
-  struct is_array : std::false_type
-  {
-  };
+    template<class Q>
+    struct is_array : std::false_type
+    {
+    };
 
-  template<class T>
-  struct is_array<T[]> : std::true_type
-  {
-  };
+    template<class T>
+    struct is_array<T[]> : std::true_type
+    {
+    };
 
-  template<class T, std::size_t N>
-  struct is_array<T[N]> : std::true_type
-  {
-  };
+    template<class T, std::size_t N>
+    struct is_array<T[N]> : std::true_type
+    {
+    };
 
 #  endif  // gsl_HAVE( TYPE_TRAITS )
 
@@ -724,33 +724,33 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
   namespace details
   {
 
-  inline unsigned char to_uchar(unsigned x) gsl_noexcept
-  {
-    return static_cast<unsigned char>(x);
-  }
+    inline unsigned char to_uchar(unsigned x) gsl_noexcept
+    {
+      return static_cast<unsigned char>(x);
+    }
 
 #    if gsl_HAVE(UNCAUGHT_EXCEPTIONS)
 
-  inline unsigned char uncaught_exceptions() gsl_noexcept
-  {
-    return to_uchar(std::uncaught_exceptions());
-  }
+    inline unsigned char uncaught_exceptions() gsl_noexcept
+    {
+      return to_uchar(std::uncaught_exceptions());
+    }
 
 #    elif gsl_COMPILER_MSVC_VERSION
 
-  extern "C" char *__cdecl _getptd();
-  inline unsigned char uncaught_exceptions() gsl_noexcept
-  {
-    return to_uchar(*reinterpret_cast<unsigned *>(_getptd() + (sizeof(void *) == 8 ? 0x100 : 0x90)));
-  }
+    extern "C" char *__cdecl _getptd();
+    inline unsigned char uncaught_exceptions() gsl_noexcept
+    {
+      return to_uchar(*reinterpret_cast<unsigned *>(_getptd() + (sizeof(void *) == 8 ? 0x100 : 0x90)));
+    }
 
 #    elif gsl_COMPILER_CLANG_VERSION || gsl_COMPILER_GNUC_VERSION
 
-  extern "C" char *__cxa_get_globals();
-  inline unsigned char uncaught_exceptions() gsl_noexcept
-  {
-    return to_uchar(*reinterpret_cast<unsigned *>(__cxa_get_globals() + sizeof(void *)));
-  }
+    extern "C" char *__cxa_get_globals();
+    inline unsigned char uncaught_exceptions() gsl_noexcept
+    {
+      return to_uchar(*reinterpret_cast<unsigned *>(__cxa_get_globals() + sizeof(void *)));
+    }
 #    endif
   }  // namespace details
 #  endif
@@ -1016,11 +1016,11 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
 
   namespace details
   {
-  template<class T, class U>
-  struct is_same_signedness
-    : public std::integral_constant<bool, std::is_signed<T>::value == std::is_signed<U>::value>
-  {
-  };
+    template<class T, class U>
+    struct is_same_signedness
+      : public std::integral_constant<bool, std::is_signed<T>::value == std::is_signed<U>::value>
+    {
+    };
   }  // namespace details
 #  endif
 
@@ -1213,7 +1213,8 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
     gsl_is_delete_access :
     // prevent compilation when initialized with a nullptr or literal 0:
 #  if gsl_HAVE(NULLPTR)
-      gsl_api not_null(std::nullptr_t) gsl_is_delete;
+      gsl_api
+      not_null(std::nullptr_t) gsl_is_delete;
     gsl_api not_null &operator=(std::nullptr_t) gsl_is_delete;
 #  else
       gsl_api
@@ -1459,7 +1460,7 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
 #  endif
   }
 
-  gsl_api inline gsl_constexpr byte operator&(byte l, byte r)gsl_noexcept
+  gsl_api inline gsl_constexpr byte operator&(byte l, byte r) gsl_noexcept
   {
     return to_byte(to_uchar(l) & to_uchar(r));
   }
@@ -1502,26 +1503,26 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
   namespace details
   {
 
-  // Can construct from containers that:
+    // Can construct from containers that:
 
-  template<class Container,
-           class ElementType,
-           class = typename std::enable_if<
-             !details::is_span<Container>::value && !details::is_array<Container>::value &&
-             !details::is_std_array<Container>::value &&
-             std::is_convertible<
-               typename std::remove_pointer<decltype(std::declval<Container>().data())>::type (*)[],
-               ElementType (*)[]>::value>::type
+    template<class Container,
+             class ElementType,
+             class = typename std::enable_if<
+               !details::is_span<Container>::value && !details::is_array<Container>::value &&
+               !details::is_std_array<Container>::value &&
+               std::is_convertible<
+                 typename std::remove_pointer<decltype(std::declval<Container>().data())>::type (*)[],
+                 ElementType (*)[]>::value>::type
 #    if gsl_HAVE(STD_DATA)
-           // data(cont) and size(cont) well-formed:
-           ,
-           class = decltype(std::data(std::declval<Container>())),
-           class = decltype(std::size(std::declval<Container>()))
+             // data(cont) and size(cont) well-formed:
+             ,
+             class = decltype(std::data(std::declval<Container>())),
+             class = decltype(std::size(std::declval<Container>()))
 #    endif
-           >
-  struct can_construct_span_from : details::true_type
-  {
-  };
+             >
+    struct can_construct_span_from : details::true_type
+    {
+    };
 
   }  // namespace details
 #  endif
@@ -1975,19 +1976,19 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
 #  if gsl_HAVE(DEDUCTION_GUIDES)  // gsl_CPP17_OR_GREATER
 
   template<class T, size_t N>
-  span(T(&)[N])->span<T /*, N*/>;
+  span(T(&)[N]) -> span<T /*, N*/>;
 
   template<class T, size_t N>
-  span(std::array<T, N> &)->span<T /*, N*/>;
+  span(std::array<T, N> &) -> span<T /*, N*/>;
 
   template<class T, size_t N>
-  span(std::array<T, N> const &)->span<const T /*, N*/>;
+  span(std::array<T, N> const &) -> span<const T /*, N*/>;
 
   template<class Container>
-  span(Container &)->span<typename Container::value_type>;
+  span(Container &) -> span<typename Container::value_type>;
 
   template<class Container>
-  span(Container const &)->span<const typename Container::value_type>;
+  span(Container const &) -> span<const typename Container::value_type>;
 
 #  endif  // gsl_HAVE( DEDUCTION_GUIDES )
 
@@ -2051,19 +2052,19 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
   namespace details
   {
 
-  template<class II, class N, class OI>
-  gsl_api inline OI copy_n(II first, N count, OI result)
-  {
-    if (count > 0)
+    template<class II, class N, class OI>
+    gsl_api inline OI copy_n(II first, N count, OI result)
     {
-      *result++ = *first;
-      for (N i = 1; i < count; ++i)
+      if (count > 0)
       {
-        *result++ = *++first;
+        *result++ = *first;
+        for (N i = 1; i < count; ++i)
+        {
+          *result++ = *++first;
+        }
       }
+      return result;
     }
-    return result;
-  }
   }  // namespace details
 
   template<class T, class U>
@@ -2167,8 +2168,9 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
   }
 
   template<class Container>
-  gsl_api inline gsl_constexpr span<const typename Container::value_type> make_span(
-    with_container_t, Container const &cont) gsl_noexcept
+  gsl_api inline gsl_constexpr span<const typename Container::value_type> make_span(with_container_t,
+                                                                                    Container const &cont)
+    gsl_noexcept
   {
     return span<const typename Container::value_type>(with_container, cont);
   }
@@ -2183,7 +2185,8 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
 
   template<class Ptr>
   gsl_api inline span<typename Ptr::element_type> make_span(
-    Ptr & ptr, typename span<typename Ptr::element_type>::index_type count)
+    Ptr & ptr,
+    typename span<typename Ptr::element_type>::index_type count)
   {
     return span<typename Ptr::element_type>(ptr, count);
   }
@@ -2216,33 +2219,33 @@ gsl_DISABLE_MSVC_WARNINGS(26410 26415 26418 26472 26439 26440 26473 26481 26482 
   namespace details
   {
 
-  template<class T>
-  struct is_basic_string_span_oracle : false_type
-  {
-  };
+    template<class T>
+    struct is_basic_string_span_oracle : false_type
+    {
+    };
 
-  template<class T>
-  struct is_basic_string_span_oracle<basic_string_span<T>> : true_type
-  {
-  };
+    template<class T>
+    struct is_basic_string_span_oracle<basic_string_span<T>> : true_type
+    {
+    };
 
-  template<class T>
-  struct is_basic_string_span : is_basic_string_span_oracle<typename remove_cv<T>::type>
-  {
-  };
+    template<class T>
+    struct is_basic_string_span : is_basic_string_span_oracle<typename remove_cv<T>::type>
+    {
+    };
 
-  template<class T>
-  gsl_api inline gsl_constexpr14 std::size_t string_length(T *ptr, std::size_t max)
-  {
-    if (ptr == gsl_nullptr || max <= 0)
-      return 0;
+    template<class T>
+    gsl_api inline gsl_constexpr14 std::size_t string_length(T *ptr, std::size_t max)
+    {
+      if (ptr == gsl_nullptr || max <= 0)
+        return 0;
 
-    std::size_t len = 0;
-    while (len < max && ptr[len])  // NOLINT
-      ++len;
+      std::size_t len = 0;
+      while (len < max && ptr[len])  // NOLINT
+        ++len;
 
-    return len;
-  }
+      return len;
+    }
 
   }  // namespace details
 
@@ -2750,41 +2753,41 @@ gsl_api inline std::basic_string< typename std::remove_const<T>::type > to_strin
   namespace details
   {
 
-  template<class Stream>
-  gsl_api void write_padding(Stream &os, std::streamsize n)
-  {
-    for (std::streamsize i = 0; i < n; ++i)
-      os.rdbuf()->sputc(os.fill());
-  }
+    template<class Stream>
+    gsl_api void write_padding(Stream &os, std::streamsize n)
+    {
+      for (std::streamsize i = 0; i < n; ++i)
+        os.rdbuf()->sputc(os.fill());
+    }
 
-  template<class Stream, class Span>
-  gsl_api Stream &write_to_stream(Stream &os, Span const &spn)
-  {
-    typename Stream::sentry sentry(os);
+    template<class Stream, class Span>
+    gsl_api Stream &write_to_stream(Stream &os, Span const &spn)
+    {
+      typename Stream::sentry sentry(os);
 
-    if (!os)
+      if (!os)
+        return os;
+
+      const std::streamsize length = narrow<std::streamsize>(spn.length());
+
+      // Whether, and how, to pad
+      const bool pad = (length < os.width());
+      const bool left_pad = pad && (os.flags() & std::ios_base::adjustfield) == std::ios_base::right;
+
+      if (left_pad)
+        write_padding(os, os.width() - length);
+
+      // Write span characters
+      os.rdbuf()->sputn(spn.begin(), length);
+
+      if (pad && !left_pad)
+        write_padding(os, os.width() - length);
+
+      // Reset output stream width
+      os.width(0);
+
       return os;
-
-    const std::streamsize length = narrow<std::streamsize>(spn.length());
-
-    // Whether, and how, to pad
-    const bool pad = (length < os.width());
-    const bool left_pad = pad && (os.flags() & std::ios_base::adjustfield) == std::ios_base::right;
-
-    if (left_pad)
-      write_padding(os, os.width() - length);
-
-    // Write span characters
-    os.rdbuf()->sputn(spn.begin(), length);
-
-    if (pad && !left_pad)
-      write_padding(os, os.width() - length);
-
-    // Reset output stream width
-    os.width(0);
-
-    return os;
-  }
+    }
 
   }  // namespace details
 
@@ -2831,23 +2834,24 @@ gsl_api inline std::basic_string< typename std::remove_const<T>::type > to_strin
   namespace details
   {
 
-  template<class T, class SizeType, const T Sentinel>
-  gsl_api static span<T> ensure_sentinel(T *seq, SizeType max = (std::numeric_limits<SizeType>::max)())
-  {
-    typedef T *pointer;
+    template<class T, class SizeType, const T Sentinel>
+    gsl_api static span<T> ensure_sentinel(T *seq, SizeType max = (std::numeric_limits<SizeType>::max)())
+    {
+      typedef T *pointer;
 
-    gsl_SUPPRESS_MSVC_WARNING(
-      26429, "f.23: symbol 'cur' is never tested for nullness, it can be marked as not_null")
+      gsl_SUPPRESS_MSVC_WARNING(
+        26429,
+        "f.23: symbol 'cur' is never tested for nullness, it can be marked as not_null")
 
-      pointer cur = seq;
+        pointer cur = seq;
 
-    while (static_cast<SizeType>(cur - seq) < max && *cur != Sentinel)
-      ++cur;
+      while (static_cast<SizeType>(cur - seq) < max && *cur != Sentinel)
+        ++cur;
 
-    Expects(*cur == Sentinel);
+      Expects(*cur == Sentinel);
 
-    return span<T>(seq, narrow_cast<typename span<T>::index_type>(cur - seq));
-  }
+      return span<T>(seq, narrow_cast<typename span<T>::index_type>(cur - seq));
+    }
   }  // namespace details
 
   //
@@ -2885,15 +2889,15 @@ gsl_api inline std::basic_string< typename std::remove_const<T>::type > to_strin
 namespace std
 {
 
-template<>
-struct hash<gsl::byte>
-{
- public:
-  std::size_t operator()(gsl::byte v) const gsl_noexcept
+  template<>
+  struct hash<gsl::byte>
   {
-    return gsl::to_integer<std::size_t>(v);
-  }
-};
+   public:
+    std::size_t operator()(gsl::byte v) const gsl_noexcept
+    {
+      return gsl::to_integer<std::size_t>(v);
+    }
+  };
 
 }  // namespace std
 

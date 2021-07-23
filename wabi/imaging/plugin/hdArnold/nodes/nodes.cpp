@@ -38,23 +38,23 @@ extern const AtNodeMethods *HdArnoldDriverAOVMtd;
 
 namespace
 {
-struct NodeDefinition
-{
-  int type;
-  uint8_t outputType;
-  const AtString &name;
-  const AtNodeMethods *methods;
-};
-
-using BuiltInNodes = std::vector<NodeDefinition>;
-
-const auto builtInNodes = []() -> const BuiltInNodes & {
-  static const BuiltInNodes ret{
-    {AI_NODE_DRIVER, AI_TYPE_UNDEFINED, str::HdArnoldDriverMain, HdArnoldDriverMainMtd},
-    {AI_NODE_DRIVER, AI_TYPE_UNDEFINED, str::HdArnoldDriverAOV, HdArnoldDriverAOVMtd},
+  struct NodeDefinition
+  {
+    int type;
+    uint8_t outputType;
+    const AtString &name;
+    const AtNodeMethods *methods;
   };
-  return ret;
-};
+
+  using BuiltInNodes = std::vector<NodeDefinition>;
+
+  const auto builtInNodes = []() -> const BuiltInNodes & {
+    static const BuiltInNodes ret{
+      {AI_NODE_DRIVER, AI_TYPE_UNDEFINED, str::HdArnoldDriverMain, HdArnoldDriverMainMtd},
+      {AI_NODE_DRIVER, AI_TYPE_UNDEFINED, str::HdArnoldDriverAOV,  HdArnoldDriverAOVMtd },
+    };
+    return ret;
+  };
 
 }  // namespace
 

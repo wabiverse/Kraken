@@ -61,29 +61,29 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static string __repr__(GfQuath const &self)
-{
-  return TF_PY_REPR_PREFIX + "Quath(" + TfPyRepr(self.GetReal()) + ", " + TfPyRepr(self.GetImaginary()) +
-         ")";
-}
+  static string __repr__(GfQuath const &self)
+  {
+    return TF_PY_REPR_PREFIX + "Quath(" + TfPyRepr(self.GetReal()) + ", " + TfPyRepr(self.GetImaginary()) +
+           ")";
+  }
 
 #if PY_MAJOR_VERSION == 2
-static GfQuath __truediv__(const GfQuath &self, GfHalf value)
-{
-  return self / value;
-}
+  static GfQuath __truediv__(const GfQuath &self, GfHalf value)
+  {
+    return self / value;
+  }
 
-static GfQuath __itruediv__(GfQuath &self, GfHalf value)
-{
-  return self /= value;
-}
+  static GfQuath __itruediv__(GfQuath &self, GfHalf value)
+  {
+    return self /= value;
+  }
 #endif
 
-// Zero-initialized default ctor for python.
-static GfQuath *__init__()
-{
-  return new GfQuath(0);
-}
+  // Zero-initialized default ctor for python.
+  static GfQuath *__init__()
+  {
+    return new GfQuath(0);
+  }
 
 }  // anonymous namespace
 
@@ -91,9 +91,9 @@ void wrapQuath()
 {
   object getImaginary = make_function(&GfQuath::GetImaginary, return_value_policy<return_by_value>());
 
-  object setImaginaryVec = make_function((void (GfQuath::*)(const GfVec3h &)) & GfQuath::SetImaginary);
+  object setImaginaryVec = make_function((void(GfQuath::*)(const GfVec3h &)) & GfQuath::SetImaginary);
 
-  object setImaginaryScl = make_function((void (GfQuath::*)(GfHalf, GfHalf, GfHalf)) & GfQuath::SetImaginary,
+  object setImaginaryScl = make_function((void(GfQuath::*)(GfHalf, GfHalf, GfHalf)) & GfQuath::SetImaginary,
                                          default_call_policies(),
                                          (arg("i"), arg("j"), arg("k")));
 

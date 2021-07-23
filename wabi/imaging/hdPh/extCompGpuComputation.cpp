@@ -344,8 +344,8 @@ HdPhExtCompGpuComputationSharedPtr HdPhExtCompGpuComputation::CreateGpuComputati
 
   // There is a companion resource that requires allocation
   // and resolution.
-  HdPhExtCompGpuComputationResourceSharedPtr resource = std::make_shared<HdPhExtCompGpuComputationResource>(
-    outputBufferSpecs, shader, inputs, resourceRegistry);
+  HdPhExtCompGpuComputationResourceSharedPtr resource =
+    std::make_shared<HdPhExtCompGpuComputationResource>(outputBufferSpecs, shader, inputs, resourceRegistry);
 
   return std::make_shared<HdPhExtCompGpuComputation>(sourceComp->GetId(),
                                                      resource,
@@ -406,8 +406,9 @@ void HdPh_GetExtComputationPrimvarsComputations(
           if (!gpuComputation)
           {
             // Create the computation for the first dirty primvar
-            gpuComputation = HdPhExtCompGpuComputation::CreateGpuComputation(
-              sceneDelegate, sourceComp, compPrimvars);
+            gpuComputation = HdPhExtCompGpuComputation::CreateGpuComputation(sceneDelegate,
+                                                                             sourceComp,
+                                                                             compPrimvars);
 
             HdBufferSourceSharedPtr gpuComputationSource =
               std::make_shared<HdPhExtCompGpuComputationBufferSource>(HdBufferSourceSharedPtrVector(),
@@ -421,14 +422,16 @@ void HdPh_GetExtComputationPrimvarsComputations(
 
           // Create a primvar buffer source for the computation
           HdBufferSourceSharedPtr primvarBufferSource = std::make_shared<HdPhExtCompGpuPrimvarBufferSource>(
-            compPrimvar.name, compPrimvar.valueType, sourceComp->GetElementCount(), sourceComp->GetId());
+            compPrimvar.name,
+            compPrimvar.valueType,
+            sourceComp->GetElementCount(),
+            sourceComp->GetId());
 
           // Gpu primvar sources only need to reserve space
           reserveOnlySources->push_back(primvarBufferSource);
         }
       }
-    }
-    else
+    } else
     {
 
       HdExtCompCpuComputationSharedPtr cpuComputation;
@@ -441,8 +444,9 @@ void HdPh_GetExtComputationPrimvarsComputations(
           if (!cpuComputation)
           {
             // Create the computation for the first dirty primvar
-            cpuComputation = HdExtCompCpuComputation::CreateComputation(
-              sceneDelegate, *sourceComp, separateComputationSources);
+            cpuComputation = HdExtCompCpuComputation::CreateComputation(sceneDelegate,
+                                                                        *sourceComp,
+                                                                        separateComputationSources);
           }
 
           // Create a primvar buffer source for the computation

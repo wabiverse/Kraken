@@ -34,15 +34,15 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static std::string _PcpSiteStr(const PcpSite &x)
-{
-  return TfStringify(x);
-}
+  static std::string _PcpSiteStr(const PcpSite &x)
+  {
+    return TfStringify(x);
+  }
 
-static std::string _PcpLayerStackSiteStr(const PcpLayerStackSite &x)
-{
-  return TfStringify(x);
-}
+  static std::string _PcpLayerStackSiteStr(const PcpLayerStackSite &x)
+  {
+    return TfStringify(x);
+  }
 
 }  // anonymous namespace
 

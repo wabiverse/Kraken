@@ -305,8 +305,7 @@ static void _AddPrimToInheritedPrimvars(const UsdPrim &prim,
           {
             (*outputPrimvars)[i] = std::move(pv);
             break;
-          }
-          else
+          } else
           {
             // Swap to the end and truncate the vector.
             // Don't bother to preserve order.
@@ -405,8 +404,7 @@ UsdGeomPrimvar UsdGeomPrimvarsAPI::FindPrimvarWithInheritance(const TfToken &nam
         if (pv.GetInterpolation() == UsdGeomTokens->constant)
         {
           return pv;
-        }
-        else
+        } else
         {
           // Non-constant interpolation blocks inheritance.
           return UsdGeomPrimvar();

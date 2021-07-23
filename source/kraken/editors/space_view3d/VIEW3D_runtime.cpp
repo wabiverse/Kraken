@@ -58,10 +58,10 @@ void ED_view3d_run(bool *show)
     if (ARCH_UNLIKELY(version == nullptr))
     {
       /** Backwards compatibility & no patch. */
-      vulkan_v = TfStringPrintf(
-        "%d.%d", VK_VERSION_MAJOR(VK_API_VERSION_1_0), VK_VERSION_MINOR(VK_API_VERSION_1_0));
-    }
-    else
+      vulkan_v = TfStringPrintf("%d.%d",
+                                VK_VERSION_MAJOR(VK_API_VERSION_1_0),
+                                VK_VERSION_MINOR(VK_API_VERSION_1_0));
+    } else
     {
       /** Vulkan Version. */
       static uint32_t instance_version;

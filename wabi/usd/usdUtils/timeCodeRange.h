@@ -156,8 +156,7 @@ class UsdUtilsTimeCodeRange
       if (!_timeCodeRange)
       {
         finished = true;
-      }
-      else if (_currStep >= _maxSteps)
+      } else if (_currStep >= _maxSteps)
       {
         finished = true;
       }
@@ -286,8 +285,7 @@ class UsdUtilsTimeCodeRange
         _Invalidate();
         return;
       }
-    }
-    else if (_stride < 0.0)
+    } else if (_stride < 0.0)
     {
       if (_endTimeCode > _startTimeCode)
       {
@@ -297,8 +295,7 @@ class UsdUtilsTimeCodeRange
         _Invalidate();
         return;
       }
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("stride cannot be zero");
       _Invalidate();

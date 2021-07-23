@@ -30,7 +30,7 @@
 
 namespace ccl
 {
-class Scene;
+  class Scene;
 }
 
 WABI_NAMESPACE_BEGIN

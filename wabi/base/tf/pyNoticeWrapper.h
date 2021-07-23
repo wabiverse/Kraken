@@ -157,9 +157,9 @@ struct TfPyNoticeWrapper : public NoticeType, public TfPyNoticeWrapperBase
   PyObject *_self;
 };
 
-#define TF_INSTANTIATE_NOTICE_WRAPPER(T, Base) \
-  TF_REGISTRY_FUNCTION(TfType) \
-  { \
+#define TF_INSTANTIATE_NOTICE_WRAPPER(T, Base)                         \
+  TF_REGISTRY_FUNCTION(TfType)                                         \
+  {                                                                    \
     TfType::Define<TfPyNoticeWrapper<T, Base>, TfType::Bases<Base>>(); \
   }
 

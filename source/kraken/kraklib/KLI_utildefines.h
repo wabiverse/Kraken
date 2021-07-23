@@ -66,52 +66,52 @@ namespace fs = std::filesystem;
 /* min/max */
 #if defined(__GNUC__) || defined(__clang__)
 
-#  define MIN2(a, b) \
-    __extension__({ \
-      typeof(a) a_ = (a); \
-      typeof(b) b_ = (b); \
+#  define MIN2(a, b)               \
+    __extension__({                \
+      typeof(a) a_ = (a);          \
+      typeof(b) b_ = (b);          \
       ((a_) < (b_) ? (a_) : (b_)); \
     })
 
-#  define MAX2(a, b) \
-    __extension__({ \
-      typeof(a) a_ = (a); \
-      typeof(b) b_ = (b); \
+#  define MAX2(a, b)               \
+    __extension__({                \
+      typeof(a) a_ = (a);          \
+      typeof(b) b_ = (b);          \
       ((a_) > (b_) ? (a_) : (b_)); \
     })
 
-#  define MIN3(a, b, c) \
-    __extension__({ \
-      typeof(a) a_ = (a); \
-      typeof(b) b_ = (b); \
-      typeof(c) c_ = (c); \
+#  define MIN3(a, b, c)                                            \
+    __extension__({                                                \
+      typeof(a) a_ = (a);                                          \
+      typeof(b) b_ = (b);                                          \
+      typeof(c) c_ = (c);                                          \
       ((a_ < b_) ? ((a_ < c_) ? a_ : c_) : ((b_ < c_) ? b_ : c_)); \
     })
 
-#  define MAX3(a, b, c) \
-    __extension__({ \
-      typeof(a) a_ = (a); \
-      typeof(b) b_ = (b); \
-      typeof(c) c_ = (c); \
+#  define MAX3(a, b, c)                                            \
+    __extension__({                                                \
+      typeof(a) a_ = (a);                                          \
+      typeof(b) b_ = (b);                                          \
+      typeof(c) c_ = (c);                                          \
       ((a_ > b_) ? ((a_ > c_) ? a_ : c_) : ((b_ > c_) ? b_ : c_)); \
     })
 
-#  define MIN4(a, b, c, d) \
-    __extension__({ \
-      typeof(a) a_ = (a); \
-      typeof(b) b_ = (b); \
-      typeof(c) c_ = (c); \
-      typeof(d) d_ = (d); \
+#  define MIN4(a, b, c, d)                                                       \
+    __extension__({                                                              \
+      typeof(a) a_ = (a);                                                        \
+      typeof(b) b_ = (b);                                                        \
+      typeof(c) c_ = (c);                                                        \
+      typeof(d) d_ = (d);                                                        \
       ((a_ < b_) ? ((a_ < c_) ? ((a_ < d_) ? a_ : d_) : ((c_ < d_) ? c_ : d_)) : \
                    ((b_ < c_) ? ((b_ < d_) ? b_ : d_) : ((c_ < d_) ? c_ : d_))); \
     })
 
-#  define MAX4(a, b, c, d) \
-    __extension__({ \
-      typeof(a) a_ = (a); \
-      typeof(b) b_ = (b); \
-      typeof(c) c_ = (c); \
-      typeof(d) d_ = (d); \
+#  define MAX4(a, b, c, d)                                                       \
+    __extension__({                                                              \
+      typeof(a) a_ = (a);                                                        \
+      typeof(b) b_ = (b);                                                        \
+      typeof(c) c_ = (c);                                                        \
+      typeof(d) d_ = (d);                                                        \
       ((a_ > b_) ? ((a_ > c_) ? ((a_ > d_) ? a_ : d_) : ((c_ > d_) ? c_ : d_)) : \
                    ((b_ > c_) ? ((b_ > d_) ? b_ : d_) : ((c_ > d_) ? c_ : d_))); \
     })
@@ -134,97 +134,97 @@ namespace fs = std::filesystem;
 #define MIN3_PAIR(cmp_a, cmp_b, cmp_c, ret_a, ret_b, ret_c) \
   ((cmp_a < cmp_b) ? ((cmp_a < cmp_c) ? ret_a : ret_c) : ((cmp_b < cmp_c) ? ret_b : ret_c))
 
-#define INIT_MINMAX(min, max) \
-  { \
-    (min)[0] = (min)[1] = (min)[2] = 1.0e30f; \
+#define INIT_MINMAX(min, max)                  \
+  {                                            \
+    (min)[0] = (min)[1] = (min)[2] = 1.0e30f;  \
     (max)[0] = (max)[1] = (max)[2] = -1.0e30f; \
-  } \
+  }                                            \
   (void)0
-#define INIT_MINMAX2(min, max) \
-  { \
-    (min)[0] = (min)[1] = 1.0e30f; \
+#define INIT_MINMAX2(min, max)      \
+  {                                 \
+    (min)[0] = (min)[1] = 1.0e30f;  \
     (max)[0] = (max)[1] = -1.0e30f; \
-  } \
+  }                                 \
   (void)0
-#define DO_MIN(vec, min) \
-  { \
+#define DO_MIN(vec, min)     \
+  {                          \
     if ((min)[0] > (vec)[0]) \
-    { \
-      (min)[0] = (vec)[0]; \
-    } \
+    {                        \
+      (min)[0] = (vec)[0];   \
+    }                        \
     if ((min)[1] > (vec)[1]) \
-    { \
-      (min)[1] = (vec)[1]; \
-    } \
+    {                        \
+      (min)[1] = (vec)[1];   \
+    }                        \
     if ((min)[2] > (vec)[2]) \
-    { \
-      (min)[2] = (vec)[2]; \
-    } \
-  } \
+    {                        \
+      (min)[2] = (vec)[2];   \
+    }                        \
+  }                          \
   (void)0
-#define DO_MAX(vec, max) \
-  { \
+#define DO_MAX(vec, max)     \
+  {                          \
     if ((max)[0] < (vec)[0]) \
-    { \
-      (max)[0] = (vec)[0]; \
-    } \
+    {                        \
+      (max)[0] = (vec)[0];   \
+    }                        \
     if ((max)[1] < (vec)[1]) \
-    { \
-      (max)[1] = (vec)[1]; \
-    } \
+    {                        \
+      (max)[1] = (vec)[1];   \
+    }                        \
     if ((max)[2] < (vec)[2]) \
-    { \
-      (max)[2] = (vec)[2]; \
-    } \
-  } \
+    {                        \
+      (max)[2] = (vec)[2];   \
+    }                        \
+  }                          \
   (void)0
 #define DO_MINMAX(vec, min, max) \
-  { \
-    if ((min)[0] > (vec)[0]) \
-    { \
-      (min)[0] = (vec)[0]; \
-    } \
-    if ((min)[1] > (vec)[1]) \
-    { \
-      (min)[1] = (vec)[1]; \
-    } \
-    if ((min)[2] > (vec)[2]) \
-    { \
-      (min)[2] = (vec)[2]; \
-    } \
-    if ((max)[0] < (vec)[0]) \
-    { \
-      (max)[0] = (vec)[0]; \
-    } \
-    if ((max)[1] < (vec)[1]) \
-    { \
-      (max)[1] = (vec)[1]; \
-    } \
-    if ((max)[2] < (vec)[2]) \
-    { \
-      (max)[2] = (vec)[2]; \
-    } \
-  } \
+  {                              \
+    if ((min)[0] > (vec)[0])     \
+    {                            \
+      (min)[0] = (vec)[0];       \
+    }                            \
+    if ((min)[1] > (vec)[1])     \
+    {                            \
+      (min)[1] = (vec)[1];       \
+    }                            \
+    if ((min)[2] > (vec)[2])     \
+    {                            \
+      (min)[2] = (vec)[2];       \
+    }                            \
+    if ((max)[0] < (vec)[0])     \
+    {                            \
+      (max)[0] = (vec)[0];       \
+    }                            \
+    if ((max)[1] < (vec)[1])     \
+    {                            \
+      (max)[1] = (vec)[1];       \
+    }                            \
+    if ((max)[2] < (vec)[2])     \
+    {                            \
+      (max)[2] = (vec)[2];       \
+    }                            \
+  }                              \
   (void)0
 #define DO_MINMAX2(vec, min, max) \
-  { \
-    if ((min)[0] > (vec)[0]) \
-    { \
-      (min)[0] = (vec)[0]; \
-    } \
-    if ((min)[1] > (vec)[1]) \
-    { \
-      (min)[1] = (vec)[1]; \
-    } \
-    if ((max)[0] < (vec)[0]) \
-    { \
-      (max)[0] = (vec)[0]; \
-    } \
-    if ((max)[1] < (vec)[1]) \
-    { \
-      (max)[1] = (vec)[1]; \
-    } \
-  } \
+  {                               \
+    if ((min)[0] > (vec)[0])      \
+    {                             \
+      (min)[0] = (vec)[0];        \
+    }                             \
+    if ((min)[1] > (vec)[1])      \
+    {                             \
+      (min)[1] = (vec)[1];        \
+    }                             \
+    if ((max)[0] < (vec)[0])      \
+    {                             \
+      (max)[0] = (vec)[0];        \
+    }                             \
+    if ((max)[1] < (vec)[1])      \
+    {                             \
+      (max)[1] = (vec)[1];        \
+    }                             \
+  }                               \
   (void)0
 
 /** \} */
@@ -233,109 +233,109 @@ namespace fs = std::filesystem;
 /** \name Clamp Macros
  * \{ */
 
-#define CLAMPIS(a, b, c) ((a) < (b) ? (b) : (a) > (c) ? (c) : (a))
+#define CLAMPIS(a, b, c) ((a) < (b) ? (b) : (a) > (c) ? (c) : \
+                                                        (a))
 
-#define CLAMP(a, b, c) \
-  { \
-    if ((a) < (b)) \
-    { \
-      (a) = (b); \
-    } \
-    else if ((a) > (c)) \
-    { \
-      (a) = (c); \
-    } \
-  } \
+#define CLAMP(a, b, c)    \
+  {                       \
+    if ((a) < (b))        \
+    {                     \
+      (a) = (b);          \
+    } else if ((a) > (c)) \
+    {                     \
+      (a) = (c);          \
+    }                     \
+  }                       \
   (void)0
 
 #define CLAMP_MAX(a, c) \
-  { \
-    if ((a) > (c)) \
-    { \
-      (a) = (c); \
-    } \
-  } \
+  {                     \
+    if ((a) > (c))      \
+    {                   \
+      (a) = (c);        \
+    }                   \
+  }                     \
   (void)0
 
 #define CLAMP_MIN(a, b) \
-  { \
-    if ((a) < (b)) \
-    { \
-      (a) = (b); \
-    } \
-  } \
+  {                     \
+    if ((a) < (b))      \
+    {                   \
+      (a) = (b);        \
+    }                   \
+  }                     \
   (void)0
 
-#define CLAMP2(vec, b, c) \
-  { \
+#define CLAMP2(vec, b, c)  \
+  {                        \
     CLAMP((vec)[0], b, c); \
     CLAMP((vec)[1], b, c); \
-  } \
+  }                        \
   (void)0
 
-#define CLAMP2_MIN(vec, b) \
-  { \
+#define CLAMP2_MIN(vec, b)  \
+  {                         \
     CLAMP_MIN((vec)[0], b); \
     CLAMP_MIN((vec)[1], b); \
-  } \
+  }                         \
   (void)0
 
-#define CLAMP2_MAX(vec, b) \
-  { \
+#define CLAMP2_MAX(vec, b)  \
+  {                         \
     CLAMP_MAX((vec)[0], b); \
     CLAMP_MAX((vec)[1], b); \
-  } \
+  }                         \
   (void)0
 
-#define CLAMP3(vec, b, c) \
-  { \
+#define CLAMP3(vec, b, c)  \
+  {                        \
     CLAMP((vec)[0], b, c); \
     CLAMP((vec)[1], b, c); \
     CLAMP((vec)[2], b, c); \
-  } \
+  }                        \
   (void)0
 
-#define CLAMP3_MIN(vec, b) \
-  { \
+#define CLAMP3_MIN(vec, b)  \
+  {                         \
     CLAMP_MIN((vec)[0], b); \
     CLAMP_MIN((vec)[1], b); \
     CLAMP_MIN((vec)[2], b); \
-  } \
+  }                         \
   (void)0
 
-#define CLAMP3_MAX(vec, b) \
-  { \
+#define CLAMP3_MAX(vec, b)  \
+  {                         \
     CLAMP_MAX((vec)[0], b); \
     CLAMP_MAX((vec)[1], b); \
     CLAMP_MAX((vec)[2], b); \
-  } \
+  }                         \
   (void)0
 
-#define CLAMP4(vec, b, c) \
-  { \
+#define CLAMP4(vec, b, c)  \
+  {                        \
     CLAMP((vec)[0], b, c); \
     CLAMP((vec)[1], b, c); \
     CLAMP((vec)[2], b, c); \
     CLAMP((vec)[3], b, c); \
-  } \
+  }                        \
   (void)0
 
-#define CLAMP4_MIN(vec, b) \
-  { \
+#define CLAMP4_MIN(vec, b)  \
+  {                         \
     CLAMP_MIN((vec)[0], b); \
     CLAMP_MIN((vec)[1], b); \
     CLAMP_MIN((vec)[2], b); \
     CLAMP_MIN((vec)[3], b); \
-  } \
+  }                         \
   (void)0
 
-#define CLAMP4_MAX(vec, b) \
-  { \
+#define CLAMP4_MAX(vec, b)  \
+  {                         \
     CLAMP_MAX((vec)[0], b); \
     CLAMP_MAX((vec)[1], b); \
     CLAMP_MAX((vec)[2], b); \
     CLAMP_MAX((vec)[3], b); \
-  } \
+  }                         \
   (void)0
 
 /** \} */
@@ -348,7 +348,7 @@ namespace fs = std::filesystem;
 
 /* assuming a static array */
 #if defined(__GNUC__) && !defined(__cplusplus) && !defined(__clang__) && !defined(__INTEL_COMPILER)
-#  define ARRAY_SIZE(arr) \
+#  define ARRAY_SIZE(arr)                                                             \
     ((sizeof(struct { int isnt_array : ((const void *)&(arr) == &(arr)[0]); }) * 0) + \
      (sizeof(arr) / sizeof(*(arr))))
 #else
@@ -356,80 +356,146 @@ namespace fs = std::filesystem;
 #endif
 
 #define _VA_NARGS_GLUE(x, y) x y
-#define _VA_NARGS_RETURN_COUNT( \
-  _1_, _2_, _3_, _4_, _5_, _6_, _7_, _8_, _9_, _10_, _11_, _12_, _13_, _14_, _15_, _16_, _17_, _18_, _19_, _20_, _21_, _22_, _23_, _24_, _25_, _26_, _27_, _28_, _29_, _30_, _31_, _32_, _33_, _34_, _35_, _36_, _37_, _38_, _39_, _40_, _41_, _42_, _43_, _44_, _45_, _46_, _47_, _48_, _49_, _50_, _51_, _52_, _53_, _54_, _55_, _56_, _57_, _58_, _59_, _60_, _61_, _62_, _63_, _64_, count, ...) count
+#define _VA_NARGS_RETURN_COUNT(_1_,   \
+                               _2_,   \
+                               _3_,   \
+                               _4_,   \
+                               _5_,   \
+                               _6_,   \
+                               _7_,   \
+                               _8_,   \
+                               _9_,   \
+                               _10_,  \
+                               _11_,  \
+                               _12_,  \
+                               _13_,  \
+                               _14_,  \
+                               _15_,  \
+                               _16_,  \
+                               _17_,  \
+                               _18_,  \
+                               _19_,  \
+                               _20_,  \
+                               _21_,  \
+                               _22_,  \
+                               _23_,  \
+                               _24_,  \
+                               _25_,  \
+                               _26_,  \
+                               _27_,  \
+                               _28_,  \
+                               _29_,  \
+                               _30_,  \
+                               _31_,  \
+                               _32_,  \
+                               _33_,  \
+                               _34_,  \
+                               _35_,  \
+                               _36_,  \
+                               _37_,  \
+                               _38_,  \
+                               _39_,  \
+                               _40_,  \
+                               _41_,  \
+                               _42_,  \
+                               _43_,  \
+                               _44_,  \
+                               _45_,  \
+                               _46_,  \
+                               _47_,  \
+                               _48_,  \
+                               _49_,  \
+                               _50_,  \
+                               _51_,  \
+                               _52_,  \
+                               _53_,  \
+                               _54_,  \
+                               _55_,  \
+                               _56_,  \
+                               _57_,  \
+                               _58_,  \
+                               _59_,  \
+                               _60_,  \
+                               _61_,  \
+                               _62_,  \
+                               _63_,  \
+                               _64_,  \
+                               count, \
+                               ...)   \
+  count
 #define _VA_NARGS_EXPAND(args) _VA_NARGS_RETURN_COUNT args
 #define _VA_NARGS_OVERLOAD_MACRO2(name, count) name##count
 #define _VA_NARGS_OVERLOAD_MACRO1(name, count) _VA_NARGS_OVERLOAD_MACRO2(name, count)
 #define _VA_NARGS_OVERLOAD_MACRO(name, count) _VA_NARGS_OVERLOAD_MACRO1(name, count)
 /* --- expose for re-use --- */
 /* 64 args max */
-#define VA_NARGS_COUNT(...) _VA_NARGS_EXPAND((__VA_ARGS__, \
-                                              64, \
-                                              63, \
-                                              62, \
-                                              61, \
-                                              60, \
-                                              59, \
-                                              58, \
-                                              57, \
-                                              56, \
-                                              55, \
-                                              54, \
-                                              53, \
-                                              52, \
-                                              51, \
-                                              50, \
-                                              49, \
-                                              48, \
-                                              47, \
-                                              46, \
-                                              45, \
-                                              44, \
-                                              43, \
-                                              42, \
-                                              41, \
-                                              40, \
-                                              39, \
-                                              38, \
-                                              37, \
-                                              36, \
-                                              35, \
-                                              34, \
-                                              33, \
-                                              32, \
-                                              31, \
-                                              30, \
-                                              29, \
-                                              28, \
-                                              27, \
-                                              26, \
-                                              25, \
-                                              24, \
-                                              23, \
-                                              22, \
-                                              21, \
-                                              20, \
-                                              19, \
-                                              18, \
-                                              17, \
-                                              16, \
-                                              15, \
-                                              14, \
-                                              13, \
-                                              12, \
-                                              11, \
-                                              10, \
-                                              9, \
-                                              8, \
-                                              7, \
-                                              6, \
-                                              5, \
-                                              4, \
-                                              3, \
-                                              2, \
-                                              1, \
-                                              0))
+#define VA_NARGS_COUNT(...)      \
+  _VA_NARGS_EXPAND((__VA_ARGS__, \
+                    64,          \
+                    63,          \
+                    62,          \
+                    61,          \
+                    60,          \
+                    59,          \
+                    58,          \
+                    57,          \
+                    56,          \
+                    55,          \
+                    54,          \
+                    53,          \
+                    52,          \
+                    51,          \
+                    50,          \
+                    49,          \
+                    48,          \
+                    47,          \
+                    46,          \
+                    45,          \
+                    44,          \
+                    43,          \
+                    42,          \
+                    41,          \
+                    40,          \
+                    39,          \
+                    38,          \
+                    37,          \
+                    36,          \
+                    35,          \
+                    34,          \
+                    33,          \
+                    32,          \
+                    31,          \
+                    30,          \
+                    29,          \
+                    28,          \
+                    27,          \
+                    26,          \
+                    25,          \
+                    24,          \
+                    23,          \
+                    22,          \
+                    21,          \
+                    20,          \
+                    19,          \
+                    18,          \
+                    17,          \
+                    16,          \
+                    15,          \
+                    14,          \
+                    13,          \
+                    12,          \
+                    11,          \
+                    10,          \
+                    9,           \
+                    8,           \
+                    7,           \
+                    6,           \
+                    5,           \
+                    4,           \
+                    3,           \
+                    2,           \
+                    1,           \
+                    0))
 #define VA_NARGS_CALL_OVERLOAD(name, ...) \
   _VA_NARGS_GLUE(_VA_NARGS_OVERLOAD_MACRO(name, VA_NARGS_COUNT(__VA_ARGS__)), (__VA_ARGS__))
 
@@ -437,94 +503,94 @@ namespace fs = std::filesystem;
 /* internal helpers */
 #define _VA_ARRAY_SET_ITEMS2(v, a) ((v)[0] = (a))
 #define _VA_ARRAY_SET_ITEMS3(v, a, b) \
-  _VA_ARRAY_SET_ITEMS2(v, a); \
+  _VA_ARRAY_SET_ITEMS2(v, a);         \
   ((v)[1] = (b))
 #define _VA_ARRAY_SET_ITEMS4(v, a, b, c) \
-  _VA_ARRAY_SET_ITEMS3(v, a, b); \
+  _VA_ARRAY_SET_ITEMS3(v, a, b);         \
   ((v)[2] = (c))
 #define _VA_ARRAY_SET_ITEMS5(v, a, b, c, d) \
-  _VA_ARRAY_SET_ITEMS4(v, a, b, c); \
+  _VA_ARRAY_SET_ITEMS4(v, a, b, c);         \
   ((v)[3] = (d))
 #define _VA_ARRAY_SET_ITEMS6(v, a, b, c, d, e) \
-  _VA_ARRAY_SET_ITEMS5(v, a, b, c, d); \
+  _VA_ARRAY_SET_ITEMS5(v, a, b, c, d);         \
   ((v)[4] = (e))
 #define _VA_ARRAY_SET_ITEMS7(v, a, b, c, d, e, f) \
-  _VA_ARRAY_SET_ITEMS6(v, a, b, c, d, e); \
+  _VA_ARRAY_SET_ITEMS6(v, a, b, c, d, e);         \
   ((v)[5] = (f))
 #define _VA_ARRAY_SET_ITEMS8(v, a, b, c, d, e, f, g) \
-  _VA_ARRAY_SET_ITEMS7(v, a, b, c, d, e, f); \
+  _VA_ARRAY_SET_ITEMS7(v, a, b, c, d, e, f);         \
   ((v)[6] = (g))
 #define _VA_ARRAY_SET_ITEMS9(v, a, b, c, d, e, f, g, h) \
-  _VA_ARRAY_SET_ITEMS8(v, a, b, c, d, e, f, g); \
+  _VA_ARRAY_SET_ITEMS8(v, a, b, c, d, e, f, g);         \
   ((v)[7] = (h))
 #define _VA_ARRAY_SET_ITEMS10(v, a, b, c, d, e, f, g, h, i) \
-  _VA_ARRAY_SET_ITEMS9(v, a, b, c, d, e, f, g, h); \
+  _VA_ARRAY_SET_ITEMS9(v, a, b, c, d, e, f, g, h);          \
   ((v)[8] = (i))
 #define _VA_ARRAY_SET_ITEMS11(v, a, b, c, d, e, f, g, h, i, j) \
-  _VA_ARRAY_SET_ITEMS10(v, a, b, c, d, e, f, g, h, i); \
+  _VA_ARRAY_SET_ITEMS10(v, a, b, c, d, e, f, g, h, i);         \
   ((v)[9] = (j))
 #define _VA_ARRAY_SET_ITEMS12(v, a, b, c, d, e, f, g, h, i, j, k) \
-  _VA_ARRAY_SET_ITEMS11(v, a, b, c, d, e, f, g, h, i, j); \
+  _VA_ARRAY_SET_ITEMS11(v, a, b, c, d, e, f, g, h, i, j);         \
   ((v)[10] = (k))
 #define _VA_ARRAY_SET_ITEMS13(v, a, b, c, d, e, f, g, h, i, j, k, l) \
-  _VA_ARRAY_SET_ITEMS12(v, a, b, c, d, e, f, g, h, i, j, k); \
+  _VA_ARRAY_SET_ITEMS12(v, a, b, c, d, e, f, g, h, i, j, k);         \
   ((v)[11] = (l))
 #define _VA_ARRAY_SET_ITEMS14(v, a, b, c, d, e, f, g, h, i, j, k, l, m) \
-  _VA_ARRAY_SET_ITEMS13(v, a, b, c, d, e, f, g, h, i, j, k, l); \
+  _VA_ARRAY_SET_ITEMS13(v, a, b, c, d, e, f, g, h, i, j, k, l);         \
   ((v)[12] = (m))
 #define _VA_ARRAY_SET_ITEMS15(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n) \
-  _VA_ARRAY_SET_ITEMS14(v, a, b, c, d, e, f, g, h, i, j, k, l, m); \
+  _VA_ARRAY_SET_ITEMS14(v, a, b, c, d, e, f, g, h, i, j, k, l, m);         \
   ((v)[13] = (n))
 #define _VA_ARRAY_SET_ITEMS16(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) \
-  _VA_ARRAY_SET_ITEMS15(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n); \
+  _VA_ARRAY_SET_ITEMS15(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n);         \
   ((v)[14] = (o))
 #define _VA_ARRAY_SET_ITEMS17(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
-  _VA_ARRAY_SET_ITEMS16(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o); \
+  _VA_ARRAY_SET_ITEMS16(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o);         \
   ((v)[15] = (p))
 
 /* reusable ARRAY_SET_ITEMS macro */
-#define ARRAY_SET_ITEMS(...) \
-  { \
+#define ARRAY_SET_ITEMS(...)                                  \
+  {                                                           \
     VA_NARGS_CALL_OVERLOAD(_VA_ARRAY_SET_ITEMS, __VA_ARGS__); \
-  } \
+  }                                                           \
   (void)0
 
 /** \} */
 
 #ifdef __GNUC__
 #  define CHECK_TYPE(var, type) \
-    { \
-      typeof(var) *__tmp; \
-      __tmp = (type *)NULL; \
-      (void)__tmp; \
-    } \
+    {                           \
+      typeof(var) *__tmp;       \
+      __tmp = (type *)NULL;     \
+      (void)__tmp;              \
+    }                           \
     (void)0
 
 #  define CHECK_TYPE_PAIR(var_a, var_b) \
-    { \
-      const typeof(var_a) *__tmp; \
-      __tmp = (typeof(var_b) *)NULL; \
-      (void)__tmp; \
-    } \
+    {                                   \
+      const typeof(var_a) *__tmp;       \
+      __tmp = (typeof(var_b) *)NULL;    \
+      (void)__tmp;                      \
+    }                                   \
     (void)0
 
 #  define CHECK_TYPE_PAIR_INLINE(var_a, var_b) \
-    ((void)({ \
-      const typeof(var_a) *__tmp; \
-      __tmp = (typeof(var_b) *)NULL; \
-      (void)__tmp; \
+    ((void)({                                  \
+      const typeof(var_a) *__tmp;              \
+      __tmp = (typeof(var_b) *)NULL;           \
+      (void)__tmp;                             \
     }))
 
 #else
 #  define CHECK_TYPE(var, type) \
-    { \
-      EXPR_NOP(var); \
-    } \
+    {                           \
+      EXPR_NOP(var);            \
+    }                           \
     (void)0
-#  define CHECK_TYPE_PAIR(var_a, var_b) \
-    { \
+#  define CHECK_TYPE_PAIR(var_a, var_b)   \
+    {                                     \
       (EXPR_NOP(var_a), EXPR_NOP(var_b)); \
-    } \
+    }                                     \
     (void)0
 #  define CHECK_TYPE_PAIR_INLINE(var_a, var_b) (EXPR_NOP(var_a), EXPR_NOP(var_b))
 #endif
@@ -534,54 +600,54 @@ namespace fs = std::filesystem;
  * \{ */
 
 #define SWAP(type, a, b) \
-  { \
-    type sw_ap; \
+  {                      \
+    type sw_ap;          \
     CHECK_TYPE(a, type); \
     CHECK_TYPE(b, type); \
-    sw_ap = (a); \
-    (a) = (b); \
-    (b) = sw_ap; \
-  } \
+    sw_ap = (a);         \
+    (a) = (b);           \
+    (b) = sw_ap;         \
+  }                      \
   (void)0
 
 /* swap with a temp value */
 #define SWAP_TVAL(tval, a, b) \
-  { \
+  {                           \
     CHECK_TYPE_PAIR(tval, a); \
     CHECK_TYPE_PAIR(tval, b); \
-    (tval) = (a); \
-    (a) = (b); \
-    (b) = (tval); \
-  } \
+    (tval) = (a);             \
+    (a) = (b);                \
+    (b) = (tval);             \
+  }                           \
   (void)0
 
 /* shift around elements */
 #define SHIFT3(type, a, b, c) \
-  { \
-    type tmp; \
-    CHECK_TYPE(a, type); \
-    CHECK_TYPE(b, type); \
-    CHECK_TYPE(c, type); \
-    tmp = a; \
-    a = c; \
-    c = b; \
-    b = tmp; \
-  } \
+  {                           \
+    type tmp;                 \
+    CHECK_TYPE(a, type);      \
+    CHECK_TYPE(b, type);      \
+    CHECK_TYPE(c, type);      \
+    tmp = a;                  \
+    a = c;                    \
+    c = b;                    \
+    b = tmp;                  \
+  }                           \
   (void)0
 
 #define SHIFT4(type, a, b, c, d) \
-  { \
-    type tmp; \
-    CHECK_TYPE(a, type); \
-    CHECK_TYPE(b, type); \
-    CHECK_TYPE(c, type); \
-    CHECK_TYPE(d, type); \
-    tmp = a; \
-    a = d; \
-    d = c; \
-    c = b; \
-    b = tmp; \
-  } \
+  {                              \
+    type tmp;                    \
+    CHECK_TYPE(a, type);         \
+    CHECK_TYPE(b, type);         \
+    CHECK_TYPE(c, type);         \
+    CHECK_TYPE(d, type);         \
+    tmp = a;                     \
+    a = d;                       \
+    d = c;                       \
+    c = b;                       \
+    b = tmp;                     \
+  }                              \
   (void)0
 
 /** No-op for expressions we don't want to instantiate, but must remain valid. */

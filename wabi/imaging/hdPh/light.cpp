@@ -89,8 +89,7 @@ GlfSimpleLight HdPhLight::_PrepareDomeLight(SdfPath const &id, HdSceneDelegate *
       if (v.IsHolding<SdfAssetPath>())
       {
         l.SetDomeLightTextureFile(v.UncheckedGet<SdfAssetPath>());
-      }
-      else
+      } else
       {
         TF_CODING_ERROR("Dome light texture file not an asset path.");
       }
@@ -134,8 +133,7 @@ void HdPhLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam,
     if (_lightType == HdPrimTypeTokens->simpleLight)
     {
       _params[HdLightTokens->params] = sceneDelegate->Get(id, HdLightTokens->params);
-    }
-    else if (_lightType == HdPrimTypeTokens->domeLight)
+    } else if (_lightType == HdPrimTypeTokens->domeLight)
     {
       _params[HdLightTokens->params] = _PrepareDomeLight(id, sceneDelegate);
     }
@@ -171,8 +169,7 @@ void HdPhLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam,
 
         changeTracker.MarkCollectionDirty(newCollection.GetName());
       }
-    }
-    else
+    } else
     {
       _params[HdLightTokens->shadowCollection] = HdRprimCollection();
     }
@@ -204,8 +201,7 @@ HdDirtyBits HdPhLight::GetInitialDirtyBitsMask() const
   if (_lightType == HdPrimTypeTokens->simpleLight)
   {
     return AllDirty;
-  }
-  else
+  } else
   {
     return (DirtyParams | DirtyTransform);
   }

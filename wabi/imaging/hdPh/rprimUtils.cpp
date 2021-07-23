@@ -337,8 +337,7 @@ void HdPhUpdateDrawItemBAR(HdBufferArrayRangeSharedPtr const &newRange,
           id.GetText(),
           newRange.get(),
           curRange.get());
-      }
-      else if (!newRange->IsAggregatedWith(curRange))
+      } else if (!newRange->IsAggregatedWith(curRange))
       {
         TfDebug::Helper().Msg(
           "%s: Marking all batches dirty since the new BAR (%p) "
@@ -346,8 +345,7 @@ void HdPhUpdateDrawItemBAR(HdBufferArrayRangeSharedPtr const &newRange,
           id.GetText(),
           newRange.get(),
           curRange.get());
-      }
-      else
+      } else
       {
         TfDebug::Helper().Msg(
           "%s: Marking all batches dirty since the new BAR (%p) "
@@ -489,8 +487,9 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
       source.reset(
         new HdVtBufferSource(HdInstancerTokens->instancerTransform, rootTransforms, rootTransforms.size()));
       sources.push_back(source);
-      source.reset(new HdVtBufferSource(
-        HdInstancerTokens->instancerTransformInverse, rootInverseTransforms, rootInverseTransforms.size()));
+      source.reset(new HdVtBufferSource(HdInstancerTokens->instancerTransformInverse,
+                                        rootInverseTransforms,
+                                        rootInverseTransforms.size()));
       sources.push_back(source);
 
       // XXX: It might be worth to consider to have isFlipped
@@ -516,13 +515,15 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
     sharedData->bounds.SetRange(prim->GetExtent(delegate));
 
     GfVec3d const &localMin = drawItem->GetBounds().GetBox().GetMin();
-    HdBufferSourceSharedPtr sourceMin(new HdVtBufferSource(
-      HdTokens->bboxLocalMin, VtValue(GfVec4f(localMin[0], localMin[1], localMin[2], 1.0f))));
+    HdBufferSourceSharedPtr sourceMin(
+      new HdVtBufferSource(HdTokens->bboxLocalMin,
+                           VtValue(GfVec4f(localMin[0], localMin[1], localMin[2], 1.0f))));
     sources.push_back(sourceMin);
 
     GfVec3d const &localMax = drawItem->GetBounds().GetBox().GetMax();
-    HdBufferSourceSharedPtr sourceMax(new HdVtBufferSource(
-      HdTokens->bboxLocalMax, VtValue(GfVec4f(localMax[0], localMax[1], localMax[2], 1.0f))));
+    HdBufferSourceSharedPtr sourceMax(
+      new HdVtBufferSource(HdTokens->bboxLocalMax,
+                           VtValue(GfVec4f(localMax[0], localMax[1], localMax[2], 1.0f))));
     sources.push_back(sourceMax);
   }
 
@@ -554,8 +555,7 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
           // empty value. Catch that case here.
           //
           // Do nothing in this case.
-        }
-        else if (!value.IsEmpty())
+        } else if (!value.IsEmpty())
         {
           // Given that this is a constant primvar, if it is
           // holding VtArray then use that as a single array
@@ -598,10 +598,16 @@ void HdPhPopulateConstantPrimvars(HdRprim *prim,
   HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 
   HdBufferArrayRangeSharedPtr range = hdPhResourceRegistry->UpdateShaderStorageBufferArrayRange(
-    HdTokens->primvar, bar, bufferSpecs, removedSpecs, HdBufferArrayUsageHint());
+    HdTokens->primvar,
+    bar,
+    bufferSpecs,
+    removedSpecs,
+    HdBufferArrayUsageHint());
 
-  HdPhUpdateDrawItemBAR(
-    range, drawItem->GetDrawingCoord()->GetConstantPrimvarIndex(), sharedData, renderIndex);
+  HdPhUpdateDrawItemBAR(range,
+                        drawItem->GetDrawingCoord()->GetConstantPrimvarIndex(),
+                        sharedData,
+                        renderIndex);
 
   TF_VERIFY(drawItem->GetConstantPrimvarRange()->IsValid());
 
@@ -719,7 +725,9 @@ void HdPhUpdateInstancerData(HdRenderIndex &renderIndex,
         bufferSpecs.emplace_back(HdInstancerTokens->culledInstanceIndices, HdTupleType{HdTypeInt32, 1});
 
         HdBufferArrayRangeSharedPtr range = resourceRegistry->AllocateNonUniformBufferArrayRange(
-          HdTokens->topology, bufferSpecs, HdBufferArrayUsageHint());
+          HdTokens->topology,
+          bufferSpecs,
+          HdBufferArrayUsageHint());
 
         HdPhUpdateDrawItemBAR(range, drawingCoord->GetInstanceIndexIndex(), sharedData, renderIndex);
 
@@ -761,7 +769,8 @@ bool HdPhIsInstancePrimvarExistentAndValid(HdRenderIndex &renderIndex,
     }
 
     HdPrimvarDescriptorVector primvars = instancer->GetDelegate()->GetPrimvarDescriptors(
-      instancer->GetId(), HdInterpolationInstance);
+      instancer->GetId(),
+      HdInterpolationInstance);
 
     for (const HdPrimvarDescriptor &pv : primvars)
     {
@@ -806,8 +815,7 @@ static HdBufferSourceSharedPtr _GetBitmaskEncodedVisibilityBuffer(VtIntArray inv
   // Initialize all bits to 1 (visible)
   VtArray<uint32_t> visibility(numUIntsNeeded, std::numeric_limits<uint32_t>::max());
 
-  for (VtIntArray::const_iterator i = invisibleIndices.begin(), end = invisibleIndices.end(); i != end;
-       ++i)
+  for (VtIntArray::const_iterator i = invisibleIndices.begin(), end = invisibleIndices.end(); i != end; ++i)
   {
     if (*i >= numTotalIndices || *i < 0)
     {
@@ -849,10 +857,14 @@ void HdPhProcessTopologyVisibility(VtIntArray invisibleElements,
   // reset the bits to make all elements/points visible.
   if (tvBAR || (!invisibleElements.empty() || !invisiblePoints.empty()))
   {
-    sources.push_back(_GetBitmaskEncodedVisibilityBuffer(
-      invisibleElements, numTotalElements, HdTokens->elementsVisibility, rprimId));
-    sources.push_back(_GetBitmaskEncodedVisibilityBuffer(
-      invisiblePoints, numTotalPoints, HdTokens->pointsVisibility, rprimId));
+    sources.push_back(_GetBitmaskEncodedVisibilityBuffer(invisibleElements,
+                                                         numTotalElements,
+                                                         HdTokens->elementsVisibility,
+                                                         rprimId));
+    sources.push_back(_GetBitmaskEncodedVisibilityBuffer(invisiblePoints,
+                                                         numTotalPoints,
+                                                         HdTokens->pointsVisibility,
+                                                         rprimId));
   }
 
   // Exit early if the BAR doesn't need to be allocated.
@@ -876,7 +888,9 @@ void HdPhProcessTopologyVisibility(VtIntArray invisibleElements,
   if (!tvBAR || barNeedsReallocation)
   {
     HdBufferArrayRangeSharedPtr range = resourceRegistry->AllocateShaderStorageBufferArrayRange(
-      HdTokens->topologyVisibility, bufferSpecs, HdBufferArrayUsageHint());
+      HdTokens->topologyVisibility,
+      bufferSpecs,
+      HdBufferArrayUsageHint());
     sharedData->barContainer.Set(drawItem->GetDrawingCoord()->GetTopologyVisibilityIndex(), range);
 
     changeTracker->MarkBatchesDirty();

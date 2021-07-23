@@ -27,211 +27,209 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-// Mapping the HdFormat base type to a C++ type.
-// The function querying the component size is not constexpr.
-template<int TYPE>
-struct HdFormatType
-{
-  using type = void;
-};
-
-template<>
-struct HdFormatType<HdFormatUNorm8>
-{
-  using type = uint8_t;
-};
-
-template<>
-struct HdFormatType<HdFormatSNorm8>
-{
-  using type = int8_t;
-};
-
-template<>
-struct HdFormatType<HdFormatFloat16>
-{
-  using type = GfHalf;
-};
-
-template<>
-struct HdFormatType<HdFormatFloat32>
-{
-  using type = float;
-};
-
-template<>
-struct HdFormatType<HdFormatInt32>
-{
-  using type = int32_t;
-};
-
-// We are storing the function pointers in an unordered map and using a very simple, well packed
-// key to look them up. We need to investigate if the overhead of the unordered_map lookup, the
-// function call and pushing the arguments to the stack are significant, compared to inlining all
-// the functions.
-struct ConversionKey
-{
-  const uint16_t from;
-  const uint16_t to;
-  ConversionKey(int _from, int _to)
-    : from(static_cast<uint16_t>(_from)),
-      to(static_cast<uint16_t>(_to))
-  {}
-  struct HashFunctor
+  // Mapping the HdFormat base type to a C++ type.
+  // The function querying the component size is not constexpr.
+  template<int TYPE>
+  struct HdFormatType
   {
-    size_t operator()(const ConversionKey &key) const
-    {
-      // The max value for the key is 20.
-      // TODO(pal): Use HdFormatCount to better pack the keys.
-      return key.to | (key.from << 8);
-    }
+    using type = void;
   };
-};
 
-inline bool operator==(const ConversionKey &a, const ConversionKey &b)
-{
-  return a.from == b.from && a.to == b.to;
-}
-
-inline bool _SupportedComponentFormat(HdFormat format)
-{
-  const auto componentFormat = HdGetComponentFormat(format);
-  return componentFormat == HdFormatUNorm8 || componentFormat == HdFormatSNorm8 ||
-         componentFormat == HdFormatFloat16 || componentFormat == HdFormatFloat32 ||
-         componentFormat == HdFormatInt32;
-}
-
-template<typename TO, typename FROM>
-inline TO _ConvertType(FROM from)
-{
-  return static_cast<TO>(from);
-}
-
-// TODO(pal): Dithering?
-template<>
-inline uint8_t _ConvertType(float from)
-{
-  return std::max(0, std::min(static_cast<int>(from * 255.0f), 255));
-}
-
-template<>
-inline uint8_t _ConvertType(GfHalf from)
-{
-  return std::max(0, std::min(static_cast<int>(from * 255.0f), 255));
-}
-
-template<>
-inline int8_t _ConvertType(float from)
-{
-  return std::max(-127, std::min(static_cast<int>(from * 127.0f), 127));
-}
-
-template<>
-inline int8_t _ConvertType(GfHalf from)
-{
-  return std::max(-127, std::min(static_cast<int>(from * 127.0f), 127));
-}
-
-// xo, xe, yo, ye is already clamped against width and height and we checked corner cases when the
-// bucket is empty.
-template<int TO, int FROM>
-inline void _WriteBucket(void *buffer,
-                         size_t componentCount,
-                         unsigned int width,
-                         unsigned int height,
-                         const void *bucketData,
-                         size_t bucketComponentCount,
-                         unsigned int xo,
-                         unsigned int xe,
-                         unsigned int yo,
-                         unsigned int ye,
-                         unsigned int bucketWidth)
-{
-  auto *to = static_cast<typename HdFormatType<TO>::type *>(buffer) +
-             (xo + (height - yo - 1) * width) * componentCount;
-  const auto *from = static_cast<const typename HdFormatType<FROM>::type *>(bucketData);
-
-  const auto toStep = width * componentCount;
-  const auto fromStep = bucketWidth * bucketComponentCount;
-
-  const auto copyOp = [](const typename HdFormatType<FROM>::type &in) -> typename HdFormatType<TO>::type
+  template<>
+  struct HdFormatType<HdFormatUNorm8>
   {
-    return _ConvertType<typename HdFormatType<TO>::type, typename HdFormatType<FROM>::type>(in);
+    using type = uint8_t;
   };
-  const auto dataWidth = xe - xo;
-  // We use std::transform instead of std::copy, so we can add special logic for float32/float16.
-  // If the lambda is just a straight copy, the behavior should be the same since we can't use
-  // memcpy.
-  if (componentCount == bucketComponentCount)
+
+  template<>
+  struct HdFormatType<HdFormatSNorm8>
   {
-    const auto copyWidth = dataWidth * componentCount;
-    for (auto y = yo; y < ye; y += 1)
+    using type = int8_t;
+  };
+
+  template<>
+  struct HdFormatType<HdFormatFloat16>
+  {
+    using type = GfHalf;
+  };
+
+  template<>
+  struct HdFormatType<HdFormatFloat32>
+  {
+    using type = float;
+  };
+
+  template<>
+  struct HdFormatType<HdFormatInt32>
+  {
+    using type = int32_t;
+  };
+
+  // We are storing the function pointers in an unordered map and using a very simple, well packed
+  // key to look them up. We need to investigate if the overhead of the unordered_map lookup, the
+  // function call and pushing the arguments to the stack are significant, compared to inlining all
+  // the functions.
+  struct ConversionKey
+  {
+    const uint16_t from;
+    const uint16_t to;
+    ConversionKey(int _from, int _to)
+      : from(static_cast<uint16_t>(_from)),
+        to(static_cast<uint16_t>(_to))
+    {}
+    struct HashFunctor
     {
-      std::transform(from, from + copyWidth, to, copyOp);
-      to -= toStep;
-      from += fromStep;
-    }
-  }
-  else
-  {  // We need to call std::transform per pixel with the amount of components to copy.
-    const auto componentsToCopy = std::min(componentCount, bucketComponentCount);
-    for (auto y = yo; y < ye; y += 1)
-    {
-      for (auto x = decltype(dataWidth){0}; x < dataWidth; x += 1)
+      size_t operator()(const ConversionKey &key) const
       {
-        std::transform(from + x * bucketComponentCount,
-                       from + x * bucketComponentCount + componentsToCopy,
-                       to + x * componentCount,
-                       copyOp);
+        // The max value for the key is 20.
+        // TODO(pal): Use HdFormatCount to better pack the keys.
+        return key.to | (key.from << 8);
       }
-      to -= toStep;
-      from += fromStep;
+    };
+  };
+
+  inline bool operator==(const ConversionKey &a, const ConversionKey &b)
+  {
+    return a.from == b.from && a.to == b.to;
+  }
+
+  inline bool _SupportedComponentFormat(HdFormat format)
+  {
+    const auto componentFormat = HdGetComponentFormat(format);
+    return componentFormat == HdFormatUNorm8 || componentFormat == HdFormatSNorm8 ||
+           componentFormat == HdFormatFloat16 || componentFormat == HdFormatFloat32 ||
+           componentFormat == HdFormatInt32;
+  }
+
+  template<typename TO, typename FROM>
+  inline TO _ConvertType(FROM from)
+  {
+    return static_cast<TO>(from);
+  }
+
+  // TODO(pal): Dithering?
+  template<>
+  inline uint8_t _ConvertType(float from)
+  {
+    return std::max(0, std::min(static_cast<int>(from * 255.0f), 255));
+  }
+
+  template<>
+  inline uint8_t _ConvertType(GfHalf from)
+  {
+    return std::max(0, std::min(static_cast<int>(from * 255.0f), 255));
+  }
+
+  template<>
+  inline int8_t _ConvertType(float from)
+  {
+    return std::max(-127, std::min(static_cast<int>(from * 127.0f), 127));
+  }
+
+  template<>
+  inline int8_t _ConvertType(GfHalf from)
+  {
+    return std::max(-127, std::min(static_cast<int>(from * 127.0f), 127));
+  }
+
+  // xo, xe, yo, ye is already clamped against width and height and we checked corner cases when the
+  // bucket is empty.
+  template<int TO, int FROM>
+  inline void _WriteBucket(void *buffer,
+                           size_t componentCount,
+                           unsigned int width,
+                           unsigned int height,
+                           const void *bucketData,
+                           size_t bucketComponentCount,
+                           unsigned int xo,
+                           unsigned int xe,
+                           unsigned int yo,
+                           unsigned int ye,
+                           unsigned int bucketWidth)
+  {
+    auto *to = static_cast<typename HdFormatType<TO>::type *>(buffer) +
+               (xo + (height - yo - 1) * width) * componentCount;
+    const auto *from = static_cast<const typename HdFormatType<FROM>::type *>(bucketData);
+
+    const auto toStep = width * componentCount;
+    const auto fromStep = bucketWidth * bucketComponentCount;
+
+    const auto copyOp = [](const typename HdFormatType<FROM>::type &in) -> typename HdFormatType<TO>::type {
+      return _ConvertType<typename HdFormatType<TO>::type, typename HdFormatType<FROM>::type>(in);
+    };
+    const auto dataWidth = xe - xo;
+    // We use std::transform instead of std::copy, so we can add special logic for float32/float16.
+    // If the lambda is just a straight copy, the behavior should be the same since we can't use
+    // memcpy.
+    if (componentCount == bucketComponentCount)
+    {
+      const auto copyWidth = dataWidth * componentCount;
+      for (auto y = yo; y < ye; y += 1)
+      {
+        std::transform(from, from + copyWidth, to, copyOp);
+        to -= toStep;
+        from += fromStep;
+      }
+    } else
+    {  // We need to call std::transform per pixel with the amount of components to copy.
+      const auto componentsToCopy = std::min(componentCount, bucketComponentCount);
+      for (auto y = yo; y < ye; y += 1)
+      {
+        for (auto x = decltype(dataWidth){0}; x < dataWidth; x += 1)
+        {
+          std::transform(from + x * bucketComponentCount,
+                         from + x * bucketComponentCount + componentsToCopy,
+                         to + x * componentCount,
+                         copyOp);
+        }
+        to -= toStep;
+        from += fromStep;
+      }
     }
   }
-}
 
-using WriteBucketFunction = void (*)(void *,
-                                     size_t,
-                                     unsigned int,
-                                     unsigned int,
-                                     const void *,
-                                     size_t,
-                                     unsigned int,
-                                     unsigned int,
-                                     unsigned int,
-                                     unsigned int,
-                                     unsigned int);
+  using WriteBucketFunction = void (*)(void *,
+                                       size_t,
+                                       unsigned int,
+                                       unsigned int,
+                                       const void *,
+                                       size_t,
+                                       unsigned int,
+                                       unsigned int,
+                                       unsigned int,
+                                       unsigned int,
+                                       unsigned int);
 
-using WriteBucketFunctionMap =
-  std::unordered_map<ConversionKey, WriteBucketFunction, ConversionKey::HashFunctor>;
+  using WriteBucketFunctionMap =
+    std::unordered_map<ConversionKey, WriteBucketFunction, ConversionKey::HashFunctor>;
 
-WriteBucketFunctionMap writeBucketFunctions{
+  WriteBucketFunctionMap writeBucketFunctions{
   // Write to UNorm8 format.
-  {{HdFormatUNorm8, HdFormatSNorm8}, _WriteBucket<HdFormatUNorm8, HdFormatSNorm8>},
-  {{HdFormatUNorm8, HdFormatFloat16}, _WriteBucket<HdFormatUNorm8, HdFormatFloat16>},
-  {{HdFormatUNorm8, HdFormatFloat32}, _WriteBucket<HdFormatUNorm8, HdFormatFloat32>},
-  {{HdFormatUNorm8, HdFormatInt32}, _WriteBucket<HdFormatUNorm8, HdFormatInt32>},
-  // Write to SNorm8 format.
-  {{HdFormatSNorm8, HdFormatUNorm8}, _WriteBucket<HdFormatSNorm8, HdFormatUNorm8>},
-  {{HdFormatSNorm8, HdFormatFloat16}, _WriteBucket<HdFormatSNorm8, HdFormatFloat16>},
-  {{HdFormatSNorm8, HdFormatFloat32}, _WriteBucket<HdFormatSNorm8, HdFormatFloat32>},
-  {{HdFormatSNorm8, HdFormatInt32}, _WriteBucket<HdFormatSNorm8, HdFormatInt32>},
-  // Write to Float16 format.
-  {{HdFormatFloat16, HdFormatSNorm8}, _WriteBucket<HdFormatFloat16, HdFormatSNorm8>},
-  {{HdFormatFloat16, HdFormatUNorm8}, _WriteBucket<HdFormatFloat16, HdFormatUNorm8>},
-  {{HdFormatFloat16, HdFormatFloat32}, _WriteBucket<HdFormatFloat16, HdFormatFloat32>},
-  {{HdFormatFloat16, HdFormatInt32}, _WriteBucket<HdFormatFloat16, HdFormatInt32>},
-  // Write to Float32 format.
-  {{HdFormatFloat32, HdFormatSNorm8}, _WriteBucket<HdFormatFloat32, HdFormatSNorm8>},
-  {{HdFormatFloat32, HdFormatUNorm8}, _WriteBucket<HdFormatFloat32, HdFormatUNorm8>},
-  {{HdFormatFloat32, HdFormatFloat16}, _WriteBucket<HdFormatFloat32, HdFormatFloat16>},
-  {{HdFormatFloat32, HdFormatInt32}, _WriteBucket<HdFormatFloat32, HdFormatInt32>},
-  // Write to Int32 format.
-  {{HdFormatInt32, HdFormatSNorm8}, _WriteBucket<HdFormatInt32, HdFormatSNorm8>},
-  {{HdFormatInt32, HdFormatUNorm8}, _WriteBucket<HdFormatInt32, HdFormatUNorm8>},
-  {{HdFormatInt32, HdFormatFloat16}, _WriteBucket<HdFormatInt32, HdFormatFloat16>},
-  {{HdFormatInt32, HdFormatFloat32}, _WriteBucket<HdFormatInt32, HdFormatFloat32>},
-};
+    {{HdFormatUNorm8, HdFormatSNorm8},   _WriteBucket<HdFormatUNorm8,  HdFormatSNorm8> },
+    {{HdFormatUNorm8, HdFormatFloat16},  _WriteBucket<HdFormatUNorm8,  HdFormatFloat16>},
+    {{HdFormatUNorm8, HdFormatFloat32},  _WriteBucket<HdFormatUNorm8,  HdFormatFloat32>},
+    {{HdFormatUNorm8, HdFormatInt32},    _WriteBucket<HdFormatUNorm8,  HdFormatInt32>  },
+ // Write to SNorm8 format.
+    {{HdFormatSNorm8, HdFormatUNorm8},   _WriteBucket<HdFormatSNorm8,  HdFormatUNorm8> },
+    {{HdFormatSNorm8, HdFormatFloat16},  _WriteBucket<HdFormatSNorm8,  HdFormatFloat16>},
+    {{HdFormatSNorm8, HdFormatFloat32},  _WriteBucket<HdFormatSNorm8,  HdFormatFloat32>},
+    {{HdFormatSNorm8, HdFormatInt32},    _WriteBucket<HdFormatSNorm8,  HdFormatInt32>  },
+ // Write to Float16 format.
+    {{HdFormatFloat16, HdFormatSNorm8},  _WriteBucket<HdFormatFloat16, HdFormatSNorm8> },
+    {{HdFormatFloat16, HdFormatUNorm8},  _WriteBucket<HdFormatFloat16, HdFormatUNorm8> },
+    {{HdFormatFloat16, HdFormatFloat32}, _WriteBucket<HdFormatFloat16, HdFormatFloat32>},
+    {{HdFormatFloat16, HdFormatInt32},   _WriteBucket<HdFormatFloat16, HdFormatInt32>  },
+ // Write to Float32 format.
+    {{HdFormatFloat32, HdFormatSNorm8},  _WriteBucket<HdFormatFloat32, HdFormatSNorm8> },
+    {{HdFormatFloat32, HdFormatUNorm8},  _WriteBucket<HdFormatFloat32, HdFormatUNorm8> },
+    {{HdFormatFloat32, HdFormatFloat16}, _WriteBucket<HdFormatFloat32, HdFormatFloat16>},
+    {{HdFormatFloat32, HdFormatInt32},   _WriteBucket<HdFormatFloat32, HdFormatInt32>  },
+ // Write to Int32 format.
+    {{HdFormatInt32, HdFormatSNorm8},    _WriteBucket<HdFormatInt32,   HdFormatSNorm8> },
+    {{HdFormatInt32, HdFormatUNorm8},    _WriteBucket<HdFormatInt32,   HdFormatUNorm8> },
+    {{HdFormatInt32, HdFormatFloat16},   _WriteBucket<HdFormatInt32,   HdFormatFloat16>},
+    {{HdFormatInt32, HdFormatFloat32},   _WriteBucket<HdFormatInt32,   HdFormatFloat32>},
+  };
 
 }  // namespace
 
@@ -373,8 +371,7 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
         data -= fullLineDataSize;
         inData += inLineDataSize;
       }
-    }
-    else
+    } else
     {
       // Component counts do not match, we need to copy as much data as possible and leave the rest
       // to their default values, we expect someone to set that up before this call.
@@ -394,8 +391,7 @@ void HdArnoldRenderBuffer::WriteBucket(unsigned int bucketXO,
         inData += inLineDataSize;
       }
     }
-  }
-  else
+  } else
   {  // Need to do conversion.
     const auto it = writeBucketFunctions.find({componentFormat, inComponentFormat});
     if (it != writeBucketFunctions.end())

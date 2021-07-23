@@ -112,8 +112,7 @@ bool KLI_dir_create_recursive(const char *dirname)
   if (KLI_is_dir(tmp))
   {
     return true;
-  }
-  else if (KLI_exists(tmp))
+  } else if (KLI_exists(tmp))
   {
     return false;
   }
@@ -159,8 +158,7 @@ static bool delete_unique(const char *path, const bool dir)
     {
       printf("Unable to remove directory\n");
     }
-  }
-  else
+  } else
   {
     err = !DeleteFileW(path_16);
     if (err)
@@ -189,8 +187,7 @@ static bool delete_recursive(const char *dir)
     if (FILENAME_IS_CURRPAR(file))
     {
       /* Skip! */
-    }
-    else if (S_ISDIR(fl->type))
+    } else if (S_ISDIR(fl->type))
     {
       char path[FILE_MAXDIR];
 
@@ -202,8 +199,7 @@ static bool delete_recursive(const char *dir)
       {
         err = true;
       }
-    }
-    else
+    } else
     {
       if (delete_unique(fl->path, false))
       {
@@ -232,8 +228,7 @@ int KLI_delete(const char *file, bool dir, bool recursive)
   if (recursive)
   {
     err = delete_recursive(file);
-  }
-  else
+  } else
   {
     err = delete_unique(file, dir);
   }
@@ -322,8 +317,7 @@ static void join_dirfile_alloc(char **dst, size_t *alloc_len, const char *dir, c
   if (*dst == NULL)
   {
     *dst = (char *)malloc(len + 1);
-  }
-  else if (*alloc_len < len)
+  } else if (*alloc_len < len)
   {
     *dst = (char *)realloc(*dst, len + 1);
   }
@@ -416,8 +410,7 @@ static int recursive_operation(const char *startfrom,
         {
           /* callback requested not to perform recursive walking, not an error */
           ret = 0;
-        }
-        else
+        } else
         {
           ret = -1;
         }
@@ -457,10 +450,8 @@ static int recursive_operation(const char *startfrom,
       if (is_dir)
       {
         /* recursively dig into a subfolder */
-        ret = recursive_operation(
-          from_path, to_path, callback_dir_pre, callback_file, callback_dir_post);
-      }
-      else if (callback_file != NULL)
+        ret = recursive_operation(from_path, to_path, callback_dir_pre, callback_file, callback_dir_post);
+      } else if (callback_file != NULL)
       {
         ret = callback_file(from_path, to_path);
         if (ret != RecursiveOp_Callback_OK)

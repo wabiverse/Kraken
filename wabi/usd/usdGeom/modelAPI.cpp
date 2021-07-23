@@ -251,14 +251,15 @@ UsdAttribute UsdGeomModelAPI::CreateModelCardTextureZNegAttr(VtValue const &defa
 
 namespace
 {
-static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left, const TfTokenVector &right)
-{
-  TfTokenVector result;
-  result.reserve(left.size() + right.size());
-  result.insert(result.end(), left.begin(), left.end());
-  result.insert(result.end(), right.begin(), right.end());
-  return result;
-}
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
+                                                         const TfTokenVector &right)
+  {
+    TfTokenVector result;
+    result.reserve(left.size() + right.size());
+    result.insert(result.end(), left.begin(), left.end());
+    result.insert(result.end(), right.begin(), right.end());
+    return result;
+  }
 }  // namespace
 
 /*static*/
@@ -425,18 +426,18 @@ vector<UsdGeomConstraintTarget> UsdGeomModelAPI::GetConstraintTargets() const
 
 namespace
 {
-static bool _GetAuthoredDrawMode(const UsdPrim &prim, TfToken *drawMode)
-{
-  // Only check for the attribute on models; don't check the pseudo-root.
-  if (!prim.IsModel() || !prim.GetParent())
+  static bool _GetAuthoredDrawMode(const UsdPrim &prim, TfToken *drawMode)
   {
-    return false;
-  }
+    // Only check for the attribute on models; don't check the pseudo-root.
+    if (!prim.IsModel() || !prim.GetParent())
+    {
+      return false;
+    }
 
-  UsdGeomModelAPI modelAPI(prim);
-  UsdAttribute attr = modelAPI.GetModelDrawModeAttr();
-  return attr && attr.Get(drawMode);
-}
+    UsdGeomModelAPI modelAPI(prim);
+    UsdAttribute attr = modelAPI.GetModelDrawModeAttr();
+    return attr && attr.Get(drawMode);
+  }
 }  // namespace
 
 TfToken UsdGeomModelAPI::ComputeModelDrawMode(const TfToken &parentDrawMode) const

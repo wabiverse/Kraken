@@ -43,17 +43,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM template<class Cls> \
-static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM   \
+  template<class Cls> \
+  static void _CustomWrapCode(Cls &_class)
 
-// fwd decl.
-WRAP_CUSTOM;
+  // fwd decl.
+  WRAP_CUSTOM;
 
-static std::string _Repr(const UsdShadeNodeGraph &self)
-{
-  std::string primRepr = TfPyRepr(self.GetPrim());
-  return TfStringPrintf("UsdShade.NodeGraph(%s)", primRepr.c_str());
-}
+  static std::string _Repr(const UsdShadeNodeGraph &self)
+  {
+    std::string primRepr = TfPyRepr(self.GetPrim());
+    return TfStringPrintf("UsdShade.NodeGraph(%s)", primRepr.c_str());
+  }
 
 }  // anonymous namespace
 
@@ -113,43 +114,43 @@ void wrapUsdShadeNodeGraph()
 namespace
 {
 
-static object _WrapComputeOutputSource(const UsdShadeNodeGraph &self, const TfToken &outputName)
-{
-  TfToken sourceName;
-  UsdShadeAttributeType sourceType;
-  UsdShadeShader source = self.ComputeOutputSource(outputName, &sourceName, &sourceType);
-  return boost::python::make_tuple(source, sourceName, sourceType);
-}
+  static object _WrapComputeOutputSource(const UsdShadeNodeGraph &self, const TfToken &outputName)
+  {
+    TfToken sourceName;
+    UsdShadeAttributeType sourceType;
+    UsdShadeShader source = self.ComputeOutputSource(outputName, &sourceName, &sourceType);
+    return boost::python::make_tuple(source, sourceName, sourceType);
+  }
 
-WRAP_CUSTOM
-{
-  _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
-    .def("ConnectableAPI", &UsdShadeNodeGraph::ConnectableAPI)
+  WRAP_CUSTOM
+  {
+    _class.def(init<UsdShadeConnectableAPI>(arg("connectable")))
+      .def("ConnectableAPI", &UsdShadeNodeGraph::ConnectableAPI)
 
-    .def("CreateOutput", &UsdShadeNodeGraph::CreateOutput, (arg("name"), arg("typeName")))
-    .def("GetOutput", &UsdShadeNodeGraph::GetOutput, (arg("name")))
-    .def("GetOutputs",
-         &UsdShadeNodeGraph::GetOutputs,
-         (arg("onlyAuthored") = true),
-         return_value_policy<TfPySequenceToList>())
-    .def("ComputeOutputSource", _WrapComputeOutputSource, (arg("outputName")))
+      .def("CreateOutput", &UsdShadeNodeGraph::CreateOutput, (arg("name"), arg("typeName")))
+      .def("GetOutput", &UsdShadeNodeGraph::GetOutput, (arg("name")))
+      .def("GetOutputs",
+           &UsdShadeNodeGraph::GetOutputs,
+           (arg("onlyAuthored") = true),
+           return_value_policy<TfPySequenceToList>())
+      .def("ComputeOutputSource", _WrapComputeOutputSource, (arg("outputName")))
 
-    .def("CreateInput", &UsdShadeNodeGraph::CreateInput, (arg("name"), arg("type")))
-    .def("GetInput", &UsdShadeNodeGraph::GetInput, arg("name"))
-    .def("GetInputs",
-         &UsdShadeNodeGraph::GetInputs,
-         (arg("onlyAuthored") = true),
-         return_value_policy<TfPySequenceToList>())
-    .def("GetInterfaceInputs",
-         &UsdShadeNodeGraph::GetInterfaceInputs,
-         return_value_policy<TfPySequenceToList>())
+      .def("CreateInput", &UsdShadeNodeGraph::CreateInput, (arg("name"), arg("type")))
+      .def("GetInput", &UsdShadeNodeGraph::GetInput, arg("name"))
+      .def("GetInputs",
+           &UsdShadeNodeGraph::GetInputs,
+           (arg("onlyAuthored") = true),
+           return_value_policy<TfPySequenceToList>())
+      .def("GetInterfaceInputs",
+           &UsdShadeNodeGraph::GetInterfaceInputs,
+           return_value_policy<TfPySequenceToList>())
 
-    .def("ComputeInterfaceInputConsumersMap",
-         &UsdShadeNodeGraph::ComputeInterfaceInputConsumersMap,
-         return_value_policy<TfPyMapToDictionary>(),
-         (arg("computeTransitiveConsumers") = false))
+      .def("ComputeInterfaceInputConsumersMap",
+           &UsdShadeNodeGraph::ComputeInterfaceInputConsumersMap,
+           return_value_policy<TfPyMapToDictionary>(),
+           (arg("computeTransitiveConsumers") = false))
 
-    ;
-}
+      ;
+  }
 
 }  // anonymous namespace

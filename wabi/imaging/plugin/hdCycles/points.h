@@ -32,11 +32,11 @@
 
 namespace ccl
 {
-class Object;
-class Mesh;
-class Scene;
-class PointCloud;
-class Shader;
+  class Object;
+  class Mesh;
+  class Scene;
+  class PointCloud;
+  class Shader;
 }  // namespace ccl
 
 WABI_NAMESPACE_BEGIN

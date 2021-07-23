@@ -29,66 +29,58 @@ WABI_NAMESPACE_BEGIN
 
 namespace
 {
-template<typename T>
-void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, uint8_t const *src)
-{
-  HdFormat srcComponentFormat = HdGetComponentFormat(srcFormat);
-  HdFormat dstComponentFormat = HdGetComponentFormat(dstFormat);
-  size_t srcComponentCount = HdGetComponentCount(srcFormat);
-  size_t dstComponentCount = HdGetComponentCount(dstFormat);
-
-  for (size_t c = 0; c < dstComponentCount; ++c)
+  template<typename T>
+  void _ConvertPixel(HdFormat dstFormat, uint8_t *dst, HdFormat srcFormat, uint8_t const *src)
   {
-    T readValue = 0;
-    if (c < srcComponentCount)
-    {
-      if (srcComponentFormat == HdFormatInt32)
-      {
-        readValue = static_cast<T>(reinterpret_cast<const int32_t *>(src)[c]);
-      }
-      else if (srcComponentFormat == HdFormatFloat16)
-      {
-        GfHalf half;
-        half.setBits(reinterpret_cast<const uint16_t *>(src)[c]);
-        readValue = static_cast<T>(half);
-      }
-      else if (srcComponentFormat == HdFormatFloat32)
-      {
-        // We need to subtract one from here due to cycles prim defaulting to 0 but hydra to -1
-        readValue = static_cast<T>(reinterpret_cast<const float *>(src)[c]);
-      }
-      else if (srcComponentFormat == HdFormatUNorm8)
-      {
-        readValue = static_cast<T>(reinterpret_cast<const uint8_t *>(src)[c] / 255.0f);
-      }
-      else if (srcComponentFormat == HdFormatSNorm8)
-      {
-        readValue = static_cast<T>(reinterpret_cast<const int8_t *>(src)[c] / 127.0f);
-      }
-    }
+    HdFormat srcComponentFormat = HdGetComponentFormat(srcFormat);
+    HdFormat dstComponentFormat = HdGetComponentFormat(dstFormat);
+    size_t srcComponentCount = HdGetComponentCount(srcFormat);
+    size_t dstComponentCount = HdGetComponentCount(dstFormat);
 
-    if (dstComponentFormat == HdFormatInt32)
+    for (size_t c = 0; c < dstComponentCount; ++c)
     {
-      reinterpret_cast<int32_t *>(dst)[c] = static_cast<int32_t>(readValue);
-    }
-    else if (dstComponentFormat == HdFormatFloat16)
-    {
-      reinterpret_cast<uint16_t *>(dst)[c] = GfHalf(float(readValue)).bits();
-    }
-    else if (dstComponentFormat == HdFormatFloat32)
-    {
-      reinterpret_cast<float *>(dst)[c] = static_cast<float>(readValue);
-    }
-    else if (dstComponentFormat == HdFormatUNorm8)
-    {
-      reinterpret_cast<uint8_t *>(dst)[c] = static_cast<uint8_t>(static_cast<float>(readValue) * 255.0f);
-    }
-    else if (dstComponentFormat == HdFormatSNorm8)
-    {
-      reinterpret_cast<int8_t *>(dst)[c] = static_cast<int8_t>(static_cast<float>(readValue) * 127.0f);
+      T readValue = 0;
+      if (c < srcComponentCount)
+      {
+        if (srcComponentFormat == HdFormatInt32)
+        {
+          readValue = static_cast<T>(reinterpret_cast<const int32_t *>(src)[c]);
+        } else if (srcComponentFormat == HdFormatFloat16)
+        {
+          GfHalf half;
+          half.setBits(reinterpret_cast<const uint16_t *>(src)[c]);
+          readValue = static_cast<T>(half);
+        } else if (srcComponentFormat == HdFormatFloat32)
+        {
+          // We need to subtract one from here due to cycles prim defaulting to 0 but hydra to -1
+          readValue = static_cast<T>(reinterpret_cast<const float *>(src)[c]);
+        } else if (srcComponentFormat == HdFormatUNorm8)
+        {
+          readValue = static_cast<T>(reinterpret_cast<const uint8_t *>(src)[c] / 255.0f);
+        } else if (srcComponentFormat == HdFormatSNorm8)
+        {
+          readValue = static_cast<T>(reinterpret_cast<const int8_t *>(src)[c] / 127.0f);
+        }
+      }
+
+      if (dstComponentFormat == HdFormatInt32)
+      {
+        reinterpret_cast<int32_t *>(dst)[c] = static_cast<int32_t>(readValue);
+      } else if (dstComponentFormat == HdFormatFloat16)
+      {
+        reinterpret_cast<uint16_t *>(dst)[c] = GfHalf(float(readValue)).bits();
+      } else if (dstComponentFormat == HdFormatFloat32)
+      {
+        reinterpret_cast<float *>(dst)[c] = static_cast<float>(readValue);
+      } else if (dstComponentFormat == HdFormatUNorm8)
+      {
+        reinterpret_cast<uint8_t *>(dst)[c] = static_cast<uint8_t>(static_cast<float>(readValue) * 255.0f);
+      } else if (dstComponentFormat == HdFormatSNorm8)
+      {
+        reinterpret_cast<int8_t *>(dst)[c] = static_cast<int8_t>(static_cast<float>(readValue) * 127.0f);
+      }
     }
   }
-}
 }  // namespace
 
 HdCyclesRenderBuffer::HdCyclesRenderBuffer(HdCyclesRenderDelegate *renderDelegate, const SdfPath &id)
@@ -264,8 +256,7 @@ void HdCyclesRenderBuffer::BlitTile(HdFormat format,
         }
       }
     }
-  }
-  else
+  } else
   {
     // Convert pixel by pixel, with nearest point sampling.
     // If src and dst are both int-based, don't round trip to float.
@@ -283,14 +274,12 @@ void HdCyclesRenderBuffer::BlitTile(HdFormat format,
         if (convertAsInt)
         {
           _ConvertPixel<int32_t>(m_format, &m_buffer[mem_start], format, &data[tile_mem_start]);
-        }
-        else
+        } else
         {
           if (mem_start >= m_buffer.size())
           {
             // TODO: This is triggered more times than it should be
-          }
-          else
+          } else
           {
             _ConvertPixel<float>(m_format, &m_buffer[mem_start], format, &data[tile_mem_start]);
           }

@@ -78,8 +78,7 @@ SdfPath::SdfPath(const std::string &path)
 #else
     TF_WARN("Ill-formed SdfPath <%s>: %s", path.c_str(), context.errStr.c_str());
 #endif
-  }
-  else
+  } else
   {
     *this = std::move(context.path);
   }
@@ -442,8 +441,7 @@ bool SdfPath::HasPrefix(const SdfPath &prefix) const
       propNode = propNode->GetParentNode();
     }
     return propNode == prefixPropNode;
-  }
-  else
+  } else
   {
     // The prefix is a prim-like path.  Walk up nodes until we achieve the
     // same depth as the prefix, then just check for equality.
@@ -664,81 +662,81 @@ SdfPath SdfPath::AppendPath(const SdfPath &newSuffix) const
 // appending children repeatedly to a node.
 namespace
 {
-struct _PerThreadPrimPathCache
-{
-  static constexpr unsigned Shift = 14;
-  static constexpr unsigned Size = 1 << Shift;
-  static constexpr unsigned ProbeShift = 1;
-  static constexpr unsigned Probes = 1 << ProbeShift;
-
-  struct _Entry
+  struct _PerThreadPrimPathCache
   {
-    Sdf_PathPrimNodeHandle parent;
-    Sdf_PathPrimNodeHandle primPart;
-    TfToken childName;
-  };
+    static constexpr unsigned Shift = 14;
+    static constexpr unsigned Size = 1 << Shift;
+    static constexpr unsigned ProbeShift = 1;
+    static constexpr unsigned Probes = 1 << ProbeShift;
 
-  inline Sdf_PathPrimNodeHandle Find(Sdf_PathPrimNodeHandle const &parent,
-                                     TfToken const &childName,
-                                     int *outIndex) const
-  {
-    // Hash and shift to find table index.
-    size_t h = childName.Hash();
-    uint32_t parentAsInt;
-    memcpy(&parentAsInt, &parent, sizeof(uint32_t));
-    boost::hash_combine(h, parentAsInt >> 8);
-    unsigned index = (h & (Size - 1));
-
-    for (unsigned probe = 0; probe != Probes; ++probe)
+    struct _Entry
     {
-      _Entry const &e = cache[(index + probe) & (Size - 1)];
-      if (e.parent == parent && e.childName == childName)
+      Sdf_PathPrimNodeHandle parent;
+      Sdf_PathPrimNodeHandle primPart;
+      TfToken childName;
+    };
+
+    inline Sdf_PathPrimNodeHandle Find(Sdf_PathPrimNodeHandle const &parent,
+                                       TfToken const &childName,
+                                       int *outIndex) const
+    {
+      // Hash and shift to find table index.
+      size_t h = childName.Hash();
+      uint32_t parentAsInt;
+      memcpy(&parentAsInt, &parent, sizeof(uint32_t));
+      boost::hash_combine(h, parentAsInt >> 8);
+      unsigned index = (h & (Size - 1));
+
+      for (unsigned probe = 0; probe != Probes; ++probe)
       {
-        // Cache hit.
-        return e.primPart;
+        _Entry const &e = cache[(index + probe) & (Size - 1)];
+        if (e.parent == parent && e.childName == childName)
+        {
+          // Cache hit.
+          return e.primPart;
+        }
+        if (!e.parent)
+          break;
       }
-      if (!e.parent)
-        break;
+
+      // Not found -- arrange to replace original hash index.
+      *outIndex = index;
+      return Sdf_PathPrimNodeHandle();
     }
 
-    // Not found -- arrange to replace original hash index.
-    *outIndex = index;
-    return Sdf_PathPrimNodeHandle();
-  }
+    inline void Store(Sdf_PathPrimNodeHandle const &parent,
+                      TfToken const &childName,
+                      Sdf_PathPrimNodeHandle primPart,
+                      int index)
+    {
+      cache[index] = {parent, primPart, childName};
+    }
 
-  inline void Store(Sdf_PathPrimNodeHandle const &parent,
-                    TfToken const &childName,
-                    Sdf_PathPrimNodeHandle primPart,
-                    int index)
-  {
-    cache[index] = {parent, primPart, childName};
-  }
-
-  _Entry cache[Size];
-};
+    _Entry cache[Size];
+  };
 }  // namespace
 
 namespace
 {
-// XXX: Workaround for Windows issue USD-5306 -- this avoids destroying the
-// per-thread caches to deal with static destruction order problems.
-template<class T>
-struct _FastThreadLocalBase
-{
-  static T &Get()
+  // XXX: Workaround for Windows issue USD-5306 -- this avoids destroying the
+  // per-thread caches to deal with static destruction order problems.
+  template<class T>
+  struct _FastThreadLocalBase
   {
-    static thread_local T *theTPtr = nullptr;
-    if (ARCH_LIKELY(theTPtr))
+    static T &Get()
     {
-      return *theTPtr;
+      static thread_local T *theTPtr = nullptr;
+      if (ARCH_LIKELY(theTPtr))
+      {
+        return *theTPtr;
+      }
+      static thread_local typename std::aligned_storage<sizeof(T)>::type storage;
+      void *addr = &storage;
+      T *p = new (addr) T;
+      theTPtr = p;
+      return *p;
     }
-    static thread_local typename std::aligned_storage<sizeof(T)>::type storage;
-    void *addr = &storage;
-    T *p = new (addr) T;
-    theTPtr = p;
-    return *p;
-  }
-};
+  };
 }  // namespace
 using _PrimPathCache = _FastThreadLocalBase<_PerThreadPrimPathCache>;
 static _PrimPathCache _primPathCache;
@@ -766,8 +764,7 @@ SdfPath SdfPath::AppendChild(TfToken const &childName) const
   if (ARCH_UNLIKELY(childName == SdfPathTokens->parentPathElement))
   {
     return GetParentPath();
-  }
-  else
+  } else
   {
     if (ARCH_UNLIKELY(!_IsValidIdentifier(childName)))
     {
@@ -787,49 +784,49 @@ SdfPath SdfPath::AppendChild(TfToken const &childName) const
 // frequently than appending properties to prim paths.
 namespace
 {
-struct _PerThreadPropertyPathCache
-{
-  static constexpr unsigned Shift = 10;
-  static constexpr unsigned Size = 1 << Shift;
-  static constexpr unsigned ProbeShift = 1;
-  static constexpr unsigned Probes = 1 << ProbeShift;
-
-  struct _Entry
+  struct _PerThreadPropertyPathCache
   {
-    TfToken propName;
-    Sdf_PathPropNodeHandle propPart;
-  };
+    static constexpr unsigned Shift = 10;
+    static constexpr unsigned Size = 1 << Shift;
+    static constexpr unsigned ProbeShift = 1;
+    static constexpr unsigned Probes = 1 << ProbeShift;
 
-  inline Sdf_PathPropNodeHandle Find(TfToken const &propName, int *outIndex) const
-  {
-    // Hash and shift to find table index.
-    size_t h = propName.Hash();
-    unsigned index = (h >> (8 * sizeof(h) - Shift));
-
-    for (unsigned probe = 0; probe != Probes; ++probe)
+    struct _Entry
     {
-      _Entry const &e = cache[(index + probe) & (Size - 1)];
-      if (e.propName == propName)
+      TfToken propName;
+      Sdf_PathPropNodeHandle propPart;
+    };
+
+    inline Sdf_PathPropNodeHandle Find(TfToken const &propName, int *outIndex) const
+    {
+      // Hash and shift to find table index.
+      size_t h = propName.Hash();
+      unsigned index = (h >> (8 * sizeof(h) - Shift));
+
+      for (unsigned probe = 0; probe != Probes; ++probe)
       {
-        // Cache hit.
-        return e.propPart;
+        _Entry const &e = cache[(index + probe) & (Size - 1)];
+        if (e.propName == propName)
+        {
+          // Cache hit.
+          return e.propPart;
+        }
+        if (e.propName.IsEmpty())
+          break;
       }
-      if (e.propName.IsEmpty())
-        break;
+
+      // Not found -- arrange to replace original hash index.
+      *outIndex = index;
+      return Sdf_PathPropNodeHandle();
     }
 
-    // Not found -- arrange to replace original hash index.
-    *outIndex = index;
-    return Sdf_PathPropNodeHandle();
-  }
+    inline void Store(TfToken const &propName, Sdf_PathPropNodeHandle propPart, int index)
+    {
+      cache[index] = {propName, propPart};
+    }
 
-  inline void Store(TfToken const &propName, Sdf_PathPropNodeHandle propPart, int index)
-  {
-    cache[index] = {propName, propPart};
-  }
-
-  _Entry cache[Size];
-};
+    _Entry cache[Size];
+  };
 }  // namespace
 
 using _PropPathCache = Sdf_FastThreadLocalBase<_PerThreadPropertyPathCache>;
@@ -968,8 +965,7 @@ SdfPath SdfPath::AppendElementToken(const TfToken &elementTok) const
     if (IsEmpty())
     {
       TF_CODING_ERROR("Cannot append element \'%s\' to the EmptyPath.", element.c_str());
-    }
-    else
+    } else
     {
       TF_CODING_ERROR("Cannot append EmptyPath as a path element.");
     }
@@ -990,19 +986,16 @@ SdfPath SdfPath::AppendElementToken(const TfToken &elementTok) const
     if (tokens.size() == 2)
     {
       variantSel = TfToken(tokens[1]);
-    }
-    else if (tokens.size() != 1)
+    } else if (tokens.size() != 1)
     {
       return EmptyPath();
     }
     return AppendVariantSelection(TfToken(tokens[0]), variantSel);
-  }
-  else if (txt[0] == SdfPathTokens->relationshipTargetStart.GetString()[0])
+  } else if (txt[0] == SdfPathTokens->relationshipTargetStart.GetString()[0])
   {
     SdfPath target(element.substr(1, element.length() - 2));
     return AppendTarget(target);
-  }
-  else if (txt[0] == SdfPathTokens->propertyDelimiter.GetString()[0])
+  } else if (txt[0] == SdfPathTokens->propertyDelimiter.GetString()[0])
   {
     // This is the ambiguous one.  First check for the special symbols,
     // and if it looks like a "plain old property", consult parent type
@@ -1016,32 +1009,27 @@ SdfPath SdfPath::AppendElementToken(const TfToken &elementTok) const
     if (element == expressionStr)
     {
       return IsPropertyPath() ? AppendExpression() : AppendProperty(SdfPathTokens->expressionIndicator);
-    }
-    else if (TfStringStartsWith(element, mapperStr))
+    } else if (TfStringStartsWith(element, mapperStr))
     {
       const size_t prefixSz(mapperStr.length());
       SdfPath target(element.substr(prefixSz, element.length() - (prefixSz + 1)));
       return AppendMapper(target);
-    }
-    else
+    } else
     {
       TfToken property(element.substr(1));
 
       if (IsMapperPath())
       {
         return AppendMapperArg(property);
-      }
-      else if (IsTargetPath())
+      } else if (IsTargetPath())
       {
         return AppendRelationalAttribute(property);
-      }
-      else
+      } else
       {
         return AppendProperty(property);
       }
     }
-  }
-  else
+  } else
   {
     return AppendChild(elementTok);
   }
@@ -1234,8 +1222,7 @@ SdfPath SdfPath::_ReplacePropPrefix(SdfPath const &oldPrefix,
         {
           newPath = newPath.AppendTarget(
             tmpNodes[i]->GetTargetPath().ReplacePrefix(oldPrefix, newPrefix, fixTargetPaths));
-        }
-        else
+        } else
         {
           newPath = _AppendNode(newPath, tmpNodes[i]);
         }
@@ -1245,8 +1232,7 @@ SdfPath SdfPath::_ReplacePropPrefix(SdfPath const &oldPrefix,
         {
           newPath = newPath.AppendMapper(
             tmpNodes[i]->GetTargetPath().ReplacePrefix(oldPrefix, newPrefix, fixTargetPaths));
-        }
-        else
+        } else
         {
           newPath = _AppendNode(newPath, tmpNodes[i]);
         }
@@ -1299,8 +1285,7 @@ SdfPath SdfPath::ReplacePrefix(const SdfPath &oldPrefix, const SdfPath &newPrefi
       // fix, so fix them up.
       newPath = newPath._ReplaceTargetPathPrefixes(oldPrefix, newPrefix);
     }
-  }
-  else
+  } else
   {
     // oldPrefix is a property-like path.  If this path is a prim-like path
     // then oldPrefix cannot be a prefix of this path and we do not have
@@ -1323,13 +1308,11 @@ SdfPath SdfPath::ReplacePrefix(const SdfPath &oldPrefix, const SdfPath &newPrefi
       if (fixTargetPaths && propNode->ContainsTargetPath())
       {
         newPath = _ReplaceTargetPathPrefixes(oldPrefix, newPrefix);
-      }
-      else
+      } else
       {
         return *this;
       }
-    }
-    else
+    } else
     {
       newPath = _ReplacePropPrefix(oldPrefix, newPrefix, fixTargetPaths);
     }
@@ -1362,8 +1345,7 @@ SdfPath SdfPath::GetCommonPrefix(const SdfPath &path2) const
   {
     path1Node = path1._primPart.get();
     path2Node = path2._primPart.get();
-  }
-  else
+  } else
   {
     isPrimLike = false;
     path1Node = path1._propPart.get();
@@ -1394,8 +1376,7 @@ SdfPath SdfPath::GetCommonPrefix(const SdfPath &path2) const
   if (ARCH_LIKELY(isPrimLike))
   {
     ret._primPart = path1Node;
-  }
-  else
+  } else
   {
     ret._primPart = path1._primPart;
     ret._propPart = path1Node;
@@ -1405,14 +1386,14 @@ SdfPath SdfPath::GetCommonPrefix(const SdfPath &path2) const
 
 namespace
 {
-struct _NodeEqual
-{
-  template<class T>
-  inline bool operator()(T const &a, T const &b) const
+  struct _NodeEqual
   {
-    return a == b;
-  }
-};
+    template<class T>
+    inline bool operator()(T const &a, T const &b) const
+    {
+      return a == b;
+    }
+  };
 }  // namespace
 
 std::pair<SdfPath, SdfPath> SdfPath::RemoveCommonSuffix(const SdfPath &otherPath, bool stopAtRootPrim) const
@@ -1494,20 +1475,16 @@ SdfPath SdfPath::ReplaceTargetPath(const SdfPath &newTargetPath) const
     if (type == Sdf_PathNode::TargetNode)
     {
       return GetParentPath().AppendTarget(newTargetPath);
-    }
-    else if (type == Sdf_PathNode::RelationalAttributeNode)
+    } else if (type == Sdf_PathNode::RelationalAttributeNode)
     {
       return GetParentPath().ReplaceTargetPath(newTargetPath).AppendRelationalAttribute(propNode->GetName());
-    }
-    else if (type == Sdf_PathNode::MapperNode)
+    } else if (type == Sdf_PathNode::MapperNode)
     {
       return GetParentPath().AppendMapper(newTargetPath);
-    }
-    else if (type == Sdf_PathNode::MapperArgNode)
+    } else if (type == Sdf_PathNode::MapperArgNode)
     {
       return GetParentPath().ReplaceTargetPath(newTargetPath).AppendMapperArg(propNode->GetName());
-    }
-    else if (type == Sdf_PathNode::ExpressionNode)
+    } else if (type == Sdf_PathNode::ExpressionNode)
     {
       return GetParentPath().ReplaceTargetPath(newTargetPath).AppendExpression();
     }
@@ -1574,8 +1551,7 @@ SdfPath SdfPath::MakeAbsolutePath(const SdfPath &anchor) const
         break;
       }
     }
-  }
-  else
+  } else
   {
     result = *this;
   }
@@ -1802,8 +1778,7 @@ std::vector<std::string> SdfPath::TokenizeIdentifier(const std::string &name)
         TfReset(result);
         return result;
       }
-    }
-    else
+    } else
     {
       // Next character
       if (!(isalnum(*first) || (*first == '_')))
@@ -1865,12 +1840,10 @@ std::string SdfPath::JoinIdentifier(const std::string &lhs, const std::string &r
   if (lhs.empty())
   {
     return rhs;
-  }
-  else if (rhs.empty())
+  } else if (rhs.empty())
   {
     return lhs;
-  }
-  else
+  } else
   {
     return lhs + SdfPathTokens->namespaceDelimiter.GetText() + rhs;
   }
@@ -1916,8 +1889,7 @@ std::pair<std::string, bool> SdfPath::StripPrefixNamespace(const std::string &na
       // The matched namespace already contained the end delimiter,
       // nothing more to do.
       return std::make_pair(name.substr(matchNamespaceLen), true);
-    }
-    else
+    } else
     {
 
       // The matched namespace needs an extra delimiter ':' so check for
@@ -2107,8 +2079,7 @@ SdfPathVector SdfPath::GetConciseRelativePaths(const SdfPathVector &paths)
                               primPaths[i] :
                               primPaths[i].MakeRelativePath(newAnchor));
         ambiguous = true;
-      }
-      else
+      } else
       {
         newAnchors.push_back(anchors[i]);
         newLabels.push_back(labels[i]);
@@ -2129,8 +2100,7 @@ SdfPathVector SdfPath::GetConciseRelativePaths(const SdfPathVector &paths)
     if (anchors[i] == SdfPath::AbsoluteRootPath())
     {
       result.push_back(paths[i]);
-    }
-    else
+    } else
     {
       result.push_back(paths[i].MakeRelativePath(anchors[i]));
     }
@@ -2191,8 +2161,7 @@ SdfPathAncestorsRange::iterator &SdfPathAncestorsRange::iterator::operator++()
     {
       propPart = _path._propPart->GetParentNode();
       primPart = _path._primPart.get();
-    }
-    else if (_path._primPart && _path._primPart->GetElementCount() > 1)
+    } else if (_path._primPart && _path._primPart->GetElementCount() > 1)
     {
       primPart = _path._primPart->GetParentNode();
     }

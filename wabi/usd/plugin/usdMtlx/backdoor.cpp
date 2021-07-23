@@ -44,37 +44,36 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-/// Read a MaterialX document then convert it using UsdMtlxRead().
-template<typename R>
-static UsdStageRefPtr _MtlxTest(R &&reader, bool nodeGraphs)
-{
-  try
+  /// Read a MaterialX document then convert it using UsdMtlxRead().
+  template<typename R>
+  static UsdStageRefPtr _MtlxTest(R &&reader, bool nodeGraphs)
   {
-    auto doc = mx::createDocument();
-    reader(doc);
+    try
+    {
+      auto doc = mx::createDocument();
+      reader(doc);
 
-    auto stage = UsdStage::CreateInMemory("tmp.usda", TfNullPtr);
-    if (nodeGraphs)
-    {
-      UsdMtlxReadNodeGraphs(doc, stage);
+      auto stage = UsdStage::CreateInMemory("tmp.usda", TfNullPtr);
+      if (nodeGraphs)
+      {
+        UsdMtlxReadNodeGraphs(doc, stage);
+      } else
+      {
+        UsdMtlxRead(doc, stage);
+      }
+      return stage;
     }
-    else
+    catch (mx::ExceptionFoundCycle &x)
     {
-      UsdMtlxRead(doc, stage);
+      TF_RUNTIME_ERROR("MaterialX cycle found: %s", x.what());
+      return TfNullPtr;
     }
-    return stage;
+    catch (mx::Exception &x)
+    {
+      TF_RUNTIME_ERROR("MaterialX read failed: %s", x.what());
+      return TfNullPtr;
+    }
   }
-  catch (mx::ExceptionFoundCycle &x)
-  {
-    TF_RUNTIME_ERROR("MaterialX cycle found: %s", x.what());
-    return TfNullPtr;
-  }
-  catch (mx::Exception &x)
-  {
-    TF_RUNTIME_ERROR("MaterialX read failed: %s", x.what());
-    return TfNullPtr;
-  }
-}
 
 }  // anonymous namespace
 

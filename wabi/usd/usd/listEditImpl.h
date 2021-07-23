@@ -233,8 +233,7 @@ struct Usd_ListEditImpl : public Usd_ListEditImplBase
       if (items.empty())
       {
         listEditor.ClearEditsAndMakeExplicit();
-      }
-      else
+      } else
       {
         listEditor.GetExplicitItems() = items;
       }

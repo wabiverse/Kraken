@@ -60,39 +60,39 @@ enum UsdObjType
 namespace _Detail
 {
 
-// A metafunction that takes a UsdObject class like UsdObject, UsdPrim,
-// UsdProperty, etc, and gives its corresponding UsdObjType, e.g. UsdTypeObject,
-// UsdTypePrim, UsdTypeProperty, etc.  Usage: GetObjType<UsdPrim>::Value.
-template<UsdObjType Type>
-struct Const
-{
-  static const UsdObjType Value = Type;
-};
-template<class T>
-struct GetObjType
-{
-  static_assert(std::is_base_of<UsdObject, T>::value, "Type T must be a subclass of UsdObject.");
-};
-template<>
-struct GetObjType<UsdObject> : Const<UsdTypeObject>
-{
-};
-template<>
-struct GetObjType<UsdPrim> : Const<UsdTypePrim>
-{
-};
-template<>
-struct GetObjType<UsdProperty> : Const<UsdTypeProperty>
-{
-};
-template<>
-struct GetObjType<UsdAttribute> : Const<UsdTypeAttribute>
-{
-};
-template<>
-struct GetObjType<UsdRelationship> : Const<UsdTypeRelationship>
-{
-};
+  // A metafunction that takes a UsdObject class like UsdObject, UsdPrim,
+  // UsdProperty, etc, and gives its corresponding UsdObjType, e.g. UsdTypeObject,
+  // UsdTypePrim, UsdTypeProperty, etc.  Usage: GetObjType<UsdPrim>::Value.
+  template<UsdObjType Type>
+  struct Const
+  {
+    static const UsdObjType Value = Type;
+  };
+  template<class T>
+  struct GetObjType
+  {
+    static_assert(std::is_base_of<UsdObject, T>::value, "Type T must be a subclass of UsdObject.");
+  };
+  template<>
+  struct GetObjType<UsdObject> : Const<UsdTypeObject>
+  {
+  };
+  template<>
+  struct GetObjType<UsdPrim> : Const<UsdTypePrim>
+  {
+  };
+  template<>
+  struct GetObjType<UsdProperty> : Const<UsdTypeProperty>
+  {
+  };
+  template<>
+  struct GetObjType<UsdAttribute> : Const<UsdTypeAttribute>
+  {
+  };
+  template<>
+  struct GetObjType<UsdRelationship> : Const<UsdTypeRelationship>
+  {
+  };
 
 }  // namespace _Detail
 
@@ -216,8 +216,7 @@ class UsdObject
     if (!_proxyPrimPath.IsEmpty())
     {
       return _type == UsdTypePrim ? _proxyPrimPath : _proxyPrimPath.AppendProperty(_propName);
-    }
-    else if (Usd_PrimDataConstPtr p = get_pointer(_prim))
+    } else if (Usd_PrimDataConstPtr p = get_pointer(_prim))
     {
       return _type == UsdTypePrim ? p->GetPath() : p->GetPath().AppendProperty(_propName);
     }
@@ -232,8 +231,7 @@ class UsdObject
     if (!_proxyPrimPath.IsEmpty())
     {
       return _proxyPrimPath;
-    }
-    else if (Usd_PrimDataConstPtr p = get_pointer(_prim))
+    } else if (Usd_PrimDataConstPtr p = get_pointer(_prim))
     {
       return p->GetPath();
     }

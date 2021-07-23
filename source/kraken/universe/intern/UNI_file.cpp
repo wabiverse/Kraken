@@ -70,14 +70,9 @@ static void decode_kraken_header(FileData *fd)
   const std::string read = fd->sdf_handle->GetDocumentation();
   KLI_strncpy(header, CHARALL(read), SIZEOFKRAKENHEADER);
 
-  if ((read.length() == sizeof(header)) &&
-      STREQLEN(header, "Kraken", 6) &&
-      (header[6] == char(" ")) &&
-      (header[7] == char("v")) &&
-      (isdigit(header[8])) &&
-      (header[9] == char(".")) &&
-      (isdigit(header[10])) &&
-      (isdigit(header[11])))
+  if ((read.length() == sizeof(header)) && STREQLEN(header, "Kraken", 6) && (header[6] == char(" ")) &&
+      (header[7] == char("v")) && (isdigit(header[8])) && (header[9] == char(".")) &&
+      (isdigit(header[10])) && (isdigit(header[11])))
   {
     fd->flags |= FD_FLAGS_FILE_OK;
 
@@ -101,10 +96,12 @@ static FileData *kr_decode_and_check(FileData *fd, ReportList *reports)
       delete fd;
       fd = NULL;
     }
-  }
-  else
+  } else
   {
-    KKE_reportf(reports, RPT_ERROR, "Failed to read project file '%s', not a supported kraken file", fd->relabase);
+    KKE_reportf(reports,
+                RPT_ERROR,
+                "Failed to read project file '%s', not a supported kraken file",
+                fd->relabase);
     delete fd;
     fd = NULL;
   }

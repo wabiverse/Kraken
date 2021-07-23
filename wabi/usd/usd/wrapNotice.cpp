@@ -34,22 +34,22 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::StageNotice, TfNotice);
+  TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::StageNotice, TfNotice);
 
-TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::StageContentsChanged, UsdNotice::StageNotice);
-TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::ObjectsChanged, UsdNotice::StageNotice);
-TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::StageEditTargetChanged, UsdNotice::StageNotice);
-TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::LayerMutingChanged, UsdNotice::StageNotice);
+  TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::StageContentsChanged, UsdNotice::StageNotice);
+  TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::ObjectsChanged, UsdNotice::StageNotice);
+  TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::StageEditTargetChanged, UsdNotice::StageNotice);
+  TF_INSTANTIATE_NOTICE_WRAPPER(UsdNotice::LayerMutingChanged, UsdNotice::StageNotice);
 
-SdfPathVector _GetResyncedPaths(const UsdNotice::ObjectsChanged &n)
-{
-  return SdfPathVector(n.GetResyncedPaths());
-}
+  SdfPathVector _GetResyncedPaths(const UsdNotice::ObjectsChanged &n)
+  {
+    return SdfPathVector(n.GetResyncedPaths());
+  }
 
-SdfPathVector _GetChangedInfoOnlyPaths(const UsdNotice::ObjectsChanged &n)
-{
-  return SdfPathVector(n.GetChangedInfoOnlyPaths());
-}
+  SdfPathVector _GetChangedInfoOnlyPaths(const UsdNotice::ObjectsChanged &n)
+  {
+    return SdfPathVector(n.GetChangedInfoOnlyPaths());
+  }
 
 }  // anonymous namespace
 
@@ -57,8 +57,9 @@ void wrapUsdNotice()
 {
   scope s = class_<UsdNotice>("Notice", no_init);
 
-  TfPyNoticeWrapper<UsdNotice::StageNotice, TfNotice>::Wrap().def(
-    "GetStage", &UsdNotice::StageNotice::GetStage, return_value_policy<return_by_value>());
+  TfPyNoticeWrapper<UsdNotice::StageNotice, TfNotice>::Wrap().def("GetStage",
+                                                                  &UsdNotice::StageNotice::GetStage,
+                                                                  return_value_policy<return_by_value>());
 
   TfPyNoticeWrapper<UsdNotice::StageContentsChanged, UsdNotice::StageNotice>::Wrap();
 
@@ -77,10 +78,10 @@ void wrapUsdNotice()
            UsdNotice::ObjectsChanged::GetChangedFields,
          return_value_policy<return_by_value>())
     .def("HasChangedFields",
-         (bool (UsdNotice::ObjectsChanged::*)(const UsdObject &) const) &
+         (bool(UsdNotice::ObjectsChanged::*)(const UsdObject &) const) &
            UsdNotice::ObjectsChanged::HasChangedFields)
     .def("HasChangedFields",
-         (bool (UsdNotice::ObjectsChanged::*)(const SdfPath &) const) &
+         (bool(UsdNotice::ObjectsChanged::*)(const SdfPath &) const) &
            UsdNotice::ObjectsChanged::HasChangedFields);
 
   TfPyNoticeWrapper<UsdNotice::StageEditTargetChanged, UsdNotice::StageNotice>::Wrap();

@@ -65,67 +65,65 @@ using std::list;
 using std::string;
 using std::vector;
 
-TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
-  ((sectionDelimiter, "--"))((commentDelimiter, "---"))(version)(configuration)(glsl)((import, "#import"))((
-    shaderResources,
-    "ShaderResources"))((toolSubst, "$TOOLS")));
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         ((sectionDelimiter, "--"))((commentDelimiter, "---"))(version)(configuration)(glsl)((import, "#import"))(
+                           (shaderResources, "ShaderResources"))((toolSubst, "$TOOLS")));
 
 using namespace std;
 
 namespace
 {
 
-// This is a private registry of paths to shader resources installed
-// within package bundles. Packages which install glslfx shader source
-// files must register the resource subdir where these files will be
-// installed within the package bundle using the "ShaderResources"
-// metadata key.
-class ShaderResourceRegistry
-{
- public:
-  ShaderResourceRegistry();
-
-  std::string GetShaderResourcePath(std::string const &packageName,
-                                    std::string const &shaderAssetPath) const;
-
- private:
-  std::unordered_map<std::string, std::string> _resourceMap;
-};
-
-ShaderResourceRegistry::ShaderResourceRegistry()
-{
-  PlugRegistry &plugReg = PlugRegistry::GetInstance();
-  PlugPluginPtrVector plugins = plugReg.GetAllPlugins();
-
-  for (PlugPluginPtr const &plugin : plugins)
+  // This is a private registry of paths to shader resources installed
+  // within package bundles. Packages which install glslfx shader source
+  // files must register the resource subdir where these files will be
+  // installed within the package bundle using the "ShaderResources"
+  // metadata key.
+  class ShaderResourceRegistry
   {
-    std::string packageName = plugin->GetName();
-    JsObject metadata = plugin->GetMetadata();
+   public:
+    ShaderResourceRegistry();
 
-    JsValue value;
-    if (TfMapLookup(metadata, _tokens->shaderResources, &value) && value.Is<std::string>())
+    std::string GetShaderResourcePath(std::string const &packageName,
+                                      std::string const &shaderAssetPath) const;
+
+   private:
+    std::unordered_map<std::string, std::string> _resourceMap;
+  };
+
+  ShaderResourceRegistry::ShaderResourceRegistry()
+  {
+    PlugRegistry &plugReg = PlugRegistry::GetInstance();
+    PlugPluginPtrVector plugins = plugReg.GetAllPlugins();
+
+    for (PlugPluginPtr const &plugin : plugins)
     {
+      std::string packageName = plugin->GetName();
+      JsObject metadata = plugin->GetMetadata();
 
-      string shaderPath = TfStringCatPaths(plugin->GetResourcePath(), value.Get<std::string>());
-      _resourceMap[packageName] = shaderPath;
+      JsValue value;
+      if (TfMapLookup(metadata, _tokens->shaderResources, &value) && value.Is<std::string>())
+      {
+
+        string shaderPath = TfStringCatPaths(plugin->GetResourcePath(), value.Get<std::string>());
+        _resourceMap[packageName] = shaderPath;
+      }
     }
   }
-}
 
-std::string ShaderResourceRegistry::GetShaderResourcePath(std::string const &packageName,
-                                                          std::string const &shaderAssetPath) const
-{
-  string resourcePath;
-  if (!TfMapLookup(_resourceMap, packageName, &resourcePath))
+  std::string ShaderResourceRegistry::GetShaderResourcePath(std::string const &packageName,
+                                                            std::string const &shaderAssetPath) const
   {
-    return std::string();
+    string resourcePath;
+    if (!TfMapLookup(_resourceMap, packageName, &resourcePath))
+    {
+      return std::string();
+    }
+
+    return TfStringCatPaths(resourcePath, shaderAssetPath);
   }
 
-  return TfStringCatPaths(resourcePath, shaderAssetPath);
-}
-
-static TfStaticData<const ShaderResourceRegistry> _shaderResourceRegistry;
+  static TfStaticData<const ShaderResourceRegistry> _shaderResourceRegistry;
 
 };  // namespace
 
@@ -231,8 +229,7 @@ HioGlslfx::HioGlslfx(string const &filePath, TfToken const &technique)
     if (!errorStr.empty())
     {
       TF_RUNTIME_ERROR(errorStr);
-    }
-    else
+    } else
     {
       TF_WARN("File doesn't exist: \"%s\"\n", filePath.c_str());
     }
@@ -340,42 +337,38 @@ bool HioGlslfx::_ProcessInput(std::istream *input, _ParseContext &context)
     if (context.currentLine.find(_tokens->commentDelimiter.GetText()) == 0)
     {
       continue;
-    }
-    else
+    } else
       // we found a section delimiter
       if (context.currentLine.find(_tokens->sectionDelimiter.GetText()) == 0)
-    {
-      if (!_ParseSectionLine(context))
       {
-        return false;
-      }
+        if (!_ParseSectionLine(context))
+        {
+          return false;
+        }
 
-      TF_DEBUG(HIO_DEBUG_GLSLFX)
-        .Msg("  %s : %d : %s\n",
-             TfGetBaseName(context.filename).c_str(),
-             context.lineNo,
-             context.currentLine.c_str());
-    }
-    else if (context.currentSectionType == HioGlslfxTokens->glslfx &&
-             context.currentLine.find(_tokens->import.GetText()) == 0)
-    {
-      if (!_ProcessImport(context))
+        TF_DEBUG(HIO_DEBUG_GLSLFX)
+          .Msg("  %s : %d : %s\n",
+               TfGetBaseName(context.filename).c_str(),
+               context.lineNo,
+               context.currentLine.c_str());
+      } else if (context.currentSectionType == HioGlslfxTokens->glslfx &&
+                 context.currentLine.find(_tokens->import.GetText()) == 0)
       {
-        return false;
+        if (!_ProcessImport(context))
+        {
+          return false;
+        }
+      } else if (context.currentSectionType == _tokens->glsl)
+      {
+        // don't do any parsing of these lines. this will be compiled
+        // and linked with the glsl compiler later.
+        _sourceMap[context.currentSectionId].append(context.currentLine + "\n");
+      } else if (context.currentSectionType == _tokens->configuration)
+      {
+        // this is added to the config dictionary which we will compose
+        // later
+        _configMap[context.filename].append(context.currentLine + "\n");
       }
-    }
-    else if (context.currentSectionType == _tokens->glsl)
-    {
-      // don't do any parsing of these lines. this will be compiled
-      // and linked with the glsl compiler later.
-      _sourceMap[context.currentSectionId].append(context.currentLine + "\n");
-    }
-    else if (context.currentSectionType == _tokens->configuration)
-    {
-      // this is added to the config dictionary which we will compose
-      // later
-      _configMap[context.filename].append(context.currentLine + "\n");
-    }
   }
 
   // If we never found the glslfx version this isn't a valid glslfx.
@@ -419,8 +412,10 @@ bool HioGlslfx::_ProcessImport(_ParseContext &context)
   {
     if (!errorStr.empty())
     {
-      TF_RUNTIME_ERROR(
-        "Syntax Error on line %d of %s. %s", context.lineNo, context.filename.c_str(), errorStr.c_str());
+      TF_RUNTIME_ERROR("Syntax Error on line %d of %s. %s",
+                       context.lineNo,
+                       context.filename.c_str(),
+                       errorStr.c_str());
       return false;
     }
 
@@ -458,8 +453,7 @@ bool HioGlslfx::_ParseSectionLine(_ParseContext &context)
   if (context.currentSectionType == _tokens->configuration.GetText())
   {
     return _ParseConfigurationLine(context);
-  }
-  else if (context.currentSectionType == _tokens->glsl.GetText())
+  } else if (context.currentSectionType == _tokens->glsl.GetText())
   {
     return _ParseGLSLSectionLine(tokens, context);
   }
@@ -600,8 +594,9 @@ bool HioGlslfx::_ComposeConfiguration(std::string *reason)
 
     if (!errorStr.empty())
     {
-      *reason = TfStringPrintf(
-        "Error parsing configuration section of %s: %s.", item.c_str(), errorStr.c_str());
+      *reason = TfStringPrintf("Error parsing configuration section of %s: %s.",
+                               item.c_str(),
+                               errorStr.c_str());
       return false;
     }
   }

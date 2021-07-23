@@ -51,107 +51,107 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-static bool _Initialize()
-{
-  string reason;
-  return TfMallocTag::Initialize(&reason);
-}
-
-static bool _Initialize2(const std::string &captureTag)
-{
-  string reason;
-  bool result = TfMallocTag::Initialize(&reason);
-  if (result)
+  static bool _Initialize()
   {
-    TfMallocTag::SetCapturedMallocStacksMatchList(captureTag);
+    string reason;
+    return TfMallocTag::Initialize(&reason);
   }
-  return result;
-}
 
-static TfMallocTag::CallTree _GetCallTree()
-{
-  TfMallocTag::CallTree ret;
-  TfMallocTag::GetCallTree(&ret);
-  return ret;
-}
-
-static std::vector<std::string> _GetCallStacks()
-{
-  std::vector<std::vector<uintptr_t>> stacks = TfMallocTag::GetCapturedMallocStacks();
-
-  // Cache address to function name map, one lookup per address.
-  std::map<uintptr_t, std::string> functionNames;
-  TF_FOR_ALL (stack, stacks)
+  static bool _Initialize2(const std::string &captureTag)
   {
-    TF_FOR_ALL (func, *stack)
+    string reason;
+    bool result = TfMallocTag::Initialize(&reason);
+    if (result)
     {
-      std::string &name = functionNames[*func];
-      if (name.empty())
+      TfMallocTag::SetCapturedMallocStacksMatchList(captureTag);
+    }
+    return result;
+  }
+
+  static TfMallocTag::CallTree _GetCallTree()
+  {
+    TfMallocTag::CallTree ret;
+    TfMallocTag::GetCallTree(&ret);
+    return ret;
+  }
+
+  static std::vector<std::string> _GetCallStacks()
+  {
+    std::vector<std::vector<uintptr_t>> stacks = TfMallocTag::GetCapturedMallocStacks();
+
+    // Cache address to function name map, one lookup per address.
+    std::map<uintptr_t, std::string> functionNames;
+    TF_FOR_ALL (stack, stacks)
+    {
+      TF_FOR_ALL (func, *stack)
       {
-        ArchGetAddressInfo(reinterpret_cast<void *>(*func), NULL, NULL, &name, NULL);
+        std::string &name = functionNames[*func];
         if (name.empty())
         {
-          name = "<unknown>";
+          ArchGetAddressInfo(reinterpret_cast<void *>(*func), NULL, NULL, &name, NULL);
+          if (name.empty())
+          {
+            name = "<unknown>";
+          }
         }
       }
     }
-  }
 
-  std::vector<std::string> result;
-  TF_FOR_ALL (stack, stacks)
-  {
-    result.push_back(std::string());
-    std::string &trace = result.back();
-    TF_FOR_ALL (func, *stack)
+    std::vector<std::string> result;
+    TF_FOR_ALL (stack, stacks)
     {
-      trace += TfStringPrintf("  0x%016lx: %s\n", (unsigned long)*func, functionNames[*func].c_str());
+      result.push_back(std::string());
+      std::string &trace = result.back();
+      TF_FOR_ALL (func, *stack)
+      {
+        trace += TfStringPrintf("  0x%016lx: %s\n", (unsigned long)*func, functionNames[*func].c_str());
+      }
+      trace += '\n';
     }
-    trace += '\n';
+    return result;
   }
-  return result;
-}
 
-static string _GetPrettyPrintString(TfMallocTag::CallTree const &self)
-{
-  return self.GetPrettyPrintString();
-}
+  static string _GetPrettyPrintString(TfMallocTag::CallTree const &self)
+  {
+    return self.GetPrettyPrintString();
+  }
 
-static vector<TfMallocTag::CallTree::CallSite> _GetCallSites(TfMallocTag::CallTree const &self)
-{
-  return self.callSites;
-}
+  static vector<TfMallocTag::CallTree::CallSite> _GetCallSites(TfMallocTag::CallTree const &self)
+  {
+    return self.callSites;
+  }
 
-static TfMallocTag::CallTree::PathNode _GetRoot(TfMallocTag::CallTree const &self)
-{
-  return self.root;
-}
+  static TfMallocTag::CallTree::PathNode _GetRoot(TfMallocTag::CallTree const &self)
+  {
+    return self.root;
+  }
 
-static vector<TfMallocTag::CallTree::PathNode> _GetChildren(TfMallocTag::CallTree::PathNode const &self)
-{
-  return self.children;
-}
+  static vector<TfMallocTag::CallTree::PathNode> _GetChildren(TfMallocTag::CallTree::PathNode const &self)
+  {
+    return self.children;
+  }
 
-static void _Report(TfMallocTag::CallTree const &self, std::string const &rootName)
-{
-  self.Report(std::cout, rootName);
-}
+  static void _Report(TfMallocTag::CallTree const &self, std::string const &rootName)
+  {
+    self.Report(std::cout, rootName);
+  }
 
-static void _ReportToFile(TfMallocTag::CallTree const &self,
-                          std::string const &fileName,
-                          std::string const &rootName)
-{
-  std::ofstream os(fileName.c_str());
-  self.Report(os, rootName);
-}
+  static void _ReportToFile(TfMallocTag::CallTree const &self,
+                            std::string const &fileName,
+                            std::string const &rootName)
+  {
+    std::ofstream os(fileName.c_str());
+    self.Report(os, rootName);
+  }
 
-static std::string _LogReport(TfMallocTag::CallTree const &self, std::string const &rootName)
-{
-  string tmpFile;
-  ArchMakeTmpFile(std::string("callSiteReport") + (rootName.empty() ? "" : "_") + rootName, &tmpFile);
+  static std::string _LogReport(TfMallocTag::CallTree const &self, std::string const &rootName)
+  {
+    string tmpFile;
+    ArchMakeTmpFile(std::string("callSiteReport") + (rootName.empty() ? "" : "_") + rootName, &tmpFile);
 
-  _ReportToFile(self, tmpFile, rootName);
-  return tmpFile;
-}
+    _ReportToFile(self, tmpFile, rootName);
+    return tmpFile;
+  }
 
 }  // anonymous namespace
 

@@ -107,8 +107,7 @@ inline void lshift(void *blob, int len, int c)
   if ((len & 3) == 0)
   {
     lshift32(blob, len, c);
-  }
-  else
+  } else
   {
     lshift8(blob, len, c);
   }
@@ -119,8 +118,7 @@ inline void rshift(void *blob, int len, int c)
   if ((len & 3) == 0)
   {
     rshift32(blob, len, c);
-  }
-  else
+  } else
   {
     rshift8(blob, len, c);
   }
@@ -132,8 +130,7 @@ inline void lshift(T &blob, int c)
   if ((sizeof(T) & 3) == 0)
   {
     lshift32(&blob, sizeof(T), c);
-  }
-  else
+  } else
   {
     lshift8(&blob, sizeof(T), c);
   }
@@ -145,8 +142,7 @@ inline void rshift(T &blob, int c)
   if ((sizeof(T) & 3) == 0)
   {
     lshift32(&blob, sizeof(T), c);
-  }
-  else
+  } else
   {
     lshift8(&blob, sizeof(T), c);
   }
@@ -190,8 +186,7 @@ inline void lrot(void *blob, int len, int c)
   if ((len & 3) == 0)
   {
     return lrot32(blob, len, c);
-  }
-  else
+  } else
   {
     return lrot8(blob, len, c);
   }
@@ -202,8 +197,7 @@ inline void rrot(void *blob, int len, int c)
   if ((len & 3) == 0)
   {
     return rrot32(blob, len, c);
-  }
-  else
+  } else
   {
     return rrot8(blob, len, c);
   }
@@ -215,8 +209,7 @@ inline void lrot(T &blob, int c)
   if ((sizeof(T) & 3) == 0)
   {
     return lrot32(&blob, sizeof(T), c);
-  }
-  else
+  } else
   {
     return lrot8(&blob, sizeof(T), c);
   }
@@ -228,8 +221,7 @@ inline void rrot(T &blob, int c)
   if ((sizeof(T) & 3) == 0)
   {
     return rrot32(&blob, sizeof(T), c);
-  }
-  else
+  } else
   {
     return rrot8(&blob, sizeof(T), c);
   }
@@ -268,8 +260,7 @@ inline uint32_t window(void *blob, int len, int start, int count)
   if (len & 3)
   {
     return window8(blob, len, start, count);
-  }
-  else
+  } else
   {
     return window32(blob, len, start, count);
   }
@@ -281,8 +272,7 @@ inline uint32_t window(T &blob, int start, int count)
   if ((sizeof(T) & 3) == 0)
   {
     return window32(&blob, sizeof(T), start, count);
-  }
-  else
+  } else
   {
     return window8(&blob, sizeof(T), start, count);
   }

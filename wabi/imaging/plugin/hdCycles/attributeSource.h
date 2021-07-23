@@ -27,7 +27,7 @@
 
 namespace ccl
 {
-class PointCloud;
+  class PointCloud;
 }
 
 WABI_NAMESPACE_BEGIN

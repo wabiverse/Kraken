@@ -70,9 +70,9 @@ void HdPhField::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam,
     if (_fieldType == _tokens->openvdbAsset)
     {
       _textureId = HdPhTextureIdentifier(
-        resolvedFilePath, std::make_unique<HdPhOpenVDBAssetSubtextureIdentifier>(fieldName, fieldIndex));
-    }
-    else
+        resolvedFilePath,
+        std::make_unique<HdPhOpenVDBAssetSubtextureIdentifier>(fieldName, fieldIndex));
+    } else
     {
       const VtValue fieldPurposeValue = sceneDelegate->Get(GetId(), _tokens->fieldPurpose);
       const TfToken &fieldPurpose = fieldPurposeValue.Get<TfToken>();

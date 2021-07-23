@@ -129,8 +129,7 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
       outputValues[dstIndex] = authoredValues[srcIndex];
       ++dstIndex;
       ++srcIndex;
-    }
-    else if (basis == HdTokens->bezier)
+    } else if (basis == HdTokens->bezier)
     {
       // For bezier splines, we map the linear values to cubic values
       // the begin value gets mapped to the first two vertices and
@@ -161,8 +160,7 @@ VtArray<T> HdPh_ExpandVarying(size_t numVerts,
       outputValues[dstIndex] = authoredValues[srcIndex];
       ++dstIndex;
       ++srcIndex;
-    }
-    else
+    } else
     {
       TF_WARN("Unsupported basis: '%s'", basis.GetText());
     }
@@ -211,8 +209,7 @@ class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSo
     if (size == 0 && _name == HdTokens->points)
     {
       primvars = _authoredPrimvar;
-    }
-    else if (_interpolation == HdInterpolationVertex)
+    } else if (_interpolation == HdInterpolationVertex)
     {
       if (size == 1)
       {
@@ -220,19 +217,16 @@ class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSo
         {
           primvars[i] = _authoredPrimvar[0];
         }
-      }
-      else if (size == numVerts)
+      } else if (size == numVerts)
       {
         primvars = _authoredPrimvar;
-      }
-      else if (size < numVerts && _topology->HasIndices())
+      } else if (size < numVerts && _topology->HasIndices())
       {
         for (size_t i = 0; i < size; ++i)
         {
           primvars[i] = _authoredPrimvar[i];
         }
-      }
-      else
+      } else
       {
         for (size_t i = 0; i < numVerts; ++i)
         {
@@ -243,8 +237,7 @@ class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSo
           "interpolation, using fallback value for rendering",
           _name.GetText());
       }
-    }
-    else if (_interpolation == HdInterpolationVarying)
+    } else if (_interpolation == HdInterpolationVarying)
     {
       if (size == 1)
       {
@@ -252,20 +245,17 @@ class HdPh_BasisCurvesPrimvarInterpolaterComputation : public HdComputedBufferSo
         {
           primvars[i] = _authoredPrimvar[0];
         }
-      }
-      else if (_topology->GetCurveType() == HdTokens->linear && size == numVerts)
+      } else if (_topology->GetCurveType() == HdTokens->linear && size == numVerts)
       {
         primvars = _authoredPrimvar;
-      }
-      else if (size == _topology->CalculateNeededNumberOfVaryingControlPoints())
+      } else if (size == _topology->CalculateNeededNumberOfVaryingControlPoints())
       {
         primvars = HdPh_ExpandVarying<T>(numVerts,
                                          _topology->GetCurveVertexCounts(),
                                          _topology->GetCurveWrap(),
                                          _topology->GetCurveBasis(),
                                          _authoredPrimvar);
-      }
-      else
+      } else
       {
         for (size_t i = 0; i < numVerts; ++i)
         {
