@@ -3,7 +3,6 @@ if($IsWindows) {
 }
 
 
-
 $KRAKEN_BUILDING_VERSION_MAJOR = 1
 $KRAKEN_BUILDING_VERSION_MINOR = 50
 $KRAKEN_DEVELOPMENT_MILESTONE = "Initial Release Sprint"
@@ -12,7 +11,6 @@ $PIXAR_BUILDING_VERSION = 21.08
 $SHOW_KRAKEN_HUD = 1
 
 $env:GIT_AUTHOR_EMAIL = "tyler@tylerfurby.com"
-
 
 
 Set-Alias g git
@@ -27,7 +25,6 @@ if($IsWindows) {
     Import-Module "$ChocolateyProfile"
   }
 }
-
 
 
 function RunOfficialReleaseKraken {
@@ -70,11 +67,19 @@ function ReloadDeveloperProfile {
   . $PROFILE
 }
 
-function DeleteConsoleLogs {
-  clear
+function RunKrakenPythonOfficialRelease {
+  if($IsWindows) {
+    & "$env:ProgramFiles/Wabi Animation/Kraken $KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
+  }
+  if($IsMacOS) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  }
+  if($IsLinux) {
+    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red    
+  }
 }
 
-function KrakenPythonRelease {
+function RunKrakenPythonRelease {
   if($IsWindows) {
     & "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
   }
@@ -86,7 +91,7 @@ function KrakenPythonRelease {
   }
 }
 
-function KrakenPythonDebug {
+function RunKrakenPythonDebug {
   if($IsWindows) {
     & "$env:USERPROFILE/dev/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python_d.exe" $args
   }
@@ -139,6 +144,11 @@ function ShowBanner {
   }
 }
 
+function DeleteConsoleLogs {
+  clear
+  ShowBanner
+}
+
 if($IsWindows) {
   Set-PoshPrompt -Theme "$env:USERPROFILE\dev\Kraken\build_files\build_environment\krakentheme.omp.json"
 }
@@ -149,13 +159,22 @@ if($IsLinux) {
   Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red  
 }
 
-Set-Alias makechaos RunOfficialReleaseKraken
-Set-Alias krakenRunRel RunDevelopmentReleaseKraken
-Set-Alias krakenRunDeb RunDevelopmentDebugKraken
-Set-Alias xx DeleteConsoleLogs
-Set-Alias python KrakenPythonRelease
-Set-Alias python_d KrakenPythonDebug
+# Run Kraken
+Set-Alias kraken RunOfficialReleaseKraken
+Set-Alias kraken_r RunDevelopmentReleaseKraken
+Set-Alias kraken_d RunDevelopmentDebugKraken
+
+# Run Kraken Python
+Set-Alias python RunKrakenPythonOfficialRelease
+Set-Alias python_r RunKrakenPythonRelease
+Set-Alias python_d RunKrakenPythonDebug
+
+# Enter Kraken Server
 Set-Alias wabiserver ConnectKraken
+
+# Utility Convenience
+Set-Alias xx DeleteConsoleLogs
 Set-Alias rr ReloadDeveloperProfile
 
+# Print Pretty ASCII Logo Variant
 ShowBanner
