@@ -52,10 +52,10 @@
 #include <string>
 #include <vector>
 #ifdef WITH_PYTHON
-#include <boost/python.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/scope.hpp>
+#  include <boost/python.hpp>
+#  include <boost/python/class.hpp>
+#  include <boost/python/def.hpp>
+#  include <boost/python/scope.hpp>
 #  if defined(__APPLE__)  // Fix breakage caused by Python's pyport.h.
 #    undef tolower
 #    undef toupper

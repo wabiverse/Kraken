@@ -95,24 +95,24 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 #ifdef WITH_PYTHON
-#include <boost/python.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/converter/to_python_function_type.hpp>
-#include <boost/python/converter/from_python.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/def_visitor.hpp>
-#include <boost/python/enum.hpp>
-#include <boost/python/extract.hpp>
-#include <boost/python/implicit.hpp>
-#include <boost/python/type_id.hpp>
-#include <boost/python/tuple.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/operators.hpp>
-#include <boost/python/return_arg.hpp>
-#include <boost/python/scope.hpp>
-#include <boost/python/to_python_converter.hpp>
-#include <boost/python/manage_new_object.hpp>
-#include <boost/python/return_value_policy.hpp>
+#  include <boost/python.hpp>
+#  include <boost/python/class.hpp>
+#  include <boost/python/converter/to_python_function_type.hpp>
+#  include <boost/python/converter/from_python.hpp>
+#  include <boost/python/def.hpp>
+#  include <boost/python/def_visitor.hpp>
+#  include <boost/python/enum.hpp>
+#  include <boost/python/extract.hpp>
+#  include <boost/python/implicit.hpp>
+#  include <boost/python/type_id.hpp>
+#  include <boost/python/tuple.hpp>
+#  include <boost/python/object.hpp>
+#  include <boost/python/operators.hpp>
+#  include <boost/python/return_arg.hpp>
+#  include <boost/python/scope.hpp>
+#  include <boost/python/to_python_converter.hpp>
+#  include <boost/python/manage_new_object.hpp>
+#  include <boost/python/return_value_policy.hpp>
 #  if defined(__APPLE__)  // Fix breakage caused by Python's pyport.h.
 #    undef tolower
 #    undef toupper
