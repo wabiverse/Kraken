@@ -4,7 +4,7 @@
 #
 # Tested to work with versions: 8 to 11.
 
-Standard: c++20
+Standard: c++17
 
 # This causes parameters on continuations to align to the opening brace.
 #

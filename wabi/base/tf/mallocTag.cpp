@@ -864,7 +864,7 @@ class TfMallocTag::Tls
     // _ThreadData object.  We leak the heap allocated blocks in
     // the _ThreadData.
     static thread_local std::aligned_storage<sizeof(_ThreadData), alignof(_ThreadData)>::type dataBuffer;
-    static thread_local _ThreadData *data = new (&dataBuffer) _ThreadData;
+    static _ThreadData *data = new (&dataBuffer) _ThreadData;
     return data;
 #else
     TF_FATAL_ERROR(

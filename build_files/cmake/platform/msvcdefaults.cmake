@@ -77,8 +77,28 @@ set(_WABI_C_FLAGS_RELWITHDEBINFO   "${_WABI_C_FLAGS_RELWITHDEBINFO} /MD ${SYMBOL
 unset(SYMBOL_FORMAT)
 unset(SYMBOL_FORMAT_RELEASE)
 
-# Enable CXX-20 features.
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /std:c++20")
+# Target Windows 11 SDK.
+set(WINDOWS_11_VERSION 10.0.22000.0)
+
+# Our Standard is now :: CXX/WinRT
+set(CMAKE_VS_WINRT_BY_DEFAULT ON)
+set(CMAKE_SYSTEM_NAME "WindowsStore")
+set(CMAKE_SYSTEM_VERSION ${WINDOWS_11_VERSION}) 
+
+# Enable CXX/WinRT (20++) hybrid features.
+# Our Windows Standard. For the long haul.
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /ZW")
+
+
+# Temporary, until they fixup the installation.
+set(WINDOWS_11_STORE
+  "C:/Program Files (x86)/Windows Kits/10/UnionMetadata/${WINDOWS_11_VERSION}"
+)
+set(WINDOWS_11_PLATFORM
+  "C:/Program Files/Microsoft Visual Studio/2022/Preview/Common7/IDE/VC/vcpackages"
+)
+list(APPEND _WABI_CXX_FLAGS /AI"${WINDOWS_11_STORE}")
+list(APPEND _WABI_CXX_FLAGS /AI"${WINDOWS_11_PLATFORM}")
 
 # Enable exception handling.
 if(KRAKEN_RELEASE_MODE)

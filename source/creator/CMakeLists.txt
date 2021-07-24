@@ -1300,10 +1300,8 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     COMPONENT KRAKEN
     DESTINATION "."
   )
-  set_target_properties(
-    kraken
-    PROPERTIES
-      VS_USER_PROPS "kraken.Cpp.user.props"
+  set_target_properties(kraken PROPERTIES
+    VS_USER_PROPS "kraken.Cpp.user.props"
   )
 endif()
 

@@ -1,5 +1,13 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+      <application>
+          <!-- Windows 10 -->
+          <maxversiontested Id="10.0.18362.0"/>
+          <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+      </application>
+  </compatibility>
+  
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>
       <requestedPrivileges>
@@ -7,31 +15,45 @@
       </requestedPrivileges>
     </security>
   </trustInfo>
-  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1"> 
-        <application> 
-            <!-- Windows 10 --> 
-            <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
-            <!-- Windows 8.1 -->
-            <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/>
-            <!-- Windows 8 -->
-            <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}"/>
-            <!-- Windows 7 -->
-            <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
-            <!-- Windows Vista -->
-            <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/> 
-        </application> 
-  </compatibility>  
-  <dependency>
-    <dependentAssembly>
-        <assemblyIdentity
-            type="win32"
-            name="Microsoft.Windows.Common-Controls"
-            version="6.0.0.0"
-            processorArchitecture="*"
-            publicKeyToken="6595b64144ccf1df"
-            language="*"
-        />
-    </dependentAssembly>
-  </dependency>  
   @BUNDLECRT@
+
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6" xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap uap6 uap10 rescap">
+  <Identity Name="WabiAnimation.Kraken" 
+            Publisher="E=mail@kraken3d.org, CN=Wabi Animation CA, OU=Chaos Engine, O=Wabi Animation, L=Denver, S=Colorado, C=US" 
+            Version="1.5.0.0" 
+            ProcessorArchitecture="x64" />
+  <Properties>
+    <DisplayName>Kraken</DisplayName>
+    <PublisherDisplayName>Wabi Animation</PublisherDisplayName>
+    <Description>Kraken is the creation platform built on Pixar USD</Description>
+    <Logo>winkraken.ico</Logo>
+    <uap10:PackageIntegrity>
+      <uap10:Content Enforcement="on" />
+    </uap10:PackageIntegrity>
+  </Properties>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1" />
+  </Dependencies>
+  <Capabilities>
+    <uap:Capability Name="objects3D" />
+    <uap6:Capability Name="graphicsCapture" />
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+  <Applications>
+    <Application Id="KRAKEN" Executable="Kraken\kraken.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+          BackgroundColor="transparent"
+          DisplayName="Kraken 1.5.0"
+          Description="Kraken is the creation platform built on Pixar USD">
+        <uap:DefaultTile
+            ShortName="Kraken 1.5.0">
+        </uap:DefaultTile>
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+</Package>
+
 </assembly>

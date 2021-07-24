@@ -31,8 +31,9 @@
 include(CXXHelpers)
 include(Options)
 
-# Require C++20
-set(CMAKE_CXX_STANDARD 20)
+# --- Require (C++17-20 Hybrid) ---
+# Our Standard is now -- CXX/WinRT
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
