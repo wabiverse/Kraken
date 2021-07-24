@@ -902,9 +902,8 @@ function(wabi_maelstrom_prologue)
     # Install a namespace declaration header,
     # wabi.h, at the top level of wabi.
 
-    install(
-        FILES ${CMAKE_SOURCE_DIR}/wabi/wabi.h
-        DESTINATION ${CMAKE_BINARY_DIR}/include/wabi
+    configure_file(${CMAKE_SOURCE_DIR}/wabi/wabi.h
+                   ${CMAKE_BINARY_DIR}/include/wabi/wabi.h
     )
     install(
         FILES ${CMAKE_SOURCE_DIR}/wabi/wabi.h

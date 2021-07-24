@@ -58,28 +58,27 @@ static HdCompareFunction HdxDrawTargetTask_GetResolvedDepthFunc(HdCompareFunctio
                                                                 HdDepthPriority priority)
 {
   static const HdCompareFunction ResolvedDepthFunc[HdDepthPriorityCount][HdCmpFuncLast] = {
-    // HdDepthPriorityNearest
     {
-      HdCmpFuncNever,     // HdCmpFuncNever
-      HdCmpFuncLess,      // HdCmpFuncLess
-      HdCmpFuncEqual,     // HdCmpFuncEqual
-      HdCmpFuncLEqual,    // HdCmpFuncLEqual
-      HdCmpFuncGreater,   // HdCmpFuncGreater
-      HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
-      HdCmpFuncGEqual,    // HdCmpFuncGEqual
-      HdCmpFuncAlways,    // HdCmpFuncAlways},
-
-      // HdDepthPriorityFarthest
-      {
-        HdCmpFuncNever,     // HdCmpFuncNever
-        HdCmpFuncGEqual,    // HdCmpFuncLess
-        HdCmpFuncEqual,     // HdCmpFuncEqual
-        HdCmpFuncGreater,   // HdCmpFuncLEqual
-        HdCmpFuncLEqual,    // HdCmpFuncGreater
-        HdCmpFuncNotEqual,  // HdCmpFuncNotEqual
-        HdCmpFuncLess,      // HdCmpFuncGEqual
-        HdCmpFuncAlways,    // HdCmpFuncAlways},
-      };
+      HdCmpFuncNever,
+      HdCmpFuncLess,
+      HdCmpFuncEqual,
+      HdCmpFuncLEqual,
+      HdCmpFuncGreater,
+      HdCmpFuncNotEqual,
+      HdCmpFuncGEqual,
+      HdCmpFuncAlways,
+    },
+    {
+      HdCmpFuncNever,
+      HdCmpFuncGEqual,
+      HdCmpFuncEqual,
+      HdCmpFuncGreater,
+      HdCmpFuncLEqual,
+      HdCmpFuncNotEqual,
+      HdCmpFuncLess,
+      HdCmpFuncAlways,
+    },
+  };
 
   return ResolvedDepthFunc[priority][depthFunc];
 }

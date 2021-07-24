@@ -28,8 +28,12 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-// WARNING: THIS FILE IS GENERATED.  DO NOT EDIT.
-//
+/**
+ * WARNING: DO NOT AIMLESSLY SLAM THOUSANDS OF
+ * SYSTEM INCLUDES INTO A SINGLE PRECOMPILED HEADER
+ * AND EXPECT IT NOT TO CAUSE ANY SIGNIFICANT BUILD
+ * PROBLEMS -- *** HEAP ISSUES GALORE ***
+ * -- Fixed by Furby ❤︎ */
 
 #include "wabi/base/arch/defines.h"
 #include "wabi/wabi.h"

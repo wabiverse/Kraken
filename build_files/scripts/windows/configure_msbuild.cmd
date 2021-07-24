@@ -41,6 +41,7 @@ if "%MUST_CLEAN%"=="1" (
 		%BUILD_DIR%\KRAKEN.sln ^
 		/target:clean ^
 		/property:Configuration=%BUILD_TYPE% ^
+		/p:PreferredToolArchitecture=x64 ^
 		/verbosity:minimal ^
 		/p:platform=%MSBUILD_PLATFORM%
 )
@@ -73,7 +74,8 @@ echo echo %%TIME%% ^> buildtime.txt >> %BUILD_DIR%\rebuild.cmd
 echo msbuild ^
 	%BUILD_DIR%\INSTALL.vcxproj ^
 	/property:Configuration=%BUILD_TYPE% ^
-	/maxcpucount:2 ^
+	/p:PreferredToolArchitecture=x64 ^
+	/maxcpucount ^
 	/verbosity:minimal ^
 	/p:platform=%MSBUILD_PLATFORM% ^
 	/flp:Summary;Verbosity=minimal;LogFile=%BUILD_DIR%\Build.log >> %BUILD_DIR%\rebuild.cmd

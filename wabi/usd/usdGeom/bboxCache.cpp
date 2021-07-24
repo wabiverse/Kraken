@@ -53,8 +53,6 @@
 #include <algorithm>
 #include <tbb/enumerable_thread_specific.h>
 
-#include <boost/atomic/atomic.hpp>
-
 WABI_NAMESPACE_BEGIN
 
 // Thread-local Xform cache.

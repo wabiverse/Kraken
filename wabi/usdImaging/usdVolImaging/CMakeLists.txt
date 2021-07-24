@@ -15,4 +15,6 @@ wabi_library(usdVolImaging
 
     RESOURCE_FILES
         resources/plugInfo.json
+
+    DISABLE_PRECOMPILED_HEADERS
 )

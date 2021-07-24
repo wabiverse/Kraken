@@ -21,8 +21,12 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-// WARNING: THIS FILE IS GENERATED.  DO NOT EDIT.
-//
+/**
+ * WARNING: DO NOT AIMLESSLY SLAM THOUSANDS OF
+ * SYSTEM INCLUDES INTO A SINGLE PRECOMPILED HEADER
+ * AND EXPECT IT NOT TO CAUSE ANY SIGNIFICANT BUILD
+ * PROBLEMS -- *** HEAP ISSUES GALORE ***
+ * -- Fixed by Furby ❤︎ */
 
 #include "wabi/wabi.h"
 #include <boost/any.hpp>

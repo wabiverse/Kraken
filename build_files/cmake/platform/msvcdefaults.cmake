@@ -191,10 +191,6 @@ set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Zi")
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /MP")
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Gm-")
 
-# Ensure error C3859 does not occur. Failing to create enough virtual memory
-# for PCH. This raises the default 75 to 1000
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Zm1000")
-
 # Enable 'Just My Code' debugging, allowing MSVC to step over system, framework,
 # libraries, and other non-user calls, and to collapse those calls in the call stack
 # window. The /JMC compiler option is available starting in Visual Studio 2017 version

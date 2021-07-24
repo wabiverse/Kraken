@@ -36,4 +36,6 @@ wabi_library(usdRiImaging
 
     RESOURCE_FILES
         resources/plugInfo.json
+
+    DISABLE_PRECOMPILED_HEADERS
 )

@@ -4,7 +4,8 @@ msbuild ^
 	%BUILD_DIR%\KRAKEN.sln ^
 	/target:build ^
 	/property:Configuration=%BUILD_TYPE% ^
-	/maxcpucount:2 ^
+	/p:PreferredToolArchitecture=x64 ^
+	/maxcpucount ^
 	/verbosity:minimal ^
 	/p:platform=%MSBUILD_PLATFORM% ^
 	/flp:Summary;Verbosity=minimal;LogFile=%BUILD_DIR%\Build.log 
@@ -16,6 +17,7 @@ msbuild ^
 msbuild ^
 	%BUILD_DIR%\INSTALL.vcxproj ^
 	/property:Configuration=%BUILD_TYPE% ^
+	/p:PreferredToolArchitecture=x64 ^
 	/verbosity:minimal ^
 	/p:platform=%MSBUILD_PLATFORM% 
 	if errorlevel 1 (
