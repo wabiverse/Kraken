@@ -187,7 +187,7 @@ void wmNotifier::Push()
 MsgBusCallback::MsgBusCallback(wmOperatorType *ot)
   : ref(1),
     notice(ot->notice),
-    op({.type = ot})
+    op({ot})
 {}
 
 void MsgBusCallback::OperatorCOMM(const TfNotice &notice, MsgBus const &sender)

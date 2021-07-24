@@ -22,27 +22,27 @@
  * Bare Metal.
  */
 
-/* clang-format off */
 #include "ANCHOR_freetype.h"
 #include "ANCHOR_internal.h"
-
 #include <stdint.h>
 #include <ft2build.h>
-
-#include <freetype/freetype.h>
-#include <freetype/ftmodapi.h>
-#include <freetype/ftglyph.h>
-#include <freetype/ftsynth.h>
-/* clang-format on */
+#include FT_FREETYPE_H
+#include FT_MODULE_H
+#include FT_GLYPH_H
+#include FT_SYNTHESIS_H
 
 #ifdef _MSC_VER
-#  pragma warning(disable : 4505)  // unreferenced local function has been removed (stb stuff)
+#  pragma warning (disable: 4505)
+#  pragma warning (disable: 26812)
 #endif
 
 #if defined(__GNUC__)
 #  pragma GCC diagnostic ignored "-Wpragmas"          // warning: unknown option after '#pragma GCC diagnostic' kind
 #  pragma GCC diagnostic ignored "-Wunused-function"  // warning: 'xxxx' defined but not used
 #endif
+
+#include <wabi/wabi.h>
+#include <wabi/base/tf/tf.h>
 
 WABI_NAMESPACE_USING
 

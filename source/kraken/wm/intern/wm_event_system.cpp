@@ -524,11 +524,16 @@ static void wm_eventemulation(wmEvent *event, bool test_only)
 }
 
 static const wmTabletData wm_event_tablet_data_default = {
-  .active = EVT_TABLET_NONE,
-  .pressure = 1.0f,
-  .x_tilt = 0.0f,
-  .y_tilt = 0.0f,
-  .is_motion_absolute = false,
+  /*.active==*/
+  EVT_TABLET_NONE,
+  /*.pressure==*/
+  1.0f,
+  /*.x_tilt==*/
+  0.0f,
+  /*.y_tilt==*/
+  0.0f,
+  /*.is_motion_absolute==*/
+  false,
 };
 
 void WM_event_tablet_data_default_set(wmTabletData *tablet_data)
