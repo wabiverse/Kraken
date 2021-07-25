@@ -1,59 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
-      <application>
-          <!-- Windows 10 -->
-          <maxversiontested Id="10.0.18362.0"/>
-          <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
-      </application>
-  </compatibility>
-  
-  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
-    <security>
-      <requestedPrivileges>
-        <requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel>
-      </requestedPrivileges>
-    </security>
-  </trustInfo>
+  <assemblyIdentity version="1.0.0.0" name="WabiAnimationKraken"/>
+
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <dpiAware xmlns="http://schemas.microsoft.com/smi/2005/windowssettings">true/PM</dpiAware>
+      <dpiAwareness xmlns="http://schemas.microsoft.com/smi/2016/windowssettings">PerMonitorV2, PerMonitor</dpiAwareness>
+    </windowsSettings>
+  </application>
   @BUNDLECRT@
-
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6" xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap uap6 uap10 rescap">
-  <Identity Name="WabiAnimation.Kraken" 
-            Publisher="E=mail@kraken3d.org, CN=Wabi Animation CA, OU=Chaos Engine, O=Wabi Animation, L=Denver, S=Colorado, C=US" 
-            Version="1.5.0.0" 
-            ProcessorArchitecture="x64" />
-  <Properties>
-    <DisplayName>Kraken</DisplayName>
-    <PublisherDisplayName>Wabi Animation</PublisherDisplayName>
-    <Description>Kraken is the creation platform built on Pixar USD</Description>
-    <Logo>winkraken.ico</Logo>
-    <uap10:PackageIntegrity>
-      <uap10:Content Enforcement="on" />
-    </uap10:PackageIntegrity>
-  </Properties>
-  <Resources>
-    <Resource Language="en-us" />
-  </Resources>
-  <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1" />
-  </Dependencies>
-  <Capabilities>
-    <uap:Capability Name="objects3D" />
-    <uap6:Capability Name="graphicsCapture" />
-    <rescap:Capability Name="runFullTrust" />
-  </Capabilities>
-  <Applications>
-    <Application Id="KRAKEN" Executable="Kraken\kraken.exe" EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements
-          BackgroundColor="transparent"
-          DisplayName="Kraken 1.5.0"
-          Description="Kraken is the creation platform built on Pixar USD">
-        <uap:DefaultTile
-            ShortName="Kraken 1.5.0">
-        </uap:DefaultTile>
-      </uap:VisualElements>
-    </Application>
-  </Applications>
-</Package>
-
 </assembly>

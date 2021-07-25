@@ -267,14 +267,28 @@ function(kraken_add_lib__impl
   
   # Kraken is a static runtime.
   add_library(${name} STATIC ${sources})
+  if(WIN32)
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS " /WHOLEARCHIVE:$<TARGET_FILE:kraken>")
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_DEBUG " /WHOLEARCHIVE:$<TARGET_FILE:kraken>")
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /WHOLEARCHIVE:$<TARGET_FILE:kraken>")
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_RELWITHDEBINFO " /WHOLEARCHIVE:$<TARGET_FILE:kraken>")
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_MINSIZEREL " /WHOLEARCHIVE:$<TARGET_FILE:kraken>")
+  elseif(APPLE)
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS "-Wl,-force_load kraken")
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_DEBUG "-Wl,-force_load kraken")
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE "-Wl,-force_load kraken")
+  elseif(UNIX)
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS "-Wl,--whole-archive $<TARGET_FILE:kraken> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_DEBUG "-Wl,--whole-archive $<TARGET_FILE:kraken> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
+    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE "-Wl,--whole-archive $<TARGET_FILE:kraken> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
+  endif()
 
-  # This is the only shared library currently.
-  # -> Pixar Monolithic USD
   add_dependencies(${name} maelstrom)
+  
 
   # if(UNIX)
-  #   set_target_properties(${name} PROPERTIES BUILD_WITH_INSTALL_RPATH true)
-  #   set_target_properties(${name} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${KRAKEN_VERSION}/lib")
+  #   set_target_properties(${final} PROPERTIES BUILD_WITH_INSTALL_RPATH true)
+  #   set_target_properties(${final} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${KRAKEN_VERSION}/lib")
   # endif()
 
 
