@@ -88,3 +88,4 @@ endif()
 
 add_definitions(-DKRAKEN_KERNEL_EXPORTS)
 kraken_add_lib(kraken_kernel "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+kraken_precompile_headers(kraken_kernel KKE_precomp.cpp KKE_precomp.h)

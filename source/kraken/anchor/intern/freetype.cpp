@@ -25,11 +25,28 @@
 #include "ANCHOR_freetype.h"
 #include "ANCHOR_internal.h"
 #include <stdint.h>
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_MODULE_H
-#include FT_GLYPH_H
-#include FT_SYNTHESIS_H
+
+#ifdef _WIN32
+/**
+ * The 'generic' keyword is
+ * problematic with Windows
+ * when compiling with WinRT
+ * 
+ * Workaround. */
+#  define generic _GenericWorkaround
+#    include <ft2build.h>
+#    include FT_FREETYPE_H
+#    include FT_MODULE_H
+#    include FT_GLYPH_H
+#    include FT_SYNTHESIS_H
+#  undef generic
+#else /* _WIN32 */
+#    include <ft2build.h>
+#    include FT_FREETYPE_H
+#    include FT_MODULE_H
+#    include FT_GLYPH_H
+#    include FT_SYNTHESIS_H
+#endif
 
 #ifdef _MSC_VER
 #  pragma warning (disable: 4505)

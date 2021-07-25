@@ -1013,11 +1013,8 @@ function(wabi_maelstrom_epilogue)
         # that we carefully avoid adding the maelstrom_static target itself by using
         # TARGET_FILE.  Linking the maelstrom_static target would link maelstrom_static and
         # everything it links to.
-        if(MSVC)
-            target_link_libraries(maelstrom
-                PRIVATE
-                    -WHOLEARCHIVE:$<TARGET_FILE:maelstrom_static>
-            )
+        if(WIN32)
+            target_link_options(maelstrom PRIVATE "LINKER:/WHOLEARCHIVE:$<TARGET_FILE:maelstrom_static>")
         elseif(CMAKE_COMPILER_IS_GNUCXX)
             target_link_libraries(maelstrom
                 PRIVATE

@@ -32,9 +32,17 @@
 #include <wabi/imaging/hd/extComputationUtils.h>
 #include <wabi/usd/sdf/assetPath.h>
 
-#ifdef USE_HBOOST
-#  include <hboost/filesystem.hpp>
-#else
+#ifdef _WIN32
+/**
+ * The 'generic' keyword is
+ * problematic with Windows
+ * when compiling with WinRT
+ * 
+ * Workaround. */
+#  define generic _GenericWorkaround
+#    include <boost/filesystem.hpp>
+#  undef generic
+#else /* _WIN32 */
 #  include <boost/filesystem.hpp>
 #endif
 

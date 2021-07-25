@@ -1274,21 +1274,18 @@ endif()
 # you run these builds on other systems due to missing dlls. So we opt out
 # the use of vcpkg
 if(WIN32)
-  set_target_properties(kraken PROPERTIES VS_GLOBAL_VcpkgEnabled "false")
+  set_target_properties(kraken PROPERTIES
+    VS_GLOBAL_VcpkgEnabled "false"
+  )
   set_target_properties(kraken PROPERTIES
     PDB_NAME "kraken_private"
-    PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
+    PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>"
+  )
     if(WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
-      # This is slightly messy, but single target generators like ninja will not have the
-      # CMAKE_CFG_INTDIR variable and multitarget generators like msbuild will not have
-      # CMAKE_BUILD_TYPE. This can be simplified by target_link_options and the $<CONFIG>
-      # generator expression in newer cmake (2.13+) but until that time this fill have suffice.
-      if(CMAKE_BUILD_TYPE)
-        set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/kraken_public.pdb")
-      else()
-        set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/kraken_public.pdb")
-      endif()
-  endif()
+      target_link_options(kraken
+        PUBLIC "LINKER:PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/bin/kraken_public.pdb"
+      )
+    endif()
 endif()
 
 # -----------------------------------------------------------------------------
@@ -1296,11 +1293,12 @@ endif()
 
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   install(
-    TARGETS kraken
+    TARGETS kraken kraken-launcher
     COMPONENT KRAKEN
     DESTINATION "."
   )
   set_target_properties(kraken PROPERTIES
+    VS_WINRT_COMPONENT TRUE
     VS_USER_PROPS "kraken.Cpp.user.props"
   )
 endif()

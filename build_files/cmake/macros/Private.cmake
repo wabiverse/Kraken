@@ -815,6 +815,7 @@ function(_wabi_target_link_libraries NAME)
                     set(internal maelstrom)
                 else()
                     set(internal maelstrom_static)
+                    target_link_options(maelstrom_static PUBLIC "LINKER:/WHOLEARCHIVE")
                 endif()
             endif()
         elseif(NOT BUILD_SHARED_LIBS)
@@ -839,7 +840,7 @@ function(_wabi_target_link_libraries NAME)
                 if(";${WABI_STATIC_LIBS};" MATCHES ";${lib};")
                     # The library is explicitly static.
                     list(APPEND final ${lib})
-                elseif(MSVC)
+                elseif(WIN32)
                     # The syntax here is -WHOLEARCHIVE[:lib] but CMake will
                     # treat that as a link flag and not "see" the library.
                     # As a result it won't replace a target with the path
@@ -860,8 +861,7 @@ function(_wabi_target_link_libraries NAME)
                     # all provided by the first.  The order doesn't really
                     # matter; we pull in the whole archive first.
                     #
-                    list(APPEND final -WHOLEARCHIVE:$<TARGET_FILE:${lib}>)
-                    list(APPEND final ${lib})
+                    list(APPEND final "/WHOLEARCHIVE:$<TARGET_FILE:${lib}>")
                 elseif(CMAKE_COMPILER_IS_GNUCXX)
                     list(APPEND final -Wl,--whole-archive ${lib} -Wl,--no-whole-archive)
                 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")

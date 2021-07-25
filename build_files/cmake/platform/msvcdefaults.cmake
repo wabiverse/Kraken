@@ -39,20 +39,6 @@ mark_as_advanced(WITH_WINDOWS_PDB)
 
 include(build_files/cmake/platform/platform_win32_bundle_crt.cmake)
 
-# X64 ASAN is available and usable on MSVC 16.9 preview 4 and up)
-if(WITH_COMPILER_ASAN AND MSVC AND NOT MSVC_CLANG)
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.28.29828)
-    #set a flag so we don't have to do this comparison all the time
-    SET(MSVC_ASAN On)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
-    set(CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} /fsanitize=address")
-    string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " /INCREMENTAL:NO")
-    string(APPEND CMAKE_SHARED_LINKER_FLAGS_DEBUG " /INCREMENTAL:NO")
-  else()
-    message("-- ASAN not supported on MSVC ${CMAKE_CXX_COMPILER_VERSION}")
-  endif()
-endif()
-
 if(MSVC_ASAN)
   set(SYMBOL_FORMAT /Z7)
   set(SYMBOL_FORMAT_RELEASE /Z7)
@@ -77,13 +63,16 @@ set(_WABI_C_FLAGS_RELWITHDEBINFO   "${_WABI_C_FLAGS_RELWITHDEBINFO} /MD ${SYMBOL
 unset(SYMBOL_FORMAT)
 unset(SYMBOL_FORMAT_RELEASE)
 
+# You should be on MSVC 2022 (>=17)
+set(COMPILER_VERSION "17")
+
 # Target Windows 11 SDK.
-set(WINDOWS_11_VERSION 10.0.22000.0)
+set(WINDOWS_SDK_VERSION 10.0.22000.0)
 
 # Our Standard is now :: CXX/WinRT
 set(CMAKE_VS_WINRT_BY_DEFAULT ON)
 set(CMAKE_SYSTEM_NAME "WindowsStore")
-set(CMAKE_SYSTEM_VERSION ${WINDOWS_11_VERSION}) 
+set(CMAKE_SYSTEM_VERSION ${WINDOWS_SDK_VERSION}) 
 
 # Enable CXX/WinRT (20++) hybrid features.
 # Our Windows Standard. For the long haul.
@@ -92,7 +81,7 @@ set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /ZW")
 
 # Temporary, until they fixup the installation.
 set(WINDOWS_11_STORE
-  "C:/Program Files (x86)/Windows Kits/10/UnionMetadata/${WINDOWS_11_VERSION}"
+  "C:/Program Files (x86)/Windows Kits/10/UnionMetadata/${WINDOWS_SDK_VERSION}"
 )
 set(WINDOWS_11_PLATFORM
   "C:/Program Files/Microsoft Visual Studio/2022/Preview/Common7/IDE/VC/vcpackages"
@@ -219,10 +208,7 @@ if(MSVC_VERSION GREATER 1914 AND NOT MSVC_CLANG)
   set(_WABI_CXX_FLAGS_DEBUG "${_WABI_CXX_FLAGS_DEBUG} /JMC")
 endif()
 
-# Ignore LNK4221.  This happens when making an archive with a object file
-# with no symbols in it.  We do this a lot because of a pattern of having
-# a C++ source file for many header-only facilities, e.g. tf/bitUtils.cpp.
-string(APPEND PLATFORM_LINKFLAGS " /SUBSYSTEM:CONSOLE /STACK:2097152")
+string(APPEND PLATFORM_LINKFLAGS " /SUBSYSTEM:CONSOLE /WINMD /STACK:2097152")
 set(PLATFORM_LINKFLAGS_RELEASE "/NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrtd.lib")
 string(APPEND PLATFORM_LINKFLAGS_DEBUG " /IGNORE:4099 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcmtd.lib")
 

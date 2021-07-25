@@ -801,6 +801,7 @@ function(get_kraken_version)
   # extracts header vars and defines them in the parent scope:
   #
   # - KRAKEN_VERSION (major.minor)
+  # - KRAKEN_VERSION_DECIMAL (major.minor.patch.0)
   # - KRAKEN_VERSION_MAJOR
   # - KRAKEN_VERSION_MINOR
   # - KRAKEN_VERSION_PATCH
@@ -833,6 +834,7 @@ function(get_kraken_version)
 
   # output vars
   set(KRAKEN_VERSION "${_out_version_major}.${_out_version_minor}" PARENT_SCOPE)
+  set(KRAKEN_VERSION_DECIMAL "${_out_version_major}.${_out_version_minor}.${_out_version_patch}.0" PARENT_SCOPE)
   set(KRAKEN_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
   set(KRAKEN_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
   set(KRAKEN_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
