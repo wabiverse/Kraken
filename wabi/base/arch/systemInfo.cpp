@@ -173,7 +173,7 @@ std::string ArchGetExecutablePath()
   // On Windows GetModuleFileName() returns the executable path.
   return _DynamicSizedRead(ARCH_PATH_MAX, [](char *buffer, size_t *size) {
     DWORD nSize = *size;
-    const DWORD n = GetModuleFileName(NULL, buffer, nSize);
+    const DWORD n = GetModuleFileName(NULL, (LPWSTR)buffer, nSize);
     if (n == 0)
     {
       ARCH_WARNING(

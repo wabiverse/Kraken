@@ -25,6 +25,19 @@
 
 #ifdef WIN32
 
+#  include <winrt/base.h>
+#  include <winrt/Windows.Foundation.h>
+#  include <winrt/Windows.Storage.h>
+
+using namespace winrt;
+using namespace winrt::Windows;
+using namespace winrt::Windows::Foundation;
+using namespace winrt::Windows::Storage;
+
+#include <wabi/base/tf/diagnostic.h>
+#include <wabi/base/tf/stringUtils.h>
+#include <wabi/base/arch/systemInfo.h>
+
 #  define WIN32_SKIP_HKEY_PROTECTION  // need to use HKEY
 #  include "KLI_path_utils.h"
 #  include "KLI_string_utils.h"
@@ -35,9 +48,12 @@
 #  define PATH_SUFFIX "\\*"
 #  define PATH_SUFFIX_LEN 2
 
+#  include <string.h>
 #  include <conio.h>
 #  include <stdio.h>
 #  include <stdlib.h>
+
+using namespace std;
 
 WABI_NAMESPACE_BEGIN
 
@@ -164,18 +180,7 @@ int closedir(DIR *dp)
 
 int KLI_windows_get_executable_dir(char *str)
 {
-  char dir[FILE_MAXDIR];
-  int a;
-  /* Change to utf support. */
-  GetModuleFileName(NULL, str, FILE_MAX);
-  KLI_split_dir_part(str, dir, sizeof(dir)); /* shouldn't be relative */
-  a = strlen(dir);
-  if (dir[a - 1] == '\\')
-  {
-    dir[a - 1] = 0;
-  }
-
-  strcpy(str, dir);
+  strcpy(str, CHARALL(TfGetPathName(ArchGetExecutablePath())));
 
   return 1;
 }
@@ -189,7 +194,8 @@ static void register_pixar_extension_failed(HKEY root, const bool background)
   }
   if (!background)
   {
-    MessageBox(0, "Could not register file extension.", "Kraken error", MB_OK | MB_ICONERROR);
+    TF_MSG_ERROR("Could not register file extension.");
+    // MessageBox(0, "Could not register file extension.", "Kraken error", MB_OK | MB_ICONERROR);
   }
 }
 
@@ -214,178 +220,178 @@ bool KLI_windows_register_pixar_extension(const bool background)
 #  endif
 
   printf("Registering file extension...");
-  GetModuleFileName(0, KrPath, MAX_PATH);
+  // GetModuleFileName(0, KrPath, MAX_PATH);
 
   /* Replace the actual app name with the wrapper. */
-  kraken_app = strstr(KrPath, "kraken.exe");
-  if (kraken_app != NULL)
-  {
-    strcpy(kraken_app, "kraken-launcher.exe");
-  }
+  // kraken_app = strstr(KrPath, "kraken.exe");
+  // if (kraken_app != NULL)
+  // {
+  //   strcpy(kraken_app, "kraken-launcher.exe");
+  // }
 
-  /* root is HKLM by default */
-  lresult = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Classes", 0, KEY_ALL_ACCESS, &root);
-  if (lresult != ERROR_SUCCESS)
-  {
-    /* try HKCU on failure */
-    usr_mode = true;
-    lresult = RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Classes", 0, KEY_ALL_ACCESS, &root);
-    if (lresult != ERROR_SUCCESS)
-    {
-      register_pixar_extension_failed(0, background);
-      return false;
-    }
-  }
+  // /* root is HKLM by default */
+  // lresult = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Classes", 0, KEY_ALL_ACCESS, &root);
+  // if (lresult != ERROR_SUCCESS)
+  // {
+  //   /* try HKCU on failure */
+  //   usr_mode = true;
+  //   lresult = RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Classes", 0, KEY_ALL_ACCESS, &root);
+  //   if (lresult != ERROR_SUCCESS)
+  //   {
+  //     register_pixar_extension_failed(0, background);
+  //     return false;
+  //   }
+  // }
 
-  lresult =
-    RegCreateKeyEx(root, "pixarfile", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
-  if (lresult == ERROR_SUCCESS)
-  {
-    strcpy(buffer, "Kraken File");
-    lresult = RegSetValueEx(hkey, NULL, 0, REG_SZ, (BYTE *)buffer, strlen(buffer) + 1);
-    RegCloseKey(hkey);
-  }
-  if (lresult != ERROR_SUCCESS)
-  {
-    register_pixar_extension_failed(root, background);
-    return false;
-  }
+  // lresult =
+  //   RegCreateKeyEx(root, "pixarfile", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
+  // if (lresult == ERROR_SUCCESS)
+  // {
+  //   strcpy(buffer, "Kraken File");
+  //   lresult = RegSetValueEx(hkey, NULL, 0, REG_SZ, (BYTE *)buffer, strlen(buffer) + 1);
+  //   RegCloseKey(hkey);
+  // }
+  // if (lresult != ERROR_SUCCESS)
+  // {
+  //   register_pixar_extension_failed(root, background);
+  //   return false;
+  // }
 
-  lresult = RegCreateKeyEx(root,
-                           "pixarfile\\shell\\open\\command",
-                           0,
-                           NULL,
-                           REG_OPTION_NON_VOLATILE,
-                           KEY_ALL_ACCESS,
-                           NULL,
-                           &hkey,
-                           &dwd);
-  if (lresult == ERROR_SUCCESS)
-  {
-    sprintf(buffer, "\"%s\" \"%%1\"", KrPath);
-    lresult = RegSetValueEx(hkey, NULL, 0, REG_SZ, (BYTE *)buffer, strlen(buffer) + 1);
-    RegCloseKey(hkey);
-  }
-  if (lresult != ERROR_SUCCESS)
-  {
-    register_pixar_extension_failed(root, background);
-    return false;
-  }
+  // lresult = RegCreateKeyEx(root,
+  //                          "pixarfile\\shell\\open\\command",
+  //                          0,
+  //                          NULL,
+  //                          REG_OPTION_NON_VOLATILE,
+  //                          KEY_ALL_ACCESS,
+  //                          NULL,
+  //                          &hkey,
+  //                          &dwd);
+  // if (lresult == ERROR_SUCCESS)
+  // {
+  //   sprintf(buffer, "\"%s\" \"%%1\"", KrPath);
+  //   lresult = RegSetValueEx(hkey, NULL, 0, REG_SZ, (BYTE *)buffer, strlen(buffer) + 1);
+  //   RegCloseKey(hkey);
+  // }
+  // if (lresult != ERROR_SUCCESS)
+  // {
+  //   register_pixar_extension_failed(root, background);
+  //   return false;
+  // }
 
-  lresult = RegCreateKeyEx(root,
-                           "pixarfile\\DefaultIcon",
-                           0,
-                           NULL,
-                           REG_OPTION_NON_VOLATILE,
-                           KEY_ALL_ACCESS,
-                           NULL,
-                           &hkey,
-                           &dwd);
-  if (lresult == ERROR_SUCCESS)
-  {
-    sprintf(buffer, "\"%s\", 1", KrPath);
-    lresult = RegSetValueEx(hkey, NULL, 0, REG_SZ, (BYTE *)buffer, strlen(buffer) + 1);
-    RegCloseKey(hkey);
-  }
-  if (lresult != ERROR_SUCCESS)
-  {
-    register_pixar_extension_failed(root, background);
-    return false;
-  }
+  // lresult = RegCreateKeyEx(root,
+  //                          "pixarfile\\DefaultIcon",
+  //                          0,
+  //                          NULL,
+  //                          REG_OPTION_NON_VOLATILE,
+  //                          KEY_ALL_ACCESS,
+  //                          NULL,
+  //                          &hkey,
+  //                          &dwd);
+  // if (lresult == ERROR_SUCCESS)
+  // {
+  //   sprintf(buffer, "\"%s\", 1", KrPath);
+  //   lresult = RegSetValueEx(hkey, NULL, 0, REG_SZ, (BYTE *)buffer, strlen(buffer) + 1);
+  //   RegCloseKey(hkey);
+  // }
+  // if (lresult != ERROR_SUCCESS)
+  // {
+  //   register_pixar_extension_failed(root, background);
+  //   return false;
+  // }
 
-  lresult =
-    RegCreateKeyEx(root, ".usd", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
-  if (lresult == ERROR_SUCCESS)
-  {
-    strcpy(buffer, "pixarfile");
-    lresult = RegSetValueEx(hkey, NULL, 0, REG_SZ, (BYTE *)buffer, strlen(buffer) + 1);
-    RegCloseKey(hkey);
-  }
-  if (lresult != ERROR_SUCCESS)
-  {
-    register_pixar_extension_failed(root, background);
-    return false;
-  }
+  // lresult =
+  //   RegCreateKeyEx(root, ".usd", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
+  // if (lresult == ERROR_SUCCESS)
+  // {
+  //   strcpy(buffer, "pixarfile");
+  //   lresult = RegSetValueEx(hkey, NULL, 0, REG_SZ, (BYTE *)buffer, strlen(buffer) + 1);
+  //   RegCloseKey(hkey);
+  // }
+  // if (lresult != ERROR_SUCCESS)
+  // {
+  //   register_pixar_extension_failed(root, background);
+  //   return false;
+  // }
 
-  KLI_windows_get_executable_dir(InstallDir);
-  GetSystemDirectory(SysDir, FILE_MAXDIR);
-  ThumbHandlerDLL = "KrakenThumb.dll";
-  snprintf(RegCmd, MAX_PATH * 2, "%s\\regsvr32 /s \"%s\\%s\"", SysDir, InstallDir, ThumbHandlerDLL);
-  system(RegCmd);
+  // KLI_windows_get_executable_dir(InstallDir);
+  // GetSystemDirectory(SysDir, FILE_MAXDIR);
+  // ThumbHandlerDLL = "KrakenThumb.dll";
+  // snprintf(RegCmd, MAX_PATH * 2, "%s\\regsvr32 /s \"%s\\%s\"", SysDir, InstallDir, ThumbHandlerDLL);
+  // system(RegCmd);
 
-  RegCloseKey(root);
-  printf("success (%s)\n", usr_mode ? "user" : "system");
-  if (!background)
-  {
-    sprintf(MBox,
-            "File extension registered for %s.",
-            usr_mode ? "the current user. To register for all users, run as an administrator" : "all users");
-    MessageBox(0, MBox, "Kraken", MB_OK | MB_ICONINFORMATION);
-  }
+  // RegCloseKey(root);
+  // printf("success (%s)\n", usr_mode ? "user" : "system");
+  // if (!background)
+  // {
+  //   sprintf(MBox,
+  //           "File extension registered for %s.",
+  //           usr_mode ? "the current user. To register for all users, run as an administrator" : "all users");
+  //   // MessageBox(0, MBox, "Kraken", MB_OK | MB_ICONINFORMATION);
+  // }
   return true;
 }
 
 void KLI_windows_get_default_root_dir(char *root)
 {
-  char str[MAX_PATH + 1];
+  // char str[MAX_PATH + 1];
 
-  /* the default drive to resolve a directory without a specified drive
-   * should be the Windows installation drive, since this was what the OS
-   * assumes. */
-  if (GetWindowsDirectory(str, MAX_PATH + 1))
-  {
-    root[0] = str[0];
-    root[1] = ':';
-    root[2] = '\\';
-    root[3] = '\0';
-  } else
-  {
-    /* if GetWindowsDirectory fails, something has probably gone wrong,
-     * we are trying the kraken install dir though */
-    if (GetModuleFileName(NULL, str, MAX_PATH + 1))
-    {
-      printf(
-        "Error! Could not get the Windows Directory - "
-        "Defaulting to Kraken installation Dir!\n");
-      root[0] = str[0];
-      root[1] = ':';
-      root[2] = '\\';
-      root[3] = '\0';
-    } else
-    {
-      DWORD tmp;
-      int i;
-      int rc = 0;
-      /* now something has gone really wrong - still trying our best guess */
-      printf(
-        "Error! Could not get the Windows Directory - "
-        "Defaulting to first valid drive! Path might be invalid!\n");
-      tmp = GetLogicalDrives();
-      for (i = 2; i < 26; i++)
-      {
-        if ((tmp >> i) & 1)
-        {
-          root[0] = 'a' + i;
-          root[1] = ':';
-          root[2] = '\\';
-          root[3] = '\0';
-          if (GetFileAttributes(root) != 0xFFFFFFFF)
-          {
-            rc = i;
-            break;
-          }
-        }
-      }
-      if (0 == rc)
-      {
-        printf("ERROR in 'KLI_windows_get_default_root_dir': can't find a valid drive!\n");
-        root[0] = 'C';
-        root[1] = ':';
-        root[2] = '\\';
-        root[3] = '\0';
-      }
-    }
-  }
+  // /* the default drive to resolve a directory without a specified drive
+  //  * should be the Windows installation drive, since this was what the OS
+  //  * assumes. */
+  // if (GetWindowsDirectory(str, MAX_PATH + 1))
+  // {
+  //   root[0] = str[0];
+  //   root[1] = ':';
+  //   root[2] = '\\';
+  //   root[3] = '\0';
+  // } else
+  // {
+  //   /* if GetWindowsDirectory fails, something has probably gone wrong,
+  //    * we are trying the kraken install dir though */
+  //   if (GetModuleFileName(NULL, str, MAX_PATH + 1))
+  //   {
+  //     printf(
+  //       "Error! Could not get the Windows Directory - "
+  //       "Defaulting to Kraken installation Dir!\n");
+  //     root[0] = str[0];
+  //     root[1] = ':';
+  //     root[2] = '\\';
+  //     root[3] = '\0';
+  //   } else
+  //   {
+  //     DWORD tmp;
+  //     int i;
+  //     int rc = 0;
+  //     /* now something has gone really wrong - still trying our best guess */
+  //     printf(
+  //       "Error! Could not get the Windows Directory - "
+  //       "Defaulting to first valid drive! Path might be invalid!\n");
+  //     tmp = GetLogicalDrives();
+  //     for (i = 2; i < 26; i++)
+  //     {
+  //       if ((tmp >> i) & 1)
+  //       {
+  //         root[0] = 'a' + i;
+  //         root[1] = ':';
+  //         root[2] = '\\';
+  //         root[3] = '\0';
+  //         if (GetFileAttributes(root) != 0xFFFFFFFF)
+  //         {
+  //           rc = i;
+  //           break;
+  //         }
+  //       }
+  //     }
+  //     if (0 == rc)
+  //     {
+  //       printf("ERROR in 'KLI_windows_get_default_root_dir': can't find a valid drive!\n");
+  //       root[0] = 'C';
+  //       root[1] = ':';
+  //       root[2] = '\\';
+  //       root[3] = '\0';
+  //     }
+  //   }
+  // }
 }
 
 WABI_NAMESPACE_END

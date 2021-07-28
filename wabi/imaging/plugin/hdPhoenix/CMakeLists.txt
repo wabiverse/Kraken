@@ -9,12 +9,12 @@ endif()
 
 set(optionalPublicClasses "")
 
-if (OPENSUBDIV_HAS_GLSL_TRANSFORM_FEEDBACK)
-    add_definitions(-DOPENSUBDIV_HAS_GLSL_TRANSFORM_FEEDBACK)
-endif()
-if (OPENSUBDIV_HAS_GLSL_COMPUTE)
-    add_definitions(-DOPENSUBDIV_HAS_GLSL_COMPUTE)
-endif()
+# if (OPENSUBDIV_HAS_GLSL_TRANSFORM_FEEDBACK)
+#     add_definitions(-DOPENSUBDIV_HAS_GLSL_TRANSFORM_FEEDBACK)
+# endif()
+# if (OPENSUBDIV_HAS_GLSL_COMPUTE)
+#     add_definitions(-DOPENSUBDIV_HAS_GLSL_COMPUTE)
+# endif()
 
 wabi_plugin(hdPhoenix
     LIBRARIES

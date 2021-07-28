@@ -80,7 +80,7 @@ std::string ArchStrSysError(unsigned long errorCode)
                              nullptr,
                              errorCode,
                              MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                             (LPSTR)&buffer,
+                             (LPWSTR)&buffer,
                              0,
                              nullptr);
   std::string message(buffer, len);

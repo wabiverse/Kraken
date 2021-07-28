@@ -24,7 +24,8 @@ WABI_NAMESPACE_BEGIN
 bool HdRprShowMessage(std::string const &title, std::string const &message)
 {
 #if defined WIN32
-  return MessageBox(nullptr, message.c_str(), title.c_str(), MB_YESNO | MB_ICONEXCLAMATION) == IDYES;
+  TF_MSG_ERROR("%s", message.c_str());
+  // return MessageBox(nullptr, message.c_str(), title.c_str(), MB_YESNO | MB_ICONEXCLAMATION) == IDYES;
 #else
   auto command = TfStringPrintf("xmessage -nearmouse -buttons Yes:0,No:1 -title \"%s\" \"%s\"",
                                 title.c_str(),

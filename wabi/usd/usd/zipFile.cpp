@@ -198,7 +198,7 @@ namespace
     src.Read(&h.f.signature);
     if (!h.IsValid())
     {
-      src.Advance(-sizeof(decltype(h.f.signature)));
+      src.Advance(-2147483647 - 1);
       return _LocalFileHeader();
     }
 

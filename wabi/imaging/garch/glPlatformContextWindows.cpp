@@ -33,6 +33,8 @@
 #include <Windows.h>
 #include <boost/functional/hash.hpp>
 
+#ifndef WINAPI_PARTITION_DESKTOP
+
 WABI_NAMESPACE_BEGIN
 
 class GarchWGLContextState::_Detail
@@ -98,3 +100,5 @@ GarchGLPlatformContextState GarchGetNullGLPlatformContextState()
 }
 
 WABI_NAMESPACE_END
+
+#endif /* WINAPI_PARTITION_DESKTOP */

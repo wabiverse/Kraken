@@ -37,6 +37,8 @@
 
 WABI_NAMESPACE_BEGIN
 
+#ifndef WINAPI_PARTITION_DESKTOP
+
 class GarchWGLContextState
 {
  public:
@@ -78,8 +80,77 @@ class GarchWGLContextState
   std::shared_ptr<_Detail> _detail;
 };
 
+#else /* WINAPI_PARTITION_DESKTOP */
+
+class GarchWGLContextState
+{
+ public:
+  /// Construct with the current state.
+  GarchWGLContextState()
+  {
+
+  }
+
+  enum class NullState
+  {
+    nullstate
+  };
+
+  /// Construct with the null state.
+  GarchWGLContextState(NullState)
+  {
+
+  }
+
+  /// Compare for equality.
+  bool operator==(const GarchWGLContextState &rhs) const
+  {
+    return false;
+  }
+
+  /// Returns a hash value for the state.
+  size_t GetHash() const
+  {
+    return 0;
+  }
+
+  /// Returns \c true if the context state is valid.
+  bool IsValid() const 
+  {
+    return false;
+  }
+
+  /// Make the context current.
+  void MakeCurrent()
+  {
+
+  }
+
+  /// Make no context current.
+  static void DoneCurrent()
+  {
+
+  }
+
+ private:
+  class _Detail;
+  std::shared_ptr<_Detail> _detail;
+};
+
+#endif /* WINAPI_PARTITION_DESKTOP */
+
 // Hide the platform specific type name behind a common name.
 typedef GarchWGLContextState GarchGLPlatformContextState;
+
+#ifdef WINAPI_PARTITION_DESKTOP
+
+inline GarchGLPlatformContextState GarchGetNullGLPlatformContextState()
+{
+  return GarchGetNullGLPlatformContextState();
+}
+
+#endif /* WINAPI_PARTITION_DESKTOP */
+
 
 WABI_NAMESPACE_END
 

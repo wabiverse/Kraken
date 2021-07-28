@@ -55,8 +55,8 @@ bool Tf_AtomicRenameFileOver(std::string const &srcFileName,
 {
   bool result = true;
 #if defined(ARCH_OS_WINDOWS)
-  bool moved = MoveFileEx(srcFileName.c_str(),
-                          dstFileName.c_str(),
+  bool moved = MoveFileEx(LPCWSTR(srcFileName.c_str()),
+                          LPCWSTR(dstFileName.c_str()),
                           MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED) != FALSE;
   if (!moved)
   {

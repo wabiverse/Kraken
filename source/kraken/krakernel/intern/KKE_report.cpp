@@ -65,7 +65,7 @@ const char *KKE_report_type_str(eReportType type)
 char *KKE_reports_string(ReportList *reports, eReportType level)
 {
   std::string text = std::string();
-  char *cstring;
+  char cstring[MAX_PATH];
 
   if (!reports || !(*reports->list.begin()))
   {
@@ -85,7 +85,7 @@ char *KKE_reports_string(ReportList *reports, eReportType level)
     KLI_strncpy(cstring, CHARALL(text), sizeof(CHARALL(text)));
   } else
   {
-    cstring = NULL;
+    KLI_strncpy(cstring, "  ", 20);
   }
 
   return cstring;

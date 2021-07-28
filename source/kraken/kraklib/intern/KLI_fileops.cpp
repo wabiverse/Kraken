@@ -39,7 +39,6 @@
 #  include "utfconv.h"
 #  include <io.h>
 #  include <shellapi.h>
-#  include <shobjidl.h>
 
 #  include "KLI_winstuff.h"
 #else

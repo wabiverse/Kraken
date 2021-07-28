@@ -1391,7 +1391,7 @@ void WM_anchor_init(kContext *C)
 {
   if (!anchor_system)
   {
-    AnchorEventConsumerHandle consumer;
+    AnchorEventConsumerHandle consumer = nullptr;
 
     if (C != NULL)
     {

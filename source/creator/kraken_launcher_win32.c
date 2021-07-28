@@ -34,7 +34,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
   wchar_t path[MAX_PATH];
 
   siStartInfo.wShowWindow = SW_HIDE;
-  siStartInfo.dwFlags = STARTF_USESHOWWINDOW;
+  siStartInfo.dwFlags = SW_SHOW;
 
   /* Get the path to the currently running executable (kraken-launcher.exe) */
 

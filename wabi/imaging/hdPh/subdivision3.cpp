@@ -24,6 +24,9 @@
 //
 #include "wabi/wabi.h"
 
+#include <winrt/base.h>
+#include "wabi/base/arch/defines.h"
+
 #include "wabi/imaging/hdPh/bufferArrayRange.h"
 #include "wabi/imaging/hdPh/subdivision.h"
 #include "wabi/imaging/hdPh/subdivision3.h"
@@ -49,7 +52,6 @@
 #include <opensubdiv/far/stencilTableFactory.h>
 #include <opensubdiv/osd/cpuEvaluator.h>
 #include <opensubdiv/osd/cpuVertexBuffer.h>
-#include <opensubdiv/osd/glVertexBuffer.h>
 #include <opensubdiv/osd/mesh.h>
 #include <opensubdiv/version.h>
 
@@ -64,6 +66,7 @@ WABI_NAMESPACE_END
 
 #if OPENSUBDIV_HAS_GLSL_COMPUTE
 
+#  include <opensubdiv/osd/glVertexBuffer.h>
 #  include <opensubdiv/osd/glComputeEvaluator.h>
 #  define HDPH_ENABLE_GPU_SUBDIVISION 1
 

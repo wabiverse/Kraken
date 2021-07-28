@@ -38,6 +38,11 @@
 #elif defined(ARCH_OS_DARWIN)
 #  include <dlfcn.h>
 #elif defined(ARCH_OS_WINDOWS)
+#  include <Windows.h>
+#  include <stdio.h>
+#  include <dbghelp.h>
+#  include <shlwapi.h>
+#  include <tlhelp32.h>
 #  include <DbgHelp.h>
 #  include <Psapi.h>
 #  include <Windows.h>
@@ -94,7 +99,7 @@ bool ArchGetAddressInfo(void *address,
   HMODULE module = nullptr;
   if (!::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
                              GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                           reinterpret_cast<LPCSTR>(address),
+                           reinterpret_cast<LPCWSTR>(address),
                            &module))
   {
     return false;
@@ -103,7 +108,7 @@ bool ArchGetAddressInfo(void *address,
   if (objectPath)
   {
     char modName[MAX_PATH] = {0};
-    if (GetModuleFileName(module, modName, MAX_PATH))
+    if (GetModuleFileName(module, (LPWSTR)modName, MAX_PATH))
     {
       objectPath->assign(modName);
     }
@@ -113,45 +118,45 @@ bool ArchGetAddressInfo(void *address,
   {
     DWORD displacement;
     HANDLE process = GetCurrentProcess();
-    SymInitialize(process, NULL, TRUE);
+    // SymInitialize(process, NULL, BOOL(TRUE));
 
-    // Symbol
-    ULONG64 symBuffer[(sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR) + sizeof(ULONG64) - 1) /
-                      sizeof(ULONG64)];
-    SYMBOL_INFO *symbol = (SYMBOL_INFO *)symBuffer;
-    symbol->MaxNameLen = MAX_SYM_NAME;
-    symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+    // // Symbol
+    // ULONG64 symBuffer[(sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR) + sizeof(ULONG64) - 1) /
+    //                    sizeof(ULONG64)];
+    // SYMBOL_INFO *sym = (SYMBOL_INFO *)symBuffer;
+    // sym->MaxNameLen = MAX_SYM_NAME;
+    // sym->SizeOfStruct = sizeof(SYMBOL_INFO);
 
-    // Line
-    IMAGEHLP_LINE64 line = {0};
-    line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+    // // Line
+    // IMAGEHLP_LINE64 line = {0};
+    // line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
-    DWORD64 dwAddress = (DWORD64)address;
-    SymFromAddr(process, dwAddress, NULL, symbol);
-    if (!SymGetLineFromAddr64(process, dwAddress, &displacement, &line))
-    {
-      return false;
-    }
+    // DWORD64 dwAddress = (DWORD64)address;
+    // SymFromAddr(process, dwAddress, NULL, sym);
+    // if (!SymGetLineFromAddr64(process, dwAddress, &displacement, &line))
+    // {
+    //   return false;
+    // }
 
-    if (baseAddress)
-    {
-      MODULEINFO moduleInfo = {0};
-      if (!GetModuleInformation(process, module, &moduleInfo, sizeof(moduleInfo)))
-      {
-        return false;
-      }
-      *baseAddress = moduleInfo.lpBaseOfDll;
-    }
+    // if (baseAddress)
+    // {
+    //   MODULEINFO moduleInfo = {0};
+    //   if (!GetModuleInformation(process, module, &moduleInfo, sizeof(moduleInfo)))
+    //   {
+    //     return false;
+    //   }
+    //   *baseAddress = moduleInfo.lpBaseOfDll;
+    // }
 
-    if (symbolName)
-    {
-      *symbolName = symbol->Name ? symbol->Name : "";
-    }
+    // if (symbolName)
+    // {
+    //   *symbolName = sym->Name ? sym->Name : "";
+    // }
 
-    if (symbolAddress)
-    {
-      *symbolAddress = (void *)symbol->Address;
-    }
+    // if (symbolAddress)
+    // {
+    //   *symbolAddress = (void *)sym->Address;
+    // }
   }
   return true;
 

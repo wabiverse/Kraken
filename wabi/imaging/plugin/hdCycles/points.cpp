@@ -890,7 +890,7 @@ void HdCyclesPoints::Sync(HdSceneDelegate *sceneDelegate,
   // Checking points separately as they dictate the size of other attribute buffers
   if (*dirtyBits & HdChangeTracker::DirtyPoints)
   {
-    bool sizeHasChanged;
+    bool sizeHasChanged = true;
     _PopulatePoints(sceneDelegate, id, sizeHasChanged, styleHasChanged);
     needsRebuildBVH = needsRebuildBVH || sizeHasChanged;
   }

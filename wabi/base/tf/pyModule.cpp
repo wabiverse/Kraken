@@ -397,9 +397,6 @@ void Tf_PyInitWrapModule(void (*wrapModule)(),
                          const char *packageTag,
                          const char *packageTag2)
 {
-  // Ensure the python GIL is created.
-  PyEval_InitThreads();
-
   // Tell the tracing mechanism that python is alive.
   Tf_PyTracingPythonInitialized();
 

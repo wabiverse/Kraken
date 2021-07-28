@@ -2,7 +2,7 @@
 #define IDR_VERSION1 1
 
 #ifdef WINDRES
-	#include "winresrc.h"
+# include <winresrc.h>
 	#define IDC_STATIC (-1)
 	#define STRINGIFY_(x) #x
 	#define STRINGIFY(x) STRINGIFY_(x)
@@ -51,7 +51,7 @@ BEGIN
       VALUE "ProductVersion", KRAKEN_VER_RC_STR
       VALUE "CompanyName", "Wabi Animation"
       VALUE "FileDescription", "Kraken"
-      VALUE "LegalCopyright", "GPLv3 (Wabi Animation)"
+      VALUE "LegalCopyright", "Copyright (C) Wabi Animation. All rights reserved."
       VALUE "OriginalFilename", "kraken.exe"
       VALUE "ProductName", "Kraken"
     END

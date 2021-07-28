@@ -39,7 +39,6 @@
 #  include "utfconv.h"
 #  include <io.h>
 #  include <shellapi.h>
-#  include <shobjidl.h>
 #else
 #  if defined(__APPLE__)
 #    include <CoreFoundation/CoreFoundation.h>

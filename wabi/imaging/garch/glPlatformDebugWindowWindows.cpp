@@ -34,6 +34,10 @@
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/imaging/garch/glDebugWindow.h"
 
+#include <winrt/base.h>
+
+#ifndef WINAPI_PARTITION_DESKTOP
+
 #include <GL/gl.h>
 #include <map>
 #include <tchar.h>
@@ -297,3 +301,5 @@ void Garch_GLPlatformDebugWindow::ExitApp()
 }
 
 WABI_NAMESPACE_END
+
+#endif /* WINAPI_PARTITION_DESKTOP */

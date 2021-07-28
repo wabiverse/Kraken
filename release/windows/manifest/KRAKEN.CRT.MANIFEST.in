@@ -1,6 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
 
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-    <assemblyIdentity type="win32" name="KRAKEN.CRT" version="1.0.0.0" />
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="kraken.app"/>
+<application xmlns="urn:schemas-microsoft-com:asm.v3">
+  <windowsSettings xmlns:ws2="http://schemas.microsoft.com/SMI/2016/WindowsSettings">
+    <ws2:longPathAware>true</ws2:longPathAware>
+  </windowsSettings>
+</application>
 @CRTLIBS@</assembly>

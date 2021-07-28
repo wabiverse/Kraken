@@ -1676,8 +1676,11 @@ static void wm_event_free_all(wmWindow *win)
   wmEvent *event;
   while (!win->event_queue.empty())
   {
+    event = win->event_queue.front();
     wm_event_free(event);
   }
+  
+  win->event_queue.clear();
 }
 
 /* -------------------------------------------------------------------- */

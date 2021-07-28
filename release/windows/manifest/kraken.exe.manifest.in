@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
 <!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
 
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity version="1.0.0.0" name="WabiAnimationKraken"/>
+  <assemblyIdentity version="1.0.0.0" name="kraken.app"/>
 
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>

@@ -476,8 +476,12 @@ UsdStage::UsdStage(const SdfLayerRefPtr &rootLayer,
 
   ARCH_PRAGMA_PUSH
   ARCH_PRAGMA_DEPRECATED_POSIX_NAME
-  _mallocTagID = TfMallocTag::IsInitialized() ? strdup(_StageTag(rootLayer->GetIdentifier()).c_str()) :
-                                                _dormantMallocTagID;
+  _mallocTagID = TfMallocTag::IsInitialized() ?
+#if defined(ARCH_OS_WINDOWS)
+  _strdup(_StageTag(rootLayer->GetIdentifier()).c_str()) : _dormantMallocTagID;
+#else
+  strdup(_StageTag(rootLayer->GetIdentifier()).c_str()) : _dormantMallocTagID;
+#endif
   ARCH_PRAGMA_POP
 
   _cache->SetVariantFallbacks(GetGlobalVariantFallbacks());

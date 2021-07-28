@@ -89,7 +89,7 @@
 #endif
 
 #if defined(ARCH_OS_WINDOWS)
-#  define getpid() _getpid()
+#  define getpid() GetCurrentProcessId()
 #  define write(fd_, data_, size_) _write(fd_, data_, size_)
 #  define strdup(str_) _strdup(str_)
 #endif

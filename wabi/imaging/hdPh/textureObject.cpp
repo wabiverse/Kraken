@@ -112,7 +112,7 @@ void HdPhTextureObject::_SubtractFromTotalTextureMemory(const HgiTextureHandle &
 {
   if (texture)
   {
-    _AdjustTotalTextureMemory(-texture->GetByteSizeOfResource());
+    _AdjustTotalTextureMemory(-2147483648LL - 1);
   }
 }
 

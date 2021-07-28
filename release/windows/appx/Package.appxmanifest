@@ -1,30 +1,27 @@
-<!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
-
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
+
 <Package
-  xmlns="http://schemas.microsoft.com/appx/manifest/foundation"
-  xmlns:msftuap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
-  xmlns:msftuap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6" 
-  xmlns:msftuap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10" 
-  xmlns:msftrestrict="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" 
-  IgnorableNamespaces="msftuap msftuap6 msftuap10 msftrestrict">
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="WabiAnimation.Kraken.Package" 
-    Publisher="CN=Wabi Animation" 
-    Version="@KRAKEN_VERSION_DECIMAL@"/>
+    Name="Kraken"
+    Publisher="CN=Wabi Animation, O=Chaos Engine, L=Denver, S=Colorado, C=US"
+    Version="@KRAKEN_VERSION_DECIMAL@" />
 
   <Properties>
     <DisplayName>Kraken</DisplayName>
     <PublisherDisplayName>Wabi Animation</PublisherDisplayName>
-    <Description>The 3D Animation Platform. Built with the Universe in Mind.</Description>
-    <Logo>assets\StoreLogo.png</Logo>
+    <Logo>StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1"/>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1"/>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.22000.0" MaxVersionTested="10.0.22000.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.22000.0"/>
   </Dependencies>
 
   <Resources>
@@ -32,55 +29,23 @@
   </Resources>
 
   <Applications>
-    <Application
-      Id="KRAKEN"
-      Executable="kraken.exe"
-      EntryPoint="Windows.FullTrustApplication">
-      <msftuap:VisualElements
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$">
+      <uap:VisualElements
         DisplayName="Kraken"
         Description="The 3D Animation Platform. Built with the Universe in Mind."
         BackgroundColor="transparent"
-        Square150x150Logo="assets\Square150x150Logo.png"
-        Square44x44Logo="assets\Square44x44Logo.png">
-        <msftuap:DefaultTile
-          Wide310x150Logo="assets\Wide310x150Logo.png" />
-        <msftuap:SplashScreen
-          Image="assets\SplashScreen.png" />
-      </msftuap:VisualElements>
+        Square150x150Logo="Square150x150Logo.png"
+        Square44x44Logo="Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Wide310x150Logo.png" />
+        <uap:SplashScreen Image="SplashScreen.png" />
+      </uap:VisualElements>
     </Application>
   </Applications>
 
   <Capabilities>
-    <Capability Name="internetClient"/>
-    <msftuap:Capability Name="objects3D"/>
-    <msftuap6:Capability Name="graphicsCapture"/>
-    <msftrestrict:Capability Name="runFullTrust"/>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
   </Capabilities>
-
-  <Extensions>
-    <msftuap3:Extension
-      Category="windows.fileTypeAssociation">
-      <msftuap3:FileTypeAssociation Name="usd">
-        <msftuap2:SupportedVerbs>
-          <msftuap3:Verb
-            Id="open" Parameters="&quot;%1&quot;">open
-          </msftuap3:Verb>
-        </msftuap2:SupportedVerbs>
-        <msftuap:SupportedFileTypes>
-          <msftuap:FileType>.usd</msftuap:FileType>
-          <msftuap:FileType>.usdc</msftuap:FileType>
-          <msftuap:FileType>.usdz</msftuap:FileType>
-          <msftuap:FileType>.usda</msftuap:FileType>
-        </msftuap:SupportedFileTypes>
-      </msftuap3:FileTypeAssociation>
-    </msftuap3:Extension>
-    <msftuap3:Extension
-      Category="windows.appExecutionAlias"
-      Executable="Kraken\kraken.exe"
-      EntryPoint="Windows.FullTrustApplication">
-      <msftuap3:AppExecutionAlias>
-        <desktop:ExecutionAlias Alias="kraken.exe"/>
-      </msftuap3:AppExecutionAlias>
-    </msftuap3:Extension>
-  </Extensions>
 </Package>

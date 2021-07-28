@@ -67,7 +67,11 @@ char const *Tf_VerifyStringFormat(const char *format, ...)
   va_start(ap, format);
   string s = TfVStringPrintf(format, ap);
   va_end(ap);
+#if defined(ARCH_OS_WINDOWS)
+  return _strdup(s.c_str());
+#else
   return strdup(s.c_str());
+#endif
 }
 
 bool Tf_FailedVerifyHelper(const TfCallContext &context, char const *condition, char const *msg)

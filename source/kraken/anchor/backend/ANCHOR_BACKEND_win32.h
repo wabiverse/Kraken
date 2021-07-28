@@ -151,7 +151,7 @@ class AnchorSystemWin32 : public AnchorSystem
   /**
    * Handles minimum window size.
    * @param minmax: The MINMAXINFO structure. */
-  static void processMinMaxInfo(MINMAXINFO *minmax);
+  static void processMinMaxInfo(void *minmax);
 
   /**
    * Windows call back routine for our window class. */
@@ -215,7 +215,7 @@ class AnchorSystemWin32 : public AnchorSystem
    * @return current status (1 -visible, 0 - hidden) */
   int toggleConsole(int action);
 
-  static AnchorEventKey *processKeyEvent(AnchorWindowWin32 *window, RAWINPUT const &raw);
+  static AnchorEventKey *processKeyEvent(AnchorWindowWin32 *window, AnchorS32 const &raw);
 
   static AnchorEvent *processWindowSizeEvent(AnchorWindowWin32 *window);
 
@@ -243,7 +243,7 @@ class AnchorSystemWin32 : public AnchorSystem
    * @param keyDown: Pointer flag that specify if a key is down.
    * @param vk: Pointer to virtual key.
    * @return The GHOST key (GHOST_kKeyUnknown if no match). */
-  eAnchorKey hardKey(RAWINPUT const &raw, bool *r_keyDown, bool *r_is_repeated_modifier);
+  eAnchorKey hardKey(AnchorS32 const &raw, bool *r_keyDown, bool *r_is_repeated_modifier);
 
   eAnchorKey processSpecialKey(short vKey, short scanCode) const;
 
@@ -286,25 +286,25 @@ inline void AnchorSystemWin32::storeModifierKeys(const AnchorModifierKeys &keys)
 
 inline void AnchorSystemWin32::handleKeyboardChange(void)
 {
-  m_keylayout = GetKeyboardLayout(0);  // get keylayout for current thread
-  int i;
-  SHORT s;
+  // m_keylayout = GetKeyboardLayout(0);  // get keylayout for current thread
+  // int i;
+  // SHORT s;
 
-  // save the language identifier.
-  m_langId = LOWORD(m_keylayout);
+  // // save the language identifier.
+  // m_langId = LOWORD(m_keylayout);
 
-  for (m_hasAltGr = false, i = 32; i < 256; ++i)
-  {
-    s = VkKeyScanEx((char)i, m_keylayout);
-    // s == -1 means no key that translates passed char code
-    // high byte contains shift state. bit 2 ctrl pressed, bit 4 alt pressed
-    // if both are pressed, we have AltGr keycombo on keylayout
-    if (s != -1 && (s & 0x600) == 0x600)
-    {
-      m_hasAltGr = true;
-      break;
-    }
-  }
+  // for (m_hasAltGr = false, i = 32; i < 256; ++i)
+  // {
+  //   s = VkKeyScanEx((char)i, m_keylayout);
+  //   // s == -1 means no key that translates passed char code
+  //   // high byte contains shift state. bit 2 ctrl pressed, bit 4 alt pressed
+  //   // if both are pressed, we have AltGr keycombo on keylayout
+  //   if (s != -1 && (s & 0x600) == 0x600)
+  //   {
+  //     m_hasAltGr = true;
+  //     break;
+  //   }
+  // }
 }
 
 
@@ -383,7 +383,7 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   bool m_wantAlphaBackground;
 
   /** ITaskbarList3 structure for progress bar. */
-  ITaskbarList3 *m_Bar;
+  // ITaskbarList3 *m_Bar;
 
   static const wchar_t *s_windowClassName;
   static const int s_maxTitleLength;

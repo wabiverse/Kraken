@@ -152,11 +152,6 @@ NUMAAPI_Result numaAPI_Initialize(void)
   // No NUMA on 32 bit platforms.
   return NUMAAPI_NOT_AVAILABLE;
 #  else
-  if (!IsWindows7OrGreater())
-  {
-    // Require Windows 7 or higher.
-    NUMAAPI_NOT_AVAILABLE;
-  }
   loadNumaSymbols();
   return NUMAAPI_SUCCESS;
 #  endif

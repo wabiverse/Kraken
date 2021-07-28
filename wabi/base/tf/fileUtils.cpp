@@ -52,6 +52,8 @@
 #  include <unistd.h>
 #  include <utime.h>
 #else
+#  include <winrt/base.h>
+#  include <winrt/Windows.Storage.h>
 #  include <Shellapi.h>
 #  include <ShlwAPI.h>
 #  include <Windows.h>
@@ -80,7 +82,7 @@ bool Tf_HasAttribute(string const &path, bool resolveSymlinks, DWORD attribute, 
   if (path.back() == '/' || path.back() == '\\')
     resolveSymlinks = true;
 
-  const DWORD attribs = GetFileAttributes(path.c_str());
+  const DWORD attribs = GetFileAttributes(LPCWSTR(path.c_str()));
   if (attribs == INVALID_FILE_ATTRIBUTES)
   {
     if (attribute == 0 && GetLastError() == ERROR_FILE_NOT_FOUND)
@@ -220,7 +222,8 @@ bool TfIsDirEmpty(string const &path)
   if (!TfIsDir(path))
     return false;
 #if defined(ARCH_OS_WINDOWS)
-  return PathIsDirectoryEmpty(path.c_str()) == TRUE;
+  auto file = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(LPCWSTR(path.c_str()));
+  return file.GetResults().Path().empty();
 #else
   if (DIR *dirp = opendir(path.c_str()))
   {
@@ -243,10 +246,13 @@ bool TfIsDirEmpty(string const &path)
 bool TfSymlink(string const &src, string const &dst)
 {
 #if defined(ARCH_OS_WINDOWS)
-  if (CreateSymbolicLink(dst.c_str(), src.c_str(), TfIsDir(src) ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0))
-  {
-    return true;
-  }
+#ifndef SYMBOLIC_LINK_FLAG_DIRECTORY
+#define SYMBOLIC_LINK_FLAG_DIRECTORY (0x1)
+#endif
+  // if (CreateSymbolicLink(LPCWSTR(dst.c_str()), LPCWSTR(src.c_str()), TfIsDir(src) ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0))
+  // {
+  //   return true;
+  // }
 
   // Translate lack of privilege to EPERM,  Anything else translates
   // to something else.  This is used by tests to disable symlink
@@ -275,7 +281,7 @@ bool TfDeleteFile(std::string const &path)
 bool TfMakeDir(string const &path, int mode)
 {
 #if defined(ARCH_OS_WINDOWS)
-  return CreateDirectory(path.c_str(), nullptr) == TRUE;
+  return CreateDirectory(LPCWSTR(path.c_str()), nullptr) == TRUE;
 #else
   // Default mode is 0777
   if (mode == -1)
@@ -338,9 +344,14 @@ bool TfReadDir(const string &dirPath,
   WIN32_FIND_DATA fdFile;
   HANDLE hFind = NULL;
 
-  PathCombine(szPath, dirPath.c_str(), "*.*");
+  auto p1 = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(LPWSTR(szPath)).GetResults().Path();
+  auto p2 = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(LPCWSTR(dirPath.c_str())).GetResults().Path();
+  strncpy(szPath, TfStringCatPaths(to_string(p2), "*.*").c_str(), MAX_PATH);
 
-  if ((hFind = FindFirstFile(szPath, &fdFile)) == INVALID_HANDLE_VALUE)
+ 
+  strncpy(szPath, TfStringCatPaths(dirPath.c_str(), "*.*").c_str(), MAX_PATH);
+
+  if ((hFind = FindFirstFile(LPCWSTR(szPath), &fdFile)) == INVALID_HANDLE_VALUE)
   {
     if (errMsg)
     {
@@ -351,16 +362,16 @@ bool TfReadDir(const string &dirPath,
   {
     do
     {
-      if (strcmp(fdFile.cFileName, ".") != 0 && strcmp(fdFile.cFileName, "..") != 0)
+      if (strcmp((LPCSTR)fdFile.cFileName, ".") != 0 && strcmp((LPCSTR)fdFile.cFileName, "..") != 0)
       {
         if (fdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
         {
           if (dirnames)
-            dirnames->push_back(fdFile.cFileName);
+            dirnames->push_back((LPCSTR)fdFile.cFileName);
         } else
         {
           if (filenames)
-            filenames->push_back(fdFile.cFileName);
+            filenames->push_back((LPCSTR)fdFile.cFileName);
         }
       }
     } while (FindNextFile(hFind, &fdFile));
@@ -638,7 +649,7 @@ vector<string> TfListDir(string const &path, bool recursive)
   return result;
 }
 
-TF_API bool TfTouchFile(string const &fileName, bool create)
+bool TfTouchFile(string const &fileName, bool create)
 {
   if (create)
   {
@@ -652,21 +663,17 @@ TF_API bool TfTouchFile(string const &fileName, bool create)
       return false;
     close(fd);
 #else
-    HANDLE fileHandle = ::CreateFile(fileName.c_str(),
-                                     GENERIC_WRITE,          // open for write
-                                     0,                      // not for sharing
-                                     NULL,                   // default security
-                                     CREATE_ALWAYS,          // overwrite existing
-                                     FILE_ATTRIBUTE_NORMAL,  // normal file
-                                     NULL);                  // no template
+    winrt::Windows::Storage::StreamedFileDataRequestedHandler req;
+    winrt::Windows::Storage::Streams::IRandomAccessStreamReference thumb;
+    auto f = winrt::Windows::Storage::StorageFile::CreateStreamedFileAsync((LPCWSTR)fileName.c_str(), req, thumb);              // no template
 
-    if (fileHandle == INVALID_HANDLE_VALUE)
+    if (!f.GetResults().IsAvailable())
     {
       return false;
     }
 
     // Close the file
-    ::CloseHandle(fileHandle);
+    f.Close();
 #endif
   }
 

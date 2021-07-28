@@ -41,6 +41,8 @@
 #include <vector>
 
 #if defined(ARCH_OS_WINDOWS)
+#  include <winrt/base.h>
+#  include <winrt/Windows.Storage.h>
 #  include <Shlwapi.h>
 #  include <Windows.h>
 #else
@@ -288,7 +290,8 @@ string TfReadLink(string const &path)
 bool TfIsRelativePath(std::string const &path)
 {
 #if defined(ARCH_OS_WINDOWS)
-  return path.empty() || (PathIsRelative(path.c_str()) && path[0] != '/' && path[0] != '\\');
+  auto file = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(LPCWSTR(path.c_str()));
+  return path.empty() || (!file.GetResults().Path().empty() && path[0] != '/' && path[0] != '\\');
 #else
   return path.empty() || path[0] != '/';
 #endif
@@ -346,7 +349,7 @@ namespace
       // Conveniently GetFileAttributes() works on paths with a trailing
       // backslash.
       string path = prefix + pattern;
-      const DWORD attributes = GetFileAttributes(path.c_str());
+      const DWORD attributes = GetFileAttributes(LPCWSTR(path.c_str()));
       if (attributes != INVALID_FILE_ATTRIBUTES)
       {
         // File exists.
@@ -384,13 +387,17 @@ namespace
 
       // Glob the leftmost pattern.
       WIN32_FIND_DATA data;
-      HANDLE find = FindFirstFile(leftmostPattern.c_str(), &data);
+      HANDLE find = FindFirstFile(LPCWSTR(leftmostPattern.c_str()), &data);
       if (find != INVALID_HANDLE_VALUE)
       {
+        char DefChar = ' ';
+        std::vector<char> ch( j );
         do
         {
           // Recurse with next pattern.
-          Tf_Glob(result, leftmostDir + data.cFileName, remainingPattern, flags);
+          WideCharToMultiByte(CP_ACP, 0, data.cFileName, -1, &ch[0], 260, &DefChar, NULL);
+          std::wstring s(data.cFileName);
+          Tf_Glob(result, leftmostDir + std::string(s.begin(), s.end()), remainingPattern, flags);
         } while (FindNextFile(find, &data));
         FindClose(find);
       }

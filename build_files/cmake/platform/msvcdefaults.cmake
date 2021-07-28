@@ -31,6 +31,13 @@
 
 _add_define("WIN32")
 
+_add_define("_SCL_SECURE_NO_WARNINGS")
+_add_define("_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING")
+_add_define("_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS")
+
+add_compile_options("/wd4146")
+add_compile_options("/wd4996")
+
 option(WITH_WINDOWS_BUNDLE_CRT "Bundle the C runtime for install free distribution." ON)
 mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
 
@@ -67,17 +74,23 @@ unset(SYMBOL_FORMAT_RELEASE)
 set(COMPILER_VERSION "17")
 
 # Target Windows 11 SDK.
-set(WINDOWS_SDK_VERSION 10.0.22000.0)
+set(WINDOWS_SDK_VERSION "10.0.22000.0")
 
 # Our Standard is now :: CXX/WinRT
 set(CMAKE_VS_WINRT_BY_DEFAULT ON)
-set(CMAKE_SYSTEM_NAME "WindowsStore")
-set(CMAKE_SYSTEM_VERSION ${WINDOWS_SDK_VERSION}) 
+
+set(CMAKE_SYSTEM_NAME WindowsStore)
+set(CMAKE_SYSTEM_VERSION ${WINDOWS_SDK_VERSION})
+
+
+# Things are in preview so we need to add this for now.
+set(WINDOWS_SDK "Windows.Universal")
+set(VC_LIBRARIES_VERSION "17.0")
+
 
 # Enable CXX/WinRT (20++) hybrid features.
 # Our Windows Standard. For the long haul.
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /ZW")
-
 
 # Temporary, until they fixup the installation.
 set(WINDOWS_11_STORE
@@ -209,8 +222,7 @@ if(MSVC_VERSION GREATER 1914 AND NOT MSVC_CLANG)
 endif()
 
 string(APPEND PLATFORM_LINKFLAGS " /SUBSYSTEM:CONSOLE /WINMD /STACK:2097152")
-set(PLATFORM_LINKFLAGS_RELEASE "/NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrtd.lib")
-string(APPEND PLATFORM_LINKFLAGS_DEBUG " /IGNORE:4099 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcmtd.lib")
+string(APPEND PLATFORM_LINKFLAGS_DEBUG " /IGNORE:4099")
 
 # Ignore meaningless for us linker warnings.
 string(APPEND PLATFORM_LINKFLAGS " /ignore:4049 /ignore:4217 /ignore:4221")

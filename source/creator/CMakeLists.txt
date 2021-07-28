@@ -79,8 +79,11 @@ if(WIN32 AND NOT UNIX)
 
 
   list(APPEND SRC
-    ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
-    ${CMAKE_BINARY_DIR}/kraken.exe.manifest
+    ${CONTENT_FILES}
+    ${ASSET_FILES}
+    ${STRING_FILES}
+    ${DEBUG_CONTENT_FILES}
+    ${RELEASE_CONTENT_FILES}
   )
 endif()
 
@@ -225,13 +228,24 @@ if(WITH_PYTHON_MODULE)
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
   if(WIN32)
-      add_executable(kraken-launcher WIN32
-        kraken_launcher_win32.c
-        ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
-        ${CMAKE_BINARY_DIR}/kraken.exe.manifest
-      )
-      target_compile_definitions (kraken-launcher PRIVATE -D_UNICODE -DUNICODE)
-      target_link_libraries(kraken-launcher Pathcch.lib)
+    add_executable(kraken-launcher WIN32
+      kraken_launcher_win32.c
+    )
+
+    set_target_properties(kraken-launcher PROPERTIES 
+      VS_WINRT_COMPONENT TRUE
+      VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
+      VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
+      VS_GLOBAL_OutputType "WinExe"
+      VS_PACKAGE_REFERENCES "Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
+      VS_GLOBAL_TargetFramework "Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
+      VS_GLOBAL_UseWindowsSdkPreview "true"
+      VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview"
+      VS_GLOBAL_PlatformToolset "v143"
+      VS_GLOBAL_MinimumVisualStudioVersion "17.0"
+    )
+    target_compile_definitions (kraken-launcher PRIVATE -D_UNICODE -DUNICODE)
+    target_link_libraries(kraken-launcher Pathcch.lib)
   endif()
 endif()
 
@@ -1270,22 +1284,16 @@ elseif(UNIX)
   set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kraken.map)
 endif()
 
-# vcpkg substitutes our libs with theirs, which will cause issues when you
-# you run these builds on other systems due to missing dlls. So we opt out
-# the use of vcpkg
 if(WIN32)
-  set_target_properties(kraken PROPERTIES
-    VS_GLOBAL_VcpkgEnabled "false"
-  )
   set_target_properties(kraken PROPERTIES
     PDB_NAME "kraken_private"
     PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>"
   )
-    if(WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
-      target_link_options(kraken
-        PUBLIC "LINKER:PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/bin/kraken_public.pdb"
-      )
-    endif()
+  if(WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
+    target_link_options(kraken
+      PUBLIC "LINKER:PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/bin/kraken_public.pdb"
+    )
+  endif()
 endif()
 
 # -----------------------------------------------------------------------------
@@ -1299,7 +1307,14 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
   )
   set_target_properties(kraken PROPERTIES
     VS_WINRT_COMPONENT TRUE
-    VS_USER_PROPS "kraken.Cpp.user.props"
+    VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
+    VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
+    VS_GLOBAL_OutputType "WinExe"
+    VS_GLOBAL_TargetFramework "Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
+    VS_GLOBAL_UseWindowsSdkPreview "true"
+    VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview"
+    VS_GLOBAL_PlatformToolset "v143"
+    VS_GLOBAL_MinimumVisualStudioVersion "17.0"
   )
 endif()
 

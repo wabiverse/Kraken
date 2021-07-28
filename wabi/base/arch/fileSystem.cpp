@@ -52,11 +52,32 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #if defined(ARCH_OS_WINDOWS)
-#  include <WinIoCtl.h>
-#  include <Windows.h>
+#  ifdef WIN32_LEAN_AND_MEAN
+#    undef WIN32_LEAN_AND_MEAN
+#    ifdef WINRT_LEAN_AND_MEAN
+#      undef WINRT_LEAN_AND_MEAN
+#    endif /* WINRT_LEAN_AND_MEAN */
+#  endif /* WIN_LEAN_AND_MEAN */
+#  include <Windows.h> 
+#  include "pch.h"
+#  include <winrt/Windows.Foundation.h>
+#  include <winrt/Windows.Security.Dataprotection.h>
+#  include <winrt/Windows.Storage.h>
+#  include <winrt/Windows.Storage.Streams.h>
+#  include <winrt/Windows.ApplicationModel.h>
+#  include <winrt/Windows.ApplicationModel.Resources.h>
+#  include <winrt/Windows.Devices.h>
+#  include <winrt/Windows.Devices.Custom.h>
 #  include <functional>
 #  include <io.h>
 #  include <process.h>
+
+using namespace winrt;
+using namespace winrt::Windows;
+using namespace winrt::Windows::Storage;
+using namespace winrt::Windows::ApplicationModel;
+using namespace winrt::Windows::ApplicationModel::Resources;
+
 #else
 #  include <alloca.h>
 #  include <sys/file.h>
@@ -88,7 +109,10 @@ FILE *ArchOpenFile(char const *fileName, char const *mode)
 #if defined(ARCH_OS_WINDOWS)
 int ArchRmDir(const char *path)
 {
-  return RemoveDirectory(path) ? 0 : -1;
+  auto dir = StorageFolder::GetFolderFromPathAsync((LPCWSTR)path);
+  dir.GetResults().DeleteAsync(StorageDeleteOption::PermanentDelete);
+  
+  return (uint32_t)dir.Status();
 }
 #endif
 
@@ -353,7 +377,7 @@ string ArchAbsPath(const string &path)
 
 #if defined(ARCH_OS_WINDOWS)
   char buffer[ARCH_PATH_MAX];
-  if (GetFullPathName(path.c_str(), ARCH_PATH_MAX, buffer, nullptr))
+  if (GetFullPathName((LPCWSTR)path.c_str(), ARCH_PATH_MAX, (LPWSTR)buffer, nullptr))
   {
     return buffer;
   } else
@@ -456,17 +480,16 @@ int64_t ArchGetFileLength(const char *fileName)
 #elif defined(ARCH_OS_WINDOWS)
   // Open a handle with 0 as the desired access and full sharing.
   // This opens the file even if exclusively locked.
-  HANDLE handle = CreateFile(fileName,
-                             0,
-                             FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                             nullptr,
-                             OPEN_EXISTING,
-                             FILE_ATTRIBUTE_NORMAL,
-                             nullptr);
+  Storage::StreamedFileDataRequestedHandler handle;
+  Storage::Streams::IRandomAccessStreamReference thumbnail;
+  StorageFile::CreateStreamedFileAsync((LPCWSTR)fileName, handle, thumbnail);
+
   if (handle)
   {
-    const auto result = _GetFileLength(handle);
-    CloseHandle(handle);
+    auto file = Storage::PathIO::ReadBufferAsync((LPCWSTR)fileName);
+    const auto result = file.GetResults().Length();
+
+    file.Close();
     return result;
   }
   return -1;
@@ -533,7 +556,7 @@ string ArchMakeTmpFileName(const string &prefix, const string &suffix)
   static std::atomic<int> nCalls(1);
   const int n = nCalls++;
 #if defined(ARCH_OS_WINDOWS)
-  int pid = _getpid();
+  int pid = GetCurrentProcessId();
 #else
   int pid = getpid();
 #endif
@@ -640,7 +663,7 @@ std::string ArchMakeTmpSubdir(const std::string &tmpdir, const std::string &pref
   std::string sTemplate = ArchStringPrintf("%s/%s.XXXXXX", tmpdir.c_str(), prefix.c_str());
 
 #if defined(ARCH_OS_WINDOWS)
-  retstr = MakeUnique(sTemplate, [](const char *name) { return CreateDirectory(name, NULL) != FALSE; });
+  retstr = MakeUnique(sTemplate, [](const char *name) { return CreateDirectory((LPCWSTR)name, NULL) != FALSE; });
 #else
   // Copy template to a writable buffer.
   char *cTemplate = reinterpret_cast<char *>(alloca(sTemplate.size() + 1));
@@ -670,7 +693,7 @@ void Arch_InitTmpDir()
   char tmpPath[MAX_PATH];
 
   // On Windows, let GetTempPath use the standard env vars, not our own.
-  int sizeOfPath = GetTempPath(MAX_PATH - 1, tmpPath);
+  int sizeOfPath = GetTempPath(MAX_PATH - 1, (LPWSTR)tmpPath);
   if (sizeOfPath > MAX_PATH || sizeOfPath == 0)
   {
     ARCH_ERROR("Call to GetTempPath failed.");
@@ -688,7 +711,7 @@ void Arch_InitTmpDir()
     // This function is not exposed in the header; it is only used during
     // Arch_InitConfig. If this is called more than once when TMPDIR is
     // set, the following call will leak a string.
-    _TmpDir = strdup(tmpdir.c_str());
+    _TmpDir = _strdup(tmpdir.c_str());
   } else
   {
 #  if defined(ARCH_OS_DARWIN)
@@ -828,7 +851,6 @@ ArchMutableFileMapping ArchMapFileReadWrite(std::string const &path, std::string
   return Arch_MapFileImpl<ArchMutableFileMapping>(path, errMsg);
 }
 
-ARCH_API
 void ArchMemAdvise(void const *addr, size_t len, ArchMemAdvice adv)
 {
 #if defined(ARCH_OS_WINDOWS)
@@ -1055,15 +1077,12 @@ int ArchFileAccess(const char *path, int mode)
   // Simple existence check is handled specially.
   if (mode == F_OK)
   {
-    return (GetFileAttributes(path) != INVALID_FILE_ATTRIBUTES) ? 0 : Arch_FileAccessError();
+    return (GetFileAttributes((LPCWSTR)path) != INVALID_FILE_ATTRIBUTES) ? 0 : Arch_FileAccessError();
   }
 
-  const SECURITY_INFORMATION securityInfo = OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION |
-                                            DACL_SECURITY_INFORMATION;
-
   // Get the SECURITY_DESCRIPTOR size.
-  DWORD length = 0;
-  if (!GetFileSecurity(path, securityInfo, NULL, 0, &length))
+  auto file = Storage::StorageFile::GetFileFromPathAsync((LPCWSTR)path);
+  if (file.GetResults().Attributes() != FileAttributes::Normal)
   {
     if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
     {
@@ -1072,9 +1091,11 @@ int ArchFileAccess(const char *path, int mode)
   }
 
   // Get the SECURITY_DESCRIPTOR.
+  DWORD length = 0;
   std::unique_ptr<unsigned char[]> buffer(new unsigned char[length]);
   PSECURITY_DESCRIPTOR security = (PSECURITY_DESCRIPTOR)buffer.get();
-  if (!GetFileSecurity(path, securityInfo, security, length, &length))
+
+  if (file.GetResults().Attributes() != FileAttributes::Normal)
   {
     return Arch_FileAccessError();
   }
@@ -1107,25 +1128,27 @@ int ArchFileAccess(const char *path, int mode)
     mapping.GenericAll = FILE_ALL_ACCESS;
 
     DWORD accessMask = ArchModeToAccess(mode);
-    MapGenericMask(&accessMask, &mapping);
 
-    if (AccessCheck(security,
-                    duplicateToken,
-                    accessMask,
-                    &mapping,
-                    &privileges,
-                    &privilegesLength,
-                    &grantedAccess,
-                    &accessStatus))
-    {
-      if (accessStatus)
-      {
-        result = true;
-      } else
-      {
-        errno = EACCES;
-      }
-    }
+    
+    // MapGenericMask(&accessMask, &mapping);
+
+    // if (AccessCheck(security,
+    //                 duplicateToken,
+    //                 accessMask,
+    //                 &mapping,
+    //                 &privileges,
+    //                 &privilegesLength,
+    //                 &grantedAccess,
+    //                 &accessStatus))
+    // {
+      // if (accessStatus)
+      // {
+      //   result = true;
+      // } else
+      // {
+      //   errno = EACCES;
+      // }
+    // }
     CloseHandle(duplicateToken);
   }
   CloseHandle(token);
@@ -1171,26 +1194,22 @@ typedef struct _REPARSE_DATA_BUFFER
 
 std::string ArchReadLink(const char *path)
 {
-  HANDLE handle = ::CreateFile(path,
-                               GENERIC_READ,
-                               FILE_SHARE_READ,
-                               NULL,
-                               OPEN_EXISTING,
-                               FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS,
-                               NULL);
+  auto file = StorageFile::GetFileFromPathAsync((LPCWSTR)path);
 
-  if (handle == INVALID_HANDLE_VALUE)
+  if (file.ErrorCode())
     return std::string();
 
   std::unique_ptr<unsigned char[]> buffer(new unsigned char[MAX_REPARSE_DATA_SIZE]);
   REPARSE_DATA_BUFFER *reparse = (REPARSE_DATA_BUFFER *)buffer.get();
 
-  if (!DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, NULL, 0, reparse, MAX_REPARSE_DATA_SIZE, NULL, NULL))
-  {
-    CloseHandle(handle);
-    return std::string();
-  }
-  CloseHandle(handle);
+  auto stream = file.GetResults().OpenAsync(FileAccessMode::Read);
+  // if (!DeviceIoControl((HANDLE)stream.GetResults().GetOutputStreamAt(0), FSCTL_GET_REPARSE_POINT, NULL, 0, reparse, MAX_REPARSE_DATA_SIZE, NULL, NULL))
+  // {
+  //   stream.Close();
+  //   file.Close();
+  //   return std::string();
+  // }
+  file.Close();
 
   if (IsReparseTagMicrosoft(reparse->ReparseTag))
   {
@@ -1302,7 +1321,6 @@ std::string ArchReadLink(const char *path)
 
 #endif
 
-ARCH_API
 void ArchFileAdvise(FILE *file, int64_t offset, size_t count, ArchFileAdvice adv)
 {
 #if defined(ARCH_OS_WINDOWS)
