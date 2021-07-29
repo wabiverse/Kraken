@@ -116,10 +116,10 @@ foreach(apx ${out_inst})
     INSTALL
       ${CMAKE_SOURCE_DIR}/release/windows/appx/assets/${ff}
     DESTINATION
-      ${CMAKE_CURRENT_BINARY_DIR}/bin/release/AppX/assets
+      ${CMAKE_CURRENT_BINARY_DIR}/source/creator/assets
   )
   list(APPEND ASSET_FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/bin/release/AppX/assets/${ff})
+    ${CMAKE_BINARY_DIR}/source/creator/assets/${ff})
 endforeach()
 
 add_custom_target(appximages ALL SOURCES ${ASSET_FILES})
