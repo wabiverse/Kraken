@@ -12,7 +12,7 @@ add_definitions(-DPRMANBUILDINGAPI)
 # libprman on Linux/OSX.
 set(optionalLibs "")
 if(WIN32)
-    set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libmmd.lib /NODEFAULTLIB:libirc.lib /NODEFAULTLIB:svml_dispmd.lib /NODEFAULTLIB:libdecimal.lib" )
+    # set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libmmd.lib /NODEFAULTLIB:libirc.lib /NODEFAULTLIB:svml_dispmd.lib /NODEFAULTLIB:libdecimal.lib" )
     list(APPEND optionalLibs ${PXRCORE_LIBRARY})
     list(APPEND optionalLibs ${PRMAN_LIBRARY})
 elseif(APPLE)

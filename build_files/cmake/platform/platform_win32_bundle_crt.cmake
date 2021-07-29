@@ -101,8 +101,30 @@ list(APPEND ASSET_FILES
 
 set_property(SOURCE PROPERTY ${CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 set_property(SOURCE PROPERTY ${ASSET_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
-set_property(SOURCE PROPERTY ${ASSET_FILES} PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/assets")
 set_property(SOURCE PROPERTY ${STRING_FILES} PROPERTY VS_TOOL_OVERRIDE "PRIResource")
 set_property(SOURCE PROPERTY ${DEBUG_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT $<CONFIG:Debug>)
 set_property(SOURCE PROPERTY ${RELEASE_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT $<CONFIG:Release,RelWithDebInfo,MinSizeRel>)
 
+file(GLOB out_inst "${CMAKE_SOURCE_DIR}/release/windows/appx/assets/*.png")
+foreach(apx ${out_inst})
+  get_filename_component(ff ${apx} NAME)
+  # configure_file(
+  #   ${CMAKE_SOURCE_DIR}/release/windows/appx/assets/${ff}
+  #   ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/PackageLayout/assets/${ff}
+  #   @ONLY)
+  file(
+    INSTALL
+      ${CMAKE_SOURCE_DIR}/release/windows/appx/assets/${ff}
+    DESTINATION
+      ${CMAKE_CURRENT_BINARY_DIR}/bin/release/AppX/assets
+  )
+  list(APPEND ASSET_FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/bin/release/AppX/assets/${ff})
+endforeach()
+
+add_custom_target(appximages ALL SOURCES ${ASSET_FILES})
+add_custom_target(appxml ALL SOURCES ${CONTENT_FILES})
+
+add_dependencies(appxml appximages)
+
+set_property(SOURCE PROPERTY ${ASSET_FILES} PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/bin/release/AppX")

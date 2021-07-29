@@ -103,8 +103,8 @@ if(WIN32)
   set(CPACK_WIX_LIGHT_EXTRA_FLAGS -dcl:medium)
 endif()
 
-set(CPACK_PACKAGE_EXECUTABLES "kraken-launcher" "kraken")
-set(CPACK_CREATE_DESKTOP_LINKS "kraken-launcher" "kraken")
+set(CPACK_PACKAGE_EXECUTABLES "kraken")
+set(CPACK_CREATE_DESKTOP_LINKS "kraken")
 
 include(CPack)
 

@@ -68,6 +68,7 @@
 #  include <winrt/Windows.ApplicationModel.Resources.h>
 #  include <winrt/Windows.Devices.h>
 #  include <winrt/Windows.Devices.Custom.h>
+#  include <filesystem>
 #  include <functional>
 #  include <io.h>
 #  include <process.h>
@@ -77,6 +78,8 @@ using namespace winrt::Windows;
 using namespace winrt::Windows::Storage;
 using namespace winrt::Windows::ApplicationModel;
 using namespace winrt::Windows::ApplicationModel::Resources;
+
+namespace fs = std::filesystem;
 
 #else
 #  include <alloca.h>
@@ -688,39 +691,20 @@ static const char *_TmpDir = 0;
 
 ARCH_HIDDEN
 void Arch_InitTmpDir()
-{
-#if defined(ARCH_OS_WINDOWS)
-  char tmpPath[MAX_PATH];
+{ 
+  /* Removes the trailing slash. */
+  auto temp_path = fs::temp_directory_path().parent_path().string();
 
-  // On Windows, let GetTempPath use the standard env vars, not our own.
-  int sizeOfPath = GetTempPath(MAX_PATH - 1, (LPWSTR)tmpPath);
-  if (sizeOfPath > MAX_PATH || sizeOfPath == 0)
+  if (temp_path.empty())
   {
+    /* Defaults temp to root if not found. */
     ARCH_ERROR("Call to GetTempPath failed.");
     _TmpDir = ".";
     return;
   }
 
-  // Strip the trailing slash
-  tmpPath[sizeOfPath - 1] = 0;
-  _TmpDir = _strdup(tmpPath);
-#else
-  const std::string tmpdir = ArchGetEnv("TMPDIR");
-  if (!tmpdir.empty())
-  {
-    // This function is not exposed in the header; it is only used during
-    // Arch_InitConfig. If this is called more than once when TMPDIR is
-    // set, the following call will leak a string.
-    _TmpDir = _strdup(tmpdir.c_str());
-  } else
-  {
-#  if defined(ARCH_OS_DARWIN)
-    _TmpDir = "/tmp";
-#  else
-    _TmpDir = "/var/tmp";
-#  endif
-  }
-#endif
+  /* No leaks. */
+  _TmpDir = temp_path.c_str();
 }
 
 const char *ArchGetTmpDir()

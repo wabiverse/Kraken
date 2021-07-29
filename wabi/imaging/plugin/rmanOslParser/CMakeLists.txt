@@ -2,9 +2,9 @@ set(WABI_PREFIX wabi/imaging)
 set(WABI_PACKAGE rmanOslParser)
 add_definitions(-DPRMANBUILDINGAPI)
 
-if(WIN32)
-    set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libmmd.lib /NODEFAULTLIB:libirc.lib /NODEFAULTLIB:svml_dispmd.lib /NODEFAULTLIB:libdecimal.lib" )
-endif()
+# if(WIN32)
+#     set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libmmd.lib /NODEFAULTLIB:libirc.lib /NODEFAULTLIB:svml_dispmd.lib /NODEFAULTLIB:libdecimal.lib" )
+# endif()
 
 wabi_plugin(rmanOslParser
     LIBRARIES

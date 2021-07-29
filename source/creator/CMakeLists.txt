@@ -228,11 +228,11 @@ if(WITH_PYTHON_MODULE)
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
   if(WIN32)
-    add_executable(kraken-launcher WIN32
-      kraken_launcher_win32.c
-    )
+    # add_executable(kraken-launcher WIN32
+    #   kraken_launcher_win32.c
+    # )
 
-    set_target_properties(kraken-launcher PROPERTIES 
+    set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT TRUE
       VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
       VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
@@ -244,14 +244,15 @@ else()
       VS_GLOBAL_PlatformToolset "v143"
       VS_GLOBAL_MinimumVisualStudioVersion "17.0"
     )
-    target_compile_definitions (kraken-launcher PRIVATE -D_UNICODE -DUNICODE)
-    target_link_libraries(kraken-launcher Pathcch.lib)
+    # target_compile_definitions (kraken-launcher PRIVATE -D_UNICODE -DUNICODE)
+    # target_link_libraries(kraken-launcher Pathcch.lib)
   endif()
 endif()
 
 if(WITH_BUILDINFO)
   # explicitly say that the executable depends on the buildinfo
   add_dependencies(kraken buildinfo)
+  add_dependencies(kraken appximages)
 endif()
 
 # Link with Pixar API
@@ -1301,7 +1302,7 @@ endif()
 
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   install(
-    TARGETS kraken kraken-launcher
+    TARGETS kraken
     COMPONENT KRAKEN
     DESTINATION "."
   )
