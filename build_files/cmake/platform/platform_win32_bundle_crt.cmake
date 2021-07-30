@@ -1,19 +1,9 @@
 # First generate the manifest for tests since it will not need the dependency on the CRT.
-configure_file(
-  ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
-  ${CMAKE_CURRENT_BINARY_DIR}/Tests.appxmanifest @ONLY
-  @ONLY)
-
 set(CONTENT_FILES "")
 set(ASSET_FILES "")
 set(STRING_FILES "")
 set(DEBUG_CONTENT_FILES "")
 set(RELEASE_CONTENT_FILES "")
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/release/windows/appx/priconfig.xml.in
-  ${CMAKE_CURRENT_BINARY_DIR}/tests.priconfig.xml
-  @ONLY)
 
 if(WITH_WINDOWS_BUNDLE_CRT)
   set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
@@ -25,7 +15,7 @@ if(WITH_WINDOWS_BUNDLE_CRT)
   if(MSVC_REDIST_DIR AND NOT EXISTS "${MSVC_REDIST_DIR}")
     # Align this with Windows 11 MSVC 2022 Runtime
     list(APPEND MSVC_REDIST_DIR
-      "C:/Program Files (x86)/Microsoft Visual Studio/2022/Preview/VC/Redist/MSVC/14.30.30401")
+      "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Redist/MSVC/14.30.30401")
   endif()
 
   include(InstallRequiredSystemLibraries)

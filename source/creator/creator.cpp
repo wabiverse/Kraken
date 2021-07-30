@@ -450,13 +450,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 int main(int argc, const char **argv)
 #endif /* WIN32 */
 {
+#if defined(ARCH_OS_WINDOWS)
+  MICROSOFT::init_apartment();
+#endif /* ARCH_OS_WINDOWS */
+
   kContext *C;
 
   // /* Environment variables. */
-  // CREATOR_kraken_env_init();
+  CREATOR_kraken_env_init();
 
   // /* Create Context C. */
-  // C = CTX_create();
+  C = CTX_create();
 
   // /* Initialize path to executable. */
   // KKE_appdir_program_path_init();
@@ -470,7 +474,8 @@ int main(int argc, const char **argv)
   // /* Init plugins. */
   // KKE_kraken_plugins_init();
 
-  // /* Init & parse args. */
+  /* Init & parse args. */
+
   // CREATOR_setup_args(argc, (const char **)argv);
   // if (CREATOR_parse_args(argc, (const char **)argv) != 0)
   // {
