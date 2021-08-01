@@ -51,21 +51,16 @@ _add_define(GLX_GLXEXT_PROTOTYPES)
 # Python bindings for tf require this define.
 _add_define(BOOST_PYTHON_NO_PY_SIGNATURES)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    _add_define(BUILD_OPTLEVEL_DEV)
+if(NOT KRAKEN_RELEASE_MODE)
+  _add_define(BUILD_OPTLEVEL_DEV)
 endif()
 
 # Set plugin path environment variable name
 set(WABI_PLUGINPATH_NAME WABI_PLUGINPATH_NAME)
 if (WABI_OVERRIDE_PLUGINPATH_NAME)
-    set(WABI_PLUGINPATH_NAME ${WABI_OVERRIDE_PLUGINPATH_NAME})
-    _add_define("WABI_PLUGINPATH_NAME=${WABI_PLUGINPATH_NAME}")
+  set(WABI_PLUGINPATH_NAME ${WABI_OVERRIDE_PLUGINPATH_NAME})
+  _add_define("WABI_PLUGINPATH_NAME=${WABI_PLUGINPATH_NAME}")
 endif()
-
-set(_WABI_CXX_FLAGS ${_WABI_CXX_FLAGS} ${_WABI_CXX_WARNING_FLAGS})
-
-# CMake list to string.
-string(REPLACE ";" " "  _WABI_CXX_FLAGS "${_WABI_CXX_FLAGS}")
 
 # Set namespace configuration.
 if(WABI_ENABLE_NAMESPACES)

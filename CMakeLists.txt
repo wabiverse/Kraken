@@ -125,28 +125,37 @@ endif()
 
 if(UNIX)
   if(CMAKE_BUILD_TYPE_INIT STREQUAL "Debug")
+    option(KRAKEN_RELEASE_MODE "Kraken build type detection" OFF)
     add_definitions(-DTBB_USE_DEBUG=1)
     add_definitions(-DTBB_USE_ASSERT=1)
     add_definitions(-DTBB_USE_PROFILING_TOOLS=1)
     add_definitions(-DOSL_DEBUG=1)
+  else()
+    option(KRAKEN_RELEASE_MODE "Kraken build type detection" ON)
+    add_definitions(-DTBB_USE_DEBUG=0)
+    add_definitions(-DTBB_USE_ASSERT=0)
+    add_definitions(-DTBB_USE_PROFILING_TOOLS=0)
+    add_definitions(-DOSL_DEBUG=0)
   endif()
 endif()
 
 # Hack, because CMAKE provided variables are not handed down from MSVC
 # and we need to ensure we are able to check Release v. Debug modes
 # to link and install with the proper Release v. Debug libraries.
-if(CMAKE_BINARY_DIR MATCHES ".*Release")
-  add_definitions(-DTBB_USE_DEBUG=0)
-  add_definitions(-DTBB_USE_ASSERT=0)
-  add_definitions(-DTBB_USE_PROFILING_TOOLS=0)
-  add_definitions(-DOSL_DEBUG=0)
-  option(KRAKEN_RELEASE_MODE "Kraken build type detection" ON)
-elseif(CMAKE_BINARY_DIR MATCHES ".*Debug")
-  add_definitions(-DTBB_USE_DEBUG=1)
-  add_definitions(-DTBB_USE_ASSERT=1)
-  add_definitions(-DTBB_USE_PROFILING_TOOLS=1)
-  add_definitions(-DOSL_DEBUG=1)
-  option(KRAKEN_RELEASE_MODE "Kraken build type detection" OFF)
+if(WIN32)
+  if(CMAKE_BINARY_DIR MATCHES ".*Release")
+    add_definitions(-DTBB_USE_DEBUG=0)
+    add_definitions(-DTBB_USE_ASSERT=0)
+    add_definitions(-DTBB_USE_PROFILING_TOOLS=0)
+    add_definitions(-DOSL_DEBUG=0)
+    option(KRAKEN_RELEASE_MODE "Kraken build type detection" ON)
+  elseif(CMAKE_BINARY_DIR MATCHES ".*Debug")
+    add_definitions(-DTBB_USE_DEBUG=1)
+    add_definitions(-DTBB_USE_ASSERT=1)
+    add_definitions(-DTBB_USE_PROFILING_TOOLS=1)
+    add_definitions(-DOSL_DEBUG=1)
+    option(KRAKEN_RELEASE_MODE "Kraken build type detection" OFF)
+  endif()
 endif()
 
 get_pixar_version()
@@ -255,10 +264,12 @@ include(Packages)
 set(WABI_PYTHON_SHEBANG "${PYTHON_EXECUTABLE}" CACHE STRING "Replacement path for Python #! line.")
 
 include(CXXDefaults)
-add_definitions(${_WABI_CXX_DEFINITIONS})
 
 #-----------------------------------------------------------------------------
-# Set Compiler flags.
+# Set Compiler Preprocessor Definitions & Compiler Flags.
+
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_DEFINITIONS}")
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_WARNING_FLAGS}")
 
 if(WIN32)
   set(CMAKE_CXX_FLAGS "${_WABI_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")

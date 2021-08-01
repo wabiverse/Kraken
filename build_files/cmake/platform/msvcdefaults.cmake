@@ -29,14 +29,8 @@
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
 
-_add_define("WIN32")
-
-_add_define("_SCL_SECURE_NO_WARNINGS")
-_add_define("_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING")
-_add_define("_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS")
-
-add_compile_options("/wd4146")
-add_compile_options("/wd4996")
+# -----------------------------------------------------------------------------
+# Build options specific for Windows
 
 option(WITH_WINDOWS_BUNDLE_CRT "Bundle the C runtime for install free distribution." ON)
 mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
@@ -45,6 +39,9 @@ option(WITH_WINDOWS_PDB "Generate a pdb file for client side stacktraces" ON)
 mark_as_advanced(WITH_WINDOWS_PDB)
 
 include(build_files/cmake/platform/platform_win32_bundle_crt.cmake)
+
+# -----------------------------------------------------------------------------
+# Setup Compiler Flags
 
 if(MSVC_ASAN)
   set(SYMBOL_FORMAT /Z7)
@@ -79,18 +76,18 @@ set(WINDOWS_SDK_VERSION "10.0.22000.0")
 # Our Standard is now :: CXX/WinRT
 set(CMAKE_VS_WINRT_BY_DEFAULT ON)
 
+# Set the CMAKE build system to target UWP
+# this effectively enables WinRT compilation
 set(CMAKE_SYSTEM_NAME WindowsStore)
 set(CMAKE_SYSTEM_VERSION ${WINDOWS_SDK_VERSION})
-
 
 # Things are in preview so we need to add this for now.
 set(WINDOWS_SDK "Windows.Universal")
 set(VC_LIBRARIES_VERSION "17.0")
 
-
 # Enable CXX/WinRT (20++) hybrid features.
 # Our Windows Standard. For the long haul.
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /ZW")
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /ZW /EHsc")
 
 # Temporary, until they fixup the installation.
 set(WINDOWS_11_STORE
@@ -99,14 +96,15 @@ set(WINDOWS_11_STORE
 set(WINDOWS_11_PLATFORM
   "C:/Program Files/Microsoft Visual Studio/2022/Preview/Common7/IDE/VC/vcpackages"
 )
-list(APPEND _WABI_CXX_FLAGS /AI"${WINDOWS_11_STORE}")
-list(APPEND _WABI_CXX_FLAGS /AI"${WINDOWS_11_PLATFORM}")
+
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${WINDOWS_11_STORE}\"")
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${WINDOWS_11_PLATFORM}\"")
 
 # Enable exception handling.
 if(KRAKEN_RELEASE_MODE)
-    set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_RELEASE} /EHsc")
+    set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_RELEASE}")
 else()
-    set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_DEBUG} /EHsc")
+    set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_DEBUG}")
 endif()
 
 # Standards compliant.
@@ -134,6 +132,33 @@ set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /W3")
 if (${WABI_STRICT_BUILD_MODE})
     set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /WX")
 endif()
+
+# These files require /bigobj compiler flag
+#   Vt/arrayPyBuffer.cpp
+#   Usd/crateFile.cpp
+#   Usd/stage.cpp
+# Until we can set the flag on a per file basis, we'll have to enable it
+# for all translation units.
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /bigobj")
+
+# Enable multiprocessor builds.
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /MP")
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Gm-")
+
+# Enable 'Just My Code' debugging, allowing MSVC to step over system, framework,
+# libraries, and other non-user calls, and to collapse those calls in the call stack
+# window. The /JMC compiler option is available starting in Visual Studio 2017 version
+# 15.8 (1915) and up.
+if(MSVC_VERSION GREATER 1914 AND NOT MSVC_CLANG)
+  set(_WABI_CXX_FLAGS_DEBUG "${_WABI_CXX_FLAGS_DEBUG} /JMC")
+endif()
+
+# -----------------------------------------------------------------------------
+# Setup Disabled Warnings
+
+# Don't treat these warnings as errors.
+_disable_warning("4146")
+_disable_warning("4996")
 
 # truncation from 'double' to 'float' due to matrix and vector classes in `Gf`
 _disable_warning("4244")
@@ -167,7 +192,13 @@ _disable_warning("4334")
 # debugging PDB files.
 _disable_warning("4099")
 
-set(_WABI_CXX_FLAGS ${_WABI_CXX_FLAGS} ${_WABI_CXX_WARNING_FLAGS})
+# -----------------------------------------------------------------------------
+# Setup Preprocessor Definitions
+
+# A safe check to detect whether or not we are building
+# on windows, however, prefer to use (ARCH_OS_WINDOWS)
+# from wabi/base/arch/defines.h where possible.
+_add_define("WIN32")
 
 # Disable warning C4996 regarding fopen(), strcpy(), etc.
 _add_define("_CRT_SECURE_NO_WARNINGS")
@@ -187,9 +218,7 @@ _add_define("YY_NO_UNISTD_H")
 # Forces all libraries that have separate source to be linked as
 # DLL's rather than static libraries on Microsoft Windows, unless
 # explicitly told otherwise.
-# if (NOT Boost_USE_STATIC_LIBS)
 _add_define("BOOST_ALL_DYN_LINK")
-# endif()
 
 # Need half::_toFloat and half::_eLut.
 _add_define("OPENEXR_DLL")
@@ -198,28 +227,28 @@ _add_define("IMATH_DLL")
 # Need M_PI_2 and other math defines
 _add_define("_USE_MATH_DEFINES")
 
-# These files require /bigobj compiler flag
-#   Vt/arrayPyBuffer.cpp
-#   Usd/crateFile.cpp
-#   Usd/stage.cpp
-# Until we can set the flag on a per file basis, we'll have to enable it
-# for all translation units.
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /bigobj")
+# These need to be set or else we get errors
+# from these warnings when compiling with the
+# Windows Runtime (C++/WinRT) "/ZW" compiler
+# flag.
+_add_define("_SCL_SECURE_NO_WARNINGS")
+_add_define("_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING")
+_add_define("_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS")
 
-# Enable PDB generation.
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Zi")
+# Per Microsoft: You should always call the Unicode versions.
+# Many world languages require Unicode. If you use ANSI strings,
+# it will be impossible to localize your application. The ANSI
+# versions are also less efficient, because the operating system
+# must convert the ANSI strings to Unicode at run time.
+# !! Be careful: Some headers use the preprocessor symbol UNICODE,
+# others use _UNICODE with an underscore prefix. Always define both
+# symbols. Visual C++ sets them both by default when you create a
+# new project.
+_add_define("UNICODE")
+_add_define("_UNICODE")
 
-# Enable multiprocessor builds.
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /MP")
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /Gm-")
-
-# Enable 'Just My Code' debugging, allowing MSVC to step over system, framework,
-# libraries, and other non-user calls, and to collapse those calls in the call stack
-# window. The /JMC compiler option is available starting in Visual Studio 2017 version
-# 15.8 (1915) and up.
-if(MSVC_VERSION GREATER 1914 AND NOT MSVC_CLANG)
-  set(_WABI_CXX_FLAGS_DEBUG "${_WABI_CXX_FLAGS_DEBUG} /JMC")
-endif()
+# -----------------------------------------------------------------------------
+# Setup Linker Flags
 
 string(APPEND PLATFORM_LINKFLAGS " /SUBSYSTEM:WINDOWS /WINMD /STACK:2097152")
 string(APPEND PLATFORM_LINKFLAGS_DEBUG " /IGNORE:4099")
@@ -235,6 +264,10 @@ else()
   string(PREPEND PLATFORM_LINKFLAGS "/MACHINE:IX86 /LARGEADDRESSAWARE ")
 endif()
 
-# When Visual Studio IDE runs the project for testing
-# it needs to know which project to execute.
+# -----------------------------------------------------------------------------
+# Setup Default Project to open Visual Studio IDE with (Optional)
+
+# When opening the cmake generated Visual Studio Solution
+# within Visual Studio IDE - the IDE needs a default vsproj
+# to open by default.
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT kraken)

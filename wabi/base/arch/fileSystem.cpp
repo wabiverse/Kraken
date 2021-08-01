@@ -1061,6 +1061,8 @@ int ArchFileAccess(const char *path, int mode)
   // Simple existence check is handled specially.
   if (mode == F_OK)
   {
+    fs::path filePath = path;
+    
     return (GetFileAttributes((LPCWSTR)path) != INVALID_FILE_ATTRIBUTES) ? 0 : Arch_FileAccessError();
   }
 
