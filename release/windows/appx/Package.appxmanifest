@@ -2,56 +2,110 @@
 
 <!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
 
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap uap2 uap3 desktop rescap build">
-  <Identity Name="Kraken" Publisher="E=mail@kraken3d.org, CN=Wabi Animation, OU=Chaos Engine, O=Wabi Animation, L=Denver, S=Colorado, C=US" Version="1.50.0.0" ProcessorArchitecture="x64" />
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap uap2 uap3 desktop rescap build">
+
+<!-- Internal Use. Microsoft Store uses this to register and verify codesign certificate. -->
+<Identity
+  Name="Kraken"
+  Publisher="CN=Wabi Animation"
+  Version="1.50.0.0"
+  ProcessorArchitecture="x64" />
+
   <Properties>
     <DisplayName>Kraken</DisplayName>
     <PublisherDisplayName>Wabi Animation</PublisherDisplayName>
     <Logo>assets\StoreLogo.png</Logo>
   </Properties>
+
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.22000.0" MaxVersionTested="10.0.22000.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.22000.0" />
-    <PackageDependency Name="Microsoft.VCLibs.140.00" MinVersion="14.0.30035.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+    <!-- Windows 11 SDK Dependencies. 10.0.22000.0 Marks the first Windows 11 Build. -->
+    <TargetDeviceFamily
+      Name="Windows.Universal"
+      MinVersion="10.0.22000.0"
+      MaxVersionTested="10.0.22000.0" />
+    <TargetDeviceFamily
+      Name="Windows.Desktop"
+      MinVersion="10.0.22000.0"
+      MaxVersionTested="10.0.22000.0" />
+    <PackageDependency
+      Name="Microsoft.VCLibs.140.00"
+      MinVersion="14.0.30035.0"
+      Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
   </Dependencies>
+
   <Resources>
-    <Resource Language="EN-US" />
-    <Resource uap:Scale="200" />
+    <Resource Language="x-generate" />
   </Resources>
+
+  <Applications>
+    <Application
+      Id="Creator"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="Kraken.Creator">
+      <!-- Manifest Schema Requires Branding. -->
+      <uap:VisualElements
+        DisplayName="Kraken"
+        Description="The 3D Animation Platform. Built with the Universe in Mind."
+        BackgroundColor="transparent"
+        Square150x150Logo="assets\Square150x150Logo.png"
+        Square44x44Logo="assets\Square44x44Logo.png">
+        <uap:DefaultTile
+          Wide310x150Logo="assets\Wide310x150Logo.png"
+          Square71x71Logo="assets\SmallTile.png"
+          Square310x310Logo="assets\LargeTile.png" />
+        <uap:SplashScreen
+          Image="assets\SplashScreen.png" />
+        <uap:LockScreen
+          BadgeLogo="assets\BadgeLogo.png"
+          Notification="badgeAndTileText" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- The Native Kraken File Formats. -->
+        <uap3:Extension Category="windows.fileTypeAssociation">
+          <!-- Pixar Natives. -->
+          <uap3:FileTypeAssociation Name="usd">
+            <uap:SupportedFileTypes>
+              <!-- Pixar .USD -->
+              <uap:FileType>.usd</uap:FileType>
+              <!-- Pixar .USDC -->
+              <uap:FileType>.usdc</uap:FileType>
+              <!-- Pixar .USDZ -->
+              <uap:FileType>.usdz</uap:FileType>
+              <!-- Pixar .USDA -->
+              <uap:FileType>.usda</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap3:FileTypeAssociation>
+        </uap3:Extension>
+
+        <!-- Kraken can be summoned via: 'kraken' in a term. -->
+        <desktop:Extension
+          Category="windows.fullTrustProcess"
+          Executable="kraken.exe">
+          <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="KrakenGroup" Parameters="kraken.exe"/>
+          </desktop:FullTrustProcess>
+        </desktop:Extension>
+      </Extensions>
+
+    </Application>
+  </Applications>
+
   <Capabilities>
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
-  <Applications>
-    <Application Id="Creator" Executable="kraken.exe" EntryPoint="Kraken.Creator">
-      <uap:VisualElements DisplayName="Kraken" Description="The 3D Animation Platform. Built with the Universe in Mind." BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="assets\Wide310x150Logo.png" Square71x71Logo="assets\SmallTile.png" Square310x310Logo="assets\LargeTile.png" />
-        <uap:SplashScreen Image="assets\SplashScreen.png" />
-        <uap:LockScreen BadgeLogo="assets\BadgeLogo.png" Notification="badgeAndTileText" />
-      </uap:VisualElements>
-      <Extensions>
-        <uap3:Extension Category="windows.fileTypeAssociation">
-          <uap3:FileTypeAssociation Name="usd">
-            <uap:SupportedFileTypes>
-              <uap:FileType>.usd</uap:FileType>
-              <uap:FileType>.usdc</uap:FileType>
-              <uap:FileType>.usdz</uap:FileType>
-              <uap:FileType>.usda</uap:FileType>
-            </uap:SupportedFileTypes>
-            <!-- <uap2:SupportedVerbs>
-              <uap3:Verb Id="open" Parameters="&quot;%1&quot;">open</uap3:Verb>
-            </uap2:SupportedVerbs> -->
-          </uap3:FileTypeAssociation>
-        </uap3:Extension>
-        <uap3:Extension Category="windows.appExecutionAlias" Executable="kraken.exe" EntryPoint="Kraken.Creator">
-          <uap3:AppExecutionAlias>
-            <desktop:ExecutionAlias Alias="kraken.exe" />
-          </uap3:AppExecutionAlias>
-        </uap3:Extension>
-      </Extensions>
-    </Application>
-  </Applications>
+
   <build:Metadata>
+    <!-- Just some useful build output from my local machine - Furby. -->
     <build:Item Name="cl.exe" Version="19.30.30401.0 built by: vcwrkspc" />
     <build:Item Name="VisualStudio" Version="17.0" />
     <build:Item Name="VisualStudioEdition" Value="Microsoft Visual Studio Professional 2022" />
