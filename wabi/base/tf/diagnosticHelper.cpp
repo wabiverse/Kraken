@@ -45,7 +45,8 @@ bool Tf_PostErrorHelper(const TfCallContext &context, const TfEnum &code, const 
 
 bool Tf_PostErrorHelper(const TfCallContext &context, TfDiagnosticType code, const std::string &msg)
 {
-  return Tf_PostErrorHelper(context, TfEnum(code), msg);
+  // return Tf_PostErrorHelper(context, TfEnum(code), msg);
+  return false;
 }
 
 bool Tf_PostErrorHelper(const TfCallContext &context, const TfEnum &code, const char *fmt, ...)

@@ -379,13 +379,12 @@ string ArchAbsPath(const string &path)
   }
 
 #if defined(ARCH_OS_WINDOWS)
-  char buffer[ARCH_PATH_MAX];
-  if (GetFullPathName((LPCWSTR)path.c_str(), ARCH_PATH_MAX, (LPWSTR)buffer, nullptr))
-  {
-    return buffer;
-  } else
+  if (fs::path(path).is_absolute())
   {
     return path;
+  } else
+  {
+    return fs::absolute(path).string();
   }
 #else
   if (path[0] == '/')
