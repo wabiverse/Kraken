@@ -24,7 +24,7 @@
 
 #pragma once
 
-# include <wabi/base/arch/defines.h>
+#include <wabi/base/arch/defines.h>
 
 #if defined(ARCH_OS_WINDOWS)
 #  include <windows.h>

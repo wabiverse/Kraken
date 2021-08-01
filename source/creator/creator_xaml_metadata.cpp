@@ -25,15 +25,14 @@
 #include "pch.h"
 #include "creator_xaml_metadata.h"
 
-void* winrt_make_Kraken_XamlMetaDataProvider()
+void *winrt_make_Kraken_XamlMetaDataProvider()
 {
-    return winrt::detach_abi(winrt::make<winrt::Kraken::factory_implementation::XamlMetaDataProvider>());
+  return winrt::detach_abi(winrt::make<winrt::Kraken::factory_implementation::XamlMetaDataProvider>());
 }
 
 WINRT_EXPORT namespace winrt::Kraken
 {
-    XamlMetaDataProvider::XamlMetaDataProvider() :
-        XamlMetaDataProvider(make<Kraken::implementation::XamlMetaDataProvider>())
-    {
-    }
+  XamlMetaDataProvider::XamlMetaDataProvider()
+    : XamlMetaDataProvider(make<Kraken::implementation::XamlMetaDataProvider>())
+  {}
 }
