@@ -116,47 +116,89 @@ bool ArchGetAddressInfo(void *address,
 
   if (baseAddress || symbolName || symbolAddress)
   {
-    DWORD displacement;
     HANDLE process = GetCurrentProcess();
-    // SymInitialize(process, NULL, BOOL(TRUE));
 
-    // // Symbol
-    // ULONG64 symBuffer[(sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR) + sizeof(ULONG64) - 1) /
-    //                    sizeof(ULONG64)];
-    // SYMBOL_INFO *sym = (SYMBOL_INFO *)symBuffer;
-    // sym->MaxNameLen = MAX_SYM_NAME;
-    // sym->SizeOfStruct = sizeof(SYMBOL_INFO);
+  /**
+   * Doesn't work on UWP */
+#ifndef WINAPI_PARTITION_DESKTOP
+    DWORD displacement;
+    SymInitialize(process, NULL, BOOL(TRUE));
 
-    // // Line
-    // IMAGEHLP_LINE64 line = {0};
-    // line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+    // Symbol
+    ULONG64 symBuffer[(sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR) + sizeof(ULONG64) - 1) /
+                       sizeof(ULONG64)];
+    SYMBOL_INFO *sym = (SYMBOL_INFO *)symBuffer;
+    sym->MaxNameLen = MAX_SYM_NAME;
+    sym->SizeOfStruct = sizeof(SYMBOL_INFO);
 
-    // DWORD64 dwAddress = (DWORD64)address;
-    // SymFromAddr(process, dwAddress, NULL, sym);
-    // if (!SymGetLineFromAddr64(process, dwAddress, &displacement, &line))
-    // {
-    //   return false;
-    // }
+    // Line
+    IMAGEHLP_LINE64 line = {0};
+    line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
-    // if (baseAddress)
-    // {
-    //   MODULEINFO moduleInfo = {0};
-    //   if (!GetModuleInformation(process, module, &moduleInfo, sizeof(moduleInfo)))
-    //   {
-    //     return false;
-    //   }
-    //   *baseAddress = moduleInfo.lpBaseOfDll;
-    // }
+    DWORD64 dwAddress = (DWORD64)address;
+    SymFromAddr(process, dwAddress, NULL, sym);
+    if (!SymGetLineFromAddr64(process, dwAddress, &displacement, &line))
+    {
+      return false;
+    }
 
-    // if (symbolName)
-    // {
-    //   *symbolName = sym->Name ? sym->Name : "";
-    // }
+    if (baseAddress)
+    {
+      MODULEINFO moduleInfo = {0};
+      if (!GetModuleInformation(process, module, &moduleInfo, sizeof(moduleInfo)))
+      {
+        return false;
+      }
+      *baseAddress = moduleInfo.lpBaseOfDll;
+    }
 
-    // if (symbolAddress)
-    // {
-    //   *symbolAddress = (void *)sym->Address;
-    // }
+    if (symbolName)
+    {
+      *symbolName = sym->Name ? sym->Name : "";
+    }
+
+    if (symbolAddress)
+    {
+      *symbolAddress = (void *)sym->Address;
+    }
+#else /* WINAPI_PARTITION_DESKTOP */
+
+    /**
+     * We can Retrieve base address on WinRT. */
+    if (baseAddress)
+    {
+      MODULEINFO moduleInfo = {0};
+      if (!GetModuleInformation(process, module, &moduleInfo, sizeof(moduleInfo)))
+      {
+        return false;
+      }
+      *baseAddress = moduleInfo.lpBaseOfDll;
+
+      /**
+       * We can return true, so long as we did
+       * not request a symbol name or symbol
+       * address -- so we passthrough here.
+       * 
+       * :: pass :: */
+    }
+
+    /**
+     * We cannot retrieve symbol name on WinRT. */
+    if (symbolName)
+    {
+      *symbolName = std::string();
+      return false;
+    }
+
+    /**
+     * We cannot retrieve symbol address on WinRT. */
+    if (symbolAddress)
+    {
+      *symbolAddress = nullptr;
+      return false;
+    }
+
+#endif /* WINRT */
   }
   return true;
 

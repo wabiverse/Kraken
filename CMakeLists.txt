@@ -174,7 +174,7 @@ option(BUILD_SHARED_LIBS "Build all libraries as shared libraries" ON)
 # Build Options
 
 option(WITH_KRAKEN                   "Build the KRAKEN executable, The Digital Content Creation Platform of the 21st Century"     ON)
-option(WITH_KRAKEN_MONOLITHIC        "Build all Pixar API libraries as one big monolithic library, the maelstrom"               ON)
+option(WITH_KRAKEN_MONOLITHIC        "Build all Pixar API libraries as one big monolithic library, the maelstrom"                 ON)
 option(WITH_LICENSING                "Save my investments god damnit"                                                             ON)
 option(WITH_TESTS                    "Build kraken test executables"                                                              ON)
 option(WITH_USD                      "Enable Universal Scene Description (USD) Support"                                           ON)

@@ -181,6 +181,12 @@ list(APPEND CONTENT_FILES
   ${KRAKEN_APPX_IDL}
 )
 
+file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")
+foreach(dlls ${out_inst_dll})
+  get_filename_component(ffdll ${dlls} NAME)
+  list(APPEND RELEASE_CONTENT_FILES ${CMAKE_BINARY_DIR}/bin/Release/${ffdll})
+endforeach()
+
 file(GLOB out_inst_ico "${CMAKE_SOURCE_DIR}/release/windows/icons/*.png")
 foreach(ico ${out_inst_ico})
   get_filename_component(ffico ${ico} NAME)
@@ -196,8 +202,11 @@ endforeach()
 set_property(SOURCE ${CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 set_property(SOURCE ${ASSET_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 set_property(SOURCE ${STRING_FILES} PROPERTY VS_TOOL_OVERRIDE "PRIResource")
-set_property(SOURCE ${DEBUG_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT $<CONFIG:Debug>)
-set_property(SOURCE ${RELEASE_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT $<CONFIG:Release,RelWithDebInfo,MinSizeRel>)
+if(KRAKEN_RELEASE_MODE)
+  set_property(SOURCE ${RELEASE_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
+else()
+  set_property(SOURCE ${DEBUG_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
+endif()
 
 add_custom_target(appximages ALL SOURCES ${ASSET_FILES})
 add_custom_target(appxml ALL SOURCES ${CONTENT_FILES})
