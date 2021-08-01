@@ -203,13 +203,11 @@ list(APPEND CONTENT_FILES
   ${KRAKEN_APPX_IDL}
 )
 
-# Icon Assets.
-set(KRAKEN_APPX_ICONS ${CMAKE_SOURCE_DIR}/release/windows/appx/assets)
-set(KRAKEN_ALL_ICONS ${CMAKE_SOURCE_DIR}/release/windows/icons)
-list(APPEND ASSET_FILES
-  ${KRAKEN_APPX_ICONS}
-  ${KRAKEN_ALL_ICONS}
-)
+file(GLOB out_inst_ico "${CMAKE_SOURCE_DIR}/release/windows/icons/*.png")
+foreach(ico ${out_inst_ico})
+  get_filename_component(ffico ${ico} NAME)
+  list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/release/windows/icons/${ffico})
+endforeach()
 
 file(GLOB out_inst "${CMAKE_SOURCE_DIR}/release/windows/appx/assets/*.png")
 foreach(apx ${out_inst})

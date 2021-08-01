@@ -35,9 +35,9 @@
             <uap:SupportedFileTypes>
               <uap:FileType>.usd</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap2:SupportedVerbs>
+            <!-- <uap2:SupportedVerbs>
               <uap3:Verb Id="open" Parameters="&quot;%1&quot;">open</uap3:Verb>
-            </uap2:SupportedVerbs>
+            </uap2:SupportedVerbs> -->
           </uap3:FileTypeAssociation>
         </uap3:Extension>
         <uap3:Extension Category="windows.appExecutionAlias" Executable="kraken.exe" EntryPoint="Windows.FullTrustApplication">

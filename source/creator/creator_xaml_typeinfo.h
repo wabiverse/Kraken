@@ -92,7 +92,7 @@ namespace winrt::Kraken::implementation
     ::winrt::hstring _fullName;
   };
 
-  struct __declspec(uuid("63A5FDC1-874E-4D22-9BC7-A0E3488AD5B2")) IXamlUserType : ::IUnknown
+  struct __declspec(uuid("3DC14369-4331-4C7D-9072-A83E6D90FC45")) IXamlUserType : ::IUnknown
   {
     virtual bool IsReturnTypeStub() const = 0;
     virtual bool IsLocalType() const = 0;
