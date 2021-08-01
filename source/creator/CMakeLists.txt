@@ -226,10 +226,6 @@ else()
   add_executable(kraken ${EXETYPE} ${SRC})
   kraken_precompile_headers(kraken pch.cpp pch.h)
   if(WIN32)
-    # add_executable(kraken-launcher WIN32
-    #   kraken_launcher_win32.c
-    # )
-
     # target_link_options(kraken PUBLIC "LINKER:/WINMDFILE:Kraken")
     set_property(SOURCE ${KRAKEN_APPX_XML} PROPERTY VS_XAML_TYPE ApplicationDefinition)
 
@@ -245,8 +241,6 @@ else()
       VS_GLOBAL_PlatformToolset "v143"
       VS_GLOBAL_MinimumVisualStudioVersion "17.0"
     )
-    # target_compile_definitions (kraken-launcher PRIVATE -D_UNICODE -DUNICODE)
-    # target_link_libraries(kraken-launcher Pathcch.lib)
   endif()
 endif()
 
@@ -1295,7 +1289,7 @@ if(WIN32)
 endif()
 
 # -----------------------------------------------------------------------------
-# Setup launcher
+# Setup Kraken
 
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   install(
