@@ -60,11 +60,13 @@ endif()
 
 # Setup the exe sources and buildinfo
 set(SRC
+  creator.cpp
   creator_args.cpp
   environment.cpp
 
   ${KRAKEN_CREATOR_SOURCE_FILES}
 
+  creator.h
   ${CONTENT_FILES}
   ${ASSET_FILES}
   ${STRING_FILES}
@@ -1308,6 +1310,9 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview"
     VS_GLOBAL_PlatformToolset "v143"
     VS_GLOBAL_MinimumVisualStudioVersion "17.0"
+    VS_GLOBAL_PackageCertificateKeyFile "kraken_TemporaryKey.pfx"
+    VS_GLOBAL_AppxBundle "Always"
+    VS_GLOBAL_AppxBundlePlatforms "x64"
   )
 endif()
 

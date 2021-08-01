@@ -45,6 +45,7 @@ if "%MUST_CLEAN%"=="1" (
 		/target:clean ^
 		/property:Configuration=%BUILD_TYPE% ^
 		/p:PreferredToolArchitecture=x64 ^
+		/maxcpucount ^
 		/verbosity:minimal ^
 		/p:platform=%MSBUILD_PLATFORM%
 )

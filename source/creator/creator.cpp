@@ -182,6 +182,60 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
       Window::Current().Activate();
     }
   }
+
+  ContentDialog dialog;
+  dialog.Title(box_value(L"Testing"));
+  dialog.Content(box_value(L"Hello"));
+  dialog.PrimaryButtonText(L"Okay");
+  dialog.CloseButtonText(L"Close");
+
+  auto result = dialog.ShowAsync();
+
+  if (result.GetResults() == ContentDialogResult::Primary)
+  {
+
+  }
+
+  kContext *C;
+
+  /* Environment variables. */
+  CREATOR_kraken_env_init();
+
+  /* Create Context C. */
+  C = CTX_create();
+
+  /* Initialize path to executable. */
+  KKE_appdir_program_path_init();
+
+  /* Initialize Threads. */
+  // KLI_threadapi_init();
+
+  /* Initialize Globals (paths, sys). */
+  KKE_kraken_globals_init();
+
+  /* Init plugins. */
+  KKE_kraken_plugins_init();
+
+  /* Init & parse args.
+   * CREATOR_setup_args(argc, (const char **)argv);
+   * if (CREATOR_parse_args(argc, (const char **)argv) != 0)
+   * {
+   *   return 0;
+   * } */
+
+  KKE_appdir_init();
+
+  /* Determining Stage Configuration and Loadup. */
+  KKE_kraken_main_init(C);
+
+  /* Initialize main Runtime. */
+  WM_init(C);
+
+  /* Initialize kraken python module. */
+  CTX_py_init_set(C, true);
+
+  /* Run the main event loop. */
+  WM_main(C);
 }
 
 void Creator::OnSuspending([[maybe_unused]] IInspectable const &sender, [[maybe_unused]] SuspendingEventArgs const &e)
@@ -335,7 +389,6 @@ int main(int argc, const char **argv)
   KKE_kraken_plugins_init();
 
   /* Init & parse args. */
-
   CREATOR_setup_args(argc, (const char **)argv);
   if (CREATOR_parse_args(argc, (const char **)argv) != 0)
   {

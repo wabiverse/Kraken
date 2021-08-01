@@ -3,7 +3,7 @@
 <!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
 
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap uap2 uap3 desktop rescap build">
-  <Identity Name="Kraken" Publisher="E=mail@kraken3d.org, CN=Wabi Animation CA, OU=Chaos Engine, O=Wabi Animation, L=Denver, S=Colorado, C=US" Version="1.50.0.0" ProcessorArchitecture="x64" />
+  <Identity Name="Kraken" Publisher="E=mail@kraken3d.org, CN=Wabi Animation, OU=Chaos Engine, O=Wabi Animation, L=Denver, S=Colorado, C=US" Version="1.50.0.0" ProcessorArchitecture="x64" />
   <Properties>
     <DisplayName>Kraken</DisplayName>
     <PublisherDisplayName>Wabi Animation</PublisherDisplayName>
@@ -34,13 +34,16 @@
           <uap3:FileTypeAssociation Name="usd">
             <uap:SupportedFileTypes>
               <uap:FileType>.usd</uap:FileType>
+              <uap:FileType>.usdc</uap:FileType>
+              <uap:FileType>.usdz</uap:FileType>
+              <uap:FileType>.usda</uap:FileType>
             </uap:SupportedFileTypes>
             <!-- <uap2:SupportedVerbs>
               <uap3:Verb Id="open" Parameters="&quot;%1&quot;">open</uap3:Verb>
             </uap2:SupportedVerbs> -->
           </uap3:FileTypeAssociation>
         </uap3:Extension>
-        <uap3:Extension Category="windows.appExecutionAlias" Executable="kraken.exe" EntryPoint="Windows.FullTrustApplication">
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="kraken.exe" EntryPoint="Kraken.Creator">
           <uap3:AppExecutionAlias>
             <desktop:ExecutionAlias Alias="kraken.exe" />
           </uap3:AppExecutionAlias>

@@ -28,7 +28,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-void WM_init(kContext *C, int argc, const char **argv);
+void WM_init(kContext *C, int argc = 0, const char **argv = NULL);
 void WM_exit(kContext *C);
 void WM_exit_ex(kContext *C, const bool do_python);
 

@@ -143,24 +143,6 @@ configure_file(
 )
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/source/creator/creator.h
-  ${CMAKE_BINARY_DIR}/source/creator/Creator.h
-  @ONLY
-)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/source/creator/creator.cpp
-  ${CMAKE_BINARY_DIR}/source/creator/Creator.cpp
-  @ONLY
-)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/source/creator/creator.h
-  ${CMAKE_BINARY_DIR}/source/creator/Creator.h
-  @ONLY
-)
-
-configure_file(
   ${CMAKE_SOURCE_DIR}/source/creator/pch.h
   ${CMAKE_BINARY_DIR}/source/creator/pch.h
   @ONLY
@@ -175,19 +157,15 @@ list(APPEND STRING_FILES
 )
 
 # Manifest Assets.
-set(KRAKEN_CREATOR_SOURCE ${CMAKE_BINARY_DIR}/source/creator/Creator.cpp)
 set(KRAKEN_METADATA_SOURCE ${CMAKE_BINARY_DIR}/source/creator/creator_xaml_metadata.cpp)
 set(KRAKEN_TYPEINFO_SOURCE ${CMAKE_BINARY_DIR}/source/creator/creator_xaml_typeinfo.cpp)
-set(KRAKEN_CREATOR_HEADER ${CMAKE_BINARY_DIR}/source/creator/Creator.h)
 set(KRAKEN_TYPEINFO_HEADER ${CMAKE_BINARY_DIR}/source/creator/creator_xaml_typeinfo.h)
 set(KRAKEN_METADATA_HEADER ${CMAKE_BINARY_DIR}/source/creator/creator_xaml_metadata.h)
 
 
 list(APPEND KRAKEN_CREATOR_SOURCE_FILES
-  ${KRAKEN_CREATOR_SOURCE}
   ${KRAKEN_METADATA_SOURCE}
   ${KRAKEN_TYPEINFO_SOURCE}
-  ${KRAKEN_CREATOR_HEADER}
   ${KRAKEN_TYPEINFO_HEADER}
   ${KRAKEN_METADATA_HEADER}
 )

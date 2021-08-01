@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <cctype>
 #include <errno.h>
+#include <filesystem>
 #include <limits.h>
 #include <string>
 #include <sys/stat.h>
@@ -48,6 +49,8 @@
 #else
 #  include <glob.h>
 #endif
+
+namespace fs = std::filesystem;
 
 using std::pair;
 using std::string;
@@ -290,8 +293,8 @@ string TfReadLink(string const &path)
 bool TfIsRelativePath(std::string const &path)
 {
 #if defined(ARCH_OS_WINDOWS)
-  auto file = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(LPCWSTR(path.c_str()));
-  return path.empty() || (!file.GetResults().Path().empty() && path[0] != '/' && path[0] != '\\');
+  fs::path filepath = path;
+  return path.empty() || (filepath.is_relative() && path[0] != '/' && path[0] != '\\');
 #else
   return path.empty() || path[0] != '/';
 #endif

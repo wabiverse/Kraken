@@ -27,17 +27,17 @@ if($IsWindows) {
 }
 
 
-function RunOfficialReleaseKraken {
-  if($IsWindows) {
-    & "$env:ProgramFiles\Wabi Animation\Kraken $KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR\kraken.exe" $args
-  }
-  if($IsMacOS) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
-  }
-  if($IsLinux) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
-  }
-}
+# function RunOfficialReleaseKraken {
+#   if($IsWindows) {
+#     & "$env:ProgramFiles\Wabi Animation\Kraken $KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR\kraken.exe" $args
+#   }
+#   if($IsMacOS) {
+#     Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+#   }
+#   if($IsLinux) {
+#     Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+#   }
+# }
 
 function RunDevelopmentReleaseKraken {
   if($IsWindows) {
@@ -160,7 +160,7 @@ if($IsLinux) {
 }
 
 # Run Kraken
-Set-Alias kraken RunOfficialReleaseKraken
+# Set-Alias kraken RunOfficialReleaseKraken
 Set-Alias kraken_r RunDevelopmentReleaseKraken
 Set-Alias kraken_d RunDevelopmentDebugKraken
 

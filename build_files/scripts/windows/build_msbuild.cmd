@@ -18,6 +18,7 @@ msbuild ^
 	%BUILD_DIR%\INSTALL.vcxproj ^
 	/property:Configuration=%BUILD_TYPE% ^
 	/p:PreferredToolArchitecture=x64 ^
+	/maxcpucount ^
 	/verbosity:minimal ^
 	/p:platform=%MSBUILD_PLATFORM% 
 	if errorlevel 1 (

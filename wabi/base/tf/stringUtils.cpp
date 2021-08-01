@@ -39,6 +39,7 @@
 #include <climits>
 #include <cstdarg>
 #include <ctype.h>
+#include <filesystem>
 #include <limits>
 #include <memory>
 #include <utility>
@@ -55,6 +56,8 @@
 #  include <winrt/Windows.Storage.h>
 #  include <Shlwapi.h>
 #endif
+
+namespace fs = std::filesystem;
 
 using std::list;
 using std::make_pair;
@@ -309,7 +312,7 @@ string TfGetBaseName(const string &fileName)
   if (i == fileName.size() - 1)  // ends in directory delimiter
     return TfGetBaseName(fileName.substr(0, i));
 #if defined(ARCH_OS_WINDOWS)
-  auto result = winrt::Windows::Storage::StorageFile::GetFileFromPathAsync((LPCWSTR)fileName.c_str());
+  const fs::path result = fileName;
 
   // If PathFindFilename returns the same string back, that means it didn't
   // do anything.  That could mean that the patch has no basename, in which
@@ -317,7 +320,7 @@ string TfGetBaseName(const string &fileName)
   // fileName was already basename, in which case we want to return the
   // string back.
 
-  if (result.GetResults().Path().empty())
+  if (result.string() == fileName)
   {
     const bool hasDriveLetter = fileName.find(":") != string::npos;
     const bool hasPathSeparator = i != string::npos;
@@ -326,7 +329,7 @@ string TfGetBaseName(const string &fileName)
       return std::string();
     }
   }
-  return to_string(result.GetResults().Path());
+  return result.string();
 
 #else
   if (i == string::npos)  // no / in name
