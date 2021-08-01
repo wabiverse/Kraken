@@ -187,7 +187,6 @@ bool ArchGetAddressInfo(void *address,
     if (symbolName)
     {
       *symbolName = std::string();
-      return false;
     }
 
     /**
@@ -195,6 +194,10 @@ bool ArchGetAddressInfo(void *address,
     if (symbolAddress)
     {
       *symbolAddress = nullptr;
+    }
+
+    if (symbolName || symbolAddress)
+    {
       return false;
     }
 
