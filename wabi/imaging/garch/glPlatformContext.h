@@ -60,7 +60,7 @@
 WABI_NAMESPACE_BEGIN
 
 #ifndef WINAPI_PARTITION_DESKTOP
-GARCH_API 
+GARCH_API
 #endif /* WINAPI_PARTITION_DESKTOP */
 GarchGLPlatformContextState GarchGetNullGLPlatformContextState();
 

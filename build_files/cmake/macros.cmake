@@ -283,6 +283,17 @@ function(kraken_add_lib__impl
     set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE "-Wl,--whole-archive $<TARGET_FILE:kraken> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
   endif()
 
+  if(WIN32)
+    set_property(TARGET ${name} PROPERTY VS_WINRT_COMPONENT ON)
+    set_property(TARGET ${name} PROPERTY VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}")
+    set_property(TARGET ${name} PROPERTY VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}")
+    set_property(TARGET ${name} PROPERTY VS_PACKAGE_REFERENCES "Microsoft.UI.Xaml_2.6.1;Microsoft.Windows.CppWinRT_2.0.210722.2;Microsoft.VSSDK.BuildTools_17.0.2155-preview2")
+    set_property(TARGET ${name} PROPERTY VS_GLOBAL_TargetFramework "Microsoft.VSSDK.BuildTools_17.0.2155-preview2")
+    set_property(TARGET ${name} PROPERTY VS_GLOBAL_UseWindowsSdkPreview "true")
+    set_property(TARGET ${name} PROPERTY VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview")
+    set_property(TARGET ${name} PROPERTY VS_GLOBAL_PlatformToolset "v143")
+  endif()
+
   add_dependencies(${name} maelstrom)
   
 

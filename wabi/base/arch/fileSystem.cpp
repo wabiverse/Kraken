@@ -57,8 +57,8 @@
 #    ifdef WINRT_LEAN_AND_MEAN
 #      undef WINRT_LEAN_AND_MEAN
 #    endif /* WINRT_LEAN_AND_MEAN */
-#  endif /* WIN_LEAN_AND_MEAN */
-#  include <Windows.h> 
+#  endif   /* WIN_LEAN_AND_MEAN */
+#  include <Windows.h>
 #  include "pch.h"
 #  include <winrt/Windows.Foundation.h>
 #  include <winrt/Windows.Security.Dataprotection.h>
@@ -114,7 +114,7 @@ int ArchRmDir(const char *path)
 {
   auto dir = StorageFolder::GetFolderFromPathAsync((LPCWSTR)path);
   dir.GetResults().DeleteAsync(StorageDeleteOption::PermanentDelete);
-  
+
   return (uint32_t)dir.Status();
 }
 #endif
@@ -691,7 +691,7 @@ static const char *_TmpDir = 0;
 
 ARCH_HIDDEN
 void Arch_InitTmpDir()
-{ 
+{
   /* Removes the trailing slash. */
   auto temp_path = fs::temp_directory_path().parent_path().string();
 
@@ -1113,7 +1113,7 @@ int ArchFileAccess(const char *path, int mode)
 
     DWORD accessMask = ArchModeToAccess(mode);
 
-    
+
     // MapGenericMask(&accessMask, &mapping);
 
     // if (AccessCheck(security,
@@ -1125,13 +1125,13 @@ int ArchFileAccess(const char *path, int mode)
     //                 &grantedAccess,
     //                 &accessStatus))
     // {
-      // if (accessStatus)
-      // {
-      //   result = true;
-      // } else
-      // {
-      //   errno = EACCES;
-      // }
+    // if (accessStatus)
+    // {
+    //   result = true;
+    // } else
+    // {
+    //   errno = EACCES;
+    // }
     // }
     CloseHandle(duplicateToken);
   }

@@ -38,9 +38,9 @@
 
 #ifndef WINAPI_PARTITION_DESKTOP
 
-#include <GL/gl.h>
-#include <map>
-#include <tchar.h>
+#  include <GL/gl.h>
+#  include <map>
+#  include <tchar.h>
 
 WABI_NAMESPACE_BEGIN
 

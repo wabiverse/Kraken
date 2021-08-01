@@ -47,10 +47,10 @@
 #if defined(ARCH_OS_WINDOWS)
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
-#  include <Windows.h>
-#  include <winrt/base.h>
-#  include <winrt/Windows.Foundation.h>
-#  include <winrt/Windows.Storage.h>
+#    include <Windows.h>
+#    include <winrt/base.h>
+#    include <winrt/Windows.Foundation.h>
+#    include <winrt/Windows.Storage.h>
 #  endif
 
 #  include <intrin.h>

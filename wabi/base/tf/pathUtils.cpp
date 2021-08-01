@@ -391,7 +391,7 @@ namespace
       if (find != INVALID_HANDLE_VALUE)
       {
         char DefChar = ' ';
-        std::vector<char> ch( j );
+        std::vector<char> ch(j);
         do
         {
           // Recurse with next pattern.

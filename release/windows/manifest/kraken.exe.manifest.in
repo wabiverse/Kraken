@@ -3,7 +3,7 @@
 <!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
 
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity version="1.0.0.0" name="kraken.app"/>
+  <assemblyIdentity version="1.0.0.0" name="Kraken.CRT"/>
 
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>

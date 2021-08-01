@@ -181,15 +181,15 @@ bool KKE_appdir_folder_documents(char *dir)
 bool KKE_appdir_font_folder_default(char *dir)
 {
   bool success = false;
-// #ifdef WIN32
-//   wchar_t wpath[FILE_MAXDIR];
-//   success = SHGetSpecialFolderPathW(0, wpath, CSIDL_FONTS, 0);
-//   if (success)
-//   {
-//     wcscat(wpath, L"\\");
-//     KLI_strncpy_wchar_as_utf8(dir, wpath, FILE_MAXDIR);
-//   }
-// #endif
+  // #ifdef WIN32
+  //   wchar_t wpath[FILE_MAXDIR];
+  //   success = SHGetSpecialFolderPathW(0, wpath, CSIDL_FONTS, 0);
+  //   if (success)
+  //   {
+  //     wcscat(wpath, L"\\");
+  //     KLI_strncpy_wchar_as_utf8(dir, wpath, FILE_MAXDIR);
+  //   }
+  // #endif
   /* TODO: Values for other platforms. */
   TF_UNUSED(dir);
   return success;

@@ -42,9 +42,7 @@ if(NOT DEFINED CMAKE_BUILD_TYPE_INIT)
 endif()
 
 # Omit superfluous "Up-to-date" messages.
-if(NOT DEFINED CMAKE_INSTALL_MESSAGE)
-  set(CMAKE_INSTALL_MESSAGE "LAZY")
-endif()
+set(CMAKE_INSTALL_MESSAGE LAZY)
 
 # global compile definitions since add_definitions() adds for all.
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS

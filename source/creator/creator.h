@@ -24,9 +24,67 @@
 
 #pragma once
 
+#include "pch.h"
 
 /**
  *  -----  The Kraken Creator. ----- */
+
+#if defined(ARCH_OS_WINDOWS)
+
+#  include "creator_xaml_typeinfo.h"
+#  include "creator_xaml_metadata.h"
+
+namespace winrt::Kraken::implementation
+{
+
+  template<typename D, typename... Interfaces>
+  struct CreatorT : public ::winrt::Windows::UI::Xaml::ApplicationT<D, ::winrt::Windows::UI::Xaml::Markup::IXamlMetadataProvider, Interfaces...>
+  {
+    using IXamlType = ::winrt::Windows::UI::Xaml::Markup::IXamlType;
+
+    void InitializeComponent()
+    {}
+
+    IXamlType GetXamlType(::winrt::Windows::UI::Xaml::Interop::TypeName const &type)
+    {
+      return AppProvider()->GetXamlType(type);
+    }
+
+    IXamlType GetXamlType(::winrt::hstring const &fullName)
+    {
+      return AppProvider()->GetXamlType(fullName);
+    }
+
+    ::winrt::com_array<::winrt::Windows::UI::Xaml::Markup::XmlnsDefinition> GetXmlnsDefinitions()
+    {
+      return AppProvider()->GetXmlnsDefinitions();
+    }
+
+   private:
+    bool _contentLoaded{false};
+    winrt::com_ptr<XamlMetaDataProvider> _appProvider;
+    winrt::com_ptr<XamlMetaDataProvider> AppProvider()
+    {
+      if (!_appProvider)
+      {
+        _appProvider = winrt::make_self<XamlMetaDataProvider>();
+      }
+      return _appProvider;
+    }
+  };
+
+  struct Creator : CreatorT<Creator>
+  {
+    Creator();
+
+    void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &);
+    void OnSuspending(IInspectable const &, Windows::ApplicationModel::SuspendingEventArgs const &);
+    void OnNavigationFailed(IInspectable const &, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs const &);
+  };
+
+}  // namespace winrt::Kraken::implementation
+
+#endif /* ARCH_OS_WINDOWS */
 
 
 void CREATOR_kraken_env_init();

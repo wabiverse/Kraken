@@ -34,9 +34,9 @@ using namespace winrt::Windows;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Storage;
 
-#include <wabi/base/tf/diagnostic.h>
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/base/arch/systemInfo.h>
+#  include <wabi/base/tf/diagnostic.h>
+#  include <wabi/base/tf/stringUtils.h>
+#  include <wabi/base/arch/systemInfo.h>
 
 #  define WIN32_SKIP_HKEY_PROTECTION  // need to use HKEY
 #  include "KLI_path_utils.h"

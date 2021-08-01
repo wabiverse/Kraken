@@ -60,11 +60,17 @@ endif()
 
 # Setup the exe sources and buildinfo
 set(SRC
-  creator.cpp
   creator_args.cpp
   environment.cpp
 
-  creator.h
+  ${KRAKEN_CREATOR_SOURCE_FILES}
+
+  ${CONTENT_FILES}
+  ${ASSET_FILES}
+  ${STRING_FILES}
+  ${DEBUG_CONTENT_FILES}
+  ${RELEASE_CONTENT_FILES}
+  ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
 )
 
 # MSVC 2010 gives linking errors with the manifest
@@ -75,15 +81,6 @@ if(WIN32 AND NOT UNIX)
     -DKRAKEN_VER_RC_2=${KRAKEN_VERSION_MINOR}
     -DKRAKEN_VER_RC_3=${KRAKEN_VERSION_PATCH}
     -DKRAKEN_VER_RC_4=0
-  )
-
-
-  list(APPEND SRC
-    ${CONTENT_FILES}
-    ${ASSET_FILES}
-    ${STRING_FILES}
-    ${DEBUG_CONTENT_FILES}
-    ${RELEASE_CONTENT_FILES}
   )
 endif()
 
@@ -184,11 +181,11 @@ if(WITH_BUILDINFO)
   # -------------- done with header values.
 
   list(APPEND SRC
-    buildinfo.c
+    buildinfo.cpp
   )
 
   # make an object library so can load with it in tests
-  add_library(buildinfoobj OBJECT buildinfo.c)
+  add_library(buildinfoobj OBJECT buildinfo.cpp)
   add_dependencies(buildinfoobj buildinfo)
 endif()
 
@@ -227,17 +224,21 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
+  kraken_precompile_headers(kraken pch.cpp pch.h)
   if(WIN32)
     # add_executable(kraken-launcher WIN32
     #   kraken_launcher_win32.c
     # )
+
+    # target_link_options(kraken PUBLIC "LINKER:/WINMDFILE:Kraken")
+    set_property(SOURCE ${KRAKEN_APPX_XML} PROPERTY VS_XAML_TYPE ApplicationDefinition)
 
     set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT TRUE
       VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
       VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
       VS_GLOBAL_OutputType "WinExe"
-      VS_PACKAGE_REFERENCES "Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
+      VS_PACKAGE_REFERENCES "Microsoft.UI.Xaml_2.6.1;Microsoft.Windows.CppWinRT_2.0.210722.2;Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
       VS_GLOBAL_TargetFramework "Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
       VS_GLOBAL_UseWindowsSdkPreview "true"
       VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview"
@@ -259,11 +260,7 @@ endif()
 # We must collect all the Pokemon, not just
 # some of the Pokemon, so we link whole archive
 if(WIN32)
-  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_DEBUG " /WHOLEARCHIVE:maelstrom")
-  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /WHOLEARCHIVE:maelstrom")
-  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_RELWITHDEBINFO " /WHOLEARCHIVE:maelstrom")
-  set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS_MINSIZEREL " /WHOLEARCHIVE:maelstrom")
-  target_link_libraries(kraken maelstrom)
+  target_link_options(kraken PUBLIC "LINKER:/WHOLEARCHIVE:maelstrom")
 elseif(APPLE)
   target_link_libraries(kraken -Wl,-force_load maelstrom)
 elseif(UNIX)
@@ -1311,6 +1308,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
     VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
     VS_GLOBAL_OutputType "WinExe"
+    VS_PACKAGE_REFERENCES "Microsoft.UI.Xaml_2.6.1;Microsoft.Windows.CppWinRT_2.0.210722.2;Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
     VS_GLOBAL_TargetFramework "Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
     VS_GLOBAL_UseWindowsSdkPreview "true"
     VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview"

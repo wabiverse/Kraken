@@ -246,9 +246,9 @@ bool TfIsDirEmpty(string const &path)
 bool TfSymlink(string const &src, string const &dst)
 {
 #if defined(ARCH_OS_WINDOWS)
-#ifndef SYMBOLIC_LINK_FLAG_DIRECTORY
-#define SYMBOLIC_LINK_FLAG_DIRECTORY (0x1)
-#endif
+#  ifndef SYMBOLIC_LINK_FLAG_DIRECTORY
+#    define SYMBOLIC_LINK_FLAG_DIRECTORY (0x1)
+#  endif
   // if (CreateSymbolicLink(LPCWSTR(dst.c_str()), LPCWSTR(src.c_str()), TfIsDir(src) ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0))
   // {
   //   return true;
@@ -348,7 +348,7 @@ bool TfReadDir(const string &dirPath,
   auto p2 = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(LPCWSTR(dirPath.c_str())).GetResults().Path();
   strncpy(szPath, TfStringCatPaths(to_string(p2), "*.*").c_str(), MAX_PATH);
 
- 
+
   strncpy(szPath, TfStringCatPaths(dirPath.c_str(), "*.*").c_str(), MAX_PATH);
 
   if ((hFind = FindFirstFile(LPCWSTR(szPath), &fdFile)) == INVALID_HANDLE_VALUE)
@@ -665,7 +665,7 @@ bool TfTouchFile(string const &fileName, bool create)
 #else
     winrt::Windows::Storage::StreamedFileDataRequestedHandler req;
     winrt::Windows::Storage::Streams::IRandomAccessStreamReference thumb;
-    auto f = winrt::Windows::Storage::StorageFile::CreateStreamedFileAsync((LPCWSTR)fileName.c_str(), req, thumb);              // no template
+    auto f = winrt::Windows::Storage::StorageFile::CreateStreamedFileAsync((LPCWSTR)fileName.c_str(), req, thumb);  // no template
 
     if (!f.GetResults().IsAvailable())
     {

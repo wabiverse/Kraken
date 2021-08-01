@@ -1251,9 +1251,9 @@ static void AnchorBackendWin32EnableDpiAwareness()
       return;
     }
   }
-// #if _WIN32_WINNT >= 0x0600
-//   ::SetProcessDPIAware();
-// #endif
+  // #if _WIN32_WINNT >= 0x0600
+  //   ::SetProcessDPIAware();
+  // #endif
 }
 
 #if defined(_MSC_VER) && !defined(NOGDI)
@@ -1504,19 +1504,19 @@ eAnchorStatus AnchorDisplayManagerWin32::setCurrentDisplaySetting(AnchorU8 displ
 
 static void initRawInput()
 {
-// #define DEVICE_COUNT 1
+  // #define DEVICE_COUNT 1
 
-//   RAWINPUTDEVICE devices[DEVICE_COUNT];
-//   memset(devices, 0, DEVICE_COUNT * sizeof(RAWINPUTDEVICE));
+  //   RAWINPUTDEVICE devices[DEVICE_COUNT];
+  //   memset(devices, 0, DEVICE_COUNT * sizeof(RAWINPUTDEVICE));
 
-//   // Initiates WM_INPUT messages from keyboard
-//   // That way ANCHOR can retrieve true keys
-//   devices[0].usUsagePage = 0x01;
-//   devices[0].usUsage = 0x06; /* http://msdn.microsoft.com/en-us/windows/hardware/gg487473.aspx */
+  //   // Initiates WM_INPUT messages from keyboard
+  //   // That way ANCHOR can retrieve true keys
+  //   devices[0].usUsagePage = 0x01;
+  //   devices[0].usUsage = 0x06; /* http://msdn.microsoft.com/en-us/windows/hardware/gg487473.aspx */
 
-//   RegisterRawInputDevices(devices, DEVICE_COUNT, sizeof(RAWINPUTDEVICE));
+  //   RegisterRawInputDevices(devices, DEVICE_COUNT, sizeof(RAWINPUTDEVICE));
 
-// #undef DEVICE_COUNT
+  // #undef DEVICE_COUNT
 }
 
 typedef BOOL(WINAPI *ANCHOR_WIN32_EnableNonClientDpiScaling)(HWND);
@@ -1598,7 +1598,7 @@ bool AnchorSystemWin32::processEvents(bool waitForEvent)
   // AnchorWindowWin32 *window = (AnchorWindowWin32 *)m_windowManager->getActiveWindow();
   // if (window->getDrawingContextType() == ANCHOR_DrawingContextTypeDX12)
   // {
-    AnchorBackendDXD12NewFrame();
+  AnchorBackendDXD12NewFrame();
   // }
   AnchorBackendWin32NewFrame();
   ANCHOR::NewFrame();
@@ -1940,643 +1940,643 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   // if (hwnd)
   // {
 
-    // if (msg == WM_NCCREATE)
-    // {
-      // Tell Windows to automatically handle scaling of non-client areas
-      // such as the caption bar. EnableNonClientDpiScaling was introduced in Windows 10
-      // HMODULE m_user32 = ::LoadLibrary("User32.dll");
-      // if (m_user32)
-      // {
-      //   ANCHOR_WIN32_EnableNonClientDpiScaling fpEnableNonClientDpiScaling =
-      //     (ANCHOR_WIN32_EnableNonClientDpiScaling)::GetProcAddress(m_user32, "EnableNonClientDpiScaling");
-      //   if (fpEnableNonClientDpiScaling)
-      //   {
-      //     fpEnableNonClientDpiScaling(hwnd);
-      //   }
-      // }
-    // }
+  // if (msg == WM_NCCREATE)
+  // {
+  // Tell Windows to automatically handle scaling of non-client areas
+  // such as the caption bar. EnableNonClientDpiScaling was introduced in Windows 10
+  // HMODULE m_user32 = ::LoadLibrary("User32.dll");
+  // if (m_user32)
+  // {
+  //   ANCHOR_WIN32_EnableNonClientDpiScaling fpEnableNonClientDpiScaling =
+  //     (ANCHOR_WIN32_EnableNonClientDpiScaling)::GetProcAddress(m_user32, "EnableNonClientDpiScaling");
+  //   if (fpEnableNonClientDpiScaling)
+  //   {
+  //     fpEnableNonClientDpiScaling(hwnd);
+  //   }
+  // }
+  // }
 
-//     AnchorWindowWin32 *window = (AnchorWindowWin32 *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
-//     if (window)
-//     {
-//       if (ANCHOR::GetCurrentContext() == NULL)
-//         return 0;
+  //     AnchorWindowWin32 *window = (AnchorWindowWin32 *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
+  //     if (window)
+  //     {
+  //       if (ANCHOR::GetCurrentContext() == NULL)
+  //         return 0;
 
-//       AnchorIO &io = ANCHOR::GetIO();
-//       AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
+  //       AnchorIO &io = ANCHOR::GetIO();
+  //       AnchorBackendWin32Data *bd = AnchorBackendWin32GetBackendData();
 
-//       switch (msg)
-//       {
-//         // we need to check if new key layout has AltGr
-//         case WM_INPUTLANGCHANGE: {
-//           system->handleKeyboardChange();
-//           break;
-//         }
-//         ////////////////////////////////////////////////////////////////////////
-//         // Keyboard events, processed
-//         ////////////////////////////////////////////////////////////////////////
-//         case WM_INPUT: {
-//           // RAWINPUT raw;
-//           // RAWINPUT *raw_ptr = &raw;
-//           // UINT rawSize = sizeof(RAWINPUT);
+  //       switch (msg)
+  //       {
+  //         // we need to check if new key layout has AltGr
+  //         case WM_INPUTLANGCHANGE: {
+  //           system->handleKeyboardChange();
+  //           break;
+  //         }
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Keyboard events, processed
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WM_INPUT: {
+  //           // RAWINPUT raw;
+  //           // RAWINPUT *raw_ptr = &raw;
+  //           // UINT rawSize = sizeof(RAWINPUT);
 
-//           // GetRawInputData((HRAWINPUT)lParam, RID_INPUT, raw_ptr, &rawSize, sizeof(RAWINPUTHEADER));
+  //           // GetRawInputData((HRAWINPUT)lParam, RID_INPUT, raw_ptr, &rawSize, sizeof(RAWINPUTHEADER));
 
-//           // switch (raw.header.dwType)
-//           // {
-//           //   case RIM_TYPEKEYBOARD:
-//           //     event = processKeyEvent(window, raw);
-//           //     if (!event)
-//           //     {
-//           //       if (TfDebug::IsEnabled(ANCHOR_WIN32))
-//           //       {
-//           //         TF_WARN("AnchorSystemWin32::wndProc: key event ");
-//           //         TF_WARN(std::to_string(msg));
-//           //         TF_WARN(" key ignored");
-//           //       }
-//           //     }
-//           //     break;
-//           // }
-//           break;
-//         }
-//         ////////////////////////////////////////////////////////////////////////
-//         // Keyboard events, ignored
-//         ////////////////////////////////////////////////////////////////////////
-//         case WM_KEYDOWN:
-//         case WM_SYSKEYDOWN:
-//           if (wParam < 256)
-//             io.KeysDown[wParam] = 1;
-//           break;
-//         case WM_KEYUP:
-//         case WM_SYSKEYUP:
-//           if (wParam < 256)
-//             io.KeysDown[wParam] = 0;
-//           break;
-//         /* These functions were replaced by #WM_INPUT. */
-//         case WM_CHAR:
-//           /* The WM_CHAR message is posted to the window with the keyboard focus when
-//            * a WM_KEYDOWN message is translated by the TranslateMessage function. WM_CHAR
-//            * contains the character code of the key that was pressed.
-//            */
-//           if (wParam > 0 && wParam < 0x10000)
-//             io.AddInputCharacterUTF16((unsigned short)wParam);
-//           break;
-//         case WM_DEADCHAR:
-//           /* The WM_DEADCHAR message is posted to the window with the keyboard focus when a
-//            * WM_KEYUP message is translated by the TranslateMessage function. WM_DEADCHAR
-//            * specifies a character code generated by a dead key. A dead key is a key that
-//            * generates a character, such as the umlaut (double-dot), that is combined with
-//            * another character to form a composite character. For example, the umlaut-O
-//            * character (Ö) is generated by typing the dead key for the umlaut character, and
-//            * then typing the O key.
-//            */
-//           break;
-//         case WM_SYSDEADCHAR:
-//         /* The WM_SYSDEADCHAR message is sent to the window with the keyboard focus when
-//          * a WM_SYSKEYDOWN message is translated by the TranslateMessage function.
-//          * WM_SYSDEADCHAR specifies the character code of a system dead key - that is,
-//          * a dead key that is pressed while holding down the alt key.
-//          */
-//         case WM_SYSCHAR:
-//           /* The WM_SYSCHAR message is sent to the window with the keyboard focus when
-//            * a WM_SYSCHAR message is translated by the TranslateMessage function.
-//            * WM_SYSCHAR specifies the character code of a dead key - that is,
-//            * a dead key that is pressed while holding down the alt key.
-//            * To prevent the sound, DefWindowProc must be avoided by return
-//            */
-//           break;
-//         case WM_SYSCOMMAND:
-//           /* The WM_SYSCOMMAND message is sent to the window when system commands such as
-//            * maximize, minimize  or close the window are triggered. Also it is sent when ALT
-//            * button is press for menu. To prevent this we must return preventing DefWindowProc.
-//            *
-//            * Note that the four low-order bits of the wParam parameter are used internally by the
-//            * OS. To obtain the correct result when testing the value of wParam, an application
-//            * must combine the value 0xFFF0 with the wParam value by using the bitwise AND operator.
-//            */
-//           switch (wParam & 0xFFF0)
-//           {
-//             case SC_KEYMENU:
-//               eventHandled = true;
-//               break;
-//             case SC_RESTORE: {
-//               ::ShowWindow(hwnd, SW_RESTORE);
-//               window->setState(window->getState());
+  //           // switch (raw.header.dwType)
+  //           // {
+  //           //   case RIM_TYPEKEYBOARD:
+  //           //     event = processKeyEvent(window, raw);
+  //           //     if (!event)
+  //           //     {
+  //           //       if (TfDebug::IsEnabled(ANCHOR_WIN32))
+  //           //       {
+  //           //         TF_WARN("AnchorSystemWin32::wndProc: key event ");
+  //           //         TF_WARN(std::to_string(msg));
+  //           //         TF_WARN(" key ignored");
+  //           //       }
+  //           //     }
+  //           //     break;
+  //           // }
+  //           break;
+  //         }
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Keyboard events, ignored
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WM_KEYDOWN:
+  //         case WM_SYSKEYDOWN:
+  //           if (wParam < 256)
+  //             io.KeysDown[wParam] = 1;
+  //           break;
+  //         case WM_KEYUP:
+  //         case WM_SYSKEYUP:
+  //           if (wParam < 256)
+  //             io.KeysDown[wParam] = 0;
+  //           break;
+  //         /* These functions were replaced by #WM_INPUT. */
+  //         case WM_CHAR:
+  //           /* The WM_CHAR message is posted to the window with the keyboard focus when
+  //            * a WM_KEYDOWN message is translated by the TranslateMessage function. WM_CHAR
+  //            * contains the character code of the key that was pressed.
+  //            */
+  //           if (wParam > 0 && wParam < 0x10000)
+  //             io.AddInputCharacterUTF16((unsigned short)wParam);
+  //           break;
+  //         case WM_DEADCHAR:
+  //           /* The WM_DEADCHAR message is posted to the window with the keyboard focus when a
+  //            * WM_KEYUP message is translated by the TranslateMessage function. WM_DEADCHAR
+  //            * specifies a character code generated by a dead key. A dead key is a key that
+  //            * generates a character, such as the umlaut (double-dot), that is combined with
+  //            * another character to form a composite character. For example, the umlaut-O
+  //            * character (Ö) is generated by typing the dead key for the umlaut character, and
+  //            * then typing the O key.
+  //            */
+  //           break;
+  //         case WM_SYSDEADCHAR:
+  //         /* The WM_SYSDEADCHAR message is sent to the window with the keyboard focus when
+  //          * a WM_SYSKEYDOWN message is translated by the TranslateMessage function.
+  //          * WM_SYSDEADCHAR specifies the character code of a system dead key - that is,
+  //          * a dead key that is pressed while holding down the alt key.
+  //          */
+  //         case WM_SYSCHAR:
+  //           /* The WM_SYSCHAR message is sent to the window with the keyboard focus when
+  //            * a WM_SYSCHAR message is translated by the TranslateMessage function.
+  //            * WM_SYSCHAR specifies the character code of a dead key - that is,
+  //            * a dead key that is pressed while holding down the alt key.
+  //            * To prevent the sound, DefWindowProc must be avoided by return
+  //            */
+  //           break;
+  //         case WM_SYSCOMMAND:
+  //           /* The WM_SYSCOMMAND message is sent to the window when system commands such as
+  //            * maximize, minimize  or close the window are triggered. Also it is sent when ALT
+  //            * button is press for menu. To prevent this we must return preventing DefWindowProc.
+  //            *
+  //            * Note that the four low-order bits of the wParam parameter are used internally by the
+  //            * OS. To obtain the correct result when testing the value of wParam, an application
+  //            * must combine the value 0xFFF0 with the wParam value by using the bitwise AND operator.
+  //            */
+  //           switch (wParam & 0xFFF0)
+  //           {
+  //             case SC_KEYMENU:
+  //               eventHandled = true;
+  //               break;
+  //             case SC_RESTORE: {
+  //               ::ShowWindow(hwnd, SW_RESTORE);
+  //               window->setState(window->getState());
 
-// #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
-//               ANCHOR_Wintab *wt = window->getWintab();
-//               if (wt)
-//               {
-//                 wt->enable();
-//               }
-// #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+  // #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+  //               ANCHOR_Wintab *wt = window->getWintab();
+  //               if (wt)
+  //               {
+  //                 wt->enable();
+  //               }
+  // #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
 
-//               eventHandled = true;
-//               break;
-//             }
-//             case SC_MAXIMIZE: {
+  //               eventHandled = true;
+  //               break;
+  //             }
+  //             case SC_MAXIMIZE: {
 
-// #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
-//               ANCHOR_Wintab *wt = window->getWintab();
-//               if (wt)
-//               {
-//                 wt->enable();
-//               }
-// #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+  // #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+  //               ANCHOR_Wintab *wt = window->getWintab();
+  //               if (wt)
+  //               {
+  //                 wt->enable();
+  //               }
+  // #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
 
-//               /* Don't report event as handled so that default handling occurs. */
-//               break;
-//             }
-//             case SC_MINIMIZE: {
+  //               /* Don't report event as handled so that default handling occurs. */
+  //               break;
+  //             }
+  //             case SC_MINIMIZE: {
 
-// #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
-//               ANCHOR_Wintab *wt = window->getWintab();
-//               if (wt)
-//               {
-//                 wt->disable();
-//               }
-// #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+  // #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+  //               ANCHOR_Wintab *wt = window->getWintab();
+  //               if (wt)
+  //               {
+  //                 wt->disable();
+  //               }
+  // #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
 
-//               /* Don't report event as handled so that default handling occurs. */
-//               break;
-//             }
-//           }
-//           break;
+  //               /* Don't report event as handled so that default handling occurs. */
+  //               break;
+  //             }
+  //           }
+  //           break;
 
-// #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+  // #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
 
-//         ////////////////////////////////////////////////////////////////////////
-//         // Wintab events, processed
-//         ////////////////////////////////////////////////////////////////////////
-//         case WT_CSRCHANGE: {
-//           ANCHOR_Wintab *wt = window->getWintab();
-//           if (wt)
-//           {
-//             wt->updateCursorInfo();
-//           }
-//           eventHandled = true;
-//           break;
-//         }
-//         case WT_PROXIMITY: {
-//           ANCHOR_Wintab *wt = window->getWintab();
-//           if (wt)
-//           {
-//             bool inRange = LOWORD(lParam);
-//             if (inRange)
-//             {
-//               /* Some devices don't emit WT_CSRCHANGE events, so update cursor info here. */
-//               wt->updateCursorInfo();
-//             } else
-//             {
-//               wt->leaveRange();
-//             }
-//           }
-//           eventHandled = true;
-//           break;
-//         }
-//         case WT_INFOCHANGE: {
-//           ANCHOR_Wintab *wt = window->getWintab();
-//           if (wt)
-//           {
-//             wt->processInfoChange(lParam);
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Wintab events, processed
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WT_CSRCHANGE: {
+  //           ANCHOR_Wintab *wt = window->getWintab();
+  //           if (wt)
+  //           {
+  //             wt->updateCursorInfo();
+  //           }
+  //           eventHandled = true;
+  //           break;
+  //         }
+  //         case WT_PROXIMITY: {
+  //           ANCHOR_Wintab *wt = window->getWintab();
+  //           if (wt)
+  //           {
+  //             bool inRange = LOWORD(lParam);
+  //             if (inRange)
+  //             {
+  //               /* Some devices don't emit WT_CSRCHANGE events, so update cursor info here. */
+  //               wt->updateCursorInfo();
+  //             } else
+  //             {
+  //               wt->leaveRange();
+  //             }
+  //           }
+  //           eventHandled = true;
+  //           break;
+  //         }
+  //         case WT_INFOCHANGE: {
+  //           ANCHOR_Wintab *wt = window->getWintab();
+  //           if (wt)
+  //           {
+  //             wt->processInfoChange(lParam);
 
-//             if (window->usingTabletAPI(AnchorTabletWintab))
-//             {
-//               window->resetPointerPenInfo();
-//             }
-//           }
-//           eventHandled = true;
-//           break;
-//         }
-//         case WT_PACKET:
-//           processWintabEvent(window);
-//           eventHandled = true;
-//           break;
+  //             if (window->usingTabletAPI(AnchorTabletWintab))
+  //             {
+  //               window->resetPointerPenInfo();
+  //             }
+  //           }
+  //           eventHandled = true;
+  //           break;
+  //         }
+  //         case WT_PACKET:
+  //           processWintabEvent(window);
+  //           eventHandled = true;
+  //           break;
 
-// #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+  // #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
 
-//         ////////////////////////////////////////////////////////////////////////
-//         // Pointer events, processed
-//         ////////////////////////////////////////////////////////////////////////
-//         case WM_POINTERUPDATE:
-//         case WM_POINTERDOWN:
-//         case WM_POINTERUP:
-//           processPointerEvent(msg, window, wParam, lParam, eventHandled);
-//           break;
-//         case WM_POINTERLEAVE: {
-//           AnchorU32 pointerId = GET_POINTERID_WPARAM(wParam);
-//           POINTER_INFO pointerInfo;
-//           if (!GetPointerInfo(pointerId, &pointerInfo))
-//           {
-//             break;
-//           }
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Pointer events, processed
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WM_POINTERUPDATE:
+  //         case WM_POINTERDOWN:
+  //         case WM_POINTERUP:
+  //           processPointerEvent(msg, window, wParam, lParam, eventHandled);
+  //           break;
+  //         case WM_POINTERLEAVE: {
+  //           AnchorU32 pointerId = GET_POINTERID_WPARAM(wParam);
+  //           POINTER_INFO pointerInfo;
+  //           if (!GetPointerInfo(pointerId, &pointerInfo))
+  //           {
+  //             break;
+  //           }
 
-//           /* Reset pointer pen info if pen device has left tracking range. */
-//           if (pointerInfo.pointerType == PT_PEN)
-//           {
-//             window->resetPointerPenInfo();
-//             eventHandled = true;
-//           }
-//           break;
-//         }
-//         ////////////////////////////////////////////////////////////////////////
-//         // Mouse events, processed
-//         ////////////////////////////////////////////////////////////////////////
-//         case WM_LBUTTONDOWN:
-//           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskLeft);
-//           break;
-//         case WM_MBUTTONDOWN:
-//           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskMiddle);
-//           break;
-//         case WM_RBUTTONDOWN:
-//           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskRight);
-//           break;
-//         case WM_XBUTTONDOWN:
-//           if ((short)HIWORD(wParam) == XBUTTON1)
-//           {
-//             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton4);
-//           } else if ((short)HIWORD(wParam) == XBUTTON2)
-//           {
-//             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton5);
-//           }
-//           break;
-//         case WM_LBUTTONUP:
-//           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskLeft);
-//           break;
-//         case WM_MBUTTONUP:
-//           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskMiddle);
-//           break;
-//         case WM_RBUTTONUP:
-//           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskRight);
-//           break;
-//         case WM_XBUTTONUP:
-//           if ((short)HIWORD(wParam) == XBUTTON1)
-//           {
-//             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton4);
-//           } else if ((short)HIWORD(wParam) == XBUTTON2)
-//           {
-//             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton5);
-//           }
-//           break;
-//         case WM_MOUSEMOVE:
-//           if (!window->m_mousePresent)
-//           {
-//             TRACKMOUSEEVENT tme = {sizeof(tme)};
-//             tme.dwFlags = TME_LEAVE;
-//             tme.hwndTrack = hwnd;
-//             TrackMouseEvent(&tme);
-//             window->m_mousePresent = true;
+  //           /* Reset pointer pen info if pen device has left tracking range. */
+  //           if (pointerInfo.pointerType == PT_PEN)
+  //           {
+  //             window->resetPointerPenInfo();
+  //             eventHandled = true;
+  //           }
+  //           break;
+  //         }
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Mouse events, processed
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WM_LBUTTONDOWN:
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskLeft);
+  //           break;
+  //         case WM_MBUTTONDOWN:
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskMiddle);
+  //           break;
+  //         case WM_RBUTTONDOWN:
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskRight);
+  //           break;
+  //         case WM_XBUTTONDOWN:
+  //           if ((short)HIWORD(wParam) == XBUTTON1)
+  //           {
+  //             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton4);
+  //           } else if ((short)HIWORD(wParam) == XBUTTON2)
+  //           {
+  //             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton5);
+  //           }
+  //           break;
+  //         case WM_LBUTTONUP:
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskLeft);
+  //           break;
+  //         case WM_MBUTTONUP:
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskMiddle);
+  //           break;
+  //         case WM_RBUTTONUP:
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskRight);
+  //           break;
+  //         case WM_XBUTTONUP:
+  //           if ((short)HIWORD(wParam) == XBUTTON1)
+  //           {
+  //             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton4);
+  //           } else if ((short)HIWORD(wParam) == XBUTTON2)
+  //           {
+  //             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton5);
+  //           }
+  //           break;
+  //         case WM_MOUSEMOVE:
+  //           if (!window->m_mousePresent)
+  //           {
+  //             TRACKMOUSEEVENT tme = {sizeof(tme)};
+  //             tme.dwFlags = TME_LEAVE;
+  //             tme.hwndTrack = hwnd;
+  //             TrackMouseEvent(&tme);
+  //             window->m_mousePresent = true;
 
-// #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
-//             ANCHOR_Wintab *wt = window->getWintab();
-//             if (wt)
-//             {
-//               wt->gainFocus();
-//             }
-// #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
-//           }
-//           event = processCursorEvent(window);
+  // #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+  //             ANCHOR_Wintab *wt = window->getWintab();
+  //             if (wt)
+  //             {
+  //               wt->gainFocus();
+  //             }
+  // #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+  //           }
+  //           event = processCursorEvent(window);
 
-//           break;
-//         case WM_MOUSEWHEEL: {
-//           /* The WM_MOUSEWHEEL message is sent to the focus window
-//            * when the mouse wheel is rotated. The DefWindowProc
-//            * function propagates the message to the window's parent.
-//            * There should be no internal forwarding of the message,
-//            * since DefWindowProc propagates it up the parent chain
-//            * until it finds a window that processes it.
-//            */
-//           processWheelEvent(window, wParam, lParam, false);
-//           eventHandled = true;
-// #ifdef BROKEN_PEEK_TOUCHPAD
-//           PostMessage(hwnd, WM_USER, 0, 0);
-// #endif
-//           break;
-//         }
-//         case WM_MOUSEHWHEEL: {
-//           /* The WM_MOUSEWHEEL message is sent to the focus window
-//            * when the mouse wheel is rotated. The DefWindowProc
-//            * function propagates the message to the window's parent.
-//            * There should be no internal forwarding of the message,
-//            * since DefWindowProc propagates it up the parent chain
-//            * until it finds a window that processes it.
-//            */
-//           processWheelEvent(window, wParam, lParam, true);
-//           eventHandled = true;
-// #ifdef BROKEN_PEEK_TOUCHPAD
-//           PostMessage(hwnd, WM_USER, 0, 0);
-// #endif
-//           break;
-//         }
-//         case WM_SETCURSOR:
-//           /* The WM_SETCURSOR message is sent to a window if the mouse causes the cursor
-//            * to move within a window and mouse input is not captured.
-//            * This means we have to set the cursor shape every time the mouse moves!
-//            * The DefWindowProc function uses this message to set the cursor to an
-//            * arrow if it is not in the client area.
-//            */
-//           if (LOWORD(lParam) == HTCLIENT)
-//           {
-//             // Load the current cursor
-//             window->loadCursor(window->getCursorVisibility(), window->getCursorShape());
-//             // Bypass call to DefWindowProc
-//             return 0;
-//           } else
-//           {
-//             // Outside of client area show standard cursor
-//             window->loadCursor(true, ANCHOR_StandardCursorDefault);
-//           }
-//           break;
-//         case WM_DEVICECHANGE: {
-//           if ((UINT)wParam == DBT_DEVNODES_CHANGED)
-//             bd->WantUpdateHasGamepad = true;
-//           break;
-//         }
-//         case WM_MOUSELEAVE: {
-//           window->m_mousePresent = false;
-//           if (window->getTabletData().Active == AnchorTabletModeNone)
-//           {
-//             processCursorEvent(window);
-//           }
-// #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
-//           ANCHOR_Wintab *wt = window->getWintab();
-//           if (wt)
-//           {
-//             wt->loseFocus();
-//           }
-// #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
-//           break;
-//         }
-//         ////////////////////////////////////////////////////////////////////////
-//         // Mouse events, ignored
-//         ////////////////////////////////////////////////////////////////////////
-//         case WM_NCMOUSEMOVE:
-//         /* The WM_NCMOUSEMOVE message is posted to a window when the cursor is moved
-//          * within the non-client area of the window. This message is posted to the window that
-//          * contains the cursor. If a window has captured the mouse, this message is not posted.
-//          */
-//         case WM_NCHITTEST:
-//           /* The WM_NCHITTEST message is sent to a window when the cursor moves, or
-//            * when a mouse button is pressed or released. If the mouse is not captured,
-//            * the message is sent to the window beneath the cursor. Otherwise, the message
-//            * is sent to the window that has captured the mouse.
-//            */
-//           break;
+  //           break;
+  //         case WM_MOUSEWHEEL: {
+  //           /* The WM_MOUSEWHEEL message is sent to the focus window
+  //            * when the mouse wheel is rotated. The DefWindowProc
+  //            * function propagates the message to the window's parent.
+  //            * There should be no internal forwarding of the message,
+  //            * since DefWindowProc propagates it up the parent chain
+  //            * until it finds a window that processes it.
+  //            */
+  //           processWheelEvent(window, wParam, lParam, false);
+  //           eventHandled = true;
+  // #ifdef BROKEN_PEEK_TOUCHPAD
+  //           PostMessage(hwnd, WM_USER, 0, 0);
+  // #endif
+  //           break;
+  //         }
+  //         case WM_MOUSEHWHEEL: {
+  //           /* The WM_MOUSEWHEEL message is sent to the focus window
+  //            * when the mouse wheel is rotated. The DefWindowProc
+  //            * function propagates the message to the window's parent.
+  //            * There should be no internal forwarding of the message,
+  //            * since DefWindowProc propagates it up the parent chain
+  //            * until it finds a window that processes it.
+  //            */
+  //           processWheelEvent(window, wParam, lParam, true);
+  //           eventHandled = true;
+  // #ifdef BROKEN_PEEK_TOUCHPAD
+  //           PostMessage(hwnd, WM_USER, 0, 0);
+  // #endif
+  //           break;
+  //         }
+  //         case WM_SETCURSOR:
+  //           /* The WM_SETCURSOR message is sent to a window if the mouse causes the cursor
+  //            * to move within a window and mouse input is not captured.
+  //            * This means we have to set the cursor shape every time the mouse moves!
+  //            * The DefWindowProc function uses this message to set the cursor to an
+  //            * arrow if it is not in the client area.
+  //            */
+  //           if (LOWORD(lParam) == HTCLIENT)
+  //           {
+  //             // Load the current cursor
+  //             window->loadCursor(window->getCursorVisibility(), window->getCursorShape());
+  //             // Bypass call to DefWindowProc
+  //             return 0;
+  //           } else
+  //           {
+  //             // Outside of client area show standard cursor
+  //             window->loadCursor(true, ANCHOR_StandardCursorDefault);
+  //           }
+  //           break;
+  //         case WM_DEVICECHANGE: {
+  //           if ((UINT)wParam == DBT_DEVNODES_CHANGED)
+  //             bd->WantUpdateHasGamepad = true;
+  //           break;
+  //         }
+  //         case WM_MOUSELEAVE: {
+  //           window->m_mousePresent = false;
+  //           if (window->getTabletData().Active == AnchorTabletModeNone)
+  //           {
+  //             processCursorEvent(window);
+  //           }
+  // #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+  //           ANCHOR_Wintab *wt = window->getWintab();
+  //           if (wt)
+  //           {
+  //             wt->loseFocus();
+  //           }
+  // #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+  //           break;
+  //         }
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Mouse events, ignored
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WM_NCMOUSEMOVE:
+  //         /* The WM_NCMOUSEMOVE message is posted to a window when the cursor is moved
+  //          * within the non-client area of the window. This message is posted to the window that
+  //          * contains the cursor. If a window has captured the mouse, this message is not posted.
+  //          */
+  //         case WM_NCHITTEST:
+  //           /* The WM_NCHITTEST message is sent to a window when the cursor moves, or
+  //            * when a mouse button is pressed or released. If the mouse is not captured,
+  //            * the message is sent to the window beneath the cursor. Otherwise, the message
+  //            * is sent to the window that has captured the mouse.
+  //            */
+  //           break;
 
-//         ////////////////////////////////////////////////////////////////////////
-//         // Window events, processed
-//         ////////////////////////////////////////////////////////////////////////
-//         case WM_CLOSE:
-//           /* The WM_CLOSE message is sent as a signal that a window
-//            * or an application should terminate. Restore if minimized. */
-//           if (IsIconic(hwnd))
-//           {
-//             ShowWindow(hwnd, SW_RESTORE);
-//           }
-//           event = processWindowEvent(AnchorEventTypeWindowClose, window);
-//           break;
-//         case WM_ACTIVATE:
-//           /* The WM_ACTIVATE message is sent to both the window being activated and the window
-//            * being deactivated. If the windows use the same input queue, the message is sent
-//            * synchronously, first to the window procedure of the top-level window being
-//            * deactivated, then to the window procedure of the top-level window being activated.
-//            * If the windows use different input queues, the message is sent asynchronously,
-//            * so the window is activated immediately. */
-//           {
-//             AnchorModifierKeys modifiers;
-//             modifiers.clear();
-//             system->storeModifierKeys(modifiers);
-//             system->m_wheelDeltaAccum = 0;
-//             system->m_keycode_last_repeat_key = 0;
-//             event = processWindowEvent(LOWORD(wParam) ? AnchorEventTypeWindowActivate :
-//                                                         AnchorEventTypeWindowDeactivate,
-//                                        window);
-//             /* WARNING: Let DefWindowProc handle WM_ACTIVATE, otherwise WM_MOUSEWHEEL
-//              * will not be dispatched to OUR active window if we minimize one of OUR windows. */
-//             if (LOWORD(wParam) == WA_INACTIVE)
-//               window->lostMouseCapture();
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Window events, processed
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WM_CLOSE:
+  //           /* The WM_CLOSE message is sent as a signal that a window
+  //            * or an application should terminate. Restore if minimized. */
+  //           if (IsIconic(hwnd))
+  //           {
+  //             ShowWindow(hwnd, SW_RESTORE);
+  //           }
+  //           event = processWindowEvent(AnchorEventTypeWindowClose, window);
+  //           break;
+  //         case WM_ACTIVATE:
+  //           /* The WM_ACTIVATE message is sent to both the window being activated and the window
+  //            * being deactivated. If the windows use the same input queue, the message is sent
+  //            * synchronously, first to the window procedure of the top-level window being
+  //            * deactivated, then to the window procedure of the top-level window being activated.
+  //            * If the windows use different input queues, the message is sent asynchronously,
+  //            * so the window is activated immediately. */
+  //           {
+  //             AnchorModifierKeys modifiers;
+  //             modifiers.clear();
+  //             system->storeModifierKeys(modifiers);
+  //             system->m_wheelDeltaAccum = 0;
+  //             system->m_keycode_last_repeat_key = 0;
+  //             event = processWindowEvent(LOWORD(wParam) ? AnchorEventTypeWindowActivate :
+  //                                                         AnchorEventTypeWindowDeactivate,
+  //                                        window);
+  //             /* WARNING: Let DefWindowProc handle WM_ACTIVATE, otherwise WM_MOUSEWHEEL
+  //              * will not be dispatched to OUR active window if we minimize one of OUR windows. */
+  //             if (LOWORD(wParam) == WA_INACTIVE)
+  //               window->lostMouseCapture();
 
-//             lResult = ::DefWindowProc(hwnd, msg, wParam, lParam);
-//             break;
-//           }
-//         case WM_ENTERSIZEMOVE:
-//           /* The WM_ENTERSIZEMOVE message is sent one time to a window after it enters the moving
-//            * or sizing modal loop. The window enters the moving or sizing modal loop when the user
-//            * clicks the window's title bar or sizing border, or when the window passes the
-//            * WM_SYSCOMMAND message to the DefWindowProc function and the wParam parameter of the
-//            * message specifies the SC_MOVE or SC_SIZE value. The operation is complete when
-//            * DefWindowProc returns.
-//            */
-//           window->m_inLiveResize = 1;
-//           break;
-//         case WM_EXITSIZEMOVE:
-//           window->m_inLiveResize = 0;
-//           break;
-//         case WM_PAINT:
-//           /* An application sends the WM_PAINT message when the system or another application
-//            * makes a request to paint a portion of an application's window. The message is sent
-//            * when the UpdateWindow or RedrawWindow function is called, or by the DispatchMessage
-//            * function when the application obtains a WM_PAINT message by using the GetMessage or
-//            * PeekMessage function.
-//            */
-//           if (!window->m_inLiveResize)
-//           {
-//             event = processWindowEvent(AnchorEventTypeWindowUpdate, window);
-//             ::ValidateRect(hwnd, NULL);
-//           } else
-//           {
-//             eventHandled = true;
-//           }
-//           break;
-//         case WM_GETMINMAXINFO:
-//           /* The WM_GETMINMAXINFO message is sent to a window when the size or
-//            * position of the window is about to change. An application can use
-//            * this message to override the window's default maximized size and
-//            * position, or its default minimum or maximum tracking size.
-//            */
-//           processMinMaxInfo((void *)lParam);
-//           /* Let DefWindowProc handle it. */
-//           break;
-//         case WM_SIZING:
-//           event = processWindowSizeEvent(window);
-//           break;
-//         case WM_SIZE:
-//           /* The WM_SIZE message is sent to a window after its size has changed.
-//            * The WM_SIZE and WM_MOVE messages are not sent if an application handles the
-//            * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
-//            * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
-//            * message without calling DefWindowProc.
-//            */
-//           event = processWindowSizeEvent(window);
-//           break;
-//         case WM_CAPTURECHANGED:
-//           window->lostMouseCapture();
-//           break;
-//         case WM_MOVING:
-//           /* The WM_MOVING message is sent to a window that the user is moving. By processing
-//            * this message, an application can monitor the size and position of the drag rectangle
-//            * and, if needed, change its size or position.
-//            */
-//         case WM_MOVE:
-//           /* The WM_SIZE and WM_MOVE messages are not sent if an application handles the
-//            * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
-//            * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
-//            * message without calling DefWindowProc.
-//            */
-//           /* See #WM_SIZE comment. */
-//           if (window->m_inLiveResize)
-//           {
-//             system->pushEvent(processWindowEvent(AnchorEventTypeWindowMove, window));
-//             system->dispatchEvents();
-//           } else
-//           {
-//             event = processWindowEvent(AnchorEventTypeWindowMove, window);
-//           }
+  //             lResult = ::DefWindowProc(hwnd, msg, wParam, lParam);
+  //             break;
+  //           }
+  //         case WM_ENTERSIZEMOVE:
+  //           /* The WM_ENTERSIZEMOVE message is sent one time to a window after it enters the moving
+  //            * or sizing modal loop. The window enters the moving or sizing modal loop when the user
+  //            * clicks the window's title bar or sizing border, or when the window passes the
+  //            * WM_SYSCOMMAND message to the DefWindowProc function and the wParam parameter of the
+  //            * message specifies the SC_MOVE or SC_SIZE value. The operation is complete when
+  //            * DefWindowProc returns.
+  //            */
+  //           window->m_inLiveResize = 1;
+  //           break;
+  //         case WM_EXITSIZEMOVE:
+  //           window->m_inLiveResize = 0;
+  //           break;
+  //         case WM_PAINT:
+  //           /* An application sends the WM_PAINT message when the system or another application
+  //            * makes a request to paint a portion of an application's window. The message is sent
+  //            * when the UpdateWindow or RedrawWindow function is called, or by the DispatchMessage
+  //            * function when the application obtains a WM_PAINT message by using the GetMessage or
+  //            * PeekMessage function.
+  //            */
+  //           if (!window->m_inLiveResize)
+  //           {
+  //             event = processWindowEvent(AnchorEventTypeWindowUpdate, window);
+  //             ::ValidateRect(hwnd, NULL);
+  //           } else
+  //           {
+  //             eventHandled = true;
+  //           }
+  //           break;
+  //         case WM_GETMINMAXINFO:
+  //           /* The WM_GETMINMAXINFO message is sent to a window when the size or
+  //            * position of the window is about to change. An application can use
+  //            * this message to override the window's default maximized size and
+  //            * position, or its default minimum or maximum tracking size.
+  //            */
+  //           processMinMaxInfo((void *)lParam);
+  //           /* Let DefWindowProc handle it. */
+  //           break;
+  //         case WM_SIZING:
+  //           event = processWindowSizeEvent(window);
+  //           break;
+  //         case WM_SIZE:
+  //           /* The WM_SIZE message is sent to a window after its size has changed.
+  //            * The WM_SIZE and WM_MOVE messages are not sent if an application handles the
+  //            * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
+  //            * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
+  //            * message without calling DefWindowProc.
+  //            */
+  //           event = processWindowSizeEvent(window);
+  //           break;
+  //         case WM_CAPTURECHANGED:
+  //           window->lostMouseCapture();
+  //           break;
+  //         case WM_MOVING:
+  //           /* The WM_MOVING message is sent to a window that the user is moving. By processing
+  //            * this message, an application can monitor the size and position of the drag rectangle
+  //            * and, if needed, change its size or position.
+  //            */
+  //         case WM_MOVE:
+  //           /* The WM_SIZE and WM_MOVE messages are not sent if an application handles the
+  //            * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
+  //            * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
+  //            * message without calling DefWindowProc.
+  //            */
+  //           /* See #WM_SIZE comment. */
+  //           if (window->m_inLiveResize)
+  //           {
+  //             system->pushEvent(processWindowEvent(AnchorEventTypeWindowMove, window));
+  //             system->dispatchEvents();
+  //           } else
+  //           {
+  //             event = processWindowEvent(AnchorEventTypeWindowMove, window);
+  //           }
 
-//           break;
-//         case WM_DPICHANGED:
-//           /* The WM_DPICHANGED message is sent when the effective dots per inch (dpi) for a
-//            * window has changed. The DPI is the scale factor for a window. There are multiple
-//            * events that can cause the DPI to change such as when the window is moved to a monitor
-//            * with a different DPI.
-//            */
-//           {
-//             // The suggested new size and position of the window.
-//             RECT *const suggestedWindowRect = (RECT *)lParam;
+  //           break;
+  //         case WM_DPICHANGED:
+  //           /* The WM_DPICHANGED message is sent when the effective dots per inch (dpi) for a
+  //            * window has changed. The DPI is the scale factor for a window. There are multiple
+  //            * events that can cause the DPI to change such as when the window is moved to a monitor
+  //            * with a different DPI.
+  //            */
+  //           {
+  //             // The suggested new size and position of the window.
+  //             RECT *const suggestedWindowRect = (RECT *)lParam;
 
-//             // Push DPI change event first
-//             system->pushEvent(processWindowEvent(AnchorEventTypeWindowDPIHintChanged, window));
-//             system->dispatchEvents();
-//             eventHandled = true;
+  //             // Push DPI change event first
+  //             system->pushEvent(processWindowEvent(AnchorEventTypeWindowDPIHintChanged, window));
+  //             system->dispatchEvents();
+  //             eventHandled = true;
 
-//             // Then move and resize window
-//             SetWindowPos(hwnd,
-//                          NULL,
-//                          suggestedWindowRect->left,
-//                          suggestedWindowRect->top,
-//                          suggestedWindowRect->right - suggestedWindowRect->left,
-//                          suggestedWindowRect->bottom - suggestedWindowRect->top,
-//                          SWP_NOZORDER | SWP_NOACTIVATE);
-//           }
-//           break;
-//         case WM_DISPLAYCHANGE: {
-// #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
-//           ANCHOR_Wintab *wt = window->getWintab();
-//           if (wt)
-//           {
-//             wt->remapCoordinates();
-//           }
-// #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
-//           break;
-//         }
-//         case WM_KILLFOCUS:
-//           /* The WM_KILLFOCUS message is sent to a window immediately before it loses the keyboard
-//            * focus. We want to prevent this if a window is still active and it loses focus to
-//            * nowhere. */
-//           memset(io.KeysDown, 0, sizeof(io.KeysDown));
-//           if (!wParam && hwnd == ::GetActiveWindow())
-//           {
-//             ::SetFocus(hwnd);
-//           }
-//           break;
-//         ////////////////////////////////////////////////////////////////////////
-//         // Window events, ignored
-//         ////////////////////////////////////////////////////////////////////////
-//         case WM_WINDOWPOSCHANGED:
-//         /* The WM_WINDOWPOSCHANGED message is sent to a window whose size, position, or place
-//          * in the Z order has changed as a result of a call to the SetWindowPos function or
-//          * another window-management function.
-//          * The WM_SIZE and WM_MOVE messages are not sent if an application handles the
-//          * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
-//          * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
-//          * message without calling DefWindowProc.
-//          */
-//         case WM_ERASEBKGND:
-//         /* An application sends the WM_ERASEBKGND message when the window background must be
-//          * erased (for example, when a window is resized). The message is sent to prepare an
-//          * invalidated portion of a window for painting.
-//          */
-//         case WM_NCPAINT:
-//         /* An application sends the WM_NCPAINT message to a window
-//          * when its frame must be painted. */
-//         case WM_NCACTIVATE:
-//         /* The WM_NCACTIVATE message is sent to a window when its non-client area needs to be
-//          * changed to indicate an active or inactive state. */
-//         case WM_DESTROY:
-//         /* The WM_DESTROY message is sent when a window is being destroyed. It is sent to the
-//          * window procedure of the window being destroyed after the window is removed from the
-//          * screen. This message is sent first to the window being destroyed and then to the child
-//          * windows (if any) as they are destroyed. During the processing of the message, it can
-//          * be assumed that all child windows still exist. */
-//         case WM_NCDESTROY:
-//           /* The WM_NCDESTROY message informs a window that its non-client area is being
-//            * destroyed. The DestroyWindow function sends the WM_NCDESTROY message to the window
-//            * following the WM_DESTROY message. WM_DESTROY is used to free the allocated memory
-//            * object associated with the window.
-//            */
-//           break;
-//         case WM_SHOWWINDOW:
-//         /* The WM_SHOWWINDOW message is sent to a window when the window is
-//          * about to be hidden or shown. */
-//         case WM_WINDOWPOSCHANGING:
-//         /* The WM_WINDOWPOSCHANGING message is sent to a window whose size, position, or place in
-//          * the Z order is about to change as a result of a call to the SetWindowPos function or
-//          * another window-management function.
-//          */
-//         case WM_SETFOCUS:
-//           /* The WM_SETFOCUS message is sent to a window after it has gained the keyboard focus. */
-//           break;
-//         ////////////////////////////////////////////////////////////////////////
-//         // Other events
-//         ////////////////////////////////////////////////////////////////////////
-//         case WM_GETTEXT:
-//         /* An application sends a WM_GETTEXT message to copy the text that
-//          * corresponds to a window into a buffer provided by the caller.
-//          */
-//         case WM_ACTIVATEAPP:
-//         /* The WM_ACTIVATEAPP message is sent when a window belonging to a
-//          * different application than the active window is about to be activated.
-//          * The message is sent to the application whose window is being activated
-//          * and to the application whose window is being deactivated.
-//          */
-//         case WM_TIMER:
-//           /* The WIN32 docs say:
-//            * The WM_TIMER message is posted to the installing thread's message queue
-//            * when a timer expires. You can process the message by providing a WM_TIMER
-//            * case in the window procedure. Otherwise, the default window procedure will
-//            * call the TimerProc callback function specified in the call to the SetTimer
-//            * function used to install the timer.
-//            *
-//            * In ANCHOR, we let DefWindowProc call the timer callback.
-//            */
-//           break;
-//       }
-//     } else
-//     {
-//       // Event found for a window before the pointer to the class has been set.
-//       // TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved a window event before creation\n");
-//       /* These are events we typically miss at this point:
-//        * WM_GETMINMAXINFO 0x24
-//        * WM_NCCREATE          0x81
-//        * WM_NCCALCSIZE        0x83
-//        * WM_CREATE            0x01
-//        * We let DefWindowProc do the work.
-//        */
-//     }
-//   } else
-//   {
-//     // Events without valid hwnd
-//     TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved event without valid hwnd\n");
-//   }
+  //             // Then move and resize window
+  //             SetWindowPos(hwnd,
+  //                          NULL,
+  //                          suggestedWindowRect->left,
+  //                          suggestedWindowRect->top,
+  //                          suggestedWindowRect->right - suggestedWindowRect->left,
+  //                          suggestedWindowRect->bottom - suggestedWindowRect->top,
+  //                          SWP_NOZORDER | SWP_NOACTIVATE);
+  //           }
+  //           break;
+  //         case WM_DISPLAYCHANGE: {
+  // #ifdef WINDOWS_NEEDS_TABLET_SUPPORT
+  //           ANCHOR_Wintab *wt = window->getWintab();
+  //           if (wt)
+  //           {
+  //             wt->remapCoordinates();
+  //           }
+  // #endif /* WINDOWS_NEEDS_TABLET_SUPPORT */
+  //           break;
+  //         }
+  //         case WM_KILLFOCUS:
+  //           /* The WM_KILLFOCUS message is sent to a window immediately before it loses the keyboard
+  //            * focus. We want to prevent this if a window is still active and it loses focus to
+  //            * nowhere. */
+  //           memset(io.KeysDown, 0, sizeof(io.KeysDown));
+  //           if (!wParam && hwnd == ::GetActiveWindow())
+  //           {
+  //             ::SetFocus(hwnd);
+  //           }
+  //           break;
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Window events, ignored
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WM_WINDOWPOSCHANGED:
+  //         /* The WM_WINDOWPOSCHANGED message is sent to a window whose size, position, or place
+  //          * in the Z order has changed as a result of a call to the SetWindowPos function or
+  //          * another window-management function.
+  //          * The WM_SIZE and WM_MOVE messages are not sent if an application handles the
+  //          * WM_WINDOWPOSCHANGED message without calling DefWindowProc. It is more efficient
+  //          * to perform any move or size change processing during the WM_WINDOWPOSCHANGED
+  //          * message without calling DefWindowProc.
+  //          */
+  //         case WM_ERASEBKGND:
+  //         /* An application sends the WM_ERASEBKGND message when the window background must be
+  //          * erased (for example, when a window is resized). The message is sent to prepare an
+  //          * invalidated portion of a window for painting.
+  //          */
+  //         case WM_NCPAINT:
+  //         /* An application sends the WM_NCPAINT message to a window
+  //          * when its frame must be painted. */
+  //         case WM_NCACTIVATE:
+  //         /* The WM_NCACTIVATE message is sent to a window when its non-client area needs to be
+  //          * changed to indicate an active or inactive state. */
+  //         case WM_DESTROY:
+  //         /* The WM_DESTROY message is sent when a window is being destroyed. It is sent to the
+  //          * window procedure of the window being destroyed after the window is removed from the
+  //          * screen. This message is sent first to the window being destroyed and then to the child
+  //          * windows (if any) as they are destroyed. During the processing of the message, it can
+  //          * be assumed that all child windows still exist. */
+  //         case WM_NCDESTROY:
+  //           /* The WM_NCDESTROY message informs a window that its non-client area is being
+  //            * destroyed. The DestroyWindow function sends the WM_NCDESTROY message to the window
+  //            * following the WM_DESTROY message. WM_DESTROY is used to free the allocated memory
+  //            * object associated with the window.
+  //            */
+  //           break;
+  //         case WM_SHOWWINDOW:
+  //         /* The WM_SHOWWINDOW message is sent to a window when the window is
+  //          * about to be hidden or shown. */
+  //         case WM_WINDOWPOSCHANGING:
+  //         /* The WM_WINDOWPOSCHANGING message is sent to a window whose size, position, or place in
+  //          * the Z order is about to change as a result of a call to the SetWindowPos function or
+  //          * another window-management function.
+  //          */
+  //         case WM_SETFOCUS:
+  //           /* The WM_SETFOCUS message is sent to a window after it has gained the keyboard focus. */
+  //           break;
+  //         ////////////////////////////////////////////////////////////////////////
+  //         // Other events
+  //         ////////////////////////////////////////////////////////////////////////
+  //         case WM_GETTEXT:
+  //         /* An application sends a WM_GETTEXT message to copy the text that
+  //          * corresponds to a window into a buffer provided by the caller.
+  //          */
+  //         case WM_ACTIVATEAPP:
+  //         /* The WM_ACTIVATEAPP message is sent when a window belonging to a
+  //          * different application than the active window is about to be activated.
+  //          * The message is sent to the application whose window is being activated
+  //          * and to the application whose window is being deactivated.
+  //          */
+  //         case WM_TIMER:
+  //           /* The WIN32 docs say:
+  //            * The WM_TIMER message is posted to the installing thread's message queue
+  //            * when a timer expires. You can process the message by providing a WM_TIMER
+  //            * case in the window procedure. Otherwise, the default window procedure will
+  //            * call the TimerProc callback function specified in the call to the SetTimer
+  //            * function used to install the timer.
+  //            *
+  //            * In ANCHOR, we let DefWindowProc call the timer callback.
+  //            */
+  //           break;
+  //       }
+  //     } else
+  //     {
+  //       // Event found for a window before the pointer to the class has been set.
+  //       // TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved a window event before creation\n");
+  //       /* These are events we typically miss at this point:
+  //        * WM_GETMINMAXINFO 0x24
+  //        * WM_NCCREATE          0x81
+  //        * WM_NCCALCSIZE        0x83
+  //        * WM_CREATE            0x01
+  //        * We let DefWindowProc do the work.
+  //        */
+  //     }
+  //   } else
+  //   {
+  //     // Events without valid hwnd
+  //     TF_DEBUG(ANCHOR_WIN32).Msg("[Anchor] recieved event without valid hwnd\n");
+  //   }
 
-//   if (event)
-//   {
-//     system->pushEvent(event);
-//     eventHandled = true;
-//   }
+  //   if (event)
+  //   {
+  //     system->pushEvent(event);
+  //     eventHandled = true;
+  //   }
 
-//   if (!eventHandled)
-//     lResult = ::DefWindowProcW(hwnd, msg, wParam, lParam);
+  //   if (!eventHandled)
+  //     lResult = ::DefWindowProcW(hwnd, msg, wParam, lParam);
 
   return lResult;
 }
@@ -3449,8 +3449,8 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
   // if (!setDrawingContextType(type))
   // {
   //   ::DestroyWindow(m_hWnd);
-    // m_hWnd = NULL;
-    // return;
+  // m_hWnd = NULL;
+  // return;
   // }
 
   // RegisterTouchWindow(m_hWnd, 0);

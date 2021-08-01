@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap rescap build">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
+
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap uap2 uap3 desktop rescap build">
   <Identity Name="Kraken" Publisher="E=mail@kraken3d.org, CN=Wabi Animation CA, OU=Chaos Engine, O=Wabi Animation, L=Denver, S=Colorado, C=US" Version="1.50.0.0" ProcessorArchitecture="x64" />
   <Properties>
     <DisplayName>Kraken</DisplayName>
@@ -15,13 +18,34 @@
     <Resource Language="EN-US" />
     <Resource uap:Scale="200" />
   </Resources>
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
   <Applications>
-    <Application Id="App" Executable="kraken.exe" EntryPoint="$targetentrypoint$">
+    <Application Id="Creator" Executable="kraken.exe" EntryPoint="Kraken.Creator">
       <uap:VisualElements DisplayName="Kraken" Description="The 3D Animation Platform. Built with the Universe in Mind." BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png">
         <uap:DefaultTile Wide310x150Logo="assets\Wide310x150Logo.png" Square71x71Logo="assets\SmallTile.png" Square310x310Logo="assets\LargeTile.png" />
         <uap:SplashScreen Image="assets\SplashScreen.png" />
         <uap:LockScreen BadgeLogo="assets\BadgeLogo.png" Notification="badgeAndTileText" />
       </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.fileTypeAssociation">
+          <uap3:FileTypeAssociation Name="usd">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.usd</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap2:SupportedVerbs>
+              <uap3:Verb Id="open" Parameters="&quot;%1&quot;">open</uap3:Verb>
+            </uap2:SupportedVerbs>
+          </uap3:FileTypeAssociation>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="kraken.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="kraken.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
     </Application>
   </Applications>
   <build:Metadata>
@@ -38,8 +62,4 @@
     <build:Item Name="WindowsMobile" Version="10.0.22000.0" />
     <build:Item Name="MakePri.exe" Version="10.0.22000.100 (WinBuild.160101.0800)" />
   </build:Metadata>
-  <Capabilities>
-    <Capability Name="internetClient" />
-    <rescap:Capability Name="runFullTrust" />
-  </Capabilities>
 </Package>

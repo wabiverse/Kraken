@@ -88,7 +88,6 @@ class GarchWGLContextState
   /// Construct with the current state.
   GarchWGLContextState()
   {
-
   }
 
   enum class NullState
@@ -99,7 +98,6 @@ class GarchWGLContextState
   /// Construct with the null state.
   GarchWGLContextState(NullState)
   {
-
   }
 
   /// Compare for equality.
@@ -115,7 +113,7 @@ class GarchWGLContextState
   }
 
   /// Returns \c true if the context state is valid.
-  bool IsValid() const 
+  bool IsValid() const
   {
     return false;
   }
@@ -123,13 +121,11 @@ class GarchWGLContextState
   /// Make the context current.
   void MakeCurrent()
   {
-
   }
 
   /// Make no context current.
   static void DoneCurrent()
   {
-
   }
 
  private:

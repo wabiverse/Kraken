@@ -37,10 +37,10 @@
  * The 'generic' keyword is
  * problematic with Windows
  * when compiling with WinRT
- * 
+ *
  * Workaround. */
 #  define generic _GenericWorkaround
-#    include <boost/filesystem.hpp>
+#  include <boost/filesystem.hpp>
 #  undef generic
 #else /* _WIN32 */
 #  include <boost/filesystem.hpp>

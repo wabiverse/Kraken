@@ -31,26 +31,26 @@
  * The 'generic' keyword is
  * problematic with Windows
  * when compiling with WinRT
- * 
+ *
  * Workaround. */
 #  define generic _GenericWorkaround
-#    include <ft2build.h>
-#    include FT_FREETYPE_H
-#    include FT_MODULE_H
-#    include FT_GLYPH_H
-#    include FT_SYNTHESIS_H
+#  include <ft2build.h>
+#  include FT_FREETYPE_H
+#  include FT_MODULE_H
+#  include FT_GLYPH_H
+#  include FT_SYNTHESIS_H
 #  undef generic
 #else /* _WIN32 */
-#    include <ft2build.h>
-#    include FT_FREETYPE_H
-#    include FT_MODULE_H
-#    include FT_GLYPH_H
-#    include FT_SYNTHESIS_H
+#  include <ft2build.h>
+#  include FT_FREETYPE_H
+#  include FT_MODULE_H
+#  include FT_GLYPH_H
+#  include FT_SYNTHESIS_H
 #endif
 
 #ifdef _MSC_VER
-#  pragma warning (disable: 4505)
-#  pragma warning (disable: 26812)
+#  pragma warning(disable : 4505)
+#  pragma warning(disable : 26812)
 #endif
 
 #if defined(__GNUC__)

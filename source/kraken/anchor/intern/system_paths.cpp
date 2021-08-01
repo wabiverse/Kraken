@@ -26,7 +26,7 @@
 
 #include <wabi/base/arch/systemInfo.h>
 
-#if defined (WIN32)
+#if defined(WIN32)
 #  include <winrt/base.h>
 #  include <winrt/Windows.Foundation.h>
 #  include <winrt/Windows.Storage.h>
@@ -274,7 +274,7 @@ const AnchorU8 *AnchorSystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDirT
   //     break;
   //   default:
   //     TF_MSG_ERROR("Anchor -- Invalid enum value for type parameter");
-      // return NULL;
+  // return NULL;
   // }
 
   // static char knownpath[MAX_PATH * 3] = {0};
@@ -312,23 +312,23 @@ AnchorISystemPaths *AnchorISystemPaths::m_systemPaths = NULL;
 
 eAnchorStatus AnchorISystemPaths::create()
 {
-//   eAnchorStatus success;
-//   if (!m_systemPaths)
-//   {
-// #ifdef WIN32
-//     m_systemPaths = new AnchorSystemPathsWin32();
-// #else
-// #  ifdef __APPLE__
-//     m_systemPaths = new AnchorSystemPathsCocoa();
-// #  else
-//     m_systemPaths = new AnchorSystemPathsUnix();
-// #  endif
-// #endif
-//     success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
-//   } else
-//   {
-//     success = ANCHOR_FAILURE;
-//   }
+  //   eAnchorStatus success;
+  //   if (!m_systemPaths)
+  //   {
+  // #ifdef WIN32
+  //     m_systemPaths = new AnchorSystemPathsWin32();
+  // #else
+  // #  ifdef __APPLE__
+  //     m_systemPaths = new AnchorSystemPathsCocoa();
+  // #  else
+  //     m_systemPaths = new AnchorSystemPathsUnix();
+  // #  endif
+  // #endif
+  //     success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
+  //   } else
+  //   {
+  //     success = ANCHOR_FAILURE;
+  //   }
   return ANCHOR_FAILURE;
 }
 
