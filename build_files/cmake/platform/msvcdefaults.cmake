@@ -38,7 +38,7 @@ mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
 option(WITH_WINDOWS_PDB "Generate a pdb file for client side stacktraces" ON)
 mark_as_advanced(WITH_WINDOWS_PDB)
 
-include(build_files/cmake/platform/platform_win32_bundle_crt.cmake)
+include(build_files/cmake/platform/microsoft_package.cmake)
 
 # -----------------------------------------------------------------------------
 # Setup Compiler Flags
