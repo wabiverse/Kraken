@@ -338,7 +338,7 @@ eAnchorStatus AnchorISystemPaths::create()
   {
     success = ANCHOR_FAILURE;
   }
-  return ANCHOR_FAILURE;
+  return success;
 }
 
 eAnchorStatus AnchorISystemPaths::dispose()
