@@ -22,19 +22,25 @@
  * Bare Metal.
  */
 
+#include "KLI_utildefines.h"
+
 #include "ANCHOR_system_paths.h"
 
 #include <wabi/base/arch/systemInfo.h>
 
 #if defined(WIN32)
 #  include <winrt/base.h>
+#  include <winrt/Windows.ApplicationModel.h>
 #  include <winrt/Windows.Foundation.h>
 #  include <winrt/Windows.Storage.h>
 
-using namespace winrt;
-using namespace winrt::Windows;
-using namespace winrt::Windows::Foundation;
-using namespace winrt::Windows::Storage;
+namespace MICROSOFT = winrt;
+
+using namespace MICROSOFT;
+using namespace MICROSOFT::Windows;
+using namespace MICROSOFT::Windows::ApplicationModel;
+using namespace MICROSOFT::Windows::Foundation;
+using namespace MICROSOFT::Windows::Storage;
 #endif
 
 WABI_NAMESPACE_USING
@@ -211,98 +217,101 @@ AnchorSystemPathsWin32::~AnchorSystemPathsWin32()
 
 const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr) const
 {
-  /* 1 utf-16 might translate into 3 utf-8. 2 utf-16 translates into 4 utf-8. */
-  // static char knownpath[MAX_PATH * 3 + 128] = {0};
-  // PWSTR knownpath_16 = NULL;
+  MICROSOFT::Windows::Storage::StorageFolder versionDir
+  {
+    StorageFolder::GetFolderFromPathAsync(
+      Package::Current().InstalledLocation().Path() +
+      L"\\" + (LPWSTR)versionstr).GetResults()
+  };
 
-  // HRESULT hResult = SHGetKnownFolderPath(FOLDERID_ProgramData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
-
-  // if (hResult == S_OK)
-  // {
-  //   conv_utf_16_to_8(knownpath_16, knownpath, MAX_PATH * 3);
-  //   CoTaskMemFree(knownpath_16);
-  //   strcat(knownpath, "\\Wabi Animation\\Kraken\\");
-  //   strcat(knownpath, versionstr);
-  //   return (AnchorU8 *)knownpath;
-  // }
+  if (!versionDir.Path().empty())
+  {
+    return (AnchorU8 *)CHARSTR(versionDir.Path());
+  }
 
   return NULL;
 }
 
 const AnchorU8 *AnchorSystemPathsWin32::getUserDir(int, const char *versionstr) const
 {
-  // static char knownpath[MAX_PATH * 3 + 128] = {0};
-  // PWSTR knownpath_16 = NULL;
+  MICROSOFT::Windows::Storage::StorageFolder versionDir
+  {
+    StorageFolder::GetFolderFromPathAsync(
+      ApplicationData::Current().LocalFolder().Path() +
+      L"\\" + (LPWSTR)versionstr).GetResults()
+  };
 
-  // HRESULT hResult = SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_DEFAULT, NULL, &knownpath_16);
-
-  // if (hResult == S_OK)
-  // {
-  //   conv_utf_16_to_8(knownpath_16, knownpath, MAX_PATH * 3);
-  //   CoTaskMemFree(knownpath_16);
-  //   strcat(knownpath, "\\Wabi Animation\\Kraken\\");
-  //   strcat(knownpath, versionstr);
-  //   return (AnchorU8 *)knownpath;
-  // }
+  if (!versionDir.Path().empty())
+  {
+    return (AnchorU8 *)CHARSTR(versionDir.Path());
+  }
 
   return NULL;
 }
 
 const AnchorU8 *AnchorSystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDirTypes type) const
 {
-  // GUID folderid;
+  MICROSOFT::hstring folderid;
 
-  // switch (type)
-  // {
-  //   case ANCHOR_UserSpecialDirDesktop:
-  //     folderid = FOLDERID_Desktop;
-  //     break;
-  //   case ANCHOR_UserSpecialDirDocuments:
-  //     folderid = FOLDERID_Documents;
-  //     break;
-  //   case ANCHOR_UserSpecialDirDownloads:
-  //     folderid = FOLDERID_Downloads;
-  //     break;
-  //   case ANCHOR_UserSpecialDirMusic:
-  //     folderid = FOLDERID_Music;
-  //     break;
-  //   case ANCHOR_UserSpecialDirPictures:
-  //     folderid = FOLDERID_Pictures;
-  //     break;
-  //   case ANCHOR_UserSpecialDirVideos:
-  //     folderid = FOLDERID_Videos;
-  //     break;
-  //   default:
-  //     TF_MSG_ERROR("Anchor -- Invalid enum value for type parameter");
-  // return NULL;
-  // }
+  switch (type)
+  {
+    case ANCHOR_UserSpecialDirDesktop:
+      folderid = AppDataPaths::GetDefault().Desktop();
+      break;
+    case ANCHOR_UserSpecialDirDocuments:
+      folderid = Storage::KnownFolders::DocumentsLibrary().Path();
+      break;
+    case ANCHOR_UserSpecialDirDownloads:
+      folderid = Storage::KnownFolders::Objects3D().Path();
+      break;
+    case ANCHOR_UserSpecialDirMusic:
+      folderid = Storage::KnownFolders::MusicLibrary().Path();
+      break;
+    case ANCHOR_UserSpecialDirPictures:
+      folderid = Storage::KnownFolders::PicturesLibrary().Path();
+      break;
+    case ANCHOR_UserSpecialDirVideos:
+      folderid = Storage::KnownFolders::VideosLibrary().Path();
+      break;
+    default:
+      TF_MSG_ERROR("Anchor -- Invalid enum value for type parameter");
+      return NULL;
+  }
 
-  // static char knownpath[MAX_PATH * 3] = {0};
-  // PWSTR knownpath_16 = NULL;
-  // HRESULT hResult = SHGetKnownFolderPath(folderid, KF_FLAG_DEFAULT, NULL, &knownpath_16);
+  if (!folderid.empty())
+  {
+    return (AnchorU8 *)CHARSTR(folderid);
+  }
 
-  // if (hResult == S_OK)
-  // {
-  //   conv_utf_16_to_8(knownpath_16, knownpath, MAX_PATH * 3);
-  //   CoTaskMemFree(knownpath_16);
-  //   return (AnchorU8 *)knownpath;
-  // }
-
-  // CoTaskMemFree(knownpath_16);
   return NULL;
 }
 
 const AnchorU8 *AnchorSystemPathsWin32::getBinaryDir() const
 {
-  return (AnchorU8 *)TfGetPathName(ArchGetExecutablePath()).c_str();
+  return (AnchorU8 *)CHARSTR(TfGetPathName(ArchGetExecutablePath()));
 }
 
 void AnchorSystemPathsWin32::addToSystemRecentFiles(const char *filename) const
 {
-  /* SHARD_PATH resolves to SHARD_PATHA for non-UNICODE build */
-  // UTF16_ENCODE(filename);
-  // SHAddToRecentDocs(SHARD_PATHW, filename_16);
-  // UTF16_UN_ENCODE(filename);
+  MICROSOFT::Windows::Storage::StorageLibrary documents
+  {
+    Storage::StorageLibrary::GetLibraryAsync(Storage::KnownLibraryId::Documents).GetResults()
+  };
+
+  MICROSOFT::Windows::Storage::StorageFolder recentFiles
+  {
+    documents.RequestAddFolderAsync().GetResults()
+  };
+
+  MICROSOFT::Windows::Storage::StorageFile fileAdded
+  {
+    recentFiles.CreateFileAsync((LPWSTR)filename).GetResults()
+  };
+  
+  if (fileAdded.Path().empty())
+  {
+    TF_MSG_ERROR("ANCHOR - Error adding file to System Recent files.");
+  }
 }
 
 #endif /* _WIN32 */
@@ -312,23 +321,23 @@ AnchorISystemPaths *AnchorISystemPaths::m_systemPaths = NULL;
 
 eAnchorStatus AnchorISystemPaths::create()
 {
-  //   eAnchorStatus success;
-  //   if (!m_systemPaths)
-  //   {
-  // #ifdef WIN32
-  //     m_systemPaths = new AnchorSystemPathsWin32();
-  // #else
-  // #  ifdef __APPLE__
-  //     m_systemPaths = new AnchorSystemPathsCocoa();
-  // #  else
-  //     m_systemPaths = new AnchorSystemPathsUnix();
-  // #  endif
-  // #endif
-  //     success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
-  //   } else
-  //   {
-  //     success = ANCHOR_FAILURE;
-  //   }
+  eAnchorStatus success;
+  if (!m_systemPaths)
+  {
+#ifdef WIN32
+    m_systemPaths = new AnchorSystemPathsWin32();
+#else
+#  ifdef __APPLE__
+    m_systemPaths = new AnchorSystemPathsCocoa();
+#  else
+    m_systemPaths = new AnchorSystemPathsUnix();
+#  endif
+#endif
+    success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
+  } else
+  {
+    success = ANCHOR_FAILURE;
+  }
   return ANCHOR_FAILURE;
 }
 

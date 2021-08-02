@@ -102,6 +102,7 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="broadFileSystemAccess" />
   </Capabilities>
 
   <build:Metadata>
