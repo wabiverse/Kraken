@@ -26,9 +26,10 @@
 
 #include "ANCHOR_system_paths.h"
 
+#include <wabi/base/arch/defines.h>
 #include <wabi/base/arch/systemInfo.h>
 
-#if defined(WIN32)
+#if defined(ARCH_OS_WINDOWS)
 #  include <winrt/base.h>
 #  include <winrt/Windows.ApplicationModel.h>
 #  include <winrt/Windows.Foundation.h>
@@ -41,13 +42,13 @@ using namespace MICROSOFT::Windows;
 using namespace MICROSOFT::Windows::ApplicationModel;
 using namespace MICROSOFT::Windows::Foundation;
 using namespace MICROSOFT::Windows::Storage;
-#endif
+#endif /* ARCH_OS_WINDOWS */
 
 WABI_NAMESPACE_USING
 
 #include <stdio.h>
 
-#if defined(__linux__)
+#if defined(ARCH_OS_LINUX)
 #  include <sstream>
 
 #  include <sys/time.h>
@@ -201,7 +202,7 @@ void AnchorSystemPathsUnix::addToSystemRecentFiles(const char * /*filename*/) co
 {
   /* TODO: implement for X11 */
 }
-#elif defined(_WIN32) /* __linux__ */
+#elif defined(ARCH_OS_WINDOWS) /* ARCH_OS_LINUX */
 
 #  ifndef _WIN32_IE
 #    define _WIN32_IE 0x0501
@@ -314,7 +315,7 @@ void AnchorSystemPathsWin32::addToSystemRecentFiles(const char *filename) const
   }
 }
 
-#endif /* _WIN32 */
+#endif /* ARCH_OS_WINDOWS */
 
 
 AnchorISystemPaths *AnchorISystemPaths::m_systemPaths = NULL;
@@ -324,14 +325,12 @@ eAnchorStatus AnchorISystemPaths::create()
   eAnchorStatus success;
   if (!m_systemPaths)
   {
-#ifdef WIN32
+#if defined(ARCH_OS_WINDOWS)
     m_systemPaths = new AnchorSystemPathsWin32();
-#else
-#  ifdef __APPLE__
+#elif defined(ARCH_OS_DARWIN)
     m_systemPaths = new AnchorSystemPathsCocoa();
-#  else
+#else /* defined(ARCH_OS_LINUX) */
     m_systemPaths = new AnchorSystemPathsUnix();
-#  endif
 #endif
     success = m_systemPaths != NULL ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
   } else
