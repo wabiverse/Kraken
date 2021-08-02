@@ -218,16 +218,11 @@ AnchorSystemPathsWin32::~AnchorSystemPathsWin32()
 
 const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr) const
 {
-  MICROSOFT::Windows::Storage::StorageFolder versionDir
-  {
-    StorageFolder::GetFolderFromPathAsync(
-      Package::Current().InstalledLocation().Path() +
-      L"\\" + (LPWSTR)versionstr).GetResults()
-  };
+  fs::path sysDir = STRCAT(ArchGetExecutablePath(), versionstr);
 
-  if (!versionDir.Path().empty())
+  if (!sysDir.empty())
   {
-    return (AnchorU8 *)CHARSTR(versionDir.Path());
+    return (AnchorU8 *)CHARSTR(sysDir.string());
   }
 
   return NULL;
@@ -235,16 +230,11 @@ const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr
 
 const AnchorU8 *AnchorSystemPathsWin32::getUserDir(int, const char *versionstr) const
 {
-  MICROSOFT::Windows::Storage::StorageFolder versionDir
-  {
-    StorageFolder::GetFolderFromPathAsync(
-      ApplicationData::Current().LocalFolder().Path() +
-      L"\\" + (LPWSTR)versionstr).GetResults()
-  };
+  fs::path userDir = STRCAT(fs::temp_directory_path().string(), STRCAT("../../", versionstr));
 
-  if (!versionDir.Path().empty())
+  if (!userDir.empty())
   {
-    return (AnchorU8 *)CHARSTR(versionDir.Path());
+    return (AnchorU8 *)CHARSTR(userDir.string());
   }
 
   return NULL;
