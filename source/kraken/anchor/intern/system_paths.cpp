@@ -218,7 +218,7 @@ AnchorSystemPathsWin32::~AnchorSystemPathsWin32()
 
 const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr) const
 {
-  fs::path sysDir = STRCAT(ArchGetExecutablePath(), versionstr);
+  fs::path sysDir = STRCAT(TfGetPathName(ArchGetExecutablePath()), versionstr);
 
   if (!sysDir.empty())
   {

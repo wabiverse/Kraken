@@ -38,6 +38,7 @@
 #include <cstdlib>
 #include <functional>
 #include <limits>
+#include <filesystem>
 
 #if defined(ARCH_OS_LINUX)
 
@@ -54,7 +55,21 @@
 
 #  include <Windows.h>
 #  include <direct.h>
+#  include <winrt/base.h>
+#  include <winrt/Windows.ApplicationModel.h>
+#  include <winrt/Windows.Foundation.h>
+#  include <winrt/Windows.Storage.h>
 #  define getcwd(buffer_, size_) _getcwd(buffer_, size_)
+
+namespace MICROSOFT = winrt;
+
+using namespace MICROSOFT;
+using namespace MICROSOFT::Windows;
+using namespace MICROSOFT::Windows::Foundation;
+using namespace MICROSOFT::Windows::ApplicationModel;
+using namespace MICROSOFT::Windows::Storage;
+
+namespace fs = std::filesystem;
 
 #else
 

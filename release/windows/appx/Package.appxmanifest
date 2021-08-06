@@ -8,9 +8,15 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
+  xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap uap2 uap3 desktop rescap build">
+  IgnorableNamespaces="uap uap2 uap3 uap4 uap5 uap10 desktop desktop4 desktop5 desktop6 rescap build">
 
 <!-- Internal Use. Microsoft Store uses this to register and verify codesign certificate. -->
 <Identity
@@ -83,26 +89,66 @@
               <!-- Pixar .USDA -->
               <uap:FileType>.usda</uap:FileType>
             </uap:SupportedFileTypes>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>assets\kraken-file-256.png</uap:Logo>
+            <uap:DisplayName>Universal Scene Description</uap:DisplayName>
           </uap3:FileTypeAssociation>
         </uap3:Extension>
 
         <!-- Kraken can be summoned via: 'kraken' in a term. -->
-        <desktop:Extension
-          Category="windows.fullTrustProcess"
-          Executable="kraken.exe">
-          <desktop:FullTrustProcess>
-            <desktop:ParameterGroup GroupId="KrakenGroup" Parameters="kraken.exe"/>
-          </desktop:FullTrustProcess>
-        </desktop:Extension>
+        <uap5:Extension
+          Category="windows.appExecutionAlias"
+          Executable="kraken.exe"
+          EntryPoint="Kraken.Creator">
+          <uap5:AppExecutionAlias desktop4:Subsystem="windows" >   
+            <uap5:ExecutionAlias Alias="kraken.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
       </Extensions>
 
     </Application>
   </Applications>
 
+  <Extensions>
+    <desktop6:Extension
+      Category="windows.mutablePackageDirectories">
+      <desktop6:MutablePackageDirectories>  
+        <desktop6:MutablePackageDirectory Target="Wabi Animation" />
+      </desktop6:MutablePackageDirectories>
+    </desktop6:Extension>
+
+    <Extension
+      Category="windows.publisherCacheFolders"
+      uap10:HostId="Creator">
+      <PublisherCacheFolders>
+        <Folder Name="1.50"/>
+      </PublisherCacheFolders>
+    </Extension>
+  </Extensions>
+
   <Capabilities>
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="broadFileSystemAccess" />
+    <rescap:Capability Name="userDataSystem" />
+    <rescap:Capability Name="previewStore" />
+    <rescap:Capability Name="teamEditionExperience" />
+    <rescap:Capability Name="previewUiComposition" />
+    <rescap:Capability Name="interopServices" />
+    <rescap:Capability Name="appDiagnostics" />
+    <rescap:Capability Name="smbios" />
+    <rescap:Capability Name="allowElevation" />
+    <rescap:Capability Name="cameraProcessingExtension" />
+    <rescap:Capability Name="unvirtualizedResources" />
+    <rescap:Capability Name="modifiableApp" />
+    <rescap:Capability Name="packageWriteRedirectionCompatibilityShim" />
+    <rescap:Capability Name="customInstallActions" />
+    <rescap:Capability Name="packagedServices" />
+    <rescap:Capability Name="localSystemServices" />
+    <rescap:Capability Name="backgroundSpatialPerception" />
+    <rescap:Capability Name="inputObservation" />
+    <rescap:Capability Name="screenDuplication" />
+    <rescap:Capability Name="confirmAppClose" />
   </Capabilities>
 
   <build:Metadata>
