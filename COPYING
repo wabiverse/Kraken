@@ -1,11 +1,10 @@
-KRAKEN uses the Wabi Software EULA, which describes the rights
+Kraken uses the GNU General Public License, which describes the rights
 to distribute or change the code. 
 
 Please read this file for the full license.
-doc/license/proprietary.txt
+https://www.gnu.org/licenses/gpl-3.0.txt
 
-Apart from this EULA, KRAKEN is not available under other licenses.
+Apart from the GNU GPL, Kraken is not available under other licenses.
 
-2020, Wabi
-devs@kraken.xyz
-
+2021, Wabi Animation
+devs@kraken3d.org

@@ -13,13 +13,14 @@ Kraken
 
 *A pixel-crushing, render-ripping, GPU incinerating machine.*
 
-Home of the Kraken -- redefining animation composition, collaborative
-workflows, simulation engines, skeletal rigging systems, and look development
-from storyboard to final render. Built on the underlying software architecture
-provided by Pixar, and extended to meet the ever-growing needs of both artists
-and production pipelines. It is with this strong core foundation, that we may
-begin to solve the most challenging issues the world of modern graphics demands,
-and push the framework for composition & design into the future.
+Home of the Kraken -- The free and open source 3D animation platform redefining
+animation composition, collaborative workflows, simulation engines, skeletal
+rigging systems, and look development from storyboard to final render. Built on
+the underlying software architecture provided by Pixar, and extended to meet the
+ever-growing needs of both artists and production pipelines. It is with this strong
+core foundation, that we may begin to solve the most challenging issues the world
+of modern graphics demands, and push the framework for composition & design into
+the future.
 
 Join the community: https://discord.gg/aXP867Q
 
@@ -56,6 +57,17 @@ And I heavily thank you for everything.
 
  ❤ Thank you Blender Foundation
 xx Furby.
+
+
+License
+=======
+Kraken uses the GNU General Public License, which describes the rights
+to distribute or change the code.
+
+Please read this file for the full license.
+https://www.gnu.org/licenses/gpl-3.0.txt
+
+Apart from the GNU GPL, Kraken is not available under other licenses.
 
 
 |
