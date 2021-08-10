@@ -118,15 +118,15 @@ bool ArchGetAddressInfo(void *address,
   {
     HANDLE process = GetCurrentProcess();
 
-  /**
-   * Doesn't work on UWP */
-#ifndef WINAPI_PARTITION_DESKTOP
+    /**
+     * Doesn't work on UWP */
+#  ifndef WINAPI_PARTITION_DESKTOP
     DWORD displacement;
     SymInitialize(process, NULL, BOOL(TRUE));
 
     // Symbol
     ULONG64 symBuffer[(sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR) + sizeof(ULONG64) - 1) /
-                       sizeof(ULONG64)];
+                      sizeof(ULONG64)];
     SYMBOL_INFO *sym = (SYMBOL_INFO *)symBuffer;
     sym->MaxNameLen = MAX_SYM_NAME;
     sym->SizeOfStruct = sizeof(SYMBOL_INFO);
@@ -161,7 +161,7 @@ bool ArchGetAddressInfo(void *address,
     {
       *symbolAddress = (void *)sym->Address;
     }
-#else /* WINAPI_PARTITION_DESKTOP */
+#  else /* WINAPI_PARTITION_DESKTOP */
 
     /**
      * We can Retrieve base address on WinRT. */
@@ -178,7 +178,7 @@ bool ArchGetAddressInfo(void *address,
        * We can return true, so long as we did
        * not request a symbol name or symbol
        * address -- so we passthrough here.
-       * 
+       *
        * :: pass :: */
     }
 
@@ -201,7 +201,7 @@ bool ArchGetAddressInfo(void *address,
       return false;
     }
 
-#endif /* WINRT */
+#  endif /* WINRT */
   }
   return true;
 

@@ -187,7 +187,7 @@ std::string ArchGetExecutablePath()
 
   return MICROSOFT::to_string(Package::Current().InstalledLocation().Path());
 
-#if 0
+#  if 0
   /**
    * On Windows GetModuleFileName()
    * Will no longer work on UWP.
@@ -214,7 +214,7 @@ std::string ArchGetExecutablePath()
       return true;
     }
   });
-#endif
+#  endif
 
 #endif
 }

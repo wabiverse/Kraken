@@ -193,7 +193,6 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
 
   if (result.GetResults() == ContentDialogResult::Primary)
   {
-
   }
 
   kContext *C;

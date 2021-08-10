@@ -284,21 +284,15 @@ const AnchorU8 *AnchorSystemPathsWin32::getBinaryDir() const
 
 void AnchorSystemPathsWin32::addToSystemRecentFiles(const char *filename) const
 {
-  MICROSOFT::Windows::Storage::StorageLibrary documents
-  {
-    Storage::StorageLibrary::GetLibraryAsync(Storage::KnownLibraryId::Documents).GetResults()
-  };
+  MICROSOFT::Windows::Storage::StorageLibrary documents{
+    Storage::StorageLibrary::GetLibraryAsync(Storage::KnownLibraryId::Documents).GetResults()};
 
-  MICROSOFT::Windows::Storage::StorageFolder recentFiles
-  {
-    documents.RequestAddFolderAsync().GetResults()
-  };
+  MICROSOFT::Windows::Storage::StorageFolder recentFiles{
+    documents.RequestAddFolderAsync().GetResults()};
 
-  MICROSOFT::Windows::Storage::StorageFile fileAdded
-  {
-    recentFiles.CreateFileAsync((LPWSTR)filename).GetResults()
-  };
-  
+  MICROSOFT::Windows::Storage::StorageFile fileAdded{
+    recentFiles.CreateFileAsync((LPWSTR)filename).GetResults()};
+
   if (fileAdded.Path().empty())
   {
     TF_MSG_ERROR("ANCHOR - Error adding file to System Recent files.");
