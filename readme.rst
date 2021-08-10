@@ -46,5 +46,28 @@ arbitrary 3D scenes that may be composed from many elemental assets.
    :align: center
 
 
+Credits
+=======
+For the -- wow this looks like the
+blender build & overall directory
+structure!
+
+Blender's Open Source code taught me how
+to read/write/build C applications.
+
+And likewise, I began to fall in love
+with the overall placement of things
+a bit.
+
+It was the months I spent tinkering around
+in a Blender build that just about taught
+me everything I know.
+
+And I heavily thank you for everything.
+
+         ❤ Thank you Blender Foundation
+            -- Furby
+
+
 |
 | *We speak in pixel, and we come in peace.*
