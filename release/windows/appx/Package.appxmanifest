@@ -118,8 +118,7 @@
     </desktop6:Extension>
 
     <Extension
-      Category="windows.publisherCacheFolders"
-      uap10:HostId="Creator">
+      Category="windows.publisherCacheFolders">
       <PublisherCacheFolders>
         <Folder Name="1.50"/>
       </PublisherCacheFolders>
@@ -127,6 +126,15 @@
   </Extensions>
 
   <Capabilities>
+    <!-- 
+      Note: This will absolutely not pass Microsoft Guidelines
+      and the removal of restrictions is simply to make dev life
+      easier. Do not get used to this for production as many of
+      these will need to be put back in place in order to get
+      approved for the Microsoft Store. However, since our proj
+      release target is Windows 11, we have some time to test
+      things out a bit.
+    -->
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="broadFileSystemAccess" />
