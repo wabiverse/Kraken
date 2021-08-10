@@ -21,6 +21,8 @@ and production pipelines. It is with this strong core foundation, that we may
 begin to solve the most challenging issues the world of modern graphics demands,
 and push the framework for composition & design into the future.
 
+Join the community: https://discord.gg/aXP867Q
+
 .. figure:: https://www.dropbox.com/s/00eo3o5ywf5frg3/cover.png?raw=1
    :scale: 50 %
    :align: center
