@@ -185,7 +185,15 @@ std::string ArchGetExecutablePath()
 
 #elif defined(ARCH_OS_WINDOWS)
 
-  // On Windows GetModuleFileName() returns the executable path.
+  return MICROSOFT::to_string(Package::Current().InstalledLocation().Path());
+
+#if 0
+  /**
+   * On Windows GetModuleFileName()
+   * Will no longer work on UWP.
+   * 
+   * Leaving this here for posterity,
+   * as well as historical reasons. */
   return _DynamicSizedRead(ARCH_PATH_MAX, [](char *buffer, size_t *size) {
     DWORD nSize = *size;
     const DWORD n = GetModuleFileName(NULL, (LPWSTR)buffer, nSize);
@@ -206,6 +214,7 @@ std::string ArchGetExecutablePath()
       return true;
     }
   });
+#endif
 
 #endif
 }

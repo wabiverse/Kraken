@@ -218,11 +218,11 @@ AnchorSystemPathsWin32::~AnchorSystemPathsWin32()
 
 const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr) const
 {
-  fs::path sysDir = STRCAT(TfGetPathName(ArchGetExecutablePath()), versionstr);
+  std::string sysDir = MICROSOFT::to_string(Package::Current().InstalledLocation().Path());
 
   if (!sysDir.empty())
   {
-    return (AnchorU8 *)CHARSTR(sysDir.string());
+    return (AnchorU8 *)CHARSTR(sysDir);
   }
 
   return NULL;

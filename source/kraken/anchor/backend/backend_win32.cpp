@@ -1656,13 +1656,13 @@ eAnchorStatus AnchorSystemWin32::getButtons(AnchorButtons &buttons) const
   // bool swapped = ::GetSystemMetrics(SM_SWAPBUTTON) == TRUE;
 
   // bool down = HIBYTE(::GetAsyncKeyState(VK_LBUTTON)) != 0;
-  // buttons.set(swapped ? ANCHOR_ButtonMaskRight : ANCHOR_ButtonMaskLeft, down);
+  // buttons.set(swapped ? ANCHOR_BUTTON_MASK_RIGHT : ANCHOR_BUTTON_MASK_LEFT, down);
 
   // down = HIBYTE(::GetAsyncKeyState(VK_MBUTTON)) != 0;
-  // buttons.set(ANCHOR_ButtonMaskMiddle, down);
+  // buttons.set(ANCHOR_BUTTON_MASK_MIDDLE, down);
 
   // down = HIBYTE(::GetAsyncKeyState(VK_RBUTTON)) != 0;
-  // buttons.set(swapped ? ANCHOR_ButtonMaskLeft : ANCHOR_ButtonMaskRight, down);
+  // buttons.set(swapped ? ANCHOR_BUTTON_MASK_LEFT : ANCHOR_BUTTON_MASK_RIGHT, down);
   return ANCHOR_SUCCESS;
 }
 
@@ -2183,39 +2183,39 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //         // Mouse events, processed
   //         ////////////////////////////////////////////////////////////////////////
   //         case WM_LBUTTONDOWN:
-  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskLeft);
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_LEFT);
   //           break;
   //         case WM_MBUTTONDOWN:
-  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskMiddle);
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_MIDDLE);
   //           break;
   //         case WM_RBUTTONDOWN:
-  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskRight);
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_RIGHT);
   //           break;
   //         case WM_XBUTTONDOWN:
   //           if ((short)HIWORD(wParam) == XBUTTON1)
   //           {
-  //             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton4);
+  //             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_BUTTON_4);
   //           } else if ((short)HIWORD(wParam) == XBUTTON2)
   //           {
-  //             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_ButtonMaskButton5);
+  //             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_BUTTON_5);
   //           }
   //           break;
   //         case WM_LBUTTONUP:
-  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskLeft);
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_LEFT);
   //           break;
   //         case WM_MBUTTONUP:
-  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskMiddle);
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_MIDDLE);
   //           break;
   //         case WM_RBUTTONUP:
-  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskRight);
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_RIGHT);
   //           break;
   //         case WM_XBUTTONUP:
   //           if ((short)HIWORD(wParam) == XBUTTON1)
   //           {
-  //             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton4);
+  //             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_BUTTON_4);
   //           } else if ((short)HIWORD(wParam) == XBUTTON2)
   //           {
-  //             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_ButtonMaskButton5);
+  //             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_BUTTON_5);
   //           }
   //           break;
   //         case WM_MOUSEMOVE:
@@ -2813,23 +2813,23 @@ eAnchorStatus AnchorWindowWin32::getPointerInfo(std::vector<AnchorBackendWin32Po
   //   {
   //     case POINTER_CHANGE_FIRSTBUTTON_DOWN:
   //     case POINTER_CHANGE_FIRSTBUTTON_UP:
-  //       outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskLeft;
+  //       outPointerInfo[i].buttonMask = ANCHOR_BUTTON_MASK_LEFT;
   //       break;
   //     case POINTER_CHANGE_SECONDBUTTON_DOWN:
   //     case POINTER_CHANGE_SECONDBUTTON_UP:
-  //       outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskRight;
+  //       outPointerInfo[i].buttonMask = ANCHOR_BUTTON_MASK_RIGHT;
   //       break;
   //     case POINTER_CHANGE_THIRDBUTTON_DOWN:
   //     case POINTER_CHANGE_THIRDBUTTON_UP:
-  //       outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskMiddle;
+  //       outPointerInfo[i].buttonMask = ANCHOR_BUTTON_MASK_MIDDLE;
   //       break;
   //     case POINTER_CHANGE_FOURTHBUTTON_DOWN:
   //     case POINTER_CHANGE_FOURTHBUTTON_UP:
-  //       outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskButton4;
+  //       outPointerInfo[i].buttonMask = ANCHOR_BUTTON_MASK_BUTTON_4;
   //       break;
   //     case POINTER_CHANGE_FIFTHBUTTON_DOWN:
   //     case POINTER_CHANGE_FIFTHBUTTON_UP:
-  //       outPointerInfo[i].buttonMask = ANCHOR_ButtonMaskButton5;
+  //       outPointerInfo[i].buttonMask = ANCHOR_BUTTON_MASK_BUTTON_5;
   //       break;
   //     default:
   //       break;
@@ -3102,19 +3102,19 @@ AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
   {
     switch (mask)
     {
-      case ANCHOR_ButtonMaskLeft:
+      case ANCHOR_BUTTON_MASK_LEFT:
         ANCHOR::GetIO().MouseDown[0] = true;
         break;
-      case ANCHOR_ButtonMaskRight:
+      case ANCHOR_BUTTON_MASK_RIGHT:
         ANCHOR::GetIO().MouseDown[1] = true;
         break;
-      case ANCHOR_ButtonMaskMiddle:
+      case ANCHOR_BUTTON_MASK_MIDDLE:
         ANCHOR::GetIO().MouseDown[2] = true;
         break;
-      case ANCHOR_ButtonMaskButton4:
+      case ANCHOR_BUTTON_MASK_BUTTON_4:
         ANCHOR::GetIO().MouseDown[3] = true;
         break;
-      case ANCHOR_ButtonMaskButton5:
+      case ANCHOR_BUTTON_MASK_BUTTON_5:
         ANCHOR::GetIO().MouseDown[4] = true;
         break;
     }
@@ -3122,19 +3122,19 @@ AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
   {
     switch (mask)
     {
-      case ANCHOR_ButtonMaskLeft:
+      case ANCHOR_BUTTON_MASK_LEFT:
         ANCHOR::GetIO().MouseDown[0] = false;
         break;
-      case ANCHOR_ButtonMaskRight:
+      case ANCHOR_BUTTON_MASK_RIGHT:
         ANCHOR::GetIO().MouseDown[1] = false;
         break;
-      case ANCHOR_ButtonMaskMiddle:
+      case ANCHOR_BUTTON_MASK_MIDDLE:
         ANCHOR::GetIO().MouseDown[2] = false;
         break;
-      case ANCHOR_ButtonMaskButton4:
+      case ANCHOR_BUTTON_MASK_BUTTON_4:
         ANCHOR::GetIO().MouseDown[3] = false;
         break;
-      case ANCHOR_ButtonMaskButton5:
+      case ANCHOR_BUTTON_MASK_BUTTON_5:
         ANCHOR::GetIO().MouseDown[4] = false;
         break;
     }

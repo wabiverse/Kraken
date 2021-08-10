@@ -1442,9 +1442,9 @@ eAnchorStatus AnchorSystemSDL::getModifierKeys(AnchorModifierKeys &keys) const
 eAnchorStatus AnchorSystemSDL::getButtons(AnchorButtons &buttons) const
 {
   Uint8 state = SDL_GetMouseState(NULL, NULL);
-  buttons.set(ANCHOR_ButtonMaskLeft, (state & SDL_BUTTON_LMASK) != 0);
-  buttons.set(ANCHOR_ButtonMaskMiddle, (state & SDL_BUTTON_MMASK) != 0);
-  buttons.set(ANCHOR_ButtonMaskRight, (state & SDL_BUTTON_RMASK) != 0);
+  buttons.set(ANCHOR_BUTTON_MASK_LEFT, (state & SDL_BUTTON_LMASK) != 0);
+  buttons.set(ANCHOR_BUTTON_MASK_MIDDLE, (state & SDL_BUTTON_MMASK) != 0);
+  buttons.set(ANCHOR_BUTTON_MASK_RIGHT, (state & SDL_BUTTON_RMASK) != 0);
 
   return ANCHOR_SUCCESS;
 }
@@ -1646,7 +1646,7 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
     case SDL_MOUSEBUTTONUP:
     case SDL_MOUSEBUTTONDOWN: {
       SDL_MouseButtonEvent &sdl_sub_evt = sdl_event->button;
-      eAnchorButtonMask abmask = ANCHOR_ButtonMaskLeft;
+      eAnchorButtonMask abmask = ANCHOR_BUTTON_MASK_LEFT;
       eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? AnchorEventTypeButtonDown :
                                                                    AnchorEventTypeButtonUp;
 
@@ -1655,16 +1655,16 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
 
       /* process rest of normal mouse buttons */
       if (sdl_sub_evt.button == SDL_BUTTON_LEFT)
-        abmask = ANCHOR_ButtonMaskLeft;
+        abmask = ANCHOR_BUTTON_MASK_LEFT;
       else if (sdl_sub_evt.button == SDL_BUTTON_MIDDLE)
-        abmask = ANCHOR_ButtonMaskMiddle;
+        abmask = ANCHOR_BUTTON_MASK_MIDDLE;
       else if (sdl_sub_evt.button == SDL_BUTTON_RIGHT)
-        abmask = ANCHOR_ButtonMaskRight;
+        abmask = ANCHOR_BUTTON_MASK_RIGHT;
       /* these buttons are untested! */
       else if (sdl_sub_evt.button == SDL_BUTTON_X1)
-        abmask = ANCHOR_ButtonMaskButton4;
+        abmask = ANCHOR_BUTTON_MASK_BUTTON_4;
       else if (sdl_sub_evt.button == SDL_BUTTON_X2)
-        abmask = ANCHOR_ButtonMaskButton5;
+        abmask = ANCHOR_BUTTON_MASK_BUTTON_5;
       else
         break;
 

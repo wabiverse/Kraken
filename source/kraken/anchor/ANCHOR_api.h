@@ -123,17 +123,17 @@ enum eAnchorStatus
 
 enum eAnchorButtonMask
 {
-  ANCHOR_ButtonMaskNone,
-  ANCHOR_ButtonMaskLeft,
-  ANCHOR_ButtonMaskMiddle,
-  ANCHOR_ButtonMaskRight,
-  ANCHOR_ButtonMaskButton4,
-  ANCHOR_ButtonMaskButton5,
+  ANCHOR_BUTTON_MASK_NONE,
+  ANCHOR_BUTTON_MASK_LEFT,
+  ANCHOR_BUTTON_MASK_MIDDLE,
+  ANCHOR_BUTTON_MASK_RIGHT,
+  ANCHOR_BUTTON_MASK_BUTTON_4,
+  ANCHOR_BUTTON_MASK_BUTTON_5,
   /**
    * Trackballs and programmable buttons */
-  ANCHOR_ButtonMaskButton6,
-  ANCHOR_ButtonMaskButton7,
-  ANCHOR_ButtonNumMasks
+  ANCHOR_BUTTON_MASK_BUTTON_6,
+  ANCHOR_BUTTON_MASK_BUTTON_7,
+  ANCHOR_BUTTON_MASK_MAX
 };
 
 enum eAnchorModifierKeyMask

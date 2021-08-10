@@ -725,22 +725,22 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
       /* Get value and type from Anchor. */
       event.val = (type == AnchorEventTypeButtonDown) ? KM_PRESS : KM_RELEASE;
 
-      if (bd->button == ANCHOR_ButtonMaskLeft)
+      if (bd->button == ANCHOR_BUTTON_MASK_LEFT)
       {
         event.type = LEFTMOUSE;
-      } else if (bd->button == ANCHOR_ButtonMaskRight)
+      } else if (bd->button == ANCHOR_BUTTON_MASK_RIGHT)
       {
         event.type = RIGHTMOUSE;
-      } else if (bd->button == ANCHOR_ButtonMaskButton4)
+      } else if (bd->button == ANCHOR_BUTTON_MASK_BUTTON_4)
       {
         event.type = BUTTON4MOUSE;
-      } else if (bd->button == ANCHOR_ButtonMaskButton5)
+      } else if (bd->button == ANCHOR_BUTTON_MASK_BUTTON_5)
       {
         event.type = BUTTON5MOUSE;
-      } else if (bd->button == ANCHOR_ButtonMaskButton6)
+      } else if (bd->button == ANCHOR_BUTTON_MASK_BUTTON_6)
       {
         event.type = BUTTON6MOUSE;
-      } else if (bd->button == ANCHOR_ButtonMaskButton7)
+      } else if (bd->button == ANCHOR_BUTTON_MASK_BUTTON_7)
       {
         event.type = BUTTON7MOUSE;
       } else
