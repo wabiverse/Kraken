@@ -183,18 +183,6 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
     }
   }
 
-  ContentDialog dialog;
-  dialog.Title(box_value(L"Testing"));
-  dialog.Content(box_value(L"Hello"));
-  dialog.PrimaryButtonText(L"Okay");
-  dialog.CloseButtonText(L"Close");
-
-  auto result = dialog.ShowAsync();
-
-  if (result.GetResults() == ContentDialogResult::Primary)
-  {
-  }
-
   kContext *C;
 
   /* Environment variables. */
@@ -224,6 +212,10 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
 
   KKE_appdir_init();
 
+#ifdef WITH_MAIN_INIT
+  /**
+   * The great refactor for WinRT. */
+
   /* Determining Stage Configuration and Loadup. */
   KKE_kraken_main_init(C);
 
@@ -235,6 +227,7 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
 
   /* Run the main event loop. */
   WM_main(C);
+#endif /* WITH_MAIN_INIT */
 }
 
 void Creator::OnSuspending([[maybe_unused]] IInspectable const &sender, [[maybe_unused]] SuspendingEventArgs const &e)
