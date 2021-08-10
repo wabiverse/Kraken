@@ -80,5 +80,14 @@ void KLI_threadapi_init(void)
 
 int KLI_thread_is_main(void)
 {
+#if !defined(ARCH_OS_WINDOWS)
   return pthread_equal(pthread_self(), mainid);
+#else
+  /**
+   * Checking for main thread is not
+   * currently necessary on WinRT,
+   * for now, always validate this
+   * check. */
+  return true;
+#endif /* !defined(ARCH_OS_WINDOWS) */
 }

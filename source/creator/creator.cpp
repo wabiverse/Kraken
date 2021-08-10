@@ -217,7 +217,7 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
 
 #ifdef WITH_MAIN_INIT
  /**
-   * The great refactor for WinRT. */
+  * The great refactor for WinRT. */
 
   /* Initialize main Runtime. */
   WM_init(C);
