@@ -212,12 +212,12 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
 
   KKE_appdir_init();
 
-#ifdef WITH_MAIN_INIT
-  /**
-   * The great refactor for WinRT. */
-
   /* Determining Stage Configuration and Loadup. */
   KKE_kraken_main_init(C);
+
+#ifdef WITH_MAIN_INIT
+ /**
+   * The great refactor for WinRT. */
 
   /* Initialize main Runtime. */
   WM_init(C);

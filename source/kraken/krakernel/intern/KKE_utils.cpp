@@ -24,14 +24,14 @@
 
 #include "KKE_utils.h"
 #include "KKE_main.h"
-
+#include "KKE_version.h"
 
 WABI_NAMESPACE_BEGIN
 
 
 std::string kraken_exe_path_init()
 {
-  return TfGetPathName(ArchGetExecutablePath());
+  return ArchGetExecutablePath();
 }
 
 std::string kraken_datafiles_path_init()

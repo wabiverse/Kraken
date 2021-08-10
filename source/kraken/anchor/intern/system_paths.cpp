@@ -222,7 +222,7 @@ const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr
 
   if (!sysDir.empty())
   {
-    return (AnchorU8 *)CHARSTR(sysDir);
+    return (AnchorU8 *)CHARSTR(STRCAT(sysDir, versionstr));
   }
 
   return NULL;
