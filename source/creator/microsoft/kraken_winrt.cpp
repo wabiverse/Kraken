@@ -66,10 +66,10 @@
 #  include <winrt/Windows.UI.Xaml.Markup.h>
 #  include <winrt/Windows.UI.Xaml.Navigation.h>
 
-#include "creator.h"
-#include "main.h"
+#  include "creator.h"
+#  include "main.h"
 
-#include "kraken_winrt.h"
+#  include "kraken_winrt.h"
 
 using namespace MICROSOFT;
 using namespace MICROSOFT::Windows;
@@ -168,7 +168,7 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
     }
   }
 
-  /** 
+  /**
    * Kraken Main Startup. */
   CREATOR_kraken_main();
 }

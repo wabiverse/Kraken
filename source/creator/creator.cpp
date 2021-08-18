@@ -62,14 +62,14 @@ void CREATOR_kraken_main(int argc, const char **argv)
   /* Init plugins. */
   KKE_kraken_plugins_init();
 
-#  ifdef WITH_CREATOR_ARGS
+#ifdef WITH_CREATOR_ARGS
   /**
    * Init & parse args. */
-   CREATOR_setup_args(argc, (const char **)argv);
-   if (CREATOR_parse_args(argc, (const char **)argv) != 0)
-   {
-      return;
-   }
+  CREATOR_setup_args(argc, (const char **)argv);
+  if (CREATOR_parse_args(argc, (const char **)argv) != 0)
+  {
+    return;
+  }
 #endif /* WITH_CREATOR_ARGS */
 
   KKE_appdir_init();
@@ -77,7 +77,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
   /* Determining Stage Configuration and Loadup. */
   KKE_kraken_main_init(C);
 
-#  ifdef WITH_MAIN_INIT
+#ifdef WITH_MAIN_INIT
   /**
    * The great refactor for WinRT. */
 
@@ -89,7 +89,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
 
   /* Run the main event loop. */
   WM_main(C);
-#  endif /* WITH_MAIN_INIT */
+#endif /* WITH_MAIN_INIT */
 }
 
 #if !defined(ARCH_OS_WINDOWS)

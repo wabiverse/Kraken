@@ -136,7 +136,7 @@ WINRT_EXPORT namespace winrt::Kraken
     IMain(void *ptr, take_ownership_from_abi_t) noexcept
       : winrt::Windows::Foundation::IInspectable(ptr, take_ownership_from_abi)
     {}
-    
+
     IMain(IMain const &) noexcept = default;
     IMain(IMain &&) noexcept = default;
     IMain &operator=(IMain const &) &noexcept = default;

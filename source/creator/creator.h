@@ -31,7 +31,7 @@
 
 #if defined(ARCH_OS_WINDOWS)
 
-#include "kraken_winrt.h"
+#  include "kraken_winrt.h"
 
 #endif /* ARCH_OS_WINDOWS */
 
