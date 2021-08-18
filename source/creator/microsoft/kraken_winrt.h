@@ -28,8 +28,6 @@
 
 #ifdef ARCH_OS_WINDOWS
 
-// #  include "pch.h"
-
 #  include "creator_xaml_typeinfo.h"
 #  include "creator_xaml_metadata.h"
 
