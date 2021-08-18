@@ -284,6 +284,15 @@ else()
   message(FATAL_ERROR "Vulkan Installation not valid")
 endif()
 
+if(WITH_DIRECTX)
+  list(APPEND DIRECTX_LIBS
+    d3d12
+    d3dcompiler
+    dxgi
+  )
+  add_definitions(-DWITH_DIRECTX)
+endif()
+
 if(UNIX)
   find_package(X11)
 endif()

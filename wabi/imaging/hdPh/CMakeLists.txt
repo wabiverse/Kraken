@@ -42,6 +42,7 @@ wabi_library(hdPh
         garch
         glf
         hd
+        hgiDX3D
         hgiVulkan
         hgiGL
         sdr

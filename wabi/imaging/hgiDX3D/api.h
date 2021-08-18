@@ -28,36 +28,27 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#ifndef WABI_IMAGING_HGI_TOKENS_H
-#define WABI_IMAGING_HGI_TOKENS_H
+#ifndef WABI_IMAGING_HGIDX3D_API_H
+#define WABI_IMAGING_HGIDX3D_API_H
 
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/export.h"
 
-#include "wabi/imaging/hgi/api.h"
-
-WABI_NAMESPACE_BEGIN
-
-/* clang-format off */
-#define HGI_TOKENS \
-  (taskDriver)     \
-  (renderDriver)   \
-  (OpenGL)         \
-  (Metal)          \
-  (Vulkan)         \
-  (DX3D)
-/* clang-format on */
-
-TF_DECLARE_PUBLIC_TOKENS(HgiTokens, HGI_API, HGI_TOKENS);
-
-/* clang-format off */
-#define HGI_SHADER_KEYWORD_TOKENS \
-  (hdGlobalInvocationID)          \
-  (hdPosition)
-/* clang-format on */
-
-TF_DECLARE_PUBLIC_TOKENS(HgiShaderKeywordTokens, HGI_API, HGI_SHADER_KEYWORD_TOKENS);
-
-WABI_NAMESPACE_END
-
+#if defined(WABI_STATIC)
+#  define HGIDX3D_API
+#  define HGIDX3D_API_TEMPLATE_CLASS(...)
+#  define HGIDX3D_API_TEMPLATE_STRUCT(...)
+#  define HGIDX3D_LOCAL
+#else
+#  if defined(HGIDX3D_EXPORTS)
+#    define HGIDX3D_API ARCH_EXPORT
+#    define HGIDX3D_API_TEMPLATE_CLASS(...) ARCH_EXPORT_TEMPLATE(class, __VA_ARGS__)
+#    define HGIDX3D_API_TEMPLATE_STRUCT(...) ARCH_EXPORT_TEMPLATE(struct, __VA_ARGS__)
+#  else
+#    define HGIDX3D_API ARCH_IMPORT
+#    define HGIDX3D_API_TEMPLATE_CLASS(...) ARCH_IMPORT_TEMPLATE(class, __VA_ARGS__)
+#    define HGIDX3D_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
+#  endif
+#  define HGIDX3D_LOCAL ARCH_HIDDEN
 #endif
+
+#endif /* WABI_IMAGING_HGIDX3D_API_H */

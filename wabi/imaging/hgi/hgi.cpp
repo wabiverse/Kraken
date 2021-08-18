@@ -37,7 +37,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, false, "Enable Vulkan as platform default Hgi backend (WIP)");
+#if defined(ARCH_OS_WINDOWS)
+  TF_DEFINE_ENV_SETTING(HGI_ENABLE_DIRECTX, true, "Enable DirectX as platform default Hgi backend (WIP)");
+  TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, false, "Enable Vulkan as platform default Hgi backend (WIP)");
+#elif defined(ARCH_OS_LINUX)
+  TF_DEFINE_ENV_SETTING(HGI_ENABLE_DIRECTX, false, "Enable DirectX as platform default Hgi backend (WIP)");
+  TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, true, "Enable Vulkan as platform default Hgi backend (WIP)");
+#endif
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -87,6 +93,15 @@ static Hgi *_MakeNewPlatformDefaultHgi()
     hgiType = "HgiVulkan";
 #else
     TF_CODING_ERROR("Build requires WITH_VULKAN=true to use Vulkan");
+#endif
+  }
+
+  if (TfGetEnvSetting(HGI_ENABLE_DIRECTX))
+  {
+#if defined(WITH_DIRECTX)
+    hgiType = "HgiDX3D";
+#else
+    TF_CODING_ERROR("Build requires WITH_DIRECTX=true to use DirectX");
 #endif
   }
 

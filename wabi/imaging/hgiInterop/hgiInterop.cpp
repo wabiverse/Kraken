@@ -36,6 +36,11 @@
 #  include "wabi/imaging/hgiVulkan/hgi.h"
 #endif /* WITH_VULKAN */
 
+#if defined(WITH_DIRECTX)
+#  include "wabi/imaging/hgiInterop/dx3d.h"
+#  include "wabi/imaging/hgiDX3D/hgi.h"
+#endif /* WITH_DIRECTX */
+
 #include "wabi/imaging/hgiInterop/opengl.h"
 /* clang-format on */
 
@@ -69,6 +74,22 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
     return;
   }
 #endif /* WITH_METAL */
+
+/**
+ * ------------------------------------ Otherwise check DirectX -> OpenGL. ----- */
+#if defined(WITH_DIRECTX)
+  if (srcApi == HgiTokens->DX3D && dstApi == HgiTokens->OpenGL)
+  {
+    /**
+     * Transfer DirectX textures to OpenGL application. */
+    if (!_dX3DToOpenGL)
+    {
+      _dX3DToOpenGL = std::make_unique<HgiInteropDX3D>(srcHgi);
+    }
+    _dX3DToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
+    return;
+  }
+#endif /* WITH_DIRECTX */
 
 /**
  * ------------------------------------ Otherwise check Vulkan -> OpenGL. ----- */

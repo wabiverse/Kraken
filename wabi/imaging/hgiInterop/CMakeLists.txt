@@ -10,7 +10,7 @@ set(optionalLibraries "")
 set(optionalCppFiles "")
 set(optionalPrivateHeaders "")
 
-if(WITH_VULKAN OR WITH_OPENGL OR WITH_METAL)
+if(WITH_VULKAN OR WITH_OPENGL OR WITH_METAL OR WITH_DIRECTX)
   list(APPEND optionalLibraries garch)
 endif()
 
@@ -32,6 +32,12 @@ if(WITH_VULKAN)
   list(APPEND optionalLibraries hgiVulkan)
   list(APPEND optionalCppFiles vulkan.cpp)
   list(APPEND optionalPrivateHeaders vulkan.h)
+endif()
+
+if(WITH_DIRECTX)
+  list(APPEND optionalLibraries hgiDX3D)
+  list(APPEND optionalCppFiles dx3d.cpp)
+  list(APPEND optionalPrivateHeaders dx3d.h)
 endif()
 
 wabi_library(hgiInterop

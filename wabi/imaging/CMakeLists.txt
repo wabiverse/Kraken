@@ -11,6 +11,10 @@ if(APPLE)
   add_subdirectory(hgiMetal)
 endif()
 
+if(WIN32)
+  add_subdirectory(hgiDX3D)
+endif()
+
 add_subdirectory(hgiVulkan)
 add_subdirectory(hgiInterop)
 add_subdirectory(hd)

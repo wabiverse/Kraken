@@ -24,40 +24,21 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
  * ANY KIND, either express or implied. See the Apache License for the
  * specific language governing permissions and limitations under the
- * Apache License.
+ * Apache License.-
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#ifndef WABI_IMAGING_HGI_TOKENS_H
-#define WABI_IMAGING_HGI_TOKENS_H
+#ifndef WABI_IMAGING_HGIDX3D_DX3D_H
+#define WABI_IMAGING_HGIDX3D_DX3D_H
 
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/defines.h"
 
-#include "wabi/imaging/hgi/api.h"
+#if defined(ARCH_OS_WINDOWS)
 
-WABI_NAMESPACE_BEGIN
+#  include <d3d12.h>
+#  include <dxgi1_6.h>
+#  include <d3dcompiler.h>
 
-/* clang-format off */
-#define HGI_TOKENS \
-  (taskDriver)     \
-  (renderDriver)   \
-  (OpenGL)         \
-  (Metal)          \
-  (Vulkan)         \
-  (DX3D)
-/* clang-format on */
+#endif /* ARCH_OS_WINDOWS */
 
-TF_DECLARE_PUBLIC_TOKENS(HgiTokens, HGI_API, HGI_TOKENS);
-
-/* clang-format off */
-#define HGI_SHADER_KEYWORD_TOKENS \
-  (hdGlobalInvocationID)          \
-  (hdPosition)
-/* clang-format on */
-
-TF_DECLARE_PUBLIC_TOKENS(HgiShaderKeywordTokens, HGI_API, HGI_SHADER_KEYWORD_TOKENS);
-
-WABI_NAMESPACE_END
-
-#endif
+#endif /* WABI_IMAGING_HGIDX3D_DX3D_H */

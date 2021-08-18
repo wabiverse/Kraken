@@ -38,6 +38,7 @@ class Hgi;
 class HgiInteropMetal;
 class HgiInteropOpenGL;
 class HgiInteropVulkan;
+class HgiInteropDX3D;
 class VtValue;
 
 /// \class HgiInterop
@@ -102,6 +103,10 @@ class HgiInterop final
 #if defined(WITH_METAL)
   std::unique_ptr<HgiInteropMetal> _metalToOpenGL;
 #endif /* WITH_METAL */
+
+#if defined(WITH_DIRECTX)
+  std::unique_ptr<HgiInteropDX3D> _dX3DToOpenGL;
+#endif /* WITH_DIRECTX */
 
 #if defined(WITH_VULKAN)
   std::unique_ptr<HgiInteropVulkan> _vulkanToOpenGL;

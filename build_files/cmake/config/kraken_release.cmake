@@ -23,6 +23,11 @@ set(WITH_RENDERMAN           ON  CACHE BOOL "" FORCE)
 set(WITH_PHOENIX             ON  CACHE BOOL "" FORCE)
 set(WITH_EMBREE              ON  CACHE BOOL "" FORCE)
 set(WITH_VULKAN              ON  CACHE BOOL "" FORCE)
+if(WIN32)
+  set(WITH_DIRECTX           ON  CACHE BOOL "" FORCE)
+else()
+  set(WITH_DIRECTX          OFF  CACHE BOOL "" FORCE)
+endif()
 
 ################################################################################## FILE FORMATS ######
 

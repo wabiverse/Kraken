@@ -182,7 +182,6 @@ option(WITH_PIXAR_AR_BETA            "Enable developmental preview of Pixar Asse
 option(WITH_PIXAR_USDVIEW            "Build the Pixar UsdView Python Application"                                                 ON)
 option(WITH_PIXAR_TOOLKIT            "Build the Pixar USD tools"                                                                  ON)
 option(WITH_TBB                      "Enable Threading Building Blocks Support"                                                   ON)
-option(WITH_VULKAN                   "Enable Vulkan graphics support"                                                             ON)
 option(WITH_OPENSUBDIV               "Enable OpenSubdiv for surface subdivision"                                                  ON)
 option(WITH_OPENCOLORIO              "Enable OpenColorIO color management"                                                        ON)
 option(WITH_ARNOLD                   "Enable Arnold Renderer support"                                                             ON)
@@ -212,6 +211,11 @@ option(WITH_PYTHON_SECURITY          "Disables execution of scripts referenced w
 option(WITH_SAFETY_OVER_SPEED        "Enable certain checks designed to avoid crashes"                                            ON)
 option(WITH_OPENGL                   "Enable OpenGL GFX API and components"                                                       ON)
 option(WITH_VULKAN                   "Enable Vulkan GFX API and components"                                                       ON)
+if(WIN32) # Only Windows has DirectX Support.
+  option(WITH_DIRECTX "Enable DirectX GFX API and components" ON)
+else()
+  option(WITH_DIRECTX "Enable DirectX GFX API and components" OFF)
+endif()
 if(APPLE) # Only Apple has Metal Support.
   option(WITH_METAL "Enable Metal GFX API and components" ON)
 else()
@@ -398,6 +402,7 @@ if(FIRST_RUN)
   info_cfg_option(WITH_SAFETY_OVER_SPEED)
 
   info_cfg_text("Hydra Graphics:")
+  info_cfg_option(WITH_DIRECTX)
   info_cfg_option(WITH_VULKAN)
   info_cfg_option(WITH_OPENSUBDIV)
   info_cfg_option(WITH_OPENCOLORIO)

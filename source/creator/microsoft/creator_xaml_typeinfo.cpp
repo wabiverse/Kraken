@@ -255,7 +255,9 @@ namespace winrt::Kraken::implementation
     &SetValueTypeMember_MyProperty<::winrt::Kraken::Main, int32_t>,
     0, /* Int32 */
     -1,
-    false, false, false,
+    false,
+    false,
+    false,
   };
 
   const wchar_t *GetShortName(const wchar_t *longName)
