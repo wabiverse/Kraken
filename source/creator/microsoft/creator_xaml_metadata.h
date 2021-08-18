@@ -176,6 +176,50 @@ WINRT_EXPORT namespace winrt::Kraken
   };
 }
 
+namespace winrt::impl
+{
+  template <typename D> WINRT_IMPL_AUTO(int32_t) consume_Kraken_IMain<D>::MyProperty() const
+  {
+    int32_t value{};
+    check_hresult(WINRT_IMPL_SHIM(winrt::Kraken::IMain)->get_MyProperty(&value));
+    return value;
+  }
+  template <typename D> WINRT_IMPL_AUTO(void) consume_Kraken_IMain<D>::MyProperty(int32_t value) const
+  {
+    check_hresult(WINRT_IMPL_SHIM(winrt::Kraken::IMain)->put_MyProperty(value));
+  }
+  template <typename D>
+  struct produce<D, winrt::Kraken::IMain> : produce_base<D, winrt::Kraken::IMain>
+  {
+    int32_t __stdcall get_MyProperty(int32_t* value) noexcept final try
+    {
+      typename D::abi_guard guard(this->shim());
+      *value = detach_from<int32_t>(this->shim().MyProperty());
+      return 0;
+    }
+    catch (...) { return to_hresult(); }
+    int32_t __stdcall put_MyProperty(int32_t value) noexcept final try
+    {
+      typename D::abi_guard guard(this->shim());
+      this->shim().MyProperty(value);
+      return 0;
+    }
+    catch (...) { return to_hresult(); }
+  };
+}
+
+WINRT_EXPORT namespace winrt::Kraken
+{}
+
+namespace std
+{
+#ifndef WINRT_LEAN_AND_MEAN
+  template<> struct hash<winrt::Kraken::IMain> : winrt::impl::hash_base {};
+  template<> struct hash<winrt::Kraken::Main> : winrt::impl::hash_base {};
+  template<> struct hash<winrt::Kraken::XamlMetaDataProvider> : winrt::impl::hash_base {};
+#endif
+}
+
 namespace winrt::Kraken::implementation
 {
   template<typename D, typename... I>
@@ -237,8 +281,7 @@ namespace winrt::Kraken::implementation
 namespace winrt::Kraken::factory_implementation
 {
   struct XamlMetaDataProvider : XamlMetaDataProviderT<XamlMetaDataProvider, implementation::XamlMetaDataProvider>
-  {
-  };
+  {};
 }  // namespace winrt::Kraken::factory_implementation
 
 namespace winrt::Kraken::implementation

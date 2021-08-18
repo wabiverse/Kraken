@@ -36,6 +36,8 @@
 #include "creator_xaml_typeinfo.h"
 #include "creator_xaml_metadata.h"
 
+#include "kraken_winrt.h"
+
 namespace winrt::Kraken::implementation
 {
   using IXamlMember = ::winrt::Windows::UI::Xaml::Markup::IXamlMember;

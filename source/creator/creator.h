@@ -24,8 +24,6 @@
 
 #pragma once
 
-#include "pch.h"
-
 /**
  *  -----  The Kraken Creator. ----- */
 

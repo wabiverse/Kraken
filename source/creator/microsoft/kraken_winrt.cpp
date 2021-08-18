@@ -68,9 +68,8 @@
 #  include <winrt/Windows.UI.Xaml.Markup.h>
 #  include <winrt/Windows.UI.Xaml.Navigation.h>
 
+/*  Kraken Creator :: Own Include. */
 #  include "creator.h"
-
-#  include "kraken_winrt.h"
 
 /* Microsoft SDK */
 using namespace MICROSOFT;
@@ -333,7 +332,7 @@ namespace winrt::Kraken::implementation
 
   void Main::ClickHandler(IInspectable const &, RoutedEventArgs const &)
   {
-    krakenLogoButton().Content(box_value(L"Clicked"));
+    // krakenLogoButton().Content(box_value(L"Clicked"));
   }
 }  // namespace winrt::Kraken::implementation
 
