@@ -35,11 +35,19 @@
 
 namespace winrt::Kraken::implementation
 {
-  template <typename D, typename... I>
+  template<typename D, typename... I>
   struct __declspec(empty_bases) Main_base : implements<D, Kraken::Main, composing, winrt::Windows::UI::Xaml::Controls::IPageOverrides, winrt::Windows::UI::Xaml::Controls::IControlOverrides, winrt::Windows::UI::Xaml::Controls::IControlOverrides6, winrt::Windows::UI::Xaml::IFrameworkElementOverrides, winrt::Windows::UI::Xaml::IFrameworkElementOverrides2, winrt::Windows::UI::Xaml::IUIElementOverrides, winrt::Windows::UI::Xaml::IUIElementOverrides7, winrt::Windows::UI::Xaml::IUIElementOverrides8, winrt::Windows::UI::Xaml::IUIElementOverrides9, I...>,
-      impl::require<D, winrt::Windows::UI::Xaml::Controls::IPage, winrt::Windows::UI::Xaml::Controls::IUserControl, winrt::Windows::UI::Xaml::Controls::IControl, winrt::Windows::UI::Xaml::Controls::IControl2, winrt::Windows::UI::Xaml::Controls::IControl3, winrt::Windows::UI::Xaml::Controls::IControl4, winrt::Windows::UI::Xaml::Controls::IControl5, winrt::Windows::UI::Xaml::Controls::IControl7, winrt::Windows::UI::Xaml::Controls::IControlProtected, winrt::Windows::UI::Xaml::IFrameworkElement, winrt::Windows::UI::Xaml::IFrameworkElement2, winrt::Windows::UI::Xaml::IFrameworkElement3, winrt::Windows::UI::Xaml::IFrameworkElement4, winrt::Windows::UI::Xaml::IFrameworkElement6, winrt::Windows::UI::Xaml::IFrameworkElement7, winrt::Windows::UI::Xaml::IFrameworkElementProtected7, winrt::Windows::UI::Xaml::IUIElement, winrt::Windows::UI::Xaml::IUIElement2, winrt::Windows::UI::Xaml::IUIElement3, winrt::Windows::UI::Xaml::IUIElement4, winrt::Windows::UI::Xaml::IUIElement5, winrt::Windows::UI::Xaml::IUIElement7, winrt::Windows::UI::Xaml::IUIElement8, winrt::Windows::UI::Xaml::IUIElement9, winrt::Windows::UI::Xaml::IUIElement10, winrt::Windows::UI::Composition::IAnimationObject, winrt::Windows::UI::Composition::IVisualElement, winrt::Windows::UI::Xaml::IDependencyObject, winrt::Windows::UI::Xaml::IDependencyObject2>,
-      impl::base<D, winrt::Windows::UI::Xaml::Controls::Page, winrt::Windows::UI::Xaml::Controls::UserControl, winrt::Windows::UI::Xaml::Controls::Control, winrt::Windows::UI::Xaml::FrameworkElement, winrt::Windows::UI::Xaml::UIElement, winrt::Windows::UI::Xaml::DependencyObject>,
-      winrt::Windows::UI::Xaml::Controls::IPageOverridesT<D>, winrt::Windows::UI::Xaml::Controls::IControlOverridesT<D>, winrt::Windows::UI::Xaml::Controls::IControlOverrides6T<D>, winrt::Windows::UI::Xaml::IFrameworkElementOverridesT<D>, winrt::Windows::UI::Xaml::IFrameworkElementOverrides2T<D>, winrt::Windows::UI::Xaml::IUIElementOverridesT<D>, winrt::Windows::UI::Xaml::IUIElementOverrides7T<D>, winrt::Windows::UI::Xaml::IUIElementOverrides8T<D>, winrt::Windows::UI::Xaml::IUIElementOverrides9T<D>
+                                             impl::require<D, winrt::Windows::UI::Xaml::Controls::IPage, winrt::Windows::UI::Xaml::Controls::IUserControl, winrt::Windows::UI::Xaml::Controls::IControl, winrt::Windows::UI::Xaml::Controls::IControl2, winrt::Windows::UI::Xaml::Controls::IControl3, winrt::Windows::UI::Xaml::Controls::IControl4, winrt::Windows::UI::Xaml::Controls::IControl5, winrt::Windows::UI::Xaml::Controls::IControl7, winrt::Windows::UI::Xaml::Controls::IControlProtected, winrt::Windows::UI::Xaml::IFrameworkElement, winrt::Windows::UI::Xaml::IFrameworkElement2, winrt::Windows::UI::Xaml::IFrameworkElement3, winrt::Windows::UI::Xaml::IFrameworkElement4, winrt::Windows::UI::Xaml::IFrameworkElement6, winrt::Windows::UI::Xaml::IFrameworkElement7, winrt::Windows::UI::Xaml::IFrameworkElementProtected7, winrt::Windows::UI::Xaml::IUIElement, winrt::Windows::UI::Xaml::IUIElement2, winrt::Windows::UI::Xaml::IUIElement3, winrt::Windows::UI::Xaml::IUIElement4, winrt::Windows::UI::Xaml::IUIElement5, winrt::Windows::UI::Xaml::IUIElement7, winrt::Windows::UI::Xaml::IUIElement8, winrt::Windows::UI::Xaml::IUIElement9, winrt::Windows::UI::Xaml::IUIElement10, winrt::Windows::UI::Composition::IAnimationObject, winrt::Windows::UI::Composition::IVisualElement, winrt::Windows::UI::Xaml::IDependencyObject, winrt::Windows::UI::Xaml::IDependencyObject2>,
+                                             impl::base<D, winrt::Windows::UI::Xaml::Controls::Page, winrt::Windows::UI::Xaml::Controls::UserControl, winrt::Windows::UI::Xaml::Controls::Control, winrt::Windows::UI::Xaml::FrameworkElement, winrt::Windows::UI::Xaml::UIElement, winrt::Windows::UI::Xaml::DependencyObject>,
+                                             winrt::Windows::UI::Xaml::Controls::IPageOverridesT<D>,
+                                             winrt::Windows::UI::Xaml::Controls::IControlOverridesT<D>,
+                                             winrt::Windows::UI::Xaml::Controls::IControlOverrides6T<D>,
+                                             winrt::Windows::UI::Xaml::IFrameworkElementOverridesT<D>,
+                                             winrt::Windows::UI::Xaml::IFrameworkElementOverrides2T<D>,
+                                             winrt::Windows::UI::Xaml::IUIElementOverridesT<D>,
+                                             winrt::Windows::UI::Xaml::IUIElementOverrides7T<D>,
+                                             winrt::Windows::UI::Xaml::IUIElementOverrides8T<D>,
+                                             winrt::Windows::UI::Xaml::IUIElementOverrides9T<D>
   {
     using base_type = Main_base;
     using class_type = Kraken::Main;
@@ -54,7 +62,9 @@ namespace winrt::Kraken::implementation
 
     Main_base()
     {
-      impl::call_factory<winrt::Windows::UI::Xaml::Controls::Page, winrt::Windows::UI::Xaml::Controls::IPageFactory>([&](winrt::Windows::UI::Xaml::Controls::IPageFactory const& f) { [[maybe_unused]] auto winrt_impl_discarded = f.CreateInstance(*this, this->m_inner); });
+      impl::call_factory<winrt::Windows::UI::Xaml::Controls::Page, winrt::Windows::UI::Xaml::Controls::IPageFactory>([&](winrt::Windows::UI::Xaml::Controls::IPageFactory const &f) {
+        [[maybe_unused]] auto winrt_impl_discarded = f.CreateInstance(*this, this->m_inner);
+      });
     }
   };
 }  // namespace winrt::Kraken::implementation

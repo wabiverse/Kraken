@@ -26,7 +26,7 @@
 
 #if defined(ARCH_OS_WINDOWS)
 
-#  include "pch.h" 
+#  include "pch.h"
 
 /**
  * The official Windows Runtime. Kraken
