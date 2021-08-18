@@ -119,6 +119,16 @@ configure_file(
   @ONLY)
 
 configure_file(
+  ${CMAKE_SOURCE_DIR}/source/creator/Main.xaml
+  ${CMAKE_BINARY_DIR}/source/creator/Main.xaml
+  @ONLY)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/source/creator/Main.idl
+  ${CMAKE_BINARY_DIR}/source/creator/Main.idl
+  @ONLY)
+
+configure_file(
   ${CMAKE_SOURCE_DIR}/source/creator/creator_xaml_typeinfo.h
   ${CMAKE_BINARY_DIR}/source/creator/creator_xaml_typeinfo.h
   @ONLY
@@ -174,11 +184,15 @@ set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest
 set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/source/creator/packages.config)
 set(KRAKEN_APPX_XML ${CMAKE_BINARY_DIR}/source/creator/Creator.xaml)
 set(KRAKEN_APPX_IDL ${CMAKE_BINARY_DIR}/source/creator/Creator.idl)
+set(KRAKEN_APPX_MAIN_XML ${CMAKE_BINARY_DIR}/source/creator/Main.xaml)
+set(KRAKEN_APPX_MAIN_IDL ${CMAKE_BINARY_DIR}/source/creator/Main.idl)
 list(APPEND CONTENT_FILES
   ${KRAKEN_APPX_MANIFEST}
   ${KRAKEN_PACKAGES_CONFIG}
   ${KRAKEN_APPX_XML}
   ${KRAKEN_APPX_IDL}
+  ${KRAKEN_APPX_MAIN_XML}
+  # ${KRAKEN_APPX_MAIN_IDL}
 )
 
 file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")

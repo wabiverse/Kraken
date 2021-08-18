@@ -33,6 +33,8 @@
 
 #include "winrt/Windows.UI.Xaml.Markup.h"
 
+#include "main.h"
+
 WINRT_EXPORT namespace winrt::Windows::UI::Xaml::Markup
 {
   struct IXamlMetadataProvider;
@@ -40,34 +42,128 @@ WINRT_EXPORT namespace winrt::Windows::UI::Xaml::Markup
 
 WINRT_EXPORT namespace winrt::Kraken
 {
+  struct IMain;
+  struct Main;
   struct XamlMetaDataProvider;
 }
 
 namespace winrt::impl
 {
   template<>
+  struct category<winrt::Kraken::IMain>
+  {
+    using type = interface_category;
+  };
+
+  template<>
+  struct category<winrt::Kraken::Main>
+  {
+    using type = class_category;
+  };
+
+  template<>
   struct category<winrt::Kraken::XamlMetaDataProvider>
   {
     using type = class_category;
   };
+
+  template<>
+  inline constexpr auto &name_v<winrt::Kraken::Main> = L"Kraken.Main";
+
   template<>
   inline constexpr auto &name_v<winrt::Kraken::XamlMetaDataProvider> = L"Kraken.XamlMetaDataProvider";
+
+  template<>
+  inline constexpr auto &name_v<winrt::Kraken::IMain> = L"Kraken.IMain";
+
+  template<>
+  inline constexpr guid guid_v<winrt::Kraken::IMain>{
+  // 3B6FC83D-B73D-56CF-84F2-F33D93FF8B28
+    0x3B6FC83D,
+    0xB73D,
+    0x56CF,
+    {0x84, 0xF2, 0xF3, 0x3D, 0x93, 0xFF, 0x8B, 0x28}
+  };
+
+  template<>
+  struct default_interface<winrt::Kraken::Main>
+  {
+    using type = winrt::Kraken::IMain;
+  };
+
   template<>
   struct default_interface<winrt::Kraken::XamlMetaDataProvider>
   {
     using type = winrt::Windows::UI::Xaml::Markup::IXamlMetadataProvider;
   };
+
+  template<>
+  struct abi<winrt::Kraken::IMain>
+  {
+    struct __declspec(novtable) type : inspectable_abi
+    {
+      virtual int32_t __stdcall get_MyProperty(int32_t *) noexcept = 0;
+      virtual int32_t __stdcall put_MyProperty(int32_t) noexcept = 0;
+    };
+  };
+
+  template<typename D>
+  struct consume_Kraken_IMain
+  {
+    [[nodiscard]] WINRT_IMPL_AUTO(int32_t)
+    MyProperty() const;
+    WINRT_IMPL_AUTO(void)
+    MyProperty(int32_t value) const;
+  };
+
+  template<>
+  struct consume<winrt::Kraken::IMain>
+  {
+    template<typename D>
+    using type = consume_Kraken_IMain<D>;
+  };
 }  // namespace winrt::impl
 
 WINRT_EXPORT namespace winrt::Kraken
 {
+
+  struct __declspec(empty_bases) IMain : winrt::Windows::Foundation::IInspectable,
+    impl::consume_t<IMain>
+  {
+    IMain(std::nullptr_t = nullptr) noexcept {}
+    IMain(void* ptr, take_ownership_from_abi_t) noexcept : winrt::Windows::Foundation::IInspectable(ptr, take_ownership_from_abi) {}
+    IMain(IMain const&) noexcept = default;
+    IMain(IMain&&) noexcept = default;
+    IMain& operator=(IMain const&) & noexcept = default;
+    IMain& operator=(IMain&&) & noexcept = default;
+  };
+
+  struct __declspec(empty_bases) Main : winrt::Kraken::IMain,
+    impl::base<Main, winrt::Windows::UI::Xaml::Controls::Page, winrt::Windows::UI::Xaml::Controls::UserControl, winrt::Windows::UI::Xaml::Controls::Control, winrt::Windows::UI::Xaml::FrameworkElement, winrt::Windows::UI::Xaml::UIElement, winrt::Windows::UI::Xaml::DependencyObject>,
+    impl::require<Main, winrt::Windows::UI::Xaml::Controls::IPage, winrt::Windows::UI::Xaml::Controls::IPageOverrides, winrt::Windows::UI::Xaml::Controls::IUserControl, winrt::Windows::UI::Xaml::Controls::IControl, winrt::Windows::UI::Xaml::Controls::IControl2, winrt::Windows::UI::Xaml::Controls::IControl3, winrt::Windows::UI::Xaml::Controls::IControl4, winrt::Windows::UI::Xaml::Controls::IControl5, winrt::Windows::UI::Xaml::Controls::IControl7, winrt::Windows::UI::Xaml::Controls::IControlProtected, winrt::Windows::UI::Xaml::Controls::IControlOverrides, winrt::Windows::UI::Xaml::Controls::IControlOverrides6, winrt::Windows::UI::Xaml::IFrameworkElement, winrt::Windows::UI::Xaml::IFrameworkElement2, winrt::Windows::UI::Xaml::IFrameworkElement3, winrt::Windows::UI::Xaml::IFrameworkElement4, winrt::Windows::UI::Xaml::IFrameworkElement6, winrt::Windows::UI::Xaml::IFrameworkElement7, winrt::Windows::UI::Xaml::IFrameworkElementProtected7, winrt::Windows::UI::Xaml::IFrameworkElementOverrides, winrt::Windows::UI::Xaml::IFrameworkElementOverrides2, winrt::Windows::UI::Xaml::IUIElement, winrt::Windows::UI::Xaml::IUIElement2, winrt::Windows::UI::Xaml::IUIElement3, winrt::Windows::UI::Xaml::IUIElement4, winrt::Windows::UI::Xaml::IUIElement5, winrt::Windows::UI::Xaml::IUIElement7, winrt::Windows::UI::Xaml::IUIElement8, winrt::Windows::UI::Xaml::IUIElement9, winrt::Windows::UI::Xaml::IUIElement10, winrt::Windows::UI::Xaml::IUIElementOverrides, winrt::Windows::UI::Xaml::IUIElementOverrides7, winrt::Windows::UI::Xaml::IUIElementOverrides8, winrt::Windows::UI::Xaml::IUIElementOverrides9, winrt::Windows::UI::Composition::IAnimationObject, winrt::Windows::UI::Composition::IVisualElement, winrt::Windows::UI::Xaml::IDependencyObject, winrt::Windows::UI::Xaml::IDependencyObject2>
+  {
+    Main(std::nullptr_t) noexcept
+    {}
+
+    Main(void* ptr, take_ownership_from_abi_t) noexcept : winrt::Kraken::IMain(ptr, take_ownership_from_abi)
+    {}
+    
+    Main();
+    Main(Main const&) noexcept = default;
+    Main(Main&&) noexcept = default;
+    Main& operator=(Main const&) & noexcept = default;
+    Main& operator=(Main&&) & noexcept = default;
+  };
+
   struct __declspec(empty_bases) XamlMetaDataProvider : winrt::Windows::UI::Xaml::Markup::IXamlMetadataProvider
   {
     XamlMetaDataProvider(std::nullptr_t) noexcept
     {}
+
     XamlMetaDataProvider(void *ptr, take_ownership_from_abi_t) noexcept
       : winrt::Windows::UI::Xaml::Markup::IXamlMetadataProvider(ptr, take_ownership_from_abi)
     {}
+
     XamlMetaDataProvider();
     XamlMetaDataProvider(XamlMetaDataProvider const &) noexcept = default;
     XamlMetaDataProvider(XamlMetaDataProvider &&) noexcept = default;

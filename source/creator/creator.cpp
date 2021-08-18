@@ -81,6 +81,7 @@
 #include "WM_window.h"
 
 #include "creator.h"
+#include "main.h"
 
 WABI_NAMESPACE_USING
 
@@ -155,7 +156,7 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
          * to the first page, configuring the new page  by
          * passing required information as a navigation
          * parameter */
-        // rootFrame.Navigate(xaml_typename<Kraken::MainPage>(), box_value(e.Arguments()));
+        rootFrame.Navigate(xaml_typename<Kraken::Main>(), box_value(e.Arguments()));
       }
       /**
        * Place the frame in the current Window */
@@ -175,7 +176,7 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
          * to the first page, configuring the new page  by
          * passing required information as a navigation
          * parameter. */
-        // rootFrame.Navigate(xaml_typename<Kraken::MainPage>(), box_value(e.Arguments()));
+        rootFrame.Navigate(xaml_typename<Kraken::Main>(), box_value(e.Arguments()));
       }
       /**
        * Ensure the current window is active. */
@@ -215,9 +216,9 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
   /* Determining Stage Configuration and Loadup. */
   KKE_kraken_main_init(C);
 
-#ifdef WITH_MAIN_INIT
- /**
-  * The great refactor for WinRT. */
+#  ifdef WITH_MAIN_INIT
+  /**
+   * The great refactor for WinRT. */
 
   /* Initialize main Runtime. */
   WM_init(C);
@@ -227,7 +228,7 @@ void Creator::OnLaunched(LaunchActivatedEventArgs const &e)
 
   /* Run the main event loop. */
   WM_main(C);
-#endif /* WITH_MAIN_INIT */
+#  endif /* WITH_MAIN_INIT */
 }
 
 void Creator::OnSuspending([[maybe_unused]] IInspectable const &sender, [[maybe_unused]] SuspendingEventArgs const &e)
@@ -240,7 +241,7 @@ void Creator::OnNavigationFailed(IInspectable const &, NavigationFailedEventArgs
   throw hresult_error(E_FAIL, hstring(L"Failed to load Page ") + e.SourcePageType().Name);
 }
 
-// void* winrt_make_Kraken_MainPage();
+void *winrt_make_Kraken_Main();
 void *winrt_make_Kraken_XamlMetaDataProvider();
 
 bool __stdcall winrt_can_unload_now() noexcept
@@ -260,10 +261,10 @@ void *__stdcall winrt_get_activation_factory([[maybe_unused]] std::wstring_view 
     return std::equal(left.rbegin(), left.rend(), right.rbegin(), right.rend());
   };
 
-  // if (requal(name, L"Kraken.MainPage"))
-  // {
-  //     return winrt_make_Kraken_MainPage();
-  // }
+  if (requal(name, L"Kraken.Main"))
+  {
+    return winrt_make_Kraken_Main();
+  }
 
   if (requal(name, L"Kraken.XamlMetaDataProvider"))
   {

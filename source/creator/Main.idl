@@ -1,0 +1,9 @@
+namespace Kraken
+{
+  [default_interface]
+  runtimeclass Main : Windows.UI.Xaml.Controls.Page
+  {
+    Main();
+    Int32 MyProperty;
+  }
+}

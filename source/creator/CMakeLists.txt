@@ -63,6 +63,8 @@ set(SRC
   creator.cpp
   creator_args.cpp
   environment.cpp
+  main.cpp
+  main.h
 
   ${KRAKEN_CREATOR_SOURCE_FILES}
 

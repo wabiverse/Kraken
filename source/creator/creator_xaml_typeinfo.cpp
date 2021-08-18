@@ -36,6 +36,8 @@
 #include "creator_xaml_typeinfo.h"
 #include "creator_xaml_metadata.h"
 
+#include "main.h"
+
 namespace winrt::Kraken::implementation
 {
   using IXamlMember = ::winrt::Windows::UI::Xaml::Markup::IXamlMember;
@@ -55,26 +57,23 @@ namespace winrt::Kraken::implementation
   }
 
   template<typename TInstance, typename TItem>
-  void CollectionAdd(
-    ::winrt::Windows::Foundation::IInspectable const &instance,
-    ::winrt::Windows::Foundation::IInspectable const &item)
+  void CollectionAdd(::winrt::Windows::Foundation::IInspectable const &instance,
+                     ::winrt::Windows::Foundation::IInspectable const &item)
   {
     instance.as<TInstance>().Append(::winrt::unbox_value<TItem>(item));
   }
 
   template<typename TInstance, typename TKey, typename TItem>
-  void DictionaryAdd(
-    ::winrt::Windows::Foundation::IInspectable const &instance,
-    ::winrt::Windows::Foundation::IInspectable const &key,
-    ::winrt::Windows::Foundation::IInspectable const &item)
+  void DictionaryAdd(::winrt::Windows::Foundation::IInspectable const &instance,
+                     ::winrt::Windows::Foundation::IInspectable const &key,
+                     ::winrt::Windows::Foundation::IInspectable const &item)
   {
     instance.as<TInstance>().Insert(::winrt::unbox_value<TKey>(key), ::winrt::unbox_value<TItem>(item));
   }
 
   template<typename T>
-  ::winrt::Windows::Foundation::IInspectable FromStringConverter(
-    XamlUserType const &userType,
-    ::winrt::hstring const &input)
+  ::winrt::Windows::Foundation::IInspectable FromStringConverter(XamlUserType const &userType,
+                                                                 ::winrt::hstring const &input)
   {
     return ::winrt::box_value(static_cast<T>(userType.CreateEnumUIntFromString(input)));
   }
@@ -86,9 +85,8 @@ namespace winrt::Kraken::implementation
   }
 
   template<typename TDeclaringType, typename TValue>
-  void SetValueTypeMember_MyProperty(
-    ::winrt::Windows::Foundation::IInspectable const &instance,
-    ::winrt::Windows::Foundation::IInspectable const &value)
+  void SetValueTypeMember_MyProperty(::winrt::Windows::Foundation::IInspectable const &instance,
+                                     ::winrt::Windows::Foundation::IInspectable const &value)
   {
     instance.as<TDeclaringType>().MyProperty(::winrt::unbox_value<TValue>(value));
   }
@@ -108,8 +106,10 @@ namespace winrt::Kraken::implementation
     const wchar_t *typeName{nullptr};
     const wchar_t *contentPropertyName{nullptr};
     ::winrt::Windows::Foundation::IInspectable (*activator)();
-    void (*collectionAdd)(::winrt::Windows::Foundation::IInspectable const &, ::winrt::Windows::Foundation::IInspectable const &);
-    void (*dictionaryAdd)(::winrt::Windows::Foundation::IInspectable const &, ::winrt::Windows::Foundation::IInspectable const &, ::winrt::Windows::Foundation::IInspectable const &);
+    void (*collectionAdd)(::winrt::Windows::Foundation::IInspectable const &,
+                          ::winrt::Windows::Foundation::IInspectable const &);
+    void (*dictionaryAdd)(::winrt::Windows::Foundation::IInspectable const &,
+                          ::winrt::Windows::Foundation::IInspectable const &, ::winrt::Windows::Foundation::IInspectable const &);
     ::winrt::Windows::Foundation::IInspectable (*fromStringConverter)(XamlUserType const &, ::winrt::hstring const &);
     int baseTypeIndex;
     int firstMemberIndex;
@@ -137,13 +137,20 @@ namespace winrt::Kraken::implementation
       TypeKind::Metadata,
       TypeInfo_Flags_IsSystemType | TypeInfo_Flags_None,
       -1,
-      // //   1
-      // L"Kraken.MainPage", L"",
-      // &ActivateLocalType<::winrt::Kraken::implementation::MainPage>, nullptr, nullptr, nullptr,
-      // 2, // Windows.UI.Xaml.Controls.Page
-      // 0, 0, -1, TypeKind::Custom,
-      // TypeInfo_Flags_IsLocalType | TypeInfo_Flags_None,
-      // -1,
+      //   1
+      L"Kraken.Main",
+      L"",
+      &ActivateLocalType<::winrt::Kraken::implementation::Main>,
+      nullptr,
+      nullptr,
+      nullptr,
+      2,  // Windows.UI.Xaml.Controls.Page
+      0,
+      0,
+      -1,
+      TypeKind::Custom,
+      TypeInfo_Flags_IsLocalType | TypeInfo_Flags_None,
+      -1,
       //   2
       L"Windows.UI.Xaml.Controls.Page",
       L"",
@@ -242,10 +249,10 @@ namespace winrt::Kraken::implementation
 
   const MemberInfo MemberInfos[] =
     {
-      //   0 - Kraken.MainPage.MyProperty
+      //   0 - Kraken.Main.MyProperty
       L"",
-      // &GetValueTypeMember_MyProperty<::winrt::Kraken::MainPage, int32_t>,
-      // &SetValueTypeMember_MyProperty<::winrt::Kraken::MainPage, int32_t>,
+      // &GetValueTypeMember_MyProperty<::winrt::Kraken::Main, int32_t>,
+      // &SetValueTypeMember_MyProperty<::winrt::Kraken::Main, int32_t>,
       // 0, // Int32
       // -1,
       // false, false, false,
@@ -286,17 +293,15 @@ namespace winrt::Kraken::implementation
       {
         const TypeInfo *pNextTypeInfo = pTypeInfo + 1;
         const auto shortMemberName = GetShortName(longMemberName.data());
-        // const auto begin = MemberInfos + pTypeInfo->firstMemberIndex;
-        // const auto end = MemberInfos + pNextTypeInfo->firstMemberIndex;
-        // auto info = std::find_if(begin, end,
-        // [shortMemberName](const MemberInfo& elem)
-        // {
-        // return wcscmp(shortMemberName, elem.shortName) == 0;
-        // });
-        // if (info != end)
-        // {
-        //     return info;
-        // }
+        const auto begin = MemberInfos + pTypeInfo->firstMemberIndex;
+        const auto end = MemberInfos + pNextTypeInfo->firstMemberIndex;
+        auto info = std::find_if(begin, end, [shortMemberName](const MemberInfo &elem) {
+          return wcscmp(shortMemberName, elem.shortName) == 0;
+        });
+        if (info != end)
+        {
+          return info;
+        }
       }
     }
     return nullptr;
@@ -634,15 +639,13 @@ namespace winrt::Kraken::implementation
   /**
    * XamlUserType */
 
-  XamlUserType::XamlUserType(
-    std::shared_ptr<XamlTypeInfoProvider> const &provider,
-    ::winrt::hstring const &fullName,
-    IXamlType baseType)
+  XamlUserType::XamlUserType(std::shared_ptr<XamlTypeInfoProvider> const &provider,
+                             ::winrt::hstring const &fullName,
+                             IXamlType baseType)
     : _provider(provider),
       _fullName(fullName),
       _baseType(baseType)
-  {
-  }
+  {}
 
   ::winrt::hstring XamlUserType::GetRuntimeClassName() const
   {
@@ -902,15 +905,13 @@ namespace winrt::Kraken::implementation
   }
 
 
-  XamlMember::XamlMember(
-    std::shared_ptr<XamlTypeInfoProvider> const &provider,
-    ::winrt::hstring const &name,
-    ::winrt::hstring const &typeName)
+  XamlMember::XamlMember(std::shared_ptr<XamlTypeInfoProvider> const &provider,
+                         ::winrt::hstring const &name,
+                         ::winrt::hstring const &typeName)
     : _provider(provider),
       _name(name),
       _typeName(typeName)
-  {
-  }
+  {}
 
   void XamlMember::TargetTypeName(::winrt::hstring const &value)
   {

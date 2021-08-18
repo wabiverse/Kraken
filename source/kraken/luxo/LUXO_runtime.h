@@ -33,7 +33,7 @@
  *  Kraken.
  *
  *  The digital content creation platform built for animation.
- *  This is Pixar's Universal Scene Description, an animators
+ *  This is Pixar's Universal Scene Description, an animator's
  *  toolkit, and a journey into the next decade of computer
  *  graphics to come.
  *
