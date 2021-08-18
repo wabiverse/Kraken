@@ -44,9 +44,6 @@ void CREATOR_kraken_main(int argc, const char **argv)
 {
   kContext *C;
 
-  /* Environment variables. */
-  CREATOR_kraken_env_init();
-
   /* Create Context C. */
   C = CTX_create();
 

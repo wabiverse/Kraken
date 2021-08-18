@@ -5,6 +5,25 @@ set(STRING_FILES "")
 set(DEBUG_CONTENT_FILES "")
 set(RELEASE_CONTENT_FILES "")
 
+# TEMPORARY: You will need to modify CMake's
+# Modules/InstallRequiredSystemLibraries.cmake
+# file itself in order for this to work -- until
+# MSVC v2022 is officially (and fully) supported.
+#
+# Steps:
+# Locate the InstallRequiredSystemLibraries.cmake file
+#
+# Change the following:
+#
+# elseif(MSVC_TOOLSET_VERSION GREATER_EQUAL 143)
+#  message(WARNING "MSVC toolset v${MSVC_TOOLSET_VERSION} not yet supported.")
+#
+# To this:
+# 
+# elseif(MSVC_TOOLSET_VERSION GREATER_EQUAL 143)
+#   set(MSVC_REDIST_NAME VC142)
+#   set(_MSVC_DLL_VERSION 140)
+#   set(_MSVC_IDE_VERSION 17)
 set(MSVC_TOOLSET_VERSION 143)
 
 if(WITH_WINDOWS_BUNDLE_CRT)
@@ -15,13 +34,16 @@ if(WITH_WINDOWS_BUNDLE_CRT)
   # changes, so test if it exists and if not, give InstallRequiredSystemLibraries
   # another chance to figure out the path.
   if(MSVC_REDIST_DIR AND NOT EXISTS "${MSVC_REDIST_DIR}")
+    # TEMPORARY: Align this with Windows 11 MSVC 2022 Runtime
+    # As MSVC "Microsoft.VC142.CRT" is secretly really the not
+    # yet released 14.30.30401 (VC143 CRT)
     file(TO_CMAKE_PATH
       "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Redist/MSVC/14.30.30401"
       MSVC_REDIST_DIR)
   endif()
-    # Align this with Windows 11 MSVC 2022 Runtime
-
-
+    # TEMPORARY: Align this with Windows 11 MSVC 2022 Runtime
+    # As MSVC "Microsoft.VC142.CRT" is secretly really the not
+    # yet released 14.30.30401 (VC143 CRT)
     file(TO_CMAKE_PATH
       "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Redist/MSVC/14.30.30401/x64/Microsoft.VC142.CRT"
       WINDOWS_11_MSVC_REDIST
@@ -49,6 +71,9 @@ if(WITH_WINDOWS_BUNDLE_CRT)
       ${WINDOWS_11_MSVC_REDIST}/vcruntime140.dll
     )
 
+  # TEMPORARY: Super super hacky that this works
+  # will cleanup once CMake actually provides
+  # support for MSVC v2022.
   include(InstallRequiredSystemLibraries)
 
   # Install the CRT to the kraken.crt Sub folder.

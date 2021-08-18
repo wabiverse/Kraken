@@ -85,7 +85,6 @@ endif()
 set(SRC
   creator.cpp
   creator_args.cpp
-  environment.cpp
 
   ${WINDOWS_RUNTIME_SOURCE}
 

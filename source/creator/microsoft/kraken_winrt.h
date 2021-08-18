@@ -28,6 +28,8 @@ r /*
 
 #if defined(ARCH_OS_WINDOWS)
 
+#  include "pch.h" 
+
 #  include "winrt/Windows.UI.Composition.h"
 #  include "winrt/Windows.UI.Xaml.h"
 #  include "winrt/Windows.UI.Xaml.Controls.h"
@@ -105,7 +107,7 @@ r /*
                                                winrt::Windows::UI::Xaml::IUIElementOverrides8T<D>,                  \
                                                winrt::Windows::UI::Xaml::IUIElementOverrides9T<D>
 
-  namespace winrt::Kraken::implementation
+namespace winrt::Kraken::implementation
 {
   KRAKEN_GUI_IMPL(Kraken::Main, Main_base)
   {
@@ -174,6 +176,7 @@ namespace winrt::Kraken::implementation
     {
       return _myButton;
     }
+    
     void myButton(::winrt::Windows::UI::Xaml::Controls::Button value)
     {
       _myButton = value;

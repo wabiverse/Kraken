@@ -26,6 +26,8 @@
 
 #if defined(ARCH_OS_WINDOWS)
 
+#  include "pch.h" 
+
 /**
  * The official Windows Runtime. Kraken
  * supports the Windows platform as a
@@ -70,6 +72,7 @@
 
 #  include "kraken_winrt.h"
 
+/* Microsoft SDK */
 using namespace MICROSOFT;
 using namespace MICROSOFT::Windows;
 using namespace MICROSOFT::Windows::ApplicationModel;
@@ -80,8 +83,9 @@ using namespace MICROSOFT::Windows::UI::Xaml;
 using namespace MICROSOFT::Windows::UI::Xaml::Controls;
 using namespace MICROSOFT::Windows::UI::Xaml::Navigation;
 
-using namespace winrt::Kraken;
-using namespace winrt::Kraken::implementation;
+/* Kraken Projected Runtime Types */
+using namespace MICROSOFT::Kraken;
+using namespace MICROSOFT::Kraken::implementation;
 
 Creator::Creator()
 {

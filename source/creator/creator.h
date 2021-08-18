@@ -36,11 +36,9 @@
 #endif /* ARCH_OS_WINDOWS */
 
 /**
- *  -----  Creator's Main Startup & Init. ----- */
+ *  -----  Kraken's Main Startup. ----- */
 
 void CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
-
-void CREATOR_kraken_env_init();
 
 /**
  *  -----  Creator's Args. ----- */
