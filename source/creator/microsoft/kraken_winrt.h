@@ -31,7 +31,7 @@ r /*
 #  include "creator_xaml_typeinfo.h"
 #  include "creator_xaml_metadata.h"
 
-  namespace winrt::Kraken::implementation
+namespace winrt::Kraken::implementation
 {
 
   template<typename D, typename... Interfaces>

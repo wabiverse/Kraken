@@ -61,12 +61,15 @@ endif()
 
 if(WIN32)
   set(WINDOWS_RUNTIME_SOURCE
-    microsoft/kraken_winrt.cpp
-
-    ${KRAKEN_CREATOR_SOURCE_FILES}
+    microsoft/kraken_winrt.cpp # wWinMain
+    microsoft/creator_xaml_metadata.cpp
+    microsoft/creator_xaml_typeinfo.cpp
 
     microsoft/main.h
     microsoft/kraken_winrt.h
+    microsoft/creator_xaml_typeinfo.h
+    microsoft/creator_xaml_metadata.h
+
     ${CONTENT_FILES}
     ${ASSET_FILES}
     ${STRING_FILES}
