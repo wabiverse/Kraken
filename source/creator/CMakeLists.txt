@@ -61,15 +61,17 @@ endif()
 
 if(WIN32)
   set(WINDOWS_RUNTIME_SOURCE
+    # CXX SOURCE CODE
     microsoft/kraken_winrt.cpp # wWinMain
     microsoft/creator_xaml_metadata.cpp
     microsoft/creator_xaml_typeinfo.cpp
 
-    microsoft/main.h
+    # CXX SOURCE HEADERS
     microsoft/kraken_winrt.h
-    microsoft/creator_xaml_typeinfo.h
     microsoft/creator_xaml_metadata.h
+    microsoft/creator_xaml_typeinfo.h
 
+    # XAML, ICONS, MISC -> CONFIGURED FILES
     ${CONTENT_FILES}
     ${ASSET_FILES}
     ${STRING_FILES}

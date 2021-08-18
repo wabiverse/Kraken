@@ -33,8 +33,6 @@
 
 #include "winrt/Windows.UI.Xaml.Markup.h"
 
-#include "main.h"
-
 WINRT_EXPORT namespace winrt::Windows::UI::Xaml::Markup
 {
   struct IXamlMetadataProvider;

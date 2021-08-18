@@ -67,7 +67,6 @@
 #  include <winrt/Windows.UI.Xaml.Navigation.h>
 
 #  include "creator.h"
-#  include "main.h"
 
 #  include "kraken_winrt.h"
 
