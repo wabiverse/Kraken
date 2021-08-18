@@ -248,15 +248,14 @@ namespace winrt::Kraken::implementation
     bool isAttachable;
   };
 
-  const MemberInfo MemberInfos[] =
-    {
-      //   0 - Kraken.Main.MyProperty
-      L"",
-      // &GetValueTypeMember_MyProperty<::winrt::Kraken::Main, int32_t>,
-      // &SetValueTypeMember_MyProperty<::winrt::Kraken::Main, int32_t>,
-      // 0, // Int32
-      // -1,
-      // false, false, false,
+  const MemberInfo MemberInfos[] = {
+    /* 0 - Kraken.Main.MyProperty */
+    L"",
+    &GetValueTypeMember_MyProperty<::winrt::Kraken::Main, int32_t>,
+    &SetValueTypeMember_MyProperty<::winrt::Kraken::Main, int32_t>,
+    0, /* Int32 */
+    -1,
+    false, false, false,
   };
 
   const wchar_t *GetShortName(const wchar_t *longName)
