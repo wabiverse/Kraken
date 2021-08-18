@@ -109,7 +109,8 @@ namespace winrt::Kraken::implementation
     void (*collectionAdd)(::winrt::Windows::Foundation::IInspectable const &,
                           ::winrt::Windows::Foundation::IInspectable const &);
     void (*dictionaryAdd)(::winrt::Windows::Foundation::IInspectable const &,
-                          ::winrt::Windows::Foundation::IInspectable const &, ::winrt::Windows::Foundation::IInspectable const &);
+                          ::winrt::Windows::Foundation::IInspectable const &,
+                          ::winrt::Windows::Foundation::IInspectable const &);
     ::winrt::Windows::Foundation::IInspectable (*fromStringConverter)(XamlUserType const &, ::winrt::hstring const &);
     int baseTypeIndex;
     int firstMemberIndex;

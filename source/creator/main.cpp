@@ -57,8 +57,8 @@ namespace winrt::Kraken::implementation
     throw hresult_not_implemented();
   }
 
-  void Main::ClickHandler(IInspectable const&, RoutedEventArgs const&)
+  void Main::ClickHandler(IInspectable const &, RoutedEventArgs const &)
   {
     krakenLogoButton().Content(box_value(L"Clicked"));
   }
-}
+}  // namespace winrt::Kraken::implementation

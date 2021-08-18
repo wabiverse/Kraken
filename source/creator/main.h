@@ -122,16 +122,16 @@ namespace winrt::Kraken::implementation
     {
       impl::call_factory<winrt::Windows::UI::Xaml::Controls::Page,
                          winrt::Windows::UI::Xaml::Controls::IPageFactory>(
-        [&](winrt::Windows::UI::Xaml::Controls::IPageFactory const& f) { 
-          [[maybe_unused]] auto winrt_impl_discarded = f.CreateInstance(*this, this->m_inner); 
+        [&](winrt::Windows::UI::Xaml::Controls::IPageFactory const &f) {
+          [[maybe_unused]] auto winrt_impl_discarded = f.CreateInstance(*this, this->m_inner);
         });
     }
   };
-}
+}  // namespace winrt::Kraken::implementation
 
 namespace winrt::Kraken::factory_implementation
 {
-  template <typename D, typename T, typename... I>
+  template<typename D, typename T, typename... I>
   struct __declspec(empty_bases) MainT : implements<D, winrt::Windows::Foundation::IActivationFactory, I...>
   {
     using instance_type = Kraken::Main;
@@ -145,28 +145,27 @@ namespace winrt::Kraken::factory_implementation
     {
       return make<T>();
     }
-
   };
-}
+}  // namespace winrt::Kraken::factory_implementation
 
 namespace winrt::Kraken::implementation
 {
   using IInspectable = ::winrt::Windows::Foundation::IInspectable;
 
-  template <typename D, typename ... I>
+  template<typename D, typename... I>
   struct MainT : public ::winrt::Kraken::implementation::Main_base<D,
-    ::winrt::Windows::UI::Xaml::Markup::IComponentConnector,
-    ::winrt::Windows::UI::Xaml::Markup::IComponentConnector2,
-    I...>
+                                                                   ::winrt::Windows::UI::Xaml::Markup::IComponentConnector,
+                                                                   ::winrt::Windows::UI::Xaml::Markup::IComponentConnector2,
+                                                                   I...>
   {
     using base_type = typename MainT::base_type;
     using base_type::base_type;
     using class_type = typename MainT::class_type;
 
     void InitializeComponent();
-    void Connect(int32_t connectionId, IInspectable const& target);
-    ::winrt::Windows::UI::Xaml::Markup::IComponentConnector GetBindingConnector(int32_t connectionId, IInspectable const& target);
-    void UnloadObject(::winrt::Windows::UI::Xaml::DependencyObject const& dependencyObject);
+    void Connect(int32_t connectionId, IInspectable const &target);
+    ::winrt::Windows::UI::Xaml::Markup::IComponentConnector GetBindingConnector(int32_t connectionId, IInspectable const &target);
+    void UnloadObject(::winrt::Windows::UI::Xaml::DependencyObject const &dependencyObject);
     void DisconnectUnloadedObject(int32_t connectionId);
 
     ::winrt::Windows::UI::Xaml::Controls::Button myButton()
@@ -177,7 +176,7 @@ namespace winrt::Kraken::implementation
     {
       _myButton = value;
     }
-      
+
    protected:
     bool _contentLoaded{false};
 
@@ -186,31 +185,31 @@ namespace winrt::Kraken::implementation
 
     ::winrt::Windows::UI::Xaml::Controls::Button _myButton{nullptr};
   };
-}
+}  // namespace winrt::Kraken::implementation
 
 namespace winrt::Kraken::implementation
 {
   struct Main : MainT<Main>
   {
-    Main();  
+    Main();
 
     int32_t MyProperty();
     void MyProperty(int32_t value);
 
-    void ClickHandler(winrt::Windows::Foundation::IInspectable const& sender,
-                      winrt::Windows::UI::Xaml::RoutedEventArgs const& args);
+    void ClickHandler(winrt::Windows::Foundation::IInspectable const &sender,
+                      winrt::Windows::UI::Xaml::RoutedEventArgs const &args);
   };
-}
+}  // namespace winrt::Kraken::implementation
 
 namespace winrt::Kraken::factory_implementation
 {
   struct Main : MainT<Main, implementation::Main>
   {};
-}
+}  // namespace winrt::Kraken::factory_implementation
 
 #pragma warning(push)
 /* unreferenced formal parameter */
-#pragma warning(disable: 4100)
+#pragma warning(disable : 4100)
 
 namespace winrt::Kraken::implementation
 {
@@ -223,33 +222,31 @@ namespace winrt::Kraken::implementation
   using Uri = ::winrt::Windows::Foundation::Uri;
   using XamlBindingHelper = ::winrt::Windows::UI::Xaml::Markup::XamlBindingHelper;
 
-  template <typename D, typename ... I>
+  template<typename D, typename... I>
   void MainT<D, I...>::InitializeComponent()
   {
     if (!_contentLoaded)
     {
       _contentLoaded = true;
-      Uri resourceLocator{ L"ms-appx:///Main.xaml" };
+      Uri resourceLocator{L"ms-appx:///Main.xaml"};
       Application::LoadComponent(*this, resourceLocator, ComponentResourceLocation::Application);
     }
   }
 
-  template <typename D, typename ... I>
-  void MainT<D, I...>::Connect(int32_t connectionId, IInspectable const& target)
+  template<typename D, typename... I>
+  void MainT<D, I...>::Connect(int32_t connectionId, IInspectable const &target)
   {
     switch (connectionId)
     {
-    case 2:
-      {
+      case 2: {
         auto targetElement = target.as<::winrt::Windows::UI::Xaml::Controls::Button>();
         this->myButton(targetElement);
         auto weakThis = ::winrt::make_weak<class_type>(*this);
-        targetElement.Click([weakThis](::winrt::Windows::Foundation::IInspectable const& p0,
-                                       ::winrt::Windows::UI::Xaml::RoutedEventArgs const& p1)
-        {
+        targetElement.Click([weakThis](::winrt::Windows::Foundation::IInspectable const &p0,
+                                       ::winrt::Windows::UI::Xaml::RoutedEventArgs const &p1) {
           if (auto t = weakThis.get())
           {
-              ::winrt::get_self<D>(t)->ClickHandler(p0, p1);
+            ::winrt::get_self<D>(t)->ClickHandler(p0, p1);
           }
         });
       }
@@ -258,27 +255,27 @@ namespace winrt::Kraken::implementation
     _contentLoaded = true;
   }
 
-  template <typename D, typename ... I>
+  template<typename D, typename... I>
   void MainT<D, I...>::DisconnectUnloadedObject(int32_t)
   {
-    throw ::winrt::hresult_invalid_argument { L"No unloadable objects to disconnect." };
+    throw ::winrt::hresult_invalid_argument{L"No unloadable objects to disconnect."};
   }
 
-  template <typename D, typename ... I>
-  void MainT<D, I...>::UnloadObject(DependencyObject const&)
+  template<typename D, typename... I>
+  void MainT<D, I...>::UnloadObject(DependencyObject const &)
   {
-    throw ::winrt::hresult_invalid_argument { L"No unloadable objects." };
+    throw ::winrt::hresult_invalid_argument{L"No unloadable objects."};
   }
 
 
-  template <typename D, typename... I>
-  IComponentConnector MainT<D, I...>::GetBindingConnector(int32_t, IInspectable const&)
+  template<typename D, typename... I>
+  IComponentConnector MainT<D, I...>::GetBindingConnector(int32_t, IInspectable const &)
   {
     return nullptr;
   }
 
   template struct MainT<struct Main>;
-}
+}  // namespace winrt::Kraken::implementation
 
 
 #pragma warning(pop)
