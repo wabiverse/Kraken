@@ -2,6 +2,7 @@ setup_libdirs()
 
 kraken_include_dirs(
   ../../.
+  ../creator/microsoft
   ../kraken/anchor
   ../kraken/editors/include
   ../kraken/kraklib
@@ -58,23 +59,32 @@ if(WITH_XR_OPENXR)
   add_definitions(-DWITH_XR_OPENXR)
 endif()
 
+if(WIN32)
+  set(WINDOWS_RUNTIME_SOURCE
+    microsoft/kraken_winrt.cpp
+
+    ${KRAKEN_CREATOR_SOURCE_FILES}
+
+    microsoft/main.h
+    microsoft/kraken_winrt.h
+    ${CONTENT_FILES}
+    ${ASSET_FILES}
+    ${STRING_FILES}
+    ${DEBUG_CONTENT_FILES}
+    ${RELEASE_CONTENT_FILES}
+    ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
+  )
+endif()
+
 # Setup the exe sources and buildinfo
 set(SRC
   creator.cpp
   creator_args.cpp
   environment.cpp
-  main.cpp
-  main.h
 
-  ${KRAKEN_CREATOR_SOURCE_FILES}
+  ${WINDOWS_RUNTIME_SOURCE}
 
   creator.h
-  ${CONTENT_FILES}
-  ${ASSET_FILES}
-  ${STRING_FILES}
-  ${DEBUG_CONTENT_FILES}
-  ${RELEASE_CONTENT_FILES}
-  ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
 )
 
 # MSVC 2010 gives linking errors with the manifest
@@ -228,7 +238,7 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
-  kraken_precompile_headers(kraken pch.cpp pch.h)
+  kraken_precompile_headers(kraken microsoft/pch.cpp microsoft/pch.h)
   if(WIN32)
     # target_link_options(kraken PUBLIC "LINKER:/WINMDFILE:Kraken")
     set_property(SOURCE ${KRAKEN_APPX_XML} PROPERTY VS_XAML_TYPE ApplicationDefinition)
