@@ -292,7 +292,7 @@ endif()
   
 
 #-----------------------------------------------------------------------------
-# Kraken Universe. The Universe - Descripted.
+# Maelstrom. The Universe - Descripted.
 
 include(Public)
 
@@ -312,7 +312,7 @@ wabi_maelstrom_epilogue()
 add_subdirectory(intern)
 
 #-----------------------------------------------------------------------------
-# KRAKEN. The Digital Content Creation Platform of the 21st Century.
+# Kraken. Pushing the Framework for Composition & Design into the Future.
 
 add_subdirectory(source)
 
