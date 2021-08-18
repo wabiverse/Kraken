@@ -94,6 +94,14 @@ void CREATOR_kraken_main(int argc, const char **argv)
 
 #if !defined(ARCH_OS_WINDOWS)
 
+/**
+ * On Windows, main is handled via
+ * WinRT, Creator::OnLaunched() is
+ * responsible for calling the same
+ * CREATOR_kraken_main() function
+ * above. Please see this call for
+ * Kraken related logic. */
+
 int main(int argc, const char **argv)
 {
   CREATOR_kraken_main(argc, argv);
