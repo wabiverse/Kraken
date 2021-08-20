@@ -25,7 +25,7 @@
 #include "pch.h"
 #include "MainWindow.h"
 #if __has_include("MainWindow.g.cpp")
-#include "MainWindow.g.cpp"
+#  include "MainWindow.g.cpp"
 #endif
 
 using namespace winrt;
@@ -33,8 +33,8 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::Kraken::implementation
 {
-    MainWindow::MainWindow()
-    {
-        InitializeComponent();
-    }
-}
+  MainWindow::MainWindow()
+  {
+    InitializeComponent();
+  }
+}  // namespace winrt::Kraken::implementation

@@ -87,7 +87,7 @@ set(VC_LIBRARIES_VERSION "17.0")
 
 # Enable CXX/WinRT (20++) hybrid features.
 # Our Windows Standard. For the long haul.
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /ZW /EHsc")
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /EHsc")
 
 # Temporary, until they fixup the installation.
 set(WINDOWS_11_STORE
@@ -229,7 +229,7 @@ _add_define("_USE_MATH_DEFINES")
 
 # These need to be set or else we get errors
 # from these warnings when compiling with the
-# Windows Runtime (C++/WinRT) "/ZW" compiler
+# Windows Runtime (C++/CX) "/ZW" compiler
 # flag.
 _add_define("_SCL_SECURE_NO_WARNINGS")
 _add_define("_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING")

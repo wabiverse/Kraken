@@ -42,6 +42,6 @@
 #  include <winrt/Microsoft.UI.Xaml.Controls.Primitives.h>
 #  include <winrt/Microsoft.UI.Xaml.Media.h>
 #  include <winrt/Microsoft.UI.Xaml.XamlTypeInfo.h>
-// #pragma comment(lib, "windowsapp")
+#  pragma comment(lib, "windowsapp")
 
 #endif /* ARCH_OS_WINDOWS */

@@ -46,104 +46,102 @@ using namespace Kraken::implementation;
  * or WinMain(). */
 App::App()
 {
-    InitializeComponent();
+  InitializeComponent();
 
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
-    UnhandledException([this](IInspectable const&, UnhandledExceptionEventArgs const& e)
+  UnhandledException([this](IInspectable const &, UnhandledExceptionEventArgs const &e) {
+    if (IsDebuggerPresent())
     {
-        if (IsDebuggerPresent())
-        {
-            auto errorMessage = e.Message();
-            __debugbreak();
-        }
-    });
+      auto errorMessage = e.Message();
+      __debugbreak();
+    }
+  });
 #endif
 }
 
-/** 
+/**
  * Invoked when the application is launched normally
  * by the end user. Other entry points will be used
  * such as when the application is launched to open
  * a specific file. */
-void App::OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const& e)
+void App::OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const &e)
 {
-    Frame rootFrame{ nullptr };
-    auto content = Window::Current().Content();
-    if (content)
-    {
-        rootFrame = content.try_as<Frame>();
-    }
+  Frame rootFrame{nullptr};
+  auto content = Window::Current().Content();
+  if (content)
+  {
+    rootFrame = content.try_as<Frame>();
+  }
 
+  /**
+   * Do not repeat app initialization when
+   * the Window already has content, just
+   * ensure that the window is active. */
+  if (rootFrame == nullptr)
+  {
     /**
-     * Do not repeat app initialization when
-     * the Window already has content, just
-     * ensure that the window is active. */
-    if (rootFrame == nullptr)
+     * Create a Frame to act as the navigation
+     * context and associate it with a given
+     * SuspensionManager key. */
+    rootFrame = Frame();
+
+    rootFrame.NavigationFailed({this, &App::OnNavigationFailed});
+
+    if (e.UWPLaunchActivatedEventArgs().PreviousExecutionState() == ApplicationExecutionState::Terminated)
     {
+      /**
+       * Restore the saved session state only when appropriate,
+       * scheduling the final launch steps after the restore is
+       * complete. */
+    }
+
+    if (e.UWPLaunchActivatedEventArgs().PrelaunchActivated() == false)
+    {
+      if (rootFrame.Content() == nullptr)
+      {
         /**
-         * Create a Frame to act as the navigation
-         * context and associate it with a given
-         * SuspensionManager key. */
-        rootFrame = Frame();
+         * When the navigation stack isn't restored navigate
+         * to the first page, configuring the new page by
+         * passing the required information as a navigation
+         * parameter. */
+        rootFrame.Navigate(xaml_typename<Kraken::MainWindow>(), box_value(e.Arguments()));
+      }
 
-        rootFrame.NavigationFailed({ this, &App::OnNavigationFailed });
+      /**
+       * Place the frame in the current Window. */
+      Window::Current().Content(rootFrame);
 
-        if (e.UWPLaunchActivatedEventArgs().PreviousExecutionState() == ApplicationExecutionState::Terminated)
-        {
-            /**
-             * Restore the saved session state only when appropriate,
-             * scheduling the final launch steps after the restore is
-             * complete. */
-        }
-
-        if (e.UWPLaunchActivatedEventArgs().PrelaunchActivated() == false)
-        {
-            if (rootFrame.Content() == nullptr)
-            {
-                /**
-                 * When the navigation stack isn't restored navigate
-                 * to the first page, configuring the new page by
-                 * passing the required information as a navigation
-                 * parameter. */
-                rootFrame.Navigate(xaml_typename<Kraken::MainWindow>(), box_value(e.Arguments()));
-            }
-
-            /**
-             * Place the frame in the current Window. */
-            Window::Current().Content(rootFrame);
-
-            /**
-             * Ensure the current window is active. */
-            Window::Current().Activate();
-        }
+      /**
+       * Ensure the current window is active. */
+      Window::Current().Activate();
     }
-    else
+  } else
+  {
+    if (e.UWPLaunchActivatedEventArgs().PrelaunchActivated() == false)
     {
-        if (e.UWPLaunchActivatedEventArgs().PrelaunchActivated() == false)
-        {
-            if (rootFrame.Content() == nullptr)
-            {
-                /**
-                 * When the navigation stack isn't restored
-                 * navigate to the first page, configuring
-                 * the new page by passing the required
-                 * information as a navigation parameter. */
-                rootFrame.Navigate(xaml_typename<Kraken::MainWindow>(), box_value(e.Arguments()));
-            }
+      if (rootFrame.Content() == nullptr)
+      {
+        /**
+         * When the navigation stack isn't restored
+         * navigate to the first page, configuring
+         * the new page by passing the required
+         * information as a navigation parameter. */
+        rootFrame.Navigate(xaml_typename<Kraken::MainWindow>(), box_value(e.Arguments()));
+      }
 
-            /**
-             * Ensure the current window is active. */
-            Window::Current().Activate();
-        }
+      /**
+       * Ensure the current window is active. */
+      Window::Current().Activate();
     }
+  }
 }
 
 /**
- * Invoked when application execution is being suspended. 
+ * Invoked when application execution is being suspended.
  * Application state is saved without knowing whether the
  * application will be terminated or resumed with the
  * contents of memory still intact. */
-void App::OnSuspending([[maybe_unused]] IInspectable const& sender, [[maybe_unused]] SuspendingEventArgs const& e)
+void App::OnSuspending([[maybe_unused]] IInspectable const &sender, [[maybe_unused]] SuspendingEventArgs const &e)
 {
   /**
    * Save application state and stop any background activity. */
@@ -151,7 +149,7 @@ void App::OnSuspending([[maybe_unused]] IInspectable const& sender, [[maybe_unus
 
 /**
  * Invoked when Navigation to a certain page fails. */
-void App::OnNavigationFailed(IInspectable const&, NavigationFailedEventArgs const& e)
+void App::OnNavigationFailed(IInspectable const &, NavigationFailedEventArgs const &e)
 {
   throw hresult_error(E_FAIL, hstring(L"Failed to load Page ") + e.SourcePageType().Name);
 }

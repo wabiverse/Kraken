@@ -38,10 +38,10 @@ namespace winrt::Kraken::implementation
   {
     MainWindow();
   };
-}
+}  // namespace winrt::Kraken::implementation
 
 namespace winrt::Kraken::factory_implementation
 {
   struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>
   {};
-}
+}  // namespace winrt::Kraken::factory_implementation

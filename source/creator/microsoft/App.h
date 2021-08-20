@@ -32,8 +32,8 @@ namespace winrt::Kraken::implementation
   {
     App();
 
-    void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
-    void OnSuspending(IInspectable const&, Windows::ApplicationModel::SuspendingEventArgs const&);
-    void OnNavigationFailed(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const&);
+    void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const &);
+    void OnSuspending(IInspectable const &, Windows::ApplicationModel::SuspendingEventArgs const &);
+    void OnNavigationFailed(IInspectable const &, Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const &);
   };
-}
+}  // namespace winrt::Kraken::implementation

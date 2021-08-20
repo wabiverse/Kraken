@@ -246,7 +246,7 @@ else()
     target_link_options(kraken PUBLIC "LINKER:/WINMDFILE:Kraken")
 
     set_source_files_properties(SOURCE ${KRAKEN_MAIN_PAGE_XAML} PROPERTIES
-      VS_XAML_TYPE Page
+      VS_XAML_TYPE Window
     )
     set_source_files_properties(SOURCE ${KRAKEN_APPLICATION_DEFINITION_XAML} PROPERTIES
       VS_XAML_TYPE ApplicationDefinition
