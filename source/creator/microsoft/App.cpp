@@ -33,8 +33,8 @@ using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Foundation;
 using namespace Microsoft::UI::Xaml;
 using namespace Microsoft::UI::Xaml::Controls;
-using namespace Microsoft::UI::Xaml::Window;
 using namespace Microsoft::UI::Xaml::Navigation;
+// using namespace Microsoft::UI::Xaml::Window;
 
 using namespace Kraken;
 using namespace Kraken::implementation;

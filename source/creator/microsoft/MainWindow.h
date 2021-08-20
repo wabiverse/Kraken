@@ -24,12 +24,6 @@
 
 #pragma once
 
-#include "winrt/Windows.UI.Xaml.h"
-#include "winrt/Windows.UI.Xaml.Markup.h"
-#include "winrt/Windows.UI.Xaml.Controls.Primitives.h"
-#include "winrt/Microsoft.UI.Xaml.Controls.h"
-#include "winrt/Microsoft.UI.Xaml.Window.h"
-
 #include "MainWindow.xaml.g.h"
 
 namespace winrt::Kraken::implementation

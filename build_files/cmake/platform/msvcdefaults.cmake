@@ -90,15 +90,19 @@ set(VC_LIBRARIES_VERSION "17.0")
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /EHsc")
 
 # Temporary, until they fixup the installation.
-set(WINDOWS_11_STORE
-  "C:/Program Files (x86)/Windows Kits/10/UnionMetadata/${WINDOWS_SDK_VERSION}"
+file(TO_CMAKE_PATH "C:/Program Files (x86)/Windows Kits/10/UnionMetadata/${WINDOWS_SDK_VERSION}"
+  WINDOWS_11_STORE
 )
-set(WINDOWS_11_PLATFORM
-  "C:/Program Files/Microsoft Visual Studio/2022/Preview/Common7/IDE/VC/vcpackages"
+file(TO_CMAKE_PATH "C:/Program Files/Microsoft Visual Studio/2022/Preview/Common7/IDE/VC/vcpackages"
+  WINDOWS_11_PLATFORM
+)
+file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/bin/Release"
+  KRAKEN_GENERATED_WINMD
 )
 
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${WINDOWS_11_STORE}\"")
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${WINDOWS_11_PLATFORM}\"")
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${KRAKEN_GENERATED_WINMD}\"")
 
 # Enable exception handling.
 if(KRAKEN_RELEASE_MODE)
