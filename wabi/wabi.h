@@ -35,7 +35,7 @@
 /**
  * @file wabi/wabi.h
  *
- * Pixar's Universal Scene Description | Built for KRAKEN
+ * Pixar's Universal Scene Description | Built for Kraken
  * .              +   .                .   . .     .  .
  *                   .                    .       .     *
  *  .       *                        . . . .  .   .  + .
@@ -54,7 +54,7 @@
  *.      .  .  .  *   .  *  . +..  .            *
  * .      .   . .   .   .   . .  +   .    .            +
  * A custom build, carefully tailored to the needs of the
- * KRAKEN software project, where it is used as a foundational
+ * Kraken software project, where it is used as a foundational
  * component framework in the context of a Digital Content
  * Creation Platform. Changes were made to better establish
  * Universal Scene Description for expanded use as the central

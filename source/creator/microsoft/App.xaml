@@ -1,0 +1,16 @@
+<!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
+
+<Application
+  x:Class="Kraken.App"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:local="using:Kraken"
+  xmlns:controls="using:Microsoft.UI.Xaml.Window">
+    <Application.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+          <controls:XamlControlsResources/>
+        </ResourceDictionary.MergedDictionaries>
+      </ResourceDictionary>
+    </Application.Resources>
+</Application>

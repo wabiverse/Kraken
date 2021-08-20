@@ -5,25 +5,6 @@ set(STRING_FILES "")
 set(DEBUG_CONTENT_FILES "")
 set(RELEASE_CONTENT_FILES "")
 
-# TEMPORARY: You will need to modify CMake's
-# Modules/InstallRequiredSystemLibraries.cmake
-# file itself in order for this to work -- until
-# MSVC v2022 is officially (and fully) supported.
-#
-# Steps:
-# Locate the InstallRequiredSystemLibraries.cmake file
-#
-# Change the following:
-#
-# elseif(MSVC_TOOLSET_VERSION GREATER_EQUAL 143)
-#  message(WARNING "MSVC toolset v${MSVC_TOOLSET_VERSION} not yet supported.")
-#
-# To this:
-# 
-# elseif(MSVC_TOOLSET_VERSION GREATER_EQUAL 143)
-#   set(MSVC_REDIST_NAME VC142)
-#   set(_MSVC_DLL_VERSION 140)
-#   set(_MSVC_IDE_VERSION 17)
 set(MSVC_TOOLSET_VERSION 143)
 
 if(WITH_WINDOWS_BUNDLE_CRT)
@@ -34,54 +15,22 @@ if(WITH_WINDOWS_BUNDLE_CRT)
   # changes, so test if it exists and if not, give InstallRequiredSystemLibraries
   # another chance to figure out the path.
   if(MSVC_REDIST_DIR AND NOT EXISTS "${MSVC_REDIST_DIR}")
-    # TEMPORARY: Align this with Windows 11 MSVC 2022 Runtime
-    # As MSVC "Microsoft.VC142.CRT" is secretly really the not
-    # yet released 14.30.30401 (VC143 CRT)
-    file(TO_CMAKE_PATH
-      "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Redist/MSVC/14.30.30401"
-      MSVC_REDIST_DIR)
+    unset(MSVC_REDIST_DIR CACHE)
   endif()
-    # TEMPORARY: Align this with Windows 11 MSVC 2022 Runtime
-    # As MSVC "Microsoft.VC142.CRT" is secretly really the not
-    # yet released 14.30.30401 (VC143 CRT)
-    file(TO_CMAKE_PATH
-      "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Redist/MSVC/14.30.30401/x64/Microsoft.VC142.CRT"
-      WINDOWS_11_MSVC_REDIST
-    )
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
-      ${WINDOWS_11_MSVC_REDIST}/concrt140_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/concrt140.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_1_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_1.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_2_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_2.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_atomic_wait_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_atomic_wait.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_codecvt_ids_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140_codecvt_ids.dll
-      ${WINDOWS_11_MSVC_REDIST}/msvcp140.dll
-      ${WINDOWS_11_MSVC_REDIST}/vcamp140_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/vccorlib140_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/vccorlib140.dll
-      ${WINDOWS_11_MSVC_REDIST}/vcomp140_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/vcruntime140_1_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/vcruntime140_1.dll
-      ${WINDOWS_11_MSVC_REDIST}/vcruntime140_app.dll
-      ${WINDOWS_11_MSVC_REDIST}/vcruntime140.dll
-    )
 
-  # TEMPORARY: Super super hacky that this works
-  # will cleanup once CMake actually provides
-  # support for MSVC v2022.
   include(InstallRequiredSystemLibraries)
 
+  # ucrtbase(d).dll cannot be in the manifest, due to the way windows 10 handles
+  # redirects for this dll, for details see T88813.
+  foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
+    string(FIND ${lib} "ucrtbase" pos)
+    if(NOT pos EQUAL -1)
+      list(REMOVE_ITEM CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS ${lib})
+      install(FILES ${lib} DESTINATION . COMPONENT Libraries)
+    endif()
+  endforeach()
   # Install the CRT to the kraken.crt Sub folder.
-  install(
-    FILES
-      ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-    DESTINATION
-      ./kraken.crt COMPONENT Libraries)
+  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./kraken.crt COMPONENT Libraries)
 
   # Generating the manifest is a relativly expensive operation since
   # it is collecting an sha1 hash for every file required. so only do
@@ -108,20 +57,15 @@ if(WITH_WINDOWS_BUNDLE_CRT)
     foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
       get_filename_component(filename ${lib} NAME)
       file(SHA1 "${lib}" sha1_file)
-      set(CRTLIBS "${CRTLIBS}    <file name=\"${filename}\" hash=\"${sha1_file}\"  hashalg=\"SHA1\" />\n")
+      string(APPEND CRTLIBS "    <file name=\"${filename}\" hash=\"${sha1_file}\"  hashalg=\"SHA1\" />\n")
     endforeach()
     configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.crt.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/kraken.crt.manifest @ONLY)
     file(TOUCH ${manifest_trigger_file})
   endif()
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kraken.crt.manifest DESTINATION ./kraken.crt)
-  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity name=\"Kraken.CRT\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
+  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"kraken.crt\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
 endif()
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/release/windows/appx/priconfig.xml.in
-  ${CMAKE_BINARY_DIR}/source/creator/priconfig.xml
-  @ONLY)
 
 configure_file(
   ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
@@ -134,23 +78,13 @@ configure_file(
   @ONLY)
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/source/creator/microsoft/Creator.xaml
-  ${CMAKE_BINARY_DIR}/source/creator/Creator.xaml
+  ${CMAKE_SOURCE_DIR}/source/creator/microsoft/App.xaml
+  ${CMAKE_BINARY_DIR}/source/creator/App.xaml
   @ONLY)
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/source/creator/microsoft/Creator.idl
-  ${CMAKE_BINARY_DIR}/source/creator/Creator.idl
-  @ONLY)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/source/creator/microsoft/Main.xaml
-  ${CMAKE_BINARY_DIR}/source/creator/Main.xaml
-  @ONLY)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/source/creator/microsoft/Main.idl
-  ${CMAKE_BINARY_DIR}/source/creator/Main.idl
+  ${CMAKE_SOURCE_DIR}/source/creator/microsoft/MainWindow.xaml
+  ${CMAKE_BINARY_DIR}/source/creator/MainWindow.xaml
   @ONLY)
 
 configure_file(
@@ -160,26 +94,30 @@ configure_file(
 )
 
 # Resource Paths Assets.
-set(KRAKEN_PRI_CONFIG ${CMAKE_BINARY_DIR}/source/creator/priconfig.xml)
 set(KRAKEN_RESOURCE_RC ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc)
 list(APPEND STRING_FILES
-  ${KRAKEN_PRI_CONFIG}
   ${KRAKEN_RESOURCE_RC}
 )
 
+# Application Manifest & Nuget Dependencies.
 set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest)
 set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/source/creator/packages.config)
-set(KRAKEN_APPX_XML ${CMAKE_BINARY_DIR}/source/creator/Creator.xaml)
-set(KRAKEN_APPX_IDL ${CMAKE_BINARY_DIR}/source/creator/Creator.idl)
-set(KRAKEN_APPX_MAIN_XML ${CMAKE_BINARY_DIR}/source/creator/Main.xaml)
-set(KRAKEN_APPX_MAIN_IDL ${CMAKE_BINARY_DIR}/source/creator/Main.idl)
+
+# XAML to define WinRT runtime typing.
+set(KRAKEN_APPLICATION_DEFINITION_XAML ${CMAKE_SOURCE_DIR}/source/creator/microsoft/App.xaml)
+set(KRAKEN_MAIN_PAGE_XAML ${CMAKE_SOURCE_DIR}/source/creator/microsoft/MainWindow.xaml)
+
+# MIDL for WinRT language projection.
+set(KRAKEN_APPLICATION_DEFINITION_MIDL ${CMAKE_SOURCE_DIR}/source/creator/microsoft/App.idl)
+set(KRAKEN_MAIN_PAGE_MIDL ${CMAKE_SOURCE_DIR}/source/creator/microsoft/MainWindow.idl)
+
 list(APPEND CONTENT_FILES
   ${KRAKEN_APPX_MANIFEST}
   ${KRAKEN_PACKAGES_CONFIG}
-  ${KRAKEN_APPX_XML}
-  ${KRAKEN_APPX_IDL}
-  ${KRAKEN_APPX_MAIN_XML}
-  # ${KRAKEN_APPX_MAIN_IDL}
+  ${KRAKEN_APPLICATION_DEFINITION_XAML}
+  ${KRAKEN_APPLICATION_DEFINITION_MIDL}
+  ${KRAKEN_MAIN_PAGE_XAML}
+  # ${KRAKEN_MAIN_PAGE_MIDL}
 )
 
 file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")
@@ -200,9 +138,22 @@ foreach(apx ${out_inst})
   list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/source/creator/assets/${ff})
 endforeach()
 
-set_property(SOURCE ${CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
-set_property(SOURCE ${ASSET_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
-set_property(SOURCE ${STRING_FILES} PROPERTY VS_TOOL_OVERRIDE "PRIResource")
+set_property(SOURCE
+  ${CONTENT_FILES}
+  PROPERTY VS_DEPLOYMENT_CONTENT 1)
+
+set_property(SOURCE
+  ${ASSET_FILES}
+  PROPERTY VS_DEPLOYMENT_CONTENT 1)
+
+set_property(SOURCE
+  ${STRING_FILES}
+  PROPERTY VS_TOOL_OVERRIDE "PRIResource")
+
+set_property(SOURCE
+  ${ASSET_FILES}
+  PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_BINARY_DIR}/source/creator")
+
 if(KRAKEN_RELEASE_MODE)
   set_property(SOURCE ${RELEASE_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 else()
@@ -214,4 +165,13 @@ add_custom_target(appxml ALL SOURCES ${CONTENT_FILES})
 
 add_dependencies(appxml appximages)
 
-set_property(SOURCE PROPERTY ${ASSET_FILES} PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_BINARY_DIR}/source/creator")
+set_target_properties(appxml PROPERTIES
+  VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1"
+  VS_GLOBAL_UseWindowsSdkPreview "true"
+  VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview"
+  VS_GLOBAL_RootNamespace "Kraken"
+  VS_GLOBAL_ProjectName "Kraken"
+  VS_GLOBAL_UseWinUI "true"
+  VS_GLOBAL_CanReferenceWinRT "true"
+  VS_GLOBAL_XamlLanguage "CppWinRT"
+)

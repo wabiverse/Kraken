@@ -41,7 +41,7 @@ if NOT EXIST %BUILD_DIR%\nul (
 if "%MUST_CLEAN%"=="1" (
 	echo Cleaning %BUILD_DIR%
 	msbuild ^
-		%BUILD_DIR%\KRAKEN.sln ^
+		%BUILD_DIR%\Kraken.sln ^
 		/target:clean ^
 		/property:Configuration=%BUILD_TYPE% ^
 		/p:PreferredToolArchitecture=x64 ^
@@ -50,7 +50,7 @@ if "%MUST_CLEAN%"=="1" (
 		/p:platform=%MSBUILD_PLATFORM%
 )
 
-if NOT EXIST %BUILD_DIR%\KRAKEN.sln set MUST_CONFIGURE=1
+if NOT EXIST %BUILD_DIR%\Kraken.sln set MUST_CONFIGURE=1
 if "%NOBUILD%"=="1" set MUST_CONFIGURE=1
 
 if "%MUST_CONFIGURE%"=="1" (

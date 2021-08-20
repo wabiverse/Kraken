@@ -85,7 +85,7 @@ if(WIN32)
   set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.ico)
   set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
 
-  set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/release/license/proprietary.txt)
+  set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/release/license/GPLv3.txt)
   set(CPACK_WIX_PRODUCT_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.ico)
 
   set(PACKAGE_GUID "3dc14369-4331-4c7d-9072-a83e6d90fc45")

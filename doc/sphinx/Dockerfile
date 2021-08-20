@@ -32,12 +32,12 @@ RUN pip3 install https://storage.googleapis.com/dependency_links/Exhale-1.3.0.ta
 RUN pip3 install sphinxcontrib-napoleon
 
 # -------------------------------------------------------------------------------------------------------------------------------
-# Clone latest KRAKEN, here in the cloud, we refer to it as the chaos engine.
+# Clone latest Kraken, here in the cloud, we refer to it as the chaos engine.
 
 RUN if [[ -d "chaos_engine/" ]]; then rm -r chaos_engine/; fi
 RUN mkdir chaos_engine/
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
-RUN git clone https://github.com/Wabi-Studios/KRAKEN.git chaos_engine/
+RUN git clone https://github.com/Wabi-Studios/Kraken.git chaos_engine/
 
 # -------------------------------------------------------------------------------------------------------------------------------
 # Grab the kraken version from the kraken version file (only place where version is ever hardcoded).

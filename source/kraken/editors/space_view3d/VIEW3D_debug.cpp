@@ -31,7 +31,7 @@ WABI_NAMESPACE_BEGIN
 
 TF_REGISTRY_FUNCTION(TfDebug)
 {
-  TF_DEBUG_ENVIRONMENT_SYMBOL(ED_VIEW3D, "Show KRAKEN Viewport status and diagnostics");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(ED_VIEW3D, "Show Kraken Viewport status and diagnostics");
 }
 
 WABI_NAMESPACE_END

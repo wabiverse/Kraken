@@ -76,7 +76,7 @@ if "%BUILD_UPDATE%" == "1" (
 
 call "%KRAKEN_DIR%build_files\scripts\windows\set_build_dir.cmd"
 
-echo Building KRAKEN with VS%\BUILD_VS_YEAR% for %BUILD_ARCH% in %BUILD_DIR%
+echo Building Kraken with VS%\BUILD_VS_YEAR% for %BUILD_ARCH% in %BUILD_DIR%
 
 call "%KRAKEN_DIR%\build_files\scripts\windows\check_libraries.cmd"
 if errorlevel 1 goto EOF

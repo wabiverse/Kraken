@@ -8,7 +8,7 @@
 define HELP_TEXT
 
 Convenience Targets
-   Provided for building KRAKEN, (multiple at once can be used).
+   Provided for building Kraken, (multiple at once can be used).
 
    * debug:         Build a debug binary.
    * release:       Complete build with all options enabled.
@@ -65,7 +65,7 @@ Environment Variables
    * NPROCS:               Number of processes to use building (auto-detect when omitted).
 
 Documentation Targets
-   Not associated with building KRAKEN.
+   Not associated with building Kraken.
 
    * doc_all:     Generate sphinx C/C++ docs.
    * doc_man:     Generate manpage.
@@ -174,12 +174,12 @@ else
 endif
 
 # -----------------------------------------------------------------------------
-# KRAKEN binary path
+# Kraken binary path
 
 # Allow passing in own KRAKEN_BIN so developers who don't
 # use the default build path can still use utility helpers.
 ifeq ($(OS), Darwin)
-	KRAKEN_BIN?="$(BUILD_DIR)/bin/KRAKEN.app/Contents/MacOS/KRAKEN"
+	KRAKEN_BIN?="$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
 else
 	KRAKEN_BIN?="$(BUILD_DIR)/bin/kraken"
 endif
@@ -226,10 +226,10 @@ endif
 
 
 # -----------------------------------------------------------------------------
-# Build KRAKEN
+# Build Kraken
 all: .FORCE
 	@echo
-	@echo Configuring KRAKEN in \"$(BUILD_DIR)\" ...
+	@echo Configuring Kraken in \"$(BUILD_DIR)\" ...
 
 #	# if test ! -f $(BUILD_DIR)/CMakeCache.txt ; then \
 #	# 	$(CMAKE_CONFIG); \

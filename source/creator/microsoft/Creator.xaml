@@ -1,9 +1,0 @@
-<!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
-
-<Application
-  x:Class="Kraken.Creator"
-  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:local="using:Kraken">
-
-</Application>

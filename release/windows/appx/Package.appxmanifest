@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
 
@@ -37,10 +37,14 @@
       Name="Windows.Universal"
       MinVersion="10.0.22000.0"
       MaxVersionTested="10.0.22000.0" />
-    <TargetDeviceFamily
-      Name="Windows.Desktop"
-      MinVersion="10.0.22000.0"
-      MaxVersionTested="10.0.22000.0" />
+    <PackageDependency
+      Name="Microsoft.WindowsAppSDK.1.0-experimental1"
+      MinVersion="0.218.840.0"
+      Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+    <PackageDependency
+      Name="Microsoft.VCLibs.140.00.UWPDesktop"
+      MinVersion="14.0.30035.0"
+      Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
     <PackageDependency
       Name="Microsoft.VCLibs.140.00"
       MinVersion="14.0.30035.0"
@@ -53,9 +57,9 @@
 
   <Applications>
     <Application
-      Id="Creator"
+      Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="Kraken.Creator">
+      EntryPoint="Kraken.App">
       <!-- Manifest Schema Requires Branding. -->
       <uap:VisualElements
         DisplayName="Kraken"
@@ -99,7 +103,7 @@
         <uap5:Extension
           Category="windows.appExecutionAlias"
           Executable="kraken.exe"
-          EntryPoint="Kraken.Creator">
+          EntryPoint="Kraken.App">
           <uap5:AppExecutionAlias desktop4:Subsystem="windows" >   
             <uap5:ExecutionAlias Alias="kraken.exe" />
           </uap5:AppExecutionAlias>
@@ -161,17 +165,15 @@
 
   <build:Metadata>
     <!-- Just some useful build output from my local machine - Furby. -->
-    <build:Item Name="cl.exe" Version="19.30.30401.0 built by: vcwrkspc" />
+    <build:Item Name="cl.exe" Version="19.30.30423.0 built by: vcwrkspc" />
     <build:Item Name="VisualStudio" Version="17.0" />
     <build:Item Name="VisualStudioEdition" Value="Microsoft Visual Studio Professional 2022" />
     <build:Item Name="OperatingSystem" Version="10.0.22000.1 (WinBuild.160101.0800)" />
-    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="17.0.31512.422" />
+    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="17.0.31605.261" />
     <build:Item Name="ProjectGUID" Value="{0BDC0280-04C8-3197-903F-9C9895C4B5F7}" />
     <build:Item Name="OptimizingToolset" Value="None" />
     <build:Item Name="TargetRuntime" Value="Native" />
-    <build:Item Name="Microsoft.Windows.UI.Xaml.Build.Tasks.dll" Version="0.0.0.0" />
-    <build:Item Name="WindowsDesktop" Version="10.0.22000.0" />
-    <build:Item Name="WindowsMobile" Version="10.0.22000.0" />
-    <build:Item Name="MakePri.exe" Version="10.0.22000.100 (WinBuild.160101.0800)" />
+    <build:Item Name="Microsoft.UI.Xaml.Markup.Compiler.dll" Version="0.0.0.0" />
+    <build:Item Name="MakePri.exe" Version="10.0.22000.132 (WinBuild.160101.0800)" />
   </build:Metadata>
 </Package>

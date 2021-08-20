@@ -62,14 +62,12 @@ endif()
 if(WIN32)
   set(WINDOWS_RUNTIME_SOURCE
     # CXX SOURCE CODE
-    microsoft/kraken_winrt.cpp # wWinMain
-    microsoft/creator_xaml_metadata.cpp
-    microsoft/creator_xaml_typeinfo.cpp
+    microsoft/App.cpp
+    microsoft/MainWindow.cpp
 
     # CXX SOURCE HEADERS
-    microsoft/kraken_winrt.h
-    microsoft/creator_xaml_metadata.h
-    microsoft/creator_xaml_typeinfo.h
+    microsoft/App.h
+    microsoft/MainWindow.h
 
     # XAML, ICONS, MISC -> CONFIGURED FILES
     ${CONTENT_FILES}
@@ -242,22 +240,50 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
-  kraken_precompile_headers(kraken microsoft/pch.cpp microsoft/pch.h)
   if(WIN32)
-    # target_link_options(kraken PUBLIC "LINKER:/WINMDFILE:Kraken")
-    set_property(SOURCE ${KRAKEN_APPX_XML} PROPERTY VS_XAML_TYPE ApplicationDefinition)
+    add_dependencies(kraken appxml)
+    kraken_precompile_headers(kraken microsoft/pch.cpp microsoft/pch.h)
+    target_link_options(kraken PUBLIC "LINKER:/WINMDFILE:Kraken")
+
+    set_source_files_properties(SOURCE ${KRAKEN_MAIN_PAGE_XAML} PROPERTIES
+      VS_XAML_TYPE Page
+    )
+    set_source_files_properties(SOURCE ${KRAKEN_APPLICATION_DEFINITION_XAML} PROPERTIES
+      VS_XAML_TYPE ApplicationDefinition
+    )
 
     set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT TRUE
+      # VS_USER_PROPS "Microsoft.Windows.CppWinRT.props"
       VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
       VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
-      VS_GLOBAL_OutputType "WinExe"
-      VS_PACKAGE_REFERENCES "Microsoft.UI.Xaml_2.6.1;Microsoft.Windows.CppWinRT_2.0.210722.2;Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
-      VS_GLOBAL_TargetFramework "Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
+      VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1"
+      VS_GLOBAL_TargetFramework "net5.0-windows10.0.22000.0"
       VS_GLOBAL_UseWindowsSdkPreview "true"
-      VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview"
+      VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview"
+      VS_GLOBAL_OutputType "WinExe"
       VS_GLOBAL_PlatformToolset "v143"
       VS_GLOBAL_MinimumVisualStudioVersion "17.0"
+      VS_GLOBAL_PackageCertificateKeyFile "kraken_TemporaryKey.pfx"
+      VS_GLOBAL_AppContainerApplication "true"
+      VS_GLOBAL_AppxBundle "Always"
+      VS_GLOBAL_AppxBundlePlatforms "x64"
+      VS_GLOBAL_CppWinRTOptimized "true"
+      VS_GLOBAL_CppWinRTRootNamespaceAutoMerge "true"
+      VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
+      VS_GLOBAL_RootNamespace "Kraken"
+      VS_GLOBAL_ProjectName "Kraken"
+      VS_GLOBAL_MinimalCoreWin "true"
+      VS_GLOBAL_WindowsTargetPlatformMinVersion "10.0.22000.0"
+      VS_GLOBAL_UseWinUI "true"
+      VS_GLOBAL_DefaultLanguage "en-US"
+      VS_GLOBAL_CanReferenceWinRT "true"
+      VS_GLOBAL_CppWinRTEnabled "true"
+      VS_GLOBAL_CppWinRTPackage "true"
+      VS_GLOBAL_XamlLanguage "CppWinRT"
+      VS_GLOBAL_CompileAsWinRT "true"
+      VS_GLOBAL_CppWinRTModernIDL "true"
+      VS_GLOBAL_EnableWindowsRuntime "true"
     )
   endif()
 endif()
@@ -266,6 +292,7 @@ if(WITH_BUILDINFO)
   # explicitly say that the executable depends on the buildinfo
   add_dependencies(kraken buildinfo)
   add_dependencies(kraken appximages)
+  add_dependencies(kraken appxml)
 endif()
 
 # Link with Pixar API
@@ -311,7 +338,7 @@ elseif(APPLE)
   if(WITH_PYTHON_MODULE)
     set(TARGETDIR_VER ${KRAKEN_VERSION})
   else()
-    set(TARGETDIR_VER KRAKEN.app/Contents/Resources/${KRAKEN_VERSION})
+    set(TARGETDIR_VER Kraken.app/Contents/Resources/${KRAKEN_VERSION})
   endif()
   # Skip relinking on cpack / install
   set_target_properties(kraken PROPERTIES BUILD_WITH_INSTALL_RPATH true)
@@ -1019,7 +1046,7 @@ elseif(APPLE)
     )
   endmacro()
 
-  set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/KRAKEN.app)
+  set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/Kraken.app)
 
   # setup Info.plist
   execute_process(COMMAND date "+%Y-%m-%d"
@@ -1039,11 +1066,11 @@ elseif(APPLE)
   # Give the bundle actual creation/modification date
   #
   # Note that the directory might not yet exist, which happens when CMake is first run.
-  if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/KRAKEN.app)
-    file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/KRAKEN.app)
+  if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/Kraken.app)
+    file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/Kraken.app)
   endif()
   execute_process(COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE}
-                  ${EXECUTABLE_OUTPUT_PATH}/KRAKEN.app)
+                  ${EXECUTABLE_OUTPUT_PATH}/Kraken.app)
 
   install(
     TARGETS kraken
@@ -1051,22 +1078,22 @@ elseif(APPLE)
   )
 
   # install release and app files
-  set(KRAKEN_TEXT_FILES_DESTINATION KRAKEN.app/Contents/Resources/text)
+  set(KRAKEN_TEXT_FILES_DESTINATION Kraken.app/Contents/Resources/text)
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-    DESTINATION KRAKEN.app/Contents
+    DESTINATION Kraken.app/Contents
   )
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    KRAKEN.app/Contents/
+    Kraken.app/Contents/
   )
 
   if(WITH_LLVM AND NOT LLVM_STATIC)
     install(
       FILES ${LIBDIR}/llvm/lib/libLLVM-3.4.dylib
-      DESTINATION KRAKEN.app/Contents/MacOS
+      DESTINATION Kraken.app/Contents/MacOS
     )
   endif()
 
@@ -1312,23 +1339,41 @@ endif()
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   install(
     TARGETS kraken
-    COMPONENT KRAKEN
+    COMPONENT Kraken
     DESTINATION "."
   )
   set_target_properties(kraken PROPERTIES
     VS_WINRT_COMPONENT TRUE
+    # VS_USER_PROPS "Microsoft.Windows.CppWinRT.props"
     VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
     VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
-    VS_GLOBAL_OutputType "WinExe"
-    VS_PACKAGE_REFERENCES "Microsoft.UI.Xaml_2.6.1;Microsoft.Windows.CppWinRT_2.0.210722.2;Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
-    VS_GLOBAL_TargetFramework "Microsoft.VSSDK.BuildTools_17.0.2155-preview2"
+    VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1"
+    VS_GLOBAL_TargetFramework "net5.0-windows10.0.22000.0"
     VS_GLOBAL_UseWindowsSdkPreview "true"
-    VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview"
+    VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview"
+    VS_GLOBAL_OutputType "WinExe"
     VS_GLOBAL_PlatformToolset "v143"
     VS_GLOBAL_MinimumVisualStudioVersion "17.0"
     VS_GLOBAL_PackageCertificateKeyFile "kraken_TemporaryKey.pfx"
+    VS_GLOBAL_AppContainerApplication "true"
     VS_GLOBAL_AppxBundle "Always"
     VS_GLOBAL_AppxBundlePlatforms "x64"
+    VS_GLOBAL_CppWinRTOptimized "true"
+    VS_GLOBAL_CppWinRTRootNamespaceAutoMerge "true"
+    VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
+    VS_GLOBAL_RootNamespace "Kraken"
+    VS_GLOBAL_ProjectName "Kraken"
+    VS_GLOBAL_MinimalCoreWin "true"
+    VS_GLOBAL_WindowsTargetPlatformMinVersion "10.0.22000.0"
+    VS_GLOBAL_UseWinUI "true"
+    VS_GLOBAL_DefaultLanguage "en-US"
+    VS_GLOBAL_CanReferenceWinRT "true"
+    VS_GLOBAL_CppWinRTEnabled "true"
+    VS_GLOBAL_CppWinRTPackage "true"
+    VS_GLOBAL_XamlLanguage "CppWinRT"
+    VS_GLOBAL_CompileAsWinRT "true"
+    VS_GLOBAL_CppWinRTModernIDL "true"
+    VS_GLOBAL_EnableWindowsRuntime "true"
   )
 endif()
 

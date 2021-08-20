@@ -1,7 +1,7 @@
 if "%NOBUILD%"=="1" goto EOF
 echo %TIME% > %BUILD_DIR%\buildtime.txt
 msbuild ^
-	%BUILD_DIR%\KRAKEN.sln ^
+	%BUILD_DIR%\Kraken.sln ^
 	/target:build ^
 	/property:Configuration=%BUILD_TYPE% ^
 	/p:PreferredToolArchitecture=x64 ^

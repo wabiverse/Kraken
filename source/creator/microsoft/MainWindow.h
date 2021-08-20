@@ -24,26 +24,24 @@
 
 #pragma once
 
-/**
- *  -----  The Kraken Creator. ----- */
+#include "winrt/Windows.UI.Xaml.h"
+#include "winrt/Windows.UI.Xaml.Markup.h"
+#include "winrt/Windows.UI.Xaml.Controls.Primitives.h"
+#include "winrt/Microsoft.UI.Xaml.Controls.h"
+#include "winrt/Microsoft.UI.Xaml.Window.h"
 
-#if defined(ARCH_OS_WINDOWS)
+#include "MainWindow.xaml.g.h"
 
-#  include "App.h"
+namespace winrt::Kraken::implementation
+{
+  struct MainWindow : winrt::Microsoft::Xaml::Window
+  {
+    MainWindow();
+  };
+}
 
-#endif /* ARCH_OS_WINDOWS */
-
-/**
- *  -----  Kraken's Main Startup. ----- */
-
-void CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
-
-/**
- *  -----  Creator's Args. ----- */
-
-void CREATOR_setup_args(int argc, const char **argv);
-
-int CREATOR_parse_args(int argc, const char **argv);
-
-
-/* ------ */
+namespace winrt::Kraken::factory_implementation
+{
+  struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>
+  {};
+}

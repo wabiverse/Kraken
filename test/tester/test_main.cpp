@@ -25,10 +25,10 @@ int main(int argc, char *argv[])
 {
 #ifdef _WIN32
   std::string LOGFILES_PATH = TfStringCatPaths(TfGetPathName(ArchGetExecutablePath()),
-                                               "../../../KRAKEN/source/kraken/test/logs/win32/");
+                                               "../../../Kraken/source/kraken/test/logs/win32/");
 #elif __linux__
   std::string LOGFILES_PATH = TfStringCatPaths(TfGetPathName(ArchGetExecutablePath()),
-                                               "../../../KRAKEN/source/kraken/test/logs/linux/");
+                                               "../../../Kraken/source/kraken/test/logs/linux/");
 #endif
 
 #ifdef WITH_PLUGS_TEST

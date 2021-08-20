@@ -88,7 +88,7 @@ include(macros)
 
 kraken_project_hack_pre()
 
-project(KRAKEN)
+project(Kraken)
 
 kraken_project_hack_post()
 
@@ -173,7 +173,7 @@ option(BUILD_SHARED_LIBS "Build all libraries as shared libraries" ON)
 #-----------------------------------------------------------------------------
 # Build Options
 
-option(WITH_KRAKEN                   "Build the KRAKEN executable, The Digital Content Creation Platform of the 21st Century"     ON)
+option(WITH_KRAKEN                   "Build the Kraken executable, The Digital Content Creation Platform of the 21st Century"     ON)
 option(WITH_KRAKEN_MONOLITHIC        "Build all Pixar API libraries as one big monolithic library, the maelstrom"                 ON)
 option(WITH_LICENSING                "Save my investments god damnit"                                                             ON)
 option(WITH_TESTS                    "Build kraken test executables"                                                              ON)
@@ -193,7 +193,7 @@ option(WITH_EMBREE                   "Enable RenderMan, Pixar's Render Engine"  
 option(WITH_ALEMBIC                  "Enable Alembic Support"                                                                     ON)
 option(WITH_ALEMBIC_HDF5             "Enable HDF5 in Alembic for high performance data management and storage"                    ON)
 option(WITH_DRACO                    "Enable Draco Support"                                                                       ON)
-option(WITH_MATERIALX                "Enable MaterialX support for KRAKEN through the usdMatx plugin"                             ON)
+option(WITH_MATERIALX                "Enable MaterialX support for Kraken through the usdMatx plugin"                             ON)
 option(WITH_OSL                      "Build with full OSL support for MaterialX, and others."                                     ON)
 option(WITH_OPENIMAGEIO              "Enable OpenImageIO Support (http://www.openimageio.org)"                                    ON)
 option(WITH_PTEX                     "Enable Walt Disney Animation Studios Ptex support (https://ptex.us/)"                       ON)
@@ -204,7 +204,7 @@ option(WITH_OPENVDB                  "Enable features relying on OpenVDB"       
 option(WITH_OPENVDB_BLOSC            "Enable blosc compression for OpenVDB, only enable if OpenVDB was built with blosc support"  ON)
 option(WITH_NANOVDB                  "Enable usage of NanoVDB data structure for accelerated rendering on the GPU"               OFF)
 option(WITH_PYTHON                   "Enable Embedded Python API  (only disable for development)"                                 ON)
-option(WITH_PYTHON_INSTALL           "Install python and it's libraries to distribute with KRAKEN"                                ON)
+option(WITH_PYTHON_INSTALL           "Install python and it's libraries to distribute with Kraken"                                ON)
 option(WITH_PYTHON_INSTALL_NUMPY     "Install numpy alongside python installation"                                                ON)
 option(WITH_PYTHON_INSTALL_REQUESTS  "Install requests alongside python installation"                                             ON)
 option(WITH_PYTHON_SECURITY          "Disables execution of scripts referenced within usd files by default"                       ON)
@@ -366,10 +366,10 @@ if(FIRST_RUN)
   message(" |_____|__|__|_____|_____|                                ")
   message("     Animation Studios                                    ")
   message("                                                          ")
-  message("  KRAKEN ::: v${KRAKEN_VERSION_MAJOR}.${KRAKEN_VERSION_MINOR}")
+  message("  Kraken ::: v${KRAKEN_VERSION_MAJOR}.${KRAKEN_VERSION_MINOR}")
   message("                                                          ")
 
-  set(_config_msg "\nKRAKEN Configuration\n=====================")
+  set(_config_msg "\Kraken Configuration\n=====================")
 
   function(info_cfg_option
     _setting

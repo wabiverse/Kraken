@@ -192,7 +192,6 @@ void HgiDX3D::StartFrame()
 
   if (_frameDepth++ == 0)
   {
-    
   }
 }
 

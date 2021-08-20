@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-    <id>xyz.wabi.KRAKEN</id>
+    <id>org.WabiAnimation.Kraken</id>
     <launchable type="desktop-id">kraken.desktop</launchable>
-    <name>KRAKEN</name>
+    <name>Kraken</name>
     <summary>Free and open source 3D creation suite</summary>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>Proprietary</project_license>
     <description>
         <p>
-            KRAKEN is the future of 3D graphics for film, animation, and the
+            Kraken is the future of 3D graphics for film, animation, and the
             future of interactive digital experiences. It supports a Hydra
             Powered Viewport capable of rendering any engine from Arnold,
             to Renderman, a real-time, physically based render engine called
@@ -24,8 +24,8 @@
         </p>
 
         <p>
-            KRAKEN is in it's very early development stages. Join the development
-            fund and help us evolve KRAKEN over the next several years. Together
+            Kraken is in it's very early development stages. Join the development
+            fund and help us evolve Kraken over the next several years. Together
             we can build the future of animation, and build the tools the way we
             want to use them. Development is moving rapidly and we are consistantly
             supporting new tools as they are made available. Drop us a line and

@@ -2041,7 +2041,7 @@ can download and build as needed:
 parser = argparse.ArgumentParser(description=programDescription, formatter_class=argparse.RawDescriptionHelpFormatter, usage=argparse.SUPPRESS, epilog=textwrap.dedent('''\
                                                                                                                                                 ::
                                                                                                                                                 ::
-                                                                                                                                                :: KRAKEN. 2021.'''), add_help=False)
+                                                                                                                                                :: Kraken. 2021.'''), add_help=False)
 parser._optionals.title = "KRAKEN DEPENDENCIES | COMMAND LINE OPTIONS"
 
 group_build = parser.add_mutually_exclusive_group()
@@ -2362,9 +2362,9 @@ if JPEG in requiredDependencies:
 # Summarize
 summaryMsg = """\
 BUILD SUMMARY:
-  KRAKEN Dependency Libraries    {libInstDir}
-  KRAKEN Dependency Source       {srcDir}
-  KRAKEN Dependency Build        {buildDir}
+  Kraken Dependency Libraries    {libInstDir}
+  Kraken Dependency Source       {srcDir}
+  Kraken Dependency Build        {buildDir}
   CMake generator               {cmakeGenerator}
   CMake toolset                 {cmakeToolset}
   Downloader                    {downloader}
@@ -2495,4 +2495,4 @@ if Windows():
     ])
 
 Print("""
-Success! Now build KRAKEN, simply use the './make' command:""")
+Success! Now build Kraken, simply use the 'make' command:""")

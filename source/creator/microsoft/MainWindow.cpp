@@ -22,28 +22,19 @@
  * Creating Chaos.
  */
 
-#pragma once
+#include "pch.h"
+#include "MainWindow.h"
+#if __has_include("MainWindow.g.cpp")
+#include "MainWindow.g.cpp"
+#endif
 
-/**
- *  -----  The Kraken Creator. ----- */
+using namespace winrt;
+using namespace Microsoft::UI::Xaml;
 
-#if defined(ARCH_OS_WINDOWS)
-
-#  include "App.h"
-
-#endif /* ARCH_OS_WINDOWS */
-
-/**
- *  -----  Kraken's Main Startup. ----- */
-
-void CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
-
-/**
- *  -----  Creator's Args. ----- */
-
-void CREATOR_setup_args(int argc, const char **argv);
-
-int CREATOR_parse_args(int argc, const char **argv);
-
-
-/* ------ */
+namespace winrt::Kraken::implementation
+{
+    MainWindow::MainWindow()
+    {
+        InitializeComponent();
+    }
+}

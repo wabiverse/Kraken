@@ -3771,7 +3771,7 @@ std::string AnchorWindowWin32::getTitle() const
   // conv_utf_16_to_8(wtitle.c_str(), &title[0], title.capacity());
 
   // return title;
-  return "KRAKEN";
+  return "Kraken";
 }
 
 void AnchorWindowWin32::setIcon(const char *icon)

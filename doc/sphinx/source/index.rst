@@ -1,4 +1,4 @@
-.. KRAKEN documentation master file, created by
+.. Kraken documentation master file, created by
    sphinx-quickstart on Thu Mar 18 23:40:52 2021.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -12,7 +12,7 @@
 Introduction
 ------------
 
-Developer reference and home of the KRAKEN project -- redefining animation
+Developer reference and home of the Kraken project -- redefining animation
 composition, collaborative workflows, simulation engines, skeletal rigging
 systems, and look development from storyboard to final render. Built on
 the underlying software architecture provided by Pixar, and extended to
@@ -24,7 +24,7 @@ framework for composition & design into the future.
 
 .. note::
    This is the developer reference as it pertains to the C++ codebase of
-   KRAKEN. It is subject to change frequently, as different iterations are
+   Kraken. It is subject to change frequently, as different iterations are
    necessary to find to correct approach. Additionally, as of now there is
    no Python API, as more planning and guidance is necessary before it can
    recieve active development contributions.

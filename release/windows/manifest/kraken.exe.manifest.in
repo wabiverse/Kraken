@@ -1,15 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
 
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity version="1.0.0.0" name="Kraken.CRT"/>
-
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="Kraken.app"/>
+  
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
-      <dpiAware xmlns="http://schemas.microsoft.com/smi/2005/windowssettings">true/PM</dpiAware>
-      <dpiAwareness xmlns="http://schemas.microsoft.com/smi/2016/windowssettings">PerMonitorV2, PerMonitor</dpiAwareness>
+      <!-- The combination of below two tags have the following effect:
+           1) Per-Monitor for >= Windows 10 Anniversary Update
+           2) System < Windows 10 Anniversary Update
+      -->
+      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/PM</dpiAware>
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor</dpiAwareness>
     </windowsSettings>
   </application>
-  @BUNDLECRT@
 </assembly>

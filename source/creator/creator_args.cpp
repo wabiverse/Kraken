@@ -82,7 +82,7 @@ void CREATOR_setup_args(int argc, const char **argv)
     "Resets factory default settings and preferences on startup")
 
     ("server", CREATOR_ARGS::bool_switch(&G.background),
-    "Puts KRAKEN in a headless client-serving server mode")
+    "Puts Kraken in a headless client-serving server mode")
 
     ("diagnostics", CREATOR_ARGS::bool_switch(&run_diagnostics),
     "Run system diagnostics to debug the Kraken System")

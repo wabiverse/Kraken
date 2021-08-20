@@ -41,7 +41,7 @@ display_version = True;
 
 # -- Project information -----------------------------------------------------
 
-project = 'KRAKEN'
+project = 'Kraken'
 copyright = '2021, Wabi'
 author = 'Furby™'
 
@@ -51,7 +51,7 @@ release = 'latest'
 html_context = {
   'display_github': True,
   'github_user': 'furby-tm',
-  'github_repo': 'KRAKEN',
+  'github_repo': 'Kraken',
   'github_version': 'main',
   'theme_navigation_depth': 4,
   'conf_py_path': '/doc/doxygen/source/',
@@ -87,7 +87,7 @@ exhale_args = {
     ############################################################################
     "containmentFolder":     "./api",
     "rootFileName":          "kraken_api_root.rst",
-    "rootFileTitle":         "KRAKEN Developer Reference",
+    "rootFileTitle":         "Kraken Developer Reference",
     "doxygenStripFromPath":  "..",
     ############################################################################
     # Suggested optional arguments.                                            #
@@ -246,12 +246,12 @@ exhale_args = {
     # Fix broken Sphinx RTD Theme 'Edit on GitHub' links
     # Search for 'Edit on GitHub' on the FAQ:
     #     http://exhale.readthedocs.io/en/latest/faq.html
-    "pageLevelConfigMeta": ":github_url: https://github.com/Wabi-Studios/KRAKEN",
+    "pageLevelConfigMeta": ":github_url: https://github.com/Wabi-Studios/Kraken",
     ############################################################################
     # Main library page layout configuration.                                  #
     ############################################################################
     "afterTitleDescription": textwrap.dedent(u'''
-        Developer reference and home of the KRAKEN project -- redefining animation
+        Developer reference and home of the Kraken project -- redefining animation
         composition, collaborative workflows, simulation engines, skeletal rigging
         systems, and look development from storyboard to final render. Built on
         the underlying software architecture provided by Pixar, and extended to
@@ -262,7 +262,7 @@ exhale_args = {
 
         .. note::
           This is the developer reference as it pertains to the C++ codebase of
-          KRAKEN. It is subject to change frequently, as different iterations are
+          Kraken. It is subject to change frequently, as different iterations are
           necessary to find the correct approach. Currently, there is an additional
           Python API available -- the Pixar USD module, wabi, which needs further
           testing to assess it's capabilities for use in a suitable scripting and

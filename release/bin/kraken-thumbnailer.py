@@ -101,7 +101,7 @@ def usd_extract_thumb(path):
         usdfile = gzip.GzipFile('', 'rb', 0, open_wrapper(path, 'rb'))
         head = usdfile.read(12)
 
-    if not head.startswith(b'KRAKEN'):
+    if not head.startswith(b'Kraken'):
         usdfile.close()
         return None, 0, 0
 

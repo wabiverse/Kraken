@@ -6,7 +6,7 @@ if "%BUILD_ARCH%"=="" (
 		set WINDOWS_ARCH= Win64
 		set BUILD_ARCH=x64
 	) else (
-		echo Error: 32 bit builds of KRAKEN are not supported.
+		echo Error: 32 bit builds of Kraken are not supported.
 		goto ERR
 	)
 ) else if "%BUILD_ARCH%"=="x64" (

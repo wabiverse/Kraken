@@ -22,17 +22,18 @@
  * Creating Chaos.
  */
 
-#include "pch.h"
-#include "creator_xaml_metadata.h"
+#pragma once
 
-void *winrt_make_Kraken_XamlMetaDataProvider()
-{
-  return winrt::detach_abi(winrt::make<winrt::Kraken::factory_implementation::XamlMetaDataProvider>());
-}
+#include "App.xaml.g.h"
 
-WINRT_EXPORT namespace winrt::Kraken
+namespace winrt::Kraken::implementation
 {
-  XamlMetaDataProvider::XamlMetaDataProvider()
-    : XamlMetaDataProvider(make<Kraken::implementation::XamlMetaDataProvider>())
-  {}
+  struct App : AppT<App>
+  {
+    App();
+
+    void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
+    void OnSuspending(IInspectable const&, Windows::ApplicationModel::SuspendingEventArgs const&);
+    void OnNavigationFailed(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const&);
+  };
 }

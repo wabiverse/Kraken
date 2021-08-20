@@ -287,10 +287,9 @@ function(kraken_add_lib__impl
     set_property(TARGET ${name} PROPERTY VS_WINRT_COMPONENT ON)
     set_property(TARGET ${name} PROPERTY VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}")
     set_property(TARGET ${name} PROPERTY VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}")
-    set_property(TARGET ${name} PROPERTY VS_PACKAGE_REFERENCES "Microsoft.UI.Xaml_2.6.1;Microsoft.Windows.CppWinRT_2.0.210722.2;Microsoft.VSSDK.BuildTools_17.0.2155-preview2")
-    set_property(TARGET ${name} PROPERTY VS_GLOBAL_TargetFramework "Microsoft.VSSDK.BuildTools_17.0.2155-preview2")
+    set_property(TARGET ${name} PROPERTY VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1")
     set_property(TARGET ${name} PROPERTY VS_GLOBAL_UseWindowsSdkPreview "true")
-    set_property(TARGET ${name} PROPERTY VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.100-preview")
+    set_property(TARGET ${name} PROPERTY VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview")
     set_property(TARGET ${name} PROPERTY VS_GLOBAL_PlatformToolset "v143")
   endif()
 
@@ -855,7 +854,7 @@ endfunction()
 
 
 # hacks to override initial project settings
-# these macros must be called directly before/after project(KRAKEN)
+# these macros must be called directly before/after project(Kraken)
 macro(kraken_project_hack_pre)
   # ------------------
   # GCC -O3 HACK START
