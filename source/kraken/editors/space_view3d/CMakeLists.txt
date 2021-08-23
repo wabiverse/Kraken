@@ -43,5 +43,4 @@ set(LIB
 
 add_definitions(-DVIEW3D_EDITOR_EXPORTS)
 
-kraken_import_nuget_packages("source/kraken/editors/space_view3d/kraken_editor_spaceview3d")
 kraken_add_lib(kraken_editor_spaceview3d "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

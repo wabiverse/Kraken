@@ -32,5 +32,4 @@ set(LIB
   ${PYTHON_LIBRARIES}
 )
 
-kraken_import_nuget_packages("source/kraken/luxo/kraken_luxo")
 kraken_add_lib(kraken_luxo "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

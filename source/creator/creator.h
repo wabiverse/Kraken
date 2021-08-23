@@ -24,14 +24,7 @@
 
 #pragma once
 
-/**
- *  -----  The Kraken Creator. ----- */
-
-#if defined(ARCH_OS_WINDOWS)
-
-// #  include "App.h"
-
-#endif /* ARCH_OS_WINDOWS */
+#include <wabi/base/arch/defines.h>
 
 /**
  *  -----  Kraken's Main Startup. ----- */
@@ -44,6 +37,5 @@ void CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
 void CREATOR_setup_args(int argc, const char **argv);
 
 int CREATOR_parse_args(int argc, const char **argv);
-
 
 /* ------ */

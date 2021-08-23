@@ -115,5 +115,17 @@ endforeach()
 # a relative-to-binary path to a project
 # & automatically fills in the required
 # XXX.vcxproj.user
-kraken_import_nuget_packages("source/creator/kraken")
 kraken_import_nuget_packages("maelstrom")
+kraken_import_nuget_packages("source/creator/kraken")
+kraken_import_nuget_packages("source/kraken/anchor/kraken_anchor")
+kraken_import_nuget_packages("source/kraken/editors/code/kraken_editor_code")
+kraken_import_nuget_packages("source/kraken/editors/screen/kraken_editor_screen")
+kraken_import_nuget_packages("source/kraken/editors/space_file/kraken_editor_spacefile")
+kraken_import_nuget_packages("source/kraken/editors/space_view3d/kraken_editor_spaceview3d")
+kraken_import_nuget_packages("source/kraken/krakernel/kraken_kernel")
+kraken_import_nuget_packages("source/kraken/kraklib/kraken_lib")
+kraken_import_nuget_packages("source/kraken/luxo/kraken_luxo")
+kraken_import_nuget_packages("source/kraken/python/kpy/kraken_python")
+kraken_import_nuget_packages("source/kraken/server/kraken_server")
+kraken_import_nuget_packages("source/kraken/universe/kraken_universe")
+kraken_import_nuget_packages("source/kraken/wm/kraken_wm")

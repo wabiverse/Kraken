@@ -35,5 +35,4 @@ set(LIB
   ${OPENGL_LIBRARIES}
 )
 
-kraken_import_nuget_packages("source/kraken/editors/space_file/kraken_editor_spacefile")
 kraken_add_lib(kraken_editor_spacefile "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

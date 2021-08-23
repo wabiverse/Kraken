@@ -88,5 +88,4 @@ endif()
 
 add_definitions(-DKRAKEN_KERNEL_EXPORTS)
 
-kraken_import_nuget_packages("source/kraken/krakernel/kraken_kernel")
 kraken_add_lib(kraken_kernel "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

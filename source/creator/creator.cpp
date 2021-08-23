@@ -22,7 +22,11 @@
  * Creating Chaos.
  */
 
-#include "pch.h"
+#include "creator.h"
+
+#if defined(ARCH_OS_WINDOWS)
+#  include "pch.h"
+#endif /* defined(ARCH_OS_WINDOWS) */
 
 #include "KLI_threads.h"
 
@@ -35,8 +39,6 @@
 #include "WM_api.h"
 #include "WM_init_exit.h"
 #include "WM_window.h"
-
-#include "creator.h"
 
 WABI_NAMESPACE_USING
 
@@ -103,7 +105,7 @@ int main(int argc, const char **argv)
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
   winrt::init_apartment();
-  ::winrt::Microsoft::UI::Xaml::Application::Start([](auto&&){
+  ::winrt::Microsoft::UI::Xaml::Application::Start([](auto &&) {
     CREATOR_kraken_main();
   });
 

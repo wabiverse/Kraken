@@ -142,5 +142,4 @@ set(LIB
 add_definitions(-DZEP_USE_SDL)
 add_definitions(-DCODE_EDITOR_EXPORTS)
 
-kraken_import_nuget_packages("source/kraken/editors/code/kraken_editor_code")
 kraken_add_lib(kraken_editor_code "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
