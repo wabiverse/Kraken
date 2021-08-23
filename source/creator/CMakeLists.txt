@@ -2,7 +2,6 @@ setup_libdirs()
 
 kraken_include_dirs(
   ../../.
-  ../creator/microsoft
   ../kraken/anchor
   ../kraken/editors/include
   ../kraken/kraklib
@@ -61,27 +60,6 @@ endif()
 
 if(WIN32)
   set(WINDOWS_RUNTIME_SOURCE
-    # CXX SOURCE CODE
-    # microsoft/App.cpp
-    # microsoft/MainWindow.cpp
-
-    # CXX SOURCE HEADERS
-    # microsoft/App.h
-    # microsoft/MainWindow.h
-
-    # XAML
-    # microsoft/App.xaml
-    # microsoft/MainWindow.xaml
-
-    # MIDL
-    # microsoft/App.idl
-    # microsoft/MainWindow.idl
-
-    # ${CONTENT_FILES}
-    ${ASSET_FILES}
-    ${STRING_FILES}
-    ${DEBUG_CONTENT_FILES}
-    ${RELEASE_CONTENT_FILES}
     ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
   )
 endif()
@@ -248,31 +226,9 @@ if(WITH_PYTHON_MODULE)
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
   if(WIN32)
-    # add_dependencies(kraken ${KRAKEN_WINRT_COMPILED_APP})
-    # add_dependencies(kraken ${KRAKEN_WINRT_COMPILED_MAINWINDOW})
-    # add_dependencies(kraken kraken_winrt_metadata_projection)
+
     add_dependencies(kraken maelstrom)
     kraken_precompile_headers(kraken pch.cpp pch.h)
-    # target_link_options(kraken PUBLIC "LINKER:/WINMDFILE:Kraken")
-
-    # set_source_files_properties(SOURCE microsoft/App.xaml PROPERTIES
-    #   VS_XAML_TYPE ApplicationDefinition
-    # )
-    # kraken_import_nuget_packages("source/creator/App")
-    # kraken_winrt_compiler
-    #   "App"
-    #   ${CMAKE_BINARY_DIR}/source/creator/App.idl
-    #   ${CMAKE_BINARY_DIR}/source/creator/App.xaml)
-    # add_dependencies(kraken App)
-
-    # set_source_files_properties(SOURCE microsoft/MainWindow.xaml PROPERTIES
-    #   VS_XAML_TYPE Window
-    # )
-    # kraken_winrt_compiler
-    #   "MainWindow"
-    #   ${CMAKE_BINARY_DIR}/source/creator/MainWindow.idl
-    #   ${CMAKE_BINARY_DIR}/source/creator/MainWindow.xaml)
-    # add_dependencies(kraken MainWindow)
 
     set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT TRUE
