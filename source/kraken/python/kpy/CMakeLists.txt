@@ -68,4 +68,5 @@ set(LIB
 
 add_definitions(-DKRAKEN_PYTHON_EXPORTS)
 
+kraken_import_nuget_packages("source/kraken/python/kpy/kraken_python")
 kraken_add_lib(kraken_python "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

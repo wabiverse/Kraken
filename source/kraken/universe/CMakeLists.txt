@@ -52,4 +52,6 @@ set(LIB
 )
 
 add_definitions(-DKRAKEN_LUXOVERSE_EXPORTS)
+
+kraken_import_nuget_packages("source/kraken/universe/kraken_universe")
 kraken_add_lib(kraken_universe "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

@@ -175,17 +175,17 @@ function(kraken_winrt_compiler
   )
   
   file(TO_CMAKE_PATH
-    "${CMAKE_BINARY_DIR}/source/creator/Generated Files/${_srcname}.xaml.g.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/${_srcname}.xaml.g.h"
     XAML_G_H
   )
 
   file(TO_CMAKE_PATH
-    "${CMAKE_BINARY_DIR}/source/creator/Generated Files/${_srcname}.xaml.g.hpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/${_srcname}.xaml.g.hpp"
     XAML_G_HPP
   )
   
   file(TO_CMAKE_PATH
-    "${CMAKE_BINARY_DIR}/source/creator/Generated Files/${_srcname}.g.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/${_srcname}.g.h"
     G_H
   )
 
@@ -198,12 +198,10 @@ function(kraken_winrt_compiler
   set(GENERATION_DRIVER
     ${_idlsrc}
     ${_xamlsrc}
-    ${CMAKE_BINARY_DIR}/source/creator/microsoft/${_srcname}.cpp
-    ${CMAKE_BINARY_DIR}/source/creator/microsoft/${_srcname}.h
   )
   
   file(TO_CMAKE_PATH
-    "${CMAKE_BINARY_DIR}\\source\\creator\\kraken.vcxproj.midlrt.rsp"
+    "${CMAKE_CURRENT_BINARY_DIR}/${_srcname}.vcxproj.midlrt.rsp"
     MIDLRT_RESP_FILE
   )
 
@@ -213,7 +211,7 @@ function(kraken_winrt_compiler
   # )
 
   file(TO_CMAKE_PATH
-    "${CMAKE_BINARY_DIR}\\source\\creator\\Generated Files"
+    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files"
     LANGUAGE_PROJECTION
   )
 
@@ -222,7 +220,7 @@ function(kraken_winrt_compiler
   add_custom_command(
     OUTPUT ${KRAKEN_AUTOGENERATE_LANGUAGE_PROJECTION}
     COMMAND ${WINRT_EXECUTABLE} -reference ${MICROSOFT_FOUNDATION_CONTRACT} -output "${LANGUAGE_PROJECTION}" -include ${GENERATION_DRIVER}  @"${MIDLRT_RESP_FILE}"
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/source/creator
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${GENERATION_DRIVER}
     VERBATIM
   )
@@ -236,6 +234,7 @@ function(kraken_winrt_compiler
       ${KRAKEN_AUTOGENERATE_LANGUAGE_PROJECTION}
       PARENT_SCOPE
     )
+    add_custom_target(App DEPENDS ${KRAKEN_WINRT_COMPILED_APP})
     # set_property(SOURCE ${KRAKEN_WINRT_COMPILED_APP} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 
   # --------------------------------- Kraken.MainWindow -----
@@ -244,6 +243,7 @@ function(kraken_winrt_compiler
       ${KRAKEN_AUTOGENERATE_LANGUAGE_PROJECTION}
       PARENT_SCOPE
     )
+    add_custom_target(MainWindow DEPENDS ${KRAKEN_WINRT_COMPILED_MAINWINDOW})
     # set_property(SOURCE ${KRAKEN_WINRT_COMPILED_MAINWINDOW} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 
   # --------------------------------- Kraken.XamlMetaDataProvider -----

@@ -129,4 +129,5 @@ if(WIN32)
   )
 endif()
 
+kraken_import_nuget_packages("source/kraken/anchor/kraken_anchor")
 kraken_add_lib(kraken_anchor "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

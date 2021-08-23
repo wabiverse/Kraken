@@ -27,4 +27,5 @@ set(LIB
   ${ZMQ_LIBRARIES}
 )
 
+kraken_import_nuget_packages("source/kraken/server/kraken_server")
 kraken_add_lib(kraken_server "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

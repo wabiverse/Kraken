@@ -174,13 +174,13 @@ endforeach()
 #   ${STRING_FILES}
 #   PROPERTY VS_TOOL_OVERRIDE "PRIResource")
 
-set_property(SOURCE
-  ${ASSET_FILES}
-  PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/source/creator")
+# set_property(SOURCE
+#   ${ASSET_FILES}
+#   PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/source/creator")
 
-set_property(SOURCE
-  ${CONTENT_FILES}
-  PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/source/creator")
+# set_property(SOURCE
+#   ${CONTENT_FILES}
+#   PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/source/creator")
 
 # if(KRAKEN_RELEASE_MODE)
 #   set_property(SOURCE ${RELEASE_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
@@ -193,30 +193,30 @@ set_property(SOURCE
 # & automatically fills in the required
 # XXX.vcxproj.user
 kraken_import_nuget_packages("source/creator/kraken")
-kraken_add_midlrt_references("source/creator/kraken")
+# kraken_add_midlrt_references("source/creator/kraken")
 
 kraken_import_nuget_packages("maelstrom")
 
-set(KRAKEN_WINRT_COMPILED_APP "")
-set_source_files_properties(${KRAKEN_WINRT_COMPILED_APP}
-  PROPERTIES GENERATED TRUE
-)
-kraken_winrt_compiler("App"
-  ${KRAKEN_APPLICATION_DEFINITION_MIDL}
-  ${KRAKEN_APPLICATION_DEFINITION_XAML}
-)
+# set(KRAKEN_WINRT_COMPILED_APP "")
+# set_source_files_properties(${KRAKEN_WINRT_COMPILED_APP}
+#   PROPERTIES GENERATED TRUE
+# )
+# kraken_winrt_compiler("App"
+#   ${KRAKEN_APPLICATION_DEFINITION_MIDL}
+#   ${KRAKEN_APPLICATION_DEFINITION_XAML}
+# )
 
-set(KRAKEN_WINRT_COMPILED_MAINWINDOW "")
-set_source_files_properties(${KRAKEN_WINRT_COMPILED_MAINWINDOW}
-  PROPERTIES GENERATED TRUE
-)
-kraken_winrt_compiler("MainWindow"
-  ${KRAKEN_MAIN_WINDOW_MIDL}
-  ${KRAKEN_MAIN_WINDOW_XAML}
-)
+# set(KRAKEN_WINRT_COMPILED_MAINWINDOW "")
+# set_source_files_properties(${KRAKEN_WINRT_COMPILED_MAINWINDOW}
+#   PROPERTIES GENERATED TRUE
+# )
+# kraken_winrt_compiler("MainWindow"
+#   ${KRAKEN_MAIN_WINDOW_MIDL}
+#   ${KRAKEN_MAIN_WINDOW_XAML}
+# )
 
-set(KRAKEN_WINRT_COMPILED_METADATA "")
-kraken_winrt_compiler("XamlMetaDataProvider"
-  ${KRAKEN_XAML_METADATA_PROVIDER_MIDL}
-  ${KRAKEN_XAML_METADATA_PROVIDER_MIDL}
-)
+# set(KRAKEN_WINRT_COMPILED_METADATA "")
+# kraken_winrt_compiler("XamlMetaDataProvider"
+#   ${KRAKEN_XAML_METADATA_PROVIDER_MIDL}
+#   ${KRAKEN_XAML_METADATA_PROVIDER_MIDL}
+# )

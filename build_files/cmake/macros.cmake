@@ -284,7 +284,6 @@ function(kraken_add_lib__impl
   endif()
 
   if(WIN32)
-    kraken_import_nuget_packages("source/kraken/${name}")
     set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS " /WINMD")
     set_property(TARGET ${name} PROPERTY VS_WINRT_COMPONENT TRUE)
     set_property(TARGET ${name} PROPERTY VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1")

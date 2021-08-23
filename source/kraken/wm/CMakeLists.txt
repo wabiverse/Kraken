@@ -69,4 +69,6 @@ set(LIB
 )
 
 add_definitions(-DKRAKEN_WM_EXPORTS)
+
+kraken_import_nuget_packages("source/kraken/wm/kraken_wm")
 kraken_add_lib(kraken_wm "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

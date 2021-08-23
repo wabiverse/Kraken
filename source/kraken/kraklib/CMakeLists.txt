@@ -69,4 +69,6 @@ if(WIN32)
 endif()
 
 add_definitions(-DKRAKEN_LIB_EXPORTS)
+
+kraken_import_nuget_packages("source/kraken/kraklib/kraken_lib")
 kraken_add_lib(kraken_lib "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

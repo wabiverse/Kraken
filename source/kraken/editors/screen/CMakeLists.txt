@@ -39,4 +39,5 @@ set(LIB
   ${OPENGL_LIBRARIES}
 )
 
+kraken_import_nuget_packages("source/kraken/editors/screen/kraken_editor_screen")
 kraken_add_lib(kraken_editor_screen "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
