@@ -26,9 +26,14 @@
 
 #include "MainWindow.xaml.g.h"
 
+#include "winrt/Microsoft.UI.Xaml.h"
+#include "winrt/Microsoft.UI.Xaml.Data.h"
+
+using namespace winrt::Microsoft::UI::Xaml::Data;
+
 namespace winrt::Kraken::implementation
 {
-  struct MainWindow : winrt::Microsoft::Xaml::Window
+  struct MainWindow : MainWindowT<MainWindow>
   {
     MainWindow();
   };

@@ -64,7 +64,7 @@ if(WITH_WINDOWS_BUNDLE_CRT)
   endif()
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kraken.crt.manifest DESTINATION ./kraken.crt)
-  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity name=\"WabiAnimation.app\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
+  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity name=\"Kraken.app\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
 endif()
 
 configure_file(
@@ -122,58 +122,21 @@ set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/source/creator/packages.config)
 # XAML to define WinRT runtime typing & MIDL for language projection.
 set(KRAKEN_APPLICATION_DEFINITION_XAML ${CMAKE_BINARY_DIR}/source/creator/App.xaml)
 set(KRAKEN_APPLICATION_DEFINITION_MIDL ${CMAKE_BINARY_DIR}/source/creator/App.idl)
-set(KRAKEN_MAIN_PAGE_XAML ${CMAKE_BINARY_DIR}/source/creator/MainWindow.xaml)
-set(KRAKEN_MAIN_PAGE_MIDL ${CMAKE_BINARY_DIR}/source/creator/MainWindow.idl)
+set(KRAKEN_MAIN_WINDOW_XAML ${CMAKE_BINARY_DIR}/source/creator/MainWindow.xaml)
+set(KRAKEN_MAIN_WINDOW_MIDL ${CMAKE_BINARY_DIR}/source/creator/MainWindow.idl)
+
+set(KRAKEN_XAML_METADATA_PROVIDER_MIDL
+  "${CMAKE_BINARY_DIR}/source/creator/Generated Files/XamlMetaDataProvider.idl"
+)
 
 list(APPEND CONTENT_FILES
   ${KRAKEN_APPX_MANIFEST}
   ${KRAKEN_PACKAGES_CONFIG}
   ${KRAKEN_APPLICATION_DEFINITION_XAML}
   ${KRAKEN_APPLICATION_DEFINITION_MIDL}
-  ${KRAKEN_MAIN_PAGE_XAML}
-  ${KRAKEN_MAIN_PAGE_MIDL}
+  ${KRAKEN_MAIN_WINDOW_XAML}
+  ${KRAKEN_MAIN_WINDOW_MIDL}
 )
-
-set(USER_PROPS_FILE "${CMAKE_CURRENT_BINARY_DIR}/source/creator/kraken.vcxproj.user")
-
-
-file(TO_CMAKE_PATH
-  "${CMAKE_CURRENT_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.210806.1/build/native/Microsoft.Windows.CppWinRT.props"
-  MICROSOFT_CPP_WINRT_PROJECT_PROPS
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_CURRENT_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.DWrite.1.0.0-experimental1/build/Microsoft.WindowsAppSDK.DWrite.props"
-  MICROSOFT_APP_SDK_DWRITE_PROPS
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_CURRENT_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/build/native/Microsoft.WindowsAppSDK.InteractiveExperiences.props"
-  MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES_PROPS
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_CURRENT_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/build/native/Microsoft.WindowsAppSDK.WinUI.props"
-  MICROSOFT_APP_SDK_WINUI_PROPS
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_CURRENT_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1/build/native/Microsoft.WindowsAppSDK.Foundation.props"
-  MICROSOFT_APP_SDK_FOUNDATION_PROPS
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_CURRENT_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.1.0.0-experimental1/build/native/Microsoft.WindowsAppSDK.props"
-  MICROSOFT_APP_SDK_EXPERIMENTAL_PROPS
-)
-
-# if(NOT EXISTS ${USER_PROPS_FILE})
-  # Layout below is messy, because otherwise the generated file will look messy.
-file(WRITE ${USER_PROPS_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">
-  <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT_PROPS}\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT_PROPS}\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_DWRITE_PROPS}\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_DWRITE_PROPS}\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES_PROPS}\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES_PROPS}\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_WINUI_PROPS}\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_WINUI_PROPS}\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_FOUNDATION_PROPS}\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_FOUNDATION_PROPS}\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_EXPERIMENTAL_PROPS}\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_EXPERIMENTAL_PROPS}\')\" />
-</Project>")
-# endif()
 
 file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")
 foreach(dlls ${out_inst_dll})
@@ -199,17 +162,17 @@ foreach(apx ${out_inst})
   list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/source/creator/assets/${ff})
 endforeach()
 
-set_property(SOURCE
-  ${CONTENT_FILES}
-  PROPERTY VS_DEPLOYMENT_CONTENT 1)
+# set_property(SOURCE
+#   ${CONTENT_FILES}
+#   PROPERTY VS_DEPLOYMENT_CONTENT 1)
 
-set_property(SOURCE
-  ${ASSET_FILES}
-  PROPERTY VS_DEPLOYMENT_CONTENT 1)
+# set_property(SOURCE
+#   ${ASSET_FILES}
+#   PROPERTY VS_DEPLOYMENT_CONTENT 1)
 
-set_property(SOURCE
-  ${STRING_FILES}
-  PROPERTY VS_TOOL_OVERRIDE "PRIResource")
+# set_property(SOURCE
+#   ${STRING_FILES}
+#   PROPERTY VS_TOOL_OVERRIDE "PRIResource")
 
 set_property(SOURCE
   ${ASSET_FILES}
@@ -219,24 +182,41 @@ set_property(SOURCE
   ${CONTENT_FILES}
   PROPERTY VS_DEPLOYMENT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/source/creator")
 
-if(KRAKEN_RELEASE_MODE)
-  set_property(SOURCE ${RELEASE_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
-else()
-  set_property(SOURCE ${DEBUG_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
-endif()
+# if(KRAKEN_RELEASE_MODE)
+#   set_property(SOURCE ${RELEASE_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
+# else()
+#   set_property(SOURCE ${DEBUG_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
+# endif()
 
-add_custom_target(appximages ALL SOURCES ${ASSET_FILES})
-add_custom_target(appxml ALL SOURCES ${CONTENT_FILES})
+# This will import nuget packages given
+# a relative-to-binary path to a project
+# & automatically fills in the required
+# XXX.vcxproj.user
+kraken_import_nuget_packages("source/creator/kraken")
+kraken_add_midlrt_references("source/creator/kraken")
 
-add_dependencies(appxml appximages)
+kraken_import_nuget_packages("maelstrom")
 
-# set_target_properties(appxml PROPERTIES
-#   VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1"
-#   VS_GLOBAL_UseWindowsSdkPreview "true"
-#   VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview"
-#   VS_GLOBAL_RootNamespace "Kraken"
-#   VS_GLOBAL_ProjectName "Kraken"
-#   VS_GLOBAL_UseWinUI "true"
-#   VS_GLOBAL_CanReferenceWinRT "true"
-#   VS_GLOBAL_XamlLanguage "CppWinRT"
-# )
+set(KRAKEN_WINRT_COMPILED_APP "")
+set_source_files_properties(${KRAKEN_WINRT_COMPILED_APP}
+  PROPERTIES GENERATED TRUE
+)
+kraken_winrt_compiler("App"
+  ${KRAKEN_APPLICATION_DEFINITION_MIDL}
+  ${KRAKEN_APPLICATION_DEFINITION_XAML}
+)
+
+set(KRAKEN_WINRT_COMPILED_MAINWINDOW "")
+set_source_files_properties(${KRAKEN_WINRT_COMPILED_MAINWINDOW}
+  PROPERTIES GENERATED TRUE
+)
+kraken_winrt_compiler("MainWindow"
+  ${KRAKEN_MAIN_WINDOW_MIDL}
+  ${KRAKEN_MAIN_WINDOW_XAML}
+)
+
+set(KRAKEN_WINRT_COMPILED_METADATA "")
+kraken_winrt_compiler("XamlMetaDataProvider"
+  ${KRAKEN_XAML_METADATA_PROVIDER_MIDL}
+  ${KRAKEN_XAML_METADATA_PROVIDER_MIDL}
+)

@@ -369,7 +369,7 @@ if(FIRST_RUN)
   message("  Kraken ::: v${KRAKEN_VERSION_MAJOR}.${KRAKEN_VERSION_MINOR}")
   message("                                                          ")
 
-  set(_config_msg "\Kraken Configuration\n=====================")
+  set(_config_msg "\nKraken Configuration\n=====================")
 
   function(info_cfg_option
     _setting

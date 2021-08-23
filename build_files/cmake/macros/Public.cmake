@@ -361,14 +361,26 @@ function(wabi_library NAME)
 endfunction()
 
 macro(wabi_shared_library NAME)
+    if(WIN32)
+        # Import necessary NuGet packages for all Pixar USD shared libraries.
+        kraken_import_nuget_packages("${WABI_PREFIX}/${NAME}/${NAME}")
+    endif()
     wabi_library(${NAME} TYPE "SHARED" ${ARGN})
 endmacro(wabi_shared_library)
 
 macro(wabi_static_library NAME)
+    if(WIN32)
+        # Import necessary NuGet packages for all Pixar USD static libraries.
+        kraken_import_nuget_packages("${WABI_PREFIX}/${NAME}/${NAME}")
+    endif()
     wabi_library(${NAME} TYPE "STATIC" ${ARGN})
 endmacro(wabi_static_library)
 
 macro(wabi_plugin NAME)
+    if(WIN32)
+        # Import necessary NuGet packages for all Pixar USD plugins.
+        kraken_import_nuget_packages("${WABI_PREFIX}/plugin/${NAME}/${NAME}")
+    endif()
     wabi_library(${NAME} TYPE "PLUGIN" ${ARGN})
 endmacro(wabi_plugin)
 

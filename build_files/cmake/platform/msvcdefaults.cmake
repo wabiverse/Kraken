@@ -38,6 +38,7 @@ mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
 option(WITH_WINDOWS_PDB "Generate a pdb file for client side stacktraces" ON)
 mark_as_advanced(WITH_WINDOWS_PDB)
 
+include(build_files/cmake/platform/nuget_packages.cmake)
 include(build_files/cmake/platform/microsoft_package.cmake)
 
 # -----------------------------------------------------------------------------

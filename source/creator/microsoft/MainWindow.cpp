@@ -28,6 +28,8 @@
 #  include "MainWindow.g.cpp"
 #endif
 
+#include "winrt/Windows.UI.Xaml.Interop.h"
+
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 

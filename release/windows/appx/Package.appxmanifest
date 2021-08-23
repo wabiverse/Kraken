@@ -163,17 +163,4 @@
     <rescap:Capability Name="confirmAppClose" />
   </Capabilities>
 
-  <build:Metadata>
-    <!-- Just some useful build output from my local machine - Furby. -->
-    <build:Item Name="cl.exe" Version="19.30.30423.0 built by: vcwrkspc" />
-    <build:Item Name="VisualStudio" Version="17.0" />
-    <build:Item Name="VisualStudioEdition" Value="Microsoft Visual Studio Professional 2022" />
-    <build:Item Name="OperatingSystem" Version="10.0.22000.1 (WinBuild.160101.0800)" />
-    <build:Item Name="Microsoft.Build.AppxPackage.dll" Version="17.0.31605.261" />
-    <build:Item Name="ProjectGUID" Value="{0BDC0280-04C8-3197-903F-9C9895C4B5F7}" />
-    <build:Item Name="OptimizingToolset" Value="None" />
-    <build:Item Name="TargetRuntime" Value="Native" />
-    <build:Item Name="Microsoft.UI.Xaml.Markup.Compiler.dll" Version="0.0.0.0" />
-    <build:Item Name="MakePri.exe" Version="10.0.22000.132 (WinBuild.160101.0800)" />
-  </build:Metadata>
 </Package>
