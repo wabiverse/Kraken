@@ -59,7 +59,7 @@ if(WITH_XR_OPENXR)
 endif()
 
 if(WIN32)
-  set(WINDOWS_RUNTIME_SOURCE
+  set(WINDOWS_RC_FILE
     ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
   )
 endif()
@@ -69,7 +69,7 @@ set(SRC
   creator.cpp
   creator_args.cpp
 
-  ${WINDOWS_RUNTIME_SOURCE}
+  ${WINDOWS_RC_FILE}
 
   creator.h
 )
@@ -225,11 +225,9 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
+  add_dependencies(kraken maelstrom)
   if(WIN32)
-
-    add_dependencies(kraken maelstrom)
     kraken_precompile_headers(kraken pch.cpp pch.h)
-
     set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT TRUE
       VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1"
@@ -264,10 +262,6 @@ else()
       VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
       VS_GLOBAL_DesktopCompatible "true"
       VS_GLOBAL_TargetFramework "net6.0-windows10.0.22000.0"
-      # VS_USER_PROPS "kraken.Cpp.user.props"
-      # VS_DESKTOP_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
-      # VS_MOBILE_EXTENSIONS_VERSION "${WINDOWS_SDK_VERSION}"
-      
     )
   endif()
 endif()
