@@ -31,9 +31,14 @@
 #  include <unknwn.h>
 #  include <restrictederrorinfo.h>
 #  include <hstring.h>
+
+#  include <winrt/base.h>
+#  include <winrt/Kraken.h>
+
 #  include <winrt/Windows.Foundation.h>
 #  include <winrt/Windows.Foundation.Collections.h>
 #  include <winrt/Windows.ApplicationModel.Activation.h>
+#  include <winrt/Microsoft.ApplicationModel.Resources.h>
 #  include <winrt/Microsoft.UI.Composition.h>
 #  include <winrt/Microsoft.UI.Xaml.h>
 #  include <winrt/Microsoft.UI.Xaml.Controls.h>
@@ -44,7 +49,6 @@
 #  include <winrt/Microsoft.UI.Xaml.Media.h>
 #  include <winrt/Microsoft.UI.Xaml.Navigation.h>
 #  include <winrt/Microsoft.UI.Xaml.Shapes.h>
-
-#  pragma comment(lib, "windowsapp")
+#  include <winrt/Microsoft.UI.Dispatching.h>
 
 #endif /* ARCH_OS_WINDOWS */

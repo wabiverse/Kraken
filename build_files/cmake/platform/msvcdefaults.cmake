@@ -38,6 +38,9 @@ mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
 option(WITH_WINDOWS_PDB "Generate a pdb file for client side stacktraces" ON)
 mark_as_advanced(WITH_WINDOWS_PDB)
 
+option(WITH_WINDOWS_STRIPPED_PDB "Use a stripped PDB file" On)
+mark_as_advanced(WITH_WINDOWS_STRIPPED_PDB)
+
 include(build_files/cmake/platform/nuget_packages.cmake)
 include(build_files/cmake/platform/microsoft_package.cmake)
 
@@ -97,13 +100,9 @@ file(TO_CMAKE_PATH "C:/Program Files (x86)/Windows Kits/10/UnionMetadata/${WINDO
 file(TO_CMAKE_PATH "C:/Program Files/Microsoft Visual Studio/2022/Preview/Common7/IDE/VC/vcpackages"
   WINDOWS_11_PLATFORM
 )
-file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/bin/Release"
-  KRAKEN_GENERATED_WINMD
-)
 
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${WINDOWS_11_STORE}\"")
 set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${WINDOWS_11_PLATFORM}\"")
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${KRAKEN_GENERATED_WINMD}\"")
 
 # Enable exception handling.
 if(KRAKEN_RELEASE_MODE)

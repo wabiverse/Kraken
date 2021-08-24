@@ -22,11 +22,15 @@
  * Creating Chaos.
  */
 
-#include "creator.h"
-
-#if defined(ARCH_OS_WINDOWS)
+#ifdef _WIN32
 #  include "pch.h"
-#endif /* defined(ARCH_OS_WINDOWS) */
+#  include "winrt/Kraken.h"
+#  include "release/windows/appx/App.xaml.h"
+#  include "release/windows/appx/MainWindow.h"
+#  include "release/windows/appx/App.xaml.g.h"
+#endif /* _WIN32 */
+
+#include "creator.h"
 
 #include "KLI_threads.h"
 
@@ -39,6 +43,19 @@
 #include "WM_api.h"
 #include "WM_init_exit.h"
 #include "WM_window.h"
+
+#if defined(ARCH_OS_WINDOWS)
+using namespace winrt;
+using namespace winrt::Windows::ApplicationModel;
+using namespace winrt::Windows::ApplicationModel::Activation;
+using namespace winrt::Windows::Foundation;
+using namespace winrt::Microsoft::UI::Xaml;
+using namespace winrt::Microsoft::UI::Xaml::Controls;
+using namespace winrt::Microsoft::UI::Xaml::Navigation;
+
+using namespace Kraken;
+using namespace Kraken::implementation;
+#endif /* defined(ARCH_OS_WINDOWS) */
 
 WABI_NAMESPACE_USING
 
@@ -102,14 +119,12 @@ int main(int argc, const char **argv)
 
 #else /* defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN) */
 
-int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
+void App::OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const &)
 {
-  winrt::init_apartment();
-  ::winrt::Microsoft::UI::Xaml::Application::Start([](auto &&) {
-    CREATOR_kraken_main();
-  });
+  window = make<MainWindow>();
+  window.Activate();
 
-  return KRAKEN_SUCCESS;
+  CREATOR_kraken_main(/* Godspeed, Graphics Universe. */);
 }
 
 #endif /* defined (ARCH_OS_WINDOWS) */

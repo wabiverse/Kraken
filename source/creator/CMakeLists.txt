@@ -1,6 +1,17 @@
 setup_libdirs()
 
+if(WIN32)
+  set(EXTRA_MICROSOFT_INCLUDES
+    "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/include"
+    "${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release"
+    "${CMAKE_SOURCE_DIR}/release/windows/appx"
+    "${CMAKE_BINARY_DIR}/source/creator/Generated Files/release/windows/appx"
+    "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
+  )
+endif()
+
 kraken_include_dirs(
+  ${EXTRA_MICROSOFT_INCLUDES}
   ../../.
   ../kraken/anchor
   ../kraken/editors/include
@@ -59,8 +70,73 @@ if(WITH_XR_OPENXR)
 endif()
 
 if(WIN32)
-  set(WINDOWS_RC_FILE
+  
+  # TODO: Fix this binary path inception weirdness.
+  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd)
+    file(RENAME
+      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd
+      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/App.winmd
+    )
+    file(RENAME
+      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainWindow.winmd
+      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/MainWindow.winmd
+    )
+    file(RENAME
+      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
+      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
+    )
+  endif()
+  file(
+    COPY
+      "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/winrt"
+    DESTINATION
+      "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/include/winrt"
+  )
+
+  set(WINDOWS_PACKAGE_SRC
+    # APPLICATION DEFINITION SOURCE
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.cpp
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.xaml.h
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.xaml
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.idl
+
+    # MAIN WINDOW SOURCE
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.cpp
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.h
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.xaml
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.idl
+
+    # ACTIVATION UNLOAD & ACTIVATION
+    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
+
+    # METADATA PROVIDER SOURCE
+    # ${CMAKE_SOURCE_DIR}/release/windows/appx/XamlMetaDataProvider.cpp
+    # ${CMAKE_SOURCE_DIR}/release/windows/appx/XamlMetaDataProvider.h
+
+    # AUTO GENERATED WINDOWS C++/WINRT SDK
+    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/winrt"
+
+    # APPLICATION MANIFESTS
+    ${CMAKE_BINARY_DIR}/app.manifest
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxManifest
+
+    # DESKTOP ICON & CURSOR RESOURCES
     ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
+
+    # DESKTOP & WINDOWS STORE ICONS & BRANDING
+    ${ASSET_FILES}
+  )
+
+  set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.xaml
+    PROPERTIES
+    VS_XAML_TYPE ApplicationDefinition
+  )
+
+  set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.xaml
+    PROPERTIES
+    VS_XAML_TYPE Window
   )
 endif()
 
@@ -68,8 +144,8 @@ endif()
 set(SRC
   creator.cpp
   creator_args.cpp
-
-  ${WINDOWS_RC_FILE}
+  ${EXTRA_MICROSOFT_INCLUDES}
+  ${WINDOWS_PACKAGE_SRC}
 
   creator.h
 )
@@ -258,10 +334,10 @@ else()
       VS_GLOBAL_CppWinRTPackage "true"
       VS_GLOBAL_XamlLanguage "CppWinRT"
       VS_GLOBAL_CompileAsWinRT "true"
-      VS_GLOBAL_CppWinRTModernIDL "true"
       VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
       VS_GLOBAL_DesktopCompatible "true"
       VS_GLOBAL_TargetFramework "net6.0-windows10.0.22000.0"
+      VS_GLOBAL_WindowsPackageType "MSIX"
     )
   endif()
 endif()
@@ -1298,19 +1374,20 @@ elseif(UNIX)
 endif()
 
 if(WIN32)
-  if(KRAKEN_RELEASE_MODE)
-    set(PDB_CONFIG "Release")
-  else()
-    set(PDB_CONFIG "Debug")
-  endif()
+  # set_target_properties(kraken PROPERTIES VS_GLOBAL_VcpkgEnabled "false")
   set_target_properties(kraken PROPERTIES
     PDB_NAME "kraken_private"
-    PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${PDB_CONFIG}"
-  )
-  if(WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
-    target_link_options(kraken
-      PUBLIC "LINKER:PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${PDB_CONFIG}/bin/kraken_public.pdb"
-    )
+    PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
+    if(WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
+      # This is slightly messy, but single target generators like ninja will not have the
+      # CMAKE_CFG_INTDIR variable and multitarget generators like msbuild will not have
+      # CMAKE_BUILD_TYPE. This can be simplified by target_link_options and the $<CONFIG>
+      # generator expression in newer cmake (2.13+) but until that time this fill have suffice.
+      if(CMAKE_BUILD_TYPE)
+        set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/kraken_public.pdb")
+      else()
+        set_property(TARGET kraken APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/kraken_public.pdb")
+      endif()
   endif()
 endif()
 
@@ -1353,15 +1430,15 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     VS_GLOBAL_CppWinRTPackage "true"
     VS_GLOBAL_XamlLanguage "CppWinRT"
     VS_GLOBAL_CompileAsWinRT "true"
-    VS_GLOBAL_CppWinRTModernIDL "true"
     VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
     VS_GLOBAL_DesktopCompatible "true"
     VS_GLOBAL_TargetFramework "net6.0-windows10.0.22000.0"
+    VS_GLOBAL_WindowsPackageType "MSIX"
   )
 
-  add_custom_target(nuget_config DEPENDS ${CMAKE_BINARY_DIR}/source/creator/packages.config)
-  add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/nuget_pkgs.done"
-    COMMAND ${NUGET} restore ${CMAKE_BINARY_DIR}
+  add_custom_target(nuget_config DEPENDS ${CMAKE_SOURCE_DIR}/release/windows/packages.config)
+  add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/nuget_pkgs.done"
+    COMMAND ${NUGET} restore ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS nuget_config
   )
 

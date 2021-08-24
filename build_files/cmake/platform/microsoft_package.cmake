@@ -30,7 +30,13 @@ if(WITH_WINDOWS_BUNDLE_CRT)
     endif()
   endforeach()
   # Install the CRT to the kraken.crt Sub folder.
-  install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./kraken.crt COMPONENT Libraries)
+  # install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./kraken.manifest COMPONENT Libraries)
+
+  configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+                 ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
+
+  configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+                 ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/reunion.merged.g.manifest)
 
   # Generating the manifest is a relativly expensive operation since
   # it is collecting an sha1 hash for every file required. so only do
@@ -48,7 +54,7 @@ if(WITH_WINDOWS_BUNDLE_CRT)
         INSTALL
           ${CMAKE_SOURCE_DIR}/release/windows/appx/assets/${ff}
         DESTINATION
-          ${CMAKE_CURRENT_BINARY_DIR}/source/creator/assets
+          ${CMAKE_BINARY_DIR}/source/creator/assets
       )
       list(APPEND ASSET_FILES
         ${CMAKE_BINARY_DIR}/source/creator/assets/${ff})
@@ -59,44 +65,22 @@ if(WITH_WINDOWS_BUNDLE_CRT)
       file(SHA1 "${lib}" sha1_file)
       string(APPEND CRTLIBS "    <file name=\"${filename}\" hash=\"${sha1_file}\"  hashalg=\"SHA1\" />\n")
     endforeach()
-    configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.crt.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/kraken.crt.manifest @ONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.crt.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/app.manifest @ONLY)
     file(TOUCH ${manifest_trigger_file})
   endif()
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kraken.crt.manifest DESTINATION ./kraken.crt)
-  set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity name=\"Kraken.app\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
+  # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kraken.app.manifest DESTINATION ./app.manifest)
+  # set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity name=\"Kraken.app\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
 endif()
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
-  ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest
-  @ONLY)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/release/windows/packages.config
-  ${CMAKE_BINARY_DIR}/source/creator/packages.config
-  @ONLY)
-
-# Resource Paths Assets.
-set(KRAKEN_RESOURCE_RC ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc)
-list(APPEND STRING_FILES
-  ${KRAKEN_RESOURCE_RC}
-)
 
 # Application Manifest & Nuget Dependencies.
 set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest)
-set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/source/creator/packages.config)
+set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINvARY_DIR}/source/creator/packages.config)
 
 file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")
 foreach(dlls ${out_inst_dll})
   get_filename_component(ffdll ${dlls} NAME)
   list(APPEND RELEASE_CONTENT_FILES ${CMAKE_BINARY_DIR}/bin/Release/${ffdll})
-endforeach()
-
-file(GLOB out_inst_winmd "${CMAKE_BINARY_DIR}/bin/Release/*.winmd")
-foreach(winmds ${out_inst_winmd})
-  get_filename_component(ffwinmd ${winmds} NAME)
-  list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/bin/Release/${ffwinmd})
 endforeach()
 
 file(GLOB out_inst_ico "${CMAKE_SOURCE_DIR}/release/windows/icons/*.png")
