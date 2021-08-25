@@ -101,8 +101,7 @@ file(TO_CMAKE_PATH "C:/Program Files/Microsoft Visual Studio/2022/Preview/Common
   WINDOWS_11_PLATFORM
 )
 
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${WINDOWS_11_STORE}\"")
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${WINDOWS_11_PLATFORM}\"")
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${CMAKE_BINARY_DIR}/bin/Release\"")
 
 # Enable exception handling.
 if(KRAKEN_RELEASE_MODE)
@@ -251,6 +250,9 @@ _add_define("_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS")
 _add_define("UNICODE")
 _add_define("_UNICODE")
 
+# Ensure projected types remain
+# within the ABI namespace
+_add_define("MIDL_NS_PREFIX")
 # -----------------------------------------------------------------------------
 # Setup Linker Flags
 

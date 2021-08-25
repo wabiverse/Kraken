@@ -62,6 +62,10 @@ if NOT "%verbose%" == "" (
 	echo BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% 
 )
 
+if NOT EXIST %BUILD_DIR%\nul (
+	mkdir %BUILD_DIR%
+)
+
 if "%MUST_CLEAN%"=="1" (
 	echo Cleaning %BUILD_DIR%
 	cd %BUILD_DIR%

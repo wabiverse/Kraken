@@ -136,6 +136,13 @@ function ConnectKraken {
   }
 }
 
+# CodeSign the Kraken Application.
+function KrakenCodeSign {
+  $cert = @(Get-ChildItem -Path 'Cert:\CurrentUser\My\bfa7030dc5376b044f7b68d9c7a32f44a086ddbf')[0]
+  $certBytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx)
+  [System.IO.File]::WriteAllBytes('C:\Users\tyler\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx', $certBytes)
+}
+
 # CMake will call this command at build time in order to install the
 # necessary NuGet packages Kraken needs to build. NuGet is no longer
 # optional with the Windows 11 SDK as well as the .NET framework or

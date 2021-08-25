@@ -10,6 +10,8 @@ if(WIN32)
   set(KRAKEN_MICROSOFT
     # FOR PREFIXES LIKE KRAKEN.MICROSOFT.APP
     "${CMAKE_SOURCE_DIR}/source"
+    ../kraken/microsoft/app
+    ../kraken/microsoft/mainwindow
   )
 endif()
 
@@ -78,9 +80,6 @@ if(WIN32)
   # Fixup WinRT generated metadata location.
   kraken_winrt_metadata_hotfix()
 
-  # Fixup Generated Headers or else we might get compilation errors.
-  nuget_header_hotfix()
-
   add_custom_target(KrakenMicrosoftApp
     DEPENDS
       "${CMAKE_BINARY_DIR}/source/creator/Generated Files/App.xaml.g.h"
@@ -101,7 +100,7 @@ if(WIN32)
     ../kraken/microsoft/mainwindow/MainWindow.idl
 
     # CODE GENERATION
-    # "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
 
     # APPLICATION MANIFESTS
     ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest
@@ -134,6 +133,7 @@ set(SRC
   ${KRAKEN_MICROSOFT}
   ${WINDOWS_PACKAGE_SRC}
 
+  ${KRAKEN_MICROSOFT_SDK}
   creator.h
 )
 
