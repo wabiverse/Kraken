@@ -67,7 +67,6 @@ file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
   <ItemGroup>
     <None Include=\"${CMAKE_BINARY_DIR}/packages.config\" />
   </ItemGroup>
-  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />
   <ImportGroup Label=\"ExtensionTargets\">
     <Import Project=\"${MICROSOFT_APP_SDK_MSIX_PACK}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_MSIX_PACK}.targets\')\" />
     <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.targets\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.targets\')\" />

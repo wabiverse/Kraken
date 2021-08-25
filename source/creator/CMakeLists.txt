@@ -100,7 +100,7 @@ if(WIN32)
     ../kraken/microsoft/MainWindow.h
 
     # CODE GENERATION
-    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
+    # "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
 
     # APPLICATION MANIFESTS
     ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest
