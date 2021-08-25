@@ -326,7 +326,8 @@ else()
       VS_GLOBAL_UseWindowsSdkPreview "true"
       VS_GLOBAL_PlatformToolset "v143"
       VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview"
-      VS_GLOBAL_PackageCertificateKeyFile "kraken_TemporaryKey.pfx"
+      VS_GLOBAL_PackageCertificateKeyFile "wabianimation.kraken3d.pfx"
+      VS_GLOBAL_TempCertificateFilePath "wabianimation.kraken3d.pfx"
       VS_GLOBAL_AppxBundle "Always"
       VS_GLOBAL_AppxBundlePlatforms "x64"
       VS_GLOBAL_CanReferenceWinRT "true"
@@ -336,7 +337,7 @@ else()
       VS_GLOBAL_CompileAsWinRT "true"
       VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
       VS_GLOBAL_DesktopCompatible "true"
-      VS_GLOBAL_TargetFramework "net6.0-windows10.0.22000.0"
+      VS_GLOBAL_TargetFramework "net6.0-windows"
       VS_GLOBAL_WindowsPackageType "MSIX"
     )
   endif()
@@ -1422,7 +1423,8 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     VS_GLOBAL_UseWindowsSdkPreview "true"
     VS_GLOBAL_PlatformToolset "v143"
     VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview"
-    VS_GLOBAL_PackageCertificateKeyFile "kraken_TemporaryKey.pfx"
+    VS_GLOBAL_PackageCertificateKeyFile "wabianimation.kraken3d.pfx"
+    VS_GLOBAL_TempCertificateFilePath "wabianimation.kraken3d.pfx"
     VS_GLOBAL_AppxBundle "Always"
     VS_GLOBAL_AppxBundlePlatforms "x64"
     VS_GLOBAL_CanReferenceWinRT "true"
@@ -1432,7 +1434,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     VS_GLOBAL_CompileAsWinRT "true"
     VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
     VS_GLOBAL_DesktopCompatible "true"
-    VS_GLOBAL_TargetFramework "net6.0-windows10.0.22000.0"
+    VS_GLOBAL_TargetFramework "net6.0-windows"
     VS_GLOBAL_WindowsPackageType "MSIX"
   )
 

@@ -32,8 +32,8 @@ if(WITH_WINDOWS_BUNDLE_CRT)
   # Install the CRT to the kraken.crt Sub folder.
   # install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./kraken.manifest COMPONENT Libraries)
 
-  configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-                 ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
+  # configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+  #                ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
 
   configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
                  ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/reunion.merged.g.manifest)
@@ -75,7 +75,7 @@ endif()
 
 # Application Manifest & Nuget Dependencies.
 set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest)
-set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINvARY_DIR}/source/creator/packages.config)
+set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/source/creator/packages.config)
 
 file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")
 foreach(dlls ${out_inst_dll})
