@@ -1,4 +1,3 @@
-# First generate the manifest for tests since it will not need the dependency on the CRT.
 set(CONTENT_FILES "")
 set(ASSET_FILES "")
 set(STRING_FILES "")
@@ -18,22 +17,22 @@ if(WITH_WINDOWS_BUNDLE_CRT)
     unset(MSVC_REDIST_DIR CACHE)
   endif()
 
-  include(InstallRequiredSystemLibraries)
+  # include(InstallRequiredSystemLibraries)
 
   # ucrtbase(d).dll cannot be in the manifest, due to the way windows 10 handles
   # redirects for this dll, for details see T88813.
-  foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
-    string(FIND ${lib} "ucrtbase" pos)
-    if(NOT pos EQUAL -1)
-      list(REMOVE_ITEM CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS ${lib})
-      install(FILES ${lib} DESTINATION . COMPONENT Libraries)
-    endif()
-  endforeach()
+  # foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
+  #   string(FIND ${lib} "ucrtbase" pos)
+  #   if(NOT pos EQUAL -1)
+  #     list(REMOVE_ITEM CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS ${lib})
+  #     install(FILES ${lib} DESTINATION . COMPONENT Libraries)
+  #   endif()
+  # endforeach()
   # Install the CRT to the kraken.crt Sub folder.
   # install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./kraken.manifest COMPONENT Libraries)
 
-  # configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-  #                ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
+  configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+                 ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
 
   configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
                  ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/reunion.merged.g.manifest)
@@ -43,7 +42,8 @@ if(WITH_WINDOWS_BUNDLE_CRT)
   # this work when the libs have either changed or the manifest does
   # not exist yet.
 
-  string(SHA1 libshash "${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}")
+  # string(SHA1 libshash "${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}")
+  string(SHA1 libshash "ChaChaNah")
   set(manifest_trigger_file "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/crt_${libshash}")
 
   if(NOT EXISTS ${manifest_trigger_file})
@@ -59,13 +59,13 @@ if(WITH_WINDOWS_BUNDLE_CRT)
       list(APPEND ASSET_FILES
         ${CMAKE_BINARY_DIR}/source/creator/assets/${ff})
     endforeach()
-    set(CRTLIBS "")
-    foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
-      get_filename_component(filename ${lib} NAME)
-      file(SHA1 "${lib}" sha1_file)
-      string(APPEND CRTLIBS "    <file name=\"${filename}\" hash=\"${sha1_file}\"  hashalg=\"SHA1\" />\n")
-    endforeach()
-    configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.crt.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/app.manifest @ONLY)
+    # set(CRTLIBS "")
+    # foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
+    #   get_filename_component(filename ${lib} NAME)
+    #   file(SHA1 "${lib}" sha1_file)
+    #   string(APPEND CRTLIBS "    <file name=\"${filename}\" hash=\"${sha1_file}\"  hashalg=\"SHA1\" />\n")
+    # endforeach()
+    configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/app.manifest @ONLY)
     file(TOUCH ${manifest_trigger_file})
   endif()
 
@@ -75,7 +75,7 @@ endif()
 
 # Application Manifest & Nuget Dependencies.
 set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest)
-set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/source/creator/packages.config)
+set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/packages.config)
 
 file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")
 foreach(dlls ${out_inst_dll})
@@ -95,10 +95,56 @@ foreach(apx ${out_inst})
   list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/source/creator/assets/${ff})
 endforeach()
 
-# This will import nuget packages given
-# a relative-to-binary path to a project
-# & automatically fills in the required
-# XXX.vcxproj.user
+function(kraken_winrt_metadata_hotfix)
+  # TODO: Fix this binary path inception weirdness.
+  # I really do wonder why MSVC is looking for files
+  # in kraken.dir/Release/kraken.dir/Release ...
+  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd)
+    file(
+      RENAME
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/App.winmd
+    )
+    file(
+      RENAME
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainWindow.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/MainWindow.winmd
+    )
+    file(
+      RENAME
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
+    )
+  endif()
+  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/App.winmd)
+    file(
+      COPY
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/App.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/MainWindow.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
+      DESTINATION
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged
+    )
+  endif()
+  if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged)
+  endif()
+  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Merged/Kraken.winmd)
+    file(
+      COPY
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Merged/Kraken.winmd
+      DESTINATION
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Merged
+    )
+  endif()
+endfunction()
+
+
+# This will import NuGet packages given a relative-to-binary path
+# to a project & automatically fills in the required XXX.vcxproj.user
+
+# Just import NuGet into Kraken and Monolithic Pixar USD vcxprojs here
+# As Nuget imports have already been added to wabi_library(xxx) macros
 kraken_import_nuget_packages("maelstrom")
 kraken_import_nuget_packages("source/creator/kraken")
 kraken_import_nuget_packages("source/kraken/anchor/kraken_anchor")

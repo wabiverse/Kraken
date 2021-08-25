@@ -1,2 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1"><assemblyIdentity version="1.0.0.0" name="Kraken.app"></assemblyIdentity><trustInfo xmlns="urn:schemas-microsoft-com:asm.v2"><security><requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3"><requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel></requestedPrivileges></security></trustInfo><ms_asmv3:application xmlns:ms_asmv3="urn:schemas-microsoft-com:asm.v3" xmlns="urn:schemas-microsoft-com:asm.v3"><ms_asmv3:windowsSettings xmlns:ms_asmv3="urn:schemas-microsoft-com:asm.v3"><ms_windowsSettings:dpiAware xmlns:ms_windowsSettings="http://schemas.microsoft.com/SMI/2005/WindowsSettings" xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/PM</ms_windowsSettings:dpiAware><ms_windowsSettings2016:dpiAwareness xmlns:ms_windowsSettings2016="http://schemas.microsoft.com/SMI/2016/WindowsSettings" xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor</ms_windowsSettings2016:dpiAwareness></ms_asmv3:windowsSettings></ms_asmv3:application></assembly>
+
+<!-- Copyright © 2021 Wabi Animation Studios. All rights reserved. -->
+
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="Kraken.app"></assemblyIdentity>
+  
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <requestedExecutionLevel level="asInvoker" uiAccess="false"></requestedExecutionLevel>
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+
+  <ms_asmv3:application xmlns:ms_asmv3="urn:schemas-microsoft-com:asm.v3" xmlns="urn:schemas-microsoft-com:asm.v3">
+    <ms_asmv3:windowsSettings xmlns:ms_asmv3="urn:schemas-microsoft-com:asm.v3">
+      <ms_windowsSettings:dpiAware xmlns:ms_windowsSettings="http://schemas.microsoft.com/SMI/2005/WindowsSettings" xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/PM</ms_windowsSettings:dpiAware>
+      <ms_windowsSettings2016:dpiAwareness xmlns:ms_windowsSettings2016="http://schemas.microsoft.com/SMI/2016/WindowsSettings" xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor</ms_windowsSettings2016:dpiAwareness>
+    </ms_asmv3:windowsSettings>
+  </ms_asmv3:application>
+
+</assembly>

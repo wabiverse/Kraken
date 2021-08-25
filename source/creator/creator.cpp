@@ -25,9 +25,10 @@
 #ifdef _WIN32
 #  include "pch.h"
 #  include "winrt/Kraken.h"
-#  include "release/windows/appx/App.xaml.h"
-#  include "release/windows/appx/MainWindow.h"
-#  include "release/windows/appx/App.xaml.g.h"
+
+#  include "Kraken/Microsoft/App/App.xaml.h"
+#  include "Kraken/Microsoft/MainWindow/MainWindow.h"
+#  include "App.xaml.g.h"
 #endif /* _WIN32 */
 
 #include "creator.h"

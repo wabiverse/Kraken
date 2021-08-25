@@ -305,7 +305,6 @@ function(kraken_add_lib__impl
     set_property(TARGET ${name} PROPERTY VS_GLOBAL_CppWinRTProjectLanguage "C++/WinRT")
     set_property(TARGET ${name} PROPERTY VS_GLOBAL_CanReferenceWinRT "true")
     set_property(TARGET ${name} PROPERTY VS_GLOBAL_DesktopCompatible "true")
-    set_property(TARGET ${name} PROPERTY VS_GLOBAL_TargetFramework "net6.0-windows")
   endif()
 
   add_dependencies(${name} maelstrom)

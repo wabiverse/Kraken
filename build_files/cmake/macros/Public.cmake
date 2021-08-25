@@ -358,6 +358,8 @@ function(wabi_library NAME)
             PRECOMPILED_HEADER_NAME ${args_PRECOMPILED_HEADER_NAME}
         )
     endif()
+
+    kraken_import_nuget_packages("${WABI_PREFIX}/${NAME}/${NAME}")
 endfunction()
 
 macro(wabi_shared_library NAME)

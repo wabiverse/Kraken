@@ -34,10 +34,6 @@ if "%BUILD_VS_YEAR%"=="2022" (
 echo "%BUILD_CMAKE_ARGS%"
 set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -G "Visual Studio 17 2022" -T v143,host=x64 -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0.22000 %BUILD_PLATFORM_SELECT% %TESTS_CMAKE_ARGS% %CLANG_CMAKE_ARGS% %ASAN_CMAKE_ARGS% %PYDEBUG_CMAKE_ARGS%
 
-if NOT EXIST %BUILD_DIR%\nul (
-	mkdir %BUILD_DIR%
-)
-
 if "%MUST_CLEAN%"=="1" (
 	echo Cleaning %BUILD_DIR%
 	msbuild ^
@@ -69,6 +65,7 @@ if "%MUST_CONFIGURE%"=="1" (
 		exit /b 1
 	)
 )
+
 echo echo off > %BUILD_DIR%\rebuild.cmd
 echo if "%%VSCMD_VER%%" == "" ^( >> %BUILD_DIR%\rebuild.cmd
 echo   call "%VCVARS%" %BUILD_ARCH% >> %BUILD_DIR%\rebuild.cmd

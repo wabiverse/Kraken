@@ -47,7 +47,7 @@ file(TO_CMAKE_PATH
 
 # Layout below is messy, because otherwise the generated file will look messy.
 file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">
+<Project xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
   <Import Project=\"${MICROSOFT_APP_SDK_MSIX_PACK}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_MSIX_PACK}.props\')\" />
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK_DWRITE}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_DWRITE}.props\')\" />
@@ -55,6 +55,18 @@ file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
   <Import Project=\"${MICROSOFT_APP_SDK_WINUI}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_WINUI}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK_FOUNDATION}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_FOUNDATION}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\')\" />
+  <PropertyGroup Label=\"Globals\">
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <WindowsTargetPlatformVersion Condition=\" \'$(WindowsTargetPlatformVersion)\' == \'\' \">10.0</WindowsTargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.22000.0</TargetPlatformMinVersion>
+    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
+    <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
+    <WindowsSdkPackageVersion>10.0.22000.160-preview</WindowsSdkPackageVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=\"${CMAKE_BINARY_DIR}/packages.config\" />
+  </ItemGroup>
+  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />
   <ImportGroup Label=\"ExtensionTargets\">
     <Import Project=\"${MICROSOFT_APP_SDK_MSIX_PACK}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_MSIX_PACK}.targets\')\" />
     <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.targets\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.targets\')\" />
@@ -64,6 +76,22 @@ file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
     <Import Project=\"${MICROSOFT_APP_SDK_FOUNDATION}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_FOUNDATION}.targets\')\" />
     <Import Project=\"${MICROSOFT_APP_SDK_EXPERIMENTAL}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_EXPERIMENTAL}.targets\')\" />
   </ImportGroup>
+  <Target Name=\"EnsureNuGetPackageBuildImports\" BeforeTargets=\"PrepareForBuild\">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_FOUNDATION}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_FOUNDATION}.props\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_FOUNDATION}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_FOUNDATION}.targets\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_WINUI}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_WINUI}.props\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_WINUI}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_WINUI}.targets\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_DWRITE}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_DWRITE}.props\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_DWRITE}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_DWRITE}.targets\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_CPP_WINRT_PROJECT}.props\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_CPP_WINRT_PROJECT}.targets\'))\" />
+  </Target>
 </Project>
 ")
 
@@ -72,4 +100,173 @@ file(TO_CMAKE_PATH
   MICROSOFT_WINRT_EXECUTABLE
 )
 set(WINRT_EXECUTABLE ${MICROSOFT_WINRT_EXECUTABLE} PARENT_SCOPE)
+endfunction()
+
+# Fix Microsoft's NuGet packages, assuming our generated
+# "Kraken Windows SDK" is generating & including the proper
+# API, and using it to patch the NuGet packages accordingly.
+function(nuget_header_hotfix)
+  # file(GLOB GENERATED_WINRT_HEADERS
+  #   "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/*.h"
+  # )
+
+  # # NuGet should be generating an include for this since this namespace
+  # # "Microsoft.ApplicationModel.Resources" appears to be compatible:
+  # # https://docs.microsoft.com/en-us/windows/winui/api/microsoft.applicationmodel.resources?view=winui-3.0-preview
+
+  # # As it is the "Windows.ApplicationModel.Resources" variant that is not compatible:
+  # # https://docs.microsoft.com/en-us/uwp/api/windows.applicationmodel.resources.management?view=winrt-insider
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.ApplicationModel.Resources.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1/lib/native"
+  # )
+
+  # # Maelstrom is supposed to have a generated header.
+  # if(NOT EXISTS ${CMAKE_BINARY_DIR}/lib/Release/maelstrom.h)
+  #   file(TOUCH ${CMAKE_BINARY_DIR}/lib/Release/maelstrom.h)
+  # endif()
+
+  # # Either "Microsoft.Foundation" is supposed to be getting generated or WinRT
+  # # is improperly trying to include "Microsoft.Foundation" when it should be using
+  # # the "Windows.XXX" namespace instead.
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Windows.Foundation.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # file(
+  #   RENAME 
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1/lib/uap10.0/Windows.Foundation.h"
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1/lib/uap10.0/Microsoft.Foundation.h"
+  # )
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1/lib/uap10.0/Microsoft.Foundation.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0"
+  # )
+
+  # # Foundation is missing "Microsoft.Windows.AppLifecycle"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.Windows.AppLifecycle.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1/lib/native"
+  # )
+  # # Foundation is missing "Microsoft.Windows.PushNotifications"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.Windows.PushNotifications.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1/lib/native"
+  # )
+
+  # # InteractiveExperiences is missing "Microsoft.Graphics.DirectX"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.Graphics.DirectX.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # # InteractiveExperiences is missing "Microsoft.UI.Composition"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.UI.Composition.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # # InteractiveExperiences is missing "Microsoft.UI.Dispatching"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.UI.Dispatching.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # # InteractiveExperiences is missing "Microsoft.UI.Hosting"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.UI.Hosting.Experimental.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # file(
+  #   RENAME 
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0/Microsoft.UI.Hosting.Experimental.h"
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0/Microsoft.UI.Hosting.h"
+  # )
+  # # InteractiveExperiences is missing "Microsoft.UI.Input"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.UI.Input.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # # InteractiveExperiences is missing "Microsoft.UI.Windowing"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.UI.Windowing.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # # InteractiveExperiences is missing "Microsoft.UI"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.UI.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # # WinUI is missing "Microsoft.UI.Text"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.UI.Text.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # # WinUI is missing "Microsoft.UI.Xaml"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.UI.Xaml.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/lib/uap10.0"
+  # )
+  # # WinUI is missing "Microsoft.UI.Xaml"
+  # file(
+  #   COPY 
+  #     "${CMAKE_BINARY_DIR}/source/creator/Generated Files/winrt/Microsoft.Web.WebView2.Core.h"
+  #   DESTINATION
+  #     "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/lib/uap10.0"
+  # )
+endfunction()
+
+function(kraken_init_nuget)
+  # Install Required NuGet Packages to the System.
+  if(NOT EXISTS "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.210806.1/build/native/Microsoft.Windows.CppWinRT.props")
+    file(
+      COPY
+        ${CMAKE_SOURCE_DIR}/release/windows/packages.config
+      DESTINATION
+        ${CMAKE_BINARY_DIR}
+    )
+    execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& \"C:/Program Files/devtools/nuget.exe\" install ${CMAKE_BINARY_DIR}/packages.config -OutputDirectory ${CMAKE_BINARY_DIR}/packages"
+                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    set(KRAKEN_SLN_NEEDS_RESTORE ON)
+  endif()
+
+  if(NOT EXISTS ${CMAKE_BINARY_DIR}/Kraken.sln)
+    set(KRAKEN_SLN_NEEDS_RESTORE ON)
+  endif()
+
+  # Install Required NuGet Packages to the Kraken project.
+  if(KRAKEN_SLN_NEEDS_RESTORE)
+    execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& \"C:/Program Files/devtools/nuget.exe\" restore ${CMAKE_BINARY_DIR}/Kraken.sln"
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& \"C:/Program Files/devtools/nuget.exe\" update ${CMAKE_BINARY_DIR}/Kraken.sln"
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    if(EXISTS ${CMAKE_BINARY_DIR}/Kraken.sln)
+      set(KRAKEN_SLN_NEEDS_RESTORE OFF)
+    endif()
+  endif()
 endfunction()

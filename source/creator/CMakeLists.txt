@@ -1,17 +1,21 @@
 setup_libdirs()
 
 if(WIN32)
-  set(EXTRA_MICROSOFT_INCLUDES
-    "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/include"
-    "${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release"
-    "${CMAKE_SOURCE_DIR}/release/windows/appx"
-    "${CMAKE_BINARY_DIR}/source/creator/Generated Files/release/windows/appx"
-    "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
+  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator/Generated Files")
+    set(KRAKEN_MICROSOFT_SDK
+      # GENERATED WINDOWS SDK WITH KRAKEN PROJECTION
+      "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
+    )
+  endif()
+  set(KRAKEN_MICROSOFT
+    # FOR PREFIXES LIKE KRAKEN.MICROSOFT.APP
+    "${CMAKE_SOURCE_DIR}/source"
   )
 endif()
 
 kraken_include_dirs(
-  ${EXTRA_MICROSOFT_INCLUDES}
+  ${KRAKEN_MICROSOFT_SDK}
+  ${KRAKEN_MICROSOFT}
   ../../.
   ../kraken/anchor
   ../kraken/editors/include
@@ -71,53 +75,36 @@ endif()
 
 if(WIN32)
   
-  # TODO: Fix this binary path inception weirdness.
-  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd)
-    file(RENAME
-      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd
-      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/App.winmd
-    )
-    file(RENAME
-      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainWindow.winmd
-      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/MainWindow.winmd
-    )
-    file(RENAME
-      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
-      ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
-    )
-  endif()
-  file(
-    COPY
-      "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/winrt"
-    DESTINATION
-      "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.InteractiveExperiences.1.0.0-experimental1/include/winrt"
+  # Fixup WinRT generated metadata location.
+  kraken_winrt_metadata_hotfix()
+
+  # Fixup Generated Headers or else we might get compilation errors.
+  nuget_header_hotfix()
+
+  add_custom_target(KrakenMicrosoftApp
+    DEPENDS
+      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/App.xaml.g.h"
+      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/MainWindow.g.h"
   )
 
   set(WINDOWS_PACKAGE_SRC
     # APPLICATION DEFINITION SOURCE
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.cpp
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.xaml.h
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.xaml
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.idl
+    ../kraken/microsoft/app/App.cpp
+    ../kraken/microsoft/app/App.xaml.h
+    ../kraken/microsoft/app/App.xaml
+    ../kraken/microsoft/app/App.idl
 
     # MAIN WINDOW SOURCE
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.cpp
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.h
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.xaml
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.idl
+    ../kraken/microsoft/mainwindow/MainWindow.cpp
+    ../kraken/microsoft/mainwindow/MainWindow.h
+    ../kraken/microsoft/mainwindow/MainWindow.xaml
+    ../kraken/microsoft/mainwindow/MainWindow.idl
 
-    # ACTIVATION UNLOAD & ACTIVATION
-    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
-
-    # METADATA PROVIDER SOURCE
-    # ${CMAKE_SOURCE_DIR}/release/windows/appx/XamlMetaDataProvider.cpp
-    # ${CMAKE_SOURCE_DIR}/release/windows/appx/XamlMetaDataProvider.h
-
-    # AUTO GENERATED WINDOWS C++/WINRT SDK
-    "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/winrt"
+    # CODE GENERATION
+    # "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
 
     # APPLICATION MANIFESTS
-    ${CMAKE_BINARY_DIR}/app.manifest
+    ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest
     ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxManifest
 
     # DESKTOP ICON & CURSOR RESOURCES
@@ -128,15 +115,15 @@ if(WIN32)
   )
 
   set_source_files_properties(
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/App.xaml
+    ../kraken/microsoft/app/App.xaml
     PROPERTIES
-    VS_XAML_TYPE ApplicationDefinition
+      VS_XAML_TYPE ApplicationDefinition
   )
 
   set_source_files_properties(
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/MainWindow.xaml
+    ../kraken/microsoft/mainwindow/MainWindow.xaml
     PROPERTIES
-    VS_XAML_TYPE Window
+      VS_XAML_TYPE Window
   )
 endif()
 
@@ -144,7 +131,7 @@ endif()
 set(SRC
   creator.cpp
   creator_args.cpp
-  ${EXTRA_MICROSOFT_INCLUDES}
+  ${KRAKEN_MICROSOFT}
   ${WINDOWS_PACKAGE_SRC}
 
   creator.h
@@ -303,7 +290,10 @@ else()
   add_executable(kraken ${EXETYPE} ${SRC})
   add_dependencies(kraken maelstrom)
   if(WIN32)
+    add_dependencies(kraken KrakenMicrosoftApp)
+
     kraken_precompile_headers(kraken pch.cpp pch.h)
+
     set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT TRUE
       VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1"
@@ -337,7 +327,6 @@ else()
       VS_GLOBAL_CompileAsWinRT "true"
       VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
       VS_GLOBAL_DesktopCompatible "true"
-      VS_GLOBAL_TargetFramework "net6.0-windows"
       VS_GLOBAL_WindowsPackageType "MSIX"
     )
   endif()
@@ -458,7 +447,27 @@ endif()
 
 if(WIN32)
 
-  file(TO_CMAKE_PATH $ENV{RMANTREE} RENDERMAN_LOCATION)
+  file(TO_CMAKE_PATH 
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Preview\\VC\\Redist\\MSVC\\14.30.30423\\x64\\Microsoft.VC142.CRT"
+    MICROSOFT_VC142_CRT
+  )
+
+  file(TO_CMAKE_PATH
+    $ENV{RMANTREE}
+    RENDERMAN_LOCATION
+  )
+
+  # important to make a clean  install each time, else old scripts get loaded.
+  install(
+    CODE
+    "file(REMOVE_RECURSE ${TARGETDIR_VER})"
+  )
+
+  # important to make a clean  install each time, else old scripts get loaded.
+  install(
+    CODE
+    "file(REMOVE_RECURSE ./AppX/${TARGETDIR_VER})"
+  )
 
   install(
     FILES
@@ -532,17 +541,22 @@ if(WIN32)
       ${LIBDIR}/tbb/bin/tbbmalloc_proxy.dll
       # ZLIB
       ${LIBDIR}/zlib/bin/zlib.dll
+      # MICROSOFT CRT
+      ${MICROSOFT_VC142_CRT}/concrt140.dll
+      ${MICROSOFT_VC142_CRT}/msvcp140.dll
+      ${MICROSOFT_VC142_CRT}/msvcp140_1.dll
+      ${MICROSOFT_VC142_CRT}/msvcp140_2.dll
+      ${MICROSOFT_VC142_CRT}/msvcp140_atomic_wait.dll
+      ${MICROSOFT_VC142_CRT}/msvcp140_codecvt_ids.dll
+      ${MICROSOFT_VC142_CRT}/vccorlib140.dll
+      ${MICROSOFT_VC142_CRT}/vcruntime140.dll
+      ${MICROSOFT_VC142_CRT}/vcruntime140_1.dll
 
+    # Install all dependent .dlls to MSIX Appx Package.
     DESTINATION
-      "."
+      "./AppX/."
   )
 endif()
-
-# important to make a clean  install each time, else old scripts get loaded.
-install(
-  CODE
-  "file(REMOVE_RECURSE ${TARGETDIR_VER})"
-)
 
 if(WITH_PYTHON)
   # install(CODE "message(\"copying kraken scripts...\")")
@@ -1434,21 +1448,21 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     VS_GLOBAL_CompileAsWinRT "true"
     VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
     VS_GLOBAL_DesktopCompatible "true"
-    VS_GLOBAL_TargetFramework "net6.0-windows"
     VS_GLOBAL_WindowsPackageType "MSIX"
   )
 
-  add_custom_target(nuget_config DEPENDS ${CMAKE_SOURCE_DIR}/release/windows/packages.config)
-  add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/nuget_pkgs.done"
-    COMMAND ${NUGET} restore ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS nuget_config
-  )
+  # Installs NuGet Packages.
+  kraken_init_nuget()
 
-  add_custom_target(gen_nuget_pkgs ALL
-    DEPENDS "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.210806.1/build/native/Microsoft.Windows.CppWinRT.props"
-  )
-
-  add_dependencies(kraken gen_nuget_pkgs)
+  # Other required dependencies to MSIX AppX Package
+  # Python, Color Management, Icons, Scripts, Etc.
+  if(KRAKEN_RELEASE_MODE)
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release/${KRAKEN_VERSION}
+            DESTINATION "./AppX/.")
+  else()
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/Debug/${KRAKEN_VERSION}
+            DESTINATION "./AppX/.")
+  endif()
 endif()
 
 # -----------------------------------------------------------------------------
