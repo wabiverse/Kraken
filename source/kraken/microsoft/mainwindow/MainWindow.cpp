@@ -24,7 +24,7 @@
 
 #include "pch.h"
 
-#include "Kraken/Microsoft/MainWindow/MainWindow.h"
+#include "Kraken/Microsoft/MainWindow.h"
 
 #if __has_include("MainWindow.g.cpp")
 #  include "MainWindow.g.cpp"
@@ -35,6 +35,7 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 using namespace Kraken;
 using namespace Kraken::implementation;
+
 
 namespace winrt::Kraken::implementation
 {

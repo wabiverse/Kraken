@@ -18,8 +18,8 @@
 
 /**
  * @file
- * Creator.
- * Creating Chaos.
+ * Microsoft.
+ * KrakenRT.
  */
 
 #pragma once

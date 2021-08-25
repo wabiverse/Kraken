@@ -24,8 +24,8 @@
 
 #include "pch.h"
 
-#include "Kraken/Microsoft/App/App.xaml.h"
-#include "Kraken/Microsoft/MainWindow/MainWindow.h"
+#include "Kraken/Microsoft/App.xaml.h"
+#include "Kraken/Microsoft/MainWindow.h"
 
 #include "winrt/Microsoft.UI.Xaml.h"
 
@@ -40,6 +40,7 @@ using namespace winrt::Microsoft::UI::Xaml::Navigation;
 using namespace Kraken;
 using namespace Kraken::implementation;
 
+
 App::App()
 {
   InitializeComponent();
@@ -53,4 +54,11 @@ App::App()
     }
   });
 #endif
+}
+
+
+void App::OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const &)
+{
+  window = make<MainWindow>();
+  window.Activate();
 }

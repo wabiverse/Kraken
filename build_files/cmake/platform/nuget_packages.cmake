@@ -62,6 +62,7 @@ file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
     <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
     <WindowsSdkPackageVersion>10.0.22000.160-preview</WindowsSdkPackageVersion>
+    <AppContainerApplication>false</AppContainerApplication>
   </PropertyGroup>
   <ItemGroup>
     <None Include=\"${CMAKE_BINARY_DIR}/packages.config\" />

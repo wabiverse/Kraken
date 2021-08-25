@@ -35,6 +35,7 @@ namespace winrt::Kraken::implementation
   };
 }  // namespace winrt::Kraken::implementation
 
+
 namespace winrt::Kraken::factory_implementation
 {
   struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>

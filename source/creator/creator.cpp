@@ -26,8 +26,9 @@
 #  include "pch.h"
 #  include "winrt/Kraken.h"
 
-#  include "Kraken/Microsoft/App/App.xaml.h"
-#  include "Kraken/Microsoft/MainWindow/MainWindow.h"
+#  include "Kraken/Microsoft/App.xaml.h"
+#  include "Kraken/Microsoft/MainWindow.h"
+
 #  include "App.xaml.g.h"
 #endif /* _WIN32 */
 
@@ -111,6 +112,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
 
 #if !defined(ARCH_OS_WINDOWS)
 
+
 int main(int argc, const char **argv)
 {
   CREATOR_kraken_main(argc, argv);
@@ -118,14 +120,21 @@ int main(int argc, const char **argv)
   return KRAKEN_SUCCESS;
 }
 
+
 #else /* defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN) */
 
-void App::OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const &)
-{
-  window = make<MainWindow>();
-  window.Activate();
 
-  CREATOR_kraken_main(/* Godspeed, Graphics Universe. */);
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
+{
+  winrt::init_apartment();
+  Application::Start([](auto &&) {
+    ::winrt::make<::winrt::Kraken::implementation::App>();
+  });
+
+  CREATOR_kraken_main();
+
+  return KRAKEN_SUCCESS;
 }
+
 
 #endif /* defined (ARCH_OS_WINDOWS) */

@@ -9,9 +9,7 @@ if(WIN32)
   endif()
   set(KRAKEN_MICROSOFT
     # FOR PREFIXES LIKE KRAKEN.MICROSOFT.APP
-    "${CMAKE_SOURCE_DIR}/source"
-    ../kraken/microsoft/app
-    ../kraken/microsoft/mainwindow
+    ../../source
   )
 endif()
 
@@ -89,15 +87,17 @@ if(WIN32)
   set(WINDOWS_PACKAGE_SRC
     # APPLICATION DEFINITION SOURCE
     ../kraken/microsoft/app/App.cpp
-    ../kraken/microsoft/app/App.xaml.h
     ../kraken/microsoft/app/App.xaml
     ../kraken/microsoft/app/App.idl
 
     # MAIN WINDOW SOURCE
     ../kraken/microsoft/mainwindow/MainWindow.cpp
-    ../kraken/microsoft/mainwindow/MainWindow.h
     ../kraken/microsoft/mainwindow/MainWindow.xaml
     ../kraken/microsoft/mainwindow/MainWindow.idl
+
+    # KRAKEN PROJECTION RUNTIME HEADERS
+    ../kraken/microsoft/App.xaml.h
+    ../kraken/microsoft/MainWindow.h
 
     # CODE GENERATION
     "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
