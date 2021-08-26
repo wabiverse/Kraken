@@ -45,6 +45,19 @@ file(TO_CMAKE_PATH
   MICROSOFT_APP_SDK_EXPERIMENTAL
 )
 
+file(TO_CMAKE_PATH 
+  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Redist\\MSVC\\14.30.30423\\x64\\Microsoft.VC142.CRT"
+  MICROSOFT_VC142_CRT
+)
+file(TO_CMAKE_PATH 
+  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Redist\\MSVC\\14.30.30401\\x64\\Microsoft.VC142.CRT"
+  MICROSOFT_VC142_APP_CRT
+)
+file(TO_CMAKE_PATH
+  $ENV{RMANTREE}
+  RENDERMAN_LOCATION
+)
+
 # Layout below is messy, because otherwise the generated file will look messy.
 file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Project xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
@@ -92,6 +105,284 @@ file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
     <Error Condition=\"!Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_CPP_WINRT_PROJECT}.props\'))\" />
     <Error Condition=\"!Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_CPP_WINRT_PROJECT}.targets\'))\" />
   </Target>
+
+  <ItemGroup>
+
+    <!-- ARNOLD RENDER ENGINE -->
+
+    <Content Include=\"${LIBDIR}/arnold/bin/AdClmHub_2.0.0.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/arnold/bin/adlmint.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/arnold/bin/AdpSDKCore.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/arnold/bin/AdpSDKUI.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/arnold/bin/AdskLicensingSDK_5.0.1.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/arnold/bin/ai.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/arnold/bin/optix.6.6.0.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/arnold/bin/UPI2.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- RENDERMAN RENDER ENGINE -->
+
+    <Content Include=\"${RENDERMAN_LOCATION}/bin/libpxrcore.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${RENDERMAN_LOCATION}/bin/libstats.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${RENDERMAN_LOCATION}/lib/libprman.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- ALEMBIC -->
+
+    <Content Include=\"${LIBDIR}/alembic/bin/Alembic.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- HDF5 -->
+
+    <Content Include=\"${LIBDIR}/hdf5/bin/hdf5.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/hdf5/bin/hdf5_cpp.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/hdf5/bin/hdf5_hl.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/hdf5/bin/hdf5_hl_cpp.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- DRACO -->
+
+    <Content Include=\"${LIBDIR}/draco/lib/draco.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- OPENEXR -->
+
+    <Content Include=\"${LIBDIR}/openexr/bin/Iex-3_0.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/openexr/bin/IlmThread-3_0.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/openexr/bin/Imath-3_0.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/openexr/bin/OpenEXR-3_0.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/openexr/bin/OpenEXRUtil-3_0.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- EMBREE -->
+
+    <Content Include=\"${LIBDIR}/embree/bin/embree3.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- BOOST -->
+
+    <Content Include=\"${LIBDIR}/boost/lib/boost_atomic-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_chrono-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_date_time-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_iostreams-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_numpy39-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_program_options-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_regex-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_system-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_python39-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/boost/lib/boost_filesystem-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- OPEN SHADING LANGUAGE -->
+
+    <Content Include=\"${LIBDIR}/osl/bin/oslcomp.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content> 
+    <Content Include=\"${LIBDIR}/osl/bin/oslexec.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content> 
+    <Content Include=\"${LIBDIR}/osl/bin/oslnoise.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content> 
+    <Content Include=\"${LIBDIR}/osl/bin/oslquery.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>  
+
+    <!-- OPENCOLORIO -->
+
+    <Content Include=\"${LIBDIR}/opencolorio/bin/OpenColorIO_2_0.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- OPENIMAGEIO -->
+
+    <Content Include=\"${LIBDIR}/OpenImageIO/bin/OpenImageIO.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content> 
+    <Content Include=\"${LIBDIR}/OpenImageIO/bin/OpenImageIO_Util.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content> 
+
+    <!-- OPENIMAGEDENOISE -->
+
+    <Content Include=\"${LIBDIR}/oidn/bin/OpenImageDenoise.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- WALT DISNEY PTEX -->
+
+    <Content Include=\"${LIBDIR}/ptex/bin/Ptex.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- BLOSC -->
+
+    <Content Include=\"${LIBDIR}/blosc/bin/blosc.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- TIFF -->
+
+    <Content Include=\"${LIBDIR}/tiff/bin/tiff.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- PNG -->
+
+    <Content Include=\"${LIBDIR}/png/bin/libpng16.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- JPEG -->
+
+    <Content Include=\"${LIBDIR}/jpeg/bin/jpeg62.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/jpeg/bin/turbojpeg.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- THREADING BUILDING BLOCKS -->
+
+    <Content Include=\"${LIBDIR}/tbb/bin/tbb.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/tbb/bin/tbbmalloc.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${LIBDIR}/tbb/bin/tbbmalloc_proxy.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- ZLIB -->
+
+    <Content Include=\"${LIBDIR}/zlib/bin/zlib.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- MICROSOFT CRT -->
+
+    <Content Include=\"${MICROSOFT_VC142_CRT}/concrt140.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140_1.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140_2.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140_atomic_wait.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140_codecvt_ids.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_CRT}/vccorlib140.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_CRT}/vcruntime140.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_CRT}/vcruntime140_1.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+    <!-- MICROSOFT APPLICATION CRT -->
+
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/concrt140_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/msvcp140_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/msvcp140_1_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/msvcp140_2_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/msvcp140_atomic_wait_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/msvcp140_codecvt_ids_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/vccorlib140_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/vcruntime140_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=\"${MICROSOFT_VC142_APP_CRT}/vcruntime140_1_app.dll\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
+  </ItemGroup>
+
 </Project>
 ")
 
