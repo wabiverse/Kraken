@@ -99,9 +99,6 @@ if(WIN32)
     ../kraken/microsoft/App.xaml.h
     ../kraken/microsoft/MainWindow.h
 
-    # CODE GENERATION
-    # "${CMAKE_CURRENT_BINARY_DIR}/Generated Files/module.g.cpp"
-
     # APPLICATION MANIFESTS
     ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest
     ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxManifest

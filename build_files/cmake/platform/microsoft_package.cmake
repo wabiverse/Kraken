@@ -146,6 +146,7 @@ endfunction()
 # Just import NuGet into Kraken and Monolithic Pixar USD vcxprojs here
 # As Nuget imports have already been added to wabi_library(xxx) macros
 kraken_import_nuget_packages("maelstrom")
+
 kraken_import_nuget_packages("source/creator/kraken")
 kraken_import_nuget_packages("source/kraken/anchor/kraken_anchor")
 kraken_import_nuget_packages("source/kraken/editors/code/kraken_editor_code")
@@ -159,3 +160,5 @@ kraken_import_nuget_packages("source/kraken/python/kpy/kraken_python")
 kraken_import_nuget_packages("source/kraken/server/kraken_server")
 kraken_import_nuget_packages("source/kraken/universe/kraken_universe")
 kraken_import_nuget_packages("source/kraken/wm/kraken_wm")
+
+kraken_import_nuget_packages("intern/utfconv/utfconv")

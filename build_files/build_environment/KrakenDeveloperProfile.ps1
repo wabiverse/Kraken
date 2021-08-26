@@ -138,6 +138,9 @@ function ConnectKraken {
 
 # CodeSign the Kraken Application.
 function KrakenCodeSign {
+  if (-not(Test-Path -Path "C:\Users\tyler\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx" -PathType Leaf)) {
+    Copy-Item "C:\Users\tyler\wabianimation.kraken3d.pfx" -Destination "C:\Users\tyler\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx"
+  }
   $cert = @(Get-ChildItem -Path 'Cert:\CurrentUser\My\bfa7030dc5376b044f7b68d9c7a32f44a086ddbf')[0]
   $certBytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx)
   [System.IO.File]::WriteAllBytes('C:\Users\tyler\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx', $certBytes)
