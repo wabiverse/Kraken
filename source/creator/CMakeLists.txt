@@ -78,12 +78,6 @@ if(WIN32)
   # Fixup WinRT generated metadata location.
   kraken_winrt_metadata_hotfix()
 
-  add_custom_target(KrakenMicrosoftApp
-    DEPENDS
-      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/App.xaml.g.h"
-      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/MainWindow.g.h"
-  )
-
   set(WINDOWS_PACKAGE_SRC
     # APPLICATION DEFINITION SOURCE
     ../kraken/microsoft/app/App.cpp
@@ -287,44 +281,9 @@ else()
   add_executable(kraken ${EXETYPE} ${SRC})
   add_dependencies(kraken maelstrom)
   if(WIN32)
-    add_dependencies(kraken KrakenMicrosoftApp)
-
     kraken_precompile_headers(kraken pch.cpp pch.h)
-
     set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT TRUE
-      VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1"
-      VS_GLOBAL_OutputType "WinExe"
-      VS_GLOBAL_CppWinRTOptimized "true"
-      VS_GLOBAL_CppWinRTRootNamespaceAutoMerge "true"
-      VS_GLOBAL_MinimalCoreWin "true"
-      VS_GLOBAL_ProjectName "Kraken"
-      VS_GLOBAL_RootNamespace "Kraken"
-      VS_GLOBAL_DefaultLanguage "en-US"
-      VS_GLOBAL_MinimumVisualStudioVersion "16.0"
-      VS_GLOBAL_WindowsAppContainer "false"
-      VS_GLOBAL_AppContainerApplication "false"
-      VS_GLOBAL_ApplicationType "Windows Store"
-      VS_GLOBAL_ApplicationTypeRevision "10.0"
-      VS_GLOBAL_WindowsTargetPlatformVersion "10.0.22000.0"
-      VS_GLOBAL_WindowsTargetPlatformMinVersion "10.0.22000.0"
-      VS_GLOBAL_UseWinUI "true"
-      VS_GLOBAL_CppWinRTProjectLanguage "C++/WinRT"
-      VS_GLOBAL_UseWindowsSdkPreview "true"
-      VS_GLOBAL_PlatformToolset "v143"
-      VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview"
-      VS_GLOBAL_PackageCertificateKeyFile "wabianimation.kraken3d.pfx"
-      VS_GLOBAL_TempCertificateFilePath "wabianimation.kraken3d.pfx"
-      VS_GLOBAL_AppxBundle "Always"
-      VS_GLOBAL_AppxBundlePlatforms "x64"
-      VS_GLOBAL_CanReferenceWinRT "true"
-      VS_GLOBAL_CppWinRTEnabled "true"
-      VS_GLOBAL_CppWinRTPackage "true"
-      VS_GLOBAL_XamlLanguage "CppWinRT"
-      VS_GLOBAL_CompileAsWinRT "true"
-      VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
-      VS_GLOBAL_DesktopCompatible "true"
-      VS_GLOBAL_WindowsPackageType "MSIX"
     )
   endif()
 endif()
@@ -438,7 +397,7 @@ else()
       maelstrom # <- Pixar monolithic
       # ---------------------------------
     DESTINATION
-      "."
+      "./AppX/."
   )
 endif()
 
@@ -543,6 +502,11 @@ if(WIN32)
       ${LIBDIR}/tbb/bin/tbbmalloc_proxy.dll
       # ZLIB
       ${LIBDIR}/zlib/bin/zlib.dll
+      # PYTHON
+      ${LIBDIR}/python/39/bin/python3.dll
+      ${LIBDIR}/python/39/bin/python39.dll
+      # OPENVDB
+      ${LIBDIR}/openvdb/bin/openvdb.dll
       # MICROSOFT CRT
       ${MICROSOFT_VC142_CRT}/concrt140.dll
       ${MICROSOFT_VC142_CRT}/msvcp140.dll
@@ -1427,40 +1391,9 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     COMPONENT Kraken
     DESTINATION "."
   )
+  
   set_target_properties(kraken PROPERTIES
     VS_WINRT_COMPONENT TRUE
-    VS_PACKAGE_REFERENCES "Microsoft.Windows.CppWinRT_2.0.210806.1;Microsoft.WindowsAppSDK.DWrite_1.0.0-experimental1;Microsoft.WindowsAppSDK_1.0.0-experimental1;Microsoft.WindowsAppSDK.Foundation_1.0.0-experimental1;Microsoft.WindowsAppSDK.WinUI_1.0.0-experimental1"
-    VS_GLOBAL_OutputType "WinExe"
-    VS_GLOBAL_CppWinRTOptimized "true"
-    VS_GLOBAL_CppWinRTRootNamespaceAutoMerge "true"
-    VS_GLOBAL_MinimalCoreWin "true"
-    VS_GLOBAL_ProjectName "Kraken"
-    VS_GLOBAL_RootNamespace "Kraken"
-    VS_GLOBAL_DefaultLanguage "en-US"
-    VS_GLOBAL_MinimumVisualStudioVersion "16.0"
-    VS_GLOBAL_WindowsAppContainer "false"
-    VS_GLOBAL_AppContainerApplication "false"
-    VS_GLOBAL_ApplicationType "Windows Store"
-    VS_GLOBAL_ApplicationTypeRevision "10.0"
-    VS_GLOBAL_WindowsTargetPlatformVersion "10.0.22000.0"
-    VS_GLOBAL_WindowsTargetPlatformMinVersion "10.0.22000.0"
-    VS_GLOBAL_UseWinUI "true"
-    VS_GLOBAL_CppWinRTProjectLanguage "C++/WinRT"
-    VS_GLOBAL_UseWindowsSdkPreview "true"
-    VS_GLOBAL_PlatformToolset "v143"
-    VS_GLOBAL_WindowsSdkPackageVersion "10.0.22000.160-preview"
-    VS_GLOBAL_PackageCertificateKeyFile "wabianimation.kraken3d.pfx"
-    VS_GLOBAL_TempCertificateFilePath "wabianimation.kraken3d.pfx"
-    VS_GLOBAL_AppxBundle "Always"
-    VS_GLOBAL_AppxBundlePlatforms "x64"
-    VS_GLOBAL_CanReferenceWinRT "true"
-    VS_GLOBAL_CppWinRTEnabled "true"
-    VS_GLOBAL_CppWinRTPackage "true"
-    VS_GLOBAL_XamlLanguage "CppWinRT"
-    VS_GLOBAL_CompileAsWinRT "true"
-    VS_GLOBAL_CppWinRTGenerateWindowsMetadata "true"
-    VS_GLOBAL_DesktopCompatible "true"
-    VS_GLOBAL_WindowsPackageType "MSIX"
   )
 
   # Installs NuGet Packages.

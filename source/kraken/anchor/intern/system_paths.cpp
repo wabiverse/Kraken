@@ -22,29 +22,23 @@
  * Bare Metal.
  */
 
+#include <wabi/wabi.h>
+#include <wabi/base/arch/defines.h>
+
+#if defined(ARCH_OS_WINDOWS)
+#  include "pch.h"
+
+#  include <winrt/base.h>
+#  include <winrt/Windows.Foundation.h>
+#  include <winrt/Windows.ApplicationModel.h>
+#  include <winrt/Windows.Storage.h>
+#endif /* ARCH_OS_WINDOWS */
+
 #include "KLI_utildefines.h"
 
 #include "ANCHOR_system_paths.h"
 
-#include <wabi/base/arch/defines.h>
 #include <wabi/base/arch/systemInfo.h>
-
-#if defined(ARCH_OS_WINDOWS)
-#  include <winrt/base.h>
-#  include <winrt/Windows.ApplicationModel.h>
-#  include <winrt/Windows.Foundation.h>
-#  include <winrt/Windows.Storage.h>
-
-namespace MICROSOFT = winrt;
-
-using namespace MICROSOFT;
-using namespace MICROSOFT::Windows;
-using namespace MICROSOFT::Windows::ApplicationModel;
-using namespace MICROSOFT::Windows::Foundation;
-using namespace MICROSOFT::Windows::Storage;
-#endif /* ARCH_OS_WINDOWS */
-
-WABI_NAMESPACE_USING
 
 #include <stdio.h>
 
@@ -59,6 +53,8 @@ WABI_NAMESPACE_USING
 
 #  include <pwd.h>
 #  include <string>
+
+WABI_NAMESPACE_USING
 
 using std::string;
 
@@ -208,7 +204,16 @@ void AnchorSystemPathsUnix::addToSystemRecentFiles(const char * /*filename*/) co
 #    define _WIN32_IE 0x0501
 #  endif
 #  include "utfconv.h"
-#  include <shlobj.h>
+
+WABI_NAMESPACE_USING
+
+#  if defined(ARCH_OS_WINDOWS)
+using namespace winrt;
+using namespace winrt::Windows;
+using namespace winrt::Windows::Foundation;
+using namespace winrt::Windows::ApplicationModel;
+using namespace winrt::Windows::Storage;
+#  endif /* ARCH_OS_WINDOWS */
 
 AnchorSystemPathsWin32::AnchorSystemPathsWin32()
 {}
@@ -218,7 +223,7 @@ AnchorSystemPathsWin32::~AnchorSystemPathsWin32()
 
 const AnchorU8 *AnchorSystemPathsWin32::getSystemDir(int, const char *versionstr) const
 {
-  std::string sysDir = MICROSOFT::to_string(Package::Current().InstalledLocation().Path());
+  std::string sysDir = winrt::to_string(Package::Current().InstalledLocation().Path());
 
   if (!sysDir.empty())
   {
@@ -242,7 +247,7 @@ const AnchorU8 *AnchorSystemPathsWin32::getUserDir(int, const char *versionstr) 
 
 const AnchorU8 *AnchorSystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDirTypes type) const
 {
-  MICROSOFT::hstring folderid;
+  winrt::hstring folderid;
 
   switch (type)
   {
@@ -284,13 +289,13 @@ const AnchorU8 *AnchorSystemPathsWin32::getBinaryDir() const
 
 void AnchorSystemPathsWin32::addToSystemRecentFiles(const char *filename) const
 {
-  MICROSOFT::Windows::Storage::StorageLibrary documents{
+  winrt::Windows::Storage::StorageLibrary documents{
     Storage::StorageLibrary::GetLibraryAsync(Storage::KnownLibraryId::Documents).GetResults()};
 
-  MICROSOFT::Windows::Storage::StorageFolder recentFiles{
+  winrt::Windows::Storage::StorageFolder recentFiles{
     documents.RequestAddFolderAsync().GetResults()};
 
-  MICROSOFT::Windows::Storage::StorageFile fileAdded{
+  winrt::Windows::Storage::StorageFile fileAdded{
     recentFiles.CreateFileAsync((LPWSTR)filename).GetResults()};
 
   if (fileAdded.Path().empty())

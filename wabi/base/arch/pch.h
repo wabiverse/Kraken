@@ -35,13 +35,30 @@
  * PROBLEMS -- *** HEAP ISSUES GALORE ***
  * -- Fixed by Furby ❤︎ */
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/defines.h"
 
 #if defined(ARCH_OS_WINDOWS)
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif /* WIN32_LEAN_AND_MEAN */
+/**
+ * Winsock must come before windows.h */
+#  include <Winsock2.h>
+
 #  include <windows.h>
 #  include <unknwn.h>
 #  include <restrictederrorinfo.h>
 #  include <hstring.h>
+
+#  ifdef GetCurrentTime
+/**
+ * Resolve a conflict between
+ * windows.h and winrt which
+ * both define this macro. */
+#    undef GetCurrentTime
+#  endif /* GetCurrentTime */
+
 #  include <winrt/Windows.Foundation.h>
 #  include <winrt/Windows.Foundation.Collections.h>
 #  include <winrt/Windows.ApplicationModel.Activation.h>
@@ -56,11 +73,19 @@
 #  include <winrt/Microsoft.UI.Xaml.Navigation.h>
 #  include <winrt/Microsoft.UI.Xaml.Shapes.h>
 
+#  include <DbgHelp.h>
+#  include <Memoryapi.h>
+#  include <Psapi.h>
+#  include <WinIoCtl.h>
+#  include <chrono>
+#  include <direct.h>
+#  include <intrin.h>
+#  include <io.h>
+#  include <process.h>
+
 #  pragma comment(lib, "windowsapp")
 
 #endif /* ARCH_OS_WINDOWS */
-
-#include "wabi/wabi.h"
 #if defined(ARCH_OS_DARWIN)
 #  include <crt_externs.h>
 #  include <dlfcn.h>
@@ -78,7 +103,7 @@
 #  include <sys/sysctl.h>
 #  include <sys/time.h>
 #  include <unistd.h>
-#endif
+#endif /* ARCH_OS_DARWIN */
 #if defined(ARCH_OS_LINUX)
 #  include <csignal>
 #  include <dlfcn.h>
@@ -94,34 +119,7 @@
 #  include <unistd.h>
 #  include <unwind.h>
 #  include <x86intrin.h>
-#endif
-#if defined(ARCH_OS_WINDOWS)
-#  ifndef WIN32_LEAN_AND_MEAN
-#    define WIN32_LEAN_AND_MEAN
-#  endif
-
-#  include <Windows.h>
-#  include <winrt/base.h>
-#  include <winrt/Windows.Foundation.h>
-#  include <winrt/Windows.Foundation.Collections.h>
-#  include <winrt/Windows.Storage.h>
-#  include <winrt/Windows.ApplicationModel.Core.h>
-#  include <winrt/Windows.UI.Core.h>
-#  include <winrt/Windows.UI.Composition.h>
-#  include <winrt/Windows.UI.Input.h>
-#  pragma comment(lib, "windowsapp")
-
-#  include <DbgHelp.h>
-#  include <Memoryapi.h>
-#  include <Psapi.h>
-#  include <WinIoCtl.h>
-#  include <Winsock2.h>
-#  include <chrono>
-#  include <direct.h>
-#  include <intrin.h>
-#  include <io.h>
-#  include <process.h>
-#endif
+#endif /* ARCH_OS_LINUX */
 #include <algorithm>
 #include <atomic>
 #include <cctype>

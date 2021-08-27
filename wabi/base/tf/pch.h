@@ -44,6 +44,14 @@
 #  include <unknwn.h>
 #  include <restrictederrorinfo.h>
 #  include <hstring.h>
+
+#  ifdef GetCurrentTime
+/**
+ * Resolve a conflict between
+ * windows.h and winrt which
+ * both define this macro. */
+#    undef GetCurrentTime
+#  endif /* GetCurrentTime */
 #  include <winrt/Windows.Foundation.h>
 #  include <winrt/Windows.Foundation.Collections.h>
 #  include <winrt/Windows.ApplicationModel.Activation.h>

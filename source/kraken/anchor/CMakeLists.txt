@@ -130,3 +130,7 @@ if(WIN32)
 endif()
 
 kraken_add_lib(kraken_anchor "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+
+if(WIN32)
+  kraken_precompile_headers(kraken_anchor pch.cpp pch.h)
+endif()

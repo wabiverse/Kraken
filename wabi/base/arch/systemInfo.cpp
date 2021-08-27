@@ -56,18 +56,16 @@
 #  include <Windows.h>
 #  include <direct.h>
 #  include <winrt/base.h>
-#  include <winrt/Windows.ApplicationModel.h>
 #  include <winrt/Windows.Foundation.h>
+#  include <winrt/Windows.ApplicationModel.h>
 #  include <winrt/Windows.Storage.h>
 #  define getcwd(buffer_, size_) _getcwd(buffer_, size_)
 
-namespace MICROSOFT = winrt;
-
-using namespace MICROSOFT;
-using namespace MICROSOFT::Windows;
-using namespace MICROSOFT::Windows::Foundation;
-using namespace MICROSOFT::Windows::ApplicationModel;
-using namespace MICROSOFT::Windows::Storage;
+using namespace winrt;
+using namespace winrt::Windows;
+using namespace winrt::Windows::Foundation;
+using namespace winrt::Windows::ApplicationModel;
+using namespace winrt::Windows::Storage;
 
 namespace fs = std::filesystem;
 
@@ -185,7 +183,7 @@ std::string ArchGetExecutablePath()
 
 #elif defined(ARCH_OS_WINDOWS)
 
-  return MICROSOFT::to_string(Package::Current().InstalledLocation().Path());
+  return winrt::to_string(Package::Current().InstalledLocation().Path());
 
 #  if 0
   /**
