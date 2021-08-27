@@ -4,7 +4,6 @@
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-  xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
@@ -16,7 +15,8 @@
   xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
   xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap uap2 uap3 uap4 uap5 uap10 desktop desktop4 desktop5 desktop6 rescap build">
+  IgnorableNamespaces="uap uap2 uap3 uap4 uap5 uap10 desktop desktop4 desktop5 desktop6 rescap build"
+  xmlns:build="http://schemas.microsoft.com/developer/appx/2015/build">
 
 <!-- Internal Use. Microsoft Store uses this to register and verify codesign certificate. -->
 <Identity
@@ -35,7 +35,11 @@
     <!-- Windows 11 SDK Dependencies. 10.0.22000.0 Marks the first Windows 11 Build. -->
     <TargetDeviceFamily
       Name="Windows.Universal"
-      MinVersion="10.0.22000.0"
+      MinVersion="10.0.17763.0"
+      MaxVersionTested="10.0.22000.0" />
+    <TargetDeviceFamily
+      Name="Windows.Desktop"
+      MinVersion="10.0.17763.0"
       MaxVersionTested="10.0.22000.0" />
     <PackageDependency
       Name="Microsoft.WindowsAppSDK.1.0-experimental1"
@@ -102,7 +106,7 @@
         <!-- Kraken can be summoned via: 'kraken' in a term. -->
         <uap5:Extension
           Category="windows.appExecutionAlias"
-          Executable="kraken.exe"
+          Executable="$targetnametoken$.exe"
           EntryPoint="Kraken.App">
           <uap5:AppExecutionAlias desktop4:Subsystem="windows" >   
             <uap5:ExecutionAlias Alias="kraken.exe" />

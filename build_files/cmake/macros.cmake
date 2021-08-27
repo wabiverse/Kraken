@@ -285,7 +285,7 @@ function(kraken_add_lib__impl
 
   if(WIN32)
     set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS " /WINMD")
-    set_property(TARGET ${name} PROPERTY VS_WINRT_COMPONENT TRUE)
+    set_property(TARGET ${name} PROPERTY VS_WINRT_COMPONENT OFF)
   endif()
 
   add_dependencies(${name} maelstrom)

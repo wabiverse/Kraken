@@ -31,11 +31,20 @@ if(WITH_WINDOWS_BUNDLE_CRT)
   # Install the CRT to the kraken.crt Sub folder.
   # install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./kraken.manifest COMPONENT Libraries)
 
-  configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-                 ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
-
-  configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-                 ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/reunion.merged.g.manifest)
+  # Override the default manifests from NuGet, someone
+  # hardcoded everything to "MyApplication.app", how cute
+  configure_file(# MICROSOFT DEFAULT
+    ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+    ${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/build/DefaultWin32Manifests/default.manifest)
+  configure_file(# MICROSOFT DEFAULT
+    ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+    ${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/buildTransitive/DefaultWin32Manifests/default.manifest)
+  configure_file(# KRAKEN MANIFEST
+    ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+    ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
+  configure_file(# KRAKEN MANIFEST
+    ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+    ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/reunion.merged.g.manifest)
 
   # Generating the manifest is a relativly expensive operation since
   # it is collecting an sha1 hash for every file required. so only do

@@ -65,7 +65,6 @@ if(${proj_path} STREQUAL "source/creator/kraken")
   # if we are not careful.
   file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Project xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
-  <Import Project=\"${MICROSOFT_APP_SDK_MSIX_PACK}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_MSIX_PACK}.props\')\" />
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK_DWRITE}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_DWRITE}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\')\" />
@@ -74,13 +73,24 @@ if(${proj_path} STREQUAL "source/creator/kraken")
   <Import Project=\"${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\')\" />
   <PropertyGroup Label=\"Globals\">
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <WindowsTargetPlatformVersion Condition=\" \'$(WindowsTargetPlatformVersion)\' == \'\' \">10.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>${WINDOWS_SDK_VERSION}</WindowsTargetPlatformMinVersion>
     <TargetPlatformMinVersion>10.0.22000.0</TargetPlatformMinVersion>
     <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
     <WindowsSdkPackageVersion>10.0.22000.160-preview</WindowsSdkPackageVersion>
-    <AppContainerApplication>false</AppContainerApplication>
+    <AppxPackage>true</AppxPackage>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <WindowsTargetPlatformVersion Condition=\" \'$(WindowsTargetPlatformVersion)\' == \'\' \">10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>${WINDOWS_SDK_VERSION}</WindowsTargetPlatformMinVersion>
+    <UseWinUI>true</UseWinUI>
+    <WindowsAppContainer>false</WindowsAppContainer>
+    <CharacterSet>Unicode</CharacterSet>
+    <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+    <CompileAsWinRT>false</CompileAsWinRT>
     <OutputType>WinExe</OutputType>
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
@@ -88,22 +98,16 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <ProjectName>Kraken</ProjectName>
     <RootNamespace>Kraken</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
-    <WindowsAppContainer>false</WindowsAppContainer>
-    <ApplicationType>Windows Store</ApplicationType>
-    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
-    <UseWinUI>true</UseWinUI>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
     <PlatformToolset>v143</PlatformToolset>
     <PackageCertificateKeyFile>wabianimation.kraken3d.pfx</PackageCertificateKeyFile>
     <TempCertificateFilePath>wabianimation.kraken3d.pfx</TempCertificateFilePath>
-    <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <CanReferenceWinRT>true</CanReferenceWinRT>
     <CppWinRTEnabled>true</CppWinRTEnabled>
     <CppWinRTPackage>true</CppWinRTPackage>
     <XamlLanguage>CppWinRT</XamlLanguage>
-    <CompileAsWinRT>true</CompileAsWinRT>
+    <CppWinRTModernIDL>true</CppWinRTModernIDL>
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <DesktopCompatible>true</DesktopCompatible>
     <WindowsPackageType>MSIX</WindowsPackageType>
@@ -111,8 +115,8 @@ if(${proj_path} STREQUAL "source/creator/kraken")
   <ItemGroup>
     <None Include=\"${CMAKE_BINARY_DIR}/packages.config\" />
   </ItemGroup>
-
   <ItemGroup>
+
     <!-- ARNOLD RENDER ENGINE -->
 
     <Content Include=\"${LIBDIR}/arnold/bin/AdClmHub_2.0.0.dll\">
@@ -403,7 +407,6 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     </Content>
   </ItemGroup>
   <ImportGroup Label=\"ExtensionTargets\">
-    <Import Project=\"${MICROSOFT_APP_SDK_MSIX_PACK}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_MSIX_PACK}.targets\')\" />
     <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.targets\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.targets\')\" />
     <Import Project=\"${MICROSOFT_APP_SDK_DWRITE}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_DWRITE}.targets\')\" />
     <Import Project=\"${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\')\" />
@@ -432,7 +435,6 @@ if(${proj_path} STREQUAL "source/creator/kraken")
 else()
   file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Project xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
-  <Import Project=\"${MICROSOFT_APP_SDK_MSIX_PACK}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_MSIX_PACK}.props\')\" />
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK_DWRITE}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_DWRITE}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\')\" />
@@ -447,17 +449,19 @@ else()
     <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
     <WindowsSdkPackageVersion>10.0.22000.160-preview</WindowsSdkPackageVersion>
-    <AppContainerApplication>false</AppContainerApplication>
+    <CompileAsWinRT>false</CompileAsWinRT>
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <MinimalCoreWin>true</MinimalCoreWin>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
-    <WindowsAppContainer>false</WindowsAppContainer>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <UseWinUI>true</UseWinUI>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
+    <XamlLanguage>CppWinRT</XamlLanguage>
+    <CppWinRTModernIDL>true</CppWinRTModernIDL>
     <PlatformToolset>v143</PlatformToolset>
     <CanReferenceWinRT>true</CanReferenceWinRT>
     <DesktopCompatible>true</DesktopCompatible>
@@ -466,7 +470,6 @@ else()
     <None Include=\"${CMAKE_BINARY_DIR}/packages.config\" />
   </ItemGroup>
   <ImportGroup Label=\"ExtensionTargets\">
-    <Import Project=\"${MICROSOFT_APP_SDK_MSIX_PACK}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_MSIX_PACK}.targets\')\" />
     <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.targets\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.targets\')\" />
     <Import Project=\"${MICROSOFT_APP_SDK_DWRITE}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_DWRITE}.targets\')\" />
     <Import Project=\"${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\')\" />

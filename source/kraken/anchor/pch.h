@@ -18,8 +18,8 @@
 
 /**
  * @file
- * Microsoft.
- * KrakenRT.
+ * ⚓︎ Anchor.
+ * Bare Metal.
  */
 
 #pragma once

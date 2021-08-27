@@ -78,6 +78,11 @@ if(WIN32)
   # Fixup WinRT generated metadata location.
   kraken_winrt_metadata_hotfix()
 
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxManifest
+    ${CMAKE_CURRENT_BINARY_DIR}/Package.appxManifest
+  )
+
   set(WINDOWS_PACKAGE_SRC
     # APPLICATION DEFINITION SOURCE
     ../kraken/microsoft/app/App.cpp
@@ -94,8 +99,8 @@ if(WIN32)
     ../kraken/microsoft/MainWindow.h
 
     # APPLICATION MANIFESTS
-    ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxManifest
+    # ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest
+    ${CMAKE_CURRENT_BINARY_DIR}/Package.appxManifest
 
     # DESKTOP ICON & CURSOR RESOURCES
     ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
@@ -283,7 +288,7 @@ else()
   if(WIN32)
     kraken_precompile_headers(kraken pch.cpp pch.h)
     set_target_properties(kraken PROPERTIES 
-      VS_WINRT_COMPONENT TRUE
+      VS_WINRT_COMPONENT OFF
     )
   endif()
 endif()
@@ -1393,7 +1398,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
   )
   
   set_target_properties(kraken PROPERTIES
-    VS_WINRT_COMPONENT TRUE
+    VS_WINRT_COMPONENT OFF
   )
 
   # Installs NuGet Packages.

@@ -863,7 +863,7 @@ function(_wabi_target_link_libraries NAME)
                     # matter; we pull in the whole archive first.
                     #
                     list(APPEND final "/WHOLEARCHIVE:$<TARGET_FILE:${lib}>")
-                    set_property(TARGET ${lib} PROPERTY VS_WINRT_COMPONENT TRUE)
+                    set_property(TARGET ${lib} PROPERTY VS_WINRT_COMPONENT OFF)
                 elseif(CMAKE_COMPILER_IS_GNUCXX)
                     list(APPEND final -Wl,--whole-archive ${lib} -Wl,--no-whole-archive)
                 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
@@ -883,7 +883,7 @@ function(_wabi_target_link_libraries NAME)
         )
 
         if(WIN32)
-            set_property(TARGET ${NAME} PROPERTY VS_WINRT_COMPONENT TRUE)
+            set_property(TARGET ${NAME} PROPERTY VS_WINRT_COMPONENT OFF)
         endif()
     endif()
 endfunction()
@@ -985,11 +985,16 @@ function(_wabi_python_module NAME)
             FOLDER "${folder}"
     )
     if(WIN32)
+        # Import NuGet packages.
+        kraken_import_nuget_packages("wabi/${NAME}/${NAME}/${LIBRARY_NAME}")
         # Python modules must be suffixed with .pyd on Windows.
         set_target_properties(${LIBRARY_NAME}
             PROPERTIES
                 SUFFIX ".pyd"
         )
+        # Reduce /MP for only python libraries.
+        target_compile_options(${LIBRARY_NAME}
+            PRIVATE "/MP1")
     elseif(APPLE)
         # Python modules must be suffixed with .so on Mac.
         set_target_properties(${LIBRARY_NAME}

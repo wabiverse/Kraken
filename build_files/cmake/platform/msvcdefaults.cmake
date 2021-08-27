@@ -77,8 +77,8 @@ set(COMPILER_VERSION "17")
 # Target Windows 11 SDK.
 set(WINDOWS_SDK_VERSION "10.0.22000.0")
 
-# Our Standard is now :: CXX/WinRT
-set(CMAKE_VS_WINRT_BY_DEFAULT ON)
+# Disable C++/CX
+set(CMAKE_VS_WINRT_BY_DEFAULT OFF)
 
 # Set the CMAKE build system to target UWP
 # this effectively enables WinRT compilation
@@ -250,9 +250,6 @@ _add_define("_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS")
 _add_define("UNICODE")
 _add_define("_UNICODE")
 
-# Ensure projected types remain
-# within the ABI namespace
-_add_define("MIDL_NS_PREFIX")
 # -----------------------------------------------------------------------------
 # Setup Linker Flags
 
