@@ -986,7 +986,8 @@ function(_wabi_python_module NAME)
     )
     if(WIN32)
         # Import NuGet packages.
-        kraken_import_nuget_packages("wabi/${NAME}/${NAME}/${LIBRARY_NAME}")
+        _get_folder("" folder)
+        kraken_import_nuget_packages("${folder}/${NAME}/${LIBRARY_NAME}")
         # Python modules must be suffixed with .pyd on Windows.
         set_target_properties(${LIBRARY_NAME}
             PROPERTIES

@@ -87,7 +87,6 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <WindowsTargetPlatformVersion Condition=\" \'$(WindowsTargetPlatformVersion)\' == \'\' \">10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>${WINDOWS_SDK_VERSION}</WindowsTargetPlatformMinVersion>
     <UseWinUI>true</UseWinUI>
-    <WindowsAppContainer>false</WindowsAppContainer>
     <CharacterSet>Unicode</CharacterSet>
     <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
     <CompileAsWinRT>false</CompileAsWinRT>

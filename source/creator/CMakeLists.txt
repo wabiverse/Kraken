@@ -78,11 +78,6 @@ if(WIN32)
   # Fixup WinRT generated metadata location.
   kraken_winrt_metadata_hotfix()
 
-  configure_file(
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxManifest
-    ${CMAKE_CURRENT_BINARY_DIR}/Package.appxManifest
-  )
-
   set(WINDOWS_PACKAGE_SRC
     # APPLICATION DEFINITION SOURCE
     ../kraken/microsoft/app/App.cpp
@@ -100,7 +95,7 @@ if(WIN32)
 
     # APPLICATION MANIFESTS
     # ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest
-    ${CMAKE_CURRENT_BINARY_DIR}/Package.appxManifest
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxManifest
 
     # DESKTOP ICON & CURSOR RESOURCES
     ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
