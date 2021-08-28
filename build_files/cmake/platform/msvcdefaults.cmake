@@ -253,7 +253,7 @@ _add_define("_UNICODE")
 # -----------------------------------------------------------------------------
 # Setup Linker Flags
 
-string(APPEND PLATFORM_LINKFLAGS " /SUBSYSTEM:WINDOWS /WINMD /STACK:2097152")
+string(APPEND PLATFORM_LINKFLAGS " /SUBSYSTEM:WINDOWS /STACK:2097152")
 string(APPEND PLATFORM_LINKFLAGS_DEBUG " /IGNORE:4099")
 
 # Ignore meaningless for us linker warnings.

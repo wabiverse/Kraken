@@ -151,8 +151,9 @@ function KrakenCodeSign {
 # optional with the Windows 11 SDK as well as the .NET framework or
 # consuming APIs with CppWinRT.
 function InstallNugetPackages {
-  & "C:\Program Files\devtools\nuget.exe" install ../build_KRAKEN_Release/packages.config -OutputDirectory ../build_KRAKEN_Release/packages
-  & "C:\Program Files\devtools\nuget.exe" restore ../build_KRAKEN_Release/Kraken.sln
+  & "C:/Program Files/devtools/nuget.exe" install $env:USERPROFILE/dev/build_KRAKEN_Release/packages.config -OutputDirectory $env:USERPROFILE/dev/build_KRAKEN_Release/packages
+  & "C:/Program Files/devtools/nuget.exe" restore $env:USERPROFILE/dev/build_KRAKEN_Release/Kraken.sln
+  & "C:/Program Files/devtools/nuget.exe" update $env:USERPROFILE/dev/build_KRAKEN_Release/Kraken.sln
 }
 
 function ShowPrettyGitRevision {

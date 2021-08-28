@@ -33,18 +33,24 @@ if(WITH_WINDOWS_BUNDLE_CRT)
 
   # Override the default manifests from NuGet, someone
   # hardcoded everything to "MyApplication.app", how cute
-  configure_file(# MICROSOFT DEFAULT
-    ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-    ${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/build/DefaultWin32Manifests/default.manifest)
-  configure_file(# MICROSOFT DEFAULT
-    ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-    ${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/buildTransitive/DefaultWin32Manifests/default.manifest)
-  configure_file(# KRAKEN MANIFEST
-    ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-    ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
-  configure_file(# KRAKEN MANIFEST
-    ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-    ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/reunion.merged.g.manifest)
+  # configure_file(# MICROSOFT DEFAULT
+  #   ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+  #   ${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/build/DefaultWin32Manifests/default.manifest)
+  # configure_file(# MICROSOFT DEFAULT
+  #   ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+  #   ${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/buildTransitive/DefaultWin32Manifests/default.manifest)
+  # configure_file(# KRAKEN MANIFEST
+  #   ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+  #   ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
+  # configure_file(# KRAKEN MANIFEST
+  #   ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
+  #   ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/reunion.merged.g.manifest)
+  # configure_file(# KRAKEN APPX MANIFEST
+  #   ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
+  #   ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest)
+  # configure_file(# KRAKEN APPX MANIFEST
+  #   ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
+  #   ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/package.appxManifest)
 
   # Generating the manifest is a relativly expensive operation since
   # it is collecting an sha1 hash for every file required. so only do
@@ -74,7 +80,7 @@ if(WITH_WINDOWS_BUNDLE_CRT)
     #   file(SHA1 "${lib}" sha1_file)
     #   string(APPEND CRTLIBS "    <file name=\"${filename}\" hash=\"${sha1_file}\"  hashalg=\"SHA1\" />\n")
     # endforeach()
-    configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/app.manifest @ONLY)
+    # configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/app.manifest @ONLY)
     file(TOUCH ${manifest_trigger_file})
   endif()
 
@@ -170,4 +176,4 @@ kraken_import_nuget_packages("source/kraken/server/kraken_server")
 kraken_import_nuget_packages("source/kraken/universe/kraken_universe")
 kraken_import_nuget_packages("source/kraken/wm/kraken_wm")
 
-kraken_import_nuget_packages("intern/utfconv/utfconv")
+kraken_import_nuget_packages("intern/utfconv/kraken_intern_utfconv")

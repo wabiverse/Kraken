@@ -284,7 +284,6 @@ function(kraken_add_lib__impl
   endif()
 
   if(WIN32)
-    set_property(TARGET ${name} APPEND_STRING PROPERTY LINK_FLAGS " /WINMD")
     set_property(TARGET ${name} PROPERTY VS_WINRT_COMPONENT OFF)
   endif()
 

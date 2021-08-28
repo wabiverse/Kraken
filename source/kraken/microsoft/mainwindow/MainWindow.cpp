@@ -33,17 +33,17 @@
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 
-using namespace Kraken;
-using namespace Kraken::implementation;
+using namespace kraken;
+using namespace kraken::implementation;
 
 
-namespace winrt::Kraken::implementation
+namespace winrt::kraken::implementation
 {
   MainWindow::MainWindow()
   {
-    winrt_make_Kraken_MainWindow();
+    winrt_make_kraken_MainWindow();
   }
 
   MainWindow::~MainWindow()
   {}
-}  // namespace winrt::Kraken::implementation
+}  // namespace winrt::kraken::implementation

@@ -26,18 +26,18 @@
 
 #include "MainWindow.g.h"
 
-namespace winrt::Kraken::implementation
+namespace winrt::kraken::implementation
 {
   struct MainWindow : MainWindowT<MainWindow>
   {
     MainWindow();
     ~MainWindow();
   };
-}  // namespace winrt::Kraken::implementation
+}  // namespace winrt::kraken::implementation
 
 
-namespace winrt::Kraken::factory_implementation
+namespace winrt::kraken::factory_implementation
 {
   struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>
   {};
-}  // namespace winrt::Kraken::factory_implementation
+}  // namespace winrt::kraken::factory_implementation

@@ -37,8 +37,8 @@ using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::Microsoft::UI::Xaml::Navigation;
 
-using namespace Kraken;
-using namespace Kraken::implementation;
+using namespace kraken;
+using namespace kraken::implementation;
 
 
 App::App()

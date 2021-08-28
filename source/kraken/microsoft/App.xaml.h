@@ -26,7 +26,7 @@
 
 #include "App.xaml.g.h"
 
-namespace winrt::Kraken::implementation
+namespace winrt::kraken::implementation
 {
   struct App : AppT<App>
   {
@@ -37,4 +37,4 @@ namespace winrt::Kraken::implementation
    private:
     winrt::Microsoft::UI::Xaml::Window window{nullptr};
   };
-}  // namespace winrt::Kraken::implementation
+}  // namespace winrt::kraken::implementation

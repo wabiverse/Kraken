@@ -55,8 +55,8 @@ using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::Microsoft::UI::Xaml::Navigation;
 
-using namespace Kraken;
-using namespace Kraken::implementation;
+using namespace kraken;
+using namespace kraken::implementation;
 #endif /* defined(ARCH_OS_WINDOWS) */
 
 WABI_NAMESPACE_USING
@@ -128,7 +128,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
   winrt::init_apartment();
   Application::Start([](auto &&) {
-    ::winrt::make<::winrt::Kraken::implementation::App>();
+    ::winrt::make<::winrt::kraken::implementation::App>();
   });
 
   CREATOR_kraken_main();

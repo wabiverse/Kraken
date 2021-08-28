@@ -425,10 +425,10 @@ if(WIN32)
   )
 
   # important to make a clean  install each time, else old scripts get loaded.
-  install(
-    CODE
-    "file(REMOVE_RECURSE ./AppX/${TARGETDIR_VER})"
-  )
+  # install(
+  #   CODE
+  #   "file(REMOVE_RECURSE ./AppX/${TARGETDIR_VER})"
+  # )
 
   install(
     FILES
@@ -1394,6 +1394,9 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
   
   set_target_properties(kraken PROPERTIES
     VS_WINRT_COMPONENT OFF
+    VS_GLOBAL_WindowsPackageType "MSIX"
+    VS_GLOBAL_AppxPackage "true"
+    VS_GLOBAL_OutputType "WinExe"
   )
 
   # Installs NuGet Packages.
