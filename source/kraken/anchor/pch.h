@@ -32,13 +32,13 @@
 #  include <restrictederrorinfo.h>
 #  include <hstring.h>
 
-#ifdef GetCurrentTime
+#  ifdef GetCurrentTime
 /**
  * Resolve a conflict between
  * windows.h and winrt which
  * both define this macro. */
-#  undef GetCurrentTime
-#endif /* GetCurrentTime */
+#    undef GetCurrentTime
+#  endif /* GetCurrentTime */
 
 #  include <winrt/base.h>
 #  include <winrt/Windows.Foundation.h>

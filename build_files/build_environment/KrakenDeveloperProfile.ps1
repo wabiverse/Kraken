@@ -72,6 +72,16 @@ function RunDevelopmentReleaseKraken {
   }
 }
 
+function PackageKraken {
+  & "C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\microsoft.windows.sdk.buildtools\10.0.22414.2000-preview.rs-prerelease\bin\10.0.22414.0\x64\makeappx.exe" pack /v /h SHA256 /d "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/AppX" /p "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/Kraken.msix"
+  & "C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\microsoft.windows.sdk.buildtools\10.0.22414.2000-preview.rs-prerelease\bin\10.0.22414.0\x64\signtool.exe" sign /fd SHA256 /sha1 bfa7030dc5376b044f7b68d9c7a32f44a086ddbf "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/Kraken.msix"
+}
+
+function InstallKrakenPackage {
+  import-module AppX -usewindowspowershell
+  Add-AppXPackage $env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/Kraken.msix
+}
+
 function RunDevelopmentDebugKraken {
   if($IsWindows) {
     & "$env:USERPROFILE\dev\build_KRAKEN_Debug\bin\Debug\kraken.exe" $args

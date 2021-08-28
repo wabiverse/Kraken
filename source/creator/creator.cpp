@@ -110,8 +110,19 @@ void CREATOR_kraken_main(int argc, const char **argv)
 #endif /* WITH_MAIN_INIT */
 }
 
-#if !defined(ARCH_OS_WINDOWS)
+#if defined(ARCH_OS_WINDOWS)
 
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
+{
+  winrt::init_apartment();
+  Application::Start([](auto &&) {
+    make<App>();
+  });
+
+  return KRAKEN_SUCCESS;
+}
+
+#else /* defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN) */
 
 int main(int argc, const char **argv)
 {
@@ -119,22 +130,5 @@ int main(int argc, const char **argv)
 
   return KRAKEN_SUCCESS;
 }
-
-
-#else /* defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN) */
-
-
-int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
-{
-  winrt::init_apartment();
-  Application::Start([](auto &&) {
-    ::winrt::make<::winrt::kraken::implementation::App>();
-  });
-
-  CREATOR_kraken_main();
-
-  return KRAKEN_SUCCESS;
-}
-
 
 #endif /* defined (ARCH_OS_WINDOWS) */

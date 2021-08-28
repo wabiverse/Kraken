@@ -94,8 +94,7 @@ if(WIN32)
     ../kraken/microsoft/MainWindow.h
 
     # APPLICATION MANIFESTS
-    # ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxManifest
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
 
     # DESKTOP ICON & CURSOR RESOURCES
     ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
@@ -105,15 +104,23 @@ if(WIN32)
   )
 
   set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
+    PROPERTIES 
+      VS_DEPLOYMENT_CONTENT 1
+  )
+
+  set_source_files_properties(
     ../kraken/microsoft/app/App.xaml
     PROPERTIES
       VS_XAML_TYPE ApplicationDefinition
+      VS_DEPLOYMENT_CONTENT 1
   )
 
   set_source_files_properties(
     ../kraken/microsoft/mainwindow/MainWindow.xaml
     PROPERTIES
       VS_XAML_TYPE Window
+      VS_DEPLOYMENT_CONTENT 1
   )
 endif()
 
@@ -284,6 +291,8 @@ else()
     kraken_precompile_headers(kraken pch.cpp pch.h)
     set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT OFF
+      VS_DEPLOYMENT_LOCATION "${CMAKE_BINARY_DIR}/bin/Release/AppX"
+      VS_SOLUTION_DEPLOY ON
     )
   endif()
 endif()
@@ -1411,6 +1420,13 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/Debug/${KRAKEN_VERSION}
             DESTINATION "./AppX/.")
   endif()
+
+  install(
+    TARGETS kraken
+    DESTINATION
+      "./AppX/."
+  )
+
 endif()
 
 # -----------------------------------------------------------------------------

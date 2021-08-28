@@ -59,6 +59,5 @@ App::App()
 
 void App::OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const &)
 {
-  window = make<MainWindow>();
-  window.Activate();
+  window = Window::Current();
 }
