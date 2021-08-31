@@ -116,29 +116,12 @@ function(kraken_winrt_metadata_hotfix)
   # in kraken.dir/Release/kraken.dir/Release ...
   if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd)
     file(
-      RENAME
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/App.winmd
-    )
-    file(
-      RENAME
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainWindow.winmd
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/MainWindow.winmd
-    )
-    file(
-      RENAME
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
-    )
-  endif()
-  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/App.winmd)
-    file(
       COPY
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/App.winmd
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/MainWindow.winmd
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd
+        # ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainWindow.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
       DESTINATION
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged
     )
   endif()
   if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged)
@@ -162,6 +145,7 @@ endfunction()
 # As Nuget imports have already been added to wabi_library(xxx) macros
 kraken_import_nuget_packages("maelstrom")
 
+kraken_import_nuget_packages("source/creator/buildinfo")
 kraken_import_nuget_packages("source/creator/kraken")
 kraken_import_nuget_packages("source/kraken/anchor/kraken_anchor")
 kraken_import_nuget_packages("source/kraken/editors/code/kraken_editor_code")

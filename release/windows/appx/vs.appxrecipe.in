@@ -37,10 +37,6 @@
       <PackagePath>kraken.exe</PackagePath>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\lib\Release\maelstrom.winmd">
-      <PackagePath>maelstrom.winmd</PackagePath>
-      <Modified>@GEN_TIME@</Modified>
-    </AppxPackagedFile>
     <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1\lib\native\Microsoft.ApplicationModel.Resources.winmd">
       <PackagePath>Microsoft.ApplicationModel.Resources.winmd</PackagePath>
       <Modified>@GEN_TIME@</Modified>
@@ -325,10 +321,17 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\source\creator\assets\kraken-file-256.png">
       <PackagePath>assets\kraken-file-256.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>@GEN_TIME@</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\Release\kraken\microsoft\app\App.xbf">
+      <PackagePath>kraken\microsoft\app\App.xbf</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\Release\resources.pri">
       <PackagePath>resources.pri</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
 @DEPENDENT_DLLS@

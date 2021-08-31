@@ -24,14 +24,24 @@
 
 #pragma once
 
-#include "MainWindow.g.h"
+#ifdef WITH_WINUI3
+#  include "MainWindow.g.h"
 
 namespace winrt::kraken::implementation
 {
   struct MainWindow : MainWindowT<MainWindow>
   {
     MainWindow();
-    ~MainWindow();
+
+    winrt::AppWindow AppWindow();
+
+   private:
+    winrt::AppWindow GetAppWindowForCurrentWindow();
+
+    winrt::AppWindow m_mainAppWindow{ nullptr };
+    hstring m_windowTitle = L"Kraken";
+
+    bool m_contentLoaded;
   };
 }  // namespace winrt::kraken::implementation
 
@@ -41,3 +51,5 @@ namespace winrt::kraken::factory_implementation
   struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>
   {};
 }  // namespace winrt::kraken::factory_implementation
+
+#endif /* WITH_WINUI3 */

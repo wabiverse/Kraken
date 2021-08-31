@@ -48,6 +48,14 @@ file(TO_CMAKE_PATH
   "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.1.0.0-experimental1/build/Microsoft.WindowsAppSDK"
   MICROSOFT_APP_SDK_BUILD_EXPERIMENTAL
 )
+file(TO_CMAKE_PATH
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.UI.Xaml.2.7.0-prerelease.210827001/build/native/Microsoft.UI.Xaml"
+  MICROSOFT_UI_XAML
+)
+file(TO_CMAKE_PATH
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.Web.WebView2.1.0.955-prerelease/build/native/Microsoft.Web.WebView2"
+  MICROSOFT_WEB_WEBVIEW
+)
 
 file(TO_CMAKE_PATH 
   "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Redist\\MSVC\\14.30.30423\\x64\\Microsoft.VC142.CRT"
@@ -70,19 +78,24 @@ if(${proj_path} STREQUAL "source/creator/kraken")
   file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Project ToolsVersion=\"15.0\" DefaultTargets=\"Build\" xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_DWRITE}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_DWRITE}.props\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_WINUI}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_WINUI}.props\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_FOUNDATION}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_FOUNDATION}.props\')\" />
-  <Import Project=\"${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\')\" />
+  <ItemGroup>
+    <PackageReference Include=\"Microsoft.Windows.CppWinRT\" Version=\"2.0.210825.3\" />
+    <PackageReference Include=\"Microsoft.UI.Xaml\" Version=\"2.7.0-prerelease.210827001\" />
+    <PackageReference Include=\"Microsoft.Web.WebView2\" Version=\"1.0.955-prerelease\" />
+    <Manifest Include=\"$(ApplicationManifest)\" />
+  </ItemGroup>
   <PropertyGroup Label=\"Globals\">
     <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
     <WindowsSdkPackageVersion>10.0.22000.160-preview</WindowsSdkPackageVersion>
     <AppxPackage>true</AppxPackage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetOsVersion>10.0</TargetOsVersion>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
+    <PackageCertificateKeyFile>wabianimation.kraken3d.pfx</PackageCertificateKeyFile>
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
-    <AppContainerApplication>false</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <WindowsTargetPlatformVersion Condition=\" \'$(WindowsTargetPlatformVersion)\' == \'\' \">10.0</WindowsTargetPlatformVersion>
@@ -407,25 +420,16 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     </Content>
   </ItemGroup>
   <ImportGroup Label=\"ExtensionTargets\">
-    <Import Project=\"${MICROSOFT_APP_SDK_FOUNDATION}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_FOUNDATION}.targets\')\" />
-    <Import Project=\"${MICROSOFT_APP_SDK_WINUI}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_WINUI}.targets\')\" />
-    <Import Project=\"${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\')\" />
-    <Import Project=\"${MICROSOFT_APP_SDK_DWRITE}.targets\" Condition=\"Exists(\'${MICROSOFT_APP_SDK_DWRITE}.targets\')\" />
+    <Import Project=\"${MICROSOFT_UI_XAML}.targets\" Condition=\"Exists(\'${MICROSOFT_UI_XAML}.targets\')\" />
+    <Import Project=\"${MICROSOFT_WEB_WEBVIEW}.targets\" Condition=\"Exists(\'${MICROSOFT_WEB_WEBVIEW}.targets\')\" />
     <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.targets\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.targets\')\" />
   </ImportGroup>
   <Target Name=\"EnsureNuGetPackageBuildImports\" BeforeTargets=\"PrepareForBuild\">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_EXPERIMENTAL}.props\'))\" />
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_FOUNDATION}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_FOUNDATION}.props\'))\" />
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_FOUNDATION}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_FOUNDATION}.targets\'))\" />
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_WINUI}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_WINUI}.props\'))\" />
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_WINUI}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_WINUI}.targets\'))\" />
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.props\'))\" />
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_INTERACTIVE_EXPERIENCES}.targets\'))\" />
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_DWRITE}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_DWRITE}.props\'))\" />
-    <Error Condition=\"!Exists(\'${MICROSOFT_APP_SDK_DWRITE}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_APP_SDK_DWRITE}.targets\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_UI_XAML}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_UI_XAML}.targets\'))\" />
+    <Error Condition=\"!Exists(\'${MICROSOFT_WEB_WEBVIEW}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_WEB_WEBVIEW}.targets\'))\" />
     <Error Condition=\"!Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_CPP_WINRT_PROJECT}.props\'))\" />
     <Error Condition=\"!Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.targets\')\" Text=\"$([System.String]::Format(\'$(ErrorText)\', \'${MICROSOFT_CPP_WINRT_PROJECT}.targets\'))\" />
   </Target>
@@ -449,6 +453,9 @@ else()
     <MinimalCoreWin>true</MinimalCoreWin>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetOsVersion>10.0</TargetOsVersion>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <UseWinUI>true</UseWinUI>
@@ -962,14 +969,14 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/AppxManifest.xml)
   )
 endif()
 
-if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/resources.pri)
-execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& MakePri.exe new /cf ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/priconfig.xml /pr ${CMAKE_BINARY_DIR}/source/creator/ /in Kraken"
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-file(RENAME
-  ${CMAKE_BINARY_DIR}/resources.pri
-  ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/resources.pri
-)
-endif()
+# if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/resources.pri)
+# execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& MakePri.exe new /cf ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/priconfig.xml /pr ${CMAKE_BINARY_DIR}/source/creator/ /in Kraken"
+#                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+# file(RENAME
+#   ${CMAKE_BINARY_DIR}/resources.pri
+#   ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/resources.pri
+# )
+# endif()
 
 file(TO_CMAKE_PATH
   "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.210825.3/bin/cppwinrt.exe"

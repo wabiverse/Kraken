@@ -7,6 +7,13 @@ if(WIN32)
       "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
     )
   endif()
+  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft")
+    set(KRAKEN_MICROSOFT_SDK
+      "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
+      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft/app"
+      # "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft/mainwindow"
+    )
+  endif()
   set(KRAKEN_MICROSOFT
     # FOR PREFIXES LIKE KRAKEN.MICROSOFT.APP
     ../../source
@@ -80,18 +87,26 @@ if(WIN32)
 
   set(WINDOWS_PACKAGE_SRC
     # APPLICATION DEFINITION SOURCE
-    ../kraken/microsoft/app/App.cpp
+    ../kraken/microsoft/app/App.xaml.cpp
     ../kraken/microsoft/app/App.xaml
     ../kraken/microsoft/app/App.idl
 
     # MAIN WINDOW SOURCE
-    ../kraken/microsoft/mainwindow/MainWindow.cpp
-    ../kraken/microsoft/mainwindow/MainWindow.xaml
-    ../kraken/microsoft/mainwindow/MainWindow.idl
+    #
+    # Disabled until WinUI v3.0 actually supports the
+    # latest Windows 11 SDK features, which are currently
+    # only available in WinUI v2.6+, Microsoft seems to
+    # express the latest Windows features are available
+    # in WinUI v3.0, which is wrong. As WinUI v3.0 does
+    # not support Mica Material or any Windows 11 features.
+    #
+    # ../kraken/microsoft/mainwindow/MainWindow.cpp
+    # ../kraken/microsoft/mainwindow/MainWindow.xaml
+    # ../kraken/microsoft/mainwindow/MainWindow.idl
 
     # KRAKEN PROJECTION RUNTIME HEADERS
     ../kraken/microsoft/App.xaml.h
-    ../kraken/microsoft/MainWindow.h
+    # ../kraken/microsoft/MainWindow.h
 
     # APPLICATION MANIFESTS
     ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
@@ -119,7 +134,7 @@ if(WIN32)
   set_source_files_properties(
     ../kraken/microsoft/mainwindow/MainWindow.xaml
     PROPERTIES
-      VS_XAML_TYPE Window
+      VS_XAML_TYPE Page
       VS_DEPLOYMENT_CONTENT 1
   )
 endif()
@@ -1426,6 +1441,18 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     DESTINATION
       "./AppX/."
   )
+
+  install(
+    DIRECTORY
+      ${CMAKE_BINARY_DIR}/bin/Release/kraken
+    DESTINATION
+      "./AppX/."
+  )
+  
+  # Call this a second time just to be
+  # sure the metadata is where MSVC is
+  # attempting to look for it.
+  kraken_winrt_metadata_hotfix()
 
 endif()
 

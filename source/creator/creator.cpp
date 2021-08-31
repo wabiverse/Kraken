@@ -26,10 +26,12 @@
 #  include "pch.h"
 #  include "winrt/Kraken.h"
 
-#  include "Kraken/Microsoft/App.xaml.h"
-#  include "Kraken/Microsoft/MainWindow.h"
+#  include "Kraken/Microsoft/App.Xaml.h"
+#  ifdef WITH_WINUI3
+#    include "Kraken/Microsoft/MainWindow.h"
+#  endif /* WITH_WINUI3 */
 
-#  include "App.xaml.g.h"
+#  include "App.Xaml.g.h"
 #endif /* _WIN32 */
 
 #include "creator.h"
@@ -53,8 +55,9 @@ using namespace winrt::Windows::ApplicationModel::Activation;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
+#  ifdef WITH_WINUI3
 using namespace winrt::Microsoft::UI::Xaml::Navigation;
-
+#  endif /* WITH_WINUI3 */
 using namespace kraken;
 using namespace kraken::implementation;
 #endif /* defined(ARCH_OS_WINDOWS) */
@@ -115,8 +118,8 @@ void CREATOR_kraken_main(int argc, const char **argv)
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
   winrt::init_apartment();
-  Application::Start([](auto &&) {
-    make<App>();
+  Windows::UI::Xaml::Application::Start([](auto&&) {
+    ::winrt::make<::winrt::kraken::implementation::App>();
   });
 
   return KRAKEN_SUCCESS;

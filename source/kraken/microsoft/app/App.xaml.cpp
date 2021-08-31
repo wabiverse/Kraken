@@ -24,18 +24,21 @@
 
 #include "pch.h"
 
-#include "Kraken/Microsoft/App.xaml.h"
-#include "Kraken/Microsoft/MainWindow.h"
+#include "Kraken/Microsoft/App.Xaml.h"
 
-#include "winrt/Microsoft.UI.Xaml.h"
+#ifdef WITH_WINUI3
+#  include "Kraken/Microsoft/MainWindow.h"
+#endif /* WITH_WINUI3 */
 
 using namespace winrt;
-using namespace winrt::Windows::ApplicationModel;
-using namespace winrt::Windows::ApplicationModel::Activation;
-using namespace winrt::Windows::Foundation;
-using namespace winrt::Microsoft::UI::Xaml;
-using namespace winrt::Microsoft::UI::Xaml::Controls;
-using namespace winrt::Microsoft::UI::Xaml::Navigation;
+using namespace Windows::Foundation;
+using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Controls;
+using namespace Microsoft::UI::Xaml::Media;
+
+#ifdef WITH_WINUI3
+using namespace Microsoft::UI::Xaml::Navigation;
+#endif /* WITH_WINUI3 */
 
 using namespace kraken;
 using namespace kraken::implementation;
@@ -57,7 +60,26 @@ App::App()
 }
 
 
-void App::OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const &)
+void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &args)
 {
-  window = Window::Current();
+  Windows::UI::Xaml::Window window = Windows::UI::Xaml::Window::Current();
+
+  winrt::MenuBar menubar = winrt::MenuBar();
+  {
+    winrt::MenuBarItem krakenMenu = winrt::MenuBarItem();
+    krakenMenu.Title(L"Kraken");
+
+    winrt::MenuBarItem fileMenu = winrt::MenuBarItem();
+    fileMenu.Title(L"File");
+
+    winrt::MenuBarItem editMenu = winrt::MenuBarItem();
+    editMenu.Title(L"Edit");
+
+    winrt::MenuBarItem helpMenu = winrt::MenuBarItem();
+    helpMenu.Title(L"Help");
+  }
+
+  window.Content(menubar);
+
+  window.Activate();
 }

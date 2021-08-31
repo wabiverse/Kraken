@@ -24,26 +24,52 @@
 
 #include "pch.h"
 
+#ifdef WITH_WINUI3
+
 #include "Kraken/Microsoft/MainWindow.h"
 
 #if __has_include("MainWindow.g.cpp")
 #  include "MainWindow.g.cpp"
-#endif
+#endif /* MainWindow.g.cpp */
+#if __has_include("Kraken/Microsoft/MainWindow/MainWindow.Xaml.g.hpp")
+#  include "Kraken/Microsoft/MainWindow/MainWindow.Xaml.g.hpp"
+#endif /* MainWindow.Xaml.g.hpp */
+
 
 using namespace winrt;
-using namespace winrt::Microsoft::UI::Xaml;
-
-using namespace kraken;
-using namespace kraken::implementation;
+using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Xaml::Controls;
 
 
 namespace winrt::kraken::implementation
 {
   MainWindow::MainWindow()
   {
-    winrt_make_kraken_MainWindow();
+    InitializeComponent();
+    m_mainAppWindow = GetAppWindowForCurrentWindow();
+    this->Title(m_windowTitle);
   }
 
-  MainWindow::~MainWindow()
-  {}
+  winrt::AppWindow MainWindow::AppWindow()
+  {
+    return m_mainAppWindow;
+  }
+
+  winrt::AppWindow MainWindow::GetAppWindowForCurrentWindow()
+  {
+    winrt::kraken::MainWindow thisWindow = *this;
+    winrt::com_ptr<IWindowNative> windowNative = thisWindow.as<IWindowNative>();
+
+    HWND hWnd;
+    windowNative->get_WindowHandle(&hWnd);
+
+    winrt::WindowId windowId;
+    winrt::GetWindowIdFromWindowHandle(hWnd, &windowId);
+
+    Microsoft::UI::Windowing::AppWindow appWindow = Microsoft::UI::Windowing::AppWindow::GetFromWindowId(windowId);
+
+    return appWindow;
+  }
 }  // namespace winrt::kraken::implementation
+
+#endif /* WITH_WINUI3 */

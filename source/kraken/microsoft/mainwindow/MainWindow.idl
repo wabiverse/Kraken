@@ -6,5 +6,9 @@ namespace kraken
   runtimeclass MainWindow : Microsoft.UI.Xaml.Window
   {
     MainWindow();
-  }
+
+    Microsoft.UI.Windowing.AppWindow AppWindow { get; };
+    Microsoft.UI.Xaml.Controls.Grid TitleBar{ get; };
+    Microsoft.UI.Xaml.Controls.Image WindowIcon{ get; };
+  };
 }
