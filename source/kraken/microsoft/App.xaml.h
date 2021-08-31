@@ -36,11 +36,12 @@ namespace winrt::kraken::implementation
   {
     App();
 
-    void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const& args);
-  
+    void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &args);
+
 #ifdef WITH_WINUI3
+
    private:
-    winrt::Microsoft::UI::Xaml::Window window{ nullptr };
+    winrt::Microsoft::UI::Xaml::Window window{nullptr};
 #endif /* WITH_WINUI3 */
   };
 }  // namespace winrt::kraken::implementation

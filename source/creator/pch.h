@@ -91,7 +91,7 @@ namespace winrt
   using namespace Windows::Graphics;
   using namespace Windows::Foundation;
   using namespace Windows::Foundation::Collections;
-}
+}  // namespace winrt
 
 #  ifdef WITH_WINUI3
 #    include "Kraken/Microsoft/MainWindow.h"

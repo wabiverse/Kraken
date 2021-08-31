@@ -26,14 +26,14 @@
 
 #ifdef WITH_WINUI3
 
-#include "Kraken/Microsoft/MainWindow.h"
+#  include "Kraken/Microsoft/MainWindow.h"
 
-#if __has_include("MainWindow.g.cpp")
-#  include "MainWindow.g.cpp"
-#endif /* MainWindow.g.cpp */
-#if __has_include("Kraken/Microsoft/MainWindow/MainWindow.Xaml.g.hpp")
-#  include "Kraken/Microsoft/MainWindow/MainWindow.Xaml.g.hpp"
-#endif /* MainWindow.Xaml.g.hpp */
+#  if __has_include("MainWindow.g.cpp")
+#    include "MainWindow.g.cpp"
+#  endif /* MainWindow.g.cpp */
+#  if __has_include("Kraken/Microsoft/MainWindow/MainWindow.Xaml.g.hpp")
+#    include "Kraken/Microsoft/MainWindow/MainWindow.Xaml.g.hpp"
+#  endif /* MainWindow.Xaml.g.hpp */
 
 
 using namespace winrt;

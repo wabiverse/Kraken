@@ -118,7 +118,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
   winrt::init_apartment();
-  Windows::UI::Xaml::Application::Start([](auto&&) {
+  Windows::UI::Xaml::Application::Start([](auto &&) {
     ::winrt::make<::winrt::kraken::implementation::App>();
   });
 

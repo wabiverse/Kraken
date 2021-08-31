@@ -38,7 +38,7 @@ namespace winrt::kraken::implementation
    private:
     winrt::AppWindow GetAppWindowForCurrentWindow();
 
-    winrt::AppWindow m_mainAppWindow{ nullptr };
+    winrt::AppWindow m_mainAppWindow{nullptr};
     hstring m_windowTitle = L"Kraken";
 
     bool m_contentLoaded;
