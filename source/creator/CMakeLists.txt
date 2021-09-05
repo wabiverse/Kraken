@@ -11,6 +11,7 @@ if(WIN32)
     set(KRAKEN_MICROSOFT_SDK
       "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
       "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft/app"
+      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft/mainpage"
       # "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft/mainwindow"
     )
   endif()
@@ -104,9 +105,14 @@ if(WIN32)
     # ../kraken/microsoft/mainwindow/MainWindow.xaml
     # ../kraken/microsoft/mainwindow/MainWindow.idl
 
+    ../kraken/microsoft/mainpage/MainPage.cpp
+    ../kraken/microsoft/mainpage/MainPage.xaml
+    ../kraken/microsoft/mainpage/MainPage.idl
+
     # KRAKEN PROJECTION RUNTIME HEADERS
     ../kraken/microsoft/App.xaml.h
     # ../kraken/microsoft/MainWindow.h
+    ../kraken/microsoft/MainPage.h
 
     # APPLICATION MANIFESTS
     ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
@@ -133,6 +139,13 @@ if(WIN32)
 
   set_source_files_properties(
     ../kraken/microsoft/mainwindow/MainWindow.xaml
+    PROPERTIES
+      VS_XAML_TYPE Page
+      VS_DEPLOYMENT_CONTENT 1
+  )
+
+  set_source_files_properties(
+    ../kraken/microsoft/mainpage/MainPage.xaml
     PROPERTIES
       VS_XAML_TYPE Page
       VS_DEPLOYMENT_CONTENT 1

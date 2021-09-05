@@ -119,6 +119,7 @@ function(kraken_winrt_metadata_hotfix)
       COPY
         ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd
         # ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainWindow.winmd
+        # ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainPage.winmd
         ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
       DESTINATION
         ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged

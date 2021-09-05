@@ -18,26 +18,25 @@
 
 /**
  * @file
- * Creator.
- * Creating Chaos.
+ * Microsoft.
+ * KrakenRT.
  */
 
 #pragma once
 
-#include <wabi/base/arch/defines.h>
+#include "MainPage.g.h"
 
-#include "KLI_utildefines.h"
+namespace winrt::kraken::implementation
+{
+  struct MainPage : MainPageT<MainPage>
+  {
+    MainPage();
+  };
+}  // namespace winrt::kraken::implementation
 
-/**
- *  -----  Kraken's Main Startup. ----- */
 
-void CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
-
-/**
- *  -----  Creator's Args. ----- */
-
-void CREATOR_setup_args(int argc, const char **argv);
-
-int CREATOR_parse_args(int argc, const char **argv);
-
-/* ------ */
+namespace winrt::kraken::factory_implementation
+{
+  struct MainPage : MainPageT<MainPage, implementation::MainPage>
+  {};
+}  // namespace winrt::kraken::factory_implementation

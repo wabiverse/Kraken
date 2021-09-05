@@ -26,6 +26,8 @@
 
 #include "App.Xaml.g.h"
 
+#include "KLI_utildefines.h"
+
 #ifdef WITH_WINUI3
 #  include "Kraken/Microsoft/MainWindow.h"
 #endif /* WITH_WINUI3 */

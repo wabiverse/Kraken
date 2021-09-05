@@ -1,0 +1,10 @@
+// Copyright © 2021 Wabi Animation Studios. All rights reserved.
+
+namespace kraken
+{
+  [default_interface]
+  runtimeclass MainPage : Windows.UI.Xaml.Controls.Page
+  {
+    MainPage();
+  }
+}

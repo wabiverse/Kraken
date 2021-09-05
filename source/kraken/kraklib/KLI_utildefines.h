@@ -42,6 +42,7 @@ typedef unsigned __int64 size_t;
 
 /* base */
 #include <wabi/base/arch/export.h>
+#include <wabi/base/tf/stringUtils.h>
 
 /* kraklib */
 #include "KLI_compiler_attrs.h"
@@ -722,11 +723,11 @@ namespace fs = std::filesystem;
 
 #define FIND_TOKEN(i) (TfToken::Find(i))
 
-#define STRINGALL(x) TfStringify(x)
-#define CHARALL(x) TfStringify(x).c_str()
+#define STRINGALL(x) wabi::TfStringify(x)
+#define CHARALL(x) wabi::TfStringify(x).c_str()
 
-#define CONCAT(a, b) TfStringCatPaths(a, b).c_str()
-#define STRCAT(a, b) TfStringCatPaths(a, b)
+#define CONCAT(a, b) wabi::TfStringCatPaths(a, b).c_str()
+#define STRCAT(a, b) wabi::TfStringCatPaths(a, b)
 
 #define CHARSTR(a) a.c_str()
 
@@ -764,4 +765,5 @@ typedef unsigned char uchar;
 
 #ifdef _WIN32
 #  define setenv(x, y, z) _putenv(CHARALL(STRINGALL(x) + "=" + y))
+#  define DebugOutput(w) OutputDebugString(TEXT(w))
 #endif

@@ -28,6 +28,8 @@
 
 #ifdef WITH_WINUI3
 #  include "Kraken/Microsoft/MainWindow.h"
+#else
+#  include "Kraken/Microsoft/MainPage.h"
 #endif /* WITH_WINUI3 */
 
 using namespace winrt;
@@ -63,23 +65,24 @@ App::App()
 void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &args)
 {
   Windows::UI::Xaml::Window window = Windows::UI::Xaml::Window::Current();
+  Windows::UI::Xaml::Controls::Frame frame{ nullptr };
 
-  winrt::MenuBar menubar = winrt::MenuBar();
-  {
-    winrt::MenuBarItem krakenMenu = winrt::MenuBarItem();
-    krakenMenu.Title(L"Kraken");
-
-    winrt::MenuBarItem fileMenu = winrt::MenuBarItem();
-    fileMenu.Title(L"File");
-
-    winrt::MenuBarItem editMenu = winrt::MenuBarItem();
-    editMenu.Title(L"Edit");
-
-    winrt::MenuBarItem helpMenu = winrt::MenuBarItem();
-    helpMenu.Title(L"Help");
+  auto content = window.Content();
+  if(content) {
+    frame = content.try_as<Windows::UI::Xaml::Controls::Frame>();
   }
 
-  window.Content(menubar);
+  if(frame == nullptr) {
+    frame = Windows::UI::Xaml::Controls::Frame();
+  }
 
-  window.Activate();
+  if(args.PrelaunchActivated() == false) {
+
+    if(frame.Content() == nullptr) {
+      frame.Navigate(xaml_typename<kraken::MainPage>(), box_value(args.Arguments()));
+    }
+    
+    window.Content(frame);
+    window.Activate();
+  }
 }

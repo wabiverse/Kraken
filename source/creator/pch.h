@@ -47,7 +47,10 @@
 #  include <winrt/Windows.Foundation.Collections.h>
 #  include <winrt/Windows.ApplicationModel.Activation.h>
 #  include <winrt/Windows.ApplicationModel.Core.h>
+#  include <winrt/Windows.UI.h>
 #  include <winrt/Windows.UI.Core.h>
+#  include <winrt/Windows.UI.Xaml.Interop.h>
+#  include <winrt/Windows.UI.Xaml.Markup.h>
 
 #  include <winrt/Microsoft.UI.Xaml.Automation.Peers.h>
 #  include <winrt/Microsoft.UI.Xaml.Controls.h>
@@ -57,8 +60,6 @@
 #  include <winrt/Microsoft.UI.Xaml.XamlTypeInfo.h>
 
 #  ifdef WITH_WINUI3
-#    include <winrt/Windows.UI.Xaml.Interop.h>
-
 #    include <winrt/Microsoft.UI.h>
 #    include <winrt/Microsoft.UI.Composition.h>
 #    include <winrt/Microsoft.UI.Interop.h>
@@ -77,24 +78,26 @@
 
 namespace winrt
 {
+#  ifdef WITH_WINUI3
   using namespace Microsoft::UI;
   using namespace Microsoft::UI::Xaml;
   using namespace Microsoft::UI::Xaml::Controls;
-#  ifdef WITH_WINUI3
   using namespace Microsoft::UI::Xaml::Navigation;
   using namespace Microsoft::UI::Windowing;
 #  endif /* WITH_WINUI3 */
-  using namespace Windows::UI;
-  using namespace Windows::UI::Core;
   using namespace Windows::ApplicationModel;
   using namespace Windows::ApplicationModel::Core;
   using namespace Windows::Graphics;
   using namespace Windows::Foundation;
   using namespace Windows::Foundation::Collections;
+  using namespace Windows::UI;
+  using namespace Windows::UI::Core;
 }  // namespace winrt
 
 #  ifdef WITH_WINUI3
 #    include "Kraken/Microsoft/MainWindow.h"
+#  else 
+#    include "Kraken/Microsoft/MainPage.h" 
 #  endif /* WITH_WINUI3 */
 
 #endif /* ARCH_OS_WINDOWS */
