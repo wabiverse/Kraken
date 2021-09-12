@@ -82,6 +82,11 @@ if Linux():
     SOURCE_DIR = "../../../lib/linux_centos7_x86_64/build_env/source"
     BUILD_DIR = "../../../lib/linux_centos7_x86_64/build_env/build"
 
+if MacOS():
+    INSTALL_DIR = "../../../lib/apple_darwin_x86_64"
+    SOURCE_DIR = "../../../lib/apple_darwin_x86_64/build_env/source"
+    BUILD_DIR = "../../../lib/apple_darwin_x86_64/build_env/build"
+
 def Python3():
     return sys.version_info.major == 3
 
@@ -2065,6 +2070,11 @@ class InstallContext:
             INSTALL_DIR = GetVisualStudioDirectories()[0]
             SOURCE_DIR = GetVisualStudioDirectories()[1]
             BUILD_DIR = GetVisualStudioDirectories()[2]
+
+        if MacOS():
+            INSTALL_DIR = "../../../lib/apple_darwin_x86_64"
+            SOURCE_DIR = "../../../lib/apple_darwin_x86_64/build_env/source"
+            BUILD_DIR = "../../../lib/apple_darwin_x86_64/build_env/build"
 
         # Directory where dependencies will be installed
         self.libInstDir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), INSTALL_DIR)).replace('\\', '/')

@@ -103,11 +103,19 @@ endif
 DEPS_INSTALL_SCRIPT:=$(KRAKEN_DIR)/build_files/build_environment/install_deps.py
 
 ifndef DEPS_BUILD_DIR
-    DEPS_BUILD_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/linux_centos7_x86_64/build_env/build
+	ifneq ($(OS_NCASE),darwin)
+      DEPS_BUILD_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/linux_centos7_x86_64/build_env/build
+	else
+      DEPS_BUILD_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/apple_darwin_x86_64/build_env/build
+	endif
 endif
 
 ifndef DEPS_INSTALL_DIR
-	DEPS_INSTALL_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/linux_centos7
+    ifneq ($(OS_NCASE),darwin)
+	    DEPS_INSTALL_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/linux_centos7
+	else
+	    DEPS_INSTALL_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/apple_darwin
+	endif
 
 	ifneq ($(OS_NCASE),darwin)
 		# Add processor type to directory name

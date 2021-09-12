@@ -75,7 +75,9 @@ void CREATOR_kraken_main(int argc, const char **argv)
   KKE_appdir_program_path_init();
 
   /* Initialize Threads. */
-  // KLI_threadapi_init();
+#if !defined(ARCH_OS_WINDOWS)
+  KLI_threadapi_init();
+#endif /* !defined(ARCH_OS_WINDOWS) */
 
   /* Initialize Globals (paths, sys). */
   KKE_kraken_globals_init();
@@ -83,7 +85,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
   /* Init plugins. */
   KKE_kraken_plugins_init();
 
-#ifdef WITH_CREATOR_ARGS
+#if !defined(ARCH_OS_WINDOWS)
   /**
    * Init & parse args. */
   CREATOR_setup_args(argc, (const char **)argv);
@@ -91,17 +93,14 @@ void CREATOR_kraken_main(int argc, const char **argv)
   {
     return;
   }
-#endif /* WITH_CREATOR_ARGS */
+#endif /* !defined(ARCH_OS_WINDOWS) */
 
   KKE_appdir_init();
 
   /* Determining Stage Configuration and Loadup. */
   KKE_kraken_main_init(C);
 
-#ifdef WITH_MAIN_INIT
-  /**
-   * The great refactor for WinRT. */
-
+#if !defined(ARCH_OS_WINDOWS)
   /* Initialize main Runtime. */
   WM_init(C);
 
@@ -110,7 +109,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
 
   /* Run the main event loop. */
   WM_main(C);
-#endif /* WITH_MAIN_INIT */
+#endif /* !defined(ARCH_OS_WINDOWS) */
 }
 
 #if defined(ARCH_OS_WINDOWS)
@@ -122,10 +121,12 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
     ::winrt::make<::winrt::kraken::implementation::App>();
   });
 
+  CREATOR_kraken_main();
+
   return KRAKEN_SUCCESS;
 }
 
-#else /* defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN) */
+#else /* ARCH_OS_WINDOWS */
 
 int main(int argc, const char **argv)
 {
@@ -134,4 +135,4 @@ int main(int argc, const char **argv)
   return KRAKEN_SUCCESS;
 }
 
-#endif /* defined (ARCH_OS_WINDOWS) */
+#endif /* ARCH_OS_LINUX || ARCH_OS_DARWIN */

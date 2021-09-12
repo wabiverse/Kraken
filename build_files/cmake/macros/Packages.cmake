@@ -293,11 +293,11 @@ if(WITH_DIRECTX)
   add_definitions(-DWITH_DIRECTX)
 endif()
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   find_package(X11)
 endif()
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   set(SDL2_INCLUDE_DIR /usr/include/SDL2)
   list(APPEND SDL2_LIBRARIES
     /usr/lib64/libSDL2.so
@@ -338,7 +338,8 @@ if(WIN32)
   set(Boost_THREAD_LIBRARY         ${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.lib)
 
 elseif(UNIX)
-  set(BOOST_ROOT "${LIBDIR}")
+  add_definitions(-DBoost_NO_BOOST_CMAKE=1)
+  # set(BOOST_ROOT "${LIBDIR}")
   find_package(Boost REQUIRED
                COMPONENTS
                  atomic
