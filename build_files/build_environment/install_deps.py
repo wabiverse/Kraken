@@ -950,7 +950,7 @@ def InstallBoost_Helper(context, force, buildArgs):
     # For some examples, see: https://svn.boost.org/trac10/ticket/11677
     dontExtract = ["*/doc/*", "*/libs/*/doc/*"]
 
-    with CurrentWorkingDirectory("C:/Users/tyler/dev/lib/win64_vc17/build_env/source/boost_1_76_0/boost_1_76_0"):
+    with CurrentWorkingDirectory(DownloadURL(BOOST_URL, context, force)):
         bootstrap = "bootstrap.bat" if Windows() else "./bootstrap.sh"
 
         if Windows():
