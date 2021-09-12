@@ -58,7 +58,7 @@ elseif(UNIX AND NOT APPLE)
   set(LIB_OBJ_EXT "so")
 elseif(APPLE)
   set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_x86_64)
-  set(LIB_OBJ_EXT "so")
+  set(LIB_OBJ_EXT "dylib")
 endif()
 
 # ! Important
