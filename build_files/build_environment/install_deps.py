@@ -1078,10 +1078,10 @@ if Windows():
     tbb_verify = "tbb/include/tbb/tbb.h"
     TBB_URL = "https://storage.googleapis.com/dependency_links/tbb2019_OSS.zip"
 elif Linux():
-    tbb_verify = "include/tbb/tbbbbb.h"
+    tbb_verify = "include/tbb/tbb.h"
     TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_lin.tgz"
 elif MacOS():
-    tbb_verify = "include/tbb/tbbbbb.h"
+    tbb_verify = "include/tbb/tbb.h"
     TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_mac.tgz"
 
 def InstallTBB(context, force, buildArgs):
