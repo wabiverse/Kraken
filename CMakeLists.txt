@@ -189,7 +189,7 @@ option(WITH_PRORENDER                "Enable AMD ProRender support"             
 option(WITH_CYCLES                   "Enable Cycles Renderer support"                                                             ON)
 option(WITH_RENDERMAN                "Enable RenderMan, Pixar's Render Engine"                                                    ON)
 option(WITH_PHOENIX                  "Enable Phoenix, real-time render engine support"                                            ON)
-option(WITH_EMBREE                   "Enable RenderMan, Pixar's Render Engine"                                                    ON)
+option(WITH_EMBREE                   "Enable Embree, Intel's Render Engine"                                                       ON)
 option(WITH_ALEMBIC                  "Enable Alembic Support"                                                                     ON)
 option(WITH_ALEMBIC_HDF5             "Enable HDF5 in Alembic for high performance data management and storage"                    ON)
 option(WITH_DRACO                    "Enable Draco Support"                                                                       ON)
@@ -216,7 +216,8 @@ if(WIN32) # Only Windows has DirectX Support.
 else()
   option(WITH_DIRECTX "Enable DirectX GFX API and components" OFF)
 endif()
-if(APPLE) # Only Apple has Metal Support.
+if(APPLE)
+  # Only Apple has Metal Support.
   option(WITH_METAL "Enable Metal GFX API and components" ON)
 else()
   option(WITH_METAL "Enable Metal GFX API and components" OFF)

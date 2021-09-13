@@ -1077,9 +1077,12 @@ BOOST = Dependency("boost", InstallBoost, BOOST_VERSION_FILE)
 if Windows():
     tbb_verify = "tbb/include/tbb/tbb.h"
     TBB_URL = "https://storage.googleapis.com/dependency_links/tbb2019_OSS.zip"
-else:
-    tbb_verify = "include/tbb/tbb.h"
+elif Linux():
+    tbb_verify = "include/tbb/tbbbbb.h"
     TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_lin.tgz"
+elif MacOS():
+    tbb_verify = "include/tbb/tbbbbb.h"
+    TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_mac.tgz"
 
 def InstallTBB(context, force, buildArgs):
     if Windows():
@@ -1120,10 +1123,15 @@ def InstallTBB_LinuxOrMacOS(context, force, buildArgs):
         # makes it easier for users to install dependencies in some
         # location that can be shared by both release and debug USD
         # builds. Plus, the TBB build system builds both versions anyway.
-        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/lib/intel64/gcc4.8", context.libInstDir + "/lib")
-        # CopyFiles(context, "lib/intel64/gcc4.8/*.*", )
-        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/include/serial", context.libInstDir + "/include/serial")
-        copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/include/tbb", context.libInstDir + "/include/tbb")
+        if Linux():
+          copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/lib/intel64/gcc4.8", context.libInstDir + "/lib")
+          # CopyFiles(context, "lib/intel64/gcc4.8/*.*", )
+          copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/include/serial", context.libInstDir + "/include/serial")
+          copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_lin/tbb2019_20191006oss/include/tbb", context.libInstDir + "/include/tbb")
+        else:
+          copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_mac/tbb2019_20191006oss/lib", context.libInstDir + "/lib")
+          copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_mac/tbb2019_20191006oss/include/serial", context.libInstDir + "/include/serial")
+          copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_mac/tbb2019_20191006oss/include/tbb", context.libInstDir + "/include/tbb")
 
 TBB = Dependency("TBB", InstallTBB, tbb_verify)
 
