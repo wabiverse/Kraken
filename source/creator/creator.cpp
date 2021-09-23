@@ -30,8 +30,6 @@
 #  ifdef WITH_WINUI3
 #    include "Kraken/Microsoft/MainWindow.h"
 #  endif /* WITH_WINUI3 */
-
-#  include "App.Xaml.g.h"
 #endif /* _WIN32 */
 
 #include "creator.h"
@@ -74,8 +72,8 @@ void CREATOR_kraken_main(int argc, const char **argv)
   /* Initialize path to executable. */
   KKE_appdir_program_path_init();
 
-  /* Initialize Threads. */
 #if !defined(ARCH_OS_WINDOWS)
+  /* Initialize Threads. */
   KLI_threadapi_init();
 #endif /* !defined(ARCH_OS_WINDOWS) */
 
@@ -86,8 +84,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
   KKE_kraken_plugins_init();
 
 #if !defined(ARCH_OS_WINDOWS)
-  /**
-   * Init & parse args. */
+  /* Init & parse args. */
   CREATOR_setup_args(argc, (const char **)argv);
   if (CREATOR_parse_args(argc, (const char **)argv) != 0)
   {

@@ -24,7 +24,9 @@
 
 #pragma once
 
-#include "App.Xaml.g.h"
+#if __has_include("App.Xaml.g.h")
+#  include "App.Xaml.g.h"
+#endif /* App.Xaml.g.h */
 
 #include "KLI_utildefines.h"
 
