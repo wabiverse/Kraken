@@ -938,7 +938,7 @@ elif Windows():
     # subdirectory, which we have to account for here. In theory, specifying
     # "layout=system" would make the Windows install match Linux/MacOS, but that
     # causes problems for other dependencies that look for boost.
-    BOOST_URL = "https://boostorg.jfrog.io/native/main/release/1.77.0/source/boost_1_77_0.zip"
+    BOOST_URL = "https://www.dropbox.com/s/y7b455m6c1bf9oj/boost_1_77_0.zip"
     BOOST_VERSION_FILE = "include/boost-1_77/boost/version.hpp"
 
 def InstallBoost_Helper(context, force, buildArgs):

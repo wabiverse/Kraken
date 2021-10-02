@@ -11,7 +11,11 @@ Kraken
    :target: https://wabi-kraken.readthedocs-hosted.com/_/sharing/1c32aeuqep6zdr4kk8sojmmi6
    :alt: Documentation Status
 
-*A pixel-crushing, render-ripping, GPU incinerating machine.*
+.. figure:: https://www.dropbox.com/s/00eo3o5ywf5frg3/cover.png?raw=1
+   :scale: 50 %
+   :align: center
+
+*Animators, Developers, Filmmakers, & Artists. This Belongs to You.*
 
 Home of the Kraken -- The free and open source 3D animation platform redefining
 animation composition, collaborative workflows, simulation engines, skeletal
@@ -23,10 +27,6 @@ of modern graphics demands, and push the framework for composition & design into
 the future.
 
 Join the community: https://discord.gg/aXP867Q
-
-.. figure:: https://www.dropbox.com/s/00eo3o5ywf5frg3/cover.png?raw=1
-   :scale: 50 %
-   :align: center
 
 
 Phoenix
@@ -51,12 +51,7 @@ arbitrary 3D scenes that may be composed from many elemental assets.
 
 Credits
 =======
-For the -- wow this looks like the blender build & overall directory structure! Blender's Open Source code taught me how to read/write/build C applications. And likewise, I began to fall in love with the overall design of things a bit. It was the months I spent tinkering around in a Blender build that just about taught me everything I know.
-
-And I heavily thank you for everything.
-
- ❤ Thank you Blender Foundation
-xx Furby.
+❤ Thank you Blender Foundation
 
 
 License
