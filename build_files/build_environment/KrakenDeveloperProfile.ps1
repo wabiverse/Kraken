@@ -10,6 +10,7 @@ $PIXAR_BUILDING_VERSION = 21.08
 
 $SHOW_KRAKEN_HUD = 1
 
+$env:path ="$($env:path);."
 $env:GIT_AUTHOR_EMAIL = "tyler@tylerfurby.com"
 
 

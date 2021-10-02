@@ -928,18 +928,18 @@ RENDERMAN = Dependency("prman", InstallRenderman, rman_verify)
 # boost
 
 if MacOS():
-    BOOST_URL = "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz"
+    BOOST_URL = "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_77_0.tar.gz"
     BOOST_VERSION_FILE = "include/boost/version.hpp"
 elif Linux():
-    BOOST_URL = "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz"
+    BOOST_URL = "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_77_0.tar.gz"
     BOOST_VERSION_FILE = "include/boost/version.hpp"
 elif Windows():
     # The default installation of boost on Windows puts headers in a versioned
     # subdirectory, which we have to account for here. In theory, specifying
     # "layout=system" would make the Windows install match Linux/MacOS, but that
     # causes problems for other dependencies that look for boost.
-    BOOST_URL = "https://storage.googleapis.com/dependency_links/boost_1_76_0.zip"
-    BOOST_VERSION_FILE = "include/boost-1_76/boost/version.hpp"
+    BOOST_URL = "https://boostorg.jfrog.io/native/main/release/1.77.0/source/boost_1_77_0.zip"
+    BOOST_VERSION_FILE = "include/boost-1_77/boost/version.hpp"
 
 def InstallBoost_Helper(context, force, buildArgs):
     # Documentation files in the boost archive can have exceptionally
