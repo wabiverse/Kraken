@@ -18,39 +18,19 @@
 
 /**
  * @file
- * Microsoft.
+ * Kraken.Foundation.App
  * KrakenRT.
  */
 
 #include "pch.h"
 
-#include "Kraken/Microsoft/App.Xaml.h"
-
-#ifdef WITH_WINUI3
-#  include "Kraken/Microsoft/MainWindow.h"
-#else
-#  include "Kraken/Microsoft/MainPage.h"
-#endif /* WITH_WINUI3 */
-
-using namespace winrt;
-using namespace Windows::Foundation;
-using namespace Microsoft::UI::Xaml;
-using namespace Microsoft::UI::Xaml::Controls;
-using namespace Microsoft::UI::Xaml::Media;
-
-#ifdef WITH_WINUI3
-using namespace Microsoft::UI::Xaml::Navigation;
-#endif /* WITH_WINUI3 */
-
-using namespace kraken;
-using namespace kraken::implementation;
+#include "ChaosEngine/Kraken.Foundation.App.h"
+#include "ChaosEngine/Kraken.UIKit.UIView.h"
 
 
 App::App()
 {
   InitializeComponent();
-
-  
 
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
   UnhandledException([this](IInspectable const &, UnhandledExceptionEventArgs const &e) {
@@ -81,7 +61,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
   if(args.PrelaunchActivated() == false) {
 
     if(frame.Content() == nullptr) {
-      frame.Navigate(xaml_typename<kraken::MainPage>(), box_value(args.Arguments()));
+      frame.Navigate(xaml_typename<Kraken::UIKit::UIView>(), box_value(args.Arguments()));
     }
     
     window.Content(frame);

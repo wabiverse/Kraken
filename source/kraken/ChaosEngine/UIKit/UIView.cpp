@@ -24,13 +24,13 @@
 
 #include "pch.h"
 
-#include "Kraken/Microsoft/MainPage.h"
-#include "MainPage.g.cpp"
+#include "ChaosEngine/Kraken.UIKit.UIView.h"
+#include "Kraken.UIKit.UIView.g.cpp"
 
 #pragma warning(push)
 #pragma warning(disable: 4100) // unreferenced formal parameter
 
-namespace winrt::kraken::implementation
+namespace winrt::Kraken::UIKit::implementation
 {
 using Application = ::winrt::Windows::UI::Xaml::Application;
 using ComponentResourceLocation = ::winrt::Windows::UI::Xaml::Controls::Primitives::ComponentResourceLocation;
@@ -42,18 +42,18 @@ using Uri = ::winrt::Windows::Foundation::Uri;
 using XamlBindingHelper = ::winrt::Windows::UI::Xaml::Markup::XamlBindingHelper;
 
 template <typename D, typename ... I>
-void MainPageT<D, I...>::InitializeComponent()
+void UIViewT<D, I...>::InitializeComponent()
 {
   if (!_contentLoaded)
   {
     _contentLoaded = true;
-    Uri resourceLocator{ L"ms-appx:///kraken/microsoft/mainpage/MainPage.xaml" };
+    Uri resourceLocator{ L"ms-appx:///Kraken/UIKit/UIView/UIView.xaml" };
     Application::LoadComponent(*this, resourceLocator, ComponentResourceLocation::Application);
   }
 }
 
 template <typename D, typename ... I>
-void MainPageT<D, I...>::Connect(int32_t connectionId, IInspectable const& target)
+void UIViewT<D, I...>::Connect(int32_t connectionId, IInspectable const& target)
 {
   switch (connectionId)
   {
@@ -99,30 +99,30 @@ void MainPageT<D, I...>::Connect(int32_t connectionId, IInspectable const& targe
 }
 
 template <typename D, typename ... I>
-void MainPageT<D, I...>::DisconnectUnloadedObject(int32_t)
+void UIViewT<D, I...>::DisconnectUnloadedObject(int32_t)
 {
   throw ::winrt::hresult_invalid_argument { L"No unloadable objects to disconnect." };
 }
 
 template <typename D, typename ... I>
-void MainPageT<D, I...>::UnloadObject(DependencyObject const&)
+void UIViewT<D, I...>::UnloadObject(DependencyObject const&)
 {
   throw ::winrt::hresult_invalid_argument { L"No unloadable objects." };
 }
 
 template <typename D, typename... I>
-IComponentConnector MainPageT<D, I...>::GetBindingConnector(int32_t, IInspectable const&)
+IComponentConnector UIViewT<D, I...>::GetBindingConnector(int32_t, IInspectable const&)
 {
   return nullptr;
 }
 
-template struct MainPageT<struct MainPage>;
+template struct UIViewT<struct UIView>;
 
 
 #pragma warning(pop)
 
 
-MainPage::MainPage()
+UIView::UIView()
 {
   InitializeComponent();
 
@@ -145,14 +145,14 @@ MainPage::MainPage()
 }
 
 
-void MainPage::TitleBarLayoutEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender,
+void UIView::TitleBarLayoutEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender,
                                    IInspectable const& event)
 {
   UIResponder::SetTitleBarLayout(sender);
 }
 
 
-void MainPage::TitleBarVisibilityEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender,
+void UIView::TitleBarVisibilityEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender,
                                        IInspectable const& event)
 {
   if (sender.IsVisible())
@@ -166,7 +166,7 @@ void MainPage::TitleBarVisibilityEvent(Windows::ApplicationModel::Core::CoreAppl
 }
 
 
-void MainPage::WindowActivatedEvent(IInspectable const& sender,
+void UIView::WindowActivatedEvent(IInspectable const& sender,
                                     Windows::UI::Core::WindowActivatedEventArgs const& event)
 {
   Uri resPrimary { L"TextFillColorPrimaryBrush" };
@@ -191,8 +191,8 @@ void MainPage::WindowActivatedEvent(IInspectable const& sender,
 }
 
 
-void MainPage::NavigationViewControl_DisplayModeChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender,
-                                                        Microsoft::UI::Xaml::Controls::NavigationViewDisplayModeChangedEventArgs const& event)
+void UIView::NavigationViewControl_DisplayModeChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender,
+                                                      Microsoft::UI::Xaml::Controls::NavigationViewDisplayModeChangedEventArgs const& event)
 {
   const int topIndent = 16;
   const int expandedIndent = 48;
@@ -230,4 +230,4 @@ void MainPage::NavigationViewControl_DisplayModeChanged(Microsoft::UI::Xaml::Con
   AppTitleBar().Margin(newMargin);
 }
 
-} // namespace winrt::kraken::implementation
+} // namespace winrt::Kraken::implementation

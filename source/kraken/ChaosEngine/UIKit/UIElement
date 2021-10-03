@@ -23,24 +23,24 @@
  */
 
 #include "pch.h"
-#include "Kraken/Microsoft/UIEvent.h"
-#include "UIEvent.g.cpp"
+#include "ChaosEngine/Kraken.UIKit.UIEvent.h"
+#include "Kraken.UIKIt.UIEvent.g.cpp"
 
-namespace winrt::kraken::uikit::implementation
+namespace winrt::Kraken::UIKit::implementation
 {
-  Event::Event(CoreApplicationViewTitleBar const& titleBar)
+  UIEvent::UIEvent(CoreApplicationViewTitleBar const& titleBar)
     : m_titleBar(titleBar),
       m_navigationView(nullptr),
       m_window(nullptr)
   {}
 
-  Event::Event(NavigationView const& view)
+  UIEvent::UIEvent(NavigationView const& view)
     : m_titleBar(nullptr),
       m_navigationView(view),
       m_window(nullptr)
   {}
 
-  Event::Event(IInspectable const& window)
+  UIEvent::UIEvent(IInspectable const& window)
     : m_titleBar(nullptr),
       m_navigationView(nullptr),
       m_window(window)

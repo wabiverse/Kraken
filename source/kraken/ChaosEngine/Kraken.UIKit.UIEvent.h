@@ -24,16 +24,16 @@
 
 #pragma once
 
-#include "UIEvent.g.h"
+#include "Kraken.UIKit.UIEvent.g.h"
 
-namespace winrt::kraken::uikit::implementation
+namespace winrt::Kraken::UIKit::implementation
 {
-  struct Event : EventT<Event>
+  struct UIEvent : UIEventT<UIEvent>
   {
-    Event() = default();
-    Event(CoreApplicationViewTitleBar const& titleBar);
-    Event(NavigationView const& view);
-    Event(IInspectable const& window);
+    UIEvent() = default();
+    UIEvent(CoreApplicationViewTitleBar const& titleBar);
+    UIEvent(NavigationView const& view);
+    UIEvent(IInspectable const& window);
 
     CoreApplicationViewTitleBar TitleBar();
     NavigationView NavigationView();
@@ -44,11 +44,11 @@ namespace winrt::kraken::uikit::implementation
     NavigationView m_navigationView{ nullptr };
     IInspectable m_window{ nullptr };
   };
-}  // namespace winrt::kraken::implementation
+}  // namespace winrt::Kraken::implementation
 
 
-namespace winrt::kraken::factory_implementation
+namespace winrt::Kraken::UIKit::factory_implementation
 {
-  struct Event : EventT<Event, implementation::Event>
+  struct UIEvent : UIEventT<UIEvent, implementation::UIEvent>
   {};
-}  // namespace winrt::kraken::factory_implementation
+}  // namespace winrt::Kraken::factory_implementation

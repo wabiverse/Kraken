@@ -1,29 +1,22 @@
 setup_libdirs()
 
 if(WIN32)
-  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator/Generated Files")
-    set(KRAKEN_MICROSOFT_SDK
-      # GENERATED WINDOWS SDK WITH KRAKEN PROJECTION
+  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator/Generated Files/Kraken/Foundation")
+    set(KRAKEN_FRAMEWORK_SDK
       "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
+      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/Kraken/Foundation/AppKit"
+      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/Kraken/UIKit/UIView"
     )
   endif()
-  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft")
-    set(KRAKEN_MICROSOFT_SDK
-      "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
-      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft/app"
-      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft/mainpage"
-      # "${CMAKE_BINARY_DIR}/source/creator/Generated Files/kraken/microsoft/mainwindow"
-    )
-  endif()
-  set(KRAKEN_MICROSOFT
-    # FOR PREFIXES LIKE KRAKEN.MICROSOFT.APP
+  set(KRAKEN_FRAMEWORK
+    # for prefixes; Kraken.Foundation.AppKit; ...
     ../../source
   )
 endif()
 
 kraken_include_dirs(
-  ${KRAKEN_MICROSOFT_SDK}
-  ${KRAKEN_MICROSOFT}
+  ${KRAKEN_FRAMEWORK_SDK}
+  ${KRAKEN_FRAMEWORK}
   ../../.
   ../kraken/anchor
   ../kraken/editors/include
@@ -87,40 +80,21 @@ if(WIN32)
   kraken_winrt_metadata_hotfix()
 
   set(WINDOWS_PACKAGE_SRC
-    # APPLICATION DEFINITION SOURCE
-    ../kraken/microsoft/app/App.xaml.cpp
-    ../kraken/microsoft/app/App.xaml
-    ../kraken/microsoft/app/App.idl
+    # foundation.
+    ../kraken/Foundation/AppKit/App.xaml.cpp
+    ../kraken/Foundation/AppKit/App.xaml.h
+    ../kraken/Foundation/AppKit/App.xaml
+    ../kraken/Foundation/AppKit/App.idl
 
-    # MAIN WINDOW SOURCE
-    #
-    # Disabled until WinUI v3.0 actually supports the
-    # latest Windows 11 SDK features, which are currently
-    # only available in WinUI v2.6+, Microsoft seems to
-    # express the latest Windows features are available
-    # in WinUI v3.0, which is wrong. As WinUI v3.0 does
-    # not support Mica Material or any Windows 11 features.
-    #
-    # ../kraken/microsoft/mainwindow/MainWindow.cpp
-    # ../kraken/microsoft/mainwindow/MainWindow.xaml
-    # ../kraken/microsoft/mainwindow/MainWindow.idl
+    # uikit.
+    ../kraken/UIKit/UIView.cpp
+    ../kraken/UIKit/UIView.h
+    ../kraken/UIKit/UIView.xaml
+    ../kraken/UIKit/UIView.idl
 
-    ../kraken/microsoft/mainpage/MainPage.cpp
-    ../kraken/microsoft/mainpage/MainPage.xaml
-    ../kraken/microsoft/mainpage/MainPage.idl
-
-    # KRAKEN PROJECTION RUNTIME HEADERS
-    ../kraken/microsoft/App.xaml.h
-    # ../kraken/microsoft/MainWindow.h
-    ../kraken/microsoft/MainPage.h
-
-    # APPLICATION MANIFESTS
+    # misc.
     ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
-
-    # DESKTOP ICON & CURSOR RESOURCES
     ${CMAKE_SOURCE_DIR}/release/windows/icons/winkraken.rc
-
-    # DESKTOP & WINDOWS STORE ICONS & BRANDING
     ${ASSET_FILES}
   )
 
@@ -131,21 +105,14 @@ if(WIN32)
   )
 
   set_source_files_properties(
-    ../kraken/microsoft/app/App.xaml
+    ../kraken/Foundation/AppKit/App.xaml
     PROPERTIES
       VS_XAML_TYPE ApplicationDefinition
       VS_DEPLOYMENT_CONTENT 1
   )
 
   set_source_files_properties(
-    ../kraken/microsoft/mainwindow/MainWindow.xaml
-    PROPERTIES
-      VS_XAML_TYPE Page
-      VS_DEPLOYMENT_CONTENT 1
-  )
-
-  set_source_files_properties(
-    ../kraken/microsoft/mainpage/MainPage.xaml
+    ../kraken/UIKit/UIView/UIView.xaml
     PROPERTIES
       VS_XAML_TYPE Page
       VS_DEPLOYMENT_CONTENT 1
@@ -156,10 +123,10 @@ endif()
 set(SRC
   creator.cpp
   creator_args.cpp
-  ${KRAKEN_MICROSOFT}
+  ${KRAKEN_FRAMEWORK}
   ${WINDOWS_PACKAGE_SRC}
 
-  ${KRAKEN_MICROSOFT_SDK}
+  ${KRAKEN_FRAMEWORKROSOFT_SDK}
   creator.h
 )
 

@@ -23,13 +23,13 @@
  */
 
 #include "pch.h"
-#include "Kraken/Microsoft/UIEvent.h"
-#include "Kraken/Microsoft/UIResponder.h"
-#include "Kraken/Microsoft/MainPage.h"
+#include "ChaosEngine/Kraken.UIKit.UIEvent.h"
+#include "ChaosEngine/Kraken.UIKit.UIResponder.h"
+#include "ChaosEngine/Kraken.UIKit.MainPage.h"
 #include "UIResponder.g.cpp"
 
 
-namespace winrt::Kraken::UIKit:::factory_implementation
+namespace winrt::Kraken::UIKit::factory_implementation
 {
   winrt::event_token UIResponder::SignalTitleBarUpdateLayout(Kraken::UIKit::SignalDelegate const& handler)
   {
@@ -94,23 +94,23 @@ namespace winrt::Kraken::UIKit:::factory_implementation
   void UIResponder::SetTitleBarIsVisible(CoreApplicationViewTitleBar const& titleBar)
   {
     if (titleBar.IsVisible()) {
-      auto args = winrt::make_self<winrt::kraken::UIKit::implementation::UIEvent>(Windows::UI::Xaml::Visibility::Visible);
+      auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(Windows::UI::Xaml::Visibility::Visible);
       m_titleBarIsVisibleEvent(*this, *args);
     } else {
-      auto args = winrt::make_self<winrt::kraken::UIKit::implementation::UIEvent>(Windows::UI::Xaml::Visibility::Collapsed);
+      auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(Windows::UI::Xaml::Visibility::Collapsed);
       m_titleBarIsVisibleEvent(*this, *args);
     }
   }
 
   void UIResponder::SetNavigationView(NavigationView const& view)
   {
-    auto args = winrt::make_self<winrt::kraken::UIKit::implementation::UIEvent>(view);
+    auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(view);
     m_setNavigationViewEvent(*this, *args);
   }
 
   void UIResponder::SetWindowActivated(bool activate)
   {
-    auto args = winrt::make_self<winrt::kraken::UIKit::implementation::UIEvent>(WindowIsActivated());
+    auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(WindowIsActivated());
     m_windowActivatedEvent(*this, *args);
   }
 }

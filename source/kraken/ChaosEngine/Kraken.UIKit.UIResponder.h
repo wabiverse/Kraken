@@ -24,12 +24,12 @@
 
 #pragma once
 
-#include "UIKit.g.h"
+#include "Kraken.UIKit.UIResponder.g.h"
 
 namespace winrt::Kraken::UIKit::implementation
 {
   struct UIResponder;
-}
+} // namespace winrt::Kraken::UIKit::implementation
 
 namespace winrt::Kraken::UIKit:::factory_implementation
 {
@@ -53,7 +53,7 @@ namespace winrt::Kraken::UIKit:::factory_implementation
    private:
     winrt::event<Kraken::UIKit::SignalDelegate> m_signal;
   };
-}
+} // namespace winrt::Kraken::UIKit:::factory_implementation
 
 namespace winrt::Kraken::UIKit::implementation
 {
@@ -76,5 +76,5 @@ namespace winrt::Kraken::UIKit::implementation
     static void SetNavigationView(NavigationView const& view);
     static void SetWindowActivated(bool activate);    
   };
-}  // namespace winrt::kraken::implementation
+}  // namespace winrt::Kraken::UIKit::implementation
 

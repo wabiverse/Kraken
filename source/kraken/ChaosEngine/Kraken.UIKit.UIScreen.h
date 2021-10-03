@@ -24,33 +24,32 @@
 
 #pragma once
 
-#if __has_include("App.Xaml.g.h")
-#  include "App.Xaml.g.h"
-#endif /* App.Xaml.g.h */
-
-#include "KLI_utildefines.h"
-
-#include "Kraken/Microsoft/UIResponder.h"
-
 #ifdef WITH_WINUI3
-#  include "Kraken/Microsoft/MainWindow.h"
-#endif /* WITH_WINUI3 */
+#  include "Kraken.UIKit.UIScreen.g.h"
 
-namespace winrt::kraken::implementation
+namespace winrt::Kraken::UIKit::implementation
 {
-  struct App : AppT<App>
+  struct UIScreen : UIScreenT<UIScreen>
   {
-    App();
+    UIScreen();
 
-    void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &args);
-
-#ifdef WITH_WINUI3
+    winrt::AppWindow AppWindow();
 
    private:
-    winrt::Microsoft::UI::Xaml::Window window{nullptr};
-#endif /* WITH_WINUI3 */
+    winrt::AppWindow GetAppWindowForCurrentWindow();
 
-   private:
-    UIResponder m_UIResponder;
+    winrt::AppWindow m_mainAppWindow{nullptr};
+    hstring m_windowTitle = L"Kraken";
+
+    bool m_contentLoaded;
   };
-}  // namespace winrt::kraken::implementation
+}  // namespace winrt::Kraken::UIKit::implementation
+
+
+namespace winrt::Kraken::factory_implementation
+{
+  struct UIScreen : UIScreenT<UIScreen, implementation::UIScreen>
+  {};
+}  // namespace winrt::Kraken::UIKit::factory_implementation
+
+#endif /* WITH_WINUI3 */

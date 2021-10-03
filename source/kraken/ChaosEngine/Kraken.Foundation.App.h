@@ -24,32 +24,23 @@
 
 #pragma once
 
-#ifdef WITH_WINUI3
-#  include "MainWindow.g.h"
+#if __has_include("Kraken.Foundation.App.g.h")
+#  include "Kraken.Foundation.App.g.h"
+#endif /* App.Xaml.g.h */
 
-namespace winrt::kraken::implementation
+#include "KLI_utildefines.h"
+
+#include "ChaosEngine/Kraken.UIKit.UIResponder.h"
+
+namespace winrt::Kraken::Foundation::implementation
 {
-  struct MainWindow : MainWindowT<MainWindow>
+  struct App : AppT<App>
   {
-    MainWindow();
+    App();
 
-    winrt::AppWindow AppWindow();
+    void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &args);
 
    private:
-    winrt::AppWindow GetAppWindowForCurrentWindow();
-
-    winrt::AppWindow m_mainAppWindow{nullptr};
-    hstring m_windowTitle = L"Kraken";
-
-    bool m_contentLoaded;
+    UIResponder m_UIResponder;
   };
-}  // namespace winrt::kraken::implementation
-
-
-namespace winrt::kraken::factory_implementation
-{
-  struct MainWindow : MainWindowT<MainWindow, implementation::MainWindow>
-  {};
-}  // namespace winrt::kraken::factory_implementation
-
-#endif /* WITH_WINUI3 */
+}  // namespace winrt::Kraken::Foundation::implementation

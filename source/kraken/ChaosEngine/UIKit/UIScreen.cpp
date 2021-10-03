@@ -26,38 +26,30 @@
 
 #ifdef WITH_WINUI3
 
-#  include "Kraken/Microsoft/MainWindow.h"
+#  include "ChaosEngine/Kraken.UIKit.UIScreen.h"
 
-#  if __has_include("MainWindow.g.cpp")
-#    include "MainWindow.g.cpp"
-#  endif /* MainWindow.g.cpp */
-#  if __has_include("Kraken/Microsoft/MainWindow/MainWindow.Xaml.g.hpp")
-#    include "Kraken/Microsoft/MainWindow/MainWindow.Xaml.g.hpp"
-#  endif /* MainWindow.Xaml.g.hpp */
+#  if __has_include("Kraken.UIKit.UIScreen.g.cpp")
+#    include "Kraken.UIKit.UIScreen.g.cpp"
+#  endif /* Kraken.UIKit.UIScreen.g.cpp */
 
 
-using namespace winrt;
-using namespace Microsoft::UI::Xaml;
-using namespace Microsoft::UI::Xaml::Controls;
-
-
-namespace winrt::kraken::implementation
+namespace winrt::Kraken::UIKit::implementation
 {
-  MainWindow::MainWindow()
+  UIScreen::UIScreen()
   {
     InitializeComponent();
     m_mainAppWindow = GetAppWindowForCurrentWindow();
     this->Title(m_windowTitle);
   }
 
-  winrt::AppWindow MainWindow::AppWindow()
+  winrt::AppWindow UIScreen::AppWindow()
   {
     return m_mainAppWindow;
   }
 
-  winrt::AppWindow MainWindow::GetAppWindowForCurrentWindow()
+  winrt::AppWindow UIScreen::GetAppWindowForCurrentWindow()
   {
-    winrt::kraken::MainWindow thisWindow = *this;
+    winrt::Kraken::UIScreen thisWindow = *this;
     winrt::com_ptr<IWindowNative> windowNative = thisWindow.as<IWindowNative>();
 
     HWND hWnd;
@@ -70,6 +62,6 @@ namespace winrt::kraken::implementation
 
     return appWindow;
   }
-}  // namespace winrt::kraken::implementation
+}  // namespace winrt::Kraken::implementation
 
 #endif /* WITH_WINUI3 */

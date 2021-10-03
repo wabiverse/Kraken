@@ -24,27 +24,25 @@
 
 #pragma once
 
-#include "Kraken/Microsoft/UIResponder.h"
-#include "MainPage.g.h"
+#include "ChaosEngine/Kraken.UIKit.UIResponder.h"
+#include "Kraken.UIKit.UIView.g.h"
 
-namespace winrt::kraken::implementation
+namespace winrt::Kraken::UIKit::implementation
 {
-  struct MainPage : MainPageT<MainPage>
+  struct UIView : UIViewT<UIView>
   {
-    MainPage();
+    UIView();
 
     void TitleBarLayoutEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender, IInspectable const& event);
     void TitleBarVisibilityEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender, IInspectable const& event);
     void WindowActivatedEvent(IInspectable const& sender, Windows::UI::Core::WindowActivatedEventArgs const& event);
     void NavigationViewControl_DisplayModeChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewDisplayModeChangedEventArgs const& event);
-
-    winrt::event<EventHandler<kraken::Event>> titleBarLayoutDidChangeEvent;
   };
-}  // namespace winrt::kraken::implementation
+}  // winrt::Kraken::UIKit::implementation
 
 
-namespace winrt::kraken::factory_implementation
+namespace winrt::Kraken::UIKit::factory_implementation
 {
-  struct MainPage : MainPageT<MainPage, implementation::MainPage>
+  struct UIView : MainPageT<UIView, implementation::UIView>
   {};
-}  // namespace winrt::kraken::factory_implementation
+}  // winrt::Kraken::UIKit::factory_implementation
