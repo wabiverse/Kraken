@@ -1350,9 +1350,22 @@ def InstallPtex_Windows(context, force, buildArgs):
         # In addition src\tests\CMakeLists.txt adds -DPTEX_STATIC to the
         # compiler but links tests against the dynamic library, causing the
         # links to fail. We patch the file to not add the -DPTEX_STATIC
-        # PatchFile('src\\ptex\\CMakeLists.txt',
-        #           [("set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptex)",
-        #             "set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptexs)")])
+        PatchFile('src\\ptex\\CMakeLists.txt',
+                  [("set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptex)",
+                    "set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptexs)")])
+        # Fix DLL linkage on static members.
+        PatchFile('src\\ptex\\PtexHalfTables.h',
+                  [("PTEXAPI uint32_t PtexHalf::h2fTable[65536] = {",
+                    "uint32_t PtexHalf::h2fTable[65536] = {")])
+        PatchFile('src\\ptex\\PtexHalfTables.h',
+                  [("PTEXAPI uint16_t PtexHalf::f2hTable[512] = {",
+                    "uint16_t PtexHalf::f2hTable[512] = {")])
+        PatchFile('src\\ptex\\PtexHalf.h',
+                  [("    PTEXAPI static uint32_t h2fTable[65536];",
+                    "    static uint32_t h2fTable[65536];")])
+        PatchFile('src\\ptex\\PtexHalf.h',
+                  [("    PTEXAPI static uint16_t f2hTable[512];",
+                    "    static uint16_t f2hTable[512];")])
         # PatchFile('src\\tests\\CMakeLists.txt',
         #           [("add_definitions(-DPTEX_STATIC)",
         #             "# add_definitions(-DPTEX_STATIC)")])
