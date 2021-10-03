@@ -81,16 +81,26 @@ if(WIN32)
 
   set(WINDOWS_PACKAGE_SRC
     # foundation.
-    ../kraken/Foundation/AppKit/App.xaml.cpp
-    ../kraken/Foundation/AppKit/App.xaml.h
-    ../kraken/Foundation/AppKit/App.xaml
-    ../kraken/Foundation/AppKit/App.idl
+    ../kraken/ChaosEngine/Foundation/App.cpp
+    ../kraken/ChaosEngine/Foundation/App.xaml
+    ../kraken/ChaosEngine/Foundation/Foundation.idl
 
     # uikit.
-    ../kraken/UIKit/UIView.cpp
-    ../kraken/UIKit/UIView.h
-    ../kraken/UIKit/UIView.xaml
-    ../kraken/UIKit/UIView.idl
+    ../kraken/ChaosEngine/UIKit/UIEvent.cpp
+    ../kraken/ChaosEngine/UIKit/UIResponder.cpp
+    ../kraken/ChaosEngine/UIKit/UIResponder.Factory.cpp
+    # ../kraken/ChaosEngine/UIKit/UIScreen.cpp | until WinUI v3 supports Win11
+    ../kraken/ChaosEngine/UIKit/UIView.cpp
+    # ../kraken/ChaosEngine/UIKit/UIScreen.xaml | until WinUI v3 supports Win11
+    ../kraken/ChaosEngine/UIKit/UIView.xaml
+    ../kraken/ChaosEngine/UIKit/UIKit.idl
+
+    # kraken api.
+    ../kraken/ChaosEngine/Kraken.Foundation.App.h
+    ../kraken/ChaosEngine/Kraken.UIKit.UIEvent.h
+    ../kraken/ChaosEngine/Kraken.UIKit.UIResponder.h
+    # ../kraken/ChaosEngine/Kraken.UIKit.UIScreen.h | until WinUI v3 supports Win11
+    ../kraken/ChaosEngine/Kraken.UIKit.UIView.h
 
     # misc.
     ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
@@ -105,14 +115,14 @@ if(WIN32)
   )
 
   set_source_files_properties(
-    ../kraken/Foundation/AppKit/App.xaml
+    ../kraken/ChaosEngine/Foundation/App.xaml
     PROPERTIES
       VS_XAML_TYPE ApplicationDefinition
       VS_DEPLOYMENT_CONTENT 1
   )
 
   set_source_files_properties(
-    ../kraken/UIKit/UIView/UIView.xaml
+    ../kraken/ChaosEngine/UIKit/UIView.xaml
     PROPERTIES
       VS_XAML_TYPE Page
       VS_DEPLOYMENT_CONTENT 1

@@ -23,8 +23,10 @@
  */
 
 #include "pch.h"
+
 #include "ChaosEngine/Kraken.UIKit.UIEvent.h"
-#include "Kraken.UIKIt.UIEvent.g.cpp"
+
+#include "Kraken.UIKit.UIEvent.g.cpp"
 
 namespace winrt::Kraken::UIKit::implementation
 {
