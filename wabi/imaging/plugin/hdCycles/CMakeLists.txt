@@ -50,6 +50,7 @@ wabi_plugin(hdCycles
         ${OPENVDB_INCLUDE_DIR}
         ${CYCLES_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
+        ${LIBDIR}/cycles/include/third_party/atomic
 
     CPPFILES
         Mikktspace/mikktspace.c

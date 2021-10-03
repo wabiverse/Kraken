@@ -2692,8 +2692,10 @@ void HdCyclesRenderParam::BlitFromCyclesPass(const HdRenderPassAovBinding &aov, 
                                 n_comps_cycles,
                                 static_cast<uint8_t *>(data),
                                 pixels_type,
-                                w,
-                                h,
+                                w /** <- src */,
+                                h /** <- src */,
+                                0 /** <- dst */,
+                                0 /** <- dst */,
                                 stride);
 
       if (cyclesAov.type == ccl::PASS_OBJECT_ID)

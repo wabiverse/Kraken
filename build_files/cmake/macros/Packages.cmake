@@ -453,8 +453,8 @@ endif()
 
 if(WIN32)
   list(APPEND WABI_MALLOC_LIBRARY
-    ${LIBDIR}/mimalloc/lib/mimalloc-2.0/mimalloc.lib
-    ${LIBDIR}/mimalloc/lib/mimalloc-2.0/mimalloc-static.lib)
+    ${LIBDIR}/mimalloc/lib/mimalloc.lib
+    ${LIBDIR}/mimalloc/lib/mimalloc-static.lib)
 else()
   find_package(Jemalloc REQUIRED)
   set(WABI_MALLOC_LIBRARY ${JEMALLOC_LIBRARY})
