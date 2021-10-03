@@ -1351,8 +1351,8 @@ def InstallPtex_Windows(context, force, buildArgs):
         # compiler but links tests against the dynamic library, causing the
         # links to fail. We patch the file to not add the -DPTEX_STATIC
         PatchFile('src\\ptex\\CMakeLists.txt',
-                  [("set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptex)",
-                    "set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptexs)")])
+                  [("    set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptex)",
+                    "    set_target_properties(Ptex_static PROPERTIES OUTPUT_NAME Ptexs)")])
         # Fix DLL linkage on static members.
         PatchFile('src\\ptex\\PtexHalfTables.h',
                   [("PTEXAPI uint32_t PtexHalf::h2fTable[65536] = {",
