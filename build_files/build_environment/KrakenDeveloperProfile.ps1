@@ -76,7 +76,7 @@ function RunDevelopmentReleaseKraken {
 
 function PackageKraken {
   & "C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\microsoft.windows.sdk.buildtools\10.0.22414.2000-preview.rs-prerelease\bin\10.0.22414.0\x64\makeappx.exe" pack /v /h SHA256 /d "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/AppX" /p "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/Kraken.msix"
-  & "C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\microsoft.windows.sdk.buildtools\10.0.22414.2000-preview.rs-prerelease\bin\10.0.22414.0\x64\signtool.exe" sign /fd SHA256 /sha1 bfa7030dc5376b044f7b68d9c7a32f44a086ddbf "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/Kraken.msix"
+  & "C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\microsoft.windows.sdk.buildtools\10.0.22414.2000-preview.rs-prerelease\bin\10.0.22414.0\x64\signtool.exe" sign /fd SHA256 /sha1 7a8d899988d5bd30621475f65922f43d7854a710 "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/Kraken.msix"
 }
 
 function InstallKrakenPackage {
@@ -158,12 +158,13 @@ function ConnectKraken {
 
 # CodeSign the Kraken Application.
 function KrakenCodeSign {
-  if (-not(Test-Path -Path "C:\Users\tyler\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx" -PathType Leaf)) {
-    Copy-Item "C:\Users\tyler\wabianimation.kraken3d.pfx" -Destination "C:\Users\tyler\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx"
+  $outCertPath = "$env:USERPROFILE\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx"
+  if (-not(Test-Path -Path "$env:USERPROFILE\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx" -PathType Leaf)) {
+    Copy-Item "$env:USERPROFILE\wabianimation.kraken3d.pfx" -Destination $outCertPath
   }
-  $cert = @(Get-ChildItem -Path 'Cert:\CurrentUser\My\bfa7030dc5376b044f7b68d9c7a32f44a086ddbf')[0]
+  $cert = @(Get-ChildItem -Path 'Cert:\LocalMachine\Root\7a8d899988d5bd30621475f65922f43d7854a710')[0]
   $certBytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx)
-  [System.IO.File]::WriteAllBytes('C:\Users\tyler\dev\build_KRAKEN_Release\source\creator\wabianimation.kraken3d.pfx', $certBytes)
+  [System.IO.File]::WriteAllBytes($outCertPath, $certBytes)
 }
 
 # CMake will call this command at build time in order to install the
