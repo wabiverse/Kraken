@@ -37,10 +37,6 @@
       <PackagePath>kraken.exe</PackagePath>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.Foundation.1.0.0-experimental1\lib\native\Microsoft.ApplicationModel.Resources.winmd">
-      <PackagePath>Microsoft.ApplicationModel.Resources.winmd</PackagePath>
-      <Modified>@GEN_TIME@</Modified>
-    </AppxPackagedFile>
     <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\Release\Kraken.winmd">
       <PackagePath>Kraken.winmd</PackagePath>
       <Modified>@GEN_TIME@</Modified>
