@@ -24,27 +24,31 @@
 
 #pragma once
 
-#include "Kraken/Microsoft/UIResponder.h"
-#include "MainPage.g.h"
+#include "UIEvent.g.h"
 
-namespace winrt::kraken::implementation
+namespace winrt::kraken::uikit::implementation
 {
-  struct MainPage : MainPageT<MainPage>
+  struct Event : EventT<Event>
   {
-    MainPage();
+    Event() = default();
+    Event(CoreApplicationViewTitleBar const& titleBar);
+    Event(NavigationView const& view);
+    Event(IInspectable const& window);
 
-    void TitleBarLayoutEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender, IInspectable const& event);
-    void TitleBarVisibilityEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender, IInspectable const& event);
-    void WindowActivatedEvent(IInspectable const& sender, Windows::UI::Core::WindowActivatedEventArgs const& event);
-    void NavigationViewControl_DisplayModeChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewDisplayModeChangedEventArgs const& event);
+    CoreApplicationViewTitleBar TitleBar();
+    NavigationView NavigationView();
+    IInspectable Window();
 
-    winrt::event<EventHandler<kraken::Event>> titleBarLayoutDidChangeEvent;
+   private:
+    CoreApplicationViewTitleBar m_titleBar{ nullptr };
+    NavigationView m_navigationView{ nullptr };
+    IInspectable m_window{ nullptr };
   };
 }  // namespace winrt::kraken::implementation
 
 
 namespace winrt::kraken::factory_implementation
 {
-  struct MainPage : MainPageT<MainPage, implementation::MainPage>
+  struct Event : EventT<Event, implementation::Event>
   {};
 }  // namespace winrt::kraken::factory_implementation

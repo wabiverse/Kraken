@@ -48,6 +48,7 @@
 #  include <winrt/Windows.ApplicationModel.Activation.h>
 #  include <winrt/Windows.ApplicationModel.Core.h>
 #  include <winrt/Windows.UI.h>
+#  include <winrt/Windows.UI.ViewManagement.h>
 #  include <winrt/Windows.UI.Core.h>
 #  include <winrt/Windows.UI.Xaml.Interop.h>
 #  include <winrt/Windows.UI.Xaml.Markup.h>
@@ -78,13 +79,15 @@
 
 namespace winrt
 {
+  using namespace Microsoft::UI::Xaml::Controls;
+
 #  ifdef WITH_WINUI3
   using namespace Microsoft::UI;
   using namespace Microsoft::UI::Xaml;
-  using namespace Microsoft::UI::Xaml::Controls;
   using namespace Microsoft::UI::Xaml::Navigation;
   using namespace Microsoft::UI::Windowing;
 #  endif /* WITH_WINUI3 */
+
   using namespace Windows::ApplicationModel;
   using namespace Windows::ApplicationModel::Core;
   using namespace Windows::Graphics;

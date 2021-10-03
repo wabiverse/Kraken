@@ -22,35 +22,43 @@
  * KrakenRT.
  */
 
-#pragma once
+#include "pch.h"
+#include "Kraken/Microsoft/UIEvent.h"
+#include "UIEvent.g.cpp"
 
-#if __has_include("App.Xaml.g.h")
-#  include "App.Xaml.g.h"
-#endif /* App.Xaml.g.h */
-
-#include "KLI_utildefines.h"
-
-#include "Kraken/Microsoft/UIResponder.h"
-
-#ifdef WITH_WINUI3
-#  include "Kraken/Microsoft/MainWindow.h"
-#endif /* WITH_WINUI3 */
-
-namespace winrt::kraken::implementation
+namespace winrt::kraken::uikit::implementation
 {
-  struct App : AppT<App>
+  Event::Event(CoreApplicationViewTitleBar const& titleBar)
+    : m_titleBar(titleBar),
+      m_navigationView(nullptr),
+      m_window(nullptr)
+  {}
+
+  Event::Event(NavigationView const& view)
+    : m_titleBar(nullptr),
+      m_navigationView(view),
+      m_window(nullptr)
+  {}
+
+  Event::Event(IInspectable const& window)
+    : m_titleBar(nullptr),
+      m_navigationView(nullptr),
+      m_window(window)
+  {}
+
+  CoreApplicationViewTitleBar UIEvent::TitleBar()
   {
-    App();
+    return m_titleBar;
+  }
 
-    void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &args);
+  NavigationView UIEvent::NavigationView()
+  {
+    return m_titleBar;
+  }
 
-#ifdef WITH_WINUI3
+  IInspectable UIEvent::Window()
+  {
+    return m_window;
+  }
+}
 
-   private:
-    winrt::Microsoft::UI::Xaml::Window window{nullptr};
-#endif /* WITH_WINUI3 */
-
-   private:
-    UIResponder m_UIResponder;
-  };
-}  // namespace winrt::kraken::implementation

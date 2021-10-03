@@ -6,5 +6,5 @@ namespace kraken
   runtimeclass MainPage : Windows.UI.Xaml.Controls.Page
   {
     MainPage();
-  }
+  };
 }

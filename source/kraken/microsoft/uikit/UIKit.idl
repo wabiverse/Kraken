@@ -1,0 +1,38 @@
+// Copyright © 2021 Wabi Animation Studios. All rights reserved.
+
+namespace kraken
+{
+  namespace UIKit
+  {
+    
+    delegate void SignalDelegate();
+
+
+    [default_interface]
+    runtimeclass UIEvent
+    {
+      UIEvent();
+
+      Single TitleBar{ get; };
+      Single NavigationView{ get; };
+      Single Window{ get; };
+    };
+
+
+    [bindable]
+    [default_interface]
+    runtimeclass UIResponder
+    {
+      event Kraken.UIKit.SignalDelegate SignalTitleBarUpdateLayout;
+      event Kraken.UIKit.SignalDelegate SignalTitleBarIsVisible;
+      event Kraken.UIKit.SignalDelegate SignalNavigationIsDisplaying;
+      event Kraken.UIKit.SignalDelegate SignalWindowIsActivated;
+
+      void SetTitleBarLayout(Single value);
+      void SetTitleBarVisibility(Single value);
+      void SetNavigationView(Single value);
+      void SetWindowActivated(Single value); 
+    };
+
+  }
+}

@@ -80,13 +80,13 @@ function PackageKraken {
 }
 
 function InstallKrakenPackage {
-  import-module AppX -usewindowspowershell
+  # import-module AppX -usewindowspowershell
   Remove-AppXPackage Kraken_1.50.0.0_x64__k8b6ffsk23gvw
   Add-AppXPackage $env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/Kraken.msix
 }
 
 function RunKraken {
-  import-module AppX -usewindowspowershell
+  # import-module AppX -usewindowspowershell
   Remove-AppXPackage Kraken_1.50.0.0_x64__k8b6ffsk23gvw
   Add-AppXPackage $env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/kraken_1.50.0.0_x64.msix
   & "kraken"
