@@ -23,97 +23,12 @@
  */
 
 #include "pch.h"
+
 #include "ChaosEngine/Kraken.UIKit.UIEvent.h"
 #include "ChaosEngine/Kraken.UIKit.UIResponder.h"
-#include "ChaosEngine/Kraken.UIKit.MainPage.h"
-#include "UIResponder.g.cpp"
+#include "ChaosEngine/Kraken.UIKit.UIView.h"
 
-
-namespace winrt::Kraken::UIKit::factory_implementation
-{
-  winrt::event_token UIResponder::SignalTitleBarUpdateLayout(Kraken::UIKit::SignalDelegate const& handler)
-  {
-    return m_signal.add(handler);
-  }
-
-  winrt::event_token UIResponder::SignalTitleBarIsVisible(Kraken::UIKit::SignalDelegate const& handler)
-  {
-    return m_signal.add(handler);
-  }
-
-  winrt::event_token UIResponder::SignalNavigationIsDisplaying(Kraken::UIKit::SignalDelegate const& handler)
-  {
-    return m_signal.add(handler);
-  }
-
-  winrt::event_token UIResponder::SignalWindowIsActivated(Kraken::UIKit::SignalDelegate const& handler)
-  {
-    return m_signal.add(handler);
-  }
-
-
-  void UIResponder::SignalTitleBarUpdateLayout(winrt::event_token const& token)
-  {
-    m_signal.remove(token);
-  }
-
-  void UIResponder::SignalTitleBarIsVisible(winrt::event_token const& token)
-  {
-    m_signal.remove(token);
-  }
-
-  void UIResponder::SignalNavigationIsDisplaying(winrt::event_token const& token)
-  {
-    m_signal.remove(token);
-  }
-
-  void UIResponder::SignalWindowIsActivated(winrt::event_token const& token)
-  {
-    m_signal.remove(token);
-  }
-
-
-  void UIResponder::SetTitleBarLayout(Border const& layout)
-  {
-    auto coreTitleBar = Windows::ApplicationModel::Core::CoreApplication::GetCurrentView().TitleBar();
-
-    layout.Height(coreTitleBar.Height());
-
-    Windows::UI::Xaml::Thickness currMargin = layout.Margin();
-    Windows::UI::Xaml::Thickness margin = {};
-    margin.Left = currMargin.Left;
-    margin.Top = currMargin.Top;
-    margin.Right = coreTitleBar.SystemOverlayRightInset();
-    margin.Bottom = currMargin.Bottom;
-
-    layout.Margin(margin);
-
-    m_signal();
-  }
-
-  void UIResponder::SetTitleBarIsVisible(CoreApplicationViewTitleBar const& titleBar)
-  {
-    if (titleBar.IsVisible()) {
-      auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(Windows::UI::Xaml::Visibility::Visible);
-      m_titleBarIsVisibleEvent(*this, *args);
-    } else {
-      auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(Windows::UI::Xaml::Visibility::Collapsed);
-      m_titleBarIsVisibleEvent(*this, *args);
-    }
-  }
-
-  void UIResponder::SetNavigationView(NavigationView const& view)
-  {
-    auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(view);
-    m_setNavigationViewEvent(*this, *args);
-  }
-
-  void UIResponder::SetWindowActivated(bool activate)
-  {
-    auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(WindowIsActivated());
-    m_windowActivatedEvent(*this, *args);
-  }
-}
+#include "Kraken.UIKit.UIResponder.g.cpp"
 
 
 namespace winrt::Kraken::UIKit::implementation
@@ -179,5 +94,5 @@ namespace winrt::Kraken::UIKit::implementation
   {
     return make_self<factory_implementation::UIResponder>()->SetWindowActivated(activate);
   }
-}
+} // namespace winrt::Kraken::UIKit::implementation
 
