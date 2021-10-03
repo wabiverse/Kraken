@@ -38,7 +38,7 @@
       MinVersion="10.0.22000.0"
       MaxVersionTested="10.0.22000.0" />
     <PackageDependency
-      Name="Microsoft.WindowsAppSDK.1.0-experimental1"
+      Name="Microsoft.WindowsAppSDK.1.0-preview1"
       MinVersion="0.218.840.0"
       Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
     <PackageDependency

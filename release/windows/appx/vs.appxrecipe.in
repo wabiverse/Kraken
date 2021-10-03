@@ -337,39 +337,39 @@
 @DEPENDENT_DLLS@
   </ItemGroup>
   <ItemGroup>
-    <ResolvedSDKReference Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-experimental1\build\..\tools\MSIX\win10-x86\Microsoft.WindowsAppSDK.1.0-experimental1.msix">
-      <Name>Microsoft.WindowsAppSDK.1.0-experimental1</Name>
+    <ResolvedSDKReference Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-preview1\build\..\tools\MSIX\win10-x86\Microsoft.WindowsAppSDK.1.0-preview1.msix">
+      <Name>Microsoft.WindowsAppSDK.1.0-preview1</Name>
       <Version>0.218.840.0</Version>
       <Architecture>x86</Architecture>
-      <FrameworkIdentity>Name = Microsoft.WindowsAppSDK.1.0-experimental1, MinVersion = 0.218.840.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
-      <AppxLocation>@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-experimental1\build\..\tools\MSIX\win10-x86\Microsoft.WindowsAppSDK.1.0-experimental1.msix</AppxLocation>
+      <FrameworkIdentity>Name = Microsoft.WindowsAppSDK.1.0-preview1, MinVersion = 0.218.840.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-preview1\build\..\tools\MSIX\win10-x86\Microsoft.WindowsAppSDK.1.0-preview1.msix</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
-    <ResolvedSDKReference Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-experimental1\build\..\tools\MSIX\win10-x86\Microsoft.WindowsAppSDK.1.0-experimental1.msix">
-      <Name>Microsoft.WindowsAppSDK.1.0-experimental1</Name>
+    <ResolvedSDKReference Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-preview1\build\..\tools\MSIX\win10-x86\Microsoft.WindowsAppSDK.1.0-preview1.msix">
+      <Name>Microsoft.WindowsAppSDK.1.0-preview1</Name>
       <Version>0.218.840.0</Version>
       <Architecture>win32</Architecture>
-      <FrameworkIdentity>Name = Microsoft.WindowsAppSDK.1.0-experimental1, MinVersion = 0.218.840.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
-      <AppxLocation>@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-experimental1\build\..\tools\MSIX\win10-x86\Microsoft.WindowsAppSDK.1.0-experimental1.msix</AppxLocation>
+      <FrameworkIdentity>Name = Microsoft.WindowsAppSDK.1.0-preview1, MinVersion = 0.218.840.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-preview1\build\..\tools\MSIX\win10-x86\Microsoft.WindowsAppSDK.1.0-preview1.msix</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
-    <ResolvedSDKReference Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-experimental1\build\..\tools\MSIX\win10-x64\Microsoft.WindowsAppSDK.1.0-experimental1.msix">
-      <Name>Microsoft.WindowsAppSDK.1.0-experimental1</Name>
+    <ResolvedSDKReference Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-preview1\build\..\tools\MSIX\win10-x64\Microsoft.WindowsAppSDK.1.0-preview1.msix">
+      <Name>Microsoft.WindowsAppSDK.1.0-preview1</Name>
       <Version>0.218.840.0</Version>
       <Architecture>x64</Architecture>
-      <FrameworkIdentity>Name = Microsoft.WindowsAppSDK.1.0-experimental1, MinVersion = 0.218.840.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
-      <AppxLocation>@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-experimental1\build\..\tools\MSIX\win10-x64\Microsoft.WindowsAppSDK.1.0-experimental1.msix</AppxLocation>
+      <FrameworkIdentity>Name = Microsoft.WindowsAppSDK.1.0-preview1, MinVersion = 0.218.840.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-preview1\build\..\tools\MSIX\win10-x64\Microsoft.WindowsAppSDK.1.0-preview1.msix</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
-    <ResolvedSDKReference Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-experimental1\build\..\tools\MSIX\win10-arm64\Microsoft.WindowsAppSDK.1.0-experimental1.msix">
-      <Name>Microsoft.WindowsAppSDK.1.0-experimental1</Name>
+    <ResolvedSDKReference Include="@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-preview1\build\..\tools\MSIX\win10-arm64\Microsoft.WindowsAppSDK.1.0-preview1.msix">
+      <Name>Microsoft.WindowsAppSDK.1.0-preview1</Name>
       <Version>0.218.840.0</Version>
       <Architecture>arm64</Architecture>
-      <FrameworkIdentity>Name = Microsoft.WindowsAppSDK.1.0-experimental1, MinVersion = 0.218.840.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
-      <AppxLocation>@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-experimental1\build\..\tools\MSIX\win10-arm64\Microsoft.WindowsAppSDK.1.0-experimental1.msix</AppxLocation>
+      <FrameworkIdentity>Name = Microsoft.WindowsAppSDK.1.0-preview1, MinVersion = 0.218.840.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>@CMAKE_BINARY_DIR@\packages\Microsoft.WindowsAppSDK.1.0.0-preview1\build\..\tools\MSIX\win10-arm64\Microsoft.WindowsAppSDK.1.0-preview1.msix</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
