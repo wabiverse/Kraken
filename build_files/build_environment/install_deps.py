@@ -939,7 +939,7 @@ elif Windows():
     # "layout=system" would make the Windows install match Linux/MacOS, but that
     # causes problems for other dependencies that look for boost.
     BOOST_URL = "https://www.dropbox.com/s/y7b455m6c1bf9oj/boost_1_77_0.zip"
-    BOOST_VERSION_FILE = "include/boost-1_77/boost/version.hpp"
+    BOOST_VERSION_FILE = "include/boost-1_78/boost/version.hpp"
 
 def InstallBoost_Helper(context, force, buildArgs):
     # Documentation files in the boost archive can have exceptionally

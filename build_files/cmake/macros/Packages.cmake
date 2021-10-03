@@ -313,17 +313,17 @@ endif()
 
 if(WIN32)
   set(LIB_OBJ_EXT "lib")
-  set(BOOST_VERSION_SCORE "1_77")
+  set(BOOST_VERSION_SCORE "1_78")
   if(KRAKEN_RELEASE_MODE)
-    set(BOOST_LIBRARY_SUFFIX "vc143-mt-x64-1_77")
+    set(BOOST_LIBRARY_SUFFIX "vc143-mt-x64-1_78")
   else()
-    set(BOOST_LIBRARY_SUFFIX "vc143-mt-gd-x64-1_77")
+    set(BOOST_LIBRARY_SUFFIX "vc143-mt-gd-x64-1_78")
   endif()
   # set(Boost_USE_STATIC_RUNTIME ON) # prefix lib
   # set(Boost_USE_MULTITHREADED ON) # suffix -mt
   # set(Boost_USE_STATIC_LIBS ON) # suffix -s
   set(BOOST_ROOT "${LIBDIR}/boost")
-  set(Boost_INCLUDE_DIR "${LIBDIR}/boost/include/boost-1_77")
+  set(Boost_INCLUDE_DIR "${LIBDIR}/boost/include/boost-1_78")
   find_package(Boost REQUIRED)
   set(boost_version_string "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}")
 
