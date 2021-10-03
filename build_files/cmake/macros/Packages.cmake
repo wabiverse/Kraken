@@ -577,6 +577,8 @@ if(KRAKEN_RELEASE_MODE)
       else()
         set(CYCLES_INCLUDE_DIRS ${CYCLES_INCLUDE_DIRS} ${LIBDIR}/Cycles/debug/include)
       endif()
+      # Forced on windows.
+      set(CYCLES_FOUND TRUE)
     endif()
   endif()
 else()

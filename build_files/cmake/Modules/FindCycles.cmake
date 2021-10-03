@@ -348,10 +348,28 @@ set(CYCLES_INCLUDE_DIR
 
 include(FindPackageHandleStandardArgs)
 
-find_package_handle_standard_args(Cycles
-    REQUIRED_VARS
-    CYCLES_LIBRARY
-    CYCLES_INCLUDE_DIR)
+if(WIN32)
+    set(CYCLES_INCLUDE_DIR ${CYCLES_HOME}/include)
+    list(APPEND CYCLES_LIBRARY
+      ${CYCLES_HOME}/lib/cycles_bvh.lib
+      ${CYCLES_HOME}/lib/cycles_device.lib
+      ${CYCLES_HOME}/lib/cycles_graph.lib
+      ${CYCLES_HOME}/lib/cycles_kernel_osl.lib
+      ${CYCLES_HOME}/lib/cycles_kernel.lib
+      ${CYCLES_HOME}/lib/cycles_render.lib
+      ${CYCLES_HOME}/lib/cycles_subd.lib
+      ${CYCLES_HOME}/lib/cycles_util.lib
+      ${CYCLES_HOME}/lib/extern_clew.lib
+      ${CYCLES_HOME}/lib/extern_cuew.lib
+      ${CYCLES_HOME}/lib/extern_numaapi.lib
+      ${CYCLES_HOME}/lib/extern_sky.lib
+    )
+else()
+    find_package_handle_standard_args(Cycles
+        REQUIRED_VARS
+        CYCLES_LIBRARY
+        CYCLES_INCLUDE_DIR)
+endif()
 
 set(CYCLES_LIBRARIES ${CYCLES_LIBRARY})
 set(CYCLES_INCLUDE_DIRS ${CYCLES_INCLUDE_DIR})
