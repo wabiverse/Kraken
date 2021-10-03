@@ -1320,6 +1320,7 @@ OPENEXR = Dependency("OpenEXR", InstallOpenEXR, verify_openexr)
 
 if Windows():
     verify_ptex = "ptex/include/PtexVersion.h"
+
 else:
     verify_ptex = "include/PtexVersion.h"
 
@@ -1332,6 +1333,8 @@ def InstallPtex(context, force, buildArgs):
     ]
 
     if Windows():
+        # You will need pkg-config on windows to build Ptex
+        pkgconf = subprocess.call("choco install pkgconfiglite", stdout=subprocess.PIPE, shell=True)
         InstallPtex_Windows(context, force, buildArgs)
     else:
         InstallPtex_LinuxOrMacOS(context, force, buildArgs)

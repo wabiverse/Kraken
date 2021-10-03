@@ -25,6 +25,7 @@ if($IsWindows) {
   if (Test-Path($ChocolateyProfile)) {
     Import-Module "$ChocolateyProfile"
   }
+  & choco feature enable -n=allowGlobalConfirmation
 }
 
 # -------------- This is called from .git/hooks/pre-commit -----
