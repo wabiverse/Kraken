@@ -10,13 +10,7 @@
   muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
   <Application.Resources>
-    <muxc:XamlControlsResources xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
-      <muxc:XamlControlsResources.MergedDictionaries>
-        <ResourceDictionary>
-        <!-- Other Resources Here... -->
-        </ResourceDictionary>
-      </muxc:XamlControlsResources.MergedDictionaries>
-    </muxc:XamlControlsResources>
+    <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
   </Application.Resources>
 
 </Application>

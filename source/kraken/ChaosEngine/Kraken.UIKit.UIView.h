@@ -25,7 +25,8 @@
 #pragma once
 
 #include "ChaosEngine/Kraken.UIKit.UIResponder.h"
-#include "Kraken.UIKit.UIView.g.h"
+
+#include "UIKit.UIView.g.h"
 
 namespace winrt::Kraken::UIKit::implementation
 {
@@ -36,13 +37,14 @@ namespace winrt::Kraken::UIKit::implementation
     void TitleBarLayoutEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender, IInspectable const& event);
     void TitleBarVisibilityEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender, IInspectable const& event);
     void WindowActivatedEvent(IInspectable const& sender, Windows::UI::Core::WindowActivatedEventArgs const& event);
-    void NavigationViewControl_DisplayModeChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewDisplayModeChangedEventArgs const& event);
+    void NavigationViewControl_DisplayModeChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender,
+                                                  Microsoft::UI::Xaml::Controls::NavigationViewDisplayModeChangedEventArgs const& event);
   };
 }  // winrt::Kraken::UIKit::implementation
 
 
 namespace winrt::Kraken::UIKit::factory_implementation
 {
-  struct UIView : MainPageT<UIView, implementation::UIView>
+  struct UIView : UIViewT<UIView, implementation::UIView>
   {};
 }  // winrt::Kraken::UIKit::factory_implementation

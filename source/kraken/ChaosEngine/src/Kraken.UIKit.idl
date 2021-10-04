@@ -18,7 +18,6 @@ namespace Kraken
     };
 
 
-    [bindable]
     [default_interface]
     runtimeclass UIResponder
     {

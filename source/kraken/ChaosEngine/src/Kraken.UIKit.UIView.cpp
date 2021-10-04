@@ -25,7 +25,8 @@
 #include "pch.h"
 
 #include "ChaosEngine/Kraken.UIKit.UIView.h"
-#include "Kraken.UIKit.UIView.g.cpp"
+
+#include "UIKit.UIView.g.cpp"
 
 #pragma warning(push)
 #pragma warning(disable: 4100) // unreferenced formal parameter

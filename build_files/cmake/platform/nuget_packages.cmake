@@ -46,6 +46,11 @@ file(TO_CMAKE_PATH
   RENDERMAN_LOCATION
 )
 
+file(TO_CMAKE_PATH
+  "${CMAKE_BINARY_DIR}/source/creator/ChaosEngine"
+  GENERATED_KRAKEN_SDK
+)
+
 if(${proj_path} STREQUAL "source/creator/kraken")
   # This is the executable vsproj, so we need to add
   # dependent DLLs here, and only to this vsproj since
@@ -84,10 +89,12 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <OutputType>WinExe</OutputType>
     <ReunionMergeWin32Manifest>false</ReunionMergeWin32Manifest>
     <CppWinRTOptimized>true</CppWinRTOptimized>
-    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectName>kraken</ProjectName>
-    <RootNamespace>kraken</RootNamespace>
+    <RootNamespace>Kraken</RootNamespace>
+    <CppWinRTRootNamespace>Kraken</CppWinRTRootNamespace>
+    <GeneratedFilesDir>ChaosEngine/</GeneratedFilesDir>
+    <CppWinRTUsePrefixes>true</CppWinRTUsePrefixes>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
@@ -100,7 +107,9 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
     <DesktopCompatible>true</DesktopCompatible>
     <WindowsPackageType>MSIX</WindowsPackageType>
+    <CppWinRTParameters>-library Kraken</CppWinRTParameters>
   </PropertyGroup>
+
   <ItemGroup>
     <None Include=\"${CMAKE_BINARY_DIR}/packages.config\" />
   </ItemGroup>
@@ -394,7 +403,6 @@ else()
     <WindowsSdkPackageVersion>10.0.22000.160-preview</WindowsSdkPackageVersion>
     <CompileAsWinRT>false</CompileAsWinRT>
     <CppWinRTOptimized>true</CppWinRTOptimized>
-    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <MinimalCoreWin>true</MinimalCoreWin>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>

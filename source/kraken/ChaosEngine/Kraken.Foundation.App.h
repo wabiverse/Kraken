@@ -24,9 +24,7 @@
 
 #pragma once
 
-#if __has_include("Kraken.Foundation.App.g.h")
-#  include "Kraken.Foundation.App.g.h"
-#endif /* App.Xaml.g.h */
+#include "Kraken.Foundation.App.Xaml.g.h"
 
 #include "KLI_utildefines.h"
 

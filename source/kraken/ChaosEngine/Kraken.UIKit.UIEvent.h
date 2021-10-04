@@ -24,24 +24,26 @@
 
 #pragma once
 
-#include "Kraken.UIKit.UIEvent.g.h"
+#include "pch.h"
+
+#include "UIKit.UIEvent.g.h"
 
 namespace winrt::Kraken::UIKit::implementation
 {
   struct UIEvent : UIEventT<UIEvent>
   {
     UIEvent() = default();
-    UIEvent(CoreApplicationViewTitleBar const& titleBar);
-    UIEvent(NavigationView const& view);
+    UIEvent(winrt::CoreApplicationViewTitleBar const& titleBar);
+    UIEvent(winrt::NavigationView const& view);
     UIEvent(IInspectable const& window);
 
-    CoreApplicationViewTitleBar TitleBar();
-    NavigationView NavigationView();
+    winrt::CoreApplicationViewTitleBar TitleBar();
+    winrt::NavigationView NavigationView();
     IInspectable Window();
 
    private:
-    CoreApplicationViewTitleBar m_titleBar{ nullptr };
-    NavigationView m_navigationView{ nullptr };
+    winrt::CoreApplicationViewTitleBar m_titleBar{ nullptr };
+    winrt::NavigationView m_navigationView{ nullptr };
     IInspectable m_window{ nullptr };
   };
 }  // namespace winrt::Kraken::implementation

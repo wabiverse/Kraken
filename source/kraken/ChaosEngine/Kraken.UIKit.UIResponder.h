@@ -24,16 +24,20 @@
 
 #pragma once
 
-#include "Kraken.UIKit.UIResponder.g.h"
+#include "pch.h"
+
+#include "UIKit.UIResponder.g.h"
+
 
 namespace winrt::Kraken::UIKit::implementation
 {
   struct UIResponder;
 } // namespace winrt::Kraken::UIKit::implementation
 
-namespace winrt::Kraken::UIKit:::factory_implementation
+
+namespace winrt::Kraken::UIKit::factory_implementation
 {
-  struct UIResponder : UIResponderT<UIResponder, implementation::UIResponder, static_lifetime>
+  struct UIResponder : UIResponderT<UIResponder, Kraken::UIKit::UIResponder, static_lifetime>
   {
     winrt::event_token SignalTitleBarUpdateLayout(Kraken::UIKit::SignalDelegate const& handler);
     winrt::event_token SignalTitleBarIsVisible(Kraken::UIKit::SignalDelegate const& handler);
@@ -45,9 +49,9 @@ namespace winrt::Kraken::UIKit:::factory_implementation
     void SignalNavigationIsDisplaying(winrt::event_token const& cookie);
     void SignalWindowIsActivated(winrt::event_token const& cookie);
 
-    void SetTitleBarLayout(CoreApplicationViewTitleBar const& titleBar);
-    void SetTitleBarVisibility(Visibility const& visibility);
-    void SetNavigationView(NavigationView const& view);
+    void SetTitleBarLayout(winrt::CoreApplicationViewTitleBar const& titleBar);
+    void SetTitleBarVisibility(Windows::UI::Xaml::Visibility const& visibility);
+    void SetNavigationView(winrt::NavigationView const& view);
     void SetWindowActivated(bool activate); 
    
    private:
@@ -55,9 +59,10 @@ namespace winrt::Kraken::UIKit:::factory_implementation
   };
 } // namespace winrt::Kraken::UIKit:::factory_implementation
 
+
 namespace winrt::Kraken::UIKit::implementation
 {
-  struct UIResponder
+  struct UIResponder : UIResponderT<UIResponder>
   {
     UIResponder() = delete;
 
@@ -71,9 +76,9 @@ namespace winrt::Kraken::UIKit::implementation
     static void SignalNavigationIsDisplaying(winrt::event_token const& token);
     static void SignalWindowIsActivated(winrt::event_token const& token);
 
-    static void SetTitleBarLayout(CoreApplicationViewTitleBar const& titleBar);
-    static void SetTitleBarVisibility(Visibility const& visibility);
-    static void SetNavigationView(NavigationView const& view);
+    static void SetTitleBarLayout(winrt::CoreApplicationViewTitleBar const& titleBar);
+    static void SetTitleBarVisibility(Windows::UI::Xaml::Visibility const& visibility);
+    static void SetNavigationView(winrt::NavigationView const& view);
     static void SetWindowActivated(bool activate);    
   };
 }  // namespace winrt::Kraken::UIKit::implementation

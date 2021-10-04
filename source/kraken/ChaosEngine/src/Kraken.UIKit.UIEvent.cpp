@@ -26,7 +26,7 @@
 
 #include "ChaosEngine/Kraken.UIKit.UIEvent.h"
 
-#include "Kraken.UIKit.UIEvent.g.cpp"
+#include "UIKit.UIEvent.g.cpp"
 
 namespace winrt::Kraken::UIKit::implementation
 {

@@ -28,8 +28,8 @@
 
 #  include "ChaosEngine/Kraken.UIKit.UIScreen.h"
 
-#  if __has_include("Kraken.UIKit.UIScreen.g.cpp")
-#    include "Kraken.UIKit.UIScreen.g.cpp"
+#  if __has_include("UIKit.UIScreen.g.cpp")
+#    include "UIKit.UIScreen.g.cpp"
 #  endif /* Kraken.UIKit.UIScreen.g.cpp */
 
 

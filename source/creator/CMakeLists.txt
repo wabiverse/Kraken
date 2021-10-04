@@ -1,16 +1,14 @@
 setup_libdirs()
 
 if(WIN32)
-  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator/Generated Files/Kraken/Foundation")
+  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator/ChaosEngine")
     set(KRAKEN_FRAMEWORK_SDK
-      "${CMAKE_BINARY_DIR}/source/creator/Generated Files"
-      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/Kraken/Foundation/AppKit"
-      "${CMAKE_BINARY_DIR}/source/creator/Generated Files/Kraken/UIKit/UIView"
+      "${CMAKE_BINARY_DIR}/source/creator/ChaosEngine"
     )
   endif()
   set(KRAKEN_FRAMEWORK
     # for prefixes; Kraken.Foundation.AppKit; ...
-    ../../source
+    ../../source/kraken
   )
 endif()
 
@@ -81,19 +79,19 @@ if(WIN32)
 
   set(WINDOWS_PACKAGE_SRC
     # foundation.
-    ../kraken/ChaosEngine/Foundation/App.cpp
-    ../kraken/ChaosEngine/Foundation/App.xaml
-    ../kraken/ChaosEngine/Foundation/Foundation.idl
+    ../kraken/ChaosEngine/src/Kraken.Foundation.App.cpp
+    ../kraken/ChaosEngine/src/Kraken.Foundation.App.xaml
+    ../kraken/ChaosEngine/src/Kraken.Foundation.idl
 
     # uikit.
-    ../kraken/ChaosEngine/UIKit/UIEvent.cpp
-    ../kraken/ChaosEngine/UIKit/UIResponder.cpp
-    ../kraken/ChaosEngine/UIKit/UIResponder.Factory.cpp
-    # ../kraken/ChaosEngine/UIKit/UIScreen.cpp | until WinUI v3 supports Win11
-    ../kraken/ChaosEngine/UIKit/UIView.cpp
-    # ../kraken/ChaosEngine/UIKit/UIScreen.xaml | until WinUI v3 supports Win11
-    ../kraken/ChaosEngine/UIKit/UIView.xaml
-    ../kraken/ChaosEngine/UIKit/UIKit.idl
+    ../kraken/ChaosEngine/src/Kraken.UIKit.UIEvent.cpp
+    ../kraken/ChaosEngine/src/Kraken.UIKit.UIResponder.cpp
+    ../kraken/ChaosEngine/src/Kraken.UIKit.UIResponder.Factory.cpp
+    # ../kraken/ChaosEngine/src/Kraken.UIKit.UIScreen.cpp | until WinUI v3 supports Win11
+    ../kraken/ChaosEngine/src/Kraken.UIKit.UIView.cpp
+    # ../kraken/ChaosEngine/src/Kraken.UIKit.UIScreen.xaml | until WinUI v3 supports Win11
+    ../kraken/ChaosEngine/src/Kraken.UIKit.UIView.xaml
+    ../kraken/ChaosEngine/src/Kraken.UIKit.idl
 
     # kraken api.
     ../kraken/ChaosEngine/Kraken.Foundation.App.h

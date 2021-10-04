@@ -98,9 +98,9 @@ namespace winrt
 }  // namespace winrt
 
 #  ifdef WITH_WINUI3
-#    include "Kraken/UIKit/UIScreen.h"
+#    include "ChaosEngine/Kraken.UIKit.UIScreen.h"
 #  else 
-#    include "Kraken/UIKit/UIView.h" 
+#    include "ChaosEngine/Kraken.UIKit.UIView.h" 
 #  endif /* WITH_WINUI3 */
 
 #endif /* ARCH_OS_WINDOWS */

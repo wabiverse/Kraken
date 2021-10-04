@@ -59,7 +59,7 @@
     <Application
       Id="App"
       Executable="kraken.exe"
-      EntryPoint="Kraken.App">
+      EntryPoint="Kraken.Foundation.App">
       <!-- Manifest Schema Requires Branding. -->
       <uap:VisualElements
         DisplayName="Kraken"
@@ -103,7 +103,7 @@
         <uap5:Extension
           Category="windows.appExecutionAlias"
           Executable="kraken.exe"
-          EntryPoint="Kraken.App">
+          EntryPoint="Kraken.Foundation.App">
           <uap5:AppExecutionAlias desktop4:Subsystem="windows" >   
             <uap5:ExecutionAlias Alias="kraken.exe" />
           </uap5:AppExecutionAlias>

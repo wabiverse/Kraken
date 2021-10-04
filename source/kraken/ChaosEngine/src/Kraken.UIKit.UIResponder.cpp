@@ -28,11 +28,14 @@
 #include "ChaosEngine/Kraken.UIKit.UIResponder.h"
 #include "ChaosEngine/Kraken.UIKit.UIView.h"
 
-#include "Kraken.UIKit.UIResponder.g.cpp"
+#include "UIKit.UIResponder.g.cpp"
 
 
 namespace winrt::Kraken::UIKit::implementation
 {
+  /**
+   * Signal Handlers. */
+
   winrt::event_token UIResponder::SignalTitleBarUpdateLayout(Kraken::UIKit::SignalDelegate const& handler)
   {
     return make_self<factory_implementation::UIResponder>()->SignalTitleBarUpdateLayout(handler);
@@ -53,6 +56,8 @@ namespace winrt::Kraken::UIKit::implementation
     return make_self<factory_implementation::UIResponder>()->SignalWindowIsActivated(handler);
   }
 
+  /**
+   * Cookie Eaters. */
 
   void UIResponder::SignalTitleBarUpdateLayout(winrt::event_token const& cookie)
   {
@@ -74,6 +79,8 @@ namespace winrt::Kraken::UIKit::implementation
     return make_self<factory_implementation::UIResponder>()->SignalWindowIsActivated(handler);
   }
 
+  /**
+   * Core functionality. Signaling upon completion. */
 
   void UIResponder::SetTitleBarLayout(CoreApplicationViewTitleBar const& layout)
   {
@@ -94,5 +101,6 @@ namespace winrt::Kraken::UIKit::implementation
   {
     return make_self<factory_implementation::UIResponder>()->SetWindowActivated(activate);
   }
+  
 } // namespace winrt::Kraken::UIKit::implementation
 
