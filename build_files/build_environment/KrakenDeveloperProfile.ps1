@@ -1,8 +1,3 @@
-if($IsWindows) {
-#Requires -RunAsAdministrator
-}
-
-
 $KRAKEN_BUILDING_VERSION_MAJOR = 1
 $KRAKEN_BUILDING_VERSION_MINOR = 50
 $KRAKEN_DEVELOPMENT_MILESTONE = "Initial Release Sprint"
@@ -61,7 +56,8 @@ if($IsWindows) {
   if (Test-Path($ChocolateyProfile)) {
     Import-Module "$ChocolateyProfile"
   }
-  & choco feature enable -n=allowGlobalConfirmation
+  # Only have to run this once.
+  # & choco feature enable -n=allowGlobalConfirmation
 }
 
 # -------------- This is called from .git/hooks/pre-commit -----
