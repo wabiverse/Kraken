@@ -20,6 +20,42 @@ Import-Module PSWriteColor
 Import-Module oh-my-posh
 Import-Module posh-git
 
+# Setup default pwsh on macOS.
+if($IsMacOS) {
+  function Get-Path {
+    [CmdLetBinding()]
+    Param()
+    $PathFiles = @()
+    $PathFiles += '/etc/paths'
+    $PathFiles = Get-ChildItem -Path /private/etc/paths.d | Select-Object -Expand FullName
+    $PathFiles | ForEach-Object {
+      Get-Content -Path $PSItem | ForEach-Object {
+        $_
+      }
+    }
+    $Paths
+  }
+
+  function Add-Path {
+    Param($Path)
+    $env:PATH = "${env:PATH}:$Path"
+  }
+
+  function Update-Environment {
+    [CmdLetBinding()]
+    Param()
+    $Paths = $env:PATH -split ':'
+    Get-Path | ForEach-Object {
+      if($PSItem -notin $Paths) {
+        Write-Verbose "Adding $PSItem to Path"
+        Add-Path -Path $PSItem
+      }
+    }
+  }
+
+  Update-Environment
+}
+
 if($IsWindows) {
   $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
   if (Test-Path($ChocolateyProfile)) {
@@ -236,10 +272,10 @@ if($IsWindows) {
   Set-PoshPrompt -Theme "$env:USERPROFILE\dev\Kraken\build_files\build_environment\krakentheme.omp.json"
 }
 if($IsMacOS) {
-  Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+  Set-PoshPrompt -Theme "~\dev\kraken\build_files\build_environment\krakentheme.omp.json"
 }
 if($IsLinux) {
-  Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red  
+  Set-PoshPrompt -Theme "~\dev\kraken\build_files\build_environment\krakentheme.omp.json"
 }
 
 # Run Kraken
