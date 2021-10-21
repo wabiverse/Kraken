@@ -13,3 +13,5 @@ doc/sphinx/source/api
 ANCHOR.ini
 
 compile_commands.json
+
+.DS_Store
