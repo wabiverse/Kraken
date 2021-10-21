@@ -24,10 +24,7 @@
 
 #pragma once
 
-#include "pch.h"
-
 #include "UIKit.UIResponder.g.h"
-
 
 namespace winrt::Kraken::UIKit::implementation
 {
@@ -37,7 +34,7 @@ namespace winrt::Kraken::UIKit::implementation
 
 namespace winrt::Kraken::UIKit::factory_implementation
 {
-  struct UIResponder : UIResponderT<UIResponder, Kraken::UIKit::UIResponder, static_lifetime>
+  struct UIResponder : UIResponderT<UIResponder, static_lifetime>
   {
     winrt::event_token SignalTitleBarUpdateLayout(Kraken::UIKit::SignalDelegate const& handler);
     winrt::event_token SignalTitleBarIsVisible(Kraken::UIKit::SignalDelegate const& handler);
@@ -54,15 +51,14 @@ namespace winrt::Kraken::UIKit::factory_implementation
     void SetNavigationView(winrt::NavigationView const& view);
     void SetWindowActivated(bool activate); 
    
-   private:
-    winrt::event<Kraken::UIKit::SignalDelegate> m_signal;
+    event<Windows::Foundation::EventHandler<int32_t>> m_static;
   };
 } // namespace winrt::Kraken::UIKit:::factory_implementation
 
 
 namespace winrt::Kraken::UIKit::implementation
 {
-  struct UIResponder : UIResponderT<UIResponder>
+  struct UIResponder
   {
     UIResponder() = delete;
 

@@ -26,9 +26,9 @@
 #  include "pch.h"
 #  include "winrt/Kraken.h"
 
-#  include "Kraken/Foundation/AppKit/App.Xaml.h"
+#  include "ChaosEngine/Kraken.Foundation.App.h"
 #  ifdef WITH_WINUI3
-#    include "Kraken/UIKit/UIScreen/UIScreen.h"
+#    include "ChaosEngine/Kraken.UIKit.UIScreen.h"
 #  endif /* WITH_WINUI3 */
 #endif /* _WIN32 */
 

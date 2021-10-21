@@ -17,7 +17,7 @@ namespace Kraken
       Single Window{ get; };
     };
 
-
+    
     [default_interface]
     runtimeclass UIResponder
     {
@@ -26,9 +26,9 @@ namespace Kraken
       event Kraken.UIKit.SignalDelegate SignalNavigationIsDisplaying;
       event Kraken.UIKit.SignalDelegate SignalWindowIsActivated;
 
-      void SetTitleBarLayout(Single value);
-      void SetTitleBarVisibility(Single value);
-      void SetNavigationView(Single value);
+      void SetTitleBarLayout(Windows.ApplicationModel.Core.CoreApplicationViewTitleBar value);
+      void SetTitleBarVisibility(Windows.UI.Xaml.Visibility value);
+      void SetNavigationView(Microsoft.UI.Xaml.Controls.NavigationView value);
       void SetWindowActivated(Single value); 
     };
 

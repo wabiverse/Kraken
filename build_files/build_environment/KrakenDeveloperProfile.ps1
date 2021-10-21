@@ -236,13 +236,16 @@ function InstallNugetPackages {
 
 function ShowPrettyGitRevision {
   Write-Output " "
-  $AUTHOR = git show --format="%an`n" -s
-  $LATEST_REVISION = git show --summary --pretty=format:"%x07%h"
-  $FOR_DATE = git show --summary --pretty=format:"%x07%ad"
-  $DID_WHAT = git show --summary --pretty=format:"%x07%s"
-  Write-Color -Text "Latest Revision: ", "$LATEST_REVISION ", "$FOR_DATE" -Color Red, Yellow, Green
-  Write-Color -Text "      Work Done: ", "$DID_WHAT" -Color Blue, Cyan
-  Write-Color -Text "    Authored by: ", "$AUTHOR" -Color Green, DarkMagenta
+  $IsGitDirectory = './.git'
+  if (Test-Path -Path $IsGitDirectory) {
+    $AUTHOR = git show --format="%an`n" -s
+    $LATEST_REVISION = git show --summary --pretty=format:"%x07%h"
+    $FOR_DATE = git show --summary --pretty=format:"%x07%ad"
+    $DID_WHAT = git show --summary --pretty=format:"%x07%s"
+    Write-Color -Text "Latest Revision: ", "$LATEST_REVISION ", "$FOR_DATE" -Color Red, Yellow, Green
+    Write-Color -Text "      Work Done: ", "$DID_WHAT" -Color Blue, Cyan
+    Write-Color -Text "    Authored by: ", "$AUTHOR" -Color Green, DarkMagenta
+  }
 }
 
 function ShowBanner {
