@@ -41,7 +41,11 @@ list(INSERT LIB 0 ${TBB_LIBRARIES})
 kraken_include_dirs(${TBB_INCLUDE_DIRS})
 kraken_include_dirs(${Boost_INCLUDE_DIRS})
 kraken_include_dirs(${PYTHON_INCLUDE_DIR})
-kraken_include_dirs(${PTHREADS_INCLUDE_DIR})
+
+# No pthreads on macOS.
+if((UNIX AND NOT APPLE) OR WIN32)
+  kraken_include_dirs(${PTHREADS_INCLUDE_DIR})
+endif()
 
 if(WITH_TBB)
   if(NOT APPLE)

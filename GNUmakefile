@@ -153,7 +153,7 @@ ifneq "$(findstring debug, $(MAKECMDGOALS))" ""
 endif
 ifneq "$(findstring release, $(MAKECMDGOALS))" ""
 	BUILD_DIR:=$(BUILD_DIR)_release
-	CMAKE_CONFIG_ARGS:=-C"$(KRAKEN_DIR)/build_files/cmake/config/wabi_release.cmake" $(CMAKE_CONFIG_ARGS)
+	CMAKE_CONFIG_ARGS:=-C"$(KRAKEN_DIR)/build_files/cmake/config/kraken_release.cmake" $(CMAKE_CONFIG_ARGS)
 endif
 
 ifneq "$(findstring developer, $(MAKECMDGOALS))" ""
@@ -199,7 +199,6 @@ endif
 # to reduce the number of cores.
 ifndef NPROCS
 	NPROCS:=1
-	RESPONSIVENESS:=19
 	ifeq ($(OS), Linux)
 		NPROCS:=$(shell nproc)
 	endif
@@ -209,7 +208,6 @@ ifndef NPROCS
 	ifneq (,$(filter $(OS),Darwin FreeBSD))
 		NPROCS:=$(shell sysctl -n hw.ncpu)
 	endif
-	NPROCS:=$(shell expr $(NPROCS) - $(RESPONSIVENESS))
 endif
 
 

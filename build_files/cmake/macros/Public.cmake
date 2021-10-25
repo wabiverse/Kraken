@@ -359,7 +359,9 @@ function(wabi_library NAME)
         )
     endif()
 
-    kraken_import_nuget_packages("${WABI_PREFIX}/${NAME}/${NAME}")
+    if(WIN32)
+      kraken_import_nuget_packages("${WABI_PREFIX}/${NAME}/${NAME}")
+    endif()
 endfunction()
 
 macro(wabi_shared_library NAME)
