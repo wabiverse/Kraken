@@ -38,11 +38,23 @@
 WABI_NAMESPACE_BEGIN
 
 #if defined(ARCH_OS_WINDOWS)
+/**
+ * DirectX for Microsoft Windows. */
 TF_DEFINE_ENV_SETTING(HGI_ENABLE_DIRECTX, true, "Enable DirectX as platform default Hgi backend (WIP)");
 TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, false, "Enable Vulkan as platform default Hgi backend (WIP)");
+TF_DEFINE_ENV_SETTING(HGI_ENABLE_METAL, false, "Enable Metal as platform default Hgi backend (WIP)");
 #elif defined(ARCH_OS_LINUX)
+/**
+ * Vulkan for Linux. */
 TF_DEFINE_ENV_SETTING(HGI_ENABLE_DIRECTX, false, "Enable DirectX as platform default Hgi backend (WIP)");
 TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, true, "Enable Vulkan as platform default Hgi backend (WIP)");
+TF_DEFINE_ENV_SETTING(HGI_ENABLE_METAL, false, "Enable Metal as platform default Hgi backend (WIP)");
+#elif defined(ARCH_OS_DARWIN)
+/**
+ * Metal for Apple macOS. */
+TF_DEFINE_ENV_SETTING(HGI_ENABLE_DIRECTX, false, "Enable DirectX as platform default Hgi backend (WIP)");
+TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, false, "Enable Vulkan as platform default Hgi backend (WIP)");
+TF_DEFINE_ENV_SETTING(HGI_ENABLE_METAL, true, "Enable Metal as platform default Hgi backend (WIP)");
 #endif
 
 TF_REGISTRY_FUNCTION(TfType)

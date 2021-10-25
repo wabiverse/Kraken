@@ -35,7 +35,8 @@
 #include "wabi/base/arch/defines.h"
 #include "wabi/wabi.h"
 
-#if defined(__GNUC__)
+#ifdef ARCH_OS_LINUX
+#  if defined(__GNUC__)
 /**
  * Wrap one of various unordered map implementations. The exposed API
  * is similar to  std::unordered_map  but is missing some methods and
@@ -47,18 +48,21 @@
  * better performance than the standard implementation in versions <= 4.3
  * however, this is no longer the case.
  */
-#  include <features.h>
-#  if __GNUC_PREREQ(4, 3)
+#    include <features.h>
+#    if __GNUC_PREREQ(4, 3)
+#      include <unordered_map>
+#    elif defined(ARCH_HAS_GNU_STL_EXTENSIONS)
+#      define USE_DEPRECATED_GNU_HASH_MAP
+#      include <ext/hash_map>
+#    else /* ARCH_HAS_GNU_STL_EXTENSIONS */
+#      include <unordered_set>
+#    endif /* __GNUC_PREREQ >= 4.3 */
+#  else
 #    include <unordered_map>
-#  elif defined(ARCH_HAS_GNU_STL_EXTENSIONS)
-#    define USE_DEPRECATED_GNU_HASH_MAP
-#    include <ext/hash_map>
-#  else /* ARCH_HAS_GNU_STL_EXTENSIONS */
-#    include <unordered_set>
-#  endif /* __GNUC_PREREQ >= 4.3 */
-#else
+#  endif /* __GNUC__ */
+#else /* ARCH_OS_DARWIN || ARCH_OS_WIN32 */
 #  include <unordered_map>
-#endif /* __GNUC__ */
+#endif /* ARCH_OS_LINUX */
 
 WABI_NAMESPACE_BEGIN
 
