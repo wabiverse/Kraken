@@ -65,8 +65,6 @@ list(APPEND LIB
 
 if(WITH_PYTHON)
   kraken_include_dirs(../kraken/python)
-  add_definitions(-DWITH_PYTHON)
-
   if(WITH_PYTHON_SECURITY)
     add_definitions(-DWITH_PYTHON_SECURITY)
   endif()
