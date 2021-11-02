@@ -7,15 +7,15 @@ add_subdirectory(glf)
 add_subdirectory(hgi)
 add_subdirectory(hgiGL)
 
-if(APPLE)
+if(WITH_METAL)
   add_subdirectory(hgiMetal)
 endif()
 
-if(WIN32)
+if(WITH_DIRECTX)
   add_subdirectory(hgiDX3D)
 endif()
 
-if(UNIX AND NOT APPLE)
+if(WITH_VULKAN)
   add_subdirectory(hgiVulkan)
 endif()
 add_subdirectory(hgiInterop)
