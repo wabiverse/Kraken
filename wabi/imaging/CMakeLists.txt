@@ -15,7 +15,9 @@ if(WIN32)
   add_subdirectory(hgiDX3D)
 endif()
 
-add_subdirectory(hgiVulkan)
+if(UNIX AND NOT APPLE)
+  add_subdirectory(hgiVulkan)
+endif()
 add_subdirectory(hgiInterop)
 add_subdirectory(hd)
 

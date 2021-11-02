@@ -36,18 +36,36 @@ if (WITH_PTEX)
     list(APPEND optionalPublicClasses ptexMipmapTextureLoader)
 endif()
 
+set(GFX_LIBRARIES "")
+
+if(WITH_OPENGL)
+  list(APPEND GFX_LIBRARIES
+    hgiGL
+  )
+endif()
+
+if(WITH_VULKAN)
+  list(APPEND GFX_LIBRARIES
+    hgiVulkan  
+  )
+endif()
+
+if(WITH_DIRECTX)
+  list(APPEND GFX_LIBRARIES
+    hgiDX3D  
+  )
+endif()
+
 wabi_library(hdPh
     LIBRARIES
         hio
         garch
         glf
         hd
-        hgiDX3D
-        hgiVulkan
-        hgiGL
         sdr
         tf
         trace
+        ${GFX_LIBRARIES}
         ${OPENSUBDIV_LIBRARIES}
         ${optionalLibs}
 

@@ -35,6 +35,7 @@
 #include "wabi/wabi.h"
 
 #include "wabi/imaging/hgiMetal/api.h"
+#include "wabi/imaging/hgiInterop/metal.h"
 
 WABI_NAMESPACE_BEGIN
 

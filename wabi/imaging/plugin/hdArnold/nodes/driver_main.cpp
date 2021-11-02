@@ -111,7 +111,7 @@ driver_prepare_bucket
 driver_process_bucket
 {
   auto *driverData = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
-  const char *outputName = nullptr;
+  AtString outputName = AtString();
   int pixelType = AI_TYPE_RGBA;
   const void *bucketData = nullptr;
   const auto pixelCount = bucket_size_x * bucket_size_y;

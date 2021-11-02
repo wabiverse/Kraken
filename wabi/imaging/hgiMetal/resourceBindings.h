@@ -31,6 +31,7 @@
 #ifndef WABI_IMAGING_HGI_METAL_RESOURCEBINDINGS_H
 #define WABI_IMAGING_HGI_METAL_RESOURCEBINDINGS_H
 
+#include "wabi/imaging/hgiInterop/metal.h"
 #include "wabi/imaging/hgi/resourceBindings.h"
 #include "wabi/imaging/hgiMetal/api.h"
 #include "wabi/wabi.h"

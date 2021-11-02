@@ -284,7 +284,7 @@ if(WITH_VULKAN)
   kraken_include_dirs_sys("${VULKAN_INCLUDE_DIRS}")
 
 else()
-  message(FATAL_ERROR "Vulkan Installation not valid")
+
 endif()
 
 if(WITH_DIRECTX)

@@ -35,16 +35,18 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/operators.hpp>
 
-#if defined(__GNUC__)
-#  include <features.h>
-#  if __GNUC_PREREQ(7, 0)
+#if !defined(ARCH_OS_DARWIN)
+#  if defined(__GNUC__)
+#    include <features.h>
+#    if __GNUC_PREREQ(7, 0)
 /**
  * GNU versions >= 7.0+
  * don't have this issue. */
-#  else /* __GNUC_PREREQ >= 7.0 */
-#    define GNU_HAS_SINGLE_INSTRUCTION_BUG
-#  endif /* __GNUC_PREREQ <= 7.0 */
-#endif   /* __GNUC__ */
+#    else /* __GNUC_PREREQ >= 7.0 */
+#      define GNU_HAS_SINGLE_INSTRUCTION_BUG
+#    endif /* __GNUC_PREREQ <= 7.0 */
+#  endif   /* __GNUC__ */
+#endif /* ARCH_OS_DARWIN  */
 
 #include <algorithm>
 #include <iterator>

@@ -31,6 +31,7 @@
 #ifndef WABI_IMAGING_HGI_METAL_BLIT_CMDS_H
 #define WABI_IMAGING_HGI_METAL_BLIT_CMDS_H
 
+#include "wabi/imaging/hgiInterop/metal.h"
 #include "wabi/imaging/hgi/blitCmds.h"
 #include "wabi/imaging/hgiMetal/api.h"
 #include "wabi/wabi.h"

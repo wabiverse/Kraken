@@ -24,8 +24,11 @@
 //
 #include "wabi/wabi.h"
 
-#include <winrt/base.h>
 #include "wabi/base/arch/defines.h"
+
+#ifdef ARCH_OS_WINDOWS
+# include <winrt/base.h>
+#endif /* ARCH_OS_WINDOWS */
 
 #include "wabi/imaging/hdPh/bufferArrayRange.h"
 #include "wabi/imaging/hdPh/subdivision.h"

@@ -41,6 +41,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+class HgiMetal;
 class HgiMetalComputePipeline;
 
 /// \class HgiMetalGraphicsCmds

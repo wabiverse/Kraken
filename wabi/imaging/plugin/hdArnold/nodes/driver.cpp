@@ -122,7 +122,7 @@ driver_prepare_bucket
 driver_process_bucket
 {
   auto *driverData = reinterpret_cast<DriverData *>(AiNodeGetLocalData(node));
-  const char *outputName = nullptr;
+  AtString outputName = AtString();
   int pixelType = AI_TYPE_RGBA;
   const void *bucketData = nullptr;
   // TODO: IDs are used to detect background pixels, so we have to handle them first. We should do

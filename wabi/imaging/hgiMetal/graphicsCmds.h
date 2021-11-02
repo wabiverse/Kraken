@@ -41,6 +41,8 @@
 
 WABI_NAMESPACE_BEGIN
 
+class HgiMetal;
+
 struct HgiGraphicsCmdsDesc;
 
 /// \class HgiMetalGraphicsCmds

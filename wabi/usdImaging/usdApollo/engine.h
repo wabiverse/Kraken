@@ -37,7 +37,9 @@
 #ifndef WABI_USD_IMAGING_USD_APOLLO_ENGINE_H
 #define WABI_USD_IMAGING_USD_APOLLO_ENGINE_H
 
-#include <vulkan/vulkan.h>
+#ifdef WITH_VULKAN
+# include <vulkan/vulkan.h>
+#endif /* WITH_VULKAN */
 
 #include "wabi/usdImaging/usdApollo/api.h"
 #include "wabi/usdImaging/usdApollo/version.h"

@@ -210,17 +210,23 @@ option(WITH_PYTHON_INSTALL_REQUESTS  "Install requests alongside python installa
 option(WITH_PYTHON_SECURITY          "Disables execution of scripts referenced within usd files by default"                       ON)
 option(WITH_SAFETY_OVER_SPEED        "Enable certain checks designed to avoid crashes"                                            ON)
 option(WITH_OPENGL                   "Enable OpenGL GFX API and components"                                                       ON)
-option(WITH_VULKAN                   "Enable Vulkan GFX API and components"                                                       ON)
+
 if(WIN32) # Only Windows has DirectX Support.
   option(WITH_DIRECTX "Enable DirectX GFX API and components" ON)
 else()
   option(WITH_DIRECTX "Enable DirectX GFX API and components" OFF)
 endif()
+
 if(APPLE)
   # Only Apple has Metal Support.
-  option(WITH_METAL "Enable Metal GFX API and components" ON)
+  option(WITH_METAL  "Enable Metal GFX API and components"   ON)
+  option(WITH_VULKAN "Enable Vulkan GFX API and components" OFF)
 else()
   option(WITH_METAL "Enable Metal GFX API and components" OFF)
+endif()
+
+if(NOT APPLE)
+  option(WITH_VULKAN "Enable Vulkan GFX API and components" ON)
 endif()
 #-------------------------------------------------------------------------------
 # Prepare Buildinfo
