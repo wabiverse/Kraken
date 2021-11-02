@@ -8,6 +8,9 @@ $SHOW_KRAKEN_HUD = 1
 $env:path ="$($env:path);."
 $env:GIT_AUTHOR_EMAIL = "tyler@tylerfurby.com"
 
+$IsKrakenCreatorInDirectory = './source/creator'
+$IsKrakenSourceInDirectory = './source/kraken/ChaosEngine'
+$IsGitDirectory = './.git'
 
 Set-Alias g git
 Import-Module -Name Terminal-Icons
@@ -232,7 +235,6 @@ function InstallNugetPackages {
 
 function ShowPrettyGitRevision {
   Write-Output " "
-  $IsGitDirectory = './.git'
   if (Test-Path -Path $IsGitDirectory) {
     $AUTHOR = git show --format="%an`n" -s
     $LATEST_REVISION = git show --summary --pretty=format:"%x07%h"
@@ -245,18 +247,18 @@ function ShowPrettyGitRevision {
 }
 
 function ShowBanner {
-  . {
-      $KRAKEN_BANNER = new-object Collections.ArrayList
-      $KRAKEN_BANNER.Add("$([char]0x250F)$([char]0x2533)$([char]0x2513)$([char]0x254B)$([char]0x254B)$([char]0x254B)$([char]0x254B)$([char]0x250F)$([char]0x2513)`n")
-      $KRAKEN_BANNER.Add("$([char]0x2503)$([char]0x250F)$([char]0x254B)$([char]0x2533)$([char]0x2533)$([char]0x2501)$([char]0x2513)$([char]0x2503)$([char]0x2523)$([char]0x2533)$([char]0x2501)$([char]0x2533)$([char]0x2501)$([char]0x2533)$([char]0x2513)`n")
-      $KRAKEN_BANNER.Add("$([char]0x2503)$([char]0x2517)$([char]0x252B)$([char]0x250F)$([char]0x252B)$([char]0x254B)$([char]0x2517)$([char]0x252B)$([char]0x2501)$([char]0x252B)$([char]0x253B)$([char]0x252B)$([char]0x2503)$([char]0x2503)$([char]0x2503)`n")
-      $KRAKEN_BANNER.Add("$([char]0x2517)$([char]0x253B)$([char]0x253B)$([char]0x251B)$([char]0x2517)$([char]0x2501)$([char]0x2501)$([char]0x253B)$([char]0x253B)$([char]0x253B)$([char]0x2501)$([char]0x253B)$([char]0x253B)$([char]0x2501)$([char]0x251B)`n")
-    } | Out-Null
-  Write-Output " "
-  Write-Output " "
-  Write-Color -Text $KRAKEN_BANNER -Color Yellow, DarkMagenta, Cyan, DarkBlue
-  Write-Output " "
-  if($SHOW_KRAKEN_HUD) {
+  if((Test-Path -Path $IsKrakenCreatorInDirectory) -and (Test-Path -Path $IsKrakenSourceInDirectory)) {
+    . {
+        $KRAKEN_BANNER = new-object Collections.ArrayList
+        $KRAKEN_BANNER.Add("$([char]0x250F)$([char]0x2533)$([char]0x2513)$([char]0x254B)$([char]0x254B)$([char]0x254B)$([char]0x254B)$([char]0x250F)$([char]0x2513)`n")
+        $KRAKEN_BANNER.Add("$([char]0x2503)$([char]0x250F)$([char]0x254B)$([char]0x2533)$([char]0x2533)$([char]0x2501)$([char]0x2513)$([char]0x2503)$([char]0x2523)$([char]0x2533)$([char]0x2501)$([char]0x2533)$([char]0x2501)$([char]0x2533)$([char]0x2513)`n")
+        $KRAKEN_BANNER.Add("$([char]0x2503)$([char]0x2517)$([char]0x252B)$([char]0x250F)$([char]0x252B)$([char]0x254B)$([char]0x2517)$([char]0x252B)$([char]0x2501)$([char]0x252B)$([char]0x253B)$([char]0x252B)$([char]0x2503)$([char]0x2503)$([char]0x2503)`n")
+        $KRAKEN_BANNER.Add("$([char]0x2517)$([char]0x253B)$([char]0x253B)$([char]0x251B)$([char]0x2517)$([char]0x2501)$([char]0x2501)$([char]0x253B)$([char]0x253B)$([char]0x253B)$([char]0x2501)$([char]0x253B)$([char]0x253B)$([char]0x2501)$([char]0x251B)`n")
+      } | Out-Null
+    Write-Output " "
+    Write-Output " "
+    Write-Color -Text $KRAKEN_BANNER -Color Yellow, DarkMagenta, Cyan, DarkBlue
+    Write-Output " "
     Write-Color -Text "Kraken ", "v$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR ", "| ", "Pixar ", "v$PIXAR_BUILDING_VERSION ", "| ", "$KRAKEN_DEVELOPMENT_MILESTONE" -Color DarkMagenta, Cyan, Yellow, Green, Blue, Yellow, DarkMagenta
     ShowPrettyGitRevision
   }
@@ -290,7 +292,7 @@ Set-Alias python_d RunKrakenPythonDebug
 Set-Alias wabiserver ConnectKraken
 
 # Utility Convenience
-Set-Alias xx DeleteConsoleLogs
+Set-Alias xxx DeleteConsoleLogs
 Set-Alias rr ReloadDeveloperProfile
 
 # Print Pretty ASCII Logo Variant
