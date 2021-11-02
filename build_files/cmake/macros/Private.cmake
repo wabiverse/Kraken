@@ -1288,7 +1288,6 @@ function(_wabi_library NAME)
             PUBLIC_HEADER "${args_PUBLIC_HEADERS}"
     )
 
-    set(WITH_PYTHON ON)
     if(TARGET shared_libs)
         set(WITH_PYTHON_MODULES ON)
     endif()

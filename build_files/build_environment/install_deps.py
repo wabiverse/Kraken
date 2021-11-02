@@ -930,10 +930,10 @@ RENDERMAN = Dependency("prman", InstallRenderman, rman_verify)
 # boost
 
 if MacOS():
-    BOOST_URL = "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_77_0.tar.gz"
+    BOOST_URL = "https://www.dropbox.com/s/19t0zx4ug5npbb3/boost_1_77_0.tar.gz?raw=1"
     BOOST_VERSION_FILE = "include/boost/version.hpp"
 elif Linux():
-    BOOST_URL = "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_77_0.tar.gz"
+    BOOST_URL = "https://boostorg.jfrog.io/ui/native/main/release/1.77.0/source/boost_1_77_0.tar.gz"
     BOOST_VERSION_FILE = "include/boost/version.hpp"
 elif Windows():
     # The default installation of boost on Windows puts headers in a versioned
@@ -1741,6 +1741,13 @@ def InstallOSL(context, force, buildArgs):
             InstallDependency("/build_env/source/OpenShadingLanguage-1.11.13.0/pugixml/include/pugiconfig.hpp", "/include/pugiconfig.hpp")
             InstallDependency("/build_env/source/OpenShadingLanguage-1.11.13.0/pugixml/include/pugixml.hpp",    "/include/pugixml.hpp")
             InstallDependency("/build_env/source/OpenShadingLanguage-1.11.13.0/pugixml/lib/libpugixml.a",       "/lib/libpugixml.a")
+
+        elif MacOS():
+            pugi = subprocess.call("svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin/pugixml/", stdout=subprocess.PIPE, shell=True)
+            macosArgs = [
+                '-DCPLUS_INCLUDE_PATH="/Users/furby/dev/lib/apple_darwin_x86_64/llvm/include/c++/v1;/Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include"',
+            ]
+            extraArgs += macosArgs     
         else:
             # OSL needs LLVM, so let's grab that too, the precompiled version from Blender should work fine.
             # Also seems to be the only version of LLVM that I can find anywhere that will actually allow OSL

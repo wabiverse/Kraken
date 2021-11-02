@@ -79,14 +79,15 @@ using namespace winrt::Windows::Storage;
 using namespace winrt::Windows::ApplicationModel;
 using namespace winrt::Windows::ApplicationModel::Resources;
 
-namespace fs = std::filesystem;
-
 #else
 #  include <alloca.h>
 #  include <sys/file.h>
 #  include <sys/mman.h>
 #  include <unistd.h>
+#  include <filesystem>
 #endif
+
+namespace fs = std::filesystem;
 
 WABI_NAMESPACE_BEGIN
 

@@ -18,40 +18,35 @@ Import-Module PSWriteColor
 Import-Module oh-my-posh
 Import-Module posh-git
 
-# Setup default pwsh on macOS.
-if($IsMacOS) {
-  function Get-Path {
-    [CmdLetBinding()]
-    Param()
-    $PathFiles = @()
-    $PathFiles += '/etc/paths'
-    $PathFiles = Get-ChildItem -Path /private/etc/paths.d | Select-Object -Expand FullName
-    $PathFiles | ForEach-Object {
-      Get-Content -Path $PSItem | ForEach-Object {
-        $_
-      }
-    }
-    $Paths
-  }
-
-  function Add-Path {
-    Param($Path)
-    $env:PATH = "${env:PATH}:$Path"
-  }
-
-  function Update-Environment {
-    [CmdLetBinding()]
-    Param()
-    $Paths = $env:PATH -split ':'
-    Get-Path | ForEach-Object {
-      if($PSItem -notin $Paths) {
-        Write-Verbose "Adding $PSItem to Path"
-        Add-Path -Path $PSItem
-      }
+function Get-Path {
+  [CmdLetBinding()]
+  Param()
+  $PathFiles = @()
+  $PathFiles += '/etc/paths'
+  $PathFiles = Get-ChildItem -Path /private/etc/paths.d | Select-Object -Expand FullName
+  $PathFiles | ForEach-Object {
+    Get-Content -Path $PSItem | ForEach-Object {
+      $_
     }
   }
+  $Paths
+}
 
-  Update-Environment
+function Add-Path {
+  Param($Path)
+  $env:PATH = "${env:PATH}:$Path"
+}
+
+function Update-Environment {
+  [CmdLetBinding()]
+  Param()
+  $Paths = $env:PATH -split ':'
+  Get-Path | ForEach-Object {
+    if($PSItem -notin $Paths) {
+      Write-Verbose "Adding $PSItem to Path"
+      Add-Path -Path $PSItem
+    }
+  }
 }
 
 if($IsWindows) {
@@ -294,6 +289,11 @@ Set-Alias wabiserver ConnectKraken
 # Utility Convenience
 Set-Alias xxx DeleteConsoleLogs
 Set-Alias rr ReloadDeveloperProfile
+
+# Setup paths on macOS.
+if($IsMacOS) {
+  Update-Environment
+}
 
 # Print Pretty ASCII Logo Variant
 ShowBanner
