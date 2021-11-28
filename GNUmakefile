@@ -17,6 +17,7 @@ Convenience Targets
    * developer:     Enable faster builds, error checking and tests, recommended for developers.
    * config:        Run cmake configuration tool to set build options.
    * ninja:         Use ninja build tool for faster builds.
+   * xcode:         Generate an Xcode Project to build and develop kraken.
 
    Note: passing the argument 'BUILD_DIR=path' when calling make will override the default build dir.
    Note: passing the argument 'BUILD_CMAKE_ARGS=args' lets you add cmake arguments.
@@ -25,7 +26,7 @@ Package Targets
 
    * package_debian:    Build a debian package.
    * package_pacman:    Build an arch linux pacman package.
-   * package_archive:	  Build an archive package.
+   * package_archive:	Build an archive package.
 
 Testing Targets
 
@@ -180,6 +181,11 @@ else
 		DEPS_BUILD_COMMAND:=make -s
 	endif
 endif
+ifneq "$(findstring xcode, $(MAKECMDGOALS))" ""
+    CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Xcode
+	BUILD_COMMAND:=xcodebuild
+	DEPS_BUILD_COMMAND:=xcodebuild
+endif
 
 # -----------------------------------------------------------------------------
 # Kraken binary path
@@ -256,6 +262,23 @@ debug: all
 release: all
 developer: all
 ninja: all
+
+# -----------------------------------------------------------------------------
+# Build Kraken using Apple Xcode.
+xcode:
+	@echo
+	@echo Configuring Kraken in \"$(BUILD_DIR)\" ...
+
+#	# do this always incase of failed initial build, could be smarter here...
+	@$(CMAKE_CONFIG)
+
+	@echo
+	@echo Building Kraken and Pixar USD...
+	$(BUILD_COMMAND) -project "$(BUILD_DIR)/Kraken.xcodeproj" -jobs $(NPROCS) -configuration Release -scheme install
+	@echo
+	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
+	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken"
+	@echo
 
 # -----------------------------------------------------------------------------
 # Run Install (So you don't have to rebuild everytime, python scripts, etc)
