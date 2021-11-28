@@ -44,6 +44,10 @@ endif()
 # Omit superfluous "Up-to-date" messages.
 set(CMAKE_INSTALL_MESSAGE LAZY)
 
+if(APPLE)
+  set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "Build architectures for MacOS" FORCE)
+endif()
+
 # global compile definitions since add_definitions() adds for all.
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
   $<$<CONFIG:Debug>:DEBUG;_DEBUG>

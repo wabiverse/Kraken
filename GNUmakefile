@@ -274,7 +274,7 @@ xcode:
 
 	@echo
 	@echo Building Kraken and Pixar USD...
-	$(BUILD_COMMAND) -project "$(BUILD_DIR)/Kraken.xcodeproj" -jobs $(NPROCS) -configuration Release -scheme install
+	$(BUILD_COMMAND) -arch "arm64" -project "$(BUILD_DIR)/Kraken.xcodeproj" -jobs $(NPROCS) -configuration Release -scheme install
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
 	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken"
