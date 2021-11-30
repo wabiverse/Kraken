@@ -8,6 +8,10 @@ $SHOW_KRAKEN_HUD = 1
 $env:path ="$($env:path);."
 $env:GIT_AUTHOR_EMAIL = "tyler@tylerfurby.com"
 
+if(-not ($IsWindows)) {
+  $env:PATH = "${env:PATH}:$Path"
+}
+
 $IsKrakenCreatorInDirectory = './source/creator'
 $IsKrakenSourceInDirectory = './source/kraken/ChaosEngine'
 $IsGitDirectory = './.git'

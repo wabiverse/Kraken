@@ -1,5 +1,9 @@
 add_subdirectory(usdImaging)
-add_subdirectory(usdApollo)
+
+if(WITH_VULKAN)
+  add_subdirectory(usdApollo)
+endif()
+
 add_subdirectory(usdImagingGL)
 add_subdirectory(usdRiImaging)
 add_subdirectory(usdSkelImaging)

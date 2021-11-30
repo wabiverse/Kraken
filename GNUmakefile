@@ -107,7 +107,7 @@ ifndef DEPS_BUILD_DIR
 	ifneq ($(OS_NCASE),darwin)
       DEPS_BUILD_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/linux_centos7_x86_64/build_env/build
 	else
-      DEPS_BUILD_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/apple_darwin_x86_64/build_env/build
+      DEPS_BUILD_DIR:=$(shell dirname "$(KRAKEN_DIR)")/lib/apple_darwin_arm64/build_env/build
 	endif
 endif
 

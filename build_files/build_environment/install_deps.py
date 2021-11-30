@@ -83,9 +83,9 @@ if Linux():
     BUILD_DIR = "../../../lib/linux_centos7_x86_64/build_env/build"
 
 if MacOS():
-    INSTALL_DIR = "../../../lib/apple_darwin_x86_64"
-    SOURCE_DIR = "../../../lib/apple_darwin_x86_64/build_env/source"
-    BUILD_DIR = "../../../lib/apple_darwin_x86_64/build_env/build"
+    INSTALL_DIR = "../../../lib/apple_darwin_arm64"
+    SOURCE_DIR = "../../../lib/apple_darwin_arm64/build_env/source"
+    BUILD_DIR = "../../../lib/apple_darwin_arm64/build_env/build"
 
 def Python3():
     return sys.version_info.major == 3
@@ -400,6 +400,7 @@ def RunCMake(context, force, extraArgs = None):
 
     with CurrentWorkingDirectory(buildDir):
         Run('cmake '
+            '-DCMAKE_OSX_ARCHITECTURES="arm64" '
             '-DCMAKE_INSTALL_PREFIX="{libInstDir}" '
             '-DCMAKE_PREFIX_PATH="{libInstDir}" '
             '-DCMAKE_BUILD_TYPE={config} '
@@ -957,6 +958,8 @@ def InstallBoost_Helper(context, force, buildArgs):
 
         if Windows():
             Run('{bootstrap} --prefix="{libInstDir}"'.format(bootstrap=bootstrap, libInstDir=context.libInstDir + "/boost"))
+        elif MacOS():
+            return
         else:
             Run('{bootstrap} --prefix="{libInstDir}"'.format(bootstrap=bootstrap, libInstDir=context.libInstDir + "/boost"))
 
@@ -1084,13 +1087,15 @@ elif Linux():
     TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_lin.tgz"
 elif MacOS():
     tbb_verify = "include/tbb/tbb.h"
-    TBB_URL = "https://github.com/oneapi-src/oneTBB/releases/download/2019_U9/tbb2019_20191006oss_mac.tgz"
+    TBB_URL = "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.4.0.tar.gz"
 
 def InstallTBB(context, force, buildArgs):
     if Windows():
         InstallTBB_Windows(context, force, buildArgs)
-    elif Linux() or MacOS():
-        InstallTBB_LinuxOrMacOS(context, force, buildArgs)
+    elif Linux():
+        InstallTBB_Linux(context, force, buildArgs)
+    elif MacOS():
+        InstallTBB_MacOS(context, force, buildArgs)
 
 def InstallTBB_Windows(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(TBB_URL, context, force)):
@@ -1107,7 +1112,7 @@ def InstallTBB_Windows(context, force, buildArgs):
         copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_OSS/include/serial", context.libInstDir + "/tbb/include/serial")
         copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_OSS/include/tbb", context.libInstDir + "/tbb/include/tbb")
 
-def InstallTBB_LinuxOrMacOS(context, force, buildArgs):
+def InstallTBB_Linux(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(TBB_URL, context, force)):
         # Note: TBB installation fails on OSX when cuda is installed, a
         # suggested fix:
@@ -1134,6 +1139,12 @@ def InstallTBB_LinuxOrMacOS(context, force, buildArgs):
           copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_mac/tbb2019_20191006oss/lib", context.libInstDir + "/lib")
           copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_mac/tbb2019_20191006oss/include/serial", context.libInstDir + "/include/serial")
           copy_tree(context.buildDir.rsplit('/',1)[0] + "/source/tbb2019_20191006oss_mac/tbb2019_20191006oss/include/tbb", context.libInstDir + "/include/tbb")
+
+def InstallTBB_MacOS(context, force, buildArgs):
+    with CurrentWorkingDirectory(DownloadURL(TBB_URL, context, force)):
+        extraArgs = [] 
+        RunCMake(context, force, extraArgs)
+
 
 TBB = Dependency("TBB", InstallTBB, tbb_verify)
 
@@ -1245,11 +1256,17 @@ else:
 def InstallPNG(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(PNG_URL, context, force)):
 
-        if Windows():
-            buildArgs = ['-DZLIB_ROOT="{zlibRoot}"'.format(zlibRoot=context.libInstDir + "/zlib")]
-            buildArgs.append('-DZLIB_INCLUDE_DIR="{libInst}"'.format(libInst=context.libInstDir + "/zlib/include"))
+        extraArgs = []
 
-        RunCMake(context, force, buildArgs)
+        if Windows():
+            extraArgs = ['-DZLIB_ROOT="{zlibRoot}"'.format(zlibRoot=context.libInstDir + "/zlib")]
+            extraArgs.append('-DZLIB_INCLUDE_DIR="{libInst}"'.format(libInst=context.libInstDir + "/zlib/include"))
+
+        elif MacOS():
+            extraArgs = ['-T buildsystem=1']
+
+        extraArgs += buildArgs
+        RunCMake(context, force, extraArgs)
 
         if Windows():
             InstallDependency("/bin/libpng16.dll",        "/png/bin/libpng16.dll")
@@ -1403,10 +1420,13 @@ if Windows():
 else:
     verify_blosc = "include/blosc.h"
 
-BLOSC_URL = "https://github.com/Blosc/c-blosc/archive/refs/tags/v1.21.0.zip"
+BLOSC_URL = "https://github.com/Blosc/c-blosc/archive/refs/tags/v1.21.1.tar.gz"
 
 def InstallBLOSC(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(BLOSC_URL, context, force)):
+        if MacOS():
+            return
+            
         RunCMake(context, force, buildArgs)
 
         if Windows():
@@ -1430,7 +1450,7 @@ if Windows():
 else:
     check_ovdb="include/openvdb/openvdb.h"
 
-OPENVDB_URL = "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v8.1.0.tar.gz"
+OPENVDB_URL = "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v8.2.0.tar.gz"
 
 def InstallOpenVDB(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(OPENVDB_URL, context, force)):
@@ -1481,7 +1501,7 @@ if Windows():
 else:
     verify_oiio = "include/OpenImageIO/oiioversion.h"
 
-OIIO_URL = "https://github.com/OpenImageIO/oiio/archive/Release-2.2.12.0.zip"
+OIIO_URL = "https://github.com/OpenImageIO/oiio/archive/refs/heads/master.zip"
 
 def InstallOpenImageIO(context, force, buildArgs):
     if Linux():
@@ -1519,6 +1539,8 @@ def InstallOpenImageIO(context, force, buildArgs):
             extraArgs.append('-DBoost_ROOT=' + context.libInstDir + "/boost")
             extraArgs.append('-DBoost_NO_BOOST_CMAKE=On')
             extraArgs.append('-DBoost_NO_SYSTEM_PATHS=True')
+        elif MacOS():
+            return
         else:
             extraArgs.append('-DOPENEXR_HOME="{instDir}"'.format(instDir=context.libInstDir))
             extraArgs.append('-DBoost_ROOT="{instDir}"'.format(instDir=context.libInstDir))
@@ -1534,16 +1556,16 @@ def InstallOpenImageIO(context, force, buildArgs):
         # ])
 
         # Fix deprecated Int64 type to uint64_t & missing includes
-        PatchFile("src/openexr.imageio/exroutput.cpp", [
-            ('    virtual Imath::Int64 tellp() { return m_io->tell(); }',   '    virtual uint64_t tellp() { return m_io->tell(); }'),
-            ('    virtual void seekp(Imath::Int64 pos)',                    '    virtual void seekp(uint64_t pos)'),
-            ('#include <OpenEXR/ImfDeepScanLineOutputPart.h>',              '#include <OpenEXR/ImfDeepFrameBuffer.h>\n#include <OpenEXR/ImfDeepScanLineOutputPart.h>\n')
-        ])
-        PatchFile("src/openexr.imageio/exrinput.cpp", [
-            ('    virtual Imath::Int64 tellg() { return m_io->tell(); }',   '    virtual uint64_t tellg() { return m_io->tell(); }'),
-            ('    virtual void seekg(Imath::Int64 pos)',                    '    virtual void seekg(uint64_t pos)'),
-            ('#include <OpenEXR/ImfDeepFrameBuffer.h>',                     '#include <OpenEXR/ImfHeader.h>\n#include <OpenEXR/ImfDeepFrameBuffer.h>\n')
-        ])
+        # PatchFile("src/openexr.imageio/exroutput.cpp", [
+        #     ('    virtual Imath::Int64 tellp() { return m_io->tell(); }',   '    virtual uint64_t tellp() { return m_io->tell(); }'),
+        #     ('    virtual void seekp(Imath::Int64 pos)',                    '    virtual void seekp(uint64_t pos)'),
+        #     ('#include <OpenEXR/ImfDeepScanLineOutputPart.h>',              '#include <OpenEXR/ImfDeepFrameBuffer.h>\n#include <OpenEXR/ImfDeepScanLineOutputPart.h>\n')
+        # ])
+        # PatchFile("src/openexr.imageio/exrinput.cpp", [
+        #     ('    virtual Imath::Int64 tellg() { return m_io->tell(); }',   '    virtual uint64_t tellg() { return m_io->tell(); }'),
+        #     ('    virtual void seekg(Imath::Int64 pos)',                    '    virtual void seekg(uint64_t pos)'),
+        #     ('#include <OpenEXR/ImfDeepFrameBuffer.h>',                     '#include <OpenEXR/ImfHeader.h>\n#include <OpenEXR/ImfDeepFrameBuffer.h>\n')
+        # ])
 
         # Add on any user-specified extra arguments.
         extraArgs += buildArgs
@@ -1569,9 +1591,14 @@ if Linux():
     OCIO_URL = "https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v2.0.0.tar.gz"
 else:
     test_ocio = "opencolorio/include/OpenColorIO/OpenColorABI.h"
+    PYSTRING_URL = "https://github.com/imageworks/pystring/archive/refs/heads/master.zip"
     OCIO_URL = "https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v2.0.0.zip"
 
 def InstallOpenColorIO(context, force, buildArgs):
+    with CurrentWorkingDirectory(DownloadURL(PYSTRING_URL, context, force)):
+        extraArgs = []
+        RunCMake(context, force, extraArgs)
+
     with CurrentWorkingDirectory(DownloadURL(OCIO_URL, context, force)):
         extraArgs = ['-DOCIO_BUILD_TRUELIGHT=OFF',
                      '-DOCIO_BUILD_APPS=OFF',
@@ -1745,7 +1772,7 @@ def InstallOSL(context, force, buildArgs):
         elif MacOS():
             pugi = subprocess.call("svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin/pugixml/", stdout=subprocess.PIPE, shell=True)
             macosArgs = [
-                '-DCPLUS_INCLUDE_PATH="/Users/furby/dev/lib/apple_darwin_x86_64/llvm/include/c++/v1;/Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include"',
+                '-DCPLUS_INCLUDE_PATH="/Users/furby/dev/lib/apple_darwin_arm64/llvm/include/c++/v1;/Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include"',
             ]
             extraArgs += macosArgs     
         else:
@@ -1854,10 +1881,13 @@ else:
 
 def InstallHDF5(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(HDF5_URL, context, force)):
+        if MacOS():
+            extraArgs = ['-T buildsystem=1']
+            extraArgs += buildArgs
         RunCMake(context, force,
                  ['-DBUILD_TESTING=OFF',
                   '-DHDF5_BUILD_TOOLS=OFF',
-                  '-DHDF5_BUILD_EXAMPLES=OFF'] + buildArgs)
+                  '-DHDF5_BUILD_EXAMPLES=OFF'] + extraArgs)
 
 HDF5 = Dependency("HDF5", InstallHDF5, "include/hdf5.h")
 
@@ -2011,6 +2041,9 @@ def InstallEmbree(context, force, buildArgs):
             '-DEMBREE_ISPC_SUPPORT=OFF'
         ]
 
+        if MacOS():
+            return
+
         if Windows():
             extraArgs.append('-DTBB_ROOT={libInstDir}'.format(libInstDir=context.libInstDir + "/tbb"))
         else:
@@ -2105,9 +2138,9 @@ class InstallContext:
             BUILD_DIR = GetVisualStudioDirectories()[2]
 
         if MacOS():
-            INSTALL_DIR = "../../../lib/apple_darwin_x86_64"
-            SOURCE_DIR = "../../../lib/apple_darwin_x86_64/build_env/source"
-            BUILD_DIR = "../../../lib/apple_darwin_x86_64/build_env/build"
+            INSTALL_DIR = "../../../lib/apple_darwin_arm64"
+            SOURCE_DIR = "../../../lib/apple_darwin_arm64/build_env/source"
+            BUILD_DIR = "../../../lib/apple_darwin_arm64/build_env/build"
 
         # Directory where dependencies will be installed
         self.libInstDir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), INSTALL_DIR)).replace('\\', '/')
@@ -2145,6 +2178,9 @@ class InstallContext:
         # CMake generator and toolset
         self.cmakeGenerator = args.generator
         self.cmakeToolset = args.toolset
+
+        if MacOS():
+            self.cmakeGenerator = "Xcode"
 
         self.buildDebug = False
 
