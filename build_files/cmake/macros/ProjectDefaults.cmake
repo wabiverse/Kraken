@@ -29,7 +29,7 @@
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
 if(APPLE)
-    set(OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures for OSX")
+    set(OSX_ARCHITECTURES "arm64" CACHE STRING "Build architectures for OSX")
     set(CMAKE_MACOSX_RPATH ON)
     set(CMAKE_SKIP_BUILD_RPATH FALSE)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)

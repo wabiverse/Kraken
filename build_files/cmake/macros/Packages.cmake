@@ -57,7 +57,7 @@ elseif(UNIX AND NOT APPLE)
   set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/linux_centos7_x86_64)
   set(LIB_OBJ_EXT "so")
 elseif(APPLE)
-  set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_x86_64)
+  set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64)
   set(LIB_OBJ_EXT "dylib")
 endif()
 
@@ -441,6 +441,14 @@ elseif(UNIX)
   find_package(TBB REQUIRED COMPONENTS tbb)
   add_definitions(-DTBB_PREVIEW_WAITING_FOR_WORKERS=1)
   add_definitions(-DTBB_PREVIEW_ISOLATED_TASK_GROUP=1)
+
+  if(APPLE)
+    macos_get_dependency("tbb" TBB_PREFIX)
+  endif()
+  list(APPEND TBB_LIBRARIES tbb)
+  list(APPEND TBB_INCLUDE_DIRS
+    ${TBB_PREFIX}/include
+  )
 endif()
 
 # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx math xxxxx
@@ -552,13 +560,22 @@ if(WITH_RENDERMAN)
 endif()
 
 if(WITH_ARNOLD)
-  add_definitions(-DWITH_ARNOLD)
   if(UNIX AND NOT APPLE)
     set(ARNOLD_HOME ${LIBDIR})
-  elseif(WIN32 OR APPLE)
+  elseif(WIN32)
     set(ARNOLD_HOME ${LIBDIR}/arnold)
   endif()
-  find_package(Arnold REQUIRED)
+  if(APPLE)
+    # Arnold Render Engine does
+    # not support ARM64. And
+    # is therefore disabled
+    # indefinitley on Apple
+    # platforms.
+    set(WITH_ARNOLD OFF)
+  else()
+    find_package(Arnold REQUIRED)
+    add_definitions(-DWITH_ARNOLD)
+  endif()
 endif()
 
 if(KRAKEN_RELEASE_MODE)
@@ -632,8 +649,15 @@ if(WITH_MATERIALX)
 endif()
 
 if(WITH_OSL)
-  add_definitions(-DWITH_OSL)
-  find_package(OSL REQUIRED)
+  if(APPLE)
+    # temp disabled until I
+    # get around to fixing
+    # osl builds on arm64.
+    set(WITH_OSL OFF)
+  else()
+    add_definitions(-DWITH_OSL)
+    find_package(OSL REQUIRED)
+  endif()
 endif()
 
 if(WIN32)

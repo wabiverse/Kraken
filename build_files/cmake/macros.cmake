@@ -1193,3 +1193,15 @@ endmacro()
 macro(without_system_libs_end)
   unset(CMAKE_IGNORE_PATH)
 endmacro()
+
+macro(macos_get_dependency 
+  _dependency _path)
+  # checks homebrew for path to dependency.
+  execute_process(
+    COMMAND brew --prefix ${_dependency}
+    RESULT_VARIABLE _unused_result
+    OUTPUT_VARIABLE DEPENDENCY_PREFIX
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  set(${_path} ${DEPENDENCY_PREFIX})
+endmacro()
