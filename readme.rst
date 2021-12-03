@@ -11,7 +11,7 @@ Kraken
    :target: https://wabi-kraken.readthedocs-hosted.com/_/sharing/1c32aeuqep6zdr4kk8sojmmi6
    :alt: Documentation Status
 
-.. figure:: https://www.dropbox.com/s/00eo3o5ywf5frg3/cover.png?raw=1
+.. figure:: https://www.dropbox.com/s/7n2ii6tt1ts7wa7/Artboard%201.png?raw=1
    :scale: 50 %
    :align: center
 
