@@ -1148,6 +1148,13 @@ function(print_all_vars)
   endforeach()
 endfunction()
 
+function(kraken_add_include_to_target dst_target)
+  foreach(src_target ${ARGN})
+    target_include_directories(${dst_target} PRIVATE $<TARGET_PROPERTY:${src_target},INTERFACE_INCLUDE_DIRECTORIES>)
+    target_compile_definitions(${dst_target} PRIVATE $<TARGET_PROPERTY:${src_target},INTERFACE_COMPILE_DEFINITIONS>)
+  endforeach()
+endfunction()
+
 macro(kraken_precompile_headers target cpp header)
   if(MSVC)
     # get the name for the pch output file
