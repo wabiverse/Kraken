@@ -17,29 +17,29 @@ file(TO_CMAKE_PATH
   MICROSOFT_NETCORE_PLATFORMS
 )
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.210930.14/build/native/Microsoft.Windows.CppWinRT"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.211028.7/build/native/Microsoft.Windows.CppWinRT"
   MICROSOFT_CPP_WINRT_PROJECT
 )
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.1.0.0-preview1/build/native/Microsoft.WindowsAppSDK"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.1.0.0/build/native/Microsoft.WindowsAppSDK"
   MICROSOFT_APP_SDK
 )
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.UI.Xaml.2.8.0-prerelease.210927001/build/native/Microsoft.UI.Xaml"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.UI.Xaml.2.7.1-prerelease.211026002/build/native/Microsoft.UI.Xaml"
   MICROSOFT_UI_XAML
 )
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.Web.WebView2.1.0.1018-prerelease/build/native/Microsoft.Web.WebView2"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.Web.WebView2.1.0.1083-prerelease/build/native/Microsoft.Web.WebView2"
   MICROSOFT_WEB_WEBVIEW
 )
 
 file(TO_CMAKE_PATH 
-  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Redist\\MSVC\\14.30.30528\\x64\\Microsoft.VC142.CRT"
-  MICROSOFT_VC142_CRT
+  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
+  MICROSOFT_VC143_CRT
 )
 file(TO_CMAKE_PATH 
-  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Redist\\MSVC\\14.30.30528\\x64\\Microsoft.VC142.CRT"
-  MICROSOFT_VC142_APP_CRT
+  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
+  MICROSOFT_VC143_APP_CRT
 )
 file(TO_CMAKE_PATH
   $ENV{RMANTREE}
@@ -60,18 +60,18 @@ if(${proj_path} STREQUAL "source/creator/kraken")
 <Project ToolsVersion=\"15.0\" DefaultTargets=\"Build\" xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <ItemGroup>
-    <PackageReference Include=\"Microsoft.Windows.CppWinRT\" Version=\"2.0.210930.14\" />
-    <PackageReference Include=\"Microsoft.UI.Xaml\" Version=\"2.8.0-prerelease.210927001\" />
-    <PackageReference Include=\"Microsoft.Web.WebView2\" Version=\"1.0.1018-prerelease\" />
+    <PackageReference Include=\"Microsoft.Windows.CppWinRT\" Version=\"2.0.211028.7\" />
+    <PackageReference Include=\"Microsoft.UI.Xaml\" Version=\"2.7.1-prerelease.211026002\" />
+    <PackageReference Include=\"Microsoft.Web.WebView2\" Version=\"1.0.1083-prerelease\" />
     <Manifest Include=\"$(ApplicationManifest)\" />
   </ItemGroup>
   <PropertyGroup Label=\"Globals\">
-    <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
-    <WindowsSdkPackageVersion>10.0.22000.160-preview</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22509.0-preview</WindowsSdkPackageVersion>
     <AppxPackage>true</AppxPackage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetOsVersion>10.0</TargetOsVersion>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFramework>net6.0-windows10.0.22509.0</TargetFramework>
+    <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
@@ -346,31 +346,31 @@ if(${proj_path} STREQUAL "source/creator/kraken")
 
     <!-- MICROSOFT CRT -->
 
-    <Content Include=\"${MICROSOFT_VC142_CRT}/concrt140.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/concrt140.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/msvcp140.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140_1.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/msvcp140_1.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140_2.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/msvcp140_2.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140_atomic_wait.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/msvcp140_atomic_wait.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${MICROSOFT_VC142_CRT}/msvcp140_codecvt_ids.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/msvcp140_codecvt_ids.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${MICROSOFT_VC142_CRT}/vccorlib140.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/vccorlib140.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${MICROSOFT_VC142_CRT}/vcruntime140.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/vcruntime140.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${MICROSOFT_VC142_CRT}/vcruntime140_1.dll\">
+    <Content Include=\"${MICROSOFT_VC143_CRT}/vcruntime140_1.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
 
@@ -399,8 +399,7 @@ else()
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK}.props\')\" />
   <PropertyGroup Label=\"Globals\">
-    <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
-    <WindowsSdkPackageVersion>10.0.22000.160-preview</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22509.0-preview</WindowsSdkPackageVersion>
     <CompileAsWinRT>false</CompileAsWinRT>
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <MinimalCoreWin>true</MinimalCoreWin>
@@ -408,7 +407,8 @@ else()
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetOsVersion>10.0</TargetOsVersion>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFramework>net6.0-windows10.0.22509.0</TargetFramework>
+    <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <UseWinUI>true</UseWinUI>
@@ -796,47 +796,47 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/kraken.build.appxrecipe)
     
     <!-- MICROSOFT CRT -->
     
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/concrt140.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/concrt140.dll\">
       <PackagePath>concrt140.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/msvcp140.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/msvcp140.dll\">
       <PackagePath>msvcp140.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/msvcp140_1.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/msvcp140_1.dll\">
       <PackagePath>msvcp140_1.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/msvcp140_2.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/msvcp140_2.dll\">
       <PackagePath>msvcp140_2.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/msvcp140_atomic_wait.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/msvcp140_atomic_wait.dll\">
       <PackagePath>msvcp140_atomic_wait.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/msvcp140_codecvt_ids.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/msvcp140_codecvt_ids.dll\">
       <PackagePath>msvcp140_codecvt_ids.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/vccorlib140.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/vccorlib140.dll\">
       <PackagePath>vccorlib140.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/vcruntime140.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/vcruntime140.dll\">
       <PackagePath>vcruntime140.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${MICROSOFT_VC142_CRT}/vcruntime140_1.dll\">
+    <AppxPackagedFile Include=\"${MICROSOFT_VC143_CRT}/vcruntime140_1.dll\">
       <PackagePath>vcruntime140_1.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
@@ -875,7 +875,7 @@ endif()
 # endif()
 
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.210930.14/bin/cppwinrt.exe"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.211028.7/bin/cppwinrt.exe"
   MICROSOFT_WINRT_EXECUTABLE
 )
 set(WINRT_EXECUTABLE ${MICROSOFT_WINRT_EXECUTABLE} PARENT_SCOPE)
@@ -883,7 +883,7 @@ endfunction()
 
 function(kraken_init_nuget)
   # Install Required NuGet Packages to the System.
-  if(NOT EXISTS "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.210930.14/build/native/Microsoft.Windows.CppWinRT.props")
+  if(NOT EXISTS "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.211028.7/build/native/Microsoft.Windows.CppWinRT.props")
     file(
       COPY
         ${CMAKE_SOURCE_DIR}/release/windows/packages.config

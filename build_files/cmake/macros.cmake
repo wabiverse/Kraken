@@ -788,12 +788,6 @@ function(get_pixar_version)
 
   math(EXPR _out_version "${_out_version_major} * 10000 + ${_out_version_minor} * 100 + ${_out_version_patch}")
 
-  # output vars
-  if(_wabi_version_not_major)
-    set(WABI_VERSION_DECIMAL "${_out_version_minor}.${_out_version_patch}" PARENT_SCOPE)
-  else()
-    set(WABI_VERSION_DECIMAL "${_out_version_major}.${_out_version_minor}.${_out_version_patch}" PARENT_SCOPE)
-  endif()
   set(WABI_VERSION "${_out_version}" PARENT_SCOPE)
   set(WABI_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
   set(WABI_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)

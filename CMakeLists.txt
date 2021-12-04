@@ -165,8 +165,6 @@ endif()
 get_pixar_version()
 get_kraken_version()
 
-add_definitions(-DWABI_VERSION_DECIMAL=${WABI_VERSION_DECIMAL})
-
 set(TARGETDIR_VER ${KRAKEN_VERSION})
 
 #-----------------------------------------------------------------------------

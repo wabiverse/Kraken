@@ -1,84 +1,29 @@
-
-# Configuration of clang-format
-# =============================
-#
-# Tested to work with versions: 8 to 11.
-
-Standard: c++17
-
-# This causes parameters on continuations to align to the opening brace.
-#
-#   like_this_long_name(parameter_one,
-#                       parameter_two,
-#                       parameter_three);
-#
+---
+# Shared configuration
+# ====================
+AlwaysBreakAfterReturnType: None
+AlwaysBreakAfterDefinitionReturnType: None
+IndentWrappedFunctionNames: false
 AlignAfterOpenBracket: Align
 AllowShortFunctionsOnASingleLine: Empty
-
-
-# Disallow short functions on one line; break them up.
 AllowShortBlocksOnASingleLine: false
-
-# These two settings trigger stacking of parameters in most cases; this is
-# easier to read and also makes diffs easier to read (since an added or removed
-# parameter is obvious). For example, function calls will look like this:
-#
-#   like_this_long_name(parameter_one,
-#                       parameter_two,
-#                       parameter_three,
-#                       parameter_four,
-#                       parameter_five,
-#                       parameter_six);
-#
-# Instead of:
-#
-#   like_this_long_name(parameter_one, parameter_two, parameter_three, parameter_four,
-#                       parameter_five, parameter_six);
-#
+AllowShortLambdasOnASingleLine: false
 BinPackArguments: false
 BinPackParameters: false
-
-# Line width (don't exceed 110).
-ColumnLimit: 0
-
-# Setup preferred inheritance list to break before the colon and after the
-# commas
+ColumnLimit: 99
 BreakInheritanceList: BeforeColon
-
-# Cause all parameters of declaration to have new lines,
-# rather than allowing them to be put on the same line
 AllowAllParametersOfDeclarationOnNextLine: false
-
-# Cause initializer lists to have one member initialized per line, in the case
-# that all initializers can't fit on a single line.
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 AllowAllConstructorInitializersOnNextLine: false
-
-# Setup preferred constructor initalizer style to break constructor initializers
-# before the colon and after the commas.
-BreakConstructorInitializers: BeforeColon
-
-# Indent the : after a constructor. For example:
-#
-#   explicit foo_class ()
-#     : member1_(5)
-#   {}
-#
 ConstructorInitializerIndentWidth: 2
-
-# Make access modifier slightly more visible.
 AccessModifierOffset: -1
-
-# This will unfortunately use spaces in some cases where it's not desired (like
-# function calls) but the overall result is better since it will allow
-# alignment to work properly with different tab width settings.
 ContinuationIndentWidth: 2
+EmptyLineAfterAccessModifier: Always
 
-# This tries to match Blender's style as much as possible. One
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterClass: true
-  AfterControlStatement: true
+  AfterControlStatement: false
   AfterEnum: true
   AfterFunction: true
   AfterNamespace: true
@@ -92,107 +37,50 @@ BraceWrapping:
   SplitEmptyRecord: false
   AfterObjCDeclaration: true
 
-# For switch statements, indent the cases.
 IndentCaseLabels: true
-
-# Indent after the hash inside preprocessor directives
 IndentPPDirectives: AfterHash
-
 BreakBeforeTernaryOperators: false
-
 SpaceAfterTemplateKeyword: false
-
-# Handy comment at the end of each C++ name space.
 FixNamespaceComments: true
 NamespaceIndentation: All
-
-# Use "if (...)" instead of "if(...)", but have function calls like foo().
 SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false
-
-# Use two spaces before trailing comments, for example
-#
-#   foo = bar;  // comment
-#
-# Note that this doesn't work for C-style comments.
 SpacesBeforeTrailingComments: 2
-
-# Reflow comments, developers must disable formatting as with code to override this.
 ReflowComments: true
-
-# Never use tabs for indentation.
-# Note: TabWidth and IndentWidth must be the same, or strange things happen.
 UseTab: Never
 TabWidth: 2
 IndentWidth: 2
-
-# Add a big penalty on breaking after the return type of functions. For example,
-#
-#   static void foo(...)
-#
-# Instead of:
-#
-#   static void
-#   foo(very long content here that maybe could be stacked)
-#
-PenaltyReturnTypeOnItsOwnLine: 10000
-
-# Avoid having function calls broken onto a new line:
-#
-#   int a = foo(
-#       long, list, of, many, params);
-#
-# Instead of:
-#
-#   int a =
-#       foo(long, list, of, many, params);
-#
 PenaltyBreakAssignment: 110
-
 AllowAllArgumentsOnNextLine: false
-AllowShortFunctionsOnASingleLine: None
-
 SortIncludes: false
-
-
 AlignEscapedNewlines: Left
 AlignArrayOfStructures: Left
-
 EmptyLineBeforeAccessModifier: Always
-
-# Always break:
-#
-#   const char *foo =
-#       "multi"
-#       "line";
-#
-# Instead of:
-#
-#   const char *foo = "multi"
-#                     "line";
-#
 AlwaysBreakBeforeMultilineStrings: true
-
 MaxEmptyLinesToKeep: 2
-
-# Setup consecutive alignment 
-#AlignConsecutiveAssignments: true
-#AlignConsecutiveBitFields: true
-
-#ConstructorInitializerAllOnOneLineOrOnePerLine: true
 BreakConstructorInitializersBeforeComma: false
 BreakConstructorInitializers: BeforeColon
-
-# We don't want literal strings to break,
-# however clang-format seems to ignore this (sigh).
+PenaltyReturnTypeOnItsOwnLine: 1000000
 PenaltyBreakString: 1000000
-
-# There are macros in Blender for custom for loops; tell Clang to treat them
-# like loops rather than an expression, and so put the { on the same line.
-#
-# To find these use multi-line regex search:
-# "^\s+[A-Z][A-Z0-9_]+\s*\([^\n]*\)\n\s*\{"
-
 ForEachMacros: ['TF_FOR_ALL', 'UNIVERSE_FOR_ALL', 'foreach']
-
 WhitespaceSensitiveMacros: ['TF_DEFINE_PRIVATE_TOKENS', 'TF_DEFINE_PUBLIC_TOKENS', 'TF_DEFINE_ENV_SETTING', 'PP_CAT']
+---
+# CXX configuration
+# =================
+Language: Cpp
+Standard: c++20
+---
+# JavaScript configuration
+# ========================
+Language: JavaScript
+ColumnLimit: 100
+---
+# Json configuration (not shared)
+# ===============================
+Language: Json
+BasedOnStyle: Google
+IndentWidth: 2
+IndentCaseLabels: false
+TabWidth: 2
+UseTab: Never 
+ColumnLimit: 0

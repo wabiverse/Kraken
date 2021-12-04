@@ -30,7 +30,7 @@
 #  ifdef WITH_WINUI3
 #    include "ChaosEngine/Kraken.UIKit.UIScreen.h"
 #  endif /* WITH_WINUI3 */
-#endif /* _WIN32 */
+#endif   /* _WIN32 */
 
 #include "creator.h"
 
@@ -88,8 +88,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
 #if !defined(ARCH_OS_WINDOWS)
   /* Init & parse args. */
   CREATOR_setup_args(argc, (const char **)argv);
-  if (CREATOR_parse_args(argc, (const char **)argv) != 0)
-  {
+  if (CREATOR_parse_args(argc, (const char **)argv) != 0) {
     return;
   }
 #endif /* !defined(ARCH_OS_WINDOWS) */
@@ -115,6 +114,9 @@ void CREATOR_kraken_main(int argc, const char **argv)
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
+  /**
+   * 🚀 Kraken Launch with Microsoft WinRT Superpowers. */
+
   winrt::init_apartment();
   Windows::UI::Xaml::Application::Start([](auto &&) {
     ::winrt::make<::winrt::Kraken::implementation::App>();

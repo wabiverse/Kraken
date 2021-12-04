@@ -14,8 +14,7 @@ if not exist "%vs_where%" (
 )
 
 if NOT "%VS2022_NOT_OFFICIALLY_RELEASED%" == "" (
-	@REM Workaround while MSVC 2022 is still under
-	@REM Developer Preview and not publicly available
+	@REM MSVC 2022 now released, saving for next beta...
 	if NOT "%verbose%" == "" (
 			echo "%vs_where%" -prerelease %VSWHERE_ARGS% -version ^[%BUILD_VS_VER%.0^,%BUILD_VS_VER%.99^) -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64
 		)

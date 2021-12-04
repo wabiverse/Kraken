@@ -16,7 +16,6 @@ $IsKrakenCreatorInDirectory = './source/creator'
 $IsKrakenSourceInDirectory = './source/kraken/ChaosEngine'
 $IsGitDirectory = './.git'
 
-Set-Alias g git
 Import-Module -Name Terminal-Icons
 Import-Module PSWriteColor
 Import-Module oh-my-posh
@@ -62,43 +61,36 @@ if($IsWindows) {
   # & choco feature enable -n=allowGlobalConfirmation
 }
 
-# -------------- This is called from .git/hooks/pre-commit -----
+# -------------------- This is called from command 'gg' -----
 
-function WabiAnimationPreCommitHook {
+function WabiAnimationPreCommitHook 
+{
+  # hook.
+  if(($Args[0] -eq 'commit') -or ($Args[0] -eq 'format')) {
 
-  # Verify git email.
-  if ($env:GIT_AUTHOR_EMAIL -notmatch '@(non\.)?tylerfurby\.com$') {
-    Write-Warning "Your Git email address '$env:GIT_AUTHOR_EMAIL' is not configured correctly."
-    Write-Warning "Use the command: 'git config --global user.email <tyler@tylerfurby.com>' to set it correctly."
-    exit 1
-  }
-
-  # Add the changed files to git staging.
-  Get-ChildItem (git diff --name-only) | Foreach-Object {
-
-    $ammendFile = $_
-
-    # Ensure we are only formatting the following extensions.
-    $formatFileExt = [System.IO.Path]::GetExtension($ammendFile)
-    if(($formatFileExt -eq '.cpp') -or ($formatFileExt -eq '.cc') -or ($formatFileExt -eq '.cpp') -or
-        ($formatFileExt -eq '.cxx') -or ($formatFileExt -eq '.h') -or ($formatFileExt -eq '.hh') -or
-        ($formatFileExt -eq '.hpp') -or ($formatFileExt -eq '.hxx') -or ($formatFileExt -eq '.m') -or
-        ($formatFileExt -eq '.mm') -or ($formatFileExt -eq '.osl') -or ($formatFileExt -eq '.glsl')) {
-      # Run clang format on each file.
-      Write-Color -Text "Formatting: ", $ammendFile -Color Yellow, Green
-      clang-format -style=file $ammendFile >$null 2>&1
+    # clang format.
+    # match hybrid CXX style between Google, Pixar, and Blender
+    & git diff --cached --name-only | Where-Object {
+      $_ -match '(\.cpp)|(\.json)'
+    } | ForEach-Object {
+      Write-Color -Text "Formatting", ": ", "$_" -Color Yellow, DarkGray, Cyan
+      & clang-format -i -verbose -style=file $_ 2>&1>$null
+      & git add $_
     }
 
-    if(-not($ammendFile -like '*vscode*')) {
-      # Stage the files.
-      git add $ammendFile
+    if ($Args[0] -eq 'commit') {
+      & git $Args
     }
+
+  } else {
+
+    & git $Args
   }
 }
 
 
 function SetupEnv {
-  cmd.exe /c "call `"C:\Program Files\Microsoft Visual Studio\2022\Preview\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
+  cmd.exe /c "call `"C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
   
   Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
     if ($_ -match "^(.*?)=(.*)$") {
@@ -112,8 +104,8 @@ function RunMidlRT {
   & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\midlrt.exe" C:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\CHAOSENGINE\SRC\KRAKEN.FOUNDATION.IDL /IC:\USERS\WABIF\DEV\BUILD_KRAKEN_RELEASE\SOURCE\CREATOR /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\CREATOR /I"C:\USERS\WABIF\DEV\BUILD_KRAKEN_RELEASE\SOURCE\CREATOR\GENERATED FILES" /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN /IC:\USERS\WABIF\DEV\KRAKEN /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\ANCHOR /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\EDITORS\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\KRAKLIB /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\KRAKERNEL /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\WM /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\LUXO /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\UNIVERSE /I"C:\USERS\WABIF\DEV\LIB\WIN64_VC17\BOOST\INCLUDE\BOOST-1_78" /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PYTHON\39\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PTHREADS\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\PYTHON /IC:\VULKANSDK\1.2.189.2\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\TBB\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\PYTHON\39\INCLUDE /I"C:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\BOOST\INCLUDE\BOOST-1_78" /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\ALEMBIC\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\OPENEXR\INCLUDE\IMATH /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\OPENEXR\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\HDF5\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\DRACO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\MATERIALX\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\ARNOLD\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\EMBREE\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\CYCLES\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OSL\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENIMAGEIO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENSUBDIV\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PTEX\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENCOLORIO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENVDB\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\WABI\IMAGING\PLUGIN\HDARNOLD\COMMON /IC:\USERS\WABIF\DEV\KRAKEN\WABI\IMAGING\PLUGIN\HDCYCLES\MIKKTSPACE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OIDN\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\CYCLES\INCLUDE\THIRD_PARTY\ATOMIC /I"C:\PROGRAM FILES\PIXAR\RENDERMANPROSERVER-24.1\INCLUDE" /metadata_dir "C:\PROGRAM FILES (X86)\WINDOWS KITS\10\REFERENCES\10.0.22000.0\WINDOWS.FOUNDATION.FOUNDATIONCONTRACT\4.0.0.0" /winrt /W1 /nologo /char signed /env x64 /out"C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\ChaosEngine" /winmd "C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\ChaosEngine\UNMERGED\KRAKEN.FOUNDATION.WINMD" /h "KRAKEN.FOUNDATION.H" /dlldata "NUL" /iid "KRAKEN.FOUNDATION_I.C" /proxy "KRAKEN.FOUNDATION_P.C" /tlb "KRAKEN.FOUNDATION.TLB" /client none /server none /enum_class /ns_prefix /target "NT60"  /nomidl @C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\kraken.dir\Release\kraken.vcxproj.midlrt.rsp  C:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\CHAOSENGINE\SRC\KRAKEN.FOUNDATION.IDL
   & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\midlrt.exe" C:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\CHAOSENGINE\SRC\KRAKEN.UIKIT.IDL /IC:\USERS\WABIF\DEV\BUILD_KRAKEN_RELEASE\SOURCE\CREATOR /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\CREATOR /I"C:\USERS\WABIF\DEV\BUILD_KRAKEN_RELEASE\SOURCE\CREATOR\GENERATED FILES" /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN /IC:\USERS\WABIF\DEV\KRAKEN /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\ANCHOR /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\EDITORS\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\KRAKLIB /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\KRAKERNEL /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\WM /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\LUXO /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\UNIVERSE /I"C:\USERS\WABIF\DEV\LIB\WIN64_VC17\BOOST\INCLUDE\BOOST-1_78" /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PYTHON\39\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PTHREADS\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\PYTHON /IC:\VULKANSDK\1.2.189.2\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\TBB\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\PYTHON\39\INCLUDE /I"C:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\BOOST\INCLUDE\BOOST-1_78" /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\ALEMBIC\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\OPENEXR\INCLUDE\IMATH /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\OPENEXR\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\HDF5\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\DRACO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\MATERIALX\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\ARNOLD\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\EMBREE\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\CYCLES\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OSL\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENIMAGEIO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENSUBDIV\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PTEX\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENCOLORIO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENVDB\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\WABI\IMAGING\PLUGIN\HDARNOLD\COMMON /IC:\USERS\WABIF\DEV\KRAKEN\WABI\IMAGING\PLUGIN\HDCYCLES\MIKKTSPACE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OIDN\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\CYCLES\INCLUDE\THIRD_PARTY\ATOMIC /I"C:\PROGRAM FILES\PIXAR\RENDERMANPROSERVER-24.1\INCLUDE" /metadata_dir "C:\PROGRAM FILES (X86)\WINDOWS KITS\10\REFERENCES\10.0.22000.0\WINDOWS.FOUNDATION.FOUNDATIONCONTRACT\4.0.0.0" /winrt /W1 /nologo /char signed /env x64 /out"C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\ChaosEngine" /winmd "C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\ChaosEngine\UNMERGED\KRAKEN.FOUNDATION.WINMD" /h "KRAKEN.FOUNDATION.H" /dlldata "NUL" /iid "KRAKEN.FOUNDATION_I.C" /proxy "KRAKEN.FOUNDATION_P.C" /tlb "KRAKEN.FOUNDATION.TLB" /client none /server none /enum_class /ns_prefix /target "NT60"  /nomidl @C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\kraken.dir\Release\kraken.vcxproj.midlrt.rsp  C:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\CHAOSENGINE\SRC\KRAKEN.UIKIT.IDL
   & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\midlrt.exe" 'C:\USERS\WABIF\DEV\BUILD_KRAKEN_RELEASE\SOURCE\CREATOR\GENERATED FILES\XAMLMETADATAPROVIDER.IDL' /IC:\USERS\WABIF\DEV\BUILD_KRAKEN_RELEASE\SOURCE\CREATOR /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\CREATOR /I"C:\USERS\WABIF\DEV\BUILD_KRAKEN_RELEASE\SOURCE\CREATOR\GENERATED FILES" /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN /IC:\USERS\WABIF\DEV\KRAKEN /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\ANCHOR /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\EDITORS\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\KRAKLIB /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\KRAKERNEL /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\WM /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\LUXO /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\UNIVERSE /I"C:\USERS\WABIF\DEV\LIB\WIN64_VC17\BOOST\INCLUDE\BOOST-1_78" /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PYTHON\39\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PTHREADS\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\SOURCE\KRAKEN\PYTHON /IC:\VULKANSDK\1.2.189.2\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\TBB\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\PYTHON\39\INCLUDE /I"C:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\BOOST\INCLUDE\BOOST-1_78" /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\ALEMBIC\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\OPENEXR\INCLUDE\IMATH /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\OPENEXR\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\HDF5\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\DRACO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\MATERIALX\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\ARNOLD\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\EMBREE\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\CYCLES\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OSL\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENIMAGEIO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENSUBDIV\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\PTEX\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENCOLORIO\INCLUDE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OPENVDB\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\WABI\IMAGING\PLUGIN\HDARNOLD\COMMON /IC:\USERS\WABIF\DEV\KRAKEN\WABI\IMAGING\PLUGIN\HDCYCLES\MIKKTSPACE /IC:\USERS\WABIF\DEV\LIB\WIN64_VC17\OIDN\INCLUDE /IC:\USERS\WABIF\DEV\KRAKEN\..\LIB\WIN64_VC17\CYCLES\INCLUDE\THIRD_PARTY\ATOMIC /I"C:\PROGRAM FILES\PIXAR\RENDERMANPROSERVER-24.1\INCLUDE" /metadata_dir "C:\PROGRAM FILES (X86)\WINDOWS KITS\10\REFERENCES\10.0.22000.0\WINDOWS.FOUNDATION.FOUNDATIONCONTRACT\4.0.0.0" /winrt /W1 /nologo /char signed /env x64 /out"C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\ChaosEngine" /winmd "C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\ChaosEngine\UNMERGED\KRAKEN.FOUNDATION.WINMD" /h "KRAKEN.FOUNDATION.H" /dlldata "NUL" /iid "KRAKEN.FOUNDATION_I.C" /proxy "KRAKEN.FOUNDATION_P.C" /tlb "KRAKEN.FOUNDATION.TLB" /client none /server none /enum_class /ns_prefix /target "NT60"  /nomidl @C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\kraken.dir\Release\kraken.vcxproj.midlrt.rsp  'C:\USERS\WABIF\DEV\BUILD_KRAKEN_RELEASE\SOURCE\CREATOR\GENERATED FILES\XAMLMETADATAPROVIDER.IDL'
-  & "C:\Users\wabif\dev\build_KRAKEN_Release\packages\Microsoft.Windows.CppWinRT.2.0.210930.14\bin\cppwinrt.exe" @C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\kraken.dir\Release\kraken.vcxproj.cppwinrt_ref.rsp -verbose
-  & "C:\Users\wabif\dev\build_KRAKEN_Release\packages\Microsoft.Windows.CppWinRT.2.0.210930.14\bin\cppwinrt.exe" @C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\kraken.dir\Release\kraken.vcxproj.cppwinrt_comp.rsp -verbose
+  & "C:\Users\wabif\dev\build_KRAKEN_Release\packages\Microsoft.Windows.CppWinRT.2.0.211028.7\bin\cppwinrt.exe" @C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\kraken.dir\Release\kraken.vcxproj.cppwinrt_ref.rsp -verbose
+  & "C:\Users\wabif\dev\build_KRAKEN_Release\packages\Microsoft.Windows.CppWinRT.2.0.211028.7\bin\cppwinrt.exe" @C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\kraken.dir\Release\kraken.vcxproj.cppwinrt_comp.rsp -verbose
   # & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\mdmerge.exe" @C:\Users\wabif\dev\build_KRAKEN_Release\source\creator\kraken.dir\Release\kraken.vcxproj.mdmerge.rsp
 }
 
@@ -234,7 +226,7 @@ function InstallNugetPackages {
 
 function ShowPrettyGitRevision {
   Write-Output " "
-  if (Test-Path -Path $IsGitDirectory) {
+  if (Test-Path -Path './.git') {
     $AUTHOR = git show --format="%an`n" -s
     $LATEST_REVISION = git show --summary --pretty=format:"%x07%h"
     $FOR_DATE = git show --summary --pretty=format:"%x07%ad"
@@ -293,6 +285,8 @@ Set-Alias wabiserver ConnectKraken
 # Utility Convenience
 Set-Alias xxx DeleteConsoleLogs
 Set-Alias rr ReloadDeveloperProfile
+
+Set-Alias gg WabiAnimationPreCommitHook
 
 # Setup paths on macOS.
 if($IsMacOS) {

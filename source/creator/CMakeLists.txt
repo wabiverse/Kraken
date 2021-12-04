@@ -418,13 +418,13 @@ endif()
 if(WIN32)
 
   file(TO_CMAKE_PATH 
-    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Redist\\MSVC\\14.30.30528\\x64\\Microsoft.VC142.CRT"
-    MICROSOFT_VC142_CRT
+    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
+    MICROSOFT_VC143_CRT
   )
 
   file(TO_CMAKE_PATH 
-    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Redist\\MSVC\\14.30.30528\\x64\\Microsoft.VC142.CRT"
-    MICROSOFT_VC142_APP_CRT
+    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
+    MICROSOFT_VC143_APP_CRT
   )
 
   file(TO_CMAKE_PATH
@@ -522,25 +522,25 @@ if(WIN32)
       # OPENVDB
       ${LIBDIR}/openvdb/bin/openvdb.dll
       # MICROSOFT CRT
-      ${MICROSOFT_VC142_CRT}/concrt140.dll
-      ${MICROSOFT_VC142_CRT}/msvcp140.dll
-      ${MICROSOFT_VC142_CRT}/msvcp140_1.dll
-      ${MICROSOFT_VC142_CRT}/msvcp140_2.dll
-      ${MICROSOFT_VC142_CRT}/msvcp140_atomic_wait.dll
-      ${MICROSOFT_VC142_CRT}/msvcp140_codecvt_ids.dll
-      ${MICROSOFT_VC142_CRT}/vccorlib140.dll
-      ${MICROSOFT_VC142_CRT}/vcruntime140.dll
-      ${MICROSOFT_VC142_CRT}/vcruntime140_1.dll
+      ${MICROSOFT_VC143_CRT}/concrt140.dll
+      ${MICROSOFT_VC143_CRT}/msvcp140.dll
+      ${MICROSOFT_VC143_CRT}/msvcp140_1.dll
+      ${MICROSOFT_VC143_CRT}/msvcp140_2.dll
+      ${MICROSOFT_VC143_CRT}/msvcp140_atomic_wait.dll
+      ${MICROSOFT_VC143_CRT}/msvcp140_codecvt_ids.dll
+      ${MICROSOFT_VC143_CRT}/vccorlib140.dll
+      ${MICROSOFT_VC143_CRT}/vcruntime140.dll
+      ${MICROSOFT_VC143_CRT}/vcruntime140_1.dll
       # MICROSOFT APP CRT ??
-      # ${MICROSOFT_VC142_APP_CRT}/concrt140_app.dll
-      # ${MICROSOFT_VC142_APP_CRT}/msvcp140_app.dll
-      # ${MICROSOFT_VC142_APP_CRT}/msvcp140_1_app.dll
-      # ${MICROSOFT_VC142_APP_CRT}/msvcp140_2_app.dll
-      # ${MICROSOFT_VC142_APP_CRT}/msvcp140_atomic_wait_app.dll
-      # ${MICROSOFT_VC142_APP_CRT}/msvcp140_codecvt_ids_app.dll
-      # ${MICROSOFT_VC142_APP_CRT}/vccorlib140_app.dll
-      # ${MICROSOFT_VC142_APP_CRT}/vcruntime140_app.dll
-      # ${MICROSOFT_VC142_APP_CRT}/vcruntime140_1_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/concrt140_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/msvcp140_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/msvcp140_1_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/msvcp140_2_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/msvcp140_atomic_wait_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/msvcp140_codecvt_ids_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/vccorlib140_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/vcruntime140_app.dll
+      # ${MICROSOFT_VC143_APP_CRT}/vcruntime140_1_app.dll
 
     # Install all dependent .dlls to MSIX Appx Package.
     DESTINATION

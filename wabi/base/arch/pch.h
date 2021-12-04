@@ -73,16 +73,6 @@
 #  include <winrt/Microsoft.UI.Xaml.Navigation.h>
 #  include <winrt/Microsoft.UI.Xaml.Shapes.h>
 
-#  include <DbgHelp.h>
-#  include <Memoryapi.h>
-#  include <Psapi.h>
-#  include <WinIoCtl.h>
-#  include <chrono>
-#  include <direct.h>
-#  include <intrin.h>
-#  include <io.h>
-#  include <process.h>
-
 #  pragma comment(lib, "windowsapp")
 
 #endif /* ARCH_OS_WINDOWS */
@@ -120,44 +110,50 @@
 #  include <unwind.h>
 #  include <x86intrin.h>
 #endif /* ARCH_OS_LINUX */
-#include <algorithm>
-#include <atomic>
-#include <cctype>
-#include <cerrno>
-#include <cinttypes>
-#include <cmath>
-#include <cstddef>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <errno.h>
-#include <fcntl.h>
-#include <fstream>
-#include <functional>
-#include <inttypes.h>
-#include <iosfwd>
-#include <iterator>
-#include <limits>
-#include <map>
-#include <memory>
-#include <mutex>
-#include <ostream>
-#include <regex>
-#include <set>
-#include <signal.h>
-#include <sstream>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <string>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <thread>
-#include <time.h>
-#include <typeindex>
-#include <typeinfo>
-#include <utility>
-#include <vector>
+
+/**
+ * This pch is far too huge for
+ * windows. */
+#if !defined(ARCH_OS_WINDOWS)
+#  include <algorithm>
+#  include <atomic>
+#  include <cctype>
+#  include <cerrno>
+#  include <cinttypes>
+#  include <cmath>
+#  include <cstddef>
+#  include <cstdint>
+#  include <cstdio>
+#  include <cstdlib>
+#  include <cstring>
+#  include <errno.h>
+#  include <fcntl.h>
+#  include <fstream>
+#  include <functional>
+#  include <inttypes.h>
+#  include <iosfwd>
+#  include <iterator>
+#  include <limits>
+#  include <map>
+#  include <memory>
+#  include <mutex>
+#  include <ostream>
+#  include <regex>
+#  include <set>
+#  include <signal.h>
+#  include <sstream>
+#  include <stdarg.h>
+#  include <stddef.h>
+#  include <stdio.h>
+#  include <stdlib.h>
+#  include <string.h>
+#  include <string>
+#  include <sys/stat.h>
+#  include <sys/types.h>
+#  include <thread>
+#  include <time.h>
+#  include <typeindex>
+#  include <typeinfo>
+#  include <utility>
+#  include <vector>
+#endif /* !ARCH_OS_WINDOWS */

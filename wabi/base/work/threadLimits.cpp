@@ -29,7 +29,7 @@
 
 #include "wabi/base/tf/envSetting.h"
 
-#include <tbb/global_control.h>
+#include <tbb/task_scheduler_init.h>
 #include <tbb/task_arena.h>
 
 #include <algorithm>
@@ -48,25 +48,25 @@ WABI_NAMESPACE_USING
 // the API calls below. If WABI_WORK_THREAD_LIMIT is set to a non-zero value, the
 // concurrency limit cannot be changed at runtime.
 //
-TF_DEFINE_ENV_SETTING(WABI_WORK_THREAD_LIMIT,
-                      0,
-                      "Limits the number of threads the application may spawn. 0 (default) "
-                      "allows for maximum concurrency as determined by the number of physical "
-                      "cores, or the process's affinity mask, whichever is smaller. Note that "
-                      "the environment variable (if set to a non-zero value) will override any "
-                      "value passed to Work thread-limiting API calls.");
+TF_DEFINE_ENV_SETTING(
+  WABI_WORK_THREAD_LIMIT, 0,
+  "Limits the number of threads the application may spawn. 0 (default) "
+  "allows for maximum concurrency as determined by the number of physical "
+  "cores, or the process's affinity mask, whichever is smaller. Note that "
+  "the environment variable (if set to a non-zero value) will override any "
+  "value passed to Work thread-limiting API calls.");
 
 WABI_NAMESPACE_BEGIN
 
 // We create a task_scheduler_init instance at static initialization time if
-// WABI_WORK_THREAD_LIMIT is set to a nonzero value.  Otherwise this stays NULL.
-static std::unique_ptr<tbb::task_arena> _tbbArena;
+// PXR_WORK_THREAD_LIMIT is set to a nonzero value.  Otherwise this stays NULL.
+static tbb::task_scheduler_init *m_tbbTaskSchedInit;
 
 unsigned WorkGetPhysicalConcurrencyLimit()
 {
   // Use TBB here, since it pays attention to the affinity mask on Linux and
   // Windows.
-  return tbb::this_task_arena::max_concurrency();
+  return tbb::task_scheduler_init::default_num_threads();
 }
 
 // This function always returns an actual thread count >= 1.
@@ -111,17 +111,16 @@ static void Work_InitializeThreading()
   // "no change".
   unsigned threadLimit = Work_OverrideConcurrencyLimit(physicalLimit, settingVal);
 
-  // Only eagerly grab TBB if the WABI_WORK_THREAD_LIMIT setting was set to
+  // Only eagerly grab TBB if the PXR_WORK_THREAD_LIMIT setting was set to
   // some non-zero value. Otherwise, the scheduler will be default initialized
   // with maximum physical concurrency, or will be left untouched if
   // previously initialized by the hosting environment (e.g. if we are running
   // as a plugin to another application.)
-  if (settingVal)
-  {
-    _tbbArena = std::make_unique<tbb::task_arena>(threadLimit);
+  if (settingVal) {
+    m_tbbTaskSchedInit = new tbb::task_scheduler_init(threadLimit);
   }
 }
-static int _forceInitialization = (Work_InitializeThreading(), 0);
+static int m_forceInitialization = (Work_InitializeThreading(), 0);
 
 void WorkSetConcurrencyLimit(unsigned n)
 {
@@ -132,8 +131,7 @@ void WorkSetConcurrencyLimit(unsigned n)
   // attempt to take control of the TBB scheduler if we can, i.e. if the host
   // environment has not already done so.
   unsigned threadLimit = 0;
-  if (n)
-  {
+  if (n) {
     // Get the thread limit from the environment setting. Note this value
     // may be 0 (default).
     const unsigned settingVal = Work_GetConcurrencyLimitSetting();
@@ -142,8 +140,7 @@ void WorkSetConcurrencyLimit(unsigned n)
     // setting always wins over the specified value n, but only if the
     // setting has been set to a non-zero value.
     threadLimit = Work_OverrideConcurrencyLimit(n, settingVal);
-  } else
-  {
+  } else {
     // Use the current thread limit.
     threadLimit = WorkGetConcurrencyLimit();
   }
@@ -157,16 +154,11 @@ void WorkSetConcurrencyLimit(unsigned n)
   // According to the documentation that should be the case, but we should
   // make sure.  If we do decide to delete it, we have to make sure to
   // note that it has already been initialized.
-  if (_tbbArena)
-  {
-    if (_tbbArena->is_active())
-    {
-      _tbbArena->terminate();
-      _tbbArena->initialize(threadLimit);
-    }
-  } else
-  {
-    _tbbArena = std::make_unique<tbb::task_arena>(threadLimit);
+  if (m_tbbTaskSchedInit) {
+    m_tbbTaskSchedInit->terminate();
+    m_tbbTaskSchedInit->initialize(threadLimit);
+  } else {
+    m_tbbTaskSchedInit = new tbb::task_scheduler_init(threadLimit);
   }
 }
 

@@ -545,17 +545,24 @@ endif()
 # ----------------------------------------------
 if(WITH_RENDERMAN)
   if(NOT EXISTS $ENV{RMANTREE})
-    # Attempt to find RenderMan installation.
+    # --------------------------------------------- Attempt to find RenderMan installation. -----
     if(UNIX AND NOT APPLE)
-      set(RENDERMAN_LOCATION "/opt/pixar/RenderManProServer-24.0")
+      file(TO_CMAKE_PATH "/opt/pixar/RenderManProServer-24.1" RENDERMAN_LOCATION)
       find_package(Renderman REQUIRED)
+      add_definitions(-DWITH_RENDERMAN)
     elseif(APPLE)
       # Renderman installer not yet available on macOS Big Sur and above.
       set(WITH_RENDERMAN OFF)
     elseif(WIN32)
-      set(RENDERMAN_LOCATION "C:/Program Files/Pixar/RenderManProServer-24.0")
+      file(TO_CMAKE_PATH "C:/Program Files/Pixar/RenderManProServer-24.1" RENDERMAN_LOCATION)
       find_package(Renderman REQUIRED)
+      add_definitions(-DWITH_RENDERMAN)
     endif()
+  # ---------------------------------------------- Get RenderMan from environment variable. -----
+  elseif((UNIX AND NOT APPLE) OR WIN32)
+    file(TO_CMAKE_PATH $ENV{RMANTREE} RENDERMAN_LOCATION)
+    find_package(Renderman REQUIRED)
+    add_definitions(-DWITH_RENDERMAN)
   endif()
 endif()
 
@@ -575,6 +582,10 @@ if(WITH_ARNOLD)
   else()
     find_package(Arnold REQUIRED)
     add_definitions(-DWITH_ARNOLD)
+    add_definitions(-DAI_VERSION_ARCH_NUM=${ARNOLD_VERSION_ARCH_NUM})
+    add_definitions(-DAI_VERSION_MAJOR_NUM=${ARNOLD_VERSION_MAJOR_NUM})
+    add_definitions(-DAI_VERSION_MINOR_NUM=${ARNOLD_VERSION_MINOR_NUM})
+    add_definitions(-DAI_VERSION_FIX_NUM=${ARNOLD_VERSION_FIX_NUM})
   endif()
 endif()
 
