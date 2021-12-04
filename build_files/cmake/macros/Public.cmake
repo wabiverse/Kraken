@@ -919,8 +919,7 @@ function(wabi_maelstrom_prologue)
     # wabi.h, at the top level of wabi.
 
     configure_file(${CMAKE_SOURCE_DIR}/wabi/wabi.h
-                   ${CMAKE_BINARY_DIR}/include/wabi/wabi.h
-    )
+                   ${CMAKE_BINARY_DIR}/include/wabi/wabi.h COPYONLY)
     install(
         FILES ${CMAKE_SOURCE_DIR}/wabi/wabi.h
         DESTINATION ${INCLUDE_WABI}

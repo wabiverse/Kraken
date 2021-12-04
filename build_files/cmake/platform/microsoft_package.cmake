@@ -17,80 +17,34 @@ if(WITH_WINDOWS_BUNDLE_CRT)
     unset(MSVC_REDIST_DIR CACHE)
   endif()
 
-  # include(InstallRequiredSystemLibraries)
-
-  # ucrtbase(d).dll cannot be in the manifest, due to the way windows 10 handles
-  # redirects for this dll, for details see T88813.
-  # foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
-  #   string(FIND ${lib} "ucrtbase" pos)
-  #   if(NOT pos EQUAL -1)
-  #     list(REMOVE_ITEM CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS ${lib})
-  #     install(FILES ${lib} DESTINATION . COMPONENT Libraries)
-  #   endif()
-  # endforeach()
-  # Install the CRT to the kraken.crt Sub folder.
-  # install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ./kraken.manifest COMPONENT Libraries)
-
-  # Override the default manifests from NuGet, someone
-  # hardcoded everything to "MyApplication.app", how cute
-  # configure_file(# MICROSOFT DEFAULT
-  #   ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-  #   ${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/build/DefaultWin32Manifests/default.manifest)
-  # configure_file(# MICROSOFT DEFAULT
-  #   ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-  #   ${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.WinUI.1.0.0-experimental1/buildTransitive/DefaultWin32Manifests/default.manifest)
-  # configure_file(# KRAKEN MANIFEST
-  #   ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-  #   ${CMAKE_BINARY_DIR}/bin/Release/kraken.manifest)
-  # configure_file(# KRAKEN MANIFEST
-  #   ${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in
-  #   ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/reunion.merged.g.manifest)
-  # configure_file(# KRAKEN APPX MANIFEST
-  #   ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
-  #   ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest)
-  # configure_file(# KRAKEN APPX MANIFEST
-  #   ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
-  #   ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/package.appxManifest)
-
-  # Generating the manifest is a relativly expensive operation since
-  # it is collecting an sha1 hash for every file required. so only do
-  # this work when the libs have either changed or the manifest does
-  # not exist yet.
-
-  # string(SHA1 libshash "${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}")
   string(SHA1 libshash "ChaChaNah")
   set(manifest_trigger_file "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/crt_${libshash}")
-
-  if(NOT EXISTS ${manifest_trigger_file})
-    file(GLOB out_inst "${CMAKE_SOURCE_DIR}/release/windows/appx/assets/*.png")
-    foreach(apx ${out_inst})
-      get_filename_component(ff ${apx} NAME)
-      file(
-        INSTALL
-          ${CMAKE_SOURCE_DIR}/release/windows/appx/assets/${ff}
-        DESTINATION
-          ${CMAKE_BINARY_DIR}/source/creator/assets
-      )
-      list(APPEND ASSET_FILES
-        ${CMAKE_BINARY_DIR}/source/creator/assets/${ff})
-    endforeach()
-    # set(CRTLIBS "")
-    # foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
-    #   get_filename_component(filename ${lib} NAME)
-    #   file(SHA1 "${lib}" sha1_file)
-    #   string(APPEND CRTLIBS "    <file name=\"${filename}\" hash=\"${sha1_file}\"  hashalg=\"SHA1\" />\n")
-    # endforeach()
-    # configure_file(${CMAKE_SOURCE_DIR}/release/windows/manifest/kraken.exe.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/app.manifest @ONLY)
-    file(TOUCH ${manifest_trigger_file})
-  endif()
-
-  # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kraken.app.manifest DESTINATION ./app.manifest)
-  # set(BUNDLECRT "<dependency><dependentAssembly><assemblyIdentity name=\"Kraken.app\" version=\"1.0.0.0\" /></dependentAssembly></dependency>")
 endif()
+
+# Generates all the icons necessary to package the Kraken Application for the
+# Microsoft App Store deployment, as well as nicely packaging our application
+# for local deployments. Command 'GenerateKrakenAssets' is defined within the
+# KrakenDeveloperProfile.ps1 pwsh profile.
+macro(gen_app_icons)
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/release/windows/appx/assets/kraken.svg
+    ${CMAKE_BINARY_DIR}/release/windows/appx/assets COPYONLY)
+
+  execute_process(
+    COMMAND pwsh -ExecutionPolicy Unrestricted -Command "GenerateKrakenAssets -Path \"${CMAKE_SOURCE_DIR}/release/windows/appx/assets/kraken.svg\" -Destination \"${CMAKE_BINARY_DIR}/release/windows/appx/assets\""
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+  file(GLOB GENERATED_APP_ICONS "${CMAKE_BINARY_DIR}/release/windows/appx/assets/*.png")
+  foreach(app_icon_file ${GENERATED_APP_ICONS})
+    get_filename_component(icon_name ${app_icon_file} NAME)
+    list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/release/windows/appx/assets/${icon_name})
+  endforeach()
+endmacro()
 
 # Application Manifest & Nuget Dependencies.
 set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest)
 set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/packages.config)
+set(KRAKEN_NUGET_CONFIG ${CMAKE_BINARY_DIR}/NuGet.config)
 
 file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")
 foreach(dlls ${out_inst_dll})
@@ -104,13 +58,7 @@ foreach(ico ${out_inst_ico})
   list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/release/windows/icons/${ffico})
 endforeach()
 
-file(GLOB out_inst "${CMAKE_SOURCE_DIR}/release/windows/appx/assets/*.png")
-foreach(apx ${out_inst})
-  get_filename_component(ff ${apx} NAME)
-  list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/source/creator/assets/${ff})
-endforeach()
-
-function(kraken_winrt_metadata_hotfix)
+function(kraken_chaosengine_metadata_hotfix)
   # TODO: Fix this binary path inception weirdness.
   # I really do wonder why MSVC is looking for files
   # in kraken.dir/Release/kraken.dir/Release ...

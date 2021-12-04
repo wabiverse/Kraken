@@ -41,6 +41,9 @@ mark_as_advanced(WITH_WINDOWS_PDB)
 option(WITH_WINDOWS_STRIPPED_PDB "Use a stripped PDB file" On)
 mark_as_advanced(WITH_WINDOWS_STRIPPED_PDB)
 
+include(build_files/cmake/platform/kraken_chaosengine_sdk_helpers.cmake)
+include(build_files/cmake/platform/kraken_chaosengine_cppwinrt.cmake)
+include(build_files/cmake/platform/kraken_chaosengine.cmake)
 include(build_files/cmake/platform/nuget_packages.cmake)
 include(build_files/cmake/platform/microsoft_package.cmake)
 
@@ -75,7 +78,7 @@ unset(SYMBOL_FORMAT_RELEASE)
 set(COMPILER_VERSION "17")
 
 # Target Windows 11 SDK.
-set(WINDOWS_SDK_VERSION "10.0.22000.0")
+set(WINDOWS_SDK_VERSION "10.0.22509.0")
 
 # Disable C++/CX
 set(CMAKE_VS_WINRT_BY_DEFAULT OFF)

@@ -6,6 +6,59 @@
 # need for Visual Studio IDE, and continue natively
 # building Kraken from within CMake.
 
+# Determines the version of a native nuget package from the root packages.config.
+#
+# id  : package id
+# out : name of variable to set result
+function(package_version id out packages_config)
+    file(READ ${packages_config} packages_config_contents)
+    string(REGEX MATCH "package[ ]*id[ ]*=[ ]*\"${id}\"" found_package_id ${packages_config_contents})
+    if (NOT(found_package_id))
+        message(FATAL_ERROR "Could not find '${id}' in packages.config!")
+    endif()
+
+    set(pattern ".*id[ ]*=[ ]*\"${id}\"[ ]+version=\"([0-9a-zA-Z\\.-]+)\"[ ]+targetFramework.*")
+    string(REGEX REPLACE ${pattern} "\\1" version ${packages_config_contents})
+    set(${out} ${version} PARENT_SCOPE)
+endfunction()
+
+# Downloads the nuget packages based on packages.config 
+function(
+    add_fetch_nuget_target
+    nuget_target # Target to be written to
+    target_dependency # The file in the nuget package that is needed
+)
+    # Pull down the nuget packages
+    if (NOT(MSVC) OR NOT(WIN32))
+      message(FATAL_ERROR "NuGet packages are only supported for MSVC on Windows.")
+    endif()
+
+    # Retrieve the latest version of nuget
+    include(ExternalProject)
+    ExternalProject_Add(nuget_exe
+    PREFIX nuget_exe
+    URL "https://dist.nuget.org/win-x86-commandline/v6.0.0/nuget.exe"
+    DOWNLOAD_NO_EXTRACT 1
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    UPDATE_COMMAND ""
+    INSTALL_COMMAND "")
+
+    set(NUGET_CONFIG ${CMAKE_BINARY_DIR}/NuGet.config)
+    set(PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/packages.config)
+    get_filename_component(PACKAGES_DIR ${CMAKE_BINARY_DIR}/packages ABSOLUTE)
+
+    # Restore nuget packages
+    add_custom_command(
+      OUTPUT ${target_dependency}
+      DEPENDS ${PACKAGES_CONFIG} ${NUGET_CONFIG}
+      COMMAND ${CMAKE_BINARY_DIR}/nuget_exe/src/nuget restore ${PACKAGES_CONFIG} -PackagesDirectory ${PACKAGES_DIR} -ConfigFile ${NUGET_CONFIG}
+      VERBATIM)
+
+    add_custom_target(${nuget_target} DEPENDS ${target_dependency})
+    add_dependencies(${nuget_target} nuget_exe)
+endfunction()
+
 function(kraken_import_nuget_packages
   proj_path
 )
@@ -76,10 +129,10 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
     <PackageCertificateKeyFile>wabianimation.kraken3d.pfx</PackageCertificateKeyFile>
-    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
-    <WindowsTargetPlatformVersion Condition=\" \'$(WindowsTargetPlatformVersion)\' == \'\' \">10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22509.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.22000.0</WindowsTargetPlatformMinVersion>
     <UseWinUI>true</UseWinUI>
     <WindowsAppContainer>true</WindowsAppContainer>
@@ -111,6 +164,7 @@ if(${proj_path} STREQUAL "source/creator/kraken")
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include=\"${CMAKE_BINARY_DIR}/NuGet.config\" />
     <None Include=\"${CMAKE_BINARY_DIR}/packages.config\" />
   </ItemGroup>
   <ItemGroup>
@@ -404,7 +458,7 @@ else()
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <MinimalCoreWin>true</MinimalCoreWin>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetOsVersion>10.0</TargetOsVersion>
     <TargetFramework>net6.0-windows10.0.22509.0</TargetFramework>
@@ -421,6 +475,7 @@ else()
     <DesktopCompatible>true</DesktopCompatible>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=\"${CMAKE_BINARY_DIR}/NuGet.config\" />
     <None Include=\"${CMAKE_BINARY_DIR}/packages.config\" />
   </ItemGroup>
   <ImportGroup Label=\"ExtensionTargets\">
@@ -873,40 +928,31 @@ endif()
 #   ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/resources.pri
 # )
 # endif()
-
-file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.211028.7/bin/cppwinrt.exe"
-  MICROSOFT_WINRT_EXECUTABLE
-)
-set(WINRT_EXECUTABLE ${MICROSOFT_WINRT_EXECUTABLE} PARENT_SCOPE)
 endfunction()
 
-function(kraken_init_nuget)
-  # Install Required NuGet Packages to the System.
-  if(NOT EXISTS "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.211028.7/build/native/Microsoft.Windows.CppWinRT.props")
-    file(
-      COPY
-        ${CMAKE_SOURCE_DIR}/release/windows/packages.config
-      DESTINATION
-        ${CMAKE_BINARY_DIR}
-    )
-    execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& \"C:/Program Files/devtools/nuget.exe\" install ${CMAKE_BINARY_DIR}/packages.config -OutputDirectory ${CMAKE_BINARY_DIR}/packages"
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-    set(KRAKEN_SLN_NEEDS_RESTORE ON)
-  endif()
+macro(_run_nuget_config)
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/release/windows/packages.config
+    ${CMAKE_BINARY_DIR}/packages.config
+    COPYONLY)
 
-  if(NOT EXISTS ${CMAKE_BINARY_DIR}/Kraken.sln)
-    set(KRAKEN_SLN_NEEDS_RESTORE ON)
-  endif()
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/release/windows/NuGet.config
+    ${CMAKE_BINARY_DIR}/NuGet.config
+    COPYONLY)
+endmacro()
 
-  # Install Required NuGet Packages to the Kraken project.
-  if(KRAKEN_SLN_NEEDS_RESTORE)
-    execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& \"C:/Program Files/devtools/nuget.exe\" restore ${CMAKE_BINARY_DIR}/Kraken.sln"
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& \"C:/Program Files/devtools/nuget.exe\" update ${CMAKE_BINARY_DIR}/Kraken.sln"
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    if(EXISTS ${CMAKE_BINARY_DIR}/Kraken.sln)
-      set(KRAKEN_SLN_NEEDS_RESTORE OFF)
+function(kraken_config_nuget)
+  # In case NuGet packages get cleaned out.
+  SUBDIRLIST(NUGET_PACKAGES_DIRLIST ${CMAKE_BINARY_DIR}/packages)
+  if(NOT ${NUGET_PACKAGES_DIRLIST})
+    if(EXISTS ${CMAKE_BINARY_DIR}/packages.config)
+      file(REMOVE ${CMAKE_BINARY_DIR}/packages.config)
+    endif()
+    if(EXISTS ${CMAKE_BINARY_DIR}/NuGet.config)
+      file(REMOVE ${CMAKE_BINARY_DIR}/packages.config)
     endif()
   endif()
+
+  _run_nuget_config()
 endfunction()

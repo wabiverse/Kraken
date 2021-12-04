@@ -762,7 +762,7 @@ function(get_pixar_version)
 
   # So cmake depends on wabi.h, beware of inf-loops!
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/wabi/wabi.h
-                 ${CMAKE_BINARY_DIR}/wabi/wabi.h.done)
+                 ${CMAKE_BINARY_DIR}/wabi/wabi.h.done COPYONLY)
 
   file(STRINGS ${CMAKE_SOURCE_DIR}/wabi/wabi.h _contents REGEX "^#define[ \t]+WABI_.*$")
 
@@ -807,7 +807,7 @@ function(get_kraken_version)
 
   # So cmake depends on KKE_version.h, beware of inf-loops!
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/kraken/krakernel/KKE_version.h
-                 ${CMAKE_BINARY_DIR}/source/kraken/krakernel/KKE_version.h.done)
+                 ${CMAKE_BINARY_DIR}/source/kraken/krakernel/KKE_version.h.done COPYONLY)
 
   file(STRINGS ${CMAKE_SOURCE_DIR}/source/kraken/krakernel/KKE_version.h _contents REGEX "^#define[ \t]+KRAKEN_.*$")
 

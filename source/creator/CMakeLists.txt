@@ -75,9 +75,14 @@ if(WITH_XR_OPENXR)
 endif()
 
 if(WIN32)
-  
+  # Generates app icons.
+  gen_app_icons()
+
+  # Updates NuGet Package configuration.
+  kraken_config_nuget()
+
   # Fixup WinRT generated metadata location.
-  kraken_winrt_metadata_hotfix()
+  kraken_chaosengine_metadata_hotfix()
 
   set(WINDOWS_PACKAGE_SRC
     # foundation.
@@ -1413,9 +1418,6 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
     VS_GLOBAL_OutputType "WinExe"
   )
 
-  # Installs NuGet Packages.
-  kraken_init_nuget()
-
   # Other required dependencies to MSIX AppX Package
   # Python, Color Management, Icons, Scripts, Etc.
   if(KRAKEN_RELEASE_MODE)
@@ -1442,7 +1444,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
   # Call this a second time just to be
   # sure the metadata is where MSVC is
   # attempting to look for it.
-  kraken_winrt_metadata_hotfix()
+  kraken_chaosengine_metadata_hotfix()
 
 endif()
 

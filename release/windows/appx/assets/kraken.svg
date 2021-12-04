@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="48"
+   height="48"
+   viewBox="0 0 48 48"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="kraken.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="9.09375"
+     inkscape:cx="-4.1786942"
+     inkscape:cy="34.034364"
+     inkscape:window-width="1755"
+     inkscape:window-height="1081"
+     inkscape:window-x="740"
+     inkscape:window-y="90"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <style
+       id="style9">.cls-1{fill:url(#linear-gradient);}.cls-2{fill:#ccc;}.cls-3{fill:#999;}.cls-4{fill:#666;}.cls-5{fill:url(#linear-gradient-2);}.cls-6{mask:url(#mask);}.cls-7{fill:url(#linear-gradient-4);}.cls-8{fill:#684fa3;}.cls-9{fill:#9c89b8;}.cls-10{fill:#f0e6ef;}</style>
+    <linearGradient
+       id="linear-gradient"
+       x1="76.9"
+       y1="-18.31"
+       x2="72.85"
+       y2="-11.3"
+       gradientTransform="matrix(0.94, 0, 0, -0.94, -58.44, 16.19)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#999"
+         id="stop11" />
+      <stop
+         offset="1"
+         stop-color="#b3b3b3"
+         id="stop13" />
+    </linearGradient>
+    <linearGradient
+       id="linear-gradient-2"
+       x1="98.78"
+       y1="-32.16"
+       x2="74.16"
+       y2="10.49"
+       gradientTransform="matrix(0.94,0,0,-0.94,-58.44,16.19)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#333"
+         id="stop16" />
+      <stop
+         offset="1"
+         stop-color="#4d4d4d"
+         id="stop18" />
+    </linearGradient>
+    <mask
+       id="mask"
+       x="5.65"
+       y="17.44"
+       width="12.14"
+       height="18.63"
+       maskUnits="userSpaceOnUse">
+      <g
+         id="mask0">
+        <path
+           id="path160"
+           class="cls-1"
+           d="M14.25,24.28,6,32.53A1,1,0,0,0,6,34l1.69,1.69a1,1,0,0,0,1.5,0l8.25-8.25a1,1,0,0,0,0-1.5l-1.69-1.69A1.15,1.15,0,0,0,14.25,24.28Z" />
+      </g>
+    </mask>
+    <linearGradient
+       id="linear-gradient-4"
+       x1="78.65"
+       y1="-14.34"
+       x2="71.11"
+       y2="-1.29"
+       gradientTransform="matrix(0.94, 0, 0, -0.94, -58.44, 16.19)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#ccc"
+         id="stop24" />
+      <stop
+         offset="1"
+         stop-color="#e6e6e6"
+         id="stop26" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline">
+    <g
+       id="g99"
+       transform="matrix(2.1663353,0,0,2.1663353,-52.659837,-44.341702)">
+      <g
+         id="g4007">
+        <g
+           id="g171">
+          <g
+             class="cls-6"
+             mask="url(#mask)"
+             id="g39">
+            <g
+               id="g167">
+              <g
+                 id="g165" />
+            </g>
+          </g>
+        </g>
+      </g>
+      <path
+         class="cls-8"
+         d="m 36.22,21.3 c -13.45,0.22 -13.45,20.23 0,20.46 13.45,-0.23 13.44,-20.24 0,-20.46 z m 0,15.74 c -7.25,-0.12 -7.25,-10.9 0,-11 7.24,0.1 7.24,10.88 0,10.96 z"
+         id="path44" />
+      <path
+         class="cls-9"
+         d="m 36.53,22.22 a 9.57,9.57 0 0 0 -3.39,4.68 7.14,7.14 0 0 0 -2.22,3.28 c 0,0 -0.5,-5.35 5.61,-7.96 z"
+         id="path46" />
+      <path
+         class="cls-10"
+         d="m 36.69,21.79 a 0.71,0.71 0 0 1 -0.42,0.58 c -7.81,3.38 -6.24,15 -0.87,16.76 7.1,2.36 9.75,-2.66 9.75,-2.66 -2.26,6.74 -19.29,9.58 -20.68,-3.75 0,-9.73 7.94,-12 11.58,-11.73 a 0.74,0.74 0 0 1 0.64,0.8 z"
+         id="path48" />
+      <path
+         class="cls-8"
+         d="m 25.59,32.16 c -0.24,2.42 -1.53,0.27 -0.78,-0.91 0.52,-0.61 0.82,0.51 0.78,0.91 z"
+         id="path50" />
+      <path
+         class="cls-8"
+         d="m 25.25,28.72 a 1.85,1.85 0 0 1 0.51,-1.18 c 0.92,-0.67 0.55,1.18 0.15,1.48 -0.4,0.3 -0.73,0.23 -0.66,-0.3 z"
+         id="path52" />
+      <path
+         class="cls-8"
+         d="m 27.08,25.4 a 1.64,1.64 0 0 1 1.05,-1.17 c 1.15,-0.02 -0.96,2.43 -1.05,1.17 z"
+         id="path54" />
+      <path
+         class="cls-8"
+         d="m 29.84,23.35 c -0.89,-0.08 0.26,-1 0.66,-0.93 0.9,0.05 -0.29,0.99 -0.66,0.93 z"
+         id="path56" />
+      <path
+         class="cls-8"
+         d="M 32.75,21.93 C 31.87,21.87 32.86,21.2 33.31,21.36 33.76,21.52 33,22 32.75,21.93 Z"
+         id="path58" />
+      <path
+         class="cls-8"
+         d="m 35.44,21.08 c 0.35,-0.06 0.65,0.27 0.18,0.4 -0.2,0 -0.64,0.13 -0.67,-0.16 -0.03,-0.29 0.31,-0.23 0.49,-0.24 z"
+         id="path60" />
+    </g>
+  </g>
+</svg>
