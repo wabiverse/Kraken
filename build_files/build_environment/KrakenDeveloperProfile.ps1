@@ -80,6 +80,37 @@ if($IsWindows) {
 
 # -------------------------------------- Developer Functions. -----
 
+function BuildUnrealEngine5
+{
+  if ($IsMacOS) {
+    if ((Test-Path -Path ~/dev/unreal)) {
+      Push-Location ~/dev/unreal
+
+      if (-not (Test-Path -Path ./UE5.xcworkspace)) {
+        if ((Test-Path -Path ./GenerateProjectFiles.command)) {
+          ./GenerateProjectFiles.command
+        }
+      }
+
+      if ((Test-Path -Path ./UE5.xcworkspace)) {
+        xcodebuild `
+        -workspace ./UE5.xcworkspace `
+        -scheme UE5 `
+        -sdk "macosx" `
+        -configuration Release `
+        CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" `
+        PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" `
+        OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain"
+      }
+
+      Pop-Location
+
+      Push-Location $KrakenGlobalView
+      Pop-Location
+    }
+  }
+}
+
 function WabiAnimationPreCommitHook 
 {
   # hook.
@@ -491,6 +522,9 @@ Set-Alias python_d RunKrakenPythonDebug
 
 # Enter Kraken Server
 Set-Alias wabiserver ConnectKraken
+
+# Build Unreal Engine 5
+Set-Alias build_unreal BuildUnrealEngine5
 
 # Utility Convenience
 Set-Alias xx RefreshConsole
