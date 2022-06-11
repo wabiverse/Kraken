@@ -135,14 +135,15 @@ function BuildUnrealEngine5
 
       if ((Test-Path -Path ./UE5.xcworkspace)) {
         xcodebuild `
-        -workspace ./UE5.xcworkspace `
+        -project ./Engine/Intermediate/ProjectFiles/UE5.xcodeproj `
         -scheme UE5 `
         -sdk "macosx" `
-        -configuration Release `
+        -configuration "Development Editor" `
         $buildaction `
         CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" `
         PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" `
-        OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain"
+        OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain" `
+        GENERATE_INFOPLIST_FILE="YES"
       }
 
       if (($Args[0] -eq "clean")) {
