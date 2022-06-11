@@ -80,17 +80,58 @@ if($IsWindows) {
 
 # -------------------------------------- Developer Functions. -----
 
-function BuildUnrealEngine5
+function GenerateUnrealEngine5
 {
+  $OVERRIDE = $Args[0]
+
   if ($IsMacOS) {
     if ((Test-Path -Path ~/dev/unreal)) {
       Push-Location ~/dev/unreal
 
-      if (-not (Test-Path -Path ./UE5.xcworkspace)) {
+      if ((-not (Test-Path -Path ./UE5.xcworkspace)) -or ($OVERRIDE -eq "regen")) {
         if ((Test-Path -Path ./GenerateProjectFiles.command)) {
           ./GenerateProjectFiles.command
         }
       }
+
+      Pop-Location
+    }
+  }
+}
+
+function SetupUnrealEngine5Dependencies
+{
+  if ($IsMacOS) {
+    Push-Location ~/dev/unreal
+
+    if ((Test-Path -Path ./Setup.command)) {
+      ./Setup.command
+    }
+
+    Pop-Location
+  }
+}
+
+function BuildUnrealEngine5
+{
+  $buildaction = "build"
+  $NEEDS_DEPENDENCIES = "NONEED"
+
+  if ($IsMacOS) {
+    if ((Test-Path -Path ~/dev/unreal)) {
+      Push-Location ~/dev/unreal
+
+      if (-not ($Args[0] -eq "regen")) {
+        if (($Args[0] -eq "build") -or ($Args[0] -eq "install") -or ($Args[0] -eq "clean")) {
+          $buildaction = $Args[0]
+        }
+
+        if (($Args[0] -eq "deps")) {
+          SetupUnrealEngine5Dependencies
+        }
+      }
+
+      GenerateUnrealEngine5 $Args[0]
 
       if ((Test-Path -Path ./UE5.xcworkspace)) {
         xcodebuild `
@@ -98,9 +139,15 @@ function BuildUnrealEngine5
         -scheme UE5 `
         -sdk "macosx" `
         -configuration Release `
+        $buildaction `
         CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" `
         PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" `
         OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain"
+      }
+
+      if (($Args[0] -eq "clean")) {
+        & git clean -fdx
+        SetupUnrealEngine5Dependencies
       }
 
       Pop-Location
