@@ -118,6 +118,23 @@ function BuildUnrealEngine5
   $NEEDS_DEPENDENCIES = "NONEED"
 
   if ($IsMacOS) {
+    # Wabi uses a custom build of Unreal Engine 5: 
+    # https://github.com/Wabi-Studios/UnrealEngine
+    # The build is experimental and is not meant
+    # for production.
+    #
+    #  ----------------- Supporting -----
+    #  * Metal 3
+    #  * macOS 13.0+ Ventura
+    #  * Native Apple silicon (m1+)
+    #  * Xcode 14+
+    #  * Unreal Engine <-> Kraken Link
+    #  * Pixar Universal Scene Description
+    #
+    # It is apart of a more long-term goal of expanding 
+    # cross-platform support & combining the capabilities
+    # of many platforms & engines into our unified platform.
+
     if ((Test-Path -Path ~/dev/unreal)) {
       Push-Location ~/dev/unreal
 
