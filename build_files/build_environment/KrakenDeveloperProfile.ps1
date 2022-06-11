@@ -1,55 +1,72 @@
+# This is a cross platorm (macOS, Windows, Linux)
+# shell profile loaded with tools and pretty colors.
+
+# ----------------------------------------------- Versioning. -----
+
 $KRAKEN_BUILDING_VERSION_MAJOR = 1
 $KRAKEN_BUILDING_VERSION_MINOR = 50
 $KRAKEN_DEVELOPMENT_MILESTONE = "Initial Release Sprint"
 $PIXAR_BUILDING_VERSION = 21.08
-
-$SHOW_KRAKEN_HUD = 1
-
-$env:path ="$($env:path);."
 $env:GIT_AUTHOR_EMAIL = "tyler@tylerfurby.com"
 
-if(-not ($IsWindows)) {
-  $env:PATH = "${env:PATH}:$Path"
-}
+# ---------------------------------------------- Environment. -----
 
+# System Paths.
+$KrakenGlobalView = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $IsKrakenCreatorInDirectory = './source/creator'
 $IsKrakenSourceInDirectory = './source/kraken/ChaosEngine'
 $IsGitDirectory = './.git'
 
-Import-Module -Name Terminal-Icons
-Import-Module PSWriteColor
-Import-Module oh-my-posh
-Import-Module posh-git
+# MacOS Environment.
+# since not all paths get scraped on init,
+# and it is annoying having to flip between 
+# zsh <-> pwsh to populate your env up.
+if ($IsMacOS) {
+  $ARM_HOMEBREW_PATH = "/opt/homebrew/bin"
+  $INTEL_HOMEBREW_PATH = "/usr/local/bin"
 
-function Get-Path {
-  [CmdLetBinding()]
-  Param()
-  $PathFiles = @()
-  $PathFiles += '/etc/paths'
-  $PathFiles = Get-ChildItem -Path /private/etc/paths.d | Select-Object -Expand FullName
-  $PathFiles | ForEach-Object {
-    Get-Content -Path $PSItem | ForEach-Object {
-      $_
-    }
+  # Apple Silicon (M1 Chip ---- /opt/homebrew/bin) 
+  if (Test-Path -Path $ARM_HOMEBREW_PATH) {
+    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$ARM_HOMEBREW_PATH
+  
+  # Intel Silicon (Old Chip ---- /usr/local/bin)
+  } elseif(Test-Path -Path $INTEL_HOMEBREW_PATH) {
+    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$INTEL_HOMEBREW_PATH
   }
-  $Paths
 }
 
-function Add-Path {
-  Param($Path)
-  $env:PATH = "${env:PATH}:$Path"
+# --------------------------------------- Powershell modules. -----
+
+if (Get-Module -ListAvailable -Name PSWriteColor) {
+  Import-Module PSWriteColor
+} 
+else {
+  # Automatically installed if it doesn't exist...
+  Install-Module PSWriteColor -Confirm:$true -Force
 }
 
-function Update-Environment {
-  [CmdLetBinding()]
-  Param()
-  $Paths = $env:PATH -split ':'
-  Get-Path | ForEach-Object {
-    if($PSItem -notin $Paths) {
-      Write-Verbose "Adding $PSItem to Path"
-      Add-Path -Path $PSItem
-    }
-  }
+if (Get-Module -ListAvailable -Name Terminal-Icons) {
+  Import-Module -Name Terminal-Icons
+} 
+else {
+  # Automatically installed if it doesn't exist...
+  Install-Module Terminal-Icons -Confirm:$true -Force
+}
+
+if (Get-Module -ListAvailable -Name oh-my-posh) {
+  Import-Module oh-my-posh
+} 
+else {
+  # Automatically installed if it doesn't exist...
+  Install-Module oh-my-posh -Confirm:$true -Force
+}
+
+if (Get-Module -ListAvailable -Name posh-git) {
+  Import-Module posh-git
+} 
+else {
+  # Automatically installed if it doesn't exist...
+  Install-Module posh-git -Confirm:$true -Force
 }
 
 if($IsWindows) {
@@ -61,7 +78,7 @@ if($IsWindows) {
   # & choco feature enable -n=allowGlobalConfirmation
 }
 
-# -------------------- This is called from command 'gg' -----
+# -------------------------------------- Developer Functions. -----
 
 function WabiAnimationPreCommitHook 
 {
@@ -85,17 +102,6 @@ function WabiAnimationPreCommitHook
   } else {
 
     & git $Args
-  }
-}
-
-
-function SetupEnv {
-  cmd.exe /c "call `"C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
-  
-  Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
-    if ($_ -match "^(.*?)=(.*)$") {
-      Set-Content "env:\$($matches[1])" $matches[2]
-    }
   }
 }
 
@@ -421,14 +427,25 @@ function InstallNugetPackages {
 
 function ShowPrettyGitRevision {
   Write-Output " "
-  if (Test-Path -Path './.git') {
+  if ((Test-Path -Path $IsKrakenCreatorInDirectory) -and (Test-Path -Path $IsKrakenSourceInDirectory)) {
+    Push-Location $KrakenGlobalView
     $AUTHOR = git show --format="%an`n" -s
-    $LATEST_REVISION = git show --summary --pretty=format:"%x07%h"
-    $FOR_DATE = git show --summary --pretty=format:"%x07%ad"
-    $DID_WHAT = git show --summary --pretty=format:"%x07%s"
+    $LATEST_REVISION = git show HEAD~1 --pretty=format:"%h" --no-patch
+    $FOR_DATE = git show -s --format=%ci
+    $DID_WHAT_ORIGINAL = git log --format=%B -n 1
+    # Remove obnoxious 'Merge Pull Request ...' from commit message.
+    $DID_WHAT_LONG = "$DID_WHAT_ORIGINAL" -replace "Merge pull request #.*? from .*?/.*?  ", ""
+    $DID_WHAT_LENGTH = "$DID_WHAT_LONG".length
+    if ($DID_WHAT_LENGTH -gt 50) {
+      $DID_WHAT = "$DID_WHAT_LONG".substring(0, 50)
+      $DID_WHAT = "$DID_WHAT..."
+    } else {
+      $DID_WHAT = $DID_WHAT_LONG
+    }
     Write-Color -Text "Latest Revision: ", "$LATEST_REVISION ", "$FOR_DATE" -Color Red, Yellow, Green
     Write-Color -Text "      Work Done: ", "$DID_WHAT" -Color Blue, Cyan
     Write-Color -Text "    Authored by: ", "$AUTHOR" -Color Green, DarkMagenta
+    Pop-Location
   }
 }
 
@@ -450,19 +467,17 @@ function ShowBanner {
   }
 }
 
-function DeleteConsoleLogs {
+function RefreshConsole {
   clear
-  ShowBanner
+  # Also refreshes or 'sources' this profile. ;-;
+  . $PROFILE
 }
 
-if($IsWindows) {
-  Set-PoshPrompt -Theme "$env:USERPROFILE\dev\Kraken\build_files\build_environment\krakentheme.omp.json"
-}
-if($IsMacOS) {
-  Set-PoshPrompt -Theme "~\dev\kraken\build_files\build_environment\krakentheme.omp.json"
-}
-if($IsLinux) {
-  Set-PoshPrompt -Theme "~\dev\kraken\build_files\build_environment\krakentheme.omp.json"
+# Shell theme
+if($KrakenGlobalView) {
+  Push-Location $KrakenGlobalView
+  Set-PoshPrompt -Theme './build_files/build_environment/krakentheme.omp.json'
+  Pop-Location
 }
 
 # Run Kraken
@@ -478,15 +493,10 @@ Set-Alias python_d RunKrakenPythonDebug
 Set-Alias wabiserver ConnectKraken
 
 # Utility Convenience
-Set-Alias xxx DeleteConsoleLogs
+Set-Alias xx RefreshConsole
 Set-Alias rr ReloadDeveloperProfile
 
 Set-Alias gg WabiAnimationPreCommitHook
-
-# Setup paths on macOS.
-if($IsMacOS) {
-  Update-Environment
-}
 
 # Print Pretty ASCII Logo Variant
 ShowBanner

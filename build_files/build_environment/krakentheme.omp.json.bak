@@ -7,7 +7,8 @@
         {
           "foreground": "lightBlue",
           "properties": {
-            "template": " "
+            "prefix": "",
+            "text": ""
           },
           "style": "plain",
           "type": "text"
@@ -21,7 +22,10 @@
         {
           "foreground": "cyan",
           "properties": {
-            "template": "\n{{ if .SSHSession }}\uf817 {{ end }}<cyan>{{ .UserName }}</><darkGray>@</><green>{{ .HostName }}</> "
+            "host_color": "green",
+            "prefix": "\n",
+            "user_color": "cyan",
+            "user_info_separator": "<darkGray>@</>"
           },
           "style": "plain",
           "type": "session"
@@ -29,8 +33,8 @@
         {
           "foreground": "lightYellow",
           "properties": {
-            "style": "full",
-            "template": "<darkGray>in </>{{ .Path }} "
+            "prefix": "<darkGray>in </>",
+            "style": "full"
           },
           "style": "plain",
           "type": "path"
@@ -38,15 +42,16 @@
         {
           "foreground": "magenta",
           "properties": {
-            "template": "<darkGray>on</> <blue>\uf113</> <green>git</><cyan>:</>{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uf692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} "
+            "prefix": "<darkGray>on</> <blue></> <green>git</><cyan>:</>"
           },
-          "style": "powerline",
-          "type": "git"
+          "type": "git",
+          "style": "powerline"
         },
         {
           "foreground": "darkGray",
           "properties": {
-            "template": "[{{ .CurrentDate | date .Format }}]"
+            "postfix": "]",
+            "prefix": "["
           },
           "style": "plain",
           "type": "time"
@@ -54,7 +59,9 @@
         {
           "foreground": "lightRed",
           "properties": {
-            "template": " $ "
+            "postfix": " ",
+            "prefix": " ",
+            "text": "$"
           },
           "style": "plain",
           "type": "text"
@@ -62,6 +69,6 @@
       ],
       "type": "prompt"
     }
-  ],
-  "version": 1
+  ]
 }
+      
