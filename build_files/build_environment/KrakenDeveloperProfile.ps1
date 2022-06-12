@@ -91,7 +91,7 @@ function RunUnrealEngine5WithDebugger
   if ($IsMacOS) {
     if ((Test-Path -Path ~/dev/unreal)) {
       Push-Location ~/dev/unreal
-      xcrun ./Engine/Binaries/Mac/UnrealEditor.app/Contents/MacOS/UnrealEditor
+      xcrun ./Engine/Binaries/Mac/UnrealEditor.app/Contents/MacOS/UnrealEditor $Args
       Pop-Location
 
       Push-Location $KrakenGlobalView
