@@ -158,6 +158,11 @@ function BuildUnrealEngine5
     if ((Test-Path -Path ~/dev/unreal)) {
       Push-Location ~/dev/unreal
 
+      if (($Args[0] -eq "nuke")) {
+        & git clean -fdx
+        return
+      }
+
       if (-not ($Args[0] -eq "regen")) {
         if (($Args[0] -eq "build") -or ($Args[0] -eq "install") -or ($Args[0] -eq "clean")) {
           $buildaction = $Args[0]
@@ -181,11 +186,6 @@ function BuildUnrealEngine5
         PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" `
         OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain" `
         GENERATE_INFOPLIST_FILE="YES"
-      }
-
-      if (($Args[0] -eq "clean")) {
-        & git clean -fdx
-        SetupUnrealEngine5Dependencies
       }
 
       Pop-Location
