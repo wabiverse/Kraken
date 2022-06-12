@@ -79,6 +79,27 @@ if($IsWindows) {
 
 # -------------------------------------- Developer Functions. -----
 
+function HopIntoRootDir
+{
+  if ((Test-Path -Path $KrakenGlobalView)) {
+    cd $KrakenGlobalView
+  }
+}
+
+function RunUnrealEngine5WithDebugger
+{
+  if ($IsMacOS) {
+    if ((Test-Path -Path ~/dev/unreal)) {
+      Push-Location ~/dev/unreal
+      xcrun ./Engine/Binaries/Mac/UnrealEditor.app/Contents/MacOS/UnrealEditor
+      Pop-Location
+
+      Push-Location $KrakenGlobalView
+      Pop-Location
+    }
+  }
+}
+
 function GenerateUnrealEngine5
 {
   $OVERRIDE = $Args[0]
@@ -575,6 +596,9 @@ if($KrakenGlobalView) {
   Pop-Location
 }
 
+# Hop Into Kraken Root
+Set-Alias krkn HopIntoRootDir
+
 # Run Kraken
 Set-Alias kraken_r RunDevelopmentReleaseKraken
 Set-Alias kraken_d RunDevelopmentDebugKraken
@@ -589,6 +613,7 @@ Set-Alias wabiserver ConnectKraken
 
 # Build Unreal Engine 5
 Set-Alias build_unreal BuildUnrealEngine5
+Set-Alias run_unreal RunUnrealEngine5WithDebugger
 
 # Utility Convenience
 Set-Alias xx RefreshConsole
