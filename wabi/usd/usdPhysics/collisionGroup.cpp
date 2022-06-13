@@ -44,14 +44,13 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdPhysicsCollisionGroup::~UsdPhysicsCollisionGroup()
-{}
+UsdPhysicsCollisionGroup::~UsdPhysicsCollisionGroup() {}
 
 /* static */
-UsdPhysicsCollisionGroup UsdPhysicsCollisionGroup::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsCollisionGroup UsdPhysicsCollisionGroup::Get(const UsdStagePtr &stage,
+                                                       const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsCollisionGroup();
   }
@@ -59,11 +58,11 @@ UsdPhysicsCollisionGroup UsdPhysicsCollisionGroup::Get(const UsdStagePtr &stage,
 }
 
 /* static */
-UsdPhysicsCollisionGroup UsdPhysicsCollisionGroup::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsCollisionGroup UsdPhysicsCollisionGroup::Define(const UsdStagePtr &stage,
+                                                          const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PhysicsCollisionGroup");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsCollisionGroup();
   }

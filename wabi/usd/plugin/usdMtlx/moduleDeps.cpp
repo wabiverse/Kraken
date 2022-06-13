@@ -54,7 +54,9 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
                                      TfToken("usdUI"),
                                      TfToken("usdUtils"),
                                      TfToken("vt")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdMtlx"), TfToken("wabi.UsdMtlx"), reqs);
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdMtlx"),
+                                                      TfToken("wabi.UsdMtlx"),
+                                                      reqs);
 }
 
 WABI_NAMESPACE_END

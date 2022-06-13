@@ -32,12 +32,9 @@ WABI_NAMESPACE_BEGIN
 // HdTask Definitions
 // -------------------------------------------------------------------------- //
 
-HdTask::HdTask(SdfPath const &id)
-  : _id(id)
-{}
+HdTask::HdTask(SdfPath const &id) : _id(id) {}
 
-HdTask::~HdTask()
-{}
+HdTask::~HdTask() {}
 
 const TfTokenVector &HdTask::GetRenderTags() const
 {
@@ -51,7 +48,8 @@ const TfTokenVector &HdTask::GetRenderTags() const
 /// Typically this would be all dirty bits.
 HdDirtyBits HdTask::GetInitialDirtyBitsMask() const
 {
-  return HdChangeTracker::DirtyParams | HdChangeTracker::DirtyCollection | HdChangeTracker::DirtyRenderTags;
+  return HdChangeTracker::DirtyParams | HdChangeTracker::DirtyCollection |
+         HdChangeTracker::DirtyRenderTags;
 }
 
 bool HdTask::_HasTaskContextData(HdTaskContext const *ctx, TfToken const &id)

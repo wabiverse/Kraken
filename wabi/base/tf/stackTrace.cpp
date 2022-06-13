@@ -84,8 +84,7 @@ static int _MakeStackFile(std::string *fileName)
   string tmpFile;
   int fd = ArchMakeTmpFile(ArchStringPrintf("st_%s", ArchGetProgramNameForErrors()), &tmpFile);
 
-  if (fileName)
-  {
+  if (fileName) {
     *fileName = tmpFile;
   }
   return fd;
@@ -96,8 +95,7 @@ void TfLogStackTrace(const std::string &reason, bool logtodb)
   string tmpFile;
   int fd = _MakeStackFile(&tmpFile);
 
-  if (fd != -1)
-  {
+  if (fd != -1) {
     FILE *fout = ArchFdOpen(fd, "w");
     fprintf(stderr,
             "Writing stack for %s to %s because of %s.\n",
@@ -108,12 +106,10 @@ void TfLogStackTrace(const std::string &reason, bool logtodb)
     fclose(fout);
 
     // Attempt to add it to the db
-    if (logtodb && ArchGetFatalStackLogging())
-    {
+    if (logtodb && ArchGetFatalStackLogging()) {
       ArchLogSessionInfo(tmpFile.c_str());
     }
-  } else
-  {
+  } else {
     // we couldn't open the tmp file, so write the stack trace to stderr
     fprintf(stderr,
             "Error writing to stack trace file. "
@@ -139,8 +135,7 @@ void TfLogCrash(const std::string &reason,
     context.GetLine(),
     context.GetFile());
 
-  if (!additionalInfo.empty())
-  {
+  if (!additionalInfo.empty()) {
     fullMessage += additionalInfo + "\n";
   }
 

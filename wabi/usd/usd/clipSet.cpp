@@ -56,11 +56,9 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const Usd_ClipRefPtrVector &clips,
   std::vector<double> activeTimes;
   activeTimes.reserve(clips.size());
 
-  for (const Usd_ClipRefPtr &clip : clips)
-  {
+  for (const Usd_ClipRefPtr &clip : clips) {
     const SdfLayerHandle clipLayer = clip->GetLayer();
-    if (clipLayer)
-    {
+    if (clipLayer) {
       clipLayers.push_back(clipLayer);
       activeTimes.push_back(clip->authoredStartTime);
     }
@@ -79,14 +77,14 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const SdfLayerHandleVector &clipLayers,
 {
   TRACE_FUNCTION();
 
-  if (!clipPrimPath.IsPrimPath())
-  {
+  if (!clipPrimPath.IsPrimPath()) {
     TF_CODING_ERROR("<%s> must be a prim path", clipPrimPath.GetText());
     return SdfLayerRefPtr();
   }
 
-  if (std::any_of(clipLayers.begin(), clipLayers.end(), [](const SdfLayerHandle &l) { return !l; }))
-  {
+  if (std::any_of(clipLayers.begin(), clipLayers.end(), [](const SdfLayerHandle &l) {
+        return !l;
+      })) {
     TF_CODING_ERROR("Invalid clip layer");
     return SdfLayerRefPtr();
   }
@@ -96,16 +94,14 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const SdfLayerHandleVector &clipLayers,
 
   SdfChangeBlock changeBlock;
 
-  for (const SdfLayerHandle &clipLayer : clipLayers)
-  {
+  for (const SdfLayerHandle &clipLayer : clipLayers) {
     clipLayer->Traverse(clipPrimPath, [&manifestLayer, &clipLayer](const SdfPath &path) {
-      if (!path.IsPropertyPath())
-      {
+      if (!path.IsPropertyPath()) {
         return;
       }
       SdfAttributeSpecHandle clipAttr = clipLayer->GetAttributeAtPath(path);
-      if (clipAttr && !manifestLayer->HasSpec(path) && clipLayer->GetNumTimeSamplesForPath(path) != 0)
-      {
+      if (clipAttr && !manifestLayer->HasSpec(path) &&
+          clipLayer->GetNumTimeSamplesForPath(path) != 0) {
         SdfJustCreatePrimAttributeInLayer(manifestLayer,
                                           path,
                                           clipAttr->GetTypeName(),
@@ -114,15 +110,13 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const SdfLayerHandleVector &clipLayers,
     });
   }
 
-  if (clipActive)
-  {
+  if (clipActive) {
     std::vector<std::pair<SdfPath, std::vector<double>>> attrToActiveTimeOfClipsWithoutSamples;
 
     manifestLayer->Traverse(
       clipPrimPath,
       [&clipLayers, &clipActive, &attrToActiveTimeOfClipsWithoutSamples](const SdfPath &path) {
-        if (!path.IsPropertyPath())
-        {
+        if (!path.IsPropertyPath()) {
           return;
         }
 
@@ -132,27 +126,22 @@ SdfLayerRefPtr Usd_GenerateClipManifest(const SdfLayerHandleVector &clipLayers,
         // recording the activation time of the clips that don't.
         std::vector<double> activeTimes;
 
-        for (size_t i = 0; i < clipLayers.size(); ++i)
-        {
+        for (size_t i = 0; i < clipLayers.size(); ++i) {
           const SdfLayerHandle &clipLayer = clipLayers[i];
-          if (clipLayer->GetNumTimeSamplesForPath(path) == 0)
-          {
+          if (clipLayer->GetNumTimeSamplesForPath(path) == 0) {
             activeTimes.push_back((*clipActive)[i]);
           }
         }
 
-        if (!activeTimes.empty())
-        {
+        if (!activeTimes.empty()) {
           attrToActiveTimeOfClipsWithoutSamples.emplace_back(path, std::move(activeTimes));
         }
       });
 
     SdfValueBlock block;
 
-    for (auto pathAndActiveTime : attrToActiveTimeOfClipsWithoutSamples)
-    {
-      for (double time : pathAndActiveTime.second)
-      {
+    for (auto pathAndActiveTime : attrToActiveTimeOfClipsWithoutSamples) {
+      for (double time : pathAndActiveTime.second) {
         manifestLayer->SetTimeSample(pathAndActiveTime.first, time, block);
       }
     }
@@ -172,34 +161,31 @@ static bool _ValidateClipFields(const VtArray<SdfAssetPath> &clipAssetPaths,
   // Note that we do allow empty clipAssetPath and clipActive data;
   // this provides users with a way to 'block' clips specified in a
   // weaker layer.
-  if (clipPrimPath.empty())
-  {
-    *errMsg = TfStringPrintf("No clip prim path specified in '%s'", UsdClipsAPIInfoKeys->primPath.GetText());
+  if (clipPrimPath.empty()) {
+    *errMsg = TfStringPrintf("No clip prim path specified in '%s'",
+                             UsdClipsAPIInfoKeys->primPath.GetText());
     return false;
   }
 
   const size_t numClips = clipAssetPaths.size();
 
   // Each entry in the clipAssetPaths array is the asset path to a clip.
-  for (const auto &clipAssetPath : clipAssetPaths)
-  {
-    if (clipAssetPath.GetAssetPath().empty())
-    {
-      *errMsg = TfStringPrintf("Empty clip asset path in '%s'", UsdClipsAPIInfoKeys->assetPaths.GetText());
+  for (const auto &clipAssetPath : clipAssetPaths) {
+    if (clipAssetPath.GetAssetPath().empty()) {
+      *errMsg = TfStringPrintf("Empty clip asset path in '%s'",
+                               UsdClipsAPIInfoKeys->assetPaths.GetText());
       return false;
     }
   }
 
   // The 'clipPrimPath' field identifies a prim from which clip data
   // will be read.
-  if (!SdfPath::IsValidPathString(clipPrimPath, errMsg))
-  {
+  if (!SdfPath::IsValidPathString(clipPrimPath, errMsg)) {
     return false;
   }
 
   const SdfPath path(clipPrimPath);
-  if (!(path.IsAbsolutePath() && path.IsPrimPath()))
-  {
+  if (!(path.IsAbsolutePath() && path.IsPrimPath())) {
     *errMsg = TfStringPrintf("Path '%s' in '%s' must be an absolute path to a prim",
                              clipPrimPath.c_str(),
                              UsdClipsAPIInfoKeys->primPath.GetText());
@@ -208,10 +194,8 @@ static bool _ValidateClipFields(const VtArray<SdfAssetPath> &clipAssetPaths,
 
   // Each Vec2d in the 'clipActive' array is a (start frame, clip index)
   // tuple. Ensure the clip index points to a valid clip.
-  for (const auto &startFrameAndClipIndex : clipActive)
-  {
-    if (startFrameAndClipIndex[1] < 0 || startFrameAndClipIndex[1] >= numClips)
-    {
+  for (const auto &startFrameAndClipIndex : clipActive) {
+    if (startFrameAndClipIndex[1] < 0 || startFrameAndClipIndex[1] >= numClips) {
 
       *errMsg = TfStringPrintf("Invalid clip index %d in '%s'",
                                (int)startFrameAndClipIndex[1],
@@ -224,13 +208,11 @@ static bool _ValidateClipFields(const VtArray<SdfAssetPath> &clipAssetPaths,
   // active at the same time.
   typedef std::map<double, int> _ActiveClipMap;
   _ActiveClipMap activeClipMap;
-  for (const auto &startFrameAndClipIndex : clipActive)
-  {
+  for (const auto &startFrameAndClipIndex : clipActive) {
     std::pair<_ActiveClipMap::iterator, bool> status = activeClipMap.insert(
       std::make_pair(startFrameAndClipIndex[0], startFrameAndClipIndex[1]));
 
-    if (!status.second)
-    {
+    if (!status.second) {
       *errMsg = TfStringPrintf(
         "Clip %d cannot be active at time %.3f in '%s' because "
         "clip %d was already specified as active at this time.",
@@ -244,17 +226,14 @@ static bool _ValidateClipFields(const VtArray<SdfAssetPath> &clipAssetPaths,
 
   // Ensure there are at most two (stage time, clip time) entries in
   // clip times that have the same stage time.
-  if (clipTimes)
-  {
+  if (clipTimes) {
     typedef std::unordered_map<double, int> _StageTimesMap;
     _StageTimesMap stageTimesMap;
-    for (const auto &stageTimeAndClipTime : *clipTimes)
-    {
+    for (const auto &stageTimeAndClipTime : *clipTimes) {
       int &numSeen = stageTimesMap.emplace(stageTimeAndClipTime[0], 0).first->second;
       numSeen += 1;
 
-      if (numSeen > 2)
-      {
+      if (numSeen > 2) {
         *errMsg = TfStringPrintf(
           "Cannot have more than two entries in '%s' with the same "
           "stage time (%.3f).",
@@ -277,8 +256,7 @@ Usd_ClipSetRefPtr Usd_ClipSet::New(const std::string &name,
   // If we haven't found all of the required clip metadata we can just
   // bail out. Note that clipTimes and clipManifestAssetPath are *not*
   // required.
-  if (!clipDef.clipAssetPaths || !clipDef.clipPrimPath || !clipDef.clipActive)
-  {
+  if (!clipDef.clipAssetPaths || !clipDef.clipPrimPath || !clipDef.clipActive) {
     return nullptr;
   }
 
@@ -288,16 +266,14 @@ Usd_ClipSetRefPtr Usd_ClipSet::New(const std::string &name,
                            *clipDef.clipPrimPath,
                            *clipDef.clipActive,
                            clipDef.clipTimes.get_ptr(),
-                           status))
-  {
+                           status)) {
     return nullptr;
   }
 
   // The clip manifest is currently optional but can greatly improve
   // performance if specified. For debugging performance problems,
   // issue a message indicating if one hasn't been specified.
-  if (!clipDef.clipManifestAssetPath)
-  {
+  if (!clipDef.clipManifestAssetPath) {
     *status =
       "No clip manifest specified. "
       "Performance may be improved if a manifest is specified.";
@@ -311,6 +287,7 @@ namespace
   struct Usd_ClipEntry
   {
    public:
+
     double startTime;
     SdfAssetPath clipAssetPath;
   };
@@ -331,8 +308,7 @@ Usd_ClipSet::Usd_ClipSet(const std::string &name_, const Usd_ClipSetDefinition &
   typedef std::map<double, Usd_ClipEntry> _TimeToClipMap;
   _TimeToClipMap startTimeToClip;
 
-  for (const auto &startFrameAndClipIndex : *clipDef.clipActive)
-  {
+  for (const auto &startFrameAndClipIndex : *clipDef.clipActive) {
     const double startFrame = startFrameAndClipIndex[0];
     const int clipIndex = (int)(startFrameAndClipIndex[1]);
     const SdfAssetPath &assetPath = (*clipDef.clipAssetPaths)[clipIndex];
@@ -348,10 +324,8 @@ Usd_ClipSet::Usd_ClipSet(const std::string &name_, const Usd_ClipSetDefinition &
 
   // Generate the clip time mapping that applies to all clips.
   Usd_Clip::TimeMappings timeMapping;
-  if (clipDef.clipTimes)
-  {
-    for (const auto &clipTime : *clipDef.clipTimes)
-    {
+  if (clipDef.clipTimes) {
+    for (const auto &clipTime : *clipDef.clipTimes) {
       const Usd_Clip::ExternalTime extTime = clipTime[0];
       const Usd_Clip::InternalTime intTime = clipTime[1];
       timeMapping.push_back(Usd_Clip::TimeMapping(extTime, intTime));
@@ -363,11 +337,11 @@ Usd_ClipSet::Usd_ClipSet(const std::string &name_, const Usd_ClipSetDefinition &
   const _TimeToClipMap::const_iterator itEnd = startTimeToClip.end();
 
   _TimeToClipMap::const_iterator it = startTimeToClip.begin();
-  while (it != itEnd)
-  {
+  while (it != itEnd) {
     const Usd_ClipEntry &clipEntry = it->second;
 
-    const Usd_Clip::ExternalTime clipStartTime = (it == itBegin ? Usd_ClipTimesEarliest : it->first);
+    const Usd_Clip::ExternalTime clipStartTime = (it == itBegin ? Usd_ClipTimesEarliest :
+                                                                  it->first);
     ++it;
     const Usd_Clip::ExternalTime clipEndTime = (it == itEnd ? Usd_ClipTimesLatest : it->first);
 
@@ -386,8 +360,7 @@ Usd_ClipSet::Usd_ClipSet(const std::string &name_, const Usd_ClipSetDefinition &
     valueClips.push_back(clip);
   }
 
-  if (clipDef.interpolateMissingClipValues)
-  {
+  if (clipDef.interpolateMissingClipValues) {
     interpolateMissingClipValues = *clipDef.interpolateMissingClipValues;
   }
 
@@ -396,11 +369,9 @@ Usd_ClipSet::Usd_ClipSet(const std::string &name_, const Usd_ClipSetDefinition &
   SdfAssetPath manifestAssetPath;
   SdfLayerRefPtr generatedManifest;
 
-  if (clipDef.clipManifestAssetPath)
-  {
+  if (clipDef.clipManifestAssetPath) {
     manifestAssetPath = *clipDef.clipManifestAssetPath;
-  } else
-  {
+  } else {
     generatedManifest = Usd_GenerateClipManifest(valueClips,
                                                  clipPrimPath,
                                                  _tokens->generated_manifest.GetString());
@@ -418,8 +389,7 @@ Usd_ClipSet::Usd_ClipSet(const std::string &name_, const Usd_ClipSetDefinition &
     /* clipEndTime          = */ Usd_ClipTimesLatest,
     /* clipTimes            = */ Usd_Clip::TimeMappings()));
 
-  if (generatedManifest)
-  {
+  if (generatedManifest) {
     // If we generated a manifest layer pull on the clip so that it takes
     // a reference to the generated layer and maintains ownership after
     // this function returns.
@@ -433,8 +403,7 @@ bool Usd_ClipSet::_ClipContributesValue(const Usd_ClipRefPtr &clip, const SdfPat
   // values for an attribute, then we need to check whether the
   // clip actually contains authored values below. Otherwise every
   // clip contributes a value, so we can use the clip.
-  if (!interpolateMissingClipValues)
-  {
+  if (!interpolateMissingClipValues) {
     return true;
   }
 
@@ -445,14 +414,12 @@ bool Usd_ClipSet::_ClipContributesValue(const Usd_ClipRefPtr &clip, const SdfPat
   // opening the layer to check if it has authored time samples.
   const bool hasAuthoredSamples = !manifestClip->IsBlocked(path, clip->authoredStartTime) &&
                                   clip->HasAuthoredTimeSamples(path);
-  if (hasAuthoredSamples)
-  {
+  if (hasAuthoredSamples) {
     return true;
   }
 
   // Use the clip if a default value specified in the manifest.
-  if (Usd_HasDefault<int>(manifestClip, path, nullptr) != Usd_DefaultValueResult::None)
-  {
+  if (Usd_HasDefault<int>(manifestClip, path, nullptr) != Usd_DefaultValueResult::None) {
     return true;
   }
 
@@ -469,10 +436,8 @@ bool Usd_ClipSet::GetBracketingTimeSamplesForPath(const SdfPath &path,
   const size_t clipIndex = _FindClipIndexForTime(time);
 
   const Usd_ClipRefPtr &activeClip = valueClips[clipIndex];
-  if (_ClipContributesValue(activeClip, path))
-  {
-    if (!TF_VERIFY(activeClip->GetBracketingTimeSamplesForPath(path, time, lower, upper)))
-    {
+  if (_ClipContributesValue(activeClip, path)) {
+    if (!TF_VERIFY(activeClip->GetBracketingTimeSamplesForPath(path, time, lower, upper))) {
       return false;
     }
 
@@ -500,17 +465,14 @@ bool Usd_ClipSet::GetBracketingTimeSamplesForPath(const SdfPath &path,
   // If we haven't found the lower bracketing sample from the active
   // clip, search backwards to find the nearest clip that contributes
   // values and use that to determine the lower sample.
-  for (size_t i = clipIndex; !foundLower && i-- != 0;)
-  {
+  for (size_t i = clipIndex; !foundLower && i-- != 0;) {
     const Usd_ClipRefPtr &clip = valueClips[i];
-    if (!_ClipContributesValue(clip, path))
-    {
+    if (!_ClipContributesValue(clip, path)) {
       continue;
     }
 
     double tmpLower, tmpUpper;
-    if (!TF_VERIFY(clip->GetBracketingTimeSamplesForPath(path, time, &tmpLower, &tmpUpper)))
-    {
+    if (!TF_VERIFY(clip->GetBracketingTimeSamplesForPath(path, time, &tmpLower, &tmpUpper))) {
       return false;
     }
 
@@ -524,11 +486,9 @@ bool Usd_ClipSet::GetBracketingTimeSamplesForPath(const SdfPath &path,
   // the cost of calling GetBracketingTimeSamples here since we know
   // a clip always has a time sample at its start frame if it
   // contributes values.
-  for (size_t i = clipIndex + 1; !foundUpper && i < valueClips.size(); ++i)
-  {
+  for (size_t i = clipIndex + 1; !foundUpper && i < valueClips.size(); ++i) {
     const Usd_ClipRefPtr &clip = valueClips[i];
-    if (!_ClipContributesValue(clip, path))
-    {
+    if (!_ClipContributesValue(clip, path)) {
       continue;
     }
 
@@ -537,14 +497,11 @@ bool Usd_ClipSet::GetBracketingTimeSamplesForPath(const SdfPath &path,
   }
 
   // Reconcile foundLower and foundUpper values.
-  if (foundLower && !foundUpper)
-  {
+  if (foundLower && !foundUpper) {
     *upper = *lower;
-  } else if (!foundLower && foundUpper)
-  {
+  } else if (!foundLower && foundUpper) {
     *lower = *upper;
-  } else if (!foundLower && !foundUpper)
-  {
+  } else if (!foundLower && !foundUpper) {
     // In this case, no clips have been found that contribute
     // values. Use the start time of the first clip as the sole
     // time sample.
@@ -557,10 +514,8 @@ bool Usd_ClipSet::GetBracketingTimeSamplesForPath(const SdfPath &path,
 std::set<double> Usd_ClipSet::ListTimeSamplesForPath(const SdfPath &path) const
 {
   std::set<double> samples;
-  for (const Usd_ClipRefPtr &clip : valueClips)
-  {
-    if (!_ClipContributesValue(clip, path))
-    {
+  for (const Usd_ClipRefPtr &clip : valueClips) {
+    if (!_ClipContributesValue(clip, path)) {
       continue;
     }
 
@@ -568,8 +523,7 @@ std::set<double> Usd_ClipSet::ListTimeSamplesForPath(const SdfPath &path) const
     samples.insert(clipSamples.begin(), clipSamples.end());
   }
 
-  if (samples.empty())
-  {
+  if (samples.empty()) {
     // In this case, no clips have been found that contribute
     // values. Use the start time of the first clip as the sole
     // time sample.
@@ -585,21 +539,20 @@ size_t Usd_ClipSet::_FindClipIndexForTime(double time) const
 
   // If there was only one clip, it must be active over all time so
   // we don't need to search any further.
-  if (valueClips.size() > 1)
-  {
+  if (valueClips.size() > 1) {
     // Find the first clip whose start time is greater than the given
     // time.
-    auto it = std::upper_bound(
-      valueClips.begin(),
-      valueClips.end(),
-      time,
-      [](double time, const Usd_ClipRefPtr &clip) { return time < clip->startTime; });
+    auto it = std::upper_bound(valueClips.begin(),
+                               valueClips.end(),
+                               time,
+                               [](double time, const Usd_ClipRefPtr &clip) {
+                                 return time < clip->startTime;
+                               });
 
     // The upper bound should never be the first clip. Since its
     // startTime is set to -inf, it should never be greater than any
     // time that is given.
-    if (TF_VERIFY(it != valueClips.begin()))
-    {
+    if (TF_VERIFY(it != valueClips.begin())) {
       // The clip before the upper bound must have time in its
       // [startTime, endTime) range. This is true even if
       // it points to valueClips.end(); if this were the case,

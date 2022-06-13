@@ -46,8 +46,7 @@ VtValue Vt_ValueFromPythonRegistry::Invoke(PyObject *obj)
   // object.
   boost::python::handle<> h(PyObject_Type(obj));
   _LValueExtractorCache::iterator i = self._lvalueExtractorCache.find(h.get());
-  if (i != self._lvalueExtractorCache.end())
-  {
+  if (i != self._lvalueExtractorCache.end()) {
     // attempt conversion.
     VtValue result = i->second.Invoke(obj);
     if (!result.IsEmpty())
@@ -55,11 +54,9 @@ VtValue Vt_ValueFromPythonRegistry::Invoke(PyObject *obj)
   }
 
   // Fall back to trying extractors in reverse registration order.
-  for (size_t i = self._lvalueExtractors.size(); i != 0; --i)
-  {
+  for (size_t i = self._lvalueExtractors.size(); i != 0; --i) {
     VtValue result = self._lvalueExtractors[i - 1].Invoke(obj);
-    if (!result.IsEmpty())
-    {
+    if (!result.IsEmpty()) {
       // Cache the result.
       self._lvalueExtractorCache.insert({PyObject_Type(obj), self._lvalueExtractors[i - 1]});
       return result;
@@ -67,8 +64,7 @@ VtValue Vt_ValueFromPythonRegistry::Invoke(PyObject *obj)
   }
 
   // No lvalue extraction worked -- try rvalue conversions.
-  for (size_t i = self._rvalueExtractors.size(); i != 0; --i)
-  {
+  for (size_t i = self._rvalueExtractors.size(); i != 0; --i) {
     VtValue result = self._rvalueExtractors[i - 1].Invoke(obj);
     if (!result.IsEmpty())
       return result;

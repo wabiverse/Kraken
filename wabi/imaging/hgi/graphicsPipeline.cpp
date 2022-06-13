@@ -49,10 +49,7 @@ bool operator!=(const HgiVertexAttributeDesc &lhs, const HgiVertexAttributeDesc 
   return !(lhs == rhs);
 }
 
-HgiVertexBufferDesc::HgiVertexBufferDesc()
-  : bindingIndex(0),
-    vertexStride(0)
-{}
+HgiVertexBufferDesc::HgiVertexBufferDesc() : bindingIndex(0), vertexStride(0) {}
 
 bool operator==(const HgiVertexBufferDesc &lhs, const HgiVertexBufferDesc &rhs)
 {
@@ -72,7 +69,8 @@ HgiMultiSampleState::HgiMultiSampleState()
 
 bool operator==(const HgiMultiSampleState &lhs, const HgiMultiSampleState &rhs)
 {
-  return lhs.alphaToCoverageEnable == rhs.alphaToCoverageEnable && lhs.sampleCount == rhs.sampleCount;
+  return lhs.alphaToCoverageEnable == rhs.alphaToCoverageEnable &&
+         lhs.sampleCount == rhs.sampleCount;
 }
 
 bool operator!=(const HgiMultiSampleState &lhs, const HgiMultiSampleState &rhs)
@@ -109,8 +107,10 @@ HgiDepthStencilState::HgiDepthStencilState()
 
 bool operator==(const HgiDepthStencilState &lhs, const HgiDepthStencilState &rhs)
 {
-  return lhs.depthTestEnabled == rhs.depthTestEnabled && lhs.depthWriteEnabled == rhs.depthWriteEnabled &&
-         lhs.depthCompareFn == rhs.depthCompareFn && lhs.stencilTestEnabled == rhs.stencilTestEnabled;
+  return lhs.depthTestEnabled == rhs.depthTestEnabled &&
+         lhs.depthWriteEnabled == rhs.depthWriteEnabled &&
+         lhs.depthCompareFn == rhs.depthCompareFn &&
+         lhs.stencilTestEnabled == rhs.stencilTestEnabled;
 }
 
 bool operator!=(const HgiDepthStencilState &lhs, const HgiDepthStencilState &rhs)
@@ -123,19 +123,19 @@ HgiGraphicsShaderConstantsDesc::HgiGraphicsShaderConstantsDesc()
     stageUsage(HgiShaderStageFragment)
 {}
 
-bool operator==(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShaderConstantsDesc &rhs)
+bool operator==(const HgiGraphicsShaderConstantsDesc &lhs,
+                const HgiGraphicsShaderConstantsDesc &rhs)
 {
   return lhs.byteSize == rhs.byteSize && lhs.stageUsage == rhs.stageUsage;
 }
 
-bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShaderConstantsDesc &rhs)
+bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs,
+                const HgiGraphicsShaderConstantsDesc &rhs)
 {
   return !(lhs == rhs);
 }
 
-HgiGraphicsPipelineDesc::HgiGraphicsPipelineDesc()
-  : primitiveType(HgiPrimitiveTypeTriangleList)
-{}
+HgiGraphicsPipelineDesc::HgiGraphicsPipelineDesc() : primitiveType(HgiPrimitiveTypeTriangleList) {}
 
 HgiGraphicsPipelineDesc const &HgiGraphicsPipeline::GetDescriptor() const
 {
@@ -146,8 +146,10 @@ bool operator==(const HgiGraphicsPipelineDesc &lhs, const HgiGraphicsPipelineDes
 {
   return lhs.debugName == rhs.debugName && lhs.primitiveType == rhs.primitiveType &&
          lhs.shaderProgram == rhs.shaderProgram && lhs.depthState == rhs.depthState &&
-         lhs.multiSampleState == rhs.multiSampleState && lhs.rasterizationState == rhs.rasterizationState &&
-         lhs.vertexBuffers == rhs.vertexBuffers && lhs.colorAttachmentDescs == rhs.colorAttachmentDescs &&
+         lhs.multiSampleState == rhs.multiSampleState &&
+         lhs.rasterizationState == rhs.rasterizationState &&
+         lhs.vertexBuffers == rhs.vertexBuffers &&
+         lhs.colorAttachmentDescs == rhs.colorAttachmentDescs &&
          lhs.colorResolveAttachmentDescs == rhs.colorResolveAttachmentDescs &&
          lhs.depthAttachmentDesc == rhs.depthAttachmentDesc &&
          lhs.depthResolveAttachmentDesc == rhs.depthResolveAttachmentDesc &&
@@ -159,8 +161,7 @@ bool operator!=(const HgiGraphicsPipelineDesc &lhs, const HgiGraphicsPipelineDes
   return !(lhs == rhs);
 }
 
-HgiGraphicsPipeline::HgiGraphicsPipeline(HgiGraphicsPipelineDesc const &desc)
-  : _descriptor(desc)
+HgiGraphicsPipeline::HgiGraphicsPipeline(HgiGraphicsPipelineDesc const &desc) : _descriptor(desc)
 {}
 
 HgiGraphicsPipeline::~HgiGraphicsPipeline() = default;

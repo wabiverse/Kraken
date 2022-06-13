@@ -78,7 +78,9 @@ void wrapRegistry()
 
     .def("GetShaderNodeByName",
          &This::GetShaderNodeByName,
-         (args("name"), args("typePriority") = NdrTokenVec(), args("filter") = NdrVersionFilterDefaultOnly),
+         (args("name"),
+          args("typePriority") = NdrTokenVec(),
+          args("filter") = NdrVersionFilterDefaultOnly),
          return_internal_reference<>())
     .def("GetShaderNodeByNameAndType",
          &This::GetShaderNodeByNameAndType,

@@ -35,13 +35,11 @@ void HdCyclesOpenvdbAsset::Sync(HdSceneDelegate *a_sceneDelegate,
                                 HdDirtyBits *a_dirtyBits)
 {
   TF_UNUSED(a_renderParam);
-  if (*a_dirtyBits & HdField::DirtyParams)
-  {
+  if (*a_dirtyBits & HdField::DirtyParams) {
     auto &changeTracker = a_sceneDelegate->GetRenderIndex().GetChangeTracker();
     // But accessing this list happens on a single thread,
     // as bprims are synced before rprims.
-    for (const auto &volume : _volumeList)
-    {
+    for (const auto &volume : _volumeList) {
       changeTracker.MarkRprimDirty(volume, HdChangeTracker::DirtyTopology);
     }
   }

@@ -33,28 +33,23 @@ WABI_NAMESPACE_BEGIN
 
 static size_t _GetVersion(HdBufferArrayRangeSharedPtr const &bar)
 {
-  if (bar)
-  {
+  if (bar) {
     return bar->GetVersion();
-  } else
-  {
+  } else {
     return 0;
   }
 }
 
 static size_t _GetElementOffset(HdBufferArrayRangeSharedPtr const &bar)
 {
-  if (bar)
-  {
+  if (bar) {
     return bar->GetElementOffset();
-  } else
-  {
+  } else {
     return 0;
   }
 }
 
-HdDrawItem::HdDrawItem(HdRprimSharedData const *sharedData)
-  : _sharedData(sharedData)
+HdDrawItem::HdDrawItem(HdRprimSharedData const *sharedData) : _sharedData(sharedData)
 {
   HF_MALLOC_TAG_FUNCTION();
 }
@@ -64,8 +59,7 @@ HdDrawItem::~HdDrawItem()
   /*NOTHING*/
 }
 
-template<class HashState>
-void TfHashAppend(HashState &h, HdDrawItem const &di)
+template<class HashState> void TfHashAppend(HashState &h, HdDrawItem const &di)
 {
   h.Append(_GetVersion(di.GetTopologyRange()));
   h.Append(_GetVersion(di.GetConstantPrimvarRange()));
@@ -76,8 +70,7 @@ void TfHashAppend(HashState &h, HdDrawItem const &di)
   h.Append(_GetVersion(di.GetTopologyVisibilityRange()));
 
   int const instancerNumLevels = di.GetInstancePrimvarNumLevels();
-  for (int i = 0; i < instancerNumLevels; ++i)
-  {
+  for (int i = 0; i < instancerNumLevels; ++i) {
     h.Append(_GetVersion(di.GetInstancePrimvarRange(i)));
   }
   h.Append(_GetVersion(di.GetInstanceIndexRange()));
@@ -101,23 +94,22 @@ size_t HdDrawItem::GetElementOffsetsHash() const
                                 _GetElementOffset(GetTopologyVisibilityRange()));
 
   int const instancerNumLevels = GetInstancePrimvarNumLevels();
-  for (int i = 0; i < instancerNumLevels; ++i)
-  {
+  for (int i = 0; i < instancerNumLevels; ++i) {
     hash = TfHash::Combine(hash, _GetElementOffset(GetInstancePrimvarRange(i)));
   }
-  hash = TfHash::Combine(hash, _GetElementOffset(GetInstanceIndexRange()), _GetElementOffsetsHash());
+  hash = TfHash::Combine(hash,
+                         _GetElementOffset(GetInstanceIndexRange()),
+                         _GetElementOffsetsHash());
 
   return hash;
 }
 
 bool HdDrawItem::IntersectsViewVolume(GfMatrix4d const &viewProjMatrix) const
 {
-  if (GetInstanceIndexRange())
-  {
+  if (GetInstanceIndexRange()) {
     // XXX: need to test intersections of the bound of all instances.
     return true;
-  } else
-  {
+  } else {
     return GfFrustum::IntersectsViewVolume(GetBounds(), viewProjMatrix);
   }
 }
@@ -128,43 +120,36 @@ std::ostream &operator<<(std::ostream &out, const HdDrawItem &self)
   out << "Draw Item:\n";
   out << "    Bound: " << self._sharedData->bounds << "\n";
   out << "    Visible: " << self._sharedData->visible << "\n";
-  if (self.GetTopologyRange())
-  {
+  if (self.GetTopologyRange()) {
     out << "    Topology:\n";
     out << "        numElements=" << self.GetTopologyRange()->GetNumElements() << "\n";
     out << *self.GetTopologyRange();
   }
-  if (self.GetConstantPrimvarRange())
-  {
+  if (self.GetConstantPrimvarRange()) {
     out << "    Constant Primvars:\n";
     out << *self.GetConstantPrimvarRange();
   }
-  if (self.GetElementPrimvarRange())
-  {
+  if (self.GetElementPrimvarRange()) {
     out << "    Element Primvars:\n";
     out << "        numElements=" << self.GetElementPrimvarRange()->GetNumElements() << "\n";
     out << *self.GetElementPrimvarRange();
   }
-  if (self.GetVertexPrimvarRange())
-  {
+  if (self.GetVertexPrimvarRange()) {
     out << "    Vertex Primvars:\n";
     out << "        numElements=" << self.GetVertexPrimvarRange()->GetNumElements() << "\n";
     out << *self.GetVertexPrimvarRange();
   }
-  if (self.GetVaryingPrimvarRange())
-  {
+  if (self.GetVaryingPrimvarRange()) {
     out << "    Varying Primvars:\n";
     out << "        numElements=" << self.GetVaryingPrimvarRange()->GetNumElements() << "\n";
     out << *self.GetVaryingPrimvarRange();
   }
-  if (self.GetFaceVaryingPrimvarRange())
-  {
+  if (self.GetFaceVaryingPrimvarRange()) {
     out << "    Fvar Primvars:\n";
     out << "        numElements=" << self.GetFaceVaryingPrimvarRange()->GetNumElements() << "\n";
     out << *self.GetFaceVaryingPrimvarRange();
   }
-  if (self.GetTopologyVisibilityRange())
-  {
+  if (self.GetTopologyVisibilityRange()) {
     out << "    Topology visibility:\n";
     out << *self.GetTopologyVisibilityRange();
   }

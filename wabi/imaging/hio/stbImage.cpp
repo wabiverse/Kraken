@@ -72,6 +72,7 @@ WABI_NAMESPACE_BEGIN
 class Hio_StbImage final : public HioImage
 {
  public:
+
   using Base = HioImage;
 
   Hio_StbImage();
@@ -101,6 +102,7 @@ class Hio_StbImage final : public HioImage
   bool Write(StorageSpec const &storage, VtDictionary const &metadata) override;
 
  protected:
+
   bool _OpenForReading(std::string const &filename,
                        int subimage,
                        int mip,
@@ -109,6 +111,7 @@ class Hio_StbImage final : public HioImage
   bool _OpenForWriting(std::string const &filename) override;
 
  private:
+
   std::string _GetFilenameExtension();
   bool _IsValidCrop(int cropTop, int cropBottom, int cropLeft, int cropRight);
   void _GetInfoFromStorageSpec(HioImage::StorageSpec const &storage);
@@ -144,8 +147,8 @@ bool Hio_StbImage::_IsValidCrop(int cropTop, int cropBottom, int cropLeft, int c
 {
   const int cropImageWidth = _width - (cropLeft + cropRight);
   const int cropImageHeight = _height - (cropTop + cropBottom);
-  return (cropTop >= 0 && cropBottom >= 0 && cropLeft >= 0 && cropRight >= 0 && cropImageWidth > 0 &&
-          cropImageHeight > 0);
+  return (cropTop >= 0 && cropBottom >= 0 && cropLeft >= 0 && cropRight >= 0 &&
+          cropImageWidth > 0 && cropImageHeight > 0);
 }
 
 std::string Hio_StbImage::_GetFilenameExtension()
@@ -165,12 +168,7 @@ void Hio_StbImage::_GetInfoFromStorageSpec(HioImage::StorageSpec const &storage)
   _nchannels = HioGetComponentCount(storage.format);
 }
 
-Hio_StbImage::Hio_StbImage()
-  : _width(0),
-    _height(0),
-    _gamma(0.0f),
-    _nchannels(0)
-{}
+Hio_StbImage::Hio_StbImage() : _width(0), _height(0), _gamma(0.0f), _nchannels(0) {}
 
 /// Copies the region of the source image defined by cropTop, cropBottom,
 /// cropLeft, and cropRight into storage.data.  If needed, we resize
@@ -184,8 +182,8 @@ bool Hio_StbImage::_CropAndResize(void const *sourceData,
                                   bool const resizeNeeded,
                                   StorageSpec const &storage)
 {
-  if (!TF_VERIFY(_IsValidCrop(cropTop, cropBottom, cropLeft, cropRight), "Invalid crop parameters"))
-  {
+  if (!TF_VERIFY(_IsValidCrop(cropTop, cropBottom, cropLeft, cropRight),
+                 "Invalid crop parameters")) {
     return false;
   }
   const int bpp = GetBytesPerPixel();
@@ -202,30 +200,26 @@ bool Hio_StbImage::_CropAndResize(void const *sourceData,
   void *croppedData;
   std::unique_ptr<uint8_t[]> tempData;
 
-  if (resizeNeeded)
-  {
+  if (resizeNeeded) {
     int croppedImageSize = croppedStrideLength * cropHeight;
     tempData.reset(new uint8_t[croppedImageSize]);
     croppedData = tempData.get();
-  } else
-  {
+  } else {
     croppedData = storage.data;
   }
 
-  for (int i = 0; i < cropHeight; i++)
-  {
-    unsigned char *src = (unsigned char *)sourceData + ((cropTop + i) * strideLength) + (cropLeft * bpp);
+  for (int i = 0; i < cropHeight; i++) {
+    unsigned char *src = (unsigned char *)sourceData + ((cropTop + i) * strideLength) +
+                         (cropLeft * bpp);
     unsigned char *dest = (unsigned char *)croppedData + (i * croppedStrideLength);
 
     // memcpy 1 row of data
     memcpy(dest, src, croppedStrideLength);
   }
 
-  if (resizeNeeded)
-  {
+  if (resizeNeeded) {
     // resize and copy data into storage
-    if (IsColorSpaceSRGB())
-    {
+    if (IsColorSpaceSRGB()) {
       int alphaIndex = (_nchannels == 3) ? STBIR_ALPHA_CHANNEL_NONE : 3;
       stbir_resize_uint8_srgb((unsigned char *)croppedData,
                               cropWidth,
@@ -238,10 +232,8 @@ bool Hio_StbImage::_CropAndResize(void const *sourceData,
                               _nchannels,
                               alphaIndex,
                               0);
-    } else
-    {
-      if (_outputType == HioTypeFloat)
-      {
+    } else {
+      if (_outputType == HioTypeFloat) {
         stbir_resize_float((float *)croppedData,
                            cropWidth,
                            cropHeight,
@@ -251,8 +243,7 @@ bool Hio_StbImage::_CropAndResize(void const *sourceData,
                            storage.height,
                            storage.width * bpp,
                            _nchannels);
-      } else
-      {
+      } else {
         stbir_resize_uint8((unsigned char *)croppedData,
                            cropWidth,
                            cropHeight,
@@ -306,12 +297,10 @@ int Hio_StbImage::GetBytesPerPixel() const
 /* virtual */
 bool Hio_StbImage::IsColorSpaceSRGB() const
 {
-  if (_sourceColorSpace == HioImage::SRGB)
-  {
+  if (_sourceColorSpace == HioImage::SRGB) {
     return true;
   }
-  if (_sourceColorSpace == HioImage::Raw)
-  {
+  if (_sourceColorSpace == HioImage::Raw) {
     return false;
   }
 
@@ -319,19 +308,16 @@ bool Hio_StbImage::IsColorSpaceSRGB() const
 
   // If we found gamma in the texture, use it to decide if we are sRGB
   bool isSRGB = (fabs(_gamma - 0.45455f) < gamma_epsilon);
-  if (isSRGB)
-  {
+  if (isSRGB) {
     return true;
   }
 
   bool isLinear = (fabs(_gamma - 1) < gamma_epsilon);
-  if (isLinear)
-  {
+  if (isLinear) {
     return false;
   }
 
-  if (_gamma > 0)
-  {
+  if (_gamma > 0) {
     TF_WARN("Unsupported gamma encoding in: %s", _filename.c_str());
   }
 
@@ -369,23 +355,19 @@ bool Hio_StbImage::_OpenForReading(std::string const &filename,
   _sourceColorSpace = sourceColorSpace;
 
   const std::string fileExtension = _GetFilenameExtension();
-  if (fileExtension == "hdr")
-  {
+  if (fileExtension == "hdr") {
     _outputType = HioTypeFloat;
-  } else
-  {
+  } else {
     _outputType = HioTypeUnsignedByte;
   }
 
   std::shared_ptr<ArAsset> const asset = ArGetResolver().OpenAsset(ArResolvedPath(_filename));
-  if (!asset)
-  {
+  if (!asset) {
     return false;
   }
 
   std::shared_ptr<const char> const buffer = asset->GetBuffer();
-  if (!buffer)
-  {
+  if (!buffer) {
     return false;
   }
 
@@ -434,76 +416,70 @@ bool Hio_StbImage::ReadCropped(int const cropTop,
 #endif
 
   std::shared_ptr<ArAsset> const asset = ArGetResolver().OpenAsset(ArResolvedPath(_filename));
-  if (!asset)
-  {
+  if (!asset) {
     TF_CODING_ERROR("Cannot open image %s for reading", _filename.c_str());
     return false;
   }
 
   std::shared_ptr<const char> const buffer = asset->GetBuffer();
-  if (buffer)
-  {
+  if (buffer) {
     size_t bufferSize = asset->GetSize();
-    if (_outputType == HioTypeFloat)
-    {
+    if (_outputType == HioTypeFloat) {
       imageData = stbi_loadf_from_memory(reinterpret_cast<stbi_uc const *>(buffer.get()),
                                          bufferSize,
                                          &_width,
                                          &_height,
                                          &_nchannels,
                                          0);
-      if (storage.flipped)
-      {
+      if (storage.flipped) {
         stbi__vertical_flip(imageData, _width, _height, _nchannels * sizeof(float));
       }
-    } else
-    {
+    } else {
       imageData = stbi_load_from_memory(reinterpret_cast<stbi_uc const *>(buffer.get()),
                                         bufferSize,
                                         &_width,
                                         &_height,
                                         &_nchannels,
                                         0);
-      if (storage.flipped)
-      {
+      if (storage.flipped) {
         stbi__vertical_flip(imageData, _width, _height, _nchannels * sizeof(stbi_uc));
       }
     }
   }
 
   //// Read pixel data
-  if (!imageData)
-  {
+  if (!imageData) {
     TF_CODING_ERROR("unable to get_pixels");
     return false;
   }
 
   //// Crop Needed
-  if (cropTop || cropBottom || cropLeft || cropRight)
-  {
+  if (cropTop || cropBottom || cropLeft || cropRight) {
     // check if resizing is still necessary after cropping
     const bool resizeNeeded = (_width - cropRight - cropLeft != storage.width) ||
                               (_height - cropTop - cropBottom != storage.height);
 
     // copy (and potentially resize)
     // cropped region of imageData into storage.data
-    if (!_CropAndResize(imageData, cropTop, cropBottom, cropLeft, cropRight, resizeNeeded, storage))
-    {
+    if (!_CropAndResize(imageData,
+                        cropTop,
+                        cropBottom,
+                        cropLeft,
+                        cropRight,
+                        resizeNeeded,
+                        storage)) {
       TF_CODING_ERROR("Unable to crop and resize");
       stbi_image_free(imageData);
       return false;
     }
-  } else
-  {
+  } else {
     const int bpp = GetBytesPerPixel();
     const int inputStrideInBytes = _width * bpp;
     const bool resizeNeeded = _width != storage.width || _height != storage.height;
 
-    if (resizeNeeded)
-    {
+    if (resizeNeeded) {
       // XXX STB only has a sRGB resize for 8bit
-      if (IsColorSpaceSRGB() && _outputType == HioTypeUnsignedByte)
-      {
+      if (IsColorSpaceSRGB() && _outputType == HioTypeUnsignedByte) {
         const int alphaIndex = (_nchannels != 4) ? STBIR_ALPHA_CHANNEL_NONE : 3;
         stbir_resize_uint8_srgb((unsigned char *)imageData,
                                 _width,
@@ -516,10 +492,8 @@ bool Hio_StbImage::ReadCropped(int const cropTop,
                                 _nchannels,
                                 alphaIndex,
                                 0);
-      } else
-      {
-        if (_outputType == HioTypeFloat)
-        {
+      } else {
+        if (_outputType == HioTypeFloat) {
           stbir_resize_float((float *)imageData,
                              _width,
                              _height,
@@ -529,8 +503,7 @@ bool Hio_StbImage::ReadCropped(int const cropTop,
                              storage.height,
                              storage.width * bpp,
                              _nchannels);
-        } else
-        {
+        } else {
           stbir_resize_uint8((unsigned char *)imageData,
                              _width,
                              _height,
@@ -545,16 +518,14 @@ bool Hio_StbImage::ReadCropped(int const cropTop,
 
       _width = storage.width;
       _height = storage.height;
-    } else
-    {
+    } else {
       const int imageSize = bpp * _width * _height;
       // no resizing needed, just copy image data to storage
       memcpy(storage.data, imageData, imageSize);
     }
   }
 
-  if (!storage.data)
-  {
+  if (!storage.data) {
     TF_CODING_ERROR("Failed to copy data to storage.data");
   }
 
@@ -595,8 +566,7 @@ namespace
     quantizedData.reset(new uint8_t[numElements]);
 
     const T *const inData = static_cast<T *>(storageIn.data);
-    for (size_t i = 0; i < numElements; ++i)
-    {
+    for (size_t i = 0; i < numElements; ++i) {
       quantizedData[i] = _Quantize(inData[i]);
     }
 
@@ -626,18 +596,14 @@ bool Hio_StbImage::Write(StorageSpec const &storageIn, VtDictionary const &metad
   const HioType type = HioGetHioType(storageIn.format);
   const bool isSRGB = IsColorSpaceSRGB();
 
-  if (type == HioTypeFloat && fileExtension != "hdr")
-  {
+  if (type == HioTypeFloat && fileExtension != "hdr") {
     quantizedSpec = _Quantize<float>(storageIn, quantizedData, isSRGB);
-  } else if (type == HioTypeHalfFloat && fileExtension != "hdr")
-  {
+  } else if (type == HioTypeHalfFloat && fileExtension != "hdr") {
     quantizedSpec = _Quantize<GfHalf>(storageIn, quantizedData, isSRGB);
-  } else if (type != HioTypeUnsignedByte && fileExtension != "hdr")
-  {
+  } else if (type != HioTypeUnsignedByte && fileExtension != "hdr") {
     TF_CODING_ERROR("stb expects unsigned byte data to write filetype %s", fileExtension.c_str());
     return false;
-  } else if (type != HioTypeFloat && fileExtension == "hdr")
-  {
+  } else if (type != HioTypeFloat && fileExtension == "hdr") {
     TF_CODING_ERROR("stb expects linear float data to write filetype hdr");
     return false;
   }
@@ -661,13 +627,13 @@ bool Hio_StbImage::Write(StorageSpec const &storageIn, VtDictionary const &metad
   // Read from storage.data and write pixel data to file
   int success = 0;
 
-  static const std::vector<std::string> jpgExtensions = {"jpg", "jpeg", "jpe", "jfif", "jfi", "jif"};
+  static const std::vector<std::string> jpgExtensions =
+    {"jpg", "jpeg", "jpe", "jfif", "jfi", "jif"};
   static const std::vector<std::string> tgaExtensions = {"tga", "icb", "vda", "vst"};
-  if (std::find(jpgExtensions.begin(), jpgExtensions.end(), fileExtension) != jpgExtensions.end())
-  {
+  if (std::find(jpgExtensions.begin(), jpgExtensions.end(), fileExtension) !=
+      jpgExtensions.end()) {
     success = stbi_write_jpg(_filename.c_str(), _width, _height, _nchannels, storage.data, 100);
-  } else if (fileExtension.compare("png") == 0)
-  {
+  } else if (fileExtension.compare("png") == 0) {
     // Assuming pixel data is packed consecutively in memory
     // Thus stride length = image width * bytes per pixel
     success = stbi_write_png(_filename.c_str(),
@@ -676,19 +642,17 @@ bool Hio_StbImage::Write(StorageSpec const &storageIn, VtDictionary const &metad
                              _nchannels,
                              storage.data,
                              _width * GetBytesPerPixel());
-  } else if (fileExtension.compare("bmp") == 0 || fileExtension.compare("dib") == 0)
-  {
+  } else if (fileExtension.compare("bmp") == 0 || fileExtension.compare("dib") == 0) {
     success = stbi_write_bmp(_filename.c_str(), _width, _height, _nchannels, storage.data);
-  } else if (std::find(tgaExtensions.begin(), tgaExtensions.end(), fileExtension) != tgaExtensions.end())
-  {
+  } else if (std::find(tgaExtensions.begin(), tgaExtensions.end(), fileExtension) !=
+             tgaExtensions.end()) {
     success = stbi_write_tga(_filename.c_str(), _width, _height, _nchannels, storage.data);
-  } else if (fileExtension.compare("hdr") == 0)
-  {
-    success = stbi_write_hdr(_filename.c_str(), _width, _height, _nchannels, (float *)storage.data);
+  } else if (fileExtension.compare("hdr") == 0) {
+    success =
+      stbi_write_hdr(_filename.c_str(), _width, _height, _nchannels, (float *)storage.data);
   }
 
-  if (!success)
-  {
+  if (!success) {
     TF_RUNTIME_ERROR("Unable to write");
     return false;
   }

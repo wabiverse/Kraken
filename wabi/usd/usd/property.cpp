@@ -135,10 +135,8 @@ bool UsdProperty::IsDefined() const
 bool UsdProperty::IsAuthored() const
 {
   // Look for the strongest authored property spec.
-  for (Usd_Resolver res(&GetPrim().GetPrimIndex()); res.IsValid(); res.NextLayer())
-  {
-    if (res.GetLayer()->HasSpec(res.GetLocalPath().AppendProperty(_PropName())))
-    {
+  for (Usd_Resolver res(&GetPrim().GetPrimIndex()); res.IsValid(); res.NextLayer()) {
+    if (res.GetLayer()->HasSpec(res.GetLocalPath().AppendProperty(_PropName()))) {
       return true;
     }
   }
@@ -147,8 +145,7 @@ bool UsdProperty::IsAuthored() const
 
 bool UsdProperty::IsAuthoredAt(const UsdEditTarget &editTarget) const
 {
-  if (editTarget.IsValid())
-  {
+  if (editTarget.IsValid()) {
     SdfPath mappedPath = editTarget.MapToSpecPath(GetPath());
     return !mappedPath.IsEmpty() && editTarget.GetLayer()->HasSpec(mappedPath);
   }
@@ -178,16 +175,14 @@ static SdfPath _MapPath(_PathMap const &map, SdfPath const &path)
 {
   using boost::make_transform_iterator;
 
-  if (map.empty())
-  {
+  if (map.empty()) {
     return path;
   }
 
   auto it = SdfPathFindLongestPrefix(make_transform_iterator(map.begin(), TfGet<0>()),
                                      make_transform_iterator(map.end(), TfGet<0>()),
                                      path);
-  if (it.base() != map.end())
-  {
+  if (it.base() != map.end()) {
     return path.ReplacePrefix(it.base()->first, it.base()->second);
   }
   return path;
@@ -195,8 +190,7 @@ static SdfPath _MapPath(_PathMap const &map, SdfPath const &path)
 
 bool UsdProperty::_GetTargets(SdfSpecType specType, SdfPathVector *out, bool *foundErrors) const
 {
-  if (!TF_VERIFY(specType == SdfSpecTypeAttribute || specType == SdfSpecTypeRelationship))
-  {
+  if (!TF_VERIFY(specType == SdfSpecTypeAttribute || specType == SdfSpecTypeRelationship)) {
     return false;
   }
 
@@ -222,8 +216,7 @@ bool UsdProperty::_GetTargets(SdfSpecType specType, SdfPathVector *out, bool *fo
     PcpBuildTargetIndex(propSite, propIndex, specType, &targetIndex, &pcpErrors);
   }
 
-  if (!targetIndex.paths.empty() && _Prim()->IsInPrototype())
-  {
+  if (!targetIndex.paths.empty() && _Prim()->IsInPrototype()) {
 
     // Walk up to the root while we're in (nested) instance-land.  When we
     // hit an instance or a prototype, add a mapping for the prototype
@@ -236,52 +229,42 @@ bool UsdProperty::_GetTargets(SdfSpecType specType, SdfPathVector *out, bool *fo
     // next ancestral prototype, just as how attribute & metadata values
     // come from the instance itself, not its prototype.
     UsdPrim prim = GetPrim();
-    if (prim.IsInstance())
-    {
+    if (prim.IsInstance()) {
       prim = prim.GetParent();
     }
-    for (; prim; prim = prim.GetParent())
-    {
+    for (; prim; prim = prim.GetParent()) {
       UsdPrim prototype;
-      if (prim.IsInstance())
-      {
+      if (prim.IsInstance()) {
         prototype = prim.GetPrototype();
-      } else if (prim.IsPrototype())
-      {
+      } else if (prim.IsPrototype()) {
         prototype = prim;
       }
-      if (prototype)
-      {
+      if (prototype) {
         pathMap.emplace_back(prototype._GetSourcePrimIndex().GetPath(), prim.GetPath());
       }
     };
     std::sort(pathMap.begin(), pathMap.end());
 
     // Now map the targets.
-    for (SdfPath const &target : targetIndex.paths)
-    {
+    for (SdfPath const &target : targetIndex.paths) {
       out->push_back(_MapPath(pathMap, target));
-      if (out->back().IsEmpty())
-      {
+      if (out->back().IsEmpty()) {
         out->pop_back();
       }
     }
-  } else
-  {
+  } else {
     out->swap(targetIndex.paths);
   }
 
   // TODO: handle errors
   const bool isClean = pcpErrors.empty();
-  if (!isClean)
-  {
+  if (!isClean) {
     stage->_ReportPcpErrors(pcpErrors,
                             TfStringPrintf(specType == SdfSpecTypeAttribute ?
                                              "getting connections for attribute <%s>" :
                                              "getting targets for relationship <%s>",
                                            GetPath().GetText()));
-    if (foundErrors)
-    {
+    if (foundErrors) {
       *foundErrors = true;
     }
   }

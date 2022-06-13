@@ -71,10 +71,7 @@ TF_DEFINE_PRIVATE_TOKENS(
 
   struct ParamDesc
   {
-    ParamDesc(const char *aname, const TfToken &hname)
-      : arnoldName(aname),
-        hdName(hname)
-    {}
+    ParamDesc(const char *aname, const TfToken &hname) : arnoldName(aname), hdName(hname) {}
     AtString arnoldName;
     TfToken hdName;
   };
@@ -122,11 +119,9 @@ TF_DEFINE_PRIVATE_TOKENS(
                      HdSceneDelegate *delegate,
                      const std::vector<ParamDesc> &params)
   {
-    for (const auto &param : params)
-    {
+    for (const auto &param : params) {
       const auto *pentry = AiNodeEntryLookUpParameter(nentry, param.arnoldName);
-      if (pentry == nullptr)
-      {
+      if (pentry == nullptr) {
         continue;
       }
 
@@ -138,16 +133,13 @@ TF_DEFINE_PRIVATE_TOKENS(
   {
     auto isDefault = [&](const TfToken &paramName, float defaultVal) -> bool {
       auto val = delegate->GetLightParamValue(id, paramName);
-      if (val.IsEmpty())
-      {
+      if (val.IsEmpty()) {
         return true;
       }
-      if (val.IsHolding<float>())
-      {
+      if (val.IsHolding<float>()) {
         return defaultVal == val.UncheckedGet<float>();
       }
-      if (val.IsHolding<double>())
-      {
+      if (val.IsHolding<double>()) {
         return defaultVal == static_cast<float>(val.UncheckedGet<double>());
       }
       // If it's holding an unexpected type, we won't be
@@ -157,16 +149,13 @@ TF_DEFINE_PRIVATE_TOKENS(
     };
     auto hasIesFile = [&]() -> bool {
       auto val = delegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingIesFile);
-      if (val.IsEmpty())
-      {
+      if (val.IsEmpty()) {
         return false;
       }
-      if (val.IsHolding<std::string>())
-      {
+      if (val.IsHolding<std::string>()) {
         return !val.UncheckedGet<std::string>().empty();
       }
-      if (val.IsHolding<SdfAssetPath>())
-      {
+      if (val.IsHolding<SdfAssetPath>()) {
         const auto path = val.UncheckedGet<SdfAssetPath>();
         return !path.GetResolvedPath().empty() || !path.GetAssetPath().empty();
       }
@@ -175,8 +164,7 @@ TF_DEFINE_PRIVATE_TOKENS(
     // If any of the shaping params exists or non-default we have a spot light.
     if (!isDefault(UsdLuxTokens->inputsShapingFocus, 0.0f) ||
         !isDefault(UsdLuxTokens->inputsShapingConeAngle, 180.0f) ||
-        !isDefault(UsdLuxTokens->inputsShapingConeSoftness, 0.0f))
-    {
+        !isDefault(UsdLuxTokens->inputsShapingConeSoftness, 0.0f)) {
       return str::spot_light;
     }
     return hasIesFile() ? str::photometric_light : str::point_light;
@@ -190,10 +178,12 @@ TF_DEFINE_PRIVATE_TOKENS(
                           HdArnoldRenderDelegate *renderDelegate) {
     iterateParams(light, nentry, id, sceneDelegate, spotParams);
 
-    const auto hdAngle =
-      sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeAngle).GetWithDefault(180.0f);
-    const auto softness =
-      sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeSoftness).GetWithDefault(0.0f);
+    const auto hdAngle = sceneDelegate
+                           ->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeAngle)
+                           .GetWithDefault(180.0f);
+    const auto softness = sceneDelegate
+                            ->GetLightParamValue(id, UsdLuxTokens->inputsShapingConeSoftness)
+                            .GetWithDefault(0.0f);
     const auto arnoldAngle = hdAngle * 2.0f;
     const auto penumbra = arnoldAngle * softness;
     AiNodeSetFlt(light, str::cone_angle, arnoldAngle);
@@ -201,11 +191,9 @@ TF_DEFINE_PRIVATE_TOKENS(
     // Barndoor parameters are only exposed in houdini for now.
     auto hasBarndoor = false;
     auto getBarndoor = [&](const TfToken &name) -> float {
-      const auto barndoor = AiClamp(sceneDelegate->GetLightParamValue(id, name).GetWithDefault(0.0f),
-                                    0.0f,
-                                    1.0f);
-      if (barndoor > AI_EPSILON)
-      {
+      const auto barndoor =
+        AiClamp(sceneDelegate->GetLightParamValue(id, name).GetWithDefault(0.0f), 0.0f, 1.0f);
+      if (barndoor > AI_EPSILON) {
         hasBarndoor = true;
       }
       return barndoor;
@@ -218,15 +206,14 @@ TF_DEFINE_PRIVATE_TOKENS(
     const auto barndoorrightedge = getBarndoor(_tokens->barndoorrightedge);
     const auto barndoortop = getBarndoor(_tokens->barndoortop);
     const auto barndoortopedge = getBarndoor(_tokens->barndoortopedge);
-    auto createBarndoor = [&]() { *filter = AiNode(renderDelegate->GetUniverse(), str::barndoor); };
-    if (hasBarndoor)
-    {
+    auto createBarndoor = [&]() {
+      *filter = AiNode(renderDelegate->GetUniverse(), str::barndoor);
+    };
+    if (hasBarndoor) {
       // We check if the filter is non-zero and if it's a barndoor
-      if (*filter == nullptr)
-      {
+      if (*filter == nullptr) {
         createBarndoor();
-      } else if (!AiNodeIs(*filter, str::barndoor))
-      {
+      } else if (!AiNodeIs(*filter, str::barndoor)) {
         AiNodeDestroy(*filter);
         createBarndoor();
       }
@@ -245,8 +232,7 @@ TF_DEFINE_PRIVATE_TOKENS(
       AiNodeSetFlt(*filter, str::barndoor_top_right, barndoortop);
       AiNodeSetFlt(*filter, str::barndoor_top_edge, barndoortopedge);
       AiNodeSetPtr(light, str::filters, *filter);
-    } else
-    {
+    } else {
       // We disconnect the filter.
       AiNodeSetArray(light, str::filters, AiArray(0, 1, AI_TYPE_NODE));
     }
@@ -260,13 +246,12 @@ TF_DEFINE_PRIVATE_TOKENS(
                            HdArnoldRenderDelegate *renderDelegate) {
     TF_UNUSED(filter);
 
-    const auto treatAsPointValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->treatAsPoint);
-    if (treatAsPointValue.IsHolding<bool>() && treatAsPointValue.UncheckedGet<bool>())
-    {
+    const auto treatAsPointValue = sceneDelegate->GetLightParamValue(id,
+                                                                     UsdLuxTokens->treatAsPoint);
+    if (treatAsPointValue.IsHolding<bool>() && treatAsPointValue.UncheckedGet<bool>()) {
       AiNodeSetFlt(light, str::radius, 0.0f);
       AiNodeSetBool(light, str::normalize, true);
-    } else
-    {
+    } else {
       iterateParams(light, nentry, id, sceneDelegate, pointParams);
     }
   };
@@ -314,14 +299,12 @@ TF_DEFINE_PRIVATE_TOKENS(
     float height = 1.0f;
 
     const auto &widthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsWidth);
-    if (widthValue.IsHolding<float>())
-    {
+    if (widthValue.IsHolding<float>()) {
       width = widthValue.UncheckedGet<float>();
     }
 
     const auto &heightValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsHeight);
-    if (heightValue.IsHolding<float>())
-    {
+    if (heightValue.IsHolding<float>()) {
       height = heightValue.UncheckedGet<float>();
     }
 
@@ -350,8 +333,7 @@ TF_DEFINE_PRIVATE_TOKENS(
     float length = 1.0f;
 
     const auto &lengthValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsLength);
-    if (lengthValue.IsHolding<float>())
-    {
+    if (lengthValue.IsHolding<float>()) {
       length = lengthValue.UncheckedGet<float>();
     }
     length /= 2.0f;
@@ -367,18 +349,15 @@ TF_DEFINE_PRIVATE_TOKENS(
                           HdArnoldRenderDelegate *renderDelegate) {
     TF_UNUSED(filter);
 
-    const auto &formatValue = sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsTextureFormat);
-    if (formatValue.IsHolding<TfToken>())
-    {
+    const auto &formatValue = sceneDelegate->GetLightParamValue(id,
+                                                                UsdLuxTokens->inputsTextureFormat);
+    if (formatValue.IsHolding<TfToken>()) {
       const auto &textureFormat = formatValue.UncheckedGet<TfToken>();
-      if (textureFormat == UsdLuxTokens->latlong)
-      {
+      if (textureFormat == UsdLuxTokens->latlong) {
         AiNodeSetStr(light, str::format, str::latlong);
-      } else if (textureFormat == UsdLuxTokens->mirroredBall)
-      {
+      } else if (textureFormat == UsdLuxTokens->mirroredBall) {
         AiNodeSetStr(light, str::format, str::mirrored_ball);
-      } else
-      {
+      } else {
         AiNodeSetStr(light, str::format, str::angular);  // default value
       }
     }
@@ -388,6 +367,7 @@ TF_DEFINE_PRIVATE_TOKENS(
   class HdArnoldGenericLight : public HdLight
   {
    public:
+
     using SyncParams = void (*)(AtNode *,
                                 AtNode **filter,
                                 const AtNodeEntry *,
@@ -419,7 +399,9 @@ TF_DEFINE_PRIVATE_TOKENS(
     /// @param sceneDelegate Pointer to the Scene Delegate.
     /// @param renderParam Pointer to HdArnoldRenderParam.
     /// @param dirtyBits Dirty Bits of the Hydra primitive.
-    void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+    void Sync(HdSceneDelegate *sceneDelegate,
+              HdRenderParam *renderParam,
+              HdDirtyBits *dirtyBits) override;
 
     /// Returns the set of initial dirty bits.
     ///
@@ -437,14 +419,15 @@ TF_DEFINE_PRIVATE_TOKENS(
     AtNode *GetLightNode() const;
 
    private:
+
     SyncParams _syncParams;             ///< Function object to sync light parameters.
     HdArnoldRenderDelegate *_delegate;  ///< Pointer to the Render Delegate.
     AtNode *_light;                     ///< Pointer to the Arnold Light.
     AtNode *_texture = nullptr;         ///< Pointer to the Arnold Texture Shader.
-    AtNode *_filter = nullptr;          ///< Pointer to the Arnold Light filter for barndoor effects.
-    TfToken _lightLink;                 ///< Light Link collection the light belongs to.
-    TfToken _shadowLink;                ///< Shadow Link collection the light belongs to.
-    bool _supportsTexture = false;      ///< Value indicating texture support.
+    AtNode *_filter = nullptr;      ///< Pointer to the Arnold Light filter for barndoor effects.
+    TfToken _lightLink;             ///< Light Link collection the light belongs to.
+    TfToken _shadowLink;            ///< Shadow Link collection the light belongs to.
+    bool _supportsTexture = false;  ///< Value indicating texture support.
   };
 
   HdArnoldGenericLight::HdArnoldGenericLight(HdArnoldRenderDelegate *delegate,
@@ -460,32 +443,26 @@ TF_DEFINE_PRIVATE_TOKENS(
       _supportsTexture(supportsTexture)
   {
     _light = AiNode(_delegate->GetUniverse(), arnoldType);
-    if (id.IsEmpty())
-    {
+    if (id.IsEmpty()) {
       AiNodeSetFlt(_light, str::intensity, 0.0f);
-    } else
-    {
+    } else {
       AiNodeSetStr(_light, str::name, AtString(id.GetText()));
     }
   }
 
   HdArnoldGenericLight::~HdArnoldGenericLight()
   {
-    if (_lightLink != _tokens->emptyLink)
-    {
+    if (_lightLink != _tokens->emptyLink) {
       _delegate->DeregisterLightLinking(_lightLink, this, false);
     }
-    if (_shadowLink != _tokens->emptyLink)
-    {
+    if (_shadowLink != _tokens->emptyLink) {
       _delegate->DeregisterLightLinking(_shadowLink, this, true);
     }
     AiNodeDestroy(_light);
-    if (_texture != nullptr)
-    {
+    if (_texture != nullptr) {
       AiNodeDestroy(_texture);
     }
-    if (_filter != nullptr)
-    {
+    if (_filter != nullptr) {
       AiNodeDestroy(_filter);
     }
   }
@@ -498,19 +475,16 @@ TF_DEFINE_PRIVATE_TOKENS(
     TF_UNUSED(sceneDelegate);
     TF_UNUSED(dirtyBits);
     const auto &id = GetId();
-    if (*dirtyBits & HdLight::DirtyParams)
-    {
-      // If the params have changed, we need to see if any of the shaping parameters were applied to
-      // the sphere light.
+    if (*dirtyBits & HdLight::DirtyParams) {
+      // If the params have changed, we need to see if any of the shaping parameters were applied
+      // to the sphere light.
       const auto *nentry = AiNodeGetNodeEntry(_light);
       const auto lightType = AiNodeEntryGetNameAtString(nentry);
       auto interrupted = false;
       if (lightType == str::spot_light || lightType == str::point_light ||
-          lightType == str::photometric_light)
-      {
+          lightType == str::photometric_light) {
         const auto newLightType = getLightType(sceneDelegate, id);
-        if (newLightType != lightType)
-        {
+        if (newLightType != lightType) {
           param->Interrupt();
           interrupted = true;
           const AtString oldName{AiNodeGetName(_light)};
@@ -518,23 +492,18 @@ TF_DEFINE_PRIVATE_TOKENS(
           _light = AiNode(_delegate->GetUniverse(), newLightType);
           nentry = AiNodeGetNodeEntry(_light);
           AiNodeSetStr(_light, str::name, oldName);
-          if (newLightType == str::point_light)
-          {
+          if (newLightType == str::point_light) {
             _syncParams = pointLightSync;
-          } else if (newLightType == str::spot_light)
-          {
+          } else if (newLightType == str::spot_light) {
             _syncParams = spotLightSync;
-          } else
-          {
+          } else {
             _syncParams = photometricLightSync;
           }
-          if (_lightLink != _tokens->emptyLink)
-          {
+          if (_lightLink != _tokens->emptyLink) {
             _delegate->DeregisterLightLinking(_shadowLink, this, false);
             _lightLink = _tokens->emptyLink;
           }
-          if (_shadowLink != _tokens->emptyLink)
-          {
+          if (_shadowLink != _tokens->emptyLink) {
             _delegate->DeregisterLightLinking(_shadowLink, this, true);
             _shadowLink = _tokens->emptyLink;
           }
@@ -542,60 +511,50 @@ TF_DEFINE_PRIVATE_TOKENS(
       }
       // We need to force dirtying the transform, because AiNodeReset resets the transformation.
       *dirtyBits |= HdLight::DirtyTransform;
-      if (!interrupted)
-      {
+      if (!interrupted) {
         param->Interrupt();
       }
 
       AiNodeReset(_light);
       iterateParams(_light, nentry, id, sceneDelegate, genericParams);
       _syncParams(_light, &_filter, nentry, id, sceneDelegate, _delegate);
-      if (_supportsTexture)
-      {
+      if (_supportsTexture) {
         SetupTexture(sceneDelegate->GetLightParamValue(id, UsdLuxTokens->inputsTextureFile));
       }
       // Primvars are not officially supported on lights, but pre-20.11 the query functions checked
       // for primvars on all primitives uniformly. We have to pass the full name of the primvar
       // post-20.11 to make this bit still work.
       for (const auto &primvar :
-           sceneDelegate->GetPrimvarDescriptors(id, HdInterpolation::HdInterpolationConstant))
-      {
+           sceneDelegate->GetPrimvarDescriptors(id, HdInterpolation::HdInterpolationConstant)) {
         ConvertPrimvarToBuiltinParameter(
           _light,
           primvar.name,
           sceneDelegate->Get(id, TfToken{TfStringPrintf("primvars:%s", primvar.name.GetText())}));
       }
       const auto filtersValue = sceneDelegate->GetLightParamValue(id, _tokens->filters);
-      if (filtersValue.IsHolding<SdfPathVector>())
-      {
+      if (filtersValue.IsHolding<SdfPathVector>()) {
         const auto &filterPaths = filtersValue.UncheckedGet<SdfPathVector>();
         std::vector<AtNode *> filters;
         filters.reserve(filterPaths.size());
-        for (const auto &filterPath : filterPaths)
-        {
+        for (const auto &filterPath : filterPaths) {
           auto *filterMaterial = reinterpret_cast<const HdArnoldMaterial *>(
             sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, filterPath));
-          if (filterMaterial == nullptr)
-          {
+          if (filterMaterial == nullptr) {
             continue;
           }
           auto *filter = filterMaterial->GetSurfaceShader();
-          if (filter == nullptr)
-          {
+          if (filter == nullptr) {
             continue;
           }
           auto *filterEntry = AiNodeGetNodeEntry(filter);
           // Light filters are shaders with a none output type.
-          if (AiNodeEntryGetOutputType(filterEntry) == AI_TYPE_NONE)
-          {
+          if (AiNodeEntryGetOutputType(filterEntry) == AI_TYPE_NONE) {
             filters.push_back(filter);
           }
         }
-        if (filters.empty())
-        {
+        if (filters.empty()) {
           AiNodeSetArray(_light, str::filters, AiArray(0, 0, AI_TYPE_NODE));
-        } else
-        {
+        } else {
           AiNodeSetArray(_light,
                          str::filters,
                          AiArrayConvert(filters.size(), 1, AI_TYPE_NODE, filters.data()));
@@ -603,8 +562,7 @@ TF_DEFINE_PRIVATE_TOKENS(
       }
     }
 
-    if (*dirtyBits & HdLight::DirtyTransform)
-    {
+    if (*dirtyBits & HdLight::DirtyTransform) {
       param->Interrupt();
       HdArnoldSetTransform(_light, sceneDelegate, id);
     }
@@ -612,16 +570,13 @@ TF_DEFINE_PRIVATE_TOKENS(
     // TODO(pal): Test if there is a separate dirty bits for this, maybe DirtyCollection?
     auto updateLightLinking = [&](TfToken &currentLink, const TfToken &linkName, bool isShadow) {
       auto linkValue = sceneDelegate->GetLightParamValue(id, linkName);
-      if (linkValue.IsHolding<TfToken>())
-      {
+      if (linkValue.IsHolding<TfToken>()) {
         const auto &link = linkValue.UncheckedGet<TfToken>();
-        if (currentLink != link)
-        {
+        if (currentLink != link) {
           param->Interrupt();
           // The empty link value only exists when creating the class, so link can never match
           // emptyLink.
-          if (currentLink != _tokens->emptyLink)
-          {
+          if (currentLink != _tokens->emptyLink) {
             _delegate->DeregisterLightLinking(currentLink, this, isShadow);
           }
           _delegate->RegisterLightLinking(link, this, isShadow);
@@ -640,40 +595,32 @@ TF_DEFINE_PRIVATE_TOKENS(
   {
     const auto *nentry = AiNodeGetNodeEntry(_light);
     const auto hasShader = AiNodeEntryLookUpParameter(nentry, str::shader) != nullptr;
-    if (hasShader)
-    {
+    if (hasShader) {
       AiNodeSetPtr(_light, str::shader, nullptr);
-    } else
-    {
+    } else {
       AiNodeUnlink(_light, str::color);
     }
-    if (_texture != nullptr)
-    {
+    if (_texture != nullptr) {
       AiNodeDestroy(_texture);
       _texture = nullptr;
     }
-    if (!value.IsHolding<SdfAssetPath>())
-    {
+    if (!value.IsHolding<SdfAssetPath>()) {
       return;
     }
     const auto &assetPath = value.UncheckedGet<SdfAssetPath>();
     auto path = assetPath.GetResolvedPath();
-    if (path.empty())
-    {
+    if (path.empty()) {
       path = assetPath.GetAssetPath();
     }
 
-    if (path.empty())
-    {
+    if (path.empty()) {
       return;
     }
     _texture = AiNode(_delegate->GetUniverse(), str::image);
     AiNodeSetStr(_texture, str::filename, AtString(path.c_str()));
-    if (hasShader)
-    {
+    if (hasShader) {
       AiNodeSetPtr(_light, str::shader, _texture);
-    } else
-    {  // Connect to color if filename doesn't exists.
+    } else {  // Connect to color if filename doesn't exists.
       AiNodeLink(_texture, str::color, _light);
     }
   }

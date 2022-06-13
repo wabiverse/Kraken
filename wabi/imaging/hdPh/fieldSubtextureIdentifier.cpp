@@ -29,8 +29,9 @@ WABI_NAMESPACE_BEGIN
 ////////////////////////////////////////////////////////////////////////////
 // HdPhOpenVDBAssetSubtextureIdentifier
 
-HdPhOpenVDBAssetSubtextureIdentifier::HdPhOpenVDBAssetSubtextureIdentifier(TfToken const &fieldName,
-                                                                           const int fieldIndex)
+HdPhOpenVDBAssetSubtextureIdentifier::HdPhOpenVDBAssetSubtextureIdentifier(
+  TfToken const &fieldName,
+  const int fieldIndex)
   : HdPhFieldBaseSubtextureIdentifier(fieldName, fieldIndex)
 {}
 
@@ -51,9 +52,10 @@ HdPhSubtextureIdentifier::ID HdPhOpenVDBAssetSubtextureIdentifier::_Hash() const
 ////////////////////////////////////////////////////////////////////////////
 // HdPhField3DAssetSubtextureIdentifier
 
-HdPhField3DAssetSubtextureIdentifier::HdPhField3DAssetSubtextureIdentifier(TfToken const &fieldName,
-                                                                           const int fieldIndex,
-                                                                           TfToken const &fieldPurpose)
+HdPhField3DAssetSubtextureIdentifier::HdPhField3DAssetSubtextureIdentifier(
+  TfToken const &fieldName,
+  const int fieldIndex,
+  TfToken const &fieldPurpose)
   : HdPhFieldBaseSubtextureIdentifier(fieldName, fieldIndex),
     _fieldPurpose(fieldPurpose)
 {}

@@ -148,8 +148,7 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
                                           VtValue const &framebuffer,
                                           GfVec4i const &compRegion)
 {
-  if (!ARCH_UNLIKELY(color))
-  {
+  if (!ARCH_UNLIKELY(color)) {
     TF_WARN("No valid color texture provided");
     return;
   }
@@ -157,15 +156,13 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   // Verify there were no gl errors coming in.
   TF_VERIFY(glGetError() == GL_NO_ERROR);
 
-  if (!ARCH_UNLIKELY(color))
-  {
+  if (!ARCH_UNLIKELY(color)) {
     TF_CODING_ERROR("A valid color texture handle is required.\n");
     return;
   }
 
   const GLuint colorName = static_cast<GLuint>(color->GetRawResource());
-  if (!glIsTexture(colorName))
-  {
+  if (!glIsTexture(colorName)) {
     TF_CODING_ERROR(
       "Hgi color texture handle is not holding a valid OpenGL "
       "texture.");
@@ -173,19 +170,15 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   }
 
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug))
-  {
+  if (GARCH_GLAPI_HAS(KHR_debug)) {
     glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, "Interop");
   }
 #endif
 
-  if (!framebuffer.IsEmpty())
-  {
-    if (framebuffer.IsHolding<uint32_t>())
-    {
+  if (!framebuffer.IsEmpty()) {
+    if (framebuffer.IsHolding<uint32_t>()) {
       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.UncheckedGet<uint32_t>());
-    } else
-    {
+    } else {
       TF_CODING_ERROR("dstFramebuffer must hold uint32_t when targeting OpenGL");
     }
   }
@@ -205,8 +198,7 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   }
 
   // Depth is optional
-  if (depth)
-  {
+  if (depth) {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(depth->GetRawResource()));
     const GLint loc = glGetUniformLocation(prg, "depthIn");
@@ -239,15 +231,13 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   glGetBooleanv(GL_DEPTH_WRITEMASK, &restoreDepthMask);
   GLint restoreDepthFunc;
   glGetIntegerv(GL_DEPTH_FUNC, &restoreDepthFunc);
-  if (depth)
-  {
+  if (depth) {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     // Note: Use LEQUAL and not LESS to ensure that fragments with only
     // translucent contribution (that don't update depth) are composited.
     glDepthFunc(GL_LEQUAL);
-  } else
-  {
+  } else {
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
   }
@@ -289,25 +279,24 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   glDisableVertexAttribArray(locUv);
   glBindBuffer(GL_ARRAY_BUFFER, restoreArrayBuffer);
 
-  if (!blendEnabled)
-  {
+  if (!blendEnabled) {
     glDisable(GL_BLEND);
   }
-  glBlendFuncSeparate(restoreColorSrcFnOp, restoreColorDstFnOp, restoreAlphaSrcFnOp, restoreAlphaDstFnOp);
+  glBlendFuncSeparate(restoreColorSrcFnOp,
+                      restoreColorDstFnOp,
+                      restoreAlphaSrcFnOp,
+                      restoreAlphaDstFnOp);
   glBlendEquationSeparate(restoreColorOp, restoreAlphaOp);
 
-  if (!restoreDepthEnabled)
-  {
+  if (!restoreDepthEnabled) {
     glDisable(GL_DEPTH_TEST);
-  } else
-  {
+  } else {
     glEnable(GL_DEPTH_TEST);
   }
   glDepthMask(restoreDepthMask);
   glDepthFunc(restoreDepthFunc);
 
-  if (restoreAlphaToCoverage)
-  {
+  if (restoreAlphaToCoverage) {
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   }
   glViewport(restoreVp[0], restoreVp[1], restoreVp[2], restoreVp[3]);
@@ -320,8 +309,7 @@ void HgiInteropOpenGL::CompositeToInterop(HgiTextureHandle const &color,
   glBindTexture(GL_TEXTURE_2D, 0);
 
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug))
-  {
+  if (GARCH_GLAPI_HAS(KHR_debug)) {
     glPopDebugGroup();
   }
 #endif

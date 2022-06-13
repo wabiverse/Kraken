@@ -36,10 +36,11 @@
 #include <limits>
 WABI_NAMESPACE_BEGIN
 
-HdExtCompPrimvarBufferSource::HdExtCompPrimvarBufferSource(const TfToken &primvarName,
-                                                           const HdExtCompCpuComputationSharedPtr &source,
-                                                           const TfToken &sourceOutputName,
-                                                           const HdTupleType &valueType)
+HdExtCompPrimvarBufferSource::HdExtCompPrimvarBufferSource(
+  const TfToken &primvarName,
+  const HdExtCompCpuComputationSharedPtr &source,
+  const TfToken &sourceOutputName,
+  const HdTupleType &valueType)
   : HdBufferSource(),
     _primvarName(primvarName),
     _source(source),
@@ -60,8 +61,7 @@ void HdExtCompPrimvarBufferSource::GetBufferSpecs(HdBufferSpecVector *specs) con
   specs->emplace_back(_primvarName, _tupleType);
 }
 
-template<class HashState>
-void TfHashAppend(HashState &h, HdExtCompPrimvarBufferSource const &bs)
+template<class HashState> void TfHashAppend(HashState &h, HdExtCompPrimvarBufferSource const &bs)
 {
   // Simply return a hash based on the computation and primvar names,
   // instead of hashing the contents of the inputs to the computation.
@@ -77,10 +77,8 @@ size_t HdExtCompPrimvarBufferSource::ComputeHash() const
 bool HdExtCompPrimvarBufferSource::Resolve()
 {
   bool sourceValid = _source->IsValid();
-  if (sourceValid)
-  {
-    if (!_source->IsResolved())
-    {
+  if (sourceValid) {
+    if (!_source->IsResolved()) {
       return false;
     }
   }
@@ -88,8 +86,7 @@ bool HdExtCompPrimvarBufferSource::Resolve()
   if (!_TryLock())
     return false;
 
-  if (!sourceValid || _source->HasResolveError())
-  {
+  if (!sourceValid || _source->HasResolveError()) {
     _SetResolveError();
     return true;
   }
@@ -97,14 +94,12 @@ bool HdExtCompPrimvarBufferSource::Resolve()
   HdVtBufferSource output(_primvarName, _source->GetOutputByIndex(_sourceOutputIdx));
 
   // Validate output type and count matches what is expected.
-  if (output.GetTupleType() != _tupleType)
-  {
+  if (output.GetTupleType() != _tupleType) {
     TF_WARN("Output type mismatch on %s. ", _primvarName.GetText());
     _SetResolveError();
     return true;
   }
-  if (output.GetNumElements() != _source->GetNumElements())
-  {
+  if (output.GetNumElements() != _source->GetNumElements()) {
     TF_WARN("Output elements mismatch on %s. ", _primvarName.GetText());
     _SetResolveError();
     return true;

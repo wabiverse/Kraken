@@ -29,8 +29,7 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          ((baseGLSLFX, "imageShader.glslfx"))((mainVS, "ImageShader.Vertex"))((mainFS, "ImageShader.Fragment")));
 
-HdPh_ImageShaderShaderKey::HdPh_ImageShaderShaderKey()
-  : glslfx(_tokens->baseGLSLFX)
+HdPh_ImageShaderShaderKey::HdPh_ImageShaderShaderKey() : glslfx(_tokens->baseGLSLFX)
 {
   VS[0] = _tokens->mainVS;
   VS[1] = TfToken();
@@ -39,7 +38,6 @@ HdPh_ImageShaderShaderKey::HdPh_ImageShaderShaderKey()
   FS[1] = TfToken();
 }
 
-HdPh_ImageShaderShaderKey::~HdPh_ImageShaderShaderKey()
-{}
+HdPh_ImageShaderShaderKey::~HdPh_ImageShaderShaderKey() {}
 
 WABI_NAMESPACE_END

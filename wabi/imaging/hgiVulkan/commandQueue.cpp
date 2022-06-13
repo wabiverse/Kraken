@@ -48,19 +48,21 @@ static HgiVulkanCommandQueue::HgiVulkan_CommandPool *_CreateCommandPool(HgiVulka
 
   VkCommandPool pool = nullptr;
 
-  TF_VERIFY(vkCreateCommandPool(device->GetVulkanDevice(), &poolCreateInfo, HgiVulkanAllocator(), &pool) ==
-            VK_SUCCESS);
+  TF_VERIFY(
+    vkCreateCommandPool(device->GetVulkanDevice(), &poolCreateInfo, HgiVulkanAllocator(), &pool) ==
+    VK_SUCCESS);
 
-  HgiVulkanCommandQueue::HgiVulkan_CommandPool *newPool = new HgiVulkanCommandQueue::HgiVulkan_CommandPool();
+  HgiVulkanCommandQueue::HgiVulkan_CommandPool *newPool =
+    new HgiVulkanCommandQueue::HgiVulkan_CommandPool();
 
   newPool->vkCommandPool = pool;
   return newPool;
 }
 
-static void _DestroyCommandPool(HgiVulkanDevice *device, HgiVulkanCommandQueue::HgiVulkan_CommandPool *pool)
+static void _DestroyCommandPool(HgiVulkanDevice *device,
+                                HgiVulkanCommandQueue::HgiVulkan_CommandPool *pool)
 {
-  for (HgiVulkanCommandBuffer *cb : pool->commandBuffers)
-  {
+  for (HgiVulkanCommandBuffer *cb : pool->commandBuffers) {
     delete cb;
   }
   pool->commandBuffers.clear();
@@ -89,8 +91,7 @@ HgiVulkanCommandQueue::HgiVulkanCommandQueue(HgiVulkanDevice *device)
 
 HgiVulkanCommandQueue::~HgiVulkanCommandQueue()
 {
-  for (auto const &it : _commandPools)
-  {
+  for (auto const &it : _commandPools) {
     _DestroyCommandPool(_device, it.second);
   }
   _commandPools.clear();
@@ -105,8 +106,7 @@ void HgiVulkanCommandQueue::SubmitToQueue(HgiVulkanCommandBuffer *cb, HgiSubmitW
   // It would be more performant to submit both command buffers to the queue
   // at the same time, but we have to signal the fence for each since we use
   // the fence to determine when a command buffer can be reused.
-  if (_resourceCommandBuffer)
-  {
+  if (_resourceCommandBuffer) {
     _resourceCommandBuffer->EndCommandBuffer();
     VkCommandBuffer rcb = _resourceCommandBuffer->GetVulkanCommandBuffer();
     semaphore = _resourceCommandBuffer->GetVulkanSemaphore();
@@ -133,8 +133,7 @@ void HgiVulkanCommandQueue::SubmitToQueue(HgiVulkanCommandBuffer *cb, HgiSubmitW
   VkSubmitInfo workInfo = {VK_STRUCTURE_TYPE_SUBMIT_INFO};
   workInfo.commandBufferCount = 1;
   workInfo.pCommandBuffers = &wcb;
-  if (semaphore)
-  {
+  if (semaphore) {
     workInfo.waitSemaphoreCount = 1;
     workInfo.pWaitSemaphores = &semaphore;
     VkPipelineStageFlags waitMask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
@@ -148,8 +147,7 @@ void HgiVulkanCommandQueue::SubmitToQueue(HgiVulkanCommandBuffer *cb, HgiSubmitW
   TF_VERIFY(vkQueueSubmit(_vkGfxQueue, 1, &workInfo, wFence) == VK_SUCCESS);
 
   // Optional blocking wait
-  if (wait == HgiSubmitWaitTypeWaitUntilCompleted)
-  {
+  if (wait == HgiSubmitWaitTypeWaitUntilCompleted) {
     static const uint64_t timeOut = 100000000000;
     VkDevice vkDevice = _device->GetVulkanDevice();
     TF_VERIFY(vkWaitForFences(vkDevice, 1, &wFence, VK_TRUE, timeOut) == VK_SUCCESS);
@@ -168,18 +166,15 @@ HgiVulkanCommandBuffer *HgiVulkanCommandQueue::AcquireCommandBuffer()
 
   // Grab one of the available command buffers.
   HgiVulkanCommandBuffer *cmdBuf = nullptr;
-  for (HgiVulkanCommandBuffer *cb : pool->commandBuffers)
-  {
-    if (!cb->IsInFlight())
-    {
+  for (HgiVulkanCommandBuffer *cb : pool->commandBuffers) {
+    if (!cb->IsInFlight()) {
       cmdBuf = cb;
       break;
     }
   }
 
   // If no command buffer was available, create a new one.
-  if (!cmdBuf)
-  {
+  if (!cmdBuf) {
     cmdBuf = new HgiVulkanCommandBuffer(_device, pool->vkCommandPool);
     pool->commandBuffers.push_back(cmdBuf);
   }
@@ -202,8 +197,7 @@ HgiVulkanCommandBuffer *HgiVulkanCommandQueue::AcquireResourceCommandBuffer()
   // secondary threads.
   TF_VERIFY(std::this_thread::get_id() == _threadId);
 
-  if (!_resourceCommandBuffer)
-  {
+  if (!_resourceCommandBuffer) {
     _resourceCommandBuffer = AcquireCommandBuffer();
   }
   return _resourceCommandBuffer;
@@ -228,13 +222,10 @@ void HgiVulkanCommandQueue::ResetConsumedCommandBuffers()
   std::lock_guard<std::mutex> guard(_commandPoolsMutex);
 
   // Loop all pools and reset any command buffers that have been consumed.
-  for (auto it : _commandPools)
-  {
+  for (auto it : _commandPools) {
     HgiVulkan_CommandPool *pool = it.second;
-    for (HgiVulkanCommandBuffer *cb : pool->commandBuffers)
-    {
-      if (cb->ResetIfConsumedByGPU())
-      {
+    for (HgiVulkanCommandBuffer *cb : pool->commandBuffers) {
+      if (cb->ResetIfConsumedByGPU()) {
         _SetInflightBit(cb->GetInflightId(), /*enabled*/ false);
       }
     }
@@ -249,13 +240,11 @@ HgiVulkanCommandQueue::HgiVulkan_CommandPool *HgiVulkanCommandQueue::_AcquireThr
   std::lock_guard<std::mutex> guard(_commandPoolsMutex);
 
   auto it = _commandPools.find(threadId);
-  if (it == _commandPools.end())
-  {
+  if (it == _commandPools.end()) {
     HgiVulkan_CommandPool *newPool = _CreateCommandPool(_device);
     _commandPools[threadId] = newPool;
     return newPool;
-  } else
-  {
+  } else {
     return it->second;
   }
 }
@@ -280,17 +269,14 @@ void HgiVulkanCommandQueue::_SetInflightBit(uint8_t id, bool enabled)
   // try again.
   uint64_t expect = _inflightBits.load();
 
-  if (enabled)
-  {
+  if (enabled) {
     // Spin if bit was already enabled. This means we have reached our max
     // of 64 command buffers and must wait until it becomes available.
     expect &= ~(1 << id);
-    while (!_inflightBits.compare_exchange_weak(expect, expect | (1ULL << id)))
-    {
+    while (!_inflightBits.compare_exchange_weak(expect, expect | (1ULL << id))) {
       expect &= ~(1 << id);
     }
-  } else
-  {
+  } else {
     while (!_inflightBits.compare_exchange_weak(expect, expect & ~(1ULL << id)))
       ;
   }

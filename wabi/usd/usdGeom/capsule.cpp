@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomCapsule::~UsdGeomCapsule()
-{}
+UsdGeomCapsule::~UsdGeomCapsule() {}
 
 /* static */
 UsdGeomCapsule UsdGeomCapsule::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCapsule();
   }
@@ -62,8 +60,7 @@ UsdGeomCapsule UsdGeomCapsule::Get(const UsdStagePtr &stage, const SdfPath &path
 UsdGeomCapsule UsdGeomCapsule::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Capsule");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCapsule();
   }
@@ -101,7 +98,8 @@ UsdAttribute UsdGeomCapsule::GetHeightAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->height);
 }
 
-UsdAttribute UsdGeomCapsule::CreateHeightAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCapsule::CreateHeightAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->height,
                                     SdfValueTypeNames->Double,
@@ -116,7 +114,8 @@ UsdAttribute UsdGeomCapsule::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->radius);
 }
 
-UsdAttribute UsdGeomCapsule::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCapsule::CreateRadiusAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->radius,
                                     SdfValueTypeNames->Double,
@@ -146,7 +145,8 @@ UsdAttribute UsdGeomCapsule::GetExtentAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->extent);
 }
 
-UsdAttribute UsdGeomCapsule::CreateExtentAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCapsule::CreateExtentAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->extent,
                                     SdfValueTypeNames->Float3Array,
@@ -178,8 +178,9 @@ const TfTokenVector &UsdGeomCapsule::GetSchemaAttributeNames(bool includeInherit
     UsdGeomTokens->axis,
     UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomGprim::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomGprim::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -209,31 +210,29 @@ static bool _ComputeExtentMax(double height, double radius, const TfToken &axis,
   // either side of the capsule.
   float halfHeightWithCap = height * 0.5 + radius;
 
-  if (axis == UsdGeomTokens->x)
-  {
+  if (axis == UsdGeomTokens->x) {
     *max = GfVec3f(halfHeightWithCap, radius, radius);
-  } else if (axis == UsdGeomTokens->y)
-  {
+  } else if (axis == UsdGeomTokens->y) {
     *max = GfVec3f(radius, halfHeightWithCap, radius);
-  } else if (axis == UsdGeomTokens->z)
-  {
+  } else if (axis == UsdGeomTokens->z) {
     *max = GfVec3f(radius, radius, halfHeightWithCap);
-  } else
-  {
+  } else {
     return false;  // invalid axis
   }
 
   return true;
 }
 
-bool UsdGeomCapsule::ComputeExtent(double height, double radius, const TfToken &axis, VtVec3fArray *extent)
+bool UsdGeomCapsule::ComputeExtent(double height,
+                                   double radius,
+                                   const TfToken &axis,
+                                   VtVec3fArray *extent)
 {
   // Create Sized Extent
   extent->resize(2);
 
   GfVec3f max;
-  if (!_ComputeExtentMax(height, radius, axis, &max))
-  {
+  if (!_ComputeExtentMax(height, radius, axis, &max)) {
     return false;
   }
 
@@ -253,8 +252,7 @@ bool UsdGeomCapsule::ComputeExtent(double height,
   extent->resize(2);
 
   GfVec3f max;
-  if (!_ComputeExtentMax(height, radius, axis, &max))
-  {
+  if (!_ComputeExtentMax(height, radius, axis, &max)) {
     return false;
   }
 
@@ -272,34 +270,28 @@ static bool _ComputeExtentForCapsule(const UsdGeomBoundable &boundable,
                                      VtVec3fArray *extent)
 {
   const UsdGeomCapsule capsuleSchema(boundable);
-  if (!TF_VERIFY(capsuleSchema))
-  {
+  if (!TF_VERIFY(capsuleSchema)) {
     return false;
   }
 
   double height;
-  if (!capsuleSchema.GetHeightAttr().Get(&height, time))
-  {
+  if (!capsuleSchema.GetHeightAttr().Get(&height, time)) {
     return false;
   }
 
   double radius;
-  if (!capsuleSchema.GetRadiusAttr().Get(&radius, time))
-  {
+  if (!capsuleSchema.GetRadiusAttr().Get(&radius, time)) {
     return false;
   }
 
   TfToken axis;
-  if (!capsuleSchema.GetAxisAttr().Get(&axis, time))
-  {
+  if (!capsuleSchema.GetAxisAttr().Get(&axis, time)) {
     return false;
   }
 
-  if (transform)
-  {
+  if (transform) {
     return UsdGeomCapsule::ComputeExtent(height, radius, axis, *transform, extent);
-  } else
-  {
+  } else {
     return UsdGeomCapsule::ComputeExtent(height, radius, axis, extent);
   }
 }

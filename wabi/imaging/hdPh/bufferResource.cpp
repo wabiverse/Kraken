@@ -36,7 +36,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhBufferResource::HdPhBufferResource(TfToken const &role, HdTupleType tupleType, int offset, int stride)
+HdPhBufferResource::HdPhBufferResource(TfToken const &role,
+                                       HdTupleType tupleType,
+                                       int offset,
+                                       int stride)
   : HdBufferResource(role, tupleType, offset, stride),
     _gpuAddr(0)
 {
@@ -59,13 +62,11 @@ void HdPhBufferResource::SetAllocation(HgiBufferHandle const &handle, size_t siz
   // or when the data store is respecified via BufferData/BufferStorage.
   // It doesn't change even when we make the buffer resident or non-resident.
   // https://www.opengl.org/registry/specs/NV/shader_buffer_load.txt
-  if (handle && caps.bindlessBufferEnabled)
-  {
+  if (handle && caps.bindlessBufferEnabled) {
     glGetNamedBufferParameterui64vNV(handle->GetRawResource(),
                                      GL_BUFFER_GPU_ADDRESS_NV,
                                      (GLuint64EXT *)&_gpuAddr);
-  } else
-  {
+  } else {
     _gpuAddr = 0;
   }
 }

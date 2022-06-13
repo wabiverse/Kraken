@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (RiLightFilterAPI));
 
 /* virtual */
-UsdRiLightFilterAPI::~UsdRiLightFilterAPI()
-{}
+UsdRiLightFilterAPI::~UsdRiLightFilterAPI() {}
 
 /* static */
 UsdRiLightFilterAPI UsdRiLightFilterAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiLightFilterAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdRiLightFilterAPI::GetSchemaKind() const
 /* static */
 UsdRiLightFilterAPI UsdRiLightFilterAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiLightFilterAPI>())
-  {
+  if (prim.ApplyAPI<UsdRiLightFilterAPI>()) {
     return UsdRiLightFilterAPI(prim);
   }
   return UsdRiLightFilterAPI();
@@ -118,7 +115,8 @@ UsdAttribute UsdRiLightFilterAPI::GetRiDensityAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riDensity);
 }
 
-UsdAttribute UsdRiLightFilterAPI::CreateRiDensityAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiLightFilterAPI::CreateRiDensityAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riDensity,
                                     SdfValueTypeNames->Float,
@@ -133,7 +131,8 @@ UsdAttribute UsdRiLightFilterAPI::GetRiInvertAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riInvert);
 }
 
-UsdAttribute UsdRiLightFilterAPI::CreateRiInvertAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiLightFilterAPI::CreateRiInvertAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riInvert,
                                     SdfValueTypeNames->Bool,
@@ -164,7 +163,8 @@ UsdAttribute UsdRiLightFilterAPI::GetRiExposureAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riExposure);
 }
 
-UsdAttribute UsdRiLightFilterAPI::CreateRiExposureAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiLightFilterAPI::CreateRiExposureAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riExposure,
                                     SdfValueTypeNames->Float,
@@ -179,7 +179,8 @@ UsdAttribute UsdRiLightFilterAPI::GetRiDiffuseAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riDiffuse);
 }
 
-UsdAttribute UsdRiLightFilterAPI::CreateRiDiffuseAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiLightFilterAPI::CreateRiDiffuseAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riDiffuse,
                                     SdfValueTypeNames->Float,
@@ -194,7 +195,8 @@ UsdAttribute UsdRiLightFilterAPI::GetRiSpecularAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riSpecular);
 }
 
-UsdAttribute UsdRiLightFilterAPI::CreateRiSpecularAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiLightFilterAPI::CreateRiSpecularAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riSpecular,
                                     SdfValueTypeNames->Float,
@@ -229,8 +231,9 @@ const TfTokenVector &UsdRiLightFilterAPI::GetSchemaAttributeNames(bool includeIn
     UsdRiTokens->riDiffuse,
     UsdRiTokens->riSpecular,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -55,16 +53,18 @@ namespace
                                                   object defaultVal,
                                                   bool writeSparsely)
   {
-    return self.CreateGravityDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f),
-                                           writeSparsely);
+    return self.CreateGravityDirectionAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3f),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateGravityMagnitudeAttr(UsdPhysicsScene &self,
                                                   object defaultVal,
                                                   bool writeSparsely)
   {
-    return self.CreateGravityMagnitudeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                           writeSparsely);
+    return self.CreateGravityMagnitudeAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdPhysicsScene &self)
@@ -97,7 +97,9 @@ void wrapUsdPhysicsScene()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -140,7 +142,6 @@ void wrapUsdPhysicsScene()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

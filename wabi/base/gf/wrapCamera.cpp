@@ -80,7 +80,8 @@ namespace
     kwargs.push_back("horizontalAperture = " + TfPyRepr(self.GetHorizontalAperture()));
     kwargs.push_back("verticalAperture = " + TfPyRepr(self.GetVerticalAperture()));
     if (self.GetHorizontalApertureOffset() != 0.0)
-      kwargs.push_back("horizontalApertureOffset = " + TfPyRepr(self.GetHorizontalApertureOffset()));
+      kwargs.push_back("horizontalApertureOffset = " +
+                       TfPyRepr(self.GetHorizontalApertureOffset()));
     if (self.GetVerticalApertureOffset() != 0.0)
       kwargs.push_back("verticalApertureOffset = " + TfPyRepr(self.GetVerticalApertureOffset()));
     kwargs.push_back("focalLength = " + TfPyRepr(self.GetFocalLength()));

@@ -60,16 +60,14 @@ namespace
 
 void hdArnoldInstallNodes()
 {
-  for (const auto &it : builtInNodes())
-  {
+  for (const auto &it : builtInNodes()) {
     AiNodeEntryInstall(it.type, it.outputType, it.name, "<built-in>", it.methods, AI_VERSION);
   }
 }
 
 void hdArnoldUninstallNodes()
 {
-  for (const auto &it : builtInNodes())
-  {
+  for (const auto &it : builtInNodes()) {
     AiNodeEntryUninstall(it.name);
   }
 }

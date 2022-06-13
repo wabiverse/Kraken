@@ -29,8 +29,7 @@ WABI_NAMESPACE_BEGIN
 
 Tf_Remnant::~Tf_Remnant()
 {
-  if (ARCH_UNLIKELY(_notify))
-  {
+  if (ARCH_UNLIKELY(_notify)) {
     Tf_ExpiryNotifier::Invoke(this);
   }
 }

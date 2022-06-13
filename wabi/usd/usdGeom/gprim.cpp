@@ -37,14 +37,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomGprim::~UsdGeomGprim()
-{}
+UsdGeomGprim::~UsdGeomGprim() {}
 
 /* static */
 UsdGeomGprim UsdGeomGprim::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomGprim();
   }
@@ -82,7 +80,8 @@ UsdAttribute UsdGeomGprim::GetDisplayColorAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->primvarsDisplayColor);
 }
 
-UsdAttribute UsdGeomGprim::CreateDisplayColorAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomGprim::CreateDisplayColorAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->primvarsDisplayColor,
                                     SdfValueTypeNames->Color3fArray,
@@ -97,7 +96,8 @@ UsdAttribute UsdGeomGprim::GetDisplayOpacityAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->primvarsDisplayOpacity);
 }
 
-UsdAttribute UsdGeomGprim::CreateDisplayOpacityAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomGprim::CreateDisplayOpacityAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->primvarsDisplayOpacity,
                                     SdfValueTypeNames->FloatArray,
@@ -112,7 +112,8 @@ UsdAttribute UsdGeomGprim::GetDoubleSidedAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->doubleSided);
 }
 
-UsdAttribute UsdGeomGprim::CreateDoubleSidedAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomGprim::CreateDoubleSidedAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->doubleSided,
                                     SdfValueTypeNames->Bool,
@@ -127,7 +128,8 @@ UsdAttribute UsdGeomGprim::GetOrientationAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->orientation);
 }
 
-UsdAttribute UsdGeomGprim::CreateOrientationAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomGprim::CreateOrientationAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->orientation,
                                     SdfValueTypeNames->Token,
@@ -159,8 +161,9 @@ const TfTokenVector &UsdGeomGprim::GetSchemaAttributeNames(bool includeInherited
     UsdGeomTokens->doubleSided,
     UsdGeomTokens->orientation,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomBoundable::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomBoundable::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -186,7 +189,8 @@ UsdGeomPrimvar UsdGeomGprim::GetDisplayColorPrimvar() const
   return UsdGeomPrimvar(GetDisplayColorAttr());
 }
 
-UsdGeomPrimvar UsdGeomGprim::CreateDisplayColorPrimvar(const TfToken &interpolation, int elementSize) const
+UsdGeomPrimvar UsdGeomGprim::CreateDisplayColorPrimvar(const TfToken &interpolation,
+                                                       int elementSize) const
 {
   return CreatePrimvar(UsdGeomTokens->primvarsDisplayColor,
                        SdfValueTypeNames->Color3fArray,
@@ -199,7 +203,8 @@ UsdGeomPrimvar UsdGeomGprim::GetDisplayOpacityPrimvar() const
   return UsdGeomPrimvar(GetDisplayOpacityAttr());
 }
 
-UsdGeomPrimvar UsdGeomGprim::CreateDisplayOpacityPrimvar(const TfToken &interpolation, int elementSize) const
+UsdGeomPrimvar UsdGeomGprim::CreateDisplayOpacityPrimvar(const TfToken &interpolation,
+                                                         int elementSize) const
 {
   return CreatePrimvar(UsdGeomTokens->primvarsDisplayOpacity,
                        SdfValueTypeNames->FloatArray,

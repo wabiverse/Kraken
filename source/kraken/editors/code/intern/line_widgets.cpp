@@ -41,8 +41,7 @@ namespace Zep
   {
     auto &display = m_editor.GetDisplay();
 
-    for (uint32_t slider = 0; slider < m_dimension; slider++)
-    {
+    for (uint32_t slider = 0; slider < m_dimension; slider++) {
       // Convert to low DPI, then double up on submit
       // We should do it this way more.
       auto location = loc / m_editor.GetDisplay().GetPixelScale().x;
@@ -51,27 +50,29 @@ namespace Zep
       NVec2f size = GetSize();
       size.x -= ((m_dimension - 1) * m_sliderGap);
       size.x /= m_dimension;
-      auto rc = NRectf(NVec2f(location.x, location.y), NVec2f(location.x + size.x, location.y + size.y));
+      auto rc = NRectf(NVec2f(location.x, location.y),
+                       NVec2f(location.x + size.x, location.y + size.y));
 
       NVec2f padding = NVec2f(1, 1);
       NRectf rcInner = rc;
       rcInner.Adjust(padding.x, padding.y, -padding.x, -padding.y);
 
       display.DrawRectFilled(DPI_RECT(rc), buffer.GetTheme().GetColor(ThemeColor::WidgetBorder));
-      display.DrawRectFilled(DPI_RECT(rcInner), buffer.GetTheme().GetColor(ThemeColor::WidgetBackground));
+      display.DrawRectFilled(DPI_RECT(rcInner),
+                             buffer.GetTheme().GetColor(ThemeColor::WidgetBackground));
 
       NRectf rcThumb = rcInner;
       rcThumb.Adjust(padding.x, padding.y, -padding.x, -padding.y);
       rcThumb = NRectf(rcThumb.Left() + 10.0f, rcThumb.Top(), 10.0f, rcThumb.Size().y);
-      display.DrawRectFilled(DPI_RECT(rcThumb), buffer.GetTheme().GetColor(ThemeColor::WidgetActive));
+      display.DrawRectFilled(DPI_RECT(rcThumb),
+                             buffer.GetTheme().GetColor(ThemeColor::WidgetActive));
     }
   }
 
   void FloatSlider::Set(const NVec4f &value)
   {
     m_value = value;
-    if (m_fnChanged)
-    {
+    if (m_fnChanged) {
       m_fnChanged(this);
     }
   }

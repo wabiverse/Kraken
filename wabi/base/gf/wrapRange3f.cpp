@@ -60,7 +60,8 @@ namespace
 
   static string _Repr(GfRange3f const &self)
   {
-    return TF_PY_REPR_PREFIX + "Range3f(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
+    return TF_PY_REPR_PREFIX + "Range3f(" + TfPyRepr(self.GetMin()) + ", " +
+           TfPyRepr(self.GetMax()) + ")";
   }
 
 #if PY_MAJOR_VERSION == 2

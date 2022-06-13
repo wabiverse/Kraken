@@ -46,8 +46,7 @@ static object _Open(const std::string &filePath)
 static object _GetFile(const UsdZipFile &zipFile, const std::string &filePath)
 {
   auto iter = zipFile.Find(filePath);
-  if (iter == zipFile.end())
-  {
+  if (iter == zipFile.end()) {
     return object();
   }
   return TfPyCopyBufferToByteArray(iter.GetFile(), iter.GetFileInfo().size);
@@ -56,8 +55,7 @@ static object _GetFile(const UsdZipFile &zipFile, const std::string &filePath)
 static object _GetFileInfo(const UsdZipFile &zipFile, const std::string &filePath)
 {
   auto iter = zipFile.Find(filePath);
-  if (iter == zipFile.end())
-  {
+  if (iter == zipFile.end()) {
     return object();
   }
   return object(iter.GetFileInfo());
@@ -83,13 +81,10 @@ static void _Enter(const UsdZipFileWriter &)
 
 static void _Exit(UsdZipFileWriter &w, const object &exc_type, const object &, const object &)
 {
-  if (w)
-  {
-    if (TfPyIsNone(exc_type))
-    {
+  if (w) {
+    if (TfPyIsNone(exc_type)) {
       w.Save();
-    } else
-    {
+    } else {
       w.Discard();
     }
   }
@@ -121,11 +116,14 @@ void wrapUsdZipFile()
     .def("CreateNew", &_CreateNew, arg("filePath"), return_value_policy<manage_new_object>())
     .staticmethod("CreateNew")
 
-    .def("AddFile", &UsdZipFileWriter::AddFile, (arg("filePath"), arg("filePathInArchive") = std::string()))
+    .def("AddFile",
+         &UsdZipFileWriter::AddFile,
+         (arg("filePath"), arg("filePathInArchive") = std::string()))
     .def("Save", &UsdZipFileWriter::Save)
     .def("Discard", &UsdZipFileWriter::Discard)
 
     .def("__enter__", &_Enter, return_self<>())
-    .def("__exit__", (void (*)(UsdZipFileWriter &, const object &, const object &, const object &)) & _Exit);
+    .def("__exit__",
+         (void (*)(UsdZipFileWriter &, const object &, const object &, const object &)) & _Exit);
   ;
 }

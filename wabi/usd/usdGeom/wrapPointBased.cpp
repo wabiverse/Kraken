@@ -43,34 +43,40 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreatePointsAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreatePointsAttr(UsdGeomPointBased &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
     return self.CreatePointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3fArray),
                                  writeSparsely);
   }
 
-  static UsdAttribute _CreateVelocitiesAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVelocitiesAttr(UsdGeomPointBased &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
   {
-    return self.CreateVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                     writeSparsely);
+    return self.CreateVelocitiesAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateAccelerationsAttr(UsdGeomPointBased &self,
                                                object defaultVal,
                                                bool writeSparsely)
   {
-    return self.CreateAccelerationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                        writeSparsely);
+    return self.CreateAccelerationsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+      writeSparsely);
   }
 
-  static UsdAttribute _CreateNormalsAttr(UsdGeomPointBased &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateNormalsAttr(UsdGeomPointBased &self,
+                                         object defaultVal,
+                                         bool writeSparsely)
   {
     return self.CreateNormalsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Normal3fArray),
                                   writeSparsely);
@@ -103,7 +109,9 @@ void wrapUsdGeomPointBased()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -162,19 +170,16 @@ namespace
     VtValue pointsAsVtValue = UsdPythonToSdfType(points, SdfValueTypeNames->Float3Array);
 
     // Check for proper conversion to VtVec3fArray
-    if (!pointsAsVtValue.IsHolding<VtVec3fArray>())
-    {
+    if (!pointsAsVtValue.IsHolding<VtVec3fArray>()) {
       TF_CODING_ERROR("Improper value for 'points'");
       return object();
     }
 
     // Convert from VtValue to VtVec3fArray
     VtVec3fArray pointsArray = pointsAsVtValue.UncheckedGet<VtVec3fArray>();
-    if (UsdGeomPointBased::ComputeExtent(pointsArray, &extent))
-    {
+    if (UsdGeomPointBased::ComputeExtent(pointsArray, &extent)) {
       return UsdVtValueToPython(VtValue(extent));
-    } else
-    {
+    } else {
       return object();
     }
   }
@@ -206,7 +211,9 @@ namespace
   WRAP_CUSTOM
   {
     _class.def("GetNormalsInterpolation", &UsdGeomPointBased::GetNormalsInterpolation)
-      .def("SetNormalsInterpolation", &UsdGeomPointBased::SetNormalsInterpolation, arg("interpolation"))
+      .def("SetNormalsInterpolation",
+           &UsdGeomPointBased::SetNormalsInterpolation,
+           arg("interpolation"))
 
       .def("ComputeExtent", &_ComputeExtent, (arg("points")))
       .staticmethod("ComputeExtent")

@@ -36,15 +36,13 @@ SdfRelocatesMapProxyValuePolicy::Type SdfRelocatesMapProxyValuePolicy::Canonical
   const SdfSpecHandle &spec,
   const Type &x)
 {
-  if (!TF_VERIFY(spec))
-  {
+  if (!TF_VERIFY(spec)) {
     return x;
   }
 
   SdfPath anchor = spec->GetPath();
   Type result;
-  TF_FOR_ALL (i, x)
-  {
+  TF_FOR_ALL (i, x) {
     result[i->first.MakeAbsolutePath(anchor)] = i->second.MakeAbsolutePath(anchor);
   }
   return result;
@@ -68,8 +66,7 @@ SdfRelocatesMapProxyValuePolicy::value_type SdfRelocatesMapProxyValuePolicy::Can
   const SdfSpecHandle &spec,
   const value_type &x)
 {
-  if (!TF_VERIFY(spec))
-  {
+  if (!TF_VERIFY(spec)) {
     return x;
   }
 

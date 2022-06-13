@@ -44,8 +44,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingDistantLightAdapter::~UsdImagingDistantLightAdapter()
-{}
+UsdImagingDistantLightAdapter::~UsdImagingDistantLightAdapter() {}
 
 bool UsdImagingDistantLightAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -63,7 +62,8 @@ SdfPath UsdImagingDistantLightAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingDistantLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
+void UsdImagingDistantLightAdapter::_RemovePrim(SdfPath const &cachePath,
+                                                UsdImagingIndexProxy *index)
 {
   index->RemoveSprim(HdPrimTypeTokens->distantLight, cachePath);
 }

@@ -20,8 +20,7 @@ namespace Zep
   {
     const char chA = 'A';
     m_defaultCharSize = GetTextSize((const uint8_t *)&chA, (const uint8_t *)&chA + 1);
-    for (int i = 0; i < 256; i++)
-    {
+    for (int i = 0; i < 256; i++) {
       uint8_t ch = (uint8_t)i;
       m_charCacheASCII[i] = GetTextSize(&ch, &ch + 1);
     }
@@ -36,8 +35,7 @@ namespace Zep
 
   const NVec2f &ZepFont::GetDefaultCharSize()
   {
-    if (m_charCacheDirty)
-    {
+    if (m_charCacheDirty) {
       BuildCharCache();
     }
 
@@ -51,21 +49,18 @@ namespace Zep
 
   NVec2f ZepFont::GetCharSize(const uint8_t *pCh)
   {
-    if (m_charCacheDirty)
-    {
+    if (m_charCacheDirty) {
       BuildCharCache();
     }
 
-    if (utf8_codepoint_length(*pCh) == 1)
-    {
+    if (utf8_codepoint_length(*pCh) == 1) {
       return m_charCacheASCII[*pCh];
     }
 
     auto ch32 = utf8::unchecked::next(pCh);
 
     auto itr = m_charCache.find((uint32_t)ch32);
-    if (itr != m_charCache.end())
-    {
+    if (itr != m_charCache.end()) {
       return itr->second;
     }
 
@@ -75,11 +70,9 @@ namespace Zep
     return sz;
   }
 
-  ZepDisplay::ZepDisplay(const NVec2f &pixelScale)
-    : m_pixelScale(pixelScale)
+  ZepDisplay::ZepDisplay(const NVec2f &pixelScale) : m_pixelScale(pixelScale)
   {
-    for (size_t i = 0; i < m_fonts.size(); i++)
-    {
+    for (size_t i = 0; i < m_fonts.size(); i++) {
       m_fonts[i] = nullptr;
     }
   }
@@ -87,8 +80,7 @@ namespace Zep
   uint32_t ZepDisplay::GetCodePointCount(const uint8_t *pCh, const uint8_t *pEnd) const
   {
     uint32_t count = 0;
-    while (pCh < pEnd)
-    {
+    while (pCh < pEnd) {
       pCh += utf8_codepoint_length(*pCh);
       count++;
     }
@@ -125,18 +117,16 @@ namespace Zep
 
   void ZepDisplay::Bigger()
   {
-    for (int i = 0; i < (int)m_fonts.size(); i++)
-    {
-      if (m_fonts[i] != nullptr)
-      {
-        switch ((ZepTextType)i)
-        {
+    for (int i = 0; i < (int)m_fonts.size(); i++) {
+      if (m_fonts[i] != nullptr) {
+        switch ((ZepTextType)i) {
           case ZepTextType::Text:
           case ZepTextType::Heading1:
           case ZepTextType::Heading2:
           case ZepTextType::Heading3: {
             auto &textFont = GetFont(ZepTextType(i));
-            textFont.SetPixelHeight((int)std::min((float)ceil(textFont.GetPixelHeight() * 1.05), 800.0f));
+            textFont.SetPixelHeight(
+              (int)std::min((float)ceil(textFont.GetPixelHeight() * 1.05), 800.0f));
           }
           default:
             break;
@@ -147,18 +137,16 @@ namespace Zep
 
   void ZepDisplay::Smaller()
   {
-    for (int i = 0; i < (int)m_fonts.size(); i++)
-    {
-      if (m_fonts[i] != nullptr)
-      {
-        switch ((ZepTextType)i)
-        {
+    for (int i = 0; i < (int)m_fonts.size(); i++) {
+      if (m_fonts[i] != nullptr) {
+        switch ((ZepTextType)i) {
           case ZepTextType::Text:
           case ZepTextType::Heading1:
           case ZepTextType::Heading2:
           case ZepTextType::Heading3: {
             auto &textFont = GetFont(ZepTextType(i));
-            textFont.SetPixelHeight((int)std::max(4.0f, (float)floor(textFont.GetPixelHeight() * .95f)));
+            textFont.SetPixelHeight(
+              (int)std::max(4.0f, (float)floor(textFont.GetPixelHeight() * .95f)));
           }
           default:
             break;

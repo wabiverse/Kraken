@@ -74,7 +74,11 @@ bool GfVec3f::operator==(GfVec3i const &other) const
   return _data[0] == other[0] && _data[1] == other[1] && _data[2] == other[2];
 }
 
-bool GfVec3f::OrthogonalizeBasis(GfVec3f *tx, GfVec3f *ty, GfVec3f *tz, const bool normalize, double eps)
+bool GfVec3f::OrthogonalizeBasis(GfVec3f *tx,
+                                 GfVec3f *ty,
+                                 GfVec3f *tz,
+                                 const bool normalize,
+                                 double eps)
 {
   return GfOrthogonalizeBasis(tx, ty, tz, normalize, eps);
 }
@@ -100,16 +104,14 @@ bool GfOrthogonalizeBasis(GfVec3f *tx, GfVec3f *ty, GfVec3f *tz, bool normalize,
 {
   GfVec3f ax, bx, cx, ay, by, cy, az, bz, cz;
 
-  if (normalize)
-  {
+  if (normalize) {
     GfNormalize(tx);
     GfNormalize(ty);
     GfNormalize(tz);
     ax = *tx;
     ay = *ty;
     az = *tz;
-  } else
-  {
+  } else {
     ax = *tx;
     ay = *ty;
     az = *tz;
@@ -125,15 +127,13 @@ bool GfOrthogonalizeBasis(GfVec3f *tx, GfVec3f *ty, GfVec3f *tz, bool normalize,
    * the colinear case beforehand, or we'll get fooled in the error
    * computation.
    */
-  if (GfIsClose(ax, ay, eps) || GfIsClose(ax, az, eps) || GfIsClose(ay, az, eps))
-  {
+  if (GfIsClose(ax, ay, eps) || GfIsClose(ax, az, eps) || GfIsClose(ay, az, eps)) {
     return false;
   }
 
   const int MAX_ITERS = 20;
   int iter;
-  for (iter = 0; iter < MAX_ITERS; ++iter)
-  {
+  for (iter = 0; iter < MAX_ITERS; ++iter) {
     bx = *tx;
     by = *ty;
     bz = *tz;
@@ -151,8 +151,7 @@ bool GfOrthogonalizeBasis(GfVec3f *tx, GfVec3f *ty, GfVec3f *tz, bool normalize,
     cy = 0.5 * (*ty + by);
     cz = 0.5 * (*tz + bz);
 
-    if (normalize)
-    {
+    if (normalize) {
       cx.Normalize();
       cy.Normalize();
       cz.Normalize();
@@ -176,8 +175,7 @@ bool GfOrthogonalizeBasis(GfVec3f *tx, GfVec3f *ty, GfVec3f *tz, bool normalize,
     ay = *ty;
     az = *tz;
 
-    if (!normalize)
-    {
+    if (!normalize) {
       ax.Normalize();
       ay.Normalize();
       az.Normalize();
@@ -199,11 +197,9 @@ void GfBuildOrthonormalFrame(GfVec3f const &v0, GfVec3f *v1, GfVec3f *v2, float 
 {
   float len = v0.GetLength();
 
-  if (len == 0.)
-  {
+  if (len == 0.) {
     *v1 = *v2 = GfVec3f(0);
-  } else
-  {
+  } else {
     GfVec3f unitDir = v0 / len;
     *v1 = GfVec3f::XAxis() ^ unitDir;
 
@@ -213,8 +209,7 @@ void GfBuildOrthonormalFrame(GfVec3f const &v0, GfVec3f *v1, GfVec3f *v2, float 
     GfNormalize(v1);
     *v2 = unitDir ^ *v1;  // this is of unit length
 
-    if (len < eps)
-    {
+    if (len < eps) {
       double desiredLen = len / eps;
       *v1 *= desiredLen;
       *v2 *= desiredLen;
@@ -232,8 +227,7 @@ GfVec3f GfSlerp(double alpha, const GfVec3f &v0, const GfVec3f &v1)
   // Check for very small angle between the vectors, and if so, just lerp them.
   // XXX: This value for epsilon is somewhat arbitrary, and if
   // someone can derive a more meaningful value, that would be fine.
-  if (fabs(angle) < 0.001)
-  {
+  if (fabs(angle) < 0.001) {
     return GfLerp(alpha, v0, v1);
   }
 
@@ -244,8 +238,7 @@ GfVec3f GfSlerp(double alpha, const GfVec3f &v0, const GfVec3f &v1)
   // compute an arbitrary orthogonal vector to interpolate across.
   // XXX: Another somewhat arbitrary test for epsilon, but trying to stay
   // within reasonable float precision.
-  if (fabs(sinAngle) < 0.00001)
-  {
+  if (fabs(sinAngle) < 0.00001) {
     GfVec3f vX, vY;
     v0.BuildOrthonormalFrame(&vX, &vY);
     GfVec3f v = v0 * cos(alpha * M_PI) + vX * sin(alpha * M_PI);
@@ -255,7 +248,8 @@ GfVec3f GfSlerp(double alpha, const GfVec3f &v0, const GfVec3f &v1)
   // interpolate
   double oneOverSinAngle = 1.0 / sinAngle;
 
-  return v0 * (sin((1.0 - alpha) * angle) * oneOverSinAngle) + v1 * (sin(alpha * angle) * oneOverSinAngle);
+  return v0 * (sin((1.0 - alpha) * angle) * oneOverSinAngle) +
+         v1 * (sin(alpha * angle) * oneOverSinAngle);
 }
 
 WABI_NAMESPACE_END

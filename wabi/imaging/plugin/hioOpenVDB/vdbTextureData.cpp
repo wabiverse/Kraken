@@ -53,6 +53,7 @@ WABI_NAMESPACE_BEGIN
 class HioOpenVDB_TextureDataFactory final : public HioFieldTextureDataFactoryBase
 {
  protected:
+
   HioFieldTextureDataSharedPtr _New(std::string const &filePath,
                                     std::string const &fieldName,
                                     int,
@@ -127,6 +128,7 @@ bool HioOpenVDB_TextureData::HasRawBuffer() const
 class HioOpenVDB_TextureData_DenseGridHolderBase
 {
  public:
+
   // Get the bounding box of the tree of the OpenVDB grid
   virtual const openvdb::CoordBBox &GetTreeBoundingBox() const = 0;
 
@@ -144,29 +146,25 @@ namespace
   {
     // Get transform
     openvdb::math::Transform::ConstPtr const t = grid->constTransformPtr();
-    if (!t)
-    {
+    if (!t) {
       return GfMatrix4d(1.0);
     }
 
     // Only support linear transforms so far.
-    if (!t->isLinear())
-    {
+    if (!t->isLinear()) {
       TF_WARN("OpenVDB grid has non-linear transform which is not supported");
       return GfMatrix4d(1.0);
     }
 
     // Get underlying map
     openvdb::math::MapBase::ConstPtr const b = t->baseMap();
-    if (!b)
-    {
+    if (!b) {
       TF_WARN("Could not get map underlying transform of OpenVDB grid");
       return GfMatrix4d(1.0);
     }
 
     openvdb::math::AffineMap::ConstPtr const a = b->getAffineMap();
-    if (!a)
-    {
+    if (!a) {
       TF_WARN("OpenVDB grid has non-affine map which is not supported");
       return GfMatrix4d(1.0);
     }
@@ -180,6 +178,7 @@ namespace
   class _DenseGridHolder final : public HioOpenVDB_TextureData_DenseGridHolderBase
   {
    public:
+
     using ValueType = typename GridType::ValueType;
     using DenseGrid = openvdb::tools::Dense<ValueType, openvdb::tools::LayoutXYZ>;
     using GridPtr = typename GridType::Ptr;
@@ -191,8 +190,7 @@ namespace
     {
       TRACE_FUNCTION();
 
-      if (bbox.empty())
-      {
+      if (bbox.empty()) {
         // Empty grid
         return nullptr;
       }
@@ -223,6 +221,7 @@ namespace
     }
 
    private:
+
     DenseGrid _denseGrid;
   };
 
@@ -234,6 +233,7 @@ namespace
   class _GridHolderBase
   {
    public:
+
     // Get grid transform from OpenVDB grid.
     virtual GfMatrix4d GetGridTransform() const = 0;
 
@@ -259,11 +259,13 @@ namespace
     static _GridHolderBase *New(const openvdb::GridBase::Ptr &grid);
 
    protected:
+
     _GridHolderBase(const openvdb::GridBase::Ptr &grid)
       : _treeBoundingBox(_ComputeTreeBoundingBox(grid))
     {}
 
    private:
+
     // Compute the tree's bounding box of an OpenVDB grid
     static openvdb::CoordBBox _ComputeTreeBoundingBox(const openvdb::GridBase::Ptr &grid)
     {
@@ -279,10 +281,10 @@ namespace
     const openvdb::CoordBBox _treeBoundingBox;
   };
 
-  template<typename GridType>
-  class _GridHolder final : public _GridHolderBase
+  template<typename GridType> class _GridHolder final : public _GridHolderBase
   {
    public:
+
     using GridPtr = typename GridType::Ptr;
     using This = _GridHolder<GridType>;
 
@@ -291,17 +293,13 @@ namespace
     static _GridHolderBase *New(const openvdb::GridBase::Ptr &grid)
     {
       GridPtr const typedGrid = openvdb::gridPtrCast<GridType>(grid);
-      if (!typedGrid)
-      {
+      if (!typedGrid) {
         return nullptr;
       }
       return new This(typedGrid);
     }
 
-    _GridHolder(const GridPtr &grid)
-      : _GridHolderBase(grid),
-        _grid(grid)
-    {}
+    _GridHolder(const GridPtr &grid) : _GridHolderBase(grid), _grid(grid) {}
 
     GfMatrix4d GetGridTransform() const override
     {
@@ -316,8 +314,8 @@ namespace
 
       GridPtr const result = GridType::create();
 
-      result->setTransform(
-        openvdb::math::Transform::createLinearTransform(openvdb::math::Mat4d(newTransform.data())));
+      result->setTransform(openvdb::math::Transform::createLinearTransform(
+        openvdb::math::Mat4d(newTransform.data())));
 
       openvdb::tools::resampleToMatch<openvdb::tools::BoxSampler>(*_grid, *result);
 
@@ -330,6 +328,7 @@ namespace
     }
 
    private:
+
     const GridPtr _grid;
   };
 
@@ -363,31 +362,26 @@ namespace
 
   _GridHolderBase *_GridHolderBase::New(const openvdb::GridBase::Ptr &grid)
   {
-    if (!grid)
-    {
+    if (!grid) {
       return nullptr;
     }
 
-    if (_GridHolderBase *g = _GridHolder<openvdb::FloatGrid>::New(grid))
-    {
+    if (_GridHolderBase *g = _GridHolder<openvdb::FloatGrid>::New(grid)) {
       TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding floats\n");
       return g;
     }
 
-    if (_GridHolderBase *g = _GridHolder<openvdb::DoubleGrid>::New(grid))
-    {
+    if (_GridHolderBase *g = _GridHolder<openvdb::DoubleGrid>::New(grid)) {
       TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding doubles\n");
       return g;
     }
 
-    if (_GridHolderBase *g = _GridHolder<openvdb::Vec3fGrid>::New(grid))
-    {
+    if (_GridHolderBase *g = _GridHolder<openvdb::Vec3fGrid>::New(grid)) {
       TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding float vectors\n");
       return g;
     }
 
-    if (_GridHolderBase *g = _GridHolder<openvdb::Vec3dGrid>::New(grid))
-    {
+    if (_GridHolderBase *g = _GridHolder<openvdb::Vec3dGrid>::New(grid)) {
       TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Grid is holding double vectors\n");
       return g;
     }
@@ -402,6 +396,7 @@ namespace
   class _CharBuf : public std::basic_streambuf<char>
   {
    public:
+
     _CharBuf(const char *p, size_t l)
     {
       setg((char *)p, (char *)p, (char *)p + l);
@@ -431,14 +426,14 @@ namespace
   class _CharStream : public std::istream
   {
    public:
-    _CharStream(const char *p, size_t l)
-      : std::istream(&_buffer),
-        _buffer(p, l)
+
+    _CharStream(const char *p, size_t l) : std::istream(&_buffer), _buffer(p, l)
     {
       rdbuf(&_buffer);
     }
 
    private:
+
     _CharBuf _buffer;
   };
 
@@ -451,31 +446,26 @@ namespace
     openvdb::initialize();
     openvdb::GridBase::Ptr result;
 
-    if (TfIsFile(filePath))
-    {
+    if (TfIsFile(filePath)) {
       openvdb::io::File f(filePath);
 
       {
         TRACE_FUNCTION_SCOPE("Opening VDB file");
-        try
-        {
+        try {
           f.open();
         }
-        catch (openvdb::IoError e)
-        {
+        catch (openvdb::IoError e) {
           TF_WARN("Could not open OpenVDB file: %s", e.what());
           return nullptr;
         }
-        catch (openvdb::LookupError e)
-        {
+        catch (openvdb::LookupError e) {
           // Occurs, e.g., when there is an unknown grid type in VDB file
           TF_WARN("Could not parse OpenVDB file: %s", e.what());
           return nullptr;
         }
       }
 
-      if (!f.hasGrid(gridName))
-      {
+      if (!f.hasGrid(gridName)) {
         TF_WARN("OpenVDB file %s has no grid %s", filePath.c_str(), gridName.c_str());
         return nullptr;
       }
@@ -491,8 +481,7 @@ namespace
         // is not explicitly specified in the documentation.
         f.close();
       }
-    } else
-    {
+    } else {
       // Try reading the vdb with ArAsset.
       // XXX In the future we may want to first try to read with a vdb
       // specific subclass of ArAsset that directly stores a GridPtrVecPtr,
@@ -517,17 +506,14 @@ namespace
         openvdb::GridPtrVecPtr grids = s.getGrids();
 
         // Find the grid in the grid vector.
-        for (const openvdb::GridBase::Ptr grid : *grids)
-        {
-          if (grid->getName() == gridName)
-          {
+        for (const openvdb::GridBase::Ptr grid : *grids) {
+          if (grid->getName() == gridName) {
             result = grid;
             break;
           }
         }
 
-        if (!result)
-        {
+        if (!result) {
           TF_WARN("OpenVDB asset path %s has no grid %s", filePath.c_str(), gridName.c_str());
           return nullptr;
         }
@@ -595,8 +581,7 @@ bool HioOpenVDB_TextureData::Read()
   // Load grid from OpenVDB file
   std::unique_ptr<_GridHolderBase> gridHolder(_LoadGrid(_filePath, _gridName));
 
-  if (!gridHolder)
-  {
+  if (!gridHolder) {
     // Runtime or coding errors already issued
     return false;
   }
@@ -619,11 +604,13 @@ bool HioOpenVDB_TextureData::Read()
   const size_t nativeSize = nativeTreeBoundingBox.volume() * bytesPerPixel;
 
   TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
-    .Msg("[VdbTextureData] Native dimensions %d x %d x %d\n", nativeWidth, nativeHeight, nativeDepth);
+    .Msg("[VdbTextureData] Native dimensions %d x %d x %d\n",
+         nativeWidth,
+         nativeHeight,
+         nativeDepth);
 
   // Check whether native size is more than target memory if given
-  if (nativeSize > _targetMemory && _targetMemory > 0)
-  {
+  if (nativeSize > _targetMemory && _targetMemory > 0) {
     TRACE_FUNCTION_SCOPE("Down-sampling");
     // We need to down-sample.
 
@@ -633,7 +620,8 @@ bool HioOpenVDB_TextureData::Read()
     // As first approximation, use the cube-root.
     const double approxScale = cbrt(double(nativeSize) / double(_targetMemory));
 
-    TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE).Msg("[VdbTextureData] Approximate scaling factor %f\n", approxScale);
+    TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
+      .Msg("[VdbTextureData] Approximate scaling factor %f\n", approxScale);
 
     // There will be additional samples near the boundary
     // of the original voluem, so scale down a bit more.
@@ -653,8 +641,7 @@ bool HioOpenVDB_TextureData::Read()
   // Convert grid to dense grid
   _denseGrid.reset(gridHolder->GetDense());
 
-  if (!_denseGrid)
-  {
+  if (!_denseGrid) {
     _resizedWidth = 0;
     _resizedHeight = 0;
     _resizedDepth = 1;
@@ -690,16 +677,16 @@ bool HioOpenVDB_TextureData::Read()
 
   TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
     .Msg("[VdbTextureData] %s",
-         (size <= _targetMemory || _targetMemory == 0) ? "Target memory was met." :
-                                                         "WARNING: the target memory was EXCEEDED");
+         (size <= _targetMemory || _targetMemory == 0) ?
+           "Target memory was met." :
+           "WARNING: the target memory was EXCEEDED");
 
   return true;
 }
 
 unsigned char const *HioOpenVDB_TextureData::GetRawBuffer() const
 {
-  if (!_denseGrid)
-  {
+  if (!_denseGrid) {
     return nullptr;
   }
   return _denseGrid->GetData();

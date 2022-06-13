@@ -43,17 +43,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
 
-  static UsdAttribute _CreateAxisAttr(UsdPhysicsPrismaticJoint &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateAxisAttr(UsdPhysicsPrismaticJoint &self,
+                                      object defaultVal,
+                                      bool writeSparsely)
   {
-    return self.CreateAxisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateAxisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                               writeSparsely);
   }
 
   static UsdAttribute _CreateLowerLimitAttr(UsdPhysicsPrismaticJoint &self,
@@ -102,14 +103,18 @@ void wrapUsdPhysicsPrismaticJoint()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
 
 
     .def("GetAxisAttr", &This::GetAxisAttr)
-    .def("CreateAxisAttr", &_CreateAxisAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateAxisAttr",
+         &_CreateAxisAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetLowerLimitAttr", &This::GetLowerLimitAttr)
     .def("CreateLowerLimitAttr",
@@ -148,7 +153,6 @@ void wrapUsdPhysicsPrismaticJoint()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

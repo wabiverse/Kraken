@@ -66,14 +66,12 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<SdfValueBlock>();
 }
 
-template<typename T>
-static VtValue _GetTfEnumForEnumValue(const VtValue &value)
+template<typename T> static VtValue _GetTfEnumForEnumValue(const VtValue &value)
 {
   return VtValue(TfEnum(value.Get<T>()));
 }
 
-template<class T>
-static void _RegisterEnumWithVtValue()
+template<class T> static void _RegisterEnumWithVtValue()
 {
   VtValue::RegisterCast<T, TfEnum>(_GetTfEnumForEnumValue<T>);
   VtValue::RegisterSimpleBidirectionalCast<int, T>();
@@ -142,13 +140,11 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
   const char *enumTypeName = unit.GetType().name();
   map<int, double> *scalesMap = info._UnitsMap[enumTypeName];
 
-  if (!scalesMap)
-  {
+  if (!scalesMap) {
     scalesMap = info._UnitsMap[enumTypeName] = new map<int, double>;
   }
   (*scalesMap)[unit.GetValueAsInt()] = scale;
-  if (scale == 1.0)
-  {
+  if (scale == 1.0) {
     info._DefaultUnitsMap[enumTypeName] = unit;
     info._UnitCategoryToDefaultUnitMap[category] = unit;
     info._UnitTypeNameToUnitCategoryMap[unit.GetType().name()] = category;
@@ -156,12 +152,10 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
 
   uint32_t typeIndex;
   map<string, uint32_t>::iterator i = info._UnitTypeIndicesTable.find(unit.GetType().name());
-  if (i == info._UnitTypeIndicesTable.end())
-  {
+  if (i == info._UnitTypeIndicesTable.end()) {
     typeIndex = (uint32_t)info._UnitTypeIndicesTable.size();
     info._UnitTypeIndicesTable[unit.GetType().name()] = typeIndex;
-  } else
-  {
+  } else {
     typeIndex = i->second;
   }
   info._UnitIndicesTable[typeIndex][unit.GetValueAsInt()] = unit;
@@ -172,10 +166,12 @@ static void _AddToUnitsMaps(_UnitsInfo &info,
 #define _ADD_UNIT_ENUM(r, category, elem) \
   TF_ADD_ENUM_NAME(BOOST_PP_CAT(Sdf##category##Unit, _SDF_UNIT_TAG(elem)), _SDF_UNIT_NAME(elem));
 
-#define _REGISTRY_FUNCTION(r, unused, elem)                                                            \
-  TF_REGISTRY_FUNCTION_WITH_TAG(TfEnum, _SDF_UNITSLIST_CATEGORY(elem))                                 \
-  {                                                                                                    \
-    BOOST_PP_SEQ_FOR_EACH(_ADD_UNIT_ENUM, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem)); \
+#define _REGISTRY_FUNCTION(r, unused, elem)                            \
+  TF_REGISTRY_FUNCTION_WITH_TAG(TfEnum, _SDF_UNITSLIST_CATEGORY(elem)) \
+  {                                                                    \
+    BOOST_PP_SEQ_FOR_EACH(_ADD_UNIT_ENUM,                              \
+                          _SDF_UNITSLIST_CATEGORY(elem),               \
+                          _SDF_UNITSLIST_TUPLES(elem));                \
   }
 
 BOOST_PP_LIST_FOR_EACH(_REGISTRY_FUNCTION, ~, _SDF_UNITS)
@@ -187,8 +183,10 @@ BOOST_PP_LIST_FOR_EACH(_REGISTRY_FUNCTION, ~, _SDF_UNITS)
                   _SDF_UNIT_SCALE(elem),                                  \
                   #category);
 
-#define _POPULATE_UNIT_MAPS(r, unused, elem) \
-  BOOST_PP_SEQ_FOR_EACH(_ADD_UNIT_TO_MAPS, _SDF_UNITSLIST_CATEGORY(elem), _SDF_UNITSLIST_TUPLES(elem))
+#define _POPULATE_UNIT_MAPS(r, unused, elem)           \
+  BOOST_PP_SEQ_FOR_EACH(_ADD_UNIT_TO_MAPS,             \
+                        _SDF_UNITSLIST_CATEGORY(elem), \
+                        _SDF_UNITSLIST_TUPLES(elem))
 
 static _UnitsInfo *_MakeUnitsMaps()
 {
@@ -229,8 +227,7 @@ const TfEnum &SdfDefaultUnit(const TfEnum &unit)
   _UnitsInfo &info = _GetUnitsInfo();
   map<string, TfEnum>::const_iterator it = info._DefaultUnitsMap.find(unit.GetType().name());
 
-  if (it == info._DefaultUnitsMap.end())
-  {
+  if (it == info._DefaultUnitsMap.end()) {
     TF_WARN("Unsupported unit '%s'.", ArchGetDemangled(unit.GetType()).c_str());
     return empty;
   }
@@ -241,10 +238,10 @@ const string &SdfUnitCategory(const TfEnum &unit)
 {
   static string empty;
   _UnitsInfo &info = _GetUnitsInfo();
-  map<string, string>::const_iterator it = info._UnitTypeNameToUnitCategoryMap.find(unit.GetType().name());
+  map<string, string>::const_iterator it = info._UnitTypeNameToUnitCategoryMap.find(
+    unit.GetType().name());
 
-  if (it == info._UnitTypeNameToUnitCategoryMap.end())
-  {
+  if (it == info._UnitTypeNameToUnitCategoryMap.end()) {
     TF_WARN("Unsupported unit '%s'.", ArchGetDemangled(unit.GetType()).c_str());
     return empty;
   }
@@ -261,17 +258,16 @@ static std::pair<uint32_t, uint32_t> Sdf_GetUnitIndices(const TfEnum &unit)
 double SdfConvertUnit(const TfEnum &fromUnit, const TfEnum &toUnit)
 {
   _UnitsInfo &info = _GetUnitsInfo();
-  if (!toUnit.IsA(fromUnit.GetType()))
-  {
+  if (!toUnit.IsA(fromUnit.GetType())) {
     TF_WARN("Can not convert from '%s' to '%s'.",
             TfEnum::GetFullName(fromUnit).c_str(),
             TfEnum::GetFullName(toUnit).c_str());
     return 0.0;
   }
-  map<string, map<int, double> *>::const_iterator it = info._UnitsMap.find(fromUnit.GetType().name());
+  map<string, map<int, double> *>::const_iterator it = info._UnitsMap.find(
+    fromUnit.GetType().name());
 
-  if (it == info._UnitsMap.end())
-  {
+  if (it == info._UnitsMap.end()) {
     TF_WARN("Unsupported unit '%s'.", ArchGetDemangled(fromUnit.GetType()).c_str());
     return 0.0;
   }
@@ -284,9 +280,9 @@ const string &SdfGetNameForUnit(const TfEnum &unit)
   _UnitsInfo &info = _GetUnitsInfo();
 
   // first check if this is a known type
-  map<string, uint32_t>::const_iterator it = info._UnitTypeIndicesTable.find(unit.GetType().name());
-  if (it == info._UnitTypeIndicesTable.end())
-  {
+  map<string, uint32_t>::const_iterator it = info._UnitTypeIndicesTable.find(
+    unit.GetType().name());
+  if (it == info._UnitTypeIndicesTable.end()) {
     TF_WARN("Unsupported unit '%s'.", ArchGetDemangled(unit.GetType()).c_str());
     return empty;
   }
@@ -303,8 +299,7 @@ const TfEnum &SdfGetUnitFromName(const std::string &name)
   _UnitsInfo &info = _GetUnitsInfo();
   map<string, TfEnum>::const_iterator it = info._UnitNameToUnitMap.find(name);
 
-  if (it == info._UnitNameToUnitMap.end())
-  {
+  if (it == info._UnitNameToUnitMap.end()) {
     TF_WARN("Unknown unit name '%s'.", name.c_str());
     return empty;
   }
@@ -341,8 +336,7 @@ static std::string _GetDiagnosticStringForValue(VtValue const &value)
   std::string valueStr = TfStringify(value);
   // Truncate the value after 32 chars so we don't spam huge diagnostic
   // strings.
-  if (valueStr.size() > 32)
-  {
+  if (valueStr.size() > 32) {
     valueStr.erase(valueStr.begin() + 32, valueStr.end());
     valueStr += "...";
   }
@@ -396,11 +390,9 @@ bool _ValueVectorToVtArray(VtValue *value,
   VtArray<T> result(distance(begin, end));
 
   bool allValid = true;
-  for (T *e = result.data(); begin != end; ++begin)
-  {
+  for (T *e = result.data(); begin != end; ++begin) {
     VtValue cast = VtValue::Cast<T>(*begin);
-    if (cast.IsEmpty())
-    {
+    if (cast.IsEmpty()) {
       errMsgs->push_back(
         TfStringPrintf("failed to cast array element "
                        "%zu: %s%s to <%s>",
@@ -409,13 +401,11 @@ bool _ValueVectorToVtArray(VtValue *value,
                        _GetKeyPathText(*keyPath).c_str(),
                        ArchGetDemangled<T>().c_str()));
       allValid = false;
-    } else
-    {
+    } else {
       cast.Swap(*e++);
     }
   }
-  if (!allValid)
-  {
+  if (!allValid) {
     *value = VtValue();
     return false;
   }
@@ -432,8 +422,9 @@ static _ValueVectorToVtArrayFn _GetTypedValueVectorToVtArrayFn(TfType const &typ
     FnMap *ret = new FnMap(BOOST_PP_SEQ_SIZE(SDF_VALUE_TYPES));
 
 // Add conversion functions for all SDF_VALUE_TYPES.
-#define _ADD_FN(r, unused, elem) \
-  ret->emplace(TfType::Find<SDF_VALUE_CPP_TYPE(elem)>(), _ValueVectorToVtArray<SDF_VALUE_CPP_TYPE(elem)>);
+#define _ADD_FN(r, unused, elem)                         \
+  ret->emplace(TfType::Find<SDF_VALUE_CPP_TYPE(elem)>(), \
+               _ValueVectorToVtArray<SDF_VALUE_CPP_TYPE(elem)>);
 
     BOOST_PP_SEQ_FOR_EACH(_ADD_FN, ~, SDF_VALUE_TYPES)
 #undef _ADD_FN
@@ -445,8 +436,7 @@ static _ValueVectorToVtArrayFn _GetTypedValueVectorToVtArrayFn(TfType const &typ
                 "Value type '%s' returns true from "
                 "SdfValueHasValidType but does not appear in "
                 "SDF_VALUE_TYPES.",
-                type.GetTypeName().c_str()))
-  {
+                type.GetTypeName().c_str())) {
     return iter->second;
   }
   return nullptr;
@@ -461,8 +451,7 @@ static bool _ValueVectorToAnyVtArray(VtValue *value,
   std::vector<VtValue> const &valVec = value->UncheckedGet<std::vector<VtValue>>();
   // If this is an empty vector, we cannot sensibly choose any type for the
   // VtArray.  Error.
-  if (valVec.empty())
-  {
+  if (valVec.empty()) {
     errMsgs->push_back(
       TfStringPrintf("cannot infer type from empty vector/list%s -- use "
                      "an empty typed array like VtIntArray/VtStringArray instead",
@@ -472,11 +461,9 @@ static bool _ValueVectorToAnyVtArray(VtValue *value,
   }
   // Pull the type from the first element, and try to invoke the conversion
   // function to convert all elements.
-  if (SdfValueHasValidType(valVec.front()))
-  {
+  if (SdfValueHasValidType(valVec.front())) {
     return _GetTypedValueVectorToVtArrayFn(valVec.front().GetType())(value, errMsgs, keyPath);
-  } else
-  {
+  } else {
     _AddInvalidTypeError("first vector/list element ", valVec.front(), errMsgs, keyPath);
     *value = VtValue();
     return false;
@@ -486,7 +473,9 @@ static bool _ValueVectorToAnyVtArray(VtValue *value,
 
 #ifdef WITH_PYTHON
 
-using _PySeqToVtArrayFn = bool (*)(VtValue *, std::vector<std::string> *, std::vector<std::string> const *);
+using _PySeqToVtArrayFn = bool (*)(VtValue *,
+                                   std::vector<std::string> *,
+                                   std::vector<std::string> const *);
 
 template<class T>
 bool _PySeqToVtArray(VtValue *value,
@@ -500,13 +489,10 @@ bool _PySeqToVtArray(VtValue *value,
   Py_ssize_t len = PySequence_Length(obj.ptr());
   VtArray<T> result(len);
   ElemType *elem = result.data();
-  for (Py_ssize_t i = 0; i != len; ++i)
-  {
+  for (Py_ssize_t i = 0; i != len; ++i) {
     boost::python::handle<> h(PySequence_ITEM(obj.ptr(), i));
-    if (!h)
-    {
-      if (PyErr_Occurred())
-      {
+    if (!h) {
+      if (PyErr_Occurred()) {
         PyErr_Clear();
       }
       errMsgs->push_back(TfStringPrintf("failed to obtain element %s from sequence%s",
@@ -515,23 +501,20 @@ bool _PySeqToVtArray(VtValue *value,
       allValid = false;
     }
     boost::python::extract<ElemType> e(h.get());
-    if (!e.check())
-    {
-      errMsgs->push_back(
-        TfStringPrintf("failed to cast sequence element "
-                       "%s: %s%s to <%s>",
-                       TfStringify(i).c_str(),
-                       _GetDiagnosticStringForValue(boost::python::extract<VtValue>(h.get())).c_str(),
-                       _GetKeyPathText(*keyPath).c_str(),
-                       ArchGetDemangled<ElemType>().c_str()));
+    if (!e.check()) {
+      errMsgs->push_back(TfStringPrintf(
+        "failed to cast sequence element "
+        "%s: %s%s to <%s>",
+        TfStringify(i).c_str(),
+        _GetDiagnosticStringForValue(boost::python::extract<VtValue>(h.get())).c_str(),
+        _GetKeyPathText(*keyPath).c_str(),
+        ArchGetDemangled<ElemType>().c_str()));
       allValid = false;
-    } else
-    {
+    } else {
       *elem++ = e();
     }
   }
-  if (!allValid)
-  {
+  if (!allValid) {
     *value = VtValue();
     return false;
   }
@@ -546,8 +529,9 @@ static _PySeqToVtArrayFn _GetTypedPySeqToVtArrayFn(TfType const &type)
     FnMap *ret = new FnMap(BOOST_PP_SEQ_SIZE(SDF_VALUE_TYPES));
 
 // Add conversion functions for all SDF_VALUE_TYPES.
-#  define _ADD_FN(r, unused, elem) \
-    ret->emplace(TfType::Find<SDF_VALUE_CPP_TYPE(elem)>(), _PySeqToVtArray<SDF_VALUE_CPP_TYPE(elem)>);
+#  define _ADD_FN(r, unused, elem)                         \
+    ret->emplace(TfType::Find<SDF_VALUE_CPP_TYPE(elem)>(), \
+                 _PySeqToVtArray<SDF_VALUE_CPP_TYPE(elem)>);
 
     BOOST_PP_SEQ_FOR_EACH(_ADD_FN, ~, SDF_VALUE_TYPES)
 #  undef _ADD_FN
@@ -559,8 +543,7 @@ static _PySeqToVtArrayFn _GetTypedPySeqToVtArrayFn(TfType const &type)
                 "Value type '%s' returns true from "
                 "SdfValueHasValidType but does not appear in "
                 "SDF_VALUE_TYPES.",
-                type.GetTypeName().c_str()))
-  {
+                type.GetTypeName().c_str())) {
     return iter->second;
   }
   return nullptr;
@@ -573,10 +556,9 @@ static bool _PyObjToAnyVtArray(VtValue *value,
   TfPyLock pyLock;
   TfPyObjWrapper obj = value->UncheckedGet<TfPyObjWrapper>();
 
-  if (!PySequence_Check(obj.ptr()))
-  {
-    errMsgs->push_back(
-      TfStringPrintf("cannot convert python object as sequence%s", _GetKeyPathText(*keyPath).c_str()));
+  if (!PySequence_Check(obj.ptr())) {
+    errMsgs->push_back(TfStringPrintf("cannot convert python object as sequence%s",
+                                      _GetKeyPathText(*keyPath).c_str()));
     *value = VtValue();
     return false;
   }
@@ -584,8 +566,7 @@ static bool _PyObjToAnyVtArray(VtValue *value,
   Py_ssize_t len = PySequence_Length(obj.ptr());
   // If this is an empty sequence, we cannot sensibly choose any type for the
   // VtArray.  Error.
-  if (len == 0)
-  {
+  if (len == 0) {
     errMsgs->push_back(
       TfStringPrintf("cannot infer type from empty sequence%s -- use"
                      "an empty typed array like VtIntArray/VtStringArray instead",
@@ -596,31 +577,26 @@ static bool _PyObjToAnyVtArray(VtValue *value,
   // Pull the type from the first element, and try to invoke the conversion
   // function to convert all elements.
   boost::python::handle<> h(PySequence_ITEM(obj.ptr(), 0));
-  if (!h)
-  {
-    if (PyErr_Occurred())
-    {
+  if (!h) {
+    if (PyErr_Occurred()) {
       PyErr_Clear();
     }
-    errMsgs->push_back(
-      TfStringPrintf("failed to obtain first element from sequence%s", _GetKeyPathText(*keyPath).c_str()));
+    errMsgs->push_back(TfStringPrintf("failed to obtain first element from sequence%s",
+                                      _GetKeyPathText(*keyPath).c_str()));
     *value = VtValue();
     return false;
   }
   boost::python::extract<VtValue> e(h.get());
-  if (!e.check())
-  {
-    errMsgs->push_back(
-      TfStringPrintf("failed to obtain first element from sequence%s", _GetKeyPathText(*keyPath).c_str()));
+  if (!e.check()) {
+    errMsgs->push_back(TfStringPrintf("failed to obtain first element from sequence%s",
+                                      _GetKeyPathText(*keyPath).c_str()));
     *value = VtValue();
     return false;
   }
   VtValue firstVal = e();
-  if (SdfValueHasValidType(firstVal))
-  {
+  if (SdfValueHasValidType(firstVal)) {
     return _GetTypedPySeqToVtArrayFn(firstVal.GetType())(value, errMsgs, keyPath);
-  } else
-  {
+  } else {
     _AddInvalidTypeError("first sequence element ", firstVal, errMsgs, keyPath);
     *value = VtValue();
     return false;
@@ -637,29 +613,24 @@ static bool _ConvertToValidMetadataDictValueInternal(VtValue *value,
 
   bool allValid = true;
 
-  if (value->IsHolding<VtDictionary>())
-  {
+  if (value->IsHolding<VtDictionary>()) {
     VtDictionary d;
     value->UncheckedSwap(d);
-    for (auto &kv : d)
-    {
+    for (auto &kv : d) {
       keyPath->push_back(kv.first);
       allValid &= _ConvertToValidMetadataDictValueInternal(&kv.second, errMsgs, keyPath);
       keyPath->pop_back();
     }
     value->UncheckedSwap(d);
-  } else if (value->IsHolding<std::vector<VtValue>>())
-  {
+  } else if (value->IsHolding<std::vector<VtValue>>()) {
     allValid &= _ValueVectorToAnyVtArray(value, errMsgs, keyPath);
   }
 #ifdef WITH_PYTHON
-  else if (value->IsHolding<TfPyObjWrapper>())
-  {
+  else if (value->IsHolding<TfPyObjWrapper>()) {
     allValid &= _PyObjToAnyVtArray(value, errMsgs, keyPath);
   }
 #endif  // WITH_PYTHON
-  else if (!SdfValueHasValidType(*value))
-  {
+  else if (!SdfValueHasValidType(*value)) {
     allValid = false;
     *value = VtValue();
   }
@@ -671,8 +642,7 @@ bool SdfConvertToValidMetadataDictionary(VtDictionary *dict, std::string *errMsg
   std::vector<std::string> keyPath;
   std::vector<std::string> errMsgs;
   bool allValid = true;
-  for (auto &kv : *dict)
-  {
+  for (auto &kv : *dict) {
     keyPath.push_back(kv.first);
     allValid &= _ConvertToValidMetadataDictValueInternal(&kv.second, &errMsgs, &keyPath);
     keyPath.pop_back();
@@ -688,8 +658,7 @@ std::ostream &operator<<(std::ostream &out, const SdfSpecifier &spec)
 
 std::ostream &operator<<(std::ostream &out, const SdfRelocatesMap &reloMap)
 {
-  TF_FOR_ALL (it, reloMap)
-  {
+  TF_FOR_ALL (it, reloMap) {
     out << it->first << ": " << it->second << std::endl;
   }
   return out;
@@ -697,8 +666,7 @@ std::ostream &operator<<(std::ostream &out, const SdfRelocatesMap &reloMap)
 
 std::ostream &operator<<(std::ostream &out, const SdfTimeSampleMap &sampleMap)
 {
-  TF_FOR_ALL (it, sampleMap)
-  {
+  TF_FOR_ALL (it, sampleMap) {
     out << it->first << ": " << it->second << std::endl;
   }
   return out;
@@ -709,19 +677,13 @@ std::ostream &VtStreamOut(const SdfVariantSelectionMap &varSelMap, std::ostream 
   return stream << varSelMap;
 }
 
-SdfUnregisteredValue::SdfUnregisteredValue()
-{}
+SdfUnregisteredValue::SdfUnregisteredValue() {}
 
-SdfUnregisteredValue::SdfUnregisteredValue(const std::string &value)
-  : _value(value)
-{}
+SdfUnregisteredValue::SdfUnregisteredValue(const std::string &value) : _value(value) {}
 
-SdfUnregisteredValue::SdfUnregisteredValue(const VtDictionary &value)
-  : _value(value)
-{}
+SdfUnregisteredValue::SdfUnregisteredValue(const VtDictionary &value) : _value(value) {}
 
-SdfUnregisteredValue::SdfUnregisteredValue(const SdfUnregisteredValueListOp &value)
-  : _value(value)
+SdfUnregisteredValue::SdfUnregisteredValue(const SdfUnregisteredValueListOp &value) : _value(value)
 {}
 
 bool SdfUnregisteredValue::operator==(const SdfUnregisteredValue &other) const
@@ -756,8 +718,7 @@ TfToken Sdf_ValueTypeNamesType::GetSerializationName(const SdfValueTypeName &typ
 {
   // Return the first registered alias, which is the new type name.
   const TfToken name = typeName.GetAliasesAsTokens().front();
-  if (!name.IsEmpty())
-  {
+  if (!name.IsEmpty()) {
     return name;
   }
 

@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiPxrAovLight::~UsdRiPxrAovLight()
-{}
+UsdRiPxrAovLight::~UsdRiPxrAovLight() {}
 
 /* static */
 UsdRiPxrAovLight UsdRiPxrAovLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrAovLight();
   }
@@ -69,8 +67,7 @@ UsdRiPxrAovLight UsdRiPxrAovLight::Get(const UsdStagePtr &stage, const SdfPath &
 UsdRiPxrAovLight UsdRiPxrAovLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiAovLight");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrAovLight();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdRiPxrAovLight::GetAovNameAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->aovName);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateAovNameAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateAovNameAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->aovName,
                                     SdfValueTypeNames->String,
@@ -123,7 +121,8 @@ UsdAttribute UsdRiPxrAovLight::GetInPrimaryHitAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->inPrimaryHit);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateInPrimaryHitAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateInPrimaryHitAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->inPrimaryHit,
                                     SdfValueTypeNames->Bool,
@@ -138,7 +137,8 @@ UsdAttribute UsdRiPxrAovLight::GetInReflectionAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->inReflection);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateInReflectionAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateInReflectionAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->inReflection,
                                     SdfValueTypeNames->Bool,
@@ -153,7 +153,8 @@ UsdAttribute UsdRiPxrAovLight::GetInRefractionAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->inRefraction);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateInRefractionAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateInRefractionAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->inRefraction,
                                     SdfValueTypeNames->Bool,
@@ -168,7 +169,8 @@ UsdAttribute UsdRiPxrAovLight::GetInvertAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->invert);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateInvertAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateInvertAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->invert,
                                     SdfValueTypeNames->Bool,
@@ -199,7 +201,8 @@ UsdAttribute UsdRiPxrAovLight::GetUseColorAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->useColor);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateUseColorAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateUseColorAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->useColor,
                                     SdfValueTypeNames->Bool,
@@ -214,7 +217,8 @@ UsdAttribute UsdRiPxrAovLight::GetUseThroughputAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->useThroughput);
 }
 
-UsdAttribute UsdRiPxrAovLight::CreateUseThroughputAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrAovLight::CreateUseThroughputAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->useThroughput,
                                     SdfValueTypeNames->Bool,
@@ -250,8 +254,9 @@ const TfTokenVector &UsdRiPxrAovLight::GetSchemaAttributeNames(bool includeInher
     UsdRiTokens->useColor,
     UsdRiTokens->useThroughput,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdLuxLight::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

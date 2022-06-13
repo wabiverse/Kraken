@@ -87,18 +87,22 @@ void PxOsdMeshTopologyValidation::_ValidateToken(PxOsdMeshTopologyValidation::Co
                                                  const TfToken &token,
                                                  const std::array<TfToken, S> &validTokens)
 {
-  if (!std::any_of(std::cbegin(validTokens), std::cend(validTokens), [&token](const TfToken &validToken) {
-        return token == validToken;
-      }))
-  {
-    _AppendInvalidation({code, TfStringPrintf("'%s' is not a valid '%s' token.", token.GetText(), name)});
+  if (!std::any_of(std::cbegin(validTokens),
+                   std::cend(validTokens),
+                   [&token](const TfToken &validToken) {
+                     return token == validToken;
+                   })) {
+    _AppendInvalidation(
+      {code, TfStringPrintf("'%s' is not a valid '%s' token.", token.GetText(), name)});
   }
 }
 
 void PxOsdMeshTopologyValidation::_ValidateScheme(PxOsdMeshTopology const &topology)
 {
   static const std::array<TfToken, 3> validSchemes = {
-    {PxOsdOpenSubdivTokens->catmullClark, PxOsdOpenSubdivTokens->loop, PxOsdOpenSubdivTokens->bilinear}
+    {PxOsdOpenSubdivTokens->catmullClark,
+     PxOsdOpenSubdivTokens->loop,
+     PxOsdOpenSubdivTokens->bilinear}
   };
   _ValidateToken(Code::InvalidScheme, "scheme", topology.GetScheme(), validSchemes);
 }
@@ -108,7 +112,10 @@ void PxOsdMeshTopologyValidation::_ValidateOrientation(PxOsdMeshTopology const &
   static const std::array<TfToken, 2> validOrientations = {
     {PxOsdOpenSubdivTokens->rightHanded, PxOsdOpenSubdivTokens->leftHanded}
   };
-  _ValidateToken(Code::InvalidOrientation, "orientation", topology.GetOrientation(), validOrientations);
+  _ValidateToken(Code::InvalidOrientation,
+                 "orientation",
+                 topology.GetOrientation(),
+                 validOrientations);
 }
 
 void PxOsdMeshTopologyValidation::_ValidateTriangleSubdivision(PxOsdMeshTopology const &topology)
@@ -138,7 +145,8 @@ void PxOsdMeshTopologyValidation::_ValidateVertexInterpolation(PxOsdMeshTopology
                  validVertexInterpolation);
 }
 
-void PxOsdMeshTopologyValidation::_ValidateFaceVaryingInterpolation(PxOsdMeshTopology const &topology)
+void PxOsdMeshTopologyValidation::_ValidateFaceVaryingInterpolation(
+  PxOsdMeshTopology const &topology)
 {
   static const TfToken empty;
   static const std::array<TfToken, 7> validFaceVaryingInterpolation = {
@@ -178,23 +186,20 @@ void PxOsdMeshTopologyValidation::_ValidateCreasesAndCorners(PxOsdMeshTopology c
 
   if (std::any_of(creaseLengths.cbegin(), creaseLengths.cend(), [](int creaseLength) {
         return creaseLength < 2;
-      }))
-  {
+      })) {
     _AppendInvalidation(
       {Code::InvalidCreaseLengthElement, "Crease lengths must be greater than or equal to 2."});
   }
   size_t totalCreaseIndices = std::accumulate(creaseLengths.cbegin(), creaseLengths.cend(), 0);
   size_t totalCreases = creaseLengths.size();
   size_t totalCreaseEdges = totalCreaseIndices - totalCreases;
-  if (creaseIndices.size() != totalCreaseIndices)
-  {
+  if (creaseIndices.size() != totalCreaseIndices) {
     _AppendInvalidation({Code::InvalidCreaseIndicesSize,
                          TfStringPrintf("Crease indices size '%zu' doesn't match expected '%zu'.",
                                         creaseIndices.size(),
                                         totalCreaseIndices)});
   }
-  if (creaseSharpness.size() != totalCreaseEdges && creaseSharpness.size() != totalCreases)
-  {
+  if (creaseSharpness.size() != totalCreaseEdges && creaseSharpness.size() != totalCreases) {
     _AppendInvalidation({Code::InvalidCreaseWeightsSize,
                          TfStringPrintf("Crease weights size '%zu' doesn't match either per edge "
                                         "'%zu' or per crease '%zu' sizes.",
@@ -203,8 +208,7 @@ void PxOsdMeshTopologyValidation::_ValidateCreasesAndCorners(PxOsdMeshTopology c
                                         totalCreases)});
   }
 
-  if (cornerIndices.size() != cornerSharpness.size())
-  {
+  if (cornerIndices.size() != cornerSharpness.size()) {
     _AppendInvalidation({Code::InvalidCornerWeightsSize,
                          TfStringPrintf("Corner weights size '%zu' doesn't match expected '%zu'.",
                                         cornerIndices.size(),
@@ -213,37 +217,34 @@ void PxOsdMeshTopologyValidation::_ValidateCreasesAndCorners(PxOsdMeshTopology c
 
   if (std::any_of(creaseSharpness.cbegin(), creaseSharpness.cend(), [](float weight) {
         return weight < 0.0f;
-      }))
-  {
+      })) {
     _AppendInvalidation({Code::NegativeCreaseWeights, "Negative crease weights."});
   }
 
   if (std::any_of(cornerSharpness.cbegin(), cornerSharpness.cend(), [](float weight) {
         return weight < 0.0f;
-      }))
-  {
+      })) {
     _AppendInvalidation({Code::NegativeCornerWeights, "Negative corner weights."});
   }
 
   std::vector<int> sortedFaceIndices;
-  sortedFaceIndices.assign(topology.GetFaceVertexIndices().cbegin(), topology.GetFaceVertexIndices().cend());
+  sortedFaceIndices.assign(topology.GetFaceVertexIndices().cbegin(),
+                           topology.GetFaceVertexIndices().cend());
   std::sort(std::begin(sortedFaceIndices), std::end(sortedFaceIndices));
 
   if (std::any_of(cornerIndices.cbegin(), cornerIndices.cend(), [&sortedFaceIndices](int index) {
         return std::find(sortedFaceIndices.begin(), sortedFaceIndices.end(), index) ==
                sortedFaceIndices.end();
-      }))
-  {
-    _AppendInvalidation(
-      {Code::InvalidCornerIndicesElement, "Corner index element missing from face vertex indices array."});
+      })) {
+    _AppendInvalidation({Code::InvalidCornerIndicesElement,
+                         "Corner index element missing from face vertex indices array."});
   }
   if (std::any_of(creaseIndices.cbegin(), creaseIndices.cend(), [&sortedFaceIndices](int index) {
         return std::find(sortedFaceIndices.begin(), sortedFaceIndices.end(), index) ==
                sortedFaceIndices.end();
-      }))
-  {
-    _AppendInvalidation(
-      {Code::InvalidCreaseIndicesElement, "Crease index element missing from face vertex indices array."});
+      })) {
+    _AppendInvalidation({Code::InvalidCreaseIndicesElement,
+                         "Crease index element missing from face vertex indices array."});
   }
 }
 
@@ -253,12 +254,10 @@ void PxOsdMeshTopologyValidation::_ValidateHoles(PxOsdMeshTopology const &topolo
   if (holeIndices.empty())
     return;
   const auto holeIndexRange = std::minmax_element(holeIndices.cbegin(), holeIndices.cend());
-  if (*holeIndexRange.first < 0)
-  {
+  if (*holeIndexRange.first < 0) {
     _AppendInvalidation({Code::InvalidHoleIndicesElement, "Hole indices cannot be negative."});
   }
-  if (*holeIndexRange.second >= (int)topology.GetFaceVertexCounts().size())
-  {
+  if (*holeIndexRange.second >= (int)topology.GetFaceVertexCounts().size()) {
     _AppendInvalidation({Code::InvalidHoleIndicesElement,
                          TfStringPrintf("Hole indices must be less than face count '%zu'.",
                                         topology.GetFaceVertexCounts().size())});
@@ -270,8 +269,7 @@ void PxOsdMeshTopologyValidation::_ValidateFaceVertexCounts(PxOsdMeshTopology co
   const auto &faceVertexCounts = topology.GetFaceVertexCounts();
   if (std::any_of(faceVertexCounts.cbegin(), faceVertexCounts.cend(), [](int faceVertexCount) {
         return faceVertexCount <= 2;
-      }))
-  {
+      })) {
     _AppendInvalidation(
       {Code::InvalidFaceVertexCountsElement, "Face vertex counts must be greater than 2."});
   }
@@ -281,15 +279,15 @@ void PxOsdMeshTopologyValidation::_ValidateFaceVertexIndices(PxOsdMeshTopology c
 {
   if (std::any_of(topology.GetFaceVertexIndices().cbegin(),
                   topology.GetFaceVertexIndices().cend(),
-                  [](int i) { return i < 0; }))
-  {
-    _AppendInvalidation(
-      {Code::InvalidFaceVertexIndicesElement, "Face vertex indices element must be greater than 0."});
+                  [](int i) {
+                    return i < 0;
+                  })) {
+    _AppendInvalidation({Code::InvalidFaceVertexIndicesElement,
+                         "Face vertex indices element must be greater than 0."});
   }
   const auto &faceVertexCounts = topology.GetFaceVertexCounts();
   size_t vertexCount = std::accumulate(faceVertexCounts.cbegin(), faceVertexCounts.cend(), 0);
-  if (topology.GetFaceVertexIndices().size() != vertexCount)
-  {
+  if (topology.GetFaceVertexIndices().size() != vertexCount) {
     _AppendInvalidation({Code::InvalidFaceVertexIndicesSize,
                          TfStringPrintf("Face vertex indices size '%zu' does not match "
                                         "expected size '%zu'.",

@@ -84,8 +84,7 @@ static GfVec2i _GetScreenSize()
   // bakends that do not attach a custom FB. This is in-correct, but gl does
   // not let us query size properties of default framebuffer. For this we
   // need the screenSize to be passed in via app (see note above)
-  if (attachId <= 0)
-  {
+  if (attachId <= 0) {
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
     return GfVec2i(viewport[2], viewport[3]);
@@ -93,27 +92,22 @@ static GfVec2i _GetScreenSize()
 
   GlfContextCaps const &caps = GlfContextCaps::GetInstance();
 
-  if (ARCH_LIKELY(caps.directStateAccessEnabled))
-  {
-    if (attachType == GL_TEXTURE)
-    {
+  if (ARCH_LIKELY(caps.directStateAccessEnabled)) {
+    if (attachType == GL_TEXTURE) {
       GLint w, h;
       glGetTextureLevelParameteriv(attachId, 0, GL_TEXTURE_WIDTH, &w);
       glGetTextureLevelParameteriv(attachId, 0, GL_TEXTURE_HEIGHT, &h);
       return GfVec2i(w, h);
     }
 
-    if (attachType == GL_RENDERBUFFER)
-    {
+    if (attachType == GL_RENDERBUFFER) {
       GLint w, h;
       glGetNamedRenderbufferParameteriv(attachId, GL_RENDERBUFFER_WIDTH, &w);
       glGetNamedRenderbufferParameteriv(attachId, GL_RENDERBUFFER_HEIGHT, &h);
       return GfVec2i(w, h);
     }
-  } else
-  {
-    if (attachType == GL_TEXTURE)
-    {
+  } else {
+    if (attachType == GL_TEXTURE) {
       GLint w, h;
       GLint oldBinding;
       glGetIntegerv(GL_TEXTURE_BINDING_2D, &oldBinding);
@@ -124,8 +118,7 @@ static GfVec2i _GetScreenSize()
       return GfVec2i(w, h);
     }
 
-    if (attachType == GL_RENDERBUFFER)
-    {
+    if (attachType == GL_RENDERBUFFER) {
       GLint w, h;
       GLint oldBinding;
       glGetIntegerv(GL_RENDERBUFFER_BINDING, &oldBinding);
@@ -155,19 +148,18 @@ void HdxOitResolveTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
   *dirtyBits = HdChangeTracker::Clean;
 }
 
-const HdRenderPassAovBindingVector &HdxOitResolveTask::_GetAovBindings(HdTaskContext *const ctx) const
+const HdRenderPassAovBindingVector &HdxOitResolveTask::_GetAovBindings(
+  HdTaskContext *const ctx) const
 {
   static HdRenderPassAovBindingVector empty;
 
-  if (!_HasTaskContextData(ctx, HdxTokens->renderPassState))
-  {
+  if (!_HasTaskContextData(ctx, HdxTokens->renderPassState)) {
     return empty;
   }
 
   HdRenderPassStateSharedPtr renderPassState;
   _GetTaskContextData(ctx, HdxTokens->renderPassState, &renderPassState);
-  if (!renderPassState)
-  {
+  if (!renderPassState) {
     return empty;
   }
 
@@ -177,16 +169,14 @@ const HdRenderPassAovBindingVector &HdxOitResolveTask::_GetAovBindings(HdTaskCon
 GfVec2i HdxOitResolveTask::_ComputeScreenSize(HdTaskContext *ctx, HdRenderIndex *renderIndex) const
 {
   const HdRenderPassAovBindingVector &aovBindings = _GetAovBindings(ctx);
-  if (aovBindings.empty())
-  {
+  if (aovBindings.empty()) {
     return _GetScreenSize();
   }
 
   const SdfPath &bufferId = aovBindings.front().renderBufferId;
   HdRenderBuffer *const buffer = static_cast<HdRenderBuffer *>(
     renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, bufferId));
-  if (!buffer)
-  {
+  if (!buffer) {
     TF_CODING_ERROR("No render buffer at path %s specified in AOV bindings", bufferId.GetText());
     return _GetScreenSize();
   }
@@ -200,23 +190,22 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
 {
   static const int numSamples = 8;  // Should match glslfx files
 
-  if (!(screenSize[0] >= 0 && screenSize[1] >= 0))
-  {
+  if (!(screenSize[0] >= 0 && screenSize[1] >= 0)) {
     TF_CODING_ERROR("Invalid screen size for OIT resolve task %s", GetId().GetText());
     return;
   }
 
-  HdPhResourceRegistrySharedPtr const &hdPhResourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
-    renderIndex->GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &hdPhResourceRegistry =
+    std::static_pointer_cast<HdPhResourceRegistry>(renderIndex->GetResourceRegistry());
 
   const bool createOitBuffers = !_counterBar;
-  if (createOitBuffers)
-  {
+  if (createOitBuffers) {
     //
     // Counter Buffer
     //
     HdBufferSpecVector counterSpecs;
-    counterSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitCounterBuffer, HdTupleType{HdTypeInt32, 1}));
+    counterSpecs.push_back(
+      HdBufferSpec(HdxTokens->hdxOitCounterBuffer, HdTupleType{HdTypeInt32, 1}));
     _counterBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
       /*role*/ HdxTokens->oitCounter,
       counterSpecs,
@@ -235,7 +224,8 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     // Data Buffer
     //
     HdBufferSpecVector dataSpecs;
-    dataSpecs.push_back(HdBufferSpec(HdxTokens->hdxOitDataBuffer, HdTupleType{HdTypeFloatVec4, 1}));
+    dataSpecs.push_back(
+      HdBufferSpec(HdxTokens->hdxOitDataBuffer, HdTupleType{HdTypeFloatVec4, 1}));
     _dataBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
       /*role*/ HdxTokens->oitData,
       dataSpecs,
@@ -255,7 +245,8 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
     // Uniforms
     //
     HdBufferSpecVector uniformSpecs;
-    uniformSpecs.push_back(HdBufferSpec(HdxTokens->oitScreenSize, HdTupleType{HdTypeInt32Vec2, 1}));
+    uniformSpecs.push_back(
+      HdBufferSpec(HdxTokens->oitScreenSize, HdTupleType{HdTypeInt32Vec2, 1}));
 
     _uniformBar = hdPhResourceRegistry->AllocateUniformBufferArrayRange(
       /*role*/ HdxTokens->oitUniforms,
@@ -275,8 +266,7 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
   // We must update uniform screenSize when either X or Y increases in size.
   const bool resizeOitBuffers = (screenSize[0] > _screenSize[0] || screenSize[1] > _screenSize[1]);
 
-  if (resizeOitBuffers)
-  {
+  if (resizeOitBuffers) {
     _screenSize = screenSize;
     const int newBufferSize = screenSize[0] * screenSize[1];
 
@@ -297,8 +287,7 @@ void HdxOitResolveTask::_PrepareOitBuffers(HdTaskContext *ctx,
 void HdxOitResolveTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 {
   // Only allocate/resize buffer if a render task requested it.
-  if (ctx->find(HdxTokens->oitRequestFlag) == ctx->end())
-  {
+  if (ctx->find(HdxTokens->oitRequestFlag) == ctx->end()) {
     // Deallocate buffers here?
     return;
   }
@@ -309,13 +298,12 @@ void HdxOitResolveTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
   // iteration.
   ctx->erase(HdxTokens->oitClearedFlag);
 
-  if (!_renderPass)
-  {
+  if (!_renderPass) {
     HdRprimCollection collection;
     HdRenderDelegate *renderDelegate = renderIndex->GetRenderDelegate();
 
-    if (!TF_VERIFY(dynamic_cast<HdPhRenderDelegate *>(renderDelegate), "OIT Task only works with HdPh"))
-    {
+    if (!TF_VERIFY(dynamic_cast<HdPhRenderDelegate *>(renderDelegate),
+                   "OIT Task only works with HdPh")) {
       return;
     }
 
@@ -365,8 +353,7 @@ void HdxOitResolveTask::Execute(HdTaskContext *ctx)
   // Check whether the request flag was set and delete it so that for the
   // next iteration the request flag is not set unless an OIT render task
   // explicitly sets it.
-  if (ctx->erase(HdxTokens->oitRequestFlag) == 0)
-  {
+  if (ctx->erase(HdxTokens->oitRequestFlag) == 0) {
     return;
   }
 
@@ -382,8 +369,7 @@ void HdxOitResolveTask::Execute(HdTaskContext *ctx)
   _renderPassState->SetAovBindings(_GetAovBindings(ctx));
 
   HdxOitBufferAccessor oitBufferAccessor(ctx);
-  if (!oitBufferAccessor.AddOitBufferBindings(_renderPassShader))
-  {
+  if (!oitBufferAccessor.AddOitBufferBindings(_renderPassShader)) {
     TF_CODING_ERROR("No OIT buffers allocated but needed by OIT resolve task");
     return;
   }

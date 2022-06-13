@@ -41,8 +41,7 @@ const std::string UsdDracoAttributeDescriptor::METADATA_VALUES_TIME_KEY = "value
 const std::string UsdDracoAttributeDescriptor::METADATA_INDICES_TIME_KEY = "indices_time";
 const std::string UsdDracoAttributeDescriptor::METADATA_INTERPOLATION_KEY = "interpolation";
 
-UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor()
-  : UsdDracoAttributeDescriptor(INVALID)
+UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor() : UsdDracoAttributeDescriptor(INVALID)
 {}
 
 UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor(Status status)
@@ -59,17 +58,18 @@ UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor(Status status)
                                 TfToken())
 {}
 
-UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor(Status status,
-                                                         draco::GeometryAttribute::Type attributeType,
-                                                         TfToken name,
-                                                         draco::DataType dataType,
-                                                         bool isPrimvar,
-                                                         size_t numComponents,
-                                                         Shape shape,
-                                                         bool isHalf,
-                                                         UsdTimeCode valuesTime,
-                                                         UsdTimeCode indicesTime,
-                                                         TfToken interpolation)
+UsdDracoAttributeDescriptor::UsdDracoAttributeDescriptor(
+  Status status,
+  draco::GeometryAttribute::Type attributeType,
+  TfToken name,
+  draco::DataType dataType,
+  bool isPrimvar,
+  size_t numComponents,
+  Shape shape,
+  bool isHalf,
+  UsdTimeCode valuesTime,
+  UsdTimeCode indicesTime,
+  TfToken interpolation)
   : _status(status),
     _attributeType(attributeType),
     _name(name),
@@ -95,16 +95,17 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::Absent()
   return UsdDracoAttributeDescriptor(ABSENT);
 }
 
-UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::Create(draco::GeometryAttribute::Type attributeType,
-                                                                TfToken name,
-                                                                draco::DataType dataType,
-                                                                bool isPrimvar,
-                                                                size_t numComponents,
-                                                                Shape shape,
-                                                                bool isHalf,
-                                                                UsdTimeCode valuesTime,
-                                                                UsdTimeCode indicesTime,
-                                                                TfToken interpolation)
+UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::Create(
+  draco::GeometryAttribute::Type attributeType,
+  TfToken name,
+  draco::DataType dataType,
+  bool isPrimvar,
+  size_t numComponents,
+  Shape shape,
+  bool isHalf,
+  UsdTimeCode valuesTime,
+  UsdTimeCode indicesTime,
+  TfToken interpolation)
 {
   // Create a valid descriptor.
   return UsdDracoAttributeDescriptor(VALID,
@@ -123,7 +124,8 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::Create(draco::GeometryA
 bool UsdDracoAttributeDescriptor::IsGeneric() const
 {
   return _name != GetPositionsName() && _name != GetTexCoordsName() && _name != GetNormalsName() &&
-         _name != GetHoleFacesName() && _name != GetAddedEdgesName() && _name != GetPointOrderName();
+         _name != GetHoleFacesName() && _name != GetAddedEdgesName() &&
+         _name != GetPointOrderName();
 }
 
 const std::set<TfToken> &UsdDracoAttributeDescriptor::GetSupportedInterpolations()
@@ -140,8 +142,7 @@ std::string UsdDracoAttributeDescriptor::GetShapeText() const
 
 std::string UsdDracoAttributeDescriptor::GetShapeText(Shape shape)
 {
-  switch (shape)
-  {
+  switch (shape) {
     case VECTOR:
       return "vec";
     case QUATERNION:
@@ -276,8 +277,7 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::FromDracoAttribute(
   // Metadata may have a shape.
   UsdDracoAttributeDescriptor::Shape shape = GetDefaultShape();
   std::string shapeText;
-  if (metadata.GetEntryString(METADATA_SHAPE_KEY, &shapeText))
-  {
+  if (metadata.GetEntryString(METADATA_SHAPE_KEY, &shapeText)) {
     if (shapeText == GetShapeText(VECTOR))
       shape = VECTOR;
     else if (shapeText == GetShapeText(MATRIX))
@@ -307,16 +307,12 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::FromDracoAttribute(
 
   // Metadata may have interpolation for primvars.
   TfToken interpolation;
-  if (isPrimvar)
-  {
+  if (isPrimvar) {
     interpolation = GetDefaultInterpolation();
     std::string interpolationText;
-    if (metadata.GetEntryString(METADATA_INTERPOLATION_KEY, &interpolationText))
-    {
-      for (const TfToken &supported : GetSupportedInterpolations())
-      {
-        if (interpolationText == supported.GetString())
-        {
+    if (metadata.GetEntryString(METADATA_INTERPOLATION_KEY, &interpolationText)) {
+      for (const TfToken &supported : GetSupportedInterpolations()) {
+        if (interpolationText == supported.GetString()) {
           interpolation = supported;
           break;
         }
@@ -394,8 +390,7 @@ UsdDracoAttributeDescriptor UsdDracoAttributeDescriptor::FromUsdAttribute(
   // Skip attributes with unsupported number of components.
   size_t dimensionOneSize = 1;
   size_t dimensionTwoSize = 1;
-  if (numDimensions > 0)
-  {
+  if (numDimensions > 0) {
     dimensionOneSize = attribute.GetTypeName().GetDimensions().d[0];
     if (numDimensions > 1)
       dimensionTwoSize = attribute.GetTypeName().GetDimensions().d[1];
@@ -450,7 +445,8 @@ std::unique_ptr<draco::AttributeMetadata> UsdDracoAttributeDescriptor::ToMetadat
 
   // Although non-generic attributes can be found by GeometryAttribute::Type,
   // we always add name to metadata to reduce the importer code complexity.
-  metadata->AddEntryString(UsdDracoAttributeDescriptor::METADATA_NAME_KEY.c_str(), _name.GetText());
+  metadata->AddEntryString(UsdDracoAttributeDescriptor::METADATA_NAME_KEY.c_str(),
+                           _name.GetText());
 
   // Default values are not added to metadata.
   if (_shape != GetDefaultShape())

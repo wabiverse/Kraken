@@ -141,8 +141,7 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
 {
   /* Determine stage to load (from user or factory default). */
   if (!std::filesystem::exists(G.main->stage_id) ||
-      G.main->stage_id.string().find("startup.usda") != std::string::npos)
-  {
+      G.main->stage_id.string().find("startup.usda") != std::string::npos) {
     G.factory_startup = true;
   }
 
@@ -151,14 +150,12 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
   /** @em Always */
   UNI_create_stage(C);
 
-  if (G.factory_startup)
-  {
+  if (G.factory_startup) {
     /**
      * Create default Pixar stage. */
     // UNI_set_defaults(C);
     // UNI_save_stage(C);
-  } else
-  {
+  } else {
     /**
      * Open user's stage. */
     UNI_open_stage(C);
@@ -167,20 +164,17 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
 
 void KKE_main_free(Main *mainvar)
 {
-  UNIVERSE_FOR_ALL (windowmanager, mainvar->wm)
-  {
+  UNIVERSE_FOR_ALL (windowmanager, mainvar->wm) {
     delete windowmanager;
   }
   mainvar->wm.clear();
 
-  UNIVERSE_FOR_ALL (workspace, mainvar->workspaces)
-  {
+  UNIVERSE_FOR_ALL (workspace, mainvar->workspaces) {
     delete workspace;
   }
   mainvar->workspaces.clear();
 
-  UNIVERSE_FOR_ALL (screen, mainvar->screens)
-  {
+  UNIVERSE_FOR_ALL (screen, mainvar->screens) {
     delete screen;
   }
   mainvar->screens.clear();
@@ -239,10 +233,8 @@ void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *use
   struct AtExitData *ae = g_atexit;
   struct AtExitData **ae_p = &g_atexit;
 
-  while (ae)
-  {
-    if ((ae->func == func) && (ae->user_data == user_data))
-    {
+  while (ae) {
+    if ((ae->func == func) && (ae->user_data == user_data)) {
       *ae_p = ae->next;
       free(ae);
       return;
@@ -255,8 +247,7 @@ void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *use
 void KKE_kraken_atexit(void)
 {
   struct AtExitData *ae = g_atexit, *ae_next;
-  while (ae)
-  {
+  while (ae) {
     ae_next = ae->next;
 
     ae->func(ae->user_data);

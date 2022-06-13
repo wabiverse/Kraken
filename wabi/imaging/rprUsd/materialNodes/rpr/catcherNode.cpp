@@ -35,8 +35,8 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (in)(enable));
 class RprUsd_RprCatcherNode : public RprUsd_MaterialNode
 {
  public:
-  RprUsd_RprCatcherNode(bool *catcherToggle)
-    : m_catcherToggle(catcherToggle)
+
+  RprUsd_RprCatcherNode(bool *catcherToggle) : m_catcherToggle(catcherToggle)
   {
     // true by default
     *m_catcherToggle = true;
@@ -50,14 +50,11 @@ class RprUsd_RprCatcherNode : public RprUsd_MaterialNode
 
   bool SetInput(TfToken const &inputId, VtValue const &value) override
   {
-    if (inputId == _tokens->in)
-    {
+    if (inputId == _tokens->in) {
       m_output = value;
       return true;
-    } else if (inputId == _tokens->enable)
-    {
-      if (value.IsHolding<int>())
-      {
+    } else if (inputId == _tokens->enable) {
+      if (value.IsHolding<int>()) {
         *m_catcherToggle = value.UncheckedGet<int>() != 0;
         return true;
       }
@@ -94,6 +91,7 @@ class RprUsd_RprCatcherNode : public RprUsd_MaterialNode
   }
 
  private:
+
   bool *m_catcherToggle;
   VtValue m_output;
 };

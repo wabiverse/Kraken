@@ -43,17 +43,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiGLBlitCmds::HgiGLBlitCmds()
-  : HgiBlitCmds(),
-    _pushStack(0)
-{}
+HgiGLBlitCmds::HgiGLBlitCmds() : HgiBlitCmds(), _pushStack(0) {}
 
 HgiGLBlitCmds::~HgiGLBlitCmds() = default;
 
 void HgiGLBlitCmds::PushDebugGroup(const char *label)
 {
-  if (HgiGLDebugEnabled())
-  {
+  if (HgiGLDebugEnabled()) {
     _pushStack++;
     _ops.push_back(HgiGLOps::PushDebugGroup(label));
   }
@@ -61,8 +57,7 @@ void HgiGLBlitCmds::PushDebugGroup(const char *label)
 
 void HgiGLBlitCmds::PopDebugGroup()
 {
-  if (HgiGLDebugEnabled())
-  {
+  if (HgiGLDebugEnabled()) {
     _pushStack--;
     _ops.push_back(HgiGLOps::PopDebugGroup());
   }
@@ -115,8 +110,7 @@ void HgiGLBlitCmds::MemoryBarrier(HgiMemoryBarrier barrier)
 
 bool HgiGLBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 {
-  if (_ops.empty())
-  {
+  if (_ops.empty()) {
     return false;
   }
 

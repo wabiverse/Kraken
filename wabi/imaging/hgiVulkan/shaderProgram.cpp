@@ -33,7 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiVulkanShaderProgram::HgiVulkanShaderProgram(HgiVulkanDevice *device, HgiShaderProgramDesc const &desc)
+HgiVulkanShaderProgram::HgiVulkanShaderProgram(HgiVulkanDevice *device,
+                                               HgiShaderProgramDesc const &desc)
   : HgiShaderProgram(desc),
     _device(device),
     _inflightBits(0)
@@ -53,8 +54,7 @@ std::string const &HgiVulkanShaderProgram::GetCompileErrors()
 size_t HgiVulkanShaderProgram::GetByteSizeOfResource() const
 {
   size_t byteSize = 0;
-  for (HgiShaderFunctionHandle const &fn : _descriptor.shaderFunctions)
-  {
+  for (HgiShaderFunctionHandle const &fn : _descriptor.shaderFunctions) {
     byteSize += fn->GetByteSizeOfResource();
   }
   return byteSize;

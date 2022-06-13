@@ -53,8 +53,7 @@ static void PARSE_SIGNALS(std::string cmd)
 #endif
 
   /* Kill the KRAKEN process if recieved 'KRAKENKILL' from world. */
-  if (cmd == "KRAKENKILL")
-  {
+  if (cmd == "KRAKENKILL") {
     exit(KRAKEN_SUCCESS);
   }
 }
@@ -70,8 +69,7 @@ static void ServerRun(socket_t &sock)
    */
 
   KRAKENServerNotice("SERVER RUN").Send();
-  while (true)
-  {
+  while (true) {
     message_t push_notif;
     TF_UNUSED(sock.recv(push_notif, recv_flags::none));
     std::string cmd = push_notif.to_string();
@@ -94,8 +92,7 @@ eServerErrorCode ServerStart(int argc, char *argv[])
 
   int status = -1;
   int reconnects = 0;
-  while (status != SERVER_SUCCESS)
-  {
+  while (status != SERVER_SUCCESS) {
     server_port = server_port.substr(0, server_port.find_last_of(":"));
     server_port += ":" + to_string(KRAKEN_COMM_PORT_ALPHA + reconnects);
     status = zmq::zmq_bind(sock, server_port.c_str());

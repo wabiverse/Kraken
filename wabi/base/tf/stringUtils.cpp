@@ -112,18 +112,17 @@ double TfStringToDouble(const string &s)
 // return that minimum representable value and set *outOfRange to true (if
 // outOfRange is not NULL).
 template<class Int>
-static typename boost::enable_if<boost::is_signed<Int>, Int>::type _StringToNegative(const char *p,
-                                                                                     bool *outOfRange)
+static typename boost::enable_if<boost::is_signed<Int>, Int>::type _StringToNegative(
+  const char *p,
+  bool *outOfRange)
 {
   const Int M = std::numeric_limits<Int>::min();
   Int result = 0;
-  while (*p >= '0' && *p <= '9')
-  {
+  while (*p >= '0' && *p <= '9') {
     Int digit = (*p++ - '0');
     // If the new digit would exceed the range, bail.  The expression below
     // is equivalent to 'result < (M + digit) / 10', but it avoids division.
-    if (ARCH_UNLIKELY(result < ((M / 10) + (-digit < (M % 10)))))
-    {
+    if (ARCH_UNLIKELY(result < ((M / 10) + (-digit < (M % 10))))) {
       if (outOfRange)
         *outOfRange = true;
       return M;
@@ -140,19 +139,16 @@ static typename boost::enable_if<boost::is_signed<Int>, Int>::type _StringToNega
 // If the resulting value would be greater than the maximum representable value,
 // return that maximum representable value and set *outOfRange to true (if
 // outOfRange is not NULL).
-template<class Int>
-static Int _StringToPositive(const char *p, bool *outOfRange)
+template<class Int> static Int _StringToPositive(const char *p, bool *outOfRange)
 {
   const Int R = 10;
   const Int M = std::numeric_limits<Int>::max();
   Int result = 0;
-  while (*p >= '0' && *p <= '9')
-  {
+  while (*p >= '0' && *p <= '9') {
     Int digit = (*p++ - '0');
     // If the new digit would exceed the range, bail.  The expression below
     // is equivalent to 'result > (M - digit) / 10', but it avoids division.
-    if (ARCH_UNLIKELY(result > ((M / R) - (digit > (M % R)))))
-    {
+    if (ARCH_UNLIKELY(result > ((M / R) - (digit > (M % R))))) {
       if (outOfRange)
         *outOfRange = true;
       return M;
@@ -164,8 +160,7 @@ static Int _StringToPositive(const char *p, bool *outOfRange)
 
 long TfStringToLong(const char *p, bool *outOfRange)
 {
-  if (*p == '-')
-  {
+  if (*p == '-') {
     ++p;
     return _StringToNegative<long>(p, outOfRange);
   }
@@ -189,8 +184,7 @@ unsigned long TfStringToULong(const std::string &txt, bool *outOfRange)
 
 int64_t TfStringToInt64(const char *p, bool *outOfRange)
 {
-  if (*p == '-')
-  {
+  if (*p == '-') {
     ++p;
     return _StringToNegative<int64_t>(p, outOfRange);
   }
@@ -237,8 +231,7 @@ string TfStringToLower(const string &source)
   size_t length = source.length();
 
   lower.reserve(length);
-  for (size_t i = 0; i < length; i++)
-  {
+  for (size_t i = 0; i < length; i++) {
     lower += tolower(source[i]);
   }
 
@@ -251,8 +244,7 @@ string TfStringToUpper(const string &source)
   size_t length = source.length();
 
   upper.reserve(length);
-  for (size_t i = 0; i < length; i++)
-  {
+  for (size_t i = 0; i < length; i++) {
     upper += toupper(source[i]);
   }
 
@@ -261,8 +253,7 @@ string TfStringToUpper(const string &source)
 
 string TfStringCapitalize(const string &source)
 {
-  if (source.empty())
-  {
+  if (source.empty()) {
     return source;
   }
 
@@ -320,12 +311,10 @@ string TfGetBaseName(const string &fileName)
   // fileName was already basename, in which case we want to return the
   // string back.
 
-  if (result.string() == fileName)
-  {
+  if (result.string() == fileName) {
     const bool hasDriveLetter = fileName.find(":") != string::npos;
     const bool hasPathSeparator = i != string::npos;
-    if (hasDriveLetter || hasPathSeparator)
-    {
+    if (hasDriveLetter || hasPathSeparator) {
       return std::string();
     }
   }
@@ -372,16 +361,14 @@ string TfStringTrim(const string &s, const char *trimChars)
 
 string TfStringReplace(const string &source, const string &from, const string &to)
 {
-  if (from.empty() || from == to)
-  {
+  if (from.empty() || from == to) {
     return source;
   }
 
   string result = source;
   string::size_type pos = 0;
 
-  while ((pos = result.find(from, pos)) != string::npos)
-  {
+  while ((pos = result.find(from, pos)) != string::npos) {
     result.replace(pos, from.size(), to);
     pos += to.size();
   }
@@ -420,8 +407,7 @@ static inline void _TokenizeToSegments(string const &src,
   // A small amount of reservation seems to help.
   segments.reserve(8);
   char const *end = src.data() + src.size();
-  for (char const *c = src.data(); c < end; ++c)
-  {
+  for (char const *c = src.data(); c < end; ++c) {
     // skip delimiters
     if (IS_DELIMITER(*c))
       continue;
@@ -452,8 +438,7 @@ vector<string> TfStringSplit(string const &src, string const &separator)
   size_t from = 0;
   size_t pos = 0;
 
-  while (true)
-  {
+  while (true) {
     pos = src.find(separator, from);
     if (pos == string::npos)
       break;
@@ -496,8 +481,7 @@ static size_t _FindFirstOfNotEscaped(const string &source, const char *toFind, s
 {
   size_t pos = source.find_first_of(toFind, offset);
 
-  while (pos != 0 && pos != string::npos && source[pos - 1] == '\\')
-  {
+  while (pos != 0 && pos != string::npos && source[pos - 1] == '\\') {
     pos = source.find_first_of(toFind, pos + 1);
   }
 
@@ -511,8 +495,7 @@ vector<string> TfQuotedStringTokenize(const string &source, const char *delimite
   const char *quotes = "\"\'`";
   string token;
 
-  if (strpbrk(delimiters, quotes) != NULL)
-  {
+  if (strpbrk(delimiters, quotes) != NULL) {
     if (errors != NULL)
       *errors = "Cannot use quotes as delimiters.";
 
@@ -520,13 +503,11 @@ vector<string> TfQuotedStringTokenize(const string &source, const char *delimite
   }
 
   string quote;
-  for (size_t i = 0; i < source.length();)
-  {
+  for (size_t i = 0; i < source.length();) {
     // Eat leading delimiters.
     i = source.find_first_not_of(delimiters, i);
 
-    if (i == string::npos)
-    {
+    if (i == string::npos) {
       // Nothing left but delimiters.
       break;
     }
@@ -535,8 +516,7 @@ vector<string> TfQuotedStringTokenize(const string &source, const char *delimite
     token.erase();
 
     while ((quoteIndex = _FindFirstOfNotEscaped(source, quotes, i)) <
-           (delimIndex = source.find_first_of(delimiters, i)))
-    {
+           (delimIndex = source.find_first_of(delimiters, i))) {
 
       // Push the token from 'i' until the first quote.
       if (i < quoteIndex)
@@ -550,10 +530,8 @@ vector<string> TfQuotedStringTokenize(const string &source, const char *delimite
 
       // If we've reached the end of the string, then we are
       // missing an end-quote.
-      if (j == string::npos)
-      {
-        if (errors != NULL)
-        {
+      if (j == string::npos) {
+        if (errors != NULL) {
           *errors = TfStringPrintf("String is missing an end-quote (\'%s\'): %s",
                                    quote.c_str(),
                                    source.c_str());
@@ -585,8 +563,7 @@ vector<string> TfQuotedStringTokenize(const string &source, const char *delimite
 
     if (delimIndex == string::npos)
       break;
-    else
-    {
+    else {
       // Set up for next loop.
       i = delimIndex + 1;
     }
@@ -602,8 +579,7 @@ vector<string> TfMatchedStringTokenize(const string &source,
 {
   vector<string> resultVec;
 
-  if ((escapeCharacter == openDelimiter) || (escapeCharacter == closeDelimiter))
-  {
+  if ((escapeCharacter == openDelimiter) || (escapeCharacter == closeDelimiter)) {
     if (errors != NULL)
       *errors = "Escape character cannot be a delimiter.";
     return resultVec;
@@ -612,11 +588,10 @@ vector<string> TfMatchedStringTokenize(const string &source,
   // If a close delimiter appears before an open delimiter, and it's not
   // preceded by the escape character, we have mismatched delimiters.
   size_t closeIndex = source.find(closeDelimiter);
-  if ((closeIndex != string::npos) && ((closeIndex == 0) || (source[closeIndex - 1] != escapeCharacter)) &&
-      (closeIndex < source.find(openDelimiter)))
-  {
-    if (errors != NULL)
-    {
+  if ((closeIndex != string::npos) &&
+      ((closeIndex == 0) || (source[closeIndex - 1] != escapeCharacter)) &&
+      (closeIndex < source.find(openDelimiter))) {
+    if (errors != NULL) {
       *errors = TfStringPrintf("String has unmatched close delimiter ('%c', '%c'): %s",
                                openDelimiter,
                                closeDelimiter,
@@ -639,20 +614,16 @@ vector<string> TfMatchedStringTokenize(const string &source,
   size_t openCount, closeCount;
   size_t sourceSize = source.size();
 
-  while ((openIndex = source.find(openDelimiter, openIndex)) != string::npos)
-  {
+  while ((openIndex = source.find(openDelimiter, openIndex)) != string::npos) {
     openCount = 1;
     closeCount = 0;
     nextIndex = openIndex;
 
     string token;
-    while (closeCount != openCount)
-    {
+    while (closeCount != openCount) {
       nextIndex = source.find_first_of(specialChars, nextIndex + 1);
-      if (nextIndex == string::npos)
-      {
-        if (errors != NULL)
-        {
+      if (nextIndex == string::npos) {
+        if (errors != NULL) {
           *errors = TfStringPrintf("String has unmatched open delimiter ('%c', '%c'): %s",
                                    openDelimiter,
                                    closeDelimiter,
@@ -662,12 +633,10 @@ vector<string> TfMatchedStringTokenize(const string &source,
         return resultVec;
       }
 
-      if (source[nextIndex] == escapeCharacter)
-      {
+      if (source[nextIndex] == escapeCharacter) {
         // Get character immediately after the escape character.
         size_t index = nextIndex + 1;
-        if (index < sourceSize - 1)
-        {
+        if (index < sourceSize - 1) {
           // Add the substring to 'token'. We remove the escape
           // character but add the character immediately after it.
           token += source.substr(openIndex + 1, nextIndex - openIndex - 1) + source[index];
@@ -692,10 +661,8 @@ vector<string> TfMatchedStringTokenize(const string &source,
   // If a close delimiter appears after our last token, we have mismatched
   // delimiters.
   closeIndex = source.find(closeDelimiter, nextIndex + 1);
-  if ((closeIndex != string::npos) && (source[closeIndex - 1] != escapeCharacter))
-  {
-    if (errors != NULL)
-    {
+  if ((closeIndex != string::npos) && (source[closeIndex - 1] != escapeCharacter)) {
+    if (errors != NULL) {
       *errors = TfStringPrintf("String has unmatched close delimiter ('%c', '%c'): %s",
                                openDelimiter,
                                closeDelimiter,
@@ -723,8 +690,7 @@ namespace
   inline long AtoL(char const *&s)
   {
     long value = 0;
-    do
-    {
+    do {
       value = value * 10 + (*s++ - '0');
     } while (IsDigit(*s));
     return value;
@@ -737,10 +703,8 @@ static bool DictionaryLess(char const *l, char const *r)
   int caseCmp = 0;
   int leadingZerosCmp = 0;
 
-  while (*l && *r)
-  {
-    if (ARCH_UNLIKELY(IsDigit(*l) && IsDigit(*r)))
-    {
+  while (*l && *r) {
+    if (ARCH_UNLIKELY(IsDigit(*l) && IsDigit(*r))) {
       char const *oldL = l, *oldR = r;
       long lval = AtoL(l), rval = AtoL(r);
       if (lval != rval)
@@ -751,8 +715,7 @@ static bool DictionaryLess(char const *l, char const *r)
       continue;
     }
 
-    if (*l != *r)
-    {
+    if (*l != *r) {
       int lowL = Lower(*l), lowR = Lower(*r);
       if (lowL != lowR)
         return lowL < lowR;
@@ -831,14 +794,12 @@ std::string TfStringify(float val)
 
 bool TfDoubleToString(double val, char *buffer, int bufferSize, bool emitTrailingZero)
 {
-  if (bufferSize < 25)
-  {
+  if (bufferSize < 25) {
     return false;
   }
   using DSC = wabi_double_conversion::DoubleToStringConverter;
   int flags = DSC::NO_FLAGS;
-  if (emitTrailingZero)
-  {
+  if (emitTrailingZero) {
     flags = DSC::EMIT_TRAILING_DECIMAL_POINT | DSC::EMIT_TRAILING_ZERO_AFTER_POINT;
   }
   const DSC conv(flags,
@@ -878,15 +839,13 @@ std::ostream &operator<<(std::ostream &o, TfStreamDouble t)
   return o << buffer;
 }
 
-template<>
-bool TfUnstringify(const std::string &instring, bool *)
+template<> bool TfUnstringify(const std::string &instring, bool *)
 {
   return (strcmp(instring.c_str(), "true") == 0) || (strcmp(instring.c_str(), "1") == 0) ||
          (strcmp(instring.c_str(), "yes") == 0) || (strcmp(instring.c_str(), "on") == 0);
 }
 
-template<>
-std::string TfUnstringify(std::string const &s, bool *)
+template<> std::string TfUnstringify(std::string const &s, bool *)
 {
   return s;
 }
@@ -929,8 +888,7 @@ static unsigned char _HexToDecimal(const char c)
 
 void TfEscapeStringReplaceChar(const char **c, char **out)
 {
-  switch (*++(*c))
-  {
+  switch (*++(*c)) {
     default:
       *(*out)++ = **c;
       break;
@@ -961,8 +919,7 @@ void TfEscapeStringReplaceChar(const char **c, char **out)
     case 'x': {
       // Allow only up to 2 hex digits.
       unsigned char n = 0;
-      for (int nd = 0; isxdigit(*++(*c)) && nd != 2; ++nd)
-      {
+      for (int nd = 0; isxdigit(*++(*c)) && nd != 2; ++nd) {
         n = (n * 16) + _HexToDecimal(**c);
       }
       --(*c);
@@ -980,8 +937,7 @@ void TfEscapeStringReplaceChar(const char **c, char **out)
       // Allow only up to 3 octal digits.
       --(*c);
       unsigned char n = 0;
-      for (int nd = 0; _IsOctalDigit(*++(*c)) && nd != 3; ++nd)
-      {
+      for (int nd = 0; _IsOctalDigit(*++(*c)) && nd != 3; ++nd) {
         n = (n * 8) + _OctalToDecimal(**c);
       }
       --(*c);
@@ -999,10 +955,8 @@ std::string TfEscapeString(const std::string &in)
   std::unique_ptr<char, std::default_delete<char[]>> out(new char[in.size() + 1]);
   char *outp = out.get();
 
-  for (const char *c = in.c_str(); *c; ++c)
-  {
-    if (*c != '\\')
-    {
+  for (const char *c = in.c_str(); *c; ++c) {
+    if (*c != '\\') {
       *outp++ = *c;
       continue;
     }
@@ -1021,29 +975,24 @@ std::string TfMakeValidIdentifier(const std::string &in)
 {
   std::string result;
 
-  if (in.empty())
-  {
+  if (in.empty()) {
     result.push_back('_');
     return result;
   }
 
   result.reserve(in.size());
   char const *p = in.c_str();
-  if (!(('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z') || *p == '_'))
-  {
+  if (!(('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z') || *p == '_')) {
     result.push_back('_');
-  } else
-  {
+  } else {
     result.push_back(*p);
   }
 
-  for (++p; *p; ++p)
-  {
-    if (!(('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z') || ('0' <= *p && *p <= '9') || *p == '_'))
-    {
+  for (++p; *p; ++p) {
+    if (!(('a' <= *p && *p <= 'z') || ('A' <= *p && *p <= 'Z') || ('0' <= *p && *p <= '9') ||
+          *p == '_')) {
       result.push_back('_');
-    } else
-    {
+    } else {
       result.push_back(*p);
     }
   }

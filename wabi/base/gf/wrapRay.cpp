@@ -91,7 +91,10 @@ namespace
     return make_tuple(result, p1, p2, t1, t2);
   }
 
-  static tuple IntersectHelper1(const GfRay &self, const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &p2)
+  static tuple IntersectHelper1(const GfRay &self,
+                                const GfVec3d &p0,
+                                const GfVec3d &p1,
+                                const GfVec3d &p2)
   {
     double dist = 0;
     GfVec3d barycentricCoords(0);
@@ -129,7 +132,10 @@ namespace
     return make_tuple(result, enterDist, exitDist);
   }
 
-  static tuple IntersectHelper6(const GfRay &self, const GfVec3d &origin, const GfVec3d &axis, double radius)
+  static tuple IntersectHelper6(const GfRay &self,
+                                const GfVec3d &origin,
+                                const GfVec3d &axis,
+                                double radius)
   {
     double enter = 0, exit = 0;
     bool result = self.Intersect(origin, axis, radius, &enter, &exit);

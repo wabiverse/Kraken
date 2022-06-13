@@ -40,14 +40,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsCollisionAPI));
 
 /* virtual */
-UsdPhysicsCollisionAPI::~UsdPhysicsCollisionAPI()
-{}
+UsdPhysicsCollisionAPI::~UsdPhysicsCollisionAPI() {}
 
 /* static */
 UsdPhysicsCollisionAPI UsdPhysicsCollisionAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsCollisionAPI();
   }
@@ -70,8 +68,7 @@ bool UsdPhysicsCollisionAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 /* static */
 UsdPhysicsCollisionAPI UsdPhysicsCollisionAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdPhysicsCollisionAPI>())
-  {
+  if (prim.ApplyAPI<UsdPhysicsCollisionAPI>()) {
     return UsdPhysicsCollisionAPI(prim);
   }
   return UsdPhysicsCollisionAPI();
@@ -143,8 +140,9 @@ const TfTokenVector &UsdPhysicsCollisionAPI::GetSchemaAttributeNames(bool includ
   static TfTokenVector localNames = {
     UsdPhysicsTokens->physicsCollisionEnabled,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

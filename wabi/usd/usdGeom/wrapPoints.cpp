@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -58,7 +56,8 @@ namespace
 
   static UsdAttribute _CreateIdsAttr(UsdGeomPoints &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array), writeSparsely);
+    return self.CreateIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array),
+                              writeSparsely);
   }
 
   static std::string _Repr(const UsdGeomPoints &self)
@@ -91,7 +90,9 @@ void wrapUsdGeomPoints()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -102,7 +103,9 @@ void wrapUsdGeomPoints()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetIdsAttr", &This::GetIdsAttr)
-    .def("CreateIdsAttr", &_CreateIdsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateIdsAttr",
+         &_CreateIdsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("__repr__", ::_Repr);
 
@@ -140,14 +143,12 @@ namespace
     VtValue widthsAsVtValue = UsdPythonToSdfType(widths, SdfValueTypeNames->FloatArray);
 
     // Check Proper conversion to VtVec3fArray
-    if (!pointsAsVtValue.IsHolding<VtVec3fArray>())
-    {
+    if (!pointsAsVtValue.IsHolding<VtVec3fArray>()) {
       TF_CODING_ERROR("Improper value for 'points'");
       return object();
     }
 
-    if (!widthsAsVtValue.IsHolding<VtFloatArray>())
-    {
+    if (!widthsAsVtValue.IsHolding<VtFloatArray>()) {
       TF_CODING_ERROR("Improper value for 'widths'");
       return object();
     }
@@ -156,11 +157,9 @@ namespace
     VtVec3fArray pointsArray = pointsAsVtValue.UncheckedGet<VtVec3fArray>();
     VtFloatArray widthsArray = widthsAsVtValue.UncheckedGet<VtFloatArray>();
 
-    if (UsdGeomPoints::ComputeExtent(pointsArray, widthsArray, &extent))
-    {
+    if (UsdGeomPoints::ComputeExtent(pointsArray, widthsArray, &extent)) {
       return UsdVtValueToPython(VtValue(extent));
-    } else
-    {
+    } else {
       return object();
     }
   }
@@ -171,7 +170,9 @@ namespace
       .def("SetWidthsInterpolation", &UsdGeomPoints::SetWidthsInterpolation, arg("interpolation"))
 
       .def("ComputeExtent", &_ComputeExtent, (arg("points"), arg("widths")))
-      .def("GetPointCount", &UsdGeomPoints::GetPointCount, arg("timeCode") = UsdTimeCode::Default())
+      .def("GetPointCount",
+           &UsdGeomPoints::GetPointCount,
+           arg("timeCode") = UsdTimeCode::Default())
       .staticmethod("ComputeExtent")
 
       ;

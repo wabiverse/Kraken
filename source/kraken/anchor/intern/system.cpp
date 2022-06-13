@@ -57,19 +57,16 @@ eAnchorStatus AnchorSystem::init()
   m_windowManager = new AnchorWindowManager();
   m_eventManager = new AnchorEventManager();
 
-  if (m_windowManager && m_eventManager)
-  {
+  if (m_windowManager && m_eventManager) {
     return ANCHOR_SUCCESS;
-  } else
-  {
+  } else {
     return ANCHOR_FAILURE;
   }
 }
 
 eAnchorStatus AnchorSystem::exit()
 {
-  if (getFullScreen())
-  {
+  if (getFullScreen()) {
     endFullScreen();
   }
 
@@ -111,32 +108,28 @@ eAnchorStatus AnchorSystem::beginFullScreen(const ANCHOR_DisplaySetting &setting
 {
   eAnchorStatus success = ANCHOR_FAILURE;
   ANCHOR_ASSERT(m_windowManager);
-  if (m_displayManager)
-  {
-    if (!m_windowManager->getFullScreen())
-    {
-      m_displayManager->getCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay, m_preFullScreenSetting);
+  if (m_displayManager) {
+    if (!m_windowManager->getFullScreen()) {
+      m_displayManager->getCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
+                                                 m_preFullScreenSetting);
 
-      success = m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay, setting);
-      if (success == ANCHOR_FAILURE)
-      {
+      success = m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
+                                                           setting);
+      if (success == ANCHOR_FAILURE) {
         success = createFullScreenWindow((AnchorSystemWindow **)window,
                                          setting,
                                          stereoVisual,
                                          alphaBackground);
-        if (success == ANCHOR_FAILURE)
-        {
+        if (success == ANCHOR_FAILURE) {
           m_windowManager->beginFullScreen(*window, stereoVisual);
-        } else
-        {
+        } else {
           m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
                                                      m_preFullScreenSetting);
         }
       }
     }
   }
-  if (success == ANCHOR_FAILURE)
-  {
+  if (success == ANCHOR_FAILURE) {
     TF_CODING_ERROR("AnchorSystem::beginFullScreen(): could not enter full-screen mode\n");
   }
   return success;
@@ -146,14 +139,12 @@ eAnchorStatus AnchorSystem::endFullScreen(void)
 {
   eAnchorStatus success = ANCHOR_FAILURE;
   ANCHOR_ASSERT(m_windowManager);
-  if (m_windowManager->getFullScreen())
-  {
+  if (m_windowManager->getFullScreen()) {
     success = m_windowManager->endFullScreen();
     ANCHOR_ASSERT(m_displayManager);
     success = m_displayManager->setCurrentDisplaySetting(AnchorDisplayManager::kMainDisplay,
                                                          m_preFullScreenSetting);
-  } else
-  {
+  } else {
     success = ANCHOR_FAILURE;
   }
   return success;
@@ -162,11 +153,9 @@ eAnchorStatus AnchorSystem::endFullScreen(void)
 bool AnchorSystem::getFullScreen(void)
 {
   bool fullScreen;
-  if (m_windowManager)
-  {
+  if (m_windowManager) {
     fullScreen = m_windowManager->getFullScreen();
-  } else
-  {
+  } else {
     fullScreen = false;
   }
   return fullScreen;
@@ -174,8 +163,7 @@ bool AnchorSystem::getFullScreen(void)
 
 void AnchorSystem::dispatchEvents()
 {
-  if (m_eventManager)
-  {
+  if (m_eventManager) {
     m_eventManager->dispatchEvents();
   }
 }
@@ -188,11 +176,9 @@ bool AnchorSystem::validWindow(AnchorISystemWindow *window)
 eAnchorStatus AnchorSystem::addEventConsumer(AnchorIEventConsumer *consumer)
 {
   eAnchorStatus success;
-  if (m_eventManager)
-  {
+  if (m_eventManager) {
     success = m_eventManager->addConsumer(consumer);
-  } else
-  {
+  } else {
     success = ANCHOR_FAILURE;
   }
   return success;
@@ -201,11 +187,9 @@ eAnchorStatus AnchorSystem::addEventConsumer(AnchorIEventConsumer *consumer)
 eAnchorStatus AnchorSystem::removeEventConsumer(AnchorIEventConsumer *consumer)
 {
   eAnchorStatus success;
-  if (m_eventManager)
-  {
+  if (m_eventManager) {
     success = m_eventManager->removeConsumer(consumer);
-  } else
-  {
+  } else {
     success = ANCHOR_FAILURE;
   }
   return success;
@@ -214,11 +198,9 @@ eAnchorStatus AnchorSystem::removeEventConsumer(AnchorIEventConsumer *consumer)
 eAnchorStatus AnchorSystem::pushEvent(AnchorIEvent *event)
 {
   eAnchorStatus success;
-  if (m_eventManager)
-  {
+  if (m_eventManager) {
     success = m_eventManager->pushEvent(event);
-  } else
-  {
+  } else {
     success = ANCHOR_FAILURE;
   }
   return success;
@@ -229,8 +211,7 @@ eAnchorStatus AnchorSystem::getModifierKeyState(eAnchorModifierKeyMask mask, boo
   AnchorModifierKeys keys;
   // Get the state of all modifier keys
   eAnchorStatus success = getModifierKeys(keys);
-  if (success)
-  {
+  if (success) {
     // Isolate the state of the key requested
     isDown = keys.get(mask);
   }
@@ -242,8 +223,7 @@ eAnchorStatus AnchorSystem::getButtonState(eAnchorButtonMask mask, bool &isDown)
   AnchorButtons buttons;
   // Get the state of all mouse buttons
   eAnchorStatus success = getButtons(buttons);
-  if (success)
-  {
+  if (success) {
     // Isolate the state of the mouse button requested
     isDown = buttons.get(mask);
   }

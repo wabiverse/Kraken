@@ -143,36 +143,45 @@ static void _ConvertVulkanTextureToOpenGL(HgiVulkan *hgiVulkan,
   blitCmds->CopyTextureGpuToCpu(readBackOp);
   hgiVulkan->SubmitCmds(blitCmds.get(), HgiSubmitWaitTypeWaitUntilCompleted);
 
-  if (*glDest == 0)
-  {
+  if (*glDest == 0) {
     glGenTextures(1, glDest);
     glBindTexture(GL_TEXTURE_2D, *glDest);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  } else
-  {
+  } else {
     glBindTexture(GL_TEXTURE_2D, *glDest);
   }
 
   const int32_t width = texDesc.dimensions[0];
   const int32_t height = texDesc.dimensions[1];
 
-  if (texDesc.format == HgiFormatFloat32Vec4)
-  {
+  if (texDesc.format == HgiFormatFloat32Vec4) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, texels.data());
-  } else if (texDesc.format == HgiFormatFloat16Vec4)
-  {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_HALF_FLOAT, texels.data());
-  } else if (texDesc.format == HgiFormatUNorm8Vec4)
-  {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texels.data());
-  } else if (texDesc.format == HgiFormatFloat32)
-  {
+  } else if (texDesc.format == HgiFormatFloat16Vec4) {
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGBA16F,
+                 width,
+                 height,
+                 0,
+                 GL_RGBA,
+                 GL_HALF_FLOAT,
+                 texels.data());
+  } else if (texDesc.format == HgiFormatUNorm8Vec4) {
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGBA8,
+                 width,
+                 height,
+                 0,
+                 GL_RGBA,
+                 GL_UNSIGNED_BYTE,
+                 texels.data());
+  } else if (texDesc.format == HgiFormatFloat32) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, texels.data());
-  } else
-  {
+  } else {
     TF_WARN("Unsupported texture format for Vulkan-GL interop");
   }
 
@@ -207,12 +216,10 @@ HgiInteropVulkan::~HgiInteropVulkan()
   glDeleteProgram(_prgNoDepth);
   glDeleteProgram(_prgDepth);
   glDeleteBuffers(1, &_vertexBuffer);
-  if (_glColorTex)
-  {
+  if (_glColorTex) {
     glDeleteTextures(1, &_glColorTex);
   }
-  if (_glDepthTex)
-  {
+  if (_glDepthTex) {
     glDeleteTextures(1, &_glDepthTex);
   }
   TF_VERIFY(glGetError() == GL_NO_ERROR);
@@ -223,8 +230,7 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
                                           VtValue const &framebuffer,
                                           GfVec4i const &compRegion)
 {
-  if (!ARCH_UNLIKELY(color))
-  {
+  if (!ARCH_UNLIKELY(color)) {
     TF_WARN("No valid color texture provided");
     return;
   }
@@ -235,15 +241,12 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   GLint restoreDrawFramebuffer = 0;
   bool doRestoreDrawFramebuffer = false;
 
-  if (!framebuffer.IsEmpty())
-  {
-    if (framebuffer.IsHolding<uint32_t>())
-    {
+  if (!framebuffer.IsEmpty()) {
+    if (framebuffer.IsHolding<uint32_t>()) {
       glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &restoreDrawFramebuffer);
       doRestoreDrawFramebuffer = true;
       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.UncheckedGet<uint32_t>());
-    } else
-    {
+    } else {
       TF_CODING_ERROR("dstFramebuffer must hold uint32_t when targeting OpenGL");
     }
   }
@@ -252,15 +255,13 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   _ConvertVulkanTextureToOpenGL(_hgiVulkan, color, &_glColorTex);
   _ConvertVulkanTextureToOpenGL(_hgiVulkan, depth, &_glDepthTex);
 
-  if (!ARCH_UNLIKELY(_glColorTex))
-  {
+  if (!ARCH_UNLIKELY(_glColorTex)) {
     TF_CODING_ERROR("A valid color texture handle is required.\n");
     return;
   }
 
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug))
-  {
+  if (GARCH_GLAPI_HAS(KHR_debug)) {
     glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, "Interop");
   }
 #endif
@@ -280,8 +281,7 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   }
 
   // Depth is optional
-  if (_glDepthTex)
-  {
+  if (_glDepthTex) {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _glDepthTex);
     const GLint loc = glGetUniformLocation(prg, "depthIn");
@@ -314,15 +314,13 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   glGetBooleanv(GL_DEPTH_WRITEMASK, &restoreDepthMask);
   GLint restoreDepthFunc;
   glGetIntegerv(GL_DEPTH_FUNC, &restoreDepthFunc);
-  if (_glDepthTex)
-  {
+  if (_glDepthTex) {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     // Note: Use LEQUAL and not LESS to ensure that fragments with only
     // translucent contribution (that don't update depth) are composited.
     glDepthFunc(GL_LEQUAL);
-  } else
-  {
+  } else {
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
   }
@@ -364,25 +362,24 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   glDisableVertexAttribArray(locUv);
   glBindBuffer(GL_ARRAY_BUFFER, restoreArrayBuffer);
 
-  if (!blendEnabled)
-  {
+  if (!blendEnabled) {
     glDisable(GL_BLEND);
   }
-  glBlendFuncSeparate(restoreColorSrcFnOp, restoreColorDstFnOp, restoreAlphaSrcFnOp, restoreAlphaDstFnOp);
+  glBlendFuncSeparate(restoreColorSrcFnOp,
+                      restoreColorDstFnOp,
+                      restoreAlphaSrcFnOp,
+                      restoreAlphaDstFnOp);
   glBlendEquationSeparate(restoreColorOp, restoreAlphaOp);
 
-  if (!restoreDepthEnabled)
-  {
+  if (!restoreDepthEnabled) {
     glDisable(GL_DEPTH_TEST);
-  } else
-  {
+  } else {
     glEnable(GL_DEPTH_TEST);
   }
   glDepthMask(restoreDepthMask);
   glDepthFunc(restoreDepthFunc);
 
-  if (restoreAlphaToCoverage)
-  {
+  if (restoreAlphaToCoverage) {
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   }
   glViewport(restoreVp[0], restoreVp[1], restoreVp[2], restoreVp[3]);
@@ -395,16 +392,14 @@ void HgiInteropVulkan::CompositeToInterop(HgiTextureHandle const &color,
   glBindTexture(GL_TEXTURE_2D, 0);
 
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug))
-  {
+  if (GARCH_GLAPI_HAS(KHR_debug)) {
     glPopDebugGroup();
   }
 #endif
 
   glActiveTexture(restoreActiveTexture);
 
-  if (doRestoreDrawFramebuffer)
-  {
+  if (doRestoreDrawFramebuffer) {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, restoreDrawFramebuffer);
   }
 

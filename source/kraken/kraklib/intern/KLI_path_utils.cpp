@@ -86,16 +86,12 @@ const char *KLI_getenv(const char *env)
    * reserve one more character for the zero terminator. */
   static wchar_t buffer[32768];
   wchar_t *env_16 = alloc_utf16_from_8(env, 0);
-  if (env_16)
-  {
-    if (GetEnvironmentVariableW(env_16, buffer, TfArraySize(buffer)))
-    {
+  if (env_16) {
+    if (GetEnvironmentVariableW(env_16, buffer, TfArraySize(buffer))) {
       char *res_utf8 = alloc_utf_8_from_16(buffer, 0);
       /* Make sure the result is valid, and will fit into our temporary storage buffer. */
-      if (res_utf8)
-      {
-        if (strlen(res_utf8) + 1 < sizeof(buffer))
-        {
+      if (res_utf8) {
+        if (strlen(res_utf8) + 1 < sizeof(buffer)) {
           /* We are re-using the utf16 buffer here, since allocating a second static buffer to
            * contain the UTF-8 version to return would be wasteful. */
           memcpy(buffer, res_utf8, strlen(res_utf8) + 1);
@@ -141,8 +137,7 @@ void KLI_join_dirfile(char *__restrict dst,
   /* args can't match */
   KLI_assert((dst != dir) && (dst != file));
 
-  if (dirlen == maxlen)
-  {
+  if (dirlen == maxlen) {
     memcpy(dst, dir, dirlen);
     dst[dirlen - 1] = '\0';
     return; /* dir fills the path */
@@ -150,20 +145,17 @@ void KLI_join_dirfile(char *__restrict dst,
 
   memcpy(dst, dir, dirlen + 1);
 
-  if (dirlen + 1 >= maxlen)
-  {
+  if (dirlen + 1 >= maxlen) {
     return; /* fills the path */
   }
 
   /* inline KLI_path_slash_ensure */
-  if ((dirlen > 0) && !((dst[dirlen - 1] != SEP) && (dst[dirlen - 1] != ALTSEP)))
-  {
+  if ((dirlen > 0) && !((dst[dirlen - 1] != SEP) && (dst[dirlen - 1] != ALTSEP))) {
     dst[dirlen++] = SEP;
     dst[dirlen] = '\0';
   }
 
-  if (dirlen >= maxlen)
-  {
+  if (dirlen >= maxlen) {
     return; /* fills the path */
   }
 
@@ -177,30 +169,25 @@ size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *pat
 #ifdef DEBUG_STRSIZE
   memset(dst, 0xff, sizeof(*dst) * dst_len);
 #endif
-  if (ARCH_UNLIKELY(dst_len == 0))
-  {
+  if (ARCH_UNLIKELY(dst_len == 0)) {
     return 0;
   }
   const size_t dst_last = dst_len - 1;
   size_t ofs = KLI_strncpy_rlen(dst, path, dst_len);
 
-  if (ofs == dst_last)
-  {
+  if (ofs == dst_last) {
     return ofs;
   }
 
   /* remove trailing slashes, unless there are _only_ trailing slashes
    * (allow "//" as the first argument). */
   bool has_trailing_slash = false;
-  if (ofs != 0)
-  {
+  if (ofs != 0) {
     size_t len = ofs;
-    while ((len != 0) && ((path[len - 1] == SEP) || (path[len - 1] == ALTSEP)))
-    {
+    while ((len != 0) && ((path[len - 1] == SEP) || (path[len - 1] == ALTSEP))) {
       len -= 1;
     }
-    if (len != 0)
-    {
+    if (len != 0) {
       ofs = len;
     }
     has_trailing_slash = (path[len] != '\0');
@@ -208,56 +195,45 @@ size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *pat
 
   va_list args;
   va_start(args, path);
-  while ((path = (const char *)va_arg(args, const char *)))
-  {
+  while ((path = (const char *)va_arg(args, const char *))) {
     has_trailing_slash = false;
     const char *path_init = path;
-    while ((path[0] == SEP) || (path[0] == ALTSEP))
-    {
+    while ((path[0] == SEP) || (path[0] == ALTSEP)) {
       path++;
     }
     size_t len = strlen(path);
-    if (len != 0)
-    {
-      while ((len != 0) && ((path[len - 1] == SEP) || path[len - 1] == ALTSEP))
-      {
+    if (len != 0) {
+      while ((len != 0) && ((path[len - 1] == SEP) || path[len - 1] == ALTSEP)) {
         len -= 1;
       }
 
-      if (len != 0)
-      {
+      if (len != 0) {
         /* the very first path may have a slash at the end */
-        if (ofs && ((dst[ofs - 1] != SEP) || (dst[ofs - 1] != ALTSEP)))
-        {
+        if (ofs && ((dst[ofs - 1] != SEP) || (dst[ofs - 1] != ALTSEP))) {
           dst[ofs++] = SEP;
-          if (ofs == dst_last)
-          {
+          if (ofs == dst_last) {
             break;
           }
         }
         has_trailing_slash = (path[len] != '\0');
-        if (ofs + len >= dst_last)
-        {
+        if (ofs + len >= dst_last) {
           len = dst_last - ofs;
         }
         memcpy(&dst[ofs], path, len);
         ofs += len;
-        if (ofs == dst_last)
-        {
+        if (ofs == dst_last) {
           break;
         }
       }
-    } else
-    {
+    } else {
       has_trailing_slash = (path_init != path);
     }
   }
   va_end(args);
 
-  if (has_trailing_slash)
-  {
-    if ((ofs != dst_last) && (ofs != 0) && ((dst[ofs - 1] == SEP) || (dst[ofs - 1] == ALTSEP) == 0))
-    {
+  if (has_trailing_slash) {
+    if ((ofs != dst_last) && (ofs != 0) &&
+        ((dst[ofs - 1] == SEP) || (dst[ofs - 1] == ALTSEP) == 0)) {
       dst[ofs++] = SEP;
     }
   }
@@ -291,10 +267,8 @@ bool KLI_path_is_unc(const char *name)
  * If the path is not a UNC path, return 0 */
 static int KLI_path_unc_prefix_len(const char *path)
 {
-  if (KLI_path_is_unc(path))
-  {
-    if ((path[2] == '?') && (path[3] == '\\'))
-    {
+  if (KLI_path_is_unc(path)) {
+    if ((path[2] == '?') && (path[3] == '\\')) {
       /* we assume long UNC path like \\?\server\share\folder etc... */
       return 4;
     }
@@ -332,10 +306,8 @@ bool KLI_path_extension_check_n(const char *str, ...)
 
   va_start(args, str);
 
-  while ((ext = (const char *)va_arg(args, void *)))
-  {
-    if (path_extension_check_ex(str, str_len, ext, strlen(ext)))
-    {
+  while ((ext = (const char *)va_arg(args, void *))) {
+    if (path_extension_check_ex(str, str_len, ext, strlen(ext))) {
       ret = true;
       break;
     }
@@ -352,10 +324,8 @@ bool KLI_path_extension_check_array(const std::string &str, const char **ext_arr
   const size_t str_len = str.length();
   int i = 0;
 
-  while (ext_array[i])
-  {
-    if (path_extension_check_ex(str.c_str(), str_len, ext_array[i], strlen(ext_array[i])))
-    {
+  while (ext_array[i]) {
+    if (path_extension_check_ex(str.c_str(), str_len, ext_array[i], strlen(ext_array[i]))) {
       return true;
     }
 
@@ -372,7 +342,11 @@ bool KLI_path_extension_check_array(const std::string &str, const char **ext_arr
  * - Won't create any directories.
  * - Doesn't use CWD, or deal with relative paths.
  * - Only fill's in @a dir and @a file when they are non NULL. */
-void KLI_split_dirfile(const char *string, char *dir, char *file, const size_t dirlen, const size_t filelen)
+void KLI_split_dirfile(const char *string,
+                       char *dir,
+                       char *file,
+                       const size_t dirlen,
+                       const size_t filelen)
 {
 #ifdef DEBUG_STRSIZE
   memset(dir, 0xff, sizeof(*dir) * dirlen);
@@ -381,20 +355,16 @@ void KLI_split_dirfile(const char *string, char *dir, char *file, const size_t d
   const char *lslash_str = KLI_path_slash_rfind(string);
   const size_t lslash = lslash_str ? (size_t)(lslash_str - string) + 1 : 0;
 
-  if (dir)
-  {
-    if (lslash)
-    {
+  if (dir) {
+    if (lslash) {
       /* +1 to include the slash and the last char */
       KLI_strncpy(dir, string, MIN2(dirlen, lslash + 1));
-    } else
-    {
+    } else {
       dir[0] = '\0';
     }
   }
 
-  if (file)
-  {
+  if (file) {
     KLI_strncpy(file, string + lslash, filelen);
   }
 }
@@ -421,14 +391,12 @@ void KLI_path_append(char *__restrict dst, const size_t maxlen, const char *__re
   size_t dirlen = KLI_strnlen(dst, maxlen);
 
   /* inline KLI_path_slash_ensure */
-  if ((dirlen > 0) && (dst[dirlen - 1] != SEP))
-  {
+  if ((dirlen > 0) && (dst[dirlen - 1] != SEP)) {
     dst[dirlen++] = SEP;
     dst[dirlen] = '\0';
   }
 
-  if (dirlen >= maxlen)
-  {
+  if (dirlen >= maxlen) {
     return; /* fills the path */
   }
 
@@ -454,8 +422,7 @@ bool KLI_path_abs(char *path, const char *basepath)
 #ifdef WIN32
 
   /* without this: "" --> "C:\" */
-  if (*path == '\0')
-  {
+  if (*path == '\0') {
     return wasrelative;
   }
 
@@ -463,18 +430,15 @@ bool KLI_path_abs(char *path, const char *basepath)
    * blend file as a lib main - we are basically checking for the case that a
    * UNIX root '/' is passed.
    */
-  if (!wasrelative && !KLI_path_is_abs(path))
-  {
+  if (!wasrelative && !KLI_path_is_abs(path)) {
     char *p = path;
     KLI_windows_get_default_root_dir(tmp);
     /* Get rid of the slashes at the beginning of the path. */
-    while ((*p == '\\') || (*p == '/'))
-    {
+    while ((*p == '\\') || (*p == '/')) {
       p++;
     }
     strcat(tmp, p);
-  } else
-  {
+  } else {
     KLI_strncpy(tmp, path, FILE_MAX);
   }
 #else
@@ -487,8 +451,7 @@ bool KLI_path_abs(char *path, const char *basepath)
    * Add a `/` prefix and lowercase the drive-letter, remove the `:`.
    * `C:\foo.JPG` -> `/c/foo.JPG` */
 
-  if (isalpha(tmp[0]) && (tmp[1] == ':') && ELEM(tmp[2], '\\', '/'))
-  {
+  if (isalpha(tmp[0]) && (tmp[1] == ':') && ELEM(tmp[2], '\\', '/')) {
     tmp[1] = tolower(tmp[0]); /* Replace ':' with drive-letter. */
     tmp[0] = '/';
     /* `\` the slash will be converted later. */
@@ -509,8 +472,7 @@ bool KLI_path_abs(char *path, const char *basepath)
 
   /* Paths starting with // will get the blend file as their base,
    * this isn't standard in any os but is used in blender all over the place */
-  if (wasrelative)
-  {
+  if (wasrelative) {
     const char *lslash;
     KLI_strncpy(base, basepath, sizeof(base));
 
@@ -519,23 +481,20 @@ bool KLI_path_abs(char *path, const char *basepath)
     lslash = KLI_path_slash_rfind(base);
     KLI_str_replace_char(base + KLI_path_unc_prefix_len(base), '\\', '/');
 
-    if (lslash)
-    {
+    if (lslash) {
       /* length up to and including last "/" */
       const int baselen = (int)(lslash - base) + 1;
       /* use path for temp storage here, we copy back over it right away */
       KLI_strncpy(path, tmp + 2, FILE_MAX); /* strip "//" */
 
-      memcpy(tmp, base, baselen);                              /* prefix with base up to last "/" */
+      memcpy(tmp, base, baselen); /* prefix with base up to last "/" */
       KLI_strncpy(tmp + baselen, path, sizeof(tmp) - baselen); /* append path after "//" */
       KLI_strncpy(path, tmp, FILE_MAX);                        /* return as result */
-    } else
-    {
+    } else {
       /* base doesn't seem to be a directory--ignore it and just strip "//" prefix on path */
       KLI_strncpy(path, tmp + 2, FILE_MAX);
     }
-  } else
-  {
+  } else {
     /* base ignored */
     KLI_strncpy(path, tmp, FILE_MAX);
   }
@@ -568,15 +527,11 @@ void KLI_path_normalize(const char *relabase, char *path)
 {
   ptrdiff_t a;
   char *start, *eind;
-  if (relabase)
-  {
+  if (relabase) {
     KLI_path_abs(path, relabase);
-  } else
-  {
-    if (path[0] == '/' && path[1] == '/')
-    {
-      if (path[2] == '\0')
-      {
+  } else {
+    if (path[0] == '/' && path[1] == '/') {
+      if (path[2] == '\0') {
         return; /* path is "//" - can't clean it */
       }
       path = path + 2; /* leave the initial "//" untouched */
@@ -592,55 +547,44 @@ void KLI_path_normalize(const char *relabase, char *path)
    */
 
 #ifdef WIN32
-  while ((start = strstr(path, "\\..\\")))
-  {
+  while ((start = strstr(path, "\\..\\"))) {
     eind = start + strlen("\\..\\") - 1;
     a = start - path - 1;
-    while (a > 0)
-    {
-      if (path[a] == '\\')
-      {
+    while (a > 0) {
+      if (path[a] == '\\') {
         break;
       }
       a--;
     }
-    if (a < 0)
-    {
+    if (a < 0) {
       break;
-    } else
-    {
+    } else {
       memmove(path + a, eind, strlen(eind) + 1);
     }
   }
 
-  while ((start = strstr(path, "\\.\\")))
-  {
+  while ((start = strstr(path, "\\.\\"))) {
     eind = start + strlen("\\.\\") - 1;
     memmove(start, eind, strlen(eind) + 1);
   }
 
   /* remove two consecutive backslashes, but skip the UNC prefix,
    * which needs to be preserved */
-  while ((start = strstr(path + KLI_path_unc_prefix_len(path), "\\\\")))
-  {
+  while ((start = strstr(path + KLI_path_unc_prefix_len(path), "\\\\"))) {
     eind = start + strlen("\\\\") - 1;
     memmove(start, eind, strlen(eind) + 1);
   }
 #else
-  while ((start = strstr(path, "/../")))
-  {
+  while ((start = strstr(path, "/../"))) {
     a = start - path - 1;
-    if (a > 0)
-    {
+    if (a > 0) {
       /* <prefix>/<parent>/../<postfix> => <prefix>/<postfix> */
       eind = start + (4 - 1) /* strlen("/../") - 1 */; /* strip "/.." and keep last "/" */
-      while (a > 0 && path[a] != '/')
-      { /* find start of <parent> */
+      while (a > 0 && path[a] != '/') {                /* find start of <parent> */
         a--;
       }
       memmove(path + a, eind, strlen(eind) + 1);
-    } else
-    {
+    } else {
       /* support for odd paths: eg /../home/me --> /home/me
        * this is a valid path in blender but we can't handle this the usual way below
        * simply strip this prefix then evaluate the path as usual.
@@ -654,14 +598,12 @@ void KLI_path_normalize(const char *relabase, char *path)
     }
   }
 
-  while ((start = strstr(path, "/./")))
-  {
+  while ((start = strstr(path, "/./"))) {
     eind = start + (3 - 1) /* strlen("/./") - 1 */;
     memmove(start, eind, strlen(eind) + 1);
   }
 
-  while ((start = strstr(path, "//")))
-  {
+  while ((start = strstr(path, "//"))) {
     eind = start + (2 - 1) /* strlen("//") - 1 */;
     memmove(start, eind, strlen(eind) + 1);
   }
@@ -680,8 +622,7 @@ bool KLI_path_parent_dir(char *path)
   KLI_join_dirfile(tmp, sizeof(tmp), path, parent_dir);
   KLI_path_normalize(NULL, tmp); /* does all the work of normalizing the path for us */
 
-  if (!KLI_path_extension_check(tmp, parent_dir))
-  {
+  if (!KLI_path_extension_check(tmp, parent_dir)) {
     strcpy(path, tmp); /* We assume pardir is always shorter... */
     return true;
   }
@@ -698,8 +639,7 @@ bool KLI_path_parent_dir_until_exists(char *dir)
   bool valid_path = true;
 
   /* Loop as long as cur path is not a dir, and we can get a parent path. */
-  while ((KLI_access(dir, R_OK) != 0) && (valid_path = KLI_path_parent_dir(dir)))
-  {
+  while ((KLI_access(dir, R_OK) != 0) && (valid_path = KLI_path_parent_dir(dir))) {
     /* pass */
   }
   return (valid_path && dir[0]);
@@ -722,21 +662,17 @@ bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *na
 #endif
 
   path = KLI_getenv("PATH");
-  if (path)
-  {
+  if (path) {
     char filename[FILE_MAX];
     const char *temp;
 
-    do
-    {
+    do {
       temp = strchr(path, separator);
-      if (temp)
-      {
+      if (temp) {
         memcpy(filename, path, temp - path);
         filename[temp - path] = 0;
         path = temp + 1;
-      } else
-      {
+      } else {
         KLI_strncpy(filename, path, sizeof(filename));
       }
 
@@ -747,8 +683,7 @@ bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *na
 #else
         KLI_exists(filename)
 #endif
-      )
-      {
+      ) {
         KLI_strncpy(fullname, filename, maxlen);
         retval = true;
         break;
@@ -756,8 +691,7 @@ bool KLI_path_program_search(char *fullname, const size_t maxlen, const char *na
     } while (temp);
   }
 
-  if (retval == false)
-  {
+  if (retval == false) {
     *fullname = '\0';
   }
 
@@ -781,8 +715,7 @@ const char *KLI_path_basename(const char *path)
 int KLI_path_slash_ensure(char *string)
 {
   int len = strlen(string);
-  if (len == 0 || string[len - 1] != SEP)
-  {
+  if (len == 0 || string[len - 1] != SEP) {
     string[len] = SEP;
     string[len + 1] = '\0';
     return len + 1;
@@ -797,12 +730,10 @@ const char *KLI_path_slash_rfind(const char *string)
   const char *const lfslash = strrchr(string, '/');
   const char *const lbslash = strrchr(string, '\\');
 
-  if (!lfslash)
-  {
+  if (!lfslash) {
     return lbslash;
   }
-  if (!lbslash)
-  {
+  if (!lbslash) {
     return lfslash;
   }
 
@@ -814,14 +745,11 @@ const char *KLI_path_slash_rfind(const char *string)
 void KLI_path_slash_rstrip(char *string)
 {
   int len = strlen(string);
-  while (len)
-  {
-    if (string[len - 1] == SEP)
-    {
+  while (len) {
+    if (string[len - 1] == SEP) {
       string[len - 1] = '\0';
       len--;
-    } else
-    {
+    } else {
       break;
     }
   }
@@ -839,13 +767,11 @@ bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen)
   fs::file_status type;
 
   type = KLI_type(name);
-  if (KLI_exists(name) || KLI_ISDIR(type))
-  {
+  if (KLI_exists(name) || KLI_ISDIR(type)) {
     /* typically 3-5, ".EXE", ".BAT"... etc */
     const int ext_max = 12;
     const char *ext = KLI_getenv("PATHEXT");
-    if (ext)
-    {
+    if (ext) {
       const int name_len = strlen(name);
       char *filename = (char *)alloca(name_len + ext_max);
       char *filename_ext;
@@ -855,20 +781,17 @@ bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen)
       memcpy(filename, name, name_len);
       filename_ext = filename + name_len;
 
-      do
-      {
+      do {
         int ext_len;
         ext_next = strchr(ext, ';');
         ext_len = ext_next ? ((ext_next++) - ext) : strlen(ext);
 
-        if (ARCH_LIKELY(ext_len < ext_max))
-        {
+        if (ARCH_LIKELY(ext_len < ext_max)) {
           memcpy(filename_ext, ext, ext_len);
           filename_ext[ext_len] = '\0';
 
           type = KLI_type(filename);
-          if (KLI_exists(name) && (!KLI_ISDIR(type)))
-          {
+          if (KLI_exists(name) && (!KLI_ISDIR(type))) {
             retval = true;
             KLI_strncpy(name, filename, maxlen);
             break;
@@ -876,8 +799,7 @@ bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen)
         }
       } while ((ext = ext_next));
     }
-  } else
-  {
+  } else {
     retval = true;
   }
 

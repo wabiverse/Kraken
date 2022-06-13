@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (SkelBindingAPI));
 
 /* virtual */
-UsdSkelBindingAPI::~UsdSkelBindingAPI()
-{}
+UsdSkelBindingAPI::~UsdSkelBindingAPI() {}
 
 /* static */
 UsdSkelBindingAPI UsdSkelBindingAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelBindingAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdSkelBindingAPI::GetSchemaKind() const
 /* static */
 UsdSkelBindingAPI UsdSkelBindingAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdSkelBindingAPI>())
-  {
+  if (prim.ApplyAPI<UsdSkelBindingAPI>()) {
     return UsdSkelBindingAPI(prim);
   }
   return UsdSkelBindingAPI();
@@ -118,7 +115,8 @@ UsdAttribute UsdSkelBindingAPI::GetJointsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->skelJoints);
 }
 
-UsdAttribute UsdSkelBindingAPI::CreateJointsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelBindingAPI::CreateJointsAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->skelJoints,
                                     SdfValueTypeNames->TokenArray,
@@ -133,7 +131,8 @@ UsdAttribute UsdSkelBindingAPI::GetJointIndicesAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->primvarsSkelJointIndices);
 }
 
-UsdAttribute UsdSkelBindingAPI::CreateJointIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelBindingAPI::CreateJointIndicesAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->primvarsSkelJointIndices,
                                     SdfValueTypeNames->IntArray,
@@ -148,7 +147,8 @@ UsdAttribute UsdSkelBindingAPI::GetJointWeightsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->primvarsSkelJointWeights);
 }
 
-UsdAttribute UsdSkelBindingAPI::CreateJointWeightsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelBindingAPI::CreateJointWeightsAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->primvarsSkelJointWeights,
                                     SdfValueTypeNames->FloatArray,
@@ -163,7 +163,8 @@ UsdAttribute UsdSkelBindingAPI::GetBlendShapesAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->skelBlendShapes);
 }
 
-UsdAttribute UsdSkelBindingAPI::CreateBlendShapesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelBindingAPI::CreateBlendShapesAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->skelBlendShapes,
                                     SdfValueTypeNames->TokenArray,
@@ -229,8 +230,9 @@ const TfTokenVector &UsdSkelBindingAPI::GetSchemaAttributeNames(bool includeInhe
     UsdSkelTokens->primvarsSkelJointWeights,
     UsdSkelTokens->skelBlendShapes,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -291,13 +293,13 @@ bool UsdSkelBindingAPI::SetRigidJointInfluence(int jointIndex, float weight) con
   UsdGeomPrimvar jointIndicesPv = CreateJointIndicesPrimvar(/*constant*/ true, /*elementSize*/ 1);
   UsdGeomPrimvar jointWeightsPv = CreateJointWeightsPrimvar(/*constant*/ true, /*elementSize*/ 1);
 
-  if (jointIndex < 0)
-  {
+  if (jointIndex < 0) {
     TF_WARN("Invalid jointIndex '%d'", jointIndex);
     return false;
   }
 
-  return jointIndicesPv.Set(VtIntArray(1, jointIndex)) && jointWeightsPv.Set(VtFloatArray(1, weight));
+  return jointIndicesPv.Set(VtIntArray(1, jointIndex)) &&
+         jointWeightsPv.Set(VtFloatArray(1, weight));
 }
 
 namespace
@@ -305,12 +307,10 @@ namespace
 
   bool _HasInactiveAncestor(const UsdStagePtr &stage, const SdfPath &path)
   {
-    if (path.IsAbsolutePath() && path.IsPrimPath())
-    {
-      for (SdfPath p = path.GetParentPath(); p != SdfPath::AbsoluteRootPath(); p = p.GetParentPath())
-      {
-        if (UsdPrim prim = stage->GetPrimAtPath(p))
-        {
+    if (path.IsAbsolutePath() && path.IsPrimPath()) {
+      for (SdfPath p = path.GetParentPath(); p != SdfPath::AbsoluteRootPath();
+           p = p.GetParentPath()) {
+        if (UsdPrim prim = stage->GetPrimAtPath(p)) {
           return !prim.IsActive();
         }
       }
@@ -321,10 +321,8 @@ namespace
   /// Return the a resolved prim for a target in \p targets.
   UsdPrim _GetFirstTargetPrimForRel(const UsdRelationship &rel, const SdfPathVector &targets)
   {
-    if (targets.size() > 0)
-    {
-      if (targets.size() > 1)
-      {
+    if (targets.size() > 0) {
+      if (targets.size() > 1) {
         TF_WARN(
           "%s -- relationship has more than one target. "
           "Only the first will be used.",
@@ -338,8 +336,7 @@ namespace
       // However, we may not be able to access the prim because one of its
       // ancestors may be inactive. If so, failing to retrieve the prim is
       // expected, so we should avoid warning spam.
-      if (!_HasInactiveAncestor(rel.GetStage(), target))
-      {
+      if (!_HasInactiveAncestor(rel.GetStage(), target)) {
         TF_WARN("%s -- Invalid target <%s>.", rel.GetPath().GetText(), target.GetText());
       }
     }
@@ -350,25 +347,20 @@ namespace
 
 bool UsdSkelBindingAPI::GetSkeleton(UsdSkelSkeleton *skel) const
 {
-  if (!skel)
-  {
+  if (!skel) {
     TF_CODING_ERROR("'skel' pointer is null.");
     return false;
   }
 
-  if (UsdRelationship rel = GetSkeletonRel())
-  {
+  if (UsdRelationship rel = GetSkeletonRel()) {
 
     SdfPathVector targets;
-    if (rel.GetForwardedTargets(&targets))
-    {
-      if (!targets.empty() || rel.HasAuthoredTargets())
-      {
+    if (rel.GetForwardedTargets(&targets)) {
+      if (!targets.empty() || rel.HasAuthoredTargets()) {
         UsdPrim prim = _GetFirstTargetPrimForRel(rel, targets);
         *skel = UsdSkelSkeleton(prim);
 
-        if (prim && !*skel)
-        {
+        if (prim && !*skel) {
           TF_WARN(
             "%s -- target (<%s>) of relationship is not "
             "a Skeleton.",
@@ -387,12 +379,9 @@ UsdSkelSkeleton UsdSkelBindingAPI::GetInheritedSkeleton() const
 {
   UsdSkelSkeleton skel;
 
-  if (UsdPrim p = GetPrim())
-  {
-    for (; !p.IsPseudoRoot(); p = p.GetParent())
-    {
-      if (UsdSkelBindingAPI(p).GetSkeleton(&skel))
-      {
+  if (UsdPrim p = GetPrim()) {
+    for (; !p.IsPseudoRoot(); p = p.GetParent()) {
+      if (UsdSkelBindingAPI(p).GetSkeleton(&skel)) {
         return skel;
       }
     }
@@ -402,24 +391,19 @@ UsdSkelSkeleton UsdSkelBindingAPI::GetInheritedSkeleton() const
 
 bool UsdSkelBindingAPI::GetAnimationSource(UsdPrim *prim) const
 {
-  if (!prim)
-  {
+  if (!prim) {
     TF_CODING_ERROR("'prim' pointer is null.");
     return false;
   }
 
-  if (UsdRelationship rel = GetAnimationSourceRel())
-  {
+  if (UsdRelationship rel = GetAnimationSourceRel()) {
 
     SdfPathVector targets;
-    if (rel.GetForwardedTargets(&targets))
-    {
-      if (!targets.empty() || rel.HasAuthoredTargets())
-      {
+    if (rel.GetForwardedTargets(&targets)) {
+      if (!targets.empty() || rel.HasAuthoredTargets()) {
         *prim = _GetFirstTargetPrimForRel(rel, targets);
 
-        if (*prim && !UsdSkelIsSkelAnimationPrim(*prim))
-        {
+        if (*prim && !UsdSkelIsSkelAnimationPrim(*prim)) {
           TF_WARN(
             "%s -- target (<%s>) of relationship is not a valid "
             "skel animation source.",
@@ -439,12 +423,9 @@ UsdPrim UsdSkelBindingAPI::GetInheritedAnimationSource() const
 {
   UsdPrim animPrim;
 
-  if (UsdPrim p = GetPrim())
-  {
-    for (; !p.IsPseudoRoot(); p = p.GetParent())
-    {
-      if (UsdSkelBindingAPI(p).GetAnimationSource(&animPrim))
-      {
+  if (UsdPrim p = GetPrim()) {
+    for (; !p.IsPseudoRoot(); p = p.GetParent()) {
+      if (UsdSkelBindingAPI(p).GetAnimationSource(&animPrim)) {
         return animPrim;
       }
     }
@@ -456,13 +437,10 @@ bool UsdSkelBindingAPI::ValidateJointIndices(TfSpan<const int> indices,
                                              size_t numJoints,
                                              std::string *reason)
 {
-  for (size_t i = 0; i < indices.size(); ++i)
-  {
+  for (size_t i = 0; i < indices.size(); ++i) {
     const int jointIndex = indices[i];
-    if (jointIndex < 0 || static_cast<size_t>(jointIndex) >= numJoints)
-    {
-      if (reason)
-      {
+    if (jointIndex < 0 || static_cast<size_t>(jointIndex) >= numJoints) {
+      if (reason) {
         *reason = TfStringPrintf("Index [%d] at element %td is not in the range [0,%zu)",
                                  jointIndex,
                                  i,

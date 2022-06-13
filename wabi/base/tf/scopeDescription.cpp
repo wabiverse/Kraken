@@ -56,15 +56,11 @@ namespace
   // that.
   struct _MessageWriter
   {
-    _MessageWriter()
-      : cur(message),
-        end(message + MaxMessageBytes - 1)
-    {}
+    _MessageWriter() : cur(message), end(message + MaxMessageBytes - 1) {}
 
     inline void Write(char const *txt)
     {
-      while (*txt && cur != end)
-      {
+      while (*txt && cur != end) {
         *cur++ = *txt++;
       }
       *cur = '\0';
@@ -75,8 +71,7 @@ namespace
       if (cur == end)
         return;
       char *start = cur;
-      do
-      {
+      do {
         size_t dig = num % 10;
         *cur++ = '0' + dig;
         num /= 10;
@@ -100,19 +95,12 @@ namespace
       friend struct _StackRegistry;
       StackLock(StackLock const &) = delete;
       StackLock &operator=(StackLock const &) = delete;
-      inline StackLock(_Stack *stack, _StackRegistry *reg)
-        : _stack(stack),
-          _reg(reg)
-      {}
-      inline StackLock()
-        : _stack(nullptr),
-          _reg(nullptr)
-      {}
+      inline StackLock(_Stack *stack, _StackRegistry *reg) : _stack(stack), _reg(reg) {}
+      inline StackLock() : _stack(nullptr), _reg(nullptr) {}
 
      public:
-      inline StackLock(StackLock &&o)
-        : _stack(o._stack),
-          _reg(o._reg)
+
+      inline StackLock(StackLock &&o) : _stack(o._stack), _reg(o._reg)
       {
         o._stack = nullptr;
         o._reg = nullptr;
@@ -127,8 +115,7 @@ namespace
       }
       inline ~StackLock()
       {
-        if (_reg)
-        {
+        if (_reg) {
           _reg->_UnlockThread();
         }
       }
@@ -139,6 +126,7 @@ namespace
       }
 
      private:
+
       _Stack *_stack;
       _StackRegistry *_reg;
     };
@@ -180,6 +168,7 @@ namespace
     }
 
    private:
+
     // Give access to the crash reporter facility.
     friend char const *_ComputeAndLockScopeDescriptionStackMsg();
 
@@ -206,8 +195,7 @@ namespace
   struct _Stack
   {
     // Add this stack to the registry.
-    _Stack()
-      : head(nullptr)
+    _Stack() : head(nullptr)
     {
       GetRegistry().Add(std::this_thread::get_id(), this);
     }
@@ -225,14 +213,12 @@ namespace
   // A helper struct for thread_local that uses nullptr initialization as a
   // sentinel to prevent guard variable use from being invoked after first
   // initialization.
-  template<class T>
-  struct _FastThreadLocalBase
+  template<class T> struct _FastThreadLocalBase
   {
     static T &Get()
     {
       static thread_local T *theTPtr = nullptr;
-      if (ARCH_LIKELY(theTPtr))
-      {
+      if (ARCH_LIKELY(theTPtr)) {
         return *theTPtr;
       }
       static thread_local T theT;
@@ -241,8 +227,7 @@ namespace
     }
   };
   struct _LocalStack : _FastThreadLocalBase<_Stack>
-  {
-  };
+  {};
 
   static bool _TimedTryAcquire(tbb::spin_mutex::scoped_lock &lock,
                                tbb::spin_mutex &mutex,
@@ -253,8 +238,7 @@ namespace
 
     auto start = std::chrono::high_resolution_clock::now();
     int msec = 0;
-    do
-    {
+    do {
       std::this_thread::yield();
       if (lock.try_acquire(mutex))
         return true;
@@ -275,8 +259,7 @@ namespace
     // Try to lock the _StackRegistry mutex -- if we fail, bail.
     auto &reg = GetRegistry();
     tbb::spin_mutex::scoped_lock regLock;
-    if (!_TimedTryAcquire(regLock, reg._stacksMutex))
-    {
+    if (!_TimedTryAcquire(regLock, reg._stacksMutex)) {
       writer.Write(
         "Error: cannot generate TfScopeDescription stacks - "
         "failed to acquire lock on stack registry mutex.\n");
@@ -288,8 +271,7 @@ namespace
     constexpr size_t MaxStackEntries = 1024;
     _StackRegistry::_StackEntry *entries[MaxStackEntries];
     size_t numEntries = std::min(MaxStackEntries, reg._stacks.size());
-    for (size_t i = 0; i != numEntries; ++i)
-    {
+    for (size_t i = 0; i != numEntries; ++i) {
       entries[i] = &reg._stacks[i];
     }
     // Sort -- always sort "main thread" first.
@@ -307,42 +289,36 @@ namespace
               });
 
     // Now try to generate text for each of them.
-    for (size_t i = 0; i != numEntries; ++i)
-    {
+    for (size_t i = 0; i != numEntries; ++i) {
       _StackRegistry::_StackEntry *e = entries[i];
       // Try to lock this entry's mutex, if we fail or if empty stack, bail.
       tbb::spin_mutex::scoped_lock stackLock;
-      if (!_TimedTryAcquire(stackLock, e->stack->mutex))
-      {
+      if (!_TimedTryAcquire(stackLock, e->stack->mutex)) {
         writer.Write(
           "Error: cannot write TfScopeDescription stack "
           "for thread ");
         writer.Write(e->idStr.c_str());
         writer.Write(" - failed to acquire stack lock.\n\n");
       }
-      if (!e->stack->head)
-      {
+      if (!e->stack->head) {
         continue;
       }
 
       writer.Write("Thread ");
       writer.Write(e->idStr.c_str());
-      if (e->id == ArchGetMainThreadId())
-      {
+      if (e->id == ArchGetMainThreadId()) {
         writer.Write(" (main)");
       }
       writer.Write(" Scope Descriptions\n");
 
       size_t frame = 1;
       TfScopeDescription *curScope = e->stack->head;
-      while (curScope)
-      {
+      while (curScope) {
         writer.Write("#");
         writer.Write(frame++);
         writer.Write(" ");
         writer.Write(Tf_GetScopeDescriptionText(curScope));
-        if (TfCallContext const &ctx = Tf_GetScopeDescriptionContext(curScope))
-        {
+        if (TfCallContext const &ctx = Tf_GetScopeDescriptionContext(curScope)) {
           writer.Write(" (from ");
           writer.Write(ctx.GetFunction());
           writer.Write(" in ");
@@ -442,11 +418,9 @@ static std::vector<std::string> _GetScopeDescriptionStack(std::thread::id id)
   std::vector<std::string> result;
   {
     auto lock = GetRegistry().LockThread(id);
-    if (_Stack *stack = lock.Get())
-    {
+    if (_Stack *stack = lock.Get()) {
       tbb::spin_mutex::scoped_lock lock(stack->mutex);
-      for (TfScopeDescription *cur = stack->head; cur; cur = Tf_GetPreviousScopeDescription(cur))
-      {
+      for (TfScopeDescription *cur = stack->head; cur; cur = Tf_GetPreviousScopeDescription(cur)) {
         result.emplace_back(Tf_GetScopeDescriptionText(cur));
       }
     }

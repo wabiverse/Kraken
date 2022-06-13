@@ -53,8 +53,8 @@ namespace
 
   string _Repr(GfBBox3d const &self)
   {
-    return TF_PY_REPR_PREFIX + "BBox3d(" + TfPyRepr(self.GetRange()) + ", " + TfPyRepr(self.GetMatrix()) +
-           ")";
+    return TF_PY_REPR_PREFIX + "BBox3d(" + TfPyRepr(self.GetRange()) + ", " +
+           TfPyRepr(self.GetMatrix()) + ")";
   }
 
 }  // anonymous namespace
@@ -94,7 +94,9 @@ void wrapBBox3d()
 
     .def("GetMatrix", make_function(&This::GetMatrix, return_value_policy<copy_const_reference>()))
 
-    .add_property("hasZeroAreaPrimitives", &This::HasZeroAreaPrimitives, &This::SetHasZeroAreaPrimitives)
+    .add_property("hasZeroAreaPrimitives",
+                  &This::HasZeroAreaPrimitives,
+                  &This::SetHasZeroAreaPrimitives)
 
     .def("GetVolume", &This::GetVolume)
 

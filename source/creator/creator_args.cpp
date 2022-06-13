@@ -92,20 +92,18 @@ void CREATOR_setup_args(int argc, const char **argv)
   /* clang-format on */
 
   CREATOR_ARGS::variables_map arg_vars;
-  try
-  {
-    CREATOR_ARGS::store(CREATOR_ARGS::parse_command_line(argc, (const char **)argv, options), arg_vars);
+  try {
+    CREATOR_ARGS::store(CREATOR_ARGS::parse_command_line(argc, (const char **)argv, options),
+                        arg_vars);
     CREATOR_ARGS::notify(arg_vars);
 
-    if (arg_vars.count("help"))
-    {
+    if (arg_vars.count("help")) {
       std::cout << options << "\n";
       /* Just show help, exit. */
       exit(KRAKEN_SUCCESS);
     }
   }
-  catch (const CREATOR_ARGS::error &e)
-  {
+  catch (const CREATOR_ARGS::error &e) {
     fprintf(stderr, "%s\n", e.what());
     fprintf(stderr, "%s\n", CHARALL(options));
     /* Let user fixup incorrect Arg, exit. */
@@ -115,21 +113,17 @@ void CREATOR_setup_args(int argc, const char **argv)
 
 int CREATOR_parse_args(int argc, const char **argv)
 {
-  if (run_diagnostics)
-  {
+  if (run_diagnostics) {
     KKE_kraken_enable_debug_codes();
   }
 
-  if (load_stage.length() > 2)
-  {
+  if (load_stage.length() > 2) {
     G.main->stage_id = load_stage;
   }
 
-  if (convert_stage.size() > 2)
-  {
+  if (convert_stage.size() > 2) {
     const std::filesystem::path fp = convert_stage;
-    if (std::filesystem::exists(fp))
-    {
+    if (std::filesystem::exists(fp)) {
       UNI_pixutil_convert_usd(fp, UsdUsdaFileFormatTokens->Id, /*verbose==*/true);
       exit(KRAKEN_SUCCESS);
     }
@@ -138,8 +132,7 @@ int CREATOR_parse_args(int argc, const char **argv)
     exit(KRAKEN_ERROR);
   }
 
-  if (resolve_asset.size() > 2)
-  {
+  if (resolve_asset.size() > 2) {
     !UNI_pixutil_resolve_asset(resolve_asset, /*verbose==*/true).empty() ? exit(KRAKEN_SUCCESS) :
                                                                            exit(KRAKEN_ERROR);
   }

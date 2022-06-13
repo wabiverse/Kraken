@@ -20,8 +20,7 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T>
-size_t GetHash(T const &value)
+template<typename T> size_t GetHash(T const &value)
 {
   return std::hash<T>{}(value);
 }
@@ -33,9 +32,7 @@ double GetModificationTime(std::string const &path)
   return modificationTime;
 }
 
-RprUsdImageCache::RprUsdImageCache(rpr::Context *context)
-  : m_context(context)
-{}
+RprUsdImageCache::RprUsdImageCache(rpr::Context *context) : m_context(context) {}
 
 std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
   std::string const &path,
@@ -44,8 +41,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
   std::vector<RprUsdCoreImage::UDIMTile> const &tiles,
   uint32_t numComponentsRequired)
 {
-  if (!wrapType)
-  {
+  if (!wrapType) {
     wrapType = RPR_IMAGE_WRAP_TYPE_REPEAT;
   }
 
@@ -56,49 +52,40 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
   key.hash = GetHash(path) ^ GetHash(colorspace) ^ GetHash(wrapType);
 
   auto it = m_cache.find(key);
-  if (it != m_cache.end())
-  {
+  if (it != m_cache.end()) {
     CacheValue &cacheValue = it->second;
-    if (auto image = cacheValue.Lock(key))
-    {
+    if (auto image = cacheValue.Lock(key)) {
       return image;
-    } else
-    {
+    } else {
       m_cache.erase(it);
       it = m_cache.end();
     }
   }
 
   auto coreImage = RprUsdCoreImage::Create(m_context, tiles, numComponentsRequired);
-  if (!coreImage)
-  {
+  if (!coreImage) {
     return nullptr;
   }
 
-  if (RprUsdIsLeakCheckEnabled())
-  {
+  if (RprUsdIsLeakCheckEnabled()) {
     coreImage->SetName(path.c_str());
   }
 
   float gamma = 1.0f;
-  if (key.colorspace == "srgb")
-  {
+  if (key.colorspace == "srgb") {
     gamma = 2.2f;
-  } else if (key.colorspace.empty())
-  {
+  } else if (key.colorspace.empty()) {
     // Figure out gamma from the internal format.
     // Assume that all tiles have the same colorspace
     //
     auto data = tiles[0].textureData;
     GLenum internalFormat = data->GetGLMetadata().internalFormat;
-    if (internalFormat == GL_SRGB || internalFormat == GL_SRGB8 || internalFormat == GL_SRGB_ALPHA ||
-        internalFormat == GL_SRGB8_ALPHA8)
-    {
+    if (internalFormat == GL_SRGB || internalFormat == GL_SRGB8 ||
+        internalFormat == GL_SRGB_ALPHA || internalFormat == GL_SRGB8_ALPHA8) {
       // XXX(RPR): sRGB formula is different from straight pow decoding, but it's the best we can
       // do without OCIO
       gamma = 2.2f;
-    } else
-    {
+    } else {
       gamma = 1.0f;
     }
   }
@@ -107,23 +94,19 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
   RPR_ERROR_CHECK(coreImage->SetWrap(key.wrapType), "Failed to set image wrap type");
 
   CacheValue cacheValue;
-  if (tiles.size() != 1 || tiles[0].id != 0)
-  {
+  if (tiles.size() != 1 || tiles[0].id != 0) {
     // UDIM tiles
     std::string formatString;
-    if (!RprUsdGetUDIMFormatString(path, &formatString))
-    {
+    if (!RprUsdGetUDIMFormatString(path, &formatString)) {
       return nullptr;
     }
 
     cacheValue.tileModificationTimes.reserve(tiles.size());
-    for (auto &tile : tiles)
-    {
+    for (auto &tile : tiles) {
       auto tilePath = TfStringPrintf(formatString.c_str(), tile.id);
       cacheValue.tileModificationTimes.emplace_back(tile.id, GetModificationTime(tilePath));
     }
-  } else
-  {
+  } else {
     cacheValue.tileModificationTimes.emplace_back(0, GetModificationTime(path));
   }
 
@@ -141,8 +124,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::GetImage(
 std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::CacheValue::Lock(CacheKey const &key) const
 {
   auto image = handle.lock();
-  if (!image)
-  {
+  if (!image) {
     return nullptr;
   }
 
@@ -150,11 +132,9 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::CacheValue::Lock(CacheKey con
 
   // Check if image files were not changed
   //
-  for (auto &entry : tileModificationTimes)
-  {
+  for (auto &entry : tileModificationTimes) {
     double modificationTime = entry.second;
-    if (modificationTime == 0.0)
-    {
+    if (modificationTime == 0.0) {
       // If the path points to a non-filesystem image (e.g. usdz embedded image)
       // we rely on the user of the Hydra to correctly reload all materials that use this image
       //
@@ -164,13 +144,10 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::CacheValue::Lock(CacheKey con
     double currentModificationTime;
 
     uint32_t tileId = entry.first;
-    if (tileId == 0)
-    {
+    if (tileId == 0) {
       currentModificationTime = GetModificationTime(key.path);
-    } else
-    {
-      if (udimFormatString.empty())
-      {
+    } else {
+      if (udimFormatString.empty()) {
         RprUsdGetUDIMFormatString(key.path, &udimFormatString);
       }
 
@@ -178,8 +155,7 @@ std::shared_ptr<RprUsdCoreImage> RprUsdImageCache::CacheValue::Lock(CacheKey con
       currentModificationTime = GetModificationTime(tilePath);
     }
 
-    if (modificationTime != currentModificationTime)
-    {
+    if (modificationTime != currentModificationTime) {
       return nullptr;
     }
   }

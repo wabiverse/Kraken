@@ -63,8 +63,7 @@ bool Tf_RefPtr_UniqueChangedCounter::_AddRefIfNonzero(TfRefBase const *refBase)
   int oldValue = counter.load(std::memory_order_relaxed);
   if (oldValue == 0)
     return false;
-  if (oldValue == 1)
-  {
+  if (oldValue == 1) {
     listener.func(refBase, false);
   }
   counter.store(oldValue + 1, std::memory_order_relaxed);

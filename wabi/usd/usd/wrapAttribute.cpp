@@ -53,7 +53,8 @@ namespace
     return result;
   }
 
-  static vector<double> _GetTimeSamplesInInterval(const UsdAttribute &self, const GfInterval &interval)
+  static vector<double> _GetTimeSamplesInInterval(const UsdAttribute &self,
+                                                  const GfInterval &interval)
   {
     vector<double> result;
     self.GetTimeSamplesInInterval(interval, &result);
@@ -80,8 +81,7 @@ namespace
     double lower = 0.0, upper = 0.0;
     bool hasTimeSamples = false;
 
-    if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples))
-    {
+    if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples)) {
       return hasTimeSamples ? make_tuple(lower, upper) : make_tuple();
     }
     return object();
@@ -186,5 +186,6 @@ void wrapUsdAttribute()
     .def("HasAuthoredConnections", &UsdAttribute::HasAuthoredConnections);
 
   TfPyRegisterStlSequencesFromPython<UsdAttribute>();
-  to_python_converter<std::vector<UsdAttribute>, TfPySequenceToPython<std::vector<UsdAttribute>>>();
+  to_python_converter<std::vector<UsdAttribute>,
+                      TfPySequenceToPython<std::vector<UsdAttribute>>>();
 }

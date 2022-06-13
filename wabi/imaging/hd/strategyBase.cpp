@@ -25,7 +25,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdAggregationStrategy::~HdAggregationStrategy()
-{}
+HdAggregationStrategy::~HdAggregationStrategy() {}
 
 WABI_NAMESPACE_END

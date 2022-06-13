@@ -74,14 +74,17 @@ void wrapUsdStageCache()
            arg("id"))
 
       .def("FindOneMatching",
-           (UsdStageRefPtr(UsdStageCache::*)(const SdfLayerHandle &) const) & UsdStageCache::FindOneMatching,
-           (arg("rootLayer")))
-      .def("FindOneMatching",
-           (UsdStageRefPtr(UsdStageCache::*)(const SdfLayerHandle &, const SdfLayerHandle &) const) &
+           (UsdStageRefPtr(UsdStageCache::*)(const SdfLayerHandle &) const) &
              UsdStageCache::FindOneMatching,
-           (arg("rootLayer"), arg("sessionLayer")))
+           (arg("rootLayer")))
+      .def(
+        "FindOneMatching",
+        (UsdStageRefPtr(UsdStageCache::*)(const SdfLayerHandle &, const SdfLayerHandle &) const) &
+          UsdStageCache::FindOneMatching,
+        (arg("rootLayer"), arg("sessionLayer")))
       .def("FindOneMatching",
-           (UsdStageRefPtr(UsdStageCache::*)(const SdfLayerHandle &, const ArResolverContext &) const) &
+           (UsdStageRefPtr(UsdStageCache::*)(const SdfLayerHandle &, const ArResolverContext &)
+              const) &
              UsdStageCache::FindOneMatching,
            (arg("rootLayer"), arg("pathResolverContext")))
       .def("FindOneMatching",
@@ -97,16 +100,17 @@ void wrapUsdStageCache()
            (arg("rootLayer")),
            return_value_policy<TfPySequenceToList>())
       .def("FindAllMatching",
-           (vector<UsdStageRefPtr>(UsdStageCache::*)(const SdfLayerHandle &, const SdfLayerHandle &) const) &
+           (vector<UsdStageRefPtr>(UsdStageCache::*)(const SdfLayerHandle &,
+                                                     const SdfLayerHandle &) const) &
              UsdStageCache::FindAllMatching,
            (arg("rootLayer"), arg("sessionLayer")),
            return_value_policy<TfPySequenceToList>())
-      .def(
-        "FindAllMatching",
-        (vector<UsdStageRefPtr>(UsdStageCache::*)(const SdfLayerHandle &, const ArResolverContext &) const) &
-          UsdStageCache::FindAllMatching,
-        (arg("rootLayer"), arg("pathResolverContext")),
-        return_value_policy<TfPySequenceToList>())
+      .def("FindAllMatching",
+           (vector<UsdStageRefPtr>(UsdStageCache::*)(const SdfLayerHandle &,
+                                                     const ArResolverContext &) const) &
+             UsdStageCache::FindAllMatching,
+           (arg("rootLayer"), arg("pathResolverContext")),
+           return_value_policy<TfPySequenceToList>())
       .def("FindAllMatching",
            (vector<UsdStageRefPtr>(UsdStageCache::*)(const SdfLayerHandle &,
                                                      const SdfLayerHandle &,
@@ -123,7 +127,9 @@ void wrapUsdStageCache()
       .def("Insert", &UsdStageCache::Insert, arg("stage"))
 
       .def("Erase", (bool(UsdStageCache::*)(UsdStageCache::Id)) & UsdStageCache::Erase, arg("id"))
-      .def("Erase", (bool(UsdStageCache::*)(const UsdStageRefPtr &)) & UsdStageCache::Erase, arg("stage"))
+      .def("Erase",
+           (bool(UsdStageCache::*)(const UsdStageRefPtr &)) & UsdStageCache::Erase,
+           arg("stage"))
 
       .def("EraseAll",
            (size_t(UsdStageCache::*)(const SdfLayerHandle &)) & UsdStageCache::EraseAll,
@@ -133,8 +139,9 @@ void wrapUsdStageCache()
              UsdStageCache::EraseAll,
            (arg("rootLayer"), arg("sessionLayer")))
       .def("EraseAll",
-           (size_t(
-             UsdStageCache::*)(const SdfLayerHandle &, const SdfLayerHandle &, const ArResolverContext &)) &
+           (size_t(UsdStageCache::*)(const SdfLayerHandle &,
+                                     const SdfLayerHandle &,
+                                     const ArResolverContext &)) &
              UsdStageCache::EraseAll,
            (arg("rootLayer"), arg("sessionLayer"), arg("pathResolverContext")))
 

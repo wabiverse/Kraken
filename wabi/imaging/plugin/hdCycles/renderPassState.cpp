@@ -29,9 +29,9 @@ HdCyclesRenderPassState::HdCyclesRenderPassState(const HdCyclesRenderDelegate *r
 
 void HdCyclesRenderPassState::Prepare(const HdResourceRegistrySharedPtr &resourceRegistry)
 {
-  HdCyclesResourceRegistry *registry = dynamic_cast<HdCyclesResourceRegistry *>(resourceRegistry.get());
-  if (!registry)
-  {
+  HdCyclesResourceRegistry *registry = dynamic_cast<HdCyclesResourceRegistry *>(
+    resourceRegistry.get());
+  if (!registry) {
     return;
   }
 

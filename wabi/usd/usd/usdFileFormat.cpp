@@ -65,14 +65,12 @@ static SdfFileFormatConstPtr _GetFileFormat(const TfToken &formatId)
 static SdfFileFormatConstPtr _GetUnderlyingFileFormat(const string &filePath)
 {
   auto usdcFormat = _GetFileFormat(UsdUsdcFileFormatTokens->Id);
-  if (usdcFormat->CanRead(filePath))
-  {
+  if (usdcFormat->CanRead(filePath)) {
     return usdcFormat;
   }
 
   auto usdaFormat = _GetFileFormat(UsdUsdaFileFormatTokens->Id);
-  if (usdaFormat->CanRead(filePath))
-  {
+  if (usdaFormat->CanRead(filePath)) {
     return usdaFormat;
   }
 
@@ -83,13 +81,11 @@ static SdfFileFormatConstPtr _GetUnderlyingFileFormat(const SdfAbstractDataConst
 {
   // A .usd file can only be backed by one of these formats,
   // so check each one individually.
-  if (TfDynamic_cast<const Usd_CrateDataConstPtr>(data))
-  {
+  if (TfDynamic_cast<const Usd_CrateDataConstPtr>(data)) {
     return _GetFileFormat(UsdUsdcFileFormatTokens->Id);
   }
 
-  if (TfDynamic_cast<const SdfDataConstPtr>(data))
-  {
+  if (TfDynamic_cast<const SdfDataConstPtr>(data)) {
     return _GetFileFormat(UsdUsdaFileFormatTokens->Id);
   }
 
@@ -100,8 +96,8 @@ static SdfFileFormatConstPtr _GetUnderlyingFileFormat(const SdfAbstractDataConst
 static SdfFileFormatConstPtr _GetDefaultFileFormat()
 {
   TfToken defaultFormatId(TfGetEnvSetting(USD_DEFAULT_FILE_FORMAT));
-  if (defaultFormatId != UsdUsdaFileFormatTokens->Id && defaultFormatId != UsdUsdcFileFormatTokens->Id)
-  {
+  if (defaultFormatId != UsdUsdaFileFormatTokens->Id &&
+      defaultFormatId != UsdUsdcFileFormatTokens->Id) {
     TF_WARN(
       "Default file format '%s' set in USD_DEFAULT_FILE_FORMAT "
       "must be either 'usda' or 'usdc'. Falling back to 'usdc'",
@@ -126,17 +122,15 @@ static TfToken _GetFormatArgumentForFileFormat(const SdfFileFormatConstPtr &file
 }
 
 // Returns the file format associated with the given arguments, or nullptr.
-static SdfFileFormatConstPtr _GetFileFormatForArguments(const SdfFileFormat::FileFormatArguments &args)
+static SdfFileFormatConstPtr _GetFileFormatForArguments(
+  const SdfFileFormat::FileFormatArguments &args)
 {
   auto it = args.find(UsdUsdFileFormatTokens->FormatArg.GetString());
-  if (it != args.end())
-  {
+  if (it != args.end()) {
     const std::string &format = it->second;
-    if (format == UsdUsdaFileFormatTokens->Id)
-    {
+    if (format == UsdUsdaFileFormatTokens->Id) {
       return _GetFileFormat(UsdUsdaFileFormatTokens->Id);
-    } else if (format == UsdUsdcFileFormatTokens->Id)
-    {
+    } else if (format == UsdUsdcFileFormatTokens->Id) {
       return _GetFileFormat(UsdUsdcFileFormatTokens->Id);
     }
     TF_CODING_ERROR(
@@ -165,14 +159,12 @@ UsdUsdFileFormat::UsdUsdFileFormat()
                   UsdUsdFileFormatTokens->Id)
 {}
 
-UsdUsdFileFormat::~UsdUsdFileFormat()
-{}
+UsdUsdFileFormat::~UsdUsdFileFormat() {}
 
 SdfAbstractDataRefPtr UsdUsdFileFormat::InitData(const FileFormatArguments &args) const
 {
   SdfFileFormatConstPtr fileFormat = _GetFileFormatForArguments(args);
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     fileFormat = _GetDefaultFileFormat();
   }
 
@@ -196,8 +188,7 @@ bool UsdUsdFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool me
 
   // Network-friendly path -- just try to read the file and if we get one that
   // works we're good.
-  for (auto const &fmt : formats)
-  {
+  for (auto const &fmt : formats) {
     TfErrorMark m;
     if (fmt && fmt->Read(layer, resolvedPath, metadataOnly))
       return true;
@@ -244,8 +235,7 @@ bool UsdUsdFileFormat::WriteToFile(const SdfLayer &layer,
   // we use the default underlying format for .usd. This ensures consistent
   // behavior -- creating a new .usd layer always uses the default format
   // unless otherwise specified.
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     // Note that SdfLayer::GetRealPath is *not* the same as realpath(3);
     // it does not follow symlinks. Hence, we use TfRealPath to determine
     // if the source and destination files are the same. If so, we know
@@ -254,14 +244,12 @@ bool UsdUsdFileFormat::WriteToFile(const SdfLayer &layer,
                                     /* allowInaccessibleSuffix = */ true);
     auto destRealPath = TfRealPath(filePath, /* allowInaccessibleSuffix = */ true);
     const bool isSavingLayer = (layerRealPath == destRealPath);
-    if (isSavingLayer)
-    {
+    if (isSavingLayer) {
       fileFormat = _GetUnderlyingFileFormatForLayer(layer);
     }
   }
 
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     fileFormat = _GetDefaultFileFormat();
   }
 
@@ -280,7 +268,9 @@ bool UsdUsdFileFormat::WriteToString(const SdfLayer &layer,
   return _GetUnderlyingFileFormatForLayer(layer)->WriteToString(layer, str, comment);
 }
 
-bool UsdUsdFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
+bool UsdUsdFileFormat::WriteToStream(const SdfSpecHandle &spec,
+                                     std::ostream &out,
+                                     size_t indent) const
 {
   return _GetUnderlyingFileFormatForLayer(*boost::get_pointer(spec->GetLayer()))
     ->WriteToStream(spec, out, indent);

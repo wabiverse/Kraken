@@ -85,21 +85,18 @@ const TfToken &RmanOslParserPlugin::GetSourceType() const
 static std::unique_ptr<RixShaderQuery> _getShaderQuery()
 {
   RixContext *ctx = RixGetContextViaRMANTREE();
-  if (!ctx)
-  {
+  if (!ctx) {
     return nullptr;
   }
 
   RixShaderInfo *si = (RixShaderInfo *)ctx->GetRixInterface(k_RixShaderInfo);
-  if (!si)
-  {
+  if (!si) {
     return nullptr;
   }
   return std::unique_ptr<RixShaderQuery>(si->CreateQuery());
 }
 
-RmanOslParserPlugin::RmanOslParserPlugin()
-{}
+RmanOslParserPlugin::RmanOslParserPlugin() {}
 
 RmanOslParserPlugin::~RmanOslParserPlugin()
 {
@@ -112,16 +109,16 @@ static std::string _WriteOSLToTempFile(const std::shared_ptr<const char> &buffer
   std::string tmpFilePath = ArchMakeTmpFileName("rmanOslParser", ".oso");
   FILE *f = fopen(tmpFilePath.c_str(), "w");
 
-  if (!f)
-  {
+  if (!f) {
     TF_WARN("Failed to open temp file %s for writing", tmpFilePath.c_str());
     return std::string();
   }
 
-  TfScoped<> fcloser([f]() { fclose(f); });
+  TfScoped<> fcloser([f]() {
+    fclose(f);
+  });
 
-  if (fwrite(buffer.get(), sizeof(char), numBytes, f) != numBytes)
-  {
+  if (fwrite(buffer.get(), sizeof(char), numBytes, f) != numBytes) {
     TF_WARN("Failed to write OSL to temp file %s", tmpFilePath.c_str());
     return std::string();
   }
@@ -132,24 +129,22 @@ static std::string _WriteOSLToTempFile(const std::shared_ptr<const char> &buffer
 NdrNodeUniquePtr RmanOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discoveryResult)
 {
   std::unique_ptr<RixShaderQuery> sq = _getShaderQuery();
-  if (!sq)
-  {
+  if (!sq) {
     TF_WARN("Could not obtain an instance of RixShaderQuery");
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   bool hasErrors = false;
 
-  if (!discoveryResult.uri.empty())
-  {
+  if (!discoveryResult.uri.empty()) {
 #if AR_VERSION == 1
     // Get the resolved URI to a location that it can be read by the OSL
     // parser
-    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(discoveryResult.uri,
-                                                                         discoveryResult.resolvedUri);
+    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(
+      discoveryResult.uri,
+      discoveryResult.resolvedUri);
 
-    if (!localFetchSuccessful)
-    {
+    if (!localFetchSuccessful) {
       TF_WARN(
         "Could not localize the OSL at URI [%s] into a local path. "
         "An invalid Sdr node definition will be created.",
@@ -158,22 +153,18 @@ NdrNodeUniquePtr RmanOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
       return NdrParserPlugin::GetInvalidNode(discoveryResult);
     }
 #endif
-    if (TfIsFile(discoveryResult.resolvedUri.c_str()))
-    {
+    if (TfIsFile(discoveryResult.resolvedUri.c_str())) {
       // Attempt to parse the node
       hasErrors = sq->Open(discoveryResult.resolvedUri.c_str(), "");
-    } else
-    {
+    } else {
       std::shared_ptr<const char> buffer;
       std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(
         ArResolvedPath(discoveryResult.resolvedUri));
-      if (asset)
-      {
+      if (asset) {
         buffer = asset->GetBuffer();
       }
 
-      if (!buffer)
-      {
+      if (!buffer) {
         TF_WARN(
           "Could not open the OSL file at URI [%s] (%s). "
           "An invalid Sdr node definition will be created.",
@@ -195,8 +186,7 @@ NdrNodeUniquePtr RmanOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
       TfDeleteFile(tmpFile);
       m.Clear();
     }
-  } else
-  {
+  } else {
     TF_WARN(
       "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
       "and sourceCode are empty.",
@@ -205,8 +195,7 @@ NdrNodeUniquePtr RmanOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discov
   }
 
   std::string errors = sq->LastError();
-  if (hasErrors || !errors.empty())
-  {
+  if (hasErrors || !errors.empty()) {
     TF_WARN(
       "Could not parse OSL shader at URI [%s]. An invalid Sdr node "
       "definition will be created. %s%s",
@@ -243,14 +232,12 @@ NdrPropertyUniquePtrVec RmanOslParserPlugin::_getNodeProperties(
 
   RixShaderParameter const *const *params = sq->Parameters();
 
-  for (int i = 0; i < nParams; ++i)
-  {
+  for (int i = 0; i < nParams; ++i) {
     const RixShaderParameter *param = params[i];
     std::string propName = param->Name();
 
     // Struct members are not supported
-    if (propName.find('.') != std::string::npos)
-    {
+    if (propName.find('.') != std::string::npos) {
       continue;
     }
 
@@ -267,18 +254,15 @@ NdrPropertyUniquePtrVec RmanOslParserPlugin::_getNodeProperties(
     // Non-standard properties in the metadata are considered hints
     NdrTokenMap hints;
     std::string definitionName;
-    for (auto metaIt = metadata.cbegin(); metaIt != metadata.cend();)
-    {
+    for (auto metaIt = metadata.cbegin(); metaIt != metadata.cend();) {
       if (std::find(SdrPropertyMetadata->allTokens.begin(),
                     SdrPropertyMetadata->allTokens.end(),
-                    metaIt->first) != SdrPropertyMetadata->allTokens.end())
-      {
+                    metaIt->first) != SdrPropertyMetadata->allTokens.end()) {
         metaIt++;
         continue;
       }
 
-      if (metaIt->first == _tokens->sdrDefinitionName)
-      {
+      if (metaIt->first == _tokens->sdrDefinitionName) {
         definitionName = metaIt->second;
         metaIt = metadata.erase(metaIt);
         continue;
@@ -286,8 +270,7 @@ NdrPropertyUniquePtrVec RmanOslParserPlugin::_getNodeProperties(
 
       // The metadata sometimes incorrectly specifies array size; this
       // value is not respected
-      if (metaIt->first == _tokens->arraySize)
-      {
+      if (metaIt->first == _tokens->arraySize) {
         TF_DEBUG(NDR_PARSING)
           .Msg(
             "Ignoring bad 'arraySize' attribute on property [%s] "
@@ -304,16 +287,14 @@ NdrPropertyUniquePtrVec RmanOslParserPlugin::_getNodeProperties(
     // If we found 'definitionName' metadata, we actually need to
     // change the name of the property to match, using the OSL
     // parameter name as the ImplementationName
-    if (!definitionName.empty())
-    {
+    if (!definitionName.empty()) {
       metadata[SdrPropertyMetadata->ImplementationName] = TfToken(propName);
       propName = definitionName;
     }
 
     // Extract options
     NdrOptionVec options;
-    if (metadata.count(SdrPropertyMetadata->Options))
-    {
+    if (metadata.count(SdrPropertyMetadata->Options)) {
       options = OptionVecVal(metadata.at(SdrPropertyMetadata->Options));
     }
 
@@ -331,35 +312,31 @@ NdrPropertyUniquePtrVec RmanOslParserPlugin::_getNodeProperties(
   return properties;
 }
 
-NdrTokenMap RmanOslParserPlugin::_getPropertyMetadata(const RixShaderParameter *param,
-                                                      const NdrNodeDiscoveryResult &discoveryResult) const
+NdrTokenMap RmanOslParserPlugin::_getPropertyMetadata(
+  const RixShaderParameter *param,
+  const NdrNodeDiscoveryResult &discoveryResult) const
 {
   NdrTokenMap metadata;
 
   RixShaderParameter const *const *metaData = param->MetaData();
-  for (int i = 0; i < param->MetaDataSize(); ++i)
-  {
+  for (int i = 0; i < param->MetaDataSize(); ++i) {
     const RixShaderParameter *metaParam = metaData[i];
     TfToken entryName = TfToken(metaParam->Name());
 
     // Vstruct metadata needs to be specially parsed; otherwise, just stuff
     // the value into the map
-    if (entryName == _tokens->vstructMember)
-    {
+    if (entryName == _tokens->vstructMember) {
       std::string vstruct(*metaParam->DefaultS());
 
-      if (!vstruct.empty())
-      {
+      if (!vstruct.empty()) {
         // A dot splits struct from member name
         size_t dotPos = vstruct.find('.');
 
-        if (dotPos != std::string::npos)
-        {
+        if (dotPos != std::string::npos) {
           metadata[SdrPropertyMetadata->VstructMemberOf] = vstruct.substr(0, dotPos);
 
           metadata[SdrPropertyMetadata->VstructMemberName] = vstruct.substr(dotPos + 1);
-        } else
-        {
+        } else {
           TF_DEBUG(NDR_PARSING)
             .Msg("Bad virtual structure member in %s.%s:%s",
                  discoveryResult.name.c_str(),
@@ -367,8 +344,7 @@ NdrTokenMap RmanOslParserPlugin::_getPropertyMetadata(const RixShaderParameter *
                  vstruct.c_str());
         }
       }
-    } else if (metaParam->Type() == RixShaderParameter::k_String)
-    {
+    } else if (metaParam->Type() == RixShaderParameter::k_String) {
       metadata[entryName] = std::string(*metaParam->DefaultS());
     }
   }
@@ -376,12 +352,11 @@ NdrTokenMap RmanOslParserPlugin::_getPropertyMetadata(const RixShaderParameter *
   return metadata;
 }
 
-void RmanOslParserPlugin::_injectParserMetadata(NdrTokenMap &metadata, const TfToken &typeName) const
+void RmanOslParserPlugin::_injectParserMetadata(NdrTokenMap &metadata,
+                                                const TfToken &typeName) const
 {
-  if (typeName == SdrPropertyTypes->String)
-  {
-    if (IsPropertyAnAssetIdentifier(metadata))
-    {
+  if (typeName == SdrPropertyTypes->String) {
+    if (IsPropertyAnAssetIdentifier(metadata)) {
       metadata[SdrPropertyMetadata->IsAssetIdentifier] = "";
     }
   }
@@ -396,8 +371,7 @@ NdrTokenMap RmanOslParserPlugin::_getNodeMetadata(const RixShaderQuery *sq,
   const int nParams = sq->MetaDataCount();
   RixShaderParameter const *const *metaData = sq->MetaData();
 
-  for (int i = 0; i < nParams; ++i)
-  {
+  for (int i = 0; i < nParams; ++i) {
     const RixShaderParameter *md = metaData[i];
     TfToken entryName = TfToken(md->Name());
     nodeMetadata[entryName] = std::string(md->Name());
@@ -410,28 +384,24 @@ std::tuple<TfToken, size_t> RmanOslParserPlugin::_getTypeName(const RixShaderPar
                                                               const NdrTokenMap &metadata) const
 {
   // Exit early if this param is known to be a struct
-  if (param->IsStruct())
-  {
+  if (param->IsStruct()) {
     return std::make_tuple(SdrPropertyTypes->Struct, /* array size = */ 0);
   }
 
   // Exit early if the param's metadata indicates the param is a terminal type
-  if (IsPropertyATerminal(metadata))
-  {
+  if (IsPropertyATerminal(metadata)) {
     return std::make_tuple(SdrPropertyTypes->Terminal, /* array size = */ 0);
   }
 
   // Otherwise, continue on to determine the type (and possibly array size)
   // std::string typeName = std::string(param->type.c_str());
   size_t arraySize = 0;
-  if (param->IsArray())
-  {
+  if (param->IsArray()) {
     arraySize = (size_t)param->ArrayLength();
   }
 
   std::string typeName("");
-  switch (param->Type())
-  {
+  switch (param->Type()) {
     case RixShaderParameter::k_Int:
       typeName = SdrPropertyTypes->Int;
       break;
@@ -474,18 +444,15 @@ VtValue RmanOslParserPlugin::_getDefaultValue(const RixShaderParameter *param,
 
   // INT and INT ARRAY
   // -------------------------------------------------------------------------
-  if (oslType == SdrPropertyTypes->Int)
-  {
+  if (oslType == SdrPropertyTypes->Int) {
     const int *dflts = param->DefaultI();
-    if (!isArray && param->DefaultSize() == 1)
-    {
+    if (!isArray && param->DefaultSize() == 1) {
       return VtValue(*dflts);
     }
 
     VtIntArray array;
     array.reserve((size_t)param->ArrayLength());
-    for (int i = 0; i < param->ArrayLength(); ++i)
-    {
+    for (int i = 0; i < param->ArrayLength(); ++i) {
       array.push_back(dflts[i]);
     }
 
@@ -494,21 +461,18 @@ VtValue RmanOslParserPlugin::_getDefaultValue(const RixShaderParameter *param,
 
   // STRING and STRING ARRAY
   // -------------------------------------------------------------------------
-  else if (oslType == SdrPropertyTypes->String)
-  {
+  else if (oslType == SdrPropertyTypes->String) {
     const char **dflts = param->DefaultS();
 
     // Handle non-array
-    if (!isArray && param->DefaultSize() == 1)
-    {
+    if (!isArray && param->DefaultSize() == 1) {
       return VtValue(std::string(*dflts));
     }
 
     // Handle array
     VtStringArray array;
     array.reserve((size_t)param->ArrayLength());
-    for (int i = 0; i < param->ArrayLength(); ++i)
-    {
+    for (int i = 0; i < param->ArrayLength(); ++i) {
       array.push_back(std::string(dflts[i]));
     }
     return VtValue::Take(array);
@@ -516,19 +480,16 @@ VtValue RmanOslParserPlugin::_getDefaultValue(const RixShaderParameter *param,
 
   // FLOAT and FLOAT ARRAY
   // -------------------------------------------------------------------------
-  else if (oslType == SdrPropertyTypes->Float)
-  {
+  else if (oslType == SdrPropertyTypes->Float) {
     const float *dflts = param->DefaultF();
 
-    if (!isArray && param->DefaultSize() == 1)
-    {
+    if (!isArray && param->DefaultSize() == 1) {
       return VtValue(*dflts);
     }
 
     VtFloatArray array;
     array.reserve((size_t)param->ArrayLength());
-    for (int i = 0; i < param->ArrayLength(); ++i)
-    {
+    for (int i = 0; i < param->ArrayLength(); ++i) {
       array.push_back(dflts[i]);
     }
 
@@ -538,22 +499,18 @@ VtValue RmanOslParserPlugin::_getDefaultValue(const RixShaderParameter *param,
   // VECTOR TYPES and VECTOR TYPE ARRAYS
   // -------------------------------------------------------------------------
   else if (oslType == SdrPropertyTypes->Color || oslType == SdrPropertyTypes->Point ||
-           oslType == SdrPropertyTypes->Normal || oslType == SdrPropertyTypes->Vector)
-  {
+           oslType == SdrPropertyTypes->Normal || oslType == SdrPropertyTypes->Vector) {
 
     const float *dflts = param->DefaultF();
     int dflt_size = param->DefaultSize();
 
-    if (!isArray && dflt_size == 3)
-    {
+    if (!isArray && dflt_size == 3) {
       return VtValue(GfVec3f(dflts[0], dflts[1], dflts[2]));
-    } else if (isArray && dflt_size % 3 == 0)
-    {
+    } else if (isArray && dflt_size % 3 == 0) {
       int numElements = dflt_size / 3;
       VtVec3fArray array(numElements);
 
-      for (int i = 0; i < numElements; ++i)
-      {
+      for (int i = 0; i < numElements; ++i) {
         array[i] = GfVec3f(dflts[3 * i + 0], dflts[3 * i + 1], dflts[3 * i + 2]);
       }
 
@@ -563,17 +520,14 @@ VtValue RmanOslParserPlugin::_getDefaultValue(const RixShaderParameter *param,
 
   // MATRIX
   // -------------------------------------------------------------------------
-  else if (oslType == SdrPropertyTypes->Matrix)
-  {
+  else if (oslType == SdrPropertyTypes->Matrix) {
     // XXX: No matrix array support
-    if (!isArray && param->DefaultSize() == 16)
-    {
+    if (!isArray && param->DefaultSize() == 16) {
       GfMatrix4d mat;
       double *values = mat.GetArray();
       const float *dflts = param->DefaultF();
 
-      for (int i = 0; i < 16; ++i)
-      {
+      for (int i = 0; i < 16; ++i) {
         values[i] = static_cast<double>(dflts[i]);
       }
 
@@ -584,8 +538,7 @@ VtValue RmanOslParserPlugin::_getDefaultValue(const RixShaderParameter *param,
   // STRUCT, TERMINAL, VSTRUCT
   // -------------------------------------------------------------------------
   else if (oslType == SdrPropertyTypes->Struct || oslType == SdrPropertyTypes->Terminal ||
-           oslType == SdrPropertyTypes->Vstruct)
-  {
+           oslType == SdrPropertyTypes->Vstruct) {
     // We return an empty VtValue for Struct, Terminal, and Vstruct
     // properties because their value may rely on being computed within the
     // renderer, or we might not have a reasonable way to represent their

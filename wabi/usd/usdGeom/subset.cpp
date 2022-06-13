@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomSubset::~UsdGeomSubset()
-{}
+UsdGeomSubset::~UsdGeomSubset() {}
 
 /* static */
 UsdGeomSubset UsdGeomSubset::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomSubset();
   }
@@ -62,8 +60,7 @@ UsdGeomSubset UsdGeomSubset::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomSubset UsdGeomSubset::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("GeomSubset");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomSubset();
   }
@@ -101,7 +98,8 @@ UsdAttribute UsdGeomSubset::GetElementTypeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->elementType);
 }
 
-UsdAttribute UsdGeomSubset::CreateElementTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomSubset::CreateElementTypeAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->elementType,
                                     SdfValueTypeNames->Token,
@@ -116,7 +114,8 @@ UsdAttribute UsdGeomSubset::GetIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->indices);
 }
 
-UsdAttribute UsdGeomSubset::CreateIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomSubset::CreateIndicesAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->indices,
                                     SdfValueTypeNames->IntArray,
@@ -131,7 +130,8 @@ UsdAttribute UsdGeomSubset::GetFamilyNameAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->familyName);
 }
 
-UsdAttribute UsdGeomSubset::CreateFamilyNameAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomSubset::CreateFamilyNameAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->familyName,
                                     SdfValueTypeNames->Token,
@@ -162,8 +162,9 @@ const TfTokenVector &UsdGeomSubset::GetSchemaAttributeNames(bool includeInherite
     UsdGeomTokens->indices,
     UsdGeomTokens->familyName,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdTyped::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -211,8 +212,7 @@ UsdGeomSubset UsdGeomSubset::CreateGeomSubset(const UsdGeomImageable &geom,
 
   // XXX: would be nice to do this just once per family rather than once per
   // subset that's created.
-  if (!familyName.IsEmpty() && !familyType.IsEmpty())
-  {
+  if (!familyName.IsEmpty() && !familyType.IsEmpty()) {
     UsdGeomSubset::SetFamilyType(geom, familyName, familyType);
   }
 
@@ -225,12 +225,10 @@ static UsdGeomSubset _CreateUniqueGeomSubset(UsdStagePtr stage,
 {
   std::string name = baseName;
   size_t idx = 0;
-  while (true)
-  {
+  while (true) {
     SdfPath childPath = parentPath.AppendChild(TfToken(name));
     auto subsetPrim = stage->GetPrimAtPath(childPath);
-    if (!subsetPrim)
-    {
+    if (!subsetPrim) {
       return UsdGeomSubset::Define(stage, childPath);
     }
     idx++;
@@ -257,8 +255,7 @@ UsdGeomSubset UsdGeomSubset::CreateUniqueGeomSubset(const UsdGeomImageable &geom
 
   // XXX: would be nice to do this just once per family rather than once per
   // subset.
-  if (!familyName.IsEmpty() && !familyType.IsEmpty())
-  {
+  if (!familyName.IsEmpty() && !familyType.IsEmpty()) {
     UsdGeomSubset::SetFamilyType(geom, familyName, familyType);
   }
 
@@ -270,10 +267,8 @@ std::vector<UsdGeomSubset> UsdGeomSubset::GetAllGeomSubsets(const UsdGeomImageab
 {
   std::vector<UsdGeomSubset> result;
 
-  for (const auto &childPrim : geom.GetPrim().GetChildren())
-  {
-    if (childPrim.IsA<UsdGeomSubset>())
-    {
+  for (const auto &childPrim : geom.GetPrim().GetChildren()) {
+    if (childPrim.IsA<UsdGeomSubset>()) {
       result.emplace_back(childPrim);
     }
   }
@@ -288,10 +283,8 @@ std::vector<UsdGeomSubset> UsdGeomSubset::GetGeomSubsets(const UsdGeomImageable 
 {
   std::vector<UsdGeomSubset> result;
 
-  for (const auto &childPrim : geom.GetPrim().GetChildren())
-  {
-    if (childPrim.IsA<UsdGeomSubset>())
-    {
+  for (const auto &childPrim : geom.GetPrim().GetChildren()) {
+    if (childPrim.IsA<UsdGeomSubset>()) {
       UsdGeomSubset subset(childPrim);
 
       TfToken subsetElementType, subsetFamilyName;
@@ -299,8 +292,7 @@ std::vector<UsdGeomSubset> UsdGeomSubset::GetGeomSubsets(const UsdGeomImageable 
       subset.GetFamilyNameAttr().Get(&subsetFamilyName);
 
       if ((elementType.IsEmpty() || subsetElementType == elementType) &&
-          (familyName.IsEmpty() || subsetFamilyName == familyName))
-      {
+          (familyName.IsEmpty() || subsetFamilyName == familyName)) {
         result.emplace_back(childPrim);
       }
     }
@@ -314,15 +306,12 @@ TfToken::Set UsdGeomSubset::GetAllGeomSubsetFamilyNames(const UsdGeomImageable &
 {
   TfToken::Set familyNames;
 
-  for (const auto &childPrim : geom.GetPrim().GetChildren())
-  {
-    if (childPrim.IsA<UsdGeomSubset>())
-    {
+  for (const auto &childPrim : geom.GetPrim().GetChildren()) {
+    if (childPrim.IsA<UsdGeomSubset>()) {
       UsdGeomSubset subset(childPrim);
       TfToken subsetFamilyName;
       subset.GetFamilyNameAttr().Get(&subsetFamilyName);
-      if (!subsetFamilyName.IsEmpty())
-      {
+      if (!subsetFamilyName.IsEmpty()) {
         familyNames.insert(subsetFamilyName);
       }
     }
@@ -362,13 +351,13 @@ TfToken UsdGeomSubset::GetFamilyType(const UsdGeomImageable &geom, const TfToken
 }
 
 /* static */
-VtIntArray UsdGeomSubset::GetUnassignedIndices(const std::vector<UsdGeomSubset> &subsets,
-                                               const size_t elementCount,
-                                               const UsdTimeCode &time /* UsdTimeCode::EarliestTime() */)
+VtIntArray UsdGeomSubset::GetUnassignedIndices(
+  const std::vector<UsdGeomSubset> &subsets,
+  const size_t elementCount,
+  const UsdTimeCode &time /* UsdTimeCode::EarliestTime() */)
 {
   std::set<int> assignedIndices;
-  for (const auto &subset : subsets)
-  {
+  for (const auto &subset : subsets) {
     VtIntArray indices;
     subset.GetIndicesAttr().Get(&indices, time);
     assignedIndices.insert(indices.begin(), indices.end());
@@ -382,30 +371,25 @@ VtIntArray UsdGeomSubset::GetUnassignedIndices(const std::vector<UsdGeomSubset> 
   // Negative indices should be extremely rare which is why it's better to
   // check and remove them after the collection of assigned indices rather
   // than during.
-  while (!assignedIndices.empty() && *assignedIndices.begin() < 0)
-  {
+  while (!assignedIndices.empty() && *assignedIndices.begin() < 0) {
     assignedIndices.erase(assignedIndices.begin());
   }
 
   VtIntArray result;
-  if (assignedIndices.empty())
-  {
+  if (assignedIndices.empty()) {
     result.reserve(elementCount);
     for (size_t idx = 0; idx < elementCount; ++idx)
       result.push_back(idx);
-  } else
-  {
+  } else {
     std::vector<int> allIndices;
     allIndices.reserve(elementCount);
     for (size_t idx = 0; idx < elementCount; ++idx)
       allIndices.push_back(idx);
 
     const unsigned int lastAssigned = *assignedIndices.rbegin();
-    if (elementCount > lastAssigned)
-    {
+    if (elementCount > lastAssigned) {
       result.reserve(elementCount - assignedIndices.size());
-    } else
-    {
+    } else {
       result.reserve(std::min(elementCount, (lastAssigned + 1) - assignedIndices.size()));
     }
     std::set_difference(allIndices.begin(),
@@ -431,14 +415,11 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
   subsets[0].GetElementTypeAttr().Get(&elementType);
 
   std::set<double> allTimeSamples;
-  for (const auto &subset : subsets)
-  {
+  for (const auto &subset : subsets) {
     TfToken subsetElementType;
     subset.GetElementTypeAttr().Get(&subsetElementType);
-    if (subsetElementType != elementType)
-    {
-      if (reason)
-      {
+    if (subsetElementType != elementType) {
+      if (reason) {
         *reason = TfStringPrintf(
           "Subset at path <%s> has elementType "
           "%s, which does not match '%s'.",
@@ -457,28 +438,22 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
 
   std::vector<UsdTimeCode> allTimeCodes(1, UsdTimeCode::Default());
   allTimeCodes.reserve(1 + allTimeSamples.size());
-  for (const double t : allTimeSamples)
-  {
+  for (const double t : allTimeSamples) {
     allTimeCodes.emplace_back(t);
   }
 
   bool valid = true;
-  for (const UsdTimeCode &t : allTimeCodes)
-  {
+  for (const UsdTimeCode &t : allTimeCodes) {
     std::set<int> indicesInFamily;
 
-    for (const UsdGeomSubset &subset : subsets)
-    {
+    for (const UsdGeomSubset &subset : subsets) {
       VtIntArray subsetIndices;
       subset.GetIndicesAttr().Get(&subsetIndices, t);
 
-      for (const int index : subsetIndices)
-      {
-        if (!indicesInFamily.insert(index).second && familyType != UsdGeomTokens->unrestricted)
-        {
+      for (const int index : subsetIndices) {
+        if (!indicesInFamily.insert(index).second && familyType != UsdGeomTokens->unrestricted) {
           valid = false;
-          if (reason)
-          {
+          if (reason) {
             *reason += TfStringPrintf(
               "Found overlapping index %d "
               "in GeomSubset at path <%s> at time %s.\n",
@@ -491,11 +466,9 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
     }
 
     // Make sure every index appears exactly once if it's a partition.
-    if (familyType == UsdGeomTokens->partition && indicesInFamily.size() != elementCount)
-    {
+    if (familyType == UsdGeomTokens->partition && indicesInFamily.size() != elementCount) {
       valid = false;
-      if (reason)
-      {
+      if (reason) {
         *reason += TfStringPrintf(
           "Number of unique indices at time %s "
           "does not match the element count %ld.",
@@ -505,11 +478,9 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
     }
 
     // Ensure that the indices are in the range [0, faceCount).
-    if (elementCount > 0 && static_cast<size_t>(*indicesInFamily.rbegin()) >= elementCount)
-    {
+    if (elementCount > 0 && static_cast<size_t>(*indicesInFamily.rbegin()) >= elementCount) {
       valid = false;
-      if (reason)
-      {
+      if (reason) {
         *reason += TfStringPrintf(
           "Found one or more indices that are "
           "greater than the element count %ld at time %s.\n",
@@ -517,11 +488,9 @@ bool UsdGeomSubset::ValidateSubsets(const std::vector<UsdGeomSubset> &subsets,
           TfStringify(t).c_str());
       }
     }
-    if (*indicesInFamily.begin() < 0)
-    {
+    if (*indicesInFamily.begin() < 0) {
       valid = false;
-      if (reason)
-      {
+      if (reason) {
         *reason += TfStringPrintf(
           "Found one or more indices that are "
           "less than 0 at time %s.\n",
@@ -539,34 +508,30 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
                                    const TfToken &familyName,
                                    std::string *const reason)
 {
-  std::vector<UsdGeomSubset> familySubsets = UsdGeomSubset::GetGeomSubsets(geom, elementType, familyName);
+  std::vector<UsdGeomSubset> familySubsets = UsdGeomSubset::GetGeomSubsets(geom,
+                                                                           elementType,
+                                                                           familyName);
 
   bool valid = true;
 
   size_t faceCount = 0;
-  if (elementType == UsdGeomTokens->face)
-  {
+  if (elementType == UsdGeomTokens->face) {
     // XXX: Use UsdGeomMesh schema to get the face count.
     UsdAttribute fvcAttr = geom.GetPrim().GetAttribute(UsdGeomTokens->faceVertexCounts);
-    if (fvcAttr)
-    {
+    if (fvcAttr) {
       VtIntArray faceVertexCounts;
-      if (fvcAttr.Get(&faceVertexCounts))
-      {
+      if (fvcAttr.Get(&faceVertexCounts)) {
         faceCount = faceVertexCounts.size();
       }
     }
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unsupported element type '%s'.", elementType.GetText());
     return false;
   }
 
-  if (faceCount == 0)
-  {
+  if (faceCount == 0) {
     valid = false;
-    if (reason)
-    {
+    if (reason) {
       *reason += TfStringPrintf(
         "Unable to determine face-count for geom"
         " <%s>",
@@ -579,8 +544,7 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
   bool familyIsRestricted = (familyType != UsdGeomTokens->unrestricted);
 
   std::set<double> allTimeSamples;
-  for (const auto &subset : familySubsets)
-  {
+  for (const auto &subset : familySubsets) {
     std::vector<double> subsetTimeSamples;
     subset.GetIndicesAttr().GetTimeSamples(&subsetTimeSamples);
     allTimeSamples.insert(subsetTimeSamples.begin(), subsetTimeSamples.end());
@@ -588,31 +552,23 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
 
   std::vector<UsdTimeCode> allTimeCodes(1, UsdTimeCode::Default());
   allTimeCodes.reserve(1 + allTimeSamples.size());
-  for (const double t : allTimeSamples)
-  {
+  for (const double t : allTimeSamples) {
     allTimeCodes.emplace_back(t);
   }
 
-  for (const UsdTimeCode &t : allTimeCodes)
-  {
+  for (const UsdTimeCode &t : allTimeCodes) {
     std::set<int> indicesInFamily;
 
-    for (const UsdGeomSubset &subset : familySubsets)
-    {
+    for (const UsdGeomSubset &subset : familySubsets) {
       VtIntArray subsetIndices;
       subset.GetIndicesAttr().Get(&subsetIndices, t);
-      if (!familyIsRestricted)
-      {
+      if (!familyIsRestricted) {
         indicesInFamily.insert(subsetIndices.begin(), subsetIndices.end());
-      } else
-      {
-        for (const int index : subsetIndices)
-        {
-          if (!indicesInFamily.insert(index).second)
-          {
+      } else {
+        for (const int index : subsetIndices) {
+          if (!indicesInFamily.insert(index).second) {
             valid = false;
-            if (reason)
-            {
+            if (reason) {
               *reason += TfStringPrintf(
                 "Found duplicate index %d "
                 "in GeomSubset at path <%s>.\n",
@@ -625,11 +581,9 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
     }
 
     // Make sure every index appears exactly once if it's a partition.
-    if (familyType == UsdGeomTokens->partition && indicesInFamily.size() != faceCount)
-    {
+    if (familyType == UsdGeomTokens->partition && indicesInFamily.size() != faceCount) {
       valid = false;
-      if (reason)
-      {
+      if (reason) {
         *reason += TfStringPrintf(
           "Number of unique indices at time %s "
           "does not match the face count %ld.",
@@ -639,11 +593,9 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
     }
 
     // Make sure the indices are valid and don't exceed the faceCount.
-    if (faceCount > 0 && static_cast<size_t>(*indicesInFamily.rbegin()) >= faceCount)
-    {
+    if (faceCount > 0 && static_cast<size_t>(*indicesInFamily.rbegin()) >= faceCount) {
       valid = false;
-      if (reason)
-      {
+      if (reason) {
         *reason += TfStringPrintf(
           "Found one or more indices that are "
           "greater than the face-count %ld at time %s.\n",
@@ -653,11 +605,9 @@ bool UsdGeomSubset::ValidateFamily(const UsdGeomImageable &geom,
     }
 
     // Ensure there are no negative indices.
-    if (*indicesInFamily.begin() < 0)
-    {
+    if (*indicesInFamily.begin() < 0) {
       valid = false;
-      if (reason)
-      {
+      if (reason) {
         *reason += TfStringPrintf(
           "Found one or more indices that are "
           "less than 0 at time %s.\n",

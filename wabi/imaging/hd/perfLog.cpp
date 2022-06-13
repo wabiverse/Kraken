@@ -39,8 +39,7 @@ static bool _IsEnabledPerfLog()
   return isEnabledPerfLog;
 }
 
-HdPerfLog::HdPerfLog()
-  : _enabled(_IsEnabledPerfLog())
+HdPerfLog::HdPerfLog() : _enabled(_IsEnabledPerfLog())
 {
   /*NOTHING*/
 }
@@ -89,8 +88,7 @@ void HdPerfLog::ResetCache(TfToken const &name)
 double HdPerfLog::GetCacheHitRatio(TfToken const &name)
 {
   _Lock lock(_mutex);
-  if (HdPerfLog::_CacheEntry *value = TfMapLookupPtr(_cacheMap, name))
-  {
+  if (HdPerfLog::_CacheEntry *value = TfMapLookupPtr(_cacheMap, name)) {
     return value->GetHitRatio();
   }
   return 0.0;
@@ -117,8 +115,7 @@ TfTokenVector HdPerfLog::GetCacheNames()
   _Lock lock(_mutex);
   TfTokenVector names;
   names.reserve(_cacheMap.size());
-  TF_FOR_ALL (tokCacheIt, _cacheMap)
-  {
+  TF_FOR_ALL (tokCacheIt, _cacheMap) {
     names.push_back(tokCacheIt->first);
   }
   std::sort(names.begin(), names.end());
@@ -130,8 +127,7 @@ TfTokenVector HdPerfLog::GetCounterNames()
   _Lock lock(_mutex);
   TfTokenVector names;
   names.reserve(_counterMap.size());
-  TF_FOR_ALL (it, _counterMap)
-  {
+  TF_FOR_ALL (it, _counterMap) {
     names.push_back(it->first);
   }
   std::sort(names.begin(), names.end());
@@ -144,7 +140,10 @@ void HdPerfLog::IncrementCounter(TfToken const &name)
     return;
   _Lock lock(_mutex);
   TF_DEBUG(HD_COUNTER_CHANGED)
-    .Msg("Counter changed %s: %f -> %f\n", name.GetText(), _counterMap[name], _counterMap[name] + 1.0);
+    .Msg("Counter changed %s: %f -> %f\n",
+         name.GetText(),
+         _counterMap[name],
+         _counterMap[name] + 1.0);
   _counterMap[name] += 1.0;
 }
 
@@ -154,7 +153,10 @@ void HdPerfLog::DecrementCounter(TfToken const &name)
     return;
   _Lock lock(_mutex);
   TF_DEBUG(HD_COUNTER_CHANGED)
-    .Msg("Counter changed %s: %f -> %f\n", name.GetText(), _counterMap[name], _counterMap[name] - 1.0);
+    .Msg("Counter changed %s: %f -> %f\n",
+         name.GetText(),
+         _counterMap[name],
+         _counterMap[name] - 1.0);
   _counterMap[name] -= 1.0;
 }
 
@@ -174,7 +176,10 @@ void HdPerfLog::AddCounter(TfToken const &name, double value)
     return;
   _Lock lock(_mutex);
   TF_DEBUG(HD_COUNTER_CHANGED)
-    .Msg("Counter changed %s %f -> %f\n", name.GetText(), _counterMap[name], _counterMap[name] + value);
+    .Msg("Counter changed %s %f -> %f\n",
+         name.GetText(),
+         _counterMap[name],
+         _counterMap[name] + value);
   _counterMap[name] += value;
 }
 
@@ -184,7 +189,10 @@ void HdPerfLog::SubtractCounter(TfToken const &name, double value)
     return;
   _Lock lock(_mutex);
   TF_DEBUG(HD_COUNTER_CHANGED)
-    .Msg("Counter changed %s %f -> %f\n", name.GetText(), _counterMap[name], _counterMap[name] - value);
+    .Msg("Counter changed %s %f -> %f\n",
+         name.GetText(),
+         _counterMap[name],
+         _counterMap[name] - value);
   _counterMap[name] -= value;
 }
 
@@ -199,8 +207,7 @@ void HdPerfLog::ResetCounters()
   if (ARCH_LIKELY(!_enabled))
     return;
   _Lock lock(_mutex);
-  TF_FOR_ALL (counterIt, _counterMap)
-  {
+  TF_FOR_ALL (counterIt, _counterMap) {
     TF_DEBUG(HD_COUNTER_CHANGED)
       .Msg("Counter reset %s: %f -> 0\n", counterIt->first.GetText(), counterIt->second);
     counterIt->second = 0;

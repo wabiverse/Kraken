@@ -37,9 +37,7 @@ HgiShaderFunctionDesc const &HgiShaderFunction::GetDescriptor() const
   return _descriptor;
 }
 
-HgiShaderFunction::HgiShaderFunction(HgiShaderFunctionDesc const &desc)
-  : _descriptor(desc)
-{}
+HgiShaderFunction::HgiShaderFunction(HgiShaderFunctionDesc const &desc) : _descriptor(desc) {}
 
 HgiShaderFunction::~HgiShaderFunction() = default;
 

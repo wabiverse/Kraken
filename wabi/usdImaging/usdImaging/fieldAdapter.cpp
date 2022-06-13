@@ -61,10 +61,11 @@ void UsdImagingFieldAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingInd
   index->RemoveBprim(GetPrimTypeToken(), cachePath);
 }
 
-void UsdImagingFieldAdapter::TrackVariability(UsdPrim const &prim,
-                                              SdfPath const &cachePath,
-                                              HdDirtyBits *timeVaryingBits,
-                                              UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingFieldAdapter::TrackVariability(
+  UsdPrim const &prim,
+  SdfPath const &cachePath,
+  HdDirtyBits *timeVaryingBits,
+  UsdImagingInstancerContext const *instancerContext) const
 {
   // Discover time-varying transforms.
   _IsTransformVarying(prim,
@@ -75,11 +76,9 @@ void UsdImagingFieldAdapter::TrackVariability(UsdPrim const &prim,
   // If any of the field attributes is time varying
   // we will assume all field params are time-varying.
   const std::vector<UsdAttribute> &attrs = prim.GetAttributes();
-  TF_FOR_ALL (attrIter, attrs)
-  {
+  TF_FOR_ALL (attrIter, attrs) {
     const UsdAttribute &attr = *attrIter;
-    if (attr.GetNumTimeSamples() > 1)
-    {
+    if (attr.GetNumTimeSamples() > 1) {
       *timeVaryingBits |= HdField::DirtyBits::DirtyParams;
     }
   }
@@ -87,11 +86,12 @@ void UsdImagingFieldAdapter::TrackVariability(UsdPrim const &prim,
 
 // Thread safe.
 //  * Populate dirty bits for the given \p time.
-void UsdImagingFieldAdapter::UpdateForTime(UsdPrim const &prim,
-                                           SdfPath const &cachePath,
-                                           UsdTimeCode time,
-                                           HdDirtyBits requestedBits,
-                                           UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingFieldAdapter::UpdateForTime(
+  UsdPrim const &prim,
+  SdfPath const &cachePath,
+  UsdTimeCode time,
+  HdDirtyBits requestedBits,
+  UsdImagingInstancerContext const *instancerContext) const
 {}
 
 HdDirtyBits UsdImagingFieldAdapter::ProcessPropertyChange(UsdPrim const &prim,
@@ -130,12 +130,10 @@ VtValue UsdImagingFieldAdapter::Get(UsdPrim const &prim,
                                     UsdTimeCode time,
                                     VtIntArray *outIndices) const
 {
-  if (key == _tokens->textureMemory)
-  {
+  if (key == _tokens->textureMemory) {
     UsdAttribute const &attr = prim.GetAttribute(key);
     VtValue value;
-    if (attr && attr.Get(&value, time))
-    {
+    if (attr && attr.Get(&value, time)) {
       return value;
     }
 

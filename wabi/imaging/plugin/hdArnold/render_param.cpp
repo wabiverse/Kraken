@@ -41,20 +41,17 @@ HdArnoldRenderParam::Status HdArnoldRenderParam::Render()
 {
   const auto aborted = _aborted.load(std::memory_order_acquire);
   // Checking early if the render was aborted earlier.
-  if (aborted)
-  {
+  if (aborted) {
     return Status::Aborted;
   }
 
   const auto status = AiRenderGetStatus();
-  if (status == AI_RENDER_STATUS_FINISHED)
-  {
+  if (status == AI_RENDER_STATUS_FINISHED) {
     // If render restart is true, it means the Render Delegate received an update after rendering
     // has finished and AiRenderInterrupt does not change the status anymore. For the atomic
     // operations we are using a release-acquire model.
     const auto needsRestart = _needsRestart.exchange(false, std::memory_order_acq_rel);
-    if (needsRestart)
-    {
+    if (needsRestart) {
       _paused.store(false, std::memory_order_release);
       AiRenderRestart();
       return Status::Converging;
@@ -63,57 +60,43 @@ HdArnoldRenderParam::Status HdArnoldRenderParam::Render()
   }
   // Resetting the value.
   _needsRestart.store(false, std::memory_order_release);
-  if (status == AI_RENDER_STATUS_PAUSED)
-  {
+  if (status == AI_RENDER_STATUS_PAUSED) {
     const auto needsRestart = _needsRestart.exchange(false, std::memory_order_acq_rel);
-    if (needsRestart)
-    {
+    if (needsRestart) {
       _paused.store(false, std::memory_order_release);
       AiRenderRestart();
-    } else if (!_paused.load(std::memory_order_acquire))
-    {
+    } else if (!_paused.load(std::memory_order_acquire)) {
       AiRenderResume();
     }
     return Status::Converging;
   }
 
-  if (status == AI_RENDER_STATUS_RESTARTING)
-  {
+  if (status == AI_RENDER_STATUS_RESTARTING) {
     _paused.store(false, std::memory_order_release);
     return Status::Converging;
   }
 
-  if (status == AI_RENDER_STATUS_FAILED)
-  {
+  if (status == AI_RENDER_STATUS_FAILED) {
     _aborted.store(true, std::memory_order_release);
     _paused.store(false, std::memory_order_release);
     const auto errorCode = AiRenderEnd();
-    if (errorCode == AI_ABORT)
-    {
+    if (errorCode == AI_ABORT) {
       TF_WARN("[arnold-usd] Render was aborted.");
-    } else if (errorCode == AI_ERROR_NO_CAMERA)
-    {
+    } else if (errorCode == AI_ERROR_NO_CAMERA) {
       TF_WARN("[arnold-usd] Camera not defined.");
-    } else if (errorCode == AI_ERROR_BAD_CAMERA)
-    {
+    } else if (errorCode == AI_ERROR_BAD_CAMERA) {
       TF_WARN("[arnold-usd] Bad camera data.");
-    } else if (errorCode == AI_ERROR_VALIDATION)
-    {
+    } else if (errorCode == AI_ERROR_VALIDATION) {
       TF_WARN("[arnold-usd] Usage not validated.");
-    } else if (errorCode == AI_ERROR_RENDER_REGION)
-    {
+    } else if (errorCode == AI_ERROR_RENDER_REGION) {
       TF_WARN("[arnold-usd] Invalid render region.");
-    } else if (errorCode == AI_INTERRUPT)
-    {
+    } else if (errorCode == AI_INTERRUPT) {
       TF_WARN("[arnold-usd] Render interrupted by user.");
-    } else if (errorCode == AI_ERROR_NO_OUTPUTS)
-    {
+    } else if (errorCode == AI_ERROR_NO_OUTPUTS) {
       TF_WARN("[arnold-usd] No rendering outputs.");
-    } else if (errorCode == AI_ERROR_UNAVAILABLE_DEVICE)
-    {
+    } else if (errorCode == AI_ERROR_UNAVAILABLE_DEVICE) {
       TF_WARN("[arnold-usd] Cannot create GPU context.");
-    } else if (errorCode == AI_ERROR)
-    {
+    } else if (errorCode == AI_ERROR) {
       TF_WARN("[arnold-usd] Generic error.");
     }
     return Status::Aborted;
@@ -126,16 +109,13 @@ HdArnoldRenderParam::Status HdArnoldRenderParam::Render()
 void HdArnoldRenderParam::Interrupt(bool needsRestart, bool clearStatus)
 {
   const auto status = AiRenderGetStatus();
-  if (status != AI_RENDER_STATUS_NOT_STARTED)
-  {
+  if (status != AI_RENDER_STATUS_NOT_STARTED) {
     AiRenderInterrupt(AI_BLOCKING);
   }
-  if (needsRestart)
-  {
+  if (needsRestart) {
     _needsRestart.store(true, std::memory_order_release);
   }
-  if (clearStatus)
-  {
+  if (clearStatus) {
     _aborted.store(false, std::memory_order_release);
   }
 }

@@ -51,15 +51,16 @@ SdfPayload::SdfPayload(const std::string &assetPath,
 
 bool SdfPayload::operator==(const SdfPayload &rhs) const
 {
-  return _assetPath == rhs._assetPath && _primPath == rhs._primPath && _layerOffset == rhs._layerOffset;
+  return _assetPath == rhs._assetPath && _primPath == rhs._primPath &&
+         _layerOffset == rhs._layerOffset;
 }
 
 bool SdfPayload::operator<(const SdfPayload &rhs) const
 {
-  return (
-    _assetPath < rhs._assetPath ||
-    (_assetPath == rhs._assetPath &&
-     (_primPath < rhs._primPath || (_primPath == rhs._primPath && (_layerOffset < rhs._layerOffset)))));
+  return (_assetPath < rhs._assetPath ||
+          (_assetPath == rhs._assetPath &&
+           (_primPath < rhs._primPath ||
+            (_primPath == rhs._primPath && (_layerOffset < rhs._layerOffset)))));
 }
 
 std::ostream &operator<<(std::ostream &out, const SdfPayload &payload)

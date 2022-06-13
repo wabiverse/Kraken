@@ -51,37 +51,32 @@ TF_REGISTRY_FUNCTION(TfType)
 
 std::ostream &operator<<(std::ostream &out, GfRange3d const &r)
 {
-  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << "..." << Gf_OstreamHelperP(r.GetMax()) << ']';
+  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << "..." << Gf_OstreamHelperP(r.GetMax())
+             << ']';
 }
 
 double GfRange3d::GetDistanceSquared(const GfVec3d &p) const
 {
   double dist = 0.0;
 
-  if (p[0] < _min[0])
-  {
+  if (p[0] < _min[0]) {
     // p is left of box
     dist += GfSqr(_min[0] - p[0]);
-  } else if (p[0] > _max[0])
-  {
+  } else if (p[0] > _max[0]) {
     // p is right of box
     dist += GfSqr(p[0] - _max[0]);
   }
-  if (p[1] < _min[1])
-  {
+  if (p[1] < _min[1]) {
     // p is front of box
     dist += GfSqr(_min[1] - p[1]);
-  } else if (p[1] > _max[1])
-  {
+  } else if (p[1] > _max[1]) {
     // p is back of box
     dist += GfSqr(p[1] - _max[1]);
   }
-  if (p[2] < _min[2])
-  {
+  if (p[2] < _min[2]) {
     // p is below of box
     dist += GfSqr(_min[2] - p[2]);
-  } else if (p[2] > _max[2])
-  {
+  } else if (p[2] > _max[2]) {
     // p is above of box
     dist += GfSqr(p[2] - _max[2]);
   }
@@ -91,8 +86,7 @@ double GfRange3d::GetDistanceSquared(const GfVec3d &p) const
 
 GfVec3d GfRange3d::GetCorner(size_t i) const
 {
-  if (i > 7)
-  {
+  if (i > 7) {
     TF_CODING_ERROR("Invalid corner %zu > 7.", i);
     return _min;
   }
@@ -101,8 +95,7 @@ GfVec3d GfRange3d::GetCorner(size_t i) const
 
 GfRange3d GfRange3d::GetOctant(size_t i) const
 {
-  if (i > 7)
-  {
+  if (i > 7) {
     TF_CODING_ERROR("Invalid octant %zu > 7.", i);
     return GfRange3d();
   }

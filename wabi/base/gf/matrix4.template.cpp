@@ -34,9 +34,7 @@
 
 { % extends "matrix.template.cpp" % } { % from "matrix.template.cpp" import DIAGONAL % }
 
-{
-  % block customIncludes %
-}
+{ % block customIncludes % }
 #include "wabi/base/gf/homogeneous.h"
 #include "wabi/base/gf/matrix3{{ SCL[0] }}.h"
 #include "wabi/base/gf/quat{{ SCL[0] }}.h"
@@ -68,18 +66,15 @@
     m[0][col] = r0[col];
   }
 
-  for (size_t col = 0; col < {{DIM}} && col < r1.size(); ++col)
-  {
+  for (size_t col = 0; col < {{DIM}} && col < r1.size(); ++col) {
     m[1][col] = r1[col];
   }
 
-  for (size_t col = 0; col < {{DIM}} && col < r2.size(); ++col)
-  {
+  for (size_t col = 0; col < {{DIM}} && col < r2.size(); ++col) {
     m[2][col] = r2[col];
   }
 
-  for (size_t col = 0; col < {{DIM}} && col < r3.size(); ++col)
-  {
+  for (size_t col = 0; col < {{DIM}} && col < r3.size(); ++col) {
     m[3][col] = r3[col];
   }
 
@@ -235,8 +230,7 @@
 
   // compute 4x4 determinant & its reciprocal
   double det = x30 * z30 + x20 * z20 + x10 * z10 + x00 * z00;
-  if (detPtr)
-  {
+  if (detPtr) {
     *detPtr = det;
   }
 
@@ -247,8 +241,7 @@
   }
   inverse;
 
-  if (GfAbs(det) > eps)
-  {
+  if (GfAbs(det) > eps) {
 
     double rcp = 1.0 / det;
 
@@ -274,8 +267,7 @@
     inverse._mtx[2][3] = {{SCALAR_CAST("z32*rcp")}};
     inverse._mtx[3][2] = {{SCALAR_CAST("z23*rcp")}};
     inverse._mtx[3][3] = {{SCALAR_CAST("z33*rcp")}};
-  } else
-  {
+  } else {
     inverse.SetScale(FLT_MAX);
   }
 
@@ -291,7 +283,8 @@ double
 ::GetDeterminant() const
 {
   return (-_mtx[0][3] * _GetDeterminant3(1, 2, 3, 0, 1, 2) +
-          _mtx[1][3] * _GetDeterminant3(0, 2, 3, 0, 1, 2) - _mtx[2][3] * _GetDeterminant3(0, 1, 3, 0, 1, 2) +
+          _mtx[1][3] * _GetDeterminant3(0, 2, 3, 0, 1, 2) -
+          _mtx[2][3] * _GetDeterminant3(0, 1, 3, 0, 1, 2) +
           _mtx[3][3] * _GetDeterminant3(0, 1, 2, 0, 1, 2));
 }
 
@@ -301,7 +294,8 @@ double
     MAT
   }
 }
-::_GetDeterminant3(size_t row1, size_t row2, size_t row3, size_t col1, size_t col2, size_t col3) const
+::_GetDeterminant3(size_t row1, size_t row2, size_t row3, size_t col1, size_t col2, size_t col3)
+  const
 {
   return (_mtx[row1][col1] * _mtx[row2][col2] * _mtx[row3][col3] +
           _mtx[row1][col2] * _mtx[row2][col3] * _mtx[row3][col1] +
@@ -359,8 +353,7 @@ bool
   _mtx[2][2] = r2[2];
 
   // divide out any homogeneous coordinate - unless it's zero
-  if (_mtx[3][3] != 1.0 && !GfIsClose(_mtx[3][3], 0.0, GF_MIN_VECTOR_LENGTH))
-  {
+  if (_mtx[3][3] != 1.0 && !GfIsClose(_mtx[3][3], 0.0, GF_MIN_VECTOR_LENGTH)) {
     _mtx[3][0] /= _mtx[3][3];
     _mtx[3][1] /= _mtx[3][3];
     _mtx[3][2] /= _mtx[3][3];
@@ -751,8 +744,7 @@ bool
   // Set A to the upper 3x3 and set t to the translation part of
   // this matrix
   GfMatrix4d a;
-  for (int i = 0; i < 3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++)
       a._mtx[i][j] = _mtx[i][j];
     a._mtx[3][i] = a._mtx[i][3] = 0.0;
@@ -814,13 +806,10 @@ bool
   // us to compute factors for singular matrices.
   GfMatrix4d sInv;
   sInv.SetIdentity();
-  for (int i = 0; i < 3; i++)
-  {
-    if (eigenvalues[i] < eps)
-    {
+  for (int i = 0; i < 3; i++) {
+    if (eigenvalues[i] < eps) {
       (*s)[i] = detSign * eps;
-    } else
-    {
+    } else {
       (*s)[i] = detSign * sqrt(eigenvalues[i]);
     }
     sInv._mtx[i][i] = 1.0 / (*s)[i];
@@ -867,8 +856,7 @@ void
   GfVec3d b = *eigenvalues;
   GfVec3d z = GfVec3d(0);
 
-  for (int i = 0; i < 50; i++)
-  {
+  for (int i = 0; i < 50; i++) {
     double sm = 0.0;
     for (int p = 0; p < 2; p++)
       for (int q = p + 1; q < 3; q++)
@@ -879,10 +867,8 @@ void
 
     double thresh = (i < 3 ? (.2 * sm / (3 * 3)) : 0.0);
 
-    for (int p = 0; p < 3; p++)
-    {
-      for (int q = p + 1; q < 3; q++)
-      {
+    for (int p = 0; p < 3; p++) {
+      for (int q = p + 1; q < 3; q++) {
 
         double g = 100.0 * GfAbs(a._mtx[p][q]);
 
@@ -890,16 +876,13 @@ void
             (GfAbs((*eigenvalues)[q]) + g == GfAbs((*eigenvalues)[q])))
           a._mtx[p][q] = 0.0;
 
-        else if (GfAbs(a._mtx[p][q]) > thresh)
-        {
+        else if (GfAbs(a._mtx[p][q]) > thresh) {
           double h = (*eigenvalues)[q] - (*eigenvalues)[p];
           double t;
 
-          if (GfAbs(h) + g == GfAbs(h))
-          {
+          if (GfAbs(h) + g == GfAbs(h)) {
             t = a._mtx[p][q] / h;
-          } else
-          {
+          } else {
             double theta = 0.5 * h / a._mtx[p][q];
             t = 1.0 / (GfAbs(theta) + sqrt(1.0 + theta * theta));
             if (theta < 0.0)
@@ -918,32 +901,28 @@ void
           (*eigenvalues)[q] += h;
           a._mtx[p][q] = 0.0;
 
-          for (int j = 0; j < p; j++)
-          {
+          for (int j = 0; j < p; j++) {
             g = a._mtx[j][p];
             h = a._mtx[j][q];
             a._mtx[j][p] = g - s * (h + g * tau);
             a._mtx[j][q] = h + s * (g - h * tau);
           }
 
-          for (int j = p + 1; j < q; j++)
-          {
+          for (int j = p + 1; j < q; j++) {
             g = a._mtx[p][j];
             h = a._mtx[j][q];
             a._mtx[p][j] = g - s * (h + g * tau);
             a._mtx[j][q] = h + s * (g - h * tau);
           }
 
-          for (int j = q + 1; j < 3; j++)
-          {
+          for (int j = q + 1; j < 3; j++) {
             g = a._mtx[p][j];
             h = a._mtx[q][j];
             a._mtx[p][j] = g - s * (h + g * tau);
             a._mtx[q][j] = h + s * (g - h * tau);
           }
 
-          for (int j = 0; j < 3; j++)
-          {
+          for (int j = 0; j < 3; j++) {
             g = eigenvectors[j][p];
             h = eigenvectors[j][q];
             eigenvectors[j][p] = g - s * (h + g * tau);
@@ -952,8 +931,7 @@ void
         }
       }
     }
-    for (int p = 0; p < 3; p++)
-    {
+    for (int p = 0; p < 3; p++) {
       (*eigenvalues)[p] = b[p] += z[p];
       z[p] = 0;
     }
@@ -984,8 +962,7 @@ void
         {
           MAT
         }
-      } ::Factor(&scaleOrientMat, &scale, &factoredRotMat, &translation, &perspMat))
-  {
+      } ::Factor(&scaleOrientMat, &scale, &factoredRotMat, &translation, &perspMat)) {
     // unable to decompose, so return the matrix
     return *this;
   }
@@ -1024,14 +1001,12 @@ GfQuat{{SCL[0]}}
   im;
   ScalarType r;
 
-  if (_mtx[0][0] + _mtx[1][1] + _mtx[2][2] > _mtx[i][i])
-  {
+  if (_mtx[0][0] + _mtx[1][1] + _mtx[2][2] > _mtx[i][i]) {
     r = 0.5 * sqrt(_mtx[0][0] + _mtx[1][1] + _mtx[2][2] + _mtx[3][3]);
     im.Set((_mtx[1][2] - _mtx[2][1]) / (4.0 * r),
            (_mtx[2][0] - _mtx[0][2]) / (4.0 * r),
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
-  } else
-  {
+  } else {
     int j = (i + 1) % 3;
     int k = (i + 2) % 3;
     ScalarType q = 0.5 * sqrt(_mtx[i][i] - _mtx[j][j] - _mtx[k][k] + _mtx[3][3]);

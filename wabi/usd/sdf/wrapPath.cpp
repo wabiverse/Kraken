@@ -58,11 +58,9 @@ namespace
 
   static string _Repr(const SdfPath &self)
   {
-    if (self.IsEmpty())
-    {
+    if (self.IsEmpty()) {
       return TF_PY_REPR_PREFIX + "Path.emptyPath";
-    } else
-    {
+    } else {
       return string(TF_PY_REPR_PREFIX + "Path(") + TfPyRepr(self.GetAsString()) + ")";
     }
   }
@@ -91,7 +89,9 @@ namespace
 
   static object _FindLongestPrefix(SdfPathVector const &paths, SdfPath const &path)
   {
-    SdfPathVector::const_iterator result = SdfPathFindLongestPrefix(paths.begin(), paths.end(), path);
+    SdfPathVector::const_iterator result = SdfPathFindLongestPrefix(paths.begin(),
+                                                                    paths.end(),
+                                                                    path);
     if (result == paths.end())
       return object();
     return object(*result);
@@ -99,7 +99,9 @@ namespace
 
   static object _FindLongestStrictPrefix(SdfPathVector const &paths, SdfPath const &path)
   {
-    SdfPathVector::const_iterator result = SdfPathFindLongestStrictPrefix(paths.begin(), paths.end(), path);
+    SdfPathVector::const_iterator result = SdfPathFindLongestStrictPrefix(paths.begin(),
+                                                                          paths.end(),
+                                                                          path);
     if (result == paths.end())
       return object();
     return object(*result);
@@ -142,14 +144,11 @@ namespace
     auto begin = paths.begin() + pathsPerThread * index;
     auto end = begin + pathsPerThread;
 
-    for (size_t stressIter = 0; stressIter != StressIters; ++stressIter)
-    {
-      for (auto i = begin; i != end; ++i)
-      {
+    for (size_t stressIter = 0; stressIter != StressIters; ++stressIter) {
+      for (auto i = begin; i != end; ++i) {
         SdfPath p = SdfPath::AbsoluteRootPath();
         // size_t offset = (i - begin) * index + stressIter;
-        for (size_t j = 0; j != (rand() % MaxStressPathSize); ++j)
-        {
+        for (size_t j = 0; j != (rand() % MaxStressPathSize); ++j) {
           char name[2];
           name[0] = 'a' + (rand() % 26);
           name[1] = '\0';
@@ -173,12 +172,10 @@ namespace
     std::vector<std::thread> threads(NumStressThreads);
 
     size_t index = 0;
-    for (auto &t : threads)
-    {
+    for (auto &t : threads) {
       t = std::thread(_PathStressTask, index++, std::ref(manyPaths));
     }
-    for (auto &t : threads)
-    {
+    for (auto &t : threads) {
       t.join();
     }
   }
@@ -194,8 +191,7 @@ namespace
     SdfPath next()
     {
       _RaiseIfAtEnd();
-      if (_didFirst)
-      {
+      if (_didFirst) {
         ++_it;
         _RaiseIfAtEnd();
       }
@@ -204,10 +200,10 @@ namespace
     }
 
    private:
+
     void _RaiseIfAtEnd() const
     {
-      if (_it == _end)
-      {
+      if (_it == _end) {
         PyErr_SetString(PyExc_StopIteration, "Iterator at end");
         throw_error_already_set();
       }
@@ -277,16 +273,19 @@ void wrapPath()
                     "thisPath.GetParentPath().AppendElementString(thisPath.element).\n"
                     "None of absoluteRootPath, reflexiveRelativePath, nor emptyPath\n"
                     "possess the above quality; their .elementString is the empty string.")
-      .add_property("targetPath",
-                    make_function(&This::GetTargetPath, return_value_policy<copy_const_reference>()),
-                    "The relational attribute target path for this path.\n\n"
-                    "EmptyPath if this is not a relational attribute path.")
+      .add_property(
+        "targetPath",
+        make_function(&This::GetTargetPath, return_value_policy<copy_const_reference>()),
+        "The relational attribute target path for this path.\n\n"
+        "EmptyPath if this is not a relational attribute path.")
 
       .def("GetAllTargetPathsRecursively",
            &_WrapGetAllTargetPathsRecursively,
            return_value_policy<TfPySequenceToList>())
 
-      .def("GetVariantSelection", &This::GetVariantSelection, return_value_policy<TfPyPairToTuple>())
+      .def("GetVariantSelection",
+           &This::GetVariantSelection,
+           return_value_policy<TfPyPairToTuple>())
 
       .def("IsAbsolutePath", &This::IsAbsolutePath)
       .def("IsAbsoluteRootPath", &This::IsAbsoluteRootPath)
@@ -355,7 +354,9 @@ void wrapPath()
            return_value_policy<TfPySequenceToList>())
       .staticmethod("GetConciseRelativePaths")
 
-      .def("RemoveDescendentPaths", _RemoveDescendentPaths, return_value_policy<TfPySequenceToList>())
+      .def("RemoveDescendentPaths",
+           _RemoveDescendentPaths,
+           return_value_policy<TfPySequenceToList>())
       .staticmethod("RemoveDescendentPaths")
       .def("RemoveAncestorPaths", _RemoveAncestorPaths, return_value_policy<TfPySequenceToList>())
       .staticmethod("RemoveAncestorPaths")
@@ -368,14 +369,17 @@ void wrapPath()
 
       .def("TokenizeIdentifier", &This::TokenizeIdentifier)
       .staticmethod("TokenizeIdentifier")
-      .def("JoinIdentifier", (std::string(*)(const std::vector<std::string> &)) & This::JoinIdentifier)
+      .def("JoinIdentifier",
+           (std::string(*)(const std::vector<std::string> &)) & This::JoinIdentifier)
       .def("JoinIdentifier",
            (std::string(*)(const std::string &, const std::string &)) & This::JoinIdentifier)
       .staticmethod("JoinIdentifier")
 
       .def("StripNamespace", (std::string(*)(const std::string &)) & This::StripNamespace)
       .staticmethod("StripNamespace")
-      .def("StripPrefixNamespace", &This::StripPrefixNamespace, return_value_policy<TfPyPairToTuple>())
+      .def("StripPrefixNamespace",
+           &This::StripPrefixNamespace,
+           return_value_policy<TfPyPairToTuple>())
       .staticmethod("StripPrefixNamespace")
 
       .def("IsValidPathString", &_IsValidPathString)
@@ -424,14 +428,16 @@ void wrapPath()
 
   // Register conversion for python list <-> set<SdfPath>
   to_python_converter<SdfPathSet, TfPySequenceToPython<SdfPathSet>>();
-  TfPyContainerConversions::from_python_sequence<std::set<SdfPath>, TfPyContainerConversions::set_policy>();
+  TfPyContainerConversions::from_python_sequence<std::set<SdfPath>,
+                                                 TfPyContainerConversions::set_policy>();
 
   implicitly_convertible<string, This>();
 
   VtValueFromPython<SdfPath>();
 
-  Sdf_PathIsValidPathStringResult::Wrap<Sdf_PathIsValidPathStringResult>("_IsValidPathStringResult",
-                                                                         "errorMessage");
+  Sdf_PathIsValidPathStringResult::Wrap<Sdf_PathIsValidPathStringResult>(
+    "_IsValidPathStringResult",
+    "errorMessage");
 
   Sdf_wrapAncestorsRange();
 }

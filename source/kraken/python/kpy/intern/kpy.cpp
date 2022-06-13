@@ -79,7 +79,9 @@ static PyObject *kpy_script_paths(PyObject *UNUSED(self))
   return ret;
 }
 
-static bool kpy_resolver_paths_visit_cb(void *userdata, char *UNUSED(path_dst), const char *path_src)
+static bool kpy_resolver_paths_visit_cb(void *userdata,
+                                        char *UNUSED(path_dst),
+                                        const char *path_src)
 {
   // PyList_APPEND((PyObject *)userdata, PyC_UnicodeFromByte(path_src));
   return false; /* never edits the path */
@@ -117,8 +119,7 @@ static PyObject *kpy_resolver_paths(PyObject *UNUSED(self), PyObject *args, PyOb
                                         PyC_ParseBool,
                                         &packed,
                                         PyC_ParseBool,
-                                        &local))
-  {
+                                        &local)) {
     return NULL;
   }
 
@@ -156,8 +157,7 @@ static PyObject *kpy_user_resource(PyObject *UNUSED(self), PyObject *args, PyObj
 
   static const char *_keywords[] = {"type", "path", NULL};
   static _PyArg_Parser _parser = {"O&|$s:user_resource", _keywords, 0};
-  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir))
-  {
+  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir)) {
     return NULL;
   }
 
@@ -193,8 +193,7 @@ static PyObject *kpy_system_resource(PyObject *UNUSED(self), PyObject *args, PyO
 
   static const char *_keywords[] = {"type", "path", NULL};
   static _PyArg_Parser _parser = {"O&|$s:system_resource", _keywords, 0};
-  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir))
-  {
+  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir)) {
     return NULL;
   }
 
@@ -203,19 +202,20 @@ static PyObject *kpy_system_resource(PyObject *UNUSED(self), PyObject *args, PyO
   return PyC_UnicodeFromByte(path ? path : "");
 }
 
-PyDoc_STRVAR(kpy_resource_path_doc,
-             ".. function:: resource_path(type, major=kpy.app.version[0], minor=kpy.app.version[1])\n"
-             "\n"
-             "   Return the base path for storing system files.\n"
-             "\n"
-             "   :arg type: string in ['USER', 'LOCAL', 'SYSTEM'].\n"
-             "   :type type: string\n"
-             "   :arg major: major version, defaults to current.\n"
-             "   :type major: int\n"
-             "   :arg minor: minor version, defaults to current.\n"
-             "   :type minor: string\n"
-             "   :return: the resource path (not necessarily existing).\n"
-             "   :rtype: string\n");
+PyDoc_STRVAR(
+  kpy_resource_path_doc,
+  ".. function:: resource_path(type, major=kpy.app.version[0], minor=kpy.app.version[1])\n"
+  "\n"
+  "   Return the base path for storing system files.\n"
+  "\n"
+  "   :arg type: string in ['USER', 'LOCAL', 'SYSTEM'].\n"
+  "   :type type: string\n"
+  "   :arg major: major version, defaults to current.\n"
+  "   :type major: int\n"
+  "   :arg minor: minor version, defaults to current.\n"
+  "   :type minor: string\n"
+  "   :return: the resource path (not necessarily existing).\n"
+  "   :rtype: string\n");
 static PyObject *kpy_resource_path(PyObject *UNUSED(self), PyObject *args, PyObject *kw)
 {
   const struct PyC_StringEnumItems type_items[] = {
@@ -231,8 +231,13 @@ static PyObject *kpy_resource_path(PyObject *UNUSED(self), PyObject *args, PyObj
 
   static const char *_keywords[] = {"type", "major", "minor", NULL};
   static _PyArg_Parser _parser = {"O&|$ii:resource_path", _keywords, 0};
-  if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &major, &minor))
-  {
+  if (!_PyArg_ParseTupleAndKeywordsFast(args,
+                                        kw,
+                                        &_parser,
+                                        PyC_ParseStringEnum,
+                                        &type,
+                                        &major,
+                                        &minor)) {
     return NULL;
   }
 
@@ -255,8 +260,7 @@ static PyObject *kpy_escape_identifier(PyObject *UNUSED(self), PyObject *value)
   Py_ssize_t value_str_len;
   const char *value_str = PyUnicode_AsUTF8AndSize(value, &value_str_len);
 
-  if (value_str == NULL)
-  {
+  if (value_str == NULL) {
     PyErr_SetString(PyExc_TypeError, "expected a string");
     return NULL;
   }
@@ -266,12 +270,10 @@ static PyObject *kpy_escape_identifier(PyObject *UNUSED(self), PyObject *value)
   const Py_ssize_t value_escape_str_len = KLI_str_escape(value_escape_str, value_str, size);
 
   PyObject *value_escape;
-  if (value_escape_str_len == value_str_len)
-  {
+  if (value_escape_str_len == value_str_len) {
     Py_INCREF(value);
     value_escape = value;
-  } else
-  {
+  } else {
     value_escape = PyUnicode_FromStringAndSize(value_escape_str, value_escape_str_len);
   }
 
@@ -295,8 +297,7 @@ static PyObject *kpy_unescape_identifier(PyObject *UNUSED(self), PyObject *value
   Py_ssize_t value_str_len;
   const char *value_str = PyUnicode_AsUTF8AndSize(value, &value_str_len);
 
-  if (value_str == NULL)
-  {
+  if (value_str == NULL) {
     PyErr_SetString(PyExc_TypeError, "expected a string");
     return NULL;
   }
@@ -306,12 +307,10 @@ static PyObject *kpy_unescape_identifier(PyObject *UNUSED(self), PyObject *value
   const Py_ssize_t value_unescape_str_len = KLI_str_unescape(value_unescape_str, value_str, size);
 
   PyObject *value_unescape;
-  if (value_unescape_str_len == value_str_len)
-  {
+  if (value_unescape_str_len == value_str_len) {
     Py_INCREF(value);
     value_unescape = value;
-  } else
-  {
+  } else {
     value_unescape = PyUnicode_FromStringAndSize(value_unescape_str, value_unescape_str_len);
   }
 
@@ -369,11 +368,9 @@ static PyObject *kpy_import_test(const char *modname)
 
   // GPU_kvk_end();
 
-  if (mod)
-  {
+  if (mod) {
     Py_DECREF(mod);
-  } else
-  {
+  } else {
     PyErr_Print();
     PyErr_Clear();
   }
@@ -392,15 +389,13 @@ void KPy_init_modules(struct kContext *C)
   /* Needs to be first since this dir is needed for future modules */
   const char *const modpath = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
 
-  if (modpath)
-  {
+  if (modpath) {
     // printf("kpy: found module path '%s'.\n", modpath);
     PyObject *sys_path = PySys_GetObject("path"); /* borrow */
     PyObject *py_modpath = PyUnicode_FromString(modpath);
     PyList_Insert(sys_path, 0, py_modpath); /* add first */
     Py_DECREF(py_modpath);
-  } else
-  {
+  } else {
     printf("kpy: couldn't find 'scripts/modules', kraken probably won't start.\n");
   }
   /* stand alone utility modules not related to kraken directly */

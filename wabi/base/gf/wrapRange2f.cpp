@@ -60,7 +60,8 @@ namespace
 
   static string _Repr(GfRange2f const &self)
   {
-    return TF_PY_REPR_PREFIX + "Range2f(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
+    return TF_PY_REPR_PREFIX + "Range2f(" + TfPyRepr(self.GetMin()) + ", " +
+           TfPyRepr(self.GetMax()) + ")";
   }
 
 #if PY_MAJOR_VERSION == 2

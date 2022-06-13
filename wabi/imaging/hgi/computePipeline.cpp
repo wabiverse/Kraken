@@ -32,9 +32,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiComputeShaderConstantsDesc::HgiComputeShaderConstantsDesc()
-  : byteSize(0)
-{}
+HgiComputeShaderConstantsDesc::HgiComputeShaderConstantsDesc() : byteSize(0) {}
 
 bool operator==(const HgiComputeShaderConstantsDesc &lhs, const HgiComputeShaderConstantsDesc &rhs)
 {
@@ -46,9 +44,7 @@ bool operator!=(const HgiComputeShaderConstantsDesc &lhs, const HgiComputeShader
   return !(lhs == rhs);
 }
 
-HgiComputePipelineDesc::HgiComputePipelineDesc()
-  : shaderProgram()
-{}
+HgiComputePipelineDesc::HgiComputePipelineDesc() : shaderProgram() {}
 
 bool operator==(const HgiComputePipelineDesc &lhs, const HgiComputePipelineDesc &rhs)
 {
@@ -61,9 +57,7 @@ bool operator!=(const HgiComputePipelineDesc &lhs, const HgiComputePipelineDesc 
   return !(lhs == rhs);
 }
 
-HgiComputePipeline::HgiComputePipeline(HgiComputePipelineDesc const &desc)
-  : _descriptor(desc)
-{}
+HgiComputePipeline::HgiComputePipeline(HgiComputePipelineDesc const &desc) : _descriptor(desc) {}
 
 HgiComputePipeline::~HgiComputePipeline() = default;
 

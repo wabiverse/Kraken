@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdLuxLightPortal::~UsdLuxLightPortal()
-{}
+UsdLuxLightPortal::~UsdLuxLightPortal() {}
 
 /* static */
 UsdLuxLightPortal UsdLuxLightPortal::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxLightPortal();
   }
@@ -69,8 +67,7 @@ UsdLuxLightPortal UsdLuxLightPortal::Get(const UsdStagePtr &stage, const SdfPath
 UsdLuxLightPortal UsdLuxLightPortal::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("LightPortal");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxLightPortal();
   }

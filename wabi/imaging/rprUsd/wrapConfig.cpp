@@ -49,6 +49,5 @@ void wrapConfig()
   scope s = class_<RprUsdConfig, BOOST_NS::noncopyable>("Config", no_init)
     CONFIG_SETTER(SetRestartWarning, bool) CONFIG_SETTER(SetTextureCacheDir, std::string)
       CONFIG_SETTER(SetKernelCacheDir, std::string) CONFIG_GETTER(IsRestartWarningEnabled)
-  CONFIG_GETTER(GetTextureCacheDir)
-  CONFIG_GETTER(GetKernelCacheDir);
+        CONFIG_GETTER(GetTextureCacheDir) CONFIG_GETTER(GetKernelCacheDir);
 }

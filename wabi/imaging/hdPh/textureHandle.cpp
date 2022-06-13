@@ -48,8 +48,7 @@ HdPhTextureHandle::HdPhTextureHandle(HdPhTextureObjectSharedPtr const &textureOb
 
 HdPhTextureHandle::~HdPhTextureHandle()
 {
-  if (TF_VERIFY(_textureHandleRegistry))
-  {
+  if (TF_VERIFY(_textureHandleRegistry)) {
     // The target memory of the texture might change, so mark dirty.
     _textureHandleRegistry->MarkDirty(_textureObject);
     // The shader needs to be updated after it dropped a texture
@@ -62,10 +61,8 @@ HdPhTextureHandle::~HdPhTextureHandle()
 
 void HdPhTextureHandle::ReallocateSamplerIfNecessary()
 {
-  if (_samplerObject)
-  {
-    if (!_createBindlessHandle)
-    {
+  if (_samplerObject) {
+    if (!_createBindlessHandle) {
       // There is no setter for sampler parameters,
       // so we only need to create a sampler once...
       return;
@@ -75,8 +72,7 @@ void HdPhTextureHandle::ReallocateSamplerIfNecessary()
     // handle that needs to be re-created if the underlying texture
     // changes, so continue.
 
-    if (TF_VERIFY(_textureHandleRegistry))
-    {
+    if (TF_VERIFY(_textureHandleRegistry)) {
       _textureHandleRegistry->MarkSamplerGarbageCollectionNeeded();
     }
 

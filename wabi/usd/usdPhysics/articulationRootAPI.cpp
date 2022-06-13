@@ -40,15 +40,13 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsArticulationRootAPI));
 
 /* virtual */
-UsdPhysicsArticulationRootAPI::~UsdPhysicsArticulationRootAPI()
-{}
+UsdPhysicsArticulationRootAPI::~UsdPhysicsArticulationRootAPI() {}
 
 /* static */
 UsdPhysicsArticulationRootAPI UsdPhysicsArticulationRootAPI::Get(const UsdStagePtr &stage,
                                                                  const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsArticulationRootAPI();
   }
@@ -71,8 +69,7 @@ bool UsdPhysicsArticulationRootAPI::CanApply(const UsdPrim &prim, std::string *w
 /* static */
 UsdPhysicsArticulationRootAPI UsdPhysicsArticulationRootAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdPhysicsArticulationRootAPI>())
-  {
+  if (prim.ApplyAPI<UsdPhysicsArticulationRootAPI>()) {
     return UsdPhysicsArticulationRootAPI(prim);
   }
   return UsdPhysicsArticulationRootAPI();

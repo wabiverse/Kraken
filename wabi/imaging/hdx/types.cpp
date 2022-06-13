@@ -33,7 +33,8 @@ WABI_NAMESPACE_BEGIN
 bool operator==(const HdxShaderInputs &lhs, const HdxShaderInputs &rhs)
 {
   return lhs.parameters == rhs.parameters && lhs.textures == rhs.textures &&
-         lhs.textureFallbackValues == rhs.textureFallbackValues && lhs.attributes == rhs.attributes;
+         lhs.textureFallbackValues == rhs.textureFallbackValues &&
+         lhs.attributes == rhs.attributes;
 }
 
 bool operator!=(const HdxShaderInputs &lhs, const HdxShaderInputs &rhs)
@@ -45,8 +46,7 @@ std::ostream &operator<<(std::ostream &out, const HdxShaderInputs &pv)
 {
   out << pv.parameters << " " << pv.textures << " " << pv.textureFallbackValues << " ";
 
-  for (const TfToken &attribute : pv.attributes)
-  {
+  for (const TfToken &attribute : pv.attributes) {
     out << attribute;
   }
   return out;
@@ -107,14 +107,16 @@ const HioFormat FORMAT_DESC[] = {
 // with the HgiFormat table.
 constexpr bool _CompileTimeValidateHgiFormatTable()
 {
-  return (TfArraySize(FORMAT_DESC) == HgiFormatCount && HgiFormatUNorm8 == 0 && HgiFormatFloat16Vec4 == 9 &&
-          HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 21 && HgiFormatInt32Vec4 == 25 &&
-          HgiFormatUNorm8Vec4srgb == 26 && HgiFormatBC3UNorm8Vec4 == 32) ?
+  return (TfArraySize(FORMAT_DESC) == HgiFormatCount && HgiFormatUNorm8 == 0 &&
+          HgiFormatFloat16Vec4 == 9 && HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 21 &&
+          HgiFormatInt32Vec4 == 25 && HgiFormatUNorm8Vec4srgb == 26 &&
+          HgiFormatBC3UNorm8Vec4 == 32) ?
            true :
            false;
 }
 
-static_assert(_CompileTimeValidateHgiFormatTable(), "_FormatDesc array out of sync with HgiFormat enum");
+static_assert(_CompileTimeValidateHgiFormatTable(),
+              "_FormatDesc array out of sync with HgiFormat enum");
 
 HioFormat HdxGetHioFormat(HgiFormat hgiFormat)
 {

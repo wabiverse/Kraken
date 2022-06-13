@@ -50,8 +50,7 @@ uint32_t MurmurHash2(const void *key, int len, uint32_t seed)
 
   const unsigned char *data = (const unsigned char *)key;
 
-  while (len >= 4)
-  {
+  while (len >= 4) {
     uint32_t k = *(uint32_t *)data;
 
     k *= m;
@@ -67,8 +66,7 @@ uint32_t MurmurHash2(const void *key, int len, uint32_t seed)
 
   // Handle the last few bytes of the input array
 
-  switch (len)
-  {
+  switch (len) {
     case 3:
       h ^= data[2] << 16;
     case 2:
@@ -106,8 +104,7 @@ uint64_t MurmurHash64A(const void *key, int len, uint64_t seed)
   const uint64_t *data = (const uint64_t *)key;
   const uint64_t *end = data + (len / 8);
 
-  while (data != end)
-  {
+  while (data != end) {
     uint64_t k = *data++;
 
     k *= m;
@@ -120,8 +117,7 @@ uint64_t MurmurHash64A(const void *key, int len, uint64_t seed)
 
   const unsigned char *data2 = (const unsigned char *)data;
 
-  switch (len & 7)
-  {
+  switch (len & 7) {
     case 7:
       h ^= uint64_t(data2[6]) << 48;
     case 6:
@@ -158,8 +154,7 @@ uint64_t MurmurHash64B(const void *key, int len, uint64_t seed)
 
   const uint32_t *data = (const uint32_t *)key;
 
-  while (len >= 8)
-  {
+  while (len >= 8) {
     uint32_t k1 = *data++;
     k1 *= m;
     k1 ^= k1 >> r;
@@ -177,8 +172,7 @@ uint64_t MurmurHash64B(const void *key, int len, uint64_t seed)
     len -= 4;
   }
 
-  if (len >= 4)
-  {
+  if (len >= 4) {
     uint32_t k1 = *data++;
     k1 *= m;
     k1 ^= k1 >> r;
@@ -188,8 +182,7 @@ uint64_t MurmurHash64B(const void *key, int len, uint64_t seed)
     len -= 4;
   }
 
-  switch (len)
-  {
+  switch (len) {
     case 3:
       h2 ^= ((unsigned char *)data)[2] << 16;
     case 2:
@@ -245,8 +238,7 @@ uint32_t MurmurHash2A(const void *key, int len, uint32_t seed)
 
   uint32_t h = seed;
 
-  while (len >= 4)
-  {
+  while (len >= 4) {
     uint32_t k = *(uint32_t *)data;
 
     mmix(h, k);
@@ -257,8 +249,7 @@ uint32_t MurmurHash2A(const void *key, int len, uint32_t seed)
 
   uint32_t t = 0;
 
-  switch (len)
-  {
+  switch (len) {
     case 3:
       t ^= data[2] << 16;
     case 2:
@@ -296,6 +287,7 @@ uint32_t MurmurHash2A(const void *key, int len, uint32_t seed)
 class CMurmurHash2A
 {
  public:
+
   void Begin(uint32_t seed = 0)
   {
     m_hash = seed;
@@ -310,8 +302,7 @@ class CMurmurHash2A
 
     MixTail(data, len);
 
-    while (len >= 4)
-    {
+    while (len >= 4) {
       uint32_t k = *(uint32_t *)data;
 
       mmix(m_hash, k);
@@ -336,20 +327,19 @@ class CMurmurHash2A
   }
 
  private:
+
   static const uint32_t m = 0x5bd1e995;
   static const int r = 24;
 
   void MixTail(const unsigned char *&data, int &len)
   {
-    while (len && ((len < 4) || m_count))
-    {
+    while (len && ((len < 4) || m_count)) {
       m_tail |= (*data++) << (m_count * 8);
 
       m_count++;
       len--;
 
-      if (m_count == 4)
-      {
+      if (m_count == 4) {
         mmix(m_hash, m_tail);
         m_tail = 0;
         m_count = 0;
@@ -378,8 +368,7 @@ uint32_t MurmurHashNeutral2(const void *key, int len, uint32_t seed)
 
   const unsigned char *data = (const unsigned char *)key;
 
-  while (len >= 4)
-  {
+  while (len >= 4) {
     uint32_t k;
 
     k = data[0];
@@ -398,8 +387,7 @@ uint32_t MurmurHashNeutral2(const void *key, int len, uint32_t seed)
     len -= 4;
   }
 
-  switch (len)
-  {
+  switch (len) {
     case 3:
       h ^= data[2] << 16;
     case 2:
@@ -444,14 +432,12 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
 
   int align = (uint64_t)data & 3;
 
-  if (align && (len >= 4))
-  {
+  if (align && (len >= 4)) {
     // Pre-load the temp registers
 
     uint32_t t = 0, d = 0;
 
-    switch (align)
-    {
+    switch (align) {
       case 1:
         t |= data[2] << 16;
       case 2:
@@ -470,8 +456,7 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
 
     // Mix
 
-    while (len >= 4)
-    {
+    while (len >= 4) {
       d = *(uint32_t *)data;
       t = (t >> sr) | (d << sl);
 
@@ -489,10 +474,8 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
 
     d = 0;
 
-    if (len >= align)
-    {
-      switch (align)
-      {
+    if (len >= align) {
+      switch (align) {
         case 3:
           d |= data[2] << 16;
         case 2:
@@ -510,8 +493,7 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
       //----------
       // Handle tail bytes
 
-      switch (len)
-      {
+      switch (len) {
         case 3:
           h ^= data[2] << 16;
         case 2:
@@ -520,10 +502,8 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
           h ^= data[0];
           h *= m;
       };
-    } else
-    {
-      switch (len)
-      {
+    } else {
+      switch (len) {
         case 3:
           d |= data[2] << 16;
         case 2:
@@ -541,10 +521,8 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
     h ^= h >> 15;
 
     return h;
-  } else
-  {
-    while (len >= 4)
-    {
+  } else {
+    while (len >= 4) {
       uint32_t k = *(uint32_t *)data;
 
       MIX(h, k, m);
@@ -556,8 +534,7 @@ uint32_t MurmurHashAligned2(const void *key, int len, uint32_t seed)
     //----------
     // Handle tail bytes
 
-    switch (len)
-    {
+    switch (len) {
       case 3:
         h ^= data[2] << 16;
       case 2:

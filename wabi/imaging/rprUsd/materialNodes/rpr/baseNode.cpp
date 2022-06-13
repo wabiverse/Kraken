@@ -28,17 +28,16 @@ RprUsd_BaseRuntimeNode::RprUsd_BaseRuntimeNode(rpr::MaterialNodeType type,
   rpr::Status status;
   m_rprNode.reset(ctx->rprContext->CreateMaterialNode(type, &status));
 
-  if (!m_rprNode)
-  {
-    throw RprUsd_NodeError(RPR_GET_ERROR_MESSAGE(status, "Failed to create material node", ctx->rprContext));
+  if (!m_rprNode) {
+    throw RprUsd_NodeError(
+      RPR_GET_ERROR_MESSAGE(status, "Failed to create material node", ctx->rprContext));
   }
 }
 
 bool RprUsd_BaseRuntimeNode::SetInput(TfToken const &inputId, VtValue const &value)
 {
   rpr::MaterialNodeInput rprInput;
-  if (ToRpr(inputId, &rprInput))
-  {
+  if (ToRpr(inputId, &rprInput)) {
     return SetInput(rprInput, value);
   }
   return false;
@@ -47,8 +46,7 @@ bool RprUsd_BaseRuntimeNode::SetInput(TfToken const &inputId, VtValue const &val
 bool RprUsd_BaseRuntimeNode::SetInput(rpr::MaterialNodeInput input, VtValue const &value)
 {
   rpr::Status status = SetRprInput(m_rprNode.get(), input, value);
-  if (status == RPR_SUCCESS)
-  {
+  if (status == RPR_SUCCESS) {
     return true;
   }
 

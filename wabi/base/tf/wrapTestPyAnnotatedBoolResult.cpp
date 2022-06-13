@@ -42,7 +42,8 @@ namespace
     {}
   };
 
-  static Tf_TestAnnotatedBoolResult _TestAnnotatedBoolResult(bool value, const std::string &annotation)
+  static Tf_TestAnnotatedBoolResult _TestAnnotatedBoolResult(bool value,
+                                                             const std::string &annotation)
   {
     return Tf_TestAnnotatedBoolResult(value, annotation);
   }
@@ -53,5 +54,6 @@ void wrapTf_TestPyAnnotatedBoolResult()
 {
   def("_TestAnnotatedBoolResult", &_TestAnnotatedBoolResult);
 
-  Tf_TestAnnotatedBoolResult::Wrap<Tf_TestAnnotatedBoolResult>("Tf_TestAnnotatedBoolResult", "annotation");
+  Tf_TestAnnotatedBoolResult::Wrap<Tf_TestAnnotatedBoolResult>("Tf_TestAnnotatedBoolResult",
+                                                               "annotation");
 }

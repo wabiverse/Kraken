@@ -48,17 +48,14 @@ namespace
   static std::string _Repr(const NdrVersion &x)
   {
     auto result = TF_PY_REPR_PREFIX;
-    if (!x)
-    {
+    if (!x) {
       result += "Version()";
-    } else
-    {
+    } else {
       result += TfStringPrintf("Version(%s, %s)",
                                TfPyRepr(x.GetMajor()).c_str(),
                                TfPyRepr(x.GetMinor()).c_str());
     }
-    if (x.IsDefault())
-    {
+    if (x.IsDefault()) {
       result += ".GetAsDefault()";
     }
     return result;

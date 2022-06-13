@@ -30,7 +30,6 @@ HdCoordSys::HdCoordSys(SdfPath const &id)
     _name(SdfPath::StripNamespace(id.GetName()))
 {}
 
-HdCoordSys::~HdCoordSys()
-{}
+HdCoordSys::~HdCoordSys() {}
 
 WABI_NAMESPACE_END

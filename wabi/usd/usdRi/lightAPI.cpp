@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (RiLightAPI));
 
 /* virtual */
-UsdRiLightAPI::~UsdRiLightAPI()
-{}
+UsdRiLightAPI::~UsdRiLightAPI() {}
 
 /* static */
 UsdRiLightAPI UsdRiLightAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiLightAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdRiLightAPI::GetSchemaKind() const
 /* static */
 UsdRiLightAPI UsdRiLightAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiLightAPI>())
-  {
+  if (prim.ApplyAPI<UsdRiLightAPI>()) {
     return UsdRiLightAPI(prim);
   }
   return UsdRiLightAPI();
@@ -150,7 +147,8 @@ UsdAttribute UsdRiLightAPI::GetRiLightGroupAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riLightGroup);
 }
 
-UsdAttribute UsdRiLightAPI::CreateRiLightGroupAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiLightAPI::CreateRiLightGroupAttr(VtValue const &defaultValue,
+                                                   bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riLightGroup,
                                     SdfValueTypeNames->String,
@@ -216,8 +214,9 @@ const TfTokenVector &UsdRiLightAPI::GetSchemaAttributeNames(bool includeInherite
     UsdRiTokens->riShadowThinShadow,
     UsdRiTokens->riTraceLightPaths,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

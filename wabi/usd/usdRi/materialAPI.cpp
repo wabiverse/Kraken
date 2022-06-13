@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (RiMaterialAPI));
 
 /* virtual */
-UsdRiMaterialAPI::~UsdRiMaterialAPI()
-{}
+UsdRiMaterialAPI::~UsdRiMaterialAPI() {}
 
 /* static */
 UsdRiMaterialAPI UsdRiMaterialAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiMaterialAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdRiMaterialAPI::GetSchemaKind() const
 /* static */
 UsdRiMaterialAPI UsdRiMaterialAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiMaterialAPI>())
-  {
+  if (prim.ApplyAPI<UsdRiMaterialAPI>()) {
     return UsdRiMaterialAPI(prim);
   }
   return UsdRiMaterialAPI();
@@ -102,7 +99,8 @@ UsdAttribute UsdRiMaterialAPI::GetSurfaceAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->outputsRiSurface);
 }
 
-UsdAttribute UsdRiMaterialAPI::CreateSurfaceAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiMaterialAPI::CreateSurfaceAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->outputsRiSurface,
                                     SdfValueTypeNames->Token,
@@ -117,7 +115,8 @@ UsdAttribute UsdRiMaterialAPI::GetDisplacementAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->outputsRiDisplacement);
 }
 
-UsdAttribute UsdRiMaterialAPI::CreateDisplacementAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiMaterialAPI::CreateDisplacementAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->outputsRiDisplacement,
                                     SdfValueTypeNames->Token,
@@ -132,7 +131,8 @@ UsdAttribute UsdRiMaterialAPI::GetVolumeAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->outputsRiVolume);
 }
 
-UsdAttribute UsdRiMaterialAPI::CreateVolumeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiMaterialAPI::CreateVolumeAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->outputsRiVolume,
                                     SdfValueTypeNames->Token,
@@ -163,8 +163,9 @@ const TfTokenVector &UsdRiMaterialAPI::GetSchemaAttributeNames(bool includeInher
     UsdRiTokens->outputsRiDisplacement,
     UsdRiTokens->outputsRiVolume,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -211,13 +212,11 @@ UsdShadeShader UsdRiMaterialAPI::_GetSourceShaderObject(const UsdShadeOutput &ou
                                                         bool ignoreBaseMaterial) const
 {
   // If output doesn't have a valid attribute, return an invalid shader.
-  if (!output.GetAttr())
-  {
+  if (!output.GetAttr()) {
     return UsdShadeShader();
   }
 
-  if (ignoreBaseMaterial && UsdShadeConnectableAPI::IsSourceConnectionFromBaseMaterial(output))
-  {
+  if (ignoreBaseMaterial && UsdShadeConnectableAPI::IsSourceConnectionFromBaseMaterial(output)) {
     return UsdShadeShader();
   }
 
@@ -225,8 +224,7 @@ UsdShadeShader UsdRiMaterialAPI::_GetSourceShaderObject(const UsdShadeOutput &ou
   TfToken sourceName;
   UsdShadeAttributeType sourceType;
 
-  if (UsdShadeConnectableAPI::GetConnectedSource(output, &source, &sourceName, &sourceType))
-  {
+  if (UsdShadeConnectableAPI::GetConnectedSource(output, &source, &sourceName, &sourceType)) {
     return source;
   }
 
@@ -236,8 +234,7 @@ UsdShadeShader UsdRiMaterialAPI::_GetSourceShaderObject(const UsdShadeOutput &ou
 UsdShadeOutput UsdRiMaterialAPI::_GetBxdfOutput(const UsdPrim &materialPrim) const
 {
   // Check if the deprecated bxdf output is present.
-  if (const UsdAttribute bxdfAttr = materialPrim.GetAttribute(_tokens->bxdfOutputAttrName))
-  {
+  if (const UsdAttribute bxdfAttr = materialPrim.GetAttribute(_tokens->bxdfOutputAttrName)) {
     return UsdShadeOutput(bxdfAttr);
   }
   return UsdShadeOutput();
@@ -245,13 +242,11 @@ UsdShadeOutput UsdRiMaterialAPI::_GetBxdfOutput(const UsdPrim &materialPrim) con
 
 UsdShadeShader UsdRiMaterialAPI::GetSurface(bool ignoreBaseMaterial) const
 {
-  if (UsdShadeShader surface = _GetSourceShaderObject(GetSurfaceOutput(), ignoreBaseMaterial))
-  {
+  if (UsdShadeShader surface = _GetSourceShaderObject(GetSurfaceOutput(), ignoreBaseMaterial)) {
     return surface;
   }
 
-  if (UsdShadeOutput bxdfOutput = _GetBxdfOutput(GetPrim()))
-  {
+  if (UsdShadeOutput bxdfOutput = _GetBxdfOutput(GetPrim())) {
     return _GetSourceShaderObject(bxdfOutput, ignoreBaseMaterial);
   }
 
@@ -286,11 +281,10 @@ UsdShadeOutput UsdRiMaterialAPI::GetVolumeOutput() const
 bool UsdRiMaterialAPI::SetSurfaceSource(const SdfPath &surfacePath) const
 {
   static const bool writeBxdfOutput = TfGetEnvSetting(USD_RI_WRITE_BXDF_OUTPUT);
-  if (writeBxdfOutput)
-  {
-    if (UsdShadeOutput bxdfOutput = UsdShadeMaterial(GetPrim()).CreateOutput(_tokens->bxdfOutputName,
-                                                                             SdfValueTypeNames->Token))
-    {
+  if (writeBxdfOutput) {
+    if (UsdShadeOutput bxdfOutput = UsdShadeMaterial(GetPrim()).CreateOutput(
+          _tokens->bxdfOutputName,
+          SdfValueTypeNames->Token)) {
       const SdfPath sourcePath = surfacePath.IsPropertyPath() ?
                                    surfacePath :
                                    surfacePath.AppendProperty(_tokens->defaultOutputName);
@@ -303,7 +297,8 @@ bool UsdRiMaterialAPI::SetSurfaceSource(const SdfPath &surfacePath) const
     /*purpose*/ _tokens->ri);
   return UsdShadeConnectableAPI::ConnectToSource(
     surfaceOutput,
-    surfacePath.IsPropertyPath() ? surfacePath : surfacePath.AppendProperty(_tokens->defaultOutputName));
+    surfacePath.IsPropertyPath() ? surfacePath :
+                                   surfacePath.AppendProperty(_tokens->defaultOutputName));
 }
 
 bool UsdRiMaterialAPI::SetDisplacementSource(const SdfPath &displacementPath) const
@@ -312,8 +307,9 @@ bool UsdRiMaterialAPI::SetDisplacementSource(const SdfPath &displacementPath) co
     /*purpose*/ _tokens->ri);
   return UsdShadeConnectableAPI::ConnectToSource(
     displacementOutput,
-    displacementPath.IsPropertyPath() ? displacementPath :
-                                        displacementPath.AppendProperty(_tokens->defaultOutputName));
+    displacementPath.IsPropertyPath() ?
+      displacementPath :
+      displacementPath.AppendProperty(_tokens->defaultOutputName));
 }
 
 bool UsdRiMaterialAPI::SetVolumeSource(const SdfPath &volumePath) const
@@ -322,13 +318,15 @@ bool UsdRiMaterialAPI::SetVolumeSource(const SdfPath &volumePath) const
     /*purpose*/ _tokens->ri);
   return UsdShadeConnectableAPI::ConnectToSource(
     volumeOutput,
-    volumePath.IsPropertyPath() ? volumePath : volumePath.AppendProperty(_tokens->defaultOutputName));
+    volumePath.IsPropertyPath() ? volumePath :
+                                  volumePath.AppendProperty(_tokens->defaultOutputName));
 }
 
 UsdShadeNodeGraph::InterfaceInputConsumersMap UsdRiMaterialAPI::ComputeInterfaceInputConsumersMap(
   bool computeTransitiveConsumers) const
 {
-  return UsdShadeNodeGraph(GetPrim()).ComputeInterfaceInputConsumersMap(computeTransitiveConsumers);
+  return UsdShadeNodeGraph(GetPrim()).ComputeInterfaceInputConsumersMap(
+    computeTransitiveConsumers);
 }
 
 WABI_NAMESPACE_END

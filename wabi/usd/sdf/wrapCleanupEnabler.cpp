@@ -45,6 +45,7 @@ namespace
   class Sdf_PyCleanupEnabler
   {
    public:
+
     // We don't create and destory the SdfCleanupEnabler object
     // on construction and destruction, but rather in the Enter/Exit methods.
     // This ties the lifetime of that object to the python 'with' block rather
@@ -71,6 +72,7 @@ namespace
     }
 
    private:
+
     std::unique_ptr<SdfCleanupEnabler> _state;
   };
 

@@ -63,15 +63,14 @@ namespace
   struct _ReentrancyGuard
   {
    public:
+
     _ReentrancyGuard(bool *reentrancyGuardValue)
       : _reentrancyGuardValue(reentrancyGuardValue),
         _scopeWasReentered(false)
     {
-      if (!*_reentrancyGuardValue)
-      {
+      if (!*_reentrancyGuardValue) {
         *_reentrancyGuardValue = true;
-      } else
-      {
+      } else {
         _scopeWasReentered = true;
       }
     }
@@ -83,13 +82,13 @@ namespace
 
     ~_ReentrancyGuard()
     {
-      if (!_scopeWasReentered)
-      {
+      if (!_scopeWasReentered) {
         *_reentrancyGuardValue = false;
       }
     }
 
    private:
+
     bool *_reentrancyGuardValue;
     bool _scopeWasReentered;
   };
@@ -132,30 +131,25 @@ static void Tf_UnhandledAbort()
 
 TF_INSTANTIATE_SINGLETON(TfDiagnosticMgr);
 
-TfDiagnosticMgr::Delegate::~Delegate()
-{}
+TfDiagnosticMgr::Delegate::~Delegate() {}
 
 void TfDiagnosticMgr::Delegate::_UnhandledAbort() const
 {
   Tf_UnhandledAbort();
 }
 
-TfDiagnosticMgr::TfDiagnosticMgr()
-  : _errorMarkCounts(static_cast<size_t>(0)),
-    _quiet(false)
+TfDiagnosticMgr::TfDiagnosticMgr() : _errorMarkCounts(static_cast<size_t>(0)), _quiet(false)
 {
   _nextSerial = 0;
   TfSingleton<This>::SetInstanceConstructed(*this);
   TfRegistryManager::GetInstance().SubscribeTo<TfDiagnosticMgr>();
 }
 
-TfDiagnosticMgr::~TfDiagnosticMgr()
-{}
+TfDiagnosticMgr::~TfDiagnosticMgr() {}
 
 void TfDiagnosticMgr::AddDelegate(Delegate *delegate)
 {
-  if (delegate == nullptr)
-  {
+  if (delegate == nullptr) {
     return;
   }
 
@@ -165,8 +159,7 @@ void TfDiagnosticMgr::AddDelegate(Delegate *delegate)
 
 void TfDiagnosticMgr::RemoveDelegate(Delegate *delegate)
 {
-  if (delegate == nullptr)
-  {
+  if (delegate == nullptr) {
     return;
   }
 
@@ -176,11 +169,9 @@ void TfDiagnosticMgr::RemoveDelegate(Delegate *delegate)
 
 void TfDiagnosticMgr::AppendError(TfError const &e)
 {
-  if (!HasActiveErrorMark())
-  {
+  if (!HasActiveErrorMark()) {
     _ReportError(e);
-  } else
-  {
+  } else {
     ErrorList &errorList = _errorList.local();
     errorList.push_back(e);
     errorList.back()._serial = _nextSerial.fetch_add(1);
@@ -190,18 +181,14 @@ void TfDiagnosticMgr::AppendError(TfError const &e)
 
 void TfDiagnosticMgr::_SpliceErrors(ErrorList &src)
 {
-  if (!HasActiveErrorMark())
-  {
-    for (ErrorList::const_iterator i = src.begin(), end = src.end(); i != end; ++i)
-    {
+  if (!HasActiveErrorMark()) {
+    for (ErrorList::const_iterator i = src.begin(), end = src.end(); i != end; ++i) {
       _ReportError(*i);
     }
-  } else
-  {
+  } else {
     // Reassign new serial numbers to the errors.
     size_t serial = _nextSerial.fetch_add(src.size());
-    for (auto &error : src)
-    {
+    for (auto &error : src) {
       error._serial = serial++;
     }
     // Now splice them into the main list.
@@ -227,14 +214,12 @@ void TfDiagnosticMgr::PostError(TfEnum errorCode,
 
   const bool logStackTraceOnError = TfDebug::IsEnabled(TF_LOG_STACK_TRACE_ON_ERROR);
 
-  if (logStackTraceOnError || TfDebug::IsEnabled(TF_PRINT_ALL_POSTED_ERRORS_TO_STDERR))
-  {
+  if (logStackTraceOnError || TfDebug::IsEnabled(TF_PRINT_ALL_POSTED_ERRORS_TO_STDERR)) {
 
     _PrintDiagnostic(stderr, errorCode, context, commentary, info);
   }
 
-  if (logStackTraceOnError)
-  {
+  if (logStackTraceOnError) {
     TfLogStackTrace("ERROR", /* logToDb */ false);
   }
 
@@ -257,27 +242,27 @@ void TfDiagnosticMgr::PostError(const TfDiagnosticBase &diagnostic)
 void TfDiagnosticMgr::_ReportError(const TfError &err)
 {
   _ReentrancyGuard guard(&_reentrantGuard.local());
-  if (guard.ScopeWasReentered())
-  {
+  if (guard.ScopeWasReentered()) {
     return;
   }
 
   bool dispatchedToDelegate = false;
   {
     tbb::spin_rw_mutex::scoped_lock lock(_delegatesMutex, /*writer=*/false);
-    for (auto const &delegate : _delegates)
-    {
-      if (delegate)
-      {
+    for (auto const &delegate : _delegates) {
+      if (delegate) {
         delegate->IssueError(err);
       }
     }
     dispatchedToDelegate = !_delegates.empty();
   }
 
-  if (!dispatchedToDelegate && !err.GetQuiet())
-  {
-    _PrintDiagnostic(stderr, err.GetDiagnosticCode(), err.GetContext(), err.GetCommentary(), err._info);
+  if (!dispatchedToDelegate && !err.GetQuiet()) {
+    _PrintDiagnostic(stderr,
+                     err.GetDiagnosticCode(),
+                     err.GetContext(),
+                     err.GetCommentary(),
+                     err._info);
   }
 }
 
@@ -289,8 +274,7 @@ void TfDiagnosticMgr::PostWarning(TfEnum warningCode,
                                   bool quiet) const
 {
   _ReentrancyGuard guard(&_reentrantGuard.local());
-  if (guard.ScopeWasReentered())
-  {
+  if (guard.ScopeWasReentered()) {
     return;
   }
 
@@ -299,8 +283,7 @@ void TfDiagnosticMgr::PostWarning(TfEnum warningCode,
 
   const bool logStackTraceOnWarning = TfDebug::IsEnabled(TF_LOG_STACK_TRACE_ON_WARNING);
 
-  if (logStackTraceOnWarning)
-  {
+  if (logStackTraceOnWarning) {
     _PrintDiagnostic(stderr, warningCode, context, commentary, info);
     TfLogStackTrace("WARNING", /* logToDb */ false);
   }
@@ -312,18 +295,15 @@ void TfDiagnosticMgr::PostWarning(TfEnum warningCode,
   bool dispatchedToDelegate = false;
   {
     tbb::spin_rw_mutex::scoped_lock lock(_delegatesMutex, /*writer=*/false);
-    for (auto const &delegate : _delegates)
-    {
-      if (delegate)
-      {
+    for (auto const &delegate : _delegates) {
+      if (delegate) {
         delegate->IssueWarning(warning);
       }
     }
     dispatchedToDelegate = !_delegates.empty();
   }
 
-  if (!logStackTraceOnWarning && !dispatchedToDelegate && !quiet)
-  {
+  if (!logStackTraceOnWarning && !dispatchedToDelegate && !quiet) {
     _PrintDiagnostic(stderr, warningCode, context, commentary, info);
   }
 }
@@ -346,8 +326,7 @@ void TfDiagnosticMgr::PostStatus(TfEnum statusCode,
                                  bool quiet) const
 {
   _ReentrancyGuard guard(&_reentrantGuard.local());
-  if (guard.ScopeWasReentered())
-  {
+  if (guard.ScopeWasReentered()) {
     return;
   }
 
@@ -358,18 +337,15 @@ void TfDiagnosticMgr::PostStatus(TfEnum statusCode,
   bool dispatchedToDelegate = false;
   {
     tbb::spin_rw_mutex::scoped_lock lock(_delegatesMutex, /*writer=*/false);
-    for (auto const &delegate : _delegates)
-    {
-      if (delegate)
-      {
+    for (auto const &delegate : _delegates) {
+      if (delegate) {
         delegate->IssueStatus(status);
       }
     }
     dispatchedToDelegate = !_delegates.empty();
   }
 
-  if (!dispatchedToDelegate && !quiet)
-  {
+  if (!dispatchedToDelegate && !quiet) {
     _PrintDiagnostic(stderr, statusCode, context, commentary, info);
   }
 }
@@ -389,8 +365,7 @@ void TfDiagnosticMgr::PostFatal(TfCallContext const &context,
                                 std::string const &msg) const
 {
   _ReentrancyGuard guard(&_reentrantGuard.local());
-  if (guard.ScopeWasReentered())
-  {
+  if (guard.ScopeWasReentered()) {
     return;
   }
 
@@ -401,20 +376,16 @@ void TfDiagnosticMgr::PostFatal(TfCallContext const &context,
   bool dispatchedToDelegate = false;
   {
     tbb::spin_rw_mutex::scoped_lock lock(_delegatesMutex, /*writer=*/false);
-    for (auto const &delegate : _delegates)
-    {
-      if (delegate)
-      {
+    for (auto const &delegate : _delegates) {
+      if (delegate) {
         delegate->IssueFatalError(context, msg);
       }
     }
     dispatchedToDelegate = !_delegates.empty();
   }
 
-  if (!dispatchedToDelegate)
-  {
-    if (statusCode == TF_DIAGNOSTIC_CODING_ERROR_TYPE)
-    {
+  if (!dispatchedToDelegate) {
+    if (statusCode == TF_DIAGNOSTIC_CODING_ERROR_TYPE) {
       fprintf(stderr,
               "Fatal coding error: %s [%s], in %s(), %s:%zu\n",
               msg.c_str(),
@@ -422,15 +393,13 @@ void TfDiagnosticMgr::PostFatal(TfCallContext const &context,
               context.GetFunction(),
               context.GetFile(),
               context.GetLine());
-    } else if (statusCode == TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE)
-    {
+    } else if (statusCode == TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE) {
       fprintf(stderr, "Fatal error: %s [%s].\n", msg.c_str(), ArchGetProgramNameForErrors());
       exit(1);
-    } else if (statusCode == TF_DIAGNOSTIC_MSG_TYPE || statusCode == TF_DIAGNOSTIC_MSG_ERROR_TYPE)
-    {
+    } else if (statusCode == TF_DIAGNOSTIC_MSG_TYPE ||
+               statusCode == TF_DIAGNOSTIC_MSG_ERROR_TYPE) {
       fprintf(stderr, "%s\n", msg.c_str());
-    } else
-    {
+    } else {
       // Report and log information about the fatal error
       TfLogCrash("FATAL ERROR", msg, std::string() /*additionalInfo*/, context, true /*logToDB*/);
     }
@@ -452,8 +421,7 @@ TfDiagnosticMgr::ErrorIterator TfDiagnosticMgr::_GetErrorMarkBegin(size_t mark, 
 {
   ErrorList &errorList = _errorList.local();
 
-  if (mark >= _nextSerial || errorList.empty())
-  {
+  if (mark >= _nextSerial || errorList.empty()) {
     if (nErrors)
       *nErrors = 0;
     return errorList.end();
@@ -464,8 +432,7 @@ TfDiagnosticMgr::ErrorIterator TfDiagnosticMgr::_GetErrorMarkBegin(size_t mark, 
   size_t count = 0;
 
   ErrorList::reverse_iterator i = errorList.rbegin(), end = errorList.rend();
-  while (i != end && i->_serial >= mark)
-  {
+  while (i != end && i->_serial >= mark) {
     ++i, ++count;
   }
 
@@ -486,7 +453,8 @@ TfDiagnosticMgr::ErrorIterator TfDiagnosticMgr::EraseRange(ErrorIterator first, 
 
 void TfDiagnosticMgr::ErrorHelper::PostWithInfo(const string &msg, TfDiagnosticInfo info) const
 {
-  TfDiagnosticMgr::GetInstance().PostError(_errorCode, _errorCodeString, _context, msg, info, false);
+  TfDiagnosticMgr::GetInstance()
+    .PostError(_errorCode, _errorCodeString, _context, msg, info, false);
 }
 
 void TfDiagnosticMgr::ErrorHelper::Post(const string &msg) const
@@ -497,7 +465,8 @@ void TfDiagnosticMgr::ErrorHelper::Post(const string &msg) const
 
 void TfDiagnosticMgr::ErrorHelper::PostQuietly(const string &msg, TfDiagnosticInfo info) const
 {
-  TfDiagnosticMgr::GetInstance().PostError(_errorCode, _errorCodeString, _context, msg, info, true);
+  TfDiagnosticMgr::GetInstance()
+    .PostError(_errorCode, _errorCodeString, _context, msg, info, true);
 }
 
 void TfDiagnosticMgr::ErrorHelper::Post(const char *fmt, ...) const
@@ -532,7 +501,8 @@ void TfDiagnosticMgr::WarningHelper::Post(const string &msg) const
 
 void TfDiagnosticMgr::WarningHelper::PostWithInfo(const string &msg, TfDiagnosticInfo info) const
 {
-  TfDiagnosticMgr::GetInstance().PostWarning(_warningCode, _warningCodeString, _context, msg, info, false);
+  TfDiagnosticMgr::GetInstance()
+    .PostWarning(_warningCode, _warningCodeString, _context, msg, info, false);
 }
 
 void TfDiagnosticMgr::StatusHelper::Post(const char *fmt, ...) const
@@ -551,25 +521,27 @@ void TfDiagnosticMgr::StatusHelper::Post(const string &msg) const
 
 void TfDiagnosticMgr::StatusHelper::PostWithInfo(const string &msg, TfDiagnosticInfo info) const
 {
-  TfDiagnosticMgr::GetInstance().PostStatus(_statusCode, _statusCodeString, _context, msg, info, false);
+  TfDiagnosticMgr::GetInstance()
+    .PostStatus(_statusCode, _statusCodeString, _context, msg, info, false);
 }
 
 /* statuc */
 std::string TfDiagnosticMgr::GetCodeName(const TfEnum &code)
 {
   string codeName = TfEnum::GetDisplayName(code);
-  if (codeName.empty())
-  {
-    codeName = TfStringPrintf("(%s)%d", ArchGetDemangled(code.GetType()).c_str(), code.GetValueAsInt());
+  if (codeName.empty()) {
+    codeName = TfStringPrintf("(%s)%d",
+                              ArchGetDemangled(code.GetType()).c_str(),
+                              code.GetValueAsInt());
   }
   return codeName;
 }
 
 void TfDiagnosticMgr::_SetLogInfoForErrors(std::vector<std::string> const &logText) const
 {
-  ArchSetExtraLogInfoForErrors(
-    TfStringPrintf("Thread %s Pending Diagnostics", TfStringify(std::this_thread::get_id()).c_str()),
-    logText.empty() ? nullptr : &logText);
+  ArchSetExtraLogInfoForErrors(TfStringPrintf("Thread %s Pending Diagnostics",
+                                              TfStringify(std::this_thread::get_id()).c_str()),
+                               logText.empty() ? nullptr : &logText);
 }
 
 void TfDiagnosticMgr::_LogText::AppendAndPublish(ErrorIterator begin, ErrorIterator end)
@@ -582,7 +554,9 @@ void TfDiagnosticMgr::_LogText::RebuildAndPublish(ErrorIterator begin, ErrorIter
   return _AppendAndPublishImpl(/*clear=*/true, begin, end);
 }
 
-void TfDiagnosticMgr::_LogText::_AppendAndPublishImpl(bool clear, ErrorIterator begin, ErrorIterator end)
+void TfDiagnosticMgr::_LogText::_AppendAndPublishImpl(bool clear,
+                                                      ErrorIterator begin,
+                                                      ErrorIterator end)
 {
   // The requirement at the Arch level for ArchSetExtraLogInfoForErrors is
   // that the pointer we hand it must remain valid, and we can't mutate the
@@ -600,21 +574,19 @@ void TfDiagnosticMgr::_LogText::_AppendAndPublishImpl(bool clear, ErrorIterator 
   // Update first.
   if (clear)
     first->clear();
-  for (ErrorIterator i = begin; i != end; ++i)
-  {
+  for (ErrorIterator i = begin; i != end; ++i) {
     first->push_back(_FormatDiagnostic(*i, i->_info));
   }
 
   // Publish.
-  ArchSetExtraLogInfoForErrors(
-    TfStringPrintf("Thread %s Pending Diagnostics", TfStringify(std::this_thread::get_id()).c_str()),
-    first->empty() ? nullptr : first);
+  ArchSetExtraLogInfoForErrors(TfStringPrintf("Thread %s Pending Diagnostics",
+                                              TfStringify(std::this_thread::get_id()).c_str()),
+                               first->empty() ? nullptr : first);
 
   // Update second to match, arch is no longer looking at it.
   if (clear)
     second->clear();
-  for (ErrorIterator i = begin; i != end; ++i)
-  {
+  for (ErrorIterator i = begin; i != end; ++i) {
     second->push_back(_FormatDiagnostic(*i, i->_info));
   }
 
@@ -647,21 +619,19 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
   SetConsoleTextAttribute(hConsole, code);
 #endif
 
-  if (context.IsDisabled())
-  {
+  if (context.IsDisabled()) {
     output = TfStringPrintf("[%s]%s %s\n",
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",
                             msg.c_str());
-  } else if (context.IsHidden() || !strcmp(context.GetFunction(), "") || !strcmp(context.GetFile(), ""))
-  {
+  } else if (context.IsHidden() || !strcmp(context.GetFunction(), "") ||
+             !strcmp(context.GetFile(), "")) {
     output = TfStringPrintf("%s%s: %s [%s]\n",
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",
                             msg.c_str(),
                             ArchGetProgramNameForErrors());
-  } else
-  {
+  } else {
     output = TfStringPrintf("%s%s: in %s at line %zu of %s -- %s\n",
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",
@@ -672,8 +642,7 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
   }
 
 #ifdef WITH_PYTHON
-  if (const TfPyExceptionState *exc = boost::any_cast<TfPyExceptionState>(&info))
-  {
+  if (const TfPyExceptionState *exc = boost::any_cast<TfPyExceptionState>(&info)) {
     output += TfStringPrintf("%s\n", exc->GetExceptionString().c_str());
   }
 #endif  // WITH_PYTHON
@@ -683,7 +652,10 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
 
 static std::string _FormatDiagnostic(const TfDiagnosticBase &d, const TfDiagnosticInfo &info)
 {
-  return TfDiagnosticMgr::FormatDiagnostic(d.GetDiagnosticCode(), d.GetContext(), d.GetCommentary(), info);
+  return TfDiagnosticMgr::FormatDiagnostic(d.GetDiagnosticCode(),
+                                           d.GetContext(),
+                                           d.GetCommentary(),
+                                           info);
 }
 
 static void _PrintDiagnostic(FILE *fout,

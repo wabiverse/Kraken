@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiRisBxdf::~UsdRiRisBxdf()
-{}
+UsdRiRisBxdf::~UsdRiRisBxdf() {}
 
 /* static */
 UsdRiRisBxdf UsdRiRisBxdf::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisBxdf();
   }
@@ -69,8 +67,7 @@ UsdRiRisBxdf UsdRiRisBxdf::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdRiRisBxdf UsdRiRisBxdf::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RisBxdf");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisBxdf();
   }

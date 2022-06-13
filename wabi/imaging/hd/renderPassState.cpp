@@ -96,20 +96,21 @@ HdRenderPassState::~HdRenderPassState() = default;
 /* virtual */
 void HdRenderPassState::Prepare(HdResourceRegistrySharedPtr const &resourceRegistry)
 {
-  if (!TfDebug::IsEnabled(HD_FREEZE_CULL_FRUSTUM))
-  {
+  if (!TfDebug::IsEnabled(HD_FREEZE_CULL_FRUSTUM)) {
     _cullMatrix = GetWorldToViewMatrix() * GetProjectionMatrix();
   }
 }
 
 void HdRenderPassState::SetCameraAndViewport(HdCamera const *camera, GfVec4d const &viewport)
 {
-  if (!camera)
-  {
+  if (!camera) {
     TF_CODING_ERROR("Received null camera\n");
   }
   _camera = camera;
-  _viewport = GfVec4f((float)viewport[0], (float)viewport[1], (float)viewport[2], (float)viewport[3]);
+  _viewport = GfVec4f((float)viewport[0],
+                      (float)viewport[1],
+                      (float)viewport[2],
+                      (float)viewport[3]);
 
   // Invalidate framing so that it isn't used by GetProjectionMatrix().
   _framing = CameraUtilFraming();
@@ -120,8 +121,7 @@ void HdRenderPassState::SetCameraAndFraming(
   const CameraUtilFraming &framing,
   const std::pair<bool, CameraUtilConformWindowPolicy> &overrideWindowPolicy)
 {
-  if (!camera)
-  {
+  if (!camera) {
     TF_CODING_ERROR("Received null camera\n");
   }
   _camera = camera;
@@ -131,8 +131,7 @@ void HdRenderPassState::SetCameraAndFraming(
 
 GfMatrix4d HdRenderPassState::GetWorldToViewMatrix() const
 {
-  if (!_camera)
-  {
+  if (!_camera) {
     return _worldToViewMatrix;
   }
 
@@ -141,12 +140,10 @@ GfMatrix4d HdRenderPassState::GetWorldToViewMatrix() const
 
 CameraUtilConformWindowPolicy HdRenderPassState::GetWindowPolicy() const
 {
-  if (_overrideWindowPolicy.first)
-  {
+  if (_overrideWindowPolicy.first) {
     return _overrideWindowPolicy.second;
   }
-  if (_camera)
-  {
+  if (_camera) {
     return _camera->GetWindowPolicy();
   }
 
@@ -155,13 +152,11 @@ CameraUtilConformWindowPolicy HdRenderPassState::GetWindowPolicy() const
 
 GfMatrix4d HdRenderPassState::GetProjectionMatrix() const
 {
-  if (!_camera)
-  {
+  if (!_camera) {
     return _projectionMatrix;
   }
 
-  if (_framing.IsValid())
-  {
+  if (_framing.IsValid()) {
     return _framing.ApplyToProjectionMatrix(_camera->GetProjectionMatrix(), GetWindowPolicy());
   }
 
@@ -174,14 +169,12 @@ GfMatrix4d HdRenderPassState::GetProjectionMatrix() const
 
 HdRenderPassState::ClipPlanesVector const &HdRenderPassState::GetClipPlanes() const
 {
-  if (!_clippingEnabled)
-  {
+  if (!_clippingEnabled) {
     const static HdRenderPassState::ClipPlanesVector empty;
     return empty;
   }
 
-  if (!_camera)
-  {
+  if (!_camera) {
     return _clipPlanes;
   }
   return _camera->GetClipPlanes();

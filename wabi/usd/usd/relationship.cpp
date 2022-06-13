@@ -52,13 +52,12 @@ static SdfPath _MapTargetPath(const UsdStage *stage, const SdfPath &anchor, cons
   // If this is a relative target path, we have to map both the anchor
   // and target path and then re-relativize them.
   const UsdEditTarget &editTarget = stage->GetEditTarget();
-  if (target.IsAbsolutePath())
-  {
+  if (target.IsAbsolutePath()) {
     return editTarget.MapToSpecPath(target).StripAllVariantSelections();
-  } else
-  {
+  } else {
     const SdfPath anchorPrim = anchor.GetPrimPath();
-    const SdfPath translatedAnchorPrim = editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();
+    const SdfPath translatedAnchorPrim =
+      editTarget.MapToSpecPath(anchorPrim).StripAllVariantSelections();
     const SdfPath translatedTarget =
       editTarget.MapToSpecPath(target.MakeAbsolutePath(anchorPrim)).StripAllVariantSelections();
     return translatedTarget.MakeRelativePath(translatedAnchorPrim);
@@ -67,13 +66,10 @@ static SdfPath _MapTargetPath(const UsdStage *stage, const SdfPath &anchor, cons
 
 SdfPath UsdRelationship::_GetTargetForAuthoring(const SdfPath &target, std::string *whyNot) const
 {
-  if (!target.IsEmpty())
-  {
+  if (!target.IsEmpty()) {
     SdfPath absTarget = target.MakeAbsolutePath(GetPath().GetAbsoluteRootOrPrimPath());
-    if (Usd_InstanceCache::IsPathInPrototype(absTarget))
-    {
-      if (whyNot)
-      {
+    if (Usd_InstanceCache::IsPathInPrototype(absTarget)) {
+      if (whyNot) {
         *whyNot =
           "Cannot target a prototype or an object within a "
           "prototype.";
@@ -84,10 +80,8 @@ SdfPath UsdRelationship::_GetTargetForAuthoring(const SdfPath &target, std::stri
 
   UsdStage *stage = _GetStage();
   SdfPath mappedPath = _MapTargetPath(stage, GetPath(), target);
-  if (mappedPath.IsEmpty())
-  {
-    if (whyNot)
-    {
+  if (mappedPath.IsEmpty()) {
+    if (whyNot) {
       *whyNot = TfStringPrintf(
         "Cannot map <%s> to layer @%s@ via stage's "
         "EditTarget",
@@ -103,8 +97,7 @@ bool UsdRelationship::AddTarget(const SdfPath &target, UsdListPosition position)
 {
   std::string errMsg;
   const SdfPath targetToAuthor = _GetTargetForAuthoring(target, &errMsg);
-  if (targetToAuthor.IsEmpty())
-  {
+  if (targetToAuthor.IsEmpty()) {
     TF_CODING_ERROR("Cannot add target <%s> to relationship <%s>: %s",
                     target.GetText(),
                     GetPath().GetText(),
@@ -132,8 +125,7 @@ bool UsdRelationship::RemoveTarget(const SdfPath &target) const
 {
   std::string errMsg;
   const SdfPath targetToAuthor = _GetTargetForAuthoring(target, &errMsg);
-  if (targetToAuthor.IsEmpty())
-  {
+  if (targetToAuthor.IsEmpty()) {
     TF_CODING_ERROR("Cannot remove target <%s> from relationship <%s>: %s",
                     target.GetText(),
                     GetPath().GetText(),
@@ -161,12 +153,10 @@ bool UsdRelationship::SetTargets(const SdfPathVector &targets) const
 {
   SdfPathVector mappedPaths;
   mappedPaths.reserve(targets.size());
-  for (const SdfPath &target : targets)
-  {
+  for (const SdfPath &target : targets) {
     std::string errMsg;
     mappedPaths.push_back(_GetTargetForAuthoring(target, &errMsg));
-    if (mappedPaths.back().IsEmpty())
-    {
+    if (mappedPaths.back().IsEmpty()) {
       TF_CODING_ERROR("Cannot set target <%s> on relationship <%s>: %s",
                       target.GetText(),
                       GetPath().GetText(),
@@ -207,12 +197,10 @@ bool UsdRelationship::ClearTargets(bool removeSpec) const
   if (!relSpec)
     return false;
 
-  if (removeSpec)
-  {
+  if (removeSpec) {
     SdfPrimSpecHandle owner = TfDynamic_cast<SdfPrimSpecHandle>(relSpec->GetOwner());
     owner->RemoveProperty(relSpec);
-  } else
-  {
+  } else {
     relSpec->GetTargetPathList().ClearEdits();
   }
   return true;
@@ -236,8 +224,7 @@ bool UsdRelationship::_GetForwardedTargetsImpl(SdfPathSet *visited,
   // If there are no targets we can just return the return value of
   // _GetTargets. Note that this may be true if there are explicit opinions
   // that make the targets empty.
-  if (curTargets.empty())
-  {
+  if (curTargets.empty()) {
     return foundTargets;
   }
 
@@ -247,18 +234,13 @@ bool UsdRelationship::_GetForwardedTargetsImpl(SdfPathSet *visited,
   bool success = false;
 
   // Process all targets at this relationship.
-  for (SdfPath const &target : curTargets)
-  {
-    if (target.IsPrimPropertyPath())
-    {
+  for (SdfPath const &target : curTargets) {
+    if (target.IsPrimPropertyPath()) {
       // Resolve forwarding if this target points at a relationship.
-      if (UsdPrim prim = GetStage()->GetPrimAtPath(target.GetPrimPath()))
-      {
-        if (UsdRelationship rel = prim.GetRelationship(target.GetNameToken()))
-        {
+      if (UsdPrim prim = GetStage()->GetPrimAtPath(target.GetPrimPath())) {
+        if (UsdRelationship rel = prim.GetRelationship(target.GetNameToken())) {
           // Only do this rel if we've not yet seen it.
-          if (visited->insert(rel.GetPath()).second)
-          {
+          if (visited->insert(rel.GetPath()).second) {
             success |= rel._GetForwardedTargetsImpl(visited,
                                                     uniqueTargets,
                                                     targets,
@@ -283,7 +265,8 @@ bool UsdRelationship::_GetForwardedTargetsImpl(SdfPathSet *visited,
   return success;
 }
 
-bool UsdRelationship::_GetForwardedTargets(SdfPathVector *targets, bool includeForwardingRels) const
+bool UsdRelationship::_GetForwardedTargets(SdfPathVector *targets,
+                                           bool includeForwardingRels) const
 {
   SdfPathSet visited, uniqueTargets;
   bool foundAnyErrors = false;
@@ -297,8 +280,7 @@ bool UsdRelationship::_GetForwardedTargets(SdfPathVector *targets, bool includeF
 
 bool UsdRelationship::GetForwardedTargets(SdfPathVector *targets) const
 {
-  if (!targets)
-  {
+  if (!targets) {
     TF_CODING_ERROR("Passed null pointer for targets on <%s>", GetPath().GetText());
     return false;
   }
@@ -318,8 +300,7 @@ SdfRelationshipSpecHandle UsdRelationship::_CreateSpec(bool fallbackCustom) cons
   // Try to create a spec for editing either from the definition or from
   // copying existing spec info.
   TfErrorMark m;
-  if (SdfRelationshipSpecHandle relSpec = stage->_CreateRelationshipSpecForEditing(*this))
-  {
+  if (SdfRelationshipSpecHandle relSpec = stage->_CreateRelationshipSpecForEditing(*this)) {
     return relSpec;
   }
 
@@ -327,8 +308,7 @@ SdfRelationshipSpecHandle UsdRelationship::_CreateSpec(bool fallbackCustom) cons
   // means there was no existing authored scene description to go on (i.e. no
   // builtin info from prim type, and no existing authored spec).  Stamp a
   // spec with the provided default values.
-  if (m.IsClean())
-  {
+  if (m.IsClean()) {
     SdfChangeBlock block;
     return SdfRelationshipSpec::New(stage->_CreatePrimSpecForEditing(GetPrim()),
                                     _PropName().GetString(),

@@ -55,12 +55,10 @@ namespace
     return boost::python::make_tuple(subShapeWeights, blendShapeIndices, subShapeIndices);
   }
 
-  template<typename T>
-  std::vector<T> _PyListToVector(const list &l)
+  template<typename T> std::vector<T> _PyListToVector(const list &l)
   {
     std::vector<T> vec(len(l));
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
+    for (size_t i = 0; i < vec.size(); ++i) {
       vec[i] = extract<T>(l[i]);
     }
     return vec;

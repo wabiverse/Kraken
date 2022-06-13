@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdVolFieldBase::~UsdVolFieldBase()
-{}
+UsdVolFieldBase::~UsdVolFieldBase() {}
 
 /* static */
 UsdVolFieldBase UsdVolFieldBase::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolFieldBase();
   }

@@ -43,13 +43,10 @@ TF_DEFINE_ENV_SETTING(PCP_OVERRIDE_INSTANCEABLE,
 // (e.g. a reference or class) that could be shared with other prims.
 struct Pcp_FindInstanceableDataVisitor
 {
-  Pcp_FindInstanceableDataVisitor()
-    : hasInstanceableData(false)
-  {}
+  Pcp_FindInstanceableDataVisitor() : hasInstanceableData(false) {}
   bool Visit(PcpNodeRef node, bool nodeIsInstanceable)
   {
-    if (nodeIsInstanceable)
-    {
+    if (nodeIsInstanceable) {
       hasInstanceableData = true;
     }
 
@@ -70,8 +67,7 @@ bool Pcp_PrimIndexIsInstanceable(const PcpPrimIndex &primIndex)
   // unless the special env var is set for testing.
   static const int instancing(TfGetEnvSetting(PCP_OVERRIDE_INSTANCEABLE));
 
-  if ((instancing == 0) || ((!primIndex.IsUsd() && (instancing == -1))))
-  {
+  if ((instancing == 0) || ((!primIndex.IsUsd() && (instancing == -1)))) {
     return false;
   }
 
@@ -84,8 +80,7 @@ bool Pcp_PrimIndexIsInstanceable(const PcpPrimIndex &primIndex)
   // not introduce instanceable data.
   Pcp_FindInstanceableDataVisitor visitor;
   Pcp_TraverseInstanceableStrongToWeak(primIndex, &visitor);
-  if (!visitor.hasInstanceableData)
-  {
+  if (!visitor.hasInstanceableData) {
     return false;
   }
 
@@ -98,23 +93,18 @@ bool Pcp_PrimIndexIsInstanceable(const PcpPrimIndex &primIndex)
   TfSmallVector<PcpNodeRef, 64> nodesToVisit;
   nodesToVisit.push_back(primIndex.GetRootNode());
   bool opinionFound = false;
-  while (!nodesToVisit.empty())
-  {
+  while (!nodesToVisit.empty()) {
     PcpNodeRef node = nodesToVisit.back();
     nodesToVisit.pop_back();
-    if (node.CanContributeSpecs())
-    {
+    if (node.CanContributeSpecs()) {
       const PcpLayerStackSite &site = node.GetSite();
-      for (SdfLayerRefPtr const &layer : site.layerStack->GetLayers())
-      {
-        if (layer->HasField(site.path, instanceField, &isInstance))
-        {
+      for (SdfLayerRefPtr const &layer : site.layerStack->GetLayers()) {
+        if (layer->HasField(site.path, instanceField, &isInstance)) {
           opinionFound = true;
           break;
         }
       }
-      if (opinionFound)
-      {
+      if (opinionFound) {
         break;
       }
     }

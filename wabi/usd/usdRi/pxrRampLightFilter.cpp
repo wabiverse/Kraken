@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiPxrRampLightFilter::~UsdRiPxrRampLightFilter()
-{}
+UsdRiPxrRampLightFilter::~UsdRiPxrRampLightFilter() {}
 
 /* static */
 UsdRiPxrRampLightFilter UsdRiPxrRampLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrRampLightFilter();
   }
@@ -66,11 +64,11 @@ UsdRiPxrRampLightFilter UsdRiPxrRampLightFilter::Get(const UsdStagePtr &stage, c
 }
 
 /* static */
-UsdRiPxrRampLightFilter UsdRiPxrRampLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdRiPxrRampLightFilter UsdRiPxrRampLightFilter::Define(const UsdStagePtr &stage,
+                                                        const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiRampLightFilter");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrRampLightFilter();
   }

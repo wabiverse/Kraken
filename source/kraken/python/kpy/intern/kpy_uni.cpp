@@ -89,8 +89,7 @@ static int kpy_class_call(kContext *C, KrakenPrim *ptr, void *func, UsdAttribute
   return 1;
 }
 
-static void kpy_class_free(void *pyob_ptr)
-{}
+static void kpy_class_free(void *pyob_ptr) {}
 
 struct KPy_TypesModule_State
 {
@@ -137,7 +136,8 @@ PyTypeObject pyuni_struct_meta_idprop_Type = {
   NULL,                                                        /* reprfunc tp_str; */
   NULL /* (getattrofunc) pyrna_struct_meta_idprop_getattro */, /* getattrofunc tp_getattro; */
 
-  NULL,  // (setattrofunc)pyrna_struct_meta_idprop_setattro,             /* setattrofunc tp_setattro; */
+  NULL,  // (setattrofunc)pyrna_struct_meta_idprop_setattro,             /* setattrofunc
+         // tp_setattro; */
 
 
   /* Functions to access object as input/output buffer */
@@ -328,8 +328,7 @@ PyObject *KPY_uni_types(void)
     };
 
     PyObject *submodule_dict = PyModule_GetDict(submodule);
-    for (int i = 0; i < TfArraySize(pyuni_types); i += 1)
-    {
+    for (int i = 0; i < TfArraySize(pyuni_types); i += 1) {
       PyDict_SetItemString(submodule_dict, pyuni_types[i]->tp_name, (PyObject *)pyuni_types[i]);
     }
   }
@@ -343,24 +342,21 @@ KrakenPrim *pyuni_object_as_uni(PyObject *self, const bool parent, const char *e
   KrakenPrim *uni;
 
   /* Unfortunately PyObject_GetAttrString won't look up this types tp_dict first :/ */
-  if (PyType_Check(self))
-  {
-    py_uni = (KPy_KrakenPrim *)PyDict_GetItem(((PyTypeObject *)self)->tp_dict, kpy_intern_str_kr_uni);
+  if (PyType_Check(self)) {
+    py_uni = (KPy_KrakenPrim *)PyDict_GetItem(((PyTypeObject *)self)->tp_dict,
+                                              kpy_intern_str_kr_uni);
     Py_XINCREF(py_uni);
   }
 
-  if (parent)
-  {
+  if (parent) {
     /* be very careful with this since it will return a parent classes uni.
      * modifying this will do confusing stuff! */
-    if (py_uni == NULL)
-    {
+    if (py_uni == NULL) {
       py_uni = (KPy_KrakenPrim *)PyObject_GetAttr(self, kpy_intern_str_kr_uni);
     }
   }
 
-  if (py_uni == NULL)
-  {
+  if (py_uni == NULL) {
     PyErr_Format(PyExc_RuntimeError,
                  "%.200s, missing kr_uni attribute from '%.200s' instance (may not be registered)",
                  error_prefix,
@@ -368,8 +364,7 @@ KrakenPrim *pyuni_object_as_uni(PyObject *self, const bool parent, const char *e
     return NULL;
   }
 
-  if (!KPy_KrakenPrim_Check(py_uni))
-  {
+  if (!KPy_KrakenPrim_Check(py_uni)) {
     PyErr_Format(PyExc_TypeError,
                  "%.200s, kr_uni attribute wrong type '%.200s' on '%.200s'' instance",
                  error_prefix,
@@ -379,8 +374,7 @@ KrakenPrim *pyuni_object_as_uni(PyObject *self, const bool parent, const char *e
     return NULL;
   }
 
-  if (py_uni->ptr.type != &LUXO_Object)
-  {
+  if (py_uni->ptr.type != &LUXO_Object) {
     PyErr_Format(PyExc_TypeError,
                  "%.200s, kr_uni attribute not a LUXO_Object, on '%.200s'' instance",
                  error_prefix,
@@ -428,8 +422,7 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
   PyObject *py_cls_meth;
   const char *error_prefix = "register_class(...):";
 
-  if (!PyType_Check(py_class))
-  {
+  if (!PyType_Check(py_class)) {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): "
                  "expected a class argument, not '%.200s'",
@@ -437,8 +430,7 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
     return NULL;
   }
 
-  if (PyDict_GetItem(((PyTypeObject *)py_class)->tp_dict, kpy_intern_str_kr_uni))
-  {
+  if (PyDict_GetItem(((PyTypeObject *)py_class)->tp_dict, kpy_intern_str_kr_uni)) {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): "
                  "already registered as a subclass '%.200s'",
@@ -446,8 +438,7 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
     return NULL;
   }
 
-  if (!pyuni_write_check())
-  {
+  if (!pyuni_write_check()) {
     PyErr_Format(PyExc_RuntimeError,
                  "register_class(...): "
                  "can't run in readonly state '%.200s'",
@@ -457,16 +448,14 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
 
   /* Warning: gets parent classes uni, only for the register function. */
   uni = pyuni_object_as_uni(py_class, true, "register_class(...):");
-  if (uni == NULL)
-  {
+  if (uni == NULL) {
     return NULL;
   }
 
   /* Check that we have a register callback for this type. */
   reg = LUXO_object_register(uni);
 
-  if (!reg)
-  {
+  if (!reg) {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): expected a subclass of a registerable "
                  "UNI type (%.200s does not support registration)",
@@ -490,8 +479,7 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
                 kpy_class_call,
                 kpy_class_free);
 
-  if (uni_new == NULL)
-  {
+  if (uni_new == NULL) {
     return NULL;
   }
 
@@ -510,16 +498,13 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
   /**
    * Call classed register method.
    * Note that zero falls through, no attribute, no error. */
-  switch (_PyObject_LookupAttr(py_class, kpy_intern_str_register, &py_cls_meth))
-  {
+  switch (_PyObject_LookupAttr(py_class, kpy_intern_str_register, &py_cls_meth)) {
     case 1: {
       PyObject *ret = PyObject_CallObject(py_cls_meth, NULL);
       Py_DECREF(py_cls_meth);
-      if (ret)
-      {
+      if (ret) {
         Py_DECREF(ret);
-      } else
-      {
+      } else {
         return NULL;
       }
       break;
@@ -535,15 +520,13 @@ static PyObject *pyuni_register_class(PyObject *UNUSED(self), PyObject *py_class
 #ifdef USE_PYUNI_OBJECT_REFERENCE
 static void pyuni_object_reference_set(KPy_KrakenPrim *self, PyObject *reference)
 {
-  if (self->reference)
-  {
+  if (self->reference) {
     PyObject_GC_UnTrack(self);
     Py_CLEAR(self->reference);
   }
   /* Reference is now NULL. */
 
-  if (reference)
-  {
+  if (reference) {
     self->reference = reference;
     Py_INCREF(reference);
     PyObject_GC_Track(self);
@@ -563,18 +546,15 @@ static RHash *id_weakref_pool_get(const SdfPath &id)
 {
   RHash *weakinfo_hash = nullptr;
 
-  if (id_weakref_pool)
-  {
+  if (id_weakref_pool) {
     weakinfo_hash = (RHash *)KKE_rhash_lookup(id_weakref_pool, id.GetAsToken());
-  } else
-  {
+  } else {
     /* First time, allocate pool. */
     // id_weakref_pool = KLI_rhash_ptr_new("uni_global_pool");
     // weakinfo_hash = NULL;
   }
 
-  if (weakinfo_hash == NULL)
-  {
+  if (weakinfo_hash == NULL) {
     // weakinfo_hash = KKE_rhash_ptr_new("rna_id");
     KKE_rhash_insert(id_weakref_pool, id.GetAsToken(), weakinfo_hash);
   }
@@ -719,8 +699,7 @@ static PyObject *pyuni_prop_collection_iter(KPy_PropertyLUXO *self)
 
 static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyLUXO *self)
 {
-  if (self->iter.empty())
-  {
+  if (self->iter.empty()) {
     PyErr_SetNone(PyExc_StopIteration);
     return NULL;
   }
@@ -728,10 +707,8 @@ static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyLUXO *sel
   KPy_KrakenPrim *pyuni = (KPy_KrakenPrim *)pyuni_object_CreatePyObject(new KrakenPrim());
 
 #  ifdef USE_PYUNI_OBJECT_REFERENCE
-  if (pyuni)
-  { /* Unlikely, but may fail. */
-    if ((PyObject *)pyuni != Py_None)
-    {
+  if (pyuni) { /* Unlikely, but may fail. */
+    if ((PyObject *)pyuni != Py_None) {
       /* hold a reference to the iterator since it may have
        * allocated memory 'pyuni' needs. eg: introspecting dynamic enum's. */
       /* TODO: we could have an api call to know if this is
@@ -749,8 +726,7 @@ static PyObject *pyuni_prop_collection_iter_next(KPy_CollectionPropertyLUXO *sel
 static void pyuni_prop_collection_iter_dealloc(KPy_CollectionPropertyLUXO *self)
 {
 #  ifdef USE_WEAKREFS
-  if (self->in_weakreflist != NULL)
-  {
+  if (self->in_weakreflist != NULL) {
     PyObject_ClearWeakRefs((PyObject *)self);
   }
 #  endif
@@ -774,8 +750,7 @@ void KPY_uni_init(void)
   //   return;
   // }
 
-  if (PyType_Ready(&pyuni_object_Type) < 0)
-  {
+  if (PyType_Ready(&pyuni_object_Type) < 0) {
     return;
   }
 
@@ -800,8 +775,7 @@ void KPY_uni_init(void)
   // }
 
 #ifdef USE_PYUNI_ITER
-  if (PyType_Ready(&pyuni_prop_collection_iter_Type) < 0)
-  {
+  if (PyType_Ready(&pyuni_prop_collection_iter_Type) < 0) {
     return;
   }
 #endif
@@ -849,8 +823,7 @@ PyObject *KPY_uni_module(void)
 
 void KPY_update_uni_module(void)
 {
-  if (uni_module_ptr)
-  {
+  if (uni_module_ptr) {
     uni_module_ptr->data = G.main;
   }
 }
@@ -893,19 +866,16 @@ PyObject *pyuni_object_CreatePyObject(PointerLUXO *ptr)
   KPy_KrakenPrim *pyuni = NULL;
 
   /* Note: don't rely on this to return None since NULL data with a valid type can often crash. */
-  if (ptr->data == NULL && ptr->type == NULL)
-  { /* Operator RNA has NULL data. */
+  if (ptr->data == NULL && ptr->type == NULL) { /* Operator RNA has NULL data. */
     Py_RETURN_NONE;
   }
 
   void **instance = ptr->data ? LUXO_object_instance(ptr) : NULL;
-  if (instance && *instance)
-  {
+  if (instance && *instance) {
     pyuni = (KPy_KrakenPrim *)*instance;
 
     /* Refine may have changed types after the first instance was created. */
-    if (ptr->type == pyuni->ptr.type)
-    {
+    if (ptr->type == pyuni->ptr.type) {
       Py_INCREF(pyuni);
       return (PyObject *)pyuni;
     }
@@ -950,15 +920,13 @@ PyObject *pyuni_object_CreatePyObject(PointerLUXO *ptr)
   // }
   // }
 
-  if (pyuni == NULL)
-  {
+  if (pyuni == NULL) {
     PyErr_SetString(PyExc_MemoryError, "couldn't create kpy_object");
     return NULL;
   }
 
   /* Blender's instance owns a reference (to avoid Python freeing it). */
-  if (instance)
-  {
+  if (instance) {
     *instance = pyuni;
     Py_INCREF(pyuni);
   }
@@ -975,8 +943,7 @@ PyObject *pyuni_object_CreatePyObject(PointerLUXO *ptr)
   // PyC_ObSpit("NewStructRNA: ", (PyObject *)pyuni);
 
 #ifdef USE_PYUNI_INVALIDATE_WEAKREF
-  if (!ptr->path.IsEmpty())
-  {
+  if (!ptr->path.IsEmpty()) {
     id_weakref_pool_add(ptr->path, (KPy_DummyPointerLUXO *)pyuni);
   }
 #endif
@@ -995,14 +962,11 @@ static PyObject *pyuni_kr_owner_id_get(PyObject *UNUSED(self))
 static PyObject *pyuni_kr_owner_id_set(PyObject *UNUSED(self), PyObject *value)
 {
   const char *name;
-  if (value == Py_None)
-  {
+  if (value == Py_None) {
     name = NULL;
-  } else if (PyUnicode_Check(value))
-  {
+  } else if (PyUnicode_Check(value)) {
     name = PyUnicode_AsUTF8(value);
-  } else
-  {
+  } else {
     PyErr_Format(PyExc_ValueError,
                  "owner_set(...): "
                  "expected None or a string, not '%.200s'",

@@ -31,19 +31,17 @@ WABI_NAMESPACE_BEGIN
 
 TfRefBase::UniqueChangedListener TfRefBase::_uniqueChangedListener;
 
-TfRefBase::~TfRefBase()
-{}
+TfRefBase::~TfRefBase() {}
 
 void TfRefBase::SetUniqueChangedListener(UniqueChangedListener listener)
 {
-  if (_uniqueChangedListener.lock || _uniqueChangedListener.func || _uniqueChangedListener.unlock)
-  {
+  if (_uniqueChangedListener.lock || _uniqueChangedListener.func ||
+      _uniqueChangedListener.unlock) {
     TF_FATAL_ERROR("Setting an already set UniqueChangedListener");
   }
   _uniqueChangedListener = listener;
 }
 
-TfSimpleRefBase::~TfSimpleRefBase()
-{}
+TfSimpleRefBase::~TfSimpleRefBase() {}
 
 WABI_NAMESPACE_END

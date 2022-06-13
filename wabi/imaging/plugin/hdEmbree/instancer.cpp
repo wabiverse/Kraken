@@ -49,19 +49,19 @@ HdEmbreeInstancer::HdEmbreeInstancer(HdSceneDelegate *delegate, SdfPath const &i
 
 HdEmbreeInstancer::~HdEmbreeInstancer()
 {
-  TF_FOR_ALL (it, _primvarMap)
-  {
+  TF_FOR_ALL (it, _primvarMap) {
     delete it->second;
   }
   _primvarMap.clear();
 }
 
-void HdEmbreeInstancer::Sync(HdSceneDelegate *delegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdEmbreeInstancer::Sync(HdSceneDelegate *delegate,
+                             HdRenderParam *renderParam,
+                             HdDirtyBits *dirtyBits)
 {
   _UpdateInstancer(delegate, dirtyBits);
 
-  if (HdChangeTracker::IsAnyPrimvarDirty(*dirtyBits, GetId()))
-  {
+  if (HdChangeTracker::IsAnyPrimvarDirty(*dirtyBits, GetId())) {
     _SyncPrimvars(delegate, *dirtyBits);
   }
 }
@@ -73,17 +73,14 @@ void HdEmbreeInstancer::_SyncPrimvars(HdSceneDelegate *delegate, HdDirtyBits dir
 
   SdfPath const &id = GetId();
 
-  HdPrimvarDescriptorVector primvars = delegate->GetPrimvarDescriptors(id, HdInterpolationInstance);
+  HdPrimvarDescriptorVector primvars = delegate->GetPrimvarDescriptors(id,
+                                                                       HdInterpolationInstance);
 
-  for (HdPrimvarDescriptor const &pv : primvars)
-  {
-    if (HdChangeTracker::IsPrimvarDirty(dirtyBits, id, pv.name))
-    {
+  for (HdPrimvarDescriptor const &pv : primvars) {
+    if (HdChangeTracker::IsPrimvarDirty(dirtyBits, id, pv.name)) {
       VtValue value = delegate->Get(id, pv.name);
-      if (!value.IsEmpty())
-      {
-        if (_primvarMap.count(pv.name) > 0)
-        {
+      if (!value.IsEmpty()) {
+        if (_primvarMap.count(pv.name) > 0) {
           delete _primvarMap[pv.name];
         }
         _primvarMap[pv.name] = new HdVtBufferSource(pv.name, value);
@@ -108,20 +105,16 @@ VtMatrix4dArray HdEmbreeInstancer::ComputeInstanceTransforms(SdfPath const &prot
   VtIntArray instanceIndices = GetDelegate()->GetInstanceIndices(GetId(), prototypeId);
 
   VtMatrix4dArray transforms(instanceIndices.size());
-  for (size_t i = 0; i < instanceIndices.size(); ++i)
-  {
+  for (size_t i = 0; i < instanceIndices.size(); ++i) {
     transforms[i] = instancerTransform;
   }
 
   // "translate" holds a translation vector for each index.
-  if (_primvarMap.count(HdInstancerTokens->translate) > 0)
-  {
+  if (_primvarMap.count(HdInstancerTokens->translate) > 0) {
     HdEmbreeBufferSampler sampler(*_primvarMap[HdInstancerTokens->translate]);
-    for (size_t i = 0; i < instanceIndices.size(); ++i)
-    {
+    for (size_t i = 0; i < instanceIndices.size(); ++i) {
       GfVec3f translate;
-      if (sampler.Sample(instanceIndices[i], &translate))
-      {
+      if (sampler.Sample(instanceIndices[i], &translate)) {
         GfMatrix4d translateMat(1);
         translateMat.SetTranslate(GfVec3d(translate));
         transforms[i] = translateMat * transforms[i];
@@ -130,14 +123,11 @@ VtMatrix4dArray HdEmbreeInstancer::ComputeInstanceTransforms(SdfPath const &prot
   }
 
   // "rotate" holds a quaternion in <real, i, j, k> format for each index.
-  if (_primvarMap.count(HdInstancerTokens->rotate) > 0)
-  {
+  if (_primvarMap.count(HdInstancerTokens->rotate) > 0) {
     HdEmbreeBufferSampler sampler(*_primvarMap[HdInstancerTokens->rotate]);
-    for (size_t i = 0; i < instanceIndices.size(); ++i)
-    {
+    for (size_t i = 0; i < instanceIndices.size(); ++i) {
       GfVec4f quat;
-      if (sampler.Sample(instanceIndices[i], &quat))
-      {
+      if (sampler.Sample(instanceIndices[i], &quat)) {
         GfMatrix4d rotateMat(1);
         rotateMat.SetRotate(GfRotation(GfQuaternion(quat[0], GfVec3d(quat[1], quat[2], quat[3]))));
         transforms[i] = rotateMat * transforms[i];
@@ -146,14 +136,11 @@ VtMatrix4dArray HdEmbreeInstancer::ComputeInstanceTransforms(SdfPath const &prot
   }
 
   // "scale" holds an axis-aligned scale vector for each index.
-  if (_primvarMap.count(HdInstancerTokens->scale) > 0)
-  {
+  if (_primvarMap.count(HdInstancerTokens->scale) > 0) {
     HdEmbreeBufferSampler sampler(*_primvarMap[HdInstancerTokens->scale]);
-    for (size_t i = 0; i < instanceIndices.size(); ++i)
-    {
+    for (size_t i = 0; i < instanceIndices.size(); ++i) {
       GfVec3f scale;
-      if (sampler.Sample(instanceIndices[i], &scale))
-      {
+      if (sampler.Sample(instanceIndices[i], &scale)) {
         GfMatrix4d scaleMat(1);
         scaleMat.SetScale(GfVec3d(scale));
         transforms[i] = scaleMat * transforms[i];
@@ -162,27 +149,22 @@ VtMatrix4dArray HdEmbreeInstancer::ComputeInstanceTransforms(SdfPath const &prot
   }
 
   // "instanceTransform" holds a 4x4 transform matrix for each index.
-  if (_primvarMap.count(HdInstancerTokens->instanceTransform) > 0)
-  {
+  if (_primvarMap.count(HdInstancerTokens->instanceTransform) > 0) {
     HdEmbreeBufferSampler sampler(*_primvarMap[HdInstancerTokens->instanceTransform]);
-    for (size_t i = 0; i < instanceIndices.size(); ++i)
-    {
+    for (size_t i = 0; i < instanceIndices.size(); ++i) {
       GfMatrix4d instanceTransform;
-      if (sampler.Sample(instanceIndices[i], &instanceTransform))
-      {
+      if (sampler.Sample(instanceIndices[i], &instanceTransform)) {
         transforms[i] = instanceTransform * transforms[i];
       }
     }
   }
 
-  if (GetParentId().IsEmpty())
-  {
+  if (GetParentId().IsEmpty()) {
     return transforms;
   }
 
   HdInstancer *parentInstancer = GetDelegate()->GetRenderIndex().GetInstancer(GetParentId());
-  if (!TF_VERIFY(parentInstancer))
-  {
+  if (!TF_VERIFY(parentInstancer)) {
     return transforms;
   }
 
@@ -195,10 +177,8 @@ VtMatrix4dArray HdEmbreeInstancer::ComputeInstanceTransforms(SdfPath const &prot
     static_cast<HdEmbreeInstancer *>(parentInstancer)->ComputeInstanceTransforms(GetId());
 
   VtMatrix4dArray final(parentTransforms.size() * transforms.size());
-  for (size_t i = 0; i < parentTransforms.size(); ++i)
-  {
-    for (size_t j = 0; j < transforms.size(); ++j)
-    {
+  for (size_t i = 0; i < parentTransforms.size(); ++i) {
+    for (size_t j = 0; j < transforms.size(); ++j) {
       final[i * transforms.size() + j] = transforms[j] * parentTransforms[i];
     }
   }

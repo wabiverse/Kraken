@@ -32,8 +32,7 @@ TF_DEFINE_PUBLIC_TOKENS(HdBasisCurvesReprDescTokens, HD_BASISCURVES_REPR_DESC_TO
 
 TF_DEFINE_ENV_SETTING(HD_ENABLE_REFINED_CURVES, 0, "Force curves to always be refined.");
 
-HdBasisCurves::HdBasisCurves(SdfPath const &id)
-  : HdRprim(id)
+HdBasisCurves::HdBasisCurves(SdfPath const &id) : HdRprim(id)
 {
   /*NOTHING*/
 }
@@ -46,7 +45,9 @@ HdBasisCurves::~HdBasisCurves()
 /* virtual */
 TfTokenVector const &HdBasisCurves::GetBuiltinPrimvarNames() const
 {
-  static const TfTokenVector primvarNames = {HdTokens->points, HdTokens->normals, HdTokens->widths};
+  static const TfTokenVector primvarNames = {HdTokens->points,
+                                             HdTokens->normals,
+                                             HdTokens->widths};
   return primvarNames;
 }
 
@@ -64,8 +65,7 @@ void HdBasisCurves::ConfigureRepr(TfToken const &reprName, HdBasisCurvesReprDesc
 {
   HD_TRACE_FUNCTION();
 
-  if (IsEnabledForceRefinedCurves())
-  {
+  if (IsEnabledForceRefinedCurves()) {
     desc.geomStyle = HdBasisCurvesGeomStylePatch;
   }
 
@@ -73,7 +73,8 @@ void HdBasisCurves::ConfigureRepr(TfToken const &reprName, HdBasisCurvesReprDesc
 }
 
 /* static */
-HdBasisCurves::_BasisCurvesReprConfig::DescArray HdBasisCurves::_GetReprDesc(TfToken const &reprName)
+HdBasisCurves::_BasisCurvesReprConfig::DescArray HdBasisCurves::_GetReprDesc(
+  TfToken const &reprName)
 {
   return _reprDescConfig.Find(reprName);
 }

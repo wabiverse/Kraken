@@ -18,16 +18,14 @@ RprUsd_MaterialNode *RprUsd_CreateRprNode(RprUsd_MaterialBuilderContext *ctx,
   return new T(ctx, parameters);
 }
 
-template<typename Node>
-RprUsd_RprNodeInfo *GetNodeInfo()
+template<typename Node> RprUsd_RprNodeInfo *GetNodeInfo()
 {
   auto ret = new RprUsd_RprNodeInfo;
   auto &nodeInfo = *ret;
 
   // Take `RPR_MATERIAL_NODE_OP_OPERATION`-like name and convert it into `operation`
   std::string name(Node::kOpName + sizeof("RPR_MATERIAL_NODE_OP"));
-  for (size_t i = 0; i < name.size(); ++i)
-  {
+  for (size_t i = 0; i < name.size(); ++i) {
     name[i] = std::tolower(name[i], std::locale());
   }
 
@@ -35,8 +33,7 @@ RprUsd_RprNodeInfo *GetNodeInfo()
   nodeInfo.uiName = std::string("RPR ") + Node::kUiName;
   nodeInfo.uiFolder = "Arithmetics";
 
-  for (int i = 0; i < Node::kArity; ++i)
-  {
+  for (int i = 0; i < Node::kArity; ++i) {
     RprUsd_RprNodeInput input(RprUsd_RprNodeInput::kColor3);
     input.name = _tokens->allTokens[i];
     input.uiName = TfStringPrintf("Color %d", i);
@@ -62,16 +59,15 @@ RprUsd_RprNodeInfo *GetNodeInfo()
 class RprUsd_RprArithmeticNodeRegistry
 {
  public:
+
   static RprUsd_RprArithmeticNodeRegistry &GetInstance()
   {
     return TfSingleton<RprUsd_RprArithmeticNodeRegistry>::GetInstance();
   }
 
-  template<typename T>
-  void Register(rpr::MaterialNodeArithmeticOperation op)
+  template<typename T> void Register(rpr::MaterialNodeArithmeticOperation op)
   {
-    if (m_lookupOp.count(op))
-    {
+    if (m_lookupOp.count(op)) {
       TF_CODING_ERROR("Attempt to define the same arithmetic node twice: %u", op);
       return;
     }
@@ -83,7 +79,9 @@ class RprUsd_RprArithmeticNodeRegistry
     desc.info = GetNodeInfo<T>();
 
     // Register this node in the general node registry
-    RprUsdMaterialRegistry::GetInstance().Register(TfToken(desc.info->name), desc.factory, desc.info);
+    RprUsdMaterialRegistry::GetInstance().Register(TfToken(desc.info->name),
+                                                   desc.factory,
+                                                   desc.info);
   }
 
   RprUsd_RprArithmeticNode *Create(rpr::MaterialNodeArithmeticOperation op,
@@ -91,8 +89,7 @@ class RprUsd_RprArithmeticNodeRegistry
                                    std::map<TfToken, VtValue> const &parameters)
   {
     auto it = m_lookupOp.find(op);
-    if (it != m_lookupOp.end())
-    {
+    if (it != m_lookupOp.end()) {
       return static_cast<RprUsd_RprArithmeticNode *>(m_descs[it->second].factory(ctx, parameters));
     }
 
@@ -101,9 +98,11 @@ class RprUsd_RprArithmeticNodeRegistry
   }
 
  private:
+
   friend class TfSingleton<RprUsd_RprArithmeticNodeRegistry>;
 
  private:
+
   using FactoryFnc = std::function<RprUsd_MaterialNode *(RprUsd_MaterialBuilderContext *,
                                                          std::map<TfToken, VtValue> const &)>;
   struct NodeDesc
@@ -131,39 +130,42 @@ namespace
 /// then arithmetic node's output will be a rpr::MaterialNode.
 /// This behavior allows to implement one uniform code-path for some complex logic over material
 /// node inputs (for example, see Houdini's principled node implementation of emissive color).
-#define DEFINE_ARITHMETIC_NODE(op, arity, eval, uiName, doc)                                            \
-  class RprUsd_##op##Node : public RprUsd_RprArithmeticNode                                             \
-  {                                                                                                     \
-   public:                                                                                              \
-    RprUsd_##op##Node(RprUsd_MaterialBuilderContext *ctx, std::map<TfToken, VtValue> const &parameters) \
-      : RprUsd_RprArithmeticNode(ctx)                                                                   \
-    {                                                                                                   \
-      for (auto &entry : parameters)                                                                    \
-        SetInput(entry.first, entry.second);                                                            \
-    }                                                                                                   \
-    static constexpr int kArity = arity;                                                                \
-    static constexpr rpr::MaterialNodeArithmeticOperation kOp = op;                                     \
-    static constexpr const char *kOpName = #op;                                                         \
-    static constexpr const char *kUiName = uiName;                                                      \
-    /*static constexpr const char* kDoc = doc;*/                                                        \
-                                                                                                        \
-   protected:                                                                                           \
-    int GetNumArguments() const final                                                                   \
-    {                                                                                                   \
-      return kArity;                                                                                    \
-    }                                                                                                   \
-    rpr::MaterialNodeArithmeticOperation GetOp() const final                                            \
-    {                                                                                                   \
-      return kOp;                                                                                       \
-    }                                                                                                   \
-    VtValue EvalOperation() const final                                                                 \
-    {                                                                                                   \
-      eval                                                                                              \
-    }                                                                                                   \
-  };                                                                                                    \
-  ARCH_CONSTRUCTOR(RprUsd_InitArithmeticNode##op, 255, void)                                            \
-  {                                                                                                     \
-    RprUsd_RprArithmeticNodeRegistry::GetInstance().Register<RprUsd_##op##Node>(op);                    \
+#define DEFINE_ARITHMETIC_NODE(op, arity, eval, uiName, doc)                         \
+  class RprUsd_##op##Node : public RprUsd_RprArithmeticNode                          \
+  {                                                                                  \
+   public:                                                                           \
+                                                                                     \
+    RprUsd_##op##Node(RprUsd_MaterialBuilderContext *ctx,                            \
+                      std::map<TfToken, VtValue> const &parameters)                  \
+      : RprUsd_RprArithmeticNode(ctx)                                                \
+    {                                                                                \
+      for (auto &entry : parameters)                                                 \
+        SetInput(entry.first, entry.second);                                         \
+    }                                                                                \
+    static constexpr int kArity = arity;                                             \
+    static constexpr rpr::MaterialNodeArithmeticOperation kOp = op;                  \
+    static constexpr const char *kOpName = #op;                                      \
+    static constexpr const char *kUiName = uiName;                                   \
+    /*static constexpr const char* kDoc = doc;*/                                     \
+                                                                                     \
+   protected:                                                                        \
+                                                                                     \
+    int GetNumArguments() const final                                                \
+    {                                                                                \
+      return kArity;                                                                 \
+    }                                                                                \
+    rpr::MaterialNodeArithmeticOperation GetOp() const final                         \
+    {                                                                                \
+      return kOp;                                                                    \
+    }                                                                                \
+    VtValue EvalOperation() const final                                              \
+    {                                                                                \
+      eval                                                                           \
+    }                                                                                \
+  };                                                                                 \
+  ARCH_CONSTRUCTOR(RprUsd_InitArithmeticNode##op, 255, void)                         \
+  {                                                                                  \
+    RprUsd_RprArithmeticNodeRegistry::GetInstance().Register<RprUsd_##op##Node>(op); \
   }
 
   DEFINE_ARITHMETIC_NODE(
@@ -194,8 +196,7 @@ namespace
       auto lhs = GetRprFloat(m_args[0]);
       auto rhs = GetRprFloat(m_args[1]);
       decltype(lhs) out;
-      for (size_t i = 0; i < out.dimension; ++i)
-      {
+      for (size_t i = 0; i < out.dimension; ++i) {
         out[i] = lhs[i] / rhs[i];
       }
       return VtValue(out);
@@ -387,8 +388,7 @@ namespace
   auto lhs = GetRprFloat(m_args[0]);           \
   auto rhs = GetRprFloat(m_args[1]);           \
   decltype(lhs) out;                           \
-  for (size_t i = 0; i < lhs.dimension; ++i)   \
-  {                                            \
+  for (size_t i = 0; i < lhs.dimension; ++i) { \
     out[i] = (lhs[i] OP rhs[i]) ? 1.0f : 0.0f; \
   }                                            \
   return VtValue(out);
@@ -457,8 +457,7 @@ namespace
       auto in1 = GetRprFloat(m_args[1]);
       auto in2 = GetRprFloat(m_args[2]);
       decltype(in0) out;
-      for (size_t i = 0; i < in0.dimension; ++i)
-      {
+      for (size_t i = 0; i < in0.dimension; ++i) {
         out[i] = in0[i] ? in1[i] : in2[i];
       }
       return VtValue(out);
@@ -530,11 +529,9 @@ namespace
     4,
     {
       GfMatrix3f mat;
-      for (size_t i = 0; i < mat.numRows; ++i)
-      {
+      for (size_t i = 0; i < mat.numRows; ++i) {
         auto input = GetRprFloat(m_args[i]);
-        for (size_t j = 0; j < mat.numColumns; ++j)
-        {
+        for (size_t j = 0; j < mat.numColumns; ++j) {
           mat[i][j] = input[j];
         }
       }
@@ -556,8 +553,7 @@ namespace
       auto in2 = GetRprFloat(m_args[2]);
       decltype(in0) out(in0[0], in1[1], in2[2], 1.0f);
 
-      if (!m_args[3].IsEmpty())
-      {
+      if (!m_args[3].IsEmpty()) {
         auto in3 = GetRprFloat(m_args[3]);
         out[3] = in3[3];
       }
@@ -581,20 +577,15 @@ std::unique_ptr<RprUsd_RprArithmeticNode> RprUsd_RprArithmeticNode::Create(
 bool RprUsd_RprArithmeticNode::SetInput(TfToken const &inputId, VtValue const &value)
 {
   int argIndex;
-  if (inputId == RprUsdMaterialNodeInputTokens->color0)
-  {
+  if (inputId == RprUsdMaterialNodeInputTokens->color0) {
     argIndex = 0;
-  } else if (inputId == RprUsdMaterialNodeInputTokens->color1)
-  {
+  } else if (inputId == RprUsdMaterialNodeInputTokens->color1) {
     argIndex = 1;
-  } else if (inputId == RprUsdMaterialNodeInputTokens->color2)
-  {
+  } else if (inputId == RprUsdMaterialNodeInputTokens->color2) {
     argIndex = 2;
-  } else if (inputId == RprUsdMaterialNodeInputTokens->color3)
-  {
+  } else if (inputId == RprUsdMaterialNodeInputTokens->color3) {
     argIndex = 3;
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unexpected input for arithmetic node: %s", inputId.GetText());
     return false;
   }
@@ -604,8 +595,7 @@ bool RprUsd_RprArithmeticNode::SetInput(TfToken const &inputId, VtValue const &v
 
 bool RprUsd_RprArithmeticNode::SetInput(int index, VtValue const &value)
 {
-  if (index < 0 || index > 3)
-  {
+  if (index < 0 || index > 3) {
     TF_CODING_ERROR("Invalid index: %d", index);
     return false;
   }
@@ -619,38 +609,31 @@ bool RprUsd_RprArithmeticNode::SetInput(int index, VtValue const &value)
 
 VtValue RprUsd_RprArithmeticNode::GetOutput()
 {
-  if (m_output.IsEmpty())
-  {
+  if (m_output.IsEmpty()) {
     // If all inputs are of trivial type (uint or float, GfVec3f, etc) we can
     // evaluate the output value on the CPU
     bool isInputsTrivial = true;
 
     int numArgs = GetNumArguments();
-    for (int i = 0; i < numArgs; ++i)
-    {
-      if (m_args[i].IsHolding<RprMaterialNodePtr>())
-      {
+    for (int i = 0; i < numArgs; ++i) {
+      if (m_args[i].IsHolding<RprMaterialNodePtr>()) {
         isInputsTrivial = false;
         break;
       }
     }
 
-    if (isInputsTrivial)
-    {
+    if (isInputsTrivial) {
       m_output = EvalOperation();
-    } else
-    {
+    } else {
       // Otherwise, we setup rpr::MaterialNode that calculates the value in runtime
       RprMaterialNodePtr rprNode;
 
       rpr::Status status;
       rprNode.reset(m_ctx->rprContext->CreateMaterialNode(RPR_MATERIAL_NODE_ARITHMETIC, &status));
 
-      if (rprNode)
-      {
+      if (rprNode) {
         if (RPR_ERROR_CHECK(rprNode->SetInput(RPR_MATERIAL_INPUT_OP, GetOp()),
-                            "Failed to set arithmetic node operation"))
-        {
+                            "Failed to set arithmetic node operation")) {
           return m_output;
         }
 
@@ -660,31 +643,27 @@ VtValue RprUsd_RprArithmeticNode::GetOutput()
           RPR_MATERIAL_INPUT_COLOR2,
           RPR_MATERIAL_INPUT_COLOR3,
         };
-        for (int i = 0; i < numArgs; ++i)
-        {
-          if (m_args[i].IsEmpty())
-          {
-            if (RPR_ERROR_CHECK(rprNode->SetInput(s_arithmeticNodeInputs[i], 0.0f, 0.0f, 0.0f, 0.0f),
-                                "Failed to set arithmetic node input"))
-            {
+        for (int i = 0; i < numArgs; ++i) {
+          if (m_args[i].IsEmpty()) {
+            if (RPR_ERROR_CHECK(
+                  rprNode->SetInput(s_arithmeticNodeInputs[i], 0.0f, 0.0f, 0.0f, 0.0f),
+                  "Failed to set arithmetic node input")) {
               return m_output;
             }
-          } else
-          {
-            if (SetRprInput(rprNode.get(), s_arithmeticNodeInputs[i], m_args[i]) != RPR_SUCCESS)
-            {
+          } else {
+            if (SetRprInput(rprNode.get(), s_arithmeticNodeInputs[i], m_args[i]) != RPR_SUCCESS) {
               return m_output;
             }
           }
         }
 
         m_output = VtValue(rprNode);
-      } else
-      {
-        TF_RUNTIME_ERROR(
-          "%s",
-          RPR_GET_ERROR_MESSAGE(status, "Failed to create arithmetic material node", m_ctx->rprContext)
-            .c_str());
+      } else {
+        TF_RUNTIME_ERROR("%s",
+                         RPR_GET_ERROR_MESSAGE(status,
+                                               "Failed to create arithmetic material node",
+                                               m_ctx->rprContext)
+                           .c_str());
       }
     }
   }

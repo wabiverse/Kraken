@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdVolField3DAsset::~UsdVolField3DAsset()
-{}
+UsdVolField3DAsset::~UsdVolField3DAsset() {}
 
 /* static */
 UsdVolField3DAsset UsdVolField3DAsset::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolField3DAsset();
   }
@@ -69,8 +67,7 @@ UsdVolField3DAsset UsdVolField3DAsset::Get(const UsdStagePtr &stage, const SdfPa
 UsdVolField3DAsset UsdVolField3DAsset::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Field3DAsset");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolField3DAsset();
   }
@@ -155,8 +152,9 @@ const TfTokenVector &UsdVolField3DAsset::GetSchemaAttributeNames(bool includeInh
     UsdVolTokens->fieldDataType,
     UsdVolTokens->fieldPurpose,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdVolFieldAsset::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdVolFieldAsset::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

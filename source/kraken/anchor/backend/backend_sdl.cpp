@@ -113,8 +113,7 @@ static void ANCHOR_ImplSDL2_SetClipboardText(void *, const char *text)
 bool AnchorSystemSDL::ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event)
 {
   AnchorIO &io = ANCHOR::GetIO();
-  switch (event->type)
-  {
+  switch (event->type) {
     case SDL_MOUSEWHEEL: {
       if (event->wheel.x > 0)
         io.MouseWheelH += 1;
@@ -164,9 +163,10 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
 
   // Setup backend capabilities flags
   AnchorIO &io = ANCHOR::GetIO();
-  io.BackendFlags |= AnchorBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
-  io.BackendFlags |= AnchorBackendFlags_HasSetMousePos;   // We can honor io.WantSetMousePos
-                                                          // requests (optional, rarely used)
+  io.BackendFlags |=
+    AnchorBackendFlags_HasMouseCursors;  // We can honor GetMouseCursor() values (optional)
+  io.BackendFlags |= AnchorBackendFlags_HasSetMousePos;  // We can honor io.WantSetMousePos
+                                                         // requests (optional, rarely used)
   io.BackendPlatformName = "ANCHOR_BACKEND_sdl";
 
   // Keyboard mapping. ANCHOR will use those indices to peek into the io.KeysDown[] array.
@@ -200,10 +200,12 @@ static bool ANCHOR_ImplSDL2_Init(SDL_Window *window)
   // Load mouse cursors
   g_MouseCursors[ANCHOR_StandardCursorDefault] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
   g_MouseCursors[ANCHOR_StandardCursorText] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-  g_MouseCursors[ANCHOR_StandardCursorNSEWScroll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+  g_MouseCursors[ANCHOR_StandardCursorNSEWScroll] = SDL_CreateSystemCursor(
+    SDL_SYSTEM_CURSOR_SIZEALL);
   g_MouseCursors[ANCHOR_StandardCursorNSScroll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
   g_MouseCursors[ANCHOR_StandardCursorEWScroll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-  g_MouseCursors[ANCHOR_StandardCursorBottomLeftCorner] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+  g_MouseCursors[ANCHOR_StandardCursorBottomLeftCorner] = SDL_CreateSystemCursor(
+    SDL_SYSTEM_CURSOR_SIZENESW);
   g_MouseCursors[ANCHOR_StandardCursorBottomRightCorner] = SDL_CreateSystemCursor(
     SDL_SYSTEM_CURSOR_SIZENWSE);
   g_MouseCursors[ANCHOR_StandardCursorMove] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
@@ -286,7 +288,8 @@ eAnchorStatus AnchorDisplayManagerSDL::getNumDisplays(AnchorU8 &numDisplays) con
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus AnchorDisplayManagerSDL::getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const
+eAnchorStatus AnchorDisplayManagerSDL::getNumDisplaySettings(AnchorU8 display,
+                                                             AnchorS32 &numSettings) const
 {
   ANCHOR_ASSERT(display < 1);
 
@@ -326,8 +329,9 @@ eAnchorStatus AnchorDisplayManagerSDL::getDisplaySetting(AnchorU8 display,
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus AnchorDisplayManagerSDL::getCurrentDisplaySetting(AnchorU8 display,
-                                                                ANCHOR_DisplaySetting &setting) const
+eAnchorStatus AnchorDisplayManagerSDL::getCurrentDisplaySetting(
+  AnchorU8 display,
+  ANCHOR_DisplaySetting &setting) const
 {
   SDL_DisplayMode mode;
   SDL_GetCurrentDisplayMode(display, &mode);
@@ -343,8 +347,9 @@ eAnchorStatus AnchorDisplayManagerSDL::getCurrentDisplayModeSDL(SDL_DisplayMode 
   return ANCHOR_SUCCESS;
 }
 
-eAnchorStatus AnchorDisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display,
-                                                                const ANCHOR_DisplaySetting &setting)
+eAnchorStatus AnchorDisplayManagerSDL::setCurrentDisplaySetting(
+  AnchorU8 display,
+  const ANCHOR_DisplaySetting &setting)
 {
   /*
    * Mode switching code ported from Quake 2 version 3.21 and bzflag version
@@ -360,27 +365,22 @@ eAnchorStatus AnchorDisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display
   best_dist = 9999999;
   best_fit = -1;
 
-  if (num_modes == 0)
-  {
+  if (num_modes == 0) {
     /* Any mode is OK. */
     anchor_mode_to_sdl(setting, &mode);
-  } else
-  {
-    for (int i = 0; i < num_modes; i++)
-    {
+  } else {
+    for (int i = 0; i < num_modes; i++) {
 
       SDL_GetDisplayMode(display, i, &mode);
 
-      if (setting.xPixels > mode.w || setting.yPixels > mode.h)
-      {
+      if (setting.xPixels > mode.w || setting.yPixels > mode.h) {
         continue;
       }
 
       x = setting.xPixels - mode.w;
       y = setting.yPixels - mode.h;
       dist = (x * x) + (y * y);
-      if (dist < best_dist)
-      {
+      if (dist < best_dist) {
         best_dist = dist;
         best_fit = i;
       }
@@ -397,8 +397,7 @@ eAnchorStatus AnchorDisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display
   /* evil, SDL2 needs a window to adjust display modes */
   AnchorWindowSDL *win = (AnchorWindowSDL *)m_system->getWindowManager()->getActiveWindow();
 
-  if (win)
-  {
+  if (win) {
     SDL_Window *sdl_win = win->getSDLWindow();
 
     SDL_SetWindowDisplayMode(sdl_win, &mode);
@@ -406,8 +405,7 @@ eAnchorStatus AnchorDisplayManagerSDL::setCurrentDisplaySetting(AnchorU8 display
     SDL_SetWindowFullscreen(sdl_win, SDL_TRUE);
 
     return ANCHOR_SUCCESS;
-  } else
-  {
+  } else {
     TF_CODING_ERROR("No windows available, can't fullscreen.\n");
 
     /* do not fail, we will try again later when the window is created - wander */
@@ -428,10 +426,11 @@ static void ANCHOR_ImplSDL2_UpdateMousePosAndButtons()
 
   int mx, my;
   Uint32 mouse_buttons = SDL_GetMouseState(&mx, &my);
-  io.MouseDown[0] = g_MousePressed[0] ||
-                    (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) !=
-                      0;  // If a mouse press event came, always pass it as "mouse held this frame", so we
-                          // don't miss click-release events that are shorter than 1 frame.
+  io.MouseDown[0] =
+    g_MousePressed[0] ||
+    (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) !=
+      0;  // If a mouse press event came, always pass it as "mouse held this frame", so we
+          // don't miss click-release events that are shorter than 1 frame.
   io.MouseDown[1] = g_MousePressed[1] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
   io.MouseDown[2] = g_MousePressed[2] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
   g_MousePressed[0] = g_MousePressed[1] = g_MousePressed[2] = false;
@@ -439,10 +438,8 @@ static void ANCHOR_ImplSDL2_UpdateMousePosAndButtons()
 #if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && \
   !(defined(__APPLE__) && TARGET_OS_IOS)
   SDL_Window *focused_window = SDL_GetKeyboardFocus();
-  if (g_Window == focused_window)
-  {
-    if (g_MouseCanUseGlobalState)
-    {
+  if (g_Window == focused_window) {
+    if (g_MouseCanUseGlobalState) {
       // SDL_GetMouseState() gives mouse position seemingly based on the last window
       // entered/focused(?) The creation of a new windows at runtime and SDL_CaptureMouse both
       // seems to severely mess up with that, so we retrieve that position globally. Won't use this
@@ -474,12 +471,10 @@ static void ANCHOR_ImplSDL2_UpdateMouseCursor()
     return;
 
   AnchorMouseCursor anchor_cursor = ANCHOR::GetMouseCursor();
-  if (io.MouseDrawCursor || anchor_cursor == ANCHOR_StandardCursorNone)
-  {
+  if (io.MouseDrawCursor || anchor_cursor == ANCHOR_StandardCursorNone) {
     // Hide OS mouse cursor if anchor is drawing it or if it wants no cursor
     SDL_ShowCursor(SDL_FALSE);
-  } else
-  {
+  } else {
     // Show OS mouse cursor
     SDL_SetCursor(g_MouseCursors[anchor_cursor] ? g_MouseCursors[anchor_cursor] :
                                                   g_MouseCursors[ANCHOR_StandardCursorDefault]);
@@ -496,26 +491,28 @@ static void ANCHOR_ImplSDL2_UpdateGamepads()
 
   // Get gamepad
   SDL_GameController *game_controller = SDL_GameControllerOpen(0);
-  if (!game_controller)
-  {
+  if (!game_controller) {
     io.BackendFlags &= ~AnchorBackendFlags_HasGamepad;
     return;
   }
 
 // Update gamepad inputs
-#define MAP_BUTTON(NAV_NO, BUTTON_NO)                                                                    \
-  {                                                                                                      \
-    io.NavInputs[NAV_NO] = (SDL_GameControllerGetButton(game_controller, BUTTON_NO) != 0) ? 1.0f : 0.0f; \
+#define MAP_BUTTON(NAV_NO, BUTTON_NO)                                                       \
+  {                                                                                         \
+    io.NavInputs[NAV_NO] = (SDL_GameControllerGetButton(game_controller, BUTTON_NO) != 0) ? \
+                             1.0f :                                                         \
+                             0.0f;                                                          \
   }
-#define MAP_ANALOG(NAV_NO, AXIS_NO, V0, V1)                                                          \
-  {                                                                                                  \
-    float vn = (float)(SDL_GameControllerGetAxis(game_controller, AXIS_NO) - V0) / (float)(V1 - V0); \
-    if (vn > 1.0f)                                                                                   \
-      vn = 1.0f;                                                                                     \
-    if (vn > 0.0f && io.NavInputs[NAV_NO] < vn)                                                      \
-      io.NavInputs[NAV_NO] = vn;                                                                     \
+#define MAP_ANALOG(NAV_NO, AXIS_NO, V0, V1)                                        \
+  {                                                                                \
+    float vn = (float)(SDL_GameControllerGetAxis(game_controller, AXIS_NO) - V0) / \
+               (float)(V1 - V0);                                                   \
+    if (vn > 1.0f)                                                                 \
+      vn = 1.0f;                                                                   \
+    if (vn > 0.0f && io.NavInputs[NAV_NO] < vn)                                    \
+      io.NavInputs[NAV_NO] = vn;                                                   \
   }
-  const int thumb_dead_zone = 8000;                                           // SDL_gamecontroller.h suggests using this value.
+  const int thumb_dead_zone = 8000;  // SDL_gamecontroller.h suggests using this value.
   MAP_BUTTON(AnchorNavInput_Activate, SDL_CONTROLLER_BUTTON_A);               // Cross / A
   MAP_BUTTON(AnchorNavInput_Cancel, SDL_CONTROLLER_BUTTON_B);                 // Circle / B
   MAP_BUTTON(AnchorNavInput_Menu, SDL_CONTROLLER_BUTTON_X);                   // Square / X
@@ -559,7 +556,8 @@ void AnchorSystemSDL::ANCHOR_ImplSDL2_NewFrame(SDL_Window *window)
   // Setup time step (we don't use SDL_GetTicks() because it is using millisecond resolution)
   static Uint64 frequency = SDL_GetPerformanceFrequency();
   Uint64 current_time = SDL_GetPerformanceCounter();
-  io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) : (float)(1.0f / 60.0f);
+  io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) :
+                              (float)(1.0f / 60.0f);
   g_Time = current_time;
 
   ANCHOR_ImplSDL2_UpdateMousePosAndButtons();
@@ -595,16 +593,15 @@ AnchorWindowSDL::AnchorWindowSDL(AnchorSystemSDL *system,
                                top,
                                width,
                                height,
-                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN | SDL_WINDOW_ALLOW_HIGHDPI);
+                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN |
+                                 SDL_WINDOW_ALLOW_HIGHDPI);
 
   /* now set up the rendering context. */
-  if (setDrawingContextType(type) == ANCHOR_SUCCESS)
-  {
+  if (setDrawingContextType(type) == ANCHOR_SUCCESS) {
     m_valid_setup = true;
   }
 
-  if (exclusive)
-  {
+  if (exclusive) {
     SDL_RaiseWindow(m_sdl_win);
   }
 
@@ -614,8 +611,7 @@ AnchorWindowSDL::AnchorWindowSDL(AnchorSystemSDL *system,
 
 AnchorWindowSDL::~AnchorWindowSDL()
 {
-  if (m_sdl_custom_cursor)
-  {
+  if (m_sdl_custom_cursor) {
     SDL_FreeCursor(m_sdl_custom_cursor);
   }
 
@@ -661,7 +657,8 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
 
     /**
      * Physical Device Properties 2 */
-    const char **ext_dprops_2 = (const char **)malloc(sizeof(const char *) * (extensions_count + 1));
+    const char **ext_dprops_2 = (const char **)malloc(sizeof(const char *) *
+                                                      (extensions_count + 1));
     memcpy(ext_dprops_2, extensions, extensions_count * sizeof(const char *));
     ext_dprops_2[extensions_count] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
     extensions = ext_dprops_2;
@@ -670,8 +667,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
     create_info.enabledExtensionCount = extensions_count;
     create_info.ppEnabledExtensionNames = extensions;
 
-    if (HgiVulkanIsDebugEnabled())
-    {
+    if (HgiVulkanIsDebugEnabled()) {
       /**
        * Enable validation layers. */
       const char *layers[] = {"VK_LAYER_KHRONOS_validation"};
@@ -681,7 +677,8 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
       /**
        * Enable debug report extension (we need additional storage,
        * so we duplicate the user array to add our new extension to it). */
-      const char **extensions_ext = (const char **)malloc(sizeof(const char *) * (extensions_count + 1));
+      const char **extensions_ext = (const char **)malloc(sizeof(const char *) *
+                                                          (extensions_count + 1));
       memcpy(extensions_ext, extensions, extensions_count * sizeof(const char *));
       extensions_ext[extensions_count] = "VK_EXT_debug_utils";
       create_info.enabledExtensionCount = extensions_count + 1;
@@ -693,8 +690,7 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
       g_PixarHydra = new HgiVulkan(g_PixarVkInstance = new HgiVulkanInstance(g_Instance));
       check_vk_result(err);
       free(extensions_ext);
-    } else
-    {
+    } else {
 
       /**
        * Create Vulkan Instance without any debug features. */
@@ -729,13 +725,11 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
      *
      * TODO: Handle more complicated setups (multiple dedicated GPUs). */
     int use_gpu = 0;
-    for (int i = 0; i < (int)gpu_count; i++)
-    {
+    for (int i = 0; i < (int)gpu_count; i++) {
 
       VkPhysicalDeviceProperties properties;
       vkGetPhysicalDeviceProperties(gpus[i], &properties);
-      if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
-      {
+      if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
         use_gpu = i;
         break;
       }
@@ -750,12 +744,11 @@ static void SetupVulkan(const char **extensions, uint32_t extensions_count)
   {
     uint32_t count;
     vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, NULL);
-    VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(sizeof(VkQueueFamilyProperties) *
-                                                                        count);
+    VkQueueFamilyProperties *queues = (VkQueueFamilyProperties *)malloc(
+      sizeof(VkQueueFamilyProperties) * count);
     vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &count, queues);
     for (uint32_t i = 0; i < count; i++)
-      if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-      {
+      if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
         g_QueueFamily = i;
         break;
       }
@@ -861,7 +854,10 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_report(VkDebugReportFlagsEXT flags,
 
 /**
  * Main Application Window. --------------------------------- */
-static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd, VkSurfaceKHR surface, int width, int height)
+static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd,
+                              VkSurfaceKHR surface,
+                              int width,
+                              int height)
 {
   wd->Surface = surface;
 
@@ -869,8 +865,7 @@ static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd, VkSurfaceKHR surface
    * Check for WSI support. */
   VkBool32 res;
   vkGetPhysicalDeviceSurfaceSupportKHR(g_PhysicalDevice, g_QueueFamily, wd->Surface, &res);
-  if (res != VK_TRUE)
-  {
+  if (res != VK_TRUE) {
     fprintf(stderr, "Error no WSI support on physical device 0\n");
     exit(-1);
   }
@@ -896,8 +891,7 @@ static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd, VkSurfaceKHR surface
 
   /**
    * Render at maximum possible FPS. */
-  if (HgiVulkanIsMaxFPSEnabled())
-  {
+  if (HgiVulkanIsMaxFPSEnabled()) {
 
     TF_DEBUG(ANCHOR_SDL_VULKAN).Msg("[Anchor] Rendering at maximum possible frames per second.\n");
 
@@ -916,8 +910,7 @@ static void SetupVulkanWindow(ANCHOR_VulkanGPU_Surface *wd, VkSurfaceKHR surface
                                                            wd->Surface,
                                                            &present_modes[0],
                                                            ANCHOR_ARRAYSIZE(present_modes));
-  } else
-  { /** Throttled FPS ~75FPS */
+  } else { /** Throttled FPS ~75FPS */
 
     TF_DEBUG(ANCHOR_SDL_VULKAN).Msg("[Anchor] Throttled maximum frames per second.\n");
 
@@ -980,16 +973,17 @@ static void FrameRender(ANCHOR_VulkanGPU_Surface *wd, AnchorDrawData *draw_data)
 {
   VkResult err;
 
-  VkSemaphore image_acquired_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
-  VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+  VkSemaphore image_acquired_semaphore =
+    wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
+  VkSemaphore render_complete_semaphore =
+    wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
   err = vkAcquireNextImageKHR(g_Device,
                               wd->Swapchain,
                               UINT64_MAX,
                               image_acquired_semaphore,
                               VK_NULL_HANDLE,
                               &wd->FrameIndex);
-  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-  {
+  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
     g_SwapChainRebuild = true;
     return;
   }
@@ -1058,7 +1052,8 @@ static void FramePresent(ANCHOR_VulkanGPU_Surface *wd)
 {
   if (g_SwapChainRebuild)
     return;
-  VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
+  VkSemaphore render_complete_semaphore =
+    wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
   VkPresentInfoKHR info = {};
   info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   info.waitSemaphoreCount = 1;
@@ -1067,8 +1062,7 @@ static void FramePresent(ANCHOR_VulkanGPU_Surface *wd)
   info.pSwapchains = &wd->Swapchain;
   info.pImageIndices = &wd->FrameIndex;
   VkResult err = vkQueuePresentKHR(g_Queue, &info);
-  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-  {
+  if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
     g_SwapChainRebuild = true;
     return;
   }
@@ -1080,8 +1074,7 @@ static void FramePresent(ANCHOR_VulkanGPU_Surface *wd)
 
 void AnchorWindowSDL::newDrawingContext(eAnchorDrawingContextType type)
 {
-  if (type == ANCHOR_DrawingContextTypeVulkan)
-  {
+  if (type == ANCHOR_DrawingContextTypeVulkan) {
 
     /**
      * Setup Vulkan. */
@@ -1095,8 +1088,8 @@ void AnchorWindowSDL::newDrawingContext(eAnchorDrawingContextType type)
     /**
      * Create Window Surface. */
     VkSurfaceKHR surface;
-    if (SDL_Vulkan_CreateSurface(m_sdl_win, g_PixarVkInstance->GetVulkanInstance(), &surface) == 0)
-    {
+    if (SDL_Vulkan_CreateSurface(m_sdl_win, g_PixarVkInstance->GetVulkanInstance(), &surface) ==
+        0) {
       TF_CODING_ERROR("Failed to create Vulkan surface.\n");
     }
 
@@ -1162,8 +1155,10 @@ void AnchorWindowSDL::newDrawingContext(eAnchorDrawingContextType type)
     {
       /**
        * Use any command queue. */
-      VkCommandPool command_pool = m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandPool;
-      VkCommandBuffer command_buffer = m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandBuffer;
+      VkCommandPool command_pool =
+        m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandPool;
+      VkCommandBuffer command_buffer =
+        m_vulkan_context->Frames[m_vulkan_context->FrameIndex].CommandBuffer;
 
       VkResult err = vkResetCommandPool(g_Device, command_pool, 0);
       check_vk_result(err);
@@ -1191,7 +1186,10 @@ void AnchorWindowSDL::newDrawingContext(eAnchorDrawingContextType type)
   }
 }
 
-void AnchorWindowSDL::clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
+void AnchorWindowSDL::clientToScreen(AnchorS32 inX,
+                                     AnchorS32 inY,
+                                     AnchorS32 &outX,
+                                     AnchorS32 &outY) const
 {
   /* XXXSDL_WEAK_ABS_COORDS */
   int x_win, y_win;
@@ -1229,14 +1227,11 @@ void AnchorWindowSDL::setIcon(const char *icon)
   SDL_SetWindowIcon(m_sdl_win, IMG_Load(icon));
 }
 
-AnchorSystemSDL::AnchorSystemSDL()
-  : AnchorSystem(),
-    m_sdl_window(nullptr)
+AnchorSystemSDL::AnchorSystemSDL() : AnchorSystem(), m_sdl_window(nullptr)
 {
   /**
    * Setup SDL. */
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
-  {
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
     TF_CODING_ERROR("Error: %s\n", SDL_GetError());
   }
 }
@@ -1288,10 +1283,8 @@ AnchorISystemWindow *AnchorSystemSDL::createWindow(const char *title,
                                      exclusive,
                                      parentWindow);
 
-  if (m_sdl_window)
-  {
-    if (AnchorWindowStateFullScreen == state)
-    {
+  if (m_sdl_window) {
+    if (AnchorWindowStateFullScreen == state) {
       SDL_Window *sdl_win = m_sdl_window->getSDLWindow();
       SDL_DisplayMode mode;
 
@@ -1302,12 +1295,10 @@ AnchorISystemWindow *AnchorSystemSDL::createWindow(const char *title,
       SDL_SetWindowFullscreen(sdl_win, SDL_TRUE);
     }
 
-    if (m_sdl_window->getValid())
-    {
+    if (m_sdl_window->getValid()) {
       m_windowManager->addWindow(m_sdl_window);
       pushEvent(new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowSize, m_sdl_window));
-    } else
-    {
+    } else {
       delete m_sdl_window;
       m_sdl_window = NULL;
     }
@@ -1322,8 +1313,7 @@ bool AnchorWindowSDL::getValid() const
 
 eAnchorStatus AnchorWindowSDL::setState(eAnchorWindowState state)
 {
-  switch (state)
-  {
+  switch (state) {
     case AnchorWindowStateNormal:
       SDL_SetWindowFullscreen(m_sdl_win, SDL_FALSE);
       SDL_RestoreWindow(m_sdl_win);
@@ -1362,12 +1352,10 @@ eAnchorStatus AnchorSystemSDL::init()
 {
   eAnchorStatus success = AnchorSystem::init();
 
-  if (success)
-  {
+  if (success) {
     m_displayManager = new AnchorDisplayManagerSDL(this);
 
-    if (m_displayManager)
-    {
+    if (m_displayManager) {
       return ANCHOR_SUCCESS;
     }
   }
@@ -1383,7 +1371,8 @@ bool AnchorSystemSDL::generateWindowExposeEvents()
   // bool anyProcessed = false;
 
   // for (; w_start != w_end; ++w_start) {
-  //   AnchorEvent *a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventWindowUpdate, *w_start);
+  //   AnchorEvent *a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventWindowUpdate,
+  //   *w_start);
 
   //   (*w_start)->validate();
 
@@ -1413,11 +1402,9 @@ AnchorWindowSDL *AnchorSystemSDL::findAnchorWindow(SDL_Window *sdl_win)
   std::vector<AnchorISystemWindow *>::const_iterator win_it = win_vec.begin();
   std::vector<AnchorISystemWindow *>::const_iterator win_end = win_vec.end();
 
-  for (; win_it != win_end; ++win_it)
-  {
+  for (; win_it != win_end; ++win_it) {
     AnchorWindowSDL *window = static_cast<AnchorWindowSDL *>(*win_it);
-    if (window->getSDLWindow() == sdl_win)
-    {
+    if (window->getSDLWindow() == sdl_win) {
       return window;
     }
   }
@@ -1458,22 +1445,17 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
 {
   eAnchorKey type;
 
-  if ((key >= SDL_SCANCODE_A) && (key <= SDL_SCANCODE_Z))
-  {
+  if ((key >= SDL_SCANCODE_A) && (key <= SDL_SCANCODE_Z)) {
     type = eAnchorKey(key - SDL_SCANCODE_A + int(AnchorKeyA));
-  } else if ((key >= SDL_SCANCODE_1) && (key <= SDL_SCANCODE_0))
-  {
-    type = (key == SDL_SCANCODE_0) ? AnchorKey0 : eAnchorKey(key - SDL_SCANCODE_1 + int(AnchorKey1));
-  } else if ((key >= SDL_SCANCODE_F1) && (key <= SDL_SCANCODE_F12))
-  {
+  } else if ((key >= SDL_SCANCODE_1) && (key <= SDL_SCANCODE_0)) {
+    type = (key == SDL_SCANCODE_0) ? AnchorKey0 :
+                                     eAnchorKey(key - SDL_SCANCODE_1 + int(AnchorKey1));
+  } else if ((key >= SDL_SCANCODE_F1) && (key <= SDL_SCANCODE_F12)) {
     type = eAnchorKey(key - SDL_SCANCODE_F1 + int(AnchorKeyF1));
-  } else if ((key >= SDL_SCANCODE_F13) && (key <= SDL_SCANCODE_F24))
-  {
+  } else if ((key >= SDL_SCANCODE_F13) && (key <= SDL_SCANCODE_F24)) {
     type = eAnchorKey(key - SDL_SCANCODE_F13 + int(AnchorKeyF13));
-  } else
-  {
-    switch (key)
-    {
+  } else {
+    switch (key) {
       /* TODO SDL_SCANCODE_NONUSBACKSLASH */
 
       AXMAP(type, SDL_SCANCODE_BACKSPACE, AnchorKeyBackSpace);
@@ -1573,8 +1555,7 @@ static eAnchorKey convertSDLKey(SDL_Scancode key)
 static SDL_Window *SDL_GetWindowFromID_fallback(Uint32 id)
 {
   SDL_Window *sdl_win = SDL_GetWindowFromID(id);
-  if (sdl_win == NULL)
-  {
+  if (sdl_win == NULL) {
     TF_CODING_ERROR("WINDOW IS NULL THIS SHOULD NOT HAPPEN!\n");
   }
   return sdl_win;
@@ -1585,14 +1566,13 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
 {
   AnchorEvent *a_event = NULL;
 
-  switch (sdl_event->type)
-  {
+  switch (sdl_event->type) {
     case SDL_WINDOWEVENT: {
       SDL_WindowEvent &sdl_sub_evt = sdl_event->window;
-      AnchorWindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      AnchorWindowSDL *window = findAnchorWindow(
+        SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
 
-      switch (sdl_sub_evt.event)
-      {
+      switch (sdl_sub_evt.event) {
         case SDL_WINDOWEVENT_EXPOSED:
           a_event = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowUpdate, window);
           break;
@@ -1650,7 +1630,8 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
       eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? AnchorEventTypeButtonDown :
                                                                    AnchorEventTypeButtonUp;
 
-      AnchorWindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      AnchorWindowSDL *window = findAnchorWindow(
+        SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
       assert(window != NULL);
 
       /* process rest of normal mouse buttons */
@@ -1668,12 +1649,14 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
       else
         break;
 
-      a_event = new AnchorEventButton(ANCHOR::GetTime(), type, window, abmask, ANCHOR_TABLET_DATA_NONE);
+      a_event =
+        new AnchorEventButton(ANCHOR::GetTime(), type, window, abmask, ANCHOR_TABLET_DATA_NONE);
       break;
     }
     case SDL_MOUSEWHEEL: {
       SDL_MouseWheelEvent &sdl_sub_evt = sdl_event->wheel;
-      AnchorWindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      AnchorWindowSDL *window = findAnchorWindow(
+        SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
       assert(window != NULL);
       a_event = new AnchorEventWheel(ANCHOR::GetTime(), window, sdl_sub_evt.y);
       break;
@@ -1685,17 +1668,16 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
       eAnchorEventType type = (sdl_sub_evt.state == SDL_PRESSED) ? AnchorEventTypeKeyDown :
                                                                    AnchorEventTypeKeyUp;
 
-      AnchorWindowSDL *window = findAnchorWindow(SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
+      AnchorWindowSDL *window = findAnchorWindow(
+        SDL_GetWindowFromID_fallback(sdl_sub_evt.windowID));
       assert(window != NULL);
 
       eAnchorKey akey = convertSDLKey(sdl_sub_evt.keysym.scancode);
       /**
        * note, the sdl_sub_evt.keysym.sym is truncated,
        * for unicode support anchor has to be modified */
-      if (sym > 127)
-      {
-        switch (sym)
-        {
+      if (sym > 127) {
+        switch (sym) {
           case SDLK_KP_DIVIDE:
             sym = '/';
             break;
@@ -1745,18 +1727,13 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
             sym = 0;
             break;
         }
-      } else
-      {
-        if (sdl_sub_evt.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT))
-        {
+      } else {
+        if (sdl_sub_evt.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT)) {
           /* lame US keyboard assumptions */
-          if (sym >= 'a' && sym <= ('a' + 32))
-          {
+          if (sym >= 'a' && sym <= ('a' + 32)) {
             sym -= 32;
-          } else
-          {
-            switch (sym)
-            {
+          } else {
+            switch (sym) {
               case '`':
                 sym = '~';
                 break;
@@ -1832,8 +1809,7 @@ void AnchorSystemSDL::processEvent(SDL_Event *sdl_event)
     }
   }
 
-  if (a_event)
-  {
+  if (a_event) {
     pushEvent(a_event);
   }
 }
@@ -1842,11 +1818,9 @@ bool AnchorSystemSDL::processEvents(bool waitForEvent)
 {
   bool anyProcessed = false;
 
-  do
-  {
+  do {
     SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
+    while (SDL_PollEvent(&event)) {
       processEvent(&event);
       anyProcessed = true;
     }
@@ -1903,7 +1877,10 @@ std::string AnchorWindowSDL::getTitle() const
 }
 
 
-void AnchorWindowSDL::screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
+void AnchorWindowSDL::screenToClient(AnchorS32 inX,
+                                     AnchorS32 inY,
+                                     AnchorS32 &outX,
+                                     AnchorS32 &outY) const
 {
   int x_win, y_win;
   SDL_GetWindowPosition(m_sdl_win, &x_win, &y_win);
@@ -1925,9 +1902,9 @@ eAnchorStatus AnchorWindowSDL::swapBuffers()
 {
   ANCHOR::Render();
   AnchorDrawData *draw_data = ANCHOR::GetDrawData();
-  const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
-  if (!is_minimized)
-  {
+  const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f ||
+                             draw_data->DisplaySize[1] <= 0.0f);
+  if (!is_minimized) {
     m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
     m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
     m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
@@ -1941,14 +1918,12 @@ eAnchorStatus AnchorWindowSDL::swapBuffers()
 AnchorU16 AnchorWindowSDL::getDPIHint()
 {
   int displayIndex = SDL_GetWindowDisplayIndex(m_sdl_win);
-  if (displayIndex < 0)
-  {
+  if (displayIndex < 0) {
     return 96;
   }
 
   float ddpi;
-  if (SDL_GetDisplayDPI(displayIndex, &ddpi, NULL, NULL) != 0)
-  {
+  if (SDL_GetDisplayDPI(displayIndex, &ddpi, NULL, NULL) != 0) {
     return 96;
   }
 

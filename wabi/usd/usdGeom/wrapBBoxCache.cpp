@@ -40,8 +40,7 @@ static object _ComputePointInstanceWorldBounds(UsdGeomBBoxCache &self,
   boost::python::stl_input_iterator<int64_t> begin(instanceIds), end;
   std::vector<int64_t> ids(begin, end);
   std::vector<GfBBox3d> boxes(ids.size());
-  if (!self.ComputePointInstanceWorldBounds(instancer, ids.data(), ids.size(), boxes.data()))
-  {
+  if (!self.ComputePointInstanceWorldBounds(instancer, ids.data(), ids.size(), boxes.data())) {
     return object();
   }
   boost::python::list ret;
@@ -62,8 +61,7 @@ static object _ComputePointInstanceRelativeBounds(UsdGeomBBoxCache &self,
                                                ids.data(),
                                                ids.size(),
                                                relativeToAncestorPrim,
-                                               boxes.data()))
-  {
+                                               boxes.data())) {
     return object();
   }
   boost::python::list ret;
@@ -79,8 +77,7 @@ static object _ComputePointInstanceLocalBounds(UsdGeomBBoxCache &self,
   boost::python::stl_input_iterator<int64_t> begin(instanceIds), end;
   std::vector<int64_t> ids(begin, end);
   std::vector<GfBBox3d> boxes(ids.size());
-  if (!self.ComputePointInstanceLocalBounds(instancer, ids.data(), ids.size(), boxes.data()))
-  {
+  if (!self.ComputePointInstanceLocalBounds(instancer, ids.data(), ids.size(), boxes.data())) {
     return object();
   }
   boost::python::list ret;
@@ -96,8 +93,10 @@ static object _ComputePointInstanceUntransformedBounds(UsdGeomBBoxCache &self,
   boost::python::stl_input_iterator<int64_t> begin(instanceIds), end;
   std::vector<int64_t> ids(begin, end);
   std::vector<GfBBox3d> boxes(ids.size());
-  if (!self.ComputePointInstanceUntransformedBounds(instancer, ids.data(), ids.size(), boxes.data()))
-  {
+  if (!self.ComputePointInstanceUntransformedBounds(instancer,
+                                                    ids.data(),
+                                                    ids.size(),
+                                                    boxes.data())) {
     return object();
   }
   boost::python::list ret;
@@ -123,7 +122,9 @@ void wrapUsdGeomBBoxCache()
       (arg("time"), arg("includedPurposes"), arg("useExtentsHint"), arg("ignoreVisibility"))))
     .def("ComputeWorldBound", &BBoxCache::ComputeWorldBound, arg("prim"))
     .def("ComputeLocalBound", &BBoxCache::ComputeLocalBound, arg("prim"))
-    .def("ComputeRelativeBound", &BBoxCache::ComputeRelativeBound, (arg("prim"), arg("relativeRootPrim")))
+    .def("ComputeRelativeBound",
+         &BBoxCache::ComputeRelativeBound,
+         (arg("prim"), arg("relativeRootPrim")))
     .def("ComputeUntransformedBound", ComputeUntransformedBound_1, arg("prim"))
     .def("ComputeUntransformedBound",
          ComputeUntransformedBound_2,
@@ -155,7 +156,9 @@ void wrapUsdGeomBBoxCache()
 
     .def("Clear", &BBoxCache::Clear)
     .def("SetIncludedPurposes", &BBoxCache::SetIncludedPurposes, arg("includedPurposes"))
-    .def("GetIncludedPurposes", &BBoxCache::GetIncludedPurposes, return_value_policy<TfPySequenceToList>())
+    .def("GetIncludedPurposes",
+         &BBoxCache::GetIncludedPurposes,
+         return_value_policy<TfPySequenceToList>())
     .def("SetTime", &BBoxCache::SetTime, arg("time"))
     .def("GetTime", &BBoxCache::GetTime)
     .def("SetBaseTime", &BBoxCache::SetBaseTime, arg("time"))

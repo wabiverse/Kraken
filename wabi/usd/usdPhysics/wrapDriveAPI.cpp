@@ -44,22 +44,26 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
 
-  static UsdAttribute _CreateTypeAttr(UsdPhysicsDriveAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateTypeAttr(UsdPhysicsDriveAPI &self,
+                                      object defaultVal,
+                                      bool writeSparsely)
   {
-    return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                               writeSparsely);
   }
 
-  static UsdAttribute _CreateMaxForceAttr(UsdPhysicsDriveAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateMaxForceAttr(UsdPhysicsDriveAPI &self,
+                                          object defaultVal,
+                                          bool writeSparsely)
   {
-    return self.CreateMaxForceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateMaxForceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                   writeSparsely);
   }
 
   static UsdAttribute _CreateTargetPositionAttr(UsdPhysicsDriveAPI &self,
@@ -78,14 +82,20 @@ namespace
                                          writeSparsely);
   }
 
-  static UsdAttribute _CreateDampingAttr(UsdPhysicsDriveAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateDampingAttr(UsdPhysicsDriveAPI &self,
+                                         object defaultVal,
+                                         bool writeSparsely)
   {
-    return self.CreateDampingAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateDampingAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                  writeSparsely);
   }
 
-  static UsdAttribute _CreateStiffnessAttr(UsdPhysicsDriveAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateStiffnessAttr(UsdPhysicsDriveAPI &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
-    return self.CreateStiffnessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateStiffnessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                    writeSparsely);
   }
 
   static bool _WrapIsPhysicsDriveAPIPath(const SdfPath &path)
@@ -121,7 +131,8 @@ void wrapUsdPhysicsDriveAPI()
 {
   typedef UsdPhysicsDriveAPI This;
 
-  UsdPhysicsDriveAPI_CanApplyResult::Wrap<UsdPhysicsDriveAPI_CanApplyResult>("_CanApplyResult", "whyNot");
+  UsdPhysicsDriveAPI_CanApplyResult::Wrap<UsdPhysicsDriveAPI_CanApplyResult>("_CanApplyResult",
+                                                                             "whyNot");
 
   class_<This, bases<UsdAPISchemaBase>> cls("DriveAPI");
 
@@ -150,14 +161,18 @@ void wrapUsdPhysicsDriveAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
 
 
     .def("GetTypeAttr", &This::GetTypeAttr)
-    .def("CreateTypeAttr", &_CreateTypeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateTypeAttr",
+         &_CreateTypeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetMaxForceAttr", &This::GetMaxForceAttr)
     .def("CreateMaxForceAttr",
@@ -213,7 +228,6 @@ void wrapUsdPhysicsDriveAPI()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

@@ -82,7 +82,8 @@ namespace
 
   SdfPath const &_GetUsdImagingDelegateId()
   {
-    static SdfPath const delegateId = SdfPath(TfGetEnvSetting(USDIMAGINGGL_ENGINE_DEBUG_SCENE_DELEGATE_ID));
+    static SdfPath const delegateId = SdfPath(
+      TfGetEnvSetting(USDIMAGINGGL_ENGINE_DEBUG_SCENE_DELEGATE_ID));
 
     return delegateId;
   }
@@ -108,14 +109,12 @@ namespace
     // Make sure there is an OpenGL context when
     // trying to initialize Hydra/Reference
     GlfGLContextSharedPtr context = GlfGLContext::GetCurrentGLContext();
-    if (!context || !context->IsValid())
-    {
+    if (!context || !context->IsValid()) {
       TF_CODING_ERROR("OpenGL context required, using reference renderer");
       return false;
     }
 
-    if (!_GetHydraEnabledEnvVar())
-    {
+    if (!_GetHydraEnabledEnvVar()) {
       return false;
     }
 
@@ -163,19 +162,16 @@ UsdImagingGLEngine::UsdImagingGLEngine(const SdfPath &rootPath,
 {
   _InitGL();
 
-  if (IsHydraEnabled())
-  {
+  if (IsHydraEnabled()) {
 
     // _renderIndex, _taskController, and _sceneDelegate are initialized
     // by the plugin system.
-    if (!SetRendererPlugin(_GetDefaultRendererPluginId()))
-    {
+    if (!SetRendererPlugin(_GetDefaultRendererPluginId())) {
       TF_CODING_ERROR(
         "No renderer plugins found! "
         "Check before creation.");
     }
-  } else
-  {
+  } else {
 
     // In the legacy implementation, both excluded paths and invised paths
     // are treated the same way.
@@ -208,8 +204,7 @@ UsdImagingGLEngine::~UsdImagingGLEngine()
 
 void UsdImagingGLEngine::PrepareBatch(const UsdPrim &root, const UsdImagingGLRenderParams &params)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -217,10 +212,8 @@ void UsdImagingGLEngine::PrepareBatch(const UsdPrim &root, const UsdImagingGLRen
 
   TF_VERIFY(_sceneDelegate);
 
-  if (_CanPrepare(root))
-  {
-    if (!_isPopulated)
-    {
+  if (_CanPrepare(root)) {
+    if (!_isPopulated) {
       _sceneDelegate->SetUsdDrawModesEnabled(params.enableUsdDrawModes);
       _sceneDelegate->Populate(root.GetStage()->GetPrimAtPath(_rootPath), _excludedPrimPaths);
       _sceneDelegate->SetInvisedPrimPaths(_invisedPrimPaths);
@@ -251,10 +244,10 @@ void UsdImagingGLEngine::_PrepareRender(const UsdImagingGLRenderParams &params)
   _sceneDelegate->SetSceneLightsEnabled(params.enableSceneLights);
 }
 
-void UsdImagingGLEngine::RenderBatch(const SdfPathVector &paths, const UsdImagingGLRenderParams &params)
+void UsdImagingGLEngine::RenderBatch(const SdfPathVector &paths,
+                                     const UsdImagingGLRenderParams &params)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -271,8 +264,7 @@ void UsdImagingGLEngine::RenderBatch(const SdfPathVector &paths, const UsdImagin
   // that has clearColor in their descriptor. So for now we must pass this
   // clear color to the color AOV.
   HdAovDescriptor colorAovDesc = _taskController->GetRenderOutputSettings(HdAovTokens->color);
-  if (colorAovDesc.format != HdFormatInvalid)
-  {
+  if (colorAovDesc.format != HdFormatInvalid) {
     colorAovDesc.clearValue = VtValue(params.clearColor);
     _taskController->SetRenderOutputSettings(HdAovTokens->color, colorAovDesc);
   }
@@ -285,8 +277,7 @@ void UsdImagingGLEngine::RenderBatch(const SdfPathVector &paths, const UsdImagin
 
 void UsdImagingGLEngine::Render(const UsdPrim &root, const UsdImagingGLRenderParams &params)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return _legacyImpl->Render(root, params);
   }
 
@@ -304,8 +295,7 @@ void UsdImagingGLEngine::Render(const UsdPrim &root, const UsdImagingGLRenderPar
 
 bool UsdImagingGLEngine::IsConverged() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return true;
   }
 
@@ -319,8 +309,7 @@ bool UsdImagingGLEngine::IsConverged() const
 
 void UsdImagingGLEngine::SetRootTransform(GfMatrix4d const &xf)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -330,8 +319,7 @@ void UsdImagingGLEngine::SetRootTransform(GfMatrix4d const &xf)
 
 void UsdImagingGLEngine::SetRootVisibility(bool isVisible)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -345,8 +333,7 @@ void UsdImagingGLEngine::SetRootVisibility(bool isVisible)
 
 void UsdImagingGLEngine::SetRenderViewport(GfVec4d const &viewport)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     _legacyImpl->SetRenderViewport(viewport);
     return;
   }
@@ -357,14 +344,12 @@ void UsdImagingGLEngine::SetRenderViewport(GfVec4d const &viewport)
 
 void UsdImagingGLEngine::SetFraming(CameraUtilFraming const &framing)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     // legacy implementation does not support camera framing.
     return;
   }
 
-  if (TF_VERIFY(_taskController))
-  {
+  if (TF_VERIFY(_taskController)) {
     _taskController->SetFraming(framing);
   }
 }
@@ -372,36 +357,31 @@ void UsdImagingGLEngine::SetFraming(CameraUtilFraming const &framing)
 void UsdImagingGLEngine::SetOverrideWindowPolicy(
   const std::pair<bool, CameraUtilConformWindowPolicy> &policy)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     // legacy implementation does not support camera framing.
     return;
   }
 
-  if (TF_VERIFY(_taskController))
-  {
+  if (TF_VERIFY(_taskController)) {
     _taskController->SetOverrideWindowPolicy(policy);
   }
 }
 
 void UsdImagingGLEngine::SetRenderBufferSize(GfVec2i const &size)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     // legacy implementation does not support camera framing.
     return;
   }
 
-  if (TF_VERIFY(_taskController))
-  {
+  if (TF_VERIFY(_taskController)) {
     _taskController->SetRenderBufferSize(size);
   }
 }
 
 void UsdImagingGLEngine::SetWindowPolicy(CameraUtilConformWindowPolicy policy)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     _legacyImpl->SetWindowPolicy(policy);
     return;
   }
@@ -416,8 +396,7 @@ void UsdImagingGLEngine::SetWindowPolicy(CameraUtilConformWindowPolicy policy)
 
 void UsdImagingGLEngine::SetCameraPath(SdfPath const &id)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     _legacyImpl->SetCameraPath(id);
     return;
   }
@@ -430,10 +409,10 @@ void UsdImagingGLEngine::SetCameraPath(SdfPath const &id)
   _sceneDelegate->SetCameraForSampling(id);
 }
 
-void UsdImagingGLEngine::SetCameraState(const GfMatrix4d &viewMatrix, const GfMatrix4d &projectionMatrix)
+void UsdImagingGLEngine::SetCameraState(const GfMatrix4d &viewMatrix,
+                                        const GfMatrix4d &projectionMatrix)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     _legacyImpl->SetFreeCameraMatrices(viewMatrix, projectionMatrix);
     return;
   }
@@ -456,15 +435,13 @@ void UsdImagingGLEngine::SetCameraStateFromOpenGL()
 
 void UsdImagingGLEngine::SetLightingStateFromOpenGL()
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
   TF_VERIFY(_taskController);
 
-  if (!_lightingContextForOpenGLState)
-  {
+  if (!_lightingContextForOpenGLState) {
     _lightingContextForOpenGLState = GlfSimpleLightingContext::New();
   }
   _lightingContextForOpenGLState->SetStateFromOpenGL();
@@ -474,8 +451,7 @@ void UsdImagingGLEngine::SetLightingStateFromOpenGL()
 
 void UsdImagingGLEngine::SetLightingState(GlfSimpleLightingContextPtr const &src)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -487,8 +463,7 @@ void UsdImagingGLEngine::SetLightingState(GlfSimpleLightVector const &lights,
                                           GlfSimpleMaterial const &material,
                                           GfVec4f const &sceneAmbient)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     _legacyImpl->SetLightingState(lights, material, sceneAmbient);
     return;
   }
@@ -497,8 +472,7 @@ void UsdImagingGLEngine::SetLightingState(GlfSimpleLightVector const &lights,
 
   // we still use _lightingContextForOpenGLState for convenience, but
   // set the values directly.
-  if (!_lightingContextForOpenGLState)
-  {
+  if (!_lightingContextForOpenGLState) {
     _lightingContextForOpenGLState = GlfSimpleLightingContext::New();
   }
   _lightingContextForOpenGLState->SetLights(lights);
@@ -515,8 +489,7 @@ void UsdImagingGLEngine::SetLightingState(GlfSimpleLightVector const &lights,
 
 void UsdImagingGLEngine::SetSelected(SdfPathVector const &paths)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -527,8 +500,7 @@ void UsdImagingGLEngine::SetSelected(SdfPathVector const &paths)
   // XXX: Usdview currently supports selection on click. If we extend to
   // rollover (locate) selection, we need to pass that mode here.
   static const HdSelection::HighlightMode mode = HdSelection::HighlightModeSelect;
-  for (SdfPath const &path : paths)
-  {
+  for (SdfPath const &path : paths) {
     _sceneDelegate->PopulateSelection(mode, path, UsdImagingDelegate::ALL_INSTANCES, selection);
   }
 
@@ -538,8 +510,7 @@ void UsdImagingGLEngine::SetSelected(SdfPathVector const &paths)
 
 void UsdImagingGLEngine::ClearSelected()
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -550,8 +521,7 @@ void UsdImagingGLEngine::ClearSelected()
 
 HdSelectionSharedPtr UsdImagingGLEngine::_GetSelection() const
 {
-  if (HdSelectionSharedPtr const selection = _selTracker->GetSelectionMap())
-  {
+  if (HdSelectionSharedPtr const selection = _selTracker->GetSelectionMap()) {
     return selection;
   }
 
@@ -560,8 +530,7 @@ HdSelectionSharedPtr UsdImagingGLEngine::_GetSelection() const
 
 void UsdImagingGLEngine::AddSelected(SdfPath const &path, int instanceIndex)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -580,8 +549,7 @@ void UsdImagingGLEngine::AddSelected(SdfPath const &path, int instanceIndex)
 
 void UsdImagingGLEngine::SetSelectionColor(GfVec4f const &color)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -606,8 +574,7 @@ bool UsdImagingGLEngine::TestIntersection(const GfMatrix4d &viewMatrix,
                                           int *outHitInstanceIndex,
                                           HdInstancerContext *outInstancerContext)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return _legacyImpl->TestIntersection(viewMatrix,
                                          projectionMatrix,
                                          root,
@@ -647,36 +614,33 @@ bool UsdImagingGLEngine::TestIntersection(const GfMatrix4d &viewMatrix,
 
   // Since we are in nearest-hit mode, we expect allHits to have
   // a single point in it.
-  if (allHits.size() != 1)
-  {
+  if (allHits.size() != 1) {
     return false;
   }
 
   HdxPickHit &hit = allHits[0];
 
-  if (outHitPoint)
-  {
+  if (outHitPoint) {
     *outHitPoint = hit.worldSpaceHitPoint;
   }
 
-  if (outHitNormal)
-  {
+  if (outHitNormal) {
     *outHitNormal = hit.worldSpaceHitNormal;
   }
 
-  hit.objectId = _sceneDelegate->GetScenePrimPath(hit.objectId, hit.instanceIndex, outInstancerContext);
-  hit.instancerId = _sceneDelegate->ConvertIndexPathToCachePath(hit.instancerId).GetAbsoluteRootOrPrimPath();
+  hit.objectId = _sceneDelegate->GetScenePrimPath(hit.objectId,
+                                                  hit.instanceIndex,
+                                                  outInstancerContext);
+  hit.instancerId =
+    _sceneDelegate->ConvertIndexPathToCachePath(hit.instancerId).GetAbsoluteRootOrPrimPath();
 
-  if (outHitPrimPath)
-  {
+  if (outHitPrimPath) {
     *outHitPrimPath = hit.objectId;
   }
-  if (outHitInstancerPath)
-  {
+  if (outHitInstancerPath) {
     *outHitInstancerPath = hit.instancerId;
   }
-  if (outHitInstanceIndex)
-  {
+  if (outHitInstanceIndex) {
     *outHitInstanceIndex = hit.instanceIndex;
   }
 
@@ -690,8 +654,7 @@ bool UsdImagingGLEngine::DecodeIntersection(unsigned char const primIdColor[4],
                                             int *outHitInstanceIndex,
                                             HdInstancerContext *outInstancerContext)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
@@ -701,27 +664,26 @@ bool UsdImagingGLEngine::DecodeIntersection(unsigned char const primIdColor[4],
   const int instanceIdx = HdxPickTask::DecodeIDRenderColor(instanceIdColor);
   SdfPath primPath = _sceneDelegate->GetRenderIndex().GetRprimPathFromPrimId(primId);
 
-  if (primPath.IsEmpty())
-  {
+  if (primPath.IsEmpty()) {
     return false;
   }
 
   SdfPath delegateId, instancerId;
-  _sceneDelegate->GetRenderIndex().GetSceneDelegateAndInstancerIds(primPath, &delegateId, &instancerId);
+  _sceneDelegate->GetRenderIndex().GetSceneDelegateAndInstancerIds(primPath,
+                                                                   &delegateId,
+                                                                   &instancerId);
 
   primPath = _sceneDelegate->GetScenePrimPath(primPath, instanceIdx, outInstancerContext);
-  instancerId = _sceneDelegate->ConvertIndexPathToCachePath(instancerId).GetAbsoluteRootOrPrimPath();
+  instancerId =
+    _sceneDelegate->ConvertIndexPathToCachePath(instancerId).GetAbsoluteRootOrPrimPath();
 
-  if (outHitPrimPath)
-  {
+  if (outHitPrimPath) {
     *outHitPrimPath = primPath;
   }
-  if (outHitInstancerPath)
-  {
+  if (outHitInstancerPath) {
     *outHitInstancerPath = instancerId;
   }
-  if (outHitInstanceIndex)
-  {
+  if (outHitInstanceIndex) {
     *outHitInstanceIndex = instanceIdx;
   }
 
@@ -735,8 +697,7 @@ bool UsdImagingGLEngine::DecodeIntersection(unsigned char const primIdColor[4],
 /* static */
 TfTokenVector UsdImagingGLEngine::GetRendererPlugins()
 {
-  if (ARCH_UNLIKELY(!_GetHydraEnabledEnvVar()))
-  {
+  if (ARCH_UNLIKELY(!_GetHydraEnabledEnvVar())) {
     // No plugins if the legacy implementation is active.
     return std::vector<TfToken>();
   }
@@ -745,8 +706,7 @@ TfTokenVector UsdImagingGLEngine::GetRendererPlugins()
   HdRendererPluginRegistry::GetInstance().GetPluginDescs(&pluginDescriptors);
 
   TfTokenVector plugins;
-  for (size_t i = 0; i < pluginDescriptors.size(); ++i)
-  {
+  for (size_t i = 0; i < pluginDescriptors.size(); ++i) {
     plugins.push_back(pluginDescriptors[i].id);
   }
   return plugins;
@@ -755,8 +715,7 @@ TfTokenVector UsdImagingGLEngine::GetRendererPlugins()
 /* static */
 std::string UsdImagingGLEngine::GetRendererDisplayName(TfToken const &id)
 {
-  if (ARCH_UNLIKELY(!_GetHydraEnabledEnvVar() || id.IsEmpty()))
-  {
+  if (ARCH_UNLIKELY(!_GetHydraEnabledEnvVar() || id.IsEmpty())) {
     // No renderer name is returned if the user requested to disable Hydra,
     // or if the machine does not support any of the available renderers
     // and it automatically switches to our legacy engine.
@@ -764,8 +723,7 @@ std::string UsdImagingGLEngine::GetRendererDisplayName(TfToken const &id)
   }
 
   HfPluginDesc pluginDescriptor;
-  if (!TF_VERIFY(HdRendererPluginRegistry::GetInstance().GetPluginDesc(id, &pluginDescriptor)))
-  {
+  if (!TF_VERIFY(HdRendererPluginRegistry::GetInstance().GetPluginDesc(id, &pluginDescriptor))) {
     return std::string();
   }
 
@@ -774,8 +732,7 @@ std::string UsdImagingGLEngine::GetRendererDisplayName(TfToken const &id)
 
 TfToken UsdImagingGLEngine::GetCurrentRendererId() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     // No renderer support if the legacy implementation is active.
     return TfToken();
   }
@@ -790,8 +747,7 @@ void UsdImagingGLEngine::_InitializeHgiIfNecessary()
   // The cleanest pattern is for the client app to provide this since you
   // may have multiple UsdImagingGLEngines in one app that ideally all use
   // the same HdDriver and Hgi to share GPU resources.
-  if (_hgiDriver.driver.IsEmpty())
-  {
+  if (_hgiDriver.driver.IsEmpty()) {
     _hgi = Hgi::CreatePlatformDefaultHgi();
     _hgiDriver.name = HgiTokens->renderDriver;
     _hgiDriver.driver = VtValue(_hgi.get());
@@ -800,8 +756,7 @@ void UsdImagingGLEngine::_InitializeHgiIfNecessary()
 
 bool UsdImagingGLEngine::SetRendererPlugin(TfToken const &id)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
@@ -812,16 +767,14 @@ bool UsdImagingGLEngine::SetRendererPlugin(TfToken const &id)
   // Special case: id = TfToken() selects the first plugin in the list.
   const TfToken resolvedId = id.IsEmpty() ? registry.GetDefaultPluginId() : id;
 
-  if (_renderDelegate && _renderDelegate.GetPluginId() == resolvedId)
-  {
+  if (_renderDelegate && _renderDelegate.GetPluginId() == resolvedId) {
     return true;
   }
 
   TF_PY_ALLOW_THREADS_IN_SCOPE();
 
   HdPluginRenderDelegateUniqueHandle renderDelegate = registry.CreateRenderDelegate(resolvedId);
-  if (!renderDelegate)
-  {
+  if (!renderDelegate) {
     return false;
   }
 
@@ -835,7 +788,8 @@ void UsdImagingGLEngine::_SetRenderDelegateAndRestoreState(
 {
   // Pull old delegate/task controller state.
 
-  const GfMatrix4d rootTransform = _sceneDelegate ? _sceneDelegate->GetRootTransform() : GfMatrix4d(1.0);
+  const GfMatrix4d rootTransform = _sceneDelegate ? _sceneDelegate->GetRootTransform() :
+                                                    GfMatrix4d(1.0);
   const bool isVisible = _sceneDelegate ? _sceneDelegate->GetRootVisibility() : true;
   HdSelectionSharedPtr const selection = _GetSelection();
 
@@ -848,7 +802,8 @@ void UsdImagingGLEngine::_SetRenderDelegateAndRestoreState(
   _taskController->SetSelectionColor(_selectionColor);
 }
 
-SdfPath UsdImagingGLEngine::_ComputeControllerPath(const HdPluginRenderDelegateUniqueHandle &renderDelegate)
+SdfPath UsdImagingGLEngine::_ComputeControllerPath(
+  const HdPluginRenderDelegateUniqueHandle &renderDelegate)
 {
   const std::string pluginId = TfMakeValidIdentifier(renderDelegate.GetPluginId().GetText());
   const TfToken rendererName(TfStringPrintf("_UsdImaging_%s_%p", pluginId.c_str(), this));
@@ -892,15 +847,13 @@ void UsdImagingGLEngine::_SetRenderDelegate(HdPluginRenderDelegateUniqueHandle &
 
 TfTokenVector UsdImagingGLEngine::GetRendererAovs() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return std::vector<TfToken>();
   }
 
   TF_VERIFY(_renderIndex);
 
-  if (_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer))
-  {
+  if (_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer)) {
 
     static const TfToken candidates[] = {HdAovTokens->primId,
                                          HdAovTokens->depth,
@@ -908,10 +861,8 @@ TfTokenVector UsdImagingGLEngine::GetRendererAovs() const
                                          HdAovTokensMakePrimvar(TfToken("st"))};
 
     TfTokenVector aovs = {HdAovTokens->color};
-    for (auto const &aov : candidates)
-    {
-      if (_renderDelegate->GetDefaultAovDescriptor(aov).format != HdFormatInvalid)
-      {
+    for (auto const &aov : candidates) {
+      if (_renderDelegate->GetDefaultAovDescriptor(aov).format != HdFormatInvalid) {
         aovs.push_back(aov);
       }
     }
@@ -922,14 +873,12 @@ TfTokenVector UsdImagingGLEngine::GetRendererAovs() const
 
 bool UsdImagingGLEngine::SetRendererAov(TfToken const &id)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
   TF_VERIFY(_renderIndex);
-  if (_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer))
-  {
+  if (_renderIndex->IsBprimTypeSupported(HdPrimTypeTokens->renderBuffer)) {
     _taskController->SetRenderOutputs({id});
     return true;
   }
@@ -941,10 +890,8 @@ HgiTextureHandle UsdImagingGLEngine::GetAovTexture(TfToken const &name) const
   VtValue aov;
   HgiTextureHandle aovTexture;
 
-  if (_engine->GetTaskContextData(name, &aov))
-  {
-    if (aov.IsHolding<HgiTextureHandle>())
-    {
+  if (_engine->GetTaskContextData(name, &aov)) {
+    if (aov.IsHolding<HgiTextureHandle>()) {
       aovTexture = aov.Get<HgiTextureHandle>();
     }
   }
@@ -954,8 +901,7 @@ HgiTextureHandle UsdImagingGLEngine::GetAovTexture(TfToken const &name) const
 
 UsdImagingGLRendererSettingsList UsdImagingGLEngine::GetRendererSettingsList() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return UsdImagingGLRendererSettingsList();
   }
 
@@ -964,8 +910,7 @@ UsdImagingGLRendererSettingsList UsdImagingGLEngine::GetRendererSettingsList() c
   const HdRenderSettingDescriptorList descriptors = _renderDelegate->GetRenderSettingDescriptors();
   UsdImagingGLRendererSettingsList ret;
 
-  for (auto const &desc : descriptors)
-  {
+  for (auto const &desc : descriptors) {
     UsdImagingGLRendererSetting r;
     r.key = desc.key;
     r.name = desc.name;
@@ -973,20 +918,15 @@ UsdImagingGLRendererSettingsList UsdImagingGLEngine::GetRendererSettingsList() c
 
     // Use the type of the default value to tell us what kind of
     // widget to create...
-    if (r.defValue.IsHolding<bool>())
-    {
+    if (r.defValue.IsHolding<bool>()) {
       r.type = UsdImagingGLRendererSetting::TYPE_FLAG;
-    } else if (r.defValue.IsHolding<int>() || r.defValue.IsHolding<unsigned int>())
-    {
+    } else if (r.defValue.IsHolding<int>() || r.defValue.IsHolding<unsigned int>()) {
       r.type = UsdImagingGLRendererSetting::TYPE_INT;
-    } else if (r.defValue.IsHolding<float>())
-    {
+    } else if (r.defValue.IsHolding<float>()) {
       r.type = UsdImagingGLRendererSetting::TYPE_FLOAT;
-    } else if (r.defValue.IsHolding<std::string>())
-    {
+    } else if (r.defValue.IsHolding<std::string>()) {
       r.type = UsdImagingGLRendererSetting::TYPE_STRING;
-    } else
-    {
+    } else {
       TF_WARN(
         "Setting '%s' with type '%s' doesn't have a UI"
         " implementation...",
@@ -1002,8 +942,7 @@ UsdImagingGLRendererSettingsList UsdImagingGLEngine::GetRendererSettingsList() c
 
 VtValue UsdImagingGLEngine::GetRendererSetting(TfToken const &id) const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return VtValue();
   }
 
@@ -1013,8 +952,7 @@ VtValue UsdImagingGLEngine::GetRendererSetting(TfToken const &id) const
 
 void UsdImagingGLEngine::SetRendererSetting(TfToken const &id, VtValue const &value)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -1024,26 +962,22 @@ void UsdImagingGLEngine::SetRendererSetting(TfToken const &id, VtValue const &va
 
 void UsdImagingGLEngine::SetEnablePresentation(bool enabled)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
-  if (TF_VERIFY(_taskController))
-  {
+  if (TF_VERIFY(_taskController)) {
     _taskController->SetEnablePresentation(enabled);
   }
 }
 
 void UsdImagingGLEngine::SetPresentationOutput(TfToken const &api, VtValue const &framebuffer)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
-  if (TF_VERIFY(_taskController))
-  {
+  if (TF_VERIFY(_taskController)) {
     _userFramebuffer = framebuffer;
     _taskController->SetPresentationOutput(api, framebuffer);
   }
@@ -1055,28 +989,25 @@ void UsdImagingGLEngine::SetPresentationOutput(TfToken const &api, VtValue const
 
 HdCommandDescriptors UsdImagingGLEngine::GetRendererCommandDescriptors() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return HdCommandDescriptors();
   }
 
-  if (ARCH_UNLIKELY(!_renderDelegate))
-  {
+  if (ARCH_UNLIKELY(!_renderDelegate)) {
     return HdCommandDescriptors();
   }
 
   return _renderDelegate->GetCommandDescriptors();
 }
 
-bool UsdImagingGLEngine::InvokeRendererCommand(const TfToken &command, const HdCommandArgs &args) const
+bool UsdImagingGLEngine::InvokeRendererCommand(const TfToken &command,
+                                               const HdCommandArgs &args) const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
-  if (ARCH_UNLIKELY(!_renderDelegate))
-  {
+  if (ARCH_UNLIKELY(!_renderDelegate)) {
     return false;
   }
 
@@ -1088,8 +1019,7 @@ bool UsdImagingGLEngine::InvokeRendererCommand(const TfToken &command, const HdC
 // ---------------------------------------------------------------------
 bool UsdImagingGLEngine::IsPauseRendererSupported() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
@@ -1099,8 +1029,7 @@ bool UsdImagingGLEngine::IsPauseRendererSupported() const
 
 bool UsdImagingGLEngine::PauseRenderer()
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
@@ -1112,8 +1041,7 @@ bool UsdImagingGLEngine::PauseRenderer()
 
 bool UsdImagingGLEngine::ResumeRenderer()
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
@@ -1125,8 +1053,7 @@ bool UsdImagingGLEngine::ResumeRenderer()
 
 bool UsdImagingGLEngine::IsStopRendererSupported() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
@@ -1136,8 +1063,7 @@ bool UsdImagingGLEngine::IsStopRendererSupported() const
 
 bool UsdImagingGLEngine::StopRenderer()
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
@@ -1149,8 +1075,7 @@ bool UsdImagingGLEngine::StopRenderer()
 
 bool UsdImagingGLEngine::RestartRenderer()
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return false;
   }
 
@@ -1165,13 +1090,11 @@ bool UsdImagingGLEngine::RestartRenderer()
 //----------------------------------------------------------------------------
 void UsdImagingGLEngine::SetColorCorrectionSettings(TfToken const &id)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
-  if (!IsColorCorrectionCapable())
-  {
+  if (!IsColorCorrectionCapable()) {
     return;
   }
 
@@ -1193,8 +1116,7 @@ bool UsdImagingGLEngine::IsColorCorrectionCapable()
 
 VtDictionary UsdImagingGLEngine::GetRenderStats() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return VtDictionary();
   }
 
@@ -1213,18 +1135,17 @@ Hgi *UsdImagingGLEngine::GetHgi()
 
 HdRenderIndex *UsdImagingGLEngine::_GetRenderIndex() const
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return nullptr;
   }
 
   return _renderIndex.get();
 }
 
-void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params, HdTaskSharedPtrVector tasks)
+void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params,
+                                  HdTaskSharedPtrVector tasks)
 {
-  if (ARCH_UNLIKELY(_legacyImpl))
-  {
+  if (ARCH_UNLIKELY(_legacyImpl)) {
     return;
   }
 
@@ -1239,8 +1160,7 @@ void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params, HdTask
   GLint restoreDrawFbo = 0;
   glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &restoreReadFbo);
   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &restoreDrawFbo);
-  if (_userFramebuffer.IsEmpty())
-  {
+  if (_userFramebuffer.IsEmpty()) {
     // If user supplied no framebuffer, use the currently bound
     // framebuffer.
     _taskController->SetPresentationOutput(HgiTokens->OpenGL,
@@ -1248,8 +1168,7 @@ void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params, HdTask
   }
 
   GLuint vao;
-  if (isCoreProfileContext)
-  {
+  if (isCoreProfileContext) {
     // We must bind a VAO (Vertex Array Object) because core profile
     // contexts do not have a default vertex array object. VAO objects are
     // container objects which are not shared between contexts, so we create
@@ -1257,23 +1176,19 @@ void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params, HdTask
     // explicitly manage per-GL context state.
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-  } else
-  {
+  } else {
     glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_DEPTH_BUFFER_BIT);
   }
 
   // hydra orients all geometry during topological processing so that
   // front faces have ccw winding.
-  if (params.flipFrontFacing)
-  {
+  if (params.flipFrontFacing) {
     glFrontFace(GL_CW);  // < State is pushed via GL_POLYGON_BIT
-  } else
-  {
+  } else {
     glFrontFace(GL_CCW);  // < State is pushed via GL_POLYGON_BIT
   }
 
-  if (params.applyRenderState)
-  {
+  if (params.applyRenderState) {
     glDisable(GL_BLEND);
   }
 
@@ -1292,16 +1207,14 @@ void UsdImagingGLEngine::_Execute(const UsdImagingGLRenderParams &params, HdTask
     _engine->Execute(_renderIndex.get(), &tasks);
   }
 
-  if (isCoreProfileContext)
-  {
+  if (isCoreProfileContext) {
 
     glBindVertexArray(0);
     // XXX: We should not delete the VAO on every draw call, but we
     // currently must because it is GL Context state and we do not control
     // the context.
     glDeleteVertexArrays(1, &vao);
-  } else
-  {
+  } else {
     glPopAttrib();  // GL_ENABLE_BIT | GL_POLYGON_BIT | GL_DEPTH_BUFFER_BIT
   }
 
@@ -1316,8 +1229,7 @@ bool UsdImagingGLEngine::_CanPrepare(const UsdPrim &root)
   if (!TF_VERIFY(root, "Attempting to draw an invalid/null prim\n"))
     return false;
 
-  if (!root.GetPath().HasPrefix(_rootPath))
-  {
+  if (!root.GetPath().HasPrefix(_rootPath)) {
     TF_CODING_ERROR(
       "Attempting to draw path <%s>, but engine is rooted"
       "at <%s>\n",
@@ -1339,35 +1251,25 @@ static int _GetRefineLevel(float c)
   // to avoid floating point inaccuracy (e.g. 1.3 > 1.3f)
   c = std::min(c + 0.01f, 2.0f);
 
-  if (1.0f <= c && c < 1.1f)
-  {
+  if (1.0f <= c && c < 1.1f) {
     refineLevel = 0;
-  } else if (1.1f <= c && c < 1.2f)
-  {
+  } else if (1.1f <= c && c < 1.2f) {
     refineLevel = 1;
-  } else if (1.2f <= c && c < 1.3f)
-  {
+  } else if (1.2f <= c && c < 1.3f) {
     refineLevel = 2;
-  } else if (1.3f <= c && c < 1.4f)
-  {
+  } else if (1.3f <= c && c < 1.4f) {
     refineLevel = 3;
-  } else if (1.4f <= c && c < 1.5f)
-  {
+  } else if (1.4f <= c && c < 1.5f) {
     refineLevel = 4;
-  } else if (1.5f <= c && c < 1.6f)
-  {
+  } else if (1.5f <= c && c < 1.6f) {
     refineLevel = 5;
-  } else if (1.6f <= c && c < 1.7f)
-  {
+  } else if (1.6f <= c && c < 1.7f) {
     refineLevel = 6;
-  } else if (1.7f <= c && c < 1.8f)
-  {
+  } else if (1.7f <= c && c < 1.8f) {
     refineLevel = 7;
-  } else if (1.8f <= c && c <= 2.0f)
-  {
+  } else if (1.8f <= c && c <= 2.0f) {
     refineLevel = 8;
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Invalid complexity %f, expected range is [1.0,2.0]\n", c);
   }
   return refineLevel;
@@ -1396,8 +1298,7 @@ bool UsdImagingGLEngine::_UpdateHydraCollection(HdRprimCollection *collection,
                                                 SdfPathVector const &roots,
                                                 UsdImagingGLRenderParams const &params)
 {
-  if (collection == nullptr)
-  {
+  if (collection == nullptr) {
     TF_CODING_ERROR("Null passed to _UpdateHydraCollection");
     return false;
   }
@@ -1406,24 +1307,20 @@ bool UsdImagingGLEngine::_UpdateHydraCollection(HdRprimCollection *collection,
   HdReprSelector reprSelector = HdReprSelector(HdReprTokens->smoothHull);
   const bool refined = params.complexity > 1.0;
 
-  if (params.drawMode == UsdImagingGLDrawMode::DRAW_POINTS)
-  {
+  if (params.drawMode == UsdImagingGLDrawMode::DRAW_POINTS) {
     reprSelector = HdReprSelector(HdReprTokens->points);
   } else if (params.drawMode == UsdImagingGLDrawMode::DRAW_GEOM_FLAT ||
-             params.drawMode == UsdImagingGLDrawMode::DRAW_SHADED_FLAT)
-  {
+             params.drawMode == UsdImagingGLDrawMode::DRAW_SHADED_FLAT) {
     // Flat shading
     reprSelector = HdReprSelector(HdReprTokens->hull);
-  } else if (params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME_ON_SURFACE)
-  {
+  } else if (params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME_ON_SURFACE) {
     // Wireframe on surface
-    reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWireOnSurf : HdReprTokens->wireOnSurf);
-  } else if (params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME)
-  {
+    reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWireOnSurf :
+                                            HdReprTokens->wireOnSurf);
+  } else if (params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME) {
     // Wireframe
     reprSelector = HdReprSelector(refined ? HdReprTokens->refinedWire : HdReprTokens->wire);
-  } else
-  {
+  } else {
     // Smooth shading
     reprSelector = HdReprSelector(refined ? HdReprTokens->refined : HdReprTokens->smoothHull);
   }
@@ -1439,17 +1336,14 @@ bool UsdImagingGLEngine::_UpdateHydraCollection(HdRprimCollection *collection,
                collection->GetReprSelector() == reprSelector;
 
   // Only take the time to compare root paths if everything else matches.
-  if (match)
-  {
+  if (match) {
     // Note that oldRoots is guaranteed to be sorted.
-    for (size_t i = 0; i < roots.size(); i++)
-    {
+    for (size_t i = 0; i < roots.size(); i++) {
       // Avoid binary search when both vectors are sorted.
       if (oldRoots[i] == roots[i])
         continue;
       // Binary search to find the current root.
-      if (!std::binary_search(oldRoots.begin(), oldRoots.end(), roots[i]))
-      {
+      if (!std::binary_search(oldRoots.begin(), oldRoots.end(), roots[i])) {
         match = false;
         break;
       }
@@ -1490,11 +1384,9 @@ HdxRenderTaskParams UsdImagingGLEngine::_MakeHydraUsdImagingGLRenderParams(
   params.wireframeColor = renderParams.wireframeColor;
 
   if (renderParams.drawMode == UsdImagingGLDrawMode::DRAW_GEOM_ONLY ||
-      renderParams.drawMode == UsdImagingGLDrawMode::DRAW_POINTS)
-  {
+      renderParams.drawMode == UsdImagingGLDrawMode::DRAW_POINTS) {
     params.enableLighting = false;
-  } else
-  {
+  } else {
     params.enableLighting = renderParams.enableLighting && !renderParams.enableIdRender;
   }
 
@@ -1505,11 +1397,9 @@ HdxRenderTaskParams UsdImagingGLEngine::_MakeHydraUsdImagingGLRenderParams(
 
   // Decrease the alpha threshold if we are using sample alpha to
   // coverage.
-  if (renderParams.alphaThreshold < 0.0)
-  {
+  if (renderParams.alphaThreshold < 0.0) {
     params.alphaThreshold = renderParams.enableSampleAlphaToCoverage ? 0.1f : 0.5f;
-  } else
-  {
+  } else {
     params.alphaThreshold = renderParams.alphaThreshold;
   }
 
@@ -1532,16 +1422,13 @@ void UsdImagingGLEngine::_ComputeRenderTags(UsdImagingGLRenderParams const &para
   renderTags->clear();
   renderTags->reserve(4);
   renderTags->push_back(HdRenderTagTokens->geometry);
-  if (params.showGuides)
-  {
+  if (params.showGuides) {
     renderTags->push_back(HdRenderTagTokens->guide);
   }
-  if (params.showProxy)
-  {
+  if (params.showProxy) {
     renderTags->push_back(HdRenderTagTokens->proxy);
   }
-  if (params.showRender)
-  {
+  if (params.showRender) {
     renderTags->push_back(HdRenderTagTokens->render);
   }
 }
@@ -1551,8 +1438,7 @@ TfToken UsdImagingGLEngine::_GetDefaultRendererPluginId()
 {
   static const std::string defaultRendererDisplayName = TfGetenv("HD_DEFAULT_RENDERER", "");
 
-  if (defaultRendererDisplayName.empty())
-  {
+  if (defaultRendererDisplayName.empty()) {
     return TfToken();
   }
 
@@ -1560,15 +1446,14 @@ TfToken UsdImagingGLEngine::_GetDefaultRendererPluginId()
   HdRendererPluginRegistry::GetInstance().GetPluginDescs(&pluginDescs);
 
   // Look for the one with the matching display name
-  for (size_t i = 0; i < pluginDescs.size(); ++i)
-  {
-    if (pluginDescs[i].displayName == defaultRendererDisplayName)
-    {
+  for (size_t i = 0; i < pluginDescs.size(); ++i) {
+    if (pluginDescs[i].displayName == defaultRendererDisplayName) {
       return pluginDescs[i].id;
     }
   }
 
-  TF_WARN("Failed to find default renderer with display name '%s'.", defaultRendererDisplayName.c_str());
+  TF_WARN("Failed to find default renderer with display name '%s'.",
+          defaultRendererDisplayName.c_str());
 
   return TfToken();
 }

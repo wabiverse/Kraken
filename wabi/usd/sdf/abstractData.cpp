@@ -39,14 +39,11 @@ TF_DEFINE_PUBLIC_TOKENS(SdfDataTokens, SDF_DATA_TOKENS);
 
 ////////////////////////////////////////////////////////////
 
-SdfAbstractData::~SdfAbstractData()
-{}
+SdfAbstractData::~SdfAbstractData() {}
 
 struct SdfAbstractData_IsEmptyChecker : public SdfAbstractDataSpecVisitor
 {
-  SdfAbstractData_IsEmptyChecker()
-    : isEmpty(true)
-  {}
+  SdfAbstractData_IsEmptyChecker() : isEmpty(true) {}
   virtual bool VisitSpec(const SdfAbstractData &, const SdfPath &)
   {
     isEmpty = false;
@@ -70,17 +67,14 @@ bool SdfAbstractData::IsEmpty() const
 
 struct SdfAbstractData_CopySpecs : public SdfAbstractDataSpecVisitor
 {
-  SdfAbstractData_CopySpecs(SdfAbstractData *dest_)
-    : dest(dest_)
-  {}
+  SdfAbstractData_CopySpecs(SdfAbstractData *dest_) : dest(dest_) {}
 
   virtual bool VisitSpec(const SdfAbstractData &src, const SdfPath &path)
   {
     const std::vector<TfToken> keys = src.List(path);
 
     dest->CreateSpec(path, src.GetSpecType(path));
-    TF_FOR_ALL (keyIt, keys)
-    {
+    TF_FOR_ALL (keyIt, keys) {
       dest->Set(path, *keyIt, src.Get(path, *keyIt));
     }
     return true;
@@ -104,15 +98,11 @@ void SdfAbstractData::CopyFrom(const SdfAbstractDataConstPtr &source)
 // exist in another SdfAbstractData object.
 struct SdfAbstractData_CheckAllSpecsExist : public SdfAbstractDataSpecVisitor
 {
-  SdfAbstractData_CheckAllSpecsExist(const SdfAbstractData &data)
-    : passed(true),
-      _data(data)
-  {}
+  SdfAbstractData_CheckAllSpecsExist(const SdfAbstractData &data) : passed(true), _data(data) {}
 
   virtual bool VisitSpec(const SdfAbstractData &, const SdfPath &path)
   {
-    if (!_data.HasSpec(path))
-    {
+    if (!_data.HasSpec(path)) {
       passed = false;
     }
     return passed;
@@ -126,6 +116,7 @@ struct SdfAbstractData_CheckAllSpecsExist : public SdfAbstractDataSpecVisitor
   bool passed;
 
  private:
+
   const SdfAbstractData &_data;
 };
 
@@ -133,10 +124,7 @@ struct SdfAbstractData_CheckAllSpecsExist : public SdfAbstractDataSpecVisitor
 // have the same fields and contents as another SdfAbstractData object.
 struct SdfAbstractData_CheckAllSpecsMatch : public SdfAbstractDataSpecVisitor
 {
-  SdfAbstractData_CheckAllSpecsMatch(const SdfAbstractData &rhs)
-    : passed(true),
-      _rhs(rhs)
-  {}
+  SdfAbstractData_CheckAllSpecsMatch(const SdfAbstractData &rhs) : passed(true), _rhs(rhs) {}
 
   virtual bool VisitSpec(const SdfAbstractData &lhs, const SdfPath &path)
   {
@@ -151,6 +139,7 @@ struct SdfAbstractData_CheckAllSpecsMatch : public SdfAbstractDataSpecVisitor
   bool passed;
 
  private:
+
   static bool _AreSpecsAtPathEqual(const SdfAbstractData &lhs,
                                    const SdfAbstractData &rhs,
                                    const SdfPath &path)
@@ -165,8 +154,7 @@ struct SdfAbstractData_CheckAllSpecsMatch : public SdfAbstractDataSpecVisitor
     if (lhsFieldSet != rhsFieldSet)
       return false;
 
-    TF_FOR_ALL (field, lhsFields)
-    {
+    TF_FOR_ALL (field, lhsFields) {
       // Note: this comparison forces manufacturing of VtValues.
       if (lhs.Get(path, *field) != rhs.Get(path, *field))
         return false;
@@ -176,6 +164,7 @@ struct SdfAbstractData_CheckAllSpecsMatch : public SdfAbstractDataSpecVisitor
   }
 
  private:
+
   const SdfAbstractData &_rhs;
 };
 
@@ -225,8 +214,7 @@ void SdfAbstractData::WriteToStream(std::ostream &os) const
   SdfAbstractData_SortedPathCollector collector;
   VisitSpecs(&collector);
 
-  for (SdfPath const &path : collector.paths)
-  {
+  for (SdfPath const &path : collector.paths) {
     const SdfSpecType specType = GetSpecType(path);
 
     os << path << " " << TfEnum::GetDisplayName(specType) << '\n';
@@ -234,8 +222,7 @@ void SdfAbstractData::WriteToStream(std::ostream &os) const
     const TfTokenVector fields = List(path);
     const std::set<TfToken> fieldSet(fields.begin(), fields.end());
 
-    for (TfToken const &fieldName : fieldSet)
-    {
+    for (TfToken const &fieldName : fieldSet) {
       const VtValue value = Get(path, fieldName);
       os << "    " << fieldName << " " << value.GetTypeName() << " " << value << '\n';
     }
@@ -244,8 +231,7 @@ void SdfAbstractData::WriteToStream(std::ostream &os) const
 
 void SdfAbstractData::VisitSpecs(SdfAbstractDataSpecVisitor *visitor) const
 {
-  if (TF_VERIFY(visitor))
-  {
+  if (TF_VERIFY(visitor)) {
     _VisitSpecs(visitor);
     visitor->Done(*this);
   }
@@ -269,7 +255,8 @@ bool SdfAbstractData::HasSpecAndField(const SdfPath &path,
   return *specType != SdfSpecTypeUnknown && Has(path, fieldName, value);
 }
 
-std::type_info const &SdfAbstractData::GetTypeid(const SdfPath &path, const TfToken &fieldName) const
+std::type_info const &SdfAbstractData::GetTypeid(const SdfPath &path,
+                                                 const TfToken &fieldName) const
 {
   return Get(path, fieldName).GetTypeid();
 }
@@ -281,8 +268,7 @@ bool SdfAbstractData::HasDictKey(const SdfPath &path,
 {
   VtValue tmp;
   bool result = HasDictKey(path, fieldName, keyPath, value ? &tmp : NULL);
-  if (result && value)
-  {
+  if (result && value) {
     value->StoreValue(tmp);
   }
   return result;
@@ -295,11 +281,9 @@ bool SdfAbstractData::HasDictKey(const SdfPath &path,
 {
   // Attempt to look up field.
   VtValue dictVal;
-  if (Has(path, fieldName, &dictVal) && dictVal.IsHolding<VtDictionary>())
-  {
+  if (Has(path, fieldName, &dictVal) && dictVal.IsHolding<VtDictionary>()) {
     // It's a dictionary -- attempt to find element at keyPath.
-    if (VtValue const *v = dictVal.UncheckedGet<VtDictionary>().GetValueAtPath(keyPath))
-    {
+    if (VtValue const *v = dictVal.UncheckedGet<VtDictionary>().GetValueAtPath(keyPath)) {
       if (value)
         *value = *v;
       return true;
@@ -322,8 +306,7 @@ void SdfAbstractData::SetDictValueByKey(const SdfPath &path,
                                         const TfToken &keyPath,
                                         const VtValue &value)
 {
-  if (value.IsEmpty())
-  {
+  if (value.IsEmpty()) {
     EraseDictValueByKey(path, fieldName, keyPath);
     return;
   }
@@ -358,8 +341,7 @@ void SdfAbstractData::EraseDictValueByKey(const SdfPath &path,
 {
   VtValue dictVal = Get(path, fieldName);
 
-  if (dictVal.IsHolding<VtDictionary>())
-  {
+  if (dictVal.IsHolding<VtDictionary>()) {
     // Swap out existing dictionary (if present).
     VtDictionary dict;
     dictVal.Swap(dict);
@@ -368,11 +350,9 @@ void SdfAbstractData::EraseDictValueByKey(const SdfPath &path,
     dict.EraseValueAtPath(keyPath);
 
     // Swap it back into the VtValue, and set it.
-    if (dict.empty())
-    {
+    if (dict.empty()) {
       Erase(path, fieldName);
-    } else
-    {
+    } else {
       dictVal.Swap(dict);
       Set(path, fieldName, dictVal);
     }
@@ -385,8 +365,7 @@ std::vector<TfToken> SdfAbstractData::ListDictKeys(const SdfPath &path,
 {
   vector<TfToken> result;
   VtValue dictVal = GetDictValueByKey(path, fieldName, keyPath);
-  if (dictVal.IsHolding<VtDictionary>())
-  {
+  if (dictVal.IsHolding<VtDictionary>()) {
     VtDictionary const &dict = dictVal.UncheckedGet<VtDictionary>();
     result.reserve(dict.size());
     TF_FOR_ALL (i, dict)
@@ -397,7 +376,6 @@ std::vector<TfToken> SdfAbstractData::ListDictKeys(const SdfPath &path,
 
 ////////////////////////////////////////////////////////////
 
-SdfAbstractDataSpecVisitor::~SdfAbstractDataSpecVisitor()
-{}
+SdfAbstractDataSpecVisitor::~SdfAbstractDataSpecVisitor() {}
 
 WABI_NAMESPACE_END

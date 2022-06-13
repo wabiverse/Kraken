@@ -25,7 +25,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdxPickFromRenderBufferTask::HdxPickFromRenderBufferTask(HdSceneDelegate *delegate, SdfPath const &id)
+HdxPickFromRenderBufferTask::HdxPickFromRenderBufferTask(HdSceneDelegate *delegate,
+                                                         SdfPath const &id)
   : HdxTask(id),
     _index(nullptr),
     _primId(nullptr),
@@ -37,8 +38,7 @@ HdxPickFromRenderBufferTask::HdxPickFromRenderBufferTask(HdSceneDelegate *delega
     _converged(false)
 {}
 
-HdxPickFromRenderBufferTask::~HdxPickFromRenderBufferTask()
-{}
+HdxPickFromRenderBufferTask::~HdxPickFromRenderBufferTask() {}
 
 bool HdxPickFromRenderBufferTask::IsConverged() const
 {
@@ -55,8 +55,7 @@ void HdxPickFromRenderBufferTask::_Sync(HdSceneDelegate *delegate,
   _GetTaskContextData(ctx, HdxPickTokens->pickParams, &_contextParams);
   _index = &(delegate->GetRenderIndex());
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
-  {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
     _GetTaskParams(delegate, &_params);
   }
   *dirtyBits = HdChangeTracker::Clean;
@@ -78,23 +77,25 @@ void HdxPickFromRenderBufferTask::Prepare(HdTaskContext *ctx, HdRenderIndex *ren
   _depth = static_cast<HdRenderBuffer *>(
     renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _params.depthBufferPath));
 
-  _camera = static_cast<const HdCamera *>(renderIndex->GetSprim(HdPrimTypeTokens->camera, _params.cameraId));
+  _camera = static_cast<const HdCamera *>(
+    renderIndex->GetSprim(HdPrimTypeTokens->camera, _params.cameraId));
 }
 
 GfMatrix4d HdxPickFromRenderBufferTask::_ComputeProjectionMatrix() const
 {
   // Same logic as in HdRenderPassState::GetProjectionMatrix().
 
-  if (_params.framing.IsValid())
-  {
+  if (_params.framing.IsValid()) {
     const CameraUtilConformWindowPolicy policy = _params.overrideWindowPolicy.first ?
                                                    _params.overrideWindowPolicy.second :
                                                    _camera->GetWindowPolicy();
     return _params.framing.ApplyToProjectionMatrix(_camera->GetProjectionMatrix(), policy);
-  } else
-  {
-    const double aspect = _params.viewport[3] != 0.0 ? _params.viewport[2] / _params.viewport[3] : 1.0;
-    return CameraUtilConformedWindow(_camera->GetProjectionMatrix(), _camera->GetWindowPolicy(), aspect);
+  } else {
+    const double aspect = _params.viewport[3] != 0.0 ? _params.viewport[2] / _params.viewport[3] :
+                                                       1.0;
+    return CameraUtilConformedWindow(_camera->GetProjectionMatrix(),
+                                     _camera->GetWindowPolicy(),
+                                     aspect);
   }
 }
 
@@ -105,8 +106,7 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
 
   // We need primId, depth, and a source camera to do anything. The other
   // inputs are optional...
-  if (!_primId || !_depth || !_camera)
-  {
+  if (!_primId || !_depth || !_camera) {
     _converged = true;
     return;
   }
@@ -117,8 +117,7 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
 
   _depth->Resolve();
   _converged = _converged && _depth->IsConverged();
-  if (_depth->GetWidth() != _primId->GetWidth() || _depth->GetHeight() != _primId->GetHeight())
-  {
+  if (_depth->GetWidth() != _primId->GetWidth() || _depth->GetHeight() != _primId->GetHeight()) {
     TF_WARN(
       "Depth buffer %s has different dimensions "
       "than Prim Id buffer %s",
@@ -127,12 +126,11 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
     return;
   }
 
-  if (_normal)
-  {
+  if (_normal) {
     _normal->Resolve();
     _converged = _converged && _normal->IsConverged();
-    if (_normal->GetWidth() != _primId->GetWidth() || _normal->GetHeight() != _primId->GetHeight())
-    {
+    if (_normal->GetWidth() != _primId->GetWidth() ||
+        _normal->GetHeight() != _primId->GetHeight()) {
       TF_WARN(
         "Normal buffer %s has different dimensions "
         "than Prim Id buffer %s",
@@ -141,12 +139,11 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
       return;
     }
   }
-  if (_elementId)
-  {
+  if (_elementId) {
     _elementId->Resolve();
     _converged = _converged && _elementId->IsConverged();
-    if (_elementId->GetWidth() != _primId->GetWidth() || _elementId->GetHeight() != _primId->GetHeight())
-    {
+    if (_elementId->GetWidth() != _primId->GetWidth() ||
+        _elementId->GetHeight() != _primId->GetHeight()) {
       TF_WARN(
         "Element Id buffer %s has different dimensions "
         "than Prim Id buffer %s",
@@ -155,12 +152,11 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
       return;
     }
   }
-  if (_instanceId)
-  {
+  if (_instanceId) {
     _instanceId->Resolve();
     _converged = _converged && _instanceId->IsConverged();
-    if (_instanceId->GetWidth() != _primId->GetWidth() || _instanceId->GetHeight() != _primId->GetHeight())
-    {
+    if (_instanceId->GetWidth() != _primId->GetWidth() ||
+        _instanceId->GetHeight() != _primId->GetHeight()) {
       TF_WARN(
         "Instance Id buffer %s has different dimensions "
         "than Prim Id buffer %s",
@@ -193,13 +189,14 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
   // indices, assuming (-1,-1) maps to 0,0 and (1,1) maps to w,h.
   GfMatrix4d renderBufferXf;
   renderBufferXf.SetScale(GfVec3d(0.5 * renderBufferSize[0], 0.5 * renderBufferSize[1], 1));
-  renderBufferXf.SetTranslateOnly(GfVec3d(0.5 * renderBufferSize[0], 0.5 * renderBufferSize[1], 0));
+  renderBufferXf.SetTranslateOnly(
+    GfVec3d(0.5 * renderBufferSize[0], 0.5 * renderBufferSize[1], 0));
 
   // Transform the corners of the pick frustum near plane from picking
   // NDC space to main render NDC space to render buffer indices.
   GfMatrix4d pickNdcToRenderBuffer =
-    (_contextParams.viewMatrix * _contextParams.projectionMatrix).GetInverse() * renderView * renderProj *
-    renderBufferXf;
+    (_contextParams.viewMatrix * _contextParams.projectionMatrix).GetInverse() * renderView *
+    renderProj * renderBufferXf;
 
   // Calculate the ID buffer area of interest: the indices of the pick
   // frustum near plane.
@@ -214,7 +211,10 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
   // center; otherwise, we'll miss relevant pixels.
   pickMin = GfVec2d(floor(pickMin[0]), floor(pickMin[1]));
   pickMax = GfVec2d(ceil(pickMax[0]), ceil(pickMax[1]));
-  GfVec4i subRect = GfVec4i(pickMin[0], pickMin[1], pickMax[0] - pickMin[0], pickMax[1] - pickMin[1]);
+  GfVec4i subRect = GfVec4i(pickMin[0],
+                            pickMin[1],
+                            pickMax[0] - pickMin[0],
+                            pickMax[1] - pickMin[1]);
 
   // Depth range of the "depth" AOV is (0,1)
   GfVec2f depthRange(0, 1);
@@ -239,20 +239,15 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
                        subRect);
 
   // Resolve!
-  if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCenter)
-  {
+  if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCenter) {
     result.ResolveNearestToCenter(_contextParams.outHits);
-  } else if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCamera)
-  {
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveNearestToCamera) {
     result.ResolveNearestToCamera(_contextParams.outHits);
-  } else if (_contextParams.resolveMode == HdxPickTokens->resolveUnique)
-  {
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveUnique) {
     result.ResolveUnique(_contextParams.outHits);
-  } else if (_contextParams.resolveMode == HdxPickTokens->resolveAll)
-  {
+  } else if (_contextParams.resolveMode == HdxPickTokens->resolveAll) {
     result.ResolveAll(_contextParams.outHits);
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unrecognized interesection mode '%s'", _contextParams.resolveMode.GetText());
   }
 
@@ -274,22 +269,24 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
 
 std::ostream &operator<<(std::ostream &out, const HdxPickFromRenderBufferTaskParams &pv)
 {
-  out << "PickFromRenderBufferTask Params: (...) " << pv.primIdBufferPath << " " << pv.instanceIdBufferPath
-      << " " << pv.elementIdBufferPath << " " << pv.normalBufferPath << " " << pv.depthBufferPath << " "
-      << pv.cameraId;
+  out << "PickFromRenderBufferTask Params: (...) " << pv.primIdBufferPath << " "
+      << pv.instanceIdBufferPath << " " << pv.elementIdBufferPath << " " << pv.normalBufferPath
+      << " " << pv.depthBufferPath << " " << pv.cameraId;
   return out;
 }
 
-bool operator==(const HdxPickFromRenderBufferTaskParams &lhs, const HdxPickFromRenderBufferTaskParams &rhs)
+bool operator==(const HdxPickFromRenderBufferTaskParams &lhs,
+                const HdxPickFromRenderBufferTaskParams &rhs)
 {
   return lhs.primIdBufferPath == rhs.primIdBufferPath &&
          lhs.instanceIdBufferPath == rhs.instanceIdBufferPath &&
          lhs.elementIdBufferPath == rhs.elementIdBufferPath &&
-         lhs.normalBufferPath == rhs.normalBufferPath && lhs.depthBufferPath == rhs.depthBufferPath &&
-         lhs.cameraId == rhs.cameraId;
+         lhs.normalBufferPath == rhs.normalBufferPath &&
+         lhs.depthBufferPath == rhs.depthBufferPath && lhs.cameraId == rhs.cameraId;
 }
 
-bool operator!=(const HdxPickFromRenderBufferTaskParams &lhs, const HdxPickFromRenderBufferTaskParams &rhs)
+bool operator!=(const HdxPickFromRenderBufferTaskParams &lhs,
+                const HdxPickFromRenderBufferTaskParams &rhs)
 {
   return !(lhs == rhs);
 }

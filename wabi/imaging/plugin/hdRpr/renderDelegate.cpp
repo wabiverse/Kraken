@@ -50,32 +50,27 @@ static HdRprApi *g_rprApi = nullptr;
 class HdRprDiagnosticMgrDelegate : public TfDiagnosticMgr::Delegate
 {
  public:
-  explicit HdRprDiagnosticMgrDelegate(std::string const &logFile)
-    : m_outputFile(nullptr)
+
+  explicit HdRprDiagnosticMgrDelegate(std::string const &logFile) : m_outputFile(nullptr)
   {
-    if (logFile == "stderr")
-    {
+    if (logFile == "stderr") {
       m_output = stderr;
-    } else if (logFile == "stdout")
-    {
+    } else if (logFile == "stdout") {
       m_output = stdout;
-    } else
-    {
+    } else {
       m_outputFile = fopen(logFile.c_str(), "a+");
-      if (!m_outputFile)
-      {
-        TF_RUNTIME_ERROR("Failed to open error output file: \"%s\". Defaults to stderr\n", logFile.c_str());
+      if (!m_outputFile) {
+        TF_RUNTIME_ERROR("Failed to open error output file: \"%s\". Defaults to stderr\n",
+                         logFile.c_str());
         m_output = stderr;
-      } else
-      {
+      } else {
         m_output = m_outputFile;
       }
     }
   }
   ~HdRprDiagnosticMgrDelegate() override
   {
-    if (m_outputFile)
-    {
+    if (m_outputFile) {
       fclose(m_outputFile);
     }
   }
@@ -103,6 +98,7 @@ class HdRprDiagnosticMgrDelegate : public TfDiagnosticMgr::Delegate
   };
 
  private:
+
   void IssueDiagnosticBase(TfDiagnosticBase const &d)
   {
     std::string msg = TfStringPrintf("%s -- %s in %s at line %zu of %s",
@@ -125,6 +121,7 @@ class HdRprDiagnosticMgrDelegate : public TfDiagnosticMgr::Delegate
   }
 
  private:
+
   FILE *m_output;
   FILE *m_outputFile;
 };
@@ -158,8 +155,7 @@ const TfTokenVector HdRprDelegate::SUPPORTED_BPRIM_TYPES = {
 
 HdRprDelegate::HdRprDelegate(HdRenderSettingsMap const &renderSettings)
 {
-  for (auto &entry : renderSettings)
-  {
+  for (auto &entry : renderSettings) {
     SetRenderSetting(entry.first, entry.second);
   }
 
@@ -171,19 +167,22 @@ HdRprDelegate::HdRprDelegate(HdRenderSettingsMap const &renderSettings)
   m_settingDescriptors = HdRprConfig::GetRenderSettingDescriptors();
   _PopulateDefaultSettings(m_settingDescriptors);
 
-  m_renderThread.SetRenderCallback([this]() { m_rprApi->Render(&m_renderThread); });
-  m_renderThread.SetStopCallback([this]() { m_rprApi->AbortRender(); });
+  m_renderThread.SetRenderCallback([this]() {
+    m_rprApi->Render(&m_renderThread);
+  });
+  m_renderThread.SetStopCallback([this]() {
+    m_rprApi->AbortRender();
+  });
   m_renderThread.StartThread();
 
   auto errorOutputFile = TfGetenv("HD_RPR_ERROR_OUTPUT_FILE");
-  if (!errorOutputFile.empty())
-  {
-    m_diagnosticMgrDelegate = DiagnostMgrDelegatePtr(new HdRprDiagnosticMgrDelegate(errorOutputFile),
-                                                     [](HdRprDiagnosticMgrDelegate *delegate) {
-                                                       TfDiagnosticMgr::GetInstance().RemoveDelegate(
-                                                         delegate);
-                                                       delete delegate;
-                                                     });
+  if (!errorOutputFile.empty()) {
+    m_diagnosticMgrDelegate = DiagnostMgrDelegatePtr(
+      new HdRprDiagnosticMgrDelegate(errorOutputFile),
+      [](HdRprDiagnosticMgrDelegate *delegate) {
+        TfDiagnosticMgr::GetInstance().RemoveDelegate(delegate);
+        delete delegate;
+      });
     TfDiagnosticMgr::GetInstance().AddDelegate(m_diagnosticMgrDelegate.get());
   }
 }
@@ -257,19 +256,15 @@ void HdRprDelegate::DestroyInstancer(HdInstancer *instancer)
 HdRprim *HdRprDelegate::CreateRprim(TfToken const &typeId,
                                     SdfPath const &rprimId HDRPR_INSTANCER_ID_ARG_DECL)
 {
-  if (typeId == HdPrimTypeTokens->mesh)
-  {
+  if (typeId == HdPrimTypeTokens->mesh) {
     return new HdRprMesh(rprimId HDRPR_INSTANCER_ID_ARG);
-  } else if (typeId == HdPrimTypeTokens->basisCurves)
-  {
+  } else if (typeId == HdPrimTypeTokens->basisCurves) {
     return new HdRprBasisCurves(rprimId HDRPR_INSTANCER_ID_ARG);
-  } else if (typeId == HdPrimTypeTokens->points)
-  {
+  } else if (typeId == HdPrimTypeTokens->points) {
     return new HdRprPoints(rprimId HDRPR_INSTANCER_ID_ARG);
   }
 #ifdef USE_VOLUME
-  else if (typeId == HdPrimTypeTokens->volume)
-  {
+  else if (typeId == HdPrimTypeTokens->volume) {
     return new HdRprVolume(rprimId);
   }
 #endif
@@ -285,24 +280,18 @@ void HdRprDelegate::DestroyRprim(HdRprim *rPrim)
 
 HdSprim *HdRprDelegate::CreateSprim(TfToken const &typeId, SdfPath const &sprimId)
 {
-  if (typeId == HdPrimTypeTokens->camera)
-  {
+  if (typeId == HdPrimTypeTokens->camera) {
     return new HdRprCamera(sprimId);
-  } else if (typeId == HdPrimTypeTokens->domeLight)
-  {
+  } else if (typeId == HdPrimTypeTokens->domeLight) {
     return new HdRprDomeLight(sprimId);
-  } else if (typeId == HdPrimTypeTokens->distantLight)
-  {
+  } else if (typeId == HdPrimTypeTokens->distantLight) {
     return new HdRprDistantLight(sprimId);
   } else if (typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->sphereLight ||
-             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->diskLight)
-  {
+             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->diskLight) {
     return new HdRprLight(sprimId, typeId);
-  } else if (typeId == HdPrimTypeTokens->material)
-  {
+  } else if (typeId == HdPrimTypeTokens->material) {
     return new HdRprMaterial(sprimId);
-  } else if (typeId == HdPrimTypeTokens->extComputation)
-  {
+  } else if (typeId == HdPrimTypeTokens->extComputation) {
     return new HdExtComputation(sprimId);
   }
 
@@ -314,24 +303,18 @@ HdSprim *HdRprDelegate::CreateFallbackSprim(TfToken const &typeId)
 {
   // For fallback sprims, create objects with an empty scene path.
   // They'll use default values and won't be updated by a scene delegate.
-  if (typeId == HdPrimTypeTokens->camera)
-  {
+  if (typeId == HdPrimTypeTokens->camera) {
     return new HdRprCamera(SdfPath::EmptyPath());
-  } else if (typeId == HdPrimTypeTokens->domeLight)
-  {
+  } else if (typeId == HdPrimTypeTokens->domeLight) {
     return new HdRprDomeLight(SdfPath::EmptyPath());
   } else if (typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->sphereLight ||
-             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->diskLight)
-  {
+             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->diskLight) {
     return new HdRprLight(SdfPath::EmptyPath(), typeId);
-  } else if (typeId == HdPrimTypeTokens->distantLight)
-  {
+  } else if (typeId == HdPrimTypeTokens->distantLight) {
     return new HdRprDistantLight(SdfPath::EmptyPath());
-  } else if (typeId == HdPrimTypeTokens->material)
-  {
+  } else if (typeId == HdPrimTypeTokens->material) {
     return new HdRprMaterial(SdfPath::EmptyPath());
-  } else if (typeId == HdPrimTypeTokens->extComputation)
-  {
+  } else if (typeId == HdPrimTypeTokens->extComputation) {
     return new HdExtComputation(SdfPath::EmptyPath());
   }
 
@@ -346,13 +329,11 @@ void HdRprDelegate::DestroySprim(HdSprim *sPrim)
 
 HdBprim *HdRprDelegate::CreateBprim(TfToken const &typeId, SdfPath const &bprimId)
 {
-  if (typeId == HdPrimTypeTokens->renderBuffer)
-  {
+  if (typeId == HdPrimTypeTokens->renderBuffer) {
     return new HdRprRenderBuffer(bprimId, m_rprApi.get());
   }
 #ifdef USE_VOLUME
-  else if (typeId == _tokens->openvdbAsset)
-  {
+  else if (typeId == _tokens->openvdbAsset) {
     return new HdRprField(bprimId);
   }
 #endif
@@ -436,10 +417,8 @@ bool HdRprDelegate::Restart()
 
 void HdRprDelegate::SetDrivers(HdDriverVector const &drivers)
 {
-  for (HdDriver *hdDriver : drivers)
-  {
-    if (hdDriver->name == _tokens->RPR && hdDriver->driver.IsHolding<VtDictionary>())
-    {
+  for (HdDriver *hdDriver : drivers) {
+    if (hdDriver->name == _tokens->RPR && hdDriver->driver.IsHolding<VtDictionary>()) {
       VtDictionary dictionary = hdDriver->driver.UncheckedGet<VtDictionary>();
 
       // Interop info is used to create context
@@ -486,8 +465,7 @@ void HdRprSetRenderQuality(const char *quality)
 
 char *HdRprGetRenderQuality()
 {
-  if (!WABI_INTERNAL_NS::g_rprApi)
-  {
+  if (!WABI_INTERNAL_NS::g_rprApi) {
     return nullptr;
   }
   auto currentRenderQuality = WABI_INTERNAL_NS::g_rprApi->GetCurrentRenderQuality().GetText();

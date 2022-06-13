@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiRisOslPattern::~UsdRiRisOslPattern()
-{}
+UsdRiRisOslPattern::~UsdRiRisOslPattern() {}
 
 /* static */
 UsdRiRisOslPattern UsdRiRisOslPattern::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisOslPattern();
   }
@@ -69,8 +67,7 @@ UsdRiRisOslPattern UsdRiRisOslPattern::Get(const UsdStagePtr &stage, const SdfPa
 UsdRiRisOslPattern UsdRiRisOslPattern::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RisOslPattern");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisOslPattern();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdRiRisOslPattern::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoFilePath);
 }
 
-UsdAttribute UsdRiRisOslPattern::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiRisOslPattern::CreateFilePathAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoFilePath,
                                     SdfValueTypeNames->Asset,
@@ -123,7 +121,8 @@ UsdAttribute UsdRiRisOslPattern::GetOslPathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoOslPath);
 }
 
-UsdAttribute UsdRiRisOslPattern::CreateOslPathAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiRisOslPattern::CreateOslPathAttr(VtValue const &defaultValue,
+                                                   bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoOslPath,
                                     SdfValueTypeNames->Asset,
@@ -153,8 +152,9 @@ const TfTokenVector &UsdRiRisOslPattern::GetSchemaAttributeNames(bool includeInh
     UsdRiTokens->infoFilePath,
     UsdRiTokens->infoOslPath,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdRiRisPattern::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdRiRisPattern::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

@@ -53,8 +53,7 @@ namespace
   static dict _ConvertDict(const JsObject &dictionary)
   {
     dict result;
-    TF_FOR_ALL (i, dictionary)
-    {
+    TF_FOR_ALL (i, dictionary) {
       const string &key = i->first;
       const JsValue &val = i->second;
 
@@ -104,7 +103,8 @@ void wrapPlugin()
   // The call to JsConvertToContainerType in _ConvertDict creates
   // vectors of boost::python::objects for array values, so register
   // a converter that turns that vector into a Python list.
-  boost::python::to_python_converter<std::vector<object>, TfPySequenceToPython<std::vector<object>>>();
+  boost::python::to_python_converter<std::vector<object>,
+                                     TfPySequenceToPython<std::vector<object>>>();
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(PlugPlugin)

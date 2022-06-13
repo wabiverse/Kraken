@@ -32,11 +32,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(HdLightTokens, HD_LIGHT_TOKENS);
 
-HdLight::HdLight(SdfPath const &id)
-  : HdSprim(id)
-{}
+HdLight::HdLight(SdfPath const &id) : HdSprim(id) {}
 
-HdLight::~HdLight()
-{}
+HdLight::~HdLight() {}
 
 WABI_NAMESPACE_END

@@ -31,11 +31,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-SdfLayerStateDelegateBase::SdfLayerStateDelegateBase()
-{}
+SdfLayerStateDelegateBase::SdfLayerStateDelegateBase() {}
 
-SdfLayerStateDelegateBase::~SdfLayerStateDelegateBase()
-{}
+SdfLayerStateDelegateBase::~SdfLayerStateDelegateBase() {}
 
 bool SdfLayerStateDelegateBase::IsDirty()
 {
@@ -66,7 +64,12 @@ void SdfLayerStateDelegateBase::SetFieldDictValueByKey(const SdfPath &path,
                                                        const VtValue *oldValue)
 {
   _OnSetFieldDictValueByKey(path, field, keyPath, value);
-  _layer->_PrimSetFieldDictValueByKey(path, field, keyPath, value, oldValue, /* useDelegate = */ false);
+  _layer->_PrimSetFieldDictValueByKey(path,
+                                      field,
+                                      keyPath,
+                                      value,
+                                      oldValue,
+                                      /* useDelegate = */ false);
 }
 
 void SdfLayerStateDelegateBase::SetFieldDictValueByKey(const SdfPath &path,
@@ -76,10 +79,17 @@ void SdfLayerStateDelegateBase::SetFieldDictValueByKey(const SdfPath &path,
                                                        const VtValue *oldValue)
 {
   _OnSetFieldDictValueByKey(path, field, keyPath, value);
-  _layer->_PrimSetFieldDictValueByKey(path, field, keyPath, value, oldValue, /* useDelegate = */ false);
+  _layer->_PrimSetFieldDictValueByKey(path,
+                                      field,
+                                      keyPath,
+                                      value,
+                                      oldValue,
+                                      /* useDelegate = */ false);
 }
 
-void SdfLayerStateDelegateBase::SetTimeSample(const SdfPath &path, double time, const VtValue &value)
+void SdfLayerStateDelegateBase::SetTimeSample(const SdfPath &path,
+                                              double time,
+                                              const VtValue &value)
 {
   _OnSetTimeSample(path, time, value);
   _layer->_PrimSetTimeSample(path, time, value, /* useDelegate = */ false);
@@ -170,9 +180,7 @@ SdfSimpleLayerStateDelegateRefPtr SdfSimpleLayerStateDelegate::New()
   return TfCreateRefPtr(new SdfSimpleLayerStateDelegate);
 }
 
-SdfSimpleLayerStateDelegate::SdfSimpleLayerStateDelegate()
-  : _dirty(false)
-{}
+SdfSimpleLayerStateDelegate::SdfSimpleLayerStateDelegate() : _dirty(false) {}
 
 bool SdfSimpleLayerStateDelegate::_IsDirty()
 {
@@ -189,8 +197,7 @@ void SdfSimpleLayerStateDelegate::_MarkCurrentStateAsDirty()
   _dirty = true;
 }
 
-void SdfSimpleLayerStateDelegate::_OnSetLayer(const SdfLayerHandle &layer)
-{}
+void SdfSimpleLayerStateDelegate::_OnSetLayer(const SdfLayerHandle &layer) {}
 
 void SdfSimpleLayerStateDelegate::_OnSetField(const SdfPath &path,
                                               const TfToken &fieldName,
@@ -222,7 +229,9 @@ void SdfSimpleLayerStateDelegate::_OnSetFieldDictValueByKey(const SdfPath &path,
   _dirty = true;
 }
 
-void SdfSimpleLayerStateDelegate::_OnSetTimeSample(const SdfPath &path, double time, const VtValue &value)
+void SdfSimpleLayerStateDelegate::_OnSetTimeSample(const SdfPath &path,
+                                                   double time,
+                                                   const VtValue &value)
 {
   _dirty = true;
 }
@@ -234,7 +243,9 @@ void SdfSimpleLayerStateDelegate::_OnSetTimeSample(const SdfPath &path,
   _dirty = true;
 }
 
-void SdfSimpleLayerStateDelegate::_OnCreateSpec(const SdfPath &path, SdfSpecType specType, bool inert)
+void SdfSimpleLayerStateDelegate::_OnCreateSpec(const SdfPath &path,
+                                                SdfSpecType specType,
+                                                bool inert)
 {
   _dirty = true;
 }

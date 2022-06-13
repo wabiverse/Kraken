@@ -100,14 +100,15 @@ static const _FormatDesc FORMAT_DESC[] = {
 // with the HgiFormat table.
 constexpr bool _CompileTimeValidateHgiFormatTable()
 {
-  return (TfArraySize(FORMAT_DESC) == HgiFormatCount && HgiFormatUNorm8 == 0 && HgiFormatFloat16Vec4 == 9 &&
-          HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 21 && HgiFormatUNorm8Vec4srgb == 26 &&
-          HgiFormatBC3UNorm8Vec4 == 32) ?
+  return (TfArraySize(FORMAT_DESC) == HgiFormatCount && HgiFormatUNorm8 == 0 &&
+          HgiFormatFloat16Vec4 == 9 && HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 21 &&
+          HgiFormatUNorm8Vec4srgb == 26 && HgiFormatBC3UNorm8Vec4 == 32) ?
            true :
            false;
 }
 
-static_assert(_CompileTimeValidateHgiFormatTable(), "_FormatDesc array out of sync with HgiFormat enum");
+static_assert(_CompileTimeValidateHgiFormatTable(),
+              "_FormatDesc array out of sync with HgiFormat enum");
 
 static const uint32_t _ShaderStageTable[][2] = {
   {HgiShaderStageVertex,              GL_VERTEX_SHADER         },
@@ -210,35 +211,28 @@ void HgiGLConversions::GetFormat(HgiFormat inFormat,
                                  GLenum *outType,
                                  GLenum *outInternalFormat)
 {
-  if ((inFormat < 0) || (inFormat >= HgiFormatCount))
-  {
+  if ((inFormat < 0) || (inFormat >= HgiFormatCount)) {
     TF_CODING_ERROR("Unexpected  %d", inFormat);
-    if (outFormat)
-    {
+    if (outFormat) {
       *outFormat = GL_RGBA;
     }
-    if (outType)
-    {
+    if (outType) {
       *outType = GL_BYTE;
     }
-    if (outInternalFormat)
-    {
+    if (outInternalFormat) {
       *outInternalFormat = GL_RGBA8;
     }
     return;
   }
 
   const _FormatDesc &desc = FORMAT_DESC[inFormat];
-  if (outFormat)
-  {
+  if (outFormat) {
     *outFormat = desc.format;
   }
-  if (outType)
-  {
+  if (outType) {
     *outType = desc.type;
   }
-  if (outInternalFormat)
-  {
+  if (outInternalFormat) {
     *outInternalFormat = desc.internalFormat;
   }
 }
@@ -252,14 +246,12 @@ GLenum HgiGLConversions::GetFormatType(HgiFormat inFormat)
 std::vector<GLenum> HgiGLConversions::GetShaderStages(HgiShaderStage ss)
 {
   std::vector<GLenum> stages;
-  for (const auto &f : _ShaderStageTable)
-  {
+  for (const auto &f : _ShaderStageTable) {
     if (ss & f[0])
       stages.push_back(f[1]);
   }
 
-  if (stages.empty())
-  {
+  if (stages.empty()) {
     TF_CODING_ERROR("Missing shader stage table entry");
   }
   return stages;
@@ -302,8 +294,7 @@ GLenum HgiGLConversions::GetSamplerAddressMode(HgiSamplerAddressMode am)
 
 GLenum HgiGLConversions::GetMagFilter(HgiSamplerFilter sf)
 {
-  switch (sf)
-  {
+  switch (sf) {
     case HgiSamplerFilterNearest:
       return GL_NEAREST;
     case HgiSamplerFilterLinear:
@@ -318,12 +309,10 @@ GLenum HgiGLConversions::GetMagFilter(HgiSamplerFilter sf)
 
 GLenum HgiGLConversions::GetMinFilter(HgiSamplerFilter minFilter, HgiMipFilter mipFilter)
 {
-  switch (mipFilter)
-  {
+  switch (mipFilter) {
     // No mip-filter supplied (no mipmapping), return min-filter
     case HgiMipFilterNotMipmapped:
-      switch (minFilter)
-      {
+      switch (minFilter) {
         case HgiSamplerFilterNearest:
           return GL_NEAREST;
         case HgiSamplerFilterLinear:
@@ -335,8 +324,7 @@ GLenum HgiGLConversions::GetMinFilter(HgiSamplerFilter minFilter, HgiMipFilter m
 
     // Mip filter is nearest, combine min and mip filter into one enum
     case HgiMipFilterNearest:
-      switch (minFilter)
-      {
+      switch (minFilter) {
         case HgiSamplerFilterNearest:
           return GL_NEAREST_MIPMAP_NEAREST;
         case HgiSamplerFilterLinear:
@@ -348,8 +336,7 @@ GLenum HgiGLConversions::GetMinFilter(HgiSamplerFilter minFilter, HgiMipFilter m
 
     // Mip filter is linear, combine min and mip filter into one enum
     case HgiMipFilterLinear:
-      switch (minFilter)
-      {
+      switch (minFilter) {
         case HgiSamplerFilterNearest:
           return GL_NEAREST_MIPMAP_LINEAR;
         case HgiSamplerFilterLinear:

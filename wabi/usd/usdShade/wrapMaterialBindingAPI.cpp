@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -80,7 +78,9 @@ void wrapUsdShadeMaterialBindingAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -122,10 +122,13 @@ namespace
     return boost::python::make_tuple(mat, bindingRel);
   }
 
-  static object _WrapComputeBoundMaterials(const std::vector<UsdPrim> &prims, const TfToken &materialPurpose)
+  static object _WrapComputeBoundMaterials(const std::vector<UsdPrim> &prims,
+                                           const TfToken &materialPurpose)
   {
     std::vector<UsdRelationship> bindingRels;
-    auto materials = UsdShadeMaterialBindingAPI::ComputeBoundMaterials(prims, materialPurpose, &bindingRels);
+    auto materials = UsdShadeMaterialBindingAPI::ComputeBoundMaterials(prims,
+                                                                       materialPurpose,
+                                                                       &bindingRels);
     return boost::python::make_tuple(materials, bindingRels);
   }
 
@@ -142,8 +145,12 @@ namespace
     directBinding.def(init<>())
       .def(init<UsdRelationship>(arg("bindingRel")))
       .def("GetMaterial", &This::DirectBinding::GetMaterial)
-      .def("GetBindingRel", &This::DirectBinding::GetBindingRel, return_value_policy<return_by_value>())
-      .def("GetMaterialPath", &This::DirectBinding::GetMaterialPath, return_value_policy<return_by_value>())
+      .def("GetBindingRel",
+           &This::DirectBinding::GetBindingRel,
+           return_value_policy<return_by_value>())
+      .def("GetMaterialPath",
+           &This::DirectBinding::GetMaterialPath,
+           return_value_policy<return_by_value>())
       .def("GetMaterialPurpose",
            &This::DirectBinding::GetMaterialPurpose,
            return_value_policy<return_by_value>());
@@ -159,7 +166,9 @@ namespace
       .def("GetMaterialPath",
            &This::CollectionBinding::GetMaterialPath,
            return_value_policy<return_by_value>())
-      .def("GetBindingRel", &This::CollectionBinding::GetBindingRel, return_value_policy<return_by_value>())
+      .def("GetBindingRel",
+           &This::CollectionBinding::GetBindingRel,
+           return_value_policy<return_by_value>())
       .def("IsValid", &This::CollectionBinding::IsValid);
 
     to_python_converter<This::CollectionBindingVector,
@@ -197,7 +206,8 @@ namespace
              return_value_policy<TfPySequenceToList>())
 
         .def("Bind",
-             (bool(This::*)(const UsdShadeMaterial &, const TfToken &, const TfToken &) const) & This::Bind,
+             (bool(This::*)(const UsdShadeMaterial &, const TfToken &, const TfToken &) const) &
+               This::Bind,
              (arg("material"),
               arg("bindingStrength") = UsdShadeTokens->fallbackStrength,
               arg("materialPurpose") = UsdShadeTokens->allPurpose))
@@ -225,13 +235,15 @@ namespace
 
         .def("UnbindAllBindings", &This::UnbindAllBindings)
 
-        .def("RemovePrimFromBindingCollection",
-             &This::RemovePrimFromBindingCollection,
-             (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def(
+          "RemovePrimFromBindingCollection",
+          &This::RemovePrimFromBindingCollection,
+          (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
-        .def("AddPrimToBindingCollection",
-             &This::AddPrimToBindingCollection,
-             (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
+        .def(
+          "AddPrimToBindingCollection",
+          &This::AddPrimToBindingCollection,
+          (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
 
         .def("ComputeBoundMaterial",
              &_WrapComputeBoundMaterial,
@@ -252,7 +264,9 @@ namespace
              &This::SetMaterialBindSubsetsFamilyType,
              (arg("familyType")))
         .def("GetMaterialBindSubsetsFamilyType", &This::GetMaterialBindSubsetsFamilyType)
-        .def("CanContainPropertyName", &UsdShadeMaterialBindingAPI::CanContainPropertyName, arg("name"))
+        .def("CanContainPropertyName",
+             &UsdShadeMaterialBindingAPI::CanContainPropertyName,
+             arg("name"))
         .staticmethod("CanContainPropertyName");
   }
 

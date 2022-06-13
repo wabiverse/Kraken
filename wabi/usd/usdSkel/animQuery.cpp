@@ -48,10 +48,10 @@ UsdPrim UsdSkelAnimQuery::GetPrim() const
 }
 
 template<typename Matrix4>
-bool UsdSkelAnimQuery::ComputeJointLocalTransforms(VtArray<Matrix4> *xforms, UsdTimeCode time) const
+bool UsdSkelAnimQuery::ComputeJointLocalTransforms(VtArray<Matrix4> *xforms,
+                                                   UsdTimeCode time) const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->ComputeJointLocalTransforms(xforms, time);
   }
   return false;
@@ -68,8 +68,7 @@ bool UsdSkelAnimQuery::ComputeJointLocalTransformComponents(VtVec3fArray *transl
                                                             VtVec3hArray *scales,
                                                             UsdTimeCode time) const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->ComputeJointLocalTransformComponents(translations, rotations, scales, time);
   }
   return false;
@@ -77,8 +76,7 @@ bool UsdSkelAnimQuery::ComputeJointLocalTransformComponents(VtVec3fArray *transl
 
 bool UsdSkelAnimQuery::ComputeBlendShapeWeights(VtFloatArray *weights, UsdTimeCode time) const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->ComputeBlendShapeWeights(weights, time);
   }
   return false;
@@ -92,8 +90,7 @@ bool UsdSkelAnimQuery::GetJointTransformTimeSamples(std::vector<double> *times) 
 bool UsdSkelAnimQuery::GetJointTransformTimeSamplesInInterval(const GfInterval &interval,
                                                               std::vector<double> *times) const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->GetJointTransformTimeSamples(interval, times);
   }
   return false;
@@ -101,8 +98,7 @@ bool UsdSkelAnimQuery::GetJointTransformTimeSamplesInInterval(const GfInterval &
 
 bool UsdSkelAnimQuery::GetJointTransformAttributes(std::vector<UsdAttribute> *attrs) const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->GetJointTransformAttributes(attrs);
   }
   return false;
@@ -110,8 +106,7 @@ bool UsdSkelAnimQuery::GetJointTransformAttributes(std::vector<UsdAttribute> *at
 
 bool UsdSkelAnimQuery::JointTransformsMightBeTimeVarying() const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->JointTransformsMightBeTimeVarying();
   }
   return false;
@@ -119,8 +114,7 @@ bool UsdSkelAnimQuery::JointTransformsMightBeTimeVarying() const
 
 VtTokenArray UsdSkelAnimQuery::GetJointOrder() const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->GetJointOrder();
   }
   return VtTokenArray();
@@ -128,8 +122,7 @@ VtTokenArray UsdSkelAnimQuery::GetJointOrder() const
 
 VtTokenArray UsdSkelAnimQuery::GetBlendShapeOrder() const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->GetBlendShapeOrder();
   }
   return VtTokenArray();
@@ -142,8 +135,7 @@ bool UsdSkelAnimQuery::GetBlendShapeWeightTimeSamples(std::vector<double> *times
 
 bool UsdSkelAnimQuery::GetBlendShapeWeightAttributes(std::vector<UsdAttribute> *attrs) const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->GetBlendShapeWeightAttributes(attrs);
   }
   return false;
@@ -152,8 +144,7 @@ bool UsdSkelAnimQuery::GetBlendShapeWeightAttributes(std::vector<UsdAttribute> *
 bool UsdSkelAnimQuery::GetBlendShapeWeightTimeSamplesInInterval(const GfInterval &interval,
                                                                 std::vector<double> *times) const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->GetBlendShapeWeightTimeSamples(interval, times);
   }
   return false;
@@ -161,8 +152,7 @@ bool UsdSkelAnimQuery::GetBlendShapeWeightTimeSamplesInInterval(const GfInterval
 
 bool UsdSkelAnimQuery::BlendShapeWeightsMightBeTimeVarying() const
 {
-  if (TF_VERIFY(IsValid(), "invalid anim query."))
-  {
+  if (TF_VERIFY(IsValid(), "invalid anim query.")) {
     return _impl->BlendShapeWeightsMightBeTimeVarying();
   }
   return false;
@@ -170,8 +160,7 @@ bool UsdSkelAnimQuery::BlendShapeWeightsMightBeTimeVarying() const
 
 std::string UsdSkelAnimQuery::GetDescription() const
 {
-  if (_impl)
-  {
+  if (_impl) {
     return TfStringPrintf("UsdSkelAnimQuery <%s>", _impl->GetPrim().GetPath().GetText());
   }
   return "invalid UsdSkelAnimQuery";

@@ -37,7 +37,9 @@ void wrapUsdEditTarget()
 {
   class_<UsdEditTarget>("EditTarget")
     .def(init<SdfLayerHandle, optional<PcpNodeRef>>((arg("layer"), arg("node"))))
-    .def("ForLocalDirectVariant", &UsdEditTarget::ForLocalDirectVariant, (arg("layer"), arg("varSelPath")))
+    .def("ForLocalDirectVariant",
+         &UsdEditTarget::ForLocalDirectVariant,
+         (arg("layer"), arg("varSelPath")))
     .staticmethod("ForLocalDirectVariant")
     .def(self == self)
     .def(self != self)
@@ -47,7 +49,9 @@ void wrapUsdEditTarget()
     .def("GetMapFunction", &UsdEditTarget::GetMapFunction, return_value_policy<return_by_value>())
     .def("MapToSpecPath", &UsdEditTarget::MapToSpecPath, arg("scenePath"))
     .def("GetPrimSpecForScenePath", &UsdEditTarget::GetPrimSpecForScenePath, arg("scenePath"))
-    .def("GetPropertySpecForScenePath", &UsdEditTarget::GetPropertySpecForScenePath, arg("scenePath"))
+    .def("GetPropertySpecForScenePath",
+         &UsdEditTarget::GetPropertySpecForScenePath,
+         arg("scenePath"))
     .def("GetSpecForScenePath", &UsdEditTarget::GetPrimSpecForScenePath, arg("scenePath"))
     .def("ComposeOver", &UsdEditTarget::ComposeOver, arg("weaker"));
 

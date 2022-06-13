@@ -9,8 +9,7 @@ namespace Zep
   {
     double golden_ratio_conjugate = 0.618033988749895;
     double h = .85f;
-    for (int i = 0; i < (int)ThemeColor::UniqueColorLast; i++)
-    {
+    for (int i = 0; i < (int)ThemeColor::UniqueColorLast; i++) {
       h += golden_ratio_conjugate;
       h = std::fmod(h, 1.0);
       m_uniqueColors.emplace_back(HSVToRGB(float(h) * 360.0f, 0.6f, 200.0f));
@@ -21,8 +20,7 @@ namespace Zep
   void ZepTheme::SetThemeType(ThemeType type)
   {
     m_currentTheme = type;
-    switch (type)
-    {
+    switch (type) {
       default:
       case ThemeType::Dark:
         SetDarkTheme();
@@ -51,7 +49,10 @@ namespace Zep
                                                  NVec4f(.02f, .02f, .02f, 0.0f);
     m_colors[ThemeColor::LineNumber] = NVec4f(.13f, 1.0f, .13f, 1.0f);
     m_colors[ThemeColor::LineNumberActive] = NVec4f(.13f, 1.0f, .13f, 1.0f);
-    m_colors[ThemeColor::CursorNormal] = NVec4f(130.0f / 255.0f, 140.0f / 255.0f, 230.0f / 255.0f, 1.0f);
+    m_colors[ThemeColor::CursorNormal] = NVec4f(130.0f / 255.0f,
+                                                140.0f / 255.0f,
+                                                230.0f / 255.0f,
+                                                1.0f);
     m_colors[ThemeColor::CursorInsert] = NVec4f(1.0f, 1.0f, 1.0f, .9f);
     m_colors[ThemeColor::CursorLineBackground] = NVec4f(.25f, .25f, .25f, 1.0f);
     m_colors[ThemeColor::AirlineBackground] = NVec4f(.20f, .20f, .20f, 1.0f);
@@ -93,7 +94,10 @@ namespace Zep
                                                  NVec4f(.02f, .02f, .02f, 0.0f);
     m_colors[ThemeColor::LineNumber] = NVec4f(.13f, .4f, .13f, 1.0f);
     m_colors[ThemeColor::LineNumberActive] = NVec4f(.13f, 0.6f, .13f, 1.0f);
-    m_colors[ThemeColor::CursorNormal] = NVec4f(130.0f / 255.0f, 140.0f / 255.0f, 230.0f / 255.0f, 1.0f);
+    m_colors[ThemeColor::CursorNormal] = NVec4f(130.0f / 255.0f,
+                                                140.0f / 255.0f,
+                                                230.0f / 255.0f,
+                                                1.0f);
     m_colors[ThemeColor::CursorInsert] = NVec4f(1.0f, 1.0f, 1.0f, .9f);
     m_colors[ThemeColor::CursorLineBackground] = NVec4f(.85f, .85f, .85f, 1.0f);
     m_colors[ThemeColor::AirlineBackground] = NVec4f(.80f, .80f, .80f, 1.0f);
@@ -134,16 +138,14 @@ namespace Zep
 
   const NVec4f &ZepTheme::GetColor(ThemeColor themeColor) const
   {
-    if (themeColor >= ThemeColor::UniqueColor0)
-    {
+    if (themeColor >= ThemeColor::UniqueColor0) {
       // Return the unique color
       return m_uniqueColors[((uint32_t)themeColor - (uint32_t)ThemeColor::UniqueColor0) %
                             (uint32_t)ThemeColor::UniqueColorLast];
     }
 
     auto itr = m_colors.find(themeColor);
-    if (itr == m_colors.end())
-    {
+    if (itr == m_colors.end()) {
       static const NVec4f one(1.0f);
       return one;
     }

@@ -61,14 +61,15 @@ string TfDiagnosticBase::GetPrettyPrintString() const
 bool TfDiagnosticBase::IsFatal() const
 {
   TfEnum code = _code;
-  return (code == TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE) || (code == TF_DIAGNOSTIC_FATAL_ERROR_TYPE) ||
-         (code == TF_APPLICATION_EXIT_TYPE);
+  return (code == TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE) ||
+         (code == TF_DIAGNOSTIC_FATAL_ERROR_TYPE) || (code == TF_APPLICATION_EXIT_TYPE);
 }
 
 bool TfDiagnosticBase::IsCodingError() const
 {
   TfEnum code = _code;
-  return (code == TF_DIAGNOSTIC_CODING_ERROR_TYPE) || (code == TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE);
+  return (code == TF_DIAGNOSTIC_CODING_ERROR_TYPE) ||
+         (code == TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE);
 }
 
 WABI_NAMESPACE_END

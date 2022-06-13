@@ -51,16 +51,14 @@ void Pcp_GetArgumentsForFileFormatTarget(const std::string &identifier,
                                          const std::string &target,
                                          SdfLayer::FileFormatArguments *args)
 {
-  if (!target.empty() && !_TargetIsSpecifiedInIdentifier(identifier))
-  {
+  if (!target.empty() && !_TargetIsSpecifiedInIdentifier(identifier)) {
     (*args)[SdfFileFormatTokens->TargetArg] = target;
   }
 }
 
 SdfLayer::FileFormatArguments Pcp_GetArgumentsForFileFormatTarget(const std::string &target)
 {
-  if (target.empty())
-  {
+  if (target.empty()) {
     return {};
   }
   return {
@@ -73,8 +71,7 @@ const SdfLayer::FileFormatArguments &Pcp_GetArgumentsForFileFormatTarget(
   const SdfLayer::FileFormatArguments *defaultArgs,
   SdfLayer::FileFormatArguments *localArgs)
 {
-  if (!_TargetIsSpecifiedInIdentifier(identifier))
-  {
+  if (!_TargetIsSpecifiedInIdentifier(identifier)) {
     return *defaultArgs;
   }
 

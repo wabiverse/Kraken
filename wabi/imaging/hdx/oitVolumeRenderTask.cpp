@@ -39,20 +39,21 @@ WABI_NAMESPACE_BEGIN
 
 HdxOitVolumeRenderTask::HdxOitVolumeRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
   : HdxRenderTask(delegate, id),
-    _oitVolumeRenderPassShader(std::make_shared<HdPhRenderPassShader>(
-      HdxPackageRenderPassOitVolumeShader())),
+    _oitVolumeRenderPassShader(
+      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitVolumeShader())),
     _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
 {}
 
 HdxOitVolumeRenderTask::~HdxOitVolumeRenderTask() = default;
 
-void HdxOitVolumeRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
+void HdxOitVolumeRenderTask::_Sync(HdSceneDelegate *delegate,
+                                   HdTaskContext *ctx,
+                                   HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (_isOitEnabled)
-  {
+  if (_isOitEnabled) {
     HdxRenderTask::_Sync(delegate, ctx, dirtyBits);
   }
 }
@@ -62,20 +63,18 @@ void HdxOitVolumeRenderTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIn
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (_isOitEnabled)
-  {
+  if (_isOitEnabled) {
     HdxRenderTask::Prepare(ctx, renderIndex);
 
     // OIT buffers take up significant GPU resources. Skip if there are no
     // oit draw items (i.e. no translucent or volumetric draw items)
-    if (HdxRenderTask::_HasDrawItems())
-    {
+    if (HdxRenderTask::_HasDrawItems()) {
       HdxOitBufferAccessor(ctx).RequestOitBuffers();
     }
 
-    if (HdRenderPassStateSharedPtr const state = _GetRenderPassState(ctx))
-    {
-      _oitVolumeRenderPassShader->UpdateAovInputTextures(state->GetAovInputBindings(), renderIndex);
+    if (HdRenderPassStateSharedPtr const state = _GetRenderPassState(ctx)) {
+      _oitVolumeRenderPassShader->UpdateAovInputTextures(state->GetAovInputBindings(),
+                                                         renderIndex);
     }
   }
 }
@@ -106,8 +105,7 @@ void HdxOitVolumeRenderTask::Execute(HdTaskContext *ctx)
     return;
 
   HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get());
-  if (!TF_VERIFY(extendedState, "OIT only works with HdPh"))
-  {
+  if (!TF_VERIFY(extendedState, "OIT only works with HdPh")) {
     return;
   }
 
@@ -117,8 +115,7 @@ void HdxOitVolumeRenderTask::Execute(HdTaskContext *ctx)
   // shaders/volume.glslfx.
   renderPassState->SetCullStyle(HdCullStyleBack);
 
-  if (!oitBufferAccessor.AddOitBufferBindings(_oitVolumeRenderPassShader))
-  {
+  if (!oitBufferAccessor.AddOitBufferBindings(_oitVolumeRenderPassShader)) {
     TF_CODING_ERROR("No OIT buffers allocated but needed by OIT volume render task");
     return;
   }
@@ -158,13 +155,11 @@ void HdxOitVolumeRenderTask::Execute(HdTaskContext *ctx)
   // Post Execute Restore
   //
 
-  if (oldMSAA)
-  {
+  if (oldMSAA) {
     glEnable(GL_MULTISAMPLE);
   }
 
-  if (!oldPointSmooth)
-  {
+  if (!oldPointSmooth) {
     glDisable(GL_POINT_SMOOTH);
   }
 }

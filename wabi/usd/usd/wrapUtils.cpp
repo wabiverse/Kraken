@@ -50,7 +50,8 @@ void Usd_ObjectSubclass::_ReplaceConverter(boost::python::type_info pti,
 
   // Save boost.python's original converter for this type, and replace it with
   // the downcasting \a convert.
-  converter::registration *reg = const_cast<converter::registration *>(converter::registry::query(pti));
+  converter::registration *reg = const_cast<converter::registration *>(
+    converter::registry::query(pti));
   originalConverters[objType] = reg->m_to_python;
   reg->m_to_python = convert;
 }

@@ -27,8 +27,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class HashState>
-void TfHashAppend(HashState &h, HdBufferSource const &bs)
+template<class HashState> void TfHashAppend(HashState &h, HdBufferSource const &bs)
 {
   HdTupleType tt = bs.GetTupleType();
   h.AppendContiguous(reinterpret_cast<const char *>(bs.GetData()),
@@ -37,8 +36,7 @@ void TfHashAppend(HashState &h, HdBufferSource const &bs)
   h.Append(bs.GetName(), tt);
 }
 
-HdBufferSource::~HdBufferSource()
-{}
+HdBufferSource::~HdBufferSource() {}
 
 size_t HdBufferSource::ComputeHash() const
 {
@@ -79,8 +77,7 @@ size_t HdComputedBufferSource::ComputeHash() const
 
 TfToken const &HdComputedBufferSource::GetName() const
 {
-  if (!_result)
-  {
+  if (!_result) {
     static TfToken empty;
     return empty;
   }
@@ -89,8 +86,7 @@ TfToken const &HdComputedBufferSource::GetName() const
 
 void const *HdComputedBufferSource::GetData() const
 {
-  if (!_result)
-  {
+  if (!_result) {
     TF_CODING_ERROR(
       "HdComputedBufferSource::GetData() called without "
       "setting the result.");
@@ -101,8 +97,7 @@ void const *HdComputedBufferSource::GetData() const
 
 HdTupleType HdComputedBufferSource::GetTupleType() const
 {
-  if (!_result)
-  {
+  if (!_result) {
     TF_CODING_ERROR(
       "HdComputedBufferSource::GetTupleType() called "
       "without setting the result.");

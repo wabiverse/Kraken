@@ -43,17 +43,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateTangentsAttr(UsdGeomHermiteCurves &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateTangentsAttr(UsdGeomHermiteCurves &self,
+                                          object defaultVal,
+                                          bool writeSparsely)
   {
-    return self.CreateTangentsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                   writeSparsely);
+    return self.CreateTangentsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdGeomHermiteCurves &self)
@@ -86,7 +87,9 @@ void wrapUsdGeomHermiteCurves()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -123,7 +126,8 @@ void wrapUsdGeomHermiteCurves()
 namespace
 {
 
-  static std::string _PointAndTangentsRepr(const UsdGeomHermiteCurves::PointAndTangentArrays &arrays)
+  static std::string _PointAndTangentsRepr(
+    const UsdGeomHermiteCurves::PointAndTangentArrays &arrays)
   {
     return TfStringPrintf("UsdGeom.HermiteCurves(%s, %s)",
                           TfPyRepr(arrays.GetPoints()).c_str(),

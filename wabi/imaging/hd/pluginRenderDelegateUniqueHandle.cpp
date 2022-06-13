@@ -37,8 +37,7 @@ HdPluginRenderDelegateUniqueHandle::HdPluginRenderDelegateUniqueHandle(
 
 HdPluginRenderDelegateUniqueHandle::~HdPluginRenderDelegateUniqueHandle()
 {
-  if (_delegate)
-  {
+  if (_delegate) {
     _plugin->DeleteRenderDelegate(_delegate);
   }
 }
@@ -46,8 +45,7 @@ HdPluginRenderDelegateUniqueHandle::~HdPluginRenderDelegateUniqueHandle()
 HdPluginRenderDelegateUniqueHandle &HdPluginRenderDelegateUniqueHandle::operator=(
   HdPluginRenderDelegateUniqueHandle &&other)
 {
-  if (_delegate)
-  {
+  if (_delegate) {
     _plugin->DeleteRenderDelegate(_delegate);
   }
   _plugin = other._plugin;
@@ -57,10 +55,10 @@ HdPluginRenderDelegateUniqueHandle &HdPluginRenderDelegateUniqueHandle::operator
   return *this;
 }
 
-HdPluginRenderDelegateUniqueHandle &HdPluginRenderDelegateUniqueHandle::operator=(const std::nullptr_t &)
+HdPluginRenderDelegateUniqueHandle &HdPluginRenderDelegateUniqueHandle::operator=(
+  const std::nullptr_t &)
 {
-  if (_delegate)
-  {
+  if (_delegate) {
     _plugin->DeleteRenderDelegate(_delegate);
     _delegate = nullptr;
   }
@@ -71,8 +69,7 @@ HdPluginRenderDelegateUniqueHandle &HdPluginRenderDelegateUniqueHandle::operator
 
 TfToken HdPluginRenderDelegateUniqueHandle::GetPluginId() const
 {
-  if (_plugin)
-  {
+  if (_plugin) {
     return _plugin->GetPluginId();
   }
 

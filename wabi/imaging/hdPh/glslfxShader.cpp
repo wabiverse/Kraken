@@ -36,15 +36,13 @@ HdPhGLSLFXShader::HdPhGLSLFXShader(HioGlslfxSharedPtr const &glslfx)
   _SetSource(HdShaderTokens->geometryShader, _glslfx->GetDisplacementSource());
 }
 
-HdPhGLSLFXShader::~HdPhGLSLFXShader()
-{}
+HdPhGLSLFXShader::~HdPhGLSLFXShader() {}
 
 void HdPhGLSLFXShader::Reload()
 {
   HioGlslfxSharedPtr newGlslFx = std::make_shared<HioGlslfx>(_glslfx->GetFilePath());
 
-  if (newGlslFx->IsValid())
-  {
+  if (newGlslFx->IsValid()) {
     _glslfx = newGlslFx;
 
     _SetSource(HdShaderTokens->fragmentShader, _glslfx->GetSurfaceSource());

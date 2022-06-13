@@ -53,40 +53,35 @@ bool UsdUtilsCopyLayerMetadata(const SdfLayerHandle &source,
   std::vector<TfToken> infoKeys = sourcePseudo->ListInfoKeys();
   std::vector<TfToken>::iterator last = infoKeys.end();
 
-  if (skipSublayers)
-  {
+  if (skipSublayers) {
     last = std::remove_if(infoKeys.begin(), last, [](TfToken key) {
       return (key == SdfFieldKeys->SubLayers || key == SdfFieldKeys->SubLayerOffsets);
     });
   }
 
-  for (auto key = infoKeys.begin(); key != last; ++key)
-  {
+  for (auto key = infoKeys.begin(); key != last; ++key) {
     destPseudo->SetInfo(*key, sourcePseudo->GetInfo(*key));
   }
 
-  if (bakeUnauthoredFallbacks)
-  {
+  if (bakeUnauthoredFallbacks) {
     bool bakeColorConfiguration = std::find(infoKeys.begin(),
                                             infoKeys.end(),
                                             SdfFieldKeys->ColorConfiguration) == infoKeys.end();
     bool bakeColorManagementSystem = std::find(infoKeys.begin(),
                                                infoKeys.end(),
-                                               SdfFieldKeys->ColorManagementSystem) == infoKeys.end();
+                                               SdfFieldKeys->ColorManagementSystem) ==
+                                     infoKeys.end();
 
-    if (bakeColorConfiguration || bakeColorManagementSystem)
-    {
+    if (bakeColorConfiguration || bakeColorManagementSystem) {
       SdfAssetPath fallbackColorConfig;
       TfToken fallbackCms;
 
       UsdStage::GetColorConfigFallbacks(&fallbackColorConfig, &fallbackCms);
 
-      if (bakeColorConfiguration && !fallbackColorConfig.GetAssetPath().empty())
-      {
+      if (bakeColorConfiguration && !fallbackColorConfig.GetAssetPath().empty()) {
         destPseudo->SetInfo(SdfFieldKeys->ColorConfiguration, VtValue(fallbackColorConfig));
       }
-      if (bakeColorManagementSystem && !fallbackCms.IsEmpty())
-      {
+      if (bakeColorManagementSystem && !fallbackCms.IsEmpty()) {
         destPseudo->SetInfo(SdfFieldKeys->ColorManagementSystem, VtValue(fallbackCms));
       }
     }
@@ -97,37 +92,34 @@ bool UsdUtilsCopyLayerMetadata(const SdfLayerHandle &source,
 
 // Helper method for determining the set of paths to exclude below the common
 // ancestor, in order to include just includedRootPaths (and their ancestors).
-static SdfPathVector _GetPathsToExcludeBelowCommonAncestor(const UsdUtilsPathHashSet &includedRootPaths,
-                                                           const UsdPrim &commonAncestor,
-                                                           const UsdUtilsPathHashSet &pathsToIgnore)
+static SdfPathVector _GetPathsToExcludeBelowCommonAncestor(
+  const UsdUtilsPathHashSet &includedRootPaths,
+  const UsdPrim &commonAncestor,
+  const UsdUtilsPathHashSet &pathsToIgnore)
 {
   SdfPathSet pathsToExclude;
 
   // Travere beneath the common prefix to find all the paths that don't
   // belong to the collection.
-  UsdPrimRange commonAncestorRange(commonAncestor, UsdTraverseInstanceProxies(UsdPrimAllPrimsPredicate));
-  for (auto primIt = commonAncestorRange.begin(); primIt != commonAncestorRange.end(); ++primIt)
-  {
+  UsdPrimRange commonAncestorRange(commonAncestor,
+                                   UsdTraverseInstanceProxies(UsdPrimAllPrimsPredicate));
+  for (auto primIt = commonAncestorRange.begin(); primIt != commonAncestorRange.end(); ++primIt) {
     SdfPath primPath = primIt->GetPath();
 
-    if (pathsToIgnore.count(primPath))
-    {
+    if (pathsToIgnore.count(primPath)) {
       continue;
     }
 
-    if (includedRootPaths.count(primPath) > 0)
-    {
+    if (includedRootPaths.count(primPath) > 0) {
       // If we find a path that's included in the collection, we must
       // remove all the ancestor paths of the path from pathsToExclude.
       SdfPath parentPath = primPath;
-      while (parentPath != commonAncestor.GetPath())
-      {
+      while (parentPath != commonAncestor.GetPath()) {
         parentPath = parentPath.GetParentPath();
         pathsToExclude.erase(parentPath);
       }
       primIt.PruneChildren();
-    } else
-    {
+    } else {
       pathsToExclude.insert(primPath);
     }
   }
@@ -157,9 +149,8 @@ static bool _ComputePathsToIncludeAndExclude(const UsdUtilsPathHashSet &included
 
   // Find the minimal set of paths that must be excluded, if we were
   // to include all of the subtree rooted at commonPrefix.
-  SdfPathVector pathsToExcludeBelowCommonAncestor = _GetPathsToExcludeBelowCommonAncestor(includedRootPaths,
-                                                                                          commonAncestor,
-                                                                                          pathsToIgnore);
+  SdfPathVector pathsToExcludeBelowCommonAncestor =
+    _GetPathsToExcludeBelowCommonAncestor(includedRootPaths, commonAncestor, pathsToIgnore);
 
   SdfPath commonAncestorParentPath = commonAncestor.GetPath().GetParentPath();
 
@@ -168,11 +159,9 @@ static bool _ComputePathsToIncludeAndExclude(const UsdUtilsPathHashSet &included
   // included.
   using AncestorPathToExcludedPathsMap = std::map<SdfPath, SdfPathVector>;
   AncestorPathToExcludedPathsMap excludedPathsMap;
-  for (const SdfPath &pathToExclude : pathsToExcludeBelowCommonAncestor)
-  {
+  for (const SdfPath &pathToExclude : pathsToExcludeBelowCommonAncestor) {
     SdfPath parentPath = pathToExclude;
-    while (parentPath != commonAncestorParentPath)
-    {
+    while (parentPath != commonAncestorParentPath) {
       excludedPathsMap[parentPath].push_back(pathToExclude);
       parentPath = parentPath.GetParentPath();
     }
@@ -182,11 +171,9 @@ static bool _ComputePathsToIncludeAndExclude(const UsdUtilsPathHashSet &included
   // compute the number of included paths.
   using AncestorPathToNumIncludesMap = std::map<SdfPath, size_t>;
   AncestorPathToNumIncludesMap numIncludedPathsMap;
-  for (const SdfPath &includedRootPath : includedRootPaths)
-  {
+  for (const SdfPath &includedRootPath : includedRootPaths) {
     SdfPath parentPath = includedRootPath;
-    while (parentPath != commonAncestorParentPath)
-    {
+    while (parentPath != commonAncestorParentPath) {
       ++numIncludedPathsMap[parentPath];
       parentPath = parentPath.GetParentPath();
     }
@@ -194,38 +181,35 @@ static bool _ComputePathsToIncludeAndExclude(const UsdUtilsPathHashSet &included
 
   // We have all the information needed to compute the optimal set of
   // included paths and excluded paths.
-  UsdPrimRange commonAncestorRange(commonAncestor, UsdTraverseInstanceProxies(UsdPrimAllPrimsPredicate));
-  for (auto primIt = commonAncestorRange.begin(); primIt != commonAncestorRange.end(); ++primIt)
-  {
+  UsdPrimRange commonAncestorRange(commonAncestor,
+                                   UsdTraverseInstanceProxies(UsdPrimAllPrimsPredicate));
+  for (auto primIt = commonAncestorRange.begin(); primIt != commonAncestorRange.end(); ++primIt) {
     const UsdPrim &p = *primIt;
 
-    if (pathsToIgnore.count(p.GetPath()))
-    {
+    if (pathsToIgnore.count(p.GetPath())) {
       continue;
     }
 
     const auto inclMapIt = numIncludedPathsMap.find(p.GetPath());
     size_t inclPathCount = (inclMapIt != numIncludedPathsMap.end()) ? inclMapIt->second : 0;
 
-    if (inclPathCount > 0)
-    {
+    if (inclPathCount > 0) {
       const auto exclMapIt = excludedPathsMap.find(p.GetPath());
       size_t exclPathCount = (exclMapIt != excludedPathsMap.end()) ? exclMapIt->second.size() : 0;
 
       double inclusionRatio = static_cast<double>(inclPathCount) / (inclPathCount + exclPathCount);
-      if (inclusionRatio >= minInclusionRatio && exclPathCount <= maxNumExcludesBelowInclude)
-      {
+      if (inclusionRatio >= minInclusionRatio && exclPathCount <= maxNumExcludesBelowInclude) {
         pathsToInclude->push_back(p.GetPath());
-        if (exclPathCount > 0)
-        {
+        if (exclPathCount > 0) {
           const SdfPathVector &excludedPaths = excludedPathsMap[p.GetPath()];
-          pathsToExclude->insert(pathsToExclude->end(), excludedPaths.begin(), excludedPaths.end());
+          pathsToExclude->insert(pathsToExclude->end(),
+                                 excludedPaths.begin(),
+                                 excludedPaths.end());
         }
         // Prune the subtree once an ancestor path has been included.
         primIt.PruneChildren();
       }
-    } else
-    {
+    } else {
       // Prune subtrees that don't have any included paths.
       primIt.PruneChildren();
     }
@@ -248,8 +232,7 @@ bool UsdUtilsComputeCollectionIncludesAndExcludes(
   pathsToInclude->clear();
   pathsToExclude->clear();
 
-  if (minInclusionRatio <= 0 || minInclusionRatio > 1)
-  {
+  if (minInclusionRatio <= 0 || minInclusionRatio > 1) {
     TF_CODING_ERROR(
       "Invalid minInclusionRatio value: %f. Clamping value "
       "to range (0, 1).",
@@ -257,8 +240,7 @@ bool UsdUtilsComputeCollectionIncludesAndExcludes(
     minInclusionRatio = GfClamp(minInclusionRatio, 0, 1.0);
   }
 
-  if (includedRootPaths.empty())
-  {
+  if (includedRootPaths.empty()) {
     return true;
   }
 
@@ -266,9 +248,10 @@ bool UsdUtilsComputeCollectionIncludesAndExcludes(
   // minIncludeExcludeCollectionSize), then create an includes-only
   // collection. If not, attempt to come up with a compact representation
   // for the collection with both included and excluded paths.
-  if (includedRootPaths.size() < minIncludeExcludeCollectionSize)
-  {
-    pathsToInclude->insert(pathsToInclude->end(), includedRootPaths.begin(), includedRootPaths.end());
+  if (includedRootPaths.size() < minIncludeExcludeCollectionSize) {
+    pathsToInclude->insert(pathsToInclude->end(),
+                           includedRootPaths.begin(),
+                           includedRootPaths.end());
     return true;
   }
 
@@ -297,14 +280,12 @@ bool UsdUtilsComputeCollectionIncludesAndExcludes(
 
   // Find the common prefix of all included paths in this collection.
   SdfPath commonPrefix = *includedRootPaths.begin();
-  for (const auto &p : includedRootPaths)
-  {
+  for (const auto &p : includedRootPaths) {
     commonPrefix = commonPrefix.GetCommonPrefix(p);
   }
 
   UsdPrim commonAncestor = usdStage->GetPrimAtPath(commonPrefix);
-  if (!commonAncestor)
-  {
+  if (!commonAncestor) {
     TF_CODING_ERROR("Could not get the prim at common-prefix path <%s>.", commonPrefix.GetText());
     return false;
   }
@@ -313,8 +294,7 @@ bool UsdUtilsComputeCollectionIncludesAndExcludes(
   // as we could (and in many cases will) be doing a lot of
   // lookups in this set.
   UsdUtilsPathHashSet includedRootPathsHashSet;
-  for (const auto &p : includedRootPaths)
-  {
+  for (const auto &p : includedRootPaths) {
     includedRootPathsHashSet.insert(p);
   }
 
@@ -337,8 +317,7 @@ UsdCollectionAPI UsdUtilsAuthorCollection(const TfToken &collectionName,
   UsdRelationship includesRel = collection.CreateIncludesRel();
   includesRel.SetTargets(pathsToInclude);
 
-  if (!pathsToExclude.empty())
-  {
+  if (!pathsToExclude.empty()) {
     UsdRelationship excludesRel = collection.CreateExcludesRel();
     excludesRel.SetTargets(pathsToExclude);
   }
@@ -355,13 +334,11 @@ std::vector<UsdCollectionAPI> UsdUtilsCreateCollections(
 {
   std::vector<UsdCollectionAPI> result;
 
-  if (assignments.empty())
-  {
+  if (assignments.empty()) {
     return result;
   }
 
-  if (minInclusionRatio <= 0 || minInclusionRatio > 1)
-  {
+  if (minInclusionRatio <= 0 || minInclusionRatio > 1) {
     TF_CODING_ERROR(
       "Invalid minInclusionRatio value: %f. Clamping value "
       "to range (0, 1).",
@@ -377,8 +354,7 @@ std::vector<UsdCollectionAPI> UsdUtilsCreateCollections(
     std::make_pair(SdfPathVector(), SdfPathVector()));
 
   WorkParallelForN(assignments.size(), [&](size_t start, size_t end) {
-    for (size_t i = start; i < end; ++i)
-    {
+    for (size_t i = start; i < end; ++i) {
       const SdfPathSet &includedRootPaths = assignments[i].second;
       SdfPathVector &pathsToInclude = collectionIncludesAndExcludes[i].first;
       SdfPathVector &pathsToExclude = collectionIncludesAndExcludes[i].second;
@@ -395,8 +371,7 @@ std::vector<UsdCollectionAPI> UsdUtilsCreateCollections(
 
   // Do the authoring of the collections serially since we can't write from
   // multiple threads in parallel.
-  for (size_t i = 0; i < assignments.size(); ++i)
-  {
+  for (size_t i = 0; i < assignments.size(); ++i) {
     const TfToken &collectionName = assignments[i].first;
     const auto &includesAndExcludes = collectionIncludesAndExcludes[i];
 
@@ -415,9 +390,11 @@ USDUTILS_API
 SdfLayerHandleVector UsdUtilsGetDirtyLayers(UsdStagePtr stage, bool includeClipLayers)
 {
   SdfLayerHandleVector usedLayers = stage->GetUsedLayers(includeClipLayers);
-  auto newEnd = std::remove_if(usedLayers.begin(), usedLayers.end(), [](const SdfLayerHandle &layer) {
-    return !layer->IsDirty();
-  });
+  auto newEnd = std::remove_if(usedLayers.begin(),
+                               usedLayers.end(),
+                               [](const SdfLayerHandle &layer) {
+                                 return !layer->IsDirty();
+                               });
   usedLayers.erase(newEnd, usedLayers.end());
   return usedLayers;
 }

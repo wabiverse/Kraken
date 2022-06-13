@@ -51,13 +51,13 @@ TraceReporterDataSourceCollector::TraceReporterDataSourceCollector(std::function
   TfNotice::Register(ThisPtr(this), &This::_OnTraceCollection);
 }
 
-std::vector<TraceReporterDataSourceBase::CollectionPtr> TraceReporterDataSourceCollector::ConsumeData()
+std::vector<TraceReporterDataSourceBase::CollectionPtr> TraceReporterDataSourceCollector::
+  ConsumeData()
 {
   TraceCollector::GetInstance().CreateCollection();
   std::vector<CollectionPtr> collections;
   std::shared_ptr<TraceCollection> collection;
-  while (_pendingCollections.try_pop(collection))
-  {
+  while (_pendingCollections.try_pop(collection)) {
     collections.emplace_back(std::move(collection));
   }
   return collections;
@@ -70,8 +70,7 @@ void TraceReporterDataSourceCollector::Clear()
 
 void TraceReporterDataSourceCollector::_OnTraceCollection(const TraceCollectionAvailable &notice)
 {
-  if (_accept())
-  {
+  if (_accept()) {
     _pendingCollections.push(notice.GetCollection());
   }
 }

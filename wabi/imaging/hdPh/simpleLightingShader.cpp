@@ -102,8 +102,7 @@ std::string HdPhSimpleLightingShader::GetSource(TfToken const &shaderStageKey) c
   defineStream << "#define NUM_LIGHTS " << numLights << "\n";
   defineStream << "#define USE_SHADOWS " << (int)(useShadows) << "\n";
   defineStream << "#define NUM_SHADOWS " << numShadows << "\n";
-  if (useShadows)
-  {
+  if (useShadows) {
     const bool useBindlessShadowMaps = GlfSimpleShadowArray::GetBindlessShadowMapsEnabled();
     ;
     defineStream << "#define USE_BINDLESS_SHADOW_TEXTURES " << int(useBindlessShadowMaps) << "\n";
@@ -111,8 +110,7 @@ std::string HdPhSimpleLightingShader::GetSource(TfToken const &shaderStageKey) c
 
   const std::string postSurfaceShader = _lightingContext->ComputeShaderSource(shaderStageKey);
 
-  if (!postSurfaceShader.empty())
-  {
+  if (!postSurfaceShader.empty()) {
     defineStream << "#define HD_HAS_postSurfaceShader\n";
   }
 
@@ -128,10 +126,8 @@ void HdPhSimpleLightingShader::SetCamera(GfMatrix4d const &worldToViewMatrix,
 
 static bool _HasDomeLight(GlfSimpleLightingContextRefPtr const &ctx)
 {
-  for (auto const &light : ctx->GetLights())
-  {
-    if (light.IsDomeLight())
-    {
+  for (auto const &light : ctx->GetLights()) {
+    if (light.IsDomeLight()) {
       return true;
     }
   }
@@ -178,8 +174,7 @@ void HdPhSimpleLightingShader::AddBindings(HdBindingRequestVector *customBinding
   // a domeLight (ignoring RectLights, and multiple domeLights)
 
   _lightTextureParams.clear();
-  if (_HasDomeLight(_lightingContext))
-  {
+  if (_HasDomeLight(_lightingContext)) {
     // irradiance map
     _lightTextureParams.push_back(HdPh_MaterialParam(HdPh_MaterialParam::ParamTypeTexture,
                                                      _tokens->domeLightIrradiance,
@@ -213,16 +208,14 @@ void HdPhSimpleLightingShader::SetLightingStateFromOpenGL()
 
 void HdPhSimpleLightingShader::SetLightingState(GlfSimpleLightingContextPtr const &src)
 {
-  if (src)
-  {
+  if (src) {
     _useLighting = true;
     _lightingContext->SetUseLighting(!src->GetLights().empty());
     _lightingContext->SetLights(src->GetLights());
     _lightingContext->SetMaterial(src->GetMaterial());
     _lightingContext->SetSceneAmbient(src->GetSceneAmbient());
     _lightingContext->SetShadows(src->GetShadows());
-  } else
-  {
+  } else {
     // XXX:
     // if src is null, turn off lights (this is temporary used for shadowmap drawing).
     // see GprimUsdBaseIcBatch::Draw()
@@ -230,32 +223,29 @@ void HdPhSimpleLightingShader::SetLightingState(GlfSimpleLightingContextPtr cons
   }
 }
 
-static const std::string &_GetResolvedDomeLightEnvironmentFilePath(const GlfSimpleLightingContextRefPtr &ctx)
+static const std::string &_GetResolvedDomeLightEnvironmentFilePath(
+  const GlfSimpleLightingContextRefPtr &ctx)
 {
   static const std::string empty;
 
-  if (!ctx)
-  {
+  if (!ctx) {
     return empty;
   }
 
   const GlfSimpleLightVector &lights = ctx->GetLights();
-  for (auto it = lights.rbegin(); it != lights.rend(); ++it)
-  {
-    if (it->IsDomeLight())
-    {
+  for (auto it = lights.rbegin(); it != lights.rend(); ++it) {
+    if (it->IsDomeLight()) {
       const SdfAssetPath &path = it->GetDomeLightTextureFile();
       const std::string &assetPath = path.GetAssetPath();
-      if (assetPath.empty())
-      {
+      if (assetPath.empty()) {
         TF_WARN("Dome light has no texture asset path.");
         return empty;
       }
 
       const std::string &resolvedPath = path.GetResolvedPath();
-      if (resolvedPath.empty())
-      {
-        TF_WARN("Texture asset path '%s' for dome light could not be resolved.", assetPath.c_str());
+      if (resolvedPath.empty()) {
+        TF_WARN("Texture asset path '%s' for dome light could not be resolved.",
+                assetPath.c_str());
       }
       return resolvedPath;
     }
@@ -264,12 +254,11 @@ static const std::string &_GetResolvedDomeLightEnvironmentFilePath(const GlfSimp
   return empty;
 }
 
-const HdPhTextureHandleSharedPtr &HdPhSimpleLightingShader::GetTextureHandle(const TfToken &name) const
+const HdPhTextureHandleSharedPtr &HdPhSimpleLightingShader::GetTextureHandle(
+  const TfToken &name) const
 {
-  for (auto const &namedTextureHandle : _namedTextureHandles)
-  {
-    if (namedTextureHandle.name == name)
-    {
+  for (auto const &namedTextureHandle : _namedTextureHandles) {
+    if (namedTextureHandle.name == name) {
       return namedTextureHandle.handle;
     }
   }
@@ -291,7 +280,11 @@ static HdPhShaderCode::NamedTextureHandle _MakeNamedTextureHandle(
   const HdPhTextureIdentifier textureId(TfToken(texturePath + "[" + name.GetString() + "]"),
                                         std::make_unique<HdPhDynamicUvSubtextureIdentifier>());
 
-  const HdSamplerParameters samplerParameters{wrapModeS, wrapModeT, wrapModeR, minFilter, HdMagFilterLinear};
+  const HdSamplerParameters samplerParameters{wrapModeS,
+                                              wrapModeT,
+                                              wrapModeR,
+                                              minFilter,
+                                              HdMagFilterLinear};
 
   HdPhTextureHandleSharedPtr const textureHandle = resourceRegistry->AllocateTextureHandle(
     textureId,
@@ -307,19 +300,17 @@ static HdPhShaderCode::NamedTextureHandle _MakeNamedTextureHandle(
 void HdPhSimpleLightingShader::AllocateTextureHandles(HdSceneDelegate *const delegate)
 {
   const std::string &resolvedPath = _GetResolvedDomeLightEnvironmentFilePath(_lightingContext);
-  if (resolvedPath.empty())
-  {
+  if (resolvedPath.empty()) {
     _domeLightEnvironmentTextureHandle = nullptr;
     _namedTextureHandles.clear();
     return;
   }
 
-  if (_domeLightEnvironmentTextureHandle)
-  {
-    HdPhTextureObjectSharedPtr const &textureObject = _domeLightEnvironmentTextureHandle->GetTextureObject();
+  if (_domeLightEnvironmentTextureHandle) {
+    HdPhTextureObjectSharedPtr const &textureObject =
+      _domeLightEnvironmentTextureHandle->GetTextureObject();
     HdPhTextureIdentifier const &textureId = textureObject->GetTextureIdentifier();
-    if (textureId.GetFilePath() == resolvedPath)
-    {
+    if (textureId.GetFilePath() == resolvedPath) {
       // Same environment map, no need to recompute
       // dome light textures.
       return;
@@ -328,8 +319,7 @@ void HdPhSimpleLightingShader::AllocateTextureHandles(HdSceneDelegate *const del
 
   HdPhResourceRegistry *const resourceRegistry = dynamic_cast<HdPhResourceRegistry *>(
     delegate->GetRenderIndex().GetResourceRegistry().get());
-  if (!TF_VERIFY(resourceRegistry))
-  {
+  if (!TF_VERIFY(resourceRegistry)) {
     return;
   }
 
@@ -383,15 +373,15 @@ void HdPhSimpleLightingShader::AllocateTextureHandles(HdSceneDelegate *const del
 
 void HdPhSimpleLightingShader::AddResourcesFromTextures(ResourceContext &ctx) const
 {
-  if (!_domeLightEnvironmentTextureHandle)
-  {
+  if (!_domeLightEnvironmentTextureHandle) {
     // No dome lights, bail.
     return;
   }
 
   // Non-const weak pointer of this
-  HdPhSimpleLightingShaderPtr const thisShader = std::dynamic_pointer_cast<HdPhSimpleLightingShader>(
-    std::const_pointer_cast<HdPhShaderCode, const HdPhShaderCode>(shared_from_this()));
+  HdPhSimpleLightingShaderPtr const thisShader =
+    std::dynamic_pointer_cast<HdPhSimpleLightingShader>(
+      std::const_pointer_cast<HdPhShaderCode, const HdPhShaderCode>(shared_from_this()));
 
   // Irriadiance map computations.
   ctx.AddComputation(
@@ -404,13 +394,11 @@ void HdPhSimpleLightingShader::AddResourcesFromTextures(ResourceContext &ctx) co
   // original Environment Map (srcTextureObject)
   const HdPhUvTextureObject *const srcTextureObject = dynamic_cast<HdPhUvTextureObject *>(
     _domeLightEnvironmentTextureHandle->GetTextureObject().get());
-  if (!TF_VERIFY(srcTextureObject))
-  {
+  if (!TF_VERIFY(srcTextureObject)) {
     return;
   }
   const HgiTexture *const srcTexture = srcTextureObject->GetTexture().Get();
-  if (!srcTexture)
-  {
+  if (!srcTexture) {
     TF_WARN("Invalid texture for dome light environment map at %s",
             srcTextureObject->GetTextureIdentifier().GetFilePath().GetText());
     return;
@@ -420,8 +408,7 @@ void HdPhSimpleLightingShader::AddResourcesFromTextures(ResourceContext &ctx) co
   const unsigned int numPrefilterLevels = (unsigned int)std::log2(std::max(srcDim[0], srcDim[1]));
 
   // Prefilter map computations. mipLevel = 0 allocates texture.
-  for (unsigned int mipLevel = 0; mipLevel < numPrefilterLevels; ++mipLevel)
-  {
+  for (unsigned int mipLevel = 0; mipLevel < numPrefilterLevels; ++mipLevel) {
     const float roughness = (float)mipLevel / (float)(numPrefilterLevels - 1);
 
     ctx.AddComputation(nullptr,
@@ -434,12 +421,14 @@ void HdPhSimpleLightingShader::AddResourcesFromTextures(ResourceContext &ctx) co
   }
 
   // Brdf map computation
-  ctx.AddComputation(nullptr,
-                     std::make_shared<HdPh_DomeLightComputationGPU>(_tokens->domeLightBRDF, thisShader),
-                     HdPhComputeQueueZero);
+  ctx.AddComputation(
+    nullptr,
+    std::make_shared<HdPh_DomeLightComputationGPU>(_tokens->domeLightBRDF, thisShader),
+    HdPhComputeQueueZero);
 }
 
-HdPhShaderCode::NamedTextureHandleVector const &HdPhSimpleLightingShader::GetNamedTextureHandles() const
+HdPhShaderCode::NamedTextureHandleVector const &HdPhSimpleLightingShader::GetNamedTextureHandles()
+  const
 {
   return _namedTextureHandles;
 }

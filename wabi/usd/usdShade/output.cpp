@@ -42,9 +42,7 @@ using std::vector;
 
 TF_DEFINE_PRIVATE_TOKENS(_tokens, (renderType));
 
-UsdShadeOutput::UsdShadeOutput(const UsdAttribute &attr)
-  : _attr(attr)
-{}
+UsdShadeOutput::UsdShadeOutput(const UsdAttribute &attr) : _attr(attr) {}
 
 TfToken UsdShadeOutput::GetBaseName() const
 {
@@ -66,16 +64,14 @@ UsdShadeOutput::UsdShadeOutput(UsdPrim prim, TfToken const &name, SdfValueTypeNa
   // XXX what do we do if the type name doesn't match and it exists already?
   TfToken attrName = _GetOutputAttrName(name);
   _attr = prim.GetAttribute(attrName);
-  if (!_attr)
-  {
+  if (!_attr) {
     _attr = prim.CreateAttribute(attrName, typeName, /* custom = */ false);
   }
 }
 
 bool UsdShadeOutput::Set(const VtValue &value, UsdTimeCode time) const
 {
-  if (UsdAttribute attr = GetAttr())
-  {
+  if (UsdAttribute attr = GetAttr()) {
     return attr.Set(value, time);
   }
   return false;
@@ -103,10 +99,8 @@ NdrTokenMap UsdShadeOutput::GetSdrMetadata() const
   NdrTokenMap result;
 
   VtDictionary sdrMetadata;
-  if (GetAttr().GetMetadata(UsdShadeTokens->sdrMetadata, &sdrMetadata))
-  {
-    for (const auto &it : sdrMetadata)
-    {
+  if (GetAttr().GetMetadata(UsdShadeTokens->sdrMetadata, &sdrMetadata)) {
+    for (const auto &it : sdrMetadata) {
       result[TfToken(it.first)] = TfStringify(it.second);
     }
   }
@@ -123,8 +117,7 @@ std::string UsdShadeOutput::GetSdrMetadataByKey(const TfToken &key) const
 
 void UsdShadeOutput::SetSdrMetadata(const NdrTokenMap &sdrMetadata) const
 {
-  for (auto &i : sdrMetadata)
-  {
+  for (auto &i : sdrMetadata) {
     SetSdrMetadataByKey(i.first, i.second);
   }
 }
@@ -204,12 +197,14 @@ bool UsdShadeOutput::ConnectToSource(UsdShadeOutput const &sourceOutput) const
   return UsdShadeConnectableAPI::ConnectToSource(*this, sourceOutput);
 }
 
-bool UsdShadeOutput::SetConnectedSources(std::vector<UsdShadeConnectionSourceInfo> const &sourceInfos) const
+bool UsdShadeOutput::SetConnectedSources(
+  std::vector<UsdShadeConnectionSourceInfo> const &sourceInfos) const
 {
   return UsdShadeConnectableAPI::SetConnectedSources(*this, sourceInfos);
 }
 
-UsdShadeOutput::SourceInfoVector UsdShadeOutput::GetConnectedSources(SdfPathVector *invalidSourcePaths) const
+UsdShadeOutput::SourceInfoVector UsdShadeOutput::GetConnectedSources(
+  SdfPathVector *invalidSourcePaths) const
 {
   return UsdShadeConnectableAPI::GetConnectedSources(*this, invalidSourcePaths);
 }

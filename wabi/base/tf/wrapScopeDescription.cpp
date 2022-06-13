@@ -61,17 +61,14 @@ namespace
     // disallowed.
     struct _Holder
     {
-      explicit _Holder(string const &description)
-        : _scopeDescription(description)
-      {}
+      explicit _Holder(string const &description) : _scopeDescription(description) {}
       TfScopeDescription _scopeDescription;
     };
 
    public:
+
     // Construct with a description string.
-    Tf_PyScopeDescription(string const &description)
-      : _description(description)
-    {}
+    Tf_PyScopeDescription(string const &description) : _description(description) {}
 
     // Enter creates a description object, pushing onto the stack.
     void __enter__()
@@ -88,13 +85,13 @@ namespace
     void SetDescription(const string &description)
     {
       _description = description;
-      if (_descriptionHolder)
-      {
+      if (_descriptionHolder) {
         _descriptionHolder->_scopeDescription.SetDescription(_description);
       }
     }
 
    private:
+
     std::unique_ptr<_Holder> _descriptionHolder;
     string _description;
   };

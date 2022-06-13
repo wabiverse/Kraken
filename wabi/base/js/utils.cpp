@@ -41,8 +41,7 @@ JsOptionalValue JsFindValue(const JsObject &object,
                             const std::string &key,
                             const JsOptionalValue &defaultValue)
 {
-  if (key.empty())
-  {
+  if (key.empty()) {
     TF_CODING_ERROR("Key is empty");
     return boost::none;
   }

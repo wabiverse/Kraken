@@ -41,14 +41,11 @@ namespace
   static void _SetOutputFile(object const &file)
   {
     int filefd = PyObject_AsFileDescriptor(file.ptr());
-    if (filefd == ArchFileNo(stdout))
-    {
+    if (filefd == ArchFileNo(stdout)) {
       TfDebug::SetOutputFile(stdout);
-    } else if (filefd == ArchFileNo(stderr))
-    {
+    } else if (filefd == ArchFileNo(stderr)) {
       TfDebug::SetOutputFile(stderr);
-    } else
-    {
+    } else {
       // reports an error indicating correct usage, either stdout or stderr
       TfDebug::SetOutputFile(NULL);
     }

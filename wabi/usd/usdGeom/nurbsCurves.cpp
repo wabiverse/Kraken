@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomNurbsCurves::~UsdGeomNurbsCurves()
-{}
+UsdGeomNurbsCurves::~UsdGeomNurbsCurves() {}
 
 /* static */
 UsdGeomNurbsCurves UsdGeomNurbsCurves::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomNurbsCurves();
   }
@@ -62,8 +60,7 @@ UsdGeomNurbsCurves UsdGeomNurbsCurves::Get(const UsdStagePtr &stage, const SdfPa
 UsdGeomNurbsCurves UsdGeomNurbsCurves::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("NurbsCurves");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomNurbsCurves();
   }
@@ -101,7 +98,8 @@ UsdAttribute UsdGeomNurbsCurves::GetOrderAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->order);
 }
 
-UsdAttribute UsdGeomNurbsCurves::CreateOrderAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomNurbsCurves::CreateOrderAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->order,
                                     SdfValueTypeNames->IntArray,
@@ -116,7 +114,8 @@ UsdAttribute UsdGeomNurbsCurves::GetKnotsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->knots);
 }
 
-UsdAttribute UsdGeomNurbsCurves::CreateKnotsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomNurbsCurves::CreateKnotsAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->knots,
                                     SdfValueTypeNames->DoubleArray,
@@ -131,7 +130,8 @@ UsdAttribute UsdGeomNurbsCurves::GetRangesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->ranges);
 }
 
-UsdAttribute UsdGeomNurbsCurves::CreateRangesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomNurbsCurves::CreateRangesAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->ranges,
                                     SdfValueTypeNames->Double2Array,
@@ -162,8 +162,9 @@ const TfTokenVector &UsdGeomNurbsCurves::GetSchemaAttributeNames(bool includeInh
     UsdGeomTokens->knots,
     UsdGeomTokens->ranges,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomCurves::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomCurves::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiRslShader::~UsdRiRslShader()
-{}
+UsdRiRslShader::~UsdRiRslShader() {}
 
 /* static */
 UsdRiRslShader UsdRiRslShader::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRslShader();
   }
@@ -69,8 +67,7 @@ UsdRiRslShader UsdRiRslShader::Get(const UsdStagePtr &stage, const SdfPath &path
 UsdRiRslShader UsdRiRslShader::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RslShader");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRslShader();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdRiRslShader::GetSloPathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoSloPath);
 }
 
-UsdAttribute UsdRiRslShader::CreateSloPathAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiRslShader::CreateSloPathAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoSloPath,
                                     SdfValueTypeNames->Asset,
@@ -137,8 +135,9 @@ const TfTokenVector &UsdRiRslShader::GetSchemaAttributeNames(bool includeInherit
   static TfTokenVector localNames = {
     UsdRiTokens->infoSloPath,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdShadeShader::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdShadeShader::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

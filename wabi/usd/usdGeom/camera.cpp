@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomCamera::~UsdGeomCamera()
-{}
+UsdGeomCamera::~UsdGeomCamera() {}
 
 /* static */
 UsdGeomCamera UsdGeomCamera::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCamera();
   }
@@ -62,8 +60,7 @@ UsdGeomCamera UsdGeomCamera::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomCamera UsdGeomCamera::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Camera");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCamera();
   }
@@ -101,7 +98,8 @@ UsdAttribute UsdGeomCamera::GetProjectionAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->projection);
 }
 
-UsdAttribute UsdGeomCamera::CreateProjectionAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateProjectionAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->projection,
                                     SdfValueTypeNames->Token,
@@ -132,7 +130,8 @@ UsdAttribute UsdGeomCamera::GetVerticalApertureAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->verticalAperture);
 }
 
-UsdAttribute UsdGeomCamera::CreateVerticalApertureAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateVerticalApertureAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->verticalAperture,
                                     SdfValueTypeNames->Float,
@@ -179,7 +178,8 @@ UsdAttribute UsdGeomCamera::GetFocalLengthAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->focalLength);
 }
 
-UsdAttribute UsdGeomCamera::CreateFocalLengthAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateFocalLengthAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->focalLength,
                                     SdfValueTypeNames->Float,
@@ -194,7 +194,8 @@ UsdAttribute UsdGeomCamera::GetClippingRangeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->clippingRange);
 }
 
-UsdAttribute UsdGeomCamera::CreateClippingRangeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateClippingRangeAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->clippingRange,
                                     SdfValueTypeNames->Float2,
@@ -209,7 +210,8 @@ UsdAttribute UsdGeomCamera::GetClippingPlanesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->clippingPlanes);
 }
 
-UsdAttribute UsdGeomCamera::CreateClippingPlanesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateClippingPlanesAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->clippingPlanes,
                                     SdfValueTypeNames->Float4Array,
@@ -239,7 +241,8 @@ UsdAttribute UsdGeomCamera::GetFocusDistanceAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->focusDistance);
 }
 
-UsdAttribute UsdGeomCamera::CreateFocusDistanceAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateFocusDistanceAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->focusDistance,
                                     SdfValueTypeNames->Float,
@@ -254,7 +257,8 @@ UsdAttribute UsdGeomCamera::GetStereoRoleAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->stereoRole);
 }
 
-UsdAttribute UsdGeomCamera::CreateStereoRoleAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateStereoRoleAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->stereoRole,
                                     SdfValueTypeNames->Token,
@@ -269,7 +273,8 @@ UsdAttribute UsdGeomCamera::GetShutterOpenAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->shutterOpen);
 }
 
-UsdAttribute UsdGeomCamera::CreateShutterOpenAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateShutterOpenAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->shutterOpen,
                                     SdfValueTypeNames->Double,
@@ -284,7 +289,8 @@ UsdAttribute UsdGeomCamera::GetShutterCloseAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->shutterClose);
 }
 
-UsdAttribute UsdGeomCamera::CreateShutterCloseAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateShutterCloseAttr(VtValue const &defaultValue,
+                                                   bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->shutterClose,
                                     SdfValueTypeNames->Double,
@@ -299,7 +305,8 @@ UsdAttribute UsdGeomCamera::GetExposureAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->exposure);
 }
 
-UsdAttribute UsdGeomCamera::CreateExposureAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCamera::CreateExposureAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->exposure,
                                     SdfValueTypeNames->Float,
@@ -341,8 +348,9 @@ const TfTokenVector &UsdGeomCamera::GetSchemaAttributeNames(bool includeInherite
     UsdGeomTokens->shutterClose,
     UsdGeomTokens->exposure,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomXformable::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -364,19 +372,21 @@ WABI_NAMESPACE_END
 WABI_NAMESPACE_BEGIN
 
 template<class T>
-static boost::optional<T> _GetValue(const UsdPrim &prim, const TfToken &name, const UsdTimeCode &time)
+static boost::optional<T> _GetValue(const UsdPrim &prim,
+                                    const TfToken &name,
+                                    const UsdTimeCode &time)
 {
   const UsdAttribute attr = prim.GetAttribute(name);
-  if (!attr)
-  {
+  if (!attr) {
     TF_WARN("%s attribute on prim %s missing.", name.GetText(), prim.GetPath().GetText());
     return boost::none;
   }
 
   T value;
-  if (!attr.Get(&value, time))
-  {
-    TF_WARN("Failed to extract value from attribute %s at <%s>.", name.GetText(), attr.GetPath().GetText());
+  if (!attr.Get(&value, time)) {
+    TF_WARN("Failed to extract value from attribute %s at <%s>.",
+            name.GetText(),
+            attr.GetPath().GetText());
     return boost::none;
   }
 
@@ -385,13 +395,11 @@ static boost::optional<T> _GetValue(const UsdPrim &prim, const TfToken &name, co
 
 static GfCamera::Projection _TokenToProjection(const TfToken &token)
 {
-  if (token == UsdGeomTokens->orthographic)
-  {
+  if (token == UsdGeomTokens->orthographic) {
     return GfCamera::Orthographic;
   }
 
-  if (token != UsdGeomTokens->perspective)
-  {
+  if (token != UsdGeomTokens->perspective) {
     TF_WARN("Unknown projection type %s", token.GetText());
   }
 
@@ -400,8 +408,7 @@ static GfCamera::Projection _TokenToProjection(const TfToken &token)
 
 static TfToken _ProjectionToToken(GfCamera::Projection projection)
 {
-  switch (projection)
-  {
+  switch (projection) {
     case GfCamera::Perspective:
       return UsdGeomTokens->perspective;
     case GfCamera::Orthographic:
@@ -442,67 +449,56 @@ GfCamera UsdGeomCamera::GetCamera(const UsdTimeCode &time) const
 
   if (const boost::optional<TfToken> projection = _GetValue<TfToken>(GetPrim(),
                                                                      UsdGeomTokens->projection,
-                                                                     time))
-  {
+                                                                     time)) {
     camera.SetProjection(_TokenToProjection(*projection));
   }
 
-  if (const boost::optional<float> horizontalAperture = _GetValue<float>(GetPrim(),
-                                                                         UsdGeomTokens->horizontalAperture,
-                                                                         time))
-  {
+  if (const boost::optional<float> horizontalAperture =
+        _GetValue<float>(GetPrim(), UsdGeomTokens->horizontalAperture, time)) {
     camera.SetHorizontalAperture(*horizontalAperture);
   }
 
-  if (const boost::optional<float> verticalAperture = _GetValue<float>(GetPrim(),
-                                                                       UsdGeomTokens->verticalAperture,
-                                                                       time))
-  {
+  if (const boost::optional<float> verticalAperture =
+        _GetValue<float>(GetPrim(), UsdGeomTokens->verticalAperture, time)) {
     camera.SetVerticalAperture(*verticalAperture);
   }
 
   if (const boost::optional<float> horizontalApertureOffset =
-        _GetValue<float>(GetPrim(), UsdGeomTokens->horizontalApertureOffset, time))
-  {
+        _GetValue<float>(GetPrim(), UsdGeomTokens->horizontalApertureOffset, time)) {
     camera.SetHorizontalApertureOffset(*horizontalApertureOffset);
   }
 
   if (const boost::optional<float> verticalApertureOffset =
-        _GetValue<float>(GetPrim(), UsdGeomTokens->verticalApertureOffset, time))
-  {
+        _GetValue<float>(GetPrim(), UsdGeomTokens->verticalApertureOffset, time)) {
     camera.SetVerticalApertureOffset(*verticalApertureOffset);
   }
 
   if (const boost::optional<float> focalLength = _GetValue<float>(GetPrim(),
                                                                   UsdGeomTokens->focalLength,
-                                                                  time))
-  {
+                                                                  time)) {
     camera.SetFocalLength(*focalLength);
   }
 
-  if (const boost::optional<GfVec2f> clippingRange = _GetValue<GfVec2f>(GetPrim(),
-                                                                        UsdGeomTokens->clippingRange,
-                                                                        time))
-  {
+  if (const boost::optional<GfVec2f> clippingRange =
+        _GetValue<GfVec2f>(GetPrim(), UsdGeomTokens->clippingRange, time)) {
     camera.SetClippingRange(_Vec2fToRange1f(*clippingRange));
   }
 
   if (const boost::optional<VtArray<GfVec4f>> clippingPlanes =
-        _GetValue<VtArray<GfVec4f>>(GetPrim(), UsdGeomTokens->clippingPlanes, time))
-  {
+        _GetValue<VtArray<GfVec4f>>(GetPrim(), UsdGeomTokens->clippingPlanes, time)) {
 
     camera.SetClippingPlanes(_VtArrayVec4fToVector(*clippingPlanes));
   }
 
-  if (const boost::optional<float> fStop = _GetValue<float>(GetPrim(), UsdGeomTokens->fStop, time))
-  {
+  if (const boost::optional<float> fStop = _GetValue<float>(GetPrim(),
+                                                            UsdGeomTokens->fStop,
+                                                            time)) {
     camera.SetFStop(*fStop);
   }
 
   if (const boost::optional<float> focusDistance = _GetValue<float>(GetPrim(),
                                                                     UsdGeomTokens->focusDistance,
-                                                                    time))
-  {
+                                                                    time)) {
     camera.SetFocusDistance(*focusDistance);
   }
 

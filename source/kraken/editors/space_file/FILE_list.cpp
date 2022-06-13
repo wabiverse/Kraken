@@ -37,53 +37,43 @@ static bool file_is_pixar_backup(const char *str)
   const size_t a = strlen(str);
 
   size_t usd = 5;
-  if (a == 0 || usd >= a)
-  {
+  if (a == 0 || usd >= a) {
     /* pass */
-  } else
-  {
+  } else {
     const char *locusd;
 
-    if (a > usd + 1)
-    {
+    if (a > usd + 1) {
       usd++;
     }
 
     /* allow .usd1 .usd2 .usd32 */
     locusd = KLI_strcasestr(str + a - usd, ".usd");
-    if (locusd)
-    {
+    if (locusd) {
       return true;
     }
   }
 
   size_t usdx = 6;
-  if (a == 0 || usdx >= a)
-  {
+  if (a == 0 || usdx >= a) {
     /* pass */
-  } else
-  {
+  } else {
     const char *locusdx;
 
-    if (a > usdx + 1)
-    {
+    if (a > usdx + 1) {
       usdx++;
     }
 
     /* allow .usda1 .usda2 .usdc3 .usdz32 */
     locusdx = KLI_strcasestr(str + a - usdx, ".usda");
-    if (locusdx)
-    {
+    if (locusdx) {
       return true;
     }
     locusdx = KLI_strcasestr(str + a - usdx, ".usdc");
-    if (locusdx)
-    {
+    if (locusdx) {
       return true;
     }
     locusdx = KLI_strcasestr(str + a - usdx, ".usdz");
-    if (locusdx)
-    {
+    if (locusdx) {
       return true;
     }
   }
@@ -94,26 +84,22 @@ static bool file_is_pixar_backup(const char *str)
 int ED_path_extension_type(const std::string &path)
 {
 
-  if (KLI_has_pixar_extension(path))
-  {
+  if (KLI_has_pixar_extension(path)) {
     return FILE_TYPE_PIXAR;
   }
 
 
-  if (file_is_pixar_backup(CHARALL(path)))
-  {
+  if (file_is_pixar_backup(CHARALL(path))) {
     return FILE_TYPE_PIXAR_BACKUP;
   }
 
 
-  if (KLI_path_extension_check(CHARALL(path), ".app"))
-  {
+  if (KLI_path_extension_check(CHARALL(path), ".app")) {
     return FILE_TYPE_APPLICATIONBUNDLE;
   }
 
 
-  if (KLI_path_extension_check(CHARALL(path), ".py"))
-  {
+  if (KLI_path_extension_check(CHARALL(path), ".py")) {
     return FILE_TYPE_PYSCRIPT;
   }
 
@@ -128,56 +114,54 @@ int ED_path_extension_type(const std::string &path)
                                  ".mcr",
                                  ".inc",
                                  ".fountain",
-                                 NULL))
-  {
+                                 NULL)) {
     return FILE_TYPE_TEXT;
   }
 
 
-  if (KLI_path_extension_check_n(CHARALL(path), ".ttf", ".ttc", ".pfb", ".otf", ".otc", NULL))
-  {
+  if (KLI_path_extension_check_n(CHARALL(path), ".ttf", ".ttc", ".pfb", ".otf", ".otc", NULL)) {
     return FILE_TYPE_FTFONT;
   }
 
 
-  if (KLI_path_extension_check(CHARALL(path), ".btx"))
-  {
+  if (KLI_path_extension_check(CHARALL(path), ".btx")) {
     return FILE_TYPE_BTX;
   }
 
 
-  if (KLI_path_extension_check(CHARALL(path), ".dae"))
-  {
+  if (KLI_path_extension_check(CHARALL(path), ".dae")) {
     return FILE_TYPE_COLLADA;
   }
 
 
-  if (KLI_path_extension_check(CHARALL(path), ".abc"))
-  {
+  if (KLI_path_extension_check(CHARALL(path), ".abc")) {
     return FILE_TYPE_ALEMBIC;
   }
 
 
-  if (KLI_path_extension_check_n(CHARALL(path), ".blend", NULL))
-  {
+  if (KLI_path_extension_check_n(CHARALL(path), ".blend", NULL)) {
     return FILE_TYPE_BLENDER;
   }
 
 
-  if (KLI_path_extension_check(CHARALL(path), ".vdb"))
-  {
+  if (KLI_path_extension_check(CHARALL(path), ".vdb")) {
     return FILE_TYPE_VOLUME;
   }
 
 
-  if (KLI_path_extension_check(CHARALL(path), ".zip"))
-  {
+  if (KLI_path_extension_check(CHARALL(path), ".zip")) {
     return FILE_TYPE_ARCHIVE;
   }
 
 
-  if (KLI_path_extension_check_n(CHARALL(path), ".obj", ".3ds", ".fbx", ".glb", ".gltf", ".svg", NULL))
-  {
+  if (KLI_path_extension_check_n(CHARALL(path),
+                                 ".obj",
+                                 ".3ds",
+                                 ".fbx",
+                                 ".glb",
+                                 ".gltf",
+                                 ".svg",
+                                 NULL)) {
     return FILE_TYPE_OBJECT_IO;
   }
 
@@ -204,8 +188,7 @@ int ED_path_extension_type(const std::string &path)
                                  ".psd",
                                  ".pdd",
                                  ".psb",
-                                 NULL))
-  {
+                                 NULL)) {
     return FILE_TYPE_IMAGE;
   }
 
@@ -239,8 +222,7 @@ int ED_path_extension_type(const std::string &path)
                                  ".xvid",
                                  ".mxf",
                                  ".webm",
-                                 NULL))
-  {
+                                 NULL)) {
     return FILE_TYPE_MOVIE;
   }
 
@@ -260,8 +242,7 @@ int ED_path_extension_type(const std::string &path)
                                  ".aiff",
                                  ".m4a",
                                  ".mka",
-                                 NULL))
-  {
+                                 NULL)) {
     return FILE_TYPE_SOUND;
   }
 
@@ -273,8 +254,7 @@ int ED_file_extension_icon(const std::string &path)
 {
   const int type = ED_path_extension_type(path);
 
-  switch (type)
-  {
+  switch (type) {
     case FILE_TYPE_PIXAR:
       return ICON_KRAKEN;
 

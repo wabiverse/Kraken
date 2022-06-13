@@ -37,8 +37,7 @@ AnchorISystem *AnchorISystem::m_system = NULL;
 eAnchorStatus AnchorISystem::createSystem()
 {
   eAnchorStatus success;
-  if (!m_system)
-  {
+  if (!m_system) {
 #if defined(__linux__)
     m_system = new AnchorSystemSDL();
 #elif defined(WIN32)
@@ -47,13 +46,11 @@ eAnchorStatus AnchorISystem::createSystem()
     m_system = new AnchorSystemCocoa();
 #endif
     success = (m_system != NULL) ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
-  } else
-  {
+  } else {
     success = ANCHOR_FAILURE;
   }
 
-  if (success == ANCHOR_SUCCESS)
-  {
+  if (success == ANCHOR_SUCCESS) {
     success = m_system->init();
   }
   return success;
@@ -62,12 +59,10 @@ eAnchorStatus AnchorISystem::createSystem()
 eAnchorStatus AnchorISystem::destroySystem()
 {
   eAnchorStatus success = ANCHOR_SUCCESS;
-  if (m_system)
-  {
+  if (m_system) {
     delete m_system;
     m_system = NULL;
-  } else
-  {
+  } else {
     success = ANCHOR_FAILURE;
   }
   return success;

@@ -100,40 +100,47 @@ void wrapTransform()
 
   class_<This>("Transform", init<>())
 
-    .def(init<const GfVec3d &, const GfRotation &, const GfVec3d &, const GfVec3d &, const GfRotation &>(
-      (args("translation") = _NoTranslation(),
-       args("rotation") = _NoRotation(),
-       args("scale") = _IdentityScale(),
-       args("pivotPosition") = _NoTranslation(),
-       args("pivotOrientation") = _NoRotation()),
-      "Initializer used by 3x code."))
+    .def(init<const GfVec3d &,
+              const GfRotation &,
+              const GfVec3d &,
+              const GfVec3d &,
+              const GfRotation &>((args("translation") = _NoTranslation(),
+                                   args("rotation") = _NoRotation(),
+                                   args("scale") = _IdentityScale(),
+                                   args("pivotPosition") = _NoTranslation(),
+                                   args("pivotOrientation") = _NoRotation()),
+                                  "Initializer used by 3x code."))
 
     // This is the constructor used by 2x code.  Leave the initial
     // arguments as non-default to force the user to provide enough
     // values to indicate her intentions.
-    .def(init<const GfVec3d &, const GfRotation &, const GfRotation &, const GfVec3d &, const GfVec3d &>(
-      (args("scale"),
-       args("pivotOrientation"),
-       args("rotation"),
-       args("pivotPosition"),
-       args("translation")),
-      "Initializer used by old 2x code. (Deprecated)"))
+    .def(init<const GfVec3d &,
+              const GfRotation &,
+              const GfRotation &,
+              const GfVec3d &,
+              const GfVec3d &>((args("scale"),
+                                args("pivotOrientation"),
+                                args("rotation"),
+                                args("pivotPosition"),
+                                args("translation")),
+                               "Initializer used by old 2x code. (Deprecated)"))
 
     .def(init<const GfMatrix4d &>())
 
     .def(TfTypePythonClass())
 
-    .def(
-      "Set",
-      (This &
-       (This::*)(const GfVec3d &, const GfRotation &, const GfVec3d &, const GfVec3d &, const GfRotation &))(
-        &This::Set),
-      return_self<>(),
-      (args("translation") = _NoTranslation(),
-       args("rotation") = _NoRotation(),
-       args("scale") = _IdentityScale(),
-       args("pivotPosition") = _NoTranslation(),
-       args("pivotOrientation") = _NoRotation()))
+    .def("Set",
+         (This & (This::*)(const GfVec3d &,
+                           const GfRotation &,
+                           const GfVec3d &,
+                           const GfVec3d &,
+                           const GfRotation &))(&This::Set),
+         return_self<>(),
+         (args("translation") = _NoTranslation(),
+          args("rotation") = _NoRotation(),
+          args("scale") = _IdentityScale(),
+          args("pivotPosition") = _NoTranslation(),
+          args("pivotOrientation") = _NoRotation()))
 
     .def("Set",
          (This & (This::*)(const GfVec3d &,
@@ -171,9 +178,10 @@ void wrapTransform()
                   make_function(&This::GetPivotPosition, return_value_policy<return_by_value>()),
                   &This::SetPivotPosition)
 
-    .add_property("pivotOrientation",
-                  make_function(&This::GetPivotOrientation, return_value_policy<return_by_value>()),
-                  &This::SetPivotOrientation)
+    .add_property(
+      "pivotOrientation",
+      make_function(&This::GetPivotOrientation, return_value_policy<return_by_value>()),
+      &This::SetPivotOrientation)
 
     .def("GetTranslation", &This::GetTranslation, return_value_policy<return_by_value>())
     .def("SetTranslation", &This::SetTranslation)

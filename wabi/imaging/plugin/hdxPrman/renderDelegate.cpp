@@ -54,8 +54,7 @@ void HdxPrmanRenderDelegate::_Initialize(std::shared_ptr<HdPrman_Context> contex
   // Check if this is an interactive context.
   _interactiveContext = std::dynamic_pointer_cast<HdxPrman_InteractiveContext>(context);
 
-  if (_interactiveContext)
-  {
+  if (_interactiveContext) {
     _renderParam = std::make_shared<HdxPrman_RenderParam>(_interactiveContext);
     _interactiveContext->Begin(this);
   }
@@ -65,8 +64,7 @@ void HdxPrmanRenderDelegate::_Initialize(std::shared_ptr<HdPrman_Context> contex
 
 HdxPrmanRenderDelegate::~HdxPrmanRenderDelegate()
 {
-  if (_interactiveContext)
-  {
+  if (_interactiveContext) {
     _interactiveContext->End();
   }
 }
@@ -74,8 +72,7 @@ HdxPrmanRenderDelegate::~HdxPrmanRenderDelegate()
 HdRenderPassSharedPtr HdxPrmanRenderDelegate::CreateRenderPass(HdRenderIndex *index,
                                                                HdRprimCollection const &collection)
 {
-  if (!_renderPass)
-  {
+  if (!_renderPass) {
     _renderPass = HdRenderPassSharedPtr(new HdxPrman_RenderPass(index, collection, _context));
   }
   return _renderPass;
@@ -84,11 +81,9 @@ HdRenderPassSharedPtr HdxPrmanRenderDelegate::CreateRenderPass(HdRenderIndex *in
 HdSprim *HdxPrmanRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath const &sprimId)
 {
   HdSprim *sprim = HdPrmanRenderDelegate::CreateSprim(typeId, sprimId);
-  if (dynamic_cast<HdPrmanLight *>(sprim))
-  {
+  if (dynamic_cast<HdPrmanLight *>(sprim)) {
     // Disregard fallback prims in count.
-    if (sprim->GetId() != SdfPath())
-    {
+    if (sprim->GetId() != SdfPath()) {
       _interactiveContext->sceneLightCount++;
     }
   }
@@ -97,11 +92,9 @@ HdSprim *HdxPrmanRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath cons
 
 void HdxPrmanRenderDelegate::DestroySprim(HdSprim *sprim)
 {
-  if (dynamic_cast<HdPrmanLight *>(sprim))
-  {
+  if (dynamic_cast<HdPrmanLight *>(sprim)) {
     // Disregard fallback prims in count.
-    if (sprim->GetId() != SdfPath())
-    {
+    if (sprim->GetId() != SdfPath()) {
       _interactiveContext->sceneLightCount--;
     }
   }
@@ -124,8 +117,7 @@ const TfTokenVector &HdxPrmanRenderDelegate::GetSupportedBprimTypes() const
 
 HdBprim *HdxPrmanRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath const &bprimId)
 {
-  if (typeId == HdPrimTypeTokens->renderBuffer)
-  {
+  if (typeId == HdPrimTypeTokens->renderBuffer) {
     return new HdxPrmanRenderBuffer(bprimId);
   }
   return HdPrmanRenderDelegate::CreateBprim(typeId, bprimId);
@@ -133,8 +125,7 @@ HdBprim *HdxPrmanRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath cons
 
 HdBprim *HdxPrmanRenderDelegate::CreateFallbackBprim(TfToken const &typeId)
 {
-  if (typeId == HdPrimTypeTokens->renderBuffer)
-  {
+  if (typeId == HdPrimTypeTokens->renderBuffer) {
     return new HdxPrmanRenderBuffer(SdfPath::EmptyPath());
   }
   return HdPrmanRenderDelegate::CreateFallbackBprim(typeId);
@@ -142,15 +133,12 @@ HdBprim *HdxPrmanRenderDelegate::CreateFallbackBprim(TfToken const &typeId)
 
 HdAovDescriptor HdxPrmanRenderDelegate::GetDefaultAovDescriptor(TfToken const &name) const
 {
-  if (name == HdAovTokens->color)
-  {
+  if (name == HdAovTokens->color) {
     return HdAovDescriptor(HdFormatFloat32Vec4, false, VtValue(GfVec4f(0.0f)));
-  } else if (name == HdAovTokens->depth)
-  {
+  } else if (name == HdAovTokens->depth) {
     return HdAovDescriptor(HdFormatFloat32, false, VtValue(1.0f));
   } else if (name == HdAovTokens->primId || name == HdAovTokens->instanceId ||
-             name == HdAovTokens->elementId)
-  {
+             name == HdAovTokens->elementId) {
     return HdAovDescriptor(HdFormatInt32, false, VtValue(-1));
   }
 

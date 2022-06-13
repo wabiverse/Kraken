@@ -40,7 +40,8 @@ WABI_NAMESPACE_BEGIN
 
 HdxOitRenderTask::HdxOitRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
   : HdxRenderTask(delegate, id),
-    _oitTranslucentRenderPassShader(std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitShader())),
+    _oitTranslucentRenderPassShader(
+      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitShader())),
     _oitOpaqueRenderPassShader(
       std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitOpaqueShader())),
     _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
@@ -53,8 +54,7 @@ void HdxOitRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (_isOitEnabled)
-  {
+  if (_isOitEnabled) {
     HdxRenderTask::_Sync(delegate, ctx, dirtyBits);
   }
 }
@@ -64,14 +64,12 @@ void HdxOitRenderTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (_isOitEnabled)
-  {
+  if (_isOitEnabled) {
     HdxRenderTask::Prepare(ctx, renderIndex);
 
     // OIT buffers take up significant GPU resources. Skip if there are no
     // oit draw items (i.e. no translucent or volumetric draw items)
-    if (HdxRenderTask::_HasDrawItems())
-    {
+    if (HdxRenderTask::_HasDrawItems()) {
       HdxOitBufferAccessor(ctx).RequestOitBuffers();
     }
   }
@@ -97,8 +95,7 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
 
     oitBufferAccessor.RequestOitBuffers();
     oitBufferAccessor.InitializeOitBuffersIfNecessary();
-    if (!oitBufferAccessor.AddOitBufferBindings(_oitTranslucentRenderPassShader))
-    {
+    if (!oitBufferAccessor.AddOitBufferBindings(_oitTranslucentRenderPassShader)) {
       TF_CODING_ERROR("No OIT buffers allocated but needed by OIT render task");
       return;
     }
@@ -109,8 +106,7 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
     return;
 
   HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get());
-  if (!TF_VERIFY(extendedState, "OIT only works with HdPh"))
-  {
+  if (!TF_VERIFY(extendedState, "OIT only works with HdPh")) {
     return;
   }
 
@@ -174,13 +170,11 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
   // Post Execute Restore
   //
 
-  if (oldMSAA)
-  {
+  if (oldMSAA) {
     glEnable(GL_MULTISAMPLE);
   }
 
-  if (!oldPointSmooth)
-  {
+  if (!oldPointSmooth) {
     glDisable(GL_POINT_SMOOTH);
   }
 }

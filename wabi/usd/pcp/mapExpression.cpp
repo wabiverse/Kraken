@@ -38,8 +38,7 @@ struct Pcp_VariableImpl;
 // Add a mapping from </> to </> if the function does not already have one.
 static PcpMapFunction _AddRootIdentity(const PcpMapFunction &value)
 {
-  if (value.HasRootIdentity())
-  {
+  if (value.HasRootIdentity()) {
     // This function already maps </> to </>; use it as-is.
     return value;
   }
@@ -52,8 +51,7 @@ static PcpMapFunction _AddRootIdentity(const PcpMapFunction &value)
 
 ////////////////////////////////////////////////////////////////////////
 
-PcpMapExpression::PcpMapExpression()
-{}
+PcpMapExpression::PcpMapExpression() {}
 
 bool PcpMapExpression::IsNull() const
 {
@@ -85,16 +83,13 @@ PcpMapExpression PcpMapExpression::Constant(const Value &value)
 PcpMapExpression PcpMapExpression::Compose(const PcpMapExpression &f) const
 {
   // Fast path short-circuits for identities
-  if (IsConstantIdentity())
-  {
+  if (IsConstantIdentity()) {
     return f;
   }
-  if (f.IsConstantIdentity())
-  {
+  if (f.IsConstantIdentity()) {
     return *this;
   }
-  if (_node->key.op == _OpConstant && f._node->key.op == _OpConstant)
-  {
+  if (_node->key.op == _OpConstant && f._node->key.op == _OpConstant) {
     // Apply constant folding
     return Constant(Evaluate().Compose(f.Evaluate()));
   }
@@ -104,12 +99,10 @@ PcpMapExpression PcpMapExpression::Compose(const PcpMapExpression &f) const
 PcpMapExpression PcpMapExpression::Inverse() const
 {
   // Fast path short-circuits for identities
-  if (IsConstantIdentity())
-  {
+  if (IsConstantIdentity()) {
     return *this;
   }
-  if (_node->key.op == _OpConstant)
-  {
+  if (_node->key.op == _OpConstant) {
     // Apply constant folding
     return Constant(Evaluate().GetInverse());
   }
@@ -119,17 +112,14 @@ PcpMapExpression PcpMapExpression::Inverse() const
 PcpMapExpression PcpMapExpression::AddRootIdentity() const
 {
   // Fast path short-circuits for identities
-  if (IsConstantIdentity())
-  {
+  if (IsConstantIdentity()) {
     return *this;
   }
-  if (_node->key.op == _OpConstant)
-  {
+  if (_node->key.op == _OpConstant) {
     // Apply constant folding
     return Constant(_AddRootIdentity(Evaluate()));
   }
-  if (_node->expressionTreeAlwaysHasIdentity)
-  {
+  if (_node->expressionTreeAlwaysHasIdentity) {
     return PcpMapExpression(_node);
   }
 
@@ -147,12 +137,9 @@ PcpMapExpression::Variable::~Variable()
 // Private implementation for Variable.
 struct Pcp_VariableImpl final : PcpMapExpression::Variable
 {
-  ~Pcp_VariableImpl() override
-  {}
+  ~Pcp_VariableImpl() override {}
 
-  explicit Pcp_VariableImpl(PcpMapExpression::_NodeRefPtr &&node)
-    : _node(std::move(node))
-  {}
+  explicit Pcp_VariableImpl(PcpMapExpression::_NodeRefPtr &&node) : _node(std::move(node)) {}
 
   const PcpMapExpression::Value &GetValue() const override
   {
@@ -187,8 +174,7 @@ PcpMapExpression::VariableUniquePtr PcpMapExpression::NewVariable(Value &&initia
 namespace
 {
 
-  template<class Key>
-  struct _KeyHashEq
+  template<class Key> struct _KeyHashEq
   {
     inline bool equal(const Key &l, const Key &r) const
     {
@@ -214,8 +200,7 @@ TfStaticData<PcpMapExpression::_Node::_NodeMap> PcpMapExpression::_Node::_nodeRe
 
 bool PcpMapExpression::_Node::_ExpressionTreeAlwaysHasIdentity(const Key &key)
 {
-  switch (key.op)
-  {
+  switch (key.op) {
     case _OpAddRootIdentity:
       return true;
 
@@ -255,12 +240,11 @@ PcpMapExpression::_NodeRefPtr PcpMapExpression::_Node::New(_Op op_,
   TfAutoMallocTag2 tag("Pcp", "PcpMapExpresion");
   const Key key(op_, arg1_, arg2_, valueForConstant_);
 
-  if (key.op != _OpVariable)
-  {
+  if (key.op != _OpVariable) {
     // Check for existing instance to re-use
     _NodeMap::accessor accessor;
-    if (_nodeRegistry->map.insert(accessor, key) || accessor->second->_refCount.fetch_add(1) == 0)
-    {
+    if (_nodeRegistry->map.insert(accessor, key) ||
+        accessor->second->_refCount.fetch_add(1) == 0) {
       // Either there was no node in the table, or there was but it had
       // begun dying (another client dropped its refcount to 0).  We have
       // to create a new node in the table.  When the client that is
@@ -282,13 +266,11 @@ PcpMapExpression::_Node::_Node(const Key &key_)
 {
   _hasCachedValue = false;
   _refCount = 0;
-  if (key.arg1)
-  {
+  if (key.arg1) {
     tbb::spin_mutex::scoped_lock lock(key.arg1->_mutex);
     key.arg1->_dependentExpressions.insert(this);
   }
-  if (key.arg2)
-  {
+  if (key.arg2) {
     tbb::spin_mutex::scoped_lock lock(key.arg2->_mutex);
     key.arg2->_dependentExpressions.insert(this);
   }
@@ -296,23 +278,19 @@ PcpMapExpression::_Node::_Node(const Key &key_)
 
 PcpMapExpression::_Node::~_Node()
 {
-  if (key.arg1)
-  {
+  if (key.arg1) {
     tbb::spin_mutex::scoped_lock lock(key.arg1->_mutex);
     key.arg1->_dependentExpressions.erase(this);
   }
-  if (key.arg2)
-  {
+  if (key.arg2) {
     tbb::spin_mutex::scoped_lock lock(key.arg2->_mutex);
     key.arg2->_dependentExpressions.erase(this);
   }
 
-  if (key.op != _OpVariable)
-  {
+  if (key.op != _OpVariable) {
     // Remove from node map if present.
     _NodeMap::accessor accessor;
-    if (_nodeRegistry->map.find(accessor, key) && accessor->second == this)
-    {
+    if (_nodeRegistry->map.find(accessor, key) && accessor->second == this) {
       _nodeRegistry->map.erase(accessor);
     }
   }
@@ -320,16 +298,14 @@ PcpMapExpression::_Node::~_Node()
 
 const PcpMapExpression::Value &PcpMapExpression::_Node::EvaluateAndCache() const
 {
-  if (_hasCachedValue)
-  {
+  if (_hasCachedValue) {
     return _cachedValue;
   }
 
   TRACE_SCOPE("PcpMapExpression::_Node::EvaluateAndCache - cache miss");
   Value val = _EvaluateUncached();
   tbb::spin_mutex::scoped_lock lock(_mutex);
-  if (!_hasCachedValue)
-  {
+  if (!_hasCachedValue) {
     _cachedValue = val;
     _hasCachedValue = true;
   }
@@ -338,8 +314,7 @@ const PcpMapExpression::Value &PcpMapExpression::_Node::EvaluateAndCache() const
 
 PcpMapExpression::Value PcpMapExpression::_Node::_EvaluateUncached() const
 {
-  switch (key.op)
-  {
+  switch (key.op) {
     case _OpConstant:
       return key.valueForConstant;
     case _OpVariable:
@@ -359,31 +334,26 @@ PcpMapExpression::Value PcpMapExpression::_Node::_EvaluateUncached() const
 void PcpMapExpression::_Node::_Invalidate()
 {
   // Caller must hold a lock on _mutex.
-  if (_hasCachedValue)
-  {
+  if (_hasCachedValue) {
     _hasCachedValue = false;
     _cachedValue = Value();
-    for (auto dep : _dependentExpressions)
-    {
+    for (auto dep : _dependentExpressions) {
       tbb::spin_mutex::scoped_lock lock(dep->_mutex);
       dep->_Invalidate();
     }
-  } else
-  {
+  } else {
     // This node is already invalid so dependent nodes are already invalid.
   }
 }
 
 void PcpMapExpression::_Node::SetValueForVariable(Value &&value)
 {
-  if (key.op != _OpVariable)
-  {
+  if (key.op != _OpVariable) {
     TF_CODING_ERROR("Cannot set value for non-variable");
     return;
   }
   tbb::spin_mutex::scoped_lock lock(_mutex);
-  if (_valueForVariable != value)
-  {
+  if (_valueForVariable != value) {
     _valueForVariable = std::move(value);
     _Invalidate();
   }
@@ -400,7 +370,8 @@ inline size_t PcpMapExpression::_Node::Key::GetHash() const
 
 bool PcpMapExpression::_Node::Key::operator==(const Key &key) const
 {
-  return op == key.op && arg1 == key.arg1 && arg2 == key.arg2 && valueForConstant == key.valueForConstant;
+  return op == key.op && arg1 == key.arg1 && arg2 == key.arg2 &&
+         valueForConstant == key.valueForConstant;
 }
 
 void intrusive_ptr_add_ref(PcpMapExpression::_Node *p)

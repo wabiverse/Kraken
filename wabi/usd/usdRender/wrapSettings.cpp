@@ -50,9 +50,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -61,8 +59,9 @@ namespace
                                                   object defaultVal,
                                                   bool writeSparsely)
   {
-    return self.CreateIncludedPurposesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
-                                           writeSparsely);
+    return self.CreateIncludedPurposesAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateMaterialBindingPurposesAttr(UsdRenderSettings &self,
@@ -104,7 +103,9 @@ void wrapUsdRenderSettings()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)

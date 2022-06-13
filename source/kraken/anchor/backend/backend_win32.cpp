@@ -151,8 +151,9 @@ struct AnchorBackendWin32Data
  *          using multi-context. */
 static AnchorBackendWin32Data *AnchorBackendWin32GetBackendData()
 {
-  return ANCHOR::GetCurrentContext() ? (AnchorBackendWin32Data *)ANCHOR::GetIO().BackendPlatformUserData :
-                                       NULL;
+  return ANCHOR::GetCurrentContext() ?
+           (AnchorBackendWin32Data *)ANCHOR::GetIO().BackendPlatformUserData :
+           NULL;
 }
 
 /**
@@ -229,12 +230,12 @@ static bool AnchorBackendWin32Init(void *hwnd)
                                     /* DirectX SDK */
                                     "xinput1_1.dll"};
 
-  for (int n = 0; n < ANCHOR_ARRAYSIZE(xinput_dll_names); n++)
-  {
-    if (HMODULE dll = ::LoadLibraryA(xinput_dll_names[n]))
-    {
+  for (int n = 0; n < ANCHOR_ARRAYSIZE(xinput_dll_names); n++) {
+    if (HMODULE dll = ::LoadLibraryA(xinput_dll_names[n])) {
       bd->XInputDLL = dll;
-      bd->XInputGetCapabilities = (PFN_XInputGetCapabilities)::GetProcAddress(dll, "XInputGetCapabilities");
+      bd->XInputGetCapabilities = (PFN_XInputGetCapabilities)::GetProcAddress(
+        dll,
+        "XInputGetCapabilities");
       bd->XInputGetState = (PFN_XInputGetState)::GetProcAddress(dll, "XInputGetState");
       break;
     }
@@ -273,8 +274,9 @@ struct AnchorBackendDXD12Data
 
 static AnchorBackendDXD12Data *AnchorBackendDXD12GetBackendData()
 {
-  return ANCHOR::GetCurrentContext() ? (AnchorBackendDXD12Data *)ANCHOR::GetIO().BackendRendererUserData :
-                                       NULL;
+  return ANCHOR::GetCurrentContext() ?
+           (AnchorBackendDXD12Data *)ANCHOR::GetIO().BackendRendererUserData :
+           NULL;
 }
 
 static bool AnchorBackendDXD12Init(ID3D12Device *device,
@@ -301,8 +303,7 @@ static bool AnchorBackendDXD12Init(ID3D12Device *device,
   bd->frameIndex = UINT_MAX;
   TF_UNUSED(cbv_srv_heap);
 
-  for (int i = 0; i < num_frames_in_flight; i++)
-  {
+  for (int i = 0; i < num_frames_in_flight; i++) {
     AnchorBackendDXD12RenderBuffers *fr = &bd->FrameResources[i];
     fr->IndexBuffer = NULL;
     fr->VertexBuffer = NULL;
@@ -313,8 +314,7 @@ static bool AnchorBackendDXD12Init(ID3D12Device *device,
   return true;
 }
 
-template<typename T>
-static inline void SafeRelease(T *&res)
+template<typename T> static inline void SafeRelease(T *&res)
 {
   if (res)
     res->Release();
@@ -333,8 +333,7 @@ static void AnchorBackendDXD12InvalidateDeviceObjects()
   SafeRelease(bd->FontTextureResource);
   io.Fonts->SetTexID(NULL);
 
-  for (UINT i = 0; i < bd->numFramesInFlight; i++)
-  {
+  for (UINT i = 0; i < bd->numFramesInFlight; i++) {
     AnchorBackendDXD12RenderBuffers *fr = &bd->FrameResources[i];
     SafeRelease(fr->IndexBuffer);
     SafeRelease(fr->VertexBuffer);
@@ -454,7 +453,8 @@ static void AnchorBackendDXD12CreateFontsTexture()
     ANCHOR_ASSERT(SUCCEEDED(hr));
 
     ID3D12CommandAllocator *cmdAlloc = NULL;
-    hr = bd->d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&cmdAlloc));
+    hr = bd->d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                               IID_PPV_ARGS(&cmdAlloc));
     ANCHOR_ASSERT(SUCCEEDED(hr));
 
     ID3D12GraphicsCommandList *cmdList = NULL;
@@ -558,9 +558,10 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
                  D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 
     static HINSTANCE d3d12_dll = ::GetModuleHandleA("d3d12.dll");
-    if (d3d12_dll == NULL)
-    {
-      const char *localD3d12Paths[] = {".\\d3d12.dll", ".\\d3d12on7\\d3d12.dll", ".\\12on7\\d3d12.dll"};
+    if (d3d12_dll == NULL) {
+      const char *localD3d12Paths[] = {".\\d3d12.dll",
+                                       ".\\d3d12on7\\d3d12.dll",
+                                       ".\\12on7\\d3d12.dll"};
 
       for (int i = 0; i < ANCHOR_ARRAYSIZE(localD3d12Paths); i++)
         if ((d3d12_dll = ::LoadLibraryA(localD3d12Paths[i])) != NULL)
@@ -576,7 +577,8 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
     }
 
     PFN_D3D12_SERIALIZE_ROOT_SIGNATURE D3D12SerializeRootSignatureFn =
-      (PFN_D3D12_SERIALIZE_ROOT_SIGNATURE)::GetProcAddress(d3d12_dll, "D3D12SerializeRootSignature");
+      (PFN_D3D12_SERIALIZE_ROOT_SIGNATURE)::GetProcAddress(d3d12_dll,
+                                                           "D3D12SerializeRootSignature");
     if (D3D12SerializeRootSignatureFn == NULL)
       return false;
 
@@ -653,26 +655,17 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
     // Create the input layout
     static D3D12_INPUT_ELEMENT_DESC local_layout[] = {
       {"POSITION",
-       0,
-       DXGI_FORMAT_R32G32_FLOAT,
-       0,
-       (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, pos),
-       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
+       0, DXGI_FORMAT_R32G32_FLOAT,
+       0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, pos),
+       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
       {"TEXCOORD",
-       0,
-       DXGI_FORMAT_R32G32_FLOAT,
-       0,
-       (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, uv),
-       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
+       0, DXGI_FORMAT_R32G32_FLOAT,
+       0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, uv),
+       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
       {"COLOR",
-       0,
-       DXGI_FORMAT_R8G8B8A8_UNORM,
-       0,
-       (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, col),
-       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-       0},
+       0, DXGI_FORMAT_R8G8B8A8_UNORM,
+       0, (UINT)ANCHOR_OFFSETOF(AnchorDrawVert, col),
+       D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
     };
     psoDesc.InputLayout = {local_layout, 3};
   }
@@ -706,8 +699,7 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
                           0,
                           0,
                           &pixelShaderBlob,
-                          NULL)))
-    {
+                          NULL))) {
       vertexShaderBlob->Release();
       return false;
     }
@@ -754,8 +746,8 @@ static bool AnchorBackendDXD12CreateDeviceObjects()
     desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
     desc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
     desc.StencilEnable = false;
-    desc.FrontFace.StencilFailOp = desc.FrontFace.StencilDepthFailOp = desc.FrontFace.StencilPassOp =
-      D3D12_STENCIL_OP_KEEP;
+    desc.FrontFace.StencilFailOp = desc.FrontFace.StencilDepthFailOp =
+      desc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
     desc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
     desc.BackFace = desc.FrontFace;
   }
@@ -832,17 +824,18 @@ static void AnchorBackendDXD12SetupRenderState(AnchorDrawData *draw_data,
   ctx->OMSetBlendFactor(blend_factor);
 }
 
-static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12GraphicsCommandList *ctx)
+static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data,
+                                             ID3D12GraphicsCommandList *ctx)
 {
   if (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f)
     return;
 
   AnchorBackendDXD12Data *bd = AnchorBackendDXD12GetBackendData();
   bd->frameIndex = bd->frameIndex + 1;
-  AnchorBackendDXD12RenderBuffers *fr = &bd->FrameResources[bd->frameIndex % bd->numFramesInFlight];
+  AnchorBackendDXD12RenderBuffers *fr =
+    &bd->FrameResources[bd->frameIndex % bd->numFramesInFlight];
 
-  if (fr->VertexBuffer == NULL || fr->VertexBufferSize < draw_data->TotalVtxCount)
-  {
+  if (fr->VertexBuffer == NULL || fr->VertexBufferSize < draw_data->TotalVtxCount) {
     SafeRelease(fr->VertexBuffer);
     fr->VertexBufferSize = draw_data->TotalVtxCount + 5000;
     D3D12_HEAP_PROPERTIES props;
@@ -869,8 +862,7 @@ static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12Gr
                                                IID_PPV_ARGS(&fr->VertexBuffer)) < 0)
       return;
   }
-  if (fr->IndexBuffer == NULL || fr->IndexBufferSize < draw_data->TotalIdxCount)
-  {
+  if (fr->IndexBuffer == NULL || fr->IndexBufferSize < draw_data->TotalIdxCount) {
     SafeRelease(fr->IndexBuffer);
     fr->IndexBufferSize = draw_data->TotalIdxCount + 10000;
     D3D12_HEAP_PROPERTIES props;
@@ -908,8 +900,7 @@ static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12Gr
     return;
   AnchorDrawVert *vtx_dst = (AnchorDrawVert *)vtx_resource;
   AnchorDrawIdx *idx_dst = (AnchorDrawIdx *)idx_resource;
-  for (int n = 0; n < draw_data->CmdListsCount; n++)
-  {
+  for (int n = 0; n < draw_data->CmdListsCount; n++) {
     const AnchorDrawList *cmd_list = draw_data->CmdLists[n];
     memcpy(vtx_dst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(AnchorDrawVert));
     memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(AnchorDrawIdx));
@@ -925,29 +916,24 @@ static void AnchorBackendDXD12RenderDrawData(AnchorDrawData *draw_data, ID3D12Gr
   int global_vtx_offset = 0;
   int global_idx_offset = 0;
   GfVec2f clip_off = draw_data->DisplayPos;
-  for (int n = 0; n < draw_data->CmdListsCount; n++)
-  {
+  for (int n = 0; n < draw_data->CmdListsCount; n++) {
     const AnchorDrawList *cmd_list = draw_data->CmdLists[n];
-    for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
-    {
+    for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
       const AnchorDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
-      if (pcmd->UserCallback != NULL)
-      {
+      if (pcmd->UserCallback != NULL) {
         // User callback, registered via AnchorDrawList::AddCallback()
         if (pcmd->UserCallback == AnchorDrawCallback_ResetRenderState)
           AnchorBackendDXD12SetupRenderState(draw_data, ctx, fr);
         else
           pcmd->UserCallback(cmd_list, pcmd);
-      } else
-      {
+      } else {
         // Apply Scissor, Bind texture, Draw
         const D3D12_RECT r = {(LONG)(pcmd->ClipRect[0] - clip_off[0]),
                               (LONG)(pcmd->ClipRect[1] - clip_off[1]),
                               (LONG)(pcmd->ClipRect[2] - clip_off[0]),
                               (LONG)(pcmd->ClipRect[3] - clip_off[1])};
 
-        if (r.right > r.left && r.bottom > r.top)
-        {
+        if (r.right > r.left && r.bottom > r.top) {
           D3D12_GPU_DESCRIPTOR_HANDLE texture_handle = {};
           texture_handle.ptr = (UINT64)pcmd->GetTexID();
           ctx->SetGraphicsRootDescriptorTable(1, texture_handle);
@@ -1009,8 +995,7 @@ static void AnchorBackendWin32UpdateMousePos()
    * Set OS mouse position if requested
    * (rarely used, only when SetMousePos
    * is enabled by user). */
-  if (io.WantSetMousePos)
-  {
+  if (io.WantSetMousePos) {
     // POINT pos = {(int)io.MousePos[0], (int)io.MousePos[1]};
     // if (::ClientToScreen(bd->hWnd, &pos))
     //   ::SetCursorPos(pos.x, pos.y);
@@ -1043,19 +1028,19 @@ static void AnchorBackendWin32UpdateGamepads()
    * availability by calling the function
    * XInputGetCapabilities() _only_ after
    * receiving WM_DEVICECHANGE. */
-  if (bd->WantUpdateHasGamepad)
-  {
+  if (bd->WantUpdateHasGamepad) {
     XINPUT_CAPABILITIES caps;
     bd->HasGamepad = bd->XInputGetCapabilities ?
-                       (bd->XInputGetCapabilities(0, XINPUT_FLAG_GAMEPAD, &caps) == ERROR_SUCCESS) :
+                       (bd->XInputGetCapabilities(0, XINPUT_FLAG_GAMEPAD, &caps) ==
+                        ERROR_SUCCESS) :
                        false;
     bd->WantUpdateHasGamepad = false;
   }
 
   io.BackendFlags &= ~AnchorBackendFlags_HasGamepad;
   XINPUT_STATE xinput_state;
-  if (bd->HasGamepad && bd->XInputGetState && bd->XInputGetState(0, &xinput_state) == ERROR_SUCCESS)
-  {
+  if (bd->HasGamepad && bd->XInputGetState &&
+      bd->XInputGetState(0, &xinput_state) == ERROR_SUCCESS) {
     const XINPUT_GAMEPAD &gamepad = xinput_state.Gamepad;
     io.BackendFlags |= AnchorBackendFlags_HasGamepad;
 
@@ -1109,10 +1094,22 @@ static void AnchorBackendWin32UpdateGamepads()
     /**
      * R1 / RB */
     MAP_BUTTON(AnchorNavInput_TweakFast, XINPUT_GAMEPAD_RIGHT_SHOULDER);
-    MAP_ANALOG(AnchorNavInput_LStickLeft, gamepad.sThumbLX, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32768);
-    MAP_ANALOG(AnchorNavInput_LStickRight, gamepad.sThumbLX, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
-    MAP_ANALOG(AnchorNavInput_LStickUp, gamepad.sThumbLY, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
-    MAP_ANALOG(AnchorNavInput_LStickDown, gamepad.sThumbLY, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32767);
+    MAP_ANALOG(AnchorNavInput_LStickLeft,
+               gamepad.sThumbLX,
+               -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE,
+               -32768);
+    MAP_ANALOG(AnchorNavInput_LStickRight,
+               gamepad.sThumbLX,
+               +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE,
+               +32767);
+    MAP_ANALOG(AnchorNavInput_LStickUp,
+               gamepad.sThumbLY,
+               +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE,
+               +32767);
+    MAP_ANALOG(AnchorNavInput_LStickDown,
+               gamepad.sThumbLY,
+               -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE,
+               -32767);
 #undef MAP_BUTTON
 #undef MAP_ANALOG
   }
@@ -1144,9 +1141,9 @@ static void AnchorBackendWin32NewFrame()
 
   /**
    * Update OS mouse cursor with the cursor requested by imgui */
-  AnchorMouseCursor mouse_cursor = io.MouseDrawCursor ? ANCHOR_StandardCursorNone : ANCHOR::GetMouseCursor();
-  if (bd->LastMouseCursor != mouse_cursor)
-  {
+  AnchorMouseCursor mouse_cursor = io.MouseDrawCursor ? ANCHOR_StandardCursorNone :
+                                                        ANCHOR::GetMouseCursor();
+  if (bd->LastMouseCursor != mouse_cursor) {
     bd->LastMouseCursor = mouse_cursor;
   }
 
@@ -1156,7 +1153,8 @@ static void AnchorBackendWin32NewFrame()
 }
 
 /**
- * Allow compilation with old Windows SDK. MinGW doesn't have default _WIN32_WINNT/WINVER versions. */
+ * Allow compilation with old Windows SDK. MinGW doesn't have default _WIN32_WINNT/WINVER versions.
+ */
 #ifndef WM_MOUSEHWHEEL
 #  define WM_MOUSEHWHEEL 0x020E
 #endif
@@ -1170,7 +1168,8 @@ static BOOL _IsWindowsVersionOrGreater(WORD major, WORD minor, WORD)
   static PFN_RtlVerifyVersionInfo RtlVerifyVersionInfoFn = NULL;
   if (RtlVerifyVersionInfoFn == NULL)
     if (HMODULE ntdllModule = ::GetModuleHandleA("ntdll.dll"))
-      RtlVerifyVersionInfoFn = (PFN_RtlVerifyVersionInfo)GetProcAddress(ntdllModule, "RtlVerifyVersionInfo");
+      RtlVerifyVersionInfoFn = (PFN_RtlVerifyVersionInfo)GetProcAddress(ntdllModule,
+                                                                        "RtlVerifyVersionInfo");
   if (RtlVerifyVersionInfoFn == NULL)
     return FALSE;
 
@@ -1181,7 +1180,9 @@ static BOOL _IsWindowsVersionOrGreater(WORD major, WORD minor, WORD)
   versionInfo.dwMinorVersion = minor;
   // VER_SET_CONDITION(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
   // VER_SET_CONDITION(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
-  return (RtlVerifyVersionInfoFn(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask) == 0) ?
+  return (RtlVerifyVersionInfoFn(&versionInfo,
+                                 VER_MAJORVERSION | VER_MINORVERSION,
+                                 conditionMask) == 0) ?
            TRUE :
            FALSE;
 }
@@ -1231,22 +1232,19 @@ typedef DPI_AWARENESS_CONTEXT(WINAPI *PFN_SetThreadDpiAwarenessContext)(
 // Helper function to enable DPI awareness without setting up a manifest
 static void AnchorBackendWin32EnableDpiAwareness()
 {
-  if (_IsWindows10OrGreater())
-  {
+  if (_IsWindows10OrGreater()) {
     static HINSTANCE user32_dll = ::LoadLibraryA("user32.dll");  // Reference counted per-process
     if (PFN_SetThreadDpiAwarenessContext SetThreadDpiAwarenessContextFn =
-          (PFN_SetThreadDpiAwarenessContext)::GetProcAddress(user32_dll, "SetThreadDpiAwarenessContext"))
-    {
+          (PFN_SetThreadDpiAwarenessContext)::GetProcAddress(user32_dll,
+                                                             "SetThreadDpiAwarenessContext")) {
       SetThreadDpiAwarenessContextFn(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
       return;
     }
   }
-  if (_IsWindows8Point1OrGreater())
-  {
+  if (_IsWindows8Point1OrGreater()) {
     static HINSTANCE shcore_dll = ::LoadLibraryA("shcore.dll");  // Reference counted per-process
     if (PFN_SetProcessDpiAwareness SetProcessDpiAwarenessFn =
-          (PFN_SetProcessDpiAwareness)::GetProcAddress(shcore_dll, "SetProcessDpiAwareness"))
-    {
+          (PFN_SetProcessDpiAwareness)::GetProcAddress(shcore_dll, "SetProcessDpiAwareness")) {
       SetProcessDpiAwarenessFn(PROCESS_PER_MONITOR_DPI_AWARE);
       return;
     }
@@ -1263,14 +1261,12 @@ static void AnchorBackendWin32EnableDpiAwareness()
 static float AnchorBackendWin32GetDpiScaleForMonitor(void *monitor)
 {
   UINT xdpi = 96, ydpi = 96;
-  if (_IsWindows8Point1OrGreater())
-  {
+  if (_IsWindows8Point1OrGreater()) {
     static HINSTANCE shcore_dll = ::LoadLibraryA("shcore.dll");  // Reference counted per-process
     static PFN_GetDpiForMonitor GetDpiForMonitorFn = NULL;
     if (GetDpiForMonitorFn == NULL && shcore_dll != NULL)
       GetDpiForMonitorFn = (PFN_GetDpiForMonitor)::GetProcAddress(shcore_dll, "GetDpiForMonitor");
-    if (GetDpiForMonitorFn != NULL)
-    {
+    if (GetDpiForMonitorFn != NULL) {
       GetDpiForMonitorFn((HMONITOR)monitor, MDT_EFFECTIVE_DPI, &xdpi, &ydpi);
       ANCHOR_ASSERT(xdpi == ydpi);  // Please contact me if you hit this assert!
       return xdpi / 96.0f;
@@ -1299,7 +1295,8 @@ static float AnchorBackendWin32GetDpiScaleForHwnd(void *hwnd)
 //--------------------------------------------------------------------------------------------------------
 
 #if defined(_MSC_VER)
-#  pragma comment(lib, "dwmapi")  // Link with dwmapi.lib. MinGW will require linking with '-ldwmapi'
+#  pragma comment(lib, \
+                  "dwmapi")  // Link with dwmapi.lib. MinGW will require linking with '-ldwmapi'
 #endif
 
 static void AnchorBackendWin32EnableAlphaCompositing(void *hwnd)
@@ -1313,7 +1310,8 @@ static void AnchorBackendWin32EnableAlphaCompositing(void *hwnd)
 
   // BOOL opaque;
   // DWORD color;
-  // if (_IsWindows8OrGreater() || (SUCCEEDED(::DwmGetColorizationColor(&color, &opaque)) && !opaque))
+  // if (_IsWindows8OrGreater() || (SUCCEEDED(::DwmGetColorizationColor(&color, &opaque)) &&
+  // !opaque))
   // {
   //   HRGN region = ::CreateRectRgn(0, 0, -1, -1);
   //   DWM_BLURBEHIND bb = {};
@@ -1334,8 +1332,7 @@ static void AnchorBackendWin32EnableAlphaCompositing(void *hwnd)
 // --------------------------------------------------------------------------------------------------------
 
 
-AnchorDisplayManagerWin32::AnchorDisplayManagerWin32(void)
-{}
+AnchorDisplayManagerWin32::AnchorDisplayManagerWin32(void) {}
 
 eAnchorStatus AnchorDisplayManagerWin32::getNumDisplays(AnchorU8 &numDisplays) const
 {
@@ -1409,15 +1406,17 @@ eAnchorStatus AnchorDisplayManagerWin32::getDisplaySetting(AnchorU8 display,
   return success;
 }
 
-eAnchorStatus AnchorDisplayManagerWin32::getCurrentDisplaySetting(AnchorU8 display,
-                                                                  ANCHOR_DisplaySetting &setting) const
+eAnchorStatus AnchorDisplayManagerWin32::getCurrentDisplaySetting(
+  AnchorU8 display,
+  ANCHOR_DisplaySetting &setting) const
 {
   // return getDisplaySetting(display, ENUM_CURRENT_SETTINGS, setting);
   return ANCHOR_FAILURE;
 }
 
-eAnchorStatus AnchorDisplayManagerWin32::setCurrentDisplaySetting(AnchorU8 display,
-                                                                  const ANCHOR_DisplaySetting &setting)
+eAnchorStatus AnchorDisplayManagerWin32::setCurrentDisplaySetting(
+  AnchorU8 display,
+  const ANCHOR_DisplaySetting &setting)
 {
   DISPLAY_DEVICE display_device;
   if (!get_dd(display, &display_device))
@@ -1512,7 +1511,8 @@ static void initRawInput()
   //   // Initiates WM_INPUT messages from keyboard
   //   // That way ANCHOR can retrieve true keys
   //   devices[0].usUsagePage = 0x01;
-  //   devices[0].usUsage = 0x06; /* http://msdn.microsoft.com/en-us/windows/hardware/gg487473.aspx */
+  //   devices[0].usUsage = 0x06; /* http://msdn.microsoft.com/en-us/windows/hardware/gg487473.aspx
+  //   */
 
   //   RegisterRawInputDevices(devices, DEVICE_COUNT, sizeof(RAWINPUTDEVICE));
 
@@ -1563,15 +1563,13 @@ bool AnchorSystemWin32::processEvents(bool waitForEvent)
   // MSG msg;
   bool hasEventHandled = false;
 
-  do
-  {
+  do {
     // if (waitForEvent && !::PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
     // {
     //   ::Sleep(1);
     // }
 
-    if (ANCHOR::GetCurrentContext())
-    {
+    if (ANCHOR::GetCurrentContext()) {
       hasEventHandled = true;
     }
 
@@ -1581,7 +1579,8 @@ bool AnchorSystemWin32::processEvents(bool waitForEvent)
     // {
     //   /**
     //    * TranslateMessage doesn't alter the message, and doesn't change our raw keyboard data.
-    //    * Needed for MapVirtualKey or if we ever need to get chars from wm_ime_char or similar. */
+    //    * Needed for MapVirtualKey or if we ever need to get chars from wm_ime_char or similar.
+    //    */
     //   ::TranslateMessage(&msg);
     //   ::DispatchMessageW(&msg);
     //   hasEventHandled = true;
@@ -1704,17 +1703,13 @@ eAnchorStatus AnchorSystemWin32::init()
 
   /* Determine whether this system has a high frequency performance counter. */
   m_hasPerformanceCounter = ::QueryPerformanceFrequency((LARGE_INTEGER *)&m_freq) == TRUE;
-  if (m_hasPerformanceCounter)
-  {
-    if (TfDebug::IsEnabled(ANCHOR_WIN32))
-    {
+  if (m_hasPerformanceCounter) {
+    if (TfDebug::IsEnabled(ANCHOR_WIN32)) {
       TF_MSG_SUCCESS("Anchor -- High Frequency Performance Timer available");
     }
     ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
-  } else
-  {
-    if (TfDebug::IsEnabled(ANCHOR_WIN32))
-    {
+  } else {
+    if (TfDebug::IsEnabled(ANCHOR_WIN32)) {
       TF_WARN("Anchor -- High Frequency Performance Timer not available");
     }
   }
@@ -1773,16 +1768,13 @@ AnchorISystemWindow *AnchorSystemWin32::createWindow(const char *title,
                                                     (AnchorWindowWin32 *)parentWindow,
                                                     is_dialog);
 
-  if (window->getValid())
-  {
+  if (window->getValid()) {
     /**
      * Store the pointer to the window. */
     m_windowManager->addWindow(window);
     m_windowManager->setActiveWindow(window);
-  } else
-  {
-    if (TfDebug::IsEnabled(ANCHOR_WIN32))
-    {
+  } else {
+    if (TfDebug::IsEnabled(ANCHOR_WIN32)) {
       TF_MSG_ERROR("Window invalid");
     }
     delete window;
@@ -1863,8 +1855,7 @@ static bool isStartedFromCommandPrompt()
 {
   HWND hwnd = GetConsoleWindow();
 
-  if (hwnd)
-  {
+  if (hwnd) {
     DWORD pid = (DWORD)-1;
     DWORD ppid = GetParentProcessID();
     // char parent_name[MAX_PATH];
@@ -1948,7 +1939,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   // if (m_user32)
   // {
   //   ANCHOR_WIN32_EnableNonClientDpiScaling fpEnableNonClientDpiScaling =
-  //     (ANCHOR_WIN32_EnableNonClientDpiScaling)::GetProcAddress(m_user32, "EnableNonClientDpiScaling");
+  //     (ANCHOR_WIN32_EnableNonClientDpiScaling)::GetProcAddress(m_user32,
+  //     "EnableNonClientDpiScaling");
   //   if (fpEnableNonClientDpiScaling)
   //   {
   //     fpEnableNonClientDpiScaling(hwnd);
@@ -1980,7 +1972,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //           // RAWINPUT *raw_ptr = &raw;
   //           // UINT rawSize = sizeof(RAWINPUT);
 
-  //           // GetRawInputData((HRAWINPUT)lParam, RID_INPUT, raw_ptr, &rawSize, sizeof(RAWINPUTHEADER));
+  //           // GetRawInputData((HRAWINPUT)lParam, RID_INPUT, raw_ptr, &rawSize,
+  //           sizeof(RAWINPUTHEADER));
 
   //           // switch (raw.header.dwType)
   //           // {
@@ -2048,11 +2041,14 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //         case WM_SYSCOMMAND:
   //           /* The WM_SYSCOMMAND message is sent to the window when system commands such as
   //            * maximize, minimize  or close the window are triggered. Also it is sent when ALT
-  //            * button is press for menu. To prevent this we must return preventing DefWindowProc.
+  //            * button is press for menu. To prevent this we must return preventing
+  //            DefWindowProc.
   //            *
-  //            * Note that the four low-order bits of the wParam parameter are used internally by the
+  //            * Note that the four low-order bits of the wParam parameter are used internally by
+  //            the
   //            * OS. To obtain the correct result when testing the value of wParam, an application
-  //            * must combine the value 0xFFF0 with the wParam value by using the bitwise AND operator.
+  //            * must combine the value 0xFFF0 with the wParam value by using the bitwise AND
+  //            operator.
   //            */
   //           switch (wParam & 0xFFF0)
   //           {
@@ -2183,39 +2179,43 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //         // Mouse events, processed
   //         ////////////////////////////////////////////////////////////////////////
   //         case WM_LBUTTONDOWN:
-  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_LEFT);
-  //           break;
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window,
+  //           ANCHOR_BUTTON_MASK_LEFT); break;
   //         case WM_MBUTTONDOWN:
-  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_MIDDLE);
-  //           break;
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window,
+  //           ANCHOR_BUTTON_MASK_MIDDLE); break;
   //         case WM_RBUTTONDOWN:
-  //           event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_RIGHT);
-  //           break;
+  //           event = processButtonEvent(AnchorEventTypeButtonDown, window,
+  //           ANCHOR_BUTTON_MASK_RIGHT); break;
   //         case WM_XBUTTONDOWN:
   //           if ((short)HIWORD(wParam) == XBUTTON1)
   //           {
-  //             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_BUTTON_4);
+  //             event = processButtonEvent(AnchorEventTypeButtonDown, window,
+  //             ANCHOR_BUTTON_MASK_BUTTON_4);
   //           } else if ((short)HIWORD(wParam) == XBUTTON2)
   //           {
-  //             event = processButtonEvent(AnchorEventTypeButtonDown, window, ANCHOR_BUTTON_MASK_BUTTON_5);
+  //             event = processButtonEvent(AnchorEventTypeButtonDown, window,
+  //             ANCHOR_BUTTON_MASK_BUTTON_5);
   //           }
   //           break;
   //         case WM_LBUTTONUP:
-  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_LEFT);
-  //           break;
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window,
+  //           ANCHOR_BUTTON_MASK_LEFT); break;
   //         case WM_MBUTTONUP:
-  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_MIDDLE);
-  //           break;
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window,
+  //           ANCHOR_BUTTON_MASK_MIDDLE); break;
   //         case WM_RBUTTONUP:
-  //           event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_RIGHT);
-  //           break;
+  //           event = processButtonEvent(AnchorEventTypeButtonUp, window,
+  //           ANCHOR_BUTTON_MASK_RIGHT); break;
   //         case WM_XBUTTONUP:
   //           if ((short)HIWORD(wParam) == XBUTTON1)
   //           {
-  //             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_BUTTON_4);
+  //             event = processButtonEvent(AnchorEventTypeButtonUp, window,
+  //             ANCHOR_BUTTON_MASK_BUTTON_4);
   //           } else if ((short)HIWORD(wParam) == XBUTTON2)
   //           {
-  //             event = processButtonEvent(AnchorEventTypeButtonUp, window, ANCHOR_BUTTON_MASK_BUTTON_5);
+  //             event = processButtonEvent(AnchorEventTypeButtonUp, window,
+  //             ANCHOR_BUTTON_MASK_BUTTON_5);
   //           }
   //           break;
   //         case WM_MOUSEMOVE:
@@ -2313,7 +2313,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //         case WM_NCMOUSEMOVE:
   //         /* The WM_NCMOUSEMOVE message is posted to a window when the cursor is moved
   //          * within the non-client area of the window. This message is posted to the window that
-  //          * contains the cursor. If a window has captured the mouse, this message is not posted.
+  //          * contains the cursor. If a window has captured the mouse, this message is not
+  //          posted.
   //          */
   //         case WM_NCHITTEST:
   //           /* The WM_NCHITTEST message is sent to a window when the cursor moves, or
@@ -2339,7 +2340,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //           /* The WM_ACTIVATE message is sent to both the window being activated and the window
   //            * being deactivated. If the windows use the same input queue, the message is sent
   //            * synchronously, first to the window procedure of the top-level window being
-  //            * deactivated, then to the window procedure of the top-level window being activated.
+  //            * deactivated, then to the window procedure of the top-level window being
+  //            activated.
   //            * If the windows use different input queues, the message is sent asynchronously,
   //            * so the window is activated immediately. */
   //           {
@@ -2352,7 +2354,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //                                                         AnchorEventTypeWindowDeactivate,
   //                                        window);
   //             /* WARNING: Let DefWindowProc handle WM_ACTIVATE, otherwise WM_MOUSEWHEEL
-  //              * will not be dispatched to OUR active window if we minimize one of OUR windows. */
+  //              * will not be dispatched to OUR active window if we minimize one of OUR windows.
+  //              */
   //             if (LOWORD(wParam) == WA_INACTIVE)
   //               window->lostMouseCapture();
 
@@ -2360,10 +2363,13 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //             break;
   //           }
   //         case WM_ENTERSIZEMOVE:
-  //           /* The WM_ENTERSIZEMOVE message is sent one time to a window after it enters the moving
-  //            * or sizing modal loop. The window enters the moving or sizing modal loop when the user
+  //           /* The WM_ENTERSIZEMOVE message is sent one time to a window after it enters the
+  //           moving
+  //            * or sizing modal loop. The window enters the moving or sizing modal loop when the
+  //            user
   //            * clicks the window's title bar or sizing border, or when the window passes the
-  //            * WM_SYSCOMMAND message to the DefWindowProc function and the wParam parameter of the
+  //            * WM_SYSCOMMAND message to the DefWindowProc function and the wParam parameter of
+  //            the
   //            * message specifies the SC_MOVE or SC_SIZE value. The operation is complete when
   //            * DefWindowProc returns.
   //            */
@@ -2374,9 +2380,12 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //           break;
   //         case WM_PAINT:
   //           /* An application sends the WM_PAINT message when the system or another application
-  //            * makes a request to paint a portion of an application's window. The message is sent
-  //            * when the UpdateWindow or RedrawWindow function is called, or by the DispatchMessage
-  //            * function when the application obtains a WM_PAINT message by using the GetMessage or
+  //            * makes a request to paint a portion of an application's window. The message is
+  //            sent
+  //            * when the UpdateWindow or RedrawWindow function is called, or by the
+  //            DispatchMessage
+  //            * function when the application obtains a WM_PAINT message by using the GetMessage
+  //            or
   //            * PeekMessage function.
   //            */
   //           if (!window->m_inLiveResize)
@@ -2414,7 +2423,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //           break;
   //         case WM_MOVING:
   //           /* The WM_MOVING message is sent to a window that the user is moving. By processing
-  //            * this message, an application can monitor the size and position of the drag rectangle
+  //            * this message, an application can monitor the size and position of the drag
+  //            rectangle
   //            * and, if needed, change its size or position.
   //            */
   //         case WM_MOVE:
@@ -2437,7 +2447,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //         case WM_DPICHANGED:
   //           /* The WM_DPICHANGED message is sent when the effective dots per inch (dpi) for a
   //            * window has changed. The DPI is the scale factor for a window. There are multiple
-  //            * events that can cause the DPI to change such as when the window is moved to a monitor
+  //            * events that can cause the DPI to change such as when the window is moved to a
+  //            monitor
   //            * with a different DPI.
   //            */
   //           {
@@ -2445,9 +2456,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //             RECT *const suggestedWindowRect = (RECT *)lParam;
 
   //             // Push DPI change event first
-  //             system->pushEvent(processWindowEvent(AnchorEventTypeWindowDPIHintChanged, window));
-  //             system->dispatchEvents();
-  //             eventHandled = true;
+  //             system->pushEvent(processWindowEvent(AnchorEventTypeWindowDPIHintChanged,
+  //             window)); system->dispatchEvents(); eventHandled = true;
 
   //             // Then move and resize window
   //             SetWindowPos(hwnd,
@@ -2470,7 +2480,8 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //           break;
   //         }
   //         case WM_KILLFOCUS:
-  //           /* The WM_KILLFOCUS message is sent to a window immediately before it loses the keyboard
+  //           /* The WM_KILLFOCUS message is sent to a window immediately before it loses the
+  //           keyboard
   //            * focus. We want to prevent this if a window is still active and it loses focus to
   //            * nowhere. */
   //           memset(io.KeysDown, 0, sizeof(io.KeysDown));
@@ -2505,12 +2516,15 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //         case WM_DESTROY:
   //         /* The WM_DESTROY message is sent when a window is being destroyed. It is sent to the
   //          * window procedure of the window being destroyed after the window is removed from the
-  //          * screen. This message is sent first to the window being destroyed and then to the child
-  //          * windows (if any) as they are destroyed. During the processing of the message, it can
+  //          * screen. This message is sent first to the window being destroyed and then to the
+  //          child
+  //          * windows (if any) as they are destroyed. During the processing of the message, it
+  //          can
   //          * be assumed that all child windows still exist. */
   //         case WM_NCDESTROY:
   //           /* The WM_NCDESTROY message informs a window that its non-client area is being
-  //            * destroyed. The DestroyWindow function sends the WM_NCDESTROY message to the window
+  //            * destroyed. The DestroyWindow function sends the WM_NCDESTROY message to the
+  //            window
   //            * following the WM_DESTROY message. WM_DESTROY is used to free the allocated memory
   //            * object associated with the window.
   //            */
@@ -2519,13 +2533,15 @@ LRESULT WINAPI AnchorSystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
   //         /* The WM_SHOWWINDOW message is sent to a window when the window is
   //          * about to be hidden or shown. */
   //         case WM_WINDOWPOSCHANGING:
-  //         /* The WM_WINDOWPOSCHANGING message is sent to a window whose size, position, or place in
-  //          * the Z order is about to change as a result of a call to the SetWindowPos function or
+  //         /* The WM_WINDOWPOSCHANGING message is sent to a window whose size, position, or place
+  //         in
+  //          * the Z order is about to change as a result of a call to the SetWindowPos function
+  //          or
   //          * another window-management function.
   //          */
   //         case WM_SETFOCUS:
-  //           /* The WM_SETFOCUS message is sent to a window after it has gained the keyboard focus. */
-  //           break;
+  //           /* The WM_SETFOCUS message is sent to a window after it has gained the keyboard
+  //           focus. */ break;
   //         ////////////////////////////////////////////////////////////////////////
   //         // Other events
   //         ////////////////////////////////////////////////////////////////////////
@@ -2585,21 +2601,16 @@ eAnchorKey AnchorSystemWin32::convertKey(short vKey, short scanCode, short exten
 {
   eAnchorKey key;
 
-  if ((vKey >= '0') && (vKey <= '9'))
-  {
+  if ((vKey >= '0') && (vKey <= '9')) {
     // VK_0 thru VK_9 are the same as ASCII '0' thru '9' (0x30 - 0x39)
     key = (eAnchorKey)(vKey - '0' + AnchorKey0);
-  } else if ((vKey >= 'A') && (vKey <= 'Z'))
-  {
+  } else if ((vKey >= 'A') && (vKey <= 'Z')) {
     // VK_A thru VK_Z are the same as ASCII 'A' thru 'Z' (0x41 - 0x5A)
     key = (eAnchorKey)(vKey - 'A' + AnchorKeyA);
-  } else if ((vKey >= VK_F1) && (vKey <= VK_F24))
-  {
+  } else if ((vKey >= VK_F1) && (vKey <= VK_F24)) {
     key = (eAnchorKey)(vKey - VK_F1 + AnchorKeyF1);
-  } else
-  {
-    switch (vKey)
-    {
+  } else {
+    switch (vKey) {
       case VK_RETURN:
         key = (extend) ? AnchorKeyNumpadEnter : AnchorKeyEnter;
         break;
@@ -2720,14 +2731,11 @@ eAnchorKey AnchorSystemWin32::convertKey(short vKey, short scanCode, short exten
 
       case VK_SHIFT:
         /* Check single shift presses */
-        if (scanCode == 0x36)
-        {
+        if (scanCode == 0x36) {
           key = AnchorKeyRightShift;
-        } else if (scanCode == 0x2a)
-        {
+        } else if (scanCode == 0x2a) {
           key = AnchorKeyLeftShift;
-        } else
-        {
+        } else {
           /* Must be a combination SHIFT (Left or Right) + a Key
            * Ignore this as the next message will contain
            * the desired "Key" */
@@ -2780,9 +2788,10 @@ eAnchorKey AnchorSystemWin32::convertKey(short vKey, short scanCode, short exten
   return key;
 }
 
-eAnchorStatus AnchorWindowWin32::getPointerInfo(std::vector<AnchorBackendWin32PointerInfo> &outPointerInfo,
-                                                WPARAM wParam,
-                                                LPARAM lParam)
+eAnchorStatus AnchorWindowWin32::getPointerInfo(
+  std::vector<AnchorBackendWin32PointerInfo> &outPointerInfo,
+  WPARAM wParam,
+  LPARAM lParam)
 {
   // AnchorS32 pointerId = GET_POINTERID_WPARAM(wParam);
   // AnchorS32 isPrimary = IS_POINTER_PRIMARY_WPARAM(wParam);
@@ -2840,7 +2849,8 @@ eAnchorStatus AnchorWindowWin32::getPointerInfo(std::vector<AnchorBackendWin32Po
   //   outPointerInfo[i].tabletData.Pressure = 1.0f;
   //   outPointerInfo[i].tabletData.Xtilt = 0.0f;
   //   outPointerInfo[i].tabletData.Ytilt = 0.0f;
-  //   outPointerInfo[i].time = system->performanceCounterToMillis(pointerApiInfo.PerformanceCount);
+  //   outPointerInfo[i].time =
+  //   system->performanceCounterToMillis(pointerApiInfo.PerformanceCount);
 
   //   if (pointerPenInfo[i].penMask & PEN_MASK_PRESSURE)
   //   {
@@ -2876,8 +2886,7 @@ eAnchorStatus AnchorWindowWin32::getPointerInfo(std::vector<AnchorBackendWin32Po
 eAnchorKey AnchorSystemWin32::processSpecialKey(short vKey, short scanCode) const
 {
   eAnchorKey key = AnchorKeyUnknown;
-  switch (PRIMARYLANGID(m_langId))
-  {
+  switch (PRIMARYLANGID(m_langId)) {
     case LANG_FRENCH:
       if (vKey == VK_OEM_8)
         key = AnchorKeyF13;  // oem key; used purely for shortcuts .
@@ -2891,12 +2900,12 @@ eAnchorKey AnchorSystemWin32::processSpecialKey(short vKey, short scanCode) cons
   return key;
 }
 
-AnchorEvent *AnchorSystemWin32::processWindowEvent(eAnchorEventType type, AnchorWindowWin32 *window)
+AnchorEvent *AnchorSystemWin32::processWindowEvent(eAnchorEventType type,
+                                                   AnchorWindowWin32 *window)
 {
   AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 
-  if (type == AnchorEventTypeWindowActivate)
-  {
+  if (type == AnchorEventTypeWindowActivate) {
     system->getWindowManager()->setActiveWindow(window);
   }
 
@@ -2910,8 +2919,7 @@ void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window,
 {
   AnchorIO &io = ANCHOR::GetIO();
 
-  if (isHorizontal)
-  {
+  if (isHorizontal) {
     /**
      * Anchor provides support for Horizontal scroll support.
      * But Kraken has no use for this as of now, give Anchor
@@ -2925,8 +2933,7 @@ void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window,
   int acc = system->m_wheelDeltaAccum;
   int delta = GET_WHEEL_DELTA_WPARAM(wParam);
 
-  if (acc * delta < 0)
-  {
+  if (acc * delta < 0) {
     // scroll direction reversed.
     acc = 0;
   }
@@ -2934,8 +2941,7 @@ void AnchorSystemWin32::processWheelEvent(AnchorWindowWin32 *window,
   int direction = (acc >= 0) ? 1 : -1;
   acc = abs(acc);
 
-  while (acc >= WHEEL_DELTA)
-  {
+  while (acc >= WHEEL_DELTA) {
     system->pushEvent(new AnchorEventWheel(ANCHOR::GetTime(), window, direction));
     acc -= WHEEL_DELTA;
   }
@@ -2959,18 +2965,15 @@ void AnchorSystemWin32::processPointerEvent(UINT type,
   AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
   std::vector<AnchorBackendWin32PointerInfo> pointerInfo;
 
-  if (window->getPointerInfo(pointerInfo, wParam, lParam) != ANCHOR_SUCCESS)
-  {
+  if (window->getPointerInfo(pointerInfo, wParam, lParam) != ANCHOR_SUCCESS) {
     return;
   }
 
-  switch (type)
-  {
+  switch (type) {
     case WM_POINTERUPDATE:
       /* Coalesced pointer events are reverse chronological order, reorder chronologically.
        * Only contiguous move events are coalesced. */
-      for (AnchorU32 i = pointerInfo.size(); i-- > 0;)
-      {
+      for (AnchorU32 i = pointerInfo.size(); i-- > 0;) {
         system->pushEvent(new AnchorEventCursor(pointerInfo[i].time,
                                                 AnchorEventTypeCursorMove,
                                                 window,
@@ -3023,24 +3026,21 @@ AnchorEventCursor *AnchorSystemWin32::processCursorEvent(AnchorWindowWin32 *wind
   AnchorS32 x_screen, y_screen;
   AnchorSystemWin32 *system = (AnchorSystemWin32 *)getSystem();
 
-  if (window->getTabletData().Active != AnchorTabletModeNone)
-  {
+  if (window->getTabletData().Active != AnchorTabletModeNone) {
     /* While pen devices are in range, cursor movement is handled by tablet input processing. */
     return NULL;
   }
 
   system->getCursorPosition(x_screen, y_screen);
 
-  if (window->getCursorGrabModeIsWarp())
-  {
+  if (window->getCursorGrabModeIsWarp()) {
     AnchorS32 x_new = x_screen;
     AnchorS32 y_new = y_screen;
     AnchorS32 x_accum, y_accum;
     AnchorRect bounds;
 
     /* Fallback to window bounds. */
-    if (window->getCursorGrabBounds(bounds) == ANCHOR_FAILURE)
-    {
+    if (window->getCursorGrabBounds(bounds) == ANCHOR_FAILURE) {
       window->getClientBounds(bounds);
     }
 
@@ -3049,14 +3049,12 @@ AnchorEventCursor *AnchorSystemWin32::processCursorEvent(AnchorWindowWin32 *wind
     bounds.wrapPoint(x_new, y_new, 2, window->getCursorGrabAxis());
 
     window->getCursorGrabAccum(x_accum, y_accum);
-    if (x_new != x_screen || y_new != y_screen)
-    {
+    if (x_new != x_screen || y_new != y_screen) {
       /* When wrapping we don't need to add an event because the setCursorPosition call will cause
        * a new event after. */
       system->setCursorPosition(x_new, y_new); /* wrap */
       window->setCursorGrabAccum(x_accum + (x_screen - x_new), y_accum + (y_screen - y_new));
-    } else
-    {
+    } else {
       return new AnchorEventCursor(ANCHOR::GetTime(),
                                    AnchorEventTypeCursorMove,
                                    window,
@@ -3064,8 +3062,7 @@ AnchorEventCursor *AnchorSystemWin32::processCursorEvent(AnchorWindowWin32 *wind
                                    y_screen + y_accum,
                                    ANCHOR_TABLET_DATA_NONE);
     }
-  } else
-  {
+  } else {
     return new AnchorEventCursor(ANCHOR::GetTime(),
                                  AnchorEventTypeCursorMove,
                                  window,
@@ -3092,16 +3089,15 @@ AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
   //   int msgPosX = GET_X_LPARAM(msgPos);
   //   int msgPosY = GET_Y_LPARAM(msgPos);
   //   system->pushEvent(
-  //     new AnchorEventCursor(::GetMessageTime(), AnchorEventTypeCursorMove, window, msgPosX, msgPosY, td));
+  //     new AnchorEventCursor(::GetMessageTime(), AnchorEventTypeCursorMove, window, msgPosX,
+  //     msgPosY, td));
   // }
 
   /**
    * Ensure Anchor Context's Main IO
    * data is aware of Mouse Events. */
-  if (type == AnchorEventTypeButtonDown)
-  {
-    switch (mask)
-    {
+  if (type == AnchorEventTypeButtonDown) {
+    switch (mask) {
       case ANCHOR_BUTTON_MASK_LEFT:
         ANCHOR::GetIO().MouseDown[0] = true;
         break;
@@ -3118,10 +3114,8 @@ AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
         ANCHOR::GetIO().MouseDown[4] = true;
         break;
     }
-  } else
-  {
-    switch (mask)
-    {
+  } else {
+    switch (mask) {
       case ANCHOR_BUTTON_MASK_LEFT:
         ANCHOR::GetIO().MouseDown[0] = false;
         break;
@@ -3144,7 +3138,9 @@ AnchorEventButton *AnchorSystemWin32::processButtonEvent(eAnchorEventType type,
   return new AnchorEventButton(ANCHOR::GetTime(), type, window, mask, td);
 }
 
-eAnchorKey AnchorSystemWin32::hardKey(AnchorS32 const &raw, bool *r_keyDown, bool *r_is_repeated_modifier)
+eAnchorKey AnchorSystemWin32::hardKey(AnchorS32 const &raw,
+                                      bool *r_keyDown,
+                                      bool *r_is_repeated_modifier)
 {
   // bool is_repeated_modifier = false;
 
@@ -3156,7 +3152,8 @@ eAnchorKey AnchorSystemWin32::hardKey(AnchorS32 const &raw, bool *r_keyDown, boo
   // // RI_KEY_BREAK doesn't work for sticky keys release, so we also
   // // check for the up message
   // unsigned int msg = raw.data.keyboard.Message;
-  // *r_keyDown = !(raw.data.keyboard.Flags & RI_KEY_BREAK) && msg != WM_KEYUP && msg != WM_SYSKEYUP;
+  // *r_keyDown = !(raw.data.keyboard.Flags & RI_KEY_BREAK) && msg != WM_KEYUP && msg !=
+  // WM_SYSKEYUP;
 
   // key = this->convertKey(raw.data.keyboard.VKey,
   //                        raw.data.keyboard.MakeCode,
@@ -3223,13 +3220,11 @@ AnchorEvent *AnchorSystemWin32::processWindowSizeEvent(AnchorWindowWin32 *window
   AnchorEvent *sizeEvent = new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowSize, window);
 
   /* We get WM_SIZE before we fully init. Do not dispatch before we are continuously resizing. */
-  if (window->m_inLiveResize)
-  {
+  if (window->m_inLiveResize) {
     system->pushEvent(sizeEvent);
     system->dispatchEvents();
     return NULL;
-  } else
-  {
+  } else {
     return sizeEvent;
   }
 }
@@ -3275,18 +3270,20 @@ AnchorEventKey *AnchorSystemWin32::processKeyEvent(AnchorWindowWin32 *window, An
   //   bool ctrl_pressed = state[VK_CONTROL] & 0x80;
   //   bool alt_pressed = state[VK_MENU] & 0x80;
 
-  //   /* No text with control key pressed (Alt can be used to insert special characters though!). */
-  //   if (ctrl_pressed && !alt_pressed)
+  //   /* No text with control key pressed (Alt can be used to insert special characters though!).
+  //   */ if (ctrl_pressed && !alt_pressed)
   //   {
   //     utf8_char[0] = '\0';
   //   }
-  //   // Don't call ToUnicodeEx on dead keys as it clears the buffer and so won't allow diacritical
+  //   // Don't call ToUnicodeEx on dead keys as it clears the buffer and so won't allow
+  //   diacritical
   //   // composition.
   //   else if (MapVirtualKeyW(vk, 2) != 0)
   //   {
   //     // todo: ToUnicodeEx can respond with up to 4 utf16 chars (only 2 here).
   //     // Could be up to 24 utf8 bytes.
-  //     if ((r = ToUnicodeEx(vk, raw.data.keyboard.MakeCode, state, utf16, 2, 0, system->m_keylayout)))
+  //     if ((r = ToUnicodeEx(vk, raw.data.keyboard.MakeCode, state, utf16, 2, 0,
+  //     system->m_keylayout)))
   //     {
   //       if ((r > 0 && r < 3))
   //       {
@@ -3340,8 +3337,7 @@ AnchorU64 AnchorSystemWin32::tickCountToMillis(__int64 ticks) const
 AnchorU64 AnchorSystemWin32::getMilliSeconds() const
 {
   // Hardware does not support high resolution timers. We will use GetTickCount instead then.
-  if (!m_hasPerformanceCounter)
-  {
+  if (!m_hasPerformanceCounter) {
     return tickCountToMillis(::GetTickCount());
   }
 
@@ -3409,11 +3405,11 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
     m_frameIndex(0),
     m_fenceLastSignaledValue(0)
 {
-  DWORD style = parentWindow ? WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
-                               WS_OVERLAPPEDWINDOW;
+  DWORD style = parentWindow ?
+                  WS_POPUPWINDOW | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX :
+                  WS_OVERLAPPEDWINDOW;
 
-  if (state == AnchorWindowStateFullScreen)
-  {
+  if (state == AnchorWindowStateFullScreen) {
     style |= WS_MAXIMIZE;
   }
 
@@ -3425,21 +3421,21 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
 
   wchar_t *title_16 = alloc_utf16_from_8((char *)title, 0);
   // m_hWnd = ::CreateWindowExW(extended_style,                  // window extended style
-  //                            s_windowClassName,               // pointer to registered class name
-  //                            title_16,                        // pointer to window name
+  //                            s_windowClassName,               // pointer to registered class
+  //                            name title_16,                        // pointer to window name
   //                            style,                           // window style
   //                            win_rect.left,                   // horizontal position of window
   //                            win_rect.top,                    // vertical position of window
   //                            win_rect.right - win_rect.left,  // window width
   //                            win_rect.bottom - win_rect.top,  // window height
-  //                            m_parentWindowHwnd,              // handle to parent or owner window
-  //                            0,                               // handle to menu or child-window identifier
+  //                            m_parentWindowHwnd,              // handle to parent or owner
+  //                            window 0,                               // handle to menu or
+  //                            child-window identifier
   //                            ::GetModuleHandle(0),            // handle to application instance
   //                            0);                              // pointer to window-creation data
   free(title_16);
 
-  if (m_hWnd == NULL)
-  {
+  if (m_hWnd == NULL) {
     return;
   }
 
@@ -3462,16 +3458,14 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
   /* Store a pointer to this class in the window structure. */
   // ::SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
-  if (!m_system->m_windowFocus)
-  {
+  if (!m_system->m_windowFocus) {
     /* If we don't want focus then lower to bottom. */
     // ::SetWindowPos(m_hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
   }
 
   /* Show the window. */
   int nCmdShow;
-  switch (state)
-  {
+  switch (state) {
     case AnchorWindowStateMaximized:
       nCmdShow = SW_SHOWMAXIMIZED;
       break;
@@ -3512,7 +3506,8 @@ AnchorWindowWin32::AnchorWindowWin32(AnchorSystemWin32 *system,
   // }
 
   /* Allow the showing of a progress bar on the taskbar. */
-  // CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID *)&m_Bar);
+  // CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID
+  // *)&m_Bar);
 }
 
 AnchorWindowWin32::~AnchorWindowWin32()
@@ -3532,8 +3527,7 @@ AnchorWindowWin32::~AnchorWindowWin32()
 
   // closeWintab();
 
-  if (m_user32)
-  {
+  if (m_user32) {
     FreeLibrary(m_user32);
     m_user32 = NULL;
   }
@@ -3550,8 +3544,7 @@ AnchorWindowWin32::~AnchorWindowWin32()
   //   m_hDC = NULL;
   // }
 
-  if (m_hWnd)
-  {
+  if (m_hWnd) {
     /* If this window is referenced by others as parent, clear that relation or windows will free
      * the handle while we still reference it. */
     // for (AnchorISystemWindow *iter_win : m_system->getWindowManager()->getWindows())
@@ -3583,63 +3576,54 @@ eAnchorStatus AnchorWindowWin32::DestroyVulkan()
    * Free all Vulkan Resources to ensure
    * clean shutdown and closeout of this
    * window. */
-  if (m_device)
-  {
+  if (m_device) {
     m_device->WaitForIdle();
     DestroyVulkanFontTexture();
 
-    if (m_fontView)
-    {
+    if (m_fontView) {
       vkDestroyImageView(m_device->GetVulkanDevice(), m_fontView, HgiVulkanAllocator());
       m_fontView = VK_NULL_HANDLE;
     }
 
-    if (m_fontImage)
-    {
+    if (m_fontImage) {
       vkDestroyImage(m_device->GetVulkanDevice(), m_fontImage, HgiVulkanAllocator());
       m_fontImage = VK_NULL_HANDLE;
     }
 
-    if (m_fontMemory)
-    {
+    if (m_fontMemory) {
       vkFreeMemory(m_device->GetVulkanDevice(), m_fontMemory, HgiVulkanAllocator());
       m_fontMemory = VK_NULL_HANDLE;
     }
 
-    if (m_fontSampler)
-    {
+    if (m_fontSampler) {
       vkDestroySampler(m_device->GetVulkanDevice(), m_fontSampler, HgiVulkanAllocator());
       m_fontSampler = VK_NULL_HANDLE;
     }
 
-    if (g_DescriptorSetLayout)
-    {
-      vkDestroyDescriptorSetLayout(m_device->GetVulkanDevice(), g_DescriptorSetLayout, HgiVulkanAllocator());
+    if (g_DescriptorSetLayout) {
+      vkDestroyDescriptorSetLayout(m_device->GetVulkanDevice(),
+                                   g_DescriptorSetLayout,
+                                   HgiVulkanAllocator());
       g_DescriptorSetLayout = VK_NULL_HANDLE;
     }
 
-    if (m_device)
-    {
+    if (m_device) {
       m_device = nullptr;
     }
 
-    if (m_commandQueue)
-    {
+    if (m_commandQueue) {
       m_commandQueue = nullptr;
     }
 
-    if (m_pipelineCache)
-    {
+    if (m_pipelineCache) {
       m_pipelineCache = nullptr;
     }
 
-    if (m_vkinstance)
-    {
+    if (m_vkinstance) {
       delete m_vkinstance;
     }
 
-    if (m_hgi)
-    {
+    if (m_hgi) {
       delete m_hgi;
     }
   }
@@ -3657,7 +3641,9 @@ eAnchorStatus AnchorWindowWin32::releaseNativeHandles()
   return ANCHOR_SUCCESS;
 }
 
-void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect, DWORD dwStyle, DWORD dwExStyle)
+void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect,
+                                                          DWORD dwStyle,
+                                                          DWORD dwExStyle)
 {
   /* Get Details of the closest monitor. */
   // HMONITOR hmonitor = MonitorFromRect(win_rect, MONITOR_DEFAULTTONEAREST);
@@ -3667,12 +3653,12 @@ void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect, DWORD
   // GetMonitorInfo(hmonitor, &monitor);
 
   // /* Constrain requested size and position to fit within this monitor. */
-  // LONG width = winmin(monitor.rcWork.right - monitor.rcWork.left, win_rect->right - win_rect->left);
-  // LONG height = winmin(monitor.rcWork.bottom - monitor.rcWork.top, win_rect->bottom - win_rect->top);
-  // win_rect->left = winmin(winmax(monitor.rcWork.left, win_rect->left), monitor.rcWork.right - width);
-  // win_rect->right = win_rect->left + width;
-  // win_rect->top = winmin(winmax(monitor.rcWork.top, win_rect->top), monitor.rcWork.bottom - height);
-  // win_rect->bottom = win_rect->top + height;
+  // LONG width = winmin(monitor.rcWork.right - monitor.rcWork.left, win_rect->right -
+  // win_rect->left); LONG height = winmin(monitor.rcWork.bottom - monitor.rcWork.top,
+  // win_rect->bottom - win_rect->top); win_rect->left = winmin(winmax(monitor.rcWork.left,
+  // win_rect->left), monitor.rcWork.right - width); win_rect->right = win_rect->left + width;
+  // win_rect->top = winmin(winmax(monitor.rcWork.top, win_rect->top), monitor.rcWork.bottom -
+  // height); win_rect->bottom = win_rect->top + height;
 
   // /* With Windows 10 and newer we can adjust for chrome that differs with DPI and scale. */
   // AnchorAdjustWindowRectExForDpiCallback fpAdjustWindowRectExForDpi = nullptr;
@@ -3684,7 +3670,8 @@ void AnchorWindowWin32::adjustWindowRectForClosestMonitor(LPRECT win_rect, DWORD
   // }
 
   // /* Adjust to allow for caption, borders, shadows, scaling, etc. Resulting values can be
-  //  * correctly outside of monitor bounds. Note: You cannot specify WS_OVERLAPPED when calling. */
+  //  * correctly outside of monitor bounds. Note: You cannot specify WS_OVERLAPPED when calling.
+  //  */
   // if (fpAdjustWindowRectExForDpi)
   // {
   //   UINT dpiX, dpiY;
@@ -3774,8 +3761,7 @@ std::string AnchorWindowWin32::getTitle() const
   return "Kraken";
 }
 
-void AnchorWindowWin32::setIcon(const char *icon)
-{}
+void AnchorWindowWin32::setIcon(const char *icon) {}
 
 void AnchorWindowWin32::getWindowBounds(AnchorRect &bounds) const
 {
@@ -3789,8 +3775,7 @@ void AnchorWindowWin32::getWindowBounds(AnchorRect &bounds) const
 
 static void check_vk_result(VkResult err)
 {
-  if (err == VK_ERROR_INCOMPATIBLE_DRIVER)
-  {
+  if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
 
     TF_MSG_ERROR(
       "Cannot find a compatible Vulkan installable client"
@@ -3800,8 +3785,7 @@ static void check_vk_result(VkResult err)
 
     fflush(stdout);
     exit(ANCHOR_FAILURE);
-  } else if (err != VK_SUCCESS)
-  {
+  } else if (err != VK_SUCCESS) {
 
     TF_MSG_ERROR(
       "The call to vkCreateInstance failed. Please make"
@@ -3837,8 +3821,7 @@ void AnchorWindowWin32::SetupVulkan()
     VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
   };
 
-  if (HgiVulkanIsDebugEnabled())
-  {
+  if (HgiVulkanIsDebugEnabled()) {
     instance_exts.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     const char *debugLayers[] = {"VK_LAYER_KHRONOS_validation"};
     create_info.ppEnabledLayerNames = debugLayers;
@@ -3890,17 +3873,14 @@ void AnchorWindowWin32::SetupVulkan()
   uint32_t queueIndex;
 
   std::vector<VkBool32> supportsPresenting(queueCount);
-  for (uint32_t i = 0; i < queueCount; i++)
-  {
+  for (uint32_t i = 0; i < queueCount; i++) {
     vkGetPhysicalDeviceSurfaceSupportKHR(m_device->GetVulkanPhysicalDevice(),
                                          i,
                                          surface,
                                          &supportsPresenting[i]);
 
-    if ((queueProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
-    {
-      if (supportsPresenting[i] == VK_TRUE)
-      {
+    if ((queueProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0) {
+      if (supportsPresenting[i] == VK_TRUE) {
         queueIndex = i;
         break;
       }
@@ -3928,11 +3908,9 @@ void AnchorWindowWin32::SetupVulkan()
   VkFormat colorFormat;
   VkColorSpaceKHR colorSpace;
 
-  if (formatCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED)
-  {
+  if (formatCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED) {
     colorFormat = VK_FORMAT_B8G8R8A8_UNORM;
-  } else
-  {
+  } else {
     colorFormat = surfaceFormats[0].format;
   }
 
@@ -3951,12 +3929,10 @@ void AnchorWindowWin32::SetupVulkan()
 
   AnchorRect rectBounds;
   getWindowBounds(rectBounds);
-  if (caps.currentExtent.width == -1 || caps.currentExtent.height == -1)
-  {
+  if (caps.currentExtent.width == -1 || caps.currentExtent.height == -1) {
     swapchainExtent.width = rectBounds.getWidth();
     swapchainExtent.height = rectBounds.getHeight();
-  } else
-  {
+  } else {
     swapchainExtent = caps.currentExtent;
   }
 
@@ -3977,10 +3953,8 @@ void AnchorWindowWin32::SetupVulkan()
   ANCHOR_ASSERT(result == VK_SUCCESS);
 
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
-  for (uint32_t i = 0; i < presentModeCount; i++)
-  {
-    if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
-    {
+  for (uint32_t i = 0; i < presentModeCount; i++) {
+    if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR) {
       presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
       break;
     }
@@ -3990,8 +3964,7 @@ void AnchorWindowWin32::SetupVulkan()
 
   ANCHOR_ASSERT(caps.maxImageCount >= 1);
   uint32_t imageCount = caps.minImageCount + 1;
-  if (imageCount > caps.maxImageCount)
-  {
+  if (imageCount > caps.maxImageCount) {
     imageCount = caps.maxImageCount;
   }
 
@@ -4014,8 +3987,7 @@ void AnchorWindowWin32::SetupVulkan()
   m_vulkan_context->ImageCount = imageCount;
   m_vulkan_context->PresentMode = presentMode;
 
-  if (TfDebug::IsEnabled(ANCHOR_WIN32))
-  {
+  if (TfDebug::IsEnabled(ANCHOR_WIN32)) {
     TF_MSG_SUCCESS("Anchor -- Rendering at maximum possible frames per second.");
     TF_MSG("Anchor -- Selected PresentMode = %d", m_vulkan_context->PresentMode);
   }
@@ -4131,7 +4103,10 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
     alloc_info.allocationSize = req.size;
     alloc_info.memoryTypeIndex = GetVulkanMemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                                                      req.memoryTypeBits);
-    err = vkAllocateMemory(m_device->GetVulkanDevice(), &alloc_info, HgiVulkanAllocator(), &m_fontMemory);
+    err = vkAllocateMemory(m_device->GetVulkanDevice(),
+                           &alloc_info,
+                           HgiVulkanAllocator(),
+                           &m_fontMemory);
     check_vk_result(err);
     err = vkBindImageMemory(m_device->GetVulkanDevice(), m_fontImage, m_fontMemory, 0);
     check_vk_result(err);
@@ -4192,15 +4167,22 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
                            HgiVulkanAllocator(),
                            &m_fontUploadBufferMemory);
     check_vk_result(err);
-    err = vkBindBufferMemory(m_device->GetVulkanDevice(), m_fontUploadBuffer, m_fontUploadBufferMemory, 0);
+    err = vkBindBufferMemory(m_device->GetVulkanDevice(),
+                             m_fontUploadBuffer,
+                             m_fontUploadBufferMemory,
+                             0);
     check_vk_result(err);
   }
 
   // Upload to Buffer:
   {
     char *map = NULL;
-    err =
-      vkMapMemory(m_device->GetVulkanDevice(), m_fontUploadBufferMemory, 0, upload_size, 0, (void **)(&map));
+    err = vkMapMemory(m_device->GetVulkanDevice(),
+                      m_fontUploadBufferMemory,
+                      0,
+                      upload_size,
+                      0,
+                      (void **)(&map));
     check_vk_result(err);
     memcpy(map, pixels, upload_size);
     VkMappedMemoryRange range[1] = {};
@@ -4279,13 +4261,11 @@ void AnchorWindowWin32::CreateVulkanFontTexture(VkCommandBuffer command_buffer)
 
 void AnchorWindowWin32::DestroyVulkanFontTexture()
 {
-  if (m_fontUploadBuffer)
-  {
+  if (m_fontUploadBuffer) {
     vkDestroyBuffer(m_device->GetVulkanDevice(), m_fontUploadBuffer, HgiVulkanAllocator());
     m_fontUploadBuffer = VK_NULL_HANDLE;
   }
-  if (m_fontUploadBufferMemory)
-  {
+  if (m_fontUploadBufferMemory) {
     vkFreeMemory(m_device->GetVulkanDevice(), m_fontUploadBufferMemory, HgiVulkanAllocator());
     m_fontUploadBufferMemory = VK_NULL_HANDLE;
   }
@@ -4307,7 +4287,10 @@ void AnchorWindowWin32::CreateVulkanDescriptorSetLayout()
     info.minLod = -1000;
     info.maxLod = 1000;
     info.maxAnisotropy = 1.0f;
-    err = vkCreateSampler(m_device->GetVulkanDevice(), &info, HgiVulkanAllocator(), &m_fontSampler);
+    err = vkCreateSampler(m_device->GetVulkanDevice(),
+                          &info,
+                          HgiVulkanAllocator(),
+                          &m_fontSampler);
     check_vk_result(err);
   }
 
@@ -4341,7 +4324,8 @@ void AnchorWindowWin32::CreateVulkanDescriptorSetLayout()
   }
 }
 
-uint32_t AnchorWindowWin32::GetVulkanMemoryType(VkMemoryPropertyFlags properties, uint32_t type_bits)
+uint32_t AnchorWindowWin32::GetVulkanMemoryType(VkMemoryPropertyFlags properties,
+                                                uint32_t type_bits)
 {
   VkPhysicalDeviceMemoryProperties prop;
   vkGetPhysicalDeviceMemoryProperties(m_device->GetVulkanPhysicalDevice(), &prop);
@@ -4353,8 +4337,7 @@ uint32_t AnchorWindowWin32::GetVulkanMemoryType(VkMemoryPropertyFlags properties
 
 void AnchorWindowWin32::CreateD3DRenderTarget()
 {
-  for (UINT i = 0; i < NUM_BACK_BUFFERS; i++)
-  {
+  for (UINT i = 0; i < NUM_BACK_BUFFERS; i++) {
     ID3D12Resource *pBackBuffer = NULL;
     m_d3dSwapChain->GetBuffer(i, IID_PPV_ARGS(&pBackBuffer));
     m_d3dDevice->CreateRenderTargetView(pBackBuffer, NULL, m_mainRenderTargetDescriptor[i]);
@@ -4386,8 +4369,7 @@ eAnchorStatus AnchorWindowWin32::SetupD3D(HWND hWnd)
   /**
    * Create device */
   D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
-  if (D3D12CreateDevice(NULL, featureLevel, IID_PPV_ARGS(&m_d3dDevice)) != S_OK)
-  {
+  if (D3D12CreateDevice(NULL, featureLevel, IID_PPV_ARGS(&m_d3dDevice)) != S_OK) {
     return ANCHOR_FAILURE;
   }
 
@@ -4397,15 +4379,15 @@ eAnchorStatus AnchorWindowWin32::SetupD3D(HWND hWnd)
     desc.NumDescriptors = NUM_BACK_BUFFERS;
     desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     desc.NodeMask = 1;
-    if (m_d3dDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_d3dRtvDescriptorHeap)) != S_OK)
-    {
+    if (m_d3dDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_d3dRtvDescriptorHeap)) != S_OK) {
       return ANCHOR_FAILURE;
     }
 
-    SIZE_T rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_d3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    for (UINT i = 0; i < NUM_BACK_BUFFERS; i++)
-    {
+    SIZE_T rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(
+      D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle =
+      m_d3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    for (UINT i = 0; i < NUM_BACK_BUFFERS; i++) {
       m_mainRenderTargetDescriptor[i] = rtvHandle;
       rtvHandle.ptr += rtvDescriptorSize;
     }
@@ -4416,8 +4398,7 @@ eAnchorStatus AnchorWindowWin32::SetupD3D(HWND hWnd)
     desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     desc.NumDescriptors = 1;
     desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    if (m_d3dDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_d3dSrvDescriptorHeap)) != S_OK)
-    {
+    if (m_d3dDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_d3dSrvDescriptorHeap)) != S_OK) {
       return ANCHOR_FAILURE;
     }
   }
@@ -4427,17 +4408,15 @@ eAnchorStatus AnchorWindowWin32::SetupD3D(HWND hWnd)
     desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
     desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     desc.NodeMask = 1;
-    if (m_d3dDevice->CreateCommandQueue(&desc, IID_PPV_ARGS(&m_d3dCommandQueue)) != S_OK)
-    {
+    if (m_d3dDevice->CreateCommandQueue(&desc, IID_PPV_ARGS(&m_d3dCommandQueue)) != S_OK) {
       return ANCHOR_FAILURE;
     }
   }
 
-  for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
-  {
+  for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++) {
     if (m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-                                            IID_PPV_ARGS(&m_frameContext[i].CommandAllocator)) != S_OK)
-    {
+                                            IID_PPV_ARGS(&m_frameContext[i].CommandAllocator)) !=
+        S_OK) {
       return ANCHOR_FAILURE;
     }
   }
@@ -4447,35 +4426,31 @@ eAnchorStatus AnchorWindowWin32::SetupD3D(HWND hWnd)
                                      m_frameContext[0].CommandAllocator,
                                      NULL,
                                      IID_PPV_ARGS(&m_d3dCommandList)) != S_OK ||
-      m_d3dCommandList->Close() != S_OK)
-  {
+      m_d3dCommandList->Close() != S_OK) {
     return ANCHOR_FAILURE;
   }
 
-  if (m_d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)) != S_OK)
-  {
+  if (m_d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)) != S_OK) {
     return ANCHOR_FAILURE;
   }
 
   m_fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  if (m_fenceEvent == NULL)
-  {
+  if (m_fenceEvent == NULL) {
     return ANCHOR_FAILURE;
   }
 
   {
     IDXGIFactory4 *dxgiFactory = NULL;
     IDXGISwapChain1 *swapChain1 = NULL;
-    if (CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)) != S_OK)
-    {
+    if (CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)) != S_OK) {
       return ANCHOR_FAILURE;
     }
-    if (dxgiFactory->CreateSwapChainForHwnd(m_d3dCommandQueue, hWnd, &sd, NULL, NULL, &swapChain1) != S_OK)
-    {
+    if (dxgiFactory
+          ->CreateSwapChainForHwnd(m_d3dCommandQueue, hWnd, &sd, NULL, NULL, &swapChain1) !=
+        S_OK) {
       return ANCHOR_FAILURE;
     }
-    if (swapChain1->QueryInterface(IID_PPV_ARGS(&m_d3dSwapChain)) != S_OK)
-    {
+    if (swapChain1->QueryInterface(IID_PPV_ARGS(&m_d3dSwapChain)) != S_OK) {
       return ANCHOR_FAILURE;
     }
     swapChain1->Release();
@@ -4493,8 +4468,7 @@ void AnchorWindowWin32::DestroyD3DRenderTarget()
   WaitForLastD3DFrame();
 
   for (UINT i = 0; i < NUM_BACK_BUFFERS; i++)
-    if (m_mainRenderTargetResource[i])
-    {
+    if (m_mainRenderTargetResource[i]) {
       m_mainRenderTargetResource[i]->Release();
       m_mainRenderTargetResource[i] = NULL;
     }
@@ -4505,16 +4479,14 @@ void AnchorWindowWin32::WaitForLastD3DFrame()
   D3D12FrameContext *frame_ctx = &m_frameContext[m_frameIndex % NUM_FRAMES_IN_FLIGHT];
 
   UINT64 fenceValue = frame_ctx->FenceValue;
-  if (fenceValue == 0)
-  {
+  if (fenceValue == 0) {
     /**
      * No fence was signaled. */
     return;
   }
 
   frame_ctx->FenceValue = 0;
-  if (m_fence->GetCompletedValue() >= fenceValue)
-  {
+  if (m_fence->GetCompletedValue() >= fenceValue) {
     return;
   }
 
@@ -4526,64 +4498,53 @@ void AnchorWindowWin32::DestroyD3D()
 {
   DestroyD3DRenderTarget();
 
-  if (m_d3dSwapChain)
-  {
+  if (m_d3dSwapChain) {
     m_d3dSwapChain->Release();
     m_d3dSwapChain = NULL;
   }
 
-  if (m_d3dSwapChainWaitObject != NULL)
-  {
+  if (m_d3dSwapChainWaitObject != NULL) {
     CloseHandle(m_d3dSwapChainWaitObject);
   }
 
-  for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
-  {
-    if (m_frameContext[i].CommandAllocator)
-    {
+  for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++) {
+    if (m_frameContext[i].CommandAllocator) {
       m_frameContext[i].CommandAllocator->Release();
       m_frameContext[i].CommandAllocator = NULL;
     }
   }
 
-  if (m_d3dCommandQueue)
-  {
+  if (m_d3dCommandQueue) {
     m_d3dCommandQueue->Release();
     m_d3dCommandQueue = NULL;
   }
 
-  if (m_d3dCommandList)
-  {
+  if (m_d3dCommandList) {
     m_d3dCommandList->Release();
     m_d3dCommandList = NULL;
   }
 
-  if (m_d3dRtvDescriptorHeap)
-  {
+  if (m_d3dRtvDescriptorHeap) {
     m_d3dRtvDescriptorHeap->Release();
     m_d3dRtvDescriptorHeap = NULL;
   }
 
-  if (m_d3dSrvDescriptorHeap)
-  {
+  if (m_d3dSrvDescriptorHeap) {
     m_d3dSrvDescriptorHeap->Release();
     m_d3dSrvDescriptorHeap = NULL;
   }
 
-  if (m_fence)
-  {
+  if (m_fence) {
     m_fence->Release();
     m_fence = NULL;
   }
 
-  if (m_fenceEvent)
-  {
+  if (m_fenceEvent) {
     CloseHandle(m_fenceEvent);
     m_fenceEvent = NULL;
   }
 
-  if (m_d3dDevice)
-  {
+  if (m_d3dDevice) {
     m_d3dDevice->Release();
     m_d3dDevice = NULL;
   }
@@ -4593,8 +4554,7 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
 {
   m_drawContextType = type;
 
-  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan)
-  {
+  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan) {
     /**
      * Create Vulkan Resources. */
 
@@ -4682,10 +4642,8 @@ void AnchorWindowWin32::newDrawingContext(eAnchorDrawingContextType type)
     DestroyVulkanFontTexture();
   }
 
-  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
-  {
-    if (!SetupD3D(m_hWnd))
-    {
+  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12) {
+    if (!SetupD3D(m_hWnd)) {
       DestroyD3D();
     }
 
@@ -4723,8 +4681,7 @@ bool AnchorWindowWin32::isDialog() const
 
 void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
 {
-  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan)
-  {
+  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan) {
     VkResult err;
 
     HgiVulkanCommandBuffer *cmdBuf = m_commandQueue->AcquireCommandBuffer();
@@ -4746,8 +4703,7 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
                                 image_acquired_semaphore,
                                 VK_NULL_HANDLE,
                                 &m_vulkan_context->FrameIndex);
-    if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-    {
+    if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
       g_SwapChainRebuild = true;
       return;
     }
@@ -4811,17 +4767,14 @@ void AnchorWindowWin32::FrameRender(AnchorDrawData *draw_data)
       err = vkQueueSubmit(m_commandQueue->GetVulkanGraphicsQueue(), 1, &info, vkfence);
       check_vk_result(err);
     }
-  } else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
-  {
+  } else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12) {
   }
 }
 
 void AnchorWindowWin32::FramePresent()
 {
-  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan)
-  {
-    if (g_SwapChainRebuild)
-    {
+  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan) {
+    if (g_SwapChainRebuild) {
       return;
     }
     // VkSemaphore render_complete_semaphore =
@@ -4837,17 +4790,16 @@ void AnchorWindowWin32::FramePresent()
     info.pSwapchains = &m_vulkan_context->Swapchain;
     info.pImageIndices = &m_vulkan_context->FrameIndex;
     VkResult err = vkQueuePresentKHR(m_commandQueue->GetVulkanGraphicsQueue(), &info);
-    if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR)
-    {
+    if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
       g_SwapChainRebuild = true;
       return;
     }
     check_vk_result(err);
     /**
      * Now we can use the next set of semaphores. */
-    m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) % m_vulkan_context->ImageCount;
-  } else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
-  {
+    m_vulkan_context->SemaphoreIndex = (m_vulkan_context->SemaphoreIndex + 1) %
+                                       m_vulkan_context->ImageCount;
+  } else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12) {
   }
 }
 
@@ -4877,19 +4829,17 @@ D3D12FrameContext *AnchorWindowWin32::WaitForNextD3D12FrameResources()
 
 eAnchorStatus AnchorWindowWin32::swapBuffers()
 {
-  if (ANCHOR::GetCurrentContext() == NULL)
-  {
+  if (ANCHOR::GetCurrentContext() == NULL) {
     return ANCHOR_FAILURE;
   }
 
   ANCHOR::Render();
 
-  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan)
-  {
+  if (m_drawContextType == ANCHOR_DrawingContextTypeVulkan) {
     AnchorDrawData *draw_data = ANCHOR::GetDrawData();
-    const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f || draw_data->DisplaySize[1] <= 0.0f);
-    if (!is_minimized)
-    {
+    const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f ||
+                               draw_data->DisplaySize[1] <= 0.0f);
+    if (!is_minimized) {
       m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
       m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
       m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
@@ -4899,8 +4849,7 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
     }
   }
 
-  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12)
-  {
+  else if (m_drawContextType == ANCHOR_DrawingContextTypeDX12) {
     D3D12FrameContext *frameCtx = WaitForNextD3D12FrameResources();
     UINT backBufferIdx = m_d3dSwapChain->GetCurrentBackBufferIndex();
     frameCtx->CommandAllocator->Reset();
@@ -4925,7 +4874,10 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
                                             clear_color_with_alpha,
                                             0,
                                             NULL);
-    m_d3dCommandList->OMSetRenderTargets(1, &m_mainRenderTargetDescriptor[backBufferIdx], FALSE, NULL);
+    m_d3dCommandList->OMSetRenderTargets(1,
+                                         &m_mainRenderTargetDescriptor[backBufferIdx],
+                                         FALSE,
+                                         NULL);
     m_d3dCommandList->SetDescriptorHeaps(1, &m_d3dSrvDescriptorHeap);
     AnchorBackendDXD12RenderDrawData(ANCHOR::GetDrawData(), m_d3dCommandList);
     barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
@@ -4947,7 +4899,10 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
   return ANCHOR_SUCCESS;
 }
 
-void AnchorWindowWin32::screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
+void AnchorWindowWin32::screenToClient(AnchorS32 inX,
+                                       AnchorS32 inY,
+                                       AnchorS32 &outX,
+                                       AnchorS32 &outY) const
 {
   // POINT point = {inX, inY};
   // ::ScreenToClient(m_hWnd, &point);
@@ -4955,7 +4910,10 @@ void AnchorWindowWin32::screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &
   // outY = point.y;
 }
 
-void AnchorWindowWin32::clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
+void AnchorWindowWin32::clientToScreen(AnchorS32 inX,
+                                       AnchorS32 inY,
+                                       AnchorS32 &outX,
+                                       AnchorS32 &outY) const
 {
   // POINT point = {inX, inY};
   // ::ClientToScreen(m_hWnd, &point);
@@ -4991,7 +4949,8 @@ eAnchorStatus AnchorWindowWin32::setOrder(eAnchorWindowOrder order)
   //   return ANCHOR_FAILURE;
   // }
 
-  // if (hWndToRaise && ::SetWindowPos(hWndToRaise, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE) == FALSE)
+  // if (hWndToRaise && ::SetWindowPos(hWndToRaise, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)
+  // == FALSE)
   // {
   //   return ANCHOR_FAILURE;
   // }
@@ -5000,8 +4959,7 @@ eAnchorStatus AnchorWindowWin32::setOrder(eAnchorWindowOrder order)
 
 void AnchorWindowWin32::lostMouseCapture()
 {
-  if (m_hasMouseCaptured)
-  {
+  if (m_hasMouseCaptured) {
     m_hasGrabMouse = false;
     m_nPressedButtons = 0;
     m_hasMouseCaptured = false;
@@ -5017,8 +4975,7 @@ void AnchorWindowWin32::lostMouseCapture()
 
 void AnchorWindowWin32::updateMouseCapture(eAnchorMouseCaptureEventWin32 event)
 {
-  switch (event)
-  {
+  switch (event) {
     case MousePressed:
       m_nPressedButtons++;
       break;
@@ -5217,7 +5174,8 @@ eAnchorStatus AnchorWindowWin32::setClientSize(AnchorU32 width, AnchorU32 height
   //   getWindowBounds(wBnds);
   //   int cx = wBnds.getWidth() + width - cBnds.getWidth();
   //   int cy = wBnds.getHeight() + height - cBnds.getHeight();
-  //   success = ::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER) ? ANCHOR_SUCCESS :
+  //   success = ::SetWindowPos(m_hWnd, HWND_TOP, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER) ?
+  //   ANCHOR_SUCCESS :
   //                                                                                         ANCHOR_FAILURE;
   // } else
   // {
@@ -5255,7 +5213,8 @@ eAnchorStatus AnchorWindowWin32::setState(eAnchorWindowState state)
   //     break;
   //   case AnchorWindowStateNormal:
   //   default:
-  //     if (curstate == AnchorWindowStateFullScreen && m_normal_state == AnchorWindowStateMaximized)
+  //     if (curstate == AnchorWindowStateFullScreen && m_normal_state ==
+  //     AnchorWindowStateMaximized)
   //     {
   //       wp.showCmd = SW_SHOWMAXIMIZED;
   //       m_normal_state = AnchorWindowStateNormal;
@@ -5266,9 +5225,11 @@ eAnchorStatus AnchorWindowWin32::setState(eAnchorWindowState state)
   //     break;
   // }
   // ::SetWindowLongPtr(m_hWnd, GWL_STYLE, style);
-  // /* SetWindowLongPtr Docs: frame changes not visible until SetWindowPos with SWP_FRAMECHANGED. */
-  // ::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-  // return ::SetWindowPlacement(m_hWnd, &wp) == TRUE ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
+  // /* SetWindowLongPtr Docs: frame changes not visible until SetWindowPos with SWP_FRAMECHANGED.
+  // */
+  // ::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+  // SWP_FRAMECHANGED); return ::SetWindowPlacement(m_hWnd, &wp) == TRUE ? ANCHOR_SUCCESS :
+  // ANCHOR_FAILURE;
   return ANCHOR_FAILURE;
 }
 
@@ -5304,14 +5265,11 @@ eAnchorStatus AnchorWindowWin32::endProgressBar()
 
 AnchorU16 AnchorWindowWin32::getDPIHint()
 {
-  if (m_user32)
-  {
-    AnchorGetDpiForWindowCallback fpGetDpiForWindow = (AnchorGetDpiForWindowCallback)::GetProcAddress(
-      m_user32,
-      "GetDpiForWindow");
+  if (m_user32) {
+    AnchorGetDpiForWindowCallback fpGetDpiForWindow =
+      (AnchorGetDpiForWindowCallback)::GetProcAddress(m_user32, "GetDpiForWindow");
 
-    if (fpGetDpiForWindow)
-    {
+    if (fpGetDpiForWindow) {
       return fpGetDpiForWindow(this->m_hWnd);
     }
   }

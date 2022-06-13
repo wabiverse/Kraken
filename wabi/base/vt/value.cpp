@@ -68,15 +68,12 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<VtValue>();
 }
 
-template<typename From, typename To>
-static inline VtValue _BoostNumericCast(const From x)
+template<typename From, typename To> static inline VtValue _BoostNumericCast(const From x)
 {
-  try
-  {
+  try {
     return VtValue(boost::numeric_cast<To>(x));
   }
-  catch (const boost::bad_numeric_cast &)
-  {
+  catch (const boost::bad_numeric_cast &) {
     return VtValue();
   }
 }
@@ -99,14 +96,11 @@ static typename std::enable_if<std::numeric_limits<To>::has_infinity, VtValue>::
 
   // Use 'x == x' to check that x is not NaN.  NaNs don't compare equal to
   // themselves.
-  if (x == x)
-  {
-    if (x > std::numeric_limits<To>::max())
-    {
+  if (x == x) {
+    if (x > std::numeric_limits<To>::max()) {
       return VtValue(std::numeric_limits<To>::infinity());
     }
-    if (x < -std::numeric_limits<To>::max())
-    {
+    if (x < -std::numeric_limits<To>::max()) {
       return VtValue(-std::numeric_limits<To>::infinity());
     }
   }
@@ -114,8 +108,7 @@ static typename std::enable_if<std::numeric_limits<To>::has_infinity, VtValue>::
   return _BoostNumericCast<From, To>(x);
 }
 
-template<class A, class B>
-static void _RegisterNumericCasts()
+template<class A, class B> static void _RegisterNumericCasts()
 {
   VtValue::RegisterCast<A, B>(_NumericCast<A, B>);
   VtValue::RegisterCast<B, A>(_NumericCast<B, A>);
@@ -125,6 +118,7 @@ class Vt_CastRegistry
 {
 
  public:
+
   static Vt_CastRegistry &GetInstance()
   {
     return TfSingleton<Vt_CastRegistry>::GetInstance();
@@ -137,8 +131,7 @@ class Vt_CastRegistry
 
     bool isNewEntry =
       _conversions.insert(std::make_pair(_ConversionSourceToTarget(src, dst), castFn)).second;
-    if (!isNewEntry)
-    {
+    if (!isNewEntry) {
       // This happens at startup if there's a bug in the code.
       TF_CODING_ERROR(
         "VtValue cast already registered from "
@@ -160,8 +153,7 @@ class Vt_CastRegistry
     VtValue (*castFn)(VtValue const &) = NULL;
 
     _Conversions::iterator c = _conversions.find({src, dst});
-    if (c != _conversions.end())
-    {
+    if (c != _conversions.end()) {
       castFn = c->second;
     }
     return castFn ? castFn(val) : VtValue();
@@ -176,14 +168,14 @@ class Vt_CastRegistry
   }
 
  private:
+
   Vt_CastRegistry()
   {
     TfSingleton<Vt_CastRegistry>::SetInstanceConstructed(*this);
     _RegisterBuiltinCasts();
     TfRegistryManager::GetInstance().SubscribeTo<VtValue>();
   }
-  virtual ~Vt_CastRegistry()
-  {}
+  virtual ~Vt_CastRegistry() {}
   friend class TfSingleton<Vt_CastRegistry>;
 
   // Disambiguate TfToken->string conversion
@@ -349,12 +341,10 @@ ARCH_CONSTRUCTOR(Vt_CastRegistryInit, 255)
 
 bool VtValue::IsArrayValued() const
 {
-  if (IsEmpty())
-  {
+  if (IsEmpty()) {
     return false;
   }
-  if (ARCH_UNLIKELY(_IsProxy()))
-  {
+  if (ARCH_UNLIKELY(_IsProxy())) {
     return _info->IsArrayValued(_storage);
   }
   return _info->isArray;
@@ -382,14 +372,12 @@ std::type_info const &VtValue::GetElementTypeid() const
 
 TfType VtValue::GetType() const
 {
-  if (IsEmpty())
-  {
+  if (IsEmpty()) {
     return TfType::Find<void>();
   }
   TfType t = ARCH_UNLIKELY(_IsProxy()) ? _info->GetProxiedType(_storage) :
                                          TfType::FindByTypeid(_info->typeInfo);
-  if (t.IsUnknown())
-  {
+  if (t.IsUnknown()) {
     TF_WARN(
       "Returning unknown type for VtValue with unregistered "
       "C++ type %s",
@@ -410,12 +398,10 @@ std::string VtValue::GetTypeName() const
 
 bool VtValue::CanHash() const
 {
-  if (IsEmpty())
-  {
+  if (IsEmpty()) {
     return true;
   }
-  if (ARCH_UNLIKELY(_IsProxy()))
-  {
+  if (ARCH_UNLIKELY(_IsProxy())) {
     return _info->CanHash(_storage);
   }
   return _info->isHashable;
@@ -423,8 +409,7 @@ bool VtValue::CanHash() const
 
 size_t VtValue::GetHash() const
 {
-  if (IsEmpty())
-  {
+  if (IsEmpty()) {
     return 0;
   }
   size_t h = _info->Hash(_storage);
@@ -443,7 +428,9 @@ size_t VtValue::GetHash() const
   return ret.CastToTypeid(type);
 }
 
-void VtValue::_RegisterCast(type_info const &from, type_info const &to, VtValue (*castFn)(VtValue const &))
+void VtValue::_RegisterCast(type_info const &from,
+                            type_info const &to,
+                            VtValue (*castFn)(VtValue const &))
 {
   Vt_CastRegistry::GetInstance().Register(from, to, castFn);
 }
@@ -466,8 +453,7 @@ bool VtValue::_EqualityImpl(VtValue const &rhs) const
 {
   // We're guaranteed by the caller that neither *this nor rhs are empty and
   // that _info and rhs._info do not point to the same object.
-  if (ARCH_UNLIKELY(_IsProxy() != rhs._IsProxy()))
-  {
+  if (ARCH_UNLIKELY(_IsProxy() != rhs._IsProxy())) {
     // Either one or the other are proxies, but not both.  Check the types
     // first.  If they match then resolve the proxy and compare with the
     // nonProxy.  This way, proxies are only ever asked to compare to the
@@ -482,8 +468,7 @@ bool VtValue::_EqualityImpl(VtValue const &rhs) const
     return proxiedObj && nonProxy->_info->EqualPtr(nonProxy->_storage, proxiedObj);
   }
 
-  if (ARCH_UNLIKELY(_IsProxy() && rhs._IsProxy()))
-  {
+  if (ARCH_UNLIKELY(_IsProxy() && rhs._IsProxy())) {
     // We have two different proxy types.  In this case we just unbox them
     // both into VtValues and compare.
     return GetType() == rhs.GetType() &&
@@ -507,7 +492,8 @@ TfPyObjWrapper VtValue::_GetPythonObject() const
 }
 #endif  // WITH_PYTHON
 
-static void const *_FindOrCreateDefaultValue(std::type_info const &type, Vt_DefaultValueHolder (*factory)())
+static void const *_FindOrCreateDefaultValue(std::type_info const &type,
+                                             Vt_DefaultValueHolder (*factory)())
 {
   // This function returns a default value for \a type.  It stores a global
   // map from type name to value.  If we have an entry for the requested type
@@ -550,24 +536,22 @@ static void const *_FindOrCreateDefaultValue(std::type_info const &type, Vt_Defa
 
 bool VtValue::_TypeIsImpl(std::type_info const &qt) const
 {
-  if (ARCH_UNLIKELY(_IsProxy()))
-  {
+  if (ARCH_UNLIKELY(_IsProxy())) {
     return _info->ProxyHoldsType(_storage, qt);
   }
   return false;
 }
 
-void const *VtValue::_FailGet(Vt_DefaultValueHolder (*factory)(), std::type_info const &queryType) const
+void const *VtValue::_FailGet(Vt_DefaultValueHolder (*factory)(),
+                              std::type_info const &queryType) const
 {
   // Issue a coding error detailing relevant types.
-  if (IsEmpty())
-  {
+  if (IsEmpty()) {
     TF_CODING_ERROR(
       "Attempted to get value of type '%s' from "
       "empty VtValue.",
       ArchGetDemangled(queryType).c_str());
-  } else
-  {
+  } else {
     TF_CODING_ERROR(
       "Attempted to get value of type '%s' from "
       "VtValue holding '%s'",
@@ -583,8 +567,7 @@ std::ostream &VtStreamOut(vector<VtValue> const &val, std::ostream &stream)
 {
   bool first = true;
   stream << '[';
-  TF_FOR_ALL (i, val)
-  {
+  TF_FOR_ALL (i, val) {
     if (first)
       first = false;
     else
@@ -595,12 +578,11 @@ std::ostream &VtStreamOut(vector<VtValue> const &val, std::ostream &stream)
   return stream;
 }
 
-#define _VT_IMPLEMENT_ZERO_VALUE_FACTORY(r, unused, elem)               \
-  template<>                                                            \
-  Vt_DefaultValueHolder Vt_DefaultValueFactory<VT_TYPE(elem)>::Invoke() \
-  {                                                                     \
-    return Vt_DefaultValueHolder::Create(VtZero<VT_TYPE(elem)>());      \
-  }                                                                     \
+#define _VT_IMPLEMENT_ZERO_VALUE_FACTORY(r, unused, elem)                          \
+  template<> Vt_DefaultValueHolder Vt_DefaultValueFactory<VT_TYPE(elem)>::Invoke() \
+  {                                                                                \
+    return Vt_DefaultValueHolder::Create(VtZero<VT_TYPE(elem)>());                 \
+  }                                                                                \
   template struct Vt_DefaultValueFactory<VT_TYPE(elem)>;
 
 BOOST_PP_SEQ_FOR_EACH(_VT_IMPLEMENT_ZERO_VALUE_FACTORY,

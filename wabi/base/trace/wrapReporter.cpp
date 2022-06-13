@@ -113,7 +113,9 @@ void wrapReporter()
 
       .add_property("groupByFunction", &This::GetGroupByFunction, &This::SetGroupByFunction)
 
-      .add_property("foldRecursiveCalls", &This::GetFoldRecursiveCalls, &This::SetFoldRecursiveCalls)
+      .add_property("foldRecursiveCalls",
+                    &This::GetFoldRecursiveCalls,
+                    &This::SetFoldRecursiveCalls)
 
       .add_static_property("globalReporter", &This::GetGlobalReporter);
 };

@@ -54,8 +54,7 @@ static bool py_use_system_env = false;
 /* use for updating while a python script runs - in case of file load */
 void KPY_context_update(kContext *C)
 {
-  if (!KLI_thread_is_main())
-  {
+  if (!KLI_thread_is_main()) {
     return;
   }
 
@@ -67,13 +66,11 @@ void kpy_context_set(kContext *C, PyGILState_STATE *gilstate)
 {
   py_call_level++;
 
-  if (gilstate)
-  {
+  if (gilstate) {
     *gilstate = PyGILState_Ensure();
   }
 
-  if (py_call_level == 1)
-  {
+  if (py_call_level == 1) {
     KPY_context_update(C);
   }
 }
@@ -82,16 +79,13 @@ void kpy_context_clear(kContext *UNUSED(C), const PyGILState_STATE *gilstate)
 {
   py_call_level--;
 
-  if (gilstate)
-  {
+  if (gilstate) {
     PyGILState_Release(*gilstate);
   }
 
-  if (py_call_level < 0)
-  {
+  if (py_call_level < 0) {
     fprintf(stderr, "ERROR: Python context internal state bug. this should not happen!\n");
-  } else if (py_call_level == 0)
-  {
+  } else if (py_call_level == 0) {
   }
 }
 
@@ -111,8 +105,7 @@ static struct _inittab kpy_internal_modules[] = {
 #ifndef WITH_PYTHON_MODULE
 static void pystatus_exit_on_error(PyStatus status)
 {
-  if (ARCH_UNLIKELY(PyStatus_Exception(status)))
-  {
+  if (ARCH_UNLIKELY(PyStatus_Exception(status))) {
     fputs("Internal error initializing Python!\n", stderr);
     /* This calls `exit`. */
     Py_ExitStatusException(status);
@@ -139,11 +132,9 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
     PyPreConfig preconfig;
     PyStatus status;
 
-    if (py_use_system_env)
-    {
+    if (py_use_system_env) {
       PyPreConfig_InitPythonConfig(&preconfig);
-    } else
-    {
+    } else {
       /**
        * Only use the systems environment variables and site when explicitly requested. */
       PyPreConfig_InitIsolatedConfig(&preconfig);
@@ -196,13 +187,11 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
       if (KKE_appdir_program_python_search(program_path,
                                            sizeof(program_path),
                                            PY_MAJOR_VERSION,
-                                           PY_MINOR_VERSION))
-      {
+                                           PY_MINOR_VERSION)) {
         status = PyConfig_SetBytesString(&config, &config.executable, program_path);
         pystatus_exit_on_error(status);
         has_python_executable = true;
-      } else
-      {
+      } else {
         /* Set to `sys.executable = None` below (we can't do before Python is initialized). */
         fprintf(stderr,
                 "Unable to find the python binary, "
@@ -213,15 +202,13 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
     /* Allow to use our own included Python. `py_path_bundle` may be NULL. */
     {
       const char *py_path_bundle = KKE_appdir_folder_id(KRAKEN_SYSTEM_PYTHON, NULL);
-      if (py_path_bundle != NULL)
-      {
+      if (py_path_bundle != NULL) {
 
 #  ifdef __APPLE__
         /* Mac-OS allows file/directory names to contain `:` character
          * (represented as `/` in the Finder) but current Python lib (as of release 3.1.1)
          * doesn't handle these correctly. */
-        if (strchr(py_path_bundle, ':'))
-        {
+        if (strchr(py_path_bundle, ':')) {
           fprintf(stderr,
                   "Warning! Kraken application is located in a path containing ':' or '/' chars\n"
                   "This may make python import function fail\n");
@@ -230,8 +217,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
 
         status = PyConfig_SetBytesString(&config, &config.home, py_path_bundle);
         pystatus_exit_on_error(status);
-      } else
-      {
+      } else {
         /* Common enough to use the system Python on Linux/Unix, warn on other systems. */
 #  if defined(__APPLE__) || defined(_WIN32)
         fprintf(stderr,
@@ -244,8 +230,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
     status = Py_InitializeFromConfig(&config);
     pystatus_exit_on_error(status);
 
-    if (!has_python_executable)
-    {
+    if (!has_python_executable) {
       PySys_SetObject("executable", Py_None);
     }
   }
@@ -267,14 +252,11 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
     struct _inittab *inittab_item;
     PyObject *sys_modules = PyImport_GetModuleDict();
 
-    for (inittab_item = kpy_internal_modules; inittab_item->name; inittab_item++)
-    {
+    for (inittab_item = kpy_internal_modules; inittab_item->name; inittab_item++) {
       PyObject *mod = inittab_item->initfunc();
-      if (mod)
-      {
+      if (mod) {
         PyDict_SetItemString(sys_modules, inittab_item->name, mod);
-      } else
-      {
+      } else {
         PyErr_Print();
         PyErr_Clear();
       }
@@ -306,8 +288,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
 
 static void kpy_context_end(kContext *C)
 {
-  if (ARCH_UNLIKELY(C == NULL))
-  {
+  if (ARCH_UNLIKELY(C == NULL)) {
     return;
   }
   CTX_wm_operator_poll_msg_clear(C);

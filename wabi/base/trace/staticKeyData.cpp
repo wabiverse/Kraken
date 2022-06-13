@@ -40,16 +40,12 @@ WABI_NAMESPACE_BEGIN
 
 static bool _StrEqual(const char *a, const char *b)
 {
-  if (a == b)
-  {
+  if (a == b) {
     return true;
-  } else
-  {
-    if (a && b)
-    {
+  } else {
+    if (a && b) {
       return std::strcmp(a, b) == 0;
-    } else
-    {
+    } else {
       return false;
     }
   }
@@ -57,24 +53,20 @@ static bool _StrEqual(const char *a, const char *b)
 
 bool TraceStaticKeyData::operator==(const TraceStaticKeyData &other) const
 {
-  return _StrEqual(_funcName, other._funcName) && _StrEqual(_prettyFuncName, other._prettyFuncName) &&
-         _StrEqual(_name, other._name);
+  return _StrEqual(_funcName, other._funcName) &&
+         _StrEqual(_prettyFuncName, other._prettyFuncName) && _StrEqual(_name, other._name);
 }
 
 std::string TraceStaticKeyData::GetString() const
 {
   std::string s;
-  if (_funcName && _prettyFuncName)
-  {
-    if (_name)
-    {
+  if (_funcName && _prettyFuncName) {
+    if (_name) {
       s = ArchGetPrettierFunctionName(_funcName, _prettyFuncName) + " (" + _name + ")";
-    } else
-    {
+    } else {
       s = ArchGetPrettierFunctionName(_funcName, _prettyFuncName);
     }
-  } else
-  {
+  } else {
     s = _name;
   }
   return s;

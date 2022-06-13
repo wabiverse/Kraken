@@ -42,6 +42,7 @@ void wrapStageCache()
     .def("Get", &UsdUtilsStageCache::Get, return_value_policy<reference_existing_object>())
     .staticmethod("Get")
 
-    .def("GetSessionLayerForVariantSelections", &UsdUtilsStageCache::GetSessionLayerForVariantSelections)
+    .def("GetSessionLayerForVariantSelections",
+         &UsdUtilsStageCache::GetSessionLayerForVariantSelections)
     .staticmethod("GetSessionLayerForVariantSelections");
 }

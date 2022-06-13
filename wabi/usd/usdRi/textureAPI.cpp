@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (RiTextureAPI));
 
 /* virtual */
-UsdRiTextureAPI::~UsdRiTextureAPI()
-{}
+UsdRiTextureAPI::~UsdRiTextureAPI() {}
 
 /* static */
 UsdRiTextureAPI UsdRiTextureAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiTextureAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdRiTextureAPI::GetSchemaKind() const
 /* static */
 UsdRiTextureAPI UsdRiTextureAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiTextureAPI>())
-  {
+  if (prim.ApplyAPI<UsdRiTextureAPI>()) {
     return UsdRiTextureAPI(prim);
   }
   return UsdRiTextureAPI();
@@ -102,7 +99,8 @@ UsdAttribute UsdRiTextureAPI::GetRiTextureGammaAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riTextureGamma);
 }
 
-UsdAttribute UsdRiTextureAPI::CreateRiTextureGammaAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiTextureAPI::CreateRiTextureGammaAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riTextureGamma,
                                     SdfValueTypeNames->Float,
@@ -148,8 +146,9 @@ const TfTokenVector &UsdRiTextureAPI::GetSchemaAttributeNames(bool includeInheri
     UsdRiTokens->riTextureGamma,
     UsdRiTokens->riTextureSaturation,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

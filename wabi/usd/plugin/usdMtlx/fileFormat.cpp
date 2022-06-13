@@ -46,23 +46,19 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-  template<typename R>
-  static bool _Read(UsdStagePtr stage, R &&reader)
+  template<typename R> static bool _Read(UsdStagePtr stage, R &&reader)
   {
-    try
-    {
+    try {
       auto doc = mx::createDocument();
       reader(doc);
       UsdMtlxRead(doc, stage);
       return true;
     }
-    catch (mx::ExceptionFoundCycle &x)
-    {
+    catch (mx::ExceptionFoundCycle &x) {
       TF_RUNTIME_ERROR("MaterialX cycle found: %s\n", x.what());
       return false;
     }
-    catch (mx::Exception &x)
-    {
+    catch (mx::Exception &x) {
       TF_RUNTIME_ERROR("MaterialX error: %s\n", x.what());
       return false;
     }
@@ -84,8 +80,7 @@ UsdMtlxFileFormat::UsdMtlxFileFormat()
                   UsdMtlxFileFormatTokens->Id)
 {}
 
-UsdMtlxFileFormat::~UsdMtlxFileFormat()
-{}
+UsdMtlxFileFormat::~UsdMtlxFileFormat() {}
 
 SdfAbstractDataRefPtr UsdMtlxFileFormat::InitData(const FileFormatArguments &args) const
 {
@@ -101,21 +96,23 @@ bool UsdMtlxFileFormat::CanRead(const std::string &filePath) const
   //        proper test described above is implemented because the
   //        actual filename extension shouldn't matter.
   const auto extension = TfGetExtension(filePath);
-  if (extension != this->GetFormatId())
-  {
+  if (extension != this->GetFormatId()) {
     return false;
   }
 
   return true;
 }
 
-bool UsdMtlxFileFormat::Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const
+bool UsdMtlxFileFormat::Read(SdfLayer *layer,
+                             const std::string &resolvedPath,
+                             bool metadataOnly) const
 {
   TRACE_FUNCTION();
 
   auto stage = UsdStage::CreateInMemory();
-  if (!_Read(stage, [&resolvedPath](mx::DocumentPtr d) { mx::readFromXmlFile(d, resolvedPath); }))
-  {
+  if (!_Read(stage, [&resolvedPath](mx::DocumentPtr d) {
+        mx::readFromXmlFile(d, resolvedPath);
+      })) {
     return false;
   }
 
@@ -136,8 +133,9 @@ bool UsdMtlxFileFormat::ReadFromString(SdfLayer *layer, const std::string &str) 
   TRACE_FUNCTION();
 
   auto stage = UsdStage::CreateInMemory();
-  if (!_Read(stage, [&str](mx::DocumentPtr d) { mx::readFromXmlString(d, str); }))
-  {
+  if (!_Read(stage, [&str](mx::DocumentPtr d) {
+        mx::readFromXmlString(d, str);
+      })) {
     return false;
   }
 
@@ -152,7 +150,9 @@ bool UsdMtlxFileFormat::WriteToString(const SdfLayer &layer,
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToString(layer, str, comment);
 }
 
-bool UsdMtlxFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
+bool UsdMtlxFileFormat::WriteToStream(const SdfSpecHandle &spec,
+                                      std::ostream &out,
+                                      size_t indent) const
 {
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
 }

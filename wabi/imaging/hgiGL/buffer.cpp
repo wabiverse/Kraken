@@ -42,25 +42,22 @@ HgiGLBuffer::HgiGLBuffer(HgiBufferDesc const &desc)
     _cpuStaging(nullptr)
 {
 
-  if (desc.byteSize == 0)
-  {
+  if (desc.byteSize == 0) {
     TF_CODING_ERROR("Buffers must have a non-zero length");
   }
 
   glCreateBuffers(1, &_bufferId);
 
-  if (!_descriptor.debugName.empty())
-  {
+  if (!_descriptor.debugName.empty()) {
     HgiGLObjectLabel(GL_BUFFER, _bufferId, _descriptor.debugName);
   }
 
   if ((_descriptor.usage & HgiBufferUsageVertex) || (_descriptor.usage & HgiBufferUsageIndex32) ||
-      (_descriptor.usage & HgiBufferUsageUniform))
-  {
+      (_descriptor.usage & HgiBufferUsageUniform)) {
     glNamedBufferData(_bufferId, _descriptor.byteSize, _descriptor.initialData, GL_STATIC_DRAW);
-  } else if (_descriptor.usage & HgiBufferUsageStorage)
-  {
-    GLbitfield flags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+  } else if (_descriptor.usage & HgiBufferUsageStorage) {
+    GLbitfield flags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT |
+                       GL_MAP_COHERENT_BIT;
 
     glNamedBufferStorage(_bufferId,
                          _descriptor.byteSize,
@@ -68,15 +65,13 @@ HgiGLBuffer::HgiGLBuffer(HgiBufferDesc const &desc)
                          flags | GL_DYNAMIC_STORAGE_BIT);
 
     _mapped = glMapNamedBufferRange(_bufferId, 0, desc.byteSize, flags);
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unknown HgiBufferUsage bit");
   }
 
   // glBindVertexBuffer (graphics cmds) needs to know the stride of each
   // vertex buffer. Make sure user provides it.
-  if (_descriptor.usage & HgiBufferUsageVertex)
-  {
+  if (_descriptor.usage & HgiBufferUsageVertex) {
     TF_VERIFY(desc.vertexStride > 0);
   }
 
@@ -87,10 +82,8 @@ HgiGLBuffer::HgiGLBuffer(HgiBufferDesc const &desc)
 
 HgiGLBuffer::~HgiGLBuffer()
 {
-  if (_bufferId > 0)
-  {
-    if (_descriptor.usage & HgiBufferUsageStorage)
-    {
+  if (_bufferId > 0) {
+    if (_descriptor.usage & HgiBufferUsageStorage) {
       glUnmapNamedBuffer(_bufferId);
     }
 
@@ -98,8 +91,7 @@ HgiGLBuffer::~HgiGLBuffer()
     _bufferId = 0;
   }
 
-  if (_cpuStaging)
-  {
+  if (_cpuStaging) {
     free(_cpuStaging);
     _cpuStaging = nullptr;
   }
@@ -119,8 +111,7 @@ uint64_t HgiGLBuffer::GetRawResource() const
 
 void *HgiGLBuffer::GetCPUStagingAddress()
 {
-  if (!_cpuStaging)
-  {
+  if (!_cpuStaging) {
     _cpuStaging = malloc(_descriptor.byteSize);
   }
 

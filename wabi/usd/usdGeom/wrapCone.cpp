@@ -43,26 +43,27 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
   static UsdAttribute _CreateHeightAttr(UsdGeomCone &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
+    return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
+                                 writeSparsely);
   }
 
   static UsdAttribute _CreateRadiusAttr(UsdGeomCone &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
+    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
+                                 writeSparsely);
   }
 
   static UsdAttribute _CreateAxisAttr(UsdGeomCone &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateAxisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateAxisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                               writeSparsely);
   }
 
   static UsdAttribute _CreateExtentAttr(UsdGeomCone &self, object defaultVal, bool writeSparsely)
@@ -101,7 +102,9 @@ void wrapUsdGeomCone()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -117,7 +120,9 @@ void wrapUsdGeomCone()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetAxisAttr", &This::GetAxisAttr)
-    .def("CreateAxisAttr", &_CreateAxisAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateAxisAttr",
+         &_CreateAxisAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetExtentAttr", &This::GetExtentAttr)
     .def("CreateExtentAttr",
@@ -151,7 +156,6 @@ void wrapUsdGeomCone()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // anonymous namespace

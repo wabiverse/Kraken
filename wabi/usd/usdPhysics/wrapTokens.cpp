@@ -37,9 +37,8 @@ namespace
   class _WrapStaticToken
   {
    public:
-    _WrapStaticToken(const TfToken *token)
-      : _token(token)
-    {}
+
+    _WrapStaticToken(const TfToken *token) : _token(token) {}
 
     std::string operator()() const
     {
@@ -47,24 +46,25 @@ namespace
     }
 
    private:
+
     const TfToken *_token;
   };
 
-  template<typename T>
-  void _AddToken(T &cls, const char *name, const TfToken &token)
+  template<typename T> void _AddToken(T &cls, const char *name, const TfToken &token)
   {
-    cls.add_static_property(
-      name,
-      boost::python::make_function(_WrapStaticToken(&token),
-                                   boost::python::return_value_policy<boost::python::return_by_value>(),
-                                   boost::mpl::vector1<std::string>()));
+    cls.add_static_property(name,
+                            boost::python::make_function(
+                              _WrapStaticToken(&token),
+                              boost::python::return_value_policy<boost::python::return_by_value>(),
+                              boost::mpl::vector1<std::string>()));
   }
 
 }  // namespace
 
 void wrapUsdPhysicsTokens()
 {
-  boost::python::class_<UsdPhysicsTokensType, boost::noncopyable> cls("Tokens", boost::python::no_init);
+  boost::python::class_<UsdPhysicsTokensType, boost::noncopyable> cls("Tokens",
+                                                                      boost::python::no_init);
   _AddToken(cls, "acceleration", UsdPhysicsTokens->acceleration);
   _AddToken(cls, "angular", UsdPhysicsTokens->angular);
   _AddToken(cls, "boundingCube", UsdPhysicsTokens->boundingCube);
@@ -95,7 +95,9 @@ void wrapUsdPhysicsTokens()
   _AddToken(cls, "physicsDensity", UsdPhysicsTokens->physicsDensity);
   _AddToken(cls, "physicsDiagonalInertia", UsdPhysicsTokens->physicsDiagonalInertia);
   _AddToken(cls, "physicsDynamicFriction", UsdPhysicsTokens->physicsDynamicFriction);
-  _AddToken(cls, "physicsExcludeFromArticulation", UsdPhysicsTokens->physicsExcludeFromArticulation);
+  _AddToken(cls,
+            "physicsExcludeFromArticulation",
+            UsdPhysicsTokens->physicsExcludeFromArticulation);
   _AddToken(cls, "physicsFilteredGroups", UsdPhysicsTokens->physicsFilteredGroups);
   _AddToken(cls, "physicsFilteredPairs", UsdPhysicsTokens->physicsFilteredPairs);
   _AddToken(cls, "physicsGravityDirection", UsdPhysicsTokens->physicsGravityDirection);

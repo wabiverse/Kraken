@@ -41,6 +41,7 @@ WABI_NAMESPACE_BEGIN
 class Glf_TestGLContextPrivate
 {
  public:
+
   Glf_TestGLContextPrivate(Glf_TestGLContextPrivate const *other = NULL);
 
   void makeCurrent() const;
@@ -54,9 +55,11 @@ class Glf_TestGLContextPrivate
 
   static const Glf_TestGLContextPrivate *currentContext();
 
-  static bool areSharing(const Glf_TestGLContextPrivate *context1, const Glf_TestGLContextPrivate *context2);
+  static bool areSharing(const Glf_TestGLContextPrivate *context1,
+                         const Glf_TestGLContextPrivate *context2);
 
  private:
+
   Display *_dpy;
 
   GLXContext _context;
@@ -100,8 +103,7 @@ Glf_TestGLContextPrivate::Glf_TestGLContextPrivate(Glf_TestGLContextPrivate cons
 
   _sharedContext = other ? other : this;
 
-  if (!_win)
-  {
+  if (!_win) {
     XVisualInfo *vi = glXGetVisualFromFBConfig(_dpy, fbConfigs[0]);
 
     XSetWindowAttributes swa;
@@ -165,6 +167,7 @@ Glf_TestGLContextPrivate *_GetSharedContext()
 class GlfTestGLContextRegistrationInterface : public GlfGLContextRegistrationInterface
 {
  public:
+
   GlfTestGLContextRegistrationInterface();
   virtual ~GlfTestGLContextRegistrationInterface();
 
@@ -190,8 +193,7 @@ GlfGLContextSharedPtr GlfTestGLContextRegistrationInterface::GetShared()
 
 GlfGLContextSharedPtr GlfTestGLContextRegistrationInterface::GetCurrent()
 {
-  if (const Glf_TestGLContextPrivate *context = Glf_TestGLContextPrivate::currentContext())
-  {
+  if (const Glf_TestGLContextPrivate *context = Glf_TestGLContextPrivate::currentContext()) {
     return GlfGLContextSharedPtr(new GlfTestGLContext(context));
   }
   return GlfGLContextSharedPtr();
@@ -203,8 +205,8 @@ GlfGLContextSharedPtr GlfTestGLContextRegistrationInterface::GetCurrent()
 
 GlfTestGLContextSharedPtr GlfTestGLContext::Create(GlfTestGLContextSharedPtr const &share)
 {
-  Glf_TestGLContextPrivate *ctx = new Glf_TestGLContextPrivate(share && share->_context ? share->_context :
-                                                                                          NULL);
+  Glf_TestGLContextPrivate *ctx = new Glf_TestGLContextPrivate(
+    share && share->_context ? share->_context : NULL);
   return GlfTestGLContextSharedPtr(new GlfTestGLContext(ctx));
 }
 
@@ -242,8 +244,7 @@ bool GlfTestGLContext::_IsSharing(GlfGLContextSharedPtr const &otherContext) con
 
 bool GlfTestGLContext::_IsEqual(GlfGLContextSharedPtr const &rhs) const
 {
-  if (const GlfTestGLContext *rhsRaw = dynamic_cast<const GlfTestGLContext *>(rhs.get()))
-  {
+  if (const GlfTestGLContext *rhsRaw = dynamic_cast<const GlfTestGLContext *>(rhs.get())) {
     return *_context == *rhsRaw->_context;
   }
   return false;

@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRenderSettingsBase::~UsdRenderSettingsBase()
-{}
+UsdRenderSettingsBase::~UsdRenderSettingsBase() {}
 
 /* static */
 UsdRenderSettingsBase UsdRenderSettingsBase::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderSettingsBase();
   }
@@ -198,8 +196,9 @@ const TfTokenVector &UsdRenderSettingsBase::GetSchemaAttributeNames(bool include
     UsdRenderTokens->dataWindowNDC,
     UsdRenderTokens->instantaneousShutter,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdTyped::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

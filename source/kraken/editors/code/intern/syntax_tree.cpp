@@ -40,29 +40,26 @@ namespace Zep
                 SyntaxData{type, background});
     };
 
-    auto markSingle = [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
-      (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
-      (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
-    };
+    auto markSingle =
+      [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
+        (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
+        (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
+      };
 
     // Walk backwards to previous delimiter
-    while (itrCurrent != itrEnd)
-    {
-      if (m_stop == true)
-      {
+    while (itrCurrent != itrEnd) {
+      if (m_stop == true) {
         return;
       }
 
       // Update start location
       m_processedChar = long(itrCurrent - buffer.begin());
 
-      if (*itrCurrent == '~' || *itrCurrent == '+')
-      {
+      if (*itrCurrent == '~' || *itrCurrent == '+') {
         mark(itrCurrent, itrCurrent + 1, ThemeColor::CursorNormal, ThemeColor::None);
         itrCurrent++;
         auto itrNext = itrCurrent;
-        while (itrNext != itrEnd && *itrNext != '\n')
-        {
+        while (itrNext != itrEnd && *itrNext != '\n') {
           itrNext++;
         }
         mark(itrCurrent, itrNext, ThemeColor::Comment, ThemeColor::None);

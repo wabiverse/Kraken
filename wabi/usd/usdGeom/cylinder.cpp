@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomCylinder::~UsdGeomCylinder()
-{}
+UsdGeomCylinder::~UsdGeomCylinder() {}
 
 /* static */
 UsdGeomCylinder UsdGeomCylinder::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCylinder();
   }
@@ -62,8 +60,7 @@ UsdGeomCylinder UsdGeomCylinder::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdGeomCylinder UsdGeomCylinder::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Cylinder");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCylinder();
   }
@@ -101,7 +98,8 @@ UsdAttribute UsdGeomCylinder::GetHeightAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->height);
 }
 
-UsdAttribute UsdGeomCylinder::CreateHeightAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCylinder::CreateHeightAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->height,
                                     SdfValueTypeNames->Double,
@@ -116,7 +114,8 @@ UsdAttribute UsdGeomCylinder::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->radius);
 }
 
-UsdAttribute UsdGeomCylinder::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCylinder::CreateRadiusAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->radius,
                                     SdfValueTypeNames->Double,
@@ -146,7 +145,8 @@ UsdAttribute UsdGeomCylinder::GetExtentAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->extent);
 }
 
-UsdAttribute UsdGeomCylinder::CreateExtentAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomCylinder::CreateExtentAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->extent,
                                     SdfValueTypeNames->Float3Array,
@@ -178,8 +178,9 @@ const TfTokenVector &UsdGeomCylinder::GetSchemaAttributeNames(bool includeInheri
     UsdGeomTokens->axis,
     UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomGprim::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomGprim::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -205,31 +206,29 @@ WABI_NAMESPACE_BEGIN
 
 static bool _ComputeExtentMax(double height, double radius, const TfToken &axis, GfVec3f *max)
 {
-  if (axis == UsdGeomTokens->x)
-  {
+  if (axis == UsdGeomTokens->x) {
     *max = GfVec3f(height * 0.5, radius, radius);
-  } else if (axis == UsdGeomTokens->y)
-  {
+  } else if (axis == UsdGeomTokens->y) {
     *max = GfVec3f(radius, height * 0.5, radius);
-  } else if (axis == UsdGeomTokens->z)
-  {
+  } else if (axis == UsdGeomTokens->z) {
     *max = GfVec3f(radius, radius, height * 0.5);
-  } else
-  {
+  } else {
     return false;  // invalid axis
   }
 
   return true;
 }
 
-bool UsdGeomCylinder::ComputeExtent(double height, double radius, const TfToken &axis, VtVec3fArray *extent)
+bool UsdGeomCylinder::ComputeExtent(double height,
+                                    double radius,
+                                    const TfToken &axis,
+                                    VtVec3fArray *extent)
 {
   // Create Sized Extent
   extent->resize(2);
 
   GfVec3f max;
-  if (!_ComputeExtentMax(height, radius, axis, &max))
-  {
+  if (!_ComputeExtentMax(height, radius, axis, &max)) {
     return false;
   }
 
@@ -249,8 +248,7 @@ bool UsdGeomCylinder::ComputeExtent(double height,
   extent->resize(2);
 
   GfVec3f max;
-  if (!_ComputeExtentMax(height, radius, axis, &max))
-  {
+  if (!_ComputeExtentMax(height, radius, axis, &max)) {
     return false;
   }
 
@@ -268,34 +266,28 @@ static bool _ComputeExtentForCylinder(const UsdGeomBoundable &boundable,
                                       VtVec3fArray *extent)
 {
   const UsdGeomCylinder cylinderSchema(boundable);
-  if (!TF_VERIFY(cylinderSchema))
-  {
+  if (!TF_VERIFY(cylinderSchema)) {
     return false;
   }
 
   double height;
-  if (!cylinderSchema.GetHeightAttr().Get(&height, time))
-  {
+  if (!cylinderSchema.GetHeightAttr().Get(&height, time)) {
     return false;
   }
 
   double radius;
-  if (!cylinderSchema.GetRadiusAttr().Get(&radius, time))
-  {
+  if (!cylinderSchema.GetRadiusAttr().Get(&radius, time)) {
     return false;
   }
 
   TfToken axis;
-  if (!cylinderSchema.GetAxisAttr().Get(&axis, time))
-  {
+  if (!cylinderSchema.GetAxisAttr().Get(&axis, time)) {
     return false;
   }
 
-  if (transform)
-  {
+  if (transform) {
     return UsdGeomCylinder::ComputeExtent(height, radius, axis, *transform, extent);
-  } else
-  {
+  } else {
     return UsdGeomCylinder::ComputeExtent(height, radius, axis, extent);
   }
 }

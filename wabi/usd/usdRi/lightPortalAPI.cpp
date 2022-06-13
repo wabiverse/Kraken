@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (RiLightPortalAPI));
 
 /* virtual */
-UsdRiLightPortalAPI::~UsdRiLightPortalAPI()
-{}
+UsdRiLightPortalAPI::~UsdRiLightPortalAPI() {}
 
 /* static */
 UsdRiLightPortalAPI UsdRiLightPortalAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiLightPortalAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdRiLightPortalAPI::GetSchemaKind() const
 /* static */
 UsdRiLightPortalAPI UsdRiLightPortalAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRiLightPortalAPI>())
-  {
+  if (prim.ApplyAPI<UsdRiLightPortalAPI>()) {
     return UsdRiLightPortalAPI(prim);
   }
   return UsdRiLightPortalAPI();
@@ -149,8 +146,9 @@ const TfTokenVector &UsdRiLightPortalAPI::GetSchemaAttributeNames(bool includeIn
     UsdRiTokens->riPortalIntensity,
     UsdRiTokens->riPortalTint,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

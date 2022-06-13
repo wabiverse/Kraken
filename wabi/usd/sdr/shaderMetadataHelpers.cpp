@@ -55,24 +55,21 @@ namespace ShaderMetadataHelpers
   bool IsTruthy(const TfToken &propName, const NdrTokenMap &metadata)
   {
     // Absence of the option implies false
-    if (metadata.count(propName) == 0)
-    {
+    if (metadata.count(propName) == 0) {
       return false;
     }
 
     std::string boolStr = metadata.at(propName);
 
     // Presence of the option without a value implies true
-    if (boolStr.empty())
-    {
+    if (boolStr.empty()) {
       return true;
     }
 
     // Turn into a lower case string
     std::transform(boolStr.begin(), boolStr.end(), boolStr.begin(), ::tolower);
 
-    if ((boolStr == "0") || (boolStr == "false") || (boolStr == "f"))
-    {
+    if ((boolStr == "0") || (boolStr == "false") || (boolStr == "f")) {
       return false;
     }
 
@@ -87,8 +84,7 @@ namespace ShaderMetadataHelpers
   {
     const NdrTokenMap::const_iterator search = metadata.find(propName);
 
-    if (search != metadata.end())
-    {
+    if (search != metadata.end()) {
       return search->second;
     }
 
@@ -97,12 +93,13 @@ namespace ShaderMetadataHelpers
 
   // -------------------------------------------------------------------------
 
-  TfToken TokenVal(const TfToken &propName, const NdrTokenMap &metadata, const TfToken &defaultValue)
+  TfToken TokenVal(const TfToken &propName,
+                   const NdrTokenMap &metadata,
+                   const TfToken &defaultValue)
   {
     const NdrTokenMap::const_iterator search = metadata.find(propName);
 
-    if (search != metadata.end())
-    {
+    if (search != metadata.end()) {
       return TfToken(search->second);
     }
 
@@ -115,8 +112,7 @@ namespace ShaderMetadataHelpers
   {
     const NdrTokenMap::const_iterator search = metadata.find(propName);
 
-    if (search != metadata.end())
-    {
+    if (search != metadata.end()) {
       return TfStringSplit(search->second, "|");
     }
 
@@ -130,8 +126,7 @@ namespace ShaderMetadataHelpers
     const NdrStringVec untokenized = StringVecVal(propName, metadata);
     NdrTokenVec tokenized;
 
-    for (const std::string &item : untokenized)
-    {
+    for (const std::string &item : untokenized) {
       tokenized.emplace_back(TfToken(item));
     }
 
@@ -154,16 +149,13 @@ namespace ShaderMetadataHelpers
 
     NdrOptionVec options;
 
-    for (const std::string &token : tokens)
-    {
+    for (const std::string &token : tokens) {
       size_t colonPos = token.find(':');
 
-      if (colonPos != std::string::npos)
-      {
+      if (colonPos != std::string::npos) {
         options.emplace_back(
           std::make_pair(TfToken(token.substr(0, colonPos)), TfToken(token.substr(colonPos + 1))));
-      } else
-      {
+      } else {
         options.emplace_back(std::make_pair(TfToken(token), TfToken()));
       }
     }
@@ -184,13 +176,11 @@ namespace ShaderMetadataHelpers
   {
     const NdrTokenMap::const_iterator widgetSearch = metadata.find(SdrPropertyMetadata->Widget);
 
-    if (widgetSearch != metadata.end())
-    {
+    if (widgetSearch != metadata.end()) {
       const TfToken widget = TfToken(widgetSearch->second);
 
       if ((widget == _tokens->assetIdInput) || (widget == _tokens->filename) ||
-          (widget == _tokens->fileInput))
-      {
+          (widget == _tokens->fileInput)) {
         return true;
       }
     }
@@ -202,17 +192,16 @@ namespace ShaderMetadataHelpers
 
   bool IsPropertyATerminal(const NdrTokenMap &metadata)
   {
-    const NdrTokenMap::const_iterator renderTypeSearch = metadata.find(SdrPropertyMetadata->RenderType);
+    const NdrTokenMap::const_iterator renderTypeSearch = metadata.find(
+      SdrPropertyMetadata->RenderType);
 
-    if (renderTypeSearch != metadata.end())
-    {
+    if (renderTypeSearch != metadata.end()) {
       // If the property is a SdrPropertyTypes->Terminal, then the
       // renderType value will be "terminal <terminalName>", where the
       // <terminalName> is the specific kind of terminal.  To identify
       // the property as a terminal, we only need to check that the first
       // string in the renderType value specifies "terminal"
-      if (TfStringStartsWith(renderTypeSearch->second, _tokens->terminal))
-      {
+      if (TfStringStartsWith(renderTypeSearch->second, _tokens->terminal)) {
         return true;
       }
     }
@@ -226,13 +215,11 @@ namespace ShaderMetadataHelpers
   {
     const NdrTokenMap::const_iterator roleSearch = metadata.find(SdrPropertyMetadata->Role);
 
-    if (roleSearch != metadata.end())
-    {
+    if (roleSearch != metadata.end()) {
       // If the value found is an allowed value, then we can return it
       const TfToken role = TfToken(roleSearch->second);
       if (std::find(SdrPropertyRole->allTokens.begin(), SdrPropertyRole->allTokens.end(), role) !=
-          SdrPropertyRole->allTokens.end())
-      {
+          SdrPropertyRole->allTokens.end()) {
         return role;
       }
     }

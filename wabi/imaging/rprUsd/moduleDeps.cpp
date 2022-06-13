@@ -26,7 +26,9 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
   const std::vector<TfToken> reqs = {
     TfToken("tf"),
   };
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("rprUsd"), TfToken("rpr.RprUsd"), reqs);
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("rprUsd"),
+                                                      TfToken("rpr.RprUsd"),
+                                                      reqs);
 }
 
 WABI_NAMESPACE_END

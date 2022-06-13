@@ -109,12 +109,8 @@ namespace
 
   struct SortKey
   {
-    SortKey()
-      : key("path")
-    {}
-    SortKey(string key)
-      : key(key)
-    {}
+    SortKey() : key("path") {}
+    SortKey(string key) : key(key) {}
     string key;
   };
   ostream &operator<<(ostream &os, SortKey const &sk)
@@ -128,11 +124,9 @@ namespace
     using namespace boost::program_options;
     validators::check_first_occurrence(v);
     string const &s = validators::get_single_string(values);
-    if (s == "path" || s == "field")
-    {
+    if (s == "path" || s == "field") {
       v = SortKey(s);
-    } else
-    {
+    } else {
       throw validation_error(validation_error::invalid_option_value);
     }
   }
@@ -143,26 +137,20 @@ namespace
                   vector<double> *literalTimes,
                   vector<pair<double, double>> *timeRanges)
   {
-    for (auto const &spec : timeSpecs)
-    {
-      try
-      {
-        if (TfStringContains(spec, ".."))
-        {
+    for (auto const &spec : timeSpecs) {
+      try {
+        if (TfStringContains(spec, "..")) {
           auto elts = TfStringSplit(spec, "..");
-          if (elts.size() != 2)
-          {
+          if (elts.size() != 2) {
             throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
           }
           timeRanges->emplace_back(boost::lexical_cast<double>(elts[0]),
                                    boost::lexical_cast<double>(elts[1]));
-        } else
-        {
+        } else {
           literalTimes->emplace_back(boost::lexical_cast<double>(spec));
         }
       }
-      catch (boost::bad_lexical_cast const &)
-      {
+      catch (boost::bad_lexical_cast const &) {
         throw std::invalid_argument(TfStringPrintf("invalid time syntax '%s'", spec.c_str()));
       }
     }
@@ -218,12 +206,16 @@ namespace
     return result;
   }
 
-  vector<TfToken> CollectFields(SdfLayerHandle const &layer, SdfPath const &path, ReportParams const &p)
+  vector<TfToken> CollectFields(SdfLayerHandle const &layer,
+                                SdfPath const &path,
+                                ReportParams const &p)
   {
     vector<TfToken> fields = layer->ListFields(path);
     fields.erase(remove_if(fields.begin(),
                            fields.end(),
-                           [&p](TfToken const &f) { return !p.fieldMatcher->Match(f.GetString()); }),
+                           [&p](TfToken const &f) {
+                             return !p.fieldMatcher->Match(f.GetString());
+                           }),
                  fields.end());
     return fields;
   }
@@ -235,7 +227,9 @@ namespace
              TfStringPrintf("%s = %s", value.GetTypeName().c_str(), TfStringify(value).c_str());
   }
 
-  string GetTimeSamplesValueString(SdfLayerHandle const &layer, SdfPath const &path, ReportParams const &p)
+  string GetTimeSamplesValueString(SdfLayerHandle const &layer,
+                                   SdfPath const &path,
+                                   ReportParams const &p)
   {
     // Pull all the sample times for the given path, then collect up by p's
     // literalTimes and timeRanges, then if we're pulling values we'll do that
@@ -245,23 +239,22 @@ namespace
     vector<double> selectedTimes;
     selectedTimes.reserve(times.size());
 
-    if (takeAllTimes)
-    {
+    if (takeAllTimes) {
       selectedTimes.assign(times.begin(), times.end());
-    } else
-    {
-      for (auto time : times)
-      {
+    } else {
+      for (auto time : times) {
         // Check literalTimes.
-        auto rng = equal_range(p.literalTimes.begin(), p.literalTimes.end(), time, [&p](double a, double b) {
-          return IsClose(a, b, p.timeTolerance) ? false : a < b;
-        });
+        auto rng = equal_range(p.literalTimes.begin(),
+                               p.literalTimes.end(),
+                               time,
+                               [&p](double a, double b) {
+                                 return IsClose(a, b, p.timeTolerance) ? false : a < b;
+                               });
         if (rng.first != rng.second)
           selectedTimes.push_back(time);
 
         // Check ranges.
-        for (auto const &range : p.timeRanges)
-        {
+        for (auto const &range : p.timeRanges) {
           if (range.first <= time && time <= range.second)
             selectedTimes.push_back(time);
         }
@@ -273,10 +266,10 @@ namespace
 
     vector<string> result;
     VtValue val;
-    for (auto time : selectedTimes)
-    {
+    for (auto time : selectedTimes) {
       TF_VERIFY(layer->QueryTimeSample(path, time, &val));
-      result.push_back(TfStringPrintf("%s: %s", TfStringify(time).c_str(), GetValueString(val, p).c_str()));
+      result.push_back(
+        TfStringPrintf("%s: %s", TfStringify(time).c_str(), GetValueString(val, p).c_str()));
     }
     return TfStringPrintf("[\n        %s ]", TfStringJoin(result, "\n        ").c_str());
   }
@@ -288,11 +281,9 @@ namespace
   {
     string result;
     // Handle timeSamples specially:
-    if (field == SdfFieldKeys->TimeSamples)
-    {
+    if (field == SdfFieldKeys->TimeSamples) {
       result = GetTimeSamplesValueString(layer, path, p);
-    } else
-    {
+    } else {
       VtValue value;
       TF_VERIFY(layer->HasField(path, field, &value));
       result = GetValueString(value, p);
@@ -304,22 +295,19 @@ namespace
   {
     vector<SdfPath> paths = CollectPaths(layer, p);
     sort(paths.begin(), paths.end());
-    for (auto const &path : paths)
-    {
+    for (auto const &path : paths) {
       SdfSpecType specType = layer->GetSpecType(path);
       report.push_back(TfStringPrintf("<%s> : %s", path.GetText(), TfStringify(specType).c_str()));
 
       vector<TfToken> fields = CollectFields(layer, path, p);
       if (fields.empty())
         continue;
-      for (auto const &field : fields)
-      {
-        if (p.showValues)
-        {
-          report.push_back(
-            TfStringPrintf("  %s: %s", field.GetText(), GetFieldValueString(layer, path, field, p).c_str()));
-        } else
-        {
+      for (auto const &field : fields) {
+        if (p.showValues) {
+          report.push_back(TfStringPrintf("  %s: %s",
+                                          field.GetText(),
+                                          GetFieldValueString(layer, path, field, p).c_str()));
+        } else {
           report.push_back(TfStringPrintf("  %s", field.GetText()));
         }
       }
@@ -332,21 +320,17 @@ namespace
     unordered_map<string, vector<string>> pathsByFieldString;
     unordered_set<string> allFieldStrings;
     sort(paths.begin(), paths.end());
-    for (auto const &path : paths)
-    {
+    for (auto const &path : paths) {
       vector<TfToken> fields = CollectFields(layer, path, p);
       if (fields.empty())
         continue;
-      for (auto const &field : fields)
-      {
+      for (auto const &field : fields) {
         string fieldString;
-        if (p.showValues)
-        {
+        if (p.showValues) {
           fieldString = TfStringPrintf("%s: %s",
                                        field.GetText(),
                                        GetFieldValueString(layer, path, field, p).c_str());
-        } else
-        {
+        } else {
           fieldString = TfStringPrintf("%s", field.GetText());
         }
         pathsByFieldString[fieldString].push_back(TfStringPrintf("  <%s>", path.GetText()));
@@ -356,8 +340,7 @@ namespace
     vector<string> fsvec(allFieldStrings.begin(), allFieldStrings.end());
     sort(fsvec.begin(), fsvec.end());
 
-    for (auto const &fs : fsvec)
-    {
+    for (auto const &fs : fsvec) {
       report.push_back(fs);
       auto const &ps = pathsByFieldString[fs];
       report.insert(report.end(), ps.begin(), ps.end());
@@ -370,23 +353,22 @@ namespace
     TF_DESCRIBE_SCOPE("Collecting paths in @%s@", layer->GetIdentifier().c_str());
     vector<SdfPath> paths;
     layer->Traverse(SdfPath::AbsoluteRootPath(), [&paths, layer](SdfPath const &path) {
-      TF_DESCRIBE_SCOPE("Collecting path <%s> in @%s@", path.GetText(), layer->GetIdentifier().c_str());
+      TF_DESCRIBE_SCOPE("Collecting path <%s> in @%s@",
+                        path.GetText(),
+                        layer->GetIdentifier().c_str());
       paths.push_back(path);
     });
     sort(paths.begin(), paths.end());
-    for (auto const &path : paths)
-    {
+    for (auto const &path : paths) {
       TF_DESCRIBE_SCOPE("Collecting fields for <%s> in @%s@",
                         path.GetText(),
                         layer->GetIdentifier().c_str());
       vector<TfToken> fields = layer->ListFields(path);
       if (fields.empty())
         continue;
-      for (auto const &field : fields)
-      {
+      for (auto const &field : fields) {
         VtValue value;
-        if (field == SdfFieldKeys->TimeSamples)
-        {
+        if (field == SdfFieldKeys->TimeSamples) {
           // Pull each sample value individually.
           TF_DESCRIBE_SCOPE("Getting sample times for '%s' on <%s> in @%s@",
                             field.GetText(),
@@ -394,8 +376,7 @@ namespace
                             layer->GetIdentifier().c_str());
           auto times = layer->ListTimeSamplesForPath(path);
 
-          for (auto time : times)
-          {
+          for (auto time : times) {
             TF_DESCRIBE_SCOPE(
               "Getting sample value at time "
               "%f for '%s' on <%s> in @%s@",
@@ -405,8 +386,7 @@ namespace
               layer->GetIdentifier().c_str());
             layer->QueryTimeSample(path, time, &value);
           }
-        } else
-        {
+        } else {
           // Just pull value.
           TF_DESCRIBE_SCOPE("Getting value for '%s' on <%s> in @%s@",
                             field.GetText(),
@@ -422,8 +402,7 @@ namespace
   void Report(SdfLayerHandle layer, ReportParams const &p)
   {
     vector<string> report = {TfStringPrintf("@%s@", layer->GetIdentifier().c_str())};
-    if (p.showSummary)
-    {
+    if (p.showSummary) {
       auto stats = GetSummaryStats(layer);
       report.push_back(
         TfStringPrintf("  %zu specs, %zu prim specs, %zu property specs, %zu fields, "
@@ -433,19 +412,15 @@ namespace
                        stats.numPropertySpecs,
                        stats.numFields,
                        stats.numSampleTimes));
-    } else if (p.validate)
-    {
+    } else if (p.validate) {
       Validate(layer, p, report);
-    } else if (p.sortKey.key == "path")
-    {
+    } else if (p.sortKey.key == "path") {
       GetReportByPath(layer, p, report);
-    } else if (p.sortKey.key == "field")
-    {
+    } else if (p.sortKey.key == "field") {
       GetReportByField(layer, p, report);
     }
 
-    for (auto const &str : report)
-    {
+    for (auto const &str : report) {
       Print("%s\n", str.c_str());
     }
   }
@@ -475,23 +450,24 @@ int main(int argc, char const *argv[])
                                                         "Report a high-level summary.")(
     "validate",
     po::bool_switch(&validate),
-    "Check validity by trying to read all data values.")("path,p",
-                                                         po::value<string>(&pathRegex)->value_name("regex"),
-                                                         "Report only paths matching this regex.")(
-    "field,f",
-    po::value<string>(&fieldRegex)->value_name("regex"),
-    "Report only fields matching this regex.")(
+    "Check validity by trying to read all data values.")(
+    "path,p",
+    po::value<string>(&pathRegex)->value_name("regex"),
+    "Report only paths matching this regex.")("field,f",
+                                              po::value<string>(&fieldRegex)->value_name("regex"),
+                                              "Report only fields matching this regex.")(
     "time,t",
     po::value<vector<string>>(&timeSpecs)->multitoken()->value_name("n or ff..lf"),
     "Report only these times or time ranges for 'timeSamples' fields.")(
     "timeTolerance",
     po::value<double>(&timeTolerance)->default_value(timeTolerance)->value_name("tol"),
     "Report times that are close to those requested within this "
-    "relative tolerance.")("sortBy",
-                           po::value<SortKey>(&sortKey)->default_value(sortKey)->value_name("path|field"),
-                           "Group output by either path or field.")("noValues",
-                                                                    po::bool_switch(&noValues),
-                                                                    "Do not report field values.")(
+    "relative tolerance.")(
+    "sortBy",
+    po::value<SortKey>(&sortKey)->default_value(sortKey)->value_name("path|field"),
+    "Group output by either path or field.")("noValues",
+                                             po::bool_switch(&noValues),
+                                             "Do not report field values.")(
     "fullArrays",
     po::bool_switch(&fullArrays),
     "Report full array contents rather than number of elements.");
@@ -503,35 +479,30 @@ int main(int argc, char const *argv[])
   allOpts.add(argOpts).add(inputFile);
 
   po::variables_map vm;
-  try
-  {
+  try {
     po::positional_options_description p;
     p.add("input-file", -1);
     po::store(po::command_line_parser(argc, argv).options(allOpts).positional(p).run(), vm);
     po::notify(vm);
     ParseTimes(timeSpecs, &literalTimes, &timeRanges);
   }
-  catch (std::exception const &e)
-  {
+  catch (std::exception const &e) {
     ErrExit("%s", e.what());
   }
 
-  if (vm.count("help") || inputFiles.empty())
-  {
+  if (vm.count("help") || inputFiles.empty()) {
     fprintf(stderr, "Usage: %s [options] <input file>\n", progName.c_str());
     fprintf(stderr, "%s\n", TfStringify(argOpts).c_str());
     exit(1);
   }
 
   TfPatternMatcher pathMatcher(pathRegex);
-  if (!pathMatcher.IsValid())
-  {
+  if (!pathMatcher.IsValid()) {
     ErrExit("path regex '%s' : %s", pathRegex.c_str(), pathMatcher.GetInvalidReason().c_str());
   }
 
   TfPatternMatcher fieldMatcher(fieldRegex);
-  if (!fieldMatcher.IsValid())
-  {
+  if (!fieldMatcher.IsValid()) {
     ErrExit("field regex '%s' : %s", fieldRegex.c_str(), fieldMatcher.GetInvalidReason().c_str());
   }
 
@@ -547,12 +518,10 @@ int main(int argc, char const *argv[])
   params.fullArrays = fullArrays;
   params.timeTolerance = timeTolerance;
 
-  for (auto const &file : inputFiles)
-  {
+  for (auto const &file : inputFiles) {
     TF_DESCRIBE_SCOPE("Opening layer @%s@", file.c_str());
     auto layer = SdfLayer::FindOrOpen(file);
-    if (!layer)
-    {
+    if (!layer) {
       Err("failed to open layer <%s>", file.c_str());
       continue;
     }

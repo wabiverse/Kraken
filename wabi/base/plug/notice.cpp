@@ -44,8 +44,7 @@ TF_REGISTRY_FUNCTION(TfType)
 
 ////////////////////////////////////////////////////////////
 
-PlugNotice::Base::~Base()
-{}
+PlugNotice::Base::~Base() {}
 
 ////////////////////////////////////////////////////////////
 
@@ -53,7 +52,6 @@ PlugNotice::DidRegisterPlugins::DidRegisterPlugins(const PlugPluginPtrVector &ne
   : _plugins(newPlugins)
 {}
 
-PlugNotice::DidRegisterPlugins::~DidRegisterPlugins()
-{}
+PlugNotice::DidRegisterPlugins::~DidRegisterPlugins() {}
 
 WABI_NAMESPACE_END

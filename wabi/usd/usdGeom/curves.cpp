@@ -37,14 +37,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomCurves::~UsdGeomCurves()
-{}
+UsdGeomCurves::~UsdGeomCurves() {}
 
 /* static */
 UsdGeomCurves UsdGeomCurves::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCurves();
   }
@@ -161,8 +159,7 @@ TfToken UsdGeomCurves::GetWidthsInterpolation() const
   // Because widths is a builtin, we don't need to check validity
   // of the attribute before using it
   TfToken interp;
-  if (GetWidthsAttr().GetMetadata(UsdGeomTokens->interpolation, &interp))
-  {
+  if (GetWidthsAttr().GetMetadata(UsdGeomTokens->interpolation, &interp)) {
     return interp;
   }
 
@@ -171,8 +168,7 @@ TfToken UsdGeomCurves::GetWidthsInterpolation() const
 
 bool UsdGeomCurves::SetWidthsInterpolation(TfToken const &interpolation)
 {
-  if (UsdGeomPrimvar::IsValidInterpolation(interpolation))
-  {
+  if (UsdGeomPrimvar::IsValidInterpolation(interpolation)) {
     return GetWidthsAttr().SetMetadata(UsdGeomTokens->interpolation, interpolation);
   }
 
@@ -202,8 +198,7 @@ bool UsdGeomCurves::ComputeExtent(const VtVec3fArray &points,
   // a point cloud with some max width (convex hull).
   float maxWidth = (widths.size() > 0 ? *(std::max_element(widths.begin(), widths.end())) : 0);
 
-  if (!UsdGeomPointBased::ComputeExtent(points, extent))
-  {
+  if (!UsdGeomPointBased::ComputeExtent(points, extent)) {
     return false;
   }
 
@@ -232,8 +227,7 @@ bool UsdGeomCurves::ComputeExtent(const VtVec3fArray &points,
   // a point cloud with some max width (convex hull).
   float maxWidth = (widths.size() > 0 ? *(std::max_element(widths.begin(), widths.end())) : 0);
 
-  if (!UsdGeomPointBased::ComputeExtent(points, transform, extent))
-  {
+  if (!UsdGeomPointBased::ComputeExtent(points, transform, extent)) {
     return false;
   }
 
@@ -245,8 +239,7 @@ bool UsdGeomCurves::ComputeExtent(const VtVec3fArray &points,
   GfMatrix4d transformDir(transform);
   transformDir.SetTranslateOnly(GfVec3d(0.0));
 
-  if (!UsdGeomSphere::ComputeExtent(maxWidth * 0.5, transformDir, &sphereExtent))
-  {
+  if (!UsdGeomSphere::ComputeExtent(maxWidth * 0.5, transformDir, &sphereExtent)) {
     return false;
   }
   (*extent)[0] += sphereExtent[0];
@@ -261,25 +254,21 @@ static bool _ComputeExtentForCurves(const UsdGeomBoundable &boundable,
                                     VtVec3fArray *extent)
 {
   const UsdGeomCurves curves(boundable);
-  if (!TF_VERIFY(curves))
-  {
+  if (!TF_VERIFY(curves)) {
     return false;
   }
 
   VtVec3fArray points;
-  if (!curves.GetPointsAttr().Get(&points, time))
-  {
+  if (!curves.GetPointsAttr().Get(&points, time)) {
     return false;
   }
 
   VtFloatArray widths;
   curves.GetWidthsAttr().Get(&widths, time);
 
-  if (transform)
-  {
+  if (transform) {
     return UsdGeomCurves::ComputeExtent(points, widths, *transform, extent);
-  } else
-  {
+  } else {
     return UsdGeomCurves::ComputeExtent(points, widths, extent);
   }
 }

@@ -40,8 +40,7 @@ ccl::TypeDesc HdBbAttributeSource::GetTypeDesc(const HdType &type)
   // Mapping from known HdType -> TypeDesc supported by Cycles.
   // Allowed types come from ccl::Attribute constructor.
 
-  switch (type)
-  {
+  switch (type) {
     // int converted to float
     case HdTypeInt32:
       return ccl::TypeFloat;
@@ -166,14 +165,12 @@ ccl::TypeDesc HdBbAttributeSource::GetTypeDesc(const HdType &type, const TfToken
 {
   // if role exists then role takes the precedence
   ccl::TypeDesc type_desc = ccl::TypeUnknown;
-  if (role != HdPrimvarRoleTokens->none)
-  {
+  if (role != HdPrimvarRoleTokens->none) {
     type_desc = GetTypeDesc(role);
   }
 
   // fallback to tuple type from VtValue
-  if (type_desc == ccl::TypeUnknown)
-  {
+  if (type_desc == ccl::TypeUnknown) {
     type_desc = GetTypeDesc(type);
   }
 
@@ -191,33 +188,32 @@ bool HdBbAttributeSource::CanCastToFloat(const VtValue &value)
 {
   // unsupported Matrix3 and Matrix4
   return value.CanCast<float>() || value.CanCast<GfVec2f>() || value.CanCast<GfVec3f>() ||
-         value.CanCast<GfVec4f>() || value.CanCast<VtFloatArray>() || value.CanCast<VtVec2fArray>() ||
-         value.CanCast<VtVec3fArray>() || value.CanCast<VtVec4fArray>();
+         value.CanCast<GfVec4f>() || value.CanCast<VtFloatArray>() ||
+         value.CanCast<VtVec2fArray>() || value.CanCast<VtVec3fArray>() ||
+         value.CanCast<VtVec4fArray>();
 }
 
 bool HdBbAttributeSource::_CheckBuffersValid() const
 {
   const VtValue &value = m_value;
 
-  if (!m_attributes)
-  {
+  if (!m_attributes) {
     return false;
   }
 
   // check if source data is valid data
   if (!TF_VERIFY(!value.IsEmpty(),
                  "ValueData for the source buffer is empty! Attribute:%s can not be committed!",
-                 m_name.data()))
-  {
+                 m_name.data())) {
     return false;
   }
 
   // check element type
   const ccl::AttributeElement &element = GetAttributeElement();
-  if (!TF_VERIFY(element != ccl::AttributeElement::ATTR_ELEMENT_NONE,
-                 "AttributeElement for the source value is NONE! Attribute:%s can not be committed!",
-                 m_name.data()))
-  {
+  if (!TF_VERIFY(
+        element != ccl::AttributeElement::ATTR_ELEMENT_NONE,
+        "AttributeElement for the source value is NONE! Attribute:%s can not be committed!",
+        m_name.data())) {
     return false;
   }
 
@@ -225,17 +221,16 @@ bool HdBbAttributeSource::_CheckBuffersValid() const
   const ccl::TypeDesc &type_desc = GetSourceTypeDesc();
   if (!TF_VERIFY(type_desc != ccl::TypeUnknown,
                  "TypeDesc for the source buffer is Unknown! Attribute:%s can not be committed!",
-                 m_name.data()))
-  {
+                 m_name.data())) {
     return false;
   }
 
   // destination buffer type
   const HdType type = GetType(type_desc);
-  if (!TF_VERIFY(type != HdTypeInvalid,
-                 "HdType for the destination buffer is Invalid! Attribute:%s can not be committed!",
-                 m_name.data()))
-  {
+  if (!TF_VERIFY(
+        type != HdTypeInvalid,
+        "HdType for the destination buffer is Invalid! Attribute:%s can not be committed!",
+        m_name.data())) {
     return false;
   }
 
@@ -250,23 +245,21 @@ bool HdBbAttributeSource::_CheckBuffersSize() const
   // ELEMENT_OBJECT accepts only a value(array size == 0) or array(array size == 1)
   // For any other ELEMENT type array data is required
   auto get_source_size = [&element, &value]() -> size_t {
-    if (element == ccl::ATTR_ELEMENT_OBJECT)
-    {
+    if (element == ccl::ATTR_ELEMENT_OBJECT) {
       return value.IsArrayValued() ? value.GetArraySize() : 1;
-    } else
-    {
+    } else {
       return value.GetArraySize();
     }
   };
 
   const size_t source_size = get_source_size();
   const size_t element_size = GetGeometry()->element_size(element, m_attributes->prim);
-  if (!TF_VERIFY(source_size == element_size,
-                 "SourceSize:%lu is not the same as ElementSize:%lu ! Attribute:%s can not be committed!",
-                 source_size,
-                 element_size,
-                 m_name.data()))
-  {
+  if (!TF_VERIFY(
+        source_size == element_size,
+        "SourceSize:%lu is not the same as ElementSize:%lu ! Attribute:%s can not be committed!",
+        source_size,
+        element_size,
+        m_name.data())) {
     return false;
   }
 
@@ -278,14 +271,12 @@ bool HdBbAttributeSource::_CheckBuffersType() const
   const VtValue &value = m_value;
 
   // check if value holds expected array type
-  if (IsHoldingFloat(value))
-  {
+  if (IsHoldingFloat(value)) {
     return true;
   }
 
   // check if vt value can be converted
-  if (CanCastToFloat(value))
-  {
+  if (CanCastToFloat(value)) {
     return true;
   }
 
@@ -298,19 +289,16 @@ bool HdBbAttributeSource::_CheckValid() const
   // Following checks ensure that no unknown or invalid buffers will be resolved.
   // Appropriate notification will be issued about incompatible buffers.
 
-  if (!_CheckBuffersValid())
-  {
+  if (!_CheckBuffersValid()) {
     return false;
   }
 
-  if (!_CheckBuffersSize())
-  {
+  if (!_CheckBuffersSize()) {
     return false;
   }
 
   // early exit on correct types
-  if (_CheckBuffersType())
-  {
+  if (_CheckBuffersType()) {
     return true;
   }
 
@@ -329,8 +317,7 @@ VtValue HdBbAttributeSource::UncheckedCastToFloat(const VtValue &input_value)
   size_t count = HdGetComponentCount(tuple_type.type);
 
   // Casting Matrix3 and Matrix4 is disabled.
-  if (value.IsArrayValued())
-  {
+  if (value.IsArrayValued()) {
     if (count == 1)
       value.Cast<VtArray<float>>();
     else if (count == 2)
@@ -339,8 +326,7 @@ VtValue HdBbAttributeSource::UncheckedCastToFloat(const VtValue &input_value)
       value.Cast<VtVec3fArray>();
     else if (count == 4)
       value.Cast<VtVec4fArray>();
-  } else
-  {
+  } else {
     if (count == 1)
       value.Cast<float>();
     else if (count == 2)
@@ -357,8 +343,7 @@ VtValue HdBbAttributeSource::UncheckedCastToFloat(const VtValue &input_value)
 bool HdBbAttributeSource::ResolveAsValue()
 {
   // cast to float
-  if (!IsHoldingFloat(m_value))
-  {
+  if (!IsHoldingFloat(m_value)) {
     m_value = UncheckedCastToFloat(m_value);
   }
 
@@ -375,14 +360,12 @@ bool HdBbAttributeSource::ResolveAsValue()
   auto dst_data = reinterpret_cast<float *>(m_attribute->data());
 
   // if Cast fails we must recover
-  if (!src_data || !dst_data)
-  {
+  if (!src_data || !dst_data) {
     return false;
   }
 
   // copy source to destination with respecting stride for both buffers
-  for (size_t comp = 0; comp < num_src_comp; ++comp)
-  {
+  for (size_t comp = 0; comp < num_src_comp; ++comp) {
     dst_data[comp] = src_data[comp];
   }
 
@@ -392,8 +375,7 @@ bool HdBbAttributeSource::ResolveAsValue()
 bool HdBbAttributeSource::ResolveAsArray()
 {
   // cast to float
-  if (!IsHoldingFloat(m_value))
-  {
+  if (!IsHoldingFloat(m_value)) {
     m_value = UncheckedCastToFloat(m_value);
   }
 
@@ -416,16 +398,14 @@ bool HdBbAttributeSource::ResolveAsArray()
   assert(num_src_comp <= num_dst_comp);
 
   // if Cast fails we must recover
-  if (!src_data || !dst_data)
-  {
+  if (!src_data || !dst_data) {
     return false;
   }
 
   // copy source to destination with respecting stride for both buffers
-  for (size_t src_off = 0, dst_off = 0; src_off < src_size; src_off += num_src_comp, dst_off += num_dst_comp)
-  {
-    for (size_t comp = 0; comp < num_src_comp; ++comp)
-    {
+  for (size_t src_off = 0, dst_off = 0; src_off < src_size;
+       src_off += num_src_comp, dst_off += num_dst_comp) {
+    for (size_t comp = 0; comp < num_src_comp; ++comp) {
       dst_data[dst_off + comp] = src_data[src_off + comp];
     }
   }
@@ -436,8 +416,7 @@ bool HdBbAttributeSource::ResolveAsArray()
 bool HdBbAttributeSource::ResolveUnlocked()
 {
   // resolving might fail, because of conversion
-  if (m_value.GetArraySize())
-  {
+  if (m_value.GetArraySize()) {
     return ResolveAsArray();
   }
 
@@ -446,8 +425,7 @@ bool HdBbAttributeSource::ResolveUnlocked()
 
 bool HdBbAttributeSource::Resolve()
 {
-  if (!_TryLock())
-  {
+  if (!_TryLock()) {
     return false;
   }
 
@@ -472,8 +450,7 @@ const void *HdBbAttributeSource::GetData() const
 
 size_t HdBbAttributeSource::GetNumElements() const
 {
-  if (GetGeometry())
-  {
+  if (GetGeometry()) {
     return GetGeometry()->element_size(GetAttributeElement(), m_attributes->prim);
   }
 
@@ -496,8 +473,7 @@ namespace
 
   ccl::AttributeElement interpolation_to_pointcloud_element(const HdInterpolation &interpolation)
   {
-    switch (interpolation)
-    {
+    switch (interpolation) {
       case HdInterpolationConstant:
         return ccl::AttributeElement::ATTR_ELEMENT_OBJECT;
       case HdInterpolationUniform:
@@ -542,11 +518,12 @@ HdBbAttributeSource::HdBbAttributeSource(const VtValue &value,
                         attribs->geometry->standard_type(std))
 {}
 
-HdCyclesPointCloudAttributeSource::HdCyclesPointCloudAttributeSource(TfToken name,
-                                                                     const TfToken &role,
-                                                                     const VtValue &value,
-                                                                     ccl::PointCloud *pc,
-                                                                     const HdInterpolation &interpolation)
+HdCyclesPointCloudAttributeSource::HdCyclesPointCloudAttributeSource(
+  TfToken name,
+  const TfToken &role,
+  const VtValue &value,
+  ccl::PointCloud *pc,
+  const HdInterpolation &interpolation)
   : HdBbAttributeSource(std::move(name),
                         role,
                         value,
@@ -562,8 +539,7 @@ HdCyclesPointCloudAttributeSource::HdCyclesPointCloudAttributeSource(TfToken nam
 namespace
 {
 
-  template<typename Dst, typename Src>
-  Dst cast_vec_to_vec(const Src &src)
+  template<typename Dst, typename Src> Dst cast_vec_to_vec(const Src &src)
   {
     static_assert(GfIsGfVec<Src>::value, "Src must be GfVec");
     static_assert(GfIsGfVec<Dst>::value, "Dst must be GfVec");
@@ -575,15 +551,13 @@ namespace
 
     constexpr size_t size = std::min(src_size, dst_size);
     Dst res{};
-    for (size_t i = 0; i < size; ++i)
-    {
+    for (size_t i = 0; i < size; ++i) {
       res[i] = static_cast<typename Dst::ScalarType>(src[i]);
     }
     return res;
   }
 
-  template<typename Dst, typename Src>
-  VtValue cast_arr_vec_to_arr_vec(const VtValue &input)
+  template<typename Dst, typename Src> VtValue cast_arr_vec_to_arr_vec(const VtValue &input)
   {
     auto &array = input.UncheckedGet<VtArray<Src>>();
 
@@ -594,8 +568,7 @@ namespace
     return VtValue{output};
   }
 
-  template<typename Dst, typename Src>
-  VtValue cast_arr_to_arr(const VtValue &input)
+  template<typename Dst, typename Src> VtValue cast_arr_to_arr(const VtValue &input)
   {
     auto &array = input.UncheckedGet<VtArray<Src>>();
 
@@ -606,35 +579,29 @@ namespace
     return VtValue{output};
   }
 
-  template<typename Dst, typename Src>
-  bool CanCast()
+  template<typename Dst, typename Src> bool CanCast()
   {
     return VtValue::CanCastFromTypeidToTypeid(typeid(Src), typeid(Dst));
   }
 
-  template<typename Dst, typename Src, typename Fn>
-  void TryRegisterCast(Fn fn)
+  template<typename Dst, typename Src, typename Fn> void TryRegisterCast(Fn fn)
   {
-    if (!CanCast<Dst, Src>())
-    {
+    if (!CanCast<Dst, Src>()) {
       VtValue::RegisterCast<Src, Dst>(fn);
     }
   }
 
-  template<typename Dst, typename Src>
-  void TryRegisterValCast()
+  template<typename Dst, typename Src> void TryRegisterValCast()
   {
     TryRegisterCast<Dst, Src>(&cast_vec_to_vec<Dst, Src>);
   }
 
-  template<typename Dst, typename Src>
-  void TryRegisterValArrayCast()
+  template<typename Dst, typename Src> void TryRegisterValArrayCast()
   {
     TryRegisterCast<VtArray<Dst>, VtArray<Src>>(&cast_arr_to_arr<float, Src>);
   }
 
-  template<typename Dst, typename Src>
-  void TryRegisterVecArrayCast()
+  template<typename Dst, typename Src> void TryRegisterVecArrayCast()
   {
     TryRegisterCast<VtArray<Dst>, VtArray<Src>>(&cast_arr_vec_to_arr_vec<Dst, Src>);
   }

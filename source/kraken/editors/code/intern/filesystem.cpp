@@ -22,8 +22,7 @@ namespace Zep
     m_workingDirectory = ZepPath(cpp_fs::current_path().string());
 
     // Didn't find the config path, try the working directory
-    if (!Exists(m_configPath))
-    {
+    if (!Exists(m_configPath)) {
       m_configPath = m_workingDirectory;
     }
 
@@ -31,8 +30,7 @@ namespace Zep
     ZLOG(INFO, "Working Dir: " << m_workingDirectory.c_str());
   }
 
-  ZepFileSystemCPP::~ZepFileSystemCPP()
-  {}
+  ZepFileSystemCPP::~ZepFileSystemCPP() {}
 
   void ZepFileSystemCPP::SetWorkingDirectory(const ZepPath &path)
   {
@@ -56,8 +54,7 @@ namespace Zep
 
   bool ZepFileSystemCPP::IsDirectory(const ZepPath &path) const
   {
-    if (!Exists(path))
-    {
+    if (!Exists(path)) {
       return false;
     }
     return cpp_fs::is_directory(path.string());
@@ -66,8 +63,7 @@ namespace Zep
   bool ZepFileSystemCPP::IsReadOnly(const ZepPath &path) const
   {
     auto perms = cpp_fs::status(path.string()).permissions();
-    if ((perms & cpp_fs::perms::owner_write) == cpp_fs::perms::owner_write)
-    {
+    if ((perms & cpp_fs::perms::owner_write) == cpp_fs::perms::owner_write) {
       return false;
     }
     return true;
@@ -76,8 +72,7 @@ namespace Zep
   std::string ZepFileSystemCPP::Read(const ZepPath &fileName)
   {
     std::ifstream in(fileName, std::ios::in | std::ios::binary);
-    if (in)
-    {
+    if (in) {
       std::string contents;
       in.seekg(0, std::ios::end);
       contents.resize(size_t(in.tellg()));
@@ -85,8 +80,7 @@ namespace Zep
       in.read(&contents[0], contents.size());
       in.close();
       return (contents);
-    } else
-    {
+    } else {
       ZLOG(ERROR, "File Not Found: " << fileName.string());
     }
     return std::string();
@@ -96,8 +90,7 @@ namespace Zep
   {
     FILE *pFile;
     pFile = fopen(fileName.string().c_str(), "wb");
-    if (!pFile)
-    {
+    if (!pFile) {
       return false;
     }
     fwrite(pData, sizeof(uint8_t), size, pFile);
@@ -111,16 +104,14 @@ namespace Zep
   {
     for (auto itr = cpp_fs::recursive_directory_iterator(path.string());
          itr != cpp_fs::recursive_directory_iterator();
-         itr++)
-    {
+         itr++) {
       auto p = ZepPath(itr->path().string());
 
       bool recurse = true;
       if (!fnScan(p, recurse))
         return;
 
-      if (!recurse && itr.recursion_pending())
-      {
+      if (!recurse && itr.recursion_pending()) {
         itr.disable_recursion_pending();
       }
     }
@@ -128,12 +119,10 @@ namespace Zep
 
   bool ZepFileSystemCPP::Exists(const ZepPath &path) const
   {
-    try
-    {
+    try {
       return cpp_fs::exists(path.string());
     }
-    catch (cpp_fs::filesystem_error &err)
-    {
+    catch (cpp_fs::filesystem_error &err) {
       ZEP_UNUSED(err);
       ZLOG(ERROR, "Exception: " << err.what());
       return false;
@@ -142,17 +131,14 @@ namespace Zep
 
   bool ZepFileSystemCPP::Equivalent(const ZepPath &path1, const ZepPath &path2) const
   {
-    try
-    {
+    try {
       // The below API expects existing files!  Best we can do is direct compare of paths
-      if (!cpp_fs::exists(path1.string()) || !cpp_fs::exists(path2.string()))
-      {
+      if (!cpp_fs::exists(path1.string()) || !cpp_fs::exists(path2.string())) {
         return Canonical(path1).string() == Canonical(path2).string();
       }
       return cpp_fs::equivalent(path1.string(), path2.string());
     }
-    catch (cpp_fs::filesystem_error &err)
-    {
+    catch (cpp_fs::filesystem_error &err) {
       ZEP_UNUSED(err);
       ZLOG(ERROR, "Exception: " << err.what());
       return path1 == path2;
@@ -161,8 +147,7 @@ namespace Zep
 
   ZepPath ZepFileSystemCPP::Canonical(const ZepPath &path) const
   {
-    try
-    {
+    try {
 #ifdef __unix__
       // TODO: Remove when unix doesn't need <experimental/filesystem>
       // I can't remember why weakly_connical is used....
@@ -171,8 +156,7 @@ namespace Zep
       return ZepPath(cpp_fs::weakly_canonical(path.string()).string());
 #endif
     }
-    catch (cpp_fs::filesystem_error &err)
-    {
+    catch (cpp_fs::filesystem_error &err) {
       ZEP_UNUSED(err);
       ZLOG(ERROR, "Exception: " << err.what());
       return path;
@@ -183,16 +167,13 @@ namespace Zep
   {
     foundGit = false;
     auto findStartPath = [&](const ZepPath &startPath) {
-      if (!startPath.empty())
-      {
+      if (!startPath.empty()) {
         auto testPath = startPath;
-        if (!IsDirectory(testPath))
-        {
+        if (!IsDirectory(testPath)) {
           testPath = testPath.parent_path();
         }
 
-        while (!testPath.empty() && IsDirectory(testPath))
-        {
+        while (!testPath.empty() && IsDirectory(testPath)) {
           foundGit = false;
 
           // Look in this dir
@@ -201,8 +182,7 @@ namespace Zep
             recurse = false;
 
             // Found the .git repo
-            if (p.extension() == ".git" && IsDirectory(p))
-            {
+            if (p.extension() == ".git" && IsDirectory(p)) {
               foundGit = true;
 
               // Quit search
@@ -212,8 +192,7 @@ namespace Zep
           });
 
           // If found,  return it as the path we need
-          if (foundGit)
-          {
+          if (foundGit) {
             return testPath;
           }
 
@@ -225,18 +204,15 @@ namespace Zep
 
     ZepPath workingDir = GetWorkingDirectory();
     auto startPath = findStartPath(start);
-    if (startPath.empty())
-    {
+    if (startPath.empty()) {
       startPath = findStartPath(workingDir);
-      if (startPath.empty())
-      {
+      if (startPath.empty()) {
         startPath = GetWorkingDirectory();
       }
     }
 
     // Failure case, just use current path
-    if (startPath.empty())
-    {
+    if (startPath.empty()) {
       startPath = start;
     }
     return startPath;

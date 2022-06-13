@@ -46,8 +46,8 @@ namespace
   class _PyResolverScopedCache : public boost::noncopyable
   {
    public:
-    _PyResolverScopedCache()
-    {}
+
+    _PyResolverScopedCache() {}
 
     void Enter()
     {
@@ -64,6 +64,7 @@ namespace
     }
 
    private:
+
     std::unique_ptr<ArResolverScopedCache> _scopedCache;
   };
 

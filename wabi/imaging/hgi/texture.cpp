@@ -32,9 +32,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiTexture::HgiTexture(HgiTextureDesc const &desc)
-  : _descriptor(desc)
-{}
+HgiTexture::HgiTexture(HgiTextureDesc const &desc) : _descriptor(desc) {}
 
 HgiTexture::~HgiTexture() = default;
 
@@ -89,9 +87,10 @@ bool operator!=(const HgiTextureDesc &lhs, const HgiTextureDesc &rhs)
 
 bool operator==(const HgiTextureViewDesc &lhs, const HgiTextureViewDesc &rhs)
 {
-  return lhs.debugName == rhs.debugName && lhs.format == rhs.format && lhs.layerCount == rhs.layerCount &&
-         lhs.mipLevels == rhs.mipLevels && lhs.sourceTexture == rhs.sourceTexture &&
-         lhs.sourceFirstLayer == rhs.sourceFirstLayer && lhs.sourceFirstMip == rhs.sourceFirstMip;
+  return lhs.debugName == rhs.debugName && lhs.format == rhs.format &&
+         lhs.layerCount == rhs.layerCount && lhs.mipLevels == rhs.mipLevels &&
+         lhs.sourceTexture == rhs.sourceTexture && lhs.sourceFirstLayer == rhs.sourceFirstLayer &&
+         lhs.sourceFirstMip == rhs.sourceFirstMip;
 }
 
 bool operator!=(const HgiTextureViewDesc &lhs, const HgiTextureViewDesc &rhs)
@@ -99,8 +98,7 @@ bool operator!=(const HgiTextureViewDesc &lhs, const HgiTextureViewDesc &rhs)
   return !(lhs == rhs);
 }
 
-HgiTextureView::HgiTextureView(HgiTextureViewDesc const &desc)
-{}
+HgiTextureView::HgiTextureView(HgiTextureViewDesc const &desc) {}
 
 HgiTextureView::~HgiTextureView() = default;
 

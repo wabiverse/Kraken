@@ -39,10 +39,8 @@ WABI_NAMESPACE_BEGIN
 
 int HdEmbreeRTCBufferAllocator::Allocate()
 {
-  for (size_t i = 0; i < _bitset.size(); ++i)
-  {
-    if (!_bitset.test(i))
-    {
+  for (size_t i = 0; i < _bitset.size(); ++i) {
+    if (!_bitset.test(i)) {
       _bitset.set(i);
       return static_cast<int>(i);
     }
@@ -62,10 +60,8 @@ unsigned int HdEmbreeRTCBufferAllocator::NumBuffers()
   // before more are allocated. Now that there are possible a "large"
   // number of buffers it might want to be handled differently in the
   // future.
-  for (int i = _bitset.size() - 1; i >= 0; i--)
-  {
-    if (_bitset.test(i))
-    {
+  for (int i = _bitset.size() - 1; i >= 0; i--) {
+    if (_bitset.test(i)) {
       return i + 1;
     }
   }
@@ -91,12 +87,10 @@ bool HdEmbreeUniformSampler::Sample(unsigned int element,
                                     void *value,
                                     HdTupleType dataType) const
 {
-  if (_primitiveParams.empty())
-  {
+  if (_primitiveParams.empty()) {
     return _sampler.Sample(element, value, dataType);
   }
-  if (element >= _primitiveParams.size())
-  {
+  if (element >= _primitiveParams.size()) {
     return false;
   }
   return _sampler.Sample(HdMeshUtil::DecodeFaceIndexFromCoarseFaceParam(_primitiveParams[element]),
@@ -112,15 +106,13 @@ bool HdEmbreeTriangleVertexSampler::Sample(unsigned int element,
                                            void *value,
                                            HdTupleType dataType) const
 {
-  if (element >= _indices.size())
-  {
+  if (element >= _indices.size()) {
     return false;
   }
   HdEmbreeTypeHelper::PrimvarTypeContainer corners[3];
   if (!_sampler.Sample(_indices[element][0], &corners[0], dataType) ||
       !_sampler.Sample(_indices[element][1], &corners[1], dataType) ||
-      !_sampler.Sample(_indices[element][2], &corners[2], dataType))
-  {
+      !_sampler.Sample(_indices[element][2], &corners[2], dataType)) {
     return false;
   }
   void *samples[3] = {static_cast<void *>(&corners[0]),
@@ -143,8 +135,7 @@ bool HdEmbreeTriangleFaceVaryingSampler::Sample(unsigned int element,
   HdEmbreeTypeHelper::PrimvarTypeContainer corners[3];
   if (!_sampler.Sample(element * 3 + 0, &corners[0], dataType) ||
       !_sampler.Sample(element * 3 + 1, &corners[1], dataType) ||
-      !_sampler.Sample(element * 3 + 2, &corners[2], dataType))
-  {
+      !_sampler.Sample(element * 3 + 2, &corners[2], dataType)) {
     return false;
   }
   void *samples[3] = {static_cast<void *>(&corners[0]),
@@ -165,8 +156,7 @@ bool HdEmbreeTriangleFaceVaryingSampler::Sample(unsigned int element,
   if (!meshUtil.ComputeTriangulatedFaceVaryingPrimvar(buffer.GetData(),
                                                       buffer.GetNumElements(),
                                                       buffer.GetTupleType().type,
-                                                      &triangulated))
-  {
+                                                      &triangulated)) {
     TF_CODING_ERROR("[%s] Could not triangulate face-varying data.", name.GetText());
     return VtValue();
   }
@@ -187,16 +177,14 @@ HdEmbreeSubdivVertexSampler::HdEmbreeSubdivVertexSampler(TfToken const &name,
     _allocator(allocator)
 {
   // Arrays are not supported
-  if (_buffer.GetTupleType().count != 1)
-  {
+  if (_buffer.GetTupleType().count != 1) {
     TF_WARN("Unsupported array size for vertex primvar");
     return;
   }
 
   // The embree API only supports float-component primvars.
   RTCFormat format = RTC_FORMAT_FLOAT;
-  switch (HdGetComponentType(_buffer.GetTupleType().type))
-  {
+  switch (HdGetComponentType(_buffer.GetTupleType().type)) {
     case HdTypeFloat:
       format = RTC_FORMAT_FLOAT;
       break;
@@ -219,8 +207,7 @@ HdEmbreeSubdivVertexSampler::HdEmbreeSubdivVertexSampler(TfToken const &name,
   _embreeBufferId = _allocator->Allocate();
   // The embree API has a constant number of primvar slots (16 at last
   // count), shared between vertex and face-varying modes.
-  if (_embreeBufferId == -1)
-  {
+  if (_embreeBufferId == -1) {
     TF_WARN(
       "Embree subdivision meshes only support %d primvars"
       " in vertex interpolation mode, excceded for rprim ",
@@ -229,7 +216,8 @@ HdEmbreeSubdivVertexSampler::HdEmbreeSubdivVertexSampler(TfToken const &name,
   }
 
   // Set number of vertex attributes correctly
-  rtcSetGeometryVertexAttributeCount(rtcGetGeometry(_meshScene, _meshId), _allocator->NumBuffers());
+  rtcSetGeometryVertexAttributeCount(rtcGetGeometry(_meshScene, _meshId),
+                                     _allocator->NumBuffers());
 
   // The start address (`byteOffset` argument) and stride (`byteStride`
   // argument) must be both aligned to 4 bytes; otherwise the
@@ -237,20 +225,19 @@ HdEmbreeSubdivVertexSampler::HdEmbreeSubdivVertexSampler(TfToken const &name,
   // floats, so this will be ok, but this is possibly not robust. Not sure
   // that it will be easy to enforce this alignment on the data
   // that is gotten from the HdVtBufferSource
-  rtcSetSharedGeometryBuffer(rtcGetGeometry(_meshScene, _meshId),           /* RTCGeometry geometry */
-                             RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,              /*enum RTCBufferType type */
-                             static_cast<size_t>(_embreeBufferId),          /* unsigned int slot */
-                             format,                                        /*enum RTCFormat format */
-                             _buffer.GetData(),                             /* const void* ptr */
-                             0,                                             /*size_t byteOffset */
+  rtcSetSharedGeometryBuffer(rtcGetGeometry(_meshScene, _meshId),  /* RTCGeometry geometry */
+                             RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,     /*enum RTCBufferType type */
+                             static_cast<size_t>(_embreeBufferId), /* unsigned int slot */
+                             format,                               /*enum RTCFormat format */
+                             _buffer.GetData(),                    /* const void* ptr */
+                             0,                                    /*size_t byteOffset */
                              HdDataSizeOfTupleType(_buffer.GetTupleType()), /* size_t byteStride */
                              _buffer.GetNumElements() /* size_t itemCount */);
 }
 
 HdEmbreeSubdivVertexSampler::~HdEmbreeSubdivVertexSampler()
 {
-  if (_embreeBufferId != -1)
-  {
+  if (_embreeBufferId != -1) {
     _allocator->Free(_embreeBufferId);
   }
 }
@@ -262,8 +249,7 @@ bool HdEmbreeSubdivVertexSampler::Sample(unsigned int element,
                                          HdTupleType dataType) const
 {
   // Make sure the buffer type and sample type have the same arity.
-  if (_embreeBufferId == -1 || dataType != _buffer.GetTupleType())
-  {
+  if (_embreeBufferId == -1 || dataType != _buffer.GetTupleType()) {
     return false;
   }
 

@@ -55,7 +55,8 @@ void wrapDiagnosticBase()
 
     .add_property("diagnosticCode", &This::GetDiagnosticCode, "The diagnostic code posted.")
 
-    .add_property("diagnosticCodeString",
-                  make_function(&This::GetDiagnosticCodeAsString, return_value_policy<return_by_value>()),
-                  "The error code posted for this error, as a string.");
+    .add_property(
+      "diagnosticCodeString",
+      make_function(&This::GetDiagnosticCodeAsString, return_value_policy<return_by_value>()),
+      "The error code posted for this error, as a string.");
 }

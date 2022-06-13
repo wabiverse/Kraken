@@ -63,13 +63,11 @@ NdrNodeDiscoveryResultVec UsdLux_DiscoveryPlugin::DiscoverNodes(const Context &c
   PlugRegistry::GetAllDerivedTypes(lightType, &types);
   PlugRegistry::GetAllDerivedTypes(lightFilterType, &types);
 
-  for (const TfType &type : types)
-  {
+  for (const TfType &type : types) {
     const TfToken name = UsdSchemaRegistry::GetConcreteSchemaTypeName(type);
     // The type name from the schema registry will be empty if the type is
     // not concrete (i.e. abstract); we skip abstract types.
-    if (!name.IsEmpty())
-    {
+    if (!name.IsEmpty()) {
       // The schema type name is the name and identifier. The URIs are
       // left empty as these nodes can be populated from the schema
       // registry prim definitions.

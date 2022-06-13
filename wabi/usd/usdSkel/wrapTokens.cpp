@@ -44,9 +44,8 @@ namespace
   class _WrapStaticToken
   {
    public:
-    _WrapStaticToken(const TfToken *token)
-      : _token(token)
-    {}
+
+    _WrapStaticToken(const TfToken *token) : _token(token) {}
 
     std::string operator()() const
     {
@@ -54,24 +53,25 @@ namespace
     }
 
    private:
+
     const TfToken *_token;
   };
 
-  template<typename T>
-  void _AddToken(T &cls, const char *name, const TfToken &token)
+  template<typename T> void _AddToken(T &cls, const char *name, const TfToken &token)
   {
-    cls.add_static_property(
-      name,
-      boost::python::make_function(_WrapStaticToken(&token),
-                                   boost::python::return_value_policy<boost::python::return_by_value>(),
-                                   boost::mpl::vector1<std::string>()));
+    cls.add_static_property(name,
+                            boost::python::make_function(
+                              _WrapStaticToken(&token),
+                              boost::python::return_value_policy<boost::python::return_by_value>(),
+                              boost::mpl::vector1<std::string>()));
   }
 
 }  // namespace
 
 void wrapUsdSkelTokens()
 {
-  boost::python::class_<UsdSkelTokensType, boost::noncopyable> cls("Tokens", boost::python::no_init);
+  boost::python::class_<UsdSkelTokensType, boost::noncopyable> cls("Tokens",
+                                                                   boost::python::no_init);
   _AddToken(cls, "bindTransforms", UsdSkelTokens->bindTransforms);
   _AddToken(cls, "blendShapes", UsdSkelTokens->blendShapes);
   _AddToken(cls, "blendShapeWeights", UsdSkelTokens->blendShapeWeights);

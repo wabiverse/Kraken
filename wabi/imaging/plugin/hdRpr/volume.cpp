@@ -80,11 +80,12 @@ namespace
                                .GetWithDefault(params.scatteringColor);
     params.transmissionColor = sceneDelegate->Get(volumeId, HdRprVolumeTokens->transmissionColor)
                                  .GetWithDefault(params.transmissionColor);
-    params.emissionColor =
-      sceneDelegate->Get(volumeId, HdRprVolumeTokens->emissionColor).GetWithDefault(params.emissionColor);
-    params.density = sceneDelegate->Get(volumeId, HdRprVolumeTokens->density).GetWithDefault(params.density);
-    params.anisotropy =
-      sceneDelegate->Get(volumeId, HdRprVolumeTokens->anisotropy).GetWithDefault(params.anisotropy);
+    params.emissionColor = sceneDelegate->Get(volumeId, HdRprVolumeTokens->emissionColor)
+                             .GetWithDefault(params.emissionColor);
+    params.density =
+      sceneDelegate->Get(volumeId, HdRprVolumeTokens->density).GetWithDefault(params.density);
+    params.anisotropy = sceneDelegate->Get(volumeId, HdRprVolumeTokens->anisotropy)
+                          .GetWithDefault(params.anisotropy);
     params.multipleScattering = sceneDelegate->Get(volumeId, HdRprVolumeTokens->multipleScattering)
                                   .GetWithDefault(params.multipleScattering);
     return params;
@@ -116,8 +117,7 @@ namespace
                           T *param)
   {
     auto value = sceneDelegate->Get(fieldId, name);
-    if (value.IsHolding<T>())
-    {
+    if (value.IsHolding<T>()) {
       *param = value.UncheckedGet<T>();
       return true;
     }
@@ -127,7 +127,10 @@ namespace
   GridParameters ParseGridParameters(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId)
   {
     GridParameters params;
-    if (ParseGridParameter(HdRprVolumeTokens->normalize, sceneDelegate, fieldId, &params.normalize))
+    if (ParseGridParameter(HdRprVolumeTokens->normalize,
+                           sceneDelegate,
+                           fieldId,
+                           &params.normalize))
       params.authoredParamsMask |= GridParameters::kNormalizeAuthored;
     if (ParseGridParameter(HdRprVolumeTokens->bias, sceneDelegate, fieldId, &params.bias))
       params.authoredParamsMask |= GridParameters::kBiasAuthored;
@@ -150,14 +153,11 @@ namespace
   BlackbodyMode ParseGridBlackbodyMode(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId)
   {
     auto modeValue = sceneDelegate->Get(fieldId, HdRprVolumeTokens->blackbodyMode);
-    if (modeValue.IsHolding<TfToken>())
-    {
+    if (modeValue.IsHolding<TfToken>()) {
       auto &modeToken = modeValue.UncheckedGet<TfToken>();
-      if (modeToken == HdRprVolumeTokens->physical)
-      {
+      if (modeToken == HdRprVolumeTokens->physical) {
         return BlackbodyMode::kPhysical;
-      } else if (modeToken == HdRprVolumeTokens->artistic)
-      {
+      } else if (modeToken == HdRprVolumeTokens->artistic) {
         return BlackbodyMode::kArtistic;
       }
     }
@@ -181,50 +181,42 @@ namespace
                                                  GridParameters::kScaleAuthored;
       return (grid->params.authoredParamsMask & metadataParameters) == metadataParameters;
     };
-    if (isAllParametersParsed(grid))
-    {
+    if (isAllParametersParsed(grid)) {
       return;
     }
 
     std::string metadataNamePrefix;
-    if (grid->desc->fieldName == HdRprVolumeTokens->temperature)
-    {
+    if (grid->desc->fieldName == HdRprVolumeTokens->temperature) {
       metadataNamePrefix = "volvis_emit";
-    } else if (grid->desc->fieldName == HdRprVolumeTokens->density)
-    {
+    } else if (grid->desc->fieldName == HdRprVolumeTokens->density) {
       metadataNamePrefix = "volvis_density";
     }
 
     auto cdrampMd = metadataNamePrefix + "cdramp";
     auto scaleMd = metadataNamePrefix + "scale";
 
-    try
-    {
+    try {
       openvdb::io::File file(grid->filepath);
       file.open();
 
       auto metadata = file.getMetadata();
-      for (auto it = metadata->beginMeta(); it != metadata->endMeta() && !isAllParametersParsed(grid); ++it)
-      {
-        if (it->first == cdrampMd)
-        {
-          if (grid->params.authoredParamsMask & GridParameters::kRampAuthored)
-          {
+      for (auto it = metadata->beginMeta();
+           it != metadata->endMeta() && !isAllParametersParsed(grid);
+           ++it) {
+        if (it->first == cdrampMd) {
+          if (grid->params.authoredParamsMask & GridParameters::kRampAuthored) {
             continue;
           }
 
-          try
-          {
+          try {
             auto root = json::parse(it->second->str());
-            if (root["colortype"] == "RGB")
-            {
+            if (root["colortype"] == "RGB") {
               auto points = root["points"];
               auto pointsIt = points.begin();
 
               // First element is always number of points
               int numPoints = pointsIt->get<int>();
-              if (numPoints <= 0)
-              {
+              if (numPoints <= 0) {
                 TF_RUNTIME_ERROR(
                   "Failed to parse openvdb metadata \"%s\": invalid %s - incorrect number of "
                   "points %d",
@@ -241,10 +233,8 @@ namespace
               parameters.reserve(std::min(64, numPoints));
               colors.reserve(std::min(64, numPoints));
 
-              for (; pointsIt != points.end(); ++pointsIt)
-              {
-                if (numPoints == 0)
-                {
+              for (; pointsIt != points.end(); ++pointsIt) {
+                if (numPoints == 0) {
                   TF_RUNTIME_ERROR(
                     "Failed to parse openvdb metadata \"%s\": invalid %s - excessive number of "
                     "points",
@@ -258,8 +248,7 @@ namespace
 
                 GfVec3f color;
                 auto rgba = point["rgba"];
-                for (int i = 0; i < 3; ++i)
-                {
+                for (int i = 0; i < 3; ++i) {
                   color[i] = rgba[i].get<float>();
                 }
                 colors.push_back(color);
@@ -267,8 +256,7 @@ namespace
                 numPoints--;
               }
 
-              if (numPoints != 0)
-              {
+              if (numPoints != 0) {
                 TF_RUNTIME_ERROR(
                   "Failed to parse openvdb metadata \"%s\": invalid %s - insufficient number of "
                   "points",
@@ -278,42 +266,37 @@ namespace
               }
 
               // RPR expects linearly interpolated ramp
-              // Houdini's ramp is defined as parameter-color pair (the parameter is in [0; 1] range)
-              // Here we convert arbitrarily distributed color ramp to a linear ramp
+              // Houdini's ramp is defined as parameter-color pair (the parameter is in [0; 1]
+              // range) Here we convert arbitrarily distributed color ramp to a linear ramp
               auto &ramp = grid->params.ramp;
               ramp.reserve(kLookupTableGranularityLevel);
-              for (int i = 0; i < kLookupTableGranularityLevel; ++i)
-              {
+              for (int i = 0; i < kLookupTableGranularityLevel; ++i) {
                 float t = static_cast<float>(i) / (kLookupTableGranularityLevel - 1);
-                ramp.push_back(
-                  HdResampleRawTimeSamples(t, parameters.size(), parameters.data(), colors.data()));
+                ramp.push_back(HdResampleRawTimeSamples(t,
+                                                        parameters.size(),
+                                                        parameters.data(),
+                                                        colors.data()));
               }
               grid->params.authoredParamsMask |= GridParameters::kRampAuthored;
             }
           }
-          catch (json::exception &e)
-          {
+          catch (json::exception &e) {
             TF_RUNTIME_ERROR("Failed to parse openvdb metadata \"%s\": invalid %s - %s",
                              grid->filepath.c_str(),
                              cdrampMd.c_str(),
                              e.what());
           }
-        } else if (it->first == scaleMd)
-        {
-          if (grid->params.authoredParamsMask & GridParameters::kScaleAuthored)
-          {
+        } else if (it->first == scaleMd) {
+          if (grid->params.authoredParamsMask & GridParameters::kScaleAuthored) {
             continue;
           }
 
-          if (it->second->typeName() == "float")
-          {
-            try
-            {
+          if (it->second->typeName() == "float") {
+            try {
               grid->params.scale *= std::stof(it->second->str()) * 0.01f;
               grid->params.authoredParamsMask |= GridParameters::kScaleAuthored;
             }
-            catch (std::exception &e)
-            {
+            catch (std::exception &e) {
               TF_RUNTIME_ERROR("Failed to parse openvdb metadata \"%s\": invalid %s - %s",
                                grid->filepath.c_str(),
                                scaleMd.c_str(),
@@ -323,9 +306,10 @@ namespace
         }
       }
     }
-    catch (openvdb::IoError const &e)
-    {
-      TF_RUNTIME_ERROR("Failed to parse openvdb metadata \"%s\": %s", grid->filepath.c_str(), e.what());
+    catch (openvdb::IoError const &e) {
+      TF_RUNTIME_ERROR("Failed to parse openvdb metadata \"%s\": %s",
+                       grid->filepath.c_str(),
+                       e.what());
     }
   }
 
@@ -349,15 +333,13 @@ namespace
   void NormalizeGrid(VDBGrid<float> *grid)
   {
     if ((GfIsClose(grid->minValue, 0.0f, 1e-3f) && GfIsClose(grid->maxValue, 1.0f, 1e-3f)) ||
-        GfIsClose(grid->minValue, grid->maxValue, 1e-6f))
-    {
+        GfIsClose(grid->minValue, grid->maxValue, 1e-6f)) {
       return;
     }
 
     float offset = -grid->minValue;
     float scale = 1.0f / (grid->maxValue - grid->minValue);
-    for (auto &value : grid->values)
-    {
+    for (auto &value : grid->values) {
       value = value * scale + offset;
     }
 
@@ -373,9 +355,7 @@ namespace
 
 }  // namespace
 
-HdRprVolume::HdRprVolume(SdfPath const &id)
-  : HdVolume(id)
-{}
+HdRprVolume::HdRprVolume(SdfPath const &id) : HdVolume(id) {}
 
 void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
                        HdRenderParam *renderParam,
@@ -388,17 +368,14 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
 
   auto &id = GetId();
 
-  if (*dirtyBits & HdChangeTracker::DirtyTransform)
-  {
+  if (*dirtyBits & HdChangeTracker::DirtyTransform) {
     m_transform = GfMatrix4f(sceneDelegate->GetTransform(id));
   }
 
   bool newVolume = false;
 
-  if (*dirtyBits & HdChangeTracker::DirtyTopology)
-  {
-    if (m_rprVolume)
-    {
+  if (*dirtyBits & HdChangeTracker::DirtyTopology) {
+    if (m_rprVolume) {
       rprApi->Release(m_rprVolume);
     }
     m_rprVolume = nullptr;
@@ -408,35 +385,30 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
 
     auto getVdbGrid = [&](SdfPath const &fieldId,
                           std::string const &openvdbPath) -> openvdb::FloatGrid const * {
-      auto fieldName = sceneDelegate->Get(fieldId, UsdVolTokens->fieldName).GetWithDefault(TfToken());
-      if (IsInMemoryVdb(openvdbPath))
-      {
+      auto fieldName =
+        sceneDelegate->Get(fieldId, UsdVolTokens->fieldName).GetWithDefault(TfToken());
+      if (IsInMemoryVdb(openvdbPath)) {
         auto houdiniGrid = HoudiniOpenvdbLoader::Instance().GetGrid(openvdbPath.c_str(),
                                                                     fieldName.GetText());
-        if (houdiniGrid->type() != openvdb::FloatGrid::gridType())
-        {
+        if (houdiniGrid->type() != openvdb::FloatGrid::gridType()) {
           TF_RUNTIME_ERROR("[%s] Failed to read vdb grid \"%s\": RPR supports scalar fields only",
                            id.GetName().c_str(),
                            openvdbPath.c_str());
           return nullptr;
         }
         return static_cast<openvdb::FloatGrid const *>(houdiniGrid);
-      } else
-      {
+      } else {
         auto gridId = openvdbPath + fieldName.GetString();
         auto gridIter = retainedVDBGrids.find(gridId);
-        if (gridIter != retainedVDBGrids.end())
-        {
+        if (gridIter != retainedVDBGrids.end()) {
           return static_cast<openvdb::FloatGrid const *>(gridIter->second.get());
         }
 
-        try
-        {
+        try {
           openvdb::io::File file(openvdbPath);
           file.open();
           auto grid = file.readGrid(fieldName.GetString());
-          if (grid->type() != openvdb::FloatGrid::gridType())
-          {
+          if (grid->type() != openvdb::FloatGrid::gridType()) {
             TF_RUNTIME_ERROR(
               "[%s] Failed to read vdb grid from file \"%s\": RPR supports scalar fields only",
               id.GetName().c_str(),
@@ -447,8 +419,7 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
           retainedVDBGrids[gridId] = std::move(grid);
           return ret;
         }
-        catch (openvdb::Exception const &e)
-        {
+        catch (openvdb::Exception const &e) {
           TF_RUNTIME_ERROR("[%s] Failed to read vdb grid from file \"%s\": %s",
                            id.GetName().c_str(),
                            openvdbPath.c_str(),
@@ -466,52 +437,41 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
     decltype(m_fieldSubscriptions) activeFieldSubscriptions;
 
     auto volumeFieldDescriptorVector = sceneDelegate->GetVolumeFieldDescriptors(GetId());
-    for (auto const &desc : volumeFieldDescriptorVector)
-    {
+    for (auto const &desc : volumeFieldDescriptorVector) {
       GridInfo *targetInfo;
-      if (desc.fieldName == HdRprVolumeTokens->density)
-      {
+      if (desc.fieldName == HdRprVolumeTokens->density) {
         targetInfo = &densityGridInfo;
-      } else if (desc.fieldName == HdRprVolumeTokens->temperature)
-      {
+      } else if (desc.fieldName == HdRprVolumeTokens->temperature) {
         targetInfo = &emissionGridInfo;
-      } else if (desc.fieldName == HdRprVolumeTokens->color)
-      {
+      } else if (desc.fieldName == HdRprVolumeTokens->color) {
         targetInfo = &albedoGridInfo;
-      } else
-      {
+      } else {
         continue;
       }
 
       auto param = sceneDelegate->Get(desc.fieldId, UsdVolTokens->filePath);
-      if (param.IsHolding<SdfAssetPath>())
-      {
+      if (param.IsHolding<SdfAssetPath>()) {
         targetInfo->desc = &desc;
 
         auto &assetPath = param.UncheckedGet<SdfAssetPath>();
-        if (!assetPath.GetResolvedPath().empty())
-        {
+        if (!assetPath.GetResolvedPath().empty()) {
           targetInfo->filepath = assetPath.GetResolvedPath();
-        } else
-        {
+        } else {
           targetInfo->filepath = assetPath.GetAssetPath();
         }
 
         targetInfo->vdbGrid = getVdbGrid(desc.fieldId, targetInfo->filepath);
-        if (targetInfo->vdbGrid)
-        {
+        if (targetInfo->vdbGrid) {
           targetInfo->params = ParseGridParameters(sceneDelegate, desc.fieldId);
           ParseOpenvdbMetadata(targetInfo);
 
           // Subscribe for field updates, more info in renderParam.h
           auto fieldSubscription = m_fieldSubscriptions.find(desc.fieldId);
-          if (fieldSubscription == m_fieldSubscriptions.end())
-          {
+          if (fieldSubscription == m_fieldSubscriptions.end()) {
             activeFieldSubscriptions.emplace(
               desc.fieldId,
               rprRenderParam->SubscribeVolumeForFieldUpdates(this, desc.fieldId));
-          } else
-          {
+          } else {
             // Reuse the old one
             activeFieldSubscriptions.emplace(desc.fieldId, std::move(fieldSubscription->second));
           }
@@ -526,16 +486,14 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
     auto emissionGrid = emissionGridInfo.vdbGrid;
     auto albedoGrid = albedoGridInfo.vdbGrid;
 
-    if (!densityGrid && !emissionGrid)
-    {
+    if (!densityGrid && !emissionGrid) {
       TF_RUNTIME_ERROR("[Node: %s]: does not have the needed grids.", GetId().GetName().c_str());
       *dirtyBits = HdChangeTracker::Clean;
       return;
     }
 
     // If we need to read from both grids, check compatibility
-    if (densityGridInfo.vdbGrid && emissionGrid)
-    {
+    if (densityGridInfo.vdbGrid && emissionGrid) {
       if (densityGridInfo.vdbGrid->voxelSize() != emissionGrid->voxelSize())
         TF_RUNTIME_ERROR(
           "[Node: %s]: density grid and temperature grid differs in voxel sizes. Taking voxel "
@@ -564,14 +522,12 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
     VDBGrid<float> emissionGridData;
     VDBGrid<float> albedoGridData;
 
-    if (densityGrid)
-    {
+    if (densityGrid) {
       ProcessVDBGrid(densityGridData, densityGridInfo.vdbGrid, activeVoxelsBB);
 
-      if (densityGridInfo.params.ramp.empty())
-      {
-        if ((densityGridInfo.params.authoredParamsMask & GridParameters::kNormalizeAuthored) == 0)
-        {
+      if (densityGridInfo.params.ramp.empty()) {
+        if ((densityGridInfo.params.authoredParamsMask & GridParameters::kNormalizeAuthored) ==
+            0) {
           densityGridInfo.params.normalize = true;
         }
 
@@ -579,91 +535,75 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
         densityGridInfo.params.ramp.push_back(GfVec3f(densityGridData.maxValue));
       }
 
-      if (densityGridInfo.params.normalize)
-      {
+      if (densityGridInfo.params.normalize) {
         NormalizeGrid(&densityGridData);
       }
     }
 
-    if (emissionGrid)
-    {
+    if (emissionGrid) {
       auto blackbodyMode = ParseGridBlackbodyMode(sceneDelegate, emissionGridInfo.desc->fieldId);
       if (blackbodyMode == BlackbodyMode::kPhysical ||
           (blackbodyMode == BlackbodyMode::kAuto &&
-           (emissionGridInfo.params.authoredParamsMask & GridParameters::kRampAuthored) == 0))
-      {
+           (emissionGridInfo.params.authoredParamsMask & GridParameters::kRampAuthored) == 0)) {
         emissionGridInfo.params.ramp.clear();
         emissionGridInfo.params.ramp.reserve(kLookupTableGranularityLevel);
-        for (int i = 0; i < kLookupTableGranularityLevel; ++i)
-        {
+        for (int i = 0; i < kLookupTableGranularityLevel; ++i) {
           float parameter = static_cast<float>(i) / (kLookupTableGranularityLevel - 1);
 
           static constexpr int kMaxTemperature = 10000;
           float temperature = parameter * kMaxTemperature;
 
           GfVec3f color = UsdLuxBlackbodyTemperatureAsRgb(temperature);
-          if (temperature <= 1000)
-          {
+          if (temperature <= 1000) {
             color *= temperature / 1000.0f;
             color *= temperature / 1000.0f;
           }
           emissionGridInfo.params.ramp.push_back(color);
         }
-      } else if (emissionGridInfo.params.ramp.empty())
-      {
+      } else if (emissionGridInfo.params.ramp.empty()) {
         emissionGridInfo.params.ramp.push_back(GfVec3f(0.0f));
         emissionGridInfo.params.ramp.push_back(GfVec3f(1.0f));
       }
 
       ProcessVDBGrid(emissionGridData, emissionGridInfo.vdbGrid, activeVoxelsBB);
 
-      if (emissionGridInfo.params.normalize)
-      {
+      if (emissionGridInfo.params.normalize) {
         NormalizeGrid(&emissionGridData);
       }
     }
 
-    if (albedoGrid)
-    {
+    if (albedoGrid) {
       ProcessVDBGrid(albedoGridData, albedoGridInfo.vdbGrid, activeVoxelsBB);
-      if (albedoGridInfo.params.normalize)
-      {
+      if (albedoGridInfo.params.normalize) {
         NormalizeGrid(&albedoGridData);
       }
-      if (albedoGridInfo.params.ramp.empty())
-      {
+      if (albedoGridInfo.params.ramp.empty()) {
         albedoGridInfo.params.ramp.push_back(defaultColor);
       }
     }
 
-    if (densityGridData.coords.empty())
-    {
+    if (densityGridData.coords.empty()) {
       densityGridData = CopyGridTopology(emissionGridData);
       densityGridInfo.params.ramp.push_back(GfVec3f(defaultDensity));
     }
 
-    if (emissionGridData.coords.empty())
-    {
+    if (emissionGridData.coords.empty()) {
       emissionGridData = CopyGridTopology(densityGridData);
       emissionGridInfo.params.ramp.push_back(defaultEmission);
     }
 
-    if (albedoGridData.coords.empty())
-    {
+    if (albedoGridData.coords.empty()) {
       albedoGridData = CopyGridTopology(densityGrid ? densityGridData : emissionGridData);
       albedoGridInfo.params.ramp.push_back(defaultColor);
     }
 
-    for (auto &value : densityGridInfo.params.ramp)
-    {
+    for (auto &value : densityGridInfo.params.ramp) {
       value = value * densityGridInfo.params.gain + GfVec3f(densityGridInfo.params.bias);
     }
-    for (auto &value : emissionGridInfo.params.ramp)
-    {
+    for (auto &value : emissionGridInfo.params.ramp) {
       value = value * emissionGridInfo.params.gain + GfVec3f(emissionGridInfo.params.bias);
     }
-    for (auto &value : albedoGridInfo.params.ramp)
-    {
+    for (auto &value : albedoGridInfo.params.ramp) {
       value = value * albedoGridInfo.params.gain + GfVec3f(albedoGridInfo.params.bias);
     }
 
@@ -693,10 +633,8 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
     newVolume = m_rprVolume != nullptr;
   }
 
-  if (m_rprVolume)
-  {
-    if (newVolume || (*dirtyBits & HdChangeTracker::DirtyTransform))
-    {
+  if (m_rprVolume) {
+    if (newVolume || (*dirtyBits & HdChangeTracker::DirtyTransform)) {
       rprApi->SetTransform(m_rprVolume, m_transform);
     }
   }
@@ -706,9 +644,10 @@ void HdRprVolume::Sync(HdSceneDelegate *sceneDelegate,
 
 HdDirtyBits HdRprVolume::GetInitialDirtyBitsMask() const
 {
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyTransform |
-             HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar |
-             HdChangeTracker::DirtyMaterialId | HdChangeTracker::AllDirty;
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyTopology |
+             HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+             HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyMaterialId |
+             HdChangeTracker::AllDirty;
 
   return (HdDirtyBits)mask;
 }

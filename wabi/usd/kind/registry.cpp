@@ -62,16 +62,14 @@ KindRegistry &KindRegistry::GetInstance()
 
 void KindRegistry::_Register(const TfToken &kind, const TfToken &baseKind)
 {
-  if (!TfIsValidIdentifier(kind.GetString()))
-  {
+  if (!TfIsValidIdentifier(kind.GetString())) {
     TF_CODING_ERROR("Invalid kind: '%s'", kind.GetText());
     return;
   }
 
   _KindMap::const_iterator it = _kindMap.find(kind);
 
-  if (it != _kindMap.end())
-  {
+  if (it != _kindMap.end()) {
     TF_CODING_ERROR("Kind '%s' has already been registered", kind.GetText());
     return;
   }
@@ -102,8 +100,7 @@ TfToken KindRegistry::_GetBaseKind(const TfToken &kind) const
 {
   _KindMap::const_iterator it = _kindMap.find(kind);
 
-  if (it == _kindMap.end())
-  {
+  if (it == _kindMap.end()) {
     TF_CODING_ERROR("Unknown kind: '%s'", kind.GetText());
     return TfToken();
   }
@@ -118,23 +115,20 @@ bool KindRegistry::IsA(const TfToken &derivedKind, const TfToken &baseKind)
 
 bool KindRegistry::_IsA(const TfToken &derivedKind, const TfToken &baseKind) const
 {
-  if (derivedKind == baseKind)
-  {
+  if (derivedKind == baseKind) {
     return true;
   }
 
   _KindMap::const_iterator it = _kindMap.find(derivedKind);
 
-  if (it == _kindMap.end())
-  {
+  if (it == _kindMap.end()) {
     // Don't make this a coding error; it's very convenient to allow
     // querying about IsA for any random kind without having to e.g.
     // verify that it's not an empty string first.
     return false;
   }
 
-  if (it->second.baseKind.IsEmpty())
-  {
+  if (it->second.baseKind.IsEmpty()) {
     return false;
   }
 
@@ -150,8 +144,7 @@ std::vector<TfToken> KindRegistry::_GetAllKinds() const
 {
   std::vector<TfToken> r;
   r.reserve(_kindMap.size());
-  for (const auto &entry : _kindMap)
-  {
+  for (const auto &entry : _kindMap) {
     r.push_back(entry.first);
   }
   return r;
@@ -161,8 +154,7 @@ std::vector<TfToken> KindRegistry::_GetAllKinds() const
 static bool _GetKey(const JsObject &dict, const std::string &key, JsObject *value)
 {
   JsObject::const_iterator i = dict.find(key);
-  if (i != dict.end() && i->second.IsObject())
-  {
+  if (i != dict.end() && i->second.IsObject()) {
     *value = i->second.GetJsObject();
     return true;
   }
@@ -184,20 +176,17 @@ void KindRegistry::_RegisterDefaults()
   //     if someone manages to add more plugins while the app is running.
   //     This allows the KindRegistry to be threadsafe without locking.
   const PlugPluginPtrVector &plugins = PlugRegistry::GetInstance().GetAllPlugins();
-  TF_FOR_ALL (plug, plugins)
-  {
+  TF_FOR_ALL (plug, plugins) {
     JsObject kinds;
     const JsObject &metadata = (*plug)->GetMetadata();
     if (!_GetKey(metadata, _tokens->PluginKindsKey, &kinds))
       continue;
 
-    TF_FOR_ALL (kindEntry, kinds)
-    {
+    TF_FOR_ALL (kindEntry, kinds) {
       // Each entry is a map from kind -> metadata dict.
       TfToken kind(kindEntry->first);
       JsObject kindDict;
-      if (!_GetKey(kinds, kind, &kindDict))
-      {
+      if (!_GetKey(kinds, kind, &kindDict)) {
         TF_RUNTIME_ERROR("Expected dict for kind '%s'", kind.GetText());
         continue;
       }
@@ -205,13 +194,10 @@ void KindRegistry::_RegisterDefaults()
       // Check for baseKind.
       TfToken baseKind;
       JsObject::const_iterator i = kindDict.find("baseKind");
-      if (i != kindDict.end())
-      {
-        if (i->second.IsString())
-        {
+      if (i != kindDict.end()) {
+        if (i->second.IsString()) {
           baseKind = TfToken(i->second.GetString());
-        } else
-        {
+        } else {
           TF_RUNTIME_ERROR("Expected string for baseKind");
           continue;
         }

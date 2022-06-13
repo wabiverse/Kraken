@@ -70,8 +70,7 @@ bool ED_screen_change(kContext *C, kScreen *screen)
 
   // screen_change_prepare(screen_old, screen_new, kmain, C, win);
 
-  if (screen_old != screen_new)
-  {
+  if (screen_old != screen_new) {
     // WM_window_set_active_screen(win, workspace, screen_new);
     // screen_change_update(C, win, screen_new);
 
@@ -88,8 +87,7 @@ void ED_region_exit(kContext *C, ARegion *region)
   wmWindow *win = CTX_wm_window(C);
   ARegion *prevar = CTX_wm_region(C);
 
-  if (region->type && region->type->exit)
-  {
+  if (region->type && region->type->exit) {
     region->type->exit(wm, region);
   }
 
@@ -127,8 +125,7 @@ void ED_area_exit(kContext *C, ScrArea *area)
 
   CTX_wm_area_set(C, area);
 
-  UNIVERSE_FOR_ALL (region, area->regions)
-  {
+  UNIVERSE_FOR_ALL (region, area->regions) {
     ED_region_exit(C, region);
   }
 
@@ -147,30 +144,25 @@ void ED_screen_exit(kContext *C, wmWindow *window, kScreen *screen)
 
   screen->active_region = NULL;
 
-  UNIVERSE_FOR_ALL (region, screen->regions)
-  {
+  UNIVERSE_FOR_ALL (region, screen->regions) {
     ED_region_exit(C, region);
   }
 
-  UNIVERSE_FOR_ALL (area, screen->areas)
-  {
+  UNIVERSE_FOR_ALL (area, screen->areas) {
     ED_area_exit(C, area);
   }
 
-  UNIVERSE_FOR_ALL (area, window->global_areas.areas)
-  {
+  UNIVERSE_FOR_ALL (area, window->global_areas.areas) {
     ED_area_exit(C, area);
   }
 
   /* mark it available for use for other windows */
   screen->winid = 0;
 
-  if (!WM_window_is_temp_screen(prevwin))
-  {
+  if (!WM_window_is_temp_screen(prevwin)) {
     /* use previous window if possible */
     CTX_wm_window_set(C, prevwin);
-  } else
-  {
+  } else {
     /* none otherwise */
     CTX_wm_window_set(C, NULL);
   }
@@ -202,12 +194,9 @@ static int find_free_areaid(kContext *C)
    * Though of course, users should be allowed to
    * create any number of screen areas without them
    * noticing a performance impact. */
-  UNIVERSE_FOR_ALL (screen, kmain->screens)
-  {
-    UNIVERSE_FOR_ALL (area, screen->areas)
-    {
-      if (id <= area->areaid)
-      {
+  UNIVERSE_FOR_ALL (screen, kmain->screens) {
+    UNIVERSE_FOR_ALL (area, screen->areas) {
+      if (id <= area->areaid) {
         id = area->areaid + 1;
       }
     }

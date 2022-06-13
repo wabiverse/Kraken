@@ -50,32 +50,38 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateShadowEnableAttr(UsdLuxShadowAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateShadowEnableAttr(UsdLuxShadowAPI &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateShadowEnableAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                        writeSparsely);
   }
 
-  static UsdAttribute _CreateShadowColorAttr(UsdLuxShadowAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateShadowColorAttr(UsdLuxShadowAPI &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
   {
     return self.CreateShadowColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
                                       writeSparsely);
   }
 
-  static UsdAttribute _CreateShadowDistanceAttr(UsdLuxShadowAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateShadowDistanceAttr(UsdLuxShadowAPI &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
   {
     return self.CreateShadowDistanceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                          writeSparsely);
   }
 
-  static UsdAttribute _CreateShadowFalloffAttr(UsdLuxShadowAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateShadowFalloffAttr(UsdLuxShadowAPI &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
   {
     return self.CreateShadowFalloffAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                         writeSparsely);
@@ -85,8 +91,9 @@ namespace
                                                     object defaultVal,
                                                     bool writeSparsely)
   {
-    return self.CreateShadowFalloffGammaAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                             writeSparsely);
+    return self.CreateShadowFalloffGammaAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdLuxShadowAPI &self)
@@ -119,7 +126,9 @@ void wrapUsdLuxShadowAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)

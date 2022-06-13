@@ -41,8 +41,7 @@ void Usd_Resolver::_Init()
   _SkipEmptyNodes();
 
   // The entire stage may be empty, so we need to check IsValid here.
-  if (IsValid())
-  {
+  if (IsValid()) {
     const SdfLayerRefPtrVector &layers = _curNode->GetLayerStack()->GetLayers();
     _curLayer = layers.begin();
     _lastLayer = layers.end();
@@ -51,16 +50,12 @@ void Usd_Resolver::_Init()
 
 void Usd_Resolver::_SkipEmptyNodes()
 {
-  if (_skipEmptyNodes)
-  {
-    for (; IsValid() && (!_curNode->HasSpecs() || _curNode->IsInert()); ++_curNode)
-    {
+  if (_skipEmptyNodes) {
+    for (; IsValid() && (!_curNode->HasSpecs() || _curNode->IsInert()); ++_curNode) {
       // do nothing.
     }
-  } else
-  {
-    for (; IsValid() && _curNode->IsInert(); ++_curNode)
-    {
+  } else {
+    for (; IsValid() && _curNode->IsInert(); ++_curNode) {
       // do nothing.
     }
   }
@@ -82,8 +77,7 @@ PcpNodeRef Usd_Resolver::GetNode() const
 
 const SdfLayerRefPtr &Usd_Resolver::GetLayer() const
 {
-  if (!IsValid())
-  {
+  if (!IsValid()) {
     static const SdfLayerRefPtr _NULL_LAYER;
     return _NULL_LAYER;
   }
@@ -104,12 +98,10 @@ const PcpPrimIndex *Usd_Resolver::GetPrimIndex() const
 
 void Usd_Resolver::NextNode()
 {
-  if (IsValid())
-  {
+  if (IsValid()) {
     ++_curNode;
     _SkipEmptyNodes();
-    if (IsValid())
-    {
+    if (IsValid()) {
       const SdfLayerRefPtrVector &layers = _curNode->GetLayerStack()->GetLayers();
       _curLayer = layers.begin();
       _lastLayer = layers.end();
@@ -122,8 +114,7 @@ bool Usd_Resolver::NextLayer()
   if (!IsValid())
     return true;
 
-  if (++_curLayer == _lastLayer)
-  {
+  if (++_curLayer == _lastLayer) {
     // We hit the last layer in this LayerStack, move on to the next node.
     NextNode();
     return true;
@@ -133,8 +124,7 @@ bool Usd_Resolver::NextLayer()
 
 Usd_Resolver::Position Usd_Resolver::GetPosition() const
 {
-  if (!IsValid())
-  {
+  if (!IsValid()) {
     return Position();
   }
 

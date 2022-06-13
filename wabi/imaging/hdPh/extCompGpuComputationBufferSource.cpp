@@ -57,22 +57,18 @@ HdPhExtCompGpuComputationBufferSource::HdPhExtCompGpuComputationBufferSource(
 bool HdPhExtCompGpuComputationBufferSource::Resolve()
 {
   bool allResolved = true;
-  for (size_t i = 0; i < _inputs.size(); ++i)
-  {
+  for (size_t i = 0; i < _inputs.size(); ++i) {
     HdBufferSourceSharedPtr const &source = _inputs[i];
-    if (!source->IsResolved())
-    {
+    if (!source->IsResolved()) {
       allResolved &= source->Resolve();
     }
   }
 
-  if (!allResolved)
-  {
+  if (!allResolved) {
     return false;
   }
 
-  if (!_TryLock())
-  {
+  if (!_TryLock()) {
     return false;
   }
 

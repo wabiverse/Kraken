@@ -37,7 +37,8 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<SdfNotice::LayerInfoDidChange, TfType::Bases<SdfNotice::Base>>();
   TfType::Define<SdfNotice::LayerIdentifierDidChange, TfType::Bases<SdfNotice::Base>>();
   TfType::Define<SdfNotice::LayerDidReplaceContent, TfType::Bases<SdfNotice::Base>>();
-  TfType::Define<SdfNotice::LayerDidReloadContent, TfType::Bases<SdfNotice::LayerDidReplaceContent>>();
+  TfType::Define<SdfNotice::LayerDidReloadContent,
+                 TfType::Bases<SdfNotice::LayerDidReplaceContent>>();
   TfType::Define<SdfNotice::LayerDidSaveLayerToFile, TfType::Bases<SdfNotice::Base>>();
   TfType::Define<SdfNotice::LayerDirtinessChanged, TfType::Bases<SdfNotice::Base>>();
   TfType::Define<SdfNotice::LayerMutenessChanged, TfType::Bases<SdfNotice::Base>>();
@@ -47,8 +48,7 @@ SdfLayerHandleVector SdfNotice::BaseLayersDidChange::GetLayers() const
 {
   SdfLayerHandleVector layers;
   layers.reserve(_vec->size());
-  TF_FOR_ALL (i, *_vec)
-  {
+  TF_FOR_ALL (i, *_vec) {
     // XXX:bug 20833 It should be ok to return expired layers here.
     if (i->first)
       layers.push_back(i->first);
@@ -62,25 +62,15 @@ SdfNotice::LayerIdentifierDidChange::LayerIdentifierDidChange(const std::string 
     _newId(newIdentifier)
 {}
 
-SdfNotice::Base::~Base()
-{}
-SdfNotice::LayersDidChange::~LayersDidChange()
-{}
-SdfNotice::LayersDidChangeSentPerLayer::~LayersDidChangeSentPerLayer()
-{}
-SdfNotice::LayerInfoDidChange::~LayerInfoDidChange()
-{}
-SdfNotice::LayerIdentifierDidChange::~LayerIdentifierDidChange()
-{}
-SdfNotice::LayerDidReplaceContent::~LayerDidReplaceContent()
-{}
-SdfNotice::LayerDidReloadContent::~LayerDidReloadContent()
-{}
-SdfNotice::LayerDidSaveLayerToFile::~LayerDidSaveLayerToFile()
-{}
-SdfNotice::LayerDirtinessChanged::~LayerDirtinessChanged()
-{}
-SdfNotice::LayerMutenessChanged::~LayerMutenessChanged()
-{}
+SdfNotice::Base::~Base() {}
+SdfNotice::LayersDidChange::~LayersDidChange() {}
+SdfNotice::LayersDidChangeSentPerLayer::~LayersDidChangeSentPerLayer() {}
+SdfNotice::LayerInfoDidChange::~LayerInfoDidChange() {}
+SdfNotice::LayerIdentifierDidChange::~LayerIdentifierDidChange() {}
+SdfNotice::LayerDidReplaceContent::~LayerDidReplaceContent() {}
+SdfNotice::LayerDidReloadContent::~LayerDidReloadContent() {}
+SdfNotice::LayerDidSaveLayerToFile::~LayerDidSaveLayerToFile() {}
+SdfNotice::LayerDirtinessChanged::~LayerDirtinessChanged() {}
+SdfNotice::LayerMutenessChanged::~LayerMutenessChanged() {}
 
 WABI_NAMESPACE_END

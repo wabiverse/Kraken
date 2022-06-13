@@ -88,7 +88,8 @@ static bool _IsNamespaced(const TfToken &opName)
 
 static TfToken _MakeNamespaced(const TfToken &name)
 {
-  return _IsNamespaced(name) ? name : TfToken(_tokens->xformOpPrefix.GetString() + name.GetString());
+  return _IsNamespaced(name) ? name :
+                               TfToken(_tokens->xformOpPrefix.GetString() + name.GetString());
 }
 
 // Returns whether the given op is an inverse operation. i.e, it starts with
@@ -103,8 +104,7 @@ UsdGeomXformOp::UsdGeomXformOp(const UsdAttribute &attr, bool isInverseOp)
     _opType(TypeInvalid),
     _isInverseOp(isInverseOp)
 {
-  if (!attr)
-  {
+  if (!attr) {
     // Legal to construct an XformOp with invalid attr, however IsDefined()
     // and explicit bool operator will return false.
     return;
@@ -114,11 +114,9 @@ UsdGeomXformOp::UsdGeomXformOp(const UsdAttribute &attr, bool isInverseOp)
   const TfToken &name = GetName();
   const std::vector<std::string> &opNameComponents = SplitName();
 
-  if (_IsNamespaced(name))
-  {
+  if (_IsNamespaced(name)) {
     _opType = GetOpTypeEnum(TfToken(opNameComponents[1]));
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Invalid xform op: <%s>.", attr.GetPath().GetText());
   }
 }
@@ -131,20 +129,17 @@ void UsdGeomXformOp::_Init()
   // Take the second namespace component.
   static char nsDelim = UsdObject::GetNamespaceDelimiter();
   char const *start = strchr(name.GetText(), nsDelim);
-  if (!start)
-  {
+  if (!start) {
     TF_CODING_ERROR("Invalid xform op: <%s>.", GetAttr().GetPath().GetText());
     return;
   }
   ++start;
   char const *end = strchr(start, nsDelim);
-  if (!end)
-  {
+  if (!end) {
     end = start + strlen(start);
   }
   _opType = _GetOpTypeEnumFromCString(start, end - start);
-  if (_opType == TypeInvalid)
-  {
+  if (_opType == TypeInvalid) {
     TF_CODING_ERROR("Invalid xform opType token '%s'.", std::string(start, end).c_str());
   }
 }
@@ -167,7 +162,8 @@ UsdGeomXformOp::UsdGeomXformOp(UsdAttributeQuery &&query, bool isInverseOp, _Val
 
 TfToken UsdGeomXformOp::GetOpName() const
 {
-  return _isInverseOp ? TfToken(_tokens->invertPrefix.GetString() + GetName().GetString()) : GetName();
+  return _isInverseOp ? TfToken(_tokens->invertPrefix.GetString() + GetName().GetString()) :
+                        GetName();
 }
 
 /* static */
@@ -186,19 +182,22 @@ bool UsdGeomXformOp::IsXformOp(const TfToken &attrName)
 }
 
 /* static */
-UsdAttribute UsdGeomXformOp::_GetXformOpAttr(UsdPrim const &prim, const TfToken &opName, bool *isInverseOp)
+UsdAttribute UsdGeomXformOp::_GetXformOpAttr(UsdPrim const &prim,
+                                             const TfToken &opName,
+                                             bool *isInverseOp)
 {
   *isInverseOp = _IsInverseOp(opName);
 
   // Is it is an inverse operation, strip off the "invert:" at the beginning
   // of opName to get the associated attribute's name.
-  return *isInverseOp ?
-           prim.GetAttribute(TfToken(opName.GetString().substr(_tokens->invertPrefix.GetString().size()))) :
-           prim.GetAttribute(opName);
+  return *isInverseOp ? prim.GetAttribute(TfToken(
+                          opName.GetString().substr(_tokens->invertPrefix.GetString().size()))) :
+                        prim.GetAttribute(opName);
 }
 
 /* static */
-UsdGeomXformOp::Precision UsdGeomXformOp::GetPrecisionFromValueTypeName(const SdfValueTypeName &typeName)
+UsdGeomXformOp::Precision UsdGeomXformOp::GetPrecisionFromValueTypeName(
+  const SdfValueTypeName &typeName)
 {
   if (typeName == SdfValueTypeNames->Matrix4d)
     return PrecisionDouble;
@@ -229,8 +228,7 @@ UsdGeomXformOp::Precision UsdGeomXformOp::GetPrecisionFromValueTypeName(const Sd
 /* static */
 TfToken const &UsdGeomXformOp::GetOpTypeToken(UsdGeomXformOp::Type const opType)
 {
-  switch (opType)
-  {
+  switch (opType) {
     case TypeTransform:
       return UsdGeomXformOpTypes->transform;
     case TypeTranslate:
@@ -344,8 +342,7 @@ UsdGeomXformOp::Type UsdGeomXformOp::_GetOpTypeEnumFromCString(char const *str, 
 const SdfValueTypeName &UsdGeomXformOp::GetValueTypeName(const UsdGeomXformOp::Type opType,
                                                          const UsdGeomXformOp::Precision precision)
 {
-  switch (opType)
-  {
+  switch (opType) {
     case TypeTransform: {
       // Regardless of the requested precision, this must be Matrix4d,
       // because Matrix4f values are not supported in Sdf.
@@ -363,8 +360,7 @@ const SdfValueTypeName &UsdGeomXformOp::GetValueTypeName(const UsdGeomXformOp::T
     case TypeRotateYZX:
     case TypeRotateZXY:
     case TypeRotateZYX: {
-      switch (precision)
-      {
+      switch (precision) {
         case PrecisionFloat:
           return SdfValueTypeNames->Float3;
         case PrecisionHalf:
@@ -377,8 +373,7 @@ const SdfValueTypeName &UsdGeomXformOp::GetValueTypeName(const UsdGeomXformOp::T
     case TypeRotateX:
     case TypeRotateY:
     case TypeRotateZ: {
-      switch (precision)
-      {
+      switch (precision) {
         case PrecisionFloat:
           return SdfValueTypeNames->Float;
         case PrecisionHalf:
@@ -390,8 +385,7 @@ const SdfValueTypeName &UsdGeomXformOp::GetValueTypeName(const UsdGeomXformOp::T
     }
 
     case TypeOrient: {
-      switch (precision)
-      {
+      switch (precision) {
         case PrecisionFloat:
           return SdfValueTypeNames->Quatf;
         case PrecisionHalf:
@@ -421,8 +415,7 @@ UsdGeomXformOp::UsdGeomXformOp(UsdPrim const &prim,
   // Determine the typeName of the xformOp attribute to be created.
   const SdfValueTypeName &typeName = GetValueTypeName(opType, precision);
 
-  if (!typeName)
-  {
+  if (!typeName) {
     TF_CODING_ERROR(
       "Invalid xform-op: incompatible combination of "
       "opType (%s) and precision (%s).",
@@ -477,18 +470,14 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
                                           bool isInverseOp)
 {
   // This will be the most common case.
-  if (opType == TypeTransform)
-  {
+  if (opType == TypeTransform) {
     GfMatrix4d mat(1.);
     bool isMatrixVal = true;
-    if (opVal.IsHolding<GfMatrix4d>())
-    {
+    if (opVal.IsHolding<GfMatrix4d>()) {
       mat = opVal.UncheckedGet<GfMatrix4d>();
-    } else if (opVal.IsHolding<GfMatrix4f>())
-    {
+    } else if (opVal.IsHolding<GfMatrix4f>()) {
       mat = GfMatrix4d(opVal.UncheckedGet<GfMatrix4f>());
-    } else
-    {
+    } else {
       isMatrixVal = false;
       TF_CODING_ERROR(
         "Invalid combination of opType (%s) "
@@ -498,13 +487,11 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
       return GfMatrix4d(1.);
     }
 
-    if (isMatrixVal && isInverseOp)
-    {
+    if (isMatrixVal && isInverseOp) {
       double determinant = 0;
       mat = mat.GetInverse(&determinant);
 
-      if (GfIsClose(determinant, 0.0, 1e-9))
-      {
+      if (GfIsClose(determinant, 0.0, 1e-9)) {
         TF_CODING_ERROR(
           "Cannot invert singular transform op with "
           "value %s.",
@@ -517,64 +504,49 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
 
   double doubleVal = 0.;
   bool isScalarVal = true;
-  if (opVal.IsHolding<double>())
-  {
+  if (opVal.IsHolding<double>()) {
     doubleVal = opVal.UncheckedGet<double>();
-  } else if (opVal.IsHolding<float>())
-  {
+  } else if (opVal.IsHolding<float>()) {
     doubleVal = opVal.UncheckedGet<float>();
-  } else if (opVal.IsHolding<GfHalf>())
-  {
+  } else if (opVal.IsHolding<GfHalf>()) {
     doubleVal = opVal.UncheckedGet<GfHalf>();
-  } else
-  {
+  } else {
     isScalarVal = false;
   }
 
-  if (isScalarVal)
-  {
+  if (isScalarVal) {
     if (isInverseOp)
       doubleVal = -doubleVal;
 
-    if (opType == TypeRotateX)
-    {
+    if (opType == TypeRotateX) {
       return GfMatrix4d(1.).SetRotate(GfRotation(GfVec3d::XAxis(), doubleVal));
-    } else if (opType == TypeRotateY)
-    {
+    } else if (opType == TypeRotateY) {
       return GfMatrix4d(1.).SetRotate(GfRotation(GfVec3d::YAxis(), doubleVal));
-    } else if (opType == TypeRotateZ)
-    {
+    } else if (opType == TypeRotateZ) {
       return GfMatrix4d(1.).SetRotate(GfRotation(GfVec3d::ZAxis(), doubleVal));
     }
   }
 
   GfVec3d vec3dVal = GfVec3d(0.);
   bool isVecVal = true;
-  if (opVal.IsHolding<GfVec3f>())
-  {
+  if (opVal.IsHolding<GfVec3f>()) {
     vec3dVal = opVal.UncheckedGet<GfVec3f>();
-  } else if (opVal.IsHolding<GfVec3d>())
-  {
+  } else if (opVal.IsHolding<GfVec3d>()) {
     vec3dVal = opVal.UncheckedGet<GfVec3d>();
-  } else if (opVal.IsHolding<GfVec3h>())
-  {
+  } else if (opVal.IsHolding<GfVec3h>()) {
     vec3dVal = opVal.UncheckedGet<GfVec3h>();
-  } else
-  {
+  } else {
     isVecVal = false;
   }
 
-  if (isVecVal)
-  {
-    switch (opType)
-    {
+  if (isVecVal) {
+    switch (opType) {
       case TypeTranslate:
         if (isInverseOp)
           vec3dVal = -vec3dVal;
         return GfMatrix4d(1.).SetTranslate(vec3dVal);
       case TypeScale:
-        if (isInverseOp)
-        {
+        if (isInverseOp) {
           vec3dVal = GfVec3d(1 / vec3dVal[0], 1 / vec3dVal[1], 1 / vec3dVal[2]);
         }
         return GfMatrix4d(1.).SetScale(vec3dVal);
@@ -586,8 +558,7 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
         GfMatrix3d yRot(GfRotation(GfVec3d::YAxis(), vec3dVal[1]));
         GfMatrix3d zRot(GfRotation(GfVec3d::ZAxis(), vec3dVal[2]));
         GfMatrix3d rotationMat(1.);
-        switch (opType)
-        {
+        switch (opType) {
           case TypeRotateXYZ:
             // Inv(ABC) = Inv(C) * Inv(B) * Inv(A)
             rotationMat = !isInverseOp ? (xRot * yRot * zRot) : (zRot * yRot * xRot);
@@ -620,17 +591,14 @@ GfMatrix4d UsdGeomXformOp::GetOpTransform(UsdGeomXformOp::Type const opType,
     }
   }
 
-  if (opType == TypeOrient)
-  {
+  if (opType == TypeOrient) {
     GfQuatd quatVal(0);
     if (opVal.IsHolding<GfQuatd>())
       quatVal = opVal.UncheckedGet<GfQuatd>();
-    else if (opVal.IsHolding<GfQuatf>())
-    {
+    else if (opVal.IsHolding<GfQuatf>()) {
       const GfQuatf &quatf = opVal.UncheckedGet<GfQuatf>();
       quatVal = GfQuatd(quatf.GetReal(), quatf.GetImaginary());
-    } else if (opVal.IsHolding<GfQuath>())
-    {
+    } else if (opVal.IsHolding<GfQuath>()) {
       const GfQuath &quath = opVal.UncheckedGet<GfQuath>();
       quatVal = GfQuatd(quath.GetReal(), quath.GetImaginary());
     }

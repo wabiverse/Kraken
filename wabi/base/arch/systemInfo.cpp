@@ -83,14 +83,12 @@ std::string ArchGetCwd()
 {
   // Try a fixed size buffer.
   char buffer[ARCH_PATH_MAX];
-  if (getcwd(buffer, ARCH_PATH_MAX))
-  {
+  if (getcwd(buffer, ARCH_PATH_MAX)) {
     return std::string(buffer);
   }
 
   // Let the system allocate the buffer.
-  if (char *buf = getcwd(NULL, 0))
-  {
+  if (char *buf = getcwd(NULL, 0)) {
     std::string result(buf);
     free(buf);
     return result;
@@ -114,10 +112,8 @@ namespace
 
     // Repeatedly invoke the callback with our buffer until it's big enough.
     size_t size = initialSize;
-    while (!callback(buffer.get(), &size))
-    {
-      if (size == std::numeric_limits<size_t>::max())
-      {
+    while (!callback(buffer.get(), &size)) {
+      if (size == std::numeric_limits<size_t>::max()) {
         // callback is never going to succeed.
         return std::string();
       }
@@ -138,28 +134,23 @@ std::string ArchGetExecutablePath()
   // symlink.
   return _DynamicSizedRead(ARCH_PATH_MAX, [](char *buffer, size_t *size) {
     const ssize_t n = readlink("/proc/self/exe", buffer, *size);
-    if (n == -1)
-    {
+    if (n == -1) {
       ARCH_WARNING(
         "Unable to read /proc/self/exe to obtain "
         "executable path");
       *size = std::numeric_limits<size_t>::max();
       return false;
-    } else if (static_cast<size_t>(n) >= *size)
-    {
+    } else if (static_cast<size_t>(n) >= *size) {
       // Find out how much space we need.
       struct stat sb;
-      if (lstat("/proc/self/exe", &sb) == 0)
-      {
+      if (lstat("/proc/self/exe", &sb) == 0) {
         *size = sb.st_size + 1;
-      } else
-      {
+      } else {
         // Try iterating on the size.
         *size *= 2;
       }
       return false;
-    } else
-    {
+    } else {
       buffer[n] = '\0';
       return true;
     }
@@ -170,13 +161,11 @@ std::string ArchGetExecutablePath()
   // On Darwin _NSGetExecutablePath() returns the executable path.
   return _DynamicSizedRead(ARCH_PATH_MAX, [](char *buffer, size_t *size) {
     uint32_t bufsize = *size;
-    if (_NSGetExecutablePath(buffer, &bufsize) == -1)
-    {
+    if (_NSGetExecutablePath(buffer, &bufsize) == -1) {
       // We're told the correct size.
       *size = bufsize;
       return false;
-    } else
-    {
+    } else {
       return true;
     }
   });

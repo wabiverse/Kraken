@@ -44,14 +44,14 @@ namespace
   class Pcp_PyTestChangeProcessor : public TfWeakBase, public boost::noncopyable
   {
    public:
-    Pcp_PyTestChangeProcessor(const PcpCache *cache)
-      : _cache(cache)
-    {}
+
+    Pcp_PyTestChangeProcessor(const PcpCache *cache) : _cache(cache) {}
 
     void Enter()
     {
-      _layerChangedNoticeKey = TfNotice::Register(TfCreateWeakPtr(this),
-                                                  &Pcp_PyTestChangeProcessor::_HandleLayerDidChange);
+      _layerChangedNoticeKey = TfNotice::Register(
+        TfCreateWeakPtr(this),
+        &Pcp_PyTestChangeProcessor::_HandleLayerDidChange);
     }
 
     void Exit(const object &, const object &, const object &)
@@ -62,10 +62,8 @@ namespace
 
     SdfPathVector GetSignificantChanges() const
     {
-      TF_FOR_ALL (it, _changes.GetCacheChanges())
-      {
-        if (it->first == _cache)
-        {
+      TF_FOR_ALL (it, _changes.GetCacheChanges()) {
+        if (it->first == _cache) {
           return SdfPathVector(it->second.didChangeSignificantly.begin(),
                                it->second.didChangeSignificantly.end());
         }
@@ -75,10 +73,8 @@ namespace
 
     SdfPathVector GetSpecChanges() const
     {
-      TF_FOR_ALL (it, _changes.GetCacheChanges())
-      {
-        if (it->first == _cache)
-        {
+      TF_FOR_ALL (it, _changes.GetCacheChanges()) {
+        if (it->first == _cache) {
           return SdfPathVector(it->second.didChangeSpecs.begin(), it->second.didChangeSpecs.end());
         }
       }
@@ -87,10 +83,8 @@ namespace
 
     SdfPathVector GetPrimChanges() const
     {
-      TF_FOR_ALL (it, _changes.GetCacheChanges())
-      {
-        if (it->first == _cache)
-        {
+      TF_FOR_ALL (it, _changes.GetCacheChanges()) {
+        if (it->first == _cache) {
           return SdfPathVector(it->second.didChangePrims.begin(), it->second.didChangePrims.end());
         }
       }
@@ -98,6 +92,7 @@ namespace
     }
 
    private:
+
     void _HandleLayerDidChange(const SdfNotice::LayersDidChange &n)
     {
       _changes.DidChange(TfSpan<const PcpCache *>(&_cache, 1), n.GetChangeListVec());
@@ -105,6 +100,7 @@ namespace
     }
 
    private:
+
     const PcpCache *_cache;
     TfNotice::Key _layerChangedNoticeKey;
     PcpChanges _changes;
@@ -121,7 +117,9 @@ void wrapTestChangeProcessor()
     .def("__enter__", &This::Enter, return_self<>())
     .def("__exit__", &This::Exit)
 
-    .def("GetSignificantChanges", &This::GetSignificantChanges, return_value_policy<TfPySequenceToList>())
+    .def("GetSignificantChanges",
+         &This::GetSignificantChanges,
+         return_value_policy<TfPySequenceToList>())
     .def("GetSpecChanges", &This::GetSpecChanges, return_value_policy<TfPySequenceToList>())
     .def("GetPrimChanges", &This::GetPrimChanges, return_value_policy<TfPySequenceToList>());
 }

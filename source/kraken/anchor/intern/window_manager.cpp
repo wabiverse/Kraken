@@ -40,10 +40,8 @@ AnchorWindowManager::~AnchorWindowManager()
 eAnchorStatus AnchorWindowManager::addWindow(AnchorISystemWindow *window)
 {
   eAnchorStatus success = ANCHOR_FAILURE;
-  if (window)
-  {
-    if (!getWindowFound(window))
-    {
+  if (window) {
+    if (!getWindowFound(window)) {
       // Store the pointer to the window
       m_windows.push_back(window);
       success = ANCHOR_SUCCESS;
@@ -55,16 +53,14 @@ eAnchorStatus AnchorWindowManager::addWindow(AnchorISystemWindow *window)
 eAnchorStatus AnchorWindowManager::removeWindow(const AnchorISystemWindow *window)
 {
   eAnchorStatus success = ANCHOR_FAILURE;
-  if (window)
-  {
-    if (window == m_fullScreenWindow)
-    {
+  if (window) {
+    if (window == m_fullScreenWindow) {
       endFullScreen();
-    } else
-    {
-      std::vector<AnchorISystemWindow *>::iterator result = find(m_windows.begin(), m_windows.end(), window);
-      if (result != m_windows.end())
-      {
+    } else {
+      std::vector<AnchorISystemWindow *>::iterator result = find(m_windows.begin(),
+                                                                 m_windows.end(),
+                                                                 window);
+      if (result != m_windows.end()) {
         setWindowInactive(window);
         m_windows.erase(result);
         success = ANCHOR_SUCCESS;
@@ -77,18 +73,14 @@ eAnchorStatus AnchorWindowManager::removeWindow(const AnchorISystemWindow *windo
 bool AnchorWindowManager::getWindowFound(const AnchorISystemWindow *window) const
 {
   bool found = false;
-  if (window)
-  {
-    if (getFullScreen() && (window == m_fullScreenWindow))
-    {
+  if (window) {
+    if (getFullScreen() && (window == m_fullScreenWindow)) {
       found = true;
-    } else
-    {
+    } else {
       std::vector<AnchorISystemWindow *>::const_iterator result = find(m_windows.begin(),
                                                                        m_windows.end(),
                                                                        window);
-      if (result != m_windows.end())
-      {
+      if (result != m_windows.end()) {
         found = true;
       }
     }
@@ -106,13 +98,13 @@ AnchorISystemWindow *AnchorWindowManager::getFullScreenWindow(void) const
   return m_fullScreenWindow;
 }
 
-eAnchorStatus AnchorWindowManager::beginFullScreen(AnchorISystemWindow *window, bool /*stereoVisual*/)
+eAnchorStatus AnchorWindowManager::beginFullScreen(AnchorISystemWindow *window,
+                                                   bool /*stereoVisual*/)
 {
   eAnchorStatus success = ANCHOR_FAILURE;
   ANCHOR_ASSERT(window);
   ANCHOR_ASSERT(window->getValid());
-  if (!getFullScreen())
-  {
+  if (!getFullScreen()) {
     m_fullScreenWindow = window;
     m_activeWindowBeforeFullScreen = getActiveWindow();
     setActiveWindow(m_fullScreenWindow);
@@ -125,16 +117,13 @@ eAnchorStatus AnchorWindowManager::beginFullScreen(AnchorISystemWindow *window, 
 eAnchorStatus AnchorWindowManager::endFullScreen(void)
 {
   eAnchorStatus success = ANCHOR_FAILURE;
-  if (getFullScreen())
-  {
-    if (m_fullScreenWindow != NULL)
-    {
+  if (getFullScreen()) {
+    if (m_fullScreenWindow != NULL) {
       setWindowInactive(m_fullScreenWindow);
       m_fullScreenWindow->endFullScreen();
       delete m_fullScreenWindow;
       m_fullScreenWindow = NULL;
-      if (m_activeWindowBeforeFullScreen)
-      {
+      if (m_activeWindowBeforeFullScreen) {
         setActiveWindow(m_activeWindowBeforeFullScreen);
       }
     }
@@ -146,13 +135,10 @@ eAnchorStatus AnchorWindowManager::endFullScreen(void)
 eAnchorStatus AnchorWindowManager::setActiveWindow(AnchorISystemWindow *window)
 {
   eAnchorStatus success = ANCHOR_SUCCESS;
-  if (window != m_activeWindow)
-  {
-    if (getWindowFound(window))
-    {
+  if (window != m_activeWindow) {
+    if (getWindowFound(window)) {
       m_activeWindow = window;
-    } else
-    {
+    } else {
       success = ANCHOR_FAILURE;
     }
   }
@@ -166,8 +152,7 @@ AnchorISystemWindow *AnchorWindowManager::getActiveWindow(void) const
 
 void AnchorWindowManager::setWindowInactive(const AnchorISystemWindow *window)
 {
-  if (window == m_activeWindow)
-  {
+  if (window == m_activeWindow) {
     m_activeWindow = NULL;
   }
 }
@@ -181,8 +166,7 @@ AnchorISystemWindow *AnchorWindowManager::getWindowAssociatedWithOSWindow(void *
 {
   std::vector<AnchorISystemWindow *>::iterator iter;
 
-  for (iter = m_windows.begin(); iter != m_windows.end(); ++iter)
-  {
+  for (iter = m_windows.begin(); iter != m_windows.end(); ++iter) {
     if ((*iter)->getOSWindow() == osWindow)
       return *iter;
   }
@@ -195,8 +179,7 @@ bool AnchorWindowManager::getAnyModifiedState()
   bool isAnyModified = false;
   std::vector<AnchorISystemWindow *>::iterator iter;
 
-  for (iter = m_windows.begin(); iter != m_windows.end(); ++iter)
-  {
+  for (iter = m_windows.begin(); iter != m_windows.end(); ++iter) {
     if ((*iter)->getModifiedState())
       isAnyModified = true;
   }

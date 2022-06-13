@@ -89,7 +89,8 @@ void wrapUsdStageLoadRules()
     .def("AddRule", &UsdStageLoadRules::AddRule, (arg("path"), arg("rule")))
 
     .def("SetRules",
-         (void(UsdStageLoadRules::*)(std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>> const &)) &
+         (void(UsdStageLoadRules::*)(
+           std::vector<std::pair<SdfPath, UsdStageLoadRules::Rule>> const &)) &
            UsdStageLoadRules::SetRules,
          arg("rules"))
 

@@ -54,8 +54,7 @@ namespace
   {
     const size_t numQueries = len(skinningQueries);
     VtArray<UsdSkelSkinningQuery> skinningQueriesArray(numQueries);
-    for (size_t i = 0; i < numQueries; ++i)
-    {
+    for (size_t i = 0; i < numQueries; ++i) {
       skinningQueriesArray[i] = extract<const UsdSkelSkinningQuery &>(skinningQueries[i]);
     }
     return new UsdSkelBinding(skel, skinningQueriesArray);
@@ -73,5 +72,7 @@ void wrapUsdSkelBinding()
 
     .def("GetSkeleton", &This::GetSkeleton, return_value_policy<return_by_value>())
 
-    .def("GetSkinningTargets", &This::GetSkinningTargets, return_value_policy<TfPySequenceToList>());
+    .def("GetSkinningTargets",
+         &This::GetSkinningTargets,
+         return_value_policy<TfPySequenceToList>());
 }

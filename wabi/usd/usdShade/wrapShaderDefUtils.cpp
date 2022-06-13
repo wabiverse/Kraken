@@ -44,11 +44,12 @@ namespace
   {
     TfToken familyName, shaderName;
     NdrVersion version;
-    if (UsdShadeShaderDefUtils::SplitShaderIdentifier(identifier, &familyName, &shaderName, &version))
-    {
+    if (UsdShadeShaderDefUtils::SplitShaderIdentifier(identifier,
+                                                      &familyName,
+                                                      &shaderName,
+                                                      &version)) {
       return boost::python::make_tuple(familyName, shaderName, version);
-    } else
-    {
+    } else {
       return object();
     }
   }

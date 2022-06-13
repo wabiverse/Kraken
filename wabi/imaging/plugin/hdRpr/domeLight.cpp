@@ -32,8 +32,7 @@ static void removeFirstSlash(std::string &string)
 {
   // Don't need this for *nix/Mac
 #ifdef _WIN32
-  if (string[0] == '/' || string[0] == '\\')
-  {
+  if (string[0] == '/' || string[0] == '\\') {
     string.erase(0, 1);
   }
 #endif
@@ -44,7 +43,9 @@ static float computeLightIntensity(float intensity, float exposure)
   return intensity * exp2(exposure);
 }
 
-void HdRprDomeLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdRprDomeLight::Sync(HdSceneDelegate *sceneDelegate,
+                          HdRenderParam *renderParam,
+                          HdDirtyBits *dirtyBits)
 {
 
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
@@ -53,29 +54,28 @@ void HdRprDomeLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
   SdfPath const &id = GetId();
   HdDirtyBits bits = *dirtyBits;
 
-  if (bits & HdLight::DirtyTransform)
-  {
-    m_transform = GfMatrix4f(sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
+  if (bits & HdLight::DirtyTransform) {
+    m_transform = GfMatrix4f(
+      sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
     m_transform *= GfMatrix4f(1.0).SetScale(GfVec3f(1.0f, 1.0f, -1.0f));
   }
 
   bool newLight = false;
-  if (bits & HdLight::DirtyParams)
-  {
-    if (m_rprLight)
-    {
+  if (bits & HdLight::DirtyParams) {
+    if (m_rprLight) {
       rprApi->Release(m_rprLight);
       m_rprLight = nullptr;
     }
 
     bool isVisible = sceneDelegate->GetVisible(id);
-    if (!isVisible)
-    {
+    if (!isVisible) {
       *dirtyBits = HdLight::Clean;
       return;
     }
 
-    VtValue const &backgroundOverride = sceneDelegate->GetLightParamValue(id, _tokens->backgroundOverride);
+    VtValue const &backgroundOverride = sceneDelegate->GetLightParamValue(
+      id,
+      _tokens->backgroundOverride);
 
     float intensity = sceneDelegate->GetLightParamValue(id, HdLightTokens->intensity).Get<float>();
     float exposure = sceneDelegate->GetLightParamValue(id, HdLightTokens->exposure).Get<float>();
@@ -83,29 +83,25 @@ void HdRprDomeLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
 
     std::string texturePath;
     VtValue texturePathValue = sceneDelegate->GetLightParamValue(id, HdLightTokens->textureFile);
-    if (texturePathValue.IsHolding<SdfAssetPath>())
-    {
+    if (texturePathValue.IsHolding<SdfAssetPath>()) {
       auto &assetPath = texturePathValue.UncheckedGet<SdfAssetPath>();
-      if (assetPath.GetResolvedPath().empty())
-      {
+      if (assetPath.GetResolvedPath().empty()) {
         texturePath = ArGetResolver().Resolve(assetPath.GetAssetPath());
-      } else
-      {
+      } else {
         texturePath = assetPath.GetResolvedPath();
       }
       // XXX: Why?
       removeFirstSlash(texturePath);
-    } else if (texturePathValue.IsHolding<std::string>())
-    {
+    } else if (texturePathValue.IsHolding<std::string>()) {
       // XXX: Is it even possible?
       texturePath = texturePathValue.UncheckedGet<std::string>();
     }
 
-    if (texturePath.empty())
-    {
-      GfVec3f color = sceneDelegate->GetLightParamValue(id, HdPrimvarRoleTokens->color).Get<GfVec3f>();
-      if (sceneDelegate->GetLightParamValue(id, HdLightTokens->enableColorTemperature).Get<bool>())
-      {
+    if (texturePath.empty()) {
+      GfVec3f color =
+        sceneDelegate->GetLightParamValue(id, HdPrimvarRoleTokens->color).Get<GfVec3f>();
+      if (sceneDelegate->GetLightParamValue(id, HdLightTokens->enableColorTemperature)
+            .Get<bool>()) {
         GfVec3f temperatureColor = UsdLuxBlackbodyTemperatureAsRgb(
           sceneDelegate->GetLightParamValue(id, HdLightTokens->colorTemperature).Get<float>());
         color[0] *= temperatureColor[0];
@@ -114,24 +110,22 @@ void HdRprDomeLight::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderP
       }
 
       m_rprLight = rprApi->CreateEnvironmentLight(color, computedIntensity, backgroundOverride);
-    } else
-    {
-      m_rprLight = rprApi->CreateEnvironmentLight(texturePath, computedIntensity, backgroundOverride);
+    } else {
+      m_rprLight = rprApi->CreateEnvironmentLight(texturePath,
+                                                  computedIntensity,
+                                                  backgroundOverride);
     }
 
-    if (m_rprLight)
-    {
+    if (m_rprLight) {
       newLight = true;
 
-      if (RprUsdIsLeakCheckEnabled())
-      {
+      if (RprUsdIsLeakCheckEnabled()) {
         rprApi->SetName(m_rprLight, id.GetText());
       }
     }
   }
 
-  if (newLight || ((bits & HdLight::DirtyTransform) && m_rprLight))
-  {
+  if (newLight || ((bits & HdLight::DirtyTransform) && m_rprLight)) {
     rprApi->SetTransform(m_rprLight, m_transform);
   }
 
@@ -147,8 +141,7 @@ void HdRprDomeLight::Finalize(HdRenderParam *renderParam)
 {
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
 
-  if (m_rprLight)
-  {
+  if (m_rprLight) {
     rprRenderParam->AcquireRprApiForEdit()->Release(m_rprLight);
     m_rprLight = nullptr;
   }

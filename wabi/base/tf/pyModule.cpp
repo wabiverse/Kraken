@@ -63,17 +63,16 @@ WABI_NAMESPACE_BEGIN
 class Tf_ModuleProcessor
 {
  public:
+
   typedef Tf_ModuleProcessor This;
 
   using WalkCallbackFn = bool (This::*)(char const *, object const &, object const &);
 
   inline bool IsBoostPythonFunc(object const &obj)
   {
-    if (!_cachedBPFuncType)
-    {
+    if (!_cachedBPFuncType) {
       handle<> typeStr(PyObject_Str((PyObject *)obj.ptr()->ob_type));
-      if (strstr(TfPyString_AsString(typeStr.get()), "Boost.Python.function"))
-      {
+      if (strstr(TfPyString_AsString(typeStr.get()), "Boost.Python.function")) {
         _cachedBPFuncType = (PyObject *)obj.ptr()->ob_type;
         return true;
       }
@@ -84,11 +83,9 @@ class Tf_ModuleProcessor
 
   inline bool IsBoostPythonClass(object const &obj)
   {
-    if (!_cachedBPClassType)
-    {
+    if (!_cachedBPClassType) {
       handle<> typeStr(PyObject_Str((PyObject *)obj.ptr()->ob_type));
-      if (strstr(TfPyString_AsString(typeStr.get()), "Boost.Python.class"))
-      {
+      if (strstr(TfPyString_AsString(typeStr.get()), "Boost.Python.class")) {
         _cachedBPClassType = (PyObject *)obj.ptr()->ob_type;
         return true;
       }
@@ -113,10 +110,12 @@ class Tf_ModuleProcessor
   }
 
  private:
-  void _WalkModule(object const &obj, WalkCallbackFn callback, TfHashSet<PyObject *, TfHash> *visitedObjs)
+
+  void _WalkModule(object const &obj,
+                   WalkCallbackFn callback,
+                   TfHashSet<PyObject *, TfHash> *visitedObjs)
   {
-    if (PyObject_HasAttrString(obj.ptr(), "__dict__"))
-    {
+    if (PyObject_HasAttrString(obj.ptr(), "__dict__")) {
 #if PY_MAJOR_VERSION >= 3
       // In python 3 dict.items() returns a proxy view object, not a list.
       // boost::python::extract<list> fails on these views, and raises:
@@ -131,16 +130,13 @@ class Tf_ModuleProcessor
       list items = extract<list>(obj.attr("__dict__").attr("items")());
 #endif
       size_t lenItems = len(items);
-      for (size_t i = 0; i < lenItems; ++i)
-      {
+      for (size_t i = 0; i < lenItems; ++i) {
         object value = items[i][1];
-        if (!visitedObjs->count(value.ptr()))
-        {
+        if (!visitedObjs->count(value.ptr())) {
           const std::string name = TfPyString_AsString(object(items[i][0]).ptr());
           bool keepGoing = (this->*callback)(name.c_str(), obj, value);
           visitedObjs->insert(value.ptr());
-          if (IsBoostPythonClass(value) && keepGoing)
-          {
+          if (IsBoostPythonClass(value) && keepGoing) {
             _WalkModule(value, callback, visitedObjs);
           }
         }
@@ -149,6 +145,7 @@ class Tf_ModuleProcessor
   }
 
  public:
+
   void WalkModule(object const &obj, WalkCallbackFn callback)
   {
     TfHashSet<PyObject *, TfHash> visited;
@@ -158,6 +155,7 @@ class Tf_ModuleProcessor
   class _InvokeWithErrorHandling
   {
    public:
+
     _InvokeWithErrorHandling(object const &fn, string const &funcName, string const &fileName)
       : _fn(fn),
         _funcName(funcName),
@@ -191,16 +189,14 @@ class Tf_ModuleProcessor
 
       // If the call did not complete successfully, just throw back into
       // python.
-      if (ARCH_UNLIKELY(!ret))
-      {
+      if (ARCH_UNLIKELY(!ret)) {
         TF_VERIFY(PyErr_Occurred());
         throw_error_already_set();
       }
 
       // If the call completed successfully, then we need to see if any tf
       // errors occurred, and if so, convert them to python exceptions.
-      if (ARCH_UNLIKELY(!m.IsClean() && TfPyConvertTfErrorsToPythonException(m)))
-      {
+      if (ARCH_UNLIKELY(!m.IsClean() && TfPyConvertTfErrorsToPythonException(m))) {
         throw_error_already_set();
       }
 
@@ -209,6 +205,7 @@ class Tf_ModuleProcessor
     }
 
    private:
+
     object _fn;
     std::string _funcName;
     std::string _fileName;
@@ -217,23 +214,23 @@ class Tf_ModuleProcessor
   object DecorateForErrorHandling(const char *name, object const &owner, object const &fn)
   {
     object ret = fn;
-    if (ARCH_LIKELY(fn.ptr() != Py_None))
-    {
+    if (ARCH_LIKELY(fn.ptr() != Py_None)) {
       // Make a new function, and bind in the tracing info, funcname and
       // filename.  The perhaps slighly unusual string operations are for
       // performance reasons.
       string *fullNamePrefix = &_newModuleName;
       string localPrefix;
-      if (PyObject_HasAttrString(owner.ptr(), "__module__"))
-      {
-        char const *ownerName = TfPyString_AsString(PyObject_GetAttrString(owner.ptr(), "__name__"));
+      if (PyObject_HasAttrString(owner.ptr(), "__module__")) {
+        char const *ownerName = TfPyString_AsString(
+          PyObject_GetAttrString(owner.ptr(), "__name__"));
         localPrefix.append(_newModuleName);
         localPrefix.push_back('.');
         localPrefix.append(ownerName);
         fullNamePrefix = &localPrefix;
       }
 
-      ret = raw_function(_InvokeWithErrorHandling(fn, *fullNamePrefix + "." + name, *fullNamePrefix));
+      ret = raw_function(
+        _InvokeWithErrorHandling(fn, *fullNamePrefix + "." + name, *fullNamePrefix));
 
       ret.attr("__doc__") = fn.attr("__doc__");
     }
@@ -252,8 +249,7 @@ class Tf_ModuleProcessor
   bool WrapForErrorHandlingCB(char const *name, object const &owner, object const &obj)
   {
     // Handle no-throw list stuff...
-    if (!strcmp(name, "RepostErrors") || !strcmp(name, "ReportActiveMarks"))
-    {
+    if (!strcmp(name, "RepostErrors") || !strcmp(name, "ReportActiveMarks")) {
       // We don't wrap these with error handling because they are used to
       // manage error handling, and wrapping them with it would make them
       // misbehave.  RepostErrors() is intended to either push errors back
@@ -264,8 +260,7 @@ class Tf_ModuleProcessor
       // reraise the posted errors as an exception in python, defeating
       // its purpose entirely.
       return false;
-    } else if (IsBoostPythonFunc(obj))
-    {
+    } else if (IsBoostPythonFunc(obj)) {
       // Replace owner's name attribute with decorated function obj.
       // Do this by using boost.python's add_to_namespace, since that sets
       // up the function name correctly.  Unfortunately to do this we need
@@ -274,19 +269,16 @@ class Tf_ModuleProcessor
       // overload.
       ReplaceFunctionOnOwner(name, owner, obj);
       return false;
-    } else if (IsProperty(obj))
-    {
+    } else if (IsProperty(obj)) {
       // Replace owner's name attribute with a new property, decorating the
       // get, set, and del functions.
-      if (owner.attr(name) != obj)
-      {
+      if (owner.attr(name) != obj) {
         // XXX If accessing the attribute by normal lookup does not produce
         // the same object, descriptors are likely at play (even on the
         // class) which at least for now means that this is likely a static
         // property.  For now, just not wrapping static properties with
         // error handling.
-      } else
-      {
+      } else {
         object propType(handle<>(borrowed(&PyProperty_Type)));
         object newfget = DecorateForErrorHandling(name, owner, obj.attr("fget"));
         object newfset = DecorateForErrorHandling(name, owner, obj.attr("fset"));
@@ -295,22 +287,18 @@ class Tf_ModuleProcessor
         setattr(owner, name, newProp);
       }
       return false;
-    } else if (IsStaticMethod(obj))
-    {
+    } else if (IsStaticMethod(obj)) {
       object underlyingFn = obj.attr("__get__")(owner);
-      if (IsBoostPythonFunc(underlyingFn))
-      {
+      if (IsBoostPythonFunc(underlyingFn)) {
         // Replace owner's name attribute with a new staticmethod,
         // decorating the underlying function.
         object newFn = ReplaceFunctionOnOwner(name, owner, underlyingFn);
         setattr(owner, name, object(handle<>(PyStaticMethod_New(newFn.ptr()))));
       }
       return false;
-    } else if (IsClassMethod(obj))
-    {
+    } else if (IsClassMethod(obj)) {
       object underlyingFn = obj.attr("__get__")(owner).attr(TfPyClassMethodFuncName);
-      if (IsBoostPythonFunc(underlyingFn))
-      {
+      if (IsBoostPythonFunc(underlyingFn)) {
         // Replace owner's name attribute with a new classmethod, decorating
         // the underlying function.
         object newFn = ReplaceFunctionOnOwner(name, owner, underlyingFn);
@@ -329,11 +317,9 @@ class Tf_ModuleProcessor
 
   bool FixModuleAttrsCB(char const *name, object const &owner, object const &obj)
   {
-    if (PyObject_HasAttrString(obj.ptr(), "__module__"))
-    {
+    if (PyObject_HasAttrString(obj.ptr(), "__module__")) {
       PyObject_SetAttrString(obj.ptr(), "__module__", _newModuleNameObj.ptr());
-      if (PyErr_Occurred())
-      {
+      if (PyErr_Occurred()) {
         /*
          * Boost python functions still screw up here.
          */
@@ -360,6 +346,7 @@ class Tf_ModuleProcessor
   }
 
  private:
+
   string _oldModuleName, _newModuleName;
   object _newModuleNameObj;
 
@@ -374,16 +361,14 @@ void Tf_PyPostProcessModule()
   // First fix up module names for classes, the wrap all functions with proper
   // error handling.
   scope module;
-  try
-  {
+  try {
     Tf_ModuleProcessor mp(module);
     mp.FixModuleAttrs();
     mp.WrapForErrorHandling();
     if (PyErr_Occurred())
       throw_error_already_set();
   }
-  catch (error_already_set const &)
-  {
+  catch (error_already_set const &) {
     string name = extract<string>(module.attr("__name__"));
     TF_WARN("Error occurred postprocessing module %s!", name.c_str());
     TfPyPrintError();
@@ -402,8 +387,7 @@ void Tf_PyInitWrapModule(void (*wrapModule)(),
 
   // Load module dependencies.
   TfScriptModuleLoader::GetInstance().LoadModulesForLibrary(TfToken(packageName));
-  if (PyErr_Occurred())
-  {
+  if (PyErr_Occurred()) {
     throw_error_already_set();
   }
 

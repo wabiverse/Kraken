@@ -43,7 +43,8 @@ namespace
     return PcpTranslatePathFromNodeToRoot(sourceNode, pathInNodeNamespace);
   }
 
-  static SdfPath TranslatePathFromRootToNode(const PcpNodeRef &destNode, const SdfPath &pathInRootNamespace)
+  static SdfPath TranslatePathFromRootToNode(const PcpNodeRef &destNode,
+                                             const SdfPath &pathInRootNamespace)
   {
     return PcpTranslatePathFromRootToNode(destNode, pathInRootNamespace);
   }

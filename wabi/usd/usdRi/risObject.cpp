@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiRisObject::~UsdRiRisObject()
-{}
+UsdRiRisObject::~UsdRiRisObject() {}
 
 /* static */
 UsdRiRisObject UsdRiRisObject::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisObject();
   }
@@ -69,8 +67,7 @@ UsdRiRisObject UsdRiRisObject::Get(const UsdStagePtr &stage, const SdfPath &path
 UsdRiRisObject UsdRiRisObject::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RisObject");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisObject();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdRiRisObject::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoFilePath);
 }
 
-UsdAttribute UsdRiRisObject::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiRisObject::CreateFilePathAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoFilePath,
                                     SdfValueTypeNames->Asset,
@@ -123,7 +121,8 @@ UsdAttribute UsdRiRisObject::GetArgsPathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->infoArgsPath);
 }
 
-UsdAttribute UsdRiRisObject::CreateArgsPathAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiRisObject::CreateArgsPathAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->infoArgsPath,
                                     SdfValueTypeNames->Asset,
@@ -153,8 +152,9 @@ const TfTokenVector &UsdRiRisObject::GetSchemaAttributeNames(bool includeInherit
     UsdRiTokens->infoFilePath,
     UsdRiTokens->infoArgsPath,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdShadeShader::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdShadeShader::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

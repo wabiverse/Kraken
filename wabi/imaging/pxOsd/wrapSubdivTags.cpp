@@ -46,10 +46,11 @@ static std::string _ReprSubdivTags(const PxOsdSubdivTags &tags)
 {
   std::ostringstream repr(std::ostringstream::ate);
   repr << "PxOsd.SubdivTags(" << TfPyRepr(tags.GetVertexInterpolationRule()) << ", "
-       << TfPyRepr(tags.GetFaceVaryingInterpolationRule()) << ", " << TfPyRepr(tags.GetCreaseMethod())
-       << ", " << TfPyRepr(tags.GetTriangleSubdivision()) << ", " << TfPyRepr(tags.GetCreaseIndices())
-       << ", " << TfPyRepr(tags.GetCreaseLengths()) << ", " << TfPyRepr(tags.GetCreaseWeights()) << ", "
-       << TfPyRepr(tags.GetCornerIndices()) << ", " << TfPyRepr(tags.GetCornerWeights()) << ")";
+       << TfPyRepr(tags.GetFaceVaryingInterpolationRule()) << ", "
+       << TfPyRepr(tags.GetCreaseMethod()) << ", " << TfPyRepr(tags.GetTriangleSubdivision())
+       << ", " << TfPyRepr(tags.GetCreaseIndices()) << ", " << TfPyRepr(tags.GetCreaseLengths())
+       << ", " << TfPyRepr(tags.GetCreaseWeights()) << ", " << TfPyRepr(tags.GetCornerIndices())
+       << ", " << TfPyRepr(tags.GetCornerWeights()) << ")";
   return repr.str();
 }
 

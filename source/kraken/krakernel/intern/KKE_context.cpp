@@ -102,8 +102,7 @@ static void *ctx_wm_python_context_get(const kContext *C,
   TF_UNUSED(member_type);
 
   /* don't allow UI context access from non-main threads */
-  if (!KLI_thread_is_main())
-  {
+  if (!KLI_thread_is_main()) {
     return NULL;
   }
 
@@ -265,8 +264,7 @@ void CTX_data_prefs_set(kContext *C, UserDef *uprefs)
 void CTX_wm_operator_poll_msg_clear(kContext *C)
 {
   kContextPollMsgParams *params = &C->wm.operator_poll_msg_params;
-  if (params->free_fn != NULL)
-  {
+  if (params->free_fn != NULL) {
     params->free_fn(C, params->user_data);
   }
   params->get_fn = NULL;

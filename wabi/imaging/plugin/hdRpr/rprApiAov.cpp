@@ -26,31 +26,27 @@ namespace
 
   bool ReadRifImage(rif_image image, void *dstBuffer, size_t dstBufferSize)
   {
-    if (!image || !dstBuffer)
-    {
+    if (!image || !dstBuffer) {
       return false;
     }
 
     size_t size;
     size_t dummy;
     auto rifStatus = rifImageGetInfo(image, RIF_IMAGE_DATA_SIZEBYTE, sizeof(size), &size, &dummy);
-    if (rifStatus != RIF_SUCCESS || dstBufferSize < size)
-    {
+    if (rifStatus != RIF_SUCCESS || dstBufferSize < size) {
       return false;
     }
 
     void *data = nullptr;
     rifStatus = rifImageMap(image, RIF_IMAGE_MAP_READ, &data);
-    if (rifStatus != RIF_SUCCESS)
-    {
+    if (rifStatus != RIF_SUCCESS) {
       return false;
     }
 
     std::memcpy(dstBuffer, data, size);
 
     rifStatus = rifImageUnmap(image, data);
-    if (rifStatus != RIF_SUCCESS)
-    {
+    if (rifStatus != RIF_SUCCESS) {
       TF_WARN("Failed to unmap rif image");
     }
 
@@ -70,8 +66,7 @@ HdRprApiAov::HdRprApiAov(rpr_aov rprAovType,
     m_filter(std::move(filter)),
     m_format(format)
 {
-  if (rif::Image::GetDesc(0, 0, format).type == 0)
-  {
+  if (rif::Image::GetDesc(0, 0, format).type == 0) {
     RIF_THROW_ERROR_MSG("Unsupported format: " + TfEnum::GetName(format));
   }
 
@@ -80,8 +75,7 @@ HdRprApiAov::HdRprApiAov(rpr_aov rprAovType,
 
   // XXX (Hybrid): Hybrid plugin does not support framebuffer resolving
   // (rprContextResolveFrameBuffer)
-  if (rprContextMetadata.pluginType != kPluginHybrid)
-  {
+  if (rprContextMetadata.pluginType != kPluginHybrid) {
     m_resolved = wabi::make_unique<HdRprApiFramebuffer>(rprContext, width, height);
   }
 }
@@ -100,15 +94,13 @@ HdRprApiAov::HdRprApiAov(rpr_aov rprAovType,
                 rprContext,
                 rprContextMetadata,
                 [format, rifContext]() -> std::unique_ptr<rif::Filter> {
-                  if (format == HdFormatFloat32Vec4)
-                  {
+                  if (format == HdFormatFloat32Vec4) {
                     // RPR framebuffers by default with such format
                     return nullptr;
                   }
 
                   auto filter = rif::Filter::CreateCustom(RIF_IMAGE_FILTER_RESAMPLE, rifContext);
-                  if (!filter)
-                  {
+                  if (!filter) {
                     RPR_THROW_ERROR_MSG("Failed to create resample filter");
                   }
 
@@ -119,21 +111,18 @@ HdRprApiAov::HdRprApiAov(rpr_aov rprAovType,
 
 void HdRprApiAov::Resolve()
 {
-  if (m_aov)
-  {
+  if (m_aov) {
     m_aov->Resolve(m_resolved.get());
   }
 
-  if (m_filter)
-  {
+  if (m_filter) {
     m_filter->Resolve();
   }
 }
 
 void HdRprApiAov::Clear()
 {
-  if (m_aov)
-  {
+  if (m_aov) {
     auto &v = m_aovDescriptor.clearValue;
     m_aov->Clear(v[0], v[1], v[2], v[3]);
   }
@@ -141,14 +130,12 @@ void HdRprApiAov::Clear()
 
 bool HdRprApiAov::GetDataImpl(void *dstBuffer, size_t dstBufferSize)
 {
-  if (m_filter)
-  {
+  if (m_filter) {
     return ReadRifImage(m_filter->GetOutput(), dstBuffer, dstBufferSize);
   }
 
   auto resolvedFb = GetResolvedFb();
-  if (!resolvedFb)
-  {
+  if (!resolvedFb) {
     return false;
   }
 
@@ -157,10 +144,8 @@ bool HdRprApiAov::GetDataImpl(void *dstBuffer, size_t dstBufferSize)
 
 bool HdRprApiAov::GetData(void *dstBuffer, size_t dstBufferSize)
 {
-  if (GetDataImpl(dstBuffer, dstBufferSize))
-  {
-    if (m_format == HdFormatInt32)
-    {
+  if (GetDataImpl(dstBuffer, dstBufferSize)) {
+    if (m_format == HdFormatInt32) {
       // RPR store integer ID values to RGB images using such formula:
       // c[i].x = i;
       // c[i].y = i/256;
@@ -168,8 +153,7 @@ bool HdRprApiAov::GetData(void *dstBuffer, size_t dstBufferSize)
       // i.e. saving little endian int24 to uchar3
       // That's why we interpret the value as int and filling the alpha channel with zeros
       auto primIdData = reinterpret_cast<int *>(dstBuffer);
-      for (size_t i = 0; i < dstBufferSize / sizeof(int); ++i)
-      {
+      for (size_t i = 0; i < dstBufferSize / sizeof(int); ++i) {
         primIdData[i] = (primIdData[i] & 0xFFFFFF) - 1;
       }
     }
@@ -182,37 +166,31 @@ bool HdRprApiAov::GetData(void *dstBuffer, size_t dstBufferSize)
 
 void HdRprApiAov::Resize(int width, int height, HdFormat format)
 {
-  if (m_format != format)
-  {
+  if (m_format != format) {
     m_format = format;
     m_dirtyBits |= ChangeTracker::DirtyFormat;
   }
 
-  if (m_aov && m_aov->Resize(width, height))
-  {
+  if (m_aov && m_aov->Resize(width, height)) {
     m_dirtyBits |= ChangeTracker::DirtySize;
   }
 
-  if (m_resolved && m_resolved->Resize(width, height))
-  {
+  if (m_resolved && m_resolved->Resize(width, height)) {
     m_dirtyBits |= ChangeTracker::DirtyFormat;
   }
 }
 
 void HdRprApiAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
 {
-  if (m_dirtyBits & ChangeTracker::DirtyFormat)
-  {
+  if (m_dirtyBits & ChangeTracker::DirtyFormat) {
     OnFormatChange(rifContext);
   }
-  if (m_dirtyBits & ChangeTracker::DirtySize)
-  {
+  if (m_dirtyBits & ChangeTracker::DirtySize) {
     OnSizeChange(rifContext);
   }
   m_dirtyBits = ChangeTracker::Clean;
 
-  if (m_filter)
-  {
+  if (m_filter) {
     m_filter->Update();
   }
 }
@@ -225,8 +203,7 @@ HdRprApiFramebuffer *HdRprApiAov::GetResolvedFb()
 void HdRprApiAov::OnFormatChange(rif::Context *rifContext)
 {
   m_filter = nullptr;
-  if (rifContext && m_format != HdFormatFloat32Vec4)
-  {
+  if (rifContext && m_format != HdFormatFloat32Vec4) {
     m_filter = rif::Filter::CreateCustom(RIF_IMAGE_FILTER_RESAMPLE, rifContext);
     m_filter->SetParam("interpOperator", (int)RIF_IMAGE_INTERPOLATION_NEAREST);
 
@@ -237,8 +214,7 @@ void HdRprApiAov::OnFormatChange(rif::Context *rifContext)
 
 void HdRprApiAov::OnSizeChange(rif::Context *rifContext)
 {
-  if (m_filter)
-  {
+  if (m_filter) {
     auto fbDesc = m_aov->GetDesc();
     m_filter->Resize(fbDesc.fb_width, fbDesc.fb_height);
     m_filter->SetInput(rif::Color, GetResolvedFb());
@@ -258,13 +234,10 @@ HdRprApiColorAov::HdRprApiColorAov(HdFormat format,
 void HdRprApiColorAov::SetFilter(Filter filter, bool enable)
 {
   bool isFilterEnabled = m_enabledFilters & filter;
-  if (enable != isFilterEnabled)
-  {
-    if (enable)
-    {
+  if (enable != isFilterEnabled) {
+    if (enable) {
       m_enabledFilters |= filter;
-    } else
-    {
+    } else {
       m_enabledFilters &= ~filter;
     }
     m_isEnabledFiltersDirty = true;
@@ -273,8 +246,7 @@ void HdRprApiColorAov::SetFilter(Filter filter, bool enable)
 
 void HdRprApiColorAov::SetOpacityAov(std::shared_ptr<HdRprApiAov> opacity)
 {
-  if (m_retainedOpacity != opacity)
-  {
+  if (m_retainedOpacity != opacity) {
     m_retainedOpacity = opacity;
     SetFilter(kFilterComposeOpacity, CanComposeAlpha());
   }
@@ -284,18 +256,15 @@ void HdRprApiColorAov::InitAIDenoise(std::shared_ptr<HdRprApiAov> albedo,
                                      std::shared_ptr<HdRprApiAov> normal,
                                      std::shared_ptr<HdRprApiAov> linearDepth)
 {
-  if (m_enabledFilters & kFilterAIDenoise)
-  {
+  if (m_enabledFilters & kFilterAIDenoise) {
     return;
   }
-  if (!albedo || !normal || !linearDepth)
-  {
+  if (!albedo || !normal || !linearDepth) {
     TF_RUNTIME_ERROR("Failed to enable AI denoise: invalid parameters");
     return;
   }
 
-  for (auto &retainedInput : m_retainedDenoiseInputs)
-  {
+  for (auto &retainedInput : m_retainedDenoiseInputs) {
     retainedInput = nullptr;
   }
   m_retainedDenoiseInputs[rif::Normal] = normal;
@@ -311,18 +280,15 @@ void HdRprApiColorAov::InitEAWDenoise(std::shared_ptr<HdRprApiAov> albedo,
                                       std::shared_ptr<HdRprApiAov> objectId,
                                       std::shared_ptr<HdRprApiAov> worldCoordinate)
 {
-  if (m_enabledFilters & kFilterEAWDenoise)
-  {
+  if (m_enabledFilters & kFilterEAWDenoise) {
     return;
   }
-  if (!albedo || !normal || !linearDepth || !objectId || !worldCoordinate)
-  {
+  if (!albedo || !normal || !linearDepth || !objectId || !worldCoordinate) {
     TF_RUNTIME_ERROR("Failed to enable EAW denoise: invalid parameters");
     return;
   }
 
-  for (auto &retainedInput : m_retainedDenoiseInputs)
-  {
+  for (auto &retainedInput : m_retainedDenoiseInputs) {
     retainedInput = nullptr;
   }
   m_retainedDenoiseInputs[rif::Normal] = normal;
@@ -336,8 +302,7 @@ void HdRprApiColorAov::InitEAWDenoise(std::shared_ptr<HdRprApiAov> albedo,
 
 void HdRprApiColorAov::DeinitDenoise(rif::Context *rifContext)
 {
-  for (auto &retainedInput : m_retainedDenoiseInputs)
-  {
+  for (auto &retainedInput : m_retainedDenoiseInputs) {
     retainedInput = nullptr;
   }
 
@@ -346,12 +311,11 @@ void HdRprApiColorAov::DeinitDenoise(rif::Context *rifContext)
 
 void HdRprApiColorAov::SetDenoise(bool enable, HdRprApi const *rprApi, rif::Context *rifContext)
 {
-  if (m_denoiseFilterType != kFilterNone)
-  {
+  if (m_denoiseFilterType != kFilterNone) {
     SetFilter(m_denoiseFilterType, enable);
-    SetFilter(m_denoiseFilterType == kFilterAIDenoise ? kFilterEAWDenoise : kFilterAIDenoise, false);
-  } else
-  {
+    SetFilter(m_denoiseFilterType == kFilterAIDenoise ? kFilterEAWDenoise : kFilterAIDenoise,
+              false);
+  } else {
     SetFilter(kFilterAIDenoise, false);
     SetFilter(kFilterEAWDenoise, false);
   }
@@ -368,21 +332,15 @@ void HdRprApiColorAov::SetTonemap(TonemapParams const &params)
 
   SetFilter(kFilterTonemap, params.enable);
 
-  if (m_tonemap != params)
-  {
+  if (m_tonemap != params) {
     m_tonemap = params;
 
-    if (!tonemapEnableDirty && isTonemapEnabled)
-    {
-      if (m_mainFilterType == kFilterTonemap)
-      {
+    if (!tonemapEnableDirty && isTonemapEnabled) {
+      if (m_mainFilterType == kFilterTonemap) {
         SetTonemapFilterParams(m_filter.get());
-      } else
-      {
-        for (auto &entry : m_auxFilters)
-        {
-          if (entry.first == kFilterTonemap)
-          {
+      } else {
+        for (auto &entry : m_auxFilters) {
+          if (entry.first == kFilterTonemap) {
             SetTonemapFilterParams(entry.second.get());
             break;
           }
@@ -408,8 +366,7 @@ bool HdRprApiColorAov::CanComposeAlpha()
 
 void HdRprApiColorAov::Resize(int width, int height, HdFormat format)
 {
-  if (m_width != width || m_height != height)
-  {
+  if (m_width != width || m_height != height) {
     m_width = width;
     m_height = height;
     m_dirtyBits |= ChangeTracker::DirtySize;
@@ -420,48 +377,42 @@ void HdRprApiColorAov::Resize(int width, int height, HdFormat format)
 
 void HdRprApiColorAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
 {
-  if (m_dirtyBits & ChangeTracker::DirtyFormat)
-  {
+  if (m_dirtyBits & ChangeTracker::DirtyFormat) {
     OnFormatChange(rifContext);
   }
 
-  if (m_isEnabledFiltersDirty)
-  {
+  if (m_isEnabledFiltersDirty) {
     m_isEnabledFiltersDirty = false;
-    if (!rifContext && m_enabledFilters != kFilterNone)
-    {
+    if (!rifContext && m_enabledFilters != kFilterNone) {
       TF_WARN("Can not enable %#x filters: rifContext required", m_enabledFilters);
       m_enabledFilters = kFilterNone;
     }
 
     // Reuse the previously created filters
-    std::vector<std::pair<Filter, std::unique_ptr<rif::Filter>>> filterPool = std::move(m_auxFilters);
-    if (m_filter)
-    {
+    std::vector<std::pair<Filter, std::unique_ptr<rif::Filter>>> filterPool = std::move(
+      m_auxFilters);
+    if (m_filter) {
       filterPool.emplace_back(m_mainFilterType, std::move(m_filter));
     }
 
     if ((m_enabledFilters & kFilterAIDenoise) || (m_enabledFilters & kFilterEAWDenoise) ||
-        (m_enabledFilters & kFilterComposeOpacity) || (m_enabledFilters & kFilterTonemap))
-    {
+        (m_enabledFilters & kFilterComposeOpacity) || (m_enabledFilters & kFilterTonemap)) {
 
-      auto addFilter = [this, &filterPool](Filter type,
-                                           std::function<std::unique_ptr<rif::Filter>()> filterCreator) {
+      auto addFilter = [this,
+                        &filterPool](Filter type,
+                                     std::function<std::unique_ptr<rif::Filter>()> filterCreator) {
         std::unique_ptr<rif::Filter> filter;
 
         auto it = std::find_if(filterPool.begin(), filterPool.end(), [type](auto &entry) {
           return type == entry.first;
         });
-        if (it != filterPool.end())
-        {
+        if (it != filterPool.end()) {
           filter = std::move(it->second);
-        } else
-        {
+        } else {
           filter = filterCreator();
         }
 
-        if (m_filter)
-        {
+        if (m_filter) {
           m_auxFilters.emplace_back(m_mainFilterType, std::move(m_filter));
         }
 
@@ -469,26 +420,27 @@ void HdRprApiColorAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
         m_mainFilterType = type;
       };
 
-      if (m_enabledFilters & kFilterTonemap)
-      {
+      if (m_enabledFilters & kFilterTonemap) {
         addFilter(kFilterTonemap, [rifContext]() {
           return rif::Filter::CreateCustom(RIF_IMAGE_FILTER_PHOTO_LINEAR_TONEMAP, rifContext);
         });
       }
 
-      if ((m_enabledFilters & kFilterAIDenoise) || (m_enabledFilters & kFilterEAWDenoise))
-      {
+      if ((m_enabledFilters & kFilterAIDenoise) || (m_enabledFilters & kFilterEAWDenoise)) {
         auto type = (m_enabledFilters & kFilterAIDenoise) ? kFilterAIDenoise : kFilterEAWDenoise;
         addFilter(type, [this, rifContext]() {
-          auto denoiseFilterType = (m_enabledFilters & kFilterAIDenoise) ? rif::FilterType::AIDenoise :
-                                                                           rif::FilterType::EawDenoise;
+          auto denoiseFilterType = (m_enabledFilters & kFilterAIDenoise) ?
+                                     rif::FilterType::AIDenoise :
+                                     rif::FilterType::EawDenoise;
           auto fbDesc = m_retainedRawColor->GetAovFb()->GetDesc();
-          return rif::Filter::Create(denoiseFilterType, rifContext, fbDesc.fb_width, fbDesc.fb_height);
+          return rif::Filter::Create(denoiseFilterType,
+                                     rifContext,
+                                     fbDesc.fb_width,
+                                     fbDesc.fb_height);
         });
       }
 
-      if (m_enabledFilters & kFilterComposeOpacity)
-      {
+      if (m_enabledFilters & kFilterComposeOpacity) {
         addFilter(kFilterComposeOpacity, [rifContext]() {
           auto filter = rif::Filter::CreateCustom(RIF_IMAGE_FILTER_USER_DEFINED, rifContext);
           auto opacityComposingKernelCode = std::string(R"(
@@ -502,8 +454,7 @@ void HdRprApiColorAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
           return filter;
         });
       }
-    } else if (m_enabledFilters & kFilterResample)
-    {
+    } else if (m_enabledFilters & kFilterResample) {
       m_filter = rif::Filter::CreateCustom(RIF_IMAGE_FILTER_RESAMPLE, rifContext);
       m_filter->SetParam("interpOperator", (int)RIF_IMAGE_INTERPOLATION_NEAREST);
       m_mainFilterType = kFilterResample;
@@ -513,35 +464,28 @@ void HdRprApiColorAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
     m_dirtyBits |= ChangeTracker::DirtySize;
   }
 
-  if (m_dirtyBits & ChangeTracker::DirtySize)
-  {
+  if (m_dirtyBits & ChangeTracker::DirtySize) {
     OnSizeChange(rifContext);
   }
   m_dirtyBits = ChangeTracker::Clean;
 
-  for (auto &auxFilter : m_auxFilters)
-  {
+  for (auto &auxFilter : m_auxFilters) {
     auxFilter.second->Update();
   }
-  if (m_filter)
-  {
+  if (m_filter) {
     m_filter->Update();
   }
 }
 
 bool HdRprApiColorAov::GetData(void *dstBuffer, size_t dstBufferSize)
 {
-  if (!m_filter)
-  {
-    if (auto resolvedRawColorFb = m_retainedRawColor->GetResolvedFb())
-    {
+  if (!m_filter) {
+    if (auto resolvedRawColorFb = m_retainedRawColor->GetResolvedFb()) {
       return resolvedRawColorFb->GetData(dstBuffer, dstBufferSize);
-    } else
-    {
+    } else {
       return false;
     }
-  } else
-  {
+  } else {
     return HdRprApiAov::GetData(dstBuffer, dstBufferSize);
   }
 }
@@ -550,8 +494,7 @@ void HdRprApiColorAov::Resolve()
 {
   HdRprApiAov::Resolve();
 
-  for (auto &auxFilter : m_auxFilters)
-  {
+  for (auto &auxFilter : m_auxFilters) {
     auxFilter.second->Resolve();
   }
 }
@@ -564,50 +507,45 @@ void HdRprApiColorAov::OnFormatChange(rif::Context *rifContext)
 }
 
 template<typename T>
-void HdRprApiColorAov::ResizeFilter(int width, int height, Filter filterType, rif::Filter *filter, T input)
+void HdRprApiColorAov::ResizeFilter(int width,
+                                    int height,
+                                    Filter filterType,
+                                    rif::Filter *filter,
+                                    T input)
 {
   filter->Resize(width, height);
   filter->SetInput(rif::Color, input);
   filter->SetOutput(rif::Image::GetDesc(width, height, m_format));
 
-  if (filterType == kFilterAIDenoise || filterType == kFilterEAWDenoise)
-  {
-    for (int i = 0; i < rif::MaxInput; ++i)
-    {
-      if (auto retainedInput = m_retainedDenoiseInputs[i].get())
-      {
+  if (filterType == kFilterAIDenoise || filterType == kFilterEAWDenoise) {
+    for (int i = 0; i < rif::MaxInput; ++i) {
+      if (auto retainedInput = m_retainedDenoiseInputs[i].get()) {
         filter->SetInput(static_cast<rif::FilterInputType>(i), retainedInput->GetResolvedFb());
       }
     }
-  } else if (filterType == kFilterComposeOpacity)
-  {
+  } else if (filterType == kFilterComposeOpacity) {
     filter->SetInput("alphaImage", m_retainedOpacity->GetResolvedFb());
-  } else if (filterType == kFilterResample)
-  {
+  } else if (filterType == kFilterResample) {
     filter->SetParam("outSize", GfVec2i(width, height));
-  } else if (filterType == kFilterTonemap)
-  {
+  } else if (filterType == kFilterTonemap) {
     SetTonemapFilterParams(filter);
   }
 }
 
 void HdRprApiColorAov::OnSizeChange(rif::Context *rifContext)
 {
-  if (!m_filter)
-  {
+  if (!m_filter) {
     return;
   }
 
   auto fbDesc = m_retainedRawColor->GetAovFb()->GetDesc();
-  if (m_auxFilters.empty())
-  {
+  if (m_auxFilters.empty()) {
     ResizeFilter(fbDesc.fb_width,
                  fbDesc.fb_height,
                  m_mainFilterType,
                  m_filter.get(),
                  m_retainedRawColor->GetResolvedFb());
-  } else
-  {
+  } else {
     // Ideally we would use "Filter combining" functionality, but it does not work with
     // user-defined filter So we attach each filter separately
 
@@ -617,8 +555,7 @@ void HdRprApiColorAov::OnSizeChange(rif::Context *rifContext)
                  m_auxFilters.front().first,
                  filter,
                  m_retainedRawColor->GetResolvedFb());
-    for (int i = 1; i < m_auxFilters.size(); ++i)
-    {
+    for (int i = 1; i < m_auxFilters.size(); ++i) {
       auto filterInput = m_auxFilters[i - 1].second->GetOutput();
       ResizeFilter(fbDesc.fb_width,
                    fbDesc.fb_height,
@@ -648,8 +585,7 @@ HdRprApiNormalAov::HdRprApiNormalAov(int width,
                 rprContextMetadata,
                 rif::Filter::CreateCustom(RIF_IMAGE_FILTER_REMAP_RANGE, rifContext))
 {
-  if (!rifContext)
-  {
+  if (!rifContext) {
     RPR_THROW_ERROR_MSG("Can not create normal AOV: RIF context required");
   }
 
@@ -673,14 +609,12 @@ void HdRprApiNormalAov::OnSizeChange(rif::Context *rifContext)
 
 void HdRprApiComputedAov::Resize(int width, int height, HdFormat format)
 {
-  if (m_format != format)
-  {
+  if (m_format != format) {
     m_format = format;
     m_dirtyBits |= ChangeTracker::DirtyFormat;
   }
 
-  if (m_width != width || m_height != height)
-  {
+  if (m_width != width || m_height != height) {
     m_width = width;
     m_height = height;
     m_dirtyBits |= ChangeTracker::DirtySize;
@@ -700,8 +634,7 @@ HdRprApiDepthAov::HdRprApiDepthAov(int width,
                         format),
     m_retainedWorldCoordinateAov(worldCoordinateAov)
 {
-  if (!rifContext)
-  {
+  if (!rifContext) {
     RPR_THROW_ERROR_MSG("Can not create depth AOV: RIF context required");
   }
 
@@ -721,17 +654,14 @@ HdRprApiDepthAov::HdRprApiDepthAov(int width,
 
 void HdRprApiDepthAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
 {
-  if (m_dirtyBits & ChangeTracker::DirtyFormat || m_dirtyBits & ChangeTracker::DirtySize)
-  {
+  if (m_dirtyBits & ChangeTracker::DirtyFormat || m_dirtyBits & ChangeTracker::DirtySize) {
 
-    if (m_remapFilter)
-    {
+    if (m_remapFilter) {
       m_ndcFilter->SetInput(rif::Color, m_retainedWorldCoordinateAov->GetResolvedFb());
       m_ndcFilter->SetOutput(rif::Image::GetDesc(m_width, m_height, m_format));
       m_remapFilter->SetInput(rif::Color, m_ndcFilter->GetOutput());
       m_remapFilter->SetOutput(rif::Image::GetDesc(m_width, m_height, m_format));
-    } else
-    {
+    } else {
       m_ndcFilter->SetInput(rif::Color, m_retainedWorldCoordinateAov->GetResolvedFb());
       m_ndcFilter->SetOutput(rif::Image::GetDesc(m_width, m_height, m_format));
     }
@@ -742,20 +672,17 @@ void HdRprApiDepthAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
   m_ndcFilter->SetParam("viewProjMatrix", GfMatrix4f(viewProjectionMatrix.GetTranspose()));
 
   m_ndcFilter->Update();
-  if (m_remapFilter)
-  {
+  if (m_remapFilter) {
     m_remapFilter->Update();
   }
 }
 
 void HdRprApiDepthAov::Resolve()
 {
-  if (m_ndcFilter)
-  {
+  if (m_ndcFilter) {
     m_ndcFilter->Resolve();
   }
-  if (m_remapFilter)
-  {
+  if (m_remapFilter) {
     m_remapFilter->Resolve();
   }
 }
@@ -771,8 +698,7 @@ HdRprApiIdMaskAov::HdRprApiIdMaskAov(HdRprAovDescriptor const &aovDescriptor,
   : HdRprApiComputedAov(aovDescriptor, width, height, format),
     m_baseIdAov(baseIdAov)
 {
-  if (!rifContext)
-  {
+  if (!rifContext) {
     RPR_THROW_ERROR_MSG("Can not create id mask AOV: RIF context required");
   }
 
@@ -806,15 +732,13 @@ HdRprApiIdMaskAov::HdRprApiIdMaskAov(HdRprAovDescriptor const &aovDescriptor,
 
 void HdRprApiIdMaskAov::Update(HdRprApi const *rprApi, rif::Context *rifContext)
 {
-  if (m_dirtyBits & ChangeTracker::DirtyFormat || m_dirtyBits & ChangeTracker::DirtySize)
-  {
+  if (m_dirtyBits & ChangeTracker::DirtyFormat || m_dirtyBits & ChangeTracker::DirtySize) {
     m_filter->SetInput(rif::Color, m_baseIdAov->GetResolvedFb());
     m_filter->SetOutput(rif::Image::GetDesc(m_width, m_height, m_format));
   }
   m_dirtyBits = ChangeTracker::Clean;
 
-  if (m_filter)
-  {
+  if (m_filter) {
     m_filter->Update();
   }
 }

@@ -59,6 +59,7 @@ namespace
   struct Sdf_TimeSampleMapConverter
   {
    public:
+
     static PyObject *convert(SdfTimeSampleMap const &c)
     {
       boost::python::dict result = TfPyCopyMapToDictionary(c);
@@ -69,6 +70,7 @@ namespace
   struct Sdf_RelocatesMapConverter
   {
    public:
+
     static PyObject *convert(SdfRelocatesMap const &c)
     {
       boost::python::dict result = TfPyCopyMapToDictionary(c);
@@ -79,11 +81,13 @@ namespace
   struct Sdf_VariantSelectionMapConverter
   {
    public:
+
     Sdf_VariantSelectionMapConverter()
     {
-      boost::python::converter::registry::push_back(&Sdf_VariantSelectionMapConverter::convertible,
-                                                    &Sdf_VariantSelectionMapConverter::construct,
-                                                    boost::python::type_id<SdfVariantSelectionMap>());
+      boost::python::converter::registry::push_back(
+        &Sdf_VariantSelectionMapConverter::convertible,
+        &Sdf_VariantSelectionMapConverter::construct,
+        boost::python::type_id<SdfVariantSelectionMap>());
       to_python_converter<SdfVariantSelectionMap, Sdf_VariantSelectionMapConverter>();
     }
 
@@ -92,9 +96,11 @@ namespace
       return _convert(obj_ptr, NULL);
     }
 
-    static void construct(PyObject *obj_ptr, boost::python::converter::rvalue_from_python_stage1_data *data)
+    static void construct(PyObject *obj_ptr,
+                          boost::python::converter::rvalue_from_python_stage1_data *data)
     {
-      void *storage = ((converter::rvalue_from_python_storage<SdfVariantSelectionMap> *)data)->storage.bytes;
+      void *storage =
+        ((converter::rvalue_from_python_storage<SdfVariantSelectionMap> *)data)->storage.bytes;
       new (storage) SdfVariantSelectionMap();
       data->convertible = storage;
       _convert(obj_ptr, (SdfVariantSelectionMap *)storage);
@@ -107,35 +113,31 @@ namespace
     }
 
    private:
+
     static PyObject *_convert(PyObject *pyDict, SdfVariantSelectionMap *result)
     {
       extract<dict> dictProxy(pyDict);
-      if (!dictProxy.check())
-      {
+      if (!dictProxy.check()) {
         return NULL;
       }
       dict d = dictProxy();
 
       list keys = d.keys();
-      for (int i = 0, numKeys = len(d); i < numKeys; ++i)
-      {
+      for (int i = 0, numKeys = len(d); i < numKeys; ++i) {
         object pyKey = keys[i];
         extract<std::string> keyProxy(pyKey);
-        if (!keyProxy.check())
-        {
+        if (!keyProxy.check()) {
           return NULL;
         }
 
         object pyValue = d[pyKey];
         extract<std::string> valueProxy(pyValue);
-        if (!valueProxy.check())
-        {
+        if (!valueProxy.check()) {
           return NULL;
         }
 
         std::string key = keyProxy();
-        if (result)
-        {
+        if (result) {
           result->insert(std::make_pair(keyProxy(), valueProxy()));
         }
       }
@@ -147,6 +149,7 @@ namespace
   class Sdf_VariantSelectionProxyWrap
   {
    public:
+
     typedef SdfVariantSelectionProxy Type;
     typedef Type::key_type key_type;
     typedef Type::mapped_type mapped_type;
@@ -157,14 +160,11 @@ namespace
 
     static void SetItem(Type &x, const key_type &key, const mapped_type &value)
     {
-      if (value.empty())
-      {
+      if (value.empty()) {
         x.erase(key);
-      } else
-      {
+      } else {
         std::pair<iterator, bool> i = x.insert(value_type(key, value));
-        if (!i.second && i.first != iterator())
-        {
+        if (!i.second && i.first != iterator()) {
           i.first->second = value;
         }
       }
@@ -173,15 +173,12 @@ namespace
     static mapped_type SetDefault(Type &x, const key_type &key, const mapped_type &def)
     {
       const_iterator i = x.find(key);
-      if (i != x.end())
-      {
+      if (i != x.end()) {
         return i->second;
-      } else if (!def.empty())
-      {
+      } else if (!def.empty()) {
         SdfChangeBlock block;
         return x[key] = def;
-      } else
-      {
+      } else {
         return def;
       }
     }
@@ -189,13 +186,10 @@ namespace
     static void Update(Type &x, const std::vector<pair_type> &values)
     {
       SdfChangeBlock block;
-      TF_FOR_ALL (i, values)
-      {
-        if (i->second.empty())
-        {
+      TF_FOR_ALL (i, values) {
+        if (i->second.empty()) {
           x.erase(i->first);
-        } else
-        {
+        } else {
           x[i->first] = i->second;
         }
       }
@@ -209,9 +203,9 @@ namespace
     static void UpdateList(Type &x, const boost::python::list &pairs)
     {
       std::vector<pair_type> values;
-      for (int i = 0, n = len(pairs); i != n; ++i)
-      {
-        values.push_back(pair_type(extract<key_type>(pairs[i][0]), extract<mapped_type>(pairs[i][1])));
+      for (int i = 0, n = len(pairs); i != n; ++i) {
+        values.push_back(
+          pair_type(extract<key_type>(pairs[i][0]), extract<mapped_type>(pairs[i][1])));
       }
       Update(x, values);
     }
@@ -270,14 +264,11 @@ namespace
   static int _UnregisteredValueHash(const SdfUnregisteredValue &self)
   {
     const VtValue &value = self.GetValue();
-    if (value.IsHolding<VtDictionary>())
-    {
+    if (value.IsHolding<VtDictionary>()) {
       return VtDictionaryHash()(value.Get<VtDictionary>());
-    } else if (value.IsHolding<std::string>())
-    {
+    } else if (value.IsHolding<std::string>()) {
       return TfHash()(value.Get<std::string>());
-    } else
-    {
+    } else {
       return 0;
     }
   }
@@ -319,7 +310,9 @@ void wrapTypes()
       "For a given typeName ('Vector', 'Point' etc.) get the "
       "default unit of measurement.");
 
-  def("UnitCategory", _UnitCategoryWrapper, "For a given unit of measurement get the unit category.");
+  def("UnitCategory",
+      _UnitCategoryWrapper,
+      "For a given unit of measurement get the unit category.");
 
   def("ConvertUnit", &SdfConvertUnit, "Convert a unit of measurement to a compatible unit.");
 
@@ -335,8 +328,9 @@ void wrapTypes()
   // Register Python conversions for std::vector<SdfUnregisteredValue>
   using _UnregisteredValueVector = std::vector<SdfUnregisteredValue>;
   to_python_converter<_UnregisteredValueVector, TfPySequenceToPython<_UnregisteredValueVector>>();
-  TfPyContainerConversions::from_python_sequence<_UnregisteredValueVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    _UnregisteredValueVector,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   TfPyWrapEnum<SdfListOpType>();
   TfPyWrapEnum<SdfPermission>();
@@ -419,8 +413,9 @@ void wrapTypes()
     .def(init<const SdfUnregisteredValue &>())
     .def(init<const SdfUnregisteredValueListOp &>())
 
-    .add_property("value",
-                  make_function(&SdfUnregisteredValue::GetValue, return_value_policy<return_by_value>()))
+    .add_property(
+      "value",
+      make_function(&SdfUnregisteredValue::GetValue, return_value_policy<return_by_value>()))
 
     .def(self == self)
     .def(self != self)

@@ -41,6 +41,7 @@ struct Tf_PyWeakObjectRegistry
   void Remove(PyObject *obj);
 
  private:
+
   Tf_PyWeakObjectRegistry() = default;
   friend class TfSingleton<This>;
 
@@ -80,21 +81,21 @@ struct Tf_PyWeakObjectDeleter
   void Deleted(PyObject * /* weakRef */);
 
  private:
+
   Tf_PyWeakObjectPtr _self;
 };
 
 int Tf_PyWeakObjectDeleter::WrapIfNecessary()
 {
-  if (TfPyIsNone(TfPyGetClassObject<Tf_PyWeakObjectDeleter>()))
-  {
-    boost::python::class_<Tf_PyWeakObjectDeleter>("Tf_PyWeakObject__Deleter", boost::python::no_init)
+  if (TfPyIsNone(TfPyGetClassObject<Tf_PyWeakObjectDeleter>())) {
+    boost::python::class_<Tf_PyWeakObjectDeleter>("Tf_PyWeakObject__Deleter",
+                                                  boost::python::no_init)
       .def("__call__", &Tf_PyWeakObjectDeleter::Deleted);
   }
   return 1;
 }
 
-Tf_PyWeakObjectDeleter::Tf_PyWeakObjectDeleter(Tf_PyWeakObjectPtr const &self)
-  : _self(self)
+Tf_PyWeakObjectDeleter::Tf_PyWeakObjectDeleter(Tf_PyWeakObjectPtr const &self) : _self(self)
 {
   static int ensureWrapped = WrapIfNecessary();
   (void)ensureWrapped;
@@ -112,8 +113,7 @@ Tf_PyWeakObjectPtr Tf_PyWeakObject::GetOrCreate(boost::python::object const &obj
     return p;
   // Otherwise, make sure we can create a python weak reference to the
   // object.
-  if (PyObject *weakRef = PyWeakref_NewRef(obj.ptr(), NULL))
-  {
+  if (PyObject *weakRef = PyWeakref_NewRef(obj.ptr(), NULL)) {
     Py_DECREF(weakRef);
     return TfCreateWeakPtr(new Tf_PyWeakObject(obj));
   }
@@ -135,8 +135,9 @@ void Tf_PyWeakObject::Delete()
 }
 
 Tf_PyWeakObject::Tf_PyWeakObject(boost::python::object const &obj)
-  : _weakRef(PyWeakref_NewRef(obj.ptr(),
-                              boost::python::object(Tf_PyWeakObjectDeleter(TfCreateWeakPtr(this))).ptr()))
+  : _weakRef(
+      PyWeakref_NewRef(obj.ptr(),
+                       boost::python::object(Tf_PyWeakObjectDeleter(TfCreateWeakPtr(this))).ptr()))
 {
   Tf_PyWeakObjectPtr self(this);
 

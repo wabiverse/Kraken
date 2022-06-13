@@ -54,28 +54,23 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
 
   SdfPrimSpec *ownerPtr = get_pointer(owner);
 
-  if (!ownerPtr)
-  {
+  if (!ownerPtr) {
     TF_CODING_ERROR("Cannot create an SdfAttributeSpec with a null owner");
     return result;
   }
 
   const SdfPath attrPath = ownerPtr->GetPath().AppendProperty(TfToken(name));
-  if (ARCH_UNLIKELY(attrPath.IsEmpty()))
-  {
+  if (ARCH_UNLIKELY(attrPath.IsEmpty())) {
     // This can happen if the owner is the pseudo-root '/', or if the passed
     // name was not a valid property name.  Give specific error messages in
     // these cases.
-    if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::IsValidName(name))
-    {
+    if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::IsValidName(name)) {
       TF_CODING_ERROR("Cannot create attribute spec on <%s> with invalid name '%s'",
                       ownerPtr->GetPath().GetText(),
                       name.c_str());
-    } else if (ownerPtr->GetPath() == SdfPath::AbsoluteRootPath())
-    {
+    } else if (ownerPtr->GetPath() == SdfPath::AbsoluteRootPath()) {
       TF_CODING_ERROR("Cannot create attribute spec '%s' on the pseudo-root '/'", name.c_str());
-    } else
-    {
+    } else {
       TF_CODING_ERROR("Cannot create attribute spec '%s' on <%s>",
                       name.c_str(),
                       ownerPtr->GetPath().GetText());
@@ -83,18 +78,16 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
     return result;
   }
 
-  if (!typeName)
-  {
+  if (!typeName) {
     TF_CODING_ERROR("Cannot create attribute spec <%s> with invalid type", attrPath.GetText());
     return result;
   }
 
   const SdfLayerHandle layer = ownerPtr->GetLayer();
-  if (layer->_ValidateAuthoring())
-  {
-    const SdfValueTypeName typeInSchema = layer->GetSchema().FindType(typeName.GetAsToken().GetString());
-    if (!typeInSchema)
-    {
+  if (layer->_ValidateAuthoring()) {
+    const SdfValueTypeName typeInSchema = layer->GetSchema().FindType(
+      typeName.GetAsToken().GetString());
+    if (!typeInSchema) {
       TF_CODING_ERROR("Cannot create attribute spec <%s> with invalid type", attrPath.GetText());
       return result;
     }
@@ -109,8 +102,7 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
   if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CreateSpec(layer,
                                                                attrPath,
                                                                SdfSpecTypeAttribute,
-                                                               hasOnlyRequiredFields))
-  {
+                                                               hasOnlyRequiredFields)) {
     return result;
   }
 
@@ -118,8 +110,7 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
 
   // Avoid expensive dormancy checks
   SdfAttributeSpec *resultPtr = get_pointer(result);
-  if (TF_VERIFY(resultPtr))
-  {
+  if (TF_VERIFY(resultPtr)) {
     resultPtr->SetField(SdfFieldKeys->Custom, custom);
     resultPtr->SetField(SdfFieldKeys->TypeName, typeName.GetAsToken());
     resultPtr->SetField(SdfFieldKeys->Variability, variability);
@@ -172,8 +163,7 @@ TfEnum SdfAttributeSpec::GetDisplayUnit() const
   // But we want to return a default displayUnit that's based on
   // the role.
   TfEnum displayUnit;
-  if (HasField(SdfFieldKeys->DisplayUnit, &displayUnit))
-  {
+  if (HasField(SdfFieldKeys->DisplayUnit, &displayUnit)) {
     return displayUnit;
   }
 
@@ -198,8 +188,7 @@ bool SdfJustCreatePrimAttributeInLayer(const SdfLayerHandle &layer,
                                        SdfVariability variability,
                                        bool isCustom)
 {
-  if (!attrPath.IsPrimPropertyPath())
-  {
+  if (!attrPath.IsPrimPropertyPath()) {
     TF_CODING_ERROR(
       "Cannot create prim attribute at path '%s' because "
       "it is not a prim property path",
@@ -211,16 +200,15 @@ bool SdfJustCreatePrimAttributeInLayer(const SdfLayerHandle &layer,
 
   SdfChangeBlock block;
 
-  if (!Sdf_UncheckedCreatePrimInLayer(layerPtr, attrPath.GetParentPath()))
-  {
+  if (!Sdf_UncheckedCreatePrimInLayer(layerPtr, attrPath.GetParentPath())) {
     return false;
   }
 
-  if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CreateSpec(layer,
-                                                               attrPath,
-                                                               SdfSpecTypeAttribute,
-                                                               /*hasOnlyRequiredFields=*/!isCustom))
-  {
+  if (!Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CreateSpec(
+        layer,
+        attrPath,
+        SdfSpecTypeAttribute,
+        /*hasOnlyRequiredFields=*/!isCustom)) {
     TF_RUNTIME_ERROR(
       "Failed to create attribute at path '%s' in "
       "layer @%s@",

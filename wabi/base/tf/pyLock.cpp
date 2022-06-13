@@ -31,17 +31,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-TfPyLock::TfPyLock()
-  : _acquired(false),
-    _allowingThreads(false)
+TfPyLock::TfPyLock() : _acquired(false), _allowingThreads(false)
 {
   // Acquire the lock on construction
   Acquire();
 }
 
-TfPyLock::TfPyLock(_UnlockedTag)
-  : _acquired(false),
-    _allowingThreads(false)
+TfPyLock::TfPyLock(_UnlockedTag) : _acquired(false), _allowingThreads(false)
 {
   // Do not acquire the lock.
 }
@@ -60,8 +56,7 @@ TfPyLock::~TfPyLock()
 void TfPyLock::Acquire()
 {
   // If already acquired, emit a warning and do nothing
-  if (_acquired)
-  {
+  if (_acquired) {
     TF_WARN("Cannot recursively acquire a TfPyLock.");
     return;
   }
@@ -77,16 +72,14 @@ void TfPyLock::Acquire()
 void TfPyLock::Release()
 {
   // If not acquired, emit a warning and do nothing
-  if (!_acquired)
-  {
+  if (!_acquired) {
     if (Py_IsInitialized())
       TF_WARN("Cannot release a TfPyLock that is not acquired.\n");
     return;
   }
 
   // If allowing threads, emit a warning and do nothing
-  if (_allowingThreads)
-  {
+  if (_allowingThreads) {
     TF_WARN("Cannot release a TfPyLock that is allowing threads.\n");
     return;
   }
@@ -99,15 +92,13 @@ void TfPyLock::Release()
 void TfPyLock::BeginAllowThreads()
 {
   // If already allowing threads, emit a warning and do nothing
-  if (_allowingThreads)
-  {
+  if (_allowingThreads) {
     TF_WARN("Cannot recursively allow threads on a TfPyLock.\n");
     return;
   }
 
   // If not acquired, emit a warning and do nothing
-  if (!_acquired)
-  {
+  if (!_acquired) {
     if (Py_IsInitialized())
       TF_WARN(
         "Cannot allow threads on a TfPyLock that is not "
@@ -123,8 +114,7 @@ void TfPyLock::BeginAllowThreads()
 void TfPyLock::EndAllowThreads()
 {
   // If not allowing threads, emit a warning and do nothing
-  if (!_allowingThreads)
-  {
+  if (!_allowingThreads) {
     TF_WARN(
       "Cannot end allowing threads on a TfPyLock that is not "
       "currently allowing threads.\n");
@@ -145,19 +135,16 @@ PyAPI_DATA(PyThreadState *) _PyThreadState_Current;
 
 WABI_NAMESPACE_BEGIN
 
-TfPyEnsureGILUnlockedObj::TfPyEnsureGILUnlockedObj()
-  : _lock(TfPyLock::_ConstructUnlocked)
+TfPyEnsureGILUnlockedObj::TfPyEnsureGILUnlockedObj() : _lock(TfPyLock::_ConstructUnlocked)
 {
 #  if PY_MAJOR_VERSION == 2
   // If we have the python lock, call Acquire() (to get the _lock object into
   // the correct state) and then BeginAllowThreads() to unlock it.  Otherwise
   // do nothing.  In Python 3.4+, this can be replaced by PyGILState_Check().
   PyThreadState *tstate = _PyThreadState_Current;
-  if (tstate && (tstate == PyGILState_GetThisThreadState()))
-  {
+  if (tstate && (tstate == PyGILState_GetThisThreadState())) {
 #  else
-  if (PyGILState_Check())
-  {
+  if (PyGILState_Check()) {
 #  endif
     _lock.Acquire();
     _lock.BeginAllowThreads();

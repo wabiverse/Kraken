@@ -77,8 +77,7 @@ namespace
   // Python's getreadbuf interface function.
   static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
-    if (segment != 0)
-    {
+    if (segment != 0) {
       // Always one-segment.
       PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
       return -1;
@@ -117,15 +116,13 @@ namespace
   // Python's getbuffer interface function.
   static int getbuffer(PyObject *self, Py_buffer *view, int flags)
   {
-    if (view == NULL)
-    {
+    if (view == NULL) {
       PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
       return -1;
     }
 
     // We don't support fortran order.
-    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
-    {
+    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS) {
       PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
       return -1;
     }
@@ -137,29 +134,23 @@ namespace
     view->len = sizeof(GfVec3f);
     view->readonly = 0;
     view->itemsize = sizeof(float);
-    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
-    {
+    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
       view->format = Gf_GetPyBufferFmtFor<float>();
-    } else
-    {
+    } else {
       view->format = NULL;
     }
-    if ((flags & PyBUF_ND) == PyBUF_ND)
-    {
+    if ((flags & PyBUF_ND) == PyBUF_ND) {
       view->ndim = 1;
       static Py_ssize_t shape = 3;
       view->shape = &shape;
-    } else
-    {
+    } else {
       view->ndim = 0;
       view->shape = NULL;
     }
-    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
-    {
+    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
       static Py_ssize_t strides = sizeof(float);
       view->strides = &strides;
-    } else
-    {
+    } else {
       view->strides = NULL;
     }
     view->suboffsets = NULL;
@@ -227,7 +218,10 @@ namespace
     return boost::python::make_tuple(v1, v2);
   }
 
-  BOOST_PYTHON_FUNCTION_OVERLOADS(BuildOrthonormalFrame_overloads, BuildOrthonormalFrameHelper, 1, 2)
+  BOOST_PYTHON_FUNCTION_OVERLOADS(BuildOrthonormalFrame_overloads,
+                                  BuildOrthonormalFrameHelper,
+                                  1,
+                                  2)
 
   static int normalizeIndex(int index)
   {
@@ -254,20 +248,17 @@ namespace
     const float *end = begin + 3;
 
     slice::range<const float *> bounds;
-    try
-    {
+    try {
       // This appears to be a typo in the boost headers.  The method
       // name should be "get_indices".
       //
       bounds = indices.get_indicies<>(begin, end);
     }
-    catch (std::invalid_argument &)
-    {
+    catch (std::invalid_argument &) {
       return result;
     }
 
-    while (bounds.start != bounds.stop)
-    {
+    while (bounds.start != bounds.stop) {
       result.append(*bounds.start);
       bounds.start += bounds.step;
     }
@@ -305,8 +296,7 @@ namespace
     //
     PyObject *valuesObj = values.ptr();
 
-    if (!PySequence_Check(valuesObj))
-    {
+    if (!PySequence_Check(valuesObj)) {
       TfPyThrowTypeError("value must be a sequence");
     }
 
@@ -323,50 +313,44 @@ namespace
     bounds.stop = 0;
     bounds.step = 0;
 
-    try
-    {
+    try {
       // This appears to be a typo in the boost headers.  The method
       // name should be "get_indices".
       //
       bounds = indices.get_indicies<>(begin, end);
     }
-    catch (std::invalid_argument &)
-    {
+    catch (std::invalid_argument &) {
       sliceLength = 0;
     }
 
     // If sliceLength was not set in the exception handling code above,
     // figure out how long it really is.
     //
-    if (sliceLength == -1)
-    {
+    if (sliceLength == -1) {
       sliceLength = ((bounds.stop - bounds.start) / bounds.step) + 1;
     }
 
-    if (PySequence_Length(valuesObj) != sliceLength)
-    {
-      TfPyThrowValueError(TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
-                                         PySequence_Length(valuesObj),
-                                         sliceLength));
+    if (PySequence_Length(valuesObj) != sliceLength) {
+      TfPyThrowValueError(
+        TfStringPrintf("attempt to assign sequence of size %zd to slice of size %zd",
+                       PySequence_Length(valuesObj),
+                       sliceLength));
     }
 
     // Short circuit for empty slices
     //
-    if (sliceLength == 0)
-    {
+    if (sliceLength == 0) {
       return;
     }
 
     // Make sure that all items can be extracted before changing the GfVec3f.
     //
-    for (Py_ssize_t i = 0; i < sliceLength; ++i)
-    {
+    for (Py_ssize_t i = 0; i < sliceLength; ++i) {
       // This will throw a TypeError if any of the items cannot be converted.
       _SequenceGetItem(valuesObj, i);
     }
 
-    for (Py_ssize_t i = 0; i < sliceLength; ++i)
-    {
+    for (Py_ssize_t i = 0; i < sliceLength; ++i) {
       *bounds.start = _SequenceGetItem(valuesObj, i);
       bounds.start += bounds.step;
     }
@@ -374,8 +358,7 @@ namespace
 
   static bool __contains__(const GfVec3f &self, float value)
   {
-    for (size_t i = 0; i < 3; ++i)
-    {
+    for (size_t i = 0; i < 3; ++i) {
       if (self[i] == value)
         return true;
     }
@@ -394,8 +377,7 @@ namespace
   }
 #endif
 
-  template<class V>
-  static V *__init__()
+  template<class V> static V *__init__()
   {
     // Default contstructor zero-initializes from python.
     return new V(0);
@@ -405,10 +387,13 @@ namespace
   {
     FromPythonTuple()
     {
-      converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<GfVec3f>());
+      converter::registry::push_back(&_convertible,
+                                     &_construct,
+                                     boost::python::type_id<GfVec3f>());
     }
 
    private:
+
     static void *_convertible(PyObject *obj_ptr)
     {
       // If this object is a GfVec already, disregard.
@@ -420,8 +405,8 @@ namespace
       // XXX: Would like to allow general sequences, but currently clients
       // depend on this behavior.
       if ((PyTuple_Check(obj_ptr) || PyList_Check(obj_ptr)) && PySequence_Size(obj_ptr) == 3 &&
-          _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1) && _SequenceCheckItem(obj_ptr, 2))
-      {
+          _SequenceCheckItem(obj_ptr, 0) && _SequenceCheckItem(obj_ptr, 1) &&
+          _SequenceCheckItem(obj_ptr, 2)) {
         return obj_ptr;
       }
       return 0;
@@ -431,8 +416,9 @@ namespace
     {
       typedef float Scalar;
       void *storage = ((converter::rvalue_from_python_storage<GfVec3f> *)data)->storage.bytes;
-      new (storage)
-        GfVec3f(_SequenceGetItem(obj_ptr, 0), _SequenceGetItem(obj_ptr, 1), _SequenceGetItem(obj_ptr, 2));
+      new (storage) GfVec3f(_SequenceGetItem(obj_ptr, 0),
+                            _SequenceGetItem(obj_ptr, 1),
+                            _SequenceGetItem(obj_ptr, 2));
       data->convertible = storage;
     }
   };
@@ -463,7 +449,9 @@ void wrapVec3f()
   def("CompDiv", (Vec(*)(const Vec &v1, const Vec &v2))GfCompDiv);
   def("CompMult", (Vec(*)(const Vec &v1, const Vec &v2))GfCompMult);
   def("GetLength", (Scalar(*)(const Vec &v))GfGetLength);
-  def("GetNormalized", (Vec(*)(const Vec &v, Scalar eps))GfGetNormalized, GetNormalized_overloads());
+  def("GetNormalized",
+      (Vec(*)(const Vec &v, Scalar eps))GfGetNormalized,
+      GetNormalized_overloads());
   def("GetProjection", (Vec(*)(const Vec &a, const Vec &b))GfGetProjection);
   def("GetComplement", (Vec(*)(const Vec &a, const Vec &b))GfGetComplement);
   def("IsClose", (bool (*)(const Vec &v1, const Vec &v2, double))GfIsClose);
@@ -569,6 +557,7 @@ void wrapVec3f()
   FromPythonTuple();
 
   // Allow conversion of lists of GfVec3f to std::vector<GfVec3f>
-  TfPyContainerConversions::from_python_sequence<std::vector<GfVec3f>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<GfVec3f>,
+    TfPyContainerConversions::variable_capacity_policy>();
 }

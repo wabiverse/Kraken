@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiRisIntegrator::~UsdRiRisIntegrator()
-{}
+UsdRiRisIntegrator::~UsdRiRisIntegrator() {}
 
 /* static */
 UsdRiRisIntegrator UsdRiRisIntegrator::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisIntegrator();
   }
@@ -69,8 +67,7 @@ UsdRiRisIntegrator UsdRiRisIntegrator::Get(const UsdStagePtr &stage, const SdfPa
 UsdRiRisIntegrator UsdRiRisIntegrator::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RisIntegrator");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisIntegrator();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdRiRisIntegrator::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->filePath);
 }
 
-UsdAttribute UsdRiRisIntegrator::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiRisIntegrator::CreateFilePathAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->filePath,
                                     SdfValueTypeNames->Asset,
@@ -123,7 +121,8 @@ UsdAttribute UsdRiRisIntegrator::GetArgsPathAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->argsPath);
 }
 
-UsdAttribute UsdRiRisIntegrator::CreateArgsPathAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiRisIntegrator::CreateArgsPathAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->argsPath,
                                     SdfValueTypeNames->Asset,
@@ -153,8 +152,9 @@ const TfTokenVector &UsdRiRisIntegrator::GetSchemaAttributeNames(bool includeInh
     UsdRiTokens->filePath,
     UsdRiTokens->argsPath,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdTyped::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

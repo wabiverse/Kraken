@@ -44,9 +44,7 @@ namespace Zep
     {"int8_t",   t_int8_t  }
   };
 
-  Indexer::Indexer(ZepEditor &editor)
-    : ZepComponent(editor)
-  {}
+  Indexer::Indexer(ZepEditor &editor) : ZepComponent(editor) {}
 
   void Indexer::GetSearchPaths(ZepEditor &editor,
                                const ZepPath &path,
@@ -56,40 +54,34 @@ namespace Zep
   {
     ZepPath config = path / ".zep" / "project.cfg";
 
-    if (editor.GetFileSystem().Exists(config))
-    {
-      try
-      {
+    if (editor.GetFileSystem().Exists(config)) {
+      try {
         auto spConfig = cpptoml::parse_file(config.string());
-        if (spConfig != nullptr)
-        {
+        if (spConfig != nullptr) {
           ignore_patterns = spConfig->get_qualified_array_of<std::string>("search.ignore")
                               .value_or(std::vector<std::string>{});
           include_patterns = spConfig->get_qualified_array_of<std::string>("search.include")
                                .value_or(std::vector<std::string>{});
         }
       }
-      catch (cpptoml::parse_exception &ex)
-      {
+      catch (cpptoml::parse_exception &ex) {
         std::ostringstream str;
         str << config.filename().string() << " : Failed to parse. " << ex.what();
         errors = str.str();
       }
-      catch (...)
-      {
+      catch (...) {
         std::ostringstream str;
         str << config.filename().string() << " : Failed to parse. ";
         errors = str.str();
       }
     }
 
-    if (ignore_patterns.empty())
-    {
+    if (ignore_patterns.empty()) {
       ignore_patterns = {"[Bb]uild/*", "**/[Oo]bj/**", "**/[Bb]in/**", "[Bb]uilt*"};
     }
-    if (include_patterns.empty())
-    {
-      include_patterns = {"*.cpp", "*.c", "*.hpp", "*.h", "*.lsp", "*.scm", "*.cs", "*.cfg", "*.orca"};
+    if (include_patterns.empty()) {
+      include_patterns =
+        {"*.cpp", "*.c", "*.hpp", "*.h", "*.lsp", "*.scm", "*.cs", "*.cfg", "*.orca"};
     }
   }  // namespace Zep
 
@@ -102,8 +94,7 @@ namespace Zep
     GetSearchPaths(editor, startPath, ignorePaths, includePaths, errors);
 
     auto spResult = std::make_shared<FileIndexResult>();
-    if (!errors.empty())
-    {
+    if (!errors.empty()) {
       spResult->errors = errors;
       return make_ready_future(spResult);
     }
@@ -113,8 +104,7 @@ namespace Zep
       [=](ZepPath root) {
         spResult->root = root;
 
-        try
-        {
+        try {
           // Index the whole subtree, ignoring any patterns supplied to us
           pFileSystem->ScanDirectory(root, [&](const ZepPath &p, bool &recurse) -> bool {
             recurse = true;
@@ -126,44 +116,36 @@ namespace Zep
             auto rel = path_get_relative(root, targetZep);
 
             bool matched = true;
-            for (auto &proj : ignorePaths)
-            {
+            for (auto &proj : ignorePaths) {
               auto res = fnmatch(proj.c_str(), rel.string().c_str(), 0);
-              if (res == 0)
-              {
+              if (res == 0) {
                 matched = false;
                 break;
               }
             }
 
-            if (!matched)
-            {
-              if (bDir)
-              {
+            if (!matched) {
+              if (bDir) {
                 recurse = false;
               }
               return true;
             }
 
             matched = false;
-            for (auto &proj : includePaths)
-            {
+            for (auto &proj : includePaths) {
               auto res = fnmatch(proj.c_str(), rel.string().c_str(), 0);
-              if (res == 0)
-              {
+              if (res == 0) {
                 matched = true;
                 break;
               }
             }
 
-            if (!matched)
-            {
+            if (!matched) {
               return true;
             }
 
             // Not adding directories to the search list
-            if (bDir)
-            {
+            if (bDir) {
               return true;
             }
 
@@ -173,8 +155,7 @@ namespace Zep
             return true;
           });
         }
-        catch (std::exception &)
-        {
+        catch (std::exception &) {
         }
         return spResult;
       },
@@ -183,20 +164,16 @@ namespace Zep
 
   void Indexer::Notify(std::shared_ptr<ZepMessage> message)
   {
-    if (message->messageId == Msg::Tick)
-    {
-      if (m_fileSearchActive)
-      {
-        if (!is_future_ready(m_indexResult))
-        {
+    if (message->messageId == Msg::Tick) {
+      if (m_fileSearchActive) {
+        if (!is_future_ready(m_indexResult)) {
           return;
         }
 
         m_fileSearchActive = false;
 
         m_spFilePaths = m_indexResult.get();
-        if (!m_spFilePaths->errors.empty())
-        {
+        if (!m_spFilePaths->errors.empty()) {
           GetEditor().SetCommandText(m_spFilePaths->errors);
           return;
         }
@@ -204,8 +181,7 @@ namespace Zep
         // Queue the files to be searched
         {
           std::lock_guard<std::mutex> guard(m_queueMutex);
-          for (auto &p : m_spFilePaths->paths)
-          {
+          for (auto &p : m_spFilePaths->paths) {
             m_searchQueue.push_back(p);
           }
         }
@@ -219,13 +195,11 @@ namespace Zep
   void Indexer::StartSymbolSearch()
   {
     GetEditor().GetThreadPool().enqueue([=]() {
-      for (;;)
-      {
+      for (;;) {
         ZepPath path;
         {
           std::lock_guard<std::mutex> lock(m_queueMutex);
-          if (m_searchQueue.empty())
-          {
+          if (m_searchQueue.empty()) {
             return true;
           }
 
@@ -238,8 +212,7 @@ namespace Zep
         std::string strLast;
 
         auto fullPath = m_searchRoot / path;
-        if (fs.Exists(fullPath))
-        {
+        if (fs.Exists(fullPath)) {
           ZLOG(DBG, "Parsing: " << fullPath.c_str());
           auto strFile = GetEditor().GetFileSystem().Read(fullPath);
 
@@ -256,8 +229,7 @@ namespace Zep
     m_searchRoot = GetEditor().GetFileSystem().GetSearchRoot(
       GetEditor().GetFileSystem().GetWorkingDirectory(),
       foundGit);
-    if (!foundGit)
-    {
+    if (!foundGit) {
       ZLOG(INFO, "Not a git project");
       return false;
     }
@@ -265,10 +237,8 @@ namespace Zep
     auto &fs = GetEditor().GetFileSystem();
 
     auto indexDBRoot = m_searchRoot / ".zep";
-    if (!fs.IsDirectory(indexDBRoot))
-    {
-      if (!fs.MakeDirectories(indexDBRoot))
-      {
+    if (!fs.IsDirectory(indexDBRoot)) {
+      if (!fs.MakeDirectories(indexDBRoot)) {
         ZLOG(ERROR, "Can't get the index folder");
         return false;
       }

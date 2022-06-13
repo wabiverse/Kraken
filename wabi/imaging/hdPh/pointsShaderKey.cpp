@@ -44,8 +44,7 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
                          // instancing
                          ((instancing, "Instancing.Transform")));
 
-HdPh_PointsShaderKey::HdPh_PointsShaderKey()
-  : glslfx(_tokens->baseGLSLFX)
+HdPh_PointsShaderKey::HdPh_PointsShaderKey() : glslfx(_tokens->baseGLSLFX)
 {
   VS[0] = _tokens->instancing;
   VS[1] = _tokens->mainVS;
@@ -63,7 +62,6 @@ HdPh_PointsShaderKey::HdPh_PointsShaderKey()
   FS[5] = TfToken();
 }
 
-HdPh_PointsShaderKey::~HdPh_PointsShaderKey()
-{}
+HdPh_PointsShaderKey::~HdPh_PointsShaderKey() {}
 
 WABI_NAMESPACE_END

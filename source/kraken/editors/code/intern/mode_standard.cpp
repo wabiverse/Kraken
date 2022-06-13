@@ -23,12 +23,9 @@
 namespace Zep
 {
 
-  ZepMode_Standard::ZepMode_Standard(ZepEditor &editor)
-    : ZepMode(editor)
-  {}
+  ZepMode_Standard::ZepMode_Standard(ZepEditor &editor) : ZepMode(editor) {}
 
-  ZepMode_Standard::~ZepMode_Standard()
-  {}
+  ZepMode_Standard::~ZepMode_Standard() {}
 
   void ZepMode_Standard::Init()
   {
@@ -37,8 +34,7 @@ namespace Zep
 
     m_modeFlags |= ModeFlags::InsertModeGroupUndo | ModeFlags::StayInInsertMode;
 
-    for (int i = 0; i <= 9; i++)
-    {
+    for (int i = 0; i <= 9; i++) {
       GetEditor().SetRegister('0' + (const char)i, "");
     }
     GetEditor().SetRegister('"', "");
@@ -268,7 +264,8 @@ namespace Zep
           {
               if (GetCurrentWindow()->GetBufferCursor() <= startOffset)
               {
-                  m_visualBegin = startOffset; // buffer.LocationFromOffsetByChars(startOffset, -1);
+                  m_visualBegin = startOffset; // buffer.LocationFromOffsetByChars(startOffset,
+  -1);
               }
               else
               {

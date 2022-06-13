@@ -35,7 +35,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-TraceReporterDataSourceBase::~TraceReporterDataSourceBase()
-{}
+TraceReporterDataSourceBase::~TraceReporterDataSourceBase() {}
 
 WABI_NAMESPACE_END

@@ -34,7 +34,8 @@ TF_REGISTRY_FUNCTION(TfDebug)
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_BPRIM_REMOVED, "Report when bprims are removed")
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_BUFFER_ARRAY_INFO, "Report detail info of HdBufferArrays");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_BUFFER_ARRAY_RANGE_CLEANED, "Report when bufferArrayRange is cleaned");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_BUFFER_ARRAY_RANGE_CLEANED,
+                              "Report when bufferArrayRange is cleaned");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_CACHE_HITS, "Report every cache hit");
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_CACHE_MISSES, "Report every cache miss");
@@ -46,16 +47,21 @@ TF_REGISTRY_FUNCTION(TfDebug)
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_DIRTY_LIST, "Reports dirty list state changes");
 
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_DISABLE_MULTITHREADED_RPRIM_SYNC, "Run RPrim sync on a single thread");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_DISABLE_MULTITHREADED_RPRIM_SYNC,
+                              "Run RPrim sync on a single thread");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_DRAWITEMS_CULLED,
                               "Report the number of draw items culled in each render pass");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_ENGINE_PHASE_INFO, "Report the execution phase of the Hydra engine");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_ENGINE_PHASE_INFO,
+                              "Report the execution phase of the Hydra engine");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_EXT_COMPUTATION_ADDED, "Report when ExtComputations are added");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_EXT_COMPUTATION_REMOVED, "Report when ExtComputations are removed");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_EXT_COMPUTATION_UPDATED, "Report when ExtComputations are updated");
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_EXT_COMPUTATION_EXECUTION, "Report when ExtComputations are executed");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_EXT_COMPUTATION_REMOVED,
+                              "Report when ExtComputations are removed");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_EXT_COMPUTATION_UPDATED,
+                              "Report when ExtComputations are updated");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_EXT_COMPUTATION_EXECUTION,
+                              "Report when ExtComputations are executed");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_FREEZE_CULL_FRUSTUM,
                               "Freeze the frustum used for culling at it's current value");
@@ -78,8 +84,9 @@ TF_REGISTRY_FUNCTION(TfDebug)
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_SELECTION_UPDATE, "Report when selection is updated");
 
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_SHARED_EXT_COMPUTATION_DATA,
-                              "Report info related to deduplication of ext computation data buffers");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(
+    HD_SHARED_EXT_COMPUTATION_DATA,
+    "Report info related to deduplication of ext computation data buffers");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_SPRIM_ADDED, "Report when sprims are added");
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_SPRIM_REMOVED, "Report when sprims are removed");

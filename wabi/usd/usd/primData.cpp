@@ -115,8 +115,7 @@ void Usd_PrimData::_ComposeAndCacheFlags(Usd_PrimDataConstPtr parent, bool isPro
 
   // Special-case the root (the only prim which has no parent) and
   // instancing prototypes.
-  if (ARCH_UNLIKELY(!parent || isPrototypePrim))
-  {
+  if (ARCH_UNLIKELY(!parent || isPrototypePrim)) {
     _flags[Usd_PrimActiveFlag] = true;
     _flags[Usd_PrimLoadedFlag] = true;
     _flags[Usd_PrimModelFlag] = true;
@@ -125,8 +124,7 @@ void Usd_PrimData::_ComposeAndCacheFlags(Usd_PrimDataConstPtr parent, bool isPro
     _flags[Usd_PrimHasDefiningSpecifierFlag] = true;
     _flags[Usd_PrimPrototypeFlag] = isPrototypePrim;
     _flags[Usd_PrimPseudoRootFlag] = !parent;
-  } else
-  {
+  } else {
     // Compose and cache 'active'.
     const bool active = UsdStage::_IsActive(this);
     _flags[Usd_PrimActiveFlag] = active;
@@ -137,22 +135,19 @@ void Usd_PrimData::_ComposeAndCacheFlags(Usd_PrimDataConstPtr parent, bool isPro
 
     // An active prim is loaded if it's loadable and in the load set, or
     // it's not loadable and its parent is loaded.
-    _flags[Usd_PrimLoadedFlag] = active &&
-                                 (hasPayload ?
-                                    _stage->_GetPcpCache()->IsPayloadIncluded(_primIndex->GetPath()) :
-                                    parent->IsLoaded());
+    _flags[Usd_PrimLoadedFlag] = active && (hasPayload ? _stage->_GetPcpCache()->IsPayloadIncluded(
+                                                           _primIndex->GetPath()) :
+                                                         parent->IsLoaded());
 
     // According to Model hierarchy rules, only Model Groups may have Model
     // children (groups or otherwise).  So if our parent is not a Model
     // Group, then this prim cannot be a model (or a model group).
     // Otherwise we look up the kind metadata and consult the kind registry.
     bool isGroup = false, isModel = false;
-    if (parent->IsGroup())
-    {
+    if (parent->IsGroup()) {
       const TfToken kind = UsdStage::_GetKind(this);
       // Use the kind registry to determine model/groupness.
-      if (!kind.IsEmpty())
-      {
+      if (!kind.IsEmpty()) {
         isGroup = KindRegistry::IsA(kind, KindTokens->group);
         isModel = isGroup || KindRegistry::IsA(kind, KindTokens->model);
       }
@@ -213,7 +208,8 @@ std::string Usd_DescribePrimData(const Usd_PrimData *p, SdfPath const &proxyPrim
   bool isInPrototype = isInstanceProxy ? Usd_InstanceCache::IsPathInPrototype(proxyPrimPath) :
                                          p->IsInPrototype();
   bool isPrototype = p->IsPrototype();
-  Usd_PrimDataConstPtr prototypeForInstance = isInstance && p->_stage ? p->GetPrototype() : nullptr;
+  Usd_PrimDataConstPtr prototypeForInstance = isInstance && p->_stage ? p->GetPrototype() :
+                                                                        nullptr;
 
   return TfStringPrintf(
     "%s%s%sprim %s<%s> %s%s%s",
@@ -231,7 +227,8 @@ std::string Usd_DescribePrimData(const Usd_PrimData *p, SdfPath const &proxyPrim
         .c_str() :
       "",
     (isInstanceProxy || isPrototype || isInPrototype) ?
-      TfStringPrintf("using prim index <%s> ", p->GetSourcePrimIndex().GetPath().GetText()).c_str() :
+      TfStringPrintf("using prim index <%s> ", p->GetSourcePrimIndex().GetPath().GetText())
+        .c_str() :
       "",
     p->_stage ? TfStringPrintf("on %s", UsdDescribe(p->_stage).c_str()).c_str() : "");
 }

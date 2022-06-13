@@ -68,7 +68,8 @@ namespace
     {
       return PyUnicode_Check(obj) ? obj : 0;
     }
-    static void construct(PyObject *src, boost::python::converter::rvalue_from_python_stage1_data *data)
+    static void construct(PyObject *src,
+                          boost::python::converter::rvalue_from_python_stage1_data *data)
     {
       boost::python::handle<> utf8(PyUnicode_AsUTF8String(src));
       std::string utf8String(boost::python::extract<std::string>(utf8.get()));

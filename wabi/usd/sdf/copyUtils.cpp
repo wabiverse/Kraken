@@ -101,13 +101,10 @@ static void _GetFieldNames(const SdfLayerHandle &layer,
 {
   const SdfSchemaBase &schema = layer->GetSchema();
   const std::vector<TfToken> allFields = layer->ListFields(path);
-  for (const TfToken &field : allFields)
-  {
-    if (schema.HoldsChildren(field))
-    {
+  for (const TfToken &field : allFields) {
+    if (schema.HoldsChildren(field)) {
       childrenFields->push_back(field);
-    } else
-    {
+    } else {
       valueFields->push_back(field);
     }
   }
@@ -135,8 +132,7 @@ static void _ProcessChildren(const TfToken &childrenField,
   typedef std::vector<FieldType> ChildrenVector;
 
   if (!TF_VERIFY(srcChildrenValue.IsHolding<ChildrenVector>() || srcChildrenValue.IsEmpty()) ||
-      !TF_VERIFY(dstChildrenValue.IsHolding<ChildrenVector>() || dstChildrenValue.IsEmpty()))
-  {
+      !TF_VERIFY(dstChildrenValue.IsHolding<ChildrenVector>() || dstChildrenValue.IsEmpty())) {
     return;
   }
 
@@ -148,10 +144,8 @@ static void _ProcessChildren(const TfToken &childrenField,
                                         emptyChildren :
                                         dstChildrenValue.UncheckedGet<ChildrenVector>();
 
-  for (size_t i = 0; i < srcChildren.size(); ++i)
-  {
-    if (srcChildren[i].IsEmpty() || dstChildren[i].IsEmpty())
-    {
+  for (size_t i = 0; i < srcChildren.size(); ++i) {
+    if (srcChildren[i].IsEmpty() || dstChildren[i].IsEmpty()) {
       continue;
     }
 
@@ -164,18 +158,14 @@ static void _ProcessChildren(const TfToken &childrenField,
   // Add entries to the copy stack to mark the removal of child specs
   // in the destination layer that aren't included in the list of children
   // to copy.
-  if (childrenInDst)
-  {
+  if (childrenInDst) {
     const VtValue oldDstChildrenValue = dstLayer->GetField(dstPath, childrenField);
-    if (!TF_VERIFY(oldDstChildrenValue.IsHolding<ChildrenVector>()))
-    {
+    if (!TF_VERIFY(oldDstChildrenValue.IsHolding<ChildrenVector>())) {
       return;
     }
 
-    for (const auto &oldDstChild : oldDstChildrenValue.UncheckedGet<ChildrenVector>())
-    {
-      if (std::find(dstChildren.begin(), dstChildren.end(), oldDstChild) == dstChildren.end())
-      {
+    for (const auto &oldDstChild : oldDstChildrenValue.UncheckedGet<ChildrenVector>()) {
+      if (std::find(dstChildren.begin(), dstChildren.end(), oldDstChild) == dstChildren.end()) {
 
         const SdfPath oldDstChildPath = ChildPolicy::GetChildPath(dstPath, oldDstChild);
         copyStack->emplace_back(SdfPath(), oldDstChildPath);
@@ -203,13 +193,11 @@ static void _ProcessChildField(const TfToken &childField,
                           dstPath,
                           childrenInDst,
                           &srcChildrenToCopy,
-                          &dstChildrenToCopy))
-  {
+                          &dstChildrenToCopy)) {
     return;
   }
 
-  if (!srcChildrenToCopy || !dstChildrenToCopy)
-  {
+  if (!srcChildrenToCopy || !dstChildrenToCopy) {
     srcChildrenToCopy = srcLayer->GetField(srcPath, childField);
     dstChildrenToCopy = srcChildrenToCopy;
   }
@@ -217,8 +205,7 @@ static void _ProcessChildField(const TfToken &childField,
   const VtValue &srcChildren = *srcChildrenToCopy;
   const VtValue &dstChildren = *dstChildrenToCopy;
 
-  if (childField == SdfChildrenKeys->ConnectionChildren)
-  {
+  if (childField == SdfChildrenKeys->ConnectionChildren) {
     _ProcessChildren<Sdf_AttributeConnectionChildPolicy>(childField,
                                                          srcChildren,
                                                          dstChildren,
@@ -231,8 +218,7 @@ static void _ProcessChildField(const TfToken &childField,
                                                          copyStack);
     return;
   }
-  if (childField == SdfChildrenKeys->MapperChildren)
-  {
+  if (childField == SdfChildrenKeys->MapperChildren) {
     _ProcessChildren<Sdf_MapperChildPolicy>(childField,
                                             srcChildren,
                                             dstChildren,
@@ -245,8 +231,7 @@ static void _ProcessChildField(const TfToken &childField,
                                             copyStack);
     return;
   }
-  if (childField == SdfChildrenKeys->MapperArgChildren)
-  {
+  if (childField == SdfChildrenKeys->MapperArgChildren) {
     _ProcessChildren<Sdf_MapperArgChildPolicy>(childField,
                                                srcChildren,
                                                dstChildren,
@@ -259,8 +244,7 @@ static void _ProcessChildField(const TfToken &childField,
                                                copyStack);
     return;
   }
-  if (childField == SdfChildrenKeys->ExpressionChildren)
-  {
+  if (childField == SdfChildrenKeys->ExpressionChildren) {
     _ProcessChildren<Sdf_ExpressionChildPolicy>(childField,
                                                 srcChildren,
                                                 dstChildren,
@@ -273,8 +257,7 @@ static void _ProcessChildField(const TfToken &childField,
                                                 copyStack);
     return;
   }
-  if (childField == SdfChildrenKeys->RelationshipTargetChildren)
-  {
+  if (childField == SdfChildrenKeys->RelationshipTargetChildren) {
     _ProcessChildren<Sdf_RelationshipTargetChildPolicy>(childField,
                                                         srcChildren,
                                                         dstChildren,
@@ -287,8 +270,7 @@ static void _ProcessChildField(const TfToken &childField,
                                                         copyStack);
     return;
   }
-  if (childField == SdfChildrenKeys->VariantChildren)
-  {
+  if (childField == SdfChildrenKeys->VariantChildren) {
     _ProcessChildren<Sdf_VariantChildPolicy>(childField,
                                              srcChildren,
                                              dstChildren,
@@ -301,8 +283,7 @@ static void _ProcessChildField(const TfToken &childField,
                                              copyStack);
     return;
   }
-  if (childField == SdfChildrenKeys->VariantSetChildren)
-  {
+  if (childField == SdfChildrenKeys->VariantSetChildren) {
     _ProcessChildren<Sdf_VariantSetChildPolicy>(childField,
                                                 srcChildren,
                                                 dstChildren,
@@ -315,8 +296,7 @@ static void _ProcessChildField(const TfToken &childField,
                                                 copyStack);
     return;
   }
-  if (childField == SdfChildrenKeys->PropertyChildren)
-  {
+  if (childField == SdfChildrenKeys->PropertyChildren) {
     _ProcessChildren<Sdf_PropertyChildPolicy>(childField,
                                               srcChildren,
                                               dstChildren,
@@ -329,8 +309,7 @@ static void _ProcessChildField(const TfToken &childField,
                                               copyStack);
     return;
   }
-  if (childField == SdfChildrenKeys->PrimChildren)
-  {
+  if (childField == SdfChildrenKeys->PrimChildren) {
     _ProcessChildren<Sdf_PrimChildPolicy>(childField,
                                           srcChildren,
                                           dstChildren,
@@ -361,18 +340,14 @@ static void _DoAddNewPrimSpec(const SdfLayerHandle &destLayer, const _SpecDataEn
   // what's done in the SdfPrimSpec constructor.
   TfToken type;
   SdfSpecifier specifier = SdfSpecifierOver;
-  for (const _FieldValuePair &fieldValue : specData.dataToCopy)
-  {
-    if (fieldValue.second.IsEmpty())
-    {
+  for (const _FieldValuePair &fieldValue : specData.dataToCopy) {
+    if (fieldValue.second.IsEmpty()) {
       continue;
     }
 
-    if (fieldValue.first == SdfFieldKeys->TypeName)
-    {
+    if (fieldValue.first == SdfFieldKeys->TypeName) {
       type = fieldValue.second.Get<TfToken>();
-    } else if (fieldValue.first == SdfFieldKeys->Specifier)
-    {
+    } else if (fieldValue.first == SdfFieldKeys->Specifier) {
       specifier = fieldValue.second.Get<SdfSpecifier>();
     }
   }
@@ -392,10 +367,8 @@ static void _DoAddNewPropertySpec(const SdfLayerHandle &destLayer, const _SpecDa
   // copied in. This mimics what's done in the
   // SdfAttributeSpec/SdfRelationshipSpec constructors.
   bool custom = false;
-  for (const _FieldValuePair &fieldValue : specData.dataToCopy)
-  {
-    if (fieldValue.first == SdfFieldKeys->Custom)
-    {
+  for (const _FieldValuePair &fieldValue : specData.dataToCopy) {
+    if (fieldValue.first == SdfFieldKeys->Custom) {
       custom = fieldValue.second.template Get<bool>();
       break;
     }
@@ -410,13 +383,11 @@ static void _DoAddNewPropertySpec(const SdfLayerHandle &destLayer, const _SpecDa
 
 static void _AddNewSpecToLayer(const SdfLayerHandle &destLayer, const _SpecDataEntry &specData)
 {
-  if (destLayer->HasSpec(specData.dstPath))
-  {
+  if (destLayer->HasSpec(specData.dstPath)) {
     return;
   }
 
-  switch (specData.specType)
-  {
+  switch (specData.specType) {
     case SdfSpecTypeAttribute:
       _DoAddNewPropertySpec<Sdf_AttributeChildPolicy>(destLayer, specData);
       break;
@@ -465,8 +436,7 @@ static void _DoRemoveSpec(const SdfLayerHandle &dstLayer, const SdfPath &dstPath
 
 static void _RemoveSpecFromLayer(const SdfLayerHandle &dstLayer, const SdfPath &dstPath)
 {
-  switch (dstLayer->GetSpecType(dstPath))
-  {
+  switch (dstLayer->GetSpecType(dstPath)) {
     case SdfSpecTypeAttribute:
       _DoRemoveSpec<Sdf_AttributeChildPolicy>(dstLayer, dstPath);
       break;
@@ -520,16 +490,21 @@ static void _AddFieldValueToCopy(SdfSpecType specType,
                                  _FieldValueList *valueList)
 {
   boost::optional<VtValue> value;
-  if (shouldCopyValue(specType, field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst, &value))
-  {
+  if (shouldCopyValue(specType,
+                      field,
+                      srcLayer,
+                      srcPath,
+                      fieldInSrc,
+                      dstLayer,
+                      dstPath,
+                      fieldInDst,
+                      &value)) {
 
     // XXX: VtValue doesn't have move semantics...
     valueList->emplace_back(field, VtValue());
-    if (value)
-    {
+    if (value) {
       value->Swap(valueList->back().second);
-    } else
-    {
+    } else {
       srcLayer->GetField(srcPath, field).Swap(valueList->back().second);
     }
   }
@@ -554,22 +529,16 @@ static void _ForEachField(const std::vector<TfToken> &srcFields,
 
   auto srcIt = srcFields.begin(), srcEndIt = srcFields.end();
   auto dstIt = dstFields.begin(), dstEndIt = dstFields.end();
-  while (srcIt != srcEndIt && dstIt != dstEndIt)
-  {
-    if (*srcIt == *dstIt)
-    {
+  while (srcIt != srcEndIt && dstIt != dstEndIt) {
+    if (*srcIt == *dstIt) {
       fn(*srcIt, /* inSrc = */ true, /* inDst = */ true);
       ++srcIt, ++dstIt;
-    } else if (lessThan(*srcIt, *dstIt))
-    {
-      for (; srcIt != srcEndIt && lessThan(*srcIt, *dstIt); ++srcIt)
-      {
+    } else if (lessThan(*srcIt, *dstIt)) {
+      for (; srcIt != srcEndIt && lessThan(*srcIt, *dstIt); ++srcIt) {
         fn(*srcIt, /* inSrc = */ true, /* inDst = */ false);
       }
-    } else
-    {
-      for (; dstIt != dstEndIt && lessThan(*dstIt, *srcIt); ++dstIt)
-      {
+    } else {
+      for (; dstIt != dstEndIt && lessThan(*dstIt, *srcIt); ++dstIt) {
         fn(*dstIt, /* inSrc = */ false, /* inDst = */ true);
       }
     }
@@ -579,8 +548,7 @@ static void _ForEachField(const std::vector<TfToken> &srcFields,
   auto finalEndIt = (srcIt == srcEndIt) ? dstEndIt : srcEndIt;
   const bool inSrc = (srcIt != srcEndIt);
 
-  for (; finalIt != finalEndIt; ++finalIt)
-  {
+  for (; finalIt != finalEndIt; ++finalIt) {
     fn(*finalIt, /* inSrc = */ inSrc, /* inDst = */ !inSrc);
   }
 }
@@ -592,14 +560,12 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
                  const SdfShouldCopyValueFn &shouldCopyValueFn,
                  const SdfShouldCopyChildrenFn &shouldCopyChildrenFn)
 {
-  if (!srcLayer || !dstLayer)
-  {
+  if (!srcLayer || !dstLayer) {
     TF_CODING_ERROR("Invalid layer handle");
     return false;
   }
 
-  if (srcPath.IsEmpty() || dstPath.IsEmpty())
-  {
+  if (srcPath.IsEmpty() || dstPath.IsEmpty()) {
     TF_CODING_ERROR("Invalid empty path");
     return false;
   }
@@ -608,18 +574,17 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
   if ((srcPath.IsAbsoluteRootOrPrimPath() || srcPath.IsPrimVariantSelectionPath()) !=
         (dstPath.IsAbsoluteRootOrPrimPath() || dstPath.IsPrimVariantSelectionPath()) ||
       srcPath.IsPropertyPath() != dstPath.IsPropertyPath() ||
-      srcPath.IsTargetPath() != dstPath.IsTargetPath() || srcPath.IsMapperPath() != dstPath.IsMapperPath() ||
+      srcPath.IsTargetPath() != dstPath.IsTargetPath() ||
+      srcPath.IsMapperPath() != dstPath.IsMapperPath() ||
       srcPath.IsMapperArgPath() != dstPath.IsMapperArgPath() ||
-      srcPath.IsExpressionPath() != dstPath.IsExpressionPath())
-  {
+      srcPath.IsExpressionPath() != dstPath.IsExpressionPath()) {
     TF_CODING_ERROR("Incompatible source and destination paths");
     return false;
   }
 
   // For target paths (relationship targets and connections), verify the
   // destination spec already exists.  See the documentation comment.
-  if (dstPath.IsTargetPath() && !dstLayer->HasSpec(dstPath))
-  {
+  if (dstPath.IsTargetPath() && !dstLayer->HasSpec(dstPath)) {
     TF_CODING_ERROR("Spec does not exist at destination target path");
     return false;
   }
@@ -630,15 +595,13 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
   // the passed parameters.  The copy routine will add additional requests
   // as needed to handle children etc... and runs until the stack is empty.
   _CopyStack copyStack(1, _CopyStackEntry(srcPath, dstPath));
-  while (!copyStack.empty())
-  {
+  while (!copyStack.empty()) {
     const _CopyStackEntry toCopy = copyStack.front();
     copyStack.pop_front();
 
     // If the source path is empty, it indicates that the spec at the
     // destination path should be removed.
-    if (toCopy.srcPath.IsEmpty())
-    {
+    if (toCopy.srcPath.IsEmpty()) {
       _RemoveSpecFromLayer(dstLayer, toCopy.dstPath);
       continue;
     }
@@ -646,8 +609,7 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
     // Figure out the concrete type of the spec we're copying. The spec type
     // dictates copying behavior below.
     const SdfSpecType specType = srcLayer->GetSpecType(toCopy.srcPath);
-    if (specType == SdfSpecTypeUnknown)
-    {
+    if (specType == SdfSpecTypeUnknown) {
       TF_CODING_ERROR("Cannot copy unknown spec at <%s> from layer <%s>",
                       srcPath.GetText(),
                       srcLayer->GetIdentifier().c_str());
@@ -690,10 +652,10 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
     // and destination spec types to be the same.
     const bool copyingPrimToVariant = specType == SdfSpecTypePrim &&
                                       toCopy.dstPath.IsPrimVariantSelectionPath();
-    const bool copyingVariantToPrim = specType == SdfSpecTypeVariant && toCopy.dstPath.IsPrimPath();
+    const bool copyingVariantToPrim = specType == SdfSpecTypeVariant &&
+                                      toCopy.dstPath.IsPrimPath();
 
-    if (copyingPrimToVariant || copyingVariantToPrim)
-    {
+    if (copyingPrimToVariant || copyingVariantToPrim) {
       // Clear out any specifier or typename fields in the data to copy,
       // since we'll want to set those specially.
       copyEntry.dataToCopy.erase(std::remove_if(copyEntry.dataToCopy.begin(),
@@ -704,43 +666,40 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
                                                 }),
                                  copyEntry.dataToCopy.end());
 
-      if (copyingPrimToVariant)
-      {
+      if (copyingPrimToVariant) {
         // Set the specifier for the destination variant to over, since
         // that's the value used in SdfVariantSpec's c'tor.
         copyEntry.dataToCopy.push_back({SdfFieldKeys->Specifier, VtValue(SdfSpecifierOver)});
         copyEntry.specType = SdfSpecTypeVariant;
-      } else if (copyingVariantToPrim)
-      {
+      } else if (copyingVariantToPrim) {
         // Variants don't have a specifier or typename, but for
         // convenience we copy those values from the owning prim.
         const SdfPath srcPrimPath = toCopy.srcPath.GetPrimPath();
         std::vector<TfToken> srcFields, dstFields;
-        for (const TfToken &field : {SdfFieldKeys->Specifier, SdfFieldKeys->TypeName})
-        {
+        for (const TfToken &field : {SdfFieldKeys->Specifier, SdfFieldKeys->TypeName}) {
 
-          if (srcLayer->HasField(srcPrimPath, field))
-          {
+          if (srcLayer->HasField(srcPrimPath, field)) {
             srcFields.push_back(field);
           }
-          if (dstLayer->HasField(toCopy.dstPath, field))
-          {
+          if (dstLayer->HasField(toCopy.dstPath, field)) {
             dstFields.push_back(field);
           }
         }
 
-        _ForEachField(srcFields, dstFields, [&](const TfToken &field, bool fieldInSrc, bool fieldInDst) {
-          _AddFieldValueToCopy(specType,
-                               field,
-                               srcLayer,
-                               srcPrimPath,
-                               fieldInSrc,
-                               dstLayer,
-                               toCopy.dstPath,
-                               fieldInDst,
-                               shouldCopyValueFn,
-                               &copyEntry.dataToCopy);
-        });
+        _ForEachField(srcFields,
+                      dstFields,
+                      [&](const TfToken &field, bool fieldInSrc, bool fieldInDst) {
+                        _AddFieldValueToCopy(specType,
+                                             field,
+                                             srcLayer,
+                                             srcPrimPath,
+                                             fieldInSrc,
+                                             dstLayer,
+                                             toCopy.dstPath,
+                                             fieldInDst,
+                                             shouldCopyValueFn,
+                                             &copyEntry.dataToCopy);
+                      });
 
         copyEntry.specType = SdfSpecTypePrim;
       }
@@ -748,15 +707,12 @@ bool SdfCopySpec(const SdfLayerHandle &srcLayer,
 
     // Create the new spec and copy all of the specified fields over.
     _AddNewSpecToLayer(dstLayer, copyEntry);
-    for (const _FieldValuePair &fieldValue : copyEntry.dataToCopy)
-    {
-      if (fieldValue.second.IsHolding<SdfCopySpecsValueEdit>())
-      {
+    for (const _FieldValuePair &fieldValue : copyEntry.dataToCopy) {
+      if (fieldValue.second.IsHolding<SdfCopySpecsValueEdit>()) {
         const SdfCopySpecsValueEdit::EditFunction &edit =
           fieldValue.second.UncheckedGet<SdfCopySpecsValueEdit>().GetEditFunction();
         edit(dstLayer, copyEntry.dstPath);
-      } else
-      {
+      } else {
         dstLayer->SetField(copyEntry.dstPath, fieldValue.first, fieldValue.second);
       }
     }
@@ -787,8 +743,8 @@ template<class T>
 static T _FixInternalSubrootPaths(const T &ref, const SdfPath &srcPrefix, const SdfPath &dstPrefix)
 {
   // Only try to fix up internal sub-root references.
-  if (!ref.GetAssetPath().empty() || ref.GetPrimPath().IsEmpty() || ref.GetPrimPath().IsRootPrimPath())
-  {
+  if (!ref.GetAssetPath().empty() || ref.GetPrimPath().IsEmpty() ||
+      ref.GetPrimPath().IsRootPrimPath()) {
     return ref;
   }
 
@@ -810,14 +766,11 @@ bool SdfShouldCopyValue(const SdfPath &srcRootPath,
                         bool fieldInDst,
                         boost::optional<VtValue> *valueToCopy)
 {
-  if (fieldInSrc)
-  {
+  if (fieldInSrc) {
     if (field == SdfFieldKeys->ConnectionPaths || field == SdfFieldKeys->TargetPaths ||
-        field == SdfFieldKeys->InheritPaths || field == SdfFieldKeys->Specializes)
-    {
+        field == SdfFieldKeys->InheritPaths || field == SdfFieldKeys->Specializes) {
       SdfPathListOp srcListOp;
-      if (srcLayer->HasField(srcPath, field, &srcListOp))
-      {
+      if (srcLayer->HasField(srcPath, field, &srcListOp)) {
         const SdfPath &srcPrefix = srcRootPath.GetPrimPath().StripAllVariantSelections();
         const SdfPath &dstPrefix = dstRootPath.GetPrimPath().StripAllVariantSelections();
 
@@ -827,11 +780,9 @@ bool SdfShouldCopyValue(const SdfPath &srcRootPath,
 
         *valueToCopy = VtValue::Take(srcListOp);
       }
-    } else if (field == SdfFieldKeys->References)
-    {
+    } else if (field == SdfFieldKeys->References) {
       SdfReferenceListOp refListOp;
-      if (srcLayer->HasField(srcPath, field, &refListOp))
-      {
+      if (srcLayer->HasField(srcPath, field, &refListOp)) {
         const SdfPath &srcPrefix = srcRootPath.GetPrimPath().StripAllVariantSelections();
         const SdfPath &dstPrefix = dstRootPath.GetPrimPath().StripAllVariantSelections();
 
@@ -842,11 +793,9 @@ bool SdfShouldCopyValue(const SdfPath &srcRootPath,
 
         *valueToCopy = VtValue::Take(refListOp);
       }
-    } else if (field == SdfFieldKeys->Payload)
-    {
+    } else if (field == SdfFieldKeys->Payload) {
       SdfPayloadListOp payloadListOp;
-      if (srcLayer->HasField(srcPath, field, &payloadListOp))
-      {
+      if (srcLayer->HasField(srcPath, field, &payloadListOp)) {
         const SdfPath &srcPrefix = srcRootPath.GetPrimPath().StripAllVariantSelections();
         const SdfPath &dstPrefix = dstRootPath.GetPrimPath().StripAllVariantSelections();
 
@@ -857,17 +806,14 @@ bool SdfShouldCopyValue(const SdfPath &srcRootPath,
 
         *valueToCopy = VtValue::Take(payloadListOp);
       }
-    } else if (field == SdfFieldKeys->Relocates)
-    {
+    } else if (field == SdfFieldKeys->Relocates) {
       SdfRelocatesMap relocates;
-      if (srcLayer->HasField(srcPath, field, &relocates))
-      {
+      if (srcLayer->HasField(srcPath, field, &relocates)) {
         const SdfPath &srcPrefix = srcRootPath.GetPrimPath().StripAllVariantSelections();
         const SdfPath &dstPrefix = dstRootPath.GetPrimPath().StripAllVariantSelections();
 
         SdfRelocatesMap updatedRelocates;
-        for (const auto &entry : relocates)
-        {
+        for (const auto &entry : relocates) {
           const SdfPath updatedSrcPath = entry.first.ReplacePrefix(srcPrefix, dstPrefix);
           const SdfPath updatedTargetPath = entry.second.ReplacePrefix(srcPrefix, dstPrefix);
           updatedRelocates[updatedSrcPath] = updatedTargetPath;
@@ -893,23 +839,19 @@ bool SdfShouldCopyChildren(const SdfPath &srcRootPath,
                            boost::optional<VtValue> *srcChildren,
                            boost::optional<VtValue> *dstChildren)
 {
-  if (fieldInSrc)
-  {
+  if (fieldInSrc) {
     if (childrenField == SdfChildrenKeys->ConnectionChildren ||
         childrenField == SdfChildrenKeys->RelationshipTargetChildren ||
-        childrenField == SdfChildrenKeys->MapperChildren)
-    {
+        childrenField == SdfChildrenKeys->MapperChildren) {
 
       SdfPathVector children;
-      if (srcLayer->HasField(srcPath, childrenField, &children))
-      {
+      if (srcLayer->HasField(srcPath, childrenField, &children)) {
         *srcChildren = VtValue(children);
 
         const SdfPath &srcPrefix = srcRootPath.GetPrimPath().StripAllVariantSelections();
         const SdfPath &dstPrefix = dstRootPath.GetPrimPath().StripAllVariantSelections();
 
-        for (SdfPath &child : children)
-        {
+        for (SdfPath &child : children) {
           child = child.ReplacePrefix(srcPrefix, dstPrefix);
         }
 

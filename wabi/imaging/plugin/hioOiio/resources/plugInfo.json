@@ -3,9 +3,16 @@
     {
       "Info": {
         "Types": {
-          "HioOIIO_Image" : {
-            "bases": ["HioImage"],
-            "imageTypes": ["exr", "tif", "zfile", "tx"],
+          "HioOIIO_Image": {
+            "bases": [
+              "HioImage"
+            ],
+            "imageTypes": [
+              "exr",
+              "tif",
+              "zfile",
+              "tx"
+            ],
             "precedence": 0
           }
         }

@@ -42,10 +42,8 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<ArPackageResolver>();
 }
 
-ArPackageResolver::ArPackageResolver()
-{}
+ArPackageResolver::ArPackageResolver() {}
 
-ArPackageResolver::~ArPackageResolver()
-{}
+ArPackageResolver::~ArPackageResolver() {}
 
 WABI_NAMESPACE_END

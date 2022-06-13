@@ -44,16 +44,13 @@ WABI_NAMESPACE_BEGIN
 ArDefaultResolverContext::ArDefaultResolverContext(const std::vector<std::string> &searchPath)
 {
   _searchPath.reserve(searchPath.size());
-  for (const std::string &p : searchPath)
-  {
-    if (p.empty())
-    {
+  for (const std::string &p : searchPath) {
+    if (p.empty()) {
       continue;
     }
 
     const std::string absPath = TfAbsPath(p);
-    if (absPath.empty())
-    {
+    if (absPath.empty()) {
       TF_WARN(
         "Could not determine absolute path for search path prefix "
         "'%s'",
@@ -83,11 +80,9 @@ bool ArDefaultResolverContext::operator!=(const ArDefaultResolverContext &rhs) c
 std::string ArDefaultResolverContext::GetAsString() const
 {
   std::string result = "Search path: ";
-  if (_searchPath.empty())
-  {
+  if (_searchPath.empty()) {
     result += "[ ]";
-  } else
-  {
+  } else {
     result += "[\n    ";
     result += TfStringJoin(_searchPath, "\n    ");
     result += "\n]";
@@ -98,8 +93,7 @@ std::string ArDefaultResolverContext::GetAsString() const
 size_t hash_value(const ArDefaultResolverContext &context)
 {
   size_t hash = 0;
-  for (const std::string &p : context.GetSearchPath())
-  {
+  for (const std::string &p : context.GetSearchPath()) {
     boost::hash_combine(hash, TfHash()(p));
   }
   return hash;

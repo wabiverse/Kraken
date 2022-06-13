@@ -100,10 +100,11 @@ namespace
                                   bool useHint,
                                   const object &swShiftIn)
   {
-    double angle[4] = {thetaTwHint.ptr() != Py_None ? boost::python::extract<double>(thetaTwHint) : 0.0,
-                       thetaFBHint.ptr() != Py_None ? boost::python::extract<double>(thetaFBHint) : 0.0,
-                       thetaLRHint.ptr() != Py_None ? boost::python::extract<double>(thetaLRHint) : 0.0,
-                       thetaSwHint.ptr() != Py_None ? boost::python::extract<double>(thetaSwHint) : 0.0};
+    double angle[4] = {
+      thetaTwHint.ptr() != Py_None ? boost::python::extract<double>(thetaTwHint) : 0.0,
+      thetaFBHint.ptr() != Py_None ? boost::python::extract<double>(thetaFBHint) : 0.0,
+      thetaLRHint.ptr() != Py_None ? boost::python::extract<double>(thetaLRHint) : 0.0,
+      thetaSwHint.ptr() != Py_None ? boost::python::extract<double>(thetaSwHint) : 0.0};
     double swShift = swShiftIn.ptr() != Py_None ? boost::python::extract<double>(swShiftIn) : 0.0;
 
     GfRotation::DecomposeRotation(rot,
@@ -123,8 +124,8 @@ namespace
 
   static string _Repr(GfRotation const &self)
   {
-    return TF_PY_REPR_PREFIX + "Rotation(" + TfPyRepr(self.GetAxis()) + ", " + TfPyRepr(self.GetAngle()) +
-           ")";
+    return TF_PY_REPR_PREFIX + "Rotation(" + TfPyRepr(self.GetAxis()) + ", " +
+           TfPyRepr(self.GetAngle()) + ")";
   }
 
 #if PY_MAJOR_VERSION == 2
@@ -157,7 +158,10 @@ void wrapRotation()
     .def("SetAxisAngle", &This::SetAxisAngle, return_self<>(), (args("axis"), args("angle")))
     .def("SetQuat", &This::SetQuat, return_self<>(), (args("quat")))
     .def("SetQuaternion", &This::SetQuaternion, return_self<>(), (args("quaternion")))
-    .def("SetRotateInto", &This::SetRotateInto, return_self<>(), (args("rotateFrom"), args("rotateTo")))
+    .def("SetRotateInto",
+         &This::SetRotateInto,
+         return_self<>(),
+         (args("rotateFrom"), args("rotateTo")))
     .def("SetIdentity", &This::SetIdentity, return_self<>())
 
     .add_property("axis",

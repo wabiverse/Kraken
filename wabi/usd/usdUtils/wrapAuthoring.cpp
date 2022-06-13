@@ -49,16 +49,14 @@ static std::vector<UsdCollectionAPI> _WrapUsdUtilsCreateCollections(
   size_t nPairs = len(assignments);
   assignmentsVec.resize(nPairs);
 
-  for (size_t i = 0; i < nPairs; ++i)
-  {
+  for (size_t i = 0; i < nPairs; ++i) {
     tuple pair = extract<tuple>(assignments[i]);
     TfToken collName = extract<TfToken>(pair[0]);
     list pathList = extract<list>(pair[1]);
 
     SdfPathSet includedPaths;
     size_t numPaths = len(pathList);
-    for (size_t pathIdx = 0; pathIdx < numPaths; ++pathIdx)
-    {
+    for (size_t pathIdx = 0; pathIdx < numPaths; ++pathIdx) {
       SdfPath includedPath = extract<SdfPath>(pathList[pathIdx]);
       includedPaths.insert(includedPath);
     }
@@ -122,7 +120,10 @@ void wrapAuthoring()
 
   def("AuthorCollection",
       UsdUtilsAuthorCollection,
-      (arg("collectionName"), arg("usdPrim"), arg("pathsToInclude"), arg("pathsToExclude") = SdfPathSet()));
+      (arg("collectionName"),
+       arg("usdPrim"),
+       arg("pathsToInclude"),
+       arg("pathsToExclude") = SdfPathSet()));
 
   def("CreateCollections",
       _WrapUsdUtilsCreateCollections,

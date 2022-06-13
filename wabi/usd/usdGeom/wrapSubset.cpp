@@ -43,26 +43,30 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateElementTypeAttr(UsdGeomSubset &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateElementTypeAttr(UsdGeomSubset &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
   {
     return self.CreateElementTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                       writeSparsely);
   }
 
-  static UsdAttribute _CreateIndicesAttr(UsdGeomSubset &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateIndicesAttr(UsdGeomSubset &self,
+                                         object defaultVal,
+                                         bool writeSparsely)
   {
     return self.CreateIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
                                   writeSparsely);
   }
 
-  static UsdAttribute _CreateFamilyNameAttr(UsdGeomSubset &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateFamilyNameAttr(UsdGeomSubset &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
   {
     return self.CreateFamilyNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                      writeSparsely);
@@ -98,7 +102,9 @@ void wrapUsdGeomSubset()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -170,10 +176,12 @@ namespace
     typedef UsdGeomSubset This;
 
     // Register to and from vector conversions.
-    boost::python::to_python_converter<std::vector<This>, TfPySequenceToPython<std::vector<This>>>();
+    boost::python::to_python_converter<std::vector<This>,
+                                       TfPySequenceToPython<std::vector<This>>>();
 
-    TfPyContainerConversions::from_python_sequence<std::vector<This>,
-                                                   TfPyContainerConversions::variable_capacity_policy>();
+    TfPyContainerConversions::from_python_sequence<
+      std::vector<This>,
+      TfPyContainerConversions::variable_capacity_policy>();
 
     scope s_enum = _class;
     scope s = _class
@@ -223,9 +231,10 @@ namespace
                 .def("GetFamilyType", &This::GetFamilyType, (arg("geom"), arg("familyName")))
                 .staticmethod("GetFamilyType")
 
-                .def("GetUnassignedIndices",
-                     &This::GetUnassignedIndices,
-                     (arg("subsets"), arg("elementCount"), arg("time") = UsdTimeCode::EarliestTime()))
+                .def(
+                  "GetUnassignedIndices",
+                  &This::GetUnassignedIndices,
+                  (arg("subsets"), arg("elementCount"), arg("time") = UsdTimeCode::EarliestTime()))
                 .staticmethod("GetUnassignedIndices")
 
                 .def("ValidateFamily",

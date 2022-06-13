@@ -37,14 +37,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomBoundable::~UsdGeomBoundable()
-{}
+UsdGeomBoundable::~UsdGeomBoundable() {}
 
 /* static */
 UsdGeomBoundable UsdGeomBoundable::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomBoundable();
   }
@@ -82,7 +80,8 @@ UsdAttribute UsdGeomBoundable::GetExtentAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->extent);
 }
 
-UsdAttribute UsdGeomBoundable::CreateExtentAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomBoundable::CreateExtentAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->extent,
                                     SdfValueTypeNames->Float3Array,
@@ -111,8 +110,9 @@ const TfTokenVector &UsdGeomBoundable::GetSchemaAttributeNames(bool includeInher
   static TfTokenVector localNames = {
     UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomXformable::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

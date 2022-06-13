@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiRiLightFilterAPI::~UsdRiRiLightFilterAPI()
-{}
+UsdRiRiLightFilterAPI::~UsdRiRiLightFilterAPI() {}
 
 /* static */
 UsdRiRiLightFilterAPI UsdRiRiLightFilterAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRiLightFilterAPI();
   }
@@ -115,7 +113,8 @@ UsdAttribute UsdRiRiLightFilterAPI::GetRiInvertAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->riInvert);
 }
 
-UsdAttribute UsdRiRiLightFilterAPI::CreateRiInvertAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiRiLightFilterAPI::CreateRiInvertAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->riInvert,
                                     SdfValueTypeNames->Bool,
@@ -197,8 +196,9 @@ const TfTokenVector &UsdRiRiLightFilterAPI::GetSchemaAttributeNames(bool include
     UsdRiTokens->riDiffuse,
     UsdRiTokens->riSpecular,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdSchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdSchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

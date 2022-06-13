@@ -28,6 +28,7 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, (rpr));
 class HdRprNdrParserPlugin final : public NdrParserPlugin
 {
  public:
+
   NdrNodeUniquePtr Parse(const NdrNodeDiscoveryResult &discoveryResult) override
   {
     return std::make_unique<NdrNode>(

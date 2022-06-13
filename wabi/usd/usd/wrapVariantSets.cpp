@@ -61,7 +61,8 @@ namespace
     return result;
   }
 
-  static UsdPyEditContext _GetVariantEditContext(const UsdVariantSet &self, const SdfLayerHandle &layer)
+  static UsdPyEditContext _GetVariantEditContext(const UsdVariantSet &self,
+                                                 const SdfLayerHandle &layer)
   {
     return UsdPyEditContext(self.GetVariantEditContext(layer));
   }
@@ -74,14 +75,18 @@ void wrapUsdVariantSets()
     .def("AddVariant",
          &UsdVariantSet::AddVariant,
          (arg("variantName"), arg("position") = UsdListPositionBackOfPrependList))
-    .def("GetVariantNames", &UsdVariantSet::GetVariantNames, return_value_policy<TfPySequenceToList>())
+    .def("GetVariantNames",
+         &UsdVariantSet::GetVariantNames,
+         return_value_policy<TfPySequenceToList>())
     .def("HasAuthoredVariant", &UsdVariantSet::HasAuthoredVariant)
     .def("GetVariantSelection", &UsdVariantSet::GetVariantSelection)
     .def("HasAuthoredVariantSelection", _HasAuthoredVariantSelection)
     .def("SetVariantSelection", &UsdVariantSet::SetVariantSelection, arg("variantName"))
     .def("ClearVariantSelection", &UsdVariantSet::ClearVariantSelection)
     .def("BlockVariantSelection", &UsdVariantSet::BlockVariantSelection)
-    .def("GetVariantEditTarget", &UsdVariantSet::GetVariantEditTarget, arg("layer") = SdfLayerHandle())
+    .def("GetVariantEditTarget",
+         &UsdVariantSet::GetVariantEditTarget,
+         arg("layer") = SdfLayerHandle())
     .def("GetVariantEditContext", _GetVariantEditContext, arg("layer") = SdfLayerHandle())
     .def("GetPrim", &UsdVariantSet::GetPrim, return_value_policy<return_by_value>())
     .def("GetName", &UsdVariantSet::GetName, return_value_policy<return_by_value>())
@@ -96,7 +101,9 @@ void wrapUsdVariantSets()
     .def("GetVariantSet", &UsdVariantSets::GetVariantSet, arg("variantSetName"))
     .def("HasVariantSet", &UsdVariantSets::HasVariantSet, arg("variantSetName"))
     .def("GetVariantSelection", &UsdVariantSets::GetVariantSelection, arg("variantSetName"))
-    .def("SetSelection", &UsdVariantSets::SetSelection, (arg("variantSetName"), arg("variantName")))
+    .def("SetSelection",
+         &UsdVariantSets::SetSelection,
+         (arg("variantSetName"), arg("variantName")))
     .def("GetAllVariantSelections",
          &UsdVariantSets::GetAllVariantSelections,
          return_value_policy<TfPyMapToDictionary>());

@@ -40,14 +40,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsMassAPI));
 
 /* virtual */
-UsdPhysicsMassAPI::~UsdPhysicsMassAPI()
-{}
+UsdPhysicsMassAPI::~UsdPhysicsMassAPI() {}
 
 /* static */
 UsdPhysicsMassAPI UsdPhysicsMassAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsMassAPI();
   }
@@ -70,8 +68,7 @@ bool UsdPhysicsMassAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 /* static */
 UsdPhysicsMassAPI UsdPhysicsMassAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdPhysicsMassAPI>())
-  {
+  if (prim.ApplyAPI<UsdPhysicsMassAPI>()) {
     return UsdPhysicsMassAPI(prim);
   }
   return UsdPhysicsMassAPI();
@@ -102,7 +99,8 @@ UsdAttribute UsdPhysicsMassAPI::GetMassAttr() const
   return GetPrim().GetAttribute(UsdPhysicsTokens->physicsMass);
 }
 
-UsdAttribute UsdPhysicsMassAPI::CreateMassAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsMassAPI::CreateMassAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsMass,
                                     SdfValueTypeNames->Float,
@@ -117,7 +115,8 @@ UsdAttribute UsdPhysicsMassAPI::GetDensityAttr() const
   return GetPrim().GetAttribute(UsdPhysicsTokens->physicsDensity);
 }
 
-UsdAttribute UsdPhysicsMassAPI::CreateDensityAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsMassAPI::CreateDensityAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsDensity,
                                     SdfValueTypeNames->Float,
@@ -132,7 +131,8 @@ UsdAttribute UsdPhysicsMassAPI::GetCenterOfMassAttr() const
   return GetPrim().GetAttribute(UsdPhysicsTokens->physicsCenterOfMass);
 }
 
-UsdAttribute UsdPhysicsMassAPI::CreateCenterOfMassAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsMassAPI::CreateCenterOfMassAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsCenterOfMass,
                                     SdfValueTypeNames->Point3f,
@@ -197,8 +197,9 @@ const TfTokenVector &UsdPhysicsMassAPI::GetSchemaAttributeNames(bool includeInhe
     UsdPhysicsTokens->physicsDiagonalInertia,
     UsdPhysicsTokens->physicsPrincipalAxes,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

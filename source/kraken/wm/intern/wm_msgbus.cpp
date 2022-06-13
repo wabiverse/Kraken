@@ -66,18 +66,14 @@ WABI_NAMESPACE_BEGIN
  *  -----  The MsgBus Callback. ----- */
 
 
-MsgBusCallback::MsgBusCallback(wmNotifier *notice)
-  : ref(1),
-    notice(notice->notice),
-    note(notice)
+MsgBusCallback::MsgBusCallback(wmNotifier *notice) : ref(1), notice(notice->notice), note(notice)
 {}
 
 void MsgBusCallback::wmCOMM(const TfNotice &notice, MsgBus const &sender)
 {
   TF_DEBUG(KRAKEN_DEBUG_MSGBUS).Msg("MsgBus\n");
 
-  switch (note->category)
-  {
+  switch (note->category) {
     case (NC_WM):
       TF_DEBUG(KRAKEN_DEBUG_MSGBUS).Msg("  Category: WindowManager\n");
       break;
@@ -184,11 +180,7 @@ void wmNotifier::Push()
 }
 
 
-MsgBusCallback::MsgBusCallback(wmOperatorType *ot)
-  : ref(1),
-    notice(ot->notice),
-    op({ot})
-{}
+MsgBusCallback::MsgBusCallback(wmOperatorType *ot) : ref(1), notice(ot->notice), op({ot}) {}
 
 void MsgBusCallback::OperatorCOMM(const TfNotice &notice, MsgBus const &sender)
 {

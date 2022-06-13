@@ -65,6 +65,7 @@ WABI_NAMESPACE_BEGIN
 class GarchGLPlatformDebugContextPrivate
 {
  public:
+
   GarchGLPlatformDebugContextPrivate(int majorVersion,
                                      int minorVersion,
                                      bool coreProfile,
@@ -100,8 +101,7 @@ GarchGLPlatformDebugContextPrivate::GarchGLPlatformDebugContextPrivate(int major
   GLXFBConfig *configs = NULL;
   int configCount = 0;
   configs = glXChooseFBConfig(shareDisplay, screen, configSpec, &configCount);
-  if (!TF_VERIFY(configCount > 0))
-  {
+  if (!TF_VERIFY(configCount > 0)) {
     return;
   }
 
@@ -125,17 +125,15 @@ GarchGLPlatformDebugContextPrivate::GarchGLPlatformDebugContextPrivate(int major
     glXGetProcAddressARB((const GLubyte *)"glXCreateContextAttribsARB");
 
   // Create a GL context with the requested capabilities.
-  if (createContextAttribs)
-  {
-    _ctx = (*createContextAttribs)(shareDisplay, configs[0], shareContext, directRendering, attribs);
-  } else
-  {
+  if (createContextAttribs) {
+    _ctx =
+      (*createContextAttribs)(shareDisplay, configs[0], shareContext, directRendering, attribs);
+  } else {
     TF_WARN("Unable to create GL debug context.");
     XVisualInfo *vis = glXGetVisualFromFBConfig(shareDisplay, configs[0]);
     _ctx = glXCreateContext(shareDisplay, vis, shareContext, directRendering);
   }
-  if (!TF_VERIFY(_ctx))
-  {
+  if (!TF_VERIFY(_ctx)) {
     return;
   }
 
@@ -144,8 +142,7 @@ GarchGLPlatformDebugContextPrivate::GarchGLPlatformDebugContextPrivate(int major
 
 GarchGLPlatformDebugContextPrivate::~GarchGLPlatformDebugContextPrivate()
 {
-  if (_dpy && _ctx)
-  {
+  if (_dpy && _ctx) {
     glXDestroyContext(_dpy, _ctx);
   }
 }
@@ -174,16 +171,15 @@ WABI_NAMESPACE_BEGIN
 class GarchGLPlatformDebugContextPrivate
 {
  public:
+
   GarchGLPlatformDebugContextPrivate(int majorVersion,
                                      int minorVersion,
                                      bool coreProfile,
                                      bool directRendering)
   {}
-  ~GarchGLPlatformDebugContextPrivate()
-  {}
+  ~GarchGLPlatformDebugContextPrivate() {}
 
-  void MakeCurrent()
-  {}
+  void MakeCurrent() {}
 };
 
 void *GarchSelectCoreProfileMacVisual();  // extern obj-c
@@ -202,16 +198,15 @@ WABI_NAMESPACE_BEGIN
 class GarchGLPlatformDebugContextPrivate
 {
  public:
+
   GarchGLPlatformDebugContextPrivate(int majorVersion,
                                      int minorVersion,
                                      bool coreProfile,
                                      bool directRendering)
   {}
-  ~GarchGLPlatformDebugContextPrivate()
-  {}
+  ~GarchGLPlatformDebugContextPrivate() {}
 
-  void MakeCurrent()
-  {}
+  void MakeCurrent() {}
 };
 
 void *GarchSelectCoreProfileMacVisual()
@@ -234,12 +229,13 @@ GarchGLPlatformDebugContext::GarchGLPlatformDebugContext(int majorVersion,
   : _coreProfile(coreProfile)
 
 {
-  if (!GarchGLPlatformDebugContext::IsEnabledDebugOutput())
-  {
+  if (!GarchGLPlatformDebugContext::IsEnabledDebugOutput()) {
     return;
   }
-  _private.reset(
-    new GarchGLPlatformDebugContextPrivate(majorVersion, minorVersion, coreProfile, directRendering));
+  _private.reset(new GarchGLPlatformDebugContextPrivate(majorVersion,
+                                                        minorVersion,
+                                                        coreProfile,
+                                                        directRendering));
 }
 
 GarchGLPlatformDebugContext::~GarchGLPlatformDebugContext()
@@ -251,13 +247,11 @@ GarchGLPlatformDebugContext::~GarchGLPlatformDebugContext()
 void GarchGLPlatformDebugContext::makeCurrent()
 {
   // note: if not enabled, returns without making context current.
-  if (!GarchGLPlatformDebugContext::IsEnabledDebugOutput())
-  {
+  if (!GarchGLPlatformDebugContext::IsEnabledDebugOutput()) {
     return;
   }
 
-  if (!TF_VERIFY(_private))
-  {
+  if (!TF_VERIFY(_private)) {
     return;
   }
 
@@ -266,11 +260,9 @@ void GarchGLPlatformDebugContext::makeCurrent()
 
 void *GarchGLPlatformDebugContext::chooseMacVisual()
 {
-  if (_coreProfile || GarchGLPlatformDebugContext::IsEnabledCoreProfile())
-  {
+  if (_coreProfile || GarchGLPlatformDebugContext::IsEnabledCoreProfile()) {
     return GarchSelectCoreProfileMacVisual();
-  } else
-  {
+  } else {
     return nullptr;
   }
   return nullptr;

@@ -59,8 +59,8 @@ HioImageSharedPtr HioImage::OpenForReading(std::string const &filename,
   HioImageRegistry &registry = HioImageRegistry::GetInstance();
 
   HioImageSharedPtr image = registry._ConstructImage(filename);
-  if (!image || !image->_OpenForReading(filename, subimage, mip, sourceColorSpace, suppressErrors))
-  {
+  if (!image ||
+      !image->_OpenForReading(filename, subimage, mip, sourceColorSpace, suppressErrors)) {
     return HioImageSharedPtr();
   }
 
@@ -73,8 +73,7 @@ HioImageSharedPtr HioImage::OpenForWriting(std::string const &filename)
   HioImageRegistry &registry = HioImageRegistry::GetInstance();
 
   HioImageSharedPtr image = registry._ConstructImage(filename);
-  if (!image || !image->_OpenForWriting(filename))
-  {
+  if (!image || !image->_OpenForWriting(filename)) {
     return HioImageSharedPtr();
   }
 

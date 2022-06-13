@@ -70,16 +70,16 @@ HdRprAovRegistry::HdRprAovRegistry()
          RPR_AOV_CRYPTOMATTE_OBJ0,
          RPR_AOV_CRYPTOMATTE_OBJ1,
          RPR_AOV_CRYPTOMATTE_OBJ2,
-       })
-  {
+       }) {
     m_aovDescriptors[rprAovId] = HdRprAovDescriptor(rprAovId);
   }
 
   // singlesampled AOVs
-  m_aovDescriptors[RPR_AOV_DEPTH] = HdRprAovDescriptor(RPR_AOV_DEPTH,
-                                                       false,
-                                                       HdFormatFloat32,
-                                                       GfVec4f(std::numeric_limits<float>::infinity()));
+  m_aovDescriptors[RPR_AOV_DEPTH] = HdRprAovDescriptor(
+    RPR_AOV_DEPTH,
+    false,
+    HdFormatFloat32,
+    GfVec4f(std::numeric_limits<float>::infinity()));
   m_aovDescriptors[RPR_AOV_UV] = HdRprAovDescriptor(RPR_AOV_UV, false, HdFormatFloat32Vec3);
   m_aovDescriptors[RPR_AOV_SHADING_NORMAL] = HdRprAovDescriptor(RPR_AOV_SHADING_NORMAL,
                                                                 false,
@@ -100,15 +100,17 @@ HdRprAovRegistry::HdRprAovRegistry()
   m_aovDescriptors[RPR_AOV_WORLD_COORDINATE] = HdRprAovDescriptor(RPR_AOV_WORLD_COORDINATE, false);
   m_aovDescriptors[RPR_AOV_BACKGROUND] = HdRprAovDescriptor(RPR_AOV_BACKGROUND, false);
   m_aovDescriptors[RPR_AOV_VELOCITY] = HdRprAovDescriptor(RPR_AOV_VELOCITY, false);
-  m_aovDescriptors[RPR_AOV_VIEW_SHADING_NORMAL] = HdRprAovDescriptor(RPR_AOV_VIEW_SHADING_NORMAL, false);
+  m_aovDescriptors[RPR_AOV_VIEW_SHADING_NORMAL] = HdRprAovDescriptor(RPR_AOV_VIEW_SHADING_NORMAL,
+                                                                     false);
   m_aovDescriptors[RPR_AOV_CAMERA_NORMAL] = HdRprAovDescriptor(RPR_AOV_CAMERA_NORMAL, false);
 
   m_computedAovDescriptors.resize(kComputedAovsCount);
-  m_computedAovDescriptors[kNdcDepth] = HdRprAovDescriptor(kNdcDepth,
-                                                           false,
-                                                           HdFormatFloat32,
-                                                           GfVec4f(std::numeric_limits<float>::infinity()),
-                                                           true);
+  m_computedAovDescriptors[kNdcDepth] = HdRprAovDescriptor(
+    kNdcDepth,
+    false,
+    HdFormatFloat32,
+    GfVec4f(std::numeric_limits<float>::infinity()),
+    true);
   m_computedAovDescriptors[kColorAlpha] =
     HdRprAovDescriptor(kColorAlpha, true, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
   m_computedAovDescriptors[kMaterialIdMask] =
@@ -119,9 +121,9 @@ HdRprAovRegistry::HdRprAovRegistry()
     HdRprAovDescriptor(kObjectGroupIdMask, false, HdFormatFloat32Vec4, GfVec4f(0.0f), true);
 
   auto addAovNameLookup = [this](TfToken const &name, HdRprAovDescriptor const &descriptor) {
-    auto status = m_aovNameLookup.emplace(name, AovNameLookupValue(descriptor.id, descriptor.computed));
-    if (!status.second)
-    {
+    auto status = m_aovNameLookup.emplace(name,
+                                          AovNameLookupValue(descriptor.id, descriptor.computed));
+    if (!status.second) {
       TF_CODING_ERROR("AOV lookup name should be unique");
     }
   };
@@ -138,8 +140,10 @@ HdRprAovRegistry::HdRprAovRegistry()
   addAovNameLookup(HdRprAovTokens->variance, m_aovDescriptors[RPR_AOV_VARIANCE]);
   addAovNameLookup(HdRprAovTokens->opacity, m_aovDescriptors[RPR_AOV_OPACITY]);
   addAovNameLookup(HdRprAovTokens->emission, m_aovDescriptors[RPR_AOV_EMISSION]);
-  addAovNameLookup(HdRprAovTokens->directIllumination, m_aovDescriptors[RPR_AOV_DIRECT_ILLUMINATION]);
-  addAovNameLookup(HdRprAovTokens->indirectIllumination, m_aovDescriptors[RPR_AOV_INDIRECT_ILLUMINATION]);
+  addAovNameLookup(HdRprAovTokens->directIllumination,
+                   m_aovDescriptors[RPR_AOV_DIRECT_ILLUMINATION]);
+  addAovNameLookup(HdRprAovTokens->indirectIllumination,
+                   m_aovDescriptors[RPR_AOV_INDIRECT_ILLUMINATION]);
   addAovNameLookup(HdRprAovTokens->ao, m_aovDescriptors[RPR_AOV_AO]);
   addAovNameLookup(HdRprAovTokens->directDiffuse, m_aovDescriptors[RPR_AOV_DIRECT_DIFFUSE]);
   addAovNameLookup(HdRprAovTokens->directReflect, m_aovDescriptors[RPR_AOV_DIRECT_REFLECT]);
@@ -158,10 +162,12 @@ HdRprAovRegistry::HdRprAovRegistry()
   addAovNameLookup(HdRprAovTokens->worldCoordinate, m_aovDescriptors[RPR_AOV_WORLD_COORDINATE]);
   addAovNameLookup(HdRprAovTokens->primvarsSt, m_aovDescriptors[RPR_AOV_UV]);
   addAovNameLookup(HdRprAovTokens->shadowCatcher, m_aovDescriptors[RPR_AOV_SHADOW_CATCHER]);
-  addAovNameLookup(HdRprAovTokens->reflectionCatcher, m_aovDescriptors[RPR_AOV_REFLECTION_CATCHER]);
+  addAovNameLookup(HdRprAovTokens->reflectionCatcher,
+                   m_aovDescriptors[RPR_AOV_REFLECTION_CATCHER]);
   addAovNameLookup(HdRprAovTokens->background, m_aovDescriptors[RPR_AOV_BACKGROUND]);
   addAovNameLookup(HdRprAovTokens->velocity, m_aovDescriptors[RPR_AOV_VELOCITY]);
-  addAovNameLookup(HdRprAovTokens->viewShadingNormal, m_aovDescriptors[RPR_AOV_VIEW_SHADING_NORMAL]);
+  addAovNameLookup(HdRprAovTokens->viewShadingNormal,
+                   m_aovDescriptors[RPR_AOV_VIEW_SHADING_NORMAL]);
   addAovNameLookup(HdRprAovTokens->lpe0, m_aovDescriptors[RPR_AOV_LPE_0]);
   addAovNameLookup(HdRprAovTokens->lpe1, m_aovDescriptors[RPR_AOV_LPE_1]);
   addAovNameLookup(HdRprAovTokens->lpe2, m_aovDescriptors[RPR_AOV_LPE_2]);
@@ -180,14 +186,14 @@ HdRprAovRegistry::HdRprAovRegistry()
   addAovNameLookup(HdRprAovTokens->cryptomatteObj2, m_aovDescriptors[RPR_AOV_CRYPTOMATTE_OBJ2]);
   addAovNameLookup(HdRprAovTokens->materialIdMask, m_computedAovDescriptors[kMaterialIdMask]);
   addAovNameLookup(HdRprAovTokens->objectIdMask, m_computedAovDescriptors[kObjectIdMask]);
-  addAovNameLookup(HdRprAovTokens->objectGroupIdMask, m_computedAovDescriptors[kObjectGroupIdMask]);
+  addAovNameLookup(HdRprAovTokens->objectGroupIdMask,
+                   m_computedAovDescriptors[kObjectGroupIdMask]);
 }
 
 HdRprAovDescriptor const &HdRprAovRegistry::GetAovDesc(TfToken const &name)
 {
   auto it = m_aovNameLookup.find(name);
-  if (it == m_aovNameLookup.end())
-  {
+  if (it == m_aovNameLookup.end()) {
     return kInvalidDesc;
   }
 
@@ -197,17 +203,14 @@ HdRprAovDescriptor const &HdRprAovRegistry::GetAovDesc(TfToken const &name)
 HdRprAovDescriptor const &HdRprAovRegistry::GetAovDesc(uint32_t id, bool computed)
 {
   size_t descsSize = computed ? m_computedAovDescriptors.size() : m_aovDescriptors.size();
-  if (id >= descsSize)
-  {
+  if (id >= descsSize) {
     TF_RUNTIME_ERROR("Invalid arguments: %#x (computed=%d)", id, int(computed));
     return kInvalidDesc;
   }
 
-  if (computed)
-  {
+  if (computed) {
     return m_computedAovDescriptors[id];
-  } else
-  {
+  } else {
     return m_aovDescriptors[id];
   }
 }

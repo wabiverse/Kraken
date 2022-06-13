@@ -99,11 +99,12 @@ void SHA1_Transform(uint32_t state[5], const uint8_t buffer[64]);
 #ifdef WORDS_BIGENDIAN
 #  define blk0(i) block->l[i]
 #else
-#  define blk0(i) (block->l[i] = (rol(block->l[i], 24) & 0xFF00FF00) | (rol(block->l[i], 8) & 0x00FF00FF))
+#  define blk0(i) \
+    (block->l[i] = (rol(block->l[i], 24) & 0xFF00FF00) | (rol(block->l[i], 8) & 0x00FF00FF))
 #endif
-#define blk(i)                                                                                        \
-  (block->l[i & 15] = rol(block->l[(i + 13) & 15] ^ block->l[(i + 8) & 15] ^ block->l[(i + 2) & 15] ^ \
-                            block->l[i & 15],                                                         \
+#define blk(i)                                                               \
+  (block->l[i & 15] = rol(block->l[(i + 13) & 15] ^ block->l[(i + 8) & 15] ^ \
+                            block->l[(i + 2) & 15] ^ block->l[i & 15],       \
                           1))
 
 /* (R0+R1), R2, R3, R4 are the different operations used in SHA1 */
@@ -260,13 +261,11 @@ void SHA1_Update(SHA1_CTX *context, const uint8_t *data, const size_t len)
 
   context->count[1] += (len >> 29);
 
-  if ((j + len) > 63)
-  {
+  if ((j + len) > 63) {
     memcpy(&context->buffer[j], data, (i = 64 - j));
     SHA1_Transform(context->state, context->buffer);
 
-    for (; i + 63 < len; i += 64)
-    {
+    for (; i + 63 < len; i += 64) {
       SHA1_Transform(context->state, data + i);
     }
 
@@ -282,19 +281,16 @@ void SHA1_Final(SHA1_CTX *context, uint8_t digest[SHA1_DIGEST_SIZE])
   uint32_t i;
   uint8_t finalcount[8];
 
-  for (i = 0; i < 8; i++)
-  {
+  for (i = 0; i < 8; i++) {
     finalcount[i] = (unsigned char)((context->count[(i >= 4 ? 0 : 1)] >> ((3 - (i & 3)) * 8)) &
                                     255); /* Endian independent */
   }
   SHA1_Update(context, (uint8_t *)"\200", 1);
-  while ((context->count[0] & 504) != 448)
-  {
+  while ((context->count[0] & 504) != 448) {
     SHA1_Update(context, (uint8_t *)"\0", 1);
   }
   SHA1_Update(context, finalcount, 8); /* Should cause a SHA1_Transform() */
-  for (i = 0; i < SHA1_DIGEST_SIZE; i++)
-  {
+  for (i = 0; i < SHA1_DIGEST_SIZE; i++) {
     digest[i] = (uint8_t)((context->state[i >> 2] >> ((3 - (i & 3)) * 8)) & 255);
   }
 
@@ -340,10 +336,8 @@ void digest_to_hex(const uint8_t digest[SHA1_DIGEST_SIZE], char *output)
   int i, j;
   char *c = output;
 
-  for (i = 0; i < SHA1_DIGEST_SIZE / 4; i++)
-  {
-    for (j = 0; j < 4; j++)
-    {
+  for (i = 0; i < SHA1_DIGEST_SIZE / 4; i++) {
+    for (j = 0; j < 4; j++) {
       sprintf(c, "%02X", digest[i * 4 + j]);
       c += 2;
     }
@@ -362,15 +356,13 @@ int main(int argc, char **argv)
 
   fprintf(stdout, "verifying SHA-1 implementation... ");
 
-  for (k = 0; k < 2; k++)
-  {
+  for (k = 0; k < 2; k++) {
     SHA1_Init(&context);
     SHA1_Update(&context, (uint8_t *)test_data[k], strlen(test_data[k]));
     SHA1_Final(&context, digest);
     digest_to_hex(digest, output);
 
-    if (strcmp(output, test_results[k]))
-    {
+    if (strcmp(output, test_results[k])) {
       fprintf(stdout, "FAIL\n");
       fprintf(stderr, "* hash of \"%s\" incorrect:\n", test_data[k]);
       fprintf(stderr, "\t%s returned\n", output);
@@ -384,8 +376,7 @@ int main(int argc, char **argv)
     SHA1_Update(&context, (uint8_t *)"a", 1);
   SHA1_Final(&context, digest);
   digest_to_hex(digest, output);
-  if (strcmp(output, test_results[2]))
-  {
+  if (strcmp(output, test_results[2])) {
     fprintf(stdout, "FAIL\n");
     fprintf(stderr, "* hash of \"%s\" incorrect:\n", test_data[2]);
     fprintf(stderr, "\t%s returned\n", output);

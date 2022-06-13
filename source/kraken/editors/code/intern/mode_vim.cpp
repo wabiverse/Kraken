@@ -67,12 +67,9 @@
 namespace Zep
 {
 
-  ZepMode_Vim::ZepMode_Vim(ZepEditor &editor)
-    : ZepMode(editor)
-  {}
+  ZepMode_Vim::ZepMode_Vim(ZepEditor &editor) : ZepMode(editor) {}
 
-  ZepMode_Vim::~ZepMode_Vim()
-  {}
+  ZepMode_Vim::~ZepMode_Vim() {}
 
   void ZepMode_Vim::AddOverStrikeMaps()
   {
@@ -94,13 +91,11 @@ namespace Zep
     AddKeyMapWithCountRegisters({&m_visualMap}, {"iw"}, id_VisualSelectInnerWord);
   }
 
-  void ZepMode_Vim::AddPasteMaps()
-  {}
+  void ZepMode_Vim::AddPasteMaps() {}
 
   void ZepMode_Vim::Init()
   {
-    for (int i = 0; i <= 9; i++)
-    {
+    for (int i = 0; i <= 9; i++) {
       GetEditor().SetRegister('0' + (const char)i, "");
     }
     GetEditor().SetRegister('"', "");
@@ -199,9 +194,8 @@ namespace Zep
     // put the j in.
     // We can do better than this and fix the keymapper to handle timed key events.
     // This is an easier fix for now
-    if (timer_get_elapsed_seconds(m_lastKeyPressTimer) > .25f && m_currentMode == EditorMode::Insert &&
-        m_currentCommand == "j")
-    {
+    if (timer_get_elapsed_seconds(m_lastKeyPressTimer) > .25f &&
+        m_currentMode == EditorMode::Insert && m_currentCommand == "j") {
       auto cmd = std::make_shared<ZepCommand_Insert>(window.GetBuffer(),
                                                      window.GetBufferCursor(),
                                                      m_currentCommand);

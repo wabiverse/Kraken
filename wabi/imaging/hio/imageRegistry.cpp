@@ -60,8 +60,7 @@ HioImageRegistry &HioImageRegistry::GetInstance()
   return TfSingleton<HioImageRegistry>::GetInstance();
 }
 
-HioImageRegistry::HioImageRegistry()
-  : _typeMap(std::make_unique<HioRankedTypeMap>())
+HioImageRegistry::HioImageRegistry() : _typeMap(std::make_unique<HioRankedTypeMap>())
 {
   // Register all image types using plugin metadata.
   _typeMap->Add(TfType::Find<HioImage>(),
@@ -79,8 +78,7 @@ HioImageSharedPtr HioImageRegistry::_ConstructImage(std::string const &filename)
 
   TfType const &pluginType = _typeMap->Find(fileExtension);
 
-  if (!pluginType)
-  {
+  if (!pluginType) {
     // Unknown prim type.
     TF_DEBUG(HIO_DEBUG_TEXTURE_IMAGE_PLUGINS)
       .Msg("[PluginLoad] Unknown image type '%s' for file '%s'\n",
@@ -91,8 +89,7 @@ HioImageSharedPtr HioImageRegistry::_ConstructImage(std::string const &filename)
 
   PlugRegistry &plugReg = PlugRegistry::GetInstance();
   PlugPluginPtr const plugin = plugReg.GetPluginForType(pluginType);
-  if (!plugin || !plugin->Load())
-  {
+  if (!plugin || !plugin->Load()) {
     TF_CODING_ERROR(
       "[PluginLoad] PlugPlugin could not be loaded for "
       "TfType '%s'\n",
@@ -101,8 +98,7 @@ HioImageSharedPtr HioImageRegistry::_ConstructImage(std::string const &filename)
   }
 
   HioImageFactoryBase *const factory = pluginType.GetFactory<HioImageFactoryBase>();
-  if (!factory)
-  {
+  if (!factory) {
     TF_CODING_ERROR(
       "[PluginLoad] Cannot manufacture type '%s' "
       "for image type '%s' for file '%s'\n",
@@ -114,8 +110,7 @@ HioImageSharedPtr HioImageRegistry::_ConstructImage(std::string const &filename)
   }
 
   HioImageSharedPtr const instance = factory->New();
-  if (!instance)
-  {
+  if (!instance) {
     TF_CODING_ERROR(
       "[PluginLoad] Cannot construct instance of type '%s' "
       "for image type '%s' for file '%s'\n",

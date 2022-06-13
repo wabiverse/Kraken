@@ -56,13 +56,10 @@ namespace
   static string __repr__(const UsdTimeCode &self)
   {
     string tail = ".Default()";
-    if (self.IsNumeric())
-    {
-      if (self.IsEarliestTime())
-      {
+    if (self.IsNumeric()) {
+      if (self.IsEarliestTime()) {
         tail = ".EarliestTime()";
-      } else
-      {
+      } else {
         tail = self.GetValue() == 0.0 ? string("()") :
                                         TfStringPrintf("(%s)", TfPyRepr(self.GetValue()).c_str());
       }
@@ -85,7 +82,9 @@ void wrapUsdTimeCode()
               .def("Default", &UsdTimeCode::Default)
               .staticmethod("Default")
 
-              .def("SafeStep", &UsdTimeCode::SafeStep, (arg("maxValue") = 1e6, arg("maxCompression") = 10.0))
+              .def("SafeStep",
+                   &UsdTimeCode::SafeStep,
+                   (arg("maxValue") = 1e6, arg("maxCompression") = 10.0))
               .staticmethod("SafeStep")
 
               .def("IsEarliestTime", &UsdTimeCode::IsEarliestTime)

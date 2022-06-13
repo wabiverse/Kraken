@@ -73,13 +73,10 @@ void UsdAppUtilsFrameRecorder::SetIncludedPurposes(const TfTokenVector &purposes
   TfTokenVector allPurposes = {UsdGeomTokens->render, UsdGeomTokens->proxy, UsdGeomTokens->guide};
   _purposes = {UsdGeomTokens->default_};
 
-  for (TfToken const &p : purposes)
-  {
-    if (_HasPurpose(allPurposes, p))
-    {
+  for (TfToken const &p : purposes) {
+    if (_HasPurpose(allPurposes, p)) {
       _purposes.push_back(p);
-    } else if (p != UsdGeomTokens->default_)
-    {
+    } else if (p != UsdGeomTokens->default_) {
       // We allow "default" to be specified even though
       // it's unnecessary
       TF_CODING_ERROR("Unrecognized purpose value '%s'.", p.GetText());
@@ -103,11 +100,9 @@ static GfCamera _ComputeCameraToFrameStage(const UsdStagePtr &stage,
   TfToken upAxis = UsdGeomGetStageUpAxis(stage);
   // Find corner of bbox in the focal plane.
   GfVec2d plane_corner;
-  if (upAxis == UsdGeomTokens->y)
-  {
+  if (upAxis == UsdGeomTokens->y) {
     plane_corner = GfVec2d(dim[0], dim[1]) / 2;
-  } else
-  {
+  } else {
     plane_corner = GfVec2d(dim[0], dim[2]) / 2;
   }
   float plane_radius = sqrt(GfDot(plane_corner, plane_corner));
@@ -115,20 +110,16 @@ static GfCamera _ComputeCameraToFrameStage(const UsdStagePtr &stage,
   float half_fov = gfCamera.GetFieldOfView(GfCamera::FOVHorizontal) / 2.0;
   float distance = plane_radius / tan(GfDegreesToRadians(half_fov));
   // Back up to frame the front face of the bbox.
-  if (upAxis == UsdGeomTokens->y)
-  {
+  if (upAxis == UsdGeomTokens->y) {
     distance += dim[2] / 2;
-  } else
-  {
+  } else {
     distance += dim[1] / 2;
   }
   // Compute local-to-world transform for camera filmback.
   GfMatrix4d xf;
-  if (upAxis == UsdGeomTokens->y)
-  {
+  if (upAxis == UsdGeomTokens->y) {
     xf.SetTranslate(center + GfVec3d(0, 0, distance));
-  } else
-  {
+  } else {
     xf.SetRotate(GfRotation(GfVec3d(1, 0, 0), 90));
     xf.SetTranslateOnly(center + GfVec3d(0, -distance, 0));
   }
@@ -174,13 +165,11 @@ static bool _WriteTextureToFile(HgiTextureDesc const &textureDesc,
   const size_t height = textureDesc.dimensions[1];
   const size_t dataByteSize = width * height * formatByteSize;
 
-  if (buffer.size() < dataByteSize)
-  {
+  if (buffer.size() < dataByteSize) {
     return false;
   }
 
-  if (textureDesc.format < 0 || textureDesc.format >= HgiFormatCount)
-  {
+  if (textureDesc.format < 0 || textureDesc.format >= HgiFormatCount) {
     return false;
   }
 
@@ -198,8 +187,7 @@ static bool _WriteTextureToFile(HgiTextureDesc const &textureDesc,
     HioImageSharedPtr const image = HioImage::OpenForWriting(filename);
     const bool writeSuccess = image && image->Write(storage, metadata);
 
-    if (!writeSuccess)
-    {
+    if (!writeSuccess) {
       TF_RUNTIME_ERROR("Failed to write image to %s", filename.c_str());
       return false;
     }
@@ -213,14 +201,12 @@ bool UsdAppUtilsFrameRecorder::Record(const UsdStagePtr &stage,
                                       const UsdTimeCode timeCode,
                                       const std::string &outputImagePath)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return false;
   }
 
-  if (outputImagePath.empty())
-  {
+  if (outputImagePath.empty()) {
     TF_CODING_ERROR("Invalid empty output image path");
     return false;
   }
@@ -234,16 +220,13 @@ bool UsdAppUtilsFrameRecorder::Record(const UsdStagePtr &stage,
   // XXX: If the camera's aspect ratio is animated, then a range of calls to
   // this function may generate a sequence of images with different sizes.
   GfCamera gfCamera;
-  if (usdCamera)
-  {
+  if (usdCamera) {
     gfCamera = usdCamera.GetCamera(timeCode);
-  } else
-  {
+  } else {
     gfCamera = _ComputeCameraToFrameStage(stage, timeCode, _purposes);
   }
   float aspectRatio = gfCamera.GetAspectRatio();
-  if (GfIsClose(aspectRatio, 0.0f, 1e-4))
-  {
+  if (GfIsClose(aspectRatio, 0.0f, 1e-4)) {
     aspectRatio = 1.0f;
   }
 
@@ -290,16 +273,14 @@ bool UsdAppUtilsFrameRecorder::Record(const UsdStagePtr &stage,
   const GLfloat CLEAR_DEPTH[1] = {1.0f};
   const UsdPrim &pseudoRoot = stage->GetPseudoRoot();
 
-  do
-  {
+  do {
     glClearBufferfv(GL_COLOR, 0, CLEAR_COLOR.data());
     glClearBufferfv(GL_DEPTH, 0, CLEAR_DEPTH);
     _imagingEngine.Render(pseudoRoot, renderParams);
   } while (!_imagingEngine.IsConverged());
 
   HgiTextureHandle handle = _imagingEngine.GetAovTexture(HdAovTokens->color);
-  if (!handle)
-  {
+  if (!handle) {
     TF_CODING_ERROR("No color presentation texture");
     return false;
   }

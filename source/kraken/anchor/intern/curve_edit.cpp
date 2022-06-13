@@ -63,16 +63,13 @@ namespace AnchorCurveEdit
 
     float xx, yy;
 
-    if (param < 0.f)
-    {
+    if (param < 0.f) {
       xx = x1;
       yy = y1;
-    } else if (param > 1.f)
-    {
+    } else if (param > 1.f) {
       xx = x2;
       yy = y2;
-    } else
-    {
+    } else {
       xx = x1 + param * C;
       yy = y1 + param * D;
     }
@@ -91,18 +88,19 @@ namespace AnchorCurveEdit
     int ret = 0;
     AnchorIO &io = ANCHOR::GetIO();
 
-    static const GfVec2f localOffsets[4] = {GfVec2f(1, 0), GfVec2f(0, 1), GfVec2f(-1, 0), GfVec2f(0, -1)};
+    static const GfVec2f localOffsets[4] = {GfVec2f(1, 0),
+                                            GfVec2f(0, 1),
+                                            GfVec2f(-1, 0),
+                                            GfVec2f(0, -1)};
     GfVec2f offsets[4];
-    for (int i = 0; i < 4; i++)
-    {
+    for (int i = 0; i < 4; i++) {
       offsets[i] = GfVec2f(pos * size) + localOffsets[i] * 4.5f + offset;
     }
 
     const GfVec2f center = GfVec2f(pos * size) + offset;
     const AnchorBBox anchor(center - GfVec2f(5, 5), center + GfVec2f(5, 5));
     draw_list->AddConvexPolyFilled(offsets, 4, 0xFF000000);
-    if (anchor.Contains(io.MousePos))
-    {
+    if (anchor.Contains(io.MousePos)) {
       ret = 1;
       if (io.MouseDown[0])
         ret = 2;
@@ -149,10 +147,8 @@ namespace AnchorCurveEdit
     GfVec2f &d_max = delegate.GetMax();
 
     // handle zoom and VScroll
-    if (container.Contains(io.MousePos))
-    {
-      if (fabsf(io.MouseWheel) > FLT_EPSILON)
-      {
+    if (container.Contains(io.MousePos)) {
+      if (fabsf(io.MouseWheel) > FLT_EPSILON) {
         const float r = (io.MousePos[1] - offset[1]) / ssize[1];
         float ratioY = AnchorLerp(d_min[1], d_max[1], r);
         auto scaleValue = [&](float v) {
@@ -164,8 +160,7 @@ namespace AnchorCurveEdit
         d_min[1] = scaleValue(d_min[1]);
         d_max[1] = scaleValue(d_max[1]);
       }
-      if (!scrollingV && ANCHOR::IsMouseDown(2))
-      {
+      if (!scrollingV && ANCHOR::IsMouseDown(2)) {
         scrollingV = true;
       }
     }
@@ -175,8 +170,7 @@ namespace AnchorCurveEdit
     const GfVec2f sizeOfPixel = viewSize / 1.0;
     const size_t curveCount = delegate.GetCurveCount();
 
-    if (scrollingV)
-    {
+    if (scrollingV) {
       float deltaH = io.MouseDelta[1] * range[1] * sizeOfPixel[1];
       d_min[1] -= deltaH;
       d_max[1] -= deltaH;
@@ -186,8 +180,12 @@ namespace AnchorCurveEdit
 
     draw_list->AddRectFilled(offset, offset + ssize, delegate.GetBackgroundColor());
 
-    auto pointToRange = [&](GfVec2f pt) { return (pt - d_min) / range; };
-    auto rangeToPoint = [&](GfVec2f pt) { return GfVec2f(pt * range) + d_min; };
+    auto pointToRange = [&](GfVec2f pt) {
+      return (pt - d_min) / range;
+    };
+    auto rangeToPoint = [&](GfVec2f pt) {
+      return GfVec2f(pt * range) + d_min;
+    };
 
     draw_list->AddLine(GfVec2f(GfVec2f(-1.f, -d_min[1] / range[1]) * viewSize) + offset,
                        GfVec2f(GfVec2f(1.f, -d_min[1] / range[1]) * viewSize) + offset,
@@ -201,14 +199,12 @@ namespace AnchorCurveEdit
     for (size_t c = 0; c < curveCount; c++)
       curvesIndex[c] = int(c);
     int highLightedCurveIndex = -1;
-    if (overCurve != -1 && curveCount)
-    {
+    if (overCurve != -1 && curveCount) {
       AnchorSwap(curvesIndex[overCurve], curvesIndex[curveCount - 1]);
       highLightedCurveIndex = overCurve;
     }
 
-    for (size_t cur = 0; cur < curveCount; cur++)
-    {
+    for (size_t cur = 0; cur < curveCount; cur++) {
       int c = curvesIndex[cur];
       if (!delegate.IsVisible(c))
         continue;
@@ -223,17 +219,14 @@ namespace AnchorCurveEdit
       if ((c == highLightedCurveIndex && selection.empty() && !selectingQuad) || movingCurve == c)
         curveColor = 0xFFFFFFFF;
 
-      for (size_t p = 0; p < ptCount - 1; p++)
-      {
+      for (size_t p = 0; p < ptCount - 1; p++) {
         const GfVec2f p1 = pointToRange(pts[p]);
         const GfVec2f p2 = pointToRange(pts[p + 1]);
 
-        if (curveType == CurveSmooth || curveType == CurveLinear)
-        {
+        if (curveType == CurveSmooth || curveType == CurveLinear) {
           size_t subStepCount = (curveType == CurveSmooth) ? 20 : 2;
           float step = 1.f / float(subStepCount - 1);
-          for (size_t substep = 0; substep < subStepCount - 1; substep++)
-          {
+          for (size_t substep = 0; substep < subStepCount - 1; substep++) {
             float t = float(substep) * step;
 
             const GfVec2f sp1 = AnchorLerp(p1, p2, t);
@@ -242,12 +235,16 @@ namespace AnchorCurveEdit
             const float rt1 = smoothstep(p1[0], p2[0], sp1[0]);
             const float rt2 = smoothstep(p1[0], p2[0], sp2[0]);
 
-            const GfVec2f pos1 = GfVec2f(GfVec2f(sp1[0], AnchorLerp(p1[1], p2[1], rt1)) * viewSize) + offset;
-            const GfVec2f pos2 = GfVec2f(GfVec2f(sp2[0], AnchorLerp(p1[1], p2[1], rt2)) * viewSize) + offset;
+            const GfVec2f pos1 = GfVec2f(GfVec2f(sp1[0], AnchorLerp(p1[1], p2[1], rt1)) *
+                                         viewSize) +
+                                 offset;
+            const GfVec2f pos2 = GfVec2f(GfVec2f(sp2[0], AnchorLerp(p1[1], p2[1], rt2)) *
+                                         viewSize) +
+                                 offset;
 
-            if (distance(io.MousePos[0], io.MousePos[1], pos1[0], pos1[1], pos2[0], pos2[1]) < 8.f &&
-                !scrollingV)
-            {
+            if (distance(io.MousePos[0], io.MousePos[1], pos1[0], pos1[1], pos2[0], pos2[1]) <
+                  8.f &&
+                !scrollingV) {
               localOverCurve = int(c);
               overCurve = int(c);
               overCurveOrPoint = true;
@@ -255,8 +252,7 @@ namespace AnchorCurveEdit
 
             draw_list->AddLine(pos1, pos2, curveColor, 1.3f);
           }  // substep
-        } else if (curveType == CurveDiscrete)
-        {
+        } else if (curveType == CurveDiscrete) {
           GfVec2f dp1 = GfVec2f(p1 * viewSize) + offset;
           GfVec2f dp2 = GfVec2f(GfVec2f(p2[0], p1[1]) * viewSize) + offset;
           GfVec2f dp3 = GfCompMult(p2, GfVec2f(viewSize + offset));
@@ -265,8 +261,7 @@ namespace AnchorCurveEdit
 
           if ((distance(io.MousePos[0], io.MousePos[1], dp1[0], dp1[1], dp3[0], dp1[1]) < 8.f ||
                distance(io.MousePos[0], io.MousePos[1], dp3[0], dp1[1], dp3[0], dp3[1]) < 8.f)
-              /*&& localOverCurve == -1*/)
-          {
+              /*&& localOverCurve == -1*/) {
             localOverCurve = int(c);
             overCurve = int(c);
             overCurveOrPoint = true;
@@ -274,21 +269,18 @@ namespace AnchorCurveEdit
         }
       }  // point loop
 
-      for (size_t p = 0; p < ptCount; p++)
-      {
-        const int drawState = DrawPoint(
-          draw_list,
-          pointToRange(pts[p]),
-          viewSize,
-          offset,
-          (selection.find({int(c), int(p)}) != selection.end() && movingCurve == -1 && !scrollingV));
-        if (drawState && movingCurve == -1 && !selectingQuad)
-        {
+      for (size_t p = 0; p < ptCount; p++) {
+        const int drawState = DrawPoint(draw_list,
+                                        pointToRange(pts[p]),
+                                        viewSize,
+                                        offset,
+                                        (selection.find({int(c), int(p)}) != selection.end() &&
+                                         movingCurve == -1 && !scrollingV));
+        if (drawState && movingCurve == -1 && !selectingQuad) {
           overCurveOrPoint = true;
           overSelectedPoint = true;
           overCurve = -1;
-          if (drawState == 2)
-          {
+          if (drawState == 2) {
             if (!io.KeyShift && selection.find({int(c), int(p)}) == selection.end())
               selection.clear();
             selection.insert({int(c), int(p)});
@@ -304,18 +296,14 @@ namespace AnchorCurveEdit
     static bool pointsMoved = false;
     static GfVec2f mousePosOrigin;
     static std::vector<GfVec2f> originalPoints;
-    if (overSelectedPoint && io.MouseDown[0])
-    {
-      if ((fabsf(io.MouseDelta[0]) > 0.f || fabsf(io.MouseDelta[1]) > 0.f) && !selection.empty())
-      {
-        if (!pointsMoved)
-        {
+    if (overSelectedPoint && io.MouseDown[0]) {
+      if ((fabsf(io.MouseDelta[0]) > 0.f || fabsf(io.MouseDelta[1]) > 0.f) && !selection.empty()) {
+        if (!pointsMoved) {
           delegate.BeginEdit(0);
           mousePosOrigin = io.MousePos;
           originalPoints.resize(selection.size());
           int index = 0;
-          for (auto &sel : selection)
-          {
+          for (auto &sel : selection) {
             const GfVec2f *pts = delegate.GetPoints(sel.curveIndex);
             originalPoints[index++] = pts[sel.pointIndex];
           }
@@ -324,14 +312,12 @@ namespace AnchorCurveEdit
         ret = 1;
         auto prevSelection = selection;
         int originalIndex = 0;
-        for (auto &sel : prevSelection)
-        {
+        for (auto &sel : prevSelection) {
           const GfVec2f mouseRange = pointToRange(originalPoints[originalIndex]) +
                                      GfVec2f(io.MousePos - mousePosOrigin);
           const GfVec2f p = rangeToPoint(GfVec2f(mouseRange * GfVec2f(sizeOfPixel)));
           const int newIndex = delegate.EditPoint(sel.curveIndex, sel.pointIndex, p);
-          if (newIndex != sel.pointIndex)
-          {
+          if (newIndex != sel.pointIndex) {
             selection.erase(sel);
             selection.insert({sel.curveIndex, newIndex});
           }
@@ -340,19 +326,16 @@ namespace AnchorCurveEdit
       }
     }
 
-    if (overSelectedPoint && !io.MouseDown[0])
-    {
+    if (overSelectedPoint && !io.MouseDown[0]) {
       overSelectedPoint = false;
-      if (pointsMoved)
-      {
+      if (pointsMoved) {
         pointsMoved = false;
         delegate.EndEdit();
       }
     }
 
     // add point
-    if (overCurve != -1 && io.MouseDoubleClicked[0])
-    {
+    if (overCurve != -1 && io.MouseDoubleClicked[0]) {
       const GfVec2f np = rangeToPoint((io.MousePos - offset) / viewSize);
       delegate.BeginEdit(overCurve);
       delegate.AddPoint(overCurve, np);
@@ -362,61 +345,51 @@ namespace AnchorCurveEdit
 
     // move curve
 
-    if (movingCurve != -1)
-    {
+    if (movingCurve != -1) {
       const size_t ptCount = delegate.GetPointCount(movingCurve);
       const GfVec2f *pts = delegate.GetPoints(movingCurve);
-      if (!pointsMoved)
-      {
+      if (!pointsMoved) {
         mousePosOrigin = io.MousePos;
         pointsMoved = true;
         originalPoints.resize(ptCount);
-        for (size_t index = 0; index < ptCount; index++)
-        {
+        for (size_t index = 0; index < ptCount; index++) {
           originalPoints[index] = pts[index];
         }
       }
-      if (ptCount >= 1)
-      {
-        for (size_t p = 0; p < ptCount; p++)
-        {
-          delegate.EditPoint(
-            movingCurve,
-            int(p),
-            GfVec2f(rangeToPoint(pointToRange(originalPoints[p]) + GfVec2f(io.MousePos - mousePosOrigin)) *
-                    sizeOfPixel));
+      if (ptCount >= 1) {
+        for (size_t p = 0; p < ptCount; p++) {
+          delegate.EditPoint(movingCurve,
+                             int(p),
+                             GfVec2f(rangeToPoint(pointToRange(originalPoints[p]) +
+                                                  GfVec2f(io.MousePos - mousePosOrigin)) *
+                                     sizeOfPixel));
         }
         ret = 1;
       }
-      if (!io.MouseDown[0])
-      {
+      if (!io.MouseDown[0]) {
         movingCurve = -1;
         pointsMoved = false;
         delegate.EndEdit();
       }
     }
     if (movingCurve == -1 && overCurve != -1 && ANCHOR::IsMouseClicked(0) && selection.empty() &&
-        !selectingQuad)
-    {
+        !selectingQuad) {
       movingCurve = overCurve;
       delegate.BeginEdit(overCurve);
     }
 
     // quad selection
-    if (selectingQuad)
-    {
+    if (selectingQuad) {
       const GfVec2f bmin = AnchorMin(quadSelection, io.MousePos);
       const GfVec2f bmax = AnchorMax(quadSelection, io.MousePos);
       draw_list->AddRectFilled(bmin, bmax, 0x40FF0000, 1.f);
       draw_list->AddRect(bmin, bmax, 0xFFFF0000, 1.f);
       const AnchorBBox selectionQuad(bmin, bmax);
-      if (!io.MouseDown[0])
-      {
+      if (!io.MouseDown[0]) {
         if (!io.KeyShift)
           selection.clear();
         // select everythnig is quad
-        for (size_t c = 0; c < curveCount; c++)
-        {
+        for (size_t c = 0; c < curveCount; c++) {
           if (!delegate.IsVisible(c))
             continue;
 
@@ -425,8 +398,7 @@ namespace AnchorCurveEdit
             continue;
 
           const GfVec2f *pts = delegate.GetPoints(c);
-          for (size_t p = 0; p < ptCount; p++)
-          {
+          for (size_t p = 0; p < ptCount; p++) {
             const GfVec2f center = GfVec2f(pointToRange(pts[p]) * viewSize) + offset;
             if (selectionQuad.Contains(center))
               selection.insert({int(c), int(p)});
@@ -437,8 +409,7 @@ namespace AnchorCurveEdit
       }
     }
     if (!overCurveOrPoint && ANCHOR::IsMouseClicked(0) && !selectingQuad && movingCurve == -1 &&
-        !overSelectedPoint && container.Contains(io.MousePos))
-    {
+        !overSelectedPoint && container.Contains(io.MousePos)) {
       selectingQuad = true;
       quadSelection = io.MousePos;
     }
@@ -449,8 +420,7 @@ namespace AnchorCurveEdit
     ANCHOR::PopStyleVar();
     ANCHOR::PopStyleColor(1);
 
-    if (selectedPoints)
-    {
+    if (selectedPoints) {
       selectedPoints->resize(int(selection.size()));
       int index = 0;
       for (auto &point : selection)

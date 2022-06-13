@@ -56,20 +56,19 @@ static NdrTokenMap _GetSdrMetadata(const UsdShadeShader &shaderDef,
   return metadata;
 }
 
-NdrNodeUniquePtr UsdShadeShaderDefParserPlugin::Parse(const NdrNodeDiscoveryResult &discoveryResult)
+NdrNodeUniquePtr UsdShadeShaderDefParserPlugin::Parse(
+  const NdrNodeDiscoveryResult &discoveryResult)
 {
   const std::string &rootLayerPath = discoveryResult.resolvedUri;
 
   SdfLayerRefPtr rootLayer = SdfLayer::FindOrOpen(rootLayerPath);
   UsdStageRefPtr stage = UsdShadeShaderDefParserPlugin::_cache.FindOneMatching(rootLayer);
-  if (!stage)
-  {
+  if (!stage) {
     stage = UsdStage::Open(rootLayer);
     UsdShadeShaderDefParserPlugin::_cache.Insert(stage);
   }
 
-  if (!stage)
-  {
+  if (!stage) {
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
     ;
   }
@@ -78,39 +77,33 @@ NdrNodeUniquePtr UsdShadeShaderDefParserPlugin::Parse(const NdrNodeDiscoveryResu
   // Fallback to looking for the subidentifier if the identifier does not
   // produce a valid shader def prim
   TfTokenVector identifiers = {discoveryResult.identifier, discoveryResult.subIdentifier};
-  for (const TfToken &identifier : identifiers)
-  {
+  for (const TfToken &identifier : identifiers) {
     SdfPath shaderDefPath = SdfPath::AbsoluteRootPath().AppendChild(identifier);
     shaderDefPrim = stage->GetPrimAtPath(shaderDefPath);
 
-    if (shaderDefPrim)
-    {
+    if (shaderDefPrim) {
       break;
     }
   }
 
-  if (!shaderDefPrim)
-  {
+  if (!shaderDefPrim) {
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
     ;
   }
 
   UsdShadeShader shaderDef(shaderDefPrim);
-  if (!shaderDef)
-  {
+  if (!shaderDef) {
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
     ;
   }
 
   SdfAssetPath nodeUriAssetPath;
-  if (!shaderDef.GetSourceAsset(&nodeUriAssetPath, discoveryResult.sourceType))
-  {
+  if (!shaderDef.GetSourceAsset(&nodeUriAssetPath, discoveryResult.sourceType)) {
     return NdrParserPlugin::GetInvalidNode(discoveryResult);
   }
 
   const std::string &resolvedImplementationUri = nodeUriAssetPath.GetResolvedPath();
-  if (resolvedImplementationUri.empty())
-  {
+  if (resolvedImplementationUri.empty()) {
     TF_RUNTIME_ERROR(
       "Unable to resolve path @%s@ in shader "
       "definition file '%s'",

@@ -27,11 +27,9 @@ namespace
                                  uint32_t depth = 1)
   {
     int bytesPerComponent = 1;
-    if (format.type == RPR_COMPONENT_TYPE_FLOAT16)
-    {
+    if (format.type == RPR_COMPONENT_TYPE_FLOAT16) {
       bytesPerComponent = 2;
-    } else if (format.type == RPR_COMPONENT_TYPE_FLOAT32)
-    {
+    } else if (format.type == RPR_COMPONENT_TYPE_FLOAT32) {
       bytesPerComponent = 4;
     }
 
@@ -60,22 +58,20 @@ namespace
     auto dstData = std::make_unique<uint8_t[]>(numPixels * dstPixelStride);
     uint8_t *dst = dstData.get();
 
-    for (size_t i = 0; i < numPixels; ++i)
-    {
-      converter((ComponentT *)(dst + i * dstPixelStride), (ComponentT *)(src + i * srcPixelStride));
+    for (size_t i = 0; i < numPixels; ++i) {
+      converter((ComponentT *)(dst + i * dstPixelStride),
+                (ComponentT *)(src + i * srcPixelStride));
     }
 
     return dstData;
   }
 
-  template<typename T>
-  struct WhiteColor
+  template<typename T> struct WhiteColor
   {
     const T value = static_cast<T>(1);
   };
 
-  template<>
-  struct WhiteColor<uint8_t>
+  template<> struct WhiteColor<uint8_t>
   {
     const uint8_t value = 255u;
   };
@@ -85,26 +81,22 @@ namespace
                                             rpr::ImageFormat const &format,
                                             uint32_t dstNumComponents)
   {
-    if (dstNumComponents < format.num_components)
-    {
+    if (dstNumComponents < format.num_components) {
       // Trim excessive channels
       return _ConvertTexture<ComponentT>(textureData,
                                          format,
                                          dstNumComponents,
                                          [=](ComponentT *dst, ComponentT *src) {
-                                           for (size_t i = 0; i < dstNumComponents; ++i)
-                                           {
+                                           for (size_t i = 0; i < dstNumComponents; ++i) {
                                              dst[i] = src[i];
                                            }
                                          });
     }
 
-    if (format.num_components == 1)
-    {
+    if (format.num_components == 1) {
       // Expand to a required amount of channels. Example: greyscale texture that is stored as
       // single-channel.
-      if (dstNumComponents == 4)
-      {
+      if (dstNumComponents == 4) {
         // r -> rrr1
         return _ConvertTexture<ComponentT>(textureData,
                                            format,
@@ -113,22 +105,18 @@ namespace
                                              dst[0] = dst[1] = dst[2] = src[0];
                                              dst[3] = WhiteColor<ComponentT>{}.value;
                                            });
-      } else
-      {
+      } else {
         return _ConvertTexture<ComponentT>(textureData,
                                            format,
                                            dstNumComponents,
                                            [=](ComponentT *dst, ComponentT *src) {
-                                             for (size_t i = 0; i < dstNumComponents; ++i)
-                                             {
+                                             for (size_t i = 0; i < dstNumComponents; ++i) {
                                                dst[i] = src[0];
                                              }
                                            });
       }
-    } else if (format.num_components == 2)
-    {
-      if (dstNumComponents == 4)
-      {
+    } else if (format.num_components == 2) {
+      if (dstNumComponents == 4) {
         // rg -> rrrg
         return _ConvertTexture<ComponentT>(textureData,
                                            format,
@@ -137,17 +125,16 @@ namespace
                                              dst[0] = dst[1] = dst[2] = src[0];
                                              dst[3] = src[1];
                                            });
-      } else
-      {
+      } else {
         // rg -> rrr
-        return _ConvertTexture<ComponentT>(
-          textureData,
-          format,
-          dstNumComponents,
-          [](ComponentT *dst, ComponentT *src) { dst[0] = dst[1] = dst[2] = src[0]; });
+        return _ConvertTexture<ComponentT>(textureData,
+                                           format,
+                                           dstNumComponents,
+                                           [](ComponentT *dst, ComponentT *src) {
+                                             dst[0] = dst[1] = dst[2] = src[0];
+                                           });
       }
-    } else if (format.num_components == 3)
-    {
+    } else if (format.num_components == 3) {
       // rgb -> rgb1
       return _ConvertTexture<ComponentT>(textureData,
                                          format,
@@ -171,8 +158,7 @@ namespace
 
     auto imageMetadata = textureData->GetGLMetadata();
 
-    switch (imageMetadata.glType)
-    {
+    switch (imageMetadata.glType) {
       case GL_UNSIGNED_BYTE:
         format.type = RPR_COMPONENT_TYPE_UINT8;
         break;
@@ -187,8 +173,7 @@ namespace
         return nullptr;
     }
 
-    switch (imageMetadata.glFormat)
-    {
+    switch (imageMetadata.glFormat) {
       case GL_RED:
         format.num_components = 1;
         break;
@@ -202,26 +187,23 @@ namespace
         TF_RUNTIME_ERROR("Unsupported pixel data GLformat: %#x", imageMetadata.glFormat);
         return nullptr;
     }
-    rpr::ImageDesc desc = GetRprImageDesc(format, textureData->GetWidth(), textureData->GetHeight());
+    rpr::ImageDesc desc = GetRprImageDesc(format,
+                                          textureData->GetWidth(),
+                                          textureData->GetHeight());
 
     auto textureBuffer = textureData->GetData();
 
     std::unique_ptr<uint8_t[]> convertedData;
-    if (numComponentsRequired != 0 && numComponentsRequired != format.num_components)
-    {
-      if (format.type == RPR_COMPONENT_TYPE_UINT8)
-      {
+    if (numComponentsRequired != 0 && numComponentsRequired != format.num_components) {
+      if (format.type == RPR_COMPONENT_TYPE_UINT8) {
         convertedData = ConvertTexture<uint8_t>(textureData, format, numComponentsRequired);
-      } else if (format.type == RPR_COMPONENT_TYPE_FLOAT16)
-      {
+      } else if (format.type == RPR_COMPONENT_TYPE_FLOAT16) {
         convertedData = ConvertTexture<GfHalf>(textureData, format, numComponentsRequired);
-      } else if (format.type == RPR_COMPONENT_TYPE_FLOAT32)
-      {
+      } else if (format.type == RPR_COMPONENT_TYPE_FLOAT32) {
         convertedData = ConvertTexture<float>(textureData, format, numComponentsRequired);
       }
 
-      if (convertedData)
-      {
+      if (convertedData) {
         textureBuffer = convertedData.get();
         format.num_components = numComponentsRequired;
         desc = GetRprImageDesc(format, textureData->GetWidth(), textureData->GetHeight());
@@ -230,8 +212,7 @@ namespace
 
     rpr::Status status;
     auto rprImage = context->CreateImage(format, desc, textureBuffer, &status);
-    if (!rprImage)
-    {
+    if (!rprImage) {
       RPR_ERROR_CHECK(status, "Failed to create image from data", context);
       return nullptr;
     }
@@ -246,8 +227,7 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
                                          uint32_t numComponentsRequired)
 {
   auto textureData = RprUsdTextureData::New(path);
-  if (!textureData)
-  {
+  if (!textureData) {
     return nullptr;
   }
 
@@ -265,9 +245,11 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
                                          void const *data,
                                          rpr::Status *status)
 {
-  auto rootImage = context->CreateImage(format, GetRprImageDesc(format, width, height), data, status);
-  if (!rootImage)
-  {
+  auto rootImage = context->CreateImage(format,
+                                        GetRprImageDesc(format, width, height),
+                                        data,
+                                        status);
+  if (!rootImage) {
     return nullptr;
   }
 
@@ -279,42 +261,34 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
                                          uint32_t numComponentsRequired)
 {
 
-  if (tiles.empty())
-  {
+  if (tiles.empty()) {
     return nullptr;
   }
 
-  if (tiles.size() == 1 && tiles[0].id == 0)
-  {
+  if (tiles.size() == 1 && tiles[0].id == 0) {
     // Single non-UDIM tile
     auto rprImage = CreateRprImage(context, tiles[0].textureData, numComponentsRequired);
-    if (!rprImage)
-    {
+    if (!rprImage) {
       return nullptr;
     }
 
     return new RprUsdCoreImage(rprImage);
-  } else
-  {
+  } else {
     // Process UDIM
     RprUsdCoreImage *coreImage = nullptr;
 
-    for (auto tile : tiles)
-    {
-      if (tile.id < 1001 || tile.id > 1100)
-      {
+    for (auto tile : tiles) {
+      if (tile.id < 1001 || tile.id > 1100) {
         TF_RUNTIME_ERROR("Invalid UDIM tile id - %u", tile.id);
         continue;
       }
 
       auto rprImage = CreateRprImage(context, tile.textureData, numComponentsRequired);
-      if (!rprImage)
-      {
+      if (!rprImage) {
         continue;
       }
 
-      if (!coreImage)
-      {
+      if (!coreImage) {
         coreImage = new RprUsdCoreImage;
 
         rpr::ImageFormat rootImageFormat = {};
@@ -323,9 +297,11 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
         rpr::ImageDesc rootImageDesc = {};
 
         rpr::Status status;
-        coreImage->m_rootImage = context->CreateImage(rootImageFormat, rootImageDesc, nullptr, &status);
-        if (!coreImage->m_rootImage)
-        {
+        coreImage->m_rootImage = context->CreateImage(rootImageFormat,
+                                                      rootImageDesc,
+                                                      nullptr,
+                                                      &status);
+        if (!coreImage->m_rootImage) {
           delete coreImage;
           delete rprImage;
           RPR_ERROR_CHECK(status, "Failed to create UDIM root image", context);
@@ -344,8 +320,7 @@ RprUsdCoreImage *RprUsdCoreImage::Create(rpr::Context *context,
 RprUsdCoreImage::~RprUsdCoreImage()
 {
   delete m_rootImage;
-  for (auto image : m_subImages)
-  {
+  for (auto image : m_subImages) {
     delete image;
   }
 
@@ -358,19 +333,14 @@ rpr::Image *RprUsdCoreImage::GetBaseImage()
   return m_subImages.empty() ? m_rootImage : m_subImages[0];
 }
 
-template<typename F>
-rpr::Status RprUsdCoreImage::ForEachImage(F f)
+template<typename F> rpr::Status RprUsdCoreImage::ForEachImage(F f)
 {
-  if (m_subImages.empty())
-  {
+  if (m_subImages.empty()) {
     return f(m_rootImage);
-  } else
-  {
-    for (auto image : m_subImages)
-    {
+  } else {
+    for (auto image : m_subImages) {
       auto status = f(image);
-      if (status != RPR_SUCCESS)
-      {
+      if (status != RPR_SUCCESS) {
         return status;
       }
     }
@@ -388,19 +358,26 @@ rpr::ImageDesc RprUsdCoreImage::GetDesc()
   return RprUsdGetInfo<rpr::ImageDesc>(GetBaseImage(), RPR_IMAGE_DESC);
 }
 
-rpr::Status RprUsdCoreImage::GetInfo(rpr::ImageInfo imageInfo, size_t size, void *data, size_t *size_ret)
+rpr::Status RprUsdCoreImage::GetInfo(rpr::ImageInfo imageInfo,
+                                     size_t size,
+                                     void *data,
+                                     size_t *size_ret)
 {
   return GetBaseImage()->GetInfo(imageInfo, size, data, size_ret);
 }
 
 rpr::Status RprUsdCoreImage::SetWrap(rpr::ImageWrapType type)
 {
-  return ForEachImage([type](rpr::Image *image) { return image->SetWrap(type); });
+  return ForEachImage([type](rpr::Image *image) {
+    return image->SetWrap(type);
+  });
 }
 
 rpr::Status RprUsdCoreImage::SetGamma(float gamma)
 {
-  return ForEachImage([gamma](rpr::Image *image) { return image->SetGamma(gamma); });
+  return ForEachImage([gamma](rpr::Image *image) {
+    return image->SetGamma(gamma);
+  });
 }
 
 rpr::Status RprUsdCoreImage::SetColorSpace(const char *colorSpace)
@@ -414,17 +391,23 @@ rpr::Status RprUsdCoreImage::SetColorSpace(const char *colorSpace)
 
 rpr::Status RprUsdCoreImage::SetMipmapEnabled(bool enabled)
 {
-  return ForEachImage([enabled](rpr::Image *image) { return image->SetMipmapEnabled(enabled); });
+  return ForEachImage([enabled](rpr::Image *image) {
+    return image->SetMipmapEnabled(enabled);
+  });
 }
 
 rpr::Status RprUsdCoreImage::SetFilter(rpr::ImageFilterType type)
 {
-  return ForEachImage([type](rpr::Image *image) { return image->SetFilter(type); });
+  return ForEachImage([type](rpr::Image *image) {
+    return image->SetFilter(type);
+  });
 }
 
 rpr::Status RprUsdCoreImage::SetName(const char *name)
 {
-  return ForEachImage([name](rpr::Image *image) { return image->SetName(name); });
+  return ForEachImage([name](rpr::Image *image) {
+    return image->SetName(name);
+  });
 }
 
 WABI_NAMESPACE_END

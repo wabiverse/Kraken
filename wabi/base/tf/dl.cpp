@@ -63,17 +63,15 @@ void *TfDlopen(const std::string &filename, int flag, std::string *error, bool l
   TF_DEBUG(TF_DLOPEN).Msg("TfDlopen: [opened] '%s' (handle=%p)\n", filename.c_str(), handle);
 
   std::string err = ArchLibraryError();
-  if (!err.empty())
-  {
-    TF_DEBUG(TF_DLOPEN).Msg("TfDlopen: [error on opening] '%s': %s\n", filename.c_str(), err.c_str());
-    if (error)
-    {
+  if (!err.empty()) {
+    TF_DEBUG(TF_DLOPEN).Msg("TfDlopen: [error on opening] '%s': %s\n",
+                            filename.c_str(),
+                            err.c_str());
+    if (error) {
       *error = std::move(err);
     }
-  } else
-  {
-    if (error)
-    {
+  } else {
+    if (error) {
       error->clear();
     }
   }
@@ -81,8 +79,7 @@ void *TfDlopen(const std::string &filename, int flag, std::string *error, bool l
 #ifdef WITH_PYTHON
   // If we successfully opened the shared library, load any script bindings if
   // scripting is initialized.
-  if (handle && loadScriptBindings)
-  {
+  if (handle && loadScriptBindings) {
     TfScriptModuleLoader::GetInstance().LoadModules();
   }
 #endif  // WITH_PYTHON

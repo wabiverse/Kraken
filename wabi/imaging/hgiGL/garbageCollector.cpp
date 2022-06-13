@@ -45,13 +45,10 @@ std::vector<HgiResourceBindingsHandleVector *> HgiGLGarbageCollector::_resourceB
 std::vector<HgiGraphicsPipelineHandleVector *> HgiGLGarbageCollector::_graphicsPipelineList;
 std::vector<HgiComputePipelineHandleVector *> HgiGLGarbageCollector::_computePipelineList;
 
-template<class T>
-static void _EmptyTrash(std::vector<std::vector<HgiHandle<T>> *> *list)
+template<class T> static void _EmptyTrash(std::vector<std::vector<HgiHandle<T>> *> *list)
 {
-  for (auto vec : *list)
-  {
-    for (auto objectHandle : *vec)
-    {
+  for (auto vec : *list) {
+    for (auto objectHandle : *vec) {
       delete objectHandle.Get();
     }
     vec->clear();
@@ -59,10 +56,7 @@ static void _EmptyTrash(std::vector<std::vector<HgiHandle<T>> *> *list)
   }
 }
 
-HgiGLGarbageCollector::HgiGLGarbageCollector(HgiGL *hgi)
-  : _hgi(hgi),
-    _isDestroying(false)
-{}
+HgiGLGarbageCollector::HgiGLGarbageCollector(HgiGL *hgi) : _hgi(hgi), _isDestroying(false) {}
 
 HgiGLGarbageCollector::~HgiGLGarbageCollector()
 {
@@ -134,11 +128,9 @@ void HgiGLGarbageCollector::PerformGarbageCollection()
   _isDestroying = false;
 }
 
-template<class T>
-T *HgiGLGarbageCollector::_GetThreadLocalStorageList(std::vector<T *> *collector)
+template<class T> T *HgiGLGarbageCollector::_GetThreadLocalStorageList(std::vector<T *> *collector)
 {
-  if (ARCH_UNLIKELY(_isDestroying))
-  {
+  if (ARCH_UNLIKELY(_isDestroying)) {
     TF_CODING_ERROR("Cannot destroy object during garbage collection ");
     while (_isDestroying)
       ;
@@ -152,8 +144,7 @@ T *HgiGLGarbageCollector::_GetThreadLocalStorageList(std::vector<T *> *collector
   thread_local T *_tls = nullptr;
   static std::mutex garbageMutex;
 
-  if (!_tls)
-  {
+  if (!_tls) {
     _tls = new T();
     std::lock_guard<std::mutex> guard(garbageMutex);
     collector->push_back(_tls);

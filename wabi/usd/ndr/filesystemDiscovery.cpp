@@ -65,7 +65,8 @@ _NdrFilesystemDiscoveryPlugin::_NdrFilesystemDiscoveryPlugin()
   // TODO: This needs to somehow be set up to find the nodes that USD
   //       ships with
   //
-  _searchPaths = TfStringSplit(TfGetEnvSetting(WABI_NDR_FS_PLUGIN_SEARCH_PATHS), ARCH_PATH_LIST_SEP);
+  _searchPaths = TfStringSplit(TfGetEnvSetting(WABI_NDR_FS_PLUGIN_SEARCH_PATHS),
+                               ARCH_PATH_LIST_SEP);
   _allowedExtensions = TfStringSplit(TfGetEnvSetting(WABI_NDR_FS_PLUGIN_ALLOWED_EXTS), ":");
   _followSymlinks = TfGetEnvSetting(WABI_NDR_FS_PLUGIN_FOLLOW_SYMLINKS);
 }
@@ -78,18 +79,17 @@ _NdrFilesystemDiscoveryPlugin::_NdrFilesystemDiscoveryPlugin(Filter filter)
 
 NdrNodeDiscoveryResultVec _NdrFilesystemDiscoveryPlugin::DiscoverNodes(const Context &context)
 {
-  auto result = NdrFsHelpersDiscoverNodes(_searchPaths, _allowedExtensions, _followSymlinks, &context);
+  auto result = NdrFsHelpersDiscoverNodes(_searchPaths,
+                                          _allowedExtensions,
+                                          _followSymlinks,
+                                          &context);
 
-  if (_filter)
-  {
+  if (_filter) {
     auto j = result.begin();
-    for (auto i = j; i != result.end(); ++i)
-    {
+    for (auto i = j; i != result.end(); ++i) {
       // If we pass the filter and any previous haven't then move.
-      if (_filter(*i))
-      {
-        if (j != i)
-        {
+      if (_filter(*i)) {
+        if (j != i) {
           *j = std::move(*i);
         }
         ++j;

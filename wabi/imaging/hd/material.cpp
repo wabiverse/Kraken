@@ -26,8 +26,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdMaterial::HdMaterial(SdfPath const &id)
-  : HdSprim(id)
+HdMaterial::HdMaterial(SdfPath const &id) : HdSprim(id)
 {
   // NOTHING
 }
@@ -43,27 +42,23 @@ void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMa
 {
   HD_TRACE_FUNCTION();
 
-  for (auto const &iter : hdNetworkMap.map)
-  {
+  for (auto const &iter : hdNetworkMap.map) {
     const TfToken &terminalName = iter.first;
     const HdMaterialNetwork &hdNetwork = iter.second;
 
     // Check if there are nodes associated with the volume terminal
     // This value is used in Phoenix to get the proper glslfx fragment shader
-    if (terminalName == HdMaterialTerminalTokens->volume && isVolume)
-    {
+    if (terminalName == HdMaterialTerminalTokens->volume && isVolume) {
       *isVolume = !hdNetwork.nodes.empty();
     }
 
     // Transfer over individual nodes.
     // Note that the same nodes may be shared by multiple terminals.
     // We simply overwrite them here.
-    if (hdNetwork.nodes.empty())
-    {
+    if (hdNetwork.nodes.empty()) {
       continue;
     }
-    for (const HdMaterialNode &node : hdNetwork.nodes)
-    {
+    for (const HdMaterialNode &node : hdNetwork.nodes) {
       HdMaterialNode2 &materialNode2 = result->nodes[node.path];
       materialNode2.nodeTypeId = node.identifier;
       materialNode2.parameters = node.parameters;
@@ -72,15 +67,13 @@ void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMa
     result->terminals[terminalName].upstreamNode = hdNetwork.nodes.back().path;
 
     // Transfer relationships to inputConnections on receiving/downstream nodes.
-    for (const HdMaterialRelationship &rel : hdNetwork.relationships)
-    {
+    for (const HdMaterialRelationship &rel : hdNetwork.relationships) {
 
       // outputId (in hdMaterial terms) is the input of the receiving node
       auto iter = result->nodes.find(rel.outputId);
 
       // skip connection if the destination node doesn't exist
-      if (iter == result->nodes.end())
-      {
+      if (iter == result->nodes.end()) {
         continue;
       }
 
@@ -89,8 +82,7 @@ void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMa
 
       // skip connection if it already exists (it may be shared
       // between surface and displacement)
-      if (std::find(conns.begin(), conns.end(), conn) == conns.end())
-      {
+      if (std::find(conns.begin(), conns.end(), conn) == conns.end()) {
         conns.push_back(std::move(conn));
       }
     }
@@ -112,8 +104,8 @@ std::ostream &operator<<(std::ostream &out, const HdMaterialNetwork &pv)
 
 bool operator==(const HdMaterialRelationship &lhs, const HdMaterialRelationship &rhs)
 {
-  return lhs.outputId == rhs.outputId && lhs.outputName == rhs.outputName && lhs.inputId == rhs.inputId &&
-         lhs.inputName == rhs.inputName;
+  return lhs.outputId == rhs.outputId && lhs.outputName == rhs.outputName &&
+         lhs.inputId == rhs.inputId && lhs.inputName == rhs.inputName;
 }
 
 size_t hash_value(const HdMaterialRelationship &rel)
@@ -127,7 +119,8 @@ size_t hash_value(const HdMaterialRelationship &rel)
 
 bool operator==(const HdMaterialNode &lhs, const HdMaterialNode &rhs)
 {
-  return lhs.path == rhs.path && lhs.identifier == rhs.identifier && lhs.parameters == rhs.parameters;
+  return lhs.path == rhs.path && lhs.identifier == rhs.identifier &&
+         lhs.parameters == rhs.parameters;
 }
 
 size_t hash_value(const HdMaterialNode &node)
@@ -140,7 +133,8 @@ size_t hash_value(const HdMaterialNode &node)
 
 bool operator==(const HdMaterialNetwork &lhs, const HdMaterialNetwork &rhs)
 {
-  return lhs.relationships == rhs.relationships && lhs.nodes == rhs.nodes && lhs.primvars == rhs.primvars;
+  return lhs.relationships == rhs.relationships && lhs.nodes == rhs.nodes &&
+         lhs.primvars == rhs.primvars;
 }
 
 bool operator!=(const HdMaterialNetwork &lhs, const HdMaterialNetwork &rhs)

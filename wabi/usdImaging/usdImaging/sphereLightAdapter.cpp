@@ -44,8 +44,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingSphereLightAdapter::~UsdImagingSphereLightAdapter()
-{}
+UsdImagingSphereLightAdapter::~UsdImagingSphereLightAdapter() {}
 
 bool UsdImagingSphereLightAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -63,7 +62,8 @@ SdfPath UsdImagingSphereLightAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingSphereLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
+void UsdImagingSphereLightAdapter::_RemovePrim(SdfPath const &cachePath,
+                                               UsdImagingIndexProxy *index)
 {
   index->RemoveSprim(HdPrimTypeTokens->sphereLight, cachePath);
 }

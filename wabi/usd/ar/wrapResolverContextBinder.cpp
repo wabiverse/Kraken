@@ -46,9 +46,8 @@ namespace
   class _PyResolverContextBinder : public boost::noncopyable
   {
    public:
-    _PyResolverContextBinder(const ArResolverContext &context)
-      : _context(context)
-    {}
+
+    _PyResolverContextBinder(const ArResolverContext &context) : _context(context) {}
 
     void Enter()
     {
@@ -65,6 +64,7 @@ namespace
     }
 
    private:
+
     ArResolverContext _context;
     std::unique_ptr<ArResolverContextBinder> _binder;
   };

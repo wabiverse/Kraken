@@ -33,7 +33,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdExtComputationContext::~HdExtComputationContext()
-{}
+HdExtComputationContext::~HdExtComputationContext() {}
 
 WABI_NAMESPACE_END

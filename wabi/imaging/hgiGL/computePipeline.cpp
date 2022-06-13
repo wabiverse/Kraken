@@ -50,9 +50,9 @@ void HgiGLComputePipeline::BindPipeline()
   //
   // Shader program
   //
-  HgiGLShaderProgram *glProgram = static_cast<HgiGLShaderProgram *>(_descriptor.shaderProgram.Get());
-  if (glProgram)
-  {
+  HgiGLShaderProgram *glProgram = static_cast<HgiGLShaderProgram *>(
+    _descriptor.shaderProgram.Get());
+  if (glProgram) {
     glUseProgram(glProgram->GetProgramId());
   }
 

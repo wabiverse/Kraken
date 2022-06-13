@@ -94,10 +94,8 @@ GfMatrix4f::GfMatrix4f(const std::vector<std::vector<double>> &v)
     {0.0, 0.0, 1.0, 0.0},
     {0.0, 0.0, 0.0, 1.0}
   };
-  for (size_t row = 0; row < 4 && row < v.size(); ++row)
-  {
-    for (size_t col = 0; col < 4 && col < v[row].size(); ++col)
-    {
+  for (size_t row = 0; row < 4 && row < v.size(); ++row) {
+    for (size_t col = 0; col < 4 && col < v[row].size(); ++col) {
       m[row][col] = v[row][col];
     }
   }
@@ -112,10 +110,8 @@ GfMatrix4f::GfMatrix4f(const std::vector<std::vector<float>> &v)
     {0.0, 0.0, 1.0, 0.0},
     {0.0, 0.0, 0.0, 1.0}
   };
-  for (size_t row = 0; row < 4 && row < v.size(); ++row)
-  {
-    for (size_t col = 0; col < 4 && col < v[row].size(); ++col)
-    {
+  for (size_t row = 0; row < 4 && row < v.size(); ++row) {
+    for (size_t col = 0; col < 4 && col < v[row].size(); ++col) {
       m[row][col] = v[row][col];
     }
   }
@@ -134,23 +130,19 @@ GfMatrix4f::GfMatrix4f(const std::vector<double> &r0,
     {0.0, 0.0, 0.0, 1.0}
   };
 
-  for (size_t col = 0; col < 4 && col < r0.size(); ++col)
-  {
+  for (size_t col = 0; col < 4 && col < r0.size(); ++col) {
     m[0][col] = r0[col];
   }
 
-  for (size_t col = 0; col < 4 && col < r1.size(); ++col)
-  {
+  for (size_t col = 0; col < 4 && col < r1.size(); ++col) {
     m[1][col] = r1[col];
   }
 
-  for (size_t col = 0; col < 4 && col < r2.size(); ++col)
-  {
+  for (size_t col = 0; col < 4 && col < r2.size(); ++col) {
     m[2][col] = r2[col];
   }
 
-  for (size_t col = 0; col < 4 && col < r3.size(); ++col)
-  {
+  for (size_t col = 0; col < 4 && col < r3.size(); ++col) {
     m[3][col] = r3[col];
   }
 
@@ -169,23 +161,19 @@ GfMatrix4f::GfMatrix4f(const std::vector<float> &r0,
     {0.0, 0.0, 0.0, 1.0}
   };
 
-  for (size_t col = 0; col < 4 && col < r0.size(); ++col)
-  {
+  for (size_t col = 0; col < 4 && col < r0.size(); ++col) {
     m[0][col] = r0[col];
   }
 
-  for (size_t col = 0; col < 4 && col < r1.size(); ++col)
-  {
+  for (size_t col = 0; col < 4 && col < r1.size(); ++col) {
     m[1][col] = r1[col];
   }
 
-  for (size_t col = 0; col < 4 && col < r2.size(); ++col)
-  {
+  for (size_t col = 0; col < 4 && col < r2.size(); ++col) {
     m[2][col] = r2[col];
   }
 
-  for (size_t col = 0; col < 4 && col < r3.size(); ++col)
-  {
+  for (size_t col = 0; col < 4 && col < r3.size(); ++col) {
     m[3][col] = r3[col];
   }
 
@@ -389,15 +377,13 @@ GfMatrix4f GfMatrix4f::GetInverse(double *detPtr, double eps) const
 
   // compute 4x4 determinant & its reciprocal
   double det = x30 * z30 + x20 * z20 + x10 * z10 + x00 * z00;
-  if (detPtr)
-  {
+  if (detPtr) {
     *detPtr = det;
   }
 
   GfMatrix4f inverse;
 
-  if (GfAbs(det) > eps)
-  {
+  if (GfAbs(det) > eps) {
 
     double rcp = 1.0 / det;
     // Multiply all 3x3 cofactors by reciprocal & transpose
@@ -417,8 +403,7 @@ GfMatrix4f GfMatrix4f::GetInverse(double *detPtr, double eps) const
     inverse._mtx[2][3] = static_cast<float>(z32 * rcp);
     inverse._mtx[3][2] = static_cast<float>(z23 * rcp);
     inverse._mtx[3][3] = static_cast<float>(z33 * rcp);
-  } else
-  {
+  } else {
     inverse.SetScale(FLT_MAX);
   }
 
@@ -428,7 +413,8 @@ GfMatrix4f GfMatrix4f::GetInverse(double *detPtr, double eps) const
 double GfMatrix4f::GetDeterminant() const
 {
   return (-_mtx[0][3] * _GetDeterminant3(1, 2, 3, 0, 1, 2) +
-          _mtx[1][3] * _GetDeterminant3(0, 2, 3, 0, 1, 2) - _mtx[2][3] * _GetDeterminant3(0, 1, 3, 0, 1, 2) +
+          _mtx[1][3] * _GetDeterminant3(0, 2, 3, 0, 1, 2) -
+          _mtx[2][3] * _GetDeterminant3(0, 1, 3, 0, 1, 2) +
           _mtx[3][3] * _GetDeterminant3(0, 1, 2, 0, 1, 2));
 }
 
@@ -483,8 +469,7 @@ bool GfMatrix4f::Orthonormalize(bool issueWarning)
   _mtx[2][2] = r2[2];
 
   // divide out any homogeneous coordinate - unless it's zero
-  if (_mtx[3][3] != 1.0 && !GfIsClose(_mtx[3][3], 0.0, GF_MIN_VECTOR_LENGTH))
-  {
+  if (_mtx[3][3] != 1.0 && !GfIsClose(_mtx[3][3], 0.0, GF_MIN_VECTOR_LENGTH)) {
     _mtx[3][0] /= _mtx[3][3];
     _mtx[3][1] /= _mtx[3][3];
     _mtx[3][2] /= _mtx[3][3];
@@ -883,7 +868,12 @@ GfMatrix4f &GfMatrix4f::SetLookAt(const GfVec3f &eyePoint, const GfRotation &ori
   return *this = (m1.SetTranslate(-eyePoint) * m2.SetRotate(orientation.GetInverse()));
 }
 
-bool GfMatrix4f::Factor(GfMatrix4f *r, GfVec3f *s, GfMatrix4f *u, GfVec3f *t, GfMatrix4f *p, float eps) const
+bool GfMatrix4f::Factor(GfMatrix4f *r,
+                        GfVec3f *s,
+                        GfMatrix4f *u,
+                        GfVec3f *t,
+                        GfMatrix4f *p,
+                        float eps) const
 {
   // This was adapted from the (open source) Open Inventor
   // SbMatrix::Factor().
@@ -893,8 +883,7 @@ bool GfMatrix4f::Factor(GfMatrix4f *r, GfVec3f *s, GfMatrix4f *u, GfVec3f *t, Gf
   // Set A to the upper 3x3 and set t to the translation part of
   // this matrix
   GfMatrix4d a;
-  for (int i = 0; i < 3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++)
       a._mtx[i][j] = _mtx[i][j];
     a._mtx[3][i] = a._mtx[i][3] = 0.0;
@@ -936,13 +925,10 @@ bool GfMatrix4f::Factor(GfMatrix4f *r, GfVec3f *s, GfMatrix4f *u, GfVec3f *t, Gf
   // us to compute factors for singular matrices.
   GfMatrix4d sInv;
   sInv.SetIdentity();
-  for (int i = 0; i < 3; i++)
-  {
-    if (eigenvalues[i] < eps)
-    {
+  for (int i = 0; i < 3; i++) {
+    if (eigenvalues[i] < eps) {
       (*s)[i] = detSign * eps;
-    } else
-    {
+    } else {
       (*s)[i] = detSign * sqrt(eigenvalues[i]);
     }
     sInv._mtx[i][i] = 1.0 / (*s)[i];
@@ -971,8 +957,7 @@ void GfMatrix4f::_Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const
   GfVec3d b = *eigenvalues;
   GfVec3d z = GfVec3d(0);
 
-  for (int i = 0; i < 50; i++)
-  {
+  for (int i = 0; i < 50; i++) {
     double sm = 0.0;
     for (int p = 0; p < 2; p++)
       for (int q = p + 1; q < 3; q++)
@@ -983,10 +968,8 @@ void GfMatrix4f::_Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const
 
     double thresh = (i < 3 ? (.2 * sm / (3 * 3)) : 0.0);
 
-    for (int p = 0; p < 3; p++)
-    {
-      for (int q = p + 1; q < 3; q++)
-      {
+    for (int p = 0; p < 3; p++) {
+      for (int q = p + 1; q < 3; q++) {
 
         double g = 100.0 * GfAbs(a._mtx[p][q]);
 
@@ -994,16 +977,13 @@ void GfMatrix4f::_Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const
             (GfAbs((*eigenvalues)[q]) + g == GfAbs((*eigenvalues)[q])))
           a._mtx[p][q] = 0.0;
 
-        else if (GfAbs(a._mtx[p][q]) > thresh)
-        {
+        else if (GfAbs(a._mtx[p][q]) > thresh) {
           double h = (*eigenvalues)[q] - (*eigenvalues)[p];
           double t;
 
-          if (GfAbs(h) + g == GfAbs(h))
-          {
+          if (GfAbs(h) + g == GfAbs(h)) {
             t = a._mtx[p][q] / h;
-          } else
-          {
+          } else {
             double theta = 0.5 * h / a._mtx[p][q];
             t = 1.0 / (GfAbs(theta) + sqrt(1.0 + theta * theta));
             if (theta < 0.0)
@@ -1022,32 +1002,28 @@ void GfMatrix4f::_Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const
           (*eigenvalues)[q] += h;
           a._mtx[p][q] = 0.0;
 
-          for (int j = 0; j < p; j++)
-          {
+          for (int j = 0; j < p; j++) {
             g = a._mtx[j][p];
             h = a._mtx[j][q];
             a._mtx[j][p] = g - s * (h + g * tau);
             a._mtx[j][q] = h + s * (g - h * tau);
           }
 
-          for (int j = p + 1; j < q; j++)
-          {
+          for (int j = p + 1; j < q; j++) {
             g = a._mtx[p][j];
             h = a._mtx[j][q];
             a._mtx[p][j] = g - s * (h + g * tau);
             a._mtx[j][q] = h + s * (g - h * tau);
           }
 
-          for (int j = q + 1; j < 3; j++)
-          {
+          for (int j = q + 1; j < 3; j++) {
             g = a._mtx[p][j];
             h = a._mtx[q][j];
             a._mtx[p][j] = g - s * (h + g * tau);
             a._mtx[q][j] = h + s * (g - h * tau);
           }
 
-          for (int j = 0; j < 3; j++)
-          {
+          for (int j = 0; j < 3; j++) {
             g = eigenvectors[j][p];
             h = eigenvectors[j][q];
             eigenvectors[j][p] = g - s * (h + g * tau);
@@ -1056,8 +1032,7 @@ void GfMatrix4f::_Jacobi3(GfVec3d *eigenvalues, GfVec3d eigenvectors[3]) const
         }
       }
     }
-    for (int p = 0; p < 3; p++)
-    {
+    for (int p = 0; p < 3; p++) {
       (*eigenvalues)[p] = b[p] += z[p];
       z[p] = 0;
     }
@@ -1068,8 +1043,7 @@ GfMatrix4f GfMatrix4f::RemoveScaleShear() const
 {
   GfMatrix4f scaleOrientMat, factoredRotMat, perspMat;
   GfVec3f scale, translation;
-  if (!GfMatrix4f::Factor(&scaleOrientMat, &scale, &factoredRotMat, &translation, &perspMat))
-  {
+  if (!GfMatrix4f::Factor(&scaleOrientMat, &scale, &factoredRotMat, &translation, &perspMat)) {
     // unable to decompose, so return the matrix
     return *this;
   }
@@ -1096,14 +1070,12 @@ GfQuatf GfMatrix4f::ExtractRotationQuat() const
   GfVec3f im;
   ScalarType r;
 
-  if (_mtx[0][0] + _mtx[1][1] + _mtx[2][2] > _mtx[i][i])
-  {
+  if (_mtx[0][0] + _mtx[1][1] + _mtx[2][2] > _mtx[i][i]) {
     r = 0.5 * sqrt(_mtx[0][0] + _mtx[1][1] + _mtx[2][2] + _mtx[3][3]);
     im.Set((_mtx[1][2] - _mtx[2][1]) / (4.0 * r),
            (_mtx[2][0] - _mtx[0][2]) / (4.0 * r),
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
-  } else
-  {
+  } else {
     int j = (i + 1) % 3;
     int k = (i + 2) % 3;
     ScalarType q = 0.5 * sqrt(_mtx[i][i] - _mtx[j][j] - _mtx[k][k] + _mtx[3][3]);
@@ -1122,7 +1094,9 @@ GfRotation GfMatrix4f::ExtractRotation() const
   return GfRotation(ExtractRotationQuat());
 }
 
-GfVec3f GfMatrix4f::DecomposeRotation(const GfVec3f &axis0, const GfVec3f &axis1, const GfVec3f &axis2) const
+GfVec3f GfMatrix4f::DecomposeRotation(const GfVec3f &axis0,
+                                      const GfVec3f &axis1,
+                                      const GfVec3f &axis2) const
 {
   return GfVec3f(ExtractRotation().Decompose(axis0, axis1, axis2));
 }
@@ -1144,10 +1118,8 @@ GfMatrix3f GfMatrix4f::ExtractRotationMatrix() const
 
 bool GfIsClose(GfMatrix4f const &m1, GfMatrix4f const &m2, double tolerance)
 {
-  for (size_t row = 0; row < 4; ++row)
-  {
-    for (size_t col = 0; col < 4; ++col)
-    {
+  for (size_t row = 0; row < 4; ++row) {
+    for (size_t col = 0; col < 4; ++col) {
       if (!GfIsClose(m1[row][col], m2[row][col], tolerance))
         return false;
     }

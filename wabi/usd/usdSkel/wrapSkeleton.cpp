@@ -50,35 +50,43 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateJointsAttr(UsdSkelSkeleton &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateJointsAttr(UsdSkelSkeleton &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
     return self.CreateJointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
                                  writeSparsely);
   }
 
-  static UsdAttribute _CreateJointNamesAttr(UsdSkelSkeleton &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateJointNamesAttr(UsdSkelSkeleton &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
   {
     return self.CreateJointNamesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
                                      writeSparsely);
   }
 
-  static UsdAttribute _CreateBindTransformsAttr(UsdSkelSkeleton &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateBindTransformsAttr(UsdSkelSkeleton &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
   {
-    return self.CreateBindTransformsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4dArray),
-                                         writeSparsely);
+    return self.CreateBindTransformsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4dArray),
+      writeSparsely);
   }
 
-  static UsdAttribute _CreateRestTransformsAttr(UsdSkelSkeleton &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateRestTransformsAttr(UsdSkelSkeleton &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
   {
-    return self.CreateRestTransformsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4dArray),
-                                         writeSparsely);
+    return self.CreateRestTransformsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4dArray),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdSkelSkeleton &self)
@@ -111,7 +119,9 @@ void wrapUsdSkelSkeleton()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -163,7 +173,6 @@ void wrapUsdSkelSkeleton()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // anonymous namespace

@@ -62,7 +62,8 @@ void wrapMapExpression()
     .def("MapSourceToTarget", &This::MapSourceToTarget, (arg("path")))
     .def("MapTargetToSource", &This::MapTargetToSource, (arg("path")))
 
-    .add_property("timeOffset", make_function(&This::GetTimeOffset, return_value_policy<return_by_value>()))
+    .add_property("timeOffset",
+                  make_function(&This::GetTimeOffset, return_value_policy<return_by_value>()))
     .add_property("isIdentity", &This::IsIdentity)
     .add_property("isNull", &This::IsNull);
 }

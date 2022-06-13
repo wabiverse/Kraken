@@ -50,19 +50,22 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateRadiusAttr(UsdLuxSphereLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateRadiusAttr(UsdLuxSphereLight &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                 writeSparsely);
   }
 
-  static UsdAttribute _CreateTreatAsPointAttr(UsdLuxSphereLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateTreatAsPointAttr(UsdLuxSphereLight &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateTreatAsPointAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                        writeSparsely);
@@ -98,7 +101,9 @@ void wrapUsdLuxSphereLight()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -140,7 +145,6 @@ void wrapUsdLuxSphereLight()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

@@ -37,9 +37,7 @@
 
 { % extends "wrapMatrix.template.cpp" % }
 
-{
-  % block customIncludes %
-}
+{ % block customIncludes % }
 #include "wabi/base/gf/matrix3{{ SCL[0] }}.h"
 #include "wabi/base/gf/quat{{ SCL[0] }}.h"
 #include "wabi/base/gf/rotation.h"
@@ -99,9 +97,14 @@ RemoveScaleShearWrapper(const {{MAT}} & self)
 { % endblock customFunctions % }
 
 { % block customInit % }
-  .def(init<const vector<float> &, const vector<float> &, const vector<float> &, const vector<float> &>())
-  .def(
-    init<const vector<double> &, const vector<double> &, const vector<double> &, const vector<double> &>())
+  .def(init<const vector<float> &,
+            const vector<float> &,
+            const vector<float> &,
+            const vector<float> &>())
+  .def(init<const vector<double> &,
+            const vector<double> &,
+            const vector<double> &,
+            const vector<double> &>())
   .def(init<const GfMatrix3{{SCL[0]}} &, const GfVec3{{SCL[0]}}>())
   .def(init<const GfRotation &, const GfVec3{{SCL[0]}}>()){ % endblock customInit % }
 
@@ -124,7 +127,8 @@ RemoveScaleShearWrapper(const {{MAT}} & self)
        (This & (This::*)(const GfRotation &, const GfVec3{{SCL[0]}} &)) & This::SetTransform,
        return_self<>())
   .def("SetTransform",
-       (This & (This::*)(const GfMatrix3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &)) & This::SetTransform,
+       (This & (This::*)(const GfMatrix3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &)) &
+         This::SetTransform,
        return_self<>())
 
   .def("SetScale", (This & (This::*)(const GfVec3{{SCL[0]}} &)) & This::SetScale, return_self<>())
@@ -132,19 +136,28 @@ RemoveScaleShearWrapper(const {{MAT}} & self)
   .def("SetTranslate", &This::SetTranslate, return_self<>())
   .def("SetTranslateOnly", &This::SetTranslateOnly, return_self<>())
 
-  .def("SetRotate", (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotate, return_self<>())
-  .def("SetRotateOnly", (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotateOnly, return_self<>())
+  .def("SetRotate",
+       (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotate,
+       return_self<>())
+  .def("SetRotateOnly",
+       (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotateOnly,
+       return_self<>())
 
   .def("SetRotate", (This & (This::*)(const GfRotation &)) & This::SetRotate, return_self<>())
-  .def("SetRotateOnly", (This & (This::*)(const GfRotation &)) & This::SetRotateOnly, return_self<>())
+  .def("SetRotateOnly",
+       (This & (This::*)(const GfRotation &)) & This::SetRotateOnly,
+       return_self<>())
 
-  .def("SetRotate", (This & (This::*)(const GfMatrix3{{SCL[0]}} &)) & This::SetRotate, return_self<>())
+  .def("SetRotate",
+       (This & (This::*)(const GfMatrix3{{SCL[0]}} &)) & This::SetRotate,
+       return_self<>())
   .def("SetRotateOnly",
        (This & (This::*)(const GfMatrix3{{SCL[0]}} &)) & This::SetRotateOnly,
        return_self<>())
 
   .def("SetLookAt",
-       (This & (This::*)(const GfVec3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &)) &
+       (This &
+        (This::*)(const GfVec3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &, const GfVec3{{SCL[0]}} &)) &
          This::SetLookAt,
        return_self<>())
 

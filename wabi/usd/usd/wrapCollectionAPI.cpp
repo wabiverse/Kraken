@@ -43,20 +43,22 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateExpansionRuleAttr(UsdCollectionAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateExpansionRuleAttr(UsdCollectionAPI &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
   {
     return self.CreateExpansionRuleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                         writeSparsely);
   }
 
-  static UsdAttribute _CreateIncludeRootAttr(UsdCollectionAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateIncludeRootAttr(UsdCollectionAPI &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
   {
     return self.CreateIncludeRootAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                       writeSparsely);
@@ -105,7 +107,9 @@ void wrapUsdCollectionAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -192,7 +196,9 @@ namespace
         .def("GetName", &This::GetName)
         .def("GetCollectionPath", &This::GetCollectionPath)
 
-        .def("GetNamedCollectionPath", &This::GetNamedCollectionPath, (arg("prim"), arg("collectionName")))
+        .def("GetNamedCollectionPath",
+             &This::GetNamedCollectionPath,
+             (arg("prim"), arg("collectionName")))
         .staticmethod("GetNamedCollectionPath")
 
         .def("IsSchemaPropertyBaseName", &This::IsSchemaPropertyBaseName, arg("baseName"))

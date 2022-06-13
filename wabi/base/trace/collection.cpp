@@ -38,11 +38,9 @@ WABI_NAMESPACE_BEGIN
 void TraceCollection::AddToCollection(const TraceThreadId &id, EventListPtr &&events)
 {
   EventTable::iterator it = _eventsPerThread.find(id);
-  if (it == _eventsPerThread.end())
-  {
+  if (it == _eventsPerThread.end()) {
     _eventsPerThread.emplace(id, std::move(events));
-  } else
-  {
+  } else {
     it->second->Append(std::move(*events));
   }
 }
@@ -55,16 +53,13 @@ void TraceCollection::_IterateEvents(Visitor &visitor,
                                      I end) const
 {
 
-  for (I iter = begin; iter != end; ++iter)
-  {
+  for (I iter = begin; iter != end; ++iter) {
     const TraceEvent &e = *iter;
-    if (visitor.AcceptsCategory(e.GetCategory()))
-    {
+    if (visitor.AcceptsCategory(e.GetCategory())) {
       // Create the token from the hash using a cache because there
       // are likely to be many duplicate keys.
       KeyTokenCache::const_iterator it = cache.find(e.GetKey());
-      if (it == cache.end())
-      {
+      if (it == cache.end()) {
         it = cache.insert(std::make_pair(e.GetKey(), TfToken(e.GetKey()._ptr->GetString()))).first;
       }
       visitor.OnEvent(threadIndex, it->second, e);
@@ -76,17 +71,14 @@ void TraceCollection::_Iterate(Visitor &visitor, bool doReverse) const
 {
   KeyTokenCache cache;
   visitor.OnBeginCollection();
-  for (const EventTable::value_type &i : _eventsPerThread)
-  {
+  for (const EventTable::value_type &i : _eventsPerThread) {
     const TraceThreadId &threadIndex = i.first;
     const EventListPtr &events = i.second;
     visitor.OnBeginThread(threadIndex);
 
-    if (doReverse)
-    {
+    if (doReverse) {
       _IterateEvents(visitor, cache, threadIndex, events->rbegin(), events->rend());
-    } else
-    {
+    } else {
       _IterateEvents(visitor, cache, threadIndex, events->begin(), events->end());
     }
 
@@ -105,7 +97,6 @@ void TraceCollection::ReverseIterate(Visitor &visitor) const
   _Iterate(visitor, true);
 }
 
-TraceCollection::Visitor::~Visitor()
-{}
+TraceCollection::Visitor::~Visitor() {}
 
 WABI_NAMESPACE_END

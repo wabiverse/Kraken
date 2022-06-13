@@ -28,10 +28,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdxTask::HdxTask(SdfPath const &id)
-  : HdTask(id),
-    _hgi(nullptr)
-{}
+HdxTask::HdxTask(SdfPath const &id) : HdTask(id), _hgi(nullptr) {}
 
 HdxTask::~HdxTask() = default;
 
@@ -49,8 +46,7 @@ void HdxTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *d
   // Hgi device so we (correctly) assume Hgi* will not change during a
   // Hydra session. Not all tasks need Hgi, so we do not consider it an
   // error here to not find Hgi.
-  if (!_hgi)
-  {
+  if (!_hgi) {
     _hgi = HdTask::_GetDriver<Hgi *>(ctx, HgiTokens->renderDriver);
   }
 
@@ -60,15 +56,13 @@ void HdxTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *d
 
 void HdxTask::_ToggleRenderTarget(HdTaskContext *ctx)
 {
-  if (!_HasTaskContextData(ctx, HdAovTokens->color))
-  {
+  if (!_HasTaskContextData(ctx, HdAovTokens->color)) {
     return;
   }
 
   HgiTextureHandle aovTexture, aovTextureIntermediate;
 
-  if (_HasTaskContextData(ctx, HdxAovTokens->colorIntermediate))
-  {
+  if (_HasTaskContextData(ctx, HdxAovTokens->colorIntermediate)) {
     _GetTaskContextData(ctx, HdAovTokens->color, &aovTexture);
     _GetTaskContextData(ctx, HdxAovTokens->colorIntermediate, &aovTextureIntermediate);
     (*ctx)[HdAovTokens->color] = VtValue(aovTextureIntermediate);
@@ -78,8 +72,7 @@ void HdxTask::_ToggleRenderTarget(HdTaskContext *ctx)
 
 Hgi *HdxTask::_GetHgi() const
 {
-  if (ARCH_UNLIKELY(!_hgi))
-  {
+  if (ARCH_UNLIKELY(!_hgi)) {
     TF_CODING_ERROR("Hgi driver missing. See HdxTask::Sync.");
   }
   return _hgi;

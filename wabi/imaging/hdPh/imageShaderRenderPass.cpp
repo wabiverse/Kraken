@@ -66,14 +66,15 @@ HdPh_ImageShaderRenderPass::HdPh_ImageShaderRenderPass(HdRenderIndex *index,
   _sharedData.rprimID = SdfPath("/imageShaderRenderPass");
   _immediateBatch = std::make_shared<HdPh_ImmediateDrawBatch>(&_drawItemInstance);
 
-  HdPhRenderDelegate *renderDelegate = static_cast<HdPhRenderDelegate *>(index->GetRenderDelegate());
+  HdPhRenderDelegate *renderDelegate = static_cast<HdPhRenderDelegate *>(
+    index->GetRenderDelegate());
   _hgi = renderDelegate->GetHgi();
 }
 
-HdPh_ImageShaderRenderPass::~HdPh_ImageShaderRenderPass()
-{}
+HdPh_ImageShaderRenderPass::~HdPh_ImageShaderRenderPass() {}
 
-void HdPh_ImageShaderRenderPass::_SetupVertexPrimvarBAR(HdPhResourceRegistrySharedPtr const &registry)
+void HdPh_ImageShaderRenderPass::_SetupVertexPrimvarBAR(
+  HdPhResourceRegistrySharedPtr const &registry)
 {
   // The current logic in HdPh_ImmediateDrawBatch::ExecuteDraw will use
   // glDrawArraysInstanced if it finds a VertexPrimvar buffer but no
@@ -86,8 +87,10 @@ void HdPh_ImageShaderRenderPass::_SetupVertexPrimvarBAR(HdPhResourceRegistryShar
   HdBufferSpecVector bufferSpecs;
   HdBufferSpec::GetBufferSpecs(sources, &bufferSpecs);
 
-  HdBufferArrayRangeSharedPtr vertexPrimvarRange =
-    registry->AllocateNonUniformBufferArrayRange(HdTokens->primvar, bufferSpecs, HdBufferArrayUsageHint());
+  HdBufferArrayRangeSharedPtr vertexPrimvarRange = registry->AllocateNonUniformBufferArrayRange(
+    HdTokens->primvar,
+    bufferSpecs,
+    HdBufferArrayUsageHint());
 
   registry->AddSources(vertexPrimvarRange, std::move(sources));
 
@@ -100,14 +103,13 @@ void HdPh_ImageShaderRenderPass::_Prepare(TfTokenVector const &renderTags)
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::dynamic_pointer_cast<HdPhResourceRegistry>(
-    GetRenderIndex()->GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry =
+    std::dynamic_pointer_cast<HdPhResourceRegistry>(GetRenderIndex()->GetResourceRegistry());
   TF_VERIFY(resourceRegistry);
 
   // First time we must create a VertexPrimvar BAR for the triangle and setup
   // the geometric shader that provides the vertex and fragment shaders.
-  if (!_sharedData.barContainer.Get(_drawItem.GetDrawingCoord()->GetVertexPrimvarIndex()))
-  {
+  if (!_sharedData.barContainer.Get(_drawItem.GetDrawingCoord()->GetVertexPrimvarIndex())) {
     _SetupVertexPrimvarBAR(resourceRegistry);
 
     HdPh_ImageShaderShaderKey shaderKey;
@@ -130,8 +132,8 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
   if (!TF_VERIFY(stRenderPassState))
     return;
 
-  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::dynamic_pointer_cast<HdPhResourceRegistry>(
-    GetRenderIndex()->GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry =
+    std::dynamic_pointer_cast<HdPhResourceRegistry>(GetRenderIndex()->GetResourceRegistry());
   TF_VERIFY(resourceRegistry);
 
   _immediateBatch->PrepareDraw(stRenderPassState, resourceRegistry);
@@ -145,8 +147,7 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
   // custom prims that spawn an imagingGLengine  with a task controller that
   // has no aovBindings.
 
-  if (gfxCmds)
-  {
+  if (gfxCmds) {
     gfxCmds->PushDebugGroup(__ARCH_PRETTY_FUNCTION__);
   }
 
@@ -158,21 +159,18 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
   HdPh_DrawBatchSharedPtr const &batch = _immediateBatch;
   HgiGLGraphicsCmds *glGfxCmds = dynamic_cast<HgiGLGraphicsCmds *>(gfxCmds.get());
 
-  if (gfxCmds && glGfxCmds)
-  {
+  if (gfxCmds && glGfxCmds) {
     // XXX Tmp code path to allow non-hgi code to insert functions into
     // HgiGL ops-stack. Will be removed once Phoenixs uses Hgi everywhere
     auto executeDrawOp = [batch, stRenderPassState, resourceRegistry] {
       _ExecuteDraw(batch, stRenderPassState, resourceRegistry);
     };
     glGfxCmds->InsertFunctionOp(executeDrawOp);
-  } else
-  {
+  } else {
     _ExecuteDraw(batch, stRenderPassState, resourceRegistry);
   }
 
-  if (gfxCmds)
-  {
+  if (gfxCmds) {
     gfxCmds->PopDebugGroup();
     _hgi->SubmitCmds(gfxCmds.get());
   }
@@ -180,7 +178,6 @@ void HdPh_ImageShaderRenderPass::_Execute(HdRenderPassStateSharedPtr const &rend
   stRenderPassState->Unbind();
 }
 
-void HdPh_ImageShaderRenderPass::_MarkCollectionDirty()
-{}
+void HdPh_ImageShaderRenderPass::_MarkCollectionDirty() {}
 
 WABI_NAMESPACE_END

@@ -53,7 +53,8 @@ namespace
 
   static string _Repr(GfRect2i const &self)
   {
-    return TF_PY_REPR_PREFIX + "Rect2i(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
+    return TF_PY_REPR_PREFIX + "Rect2i(" + TfPyRepr(self.GetMin()) + ", " +
+           TfPyRepr(self.GetMax()) + ")";
   }
 
 }  // anonymous namespace

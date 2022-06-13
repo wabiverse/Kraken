@@ -54,7 +54,9 @@ namespace
 
 void wrapIntrospection()
 {
-  TF_PY_WRAP_PUBLIC_TOKENS("UsdStageStatsKeys", UsdUtilsUsdStageStatsKeys, USDUTILS_USDSTAGE_STATS);
+  TF_PY_WRAP_PUBLIC_TOKENS("UsdStageStatsKeys",
+                           UsdUtilsUsdStageStatsKeys,
+                           USDUTILS_USDSTAGE_STATS);
 
   def("ComputeUsdStageStats", _WrapUsdUtilsComputeUsdStageStats_1);
   def("ComputeUsdStageStats", _WrapUsdUtilsComputeUsdStageStats_2);

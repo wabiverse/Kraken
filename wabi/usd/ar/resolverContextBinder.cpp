@@ -35,12 +35,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-ArResolverContextBinder::ArResolverContextBinder(ArResolver *resolver, const ArResolverContext &context)
+ArResolverContextBinder::ArResolverContextBinder(ArResolver *resolver,
+                                                 const ArResolverContext &context)
   : _resolver(resolver),
     _context(context)
 {
-  if (_resolver)
-  {
+  if (_resolver) {
     _resolver->BindContext(_context, &_bindingData);
   }
 }
@@ -49,16 +49,14 @@ ArResolverContextBinder::ArResolverContextBinder(const ArResolverContext &contex
   : _resolver(&ArGetResolver()),
     _context(context)
 {
-  if (_resolver)
-  {
+  if (_resolver) {
     _resolver->BindContext(_context, &_bindingData);
   }
 }
 
 ArResolverContextBinder::~ArResolverContextBinder()
 {
-  if (_resolver)
-  {
+  if (_resolver) {
     _resolver->UnbindContext(_context, &_bindingData);
   }
 }

@@ -44,8 +44,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingDomeLightAdapter::~UsdImagingDomeLightAdapter()
-{}
+UsdImagingDomeLightAdapter::~UsdImagingDomeLightAdapter() {}
 
 bool UsdImagingDomeLightAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {

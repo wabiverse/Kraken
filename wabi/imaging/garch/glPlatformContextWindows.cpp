@@ -40,10 +40,8 @@ WABI_NAMESPACE_BEGIN
 class GarchWGLContextState::_Detail
 {
  public:
-  _Detail(HDC hdc, HGLRC hglrc)
-    : hdc(hdc),
-      hglrc(hglrc)
-  {}
+
+  _Detail(HDC hdc, HGLRC hglrc) : hdc(hdc), hglrc(hglrc) {}
 
   HDC hdc;
   HGLRC hglrc;

@@ -58,10 +58,11 @@ namespace winrt::Kraken::UIKit::implementation
     winrt::WindowId windowId;
     winrt::GetWindowIdFromWindowHandle(hWnd, &windowId);
 
-    Microsoft::UI::Windowing::AppWindow appWindow = Microsoft::UI::Windowing::AppWindow::GetFromWindowId(windowId);
+    Microsoft::UI::Windowing::AppWindow appWindow =
+      Microsoft::UI::Windowing::AppWindow::GetFromWindowId(windowId);
 
     return appWindow;
   }
-}  // namespace winrt::Kraken::implementation
+}  // namespace winrt::Kraken::UIKit::implementation
 
 #endif /* WITH_WINUI3 */

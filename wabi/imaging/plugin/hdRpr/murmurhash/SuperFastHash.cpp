@@ -37,8 +37,7 @@ uint32_t SuperFastHash(const signed char *data, int len)
   len >>= 2;
 
   /* Main loop */
-  for (; len > 0; len--)
-  {
+  for (; len > 0; len--) {
     hash += get16bits(data);
     tmp = (get16bits(data + 2) << 11) ^ hash;
     hash = (hash << 16) ^ tmp;
@@ -47,8 +46,7 @@ uint32_t SuperFastHash(const signed char *data, int len)
   }
 
   /* Handle end cases */
-  switch (rem)
-  {
+  switch (rem) {
     case 3:
       hash += get16bits(data);
       hash ^= hash << 16;

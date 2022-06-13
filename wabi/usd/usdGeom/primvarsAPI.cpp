@@ -40,14 +40,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PrimvarsAPI));
 
 /* virtual */
-UsdGeomPrimvarsAPI::~UsdGeomPrimvarsAPI()
-{}
+UsdGeomPrimvarsAPI::~UsdGeomPrimvarsAPI() {}
 
 /* static */
 UsdGeomPrimvarsAPI UsdGeomPrimvarsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomPrimvarsAPI();
   }
@@ -114,8 +112,7 @@ UsdGeomPrimvar UsdGeomPrimvarsAPI::CreatePrimvar(const TfToken &name,
 
   UsdGeomPrimvar primvar(prim, name, typeName);
 
-  if (primvar)
-  {
+  if (primvar) {
     if (!interpolation.IsEmpty())
       primvar.SetInterpolation(interpolation);
     if (elementSize > 0)
@@ -128,29 +125,25 @@ UsdGeomPrimvar UsdGeomPrimvarsAPI::CreatePrimvar(const TfToken &name,
 bool UsdGeomPrimvarsAPI::RemovePrimvar(const TfToken &name)
 {
   const TfToken &attrName = UsdGeomPrimvar::_MakeNamespaced(name);
-  if (attrName.IsEmpty())
-  {
+  if (attrName.IsEmpty()) {
     return false;
   }
 
   UsdPrim prim = GetPrim();
-  if (!prim)
-  {
+  if (!prim) {
     TF_CODING_ERROR("RemovePrimvar called on invalid prim: %s", UsdDescribe(prim).c_str());
     return false;
   }
 
   const UsdGeomPrimvar &primvar = UsdGeomPrimvar(prim.GetAttribute(attrName));
-  if (!primvar)
-  {
+  if (!primvar) {
     return false;
   }
 
   const UsdAttribute &indexAttr = primvar.GetIndicesAttr();
   bool success = true;
   // If the Primvar is an indexed primvar, also remove the indexAttr
-  if (indexAttr)
-  {
+  if (indexAttr) {
     success = prim.RemoveProperty(indexAttr.GetName());
   }
   return prim.RemoveProperty(attrName) && success;
@@ -159,21 +152,18 @@ bool UsdGeomPrimvarsAPI::RemovePrimvar(const TfToken &name)
 void UsdGeomPrimvarsAPI::BlockPrimvar(const TfToken &name)
 {
   const TfToken &attrName = UsdGeomPrimvar::_MakeNamespaced(name);
-  if (attrName.IsEmpty())
-  {
+  if (attrName.IsEmpty()) {
     return;
   }
 
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
+  if (!prim) {
     TF_CODING_ERROR("RemovePrimvar called on invalid prim: %s", UsdDescribe(prim).c_str());
     return;
   }
 
   const UsdGeomPrimvar &primvar = UsdGeomPrimvar(prim.GetAttribute(name));
-  if (!primvar)
-  {
+  if (!primvar) {
     return;
   }
 
@@ -198,14 +188,12 @@ static std::vector<UsdGeomPrimvar> _MakePrimvars(std::vector<UsdProperty> const 
 {
   std::vector<UsdGeomPrimvar> primvars;
 
-  for (UsdProperty const &prop : props)
-  {
+  for (UsdProperty const &prop : props) {
     // All prefixed properties except the ones that contain extra
     // namespaces (eg. the ":indices" attributes belonging to indexed
     // primvars) will be valid primvars.
     UsdGeomPrimvar primvar = UsdGeomPrimvar(prop.As<UsdAttribute>());
-    if (primvar && filterPass(primvar))
-    {
+    if (primvar && filterPass(primvar)) {
       primvars.push_back(std::move(primvar));
     }
   }
@@ -216,52 +204,60 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetPrimvars() const
 {
   TRACE_FUNCTION();
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
+  if (!prim) {
     TF_CODING_ERROR("Called GetPrimvars on invalid prim: %s", UsdDescribe(prim).c_str());
     return std::vector<UsdGeomPrimvar>();
   }
   return _MakePrimvars(prim.GetPropertiesInNamespace(UsdGeomPrimvar::_GetNamespacePrefix()),
-                       [](UsdGeomPrimvar const &) { return true; });
+                       [](UsdGeomPrimvar const &) {
+                         return true;
+                       });
 }
 
 std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetAuthoredPrimvars() const
 {
   TRACE_FUNCTION();
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
+  if (!prim) {
     TF_CODING_ERROR("Called GetAuthoredPrimvars on invalid prim: %s", UsdDescribe(prim).c_str());
     return std::vector<UsdGeomPrimvar>();
   }
-  return _MakePrimvars(prim.GetAuthoredPropertiesInNamespace(UsdGeomPrimvar::_GetNamespacePrefix()),
-                       [](UsdGeomPrimvar const &) { return true; });
+  return _MakePrimvars(
+    prim.GetAuthoredPropertiesInNamespace(UsdGeomPrimvar::_GetNamespacePrefix()),
+    [](UsdGeomPrimvar const &) {
+      return true;
+    });
 }
 
 std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetPrimvarsWithValues() const
 {
   TRACE_FUNCTION();
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
+  if (!prim) {
     TF_CODING_ERROR("Called GetPrimvarsWithValues on invalid prim: %s", UsdDescribe(prim).c_str());
     return std::vector<UsdGeomPrimvar>();
   }
-  return _MakePrimvars(prim.GetAuthoredPropertiesInNamespace(UsdGeomPrimvar::_GetNamespacePrefix()),
-                       [](UsdGeomPrimvar const &pv) { return pv.HasValue(); });
+  return _MakePrimvars(
+    prim.GetAuthoredPropertiesInNamespace(UsdGeomPrimvar::_GetNamespacePrefix()),
+    [](UsdGeomPrimvar const &pv) {
+      return pv.HasValue();
+    });
 }
 
 std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetPrimvarsWithAuthoredValues() const
 {
   TRACE_FUNCTION();
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
-    TF_CODING_ERROR("Called GetPrimvarsWithAuthoredValues on invalid prim: %s", UsdDescribe(prim).c_str());
+  if (!prim) {
+    TF_CODING_ERROR("Called GetPrimvarsWithAuthoredValues on invalid prim: %s",
+                    UsdDescribe(prim).c_str());
     return std::vector<UsdGeomPrimvar>();
   }
-  return _MakePrimvars(prim.GetAuthoredPropertiesInNamespace(UsdGeomPrimvar::_GetNamespacePrefix()),
-                       [](UsdGeomPrimvar const &pv) { return pv.HasAuthoredValue(); });
+  return _MakePrimvars(
+    prim.GetAuthoredPropertiesInNamespace(UsdGeomPrimvar::_GetNamespacePrefix()),
+    [](UsdGeomPrimvar const &pv) {
+      return pv.HasAuthoredValue();
+    });
 }
 
 static void _AddPrimToInheritedPrimvars(const UsdPrim &prim,
@@ -271,21 +267,17 @@ static void _AddPrimToInheritedPrimvars(const UsdPrim &prim,
                                         bool acceptAll)
 {
   auto copyPrimvars = [&inputPrimvars, &outputPrimvars]() {
-    if (inputPrimvars != outputPrimvars)
-    {
+    if (inputPrimvars != outputPrimvars) {
       *outputPrimvars = *inputPrimvars;
       inputPrimvars = outputPrimvars;
     }
   };
 
-  for (UsdProperty const &prop : prim.GetAuthoredPropertiesInNamespace(pvPrefix))
-  {
-    if (UsdGeomPrimvar pv = UsdGeomPrimvar(prop.As<UsdAttribute>()))
-    {
+  for (UsdProperty const &prop : prim.GetAuthoredPropertiesInNamespace(pvPrefix)) {
+    if (UsdGeomPrimvar pv = UsdGeomPrimvar(prop.As<UsdAttribute>())) {
       // If the primvar does not provide a value, then it is as if it
       // does not exist on prim
-      if (!pv.HasAuthoredValue())
-      {
+      if (!pv.HasAuthoredValue()) {
         continue;
       }
 
@@ -295,18 +287,14 @@ static void _AddPrimToInheritedPrimvars(const UsdPrim &prim,
       size_t i;
       bool pvIsConstant = pv.GetInterpolation() == UsdGeomTokens->constant;
       bool foundMatch = false;
-      for (i = 0; i < inputPrimvars->size(); ++i)
-      {
-        if (name == (*inputPrimvars)[i].GetName())
-        {
+      for (i = 0; i < inputPrimvars->size(); ++i) {
+        if (name == (*inputPrimvars)[i].GetName()) {
           copyPrimvars();
           foundMatch = true;
-          if (pvIsConstant || acceptAll)
-          {
+          if (pvIsConstant || acceptAll) {
             (*outputPrimvars)[i] = std::move(pv);
             break;
-          } else
-          {
+          } else {
             // Swap to the end and truncate the vector.
             // Don't bother to preserve order.
             std::swap((*outputPrimvars)[i], outputPrimvars->back());
@@ -315,8 +303,7 @@ static void _AddPrimToInheritedPrimvars(const UsdPrim &prim,
           }
         }
       }
-      if (!foundMatch && (pvIsConstant || acceptAll))
-      {
+      if (!foundMatch && (pvIsConstant || acceptAll)) {
         copyPrimvars();
         outputPrimvars->push_back(std::move(pv));
       }
@@ -345,9 +332,9 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::FindInheritablePrimvars() const
   // just use a vector to accumulate primvars up to the root prim.
   std::vector<UsdGeomPrimvar> primvars;
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
-    TF_CODING_ERROR("FindInheritablePrimvars called on invalid prim: %s", UsdDescribe(prim).c_str());
+  if (!prim) {
+    TF_CODING_ERROR("FindInheritablePrimvars called on invalid prim: %s",
+                    UsdDescribe(prim).c_str());
     return primvars;
   }
 
@@ -364,15 +351,18 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::FindIncrementallyInheritablePrim
 
   std::vector<UsdGeomPrimvar> primvars;
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
+  if (!prim) {
     TF_CODING_ERROR("FindIncrementallyInheritablePrimvars called on invalid prim: %s",
                     UsdDescribe(prim).c_str());
     return primvars;
   }
 
   TfToken const &prefix = UsdGeomPrimvar::_GetNamespacePrefix();
-  _AddPrimToInheritedPrimvars(prim, prefix, &inheritedFromAncestors, &primvars, /* acceptAll = */ false);
+  _AddPrimToInheritedPrimvars(prim,
+                              prefix,
+                              &inheritedFromAncestors,
+                              &primvars,
+                              /* acceptAll = */ false);
   return primvars;
 }
 
@@ -382,30 +372,24 @@ UsdGeomPrimvar UsdGeomPrimvarsAPI::FindPrimvarWithInheritance(const TfToken &nam
 
   const TfToken attrName = UsdGeomPrimvar::_MakeNamespaced(name);
   UsdPrim prim = GetPrim();
-  if (!prim)
-  {
-    TF_CODING_ERROR("FindPrimvarWithInheritance called on invalid prim: %s", UsdDescribe(prim).c_str());
+  if (!prim) {
+    TF_CODING_ERROR("FindPrimvarWithInheritance called on invalid prim: %s",
+                    UsdDescribe(prim).c_str());
     return UsdGeomPrimvar();
   }
   UsdGeomPrimvar localPv = GetPrimvar(name);
-  if (localPv.HasAuthoredValue())
-  {
+  if (localPv.HasAuthoredValue()) {
     return localPv;
   }
 
-  for (prim = prim.GetParent(); prim && !prim.IsPseudoRoot(); prim = prim.GetParent())
-  {
+  for (prim = prim.GetParent(); prim && !prim.IsPseudoRoot(); prim = prim.GetParent()) {
     UsdAttribute attr = prim.GetAttribute(attrName);
-    if (attr.HasAuthoredValue())
-    {
-      if (UsdGeomPrimvar pv = UsdGeomPrimvar(attr))
-      {
+    if (attr.HasAuthoredValue()) {
+      if (UsdGeomPrimvar pv = UsdGeomPrimvar(attr)) {
         // Only constant primvars can be inherited.
-        if (pv.GetInterpolation() == UsdGeomTokens->constant)
-        {
+        if (pv.GetInterpolation() == UsdGeomTokens->constant) {
           return pv;
-        } else
-        {
+        } else {
           // Non-constant interpolation blocks inheritance.
           return UsdGeomPrimvar();
         }
@@ -422,22 +406,19 @@ UsdGeomPrimvar UsdGeomPrimvarsAPI::FindPrimvarWithInheritance(
   TRACE_FUNCTION();
 
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
-    TF_CODING_ERROR("FindPrimvarWithInheritance called on invalid prim: %s", UsdDescribe(prim).c_str());
+  if (!prim) {
+    TF_CODING_ERROR("FindPrimvarWithInheritance called on invalid prim: %s",
+                    UsdDescribe(prim).c_str());
     return UsdGeomPrimvar();
   }
   const TfToken attrName = UsdGeomPrimvar::_MakeNamespaced(name);
   UsdGeomPrimvar pv = GetPrimvar(attrName);
-  if (pv.HasAuthoredValue())
-  {
+  if (pv.HasAuthoredValue()) {
     return pv;
   }
 
-  for (UsdGeomPrimvar const &inherited : inheritedFromAncestors)
-  {
-    if (inherited.GetName() == attrName)
-    {
+  for (UsdGeomPrimvar const &inherited : inheritedFromAncestors) {
+    if (inherited.GetName() == attrName) {
       return inherited;
     }
   }
@@ -452,9 +433,9 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance() co
   // just use a vector to accumulate primvars up to the root prim.
   std::vector<UsdGeomPrimvar> primvars;
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
-    TF_CODING_ERROR("FindPrimvarsWithINheritance called on invalid prim: %s", UsdDescribe(prim).c_str());
+  if (!prim) {
+    TF_CODING_ERROR("FindPrimvarsWithINheritance called on invalid prim: %s",
+                    UsdDescribe(prim).c_str());
     return primvars;
   }
 
@@ -474,9 +455,9 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance(
 
   std::vector<UsdGeomPrimvar> primvars;
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
-    TF_CODING_ERROR("FindPrimvarsWithInheritance called on invalid prim: %s", UsdDescribe(prim).c_str());
+  if (!prim) {
+    TF_CODING_ERROR("FindPrimvarsWithInheritance called on invalid prim: %s",
+                    UsdDescribe(prim).c_str());
     return primvars;
   }
 
@@ -496,8 +477,7 @@ bool UsdGeomPrimvarsAPI::HasPrimvar(const TfToken &name) const
 {
   TfToken primvarName = UsdGeomPrimvar::_MakeNamespaced(name, /* quiet */ true);
   const UsdPrim &prim = GetPrim();
-  if (!prim)
-  {
+  if (!prim) {
     TF_CODING_ERROR("HasPrimvar called on invalid prim: %s", UsdDescribe(prim).c_str());
     return false;
   }
@@ -509,27 +489,23 @@ bool UsdGeomPrimvarsAPI::HasPossiblyInheritedPrimvar(const TfToken &name) const
   TRACE_FUNCTION();
 
   UsdPrim prim = GetPrim();
-  if (!prim)
-  {
-    TF_CODING_ERROR("HasPossiblyInheritedPrimvar called on invalid prim: %s", UsdDescribe(prim).c_str());
+  if (!prim) {
+    TF_CODING_ERROR("HasPossiblyInheritedPrimvar called on invalid prim: %s",
+                    UsdDescribe(prim).c_str());
     return false;
   }
   UsdGeomPrimvar pv = GetPrimvar(name);
-  if (pv.HasAuthoredValue())
-  {
+  if (pv.HasAuthoredValue()) {
     return true;
   }
 
   const TfToken attrName = UsdGeomPrimvar::_MakeNamespaced(name);
-  if (attrName.IsEmpty())
-  {
+  if (attrName.IsEmpty()) {
     return false;
   }
-  for (prim = prim.GetParent(); prim && !prim.IsPseudoRoot(); prim = prim.GetParent())
-  {
+  for (prim = prim.GetParent(); prim && !prim.IsPseudoRoot(); prim = prim.GetParent()) {
     UsdAttribute attr = prim.GetAttribute(attrName);
-    if (attr.HasAuthoredValue() && UsdGeomPrimvar::IsPrimvar(attr))
-    {
+    if (attr.HasAuthoredValue() && UsdGeomPrimvar::IsPrimvar(attr)) {
       // Only constant primvars can be inherited.
       // Non-constant interpolation blocks inheritance.
       return UsdGeomPrimvar(attr).GetInterpolation() == UsdGeomTokens->constant;

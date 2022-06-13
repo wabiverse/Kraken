@@ -51,8 +51,7 @@ static const size_t _NumInternalStackLevels = 2;
 
 TF_INSTANTIATE_SINGLETON(TfRefPtrTracker);
 
-TfRefPtrTracker::TfRefPtrTracker()
-  : _maxDepth(20)
+TfRefPtrTracker::TfRefPtrTracker() : _maxDepth(20)
 {
   // Do nothing
 }
@@ -91,20 +90,17 @@ void TfRefPtrTracker::_AddTrace(const void *owner, const TfRefBase *obj, TraceTy
   // the use count then we're no longer watching the object;  this
   // shouldn't happen.
   OwnerTraces::iterator i = _traces.find(owner);
-  if (i != _traces.end())
-  {
+  if (i != _traces.end()) {
     // Stop watching previous object.
     WatchedCounts::iterator j = _watched.find(i->second.obj);
-    if (j != _watched.end())
-    {
+    if (j != _watched.end()) {
       --j->second;
     }
   }
 
   // See if the new TfRefBase is being watched.
   WatchedCounts::iterator j = _watched.find(obj);
-  if (j != _watched.end())
-  {
+  if (j != _watched.end()) {
     // TfRefBase is being watched.  Increment the number of uses of
     // that TfRefBase.
     ++j->second;
@@ -118,8 +114,7 @@ void TfRefPtrTracker::_AddTrace(const void *owner, const TfRefBase *obj, TraceTy
     trace.type = type;
   }
 
-  else if (i != _traces.end())
-  {
+  else if (i != _traces.end()) {
     // We assigned a TfRefBase that we're not watching.  This owner is
     // no longer relevant so discard it.
     _traces.erase(i);
@@ -132,14 +127,12 @@ void TfRefPtrTracker::_RemoveTraces(const void *owner)
 
   // See if we have this owner.
   OwnerTraces::iterator i = _traces.find(owner);
-  if (i != _traces.end())
-  {
+  if (i != _traces.end()) {
     // We have the owner.  Decrement the number of uses of the object
     // it's pointing to.  If we can't find the use count then we're
     // no longer watching that object;  this shouldn't happen.
     WatchedCounts::iterator j = _watched.find(i->second.obj);
-    if (j != _watched.end())
-    {
+    if (j != _watched.end()) {
       --j->second;
     }
 
@@ -163,8 +156,7 @@ TfRefPtrTracker::OwnerTraces TfRefPtrTracker::GetAllTraces() const
 void TfRefPtrTracker::ReportAllWatchedCounts(std::ostream &stream) const
 {
   stream << "TfRefPtrTracker watched counts:" << std::endl;
-  TF_FOR_ALL (i, _watched)
-  {
+  TF_FOR_ALL (i, _watched) {
     stream << "  " << i->first << ": " << i->second << " (type " << _GetDemangled(i->first) << ")"
            << std::endl;
   }
@@ -174,10 +166,10 @@ void TfRefPtrTracker::ReportAllTraces(std::ostream &stream) const
 {
   stream << "TfRefPtrTracker traces:" << std::endl;
   _Lock lock(_mutex);
-  TF_FOR_ALL (i, _traces)
-  {
+  TF_FOR_ALL (i, _traces) {
     const Trace &trace = i->second;
-    stream << "  Owner: " << i->first << " " << _type[trace.type] << " " << trace.obj << ":" << std::endl;
+    stream << "  Owner: " << i->first << " " << _type[trace.type] << " " << trace.obj << ":"
+           << std::endl;
     stream << "==============================================================" << std::endl;
     ArchPrintStackFrames(stream, trace.trace);
     stream << std::endl;
@@ -189,8 +181,7 @@ void TfRefPtrTracker::ReportTracesForWatched(std::ostream &stream, const TfRefBa
   _Lock lock(_mutex);
 
   // Report if not watched.
-  if (_watched.find(watched) == _watched.end())
-  {
+  if (_watched.find(watched) == _watched.end()) {
     stream << "TfRefPtrTracker traces for " << watched << ":  not watched" << std::endl;
     return;
   }
@@ -200,11 +191,9 @@ void TfRefPtrTracker::ReportTracesForWatched(std::ostream &stream, const TfRefBa
          << std::endl;
 
   // Loop over all traces and report the ones that are watching watched.
-  TF_FOR_ALL (i, _traces)
-  {
+  TF_FOR_ALL (i, _traces) {
     const Trace &trace = i->second;
-    if (trace.obj == watched)
-    {
+    if (trace.obj == watched) {
       stream << "  Owner: " << i->first << " " << _type[trace.type] << ":" << std::endl;
       stream << "==============================================================" << std::endl;
       ArchPrintStackFrames(stream, trace.trace);

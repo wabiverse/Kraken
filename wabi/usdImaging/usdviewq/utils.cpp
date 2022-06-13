@@ -44,13 +44,17 @@
 WABI_NAMESPACE_BEGIN
 
 /*static*/
-std::vector<UsdPrim> UsdviewqUtils::_GetAllPrimsOfType(UsdStagePtr const &stage, TfType const &schemaType)
+std::vector<UsdPrim> UsdviewqUtils::_GetAllPrimsOfType(UsdStagePtr const &stage,
+                                                       TfType const &schemaType)
 {
   std::vector<UsdPrim> result;
   UsdPrimRange range = stage->Traverse();
-  std::copy_if(range.begin(), range.end(), std::back_inserter(result), [schemaType](UsdPrim const &prim) {
-    return prim.IsA(schemaType);
-  });
+  std::copy_if(range.begin(),
+               range.end(),
+               std::back_inserter(result),
+               [schemaType](UsdPrim const &prim) {
+                 return prim.IsA(schemaType);
+               });
   return result;
 }
 
@@ -80,15 +84,13 @@ UsdviewqUtils::PrimInfo::PrimInfo(const UsdPrim &prim, const UsdTimeCode time)
 
   isInstance = prim.IsInstance();
   isVisibilityInherited = false;
-  if (img)
-  {
+  if (img) {
     UsdAttributeQuery query(img.GetVisibilityAttr());
     TfToken visibility = UsdGeomTokens->inherited;
     query.Get(&visibility, time);
     isVisibilityInherited = (visibility == UsdGeomTokens->inherited);
     visVaries = query.ValueMightBeTimeVarying();
-  } else
-  {
+  } else {
     visVaries = false;
   }
 

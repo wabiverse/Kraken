@@ -57,8 +57,7 @@ bool Usd_UntypedInterpolator::_Interpolate(const Src &src,
                                            double lower,
                                            double upper)
 {
-  if (_attr.GetStage()->GetInterpolationType() == UsdInterpolationTypeHeld)
-  {
+  if (_attr.GetStage()->GetInterpolationType() == UsdInterpolationTypeHeld) {
     return Usd_HeldInterpolator<VtValue>(_result).Interpolate(src, path, time, lower, upper);
   }
 
@@ -68,27 +67,24 @@ bool Usd_UntypedInterpolator::_Interpolate(const Src &src,
   // value.
 
   const TfType attrValueType = _attr.GetTypeName().GetType();
-  if (!attrValueType)
-  {
+  if (!attrValueType) {
     TF_RUNTIME_ERROR("Unknown value type '%s' for attribute '%s'",
                      _attr.GetTypeName().GetAsToken().GetText(),
                      _attr.GetPath().GetString().c_str());
     return false;
   }
 
-#define _MAKE_CLAUSE(r, unused, type)                                                       \
-  {                                                                                         \
-    static const TfType valueType = TfType::Find<type>();                                   \
-    if (attrValueType == valueType)                                                         \
-    {                                                                                       \
-      type result;                                                                          \
-      if (Usd_LinearInterpolator<type>(&result).Interpolate(src, path, time, lower, upper)) \
-      {                                                                                     \
-        *_result = result;                                                                  \
-        return true;                                                                        \
-      }                                                                                     \
-      return false;                                                                         \
-    }                                                                                       \
+#define _MAKE_CLAUSE(r, unused, type)                                                         \
+  {                                                                                           \
+    static const TfType valueType = TfType::Find<type>();                                     \
+    if (attrValueType == valueType) {                                                         \
+      type result;                                                                            \
+      if (Usd_LinearInterpolator<type>(&result).Interpolate(src, path, time, lower, upper)) { \
+        *_result = result;                                                                    \
+        return true;                                                                          \
+      }                                                                                       \
+      return false;                                                                           \
+    }                                                                                         \
   }
 
   BOOST_PP_SEQ_FOR_EACH(_MAKE_CLAUSE, ~, USD_LINEAR_INTERPOLATION_TYPES)

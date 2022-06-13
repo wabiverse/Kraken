@@ -64,15 +64,13 @@ static struct HdPrmanLoader
 void HdPrmanLoader::Load()
 {
   static bool inited = false;
-  if (inited)
-  {
+  if (inited) {
     return;
   }
   inited = true;
 
   const std::string rmantree = TfGetenv(k_RMANTREE);
-  if (rmantree.empty())
-  {
+  if (rmantree.empty()) {
     TF_WARN("The hdPrmanLoader backend requires $RMANTREE to be set.");
     return;
   }
@@ -81,8 +79,7 @@ void HdPrmanLoader::Load()
   // Open $RMANTREE/lib/libprman.so into the global namespace
   const std::string libprmanPath = TfStringCatPaths(rmantree, "lib/libprman" ARCH_LIBRARY_SUFFIX);
   _hdPrman.libprman = ArchLibraryOpen(libprmanPath, ARCH_LIBRARY_NOW | ARCH_LIBRARY_GLOBAL);
-  if (!_hdPrman.libprman)
-  {
+  if (!_hdPrman.libprman) {
     TF_WARN("Could not load libprman.");
     return;
   }
@@ -96,12 +93,10 @@ void HdPrmanLoader::Load()
 
   // hdxPrman is assumed to be next to hdPrmanLoader (this plugin)
   PlugPluginPtr plugin = PlugRegistry::GetInstance().GetPluginWithName("hdxPrman");
-  if (plugin)
-  {
+  if (plugin) {
     _hdPrman.hdxPrman = ArchLibraryOpen(plugin->GetPath(), ARCH_LIBRARY_NOW | ARCH_LIBRARY_LOCAL);
   }
-  if (!_hdPrman.hdxPrman)
-  {
+  if (!_hdPrman.hdxPrman) {
     TF_WARN("Could not load versioned hdPrman backend: %s", ArchLibraryError().c_str());
     return;
   }
@@ -110,8 +105,7 @@ void HdPrmanLoader::Load()
     ArchLibraryGetSymbolAddress(_hdPrman.hdxPrman, "HdPrmanLoaderCreateDelegate"));
   _hdPrman.deleteFunc = reinterpret_cast<DeleteDelegateFunc>(
     ArchLibraryGetSymbolAddress(_hdPrman.hdxPrman, "HdPrmanLoaderDeleteDelegate"));
-  if (!_hdPrman.createFunc || !_hdPrman.deleteFunc)
-  {
+  if (!_hdPrman.createFunc || !_hdPrman.deleteFunc) {
     TF_WARN("hdPrmanLoader factory methods could not be found.");
     return;
   }
@@ -121,15 +115,13 @@ void HdPrmanLoader::Load()
 
 HdPrmanLoader::~HdPrmanLoader()
 {
-  if (hdxPrman)
-  {
+  if (hdxPrman) {
     // Note: OSX does not support clean unloading of hdxPrman.dylib symbols
     ArchLibraryClose(hdxPrman);
     hdxPrman = nullptr;
   }
 #if defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN)
-  if (libprman)
-  {
+  if (libprman) {
     ArchLibraryClose(libprman);
     libprman = nullptr;
   }
@@ -147,23 +139,21 @@ HdPrmanLoaderRendererPlugin::HdPrmanLoaderRendererPlugin()
   HdPrmanLoader::Load();
 }
 
-HdPrmanLoaderRendererPlugin::~HdPrmanLoaderRendererPlugin()
-{}
+HdPrmanLoaderRendererPlugin::~HdPrmanLoaderRendererPlugin() {}
 
 HdRenderDelegate *HdPrmanLoaderRendererPlugin::CreateRenderDelegate()
 {
-  if (_hdPrman.valid)
-  {
+  if (_hdPrman.valid) {
     HdRenderSettingsMap settingsMap;
     return _hdPrman.createFunc(settingsMap);
   }
   return nullptr;
 }
 
-HdRenderDelegate *HdPrmanLoaderRendererPlugin::CreateRenderDelegate(HdRenderSettingsMap const &settingsMap)
+HdRenderDelegate *HdPrmanLoaderRendererPlugin::CreateRenderDelegate(
+  HdRenderSettingsMap const &settingsMap)
 {
-  if (_hdPrman.valid)
-  {
+  if (_hdPrman.valid) {
     return _hdPrman.createFunc(settingsMap);
   }
   return nullptr;
@@ -171,8 +161,7 @@ HdRenderDelegate *HdPrmanLoaderRendererPlugin::CreateRenderDelegate(HdRenderSett
 
 void HdPrmanLoaderRendererPlugin::DeleteRenderDelegate(HdRenderDelegate *renderDelegate)
 {
-  if (_hdPrman.valid)
-  {
+  if (_hdPrman.valid) {
     _hdPrman.deleteFunc(renderDelegate);
   }
 }

@@ -268,16 +268,14 @@ GfSlerp(double alpha, const {{QUAT}} & q0, const {{QUAT}} & q1)
   double cosTheta = q0.GetImaginary() * q1.GetImaginary() + q0.GetReal() * q1.GetReal();
   bool flip1 = false;
 
-  if (cosTheta < 0.0)
-  {
+  if (cosTheta < 0.0) {
     cosTheta = -cosTheta;
     flip1 = true;
   }
 
   double scale0, scale1;
 
-  if (1.0 - cosTheta > 0.00001)
-  {
+  if (1.0 - cosTheta > 0.00001) {
     // standard case
     {
       {
@@ -288,8 +286,7 @@ GfSlerp(double alpha, const {{QUAT}} & q0, const {{QUAT}} & q1)
 
     scale0 = sin((1.0 - alpha) * theta) / sinTheta;
     scale1 = sin(alpha * theta) / sinTheta;
-  } else
-  {
+  } else {
     // rot0 and rot1 very close - just do linear interp and renormalize.
     scale0 = 1.0 - alpha;
     scale1 = alpha;

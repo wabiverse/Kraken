@@ -47,6 +47,7 @@ namespace
   class CyclesShaderProperty : public SdrShaderProperty
   {
    public:
+
     CyclesShaderProperty(const TfToken &name,
                          const SdfValueTypeName &typeName,
                          const VtValue &defaultValue,
@@ -72,16 +73,15 @@ namespace
     }
 
    private:
+
     SdfValueTypeName _typeName;
   };
 
 }  // namespace
 
-NdrCyclesParserPlugin::NdrCyclesParserPlugin()
-{}
+NdrCyclesParserPlugin::NdrCyclesParserPlugin() {}
 
-NdrCyclesParserPlugin::~NdrCyclesParserPlugin()
-{}
+NdrCyclesParserPlugin::~NdrCyclesParserPlugin() {}
 
 NdrNodeUniquePtr NdrCyclesParserPlugin::Parse(const NdrNodeDiscoveryResult &discoveryResult)
 {

@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdLuxRectLight::~UsdLuxRectLight()
-{}
+UsdLuxRectLight::~UsdLuxRectLight() {}
 
 /* static */
 UsdLuxRectLight UsdLuxRectLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxRectLight();
   }
@@ -69,8 +67,7 @@ UsdLuxRectLight UsdLuxRectLight::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdLuxRectLight UsdLuxRectLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RectLight");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxRectLight();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdLuxRectLight::GetWidthAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsWidth);
 }
 
-UsdAttribute UsdLuxRectLight::CreateWidthAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxRectLight::CreateWidthAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsWidth,
                                     SdfValueTypeNames->Float,
@@ -123,7 +121,8 @@ UsdAttribute UsdLuxRectLight::GetHeightAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsHeight);
 }
 
-UsdAttribute UsdLuxRectLight::CreateHeightAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxRectLight::CreateHeightAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsHeight,
                                     SdfValueTypeNames->Float,
@@ -138,7 +137,8 @@ UsdAttribute UsdLuxRectLight::GetTextureFileAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsTextureFile);
 }
 
-UsdAttribute UsdLuxRectLight::CreateTextureFileAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxRectLight::CreateTextureFileAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsTextureFile,
                                     SdfValueTypeNames->Asset,
@@ -169,8 +169,9 @@ const TfTokenVector &UsdLuxRectLight::GetSchemaAttributeNames(bool includeInheri
     UsdLuxTokens->inputsHeight,
     UsdLuxTokens->inputsTextureFile,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdLuxLight::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

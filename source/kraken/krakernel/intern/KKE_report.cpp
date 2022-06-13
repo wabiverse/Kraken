@@ -37,8 +37,7 @@ WABI_NAMESPACE_BEGIN
 
 const char *KKE_report_type_str(eReportType type)
 {
-  switch (type)
-  {
+  switch (type) {
     case RPT_DEBUG:
       return TIP_("Debug");
     case RPT_INFO:
@@ -67,24 +66,19 @@ char *KKE_reports_string(ReportList *reports, eReportType level)
   std::string text = std::string();
   char cstring[MAX_PATH];
 
-  if (!reports || !(*reports->list.begin()))
-  {
+  if (!reports || !(*reports->list.begin())) {
     return NULL;
   }
 
-  UNIVERSE_FOR_ALL (rep, reports->list)
-  {
-    if (rep->type >= level)
-    {
+  UNIVERSE_FOR_ALL (rep, reports->list) {
+    if (rep->type >= level) {
       text = TfStringPrintf("%s: %s\n", rep->typestr, rep->message);
     }
   }
 
-  if (!text.empty())
-  {
+  if (!text.empty()) {
     KLI_strncpy(cstring, CHARALL(text), sizeof(CHARALL(text)));
-  } else
-  {
+  } else {
     KLI_strncpy(cstring, "  ", 20);
   }
 
@@ -93,8 +87,7 @@ char *KKE_reports_string(ReportList *reports, eReportType level)
 
 void KKE_reports_init(ReportList *reports, int flag)
 {
-  if (!reports)
-  {
+  if (!reports) {
     return;
   }
 
@@ -107,15 +100,13 @@ void KKE_reports_init(ReportList *reports, int flag)
 
 void KKE_reports_clear(ReportList *reports)
 {
-  if (!reports)
-  {
+  if (!reports) {
     return;
   }
 
   auto report = reports->list.begin();
 
-  while (report != reports->list.end())
-  {
+  while (report != reports->list.end()) {
     free((void *)(*report)->message);
     delete (*report);
     report++;
@@ -130,14 +121,12 @@ void KKE_report(ReportList *reports, eReportType type, const char *_message)
   int len;
   const char *message = TIP_(_message);
 
-  if (G.background || !reports || ((reports->flag & RPT_PRINT) && (type >= reports->printlevel)))
-  {
+  if (G.background || !reports || ((reports->flag & RPT_PRINT) && (type >= reports->printlevel))) {
     printf("%s: %s\n", KKE_report_type_str(type), message);
     fflush(stdout);
   }
 
-  if (reports && (reports->flag & RPT_STORE) && (type >= reports->storelevel))
-  {
+  if (reports && (reports->flag & RPT_STORE) && (type >= reports->storelevel)) {
     char *message_alloc;
     report = new Report();
     report->type = type;
@@ -160,8 +149,7 @@ void KKE_reportf(ReportList *reports, eReportType type, const char *_format, ...
   va_list args;
   const char *format = TIP_(_format);
 
-  if (G.background || !reports || ((reports->flag & RPT_PRINT) && (type >= reports->printlevel)))
-  {
+  if (G.background || !reports || ((reports->flag & RPT_PRINT) && (type >= reports->printlevel))) {
     printf("%s: ", KKE_report_type_str(type));
     va_start(args, _format);
     vprintf(format, args);
@@ -170,8 +158,7 @@ void KKE_reportf(ReportList *reports, eReportType type, const char *_format, ...
     fflush(stdout);
   }
 
-  if (reports && (reports->flag & RPT_STORE) && (type >= reports->storelevel))
-  {
+  if (reports && (reports->flag & RPT_STORE) && (type >= reports->storelevel)) {
 
     report = new Report();
 

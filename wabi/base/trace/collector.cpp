@@ -69,8 +69,7 @@ TraceCollector::_PerThreadData *TraceCollector::_GetThreadData()
   // Use nullptr initialization as sentinel to prevent guard variable from
   // being emitted.
   static thread_local TraceCollector::_PerThreadData *threadData = nullptr;
-  if (ARCH_UNLIKELY(!threadData))
-  {
+  if (ARCH_UNLIKELY(!threadData)) {
     threadData = &(*_allPerThreadData.Insert());
   }
   return threadData;
@@ -92,11 +91,9 @@ TraceCollector::TraceCollector()
 
 #ifdef WITH_PYTHON
   const bool globalPyTracing = TfGetenvBool("WABI_ENABLE_GLOBAL_PY_TRACE", false);
-  if (globalPyTracing || globalTracing)
-  {
+  if (globalPyTracing || globalTracing) {
 #else
-  if (globalTracing)
-  {
+  if (globalTracing) {
 #endif  // WITH_PYTHON
     atexit(_OutputGlobalReport);
     SetEnabled(true);
@@ -121,8 +118,7 @@ void TraceCollector::SetEnabled(bool isEnabled)
 TraceCollector::TimeStamp TraceCollector::_BeginEvent(const Key &key, TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::BeginEvent");
-  if (!IsEnabled())
-  {
+  if (!IsEnabled()) {
     return 0;
   }
 
@@ -133,8 +129,7 @@ TraceCollector::TimeStamp TraceCollector::_BeginEvent(const Key &key, TraceCateg
 TraceCollector::TimeStamp TraceCollector::_EndEvent(const Key &key, TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::EndEvent (key)");
-  if (!IsEnabled())
-  {
+  if (!IsEnabled()) {
     return 0;
   }
 
@@ -145,8 +140,7 @@ TraceCollector::TimeStamp TraceCollector::_EndEvent(const Key &key, TraceCategor
 TraceCollector::TimeStamp TraceCollector::_MarkerEvent(const Key &key, TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::MarkerEvent");
-  if (!IsEnabled())
-  {
+  if (!IsEnabled()) {
     return 0;
   }
 
@@ -157,8 +151,7 @@ TraceCollector::TimeStamp TraceCollector::_MarkerEvent(const Key &key, TraceCate
 void TraceCollector::_EndEventAtTime(const Key &key, double ms, TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::EndEventAtTime (key, double)");
-  if (!IsEnabled())
-  {
+  if (!IsEnabled()) {
     return;
   }
 
@@ -169,8 +162,7 @@ void TraceCollector::_EndEventAtTime(const Key &key, double ms, TraceCategoryId 
 void TraceCollector::_BeginEventAtTime(const Key &key, double ms, TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::BeginEventAtTime (key, double)");
-  if (!IsEnabled())
-  {
+  if (!IsEnabled()) {
     return;
   }
 
@@ -181,8 +173,7 @@ void TraceCollector::_BeginEventAtTime(const Key &key, double ms, TraceCategoryI
 void TraceCollector::_MarkerEventAtTime(const Key &key, double ms, TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::MarkerEventAtTime (key, double)");
-  if (!IsEnabled())
-  {
+  if (!IsEnabled()) {
     return;
   }
 
@@ -192,8 +183,7 @@ void TraceCollector::_MarkerEventAtTime(const Key &key, double ms, TraceCategory
 
 void TraceCollector::Clear()
 {
-  for (_PerThreadData &i : _allPerThreadData)
-  {
+  for (_PerThreadData &i : _allPerThreadData) {
     i.Clear();
   }
 }
@@ -209,11 +199,9 @@ void TraceCollector::_EndScope(const TraceKey &key, TraceCategoryId cat)
 void TraceCollector::CreateCollection()
 {
   std::unique_ptr<TraceCollection> collection(new TraceCollection());
-  for (_PerThreadData &i : _allPerThreadData)
-  {
+  for (_PerThreadData &i : _allPerThreadData) {
     TraceCollection::EventListPtr collData = i.GetCollectionData();
-    if (!collData->IsEmpty())
-    {
+    if (!collData->IsEmpty()) {
       collection->AddToCollection(i.GetThreadId(), std::move(collData));
     }
   }
@@ -240,13 +228,11 @@ static inline TraceCollector::Key _MakePythonScopeKey(const TfPyTraceInfo &info)
 
 inline void TraceCollector::_PyTracingCallback(const TfPyTraceInfo &info)
 {
-  if (info.what == PyTrace_CALL)
-  {
+  if (info.what == PyTrace_CALL) {
     // If this is a CALL, push a scope for this \a frame in the collector.
     _PerThreadData *threadData = _GetThreadData();
     threadData->PushPyScope(_MakePythonScopeKey(info), IsEnabled());
-  } else if (info.what == PyTrace_RETURN)
-  {
+  } else if (info.what == PyTrace_RETURN) {
     // If instead this is a RETURN, pop the current scope in the collector.
     // We may be called with no active scopes if python tracing is enabled
     // in the middle of some call stack and then the code returns out of
@@ -262,13 +248,13 @@ void TraceCollector::SetPythonTracingEnabled(bool enabled)
   static tbb::spin_mutex enableMutex;
   tbb::spin_mutex::scoped_lock lock(enableMutex);
 
-  if (enabled && !IsPythonTracingEnabled())
-  {
+  if (enabled && !IsPythonTracingEnabled()) {
     _isPythonTracingEnabled.store(enabled, std::memory_order_release);
     // Install the python tracing function.
-    _pyTraceFnId = TfPyRegisterTraceFn([this](const TfPyTraceInfo &info) { _PyTracingCallback(info); });
-  } else if (!enabled && IsPythonTracingEnabled())
-  {
+    _pyTraceFnId = TfPyRegisterTraceFn([this](const TfPyTraceInfo &info) {
+      _PyTracingCallback(info);
+    });
+  } else if (!enabled && IsPythonTracingEnabled()) {
     _isPythonTracingEnabled.store(enabled, std::memory_order_release);
     // Remove the python tracing function.
     _pyTraceFnId.reset();
@@ -280,8 +266,7 @@ void TraceCollector::SetPythonTracingEnabled(bool enabled)
 ////////////////////////////////////////////////////////////////////////
 // _PerThreadData methods
 
-TraceCollector::_PerThreadData::_PerThreadData()
-  : _writing()
+TraceCollector::_PerThreadData::_PerThreadData() : _writing()
 {
   _threadIndex = TraceGetThreadId();
   _events = new EventList();
@@ -292,7 +277,8 @@ TraceCollector::_PerThreadData::~_PerThreadData()
   delete _events.load(std::memory_order_acquire);
 }
 
-TraceCollector::TimeStamp TraceCollector::_PerThreadData::BeginEvent(const Key &key, TraceCategoryId cat)
+TraceCollector::TimeStamp TraceCollector::_PerThreadData::BeginEvent(const Key &key,
+                                                                     TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::_PerThreadData::BeginEvent");
   AtomicRef lock(_writing);
@@ -301,7 +287,8 @@ TraceCollector::TimeStamp TraceCollector::_PerThreadData::BeginEvent(const Key &
   return event.GetTimeStamp();
 }
 
-TraceCollector::TimeStamp TraceCollector::_PerThreadData::EndEvent(const Key &key, TraceCategoryId cat)
+TraceCollector::TimeStamp TraceCollector::_PerThreadData::EndEvent(const Key &key,
+                                                                   TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::_PerThreadData::EndEvent");
   AtomicRef lock(_writing);
@@ -310,7 +297,8 @@ TraceCollector::TimeStamp TraceCollector::_PerThreadData::EndEvent(const Key &ke
   return event.GetTimeStamp();
 }
 
-TraceCollector::TimeStamp TraceCollector::_PerThreadData::MarkerEvent(const Key &key, TraceCategoryId cat)
+TraceCollector::TimeStamp TraceCollector::_PerThreadData::MarkerEvent(const Key &key,
+                                                                      TraceCategoryId cat)
 {
   TfAutoMallocTag2 tag("Trace", "TraceCollector::_PerThreadData::MarkerEvent");
   AtomicRef lock(_writing);
@@ -319,7 +307,9 @@ TraceCollector::TimeStamp TraceCollector::_PerThreadData::MarkerEvent(const Key 
   return event.GetTimeStamp();
 }
 
-void TraceCollector::_PerThreadData::BeginEventAtTime(const Key &key, double ms, TraceCategoryId cat)
+void TraceCollector::_PerThreadData::BeginEventAtTime(const Key &key,
+                                                      double ms,
+                                                      TraceCategoryId cat)
 {
   AtomicRef lock(_writing);
   TfAutoMallocTag2 tag("Trace", "TraceCollector::_PerThreadData::BeginEventAtTime");
@@ -337,7 +327,9 @@ void TraceCollector::_PerThreadData::EndEventAtTime(const Key &key, double ms, T
   events->EmplaceBack(TraceEvent::End, events->CacheKey(key), ts, cat);
 }
 
-void TraceCollector::_PerThreadData::MarkerEventAtTime(const Key &key, double ms, TraceCategoryId cat)
+void TraceCollector::_PerThreadData::MarkerEventAtTime(const Key &key,
+                                                       double ms,
+                                                       TraceCategoryId cat)
 {
   AtomicRef lock(_writing);
   TfAutoMallocTag2 tag("Trace", "TraceCollector::_PerThreadData::MarkerEventAtTime");
@@ -351,14 +343,18 @@ void TraceCollector::_PerThreadData::_EndScope(const TraceKey &key, TraceCategor
   _events.load(std::memory_order_acquire)->EmplaceBack(TraceEvent::End, key, cat);
 }
 
-void TraceCollector::_PerThreadData::CounterDelta(const Key &key, double value, TraceCategoryId cat)
+void TraceCollector::_PerThreadData::CounterDelta(const Key &key,
+                                                  double value,
+                                                  TraceCategoryId cat)
 {
   AtomicRef lock(_writing);
   EventList *events = _events.load(std::memory_order_acquire);
   events->EmplaceBack(TraceEvent::CounterDelta, events->CacheKey(key), value, cat);
 }
 
-void TraceCollector::_PerThreadData::CounterValue(const Key &key, double value, TraceCategoryId cat)
+void TraceCollector::_PerThreadData::CounterValue(const Key &key,
+                                                  double value,
+                                                  TraceCategoryId cat)
 {
   AtomicRef lock(_writing);
   EventList *events = _events.load(std::memory_order_acquire);
@@ -370,8 +366,7 @@ void TraceCollector::_PerThreadData::CounterValue(const Key &key, double value, 
 void TraceCollector::_PerThreadData::PushPyScope(const Key &key, bool enabled)
 {
   AtomicRef lock(_writing);
-  if (enabled)
-  {
+  if (enabled) {
     EventList *events = _events.load(std::memory_order_acquire);
     TraceKey stableKey = events->CacheKey(key);
     _BeginScope(stableKey, TraceCategory::Default);
@@ -382,10 +377,8 @@ void TraceCollector::_PerThreadData::PushPyScope(const Key &key, bool enabled)
 void TraceCollector::_PerThreadData::PopPyScope(bool enabled)
 {
   AtomicRef lock(_writing);
-  if (!_pyScopes.empty())
-  {
-    if (enabled)
-    {
+  if (!_pyScopes.empty()) {
+    if (enabled) {
       const PyScope &scope = _pyScopes.back();
       EventList *events = _events.load(std::memory_order_acquire);
       TraceKey stableKey = events->CacheKey(scope.key);
@@ -407,8 +400,7 @@ std::unique_ptr<TraceCollection::EventList> TraceCollector::_PerThreadData::GetC
 
   // The previous list may have a writer so we have to wait until noone is
   // potentially writing to prevList.
-  while (_writing.load(std::memory_order_acquire))
-  {
+  while (_writing.load(std::memory_order_acquire)) {
   }
 
   // Now it should be ok to release the list to the outside.

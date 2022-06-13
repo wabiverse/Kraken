@@ -62,8 +62,7 @@ namespace
                              const std::string &dirPath,
                              const NdrStringVec &dirFileNames)
   {
-    for (const std::string &fileName : dirFileNames)
-    {
+    for (const std::string &fileName : dirFileNames) {
       std::string extension = TfStringToLower(TfGetExtension(fileName));
 
       // Does the extension match one of the known-good extensions?
@@ -71,8 +70,7 @@ namespace
                                                        allowedExtensions.end(),
                                                        extension);
 
-      if (extIter != allowedExtensions.end())
-      {
+      if (extIter != allowedExtensions.end()) {
         // Found a node file w/ allowed extension
         std::string uri = TfStringCatPaths(dirPath, fileName);
         std::string identifier = TfStringGetBeforeSuffix(fileName, '.');
@@ -80,8 +78,7 @@ namespace
 
         // Don't allow duplicates. A "duplicate" is considered to be a node
         // with the same name AND discovery type.
-        if (!foundNodesWithTypes->insert(identifierAndType).second)
-        {
+        if (!foundNodesWithTypes->insert(identifierAndType).second) {
           TF_DEBUG(NDR_DISCOVERY)
             .Msg(
               "Found a duplicate node with identifier [%s] "
@@ -141,10 +138,8 @@ NdrNodeDiscoveryResultVec NdrFsHelpersDiscoverNodes(const NdrStringVec &searchPa
   // Cache the calls to Ar's `Resolve()`
   ArResolverScopedCache resolverCache;
 
-  for (const std::string &searchPath : searchPaths)
-  {
-    if (!TfIsDir(searchPath))
-    {
+  for (const std::string &searchPath : searchPaths) {
+    if (!TfIsDir(searchPath)) {
       continue;
     }
 

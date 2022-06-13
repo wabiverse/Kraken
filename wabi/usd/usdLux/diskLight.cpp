@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdLuxDiskLight::~UsdLuxDiskLight()
-{}
+UsdLuxDiskLight::~UsdLuxDiskLight() {}
 
 /* static */
 UsdLuxDiskLight UsdLuxDiskLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxDiskLight();
   }
@@ -69,8 +67,7 @@ UsdLuxDiskLight UsdLuxDiskLight::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdLuxDiskLight UsdLuxDiskLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("DiskLight");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxDiskLight();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdLuxDiskLight::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsRadius);
 }
 
-UsdAttribute UsdLuxDiskLight::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxDiskLight::CreateRadiusAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsRadius,
                                     SdfValueTypeNames->Float,
@@ -137,8 +135,9 @@ const TfTokenVector &UsdLuxDiskLight::GetSchemaAttributeNames(bool includeInheri
   static TfTokenVector localNames = {
     UsdLuxTokens->inputsRadius,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdLuxLight::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

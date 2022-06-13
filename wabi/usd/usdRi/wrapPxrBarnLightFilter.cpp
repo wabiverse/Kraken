@@ -50,9 +50,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -61,30 +59,41 @@ namespace
                                           object defaultVal,
                                           bool writeSparsely)
   {
-    return self.CreateBarnModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateBarnModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                   writeSparsely);
   }
 
-  static UsdAttribute _CreateWidthAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateWidthAttr(UsdRiPxrBarnLightFilter &self,
+                                       object defaultVal,
+                                       bool writeSparsely)
   {
-    return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateWidthAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                writeSparsely);
   }
 
-  static UsdAttribute _CreateHeightAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateHeightAttr(UsdRiPxrBarnLightFilter &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateHeightAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                 writeSparsely);
   }
 
-  static UsdAttribute _CreateRadiusAttr(UsdRiPxrBarnLightFilter &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateRadiusAttr(UsdRiPxrBarnLightFilter &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateRadiusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                 writeSparsely);
   }
 
   static UsdAttribute _CreateAnalyticDirectionalAttr(UsdRiPxrBarnLightFilter &self,
                                                      object defaultVal,
                                                      bool writeSparsely)
   {
-    return self.CreateAnalyticDirectionalAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                              writeSparsely);
+    return self.CreateAnalyticDirectionalAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateAnalyticShearXAttr(UsdRiPxrBarnLightFilter &self,
@@ -115,8 +124,9 @@ namespace
                                                            object defaultVal,
                                                            bool writeSparsely)
   {
-    return self.CreateAnalyticUseLightDirectionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                                    writeSparsely);
+    return self.CreateAnalyticUseLightDirectionAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateAnalyticDensityNearDistanceAttr(UsdRiPxrBarnLightFilter &self,
@@ -141,24 +151,27 @@ namespace
                                                           object defaultVal,
                                                           bool writeSparsely)
   {
-    return self.CreateAnalyticDensityNearValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                   writeSparsely);
+    return self.CreateAnalyticDensityNearValueAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateAnalyticDensityFarValueAttr(UsdRiPxrBarnLightFilter &self,
                                                          object defaultVal,
                                                          bool writeSparsely)
   {
-    return self.CreateAnalyticDensityFarValueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                  writeSparsely);
+    return self.CreateAnalyticDensityFarValueAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateAnalyticDensityExponentAttr(UsdRiPxrBarnLightFilter &self,
                                                          object defaultVal,
                                                          bool writeSparsely)
   {
-    return self.CreateAnalyticDensityExponentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                                  writeSparsely);
+    return self.CreateAnalyticDensityExponentAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateEdgeThicknessAttr(UsdRiPxrBarnLightFilter &self,
@@ -197,7 +210,8 @@ namespace
                                            object defaultVal,
                                            bool writeSparsely)
   {
-    return self.CreateRefineTopAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateRefineTopAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                    writeSparsely);
   }
 
   static UsdAttribute _CreateRefineBottomAttr(UsdRiPxrBarnLightFilter &self,
@@ -286,7 +300,9 @@ void wrapUsdRiPxrBarnLightFilter()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -448,7 +464,6 @@ void wrapUsdRiPxrBarnLightFilter()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

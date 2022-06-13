@@ -58,12 +58,10 @@ namespace Zep
     return double(value / 1000.0);
   }
 
-  ProfileBlock::ProfileBlock(const char *timer)
-    : strTimer(timer)
+  ProfileBlock::ProfileBlock(const char *timer) : strTimer(timer)
   {
     timer_start(blockTimer);
-    if (globalProfiler.timerData.find(timer) == globalProfiler.timerData.end())
-    {
+    if (globalProfiler.timerData.find(timer) == globalProfiler.timerData.end()) {
       globalProfiler.timerData[timer] = profile_value{};
     }
   }

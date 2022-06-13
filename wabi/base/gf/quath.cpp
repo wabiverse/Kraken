@@ -48,13 +48,9 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<GfQuath>();
 }
 
-GfQuath::GfQuath(GfQuatd const &other)
-  : _imaginary(other.GetImaginary()),
-    _real(other.GetReal())
+GfQuath::GfQuath(GfQuatd const &other) : _imaginary(other.GetImaginary()), _real(other.GetReal())
 {}
-GfQuath::GfQuath(GfQuatf const &other)
-  : _imaginary(other.GetImaginary()),
-    _real(other.GetReal())
+GfQuath::GfQuath(GfQuatf const &other) : _imaginary(other.GetImaginary()), _real(other.GetReal())
 {}
 
 std::ostream &operator<<(std::ostream &out, GfQuath const &q)
@@ -177,23 +173,20 @@ GfQuath GfSlerp(double alpha, const GfQuath &q0, const GfQuath &q1)
   double cosTheta = q0.GetImaginary() * q1.GetImaginary() + q0.GetReal() * q1.GetReal();
   bool flip1 = false;
 
-  if (cosTheta < 0.0)
-  {
+  if (cosTheta < 0.0) {
     cosTheta = -cosTheta;
     flip1 = true;
   }
 
   double scale0, scale1;
 
-  if (1.0 - cosTheta > 0.00001)
-  {
+  if (1.0 - cosTheta > 0.00001) {
     // standard case
     GfHalf theta = acos(cosTheta), sinTheta = sin(theta);
 
     scale0 = sin((1.0 - alpha) * theta) / sinTheta;
     scale1 = sin(alpha * theta) / sinTheta;
-  } else
-  {
+  } else {
     // rot0 and rot1 very close - just do linear interp and renormalize.
     scale0 = 1.0 - alpha;
     scale1 = alpha;

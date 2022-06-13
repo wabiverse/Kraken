@@ -34,15 +34,13 @@ void UsdImaging_MaterialBindingImplData::ClearCaches()
   // Speed up destuction of the cache by resetting the unique_ptrs held
   // within in parallel.
   tbb::parallel_for(_bindingsCache.range(), [](decltype(_bindingsCache)::range_type &range) {
-    for (auto entryIt = range.begin(); entryIt != range.end(); ++entryIt)
-    {
+    for (auto entryIt = range.begin(); entryIt != range.end(); ++entryIt) {
       entryIt->second.release();
     }
   });
 
   tbb::parallel_for(_collQueryCache.range(), [](decltype(_collQueryCache)::range_type &range) {
-    for (auto entryIt = range.begin(); entryIt != range.end(); ++entryIt)
-    {
+    for (auto entryIt = range.begin(); entryIt != range.end(); ++entryIt) {
       entryIt->second.release();
     }
   });

@@ -18,8 +18,7 @@ double CalcMean(std::vector<double> &v)
 {
   double mean = 0;
 
-  for (int i = 0; i < (int)v.size(); i++)
-  {
+  for (int i = 0; i < (int)v.size(); i++) {
     mean += v[i];
   }
 
@@ -32,8 +31,7 @@ double CalcMean(std::vector<double> &v, int a, int b)
 {
   double mean = 0;
 
-  for (int i = a; i <= b; i++)
-  {
+  for (int i = a; i <= b; i++) {
     mean += v[i];
   }
 
@@ -48,8 +46,7 @@ double CalcStdv(std::vector<double> &v, int a, int b)
 
   double stdv = 0;
 
-  for (int i = a; i <= b; i++)
-  {
+  for (int i = a; i <= b; i++) {
     double x = v[i] - mean;
 
     stdv += x * x;
@@ -67,8 +64,7 @@ bool ContainsOutlier(std::vector<double> &v, size_t len)
 {
   double mean = 0;
 
-  for (size_t i = 0; i < len; i++)
-  {
+  for (size_t i = 0; i < len; i++) {
     mean += v[i];
   }
 
@@ -76,8 +72,7 @@ bool ContainsOutlier(std::vector<double> &v, size_t len)
 
   double stdv = 0;
 
-  for (size_t i = 0; i < len; i++)
-  {
+  for (size_t i = 0; i < len; i++) {
     double x = v[i] - mean;
     stdv += x * x;
   }
@@ -98,13 +93,11 @@ void FilterOutliers(std::vector<double> &v)
 
   size_t len = 0;
 
-  for (size_t x = 0x40000000; x; x = x >> 1)
-  {
+  for (size_t x = 0x40000000; x; x = x >> 1) {
     if ((len | x) >= v.size())
       continue;
 
-    if (!ContainsOutlier(v, len | x))
-    {
+    if (!ContainsOutlier(v, len | x)) {
       len |= x;
     }
   }
@@ -122,8 +115,7 @@ void FilterOutliers2(std::vector<double> &v)
   int a = 0;
   int b = (int)(v.size() - 1);
 
-  for (int i = 0; i < 10; i++)
-  {
+  for (int i = 0; i < 10; i++) {
     // printf("%d %d\n",a,b);
 
     double mean = CalcMean(v, a, b);
@@ -168,7 +160,11 @@ NEVER_INLINE int64_t timehash(pfHash hash, const void *key, int len, int seed)
 
 //-----------------------------------------------------------------------------
 
-double SpeedTest(pfHash hash, uint32_t seed, const int trials, const int blocksize, const int align)
+double SpeedTest(pfHash hash,
+                 uint32_t seed,
+                 const int trials,
+                 const int blocksize,
+                 const int align)
 {
   Rand r(seed);
 
@@ -188,8 +184,7 @@ double SpeedTest(pfHash hash, uint32_t seed, const int trials, const int blocksi
   std::vector<double> times;
   times.reserve(trials);
 
-  for (int itrial = 0; itrial < trials; itrial++)
-  {
+  for (int itrial = 0; itrial < trials; itrial++) {
     r.rand_p(block, blocksize);
 
     double t = (double)timehash(hash, block, blocksize, itrial);
@@ -219,8 +214,7 @@ void BulkSpeedTest(pfHash hash, uint32_t seed)
 
   printf("Bulk speed test - %d-byte keys\n", blocksize);
 
-  for (int align = 0; align < 8; align++)
-  {
+  for (int align = 0; align < 8; align++) {
     double cycles = SpeedTest(hash, seed, trials, blocksize, align);
 
     double bestbpc = double(blocksize) / cycles;

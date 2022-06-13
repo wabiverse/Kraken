@@ -44,9 +44,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -76,9 +74,12 @@ namespace
                                       writeSparsely);
   }
 
-  static UsdAttribute _CreateDensityAttr(UsdPhysicsMaterialAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateDensityAttr(UsdPhysicsMaterialAPI &self,
+                                         object defaultVal,
+                                         bool writeSparsely)
   {
-    return self.CreateDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                  writeSparsely);
   }
 
   static std::string _Repr(const UsdPhysicsMaterialAPI &self)
@@ -107,8 +108,9 @@ void wrapUsdPhysicsMaterialAPI()
 {
   typedef UsdPhysicsMaterialAPI This;
 
-  UsdPhysicsMaterialAPI_CanApplyResult::Wrap<UsdPhysicsMaterialAPI_CanApplyResult>("_CanApplyResult",
-                                                                                   "whyNot");
+  UsdPhysicsMaterialAPI_CanApplyResult::Wrap<UsdPhysicsMaterialAPI_CanApplyResult>(
+    "_CanApplyResult",
+    "whyNot");
 
   class_<This, bases<UsdAPISchemaBase>> cls("MaterialAPI");
 
@@ -131,7 +133,9 @@ void wrapUsdPhysicsMaterialAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -184,7 +188,6 @@ void wrapUsdPhysicsMaterialAPI()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdPhysicsRevoluteJoint::~UsdPhysicsRevoluteJoint()
-{}
+UsdPhysicsRevoluteJoint::~UsdPhysicsRevoluteJoint() {}
 
 /* static */
 UsdPhysicsRevoluteJoint UsdPhysicsRevoluteJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsRevoluteJoint();
   }
@@ -59,11 +57,11 @@ UsdPhysicsRevoluteJoint UsdPhysicsRevoluteJoint::Get(const UsdStagePtr &stage, c
 }
 
 /* static */
-UsdPhysicsRevoluteJoint UsdPhysicsRevoluteJoint::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsRevoluteJoint UsdPhysicsRevoluteJoint::Define(const UsdStagePtr &stage,
+                                                        const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PhysicsRevoluteJoint");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsRevoluteJoint();
   }
@@ -101,7 +99,8 @@ UsdAttribute UsdPhysicsRevoluteJoint::GetAxisAttr() const
   return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAxis);
 }
 
-UsdAttribute UsdPhysicsRevoluteJoint::CreateAxisAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsRevoluteJoint::CreateAxisAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAxis,
                                     SdfValueTypeNames->Token,
@@ -164,8 +163,9 @@ const TfTokenVector &UsdPhysicsRevoluteJoint::GetSchemaAttributeNames(bool inclu
     UsdPhysicsTokens->physicsLowerLimit,
     UsdPhysicsTokens->physicsUpperLimit,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdPhysicsJoint::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdPhysicsJoint::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

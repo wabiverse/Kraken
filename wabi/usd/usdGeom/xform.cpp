@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomXform::~UsdGeomXform()
-{}
+UsdGeomXform::~UsdGeomXform() {}
 
 /* static */
 UsdGeomXform UsdGeomXform::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomXform();
   }
@@ -62,8 +60,7 @@ UsdGeomXform UsdGeomXform::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomXform UsdGeomXform::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Xform");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomXform();
   }

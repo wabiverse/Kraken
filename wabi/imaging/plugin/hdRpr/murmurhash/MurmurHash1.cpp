@@ -29,8 +29,7 @@ uint32_t MurmurHash1(const void *key, int len, uint32_t seed)
 
   const unsigned char *data = (const unsigned char *)key;
 
-  while (len >= 4)
-  {
+  while (len >= 4) {
     unsigned int k = *(unsigned int *)data;
 
     h += k;
@@ -43,8 +42,7 @@ uint32_t MurmurHash1(const void *key, int len, uint32_t seed)
 
   //----------
 
-  switch (len)
-  {
+  switch (len) {
     case 3:
       h += data[2] << 16;
     case 2:
@@ -84,14 +82,12 @@ unsigned int MurmurHash1Aligned(const void *key, int len, unsigned int seed)
 
   int align = (uint64_t)data & 3;
 
-  if (align && (len >= 4))
-  {
+  if (align && (len >= 4)) {
     // Pre-load the temp registers
 
     unsigned int t = 0, d = 0;
 
-    switch (align)
-    {
+    switch (align) {
       case 1:
         t |= data[2] << 16;
       case 2:
@@ -110,8 +106,7 @@ unsigned int MurmurHash1Aligned(const void *key, int len, unsigned int seed)
 
     // Mix
 
-    while (len >= 4)
-    {
+    while (len >= 4) {
       d = *(unsigned int *)data;
       t = (t >> sr) | (d << sl);
       h += t;
@@ -129,8 +124,7 @@ unsigned int MurmurHash1Aligned(const void *key, int len, unsigned int seed)
 
     d = 0;
 
-    switch (pack)
-    {
+    switch (pack) {
       case 3:
         d |= data[2] << 16;
       case 2:
@@ -145,10 +139,8 @@ unsigned int MurmurHash1Aligned(const void *key, int len, unsigned int seed)
 
     data += pack;
     len -= pack;
-  } else
-  {
-    while (len >= 4)
-    {
+  } else {
+    while (len >= 4) {
       h += *(unsigned int *)data;
       h *= m;
       h ^= h >> r;
@@ -161,8 +153,7 @@ unsigned int MurmurHash1Aligned(const void *key, int len, unsigned int seed)
   //----------
   // Handle tail bytes
 
-  switch (len)
-  {
+  switch (len) {
     case 3:
       h += data[2] << 16;
     case 2:

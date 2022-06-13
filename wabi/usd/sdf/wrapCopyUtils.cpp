@@ -60,14 +60,12 @@ namespace
     // XXX: See also wrapSpec.cpp. Perhaps this logic should live in
     // pyUtils.h?
     const VtValue &fallback = layer->GetSchema().GetFallback(field);
-    if (fallback.IsHolding<TfTokenVector>())
-    {
+    if (fallback.IsHolding<TfTokenVector>()) {
       return VtValue(extract<TfTokenVector>(obj)());
     }
 
     VtValue v = extract<VtValue>(obj)();
-    if (!fallback.IsEmpty())
-    {
+    if (!fallback.IsEmpty()) {
       v.CastToTypeOf(fallback);
     }
     return v;
@@ -105,18 +103,16 @@ namespace
                         bool fieldInDst,
                         boost::optional<VtValue> *value)
   {
-    object result = pyFunc(specType, field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst);
+    object result =
+      pyFunc(specType, field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst);
 
-    if (PyBool_Check(result.ptr()))
-    {
+    if (PyBool_Check(result.ptr())) {
       return extract<bool>(result)();
     }
 
     extract<tuple> getTuple(result);
-    if (getTuple.check())
-    {
-      if (PyBool_Check(object(result[0]).ptr()))
-      {
+    if (getTuple.check()) {
+      if (PyBool_Check(object(result[0]).ptr())) {
         const bool status = extract<bool>(result[0])();
         *value = _GetValueForField(srcLayer, field, result[1]);
         return status;
@@ -140,16 +136,13 @@ namespace
   {
     object result = pyFunc(field, srcLayer, srcPath, fieldInSrc, dstLayer, dstPath, fieldInDst);
 
-    if (PyBool_Check(result.ptr()))
-    {
+    if (PyBool_Check(result.ptr())) {
       return extract<bool>(result)();
     }
 
     extract<tuple> getTuple(result);
-    if (getTuple.check())
-    {
-      if (PyBool_Check(object(result[0]).ptr()))
-      {
+    if (getTuple.check()) {
+      if (PyBool_Check(object(result[0]).ptr())) {
         const bool status = extract<bool>(result[0])();
         *srcChildren = _GetValueForField(srcLayer, field, result[1]);
         *dstChildren = _GetValueForField(srcLayer, field, result[2]);
@@ -204,10 +197,11 @@ namespace
 
 void wrapCopyUtils()
 {
-  def("CopySpec",
-      (bool (*)(const SdfLayerHandle &, const SdfPath &, const SdfLayerHandle &, const SdfPath &)) &
-        SdfCopySpec,
-      (arg("srcLayer"), arg("srcPath"), arg("dstLayer"), arg("dstPath")));
+  def(
+    "CopySpec",
+    (bool (*)(const SdfLayerHandle &, const SdfPath &, const SdfLayerHandle &, const SdfPath &)) &
+      SdfCopySpec,
+    (arg("srcLayer"), arg("srcPath"), arg("dstLayer"), arg("dstPath")));
 
   TfPyFunctionFromPython<Py_SdfShouldCopyChildrenSig>();
   TfPyFunctionFromPython<Py_SdfShouldCopyValueSig>();

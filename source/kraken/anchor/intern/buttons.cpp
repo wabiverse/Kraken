@@ -31,8 +31,7 @@ AnchorButtons::AnchorButtons()
 
 bool AnchorButtons::get(eAnchorButtonMask mask) const
 {
-  switch (mask)
-  {
+  switch (mask) {
     case ANCHOR_BUTTON_MASK_LEFT:
       return m_ButtonLeft;
     case ANCHOR_BUTTON_MASK_MIDDLE:
@@ -46,8 +45,7 @@ bool AnchorButtons::get(eAnchorButtonMask mask) const
 
 void AnchorButtons::set(eAnchorButtonMask mask, bool down)
 {
-  switch (mask)
-  {
+  switch (mask) {
     case ANCHOR_BUTTON_MASK_LEFT:
       m_ButtonLeft = down;
       break;
@@ -69,5 +67,4 @@ void AnchorButtons::clear()
   m_ButtonRight = false;
 }
 
-AnchorButtons::~AnchorButtons()
-{}
+AnchorButtons::~AnchorButtons() {}

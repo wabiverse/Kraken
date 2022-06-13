@@ -67,6 +67,7 @@ typedef TfHashMap<string, const type_info *, TfHash> _TypeNameToTypeTableType;
 class Tf_EnumRegistry : boost::noncopyable
 {
  private:
+
   static Tf_EnumRegistry &_GetInstance()
   {
     return TfSingleton<Tf_EnumRegistry>::GetInstance();
@@ -155,7 +156,9 @@ void TfEnum::_AddName(TfEnum val,
   r._typeNameToNameVector[val.GetType().name()].push_back(shortName);
   r._typeNameToType[typeName] = &val.GetType();
 
-  TfRegistryManager::GetInstance().AddFunctionForUnload([&r, val]() { r._Remove(val); });
+  TfRegistryManager::GetInstance().AddFunctionForUnload([&r, val]() {
+    r._Remove(val);
+  });
 }
 
 void TfEnum::_AddName(TfEnum val, const string &valName, const string &displayName)
@@ -187,7 +190,9 @@ void TfEnum::_AddName(TfEnum val, const string &valName, const string &displayNa
   r._typeNameToNameVector[val.GetType().name()].push_back(shortName);
   r._typeNameToType[typeName] = &val.GetType();
 
-  TfRegistryManager::GetInstance().AddFunctionForUnload([&r, val]() { r._Remove(val); });
+  TfRegistryManager::GetInstance().AddFunctionForUnload([&r, val]() {
+    r._Remove(val);
+  });
 }
 
 string TfEnum::GetName(TfEnum val)
@@ -267,18 +272,15 @@ TfEnum TfEnum::GetValueFromFullName(const string &fullname, bool *foundIt)
   tbb::spin_mutex::scoped_lock lock(r._tableLock);
 
   _NameToEnumTableType::iterator i = r._fullNameToEnum.find(fullname);
-  if (i != r._fullNameToEnum.end())
-  {
+  if (i != r._fullNameToEnum.end()) {
     if (foundIt)
       *foundIt = true;
     return TfEnum(i->second);
-  } else if (fullname.find("int::") == 0)
-  {
+  } else if (fullname.find("int::") == 0) {
     if (foundIt)
       *foundIt = true;
     return TfEnum(atoi(fullname.c_str() + 5));
-  } else
-  {
+  } else {
     if (foundIt)
       *foundIt = false;
     return TfEnum(-1);

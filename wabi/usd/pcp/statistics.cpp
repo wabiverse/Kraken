@@ -39,10 +39,8 @@ WABI_NAMESPACE_BEGIN
 struct Pcp_GraphStats
 {
  public:
-  Pcp_GraphStats()
-    : numNodes(0),
-      numImpliedInherits(0)
-  {}
+
+  Pcp_GraphStats() : numNodes(0), numImpliedInherits(0) {}
 
   size_t numNodes;
   std::map<PcpArcType, size_t> typeToNumNodes;
@@ -52,11 +50,8 @@ struct Pcp_GraphStats
 struct Pcp_CacheStats
 {
  public:
-  Pcp_CacheStats()
-    : numPrimIndexes(0),
-      numPropertyIndexes(0),
-      numGraphInstances(0)
-  {}
+
+  Pcp_CacheStats() : numPrimIndexes(0), numPropertyIndexes(0), numGraphInstances(0) {}
 
   size_t numPrimIndexes;
   size_t numPropertyIndexes;
@@ -74,14 +69,13 @@ struct Pcp_CacheStats
 class Pcp_Statistics
 {
  public:
+
   static void AccumulateGraphStats(const PcpPrimIndex &primIndex,
                                    Pcp_GraphStats *stats,
                                    bool culledNodesOnly)
   {
-    for (const PcpNodeRef &node : primIndex.GetNodeRange())
-    {
-      if (culledNodesOnly && !node.IsCulled())
-      {
+    for (const PcpNodeRef &node : primIndex.GetNodeRange()) {
+      if (culledNodesOnly && !node.IsCulled()) {
         continue;
       }
 
@@ -89,8 +83,7 @@ class Pcp_Statistics
       ++(stats->typeToNumNodes[node.GetArcType()]);
 
       const bool nodeIsImpliedInherit = node.GetOriginNode() != node.GetParentNode();
-      if (nodeIsImpliedInherit)
-      {
+      if (nodeIsImpliedInherit) {
         if (node.GetArcType() == PcpArcTypeInherit)
           ++(stats->numImpliedInherits);
       }
@@ -111,11 +104,9 @@ class Pcp_Statistics
     std::set<_SharedNodePool> seenNodePools;
     TfHashSet<PcpMapFunction, MapFuncHash> allMapFuncs;
 
-    TF_FOR_ALL (it, cache->_primIndexCache)
-    {
+    TF_FOR_ALL (it, cache->_primIndexCache) {
       const PcpPrimIndex &primIndex = it->second;
-      if (!primIndex.IsValid())
-      {
+      if (!primIndex.IsValid()) {
         continue;
       }
 
@@ -128,8 +119,7 @@ class Pcp_Statistics
                            &stats->culledGraphStats,
                            /* culledNodesOnly = */ true);
 
-      if (seenNodePools.insert(primIndex.GetGraph()->_data).second)
-      {
+      if (seenNodePools.insert(primIndex.GetGraph()->_data).second) {
         ++(stats->numGraphInstances);
 
         AccumulateGraphStats(primIndex,
@@ -141,18 +131,15 @@ class Pcp_Statistics
       }
 
       // Gather map functions
-      for (const PcpNodeRef &node : primIndex.GetNodeRange())
-      {
+      for (const PcpNodeRef &node : primIndex.GetNodeRange()) {
         allMapFuncs.insert(node.GetMapToParent().Evaluate());
         allMapFuncs.insert(node.GetMapToRoot().Evaluate());
       }
     }
 
-    TF_FOR_ALL (it, cache->_propertyIndexCache)
-    {
+    TF_FOR_ALL (it, cache->_propertyIndexCache) {
       const PcpPropertyIndex &propIndex = it->second;
-      if (propIndex.IsEmpty())
-      {
+      if (propIndex.IsEmpty()) {
         continue;
       }
 
@@ -160,15 +147,13 @@ class Pcp_Statistics
     }
 
     // PcpMapFunction size distribution
-    TF_FOR_ALL (i, allMapFuncs)
-    {
+    TF_FOR_ALL (i, allMapFuncs) {
       size_t size = i->GetSourceToTargetMap().size();
       stats->mapFunctionSizeDistribution[size] += 1;
     }
 
     // PcpLayerStack _relocatesPrimPaths size distribution
-    for (const PcpLayerStackPtr &layerStack : cache->_layerStackCache->GetAllLayerStacks())
-    {
+    for (const PcpLayerStackPtr &layerStack : cache->_layerStackCache->GetAllLayerStacks()) {
       size_t size = layerStack->GetPathsToPrimsWithRelocates().size();
       stats->layerStackRelocationsSizeDistribution[size] += 1;
     }
@@ -184,8 +169,7 @@ class Pcp_Statistics
 
     static std::string FormatAverage(size_t n, size_t d)
     {
-      if (d == 0)
-      {
+      if (d == 0) {
         return "N/A";
       }
       return TfStringPrintf("%'.3f", (double)n / (double)d);
@@ -193,32 +177,25 @@ class Pcp_Statistics
 
     static std::string FormatSize(size_t n)
     {
-      if (n < 1024)
-      {
+      if (n < 1024) {
         return TfStringPrintf("%zd B", n);
       }
-      if (n < 10 * 1024)
-      {
+      if (n < 10 * 1024) {
         return TfStringPrintf("%4.2f kB", (double)n / 1024.0);
       }
-      if (n < 100 * 1024)
-      {
+      if (n < 100 * 1024) {
         return TfStringPrintf("%4.1f kB", (double)n / 1024.0);
       }
-      if (n < 1024 * 1024)
-      {
+      if (n < 1024 * 1024) {
         return TfStringPrintf("%3zd kB", n / 1024);
       }
-      if (n < 10 * 1024 * 1024)
-      {
+      if (n < 10 * 1024 * 1024) {
         return TfStringPrintf("%4.2f MB", (double)n / (1024.0 * 1024.0));
       }
-      if (n < 100 * 1024 * 1024)
-      {
+      if (n < 100 * 1024 * 1024) {
         return TfStringPrintf("%4.1f MB", (double)n / (1024.0 * 1024.0));
       }
-      if (n < 1024 * 1024 * 1024)
-      {
+      if (n < 1024 * 1024 * 1024) {
         return TfStringPrintf("%3zd MB", n / (1024 * 1024));
       }
       return TfStringPrintf("%f GB", n / (1024.0 * 1024.0 * 1024.0));
@@ -231,14 +208,15 @@ class Pcp_Statistics
   {
     using namespace std;
 
-    out << "  Total nodes:                       " << _Helper::FormatNumber(totalStats.numNodes) << endl;
-    out << "  Total culled* nodes:               " << _Helper::FormatNumber(culledStats.numNodes) << endl;
+    out << "  Total nodes:                       " << _Helper::FormatNumber(totalStats.numNodes)
+        << endl;
+    out << "  Total culled* nodes:               " << _Helper::FormatNumber(culledStats.numNodes)
+        << endl;
     out << "  By type (total / culled*):         " << endl;
 
     std::map<PcpArcType, size_t> typeToNumNodes = totalStats.typeToNumNodes;
     std::map<PcpArcType, size_t> typeToNumCulledNodes = culledStats.typeToNumNodes;
-    for (PcpArcType t = PcpArcTypeRoot; t != PcpNumArcTypes; t = (PcpArcType)(t + 1))
-    {
+    for (PcpArcType t = PcpArcTypeRoot; t != PcpNumArcTypes; t = (PcpArcType)(t + 1)) {
       const std::string nodeTypeName = TfEnum::GetDisplayName(t);
       out << "    " << nodeTypeName << ": "
           << TfStringPrintf("%*s%s / %s",
@@ -248,8 +226,7 @@ class Pcp_Statistics
                             _Helper::FormatNumber(typeToNumCulledNodes[t]).c_str())
           << endl;
 
-      if (t == PcpArcTypeInherit)
-      {
+      if (t == PcpArcTypeInherit) {
         out << "      implied inherits: "
             << TfStringPrintf("%*s%s / %s",
                               13,
@@ -271,13 +248,13 @@ class Pcp_Statistics
     Pcp_CacheStats stats;
     AccumulateCacheStats(cache, &stats);
 
-    out << "PcpCache Statistics" << endl
-        << "-------------------" << endl;
+    out << "PcpCache Statistics" << endl << "-------------------" << endl;
 
     out << "Entries: " << endl;
-    out << "  Prim indexes:                      " << _Helper::FormatNumber(stats.numPrimIndexes) << endl;
-    out << "  Property indexes:                  " << _Helper::FormatNumber(stats.numPropertyIndexes)
+    out << "  Prim indexes:                      " << _Helper::FormatNumber(stats.numPrimIndexes)
         << endl;
+    out << "  Property indexes:                  "
+        << _Helper::FormatNumber(stats.numPropertyIndexes) << endl;
     out << endl;
 
     out << "Prim graphs: " << endl;
@@ -285,32 +262,35 @@ class Pcp_Statistics
     out << endl;
 
     out << "Prim graphs (shared): " << endl;
-    out << "  Graph instances:                   " << _Helper::FormatNumber(stats.numGraphInstances) << endl;
+    out << "  Graph instances:                   "
+        << _Helper::FormatNumber(stats.numGraphInstances) << endl;
     PrintGraphStats(stats.sharedAllGraphStats, stats.sharedCulledGraphStats, out);
     out << endl;
 
     out << "Memory usage: " << endl;
-    out << "  sizeof(PcpMapFunction):            " << _Helper::FormatSize(sizeof(PcpMapFunction)) << endl;
-    out << "  sizeof(PcpLayerStackPtr):          " << _Helper::FormatSize(sizeof(PcpLayerStackPtr)) << endl;
-    out << "  sizeof(PcpLayerStackSite):         " << _Helper::FormatSize(sizeof(PcpLayerStackSite)) << endl;
-    out << "  sizeof(PcpPrimIndex):              " << _Helper::FormatSize(sizeof(PcpPrimIndex)) << endl;
-    out << "  sizeof(PcpPrimIndex_Graph):        " << _Helper::FormatSize(sizeof(PcpPrimIndex_Graph))
+    out << "  sizeof(PcpMapFunction):            " << _Helper::FormatSize(sizeof(PcpMapFunction))
         << endl;
-    out << "  sizeof(PcpPrimIndex_Graph::_Node): " << _Helper::FormatSize(sizeof(PcpPrimIndex_Graph::_Node))
+    out << "  sizeof(PcpLayerStackPtr):          " << _Helper::FormatSize(sizeof(PcpLayerStackPtr))
         << endl;
+    out << "  sizeof(PcpLayerStackSite):         "
+        << _Helper::FormatSize(sizeof(PcpLayerStackSite)) << endl;
+    out << "  sizeof(PcpPrimIndex):              " << _Helper::FormatSize(sizeof(PcpPrimIndex))
+        << endl;
+    out << "  sizeof(PcpPrimIndex_Graph):        "
+        << _Helper::FormatSize(sizeof(PcpPrimIndex_Graph)) << endl;
+    out << "  sizeof(PcpPrimIndex_Graph::_Node): "
+        << _Helper::FormatSize(sizeof(PcpPrimIndex_Graph::_Node)) << endl;
     out << endl;
 
     out << "PcpMapFunction size histogram: " << endl;
     out << "SIZE    COUNT" << endl;
-    TF_FOR_ALL (i, stats.mapFunctionSizeDistribution)
-    {
+    TF_FOR_ALL (i, stats.mapFunctionSizeDistribution) {
       printf("%zu   %zu\n", i->first, i->second);
     }
 
     out << "PcpLayerStack pathsWithRelocates size histogram: " << endl;
     out << "SIZE    COUNT" << endl;
-    TF_FOR_ALL (i, stats.layerStackRelocationsSizeDistribution)
-    {
+    TF_FOR_ALL (i, stats.layerStackRelocationsSizeDistribution) {
       printf("%zu   %zu\n", i->first, i->second);
     }
   }

@@ -18,10 +18,12 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-HdRprVolumeFieldSubscription HdRprRenderParam::SubscribeVolumeForFieldUpdates(HdRprVolume *volume,
-                                                                              SdfPath const &fieldId)
+HdRprVolumeFieldSubscription HdRprRenderParam::SubscribeVolumeForFieldUpdates(
+  HdRprVolume *volume,
+  SdfPath const &fieldId)
 {
-  auto sub = HdRprVolumeFieldSubscription(volume, [](HdRprVolume *volume) {});
+  auto sub = HdRprVolumeFieldSubscription(volume, [](HdRprVolume *volume) {
+  });
   {
     std::lock_guard<std::mutex> lock(m_subscribedVolumesMutex);
     m_subscribedVolumes[fieldId].push_back(std::move(sub));
@@ -29,55 +31,52 @@ HdRprVolumeFieldSubscription HdRprRenderParam::SubscribeVolumeForFieldUpdates(Hd
   return sub;
 }
 
-void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId)
+void HdRprRenderParam::NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDelegate,
+                                                     SdfPath const &fieldId)
 {
   std::lock_guard<std::mutex> lock(m_subscribedVolumesMutex);
-  for (auto subscriptionsIt = m_subscribedVolumes.begin(); subscriptionsIt != m_subscribedVolumes.end();)
-  {
+  for (auto subscriptionsIt = m_subscribedVolumes.begin();
+       subscriptionsIt != m_subscribedVolumes.end();) {
     auto &subscriptions = subscriptionsIt->second;
-    for (size_t i = 0; i < subscriptions.size(); ++i)
-    {
-      if (auto volume = subscriptions[i].lock())
-      {
+    for (size_t i = 0; i < subscriptions.size(); ++i) {
+      if (auto volume = subscriptions[i].lock()) {
         // Force HdVolume Sync
-        sceneDelegate->GetRenderIndex().GetChangeTracker().MarkRprimDirty(volume->GetId(),
-                                                                          HdChangeTracker::DirtyTopology);
+        sceneDelegate->GetRenderIndex().GetChangeTracker().MarkRprimDirty(
+          volume->GetId(),
+          HdChangeTracker::DirtyTopology);
 
         // Possible Optimization: notify volume about exact changed field
         // Does not make sense right now because Hydra removes and creates
         // from scratch all HdFields whenever one of them is changed (e.g added/removed/edited
         // primvar) (USD 20.02)
-      } else
-      {
+      } else {
         std::swap(subscriptions[i], subscriptions.back());
         subscriptions.pop_back();
       }
     }
-    if (subscriptions.empty())
-    {
+    if (subscriptions.empty()) {
       subscriptionsIt = m_subscribedVolumes.erase(subscriptionsIt);
-    } else
-    {
+    } else {
       ++subscriptionsIt;
     }
   }
 }
 
-void HdRprRenderParam::SubscribeForMaterialUpdates(SdfPath const &materialId, SdfPath const &rPrimId)
+void HdRprRenderParam::SubscribeForMaterialUpdates(SdfPath const &materialId,
+                                                   SdfPath const &rPrimId)
 {
   std::lock_guard<std::mutex> lock(m_materialSubscriptionsMutex);
   m_materialSubscriptions[materialId].insert(rPrimId);
 }
 
-void HdRprRenderParam::UnsubscribeFromMaterialUpdates(SdfPath const &materialId, SdfPath const &rPrimId)
+void HdRprRenderParam::UnsubscribeFromMaterialUpdates(SdfPath const &materialId,
+                                                      SdfPath const &rPrimId)
 {
   std::lock_guard<std::mutex> lock(m_materialSubscriptionsMutex);
   auto subscriptionsIt = m_materialSubscriptions.find(materialId);
-  if (TF_VERIFY(subscriptionsIt != m_materialSubscriptions.end()))
-  {
+  if (TF_VERIFY(subscriptionsIt != m_materialSubscriptions.end())) {
     subscriptionsIt->second.erase(rPrimId);
-    if (subscriptionsIt->second.empty())
-    {
+    if (subscriptionsIt->second.empty()) {
       m_materialSubscriptions.erase(subscriptionsIt);
     }
   }
@@ -87,11 +86,9 @@ void HdRprRenderParam::MaterialDidChange(HdSceneDelegate *sceneDelegate, SdfPath
 {
   std::lock_guard<std::mutex> lock(m_materialSubscriptionsMutex);
   auto subscriptionsIt = m_materialSubscriptions.find(materialId);
-  if (subscriptionsIt != m_materialSubscriptions.end())
-  {
+  if (subscriptionsIt != m_materialSubscriptions.end()) {
     HdChangeTracker &changeTracker = sceneDelegate->GetRenderIndex().GetChangeTracker();
-    for (auto &rPrimId : subscriptionsIt->second)
-    {
+    for (auto &rPrimId : subscriptionsIt->second) {
       changeTracker.MarkRprimDirty(rPrimId, HdChangeTracker::DirtyMaterialId);
     }
   }

@@ -42,19 +42,16 @@ static RHashOp *global_ops_hash = NULL;
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname)
 {
-  if (!idname.IsEmpty())
-  {
+  if (!idname.IsEmpty()) {
     wmOperatorType *ot;
 
     ot = (wmOperatorType *)KKE_rhash_lookup((RHash *)global_ops_hash, idname);
-    if (ot)
-    {
+    if (ot) {
       return ot;
     }
 
     TF_DEBUG(KRAKEN_DEBUG_OPERATORS).Msg("Unknown operator '%s'\n", CHARALL(idname));
-  } else
-  {
+  } else {
     TF_DEBUG(KRAKEN_DEBUG_OPERATORS).Msg("Operator has no id.\n");
   }
 

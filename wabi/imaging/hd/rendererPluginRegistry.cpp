@@ -60,16 +60,14 @@ TfToken HdRendererPluginRegistry::GetDefaultPluginId()
   // we will only load plugins until we find the first one that works.
   HfPluginDescVector pluginDescriptors;
   GetPluginDescs(&pluginDescriptors);
-  for (const HfPluginDesc &desc : pluginDescriptors)
-  {
+  for (const HfPluginDesc &desc : pluginDescriptors) {
 
     HdRendererPlugin *plugin = HdRendererPluginRegistry::GetInstance().GetRendererPlugin(desc.id);
 
     // Important to bail out as soon as we found a plugin that works to
     // avoid loading plugins unnecessary as that can be arbitrarily
     // expensive.
-    if (plugin && plugin->IsSupported())
-    {
+    if (plugin && plugin->IsSupported()) {
       HdRendererPluginRegistry::GetInstance().ReleasePlugin(plugin);
       return desc.id;
     }
@@ -95,8 +93,7 @@ HdPluginRenderDelegateUniqueHandle HdRendererPluginRegistry::CreateRenderDelegat
   HdRenderSettingsMap const &settingsMap)
 {
   HdRendererPluginHandle plugin = GetOrCreateRendererPlugin(pluginId);
-  if (!plugin)
-  {
+  if (!plugin) {
     TF_CODING_ERROR("Couldn't find plugin for id %s", pluginId.GetText());
     return nullptr;
   }

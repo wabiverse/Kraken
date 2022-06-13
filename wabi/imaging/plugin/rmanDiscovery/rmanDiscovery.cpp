@@ -40,44 +40,36 @@ static NdrStringVec computeDefaultSearchPaths()
 
   // RMAN_SHADERPATH contains OSL (.oso)
   std::string shaderpath = TfGetenv("RMAN_SHADERPATH");
-  if (!shaderpath.empty())
-  {
+  if (!shaderpath.empty()) {
     NdrStringVec paths = TfStringSplit(shaderpath, ARCH_PATH_LIST_SEP);
     for (std::string const &path : paths)
       searchPaths.push_back(path);
-  } else
-  {
+  } else {
     // Default RenderMan installation under '$RMANTREE/lib/shaders'
     std::string rmantree = TfGetenv("RMANTREE");
-    if (!rmantree.empty())
-    {
+    if (!rmantree.empty()) {
       searchPaths.push_back(TfStringCatPaths(rmantree, "lib/shaders"));
     }
     // Default hdPrman installation under 'plugins/usd/resources/shaders'
     PlugPluginPtr plugin = PlugRegistry::GetInstance().GetPluginWithName("hdPrmanLoader");
-    if (plugin)
-    {
+    if (plugin) {
       std::string path = TfGetPathName(plugin->GetPath());
-      if (!path.empty())
-      {
+      if (!path.empty()) {
         searchPaths.push_back(TfStringCatPaths(path, "resources/shaders"));
       }
     }
   }
   // RMAN_RIXPLUGINPATH contains Args (.args) metadata
   std::string rixpluginpath = TfGetenv("RMAN_RIXPLUGINPATH");
-  if (!rixpluginpath.empty())
-  {
+  if (!rixpluginpath.empty()) {
     // Assume that args files are under an 'Args' directory
     NdrStringVec paths = TfStringSplit(rixpluginpath, ARCH_PATH_LIST_SEP);
     for (std::string const &path : paths)
       searchPaths.push_back(TfStringCatPaths(path, "Args"));
-  } else
-  {
+  } else {
     // Default RenderMan installation under '$RMANTREE/lib/plugins/Args'
     std::string rmantree = TfGetenv("RMANTREE");
-    if (!rmantree.empty())
-    {
+    if (!rmantree.empty()) {
       searchPaths.push_back(TfStringCatPaths(rmantree, "lib/plugins/Args"));
     }
   }
@@ -113,8 +105,7 @@ RmanDiscoveryPlugin::RmanDiscoveryPlugin()
   _followSymlinks = RmanDiscoveryPlugin_GetDefaultFollowSymlinks();
 }
 
-RmanDiscoveryPlugin::RmanDiscoveryPlugin(Filter filter)
-  : RmanDiscoveryPlugin()
+RmanDiscoveryPlugin::RmanDiscoveryPlugin(Filter filter) : RmanDiscoveryPlugin()
 {
   _filter = std::move(filter);
 }
@@ -123,18 +114,17 @@ RmanDiscoveryPlugin::~RmanDiscoveryPlugin() = default;
 
 NdrNodeDiscoveryResultVec RmanDiscoveryPlugin::DiscoverNodes(const Context &context)
 {
-  auto result = NdrFsHelpersDiscoverNodes(_searchPaths, _allowedExtensions, _followSymlinks, &context);
+  auto result = NdrFsHelpersDiscoverNodes(_searchPaths,
+                                          _allowedExtensions,
+                                          _followSymlinks,
+                                          &context);
 
-  if (_filter)
-  {
+  if (_filter) {
     auto j = result.begin();
-    for (auto i = j; i != result.end(); ++i)
-    {
+    for (auto i = j; i != result.end(); ++i) {
       // If we pass the filter and any previous haven't then move.
-      if (_filter(*i))
-      {
-        if (j != i)
-        {
+      if (_filter(*i)) {
+        if (j != i) {
           *j = std::move(*i);
         }
         ++j;

@@ -44,8 +44,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingPointsAdapter::~UsdImagingPointsAdapter()
-{}
+UsdImagingPointsAdapter::~UsdImagingPointsAdapter() {}
 
 bool UsdImagingPointsAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -56,13 +55,18 @@ SdfPath UsdImagingPointsAdapter::Populate(UsdPrim const &prim,
                                           UsdImagingIndexProxy *index,
                                           UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(HdPrimTypeTokens->points, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->points,
+                   prim,
+                   index,
+                   GetMaterialUsdPath(prim),
+                   instancerContext);
 }
 
-void UsdImagingPointsAdapter::TrackVariability(UsdPrim const &prim,
-                                               SdfPath const &cachePath,
-                                               HdDirtyBits *timeVaryingBits,
-                                               UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingPointsAdapter::TrackVariability(
+  UsdPrim const &prim,
+  SdfPath const &cachePath,
+  HdDirtyBits *timeVaryingBits,
+  UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
 
@@ -84,18 +88,15 @@ void UsdImagingPointsAdapter::TrackVariability(UsdPrim const &prim,
              timeVaryingBits,
              /*isInherited*/ false,
              &widthsExists);
-  if (!widthsExists)
-  {
+  if (!widthsExists) {
     UsdGeomPrimvar pv = _GetInheritedPrimvar(prim, HdTokens->widths);
-    if (pv && pv.ValueMightBeTimeVarying())
-    {
+    if (pv && pv.ValueMightBeTimeVarying()) {
       *timeVaryingBits |= HdChangeTracker::DirtyWidths;
       HD_PERF_COUNTER_INCR(UsdImagingTokens->usdVaryingWidths);
       widthsExists = true;
     }
   }
-  if (!widthsExists)
-  {
+  if (!widthsExists) {
     _IsVarying(prim,
                UsdGeomTokens->widths,
                HdChangeTracker::DirtyWidths,
@@ -114,18 +115,15 @@ void UsdImagingPointsAdapter::TrackVariability(UsdPrim const &prim,
              timeVaryingBits,
              /*isInherited*/ false,
              &normalsExists);
-  if (!normalsExists)
-  {
+  if (!normalsExists) {
     UsdGeomPrimvar pv = _GetInheritedPrimvar(prim, HdTokens->normals);
-    if (pv && pv.ValueMightBeTimeVarying())
-    {
+    if (pv && pv.ValueMightBeTimeVarying()) {
       *timeVaryingBits |= HdChangeTracker::DirtyNormals;
       HD_PERF_COUNTER_INCR(UsdImagingTokens->usdVaryingNormals);
       normalsExists = true;
     }
   }
-  if (!normalsExists)
-  {
+  if (!normalsExists) {
     _IsVarying(prim,
                UsdGeomTokens->normals,
                HdChangeTracker::DirtyNormals,
@@ -141,72 +139,61 @@ bool UsdImagingPointsAdapter::_IsBuiltinPrimvar(TfToken const &primvarName) cons
          UsdImagingGprimAdapter::_IsBuiltinPrimvar(primvarName);
 }
 
-void UsdImagingPointsAdapter::UpdateForTime(UsdPrim const &prim,
-                                            SdfPath const &cachePath,
-                                            UsdTimeCode time,
-                                            HdDirtyBits requestedBits,
-                                            UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingPointsAdapter::UpdateForTime(
+  UsdPrim const &prim,
+  SdfPath const &cachePath,
+  UsdTimeCode time,
+  HdDirtyBits requestedBits,
+  UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::UpdateForTime(prim, cachePath, time, requestedBits, instancerContext);
 
   UsdImagingPrimvarDescCache *primvarDescCache = _GetPrimvarDescCache();
   HdPrimvarDescriptorVector &primvars = primvarDescCache->GetPrimvars(cachePath);
 
-  if (requestedBits & HdChangeTracker::DirtyWidths)
-  {
+  if (requestedBits & HdChangeTracker::DirtyWidths) {
     // First check for "primvars:widths"
     UsdGeomPrimvarsAPI primvarsApi(prim);
     UsdGeomPrimvar pv = primvarsApi.GetPrimvar(UsdImagingTokens->primvarsWidths);
-    if (!pv)
-    {
+    if (!pv) {
       // If it's not found locally, see if it's inherited
       pv = _GetInheritedPrimvar(prim, HdTokens->widths);
     }
 
-    if (pv)
-    {
+    if (pv) {
       _ComputeAndMergePrimvar(prim, pv, time, &primvars);
-    } else
-    {
+    } else {
       UsdGeomPoints points(prim);
       VtFloatArray widths;
-      if (points.GetWidthsAttr().Get(&widths, time))
-      {
+      if (points.GetWidthsAttr().Get(&widths, time)) {
         HdInterpolation interpolation = _UsdToHdInterpolation(points.GetWidthsInterpolation());
         _MergePrimvar(&primvars, UsdGeomTokens->widths, interpolation);
-      } else
-      {
+      } else {
         _RemovePrimvar(&primvars, UsdGeomTokens->widths);
       }
     }
   }
 
-  if (requestedBits & HdChangeTracker::DirtyNormals)
-  {
+  if (requestedBits & HdChangeTracker::DirtyNormals) {
     // First check for "primvars:normals"
     UsdGeomPrimvarsAPI primvarsApi(prim);
     UsdGeomPrimvar pv = primvarsApi.GetPrimvar(UsdImagingTokens->primvarsNormals);
-    if (!pv)
-    {
+    if (!pv) {
       // If it's not found locally, see if it's inherited
       pv = _GetInheritedPrimvar(prim, HdTokens->normals);
     }
 
-    if (pv)
-    {
+    if (pv) {
       _ComputeAndMergePrimvar(prim, pv, time, &primvars);
-    } else
-    {
+    } else {
       UsdGeomPoints points(prim);
       VtVec3fArray normals;
-      if (points.GetNormalsAttr().Get(&normals, time))
-      {
+      if (points.GetNormalsAttr().Get(&normals, time)) {
         _MergePrimvar(&primvars,
                       UsdGeomTokens->normals,
                       _UsdToHdInterpolation(points.GetNormalsInterpolation()),
                       HdPrimvarRoleTokens->normal);
-      } else
-      {
+      } else {
         _RemovePrimvar(&primvars, UsdGeomTokens->normals);
       }
     }
@@ -221,8 +208,7 @@ HdDirtyBits UsdImagingPointsAdapter::ProcessPropertyChange(UsdPrim const &prim,
     return HdChangeTracker::DirtyPoints;
 
   // Handle attributes that are treated as "built-in" primvars.
-  if (propertyName == UsdGeomTokens->widths)
-  {
+  if (propertyName == UsdGeomTokens->widths) {
     UsdGeomPoints points(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
       prim,
@@ -231,8 +217,7 @@ HdDirtyBits UsdImagingPointsAdapter::ProcessPropertyChange(UsdPrim const &prim,
       HdTokens->widths,
       _UsdToHdInterpolation(points.GetWidthsInterpolation()),
       HdChangeTracker::DirtyWidths);
-  } else if (propertyName == UsdGeomTokens->normals)
-  {
+  } else if (propertyName == UsdGeomTokens->normals) {
     UsdGeomPoints points(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
       prim,
@@ -243,18 +228,18 @@ HdDirtyBits UsdImagingPointsAdapter::ProcessPropertyChange(UsdPrim const &prim,
       HdChangeTracker::DirtyNormals);
   }
   // Handle prefixed primvars that use special dirty bits.
-  else if (propertyName == UsdImagingTokens->primvarsWidths)
-  {
-    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(prim,
-                                                                        cachePath,
-                                                                        propertyName,
-                                                                        HdChangeTracker::DirtyWidths);
-  } else if (propertyName == UsdImagingTokens->primvarsNormals)
-  {
-    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(prim,
-                                                                        cachePath,
-                                                                        propertyName,
-                                                                        HdChangeTracker::DirtyNormals);
+  else if (propertyName == UsdImagingTokens->primvarsWidths) {
+    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
+      prim,
+      cachePath,
+      propertyName,
+      HdChangeTracker::DirtyWidths);
+  } else if (propertyName == UsdImagingTokens->primvarsNormals) {
+    return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
+      prim,
+      cachePath,
+      propertyName,
+      HdChangeTracker::DirtyNormals);
   }
 
   // Allow base class to handle change processing.
@@ -271,28 +256,23 @@ VtValue UsdImagingPointsAdapter::Get(UsdPrim const &prim,
   TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (key == HdTokens->normals)
-  {
+  if (key == HdTokens->normals) {
     // First check for "primvars:normals"
     UsdGeomPrimvarsAPI primvarsApi(prim);
     UsdGeomPrimvar pv = primvarsApi.GetPrimvar(UsdImagingTokens->primvarsNormals);
-    if (!pv)
-    {
+    if (!pv) {
       // If it's not found locally, see if it's inherited
       pv = _GetInheritedPrimvar(prim, HdTokens->normals);
     }
 
     VtValue value;
 
-    if (outIndices)
-    {
-      if (pv && pv.Get(&value, time))
-      {
+    if (outIndices) {
+      if (pv && pv.Get(&value, time)) {
         pv.GetIndices(outIndices, time);
         return value;
       }
-    } else if (pv && pv.ComputeFlattened(&value, time))
-    {
+    } else if (pv && pv.ComputeFlattened(&value, time)) {
       return value;
     }
 
@@ -300,41 +280,34 @@ VtValue UsdImagingPointsAdapter::Get(UsdPrim const &prim,
     // fall back to UsdGeomPoints's "normals" attribute.
     UsdGeomPoints points(prim);
     VtVec3fArray normals;
-    if (points && points.GetNormalsAttr().Get(&normals, time))
-    {
+    if (points && points.GetNormalsAttr().Get(&normals, time)) {
       value = normals;
       return value;
     }
-  } else if (key == HdTokens->widths)
-  {
+  } else if (key == HdTokens->widths) {
     // First check for "primvars:widths"
     UsdGeomPrimvarsAPI primvarsApi(prim);
     UsdGeomPrimvar pv = primvarsApi.GetPrimvar(UsdImagingTokens->primvarsWidths);
-    if (!pv)
-    {
+    if (!pv) {
       // If it's not found locally, see if it's inherited
       pv = _GetInheritedPrimvar(prim, HdTokens->widths);
     }
 
     VtValue value;
 
-    if (outIndices)
-    {
-      if (pv && pv.Get(&value, time))
-      {
+    if (outIndices) {
+      if (pv && pv.Get(&value, time)) {
         pv.GetIndices(outIndices, time);
         return value;
       }
-    } else if (pv && pv.ComputeFlattened(&value, time))
-    {
+    } else if (pv && pv.ComputeFlattened(&value, time)) {
       return value;
     }
 
     // Fallback to UsdGeomPoints' "normals" attribute.
     UsdGeomPoints points(prim);
     VtFloatArray widths;
-    if (points && points.GetWidthsAttr().Get(&widths, time))
-    {
+    if (points && points.GetWidthsAttr().Get(&widths, time)) {
       value = widths;
       return value;
     }

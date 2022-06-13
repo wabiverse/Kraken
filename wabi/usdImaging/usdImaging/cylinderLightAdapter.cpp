@@ -44,8 +44,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingCylinderLightAdapter::~UsdImagingCylinderLightAdapter()
-{}
+UsdImagingCylinderLightAdapter::~UsdImagingCylinderLightAdapter() {}
 
 bool UsdImagingCylinderLightAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -53,9 +52,10 @@ bool UsdImagingCylinderLightAdapter::IsSupported(UsdImagingIndexProxy const *ind
          index->IsSprimTypeSupported(HdPrimTypeTokens->cylinderLight);
 }
 
-SdfPath UsdImagingCylinderLightAdapter::Populate(UsdPrim const &prim,
-                                                 UsdImagingIndexProxy *index,
-                                                 UsdImagingInstancerContext const *instancerContext)
+SdfPath UsdImagingCylinderLightAdapter::Populate(
+  UsdPrim const &prim,
+  UsdImagingIndexProxy *index,
+  UsdImagingInstancerContext const *instancerContext)
 {
   index->InsertSprim(HdPrimTypeTokens->cylinderLight, prim.GetPath(), prim);
   HD_PERF_COUNTER_INCR(UsdImagingTokens->usdPopulatedPrimCount);
@@ -63,7 +63,8 @@ SdfPath UsdImagingCylinderLightAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingCylinderLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
+void UsdImagingCylinderLightAdapter::_RemovePrim(SdfPath const &cachePath,
+                                                 UsdImagingIndexProxy *index)
 {
   index->RemoveSprim(HdPrimTypeTokens->cylinderLight, cachePath);
 }

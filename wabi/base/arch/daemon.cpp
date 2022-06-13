@@ -61,19 +61,15 @@ int ArchCloseAllFiles(int nExcept, const int *exceptFds)
   //
   status = getrlimit(RLIMIT_NOFILE, &limits);
 
-  if (limits.rlim_cur == RLIM_INFINITY)
-  {
+  if (limits.rlim_cur == RLIM_INFINITY) {
     maxfd = NOFILE;
-  } else
-  {
+  } else {
     maxfd = (int)limits.rlim_cur;
   }
 
   // Figure out the largest file descriptor in exceptFds.
-  for (i = 0; i < nExcept; ++i)
-  {
-    if (maxExcept < exceptFds[i])
-    {
+  for (i = 0; i < nExcept; ++i) {
+    if (maxExcept < exceptFds[i]) {
       maxExcept = exceptFds[i];
     }
   }
@@ -81,40 +77,33 @@ int ArchCloseAllFiles(int nExcept, const int *exceptFds)
   retStatus = 0;
   retErrno = 0;
 
-  for (i = 0; i < maxfd; ++i)
-  {
+  for (i = 0; i < maxfd; ++i) {
     // Check if we should skip this file descriptor.
     // XXX -- This is slow for large maxfd and nExcept but nExcept is
     //        never large in our use cases.  We could copy and sort
     //        exceptFds if we think it might get big but we should
     //        avoid using the heap because we might get called from
     //        precarious situations, e.g. signal handlers.
-    if (i <= maxExcept)
-    {
-      for (j = 0; j != nExcept; ++j)
-      {
-        if (exceptFds[j] == i)
-        {
+    if (i <= maxExcept) {
+      for (j = 0; j != nExcept; ++j) {
+        if (exceptFds[j] == i) {
           break;
         }
       }
-      if (j != nExcept)
-      {
+      if (j != nExcept) {
         // File descriptor is in exceptFds
         continue;
       }
     }
 
-    do
-    {
+    do {
       // Close the file, repeat if interrupted.
       //
       errno = 0;
       status = close(i);
     } while (status != 0 && errno == EINTR);
 
-    if (status != 0 && errno != EBADF)
-    {
+    if (status != 0 && errno != EBADF) {
       // We got some real error.  Remember it but keep going.
       //
       retStatus = status;

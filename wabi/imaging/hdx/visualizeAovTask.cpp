@@ -67,36 +67,29 @@ HdxVisualizeAovTask::~HdxVisualizeAovTask()
 {
   // Kernel independent resources
   {
-    if (_vertexBuffer)
-    {
+    if (_vertexBuffer) {
       _GetHgi()->DestroyBuffer(&_vertexBuffer);
     }
-    if (_indexBuffer)
-    {
+    if (_indexBuffer) {
       _GetHgi()->DestroyBuffer(&_indexBuffer);
     }
-    if (_sampler)
-    {
+    if (_sampler) {
       _GetHgi()->DestroySampler(&_sampler);
     }
   }
 
   // Kernel dependent resources
   {
-    if (_outputTexture)
-    {
+    if (_outputTexture) {
       _GetHgi()->DestroyTexture(&_outputTexture);
     }
-    if (_shaderProgram)
-    {
+    if (_shaderProgram) {
       _DestroyShaderProgram();
     }
-    if (_resourceBindings)
-    {
+    if (_resourceBindings) {
       _GetHgi()->DestroyResourceBindings(&_resourceBindings);
     }
-    if (_pipeline)
-    {
+    if (_pipeline) {
       _GetHgi()->DestroyGraphicsPipeline(&_pipeline);
     }
   }
@@ -113,22 +106,17 @@ bool HdxVisualizeAovTask::_UpdateVizKernel(TfToken const &aovName)
 {
   VizKernel vk = VizKernelFallback;
 
-  if (aovName == HdAovTokens->color)
-  {
+  if (aovName == HdAovTokens->color) {
     vk = VizKernelNone;
-  } else if (HdAovHasDepthSemantic(aovName))
-  {
+  } else if (HdAovHasDepthSemantic(aovName)) {
     vk = VizKernelDepth;
-  } else if (_IsIdAov(aovName))
-  {
+  } else if (_IsIdAov(aovName)) {
     vk = VizKernelId;
-  } else if (aovName == HdAovTokens->normal)
-  {
+  } else if (aovName == HdAovTokens->normal) {
     vk = VizKernelNormal;
   }
 
-  if (vk != _vizKernel)
-  {
+  if (vk != _vizKernel) {
     _vizKernel = vk;
     return true;
   }
@@ -137,8 +125,7 @@ bool HdxVisualizeAovTask::_UpdateVizKernel(TfToken const &aovName)
 
 TfToken const &HdxVisualizeAovTask::_GetTextureIdentifierForShader() const
 {
-  switch (_vizKernel)
-  {
+  switch (_vizKernel) {
     case VizKernelDepth:
       return _tokens->depthIn;
     case VizKernelId:
@@ -155,8 +142,7 @@ TfToken const &HdxVisualizeAovTask::_GetTextureIdentifierForShader() const
 
 TfToken const &HdxVisualizeAovTask::_GetFragmentMixin() const
 {
-  switch (_vizKernel)
-  {
+  switch (_vizKernel) {
     case VizKernelDepth:
       return _tokens->visualizeAovFragmentDepth;
     case VizKernelId:
@@ -173,8 +159,7 @@ TfToken const &HdxVisualizeAovTask::_GetFragmentMixin() const
 
 bool HdxVisualizeAovTask::_CreateShaderResources(HgiTextureDesc const &inputAovTextureDesc)
 {
-  if (_shaderProgram)
-  {
+  if (_shaderProgram) {
     return true;
   }
 
@@ -189,8 +174,7 @@ bool HdxVisualizeAovTask::_CreateShaderResources(HgiTextureDesc const &inputAovT
     vertDesc.shaderStage = HgiShaderStageVertex;
     HgiShaderFunctionAddStageInput(&vertDesc, "position", "vec4");
     HgiShaderFunctionAddStageInput(&vertDesc, "uvIn", "vec2");
-    if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan)
-    {
+    if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan) {
       vsCode = "#version 450 \n";
     }
     HgiShaderFunctionAddStageOutput(&vertDesc, "gl_Position", "vec4", "position");
@@ -217,15 +201,13 @@ bool HdxVisualizeAovTask::_CreateShaderResources(HgiTextureDesc const &inputAovT
     HgiShaderFunctionAddStageOutput(&fragDesc, "hd_FragColor", "vec4", "color");
     HgiShaderFunctionAddConstantParam(&fragDesc, "screenSize", "vec2");
 
-    if (_vizKernel == VizKernelDepth)
-    {
+    if (_vizKernel == VizKernelDepth) {
       HgiShaderFunctionAddConstantParam(&fragDesc, "minMaxDepth", "vec2");
     }
     TfToken const &mixin = _GetFragmentMixin();
     fragDesc.debugName = mixin.GetString();
     fragDesc.shaderStage = HgiShaderStageFragment;
-    if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan)
-    {
+    if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan) {
       fsCode = "#version 450 \n";
     }
     fsCode += glslfx.GetSource(mixin);
@@ -241,8 +223,7 @@ bool HdxVisualizeAovTask::_CreateShaderResources(HgiTextureDesc const &inputAovT
   programDesc.shaderFunctions.push_back(std::move(fragFn));
   _shaderProgram = _GetHgi()->CreateShaderProgram(programDesc);
 
-  if (!_shaderProgram->IsValid() || !vertFn->IsValid() || !fragFn->IsValid())
-  {
+  if (!_shaderProgram->IsValid() || !vertFn->IsValid() || !fragFn->IsValid()) {
     TF_CODING_ERROR("Failed to create AOV visualization shader %s", mixin.GetText());
     _PrintCompileErrors();
     _DestroyShaderProgram();
@@ -254,8 +235,7 @@ bool HdxVisualizeAovTask::_CreateShaderResources(HgiTextureDesc const &inputAovT
 
 bool HdxVisualizeAovTask::_CreateBufferResources()
 {
-  if (_vertexBuffer && _indexBuffer)
-  {
+  if (_vertexBuffer && _indexBuffer) {
     return true;
   }
 
@@ -306,14 +286,11 @@ bool HdxVisualizeAovTask::_CreateResourceBindings(HgiTextureHandle const &inputA
 
   // If nothing has changed in the descriptor we avoid re-creating the
   // resource bindings object.
-  if (_resourceBindings)
-  {
+  if (_resourceBindings) {
     HgiResourceBindingsDesc const &desc = _resourceBindings->GetDescriptor();
-    if (desc == resourceDesc)
-    {
+    if (desc == resourceDesc) {
       return true;
-    } else
-    {
+    } else {
       _GetHgi()->DestroyResourceBindings(&_resourceBindings);
     }
   }
@@ -325,8 +302,7 @@ bool HdxVisualizeAovTask::_CreateResourceBindings(HgiTextureHandle const &inputA
 
 bool HdxVisualizeAovTask::_CreatePipeline(HgiTextureDesc const &outputTextureDesc)
 {
-  if (_pipeline)
-  {
+  if (_pipeline) {
     return true;
   }
   _GetHgi()->DestroyGraphicsPipeline(&_pipeline);
@@ -385,8 +361,7 @@ bool HdxVisualizeAovTask::_CreatePipeline(HgiTextureDesc const &outputTextureDes
 
   desc.shaderConstantsDesc.stageUsage = HgiShaderStageFragment;
   desc.shaderConstantsDesc.byteSize = sizeof(_screenSize);
-  if (_vizKernel == VizKernelDepth)
-  {
+  if (_vizKernel == VizKernelDepth) {
     desc.shaderConstantsDesc.byteSize += sizeof(_minMaxDepth);
   }
 
@@ -397,8 +372,7 @@ bool HdxVisualizeAovTask::_CreatePipeline(HgiTextureDesc const &outputTextureDes
 
 bool HdxVisualizeAovTask::_CreateSampler()
 {
-  if (_sampler)
-  {
+  if (_sampler) {
     return true;
   }
 
@@ -417,10 +391,8 @@ bool HdxVisualizeAovTask::_CreateSampler()
 
 bool HdxVisualizeAovTask::_CreateOutputTexture(GfVec3i const &dimensions)
 {
-  if (_outputTexture)
-  {
-    if (_outputTextureDimensions == dimensions)
-    {
+  if (_outputTexture) {
+    if (_outputTextureDimensions == dimensions) {
       return true;
     }
     _GetHgi()->DestroyTexture(&_outputTexture);
@@ -446,8 +418,7 @@ void HdxVisualizeAovTask::_DestroyShaderProgram()
   if (!_shaderProgram)
     return;
 
-  for (HgiShaderFunctionHandle fn : _shaderProgram->GetShaderFunctions())
-  {
+  for (HgiShaderFunctionHandle fn : _shaderProgram->GetShaderFunctions()) {
     _GetHgi()->DestroyShaderFunction(&fn);
   }
   _GetHgi()->DestroyShaderProgram(&_shaderProgram);
@@ -458,8 +429,7 @@ void HdxVisualizeAovTask::_PrintCompileErrors()
   if (!_shaderProgram)
     return;
 
-  for (HgiShaderFunctionHandle fn : _shaderProgram->GetShaderFunctions())
-  {
+  for (HgiShaderFunctionHandle fn : _shaderProgram->GetShaderFunctions()) {
     std::cout << fn->GetCompileErrors() << std::endl;
   }
   std::cout << _shaderProgram->GetCompileErrors() << std::endl;
@@ -470,8 +440,7 @@ void HdxVisualizeAovTask::_UpdateMinMaxDepth(HgiTextureHandle const &inputAovTex
   // XXX CPU readback to determine min, max depth
   // This should be rewritten to use a compute shader.
   const HgiTextureDesc &textureDesc = inputAovTexture.Get()->GetDescriptor();
-  if (textureDesc.format != HgiFormatFloat32)
-  {
+  if (textureDesc.format != HgiFormatFloat32) {
     TF_WARN("Non-floating point depth AOVs aren't supported yet.");
     return;
   }
@@ -501,15 +470,12 @@ void HdxVisualizeAovTask::_UpdateMinMaxDepth(HgiTextureHandle const &inputAovTex
     float *ptr = reinterpret_cast<float *>(&buffer[0]);
     float min = std::numeric_limits<float>::max();
     float max = std::numeric_limits<float>::min();
-    for (size_t ii = 0; ii < width * height; ii++)
-    {
+    for (size_t ii = 0; ii < width * height; ii++) {
       float const &val = ptr[ii];
-      if (val < min)
-      {
+      if (val < min) {
         min = val;
       }
-      if (val > max)
-      {
+      if (val > max) {
         max = val;
       }
     }
@@ -538,8 +504,7 @@ void HdxVisualizeAovTask::_ApplyVisualizationKernel(HgiTextureHandle const &outp
   _screenSize[0] = static_cast<float>(dimensions[0]);
   _screenSize[1] = static_cast<float>(dimensions[1]);
 
-  if (_vizKernel == VizKernelDepth)
-  {
+  if (_vizKernel == VizKernelDepth) {
     struct Uniform
     {
       float screenSize[2];
@@ -552,9 +517,12 @@ void HdxVisualizeAovTask::_ApplyVisualizationKernel(HgiTextureHandle const &outp
     data.minMaxDepth[1] = _minMaxDepth[1];
 
     gfxCmds->SetConstantValues(_pipeline, HgiShaderStageFragment, 0, sizeof(data), &data);
-  } else
-  {
-    gfxCmds->SetConstantValues(_pipeline, HgiShaderStageFragment, 0, sizeof(_screenSize), &_screenSize);
+  } else {
+    gfxCmds->SetConstantValues(_pipeline,
+                               HgiShaderStageFragment,
+                               0,
+                               sizeof(_screenSize),
+                               &_screenSize);
   }
 
   gfxCmds->SetViewport(vp);
@@ -565,27 +533,24 @@ void HdxVisualizeAovTask::_ApplyVisualizationKernel(HgiTextureHandle const &outp
   _GetHgi()->SubmitCmds(gfxCmds.get());
 }
 
-void HdxVisualizeAovTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
+void HdxVisualizeAovTask::_Sync(HdSceneDelegate *delegate,
+                                HdTaskContext *ctx,
+                                HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
-  {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
     HdxVisualizeAovTaskParams params;
 
-    if (_GetTaskParams(delegate, &params))
-    {
+    if (_GetTaskParams(delegate, &params)) {
       // Rebuild necessary Hgi objects when aov to be visualized changes.
-      if (_UpdateVizKernel(params.aovName))
-      {
+      if (_UpdateVizKernel(params.aovName)) {
         _DestroyShaderProgram();
-        if (_resourceBindings)
-        {
+        if (_resourceBindings) {
           _GetHgi()->DestroyResourceBindings(&_resourceBindings);
         }
-        if (_pipeline)
-        {
+        if (_pipeline) {
           _GetHgi()->DestroyGraphicsPipeline(&_pipeline);
         }
       }
@@ -595,16 +560,14 @@ void HdxVisualizeAovTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, H
   *dirtyBits = HdChangeTracker::Clean;
 }
 
-void HdxVisualizeAovTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
-{}
+void HdxVisualizeAovTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex) {}
 
 void HdxVisualizeAovTask::Execute(HdTaskContext *ctx)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (_vizKernel == VizKernelNone)
-  {
+  if (_vizKernel == VizKernelNone) {
     return;
   }
 
@@ -613,8 +576,7 @@ void HdxVisualizeAovTask::Execute(HdTaskContext *ctx)
   // The naming is misleading and may be improved to
   // 'aovTexture' and 'aovTextureIntermediate' instead.
   if (!_HasTaskContextData(ctx, HdAovTokens->color) ||
-      !_HasTaskContextData(ctx, HdxAovTokens->colorIntermediate))
-  {
+      !_HasTaskContextData(ctx, HdxAovTokens->colorIntermediate)) {
     return;
   }
 
@@ -623,20 +585,16 @@ void HdxVisualizeAovTask::Execute(HdTaskContext *ctx)
   _GetTaskContextData(ctx, HdxAovTokens->colorIntermediate, &aovTextureIntermediate);
   HgiTextureDesc const &aovTexDesc = aovTexture->GetDescriptor();
 
-  if (!TF_VERIFY(_CreateBufferResources()))
-  {
+  if (!TF_VERIFY(_CreateBufferResources())) {
     return;
   }
-  if (!TF_VERIFY(_CreateSampler()))
-  {
+  if (!TF_VERIFY(_CreateSampler())) {
     return;
   }
-  if (!TF_VERIFY(_CreateShaderResources(/*inputTextureDesc*/ aovTexDesc)))
-  {
+  if (!TF_VERIFY(_CreateShaderResources(/*inputTextureDesc*/ aovTexDesc))) {
     return;
   }
-  if (!TF_VERIFY(_CreateResourceBindings(/*inputTexture*/ aovTexture)))
-  {
+  if (!TF_VERIFY(_CreateResourceBindings(/*inputTexture*/ aovTexture))) {
     return;
   }
 
@@ -648,32 +606,27 @@ void HdxVisualizeAovTask::Execute(HdTaskContext *ctx)
   canUseIntermediateAovTexture = HdxPresentTask::IsFormatSupported(aovTexDesc.format) &&
                                  HgiGetComponentCount(aovTexDesc.format) >= 3;
 
-  if (!canUseIntermediateAovTexture && !TF_VERIFY(_CreateOutputTexture(aovTexDesc.dimensions)))
-  {
+  if (!canUseIntermediateAovTexture && !TF_VERIFY(_CreateOutputTexture(aovTexDesc.dimensions))) {
     return;
   }
 
   HgiTextureHandle const &outputTexture = canUseIntermediateAovTexture ? aovTextureIntermediate :
                                                                          _outputTexture;
-  if (!TF_VERIFY(_CreatePipeline(outputTexture->GetDescriptor())))
-  {
+  if (!TF_VERIFY(_CreatePipeline(outputTexture->GetDescriptor()))) {
     return;
   }
 
-  if (_vizKernel == VizKernelDepth)
-  {
+  if (_vizKernel == VizKernelDepth) {
     _UpdateMinMaxDepth(/*inputTexture*/ aovTexture);
   }
 
   _ApplyVisualizationKernel(outputTexture);
 
-  if (canUseIntermediateAovTexture)
-  {
+  if (canUseIntermediateAovTexture) {
     // Swap the handles on the task context so that future downstream tasks
     // can use HdxAovTokens->color to get the output of this task.
     _ToggleRenderTarget(ctx);
-  } else
-  {
+  } else {
     (*ctx)[HdAovTokens->color] = VtValue(_outputTexture);
   }
 }

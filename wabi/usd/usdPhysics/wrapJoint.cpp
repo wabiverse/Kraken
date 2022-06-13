@@ -43,37 +43,47 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
 
-  static UsdAttribute _CreateLocalPos0Attr(UsdPhysicsJoint &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateLocalPos0Attr(UsdPhysicsJoint &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
     return self.CreateLocalPos0Attr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3f),
                                     writeSparsely);
   }
 
-  static UsdAttribute _CreateLocalRot0Attr(UsdPhysicsJoint &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateLocalRot0Attr(UsdPhysicsJoint &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
-    return self.CreateLocalRot0Attr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Quatf), writeSparsely);
+    return self.CreateLocalRot0Attr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Quatf),
+                                    writeSparsely);
   }
 
-  static UsdAttribute _CreateLocalPos1Attr(UsdPhysicsJoint &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateLocalPos1Attr(UsdPhysicsJoint &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
     return self.CreateLocalPos1Attr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3f),
                                     writeSparsely);
   }
 
-  static UsdAttribute _CreateLocalRot1Attr(UsdPhysicsJoint &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateLocalRot1Attr(UsdPhysicsJoint &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
-    return self.CreateLocalRot1Attr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Quatf), writeSparsely);
+    return self.CreateLocalRot1Attr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Quatf),
+                                    writeSparsely);
   }
 
-  static UsdAttribute _CreateJointEnabledAttr(UsdPhysicsJoint &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateJointEnabledAttr(UsdPhysicsJoint &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateJointEnabledAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
                                        writeSparsely);
@@ -91,17 +101,22 @@ namespace
                                                          object defaultVal,
                                                          bool writeSparsely)
   {
-    return self.CreateExcludeFromArticulationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                                  writeSparsely);
+    return self.CreateExcludeFromArticulationAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+      writeSparsely);
   }
 
-  static UsdAttribute _CreateBreakForceAttr(UsdPhysicsJoint &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateBreakForceAttr(UsdPhysicsJoint &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
   {
     return self.CreateBreakForceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                      writeSparsely);
   }
 
-  static UsdAttribute _CreateBreakTorqueAttr(UsdPhysicsJoint &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateBreakTorqueAttr(UsdPhysicsJoint &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
   {
     return self.CreateBreakTorqueAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                       writeSparsely);
@@ -137,7 +152,9 @@ void wrapUsdPhysicsJoint()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -221,7 +238,6 @@ void wrapUsdPhysicsJoint()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

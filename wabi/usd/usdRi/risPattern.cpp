@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiRisPattern::~UsdRiRisPattern()
-{}
+UsdRiRisPattern::~UsdRiRisPattern() {}
 
 /* static */
 UsdRiRisPattern UsdRiRisPattern::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisPattern();
   }
@@ -69,8 +67,7 @@ UsdRiRisPattern UsdRiRisPattern::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdRiRisPattern UsdRiRisPattern::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RisPattern");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiRisPattern();
   }

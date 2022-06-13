@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -58,28 +56,35 @@ namespace
                                        writeSparsely);
   }
 
-  static UsdAttribute _CreateIdsAttr(UsdGeomPointInstancer &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateIdsAttr(UsdGeomPointInstancer &self,
+                                     object defaultVal,
+                                     bool writeSparsely)
   {
-    return self.CreateIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array), writeSparsely);
+    return self.CreateIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array),
+                              writeSparsely);
   }
 
   static UsdAttribute _CreatePositionsAttr(UsdGeomPointInstancer &self,
                                            object defaultVal,
                                            bool writeSparsely)
   {
-    return self.CreatePositionsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3fArray),
-                                    writeSparsely);
+    return self.CreatePositionsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Point3fArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateOrientationsAttr(UsdGeomPointInstancer &self,
                                               object defaultVal,
                                               bool writeSparsely)
   {
-    return self.CreateOrientationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->QuathArray),
-                                       writeSparsely);
+    return self.CreateOrientationsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->QuathArray),
+      writeSparsely);
   }
 
-  static UsdAttribute _CreateScalesAttr(UsdGeomPointInstancer &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateScalesAttr(UsdGeomPointInstancer &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
     return self.CreateScalesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
                                  writeSparsely);
@@ -89,32 +94,36 @@ namespace
                                             object defaultVal,
                                             bool writeSparsely)
   {
-    return self.CreateVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                     writeSparsely);
+    return self.CreateVelocitiesAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateAccelerationsAttr(UsdGeomPointInstancer &self,
                                                object defaultVal,
                                                bool writeSparsely)
   {
-    return self.CreateAccelerationsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                        writeSparsely);
+    return self.CreateAccelerationsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateAngularVelocitiesAttr(UsdGeomPointInstancer &self,
                                                    object defaultVal,
                                                    bool writeSparsely)
   {
-    return self.CreateAngularVelocitiesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                            writeSparsely);
+    return self.CreateAngularVelocitiesAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateInvisibleIdsAttr(UsdGeomPointInstancer &self,
                                               object defaultVal,
                                               bool writeSparsely)
   {
-    return self.CreateInvisibleIdsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array),
-                                       writeSparsely);
+    return self.CreateInvisibleIdsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int64Array),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdGeomPointInstancer &self)
@@ -147,7 +156,9 @@ void wrapUsdGeomPointInstancer()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -158,7 +169,9 @@ void wrapUsdGeomPointInstancer()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetIdsAttr", &This::GetIdsAttr)
-    .def("CreateIdsAttr", &_CreateIdsAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateIdsAttr",
+         &_CreateIdsAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetPositionsAttr", &This::GetPositionsAttr)
     .def("CreatePositionsAttr",
@@ -226,11 +239,11 @@ void wrapUsdGeomPointInstancer()
 namespace
 {
 
-  static boost::python::list _ComputeMaskAtTime(const UsdGeomPointInstancer &self, const UsdTimeCode time)
+  static boost::python::list _ComputeMaskAtTime(const UsdGeomPointInstancer &self,
+                                                const UsdTimeCode time)
   {
     boost::python::list items;
-    for (const auto &b : self.ComputeMaskAtTime(time))
-    {
+    for (const auto &b : self.ComputeMaskAtTime(time)) {
       items.append(static_cast<bool>(b));
     }
 
@@ -341,7 +354,8 @@ namespace
     TfPyRegisterStlSequencesFromPython<UsdTimeCode>();
     to_python_converter<std::vector<VtArray<GfMatrix4d>>,
                         TfPySequenceToPython<std::vector<VtArray<GfMatrix4d>>>>();
-    to_python_converter<std::vector<VtVec3fArray>, TfPySequenceToPython<std::vector<VtVec3fArray>>>();
+    to_python_converter<std::vector<VtVec3fArray>,
+                        TfPySequenceToPython<std::vector<VtVec3fArray>>>();
   }
 
 }  // anonymous namespace

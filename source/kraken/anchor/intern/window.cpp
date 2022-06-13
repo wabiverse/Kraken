@@ -49,8 +49,7 @@ AnchorSystemWindow::AnchorSystemWindow(AnchorU32 width,
   m_nativePixelSize = 1.0f;
 
   m_fullScreen = state == AnchorWindowStateFullScreen;
-  if (m_fullScreen)
-  {
+  if (m_fullScreen) {
     m_fullScreenWidth = width;
     m_fullScreenHeight = height;
   }
@@ -68,25 +67,21 @@ void *AnchorSystemWindow::getOSWindow() const
 
 eAnchorStatus AnchorSystemWindow::setDrawingContextType(eAnchorDrawingContextType type)
 {
-  if (type != m_drawingContextType)
-  {
+  if (type != m_drawingContextType) {
     ANCHOR::SetCurrentContext(NULL);
 
     if (type != ANCHOR_DrawingContextTypeNone)
       newDrawingContext(type);
 
-    if (ANCHOR::GetCurrentContext() != NULL)
-    {
+    if (ANCHOR::GetCurrentContext() != NULL) {
       m_drawingContextType = type;
-    } else
-    {
+    } else {
       ANCHOR::CreateContext();
       m_drawingContextType = ANCHOR_DrawingContextTypeNone;
     }
 
     return (type == m_drawingContextType) ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
-  } else
-  {
+  } else {
     return ANCHOR_SUCCESS;
   }
 }

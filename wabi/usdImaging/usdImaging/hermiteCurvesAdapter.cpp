@@ -45,19 +45,23 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingHermiteCurvesAdapter::~UsdImagingHermiteCurvesAdapter()
-{}
+UsdImagingHermiteCurvesAdapter::~UsdImagingHermiteCurvesAdapter() {}
 
 bool UsdImagingHermiteCurvesAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
   return index->IsRprimTypeSupported(HdPrimTypeTokens->basisCurves);
 }
 
-SdfPath UsdImagingHermiteCurvesAdapter::Populate(UsdPrim const &prim,
-                                                 UsdImagingIndexProxy *index,
-                                                 UsdImagingInstancerContext const *instancerContext)
+SdfPath UsdImagingHermiteCurvesAdapter::Populate(
+  UsdPrim const &prim,
+  UsdImagingIndexProxy *index,
+  UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(HdPrimTypeTokens->basisCurves, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->basisCurves,
+                   prim,
+                   index,
+                   GetMaterialUsdPath(prim),
+                   instancerContext);
 }
 
 void UsdImagingHermiteCurvesAdapter::TrackVariability(
@@ -98,13 +102,11 @@ HdDirtyBits UsdImagingHermiteCurvesAdapter::ProcessPropertyChange(UsdPrim const 
                                                                   SdfPath const &cachePath,
                                                                   TfToken const &propertyName)
 {
-  if (propertyName == UsdGeomTokens->points)
-  {
+  if (propertyName == UsdGeomTokens->points) {
     return HdChangeTracker::DirtyPoints;
   }
 
-  else if (propertyName == UsdGeomTokens->curveVertexCounts)
-  {
+  else if (propertyName == UsdGeomTokens->curveVertexCounts) {
     return HdChangeTracker::DirtyTopology;
   }
 

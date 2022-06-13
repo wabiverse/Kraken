@@ -52,7 +52,9 @@ HdPh_MeshTopologySharedPtr HdPh_MeshTopology::New(const HdMeshTopology &src,
 }
 
 // explicit
-HdPh_MeshTopology::HdPh_MeshTopology(const HdMeshTopology &src, int refineLevel, RefineMode refineMode)
+HdPh_MeshTopology::HdPh_MeshTopology(const HdMeshTopology &src,
+                                     int refineLevel,
+                                     RefineMode refineMode)
   : HdMeshTopology(src, refineLevel),
     _quadInfo(nullptr),
     _quadrangulateTableRange(),
@@ -104,25 +106,22 @@ HdPh_QuadInfoBuilderComputationSharedPtr HdPh_MeshTopology::GetQuadInfoBuilderCo
   SdfPath const &id,
   HdPhResourceRegistry *resourceRegistry)
 {
-  HdPh_QuadInfoBuilderComputationSharedPtr builder = std::make_shared<HdPh_QuadInfoBuilderComputation>(this,
-                                                                                                       id);
+  HdPh_QuadInfoBuilderComputationSharedPtr builder =
+    std::make_shared<HdPh_QuadInfoBuilderComputation>(this, id);
 
   // store as a weak ptr.
   _quadInfoBuilder = builder;
 
-  if (gpu)
-  {
-    if (!TF_VERIFY(resourceRegistry))
-    {
+  if (gpu) {
+    if (!TF_VERIFY(resourceRegistry)) {
       TF_CODING_ERROR(
         "resource registry must be non-null "
         "if gpu quadinfo is requested.");
       return builder;
     }
 
-    HdBufferSourceSharedPtr quadrangulateTable = std::make_shared<HdPh_QuadrangulateTableComputation>(
-      this,
-      builder);
+    HdBufferSourceSharedPtr quadrangulateTable =
+      std::make_shared<HdPh_QuadrangulateTableComputation>(this, builder);
 
     // allocate quadrangulation table on GPU
     HdBufferSpecVector bufferSpecs;
@@ -143,12 +142,12 @@ HdBufferSourceSharedPtr HdPh_MeshTopology::GetQuadIndexBuilderComputation(SdfPat
   return std::make_shared<HdPh_QuadIndexBuilderComputation>(this, _quadInfoBuilder.lock(), id);
 }
 
-HdBufferSourceSharedPtr HdPh_MeshTopology::GetQuadrangulateComputation(HdBufferSourceSharedPtr const &source,
-                                                                       SdfPath const &id)
+HdBufferSourceSharedPtr HdPh_MeshTopology::GetQuadrangulateComputation(
+  HdBufferSourceSharedPtr const &source,
+  SdfPath const &id)
 {
   // check if the quad table is already computed as all-quads.
-  if (_quadInfo && _quadInfo->IsAllQuads())
-  {
+  if (_quadInfo && _quadInfo->IsAllQuads()) {
     // no need of quadrangulation.
     return HdBufferSourceSharedPtr();
   }
@@ -169,8 +168,7 @@ HdComputationSharedPtr HdPh_MeshTopology::GetQuadrangulateComputationGPU(TfToken
                                                                          SdfPath const &id)
 {
   // check if the quad table is already computed as all-quads.
-  if (_quadInfo && _quadInfo->IsAllQuads())
-  {
+  if (_quadInfo && _quadInfo->IsAllQuads()) {
     // no need of quadrangulation.
     return HdComputationSharedPtr();
   }
@@ -210,8 +208,7 @@ bool HdPh_MeshTopology::RefinesToBoxSplineTrianglePatches() const
 
 HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdTopologyComputation(SdfPath const &id)
 {
-  if (HdBufferSourceSharedPtr builder = _osdTopologyBuilder.lock())
-  {
+  if (HdBufferSourceSharedPtr builder = _osdTopologyBuilder.lock()) {
     return builder;
   }
 
@@ -248,9 +245,10 @@ HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdFvarIndexBuilderComputation(int
   return _subdivision->CreateFvarIndexComputation(this, topologyBuilder, channel);
 }
 
-HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdRefineComputation(HdBufferSourceSharedPtr const &source,
-                                                                   Interpolation interpolation,
-                                                                   int fvarChannel)
+HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdRefineComputation(
+  HdBufferSourceSharedPtr const &source,
+  Interpolation interpolation,
+  int fvarChannel)
 {
   // Make a dependency to far mesh.
   // (see comment on GetQuadrangulateComputation)
@@ -264,8 +262,7 @@ HdBufferSourceSharedPtr HdPh_MeshTopology::GetOsdRefineComputation(HdBufferSourc
   if (_topology.GetFaceVertexCounts().size() == 0)
     return source;
 
-  if (!TF_VERIFY(_subdivision))
-  {
+  if (!TF_VERIFY(_subdivision)) {
     TF_CODING_ERROR(
       "GetOsdTopologyComputation should be called before "
       "GetOsdRefineComputation.");
@@ -283,15 +280,18 @@ HdComputationSharedPtr HdPh_MeshTopology::GetOsdRefineComputationGPU(TfToken con
                                                                      int fvarChannel)
 {
   // for empty topology, we don't need to refine anything.
-  if (_topology.GetFaceVertexCounts().size() == 0)
-  {
+  if (_topology.GetFaceVertexCounts().size() == 0) {
     return HdComputationSharedPtr();
   }
 
   if (!TF_VERIFY(_subdivision))
     return HdComputationSharedPtr();
 
-  return _subdivision->CreateRefineComputationGPU(this, name, dataType, interpolation, fvarChannel);
+  return _subdivision->CreateRefineComputationGPU(this,
+                                                  name,
+                                                  dataType,
+                                                  interpolation,
+                                                  fvarChannel);
 }
 
 WABI_NAMESPACE_END

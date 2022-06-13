@@ -4,11 +4,9 @@
 namespace Zep
 {
 
-  GlyphIterator::GlyphIterator(const ZepBuffer *buffer, unsigned long offset)
-    : m_pBuffer(buffer)
+  GlyphIterator::GlyphIterator(const ZepBuffer *buffer, unsigned long offset) : m_pBuffer(buffer)
   {
-    if (buffer)
-    {
+    if (buffer) {
       m_index = offset;
     }
   }
@@ -25,13 +23,11 @@ namespace Zep
 
   bool GlyphIterator::Valid() const
   {
-    if (!m_pBuffer)
-    {
+    if (!m_pBuffer) {
       return false;
     }
 
-    if (m_index < 0 || m_index >= m_pBuffer->GetWorkingBuffer().size())
-    {
+    if (m_index < 0 || m_index >= m_pBuffer->GetWorkingBuffer().size()) {
       return false;
     }
 
@@ -79,8 +75,7 @@ namespace Zep
 
   uint8_t GlyphIterator::Char() const
   {
-    if (!m_pBuffer)
-    {
+    if (!m_pBuffer) {
       return 0;
     }
     return m_pBuffer->GetWorkingBuffer()[m_index];
@@ -88,8 +83,7 @@ namespace Zep
 
   uint8_t GlyphIterator::operator*() const
   {
-    if (!m_pBuffer)
-    {
+    if (!m_pBuffer) {
       return 0;
     }
     return m_pBuffer->GetWorkingBuffer()[m_index];
@@ -97,28 +91,22 @@ namespace Zep
 
   GlyphIterator &GlyphIterator::MoveClamped(long count, LineLocation clamp)
   {
-    if (!m_pBuffer)
-    {
+    if (!m_pBuffer) {
       return *this;
     }
     auto &gapBuffer = m_pBuffer->GetWorkingBuffer();
 
-    if (count >= 0)
-    {
+    if (count >= 0) {
       auto lineEnd = m_pBuffer->GetLinePos(*this, clamp);
-      for (long c = 0; c < count; c++)
-      {
-        if (m_index >= lineEnd.m_index)
-        {
+      for (long c = 0; c < count; c++) {
+        if (m_index >= lineEnd.m_index) {
           break;
         }
         m_index += utf8_codepoint_length(gapBuffer[m_index]);
       }
-    } else
-    {
+    } else {
       auto lineBegin = m_pBuffer->GetLinePos(*this, LineLocation::LineBegin);
-      for (long c = count; c < 0; c++)
-      {
+      for (long c = count; c < 0; c++) {
         while ((m_index > lineBegin.Index()) && utf8_is_trailing(gapBuffer[--m_index]))
           ;
       }
@@ -131,22 +119,17 @@ namespace Zep
 
   GlyphIterator &GlyphIterator::Move(long count)
   {
-    if (!m_pBuffer)
-    {
+    if (!m_pBuffer) {
       return *this;
     }
     auto &gapBuffer = m_pBuffer->GetWorkingBuffer();
 
-    if (count >= 0)
-    {
-      for (long c = 0; c < count; c++)
-      {
+    if (count >= 0) {
+      for (long c = 0; c < count; c++) {
         m_index += utf8_codepoint_length(gapBuffer[m_index]);
       }
-    } else
-    {
-      for (long c = count; c < 0; c++)
-      {
+    } else {
+      for (long c = count; c < 0; c++) {
         while ((m_index > 0) && utf8::internal::is_trail(gapBuffer[--m_index]))
           ;
       }
@@ -165,8 +148,7 @@ namespace Zep
   GlyphIterator &GlyphIterator::Clamp()
   {
     // Invalid thing is still invalid
-    if (!m_pBuffer)
-    {
+    if (!m_pBuffer) {
       return *this;
     }
 
@@ -240,18 +222,14 @@ namespace Zep
     Move(-count);
   }
 
-  GlyphRange::GlyphRange(GlyphIterator a, GlyphIterator b)
-    : first(a),
-      second(b)
-  {}
+  GlyphRange::GlyphRange(GlyphIterator a, GlyphIterator b) : first(a), second(b) {}
 
   GlyphRange::GlyphRange(const ZepBuffer *pBuffer, ByteRange range)
     : first(pBuffer, range.first),
       second(pBuffer, range.second)
   {}
 
-  GlyphRange::GlyphRange()
-  {}
+  GlyphRange::GlyphRange() {}
 
   bool GlyphRange::ContainsLocation(long loc) const
   {

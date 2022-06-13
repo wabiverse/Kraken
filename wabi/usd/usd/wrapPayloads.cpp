@@ -40,7 +40,10 @@ void wrapUsdPayloads()
          (bool(UsdPayloads::*)(const SdfPayload &, UsdListPosition)) & UsdPayloads::AddPayload,
          (arg("payload"), arg("position") = UsdListPositionBackOfPrependList))
     .def("AddPayload",
-         (bool(UsdPayloads::*)(const string &, const SdfPath &, const SdfLayerOffset &, UsdListPosition)) &
+         (bool(UsdPayloads::*)(const string &,
+                               const SdfPath &,
+                               const SdfLayerOffset &,
+                               UsdListPosition)) &
            UsdPayloads::AddPayload,
          (arg("assetPath"),
           arg("primPath"),

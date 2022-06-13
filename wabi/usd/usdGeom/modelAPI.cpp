@@ -40,14 +40,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (GeomModelAPI));
 
 /* virtual */
-UsdGeomModelAPI::~UsdGeomModelAPI()
-{}
+UsdGeomModelAPI::~UsdGeomModelAPI() {}
 
 /* static */
 UsdGeomModelAPI UsdGeomModelAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomModelAPI();
   }
@@ -63,8 +61,7 @@ UsdSchemaKind UsdGeomModelAPI::GetSchemaKind() const
 /* static */
 UsdGeomModelAPI UsdGeomModelAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdGeomModelAPI>())
-  {
+  if (prim.ApplyAPI<UsdGeomModelAPI>()) {
     return UsdGeomModelAPI(prim);
   }
   return UsdGeomModelAPI();
@@ -95,7 +92,8 @@ UsdAttribute UsdGeomModelAPI::GetModelDrawModeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->modelDrawMode);
 }
 
-UsdAttribute UsdGeomModelAPI::CreateModelDrawModeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomModelAPI::CreateModelDrawModeAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->modelDrawMode,
                                     SdfValueTypeNames->Token,
@@ -277,8 +275,9 @@ const TfTokenVector &UsdGeomModelAPI::GetSchemaAttributeNames(bool includeInheri
     UsdGeomTokens->modelCardTextureYNeg,
     UsdGeomTokens->modelCardTextureZNeg,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -347,8 +346,7 @@ VtVec3fArray UsdGeomModelAPI::ComputeExtentsHint(UsdGeomBBoxCache &bboxCache) co
   // we expect purpose 'default' to be the most common purpose value
   // and in some cases the only purpose value. Computing bounds for
   // the rest of the purpose values should be very fast.
-  for (size_t bboxType = purposeTokens.size(); bboxType-- != 0;)
-  {
+  for (size_t bboxType = purposeTokens.size(); bboxType-- != 0;) {
 
     // Set the gprim purpose that we are interested in computing the
     // bbox for. This doesn't cause the cache to be blown.
@@ -380,21 +378,23 @@ VtVec3fArray UsdGeomModelAPI::ComputeExtentsHint(UsdGeomBBoxCache &bboxCache) co
   return extents;
 }
 
-UsdGeomConstraintTarget UsdGeomModelAPI::GetConstraintTarget(const std::string &constraintName) const
+UsdGeomConstraintTarget UsdGeomModelAPI::GetConstraintTarget(
+  const std::string &constraintName) const
 {
-  const TfToken &constraintAttrName = UsdGeomConstraintTarget::GetConstraintAttrName(constraintName);
+  const TfToken &constraintAttrName = UsdGeomConstraintTarget::GetConstraintAttrName(
+    constraintName);
 
   return UsdGeomConstraintTarget(GetPrim().GetAttribute(constraintAttrName));
 }
 
 UsdGeomConstraintTarget UsdGeomModelAPI::CreateConstraintTarget(const string &constraintName) const
 {
-  const TfToken &constraintAttrName = UsdGeomConstraintTarget::GetConstraintAttrName(constraintName);
+  const TfToken &constraintAttrName = UsdGeomConstraintTarget::GetConstraintAttrName(
+    constraintName);
 
   // Check if the constraint target attribute already exists.
   UsdAttribute constraintAttr = GetPrim().GetAttribute(constraintAttrName);
-  if (!constraintAttr)
-  {
+  if (!constraintAttr) {
     // Create the attribute, if it doesn't exist.
     constraintAttr = GetPrim().CreateAttribute(constraintAttrName,
                                                SdfValueTypeNames->Matrix4d,
@@ -410,13 +410,11 @@ vector<UsdGeomConstraintTarget> UsdGeomModelAPI::GetConstraintTargets() const
   vector<UsdGeomConstraintTarget> constraintTargets;
 
   const vector<UsdAttribute> &attributes = GetPrim().GetAttributes();
-  TF_FOR_ALL (attrIt, attributes)
-  {
+  TF_FOR_ALL (attrIt, attributes) {
     UsdGeomConstraintTarget constraintTarget(*attrIt);
 
     // Add it to the list, if it is a valid constraint target.
-    if (constraintTarget)
-    {
+    if (constraintTarget) {
       constraintTargets.push_back(constraintTarget);
     }
   }
@@ -429,8 +427,7 @@ namespace
   static bool _GetAuthoredDrawMode(const UsdPrim &prim, TfToken *drawMode)
   {
     // Only check for the attribute on models; don't check the pseudo-root.
-    if (!prim.IsModel() || !prim.GetParent())
-    {
+    if (!prim.IsModel() || !prim.GetParent()) {
       return false;
     }
 
@@ -444,22 +441,18 @@ TfToken UsdGeomModelAPI::ComputeModelDrawMode(const TfToken &parentDrawMode) con
 {
   TfToken drawMode = UsdGeomTokens->inherited;
 
-  if (_GetAuthoredDrawMode(GetPrim(), &drawMode) && drawMode != UsdGeomTokens->inherited)
-  {
+  if (_GetAuthoredDrawMode(GetPrim(), &drawMode) && drawMode != UsdGeomTokens->inherited) {
     return drawMode;
   }
 
-  if (!parentDrawMode.IsEmpty())
-  {
+  if (!parentDrawMode.IsEmpty()) {
     return parentDrawMode;
   }
 
   // Find the closest applicable model:drawMode among this prim's ancestors.
-  for (UsdPrim curPrim = GetPrim().GetParent(); curPrim; curPrim = curPrim.GetParent())
-  {
+  for (UsdPrim curPrim = GetPrim().GetParent(); curPrim; curPrim = curPrim.GetParent()) {
 
-    if (_GetAuthoredDrawMode(curPrim, &drawMode) && drawMode != UsdGeomTokens->inherited)
-    {
+    if (_GetAuthoredDrawMode(curPrim, &drawMode) && drawMode != UsdGeomTokens->inherited) {
       return drawMode;
     }
   }

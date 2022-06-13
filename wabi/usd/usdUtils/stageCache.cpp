@@ -63,13 +63,13 @@ SdfLayerRefPtr UsdUtilsStageCache::GetSessionLayerForVariantSelections(
   const std::vector<std::pair<std::string, std::string>> &variantSelections)
 {
   // Sort so that the key is deterministic.
-  std::vector<std::pair<std::string, std::string>> variantSelectionsSorted(variantSelections.begin(),
-                                                                           variantSelections.end());
+  std::vector<std::pair<std::string, std::string>> variantSelectionsSorted(
+    variantSelections.begin(),
+    variantSelections.end());
   std::sort(variantSelectionsSorted.begin(), variantSelectionsSorted.end());
 
   std::string sessionKey = modelName;
-  TF_FOR_ALL (itr, variantSelectionsSorted)
-  {
+  TF_FOR_ALL (itr, variantSelectionsSorted) {
     sessionKey += ":" + itr->first + "=" + itr->second;
   }
 
@@ -80,22 +80,18 @@ SdfLayerRefPtr UsdUtilsStageCache::GetSessionLayerForVariantSelections(
 
     _SessionLayerMap &sessionLayerMap = GetSessionLayerMap();
     _SessionLayerMap::iterator itr = sessionLayerMap.find(sessionKey);
-    if (itr == sessionLayerMap.end())
-    {
+    if (itr == sessionLayerMap.end()) {
       SdfLayerRefPtr layer = SdfLayer::CreateAnonymous();
-      if (!variantSelections.empty())
-      {
+      if (!variantSelections.empty()) {
         SdfPrimSpecHandle over = SdfPrimSpec::New(layer, modelName, SdfSpecifierOver);
-        TF_FOR_ALL (varSelItr, variantSelections)
-        {
+        TF_FOR_ALL (varSelItr, variantSelections) {
           // Construct the variant opinion for the session layer.
           over->GetVariantSelections()[varSelItr->first] = varSelItr->second;
         }
       }
       sessionLayerMap[sessionKey] = layer;
       ret = layer;
-    } else
-    {
+    } else {
       ret = itr->second;
     }
   }

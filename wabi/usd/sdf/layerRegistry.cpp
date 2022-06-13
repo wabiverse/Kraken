@@ -48,27 +48,26 @@ WABI_NAMESPACE_BEGIN
 // the identifier and the real path.
 static string Sdf_LayerDebugRepr(const SdfLayerHandle &layer)
 {
-  return layer ? "SdfLayer('" + layer->GetIdentifier() + "', '" + layer->GetRealPath() + "')" : "None";
+  return layer ? "SdfLayer('" + layer->GetIdentifier() + "', '" + layer->GetRealPath() + "')" :
+                 "None";
 }
 
-const Sdf_LayerRegistry::layer_identifier::result_type &Sdf_LayerRegistry::layer_identifier::operator()(
-  const SdfLayerHandle &layer) const
+const Sdf_LayerRegistry::layer_identifier::result_type &Sdf_LayerRegistry::layer_identifier::
+operator()(const SdfLayerHandle &layer) const
 {
   static string emptyString;
   return layer ? layer->GetIdentifier() : emptyString;
 }
 
-Sdf_LayerRegistry::layer_repository_path::result_type Sdf_LayerRegistry::layer_repository_path::operator()(
-  const SdfLayerHandle &layer) const
+Sdf_LayerRegistry::layer_repository_path::result_type Sdf_LayerRegistry::layer_repository_path::
+operator()(const SdfLayerHandle &layer) const
 {
-  if (!layer)
-  {
+  if (!layer) {
     return std::string();
   }
 
   const string repoPath = layer->GetRepositoryPath();
-  if (!repoPath.empty())
-  {
+  if (!repoPath.empty()) {
     string layerPath, arguments;
     TF_VERIFY(Sdf_SplitIdentifier(layer->GetIdentifier(), &layerPath, &arguments));
     return Sdf_CreateIdentifier(repoPath, arguments);
@@ -80,21 +79,18 @@ Sdf_LayerRegistry::layer_repository_path::result_type Sdf_LayerRegistry::layer_r
 Sdf_LayerRegistry::layer_real_path::result_type Sdf_LayerRegistry::layer_real_path::operator()(
   const SdfLayerHandle &layer) const
 {
-  if (!layer)
-  {
+  if (!layer) {
     return std::string();
   }
 
-  if (layer->IsAnonymous())
-  {
+  if (layer->IsAnonymous()) {
     // The layer_real_path index requires a unique key. As anonymous do
     // not have a realPath, we use the (unique) identifier as the key.
     return layer->GetIdentifier();
   }
 
   const string realPath = layer->GetRealPath();
-  if (!realPath.empty())
-  {
+  if (!realPath.empty()) {
     string layerPath, arguments;
     TF_VERIFY(Sdf_SplitIdentifier(layer->GetIdentifier(), &layerPath, &arguments));
     return Sdf_CreateIdentifier(realPath, arguments);
@@ -103,41 +99,36 @@ Sdf_LayerRegistry::layer_real_path::result_type Sdf_LayerRegistry::layer_real_pa
   return std::string();
 }
 
-Sdf_LayerRegistry::Sdf_LayerRegistry()
-{}
+Sdf_LayerRegistry::Sdf_LayerRegistry() {}
 
 struct update_index_only
 {
-  void operator()(const SdfLayerHandle &)
-  {}
+  void operator()(const SdfLayerHandle &) {}
 };
 
 void Sdf_LayerRegistry::InsertOrUpdate(const SdfLayerHandle &layer)
 {
   TRACE_FUNCTION();
 
-  if (!layer)
-  {
+  if (!layer) {
     TF_CODING_ERROR("Expired layer handle");
     return;
   }
 
-  TF_DEBUG(SDF_LAYER).Msg("Sdf_LayerRegistry::InsertOrUpdate(%s)\n", Sdf_LayerDebugRepr(layer).c_str());
+  TF_DEBUG(SDF_LAYER).Msg("Sdf_LayerRegistry::InsertOrUpdate(%s)\n",
+                          Sdf_LayerDebugRepr(layer).c_str());
 
   // Attempt to insert the layer into the registry. This may fail because
   // the new layer violates constraints of one of the registry indices.
   std::pair<_Layers::iterator, bool> result = _layers.insert(layer);
-  if (!result.second)
-  {
+  if (!result.second) {
     SdfLayerHandle existingLayer = *result.first;
-    if (layer == existingLayer)
-    {
+    if (layer == existingLayer) {
       // We failed to insert the layer into the registry because this
       // layer object is already in the registry. All we need to do is
       // update the indices so it can be found.
       _layers.modify(result.first, update_index_only());
-    } else
-    {
+    } else {
       // We failed to insert the layer into the registry because there
       // is a realPath conflict. This can happen when the same layer is
       // crated twice in the same location in the same session.
@@ -161,17 +152,16 @@ void Sdf_LayerRegistry::Erase(const SdfLayerHandle &layer)
                           erased ? "Success" : "Failed");
 }
 
-SdfLayerHandle Sdf_LayerRegistry::Find(const string &inputLayerPath, const string &resolvedPath) const
+SdfLayerHandle Sdf_LayerRegistry::Find(const string &inputLayerPath,
+                                       const string &resolvedPath) const
 {
   TRACE_FUNCTION();
 
   SdfLayerHandle foundLayer;
 
-  if (Sdf_IsAnonLayerIdentifier(inputLayerPath))
-  {
+  if (Sdf_IsAnonLayerIdentifier(inputLayerPath)) {
     foundLayer = FindByIdentifier(inputLayerPath);
-  } else
-  {
+  } else {
     ArResolver &resolver = ArGetResolver();
 
 #if AR_VERSION == 1
@@ -198,8 +188,7 @@ SdfLayerHandle Sdf_LayerRegistry::Find(const string &inputLayerPath, const strin
     // If the layer path depends on context there may be multiple
     // layers with the same identifier but different resolved paths.
     // In this case we need to look up the layer by resolved path.
-    if (!resolver.IsContextDependentPath(layerPath))
-    {
+    if (!resolver.IsContextDependentPath(layerPath)) {
       foundLayer = FindByIdentifier(layerPath);
     }
 #endif
@@ -264,7 +253,8 @@ SdfLayerHandle Sdf_LayerRegistry::FindByRepositoryPath(const string &layerPath) 
   return foundLayer;
 }
 
-SdfLayerHandle Sdf_LayerRegistry::FindByRealPath(const string &layerPath, const string &resolvedPath) const
+SdfLayerHandle Sdf_LayerRegistry::FindByRealPath(const string &layerPath,
+                                                 const string &resolvedPath) const
 {
   TRACE_FUNCTION();
 
@@ -303,11 +293,9 @@ SdfLayerHandleSet Sdf_LayerRegistry::GetLayers() const
 {
   SdfLayerHandleSet layers;
 
-  TF_FOR_ALL (i, _layers.get<by_identity>())
-  {
+  TF_FOR_ALL (i, _layers.get<by_identity>()) {
     SdfLayerHandle layer = *i;
-    if (TF_VERIFY(layer, "Found expired layer in registry"))
-    {
+    if (TF_VERIFY(layer, "Found expired layer in registry")) {
       layers.insert(layer);
     }
   }
@@ -318,10 +306,8 @@ SdfLayerHandleSet Sdf_LayerRegistry::GetLayers() const
 std::ostream &operator<<(std::ostream &ostr, const Sdf_LayerRegistry &registry)
 {
   SdfLayerHandleSet layers = registry.GetLayers();
-  TF_FOR_ALL (i, layers)
-  {
-    if (SdfLayerHandle layer = *i)
-    {
+  TF_FOR_ALL (i, layers) {
+    if (SdfLayerHandle layer = *i) {
       ostr << boost::format(
                 "%1%[ref=%2%]:\n"
                 "    format           = %3%\n"
@@ -334,9 +320,10 @@ std::ostream &operator<<(std::ostream &ostr, const Sdf_LayerRegistry &registry)
                 "    anonymous        = %10%\n"
                 "\n") %
                 layer.GetUniqueIdentifier() % layer->GetCurrentCount() %
-                layer->GetFileFormat()->GetFormatId() % layer->GetIdentifier() % layer->GetRepositoryPath() %
-                layer->GetRealPath() % layer->GetVersion() % layer->GetAssetInfo() %
-                (layer->IsMuted() ? "True" : "False") % (layer->IsAnonymous() ? "True" : "False");
+                layer->GetFileFormat()->GetFormatId() % layer->GetIdentifier() %
+                layer->GetRepositoryPath() % layer->GetRealPath() % layer->GetVersion() %
+                layer->GetAssetInfo() % (layer->IsMuted() ? "True" : "False") %
+                (layer->IsAnonymous() ? "True" : "False");
     }
   }
 

@@ -41,7 +41,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device, HgiShaderFunctionDesc const &desc)
+HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device,
+                                                 HgiShaderFunctionDesc const &desc)
   : HgiShaderFunction(desc),
     _device(device),
     _spirvByteSize(0),
@@ -64,8 +65,7 @@ HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device, HgiSha
   bool result = HgiVulkanCompileGLSL(debugLbl, &shaderCode, 1, desc.shaderStage, &spirv, &_errors);
 
   // Create vulkan module if there were no errors.
-  if (result)
-  {
+  if (result) {
     _spirvByteSize = spirv.size() * sizeof(unsigned int);
 
     shaderCreateInfo.codeSize = _spirvByteSize;
@@ -77,8 +77,7 @@ HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device, HgiSha
                                    &_vkShaderModule) == VK_SUCCESS);
 
     // Debug label
-    if (!_descriptor.debugName.empty())
-    {
+    if (!_descriptor.debugName.empty()) {
       std::string debugLabel = "ShaderModule " + _descriptor.debugName;
       HgiVulkanSetDebugName(device,
                             (uint64_t)_vkShaderModule,
@@ -101,8 +100,7 @@ HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device, HgiSha
 
 HgiVulkanShaderFunction::~HgiVulkanShaderFunction()
 {
-  if (_vkShaderModule)
-  {
+  if (_vkShaderModule) {
     vkDestroyShaderModule(_device->GetVulkanDevice(), _vkShaderModule, HgiVulkanAllocator());
   }
 }

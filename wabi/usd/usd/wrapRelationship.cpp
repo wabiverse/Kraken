@@ -57,13 +57,11 @@ namespace
 
   static string __repr__(const UsdRelationship &self)
   {
-    if (self)
-    {
+    if (self) {
       return TfStringPrintf("%s.GetRelationship(%s)",
                             TfPyRepr(self.GetPrim()).c_str(),
                             TfPyRepr(self.GetName()).c_str());
-    } else
-    {
+    } else {
       return "invalid " + self.GetDescription();
     }
   }
@@ -85,5 +83,6 @@ void wrapUsdRelationship()
     .def("GetForwardedTargets", _GetForwardedTargets, return_value_policy<TfPySequenceToList>())
     .def("HasAuthoredTargets", &UsdRelationship::HasAuthoredTargets);
   TfPyRegisterStlSequencesFromPython<UsdRelationship>();
-  to_python_converter<std::vector<UsdRelationship>, TfPySequenceToPython<std::vector<UsdRelationship>>>();
+  to_python_converter<std::vector<UsdRelationship>,
+                      TfPySequenceToPython<std::vector<UsdRelationship>>>();
 }

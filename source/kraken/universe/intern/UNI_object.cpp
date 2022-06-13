@@ -45,8 +45,7 @@ KrakenPrim::KrakenPrim(const UsdSchemaBase &schemaObj)
     base(nullptr)
 {}
 
-KrakenPrim::~KrakenPrim()
-{}
+KrakenPrim::~KrakenPrim() {}
 
 
 UsdSchemaKind KrakenPrim::GetSchemaKind() const

@@ -42,10 +42,7 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 HdPh_VolumeShaderKey::HdPh_VolumeShaderKey()
   : glslfx(_tokens->baseGLSLFX),
     VS{_tokens->instancing, _tokens->mainVS, TfToken()},
-    FS{_tokens->pointIdFS,
-       _tokens->instancing,
-       _tokens->mainFS,
-       TfToken()}
+    FS{_tokens->pointIdFS, _tokens->instancing, _tokens->mainFS, TfToken()}
 {}
 
 HdPh_VolumeShaderKey::~HdPh_VolumeShaderKey() = default;

@@ -21,45 +21,39 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-HdRprMaterial::HdRprMaterial(SdfPath const &id)
-  : HdMaterial(id)
-{}
+HdRprMaterial::HdRprMaterial(SdfPath const &id) : HdMaterial(id) {}
 
-void HdRprMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdRprMaterial::Sync(HdSceneDelegate *sceneDelegate,
+                         HdRenderParam *renderParam,
+                         HdDirtyBits *dirtyBits)
 {
 
   auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
   auto rprApi = rprRenderParam->AcquireRprApiForEdit();
 
-  if (*dirtyBits & HdMaterial::DirtyResource)
-  {
-    if (m_rprMaterial)
-    {
+  if (*dirtyBits & HdMaterial::DirtyResource) {
+    if (m_rprMaterial) {
       rprApi->Release(m_rprMaterial);
       m_rprMaterial = nullptr;
     }
 
     VtValue vtMat = sceneDelegate->GetMaterialResource(GetId());
-    if (vtMat.IsHolding<HdMaterialNetworkMap>())
-    {
+    if (vtMat.IsHolding<HdMaterialNetworkMap>()) {
       auto &networkMap = vtMat.UncheckedGet<HdMaterialNetworkMap>();
       m_rprMaterial = rprApi->CreateMaterial(GetId(), sceneDelegate, networkMap);
     }
 
-    if (!m_rprMaterial)
-    {
+    if (!m_rprMaterial) {
       // Autodesk's Hydra Scene delegate may give us a mtlx file path directly,
       // to reuse existing material processing code, we create HdMaterialNetworkMap
       // that holds rpr_materialx_node
       //
       static TfToken materialXFilenameToken("MaterialXFilename", TfToken::Immortal);
       auto materialXFilename = sceneDelegate->Get(GetId(), materialXFilenameToken);
-      if (materialXFilename.IsHolding<SdfAssetPath>())
-      {
+      if (materialXFilename.IsHolding<SdfAssetPath>()) {
         auto &mtlxAssetPath = materialXFilename.UncheckedGet<SdfAssetPath>();
         auto &mtlxPath = mtlxAssetPath.GetResolvedPath();
-        if (!mtlxPath.empty())
-        {
+        if (!mtlxPath.empty()) {
           HdMaterialNetwork network;
           network.nodes.emplace_back();
           HdMaterialNode &mtlxNode = network.nodes.back();

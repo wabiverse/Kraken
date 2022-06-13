@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdShadeShader::~UsdShadeShader()
-{}
+UsdShadeShader::~UsdShadeShader() {}
 
 /* static */
 UsdShadeShader UsdShadeShader::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdShadeShader();
   }
@@ -62,8 +60,7 @@ UsdShadeShader UsdShadeShader::Get(const UsdStagePtr &stage, const SdfPath &path
 UsdShadeShader UsdShadeShader::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Shader");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdShadeShader();
   }
@@ -207,7 +204,8 @@ bool UsdShadeShader::GetShaderId(TfToken *id) const
   return UsdShadeNodeDefAPI(GetPrim()).GetShaderId(id);
 }
 
-bool UsdShadeShader::SetSourceAsset(const SdfAssetPath &sourceAsset, const TfToken &sourceType) const
+bool UsdShadeShader::SetSourceAsset(const SdfAssetPath &sourceAsset,
+                                    const TfToken &sourceType) const
 {
   return UsdShadeNodeDefAPI(GetPrim()).SetSourceAsset(sourceAsset, sourceType);
 }
@@ -223,7 +221,8 @@ bool UsdShadeShader::SetSourceAssetSubIdentifier(const TfToken &subIdentifier,
   return UsdShadeNodeDefAPI(GetPrim()).SetSourceAssetSubIdentifier(subIdentifier, sourceType);
 }
 
-bool UsdShadeShader::GetSourceAssetSubIdentifier(TfToken *subIdentifier, const TfToken &sourceType) const
+bool UsdShadeShader::GetSourceAssetSubIdentifier(TfToken *subIdentifier,
+                                                 const TfToken &sourceType) const
 {
   return UsdShadeNodeDefAPI(GetPrim()).GetSourceAssetSubIdentifier(subIdentifier, sourceType);
 }
@@ -251,10 +250,8 @@ NdrTokenMap UsdShadeShader::GetSdrMetadata() const
   NdrTokenMap result;
 
   VtDictionary sdrMetadata;
-  if (GetPrim().GetMetadata(UsdShadeTokens->sdrMetadata, &sdrMetadata))
-  {
-    for (const auto &it : sdrMetadata)
-    {
+  if (GetPrim().GetMetadata(UsdShadeTokens->sdrMetadata, &sdrMetadata)) {
+    for (const auto &it : sdrMetadata) {
       result[TfToken(it.first)] = TfStringify(it.second);
     }
   }
@@ -271,8 +268,7 @@ std::string UsdShadeShader::GetSdrMetadataByKey(const TfToken &key) const
 
 void UsdShadeShader::SetSdrMetadata(const NdrTokenMap &sdrMetadata) const
 {
-  for (auto &i : sdrMetadata)
-  {
+  for (auto &i : sdrMetadata) {
     SetSdrMetadataByKey(i.first, i.second);
   }
 }

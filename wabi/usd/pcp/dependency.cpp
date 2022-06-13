@@ -47,16 +47,13 @@ TF_REGISTRY_FUNCTION(TfEnum)
 
 bool PcpNodeIntroducesDependency(const PcpNodeRef &node)
 {
-  if (node.IsInert())
-  {
-    switch (node.GetArcType())
-    {
+  if (node.IsInert()) {
+    switch (node.GetArcType()) {
       case PcpArcTypeInherit:
       case PcpArcTypeSpecialize:
         // Special case: inert, propagated class-based arcs do not
         // represent dependencies.
-        if (node.GetOriginNode() != node.GetParentNode())
-        {
+        if (node.GetOriginNode() != node.GetParentNode()) {
           return false;
         }
         // Fall through
@@ -69,8 +66,7 @@ bool PcpNodeIntroducesDependency(const PcpNodeRef &node)
 
 PcpDependencyFlags PcpClassifyNodeDependency(const PcpNodeRef &node)
 {
-  if (node.GetArcType() == PcpArcTypeRoot)
-  {
+  if (node.GetArcType() == PcpArcTypeRoot) {
     return PcpDependencyTypeRoot;
   }
 
@@ -89,10 +85,8 @@ PcpDependencyFlags PcpClassifyNodeDependency(const PcpNodeRef &node)
   // edits that resolve the condition causing the node to be inert,
   // such as permissions.
   //
-  if (node.IsInert())
-  {
-    if (!PcpNodeIntroducesDependency(node))
-    {
+  if (node.IsInert()) {
+    if (!PcpNodeIntroducesDependency(node)) {
       return PcpDependencyTypeNone;
     }
     flags |= PcpDependencyTypeVirtual;
@@ -103,39 +97,29 @@ PcpDependencyFlags PcpClassifyNodeDependency(const PcpNodeRef &node)
   // direct dependency.
   bool anyDirect = false;
   bool anyAncestral = false;
-  for (PcpNodeRef p = node; p.GetParentNode(); p = p.GetParentNode())
-  {
-    if (p.IsDueToAncestor())
-    {
+  for (PcpNodeRef p = node; p.GetParentNode(); p = p.GetParentNode()) {
+    if (p.IsDueToAncestor()) {
       anyAncestral = true;
-    } else
-    {
+    } else {
       anyDirect = true;
     }
-    if (anyAncestral && anyDirect)
-    {
+    if (anyAncestral && anyDirect) {
       break;
     }
   }
-  if (anyDirect)
-  {
-    if (anyAncestral)
-    {
+  if (anyDirect) {
+    if (anyAncestral) {
       flags |= PcpDependencyTypePartlyDirect;
-    } else
-    {
+    } else {
       flags |= PcpDependencyTypePurelyDirect;
     }
-  } else
-  {
-    if (anyAncestral)
-    {
+  } else {
+    if (anyAncestral) {
       flags |= PcpDependencyTypeAncestral;
     }
   }
 
-  if (!(flags & PcpDependencyTypeVirtual))
-  {
+  if (!(flags & PcpDependencyTypeVirtual)) {
     flags |= PcpDependencyTypeNonVirtual;
   }
 
@@ -145,32 +129,25 @@ PcpDependencyFlags PcpClassifyNodeDependency(const PcpNodeRef &node)
 std::string PcpDependencyFlagsToString(const PcpDependencyFlags depFlags)
 {
   std::set<std::string> tags;
-  if (depFlags == PcpDependencyTypeNone)
-  {
+  if (depFlags == PcpDependencyTypeNone) {
     tags.insert("none");
   }
-  if (depFlags == PcpDependencyTypeRoot)
-  {
+  if (depFlags == PcpDependencyTypeRoot) {
     tags.insert("root");
   }
-  if (depFlags & PcpDependencyTypePurelyDirect)
-  {
+  if (depFlags & PcpDependencyTypePurelyDirect) {
     tags.insert("purely-direct");
   }
-  if (depFlags & PcpDependencyTypePartlyDirect)
-  {
+  if (depFlags & PcpDependencyTypePartlyDirect) {
     tags.insert("partly-direct");
   }
-  if (depFlags & PcpDependencyTypeAncestral)
-  {
+  if (depFlags & PcpDependencyTypeAncestral) {
     tags.insert("ancestral");
   }
-  if (depFlags & PcpDependencyTypeVirtual)
-  {
+  if (depFlags & PcpDependencyTypeVirtual) {
     tags.insert("virtual");
   }
-  if (depFlags & PcpDependencyTypeNonVirtual)
-  {
+  if (depFlags & PcpDependencyTypeNonVirtual) {
     tags.insert("non-virtual");
   }
   return TfStringJoin(tags, ", ");

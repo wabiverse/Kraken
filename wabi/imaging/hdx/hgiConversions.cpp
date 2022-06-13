@@ -75,10 +75,10 @@ static const _FormatDesc FORMAT_DESC[] = {
 // table stays up-to-date with changes to HdFormat and HgiFormat.
 constexpr bool _CompileTimeValidateFormatTable()
 {
-  return (HdFormatCount == 29 && HdFormatUNorm8 == 0 && HgiFormatUNorm8 == 0 && HdFormatFloat16Vec4 == 11 &&
-          HgiFormatFloat16Vec4 == 9 && HdFormatFloat32Vec4 == 15 && HgiFormatFloat32Vec4 == 13 &&
-          HdFormatUInt16Vec4 == 23 && HgiFormatUInt16Vec4 == 21 && HdFormatInt32Vec4 == 27 &&
-          HgiFormatInt32Vec4 == 25) ?
+  return (HdFormatCount == 29 && HdFormatUNorm8 == 0 && HgiFormatUNorm8 == 0 &&
+          HdFormatFloat16Vec4 == 11 && HgiFormatFloat16Vec4 == 9 && HdFormatFloat32Vec4 == 15 &&
+          HgiFormatFloat32Vec4 == 13 && HdFormatUInt16Vec4 == 23 && HgiFormatUInt16Vec4 == 21 &&
+          HdFormatInt32Vec4 == 27 && HgiFormatInt32Vec4 == 25) ?
            true :
            false;
 }
@@ -88,8 +88,7 @@ static_assert(_CompileTimeValidateFormatTable(),
 
 HgiFormat HdxHgiConversions::GetHgiFormat(HdFormat hdFormat)
 {
-  if ((hdFormat < 0) || (hdFormat >= HdFormatCount))
-  {
+  if ((hdFormat < 0) || (hdFormat >= HdFormatCount)) {
     TF_CODING_ERROR("Unexpected HdFormat %d", hdFormat);
     return HgiFormatInvalid;
   }
@@ -99,16 +98,13 @@ HgiFormat HdxHgiConversions::GetHgiFormat(HdFormat hdFormat)
 
 HdFormat HdxHgiConversions::GetHdFormat(HgiFormat hgiFormat)
 {
-  if ((hgiFormat < 0) || (hgiFormat >= HgiFormatCount))
-  {
+  if ((hgiFormat < 0) || (hgiFormat >= HgiFormatCount)) {
     TF_CODING_ERROR("Unexpected HgiFormat %d", hgiFormat);
     return HdFormatInvalid;
   }
 
-  for (size_t i = 0; i < HdFormatCount; i++)
-  {
-    if (FORMAT_DESC[i].hgiFormat == hgiFormat)
-    {
+  for (size_t i = 0; i < HdFormatCount; i++) {
+    if (FORMAT_DESC[i].hgiFormat == hgiFormat) {
       return HdFormat(i);
     }
   }

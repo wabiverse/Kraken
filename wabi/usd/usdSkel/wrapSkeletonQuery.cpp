@@ -51,14 +51,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-  VtMatrix4dArray _ComputeJointLocalTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
+  VtMatrix4dArray _ComputeJointLocalTransforms(UsdSkelSkeletonQuery &self,
+                                               UsdTimeCode time,
+                                               bool atRest)
   {
     VtMatrix4dArray xforms;
     self.ComputeJointLocalTransforms(&xforms, time, atRest);
     return xforms;
   }
 
-  VtMatrix4dArray _ComputeJointSkelTransforms(UsdSkelSkeletonQuery &self, UsdTimeCode time, bool atRest)
+  VtMatrix4dArray _ComputeJointSkelTransforms(UsdSkelSkeletonQuery &self,
+                                              UsdTimeCode time,
+                                              bool atRest)
   {
     VtMatrix4dArray xforms;
     self.ComputeJointSkelTransforms(&xforms, time, atRest);
@@ -135,7 +139,9 @@ void wrapUsdSkelSkeletonQuery()
          &_ComputeJointWorldTransforms,
          (arg("time") = UsdTimeCode::Default(), arg("atRest") = false))
 
-    .def("ComputeSkinningTransforms", &_ComputeSkinningTransforms, (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeSkinningTransforms",
+         &_ComputeSkinningTransforms,
+         (arg("time") = UsdTimeCode::Default()))
 
     .def("ComputeJointRestRelativeTransforms",
          &_ComputeJointRestRelativeTransforms,

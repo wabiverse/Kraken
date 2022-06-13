@@ -39,10 +39,8 @@ WABI_NAMESPACE_BEGIN
 
 static HgiTextureUsage _GetTextureUsage(HdFormat format, TfToken const &name)
 {
-  if (HdAovHasDepthSemantic(name))
-  {
-    if (format == HdFormatFloat32UInt8)
-    {
+  if (HdAovHasDepthSemantic(name)) {
+    if (format == HdFormatFloat32UInt8) {
       return HgiTextureUsageBitsDepthTarget | HgiTextureUsageBitsStencilTarget;
     }
     return HgiTextureUsageBitsDepthTarget;
@@ -68,11 +66,9 @@ void HdPhRenderBuffer::Sync(HdSceneDelegate *sceneDelegate,
 {
   // Invoke base class processing for the DirtyDescriptor bit after pulling
   // the MSAA sample count, which is authored for consumption by Phoenix alone.
-  if (*dirtyBits & DirtyDescription)
-  {
+  if (*dirtyBits & DirtyDescription) {
     VtValue val = sceneDelegate->Get(GetId(), HdPhRenderBufferTokens->phoenixMsaaSampleCount);
-    if (val.IsHolding<uint32_t>())
-    {
+    if (val.IsHolding<uint32_t>()) {
       _msaaSampleCount = val.UncheckedGet<uint32_t>();
     }
   }
@@ -89,8 +85,7 @@ HdPhTextureIdentifier HdPhRenderBuffer::GetTextureIdentifier(const bool multiSam
   // "this" pointer to ensure uniqueness.
   //
   std::string idStr = GetId().GetString();
-  if (multiSampled)
-  {
+  if (multiSampled) {
     idStr += " [MSAA]";
   }
   idStr += TfStringPrintf("[%p] ", this);
@@ -111,54 +106,48 @@ static void _CreateTexture(HdPhDynamicUvTextureObjectSharedPtr const &textureObj
                            const HgiTextureDesc &desc)
 {
   HgiTextureHandle const texture = textureObject->GetTexture();
-  if (texture && texture->GetDescriptor() == desc)
-  {
+  if (texture && texture->GetDescriptor() == desc) {
     return;
   }
 
   textureObject->CreateTexture(desc);
 }
 
-bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions, const HdFormat format, const bool multiSampled)
+bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions,
+                                const HdFormat format,
+                                const bool multiSampled)
 {
   _format = format;
 
-  if (_format == HdFormatInvalid)
-  {
+  if (_format == HdFormatInvalid) {
     _textureObject = nullptr;
     _textureMSAAObject = nullptr;
     return false;
   }
 
-  if (!_textureObject)
-  {
+  if (!_textureObject) {
     // Allocate texture object if necessary.
     _textureObject = std::dynamic_pointer_cast<HdPhDynamicUvTextureObject>(
       _resourceRegistry->AllocateTextureObject(GetTextureIdentifier(/*multiSampled = */ false),
                                                HdTextureType::Uv));
-    if (!_textureObject)
-    {
+    if (!_textureObject) {
       TF_CODING_ERROR("Expected HdPhDynamicUvTextureObject");
       return false;
     }
   }
 
-  if (multiSampled)
-  {
-    if (!_textureMSAAObject)
-    {
+  if (multiSampled) {
+    if (!_textureMSAAObject) {
       // Allocate texture object if necessary
       _textureMSAAObject = std::dynamic_pointer_cast<HdPhDynamicUvTextureObject>(
         _resourceRegistry->AllocateTextureObject(GetTextureIdentifier(/*multiSampled = */ true),
                                                  HdTextureType::Uv));
-      if (!_textureMSAAObject)
-      {
+      if (!_textureMSAAObject) {
         TF_CODING_ERROR("Expected HdPhDynamicUvTextureObject");
         return false;
       }
     }
-  } else
-  {
+  } else {
     // De-allocate texture object
     _textureMSAAObject = nullptr;
   }
@@ -174,8 +163,7 @@ bool HdPhRenderBuffer::Allocate(GfVec3i const &dimensions, const HdFormat format
   // Allocate actual GPU resource
   _CreateTexture(_textureObject, texDesc);
 
-  if (multiSampled)
-  {
+  if (multiSampled) {
     texDesc.debugName = _GetDebugName(_textureMSAAObject);
     texDesc.sampleCount = HgiSampleCount(_msaaSampleCount);
 
@@ -196,14 +184,12 @@ void *HdPhRenderBuffer::Map()
 {
   _mappers.fetch_add(1);
 
-  if (!_textureObject)
-  {
+  if (!_textureObject) {
     return nullptr;
   }
 
   HgiTextureHandle const texture = _textureObject->GetTexture();
-  if (!texture)
-  {
+  if (!texture) {
     return nullptr;
   }
 
@@ -211,21 +197,18 @@ void *HdPhRenderBuffer::Map()
   const size_t dataByteSize = desc.dimensions[0] * desc.dimensions[1] * desc.dimensions[2] *
                               HgiGetDataSizeOfFormat(desc.format);
 
-  if (dataByteSize == 0)
-  {
+  if (dataByteSize == 0) {
     return nullptr;
   }
 
   _mappedBuffer.resize(dataByteSize);
 
-  if (!TF_VERIFY(_resourceRegistry))
-  {
+  if (!TF_VERIFY(_resourceRegistry)) {
     return nullptr;
   }
 
   Hgi *const hgi = _resourceRegistry->GetHgi();
-  if (!TF_VERIFY(hgi))
-  {
+  if (!TF_VERIFY(hgi)) {
     return nullptr;
   }
 
@@ -266,22 +249,18 @@ void HdPhRenderBuffer::Resolve()
 
 static VtValue _GetResource(const HdPhDynamicUvTextureObjectSharedPtr &textureObject)
 {
-  if (textureObject)
-  {
+  if (textureObject) {
     return VtValue(textureObject->GetTexture());
-  } else
-  {
+  } else {
     return VtValue();
   }
 }
 
 VtValue HdPhRenderBuffer::GetResource(const bool multiSampled) const
 {
-  if (multiSampled)
-  {
+  if (multiSampled) {
     return _GetResource(_textureMSAAObject);
-  } else
-  {
+  } else {
     return _GetResource(_textureObject);
   }
 }
@@ -295,13 +274,11 @@ static const GfVec3i &_GetDimensions(HdPhDynamicUvTextureObjectSharedPtr const &
 {
   static const GfVec3i invalidDimensions(0, 0, 0);
 
-  if (!textureObject)
-  {
+  if (!textureObject) {
     return invalidDimensions;
   }
   HgiTextureHandle const texture = textureObject->GetTexture();
-  if (!texture)
-  {
+  if (!texture) {
     return invalidDimensions;
   }
   return texture->GetDescriptor().dimensions;

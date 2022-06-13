@@ -25,7 +25,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdComputation::~HdComputation()
-{}
+HdComputation::~HdComputation() {}
 
 WABI_NAMESPACE_END

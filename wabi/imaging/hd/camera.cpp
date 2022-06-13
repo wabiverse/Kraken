@@ -62,7 +62,9 @@ HdCamera::HdCamera(SdfPath const &id)
 
 HdCamera::~HdCamera() = default;
 
-void HdCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdCamera::Sync(HdSceneDelegate *sceneDelegate,
+                    HdRenderParam *renderParam,
+                    HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
@@ -70,8 +72,7 @@ void HdCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, 
   TF_UNUSED(renderParam);
 
   SdfPath const &id = GetId();
-  if (!TF_VERIFY(sceneDelegate != nullptr))
-  {
+  if (!TF_VERIFY(sceneDelegate != nullptr)) {
     return;
   }
 
@@ -82,132 +83,120 @@ void HdCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, 
   // efficient.
   HdDirtyBits bits = *dirtyBits;
 
-  if (bits & DirtyTransform)
-  {
+  if (bits & DirtyTransform) {
     _transform = sceneDelegate->GetTransform(id);
   }
 
-  if (bits & DirtyParams)
-  {
+  if (bits & DirtyParams) {
     const VtValue vProjection = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->projection);
-    if (!vProjection.IsEmpty())
-    {
+    if (!vProjection.IsEmpty()) {
       _projection = vProjection.Get<Projection>();
     }
 
     const VtValue vHorizontalAperture = sceneDelegate->GetCameraParamValue(
       id,
       HdCameraTokens->horizontalAperture);
-    if (!vHorizontalAperture.IsEmpty())
-    {
+    if (!vHorizontalAperture.IsEmpty()) {
       _horizontalAperture = vHorizontalAperture.Get<float>();
     }
 
-    const VtValue vVerticalAperture = sceneDelegate->GetCameraParamValue(id,
-                                                                         HdCameraTokens->verticalAperture);
-    if (!vVerticalAperture.IsEmpty())
-    {
+    const VtValue vVerticalAperture = sceneDelegate->GetCameraParamValue(
+      id,
+      HdCameraTokens->verticalAperture);
+    if (!vVerticalAperture.IsEmpty()) {
       _verticalAperture = vVerticalAperture.Get<float>();
     }
 
     const VtValue vHorizontalApertureOffset = sceneDelegate->GetCameraParamValue(
       id,
       HdCameraTokens->horizontalApertureOffset);
-    if (!vHorizontalApertureOffset.IsEmpty())
-    {
+    if (!vHorizontalApertureOffset.IsEmpty()) {
       _horizontalApertureOffset = vHorizontalApertureOffset.Get<float>();
     }
 
     const VtValue vVerticalApertureOffset = sceneDelegate->GetCameraParamValue(
       id,
       HdCameraTokens->verticalApertureOffset);
-    if (!vVerticalApertureOffset.IsEmpty())
-    {
+    if (!vVerticalApertureOffset.IsEmpty()) {
       _verticalApertureOffset = vVerticalApertureOffset.Get<float>();
     }
 
-    const VtValue vFocalLength = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->focalLength);
-    if (!vFocalLength.IsEmpty())
-    {
+    const VtValue vFocalLength = sceneDelegate->GetCameraParamValue(id,
+                                                                    HdCameraTokens->focalLength);
+    if (!vFocalLength.IsEmpty()) {
       _focalLength = vFocalLength.Get<float>();
     }
 
-    const VtValue vClippingRange = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->clippingRange);
-    if (!vClippingRange.IsEmpty())
-    {
+    const VtValue vClippingRange = sceneDelegate->GetCameraParamValue(
+      id,
+      HdCameraTokens->clippingRange);
+    if (!vClippingRange.IsEmpty()) {
       _clippingRange = vClippingRange.Get<GfRange1f>();
     }
 
     const VtValue vFStop = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->fStop);
-    if (!vFStop.IsEmpty())
-    {
+    if (!vFStop.IsEmpty()) {
       _fStop = vFStop.Get<float>();
     }
 
-    const VtValue vFocusDistance = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->focusDistance);
-    if (!vFocusDistance.IsEmpty())
-    {
+    const VtValue vFocusDistance = sceneDelegate->GetCameraParamValue(
+      id,
+      HdCameraTokens->focusDistance);
+    if (!vFocusDistance.IsEmpty()) {
       _focusDistance = vFocusDistance.Get<float>();
     }
 
-    const VtValue vShutterOpen = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->shutterOpen);
-    if (!vShutterOpen.IsEmpty())
-    {
+    const VtValue vShutterOpen = sceneDelegate->GetCameraParamValue(id,
+                                                                    HdCameraTokens->shutterOpen);
+    if (!vShutterOpen.IsEmpty()) {
       _shutterOpen = vShutterOpen.Get<double>();
     }
 
-    const VtValue vShutterClose = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->shutterClose);
-    if (!vShutterClose.IsEmpty())
-    {
+    const VtValue vShutterClose = sceneDelegate->GetCameraParamValue(id,
+                                                                     HdCameraTokens->shutterClose);
+    if (!vShutterClose.IsEmpty()) {
       _shutterClose = vShutterClose.Get<double>();
     }
 
     const VtValue vExposure = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->exposure);
-    if (!vExposure.IsEmpty())
-    {
+    if (!vExposure.IsEmpty()) {
       _exposure = vExposure.Get<float>();
     }
   }
 
-  if (bits & DirtyViewMatrix)
-  {
+  if (bits & DirtyViewMatrix) {
     // extract and store view matrix
-    const VtValue vMatrix = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->worldToViewMatrix);
+    const VtValue vMatrix = sceneDelegate->GetCameraParamValue(id,
+                                                               HdCameraTokens->worldToViewMatrix);
 
-    if (!vMatrix.IsEmpty())
-    {
+    if (!vMatrix.IsEmpty()) {
       _worldToViewMatrix = vMatrix.Get<GfMatrix4d>();
       _worldToViewInverseMatrix = _worldToViewMatrix.GetInverse();
     }
   }
 
-  if (bits & DirtyProjMatrix)
-  {
+  if (bits & DirtyProjMatrix) {
     // extract and store projection matrix
-    const VtValue vMatrix = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->projectionMatrix);
+    const VtValue vMatrix = sceneDelegate->GetCameraParamValue(id,
+                                                               HdCameraTokens->projectionMatrix);
 
-    if (!vMatrix.IsEmpty())
-    {
+    if (!vMatrix.IsEmpty()) {
       _projectionMatrix = vMatrix.Get<GfMatrix4d>();
     }
   }
 
-  if (bits & DirtyWindowPolicy)
-  {
+  if (bits & DirtyWindowPolicy) {
     // treat window policy as an optional parameter
     const VtValue vPolicy = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->windowPolicy);
-    if (!vPolicy.IsEmpty())
-    {
+    if (!vPolicy.IsEmpty()) {
       _windowPolicy = vPolicy.Get<CameraUtilConformWindowPolicy>();
     }
   }
 
-  if (bits & DirtyClipPlanes)
-  {
+  if (bits & DirtyClipPlanes) {
     // treat clip planes as an optional parameter
     const VtValue vClipPlanes = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->clipPlanes);
-    if (!vClipPlanes.IsEmpty())
-    {
+    if (!vClipPlanes.IsEmpty()) {
       _clipPlanes = vClipPlanes.Get<std::vector<GfVec4d>>();
     }
   }
@@ -219,8 +208,7 @@ void HdCamera::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, 
 
 GfMatrix4d HdCamera::GetViewMatrix() const
 {
-  if (_worldToViewMatrix == GfMatrix4d(0.0))
-  {
+  if (_worldToViewMatrix == GfMatrix4d(0.0)) {
     return _transform.GetInverse();
   }
   return _worldToViewMatrix;
@@ -228,8 +216,7 @@ GfMatrix4d HdCamera::GetViewMatrix() const
 
 GfMatrix4d HdCamera::GetViewInverseMatrix() const
 {
-  if (_worldToViewInverseMatrix == GfMatrix4d(0.0))
-  {
+  if (_worldToViewInverseMatrix == GfMatrix4d(0.0)) {
     return _transform;
   }
   return _worldToViewInverseMatrix;
@@ -239,8 +226,7 @@ GfMatrix4d HdCamera::GetProjectionMatrix() const
 {
   HD_TRACE_FUNCTION();
 
-  if (GetFocalLength() == 0.0f)
-  {
+  if (GetFocalLength() == 0.0f) {
     return _projectionMatrix;
   }
 

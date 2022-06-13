@@ -48,8 +48,7 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
 {
   // Double checked locking.
   std::lock_guard<std::mutex> lock(_initializationMutex);
-  if (_initialized)
-  {
+  if (_initialized) {
     // Someone beat us to the initialization.
     return;
   }
@@ -58,22 +57,22 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
   // even if we fail to load or instantiate.  We must not set it before we
   // return because other threads would be able to observe partial
   // initialization.
-  TfScoped<> initializeOnReturn{[this]() { _initialized = true; }};
+  TfScoped<> initializeOnReturn{[this]() {
+    _initialized = true;
+  }};
 
   // Validate type.
   // We use FindByName because Find requres that std::type_info has been
   // regisered, but that won't happen until the plugin is loaded.
   const TfType &tfType = TfType::FindByName(TfType::GetCanonicalTypeName(type));
-  if (!tfType)
-  {
+  if (!tfType) {
     TF_CODING_ERROR(
       "Failed to load plugin interface: "
       "Can't find type %s",
       type.name());
     return;
   }
-  if (tfType.IsRoot())
-  {
+  if (tfType.IsRoot()) {
     TF_CODING_ERROR(
       "Failed to load plugin interface: "
       "Can't manufacture type %s",
@@ -83,8 +82,7 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
 
   // Get the plugin with type.
   PlugPluginPtr plugin = PlugRegistry::GetInstance().GetPluginForType(tfType);
-  if (!plugin)
-  {
+  if (!plugin) {
     TF_RUNTIME_ERROR(
       "Failed to load plugin interface: "
       "Can't find plugin that defines type %s",
@@ -93,16 +91,14 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
   }
 
   // Load the plugin.
-  if (!plugin->Load())
-  {
+  if (!plugin->Load()) {
     // Error already reported.
     return;
   }
 
   // Manufacture the type.
   Plug_InterfaceFactory::Base *factory = tfType.GetFactory<Plug_InterfaceFactory::Base>();
-  if (!factory)
-  {
+  if (!factory) {
     TF_CODING_ERROR(
       "Failed to load plugin interface: "
       "No default constructor for type %s",
@@ -112,8 +108,7 @@ void Plug_StaticInterfaceBase::_LoadAndInstantiate(const std::type_info &type) c
   _ptr = factory->New();
 
   // Report on error.
-  if (!_ptr)
-  {
+  if (!_ptr) {
     TF_CODING_ERROR(
       "Failed to load plugin interface: "
       "Plugin didn't manufacture an instance of %s",

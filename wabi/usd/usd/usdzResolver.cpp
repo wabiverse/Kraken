@@ -43,8 +43,7 @@ Usd_UsdzResolverCache &Usd_UsdzResolverCache::GetInstance()
   return cache;
 }
 
-Usd_UsdzResolverCache::Usd_UsdzResolverCache()
-{}
+Usd_UsdzResolverCache::Usd_UsdzResolverCache() {}
 
 struct Usd_UsdzResolverCache::_Cache
 {
@@ -71,8 +70,7 @@ Usd_UsdzResolverCache::AssetAndZipFile Usd_UsdzResolverCache::_OpenZipFile(const
 {
   AssetAndZipFile result;
   result.first = ArGetResolver().OpenAsset(ArResolvedPath(path));
-  if (result.first)
-  {
+  if (result.first) {
     result.second = UsdZipFile::Open(result.first);
   }
   return result;
@@ -82,11 +80,10 @@ Usd_UsdzResolverCache::AssetAndZipFile Usd_UsdzResolverCache::FindOrOpenZipFile(
   const std::string &packagePath)
 {
   _CachePtr currentCache = _GetCurrentCache();
-  if (currentCache)
-  {
+  if (currentCache) {
     _Cache::_Map::accessor accessor;
-    if (currentCache->_pathToEntryMap.insert(accessor, std::make_pair(packagePath, AssetAndZipFile())))
-    {
+    if (currentCache->_pathToEntryMap.insert(accessor,
+                                             std::make_pair(packagePath, AssetAndZipFile()))) {
       accessor->second = _OpenZipFile(packagePath);
     }
     return accessor->second;
@@ -99,8 +96,7 @@ Usd_UsdzResolverCache::AssetAndZipFile Usd_UsdzResolverCache::FindOrOpenZipFile(
 
 AR_DEFINE_PACKAGE_RESOLVER(Usd_UsdzResolver, ArPackageResolver);
 
-Usd_UsdzResolver::Usd_UsdzResolver()
-{}
+Usd_UsdzResolver::Usd_UsdzResolver() {}
 
 void Usd_UsdzResolver::BeginCacheScope(VtValue *cacheScopeData)
 {
@@ -112,14 +108,14 @@ void Usd_UsdzResolver::EndCacheScope(VtValue *cacheScopeData)
   Usd_UsdzResolverCache::GetInstance().EndCacheScope(cacheScopeData);
 }
 
-std::string Usd_UsdzResolver::Resolve(const std::string &packagePath, const std::string &packagedPath)
+std::string Usd_UsdzResolver::Resolve(const std::string &packagePath,
+                                      const std::string &packagedPath)
 {
   std::shared_ptr<ArAsset> asset;
   UsdZipFile zipFile;
   std::tie(asset, zipFile) = Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(packagePath);
 
-  if (!zipFile)
-  {
+  if (!zipFile) {
     return std::string();
   }
   return zipFile.Find(packagedPath) != zipFile.end() ? packagedPath : std::string();
@@ -131,6 +127,7 @@ namespace
   class _Asset : public ArAsset
   {
    private:
+
     std::shared_ptr<ArAsset> _sourceAsset;
     UsdZipFile _zipFile;
     const char *_dataInZipFile;
@@ -138,6 +135,7 @@ namespace
     size_t _sizeInZipFile;
 
    public:
+
     explicit _Asset(std::shared_ptr<ArAsset> &&sourceAsset,
                     UsdZipFile &&zipFile,
                     const char *dataInZipFile,
@@ -174,8 +172,7 @@ namespace
 
     size_t Read(void *buffer, size_t count, size_t offset) override
     {
-      if (ARCH_UNLIKELY(offset + count > _sizeInZipFile))
-      {
+      if (ARCH_UNLIKELY(offset + count > _sizeInZipFile)) {
         return 0;
       }
       memcpy(buffer, _dataInZipFile + offset, count);
@@ -185,8 +182,7 @@ namespace
     std::pair<FILE *, size_t> GetFileUnsafe() override
     {
       std::pair<FILE *, size_t> result = _sourceAsset->GetFileUnsafe();
-      if (result.first)
-      {
+      if (result.first) {
         result.second += _offsetInZipFile;
       }
       return result;
@@ -202,29 +198,25 @@ std::shared_ptr<ArAsset> Usd_UsdzResolver::OpenAsset(const std::string &packageP
   UsdZipFile zipFile;
   std::tie(asset, zipFile) = Usd_UsdzResolverCache::GetInstance().FindOrOpenZipFile(packagePath);
 
-  if (!zipFile)
-  {
+  if (!zipFile) {
     return nullptr;
   }
 
   auto iter = zipFile.Find(packagedPath);
-  if (iter == zipFile.end())
-  {
+  if (iter == zipFile.end()) {
     return nullptr;
   }
 
   const UsdZipFile::FileInfo info = iter.GetFileInfo();
 
-  if (info.compressionMethod != 0)
-  {
+  if (info.compressionMethod != 0) {
     TF_RUNTIME_ERROR("Cannot open %s in %s: compressed files are not supported",
                      packagedPath.c_str(),
                      packagePath.c_str());
     return nullptr;
   }
 
-  if (info.encrypted)
-  {
+  if (info.encrypted) {
     TF_RUNTIME_ERROR("Cannot open %s in %s: encrypted files are not supported",
                      packagedPath.c_str(),
                      packagePath.c_str());

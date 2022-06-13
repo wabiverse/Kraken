@@ -34,13 +34,10 @@ WABI_NAMESPACE_BEGIN
 namespace
 {
 
-  template<typename C, typename V>
-  bool IsValueIn(const C &container, V value)
+  template<typename C, typename V> bool IsValueIn(const C &container, V value)
   {
-    for (const auto &element : container)
-    {
-      if (element == value)
-      {
+    for (const auto &element : container) {
+      if (element == value) {
         return true;
       }
     }
@@ -55,16 +52,13 @@ namespace
 
 bool SdfTupleDimensions::operator==(const SdfTupleDimensions &rhs) const
 {
-  if (size != rhs.size)
-  {
+  if (size != rhs.size) {
     return false;
   }
-  if (size >= 1 && d[0] != rhs.d[0])
-  {
+  if (size >= 1 && d[0] != rhs.d[0]) {
     return false;
   }
-  if (size >= 2 && d[1] != rhs.d[1])
-  {
+  if (size >= 2 && d[1] != rhs.d[1]) {
     return false;
   }
   return true;
@@ -74,14 +68,12 @@ bool SdfTupleDimensions::operator==(const SdfTupleDimensions &rhs) const
 // SdfValueTypeName
 //
 
-SdfValueTypeName::SdfValueTypeName()
-  : _impl(Sdf_ValueTypePrivate::GetEmptyTypeName())
+SdfValueTypeName::SdfValueTypeName() : _impl(Sdf_ValueTypePrivate::GetEmptyTypeName())
 {
   // Do nothing
 }
 
-SdfValueTypeName::SdfValueTypeName(const Sdf_ValueTypeImpl *impl)
-  : _impl(impl)
+SdfValueTypeName::SdfValueTypeName(const Sdf_ValueTypeImpl *impl) : _impl(impl)
 {
   // Do nothing
 }
@@ -147,7 +139,8 @@ bool SdfValueTypeName::operator==(const SdfValueTypeName &rhs) const
   // equivalent type names from different registries compare
   // equal. The registry ensures that type and role are
   // the only things we need to look at here.
-  return (_impl->type->type == rhs._impl->type->type && _impl->type->role == rhs._impl->type->role);
+  return (_impl->type->type == rhs._impl->type->type &&
+          _impl->type->role == rhs._impl->type->role);
 }
 
 bool SdfValueTypeName::operator==(const std::string &rhs) const

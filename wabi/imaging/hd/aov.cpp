@@ -31,8 +31,7 @@ std::ostream &operator<<(std::ostream &out, const HdRenderPassAovBinding &desc)
   out << "RenderPassAovBinding: {" << desc.aovName << ", " << desc.renderBuffer << ", "
       << desc.renderBufferId << ", " << desc.clearValue << ", "
       << "aovSettings: { ";
-  for (auto const &pair : desc.aovSettings)
-  {
+  for (auto const &pair : desc.aovSettings) {
     out << pair.first << ": " << pair.second << ", ";
   }
   out << "}}";
@@ -62,12 +61,7 @@ bool HdAovHasDepthSemantic(TfToken const &aovName)
   return TfStringEndsWith(TfStringToLower(aovName.GetString()), HdAovTokens->depth);
 }
 
-HdParsedAovToken::HdParsedAovToken()
-  : name(),
-    isPrimvar(false),
-    isLpe(false),
-    isShader(false)
-{}
+HdParsedAovToken::HdParsedAovToken() : name(), isPrimvar(false), isLpe(false), isShader(false) {}
 
 HdParsedAovToken::HdParsedAovToken(TfToken const &aovName)
   : isPrimvar(false),
@@ -79,20 +73,16 @@ HdParsedAovToken::HdParsedAovToken(TfToken const &aovName)
   std::string const &lpe = HdAovTokens->lpe.GetString();
   std::string const &shader = HdAovTokens->shader.GetString();
 
-  if (aov.size() > primvars.size() && aov.compare(0, primvars.size(), primvars) == 0)
-  {
+  if (aov.size() > primvars.size() && aov.compare(0, primvars.size(), primvars) == 0) {
     name = TfToken(aov.substr(primvars.size()));
     isPrimvar = true;
-  } else if (aov.size() > lpe.size() && aov.compare(0, lpe.size(), lpe) == 0)
-  {
+  } else if (aov.size() > lpe.size() && aov.compare(0, lpe.size(), lpe) == 0) {
     name = TfToken(aov.substr(lpe.size()));
     isLpe = true;
-  } else if (aov.size() > shader.size() && aov.compare(0, shader.size(), shader) == 0)
-  {
+  } else if (aov.size() > shader.size() && aov.compare(0, shader.size(), shader) == 0) {
     name = TfToken(aov.substr(shader.size()));
     isShader = true;
-  } else
-  {
+  } else {
     name = aovName;
   }
 }

@@ -57,5 +57,6 @@ void wrapRendererSettings()
     .add_property("key", make_getter(&Setting::key, return_value_policy<return_by_value>()))
     .def_readonly("name", &Setting::name)
     .def_readonly("type", &Setting::type)
-    .add_property("defValue", make_getter(&Setting::defValue, return_value_policy<return_by_value>()));
+    .add_property("defValue",
+                  make_getter(&Setting::defValue, return_value_policy<return_by_value>()));
 }

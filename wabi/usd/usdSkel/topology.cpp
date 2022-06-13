@@ -43,18 +43,15 @@ namespace
 
   int _GetParentIndex(const _PathIndexMap &pathMap, const SdfPath &path)
   {
-    if (path.IsPrimPath())
-    {
+    if (path.IsPrimPath()) {
       // Recurse over all ancestor paths, not just the direct parent.
       // For instance, if the map includes only paths 'a' and 'a/b/c',
       // 'a' will be treated as the parent of 'a/b/c'.
       const auto range = path.GetAncestorsRange();
       auto it = range.begin();
-      for (++it; it != range.end(); ++it)
-      {
+      for (++it; it != range.end(); ++it) {
         const auto mapIt = pathMap.find(*it);
-        if (mapIt != pathMap.end())
-        {
+        if (mapIt != pathMap.end()) {
           return mapIt->second;
         }
       }
@@ -67,8 +64,7 @@ namespace
     TRACE_FUNCTION();
 
     _PathIndexMap pathMap;
-    for (size_t i = 0; i < paths.size(); ++i)
-    {
+    for (size_t i = 0; i < paths.size(); ++i) {
       pathMap[paths[i]] = static_cast<int>(i);
     }
 
@@ -76,8 +72,7 @@ namespace
     parentIndices.assign(paths.size(), -1);
 
     const auto parentIndicesSpan = TfMakeSpan(parentIndices);
-    for (size_t i = 0; i < paths.size(); ++i)
-    {
+    for (size_t i = 0; i < paths.size(); ++i) {
       parentIndicesSpan[i] = _GetParentIndex(pathMap, paths[i]);
     }
     return parentIndices;
@@ -87,8 +82,7 @@ namespace
   {
     // Convert tokens to paths.
     SdfPathVector paths(tokens.size());
-    for (size_t i = 0; i < tokens.size(); ++i)
-    {
+    for (size_t i = 0; i < tokens.size(); ++i) {
       paths[i] = SdfPath(tokens[i].GetString());
     }
     return _ComputeParentIndicesFromPaths(paths);
@@ -107,32 +101,25 @@ UsdSkelTopology::UsdSkelTopology(TfSpan<const SdfPath> paths)
   : UsdSkelTopology(_ComputeParentIndicesFromPaths(paths))
 {}
 
-UsdSkelTopology::UsdSkelTopology(const VtIntArray &parentIndices)
-  : _parentIndices(parentIndices)
+UsdSkelTopology::UsdSkelTopology(const VtIntArray &parentIndices) : _parentIndices(parentIndices)
 {}
 
 bool UsdSkelTopology::Validate(std::string *reason) const
 {
   TRACE_FUNCTION();
 
-  for (size_t i = 0; i < size(); ++i)
-  {
+  for (size_t i = 0; i < size(); ++i) {
     const int parent = _parentIndices[i];
-    if (parent >= 0)
-    {
-      if (ARCH_UNLIKELY(static_cast<size_t>(parent) >= i))
-      {
-        if (static_cast<size_t>(parent) == i)
-        {
-          if (reason)
-          {
+    if (parent >= 0) {
+      if (ARCH_UNLIKELY(static_cast<size_t>(parent) >= i)) {
+        if (static_cast<size_t>(parent) == i) {
+          if (reason) {
             *reason = TfStringPrintf("Joint %zu has itself as its parent.", i);
           }
           return false;
         }
 
-        if (reason)
-        {
+        if (reason) {
           *reason = TfStringPrintf(
             "Joint %zu has mis-ordered parent %d. Joints are "
             "expected to be ordered with parent joints always "

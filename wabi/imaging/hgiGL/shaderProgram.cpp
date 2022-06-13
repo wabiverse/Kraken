@@ -47,13 +47,11 @@ HgiGLShaderProgram::HgiGLShaderProgram(HgiShaderProgramDesc const &desc)
 {
   _programId = glCreateProgram();
 
-  if (!_descriptor.debugName.empty())
-  {
+  if (!_descriptor.debugName.empty()) {
     HgiGLObjectLabel(GL_PROGRAM, _programId, _descriptor.debugName);
   }
 
-  for (HgiShaderFunctionHandle const &shd : desc.shaderFunctions)
-  {
+  for (HgiShaderFunctionHandle const &shd : desc.shaderFunctions) {
     HgiGLShaderFunction *glShader = static_cast<HgiGLShaderFunction *>(shd.Get());
     uint32_t id = glShader->GetShaderId();
     TF_VERIFY(id > 0, "Invalid shader provided to program");
@@ -64,16 +62,14 @@ HgiGLShaderProgram::HgiGLShaderProgram(HgiShaderProgramDesc const &desc)
   // Grab compile errors
   GLint status;
   glGetProgramiv(_programId, GL_LINK_STATUS, &status);
-  if (status != GL_TRUE)
-  {
+  if (status != GL_TRUE) {
     int logSize = 0;
     glGetProgramiv(_programId, GL_INFO_LOG_LENGTH, &logSize);
     _errors.resize(logSize + 1);
     glGetProgramInfoLog(_programId, logSize, nullptr, &_errors[0]);
     glDeleteProgram(_programId);
     _programId = 0;
-  } else
-  {
+  } else {
     GLint size;
     glGetProgramiv(_programId, GL_PROGRAM_BINARY_LENGTH, &size);
     _programByteSize = (size_t)size;

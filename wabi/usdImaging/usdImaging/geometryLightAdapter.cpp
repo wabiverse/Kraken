@@ -44,23 +44,24 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingGeometryLightAdapter::~UsdImagingGeometryLightAdapter()
-{}
+UsdImagingGeometryLightAdapter::~UsdImagingGeometryLightAdapter() {}
 
 bool UsdImagingGeometryLightAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
   return false;
 }
 
-SdfPath UsdImagingGeometryLightAdapter::Populate(UsdPrim const &prim,
-                                                 UsdImagingIndexProxy *index,
-                                                 UsdImagingInstancerContext const *instancerContext)
+SdfPath UsdImagingGeometryLightAdapter::Populate(
+  UsdPrim const &prim,
+  UsdImagingIndexProxy *index,
+  UsdImagingInstancerContext const *instancerContext)
 {
   TF_CODING_ERROR("Geometry lights are not yet supported in USD imaging");
   return prim.GetPath();
 }
 
-void UsdImagingGeometryLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
+void UsdImagingGeometryLightAdapter::_RemovePrim(SdfPath const &cachePath,
+                                                 UsdImagingIndexProxy *index)
 {
   TF_CODING_ERROR("Geometry lights are not yet supported in USD imaging");
 }

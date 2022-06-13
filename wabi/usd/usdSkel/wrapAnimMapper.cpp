@@ -86,7 +86,10 @@ void wrapUsdSkelAnimMapper()
     .def(init<VtTokenArray, VtTokenArray>((arg("sourceOrder"), arg("targetOrder"))))
     .def("Remap",
          &_Remap,
-         (arg("source"), arg("target") = VtValue(), arg("elementSize") = 1, arg("defaultValue") = VtValue()))
+         (arg("source"),
+          arg("target") = VtValue(),
+          arg("elementSize") = 1,
+          arg("defaultValue") = VtValue()))
 
     .def("RemapTransforms",
          &_RemapTransforms<GfMatrix4d>,

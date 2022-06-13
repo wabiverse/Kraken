@@ -50,14 +50,14 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateShapingFocusAttr(UsdLuxShapingAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateShapingFocusAttr(UsdLuxShapingAPI &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateShapingFocusAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
                                        writeSparsely);
@@ -67,24 +67,27 @@ namespace
                                                   object defaultVal,
                                                   bool writeSparsely)
   {
-    return self.CreateShapingFocusTintAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
-                                           writeSparsely);
+    return self.CreateShapingFocusTintAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateShapingConeAngleAttr(UsdLuxShapingAPI &self,
                                                   object defaultVal,
                                                   bool writeSparsely)
   {
-    return self.CreateShapingConeAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                           writeSparsely);
+    return self.CreateShapingConeAngleAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateShapingConeSoftnessAttr(UsdLuxShapingAPI &self,
                                                      object defaultVal,
                                                      bool writeSparsely)
   {
-    return self.CreateShapingConeSoftnessAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                              writeSparsely);
+    return self.CreateShapingConeSoftnessAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateShapingIesFileAttr(UsdLuxShapingAPI &self,
@@ -99,16 +102,18 @@ namespace
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateShapingIesAngleScaleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                               writeSparsely);
+    return self.CreateShapingIesAngleScaleAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateShapingIesNormalizeAttr(UsdLuxShapingAPI &self,
                                                      object defaultVal,
                                                      bool writeSparsely)
   {
-    return self.CreateShapingIesNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                              writeSparsely);
+    return self.CreateShapingIesNormalizeAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdLuxShapingAPI &self)
@@ -141,7 +146,9 @@ void wrapUsdLuxShapingAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)

@@ -43,55 +43,46 @@ static void _ReadExtraSettings(UsdPrim const &prim,
                                std::vector<std::string> const &namespaces)
 {
   std::vector<UsdAttribute> attrs = prim.GetAuthoredAttributes();
-  for (UsdAttribute attr : attrs)
-  {
-    if (namespaces.empty())
-    {
-      if (attr.HasFallbackValue())
-      {
+  for (UsdAttribute attr : attrs) {
+    if (namespaces.empty()) {
+      if (attr.HasFallbackValue()) {
         // Skip attributes built into schemas.
         continue;
       }
-    } else
-    {
+    } else {
       bool attrIsInRequestedNS = false;
-      for (std::string const &ns : namespaces)
-      {
-        if (TfStringStartsWith(attr.GetName(), ns))
-        {
+      for (std::string const &ns : namespaces) {
+        if (TfStringStartsWith(attr.GetName(), ns)) {
           attrIsInRequestedNS = true;
           break;
         }
       }
-      if (!attrIsInRequestedNS)
-      {
+      if (!attrIsInRequestedNS) {
         continue;
       }
     }
     VtValue val;
-    if (attr.Get(&val))
-    {
+    if (attr.Get(&val)) {
       (*extraSettings)[attr.GetName()] = val;
     }
   }
 }
 
-template<typename T>
-inline bool _Get(UsdAttribute const &attr, T *val, bool sparse = false)
+template<typename T> inline bool _Get(UsdAttribute const &attr, T *val, bool sparse = false)
 {
-  if (!sparse || attr.HasAuthoredValue())
-  {
+  if (!sparse || attr.HasAuthoredValue()) {
     return attr.Get(val);
   }
   return false;
 }
 
-static void _ReadSettingsBase(UsdRenderSettingsBase const &base, UsdRenderSpec::Product *pd, bool sparse)
+static void _ReadSettingsBase(UsdRenderSettingsBase const &base,
+                              UsdRenderSpec::Product *pd,
+                              bool sparse)
 {
   SdfPathVector targets;
   base.GetCameraRel().GetForwardedTargets(&targets);
-  if (!targets.empty())
-  {
+  if (!targets.empty()) {
     pd->cameraPath = targets[0];
   }
   _Get(base.GetResolutionAttr(), &pd->resolution, sparse);
@@ -100,8 +91,7 @@ static void _ReadSettingsBase(UsdRenderSettingsBase const &base, UsdRenderSpec::
   {
     // Convert dataWindowNDC from vec4 to range2.
     GfVec4f dataWindowNDCVec;
-    if (_Get(base.GetDataWindowNDCAttr(), &dataWindowNDCVec, sparse))
-    {
+    if (_Get(base.GetDataWindowNDCAttr(), &dataWindowNDCVec, sparse)) {
       pd->dataWindowNDC = GfRange2f(GfVec2f(dataWindowNDCVec[0], dataWindowNDCVec[1]),
                                     GfVec2f(dataWindowNDCVec[2], dataWindowNDCVec[3]));
     }
@@ -117,15 +107,13 @@ static void _ApplyAspectRatioPolicy(UsdRenderSpec::Product *product)
   GfVec2i res = product->resolution;
   GfVec2f size = product->apertureSize;
   // Validate dimensions
-  if (res[0] <= 0.0 || res[1] <= 0.0 || size[0] <= 0.0 || size[1] <= 0.0)
-  {
+  if (res[0] <= 0.0 || res[1] <= 0.0 || size[0] <= 0.0 || size[1] <= 0.0) {
     return;
   }
   // Compute aspect ratios
   float resAspectRatio = float(res[0]) / float(res[1]);
   float imageAspectRatio = product->pixelAspectRatio * resAspectRatio;
-  if (imageAspectRatio <= 0.0)
-  {
+  if (imageAspectRatio <= 0.0) {
     return;
   }
   float apertureAspectRatio = size[0] / size[1];
@@ -137,28 +125,21 @@ static void _ApplyAspectRatioPolicy(UsdRenderSpec::Product *product)
     Height,
     None
   } adjust = None;
-  if (policy == UsdRenderTokens->adjustPixelAspectRatio)
-  {
+  if (policy == UsdRenderTokens->adjustPixelAspectRatio) {
     product->pixelAspectRatio = apertureAspectRatio / resAspectRatio;
-  } else if (policy == UsdRenderTokens->adjustApertureHeight)
-  {
+  } else if (policy == UsdRenderTokens->adjustApertureHeight) {
     adjust = Height;
-  } else if (policy == UsdRenderTokens->adjustApertureWidth)
-  {
+  } else if (policy == UsdRenderTokens->adjustApertureWidth) {
     adjust = Width;
-  } else if (policy == UsdRenderTokens->expandAperture)
-  {
+  } else if (policy == UsdRenderTokens->expandAperture) {
     adjust = (apertureAspectRatio > imageAspectRatio) ? Height : Width;
-  } else if (policy == UsdRenderTokens->cropAperture)
-  {
+  } else if (policy == UsdRenderTokens->cropAperture) {
     adjust = (apertureAspectRatio > imageAspectRatio) ? Width : Height;
   }
   // Adjust aperture so that size[0] / size[1] == imageAspectRatio.
-  if (adjust == Width)
-  {
+  if (adjust == Width) {
     product->apertureSize[0] = size[1] * imageAspectRatio;
-  } else if (adjust == Height)
-  {
+  } else if (adjust == Height) {
     product->apertureSize[1] = size[0] / imageAspectRatio;
   }
 }
@@ -170,8 +151,7 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
   UsdRenderSpec rd;
   UsdPrim prim = settings.GetPrim();
   UsdStageWeakPtr stage = prim.GetStage();
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage\n");
     return rd;
   }
@@ -184,23 +164,19 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
   // Products
   SdfPathVector targets;
   settings.GetProductsRel().GetForwardedTargets(&targets);
-  for (SdfPath const &target : targets)
-  {
-    if (UsdRenderProduct product = UsdRenderProduct(stage->GetPrimAtPath(target)))
-    {
+  for (SdfPath const &target : targets) {
+    if (UsdRenderProduct product = UsdRenderProduct(stage->GetPrimAtPath(target))) {
       UsdRenderSpec::Product pd = base;
 
       // Read product-specific overrides to base render settings.
       _ReadSettingsBase(UsdRenderSettingsBase(product), &pd, true);
 
       // Read camera aperture and apply aspectRatioConformPolicy.
-      if (UsdGeomCamera cam = UsdGeomCamera(stage->GetPrimAtPath(pd.cameraPath)))
-      {
+      if (UsdGeomCamera cam = UsdGeomCamera(stage->GetPrimAtPath(pd.cameraPath))) {
         cam.GetHorizontalApertureAttr().Get(&pd.apertureSize[0]);
         cam.GetVerticalApertureAttr().Get(&pd.apertureSize[1]);
         _ApplyAspectRatioPolicy(&pd);
-      } else
-      {
+      } else {
         TF_RUNTIME_ERROR(
           "UsdRenderSettings: Could not find camera "
           "<%s> for product <%s>\n",
@@ -216,23 +192,18 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
       // Read render vars.
       SdfPathVector renderVarPaths;
       product.GetOrderedVarsRel().GetForwardedTargets(&renderVarPaths);
-      for (SdfPath const &renderVarPath : renderVarPaths)
-      {
+      for (SdfPath const &renderVarPath : renderVarPaths) {
         bool foundExisting = false;
-        for (size_t i = 0; i < rd.renderVars.size(); ++i)
-        {
-          if (rd.renderVars[i].renderVarPath == renderVarPath)
-          {
+        for (size_t i = 0; i < rd.renderVars.size(); ++i) {
+          if (rd.renderVars[i].renderVarPath == renderVarPath) {
             pd.renderVarIndices.push_back(i);
             foundExisting = true;
             break;
           }
         }
-        if (!foundExisting)
-        {
+        if (!foundExisting) {
           UsdPrim prim = stage->GetPrimAtPath(renderVarPath);
-          if (prim.IsA<UsdRenderVar>())
-          {
+          if (prim.IsA<UsdRenderVar>()) {
             UsdRenderVar rv(prim);
             UsdRenderSpec::RenderVar rvd;
             // Store schema-defined attributes in explicit fields.
@@ -245,8 +216,7 @@ UsdRenderSpec UsdRenderComputeSpec(UsdRenderSettings const &settings,
             // Record new render var.
             pd.renderVarIndices.push_back(rd.renderVars.size());
             rd.renderVars.emplace_back(rvd);
-          } else
-          {
+          } else {
             TF_RUNTIME_ERROR(
               "Render product <%s> includes "
               "render var at path <%s>, but "

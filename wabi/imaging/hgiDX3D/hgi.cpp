@@ -52,13 +52,9 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<HgiFactory<HgiDX3D>>();
 }
 
-HgiDX3D::HgiDX3D()
-  : _threadId(std::this_thread::get_id()),
-    _frameDepth(0)
-{}
+HgiDX3D::HgiDX3D() : _threadId(std::this_thread::get_id()), _frameDepth(0) {}
 
-HgiDX3D::~HgiDX3D()
-{}
+HgiDX3D::~HgiDX3D() {}
 
 /* Multi threaded */
 HgiGraphicsCmdsUniquePtr HgiDX3D::CreateGraphicsCmds(HgiGraphicsCmdsDesc const &desc)
@@ -84,14 +80,12 @@ HgiTextureHandle HgiDX3D::CreateTexture(HgiTextureDesc const &desc)
 }
 
 /* Multi threaded */
-void HgiDX3D::DestroyTexture(HgiTextureHandle *texHandle)
-{}
+void HgiDX3D::DestroyTexture(HgiTextureHandle *texHandle) {}
 
 /* Multi threaded */
 HgiTextureViewHandle HgiDX3D::CreateTextureView(HgiTextureViewDesc const &desc)
 {
-  if (!desc.sourceTexture)
-  {
+  if (!desc.sourceTexture) {
     TF_CODING_ERROR("Source texture is null");
   }
 
@@ -119,8 +113,7 @@ HgiSamplerHandle HgiDX3D::CreateSampler(HgiSamplerDesc const &desc)
 }
 
 /* Multi threaded */
-void HgiDX3D::DestroySampler(HgiSamplerHandle *smpHandle)
-{}
+void HgiDX3D::DestroySampler(HgiSamplerHandle *smpHandle) {}
 
 /* Multi threaded */
 HgiBufferHandle HgiDX3D::CreateBuffer(HgiBufferDesc const &desc)
@@ -129,8 +122,7 @@ HgiBufferHandle HgiDX3D::CreateBuffer(HgiBufferDesc const &desc)
 }
 
 /* Multi threaded */
-void HgiDX3D::DestroyBuffer(HgiBufferHandle *bufHandle)
-{}
+void HgiDX3D::DestroyBuffer(HgiBufferHandle *bufHandle) {}
 
 /* Multi threaded */
 HgiShaderFunctionHandle HgiDX3D::CreateShaderFunction(HgiShaderFunctionDesc const &desc)
@@ -139,8 +131,7 @@ HgiShaderFunctionHandle HgiDX3D::CreateShaderFunction(HgiShaderFunctionDesc cons
 }
 
 /* Multi threaded */
-void HgiDX3D::DestroyShaderFunction(HgiShaderFunctionHandle *shaderFnHandle)
-{}
+void HgiDX3D::DestroyShaderFunction(HgiShaderFunctionHandle *shaderFnHandle) {}
 
 /* Multi threaded */
 HgiShaderProgramHandle HgiDX3D::CreateShaderProgram(HgiShaderProgramDesc const &desc)
@@ -149,8 +140,7 @@ HgiShaderProgramHandle HgiDX3D::CreateShaderProgram(HgiShaderProgramDesc const &
 }
 
 /* Multi threaded */
-void HgiDX3D::DestroyShaderProgram(HgiShaderProgramHandle *shaderPrgHandle)
-{}
+void HgiDX3D::DestroyShaderProgram(HgiShaderProgramHandle *shaderPrgHandle) {}
 
 /* Multi threaded */
 HgiResourceBindingsHandle HgiDX3D::CreateResourceBindings(HgiResourceBindingsDesc const &desc)
@@ -159,24 +149,21 @@ HgiResourceBindingsHandle HgiDX3D::CreateResourceBindings(HgiResourceBindingsDes
 }
 
 /* Multi threaded */
-void HgiDX3D::DestroyResourceBindings(HgiResourceBindingsHandle *resHandle)
-{}
+void HgiDX3D::DestroyResourceBindings(HgiResourceBindingsHandle *resHandle) {}
 
 HgiGraphicsPipelineHandle HgiDX3D::CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &desc)
 {
   return HgiGraphicsPipelineHandle(nullptr, GetUniqueId());
 }
 
-void HgiDX3D::DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle)
-{}
+void HgiDX3D::DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle) {}
 
 HgiComputePipelineHandle HgiDX3D::CreateComputePipeline(HgiComputePipelineDesc const &desc)
 {
   return HgiComputePipelineHandle(nullptr, GetUniqueId());
 }
 
-void HgiDX3D::DestroyComputePipeline(HgiComputePipelineHandle *pipeHandle)
-{}
+void HgiDX3D::DestroyComputePipeline(HgiComputePipelineHandle *pipeHandle) {}
 
 /* Multi threaded */
 TfToken const &HgiDX3D::GetAPIName() const
@@ -190,8 +177,7 @@ void HgiDX3D::StartFrame()
   /**
    * Please read important usage limitations for Hgi::StartFrame */
 
-  if (_frameDepth++ == 0)
-  {
+  if (_frameDepth++ == 0) {
   }
 }
 
@@ -201,8 +187,7 @@ void HgiDX3D::EndFrame()
   /**
    * Please read important usage limitations for Hgi::EndFrame */
 
-  if (--_frameDepth == 0)
-  {
+  if (--_frameDepth == 0) {
     _EndFrameSync();
   }
 }
@@ -218,8 +203,7 @@ bool HgiDX3D::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
    * However, since we currently call garbage collection here and because
    * we only have one resource command buffer, we cannot support submitting
    * cmds from secondary threads until those issues are resolved. */
-  if (ARCH_UNLIKELY(_threadId != std::this_thread::get_id()))
-  {
+  if (ARCH_UNLIKELY(_threadId != std::this_thread::get_id())) {
     TF_CODING_ERROR("Secondary threads should not submit cmds");
     return false;
   }
@@ -227,8 +211,7 @@ bool HgiDX3D::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
   /**
    * Submit Cmds work */
   bool result = false;
-  if (cmds)
-  {
+  if (cmds) {
     result = Hgi::_SubmitCmds(cmds, wait);
   }
 
@@ -236,8 +219,7 @@ bool HgiDX3D::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
    * XXX If client does not call StartFrame / EndFrame we perform end of frame
    * cleanup after each SubmitCmds. This is more frequent than ideal and also
    * prevents us from making SubmitCmds thread-safe. */
-  if (_frameDepth == 0)
-  {
+  if (_frameDepth == 0) {
     _EndFrameSync();
   }
 
@@ -250,8 +232,7 @@ void HgiDX3D::_EndFrameSync()
   /**
    * The garbage collector and command buffer reset must happen on the
    * main-thread when no threads are recording. */
-  if (ARCH_UNLIKELY(_threadId != std::this_thread::get_id()))
-  {
+  if (ARCH_UNLIKELY(_threadId != std::this_thread::get_id())) {
     TF_CODING_ERROR("Secondary thread violation");
     return;
   }

@@ -50,9 +50,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -87,7 +85,9 @@ void wrapUsdRiStatementsAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -137,14 +137,18 @@ namespace
   {
     _class
       .def("CreateRiAttribute",
-           (UsdAttribute(UsdRiStatementsAPI::*)(const TfToken &, const TfType &, const std::string &)) &
+           (UsdAttribute(
+             UsdRiStatementsAPI::*)(const TfToken &, const TfType &, const std::string &)) &
              UsdRiStatementsAPI::CreateRiAttribute,
            (arg("name"), arg("tfType"), arg("nameSpace") = "user"))
       .def("CreateRiAttribute",
-           (UsdAttribute(UsdRiStatementsAPI::*)(const TfToken &, const std::string &, const std::string &)) &
+           (UsdAttribute(
+             UsdRiStatementsAPI::*)(const TfToken &, const std::string &, const std::string &)) &
              UsdRiStatementsAPI::CreateRiAttribute,
            (arg("name"), arg("riType"), arg("nameSpace") = "user"))
-      .def("GetRiAttribute", &UsdRiStatementsAPI::GetRiAttribute, (arg("name"), arg("nameSpace") = "user"))
+      .def("GetRiAttribute",
+           &UsdRiStatementsAPI::GetRiAttribute,
+           (arg("name"), arg("nameSpace") = "user"))
       .def("GetRiAttributes",
            &UsdRiStatementsAPI::GetRiAttributes,
            (arg("nameSpace") = ""),

@@ -39,8 +39,8 @@ namespace
   class Sdf_PythonChangeBlock
   {
    public:
-    Sdf_PythonChangeBlock()
-      : _block(0)
+
+    Sdf_PythonChangeBlock() : _block(0)
     {
       // Do nothing.
     }
@@ -52,8 +52,7 @@ namespace
 
     void Open()
     {
-      if (!TF_VERIFY(_block == 0))
-      {
+      if (!TF_VERIFY(_block == 0)) {
         return;
       }
       _block = new SdfChangeBlock;
@@ -61,8 +60,7 @@ namespace
 
     void Close(object, object, object)
     {
-      if (!TF_VERIFY(_block != 0))
-      {
+      if (!TF_VERIFY(_block != 0)) {
         return;
       }
       delete _block;
@@ -70,6 +68,7 @@ namespace
     }
 
    private:
+
     SdfChangeBlock *_block;
   };
 

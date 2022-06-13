@@ -106,16 +106,12 @@ namespace
   // equivalents.
   struct Vt_ValueWrapper
   {
-    template<class T>
-    static Vt_ValueWrapper Create(T a)
+    template<class T> static Vt_ValueWrapper Create(T a)
     {
       return Vt_ValueWrapper(a);
     }
 
-    template<typename T>
-    explicit Vt_ValueWrapper(T val)
-      : _val(val)
-    {}
+    template<typename T> explicit Vt_ValueWrapper(T val) : _val(val) {}
 
     VtValue const &GetValue() const
     {
@@ -123,6 +119,7 @@ namespace
     }
 
    private:
+
     VtValue _val;
   };
 
@@ -138,10 +135,13 @@ namespace
   {
     Vt_ValueWrapperFromPython()
     {
-      converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<VtValue>());
+      converter::registry::push_back(&_convertible,
+                                     &_construct,
+                                     boost::python::type_id<VtValue>());
     }
 
    private:
+
     static void *_convertible(PyObject *obj_ptr)
     {
       return extract<Vt_ValueWrapper>(obj_ptr).check() ? obj_ptr : NULL;
@@ -160,10 +160,13 @@ namespace
 
     Vt_ValueFromPython()
     {
-      converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<VtValue>());
+      converter::registry::push_back(&_convertible,
+                                     &_construct,
+                                     boost::python::type_id<VtValue>());
     }
 
    private:
+
     static void *_convertible(PyObject *obj_ptr)
     {
       // Can always make a VtValue, but disregard wrappers.  We let implicit
@@ -182,82 +185,68 @@ namespace
 
       // Certain python objects like 'None', bool, numbers and strings are
       // special-cased.
-      if (obj_ptr == Py_None)
-      {
+      if (obj_ptr == Py_None) {
         // None -> Empty VtValue.
         new (storage) VtValue();
         data->convertible = storage;
         return;
       }
-      if (PyBool_Check(obj_ptr))
-      {
+      if (PyBool_Check(obj_ptr)) {
         // Python bool -> C++ bool.
         new (storage) VtValue(bool(TfPyInt_AS_LONG(obj_ptr)));
         data->convertible = storage;
         return;
       }
 #if PY_MAJOR_VERSION == 2
-      if (PyInt_Check(obj_ptr))
-      {
+      if (PyInt_Check(obj_ptr)) {
         // Python int -> either c++ int or long depending on range.
         // In Python 3 it will always be a long, so we want to be sure
         // we fall into the "long" clause below
         long val = PyInt_AS_LONG(obj_ptr);
-        if (std::numeric_limits<int>::min() <= val && val <= std::numeric_limits<int>::max())
-        {
+        if (std::numeric_limits<int>::min() <= val && val <= std::numeric_limits<int>::max()) {
           new (storage) VtValue(boost::numeric_cast<int>(val));
-        } else
-        {
+        } else {
           new (storage) VtValue(boost::numeric_cast<long>(val));
         }
         data->convertible = storage;
         return;
       }
 #endif
-      if (PyLong_Check(obj_ptr))
-      {
+      if (PyLong_Check(obj_ptr)) {
         // Python long -> either c++ int or long or unsigned long or long
         // long or unsigned long long or fail, depending on range.
         long long val = PyLong_AsLongLong(obj_ptr);
-        if (!PyErr_Occurred())
-        {
-          if (std::numeric_limits<int>::min() <= val && val <= std::numeric_limits<int>::max())
-          {
+        if (!PyErr_Occurred()) {
+          if (std::numeric_limits<int>::min() <= val && val <= std::numeric_limits<int>::max()) {
             new (storage) VtValue(boost::numeric_cast<int>(val));
-          } else if (std::numeric_limits<long>::min() <= val && val <= std::numeric_limits<long>::max())
-          {
+          } else if (std::numeric_limits<long>::min() <= val &&
+                     val <= std::numeric_limits<long>::max()) {
             new (storage) VtValue(boost::numeric_cast<long>(val));
-          } else
-          {
+          } else {
             new (storage) VtValue(boost::numeric_cast<long long>(val));
           }
           data->convertible = storage;
           return;
-        } else
-        {
+        } else {
           PyErr_Clear();
           // Try as unsigned long long.
           unsigned long long uval = PyLong_AsUnsignedLongLong(obj_ptr);
-          if (!PyErr_Occurred())
-          {
+          if (!PyErr_Occurred()) {
             new (storage) VtValue(uval);
             data->convertible = storage;
             return;
-          } else
-          {
+          } else {
             PyErr_Clear();
           }
         }
       }
-      if (PyFloat_Check(obj_ptr))
-      {
+      if (PyFloat_Check(obj_ptr)) {
         // Py float -> c++ double.
         new (storage) VtValue(double(PyFloat_AS_DOUBLE(obj_ptr)));
         data->convertible = storage;
         return;
       }
-      if (TfPyString_Check(obj_ptr) || PyUnicode_Check(obj_ptr))
-      {
+      if (TfPyString_Check(obj_ptr) || PyUnicode_Check(obj_ptr)) {
         // Py string or unicode -> std::string.
         new (storage) VtValue(std::string(extract<std::string>(obj_ptr)));
         data->convertible = storage;
@@ -267,13 +256,11 @@ namespace
       // Attempt a registered conversion via the registry.
       VtValue v = Vt_ValueFromPythonRegistry::Invoke(obj_ptr);
 
-      if (!v.IsEmpty())
-      {
+      if (!v.IsEmpty()) {
         new (storage) VtValue(v);
         data->convertible = storage;
         return;
-      } else
-      {
+      } else {
         // Fall back to generic python object.
         new (storage) VtValue(TfPyObjWrapper(extract<object>(obj_ptr)()));
         data->convertible = storage;
@@ -303,7 +290,9 @@ void wrapValue()
     "when calling a C++ wrapped function that expects a VtValue. (There are "
     "some C++ types that have no equivalents in Python, such as short.)";
 
-  def("Bool", Vt_ValueWrapper::Create<bool>, TfStringPrintf(funcDocString, "Bool", "bool", "bool").c_str());
+  def("Bool",
+      Vt_ValueWrapper::Create<bool>,
+      TfStringPrintf(funcDocString, "Bool", "bool", "bool").c_str());
   def("UChar",
       Vt_ValueWrapper::Create<unsigned char>,
       TfStringPrintf(funcDocString, "UChar", "unsigned char", "unsigned char").c_str());
@@ -313,11 +302,15 @@ void wrapValue()
   def("UShort",
       Vt_ValueWrapper::Create<unsigned short>,
       TfStringPrintf(funcDocString, "UShort", "unsigned short", "unsigned short").c_str());
-  def("Int", Vt_ValueWrapper::Create<int>, TfStringPrintf(funcDocString, "Int", "int", "int").c_str());
+  def("Int",
+      Vt_ValueWrapper::Create<int>,
+      TfStringPrintf(funcDocString, "Int", "int", "int").c_str());
   def("UInt",
       Vt_ValueWrapper::Create<unsigned int>,
       TfStringPrintf(funcDocString, "UInt", "unsigned int", "unsigned int").c_str());
-  def("Long", Vt_ValueWrapper::Create<long>, TfStringPrintf(funcDocString, "Long", "long", "long").c_str());
+  def("Long",
+      Vt_ValueWrapper::Create<long>,
+      TfStringPrintf(funcDocString, "Long", "long", "long").c_str());
   def("ULong",
       Vt_ValueWrapper::Create<unsigned long>,
       TfStringPrintf(funcDocString, "ULong", "unsigned long", "unsigned long").c_str());
@@ -348,8 +341,7 @@ void wrapValue()
   // Register conversions for VtValue from python, but first make sure that
   // nobody's registered anything before us.
 
-  if (Vt_ValueFromPythonRegistry::HasConversions())
-  {
+  if (Vt_ValueFromPythonRegistry::HasConversions()) {
     TF_FATAL_ERROR(
       "Vt was not the first library to register VtValue "
       "from-python conversions!");
@@ -363,7 +355,9 @@ void wrapValue()
 #undef REGISTER_VALUE_FROM_PYTHON
 
 #define REGISTER_VALUE_FROM_PYTHON(r, unused, elem) VtValueFromPython<VT_TYPE(elem)>();
-  BOOST_PP_SEQ_FOR_EACH(REGISTER_VALUE_FROM_PYTHON, ~, VT_SCALAR_CLASS_VALUE_TYPES VT_NONARRAY_VALUE_TYPES)
+  BOOST_PP_SEQ_FOR_EACH(REGISTER_VALUE_FROM_PYTHON,
+                        ~,
+                        VT_SCALAR_CLASS_VALUE_TYPES VT_NONARRAY_VALUE_TYPES)
 #undef REGISTER_VALUE_FROM_PYTHON
 
   VtValueFromPython<string>();
@@ -374,8 +368,9 @@ void wrapValue()
   VtValueFromPythonLValue<TfType>();
 
   // Register conversions from sequences of VtValues
-  TfPyContainerConversions::from_python_sequence<std::vector<VtValue>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<VtValue>,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   // Conversions for nullary functions returning VtValue.
   TfPyFunctionFromPython<VtValue()>();

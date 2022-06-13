@@ -59,8 +59,7 @@ namespace
     repr << TF_PY_REPR_PREFIX << "AssetPath(" << TfPyRepr(self.GetAssetPath());
 
     const std::string &resolvedPath = self.GetResolvedPath();
-    if (!resolvedPath.empty())
-    {
+    if (!resolvedPath.empty()) {
       repr << ", " << TfPyRepr(resolvedPath);
     }
     repr << ")";
@@ -99,7 +98,8 @@ void wrapAssetPath()
     //        .def( str(self) )
     .def("__str__", _Str)
 
-    .add_property("path", make_function(&This::GetAssetPath, return_value_policy<return_by_value>()))
+    .add_property("path",
+                  make_function(&This::GetAssetPath, return_value_policy<return_by_value>()))
 
     .add_property("resolvedPath",
                   make_function(&This::GetResolvedPath, return_value_policy<return_by_value>()));

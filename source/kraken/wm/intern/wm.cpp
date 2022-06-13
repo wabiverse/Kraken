@@ -57,8 +57,7 @@ void WM_main(kContext *C)
    * Single refresh before handling events. */
   WM_event_do_refresh_wm(C);
 
-  while (1)
-  {
+  while (1) {
 
     /**
      * Process events from anchor, handle window events. */
@@ -91,20 +90,17 @@ void wm_add_default(Main *kmain, kContext *C)
   win = wm_window_new(C, wm, NULL, false);
   win->scene = CTX_data_scene(C);
 
-  if (!workspace)
-  {
+  if (!workspace) {
     workspace = new WorkSpace(
       C,
       SdfPath(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES)).AppendPath(SdfPath("Layout")));
 
-    if (!layout)
-    {
+    if (!layout) {
       layout = new WorkSpaceLayout();
       layout->name = TfToken("Layout");
     }
 
-    if (!screen)
-    {
+    if (!screen) {
       screen = new kScreen(C, workspace->path.AppendPath(SdfPath("Screen")));
     }
 
@@ -178,14 +174,12 @@ void WM_check(kContext *C)
   wmWindowManager *wm = CTX_wm_manager(C);
 
   /* WM context. */
-  if (wm == NULL)
-  {
+  if (wm == NULL) {
     wm = new wmWindowManager();
     CTX_wm_manager_set(C, wm);
   }
 
-  if (wm == NULL || wm->windows.empty())
-  {
+  if (wm == NULL || wm->windows.empty()) {
     return;
   }
 
@@ -214,7 +208,6 @@ void WM_check(kContext *C)
 }
 
 /* wait until every job ended */
-void WM_jobs_kill_all(wmWindowManager *wm)
-{}
+void WM_jobs_kill_all(wmWindowManager *wm) {}
 
 WABI_NAMESPACE_END

@@ -75,7 +75,8 @@ void wrapAggregateNode()
     .add_property("exclusiveCount", &This::GetExclusiveCount)
     .add_property("inclusiveTime", GetInclusiveTime)
     .add_property("exclusiveTime", GetExclusiveTime)
-    .add_property("children", make_function(&This::GetChildren, return_value_policy<TfPySequenceToList>()))
+    .add_property("children",
+                  make_function(&This::GetChildren, return_value_policy<TfPySequenceToList>()))
     .add_property("expanded", &This::IsExpanded, &This::SetExpanded)
 
     ;

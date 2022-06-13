@@ -41,19 +41,15 @@ static boost::python::object _GetEnvSettingByName(std::string const &name)
 {
   boost::variant<int, bool, std::string> const *variantValue = Tf_GetEnvSettingByName(name);
 
-  if (!variantValue)
-  {
+  if (!variantValue) {
     return boost::python::object();
   }
 
-  if (std::string const *value = boost::get<std::string>(variantValue))
-  {
+  if (std::string const *value = boost::get<std::string>(variantValue)) {
     return boost::python::object(*value);
-  } else if (bool const *value = boost::get<bool>(variantValue))
-  {
+  } else if (bool const *value = boost::get<bool>(variantValue)) {
     return boost::python::object(*value);
-  } else if (int const *value = boost::get<int>(variantValue))
-  {
+  } else if (int const *value = boost::get<int>(variantValue)) {
     return boost::python::object(*value);
   }
 

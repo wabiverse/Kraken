@@ -44,8 +44,9 @@ void wrapScreenWindowParameters()
   object getScreenWindowFunc = make_function(&CameraUtilScreenWindowParameters::GetScreenWindow,
                                              return_value_policy<copy_const_reference>());
 
-  object getZFacingViewMatrixFunc = make_function(&CameraUtilScreenWindowParameters::GetZFacingViewMatrix,
-                                                  return_value_policy<copy_const_reference>());
+  object getZFacingViewMatrixFunc = make_function(
+    &CameraUtilScreenWindowParameters::GetZFacingViewMatrix,
+    return_value_policy<copy_const_reference>());
 
   class_<CameraUtilScreenWindowParameters>("ScreenWindowParameters", no_init)
     .def(init<const GfCamera &>())

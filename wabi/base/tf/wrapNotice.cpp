@@ -51,6 +51,7 @@ WABI_NAMESPACE_BEGIN
 class Tf_PyNotice
 {
  public:
+
   static size_t SendWithType(const TfNotice &notice,
                              const TfType &noticeType,
                              const TfWeakBase *sender,
@@ -75,13 +76,16 @@ namespace
   class Tf_PyNoticeInternal
   {
    public:
+
     struct Listener : public TfWeakBase, public boost::noncopyable
     {
 
       typedef void CallbackSig(object const &, handle<> const &);
       typedef std::function<CallbackSig> Callback;
 
-      static Listener *New(TfType const &noticeType, Callback const &callback, TfAnyWeakPtr const &sender)
+      static Listener *New(TfType const &noticeType,
+                           Callback const &callback,
+                           TfAnyWeakPtr const &sender)
       {
         if (noticeType.IsA<TfNotice>())
           return new Listener(noticeType, callback, sender);
@@ -104,12 +108,16 @@ namespace
       }
 
      private:
+
       Listener(TfType const &noticeType, Callback const &callback, TfAnyWeakPtr const &sender)
         : _callback(callback),
           _noticeType(noticeType)
       {
 
-        _key = TfNotice::Register(TfCreateWeakPtr(this), &Listener::_HandleNotice, noticeType, sender);
+        _key = TfNotice::Register(TfCreateWeakPtr(this),
+                                  &Listener::_HandleNotice,
+                                  noticeType,
+                                  sender);
       }
 
       object _GetDeliverableNotice(TfNotice const &notice, TfType const &noticeType)
@@ -125,8 +133,8 @@ namespace
           return object(TfType::Find(notice).GetTypeName());
 
         // If it's a python notice, use the embedded python object.
-        if (TfPyNoticeWrapperBase const *pyNotice = TfSafeDynamic_cast<TfPyNoticeWrapperBase const *>(
-              &notice))
+        if (TfPyNoticeWrapperBase const *pyNotice =
+              TfSafeDynamic_cast<TfPyNoticeWrapperBase const *>(&notice))
           return object(pyNotice->GetNoticePythonObject());
 
         // Otherwise convert the notice to python like normal.  We
@@ -143,11 +151,11 @@ namespace
       {
         TfPyLock lock;
         object pyNotice = _GetDeliverableNotice(notice, type);
-        if (!TfPyIsNone(pyNotice))
-        {
+        if (!TfPyIsNone(pyNotice)) {
           // Get the python sender.
-          handle<> pySender = sender ? handle<>(allow_null(Tf_PyIdentityHelper::Get(senderUniqueId))) :
-                                       handle<>();
+          handle<> pySender = sender ?
+                                handle<>(allow_null(Tf_PyIdentityHelper::Get(senderUniqueId))) :
+                                handle<>();
           _callback(pyNotice, pySender);
         }
       }

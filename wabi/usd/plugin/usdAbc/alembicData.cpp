@@ -137,26 +137,22 @@ bool UsdAbc_AlembicData::Open(const std::string &filePath)
   // Prepare the reader.
   _reader.reset(new UsdAbc_AlembicDataReader);
   // Suppress instancing support.
-  if (TfGetEnvSetting(USD_ABC_EXPAND_INSTANCES))
-  {
+  if (TfGetEnvSetting(USD_ABC_EXPAND_INSTANCES)) {
     _reader->SetFlag(UsdAbc_AlembicContextFlagNames->expandInstances);
   }
   // Create instances but disallow instancing on the prototype.
-  if (TfGetEnvSetting(USD_ABC_DISABLE_INSTANCING))
-  {
+  if (TfGetEnvSetting(USD_ABC_DISABLE_INSTANCING)) {
     _reader->SetFlag(UsdAbc_AlembicContextFlagNames->disableInstancing);
   }
   // Use the parent of instance sources as the Usd prototype prim, where
   // possible.
-  if (TfGetEnvSetting(USD_ABC_PARENT_INSTANCES))
-  {
+  if (TfGetEnvSetting(USD_ABC_PARENT_INSTANCES)) {
     _reader->SetFlag(UsdAbc_AlembicContextFlagNames->promoteInstances);
   }
   //_reader->SetFlag(UsdAbc_AlembicContextFlagNames->verbose);
 
   // Open the archive.
-  if (_reader->Open(filePath, _arguments))
-  {
+  if (_reader->Open(filePath, _arguments)) {
     return true;
   }
 
@@ -180,11 +176,9 @@ bool UsdAbc_AlembicData::Write(const SdfAbstractDataConstPtr &data,
   TRACE_FUNCTION();
 
   std::string finalComment = comment;
-  if (data && finalComment.empty())
-  {
+  if (data && finalComment.empty()) {
     VtValue value = data->Get(SdfPath::AbsoluteRootPath(), SdfFieldKeys->Comment);
-    if (value.IsHolding<std::string>())
-    {
+    if (value.IsHolding<std::string>()) {
       finalComment = value.UncheckedGet<std::string>();
     }
   }
@@ -194,10 +188,8 @@ bool UsdAbc_AlembicData::Write(const SdfAbstractDataConstPtr &data,
   // writer.SetFlag(UsdAbc_AlembicContextFlagNames->verbose);
 
   // Write the archive.
-  if (writer.Open(filePath, finalComment))
-  {
-    if (writer.Write(data) && writer.Close())
-    {
+  if (writer.Open(filePath, finalComment)) {
+    if (writer.Write(data) && writer.Close()) {
       return true;
     }
     TfDeleteFile(filePath);
@@ -233,12 +225,10 @@ void UsdAbc_AlembicData::MoveSpec(const SdfPath &oldPath, const SdfPath &newPath
 
 SdfSpecType UsdAbc_AlembicData::GetSpecType(const SdfPath &path) const
 {
-  if (_reader)
-  {
+  if (_reader) {
     return _reader->GetSpecType(path);
   }
-  if (path == SdfPath::AbsoluteRootPath())
-  {
+  if (path == SdfPath::AbsoluteRootPath()) {
     return SdfSpecTypePseudoRoot;
   }
   return SdfSpecTypeUnknown;
@@ -246,8 +236,7 @@ SdfSpecType UsdAbc_AlembicData::GetSpecType(const SdfPath &path) const
 
 void UsdAbc_AlembicData::_VisitSpecs(SdfAbstractDataSpecVisitor *visitor) const
 {
-  if (_reader)
-  {
+  if (_reader) {
     _reader->VisitSpecs(*this, visitor);
   }
 }
@@ -267,8 +256,7 @@ bool UsdAbc_AlembicData::Has(const SdfPath &path, const TfToken &fieldName, VtVa
 VtValue UsdAbc_AlembicData::Get(const SdfPath &path, const TfToken &fieldName) const
 {
   VtValue result;
-  if (_reader)
-  {
+  if (_reader) {
     _reader->HasField(path, fieldName, &result);
   }
   return result;
@@ -306,7 +294,9 @@ std::set<double> UsdAbc_AlembicData::ListTimeSamplesForPath(const SdfPath &path)
   return _reader ? _reader->ListTimeSamplesForPath(path).GetTimes() : std::set<double>();
 }
 
-bool UsdAbc_AlembicData::GetBracketingTimeSamples(double time, double *tLower, double *tUpper) const
+bool UsdAbc_AlembicData::GetBracketingTimeSamples(double time,
+                                                  double *tLower,
+                                                  double *tUpper) const
 {
   const std::set<double> &samples = _reader->ListAllTimeSamples();
   return UsdAbc_AlembicDataReader::TimeSamples::Bracket(samples, time, tLower, tUpper);
@@ -325,7 +315,9 @@ bool UsdAbc_AlembicData::GetBracketingTimeSamplesForPath(const SdfPath &path,
   return _reader && _reader->ListTimeSamplesForPath(path).Bracket(time, tLower, tUpper);
 }
 
-bool UsdAbc_AlembicData::QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataValue *value) const
+bool UsdAbc_AlembicData::QueryTimeSample(const SdfPath &path,
+                                         double time,
+                                         SdfAbstractDataValue *value) const
 {
   UsdAbc_AlembicDataReader::Index index;
   return _reader && _reader->ListTimeSamplesForPath(path).FindIndex(time, &index) &&

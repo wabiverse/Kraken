@@ -46,14 +46,18 @@
 
 WABI_NAMESPACE_BEGIN
 
-static bool _CheckFormatSupport(VkPhysicalDevice pDevice, VkFormat format, VkFormatFeatureFlags flags)
+static bool _CheckFormatSupport(VkPhysicalDevice pDevice,
+                                VkFormat format,
+                                VkFormatFeatureFlags flags)
 {
   VkFormatProperties props;
   vkGetPhysicalDeviceFormatProperties(pDevice, format, &props);
   return (props.optimalTilingFeatures & flags) == flags;
 }
 
-HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiTextureDesc const &desc)
+HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi,
+                                   HgiVulkanDevice *device,
+                                   HgiTextureDesc const &desc)
   : HgiTexture(desc),
     _isTextureView(false),
     _vkImage(nullptr),
@@ -82,11 +86,12 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
   imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
   imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
   imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-  imageCreateInfo.extent = {(uint32_t)dimensions[0], (uint32_t)dimensions[1], (uint32_t)dimensions[2]};
+  imageCreateInfo.extent = {(uint32_t)dimensions[0],
+                            (uint32_t)dimensions[1],
+                            (uint32_t)dimensions[2]};
 
   imageCreateInfo.usage = HgiVulkanConversions::GetTextureUsage(desc.usage);
-  if (imageCreateInfo.usage == 0)
-  {
+  if (imageCreateInfo.usage == 0) {
     TF_CODING_ERROR("Texture usage missing in descriptor");
     imageCreateInfo.usage = HgiTextureUsageBitsColorTarget | HgiTextureUsageBitsShaderRead |
                             HgiTextureUsageBitsShaderWrite;
@@ -98,21 +103,21 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
 
   // XXX STORAGE_IMAGE requires VK_IMAGE_USAGE_STORAGE_BIT, but Hgi
   // doesn't tell us if a texture will be used as image load/store.
-  if ((desc.usage & HgiTextureUsageBitsShaderRead) || (desc.usage & HgiTextureUsageBitsShaderWrite))
-  {
+  if ((desc.usage & HgiTextureUsageBitsShaderRead) ||
+      (desc.usage & HgiTextureUsageBitsShaderWrite)) {
     imageCreateInfo.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
   }
 
   VkFormatFeatureFlags formatValidationFlags = HgiVulkanConversions::GetFormatFeature(desc.usage);
 
-  if (!_CheckFormatSupport(device->GetVulkanPhysicalDevice(), imageCreateInfo.format, formatValidationFlags))
-  {
+  if (!_CheckFormatSupport(device->GetVulkanPhysicalDevice(),
+                           imageCreateInfo.format,
+                           formatValidationFlags)) {
     TF_CODING_ERROR("Image format / usage combo not supported on device");
     return;
   };
 
-  if (imageCreateInfo.tiling != VK_IMAGE_TILING_OPTIMAL && desc.mipLevels > 1)
-  {
+  if (imageCreateInfo.tiling != VK_IMAGE_TILING_OPTIMAL && desc.mipLevels > 1) {
     TF_WARN("Linear tiled images usually do not support mips");
   }
 
@@ -133,8 +138,7 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
   TF_VERIFY(_vkImage, "Failed to create image");
 
   // Debug label
-  if (!_descriptor.debugName.empty())
-  {
+  if (!_descriptor.debugName.empty()) {
     std::string debugLabel = "Image " + _descriptor.debugName;
     HgiVulkanSetDebugName(device, (uint64_t)_vkImage, VK_OBJECT_TYPE_IMAGE, debugLabel.c_str());
   }
@@ -160,9 +164,9 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
   // referring to different (and/or overlapping) ranges of the image.
   // A 'view' must be either depth or stencil, not both, especially when used
   // in a descriptor set. For now we assume we always want the 'depth' aspect.
-  view.subresourceRange.aspectMask = isDepthBuffer ?
-                                       VK_IMAGE_ASPECT_DEPTH_BIT /*| VK_IMAGE_ASPECT_STENCIL_BIT*/ :
-                                       VK_IMAGE_ASPECT_COLOR_BIT;
+  view.subresourceRange.aspectMask =
+    isDepthBuffer ? VK_IMAGE_ASPECT_DEPTH_BIT /*| VK_IMAGE_ASPECT_STENCIL_BIT*/ :
+                    VK_IMAGE_ASPECT_COLOR_BIT;
 
   view.subresourceRange.baseMipLevel = 0;
   view.subresourceRange.baseArrayLayer = 0;
@@ -170,21 +174,23 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
   view.subresourceRange.levelCount = desc.mipLevels;
   view.image = _vkImage;
 
-  TF_VERIFY(vkCreateImageView(device->GetVulkanDevice(), &view, HgiVulkanAllocator(), &_vkImageView) ==
-            VK_SUCCESS);
+  TF_VERIFY(
+    vkCreateImageView(device->GetVulkanDevice(), &view, HgiVulkanAllocator(), &_vkImageView) ==
+    VK_SUCCESS);
 
   // Debug label
-  if (!_descriptor.debugName.empty())
-  {
+  if (!_descriptor.debugName.empty()) {
     std::string debugLabel = "ImageView " + _descriptor.debugName;
-    HgiVulkanSetDebugName(device, (uint64_t)_vkImageView, VK_OBJECT_TYPE_IMAGE_VIEW, debugLabel.c_str());
+    HgiVulkanSetDebugName(device,
+                          (uint64_t)_vkImageView,
+                          VK_OBJECT_TYPE_IMAGE_VIEW,
+                          debugLabel.c_str());
   }
 
   //
   // Upload data
   //
-  if (desc.initialData && desc.pixelsByteSize > 0)
-  {
+  if (desc.initialData && desc.pixelsByteSize > 0) {
     HgiBufferDesc stageDesc;
     stageDesc.byteSize = std::min(GetByteSizeOfResource(), desc.pixelsByteSize);
     stageDesc.initialData = desc.initialData;
@@ -211,8 +217,7 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
   // we have none-optimal assumptions for imageLayout, access and stageFlags.
   VkImageLayout layout = GetDefaultImageLayout(desc.usage);
 
-  if (_vkImageLayout != layout)
-  {
+  if (_vkImageLayout != layout) {
     HgiVulkanCommandQueue *queue = device->GetCommandQueue();
     HgiVulkanCommandBuffer *cb = queue->AcquireResourceCommandBuffer();
 
@@ -228,7 +233,9 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
   _descriptor.initialData = nullptr;
 }
 
-HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiTextureViewDesc const &desc)
+HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi,
+                                   HgiVulkanDevice *device,
+                                   HgiTextureViewDesc const &desc)
   : HgiTexture(desc.sourceTexture->GetDescriptor()),
     _isTextureView(true),
     _vkImage(nullptr),
@@ -261,9 +268,9 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
   view.components.b = HgiVulkanConversions::GetComponentSwizzle(srcTexDesc.componentMapping.b);
   view.components.a = HgiVulkanConversions::GetComponentSwizzle(srcTexDesc.componentMapping.a);
 
-  view.subresourceRange.aspectMask = isDepthBuffer ?
-                                       VK_IMAGE_ASPECT_DEPTH_BIT /*| VK_IMAGE_ASPECT_STENCIL_BIT*/ :
-                                       VK_IMAGE_ASPECT_COLOR_BIT;
+  view.subresourceRange.aspectMask =
+    isDepthBuffer ? VK_IMAGE_ASPECT_DEPTH_BIT /*| VK_IMAGE_ASPECT_STENCIL_BIT*/ :
+                    VK_IMAGE_ASPECT_COLOR_BIT;
 
   view.subresourceRange.baseMipLevel = 0;
   view.subresourceRange.baseArrayLayer = 0;
@@ -271,37 +278,38 @@ HgiVulkanTexture::HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiT
   view.subresourceRange.levelCount = desc.mipLevels;
   view.image = srcTexture->GetImage();
 
-  TF_VERIFY(vkCreateImageView(device->GetVulkanDevice(), &view, HgiVulkanAllocator(), &_vkImageView) ==
-            VK_SUCCESS);
+  TF_VERIFY(
+    vkCreateImageView(device->GetVulkanDevice(), &view, HgiVulkanAllocator(), &_vkImageView) ==
+    VK_SUCCESS);
 
   // Debug label
-  if (!_descriptor.debugName.empty())
-  {
+  if (!_descriptor.debugName.empty()) {
     std::string debugLabel = "ImageView " + _descriptor.debugName;
-    HgiVulkanSetDebugName(device, (uint64_t)_vkImageView, VK_OBJECT_TYPE_IMAGE_VIEW, debugLabel.c_str());
+    HgiVulkanSetDebugName(device,
+                          (uint64_t)_vkImageView,
+                          VK_OBJECT_TYPE_IMAGE_VIEW,
+                          debugLabel.c_str());
   }
 }
 
 HgiVulkanTexture::~HgiVulkanTexture()
 {
-  if (_cpuStagingAddress && _stagingBuffer)
-  {
-    vmaUnmapMemory(_device->GetVulkanMemoryAllocator(), _stagingBuffer->GetVulkanMemoryAllocation());
+  if (_cpuStagingAddress && _stagingBuffer) {
+    vmaUnmapMemory(_device->GetVulkanMemoryAllocator(),
+                   _stagingBuffer->GetVulkanMemoryAllocation());
     _cpuStagingAddress = nullptr;
   }
 
   delete _stagingBuffer;
   _stagingBuffer = nullptr;
 
-  if (_vkImageView)
-  {
+  if (_vkImageView) {
     vkDestroyImageView(_device->GetVulkanDevice(), _vkImageView, HgiVulkanAllocator());
   }
 
   // This texture may be a 'TextureView' into another Texture's image.
   // In that case we do not own the image.
-  if (!_isTextureView && _vkImage)
-  {
+  if (!_isTextureView && _vkImage) {
     vmaDestroyImage(_device->GetVulkanMemoryAllocator(), _vkImage, _vmaImageAllocation);
   }
 }
@@ -318,8 +326,7 @@ uint64_t HgiVulkanTexture::GetRawResource() const
 
 void *HgiVulkanTexture::GetCPUStagingAddress()
 {
-  if (!_stagingBuffer)
-  {
+  if (!_stagingBuffer) {
 
     HgiBufferDesc desc;
     desc.byteSize = GetByteSizeOfResource();
@@ -327,8 +334,7 @@ void *HgiVulkanTexture::GetCPUStagingAddress()
     _stagingBuffer = HgiVulkanBuffer::CreateStagingBuffer(_device, desc);
   }
 
-  if (!_cpuStagingAddress)
-  {
+  if (!_cpuStagingAddress) {
     TF_VERIFY(vmaMapMemory(_device->GetVulkanMemoryAllocator(),
                            _stagingBuffer->GetVulkanMemoryAllocation(),
                            &_cpuStagingAddress) == VK_SUCCESS);
@@ -391,11 +397,9 @@ void HgiVulkanTexture::CopyBufferToTexture(HgiVulkanCommandBuffer *cb,
 
   const size_t mipLevels = std::min(mipInfos.size(), size_t(_descriptor.mipLevels));
 
-  for (size_t mip = 0; mip < mipLevels; mip++)
-  {
+  for (size_t mip = 0; mip < mipLevels; mip++) {
     // Skip this mip if it isn't a mipLevel we want to copy
-    if (mipLevel > -1 && (int)mip != mipLevel)
-    {
+    if (mipLevel > -1 && (int)mip != mipLevel) {
       continue;
     }
 
@@ -469,9 +473,9 @@ void HgiVulkanTexture::TransitionImageBarrier(HgiVulkanCommandBuffer *cb,
   barrier[0].srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
   barrier[0].dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
   barrier[0].image = tex->GetImage();
-  barrier[0].subresourceRange.aspectMask = isDepthBuffer ?
-                                             VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT :
-                                             VK_IMAGE_ASPECT_COLOR_BIT;
+  barrier[0].subresourceRange.aspectMask = isDepthBuffer ? VK_IMAGE_ASPECT_DEPTH_BIT |
+                                                             VK_IMAGE_ASPECT_STENCIL_BIT :
+                                                           VK_IMAGE_ASPECT_COLOR_BIT;
   barrier[0].subresourceRange.baseMipLevel = firstMip;
   barrier[0].subresourceRange.levelCount = mipCnt;
   barrier[0].subresourceRange.layerCount = desc.layerCount;
@@ -495,23 +499,18 @@ void HgiVulkanTexture::TransitionImageBarrier(HgiVulkanCommandBuffer *cb,
 
 VkImageLayout HgiVulkanTexture::GetDefaultImageLayout(HgiTextureUsage usage)
 {
-  if (usage == 0)
-  {
+  if (usage == 0) {
     TF_CODING_ERROR("Cannot determine image layout from invalid usage.");
   }
 
-  if (usage & HgiTextureUsageBitsShaderWrite)
-  {
+  if (usage & HgiTextureUsageBitsShaderWrite) {
     // Assume the ShaderWrite means its a storage image.
     return VK_IMAGE_LAYOUT_GENERAL;
-  } else if (usage & HgiTextureUsageBitsShaderRead)
-  {
+  } else if (usage & HgiTextureUsageBitsShaderRead) {
     return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-  } else if (usage & HgiTextureUsageBitsDepthTarget)
-  {
+  } else if (usage & HgiTextureUsageBitsDepthTarget) {
     return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-  } else if (usage & HgiTextureUsageBitsColorTarget)
-  {
+  } else if (usage & HgiTextureUsageBitsColorTarget) {
     return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
   }
 
@@ -520,19 +519,15 @@ VkImageLayout HgiVulkanTexture::GetDefaultImageLayout(HgiTextureUsage usage)
 
 VkAccessFlags HgiVulkanTexture::GetDefaultAccessFlags(HgiTextureUsage usage)
 {
-  if (usage == 0)
-  {
+  if (usage == 0) {
     TF_CODING_ERROR("Cannot determine image layout from invalid usage.");
   }
 
-  if (usage & HgiTextureUsageBitsShaderRead)
-  {
+  if (usage & HgiTextureUsageBitsShaderRead) {
     return VK_ACCESS_SHADER_READ_BIT;
-  } else if (usage & HgiTextureUsageBitsDepthTarget)
-  {
+  } else if (usage & HgiTextureUsageBitsDepthTarget) {
     return VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-  } else if (usage & HgiTextureUsageBitsColorTarget)
-  {
+  } else if (usage & HgiTextureUsageBitsColorTarget) {
     return VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
   }
 

@@ -58,20 +58,16 @@ namespace
                        const std::string &paths,
                        const std::string &sharedLibPath)
   {
-    for (const auto &path : TfStringSplit(paths, ARCH_PATH_LIST_SEP))
-    {
-      if (path.empty())
-      {
+    for (const auto &path : TfStringSplit(paths, ARCH_PATH_LIST_SEP)) {
+      if (path.empty()) {
         continue;
       }
 
       // Anchor all relative paths to the shared library path.
       const bool isLibraryRelativePath = TfIsRelativePath(path);
-      if (isLibraryRelativePath)
-      {
+      if (isLibraryRelativePath) {
         result->push_back(TfStringCatPaths(sharedLibPath, path));
-      } else
-      {
+      } else {
         result->push_back(path);
       }
     }
@@ -94,16 +90,14 @@ namespace
                             &binaryPath,
                             nullptr,
                             nullptr,
-                            nullptr))
-    {
+                            nullptr)) {
       debugMessages.emplace_back(
         "Failed to determine absolute path for Plug search "
         "using using ArchGetAddressInfo().  This is expected "
         "if wabi is linked as a static library.\n");
     }
 
-    if (binaryPath.empty())
-    {
+    if (binaryPath.empty()) {
       debugMessages.emplace_back(
         "Using ArchGetExecutablePath() to determine absolute "
         "path for Plug search location.\n");

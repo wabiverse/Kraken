@@ -34,13 +34,11 @@ UsdPrimTypeInfo::UsdPrimTypeInfo(_TypeId &&typeId)
   // name or the prim type name.
   auto _SetSchemaType = [this](const TfToken &typeName) {
     // Empty type name returns false.
-    if (typeName.IsEmpty())
-    {
+    if (typeName.IsEmpty()) {
       return false;
     }
     _schemaType = UsdSchemaRegistry::GetConcreteTypeFromSchemaTypeName(typeName);
-    if (_schemaType)
-    {
+    if (_schemaType) {
       _schemaTypeName = typeName;
     }
     // Return true even if the schema type is invalid since the type name
@@ -57,15 +55,13 @@ const UsdPrimDefinition *UsdPrimTypeInfo::_FindOrCreatePrimDefinition() const
 {
   const UsdPrimDefinition *primDef = nullptr;
   const UsdSchemaRegistry &reg = UsdSchemaRegistry::GetInstance();
-  if (_typeId.appliedAPISchemas.empty())
-  {
+  if (_typeId.appliedAPISchemas.empty()) {
     // With no applied schemas we can just get the concrete typed prim
     // definition from the schema registry. Prim definitions for all
     // concrete types are created with the schema registry when it is
     // instantiated so if the type exists, the definition will be there.
     primDef = reg.FindConcretePrimDefinition(_schemaTypeName);
-    if (!primDef)
-    {
+    if (!primDef) {
       // For invalid types, we use the empty prim definition so we don't
       // have to check again.
       primDef = reg.GetEmptyPrimDefinition();
@@ -75,8 +71,7 @@ const UsdPrimDefinition *UsdPrimTypeInfo::_FindOrCreatePrimDefinition() const
     // will be constant. Thus, we don't have to check if another thread
     // cached it first as all threads would store the same pointer.
     _primDefinition.store(primDef, std::memory_order_relaxed);
-  } else
-  {
+  } else {
     // If we have applied schemas, then we need ask the schema registry to
     // compose a prim definition for us from the list of types. The schema
     // registry does NOT take ownership of this new prim definition; this
@@ -87,8 +82,9 @@ const UsdPrimDefinition *UsdPrimTypeInfo::_FindOrCreatePrimDefinition() const
     // Try to cache the new prim definition, but if another thread beat us
     // to it, we'll use its definition instead and just let ours get
     // deleted.
-    if (_primDefinition.compare_exchange_strong(primDef, composedPrimDef.get(), std::memory_order_acq_rel))
-    {
+    if (_primDefinition.compare_exchange_strong(primDef,
+                                                composedPrimDef.get(),
+                                                std::memory_order_acq_rel)) {
       // Since we succeeded, transfer ownership of the new prim definition
       // to this type info.
       _ownedPrimDefinition = std::move(composedPrimDef);

@@ -29,14 +29,12 @@ AnchorModifierKeys::AnchorModifierKeys()
   clear();
 }
 
-AnchorModifierKeys::~AnchorModifierKeys()
-{}
+AnchorModifierKeys::~AnchorModifierKeys() {}
 
 eAnchorKey AnchorModifierKeys::getModifierKeyCode(eAnchorModifierKeyMask mask)
 {
   eAnchorKey key;
-  switch (mask)
-  {
+  switch (mask) {
     case ANCHOR_ModifierKeyLeftShift:
       key = AnchorKeyLeftShift;
       break;
@@ -69,8 +67,7 @@ eAnchorKey AnchorModifierKeys::getModifierKeyCode(eAnchorModifierKeyMask mask)
 
 bool AnchorModifierKeys::get(eAnchorModifierKeyMask mask) const
 {
-  switch (mask)
-  {
+  switch (mask) {
     case ANCHOR_ModifierKeyLeftShift:
       return m_LeftShift;
     case ANCHOR_ModifierKeyRightShift:
@@ -92,8 +89,7 @@ bool AnchorModifierKeys::get(eAnchorModifierKeyMask mask) const
 
 void AnchorModifierKeys::set(eAnchorModifierKeyMask mask, bool down)
 {
-  switch (mask)
-  {
+  switch (mask) {
     case ANCHOR_ModifierKeyLeftShift:
       m_LeftShift = down;
       break;

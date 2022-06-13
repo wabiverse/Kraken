@@ -39,6 +39,7 @@ namespace
   class _ComposeValueHelper
   {
    public:
+
     // Templated static function is the only public interface. ComposeFunc is
     // expected to be a function of type void (VtValue &&)
     template<typename ComposeFunc>
@@ -57,6 +58,7 @@ namespace
     }
 
    private:
+
     _ComposeValueHelper(const PcpNodeRef &parentNode,
                         PcpPrimIndex_StackFrame *&previousStackFrame,
                         const TfToken &fieldName,
@@ -73,26 +75,21 @@ namespace
     {
       // Search the node's layer stack in strength order for the field on
       // the spec.
-      for (const SdfLayerHandle &layer : node.GetLayerStack()->GetLayers())
-      {
+      for (const SdfLayerHandle &layer : node.GetLayerStack()->GetLayers()) {
         VtValue value;
-        if (layer->HasField(node.GetPath(), _fieldName, &value))
-        {
+        if (layer->HasField(node.GetPath(), _fieldName, &value)) {
           // Process the value and mark found
           composeFunc(std::move(value));
           _foundValue = true;
           // Stop if we only need the strongest opinion.
-          if (_strongestOpinionOnly)
-          {
+          if (_strongestOpinionOnly) {
             return true;
           }
         }
       }
 
-      TF_FOR_ALL (childNode, Pcp_GetChildrenRange(node))
-      {
-        if (_ComposeOpinionInSubtree(*childNode, composeFunc))
-        {
+      TF_FOR_ALL (childNode, Pcp_GetChildrenRange(node)) {
+        if (_ComposeOpinionInSubtree(*childNode, composeFunc)) {
           return true;
         }
       }
@@ -110,18 +107,15 @@ namespace
 
       // Try parent node.
       _iterator.Next();
-      if (_iterator.node)
-      {
+      if (_iterator.node) {
         // Recurse on parent node's ancestors.
-        if (_ComposeOpinionFromAncestors(composeFunc))
-        {
+        if (_ComposeOpinionFromAncestors(composeFunc)) {
           return true;
         }
       }
 
       // Otherwise compose from the current node and it subtrees.
-      if (_ComposeOpinionInSubtree(currentNode, composeFunc))
-      {
+      if (_ComposeOpinionInSubtree(currentNode, composeFunc)) {
         return true;
       }
       return false;
@@ -136,9 +130,10 @@ namespace
 
 }  // anonymous namespace
 
-PcpDynamicFileFormatContext::PcpDynamicFileFormatContext(const PcpNodeRef &parentNode,
-                                                         PcpPrimIndex_StackFrame *previousStackFrame,
-                                                         TfToken::Set *composedFieldNames)
+PcpDynamicFileFormatContext::PcpDynamicFileFormatContext(
+  const PcpNodeRef &parentNode,
+  PcpPrimIndex_StackFrame *previousStackFrame,
+  TfToken::Set *composedFieldNames)
   : _parentNode(parentNode),
     _previousStackFrame(previousStackFrame),
     _composedFieldNames(composedFieldNames)
@@ -151,10 +146,10 @@ bool PcpDynamicFileFormatContext::_IsAllowedFieldForArguments(const TfToken &fie
   // defined by plugins. We may ease this in the future to allow certain
   // builtin fields as well but there will need to be some updates to
   // change management to handle these correctly.
-  const SdfSchemaBase &schema = _parentNode.GetLayerStack()->GetIdentifier().rootLayer->GetSchema();
+  const SdfSchemaBase &schema =
+    _parentNode.GetLayerStack()->GetIdentifier().rootLayer->GetSchema();
   const SdfSchema::FieldDefinition *fieldDef = schema.GetFieldDefinition(field);
-  if (!(fieldDef && fieldDef->IsPlugin()))
-  {
+  if (!(fieldDef && fieldDef->IsPlugin())) {
     TF_CODING_ERROR(
       "Field %s is not a plugin field and is not supported "
       "for composing dynamic file format arguments",
@@ -162,8 +157,7 @@ bool PcpDynamicFileFormatContext::_IsAllowedFieldForArguments(const TfToken &fie
     return false;
   }
 
-  if (fieldValueIsDictionary)
-  {
+  if (fieldValueIsDictionary) {
     *fieldValueIsDictionary = fieldDef->GetFallbackValue().IsHolding<VtDictionary>();
   }
 
@@ -173,45 +167,38 @@ bool PcpDynamicFileFormatContext::_IsAllowedFieldForArguments(const TfToken &fie
 bool PcpDynamicFileFormatContext::ComposeValue(const TfToken &field, VtValue *value) const
 {
   bool fieldIsDictValued = false;
-  if (!_IsAllowedFieldForArguments(field, &fieldIsDictValued))
-  {
+  if (!_IsAllowedFieldForArguments(field, &fieldIsDictValued)) {
     return false;
   }
 
   // Update the cached field names for dependency tracking.
-  if (_composedFieldNames)
-  {
+  if (_composedFieldNames) {
     _composedFieldNames->insert(field);
   }
 
   // If the field is a dictionary, compose the dictionary's key values from
   // strongest to weakest opinions.
-  if (fieldIsDictValued)
-  {
+  if (fieldIsDictValued) {
     VtDictionary composedDict;
-    if (_ComposeValueHelper::ComposeValue(_parentNode,
-                                          _previousStackFrame,
-                                          field,
-                                          /*findStrongestOnly = */ false,
-                                          [&composedDict](VtValue &&val) {
-                                            if (val.IsHolding<VtDictionary>())
-                                            {
-                                              VtDictionaryOverRecursive(&composedDict,
-                                                                        val.UncheckedGet<VtDictionary>());
-                                            } else
-                                            {
-                                              TF_CODING_ERROR("Expected value to contain VtDictionary");
-                                            }
-                                          }))
-    {
+    if (_ComposeValueHelper::ComposeValue(
+          _parentNode,
+          _previousStackFrame,
+          field,
+          /*findStrongestOnly = */ false,
+          [&composedDict](VtValue &&val) {
+            if (val.IsHolding<VtDictionary>()) {
+              VtDictionaryOverRecursive(&composedDict, val.UncheckedGet<VtDictionary>());
+            } else {
+              TF_CODING_ERROR("Expected value to contain VtDictionary");
+            }
+          })) {
       // Output the composed dictionary only if we found a value for the
       // field.
       value->Swap(composedDict);
       return true;
     }
     return false;
-  } else
-  {
+  } else {
     // For all other value type we compose by just grabbing the strongest
     // opinion if it exists.
     return _ComposeValueHelper::ComposeValue(_parentNode,
@@ -226,16 +213,15 @@ bool PcpDynamicFileFormatContext::ComposeValue(const TfToken &field, VtValue *va
   }
 }
 
-bool PcpDynamicFileFormatContext::ComposeValueStack(const TfToken &field, VtValueVector *values) const
+bool PcpDynamicFileFormatContext::ComposeValueStack(const TfToken &field,
+                                                    VtValueVector *values) const
 {
-  if (!_IsAllowedFieldForArguments(field))
-  {
+  if (!_IsAllowedFieldForArguments(field)) {
     return false;
   }
 
   // Update the cached field names for dependency tracking.
-  if (_composedFieldNames)
-  {
+  if (_composedFieldNames) {
     _composedFieldNames->insert(field);
   }
 
@@ -254,9 +240,10 @@ bool PcpDynamicFileFormatContext::ComposeValueStack(const TfToken &field, VtValu
 
 // "Private" function for creating a PcpDynamicFileFormatContext; should only
 // be used by prim indexing.
-PcpDynamicFileFormatContext Pcp_CreateDynamicFileFormatContext(const PcpNodeRef &parentNode,
-                                                               PcpPrimIndex_StackFrame *previousFrame,
-                                                               TfToken::Set *composedFieldNames)
+PcpDynamicFileFormatContext Pcp_CreateDynamicFileFormatContext(
+  const PcpNodeRef &parentNode,
+  PcpPrimIndex_StackFrame *previousFrame,
+  TfToken::Set *composedFieldNames)
 {
   return PcpDynamicFileFormatContext(parentNode, previousFrame, composedFieldNames);
 }

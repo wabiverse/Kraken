@@ -25,12 +25,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdVolume::HdVolume(SdfPath const &id)
-  : HdRprim(id)
-{}
+HdVolume::HdVolume(SdfPath const &id) : HdRprim(id) {}
 
-HdVolume::~HdVolume()
-{}
+HdVolume::~HdVolume() {}
 
 /* virtual */
 TfTokenVector const &HdVolume::GetBuiltinPrimvarNames() const

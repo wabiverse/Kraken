@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdLuxLight::~UsdLuxLight()
-{}
+UsdLuxLight::~UsdLuxLight() {}
 
 /* static */
 UsdLuxLight UsdLuxLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxLight();
   }
@@ -89,7 +87,8 @@ UsdAttribute UsdLuxLight::GetIntensityAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsIntensity);
 }
 
-UsdAttribute UsdLuxLight::CreateIntensityAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxLight::CreateIntensityAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsIntensity,
                                     SdfValueTypeNames->Float,
@@ -149,7 +148,8 @@ UsdAttribute UsdLuxLight::GetNormalizeAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsNormalize);
 }
 
-UsdAttribute UsdLuxLight::CreateNormalizeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxLight::CreateNormalizeAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsNormalize,
                                     SdfValueTypeNames->Bool,
@@ -195,7 +195,8 @@ UsdAttribute UsdLuxLight::GetColorTemperatureAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsColorTemperature);
 }
 
-UsdAttribute UsdLuxLight::CreateColorTemperatureAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxLight::CreateColorTemperatureAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsColorTemperature,
                                     SdfValueTypeNames->Float,
@@ -244,8 +245,9 @@ const TfTokenVector &UsdLuxLight::GetSchemaAttributeNames(bool includeInherited)
     UsdLuxTokens->inputsEnableColorTemperature,
     UsdLuxTokens->inputsColorTemperature,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomXformable::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -277,7 +279,10 @@ class UsdLuxLight_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
                                const UsdAttribute &source,
                                std::string *reason) override
   {
-    return _CanConnectInputToSource(input, source, reason, ConnectableNodeTypes::DerivedContainerNodes);
+    return _CanConnectInputToSource(input,
+                                    source,
+                                    reason,
+                                    ConnectableNodeTypes::DerivedContainerNodes);
   }
 
   bool IsContainer() const
@@ -354,11 +359,9 @@ GfVec3f UsdLuxLight::ComputeBaseEmission() const
 
   bool enableColorTemp = false;
   GetEnableColorTemperatureAttr().Get(&enableColorTemp);
-  if (enableColorTemp)
-  {
+  if (enableColorTemp) {
     float colorTemp = 6500;
-    if (GetColorTemperatureAttr().Get(&colorTemp))
-    {
+    if (GetColorTemperatureAttr().Get(&colorTemp)) {
       e = GfCompMult(e, UsdLuxBlackbodyTemperatureAsRgb(colorTemp));
     }
   }

@@ -27,8 +27,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPoints::HdPoints(SdfPath const &id)
-  : HdRprim(id)
+HdPoints::HdPoints(SdfPath const &id) : HdRprim(id)
 {
   /*NOTHING*/
 }
@@ -41,7 +40,9 @@ HdPoints::~HdPoints()
 /* virtual */
 TfTokenVector const &HdPoints::GetBuiltinPrimvarNames() const
 {
-  static const TfTokenVector primvarNames = {HdTokens->points, HdTokens->normals, HdTokens->widths};
+  static const TfTokenVector primvarNames = {HdTokens->points,
+                                             HdTokens->normals,
+                                             HdTokens->widths};
   return primvarNames;
 }
 

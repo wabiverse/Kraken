@@ -45,21 +45,19 @@ HdPh_TextureObjectRegistry::~HdPh_TextureObjectRegistry() = default;
 
 bool static _IsDynamic(const HdPhTextureIdentifier &textureId)
 {
-  return dynamic_cast<const HdPhDynamicUvSubtextureIdentifier *>(textureId.GetSubtextureIdentifier());
+  return dynamic_cast<const HdPhDynamicUvSubtextureIdentifier *>(
+    textureId.GetSubtextureIdentifier());
 }
 
 HdPhTextureObjectSharedPtr HdPh_TextureObjectRegistry::_MakeTextureObject(
   const HdPhTextureIdentifier &textureId,
   const HdTextureType textureType)
 {
-  switch (textureType)
-  {
+  switch (textureType) {
     case HdTextureType::Uv:
-      if (_IsDynamic(textureId))
-      {
+      if (_IsDynamic(textureId)) {
         return std::make_shared<HdPhDynamicUvTextureObject>(textureId, this);
-      } else
-      {
+      } else {
         return std::make_shared<HdPhAssetUvTextureObject>(textureId, this);
       }
     case HdTextureType::Field:
@@ -80,10 +78,10 @@ HdPhTextureObjectSharedPtr HdPh_TextureObjectRegistry::AllocateTextureObject(
 {
   // Check with instance registry and allocate texture and sampler object
   // if first object.
-  HdInstance<HdPhTextureObjectSharedPtr> inst = _textureObjectRegistry.GetInstance(TfHash()(textureId));
+  HdInstance<HdPhTextureObjectSharedPtr> inst = _textureObjectRegistry.GetInstance(
+    TfHash()(textureId));
 
-  if (inst.IsFirstInstance())
-  {
+  if (inst.IsFirstInstance()) {
     HdPhTextureObjectSharedPtr const texture = _MakeTextureObject(textureId, textureType);
 
     inst.SetValue(texture);
@@ -126,10 +124,8 @@ static void _Uniquify(const T &objects, std::set<std::shared_ptr<U>> *result)
   // the second time in the _dirtyTextures vector.
 
   TRACE_FUNCTION();
-  for (std::weak_ptr<U> const &objectPtr : objects)
-  {
-    if (std::shared_ptr<U> const object = objectPtr.lock())
-    {
+  for (std::weak_ptr<U> const &objectPtr : objects) {
+    if (std::shared_ptr<U> const object = objectPtr.lock()) {
       result->insert(object);
     }
   }
@@ -149,11 +145,9 @@ std::set<HdPhTextureObjectSharedPtr> HdPh_TextureObjectRegistry::Commit()
 
   // Record all textures as dirty corresponding to file paths
   // explicitly marked dirty by client.
-  for (const TfToken &dirtyFilePath : _dirtyFilePaths)
-  {
+  for (const TfToken &dirtyFilePath : _dirtyFilePaths) {
     const auto it = _filePathToTextureObjects.find(dirtyFilePath);
-    if (it != _filePathToTextureObjects.end())
-    {
+    if (it != _filePathToTextureObjects.end()) {
       _Uniquify(it->second, &result);
     }
   }
@@ -165,21 +159,20 @@ std::set<HdPhTextureObjectSharedPtr> HdPh_TextureObjectRegistry::Commit()
     TRACE_FUNCTION_SCOPE("Loading textures");
     HF_TRACE_FUNCTION_SCOPE("Loading textures");
 
-    if (_isGlfBaseTextureDataThreadSafe)
-    {
+    if (_isGlfBaseTextureDataThreadSafe) {
       // Loading a texture file of a previously unseen type might
       // require loading a new plugin, so give up the GIL temporarily
       // to the threads loading the images.
       TF_PY_ALLOW_THREADS_IN_SCOPE();
 
       // Parallel load texture files
-      WorkParallelForEach(result.begin(), result.end(), [](const HdPhTextureObjectSharedPtr &texture) {
-        texture->_Load();
-      });
-    } else
-    {
-      for (const HdPhTextureObjectSharedPtr &texture : result)
-      {
+      WorkParallelForEach(result.begin(),
+                          result.end(),
+                          [](const HdPhTextureObjectSharedPtr &texture) {
+                            texture->_Load();
+                          });
+    } else {
+      for (const HdPhTextureObjectSharedPtr &texture : result) {
         texture->_Load();
       }
     }
@@ -190,8 +183,7 @@ std::set<HdPhTextureObjectSharedPtr> HdPh_TextureObjectRegistry::Commit()
     HF_TRACE_FUNCTION_SCOPE("Committing textures");
 
     // Commit loaded files to GPU.
-    for (const HdPhTextureObjectSharedPtr &texture : result)
-    {
+    for (const HdPhTextureObjectSharedPtr &texture : result) {
       texture->_Commit();
     }
   }
@@ -210,19 +202,14 @@ static bool _GarbageCollect(HdPhTextureObjectPtrVector *const vec)
   // with valid weak pointers from the right.
   size_t last = vec->size();
 
-  for (size_t i = 0; i < last; i++)
-  {
-    if ((*vec)[i].expired())
-    {
-      while (true)
-      {
+  for (size_t i = 0; i < last; i++) {
+    if ((*vec)[i].expired()) {
+      while (true) {
         last--;
-        if (i == last)
-        {
+        if (i == last) {
           break;
         }
-        if (!(*vec)[last].expired())
-        {
+        if (!(*vec)[last].expired()) {
           (*vec)[i] = (*vec)[last];
           break;
         }
@@ -235,17 +222,15 @@ static bool _GarbageCollect(HdPhTextureObjectPtrVector *const vec)
   return last == 0;
 }
 
-static void _GarbageCollect(std::unordered_map<TfToken, HdPhTextureObjectPtrVector, TfToken::HashFunctor>
-                              *const filePathToTextureObjects)
+static void _GarbageCollect(
+  std::unordered_map<TfToken, HdPhTextureObjectPtrVector, TfToken::HashFunctor>
+    *const filePathToTextureObjects)
 {
-  for (auto it = filePathToTextureObjects->begin(); it != filePathToTextureObjects->end();)
-  {
+  for (auto it = filePathToTextureObjects->begin(); it != filePathToTextureObjects->end();) {
 
-    if (_GarbageCollect(&it->second))
-    {
+    if (_GarbageCollect(&it->second)) {
       it = filePathToTextureObjects->erase(it);
-    } else
-    {
+    } else {
       ++it;
     }
   }

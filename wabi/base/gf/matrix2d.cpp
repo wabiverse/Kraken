@@ -67,10 +67,8 @@ GfMatrix2d::GfMatrix2d(const std::vector<std::vector<double>> &v)
     {1.0, 0.0},
     {0.0, 1.0}
   };
-  for (size_t row = 0; row < 2 && row < v.size(); ++row)
-  {
-    for (size_t col = 0; col < 2 && col < v[row].size(); ++col)
-    {
+  for (size_t row = 0; row < 2 && row < v.size(); ++row) {
+    for (size_t col = 0; col < 2 && col < v[row].size(); ++col) {
       m[row][col] = v[row][col];
     }
   }
@@ -83,10 +81,8 @@ GfMatrix2d::GfMatrix2d(const std::vector<std::vector<float>> &v)
     {1.0, 0.0},
     {0.0, 1.0}
   };
-  for (size_t row = 0; row < 2 && row < v.size(); ++row)
-  {
-    for (size_t col = 0; col < 2 && col < v[row].size(); ++col)
-    {
+  for (size_t row = 0; row < 2 && row < v.size(); ++row) {
+    for (size_t col = 0; col < 2 && col < v[row].size(); ++col) {
       m[row][col] = v[row][col];
     }
   }
@@ -147,8 +143,7 @@ GfMatrix2d GfMatrix2d::GetInverse(double *detPtr, double eps) const
 {
   double det = GetDeterminant();
 
-  if (detPtr)
-  {
+  if (detPtr) {
     // CODE_COVERAGE_OFF_NO_REPORT This is inaccessible from script and not
     // worth writing a whole C++ test for.
     *detPtr = det;
@@ -157,16 +152,14 @@ GfMatrix2d GfMatrix2d::GetInverse(double *detPtr, double eps) const
 
   GfMatrix2d inverse;
 
-  if (GfAbs(det) > eps)
-  {
+  if (GfAbs(det) > eps) {
 
     double rcp = 1.0 / det;
     inverse._mtx[0][0] = _mtx[1][1] * rcp;
     inverse._mtx[0][1] = _mtx[0][1] * -rcp;
     inverse._mtx[1][0] = _mtx[1][0] * -rcp;
     inverse._mtx[1][1] = _mtx[0][0] * rcp;
-  } else
-  {
+  } else {
     inverse.SetDiagonal(FLT_MAX);
   }
 
@@ -255,10 +248,8 @@ GfVec2f operator*(const GfMatrix2d &m, const GfVec2f &vec)
 
 bool GfIsClose(GfMatrix2d const &m1, GfMatrix2d const &m2, double tolerance)
 {
-  for (size_t row = 0; row < 2; ++row)
-  {
-    for (size_t col = 0; col < 2; ++col)
-    {
+  for (size_t row = 0; row < 2; ++row) {
+    for (size_t col = 0; col < 2; ++col) {
       if (!GfIsClose(m1[row][col], m2[row][col], tolerance))
         return false;
     }

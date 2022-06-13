@@ -37,7 +37,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-static SdfLayerRefPtr _UsdFlattenLayerStack2(const PcpLayerStackRefPtr &layerStack, const std::string &tag)
+static SdfLayerRefPtr _UsdFlattenLayerStack2(const PcpLayerStackRefPtr &layerStack,
+                                             const std::string &tag)
 {
   return UsdFlattenLayerStack(layerStack, tag);
 }
@@ -45,9 +46,10 @@ static SdfLayerRefPtr _UsdFlattenLayerStack2(const PcpLayerStackRefPtr &layerSta
 using Py_UsdFlattenResolveAssetPathSig = std::string(const SdfLayerHandle &, const std::string &);
 using Py_UsdFlattenResolveAssetPathFn = std::function<Py_UsdFlattenResolveAssetPathSig>;
 
-static SdfLayerRefPtr _UsdFlattenLayerStack3(const PcpLayerStackRefPtr &layerStack,
-                                             const Py_UsdFlattenResolveAssetPathFn &resolveAssetPathFn,
-                                             const std::string &tag)
+static SdfLayerRefPtr _UsdFlattenLayerStack3(
+  const PcpLayerStackRefPtr &layerStack,
+  const Py_UsdFlattenResolveAssetPathFn &resolveAssetPathFn,
+  const std::string &tag)
 {
   return UsdFlattenLayerStack(layerStack, resolveAssetPathFn, tag);
 }

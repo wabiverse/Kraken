@@ -36,8 +36,7 @@ static EXCEPTION_POINTERS *current_exception = NULL;
 
 static const char *kli_windows_get_exception_description(const DWORD exceptioncode)
 {
-  switch (exceptioncode)
-  {
+  switch (exceptioncode) {
     case EXCEPTION_ACCESS_VIOLATION:
       return "EXCEPTION_ACCESS_VIOLATION";
     case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
@@ -110,8 +109,7 @@ static void kli_windows_get_module_name(LPVOID address, PCHAR buffer, size_t siz
 static void kli_load_symbols()
 {
   /* If this is a developer station and the private pdb is already loaded leave it be. */
-  if (kli_private_symbols_loaded())
-  {
+  if (kli_private_symbols_loaded()) {
     return;
   }
 
@@ -165,9 +163,9 @@ static bool KLI_windows_system_backtrace_run_trace(FILE *fp, HANDLE hThread, PCO
 
   // bool result = true;
 
-  // PSYMBOL_INFO symbolinfo = (PSYMBOL_INFO)calloc(1, sizeof(SYMBOL_INFO) + max_symbol_length * sizeof(char));
-  // symbolinfo->MaxNameLen = max_symbol_length - 1;
-  // symbolinfo->SizeOfStruct = sizeof(SYMBOL_INFO);
+  // PSYMBOL_INFO symbolinfo = (PSYMBOL_INFO)calloc(1, sizeof(SYMBOL_INFO) + max_symbol_length *
+  // sizeof(char)); symbolinfo->MaxNameLen = max_symbol_length - 1; symbolinfo->SizeOfStruct =
+  // sizeof(SYMBOL_INFO);
 
   // STACKFRAME frame = {0};
   // frame.AddrPC.Offset = context->Rip;
@@ -211,9 +209,8 @@ static bool KLI_windows_system_backtrace_run_trace(FILE *fp, HANDLE hThread, PCO
   //         fprintf(fp, "\n");
   //       } else
   //       {
-  //         fprintf(fp, "%-20s:0x%p  %s\n", module, (LPVOID)frame.AddrPC.Offset, "Symbols not available");
-  //         result = false;
-  //         break;
+  //         fprintf(fp, "%-20s:0x%p  %s\n", module, (LPVOID)frame.AddrPC.Offset, "Symbols not
+  //         available"); result = false; break;
   //       }
   //     } else
   //     {
@@ -233,13 +230,13 @@ static void kli_windows_system_backtrace_exception_record(FILE *fp, PEXCEPTION_R
 {
   // char module[MAX_PATH];
   // fprintf(fp, "Exception Record:\n\n");
-  // fprintf(fp, "ExceptionCode         : %s\n", kli_windows_get_exception_description(record->ExceptionCode));
-  // fprintf(fp, "Exception Address     : 0x%p\n", record->ExceptionAddress);
-  // kli_windows_get_module_name(record->ExceptionAddress, module, sizeof(module));
-  // fprintf(fp, "Exception Module      : %s\n", module);
-  // fprintf(fp, "Exception Flags       : 0x%.8x\n", record->ExceptionFlags);
-  // fprintf(fp, "Exception Parameters  : 0x%x\n", record->NumberParameters);
-  // for (DWORD idx = 0; idx < record->NumberParameters; idx++)
+  // fprintf(fp, "ExceptionCode         : %s\n",
+  // kli_windows_get_exception_description(record->ExceptionCode)); fprintf(fp, "Exception Address
+  // : 0x%p\n", record->ExceptionAddress); kli_windows_get_module_name(record->ExceptionAddress,
+  // module, sizeof(module)); fprintf(fp, "Exception Module      : %s\n", module); fprintf(fp,
+  // "Exception Flags       : 0x%.8x\n", record->ExceptionFlags); fprintf(fp, "Exception Parameters
+  // : 0x%x\n", record->NumberParameters); for (DWORD idx = 0; idx < record->NumberParameters;
+  // idx++)
   // {
   //   fprintf(fp, "\tParameters[%d] : 0x%p\n", idx, (LPVOID *)record->ExceptionInformation[idx]);
   // }
@@ -255,7 +252,8 @@ static bool kli_windows_system_backtrace_stack_thread(FILE *fp, HANDLE hThread)
 {
   // CONTEXT context = {0};
   // context.ContextFlags = CONTEXT_ALL;
-  // /* GetThreadContext requires the thread to be in a suspended state, which is problematic for the
+  // /* GetThreadContext requires the thread to be in a suspended state, which is problematic for
+  // the
   //  * currently running thread, RtlCaptureContext is used as an alternative to sidestep this */
   // if (hThread != GetCurrentThread())
   // {

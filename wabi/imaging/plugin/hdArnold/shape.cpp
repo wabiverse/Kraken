@@ -32,8 +32,7 @@ HdArnoldShape::HdArnoldShape(const AtString &shapeType,
 HdArnoldShape::~HdArnoldShape()
 {
   AiNodeDestroy(_shape);
-  if (_instancer != nullptr)
-  {
+  if (_instancer != nullptr) {
     AiNodeDestroy(_instancer);
   }
 }
@@ -46,25 +45,28 @@ void HdArnoldShape::Sync(HdRprim *rprim,
                          bool force)
 {
   auto &id = rprim->GetId();
-  if (HdChangeTracker::IsPrimIdDirty(dirtyBits, id))
-  {
+  if (HdChangeTracker::IsPrimIdDirty(dirtyBits, id)) {
     param.Interrupt();
     _SetPrimId(rprim->GetPrimId());
   }
-  if (dirtyBits & HdChangeTracker::DirtyCategories)
-  {
+  if (dirtyBits & HdChangeTracker::DirtyCategories) {
     param.Interrupt();
     renderDelegate->ApplyLightLinking(_shape, sceneDelegate->GetCategories(id));
   }
-  _SyncInstances(dirtyBits, renderDelegate, sceneDelegate, param, id, rprim->GetInstancerId(), force);
+  _SyncInstances(dirtyBits,
+                 renderDelegate,
+                 sceneDelegate,
+                 param,
+                 id,
+                 rprim->GetInstancerId(),
+                 force);
 }
 
 void HdArnoldShape::SetVisibility(uint8_t visibility)
 {
   // Either the shape is not instanced or the instances are not yet created. In either case we can
   // set the visibility on the shape.
-  if (_instancer == nullptr)
-  {
+  if (_instancer == nullptr) {
     AiNodeSetByte(_shape, str::visibility, visibility);
   }
   _visibility = visibility;
@@ -91,8 +93,7 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
 {
   // The primitive is not instanced. Instancer IDs are not supposed to be changed during the
   // lifetime of the shape.
-  if (instancerId.IsEmpty())
-  {
+  if (instancerId.IsEmpty()) {
     return;
   }
 
@@ -101,8 +102,7 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
   //  up with a visible source mesh. We need to investigate if an instancer without any instances
   //  is a valid object in USD. Alternatively, what happens if a prototype is not instanced in USD.
   if (!HdChangeTracker::IsInstancerDirty(dirtyBits, id) &&
-      !HdChangeTracker::IsInstanceIndexDirty(dirtyBits, id) && !force)
-  {
+      !HdChangeTracker::IsInstanceIndexDirty(dirtyBits, id) && !force) {
     // Visibility still could have changed outside the shape.
     _UpdateInstanceVisibility(param);
     return;
@@ -114,8 +114,7 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
   auto *instancer = static_cast<HdArnoldInstancer *>(renderIndex.GetInstancer(instancerId));
   HdArnoldSampledMatrixArrayType instanceMatrices;
   instancer->CalculateInstanceMatrices(id, instanceMatrices);
-  if (_instancer == nullptr)
-  {
+  if (_instancer == nullptr) {
     _instancer = AiNode(renderDelegate->GetUniverse(), str::instancer);
     std::stringstream ss;
     ss << AiNodeGetName(_shape) << "_instancer";
@@ -124,13 +123,11 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
     AiNodeDeclare(_instancer, str::instance_inherit_xform, "constant array BOOL");
     AiNodeSetArray(_instancer, str::instance_inherit_xform, AiArray(1, 1, AI_TYPE_BOOLEAN, true));
   }
-  if (instanceMatrices.count == 0 || instanceMatrices.values.front().empty())
-  {
+  if (instanceMatrices.count == 0 || instanceMatrices.values.front().empty()) {
     AiNodeResetParameter(_instancer, str::instance_matrix);
     AiNodeResetParameter(_instancer, str::node_idxs);
     AiNodeResetParameter(_instancer, str::instance_visibility);
-  } else
-  {
+  } else {
     const auto sampleCount = instanceMatrices.count;
     const auto instanceCount = instanceMatrices.values.front().size();
     auto *matrixArray = AiArrayAllocate(instanceCount, sampleCount, AI_TYPE_MATRIX);
@@ -143,34 +140,30 @@ void HdArnoldShape::_SyncInstances(HdDirtyBits dirtyBits,
       std::transform(instanceMatrices.values[sample].begin(),
                      instanceMatrices.values[sample].end(),
                      matrices + sample * instanceCount,
-                     [](const GfMatrix4d &in) -> AtMatrix { return HdArnoldConvertMatrix(in); });
+                     [](const GfMatrix4d &in) -> AtMatrix {
+                       return HdArnoldConvertMatrix(in);
+                     });
     };
     convertMatrices(0);
-    for (auto sample = decltype(sampleCount){1}; sample < sampleCount; sample += 1)
-    {
+    for (auto sample = decltype(sampleCount){1}; sample < sampleCount; sample += 1) {
       // We check if there is enough data to do the conversion, otherwise we are reusing the first
       // sample.
-      if (ARCH_UNLIKELY(instanceMatrices.values[sample].size() != instanceCount))
-      {
+      if (ARCH_UNLIKELY(instanceMatrices.values[sample].size() != instanceCount)) {
         std::copy(matrices, matrices + instanceCount, matrices + sample * instanceCount);
-      } else
-      {
+      } else {
         convertMatrices(sample);
       }
     }
     auto setMotionParam = [&](const char *name, float value) {
-      if (AiNodeLookUpUserParameter(_instancer, AtString(name)) == nullptr)
-      {
+      if (AiNodeLookUpUserParameter(_instancer, AtString(name)) == nullptr) {
         AiNodeDeclare(_instancer, AtString(name), str::constantArrayFloat);
       }
       AiNodeSetArray(_instancer, AtString(name), AiArray(1, 1, AI_TYPE_FLOAT, value));
     };
-    if (sampleCount > 1)
-    {
+    if (sampleCount > 1) {
       setMotionParam(str::instance_motion_start, instanceMatrices.times.front());
       setMotionParam(str::instance_motion_end, instanceMatrices.times[sampleCount - 1]);
-    } else
-    {
+    } else {
       setMotionParam(str::instance_motion_start, 0.0f);
       setMotionParam(str::instance_motion_end, 1.0f);
     }
@@ -189,8 +182,7 @@ void HdArnoldShape::_UpdateInstanceVisibility(HdArnoldRenderParamInterrupt &para
                                   AiArrayGetNumElements(instanceVisibility) == 1) ?
                                    AiArrayGetByte(instanceVisibility, 0) :
                                    ~_visibility;
-  if (currentVisibility == _visibility)
-  {
+  if (currentVisibility == _visibility) {
     return;
   }
   param.Interrupt();

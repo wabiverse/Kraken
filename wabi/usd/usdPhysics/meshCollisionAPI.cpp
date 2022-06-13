@@ -40,14 +40,13 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsMeshCollisionAPI));
 
 /* virtual */
-UsdPhysicsMeshCollisionAPI::~UsdPhysicsMeshCollisionAPI()
-{}
+UsdPhysicsMeshCollisionAPI::~UsdPhysicsMeshCollisionAPI() {}
 
 /* static */
-UsdPhysicsMeshCollisionAPI UsdPhysicsMeshCollisionAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsMeshCollisionAPI UsdPhysicsMeshCollisionAPI::Get(const UsdStagePtr &stage,
+                                                           const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsMeshCollisionAPI();
   }
@@ -70,8 +69,7 @@ bool UsdPhysicsMeshCollisionAPI::CanApply(const UsdPrim &prim, std::string *whyN
 /* static */
 UsdPhysicsMeshCollisionAPI UsdPhysicsMeshCollisionAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdPhysicsMeshCollisionAPI>())
-  {
+  if (prim.ApplyAPI<UsdPhysicsMeshCollisionAPI>()) {
     return UsdPhysicsMeshCollisionAPI(prim);
   }
   return UsdPhysicsMeshCollisionAPI();
@@ -132,8 +130,9 @@ const TfTokenVector &UsdPhysicsMeshCollisionAPI::GetSchemaAttributeNames(bool in
   static TfTokenVector localNames = {
     UsdPhysicsTokens->physicsApproximation,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

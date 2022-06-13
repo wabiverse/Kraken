@@ -61,13 +61,10 @@ TF_REGISTRY_FUNCTION(TfEnum)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-PcpErrorBase::PcpErrorBase(TfEnum errorType)
-  : errorType(errorType)
-{}
+PcpErrorBase::PcpErrorBase(TfEnum errorType) : errorType(errorType) {}
 
 // virtual
-PcpErrorBase::~PcpErrorBase()
-{}
+PcpErrorBase::~PcpErrorBase() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -76,12 +73,9 @@ PcpErrorArcCyclePtr PcpErrorArcCycle::New()
   return PcpErrorArcCyclePtr(new PcpErrorArcCycle);
 }
 
-PcpErrorArcCycle::PcpErrorArcCycle()
-  : PcpErrorBase(PcpErrorType_ArcCycle)
-{}
+PcpErrorArcCycle::PcpErrorArcCycle() : PcpErrorBase(PcpErrorType_ArcCycle) {}
 
-PcpErrorArcCycle::~PcpErrorArcCycle()
-{}
+PcpErrorArcCycle::~PcpErrorArcCycle() {}
 
 // virtual
 std::string PcpErrorArcCycle::ToString() const
@@ -90,15 +84,11 @@ std::string PcpErrorArcCycle::ToString() const
     return std::string();
 
   std::string msg = "Cycle detected:\n";
-  for (size_t i = 0; i < cycle.size(); i++)
-  {
+  for (size_t i = 0; i < cycle.size(); i++) {
     const PcpSiteTrackerSegment &segment = cycle[i];
-    if (i > 0)
-    {
-      if (i + 1 < cycle.size())
-      {
-        switch (segment.arcType)
-        {
+    if (i > 0) {
+      if (i + 1 < cycle.size()) {
+        switch (segment.arcType) {
           case PcpArcTypeInherit:
             msg += "inherits from:\n";
             break;
@@ -118,11 +108,9 @@ std::string PcpErrorArcCycle::ToString() const
             msg += "refers to:\n";
             break;
         }
-      } else
-      {
+      } else {
         msg += "CANNOT ";
-        switch (segment.arcType)
-        {
+        switch (segment.arcType) {
           case PcpArcTypeInherit:
             msg += "inherit from:\n";
             break;
@@ -162,15 +150,13 @@ PcpErrorArcPermissionDenied::PcpErrorArcPermissionDenied()
   : PcpErrorBase(PcpErrorType_ArcPermissionDenied)
 {}
 
-PcpErrorArcPermissionDenied::~PcpErrorArcPermissionDenied()
-{}
+PcpErrorArcPermissionDenied::~PcpErrorArcPermissionDenied() {}
 
 // virtual
 std::string PcpErrorArcPermissionDenied::ToString() const
 {
   std::string msg = TfStringPrintf("%s\nCANNOT ", TfStringify(site).c_str());
-  switch (arcType)
-  {
+  switch (arcType) {
     case PcpArcTypeInherit:
       msg += "inherit from:\n";
       break;
@@ -205,8 +191,7 @@ PcpErrorCapacityExceeded::PcpErrorCapacityExceeded(PcpErrorType errorType)
   : PcpErrorBase(errorType)
 {}
 
-PcpErrorCapacityExceeded::~PcpErrorCapacityExceeded()
-{}
+PcpErrorCapacityExceeded::~PcpErrorCapacityExceeded() {}
 
 // virtual
 std::string PcpErrorCapacityExceeded::ToString() const
@@ -221,8 +206,7 @@ PcpErrorInconsistentPropertyBase::PcpErrorInconsistentPropertyBase(TfEnum errorT
 {}
 
 // virtual
-PcpErrorInconsistentPropertyBase::~PcpErrorInconsistentPropertyBase()
-{}
+PcpErrorInconsistentPropertyBase::~PcpErrorInconsistentPropertyBase() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -235,8 +219,7 @@ PcpErrorInconsistentPropertyType::PcpErrorInconsistentPropertyType()
   : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentPropertyType)
 {}
 
-PcpErrorInconsistentPropertyType::~PcpErrorInconsistentPropertyType()
-{}
+PcpErrorInconsistentPropertyType::~PcpErrorInconsistentPropertyType() {}
 
 // virtual
 std::string PcpErrorInconsistentPropertyType::ToString() const
@@ -266,8 +249,7 @@ PcpErrorInconsistentAttributeType::PcpErrorInconsistentAttributeType()
   : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentAttributeType)
 {}
 
-PcpErrorInconsistentAttributeType::~PcpErrorInconsistentAttributeType()
-{}
+PcpErrorInconsistentAttributeType::~PcpErrorInconsistentAttributeType() {}
 
 // virtual
 std::string PcpErrorInconsistentAttributeType::ToString() const
@@ -297,8 +279,7 @@ PcpErrorInconsistentAttributeVariability::PcpErrorInconsistentAttributeVariabili
   : PcpErrorInconsistentPropertyBase(PcpErrorType_InconsistentAttributeVariability)
 {}
 
-PcpErrorInconsistentAttributeVariability::~PcpErrorInconsistentAttributeVariability()
-{}
+PcpErrorInconsistentAttributeVariability::~PcpErrorInconsistentAttributeVariability() {}
 
 // virtual
 std::string PcpErrorInconsistentAttributeVariability::ToString() const
@@ -328,8 +309,7 @@ PcpErrorInternalAssetPath::PcpErrorInternalAssetPath()
   : PcpErrorBase(PcpErrorType_InternalAssetPath)
 {}
 
-PcpErrorInternalAssetPath::~PcpErrorInternalAssetPath()
-{}
+PcpErrorInternalAssetPath::~PcpErrorInternalAssetPath() {}
 
 // virtual
 std::string PcpErrorInternalAssetPath::ToString() const
@@ -349,12 +329,9 @@ PcpErrorInvalidPrimPathPtr PcpErrorInvalidPrimPath::New()
   return PcpErrorInvalidPrimPathPtr(new PcpErrorInvalidPrimPath);
 }
 
-PcpErrorInvalidPrimPath::PcpErrorInvalidPrimPath()
-  : PcpErrorBase(PcpErrorType_InvalidPrimPath)
-{}
+PcpErrorInvalidPrimPath::PcpErrorInvalidPrimPath() : PcpErrorBase(PcpErrorType_InvalidPrimPath) {}
 
-PcpErrorInvalidPrimPath::~PcpErrorInvalidPrimPath()
-{}
+PcpErrorInvalidPrimPath::~PcpErrorInvalidPrimPath() {}
 
 // virtual
 std::string PcpErrorInvalidPrimPath::ToString() const
@@ -374,8 +351,7 @@ PcpErrorInvalidAssetPathBase::PcpErrorInvalidAssetPathBase(TfEnum errorType)
 {}
 
 // virtual
-PcpErrorInvalidAssetPathBase::~PcpErrorInvalidAssetPathBase()
-{}
+PcpErrorInvalidAssetPathBase::~PcpErrorInvalidAssetPathBase() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -388,8 +364,7 @@ PcpErrorInvalidAssetPath::PcpErrorInvalidAssetPath()
   : PcpErrorInvalidAssetPathBase(PcpErrorType_InvalidAssetPath)
 {}
 
-PcpErrorInvalidAssetPath::~PcpErrorInvalidAssetPath()
-{}
+PcpErrorInvalidAssetPath::~PcpErrorInvalidAssetPath() {}
 
 // virtual
 std::string PcpErrorInvalidAssetPath::ToString() const
@@ -413,8 +388,7 @@ PcpErrorMutedAssetPath::PcpErrorMutedAssetPath()
   : PcpErrorInvalidAssetPathBase(PcpErrorType_MutedAssetPath)
 {}
 
-PcpErrorMutedAssetPath::~PcpErrorMutedAssetPath()
-{}
+PcpErrorMutedAssetPath::~PcpErrorMutedAssetPath() {}
 
 // virtual
 std::string PcpErrorMutedAssetPath::ToString() const
@@ -427,12 +401,9 @@ std::string PcpErrorMutedAssetPath::ToString() const
 
 ///////////////////////////////////////////////////////////////////////////////
 
-PcpErrorTargetPathBase::PcpErrorTargetPathBase(TfEnum errorType)
-  : PcpErrorBase(errorType)
-{}
+PcpErrorTargetPathBase::PcpErrorTargetPathBase(TfEnum errorType) : PcpErrorBase(errorType) {}
 
-PcpErrorTargetPathBase::~PcpErrorTargetPathBase()
-{}
+PcpErrorTargetPathBase::~PcpErrorTargetPathBase() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -445,8 +416,7 @@ PcpErrorInvalidInstanceTargetPath::PcpErrorInvalidInstanceTargetPath()
   : PcpErrorTargetPathBase(PcpErrorType_InvalidInstanceTargetPath)
 {}
 
-PcpErrorInvalidInstanceTargetPath::~PcpErrorInvalidInstanceTargetPath()
-{}
+PcpErrorInvalidInstanceTargetPath::~PcpErrorInvalidInstanceTargetPath() {}
 
 // virtual
 std::string PcpErrorInvalidInstanceTargetPath::ToString() const
@@ -472,8 +442,7 @@ PcpErrorInvalidExternalTargetPath::PcpErrorInvalidExternalTargetPath()
   : PcpErrorTargetPathBase(PcpErrorType_InvalidExternalTargetPath)
 {}
 
-PcpErrorInvalidExternalTargetPath::~PcpErrorInvalidExternalTargetPath()
-{}
+PcpErrorInvalidExternalTargetPath::~PcpErrorInvalidExternalTargetPath() {}
 
 // virtual
 std::string PcpErrorInvalidExternalTargetPath::ToString() const
@@ -502,8 +471,7 @@ PcpErrorInvalidTargetPath::PcpErrorInvalidTargetPath()
   : PcpErrorTargetPathBase(PcpErrorType_InvalidTargetPath)
 {}
 
-PcpErrorInvalidTargetPath::~PcpErrorInvalidTargetPath()
-{}
+PcpErrorInvalidTargetPath::~PcpErrorInvalidTargetPath() {}
 
 // virtual
 std::string PcpErrorInvalidTargetPath::ToString() const
@@ -530,8 +498,7 @@ PcpErrorInvalidSublayerOffset::PcpErrorInvalidSublayerOffset()
   : PcpErrorBase(PcpErrorType_InvalidSublayerOffset)
 {}
 
-PcpErrorInvalidSublayerOffset::~PcpErrorInvalidSublayerOffset()
-{}
+PcpErrorInvalidSublayerOffset::~PcpErrorInvalidSublayerOffset() {}
 
 // virtual
 std::string PcpErrorInvalidSublayerOffset::ToString() const
@@ -555,8 +522,7 @@ PcpErrorInvalidReferenceOffset::PcpErrorInvalidReferenceOffset()
   : PcpErrorBase(PcpErrorType_InvalidReferenceOffset)
 {}
 
-PcpErrorInvalidReferenceOffset::~PcpErrorInvalidReferenceOffset()
-{}
+PcpErrorInvalidReferenceOffset::~PcpErrorInvalidReferenceOffset() {}
 
 // virtual
 std::string PcpErrorInvalidReferenceOffset::ToString() const
@@ -580,15 +546,13 @@ PcpErrorInvalidSublayerOwnership::PcpErrorInvalidSublayerOwnership()
   : PcpErrorBase(PcpErrorType_InvalidSublayerOwnership)
 {}
 
-PcpErrorInvalidSublayerOwnership::~PcpErrorInvalidSublayerOwnership()
-{}
+PcpErrorInvalidSublayerOwnership::~PcpErrorInvalidSublayerOwnership() {}
 
 // virtual
 std::string PcpErrorInvalidSublayerOwnership::ToString() const
 {
   std::vector<std::string> sublayerStrVec;
-  TF_FOR_ALL (sublayer, sublayers)
-  {
+  TF_FOR_ALL (sublayer, sublayers) {
     sublayerStrVec.push_back("@" + (*sublayer)->GetIdentifier() + "@");
   }
   return TfStringPrintf(
@@ -610,8 +574,7 @@ PcpErrorInvalidSublayerPath::PcpErrorInvalidSublayerPath()
   : PcpErrorBase(PcpErrorType_InvalidSublayerPath)
 {}
 
-PcpErrorInvalidSublayerPath::~PcpErrorInvalidSublayerPath()
-{}
+PcpErrorInvalidSublayerPath::~PcpErrorInvalidSublayerPath() {}
 
 // virtual
 std::string PcpErrorInvalidSublayerPath::ToString() const
@@ -636,8 +599,7 @@ PcpErrorInvalidVariantSelection::PcpErrorInvalidVariantSelection()
   : PcpErrorBase(PcpErrorType_InvalidVariantSelection)
 {}
 
-PcpErrorInvalidVariantSelection::~PcpErrorInvalidVariantSelection()
-{}
+PcpErrorInvalidVariantSelection::~PcpErrorInvalidVariantSelection() {}
 
 // virtual
 std::string PcpErrorInvalidVariantSelection::ToString() const
@@ -662,8 +624,7 @@ PcpErrorOpinionAtRelocationSource::PcpErrorOpinionAtRelocationSource()
   : PcpErrorBase(PcpErrorType_OpinionAtRelocationSource)
 {}
 
-PcpErrorOpinionAtRelocationSource::~PcpErrorOpinionAtRelocationSource()
-{}
+PcpErrorOpinionAtRelocationSource::~PcpErrorOpinionAtRelocationSource() {}
 
 // virtual
 std::string PcpErrorOpinionAtRelocationSource::ToString() const
@@ -687,8 +648,7 @@ PcpErrorPrimPermissionDenied::PcpErrorPrimPermissionDenied()
   : PcpErrorBase(PcpErrorType_PrimPermissionDenied)
 {}
 
-PcpErrorPrimPermissionDenied::~PcpErrorPrimPermissionDenied()
-{}
+PcpErrorPrimPermissionDenied::~PcpErrorPrimPermissionDenied() {}
 
 // virtual
 std::string PcpErrorPrimPermissionDenied::ToString() const
@@ -713,8 +673,7 @@ PcpErrorPropertyPermissionDenied::PcpErrorPropertyPermissionDenied()
   : PcpErrorBase(PcpErrorType_PropertyPermissionDenied)
 {}
 
-PcpErrorPropertyPermissionDenied::~PcpErrorPropertyPermissionDenied()
-{}
+PcpErrorPropertyPermissionDenied::~PcpErrorPropertyPermissionDenied() {}
 
 // virtual
 std::string PcpErrorPropertyPermissionDenied::ToString() const
@@ -735,12 +694,9 @@ PcpErrorSublayerCyclePtr PcpErrorSublayerCycle::New()
   return PcpErrorSublayerCyclePtr(new PcpErrorSublayerCycle);
 }
 
-PcpErrorSublayerCycle::PcpErrorSublayerCycle()
-  : PcpErrorBase(PcpErrorType_SublayerCycle)
-{}
+PcpErrorSublayerCycle::PcpErrorSublayerCycle() : PcpErrorBase(PcpErrorType_SublayerCycle) {}
 
-PcpErrorSublayerCycle::~PcpErrorSublayerCycle()
-{}
+PcpErrorSublayerCycle::~PcpErrorSublayerCycle() {}
 
 // virtual
 std::string PcpErrorSublayerCycle::ToString() const
@@ -764,8 +720,7 @@ PcpErrorTargetPermissionDenied::PcpErrorTargetPermissionDenied()
   : PcpErrorTargetPathBase(PcpErrorType_TargetPermissionDenied)
 {}
 
-PcpErrorTargetPermissionDenied::~PcpErrorTargetPermissionDenied()
-{}
+PcpErrorTargetPermissionDenied::~PcpErrorTargetPermissionDenied() {}
 
 // virtual
 std::string PcpErrorTargetPermissionDenied::ToString() const
@@ -793,8 +748,7 @@ PcpErrorUnresolvedPrimPath::PcpErrorUnresolvedPrimPath()
   : PcpErrorBase(PcpErrorType_UnresolvedPrimPath)
 {}
 
-PcpErrorUnresolvedPrimPath::~PcpErrorUnresolvedPrimPath()
-{}
+PcpErrorUnresolvedPrimPath::~PcpErrorUnresolvedPrimPath() {}
 
 // virtual
 std::string PcpErrorUnresolvedPrimPath::ToString() const
@@ -809,8 +763,7 @@ std::string PcpErrorUnresolvedPrimPath::ToString() const
 
 void PcpRaiseErrors(const PcpErrorVector &errors)
 {
-  TF_FOR_ALL (err, errors)
-  {
+  TF_FOR_ALL (err, errors) {
     TF_RUNTIME_ERROR("%s", (*err)->ToString().c_str());
   }
 }

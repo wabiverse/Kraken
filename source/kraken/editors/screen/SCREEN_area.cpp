@@ -64,8 +64,7 @@ struct RegionTypeAlignInfo
 
 void ED_area_do_refresh(kContext *C, ScrArea *area)
 {
-  if (area->type && area->type->refresh)
-  {
+  if (area->type && area->type->refresh) {
     area->type->refresh(C, area);
   }
   area->do_refresh = false;
@@ -73,17 +72,14 @@ void ED_area_do_refresh(kContext *C, ScrArea *area)
 
 static void region_align_info_from_area(ScrArea *area, RegionTypeAlignInfo *r_align_info)
 {
-  for (int index = 0; index < RGN_TYPE_LEN; index++)
-  {
+  for (int index = 0; index < RGN_TYPE_LEN; index++) {
     r_align_info->by_type[index].alignment = -1;
     r_align_info->by_type[index].hidden = true;
   }
 
-  UNIVERSE_FOR_ALL (region, area->regions)
-  {
+  UNIVERSE_FOR_ALL (region, area->regions) {
     const int index = region->regiontype;
-    if ((uint)index < RGN_TYPE_LEN)
-    {
+    if ((uint)index < RGN_TYPE_LEN) {
       r_align_info->by_type[index].alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
       r_align_info->by_type[index].hidden = (region->flag & RGN_FLAG_HIDDEN) != 0;
     }
@@ -97,32 +93,28 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
 
   TfToken spacetype = FormFactory(area->spacetype);
 
-  if (spacetype != type)
-  {
+  if (spacetype != type) {
     SpaceLink *slold = area->spacedata.at(0);
 
     // void *area_exit = area->type ? area->type->exit : NULL;
 
     bool sync_header_alignment = false;
     RegionTypeAlignInfo region_align_info[RGN_TYPE_LEN];
-    if ((slold != NULL) && (slold->link_flag & SPACE_FLAG_TYPE_TEMPORARY) == 0)
-    {
+    if ((slold != NULL) && (slold->link_flag & SPACE_FLAG_TYPE_TEMPORARY) == 0) {
       region_align_info_from_area(area, region_align_info);
       sync_header_alignment = true;
     }
 
     /* in some cases (opening temp space) we don't want to
      * call area exit callback, so we temporarily unset it */
-    if (skip_region_exit && area->type)
-    {
+    if (skip_region_exit && area->type) {
       area->type->exit = NULL;
     }
 
     ED_area_exit(C, area);
 
     /* restore old area exit callback */
-    if (skip_region_exit && area->type)
-    {
+    if (skip_region_exit && area->type) {
       // area->type->exit = area_exit;
     }
 
@@ -137,28 +129,23 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
 
     /* check previously stored space */
     SpaceLink *sl = POINTER_ZERO;
-    UNIVERSE_FOR_ALL (sl_iter, area->spacedata)
-    {
-      if (sl_iter->spacetype == type.Hash())
-      {
+    UNIVERSE_FOR_ALL (sl_iter, area->spacedata) {
+      if (sl_iter->spacetype == type.Hash()) {
         sl = sl_iter;
         break;
       }
     }
 
-    if (sl && sl->regions.empty())
-    {
+    if (sl && sl->regions.empty()) {
       st->free(sl);
       // area->spacedata.erase(sl);
-      if (slold == sl)
-      {
+      if (slold == sl) {
         slold = NULL;
       }
       sl = NULL;
     }
 
-    if (sl)
-    {
+    if (sl) {
       /* swap regions */
       slold->regions = area->regions;
       area->regions = sl->regions;
@@ -172,19 +159,16 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
 
       // area->spacedata.erase(sl);
       area->spacedata.insert(area->spacedata.begin(), sl);
-    } else
-    {
+    } else {
       /* new space */
-      if (st)
-      {
+      if (st) {
         /* Don't get scene from context here which may depend on space-data. */
         Scene *scene = CTX_data_scene(C);
         sl = st->create(area, scene);
         area->spacedata.insert(area->spacedata.begin(), sl);
 
         /* swap regions */
-        if (slold)
-        {
+        if (slold) {
           slold->regions = area->regions;
         }
         area->regions = sl->regions;
@@ -193,8 +177,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
     }
 
     /* Sync header alignment. */
-    if (sync_header_alignment)
-    {
+    if (sync_header_alignment) {
       // region_align_info_to_area(area, region_align_info);
     }
 

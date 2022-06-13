@@ -55,28 +55,24 @@ namespace
   {
 #ifdef WIN32
     char appDataPath[MAX_PATH];
-    if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, appDataPath)))
-    {
+    if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, appDataPath))) {
       return appDataPath;
     }
 #elif defined(__linux__)
     auto homeEnv = ArchGetEnv("XDG_DATA_HOME");
-    if (!homeEnv.empty() && homeEnv[0] == '/')
-    {
+    if (!homeEnv.empty() && homeEnv[0] == '/') {
       return homeEnv;
     }
 
     int uid = getuid();
     homeEnv = ArchGetEnv("HOME");
-    if (uid != 0 && !homeEnv.empty())
-    {
+    if (uid != 0 && !homeEnv.empty()) {
       return homeEnv + "/.config";
     }
 
 #elif defined(__APPLE__)
     auto homeEnv = ArchGetEnv("HOME");
-    if (!homeEnv.empty() && homeEnv[0] == '/')
-    {
+    if (!homeEnv.empty() && homeEnv[0] == '/') {
       return homeEnv + "/Library/Application Support";
     }
 #else
@@ -90,17 +86,15 @@ namespace
   {
     // Return HDRPR_CACHE_PATH_OVERRIDE if provided
     auto overriddenCacheDir = TfGetEnvSetting(HDRPR_CACHE_PATH_OVERRIDE);
-    if (!overriddenCacheDir.empty())
-    {
+    if (!overriddenCacheDir.empty()) {
       overriddenCacheDir = overriddenCacheDir + ARCH_PATH_SEP + cacheType;
 
       bool directoryExists = ArchDirectoryExists(overriddenCacheDir.c_str());
-      if (!directoryExists)
-      {
+      if (!directoryExists) {
         bool succeeded = ArchCreateDirectory(overriddenCacheDir.c_str());
-        if (!succeeded)
-        {
-          TF_RUNTIME_ERROR("Can't create shader cache directory at: %s", overriddenCacheDir.c_str());
+        if (!succeeded) {
+          TF_RUNTIME_ERROR("Can't create shader cache directory at: %s",
+                           overriddenCacheDir.c_str());
         }
       }
 
@@ -108,8 +102,7 @@ namespace
     }
 
     auto cacheDir = ArchGetEnv("RPR");
-    if (cacheDir.empty())
-    {
+    if (cacheDir.empty()) {
       // Fallback to AppData
       cacheDir = GetAppDataPath() + (ARCH_PATH_SEP "hdRpr");
       ArchCreateDirectory(cacheDir.c_str());
@@ -130,24 +123,19 @@ namespace
     bool setDefaultValue = false;
 
     auto it = json->find(propertyName);
-    if (it == json->end())
-    {
+    if (it == json->end()) {
       setDefaultValue = true;
-    } else
-    {
-      try
-      {
+    } else {
+      try {
         it->get<T>();
       }
-      catch (json::exception &e)
-      {
+      catch (json::exception &e) {
         TF_UNUSED(e);
         setDefaultValue = true;
       }
     }
 
-    if (setDefaultValue)
-    {
+    if (setDefaultValue) {
       (*json)[propertyName] = defaultValue;
     }
     return setDefaultValue;
@@ -157,15 +145,12 @@ namespace
   bool GetJsonProperty(const char *propertyName, json const &json, T *property)
   {
     auto it = json.find(propertyName);
-    if (it != json.end())
-    {
-      try
-      {
+    if (it != json.end()) {
+      try {
         *property = it->get<T>();
         return true;
       }
-      catch (json::exception &e)
-      {
+      catch (json::exception &e) {
         TF_UNUSED(e);
       }
     }
@@ -197,30 +182,25 @@ struct RprUsdConfig::Impl
   json cfg;
 };
 
-RprUsdConfig::RprUsdConfig()
-  : m_impl(new Impl)
+RprUsdConfig::RprUsdConfig() : m_impl(new Impl)
 {
   auto configDir = ArchGetEnv("RPRUSD_CONFIG_PATH");
-  if (configDir.empty())
-  {
+  if (configDir.empty()) {
     configDir = GetAppDataPath() + (ARCH_PATH_SEP "hdRpr");
   }
-  if (!configDir.empty())
-  {
+  if (!configDir.empty()) {
     ArchCreateDirectory(configDir.c_str());
   }
   m_filepath = configDir + (ARCH_PATH_SEP "cfg.json");
 
   std::ifstream cfgFile(m_filepath);
-  if (cfgFile.is_open())
-  {
+  if (cfgFile.is_open()) {
     cfgFile >> m_impl->cfg;
   }
 
   bool configDirty = false;
   configDirty |= InitJsonProperty(kShowRestartRequiredMessage, true, &m_impl->cfg);
-  if (configDirty)
-  {
+  if (configDirty) {
     Save();
   }
 }
@@ -228,8 +208,7 @@ RprUsdConfig::RprUsdConfig()
 void RprUsdConfig::Save()
 {
   std::ofstream cfgFile(m_filepath);
-  if (!cfgFile.is_open())
-  {
+  if (!cfgFile.is_open()) {
     TF_RUNTIME_ERROR("Failed to save RprUsd config: cannot open file \"%s\"", m_filepath.c_str());
     return;
   }
@@ -239,8 +218,7 @@ void RprUsdConfig::Save()
 
 void RprUsdConfig::SetRestartWarning(bool newValue)
 {
-  if (m_impl->cfg[kShowRestartRequiredMessage] != newValue)
-  {
+  if (m_impl->cfg[kShowRestartRequiredMessage] != newValue) {
     m_impl->cfg[kShowRestartRequiredMessage] = newValue;
     Save();
   }
@@ -252,8 +230,7 @@ bool RprUsdConfig::IsRestartWarningEnabled() const
 
 void RprUsdConfig::SetTextureCacheDir(std::string const &newValue)
 {
-  if (m_impl->cfg[kTextureCacheDir] != newValue)
-  {
+  if (m_impl->cfg[kTextureCacheDir] != newValue) {
     m_impl->cfg[kTextureCacheDir] = newValue;
     Save();
   }
@@ -261,8 +238,7 @@ void RprUsdConfig::SetTextureCacheDir(std::string const &newValue)
 std::string RprUsdConfig::GetTextureCacheDir() const
 {
   std::string ret;
-  if (!GetJsonProperty(kTextureCacheDir, m_impl->cfg, &ret))
-  {
+  if (!GetJsonProperty(kTextureCacheDir, m_impl->cfg, &ret)) {
     ret = GetDefaultCacheDir("texture");
   }
   return ret;
@@ -270,8 +246,7 @@ std::string RprUsdConfig::GetTextureCacheDir() const
 
 void RprUsdConfig::SetKernelCacheDir(std::string const &newValue)
 {
-  if (m_impl->cfg[kKernelCacheDir] != newValue)
-  {
+  if (m_impl->cfg[kKernelCacheDir] != newValue) {
     m_impl->cfg[kKernelCacheDir] = newValue;
     Save();
   }
@@ -279,8 +254,7 @@ void RprUsdConfig::SetKernelCacheDir(std::string const &newValue)
 std::string RprUsdConfig::GetKernelCacheDir() const
 {
   std::string ret;
-  if (!GetJsonProperty(kKernelCacheDir, m_impl->cfg, &ret))
-  {
+  if (!GetJsonProperty(kKernelCacheDir, m_impl->cfg, &ret)) {
     ret = GetDefaultCacheDir("kernel");
   }
   return ret;

@@ -49,8 +49,7 @@ using PythonKey = std::string;
 
 static double GetElapsedSeconds(TraceEvent::TimeStamp begin, TraceEvent::TimeStamp end)
 {
-  if (begin > end)
-  {
+  if (begin > end) {
     TF_CODING_ERROR("Invalid interval: begin=%zu, end=%zu", begin, end);
     return 0.0;
   }
@@ -101,7 +100,9 @@ void wrapCollector()
     .def("Clear", &This::Clear)
 
     .add_property("enabled", IsEnabledHelper, &This::SetEnabled)
-    .add_property("pythonTracingEnabled", &This::IsPythonTracingEnabled, &This::SetPythonTracingEnabled);
+    .add_property("pythonTracingEnabled",
+                  &This::IsPythonTracingEnabled,
+                  &This::SetPythonTracingEnabled);
 
   def("GetElapsedSeconds", GetElapsedSeconds);
 };

@@ -54,7 +54,8 @@ namespace
     return TfCreateRefPtr(new _NdrFilesystemDiscoveryPlugin());
   }
 
-  static _NdrFilesystemDiscoveryPluginRefPtr NewWithFilter(_NdrFilesystemDiscoveryPlugin::Filter filter)
+  static _NdrFilesystemDiscoveryPluginRefPtr NewWithFilter(
+    _NdrFilesystemDiscoveryPlugin::Filter filter)
   {
     return TfCreateRefPtr(new _NdrFilesystemDiscoveryPlugin(std::move(filter)));
   }
@@ -65,6 +66,7 @@ namespace
   class _Context : public NdrDiscoveryPluginContext
   {
    public:
+
     ~_Context() override = default;
 
     TfToken GetSourceType(const TfToken &discoveryType) const override
@@ -106,7 +108,9 @@ void wrapFilesystemDiscovery()
               .def(TfPyRefAndWeakPtr())
               .def(TfMakePyConstructor(New))
               .def(TfMakePyConstructor(NewWithFilter))
-              .def("DiscoverNodes", &This::DiscoverNodes, return_value_policy<TfPySequenceToList>())
+              .def("DiscoverNodes",
+                   &This::DiscoverNodes,
+                   return_value_policy<TfPySequenceToList>())
               .def("GetSearchURIs", &This::GetSearchURIs, copyRefPolicy);
 
   wrapFilesystemDiscoveryContext();

@@ -60,12 +60,10 @@ HdRprimCollection::HdRprimCollection(TfToken const &name,
     _forcedRepr(forcedRepr),
     _materialTag(materialTag)
 {
-  if (!rootPath.IsAbsolutePath())
-  {
+  if (!rootPath.IsAbsolutePath()) {
     TF_CODING_ERROR("Root path must be absolute");
     _rootPaths.push_back(SdfPath::AbsoluteRootPath());
-  } else
-  {
+  } else {
     _rootPaths.push_back(rootPath);
   }
 }
@@ -101,10 +99,8 @@ SdfPathVector const &HdRprimCollection::GetRootPaths() const
 
 void HdRprimCollection::SetRootPaths(SdfPathVector const &rootPaths)
 {
-  TF_FOR_ALL (pit, rootPaths)
-  {
-    if (!pit->IsAbsolutePath())
-    {
+  TF_FOR_ALL (pit, rootPaths) {
+    if (!pit->IsAbsolutePath()) {
       TF_CODING_ERROR("Root path must be absolute (<%s>)", pit->GetText());
       return;
     }
@@ -116,8 +112,7 @@ void HdRprimCollection::SetRootPaths(SdfPathVector const &rootPaths)
 
 void HdRprimCollection::SetRootPath(SdfPath const &rootPath)
 {
-  if (!rootPath.IsAbsolutePath())
-  {
+  if (!rootPath.IsAbsolutePath()) {
     TF_CODING_ERROR("Root path must be absolute");
     return;
   }
@@ -127,10 +122,8 @@ void HdRprimCollection::SetRootPath(SdfPath const &rootPath)
 
 void HdRprimCollection::SetExcludePaths(SdfPathVector const &excludePaths)
 {
-  TF_FOR_ALL (pit, excludePaths)
-  {
-    if (!pit->IsAbsolutePath())
-    {
+  TF_FOR_ALL (pit, excludePaths) {
+    if (!pit->IsAbsolutePath()) {
       TF_CODING_ERROR("Exclude path must be absolute (<%s>)", pit->GetText());
       return;
     }
@@ -162,9 +155,9 @@ size_t HdRprimCollection::ComputeHash() const
 
 bool HdRprimCollection::operator==(HdRprimCollection const &other) const
 {
-  return _name == other._name && _reprSelector == other._reprSelector && _forcedRepr == other._forcedRepr &&
-         _rootPaths == other._rootPaths && _excludePaths == other._excludePaths &&
-         _materialTag == other._materialTag;
+  return _name == other._name && _reprSelector == other._reprSelector &&
+         _forcedRepr == other._forcedRepr && _rootPaths == other._rootPaths &&
+         _excludePaths == other._excludePaths && _materialTag == other._materialTag;
 }
 
 bool HdRprimCollection::operator!=(HdRprimCollection const &other) const
@@ -178,7 +171,8 @@ bool HdRprimCollection::operator!=(HdRprimCollection const &other) const
 
 std::ostream &operator<<(std::ostream &out, HdRprimCollection const &v)
 {
-  out << "name: " << v._name << ", repr sel: " << v._reprSelector << ", mat tag: " << v._materialTag;
+  out << "name: " << v._name << ", repr sel: " << v._reprSelector
+      << ", mat tag: " << v._materialTag;
   return out;
 }
 

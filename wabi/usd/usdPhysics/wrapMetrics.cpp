@@ -38,8 +38,12 @@ WABI_NAMESPACE_USING
 void wrapMetrics()
 {
   def("GetStageKilogramsPerUnit", UsdPhysicsGetStageKilogramsPerUnit, arg("stage"));
-  def("StageHasAuthoredKilogramsPerUnit", UsdPhysicsStageHasAuthoredKilogramsPerUnit, arg("stage"));
-  def("SetStageKilogramsPerUnit", UsdPhysicsSetStageKilogramsPerUnit, (arg("stage"), arg("metersPerUnit")));
+  def("StageHasAuthoredKilogramsPerUnit",
+      UsdPhysicsStageHasAuthoredKilogramsPerUnit,
+      arg("stage"));
+  def("SetStageKilogramsPerUnit",
+      UsdPhysicsSetStageKilogramsPerUnit,
+      (arg("stage"), arg("metersPerUnit")));
   def("MassUnitsAre",
       UsdPhysicsMassUnitsAre,
       (arg("authoredUnits"), arg("standardUnits"), arg("epsilon") = 1e-5));

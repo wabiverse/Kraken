@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRiPxrRodLightFilter::~UsdRiPxrRodLightFilter()
-{}
+UsdRiPxrRodLightFilter::~UsdRiPxrRodLightFilter() {}
 
 /* static */
 UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrRodLightFilter();
   }
@@ -66,11 +64,11 @@ UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Get(const UsdStagePtr &stage, con
 }
 
 /* static */
-UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Define(const UsdStagePtr &stage,
+                                                      const SdfPath &path)
 {
   static TfToken usdPrimTypeName("wabiRodLightFilter");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRiPxrRodLightFilter();
   }
@@ -108,7 +106,8 @@ UsdAttribute UsdRiPxrRodLightFilter::GetWidthAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->width);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateWidthAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateWidthAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->width,
                                     SdfValueTypeNames->Float,
@@ -123,7 +122,8 @@ UsdAttribute UsdRiPxrRodLightFilter::GetHeightAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->height);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateHeightAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateHeightAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->height,
                                     SdfValueTypeNames->Float,
@@ -138,7 +138,8 @@ UsdAttribute UsdRiPxrRodLightFilter::GetDepthAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->depth);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateDepthAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateDepthAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->depth,
                                     SdfValueTypeNames->Float,
@@ -153,7 +154,8 @@ UsdAttribute UsdRiPxrRodLightFilter::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->radius);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateRadiusAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->radius,
                                     SdfValueTypeNames->Float,
@@ -440,7 +442,8 @@ UsdAttribute UsdRiPxrRodLightFilter::GetFalloffAttr() const
   return GetPrim().GetAttribute(UsdRiTokens->falloff);
 }
 
-UsdAttribute UsdRiPxrRodLightFilter::CreateFalloffAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRiPxrRodLightFilter::CreateFalloffAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRiTokens->falloff,
                                     SdfValueTypeNames->Int,

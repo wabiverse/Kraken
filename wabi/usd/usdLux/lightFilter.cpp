@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdLuxLightFilter::~UsdLuxLightFilter()
-{}
+UsdLuxLightFilter::~UsdLuxLightFilter() {}
 
 /* static */
 UsdLuxLightFilter UsdLuxLightFilter::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxLightFilter();
   }
@@ -69,8 +67,7 @@ UsdLuxLightFilter UsdLuxLightFilter::Get(const UsdStagePtr &stage, const SdfPath
 UsdLuxLightFilter UsdLuxLightFilter::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("LightFilter");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxLightFilter();
   }
@@ -122,8 +119,9 @@ const TfTokenVector &UsdLuxLightFilter::GetSchemaAttributeNames(bool includeInhe
   static TfTokenVector localNames = {
     UsdLuxTokens->collectionFilterLinkIncludeRoot,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomXformable::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -153,7 +151,10 @@ class UsdLuxLightFilter_ConnectableAPIBehavior : public UsdShadeConnectableAPIBe
                                const UsdAttribute &source,
                                std::string *reason) override
   {
-    return _CanConnectInputToSource(input, source, reason, ConnectableNodeTypes::DerivedContainerNodes);
+    return _CanConnectInputToSource(input,
+                                    source,
+                                    reason,
+                                    ConnectableNodeTypes::DerivedContainerNodes);
   }
 
   bool IsContainer() const
@@ -170,7 +171,8 @@ TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
 {
   // UsdLuxLightFilter prims are connectable, with special behavior requiring
   // connection source to be encapsulated under the light.
-  UsdShadeRegisterConnectableAPIBehavior<UsdLuxLightFilter, UsdLuxLightFilter_ConnectableAPIBehavior>();
+  UsdShadeRegisterConnectableAPIBehavior<UsdLuxLightFilter,
+                                         UsdLuxLightFilter_ConnectableAPIBehavior>();
 }
 
 UsdLuxLightFilter::UsdLuxLightFilter(const UsdShadeConnectableAPI &connectable)
@@ -182,7 +184,8 @@ UsdShadeConnectableAPI UsdLuxLightFilter::ConnectableAPI() const
   return UsdShadeConnectableAPI(GetPrim());
 }
 
-UsdShadeOutput UsdLuxLightFilter::CreateOutput(const TfToken &name, const SdfValueTypeName &typeName)
+UsdShadeOutput UsdLuxLightFilter::CreateOutput(const TfToken &name,
+                                               const SdfValueTypeName &typeName)
 {
   return UsdShadeConnectableAPI(GetPrim()).CreateOutput(name, typeName);
 }

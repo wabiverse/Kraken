@@ -42,23 +42,20 @@ namespace
   {
     std::string capture = TfGetenv("TF_MALLOC_TAG_CAPTURE");
     std::string debug = TfGetenv("TF_MALLOC_TAG_DEBUG");
-    if (!capture.empty() || !debug.empty() || TfGetenvBool("TF_MALLOC_TAG", false))
-    {
+    if (!capture.empty() || !debug.empty() || TfGetenvBool("TF_MALLOC_TAG", false)) {
       std::string errMsg;
 
       /*
        * Only the most basic error output can be done this early...
        */
 
-      if (!TfMallocTag::Initialize(&errMsg))
-      {
+      if (!TfMallocTag::Initialize(&errMsg)) {
         fprintf(stderr,
                 "%s: TF_MALLOC_TAG environment variable set, but\n"
                 "            malloc tag initialization failed: %s\n",
                 ArchGetExecutablePath().c_str(),
                 errMsg.c_str());
-      } else
-      {
+      } else {
         TfMallocTag::SetCapturedMallocStacksMatchList(capture);
         TfMallocTag::SetDebugMatchList(debug);
       }

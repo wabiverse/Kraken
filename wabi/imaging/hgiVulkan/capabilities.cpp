@@ -36,8 +36,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiVulkanCapabilities::HgiVulkanCapabilities(HgiVulkanDevice *device)
-  : supportsTimeStamps(false)
+HgiVulkanCapabilities::HgiVulkanCapabilities(HgiVulkanDevice *device) : supportsTimeStamps(false)
 {
   VkPhysicalDevice physicalDevice = device->GetVulkanPhysicalDevice();
 
@@ -51,8 +50,7 @@ HgiVulkanCapabilities::HgiVulkanCapabilities(HgiVulkanDevice *device)
   uint32_t gfxQueueIndex = device->GetGfxQueueFamilyIndex();
 
   // The last queue we grabbed the properties of is our gfx queue.
-  if (TF_VERIFY(gfxQueueIndex < queues.size()))
-  {
+  if (TF_VERIFY(gfxQueueIndex < queues.size())) {
     VkQueueFamilyProperties const &gfxQueue = queues[gfxQueueIndex];
     supportsTimeStamps = gfxQueue.timestampValidBits > 0;
   }
@@ -77,8 +75,7 @@ HgiVulkanCapabilities::HgiVulkanCapabilities(HgiVulkanDevice *device)
             vkIndexingFeatures.shaderStorageBufferArrayNonUniformIndexing);
 #endif
 
-  if (HgiVulkanIsDebugEnabled())
-  {
+  if (HgiVulkanIsDebugEnabled()) {
     TF_MSG("Selected GPU %s", vkDeviceProperties.deviceName);
   }
 }

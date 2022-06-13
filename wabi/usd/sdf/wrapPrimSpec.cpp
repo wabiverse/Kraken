@@ -126,8 +126,7 @@ namespace
     list keys = d.keys();
     int numKeys = len(d);
 
-    for (int i = 0; i < numKeys; i++)
-    {
+    for (int i = 0; i < numKeys; i++) {
       SdfPath key = extract<SdfPath>(keys[i]);
       SdfPath val = extract<SdfPath>(d[keys[i]]);
 
@@ -159,7 +158,8 @@ namespace
     return result;
   }
 
-  static std::vector<TfToken> _ApplyPropertyOrder(const SdfPrimSpec &self, const std::vector<TfToken> &names)
+  static std::vector<TfToken> _ApplyPropertyOrder(const SdfPrimSpec &self,
+                                                  const std::vector<TfToken> &names)
   {
     std::vector<TfToken> result = names;
     self.ApplyPropertyOrder(&result);
@@ -177,18 +177,22 @@ void wrapPrimSpec()
 
   // Register python conversions for vector<SdfPrimSpecHandle>
   to_python_converter<SdfPrimSpecHandleVector, TfPySequenceToPython<SdfPrimSpecHandleVector>>();
-  TfPyContainerConversions::from_python_sequence<SdfPrimSpecHandleVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    SdfPrimSpecHandleVector,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   // Register python conversions for vector<SdfPrimSpecConstHandle>
-  to_python_converter<SdfPrimSpecConstHandleVector, TfPySequenceToPython<SdfPrimSpecConstHandleVector>>();
-  TfPyContainerConversions::from_python_sequence<SdfPrimSpecConstHandleVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  to_python_converter<SdfPrimSpecConstHandleVector,
+                      TfPySequenceToPython<SdfPrimSpecConstHandleVector>>();
+  TfPyContainerConversions::from_python_sequence<
+    SdfPrimSpecConstHandleVector,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   // Register python coversions for SdfVariantSets
   typedef SdfVariantSetSpecHandleMap::value_type VSSHVT;
   to_python_converter<VSSHVT, TfPyContainerConversions::to_tuple<VSSHVT>>();
-  to_python_converter<SdfVariantSetSpecHandleMap, TfPySequenceToPython<SdfVariantSetSpecHandleMap>>();
+  to_python_converter<SdfVariantSetSpecHandleMap,
+                      TfPySequenceToPython<SdfVariantSetSpecHandleMap>>();
 
   class_<This, SdfHandle<This>, bases<SdfSpec>, boost::noncopyable>("PrimSpec", no_init)
     .def(SdfPySpec())
@@ -435,7 +439,9 @@ void wrapPrimSpec()
                   "value or as a set of list editing operations.  See "
                   "PayloadListEditor for more information.")
 
-    .add_property("hasReferences", &This::HasReferences, "Returns true if this prim has references set.")
+    .add_property("hasReferences",
+                  &This::HasReferences,
+                  "Returns true if this prim has references set.")
 
     .add_property("hasPayloads", &This::HasPayloads, "Returns true if this prim has payloads set.")
 
@@ -453,7 +459,9 @@ void wrapPrimSpec()
 
     .def("CanSetName", &_WrapCanSetName)
 
-    .def("ApplyNameChildrenOrder", &_ApplyNameChildrenOrder, return_value_policy<TfPySequenceToList>())
+    .def("ApplyNameChildrenOrder",
+         &_ApplyNameChildrenOrder,
+         return_value_policy<TfPySequenceToList>())
     .def("ApplyPropertyOrder", &_ApplyPropertyOrder, return_value_policy<TfPySequenceToList>())
 
     .setattr("ActiveKey", SdfFieldKeys->Active)

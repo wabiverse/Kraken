@@ -36,20 +36,19 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
 static SdfPath _ComputeCameraId(HdRenderIndex *renderIndex, SdfPath const &delegateId)
 {
-  if (!renderIndex->IsSprimTypeSupported(HdPrimTypeTokens->camera))
-  {
+  if (!renderIndex->IsSprimTypeSupported(HdPrimTypeTokens->camera)) {
     return SdfPath();
   }
   return delegateId.AppendChild(_tokens->camera);
 }
 
-HdxFreeCameraSceneDelegate::HdxFreeCameraSceneDelegate(HdRenderIndex *renderIndex, SdfPath const &delegateId)
+HdxFreeCameraSceneDelegate::HdxFreeCameraSceneDelegate(HdRenderIndex *renderIndex,
+                                                       SdfPath const &delegateId)
   : HdSceneDelegate(renderIndex, delegateId),
     _cameraId(_ComputeCameraId(renderIndex, delegateId)),
     _policy(CameraUtilFit)
 {
-  if (_cameraId.IsEmpty())
-  {
+  if (_cameraId.IsEmpty()) {
     return;
   }
 
@@ -58,8 +57,7 @@ HdxFreeCameraSceneDelegate::HdxFreeCameraSceneDelegate(HdRenderIndex *renderInde
 
 HdxFreeCameraSceneDelegate::~HdxFreeCameraSceneDelegate()
 {
-  if (_cameraId.IsEmpty())
-  {
+  if (_cameraId.IsEmpty()) {
     return;
   }
 
@@ -68,8 +66,7 @@ HdxFreeCameraSceneDelegate::~HdxFreeCameraSceneDelegate()
 
 void HdxFreeCameraSceneDelegate::_MarkDirty(const HdDirtyBits bits)
 {
-  if (_cameraId.IsEmpty())
-  {
+  if (_cameraId.IsEmpty()) {
     return;
   }
 
@@ -78,8 +75,7 @@ void HdxFreeCameraSceneDelegate::_MarkDirty(const HdDirtyBits bits)
 
 void HdxFreeCameraSceneDelegate::SetCamera(const GfCamera &camera)
 {
-  if (_camera == camera)
-  {
+  if (_camera == camera) {
     return;
   }
 
@@ -87,12 +83,10 @@ void HdxFreeCameraSceneDelegate::SetCamera(const GfCamera &camera)
   // or clipping planes that changed.
   HdDirtyBits dirtyBits = HdCamera::DirtyParams;
 
-  if (_camera.GetTransform() != camera.GetTransform())
-  {
+  if (_camera.GetTransform() != camera.GetTransform()) {
     dirtyBits |= HdCamera::DirtyTransform;
   }
-  if (_camera.GetClippingPlanes() != camera.GetClippingPlanes())
-  {
+  if (_camera.GetClippingPlanes() != camera.GetClippingPlanes()) {
     dirtyBits |= HdCamera::DirtyClipPlanes;
   }
   _camera = camera;
@@ -102,8 +96,7 @@ void HdxFreeCameraSceneDelegate::SetCamera(const GfCamera &camera)
 
 void HdxFreeCameraSceneDelegate::SetWindowPolicy(const CameraUtilConformWindowPolicy policy)
 {
-  if (_policy == policy)
-  {
+  if (_policy == policy) {
     return;
   }
 
@@ -112,7 +105,8 @@ void HdxFreeCameraSceneDelegate::SetWindowPolicy(const CameraUtilConformWindowPo
   _MarkDirty(HdCamera::DirtyWindowPolicy);
 }
 
-void HdxFreeCameraSceneDelegate::SetMatrices(GfMatrix4d const &viewMatrix, GfMatrix4d const &projMatrix)
+void HdxFreeCameraSceneDelegate::SetMatrices(GfMatrix4d const &viewMatrix,
+                                             GfMatrix4d const &projMatrix)
 {
   GfCamera cam;
   cam.SetFromViewAndProjectionMatrix(viewMatrix, projMatrix);
@@ -121,8 +115,7 @@ void HdxFreeCameraSceneDelegate::SetMatrices(GfMatrix4d const &viewMatrix, GfMat
 
 void HdxFreeCameraSceneDelegate::SetClipPlanes(std::vector<GfVec4f> const &clipPlanes)
 {
-  if (_camera.GetClippingPlanes() == clipPlanes)
-  {
+  if (_camera.GetClippingPlanes() == clipPlanes) {
     return;
   }
 
@@ -138,8 +131,7 @@ GfMatrix4d HdxFreeCameraSceneDelegate::GetTransform(SdfPath const &id)
 
 static HdCamera::Projection _ToHd(const GfCamera::Projection projection)
 {
-  switch (projection)
-  {
+  switch (projection) {
     case GfCamera::Perspective:
       return HdCamera::Perspective;
     case GfCamera::Orthographic:
@@ -151,65 +143,54 @@ static HdCamera::Projection _ToHd(const GfCamera::Projection projection)
 
 VtValue HdxFreeCameraSceneDelegate::GetCameraParamValue(SdfPath const &id, TfToken const &key)
 {
-  if (key == HdCameraTokens->projection)
-  {
+  if (key == HdCameraTokens->projection) {
     return VtValue(_ToHd(_camera.GetProjection()));
   }
 
-  if (key == HdCameraTokens->focalLength)
-  {
+  if (key == HdCameraTokens->focalLength) {
     const float result = _camera.GetFocalLength() * float(GfCamera::FOCAL_LENGTH_UNIT);
     return VtValue(result);
   }
 
-  if (key == HdCameraTokens->horizontalAperture)
-  {
+  if (key == HdCameraTokens->horizontalAperture) {
     const float result = _camera.GetHorizontalAperture() * float(GfCamera::APERTURE_UNIT);
     return VtValue(result);
   }
 
-  if (key == HdCameraTokens->verticalAperture)
-  {
+  if (key == HdCameraTokens->verticalAperture) {
     const float result = _camera.GetVerticalAperture() * float(GfCamera::APERTURE_UNIT);
     return VtValue(result);
   }
 
-  if (key == HdCameraTokens->horizontalApertureOffset)
-  {
+  if (key == HdCameraTokens->horizontalApertureOffset) {
     const float result = _camera.GetHorizontalApertureOffset() * float(GfCamera::APERTURE_UNIT);
     return VtValue(result);
   }
 
-  if (key == HdCameraTokens->verticalApertureOffset)
-  {
+  if (key == HdCameraTokens->verticalApertureOffset) {
     const float result = _camera.GetVerticalApertureOffset() * float(GfCamera::APERTURE_UNIT);
     return VtValue(result);
   }
 
-  if (key == HdCameraTokens->clippingRange)
-  {
+  if (key == HdCameraTokens->clippingRange) {
     return VtValue(_camera.GetClippingRange());
   }
 
-  if (key == HdCameraTokens->clipPlanes)
-  {
+  if (key == HdCameraTokens->clipPlanes) {
     const std::vector<GfVec4f> &clipPlanes = _camera.GetClippingPlanes();
     const std::vector<GfVec4d> planes(clipPlanes.begin(), clipPlanes.end());
     return VtValue(planes);
   }
 
-  if (key == HdCameraTokens->fStop)
-  {
+  if (key == HdCameraTokens->fStop) {
     return VtValue(_camera.GetFStop());
   }
 
-  if (key == HdCameraTokens->focusDistance)
-  {
+  if (key == HdCameraTokens->focusDistance) {
     return VtValue(_camera.GetFocusDistance());
   }
 
-  if (key == HdCameraTokens->windowPolicy)
-  {
+  if (key == HdCameraTokens->windowPolicy) {
     return VtValue(_policy);
   }
 

@@ -74,8 +74,8 @@ typedef TfRefPtr<class Tf_TestBase> Tf_TestBaseRefPtr;
 class Tf_TestBase : public TfRefBase, public TfWeakBase
 {
  public:
-  virtual ~Tf_TestBase()
-  {}
+
+  virtual ~Tf_TestBase() {}
   virtual string Virtual() const = 0;
   virtual void Virtual2() const = 0;
   virtual void Virtual3(string const &arg) = 0;
@@ -92,8 +92,8 @@ class Tf_TestBase : public TfRefBase, public TfWeakBase
   virtual string UnwrappedVirtual() const = 0;
 
  protected:
-  Tf_TestBase()
-  {}
+
+  Tf_TestBase() {}
 };
 
 // Derived
@@ -102,16 +102,15 @@ typedef TfRefPtr<class Tf_TestDerived> Tf_TestDerivedRefPtr;
 class Tf_TestDerived : public Tf_TestBase
 {
  public:
+
   // CODE_COVERAGE_OFF_GCOV_BUG  woot
-  virtual ~Tf_TestDerived()
-  {}
+  virtual ~Tf_TestDerived() {}
   // CODE_COVERAGE_ON_GCOV_BUG
   virtual string Virtual() const
   {
     return "cpp derived";
   }
-  virtual void Virtual2() const
-  {}
+  virtual void Virtual2() const {}
   virtual void Virtual3(string const &arg)
   {
     printf("cpp derived v3! : %s\n", arg.c_str());
@@ -131,8 +130,8 @@ class Tf_TestDerived : public Tf_TestBase
   }
 
  protected:
-  Tf_TestDerived()
-  {}
+
+  Tf_TestDerived() {}
 };
 
 static string TakesConstBase(Tf_TestBaseConstPtr base)
@@ -169,8 +168,7 @@ static string TakesDerived(Tf_TestDerivedPtr derived)
   return derived->Virtual();
 }
 
-static void TakesReference(Tf_TestDerivedRefPtr const &derived)
-{}
+static void TakesReference(Tf_TestDerivedRefPtr const &derived) {}
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -245,8 +243,7 @@ struct polymorphic_Tf_TestDerived : public polymorphic_Tf_TestBase<T>
   }
 };
 
-template<typename T>
-static TfRefPtr<T> __Ref_init__()
+template<typename T> static TfRefPtr<T> __Ref_init__()
 {
   return TfCreateRefPtr(new T);
 }
@@ -265,8 +262,7 @@ TF_REGISTRY_FUNCTION(TfEnum)
 
 static void mightRaise(bool raise)
 {
-  if (raise)
-  {
+  if (raise) {
     TF_ERROR(TF_TEST_ERROR_1, "Test error 1!");
     TF_ERROR(TF_TEST_ERROR_2, "Test error 2!");
   }
@@ -451,10 +447,9 @@ static void sendTfNoticeWithSender(Tf_TestBasePtr const &base)
 class Tf_ClassWithClassMethod
 {
  public:
-  Tf_ClassWithClassMethod()
-  {}
-  virtual ~Tf_ClassWithClassMethod()
-  {}
+
+  Tf_ClassWithClassMethod() {}
+  virtual ~Tf_ClassWithClassMethod() {}
 };
 
 static tuple _TestClassMethod(object &pyClassObj, const object &callable)
@@ -499,6 +494,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(Tf_ClassWithVarArgInit);
 class Tf_ClassWithVarArgInit : public TfRefBase, public TfWeakBase
 {
  public:
+
   bool allowExtraArgs;
   tuple args;
   dict kwargs;
@@ -513,7 +509,10 @@ static Tf_ClassWithVarArgInitRefPtr _MakeClassWithVarArgInit(bool allowExtraArgs
   const TfPyArgs optionalArgs = boost::assign::list_of<>(TfPyArg("a", ""))(TfPyArg("b", ""))(
     TfPyArg("c", ""));
 
-  const std::pair<tuple, dict> params = TfPyProcessOptionalArgs(args, kwargs, optionalArgs, allowExtraArgs);
+  const std::pair<tuple, dict> params = TfPyProcessOptionalArgs(args,
+                                                                kwargs,
+                                                                optionalArgs,
+                                                                allowExtraArgs);
 
   Tf_ClassWithVarArgInitRefPtr rval = TfCreateRefPtr(new Tf_ClassWithVarArgInit);
   rval->allowExtraArgs = allowExtraArgs;
@@ -529,8 +528,7 @@ static Tf_ClassWithVarArgInitRefPtr _MakeClassWithVarArgInit(bool allowExtraArgs
 static object _ConvertByteListToByteArray(const list &byteList)
 {
   std::vector<char> inputList;
-  for (int i = 0; i < len(byteList); ++i)
-  {
+  for (int i = 0; i < len(byteList); ++i) {
     inputList.push_back(extract<char>(byteList[i]));
   }
 
@@ -595,10 +593,13 @@ void wrapTf_TestTfPython()
 
   def("_DerivedFactory", Tf_TestDerived::Factory, return_value_policy<TfPyRefPtrFactory<>>());
 
-  def("_DerivedNullFactory", Tf_TestDerived::NullFactory, return_value_policy<TfPyRefPtrFactory<>>());
+  def("_DerivedNullFactory",
+      Tf_TestDerived::NullFactory,
+      return_value_policy<TfPyRefPtrFactory<>>());
 
-  class_<polymorphic_Tf_TestBase<>, TfWeakPtr<polymorphic_Tf_TestBase<>>, boost::noncopyable>("_TestBase",
-                                                                                              no_init)
+  class_<polymorphic_Tf_TestBase<>, TfWeakPtr<polymorphic_Tf_TestBase<>>, boost::noncopyable>(
+    "_TestBase",
+    no_init)
     .def(TfPyRefAndWeakPtr())
     .def(TfMakePyConstructor(__Ref_init__<polymorphic_Tf_TestBase<>>))
     .def("Virtual", pure_virtual(&Tf_TestBase::Virtual))

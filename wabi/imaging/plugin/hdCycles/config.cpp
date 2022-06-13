@@ -29,32 +29,28 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<>
-HdCyclesEnvValue<bool>::HdCyclesEnvValue(const char *a_envName, bool a_default)
+template<> HdCyclesEnvValue<bool>::HdCyclesEnvValue(const char *a_envName, bool a_default)
 {
   envName = std::string(a_envName);
   value = TfGetenvBool(envName, a_default);
   hasOverride = TfGetenv(envName) != "";
 }
 
-template<>
-HdCyclesEnvValue<int>::HdCyclesEnvValue(const char *a_envName, int a_default)
+template<> HdCyclesEnvValue<int>::HdCyclesEnvValue(const char *a_envName, int a_default)
 {
   envName = std::string(a_envName);
   value = TfGetenvInt(envName, a_default);
   hasOverride = TfGetenv(envName) != "";
 }
 
-template<>
-HdCyclesEnvValue<double>::HdCyclesEnvValue(const char *a_envName, double a_default)
+template<> HdCyclesEnvValue<double>::HdCyclesEnvValue(const char *a_envName, double a_default)
 {
   envName = std::string(a_envName);
   value = TfGetenvDouble(envName, a_default);
   hasOverride = TfGetenv(envName) != "";
 }
 
-template<>
-HdCyclesEnvValue<float>::HdCyclesEnvValue(const char *a_envName, float a_default)
+template<> HdCyclesEnvValue<float>::HdCyclesEnvValue(const char *a_envName, float a_default)
 {
   envName = std::string(a_envName);
   value = static_cast<float>(TfGetenvDouble(envName, static_cast<double>(a_default)));
@@ -80,8 +76,8 @@ TF_DEFINE_ENV_SETTING(CYCLES_ENABLE_LOGGING, false, "Enable HdCycles Logging")
 TF_DEFINE_ENV_SETTING(CYCLES_LOGGING_SEVERITY, 1, "Enable HdCycles progress reporting")
 
 TF_DEFINE_ENV_SETTING(CYCLES_DUMP_SHADER_GRAPH_DIR,
-                        "",
-                        "Valid, existing directory to dump shader graphs for render")
+                      "",
+                      "Valid, existing directory to dump shader graphs for render")
 
 TF_DEFINE_ENV_SETTING(HD_CYCLES_ENABLE_LOGGING, false, "Enable HdCycles Logging")
 
@@ -118,7 +114,8 @@ HdCyclesConfig::HdCyclesConfig()
   render_height = HdCyclesEnvValue<int>("HD_CYCLES_RENDER_HEIGHT", 720);
   use_old_curves = HdCyclesEnvValue<bool>("HD_CYCLES_USE_OLD_CURVES", false);
 
-  enable_transparent_background = HdCyclesEnvValue<bool>("HD_CYCLES_USE_TRANSPARENT_BACKGROUND", false);
+  enable_transparent_background = HdCyclesEnvValue<bool>("HD_CYCLES_USE_TRANSPARENT_BACKGROUND",
+                                                         false);
   use_square_samples = HdCyclesEnvValue<bool>("HD_CYCLES_USE_SQUARE_SAMPLES", false);
 
   // -- Cycles Settings
@@ -143,7 +140,8 @@ HdCyclesConfig::HdCyclesConfig()
   texture_use_cache = HdCyclesEnvValue<bool>("HD_BLACKBIRD_TEXTURE_USE_CACHE", false);
   texture_cache_size = HdCyclesEnvValue<int>("HD_BLACKBIRD_TEXTURE_CACHE_SIZE", 4096);
   texture_tile_size = HdCyclesEnvValue<int>("HD_BLACKBIRD_TEXTURE_TILE_SIZE", 64);
-  texture_diffuse_blur = HdCyclesEnvValue<float>("HD_BLACKBIRD_TEXTURE_DIFFUSE_BLUR", 1.0f / 64.0f);
+  texture_diffuse_blur = HdCyclesEnvValue<float>("HD_BLACKBIRD_TEXTURE_DIFFUSE_BLUR",
+                                                 1.0f / 64.0f);
   texture_glossy_blur = HdCyclesEnvValue<float>("HD_BLACKBIRD_TEXTURE_GLOSSY_BLUR", 0.0f);
   texture_auto_convert = HdCyclesEnvValue<bool>("HD_BLACKBIRD_TEXTURE_AUTO_CONVERT", false);
   texture_accept_unmipped = HdCyclesEnvValue<bool>("HD_BLACKBIRD_TEXTURE_ACCEPT_UNMIPPED", false);

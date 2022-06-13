@@ -43,9 +43,10 @@ static SdfLayerRefPtr _UsdUtilsFlattenLayerStack2(const UsdStagePtr &stage, cons
 using Py_UsdUtilsResolveAssetPathSig = std::string(const SdfLayerHandle &, const std::string &);
 using Py_UsdUtilsResolveAssetPathFn = std::function<Py_UsdUtilsResolveAssetPathSig>;
 
-static SdfLayerRefPtr _UsdUtilsFlattenLayerStack3(const UsdStagePtr &stage,
-                                                  const Py_UsdUtilsResolveAssetPathFn &resolveAssetPathFn,
-                                                  const std::string &tag)
+static SdfLayerRefPtr _UsdUtilsFlattenLayerStack3(
+  const UsdStagePtr &stage,
+  const Py_UsdUtilsResolveAssetPathFn &resolveAssetPathFn,
+  const std::string &tag)
 {
   return UsdUtilsFlattenLayerStack(stage, resolveAssetPathFn, tag);
 }

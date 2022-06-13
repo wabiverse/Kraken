@@ -50,14 +50,14 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateOffsetsAttr(UsdSkelBlendShape &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateOffsetsAttr(UsdSkelBlendShape &self,
+                                         object defaultVal,
+                                         bool writeSparsely)
   {
     return self.CreateOffsetsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
                                   writeSparsely);
@@ -67,11 +67,14 @@ namespace
                                                object defaultVal,
                                                bool writeSparsely)
   {
-    return self.CreateNormalOffsetsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
-                                        writeSparsely);
+    return self.CreateNormalOffsetsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray),
+      writeSparsely);
   }
 
-  static UsdAttribute _CreatePointIndicesAttr(UsdSkelBlendShape &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreatePointIndicesAttr(UsdSkelBlendShape &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreatePointIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
                                        writeSparsely);
@@ -107,7 +110,9 @@ void wrapUsdSkelBlendShape()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -171,7 +176,9 @@ namespace
       .def("HasInbetween", &This::HasInbetween, arg("name"))
 
       .def("GetInbetweens", &This::GetInbetweens, return_value_policy<TfPySequenceToList>())
-      .def("GetAuthoredInbetweens", &This::GetAuthoredInbetweens, return_value_policy<TfPySequenceToList>())
+      .def("GetAuthoredInbetweens",
+           &This::GetAuthoredInbetweens,
+           return_value_policy<TfPySequenceToList>())
 
       .def("ValidatePointIndices", &_ValidatePointIndices, (arg("pointIndices"), arg("numPoints")))
       .staticmethod("ValidatePointIndices");

@@ -58,8 +58,7 @@ HdxColorizeSelectionTask::~HdxColorizeSelectionTask()
 {
   delete[] _outputBuffer;
 
-  if (_texture)
-  {
+  if (_texture) {
     _GetHgi()->DestroyTexture(&_texture);
   }
 }
@@ -69,18 +68,18 @@ bool HdxColorizeSelectionTask::IsConverged() const
   return _converged;
 }
 
-void HdxColorizeSelectionTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
+void HdxColorizeSelectionTask::_Sync(HdSceneDelegate *delegate,
+                                     HdTaskContext *ctx,
+                                     HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!_compositor)
-  {
+  if (!_compositor) {
     _compositor = std::make_unique<HdxFullscreenShader>(_GetHgi(), "ColorizeSelection");
   }
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
-  {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
     _GetTaskParams(delegate, &_params);
   }
   *dirtyBits = HdChangeTracker::Clean;
@@ -92,8 +91,7 @@ void HdxColorizeSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *render
   HF_MALLOC_TAG_FUNCTION();
 
   HdxSelectionTrackerSharedPtr sel;
-  if (_GetTaskContextData(ctx, HdxTokens->selectionState, &sel))
-  {
+  if (_GetTaskContextData(ctx, HdxTokens->selectionState, &sel)) {
     sel->UpdateSelection(renderIndex);
   }
 
@@ -104,10 +102,11 @@ void HdxColorizeSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *render
   _elementId = static_cast<HdRenderBuffer *>(
     renderIndex->GetBprim(HdPrimTypeTokens->renderBuffer, _params.elementIdBufferPath));
 
-  if (sel && sel->GetVersion() != _lastVersion)
-  {
+  if (sel && sel->GetVersion() != _lastVersion) {
     _lastVersion = sel->GetVersion();
-    _hasSelection = sel->GetSelectionOffsetBuffer(renderIndex, _params.enableSelection, &_selectionOffsets);
+    _hasSelection = sel->GetSelectionOffsetBuffer(renderIndex,
+                                                  _params.enableSelection,
+                                                  &_selectionOffsets);
   }
 }
 
@@ -116,8 +115,7 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!_HasTaskContextData(ctx, HdAovTokens->color))
-  {
+  if (!_HasTaskContextData(ctx, HdAovTokens->color)) {
     _converged = true;
     return;
   }
@@ -129,15 +127,13 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
 
   // instance ID and element ID are optional inputs, but if we don't have
   // a prim ID buffer, skip doing anything.
-  if (!_primId)
-  {
+  if (!_primId) {
     _converged = true;
     return;
   }
 
   // If there's nothing in the selection buffer, return.
-  if (!_hasSelection)
-  {
+  if (!_hasSelection) {
     _converged = true;
     return;
   }
@@ -146,12 +142,10 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
   _converged = _primId->IsConverged();
   size_t size = _primId->GetWidth() * _primId->GetHeight();
 
-  if (_instanceId)
-  {
+  if (_instanceId) {
     _instanceId->Resolve();
     size_t iidSize = _instanceId->GetWidth() * _instanceId->GetHeight();
-    if (iidSize != size)
-    {
+    if (iidSize != size) {
       TF_WARN(
         "Instance Id buffer %s has different dimensions "
         "than Prim Id buffer %s",
@@ -161,12 +155,10 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
     }
     _converged = _converged && _instanceId->IsConverged();
   }
-  if (_elementId)
-  {
+  if (_elementId) {
     _elementId->Resolve();
     size_t eidSize = _elementId->GetWidth() * _elementId->GetHeight();
-    if (eidSize != size)
-    {
+    if (eidSize != size) {
       TF_WARN(
         "Element Id buffer %s has different dimensions "
         "than Prim Id buffer %s",
@@ -178,8 +170,7 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
   }
 
   // Allocate the scratch space, if needed.
-  if (!_outputBuffer || _outputBufferSize != size)
-  {
+  if (!_outputBuffer || _outputBufferSize != size) {
     delete[] _outputBuffer;
     _outputBuffer = new uint8_t[size * 4];
     _outputBufferSize = size;
@@ -209,8 +200,7 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
 
   _compositor->BindTextures({_tokens->colorIn}, {_texture});
 
-  if (_UpdateParameterBuffer())
-  {
+  if (_UpdateParameterBuffer()) {
     const size_t byteSize = sizeof(_ParameterBuffer);
     _compositor->SetShaderConstants(byteSize, &_parameterData);
   }
@@ -225,8 +215,7 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
   // color, and the selection alpha is the residual value used to scale the
   // scene color. This gives us the blend func:
   // GL_ONE, GL_SRC_ALPHA, GL_ZERO, GL_ONE.
-  if (!_pipelineCreated)
-  {
+  if (!_pipelineCreated) {
     HgiDepthStencilState depthState;
     depthState.depthTestEnabled = false;
     depthState.depthWriteEnabled = false;
@@ -250,14 +239,11 @@ void HdxColorizeSelectionTask::Execute(HdTaskContext *ctx)
 
 GfVec4f HdxColorizeSelectionTask::_GetColorForMode(int mode) const
 {
-  if (mode == 0)
-  {
+  if (mode == 0) {
     return _params.selectionColor;
-  } else if (mode == 1)
-  {
+  } else if (mode == 1) {
     return _params.locateColor;
-  } else
-  {
+  } else {
     return GfVec4f(0);
   }
 }
@@ -265,54 +251,45 @@ GfVec4f HdxColorizeSelectionTask::_GetColorForMode(int mode) const
 void HdxColorizeSelectionTask::_ColorizeSelection()
 {
   int32_t *piddata = reinterpret_cast<int32_t *>(_primId->Map());
-  if (!piddata)
-  {
+  if (!piddata) {
     // Skip the colorizing if we can't look up prim ID
     return;
   }
   int32_t *iiddata = reinterpret_cast<int32_t *>(_instanceId->Map());
   int32_t *eiddata = reinterpret_cast<int32_t *>(_elementId->Map());
 
-  for (size_t i = 0; i < _outputBufferSize; ++i)
-  {
+  for (size_t i = 0; i < _outputBufferSize; ++i) {
     GfVec4f output = GfVec4f(0, 0, 0, 1);
 
     int primId = piddata ? piddata[i] : -1;
     int instanceId = iiddata ? iiddata[i] : -1;
     int elementId = eiddata ? eiddata[i] : -1;
 
-    for (int mode = 0; mode < _selectionOffsets[0]; ++mode)
-    {
-      if (primId == -1)
-      {
+    for (int mode = 0; mode < _selectionOffsets[0]; ++mode) {
+      if (primId == -1) {
         continue;
       }
 
       int modeOffset = _selectionOffsets[mode + 1];
-      if (modeOffset == 0)
-      {
+      if (modeOffset == 0) {
         continue;
       }
 
       int smin = _selectionOffsets[modeOffset];
       int smax = _selectionOffsets[modeOffset + 1];
 
-      if (primId >= smin && primId < smax)
-      {
+      if (primId >= smin && primId < smax) {
         int offset = modeOffset + 2 + primId - smin;
         int selectionData = _selectionOffsets[offset];
         bool sel = bool(selectionData & 0x1);
         int nextOffset = selectionData >> 1;
 
-        if (nextOffset != 0 && !sel)
-        {
+        if (nextOffset != 0 && !sel) {
           int subprimType = _selectionOffsets[nextOffset];
-          if (subprimType == 3 /* INSTANCE */)
-          {
+          if (subprimType == 3 /* INSTANCE */) {
             int imin = _selectionOffsets[nextOffset + 1];
             int imax = _selectionOffsets[nextOffset + 2];
-            if (instanceId >= imin && instanceId < imax)
-            {
+            if (instanceId >= imin && instanceId < imax) {
               offset = nextOffset + 3 + instanceId - imin;
               selectionData = _selectionOffsets[offset];
               sel = sel || bool(selectionData & 0x1);
@@ -320,12 +297,10 @@ void HdxColorizeSelectionTask::_ColorizeSelection()
             }
           }
           subprimType = _selectionOffsets[nextOffset];
-          if (subprimType == 0 /* ELEMENT */)
-          {
+          if (subprimType == 0 /* ELEMENT */) {
             int emin = _selectionOffsets[nextOffset + 1];
             int emax = _selectionOffsets[nextOffset + 2];
-            if (elementId >= emin && elementId < emax)
-            {
+            if (elementId >= emin && elementId < emax) {
               offset = nextOffset + 3 + elementId - emin;
               selectionData = _selectionOffsets[offset];
               sel = sel || bool(selectionData & 0x1);
@@ -334,8 +309,7 @@ void HdxColorizeSelectionTask::_ColorizeSelection()
           }
         }
 
-        if (sel)
-        {
+        if (sel) {
           // dst.rgb = mix(dst.rgb, selection.rgb, selection.a)
           // dst.a = mix(dst.a, 0, selection.a);
           GfVec4f modeColor = _GetColorForMode(mode);
@@ -353,12 +327,10 @@ void HdxColorizeSelectionTask::_ColorizeSelection()
   }
 
   _primId->Unmap();
-  if (iiddata)
-  {
+  if (iiddata) {
     _instanceId->Unmap();
   }
-  if (eiddata)
-  {
+  if (eiddata) {
     _elementId->Unmap();
   }
 }
@@ -367,8 +339,7 @@ bool HdxColorizeSelectionTask::_UpdateParameterBuffer()
 {
   _ParameterBuffer pb;
 
-  if (_primId->GetWidth() > 0 && _primId->GetHeight() > 0)
-  {
+  if (_primId->GetWidth() > 0 && _primId->GetHeight() > 0) {
     pb.texelSize[0] = 1.0f / _primId->GetWidth();
     pb.texelSize[1] = 1.0f / _primId->GetHeight();
   }
@@ -377,8 +348,7 @@ bool HdxColorizeSelectionTask::_UpdateParameterBuffer()
   pb.radius = (int)_params.outlineRadius;
 
   // All data is still the same, no need to update the compositor
-  if (pb == _parameterData)
-  {
+  if (pb == _parameterData) {
     return false;
   }
 
@@ -392,14 +362,12 @@ void HdxColorizeSelectionTask::_CreateTexture(int width, int height, HdFormat fo
   HF_MALLOC_TAG_FUNCTION();
 
   // Destroy the old texture (if any) if we received new pixels.
-  if (_texture)
-  {
+  if (_texture) {
     _GetHgi()->DestroyTexture(&_texture);
   }
 
   // Texture was removed, exit.
-  if (width == 0 || height == 0 || data == nullptr)
-  {
+  if (width == 0 || height == 0 || data == nullptr) {
     return;
   }
 
@@ -424,13 +392,14 @@ void HdxColorizeSelectionTask::_CreateTexture(int width, int height, HdFormat fo
 
 std::ostream &operator<<(std::ostream &out, const HdxColorizeSelectionTaskParams &pv)
 {
-  out << "ColorizeSelectionTask Params: (...) " << pv.enableSelection << " " << pv.selectionColor << " "
-      << pv.locateColor << " " << pv.primIdBufferPath << " " << pv.instanceIdBufferPath << " "
-      << pv.elementIdBufferPath;
+  out << "ColorizeSelectionTask Params: (...) " << pv.enableSelection << " " << pv.selectionColor
+      << " " << pv.locateColor << " " << pv.primIdBufferPath << " " << pv.instanceIdBufferPath
+      << " " << pv.elementIdBufferPath;
   return out;
 }
 
-bool operator==(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSelectionTaskParams &rhs)
+bool operator==(const HdxColorizeSelectionTaskParams &lhs,
+                const HdxColorizeSelectionTaskParams &rhs)
 {
   return lhs.enableSelection == rhs.enableSelection && lhs.selectionColor == rhs.selectionColor &&
          lhs.locateColor == rhs.locateColor && lhs.primIdBufferPath == rhs.primIdBufferPath &&
@@ -438,7 +407,8 @@ bool operator==(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSele
          lhs.elementIdBufferPath == rhs.elementIdBufferPath;
 }
 
-bool operator!=(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSelectionTaskParams &rhs)
+bool operator!=(const HdxColorizeSelectionTaskParams &lhs,
+                const HdxColorizeSelectionTaskParams &rhs)
 {
   return !(lhs == rhs);
 }

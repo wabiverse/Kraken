@@ -58,31 +58,30 @@ static const char Delimiter = '@';
 static int _ReadUTF8(char const *&cp, std::string *errMsg)
 {
   // Return a byte with the high `n` bits set, rest clear.
-  auto highBits = [](int n) { return static_cast<unsigned char>(((1 << n) - 1) << (8 - n)); };
+  auto highBits = [](int n) {
+    return static_cast<unsigned char>(((1 << n) - 1) << (8 - n));
+  };
 
   // Return true if `ch` is a continuation byte.
-  auto isContinuation = [&highBits](unsigned char ch) { return (ch & highBits(2)) == highBits(1); };
+  auto isContinuation = [&highBits](unsigned char ch) {
+    return (ch & highBits(2)) == highBits(1);
+  };
 
   // Check for single-character code.
-  if ((*cp & highBits(1)) == 0)
-  {
+  if ((*cp & highBits(1)) == 0) {
     return *cp++;
   }
 
   // Check for 2, 3, or 4-byte code.
-  for (int i = 2; i <= 4; ++i)
-  {
+  for (int i = 2; i <= 4; ++i) {
     // This is an N-byte code if the high-order N+1 bits are N 1s
     // followed by a single 0.
-    if ((*cp & highBits(i + 1)) == highBits(i))
-    {
+    if ((*cp & highBits(i + 1)) == highBits(i)) {
       int ret = *cp & ~highBits(i + 1);
       // If that's the case then the following N-1 bytes must be
       // "continuation bytes".
-      for (int j = 1; j != i; ++j)
-      {
-        if (!isContinuation(cp[j]))
-        {
+      for (int j = 1; j != i; ++j) {
+        if (!isContinuation(cp[j])) {
           char const *ordinalWords[] = {"first", "second", "third", "fourth"};
           *errMsg = TfStringPrintf(
             "%d-byte UTF-8 code point lacks "
@@ -115,10 +114,8 @@ static bool _ValidateAssetPathString(char const *path)
   std::string err;
   int utf8Char = _ReadUTF8(cp, &err);
   int charNum = 1;
-  for (; utf8Char > 0; utf8Char = _ReadUTF8(cp, &err))
-  {
-    if (isControlCode(utf8Char))
-    {
+  for (; utf8Char > 0; utf8Char = _ReadUTF8(cp, &err)) {
+    if (isControlCode(utf8Char)) {
       TF_CODING_ERROR(
         "Invalid asset path string -- character %d is "
         "control character 0x%x",
@@ -128,22 +125,18 @@ static bool _ValidateAssetPathString(char const *path)
     }
     ++charNum;
   }
-  if (utf8Char == -1)
-  {
+  if (utf8Char == -1) {
     TF_CODING_ERROR("Invalid asset path string -- character %d: %s\n", charNum, err.c_str());
     return false;
   }
   return true;
 }
 
-SdfAssetPath::SdfAssetPath()
-{}
+SdfAssetPath::SdfAssetPath() {}
 
-SdfAssetPath::SdfAssetPath(const std::string &path)
-  : _assetPath(path)
+SdfAssetPath::SdfAssetPath(const std::string &path) : _assetPath(path)
 {
-  if (!_ValidateAssetPathString(path.c_str()))
-  {
+  if (!_ValidateAssetPathString(path.c_str())) {
     *this = SdfAssetPath();
   }
 }
@@ -152,8 +145,7 @@ SdfAssetPath::SdfAssetPath(const std::string &path, const std::string &resolvedP
   : _assetPath(path),
     _resolvedPath(resolvedPath)
 {
-  if (!_ValidateAssetPathString(path.c_str()) || !_ValidateAssetPathString(resolvedPath.c_str()))
-  {
+  if (!_ValidateAssetPathString(path.c_str()) || !_ValidateAssetPathString(resolvedPath.c_str())) {
     *this = SdfAssetPath();
   }
 }

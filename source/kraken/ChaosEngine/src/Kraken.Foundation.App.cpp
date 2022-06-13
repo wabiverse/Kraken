@@ -34,8 +34,7 @@ App::App()
 
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
   UnhandledException([this](IInspectable const &, UnhandledExceptionEventArgs const &e) {
-    if (IsDebuggerPresent())
-    {
+    if (IsDebuggerPresent()) {
       auto errorMessage = e.Message();
       __debugbreak();
     }
@@ -47,23 +46,23 @@ App::App()
 void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &args)
 {
   Windows::UI::Xaml::Window window = Windows::UI::Xaml::Window::Current();
-  Windows::UI::Xaml::Controls::Frame frame{ nullptr };
+  Windows::UI::Xaml::Controls::Frame frame{nullptr};
 
   auto content = window.Content();
-  if(content) {
+  if (content) {
     frame = content.try_as<Windows::UI::Xaml::Controls::Frame>();
   }
 
-  if(frame == nullptr) {
+  if (frame == nullptr) {
     frame = Windows::UI::Xaml::Controls::Frame();
   }
 
-  if(args.PrelaunchActivated() == false) {
+  if (args.PrelaunchActivated() == false) {
 
-    if(frame.Content() == nullptr) {
+    if (frame.Content() == nullptr) {
       frame.Navigate(xaml_typename<Kraken::UIKit::UIView>(), box_value(args.Arguments()));
     }
-    
+
     window.Content(frame);
     window.Activate();
   }

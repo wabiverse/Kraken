@@ -30,8 +30,7 @@ void HdRprRenderBuffer::Sync(HdSceneDelegate *sceneDelegate,
                              HdRenderParam *renderParam,
                              HdDirtyBits *dirtyBits)
 {
-  if (*dirtyBits & DirtyDescription)
-  {
+  if (*dirtyBits & DirtyDescription) {
     // hdRpr has the background thread write directly into render buffers,
     // so we need to stop the render thread before reallocating them.
     static_cast<HdRprRenderParam *>(renderParam)->AcquireRprApiForEdit();
@@ -51,15 +50,16 @@ void HdRprRenderBuffer::Finalize(HdRenderParam *renderParam)
 
 bool HdRprRenderBuffer::Allocate(GfVec3i const &dimensions, HdFormat format, bool multiSampled)
 {
-  if (dimensions[2] != 1)
-  {
+  if (dimensions[2] != 1) {
     TF_WARN("HdRprRenderBuffer supports 2D buffers only");
     return false;
   }
 
 #ifdef ENABLE_MULTITHREADED_RENDER_BUFFER
   std::unique_lock<std::mutex> lock(m_mapMutex);
-  m_mapConditionVar.wait(lock, [this]() { return m_numMappers == 0; });
+  m_mapConditionVar.wait(lock, [this]() {
+    return m_numMappers == 0;
+  });
 #endif  // ENABLE_MULTITHREADED_RENDER_BUFFER
 
   m_width = dimensions[0];
@@ -69,12 +69,10 @@ bool HdRprRenderBuffer::Allocate(GfVec3i const &dimensions, HdFormat format, boo
   m_isConverged.store(false);
 
   size_t dataByteSize = m_width * m_height * HdDataSizeOfFormat(m_format);
-  if (dataByteSize)
-  {
+  if (dataByteSize) {
     m_mappedBuffer.reserve(dataByteSize);
     std::memset(m_mappedBuffer.data(), 0, dataByteSize);
-  } else
-  {
+  } else {
     m_mappedBuffer = std::vector<uint8_t>();
   }
 
@@ -86,7 +84,9 @@ void HdRprRenderBuffer::_Deallocate()
 
 #ifdef ENABLE_MULTITHREADED_RENDER_BUFFER
   std::unique_lock<std::mutex> lock(m_mapMutex);
-  m_mapConditionVar.wait(lock, [this]() { return m_numMappers == 0; });
+  m_mapConditionVar.wait(lock, [this]() {
+    return m_numMappers == 0;
+  });
 #endif  // ENABLE_MULTITHREADED_RENDER_BUFFER
 
   m_width = 0u;
@@ -115,8 +115,7 @@ void HdRprRenderBuffer::Unmap()
   bool isLastMapper;
   {
     std::unique_lock<std::mutex> lock(m_mapMutex);
-    if (!TF_VERIFY(m_numMappers))
-    {
+    if (!TF_VERIFY(m_numMappers)) {
       TF_CODING_ERROR("Invalid HdRenderBuffer usage detected. Over-use of Unmap.");
       return;
     }
@@ -129,8 +128,7 @@ void HdRprRenderBuffer::Unmap()
     isLastMapper = m_numMappers == 0;
   }
 
-  if (isLastMapper)
-  {
+  if (isLastMapper) {
     m_mapConditionVar.notify_one();
   }
 #endif  // ENABLE_MULTITHREADED_RENDER_BUFFER
@@ -168,12 +166,10 @@ void HdRprRenderBuffer::SetConverged(bool converged)
 
 VtValue HdRprRenderBuffer::GetResource(bool multiSampled) const
 {
-  if ("aov_color" == GetId().GetElementString())
-  {
+  if ("aov_color" == GetId().GetElementString()) {
     rpr::FrameBuffer *color = m_rprApi->GetRawColorFramebuffer();
     // RPR framebuffer not created yet
-    if (!color)
-    {
+    if (!color) {
       return VtValue();
     }
 

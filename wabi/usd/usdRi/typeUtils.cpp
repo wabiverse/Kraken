@@ -59,8 +59,7 @@ SdfValueTypeName UsdRi_GetUsdType(const string &riType)
   };
   static const size_t mapLen = sizeof(map) / sizeof(map[0]);
 
-  for (size_t i = 0; i != mapLen; ++i)
-  {
+  for (size_t i = 0; i != mapLen; ++i) {
     if (riType.find(map[i].riName) != string::npos)
       return map[i].usdType;
   }

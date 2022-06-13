@@ -33,7 +33,6 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<TfPyModuleWasLoaded, TfType::Bases<TfNotice>>();
 }
 
-TfPyModuleWasLoaded::~TfPyModuleWasLoaded()
-{}
+TfPyModuleWasLoaded::~TfPyModuleWasLoaded() {}
 
 WABI_NAMESPACE_END

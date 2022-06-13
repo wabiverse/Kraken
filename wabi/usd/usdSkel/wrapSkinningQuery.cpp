@@ -56,19 +56,19 @@ namespace
   {
     VtIntArray indices;
     VtFloatArray weights;
-    if (self.ComputeJointInfluences(&indices, &weights, time))
-    {
+    if (self.ComputeJointInfluences(&indices, &weights, time)) {
       return boost::python::make_tuple(indices, weights);
     }
     return object();
   }
 
-  object _ComputeVaryingJointInfluences(const UsdSkelSkinningQuery &self, size_t numPoints, UsdTimeCode time)
+  object _ComputeVaryingJointInfluences(const UsdSkelSkinningQuery &self,
+                                        size_t numPoints,
+                                        UsdTimeCode time)
   {
     VtIntArray indices;
     VtFloatArray weights;
-    if (self.ComputeVaryingJointInfluences(numPoints, &indices, &weights, time))
-    {
+    if (self.ComputeVaryingJointInfluences(numPoints, &indices, &weights, time)) {
       return boost::python::make_tuple(indices, weights);
     }
     return object();
@@ -81,7 +81,8 @@ namespace
     return times;
   }
 
-  std::vector<double> _GetTimeSamplesInInterval(const UsdSkelSkinningQuery &self, const GfInterval &interval)
+  std::vector<double> _GetTimeSamplesInInterval(const UsdSkelSkinningQuery &self,
+                                                const GfInterval &interval)
   {
     std::vector<double> times;
     self.GetTimeSamplesInInterval(interval, &times);
@@ -147,15 +148,23 @@ void wrapUsdSkelSkinningQuery()
 
     .def("IsRigidlyDeformed", &This::IsRigidlyDeformed)
 
-    .def("GetGeomBindTransformAttr", &This::GetGeomBindTransformAttr, return_value_policy<return_by_value>())
+    .def("GetGeomBindTransformAttr",
+         &This::GetGeomBindTransformAttr,
+         return_value_policy<return_by_value>())
 
-    .def("GetJointIndicesPrimvar", &This::GetJointIndicesPrimvar, return_value_policy<return_by_value>())
+    .def("GetJointIndicesPrimvar",
+         &This::GetJointIndicesPrimvar,
+         return_value_policy<return_by_value>())
 
-    .def("GetJointWeightsPrimvar", &This::GetJointWeightsPrimvar, return_value_policy<return_by_value>())
+    .def("GetJointWeightsPrimvar",
+         &This::GetJointWeightsPrimvar,
+         return_value_policy<return_by_value>())
 
     .def("GetBlendShapesAttr", &This::GetBlendShapesAttr, return_value_policy<return_by_value>())
 
-    .def("GetBlendShapeTargetsRel", &This::GetBlendShapeTargetsRel, return_value_policy<return_by_value>())
+    .def("GetBlendShapeTargetsRel",
+         &This::GetBlendShapeTargetsRel,
+         return_value_policy<return_by_value>())
 
     // deprecated
     .def("GetMapper", &This::GetMapper, return_value_policy<return_by_value>())
@@ -172,7 +181,9 @@ void wrapUsdSkelSkinningQuery()
 
     .def("GetTimeSamplesInInterval", &_GetTimeSamplesInInterval)
 
-    .def("ComputeJointInfluences", &_ComputeJointInfluences, (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeJointInfluences",
+         &_ComputeJointInfluences,
+         (arg("time") = UsdTimeCode::Default()))
 
     .def("ComputeVaryingJointInfluences",
          &_ComputeVaryingJointInfluences,
@@ -194,17 +205,19 @@ void wrapUsdSkelSkinningQuery()
          &_ComputeSkinnedTransform<GfMatrix4f>,
          (arg("xforms"), arg("time") = UsdTimeCode::Default()))
 
-    .def(
-      "ComputeExtentsPadding",
-      static_cast<float (UsdSkelSkinningQuery::*)(const VtMatrix4dArray &, const UsdGeomBoundable &) const>(
-        &This::ComputeExtentsPadding),
-      (arg("skelRestXforms"), arg("boundable"), arg("time") = UsdTimeCode::Default()))
+    .def("ComputeExtentsPadding",
+         static_cast<float (UsdSkelSkinningQuery::*)(const VtMatrix4dArray &,
+                                                     const UsdGeomBoundable &) const>(
+           &This::ComputeExtentsPadding),
+         (arg("skelRestXforms"), arg("boundable"), arg("time") = UsdTimeCode::Default()))
 
-    .def(
-      "ComputeExtentsPadding",
-      static_cast<float (UsdSkelSkinningQuery::*)(const VtMatrix4fArray &, const UsdGeomBoundable &) const>(
-        &This::ComputeExtentsPadding),
-      (arg("skelRestXforms"), arg("boundable"), arg("time") = UsdTimeCode::Default()))
+    .def("ComputeExtentsPadding",
+         static_cast<float (UsdSkelSkinningQuery::*)(const VtMatrix4fArray &,
+                                                     const UsdGeomBoundable &) const>(
+           &This::ComputeExtentsPadding),
+         (arg("skelRestXforms"), arg("boundable"), arg("time") = UsdTimeCode::Default()))
 
-    .def("GetGeomBindTransform", &This::GetGeomBindTransform, (arg("time") = UsdTimeCode::Default()));
+    .def("GetGeomBindTransform",
+         &This::GetGeomBindTransform,
+         (arg("time") = UsdTimeCode::Default()));
 }

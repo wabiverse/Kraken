@@ -95,7 +95,9 @@ void wrapResolver()
 
   def("SetPreferredResolver", ArSetPreferredResolver, arg("resolverTypeName"));
 
-  def("GetUnderlyingResolver", ArGetUnderlyingResolver, return_value_policy<reference_existing_object>());
+  def("GetUnderlyingResolver",
+      ArGetUnderlyingResolver,
+      return_value_policy<reference_existing_object>());
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(ArResolver)

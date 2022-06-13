@@ -48,23 +48,20 @@ std::vector<UsdAttributeQuery> UsdAttributeQuery::CreateQueries(const UsdPrim &p
 {
   std::vector<UsdAttributeQuery> rval;
   rval.reserve(attrNames.size());
-  for (const auto &attrName : attrNames)
-  {
+  for (const auto &attrName : attrNames) {
     rval.push_back(UsdAttributeQuery(prim, attrName));
   }
 
   return rval;
 }
 
-UsdAttributeQuery::UsdAttributeQuery()
-{}
+UsdAttributeQuery::UsdAttributeQuery() {}
 
 void UsdAttributeQuery::_Initialize(const UsdAttribute &attr)
 {
   TRACE_FUNCTION();
 
-  if (attr)
-  {
+  if (attr) {
     const UsdStage *stage = attr._GetStage();
     stage->_GetResolveInfo(attr, &_resolveInfo);
   }
@@ -77,8 +74,7 @@ const UsdAttribute &UsdAttributeQuery::GetAttribute() const
   return _attr;
 }
 
-template<typename T>
-USD_API bool UsdAttributeQuery::_Get(T *value, UsdTimeCode time) const
+template<typename T> USD_API bool UsdAttributeQuery::_Get(T *value, UsdTimeCode time) const
 {
   return _attr._GetStage()->_GetValueFromResolveInfo(_resolveInfo, time, _attr, value);
 }
@@ -99,7 +95,10 @@ bool UsdAttributeQuery::GetTimeSamples(std::vector<double> *times) const
 bool UsdAttributeQuery::GetTimeSamplesInInterval(const GfInterval &interval,
                                                  std::vector<double> *times) const
 {
-  return _attr._GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(_resolveInfo, _attr, interval, times);
+  return _attr._GetStage()->_GetTimeSamplesInIntervalFromResolveInfo(_resolveInfo,
+                                                                     _attr,
+                                                                     interval,
+                                                                     times);
 }
 
 /* static */
@@ -110,15 +109,15 @@ bool UsdAttributeQuery::GetUnionedTimeSamples(const std::vector<UsdAttributeQuer
 }
 
 /* static */
-bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(const std::vector<UsdAttributeQuery> &attrQueries,
-                                                        const GfInterval &interval,
-                                                        std::vector<double> *times)
+bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(
+  const std::vector<UsdAttributeQuery> &attrQueries,
+  const GfInterval &interval,
+  std::vector<double> *times)
 {
   // Clear the vector first before proceeding to accumulate sample times.
   times->clear();
 
-  if (attrQueries.empty())
-  {
+  if (attrQueries.empty()) {
     return true;
   }
 
@@ -130,8 +129,7 @@ bool UsdAttributeQuery::GetUnionedTimeSamplesInInterval(const std::vector<UsdAtt
   // Temporary vector used to hold the union of two time-sample vectors.
   std::vector<double> tempUnionSampleTimes;
 
-  for (const auto &attrQuery : attrQueries)
-  {
+  for (const auto &attrQuery : attrQueries) {
     const UsdAttribute &attr = attrQuery.GetAttribute();
     if (!attr)
       continue;
@@ -202,7 +200,8 @@ ARCH_PRAGMA_INSTANTIATION_AFTER_SPECIALIZATION
 // types.
 #define _INSTANTIATE_GET(r, unused, elem)                                                       \
   template USD_API bool UsdAttributeQuery::_Get(SDF_VALUE_CPP_TYPE(elem) *, UsdTimeCode) const; \
-  template USD_API bool UsdAttributeQuery::_Get(SDF_VALUE_CPP_ARRAY_TYPE(elem) *, UsdTimeCode) const;
+  template USD_API bool UsdAttributeQuery::_Get(SDF_VALUE_CPP_ARRAY_TYPE(elem) *, UsdTimeCode)  \
+    const;
 
 BOOST_PP_SEQ_FOR_EACH(_INSTANTIATE_GET, ~, SDF_VALUE_TYPES)
 #undef _INSTANTIATE_GET

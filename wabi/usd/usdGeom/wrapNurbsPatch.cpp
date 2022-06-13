@@ -43,119 +43,152 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateUVertexCountAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateUVertexCountAttr(UsdGeomNurbsPatch &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateUVertexCountAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
                                        writeSparsely);
   }
 
-  static UsdAttribute _CreateVVertexCountAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVVertexCountAttr(UsdGeomNurbsPatch &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateVVertexCountAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
                                        writeSparsely);
   }
 
-  static UsdAttribute _CreateUOrderAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateUOrderAttr(UsdGeomNurbsPatch &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateUOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+    return self.CreateUOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
+                                 writeSparsely);
   }
 
-  static UsdAttribute _CreateVOrderAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVOrderAttr(UsdGeomNurbsPatch &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateVOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+    return self.CreateVOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
+                                 writeSparsely);
   }
 
-  static UsdAttribute _CreateUKnotsAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateUKnotsAttr(UsdGeomNurbsPatch &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
     return self.CreateUKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
                                  writeSparsely);
   }
 
-  static UsdAttribute _CreateVKnotsAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVKnotsAttr(UsdGeomNurbsPatch &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
     return self.CreateVKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
                                  writeSparsely);
   }
 
-  static UsdAttribute _CreateUFormAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateUFormAttr(UsdGeomNurbsPatch &self,
+                                       object defaultVal,
+                                       bool writeSparsely)
   {
-    return self.CreateUFormAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateUFormAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                writeSparsely);
   }
 
-  static UsdAttribute _CreateVFormAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVFormAttr(UsdGeomNurbsPatch &self,
+                                       object defaultVal,
+                                       bool writeSparsely)
   {
-    return self.CreateVFormAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateVFormAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                writeSparsely);
   }
 
-  static UsdAttribute _CreateURangeAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateURangeAttr(UsdGeomNurbsPatch &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateURangeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2), writeSparsely);
+    return self.CreateURangeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2),
+                                 writeSparsely);
   }
 
-  static UsdAttribute _CreateVRangeAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVRangeAttr(UsdGeomNurbsPatch &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateVRangeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2), writeSparsely);
+    return self.CreateVRangeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2),
+                                 writeSparsely);
   }
 
-  static UsdAttribute _CreatePointWeightsAttr(UsdGeomNurbsPatch &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreatePointWeightsAttr(UsdGeomNurbsPatch &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
-    return self.CreatePointWeightsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
-                                       writeSparsely);
+    return self.CreatePointWeightsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateTrimCurveCountsAttr(UsdGeomNurbsPatch &self,
                                                  object defaultVal,
                                                  bool writeSparsely)
   {
-    return self.CreateTrimCurveCountsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                          writeSparsely);
+    return self.CreateTrimCurveCountsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateTrimCurveOrdersAttr(UsdGeomNurbsPatch &self,
                                                  object defaultVal,
                                                  bool writeSparsely)
   {
-    return self.CreateTrimCurveOrdersAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                          writeSparsely);
+    return self.CreateTrimCurveOrdersAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateTrimCurveVertexCountsAttr(UsdGeomNurbsPatch &self,
                                                        object defaultVal,
                                                        bool writeSparsely)
   {
-    return self.CreateTrimCurveVertexCountsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
-                                                writeSparsely);
+    return self.CreateTrimCurveVertexCountsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateTrimCurveKnotsAttr(UsdGeomNurbsPatch &self,
                                                 object defaultVal,
                                                 bool writeSparsely)
   {
-    return self.CreateTrimCurveKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
-                                         writeSparsely);
+    return self.CreateTrimCurveKnotsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateTrimCurveRangesAttr(UsdGeomNurbsPatch &self,
                                                  object defaultVal,
                                                  bool writeSparsely)
   {
-    return self.CreateTrimCurveRangesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2Array),
-                                          writeSparsely);
+    return self.CreateTrimCurveRangesAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2Array),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateTrimCurvePointsAttr(UsdGeomNurbsPatch &self,
                                                  object defaultVal,
                                                  bool writeSparsely)
   {
-    return self.CreateTrimCurvePointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double3Array),
-                                          writeSparsely);
+    return self.CreateTrimCurvePointsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double3Array),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdGeomNurbsPatch &self)
@@ -188,7 +221,9 @@ void wrapUsdGeomNurbsPatch()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -305,7 +340,6 @@ void wrapUsdGeomNurbsPatch()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // anonymous namespace

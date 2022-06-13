@@ -64,31 +64,26 @@ double PIL_check_seconds_timer(void)
   static int hasperfcounter = -1; /* (-1 == unknown) */
   static double perffreq;
 
-  if (hasperfcounter == -1)
-  {
+  if (hasperfcounter == -1) {
     __int64 ifreq;
     hasperfcounter = QueryPerformanceFrequency((LARGE_INTEGER *)&ifreq);
     perffreq = (double)ifreq;
   }
 
-  if (hasperfcounter)
-  {
+  if (hasperfcounter) {
     __int64 count;
 
     QueryPerformanceCounter((LARGE_INTEGER *)&count);
 
     return count / perffreq;
-  } else
-  {
+  } else {
     static double accum = 0.0;
     static int ltick = 0;
     int ntick = GetTickCount();
 
-    if (ntick < ltick)
-    {
+    if (ntick < ltick) {
       accum += (0xFFFFFFFF - ltick + ntick) / 1000.0;
-    } else
-    {
+    } else {
       accum += (ntick - ltick) / 1000.0;
     }
 
@@ -101,8 +96,7 @@ double PIL_check_seconds_timer(void)
 
 void PIL_sleep_ms(int ms)
 {
-  if (ms >= 1000)
-  {
+  if (ms >= 1000) {
     sleep(ms / 1000);
     ms = (ms % 1000);
   }

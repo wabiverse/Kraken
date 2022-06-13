@@ -63,16 +63,17 @@ namespace
   class Sdf_SubLayerOffsetsProxy
   {
    public:
+
     typedef Sdf_SubLayerOffsetsProxy This;
 
-    Sdf_SubLayerOffsetsProxy(const SdfLayerHandle &layer)
-      : _layer(layer)
+    Sdf_SubLayerOffsetsProxy(const SdfLayerHandle &layer) : _layer(layer)
     {
       // Wrap as soon as the first instance is constructed.
       TfPyWrapOnce<Sdf_SubLayerOffsetsProxy>(&_Wrap);
     }
 
    private:
+
     static void _Wrap()
     {
       using namespace boost::python;
@@ -98,8 +99,7 @@ namespace
     // exception, which Boost catches and converts to a Python exception.
     SdfLayer *GetLayer() const
     {
-      if (!_layer)
-      {
+      if (!_layer) {
         // CODE_COVERAGE_OFF
         // I cannot figure out a way to get a pointer to an expired
         // layer in python, so I have not been able to cover this...
@@ -146,10 +146,8 @@ namespace
     {
       SdfLayerOffsetVector values = _GetValues();
 
-      for (size_t i = 0; i < values.size(); ++i)
-      {
-        if (values[i] == val)
-        {
+      for (size_t i = 0; i < values.size(); ++i) {
+        if (values[i] == val) {
           return i;
         }
       }
@@ -160,10 +158,8 @@ namespace
     int _FindIndexForPath(const std::string &path) const
     {
       SdfSubLayerProxy paths = GetLayer()->GetSubLayerPaths();
-      for (size_t i = 0, n = paths.size(); i < n; ++i)
-      {
-        if (paths[i] == path)
-        {
+      for (size_t i = 0, n = paths.size(); i < n; ++i) {
+        if (paths[i] == path) {
           return i;
         }
       }
@@ -180,9 +176,9 @@ namespace
     SdfLayerOffset _GetItemByPath(const std::string &path) const
     {
       int index = _FindIndexForPath(path);
-      if (index == -1)
-      {
-        TfPyThrowIndexError(TfStringPrintf("path @%s@ not present in subLayerPaths", path.c_str()));
+      if (index == -1) {
+        TfPyThrowIndexError(
+          TfStringPrintf("path @%s@ not present in subLayerPaths", path.c_str()));
       }
 
       return _GetItemByIndex(index);
@@ -191,12 +187,10 @@ namespace
     void _SetItemByIndex(int index, const SdfLayerOffset &value)
     {
       int size = GetLayer()->GetNumSubLayerPaths();
-      if (index == -1)
-      {
+      if (index == -1) {
         index = size;
       }
-      if (index < 0 || index > size)
-      {
+      if (index < 0 || index > size) {
         TfPyThrowIndexError("Index out of range");
       }
       GetLayer()->SetSubLayerOffset(value, index);
@@ -205,9 +199,9 @@ namespace
     void _SetItemByPath(const std::string &path, const SdfLayerOffset &value)
     {
       int index = _FindIndexForPath(path);
-      if (index == -1)
-      {
-        TfPyThrowIndexError(TfStringPrintf("path @%s@ not present in subLayerPaths", path.c_str()));
+      if (index == -1) {
+        TfPyThrowIndexError(
+          TfStringPrintf("path @%s@ not present in subLayerPaths", path.c_str()));
       }
 
       _SetItemByIndex(index, value);
@@ -224,10 +218,8 @@ namespace
       SdfLayerOffsetVector values = _GetValues();
 
       std::string result;
-      TF_FOR_ALL (it, values)
-      {
-        if (!result.empty())
-        {
+      TF_FOR_ALL (it, values) {
+        if (!result.empty()) {
           result += ", ";
         }
         result += TfPyRepr(*it);
@@ -236,6 +228,7 @@ namespace
     }
 
    private:
+
     SdfLayerHandle _layer;
   };
 
@@ -250,8 +243,7 @@ namespace
                                           SdfLayer::FileFormatArguments *args)
   {
     std::string errMsg;
-    if (!SdfFileFormatArgumentsFromPython(dict, args, &errMsg))
-    {
+    if (!SdfFileFormatArgumentsFromPython(dict, args, &errMsg)) {
       TF_CODING_ERROR("%s", errMsg.c_str());
       return false;
     }
@@ -260,8 +252,7 @@ namespace
 
   static std::string _Repr(const SdfLayerHandle &self)
   {
-    if (!self)
-    {
+    if (!self) {
       return "<expired " + TF_PY_REPR_PREFIX + "Layer instance>";
     }
     return TF_PY_REPR_PREFIX + "Find(" + TfPyRepr(self->GetIdentifier()) + ")";
@@ -280,8 +271,7 @@ namespace
                       const boost::python::dict &dict)
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return false;
     }
 
@@ -354,11 +344,9 @@ namespace
   {
     SdfNamespaceEditDetailVector details;
     SdfNamespaceEditDetail::Result result = x->CanApply(edit, &details);
-    if (result != SdfNamespaceEditDetail::Okay)
-    {
+    if (result != SdfNamespaceEditDetail::Okay) {
       return make_tuple(object(false), object(details));
-    } else
-    {
+    } else {
       return object(true);
     }
   }
@@ -367,8 +355,7 @@ namespace
                                    const boost::python::dict &dict = boost::python::dict())
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return SdfLayerRefPtr();
     }
 
@@ -380,8 +367,7 @@ namespace
                              const boost::python::dict &dict = boost::python::dict())
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return SdfLayerRefPtr();
     }
 
@@ -391,8 +377,7 @@ namespace
   static SdfLayerRefPtr _CreateAnonymous(const std::string &tag, const boost::python::dict &dict)
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return SdfLayerRefPtr();
     }
 
@@ -404,8 +389,7 @@ namespace
                                          const boost::python::dict &dict)
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return SdfLayerRefPtr();
     }
 
@@ -415,8 +399,7 @@ namespace
   static SdfLayerRefPtr _FindOrOpen(const std::string &identifier, const boost::python::dict &dict)
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return SdfLayerRefPtr();
     }
 
@@ -426,8 +409,7 @@ namespace
   static SdfLayerHandle _Find(const std::string &identifier, const boost::python::dict &dict)
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return SdfLayerHandle();
     }
 
@@ -439,8 +421,7 @@ namespace
                                              const boost::python::dict &dict)
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return SdfLayerHandle();
     }
 
@@ -452,8 +433,7 @@ namespace
                                                    const boost::python::dict &dict)
   {
     SdfLayer::FileFormatArguments args;
-    if (!_ExtractFileFormatArguments(dict, &args))
-    {
+    if (!_ExtractFileFormatArguments(dict, &args)) {
       return SdfLayerHandle();
     }
 
@@ -491,7 +471,9 @@ void wrapLayer()
       .def("__repr__", _Repr)
 
       .def("GetFileFormat", &This::GetFileFormat, return_value_policy<return_by_value>())
-      .def("GetFileFormatArguments", &This::GetFileFormatArguments, return_value_policy<return_by_value>())
+      .def("GetFileFormatArguments",
+           &This::GetFileFormatArguments,
+           return_value_policy<return_by_value>())
 
       .def("CreateNew",
            &_CreateNew,
@@ -500,7 +482,8 @@ void wrapLayer()
       .staticmethod("CreateNew")
 
       .def("CreateAnonymous",
-           (SdfLayerRefPtr(*)(const std::string &, const boost::python::dict &)) & _CreateAnonymous,
+           (SdfLayerRefPtr(*)(const std::string &, const boost::python::dict &)) &
+             _CreateAnonymous,
            return_value_policy<TfPyRefPtrFactory<ThisHandle>>(),
            (arg("tag") = std::string(), arg("args") = boost::python::dict()))
       .def("CreateAnonymous",
@@ -530,10 +513,11 @@ void wrapLayer()
            return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
       .staticmethod("FindOrOpenRelativeToLayer")
 
-      .def("OpenAsAnonymous",
-           This::OpenAsAnonymous,
-           (arg("filePath") = std::string(), arg("metadataOnly") = false, arg("tag") = std::string()),
-           return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
+      .def(
+        "OpenAsAnonymous",
+        This::OpenAsAnonymous,
+        (arg("filePath") = std::string(), arg("metadataOnly") = false, arg("tag") = std::string()),
+        return_value_policy<TfPyRefPtrFactory<ThisHandle>>())
       .staticmethod("OpenAsAnonymous")
 
       .def("Save", &This::Save, (arg("force") = false))
@@ -593,9 +577,10 @@ void wrapLayer()
                     make_function(&This::GetVersion, return_value_policy<return_by_value>()),
                     "The layer's version.")
 
-      .add_property("repositoryPath",
-                    make_function(&This::GetRepositoryPath, return_value_policy<return_by_value>()),
-                    "The layer's associated repository path")
+      .add_property(
+        "repositoryPath",
+        make_function(&This::GetRepositoryPath, return_value_policy<return_by_value>()),
+        "The layer's associated repository path")
 
       .def("GetAssetName", &This::GetAssetName, return_value_policy<return_by_value>())
 
@@ -813,13 +798,15 @@ void wrapLayer()
            "Return a list of asset paths for\n"
            "this layer.")
 
-      .add_property("externalReferences",
-                    make_function(&This::GetExternalReferences, return_value_policy<TfPySequenceToList>()),
-                    "Return unique list of asset paths of external references for\n"
-                    "given layer.")
+      .add_property(
+        "externalReferences",
+        make_function(&This::GetExternalReferences, return_value_policy<TfPySequenceToList>()),
+        "Return unique list of asset paths of external references for\n"
+        "given layer.")
 
       .def("GetExternalAssetDependencies",
-           make_function(&This::GetExternalAssetDependencies, return_value_policy<TfPySequenceToList>()))
+           make_function(&This::GetExternalAssetDependencies,
+                         return_value_policy<TfPySequenceToList>()))
 
       .add_property("permissionToSave",
                     &This::PermissionToSave,
@@ -848,8 +835,12 @@ void wrapLayer()
 
       .def("_WriteDataFile", &SdfLayer::WriteDataFile)
 
-      .def("ListAllTimeSamples", &SdfLayer::ListAllTimeSamples, return_value_policy<TfPySequenceToList>())
-      .def("ListTimeSamplesForPath", &_ListTimeSamplesForPath, return_value_policy<TfPySequenceToList>())
+      .def("ListAllTimeSamples",
+           &SdfLayer::ListAllTimeSamples,
+           return_value_policy<TfPySequenceToList>())
+      .def("ListTimeSamplesForPath",
+           &_ListTimeSamplesForPath,
+           return_value_policy<TfPySequenceToList>())
       .def("GetNumTimeSamplesForPath", &_GetNumTimeSamplesForPath)
       .def("GetBracketingTimeSamples", &_GetBracketingTimeSamples)
       .def("GetBracketingTimeSamplesForPath", &_GetBracketingTimeSamplesForPath)
@@ -857,10 +848,12 @@ void wrapLayer()
       .def("SetTimeSample", &_SetTimeSample)
       .def("EraseTimeSample", &_EraseTimeSample);
 
-  TfPyContainerConversions::from_python_sequence<SdfLayerHandleSet, TfPyContainerConversions::set_policy>();
+  TfPyContainerConversions::from_python_sequence<SdfLayerHandleSet,
+                                                 TfPyContainerConversions::set_policy>();
 
-  TfPyContainerConversions::from_python_sequence<SdfLayerHandleVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    SdfLayerHandleVector,
+    TfPyContainerConversions::variable_capacity_policy>();
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(SdfLayer)

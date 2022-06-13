@@ -66,8 +66,7 @@ namespace
 
     static void *_convertible(PyObject *obj_ptr)
     {
-      if (obj_ptr == Py_None || Ar_CanConvertResolverContextFromPython(obj_ptr))
-      {
+      if (obj_ptr == Py_None || Ar_CanConvertResolverContextFromPython(obj_ptr)) {
         return obj_ptr;
       }
       return 0;
@@ -75,11 +74,11 @@ namespace
 
     static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
     {
-      void *storage = ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
+      void *storage =
+        ((converter::rvalue_from_python_storage<ArResolverContext> *)data)->storage.bytes;
 
       ArResolverContext context;
-      if (obj_ptr != Py_None)
-      {
+      if (obj_ptr != Py_None) {
         context = Ar_ConvertResolverContextFromPython(obj_ptr);
       }
 

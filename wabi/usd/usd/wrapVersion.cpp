@@ -65,8 +65,9 @@ static boost::python::tuple _GetVersion()
 // and the type returned.
 static std::string _MakeVersionFuncDocstring(const std::string &section, const std::string &type)
 {
-  return "Get the " + section + " version number for this build of USD.\n" + "Returns a value of type " +
-         type + ".\n" + "USD versions are described as (major,minor,patch)\n";
+  return "Get the " + section + " version number for this build of USD.\n" +
+         "Returns a value of type " + type + ".\n" +
+         "USD versions are described as (major,minor,patch)\n";
 }
 
 void wrapVersion()
@@ -74,5 +75,7 @@ void wrapVersion()
   def("GetMajorVersion", _GetMajorVersion, _MakeVersionFuncDocstring("major", "int").c_str());
   def("GetMinorVersion", _GetMinorVersion, _MakeVersionFuncDocstring("minor", "int").c_str());
   def("GetPatchVersion", _GetPatchVersion, _MakeVersionFuncDocstring("patch", "int").c_str());
-  def("GetVersion", _GetVersion, _MakeVersionFuncDocstring("complete", "tuple(int,int,int)").c_str());
+  def("GetVersion",
+      _GetVersion,
+      _MakeVersionFuncDocstring("complete", "tuple(int,int,int)").c_str());
 }

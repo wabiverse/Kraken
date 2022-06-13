@@ -52,7 +52,8 @@ namespace
       : depthFormat(desc.depthAttachmentDesc.format),
         colorTextures(resolved && !desc.colorResolveTextures.empty() ? desc.colorResolveTextures :
                                                                        desc.colorTextures),
-        depthTexture(resolved && desc.depthResolveTexture ? desc.depthResolveTexture : desc.depthTexture)
+        depthTexture(resolved && desc.depthResolveTexture ? desc.depthResolveTexture :
+                                                            desc.depthTexture)
     {
       TF_VERIFY(colorTextures.size() == desc.colorAttachmentDescs.size(),
                 "Number of attachment descriptors and textures don't match");
@@ -73,14 +74,12 @@ namespace
   {
     out << "_FramebufferDesc: {";
 
-    for (size_t i = 0; i < desc.colorTextures.size(); i++)
-    {
+    for (size_t i = 0; i < desc.colorTextures.size(); i++) {
       out << "colorTexture" << i << " ";
       out << "dimensions:" << desc.colorTextures[i]->GetDescriptor().dimensions << ", ";
     }
 
-    if (desc.depthTexture)
-    {
+    if (desc.depthTexture) {
       out << "depthFormat " << desc.depthFormat;
       out << "depthTexture ";
       out << "dimensions:" << desc.depthTexture->GetDescriptor().dimensions;
@@ -110,18 +109,15 @@ static void _CreateFramebuffer(const _FramebufferDesc &desc, uint32_t *const fra
   //
   // Color attachments
   //
-  for (size_t i = 0; i < numColorAttachments; i++)
-  {
+  for (size_t i = 0; i < numColorAttachments; i++) {
     HgiGLTexture *const glTexture = static_cast<HgiGLTexture *>(desc.colorTextures[i].Get());
 
-    if (!TF_VERIFY(glTexture, "Invalid attachment texture"))
-    {
+    if (!TF_VERIFY(glTexture, "Invalid attachment texture")) {
       continue;
     }
 
     const uint32_t textureName = glTexture->GetTextureId();
-    if (!TF_VERIFY(glIsTexture(textureName), "Attachment not a texture"))
-    {
+    if (!TF_VERIFY(glIsTexture(textureName), "Attachment not a texture")) {
       continue;
     }
 
@@ -138,16 +134,15 @@ static void _CreateFramebuffer(const _FramebufferDesc &desc, uint32_t *const fra
   //
   // Depth attachment
   //
-  if (desc.depthTexture)
-  {
+  if (desc.depthTexture) {
     HgiGLTexture *const glTexture = static_cast<HgiGLTexture *>(desc.depthTexture.Get());
 
     const uint32_t textureName = glTexture->GetTextureId();
 
-    if (TF_VERIFY(glIsTexture(textureName), "Attachment not a texture"))
-    {
-      const GLenum attachment = (desc.depthFormat == HgiFormatFloat32UInt8) ? GL_DEPTH_STENCIL_ATTACHMENT :
-                                                                              GL_DEPTH_ATTACHMENT;
+    if (TF_VERIFY(glIsTexture(textureName), "Attachment not a texture")) {
+      const GLenum attachment = (desc.depthFormat == HgiFormatFloat32UInt8) ?
+                                  GL_DEPTH_STENCIL_ATTACHMENT :
+                                  GL_DEPTH_ATTACHMENT;
 
       glNamedFramebufferTexture(*framebuffer, attachment, textureName,
                                 0);  // level
@@ -179,10 +174,8 @@ static void _DestroyDescriptorCacheItem(HgiGLDescriptorCacheItem *dci)
 {
   TRACE_FUNCTION();
 
-  if (dci->framebuffer)
-  {
-    if (glIsFramebuffer(dci->framebuffer))
-    {
+  if (dci->framebuffer) {
+    if (glIsFramebuffer(dci->framebuffer)) {
       glDeleteFramebuffers(1, &dci->framebuffer);
       dci->framebuffer = 0;
     }
@@ -212,20 +205,16 @@ uint32_t HgiGLFramebufferCache::AcquireFramebuffer(HgiGraphicsCmdsDesc const &gr
   _FramebufferDesc desc(graphicsCmdsDesc, resolved);
 
   // Look for our framebuffer in cache
-  for (size_t i = 0; i < _descriptorCache.size(); i++)
-  {
+  for (size_t i = 0; i < _descriptorCache.size(); i++) {
     HgiGLDescriptorCacheItem *const item = _descriptorCache[i];
-    if (desc == item->descriptor)
-    {
+    if (desc == item->descriptor) {
       // If the GL context is changed we cannot re-use the framebuffer as
       // framebuffers cannot be shared between contexts.
-      if (glIsFramebuffer(item->framebuffer))
-      {
+      if (glIsFramebuffer(item->framebuffer)) {
         dci = item;
 
         // Move descriptor to end of 'LRU cache' as it is still used.
-        if (i < _descriptorCache.size())
-        {
+        if (i < _descriptorCache.size()) {
           _descriptorCache.erase(_descriptorCache.begin() + i);
           _descriptorCache.push_back(dci);
         }
@@ -235,8 +224,7 @@ uint32_t HgiGLFramebufferCache::AcquireFramebuffer(HgiGraphicsCmdsDesc const &gr
   }
 
   // Create a new descriptor cache item if it was not found
-  if (!dci)
-  {
+  if (!dci) {
     dci = _CreateDescriptorCacheItem(desc);
     _descriptorCache.push_back(dci);
 
@@ -244,8 +232,7 @@ uint32_t HgiGLFramebufferCache::AcquireFramebuffer(HgiGraphicsCmdsDesc const &gr
     // The size of the cache is small enough and we only store ptrs so we
     // use a vector instead of a linked list LRU.
     const size_t descriptorLRUsize = 64;
-    if (_descriptorCache.size() == descriptorLRUsize)
-    {
+    if (_descriptorCache.size() == descriptorLRUsize) {
       _DestroyDescriptorCacheItem(_descriptorCache.front());
       _descriptorCache.erase(_descriptorCache.begin());
     }
@@ -256,8 +243,7 @@ uint32_t HgiGLFramebufferCache::AcquireFramebuffer(HgiGraphicsCmdsDesc const &gr
 
 void HgiGLFramebufferCache::Clear()
 {
-  for (HgiGLDescriptorCacheItem *dci : _descriptorCache)
-  {
+  for (HgiGLDescriptorCacheItem *dci : _descriptorCache) {
     _DestroyDescriptorCacheItem(dci);
   }
   _descriptorCache.clear();
@@ -268,8 +254,7 @@ std::ostream &operator<<(std::ostream &out, const HgiGLFramebufferCache &fbc)
   out << "HgiGLFramebufferCache: {"
       << "descriptor cache: { ";
 
-  for (HgiGLDescriptorCacheItem const *d : fbc._descriptorCache)
-  {
+  for (HgiGLDescriptorCacheItem const *d : fbc._descriptorCache) {
     out << d->descriptor;
   }
 

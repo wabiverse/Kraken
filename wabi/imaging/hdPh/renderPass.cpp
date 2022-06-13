@@ -88,12 +88,12 @@ HdPh_RenderPass::HdPh_RenderPass(HdRenderIndex *index, HdRprimCollection const &
     _drawItemsChanged(false),
     _hgi(nullptr)
 {
-  HdPhRenderDelegate *renderDelegate = static_cast<HdPhRenderDelegate *>(index->GetRenderDelegate());
+  HdPhRenderDelegate *renderDelegate = static_cast<HdPhRenderDelegate *>(
+    index->GetRenderDelegate());
   _hgi = renderDelegate->GetHgi();
 }
 
-HdPh_RenderPass::~HdPh_RenderPass()
-{}
+HdPh_RenderPass::~HdPh_RenderPass() {}
 
 size_t HdPh_RenderPass::GetDrawItemCount() const
 {
@@ -110,12 +110,10 @@ void HdPh_RenderPass::_Prepare(TfTokenVector const &renderTags)
 
 static const GfVec3i &_GetFramebufferSize(const HgiGraphicsCmdsDesc &desc)
 {
-  for (const HgiTextureHandle &color : desc.colorTextures)
-  {
+  for (const HgiTextureHandle &color : desc.colorTextures) {
     return color->GetDescriptor().dimensions;
   }
-  if (desc.depthTexture)
-  {
+  if (desc.depthTexture) {
     return desc.depthTexture->GetDescriptor().dimensions;
   }
 
@@ -126,11 +124,9 @@ static const GfVec3i &_GetFramebufferSize(const HgiGraphicsCmdsDesc &desc)
 static GfVec4i _FlipViewport(const GfVec4i &viewport, const GfVec3i &framebufferSize)
 {
   const int height = framebufferSize[1];
-  if (height > 0)
-  {
+  if (height > 0) {
     return GfVec4i(viewport[0], height - (viewport[1] + viewport[3]), viewport[2], viewport[3]);
-  } else
-  {
+  } else {
     return viewport;
   }
 }
@@ -150,18 +146,15 @@ static GfVec4i _ComputeViewport(HdRenderPassStateSharedPtr const &renderPassStat
                                 const bool flip)
 {
   const CameraUtilFraming &framing = renderPassState->GetFraming();
-  if (framing.IsValid())
-  {
+  if (framing.IsValid()) {
     // Use data window for clients using the new camera framing
     // API.
     const GfVec4i viewport = _ToVec4i(framing.dataWindow);
-    if (flip)
-    {
+    if (flip) {
       // Note that in OpenGL, the coordinates for the viewport
       // are y-Up but the camera framing is y-Down.
       return _FlipViewport(viewport, _GetFramebufferSize(desc));
-    } else
-    {
+    } else {
       return viewport;
     }
   }
@@ -189,8 +182,8 @@ void HdPh_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
   _FrustumCullCPU(stRenderPassState);
 
   // Downcast the resource registry
-  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::dynamic_pointer_cast<HdPhResourceRegistry>(
-    GetRenderIndex()->GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry =
+    std::dynamic_pointer_cast<HdPhResourceRegistry>(GetRenderIndex()->GetResourceRegistry());
   TF_VERIFY(resourceRegistry);
 
   _cmdBuffer.PrepareDraw(stRenderPassState, resourceRegistry);
@@ -198,8 +191,7 @@ void HdPh_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
   // Create graphics work to render into aovs.
   const HgiGraphicsCmdsDesc desc = stRenderPassState->MakeGraphicsCmdsDesc(GetRenderIndex());
   HgiGraphicsCmdsUniquePtr gfxCmds = _hgi->CreateGraphicsCmds(desc);
-  if (!TF_VERIFY(gfxCmds))
-  {
+  if (!TF_VERIFY(gfxCmds)) {
     return;
   }
   HdRprimCollection const &collection = GetRprimCollection();
@@ -217,21 +209,18 @@ void HdPh_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState
   // This will be reworked to use Hgi.
   stRenderPassState->Bind();
 
-  if (glGfxCmds)
-  {
+  if (glGfxCmds) {
     // XXX Tmp code path to allow non-hgi code to insert functions into
     // HgiGL ops-stack. Will be removed once Phoenixs uses Hgi everywhere
     auto executeDrawOp = [cmdBuffer, stRenderPassState, resourceRegistry] {
       _ExecuteDraw(cmdBuffer, stRenderPassState, resourceRegistry);
     };
     glGfxCmds->InsertFunctionOp(executeDrawOp);
-  } else
-  {
+  } else {
     _ExecuteDraw(cmdBuffer, stRenderPassState, resourceRegistry);
   }
 
-  if (gfxCmds)
-  {
+  if (gfxCmds) {
     gfxCmds->PopDebugGroup();
     _hgi->SubmitCmds(gfxCmds.get());
   }
@@ -265,14 +254,11 @@ void HdPh_RenderPass::_PrepareDrawItems(TfTokenVector const &renderTags)
 
   const bool materialTagsChanged = _materialTagsVersion != materialTagsVersion;
 
-  if (collectionChanged || renderTagsChanged || materialTagsChanged)
-  {
+  if (collectionChanged || renderTagsChanged || materialTagsChanged) {
     HD_PERF_COUNTER_INCR(HdPerfTokens->collectionsRefreshed);
 
-    if (TfDebug::IsEnabled(HDPH_DRAW_ITEM_GATHER))
-    {
-      if (collectionChanged)
-      {
+    if (TfDebug::IsEnabled(HDPH_DRAW_ITEM_GATHER)) {
+      if (collectionChanged) {
         TfDebug::Helper::Msg("CollectionChanged: %s (repr = %s, version = %d -> %d)\n",
                              collection.GetName().GetText(),
                              collection.GetReprSelector().GetText(),
@@ -280,14 +266,12 @@ void HdPh_RenderPass::_PrepareDrawItems(TfTokenVector const &renderTags)
                              collectionVersion);
       }
 
-      if (renderTagsChanged)
-      {
+      if (renderTagsChanged) {
         TfDebug::Helper::Msg("RenderTagsChanged (version = %d -> %d)\n",
                              _renderTagVersion,
                              renderTagVersion);
       }
-      if (materialTagsChanged)
-      {
+      if (materialTagsChanged) {
         TfDebug::Helper::Msg("MaterialTagsChanged (version = %d -> %d)\n",
                              _materialTagsVersion,
                              materialTagsVersion);
@@ -324,8 +308,7 @@ void HdPh_RenderPass::_PrepareCommandBuffer(TfTokenVector const &renderTags)
   _PrepareDrawItems(renderTags);
 
   // Rebuild draw batches based on new draw items
-  if (_drawItemsChanged)
-  {
+  if (_drawItemsChanged) {
     _cmdBuffer.SwapDrawItems(
       // Downcast the HdDrawItem entries to HdPhDrawItems:
       reinterpret_cast<std::vector<HdPhDrawItem const *> *>(&_drawItems),
@@ -334,8 +317,7 @@ void HdPh_RenderPass::_PrepareCommandBuffer(TfTokenVector const &renderTags)
     _drawItemsChanged = false;
     size_t itemCount = _cmdBuffer.GetTotalSize();
     HD_PERF_COUNTER_SET(HdTokens->totalItemCount, itemCount);
-  } else
-  {
+  } else {
     // validate command buffer to not include expired drawItems,
     // which could be produced by migrating BARs at the new repr creation.
     _cmdBuffer.RebuildDrawBatchesIfNeeded(batchVersion);
@@ -346,8 +328,7 @@ void HdPh_RenderPass::_PrepareCommandBuffer(TfTokenVector const &renderTags)
   // -------------------------------------------------------------------
   HdRenderDelegate *renderDelegate = GetRenderIndex()->GetRenderDelegate();
   int currentSettingsVersion = renderDelegate->GetRenderSettingsVersion();
-  if (_lastSettingsVersion != currentSettingsVersion)
-  {
+  if (_lastSettingsVersion != currentSettingsVersion) {
     _lastSettingsVersion = currentSettingsVersion;
     _useTinyPrimCulling = renderDelegate->GetRenderSetting<bool>(
       HdPhRenderSettingsTokens->enableTinyPrimCulling,
@@ -370,23 +351,19 @@ void HdPh_RenderPass::_FrustumCullCPU(HdPhRenderPassStateSharedPtr const &render
                             HdPh_IndirectDrawBatch::IsEnabledGPUFrustumCulling());
   bool freezeCulling = TfDebug::IsEnabled(HD_FREEZE_CULL_FRUSTUM);
 
-  if (skipCulling)
-  {
+  if (skipCulling) {
     // Since culling state is stored across renders,
     // we need to update all items visible state
     _cmdBuffer.SyncDrawItemVisibility(tracker.GetVisibilityChangeCount());
 
     TF_DEBUG(HD_DRAWITEMS_CULLED).Msg("CULLED: skipped\n");
-  } else
-  {
-    if (!freezeCulling)
-    {
+  } else {
+    if (!freezeCulling) {
       // Re-cull the command buffer.
       _cmdBuffer.FrustumCull(renderPassState->GetCullMatrix());
     }
 
-    if (TfDebug::IsEnabled(HD_DRAWITEMS_CULLED))
-    {
+    if (TfDebug::IsEnabled(HD_DRAWITEMS_CULLED)) {
       TF_DEBUG(HD_DRAWITEMS_CULLED).Msg("CULLED: %zu drawItems\n", _cmdBuffer.GetCulledSize());
     }
   }

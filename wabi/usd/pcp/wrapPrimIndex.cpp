@@ -41,8 +41,7 @@ namespace
 
     SdfPrimSpecHandleVector primStack;
     primStack.reserve(std::distance(primRange.first, primRange.second));
-    TF_FOR_ALL (it, primRange)
-    {
+    TF_FOR_ALL (it, primRange) {
       primStack.push_back(SdfGetPrimAtPath(*it));
     }
 
@@ -72,7 +71,8 @@ void wrapPrimIndex()
   typedef PcpPrimIndex This;
 
   class_<This>("PrimIndex", "", no_init)
-    .add_property("primStack", make_function(&_GetPrimStack, return_value_policy<TfPySequenceToList>()))
+    .add_property("primStack",
+                  make_function(&_GetPrimStack, return_value_policy<TfPySequenceToList>()))
     .add_property("rootNode", &This::GetRootNode)
     .add_property("hasAnyPayloads", &This::HasAnyPayloads)
     .add_property("localErrors",
@@ -82,7 +82,9 @@ void wrapPrimIndex()
     .def("IsInstanceable", &This::IsInstanceable)
 
     .def("ComputePrimChildNames", &_ComputePrimChildNames)
-    .def("ComputePrimPropertyNames", &_ComputePrimPropertyNames, return_value_policy<TfPySequenceToList>())
+    .def("ComputePrimPropertyNames",
+         &_ComputePrimPropertyNames,
+         return_value_policy<TfPySequenceToList>())
     .def("ComposeAuthoredVariantSelections",
          &This::ComposeAuthoredVariantSelections,
          return_value_policy<TfPyMapToDictionary>())
@@ -92,7 +94,8 @@ void wrapPrimIndex()
          (PcpNodeRef(This::*)(const SdfPrimSpecHandle &) const)(&This::GetNodeProvidingSpec),
          args("primSpec"))
     .def("GetNodeProvidingSpec",
-         (PcpNodeRef(This::*)(const SdfLayerHandle &, const SdfPath &) const)(&This::GetNodeProvidingSpec),
+         (PcpNodeRef(This::*)(const SdfLayerHandle &, const SdfPath &)
+            const)(&This::GetNodeProvidingSpec),
          (args("layer"), args("path")))
 
     .def("PrintStatistics", &This::PrintStatistics)

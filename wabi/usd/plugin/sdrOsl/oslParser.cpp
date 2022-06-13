@@ -124,15 +124,14 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
 
   bool parseSuccessful = true;
 
-  if (!discoveryResult.uri.empty())
-  {
+  if (!discoveryResult.uri.empty()) {
 #if AR_VERSION == 1
     // Get the resolved URI to a location that it can be read by the OSL parser
-    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(discoveryResult.uri,
-                                                                         discoveryResult.resolvedUri);
+    bool localFetchSuccessful = ArGetResolver().FetchToLocalResolvedPath(
+      discoveryResult.uri,
+      discoveryResult.resolvedUri);
 
-    if (!localFetchSuccessful)
-    {
+    if (!localFetchSuccessful) {
       TF_WARN(
         "Could not localize the OSL at URI [%s] into a local path. "
         "An invalid Sdr node definition will be created.",
@@ -146,21 +145,17 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
     // we explicitly check if we're reading from a file on disk and
     // use the regular open function so that this case still works with
     // older versions.
-    if (TfIsFile(discoveryResult.resolvedUri))
-    {
+    if (TfIsFile(discoveryResult.resolvedUri)) {
       parseSuccessful = oslQuery.open(discoveryResult.resolvedUri);
-    } else
-    {
+    } else {
       std::shared_ptr<const char> buffer;
       std::shared_ptr<ArAsset> asset = ArGetResolver().OpenAsset(
         ArResolvedPath(discoveryResult.resolvedUri));
-      if (asset)
-      {
+      if (asset) {
         buffer = asset->GetBuffer();
       }
 
-      if (!buffer)
-      {
+      if (!buffer) {
         TF_WARN(
           "Could not open the OSL at URI [%s] (%s). An invalid Sdr "
           "node definition will be created.",
@@ -169,13 +164,12 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
         return NdrParserPlugin::GetInvalidNode(discoveryResult);
       }
 
-      parseSuccessful = _ParseFromSourceCode(&oslQuery, OSL::string_view(buffer.get(), asset->GetSize()));
+      parseSuccessful = _ParseFromSourceCode(&oslQuery,
+                                             OSL::string_view(buffer.get(), asset->GetSize()));
     }
-  } else if (!discoveryResult.sourceCode.empty())
-  {
+  } else if (!discoveryResult.sourceCode.empty()) {
     parseSuccessful = _ParseFromSourceCode(&oslQuery, discoveryResult.sourceCode);
-  } else
-  {
+  } else {
     TF_WARN(
       "Invalid NdrNodeDiscoveryResult with identifier %s: both uri "
       "and sourceCode are empty.",
@@ -184,8 +178,7 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
   }
 
   std::string errors = oslQuery.geterror();
-  if (!parseSuccessful || !errors.empty())
-  {
+  if (!parseSuccessful || !errors.empty()) {
     TF_WARN(
       "Could not parse OSL shader at URI [%s]. An invalid Sdr node "
       "definition will be created. %s%s",
@@ -220,14 +213,12 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
   NdrPropertyUniquePtrVec properties;
   const size_t nParams = query.nparams();
 
-  for (size_t i = 0; i < nParams; ++i)
-  {
+  for (size_t i = 0; i < nParams; ++i) {
     const OslParameter *param = query.getparam(i);
     std::string propName = param->name.string();
 
     // Struct members are not supported
-    if (propName.find('.') != std::string::npos)
-    {
+    if (propName.find('.') != std::string::npos) {
       continue;
     }
 
@@ -244,18 +235,15 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
     // Non-standard properties in the metadata are considered hints
     NdrTokenMap hints;
     std::string definitionName;
-    for (auto metaIt = metadata.cbegin(); metaIt != metadata.cend();)
-    {
+    for (auto metaIt = metadata.cbegin(); metaIt != metadata.cend();) {
       if (std::find(SdrPropertyMetadata->allTokens.begin(),
                     SdrPropertyMetadata->allTokens.end(),
-                    metaIt->first) != SdrPropertyMetadata->allTokens.end())
-      {
+                    metaIt->first) != SdrPropertyMetadata->allTokens.end()) {
         metaIt++;
         continue;
       }
 
-      if (metaIt->first == _tokens->sdrDefinitionName)
-      {
+      if (metaIt->first == _tokens->sdrDefinitionName) {
         definitionName = metaIt->second;
         metaIt = metadata.erase(metaIt);
         continue;
@@ -263,8 +251,7 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
 
       // The metadata sometimes incorrectly specifies array size; this
       // value is not respected
-      if (metaIt->first == _tokens->arraySize)
-      {
+      if (metaIt->first == _tokens->arraySize) {
         TF_DEBUG(NDR_PARSING)
           .Msg(
             "Ignoring bad 'arraySize' attribute on property [%s] "
@@ -281,16 +268,14 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
     // If we found 'definitionName' metadata, we actually need to
     // change the name of the property to match, using the OSL
     // parameter name as the ImplementationName
-    if (!definitionName.empty())
-    {
+    if (!definitionName.empty()) {
       metadata[SdrPropertyMetadata->ImplementationName] = TfToken(propName);
       propName = definitionName;
     }
 
     // Extract options
     NdrOptionVec options;
-    if (metadata.count(SdrPropertyMetadata->Options))
-    {
+    if (metadata.count(SdrPropertyMetadata->Options)) {
       options = OptionVecVal(metadata.at(SdrPropertyMetadata->Options));
     }
 
@@ -308,33 +293,29 @@ NdrPropertyUniquePtrVec SdrOslParserPlugin::_getNodeProperties(
   return properties;
 }
 
-NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(const OslParameter *param,
-                                                     const NdrNodeDiscoveryResult &discoveryResult) const
+NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(
+  const OslParameter *param,
+  const NdrNodeDiscoveryResult &discoveryResult) const
 {
   NdrTokenMap metadata;
 
-  for (const OslParameter &metaParam : param->metadata)
-  {
+  for (const OslParameter &metaParam : param->metadata) {
     TfToken entryName = TfToken(metaParam.name.string());
 
     // Vstruct metadata needs to be specially parsed; otherwise, just stuff
     // the value into the map
-    if (entryName == _tokens->vstructMember)
-    {
+    if (entryName == _tokens->vstructMember) {
       std::string vstruct = _getParamAsString(metaParam);
 
-      if (!vstruct.empty())
-      {
+      if (!vstruct.empty()) {
         // A dot splits struct from member name
         size_t dotPos = vstruct.find('.');
 
-        if (dotPos != std::string::npos)
-        {
+        if (dotPos != std::string::npos) {
           metadata[SdrPropertyMetadata->VstructMemberOf] = vstruct.substr(0, dotPos);
 
           metadata[SdrPropertyMetadata->VstructMemberName] = vstruct.substr(dotPos + 1);
-        } else
-        {
+        } else {
           TF_DEBUG(NDR_PARSING)
             .Msg("Bad virtual structure member in %s.%s:%s",
                  discoveryResult.name.c_str(),
@@ -342,8 +323,7 @@ NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(const OslParameter *param,
                  vstruct.c_str());
         }
       }
-    } else
-    {
+    } else {
       metadata[entryName] = _getParamAsString(metaParam);
     }
   }
@@ -351,12 +331,11 @@ NdrTokenMap SdrOslParserPlugin::_getPropertyMetadata(const OslParameter *param,
   return metadata;
 }
 
-void SdrOslParserPlugin::_injectParserMetadata(NdrTokenMap &metadata, const TfToken &typeName) const
+void SdrOslParserPlugin::_injectParserMetadata(NdrTokenMap &metadata,
+                                               const TfToken &typeName) const
 {
-  if (typeName == SdrPropertyTypes->String)
-  {
-    if (IsPropertyAnAssetIdentifier(metadata))
-    {
+  if (typeName == SdrPropertyTypes->String) {
+    if (IsPropertyAnAssetIdentifier(metadata)) {
       metadata[SdrPropertyMetadata->IsAssetIdentifier] = "";
     }
   }
@@ -369,8 +348,7 @@ NdrTokenMap SdrOslParserPlugin::_getNodeMetadata(const OSL::OSLQuery &query,
 
   // Convert the OSL metadata to a dict. Each entry in the metadata is stored
   // as an OslParameter.
-  for (const OslParameter &metaParam : query.metadata())
-  {
+  for (const OslParameter &metaParam : query.metadata()) {
     TfToken entryName = TfToken(metaParam.name.string());
 
     nodeMetadata[entryName] = _getParamAsString(metaParam);
@@ -381,14 +359,11 @@ NdrTokenMap SdrOslParserPlugin::_getNodeMetadata(const OSL::OSLQuery &query,
 
 std::string SdrOslParserPlugin::_getParamAsString(const OslParameter &param) const
 {
-  if (param.sdefault.size() == 1)
-  {
+  if (param.sdefault.size() == 1) {
     return param.sdefault[0].string();
-  } else if (param.idefault.size() == 1)
-  {
+  } else if (param.idefault.size() == 1) {
     return std::to_string(param.idefault[0]);
-  } else if (param.fdefault.size() == 1)
-  {
+  } else if (param.fdefault.size() == 1) {
     return std::to_string(param.fdefault[0]);
   }
 
@@ -399,14 +374,12 @@ std::tuple<TfToken, size_t> SdrOslParserPlugin::_getTypeName(const OslParameter 
                                                              const NdrTokenMap &metadata) const
 {
   // Exit early if this param is known to be a struct
-  if (param->isstruct)
-  {
+  if (param->isstruct) {
     return std::make_tuple(SdrPropertyTypes->Struct, /* array size = */ 0);
   }
 
   // Exit early if the param's metadata indicates the param is a terminal type
-  if (IsPropertyATerminal(metadata))
-  {
+  if (IsPropertyATerminal(metadata)) {
     return std::make_tuple(SdrPropertyTypes->Terminal, /* array size = */ 0);
   }
 
@@ -415,15 +388,12 @@ std::tuple<TfToken, size_t> SdrOslParserPlugin::_getTypeName(const OslParameter 
   size_t arraySize = 0;
   size_t openingBracket = typeName.find('[');
 
-  if (openingBracket != std::string::npos)
-  {
-    try
-    {
+  if (openingBracket != std::string::npos) {
+    try {
       // stoi will stop at the first non-number char, usually ']'
       arraySize = std::stoi(typeName.substr(openingBracket + 1));
     }
-    catch (...)
-    {
+    catch (...) {
       // It is possible we try to parse a type like `color[]`, which
       // usually indicates a dynamic array type. This attribute NEEDS to
       // have the `isDynamicArray` metadatum set to 1, otherwise the Sdr
@@ -448,10 +418,8 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
 
   // INT and INT ARRAY
   // -------------------------------------------------------------------------
-  if (oslType == SdrPropertyTypes->Int)
-  {
-    if (!isArray && param.idefault.size() == 1)
-    {
+  if (oslType == SdrPropertyTypes->Int) {
+    if (!isArray && param.idefault.size() == 1) {
       return VtValue(param.idefault[0]);
     }
 
@@ -463,12 +431,10 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
 
   // STRING and STRING ARRAY
   // -------------------------------------------------------------------------
-  else if (oslType == SdrPropertyTypes->String)
-  {
+  else if (oslType == SdrPropertyTypes->String) {
 
     // Handle non-array
-    if (!isArray && param.sdefault.size() == 1)
-    {
+    if (!isArray && param.sdefault.size() == 1) {
       return VtValue(param.sdefault[0].string());
     }
 
@@ -479,8 +445,7 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
     // Strings are stored as `ustring`s from OIIO; these need to be
     // converted explicitly into `std::string`s (otherwise the VtStringArray
     // will contain garbage).
-    for (const OIIO::ustring &ustr : param.sdefault)
-    {
+    for (const OIIO::ustring &ustr : param.sdefault) {
       array.push_back(ustr.string());
     }
     return VtValue::Take(array);
@@ -488,10 +453,8 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
 
   // FLOAT and FLOAT ARRAY
   // -------------------------------------------------------------------------
-  else if (oslType == SdrPropertyTypes->Float)
-  {
-    if (!isArray && param.fdefault.size() == 1)
-    {
+  else if (oslType == SdrPropertyTypes->Float) {
+    if (!isArray && param.fdefault.size() == 1) {
       return VtValue(param.fdefault[0]);
     }
 
@@ -504,19 +467,17 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
   // VECTOR TYPES and VECTOR TYPE ARRAYS
   // -------------------------------------------------------------------------
   else if (oslType == SdrPropertyTypes->Color || oslType == SdrPropertyTypes->Point ||
-           oslType == SdrPropertyTypes->Normal || oslType == SdrPropertyTypes->Vector)
-  {
-    if (!isArray && param.fdefault.size() == 3)
-    {
+           oslType == SdrPropertyTypes->Normal || oslType == SdrPropertyTypes->Vector) {
+    if (!isArray && param.fdefault.size() == 3) {
       return VtValue(GfVec3f(param.fdefault[0], param.fdefault[1], param.fdefault[2]));
-    } else if (isArray && param.fdefault.size() % 3 == 0)
-    {
+    } else if (isArray && param.fdefault.size() % 3 == 0) {
       int numElements = param.fdefault.size() / 3;
       VtVec3fArray array(numElements);
 
-      for (int i = 0; i < numElements; ++i)
-      {
-        array[i] = GfVec3f(param.fdefault[3 * i + 0], param.fdefault[3 * i + 1], param.fdefault[3 * i + 2]);
+      for (int i = 0; i < numElements; ++i) {
+        array[i] = GfVec3f(param.fdefault[3 * i + 0],
+                           param.fdefault[3 * i + 1],
+                           param.fdefault[3 * i + 2]);
       }
 
       return VtValue::Take(array);
@@ -525,16 +486,13 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
 
   // MATRIX
   // -------------------------------------------------------------------------
-  else if (oslType == SdrPropertyTypes->Matrix)
-  {
+  else if (oslType == SdrPropertyTypes->Matrix) {
     // XXX: No matrix array support
-    if (!isArray && param.fdefault.size() == 16)
-    {
+    if (!isArray && param.fdefault.size() == 16) {
       GfMatrix4d mat;
       double *values = mat.GetArray();
 
-      for (int i = 0; i < 16; ++i)
-      {
+      for (int i = 0; i < 16; ++i) {
         values[i] = static_cast<double>(param.fdefault[i]);
       }
 
@@ -545,8 +503,7 @@ VtValue SdrOslParserPlugin::_getDefaultValue(const SdrOslParserPlugin::OslParame
   // STRUCT, TERMINAL, VSTRUCT
   // -------------------------------------------------------------------------
   else if (oslType == SdrPropertyTypes->Struct || oslType == SdrPropertyTypes->Terminal ||
-           oslType == SdrPropertyTypes->Vstruct)
-  {
+           oslType == SdrPropertyTypes->Vstruct) {
     // We return an empty VtValue for Struct, Terminal, and Vstruct
     // properties because their value may rely on being computed within the
     // renderer, or we might not have a reasonable way to represent their

@@ -54,38 +54,30 @@ namespace
   static void _WrapSetInfo(SdfSpec &self, const TfToken &name, const object &pyObj)
   {
     VtValue fallback;
-    if (!self.GetSchema().IsRegistered(name, &fallback))
-    {
+    if (!self.GetSchema().IsRegistered(name, &fallback)) {
       TF_CODING_ERROR("Invalid info key: %s", name.GetText());
       return;
     }
 
     VtValue value;
-    if (fallback.IsEmpty())
-    {
+    if (fallback.IsEmpty()) {
       value = extract<VtValue>(pyObj)();
-    } else
-    {
+    } else {
       // We have to handle a few things as special cases to disambiguate
       // types from Python.
-      if (fallback.IsHolding<SdfPath>())
-      {
+      if (fallback.IsHolding<SdfPath>()) {
         value = extract<SdfPath>(pyObj)();
-      } else if (fallback.IsHolding<TfTokenVector>())
-      {
+      } else if (fallback.IsHolding<TfTokenVector>()) {
         value = extract<TfTokenVector>(pyObj)();
-      } else if (fallback.IsHolding<SdfVariantSelectionMap>())
-      {
+      } else if (fallback.IsHolding<SdfVariantSelectionMap>()) {
         value = extract<SdfVariantSelectionMap>(pyObj)();
-      } else
-      {
+      } else {
         value = extract<VtValue>(pyObj)();
         value.CastToTypeOf(fallback);
       }
     }
 
-    if (value.IsEmpty())
-    {
+    if (value.IsEmpty()) {
       TfPyThrowTypeError("Invalid type for key");
       return;
     }
@@ -95,8 +87,7 @@ namespace
 
   static std::string _GetAsText(const SdfSpecHandle &self)
   {
-    if (!self)
-    {
+    if (!self) {
       return TfPyRepr(self);
     }
     std::stringstream stream;
@@ -119,7 +110,9 @@ void wrapSpec()
     .def("GetAsText", &_GetAsText)
 
     .def("ListInfoKeys", &This::ListInfoKeys, return_value_policy<TfPySequenceToList>())
-    .def("GetMetaDataInfoKeys", &This::GetMetaDataInfoKeys, return_value_policy<TfPySequenceToList>())
+    .def("GetMetaDataInfoKeys",
+         &This::GetMetaDataInfoKeys,
+         return_value_policy<TfPySequenceToList>())
 
     .def("GetMetaDataDisplayGroup", &This::GetMetaDataDisplayGroup)
 

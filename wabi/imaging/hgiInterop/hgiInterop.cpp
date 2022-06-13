@@ -62,12 +62,10 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 /**
  * ----------------------------------------- Check Metal -> OpenGL first. ----- */
 #if defined(WITH_METAL)
-  if (srcApi == HgiTokens->Metal && dstApi == HgiTokens->OpenGL)
-  {
+  if (srcApi == HgiTokens->Metal && dstApi == HgiTokens->OpenGL) {
     /**
      * Transfer Metal textures to OpenGL application. */
-    if (!_metalToOpenGL)
-    {
+    if (!_metalToOpenGL) {
       _metalToOpenGL = std::make_unique<HgiInteropMetal>(srcHgi);
     }
     _metalToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
@@ -78,12 +76,10 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 /**
  * ------------------------------------ Otherwise check DirectX -> OpenGL. ----- */
 #if defined(WITH_DIRECTX)
-  if (srcApi == HgiTokens->DX3D && dstApi == HgiTokens->OpenGL)
-  {
+  if (srcApi == HgiTokens->DX3D && dstApi == HgiTokens->OpenGL) {
     /**
      * Transfer DirectX textures to OpenGL application. */
-    if (!_dX3DToOpenGL)
-    {
+    if (!_dX3DToOpenGL) {
       _dX3DToOpenGL = std::make_unique<HgiInteropDX3D>(srcHgi);
     }
     _dX3DToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
@@ -94,12 +90,10 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 /**
  * ------------------------------------ Otherwise check Vulkan -> OpenGL. ----- */
 #if defined(WITH_VULKAN)
-  if (srcApi == HgiTokens->Vulkan && dstApi == HgiTokens->OpenGL)
-  {
+  if (srcApi == HgiTokens->Vulkan && dstApi == HgiTokens->OpenGL) {
     /**
      * Transfer Vulkan textures to OpenGL application. */
-    if (!_vulkanToOpenGL)
-    {
+    if (!_vulkanToOpenGL) {
       _vulkanToOpenGL = std::make_unique<HgiInteropVulkan>(srcHgi);
     }
     _vulkanToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
@@ -109,12 +103,10 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 
   /**
    * ---------------------------------------- Otherwise fallback to OpenGL. ----- */
-  if (srcApi == HgiTokens->OpenGL && dstApi == HgiTokens->OpenGL)
-  {
+  if (srcApi == HgiTokens->OpenGL && dstApi == HgiTokens->OpenGL) {
     /**
      * Transfer OpenGL textures to OpenGL application. */
-    if (!_openGLToOpenGL)
-    {
+    if (!_openGLToOpenGL) {
       _openGLToOpenGL = std::make_unique<HgiInteropOpenGL>();
     }
     _openGLToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);

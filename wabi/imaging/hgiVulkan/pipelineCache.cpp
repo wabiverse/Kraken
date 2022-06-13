@@ -37,8 +37,7 @@ HgiVulkanPipelineCache::HgiVulkanPipelineCache(HgiVulkanDevice *device)
   // where we create the pipeline. So a pipeline cache can be helpful.
 }
 
-HgiVulkanPipelineCache::~HgiVulkanPipelineCache()
-{}
+HgiVulkanPipelineCache::~HgiVulkanPipelineCache() {}
 
 VkPipelineCache HgiVulkanPipelineCache::GetVulkanPipelineCache() const
 {

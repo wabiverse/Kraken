@@ -64,7 +64,8 @@ namespace
     return UsdVtValueToPython(retValue);
   }
 
-  static VtIntArray _GetIndices(const UsdGeomPrimvar &self, UsdTimeCode time = UsdTimeCode::Default())
+  static VtIntArray _GetIndices(const UsdGeomPrimvar &self,
+                                UsdTimeCode time = UsdTimeCode::Default())
   {
     VtIntArray indices;
     self.GetIndices(&indices, time);
@@ -86,7 +87,8 @@ namespace
     return result;
   }
 
-  static vector<double> _GetTimeSamplesInInterval(const UsdGeomPrimvar &self, const GfInterval &interval)
+  static vector<double> _GetTimeSamplesInInterval(const UsdGeomPrimvar &self,
+                                                  const GfInterval &interval)
   {
     vector<double> result;
     self.GetTimeSamplesInInterval(interval, &result);
@@ -124,12 +126,10 @@ namespace
           strcmp(name, "NameContainsNamespaces") == 0 || strcmp(name, "GetBaseName") == 0 ||
           strcmp(name, "GetNamespace") == 0 || strcmp(name, "SplitName") == 0)) ||
         // prim and attr are both invalid, let almost nothing through.
-        strcmp(name, "IsDefined") == 0 || strcmp(name, "GetAttr") == 0)
-    {
+        strcmp(name, "IsDefined") == 0 || strcmp(name, "GetAttr") == 0) {
       // Dispatch to object's __getattribute__.
       return (*_object__getattribute__)(selfObj, name);
-    } else
-    {
+    } else {
       // Otherwise raise a runtime error.
       TfPyThrowRuntimeError(TfStringPrintf("Accessed invalid attribute as a primvar"));
     }
@@ -191,7 +191,9 @@ void wrapUsdGeomPrimvar()
     .def("GetTimeSamplesInInterval", _GetTimeSamplesInInterval)
     .def("ValueMightBeTimeVarying", &Primvar::ValueMightBeTimeVarying)
 
-    .def("SetIndices", &Primvar::SetIndices, (arg("indices"), arg("time") = UsdTimeCode::Default()))
+    .def("SetIndices",
+         &Primvar::SetIndices,
+         (arg("indices"), arg("time") = UsdTimeCode::Default()))
     .def("BlockIndices", &Primvar::BlockIndices)
     .def("GetIndices", _GetIndices, (arg("time") = UsdTimeCode::Default()))
     .def("GetIndicesAttr", &Primvar::GetIndicesAttr)
@@ -199,7 +201,9 @@ void wrapUsdGeomPrimvar()
     .def("IsIndexed", &Primvar::IsIndexed)
 
     .def("GetUnauthoredValuesIndex", &Primvar::GetUnauthoredValuesIndex)
-    .def("SetUnauthoredValuesIndex", &Primvar::SetUnauthoredValuesIndex, arg("unauthoredValuesIndex"))
+    .def("SetUnauthoredValuesIndex",
+         &Primvar::SetUnauthoredValuesIndex,
+         arg("unauthoredValuesIndex"))
 
     .def("ComputeFlattened", _ComputeFlattened, (arg("time") = UsdTimeCode::Default()))
 
@@ -207,7 +211,8 @@ void wrapUsdGeomPrimvar()
     .def("SetIdTarget", &Primvar::SetIdTarget);
 
   TfPyRegisterStlSequencesFromPython<UsdGeomPrimvar>();
-  to_python_converter<std::vector<UsdGeomPrimvar>, TfPySequenceToPython<std::vector<UsdGeomPrimvar>>>();
+  to_python_converter<std::vector<UsdGeomPrimvar>,
+                      TfPySequenceToPython<std::vector<UsdGeomPrimvar>>>();
   implicitly_convertible<Primvar, UsdAttribute>();
 
   // Save existing __getattribute__ and replace.

@@ -45,8 +45,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-  template<class T>
-  void wrap_TestPlugBase(const std::string &name)
+  template<class T> void wrap_TestPlugBase(const std::string &name)
   {
     typedef T This;
     typedef TfWeakPtr<T> ThisPtr;

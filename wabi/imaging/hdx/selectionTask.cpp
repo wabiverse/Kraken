@@ -54,8 +54,7 @@ void HdxSelectionTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDir
 {
   HD_TRACE_FUNCTION();
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
-  {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
     _GetTaskParams(delegate, &_params);
 
     // We track the version of selection tracker in the task
@@ -74,8 +73,7 @@ void HdxSelectionTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDir
 void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 {
   HdxSelectionTrackerSharedPtr sel;
-  if (_GetTaskContextData(ctx, HdxTokens->selectionState, &sel))
-  {
+  if (_GetTaskContextData(ctx, HdxTokens->selectionState, &sel)) {
     // Update the Hydra selection held by the tracker. This hook point
     // allows applications to transform their notion of selected
     // objects into Hydra selection entries.
@@ -87,18 +85,15 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 
   // Only Phoenix supports buffer array range. Without its registry
   // there's nowhere to put selection state, so don't compute it.
-  if (!hdPhResourceRegistry)
-  {
+  if (!hdPhResourceRegistry) {
     return;
   }
 
-  if (sel && (sel->GetVersion() != _lastVersion))
-  {
+  if (sel && (sel->GetVersion() != _lastVersion)) {
 
     _lastVersion = sel->GetVersion();
 
-    if (!_selOffsetBar)
-    {
+    if (!_selOffsetBar) {
 
       HdBufferSpecVector offsetSpecs;
       offsetSpecs.emplace_back(HdxTokens->hdxSelectionBuffer, HdTupleType{HdTypeInt32, 1});
@@ -108,8 +103,7 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
         HdBufferArrayUsageHint());
     }
 
-    if (!_selUniformBar)
-    {
+    if (!_selUniformBar) {
       HdBufferSpecVector uniformSpecs;
       uniformSpecs.emplace_back(HdxTokens->selColor, HdTupleType{HdTypeFloatVec4, 1});
       uniformSpecs.emplace_back(HdxTokens->selLocateColor, HdTupleType{HdTypeFloatVec4, 1});
@@ -120,8 +114,7 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
         HdBufferArrayUsageHint());
     }
 
-    if (!_selPointColorsBar)
-    {
+    if (!_selPointColorsBar) {
       HdBufferSpecVector colorSpecs;
       colorSpecs.emplace_back(HdxTokens->selectionPointColors, HdTupleType{HdTypeFloatVec4, 1});
       _selPointColorsBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(

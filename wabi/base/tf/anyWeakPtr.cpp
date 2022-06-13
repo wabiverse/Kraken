@@ -30,8 +30,7 @@ using std::type_info;
 
 WABI_NAMESPACE_BEGIN
 
-TfAnyWeakPtr::_EmptyHolder::~_EmptyHolder()
-{}
+TfAnyWeakPtr::_EmptyHolder::~_EmptyHolder() {}
 
 void TfAnyWeakPtr::_EmptyHolder::Clone(_Data *target) const
 {
@@ -145,7 +144,6 @@ boost::python::api::object TfAnyWeakPtr::_GetPythonObject() const
 }
 #endif  // WITH_PYTHON
 
-TfAnyWeakPtr::_PointerHolderBase::~_PointerHolderBase()
-{}
+TfAnyWeakPtr::_PointerHolderBase::~_PointerHolderBase() {}
 
 WABI_NAMESPACE_END

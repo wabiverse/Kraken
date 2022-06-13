@@ -40,8 +40,7 @@ namespace
   {
     bool found = false;
     const TfEnum value = TfEnum::GetValueFromFullName(fullName, &found);
-    if (found)
-    {
+    if (found) {
       return boost::python::object(value);
     }
     return boost::python::object();

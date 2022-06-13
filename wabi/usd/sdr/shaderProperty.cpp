@@ -83,7 +83,8 @@ namespace
   // The following typedefs are only needed to support the table below that
   // indicates how to convert an SdrPropertyType given a particular "role"
   // value
-  typedef std::unordered_map<TfToken, std::pair<TfToken, size_t>, TfToken::HashFunctor> TokenToPairTable;
+  typedef std::unordered_map<TfToken, std::pair<TfToken, size_t>, TfToken::HashFunctor>
+    TokenToPairTable;
 
   typedef std::unordered_map<TfToken, TokenToPairTable, TfToken::HashFunctor> TokenToMapTable;
 
@@ -130,18 +131,14 @@ namespace
     // In the future if we change this to not return a fixed-size array,
     // all the parsers need to be updated to not return a fixed-size array
     // as well.
-    if (type == SdrPropertyTypes->Float)
-    {
-      if (arraySize == 2)
-      {
+    if (type == SdrPropertyTypes->Float) {
+      if (arraySize == 2) {
         convertedType = SdfValueTypeNames->Float2;
         conversionSuccessful = true;
-      } else if (arraySize == 3)
-      {
+      } else if (arraySize == 3) {
         convertedType = SdfValueTypeNames->Float3;
         conversionSuccessful = true;
-      } else if (arraySize == 4)
-      {
+      } else if (arraySize == 4) {
         convertedType = SdfValueTypeNames->Float4;
         conversionSuccessful = true;
       }
@@ -149,13 +146,11 @@ namespace
 
     // If no float array conversion was done, try converting to an array
     // type without a fixed dimension
-    if (!conversionSuccessful)
-    {
+    if (!conversionSuccessful) {
       const TokenToSdfTypeMap &tokenTypeToSdfArrayType = GetTokenTypeToSdfArrayType();
       TokenToSdfTypeMap::const_iterator it = tokenTypeToSdfArrayType.find(type);
 
-      if (it != tokenTypeToSdfArrayType.end())
-      {
+      if (it != tokenTypeToSdfArrayType.end()) {
         convertedType = it->second;
         conversionSuccessful = true;
       }
@@ -174,10 +169,8 @@ namespace
   {
     // There is one Sdf type (Asset) that is not included in the type
     // mapping because it is determined dynamically
-    if (_IsAssetIdentifier(metadata))
-    {
-      if (arraySize > 0)
-      {
+    if (_IsAssetIdentifier(metadata)) {
+      if (arraySize > 0) {
         return std::make_pair(SdfValueTypeNames->AssetArray, TfToken());
       }
       return std::make_pair(SdfValueTypeNames->Asset, TfToken());
@@ -188,8 +181,7 @@ namespace
     // We call out this conversion here so it is explicitly documented
     // rather than happening implicitly.
     if (type == SdrPropertyTypes->Terminal || type == SdrPropertyTypes->Struct ||
-        type == SdrPropertyTypes->Vstruct)
-    {
+        type == SdrPropertyTypes->Vstruct) {
       return std::make_pair(SdfValueTypeNames->Token, type);
     }
 
@@ -198,15 +190,13 @@ namespace
     // If the conversion can't be made, it defaults to the 'Token' type
     SdfValueTypeName convertedType = SdfValueTypeNames->Token;
 
-    if (arraySize > 0)
-    {
+    if (arraySize > 0) {
       return _GetTypeAsSdfArrayType(type, arraySize);
     }
 
     const TokenToSdfTypeMap &tokenTypeToSdfType = GetTokenTypeToSdfType();
     TokenToSdfTypeMap::const_iterator it = tokenTypeToSdfType.find(type);
-    if (it != tokenTypeToSdfType.end())
-    {
+    if (it != tokenTypeToSdfType.end()) {
       conversionSuccessful = true;
       convertedType = it->second;
     }
@@ -226,15 +216,12 @@ namespace
   {
     TfToken role = GetRoleFromMetadata(metadata);
 
-    if (!type.IsEmpty() && !role.IsEmpty())
-    {
+    if (!type.IsEmpty() && !role.IsEmpty()) {
       // Look up using original type and role declaration
       const TokenToMapTable::const_iterator &typeSearch = _GetConvertedSdrTypes().find(type);
-      if (typeSearch != _GetConvertedSdrTypes().end())
-      {
+      if (typeSearch != _GetConvertedSdrTypes().end()) {
         const TokenToPairTable::const_iterator &roleSearch = typeSearch->second.find(role);
-        if (roleSearch != typeSearch->second.end())
-        {
+        if (roleSearch != typeSearch->second.end()) {
           // Return converted type and size
           return roleSearch->second;
         }
@@ -247,11 +234,9 @@ namespace
 
   // -------------------------------------------------------------------------
 
-  template<class T>
-  bool _GetValue(const VtValue &defaultValue, T *val)
+  template<class T> bool _GetValue(const VtValue &defaultValue, T *val)
   {
-    if (defaultValue.IsHolding<T>())
-    {
+    if (defaultValue.IsHolding<T>()) {
       *val = defaultValue.UncheckedGet<T>();
       return true;
     }
@@ -272,8 +257,7 @@ namespace
                                const NdrTokenMap &metadata)
   {
     // Return early if there is no value to conform
-    if (defaultValue.IsEmpty())
-    {
+    if (defaultValue.IsEmpty()) {
       return defaultValue;
     }
 
@@ -281,8 +265,7 @@ namespace
     const SdfTypeIndicator sdfTypeIndicator = _GetTypeAsSdfType(sdrType, arraySize, metadata);
     const SdfValueTypeName sdfType = sdfTypeIndicator.first;
 
-    if (defaultValue.GetType() == sdfType.GetType())
-    {
+    if (defaultValue.GetType() == sdfType.GetType()) {
       return defaultValue;
     }
 
@@ -291,23 +274,19 @@ namespace
 
     // ASSET and ASSET ARRAY
     // ---------------------------------------------------------------------
-    if (sdrType == SdrPropertyTypes->String && IsPropertyAnAssetIdentifier(metadata))
-    {
-      if (isArray)
-      {
+    if (sdrType == SdrPropertyTypes->String && IsPropertyAnAssetIdentifier(metadata)) {
+      if (isArray) {
         VtStringArray arrayVal;
         _GetValue(defaultValue, &arrayVal);
 
         VtArray<SdfAssetPath> array;
         array.reserve(arrayVal.size());
 
-        for (const std::string &val : arrayVal)
-        {
+        for (const std::string &val : arrayVal) {
           array.push_back(SdfAssetPath(val));
         }
         return VtValue::Take(array);
-      } else
-      {
+      } else {
         std::string val;
         _GetValue(defaultValue, &val);
         return VtValue(SdfAssetPath(val));
@@ -316,8 +295,7 @@ namespace
 
     // FLOAT ARRAY (FIXED SIZE 2, 3, 4)
     // ---------------------------------------------------------------------
-    else if (sdrType == SdrPropertyTypes->Float && isArray)
-    {
+    else if (sdrType == SdrPropertyTypes->Float && isArray) {
       VtFloatArray arrayVal;
       _GetValue(defaultValue, &arrayVal);
 
@@ -326,14 +304,11 @@ namespace
       // size type (Float2, Float3, Float4).  If in the future we want to
       // return a VtFloatArray instead, we need to change the logic in
       // SdrShaderProperty::GetTypeAsSdfType
-      if (arraySize == 2)
-      {
+      if (arraySize == 2) {
         return VtValue(GfVec2f(arrayVal[0], arrayVal[1]));
-      } else if (arraySize == 3)
-      {
+      } else if (arraySize == 3) {
         return VtValue(GfVec3f(arrayVal[0], arrayVal[1], arrayVal[2]));
-      } else if (arraySize == 4)
-      {
+      } else if (arraySize == 4) {
         return VtValue(GfVec4f(arrayVal[0], arrayVal[1], arrayVal[2], arrayVal[3]));
       }
     }
@@ -352,13 +327,14 @@ SdrShaderProperty::SdrShaderProperty(const TfToken &name,
                                      const NdrTokenMap &metadata,
                                      const NdrTokenMap &hints,
                                      const NdrOptionVec &options)
-  : NdrProperty(name,
-                /* type= */ _ConvertSdrPropertyTypeAndArraySize(type, arraySize, metadata).first,
-                _ConformDefaultValue(defaultValue, type, arraySize, metadata),
-                isOutput,
-                /* arraySize= */ _ConvertSdrPropertyTypeAndArraySize(type, arraySize, metadata).second,
-                /* isDynamicArray= */ false,
-                metadata),
+  : NdrProperty(
+      name,
+      /* type= */ _ConvertSdrPropertyTypeAndArraySize(type, arraySize, metadata).first,
+      _ConformDefaultValue(defaultValue, type, arraySize, metadata),
+      isOutput,
+      /* arraySize= */ _ConvertSdrPropertyTypeAndArraySize(type, arraySize, metadata).second,
+      /* isDynamicArray= */ false,
+      metadata),
 
     _hints(hints),
     _options(options)
@@ -367,11 +343,9 @@ SdrShaderProperty::SdrShaderProperty(const TfToken &name,
 
   // Note that outputs are always connectable. If "connectable" metadata is
   // found on outputs, ignore it.
-  if (isOutput)
-  {
+  if (isOutput) {
     _isConnectable = true;
-  } else
-  {
+  } else {
     _isConnectable = _metadata.count(SdrPropertyMetadata->Connectable) ?
                        IsTruthy(SdrPropertyMetadata->Connectable, _metadata) :
                        true;
@@ -406,8 +380,7 @@ bool SdrShaderProperty::CanConnectTo(const NdrProperty &other) const
   NdrPropertyConstPtr output = _isOutput ? this : &other;
 
   // Outputs cannot connect to outputs and vice versa
-  if (_isOutput == other.IsOutput())
-  {
+  if (_isOutput == other.IsOutput()) {
     return false;
   }
 
@@ -421,42 +394,45 @@ bool SdrShaderProperty::CanConnectTo(const NdrProperty &other) const
 
   // Connections are always possible if the types match exactly and the
   // array size matches
-  if ((inputType == outputType) && (inputArraySize == outputArraySize))
-  {
+  if ((inputType == outputType) && (inputArraySize == outputArraySize)) {
     return true;
   }
 
   // Connections are also possible if the types match exactly and the input
   // is a dynamic array
-  if ((inputType == outputType) && !output->IsArray() && input->IsDynamicArray())
-  {
+  if ((inputType == outputType) && !output->IsArray() && input->IsDynamicArray()) {
     return true;
   }
 
   // Convert input/output types to Sdf types
-  const SdfTypeIndicator &sdfInputTypeInd = _GetTypeAsSdfType(inputType, inputArraySize, inputMetadata);
-  const SdfTypeIndicator &sdfOutputTypeInd = _GetTypeAsSdfType(outputType, outputArraySize, outputMetadata);
+  const SdfTypeIndicator &sdfInputTypeInd = _GetTypeAsSdfType(inputType,
+                                                              inputArraySize,
+                                                              inputMetadata);
+  const SdfTypeIndicator &sdfOutputTypeInd = _GetTypeAsSdfType(outputType,
+                                                               outputArraySize,
+                                                               outputMetadata);
   const SdfValueTypeName &sdfInputType = sdfInputTypeInd.first;
   const SdfValueTypeName &sdfOutputType = sdfOutputTypeInd.first;
 
-  bool inputIsFloat3 = (inputType == SdrPropertyTypes->Color) || (inputType == SdrPropertyTypes->Point) ||
-                       (inputType == SdrPropertyTypes->Normal) || (inputType == SdrPropertyTypes->Vector) ||
+  bool inputIsFloat3 = (inputType == SdrPropertyTypes->Color) ||
+                       (inputType == SdrPropertyTypes->Point) ||
+                       (inputType == SdrPropertyTypes->Normal) ||
+                       (inputType == SdrPropertyTypes->Vector) ||
                        (sdfInputType == SdfValueTypeNames->Float3);
 
-  bool outputIsFloat3 = (outputType == SdrPropertyTypes->Color) || (outputType == SdrPropertyTypes->Point) ||
+  bool outputIsFloat3 = (outputType == SdrPropertyTypes->Color) ||
+                        (outputType == SdrPropertyTypes->Point) ||
                         (outputType == SdrPropertyTypes->Normal) ||
                         (outputType == SdrPropertyTypes->Vector) ||
                         (sdfOutputType == SdfValueTypeNames->Float3);
 
   // Connections between float-3 types are possible
-  if (inputIsFloat3 && outputIsFloat3)
-  {
+  if (inputIsFloat3 && outputIsFloat3) {
     return true;
   }
 
   // Special cases
-  if ((outputType == SdrPropertyTypes->Vstruct) && (inputType == SdrPropertyTypes->Float))
-  {
+  if ((outputType == SdrPropertyTypes->Vstruct) && (inputType == SdrPropertyTypes->Float)) {
     // vstruct -> float is accepted because vstruct seems to be an output
     // only type
     return true;

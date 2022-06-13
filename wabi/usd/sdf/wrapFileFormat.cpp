@@ -46,6 +46,7 @@ namespace
   class Sdf_PyFileFormatFactory : public Sdf_FileFormatFactoryBase
   {
    public:
+
     typedef std::unique_ptr<Sdf_PyFileFormatFactory> Ptr;
 
     static Ptr New(const object &classObject)
@@ -59,13 +60,14 @@ namespace
     }
 
    private:
-    Sdf_PyFileFormatFactory(const object &classObject)
-      : _factory(classObject)
+
+    Sdf_PyFileFormatFactory(const object &classObject) : _factory(classObject)
     {
       // Do nothing
     }
 
    private:
+
     // XXX -- TfPyCall::operator() should be const.
     mutable TfPyCall<SdfFileFormatRefPtr> _factory;
   };
@@ -78,8 +80,7 @@ namespace
 
     TfType fileFormatType = TfType_DefinePythonTypeAndBases(classObject);
 
-    if (fileFormatType.IsUnknown())
-    {
+    if (fileFormatType.IsUnknown()) {
       // CODE_COVERAGE_OFF - The code above registers this TfType, and
       // currently never fails.
       TF_CODING_ERROR("Could not define Python type for %s.", typeName.c_str());
@@ -107,12 +108,15 @@ void wrapFileFormat()
 
       .def(TfPyRefAndWeakPtr())
 
-      .add_property("formatId", make_function(&This::GetFormatId, return_value_policy<return_by_value>()))
-      .add_property("target", make_function(&This::GetTarget, return_value_policy<return_by_value>()))
+      .add_property("formatId",
+                    make_function(&This::GetFormatId, return_value_policy<return_by_value>()))
+      .add_property("target",
+                    make_function(&This::GetTarget, return_value_policy<return_by_value>()))
       .add_property("fileCookie",
                     make_function(&This::GetFileCookie, return_value_policy<return_by_value>()))
-      .add_property("primaryFileExtension",
-                    make_function(&This::GetPrimaryFileExtension, return_value_policy<return_by_value>()))
+      .add_property(
+        "primaryFileExtension",
+        make_function(&This::GetPrimaryFileExtension, return_value_policy<return_by_value>()))
 
       .def("GetFileExtensions", &This::GetFileExtensions, return_value_policy<return_by_value>())
 
@@ -134,10 +138,12 @@ void wrapFileFormat()
       .staticmethod("FindById")
 
       .def("FindByExtension",
-           (SdfFileFormatConstPtr(*)(const std::string &, const std::string &)) & This::FindByExtension,
+           (SdfFileFormatConstPtr(*)(const std::string &, const std::string &)) &
+             This::FindByExtension,
            (arg("extension"), arg("target") = std::string()))
       .def("FindByExtension",
-           (SdfFileFormatConstPtr(*)(const std::string &, const SdfFileFormat::FileFormatArguments &)) &
+           (SdfFileFormatConstPtr(*)(const std::string &,
+                                     const SdfFileFormat::FileFormatArguments &)) &
              This::FindByExtension,
            (arg("extension"), arg("args")))
       .staticmethod("FindByExtension")

@@ -43,16 +43,15 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
   static UsdAttribute _CreateSizeAttr(UsdGeomCube &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double), writeSparsely);
+    return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double),
+                               writeSparsely);
   }
 
   static UsdAttribute _CreateExtentAttr(UsdGeomCube &self, object defaultVal, bool writeSparsely)
@@ -91,13 +90,17 @@ void wrapUsdGeomCube()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
 
     .def("GetSizeAttr", &This::GetSizeAttr)
-    .def("CreateSizeAttr", &_CreateSizeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateSizeAttr",
+         &_CreateSizeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetExtentAttr", &This::GetExtentAttr)
     .def("CreateExtentAttr",
@@ -131,7 +134,6 @@ void wrapUsdGeomCube()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // anonymous namespace

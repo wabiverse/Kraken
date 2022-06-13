@@ -36,8 +36,7 @@ void MatfiltExecFilterChain(MatfiltFilterChain const &filterChain,
 {
   HD_TRACE_FUNCTION();
 
-  for (const MatfiltFilterFnc &filter : filterChain)
-  {
+  for (const MatfiltFilterFnc &filter : filterChain) {
     (*filter)(networkId, network, contextValues, shaderTypePriority, outputErrorMessages);
   }
 }

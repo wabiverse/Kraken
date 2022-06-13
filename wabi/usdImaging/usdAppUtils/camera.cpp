@@ -43,24 +43,20 @@ WABI_NAMESPACE_BEGIN
 
 UsdGeomCamera UsdAppUtilsGetCameraAtPath(const UsdStagePtr &stage, const SdfPath &cameraPath)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCamera();
   }
 
-  if (!cameraPath.IsPrimPath())
-  {
+  if (!cameraPath.IsPrimPath()) {
     // A non-prim path cannot be a camera.
     return UsdGeomCamera();
   }
 
   SdfPath usdCameraPath = cameraPath;
 
-  if (!cameraPath.IsAbsolutePath())
-  {
-    if (cameraPath.GetPathElementCount() > 1u)
-    {
+  if (!cameraPath.IsAbsolutePath()) {
+    if (cameraPath.GetPathElementCount() > 1u) {
       // XXX: Perhaps we should error here? For now we coerce the camera
       // path to be absolute using the absolute root path and print a
       // warning.
@@ -70,18 +66,14 @@ UsdGeomCamera UsdAppUtilsGetCameraAtPath(const UsdStagePtr &stage, const SdfPath
         "instead: \"%s\"",
         cameraPath.GetText(),
         usdCameraPath.GetText());
-    } else
-    {
+    } else {
       // Search for the camera by name.
       UsdPrimRange primRange = UsdPrimRange::Stage(stage, UsdTraverseInstanceProxies());
 
-      for (const UsdPrim &usdPrim : primRange)
-      {
-        if (usdPrim.GetName() == cameraPath.GetNameToken())
-        {
+      for (const UsdPrim &usdPrim : primRange) {
+        if (usdPrim.GetName() == cameraPath.GetNameToken()) {
           const UsdGeomCamera usdCamera(usdPrim);
-          if (usdCamera)
-          {
+          if (usdCamera) {
             return usdCamera;
           }
         }

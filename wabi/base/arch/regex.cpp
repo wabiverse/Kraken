@@ -47,8 +47,7 @@ namespace
   std::string _Replace(std::string &&s, const std::string &from, const std::string &to)
   {
     std::string::size_type pos = 0;
-    while ((pos = s.find(from, pos)) != std::string::npos)
-    {
+    while ((pos = s.find(from, pos)) != std::string::npos) {
       s.replace(pos, from.size(), to);
       pos += to.size();
     }
@@ -67,10 +66,12 @@ namespace
 class ArchRegex::_Impl
 {
  public:
+
   _Impl(const std::string &pattern, unsigned int flags, std::string *error);
   bool Match(const char *query) const;
 
  private:
+
   std::regex _regex;
 };
 
@@ -78,17 +79,14 @@ ArchRegex::_Impl::_Impl(const std::string &pattern, unsigned int flags, std::str
 {
   auto stdflags = std::regex_constants::extended;
   stdflags |= std::regex_constants::nosubs | std::regex_constants::optimize;
-  if (flags & ArchRegex::CASE_INSENSITIVE)
-  {
+  if (flags & ArchRegex::CASE_INSENSITIVE) {
     stdflags |= std::regex_constants::icase;
   }
 
-  try
-  {
+  try {
     _regex = std::regex(pattern.c_str(), stdflags);
   }
-  catch (std::regex_error &e)
-  {
+  catch (std::regex_error &e) {
     *error = e.what();
     throw;
   }
@@ -102,10 +100,8 @@ bool ArchRegex::_Impl::Match(const char *query) const
   // doesn't match literal newlines in the regex so this doesn't
   // match exactly the same.
   const char *eol = strchr(query, '\n');
-  while (eol)
-  {
-    if (std::regex_search(query, eol, result, _regex))
-    {
+  while (eol) {
+    if (std::regex_search(query, eol, result, _regex)) {
       return true;
     }
     query = eol + 1;
@@ -119,21 +115,23 @@ bool ArchRegex::_Impl::Match(const char *query) const
 class ArchRegex::_Impl
 {
  public:
+
   _Impl(const std::string &pattern, unsigned int flags, std::string *error);
   ~_Impl();
   bool Match(const char *query) const;
 
  private:
+
   regex_t _regex;
 };
 
 ArchRegex::_Impl::_Impl(const std::string &pattern, unsigned int flags, std::string *error)
 {
-  const int regflags = REG_EXTENDED | REG_NEWLINE | ((flags & ArchRegex::CASE_INSENSITIVE) ? REG_ICASE : 0);
+  const int regflags = REG_EXTENDED | REG_NEWLINE |
+                       ((flags & ArchRegex::CASE_INSENSITIVE) ? REG_ICASE : 0);
 
   const int result = regcomp(&_regex, pattern.c_str(), regflags);
-  if (result != 0)
-  {
+  if (result != 0) {
     char buffer[256];
     buffer[0] = '\0';
     regerror(result, &_regex, buffer, sizeof(buffer));
@@ -159,26 +157,19 @@ ArchRegex::ArchRegex()
   // Do nothing.
 }
 
-ArchRegex::ArchRegex(const std::string &pattern, unsigned int flags)
-  : _flags(flags)
+ArchRegex::ArchRegex(const std::string &pattern, unsigned int flags) : _flags(flags)
 {
-  try
-  {
-    if (pattern.empty())
-    {
+  try {
+    if (pattern.empty()) {
       _error = "empty pattern";
-    } else if (flags & GLOB)
-    {
+    } else if (flags & GLOB) {
       _impl.reset(new _Impl(_GlobToRegex(pattern), _flags, &_error));
-    } else
-    {
+    } else {
       _impl.reset(new _Impl(pattern, _flags, &_error));
     }
   }
-  catch (...)
-  {
-    if (_error.empty())
-    {
+  catch (...) {
+    if (_error.empty()) {
       _error = "unknown reason";
     }
   }

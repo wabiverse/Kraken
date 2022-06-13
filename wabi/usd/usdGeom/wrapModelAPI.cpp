@@ -43,14 +43,14 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateModelDrawModeAttr(UsdGeomModelAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateModelDrawModeAttr(UsdGeomModelAPI &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
   {
     return self.CreateModelDrawModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                         writeSparsely);
@@ -60,72 +60,81 @@ namespace
                                                     object defaultVal,
                                                     bool writeSparsely)
   {
-    return self.CreateModelApplyDrawModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                             writeSparsely);
+    return self.CreateModelApplyDrawModeAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateModelDrawModeColorAttr(UsdGeomModelAPI &self,
                                                     object defaultVal,
                                                     bool writeSparsely)
   {
-    return self.CreateModelDrawModeColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3),
-                                             writeSparsely);
+    return self.CreateModelDrawModeColorAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateModelCardGeometryAttr(UsdGeomModelAPI &self,
                                                    object defaultVal,
                                                    bool writeSparsely)
   {
-    return self.CreateModelCardGeometryAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                            writeSparsely);
+    return self.CreateModelCardGeometryAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateModelCardTextureXPosAttr(UsdGeomModelAPI &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateModelCardTextureXPosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                               writeSparsely);
+    return self.CreateModelCardTextureXPosAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateModelCardTextureYPosAttr(UsdGeomModelAPI &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateModelCardTextureYPosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                               writeSparsely);
+    return self.CreateModelCardTextureYPosAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateModelCardTextureZPosAttr(UsdGeomModelAPI &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateModelCardTextureZPosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                               writeSparsely);
+    return self.CreateModelCardTextureZPosAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateModelCardTextureXNegAttr(UsdGeomModelAPI &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateModelCardTextureXNegAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                               writeSparsely);
+    return self.CreateModelCardTextureXNegAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateModelCardTextureYNegAttr(UsdGeomModelAPI &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateModelCardTextureYNegAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                               writeSparsely);
+    return self.CreateModelCardTextureYNegAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateModelCardTextureZNegAttr(UsdGeomModelAPI &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateModelCardTextureZNegAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
-                                               writeSparsely);
+    return self.CreateModelCardTextureZNegAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdGeomModelAPI &self)
@@ -158,7 +167,9 @@ void wrapUsdGeomModelAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -243,20 +254,21 @@ namespace
   static object _GetExtentsHint(const UsdGeomModelAPI &self, const UsdTimeCode &time)
   {
     VtVec3fArray extents;
-    if (!self.GetExtentsHint(&extents, time))
-    {
+    if (!self.GetExtentsHint(&extents, time)) {
       return object();
     }
 
     return object(extents);
   }
 
-  static bool _SetExtentsHint(UsdGeomModelAPI &self, const TfPyObjWrapper pyVal, const UsdTimeCode &timeVal)
+  static bool _SetExtentsHint(UsdGeomModelAPI &self,
+                              const TfPyObjWrapper pyVal,
+                              const UsdTimeCode &timeVal)
   {
     VtValue value = UsdPythonToSdfType(pyVal, SdfValueTypeNames->Float3Array);
-    if (!value.IsHolding<VtVec3fArray>())
-    {
-      TF_CODING_ERROR("Improper value for 'extentsHint' on %s", UsdDescribe(self.GetPrim()).c_str());
+    if (!value.IsHolding<VtVec3fArray>()) {
+      TF_CODING_ERROR("Improper value for 'extentsHint' on %s",
+                      UsdDescribe(self.GetPrim()).c_str());
       return false;
     }
 
@@ -266,7 +278,9 @@ namespace
   WRAP_CUSTOM
   {
     _class.def("GetExtentsHint", &_GetExtentsHint, (arg("time") = UsdTimeCode::Default()))
-      .def("SetExtentsHint", &_SetExtentsHint, (arg("extents"), arg("time") = UsdTimeCode::Default()))
+      .def("SetExtentsHint",
+           &_SetExtentsHint,
+           (arg("extents"), arg("time") = UsdTimeCode::Default()))
       .def("ComputeExtentsHint", &UsdGeomModelAPI::ComputeExtentsHint, (arg("bboxCache")))
 
       .def("GetExtentsHintAttr", &UsdGeomModelAPI::GetExtentsHintAttr)

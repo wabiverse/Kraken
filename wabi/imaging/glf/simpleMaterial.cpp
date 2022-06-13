@@ -44,8 +44,7 @@ GlfSimpleMaterial::GlfSimpleMaterial()
     _shininess(32.0)
 {}
 
-GlfSimpleMaterial::~GlfSimpleMaterial()
-{}
+GlfSimpleMaterial::~GlfSimpleMaterial() {}
 
 GfVec4f const &GlfSimpleMaterial::GetAmbient() const
 {
@@ -99,8 +98,9 @@ void GlfSimpleMaterial::SetShininess(double shininess)
 
 bool GlfSimpleMaterial::operator==(GlfSimpleMaterial const &other) const
 {
-  return (_ambient == other._ambient && _diffuse == other._diffuse && _specular == other._specular &&
-          _emission == other._emission && _shininess == other._shininess);
+  return (_ambient == other._ambient && _diffuse == other._diffuse &&
+          _specular == other._specular && _emission == other._emission &&
+          _shininess == other._shininess);
 }
 
 bool GlfSimpleMaterial::operator!=(GlfSimpleMaterial const &other) const

@@ -52,11 +52,9 @@ namespace
   static string _Repr(GfInterval const &self)
   {
     string r = TF_PY_REPR_PREFIX + "Interval(";
-    if (!self.IsEmpty())
-    {
+    if (!self.IsEmpty()) {
       r += TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax());
-      if (!self.IsMinClosed() || !self.IsMaxClosed())
-      {
+      if (!self.IsMinClosed() || !self.IsMaxClosed()) {
         r += ", " + TfPyRepr(self.IsMinClosed()) + ", " + TfPyRepr(self.IsMaxClosed());
       }
     }
@@ -99,7 +97,9 @@ void wrapInterval()
          "Returns true if x is inside the interval.")
 
     // For 2x compatibility
-    .def("In", (bool(This::*)(double) const) & This::Contains, "Returns true if x is inside the interval.")
+    .def("In",
+         (bool(This::*)(double) const) & This::Contains,
+         "Returns true if x is inside the interval.")
 
     .def("GetFullInterval", &This::GetFullInterval)
     .staticmethod("GetFullInterval")
@@ -162,6 +162,7 @@ void wrapInterval()
     .def("__repr__", _Repr)
     .def("__hash__", &This::Hash);
 
-  TfPyContainerConversions::from_python_sequence<std::vector<GfInterval>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<GfInterval>,
+    TfPyContainerConversions::variable_capacity_policy>();
 }

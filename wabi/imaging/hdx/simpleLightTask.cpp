@@ -69,33 +69,33 @@ std::vector<GfMatrix4d> HdxSimpleLightTask::_ComputeShadowMatrices(
 {
   const CameraUtilConformWindowPolicy camPolicy = camera->GetWindowPolicy();
 
-  if (_framing.IsValid())
-  {
-    CameraUtilConformWindowPolicy const policy = _overrideWindowPolicy.first ? _overrideWindowPolicy.second :
-                                                                               camPolicy;
+  if (_framing.IsValid()) {
+    CameraUtilConformWindowPolicy const policy = _overrideWindowPolicy.first ?
+                                                   _overrideWindowPolicy.second :
+                                                   camPolicy;
     return computation->Compute(_framing, policy);
-  } else
-  {
+  } else {
     return computation->Compute(_viewport, camPolicy);
   }
 }
 
-void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits)
+void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate,
+                              HdTaskContext *ctx,
+                              HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
 
   // Store the lighting context in the task context
   // so later on other tasks can use this information
   // draw shadows or other purposes
-  (*ctx)[HdxTokens->lightingShader] = std::dynamic_pointer_cast<HdPhLightingShader>(_lightingShader);
+  (*ctx)[HdxTokens->lightingShader] = std::dynamic_pointer_cast<HdPhLightingShader>(
+    _lightingShader);
 
   HdRenderIndex &renderIndex = delegate->GetRenderIndex();
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
-  {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
     HdxSimpleLightTaskParams params;
-    if (!_GetTaskParams(delegate, &params))
-    {
+    if (!_GetTaskParams(delegate, &params)) {
       return;
     }
 
@@ -114,21 +114,18 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
 
   const HdCamera *camera = static_cast<const HdCamera *>(
     renderIndex.GetSprim(HdPrimTypeTokens->camera, _cameraId));
-  if (!TF_VERIFY(camera))
-  {
+  if (!TF_VERIFY(camera)) {
     return;
   }
 
   // The lighting shader owns the lighting context, which in turn owns the
   // shadow array.
   GlfSimpleLightingContextRefPtr const &lightingContext = _lightingShader->GetLightingContext();
-  if (!TF_VERIFY(lightingContext))
-  {
+  if (!TF_VERIFY(lightingContext)) {
     return;
   }
   GlfSimpleShadowArrayRefPtr const &shadows = lightingContext->GetShadows();
-  if (!TF_VERIFY(shadows))
-  {
+  if (!TF_VERIFY(shadows)) {
     return;
   }
   bool const useBindlessShadowMaps = GlfSimpleShadowArray::GetBindlessShadowMapsEnabled();
@@ -151,8 +148,11 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
                                            HdPrimTypeTokens->sphereLight,
                                            HdPrimTypeTokens->rectLight};
   _lightIds.clear();
-  _numLights =
-    _AppendLightsOfType(renderIndex, lightTypes, _lightIncludePaths, _lightExcludePaths, &_lightIds);
+  _numLights = _AppendLightsOfType(renderIndex,
+                                   lightTypes,
+                                   _lightIncludePaths,
+                                   _lightExcludePaths,
+                                   &_lightIds);
 
   // We rebuild the lights array every time, but avoid reallocating
   // the array every frame as this was showing up as a significant portion
@@ -161,8 +161,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
   // clear() is guaranteed by spec to not change the capacity of the
   // vector.
   _glfSimpleLights.clear();
-  if (_numLights != _glfSimpleLights.capacity())
-  {
+  if (_numLights != _glfSimpleLights.capacity()) {
     // We don't just want to reserve here as we want to try and
     // recover memory if the number of lights shrinks.
 
@@ -173,15 +172,12 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
   std::vector<GfVec2i> shadowMapResolutions;
   shadowMapResolutions.reserve(_numLights);
 
-  TF_FOR_ALL (lightPerTypeIt, _lightIds)
-  {
-    TF_FOR_ALL (lightPathIt, lightPerTypeIt->second)
-    {
+  TF_FOR_ALL (lightPerTypeIt, _lightIds) {
+    TF_FOR_ALL (lightPathIt, lightPerTypeIt->second) {
 
       HdPhLight const *light = static_cast<const HdPhLight *>(
         renderIndex.GetSprim(lightPerTypeIt->first, *lightPathIt));
-      if (!TF_VERIFY(light))
-      {
+      if (!TF_VERIFY(light)) {
         _glfSimpleLights.push_back(GlfSimpleLight());
         continue;
       }
@@ -192,8 +188,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
       GlfSimpleLight glfl = vtLightParams.GetWithDefault<GlfSimpleLight>(GlfSimpleLight());
 
       // Skip lights with zero intensity
-      if (!glfl.HasIntensity())
-      {
+      if (!glfl.HasIntensity()) {
         continue;
       }
 
@@ -204,8 +199,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
       // If the light is in camera space we need to transform
       // the position and spot direction to world space for
       // HdPhSimpleLightingShader.
-      if (glfl.IsCameraSpaceLight())
-      {
+      if (glfl.IsCameraSpaceLight()) {
         GfVec4f lightPos = glfl.GetPosition();
         glfl.SetPosition(lightPos * viewInverseMatrix);
         GfVec3f lightDir = glfl.GetSpotDirection();
@@ -225,17 +219,14 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
       // we treat this light as if it had the shadow disabled
       // doing so we guarantee that shadowIndex will be -1
       // which will not create memory for the shadow maps
-      if (!_enableShadows || !lightShadowParams.enabled)
-      {
+      if (!_enableShadows || !lightShadowParams.enabled) {
         glfl.SetHasShadow(false);
       }
 
       // Setup the rest of the light parameters necessary
       // to calculate shadows.
-      if (glfl.HasShadow())
-      {
-        if (!TF_VERIFY(lightShadowParams.shadowMatrix))
-        {
+      if (glfl.HasShadow()) {
+        if (!TF_VERIFY(lightShadowParams.shadowMatrix)) {
           glfl.SetHasShadow(false);
           continue;
         }
@@ -244,8 +235,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
           camera,
           lightShadowParams.shadowMatrix);
 
-        if (shadowMatrices.empty())
-        {
+        if (shadowMatrices.empty()) {
           glfl.SetHasShadow(false);
           continue;
         }
@@ -259,8 +249,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
         glfl.SetShadowBlur(lightShadowParams.blur);
         glfl.SetShadowResolution(lightShadowParams.resolution);
 
-        for (size_t i = 0; i < shadowMatrices.size(); ++i)
-        {
+        for (size_t i = 0; i < shadowMatrices.size(); ++i) {
           shadowMapResolutions.push_back(GfVec2i(lightShadowParams.resolution));
         }
       }
@@ -281,28 +270,22 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
   // order to receive shadows
   // These calls will re-allocate internal buffers if they change.
 
-  if (useBindlessShadowMaps)
-  {
+  if (useBindlessShadowMaps) {
     shadows->SetShadowMapResolutions(shadowMapResolutions);
-  } else
-  {
+  } else {
     // Bindful shadow maps use a texture array, and hence are limited to
     // a single resolution. Use the maximum authored resolution.
     int maxRes = 0;
-    for (GfVec2i const &res : shadowMapResolutions)
-    {
+    for (GfVec2i const &res : shadowMapResolutions) {
       maxRes = std::max(maxRes, res[0]);
     }
     shadows->SetSize(GfVec2i(maxRes, maxRes));
     shadows->SetNumLayers(shadowIndex + 1);
   }
 
-  if (shadowIndex > -1)
-  {
-    for (size_t lightId = 0; lightId < _numLights; ++lightId)
-    {
-      if (!_glfSimpleLights[lightId].HasShadow())
-      {
+  if (shadowIndex > -1) {
+    for (size_t lightId = 0; lightId < _numLights; ++lightId) {
+      if (!_glfSimpleLights[lightId].HasShadow()) {
         continue;
       }
       // Complete the shadow setup for this light
@@ -310,8 +293,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
       int shadowEnd = _glfSimpleLights[lightId].GetShadowIndexEnd();
       std::vector<GfMatrix4d> shadowMatrices = _glfSimpleLights[lightId].GetShadowMatrices();
 
-      for (int shadowId = shadowStart; shadowId <= shadowEnd; ++shadowId)
-      {
+      for (int shadowId = shadowStart; shadowId <= shadowEnd; ++shadowId) {
         shadows->SetViewMatrix(shadowId, _glfSimpleLights[lightId].GetTransform());
         shadows->SetProjectionMatrix(shadowId, shadowMatrices[shadowId - shadowStart]);
       }
@@ -323,8 +305,7 @@ void HdxSimpleLightTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdD
   *dirtyBits = HdChangeTracker::Clean;
 }
 
-void HdxSimpleLightTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
-{}
+void HdxSimpleLightTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex) {}
 
 void HdxSimpleLightTask::Execute(HdTaskContext *ctx)
 {
@@ -339,10 +320,8 @@ size_t HdxSimpleLightTask::_AppendLightsOfType(HdRenderIndex &renderIndex,
                                                std::map<TfToken, SdfPathVector> *lights)
 {
   size_t count = 0;
-  TF_FOR_ALL (it, lightTypes)
-  {
-    if (renderIndex.IsSprimTypeSupported(*it))
-    {
+  TF_FOR_ALL (it, lightTypes) {
+    if (renderIndex.IsSprimTypeSupported(*it)) {
       // XXX: This is inefficient, need to be optimized
       SdfPathVector sprimPaths = renderIndex.GetSprimSubtree(*it, SdfPath::AbsoluteRootPath());
 
@@ -363,12 +342,10 @@ size_t HdxSimpleLightTask::_AppendLightsOfType(HdRenderIndex &renderIndex,
 std::ostream &operator<<(std::ostream &out, const HdxSimpleLightTaskParams &pv)
 {
   out << pv.cameraPath << " " << pv.enableShadows << " ";
-  TF_FOR_ALL (it, pv.lightIncludePaths)
-  {
+  TF_FOR_ALL (it, pv.lightIncludePaths) {
     out << *it;
   }
-  TF_FOR_ALL (it, pv.lightExcludePaths)
-  {
+  TF_FOR_ALL (it, pv.lightExcludePaths) {
     out << *it;
   }
   return out;
@@ -392,14 +369,15 @@ bool operator!=(const HdxSimpleLightTaskParams &lhs, const HdxSimpleLightTaskPar
 
 std::ostream &operator<<(std::ostream &out, const HdxShadowParams &pv)
 {
-  out << pv.shadowMatrix << " " << pv.resolution << " " << pv.bias << " " << pv.blur << " " << pv.enabled;
+  out << pv.shadowMatrix << " " << pv.resolution << " " << pv.bias << " " << pv.blur << " "
+      << pv.enabled;
   return out;
 }
 
 bool operator==(const HdxShadowParams &lhs, const HdxShadowParams &rhs)
 {
-  return lhs.shadowMatrix == rhs.shadowMatrix && lhs.resolution == rhs.resolution && lhs.bias == rhs.bias &&
-         lhs.blur == rhs.blur && lhs.enabled == rhs.enabled;
+  return lhs.shadowMatrix == rhs.shadowMatrix && lhs.resolution == rhs.resolution &&
+         lhs.bias == rhs.bias && lhs.blur == rhs.blur && lhs.enabled == rhs.enabled;
 }
 
 bool operator!=(const HdxShadowParams &lhs, const HdxShadowParams &rhs)

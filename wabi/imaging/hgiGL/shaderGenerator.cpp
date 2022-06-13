@@ -59,8 +59,7 @@ HgiGLShaderGenerator::HgiGLShaderGenerator(const HgiShaderFunctionDesc &descript
 void HgiGLShaderGenerator::_WriteTextures(const HgiShaderFunctionTextureDescVector &textures)
 {
   // Extract texture descriptors and add appropriate texture sections
-  for (size_t i = 0; i < textures.size(); i++)
-  {
+  for (size_t i = 0; i < textures.size(); i++) {
     const HgiShaderFunctionTextureDesc &textureDescription = textures[i];
     const HgiShaderSectionAttributeVector attrs = {
       HgiShaderSectionAttribute{"binding", std::to_string(i)}
@@ -78,28 +77,28 @@ void HgiGLShaderGenerator::_WriteTextures(const HgiShaderFunctionTextureDescVect
 void HgiGLShaderGenerator::_WriteBuffers(const HgiShaderFunctionBufferDescVector &buffers)
 {
   // Extract buffer descriptors and add appropriate buffer sections
-  for (size_t i = 0; i < buffers.size(); i++)
-  {
+  for (size_t i = 0; i < buffers.size(); i++) {
     const HgiShaderFunctionBufferDesc &bufferDescription = buffers[i];
     const HgiShaderSectionAttributeVector attrs = {
       HgiShaderSectionAttribute{"std430",  ""                   },
       HgiShaderSectionAttribute{"binding", std::to_string(i + 1)}
     };
 
-    GetShaderSections()->push_back(std::make_unique<HgiGLBufferShaderSection>(bufferDescription.nameInShader,
-                                                                              i + 1,
-                                                                              bufferDescription.type,
-                                                                              attrs));
+    GetShaderSections()->push_back(
+      std::make_unique<HgiGLBufferShaderSection>(bufferDescription.nameInShader,
+                                                 i + 1,
+                                                 bufferDescription.type,
+                                                 attrs));
   }
 }
 
 void HgiGLShaderGenerator::_WriteConstantParams(const HgiShaderFunctionParamDescVector &parameters)
 {
-  if (parameters.size() < 1)
-  {
+  if (parameters.size() < 1) {
     return;
   }
-  GetShaderSections()->push_back(std::make_unique<HgiGLBlockShaderSection>("ParamBuffer", parameters, 0));
+  GetShaderSections()->push_back(
+    std::make_unique<HgiGLBlockShaderSection>("ParamBuffer", parameters, 0));
 }
 
 void HgiGLShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVector &parameters,
@@ -118,20 +117,16 @@ void HgiGLShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVector &
 
   const bool in_qualifier = qualifier == "in";
   const bool out_qualifier = qualifier == "out";
-  for (const HgiShaderFunctionParamDesc &param : parameters)
-  {
+  for (const HgiShaderFunctionParamDesc &param : parameters) {
     // Skip writing out taken parameter names
     const std::string &paramName = param.nameInShader;
-    if (out_qualifier && takenOutParams.find(paramName) != takenOutParams.end())
-    {
+    if (out_qualifier && takenOutParams.find(paramName) != takenOutParams.end()) {
       continue;
     }
-    if (in_qualifier)
-    {
+    if (in_qualifier) {
       const std::string &role = param.role;
       auto const &keyword = takenInParams.find(role);
-      if (keyword != takenInParams.end())
-      {
+      if (keyword != takenInParams.end()) {
         GetShaderSections()->push_back(
           std::make_unique<HgiGLKeywordShaderSection>(paramName, param.type, keyword->second));
         continue;
@@ -158,32 +153,27 @@ void HgiGLShaderGenerator::_Execute(std::ostream &ss, const std::string &origina
   // section, capabilities to define macros in global space,
   // and abilities to declare some members or functions there
 
-  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalIncludes(ss);
     ss << "\n";
   }
 
-  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalMacros(ss);
     ss << "\n";
   }
 
-  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalStructs(ss);
     ss << "\n";
   }
 
-  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalMemberDeclarations(ss);
     ss << "\n";
   }
 
-  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiGLShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalFunctionDefinitions(ss);
     ss << "\n";
   }

@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdSkelAnimation::~UsdSkelAnimation()
-{}
+UsdSkelAnimation::~UsdSkelAnimation() {}
 
 /* static */
 UsdSkelAnimation UsdSkelAnimation::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelAnimation();
   }
@@ -69,8 +67,7 @@ UsdSkelAnimation UsdSkelAnimation::Get(const UsdStagePtr &stage, const SdfPath &
 UsdSkelAnimation UsdSkelAnimation::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("SkelAnimation");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelAnimation();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdSkelAnimation::GetJointsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->joints);
 }
 
-UsdAttribute UsdSkelAnimation::CreateJointsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelAnimation::CreateJointsAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->joints,
                                     SdfValueTypeNames->TokenArray,
@@ -123,7 +121,8 @@ UsdAttribute UsdSkelAnimation::GetTranslationsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->translations);
 }
 
-UsdAttribute UsdSkelAnimation::CreateTranslationsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelAnimation::CreateTranslationsAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->translations,
                                     SdfValueTypeNames->Float3Array,
@@ -138,7 +137,8 @@ UsdAttribute UsdSkelAnimation::GetRotationsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->rotations);
 }
 
-UsdAttribute UsdSkelAnimation::CreateRotationsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelAnimation::CreateRotationsAttr(VtValue const &defaultValue,
+                                                   bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->rotations,
                                     SdfValueTypeNames->QuatfArray,
@@ -153,7 +153,8 @@ UsdAttribute UsdSkelAnimation::GetScalesAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->scales);
 }
 
-UsdAttribute UsdSkelAnimation::CreateScalesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelAnimation::CreateScalesAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->scales,
                                     SdfValueTypeNames->Half3Array,
@@ -168,7 +169,8 @@ UsdAttribute UsdSkelAnimation::GetBlendShapesAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->blendShapes);
 }
 
-UsdAttribute UsdSkelAnimation::CreateBlendShapesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelAnimation::CreateBlendShapesAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->blendShapes,
                                     SdfValueTypeNames->TokenArray,
@@ -218,8 +220,9 @@ const TfTokenVector &UsdSkelAnimation::GetSchemaAttributeNames(bool includeInher
     UsdSkelTokens->blendShapes,
     UsdSkelTokens->blendShapeWeights,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdTyped::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -245,14 +248,11 @@ WABI_NAMESPACE_BEGIN
 bool UsdSkelAnimation::GetTransforms(VtMatrix4dArray *xforms, UsdTimeCode time) const
 {
   VtVec3fArray translations;
-  if (GetTranslationsAttr().Get(&translations, time))
-  {
+  if (GetTranslationsAttr().Get(&translations, time)) {
     VtQuatfArray rotations;
-    if (GetRotationsAttr().Get(&rotations, time))
-    {
+    if (GetRotationsAttr().Get(&rotations, time)) {
       VtVec3hArray scales;
-      if (GetScalesAttr().Get(&scales, time))
-      {
+      if (GetScalesAttr().Get(&scales, time)) {
         return UsdSkelMakeTransforms(translations, rotations, scales, xforms);
       }
     }
@@ -265,10 +265,9 @@ bool UsdSkelAnimation::SetTransforms(const VtMatrix4dArray &xforms, UsdTimeCode 
   VtVec3fArray translations;
   VtQuatfArray rotations;
   VtVec3hArray scales;
-  if (UsdSkelDecomposeTransforms(xforms, &translations, &rotations, &scales))
-  {
-    return GetTranslationsAttr().Set(translations, time) & GetRotationsAttr().Set(rotations, time) &
-           GetScalesAttr().Set(scales, time);
+  if (UsdSkelDecomposeTransforms(xforms, &translations, &rotations, &scales)) {
+    return GetTranslationsAttr().Set(translations, time) &
+           GetRotationsAttr().Set(rotations, time) & GetScalesAttr().Set(scales, time);
   }
   return false;
 }

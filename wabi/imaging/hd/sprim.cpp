@@ -28,14 +28,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdSprim::HdSprim(SdfPath const &id)
-  : _id(id)
-{}
+HdSprim::HdSprim(SdfPath const &id) : _id(id) {}
 
-HdSprim::~HdSprim()
-{}
+HdSprim::~HdSprim() {}
 
-void HdSprim::Finalize(HdRenderParam *renderParam)
-{}
+void HdSprim::Finalize(HdRenderParam *renderParam) {}
 
 WABI_NAMESPACE_END

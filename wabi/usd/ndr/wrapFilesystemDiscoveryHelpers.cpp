@@ -42,10 +42,11 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-  NdrNodeDiscoveryResultVec _WrapFsHelpersDiscoverNodes(const NdrStringVec &searchPaths,
-                                                        const NdrStringVec &allowedExtensions,
-                                                        bool followSymlinks,
-                                                        const TfWeakPtr<NdrDiscoveryPluginContext> &context)
+  NdrNodeDiscoveryResultVec _WrapFsHelpersDiscoverNodes(
+    const NdrStringVec &searchPaths,
+    const NdrStringVec &allowedExtensions,
+    bool followSymlinks,
+    const TfWeakPtr<NdrDiscoveryPluginContext> &context)
   {
     return NdrFsHelpersDiscoverNodes(searchPaths,
                                      allowedExtensions,

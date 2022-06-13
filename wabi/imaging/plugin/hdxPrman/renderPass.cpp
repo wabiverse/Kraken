@@ -64,13 +64,11 @@ HdxPrman_RenderPass::HdxPrman_RenderPass(HdRenderIndex *index,
   _quickIntegrateTime = _enableQuickIntegrate ? 200.f / 1000.f : 0.f;
 }
 
-HdxPrman_RenderPass::~HdxPrman_RenderPass()
-{}
+HdxPrman_RenderPass::~HdxPrman_RenderPass() {}
 
 bool HdxPrman_RenderPass::IsConverged() const
 {
-  if (!_interactiveContext)
-  {
+  if (!_interactiveContext) {
     return true;
   }
   return _converged;
@@ -80,7 +78,8 @@ bool HdxPrman_RenderPass::IsConverged() const
 static double _DiffTimeToNow(std::chrono::steady_clock::time_point const &then)
 {
   std::chrono::duration<double> diff;
-  diff = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - then);
+  diff = std::chrono::duration_cast<std::chrono::duration<double>>(
+    std::chrono::steady_clock::now() - then);
   return (diff.count());
 }
 
@@ -123,8 +122,7 @@ static GfVec4f _GetCropWindow(HdRenderPassStateSharedPtr const &renderPassState,
                               const int32_t height)
 {
   const CameraUtilFraming &framing = renderPassState->GetFraming();
-  if (!framing.IsValid())
-  {
+  if (!framing.IsValid()) {
     return GfVec4f(0, 1, 0, 1);
   }
 
@@ -164,13 +162,11 @@ static GfRange2d _GetScreenWindow(const HdCamera *const cam)
 
   const GfRange2d filmbackPlane(-0.5 * size + offset, +0.5 * size + offset);
 
-  if (cam->GetProjection() == HdCamera::Orthographic)
-  {
+  if (cam->GetProjection() == HdCamera::Orthographic) {
     return filmbackPlane;
   }
 
-  if (cam->GetFocalLength() == 0.0f)
-  {
+  if (cam->GetFocalLength() == 0.0f) {
     return filmbackPlane;
   }
 
@@ -179,8 +175,7 @@ static GfRange2d _GetScreenWindow(const HdCamera *const cam)
 
 static double _SafeDiv(const double a, const double b)
 {
-  if (b == 0)
-  {
+  if (b == 0) {
     TF_CODING_ERROR("Invalid display window in render pass state for hdxPrman");
     return 1.0;
   }
@@ -198,8 +193,7 @@ static double _GetDisplayWindowAspect(const CameraUtilFraming &framing)
 static const HdRenderBuffer *_GetRenderBuffer(const HdRenderPassAovBinding &aov,
                                               const HdRenderIndex *const renderIndex)
 {
-  if (aov.renderBuffer)
-  {
+  if (aov.renderBuffer) {
     return aov.renderBuffer;
   }
 
@@ -212,15 +206,12 @@ static bool _GetRenderBufferSize(const HdRenderPassAovBindingVector &aovBindings
                                  int32_t *const width,
                                  int32_t *const height)
 {
-  for (const HdRenderPassAovBinding &aovBinding : aovBindings)
-  {
-    if (const HdRenderBuffer *const renderBuffer = _GetRenderBuffer(aovBinding, renderIndex))
-    {
+  for (const HdRenderPassAovBinding &aovBinding : aovBindings) {
+    if (const HdRenderBuffer *const renderBuffer = _GetRenderBuffer(aovBinding, renderIndex)) {
       *width = renderBuffer->GetWidth();
       *height = renderBuffer->GetHeight();
       return true;
-    } else
-    {
+    } else {
       TF_CODING_ERROR(
         "No render buffer available for AOV "
         "%s",
@@ -260,12 +251,13 @@ static GfRange2d _ConvertScreenWindowForDisplayWindowToRenderBuffer(
   // Assuming an affine mapping between screen window space
   // and image space, compute what (0,0) corresponds to in
   // screen window space.
-  const GfVec2d screenWindowMin(
-    screenWindowForDisplayWindow.GetMin()[0] - screenWindowWidthPerPixel * displayWindow.GetMin()[0],
-    // Note that image space is y-Down and screen window
-    // space is y-Up, so this is a bit tricky...
-    screenWindowForDisplayWindow.GetMax()[1] +
-      screenWindowHeightPerPixel * (displayWindow.GetMin()[1] - renderBufferHeight));
+  const GfVec2d screenWindowMin(screenWindowForDisplayWindow.GetMin()[0] -
+                                  screenWindowWidthPerPixel * displayWindow.GetMin()[0],
+                                // Note that image space is y-Down and screen window
+                                // space is y-Up, so this is a bit tricky...
+                                screenWindowForDisplayWindow.GetMax()[1] +
+                                  screenWindowHeightPerPixel *
+                                    (displayWindow.GetMin()[1] - renderBufferHeight));
 
   const GfVec2d screenWindowSize(screenWindowWidthPerPixel * renderBufferWidth,
                                  screenWindowHeightPerPixel * renderBufferHeight);
@@ -323,15 +315,13 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
   static const RtUString us_PathTracer("PathTracer");
   static const RtUString us_main_cam_projection("main_cam_projection");
 
-  if (!_interactiveContext)
-  {
+  if (!_interactiveContext) {
     // If this is not an interactive context, don't use Hydra to drive
     // rendering and presentation of the framebuffer.  Instead, assume
     // we are just using Hydra to sync the scene contents to Riley.
     return;
   }
-  if (_interactiveContext->renderThread.IsPauseRequested())
-  {
+  if (_interactiveContext->renderThread.IsPauseRequested()) {
     // No more updates if pause is pending
     return;
   }
@@ -340,16 +330,14 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
 
   bool needStartRender = false;
   const int currentSceneVersion = _interactiveContext->sceneVersion.load();
-  if (currentSceneVersion != _lastRenderedVersion)
-  {
+  if (currentSceneVersion != _lastRenderedVersion) {
     needStartRender = true;
     _lastRenderedVersion = currentSceneVersion;
   }
 
   // Creates displays if needed
   HdRenderPassAovBindingVector const &aovBindings = renderPassState->GetAovBindings();
-  if (_interactiveContext->CreateDisplays(aovBindings))
-  {
+  if (_interactiveContext->CreateDisplays(aovBindings)) {
     needStartRender = true;
   }
 
@@ -359,8 +347,10 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
   int32_t renderBufferWidth = 0;
   int32_t renderBufferHeight = 0;
 
-  if (!_GetRenderBufferSize(aovBindings, GetRenderIndex(), &renderBufferWidth, &renderBufferHeight))
-  {
+  if (!_GetRenderBufferSize(aovBindings,
+                            GetRenderIndex(),
+                            &renderBufferWidth,
+                            &renderBufferHeight)) {
     // For legacy clients not using AOVs, take size of viewport.
     const GfVec4f vp = renderPassState->GetViewport();
     renderBufferWidth = vp[2];
@@ -385,8 +375,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
   const CameraUtilFraming &framing = renderPassState->GetFraming();
 
   if (camParamsChanged || resolutionChanged || proj != _lastProj ||
-      viewToWorldMatrix != _lastViewToWorldMatrix || framing != _lastFraming)
-  {
+      viewToWorldMatrix != _lastViewToWorldMatrix || framing != _lastFraming) {
 
     _lastProj = proj;
     _lastViewToWorldMatrix = viewToWorldMatrix;
@@ -394,21 +383,20 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
 
     _interactiveContext->StopRender();
 
-    const GfVec4f cropWindow = _GetCropWindow(renderPassState, renderBufferWidth, renderBufferHeight);
+    const GfVec4f cropWindow = _GetCropWindow(renderPassState,
+                                              renderBufferWidth,
+                                              renderBufferHeight);
     const bool cropWindowChanged = cropWindow != _lastCropWindow;
 
-    if (resolutionChanged || cropWindowChanged)
-    {
-      if (resolutionChanged)
-      {
+    if (resolutionChanged || cropWindowChanged) {
+      if (resolutionChanged) {
         _interactiveContext->resolution[0] = renderBufferWidth;
         _interactiveContext->resolution[1] = renderBufferHeight;
         _interactiveContext->_options.SetIntegerArray(RixStr.k_Ri_FormatResolution,
                                                       _interactiveContext->resolution,
                                                       2);
       }
-      if (cropWindowChanged)
-      {
+      if (cropWindowChanged) {
         _lastCropWindow = cropWindow;
         _interactiveContext->_options.SetFloatArray(RixStr.k_Ri_CropWindow, cropWindow.data(), 4);
       }
@@ -438,8 +426,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
     // Set riley camera and projection shader params from the Hydra camera,
     // if available.
     RtParamList camParams;
-    if (hdCam)
-    {
+    if (hdCam) {
       hdCam->SetRileyCameraParams(camParams, cameraNode.params);
     }
 
@@ -451,14 +438,12 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
     // Inverse computation of GfFrustum::ComputeProjectionMatrix()
     GfMatrix4d viewToWorldCorrectionMatrix(1.0);
 
-    if (hdCam && renderPassState->GetFraming().IsValid())
-    {
+    if (hdCam && renderPassState->GetFraming().IsValid()) {
       const GfVec4f screenWindow = _ComputeScreenWindow(renderPassState,
                                                         renderBufferWidth,
                                                         renderBufferHeight);
 
-      if (hdCam->GetProjection() == HdCamera::Perspective)
-      {
+      if (hdCam->GetProjection() == HdCamera::Perspective) {
         // TODO: For lens distortion to be correct, we might
         // need to set a different FOV and adjust the screenwindow
         // accordingly.
@@ -468,10 +453,8 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
         cameraNode.params.SetFloat(RixStr.k_fov, 90.0f);
       }
       camParams.SetFloatArray(RixStr.k_Ri_ScreenWindow, screenWindow.data(), 4);
-    } else
-    {
-      if (!isPerspective)
-      {
+    } else {
+      if (!isPerspective) {
         const double left = -(1 + proj[3][0]) / proj[0][0];
         const double right = (1 - proj[3][0]) / proj[0][0];
         const double bottom = -(1 - proj[3][1]) / proj[1][1];
@@ -479,8 +462,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
         const double w = (right - left) / 2;
         const double h = (top - bottom) / 2;
         viewToWorldCorrectionMatrix = GfMatrix4d(GfVec4d(w, h, 1, 1));
-      } else
-      {
+      } else {
         // Extract FOV from hydra projection matrix. More precisely,
         // use the smaller value among the horizontal and vertical FOV.
         //
@@ -501,27 +483,27 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
     flipZ[2][2] = -1.0;
     viewToWorldCorrectionMatrix = flipZ * viewToWorldCorrectionMatrix;
 
-    if (hdCam)
-    {
+    if (hdCam) {
       // Use time sampled transforms authored on the scene camera.
-      HdTimeSampleArray<GfMatrix4d, HDPRMAN_MAX_TIME_SAMPLES> const &xforms = hdCam->GetTimeSampleXforms();
+      HdTimeSampleArray<GfMatrix4d, HDPRMAN_MAX_TIME_SAMPLES> const &xforms =
+        hdCam->GetTimeSampleXforms();
 
       TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES> xf_rt_values(xforms.count);
 
-      for (size_t i = 0; i < xforms.count; ++i)
-      {
-        xf_rt_values[i] = HdPrman_GfMatrixToRtMatrix(viewToWorldCorrectionMatrix * xforms.values[i]);
+      for (size_t i = 0; i < xforms.count; ++i) {
+        xf_rt_values[i] = HdPrman_GfMatrixToRtMatrix(viewToWorldCorrectionMatrix *
+                                                     xforms.values[i]);
       }
 
       riley::Transform xform = {unsigned(xforms.count), xf_rt_values.data(), xforms.times.data()};
 
       // Commit camera.
       riley->ModifyCamera(_interactiveContext->cameraId, &cameraNode, &xform, &camParams);
-    } else
-    {
+    } else {
       // Use the framing state as a single time sample.
       float const zerotime = 0.0f;
-      RtMatrix4x4 matrix = HdPrman_GfMatrixToRtMatrix(viewToWorldCorrectionMatrix * viewToWorldMatrix);
+      RtMatrix4x4 matrix = HdPrman_GfMatrixToRtMatrix(viewToWorldCorrectionMatrix *
+                                                      viewToWorldMatrix);
 
       riley::Transform xform = {1, &matrix, &zerotime};
 
@@ -538,8 +520,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
   // Likewise the render settings.
   HdRenderDelegate *renderDelegate = GetRenderIndex()->GetRenderDelegate();
   int currentSettingsVersion = renderDelegate->GetRenderSettingsVersion();
-  if (_lastSettingsVersion != currentSettingsVersion || camParamsChanged)
-  {
+  if (_lastSettingsVersion != currentSettingsVersion || camParamsChanged) {
     _interactiveContext->StopRender();
 
     _integrator = renderDelegate->GetRenderSetting<std::string>(
@@ -547,8 +528,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
       HdPrmanIntegratorTokens->PxrPathTracer.GetString());
     _isPrimaryIntegrator = _integrator == HdPrmanIntegratorTokens->PxrPathTracer.GetString() ||
                            _integrator == HdPrmanIntegratorTokens->PbsPathTracer.GetString();
-    if (_enableQuickIntegrate)
-    {
+    if (_enableQuickIntegrate) {
       _quickIntegrator = renderDelegate->GetRenderSetting<std::string>(
         HdPrmanRenderSettingsTokens->interactiveIntegrator,
         HdPrmanIntegratorTokens->PxrDirectLighting.GetString());
@@ -557,14 +537,14 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
                               HdPrmanRenderSettingsTokens->interactiveIntegratorTimeout,
                               200) /
                             1000.f;
-    } else
-    {
+    } else {
       _quickIntegrateTime = 0.0f;
 
       RtParamList integratorParams;
-      _interactiveContext->SetIntegratorParamsFromRenderSettings((HdPrmanRenderDelegate *)renderDelegate,
-                                                                 _integrator,
-                                                                 integratorParams);
+      _interactiveContext->SetIntegratorParamsFromRenderSettings(
+        (HdPrmanRenderDelegate *)renderDelegate,
+        _integrator,
+        integratorParams);
       _interactiveContext->SetIntegratorParamsFromCamera((HdPrmanRenderDelegate *)renderDelegate,
                                                          hdCam,
                                                          _integrator,
@@ -578,20 +558,23 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
     }
 
     // Update convergence criteria.
-    VtValue vtMaxSamples =
-      renderDelegate->GetRenderSetting(HdRenderSettingsTokens->convergedSamplesPerPixel).Cast<int>();
+    VtValue vtMaxSamples = renderDelegate
+                             ->GetRenderSetting(HdRenderSettingsTokens->convergedSamplesPerPixel)
+                             .Cast<int>();
     int maxSamples = TF_VERIFY(!vtMaxSamples.IsEmpty()) ? vtMaxSamples.UncheckedGet<int>() : 1024;
     _interactiveContext->_options.SetInteger(RixStr.k_hider_maxsamples, maxSamples);
 
     VtValue vtPixelVariance =
       renderDelegate->GetRenderSetting(HdRenderSettingsTokens->convergedVariance).Cast<float>();
-    float pixelVariance = TF_VERIFY(!vtPixelVariance.IsEmpty()) ? vtPixelVariance.UncheckedGet<float>() :
-                                                                  0.001f;
+    float pixelVariance = TF_VERIFY(!vtPixelVariance.IsEmpty()) ?
+                            vtPixelVariance.UncheckedGet<float>() :
+                            0.001f;
     _interactiveContext->_options.SetFloat(RixStr.k_Ri_PixelVariance, pixelVariance);
 
     // Set Options from RenderSettings schema
-    _interactiveContext->SetOptionsFromRenderSettings(static_cast<HdPrmanRenderDelegate *>(renderDelegate),
-                                                      _interactiveContext->_options);
+    _interactiveContext->SetOptionsFromRenderSettings(
+      static_cast<HdPrmanRenderDelegate *>(renderDelegate),
+      _interactiveContext->_options);
 
     _interactiveContext->riley->SetOptions(_interactiveContext->_options);
     _lastSettingsVersion = currentSettingsVersion;
@@ -599,8 +582,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
     needStartRender = true;
 
     // Setup quick integrator and save ids of it and main
-    if (_enableQuickIntegrate)
-    {
+    if (_enableQuickIntegrate) {
       riley::ShadingNode integratorNode{riley::ShadingNode::k_Integrator,
                                         RtUString(_quickIntegrator.c_str()),
                                         us_PathTracer,
@@ -625,8 +607,7 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
   // If we're rendering but we're still in the quick integrate window,
   // check and see if we need to switch to the main integrator yet.
   if (_quickIntegrate && (!needStartRender) && _interactiveContext->renderThread.IsRendering() &&
-      _DiffTimeToNow(_frameStart) > _quickIntegrateTime)
-  {
+      _DiffTimeToNow(_frameStart) > _quickIntegrateTime) {
 
     _interactiveContext->StopRender();
     _interactiveContext->SetIntegrator(_mainIntegratorId);
@@ -635,19 +616,15 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
     _quickIntegrate = false;
   }
   // Start (or restart) concurrent rendering.
-  if (needStartRender)
-  {
-    if (_quickIntegrateTime > 0 && _isPrimaryIntegrator)
-    {
-      if (!_quickIntegrate)
-      {
+  if (needStartRender) {
+    if (_quickIntegrateTime > 0 && _isPrimaryIntegrator) {
+      if (!_quickIntegrate) {
         // Start the frame with interactive integrator to give faster
         // time-to-first-buckets.
         _interactiveContext->SetIntegrator(_quickIntegratorId);
         _quickIntegrate = true;
       }
-    } else if (_quickIntegrateTime <= 0 || _quickIntegrate)
-    {
+    } else if (_quickIntegrateTime <= 0 || _quickIntegrate) {
       // Disable quick integrate
       _interactiveContext->SetIntegrator(_mainIntegratorId);
       _quickIntegrate = false;
@@ -663,20 +640,19 @@ void HdxPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassS
   // with RenderMan's resize/writing.
   _interactiveContext->framebuffer.mutex.lock();
 
-  for (size_t aov = 0; aov < aovBindings.size(); ++aov)
-  {
-    if (!TF_VERIFY(aovBindings[aov].renderBuffer))
-    {
+  for (size_t aov = 0; aov < aovBindings.size(); ++aov) {
+    if (!TF_VERIFY(aovBindings[aov].renderBuffer)) {
       continue;
     }
     HdxPrmanRenderBuffer *rb = static_cast<HdxPrmanRenderBuffer *>(aovBindings[aov].renderBuffer);
 
     // Forward convergence state to the render buffers...
     rb->SetConverged(_converged);
-    rb->Blit(_interactiveContext->framebuffer.aovs[aov].format,
-             _interactiveContext->framebuffer.w,
-             _interactiveContext->framebuffer.h,
-             reinterpret_cast<uint8_t *>(_interactiveContext->framebuffer.aovs[aov].pixels.data()));
+    rb->Blit(
+      _interactiveContext->framebuffer.aovs[aov].format,
+      _interactiveContext->framebuffer.w,
+      _interactiveContext->framebuffer.h,
+      reinterpret_cast<uint8_t *>(_interactiveContext->framebuffer.aovs[aov].pixels.data()));
   }
   _interactiveContext->framebuffer.mutex.unlock();
 }

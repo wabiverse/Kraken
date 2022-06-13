@@ -34,9 +34,7 @@
 
 { % extends "wrapMatrix.template.cpp" % }
 
-{
-  % block customIncludes %
-}
+{ % block customIncludes % }
 #include "wabi/base/gf/quat{{ SCL[0] }}.h"
 #include "wabi/base/gf/rotation.h"
 { % endblock customIncludes % }
@@ -56,7 +54,9 @@
 
 { % block customXformDefs % }
   .def("SetScale", (This & (This::*)(const GfVec3{{SCL[0]}} &)) & This::SetScale, return_self<>())
-  .def("SetRotate", (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotate, return_self<>())
+  .def("SetRotate",
+       (This & (This::*)(const GfQuat{{SCL[0]}} &)) & This::SetRotate,
+       return_self<>())
   .def("SetRotate", (This & (This::*)(const GfRotation &)) & This::SetRotate, return_self<>())
   .def("ExtractRotation", &This::ExtractRotation)
   .def("SetScale", (This & (This::*)({{SCL}})) & This::SetScale, return_self<>())

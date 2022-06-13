@@ -43,25 +43,30 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateOrderAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateOrderAttr(UsdGeomNurbsCurves &self,
+                                       object defaultVal,
+                                       bool writeSparsely)
   {
-    return self.CreateOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray), writeSparsely);
+    return self.CreateOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
+                                writeSparsely);
   }
 
-  static UsdAttribute _CreateKnotsAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateKnotsAttr(UsdGeomNurbsCurves &self,
+                                       object defaultVal,
+                                       bool writeSparsely)
   {
     return self.CreateKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->DoubleArray),
                                 writeSparsely);
   }
 
-  static UsdAttribute _CreateRangesAttr(UsdGeomNurbsCurves &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateRangesAttr(UsdGeomNurbsCurves &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
     return self.CreateRangesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Double2Array),
                                  writeSparsely);
@@ -97,7 +102,9 @@ void wrapUsdGeomNurbsCurves()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -144,7 +151,6 @@ void wrapUsdGeomNurbsCurves()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // anonymous namespace

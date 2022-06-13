@@ -41,8 +41,7 @@ HdPrmanCoordSys::HdPrmanCoordSys(SdfPath const &id)
   /* NOTHING */
 }
 
-HdPrmanCoordSys::~HdPrmanCoordSys()
-{}
+HdPrmanCoordSys::~HdPrmanCoordSys() {}
 
 void HdPrmanCoordSys::Finalize(HdRenderParam *renderParam)
 {
@@ -53,8 +52,7 @@ void HdPrmanCoordSys::Finalize(HdRenderParam *renderParam)
 void HdPrmanCoordSys::_ResetCoordSys(HdPrman_Context *context)
 {
   riley::Riley *riley = context->riley;
-  if (_coordSysId != riley::CoordinateSystemId::InvalidId())
-  {
+  if (_coordSysId != riley::CoordinateSystemId::InvalidId()) {
     riley->DeleteCoordinateSystem(_coordSysId);
     _coordSysId = riley::CoordinateSystemId::InvalidId();
   }
@@ -71,14 +69,12 @@ void HdPrmanCoordSys::Sync(HdSceneDelegate *sceneDelegate,
 
   riley::Riley *riley = context->riley;
 
-  if (*dirtyBits)
-  {
+  if (*dirtyBits) {
     // Sample transform
     HdTimeSampleArray<GfMatrix4d, HDPRMAN_MAX_TIME_SAMPLES> xf;
     sceneDelegate->SampleTransform(id, &xf);
     TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES> xf_rt_values(xf.count);
-    for (size_t i = 0; i < xf.count; ++i)
-    {
+    for (size_t i = 0; i < xf.count; ++i) {
       xf_rt_values[i] = HdPrman_GfMatrixToRtMatrix(xf.values[i]);
     }
     const riley::Transform xform = {unsigned(xf.count), xf_rt_values.data(), xf.times.data()};
@@ -87,11 +83,9 @@ void HdPrmanCoordSys::Sync(HdSceneDelegate *sceneDelegate,
     // The coordSys name is the final component of the id,
     // after stripping namespaces.
     attrs.SetString(RixStr.k_name, RtUString(SdfPath::StripNamespace(id.GetName()).c_str()));
-    if (_coordSysId != riley::CoordinateSystemId::InvalidId())
-    {
+    if (_coordSysId != riley::CoordinateSystemId::InvalidId()) {
       riley->ModifyCoordinateSystem(_coordSysId, &xform, &attrs);
-    } else
-    {
+    } else {
       _coordSysId = riley->CreateCoordinateSystem(riley::UserId::DefaultId(), xform, attrs);
     }
   }

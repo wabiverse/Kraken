@@ -50,9 +50,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -87,7 +85,9 @@ void wrapUsdVolVolume()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -121,7 +121,10 @@ namespace
 
   WRAP_CUSTOM
   {
-    _class.def("GetFieldPaths", &UsdVolVolume::GetFieldPaths, return_value_policy<TfPyMapToDictionary>())
+    _class
+      .def("GetFieldPaths",
+           &UsdVolVolume::GetFieldPaths,
+           return_value_policy<TfPyMapToDictionary>())
       .def("GetFieldPath", &UsdVolVolume::GetFieldPath, arg("name"))
       .def("HasFieldRelationship", &UsdVolVolume::HasFieldRelationship, arg("name"))
       .def("CreateFieldRelationship",

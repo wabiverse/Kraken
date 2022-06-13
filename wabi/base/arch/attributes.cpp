@@ -55,6 +55,7 @@ namespace
   class MachO
   {
    public:
+
     struct SectionInfo
     {
       intptr_t address;
@@ -69,8 +70,8 @@ namespace
     SectionInfo find(const char *segname, const char *sectname) const;
 
    private:
-    template<class T>
-    const T *get(size_t offset) const
+
+    template<class T> const T *get(size_t offset) const
     {
       return reinterpret_cast<const T *>(get2(offset));
     }
@@ -81,31 +82,26 @@ namespace
     }
 
    private:
+
     const struct mach_header *_mh;
     intptr_t _slide;
     size_t _ncmds;
     size_t _cmdsOffset;
   };
 
-  MachO::MachO(const struct mach_header *mh, intptr_t slide)
-    : _mh(mh),
-      _slide(slide)
+  MachO::MachO(const struct mach_header *mh, intptr_t slide) : _mh(mh), _slide(slide)
   {
-    if (_mh->magic == MH_MAGIC_64)
-    {
+    if (_mh->magic == MH_MAGIC_64) {
       auto header = get<struct mach_header_64>(0);
       _ncmds = header->ncmds;
       _cmdsOffset = sizeof(struct mach_header_64);
-    } else if (_mh->magic == MH_MAGIC)
-    {
+    } else if (_mh->magic == MH_MAGIC) {
       auto header = get<struct mach_header>(0);
       _ncmds = header->ncmds;
       _cmdsOffset = sizeof(struct mach_header);
-    } else if (_mh->magic == MH_CIGAM_64 || _mh->magic == MH_CIGAM)
-    {
+    } else if (_mh->magic == MH_CIGAM_64 || _mh->magic == MH_CIGAM) {
       ARCH_ERROR("Loaded byte-swapped MachO object");
-    } else
-    {
+    } else {
       ARCH_ERROR("Unrecognized MachO object");
     }
   }
@@ -115,24 +111,19 @@ namespace
     bool is_64 = false;
     size_t nsects = 0;
     size_t offset = _cmdsOffset;
-    for (size_t i = 0; i != _ncmds; ++i)
-    {
+    for (size_t i = 0; i != _ncmds; ++i) {
       auto cmd = get<struct load_command>(offset);
-      if (cmd->cmd == LC_SEGMENT_64)
-      {
+      if (cmd->cmd == LC_SEGMENT_64) {
         auto segment = get<struct segment_command_64>(offset);
-        if (strcmp(segment->segname, segname) == 0)
-        {
+        if (strcmp(segment->segname, segname) == 0) {
           nsects = segment->nsects;
           offset += sizeof(struct segment_command_64);
           is_64 = true;
           break;
         }
-      } else if (cmd->cmd == LC_SEGMENT)
-      {
+      } else if (cmd->cmd == LC_SEGMENT) {
         auto segment = get<struct segment_command>(offset);
-        if (strcmp(segment->segname, segname) == 0)
-        {
+        if (strcmp(segment->segname, segname) == 0) {
           nsects = segment->nsects;
           offset += sizeof(struct segment_command);
           break;
@@ -141,25 +132,21 @@ namespace
       offset += cmd->cmdsize;
     }
 
-    if (is_64)
-    {
-      for (size_t i = 0; i != nsects; ++i)
-      {
+    if (is_64) {
+      for (size_t i = 0; i != nsects; ++i) {
         auto section = get<struct section_64>(offset);
-        if (strcmp(section->sectname, sectname) == 0)
-        {
-          return {static_cast<intptr_t>(section->addr) + _slide, static_cast<ptrdiff_t>(section->size)};
+        if (strcmp(section->sectname, sectname) == 0) {
+          return {static_cast<intptr_t>(section->addr) + _slide,
+                  static_cast<ptrdiff_t>(section->size)};
         }
         offset += sizeof(*section);
       }
-    } else
-    {
-      for (size_t i = 0; i != nsects; ++i)
-      {
+    } else {
+      for (size_t i = 0; i != nsects; ++i) {
         auto section = get<struct section>(offset);
-        if (strcmp(section->sectname, sectname) == 0)
-        {
-          return {static_cast<intptr_t>(section->addr) + _slide, static_cast<ptrdiff_t>(section->size)};
+        if (strcmp(section->sectname, sectname) == 0) {
+          return {static_cast<intptr_t>(section->addr) + _slide,
+                  static_cast<ptrdiff_t>(section->size)};
         }
         offset += sizeof(*section);
       }
@@ -180,14 +167,14 @@ namespace
 
     // Done if not found or empty.
     const ptrdiff_t numEntries = info.size / sizeof(Arch_ConstructorEntry);
-    if (numEntries == 0)
-    {
+    if (numEntries == 0) {
       return result;
     }
 
     // Copy the entries for sorting.  We could sort in place but we want
     // to return a vector anyway.
-    const Arch_ConstructorEntry *entries = reinterpret_cast<const Arch_ConstructorEntry *>(info.address);
+    const Arch_ConstructorEntry *entries = reinterpret_cast<const Arch_ConstructorEntry *>(
+      info.address);
     result.assign(entries, entries + numEntries);
 
     // Sort.
@@ -206,10 +193,8 @@ namespace
     const auto entries = GetConstructorEntries(mh, slide, "__DATA", "wabictor");
 
     // Execute in priority order.
-    for (size_t i = 0, n = entries.size(); i != n; ++i)
-    {
-      if (entries[i].function && entries[i].version == 0u)
-      {
+    for (size_t i = 0, n = entries.size(); i != n; ++i) {
+      if (entries[i].function && entries[i].version == 0u) {
         entries[i].function();
       }
     }
@@ -221,10 +206,8 @@ namespace
     const auto entries = GetConstructorEntries(mh, slide, "__DATA", "wabidtor");
 
     // Execute in reverse priority order.
-    for (size_t i = entries.size(); i-- != 0;)
-    {
-      if (entries[i].function && entries[i].version == 0u)
-      {
+    for (size_t i = entries.size(); i-- != 0;) {
+      if (entries[i].function && entries[i].version == 0u) {
         entries[i].function();
       }
     }
@@ -267,21 +250,21 @@ namespace
   class ImageNT
   {
    public:
+
     struct SectionInfo
     {
       intptr_t address;
       ptrdiff_t size;
     };
 
-    ImageNT(HMODULE hModule)
-      : _hModule(hModule)
-    {}
+    ImageNT(HMODULE hModule) : _hModule(hModule) {}
 
     // Returns the address and size of the section named sectname.
     // Returns a zero size and address if not found.
     SectionInfo Find(const char *sectname) const;
 
    private:
+
     HMODULE _hModule;
   };
 
@@ -290,15 +273,15 @@ namespace
     // Get the section headers and the number of sections.
     intptr_t base = reinterpret_cast<intptr_t>(_hModule);
     const IMAGE_DOS_HEADER *dosHeader = reinterpret_cast<IMAGE_DOS_HEADER *>(base);
-    const IMAGE_NT_HEADERS *ntHeader = reinterpret_cast<IMAGE_NT_HEADERS *>(base + dosHeader->e_lfanew);
+    const IMAGE_NT_HEADERS *ntHeader = reinterpret_cast<IMAGE_NT_HEADERS *>(base +
+                                                                            dosHeader->e_lfanew);
     const IMAGE_SECTION_HEADER *sectionHeaders = IMAGE_FIRST_SECTION(ntHeader);
 
     // Search for the section by name.
-    for (WORD i = 0; i != ntHeader->FileHeader.NumberOfSections; ++i)
-    {
+    for (WORD i = 0; i != ntHeader->FileHeader.NumberOfSections; ++i) {
       const auto &section = sectionHeaders[i];
-      if (strncmp(reinterpret_cast<const char *>(section.Name), sectname, sizeof(section.Name)) == 0)
-      {
+      if (strncmp(reinterpret_cast<const char *>(section.Name), sectname, sizeof(section.Name)) ==
+          0) {
         return {base + section.VirtualAddress, section.Misc.VirtualSize};
       }
     }
@@ -306,7 +289,8 @@ namespace
     return {0, 0};
   }
 
-  static std::vector<Arch_ConstructorEntry> GetConstructorEntries(HMODULE hModule, const char *sectname)
+  static std::vector<Arch_ConstructorEntry> GetConstructorEntries(HMODULE hModule,
+                                                                  const char *sectname)
   {
     std::vector<Arch_ConstructorEntry> result;
 
@@ -315,14 +299,14 @@ namespace
 
     // Done if not found or empty.
     const DWORD numEntries = info.size / sizeof(Arch_ConstructorEntry);
-    if (numEntries == 0)
-    {
+    if (numEntries == 0) {
       return result;
     }
 
     // Copy the entries for sorting.  We could sort in place but we want
     // to return a vector anyway.
-    const Arch_ConstructorEntry *entries = reinterpret_cast<const Arch_ConstructorEntry *>(info.address);
+    const Arch_ConstructorEntry *entries = reinterpret_cast<const Arch_ConstructorEntry *>(
+      info.address);
     result.assign(entries, entries + numEntries);
 
     // Sort.
@@ -341,14 +325,11 @@ namespace
     static std::set<HMODULE> *visited = new std::set<HMODULE>;
 
     // Do each HMODULE at most once.
-    if (visited->insert(hModule).second)
-    {
+    if (visited->insert(hModule).second) {
       // Execute in priority order.
       const auto entries = GetConstructorEntries(hModule, ".wabictor");
-      for (size_t i = 0, n = entries.size(); i != n; ++i)
-      {
-        if (entries[i].function && entries[i].version == 0u)
-        {
+      for (size_t i = 0, n = entries.size(); i != n; ++i) {
+        if (entries[i].function && entries[i].version == 0u) {
           entries[i].function();
         }
       }
@@ -361,14 +342,11 @@ namespace
     static std::set<HMODULE> *visited = new std::set<HMODULE>;
 
     // Do each HMODULE at most once.
-    if (visited->insert(hModule).second)
-    {
+    if (visited->insert(hModule).second) {
       // Execute in reverse priority order.
       const auto entries = GetConstructorEntries(hModule, ".wabidtor");
-      for (size_t i = entries.size(); i-- != 0;)
-      {
-        if (entries[i].function && entries[i].version == 0u)
-        {
+      for (size_t i = entries.size(); i-- != 0;) {
+        if (entries[i].function && entries[i].version == 0u) {
           entries[i].function();
         }
       }
@@ -379,7 +357,8 @@ namespace
   static HMODULE GetCurrentModule(void *ptr)
   {
     HMODULE result;
-    GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+    GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                        GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                       reinterpret_cast<LPCTSTR>(ptr),
                       &result);
     return result;

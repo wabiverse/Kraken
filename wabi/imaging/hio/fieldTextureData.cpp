@@ -53,11 +53,13 @@ namespace
   class _FieldTextureDataFactoryRegistry
   {
    public:
+
     _FieldTextureDataFactoryRegistry();
 
     HioFieldTextureDataFactoryBase const *GetFactory(std::string const &filePath) const;
 
    private:
+
     HioRankedTypeMap _typeMap;
   };
 
@@ -76,16 +78,15 @@ namespace
     TfToken const fileExtension(TfStringToLower(ArGetResolver().GetExtension(filePath)));
 
     TfType const &pluginType = _typeMap.Find(fileExtension);
-    if (!pluginType)
-    {
+    if (!pluginType) {
       // Unknown prim type.
       TF_CODING_ERROR("[PluginLoad] Unknown field data type '%s'\n", fileExtension.GetText());
       return nullptr;
     }
 
-    HioFieldTextureDataFactoryBase const *factory = pluginType.GetFactory<HioFieldTextureDataFactoryBase>();
-    if (!factory)
-    {
+    HioFieldTextureDataFactoryBase const *factory =
+      pluginType.GetFactory<HioFieldTextureDataFactoryBase>();
+    if (!factory) {
       TF_CODING_ERROR(
         "[PluginLoad] Cannot get factory for type '%s' "
         "for field data type '%s' for file '%s'\n",
@@ -119,16 +120,14 @@ HioFieldTextureDataSharedPtr HioFieldTextureData::New(std::string const &filePat
                                                       size_t targetMemory)
 {
   HioFieldTextureDataFactoryBase const *factory = _factoryRegistry->GetFactory(filePath);
-  if (!factory)
-  {
+  if (!factory) {
     return nullptr;
   }
 
   HioFieldTextureDataSharedPtr fieldTextureData =
     factory->_New(filePath, fieldName, fieldIndex, fieldPurpose, targetMemory);
 
-  if (!fieldTextureData)
-  {
+  if (!fieldTextureData) {
     TF_CODING_ERROR("Cannot get construct field texture data for file '%s'\n", filePath.c_str());
 
     return nullptr;

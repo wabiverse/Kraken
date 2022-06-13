@@ -59,7 +59,8 @@ struct Ndr_ValidatePropertyAnnotatedBool : public TfPyAnnotatedBoolResult<std::s
   {}
 };
 
-static Ndr_ValidatePropertyAnnotatedBool _ValidateProperty(const NdrNode &node, const NdrProperty &property)
+static Ndr_ValidatePropertyAnnotatedBool _ValidateProperty(const NdrNode &node,
+                                                           const NdrProperty &property)
 {
   std::string errorMessage;
   bool isValid = NdrRegistry_ValidateProperty(&node, &property, &errorMessage);
@@ -71,18 +72,14 @@ static void _SetExtraDiscoveryPlugins(NdrRegistry &self, const list &pylist)
   NdrDiscoveryPluginRefPtrVector plugins;
   std::vector<TfType> types;
 
-  for (int i = 0; i < len(pylist); ++i)
-  {
+  for (int i = 0; i < len(pylist); ++i) {
     extract<NdrDiscoveryPluginPtr> plugin(pylist[i]);
-    if (plugin.check())
-    {
+    if (plugin.check()) {
       NdrDiscoveryPluginPtr pluginPtr = plugin;
-      if (pluginPtr)
-      {
+      if (pluginPtr) {
         plugins.push_back(pluginPtr);
       }
-    } else
-    {
+    } else {
       types.push_back(extract<TfType>(pylist[i]));
     }
   }
@@ -131,7 +128,9 @@ void wrapRegistry()
          return_internal_reference<>())
     .def("GetNodeByName",
          &This::GetNodeByName,
-         (args("name"), args("typePriority") = NdrTokenVec(), args("filter") = NdrVersionFilterDefaultOnly),
+         (args("name"),
+          args("typePriority") = NdrTokenVec(),
+          args("filter") = NdrVersionFilterDefaultOnly),
          return_internal_reference<>())
     .def("GetNodeByNameAndType",
          &This::GetNodeByNameAndType,
@@ -164,5 +163,6 @@ void wrapRegistry()
   // for testing property correctness
   def("_ValidateProperty", _ValidateProperty);
 
-  Ndr_ValidatePropertyAnnotatedBool::Wrap<Ndr_ValidatePropertyAnnotatedBool>("_AnnotatedBool", "message");
+  Ndr_ValidatePropertyAnnotatedBool::Wrap<Ndr_ValidatePropertyAnnotatedBool>("_AnnotatedBool",
+                                                                             "message");
 }

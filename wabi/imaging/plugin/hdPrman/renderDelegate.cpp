@@ -195,8 +195,7 @@ HdResourceRegistrySharedPtr HdPrmanRenderDelegate::GetResourceRegistry() const
 HdRenderPassSharedPtr HdPrmanRenderDelegate::CreateRenderPass(HdRenderIndex *index,
                                                               HdRprimCollection const &collection)
 {
-  if (!_renderPass)
-  {
+  if (!_renderPass) {
     _renderPass = HdRenderPassSharedPtr(new HdPrman_RenderPass(index, collection));
   }
   return _renderPass;
@@ -214,20 +213,15 @@ void HdPrmanRenderDelegate::DestroyInstancer(HdInstancer *instancer)
 
 HdRprim *HdPrmanRenderDelegate::CreateRprim(TfToken const &typeId, SdfPath const &rprimId)
 {
-  if (typeId == HdPrimTypeTokens->mesh)
-  {
+  if (typeId == HdPrimTypeTokens->mesh) {
     return new HdPrman_Mesh(rprimId);
-  } else if (typeId == HdPrimTypeTokens->basisCurves)
-  {
+  } else if (typeId == HdPrimTypeTokens->basisCurves) {
     return new HdPrman_BasisCurves(rprimId);
-  } else if (typeId == HdPrimTypeTokens->points)
-  {
+  } else if (typeId == HdPrimTypeTokens->points) {
     return new HdPrman_Points(rprimId);
-  } else if (typeId == HdPrimTypeTokens->volume)
-  {
+  } else if (typeId == HdPrimTypeTokens->volume) {
     return new HdPrman_Volume(rprimId);
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unknown Rprim Type %s", typeId.GetText());
   }
 
@@ -241,28 +235,22 @@ void HdPrmanRenderDelegate::DestroyRprim(HdRprim *rPrim)
 
 HdSprim *HdPrmanRenderDelegate::CreateSprim(TfToken const &typeId, SdfPath const &sprimId)
 {
-  if (typeId == HdPrimTypeTokens->camera)
-  {
+  if (typeId == HdPrimTypeTokens->camera) {
     return new HdPrmanCamera(sprimId);
-  } else if (typeId == HdPrimTypeTokens->material)
-  {
+  } else if (typeId == HdPrimTypeTokens->material) {
     return new HdPrmanMaterial(sprimId);
-  } else if (typeId == HdPrimTypeTokens->coordSys)
-  {
+  } else if (typeId == HdPrimTypeTokens->coordSys) {
     return new HdPrmanCoordSys(sprimId);
-  } else if (typeId == HdPrimTypeTokens->lightFilter)
-  {
+  } else if (typeId == HdPrimTypeTokens->lightFilter) {
     return new HdPrmanLightFilter(sprimId, typeId);
   } else if (typeId == HdPrimTypeTokens->distantLight || typeId == HdPrimTypeTokens->domeLight ||
              typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->diskLight ||
-             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->sphereLight)
-  {
+             typeId == HdPrimTypeTokens->cylinderLight ||
+             typeId == HdPrimTypeTokens->sphereLight) {
     return new HdPrmanLight(sprimId, typeId);
-  } else if (typeId == HdPrimTypeTokens->extComputation)
-  {
+  } else if (typeId == HdPrimTypeTokens->extComputation) {
     return new HdExtComputation(sprimId);
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
 
@@ -273,28 +261,22 @@ HdSprim *HdPrmanRenderDelegate::CreateFallbackSprim(TfToken const &typeId)
 {
   // For fallback sprims, create objects with an empty scene path.
   // They'll use default values and won't be updated by a scene delegate.
-  if (typeId == HdPrimTypeTokens->camera)
-  {
+  if (typeId == HdPrimTypeTokens->camera) {
     return new HdPrmanCamera(SdfPath::EmptyPath());
-  } else if (typeId == HdPrimTypeTokens->material)
-  {
+  } else if (typeId == HdPrimTypeTokens->material) {
     return new HdPrmanMaterial(SdfPath::EmptyPath());
-  } else if (typeId == HdPrimTypeTokens->coordSys)
-  {
+  } else if (typeId == HdPrimTypeTokens->coordSys) {
     return new HdPrmanCoordSys(SdfPath::EmptyPath());
-  } else if (typeId == HdPrimTypeTokens->lightFilter)
-  {
+  } else if (typeId == HdPrimTypeTokens->lightFilter) {
     return new HdPrmanLightFilter(SdfPath::EmptyPath(), typeId);
   } else if (typeId == HdPrimTypeTokens->distantLight || typeId == HdPrimTypeTokens->domeLight ||
              typeId == HdPrimTypeTokens->rectLight || typeId == HdPrimTypeTokens->diskLight ||
-             typeId == HdPrimTypeTokens->cylinderLight || typeId == HdPrimTypeTokens->sphereLight)
-  {
+             typeId == HdPrimTypeTokens->cylinderLight ||
+             typeId == HdPrimTypeTokens->sphereLight) {
     return new HdPrmanLight(SdfPath::EmptyPath(), typeId);
-  } else if (typeId == HdPrimTypeTokens->extComputation)
-  {
+  } else if (typeId == HdPrimTypeTokens->extComputation) {
     return new HdExtComputation(SdfPath::EmptyPath());
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unknown Sprim Type %s", typeId.GetText());
   }
 
@@ -308,11 +290,9 @@ void HdPrmanRenderDelegate::DestroySprim(HdSprim *sPrim)
 
 HdBprim *HdPrmanRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath const &bprimId)
 {
-  if (typeId == _tokens->openvdbAsset || typeId == _tokens->field3dAsset)
-  {
+  if (typeId == _tokens->openvdbAsset || typeId == _tokens->field3dAsset) {
     return new HdPrman_Field(typeId, bprimId);
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
   return nullptr;
@@ -320,11 +300,9 @@ HdBprim *HdPrmanRenderDelegate::CreateBprim(TfToken const &typeId, SdfPath const
 
 HdBprim *HdPrmanRenderDelegate::CreateFallbackBprim(TfToken const &typeId)
 {
-  if (typeId == _tokens->openvdbAsset || typeId == _tokens->field3dAsset)
-  {
+  if (typeId == _tokens->openvdbAsset || typeId == _tokens->field3dAsset) {
     return new HdPrman_Field(typeId, SdfPath::EmptyPath());
-  } else
-  {
+  } else {
     TF_CODING_ERROR("Unknown Bprim Type %s", typeId.GetText());
   }
   return nullptr;
@@ -367,21 +345,17 @@ void HdPrmanRenderDelegate::SetRenderSetting(TfToken const &key, VtValue const &
 {
   // update settings version only if a setting actually changed
   auto it = _settingsMap.find(key);
-  if (it != _settingsMap.end())
-  {
-    if (value != it->second)
-    {
+  if (it != _settingsMap.end()) {
+    if (value != it->second) {
       _settingsVersion++;
     }
-  } else
-  {
+  } else {
     _settingsVersion++;
   }
 
   _settingsMap[key] = value;
 
-  if (TfDebug::IsEnabled(HD_RENDER_SETTINGS))
-  {
+  if (TfDebug::IsEnabled(HD_RENDER_SETTINGS)) {
     std::cout << "Render Setting [" << key << "] = " << value << std::endl;
   }
 }

@@ -26,32 +26,26 @@
 
 void AnchorRect::inset(AnchorS32 i)
 {
-  if (i > 0)
-  {
+  if (i > 0) {
     // Grow the rectangle
     m_l -= i;
     m_r += i;
     m_t -= i;
     m_b += i;
-  } else if (i < 0)
-  {
+  } else if (i < 0) {
     // Shrink the rectangle, check for insets larger than half the size
     AnchorS32 i2 = i * 2;
-    if (getWidth() > i2)
-    {
+    if (getWidth() > i2) {
       m_l += i;
       m_r -= i;
-    } else
-    {
+    } else {
       m_l = m_l + ((m_r - m_l) / 2);
       m_r = m_l;
     }
-    if (getHeight() > i2)
-    {
+    if (getHeight() > i2) {
       m_t += i;
       m_b -= i;
-    } else
-    {
+    } else {
       m_t = m_t + ((m_b - m_t) / 2);
       m_b = m_t;
     }
@@ -65,23 +59,18 @@ eAnchorVisibility AnchorRect::getVisibility(AnchorRect &r) const
   bool lb = isInside(r.m_l, r.m_b);
   bool rb = isInside(r.m_r, r.m_b);
   eAnchorVisibility v;
-  if (lt && rt && lb && rb)
-  {
+  if (lt && rt && lb && rb) {
     // All points inside, rectangle is inside this
     v = ANCHOR_FullyVisible;
-  } else if (!(lt || rt || lb || rb))
-  {
+  } else if (!(lt || rt || lb || rb)) {
     // None of the points inside
     // Check to see whether the rectangle is larger than this one
-    if ((r.m_l < m_l) && (r.m_t < m_t) && (r.m_r > m_r) && (r.m_b > m_b))
-    {
+    if ((r.m_l < m_l) && (r.m_t < m_t) && (r.m_r > m_r) && (r.m_b > m_b)) {
       v = ANCHOR_PartiallyVisible;
-    } else
-    {
+    } else {
       v = ANCHOR_NotVisible;
     }
-  } else
-  {
+  } else {
     // Some of the points inside, rectangle is partially inside
     v = ANCHOR_PartiallyVisible;
   }
@@ -113,23 +102,19 @@ void AnchorRect::setCenter(AnchorS32 cx, AnchorS32 cy, AnchorS32 w, AnchorS32 h)
 bool AnchorRect::clip(AnchorRect &r) const
 {
   bool clipped = false;
-  if (r.m_l < m_l)
-  {
+  if (r.m_l < m_l) {
     r.m_l = m_l;
     clipped = true;
   }
-  if (r.m_t < m_t)
-  {
+  if (r.m_t < m_t) {
     r.m_t = m_t;
     clipped = true;
   }
-  if (r.m_r > m_r)
-  {
+  if (r.m_r > m_r) {
     r.m_r = m_r;
     clipped = true;
   }
-  if (r.m_b > m_b)
-  {
+  if (r.m_b > m_b) {
     r.m_b = m_b;
     clipped = true;
   }

@@ -58,8 +58,7 @@ bool TfGetenvBool(const string &envName, bool defaultValue)
 
   if (value.empty())
     return defaultValue;
-  else
-  {
+  else {
     for (char &c : value)
       c = tolower(c);
 

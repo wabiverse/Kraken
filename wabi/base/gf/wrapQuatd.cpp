@@ -63,8 +63,8 @@ namespace
 
   static string __repr__(GfQuatd const &self)
   {
-    return TF_PY_REPR_PREFIX + "Quatd(" + TfPyRepr(self.GetReal()) + ", " + TfPyRepr(self.GetImaginary()) +
-           ")";
+    return TF_PY_REPR_PREFIX + "Quatd(" + TfPyRepr(self.GetReal()) + ", " +
+           TfPyRepr(self.GetImaginary()) + ")";
   }
 
 #if PY_MAJOR_VERSION == 2
@@ -89,11 +89,14 @@ namespace
 
 void wrapQuatd()
 {
-  object getImaginary = make_function(&GfQuatd::GetImaginary, return_value_policy<return_by_value>());
+  object getImaginary = make_function(&GfQuatd::GetImaginary,
+                                      return_value_policy<return_by_value>());
 
-  object setImaginaryVec = make_function((void(GfQuatd::*)(const GfVec3d &)) & GfQuatd::SetImaginary);
+  object setImaginaryVec = make_function((void(GfQuatd::*)(const GfVec3d &)) &
+                                         GfQuatd::SetImaginary);
 
-  object setImaginaryScl = make_function((void(GfQuatd::*)(double, double, double)) & GfQuatd::SetImaginary,
+  object setImaginaryScl = make_function((void(GfQuatd::*)(double, double, double)) &
+                                           GfQuatd::SetImaginary,
                                          default_call_policies(),
                                          (arg("i"), arg("j"), arg("k")));
 

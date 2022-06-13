@@ -52,8 +52,7 @@ size_t TfFastCompression::GetCompressedBufferSize(size_t inputSize)
     return 0;
 
   // If it fits in one chunk then it's just the compress bound plus 1.
-  if (inputSize <= LZ4_MAX_INPUT_SIZE)
-  {
+  if (inputSize <= LZ4_MAX_INPUT_SIZE) {
     return LZ4_compressBound(inputSize) + 1;
   }
   size_t nWholeChunks = inputSize / LZ4_MAX_INPUT_SIZE;
@@ -66,8 +65,7 @@ size_t TfFastCompression::GetCompressedBufferSize(size_t inputSize)
 
 size_t TfFastCompression::CompressToBuffer(char const *input, char *compressed, size_t inputSize)
 {
-  if (inputSize > GetMaxInputSize())
-  {
+  if (inputSize > GetMaxInputSize()) {
     TF_CODING_ERROR(
       "Attempted to compress a buffer of %zu bytes, "
       "more than the maximum supported %zu",
@@ -78,13 +76,13 @@ size_t TfFastCompression::CompressToBuffer(char const *input, char *compressed, 
 
   // If it fits in one chunk, just do it.
   char const *const origCompressed = compressed;
-  if (inputSize <= LZ4_MAX_INPUT_SIZE)
-  {
+  if (inputSize <= LZ4_MAX_INPUT_SIZE) {
     compressed[0] = 0;  // < zero byte means one chunk.
-    compressed += 1 +
-                  LZ4_compress_default(input, compressed + 1, inputSize, GetCompressedBufferSize(inputSize));
-  } else
-  {
+    compressed += 1 + LZ4_compress_default(input,
+                                           compressed + 1,
+                                           inputSize,
+                                           GetCompressedBufferSize(inputSize));
+  } else {
     size_t nWholeChunks = inputSize / LZ4_MAX_INPUT_SIZE;
     size_t partChunkSz = inputSize % LZ4_MAX_INPUT_SIZE;
     *compressed++ = nWholeChunks + (partChunkSz ? 1 : 0);
@@ -96,12 +94,10 @@ size_t TfFastCompression::CompressToBuffer(char const *input, char *compressed, 
       output += n;
       input += size;
     };
-    for (size_t chunk = 0; chunk != nWholeChunks; ++chunk)
-    {
+    for (size_t chunk = 0; chunk != nWholeChunks; ++chunk) {
       writeChunk(input, compressed, LZ4_MAX_INPUT_SIZE);
     }
-    if (partChunkSz)
-    {
+    if (partChunkSz) {
       writeChunk(input, compressed, partChunkSz);
     }
   }
@@ -116,12 +112,10 @@ size_t TfFastCompression::DecompressFromBuffer(char const *compressed,
 {
   // Check first byte for # chunks.
   int nChunks = *compressed++;
-  if (nChunks == 0)
-  {
+  if (nChunks == 0) {
     // Just one.
     int nDecompressed = LZ4_decompress_safe(compressed, output, compressedSize - 1, maxOutputSize);
-    if (nDecompressed < 0)
-    {
+    if (nDecompressed < 0) {
       TF_RUNTIME_ERROR(
         "Failed to decompress data, possibly corrupt? "
         "LZ4 error code: %d",
@@ -129,12 +123,10 @@ size_t TfFastCompression::DecompressFromBuffer(char const *compressed,
       return 0;
     }
     return nDecompressed;
-  } else
-  {
+  } else {
     // Do each chunk.
     size_t totalDecompressed = 0;
-    for (int i = 0; i != nChunks; ++i)
-    {
+    for (int i = 0; i != nChunks; ++i) {
       int32_t chunkSize = 0;
       memcpy(&chunkSize, compressed, sizeof(chunkSize));
       compressed += sizeof(chunkSize);
@@ -142,8 +134,7 @@ size_t TfFastCompression::DecompressFromBuffer(char const *compressed,
                                               output,
                                               chunkSize,
                                               std::min<size_t>(LZ4_MAX_INPUT_SIZE, maxOutputSize));
-      if (nDecompressed < 0)
-      {
+      if (nDecompressed < 0) {
         TF_RUNTIME_ERROR(
           "Failed to decompress data, possibly corrupt? "
           "LZ4 error code: %d",

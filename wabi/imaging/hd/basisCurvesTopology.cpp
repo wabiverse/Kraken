@@ -69,14 +69,12 @@ HdBasisCurvesTopology::HdBasisCurvesTopology(const TfToken &curveType,
     _invisiblePoints(),
     _invisibleCurves()
 {
-  if (_curveType != HdTokens->linear && _curveType != HdTokens->cubic)
-  {
+  if (_curveType != HdTokens->linear && _curveType != HdTokens->cubic) {
     TF_WARN("Curve type must be 'linear' or 'cubic'.  Got: '%s'", _curveType.GetText());
     _curveType = HdTokens->linear;
     _curveBasis = TfToken();
   }
-  if (curveBasis == HdTokens->linear && curveType == HdTokens->cubic)
-  {
+  if (curveBasis == HdTokens->linear && curveType == HdTokens->cubic) {
     TF_WARN("Basis 'linear' passed in to 'cubic' curveType.  Converting 'curveType' to 'linear'.");
     _curveType = HdTokens->linear;
     _curveBasis = TfToken();
@@ -113,7 +111,9 @@ HdTopology::ID HdBasisCurvesTopology::ComputeHash() const
   hash = ArchHash64((const char *)&_curveBasis, sizeof(TfToken), hash);
   hash = ArchHash64((const char *)&_curveType, sizeof(TfToken), hash);
   hash = ArchHash64((const char *)&_curveWrap, sizeof(TfToken), hash);
-  hash = ArchHash64((const char *)_curveVertexCounts.cdata(), _curveVertexCounts.size() * sizeof(int), hash);
+  hash = ArchHash64((const char *)_curveVertexCounts.cdata(),
+                    _curveVertexCounts.size() * sizeof(int),
+                    hash);
   hash = ArchHash64((const char *)_curveIndices.cdata(), _curveIndices.size() * sizeof(int), hash);
 
   // Note: We don't hash topological visibility, because it is treated as a
@@ -125,8 +125,8 @@ std::ostream &operator<<(std::ostream &out, HdBasisCurvesTopology const &topo)
 {
   out << "(" << topo.GetCurveBasis().GetString() << ", " << topo.GetCurveType().GetString() << ", "
       << topo.GetCurveWrap().GetString() << ", (" << topo.GetCurveVertexCounts() << "), ("
-      << topo.GetCurveIndices() << "), (" << topo.GetInvisiblePoints() << "), (" << topo.GetInvisibleCurves()
-      << "))";
+      << topo.GetCurveIndices() << "), (" << topo.GetInvisiblePoints() << "), ("
+      << topo.GetInvisibleCurves() << "))";
   return out;
 }
 
@@ -138,8 +138,7 @@ size_t HdBasisCurvesTopology::CalculateNeededNumberOfControlPoints() const
   // (so we don't detach the array while multi-threaded)
   for (VtIntArray::const_iterator itCounts = _curveVertexCounts.cbegin();
        itCounts != _curveVertexCounts.cend();
-       ++itCounts)
-  {
+       ++itCounts) {
     numVerts += *itCounts;
   }
 
@@ -148,8 +147,7 @@ size_t HdBasisCurvesTopology::CalculateNeededNumberOfControlPoints() const
 
 size_t HdBasisCurvesTopology::CalculateNeededNumberOfVaryingControlPoints() const
 {
-  if (GetCurveType() == HdTokens->linear)
-  {
+  if (GetCurveType() == HdTokens->linear) {
     // For linear curves, varying and vertex interpolation is identical.
     return CalculateNeededNumberOfControlPoints();
   }
@@ -157,11 +155,9 @@ size_t HdBasisCurvesTopology::CalculateNeededNumberOfVaryingControlPoints() cons
   int numSegs = 0, vStep = 0;
   bool wrap = GetCurveWrap() == HdTokens->periodic;
 
-  if (GetCurveBasis() == HdTokens->bezier)
-  {
+  if (GetCurveBasis() == HdTokens->bezier) {
     vStep = 3;
-  } else
-  {
+  } else {
     vStep = 1;
   }
 
@@ -169,22 +165,18 @@ size_t HdBasisCurvesTopology::CalculateNeededNumberOfVaryingControlPoints() cons
   // (so we don't detach the array while multi-threaded)
   for (VtIntArray::const_iterator itCounts = _curveVertexCounts.cbegin();
        itCounts != _curveVertexCounts.cend();
-       ++itCounts)
-  {
+       ++itCounts) {
 
     // Handling for the case of potentially incorrect vertex counts
-    if (*itCounts < 1)
-    {
+    if (*itCounts < 1) {
       continue;
     }
 
     // The number of verts is different if we have periodic vs non-periodic
     // curves, check basisCurvesComputations.cpp line 207 for a diagram.
-    if (wrap)
-    {
+    if (wrap) {
       numSegs = *itCounts / vStep;
-    } else
-    {
+    } else {
       numSegs = ((*itCounts - 4) / vStep) + 1;
     }
     numVerts += numSegs + 1;

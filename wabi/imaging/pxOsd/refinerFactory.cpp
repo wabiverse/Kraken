@@ -46,7 +46,9 @@ namespace
   struct Converter
   {
 
-    Converter(PxOsdMeshTopology const &topo, std::vector<VtIntArray> const &fvarTopologies, TfToken t)
+    Converter(PxOsdMeshTopology const &topo,
+              std::vector<VtIntArray> const &fvarTopologies,
+              TfToken t)
       : name(t),
         topology(topo),
         fvarTopologies(fvarTopologies)
@@ -69,30 +71,25 @@ namespace
     TfToken const scheme = topology.GetScheme();
 
     SchemeType type = SCHEME_CATMARK;
-    if (scheme == PxOsdOpenSubdivTokens->catmullClark)
-    {
+    if (scheme == PxOsdOpenSubdivTokens->catmullClark) {
       type = SCHEME_CATMARK;
-    } else if (scheme == PxOsdOpenSubdivTokens->loop)
-    {
+    } else if (scheme == PxOsdOpenSubdivTokens->loop) {
       type = SCHEME_LOOP;
       // in loop case, all input faces have to be triangle.
       int numFaces = topology.GetFaceVertexCounts().size();
       int const *numVertsPtr = topology.GetFaceVertexCounts().cdata();
-      if (std::find_if(numVertsPtr, numVertsPtr + numFaces, [](int x) { return x != 3; }) ==
-          numVertsPtr + numFaces)
-      {
-      } else
-      {
+      if (std::find_if(numVertsPtr, numVertsPtr + numFaces, [](int x) {
+            return x != 3;
+          }) == numVertsPtr + numFaces) {
+      } else {
         TF_WARN(
           "Can't apply loop subdivision on prim %s, since "
           "it has non-triangle face(s).",
           name.GetText());
       }
-    } else if (scheme == PxOsdOpenSubdivTokens->bilinear)
-    {
+    } else if (scheme == PxOsdOpenSubdivTokens->bilinear) {
       type = SCHEME_BILINEAR;
-    } else
-    {
+    } else {
       TF_WARN("Unsupported scheme (%s) (%s)", scheme.GetText(), name.GetText());
     }
     return type;
@@ -117,25 +114,19 @@ namespace
                                           PxOsdOpenSubdivTokens->edgeAndCorner :
                                           topology.GetSubdivTags().GetVertexInterpolationRule();
 
-    if (!interpolateBoundary.IsEmpty())
-    {
-      if (interpolateBoundary == PxOsdOpenSubdivTokens->none)
-      {
+    if (!interpolateBoundary.IsEmpty()) {
+      if (interpolateBoundary == PxOsdOpenSubdivTokens->none) {
         options.SetVtxBoundaryInterpolation(Options::VTX_BOUNDARY_NONE);
-      } else if (interpolateBoundary == PxOsdOpenSubdivTokens->edgeOnly)
-      {
+      } else if (interpolateBoundary == PxOsdOpenSubdivTokens->edgeOnly) {
         options.SetVtxBoundaryInterpolation(Options::VTX_BOUNDARY_EDGE_ONLY);
-      } else if (interpolateBoundary == PxOsdOpenSubdivTokens->edgeAndCorner)
-      {
+      } else if (interpolateBoundary == PxOsdOpenSubdivTokens->edgeAndCorner) {
         options.SetVtxBoundaryInterpolation(Options::VTX_BOUNDARY_EDGE_AND_CORNER);
-      } else
-      {
+      } else {
         TF_WARN("Unknown vertex boundary interpolation rule (%s) (%s)",
                 interpolateBoundary.GetText(),
                 name.GetText());
       }
-    } else
-    {
+    } else {
       // XXX legacy assets expect a default of "edge & corner" if no
       //     tag has been defined. this should default to Osd defaults
       //     instead
@@ -149,34 +140,25 @@ namespace
     TfToken const faceVaryingLinearInterpolation =
       topology.GetSubdivTags().GetFaceVaryingInterpolationRule();
 
-    if (!faceVaryingLinearInterpolation.IsEmpty())
-    {
-      if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->all)
-      {
+    if (!faceVaryingLinearInterpolation.IsEmpty()) {
+      if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->all) {
         options.SetFVarLinearInterpolation(Options::FVAR_LINEAR_ALL);
-      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->cornersOnly)
-      {
+      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->cornersOnly) {
         options.SetFVarLinearInterpolation(Options::FVAR_LINEAR_CORNERS_ONLY);
-      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->cornersPlus1)
-      {
+      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->cornersPlus1) {
         options.SetFVarLinearInterpolation(Options::FVAR_LINEAR_CORNERS_PLUS1);
-      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->cornersPlus2)
-      {
+      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->cornersPlus2) {
         options.SetFVarLinearInterpolation(Options::FVAR_LINEAR_CORNERS_PLUS2);
-      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->none)
-      {
+      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->none) {
         options.SetFVarLinearInterpolation(Options::FVAR_LINEAR_NONE);
-      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->boundaries)
-      {
+      } else if (faceVaryingLinearInterpolation == PxOsdOpenSubdivTokens->boundaries) {
         options.SetFVarLinearInterpolation(Options::FVAR_LINEAR_BOUNDARIES);
-      } else
-      {
+      } else {
         TF_WARN("Unknown face-varying boundary interpolation rule (%s) (%s)",
                 faceVaryingLinearInterpolation.GetText(),
                 name.GetText());
       }
-    } else
-    {
+    } else {
       // XXX legacy assets expect a default of "edge & corner" if no
       //     tag has been defined. this should default to Osd defaults
       //     instead
@@ -189,16 +171,12 @@ namespace
 
     TfToken const creaseMethod = topology.GetSubdivTags().GetCreaseMethod();
 
-    if (!creaseMethod.IsEmpty())
-    {
-      if (creaseMethod == PxOsdOpenSubdivTokens->uniform)
-      {
+    if (!creaseMethod.IsEmpty()) {
+      if (creaseMethod == PxOsdOpenSubdivTokens->uniform) {
         options.SetCreasingMethod(Options::CREASE_UNIFORM);
-      } else if (creaseMethod == PxOsdOpenSubdivTokens->chaikin)
-      {
+      } else if (creaseMethod == PxOsdOpenSubdivTokens->chaikin) {
         options.SetCreasingMethod(Options::CREASE_CHAIKIN);
-      } else
-      {
+      } else {
         TF_WARN("Unknown creasing method (%s) (%s)", creaseMethod.GetText(), name.GetText());
       }
     }
@@ -209,16 +187,12 @@ namespace
 
     TfToken const triangleSubdivision = topology.GetSubdivTags().GetTriangleSubdivision();
 
-    if (!triangleSubdivision.IsEmpty())
-    {
-      if (triangleSubdivision == PxOsdOpenSubdivTokens->catmullClark)
-      {
+    if (!triangleSubdivision.IsEmpty()) {
+      if (triangleSubdivision == PxOsdOpenSubdivTokens->catmullClark) {
         options.SetTriangleSubdivision(Options::TRI_SUB_CATMARK);
-      } else if (triangleSubdivision == PxOsdOpenSubdivTokens->smooth)
-      {
+      } else if (triangleSubdivision == PxOsdOpenSubdivTokens->smooth) {
         options.SetTriangleSubdivision(Options::TRI_SUB_SMOOTH);
-      } else
-      {
+      } else {
         TF_WARN("Unknown triangle subdivision rule (%s) (%s)",
                 triangleSubdivision.GetText(),
                 name.GetText());
@@ -262,14 +236,12 @@ namespace OpenSubdiv
 
         setNumBaseFaces(refiner, numFaces);
 
-        for (int face = 0; face < numFaces; ++face)
-        {
+        for (int face = 0; face < numFaces; ++face) {
 
           int nverts = vertCounts[face];
           setNumBaseFaceVertices(refiner, face, nverts);
 
-          for (int vert = 0; vert < nverts; ++vert)
-          {
+          for (int vert = 0; vert < nverts; ++vert) {
             maxVertIndex = std::max(maxVertIndex, vertIndices[vert]);
           }
           vertIndices += nverts;
@@ -292,22 +264,17 @@ namespace OpenSubdiv
         int const *vertIndices = topology.GetFaceVertexIndices().cdata();
         bool flip = (topology.GetOrientation() != PxOsdOpenSubdivTokens->rightHanded);
 
-        for (int face = 0, idx = 0; face < refiner.GetLevel(0).GetNumFaces(); ++face)
-        {
+        for (int face = 0, idx = 0; face < refiner.GetLevel(0).GetNumFaces(); ++face) {
 
           IndexArray dstFaceVerts = getBaseFaceVertices(refiner, face);
 
-          if (flip)
-          {
+          if (flip) {
             dstFaceVerts[0] = vertIndices[idx++];
-            for (int vert = dstFaceVerts.size() - 1; vert > 0; --vert)
-            {
+            for (int vert = dstFaceVerts.size() - 1; vert > 0; --vert) {
               dstFaceVerts[vert] = vertIndices[idx++];
             }
-          } else
-          {
-            for (int vert = 0; vert < dstFaceVerts.size(); ++vert)
-            {
+          } else {
+            for (int vert = 0; vert < dstFaceVerts.size(); ++vert) {
 
               dstFaceVerts[vert] = vertIndices[idx++];
             }
@@ -336,34 +303,30 @@ namespace OpenSubdiv
         //
 
         // The sharpnesses can be defined either per-crease or per-edge.
-        VtIntArray const creaseIndices = tags.GetCreaseIndices(), creaseLengths = tags.GetCreaseLengths();
+        VtIntArray const creaseIndices = tags.GetCreaseIndices(),
+                         creaseLengths = tags.GetCreaseLengths();
         VtFloatArray const creaseWeights = tags.GetCreaseWeights();
 
         size_t numCreaseSets = creaseLengths.size();
         bool perEdgeCrease = creaseWeights.size() != numCreaseSets;
 
-        if (perEdgeCrease)
-        {
+        if (perEdgeCrease) {
           // validate per-edge crease.
           int numEdges = 0;
-          for (size_t i = 0; i < numCreaseSets; ++i)
-          {
+          for (size_t i = 0; i < numCreaseSets; ++i) {
             numEdges += creaseLengths[i] - 1;
           }
-          if (creaseWeights.size() != static_cast<size_t>(numEdges))
-          {
+          if (creaseWeights.size() != static_cast<size_t>(numEdges)) {
             TF_WARN("Invalid length of crease sharpnesses (%s)\n", converter.name.GetText());
             numCreaseSets = 0;
           }
         }
-        for (size_t i = 0, cindex = 0, sindex = 0; i < numCreaseSets; ++i)
-        {
+        for (size_t i = 0, cindex = 0, sindex = 0; i < numCreaseSets; ++i) {
 
           size_t numSegments = std::max(int(creaseLengths[i]) - 1, 0);
 
           OpenSubdiv::Far::TopologyLevel const &level = refiner.GetLevel(0);
-          for (size_t j = 0; j < numSegments; ++j)
-          {
+          for (size_t j = 0; j < numSegments; ++j) {
             const int v0 = creaseIndices[cindex + j];
             const int v1 = creaseIndices[cindex + j + 1];
 
@@ -371,16 +334,14 @@ namespace OpenSubdiv
             // be referencing outside the bounds.
             // The asset may need fixing if any of the warnings fire off.
             bool validIndices = true;
-            if (v0 < 0 || v0 >= level.GetNumVertices())
-            {
+            if (v0 < 0 || v0 >= level.GetNumVertices()) {
               TF_WARN("creaseIndices[%d] (%d) is out of bounds on %s",
                       int(cindex + j),
                       v0,
                       converter.name.GetText());
               validIndices = false;
             }
-            if (v1 < 0 || v1 >= level.GetNumVertices())
-            {
+            if (v1 < 0 || v1 >= level.GetNumVertices()) {
               TF_WARN("creaseIndices[%d] (%d) is out of bounds on %s",
                       int(cindex + j + 1),
                       v1,
@@ -388,28 +349,23 @@ namespace OpenSubdiv
               validIndices = false;
             }
 
-            if (validIndices)
-            {
+            if (validIndices) {
               OpenSubdiv::Vtr::Index edge = level.FindEdge(v0, v1);
-              if (edge == OpenSubdiv::Vtr::INDEX_INVALID)
-              {
+              if (edge == OpenSubdiv::Vtr::INDEX_INVALID) {
                 TF_WARN("Set edge sharpness cannot find edge (%d-%d) (%s)",
                         v0,
                         v1,
                         converter.name.GetText());
-              } else
-              {
+              } else {
                 setBaseEdgeSharpness(refiner, edge, std::max(0.0f, creaseWeights[sindex]));
               }
             }
 
-            if (perEdgeCrease)
-            {
+            if (perEdgeCrease) {
               ++sindex;
             }
           }
-          if (!perEdgeCrease)
-          {
+          if (!perEdgeCrease) {
             ++sindex;
           }
           cindex += creaseLengths[i];
@@ -424,20 +380,18 @@ namespace OpenSubdiv
 
         size_t numCorners = cornerIndices.size();
 
-        if (cornerWeights.size() != numCorners)
-        {
+        if (cornerWeights.size() != numCorners) {
           TF_WARN("Invalid length of corner sharpnesses at prim %s\n", converter.name.GetText());
           numCorners = 0;
         }
-        for (size_t i = 0; i < numCorners; ++i)
-        {
+        for (size_t i = 0; i < numCorners; ++i) {
           int vert = cornerIndices[i];
-          if (vert >= 0 && vert < refiner.GetLevel(0).GetNumVertices())
-          {
+          if (vert >= 0 && vert < refiner.GetLevel(0).GetNumVertices()) {
             setBaseVertexSharpness(refiner, vert, std::max(0.0f, cornerWeights[i]));
-          } else
-          {
-            TF_WARN("Set vertex sharpness cannot find vertex (%d) (%s)", vert, converter.name.GetText());
+          } else {
+            TF_WARN("Set vertex sharpness cannot find vertex (%d) (%s)",
+                    vert,
+                    converter.name.GetText());
           }
         }
 
@@ -449,14 +403,11 @@ namespace OpenSubdiv
 
         int numHoles = holeIndices.size();
 
-        for (int i = 0; i < numHoles; ++i)
-        {
+        for (int i = 0; i < numHoles; ++i) {
           int face = holeIndices[i];
-          if (face >= 0 && face < refiner.GetLevel(0).GetNumFaces())
-          {
+          if (face >= 0 && face < refiner.GetLevel(0).GetNumFaces()) {
             setBaseFaceHole(refiner, face, true);
-          } else
-          {
+          } else {
             TF_WARN("Set hole cannot find face (%d) (%s)", face, converter.name.GetText());
           }
         }
@@ -477,14 +428,12 @@ namespace OpenSubdiv
         if (converter.fvarTopologies.empty())
           return true;
 
-        for (size_t i = 0; i < converter.fvarTopologies.size(); ++i)
-        {
+        for (size_t i = 0; i < converter.fvarTopologies.size(); ++i) {
           VtIntArray const &fvIndices = converter.fvarTopologies[i];
 
           // find fvardata size
           int maxIndex = -1;
-          for (size_t j = 0; j < fvIndices.size(); ++j)
-          {
+          for (size_t j = 0; j < fvIndices.size(); ++j) {
             maxIndex = std::max(maxIndex, fvIndices[j]);
           }
 
@@ -493,27 +442,21 @@ namespace OpenSubdiv
 
           bool flip = (converter.topology.GetOrientation() != PxOsdOpenSubdivTokens->rightHanded);
 
-          for (size_t j = 0, ofs = 0; j < nfaces; ++j)
-          {
+          for (size_t j = 0, ofs = 0; j < nfaces; ++j) {
             Far::IndexArray faceIndices = getBaseFaceFVarValues(refiner, j, channel);
             size_t numVerts = faceIndices.size();
 
-            if (!TF_VERIFY(ofs + numVerts <= fvIndices.size()))
-            {
+            if (!TF_VERIFY(ofs + numVerts <= fvIndices.size())) {
               return false;
             }
 
-            if (flip)
-            {
+            if (flip) {
               faceIndices[0] = fvIndices[ofs++];
-              for (int k = numVerts - 1; k > 0; --k)
-              {
+              for (int k = numVerts - 1; k > 0; --k) {
                 faceIndices[k] = fvIndices[ofs++];
               }
-            } else
-            {
-              for (size_t k = 0; k < numVerts; ++k)
-              {
+            } else {
+              for (size_t k = 0; k < numVerts; ++k) {
                 faceIndices[k] = fvIndices[ofs++];
               }
             }
@@ -544,16 +487,18 @@ namespace OpenSubdiv
 WABI_NAMESPACE_BEGIN
 
 // ---------------------------------------------------------------------------
-PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(PxOsdMeshTopology const &topology, TfToken name)
+PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(PxOsdMeshTopology const &topology,
+                                                          TfToken name)
 {
 
   std::vector<VtIntArray> fvarTopologies;
   return Create(topology, fvarTopologies, name);
 }
 
-PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(PxOsdMeshTopology const &topology,
-                                                          std::vector<VtIntArray> const &fvarTopologies,
-                                                          TfToken name)
+PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(
+  PxOsdMeshTopology const &topology,
+  std::vector<VtIntArray> const &fvarTopologies,
+  TfToken name)
 {
 
   Converter converter(topology, fvarTopologies, name);
@@ -561,9 +506,8 @@ PxOsdTopologyRefinerSharedPtr PxOsdRefinerFactory::Create(PxOsdMeshTopology cons
   OpenSubdiv::Far::TopologyRefinerFactory<Converter>::Options options(converter.GetType(),
                                                                       converter.GetOptions());
 
-  OpenSubdiv::Far::TopologyRefiner *refiner = OpenSubdiv::Far::TopologyRefinerFactory<Converter>::Create(
-    converter,
-    options);
+  OpenSubdiv::Far::TopologyRefiner *refiner =
+    OpenSubdiv::Far::TopologyRefinerFactory<Converter>::Create(converter, options);
 
   return PxOsdTopologyRefinerSharedPtr(refiner);
 }

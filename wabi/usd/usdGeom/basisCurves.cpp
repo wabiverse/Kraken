@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomBasisCurves::~UsdGeomBasisCurves()
-{}
+UsdGeomBasisCurves::~UsdGeomBasisCurves() {}
 
 /* static */
 UsdGeomBasisCurves UsdGeomBasisCurves::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomBasisCurves();
   }
@@ -62,8 +60,7 @@ UsdGeomBasisCurves UsdGeomBasisCurves::Get(const UsdStagePtr &stage, const SdfPa
 UsdGeomBasisCurves UsdGeomBasisCurves::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("BasisCurves");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomBasisCurves();
   }
@@ -101,7 +98,8 @@ UsdAttribute UsdGeomBasisCurves::GetTypeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->type);
 }
 
-UsdAttribute UsdGeomBasisCurves::CreateTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomBasisCurves::CreateTypeAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->type,
                                     SdfValueTypeNames->Token,
@@ -116,7 +114,8 @@ UsdAttribute UsdGeomBasisCurves::GetBasisAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->basis);
 }
 
-UsdAttribute UsdGeomBasisCurves::CreateBasisAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomBasisCurves::CreateBasisAttr(VtValue const &defaultValue,
+                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->basis,
                                     SdfValueTypeNames->Token,
@@ -131,7 +130,8 @@ UsdAttribute UsdGeomBasisCurves::GetWrapAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->wrap);
 }
 
-UsdAttribute UsdGeomBasisCurves::CreateWrapAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomBasisCurves::CreateWrapAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->wrap,
                                     SdfValueTypeNames->Token,
@@ -162,8 +162,9 @@ const TfTokenVector &UsdGeomBasisCurves::GetSchemaAttributeNames(bool includeInh
     UsdGeomTokens->basis,
     UsdGeomTokens->wrap,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomCurves::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomCurves::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -186,14 +187,11 @@ WABI_NAMESPACE_BEGIN
 
 static size_t _GetVStepForBasis(const TfToken &basis)
 {
-  if (basis == UsdGeomTokens->bezier)
-  {
+  if (basis == UsdGeomTokens->bezier) {
     return 3;
-  } else if (basis == UsdGeomTokens->bspline)
-  {
+  } else if (basis == UsdGeomTokens->bspline) {
     return 1;
-  } else if (basis == UsdGeomTokens->catmullRom)
-  {
+  } else if (basis == UsdGeomTokens->catmullRom) {
     return 1;
   }
   // Calling code should have already errored from unknown basis.
@@ -215,18 +213,13 @@ static size_t _ComputeVaryingDataSize(const UsdGeomBasisCurves &basisCurves,
   // http://renderman.pixar.com/resources/current/rps/appnote.19.html
   size_t result = 0;
   // Code is deliberately verbose to clarify each case.
-  if (curvesType == UsdGeomTokens->linear)
-  {
-    if (isNonPeriodic)
-    {
-      TF_FOR_ALL (itr, curveVertexCts)
-      {
+  if (curvesType == UsdGeomTokens->linear) {
+    if (isNonPeriodic) {
+      TF_FOR_ALL (itr, curveVertexCts) {
         result += *itr;
       }
-    } else
-    {
-      TF_FOR_ALL (itr, curveVertexCts)
-      {
+    } else {
+      TF_FOR_ALL (itr, curveVertexCts) {
         result += *itr + 1;
       }
     }
@@ -237,18 +230,13 @@ static size_t _ComputeVaryingDataSize(const UsdGeomBasisCurves &basisCurves,
   basisCurves.GetBasisAttr().Get(&basis, frame);
   size_t vstep = _GetVStepForBasis(basis);
 
-  if (curvesType == UsdGeomTokens->cubic)
-  {
-    if (isNonPeriodic)
-    {
-      TF_FOR_ALL (itr, curveVertexCts)
-      {
+  if (curvesType == UsdGeomTokens->cubic) {
+    if (isNonPeriodic) {
+      TF_FOR_ALL (itr, curveVertexCts) {
         result += (*itr - 4) / vstep + 2;
       }
-    } else
-    {
-      TF_FOR_ALL (itr, curveVertexCts)
-      {
+    } else {
+      TF_FOR_ALL (itr, curveVertexCts) {
         result += *itr / vstep;
       }
     }
@@ -261,8 +249,7 @@ static size_t _ComputeVertexDataSize(const VtIntArray &curveVertexCounts)
 {
   // http://renderman.pixar.com/resources/current/rps/appnote.19.html
   size_t result = 0;
-  TF_FOR_ALL (itr, curveVertexCounts)
-  {
+  TF_FOR_ALL (itr, curveVertexCounts) {
     result += *itr;
   }
 
@@ -270,11 +257,9 @@ static size_t _ComputeVertexDataSize(const VtIntArray &curveVertexCounts)
 }
 
 #define RETURN_OR_APPEND_INFO(interpToken, val, expected)   \
-  if (val == expected)                                      \
-  {                                                         \
+  if (val == expected) {                                    \
     return interpToken;                                     \
-  } else if (info)                                          \
-  {                                                         \
+  } else if (info) {                                        \
     info->push_back(std::make_pair(interpToken, expected)); \
   }
 
@@ -283,8 +268,7 @@ TfToken UsdGeomBasisCurves::ComputeInterpolationForSize(
   const UsdTimeCode &timeCode,
   UsdGeomBasisCurves::ComputeInterpolationInfo *info) const
 {
-  if (info)
-  {
+  if (info) {
     info->clear();
   }
 

@@ -66,15 +66,13 @@ void GfPlane::Set(const GfVec3d &p0, const GfVec3d &p1, const GfVec3d &p2)
 
 void GfPlane::Set(const GfVec4d &eqn)
 {
-  for (size_t i = 0; i < 3; i++)
-  {
+  for (size_t i = 0; i < 3; i++) {
     _normal[i] = eqn[i];
   }
   _distance = -eqn[3];
 
   const double l = _normal.Normalize();
-  if (l != 0.0)
-  {
+  if (l != 0.0) {
     _distance /= l;
   }
 }
@@ -104,8 +102,7 @@ bool GfPlane::IntersectsPositiveHalfSpace(const GfRange3d &box) const
   // The maximum of the inner product between the normal and any point in the
   // box.
   double d = 0.0;
-  for (int i = 0; i < 3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     // Add the contributions each component makes to the inner product
     // as the maximum of
     // _normal[i] * box.GetMin()[i] and _normal[i] * box.GetMax()[i].
@@ -123,16 +120,14 @@ bool GfPlane::IntersectsPositiveHalfSpace(const GfRange3d &box) const
 bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
 {
   // Less than three points doesn't define a unique plane.
-  if (points.size() < 3)
-  {
+  if (points.size() < 3) {
     TF_CODING_ERROR("Need three points to correctly fit a plane");
     return false;
   }
 
   // We'll use the centroid of the points as the origin of our fit plane.
   GfVec3d sumOfPoints(0.0);
-  for (const GfVec3d &p : points)
-  {
+  for (const GfVec3d &p : points) {
     sumOfPoints += p;
   }
   const GfVec3d centroid = sumOfPoints / points.size();
@@ -151,8 +146,7 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
   double yy = 0.0;
   double yz = 0.0;
   double zz = 0.0;
-  for (const GfVec3d &p : points)
-  {
+  for (const GfVec3d &p : points) {
     const GfVec3d offset = p - centroid;
     xx += offset[0] * offset[0];
     xy += offset[0] * offset[1];
@@ -206,8 +200,7 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
   const double det2 = GfAbs(ata2.GetDeterminant());
   const double det3 = GfAbs(ata3.GetDeterminant());
   GfVec3d equation;
-  if (det1 > 0.0 && det1 > det2 && det1 > det3)
-  {
+  if (det1 > 0.0 && det1 > det2 && det1 > det3) {
     // A^T B = {{\sum (y_i) (-x_i)},
     //          {\sum (z_i) (-x_i)}}
     // X = {{b}, {c}}
@@ -216,8 +209,7 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     equation[0] = 1.0;
     equation[1] = leastSquaresEstimate[0];
     equation[2] = leastSquaresEstimate[1];
-  } else if (det2 > 0.0 && det2 > det3)
-  {
+  } else if (det2 > 0.0 && det2 > det3) {
     // A^T B = {{\sum (x_i) (-y_i)},
     //          {\sum (z_i) (-y_i)}}
     // X = {{a}, {c}}
@@ -226,8 +218,7 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     equation[0] = leastSquaresEstimate[0];
     equation[1] = 1.0;
     equation[2] = leastSquaresEstimate[1];
-  } else if (det3 > 0.0)
-  {
+  } else if (det3 > 0.0) {
     // A^T B = {{\sum (x_i) (z_i)},
     //          {\sum (y_i) (z_i)}}
     // X = {{a}, {b}}
@@ -236,8 +227,7 @@ bool GfFitPlaneToPoints(const std::vector<GfVec3d> &points, GfPlane *fitPlane)
     equation[0] = leastSquaresEstimate[0];
     equation[1] = leastSquaresEstimate[1];
     equation[2] = 1.0;
-  } else
-  {
+  } else {
     // In all cases, det(A^T A) is zero. This happens when the points are
     // collinear and a plane can't be fitted, for example.
     return false;

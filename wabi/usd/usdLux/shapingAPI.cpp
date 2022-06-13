@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (ShapingAPI));
 
 /* virtual */
-UsdLuxShapingAPI::~UsdLuxShapingAPI()
-{}
+UsdLuxShapingAPI::~UsdLuxShapingAPI() {}
 
 /* static */
 UsdLuxShapingAPI UsdLuxShapingAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxShapingAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdLuxShapingAPI::GetSchemaKind() const
 /* static */
 UsdLuxShapingAPI UsdLuxShapingAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdLuxShapingAPI>())
-  {
+  if (prim.ApplyAPI<UsdLuxShapingAPI>()) {
     return UsdLuxShapingAPI(prim);
   }
   return UsdLuxShapingAPI();
@@ -102,7 +99,8 @@ UsdAttribute UsdLuxShapingAPI::GetShapingFocusAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingFocus);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingFocusAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxShapingAPI::CreateShapingFocusAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingFocus,
                                     SdfValueTypeNames->Float,
@@ -233,8 +231,9 @@ const TfTokenVector &UsdLuxShapingAPI::GetSchemaAttributeNames(bool includeInher
     UsdLuxTokens->inputsShapingIesAngleScale,
     UsdLuxTokens->inputsShapingIesNormalize,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -266,7 +265,8 @@ UsdShadeConnectableAPI UsdLuxShapingAPI::ConnectableAPI() const
   return UsdShadeConnectableAPI(GetPrim());
 }
 
-UsdShadeOutput UsdLuxShapingAPI::CreateOutput(const TfToken &name, const SdfValueTypeName &typeName)
+UsdShadeOutput UsdLuxShapingAPI::CreateOutput(const TfToken &name,
+                                              const SdfValueTypeName &typeName)
 {
   return UsdShadeConnectableAPI(GetPrim()).CreateOutput(name, typeName);
 }

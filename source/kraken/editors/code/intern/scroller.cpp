@@ -10,8 +10,7 @@
 namespace Zep
 {
 
-  Scroller::Scroller(ZepEditor &editor, Region &parent)
-    : ZepComponent(editor)
+  Scroller::Scroller(ZepEditor &editor, Region &parent) : ZepComponent(editor)
   {
     m_region = std::make_shared<Region>();
     m_topButtonRegion = std::make_shared<Region>();
@@ -43,18 +42,15 @@ namespace Zep
 
   void Scroller::CheckState()
   {
-    if (m_scrollState == ScrollState::None)
-    {
+    if (m_scrollState == ScrollState::None) {
       return;
     }
 
-    if (timer_get_elapsed_seconds(m_start_delay_timer) < 0.5f)
-    {
+    if (timer_get_elapsed_seconds(m_start_delay_timer) < 0.5f) {
       return;
     }
 
-    switch (m_scrollState)
-    {
+    switch (m_scrollState) {
       default:
       case ScrollState::None:
         break;
@@ -109,8 +105,7 @@ namespace Zep
 
   void Scroller::DoMove(NVec2f pos)
   {
-    if (m_scrollState == ScrollState::Drag)
-    {
+    if (m_scrollState == ScrollState::Drag) {
       float dist = pos.y - m_mouseDownPos.y;
 
       float totalMove = m_mainRegion->rect.Height() - ThumbSize();
@@ -139,47 +134,39 @@ namespace Zep
       NVec2f(m_mainRegion->rect.topLeftPx.x,
              m_mainRegion->rect.topLeftPx.y + m_mainRegion->rect.Height() * vScrollPosition),
       NVec2f(m_mainRegion->rect.bottomRightPx.x,
-             m_mainRegion->rect.topLeftPx.y + m_mainRegion->rect.Height() * vScrollPosition + thumbSize));
+             m_mainRegion->rect.topLeftPx.y + m_mainRegion->rect.Height() * vScrollPosition +
+               thumbSize));
   }
 
   void Scroller::Notify(std::shared_ptr<ZepMessage> message)
   {
-    switch (message->messageId)
-    {
+    switch (message->messageId) {
       case Msg::Tick: {
         CheckState();
-      }
-      break;
+      } break;
 
       case Msg::MouseDown:
-        if (message->button == ZepMouseButton::Left)
-        {
-          if (m_bottomButtonRegion->rect.Contains(message->pos))
-          {
+        if (message->button == ZepMouseButton::Left) {
+          if (m_bottomButtonRegion->rect.Contains(message->pos)) {
             ClickDown();
             timer_start(m_start_delay_timer);
             message->handled = true;
-          } else if (m_topButtonRegion->rect.Contains(message->pos))
-          {
+          } else if (m_topButtonRegion->rect.Contains(message->pos)) {
             ClickUp();
             timer_start(m_start_delay_timer);
             message->handled = true;
-          } else if (m_mainRegion->rect.Contains(message->pos))
-          {
+          } else if (m_mainRegion->rect.Contains(message->pos)) {
             auto thumbRect = ThumbRect();
-            if (thumbRect.Contains(message->pos))
-            {
+            if (thumbRect.Contains(message->pos)) {
               m_mouseDownPos = message->pos;
               m_mouseDownPercent = vScrollPosition;
               m_scrollState = ScrollState::Drag;
               message->handled = true;
-            } else if (message->pos.y > thumbRect.BottomLeft().y)
-            {
+            } else if (message->pos.y > thumbRect.BottomLeft().y) {
               PageDown();
               timer_start(m_start_delay_timer);
               message->handled = true;
-            } else if (message->pos.y < thumbRect.TopRight().y)
-            {
+            } else if (message->pos.y < thumbRect.TopRight().y) {
               PageUp();
               timer_start(m_start_delay_timer);
               message->handled = true;
@@ -189,8 +176,7 @@ namespace Zep
         break;
       case Msg::MouseUp: {
         m_scrollState = ScrollState::None;
-      }
-      break;
+      } break;
       case Msg::MouseMove:
         DoMove(message->pos);
         break;
@@ -213,14 +199,13 @@ namespace Zep
     display.DrawRectFilled(m_region->rect, theme.GetColor(ThemeColor::WidgetBackground));
 
     bool onTop = m_topButtonRegion->rect.Contains(mousePos) && m_scrollState != ScrollState::Drag;
-    bool onBottom = m_bottomButtonRegion->rect.Contains(mousePos) && m_scrollState != ScrollState::Drag;
+    bool onBottom = m_bottomButtonRegion->rect.Contains(mousePos) &&
+                    m_scrollState != ScrollState::Drag;
 
-    if (m_scrollState == ScrollState::ScrollUp)
-    {
+    if (m_scrollState == ScrollState::ScrollUp) {
       onTop = true;
     }
-    if (m_scrollState == ScrollState::ScrollDown)
-    {
+    if (m_scrollState == ScrollState::ScrollDown) {
       onBottom = true;
     }
 
@@ -230,9 +215,10 @@ namespace Zep
     auto thumbRect = ThumbRect();
 
     // Thumb
-    display.DrawRectFilled(
-      thumbRect,
-      thumbRect.Contains(mousePos) || m_scrollState == ScrollState::Drag ? activeColor : inactiveColor);
+    display.DrawRectFilled(thumbRect,
+                           thumbRect.Contains(mousePos) || m_scrollState == ScrollState::Drag ?
+                             activeColor :
+                             inactiveColor);
   }
 
 };  // namespace Zep

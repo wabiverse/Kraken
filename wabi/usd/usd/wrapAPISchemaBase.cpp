@@ -50,9 +50,7 @@ WABI_NAMESPACE_USING
 
 namespace
 {
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   /**
    * fwds ->. */
@@ -106,7 +104,6 @@ void wrapUsdAPISchemaBase()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

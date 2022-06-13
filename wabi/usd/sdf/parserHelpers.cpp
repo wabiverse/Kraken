@@ -63,8 +63,7 @@ namespace Sdf_ParserHelpers
 
 // Check that there are enough values to parse so we don't overflow
 #define CHECK_BOUNDS(count, name)                                         \
-  if (index + count > vars.size())                                        \
-  {                                                                       \
+  if (index + count > vars.size()) {                                      \
     TF_CODING_ERROR("Not enough values to parse value of type %s", name); \
     throw boost::bad_get();                                               \
   }
@@ -106,9 +105,10 @@ namespace Sdf_ParserHelpers
   }
 
   template<class Int>
-  inline std::enable_if_t<std::is_integral<Int>::value> MakeScalarValueImpl(Int *out,
-                                                                            vector<Value> const &vars,
-                                                                            size_t &index)
+  inline std::enable_if_t<std::is_integral<Int>::value> MakeScalarValueImpl(
+    Int *out,
+    vector<Value> const &vars,
+    size_t &index)
   {
     CHECK_BOUNDS(1, ArchGetDemangled<Int>().c_str());
     *out = vars[index++].Get<Int>();
@@ -304,12 +304,10 @@ namespace Sdf_ParserHelpers
   {
     T t;
     size_t origIndex = index;
-    try
-    {
+    try {
       MakeScalarValueImpl(&t, vars, index);
     }
-    catch (const boost::bad_get &)
-    {
+    catch (const boost::bad_get &) {
       *errStrPtr = TfStringPrintf(
         "Failed to parse value (at sub-part %zd "
         "if there are multiple parts)",
@@ -335,16 +333,13 @@ namespace Sdf_ParserHelpers
     VtArray<T> array(size);
     size_t shapeIndex = 0;
     size_t origIndex = index;
-    try
-    {
-      TF_FOR_ALL (i, array)
-      {
+    try {
+      TF_FOR_ALL (i, array) {
         MakeScalarValueImpl(&(*i), vars, index);
         shapeIndex++;
       }
     }
-    catch (const boost::bad_get &)
-    {
+    catch (const boost::bad_get &) {
       *errStrPtr = TfStringPrintf(
         "Failed to parse at element %zd "
         "(at sub-part %zd if there are "
@@ -362,19 +357,17 @@ namespace Sdf_ParserHelpers
   struct _MakeFactoryMap
   {
 
-    explicit _MakeFactoryMap(_ValueFactoryMap *factories)
-      : _factories(factories)
-    {}
+    explicit _MakeFactoryMap(_ValueFactoryMap *factories) : _factories(factories) {}
 
-    template<class CppType>
-    void add(const SdfValueTypeName &scalar, const char *alias = NULL)
+    template<class CppType> void add(const SdfValueTypeName &scalar, const char *alias = NULL)
     {
       static const bool isShaped = true;
 
       const SdfValueTypeName array = scalar.GetArrayType();
 
       const std::string scalarName = alias ? std::string(alias) : scalar.GetAsToken().GetString();
-      const std::string arrayName = alias ? std::string(alias) + "[]" : array.GetAsToken().GetString();
+      const std::string arrayName = alias ? std::string(alias) + "[]" :
+                                            array.GetAsToken().GetString();
 
       _ValueFactoryMap &f = *_factories;
       f[scalarName] = ValueFactory(scalarName,
@@ -512,8 +505,7 @@ namespace Sdf_ParserHelpers
   ValueFactory const &GetValueFactoryForMenvaName(std::string const &name, bool *found)
   {
     _ValueFactoryMap::const_iterator it = _valueFactories->find(name);
-    if (it != _valueFactories->end())
-    {
+    if (it != _valueFactories->end()) {
       *found = true;
       return it->second;
     }
@@ -553,7 +545,10 @@ bool Sdf_BoolFromString(const std::string &str, bool *parseOk)
   return true;
 }
 
-std::string Sdf_EvalQuotedString(const char *x, size_t n, size_t trimBothSides, unsigned int *numLines)
+std::string Sdf_EvalQuotedString(const char *x,
+                                 size_t n,
+                                 size_t trimBothSides,
+                                 unsigned int *numLines)
 {
   std::string ret;
 
@@ -571,13 +566,10 @@ std::string Sdf_EvalQuotedString(const char *x, size_t n, size_t trimBothSides, 
   char *buf = n <= LocalSize ? localBuf : (char *)malloc(n);
 
   char *s = buf;
-  for (const char *p = x + trimBothSides, *end = x + trimBothSides + n; p != end; ++p)
-  {
-    if (*p != '\\')
-    {
+  for (const char *p = x + trimBothSides, *end = x + trimBothSides + n; p != end; ++p) {
+    if (*p != '\\') {
       *s++ = *p;
-    } else
-    {
+    } else {
       TfEscapeStringReplaceChar(&p, &s);
     }
   }
@@ -601,8 +593,7 @@ std::string Sdf_EvalAssetPath(const char *x, size_t n, bool tripleDelimited)
   // no escape sequences except for the "@@@" delimiter.
   const int numDelimiters = tripleDelimited ? 3 : 1;
   std::string ret(x + numDelimiters, n - (2 * numDelimiters));
-  if (tripleDelimited)
-  {
+  if (tripleDelimited) {
     ret = TfStringReplace(ret, "\\@@@", "@@@");
   }
 

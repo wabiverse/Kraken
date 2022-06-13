@@ -47,8 +47,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingCubeAdapter::~UsdImagingCubeAdapter()
-{}
+UsdImagingCubeAdapter::~UsdImagingCubeAdapter() {}
 
 bool UsdImagingCubeAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -59,13 +58,18 @@ SdfPath UsdImagingCubeAdapter::Populate(UsdPrim const &prim,
                                         UsdImagingIndexProxy *index,
                                         UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->mesh,
+                   prim,
+                   index,
+                   GetMaterialUsdPath(prim),
+                   instancerContext);
 }
 
-void UsdImagingCubeAdapter::TrackVariability(UsdPrim const &prim,
-                                             SdfPath const &cachePath,
-                                             HdDirtyBits *timeVaryingBits,
-                                             UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingCubeAdapter::TrackVariability(
+  UsdPrim const &prim,
+  SdfPath const &cachePath,
+  HdDirtyBits *timeVaryingBits,
+  UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
   // WARNING: This method is executed from multiple threads, the value cache
@@ -75,8 +79,7 @@ void UsdImagingCubeAdapter::TrackVariability(UsdPrim const &prim,
   // The base adapter may already be setting that points dirty bit.
   // _IsVarying will clear it, so check it isn't already marked as
   // varying before checking for additional set cases.
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
-  {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
     _IsVarying(prim,
                UsdGeomTokens->size,
                HdChangeTracker::DirtyPoints,
@@ -90,8 +93,7 @@ HdDirtyBits UsdImagingCubeAdapter::ProcessPropertyChange(UsdPrim const &prim,
                                                          SdfPath const &cachePath,
                                                          TfToken const &propertyName)
 {
-  if (propertyName == UsdGeomTokens->size)
-  {
+  if (propertyName == UsdGeomTokens->size) {
     return HdChangeTracker::DirtyPoints;
   }
 
@@ -110,9 +112,9 @@ static GfMatrix4d _GetImplicitGeomScaleTransform(UsdPrim const &prim, UsdTimeCod
   UsdGeomCube cube(prim);
 
   double size = 2.0;
-  if (!cube.GetSizeAttr().Get(&size, time))
-  {
-    TF_WARN("Could not evaluate double-valued size attribute on prim %s", prim.GetPath().GetText());
+  if (!cube.GetSizeAttr().Get(&size, time)) {
+    TF_WARN("Could not evaluate double-valued size attribute on prim %s",
+            prim.GetPath().GetText());
   }
 
   return UsdImagingGenerateSphereOrCubeTransform(size);
@@ -124,8 +126,7 @@ VtValue UsdImagingCubeAdapter::GetMeshPoints(UsdPrim const &prim, UsdTimeCode ti
   // Return scaled points (and not that of a unit geometry)
   VtVec3fArray points = UsdImagingGetUnitCubeMeshPoints();
   GfMatrix4d scale = _GetImplicitGeomScaleTransform(prim, time);
-  for (GfVec3f &pt : points)
-  {
+  for (GfVec3f &pt : points) {
     pt = scale.Transform(pt);
   }
 

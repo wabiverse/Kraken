@@ -52,8 +52,7 @@ static HdPhSamplerObjectSharedPtr _MakeTypedSamplerObject(
   using SamplerObject = HdPhTypedSamplerObject<textureType>;
 
   const TextureObject *const typedTexture = dynamic_cast<TextureObject *>(texture.get());
-  if (!typedTexture)
-  {
+  if (!typedTexture) {
     TF_CODING_ERROR("Bad texture object");
     return nullptr;
   }
@@ -64,13 +63,13 @@ static HdPhSamplerObjectSharedPtr _MakeTypedSamplerObject(
                                          samplerObjectRegistry);
 }
 
-static HdPhSamplerObjectSharedPtr _MakeSamplerObject(HdPhTextureObjectSharedPtr const &texture,
-                                                     HdSamplerParameters const &samplerParameters,
-                                                     const bool createBindlessHandle,
-                                                     HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
+static HdPhSamplerObjectSharedPtr _MakeSamplerObject(
+  HdPhTextureObjectSharedPtr const &texture,
+  HdSamplerParameters const &samplerParameters,
+  const bool createBindlessHandle,
+  HdPh_SamplerObjectRegistry *const samplerObjectRegistry)
 {
-  switch (texture->GetTextureType())
-  {
+  switch (texture->GetTextureType()) {
     case HdTextureType::Uv:
       return _MakeTypedSamplerObject<HdTextureType::Uv>(texture,
                                                         samplerParameters,
@@ -109,8 +108,7 @@ HdPhSamplerObjectSharedPtr HdPh_SamplerObjectRegistry::AllocateSampler(
                                                                createBindlessHandle,
                                                                this);
 
-  if (result)
-  {
+  if (result) {
     // Record sampler object
     _samplerObjects.push_back(result);
   }
@@ -133,8 +131,7 @@ void HdPh_SamplerObjectRegistry::GarbageCollect()
 {
   TRACE_FUNCTION();
 
-  if (!_garbageCollectionNeeded)
-  {
+  if (!_garbageCollectionNeeded) {
     return;
   }
 
@@ -142,19 +139,14 @@ void HdPh_SamplerObjectRegistry::GarbageCollect()
   // with "shared" shared pointers from the right.
   size_t last = _samplerObjects.size();
 
-  for (size_t i = 0; i < last; i++)
-  {
-    if (_samplerObjects[i].use_count() == 1)
-    {
-      while (true)
-      {
+  for (size_t i = 0; i < last; i++) {
+    if (_samplerObjects[i].use_count() == 1) {
+      while (true) {
         last--;
-        if (i == last)
-        {
+        if (i == last) {
           break;
         }
-        if (!_samplerObjects[last].use_count() == 1)
-        {
+        if (!_samplerObjects[last].use_count() == 1) {
           _samplerObjects[i] = _samplerObjects[last];
           break;
         }

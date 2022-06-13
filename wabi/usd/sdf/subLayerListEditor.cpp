@@ -50,22 +50,20 @@ void Sdf_SubLayerListEditor::_OnEdit(SdfListOpType op,
 
   // If this is ever the case, bad things will probably happen as code
   // in SdfLayer assumes the two vectors are in sync.
-  if (!TF_VERIFY(oldValues.size() == oldLayerOffsets.size(), "Sublayer offsets do not match sublayer paths"))
-  {
+  if (!TF_VERIFY(oldValues.size() == oldLayerOffsets.size(),
+                 "Sublayer offsets do not match sublayer paths")) {
     return;
   }
 
   // Rebuild the layer offsets vector, retaining offsets.
   SdfLayerOffsetVector newLayerOffsets(newValues.size());
-  for (size_t i = 0; i < newValues.size(); ++i)
-  {
+  for (size_t i = 0; i < newValues.size(); ++i) {
     const std::string &newLayer = newValues[i];
 
     std::vector<std::string>::const_iterator oldValuesIt = std::find(oldValues.begin(),
                                                                      oldValues.end(),
                                                                      newLayer);
-    if (oldValuesIt == oldValues.end())
-    {
+    if (oldValuesIt == oldValues.end()) {
       continue;
     }
 

@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -77,7 +75,9 @@ void wrapUsdShadeCoordSysAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -113,7 +113,9 @@ namespace
   {
     static PyObject *convert(UsdShadeCoordSysAPI::Binding const &b)
     {
-      boost::python::tuple result = boost::python::make_tuple(b.name, b.bindingRelPath, b.coordSysPrimPath);
+      boost::python::tuple result = boost::python::make_tuple(b.name,
+                                                              b.bindingRelPath,
+                                                              b.coordSysPrimPath);
       return boost::python::incref(result.ptr());
     }
   };

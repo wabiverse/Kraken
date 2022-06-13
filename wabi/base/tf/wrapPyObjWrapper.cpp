@@ -39,10 +39,13 @@ namespace
   {
     Tf_PyObjWrapperFromPython()
     {
-      converter::registry::push_back(&_convertible, &_construct, boost::python::type_id<TfPyObjWrapper>());
+      converter::registry::push_back(&_convertible,
+                                     &_construct,
+                                     boost::python::type_id<TfPyObjWrapper>());
     }
 
    private:
+
     static void *_convertible(PyObject *o)
     {
       // Can always put a python object in a TfPyObjWrapper.
@@ -51,7 +54,8 @@ namespace
 
     static void _construct(PyObject *obj_ptr, converter::rvalue_from_python_stage1_data *data)
     {
-      void *storage = ((converter::rvalue_from_python_storage<TfPyObjWrapper> *)data)->storage.bytes;
+      void *storage =
+        ((converter::rvalue_from_python_storage<TfPyObjWrapper> *)data)->storage.bytes;
       // Make a TfPyObjWrapper holding the Python object.
       new (storage) TfPyObjWrapper(object(borrowed(obj_ptr)));
       data->convertible = storage;

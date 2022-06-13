@@ -43,22 +43,25 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateVisibilityAttr(UsdGeomImageable &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVisibilityAttr(UsdGeomImageable &self,
+                                            object defaultVal,
+                                            bool writeSparsely)
   {
     return self.CreateVisibilityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                      writeSparsely);
   }
 
-  static UsdAttribute _CreatePurposeAttr(UsdGeomImageable &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreatePurposeAttr(UsdGeomImageable &self,
+                                         object defaultVal,
+                                         bool writeSparsely)
   {
-    return self.CreatePurposeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreatePurposeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                  writeSparsely);
   }
 
   static std::string _Repr(const UsdGeomImageable &self)
@@ -88,7 +91,9 @@ void wrapUsdGeomImageable()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -138,11 +143,9 @@ namespace
   {
     UsdPrim renderPrim, proxyPrim;
 
-    if (self)
-    {
+    if (self) {
       proxyPrim = self.ComputeProxyPrim(&renderPrim);
-      if (proxyPrim)
-      {
+      if (proxyPrim) {
         return TfPyObjWrapper(boost::python::make_tuple(proxyPrim, renderPrim));
       }
     }
@@ -170,9 +173,14 @@ namespace
     _class
       .def("CreatePrimvar",
            &UsdGeomImageable::CreatePrimvar,
-           (arg("attrName"), arg("typeName"), arg("interpolation") = TfToken(), arg("elementSize") = -1))
+           (arg("attrName"),
+            arg("typeName"),
+            arg("interpolation") = TfToken(),
+            arg("elementSize") = -1))
       .def("GetPrimvar", &UsdGeomImageable::GetPrimvar, arg("name"))
-      .def("GetPrimvars", &UsdGeomImageable::GetPrimvars, return_value_policy<TfPySequenceToList>())
+      .def("GetPrimvars",
+           &UsdGeomImageable::GetPrimvars,
+           return_value_policy<TfPySequenceToList>())
       .def("GetAuthoredPrimvars",
            &UsdGeomImageable::GetAuthoredPrimvars,
            return_value_policy<TfPySequenceToList>())
@@ -183,22 +191,24 @@ namespace
       .staticmethod("GetOrderedPurposeTokens")
 
       .def("ComputeVisibility",
-           (TfToken(UsdGeomImageable::*)(UsdTimeCode const &) const) & UsdGeomImageable::ComputeVisibility,
+           (TfToken(UsdGeomImageable::*)(UsdTimeCode const &) const) &
+             UsdGeomImageable::ComputeVisibility,
            arg("time") = UsdTimeCode::Default())
       .def("ComputeVisibility",
            (TfToken(UsdGeomImageable::*)(TfToken const &, UsdTimeCode const &) const) &
              UsdGeomImageable::ComputeVisibility,
            (arg("parentVisibility"), arg("time") = UsdTimeCode::Default()))
 
-      .def("ComputePurpose", (TfToken(UsdGeomImageable::*)() const) & UsdGeomImageable::ComputePurpose)
+      .def("ComputePurpose",
+           (TfToken(UsdGeomImageable::*)() const) & UsdGeomImageable::ComputePurpose)
       .def("ComputePurposeInfo",
            (UsdGeomImageable::PurposeInfo(UsdGeomImageable::*)() const) &
              UsdGeomImageable::ComputePurposeInfo)
-      .def(
-        "ComputePurposeInfo",
-        (UsdGeomImageable::PurposeInfo(UsdGeomImageable::*)(const UsdGeomImageable::PurposeInfo &) const) &
-          UsdGeomImageable::ComputePurposeInfo,
-        arg("parentPurposeInfo"))
+      .def("ComputePurposeInfo",
+           (UsdGeomImageable::PurposeInfo(UsdGeomImageable::*)(
+             const UsdGeomImageable::PurposeInfo &) const) &
+             UsdGeomImageable::ComputePurposeInfo,
+           arg("parentPurposeInfo"))
 
       .def("ComputeProxyPrim",
            &_ComputeProxyPrim,
@@ -209,7 +219,8 @@ namespace
            (bool(UsdGeomImageable::*)(const UsdPrim &) const) & UsdGeomImageable::SetProxyPrim,
            arg("proxy"))
       .def("SetProxyPrim",
-           (bool(UsdGeomImageable::*)(const UsdSchemaBase &) const) & UsdGeomImageable::SetProxyPrim,
+           (bool(UsdGeomImageable::*)(const UsdSchemaBase &) const) &
+             UsdGeomImageable::SetProxyPrim,
            arg("proxy"))
       .def("MakeVisible", &UsdGeomImageable::MakeVisible, arg("time") = UsdTimeCode::Default())
       .def("MakeInvisible", &UsdGeomImageable::MakeInvisible, arg("time") = UsdTimeCode::Default())
@@ -234,8 +245,12 @@ namespace
             arg("purpose2") = TfToken(),
             arg("purpose3") = TfToken(),
             arg("purpose4") = TfToken()))
-      .def("ComputeLocalToWorldTransform", &UsdGeomImageable::ComputeLocalToWorldTransform, (arg("time")))
-      .def("ComputeParentToWorldTransform", &UsdGeomImageable::ComputeParentToWorldTransform, (arg("time")));
+      .def("ComputeLocalToWorldTransform",
+           &UsdGeomImageable::ComputeLocalToWorldTransform,
+           (arg("time")))
+      .def("ComputeParentToWorldTransform",
+           &UsdGeomImageable::ComputeParentToWorldTransform,
+           (arg("time")));
 
     {
       scope s = _class;

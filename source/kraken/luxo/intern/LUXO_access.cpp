@@ -51,10 +51,8 @@ ObjectRegisterFunc LUXO_object_register(KrakenPrim *type)
 
 ObjectUnregisterFunc LUXO_object_unregister(KrakenPrim *type)
 {
-  do
-  {
-    if (type->unreg)
-    {
+  do {
+    if (type->unreg) {
       return type->unreg;
     }
   } while ((type = type->base));
@@ -71,10 +69,8 @@ void **LUXO_object_instance(PointerLUXO *ptr)
 {
   KrakenPrim *type = ptr->type;
 
-  do
-  {
-    if (type->instance)
-    {
+  do {
+    if (type->instance) {
       return type->instance(ptr);
     }
   } while ((type = type->base));
@@ -99,12 +95,14 @@ bool UNI_enum_identifier(TfEnum item, const int value, const char **r_identifier
 
 PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier)
 {
-  // if (identifier[0] == '[' && identifier[1] == '"') { /* "  (dummy comment to avoid confusing some
+  // if (identifier[0] == '[' && identifier[1] == '"') { /* "  (dummy comment to avoid confusing
+  // some
   //                                                      * function lists in text editors) */
   //   /* id prop lookup, not so common */
   //   PropertyLUXO *r_prop = NULL;
   //   PointerLUXO r_ptr; /* only support single level props */
-  //   if (UNI_path_resolve_property(ptr, identifier, &r_ptr, &r_prop) && (r_ptr.type == ptr->type) &&
+  //   if (UNI_path_resolve_property(ptr, identifier, &r_ptr, &r_prop) && (r_ptr.type == ptr->type)
+  //   &&
   //       (r_ptr.data == ptr->data)) {
   //     return r_prop;
   //   }
@@ -122,7 +120,9 @@ PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier
   return NULL;
 }
 
-void LUXO_property_collection_begin(PointerLUXO *ptr, PropertyLUXO *prop, CollectionPropertyLUXO iter)
+void LUXO_property_collection_begin(PointerLUXO *ptr,
+                                    PropertyLUXO *prop,
+                                    CollectionPropertyLUXO iter)
 {
   iter.push_back(prop);
   iter.begin();

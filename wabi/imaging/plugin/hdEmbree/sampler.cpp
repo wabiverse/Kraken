@@ -37,8 +37,7 @@ bool HdEmbreeBufferSampler::Sample(int index, void *value, HdTupleType dataType)
   // Sanity checks: index is within the bounds of buffer,
   // and the sample type and buffer type (defined by the dataType)
   // are the same.
-  if (_buffer.GetNumElements() <= (size_t)index || _buffer.GetTupleType() != dataType)
-  {
+  if (_buffer.GetNumElements() <= (size_t)index || _buffer.GetTupleType() != dataType) {
     return false;
   }
 
@@ -65,11 +64,9 @@ static void _InterpolateImpl(void *out,
   // out = sum_j { sample[j] * weights[j] }.
   // Since the vector length comes in as a parameter, and not part
   // of the type, the blend is implemented per component.
-  for (short i = 0; i < numComponents; ++i)
-  {
+  for (short i = 0; i < numComponents; ++i) {
     static_cast<T *>(out)[i] = 0;
-    for (size_t j = 0; j < sampleCount; ++j)
-    {
+    for (size_t j = 0; j < sampleCount; ++j) {
       static_cast<T *>(out)[i] += static_cast<T *>(samples[j])[i] * weights[j];
     }
   }
@@ -89,8 +86,7 @@ static void _InterpolateImpl(void *out,
 
   HdType componentType = HdGetComponentType(dataType.type);
 
-  switch (componentType)
-  {
+  switch (componentType) {
     case HdTypeBool:
       /* This function isn't meaningful on boolean types. */
       return false;

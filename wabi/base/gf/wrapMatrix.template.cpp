@@ -38,9 +38,7 @@
 
 #include "wabi/base/gf/pyBufferUtils.h"
 
-  { % block customIncludes % } {
-    % endblock customIncludes %
-  }
+  { % block customIncludes % } { % endblock customIncludes % }
 
 #include "wabi/base/tf/py3Compat.h"
 #include "wabi/base/tf/pyContainerConversions.h"
@@ -61,320 +59,311 @@
 #include <vector>
 
   using namespace boost::python;
-  using std::string;
-  using std::vector;
+using std::string;
+using std::vector;
 
-  WABI_NAMESPACE_USING
+WABI_NAMESPACE_USING
 
-  namespace
+namespace
+{
+
+  ////////////////////////////////////////////////////////////////////////
+  // Python buffer protocol support.
+
+#if PY_MAJOR_VERSION == 2
+  // Python's getreadbuf interface function.
+  static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
-
-    ////////////////////////////////////////////////////////////////////////
-    // Python buffer protocol support.
-
-#if PY_MAJOR_VERSION == 2
-    // Python's getreadbuf interface function.
-    static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
-    {
-      if (segment != 0)
-      {
-        // Always one-segment.
-        PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
-        return -1;
-      }
-      {{MAT}} &mat = extract<{{MAT}} &>(self);
-      *ptrptr = static_cast<void *>(mat.GetArray());
-      // Return size in bytes.
-      return sizeof({{MAT}});
+    if (segment != 0) {
+      // Always one-segment.
+      PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
+      return -1;
     }
+    {{MAT}} &mat = extract<{{MAT}} &>(self);
+    *ptrptr = static_cast<void *>(mat.GetArray());
+    // Return size in bytes.
+    return sizeof({{MAT}});
+  }
 
-    // Python's getwritebuf interface function.
-    static Py_ssize_t getwritebuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
-    {
-      PyErr_SetString(PyExc_ValueError,
-                      "writable buffers supported only with "
-                      "new-style buffer protocol.");
+  // Python's getwritebuf interface function.
+  static Py_ssize_t getwritebuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
+  {
+    PyErr_SetString(PyExc_ValueError,
+                    "writable buffers supported only with "
+                    "new-style buffer protocol.");
+    return -1;
+  }
+
+  // Python's getsegcount interface function.
+  static Py_ssize_t getsegcount(PyObject *self, Py_ssize_t *lenp)
+  {
+    if (lenp)
+      *lenp = sizeof({{MAT}});
+    return 1;  // Always one contiguous segment.
+  }
+
+  // Python's getcharbuf interface function.
+  static Py_ssize_t getcharbuf(PyObject *self, Py_ssize_t segment, const char **ptrptr)
+  {
+    PyErr_SetString(PyExc_ValueError, "cannot treat binary data as text");
+    return -1;
+  }
+#endif
+
+  // Python's getbuffer interface function.
+  static int getbuffer(PyObject *self, Py_buffer *view, int flags)
+  {
+    if (view == NULL) {
+      PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
       return -1;
     }
 
-    // Python's getsegcount interface function.
-    static Py_ssize_t getsegcount(PyObject *self, Py_ssize_t *lenp)
-    {
-      if (lenp)
-        *lenp = sizeof({{MAT}});
-      return 1;  // Always one contiguous segment.
-    }
-
-    // Python's getcharbuf interface function.
-    static Py_ssize_t getcharbuf(PyObject *self, Py_ssize_t segment, const char **ptrptr)
-    {
-      PyErr_SetString(PyExc_ValueError, "cannot treat binary data as text");
+    // We don't support fortran order.
+    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS) {
+      PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
       return -1;
     }
-#endif
 
-    // Python's getbuffer interface function.
-    static int getbuffer(PyObject *self, Py_buffer *view, int flags)
-    {
-      if (view == NULL)
-      {
-        PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
-        return -1;
-      }
+    {{MAT}} &mat = extract<{{MAT}} &>(self);
 
-      // We don't support fortran order.
-      if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
-      {
-        PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
-        return -1;
-      }
-
-      {{MAT}} &mat = extract<{{MAT}} &>(self);
-
-      view->obj = self;
-      view->buf = static_cast<void *>(mat.GetArray());
-      view->len = sizeof({{MAT}});
-      view->readonly = 0;
-      view->itemsize = sizeof({{SCL}});
-      if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
-      {
-        view->format = Gf_GetPyBufferFmtFor<{{SCL}}>();
-      } else
-      {
-        view->format = NULL;
-      }
-      if ((flags & PyBUF_ND) == PyBUF_ND)
-      {
-        view->ndim = 2;
-        static Py_ssize_t shape[] = {{{DIM}}, {{DIM}}};
-        view->shape = shape;
-      } else
-      {
-        view->ndim = 0;
-        view->shape = NULL;
-      }
-      if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
-      {
-        static Py_ssize_t strides[] = {{{DIM}} * sizeof({{SCL}}), sizeof({{SCL}})};
-        view->strides = strides;
-      } else
-      {
-        view->strides = NULL;
-      }
-      view->suboffsets = NULL;
-      view->internal = NULL;
-
-      Py_INCREF(self);  // need to retain a reference to self.
-      return 0;
+    view->obj = self;
+    view->buf = static_cast<void *>(mat.GetArray());
+    view->len = sizeof({{MAT}});
+    view->readonly = 0;
+    view->itemsize = sizeof({{SCL}});
+    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
+      view->format = Gf_GetPyBufferFmtFor<{{SCL}}>();
+    } else {
+      view->format = NULL;
     }
+    if ((flags & PyBUF_ND) == PyBUF_ND) {
+      view->ndim = 2;
+      static Py_ssize_t shape[] = {{{DIM}}, {{DIM}}};
+      view->shape = shape;
+    } else {
+      view->ndim = 0;
+      view->shape = NULL;
+    }
+    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
+      static Py_ssize_t strides[] = {{{DIM}} * sizeof({{SCL}}), sizeof({{SCL}})};
+      view->strides = strides;
+    } else {
+      view->strides = NULL;
+    }
+    view->suboffsets = NULL;
+    view->internal = NULL;
 
-    // This structure serves to instantiate a PyBufferProcs instance with pointers
-    // to the right buffer protocol functions.
-    static PyBufferProcs bufferProcs = {
+    Py_INCREF(self);  // need to retain a reference to self.
+    return 0;
+  }
+
+  // This structure serves to instantiate a PyBufferProcs instance with pointers
+  // to the right buffer protocol functions.
+  static PyBufferProcs bufferProcs = {
 #if PY_MAJOR_VERSION == 2
-      (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
-      (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
-      (segcountproc)getsegcount,    /*bf_getsegcount*/
-      (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
+    (readbufferproc)getreadbuf,   /*bf_getreadbuffer*/
+    (writebufferproc)getwritebuf, /*bf_getwritebuffer*/
+    (segcountproc)getsegcount,    /*bf_getsegcount*/
+    (charbufferproc)getcharbuf,   /*bf_getcharbuffer*/
 #endif
-      (getbufferproc)getbuffer,
-      (releasebufferproc)0,
-    };
+    (getbufferproc)getbuffer,
+    (releasebufferproc)0,
+  };
 
-    // End python buffer protocol support.
-    ////////////////////////////////////////////////////////////////////////
+  // End python buffer protocol support.
+  ////////////////////////////////////////////////////////////////////////
 
-    static string _Repr({
+  static string _Repr({
+    {
+      MAT
+    }
+  } const &self)
+  {
+    static char newline[] = ",\n            ";
+    return TF_PY_REPR_PREFIX + "Matrix{{ SUFFIX }}(" +
+    {% for ROW in range(DIM) %
+    }
+    {{LIST("TfPyRepr(self[%(ROW)s][%%(i)s])" % {'ROW' : ROW}, sep = " + \", \" + ")}} {
+      % -if not loop.last %
+    }
+    {{" + newline +\n"}} { % endif % } { % endfor % } + ")";
+  }
+
+  static
+  {
+    {
+      MAT
+    }
+  }
+  GetInverseWrapper(const {{MAT}} & self)
+  {
+    return self.GetInverse();
+  }
+
+  static void throwIndexErr(const char *msg)
+  {
+    PyErr_SetString(PyExc_IndexError, msg);
+    boost::python::throw_error_already_set();
+  }
+
+  static int normalizeIndex(int index)
+  {
+    return TfPyNormalizeIndex(index, {{DIM}}, true /*throw error*/);
+  }
+
+  // Return number of rows
+  static int __len__({
+    {
+      MAT
+    }
+  } const &self)
+  {
+    return {{DIM}};
+  }
+
+  static
+  {
+    {
+      SCL
+    }
+  }
+  __getitem__{{SCL}}(
+    {
       {
         MAT
       }
-    } const &self)
-    {
-      static char newline[] = ",\n            ";
-      return TF_PY_REPR_PREFIX + "Matrix{{ SUFFIX }}(" +
-      {% for ROW in range(DIM) %
-      }
-      {{LIST("TfPyRepr(self[%(ROW)s][%%(i)s])" % {'ROW' : ROW}, sep = " + \", \" + ")}} {
-        % -if not loop.last %
-      }
-      {{" + newline +\n"}} { % endif % } { % endfor % } + ")";
-    }
+    } const &self,
+    tuple index)
+  {
+    int i1 = 0, i2 = 0;
+    if (len(index) == 2) {
+      i1 = normalizeIndex(extract<int>(index[0]));
+      i2 = normalizeIndex(extract<int>(index[1]));
+    } else
+      throwIndexErr("Index has incorrect size.");
 
-    static
+    return self[i1][i2];
+  }
+
+  static GfVec
+  {
+    {
+      SUFFIX
+    }
+  }
+  __getitem__vector(
     {
       {
         MAT
       }
-    }
-    GetInverseWrapper(const {{MAT}} & self)
-    {
-      return self.GetInverse();
-    }
+    } const &self,
+    int index)
+  {
+    return GfVec{{SUFFIX}}(self[normalizeIndex(index)]);
+  }
 
-    static void throwIndexErr(const char *msg)
+  static void __setitem__{{SCL}}({{MAT}} & self, tuple index, {
     {
-      PyErr_SetString(PyExc_IndexError, msg);
-      boost::python::throw_error_already_set();
+      SCL
     }
+  } value)
+  {
+    int i1 = 0, i2 = 0;
+    if (len(index) == 2) {
+      i1 = normalizeIndex(extract<int>(index[0]));
+      i2 = normalizeIndex(extract<int>(index[1]));
+    } else
+      throwIndexErr("Index has incorrect size.");
 
-    static int normalizeIndex(int index)
-    {
-      return TfPyNormalizeIndex(index, {{DIM}}, true /*throw error*/);
-    }
+    self[i1][i2] = value;
+  }
 
-    // Return number of rows
-    static int __len__({
-      {
-        MAT
-      }
-    } const &self)
-    {
-      return {{DIM}};
-    }
-
-    static
-    {
-      {
-        SCL
-      }
-    }
-    __getitem__{{SCL}}(
-      {
-        {
-          MAT
-        }
-      } const &self,
-      tuple index)
-    {
-      int i1 = 0, i2 = 0;
-      if (len(index) == 2)
-      {
-        i1 = normalizeIndex(extract<int>(index[0]));
-        i2 = normalizeIndex(extract<int>(index[1]));
-      } else
-        throwIndexErr("Index has incorrect size.");
-
-      return self[i1][i2];
-    }
-
-    static GfVec
-    {
+  static void __setitem__vector(
+    {{MAT}} & self,
+    int index,
+    GfVec {
       {
         SUFFIX
       }
-    }
-    __getitem__vector(
-      {
-        {
-          MAT
-        }
-      } const &self,
-      int index)
-    {
-      return GfVec{{SUFFIX}}(self[normalizeIndex(index)]);
-    }
-
-    static void __setitem__{{SCL}}({{MAT}} & self, tuple index, {
-      {
-        SCL
-      }
     } value)
+  {
+    int ni = normalizeIndex(index);
     {
-      int i1 = 0, i2 = 0;
-      if (len(index) == 2)
       {
-        i1 = normalizeIndex(extract<int>(index[0]));
-        i2 = normalizeIndex(extract<int>(index[1]));
-      } else
-        throwIndexErr("Index has incorrect size.");
-
-      self[i1][i2] = value;
-    }
-
-    static void __setitem__vector(
-      {{MAT}} & self,
-      int index,
-      GfVec {
-        {
-          SUFFIX
-        }
-      } value)
-    {
-      int ni = normalizeIndex(index);
-      {
-        {
-          LIST("self[ni][%(i)s] = value[%(i)s];", sep = "\n    ")
-        }
+        LIST("self[ni][%(i)s] = value[%(i)s];", sep = "\n    ")
       }
     }
+  }
 
-    static bool __contains__{{SCL}}(const {{MAT}} & self, {
-      {
-        SCL
-      }
-    } value)
+  static bool __contains__{{SCL}}(const {{MAT}} & self, {
     {
-      for (int i = 0; i < {{DIM}}; ++i)
-        for (int j = 0; j < {{DIM}}; ++j)
-          if (self[i][j] == value)
-            return true;
-      return false;
+      SCL
     }
-
-    // Check rows against GfVec
-    static bool __contains__vector(
-      const {{MAT}} & self,
-      GfVec {
-        {
-          SUFFIX
-        }
-      } value)
-    {
-      for (int i = 0; i < {{DIM}}; ++i)
-        if (self.GetRow(i) == value)
+  } value)
+  {
+    for (int i = 0; i < {{DIM}}; ++i)
+      for (int j = 0; j < {{DIM}}; ++j)
+        if (self[i][j] == value)
           return true;
-      return false;
-    }
+    return false;
+  }
+
+  // Check rows against GfVec
+  static bool __contains__vector(
+    const {{MAT}} & self,
+    GfVec {
+      {
+        SUFFIX
+      }
+    } value)
+  {
+    for (int i = 0; i < {{DIM}}; ++i)
+      if (self.GetRow(i) == value)
+        return true;
+    return false;
+  }
 
 #if PY_MAJOR_VERSION == 2
-    static
+  static
+  {
     {
-      {
-        MAT
-      }
+      MAT
     }
-    __truediv__(const {{MAT}} & self, {
-      {
-        MAT
-      }
-    } value)
+  }
+  __truediv__(const {{MAT}} & self, {
     {
-      return self / value;
+      MAT
     }
+  } value)
+  {
+    return self / value;
+  }
 #endif
 
-    static {{MAT}} * __init__()
-    {
-      // Default constructor produces identity from python.
-      return new {{MAT}}(1);
-    }
+  static {{MAT}} * __init__()
+  {
+    // Default constructor produces identity from python.
+    return new {{MAT}}(1);
+  }
 
-    { % block customFunctions % } {
-      % endblock customFunctions %
-    }
+  { % block customFunctions % } {
+    % endblock customFunctions %
+  }
 
-    // This adds support for python's builtin pickling library
-    // This is used by our Shake plugins which need to pickle entire classes
-    // (including code), which we don't support in pxml.
-    struct
+  // This adds support for python's builtin pickling library
+  // This is used by our Shake plugins which need to pickle entire classes
+  // (including code), which we don't support in pxml.
+  struct
+  {
     {
-      {
-        MAT
-      }
-    } _Pickle_Suite : boost::python::pickle_suite{static boost::python::tuple getinitargs(const {{MAT}} & m){
-                        return boost::python::make_tuple({{MATRIX("m[%(i)s][%(j)s]", indent = 12)}});
-  }  // namespace
-};
+      MAT
+    }
+  } _Pickle_Suite
+    : boost::python::pickle_suite{static boost::python::tuple getinitargs(const {{MAT}} & m){
+        return boost::python::make_tuple({{MATRIX("m[%(i)s][%(j)s]", indent = 12)}});
+}  // namespace
+}
+;
 
 static size_t __hash__({
   {
@@ -435,7 +424,8 @@ void wrapMatrix{{SUFFIX}}()
     .def(init<{{MATRIX(SCL, indent = 13)}}>())
     .def(init<const GfVec{{SUFFIX}} &>())
     .def(init<const vector<vector<float>> &>())
-    .def(init<const vector<vector<double>> &>()){ % block customInit % } { % endblock customInit % }
+    .def(init<const vector<vector<double>> &>()){ % block customInit % } { %
+                                                                           endblock customInit % }
 
     .def(TfTypePythonClass())
 
@@ -447,8 +437,8 @@ void wrapMatrix{{SUFFIX}}()
     .def("__setitem__", __setitem__{{SCL}})
     .def("__setitem__", __setitem__vector)
     .def("__contains__", __contains__{{SCL}})
-    .def("__contains__", __contains__vector, "Check rows against GfVec"){ % block customSpecialMethods % } {
-      % endblock customSpecialMethods % }
+    .def("__contains__", __contains__vector, "Check rows against GfVec"){
+      % block customSpecialMethods % } { % endblock customSpecialMethods % }
 
     .def("Set", (This & (This::*)({{MATRIX(SCL, indent = 37)}})) & This::Set, return_self<>())
 
@@ -456,7 +446,9 @@ void wrapMatrix{{SUFFIX}}()
     .def("SetZero", &This::SetZero, return_self<>())
 
     .def("SetDiagonal", (This & (This::*)({{SCL}})) & This::SetDiagonal, return_self<>())
-    .def("SetDiagonal", (This & (This::*)(const GfVec{{SUFFIX}} &)) & This::SetDiagonal, return_self<>())
+    .def("SetDiagonal",
+         (This & (This::*)(const GfVec{{SUFFIX}} &)) & This::SetDiagonal,
+         return_self<>())
 
     .def("SetRow", &This::SetRow)
     .def("SetColumn", &This::SetColumn)
@@ -466,7 +458,8 @@ void wrapMatrix{{SUFFIX}}()
     .def("GetTranspose", &This::GetTranspose)
     .def("GetInverse", GetInverseWrapper)
 
-    .def("GetDeterminant", &This::GetDeterminant){ % block customDefs % } { % endblock customDefs % }
+    .def("GetDeterminant",
+         &This::GetDeterminant){ % block customDefs % } { % endblock customDefs % }
 
     .def(str(self))
     .def(self == self)

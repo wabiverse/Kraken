@@ -64,11 +64,9 @@ namespace
     TfToken sourceName;
     UsdShadeAttributeType sourceType;
 
-    if (self.GetConnectedSource(&source, &sourceName, &sourceType))
-    {
+    if (self.GetConnectedSource(&source, &sourceName, &sourceType)) {
       return boost::python::make_tuple(source, sourceName, sourceType);
-    } else
-    {
+    } else {
       return object();
     }
   }

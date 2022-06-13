@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 
 static std::atomic<FILE *> &_GetOutputFile()
 {
-  static std::atomic<FILE *> _outputFile{TfGetenv("TF_DEBUG_OUTPUT_FILE") == "stderr" ? stderr : stdout};
+  static std::atomic<FILE *> _outputFile{TfGetenv("TF_DEBUG_OUTPUT_FILE") == "stderr" ? stderr :
+                                                                                        stdout};
   return _outputFile;
 }
 
@@ -79,40 +80,34 @@ namespace
   };
 }  // namespace
 
-static _CheckResult _CheckSymbolAgainstPatterns(char const *enumName, TfSpan<const std::string> patterns)
+static _CheckResult _CheckSymbolAgainstPatterns(char const *enumName,
+                                                TfSpan<const std::string> patterns)
 {
   _CheckResult result;
 
-  for (std::string pattern : patterns)
-  {
-    if (pattern.empty())
-    {
+  for (std::string pattern : patterns) {
+    if (pattern.empty()) {
       continue;
     }
 
     bool value = true;
 
-    if (pattern[0] == '-')
-    {
+    if (pattern[0] == '-') {
       pattern.erase(0, 1);
       value = false;
     }
 
-    if (pattern.empty())
-    {
+    if (pattern.empty()) {
       continue;
     }
 
-    if (pattern[pattern.size() - 1] == '*')
-    {
+    if (pattern[pattern.size() - 1] == '*') {
       pattern.erase(pattern.size() - 1);  // remove trailing '*'
-      if (strncmp(enumName, pattern.c_str(), pattern.size()) == 0)
-      {
+      if (strncmp(enumName, pattern.c_str(), pattern.size()) == 0) {
         result.matched = true;
         result.enabled = value;
       }
-    } else if (strcmp(pattern.c_str(), enumName) == 0)
-    {
+    } else if (strcmp(pattern.c_str(), enumName) == 0) {
       result.matched = true;
       result.enabled = value;
     }
@@ -128,18 +123,20 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
   Tf_DebugSymbolRegistry &operator=(Tf_DebugSymbolRegistry const &) = delete;
 
  public:
+
   static Tf_DebugSymbolRegistry &_GetInstance()
   {
     return TfSingleton<Tf_DebugSymbolRegistry>::GetInstance();
   }
 
-  void _Register(const std::string &name, TfDebug::_Node *symbolAddr, const std::string &description)
+  void _Register(const std::string &name,
+                 TfDebug::_Node *symbolAddr,
+                 const std::string &description)
   {
     TF_DEBUG(TF_DEBUG_REGISTRY).Msg("%s: %s\n", TF_FUNC_NAME().c_str(), name.c_str());
 
     tbb::spin_mutex::scoped_lock lock(_tableMutex);
-    if (!_registeredNames.emplace(name, description).second)
-    {
+    if (!_registeredNames.emplace(name, description).second) {
       lock.release();
       TF_FATAL_ERROR(
         "[TF_DEBUG_ENVIRONMENT_SYMBOL] multiple debug symbol "
@@ -154,8 +151,7 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
     // enabled state here and push it out; we can wait until it's needed.
     bool inserted = _namesToNodes[name].insert(symbolAddr).second;
 
-    if (inserted && _initialized)
-    {
+    if (inserted && _initialized) {
       lock.release();
       // Even if the debug registry is initialized, our notice type may
       // not yet be defined with TfType.  This happens when we're loading
@@ -163,8 +159,7 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
       // symbols, since we'll get a fatal error from TfNotice, and nobody
       // can really be depending on detecting changes to debug symbols
       // anyway.
-      if (TfType::Find<TfDebugSymbolsChangedNotice>())
-      {
+      if (TfType::Find<TfDebugSymbolsChangedNotice>()) {
         TfDebugSymbolsChangedNotice().Send();
       }
     }
@@ -178,8 +173,7 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
     auto &nodesForName = _namesToNodes[name];
     nodesForName.insert(&node);
     bool enabled = _GetEnabledStateNoLock(name);
-    for (TfDebug::_Node *n : nodesForName)
-    {
+    for (TfDebug::_Node *n : nodesForName) {
       TfDebug::_NodeState nodeState = enabled ? TfDebug::_NodeEnabled : TfDebug::_NodeDisabled;
       n->state.store(nodeState);
     }
@@ -190,8 +184,7 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
     // First check explicit enable/disable state.  If none has been set fall
     // back to the environment.
     auto iter = _namesToExplicitEnabledState.find(name);
-    if (iter != _namesToExplicitEnabledState.end())
-    {
+    if (iter != _namesToExplicitEnabledState.end()) {
       return iter->second;
     }
     return _CheckSymbolAgainstPatterns(name, TfSpan<const std::string>(_envTokens)).enabled;
@@ -211,20 +204,17 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
     // Go through all of _namesToNodes, looking for matches.  If we match
     // anything, set all the nodes accordingly, and also store the explicit
     // state into _namesToExplicitEnabledState.
-    for (auto &nameAndNodes : _namesToNodes)
-    {
+    for (auto &nameAndNodes : _namesToNodes) {
       _CheckResult check = _CheckSymbolAgainstPatterns(nameAndNodes.first.c_str(), patterns);
-      if (check.matched)
-      {
+      if (check.matched) {
         changed = true;
-        if (matches)
-        {
+        if (matches) {
           matches->push_back(nameAndNodes.first);
         }
         _namesToExplicitEnabledState[nameAndNodes.first] = check.enabled;
-        TfDebug::_NodeState nodeState = check.enabled ? TfDebug::_NodeEnabled : TfDebug::_NodeDisabled;
-        for (TfDebug::_Node *n : nameAndNodes.second)
-        {
+        TfDebug::_NodeState nodeState = check.enabled ? TfDebug::_NodeEnabled :
+                                                        TfDebug::_NodeDisabled;
+        for (TfDebug::_Node *n : nameAndNodes.second) {
           n->state.store(nodeState);
         }
         TF_DEBUG(TF_DEBUG_REGISTRY)
@@ -235,8 +225,7 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
       }
     }
 
-    if (changed && _initialized)
-    {
+    if (changed && _initialized) {
       lock.release();
       TfDebugSymbolsChangedNotice().Send();
     }
@@ -249,16 +238,14 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
     // store that state in all known nodes.
     auto &nodesForName = _namesToNodes[name];
     nodesForName.insert(&node);
-    for (TfDebug::_Node *n : nodesForName)
-    {
+    for (TfDebug::_Node *n : nodesForName) {
       TfDebug::_NodeState nodeState = enabled ? TfDebug::_NodeEnabled : TfDebug::_NodeDisabled;
       n->state.store(nodeState);
     }
     // Store the state in the _namesToExplicitEnabledState.
     _namesToExplicitEnabledState[name] = enabled;
 
-    if (_initialized)
-    {
+    if (_initialized) {
       lock.release();
       TfDebugSymbolsChangedNotice().Send();
     }
@@ -275,17 +262,14 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
     std::string result;
     tbb::spin_mutex::scoped_lock lock(_tableMutex);
 
-    for (auto const &nameAndDescr : _registeredNames)
-    {
-      if (nameAndDescr.first.size() < 25)
-      {
+    for (auto const &nameAndDescr : _registeredNames) {
+      if (nameAndDescr.first.size() < 25) {
         std::string padding(25 - nameAndDescr.first.size(), ' ');
         result += TfStringPrintf("%s%s: %s\n",
                                  nameAndDescr.first.c_str(),
                                  padding.c_str(),
                                  nameAndDescr.second.c_str());
-      } else
-      {
+      } else {
         result += TfStringPrintf("%s:\n%s  %s\n",
                                  nameAndDescr.first.c_str(),
                                  std::string(25, ' ').c_str(),
@@ -300,8 +284,7 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
     tbb::spin_mutex::scoped_lock lock(_tableMutex);
     std::vector<std::string> result;
     result.reserve(_namesToNodes.size());
-    for (auto const &p : _namesToNodes)
-    {
+    for (auto const &p : _namesToNodes) {
       result.push_back(p.first);
     }
     return result;
@@ -311,20 +294,19 @@ class ARCH_HIDDEN Tf_DebugSymbolRegistry
   {
     tbb::spin_mutex::scoped_lock lock(_tableMutex);
     auto iter = _registeredNames.find(name);
-    if (iter == _registeredNames.end())
-    {
+    if (iter == _registeredNames.end()) {
       return std::string();
     }
     return iter->second;
   }
 
  private:
+
   Tf_DebugSymbolRegistry()
   {
     _envTokens = TfStringTokenize(TfGetenv("TF_DEBUG"));
 
-    if (std::find(_envTokens.begin(), _envTokens.end(), "help") != _envTokens.end())
-    {
+    if (std::find(_envTokens.begin(), _envTokens.end(), "help") != _envTokens.end()) {
       printf("%s", _helpMsg);
       exit(0);
     }
@@ -385,7 +367,8 @@ TF_INSTANTIATE_SINGLETON(Tf_DebugSymbolRegistry);
 std::vector<std::string> TfDebug::SetDebugSymbolsByName(const std::string &pattern, bool value)
 {
   std::vector<std::string> matches;
-  Tf_DebugSymbolRegistry::_GetInstance()._SetByPattern(std::string(value ? "" : "-") + pattern, &matches);
+  Tf_DebugSymbolRegistry::_GetInstance()._SetByPattern(std::string(value ? "" : "-") + pattern,
+                                                       &matches);
   return matches;
 }
 
@@ -411,11 +394,9 @@ std::string TfDebug::GetDebugSymbolDescription(const std::string &name)
 
 void TfDebug::SetOutputFile(FILE *file)
 {
-  if (file == stdout || file == stderr)
-  {
+  if (file == stdout || file == stderr) {
     _GetOutputFile().store(file);
-  } else
-  {
+  } else {
     TF_CODING_ERROR("TfDebug output must go to either stdout or stderr");
   }
 }
@@ -459,12 +440,10 @@ void TfDebug::_ScopedOutput(bool start, const char *str)
 
   FILE *outputFile = _GetOutputFile().load();
 
-  if (start)
-  {
+  if (start) {
     fprintf(outputFile, "%*s%s --{\n", 2 * stackDepth, "", str);
     ++stackDepth;
-  } else
-  {
+  } else {
     --stackDepth;
     fprintf(outputFile, "%*s}-- %s\n", 2 * stackDepth, "", str);
   }
@@ -475,14 +454,12 @@ void TfDebug::_RegisterDebugSymbolImpl(_Node *addr, char const *enumNameCstr, ch
 {
   std::string enumName = enumNameCstr;
 
-  if (!descrip)
-  {
+  if (!descrip) {
     TF_FATAL_ERROR(
       "description argument for '%s' "
       "is NULL",
       enumName.c_str());
-  } else if (descrip[0] == '\0')
-  {
+  } else if (descrip[0] == '\0') {
     TF_FATAL_ERROR(
       "description argument for '%s' is empty -- "
       "add description!",
@@ -500,12 +477,10 @@ void TfDebug::_ComplainAboutInvalidSymbol(const char *name)
     name);
 }
 
-template<bool B>
-TfDebug::TimedScopeHelper<B>::TimedScopeHelper(bool enabled, const char *fmt, ...)
+template<bool B> TfDebug::TimedScopeHelper<B>::TimedScopeHelper(bool enabled, const char *fmt, ...)
 {
   active = enabled;
-  if (active)
-  {
+  if (active) {
     va_list ap;
     va_start(ap, fmt);
     str = TfVStringPrintf(fmt, ap);
@@ -516,14 +491,14 @@ TfDebug::TimedScopeHelper<B>::TimedScopeHelper(bool enabled, const char *fmt, ..
   }
 }
 
-template<bool B>
-TfDebug::TimedScopeHelper<B>::~TimedScopeHelper()
+template<bool B> TfDebug::TimedScopeHelper<B>::~TimedScopeHelper()
 {
-  if (active)
-  {
+  if (active) {
     stopwatch.Stop();
 
-    const std::string endStr = TfStringPrintf("%s: %.3f ms", str.c_str(), stopwatch.GetSeconds() * 1000.0);
+    const std::string endStr = TfStringPrintf("%s: %.3f ms",
+                                              str.c_str(),
+                                              stopwatch.GetSeconds() * 1000.0);
     TfDebug::_ScopedOutput(/* start = */ false, endStr.c_str());
   }
 }

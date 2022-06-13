@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (ShadowAPI));
 
 /* virtual */
-UsdLuxShadowAPI::~UsdLuxShadowAPI()
-{}
+UsdLuxShadowAPI::~UsdLuxShadowAPI() {}
 
 /* static */
 UsdLuxShadowAPI UsdLuxShadowAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxShadowAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdLuxShadowAPI::GetSchemaKind() const
 /* static */
 UsdLuxShadowAPI UsdLuxShadowAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdLuxShadowAPI>())
-  {
+  if (prim.ApplyAPI<UsdLuxShadowAPI>()) {
     return UsdLuxShadowAPI(prim);
   }
   return UsdLuxShadowAPI();
@@ -102,7 +99,8 @@ UsdAttribute UsdLuxShadowAPI::GetShadowEnableAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsShadowEnable);
 }
 
-UsdAttribute UsdLuxShadowAPI::CreateShadowEnableAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxShadowAPI::CreateShadowEnableAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShadowEnable,
                                     SdfValueTypeNames->Bool,
@@ -117,7 +115,8 @@ UsdAttribute UsdLuxShadowAPI::GetShadowColorAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsShadowColor);
 }
 
-UsdAttribute UsdLuxShadowAPI::CreateShadowColorAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxShadowAPI::CreateShadowColorAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShadowColor,
                                     SdfValueTypeNames->Color3f,
@@ -132,7 +131,8 @@ UsdAttribute UsdLuxShadowAPI::GetShadowDistanceAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsShadowDistance);
 }
 
-UsdAttribute UsdLuxShadowAPI::CreateShadowDistanceAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxShadowAPI::CreateShadowDistanceAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShadowDistance,
                                     SdfValueTypeNames->Float,
@@ -147,7 +147,8 @@ UsdAttribute UsdLuxShadowAPI::GetShadowFalloffAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsShadowFalloff);
 }
 
-UsdAttribute UsdLuxShadowAPI::CreateShadowFalloffAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxShadowAPI::CreateShadowFalloffAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShadowFalloff,
                                     SdfValueTypeNames->Float,
@@ -196,8 +197,9 @@ const TfTokenVector &UsdLuxShadowAPI::GetSchemaAttributeNames(bool includeInheri
     UsdLuxTokens->inputsShadowFalloff,
     UsdLuxTokens->inputsShadowFalloffGamma,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

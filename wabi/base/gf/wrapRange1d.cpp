@@ -60,7 +60,8 @@ namespace
 
   static string _Repr(GfRange1d const &self)
   {
-    return TF_PY_REPR_PREFIX + "Range1d(" + TfPyRepr(self.GetMin()) + ", " + TfPyRepr(self.GetMax()) + ")";
+    return TF_PY_REPR_PREFIX + "Range1d(" + TfPyRepr(self.GetMin()) + ", " +
+           TfPyRepr(self.GetMax()) + ")";
   }
 
 #if PY_MAJOR_VERSION == 2
@@ -118,7 +119,9 @@ void wrapRange1d()
     .def("GetUnion", &GfRange1d::GetUnion)
     .staticmethod("GetUnion")
 
-    .def("UnionWith", (const GfRange1d &(GfRange1d::*)(double)) & GfRange1d::UnionWith, return_self<>())
+    .def("UnionWith",
+         (const GfRange1d &(GfRange1d::*)(double)) & GfRange1d::UnionWith,
+         return_self<>())
     .def("UnionWith",
          (const GfRange1d &(GfRange1d::*)(const GfRange1d &)) & GfRange1d::UnionWith,
          return_self<>())

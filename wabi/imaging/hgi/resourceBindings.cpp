@@ -32,8 +32,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiResourceBindings::HgiResourceBindings(HgiResourceBindingsDesc const &desc)
-  : _descriptor(desc)
+HgiResourceBindings::HgiResourceBindings(HgiResourceBindingsDesc const &desc) : _descriptor(desc)
 {}
 
 HgiResourceBindings::~HgiResourceBindings() = default;
@@ -43,15 +42,13 @@ HgiResourceBindingsDesc const &HgiResourceBindings::GetDescriptor() const
   return _descriptor;
 }
 
-HgiBufferBindDesc::HgiBufferBindDesc()
-  : bindingIndex(0),
-    stageUsage(HgiShaderStageVertex)
-{}
+HgiBufferBindDesc::HgiBufferBindDesc() : bindingIndex(0), stageUsage(HgiShaderStageVertex) {}
 
 bool operator==(const HgiBufferBindDesc &lhs, const HgiBufferBindDesc &rhs)
 {
-  return lhs.buffers == rhs.buffers && lhs.resourceType == rhs.resourceType && lhs.offsets == rhs.offsets &&
-         lhs.bindingIndex == rhs.bindingIndex && lhs.stageUsage == rhs.stageUsage;
+  return lhs.buffers == rhs.buffers && lhs.resourceType == rhs.resourceType &&
+         lhs.offsets == rhs.offsets && lhs.bindingIndex == rhs.bindingIndex &&
+         lhs.stageUsage == rhs.stageUsage;
 }
 
 bool operator!=(const HgiBufferBindDesc &lhs, const HgiBufferBindDesc &rhs)
@@ -81,7 +78,8 @@ HgiResourceBindingsDesc::HgiResourceBindingsDesc() = default;
 
 bool operator==(const HgiResourceBindingsDesc &lhs, const HgiResourceBindingsDesc &rhs)
 {
-  return lhs.debugName == rhs.debugName && lhs.buffers == rhs.buffers && lhs.textures == rhs.textures;
+  return lhs.debugName == rhs.debugName && lhs.buffers == rhs.buffers &&
+         lhs.textures == rhs.textures;
 }
 
 bool operator!=(const HgiResourceBindingsDesc &lhs, const HgiResourceBindingsDesc &rhs)

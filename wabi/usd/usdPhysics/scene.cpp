@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdPhysicsScene::~UsdPhysicsScene()
-{}
+UsdPhysicsScene::~UsdPhysicsScene() {}
 
 /* static */
 UsdPhysicsScene UsdPhysicsScene::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsScene();
   }
@@ -62,8 +60,7 @@ UsdPhysicsScene UsdPhysicsScene::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdPhysicsScene UsdPhysicsScene::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PhysicsScene");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsScene();
   }
@@ -148,8 +145,9 @@ const TfTokenVector &UsdPhysicsScene::GetSchemaAttributeNames(bool includeInheri
     UsdPhysicsTokens->physicsGravityDirection,
     UsdPhysicsTokens->physicsGravityMagnitude,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdTyped::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

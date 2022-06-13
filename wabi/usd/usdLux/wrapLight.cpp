@@ -50,55 +50,67 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateIntensityAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateIntensityAttr(UsdLuxLight &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
-    return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                    writeSparsely);
   }
 
   static UsdAttribute _CreateExposureAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateExposureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                   writeSparsely);
   }
 
   static UsdAttribute _CreateDiffuseAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                  writeSparsely);
   }
 
   static UsdAttribute _CreateSpecularAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateSpecularAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                   writeSparsely);
   }
 
-  static UsdAttribute _CreateNormalizeAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateNormalizeAttr(UsdLuxLight &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
-    return self.CreateNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+    return self.CreateNormalizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                    writeSparsely);
   }
 
   static UsdAttribute _CreateColorAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f), writeSparsely);
+    return self.CreateColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
+                                writeSparsely);
   }
 
   static UsdAttribute _CreateEnableColorTemperatureAttr(UsdLuxLight &self,
                                                         object defaultVal,
                                                         bool writeSparsely)
   {
-    return self.CreateEnableColorTemperatureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
-                                                 writeSparsely);
+    return self.CreateEnableColorTemperatureAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+      writeSparsely);
   }
 
-  static UsdAttribute _CreateColorTemperatureAttr(UsdLuxLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateColorTemperatureAttr(UsdLuxLight &self,
+                                                  object defaultVal,
+                                                  bool writeSparsely)
   {
-    return self.CreateColorTemperatureAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
-                                           writeSparsely);
+    return self.CreateColorTemperatureAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdLuxLight &self)
@@ -128,7 +140,9 @@ void wrapUsdLuxLight()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)

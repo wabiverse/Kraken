@@ -47,8 +47,7 @@ std::shared_ptr<ArFilesystemWritableAsset> ArFilesystemWritableAsset::Create(
   ArResolver::WriteMode writeMode)
 {
   const std::string dir = TfGetPathName(resolvedPath);
-  if (!dir.empty() && !TfIsDir(dir) && !TfMakeDirs(dir))
-  {
+  if (!dir.empty() && !TfIsDir(dir) && !TfMakeDirs(dir)) {
     TF_RUNTIME_ERROR("Could not create directory '%s' for asset '%s'",
                      dir.c_str(),
                      resolvedPath.GetPathString().c_str());
@@ -58,8 +57,7 @@ std::shared_ptr<ArFilesystemWritableAsset> ArFilesystemWritableAsset::Create(
   TfErrorMark m;
 
   TfSafeOutputFile f;
-  switch (writeMode)
-  {
+  switch (writeMode) {
     case ArResolver::WriteMode::Update:
       f = TfSafeOutputFile::Update(resolvedPath);
       break;
@@ -68,8 +66,7 @@ std::shared_ptr<ArFilesystemWritableAsset> ArFilesystemWritableAsset::Create(
       break;
   }
 
-  if (!m.IsClean())
-  {
+  if (!m.IsClean()) {
     return nullptr;
   }
 
@@ -79,8 +76,7 @@ std::shared_ptr<ArFilesystemWritableAsset> ArFilesystemWritableAsset::Create(
 ArFilesystemWritableAsset::ArFilesystemWritableAsset(TfSafeOutputFile &&file)
   : _file(std::move(file))
 {
-  if (!_file.Get())
-  {
+  if (!_file.Get()) {
     TF_CODING_ERROR("Invalid output file");
   }
 }
@@ -97,8 +93,7 @@ bool ArFilesystemWritableAsset::Close()
 size_t ArFilesystemWritableAsset::Write(const void *buffer, size_t count, size_t offset)
 {
   int64_t numWritten = ArchPWrite(_file.Get(), buffer, count, offset);
-  if (numWritten == -1)
-  {
+  if (numWritten == -1) {
     TF_RUNTIME_ERROR("Error occurred writing file: %s", ArchStrerror().c_str());
     return 0;
   }

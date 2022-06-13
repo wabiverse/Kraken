@@ -53,8 +53,7 @@ void GfBBox3d::_SetMatrices(const GfMatrix4d &matrix)
   _inverse = matrix.GetInverse(&det, PRECISION_LIMIT);
 
   // Check for degenerate matrix:
-  if (GfAbs(det) <= PRECISION_LIMIT)
-  {
+  if (GfAbs(det) <= PRECISION_LIMIT) {
     _isDegenerate = true;
     _inverse.SetIdentity();
   }
@@ -87,18 +86,14 @@ GfRange3d GfBBox3d::ComputeAlignedRange() const
   const GfVec3d &min = _box.GetMin();
   const GfVec3d &max = _box.GetMax();
 
-  for (int j = 0; j < 3; j++)
-  {
-    for (int i = 0; i < 3; i++)
-    {
+  for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
       double a = min[i] * _matrix[i][j];
       double b = max[i] * _matrix[i][j];
-      if (a < b)
-      {
+      if (a < b) {
         alignedMin[j] += a;
         alignedMax[j] += b;
-      } else
-      {
+      } else {
         alignedMin[j] += b;
         alignedMax[j] += a;
       }
@@ -121,8 +116,7 @@ GfBBox3d GfBBox3d::Combine(const GfBBox3d &b1, const GfBBox3d &b2)
   // If both boxes are degenerate, combine their projected
   // boxes. Otherwise, transform the degenerate box into the space
   // of the other box and combine the results in that space.
-  else if (b1._isDegenerate)
-  {
+  else if (b1._isDegenerate) {
     if (b2._isDegenerate)
       result = GfBBox3d(GfRange3d::GetUnion(b1.ComputeAlignedRange(), b2.ComputeAlignedRange()));
     else
@@ -138,8 +132,7 @@ GfBBox3d GfBBox3d::Combine(const GfBBox3d &b1, const GfBBox3d &b2)
   // This is because projecting almost always adds a little extra
   // space and it gives an unfair advantage to the box that is more
   // closely aligned to the coordinate axes.
-  else
-  {
+  else {
     GfBBox3d result1 = _CombineInOrder(b1, b2);
     GfBBox3d result2 = _CombineInOrder(b2, b1);
 
@@ -186,7 +179,8 @@ GfVec3d GfBBox3d::ComputeCentroid() const
 
 std::ostream &operator<<(std::ostream &out, const GfBBox3d &b)
 {
-  return out << "[(" << Gf_OstreamHelperP(b.GetRange()) << ") (" << Gf_OstreamHelperP(b.GetMatrix()) << ") "
+  return out << "[(" << Gf_OstreamHelperP(b.GetRange()) << ") ("
+             << Gf_OstreamHelperP(b.GetMatrix()) << ") "
              << (b.HasZeroAreaPrimitives() ? "true" : "false") << ']';
 }
 

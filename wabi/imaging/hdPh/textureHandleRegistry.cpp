@@ -37,6 +37,7 @@ WABI_NAMESPACE_BEGIN
 class HdPh_TextureHandleRegistry::_TextureToHandlesMap
 {
  public:
+
   using TextureSharedPtr = HdPhTextureObjectSharedPtr;
 
   using HandlePtr = HdPhTextureHandlePtr;
@@ -50,8 +51,7 @@ class HdPh_TextureHandleRegistry::_TextureToHandlesMap
     std::unique_lock<std::mutex> lock(_mutex);
 
     const typename Map::const_iterator it = _map.find(texture);
-    if (it == _map.end())
-    {
+    if (it == _map.end()) {
       return nullptr;
     }
 
@@ -73,16 +73,12 @@ class HdPh_TextureHandleRegistry::_TextureToHandlesMap
   {
     bool result = false;
 
-    for (HdPhTextureObjectSharedPtr const &texture : textures)
-    {
+    for (HdPhTextureObjectSharedPtr const &texture : textures) {
       const typename Map::const_iterator it = _map.find(texture);
-      if (it == _map.end())
-      {
+      if (it == _map.end()) {
         result = true;
-      } else
-      {
-        if (_GarbageCollect(it->second.get()))
-        {
+      } else {
+        if (_GarbageCollect(it->second.get())) {
           result = true;
           _map.erase(it);
         }
@@ -103,6 +99,7 @@ class HdPh_TextureHandleRegistry::_TextureToHandlesMap
   }
 
  private:
+
   // Remove all expired weak pointers from vector, return true
   // if no weak pointers left.
   //
@@ -113,20 +110,15 @@ class HdPh_TextureHandleRegistry::_TextureToHandlesMap
     // with valid weak pointers from the right.
     size_t last = vec->size();
 
-    for (size_t i = 0; i < last; i++)
-    {
-      if ((*vec)[i].expired())
-      {
+    for (size_t i = 0; i < last; i++) {
+      if ((*vec)[i].expired()) {
         _size--;
-        while (true)
-        {
+        while (true) {
           last--;
-          if (i == last)
-          {
+          if (i == last) {
             break;
           }
-          if (!(*vec)[last].expired())
-          {
+          if (!(*vec)[last].expired()) {
             (*vec)[i] = (*vec)[last];
             break;
           }
@@ -147,8 +139,7 @@ class HdPh_TextureHandleRegistry::_TextureToHandlesMap
 
     HandlePtrVectorSharedPtr &result = _map[texture];
 
-    if (!result)
-    {
+    if (!result) {
       result = std::make_shared<HandlePtrVector>();
     }
 
@@ -185,12 +176,13 @@ HdPhTextureHandleSharedPtr HdPh_TextureHandleRegistry::AllocateTextureHandle(
     textureId,
     textureType);
 
-  HdPhTextureHandleSharedPtr const result = std::make_shared<HdPhTextureHandle>(textureObject,
-                                                                                samplerParams,
-                                                                                memoryRequest,
-                                                                                createBindlessHandle,
-                                                                                shaderCode,
-                                                                                this);
+  HdPhTextureHandleSharedPtr const result = std::make_shared<HdPhTextureHandle>(
+    textureObject,
+    samplerParams,
+    memoryRequest,
+    createBindlessHandle,
+    shaderCode,
+    this);
 
   // Keep track and mark dirty
   _textureToHandlesMap->Insert(textureObject, result);
@@ -217,10 +209,10 @@ void HdPh_TextureHandleRegistry::MarkDirty(HdPhShaderCodePtr const &shader)
 // Compute target memory for texture.
 void HdPh_TextureHandleRegistry::_ComputeMemoryRequest(HdPhTextureObjectSharedPtr const &texture)
 {
-  _TextureToHandlesMap::HandlePtrVectorSharedPtr const handles = _textureToHandlesMap->GetHandles(texture);
+  _TextureToHandlesMap::HandlePtrVectorSharedPtr const handles = _textureToHandlesMap->GetHandles(
+    texture);
 
-  if (!handles)
-  {
+  if (!handles) {
     return;
   }
 
@@ -229,38 +221,33 @@ void HdPh_TextureHandleRegistry::_ComputeMemoryRequest(HdPhTextureObjectSharedPt
 
   // Take maximum of memory requests from all associated
   // handles.
-  for (HdPhTextureHandlePtr const &handlePtr : *handles)
-  {
-    if (HdPhTextureHandleSharedPtr const handle = handlePtr.lock())
-    {
+  for (HdPhTextureHandlePtr const &handlePtr : *handles) {
+    if (HdPhTextureHandleSharedPtr const handle = handlePtr.lock()) {
       maxRequest = std::max(maxRequest, handle->GetMemoryRequest());
       hasHandle = true;
     }
   }
 
-  if (maxRequest == 0)
-  {
+  if (maxRequest == 0) {
     // If no handle had an opinion, use default memory request.
     const auto it = _textureTypeToMemoryRequest.find(texture->GetTextureType());
-    if (it != _textureTypeToMemoryRequest.end())
-    {
+    if (it != _textureTypeToMemoryRequest.end()) {
       maxRequest = it->second;
     }
   }
 
-  if (hasHandle)
-  {
+  if (hasHandle) {
     texture->SetTargetMemory(maxRequest);
   }
 }
 
 // Compute target memory for textures.
-void HdPh_TextureHandleRegistry::_ComputeMemoryRequests(const std::set<HdPhTextureObjectSharedPtr> &textures)
+void HdPh_TextureHandleRegistry::_ComputeMemoryRequests(
+  const std::set<HdPhTextureObjectSharedPtr> &textures)
 {
   TRACE_FUNCTION();
 
-  for (HdPhTextureObjectSharedPtr const &texture : textures)
-  {
+  for (HdPhTextureObjectSharedPtr const &texture : textures) {
     _ComputeMemoryRequest(texture);
   }
 }
@@ -269,8 +256,7 @@ void HdPh_TextureHandleRegistry::_ComputeAllMemoryRequests()
 {
   TRACE_FUNCTION();
 
-  for (const auto &it : _textureToHandlesMap->GetMap())
-  {
+  for (const auto &it : _textureToHandlesMap->GetMap()) {
     _ComputeMemoryRequest(it.first);
   }
 }
@@ -282,10 +268,8 @@ static void _Uniquify(const tbb::concurrent_vector<std::weak_ptr<T>> &objects,
 {
   TRACE_FUNCTION();
 
-  for (std::weak_ptr<T> const &objectPtr : objects)
-  {
-    if (std::shared_ptr<T> const object = objectPtr.lock())
-    {
+  for (std::weak_ptr<T> const &objectPtr : objects) {
+    if (std::shared_ptr<T> const object = objectPtr.lock()) {
       result->insert(object);
     }
   }
@@ -312,12 +296,10 @@ bool HdPh_TextureHandleRegistry::_GarbageCollectHandlesAndComputeTargetMemory()
   const bool texturesNeedGarbageCollection = _textureToHandlesMap->GarbageCollect(dirtyTextures);
 
   // Compute target memory for dirty textures.
-  if (_textureTypeToMemoryRequestChanged)
-  {
+  if (_textureTypeToMemoryRequestChanged) {
     _ComputeAllMemoryRequests();
     _textureTypeToMemoryRequestChanged = false;
-  } else
-  {
+  } else {
     _ComputeMemoryRequests(dirtyTextures);
   }
 
@@ -337,8 +319,7 @@ void HdPh_TextureHandleRegistry::_GarbageCollectAndComputeTargetMemory()
   // Note that this also deletes the texture entries in the
   // _textureToHandlesMap if there are no handles left so that the
   // textures can be freed.
-  if (!_GarbageCollectHandlesAndComputeTargetMemory())
-  {
+  if (!_GarbageCollectHandlesAndComputeTargetMemory()) {
     return;
   }
 
@@ -362,11 +343,9 @@ std::set<HdPhShaderCodeSharedPtr> HdPh_TextureHandleRegistry::_Commit()
 
   // ... texture handles associated to textures affected by the
   // (re)-commit.
-  for (HdPhTextureObjectSharedPtr const &texture : committedTextures)
-  {
-    if (_TextureToHandlesMap::HandlePtrVectorSharedPtr const handles = _textureToHandlesMap->GetHandles(
-          texture))
-    {
+  for (HdPhTextureObjectSharedPtr const &texture : committedTextures) {
+    if (_TextureToHandlesMap::HandlePtrVectorSharedPtr const handles =
+          _textureToHandlesMap->GetHandles(texture)) {
       _Uniquify(*handles, &dirtyHandles);
     }
   }
@@ -381,22 +360,18 @@ std::set<HdPhShaderCodeSharedPtr> HdPh_TextureHandleRegistry::_Commit()
   {
     TRACE_FUNCTION_SCOPE("Determining shader code instances that require updating.");
 
-    for (HdPhTextureHandleSharedPtr const &handle : dirtyHandles)
-    {
+    for (HdPhTextureHandleSharedPtr const &handle : dirtyHandles) {
 
       // ... while allocating samplers for the textures.
       handle->ReallocateSamplerIfNecessary();
 
-      if (HdPhShaderCodeSharedPtr const shader = handle->GetShaderCode().lock())
-      {
+      if (HdPhShaderCodeSharedPtr const shader = handle->GetShaderCode().lock()) {
         result.insert(shader);
       }
     }
 
-    for (HdPhShaderCodePtr const &dirtyShader : _dirtyShaders)
-    {
-      if (HdPhShaderCodeSharedPtr const shader = dirtyShader.lock())
-      {
+    for (HdPhShaderCodePtr const &dirtyShader : _dirtyShaders) {
+      if (HdPhShaderCodeSharedPtr const shader = dirtyShader.lock()) {
         result.insert(shader);
       }
     }
@@ -432,8 +407,7 @@ void HdPh_TextureHandleRegistry::SetMemoryRequestForTextureType(const HdTextureT
                                                                 const size_t memoryRequest)
 {
   size_t &val = _textureTypeToMemoryRequest[textureType];
-  if (val != memoryRequest)
-  {
+  if (val != memoryRequest) {
     val = memoryRequest;
     _textureTypeToMemoryRequestChanged = true;
   }

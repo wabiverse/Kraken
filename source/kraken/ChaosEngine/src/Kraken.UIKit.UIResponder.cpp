@@ -36,22 +36,26 @@ namespace winrt::Kraken::UIKit::implementation
   /**
    * Signal Handlers. */
 
-  winrt::event_token UIResponder::SignalTitleBarUpdateLayout(Kraken::UIKit::SignalDelegate const& handler)
+  winrt::event_token UIResponder::SignalTitleBarUpdateLayout(
+    Kraken::UIKit::SignalDelegate const &handler)
   {
     return make_self<factory_implementation::UIResponder>()->SignalTitleBarUpdateLayout(handler);
   }
 
-  winrt::event_token UIResponder::SignalTitleBarIsVisible(Kraken::UIKit::SignalDelegate const& handler)
+  winrt::event_token UIResponder::SignalTitleBarIsVisible(
+    Kraken::UIKit::SignalDelegate const &handler)
   {
     return make_self<factory_implementation::UIResponder>()->SignalTitleBarIsVisible(handler);
   }
 
-  winrt::event_token UIResponder::SignalNavigationIsDisplaying(Kraken::UIKit::SignalDelegate const& handler)
+  winrt::event_token UIResponder::SignalNavigationIsDisplaying(
+    Kraken::UIKit::SignalDelegate const &handler)
   {
     return make_self<factory_implementation::UIResponder>()->SignalNavigationIsDisplaying(handler);
   }
 
-  winrt::event_token UIResponder::SignalWindowIsActivated(Kraken::UIKit::SignalDelegate const& handler)
+  winrt::event_token UIResponder::SignalWindowIsActivated(
+    Kraken::UIKit::SignalDelegate const &handler)
   {
     return make_self<factory_implementation::UIResponder>()->SignalWindowIsActivated(handler);
   }
@@ -59,22 +63,22 @@ namespace winrt::Kraken::UIKit::implementation
   /**
    * Cookie Eaters. */
 
-  void UIResponder::SignalTitleBarUpdateLayout(winrt::event_token const& cookie)
+  void UIResponder::SignalTitleBarUpdateLayout(winrt::event_token const &cookie)
   {
     return make_self<factory_implementation::UIResponder>()->SignalTitleBarUpdateLayout(handler);
   }
 
-  void UIResponder::SignalTitleBarIsVisible(winrt::event_token const& cookie)
+  void UIResponder::SignalTitleBarIsVisible(winrt::event_token const &cookie)
   {
     return make_self<factory_implementation::UIResponder>()->SignalTitleBarIsVisible(handler);
   }
 
-  void UIResponder::SignalNavigationIsDisplaying(winrt::event_token const& cookie)
+  void UIResponder::SignalNavigationIsDisplaying(winrt::event_token const &cookie)
   {
     return make_self<factory_implementation::UIResponder>()->SignalNavigationIsDisplaying(handler);
   }
 
-  void UIResponder::SignalWindowIsActivated(winrt::event_token const& cookie)
+  void UIResponder::SignalWindowIsActivated(winrt::event_token const &cookie)
   {
     return make_self<factory_implementation::UIResponder>()->SignalWindowIsActivated(handler);
   }
@@ -82,17 +86,17 @@ namespace winrt::Kraken::UIKit::implementation
   /**
    * Core functionality. Signaling upon completion. */
 
-  void UIResponder::SetTitleBarLayout(CoreApplicationViewTitleBar const& layout)
+  void UIResponder::SetTitleBarLayout(CoreApplicationViewTitleBar const &layout)
   {
     return make_self<factory_implementation::UIResponder>()->SetTitleBarLayout(layout);
   }
 
-  void UIResponder::SetTitleBarIsVisible(CoreApplicationViewTitleBar const& titleBar)
+  void UIResponder::SetTitleBarIsVisible(CoreApplicationViewTitleBar const &titleBar)
   {
     return make_self<factory_implementation::UIResponder>()->SetTitleBarIsVisible(titleBar);
   }
 
-  void UIResponder::SetNavigationView(NavigationView const& view)
+  void UIResponder::SetNavigationView(NavigationView const &view)
   {
     return make_self<factory_implementation::UIResponder>()->SetNavigationView(view);
   }
@@ -101,6 +105,5 @@ namespace winrt::Kraken::UIKit::implementation
   {
     return make_self<factory_implementation::UIResponder>()->SetWindowActivated(activate);
   }
-  
-} // namespace winrt::Kraken::UIKit::implementation
 
+}  // namespace winrt::Kraken::UIKit::implementation

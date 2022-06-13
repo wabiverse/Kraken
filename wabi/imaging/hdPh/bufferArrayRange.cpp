@@ -40,8 +40,7 @@ HdPhBufferArrayRange::HdPhBufferArrayRange(HdPhResourceRegistry *resourceRegistr
   : _resourceRegistry(resourceRegistry)
 {}
 
-HdPhBufferArrayRange::~HdPhBufferArrayRange()
-{}
+HdPhBufferArrayRange::~HdPhBufferArrayRange() {}
 
 void HdPhBufferArrayRange::GetBufferSpecs(HdBufferSpecVector *specs) const
 {
@@ -49,8 +48,7 @@ void HdPhBufferArrayRange::GetBufferSpecs(HdBufferSpecVector *specs) const
 
   HdPhBufferResourceNamedList const &resources = GetResources();
 
-  TF_FOR_ALL (it, resources)
-  {
+  TF_FOR_ALL (it, resources) {
     specs->emplace_back(it->first, it->second->GetTupleType());
   }
 }
@@ -71,14 +69,12 @@ void HdPhBufferArrayRangeContainer::Set(int index, HdPhBufferArrayRangeSharedPtr
 {
   HD_TRACE_FUNCTION();
 
-  if (index < 0)
-  {
+  if (index < 0) {
     TF_CODING_ERROR("Index negative in HdPhBufferArrayRangeContainer::Set()");
     return;
   }
 
-  if (static_cast<size_t>(index) >= _ranges.size())
-  {
+  if (static_cast<size_t>(index) >= _ranges.size()) {
     HD_PERF_COUNTER_INCR(HdPerfTokens->bufferArrayRangeContainerResized);
     _ranges.resize(index + 1);
   }
@@ -87,8 +83,7 @@ void HdPhBufferArrayRangeContainer::Set(int index, HdPhBufferArrayRangeSharedPtr
 
 HdPhBufferArrayRangeSharedPtr const &HdPhBufferArrayRangeContainer::Get(int index) const
 {
-  if (index < 0 || static_cast<size_t>(index) >= _ranges.size())
-  {
+  if (index < 0 || static_cast<size_t>(index) >= _ranges.size()) {
     // out of range access is not an errorneous path.
     // (i.e. element/instance bars can be null if not exists)
     static HdPhBufferArrayRangeSharedPtr empty;

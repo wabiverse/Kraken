@@ -112,8 +112,7 @@ UsdImagingGLLegacyEngine::UsdImagingGLLegacyEngine(const SdfPathVector &excluded
     _usingSceneCam(false)
 {
   // Build a TfHashSet of excluded prims for fast rejection.
-  TF_FOR_ALL (pathIt, excludedPrimPaths)
-  {
+  TF_FOR_ALL (pathIt, excludedPrimPaths) {
     _excludedSet.insert(*pathIt);
   }
 }
@@ -134,15 +133,13 @@ void UsdImagingGLLegacyEngine::InvalidateBuffers()
 {
   TRACE_FUNCTION();
 
-  if (!_attribBuffer)
-  {
+  if (!_attribBuffer) {
     return;
   }
 
   // There is no sensible configuration that would have an attribBuffer but
   // not an indexBuffer.
-  if (!TF_VERIFY(_indexBuffer))
-  {
+  if (!TF_VERIFY(_indexBuffer)) {
     return;
   }
 
@@ -179,8 +176,9 @@ void UsdImagingGLLegacyEngine::_PopulateBuffers()
   // The array buffer contains the raw floats for the points, normals, and
   // colors.
   glBufferData(GL_ARRAY_BUFFER,
-               sizeof(GLfloat) * (_points.size() + _normals.size() + _colors.size() + _linePoints.size() +
-                                  _lineColors.size() + _IDColors.size() + _lineIDColors.size()),
+               sizeof(GLfloat) *
+                 (_points.size() + _normals.size() + _colors.size() + _linePoints.size() +
+                  _lineColors.size() + _IDColors.size() + _lineIDColors.size()),
                NULL,
                GL_STATIC_DRAW);
 
@@ -217,8 +215,7 @@ void UsdImagingGLLegacyEngine::_PopulateBuffers()
 
 void UsdImagingGLLegacyEngine::_DrawPolygons(bool drawID)
 {
-  if (_points.empty())
-  {
+  if (_points.empty()) {
     return;
   }
 
@@ -233,15 +230,13 @@ void UsdImagingGLLegacyEngine::_DrawPolygons(bool drawID)
     offset += sizeof(GLfloat) * (_colors.size() + _linePoints.size() + _lineColors.size());
   glColorPointer(3, GL_FLOAT, 0, (GLvoid *)offset);
 
-  if (!_SupportsPrimitiveRestartIndex())
-  {
+  if (!_SupportsPrimitiveRestartIndex()) {
     glMultiDrawElements(GL_POLYGON,
                         (GLsizei *)(&(_numVerts[0])),
                         GL_UNSIGNED_INT,
                         (const GLvoid **)(&(_vertIdxOffsets[0])),
                         _numVerts.size());
-  } else
-  {
+  } else {
     glDrawElements(GL_POLYGON, _verts.size(), GL_UNSIGNED_INT, 0);
   }
 }
@@ -252,8 +247,7 @@ void UsdImagingGLLegacyEngine::_DrawLines(bool drawID)
   // normals.
   glDisableClientState(GL_NORMAL_ARRAY);
 
-  if (_linePoints.empty())
-  {
+  if (_linePoints.empty()) {
     return;
   }
 
@@ -267,15 +261,13 @@ void UsdImagingGLLegacyEngine::_DrawLines(bool drawID)
     offset += sizeof(GLfloat) * (_lineColors.size() + _IDColors.size());
   glColorPointer(3, GL_FLOAT, 0, (GLvoid *)offset);
 
-  if (!_SupportsPrimitiveRestartIndex())
-  {
+  if (!_SupportsPrimitiveRestartIndex()) {
     glMultiDrawElements(GL_LINE_STRIP,
                         (GLsizei *)(&(_numLineVerts[0])),
                         GL_UNSIGNED_INT,
                         (const GLvoid **)(&(_lineVertIdxOffsets[0])),
                         _numLineVerts.size());
-  } else
-  {
+  } else {
     glDrawElements(GL_LINE_STRIP,
                    _lineVerts.size(),
                    GL_UNSIGNED_INT,
@@ -293,8 +285,7 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
   // Invalidate existing buffers if we are drawing from a different root or
   // frame.
   if (_root != root || _params.frame != params.frame ||
-      _params.gammaCorrectColors != params.gammaCorrectColors)
-  {
+      _params.gammaCorrectColors != params.gammaCorrectColors) {
     InvalidateBuffers();
 
     TfNotice::Revoke(_objectsChangedNoticeKey);
@@ -311,11 +302,9 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
   glPushAttrib(GL_CURRENT_BIT);
   glPushAttrib(GL_ENABLE_BIT);
 
-  if (params.cullStyle == UsdImagingGLCullStyle::CULL_STYLE_NOTHING)
-  {
+  if (params.cullStyle == UsdImagingGLCullStyle::CULL_STYLE_NOTHING) {
     glDisable(GL_CULL_FACE);
-  } else
-  {
+  } else {
     static const GLenum USD_2_GL_CULL_FACE[] = {
       0,         // No Opinion - Unused
       0,         // CULL_STYLE_NOTHING - Unused
@@ -335,8 +324,7 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
 
   if (_params.drawMode != UsdImagingGLDrawMode::DRAW_GEOM_ONLY &&
       _params.drawMode != UsdImagingGLDrawMode::DRAW_GEOM_SMOOTH &&
-      _params.drawMode != UsdImagingGLDrawMode::DRAW_GEOM_FLAT)
-  {
+      _params.drawMode != UsdImagingGLDrawMode::DRAW_GEOM_FLAT) {
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 
@@ -346,8 +334,7 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
     glEnable(GL_NORMALIZE);
   }
 
-  switch (_params.drawMode)
-  {
+  switch (_params.drawMode) {
     case UsdImagingGLDrawMode::DRAW_WIREFRAME:
       glDisable(GL_LIGHTING);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -359,14 +346,12 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
       break;
   }
 
-  if (_SupportsPrimitiveRestartIndex())
-  {
+  if (_SupportsPrimitiveRestartIndex()) {
     glPrimitiveRestartIndexNV(_PRIM_RESTART_INDEX);
     glEnableClientState(GL_PRIMITIVE_RESTART_NV);
   }
 
-  if (!_attribBuffer)
-  {
+  if (!_attribBuffer) {
 
     _ctm = GfMatrix4d(1.0);
     TfReset(_xformStack);
@@ -392,11 +377,9 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
 
   TF_VERIFY(_xformStack.empty());
 
-  if (!_attribBuffer)
-  {
+  if (!_attribBuffer) {
     _PopulateBuffers();
-  } else
-  {
+  } else {
     glBindBuffer(GL_ARRAY_BUFFER, _attribBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
   }
@@ -404,8 +387,7 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
   glEnableClientState(GL_VERTEX_ARRAY);
 
   bool drawID = false;
-  if (_params.enableIdRender)
-  {
+  if (_params.enableIdRender) {
     glEnableClientState(GL_COLOR_ARRAY);
     glDisable(GL_LIGHTING);
     // glShadeModel(GL_FLAT);
@@ -416,13 +398,11 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
     glDisable(GL_BLEND);
     glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
     drawID = true;
-  } else
-  {
+  } else {
     glShadeModel(GL_SMOOTH);
   }
 
-  switch (_params.drawMode)
-  {
+  switch (_params.drawMode) {
     case UsdImagingGLDrawMode::DRAW_GEOM_FLAT:
     case UsdImagingGLDrawMode::DRAW_GEOM_SMOOTH:
       glEnableClientState(GL_NORMAL_ARRAY);
@@ -447,8 +427,7 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
   }
 
   // Draw the overlay wireframe, if requested.
-  if (_params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME_ON_SURFACE)
-  {
+  if (_params.drawMode == UsdImagingGLDrawMode::DRAW_WIREFRAME_ON_SURFACE) {
     // We have to push lighting again since we don't know what state we want
     // after this without popping.
     glPushAttrib(GL_LIGHTING_BIT);
@@ -485,8 +464,7 @@ void UsdImagingGLLegacyEngine::Render(const UsdPrim &root, const UsdImagingGLRen
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  if (_SupportsPrimitiveRestartIndex())
-  {
+  if (_SupportsPrimitiveRestartIndex()) {
     glDisableClientState(GL_PRIMITIVE_RESTART_NV);
   }
 
@@ -508,13 +486,11 @@ void UsdImagingGLLegacyEngine::SetCameraPath(const SdfPath &id)
 {
   // Validate the path before setting to true.
   _usingSceneCam = false;
-  if (id.IsEmpty())
-  {
+  if (id.IsEmpty()) {
     return;
   }
 
-  if (_sceneCamId != id)
-  {
+  if (_sceneCamId != id) {
     _sceneCamId = id;
 
     _sceneCam = UsdPrim();
@@ -527,23 +503,18 @@ void UsdImagingGLLegacyEngine::SetLightingState(GlfSimpleLightVector const &ligh
                                                 GlfSimpleMaterial const &material,
                                                 GfVec4f const &sceneAmbient)
 {
-  if (lights.empty())
-  {
+  if (lights.empty()) {
     glDisable(GL_LIGHTING);
-  } else
-  {
+  } else {
     glEnable(GL_LIGHTING);
 
     static int maxLights = 0;
-    if (maxLights == 0)
-    {
+    if (maxLights == 0) {
       glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
     }
 
-    for (size_t i = 0; i < static_cast<size_t>(maxLights); ++i)
-    {
-      if (i < lights.size())
-      {
+    for (size_t i = 0; i < static_cast<size_t>(maxLights); ++i) {
+      if (i < lights.size()) {
         glEnable(GL_LIGHT0 + i);
         GlfSimpleLight const &light = lights[i];
 
@@ -552,8 +523,7 @@ void UsdImagingGLLegacyEngine::SetLightingState(GlfSimpleLightVector const &ligh
         glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, light.GetDiffuse().data());
         glLightfv(GL_LIGHT0 + i, GL_SPECULAR, light.GetSpecular().data());
         // omit spot parameters.
-      } else
-      {
+      } else {
         glDisable(GL_LIGHT0 + i);
       }
     }
@@ -595,12 +565,10 @@ static void UsdImagingGLLegacyEngine_ComputeSmoothNormals(const VtVec3fArray &po
 
   // Compute a normal at each vertex of each face.
   int firstIndex = 0;
-  TF_FOR_ALL (j, numVerts)
-  {
+  TF_FOR_ALL (j, numVerts) {
 
     int nv = *j;
-    for (int i = 0; i < nv; ++i)
-    {
+    for (int i = 0; i < nv; ++i) {
 
       int a = vertsPtr[firstIndex + i];
       int b = vertsPtr[firstIndex + ((i + 1) < nv ? i + 1 : i + 1 - nv)];
@@ -608,9 +576,8 @@ static void UsdImagingGLLegacyEngine_ComputeSmoothNormals(const VtVec3fArray &po
 
       // Make sure that we don't read or write using an out-of-bounds
       // index.
-      if (a >= 0 && static_cast<size_t>(a) < pointsCount && b >= 0 && static_cast<size_t>(b) < pointsCount &&
-          c >= 0 && static_cast<size_t>(c) < pointsCount)
-      {
+      if (a >= 0 && static_cast<size_t>(a) < pointsCount && b >= 0 &&
+          static_cast<size_t>(b) < pointsCount && c >= 0 && static_cast<size_t>(c) < pointsCount) {
 
         GfVec3f p0 = pointsPtr[a] - pointsPtr[b];
         GfVec3f p1 = pointsPtr[c] - pointsPtr[b];
@@ -620,8 +587,7 @@ static void UsdImagingGLLegacyEngine_ComputeSmoothNormals(const VtVec3fArray &po
           normalsPtr[b] = n - GfCross(p0, p1);
         else
           normalsPtr[b] = n + GfCross(p0, p1);
-      } else
-      {
+      } else {
 
         foundOutOfBoundsIndex = true;
 
@@ -634,8 +600,7 @@ static void UsdImagingGLLegacyEngine_ComputeSmoothNormals(const VtVec3fArray &po
     firstIndex += nv;
   }
 
-  if (foundOutOfBoundsIndex)
-  {
+  if (foundOutOfBoundsIndex) {
     TF_WARN(
       "Out of bound indices detected while computing smooth "
       "normals.");
@@ -664,13 +629,10 @@ void UsdImagingGLLegacyEngine::_TraverseStage(const UsdPrim &root)
   UsdPrim pseudoRoot = root.GetStage()->GetPseudoRoot();
 
   // Traverse the stage to extract data for drawing.
-  for (auto iter = range.begin(); iter != range.end(); ++iter)
-  {
-    if (!iter.IsPostVisit())
-    {
+  for (auto iter = range.begin(); iter != range.end(); ++iter) {
+    if (!iter.IsPostVisit()) {
 
-      if (_excludedSet.find(iter->GetPath()) != _excludedSet.end())
-      {
+      if (_excludedSet.find(iter->GetPath()) != _excludedSet.end()) {
         iter.PruneChildren();
         ++iter;
         continue;
@@ -683,26 +645,24 @@ void UsdImagingGLLegacyEngine::_TraverseStage(const UsdPrim &root)
       TfToken visibility;
       if (*iter != pseudoRoot &&
           iter->GetAttribute(UsdGeomTokens->visibility).Get(&visibility, _params.frame) &&
-          visibility == UsdGeomTokens->invisible)
-      {
+          visibility == UsdGeomTokens->invisible) {
 
         visible = false;
       }
 
       // Treat only the purposes we've been asked to show as visible
       TfToken purpose;
-      if (*iter != pseudoRoot && iter->GetAttribute(UsdGeomTokens->purpose).Get(&purpose, _params.frame) &&
+      if (*iter != pseudoRoot &&
+          iter->GetAttribute(UsdGeomTokens->purpose).Get(&purpose, _params.frame) &&
           purpose != UsdGeomTokens->default_  // fast/common out
           && ((purpose == UsdGeomTokens->guide && !_params.showGuides) ||
               (purpose == UsdGeomTokens->render && !_params.showRender) ||
-              (purpose == UsdGeomTokens->proxy && !_params.showProxy)))
-      {
+              (purpose == UsdGeomTokens->proxy && !_params.showProxy))) {
         visible = false;
       }
 
       // Do pre-visit data extraction.
-      if (visible)
-      {
+      if (visible) {
         if (iter->IsA<UsdGeomXform>())
           _HandleXform(*iter);
         else if (iter->IsA<UsdGeomMesh>())
@@ -723,17 +683,13 @@ void UsdImagingGLLegacyEngine::_TraverseStage(const UsdPrim &root)
           _HandlePoints(*iter);
         else if (iter->IsA<UsdGeomNurbsPatch>())
           _HandleNurbsPatch(*iter);
-      } else
-      {
+      } else {
         iter.PruneChildren();
       }
-    } else
-    {
-      if (!_xformStack.empty())
-      {
+    } else {
+      if (!_xformStack.empty()) {
         const std::pair<UsdPrim, GfMatrix4d> &entry = _xformStack.back();
-        if (entry.first == *iter)
-        {
+        if (entry.first == *iter) {
           // pop state
           _xformStack.pop_back();
           _ctm = entry.second;
@@ -745,8 +701,7 @@ void UsdImagingGLLegacyEngine::_TraverseStage(const UsdPrim &root)
   // Apply the additional offset from the polygon vertex indices, which are
   // before the line vertex indices in the element array buffer.
   size_t polygonVertOffset = _verts.size() * sizeof(GLuint);
-  TF_FOR_ALL (itr, _lineVertIdxOffsets)
-  {
+  TF_FOR_ALL (itr, _lineVertIdxOffsets) {
     *itr = (GLvoid *)((size_t)(*itr) + polygonVertOffset);
   }
 }
@@ -754,28 +709,23 @@ void UsdImagingGLLegacyEngine::_TraverseStage(const UsdPrim &root)
 void UsdImagingGLLegacyEngine::_ResolveCamera()
 {
   double targetAspect = 1.0;
-  if (_viewport[3] != 0.0)
-  {
+  if (_viewport[3] != 0.0) {
     targetAspect = _viewport[2] / _viewport[3];
   }
 
-  if (_usingSceneCam && !_sceneCam)
-  {
+  if (_usingSceneCam && !_sceneCam) {
     // Update handle to camera prim, if it has not already been updated.
     UsdPrim prim = _root.GetStage()->GetPrimAtPath(_sceneCamId);
-    if (!TF_VERIFY(prim))
-    {
+    if (!TF_VERIFY(prim)) {
       _usingSceneCam = false;
     }
-    if (!TF_VERIFY(prim.IsA<UsdGeomCamera>()))
-    {
+    if (!TF_VERIFY(prim.IsA<UsdGeomCamera>())) {
       _usingSceneCam = false;
     }
     _sceneCam = prim;
   }
 
-  if (_usingSceneCam)
-  {
+  if (_usingSceneCam) {
 
     UsdGeomCamera cam(_sceneCam);
     TF_VERIFY(cam);
@@ -788,8 +738,7 @@ void UsdImagingGLLegacyEngine::_ResolveCamera()
                                                         targetAspect);
 
     _UpdateGLCameraFramingState(gfCam.GetTransform().GetInverse(), adjustedProj, _viewport);
-  } else
-  {
+  } else {
     // GfMatrix4d adjustedProj = CameraUtilConformedWindow(
     //                             _freeCamProjMatrix,
     //                             _windowPolicy,
@@ -823,12 +772,10 @@ void UsdImagingGLLegacyEngine::_ProcessGprimColor(const UsdGeomGprim *gprimSchem
 
   // Get interpolation and color using UsdShadeMaterial'
   VtValue colorAsVt;
-  if (UsdImagingGprimAdapter::GetColor(prim, _params.frame, interpolation, &colorAsVt, nullptr))
-  {
+  if (UsdImagingGprimAdapter::GetColor(prim, _params.frame, interpolation, &colorAsVt, nullptr)) {
     VtVec3fArray temp = colorAsVt.Get<VtVec3fArray>();
     color->push_back(temp[0]);
-  } else
-  {
+  } else {
     color->push_back(GfVec3f(0.5f, 0.5f, 0.5f));
     *interpolation = UsdGeomTokens->constant;
   }
@@ -848,8 +795,7 @@ void UsdImagingGLLegacyEngine::_HandleXform(const UsdPrim &prim)
 
   // XXX:
   // Should do GfIsClose for each element.
-  if (xform != IDENTITY)
-  {
+  if (xform != IDENTITY) {
     _xformStack.push_back(std::make_pair(prim, _ctm));
     if (!resetsXformStack)
       _ctm = xform * _ctm;
@@ -918,8 +864,7 @@ void UsdImagingGLLegacyEngine::_HandleCurves(const UsdPrim &prim)
   VtVec3fArray pts;
   curvesSchema.GetPointsAttr().Get(&pts, _params.frame);
 
-  if (color.size() < 1)
-  {
+  if (color.size() < 1) {
 
     // set default
     color = VtArray<GfVec3f>(1);
@@ -927,8 +872,7 @@ void UsdImagingGLLegacyEngine::_HandleCurves(const UsdPrim &prim)
     colorInterpolation = UsdGeomTokens->constant;
 
     // Check for error condition for vertex colors
-  } else if (colorInterpolation == UsdGeomTokens->vertex && color.size() != pts.size())
-  {
+  } else if (colorInterpolation == UsdGeomTokens->vertex && color.size() != pts.size()) {
 
     // fallback to default
     color = VtArray<GfVec3f>(1);
@@ -938,22 +882,18 @@ void UsdImagingGLLegacyEngine::_HandleCurves(const UsdPrim &prim)
   }
 
   int index = 0;
-  TF_FOR_ALL (itr, pts)
-  {
+  TF_FOR_ALL (itr, pts) {
     GfVec3f pt = _ctm.Transform(*itr);
     _linePoints.push_back(pt[0]);
     _linePoints.push_back(pt[1]);
     _linePoints.push_back(pt[2]);
 
     GfVec3f currColor = color[0];
-    if (colorInterpolation == UsdGeomTokens->uniform)
-    {
+    if (colorInterpolation == UsdGeomTokens->uniform) {
       // XXX uniform not yet supported, fallback to constant
-    } else if (colorInterpolation == UsdGeomTokens->vertex)
-    {
+    } else if (colorInterpolation == UsdGeomTokens->vertex) {
       currColor = color[index];
-    } else if (colorInterpolation == UsdGeomTokens->faceVarying)
-    {
+    } else if (colorInterpolation == UsdGeomTokens->faceVarying) {
       // XXX faceVarying not yet supported, fallback to constant
     }
     _lineColors.push_back(currColor[0]);
@@ -966,14 +906,11 @@ void UsdImagingGLLegacyEngine::_HandleCurves(const UsdPrim &prim)
   VtIntArray nmvts;
   curvesSchema.GetCurveVertexCountsAttr().Get(&nmvts, _params.frame);
 
-  TF_FOR_ALL (itr, nmvts)
-  {
-    for (int idx = 0; idx < *itr; idx++)
-    {
+  TF_FOR_ALL (itr, nmvts) {
+    for (int idx = 0; idx < *itr; idx++) {
       _lineVerts.push_back(idx + _lineVertCount);
     }
-    if (!_SupportsPrimitiveRestartIndex())
-    {
+    if (!_SupportsPrimitiveRestartIndex()) {
       // If prim restart is not supported, we need to keep track of the
       // number of vertices per line segment, as well as the byte-offsets
       // into the element array buffer containing the vertex indices for
@@ -982,8 +919,7 @@ void UsdImagingGLLegacyEngine::_HandleCurves(const UsdPrim &prim)
       // before the line vertex indices in the element array buffer.
       _numLineVerts.push_back(*itr);
       _lineVertIdxOffsets.push_back((GLvoid *)(_lineVertCount * sizeof(GLuint)));
-    } else
-    {
+    } else {
       // Append a primitive restart index at the end of each numVerts
       // index boundary.
       _lineVerts.push_back(_PRIM_RESTART_INDEX);
@@ -1150,8 +1086,7 @@ void UsdImagingGLLegacyEngine::_RenderPrimitive(const UsdPrim &prim,
   TfToken colorInterpolation = UsdGeomTokens->constant;
 
   _ProcessGprimColor(gprimSchema, prim, &doubleSided, &color, &colorInterpolation);
-  if (color.size() < 1)
-  {
+  if (color.size() < 1) {
     // set default
     color = VtArray<GfVec3f>(1);
     color[0] = GfVec3f(0.5, 0.5, 0.5);
@@ -1162,22 +1097,18 @@ void UsdImagingGLLegacyEngine::_RenderPrimitive(const UsdPrim &prim,
   GfVec4f idColor = _IssueID(prim.GetPath());
 
   int index = 0;
-  TF_FOR_ALL (itr, pts)
-  {
+  TF_FOR_ALL (itr, pts) {
     GfVec3f pt = _ctm.Transform(*itr);
     _points.push_back(pt[0]);
     _points.push_back(pt[1]);
     _points.push_back(pt[2]);
 
     GfVec3f currColor = color[0];
-    if (colorInterpolation == UsdGeomTokens->uniform)
-    {
+    if (colorInterpolation == UsdGeomTokens->uniform) {
       // XXX uniform not yet supported, fallback to constant
-    } else if (colorInterpolation == UsdGeomTokens->vertex)
-    {
+    } else if (colorInterpolation == UsdGeomTokens->vertex) {
       currColor = color[index];
-    } else if (colorInterpolation == UsdGeomTokens->faceVarying)
-    {
+    } else if (colorInterpolation == UsdGeomTokens->faceVarying) {
       // XXX faceVarying not yet supported, fallback to constant
     }
     _colors.push_back(currColor[0]);
@@ -1189,34 +1120,28 @@ void UsdImagingGLLegacyEngine::_RenderPrimitive(const UsdPrim &prim,
 
   VtVec3fArray normals;
 
-  if (!_SupportsPrimitiveRestartIndex())
-  {
+  if (!_SupportsPrimitiveRestartIndex()) {
     // If prim restart is not supported, we need to keep track of the number
     // of vertices per polygon, as well as the byte-offsets for where the
     // indices in the element array buffer start for each polygon.
     int indexCount = _verts.size();
-    TF_FOR_ALL (itr, nmvts)
-    {
+    TF_FOR_ALL (itr, nmvts) {
       _vertIdxOffsets.push_back((GLvoid *)(indexCount * sizeof(GLuint)));
       indexCount += *itr;
 
       _numVerts.push_back(*itr);
     }
 
-    TF_FOR_ALL (itr, vts)
-    {
+    TF_FOR_ALL (itr, vts) {
       _verts.push_back(*itr + _vertCount);
     }
-  } else
-  {
-    for (size_t i = 0, j = 0, k = 0; i < vts.size(); ++i)
-    {
+  } else {
+    for (size_t i = 0, j = 0, k = 0; i < vts.size(); ++i) {
       _verts.push_back(vts[i] + _vertCount);
 
       // Append a primitive restart index at the end of each numVerts
       // index boundary.
-      if (k < nmvts.size() && ++j == static_cast<size_t>(nmvts[k]))
-      {
+      if (k < nmvts.size() && ++j == static_cast<size_t>(nmvts[k])) {
         _verts.push_back(_PRIM_RESTART_INDEX);
         j = 0, k++;
       }
@@ -1234,15 +1159,13 @@ void UsdImagingGLLegacyEngine::_RenderPrimitive(const UsdPrim &prim,
   // the normals array.
   UsdImagingGLLegacyEngine_ComputeSmoothNormals(pts, nmvts, vts, true /*ccw*/, &normals);
 
-  TF_FOR_ALL (itr, normals)
-  {
+  TF_FOR_ALL (itr, normals) {
     _normals.push_back((*itr)[0]);
     _normals.push_back((*itr)[1]);
     _normals.push_back((*itr)[2]);
   }
 
-  if (doubleSided)
-  {
+  if (doubleSided) {
 
     // Duplicate the geometry with the normals inverted and topology
     // reversed, so that we handle doublesided geometry alongside
@@ -1251,22 +1174,18 @@ void UsdImagingGLLegacyEngine::_RenderPrimitive(const UsdPrim &prim,
     TRACE_SCOPE("UsdImagingGLLegacyEngine::HandleMesh (doublesided)");
 
     index = 0;
-    TF_FOR_ALL (itr, pts)
-    {
+    TF_FOR_ALL (itr, pts) {
       GfVec3f pt = _ctm.Transform(*itr);
       _points.push_back(pt[0]);
       _points.push_back(pt[1]);
       _points.push_back(pt[2]);
 
       GfVec3f currColor = color[0];
-      if (colorInterpolation == UsdGeomTokens->uniform)
-      {
+      if (colorInterpolation == UsdGeomTokens->uniform) {
         // XXX uniform not yet supported, fallback to constant
-      } else if (colorInterpolation == UsdGeomTokens->vertex)
-      {
+      } else if (colorInterpolation == UsdGeomTokens->vertex) {
         currColor = color[index];
-      } else if (colorInterpolation == UsdGeomTokens->faceVarying)
-      {
+      } else if (colorInterpolation == UsdGeomTokens->faceVarying) {
         // XXX faceVarying not yet supported, fallback to constant
       }
       _colors.push_back(currColor[0]);
@@ -1277,29 +1196,23 @@ void UsdImagingGLLegacyEngine::_RenderPrimitive(const UsdPrim &prim,
       index++;
     }
 
-    if (!_SupportsPrimitiveRestartIndex())
-    {
+    if (!_SupportsPrimitiveRestartIndex()) {
       int indexCount = _verts.size();
-      for (int i = nmvts.size() - 1; i >= 0; --i)
-      {
+      for (int i = nmvts.size() - 1; i >= 0; --i) {
         _vertIdxOffsets.push_back((GLvoid *)(indexCount * sizeof(GLuint)));
         _numVerts.push_back(nmvts[i]);
         indexCount += nmvts[i];
       }
-      for (int i = vts.size() - 1; i >= 0; --i)
-      {
+      for (int i = vts.size() - 1; i >= 0; --i) {
         _verts.push_back(vts[i] + _vertCount);
       }
-    } else
-    {
-      for (int i = vts.size() - 1, j = 0, k = nmvts.size() - 1; i >= 0; --i)
-      {
+    } else {
+      for (int i = vts.size() - 1, j = 0, k = nmvts.size() - 1; i >= 0; --i) {
         _verts.push_back(vts[i] + _vertCount);
 
         // Append a primitive restart index at the end of each numVerts
         // index boundary.
-        if (k >= 0 && ++j == nmvts[k])
-        {
+        if (k >= 0 && ++j == nmvts[k]) {
           _verts.push_back(_PRIM_RESTART_INDEX);
           j = 0, k--;
         }
@@ -1308,8 +1221,7 @@ void UsdImagingGLLegacyEngine::_RenderPrimitive(const UsdPrim &prim,
 
     _vertCount += pts.size();
 
-    TF_FOR_ALL (itr, normals)
-    {
+    TF_FOR_ALL (itr, normals) {
       _normals.push_back(-(*itr)[0]);
       _normals.push_back(-(*itr)[1]);
       _normals.push_back(-(*itr)[2]);
@@ -1348,34 +1260,29 @@ bool UsdImagingGLLegacyEngine::TestIntersection(const GfMatrix4d &viewMatrix,
   // Use a separate drawTarget (framebuffer object) for each GL context
   // that uses this renderer, but the drawTargets can share attachments.
   GlfGLContextSharedPtr context = GlfGLContext::GetCurrentGLContext();
-  if (!TF_VERIFY(context))
-  {
+  if (!TF_VERIFY(context)) {
     TF_RUNTIME_ERROR("Invalid GL context");
     return false;
   }
 
-  if (GlfContextCaps::GetInstance().glVersion < 200)
-  {
+  if (GlfContextCaps::GetInstance().glVersion < 200) {
     TF_RUNTIME_ERROR("framebuffer object not supported");
     return false;
   }
 
   GfVec2i attachmentSize(width, height);
   GlfDrawTargetRefPtr drawTarget;
-  if (!TfMapLookup(_drawTargets, context, &drawTarget))
-  {
+  if (!TfMapLookup(_drawTargets, context, &drawTarget)) {
 
     // Create an instance for use with this GL context
     drawTarget = GlfDrawTarget::New(attachmentSize);
 
-    if (!_drawTargets.empty())
-    {
+    if (!_drawTargets.empty()) {
       // Share existing attachments
       drawTarget->Bind();
       drawTarget->CloneAttachments(_drawTargets.begin()->second);
       drawTarget->Unbind();
-    } else
-    {
+    } else {
       // Need to create initial attachments
       drawTarget->Bind();
       drawTarget->AddAttachment("primId", GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA8);
@@ -1385,10 +1292,9 @@ bool UsdImagingGLLegacyEngine::TestIntersection(const GfMatrix4d &viewMatrix,
     }
 
     // This is a good time to clean up any drawTargets no longer in use.
-    for (_DrawTargetPerContextMap::iterator it = _drawTargets.begin(); it != _drawTargets.end(); ++it)
-    {
-      if (!(it->first && it->first->IsValid()))
-      {
+    for (_DrawTargetPerContextMap::iterator it = _drawTargets.begin(); it != _drawTargets.end();
+         ++it) {
+      if (!(it->first && it->first->IsValid())) {
         _drawTargets.erase(it);
       }
     }
@@ -1397,14 +1303,14 @@ bool UsdImagingGLLegacyEngine::TestIntersection(const GfMatrix4d &viewMatrix,
   }
 
   // Resize if necessary
-  if (drawTarget->GetSize() != attachmentSize)
-  {
+  if (drawTarget->GetSize() != attachmentSize) {
     drawTarget->SetSize(attachmentSize);
   }
 
   drawTarget->Bind();
 
-  glPushAttrib(GL_VIEWPORT_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_TEXTURE_BIT);
+  glPushAttrib(GL_VIEWPORT_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
+               GL_TEXTURE_BIT);
 
   GLenum drawBuffers[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
   glDrawBuffers(2, drawBuffers);
@@ -1466,12 +1372,9 @@ bool UsdImagingGLLegacyEngine::TestIntersection(const GfMatrix4d &viewMatrix,
   GLF_POST_PENDING_GL_ERRORS();
 
   // Find the smallest value (nearest pixel) in the z buffer
-  for (int y = 0, i = 0; y < height; y++)
-  {
-    for (int x = 0; x < width; x++, i++)
-    {
-      if (depths[i] < zMin)
-      {
+  for (int y = 0, i = 0; y < height; y++) {
+    for (int x = 0; x < width; x++, i++) {
+      if (depths[i] < zMin) {
         xMin = x;
         yMin = y;
         zMin = depths[i];
@@ -1482,28 +1385,23 @@ bool UsdImagingGLLegacyEngine::TestIntersection(const GfMatrix4d &viewMatrix,
 
   bool didHit = (zMin < 1.0);
 
-  if (didHit)
-  {
+  if (didHit) {
     GfVec4i viewport = {0, 0, width, height};
 
     *outHitPoint = _UnProject(GfVec3d(xMin, yMin, zMin), viewMatrix, projectionMatrix, viewport);
 
-    if (outHitPrimPath)
-    {
+    if (outHitPrimPath) {
       int idIndex = zMinIndex * 4;
 
       int primIdVal = HdxPickTask::DecodeIDRenderColor(&primId[idIndex]);
       _PrimIDMap::const_iterator it = _primIDMap.find(primIdVal);
-      if (it != _primIDMap.end())
-      {
+      if (it != _primIDMap.end()) {
         *outHitPrimPath = it->second;
-      } else
-      {
+      } else {
         *outHitPrimPath = SdfPath();
       }
 
-      if (outHitInstanceIndex)
-      {
+      if (outHitInstanceIndex) {
         *outHitInstanceIndex = HdxPickTask::DecodeIDRenderColor(&instanceId[idIndex]);
       }
     }

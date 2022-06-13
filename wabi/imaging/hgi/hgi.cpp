@@ -62,9 +62,7 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<Hgi>();
 }
 
-Hgi::Hgi()
-  : _uniqueIdCounter(1)
-{}
+Hgi::Hgi() : _uniqueIdCounter(1) {}
 
 Hgi::~Hgi() = default;
 
@@ -72,8 +70,7 @@ void Hgi::SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
 {
   TRACE_FUNCTION();
 
-  if (cmds && TF_VERIFY(!cmds->IsSubmitted()))
-  {
+  if (cmds && TF_VERIFY(!cmds->IsSubmitted())) {
     _SubmitCmds(cmds, wait);
     cmds->_SetSubmitted();
   }
@@ -99,8 +96,7 @@ static Hgi *_MakeNewPlatformDefaultHgi()
   return nullptr;
 #endif
 
-  if (TfGetEnvSetting(HGI_ENABLE_VULKAN))
-  {
+  if (TfGetEnvSetting(HGI_ENABLE_VULKAN)) {
 #if defined(WITH_VULKAN)
     hgiType = "HgiVulkan";
 #else
@@ -108,8 +104,7 @@ static Hgi *_MakeNewPlatformDefaultHgi()
 #endif
   }
 
-  if (TfGetEnvSetting(HGI_ENABLE_DIRECTX))
-  {
+  if (TfGetEnvSetting(HGI_ENABLE_DIRECTX)) {
 #if defined(WITH_DIRECTX)
     hgiType = "HgiDX3D";
 #else
@@ -120,24 +115,23 @@ static Hgi *_MakeNewPlatformDefaultHgi()
   const TfType plugType = plugReg.FindDerivedTypeByName<Hgi>(hgiType);
 
   PlugPluginPtr plugin = plugReg.GetPluginForType(plugType);
-  if (!plugin || !plugin->Load())
-  {
+  if (!plugin || !plugin->Load()) {
     TF_CODING_ERROR("[PluginLoad] PlugPlugin could not be loaded for TfType '%s'\n",
                     plugType.GetTypeName().c_str());
     return nullptr;
   }
 
   HgiFactoryBase *factory = plugType.GetFactory<HgiFactoryBase>();
-  if (!factory)
-  {
-    TF_CODING_ERROR("[PluginLoad] Cannot manufacture type '%s' \n", plugType.GetTypeName().c_str());
+  if (!factory) {
+    TF_CODING_ERROR("[PluginLoad] Cannot manufacture type '%s' \n",
+                    plugType.GetTypeName().c_str());
     return nullptr;
   }
 
   Hgi *instance = factory->New();
-  if (!instance)
-  {
-    TF_CODING_ERROR("[PluginLoad] Cannot construct instance of type '%s'\n", plugType.GetTypeName().c_str());
+  if (!instance) {
+    TF_CODING_ERROR("[PluginLoad] Cannot construct instance of type '%s'\n",
+                    plugType.GetTypeName().c_str());
     return nullptr;
   }
 

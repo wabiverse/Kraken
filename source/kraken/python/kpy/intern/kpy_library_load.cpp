@@ -164,20 +164,21 @@ static PyTypeObject kpy_lib_Type = {
   NULL,
 };
 
-PyDoc_STRVAR(kpy_lib_load_doc,
-             ".. method:: load(filepath, link=False, relative=False, assets_only=False)\n"
-             "\n"
-             "   Returns a context manager which exposes 2 library objects on entering.\n"
-             "   Each object has attributes matching kpy.data which are lists of strings to be linked.\n"
-             "\n"
-             "   :arg filepath: The path to a blend file.\n"
-             "   :type filepath: string\n"
-             "   :arg link: When False reference to the original file is lost.\n"
-             "   :type link: bool\n"
-             "   :arg relative: When True the path is stored relative to the open blend file.\n"
-             "   :type relative: bool\n"
-             "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
-             "   :type assets_only: bool\n");
+PyDoc_STRVAR(
+  kpy_lib_load_doc,
+  ".. method:: load(filepath, link=False, relative=False, assets_only=False)\n"
+  "\n"
+  "   Returns a context manager which exposes 2 library objects on entering.\n"
+  "   Each object has attributes matching kpy.data which are lists of strings to be linked.\n"
+  "\n"
+  "   :arg filepath: The path to a blend file.\n"
+  "   :type filepath: string\n"
+  "   :arg link: When False reference to the original file is lost.\n"
+  "   :type link: bool\n"
+  "   :arg relative: When True the path is stored relative to the open blend file.\n"
+  "   :type relative: bool\n"
+  "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
+  "   :type assets_only: bool\n");
 static PyObject *kpy_lib_load(KPy_PropertyLUXO *self, PyObject *args, PyObject *kw)
 {
   Main *kmain_base = CTX_data_main(KPY_context_get());
@@ -197,8 +198,7 @@ static PyObject *kpy_lib_load(KPy_PropertyLUXO *self, PyObject *args, PyObject *
                                         PyC_ParseBool,
                                         &is_rel,
                                         PyC_ParseBool,
-                                        &use_assets_only))
-  {
+                                        &use_assets_only)) {
     return NULL;
   }
 
@@ -231,16 +231,16 @@ static PyObject *_kpy_names(KPy_Library *self, const SdfPath &prim)
 
   SdfLayerRefPtr layer = self->kr_handle->sdf_handle;
 
-  SdfLayer::TraversalFunction appendFunc = std::bind(&_AppendToPaths, paths, std::placeholders::_1);
+  SdfLayer::TraversalFunction appendFunc = std::bind(&_AppendToPaths,
+                                                     paths,
+                                                     std::placeholders::_1);
   layer->Traverse(prim, appendFunc);
 
   list = PyList_New(paths.size());
 
-  if (!paths.empty())
-  {
+  if (!paths.empty()) {
     int counter = 0;
-    UNIVERSE_FOR_ALL (sdf_path, paths)
-    {
+    UNIVERSE_FOR_ALL (sdf_path, paths) {
       PyList_SET_ITEM(list, counter, PyUnicode_FromString(CHARALL(sdf_path.GetName())));
       counter++;
     }
@@ -263,10 +263,8 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
 
   self->kr_handle = KLO_krakenhandle_from_file(self->abspath, &kr_reports);
 
-  if (self->kr_handle == NULL)
-  {
-    if (KPy_reports_to_error(&reports, PyExc_IOError, true) != -1)
-    {
+  if (self->kr_handle == NULL) {
+    if (KPy_reports_to_error(&reports, PyExc_IOError, true) != -1) {
       PyErr_Format(PyExc_IOError, "load: %s failed to open kraken project file", self->abspath);
     }
     return NULL;
@@ -274,8 +272,7 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
 
   SdfLayer::RootPrimsView prims = self->kr_handle->sdf_handle->GetRootPrims();
 
-  UNIVERSE_FOR_ALL (prim, prims)
-  {
+  UNIVERSE_FOR_ALL (prim, prims) {
     PyObject *str = PyUnicode_FromString(CHARALL(prim->GetName()));
     PyObject *item;
 
@@ -325,8 +322,7 @@ PyMethodDef KPY_library_load_method_def = {
 
 int KPY_library_load_type_ready(void)
 {
-  if (PyType_Ready(&kpy_lib_Type) < 0)
-  {
+  if (PyType_Ready(&kpy_lib_Type) < 0) {
     return -1;
   }
 

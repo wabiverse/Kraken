@@ -50,9 +50,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -69,12 +67,16 @@ namespace
                                            object defaultVal,
                                            bool writeSparsely)
   {
-    return self.CreateRiDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateRiDensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                    writeSparsely);
   }
 
-  static UsdAttribute _CreateRiInvertAttr(UsdRiRiLightFilterAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateRiInvertAttr(UsdRiRiLightFilterAPI &self,
+                                          object defaultVal,
+                                          bool writeSparsely)
   {
-    return self.CreateRiInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool), writeSparsely);
+    return self.CreateRiInvertAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                   writeSparsely);
   }
 
   static UsdAttribute _CreateRiIntensityAttr(UsdRiRiLightFilterAPI &self,
@@ -97,7 +99,8 @@ namespace
                                            object defaultVal,
                                            bool writeSparsely)
   {
-    return self.CreateRiDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateRiDiffuseAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                    writeSparsely);
   }
 
   static UsdAttribute _CreateRiSpecularAttr(UsdRiRiLightFilterAPI &self,
@@ -129,7 +132,9 @@ void wrapUsdRiRiLightFilterAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -196,7 +201,6 @@ void wrapUsdRiRiLightFilterAPI()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

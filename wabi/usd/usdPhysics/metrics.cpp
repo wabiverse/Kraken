@@ -42,8 +42,7 @@ constexpr double UsdPhysicsMassUnits::slugs;
 double UsdPhysicsGetStageKilogramsPerUnit(const UsdStageWeakPtr &stage)
 {
   double units = UsdPhysicsMassUnits::kilograms;
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid UsdStage");
     return units;
   }
@@ -54,8 +53,7 @@ double UsdPhysicsGetStageKilogramsPerUnit(const UsdStageWeakPtr &stage)
 
 bool UsdPhysicsStageHasAuthoredKilogramsPerUnit(const UsdStageWeakPtr &stage)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid UsdStage");
     return false;
   }
@@ -65,8 +63,7 @@ bool UsdPhysicsStageHasAuthoredKilogramsPerUnit(const UsdStageWeakPtr &stage)
 
 bool UsdPhysicsSetStageKilogramsPerUnit(const UsdStageWeakPtr &stage, double kilogramsPerUnit)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid UsdStage");
     return false;
   }
@@ -76,8 +73,7 @@ bool UsdPhysicsSetStageKilogramsPerUnit(const UsdStageWeakPtr &stage, double kil
 
 bool UsdPhysicsMassUnitsAre(double authoredUnits, double standardUnits, double epsilon)
 {
-  if (authoredUnits <= 0 || standardUnits <= 0)
-  {
+  if (authoredUnits <= 0 || standardUnits <= 0) {
     return false;
   }
 

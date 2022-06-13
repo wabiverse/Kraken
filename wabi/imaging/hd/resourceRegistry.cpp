@@ -26,11 +26,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdResourceRegistry::HdResourceRegistry()
-{}
+HdResourceRegistry::HdResourceRegistry() {}
 
-HdResourceRegistry::~HdResourceRegistry()
-{}
+HdResourceRegistry::~HdResourceRegistry() {}
 
 void HdResourceRegistry::GarbageCollect()
 {
@@ -58,18 +56,15 @@ void HdResourceRegistry::InvalidateShaderRegistry()
   // but the base registry has nothing to do.
 }
 
-void HdResourceRegistry::ReloadResource(TfToken const &resourceType, std::string const &path)
-{}
+void HdResourceRegistry::ReloadResource(TfToken const &resourceType, std::string const &path) {}
 
 VtDictionary HdResourceRegistry::GetResourceAllocation() const
 {
   return VtDictionary();
 }
 
-void HdResourceRegistry::_Commit()
-{}
+void HdResourceRegistry::_Commit() {}
 
-void HdResourceRegistry::_GarbageCollect()
-{}
+void HdResourceRegistry::_GarbageCollect() {}
 
 WABI_NAMESPACE_END

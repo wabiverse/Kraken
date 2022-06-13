@@ -46,28 +46,23 @@ HdPh_ShaderKey::ID HdPh_ShaderKey::ComputeHash() const
   TfToken const *GS = GetGS();
   TfToken const *FS = GetFS();
 
-  while (VS && (!VS->IsEmpty()))
-  {
+  while (VS && (!VS->IsEmpty())) {
     boost::hash_combine(hash, VS->Hash());
     ++VS;
   }
-  while (TCS && (!TCS->IsEmpty()))
-  {
+  while (TCS && (!TCS->IsEmpty())) {
     boost::hash_combine(hash, TCS->Hash());
     ++TCS;
   }
-  while (TES && (!TES->IsEmpty()))
-  {
+  while (TES && (!TES->IsEmpty())) {
     boost::hash_combine(hash, TES->Hash());
     ++TES;
   }
-  while (GS && (!GS->IsEmpty()))
-  {
+  while (GS && (!GS->IsEmpty())) {
     boost::hash_combine(hash, GS->Hash());
     ++GS;
   }
-  while (FS && (!FS->IsEmpty()))
-  {
+  while (FS && (!FS->IsEmpty())) {
     boost::hash_combine(hash, FS->Hash());
     ++FS;
   }
@@ -81,8 +76,7 @@ HdPh_ShaderKey::ID HdPh_ShaderKey::ComputeHash() const
   boost::hash_combine(hash, GetPrimitiveType());
   boost::hash_combine(hash, GetCullStyle());
   boost::hash_combine(hash, UseHardwareFaceCulling());
-  if (UseHardwareFaceCulling())
-  {
+  if (UseHardwareFaceCulling()) {
     boost::hash_combine(hash, HasMirroredTransform());
     boost::hash_combine(hash, IsDoubleSided());
   }
@@ -109,8 +103,7 @@ static std::string _JoinTokens(const char *stage, TfToken const *tokens, bool *f
      << "\"source\" : [";
 
   bool first = true;
-  while (!tokens->IsEmpty())
-  {
+  while (!tokens->IsEmpty()) {
     if (first == false)
       ss << ", ";
     ss << "\"" << tokens->GetText() << "\"";

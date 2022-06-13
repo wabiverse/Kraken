@@ -43,17 +43,18 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateXformOpOrderAttr(UsdGeomXformable &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateXformOpOrderAttr(UsdGeomXformable &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
-    return self.CreateXformOpOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
-                                       writeSparsely);
+    return self.CreateXformOpOrderAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdGeomXformable &self)
@@ -83,7 +84,9 @@ void wrapUsdGeomXformable()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -320,7 +323,8 @@ namespace
                      " GetResetXformStack() to be able to construct the local-to-world"
                      " transformation.")
 
-                .def("IsTransformationAffectedByAttrNamed", &This::IsTransformationAffectedByAttrNamed)
+                .def("IsTransformationAffectedByAttrNamed",
+                     &This::IsTransformationAffectedByAttrNamed)
                 .staticmethod("IsTransformationAffectedByAttrNamed");
   }
 

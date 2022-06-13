@@ -32,7 +32,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_REGISTRY_FUNCTION(TfDebug)
 {
-  TF_DEBUG_ENVIRONMENT_SYMBOL(KRAKEN_DEBUG_MSGBUS, "Show Kraken MsgBus messages for debugging purposes");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(KRAKEN_DEBUG_MSGBUS,
+                              "Show Kraken MsgBus messages for debugging purposes");
   TF_DEBUG_ENVIRONMENT_SYMBOL(KRAKEN_DEBUG_OPERATORS,
                               "Show Kraken Operator messages for debugging purposes");
 }

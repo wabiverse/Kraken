@@ -60,8 +60,7 @@ bool TfSafeOutputFile::IsOpenForUpdate() const
 
 FILE *TfSafeOutputFile::ReleaseUpdatedFile()
 {
-  if (!IsOpenForUpdate())
-  {
+  if (!IsOpenForUpdate()) {
     TF_CODING_ERROR(
       "Invalid output file (failed to open, or opened for "
       "replace)");
@@ -88,8 +87,7 @@ void TfSafeOutputFile::Close()
     return;
 
   std::string error;
-  if (!Tf_AtomicRenameFileOver(_tempFileName, _targetFileName, &error))
-  {
+  if (!Tf_AtomicRenameFileOver(_tempFileName, _targetFileName, &error)) {
     TF_RUNTIME_ERROR(error);
   }
 
@@ -99,8 +97,7 @@ void TfSafeOutputFile::Close()
 
 void TfSafeOutputFile::Discard()
 {
-  if (IsOpenForUpdate())
-  {
+  if (IsOpenForUpdate()) {
     TF_CODING_ERROR(
       "Invalid output file (failed to open, or opened for "
       "update)");
@@ -113,8 +110,7 @@ void TfSafeOutputFile::Discard()
   tempFileToRemove.swap(_tempFileName);
   Close();
 
-  if (!tempFileToRemove.empty())
-  {
+  if (!tempFileToRemove.empty()) {
     TfDeleteFile(tempFileToRemove);
   }
 }
@@ -124,8 +120,7 @@ TfSafeOutputFile TfSafeOutputFile::Update(std::string const &fileName)
   TfSafeOutputFile result;
   result._targetFileName = fileName;
   FILE *file = ArchOpenFile(fileName.c_str(), "rb+");
-  if (!file)
-  {
+  if (!file) {
     TF_RUNTIME_ERROR("Unable to open file '%s' for writing", fileName.c_str());
     return result;
   }
@@ -137,17 +132,18 @@ TfSafeOutputFile TfSafeOutputFile::Replace(std::string const &fileName)
 {
   TfSafeOutputFile result;
   std::string error;
-  int tmpFd = Tf_CreateSiblingTempFile(fileName, &result._targetFileName, &result._tempFileName, &error);
-  if (tmpFd == -1)
-  {
+  int tmpFd = Tf_CreateSiblingTempFile(fileName,
+                                       &result._targetFileName,
+                                       &result._tempFileName,
+                                       &error);
+  if (tmpFd == -1) {
     TF_RUNTIME_ERROR(error);
     return result;
   }
 
   // Obtain a FILE *.
   result._file = ArchFdOpen(tmpFd, "wb");
-  if (!result._file)
-  {
+  if (!result._file) {
     TF_RUNTIME_ERROR("Unable to obtain writable FILE pointer: %s", ArchStrerror(errno).c_str());
   }
 

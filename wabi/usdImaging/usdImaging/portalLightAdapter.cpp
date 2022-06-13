@@ -44,8 +44,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingPortalLightAdapter::~UsdImagingPortalLightAdapter()
-{}
+UsdImagingPortalLightAdapter::~UsdImagingPortalLightAdapter() {}
 
 bool UsdImagingPortalLightAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -60,7 +59,8 @@ SdfPath UsdImagingPortalLightAdapter::Populate(UsdPrim const &prim,
   return prim.GetPath();
 }
 
-void UsdImagingPortalLightAdapter::_RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index)
+void UsdImagingPortalLightAdapter::_RemovePrim(SdfPath const &cachePath,
+                                               UsdImagingIndexProxy *index)
 {
   TF_CODING_ERROR("Portal lights are not yet supported in USD imaging");
 }

@@ -86,6 +86,7 @@ namespace
   class _FileAnalyzer
   {
    public:
+
     // The asset remapping function's signature.
     // It takes a given asset path, the layer it was found in and a boolean
     // value. The bool is used to indicate whether a dependency must be skipped
@@ -101,7 +102,8 @@ namespace
 
     // Takes the asset path and the type of dependency it is and does some
     // arbitrary processing (like enumerating dependencies).
-    using ProcessAssetPathFunc = std::function<void(const std::string &assetPath, const _DepType &depType)>;
+    using ProcessAssetPathFunc =
+      std::function<void(const std::string &assetPath, const _DepType &depType)>;
 
     // Opens the file at \p resolvedFilePath and analyzes its external
     // dependencies.
@@ -123,16 +125,14 @@ namespace
       // If this file can be opened on a USD stage or referenced into a USD
       // stage via composition, then analyze the file, collect & update all
       // references. If not, return early.
-      if (!UsdStage::IsSupportedFile(_filePath))
-      {
+      if (!UsdStage::IsSupportedFile(_filePath)) {
         return;
       }
 
       TRACE_FUNCTION();
 
       _layer = SdfLayer::FindOrOpen(_filePath);
-      if (!_layer)
-      {
+      if (!_layer) {
         TF_WARN("Unable to open layer at path @%s@.", _filePath.c_str());
         return;
       }
@@ -151,8 +151,7 @@ namespace
         _remapPathFunc(remapPathFunc),
         _processPathFunc(processPathFunc)
     {
-      if (!_layer)
-      {
+      if (!_layer) {
         return;
       }
 
@@ -174,6 +173,7 @@ namespace
     }
 
    private:
+
     // Open the layer, updates references to point to relative or search paths
     // and accumulates all references.
     void _AnalyzeDependencies();
@@ -226,15 +226,14 @@ namespace
     ProcessAssetPathFunc _processPathFunc;
   };
 
-  std::string _FileAnalyzer::_ProcessDependency(const std::string &rawRefPath, const _DepType &depType)
+  std::string _FileAnalyzer::_ProcessDependency(const std::string &rawRefPath,
+                                                const _DepType &depType)
   {
-    if (_processPathFunc)
-    {
+    if (_processPathFunc) {
       _processPathFunc(rawRefPath, depType);
     }
 
-    if (_remapPathFunc)
-    {
+    if (_remapPathFunc) {
       return _remapPathFunc(rawRefPath, GetLayer(), /*skipDependency*/ false);
     }
 
@@ -245,35 +244,28 @@ namespace
 
   VtValue _FileAnalyzer::_UpdateAssetValue(const VtValue &val)
   {
-    if (val.IsHolding<SdfAssetPath>())
-    {
+    if (val.IsHolding<SdfAssetPath>()) {
       auto assetPath = val.UncheckedGet<SdfAssetPath>();
       std::string rawAssetPath = assetPath.GetAssetPath();
-      if (!rawAssetPath.empty())
-      {
+      if (!rawAssetPath.empty()) {
         return VtValue(SdfAssetPath(_ProcessDependency(rawAssetPath, _DepType::Reference)));
       }
-    } else if (val.IsHolding<VtArray<SdfAssetPath>>())
-    {
+    } else if (val.IsHolding<VtArray<SdfAssetPath>>()) {
       VtArray<SdfAssetPath> updatedVal;
-      for (const SdfAssetPath &assetPath : val.UncheckedGet<VtArray<SdfAssetPath>>())
-      {
+      for (const SdfAssetPath &assetPath : val.UncheckedGet<VtArray<SdfAssetPath>>()) {
         std::string rawAssetPath = assetPath.GetAssetPath();
-        if (!rawAssetPath.empty())
-        {
-          updatedVal.push_back(SdfAssetPath(_ProcessDependency(rawAssetPath, _DepType::Reference)));
-        } else
-        {
+        if (!rawAssetPath.empty()) {
+          updatedVal.push_back(
+            SdfAssetPath(_ProcessDependency(rawAssetPath, _DepType::Reference)));
+        } else {
           // Retain empty paths in the array.
           updatedVal.push_back(assetPath);
         }
       }
       return VtValue(updatedVal);
-    } else if (val.IsHolding<VtDictionary>())
-    {
+    } else if (val.IsHolding<VtDictionary>()) {
       VtDictionary updatedVal;
-      for (const auto &p : val.UncheckedGet<VtDictionary>())
-      {
+      for (const auto &p : val.UncheckedGet<VtDictionary>()) {
         updatedVal[p.first] = _UpdateAssetValue(p.second);
       }
       return VtValue(updatedVal);
@@ -286,31 +278,27 @@ namespace
   {
     const std::vector<std::string> subLayerPaths = _layer->GetSubLayerPaths();
 
-    if (_remapPathFunc)
-    {
+    if (_remapPathFunc) {
       std::vector<std::string> newSubLayerPaths;
       newSubLayerPaths.reserve(subLayerPaths.size());
-      for (auto &subLayer : subLayerPaths)
-      {
+      for (auto &subLayer : subLayerPaths) {
         newSubLayerPaths.push_back(_ProcessDependency(subLayer, _DepType::Sublayer));
       }
       _layer->SetSubLayerPaths(newSubLayerPaths);
-    } else
-    {
-      for (auto &subLayer : subLayerPaths)
-      {
+    } else {
+      for (auto &subLayer : subLayerPaths) {
         _ProcessDependency(subLayer, _DepType::Sublayer);
       }
     }
   }
 
   template<class RefOrPayloadType, _DepType DEP_TYPE>
-  boost::optional<RefOrPayloadType> _FileAnalyzer::_RemapRefOrPayload(const RefOrPayloadType &refOrPayload)
+  boost::optional<RefOrPayloadType> _FileAnalyzer::_RemapRefOrPayload(
+    const RefOrPayloadType &refOrPayload)
   {
     // If this is a local (or self) reference or payload, there's no asset path
     // to update.
-    if (refOrPayload.GetAssetPath().empty())
-    {
+    if (refOrPayload.GetAssetPath().empty()) {
       return refOrPayload;
     }
 
@@ -330,9 +318,10 @@ namespace
   void _FileAnalyzer::_ProcessPayloads(const SdfPrimSpecHandle &primSpec)
   {
     SdfPayloadsProxy payloadList = primSpec->GetPayloadList();
-    payloadList.ModifyItemEdits(std::bind(&_FileAnalyzer::_RemapRefOrPayload<SdfPayload, _DepType::Payload>,
-                                          this,
-                                          std::placeholders::_1));
+    payloadList.ModifyItemEdits(
+      std::bind(&_FileAnalyzer::_RemapRefOrPayload<SdfPayload, _DepType::Payload>,
+                this,
+                std::placeholders::_1));
   }
 
   void _FileAnalyzer::_ProcessProperties(const SdfPrimSpecHandle &primSpec)
@@ -350,24 +339,19 @@ namespace
     //
     const VtValue propertyNames = primSpec->GetField(SdfChildrenKeys->PropertyChildren);
 
-    if (propertyNames.IsHolding<vector<TfToken>>())
-    {
-      for (const auto &name : propertyNames.UncheckedGet<vector<TfToken>>())
-      {
+    if (propertyNames.IsHolding<vector<TfToken>>()) {
+      for (const auto &name : propertyNames.UncheckedGet<vector<TfToken>>()) {
         // For every property
         // Build an SdfPath to the property
         const SdfPath path = primSpec->GetPath().AppendProperty(name);
 
         // Check property metadata
-        for (const TfToken &infoKey : _layer->ListFields(path))
-        {
-          if (infoKey != SdfFieldKeys->Default && infoKey != SdfFieldKeys->TimeSamples)
-          {
+        for (const TfToken &infoKey : _layer->ListFields(path)) {
+          if (infoKey != SdfFieldKeys->Default && infoKey != SdfFieldKeys->TimeSamples) {
 
             VtValue value = _layer->GetField(path, infoKey);
             VtValue updatedValue = _UpdateAssetValue(value);
-            if (_remapPathFunc && value != updatedValue)
-            {
+            if (_remapPathFunc && value != updatedValue) {
               _layer->SetField(path, infoKey, updatedValue);
             }
           }
@@ -379,27 +363,22 @@ namespace
           continue;
 
         const TfToken typeName = vtTypeName.UncheckedGet<TfToken>();
-        if (typeName == SdfValueTypeNames->Asset || typeName == SdfValueTypeNames->AssetArray)
-        {
+        if (typeName == SdfValueTypeNames->Asset || typeName == SdfValueTypeNames->AssetArray) {
 
           // Check default value
           VtValue defValue = _layer->GetField(path, SdfFieldKeys->Default);
           VtValue updatedDefValue = _UpdateAssetValue(defValue);
-          if (_remapPathFunc && defValue != updatedDefValue)
-          {
+          if (_remapPathFunc && defValue != updatedDefValue) {
             _layer->SetField(path, SdfFieldKeys->Default, updatedDefValue);
           }
 
           // Check timeSample values
-          for (double t : _layer->ListTimeSamplesForPath(path))
-          {
+          for (double t : _layer->ListTimeSamplesForPath(path)) {
             VtValue timeSampleVal;
-            if (_layer->QueryTimeSample(path, t, &timeSampleVal))
-            {
+            if (_layer->QueryTimeSample(path, t, &timeSampleVal)) {
 
               VtValue updatedTimeSampleVal = _UpdateAssetValue(timeSampleVal);
-              if (_remapPathFunc && timeSampleVal != updatedTimeSampleVal)
-              {
+              if (_remapPathFunc && timeSampleVal != updatedTimeSampleVal) {
                 _layer->SetTimeSample(path, t, updatedTimeSampleVal);
               }
             }
@@ -411,14 +390,11 @@ namespace
 
   void _FileAnalyzer::_ProcessMetadata(const SdfPrimSpecHandle &primSpec)
   {
-    if (_refTypesToInclude == _ReferenceTypesToInclude::All)
-    {
-      for (const TfToken &infoKey : primSpec->GetMetaDataInfoKeys())
-      {
+    if (_refTypesToInclude == _ReferenceTypesToInclude::All) {
+      for (const TfToken &infoKey : primSpec->GetMetaDataInfoKeys()) {
         VtValue value = primSpec->GetInfo(infoKey);
         VtValue updatedValue = _UpdateAssetValue(value);
-        if (_remapPathFunc && value != updatedValue)
-        {
+        if (_remapPathFunc && value != updatedValue) {
           primSpec->SetInfo(infoKey, updatedValue);
         }
       }
@@ -428,35 +404,30 @@ namespace
     // containing one or more #'s. See
     // UsdClipsAPI::GetClipTemplateAssetPath for details.
     VtValue clipsValue = primSpec->GetInfo(UsdTokens->clips);
-    if (!clipsValue.IsEmpty() && clipsValue.IsHolding<VtDictionary>())
-    {
+    if (!clipsValue.IsEmpty() && clipsValue.IsHolding<VtDictionary>()) {
       const VtDictionary origClipsDict = clipsValue.UncheckedGet<VtDictionary>();
 
       // Create a copy of the clips dictionary, as we may have to modify it.
       VtDictionary clipsDict = origClipsDict;
-      for (auto &clipSetNameAndDict : clipsDict)
-      {
-        if (clipSetNameAndDict.second.IsHolding<VtDictionary>())
-        {
+      for (auto &clipSetNameAndDict : clipsDict) {
+        if (clipSetNameAndDict.second.IsHolding<VtDictionary>()) {
           VtDictionary clipDict = clipSetNameAndDict.second.UncheckedGet<VtDictionary>();
 
-          if (VtDictionaryIsHolding<std::string>(clipDict,
-                                                 UsdClipsAPIInfoKeys->templateAssetPath.GetString()))
-          {
+          if (VtDictionaryIsHolding<std::string>(
+                clipDict,
+                UsdClipsAPIInfoKeys->templateAssetPath.GetString())) {
             const std::string &templateAssetPath = VtDictionaryGet<std::string>(
               clipDict,
               UsdClipsAPIInfoKeys->templateAssetPath.GetString());
 
-            if (templateAssetPath.empty())
-            {
+            if (templateAssetPath.empty()) {
               continue;
             }
 
             // Remap templateAssetPath if there's a remap function and
             // update the clip dictionary.
             // This retains the #s in the templateAssetPath?
-            if (_remapPathFunc)
-            {
+            if (_remapPathFunc) {
               // Not adding a dependency on the templated asset path
               // since it can't be resolved by the resolver.
               clipDict[UsdClipsAPIInfoKeys->templateAssetPath] = VtValue(
@@ -471,18 +442,17 @@ namespace
             // This contains a '/' in the end.
             const std::string clipsDir = TfGetPathName(templateAssetPath);
             // Resolve clipsDir relative to this layer.
-            if (clipsDir.empty())
-            {
+            if (clipsDir.empty()) {
               TF_WARN("Invalid template asset path '%s'.", templateAssetPath.c_str());
               continue;
             }
-            const std::string clipsDirAssetPath = SdfComputeAssetPathRelativeToLayer(_layer, clipsDir);
+            const std::string clipsDirAssetPath = SdfComputeAssetPathRelativeToLayer(_layer,
+                                                                                     clipsDir);
 
             // We don't attempt to resolve the clips directory asset
             // path, since Ar does not support directory-path
             // resolution.
-            if (!TfIsDir(clipsDirAssetPath))
-            {
+            if (!TfIsDir(clipsDirAssetPath)) {
               TF_WARN(
                 "Clips directory '%s' is not a valid directory "
                 "on the filesystem.",
@@ -494,15 +464,16 @@ namespace
             std::string globPattern = TfStringCatPaths(clipsDirAssetPath,
                                                        TfStringReplace(clipsBaseName, "#", "*"));
             const std::vector<std::string> clipAssetRefs = TfGlob(globPattern);
-            for (auto &clipAsset : clipAssetRefs)
-            {
+            for (auto &clipAsset : clipAssetRefs) {
               // Reconstruct the raw, unresolved clip reference, for
               // which the dependency must be processed.
               //
               // clipsDir contains a '/' in the end, but
               // clipsDirAssetPath does not. Hence, add a '/' to
               // clipsDirAssetPath before doing the replace.
-              std::string rawClipRef = TfStringReplace(clipAsset, clipsDirAssetPath + '/', clipsDir);
+              std::string rawClipRef = TfStringReplace(clipAsset,
+                                                       clipsDirAssetPath + '/',
+                                                       clipsDir);
               _ProcessDependency(rawClipRef, _DepType::Reference);
             }
           }
@@ -510,8 +481,7 @@ namespace
       }
 
       // Update the clips dictionary only if it has been modified.
-      if (_remapPathFunc && clipsDict != origClipsDict)
-      {
+      if (_remapPathFunc && clipsDict != origClipsDict) {
         primSpec->SetInfo(UsdTokens->clips, VtValue(clipsDict));
       }
     }
@@ -520,9 +490,10 @@ namespace
   void _FileAnalyzer::_ProcessReferences(const SdfPrimSpecHandle &primSpec)
   {
     SdfReferencesProxy refList = primSpec->GetReferenceList();
-    refList.ModifyItemEdits(std::bind(&_FileAnalyzer::_RemapRefOrPayload<SdfReference, _DepType::Reference>,
-                                      this,
-                                      std::placeholders::_1));
+    refList.ModifyItemEdits(
+      std::bind(&_FileAnalyzer::_RemapRefOrPayload<SdfReference, _DepType::Reference>,
+                this,
+                std::placeholders::_1));
   }
 
   void _FileAnalyzer::_AnalyzeDependencies()
@@ -534,33 +505,28 @@ namespace
     std::stack<SdfPrimSpecHandle> dfs;
     dfs.push(_layer->GetPseudoRoot());
 
-    while (!dfs.empty())
-    {
+    while (!dfs.empty()) {
       SdfPrimSpecHandle curr = dfs.top();
       dfs.pop();
 
       // Metadata is processed even on the pseudoroot, which ensures
       // we process layer metadata properly.
       _ProcessMetadata(curr);
-      if (curr != _layer->GetPseudoRoot())
-      {
+      if (curr != _layer->GetPseudoRoot()) {
         _ProcessPayloads(curr);
         _ProcessProperties(curr);
         _ProcessReferences(curr);
       }
 
       // variants "children"
-      for (const SdfVariantSetsProxy::value_type &p : curr->GetVariantSets())
-      {
-        for (const SdfVariantSpecHandle &variantSpec : p.second->GetVariantList())
-        {
+      for (const SdfVariantSetsProxy::value_type &p : curr->GetVariantSets()) {
+        for (const SdfVariantSpecHandle &variantSpec : p.second->GetVariantList()) {
           dfs.push(variantSpec->GetPrimSpec());
         }
       }
 
       // children
-      for (const SdfPrimSpecHandle &child : curr->GetNameChildren())
-      {
+      for (const SdfPrimSpecHandle &child : curr->GetNameChildren()) {
         dfs.push(child);
       }
     }
@@ -569,10 +535,12 @@ namespace
   class _AssetLocalizer
   {
    public:
+
     using LayerAndDestPath = std::pair<SdfLayerRefPtr, std::string>;
     using SrcPathAndDestPath = std::pair<std::string, std::string>;
     using DestFilePathAndAnalyzer = std::pair<std::string, _FileAnalyzer>;
-    using LayerDependenciesMap = std::unordered_map<SdfLayerRefPtr, std::vector<std::string>, TfHash>;
+    using LayerDependenciesMap =
+      std::unordered_map<SdfLayerRefPtr, std::vector<std::string>, TfHash>;
 
     // Computes the given asset's dependencies recursively and determines
     // the information needed to localize the asset.
@@ -593,11 +561,12 @@ namespace
     // is skipped because it exists in the \p dependenciesToSkip list, none of
     // the transitive dependencies referenced by the skipped dependency are
     // processed and may be missing in the created package.
-    _AssetLocalizer(const SdfAssetPath &assetPath,
-                    const std::string &destDir,
-                    const std::string &firstLayerName = std::string(),
-                    const std::string &origRootFilePath = std::string(),
-                    const std::vector<std::string> &dependenciesToSkip = std::vector<std::string>())
+    _AssetLocalizer(
+      const SdfAssetPath &assetPath,
+      const std::string &destDir,
+      const std::string &firstLayerName = std::string(),
+      const std::string &origRootFilePath = std::string(),
+      const std::vector<std::string> &dependenciesToSkip = std::vector<std::string>())
     {
       _DirectoryRemapper dirRemapper;
 
@@ -608,44 +577,43 @@ namespace
       std::string rootFilePath = resolver.Resolve(assetPath.GetAssetPath());
 
       // Ensure that the resolved path is not empty.
-      if (rootFilePath.empty())
-      {
+      if (rootFilePath.empty()) {
         return;
       }
 
 #if AR_VERSION == 1
       // ... and can be localized to a physical location on disk.
-      if (!ArGetResolver().FetchToLocalResolvedPath(assetPath.GetAssetPath(), rootFilePath))
-      {
+      if (!ArGetResolver().FetchToLocalResolvedPath(assetPath.GetAssetPath(), rootFilePath)) {
         return;
       }
 #endif
 
-      const auto remapAssetPathFunc =
-        [&layerDependenciesMap, &dirRemapper, &destDir, &rootFilePath, &origRootFilePath, &firstLayerName](
-          const std::string &ap,
-          const SdfLayerRefPtr &layer,
-          bool skipDependency) {
-          if (!skipDependency)
-          {
-            layerDependenciesMap[layer].push_back(ap);
-          }
+      const auto remapAssetPathFunc = [&layerDependenciesMap,
+                                       &dirRemapper,
+                                       &destDir,
+                                       &rootFilePath,
+                                       &origRootFilePath,
+                                       &firstLayerName](const std::string &ap,
+                                                        const SdfLayerRefPtr &layer,
+                                                        bool skipDependency) {
+        if (!skipDependency) {
+          layerDependenciesMap[layer].push_back(ap);
+        }
 
-          // If destination directory is an empty string, skip any remapping.
-          // of asset paths.
-          if (destDir.empty())
-          {
-            return ap;
-          }
+        // If destination directory is an empty string, skip any remapping.
+        // of asset paths.
+        if (destDir.empty()) {
+          return ap;
+        }
 
-          return _RemapAssetPath(ap,
-                                 layer,
-                                 origRootFilePath,
-                                 rootFilePath,
-                                 firstLayerName,
-                                 &dirRemapper,
-                                 /* isRelativePath */ nullptr);
-        };
+        return _RemapAssetPath(ap,
+                               layer,
+                               origRootFilePath,
+                               rootFilePath,
+                               firstLayerName,
+                               &dirRemapper,
+                               /* isRelativePath */ nullptr);
+      };
 
       // Set of all seen files. We maintain this set to avoid redundant
       // dependency analysis of already seen files.
@@ -661,8 +629,7 @@ namespace
                                               remapAssetPathFunc));
       }
 
-      while (!filesToLocalize.empty())
-      {
+      while (!filesToLocalize.empty()) {
         // Copying data here since we're about to pop.
         const DestFilePathAndAnalyzer destFilePathAndAnalyzer = filesToLocalize.top();
         filesToLocalize.pop();
@@ -670,8 +637,7 @@ namespace
         auto &destFilePath = destFilePathAndAnalyzer.first;
         auto &fileAnalyzer = destFilePathAndAnalyzer.second;
 
-        if (!fileAnalyzer.GetLayer())
-        {
+        if (!fileAnalyzer.GetLayer()) {
           _fileCopyMap.emplace_back(fileAnalyzer.GetFilePath(), destFilePath);
           continue;
         }
@@ -680,31 +646,29 @@ namespace
 
         const auto &layerDepIt = layerDependenciesMap.find(fileAnalyzer.GetLayer());
 
-        if (layerDepIt == _layerDependenciesMap.end())
-        {
+        if (layerDepIt == _layerDependenciesMap.end()) {
           // The layer has no external dependencies.
           continue;
         }
 
-        for (std::string ref : layerDepIt->second)
-        {
+        for (std::string ref : layerDepIt->second) {
           // If this is a package-relative path, then simply copy the
           // package over.
           // Note: recursive search for dependencies ends here.
           // This is because we don't want to be modifying packaged
           // assets during asset isolation or archival.
           // XXX: We may want to reconsider this approach in the future.
-          if (ArIsPackageRelativePath(ref))
-          {
+          if (ArIsPackageRelativePath(ref)) {
             ref = ArSplitPackageRelativePathOuter(ref).first;
           }
 
-          const std::string refAssetPath = SdfComputeAssetPathRelativeToLayer(fileAnalyzer.GetLayer(), ref);
+          const std::string refAssetPath = SdfComputeAssetPathRelativeToLayer(
+            fileAnalyzer.GetLayer(),
+            ref);
 
           std::string resolvedRefFilePath = resolver.Resolve(refAssetPath);
 
-          if (resolvedRefFilePath.empty())
-          {
+          if (resolvedRefFilePath.empty()) {
             TF_WARN(
               "Failed to resolve reference @%s@ with computed "
               "asset path @%s@ found in layer @%s@.",
@@ -719,8 +683,7 @@ namespace
 #if AR_VERSION == 1
           // Ensure that the resolved path can be fetched to a physical
           // location on disk.
-          if (!ArGetResolver().FetchToLocalResolvedPath(refAssetPath, resolvedRefFilePath))
-          {
+          if (!ArGetResolver().FetchToLocalResolvedPath(refAssetPath, resolvedRefFilePath)) {
             TF_WARN(
               "Failed to fetch-to-local resolved path for asset "
               "@%s@ : '%s'. Skipping dependency.",
@@ -731,24 +694,22 @@ namespace
 #endif
 
           // Check if this dependency must skipped.
-          if (std::find(dependenciesToSkip.begin(), dependenciesToSkip.end(), resolvedRefFilePath) !=
-              dependenciesToSkip.end())
-          {
+          if (std::find(dependenciesToSkip.begin(),
+                        dependenciesToSkip.end(),
+                        resolvedRefFilePath) != dependenciesToSkip.end()) {
             continue;
           }
 
           // Given the way our remap function (_RemapAssetPath) works, we
           // should only have to copy every resolved file once during
           // localization.
-          if (!seenFiles.insert(resolvedRefFilePath).second)
-          {
+          if (!seenFiles.insert(resolvedRefFilePath).second) {
             continue;
           }
 
           // XXX: We don't localize directory references. Should we copy
           // the entire directory over?
-          if (TfIsDir(resolvedRefFilePath))
-          {
+          if (TfIsDir(resolvedRefFilePath)) {
             continue;
           }
 
@@ -767,10 +728,11 @@ namespace
           const std::string destDirForRef = isRelativePath ? TfGetPathName(destFilePath) : destDir;
           const std::string destFilePathForRef = TfStringCatPaths(destDirForRef, remappedRef);
 
-          filesToLocalize.emplace(destFilePathForRef,
-                                  _FileAnalyzer(resolvedRefFilePath,
-                                                /* refTypesToInclude */ _ReferenceTypesToInclude::All,
-                                                remapAssetPathFunc));
+          filesToLocalize.emplace(
+            destFilePathForRef,
+            _FileAnalyzer(resolvedRefFilePath,
+                          /* refTypesToInclude */ _ReferenceTypesToInclude::All,
+                          remapAssetPathFunc));
         }
       }
     }
@@ -796,6 +758,7 @@ namespace
     }
 
    private:
+
     // This will contain a mapping of SdfLayerRefPtr's mapped to their
     // desination path inside the destination directory.
     std::vector<LayerAndDestPath> _layerExportMap;
@@ -815,9 +778,8 @@ namespace
     class _DirectoryRemapper
     {
      public:
-      _DirectoryRemapper()
-        : _nextDirectoryNum(0)
-      {}
+
+      _DirectoryRemapper() : _nextDirectoryNum(0) {}
 
       // Remap the given file path by replacing the directory with a
       // unique, artifically generated name. The generated directory name
@@ -825,23 +787,21 @@ namespace
       // subsequent call to Remap.
       std::string Remap(const std::string &filePath)
       {
-        if (ArIsPackageRelativePath(filePath))
-        {
-          std::pair<std::string, std::string> packagePath = ArSplitPackageRelativePathOuter(filePath);
+        if (ArIsPackageRelativePath(filePath)) {
+          std::pair<std::string, std::string> packagePath = ArSplitPackageRelativePathOuter(
+            filePath);
           return ArJoinPackageRelativePath(Remap(packagePath.first), packagePath.second);
         }
 
         const std::string pathName = TfGetPathName(filePath);
-        if (pathName.empty())
-        {
+        if (pathName.empty()) {
           return filePath;
         }
 
         const std::string baseName = TfGetBaseName(filePath);
 
         auto insertStatus = _oldToNewDirectory.insert({pathName, ""});
-        if (insertStatus.second)
-        {
+        if (insertStatus.second) {
           insertStatus.first->second = TfStringPrintf("%zu", _nextDirectoryNum++);
         }
 
@@ -849,6 +809,7 @@ namespace
       }
 
      private:
+
       size_t _nextDirectoryNum;
       std::unordered_map<std::string, std::string> _oldToNewDirectory;
     };
@@ -899,19 +860,16 @@ namespace
 #endif
 
     // Return relative paths unmodified.
-    if (isRelativePathOut)
-    {
+    if (isRelativePathOut) {
       *isRelativePathOut = isRelativePath;
     }
 
-    if (isRelativePath)
-    {
+    if (isRelativePath) {
       return refPath;
     }
 
     std::string result = refPath;
-    if (isContextDependentPath)
-    {
+    if (isContextDependentPath) {
       // Absolutize the search path, to avoid collisions resulting from the
       // same search path resolving to different paths in different resolver
       // contexts.
@@ -925,11 +883,9 @@ namespace
       resolveOk = resolveOk && resolver.FetchToLocalResolvedPath(refAssetPath, refFilePath);
 #endif
 
-      if (resolveOk)
-      {
+      if (resolveOk) {
         result = refFilePath;
-      } else
-      {
+      } else {
         // Failed to resolve, hence retain the reference as is.
         result = refAssetPath;
       }
@@ -951,26 +907,24 @@ namespace
     bool resultPointsToRoot = ((result == rootFilePath) || (result == origRootFilePath));
     // If this is a self-reference, then remap to a relative path that points
     // to the file itself.
-    if (result == layerPath)
-    {
+    if (result == layerPath) {
       // If this is a self-reference in the root layer and we're renaming the
       // root layer, simply set the reference path to point to the renamed
       // root layer.
-      return resultPointsToRoot && !firstLayerName.empty() ? firstLayerName : TfGetBaseName(result);
+      return resultPointsToRoot && !firstLayerName.empty() ? firstLayerName :
+                                                             TfGetBaseName(result);
     }
 
     // References to the original (unflattened) root file need to be remapped
     // to point to the new root file.
-    if (resultPointsToRoot && layerPath == rootFilePath)
-    {
+    if (resultPointsToRoot && layerPath == rootFilePath) {
       return !firstLayerName.empty() ? firstLayerName : TfGetBaseName(result);
     }
 
     // Result is now an absolute or a repository path. Simply strip off the
     // leading slashes to make it relative.
     // Strip off any drive letters.
-    if (result.size() >= 2 && result[1] == ':')
-    {
+    if (result.size() >= 2 && result[1] == ':') {
       result.erase(0, 2);
     }
 
@@ -986,13 +940,13 @@ namespace
 
   // Returns a relative path for fullDestPath, relative to the given destination
   // directory (destDir).
-  static std::string _GetDestRelativePath(const std::string &fullDestPath, const std::string &destDir)
+  static std::string _GetDestRelativePath(const std::string &fullDestPath,
+                                          const std::string &destDir)
   {
     std::string destPath = fullDestPath;
     // fullDestPath won't start with destDir if destDir is a relative path,
     // relative to CWD.
-    if (TfStringStartsWith(destPath, destDir))
-    {
+    if (TfStringStartsWith(destPath, destDir)) {
       destPath = destPath.substr(destDir.length());
     }
     return destPath;
@@ -1008,21 +962,19 @@ static void _ExtractExternalReferences(const std::string &filePath,
 {
   // We only care about knowing what the dependencies are. Hence, set
   // remapPathFunc to empty.
-  _FileAnalyzer(filePath,
-                refTypesToInclude,
-                /*remapPathFunc*/ {},
-                [&subLayers, &references, &payloads](const std::string &assetPath, const _DepType &depType) {
-                  if (depType == _DepType::Reference)
-                  {
-                    references->push_back(assetPath);
-                  } else if (depType == _DepType::Sublayer)
-                  {
-                    subLayers->push_back(assetPath);
-                  } else if (depType == _DepType::Payload)
-                  {
-                    payloads->push_back(assetPath);
-                  }
-                });
+  _FileAnalyzer(
+    filePath,
+    refTypesToInclude,
+    /*remapPathFunc*/ {},
+    [&subLayers, &references, &payloads](const std::string &assetPath, const _DepType &depType) {
+      if (depType == _DepType::Reference) {
+        references->push_back(assetPath);
+      } else if (depType == _DepType::Sublayer) {
+        subLayers->push_back(assetPath);
+      } else if (depType == _DepType::Payload) {
+        payloads->push_back(assetPath);
+      }
+    });
 
   // Sort and remove duplicates
   std::sort(references->begin(), references->end());
@@ -1041,7 +993,11 @@ void UsdUtilsExtractExternalReferences(const std::string &filePath,
                                        std::vector<std::string> *payloads)
 {
   TRACE_FUNCTION();
-  _ExtractExternalReferences(filePath, _ReferenceTypesToInclude::All, subLayers, references, payloads);
+  _ExtractExternalReferences(filePath,
+                             _ReferenceTypesToInclude::All,
+                             subLayers,
+                             references,
+                             payloads);
 }
 
 static bool _CreateNewUsdzPackage(
@@ -1060,13 +1016,16 @@ static bool _CreateNewUsdzPackage(
 
   std::string destDir = TfGetPathName(usdzFilePath);
   destDir = destDir.empty() ? "./" : destDir;
-  _AssetLocalizer localizer(assetPath, destDir, firstLayerName, origRootFilePath, dependenciesToSkip);
+  _AssetLocalizer localizer(assetPath,
+                            destDir,
+                            firstLayerName,
+                            origRootFilePath,
+                            dependenciesToSkip);
 
   auto &layerExportMap = localizer.GetLayerExportMap();
   auto &fileCopyMap = localizer.GetFileCopyMap();
 
-  if (layerExportMap.empty() && fileCopyMap.empty())
-  {
+  if (layerExportMap.empty() && fileCopyMap.empty()) {
     return false;
   }
 
@@ -1085,21 +1044,18 @@ static bool _CreateNewUsdzPackage(
 
   bool firstLayer = true;
   bool success = true;
-  for (auto &layerAndDestPath : layerExportMap)
-  {
+  for (auto &layerAndDestPath : layerExportMap) {
     const auto &layer = layerAndDestPath.first;
     std::string destPath = _GetDestRelativePath(layerAndDestPath.second, destDir);
 
     // Change the first layer's name if requested.
-    if (firstLayer && !firstLayerName.empty())
-    {
+    if (firstLayer && !firstLayerName.empty()) {
       const std::string pathName = TfGetPathName(destPath);
       destPath = TfStringCatPaths(pathName, firstLayerName);
       firstLayer = false;
     }
 
-    if (!packagedFiles.insert(destPath).second)
-    {
+    if (!packagedFiles.insert(destPath).second) {
       TF_WARN(
         "A file already exists at path \"%s\" in the package. "
         "Skipping export of layer @%s@.",
@@ -1116,20 +1072,16 @@ static bool _CreateNewUsdzPackage(
     // If the layer is a package or if it's inside a package, copy the
     // entire package. We could extract the package and copy only the
     // dependencies, but this could get very complicated.
-    if (layer->GetFileFormat()->IsPackage() || ArIsPackageRelativePath(layer->GetIdentifier()))
-    {
+    if (layer->GetFileFormat()->IsPackage() || ArIsPackageRelativePath(layer->GetIdentifier())) {
       std::string packagePath = ArSplitPackageRelativePathOuter(layer->GetRealPath()).first;
       std::string destPackagePath = ArSplitPackageRelativePathOuter(destPath).first;
-      if (!packagePath.empty())
-      {
+      if (!packagePath.empty()) {
         std::string inArchivePath = writer.AddFile(packagePath, destPackagePath);
-        if (inArchivePath.empty())
-        {
+        if (inArchivePath.empty()) {
           success = false;
         }
       }
-    } else if (!layer->IsDirty() && extensionsMatch(layer->GetRealPath(), destPath))
-    {
+    } else if (!layer->IsDirty() && extensionsMatch(layer->GetRealPath(), destPath)) {
       // If the layer hasn't been modified from its persistent
       // representation and if its extension isn't changing in the
       // package, then simply copy it over from its real-path (i.e.
@@ -1137,12 +1089,10 @@ static bool _CreateNewUsdzPackage(
       // file (which will be lost if we were to export all layers before
       // adding them to to the package).
       std::string inArchivePath = writer.AddFile(layer->GetRealPath(), destPath);
-      if (inArchivePath.empty())
-      {
+      if (inArchivePath.empty()) {
         success = false;
       }
-    } else
-    {
+    } else {
       // If the layer has been modified or needs to be modified, then we
       // need to export it to a temporary file before adding it to the
       // package.
@@ -1151,8 +1101,7 @@ static bool _CreateNewUsdzPackage(
       const SdfFileFormatConstPtr fileFormat = SdfFileFormat::FindByExtension(
         SdfFileFormat::GetFileExtension(destPath));
 
-      if (TfDynamic_cast<UsdUsdFileFormatConstPtr>(fileFormat))
-      {
+      if (TfDynamic_cast<UsdUsdFileFormatConstPtr>(fileFormat)) {
         args[UsdUsdFileFormatTokens->FormatArg] = UsdUsdFileFormat::GetUnderlyingFormatForLayer(
           *get_pointer(layer));
       }
@@ -1162,8 +1111,7 @@ static bool _CreateNewUsdzPackage(
 
       std::string inArchivePath = writer.AddFile(tmpLayerExportPath, destPath);
 
-      if (inArchivePath.empty())
-      {
+      if (inArchivePath.empty()) {
         // XXX: Should we discard the usdz file and return early here?
         TF_WARN(
           "Failed to add temporary layer at '%s' to the package "
@@ -1171,8 +1119,7 @@ static bool _CreateNewUsdzPackage(
           tmpLayerExportPath.c_str(),
           usdzFilePath.c_str());
         success = false;
-      } else
-      {
+      } else {
         // The file has been added to the package successfully. We can
         // delete it now.
         TfDeleteFile(tmpLayerExportPath);
@@ -1180,15 +1127,13 @@ static bool _CreateNewUsdzPackage(
     }
   }
 
-  for (auto &fileSrcAndDestPath : fileCopyMap)
-  {
+  for (auto &fileSrcAndDestPath : fileCopyMap) {
     const std::string &srcPath = fileSrcAndDestPath.first;
     const std::string destPath = _GetDestRelativePath(fileSrcAndDestPath.second, destDir);
     TF_DEBUG(USDUTILS_CREATE_USDZ_PACKAGE)
       .Msg(".. adding file '%s' to package at path '%s'.\n", srcPath.c_str(), destPath.c_str());
 
-    if (!packagedFiles.insert(destPath).second)
-    {
+    if (!packagedFiles.insert(destPath).second) {
       TF_WARN(
         "A file already exists at path \"%s\" in the package. "
         "Skipping copy of file \"%s\".",
@@ -1200,23 +1145,18 @@ static bool _CreateNewUsdzPackage(
     // If the file is a package or inside a package, copy the
     // entire package. We could extract the package and copy only the
     // dependencies, but this could get very complicated.
-    if (ArIsPackageRelativePath(destPath))
-    {
+    if (ArIsPackageRelativePath(destPath)) {
       std::string packagePath = ArSplitPackageRelativePathOuter(srcPath).first;
       std::string destPackagePath = ArSplitPackageRelativePathOuter(destPath).first;
-      if (!packagePath.empty())
-      {
+      if (!packagePath.empty()) {
         std::string inArchivePath = writer.AddFile(packagePath, destPackagePath);
-        if (inArchivePath.empty())
-        {
+        if (inArchivePath.empty()) {
           success = false;
         }
       }
-    } else
-    {
+    } else {
       std::string inArchivePath = writer.AddFile(srcPath, destPath);
-      if (inArchivePath.empty())
-      {
+      if (inArchivePath.empty()) {
         // XXX: Should we discard the usdz file and return early here?
         TF_WARN("Failed to add file '%s' to the package at path '%s'.",
                 srcPath.c_str(),
@@ -1245,8 +1185,7 @@ bool UsdUtilsCreateNewARKitUsdzPackage(const SdfAssetPath &assetPath,
   std::string usdzFilePath = ArchNormPath(inUsdzFilePath);
 
   const std::string resolvedPath = resolver.Resolve(assetPath.GetAssetPath());
-  if (resolvedPath.empty())
-  {
+  if (resolvedPath.empty()) {
     return false;
   }
 
@@ -1264,8 +1203,7 @@ bool UsdUtilsCreateNewARKitUsdzPackage(const SdfAssetPath &assetPath,
                                                         firstLayerName;
   const std::string &fileExt = resolver.GetExtension(targetBaseName);
   bool renamingRootLayer = false;
-  if (fileExt != UsdUsdcFileFormatTokens->Id)
-  {
+  if (fileExt != UsdUsdcFileFormatTokens->Id) {
     renamingRootLayer = true;
     targetBaseName = targetBaseName.substr(0, targetBaseName.rfind(".") + 1) +
                      UsdUsdcFileFormatTokens->Id.GetString();
@@ -1273,17 +1211,14 @@ bool UsdUtilsCreateNewARKitUsdzPackage(const SdfAssetPath &assetPath,
 
   // If there are no external dependencies needed for composition, we can
   // invoke the regular packaging function.
-  if (sublayers.empty() && references.empty() && payloads.empty())
-  {
-    if (renamingRootLayer)
-    {
+  if (sublayers.empty() && references.empty() && payloads.empty()) {
+    if (renamingRootLayer) {
       return _CreateNewUsdzPackage(assetPath,
                                    usdzFilePath,
                                    /*firstLayerName*/ targetBaseName,
                                    /* origRootFilePath*/ resolvedPath,
                                    /* dependenciesToSkip */ {resolvedPath});
-    } else
-    {
+    } else {
       return _CreateNewUsdzPackage(assetPath,
                                    usdzFilePath,
                                    /*firstLayerName*/ targetBaseName,
@@ -1309,8 +1244,7 @@ bool UsdUtilsCreateNewARKitUsdzPackage(const SdfAssetPath &assetPath,
       resolvedPath.c_str(),
       tmpFileName.c_str());
 
-  if (!usdStage->Export(tmpFileName, /*addSourceFileComment*/ false))
-  {
+  if (!usdStage->Export(tmpFileName, /*addSourceFileComment*/ false)) {
     TF_WARN("Failed to flatten and export the USD stage '%s'.", UsdDescribe(usdStage).c_str());
     return false;
   }
@@ -1321,11 +1255,9 @@ bool UsdUtilsCreateNewARKitUsdzPackage(const SdfAssetPath &assetPath,
                                        /* origRootFilePath*/ resolvedPath,
                                        /*dependenciesToSkip*/ {resolvedPath});
 
-  if (success)
-  {
+  if (success) {
     TfDeleteFile(tmpFileName);
-  } else
-  {
+  } else {
     TF_WARN(
       "Failed to create a .usdz package from temporary, flattened "
       "layer '%s'.",
@@ -1353,13 +1285,11 @@ bool UsdUtilsComputeAllDependencies(const SdfAssetPath &assetPath,
   layers->reserve(localizer.GetLayerExportMap().size());
   assets->reserve(localizer.GetFileCopyMap().size());
 
-  for (auto &layerAndDestPath : localizer.GetLayerExportMap())
-  {
+  for (auto &layerAndDestPath : localizer.GetLayerExportMap()) {
     layers->push_back(layerAndDestPath.first);
   }
 
-  for (auto &srcAndDestPath : localizer.GetFileCopyMap())
-  {
+  for (auto &srcAndDestPath : localizer.GetFileCopyMap()) {
     assets->push_back(srcAndDestPath.first);
   }
 
@@ -1369,13 +1299,15 @@ bool UsdUtilsComputeAllDependencies(const SdfAssetPath &assetPath,
   return !layers->empty() || !assets->empty();
 }
 
-void UsdUtilsModifyAssetPaths(const SdfLayerHandle &layer, const UsdUtilsModifyAssetPathFn &modifyFn)
+void UsdUtilsModifyAssetPaths(const SdfLayerHandle &layer,
+                              const UsdUtilsModifyAssetPathFn &modifyFn)
 {
-  _FileAnalyzer(layer,
-                _ReferenceTypesToInclude::All,
-                [&modifyFn](const std::string &assetPath, const SdfLayerRefPtr &layer, bool skipDep) {
-                  return modifyFn(assetPath);
-                });
+  _FileAnalyzer(
+    layer,
+    _ReferenceTypesToInclude::All,
+    [&modifyFn](const std::string &assetPath, const SdfLayerRefPtr &layer, bool skipDep) {
+      return modifyFn(assetPath);
+    });
 }
 
 WABI_NAMESPACE_END

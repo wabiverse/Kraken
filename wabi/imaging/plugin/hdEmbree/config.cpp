@@ -78,10 +78,10 @@ HdEmbreeConfig::HdEmbreeConfig()
   ambientOcclusionSamples = std::max(0, TfGetEnvSetting(HDEMBREE_AMBIENT_OCCLUSION_SAMPLES));
   jitterCamera = (TfGetEnvSetting(HDEMBREE_JITTER_CAMERA) > 0);
   useFaceColors = (TfGetEnvSetting(HDEMBREE_USE_FACE_COLORS) > 0);
-  cameraLightIntensity = (std::max(100, TfGetEnvSetting(HDEMBREE_CAMERA_LIGHT_INTENSITY)) / 100.0f);
+  cameraLightIntensity = (std::max(100, TfGetEnvSetting(HDEMBREE_CAMERA_LIGHT_INTENSITY)) /
+                          100.0f);
 
-  if (TfGetEnvSetting(HDEMBREE_PRINT_CONFIGURATION) > 0)
-  {
+  if (TfGetEnvSetting(HDEMBREE_PRINT_CONFIGURATION) > 0) {
     std::cout << "HdEmbree Configuration: \n"
               << "  samplesToConvergence       = " << samplesToConvergence << "\n"
               << "  tileSize                   = " << tileSize << "\n"

@@ -71,10 +71,13 @@ void wrapLayerTree()
     .def(TfMakePyConstructor(&_NewEmpty))
     .def(TfMakePyConstructor(&_NewNoOffset))
     .def(TfMakePyConstructor(&_New))
-    .add_property("layer", make_function(&SdfLayerTree::GetLayer, return_value_policy<return_by_value>()))
-    .add_property("offset", make_function(&SdfLayerTree::GetOffset, return_value_policy<return_by_value>()))
-    .add_property("childTrees",
-                  make_function(&SdfLayerTree::GetChildTrees, return_value_policy<TfPySequenceToList>()));
+    .add_property("layer",
+                  make_function(&SdfLayerTree::GetLayer, return_value_policy<return_by_value>()))
+    .add_property("offset",
+                  make_function(&SdfLayerTree::GetOffset, return_value_policy<return_by_value>()))
+    .add_property(
+      "childTrees",
+      make_function(&SdfLayerTree::GetChildTrees, return_value_policy<TfPySequenceToList>()));
 }
 
 TF_REFPTR_CONST_VOLATILE_GET(SdfLayerTree)

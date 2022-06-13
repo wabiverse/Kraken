@@ -39,19 +39,18 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPrman_Points::HdPrman_Points(SdfPath const &id)
-  : BASE(id)
-{}
+HdPrman_Points::HdPrman_Points(SdfPath const &id) : BASE(id) {}
 
 HdDirtyBits HdPrman_Points::GetInitialDirtyBitsMask() const
 {
   // The initial dirty bits control what data is available on the first
   // run through _PopulateRtPoints(), so it should list every data item
   // that _PopluateRtPoints requests.
-  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyTransform |
-             HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyPrimvar |
-             HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyWidths |
-             HdChangeTracker::DirtyMaterialId | HdChangeTracker::DirtyInstancer;
+  int mask = HdChangeTracker::Clean | HdChangeTracker::DirtyPoints |
+             HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyVisibility |
+             HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyNormals |
+             HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyMaterialId |
+             HdChangeTracker::DirtyInstancer;
 
   return (HdDirtyBits)mask;
 }
@@ -75,7 +74,13 @@ RtPrimVarList HdPrman_Points::_ConvertGeometry(HdPrman_Context *context,
 
   *primType = RixStr.k_Ri_Points;
 
-  HdPrman_ConvertPrimvars(sceneDelegate, id, primvars, 1, points.size(), points.size(), points.size());
+  HdPrman_ConvertPrimvars(sceneDelegate,
+                          id,
+                          primvars,
+                          1,
+                          points.size(),
+                          points.size(),
+                          points.size());
   return primvars;
 }
 

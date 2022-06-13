@@ -136,12 +136,12 @@ void GfCamera::SetPerspectiveFromAspectRatioAndFieldOfView(float aspectRatio,
   _verticalAperture = horizontalAperture / (aspectRatio != 0.0 ? aspectRatio : 1.0);
 
   // Pick the right dimension based on the direction parameter
-  const float aperture = (direction == GfCamera::FOVHorizontal) ? _horizontalAperture : _verticalAperture;
+  const float aperture = (direction == GfCamera::FOVHorizontal) ? _horizontalAperture :
+                                                                  _verticalAperture;
   // Compute tangent for field of view
   const float tanValue = tan(0.5 * GfDegreesToRadians(fieldOfView));
 
-  if (tanValue == 0)
-  {
+  if (tanValue == 0) {
     // To avoid division by zero, just set default value
     _focalLength = 50.0;
     return;
@@ -162,19 +162,15 @@ void GfCamera::SetOrthographicFromAspectRatioAndSize(float aspectRatio,
   _focalLength = 50.0;
 
   // Set horizontal and vertial aperture
-  if (direction == FOVHorizontal)
-  {
+  if (direction == FOVHorizontal) {
     // We are given the width, determine height by dividing by aspect ratio
     _horizontalAperture = orthographicSize / GfCamera::APERTURE_UNIT;
-    if (aspectRatio > 0.0)
-    {
+    if (aspectRatio > 0.0) {
       _verticalAperture = _horizontalAperture / aspectRatio;
-    } else
-    {
+    } else {
       _verticalAperture = _horizontalAperture;
     }
-  } else
-  {
+  } else {
     // We are given the height, determine the width by multiplying
     _verticalAperture = orthographicSize / GfCamera::APERTURE_UNIT;
     _horizontalAperture = _verticalAperture * aspectRatio;
@@ -189,11 +185,9 @@ void GfCamera::SetFromViewAndProjectionMatrix(const GfMatrix4d &viewMatrix,
 
   _focalLength = focalLength;
 
-  if (projMatrix[2][3] < -0.5)
-  {
+  if (projMatrix[2][3] < -0.5) {
     // Use !(a<b) rather than a>=b so that NaN is caught.
-    if (!(fabs(projMatrix[2][3] - (-1.0)) < 1e-6))
-    {
+    if (!(fabs(projMatrix[2][3] - (-1.0)) < 1e-6)) {
       TF_WARN(
         "GfCamera: Given projection matrix does not appear to be "
         "valid perspective matrix.");
@@ -209,10 +203,8 @@ void GfCamera::SetFromViewAndProjectionMatrix(const GfMatrix4d &viewMatrix,
     _verticalApertureOffset = 0.5 * _verticalAperture * projMatrix[2][1];
     _clippingRange = GfRange1f(projMatrix[3][2] / (projMatrix[2][2] - 1.0),
                                projMatrix[3][2] / (projMatrix[2][2] + 1.0));
-  } else
-  {
-    if (!(fabs(projMatrix[2][3]) < 1e-6))
-    {
+  } else {
+    if (!(fabs(projMatrix[2][3]) < 1e-6)) {
       TF_WARN(
         "GfCamera: Given projection matrix does not appear to be "
         "valid orthographic matrix.");
@@ -225,7 +217,8 @@ void GfCamera::SetFromViewAndProjectionMatrix(const GfMatrix4d &viewMatrix,
     _verticalApertureOffset = -0.5 * (_verticalAperture)*projMatrix[3][1];
     const double nearMinusFarHalf = 1.0 / projMatrix[2][2];
     const double nearPlusFarHalf = nearMinusFarHalf * projMatrix[3][2];
-    _clippingRange = GfRange1f(nearPlusFarHalf + nearMinusFarHalf, nearPlusFarHalf - nearMinusFarHalf);
+    _clippingRange = GfRange1f(nearPlusFarHalf + nearMinusFarHalf,
+                               nearPlusFarHalf - nearMinusFarHalf);
   }
 }
 
@@ -324,15 +317,15 @@ GfFrustum GfCamera::GetFrustum() const
   // Up to now, all computations were done in mm, convert to cm.
   window *= GfCamera::APERTURE_UNIT;
 
-  if (_projection != Orthographic && _focalLength != 0)
-  {
+  if (_projection != Orthographic && _focalLength != 0) {
     window /= _focalLength * GfCamera::FOCAL_LENGTH_UNIT;
   }
 
   const GfRange1d clippingRange(_clippingRange.GetMin(), _clippingRange.GetMax());
 
-  const GfFrustum::ProjectionType projection = _projection == Orthographic ? GfFrustum::Orthographic :
-                                                                             GfFrustum::Perspective;
+  const GfFrustum::ProjectionType projection = _projection == Orthographic ?
+                                                 GfFrustum::Orthographic :
+                                                 GfFrustum::Perspective;
 
   return GfFrustum(_transform, window, clippingRange, projection);
 }
@@ -350,11 +343,13 @@ float GfCamera::GetFocusDistance() const
 bool GfCamera::operator==(const GfCamera &other) const
 {
   return _transform == other._transform && _projection == other._projection &&
-         _horizontalAperture == other._horizontalAperture && _verticalAperture == other._verticalAperture &&
+         _horizontalAperture == other._horizontalAperture &&
+         _verticalAperture == other._verticalAperture &&
          _horizontalApertureOffset == other._horizontalApertureOffset &&
-         _verticalApertureOffset == other._verticalApertureOffset && _focalLength == other._focalLength &&
-         _clippingRange == other._clippingRange && _clippingPlanes == other._clippingPlanes &&
-         _fStop == other._fStop && _focusDistance == other._focusDistance;
+         _verticalApertureOffset == other._verticalApertureOffset &&
+         _focalLength == other._focalLength && _clippingRange == other._clippingRange &&
+         _clippingPlanes == other._clippingPlanes && _fStop == other._fStop &&
+         _focusDistance == other._focusDistance;
 }
 
 bool GfCamera::operator!=(const GfCamera &other) const

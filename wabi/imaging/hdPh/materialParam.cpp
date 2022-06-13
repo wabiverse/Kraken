@@ -58,12 +58,10 @@ HdPh_MaterialParam::HdPh_MaterialParam(ParamType paramType,
 size_t HdPh_MaterialParam::ComputeHash(HdPh_MaterialParamVector const &params)
 {
   size_t hash = 0;
-  for (HdPh_MaterialParam const &param : params)
-  {
+  for (HdPh_MaterialParam const &param : params) {
     boost::hash_combine(hash, param.paramType);
     boost::hash_combine(hash, param.name.Hash());
-    for (TfToken const &coord : param.samplerCoords)
-    {
+    for (TfToken const &coord : param.samplerCoords) {
       boost::hash_combine(hash, coord.Hash());
     }
     boost::hash_combine(hash, param.textureType);

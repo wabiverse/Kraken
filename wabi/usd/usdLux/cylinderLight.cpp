@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdLuxCylinderLight::~UsdLuxCylinderLight()
-{}
+UsdLuxCylinderLight::~UsdLuxCylinderLight() {}
 
 /* static */
 UsdLuxCylinderLight UsdLuxCylinderLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxCylinderLight();
   }
@@ -69,8 +67,7 @@ UsdLuxCylinderLight UsdLuxCylinderLight::Get(const UsdStagePtr &stage, const Sdf
 UsdLuxCylinderLight UsdLuxCylinderLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("CylinderLight");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxCylinderLight();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdLuxCylinderLight::GetLengthAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsLength);
 }
 
-UsdAttribute UsdLuxCylinderLight::CreateLengthAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxCylinderLight::CreateLengthAttr(VtValue const &defaultValue,
+                                                   bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsLength,
                                     SdfValueTypeNames->Float,
@@ -123,7 +121,8 @@ UsdAttribute UsdLuxCylinderLight::GetRadiusAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsRadius);
 }
 
-UsdAttribute UsdLuxCylinderLight::CreateRadiusAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxCylinderLight::CreateRadiusAttr(VtValue const &defaultValue,
+                                                   bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsRadius,
                                     SdfValueTypeNames->Float,
@@ -170,8 +169,9 @@ const TfTokenVector &UsdLuxCylinderLight::GetSchemaAttributeNames(bool includeIn
     UsdLuxTokens->inputsRadius,
     UsdLuxTokens->treatAsLine,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdLuxLight::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

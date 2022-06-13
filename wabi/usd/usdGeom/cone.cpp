@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomCone::~UsdGeomCone()
-{}
+UsdGeomCone::~UsdGeomCone() {}
 
 /* static */
 UsdGeomCone UsdGeomCone::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCone();
   }
@@ -62,8 +60,7 @@ UsdGeomCone UsdGeomCone::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomCone UsdGeomCone::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Cone");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomCone();
   }
@@ -178,8 +175,9 @@ const TfTokenVector &UsdGeomCone::GetSchemaAttributeNames(bool includeInherited)
     UsdGeomTokens->axis,
     UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomGprim::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomGprim::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -205,31 +203,29 @@ WABI_NAMESPACE_BEGIN
 
 static bool _ComputeExtentMax(double height, double radius, const TfToken &axis, GfVec3f *max)
 {
-  if (axis == UsdGeomTokens->x)
-  {
+  if (axis == UsdGeomTokens->x) {
     *max = GfVec3f(height * 0.5, radius, radius);
-  } else if (axis == UsdGeomTokens->y)
-  {
+  } else if (axis == UsdGeomTokens->y) {
     *max = GfVec3f(radius, height * 0.5, radius);
-  } else if (axis == UsdGeomTokens->z)
-  {
+  } else if (axis == UsdGeomTokens->z) {
     *max = GfVec3f(radius, radius, height * 0.5);
-  } else
-  {
+  } else {
     return false;  // invalid axis
   }
 
   return true;
 }
 
-bool UsdGeomCone::ComputeExtent(double height, double radius, const TfToken &axis, VtVec3fArray *extent)
+bool UsdGeomCone::ComputeExtent(double height,
+                                double radius,
+                                const TfToken &axis,
+                                VtVec3fArray *extent)
 {
   // Create Sized Extent
   extent->resize(2);
 
   GfVec3f max;
-  if (!_ComputeExtentMax(height, radius, axis, &max))
-  {
+  if (!_ComputeExtentMax(height, radius, axis, &max)) {
     return false;
   }
 
@@ -249,8 +245,7 @@ bool UsdGeomCone::ComputeExtent(double height,
   extent->resize(2);
 
   GfVec3f max;
-  if (!_ComputeExtentMax(height, radius, axis, &max))
-  {
+  if (!_ComputeExtentMax(height, radius, axis, &max)) {
     return false;
   }
 
@@ -268,34 +263,28 @@ static bool _ComputeExtentForCone(const UsdGeomBoundable &boundable,
                                   VtVec3fArray *extent)
 {
   const UsdGeomCone coneSchema(boundable);
-  if (!TF_VERIFY(coneSchema))
-  {
+  if (!TF_VERIFY(coneSchema)) {
     return false;
   }
 
   double height;
-  if (!coneSchema.GetHeightAttr().Get(&height, time))
-  {
+  if (!coneSchema.GetHeightAttr().Get(&height, time)) {
     return false;
   }
 
   double radius;
-  if (!coneSchema.GetRadiusAttr().Get(&radius, time))
-  {
+  if (!coneSchema.GetRadiusAttr().Get(&radius, time)) {
     return false;
   }
 
   TfToken axis;
-  if (!coneSchema.GetAxisAttr().Get(&axis, time))
-  {
+  if (!coneSchema.GetAxisAttr().Get(&axis, time)) {
     return false;
   }
 
-  if (transform)
-  {
+  if (transform) {
     return UsdGeomCone::ComputeExtent(height, radius, axis, *transform, extent);
-  } else
-  {
+  } else {
     return UsdGeomCone::ComputeExtent(height, radius, axis, extent);
   }
 }

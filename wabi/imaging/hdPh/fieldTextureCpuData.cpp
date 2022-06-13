@@ -52,14 +52,12 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
   _textureDesc.debugName = debugName;
 
   // Bail if we don't have texture data.
-  if (!textureData)
-  {
+  if (!textureData) {
     return;
   }
 
   // Sanity checks
-  if (!_IsValid(textureData))
-  {
+  if (!_IsValid(textureData)) {
     return;
   }
 
@@ -79,13 +77,11 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
   const HioFormat hioFormat = textureData->GetFormat();
 
   _textureDesc.format = HdPhTextureUtils::GetHgiFormat(hioFormat, premultiplyAlpha);
-  const HdPhTextureUtils::ConversionFunction conversionFunction = HdPhTextureUtils::GetHioToHgiConversion(
-    hioFormat,
-    premultiplyAlpha);
+  const HdPhTextureUtils::ConversionFunction conversionFunction =
+    HdPhTextureUtils::GetHioToHgiConversion(hioFormat, premultiplyAlpha);
 
   // Handle grayscale textures by expanding value to green and blue.
-  if (HgiGetComponentCount(_textureDesc.format) == 1)
-  {
+  if (HgiGetComponentCount(_textureDesc.format) == 1) {
     _textureDesc.componentMapping = {HgiComponentSwizzleR,
                                      HgiComponentSwizzleR,
                                      HgiComponentSwizzleR,
@@ -107,9 +103,9 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
   // Size of initial data.
   _textureDesc.pixelsByteSize = mipInfo.byteOffset + mipInfo.byteSizePerLayer;
 
-  if (conversionFunction)
-  {
-    const size_t numPixels = _textureDesc.pixelsByteSize / HgiGetDataSizeOfFormat(_textureDesc.format);
+  if (conversionFunction) {
+    const size_t numPixels = _textureDesc.pixelsByteSize /
+                             HgiGetDataSizeOfFormat(_textureDesc.format);
 
     // Convert the texture data
     std::unique_ptr<unsigned char[]> convertedData = std::make_unique<unsigned char[]>(
@@ -119,8 +115,7 @@ HdPh_FieldTextureCpuData::HdPh_FieldTextureCpuData(HioFieldTextureDataSharedPtr 
 
     // Point to converted data
     _textureDesc.initialData = _convertedData.get();
-  } else
-  {
+  } else {
     // Ensure that texture data are not deleted
     _textureData = textureData;
     // Point to raw buffer inside texture data

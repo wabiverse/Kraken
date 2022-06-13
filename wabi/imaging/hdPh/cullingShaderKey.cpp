@@ -45,7 +45,6 @@ HdPh_CullingShaderKey::HdPh_CullingShaderKey(bool instancing, bool tinyCull, boo
   VS[5] = TfToken();
 }
 
-HdPh_CullingShaderKey::~HdPh_CullingShaderKey()
-{}
+HdPh_CullingShaderKey::~HdPh_CullingShaderKey() {}
 
 WABI_NAMESPACE_END

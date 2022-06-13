@@ -39,10 +39,8 @@ void Sdf_ClearPathTableInParallel(void **entryStart, size_t numEntries, void (*d
   TF_PY_ALLOW_THREADS_IN_SCOPE();
 
   WorkParallelForN(numEntries, [&entryStart, delFn](size_t i, size_t end) {
-    for (; i != end; ++i)
-    {
-      if (entryStart[i])
-      {
+    for (; i != end; ++i) {
+      if (entryStart[i]) {
         delFn(entryStart[i]);
         entryStart[i] = nullptr;
       }

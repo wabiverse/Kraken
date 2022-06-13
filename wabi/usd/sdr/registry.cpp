@@ -53,21 +53,21 @@ namespace
     std::transform(nodeVec.begin(),
                    nodeVec.end(),
                    std::back_inserter(sdrNodes),
-                   [](NdrNodeConstPtr baseNode) { return SdrShaderNodeConstPtr(baseNode); });
+                   [](NdrNodeConstPtr baseNode) {
+                     return SdrShaderNodeConstPtr(baseNode);
+                   });
 
     return sdrNodes;
   }
 }  // namespace
 
-SdrRegistry::SdrRegistry()
-  : NdrRegistry()
+SdrRegistry::SdrRegistry() : NdrRegistry()
 {
   // Track plugin discovery cost of base class
   TRACE_FUNCTION();
 }
 
-SdrRegistry::~SdrRegistry()
-{}
+SdrRegistry::~SdrRegistry() {}
 
 SdrRegistry &SdrRegistry::GetInstance()
 {
@@ -83,8 +83,9 @@ SdrShaderNodeConstPtr SdrRegistry::GetShaderNodeByIdentifier(const NdrIdentifier
   return NdrNodeToShaderNode(GetInstance().GetNodeByIdentifier(identifier, typePriority));
 }
 
-SdrShaderNodeConstPtr SdrRegistry::GetShaderNodeByIdentifierAndType(const NdrIdentifier &identifier,
-                                                                    const TfToken &nodeType)
+SdrShaderNodeConstPtr SdrRegistry::GetShaderNodeByIdentifierAndType(
+  const NdrIdentifier &identifier,
+  const TfToken &nodeType)
 {
   // XXX Remove trace function when function performance has improved
   TRACE_FUNCTION();
@@ -111,7 +112,8 @@ SdrShaderNodeConstPtr SdrRegistry::GetShaderNodeFromSourceCode(const std::string
   // XXX Remove trace function when function performance has improved
   TRACE_FUNCTION();
 
-  return NdrNodeToShaderNode(GetInstance().GetNodeFromSourceCode(sourceCode, sourceType, metadata));
+  return NdrNodeToShaderNode(
+    GetInstance().GetNodeFromSourceCode(sourceCode, sourceType, metadata));
 }
 
 SdrShaderNodeConstPtr SdrRegistry::GetShaderNodeByName(const std::string &name,
@@ -142,7 +144,8 @@ SdrShaderNodePtrVec SdrRegistry::GetShaderNodesByIdentifier(const NdrIdentifier 
   return NdrNodeVecToShaderNodeVec(GetInstance().GetNodesByIdentifier(identifier));
 }
 
-SdrShaderNodePtrVec SdrRegistry::GetShaderNodesByName(const std::string &name, NdrVersionFilter filter)
+SdrShaderNodePtrVec SdrRegistry::GetShaderNodesByName(const std::string &name,
+                                                      NdrVersionFilter filter)
 {
   // XXX Remove trace function when function performance has improved
   TRACE_FUNCTION();
@@ -150,7 +153,8 @@ SdrShaderNodePtrVec SdrRegistry::GetShaderNodesByName(const std::string &name, N
   return NdrNodeVecToShaderNodeVec(GetInstance().GetNodesByName(name, filter));
 }
 
-SdrShaderNodePtrVec SdrRegistry::GetShaderNodesByFamily(const TfToken &family, NdrVersionFilter filter)
+SdrShaderNodePtrVec SdrRegistry::GetShaderNodesByFamily(const TfToken &family,
+                                                        NdrVersionFilter filter)
 {
   // XXX Remove trace function when function performance has improved
   TRACE_FUNCTION();

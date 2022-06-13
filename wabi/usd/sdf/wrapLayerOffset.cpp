@@ -47,8 +47,7 @@ namespace
 
     std::stringstream s;
     s << TF_PY_REPR_PREFIX + "LayerOffset(";
-    if (offset != 0.0 || scale != 1.0)
-    {
+    if (offset != 0.0 || scale != 1.0) {
       s << offset;
       if (scale != 1.0)
         s << ", " << scale;
@@ -63,8 +62,9 @@ void wrapLayerOffset()
 {
   typedef SdfLayerOffset This;
 
-  TfPyContainerConversions::from_python_sequence<std::vector<SdfLayerOffset>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<SdfLayerOffset>,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   // Note: Since we have no support for nested proxies we wrap Sdf.LayerOffset
   //       as an immutable type to avoid confusion about code like this

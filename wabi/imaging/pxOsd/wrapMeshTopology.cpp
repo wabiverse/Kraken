@@ -46,8 +46,9 @@ static std::string _ReprMeshTopology(const PxOsdMeshTopology &topology)
 {
   std::ostringstream repr(std::ostringstream::ate);
   repr << "PxOsd.MeshTopology(" << TfPyRepr(topology.GetScheme()) << ", "
-       << TfPyRepr(topology.GetOrientation()) << ", " << TfPyRepr(topology.GetFaceVertexCounts()) << ", "
-       << TfPyRepr(topology.GetFaceVertexIndices()) << ", " << TfPyRepr(topology.GetHoleIndices()) << ")";
+       << TfPyRepr(topology.GetOrientation()) << ", " << TfPyRepr(topology.GetFaceVertexCounts())
+       << ", " << TfPyRepr(topology.GetFaceVertexIndices()) << ", "
+       << TfPyRepr(topology.GetHoleIndices()) << ")";
   return repr.str();
 }
 
@@ -70,8 +71,12 @@ void wrapMeshTopology()
 
     .def("GetScheme", &This::GetScheme)
     .def("WithScheme", &This::WithScheme)
-    .def("GetFaceVertexCounts", &This::GetFaceVertexCounts, return_value_policy<copy_const_reference>())
-    .def("GetFaceVertexIndices", &This::GetFaceVertexIndices, return_value_policy<copy_const_reference>())
+    .def("GetFaceVertexCounts",
+         &This::GetFaceVertexCounts,
+         return_value_policy<copy_const_reference>())
+    .def("GetFaceVertexIndices",
+         &This::GetFaceVertexIndices,
+         return_value_policy<copy_const_reference>())
     .def("GetOrientation", &This::GetOrientation, return_value_policy<copy_const_reference>())
     .def("GetHoleIndices", &This::GetHoleIndices, return_value_policy<copy_const_reference>())
     .def("WithHoleIndices", &This::WithHoleIndices)

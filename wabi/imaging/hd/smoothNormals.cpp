@@ -33,11 +33,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename SrcVec3Type, typename DstType>
-class _SmoothNormalsWorker
+template<typename SrcVec3Type, typename DstType> class _SmoothNormalsWorker
 {
  public:
-  _SmoothNormalsWorker(SrcVec3Type const *pointsPtr, VtIntArray const &adjacencyTable, DstType *normals)
+
+  _SmoothNormalsWorker(SrcVec3Type const *pointsPtr,
+                       VtIntArray const &adjacencyTable,
+                       DstType *normals)
     : _pointsPtr(pointsPtr),
       _adjacencyTable(adjacencyTable),
       _normals(normals)
@@ -45,8 +47,7 @@ class _SmoothNormalsWorker
 
   void Compute(size_t begin, size_t end)
   {
-    for (size_t i = begin; i < end; ++i)
-    {
+    for (size_t i = begin; i < end; ++i) {
       int offsetIdx = i * 2;
       int offset = _adjacencyTable[offsetIdx];
       int valence = _adjacencyTable[offsetIdx + 1];
@@ -54,15 +55,13 @@ class _SmoothNormalsWorker
       int const *e = &_adjacencyTable[offset];
       SrcVec3Type normal(0);
       SrcVec3Type const &curr = _pointsPtr[i];
-      for (int j = 0; j < valence; ++j)
-      {
+      for (int j = 0; j < valence; ++j) {
         SrcVec3Type const &prev = _pointsPtr[*e++];
         SrcVec3Type const &next = _pointsPtr[*e++];
         // All meshes have all been converted to rightHanded
         normal += GfCross(next - curr, prev - curr);
       }
-      if (true)
-      {  // Could defer normalization to shader code
+      if (true) {  // Could defer normalization to shader code
         normal.Normalize();
       }
       _normals[i] = normal;
@@ -70,6 +69,7 @@ class _SmoothNormalsWorker
   }
 
  private:
+
   SrcVec3Type const *_pointsPtr;
   VtIntArray const &_adjacencyTable;
   DstType *_normals;
@@ -91,7 +91,9 @@ VtArray<DstType> _ComputeSmoothNormals(int numPoints,
 
   VtArray<DstType> normals(numPoints);
 
-  _SmoothNormalsWorker<SrcVec3Type, DstType> workerState(pointsPtr, adjacencyTable, normals.data());
+  _SmoothNormalsWorker<SrcVec3Type, DstType> workerState(pointsPtr,
+                                                         adjacencyTable,
+                                                         normals.data());
 
   WorkParallelForN(numPoints,
                    std::bind(&_SmoothNormalsWorker<SrcVec3Type, DstType>::Compute,
@@ -148,11 +150,12 @@ VtArray<HdVec4f_2_10_10_10_REV> Hd_SmoothNormals::ComputeSmoothNormalsPacked(
                                                                 adjacency->GetNumPoints());
 }
 
-Hd_SmoothNormalsComputation::Hd_SmoothNormalsComputation(Hd_VertexAdjacency const *adjacency,
-                                                         HdBufferSourceSharedPtr const &points,
-                                                         TfToken const &dstName,
-                                                         HdBufferSourceSharedPtr const &adjacencyBuilder,
-                                                         bool packed)
+Hd_SmoothNormalsComputation::Hd_SmoothNormalsComputation(
+  Hd_VertexAdjacency const *adjacency,
+  HdBufferSourceSharedPtr const &points,
+  TfToken const &dstName,
+  HdBufferSourceSharedPtr const &adjacencyBuilder,
+  bool packed)
   : _adjacency(adjacency),
     _points(points),
     _dstName(dstName),
@@ -165,7 +168,8 @@ void Hd_SmoothNormalsComputation::GetBufferSpecs(HdBufferSpecVector *specs) cons
   // The datatype of normals is the same as that of points,
   // unless the packed format was requested.
   specs->emplace_back(_dstName,
-                      _packed ? HdTupleType{HdTypeInt32_2_10_10_10_REV, 1} : _points->GetTupleType());
+                      _packed ? HdTupleType{HdTypeInt32_2_10_10_10_REV, 1} :
+                                _points->GetTupleType());
 }
 
 TfToken const &Hd_SmoothNormalsComputation::GetName() const
@@ -176,8 +180,7 @@ TfToken const &Hd_SmoothNormalsComputation::GetName() const
 bool Hd_SmoothNormalsComputation::Resolve()
 {
   // dependency check first
-  if (_adjacencyBuilder)
-  {
+  if (_adjacencyBuilder) {
     if (!_adjacencyBuilder->IsResolved())
       return false;
   }
@@ -196,19 +199,16 @@ bool Hd_SmoothNormalsComputation::Resolve()
 
   HdBufferSourceSharedPtr normals;
 
-  switch (_points->GetTupleType().type)
-  {
+  switch (_points->GetTupleType().type) {
     case HdTypeFloatVec3:
-      if (_packed)
-      {
+      if (_packed) {
         normals = HdBufferSourceSharedPtr(
           new HdVtBufferSource(_dstName,
                                VtValue(Hd_SmoothNormals::ComputeSmoothNormalsPacked(
                                  _adjacency,
                                  numPoints,
                                  static_cast<const GfVec3f *>(_points->GetData())))));
-      } else
-      {
+      } else {
         normals = HdBufferSourceSharedPtr(
           new HdVtBufferSource(_dstName,
                                VtValue(Hd_SmoothNormals::ComputeSmoothNormals(
@@ -218,16 +218,14 @@ bool Hd_SmoothNormalsComputation::Resolve()
       }
       break;
     case HdTypeDoubleVec3:
-      if (_packed)
-      {
+      if (_packed) {
         normals = HdBufferSourceSharedPtr(
           new HdVtBufferSource(_dstName,
                                VtValue(Hd_SmoothNormals::ComputeSmoothNormalsPacked(
                                  _adjacency,
                                  numPoints,
                                  static_cast<const GfVec3d *>(_points->GetData())))));
-      } else
-      {
+      } else {
         normals = HdBufferSourceSharedPtr(
           new HdVtBufferSource(_dstName,
                                VtValue(Hd_SmoothNormals::ComputeSmoothNormals(

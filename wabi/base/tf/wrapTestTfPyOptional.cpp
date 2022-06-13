@@ -50,38 +50,34 @@ namespace
                               const boost::optional<vector<string>> &optStrvec)
   {
     object strObj;
-    if (optString)
-    {
+    if (optString) {
       strObj = object(*optString);
     }
     object vecObj;
-    if (optStrvec)
-    {
+    if (optStrvec) {
       vecObj = object(TfPyCopySequenceToList(*optStrvec));
     }
     return make_tuple(strObj, vecObj);
   }
 
-  template<typename T>
-  static boost::optional<T> _TestOptional(const boost::optional<T> &opt)
+  template<typename T> static boost::optional<T> _TestOptional(const boost::optional<T> &opt)
   {
     fprintf(stderr, "TestOptional<%s>\n", ArchGetDemangled<T>().c_str());
     return opt;
   }
 
   struct Tf_TestPyOptional
-  {
-  };
+  {};
 
 }  // anonymous namespace
 
 void wrapTf_TestTfPyOptional()
 {
   class_<Tf_TestPyOptional, boost::noncopyable>("Tf_TestPyOptional")
-    .def(
-      "TakesOptional",
-      _TakesOptional,
-      (arg("optString") = boost::optional<string>(), arg("optStrvec") = boost::optional<vector<string>>()))
+    .def("TakesOptional",
+         _TakesOptional,
+         (arg("optString") = boost::optional<string>(),
+          arg("optStrvec") = boost::optional<vector<string>>()))
     .staticmethod("TakesOptional")
 
     .def("TestOptionalStringVector", _TestOptional<std::vector<std::string>>)

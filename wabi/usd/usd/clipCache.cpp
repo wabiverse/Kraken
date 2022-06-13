@@ -66,6 +66,7 @@ Usd_ClipCache::ConcurrentPopulationContext::~ConcurrentPopulationContext()
 class Usd_ClipCache::Lifeboat::Data
 {
  public:
+
   struct ManifestKey
   {
     SdfPath primPath;
@@ -86,8 +87,7 @@ class Usd_ClipCache::Lifeboat::Data
         size_t hash = key.primPath.GetHash();
         boost::hash_combine(hash, TfHash()(key.clipSetName));
         boost::hash_combine(hash, key.clipPrimPath.GetHash());
-        for (const auto &p : key.clipAssetPaths)
-        {
+        for (const auto &p : key.clipAssetPaths) {
           boost::hash_combine(hash, p.GetHash());
         }
         return hash;
@@ -99,9 +99,7 @@ class Usd_ClipCache::Lifeboat::Data
   std::unordered_map<ManifestKey, std::string, ManifestKey::Hash> generatedManifests;
 };
 
-Usd_ClipCache::Lifeboat::Lifeboat(Usd_ClipCache &cache)
-  : _cache(cache),
-    _data(new Data)
+Usd_ClipCache::Lifeboat::Lifeboat(Usd_ClipCache &cache) : _cache(cache), _data(new Data)
 {
   TF_AXIOM(!_cache._lifeboat);
   _cache._lifeboat = this;
@@ -114,13 +112,9 @@ Usd_ClipCache::Lifeboat::~Lifeboat()
 
 // ------------------------------------------------------------
 
-Usd_ClipCache::Usd_ClipCache()
-  : _concurrentPopulationContext(nullptr),
-    _lifeboat(nullptr)
-{}
+Usd_ClipCache::Usd_ClipCache() : _concurrentPopulationContext(nullptr), _lifeboat(nullptr) {}
 
-Usd_ClipCache::~Usd_ClipCache()
-{}
+Usd_ClipCache::~Usd_ClipCache() {}
 
 static Usd_ClipSetRefPtr _CreateClipSetFromDefinition(const SdfPath &usdPrimPath,
                                                       const std::string &clipSetName,
@@ -129,13 +123,12 @@ static Usd_ClipSetRefPtr _CreateClipSetFromDefinition(const SdfPath &usdPrimPath
   std::string status;
   Usd_ClipSetRefPtr clipSet = Usd_ClipSet::New(clipSetName, clipSetDef, &status);
 
-  if (!status.empty())
-  {
-    if (!clipSet)
-    {
-      TF_WARN("Invalid clips specified for prim <%s>: %s", usdPrimPath.GetString().c_str(), status.c_str());
-    } else
-    {
+  if (!status.empty()) {
+    if (!clipSet) {
+      TF_WARN("Invalid clips specified for prim <%s>: %s",
+              usdPrimPath.GetString().c_str(),
+              status.c_str());
+    } else {
       TF_DEBUG(USD_CLIPS).Msg("%s (on prim <%s>)\n", status.c_str(), usdPrimPath.GetText());
     }
   }
@@ -152,8 +145,7 @@ void Usd_ClipCache::_ComputeClipsFromPrimIndex(const SdfPath &usdPrimPath,
   Usd_ComputeClipSetDefinitionsForPrimIndex(primIndex, &clipSetDefs, &clipSetNames);
 
   clips->reserve(clipSetDefs.size());
-  for (size_t i = 0; i < clipSetDefs.size(); ++i)
-  {
+  for (size_t i = 0; i < clipSetDefs.size(); ++i) {
     Usd_ClipSetDefinition &clipSetDef = clipSetDefs[i];
     const std::string &clipSetName = clipSetNames[i];
 
@@ -161,35 +153,30 @@ void Usd_ClipCache::_ComputeClipsFromPrimIndex(const SdfPath &usdPrimPath,
     // active lifeboat (i.e., we're in the middle of change processing)
     // see if we can reuse a generated manifest from before.
     bool reusingGeneratedManifest = false;
-    if (!clipSetDef.clipManifestAssetPath && _lifeboat)
-    {
+    if (!clipSetDef.clipManifestAssetPath && _lifeboat) {
       Lifeboat::Data::ManifestKey key;
       key.primPath = usdPrimPath;
       key.clipSetName = clipSetName;
-      if (clipSetDef.clipPrimPath)
-      {
+      if (clipSetDef.clipPrimPath) {
         key.clipPrimPath = SdfPath(*clipSetDef.clipPrimPath);
       }
-      if (clipSetDef.clipAssetPaths)
-      {
+      if (clipSetDef.clipAssetPaths) {
         key.clipAssetPaths = *clipSetDef.clipAssetPaths;
       }
 
-      const std::string *manifestIdentifier = TfMapLookupPtr(_lifeboat->_data->generatedManifests, key);
-      if (manifestIdentifier)
-      {
+      const std::string *manifestIdentifier = TfMapLookupPtr(_lifeboat->_data->generatedManifests,
+                                                             key);
+      if (manifestIdentifier) {
         clipSetDef.clipManifestAssetPath = SdfAssetPath(*manifestIdentifier);
         reusingGeneratedManifest = true;
       }
     }
 
     Usd_ClipSetRefPtr clipSet = _CreateClipSetFromDefinition(usdPrimPath, clipSetName, clipSetDef);
-    if (clipSet && !clipSet->valueClips.empty())
-    {
+    if (clipSet && !clipSet->valueClips.empty()) {
       // If reusing a previously-generated manifest from the lifeboat,
       // pull on it here to ensure the manifest takes ownership of it.
-      if (reusingGeneratedManifest)
-      {
+      if (reusingGeneratedManifest) {
         TF_UNUSED(clipSet->manifestClip->GetLayer());
       }
       clips->push_back(clipSet);
@@ -206,11 +193,9 @@ bool Usd_ClipCache::PopulateClipsForPrim(const SdfPath &path, const PcpPrimIndex
   _ComputeClipsFromPrimIndex(path, primIndex, &allClips);
 
   const bool primHasClips = !allClips.empty();
-  if (primHasClips)
-  {
+  if (primHasClips) {
     tbb::mutex::scoped_lock lock;
-    if (_concurrentPopulationContext)
-    {
+    if (_concurrentPopulationContext) {
       lock.acquire(_concurrentPopulationContext->_mutex);
     }
 
@@ -218,19 +203,16 @@ bool Usd_ClipCache::PopulateClipsForPrim(const SdfPath &path, const PcpPrimIndex
     const std::vector<Usd_ClipSetRefPtr> *ancestralClips = nullptr;
     SdfPath ancestralClipsPath(path.GetParentPath());
     for (; !ancestralClipsPath.IsAbsoluteRootPath() && !ancestralClips;
-         ancestralClipsPath = ancestralClipsPath.GetParentPath())
-    {
+         ancestralClipsPath = ancestralClipsPath.GetParentPath()) {
       ancestralClips = TfMapLookupPtr(_table, ancestralClipsPath);
     }
 
-    if (ancestralClips)
-    {
+    if (ancestralClips) {
       // SdfPathTable will create entries for all ancestor paths when
       // inserting a new path. So if there were clips on prim /A and
       // we're inserting clips on prim /A/B/C, we need to make sure
       // we copy the ancestral clips from /A down to /A/B as well.
-      for (SdfPath p = path.GetParentPath(); p != ancestralClipsPath; p = p.GetParentPath())
-      {
+      for (SdfPath p = path.GetParentPath(); p != ancestralClipsPath; p = p.GetParentPath()) {
         _table[p] = *ancestralClips;
       }
 
@@ -250,24 +232,18 @@ bool Usd_ClipCache::PopulateClipsForPrim(const SdfPath &path, const PcpPrimIndex
 SdfLayerHandleSet Usd_ClipCache::GetUsedLayers() const
 {
   tbb::mutex::scoped_lock lock;
-  if (_concurrentPopulationContext)
-  {
+  if (_concurrentPopulationContext) {
     lock.acquire(_concurrentPopulationContext->_mutex);
   }
   SdfLayerHandleSet layers;
-  for (_ClipTable::iterator::value_type const &clipsListIter : _table)
-  {
-    for (Usd_ClipSetRefPtr const &clipSet : clipsListIter.second)
-    {
+  for (_ClipTable::iterator::value_type const &clipsListIter : _table) {
+    for (Usd_ClipSetRefPtr const &clipSet : clipsListIter.second) {
       if (SdfLayerHandle layer = clipSet->manifestClip ? clipSet->manifestClip->GetLayerIfOpen() :
-                                                         SdfLayerHandle())
-      {
+                                                         SdfLayerHandle()) {
         layers.insert(layer);
       }
-      for (Usd_ClipRefPtr const &clip : clipSet->valueClips)
-      {
-        if (SdfLayerHandle layer = clip->GetLayerIfOpen())
-        {
+      for (Usd_ClipRefPtr const &clip : clipSet->valueClips) {
+        if (SdfLayerHandle layer = clip->GetLayerIfOpen()) {
           layers.insert(layer);
         }
       }
@@ -284,22 +260,18 @@ void Usd_ClipCache::Reload()
   // Collect all unique clip sets to iterate over to avoid duplicated work
   // due to ancestral clip entries (see PopulateClipsForPrim)
   std::unordered_set<Usd_ClipSetRefPtr> clipSets;
-  for (auto it = _table.begin(), end = _table.end(); it != end; ++it)
-  {
+  for (auto it = _table.begin(), end = _table.end(); it != end; ++it) {
     clipSets.insert(it->second.begin(), it->second.end());
   }
 
   // Iterate through all clip sets and call SdfLayer::Reload for any
   // associated layers that are opened.
   std::unordered_set<SdfLayerHandle, TfHash> reloadedClipLayers;
-  for (const Usd_ClipSetRefPtr &clipSet : clipSets)
-  {
+  for (const Usd_ClipSetRefPtr &clipSet : clipSets) {
     // Reload all clip layers.
-    for (const Usd_ClipRefPtr &clip : clipSet->valueClips)
-    {
+    for (const Usd_ClipRefPtr &clip : clipSet->valueClips) {
       const SdfLayerHandle clipLayer = clip->GetLayerIfOpen();
-      if (!clipLayer)
-      {
+      if (!clipLayer) {
         continue;
       }
 
@@ -307,8 +279,7 @@ void Usd_ClipCache::Reload()
       // in multiple clip sets. We need to keep track of all the layers
       // that were reloaded to handle that case.
       const bool notPreviouslyReloaded = reloadedClipLayers.insert(clipLayer).second;
-      if (notPreviouslyReloaded)
-      {
+      if (notPreviouslyReloaded) {
         clipLayer->Reload();
       }
     }
@@ -323,14 +294,12 @@ void Usd_ClipCache::Reload()
     // wouldn't have anything to reload, so we wouldn't know that we
     // need to regenerate the manifest.
     SdfLayerHandle manifestLayer = clipSet->manifestClip->GetLayerIfOpen();
-    if (manifestLayer)
-    {
-      if (Usd_IsAutoGeneratedClipManifest(manifestLayer))
-      {
-        SdfLayerRefPtr newManifest = Usd_GenerateClipManifest(clipSet->valueClips, clipSet->clipPrimPath);
+    if (manifestLayer) {
+      if (Usd_IsAutoGeneratedClipManifest(manifestLayer)) {
+        SdfLayerRefPtr newManifest = Usd_GenerateClipManifest(clipSet->valueClips,
+                                                              clipSet->clipPrimPath);
         manifestLayer->TransferContent(newManifest);
-      } else
-      {
+      } else {
         manifestLayer->Reload();
       }
     }
@@ -341,20 +310,18 @@ const std::vector<Usd_ClipSetRefPtr> &Usd_ClipCache::GetClipsForPrim(const SdfPa
 {
   TRACE_FUNCTION();
   tbb::mutex::scoped_lock lock;
-  if (_concurrentPopulationContext)
-  {
+  if (_concurrentPopulationContext) {
     lock.acquire(_concurrentPopulationContext->_mutex);
   }
   return _GetClipsForPrim_NoLock(path);
 }
 
-const std::vector<Usd_ClipSetRefPtr> &Usd_ClipCache::_GetClipsForPrim_NoLock(const SdfPath &path) const
+const std::vector<Usd_ClipSetRefPtr> &Usd_ClipCache::_GetClipsForPrim_NoLock(
+  const SdfPath &path) const
 {
-  for (SdfPath p = path; p != SdfPath::AbsoluteRootPath(); p = p.GetParentPath())
-  {
+  for (SdfPath p = path; p != SdfPath::AbsoluteRootPath(); p = p.GetParentPath()) {
     _ClipTable::const_iterator it = _table.find(p);
-    if (it != _table.end())
-    {
+    if (it != _table.end()) {
       return it->second;
     }
   }
@@ -373,23 +340,22 @@ void Usd_ClipCache::InvalidateClipsForPrim(const SdfPath &invalidatePath)
   // exclusive to any other member function.
 
   auto range = _table.FindSubtreeRange(invalidatePath);
-  for (auto entryIter = range.first; entryIter != range.second; ++entryIter)
-  {
+  for (auto entryIter = range.first; entryIter != range.second; ++entryIter) {
     const SdfPath &path = entryIter->first;
     const std::vector<Usd_ClipSetRefPtr> &clipSets = entryIter->second;
 
     // Keep all clip sets alive. In particular, this keeps any layers
     // that have been opened and are owned by these clip sets alive until
     // the lifeboat is dropped.
-    _lifeboat->_data->clips.insert(_lifeboat->_data->clips.end(), clipSets.begin(), clipSets.end());
+    _lifeboat->_data->clips.insert(_lifeboat->_data->clips.end(),
+                                   clipSets.begin(),
+                                   clipSets.end());
 
     // Keep track of all generated manifests so that they can be reused
     // during population until the lifeboat s dropped.
-    for (const Usd_ClipSetRefPtr &clipSet : clipSets)
-    {
+    for (const Usd_ClipSetRefPtr &clipSet : clipSets) {
       const SdfLayerHandle manifestLayer = clipSet->manifestClip->GetLayerIfOpen();
-      if (!manifestLayer || !Usd_IsAutoGeneratedClipManifest(manifestLayer))
-      {
+      if (!manifestLayer || !Usd_IsAutoGeneratedClipManifest(manifestLayer)) {
         continue;
       }
 
@@ -399,8 +365,7 @@ void Usd_ClipCache::InvalidateClipsForPrim(const SdfPath &invalidatePath)
       key.clipPrimPath = clipSet->clipPrimPath;
 
       key.clipAssetPaths.reserve(clipSet->valueClips.size());
-      for (const Usd_ClipRefPtr &clip : clipSet->valueClips)
-      {
+      for (const Usd_ClipRefPtr &clip : clipSet->valueClips) {
         key.clipAssetPaths.push_back(clip->assetPath);
       }
 

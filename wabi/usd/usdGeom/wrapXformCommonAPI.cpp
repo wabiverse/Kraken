@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -77,7 +75,9 @@ void wrapUsdGeomXformCommonAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -117,7 +117,8 @@ namespace
     GfVec3f rotation, scale, pivot;
     UsdGeomXformCommonAPI::RotationOrder rotationOrder;
 
-    bool result = self.GetXformVectors(&translation, &rotation, &scale, &pivot, &rotationOrder, time);
+    bool result =
+      self.GetXformVectors(&translation, &rotation, &scale, &pivot, &rotationOrder, time);
 
     return result ? make_tuple(translation, rotation, scale, pivot, rotationOrder) : tuple();
   }
@@ -128,8 +129,12 @@ namespace
     GfVec3f rotation, scale, pivot;
     UsdGeomXformCommonAPI::RotationOrder rotationOrder;
 
-    bool result =
-      self.GetXformVectorsByAccumulation(&translation, &rotation, &scale, &pivot, &rotationOrder, time);
+    bool result = self.GetXformVectorsByAccumulation(&translation,
+                                                     &rotation,
+                                                     &scale,
+                                                     &pivot,
+                                                     &rotationOrder,
+                                                     time);
 
     return result ? make_tuple(translation, rotation, scale, pivot, rotationOrder) : tuple();
   }
@@ -166,16 +171,22 @@ namespace
     }
 
     _class
-      .def(
-        "SetXformVectors",
-        &This::SetXformVectors,
-        (arg("translation"), arg("rotation"), arg("scale"), arg("pivot"), arg("rotationOrder"), arg("time")))
+      .def("SetXformVectors",
+           &This::SetXformVectors,
+           (arg("translation"),
+            arg("rotation"),
+            arg("scale"),
+            arg("pivot"),
+            arg("rotationOrder"),
+            arg("time")))
 
       .def("GetXformVectors", &_GetXformVectors, arg("time"))
 
       .def("GetXformVectorsByAccumulation", &_GetXformVectorsByAccumulation, arg("time"))
 
-      .def("SetTranslate", &This::SetTranslate, (arg("translation"), arg("time") = UsdTimeCode::Default()))
+      .def("SetTranslate",
+           &This::SetTranslate,
+           (arg("translation"), arg("time") = UsdTimeCode::Default()))
 
       .def("SetPivot", &This::SetPivot, (arg("pivot"), arg("time") = UsdTimeCode::Default()))
 
@@ -206,16 +217,22 @@ namespace
             arg("op3") = UsdGeomXformCommonAPI::OpNone,
             arg("op4") = UsdGeomXformCommonAPI::OpNone))
 
-      .def("GetRotationTransform", &This::GetRotationTransform, (arg("rotation"), arg("rotationOrder")))
+      .def("GetRotationTransform",
+           &This::GetRotationTransform,
+           (arg("rotation"), arg("rotationOrder")))
       .staticmethod("GetRotationTransform")
 
-      .def("ConvertRotationOrderToOpType", &This::ConvertRotationOrderToOpType, arg("rotationOrder"))
+      .def("ConvertRotationOrderToOpType",
+           &This::ConvertRotationOrderToOpType,
+           arg("rotationOrder"))
       .staticmethod("ConvertRotationOrderToOpType")
 
       .def("ConvertOpTypeToRotationOrder", &This::ConvertOpTypeToRotationOrder, arg("opType"))
       .staticmethod("ConvertOpTypeToRotationOrder")
 
-      .def("CanConvertOpTypeToRotationOrder", &This::CanConvertOpTypeToRotationOrder, arg("opType"))
+      .def("CanConvertOpTypeToRotationOrder",
+           &This::CanConvertOpTypeToRotationOrder,
+           arg("opType"))
       .staticmethod("CanConvertOpTypeToRotationOrder");
   }
 

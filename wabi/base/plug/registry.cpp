@@ -79,11 +79,11 @@ bool PlugRegistry::_InsertRegisteredPluginPath(const std::string &path)
 }
 
 template<class ConcurrentVector>
-void PlugRegistry::_RegisterPlugin(const Plug_RegistrationMetadata &metadata, ConcurrentVector *newPlugins)
+void PlugRegistry::_RegisterPlugin(const Plug_RegistrationMetadata &metadata,
+                                   ConcurrentVector *newPlugins)
 {
   std::pair<PlugPluginPtr, bool> newPlugin(TfNullPtr, false);
-  switch (metadata.type)
-  {
+  switch (metadata.type) {
     default:
     case Plug_RegistrationMetadata::UnknownType:
       TF_CODING_ERROR(
@@ -105,8 +105,7 @@ void PlugRegistry::_RegisterPlugin(const Plug_RegistrationMetadata &metadata, Co
       break;
   }
 
-  if (newPlugin.second)
-  {
+  if (newPlugin.second) {
     newPlugins->push_back(newPlugin.first);
   }
 }
@@ -120,8 +119,7 @@ PlugPluginPtrVector PlugRegistry::RegisterPlugins(const std::vector<std::string>
 {
   const bool pathsAreOrdered = true;
   PlugPluginPtrVector result = _RegisterPlugins(pathsToPlugInfo, pathsAreOrdered);
-  if (!result.empty())
-  {
+  if (!result.empty()) {
     PlugNotice::DidRegisterPlugins(result).Send(TfCreateWeakPtr(this));
   }
   return result;
@@ -143,15 +141,16 @@ PlugPluginPtrVector PlugRegistry::_RegisterPlugins(const std::vector<std::string
       pathsToPlugInfo,
       pathsAreOrdered,
       std::bind(&PlugRegistry::_InsertRegisteredPluginPath, this, std::placeholders::_1),
-      std::bind(&PlugRegistry::_RegisterPlugin<NewPluginsVec>, this, std::placeholders::_1, &newPlugins),
+      std::bind(&PlugRegistry::_RegisterPlugin<NewPluginsVec>,
+                this,
+                std::placeholders::_1,
+                &newPlugins),
       &taskArena);
   }
 
-  if (!newPlugins.empty())
-  {
+  if (!newPlugins.empty()) {
     PlugPluginPtrVector v(newPlugins.begin(), newPlugins.end());
-    for (const auto &plug : v)
-    {
+    for (const auto &plug : v) {
       plug->_DeclareTypes();
     }
     return v;
@@ -161,8 +160,7 @@ PlugPluginPtrVector PlugRegistry::_RegisterPlugins(const std::vector<std::string
 
 PlugPluginPtr PlugRegistry::GetPluginForType(TfType t) const
 {
-  if (t.IsUnknown())
-  {
+  if (t.IsUnknown()) {
     TF_CODING_ERROR("Unknown base type");
     return TfNullPtr;
   }
@@ -185,8 +183,7 @@ JsValue PlugRegistry::GetDataFromPluginMetaData(TfType type, const string &key) 
 
   string typeName = type.GetTypeName();
   PlugPluginPtr plugin = GetPluginForType(type);
-  if (plugin)
-  {
+  if (plugin) {
     JsObject dict = plugin->GetMetadataForType(type);
     TfMapLookup(dict, key, &result);
   }
@@ -264,22 +261,20 @@ void PlugPlugin::_RegisterAllPlugins()
   std::call_once(once, [&result]() {
     PlugRegistry &registry = PlugRegistry::GetInstance();
 
-    if (!TfGetenvBool("WABI_DISABLE_STANDARD_PLUG_SEARCH_PATH", false))
-    {
+    if (!TfGetenvBool("WABI_DISABLE_STANDARD_PLUG_SEARCH_PATH", false)) {
       // Emit any debug messages first, then call _RegisterPlugins.
-      for (std::string const &msg : Plug_GetPathsInfo().debugMessages)
-      {
+      for (std::string const &msg : Plug_GetPathsInfo().debugMessages) {
         TF_DEBUG(PLUG_INFO_SEARCH).Msg("%s", msg.c_str());
       }
       // Register plugins in the tree. This declares TfTypes.
-      result = registry._RegisterPlugins(Plug_GetPathsInfo().paths, Plug_GetPathsInfo().pathsAreOrdered);
+      result = registry._RegisterPlugins(Plug_GetPathsInfo().paths,
+                                         Plug_GetPathsInfo().pathsAreOrdered);
     }
   });
 
   // Send a notice outside of the call_once.  We don't want to be holding
   // a lock (even an implicit one) when sending a notice.
-  if (!result.empty())
-  {
+  if (!result.empty()) {
     PlugNotice::DidRegisterPlugins(result).Send(TfCreateWeakPtr(&PlugRegistry::GetInstance()));
   }
 }

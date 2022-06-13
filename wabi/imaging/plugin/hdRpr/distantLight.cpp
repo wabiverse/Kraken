@@ -41,19 +41,16 @@ void HdRprDistantLight::Sync(HdSceneDelegate *sceneDelegate,
   HdDirtyBits bits = *dirtyBits;
   auto &id = GetId();
 
-  if (bits & HdLight::DirtyTransform)
-  {
-    m_transform = GfMatrix4f(sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
+  if (bits & HdLight::DirtyTransform) {
+    m_transform = GfMatrix4f(
+      sceneDelegate->GetLightParamValue(id, HdTokens->transform).Get<GfMatrix4d>());
   }
 
   bool newLight = false;
-  if (bits & HdLight::DirtyParams)
-  {
+  if (bits & HdLight::DirtyParams) {
     bool isVisible = sceneDelegate->GetVisible(id);
-    if (!isVisible)
-    {
-      if (m_rprLight)
-      {
+    if (!isVisible) {
+      if (m_rprLight) {
         rprApi->Release(m_rprLight);
         m_rprLight = nullptr;
       }
@@ -66,9 +63,9 @@ void HdRprDistantLight::Sync(HdSceneDelegate *sceneDelegate,
     float exposure = sceneDelegate->GetLightParamValue(id, HdLightTokens->exposure).Get<float>();
     float computedIntensity = computeLightIntensity(intensity, exposure);
 
-    GfVec3f color = sceneDelegate->GetLightParamValue(id, HdPrimvarRoleTokens->color).Get<GfVec3f>();
-    if (sceneDelegate->GetLightParamValue(id, HdLightTokens->enableColorTemperature).Get<bool>())
-    {
+    GfVec3f color =
+      sceneDelegate->GetLightParamValue(id, HdPrimvarRoleTokens->color).Get<GfVec3f>();
+    if (sceneDelegate->GetLightParamValue(id, HdLightTokens->enableColorTemperature).Get<bool>()) {
       GfVec3f temperatureColor = UsdLuxBlackbodyTemperatureAsRgb(
         sceneDelegate->GetLightParamValue(id, HdLightTokens->colorTemperature).Get<float>());
       color[0] *= temperatureColor[0];
@@ -76,31 +73,29 @@ void HdRprDistantLight::Sync(HdSceneDelegate *sceneDelegate,
       color[2] *= temperatureColor[2];
     }
 
-    if (!m_rprLight)
-    {
+    if (!m_rprLight) {
       m_rprLight = rprApi->CreateDirectionalLight();
-      if (!m_rprLight)
-      {
+      if (!m_rprLight) {
         TF_CODING_ERROR("Directional light was not created");
         *dirtyBits = HdLight::Clean;
         return;
       }
 
-      if (RprUsdIsLeakCheckEnabled())
-      {
+      if (RprUsdIsLeakCheckEnabled()) {
         rprApi->SetName(m_rprLight, id.GetText());
       }
     }
 
     float angle = sceneDelegate->GetLightParamValue(id, _tokens->angle).Get<float>();
 
-    rprApi->SetDirectionalLightAttributes(m_rprLight, color * computedIntensity, angle * (M_PI / 180.0));
+    rprApi->SetDirectionalLightAttributes(m_rprLight,
+                                          color * computedIntensity,
+                                          angle * (M_PI / 180.0));
 
     newLight = true;
   }
 
-  if (newLight || ((bits & HdLight::DirtyTransform) && m_rprLight))
-  {
+  if (newLight || ((bits & HdLight::DirtyTransform) && m_rprLight)) {
     rprApi->SetTransform(m_rprLight, m_transform);
   }
 
@@ -114,8 +109,7 @@ HdDirtyBits HdRprDistantLight::GetInitialDirtyBitsMask() const
 
 void HdRprDistantLight::Finalize(HdRenderParam *renderParam)
 {
-  if (m_rprLight)
-  {
+  if (m_rprLight) {
     auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
     rprRenderParam->AcquireRprApiForEdit()->Release(m_rprLight);
     m_rprLight = nullptr;

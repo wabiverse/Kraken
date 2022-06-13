@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdVolVolume::~UsdVolVolume()
-{}
+UsdVolVolume::~UsdVolVolume() {}
 
 /* static */
 UsdVolVolume UsdVolVolume::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolVolume();
   }
@@ -69,8 +67,7 @@ UsdVolVolume UsdVolVolume::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdVolVolume UsdVolVolume::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Volume");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdVolVolume();
   }
@@ -134,11 +131,9 @@ TfToken UsdVolVolume::_MakeNamespaced(const TfToken &name)
 {
   TfToken result;
 
-  if (TfStringStartsWith(name, _tokens->fieldPrefix))
-  {
+  if (TfStringStartsWith(name, _tokens->fieldPrefix)) {
     result = name;
-  } else
-  {
+  } else {
     result = TfToken(_tokens->fieldPrefix.GetString() + name.GetString());
   }
 
@@ -150,20 +145,16 @@ UsdVolVolume::FieldMap UsdVolVolume::GetFieldPaths() const
   std::map<TfToken, SdfPath> fieldMap;
   const UsdPrim &prim = GetPrim();
 
-  if (prim)
-  {
+  if (prim) {
     std::vector<UsdProperty> fieldProps = prim.GetPropertiesInNamespace(_tokens->fieldPrefix);
-    for (const UsdProperty &fieldProp : fieldProps)
-    {
+    for (const UsdProperty &fieldProp : fieldProps) {
       UsdRelationship fieldRel = fieldProp.As<UsdRelationship>();
       SdfPathVector targets;
 
       // All relationships starting with "field:" should point to
       // UsdVolFieldBase primitives.
-      if (fieldRel && fieldRel.GetForwardedTargets(&targets))
-      {
-        if (targets.size() == 1 && targets.front().IsPrimPath())
-        {
+      if (fieldRel && fieldRel.GetForwardedTargets(&targets)) {
+        if (targets.size() == 1 && targets.front().IsPrimPath()) {
           fieldMap.emplace(fieldRel.GetBaseName(), targets.front());
         }
       }
@@ -183,10 +174,8 @@ SdfPath UsdVolVolume::GetFieldPath(const TfToken &name) const
   UsdRelationship fieldRel = GetPrim().GetRelationship(_MakeNamespaced(name));
   SdfPathVector targets;
 
-  if (fieldRel && fieldRel.GetForwardedTargets(&targets))
-  {
-    if (targets.size() == 1 && targets.front().IsPrimPath())
-    {
+  if (fieldRel && fieldRel.GetForwardedTargets(&targets)) {
+    if (targets.size() == 1 && targets.front().IsPrimPath()) {
       return targets.front();
     }
   }
@@ -196,14 +185,12 @@ SdfPath UsdVolVolume::GetFieldPath(const TfToken &name) const
 
 bool UsdVolVolume::CreateFieldRelationship(const TfToken &name, const SdfPath &fieldPath) const
 {
-  if (!fieldPath.IsPrimPath() && !fieldPath.IsPrimPropertyPath())
-  {
+  if (!fieldPath.IsPrimPath() && !fieldPath.IsPrimPropertyPath()) {
     return false;
   }
   UsdRelationship fieldRel = GetPrim().CreateRelationship(_MakeNamespaced(name), /*custom*/ true);
 
-  if (fieldRel)
-  {
+  if (fieldRel) {
     return fieldRel.SetTargets({fieldPath});
   }
 
@@ -214,12 +201,10 @@ bool UsdVolVolume::BlockFieldRelationship(const TfToken &name) const
 {
   UsdRelationship fieldRel = GetPrim().GetRelationship(_MakeNamespaced(name));
 
-  if (fieldRel)
-  {
+  if (fieldRel) {
     fieldRel.SetTargets({});
     return true;
-  } else
-  {
+  } else {
     return false;
   }
 }

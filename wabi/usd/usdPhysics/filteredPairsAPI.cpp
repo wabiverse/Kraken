@@ -40,14 +40,13 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsFilteredPairsAPI));
 
 /* virtual */
-UsdPhysicsFilteredPairsAPI::~UsdPhysicsFilteredPairsAPI()
-{}
+UsdPhysicsFilteredPairsAPI::~UsdPhysicsFilteredPairsAPI() {}
 
 /* static */
-UsdPhysicsFilteredPairsAPI UsdPhysicsFilteredPairsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsFilteredPairsAPI UsdPhysicsFilteredPairsAPI::Get(const UsdStagePtr &stage,
+                                                           const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsFilteredPairsAPI();
   }
@@ -70,8 +69,7 @@ bool UsdPhysicsFilteredPairsAPI::CanApply(const UsdPrim &prim, std::string *whyN
 /* static */
 UsdPhysicsFilteredPairsAPI UsdPhysicsFilteredPairsAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdPhysicsFilteredPairsAPI>())
-  {
+  if (prim.ApplyAPI<UsdPhysicsFilteredPairsAPI>()) {
     return UsdPhysicsFilteredPairsAPI(prim);
   }
   return UsdPhysicsFilteredPairsAPI();

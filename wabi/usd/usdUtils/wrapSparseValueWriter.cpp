@@ -35,9 +35,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-static UsdUtilsSparseAttrValueWriter *__init__(const UsdAttribute &attr, const object &defaultValue)
+static UsdUtilsSparseAttrValueWriter *__init__(const UsdAttribute &attr,
+                                               const object &defaultValue)
 {
-  return new UsdUtilsSparseAttrValueWriter(attr, UsdPythonToSdfType(defaultValue, attr.GetTypeName()));
+  return new UsdUtilsSparseAttrValueWriter(attr,
+                                           UsdPythonToSdfType(defaultValue, attr.GetTypeName()));
 }
 
 static bool _WrapSetTimeSample(UsdUtilsSparseAttrValueWriter &vc,
@@ -65,7 +67,9 @@ void wrapSparseValueWriter()
 {
   class_<UsdUtilsSparseAttrValueWriter>("SparseAttrValueWriter", no_init)
     .def("__init__",
-         make_constructor(__init__, default_call_policies(), (arg("attr"), arg("defaultValue") = object())))
+         make_constructor(__init__,
+                          default_call_policies(),
+                          (arg("attr"), arg("defaultValue") = object())))
 
     .def("SetTimeSample", _WrapSetTimeSample, (arg("value"), arg("time")));
 
@@ -77,6 +81,7 @@ void wrapSparseValueWriter()
     .def("GetSparseAttrValueWriters", _WrapGetSparseAttrValueWriters);
 
   // Register to and from vector conversions.
-  boost::python::to_python_converter<std::vector<UsdUtilsSparseAttrValueWriter>,
-                                     TfPySequenceToPython<std::vector<UsdUtilsSparseAttrValueWriter>>>();
+  boost::python::to_python_converter<
+    std::vector<UsdUtilsSparseAttrValueWriter>,
+    TfPySequenceToPython<std::vector<UsdUtilsSparseAttrValueWriter>>>();
 }

@@ -51,13 +51,10 @@ WABI_NAMESPACE_BEGIN
 
 static kScreen *screen_fullscreen_find_associated_normal_screen(const Main *kmain, kScreen *screen)
 {
-  UNIVERSE_FOR_ALL (screen_iter, kmain->screens)
-  {
-    if ((screen_iter != screen))
-    {
+  UNIVERSE_FOR_ALL (screen_iter, kmain->screens) {
+    if ((screen_iter != screen)) {
       ScrArea *area = screen_iter->areas.at(0);
-      if (area)
-      {
+      if (area) {
         return screen_iter;
       }
     }
@@ -73,11 +70,12 @@ static bool screen_is_used_by_other_window(const wmWindow *win, const kScreen *s
 }
 
 
-WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *kmain,
-                                                                 WorkSpace *workspace,
-                                                                 WorkSpaceLayout *layout_new,
-                                                                 const WorkSpaceLayout *layout_fallback_base,
-                                                                 wmWindow *win)
+WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(
+  Main *kmain,
+  WorkSpace *workspace,
+  WorkSpaceLayout *layout_new,
+  const WorkSpaceLayout *layout_fallback_base,
+  wmWindow *win)
 {
   WorkSpaceLayout *layout_temp = layout_new;
   kScreen *screen_temp = KKE_workspace_layout_screen_get(layout_new);
@@ -103,7 +101,10 @@ WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(Main *kmain,
 }
 
 
-WorkSpaceLayout *ED_workspace_layout_add(kContext *C, WorkSpace *workspace, wmWindow *win, const char *name)
+WorkSpaceLayout *ED_workspace_layout_add(kContext *C,
+                                         WorkSpace *workspace,
+                                         wmWindow *win,
+                                         const char *name)
 {
   kScreen *screen;
   GfRect2i screen_rect;

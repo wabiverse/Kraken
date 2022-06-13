@@ -70,8 +70,7 @@ namespace
     HgiResourceBindingsDesc resourceDesc;
     resourceDesc.debugName = "FlatNormals";
 
-    if (points)
-    {
+    if (points) {
       HgiBufferBindDesc bufBind0;
       bufBind0.bindingIndex = BufferBinding_Points;
       bufBind0.resourceType = HgiBindResourceTypeStorageBuffer;
@@ -81,8 +80,7 @@ namespace
       resourceDesc.buffers.push_back(std::move(bufBind0));
     }
 
-    if (normals)
-    {
+    if (normals) {
       HgiBufferBindDesc bufBind1;
       bufBind1.bindingIndex = BufferBinding_Normals;
       bufBind1.resourceType = HgiBindResourceTypeStorageBuffer;
@@ -92,8 +90,7 @@ namespace
       resourceDesc.buffers.push_back(std::move(bufBind1));
     }
 
-    if (indices)
-    {
+    if (indices) {
       HgiBufferBindDesc bufBind2;
       bufBind2.bindingIndex = BufferBinding_Indices;
       bufBind2.resourceType = HgiBindResourceTypeStorageBuffer;
@@ -103,8 +100,7 @@ namespace
       resourceDesc.buffers.push_back(std::move(bufBind2));
     }
 
-    if (primitiveParam)
-    {
+    if (primitiveParam) {
       HgiBufferBindDesc bufBind3;
       bufBind3.bindingIndex = BufferBinding_PrimitiveParam;
       bufBind3.resourceType = HgiBindResourceTypeStorageBuffer;
@@ -145,8 +141,7 @@ HdPh_FlatNormalsComputationGPU::HdPh_FlatNormalsComputationGPU(
     _dstName(dstName),
     _srcDataType(srcDataType)
 {
-  if (srcDataType != HdTypeFloatVec3 && srcDataType != HdTypeDoubleVec3)
-  {
+  if (srcDataType != HdTypeFloatVec3 && srcDataType != HdTypeDoubleVec3) {
     TF_CODING_ERROR("Unsupported points type %s for computing flat normals",
                     TfEnum::GetName(srcDataType).c_str());
     _srcDataType = HdTypeInvalid;
@@ -169,7 +164,8 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
     return;
 
   HdPhBufferArrayRangeSharedPtr range = std::static_pointer_cast<HdPhBufferArrayRange>(range_);
-  HdPhBufferArrayRangeSharedPtr vertexRange = std::static_pointer_cast<HdPhBufferArrayRange>(_vertexRange);
+  HdPhBufferArrayRangeSharedPtr vertexRange = std::static_pointer_cast<HdPhBufferArrayRange>(
+    _vertexRange);
   HdPhBufferArrayRangeSharedPtr topologyRange = std::static_pointer_cast<HdPhBufferArrayRange>(
     _topologyRange);
 
@@ -177,50 +173,37 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
   HdPhBufferResourceSharedPtr points = vertexRange->GetResource(_srcName);
   HdPhBufferResourceSharedPtr normals = range->GetResource(_dstName);
   HdPhBufferResourceSharedPtr indices = topologyRange->GetResource(HdTokens->indices);
-  HdPhBufferResourceSharedPtr primitiveParam = topologyRange->GetResource(HdTokens->primitiveParam);
+  HdPhBufferResourceSharedPtr primitiveParam = topologyRange->GetResource(
+    HdTokens->primitiveParam);
 
   // select shader by datatype
   TfToken shaderToken;
   int indexArity = HdGetComponentCount(indices->GetTupleType().type);
-  if (indexArity == 3)
-  {
-    if (_srcDataType == HdTypeFloatVec3)
-    {
-      if (_dstDataType == HdTypeFloatVec3)
-      {
+  if (indexArity == 3) {
+    if (_srcDataType == HdTypeFloatVec3) {
+      if (_dstDataType == HdTypeFloatVec3) {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsTriFloatToFloat;
-      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
-      {
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV) {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsTriFloatToPacked;
       }
-    } else if (_srcDataType == HdTypeDoubleVec3)
-    {
-      if (_dstDataType == HdTypeDoubleVec3)
-      {
+    } else if (_srcDataType == HdTypeDoubleVec3) {
+      if (_dstDataType == HdTypeDoubleVec3) {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsTriDoubleToDouble;
-      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
-      {
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV) {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsTriDoubleToPacked;
       }
     }
-  } else if (indexArity == 4)
-  {
-    if (_srcDataType == HdTypeFloatVec3)
-    {
-      if (_dstDataType == HdTypeFloatVec3)
-      {
+  } else if (indexArity == 4) {
+    if (_srcDataType == HdTypeFloatVec3) {
+      if (_dstDataType == HdTypeFloatVec3) {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsQuadFloatToFloat;
-      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
-      {
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV) {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsQuadFloatToPacked;
       }
-    } else if (_srcDataType == HdTypeDoubleVec3)
-    {
-      if (_dstDataType == HdTypeDoubleVec3)
-      {
+    } else if (_srcDataType == HdTypeDoubleVec3) {
+      if (_dstDataType == HdTypeDoubleVec3) {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsQuadDoubleToDouble;
-      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
-      {
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV) {
         shaderToken = HdPhGLSLProgramTokens->flatNormalsQuadDoubleToPacked;
       }
     }
@@ -243,7 +226,8 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
     int pParamStride;
   } uniform;
 
-  HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(resourceRegistry);
+  HdPhResourceRegistry *hdPhResourceRegistry = static_cast<HdPhResourceRegistry *>(
+    resourceRegistry);
   HdPhGLSLProgramSharedPtr computeProgram = HdPhGLSLProgram::GetComputeProgram(
     shaderToken,
     hdPhResourceRegistry,
@@ -253,22 +237,17 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
 
       TfToken srcType;
       TfToken dstType;
-      if (_srcDataType == HdTypeFloatVec3)
-      {
+      if (_srcDataType == HdTypeFloatVec3) {
         srcType = HdPhTokens->_float;
-      } else
-      {
+      } else {
         srcType = HdPhTokens->_double;
       }
 
-      if (_dstDataType == HdTypeFloatVec3)
-      {
+      if (_dstDataType == HdTypeFloatVec3) {
         dstType = HdPhTokens->_float;
-      } else if (_dstDataType == HdTypeDoubleVec3)
-      {
+      } else if (_dstDataType == HdTypeDoubleVec3) {
         dstType = HdPhTokens->_double;
-      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV)
-      {
+      } else if (_dstDataType == HdTypeInt32_2_10_10_10_REV) {
         dstType = HdPhTokens->_int;
       }
       HgiShaderFunctionAddBuffer(&computeDesc, "points", srcType);
@@ -290,8 +269,7 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
         "pParamStride"     // interleave stride
       };
       static_assert((sizeof(Uniform) / sizeof(int)) == (sizeof(params) / sizeof(params[0])), "");
-      for (std::string const &param : params)
-      {
+      for (std::string const &param : params) {
         HgiShaderFunctionAddConstantParam(&computeDesc, param, HdPhTokens->_int);
       }
       HgiShaderFunctionAddStageInput(&computeDesc,
@@ -319,15 +297,18 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
   // of indexes, not bytes, so we must convert the HdBufferResource
   // offset/stride (which are in bytes) to counts of float[]/double[]
   // entries.
-  const size_t pointComponentSize = HdDataSizeOfType(HdGetComponentType(points->GetTupleType().type));
+  const size_t pointComponentSize = HdDataSizeOfType(
+    HdGetComponentType(points->GetTupleType().type));
   uniform.pointsOffset = points->GetOffset() / pointComponentSize;
   uniform.pointsStride = points->GetStride() / pointComponentSize;
   // interleaved offset/stride to normals
-  const size_t normalComponentSize = HdDataSizeOfType(HdGetComponentType(normals->GetTupleType().type));
+  const size_t normalComponentSize = HdDataSizeOfType(
+    HdGetComponentType(normals->GetTupleType().type));
   uniform.normalsOffset = normals->GetOffset() / normalComponentSize;
   uniform.normalsStride = normals->GetStride() / normalComponentSize;
 
-  const size_t indexComponentSize = HdDataSizeOfType(HdGetComponentType(indices->GetTupleType().type));
+  const size_t indexComponentSize = HdDataSizeOfType(
+    HdGetComponentType(indices->GetTupleType().type));
   uniform.indexOffset = indices->GetOffset() / indexComponentSize;
   uniform.indexStride = indices->GetStride() / indexComponentSize;
 
@@ -350,8 +331,7 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
   // Get or add resource bindings in registry.
   HdInstance<HgiResourceBindingsSharedPtr> resourceBindingsInstance =
     hdPhResourceRegistry->RegisterResourceBindings(rbHash);
-  if (resourceBindingsInstance.IsFirstInstance())
-  {
+  if (resourceBindingsInstance.IsFirstInstance()) {
     HgiResourceBindingsSharedPtr rb = _CreateResourceBindings(hgi,
                                                               points->GetHandle(),
                                                               normals->GetHandle(),
@@ -366,9 +346,10 @@ void HdPh_FlatNormalsComputationGPU::Execute(HdBufferArrayRangeSharedPtr const &
   // Get or add pipeline in registry.
   HdInstance<HgiComputePipelineSharedPtr> computePipelineInstance =
     hdPhResourceRegistry->RegisterComputePipeline(pHash);
-  if (computePipelineInstance.IsFirstInstance())
-  {
-    HgiComputePipelineSharedPtr pipe = _CreatePipeline(hgi, sizeof(uniform), computeProgram->GetProgram());
+  if (computePipelineInstance.IsFirstInstance()) {
+    HgiComputePipelineSharedPtr pipe = _CreatePipeline(hgi,
+                                                       sizeof(uniform),
+                                                       computeProgram->GetProgram());
     computePipelineInstance.SetValue(pipe);
   }
 

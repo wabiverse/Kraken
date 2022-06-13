@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -77,7 +75,9 @@ void wrapUsdGeomPrimvarsAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -131,15 +131,17 @@ namespace
                                               UsdTimeCode time)
   {
     VtValue val = UsdPythonToSdfType(pyVal, typeName);
-    return self.CreateIndexedPrimvar(name, typeName, val, indices, interpolation, elementSize, time);
+    return self
+      .CreateIndexedPrimvar(name, typeName, val, indices, interpolation, elementSize, time);
   }
 
   WRAP_CUSTOM
   {
     _class
-      .def("CreatePrimvar",
-           &UsdGeomPrimvarsAPI::CreatePrimvar,
-           (arg("name"), arg("typeName"), arg("interpolation") = TfToken(), arg("elementSize") = -1))
+      .def(
+        "CreatePrimvar",
+        &UsdGeomPrimvarsAPI::CreatePrimvar,
+        (arg("name"), arg("typeName"), arg("interpolation") = TfToken(), arg("elementSize") = -1))
       .def("CreateNonIndexedPrimvar",
            _CreateNonIndexedPrimvar,
            (arg("name"),
@@ -160,7 +162,9 @@ namespace
       .def("RemovePrimvar", &UsdGeomPrimvarsAPI::RemovePrimvar, arg("name"))
       .def("BlockPrimvar", &UsdGeomPrimvarsAPI::BlockPrimvar, arg("name"))
       .def("GetPrimvar", &UsdGeomPrimvarsAPI::GetPrimvar, arg("name"))
-      .def("GetPrimvars", &UsdGeomPrimvarsAPI::GetPrimvars, return_value_policy<TfPySequenceToList>())
+      .def("GetPrimvars",
+           &UsdGeomPrimvarsAPI::GetPrimvars,
+           return_value_policy<TfPySequenceToList>())
       .def("GetAuthoredPrimvars",
            &UsdGeomPrimvarsAPI::GetAuthoredPrimvars,
            return_value_policy<TfPySequenceToList>())
@@ -181,22 +185,25 @@ namespace
            (UsdGeomPrimvar(UsdGeomPrimvarsAPI::*)(const TfToken &) const) &
              UsdGeomPrimvarsAPI::FindPrimvarWithInheritance,
            (arg("name")))
-      .def(
-        "FindPrimvarWithInheritance",
-        (UsdGeomPrimvar(UsdGeomPrimvarsAPI::*)(const TfToken &, const std::vector<UsdGeomPrimvar> &) const) &
-          UsdGeomPrimvarsAPI::FindPrimvarWithInheritance,
-        (arg("name"), arg("inheritedFromAncestors")))
+      .def("FindPrimvarWithInheritance",
+           (UsdGeomPrimvar(UsdGeomPrimvarsAPI::*)(const TfToken &,
+                                                  const std::vector<UsdGeomPrimvar> &) const) &
+             UsdGeomPrimvarsAPI::FindPrimvarWithInheritance,
+           (arg("name"), arg("inheritedFromAncestors")))
       .def("FindPrimvarsWithInheritance",
            (std::vector<UsdGeomPrimvar>(UsdGeomPrimvarsAPI::*)() const) &
              UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance,
            return_value_policy<TfPySequenceToList>())
       .def("FindPrimvarsWithInheritance",
-           (std::vector<UsdGeomPrimvar>(UsdGeomPrimvarsAPI::*)(const std::vector<UsdGeomPrimvar> &) const) &
+           (std::vector<UsdGeomPrimvar>(UsdGeomPrimvarsAPI::*)(const std::vector<UsdGeomPrimvar> &)
+              const) &
              UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance,
            (arg("inheritedFromAncestors")),
            return_value_policy<TfPySequenceToList>())
       .def("HasPrimvar", &UsdGeomPrimvarsAPI::HasPrimvar, arg("name"))
-      .def("HasPossiblyInheritedPrimvar", &UsdGeomPrimvarsAPI::HasPossiblyInheritedPrimvar, arg("name"))
+      .def("HasPossiblyInheritedPrimvar",
+           &UsdGeomPrimvarsAPI::HasPossiblyInheritedPrimvar,
+           arg("name"))
       .def("CanContainPropertyName", &UsdGeomPrimvarsAPI::CanContainPropertyName, arg("name"))
       .staticmethod("CanContainPropertyName");
   }

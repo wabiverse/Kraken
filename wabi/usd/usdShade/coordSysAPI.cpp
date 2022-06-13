@@ -40,14 +40,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (CoordSysAPI));
 
 /* virtual */
-UsdShadeCoordSysAPI::~UsdShadeCoordSysAPI()
-{}
+UsdShadeCoordSysAPI::~UsdShadeCoordSysAPI() {}
 
 /* static */
 UsdShadeCoordSysAPI UsdShadeCoordSysAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdShadeCoordSysAPI();
   }
@@ -111,13 +109,10 @@ std::vector<UsdShadeCoordSysAPI::Binding> UsdShadeCoordSysAPI::GetLocalBindings(
 {
   std::vector<Binding> result;
   SdfPathVector targets;
-  for (UsdProperty prop : GetPrim().GetAuthoredPropertiesInNamespace(_tokens->coordSys))
-  {
-    if (UsdRelationship rel = prop.As<UsdRelationship>())
-    {
+  for (UsdProperty prop : GetPrim().GetAuthoredPropertiesInNamespace(_tokens->coordSys)) {
+    if (UsdRelationship rel = prop.As<UsdRelationship>()) {
       targets.clear();
-      if (rel.GetForwardedTargets(&targets) && !targets.empty())
-      {
+      if (rel.GetForwardedTargets(&targets) && !targets.empty()) {
         Binding b = {rel.GetBaseName(), rel.GetPath(), targets.front()};
         result.push_back(b);
       }
@@ -130,28 +125,21 @@ std::vector<UsdShadeCoordSysAPI::Binding> UsdShadeCoordSysAPI::FindBindingsWithI
 {
   std::vector<Binding> result;
   SdfPathVector targets;
-  for (UsdPrim prim = GetPrim(); prim; prim = prim.GetParent())
-  {
+  for (UsdPrim prim = GetPrim(); prim; prim = prim.GetParent()) {
     SdfPathVector targets;
-    for (UsdProperty prop : prim.GetAuthoredPropertiesInNamespace(_tokens->coordSys))
-    {
-      if (UsdRelationship rel = prop.As<UsdRelationship>())
-      {
+    for (UsdProperty prop : prim.GetAuthoredPropertiesInNamespace(_tokens->coordSys)) {
+      if (UsdRelationship rel = prop.As<UsdRelationship>()) {
         // Check if name is already bound; skip if bound.
         bool nameIsAlreadyBound = false;
-        for (Binding const &existing : result)
-        {
-          if (existing.name == rel.GetBaseName())
-          {
+        for (Binding const &existing : result) {
+          if (existing.name == rel.GetBaseName()) {
             nameIsAlreadyBound = true;
             break;
           }
         }
-        if (!nameIsAlreadyBound)
-        {
+        if (!nameIsAlreadyBound) {
           targets.clear();
-          if (rel.GetForwardedTargets(&targets) && !targets.empty())
-          {
+          if (rel.GetForwardedTargets(&targets) && !targets.empty()) {
             Binding b = {rel.GetBaseName(), rel.GetPath(), targets.front()};
             result.push_back(b);
           }
@@ -164,12 +152,9 @@ std::vector<UsdShadeCoordSysAPI::Binding> UsdShadeCoordSysAPI::FindBindingsWithI
 
 bool UsdShadeCoordSysAPI::HasLocalBindings() const
 {
-  for (UsdProperty prop : GetPrim().GetAuthoredPropertiesInNamespace(_tokens->coordSys))
-  {
-    if (UsdRelationship rel = prop.As<UsdRelationship>())
-    {
-      if (rel.HasAuthoredTargets())
-      {
+  for (UsdProperty prop : GetPrim().GetAuthoredPropertiesInNamespace(_tokens->coordSys)) {
+    if (UsdRelationship rel = prop.As<UsdRelationship>()) {
+      if (rel.HasAuthoredTargets()) {
         return true;
       }
     }
@@ -180,8 +165,7 @@ bool UsdShadeCoordSysAPI::HasLocalBindings() const
 bool UsdShadeCoordSysAPI::Bind(const TfToken &name, const SdfPath &path) const
 {
   TfToken relName = GetCoordSysRelationshipName(name);
-  if (UsdRelationship rel = GetPrim().CreateRelationship(relName))
-  {
+  if (UsdRelationship rel = GetPrim().CreateRelationship(relName)) {
     return rel.SetTargets(SdfPathVector(1, path));
   }
   return false;
@@ -190,8 +174,7 @@ bool UsdShadeCoordSysAPI::Bind(const TfToken &name, const SdfPath &path) const
 bool UsdShadeCoordSysAPI::ClearBinding(const TfToken &name, bool removeSpec) const
 {
   TfToken relName = GetCoordSysRelationshipName(name);
-  if (UsdRelationship rel = GetPrim().GetRelationship(relName))
-  {
+  if (UsdRelationship rel = GetPrim().GetRelationship(relName)) {
     return rel.ClearTargets(removeSpec);
   }
   return false;
@@ -200,8 +183,7 @@ bool UsdShadeCoordSysAPI::ClearBinding(const TfToken &name, bool removeSpec) con
 bool UsdShadeCoordSysAPI::BlockBinding(const TfToken &name) const
 {
   TfToken relName = GetCoordSysRelationshipName(name);
-  if (UsdRelationship rel = GetPrim().CreateRelationship(relName))
-  {
+  if (UsdRelationship rel = GetPrim().CreateRelationship(relName)) {
     return rel.SetTargets({});
   }
   return false;

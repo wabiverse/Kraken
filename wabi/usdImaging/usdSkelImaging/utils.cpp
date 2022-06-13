@@ -72,8 +72,7 @@ namespace
     int numJoints = static_cast<int>(topology.GetNumJoints());
 
     size_t numBones = 0;
-    for (size_t i = 0; i < topology.GetNumJoints(); ++i)
-    {
+    for (size_t i = 0; i < topology.GetNumJoints(); ++i) {
       int parent = topology.GetParent(i);
       numBones += (parent >= 0 && parent < numJoints);
     }
@@ -86,13 +85,11 @@ bool UsdSkelImagingComputeBoneTopology(const UsdSkelTopology &skelTopology,
                                        HdMeshTopology *meshTopology,
                                        size_t *numPoints)
 {
-  if (!meshTopology)
-  {
+  if (!meshTopology) {
     TF_CODING_ERROR("'meshTopology' pointer is null.");
     return false;
   }
-  if (!numPoints)
-  {
+  if (!numPoints) {
     TF_CODING_ERROR("'numPoints' pointer is null.");
     return false;
   }
@@ -104,10 +101,8 @@ bool UsdSkelImagingComputeBoneTopology(const UsdSkelTopology &skelTopology,
 
   VtIntArray faceVertexIndices(numBones * _boneNumVerts);
   int *vertsData = faceVertexIndices.data();
-  for (size_t i = 0; i < numBones; ++i)
-  {
-    for (int j = 0; j < _boneNumVerts; ++j)
-    {
+  for (size_t i = 0; i < numBones; ++i) {
+    for (int j = 0; j < _boneNumVerts; ++j) {
       vertsData[i * _boneNumVerts + j] = _boneVerts[j] + i * _boneNumPoints;
     }
   }
@@ -127,18 +122,15 @@ namespace
 
   /// Wrapper for parallel loops that execs in serial if \p count
   /// is below a reasonable threading threshold.
-  template<typename Fn>
-  void _ParallelForN(size_t count, Fn &&callback)
+  template<typename Fn> void _ParallelForN(size_t count, Fn &&callback)
   {
     // XXX: Profiling shows that most of our loops only benefit
     // from parallelism past this threshold.
     size_t threshold = 1000;
 
-    if (count < threshold)
-    {
+    if (count < threshold) {
       WorkSerialForN(count, callback);
-    } else
-    {
+    } else {
       WorkParallelForN(count, callback);
     }
   }
@@ -149,8 +141,7 @@ namespace
   {
     const float PI_4 = static_cast<float>(M_PI) / 4.0f;
 
-    for (int i = 0; i < 2; ++i)
-    {
+    for (int i = 0; i < 2; ++i) {
       // If the transform is orthogonal, the best aligned
       // basis has an absolute dot product > PI/4.
       if (std::abs(GfDot(mx.GetRow3(i), dir)) > PI_4)
@@ -160,7 +151,9 @@ namespace
     return 2;
   }
 
-  void _ComputePointsForSingleBone(GfVec3f *points, const GfMatrix4d &xform, const GfMatrix4d &parentXform)
+  void _ComputePointsForSingleBone(GfVec3f *points,
+                                   const GfMatrix4d &xform,
+                                   const GfMatrix4d &parentXform)
   {
     GfVec3f end = GfVec3f(xform.ExtractTranslation());
     GfVec3f start = GfVec3f(parentXform.ExtractTranslation());
@@ -200,20 +193,20 @@ bool UsdSkelImagingComputeBonePoints(const UsdSkelTopology &topology,
                                      size_t numPoints,
                                      VtVec3fArray *points)
 {
-  if (!points)
-  {
+  if (!points) {
     TF_CODING_ERROR("'points' pointer is null.");
     return false;
   }
 
-  if (jointSkelXforms.size() == topology.GetNumJoints())
-  {
+  if (jointSkelXforms.size() == topology.GetNumJoints()) {
 
     points->resize(numPoints);
 
-    return UsdSkelImagingComputeBonePoints(topology, jointSkelXforms.cdata(), points->data(), numPoints);
-  } else
-  {
+    return UsdSkelImagingComputeBonePoints(topology,
+                                           jointSkelXforms.cdata(),
+                                           points->data(),
+                                           numPoints);
+  } else {
     TF_WARN("jointSkelXforms.size() [%zu] != number of joints [%zu].",
             jointSkelXforms.size(),
             topology.GetNumJoints());
@@ -226,8 +219,7 @@ bool UsdSkelImagingComputeBonePoints(const UsdSkelTopology &topology,
                                      GfVec3f *points,
                                      size_t numPoints)
 {
-  if (numPoints > 0 && !points)
-  {
+  if (numPoints > 0 && !points) {
     TF_CODING_ERROR("'points' pointer is null.");
     return false;
   }
@@ -238,17 +230,14 @@ bool UsdSkelImagingComputeBonePoints(const UsdSkelTopology &topology,
   std::vector<int> boneIndices(topology.GetNumJoints(), -1);
   int boneIndex = 0;
   size_t actualNumPoints = 0;
-  for (size_t i = 0; i < topology.GetNumJoints(); ++i)
-  {
+  for (size_t i = 0; i < topology.GetNumJoints(); ++i) {
     int parent = topology.GetParent(i);
-    if (parent >= 0 && parent < numJoints)
-    {
+    if (parent >= 0 && parent < numJoints) {
       boneIndices[i] = boneIndex++;
       actualNumPoints += _boneNumPoints;
     }
   }
-  if (actualNumPoints != numPoints)
-  {
+  if (actualNumPoints != numPoints) {
     TF_WARN(
       "number of points [%zu] does not match the size of "
       "the input point array [%zu].",
@@ -261,11 +250,9 @@ bool UsdSkelImagingComputeBonePoints(const UsdSkelTopology &topology,
   // where a bones are being computed for many skels.
   // (This is a known bottleneck in some imaging scenarios).
   _ParallelForN(topology.GetNumJoints(), [&](size_t start, size_t end) {
-    for (size_t i = start; i < end; ++i)
-    {
+    for (size_t i = start; i < end; ++i) {
       int boneIndex = boneIndices[i];
-      if (boneIndex >= 0)
-      {
+      if (boneIndex >= 0) {
         size_t offset = static_cast<size_t>(boneIndex) * _boneNumPoints;
 
         TF_DEV_AXIOM((offset + _boneNumPoints) <= numPoints);
@@ -285,8 +272,7 @@ bool UsdSkelImagingComputeBoneJointIndices(const UsdSkelTopology &topology,
                                            VtIntArray *jointIndices,
                                            size_t numPoints)
 {
-  if (!jointIndices)
-  {
+  if (!jointIndices) {
     TF_CODING_ERROR("'jointIndices' pointer is null.");
     return false;
   }
@@ -299,8 +285,7 @@ bool UsdSkelImagingComputeBoneJointIndices(const UsdSkelTopology &topology,
                                            int *jointIndices,
                                            size_t numPoints)
 {
-  if (numPoints > 0 && !jointIndices)
-  {
+  if (numPoints > 0 && !jointIndices) {
     TF_CODING_ERROR("'jointIndices' pointer is null.");
     return false;
   }
@@ -308,14 +293,11 @@ bool UsdSkelImagingComputeBoneJointIndices(const UsdSkelTopology &topology,
   int numJoints = static_cast<int>(topology.GetNumJoints());
 
   size_t offset = 0;
-  for (size_t i = 0; i < topology.GetNumJoints(); ++i)
-  {
+  for (size_t i = 0; i < topology.GetNumJoints(); ++i) {
     int parent = topology.GetParent(i);
-    if (parent >= 0 && parent < numJoints)
-    {
+    if (parent >= 0 && parent < numJoints) {
 
-      if ((offset + _boneNumPoints) <= numPoints)
-      {
+      if ((offset + _boneNumPoints) <= numPoints) {
         // Each bone is defined as a pyramid shaped object,
         // with the tip at a joint, and a square base at
         // the parent.
@@ -324,14 +306,12 @@ bool UsdSkelImagingComputeBoneJointIndices(const UsdSkelTopology &topology,
         jointIndices[offset] = static_cast<int>(i);
 
         // The rest of the points (the base) belong to the parent.
-        for (int j = 1; j < _boneNumPoints; ++j)
-        {
+        for (int j = 1; j < _boneNumPoints; ++j) {
           jointIndices[offset + j] = parent;
         }
 
         offset += _boneNumPoints;
-      } else
-      {
+      } else {
         TF_WARN(
           "Incorrect number of points for bone "
           "mesh [%zu].",

@@ -215,12 +215,16 @@ bool SdfFileFormat::ReadFromString(SdfLayer *layer, const std::string &str) cons
   return false;
 }
 
-bool SdfFileFormat::WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const
+bool SdfFileFormat::WriteToStream(const SdfSpecHandle &spec,
+                                  std::ostream &out,
+                                  size_t indent) const
 {
   return false;
 }
 
-bool SdfFileFormat::WriteToString(const SdfLayer &layer, std::string *str, const std::string &comment) const
+bool SdfFileFormat::WriteToString(const SdfLayer &layer,
+                                  std::string *str,
+                                  const std::string &comment) const
 {
   return false;
 }
@@ -233,8 +237,7 @@ std::set<std::string> SdfFileFormat::GetExternalAssetDependencies(const SdfLayer
 /* static */
 std::string SdfFileFormat::GetFileExtension(const std::string &s)
 {
-  if (s.empty())
-  {
+  if (s.empty()) {
     return s;
   }
 
@@ -255,7 +258,8 @@ SdfFileFormatConstPtr SdfFileFormat::FindById(const TfToken &formatId)
 }
 
 /* static */
-SdfFileFormatConstPtr SdfFileFormat::FindByExtension(const std::string &extension, const std::string &target)
+SdfFileFormatConstPtr SdfFileFormat::FindByExtension(const std::string &extension,
+                                                     const std::string &target)
 {
   return _FileFormatRegistry->FindByExtension(extension, target);
 }
@@ -267,18 +271,14 @@ SdfFileFormatConstPtr SdfFileFormat::FindByExtension(const std::string &path,
   // Find a file format that can handle this extension and the
   // specified target (if any).
   const std::string *targets = TfMapLookupPtr(args, SdfFileFormatTokens->TargetArg);
-  if (targets)
-  {
-    for (std::string &target : TfStringTokenize(*targets, ","))
-    {
+  if (targets) {
+    for (std::string &target : TfStringTokenize(*targets, ",")) {
       target = TfStringTrim(target);
-      if (target.empty())
-      {
+      if (target.empty()) {
         continue;
       }
 
-      if (const SdfFileFormatConstPtr format = SdfFileFormat::FindByExtension(path, target))
-      {
+      if (const SdfFileFormatConstPtr format = SdfFileFormat::FindByExtension(path, target)) {
         return format;
       }
     }
@@ -310,7 +310,9 @@ void SdfFileFormat::_SetLayerData(SdfLayer *layer, SdfAbstractDataRefPtr &data)
   _SetLayerData(layer, data, SdfLayerHints{});
 }
 
-void SdfFileFormat::_SetLayerData(SdfLayer *layer, SdfAbstractDataRefPtr &data, SdfLayerHints hints)
+void SdfFileFormat::_SetLayerData(SdfLayer *layer,
+                                  SdfAbstractDataRefPtr &data,
+                                  SdfLayerHints hints)
 {
   // If layer initialization has not completed, then this
   // is being loaded as a new layer; otherwise we are loading
@@ -320,11 +322,9 @@ void SdfFileFormat::_SetLayerData(SdfLayer *layer, SdfAbstractDataRefPtr &data, 
   // been set, not what its held value is.
   //
   const bool layerIsLoadingAsNew = !layer->_initializationWasSuccessful;
-  if (layerIsLoadingAsNew)
-  {
+  if (layerIsLoadingAsNew) {
     layer->_SwapData(data);
-  } else
-  {
+  } else {
     layer->_SetData(data);
   }
 

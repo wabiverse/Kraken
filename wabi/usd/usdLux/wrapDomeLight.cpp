@@ -50,20 +50,22 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateTextureFileAttr(UsdLuxDomeLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateTextureFileAttr(UsdLuxDomeLight &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
   {
     return self.CreateTextureFileAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
                                       writeSparsely);
   }
 
-  static UsdAttribute _CreateTextureFormatAttr(UsdLuxDomeLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateTextureFormatAttr(UsdLuxDomeLight &self,
+                                               object defaultVal,
+                                               bool writeSparsely)
   {
     return self.CreateTextureFormatAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                         writeSparsely);
@@ -99,7 +101,9 @@ void wrapUsdLuxDomeLight()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)

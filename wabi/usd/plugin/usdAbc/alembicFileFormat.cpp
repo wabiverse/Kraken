@@ -65,8 +65,7 @@ UsdAbcAlembicFileFormat::UsdAbcAlembicFileFormat()
     _usda(SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id))
 {}
 
-UsdAbcAlembicFileFormat::~UsdAbcAlembicFileFormat()
-{}
+UsdAbcAlembicFileFormat::~UsdAbcAlembicFileFormat() {}
 
 SdfAbstractDataRefPtr UsdAbcAlembicFileFormat::InitData(const FileFormatArguments &args) const
 {
@@ -77,22 +76,22 @@ bool UsdAbcAlembicFileFormat::CanRead(const string &filePath) const
 {
   // XXX: Add more verification of file header magic
   auto extension = TfGetExtension(filePath);
-  if (extension.empty())
-  {
+  if (extension.empty()) {
     return false;
   }
 
   return extension == this->GetFormatId();
 }
 
-bool UsdAbcAlembicFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool metadataOnly) const
+bool UsdAbcAlembicFileFormat::Read(SdfLayer *layer,
+                                   const string &resolvedPath,
+                                   bool metadataOnly) const
 {
   TRACE_FUNCTION();
 
   SdfAbstractDataRefPtr data = InitData(layer->GetFileFormatArguments());
   UsdAbc_AlembicDataRefPtr abcData = TfStatic_cast<UsdAbc_AlembicDataRefPtr>(data);
-  if (!abcData->Open(resolvedPath))
-  {
+  if (!abcData->Open(resolvedPath)) {
     return false;
   }
 

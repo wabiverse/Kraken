@@ -35,9 +35,7 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<TfDebugSymbolEnableChangedNotice, TfType::Bases<TfNotice>>();
 }
 
-TfDebugSymbolsChangedNotice::~TfDebugSymbolsChangedNotice()
-{}
-TfDebugSymbolEnableChangedNotice::~TfDebugSymbolEnableChangedNotice()
-{}
+TfDebugSymbolsChangedNotice::~TfDebugSymbolsChangedNotice() {}
+TfDebugSymbolEnableChangedNotice::~TfDebugSymbolEnableChangedNotice() {}
 
 WABI_NAMESPACE_END

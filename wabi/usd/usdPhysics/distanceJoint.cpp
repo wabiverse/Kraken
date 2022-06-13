@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdPhysicsDistanceJoint::~UsdPhysicsDistanceJoint()
-{}
+UsdPhysicsDistanceJoint::~UsdPhysicsDistanceJoint() {}
 
 /* static */
 UsdPhysicsDistanceJoint UsdPhysicsDistanceJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsDistanceJoint();
   }
@@ -59,11 +57,11 @@ UsdPhysicsDistanceJoint UsdPhysicsDistanceJoint::Get(const UsdStagePtr &stage, c
 }
 
 /* static */
-UsdPhysicsDistanceJoint UsdPhysicsDistanceJoint::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsDistanceJoint UsdPhysicsDistanceJoint::Define(const UsdStagePtr &stage,
+                                                        const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PhysicsDistanceJoint");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsDistanceJoint();
   }
@@ -148,8 +146,9 @@ const TfTokenVector &UsdPhysicsDistanceJoint::GetSchemaAttributeNames(bool inclu
     UsdPhysicsTokens->physicsMinDistance,
     UsdPhysicsTokens->physicsMaxDistance,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdPhysicsJoint::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdPhysicsJoint::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

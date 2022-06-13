@@ -40,14 +40,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsRigidBodyAPI));
 
 /* virtual */
-UsdPhysicsRigidBodyAPI::~UsdPhysicsRigidBodyAPI()
-{}
+UsdPhysicsRigidBodyAPI::~UsdPhysicsRigidBodyAPI() {}
 
 /* static */
 UsdPhysicsRigidBodyAPI UsdPhysicsRigidBodyAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsRigidBodyAPI();
   }
@@ -70,8 +68,7 @@ bool UsdPhysicsRigidBodyAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 /* static */
 UsdPhysicsRigidBodyAPI UsdPhysicsRigidBodyAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdPhysicsRigidBodyAPI>())
-  {
+  if (prim.ApplyAPI<UsdPhysicsRigidBodyAPI>()) {
     return UsdPhysicsRigidBodyAPI(prim);
   }
   return UsdPhysicsRigidBodyAPI();
@@ -211,8 +208,9 @@ const TfTokenVector &UsdPhysicsRigidBodyAPI::GetSchemaAttributeNames(bool includ
     UsdPhysicsTokens->physicsVelocity,
     UsdPhysicsTokens->physicsAngularVelocity,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

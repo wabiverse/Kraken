@@ -43,13 +43,11 @@ WABI_NAMESPACE_BEGIN
 static void Pcp_SubsumeDescendants(SdfPathSet *pathSet)
 {
   SdfPathSet::iterator prefixIt = pathSet->begin(), end = pathSet->end();
-  while (prefixIt != end)
-  {
+  while (prefixIt != end) {
     // Find the range of paths under path *prefixIt.
     SdfPathSet::iterator first = prefixIt;
     SdfPathSet::iterator last = ++first;
-    while (last != end && last->HasPrefix(*prefixIt))
-    {
+    while (last != end && last->HasPrefix(*prefixIt)) {
       ++last;
     }
 
@@ -69,8 +67,7 @@ void Pcp_SubsumeDescendants(SdfPathSet *pathSet, const SdfPath &prefix)
   // Scan for next path in pathSet that does not have prefix as a prefix.
   SdfPathSet::iterator last = first;
   SdfPathSet::iterator end = pathSet->end();
-  while (last != end && last->HasPrefix(prefix))
-  {
+  while (last != end && last->HasPrefix(prefix)) {
     ++last;
   }
 
@@ -132,39 +129,34 @@ enum Pcp_ChangesLayerStackChange
   Pcp_ChangesLayerStackChangeMaybeSignificant
 };
 
-static Pcp_ChangesLayerStackChange Pcp_EntryRequiresLayerStackChange(const SdfChangeList::Entry &entry)
+static Pcp_ChangesLayerStackChange Pcp_EntryRequiresLayerStackChange(
+  const SdfChangeList::Entry &entry)
 {
   // If a layer's content was entirely replaced, we must blow layer stacks.
-  if (entry.flags.didReplaceContent)
-  {
+  if (entry.flags.didReplaceContent) {
     return Pcp_ChangesLayerStackChangeSignificant;
   }
 
   // XXX: This only requires blowing the layer stacks using this
   //      identifier that haven't also been updated to use the new
   //      identifier.
-  if (entry.flags.didChangeIdentifier)
-  {
+  if (entry.flags.didChangeIdentifier) {
     return Pcp_ChangesLayerStackChangeSignificant;
   }
 
   // Order of layers in layer stack probably changed.
   // XXX: Don't return true if these changes don't affect the
   //      layer tree order.
-  for (auto const &p : entry.infoChanged)
-  {
+  for (auto const &p : entry.infoChanged) {
     if (p.first == SdfFieldKeys->Owner || p.first == SdfFieldKeys->SessionOwner ||
-        p.first == SdfFieldKeys->HasOwnedSubLayers)
-    {
+        p.first == SdfFieldKeys->HasOwnedSubLayers) {
       return Pcp_ChangesLayerStackChangeSignificant;
     }
   }
 
   // Layer was added or removed.
-  TF_FOR_ALL (i, entry.subLayerChanges)
-  {
-    if (i->second == SdfChangeList::SubLayerAdded || i->second == SdfChangeList::SubLayerRemoved)
-    {
+  TF_FOR_ALL (i, entry.subLayerChanges) {
+    if (i->second == SdfChangeList::SubLayerAdded || i->second == SdfChangeList::SubLayerRemoved) {
       // Whether the change is significant depends on whether any
       // added/removed layer is significant.  To check that we need
       // the help of each cache using this layer.
@@ -180,10 +172,8 @@ static bool Pcp_EntryRequiresLayerStackOffsetsChange(const SdfLayerHandle &layer
                                                      bool *rootLayerStacksMayNeedTcpsRecompute)
 {
   // Check any changes to actual sublayer offsets.
-  for (const auto &it : entry.subLayerChanges)
-  {
-    if (it.second == SdfChangeList::SubLayerOffset)
-    {
+  for (const auto &it : entry.subLayerChanges) {
+    if (it.second == SdfChangeList::SubLayerOffset) {
       return true;
     }
   }
@@ -193,8 +183,7 @@ static bool Pcp_EntryRequiresLayerStackOffsetsChange(const SdfLayerHandle &layer
   // SdfChangeManager will send a send a FPS change as a change to TCPS as
   // well when the FPS is relevant as a fallback for an unspecified TCPS.
   auto it = entry.FindInfoChange(SdfFieldKeys->TimeCodesPerSecond);
-  if (it != entry.infoChanged.end())
-  {
+  if (it != entry.infoChanged.end()) {
     // The old and new values in the entry already account for the
     // "computed TCPS" when the FPS is used as a fallback. So we still have
     // to check if the computed TCPS changed.
@@ -226,10 +215,8 @@ static bool Pcp_EntryRequiresLayerStackOffsetsChange(const SdfLayerHandle &layer
     // details of Sdf change management. Ideally Sdf should provide a
     // notification differentiation between "authored TCPS" changed vs
     // "computed TCPS" changed.
-    if (oldComputedTcps == newComputedTcps)
-    {
-      if (rootLayerStacksMayNeedTcpsRecompute)
-      {
+    if (oldComputedTcps == newComputedTcps) {
+      if (rootLayerStacksMayNeedTcpsRecompute) {
         *rootLayerStacksMayNeedTcpsRecompute = true;
       }
       return false;
@@ -238,8 +225,7 @@ static bool Pcp_EntryRequiresLayerStackOffsetsChange(const SdfLayerHandle &layer
     // If either old or new value is empty, and the other value matches the
     // fallback, then we don't have an effective TCPS change.
     if ((oldComputedTcps.IsEmpty() && _MatchesFallback(newComputedTcps)) ||
-        (newComputedTcps.IsEmpty() && _MatchesFallback(oldComputedTcps)))
-    {
+        (newComputedTcps.IsEmpty() && _MatchesFallback(oldComputedTcps))) {
       return false;
     }
     return true;
@@ -252,8 +238,7 @@ static bool Pcp_EntryRequiresPrimIndexChange(const SdfChangeList::Entry &entry)
 {
   // Inherits, specializes, reference or variants changed.
   if (entry.flags.didChangePrimInheritPaths || entry.flags.didChangePrimSpecializes ||
-      entry.flags.didChangePrimReferences || entry.flags.didChangePrimVariantSets)
-  {
+      entry.flags.didChangePrimReferences || entry.flags.didChangePrimVariantSets) {
     return true;
   }
 
@@ -263,11 +248,9 @@ static bool Pcp_EntryRequiresPrimIndexChange(const SdfChangeList::Entry &entry)
   //        permissions change doesn't add/remove any specs
   //            that themselves require prim graph changes;
   //        variant selection was invalid and is still invalid.
-  for (auto const &p : entry.infoChanged)
-  {
+  for (auto const &p : entry.infoChanged) {
     if (p.first == SdfFieldKeys->Payload || p.first == SdfFieldKeys->Permission ||
-        p.first == SdfFieldKeys->VariantSelection || p.first == SdfFieldKeys->Instanceable)
-    {
+        p.first == SdfFieldKeys->VariantSelection || p.first == SdfFieldKeys->Instanceable) {
       return true;
     }
   }
@@ -284,9 +267,11 @@ enum
   Pcp_EntryChangeSpecsTargets = 16,
   Pcp_EntryChangeSpecsConnections = 32,
   Pcp_EntryChangeSpecsAdd = Pcp_EntryChangeSpecsAddInert | Pcp_EntryChangeSpecsAddNonInert,
-  Pcp_EntryChangeSpecsRemove = Pcp_EntryChangeSpecsRemoveInert | Pcp_EntryChangeSpecsRemoveNonInert,
+  Pcp_EntryChangeSpecsRemove = Pcp_EntryChangeSpecsRemoveInert |
+                               Pcp_EntryChangeSpecsRemoveNonInert,
   Pcp_EntryChangeSpecsInert = Pcp_EntryChangeSpecsAddInert | Pcp_EntryChangeSpecsRemoveInert,
-  Pcp_EntryChangeSpecsNonInert = Pcp_EntryChangeSpecsAddNonInert | Pcp_EntryChangeSpecsRemoveNonInert
+  Pcp_EntryChangeSpecsNonInert = Pcp_EntryChangeSpecsAddNonInert |
+                                 Pcp_EntryChangeSpecsRemoveNonInert
 };
 
 static int Pcp_EntryRequiresPrimSpecsChange(const SdfChangeList::Entry &entry)
@@ -306,16 +291,15 @@ static int Pcp_EntryRequiresPropertySpecsChange(const SdfChangeList::Entry &entr
   int result = 0;
 
   result |= entry.flags.didAddPropertyWithOnlyRequiredFields ? Pcp_EntryChangeSpecsAddInert : 0;
-  result |= entry.flags.didRemovePropertyWithOnlyRequiredFields ? Pcp_EntryChangeSpecsRemoveInert : 0;
+  result |= entry.flags.didRemovePropertyWithOnlyRequiredFields ? Pcp_EntryChangeSpecsRemoveInert :
+                                                                  0;
   result |= entry.flags.didAddProperty ? Pcp_EntryChangeSpecsAddNonInert : 0;
   result |= entry.flags.didRemoveProperty ? Pcp_EntryChangeSpecsRemoveNonInert : 0;
 
-  if (entry.flags.didChangeRelationshipTargets)
-  {
+  if (entry.flags.didChangeRelationshipTargets) {
     result |= Pcp_EntryChangeSpecsTargets;
   }
-  if (entry.flags.didChangeAttributeConnection)
-  {
+  if (entry.flags.didChangeAttributeConnection) {
     result |= Pcp_EntryChangeSpecsConnections;
   }
 
@@ -324,10 +308,8 @@ static int Pcp_EntryRequiresPropertySpecsChange(const SdfChangeList::Entry &entr
 
 static bool Pcp_EntryRequiresPropertyIndexChange(const SdfChangeList::Entry &entry)
 {
-  for (auto const &p : entry.infoChanged)
-  {
-    if (p.first == SdfFieldKeys->Permission)
-    {
+  for (auto const &p : entry.infoChanged) {
+    if (p.first == SdfFieldKeys->Permission) {
       return true;
     }
   }
@@ -343,12 +325,9 @@ static bool Pcp_ChangeMayAffectDynamicFileFormatArguments(const PcpCache *cache,
                                                           std::string *debugSummary)
 {
   // Early out if the cache has no dynamic file format dependencies.
-  if (cache->HasAnyDynamicFileFormatArgumentDependencies())
-  {
-    for (const auto &change : entry.infoChanged)
-    {
-      if (cache->IsPossibleDynamicFileFormatArgumentField(change.first))
-      {
+  if (cache->HasAnyDynamicFileFormatArgumentDependencies()) {
+    for (const auto &change : entry.infoChanged) {
+      if (cache->IsPossibleDynamicFileFormatArgumentField(change.first)) {
         PCP_APPEND_DEBUG(
           "  Info change for field '%s' may affect "
           "dynamic file format arguments\n",
@@ -361,22 +340,19 @@ static bool Pcp_ChangeMayAffectDynamicFileFormatArguments(const PcpCache *cache,
   return false;
 }
 
-static bool Pcp_PrimSpecOrDescendantHasRelocates(const SdfLayerHandle &layer, const SdfPath &primPath)
+static bool Pcp_PrimSpecOrDescendantHasRelocates(const SdfLayerHandle &layer,
+                                                 const SdfPath &primPath)
 {
   TRACE_FUNCTION();
 
-  if (layer->HasField(primPath, SdfFieldKeys->Relocates))
-  {
+  if (layer->HasField(primPath, SdfFieldKeys->Relocates)) {
     return true;
   }
 
   TfTokenVector primChildNames;
-  if (layer->HasField(primPath, SdfChildrenKeys->PrimChildren, &primChildNames))
-  {
-    for (const TfToken &name : primChildNames)
-    {
-      if (Pcp_PrimSpecOrDescendantHasRelocates(layer, primPath.AppendChild(name)))
-      {
+  if (layer->HasField(primPath, SdfChildrenKeys->PrimChildren, &primChildNames)) {
+    for (const TfToken &name : primChildNames) {
+      if (Pcp_PrimSpecOrDescendantHasRelocates(layer, primPath.AppendChild(name))) {
         return true;
       }
     }
@@ -399,21 +375,20 @@ static bool Pcp_DoesInfoChangeAffectFileFormatArguments(PcpCache const *cache,
   // Get the cached  dynamic file format dependency data for the prim index.
   // This will exist if the prim index exists and has any direct arcs that
   // used a dynamic file format.
-  const PcpDynamicFileFormatDependencyData &depData = cache->GetDynamicFileFormatArgumentDependencyData(
-    primIndexPath);
-  if (depData.IsEmpty())
-  {
+  const PcpDynamicFileFormatDependencyData &depData =
+    cache->GetDynamicFileFormatArgumentDependencyData(primIndexPath);
+  if (depData.IsEmpty()) {
     PCP_APPEND_DEBUG("  Prim index has no dynamic file format dependencies\n");
     return false;
   }
 
   // For each info field ask the dependency data if the change can affect
   // the file format args of any node in the prim index graph.
-  for (const auto &change : changes.infoChanged)
-  {
-    const bool isRelevantChange = depData.CanFieldChangeAffectFileFormatArguments(change.first,
-                                                                                  change.second.first,
-                                                                                  change.second.second);
+  for (const auto &change : changes.infoChanged) {
+    const bool isRelevantChange = depData.CanFieldChangeAffectFileFormatArguments(
+      change.first,
+      change.second.first,
+      change.second.second);
     PCP_APPEND_DEBUG(
       "  Field '%s' change: %s -> %s "
       "%s relevant for prim index path '%s'\n",
@@ -422,8 +397,7 @@ static bool Pcp_DoesInfoChangeAffectFileFormatArguments(PcpCache const *cache,
       TfStringify(change.second.second).c_str(),
       isRelevantChange ? "IS" : "is NOT",
       primIndexPath.GetText());
-    if (isRelevantChange)
-    {
+    if (isRelevantChange) {
       return true;
     }
   }
@@ -458,16 +432,18 @@ static void Pcp_DidChangeDependents(const PcpCache *cache,
 
   PCP_APPEND_DEBUG("   Resync following in @%s@ %s due to Sdf site @%s@<%s>%s:\n",
                    cache->GetLayerStackIdentifier().rootLayer->GetIdentifier().c_str(),
-                   recurseOnSite ? "recurse on prim descendants" : "do not recurse on prim descendants",
+                   recurseOnSite ? "recurse on prim descendants" :
+                                   "do not recurse on prim descendants",
                    layer->GetIdentifier().c_str(),
                    path.GetText(),
                    onlyExistingDependentPaths ? " (restricted to existing caches)" :
                                                 " (not restricted to existing caches)");
 
   // Run the process function on each found dependency.
-  for (const auto &dep : deps)
-  {
-    PCP_APPEND_DEBUG("    <%s> depends on <%s>\n", dep.indexPath.GetText(), dep.sitePath.GetText());
+  for (const auto &dep : deps) {
+    PCP_APPEND_DEBUG("    <%s> depends on <%s>\n",
+                     dep.indexPath.GetText(),
+                     dep.sitePath.GetText());
 
     processDependencyFunc(dep);
   }
@@ -475,7 +451,8 @@ static void Pcp_DidChangeDependents(const PcpCache *cache,
   PCP_APPEND_DEBUG("   Resync end\n");
 }
 
-void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLayerChangeListVec &changes)
+void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches,
+                           const SdfLayerChangeListVec &changes)
 {
   // LayerStack changes
   static const int LayerStackLayersChange = 1;
@@ -523,18 +500,18 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
   std::string *debugSummary = TfDebug::IsEnabled(PCP_CHANGES) ? &summary : 0;
 
   PCP_APPEND_DEBUG("  Caches:\n");
-  for (const PcpCache *cache : caches)
-  {
+  for (const PcpCache *cache : caches) {
     PCP_APPEND_DEBUG("    %s\n", TfStringify(cache->GetLayerStack()->GetIdentifier()).c_str());
   }
 
-  const bool allCachesInUsdMode = std::all_of(caches.begin(), caches.end(), [](const PcpCache *cache) {
-    return cache->IsUsd();
-  });
+  const bool allCachesInUsdMode = std::all_of(caches.begin(),
+                                              caches.end(),
+                                              [](const PcpCache *cache) {
+                                                return cache->IsUsd();
+                                              });
 
   // Process all changes, first looping over all layers.
-  for (auto const &i : changes)
-  {
+  for (auto const &i : changes) {
     const SdfLayerHandle &layer = i.first;
     const SdfChangeList &changeList = i.second;
 
@@ -542,8 +519,7 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     // care about prim changes. We can do a pre-scan of the entries
     // and bail early if none of the changes are for prims, skipping
     // over unnecessary work.
-    if (allCachesInUsdMode)
-    {
+    if (allCachesInUsdMode) {
       using _Entries = SdfChangeList::EntryList;
 
       const _Entries &entries = changeList.GetEntryList();
@@ -553,8 +529,7 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
                                                  return !entry.first.ContainsPropertyElements();
                                                }) != entries.end();
 
-      if (!hasPrimChanges)
-      {
+      if (!hasPrimChanges) {
         PCP_APPEND_DEBUG("  Layer @%s@ changed:  skipping non-prim changes\n",
                          layer->GetIdentifier().c_str());
         continue;
@@ -567,16 +542,13 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     typedef std::vector<CacheLayerStacks> CacheLayerStacksVector;
 
     CacheLayerStacksVector cacheLayerStacks;
-    for (auto cache : caches)
-    {
+    for (auto cache : caches) {
       PcpLayerStackPtrVector stacks = cache->FindAllLayerStacksUsingLayer(layer);
-      if (!stacks.empty())
-      {
+      if (!stacks.empty()) {
         cacheLayerStacks.emplace_back(cache, std::move(stacks));
       }
     }
-    if (cacheLayerStacks.empty())
-    {
+    if (cacheLayerStacks.empty()) {
       PCP_APPEND_DEBUG("  Layer @%s@ changed:  unused\n", layer->GetIdentifier().c_str());
       continue;
     }
@@ -598,8 +570,7 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     fieldForFileFormatArgumentsChanges.clear();
 
     // Loop over each entry on the layer.
-    for (auto const &j : changeList.GetEntryList())
-    {
+    for (auto const &j : changeList.GetEntryList()) {
       const SdfPath &path = j.first;
       const SdfChangeList::Entry &entry = j.second;
 
@@ -622,29 +593,27 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
       // yet. The fallback ancestor code won't be run in the usual
       // case anyway, so it's safe to just always set up the fallback
       // ancestor path.
-      const bool fallbackToParent = entry.flags.didAddInertPrim || entry.flags.didRemoveInertPrim ||
-                                    entry.flags.didAddNonInertPrim || entry.flags.didRemoveNonInertPrim ||
+      const bool fallbackToParent = entry.flags.didAddInertPrim ||
+                                    entry.flags.didRemoveInertPrim ||
+                                    entry.flags.didAddNonInertPrim ||
+                                    entry.flags.didRemoveNonInertPrim ||
                                     entry.flags.didAddProperty || entry.flags.didRemoveProperty ||
                                     entry.flags.didAddPropertyWithOnlyRequiredFields ||
                                     entry.flags.didRemovePropertyWithOnlyRequiredFields;
 
-      if (fallbackToParent)
-      {
+      if (fallbackToParent) {
         fallbackToAncestorPaths.insert(path);
       }
 
-      if (path == SdfPath::AbsoluteRootPath())
-      {
-        if (entry.flags.didReplaceContent)
-        {
+      if (path == SdfPath::AbsoluteRootPath()) {
+        if (entry.flags.didReplaceContent) {
           pathsWithSignificantChanges.insert(path);
         }
 
         // Treat a change to DefaultPrim as a resync
         // of that root prim path.
         auto i = entry.FindInfoChange(SdfFieldKeys->DefaultPrim);
-        if (i != entry.infoChanged.end())
-        {
+        if (i != entry.infoChanged.end()) {
           // old value.
           TfToken token = i->second.first.GetWithDefault<TfToken>();
           pathsWithSignificantChanges.insert(SdfPath::IsValidIdentifier(token) ?
@@ -658,21 +627,19 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
         }
 
         // Handle changes that require blowing the layer stack.
-        switch (Pcp_EntryRequiresLayerStackChange(entry))
-        {
+        switch (Pcp_EntryRequiresLayerStackChange(entry)) {
           case Pcp_ChangesLayerStackChangeMaybeSignificant:
             layerStackChangeMask |= LayerStackLayersChange;
-            for (auto const &k : entry.subLayerChanges)
-            {
-              if (k.second == SdfChangeList::SubLayerAdded || k.second == SdfChangeList::SubLayerRemoved)
-              {
+            for (auto const &k : entry.subLayerChanges) {
+              if (k.second == SdfChangeList::SubLayerAdded ||
+                  k.second == SdfChangeList::SubLayerRemoved) {
                 const std::string &sublayerPath = k.first;
-                const _SublayerChangeType sublayerChange = k.second == SdfChangeList::SubLayerAdded ?
+                const _SublayerChangeType sublayerChange = k.second ==
+                                                               SdfChangeList::SubLayerAdded ?
                                                              _SublayerAdded :
                                                              _SublayerRemoved;
 
-                for (auto const &i : cacheLayerStacks)
-                {
+                for (auto const &i : cacheLayerStacks) {
                   bool significant = false;
                   const SdfLayerRefPtr sublayer = _LoadSublayerForChange(i.first,
                                                                          layer,
@@ -689,8 +656,7 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
                                      sublayerChange,
                                      debugSummary,
                                      &significant);
-                  if (significant)
-                  {
+                  if (significant) {
                     layerStackChangeMask |= LayerStackSignificantChange;
                   }
                 }
@@ -702,14 +668,16 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
             // Must blow everything
             layerStackChangeMask |= LayerStackLayersChange | LayerStackSignificantChange;
             pathsWithSignificantChanges.insert(path);
-            PCP_APPEND_DEBUG("  Layer @%s@ changed:  significant\n", layer->GetIdentifier().c_str());
+            PCP_APPEND_DEBUG("  Layer @%s@ changed:  significant\n",
+                             layer->GetIdentifier().c_str());
             break;
 
           case Pcp_ChangesLayerStackChangeNone:
             // Layer stack is okay.   Handle changes that require
             // blowing the layer stack offsets.
-            if (Pcp_EntryRequiresLayerStackOffsetsChange(layer, entry, &rootLayerStacksMayNeedTcpsRecompute))
-            {
+            if (Pcp_EntryRequiresLayerStackOffsetsChange(layer,
+                                                         entry,
+                                                         &rootLayerStacksMayNeedTcpsRecompute)) {
               layerStackChangeMask |= LayerStackOffsetsChange;
 
               // Layer offsets are folded into the map functions
@@ -730,17 +698,14 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
             break;
         }
 
-        if (entry.flags.didChangeResolvedPath)
-        {
+        if (entry.flags.didChangeResolvedPath) {
           layerStackChangeMask |= LayerStackResolvedPathChange;
         }
       }
 
       // Handle changes that require a prim graph change.
-      else if (path.IsPrimOrPrimVariantSelectionPath())
-      {
-        if (entry.flags.didRename)
-        {
+      else if (path.IsPrimOrPrimVariantSelectionPath()) {
+        if (entry.flags.didRename) {
           // XXX: We don't have enough info to determine if
           //      the changes so far are a rename in layer
           //      stack space.  Renames in Sd are only renames
@@ -769,23 +734,18 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
                            entry.oldPath.GetText(),
                            path.GetText());
         }
-        if (int specChanges = Pcp_EntryRequiresPrimSpecsChange(entry))
-        {
+        if (int specChanges = Pcp_EntryRequiresPrimSpecsChange(entry)) {
           pathsWithSpecChangesTypes[path] |= specChanges;
         }
-        if (Pcp_EntryRequiresPrimIndexChange(entry))
-        {
+        if (Pcp_EntryRequiresPrimIndexChange(entry)) {
           pathsWithSignificantChanges.insert(path);
-        } else
-        {
-          for (const auto &c : cacheLayerStacks)
-          {
+        } else {
+          for (const auto &c : cacheLayerStacks) {
             const PcpCache *cache = c.first;
             // Gather info changes that may affect dynamic file
             // format arguments so we can check dependents on
             // these changes later.
-            if (Pcp_ChangeMayAffectDynamicFileFormatArguments(cache, entry, debugSummary))
-            {
+            if (Pcp_ChangeMayAffectDynamicFileFormatArguments(cache, entry, debugSummary)) {
               PCP_APPEND_DEBUG(
                 "  Info change on @%s@<%s> may affect file "
                 "format arguments in cache '%s'\n",
@@ -798,20 +758,16 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
           }
         }
 
-        if (entry.HasInfoChange(SdfFieldKeys->Relocates))
-        {
+        if (entry.HasInfoChange(SdfFieldKeys->Relocates)) {
           layerStackChangeMask |= LayerStackRelocatesChange;
         }
-      } else if (!allCachesInUsdMode)
-      {
+      } else if (!allCachesInUsdMode) {
         // See comment above regarding PcpCaches in USD mode.
         // We also check for USD mode here to ensure we don't
         // process any non-prim changes if the changelist had
         // a mix of prim and non-prim changes.
-        if (path.IsPropertyPath())
-        {
-          if (entry.flags.didRename)
-          {
+        if (path.IsPropertyPath()) {
+          if (entry.flags.didRename) {
             // XXX: See the comment above regarding renaming
             //      prims.
             oldPaths.push_back(entry.oldPath);
@@ -821,22 +777,17 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
                              entry.oldPath.GetText(),
                              path.GetText());
           }
-          if (int specChanges = Pcp_EntryRequiresPropertySpecsChange(entry))
-          {
+          if (int specChanges = Pcp_EntryRequiresPropertySpecsChange(entry)) {
             pathsWithSpecChangesTypes[path] |= specChanges;
           }
-          if (Pcp_EntryRequiresPropertyIndexChange(entry))
-          {
+          if (Pcp_EntryRequiresPropertyIndexChange(entry)) {
             pathsWithSignificantChanges.insert(path);
           }
-        } else if (path.IsTargetPath())
-        {
-          if (entry.flags.didAddTarget)
-          {
+        } else if (path.IsTargetPath()) {
+          if (entry.flags.didAddTarget) {
             pathsWithSpecChangesTypes[path] |= Pcp_EntryChangeSpecsAddInert;
           }
-          if (entry.flags.didRemoveTarget)
-          {
+          if (entry.flags.didRemoveTarget) {
             pathsWithSpecChangesTypes[path] |= Pcp_EntryChangeSpecsRemoveInert;
           }
         }
@@ -845,20 +796,16 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
 
     // If we processed a change that may affect the TCPS of root layer
     // stacks, we check that here.
-    if (rootLayerStacksMayNeedTcpsRecompute)
-    {
-      for (const auto &i : cacheLayerStacks)
-      {
+    if (rootLayerStacksMayNeedTcpsRecompute) {
+      for (const auto &i : cacheLayerStacks) {
         const PcpCache *cache = i.first;
         // We only need to check the root layer stacks of caches
         // using this layer.
-        if (const PcpLayerStackPtr &layerStack = cache->GetLayerStack())
-        {
+        if (const PcpLayerStackPtr &layerStack = cache->GetLayerStack()) {
           // If the layer stack will need to recompute its TCPS
           // because this layer changed, then mark that layer stack
           // will have its layer offsets change.
-          if (Pcp_NeedToRecomputeLayerStackTimeCodesPerSecond(layerStack, layer))
-          {
+          if (Pcp_NeedToRecomputeLayerStackTimeCodesPerSecond(layerStack, layer)) {
             PCP_APPEND_DEBUG(
               "  Layer @%s@ changed:  "
               "root layer stack TCPS (significant)\n",
@@ -872,12 +819,9 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     }
 
     // Push layer stack changes to all layer stacks using this layer.
-    if (layerStackChangeMask != 0)
-    {
-      for (auto const &i : cacheLayerStacks)
-      {
-        for (auto const &layerStack : i.second)
-        {
+    if (layerStackChangeMask != 0) {
+      for (auto const &i : cacheLayerStacks) {
+        for (auto const &layerStack : i.second) {
           layerStackChangesMap[layerStack] |= layerStackChangeMask;
         }
       }
@@ -902,34 +846,25 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     // Note that in the below code, the order of the if statements does
     // matter, as a spec could be added, then removed (for example) within
     // the same change.
-    for (const auto &value : pathsWithSpecChangesTypes)
-    {
+    for (const auto &value : pathsWithSpecChangesTypes) {
       const SdfPath &path = value.first;
-      if (path.IsPrimOrPrimVariantSelectionPath())
-      {
-        if (value.second & Pcp_EntryChangeSpecsNonInert)
-        {
+      if (path.IsPrimOrPrimVariantSelectionPath()) {
+        if (value.second & Pcp_EntryChangeSpecsNonInert) {
           pathsWithSignificantChanges.insert(path);
-        } else if (value.second & Pcp_EntryChangeSpecsInert)
-        {
+        } else if (value.second & Pcp_EntryChangeSpecsInert) {
           pathsWithSpecChanges[path] |= PathChangeSimple;
         }
-      } else
-      {
-        if (value.second & Pcp_EntryChangeSpecsNonInert)
-        {
+      } else {
+        if (value.second & Pcp_EntryChangeSpecsNonInert) {
           pathsWithSignificantChanges.insert(path);
-        } else if (value.second & Pcp_EntryChangeSpecsInert)
-        {
+        } else if (value.second & Pcp_EntryChangeSpecsInert) {
           pathsWithSpecChanges[path] |= PathChangeSimple;
         }
 
-        if (value.second & Pcp_EntryChangeSpecsTargets)
-        {
+        if (value.second & Pcp_EntryChangeSpecsTargets) {
           pathsWithSpecChanges[path] |= PathChangeTargets;
         }
-        if (value.second & Pcp_EntryChangeSpecsConnections)
-        {
+        if (value.second & Pcp_EntryChangeSpecsConnections) {
           pathsWithSpecChanges[path] |= PathChangeConnections;
         }
       }
@@ -938,11 +873,9 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     // For every path we've found on this layer that has a
     // significant change, find all paths in the cache that use the
     // spec at (layer, path) and mark them as affected.
-    for (const auto &path : pathsWithSignificantChanges)
-    {
+    for (const auto &path : pathsWithSignificantChanges) {
       const bool onlyExistingDependentPaths = fallbackToAncestorPaths.count(path) == 0;
-      for (auto cache : caches)
-      {
+      for (auto cache : caches) {
         // For significant changes to a prim (as opposed to property),
         // we need to process its dependencies as well as dependencies
         // on descendants of that prim.
@@ -962,7 +895,9 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
           path,
           /*processPrimDescendants*/ true,
           onlyExistingDependentPaths,
-          [this, &cache](const PcpDependency &dep) { DidChangeSignificantly(cache, dep.indexPath); },
+          [this, &cache](const PcpDependency &dep) {
+            DidChangeSignificantly(cache, dep.indexPath);
+          },
           debugSummary);
       }
     }
@@ -972,8 +907,7 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     // arguments cares about, find all paths in the cache that depend on
     // that site and register a significant change if the file format says
     // the field change affects how it generates arguments.
-    for (const auto &p : fieldForFileFormatArgumentsChanges)
-    {
+    for (const auto &p : fieldForFileFormatArgumentsChanges) {
       const bool onlyExistingDependentPaths = fallbackToAncestorPaths.count(p.second) == 0;
 
       const PcpCache *cache = p.first;
@@ -994,8 +928,10 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
         /*processPrimDescendants*/ true,
         onlyExistingDependentPaths,
         [this, &cache, &changes, &debugSummary](const PcpDependency &dep) {
-          if (Pcp_DoesInfoChangeAffectFileFormatArguments(cache, dep.indexPath, changes, debugSummary))
-          {
+          if (Pcp_DoesInfoChangeAffectFileFormatArguments(cache,
+                                                          dep.indexPath,
+                                                          changes,
+                                                          debugSummary)) {
             DidChangeSignificantly(cache, dep.indexPath);
           }
         },
@@ -1007,27 +943,21 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     // If so, all dependent layer stacks need to recompute its cached
     // relocates. We can skip this if all caches are in USD mode, since
     // relocates are disabled for those caches.
-    if (!allCachesInUsdMode)
-    {
-      for (const auto &value : pathsWithSpecChangesTypes)
-      {
+    if (!allCachesInUsdMode) {
+      for (const auto &value : pathsWithSpecChangesTypes) {
         const SdfPath &path = value.first;
-        if (!path.IsPrimOrPrimVariantSelectionPath() || !(value.second & Pcp_EntryChangeSpecsAddNonInert))
-        {
+        if (!path.IsPrimOrPrimVariantSelectionPath() ||
+            !(value.second & Pcp_EntryChangeSpecsAddNonInert)) {
           continue;
         }
 
-        if (Pcp_PrimSpecOrDescendantHasRelocates(layer, path))
-        {
-          for (const CacheLayerStacks &i : cacheLayerStacks)
-          {
-            if (i.first->IsUsd())
-            {
+        if (Pcp_PrimSpecOrDescendantHasRelocates(layer, path)) {
+          for (const CacheLayerStacks &i : cacheLayerStacks) {
+            if (i.first->IsUsd()) {
               // No relocations in usd mode
               continue;
             }
-            for (const PcpLayerStackPtr &layerStack : i.second)
-            {
+            for (const PcpLayerStackPtr &layerStack : i.second) {
               layerStackChangesMap[layerStack] |= LayerStackRelocatesChange;
             }
           }
@@ -1040,8 +970,7 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     // check layer stacks that have discovered relocations that
     // could be affected by that change. We can skip this if all caches
     // are in USD mode, since relocates are disabled for those caches.
-    if (!pathsWithSignificantChanges.empty() && !allCachesInUsdMode)
-    {
+    if (!pathsWithSignificantChanges.empty() && !allCachesInUsdMode) {
       // If this scope turns out to be expensive, we should look
       // at switching PcpLayerStack's _relocatesPrimPaths from
       // a std::vector to a path set.  _AddRelocateEditsForLayerStack
@@ -1050,26 +979,19 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
         "PcpChanges::DidChange -- Checking layer stack "
         "relocations against significant prim resyncs");
 
-      for (const CacheLayerStacks &i : cacheLayerStacks)
-      {
-        if (i.first->IsUsd())
-        {
+      for (const CacheLayerStacks &i : cacheLayerStacks) {
+        if (i.first->IsUsd()) {
           // No relocations in usd mode
           continue;
         }
-        for (const PcpLayerStackPtr &layerStack : i.second)
-        {
+        for (const PcpLayerStackPtr &layerStack : i.second) {
           const SdfPathVector &reloPaths = layerStack->GetPathsToPrimsWithRelocates();
-          if (reloPaths.empty())
-          {
+          if (reloPaths.empty()) {
             continue;
           }
-          for (const SdfPath &changedPath : pathsWithSignificantChanges)
-          {
-            for (const SdfPath &reloPath : reloPaths)
-            {
-              if (reloPath.HasPrefix(changedPath))
-              {
+          for (const SdfPath &changedPath : pathsWithSignificantChanges) {
+            for (const SdfPath &reloPath : reloPaths) {
+              if (reloPath.HasPrefix(changedPath)) {
                 layerStackChangesMap[layerStack] |= LayerStackRelocatesChange;
                 goto doneWithLayerStack;
               }
@@ -1086,13 +1008,11 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     // there aren't any then find all paths in the cache that use the
     // parent.  In either case mark the found paths as needing their
     // property spec stacks blown.
-    for (const auto &value : pathsWithSpecChanges)
-    {
+    for (const auto &value : pathsWithSpecChanges) {
       const SdfPath &path = value.first;
       PathChangeBitmask changes = value.second;
 
-      for (auto cache : caches)
-      {
+      for (auto cache : caches) {
         Pcp_DidChangeDependents(
           cache,
           layer,
@@ -1102,16 +1022,15 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
           [this, &changes, &cache, &layer](const PcpDependency &dep) {
             // If the changes for this path include something other
             // than target changes, they must be spec changes.
-            if (changes & ~(PathChangeTargets | PathChangeConnections))
-            {
+            if (changes & ~(PathChangeTargets | PathChangeConnections)) {
               DidChangeSpecs(cache, dep.indexPath, layer, dep.sitePath);
             }
-            if (changes & PathChangeTargets)
-            {
-              DidChangeTargets(cache, dep.indexPath, PcpCacheChanges::TargetTypeRelationshipTarget);
+            if (changes & PathChangeTargets) {
+              DidChangeTargets(cache,
+                               dep.indexPath,
+                               PcpCacheChanges::TargetTypeRelationshipTarget);
             }
-            if (changes & PathChangeConnections)
-            {
+            if (changes & PathChangeConnections) {
               DidChangeTargets(cache, dep.indexPath, PcpCacheChanges::TargetTypeConnection);
             }
           },
@@ -1123,33 +1042,28 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
     // edited, find all paths in the cache that map to the path and
     // the corresponding new path.  Save these internally for later
     // comparison to edits added through DidChangePaths().
-    if (!oldPaths.empty())
-    {
+    if (!oldPaths.empty()) {
       SdfPathVector depPaths;
 
-      for (auto cache : caches)
-      {
+      for (auto cache : caches) {
         _PathEditMap &renameChanges = _GetRenameChanges(cache);
 
         // Do every path.
-        for (size_t i = 0, n = oldPaths.size(); i != n; ++i)
-        {
+        for (size_t i = 0, n = oldPaths.size(); i != n; ++i) {
           const SdfPath &oldPath = oldPaths[i];
           const SdfPath &newPath = newPaths[i];
           // Do every path dependent on the new path.  We might
           // have an object at the new path and we're replacing
           // it with the object at the old path.  So we must
           // act as if we're deleting the object at the new path.
-          if (!newPath.IsEmpty())
-          {
+          if (!newPath.IsEmpty()) {
             PcpDependencyVector deps = cache->FindSiteDependencies(layer,
                                                                    newPath,
                                                                    PcpDependencyTypeAnyNonVirtual,
                                                                    /* recurseOnSite */ false,
                                                                    /* recurseOnIndex */ false,
                                                                    /* filter */ true);
-            for (const auto &dep : deps)
-            {
+            for (const auto &dep : deps) {
               renameChanges[dep.indexPath] = SdfPath();
             }
           }
@@ -1161,12 +1075,10 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
                                                                  /* recurseOnSite */ false,
                                                                  /* recurseOnIndex */ false,
                                                                  /* filter */ true);
-          for (const auto &dep : deps)
-          {
+          for (const auto &dep : deps) {
             SdfPath newIndexPath;
             // If this isn't a delete then translate newPath
-            if (!newPath.IsEmpty())
-            {
+            if (!newPath.IsEmpty()) {
               newIndexPath = dep.mapFunc.MapSourceToTarget(newPath);
             }
             renameChanges[dep.indexPath] = newIndexPath;
@@ -1182,22 +1094,18 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
   // Process layer stack changes.  This will handle both blowing
   // caches (as needed) for the layer stack contents and offsets,
   // as well as analyzing relocation changes in the layer stack.
-  for (const auto &entry : layerStackChangesMap)
-  {
+  for (const auto &entry : layerStackChangesMap) {
     const PcpLayerStackPtr &layerStack = entry.first;
     LayerStackChangeBitmask layerStackChanges = entry.second;
 
-    if (layerStackChanges & LayerStackResolvedPathChange)
-    {
+    if (layerStackChanges & LayerStackResolvedPathChange) {
       _DidChangeLayerStackResolvedPath(caches, layerStack, debugSummary);
-      if (Pcp_NeedToRecomputeDueToAssetPathChange(layerStack))
-      {
+      if (Pcp_NeedToRecomputeDueToAssetPathChange(layerStack)) {
         layerStackChanges |= LayerStackSignificantChange;
       }
     }
 
-    if (layerStackChanges & LayerStackRelocatesChange)
-    {
+    if (layerStackChanges & LayerStackRelocatesChange) {
       _DidChangeLayerStackRelocations(caches, layerStack, debugSummary);
     }
 
@@ -1208,8 +1116,7 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches, const SdfLaye
                          layerStackChanges & LayerStackSignificantChange);
   }
 
-  if (debugSummary && !debugSummary->empty())
-  {
+  if (debugSummary && !debugSummary->empty()) {
     TfDebug::Helper().Msg("PcpChanges::DidChange\n%s", debugSummary->c_str());
   }
 }
@@ -1225,8 +1132,7 @@ void PcpChanges::DidMuteLayer(const PcpCache *cache, const std::string &layerId)
 
   PCP_APPEND_DEBUG("  Did mute layer @%s@\n", layerId.c_str());
 
-  if (!layerStacks.empty())
-  {
+  if (!layerStacks.empty()) {
     _DidChangeSublayerAndLayerStacks(cache,
                                      layerStacks,
                                      layerId,
@@ -1235,8 +1141,7 @@ void PcpChanges::DidMuteLayer(const PcpCache *cache, const std::string &layerId)
                                      debugSummary);
   }
 
-  if (debugSummary && !debugSummary->empty())
-  {
+  if (debugSummary && !debugSummary->empty()) {
     TfDebug::Helper().Msg("PcpChanges::DidMuteLayer\n%s", debugSummary->c_str());
   }
 }
@@ -1248,12 +1153,12 @@ void PcpChanges::DidUnmuteLayer(const PcpCache *cache, const std::string &layerI
   std::string *debugSummary = TfDebug::IsEnabled(PCP_CHANGES) ? &summary : 0;
 
   const SdfLayerRefPtr unmutedLayer = _LoadSublayerForChange(cache, layerId, _SublayerAdded);
-  const PcpLayerStackPtrVector &layerStacks = cache->_layerStackCache->FindAllUsingMutedLayer(layerId);
+  const PcpLayerStackPtrVector &layerStacks = cache->_layerStackCache->FindAllUsingMutedLayer(
+    layerId);
 
   PCP_APPEND_DEBUG("  Did unmute layer @%s@\n", layerId.c_str());
 
-  if (!layerStacks.empty())
-  {
+  if (!layerStacks.empty()) {
     _DidChangeSublayerAndLayerStacks(cache,
                                      layerStacks,
                                      layerId,
@@ -1262,8 +1167,7 @@ void PcpChanges::DidUnmuteLayer(const PcpCache *cache, const std::string &layerI
                                      debugSummary);
   }
 
-  if (debugSummary && !debugSummary->empty())
-  {
+  if (debugSummary && !debugSummary->empty()) {
     TfDebug::Helper().Msg("PcpChanges::DidUnmuteLayer\n%s", debugSummary->c_str());
   }
 }
@@ -1280,17 +1184,24 @@ void PcpChanges::DidMaybeFixSublayer(const PcpCache *cache,
   // using the sublayer's parent (and thus the sublayer) as dirty, and also
   // all of the prims in cache that are using any prim from any of those
   // layer stacks.
-  const SdfLayerRefPtr sublayer = _LoadSublayerForChange(cache, layer, sublayerPath, _SublayerAdded);
+  const SdfLayerRefPtr sublayer = _LoadSublayerForChange(cache,
+                                                         layer,
+                                                         sublayerPath,
+                                                         _SublayerAdded);
   const PcpLayerStackPtrVector &layerStacks = cache->FindAllLayerStacksUsingLayer(layer);
 
   PCP_APPEND_DEBUG("  Layer @%s@ changed sublayer @%s@\n",
                    layer ? layer->GetIdentifier().c_str() : "invalid",
                    sublayerPath.c_str());
 
-  _DidChangeSublayerAndLayerStacks(cache, layerStacks, sublayerPath, sublayer, _SublayerAdded, debugSummary);
+  _DidChangeSublayerAndLayerStacks(cache,
+                                   layerStacks,
+                                   sublayerPath,
+                                   sublayer,
+                                   _SublayerAdded,
+                                   debugSummary);
 
-  if (debugSummary && !debugSummary->empty())
-  {
+  if (debugSummary && !debugSummary->empty()) {
     TfDebug::Helper().Msg("PcpChanges::DidMaybeFixSublayer\n%s", debugSummary->c_str());
   }
 }
@@ -1314,11 +1225,9 @@ void PcpChanges::_DidChangeSublayerAndLayerStacks(const PcpCache *cache,
                      debugSummary,
                      &requiresSignificantChange);
 
-  if (sublayer)
-  {
+  if (sublayer) {
     // Layer was loaded.  The layer stacks are changed.
-    TF_FOR_ALL (layerStack, layerStacks)
-    {
+    TF_FOR_ALL (layerStack, layerStacks) {
       _DidChangeLayerStack(TfSpan<const PcpCache *>(&cache, 1),
                            *layerStack,
                            requiresLayerStackChange,
@@ -1335,8 +1244,7 @@ void PcpChanges::DidMaybeFixAsset(const PcpCache *cache,
 {
   // Get the site's layer stack and make sure it's valid.
   PcpLayerStackPtr layerStack = cache->FindLayerStack(site.layerStackIdentifier);
-  if (!layerStack)
-  {
+  if (!layerStack) {
     return;
   }
 
@@ -1353,8 +1261,7 @@ void PcpChanges::DidMaybeFixAsset(const PcpCache *cache,
                    assetPath.c_str(),
                    layer ? (layer->IsEmpty() ? "insignificant" : "significant") : "invalid");
 
-  if (layer)
-  {
+  if (layer) {
     // Hold layer to avoid reparsing.
     _lifeboat.Retain(layer);
 
@@ -1365,8 +1272,7 @@ void PcpChanges::DidMaybeFixAsset(const PcpCache *cache,
       cache->GetLayerStackIdentifier().rootLayer->GetIdentifier().c_str(),
       layerStack->GetIdentifier().rootLayer->GetIdentifier().c_str(),
       site.path.GetText());
-    if (layerStack == cache->GetLayerStack())
-    {
+    if (layerStack == cache->GetLayerStack()) {
       PCP_APPEND_DEBUG("    <%s>\n", site.path.GetText());
       DidChangeSignificantly(cache, site.path);
     }
@@ -1376,15 +1282,13 @@ void PcpChanges::DidMaybeFixAsset(const PcpCache *cache,
                                                            /* recurseOnSite */ true,
                                                            /* recurseOnIndex */ true,
                                                            /* filter */ true);
-    for (const auto &dep : deps)
-    {
+    for (const auto &dep : deps) {
       PCP_APPEND_DEBUG("    <%s>\n", dep.indexPath.GetText());
       DidChangeSignificantly(cache, dep.indexPath);
     }
   }
 
-  if (debugSummary && !debugSummary->empty())
-  {
+  if (debugSummary && !debugSummary->empty()) {
     TfDebug::Helper().Msg("PcpChanges::DidMaybeFixAsset\n%s", debugSummary->c_str());
   }
 }
@@ -1396,8 +1300,7 @@ void PcpChanges::DidChangeLayers(const PcpCache *cache)
          cache->GetLayerStackIdentifier().rootLayer->GetIdentifier().c_str());
 
   PcpLayerStackChanges &changes = _GetLayerStackChanges(cache);
-  if (!changes.didChangeLayers)
-  {
+  if (!changes.didChangeLayers) {
     changes.didChangeLayers = true;
     changes.didChangeLayerOffsets = false;
   }
@@ -1406,8 +1309,7 @@ void PcpChanges::DidChangeLayers(const PcpCache *cache)
 void PcpChanges::DidChangeLayerOffsets(const PcpCache *cache)
 {
   PcpLayerStackChanges &changes = _GetLayerStackChanges(cache);
-  if (!changes.didChangeLayers)
-  {
+  if (!changes.didChangeLayers) {
     changes.didChangeLayerOffsets = true;
   }
 }
@@ -1419,10 +1321,8 @@ void PcpChanges::DidChangeSignificantly(const PcpCache *cache, const SdfPath &pa
 
 static bool _NoLongerHasAnySpecs(const PcpPrimIndex &primIndex)
 {
-  for (const PcpNodeRef &node : primIndex.GetNodeRange())
-  {
-    if (PcpComposeSiteHasPrimSpecs(node))
-    {
+  for (const PcpNodeRef &node : primIndex.GetNodeRange()) {
+    if (PcpComposeSiteHasPrimSpecs(node)) {
       return false;
     }
   }
@@ -1434,27 +1334,24 @@ void PcpChanges::DidChangeSpecs(const PcpCache *cache,
                                 const SdfLayerHandle &changedLayer,
                                 const SdfPath &changedPath)
 {
-  if (path.IsPrimPath())
-  {
+  if (path.IsPrimPath()) {
     TF_VERIFY(changedPath.IsPrimOrPrimVariantSelectionPath());
     const bool primWasAdded = changedLayer->HasSpec(changedPath);
     const bool primWasRemoved = !primWasAdded;
 
     const PcpPrimIndex *primIndex = cache->FindPrimIndex(path);
-    if (primIndex && primIndex->HasSpecs())
-    {
+    if (primIndex && primIndex->HasSpecs()) {
       // If the inert spec removed was the last spec in this prim index,
       // the composed prim no longer exists, so mark it as a significant
       // change.
-      if (primWasRemoved && _NoLongerHasAnySpecs(*primIndex))
-      {
+      if (primWasRemoved && _NoLongerHasAnySpecs(*primIndex)) {
         DidChangeSignificantly(cache, path);
         return;
       }
 
-      const PcpNodeRef nodeForChangedSpec = primIndex->GetNodeProvidingSpec(changedLayer, changedPath);
-      if (nodeForChangedSpec)
-      {
+      const PcpNodeRef nodeForChangedSpec = primIndex->GetNodeProvidingSpec(changedLayer,
+                                                                            changedPath);
+      if (nodeForChangedSpec) {
         // If this prim index is instanceable, the addition or removal
         // of an inert spec could affect whether this node is considered
         // instanceable, which would change the prim index's instancing
@@ -1467,13 +1364,11 @@ void PcpChanges::DidChangeSpecs(const PcpCache *cache,
         // so we should always be able to find them.
         //
         // See Pcp_ChildNodeIsInstanceable and _NodeCanBeCulled.
-        if (primIndex->IsInstanceable() && Pcp_ChildNodeInstanceableChanged(nodeForChangedSpec))
-        {
+        if (primIndex->IsInstanceable() && Pcp_ChildNodeInstanceableChanged(nodeForChangedSpec)) {
           DidChangeSignificantly(cache, path);
           return;
         }
-      } else if (primWasAdded)
-      {
+      } else if (primWasAdded) {
         // If we're adding an inert prim spec, it may correspond to a
         // node that was culled in the prim index at path. If so, we
         // need to rebuild that index to pick up the new node. We don't
@@ -1482,13 +1377,11 @@ void PcpChanges::DidChangeSpecs(const PcpCache *cache,
         _GetCacheChanges(cache).didChangePrims.insert(path);
         return;
       }
-    } else
-    {
+    } else {
       // If no prim index was found for this path, we assume that if we're
       // adding an inert spec, it's the first one for this composed prim,
       // so mark it as a significant change.
-      if (primWasAdded)
-      {
+      if (primWasAdded) {
         DidChangeSignificantly(cache, path);
         return;
       }
@@ -1519,7 +1412,9 @@ void PcpChanges::DidChangeRelocates(const PcpCache *cache, const SdfPath &path)
   _GetCacheChanges(cache).didChangeSignificantly.insert(path);
 }
 
-void PcpChanges::DidChangePaths(const PcpCache *cache, const SdfPath &oldPath, const SdfPath &newPath)
+void PcpChanges::DidChangePaths(const PcpCache *cache,
+                                const SdfPath &oldPath,
+                                const SdfPath &newPath)
 {
   TF_DEBUG(PCP_CHANGES)
     .Msg("PcpChanges::DidChangePaths: @%s@<%s> to <%s>\n",
@@ -1583,17 +1478,14 @@ void PcpChanges::Apply() const
   _Optimize();
 
   // Apply layer changes first.
-  TF_FOR_ALL (i, _layerStackChanges)
-  {
-    if (i->first)
-    {
+  TF_FOR_ALL (i, _layerStackChanges) {
+    if (i->first) {
       i->first->Apply(i->second, &_lifeboat);
     }
   }
 
   // Now apply cache changes.
-  TF_FOR_ALL (i, _cacheChanges)
-  {
+  TF_FOR_ALL (i, _cacheChanges) {
     i->first->Apply(i->second, &_lifeboat);
   }
 }
@@ -1625,14 +1517,12 @@ void PcpChanges::_Optimize() const
 
 void PcpChanges::_Optimize()
 {
-  TF_FOR_ALL (i, _renameChanges)
-  {
+  TF_FOR_ALL (i, _renameChanges) {
     _OptimizePathChanges(i->first, &_cacheChanges[i->first], &i->second);
   }
 
   // This must be called after _OptimizePathChanges().
-  TF_FOR_ALL (i, _cacheChanges)
-  {
+  TF_FOR_ALL (i, _cacheChanges) {
     _Optimize(&i->second);
   }
 }
@@ -1643,24 +1533,21 @@ void PcpChanges::_Optimize(PcpCacheChanges *changes)
   Pcp_SubsumeDescendants(&changes->didChangeSignificantly);
 
   // Subsume changes implied by prim graph changes.
-  TF_FOR_ALL (i, changes->didChangeSignificantly)
-  {
+  TF_FOR_ALL (i, changes->didChangeSignificantly) {
     Pcp_SubsumeDescendants(&changes->didChangePrims, *i);
     Pcp_SubsumeDescendants(&changes->didChangeSpecs, *i);
     Pcp_SubsumeDescendants(&changes->_didChangeSpecsInternal, *i);
   }
 
   // Subsume spec changes for prims whose indexes will be rebuilt.
-  TF_FOR_ALL (i, changes->didChangePrims)
-  {
+  TF_FOR_ALL (i, changes->didChangePrims) {
     changes->didChangeSpecs.erase(*i);
     changes->_didChangeSpecsInternal.erase(*i);
   }
 
   // Subsume spec changes that don't change the contents of the stack
   // changes against those that may change the contents.
-  TF_FOR_ALL (i, changes->didChangeSpecs)
-  {
+  TF_FOR_ALL (i, changes->didChangeSpecs) {
     changes->_didChangeSpecsInternal.erase(*i);
   }
 
@@ -1679,12 +1566,10 @@ void PcpChanges::_OptimizePathChanges(const PcpCache *cache,
   // Copy the path changes and discard any that are also in
   // changes->didChangePath.
   _PathEditMap sdOnly(*pathChanges);
-  for (const auto &pathPair : changes->didChangePath)
-  {
+  for (const auto &pathPair : changes->didChangePath) {
     auto it = sdOnly.find(pathPair.first);
     // Note that we check for exact matches of mapping oldPath to newPath.
-    if (it != sdOnly.end() && it->second == pathPair.second)
-    {
+    if (it != sdOnly.end() && it->second == pathPair.second) {
       sdOnly.erase(it);
     }
   }
@@ -1694,8 +1579,7 @@ void PcpChanges::_OptimizePathChanges(const PcpCache *cache,
 
   // sdOnly now has the path changes that Sd told us about but
   // DidChangePaths() did not.  We must assume the worst.
-  for (const auto &change : sdOnly)
-  {
+  for (const auto &change : sdOnly) {
     const SdfPath &oldPath = change.first;
     const SdfPath &newPath = change.second;
 
@@ -1704,14 +1588,12 @@ void PcpChanges::_OptimizePathChanges(const PcpCache *cache,
                      oldPath.GetText(),
                      newPath.GetText());
     changes->didChangeSignificantly.insert(oldPath);
-    if (!newPath.IsEmpty())
-    {
+    if (!newPath.IsEmpty()) {
       changes->didChangeSignificantly.insert(newPath);
     }
   }
 
-  if (debugSummary && !debugSummary->empty())
-  {
+  if (debugSummary && !debugSummary->empty()) {
     TfDebug::Helper().Msg("PcpChanges::_Optimize:\n%s", debugSummary->c_str());
   }
 }
@@ -1730,11 +1612,9 @@ SdfLayerRefPtr PcpChanges::_LoadSublayerForChange(const PcpCache *cache,
     sublayerPath,
     cache->GetFileFormatTarget());
 
-  if (sublayerChange == _SublayerAdded)
-  {
+  if (sublayerChange == _SublayerAdded) {
     sublayer = SdfLayer::FindOrOpen(sublayerPath, sublayerArgs);
-  } else
-  {
+  } else {
     sublayer = SdfLayer::Find(sublayerPath, sublayerArgs);
   }
 
@@ -1746,8 +1626,7 @@ SdfLayerRefPtr PcpChanges::_LoadSublayerForChange(const PcpCache *cache,
                                                   const std::string &sublayerPath,
                                                   _SublayerChangeType sublayerChange) const
 {
-  if (!layer)
-  {
+  if (!layer) {
     return SdfLayerRefPtr();
   }
 
@@ -1762,21 +1641,17 @@ SdfLayerRefPtr PcpChanges::_LoadSublayerForChange(const PcpCache *cache,
     cache->GetFileFormatTarget());
 
   // Note the possible conversions from SdfLayerHandle to SdfLayerRefPtr below.
-  if (SdfLayer::IsAnonymousLayerIdentifier(sublayerPath))
-  {
+  if (SdfLayer::IsAnonymousLayerIdentifier(sublayerPath)) {
     sublayer = SdfLayer::Find(sublayerPath, sublayerArgs);
-  } else
-  {
+  } else {
     // Don't bother trying to open a sublayer if we're removing it;
     // either it's already opened in the system and we'll find it, or
     // it's invalid, which we'll deal with below.
-    if (sublayerChange == _SublayerAdded)
-    {
+    if (sublayerChange == _SublayerAdded) {
       TfErrorMark m;
       sublayer = SdfLayer::FindOrOpenRelativeToLayer(layer, sublayerPath, sublayerArgs);
       m.Clear();
-    } else
-    {
+    } else {
       sublayer = SdfLayer::FindRelativeToLayer(layer, sublayerPath, sublayerArgs);
     }
   }
@@ -1799,8 +1674,7 @@ void PcpChanges::_DidChangeSublayer(const PcpCache *cache,
                    sublayerPath.c_str(),
                    sublayerChange == _SublayerAdded ? "added" : "removed");
 
-  if (!sublayer || (!*significant && cache->IsUsd()))
-  {
+  if (!sublayer || (!*significant && cache->IsUsd())) {
     // If the added or removed sublayer is invalid, or if it is
     // insignificant and this cache is a USD cache, then it has no effect on
     // composed results so we don't need to register any changes.
@@ -1833,23 +1707,19 @@ void PcpChanges::_DidChangeSublayer(const PcpCache *cache,
   // a sublayer.
 
   bool anyFound = false;
-  TF_FOR_ALL (layerStack, layerStacks)
-  {
+  TF_FOR_ALL (layerStack, layerStacks) {
     PcpDependencyVector deps = cache->FindSiteDependencies(*layerStack,
                                                            SdfPath::AbsoluteRootPath(),
                                                            PcpDependencyTypeAnyIncludingVirtual,
                                                            /* recurseOnSite */ true,
                                                            /* recurseOnIndex */ true,
                                                            /* filter */ true);
-    for (const auto &dep : deps)
-    {
-      if (!dep.indexPath.IsAbsoluteRootOrPrimPath())
-      {
+    for (const auto &dep : deps) {
+      if (!dep.indexPath.IsAbsoluteRootOrPrimPath()) {
         // Filter to only prims; see comment above re: properties.
         continue;
       }
-      if (!anyFound)
-      {
+      if (!anyFound) {
         PCP_APPEND_DEBUG(
           "  %s following in @%s@ due to "
           "%s reload in sublayer @%s@:\n",
@@ -1860,11 +1730,9 @@ void PcpChanges::_DidChangeSublayer(const PcpCache *cache,
         anyFound = true;
       }
       PCP_APPEND_DEBUG("    <%s>\n", dep.indexPath.GetText());
-      if (*significant)
-      {
+      if (*significant) {
         DidChangeSignificantly(cache, dep.indexPath);
-      } else
-      {
+      } else {
         _DidChangeSpecStackInternal(cache, dep.indexPath);
       }
     }
@@ -1883,17 +1751,13 @@ void PcpChanges::_DidChangeLayerStack(const TfSpan<const PcpCache *> &caches,
   changes.didChangeSignificantly |= requiresSignificantChange;
 
   // didChangeLayers subsumes didChangeLayerOffsets.
-  if (changes.didChangeLayers)
-  {
+  if (changes.didChangeLayers) {
     changes.didChangeLayerOffsets = false;
   }
 
-  if (requiresLayerStackChange || requiresSignificantChange)
-  {
-    for (const PcpCache *cache : caches)
-    {
-      if (cache->UsesLayerStack(layerStack))
-      {
+  if (requiresLayerStackChange || requiresSignificantChange) {
+    for (const PcpCache *cache : caches) {
+      if (cache->UsesLayerStack(layerStack)) {
         _GetCacheChanges(cache).didMaybeChangeLayers = true;
       }
     }
@@ -1904,34 +1768,28 @@ static void _DeterminePathsAffectedByRelocationChanges(const SdfRelocatesMap &ol
                                                        const SdfRelocatesMap &newMap,
                                                        SdfPathSet *affectedPaths)
 {
-  TF_FOR_ALL (path, oldMap)
-  {
+  TF_FOR_ALL (path, oldMap) {
     SdfRelocatesMap::const_iterator i = newMap.find(path->first);
-    if (i == newMap.end() || i->second != path->second)
-    {
+    if (i == newMap.end() || i->second != path->second) {
       // This entry in oldMap does not exist in newMap, or
       // newMap relocates this to a different path.
       // Record the affected paths.
       affectedPaths->insert(path->first);
       affectedPaths->insert(path->second);
-      if (i != newMap.end())
-      {
+      if (i != newMap.end()) {
         affectedPaths->insert(i->second);
       }
     }
   }
-  TF_FOR_ALL (path, newMap)
-  {
+  TF_FOR_ALL (path, newMap) {
     SdfRelocatesMap::const_iterator i = oldMap.find(path->first);
-    if (i == oldMap.end() || i->second != path->second)
-    {
+    if (i == oldMap.end() || i->second != path->second) {
       // This entry in newMap does not exist in oldMap, or
       // oldMap relocated this to a different path.
       // Record the affected paths.
       affectedPaths->insert(path->first);
       affectedPaths->insert(path->second);
-      if (i != oldMap.end())
-      {
+      if (i != oldMap.end()) {
         affectedPaths->insert(i->second);
       }
     }
@@ -1948,8 +1806,7 @@ void PcpChanges::_DidChangeLayerStackRelocations(const TfSpan<const PcpCache *> 
 {
   PcpLayerStackChanges &changes = _GetLayerStackChanges(layerStack);
 
-  if (changes.didChangeRelocates)
-  {
+  if (changes.didChangeRelocates) {
     // There might be multiple relocation changes in a given
     // layer stack, but we only need to process them once.
     return;
@@ -1975,42 +1832,36 @@ void PcpChanges::_DidChangeLayerStackRelocations(const TfSpan<const PcpCache *> 
 
   // Resync affected prims.
   // Use dependencies to find affected caches.
-  if (!changes.pathsAffectedByRelocationChanges.empty())
-  {
+  if (!changes.pathsAffectedByRelocationChanges.empty()) {
     PCP_APPEND_DEBUG("  Relocation change in %s affects:\n", TfStringify(layerStack).c_str());
   }
-  for (const PcpCache *cache : caches)
-  {
+  for (const PcpCache *cache : caches) {
     // Find the equivalent layer stack in this cache.
     PcpLayerStackPtr equivLayerStack = cache->FindLayerStack(layerStack->GetIdentifier());
-    if (!equivLayerStack)
-    {
+    if (!equivLayerStack) {
       continue;
     }
 
     SdfPathSet depPathSet;
-    for (const SdfPath &path : changes.pathsAffectedByRelocationChanges)
-    {
+    for (const SdfPath &path : changes.pathsAffectedByRelocationChanges) {
       PCP_APPEND_DEBUG("    <%s>\n", path.GetText());
 
-      PcpDependencyVector deps = cache->FindSiteDependencies(equivLayerStack,
-                                                             path,
-                                                             PcpDependencyTypeAnyIncludingVirtual,
-                                                             /* recurseOnSite */ true,
-                                                             /* recurseOnIndex */ true,
-                                                             /* filterForExistingCachesOnly */ false);
-      for (const auto &dep : deps)
-      {
+      PcpDependencyVector deps = cache->FindSiteDependencies(
+        equivLayerStack,
+        path,
+        PcpDependencyTypeAnyIncludingVirtual,
+        /* recurseOnSite */ true,
+        /* recurseOnIndex */ true,
+        /* filterForExistingCachesOnly */ false);
+      for (const auto &dep : deps) {
         depPathSet.insert(dep.indexPath);
       }
     }
 
-    if (!depPathSet.empty())
-    {
+    if (!depPathSet.empty()) {
       PCP_APPEND_DEBUG("  and dependent paths in %s\n", TfStringify(layerStack).c_str());
     }
-    for (const SdfPath &depPath : depPathSet)
-    {
+    for (const SdfPath &depPath : depPathSet) {
       PCP_APPEND_DEBUG("      <%s>\n", depPath.GetText());
       DidChangeSignificantly(cache, depPath);
     }
@@ -2023,8 +1874,7 @@ void PcpChanges::_DidChangeLayerStackResolvedPath(const TfSpan<const PcpCache *>
 {
   const ArResolverContextBinder binder(layerStack->GetIdentifier().pathResolverContext);
 
-  for (const PcpCache *cache : caches)
-  {
+  for (const PcpCache *cache : caches) {
     PcpDependencyVector deps = cache->FindSiteDependencies(layerStack,
                                                            SdfPath::AbsoluteRootPath(),
                                                            PcpDependencyTypeAnyIncludingVirtual,
@@ -2033,8 +1883,7 @@ void PcpChanges::_DidChangeLayerStackResolvedPath(const TfSpan<const PcpCache *>
                                                            /* filterForExisting */ true);
 
     auto noResyncNeeded = [cache](const PcpDependency &dep) {
-      if (!dep.indexPath.IsPrimPath())
-      {
+      if (!dep.indexPath.IsPrimPath()) {
         return true;
       }
       const PcpPrimIndex *primIndex = cache->FindPrimIndex(dep.indexPath);
@@ -2042,8 +1891,7 @@ void PcpChanges::_DidChangeLayerStackResolvedPath(const TfSpan<const PcpCache *>
     };
 
     deps.erase(std::remove_if(deps.begin(), deps.end(), noResyncNeeded), deps.end());
-    if (deps.empty())
-    {
+    if (deps.empty()) {
       continue;
     }
 
@@ -2052,8 +1900,7 @@ void PcpChanges::_DidChangeLayerStackResolvedPath(const TfSpan<const PcpCache *>
       "resolved path change:\n",
       cache->GetLayerStackIdentifier().rootLayer->GetIdentifier().c_str());
 
-    for (const PcpDependency &dep : deps)
-    {
+    for (const PcpDependency &dep : deps) {
       PCP_APPEND_DEBUG("    <%s>\n", dep.indexPath.GetText());
       DidChangeSignificantly(cache, dep.indexPath);
     }

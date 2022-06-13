@@ -62,6 +62,7 @@ namespace
     }
 
    private:
+
     // from-python
     static void *_convertible(PyObject *obj_ptr)
     {

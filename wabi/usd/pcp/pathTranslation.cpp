@@ -33,36 +33,33 @@
 WABI_NAMESPACE_BEGIN
 
 template<bool NodeToRoot, class Mapping>
-static SdfPath Pcp_TranslatePath(const Mapping &mapToRoot, const SdfPath &path, bool *pathWasTranslated)
+static SdfPath Pcp_TranslatePath(const Mapping &mapToRoot,
+                                 const SdfPath &path,
+                                 bool *pathWasTranslated)
 {
   bool localPathWasTranslated;
-  if (!pathWasTranslated)
-  {
+  if (!pathWasTranslated) {
     pathWasTranslated = &localPathWasTranslated;
   }
 
   *pathWasTranslated = false;
 
-  if (mapToRoot.IsNull())
-  {
+  if (mapToRoot.IsNull()) {
     TF_CODING_ERROR("Null map function");
     return SdfPath();
   }
 
   // Special case the empty path.
-  if (path.IsEmpty())
-  {
+  if (path.IsEmpty()) {
     *pathWasTranslated = true;
     return path;
   }
 
-  if (!path.IsAbsolutePath())
-  {
+  if (!path.IsAbsolutePath()) {
     TF_CODING_ERROR("Path to translate <%s> is not absolute.", path.GetText());
     return SdfPath();
   }
-  if (path.ContainsPrimVariantSelection())
-  {
+  if (path.ContainsPrimVariantSelection()) {
     TF_CODING_ERROR(
       "Path to translate <%s> must not contain a variant "
       "selection.",
@@ -71,8 +68,7 @@ static SdfPath Pcp_TranslatePath(const Mapping &mapToRoot, const SdfPath &path, 
   }
 
   // Special case the identity mapping.
-  if (mapToRoot.IsIdentity())
-  {
+  if (mapToRoot.IsIdentity()) {
     *pathWasTranslated = true;
     return path;
   }
@@ -83,21 +79,18 @@ static SdfPath Pcp_TranslatePath(const Mapping &mapToRoot, const SdfPath &path, 
   // translation fails and we return an empty path.
   SdfPath translatedPath = NodeToRoot ? mapToRoot.MapSourceToTarget(path) :
                                         mapToRoot.MapTargetToSource(path);
-  if (translatedPath.IsEmpty())
-  {
+  if (translatedPath.IsEmpty()) {
     return SdfPath();
   }
 
   SdfPathVector targetPaths;
   translatedPath.GetAllTargetPathsRecursively(&targetPaths);
 
-  TF_FOR_ALL (targetPathIt, targetPaths)
-  {
+  TF_FOR_ALL (targetPathIt, targetPaths) {
     const SdfPath &targetPath = *targetPathIt;
     const SdfPath translatedTargetPath = NodeToRoot ? mapToRoot.MapSourceToTarget(targetPath) :
                                                       mapToRoot.MapTargetToSource(targetPath);
-    if (translatedTargetPath.IsEmpty())
-    {
+    if (translatedTargetPath.IsEmpty()) {
       return SdfPath();
     }
 
@@ -144,15 +137,15 @@ SdfPath PcpTranslatePathFromRootToNode(const PcpNodeRef &destNode,
   // prefix replacement here to bring the variant selections back.
   // We don't need to fix target paths because they should never have
   // variant selections.
-  if (localPathWasTranslated)
-  {
+  if (localPathWasTranslated) {
     const SdfPath sitePath = destNode.GetPath();
     const SdfPath strippedSitePath = sitePath.StripAllVariantSelections();
-    translatedPath = translatedPath.ReplacePrefix(strippedSitePath, sitePath, /* fixTargetPaths = */ false);
+    translatedPath = translatedPath.ReplacePrefix(strippedSitePath,
+                                                  sitePath,
+                                                  /* fixTargetPaths = */ false);
   }
 
-  if (pathWasTranslated)
-  {
+  if (pathWasTranslated) {
     *pathWasTranslated = localPathWasTranslated;
   }
 
@@ -175,7 +168,9 @@ SdfPath PcpTranslatePathFromRootToNodeUsingFunction(const PcpMapFunction &mapToR
                                                     bool *pathWasTranslated)
 {
   TRACE_FUNCTION();
-  return Pcp_TranslatePath</* NodeToRoot = */ false>(mapToRoot, pathInRootNamespace, pathWasTranslated);
+  return Pcp_TranslatePath</* NodeToRoot = */ false>(mapToRoot,
+                                                     pathInRootNamespace,
+                                                     pathWasTranslated);
 }
 
 SdfPath PcpTranslatePathFromNodeToRootUsingFunction(const PcpMapFunction &mapToRoot,

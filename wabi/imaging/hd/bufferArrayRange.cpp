@@ -42,14 +42,12 @@ void HdBufferArrayRangeContainer::Set(int index, HdBufferArrayRangeSharedPtr con
 {
   HD_TRACE_FUNCTION();
 
-  if (index < 0)
-  {
+  if (index < 0) {
     TF_CODING_ERROR("Index negative in HdBufferArrayRangeContainer::Set()");
     return;
   }
 
-  if (static_cast<size_t>(index) >= _ranges.size())
-  {
+  if (static_cast<size_t>(index) >= _ranges.size()) {
     HD_PERF_COUNTER_INCR(HdPerfTokens->bufferArrayRangeContainerResized);
     _ranges.resize(index + 1);
   }
@@ -58,8 +56,7 @@ void HdBufferArrayRangeContainer::Set(int index, HdBufferArrayRangeSharedPtr con
 
 HdBufferArrayRangeSharedPtr const &HdBufferArrayRangeContainer::Get(int index) const
 {
-  if (index < 0 || static_cast<size_t>(index) >= _ranges.size())
-  {
+  if (index < 0 || static_cast<size_t>(index) >= _ranges.size()) {
     // out of range access is not an errorneous path.
     // (i.e. element/instance bars can be null if not exists)
     static HdBufferArrayRangeSharedPtr empty;
@@ -72,8 +69,7 @@ void HdBufferArrayRangeContainer::Resize(int size)
 {
   HD_TRACE_FUNCTION();
 
-  if (size < 0)
-  {
+  if (size < 0) {
     TF_CODING_ERROR(
       "Size negative in "
       "HdBufferArrayRangeContainer::Resize()");

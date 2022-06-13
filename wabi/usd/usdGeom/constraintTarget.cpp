@@ -38,9 +38,7 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
                          (constraintTargets)(constraintTargetIdentifier));
 
-UsdGeomConstraintTarget::UsdGeomConstraintTarget(const UsdAttribute &attr)
-  : _attr(attr)
-{}
+UsdGeomConstraintTarget::UsdGeomConstraintTarget(const UsdAttribute &attr) : _attr(attr) {}
 
 /* static */
 bool UsdGeomConstraintTarget::IsValid(const UsdAttribute &attr)
@@ -72,10 +70,8 @@ bool UsdGeomConstraintTarget::Set(const GfMatrix4d &value, UsdTimeCode time) con
 TfToken UsdGeomConstraintTarget::GetIdentifier() const
 {
   TfToken result;
-  if (_attr)
-  {
-    if (_attr.GetMetadata(_tokens->constraintTargetIdentifier, &result))
-    {
+  if (_attr) {
+    if (_attr.GetMetadata(_tokens->constraintTargetIdentifier, &result)) {
       return result;
     }
   }
@@ -85,8 +81,7 @@ TfToken UsdGeomConstraintTarget::GetIdentifier() const
 
 void UsdGeomConstraintTarget::SetIdentifier(const TfToken &identifier)
 {
-  if (_attr)
-  {
+  if (_attr) {
     _attr.SetMetadata(_tokens->constraintTargetIdentifier, identifier);
   }
 }
@@ -97,10 +92,10 @@ TfToken UsdGeomConstraintTarget::GetConstraintAttrName(const std::string &constr
   return TfToken(_tokens->constraintTargets.GetString() + ":" + constraintName);
 }
 
-GfMatrix4d UsdGeomConstraintTarget::ComputeInWorldSpace(UsdTimeCode time, UsdGeomXformCache *xfCache) const
+GfMatrix4d UsdGeomConstraintTarget::ComputeInWorldSpace(UsdTimeCode time,
+                                                        UsdGeomXformCache *xfCache) const
 {
-  if (!IsDefined())
-  {
+  if (!IsDefined()) {
     TF_CODING_ERROR("Invalid constraint target.");
     return GfMatrix4d(1);
   }
@@ -108,20 +103,17 @@ GfMatrix4d UsdGeomConstraintTarget::ComputeInWorldSpace(UsdTimeCode time, UsdGeo
   const UsdPrim &modelPrim = GetAttr().GetPrim();
 
   GfMatrix4d localToWorld(1);
-  if (xfCache)
-  {
+  if (xfCache) {
     xfCache->SetTime(time);
     localToWorld = xfCache->GetLocalToWorldTransform(modelPrim);
-  } else
-  {
+  } else {
     UsdGeomXformCache cache;
     cache.SetTime(time);
     localToWorld = cache.GetLocalToWorldTransform(modelPrim);
   }
 
   GfMatrix4d localConstraintSpace(1.);
-  if (!Get(&localConstraintSpace, time))
-  {
+  if (!Get(&localConstraintSpace, time)) {
     TF_WARN("Failed to get value of constraint target '%s' at path <%s>.",
             GetIdentifier().GetText(),
             GetAttr().GetPath().GetText());

@@ -38,23 +38,18 @@ bool SdfFileFormatArgumentsFromPython(const boost::python::dict &dict,
   typedef SdfLayer::FileFormatArguments::mapped_type ArgValueType;
 
   const boost::python::object items = dict.items();
-  for (boost::python::ssize_t i = 0; i < len(items); ++i)
-  {
+  for (boost::python::ssize_t i = 0; i < len(items); ++i) {
     boost::python::extract<ArgKeyType> keyExtractor(items[i][0]);
-    if (!keyExtractor.check())
-    {
-      if (errMsg)
-      {
+    if (!keyExtractor.check()) {
+      if (errMsg) {
         *errMsg = "All file format argument keys must be strings";
       }
       return false;
     }
 
     boost::python::extract<ArgValueType> valueExtractor(items[i][1]);
-    if (!valueExtractor.check())
-    {
-      if (errMsg)
-      {
+    if (!valueExtractor.check()) {
+      if (errMsg) {
         *errMsg = "All file format argument values must be strings";
       }
       return false;

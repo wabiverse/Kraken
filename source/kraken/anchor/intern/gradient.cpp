@@ -38,8 +38,10 @@ namespace AnchorGradient
   {
     AnchorIO &io = ANCHOR::GetIO();
 
-    GfVec2f p1 = AnchorLerp(pos, GfVec2f(pos + GfVec2f(size[0] - size[1], 0.f)), color[3]) + GfVec2f(3, 3);
-    GfVec2f p2 = AnchorLerp(pos + GfVec2f(size[1], size[1]), GfVec2f(pos + size), color[3]) - GfVec2f(3, 3);
+    GfVec2f p1 = AnchorLerp(pos, GfVec2f(pos + GfVec2f(size[0] - size[1], 0.f)), color[3]) +
+                 GfVec2f(3, 3);
+    GfVec2f p2 = AnchorLerp(pos + GfVec2f(size[1], size[1]), GfVec2f(pos + size), color[3]) -
+                 GfVec2f(3, 3);
     AnchorBBox rc(p1, p2);
 
     color[3] = 1.f;
@@ -49,8 +51,7 @@ namespace AnchorGradient
     else
       draw_list->AddRect(p1, p2, 0x80FFFFFF, 2.f, 15, 1.25f);
 
-    if (rc.Contains(io.MousePos))
-    {
+    if (rc.Contains(io.MousePos)) {
       if (io.MouseClicked[0])
         return 2;
       return 1;
@@ -73,8 +74,7 @@ namespace AnchorGradient
     static int movingPt = -1;
     if (currentSelection >= int(delegate.GetPointCount()))
       currentSelection = -1;
-    if (movingPt != -1)
-    {
+    if (movingPt != -1) {
       GfVec4f current = pts[movingPt];
       current[3] += io.MouseDelta[0] / size[0];
       current[3] = AnchorClamp(current[3], 0.f, 1.f);
@@ -83,22 +83,18 @@ namespace AnchorGradient
       if (!io.MouseDown[0])
         movingPt = -1;
     }
-    for (size_t i = 0; i < delegate.GetPointCount(); i++)
-    {
+    for (size_t i = 0; i < delegate.GetPointCount(); i++) {
       int ptSel = DrawPoint(draw_list, pts[i], size, i == currentSelection, offset);
-      if (ptSel == 2)
-      {
+      if (ptSel == 2) {
         currentSelection = int(i);
         ret = true;
       }
-      if (ptSel == 1 && io.MouseDown[0] && movingPt == -1)
-      {
+      if (ptSel == 1 && io.MouseDown[0] && movingPt == -1) {
         movingPt = int(i);
       }
     }
     AnchorBBox rc(offset, offset + size);
-    if (rc.Contains(io.MousePos) && io.MouseDoubleClicked[0])
-    {
+    if (rc.Contains(io.MousePos) && io.MouseDoubleClicked[0]) {
       float t = (io.MousePos[0] - offset[0]) / size[0];
       delegate.AddPoint(delegate.GetPoint(t));
       ret = true;

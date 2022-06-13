@@ -43,14 +43,14 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateExtentAttr(UsdGeomBoundable &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateExtentAttr(UsdGeomBoundable &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
     return self.CreateExtentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array),
                                  writeSparsely);
@@ -83,7 +83,9 @@ void wrapUsdGeomBoundable()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -120,11 +122,11 @@ void wrapUsdGeomBoundable()
 namespace
 {
 
-  static object _ComputeExtentFromPlugins(const UsdGeomBoundable &boundable, const UsdTimeCode &time)
+  static object _ComputeExtentFromPlugins(const UsdGeomBoundable &boundable,
+                                          const UsdTimeCode &time)
   {
     VtVec3fArray extent;
-    if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, &extent))
-    {
+    if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, &extent)) {
       return object();
     }
     return object(extent);
@@ -135,8 +137,7 @@ namespace
                                                        const GfMatrix4d &transform)
   {
     VtVec3fArray extent;
-    if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, transform, &extent))
-    {
+    if (!UsdGeomBoundable::ComputeExtentFromPlugins(boundable, time, transform, &extent)) {
       return object();
     }
     return object(extent);
@@ -144,7 +145,8 @@ namespace
 
   WRAP_CUSTOM
   {
-    _class.def("ComputeExtentFromPlugins", &_ComputeExtentFromPlugins, (arg("boundable"), arg("time")))
+    _class
+      .def("ComputeExtentFromPlugins", &_ComputeExtentFromPlugins, (arg("boundable"), arg("time")))
       .def("ComputeExtentFromPlugins",
            &_ComputeExtentFromPluginsWithTransform,
            (arg("boundable"), arg("time"), arg("transform")))

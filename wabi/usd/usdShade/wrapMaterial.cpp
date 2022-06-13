@@ -43,27 +43,33 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateSurfaceAttr(UsdShadeMaterial &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateSurfaceAttr(UsdShadeMaterial &self,
+                                         object defaultVal,
+                                         bool writeSparsely)
   {
-    return self.CreateSurfaceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateSurfaceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                  writeSparsely);
   }
 
-  static UsdAttribute _CreateDisplacementAttr(UsdShadeMaterial &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateDisplacementAttr(UsdShadeMaterial &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateDisplacementAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                        writeSparsely);
   }
 
-  static UsdAttribute _CreateVolumeAttr(UsdShadeMaterial &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVolumeAttr(UsdShadeMaterial &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateVolumeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateVolumeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                 writeSparsely);
   }
 
   static std::string _Repr(const UsdShadeMaterial &self)
@@ -96,7 +102,9 @@ void wrapUsdShadeMaterial()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -156,7 +164,8 @@ namespace
     return UsdPyEditContext(self.GetEditContextForVariant(materialVariantName, layer));
   }
 
-  static object _WrapComputeSurfaceSource(const UsdShadeMaterial &self, const TfToken &renderContext)
+  static object _WrapComputeSurfaceSource(const UsdShadeMaterial &self,
+                                          const TfToken &renderContext)
   {
     UsdShadeShader source;
     TfToken sourceName;
@@ -165,7 +174,8 @@ namespace
     return boost::python::make_tuple(source, sourceName, sourceType);
   }
 
-  static object _WrapComputeDisplacementSource(const UsdShadeMaterial &self, const TfToken &renderContext)
+  static object _WrapComputeDisplacementSource(const UsdShadeMaterial &self,
+                                               const TfToken &renderContext)
   {
     UsdShadeShader source;
     TfToken sourceName;
@@ -174,7 +184,8 @@ namespace
     return boost::python::make_tuple(source, sourceName, sourceType);
   }
 
-  static object _WrapComputeVolumeSource(const UsdShadeMaterial &self, const TfToken &renderContext)
+  static object _WrapComputeVolumeSource(const UsdShadeMaterial &self,
+                                         const TfToken &renderContext)
   {
     UsdShadeShader source;
     TfToken sourceName;

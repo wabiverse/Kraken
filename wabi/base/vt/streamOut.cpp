@@ -38,7 +38,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-std::ostream &Vt_StreamOutGeneric(std::type_info const &type, void const *addr, std::ostream &stream)
+std::ostream &Vt_StreamOutGeneric(std::type_info const &type,
+                                  void const *addr,
+                                  std::ostream &stream)
 {
   return stream << TfStringPrintf("<'%s' @ %p>", ArchGetDemangled(type).c_str(), addr);
 }
@@ -84,22 +86,16 @@ namespace
                              size_t dimension)
   {
     out << '[';
-    if (dimension == shape.GetRank() - 1)
-    {
-      for (size_t j = 0; j < lastDimSize; ++j)
-      {
-        if (j)
-        {
+    if (dimension == shape.GetRank() - 1) {
+      for (size_t j = 0; j < lastDimSize; ++j) {
+        if (j) {
           out << ", ";
         }
         i->Next(out);
       }
-    } else
-    {
-      for (size_t j = 0; j < shape.otherDims[dimension]; ++j)
-      {
-        if (j)
-        {
+    } else {
+      for (size_t j = 0; j < shape.otherDims[dimension]; ++j) {
+        if (j) {
           out << ", ";
         }
         _StreamArrayRecursive(out, i, shape, lastDimSize, index, dimension + 1);
@@ -110,25 +106,28 @@ namespace
 
 }  // namespace
 
-VtStreamOutIterator::~VtStreamOutIterator()
-{}
+VtStreamOutIterator::~VtStreamOutIterator() {}
 
-void VtStreamOutArray(VtStreamOutIterator *i, size_t size, const Vt_ShapeData *shapeData, std::ostream &out)
+void VtStreamOutArray(VtStreamOutIterator *i,
+                      size_t size,
+                      const Vt_ShapeData *shapeData,
+                      std::ostream &out)
 {
   // Compute last dim size, and if size is not evenly divisible, output as
   // rank-1.
   size_t divisor = std::accumulate(shapeData->otherDims,
                                    shapeData->otherDims + shapeData->GetRank() - 1,
                                    1,
-                                   [](size_t x, size_t y) { return x * y; });
+                                   [](size_t x, size_t y) {
+                                     return x * y;
+                                   });
 
   size_t lastDimSize = divisor ? shapeData->totalSize / divisor : 0;
   size_t remainder = divisor ? shapeData->totalSize % divisor : 0;
 
   // If there's a remainder, make a rank-1 shapeData.
   Vt_ShapeData rank1;
-  if (remainder)
-  {
+  if (remainder) {
     rank1.totalSize = shapeData->totalSize;
     shapeData = &rank1;
   }

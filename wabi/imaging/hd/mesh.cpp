@@ -29,8 +29,7 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(HdMeshReprDescTokens, HD_MESH_REPR_DESC_TOKENS);
 
-HdMesh::HdMesh(SdfPath const &id)
-  : HdRprim(id)
+HdMesh::HdMesh(SdfPath const &id) : HdRprim(id)
 {
   /*NOTHING*/
 }

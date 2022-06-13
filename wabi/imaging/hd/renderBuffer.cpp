@@ -26,12 +26,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdRenderBuffer::HdRenderBuffer(SdfPath const &id)
-  : HdBprim(id)
-{}
+HdRenderBuffer::HdRenderBuffer(SdfPath const &id) : HdBprim(id) {}
 
-HdRenderBuffer::~HdRenderBuffer()
-{}
+HdRenderBuffer::~HdRenderBuffer() {}
 
 /*virtual*/
 HdDirtyBits HdRenderBuffer::GetInitialDirtyBitsMask() const
@@ -40,14 +37,14 @@ HdDirtyBits HdRenderBuffer::GetInitialDirtyBitsMask() const
 }
 
 /*virtual*/
-void HdRenderBuffer::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdRenderBuffer::Sync(HdSceneDelegate *sceneDelegate,
+                          HdRenderParam *renderParam,
+                          HdDirtyBits *dirtyBits)
 {
-  if (*dirtyBits & DirtyDescription)
-  {
+  if (*dirtyBits & DirtyDescription) {
     const HdRenderBufferDescriptor desc = sceneDelegate->GetRenderBufferDescriptor(GetId());
 
-    if (!(desc.dimensions[0] >= 0 && desc.dimensions[1] >= 0 && desc.dimensions[2] >= 0))
-    {
+    if (!(desc.dimensions[0] >= 0 && desc.dimensions[1] >= 0 && desc.dimensions[2] >= 0)) {
       TF_CODING_ERROR("Bad dimensions for render buffer %s", GetId().GetText());
       return;
     }

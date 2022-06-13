@@ -79,8 +79,7 @@ namespace
   // Python's getreadbuf interface function.
   static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
-    if (segment != 0)
-    {
+    if (segment != 0) {
       // Always one-segment.
       PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
       return -1;
@@ -119,15 +118,13 @@ namespace
   // Python's getbuffer interface function.
   static int getbuffer(PyObject *self, Py_buffer *view, int flags)
   {
-    if (view == NULL)
-    {
+    if (view == NULL) {
       PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
       return -1;
     }
 
     // We don't support fortran order.
-    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
-    {
+    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS) {
       PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
       return -1;
     }
@@ -139,29 +136,23 @@ namespace
     view->len = sizeof(GfMatrix4d);
     view->readonly = 0;
     view->itemsize = sizeof(double);
-    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
-    {
+    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
       view->format = Gf_GetPyBufferFmtFor<double>();
-    } else
-    {
+    } else {
       view->format = NULL;
     }
-    if ((flags & PyBUF_ND) == PyBUF_ND)
-    {
+    if ((flags & PyBUF_ND) == PyBUF_ND) {
       view->ndim = 2;
       static Py_ssize_t shape[] = {4, 4};
       view->shape = shape;
-    } else
-    {
+    } else {
       view->ndim = 0;
       view->shape = NULL;
     }
-    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
-    {
+    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
       static Py_ssize_t strides[] = {4 * sizeof(double), sizeof(double)};
       view->strides = strides;
-    } else
-    {
+    } else {
       view->strides = NULL;
     }
     view->suboffsets = NULL;
@@ -190,11 +181,12 @@ namespace
   static string _Repr(GfMatrix4d const &self)
   {
     static char newline[] = ",\n            ";
-    return TF_PY_REPR_PREFIX + "Matrix4d(" + TfPyRepr(self[0][0]) + ", " + TfPyRepr(self[0][1]) + ", " +
-           TfPyRepr(self[0][2]) + ", " + TfPyRepr(self[0][3]) + newline + TfPyRepr(self[1][0]) + ", " +
-           TfPyRepr(self[1][1]) + ", " + TfPyRepr(self[1][2]) + ", " + TfPyRepr(self[1][3]) + newline +
-           TfPyRepr(self[2][0]) + ", " + TfPyRepr(self[2][1]) + ", " + TfPyRepr(self[2][2]) + ", " +
-           TfPyRepr(self[2][3]) + newline + TfPyRepr(self[3][0]) + ", " + TfPyRepr(self[3][1]) + ", " +
+    return TF_PY_REPR_PREFIX + "Matrix4d(" + TfPyRepr(self[0][0]) + ", " + TfPyRepr(self[0][1]) +
+           ", " + TfPyRepr(self[0][2]) + ", " + TfPyRepr(self[0][3]) + newline +
+           TfPyRepr(self[1][0]) + ", " + TfPyRepr(self[1][1]) + ", " + TfPyRepr(self[1][2]) +
+           ", " + TfPyRepr(self[1][3]) + newline + TfPyRepr(self[2][0]) + ", " +
+           TfPyRepr(self[2][1]) + ", " + TfPyRepr(self[2][2]) + ", " + TfPyRepr(self[2][3]) +
+           newline + TfPyRepr(self[3][0]) + ", " + TfPyRepr(self[3][1]) + ", " +
            TfPyRepr(self[3][2]) + ", " + TfPyRepr(self[3][3]) + ")";
   }
 
@@ -223,8 +215,7 @@ namespace
   static double __getitem__double(GfMatrix4d const &self, tuple index)
   {
     int i1 = 0, i2 = 0;
-    if (len(index) == 2)
-    {
+    if (len(index) == 2) {
       i1 = normalizeIndex(extract<int>(index[0]));
       i2 = normalizeIndex(extract<int>(index[1]));
     } else
@@ -241,8 +232,7 @@ namespace
   static void __setitem__double(GfMatrix4d &self, tuple index, double value)
   {
     int i1 = 0, i2 = 0;
-    if (len(index) == 2)
-    {
+    if (len(index) == 2) {
       i1 = normalizeIndex(extract<int>(index[0]));
       i2 = normalizeIndex(extract<int>(index[1]));
     } else
@@ -390,9 +380,14 @@ void wrapMatrix4d()
     .def(init<const GfVec4d &>())
     .def(init<const vector<vector<float>> &>())
     .def(init<const vector<vector<double>> &>())
-    .def(init<const vector<float> &, const vector<float> &, const vector<float> &, const vector<float> &>())
-    .def(
-      init<const vector<double> &, const vector<double> &, const vector<double> &, const vector<double> &>())
+    .def(init<const vector<float> &,
+              const vector<float> &,
+              const vector<float> &,
+              const vector<float> &>())
+    .def(init<const vector<double> &,
+              const vector<double> &,
+              const vector<double> &,
+              const vector<double> &>())
     .def(init<const GfMatrix3d &, const GfVec3d>())
     .def(init<const GfRotation &, const GfVec3d>())
 
@@ -495,13 +490,19 @@ void wrapMatrix4d()
     .def("SetTranslateOnly", &This::SetTranslateOnly, return_self<>())
 
     .def("SetRotate", (This & (This::*)(const GfQuatd &)) & This::SetRotate, return_self<>())
-    .def("SetRotateOnly", (This & (This::*)(const GfQuatd &)) & This::SetRotateOnly, return_self<>())
+    .def("SetRotateOnly",
+         (This & (This::*)(const GfQuatd &)) & This::SetRotateOnly,
+         return_self<>())
 
     .def("SetRotate", (This & (This::*)(const GfRotation &)) & This::SetRotate, return_self<>())
-    .def("SetRotateOnly", (This & (This::*)(const GfRotation &)) & This::SetRotateOnly, return_self<>())
+    .def("SetRotateOnly",
+         (This & (This::*)(const GfRotation &)) & This::SetRotateOnly,
+         return_self<>())
 
     .def("SetRotate", (This & (This::*)(const GfMatrix3d &)) & This::SetRotate, return_self<>())
-    .def("SetRotateOnly", (This & (This::*)(const GfMatrix3d &)) & This::SetRotateOnly, return_self<>())
+    .def("SetRotateOnly",
+         (This & (This::*)(const GfMatrix3d &)) & This::SetRotateOnly,
+         return_self<>())
 
     .def("SetLookAt",
          (This & (This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &)) & This::SetLookAt,

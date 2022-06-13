@@ -53,13 +53,14 @@ for i in range(1, 32+1):
 #  define _TF_ARG_ERROR(a, b, c)
 #  define _TF_ARG_TUPLE_OVERFLOW(a, b, c)
 
-BOOST_PP_IIF(
-  BOOST_PP_EQUAL(1,
-                 BOOST_PP_EXPAND(BOOST_PP_CAT(TF_ARG_, _MAX_ARGS) BOOST_PP_LPAREN()
-                                   _TF BOOST_PP_REPEAT(BOOST_PP_SUB(_MAX_ARGS, 2), _TF_NUM_ARGS_REP, _TF)
-                                     BOOST_PP_COMMA() 1 BOOST_PP_RPAREN())),
-  BOOST_PP_TUPLE_EAT(1),
-  _TF_ARG_ERROR)
+BOOST_PP_IIF(BOOST_PP_EQUAL(1,
+                            BOOST_PP_EXPAND(BOOST_PP_CAT(TF_ARG_, _MAX_ARGS) BOOST_PP_LPAREN()
+                                              _TF BOOST_PP_REPEAT(BOOST_PP_SUB(_MAX_ARGS, 2),
+                                                                  _TF_NUM_ARGS_REP,
+                                                                  _TF)
+                                                BOOST_PP_COMMA() 1 BOOST_PP_RPAREN())),
+             BOOST_PP_TUPLE_EAT(1),
+             _TF_ARG_ERROR)
 (...)
 
   BOOST_PP_IIF(BOOST_PP_GREATER_EQUAL(_MAX_ARGS, BOOST_PP_LIMIT_TUPLE),

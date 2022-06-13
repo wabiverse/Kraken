@@ -50,21 +50,25 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateAngleAttr(UsdLuxDistantLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateAngleAttr(UsdLuxDistantLight &self,
+                                       object defaultVal,
+                                       bool writeSparsely)
   {
-    return self.CreateAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateAngleAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                writeSparsely);
   }
 
-  static UsdAttribute _CreateIntensityAttr(UsdLuxDistantLight &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateIntensityAttr(UsdLuxDistantLight &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
-    return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float), writeSparsely);
+    return self.CreateIntensityAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                    writeSparsely);
   }
 
   static std::string _Repr(const UsdLuxDistantLight &self)
@@ -97,7 +101,9 @@ void wrapUsdLuxDistantLight()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -139,7 +145,6 @@ void wrapUsdLuxDistantLight()
 namespace
 {
 
-  WRAP_CUSTOM
-  {}
+  WRAP_CUSTOM {}
 
 }  // namespace

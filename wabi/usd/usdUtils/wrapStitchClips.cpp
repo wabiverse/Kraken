@@ -39,11 +39,9 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-  template<typename T>
-  T _ConvertWithDefault(const object obj, const T &def)
+  template<typename T> T _ConvertWithDefault(const object obj, const T &def)
   {
-    if (!TfPyIsNone(obj))
-    {
+    if (!TfPyIsNone(obj)) {
       return extract<T>(obj);
     }
 
@@ -93,8 +91,10 @@ namespace
                                   const object pyClipSet)
   {
     const auto clipSet = _ConvertWithDefault(pyClipSet, UsdClipsAPISetNames->default_);
-    const auto activeOffset = _ConvertWithDefault(pyActiveOffset, std::numeric_limits<double>::max());
-    const auto interpolateMissingClipValues = _ConvertWithDefault(pyInterpolateMissingClipValues, false);
+    const auto activeOffset = _ConvertWithDefault(pyActiveOffset,
+                                                  std::numeric_limits<double>::max());
+    const auto interpolateMissingClipValues = _ConvertWithDefault(pyInterpolateMissingClipValues,
+                                                                  false);
     return UsdUtilsStitchClipsTemplate(resultLayer,
                                        topologyLayer,
                                        manifestLayer,
@@ -122,7 +122,9 @@ void wrapStitchClips()
        arg("interpolateMissingClipValues") = object(),
        arg("clipSet") = object()));
 
-  def("StitchClipsTopology", _ConvertStitchClipsTopology, (arg("topologyLayer"), arg("clipLayerFiles")));
+  def("StitchClipsTopology",
+      _ConvertStitchClipsTopology,
+      (arg("topologyLayer"), arg("clipLayerFiles")));
 
   def("StitchClipsManifest",
       UsdUtilsStitchClipsManifest,

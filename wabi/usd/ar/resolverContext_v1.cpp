@@ -36,8 +36,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-ArResolverContext::_Untyped::~_Untyped()
-{}
+ArResolverContext::_Untyped::~_Untyped() {}
 
 std::string Ar_GetDebugString(const std::type_info &info, void const *context)
 {

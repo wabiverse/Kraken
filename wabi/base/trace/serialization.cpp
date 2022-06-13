@@ -38,10 +38,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-bool TraceSerialization::Write(std::ostream &ostr, const std::shared_ptr<TraceCollection> &collection)
+bool TraceSerialization::Write(std::ostream &ostr,
+                               const std::shared_ptr<TraceCollection> &collection)
 {
-  if (!collection)
-  {
+  if (!collection) {
     return false;
   }
   return Write(ostr, std::vector<std::shared_ptr<TraceCollection>>{collection});
@@ -51,8 +51,7 @@ bool TraceSerialization::Write(std::ostream &ostr,
                                const std::vector<std::shared_ptr<TraceCollection>> &collections)
 {
   JsValue colVal;
-  if (collections.empty())
-  {
+  if (collections.empty()) {
     return false;
   }
   {
@@ -64,14 +63,13 @@ bool TraceSerialization::Write(std::ostream &ostr,
   return false;
 }
 
-std::unique_ptr<TraceCollection> TraceSerialization::Read(std::istream &istr, std::string *errorStr)
+std::unique_ptr<TraceCollection> TraceSerialization::Read(std::istream &istr,
+                                                          std::string *errorStr)
 {
   JsParseError error;
   JsValue value = JsParseStream(istr, &error);
-  if (value.IsNull())
-  {
-    if (errorStr)
-    {
+  if (value.IsNull()) {
+    if (errorStr) {
       *errorStr = TfStringPrintf(
         "Error parsing JSON\n"
         "line: %d, col: %d ->\n\t%s.\n",

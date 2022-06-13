@@ -39,16 +39,14 @@ UsdPrimCompositionQueryArc::UsdPrimCompositionQueryArc(const PcpNodeRef &node)
 {
   // Only the query itself can construct these, so we expect the node must be
   // valid
-  if (!TF_VERIFY(_node))
-  {
+  if (!TF_VERIFY(_node)) {
     return;
   }
 
   _originalIntroducedNode = _node;
 
   // The root node of introduces itself
-  if (_node.IsRootNode())
-  {
+  if (_node.IsRootNode()) {
     _introducingNode = _node;
     return;
   }
@@ -60,8 +58,7 @@ UsdPrimCompositionQueryArc::UsdPrimCompositionQueryArc(const PcpNodeRef &node)
   // the origin chain is is originally introduced node of the arc that causes
   // this node to exist and therefore that node's parent is the introducing
   // node of this arc.
-  if (_node.GetOriginNode() != _node.GetParentNode())
-  {
+  if (_node.GetOriginNode() != _node.GetParentNode()) {
     _originalIntroducedNode = _node.GetOriginRootNode();
   }
   _introducingNode = _originalIntroducedNode.GetParentNode();
@@ -97,29 +94,28 @@ static bool _GetIntroducingComposeInfo(const UsdPrimCompositionQueryArc &arc,
   // entries and arc source info.
   PcpSourceArcInfoVector info;
   std::vector<ResultType> result;
-  composeFunc(arc.GetIntroducingNode().GetLayerStack(), arc.GetIntroducingPrimPath(), &result, &info);
-  if (!TF_VERIFY(result.size() == info.size()))
-  {
+  composeFunc(arc.GetIntroducingNode().GetLayerStack(),
+              arc.GetIntroducingPrimPath(),
+              &result,
+              &info);
+  if (!TF_VERIFY(result.size() == info.size())) {
     return false;
   }
 
   // We can use the sibling num at origin to find exactly which entry in the
   // list corresponds to our arc's target node.
   const int index = arc.GetTargetNode().GetSiblingNumAtOrigin();
-  if (static_cast<size_t>(index) >= info.size())
-  {
+  if (static_cast<size_t>(index) >= info.size()) {
     TF_CODING_ERROR(
       "Node sibling number of target node is out of range "
       "introducing composed list op");
     return false;
   }
 
-  if (arcInfo)
-  {
+  if (arcInfo) {
     *arcInfo = info[index];
   }
-  if (entry)
-  {
+  if (entry) {
     *entry = result[index];
   }
   return true;
@@ -132,28 +128,41 @@ SdfLayerHandle UsdPrimCompositionQueryArc::GetIntroducingLayer() const
   // list. Just need to call the correct function for each arc type.
   PcpSourceArcInfo info;
   bool foundInfo = false;
-  switch (_node.GetArcType())
-  {
+  switch (_node.GetArcType()) {
     case PcpArcTypeReference:
-      foundInfo = _GetIntroducingComposeInfo<SdfReference>(*this, &PcpComposeSiteReferences, &info, nullptr);
+      foundInfo = _GetIntroducingComposeInfo<SdfReference>(*this,
+                                                           &PcpComposeSiteReferences,
+                                                           &info,
+                                                           nullptr);
       break;
     case PcpArcTypePayload:
-      foundInfo = _GetIntroducingComposeInfo<SdfPayload>(*this, &PcpComposeSitePayloads, &info, nullptr);
+      foundInfo = _GetIntroducingComposeInfo<SdfPayload>(*this,
+                                                         &PcpComposeSitePayloads,
+                                                         &info,
+                                                         nullptr);
       break;
     case PcpArcTypeInherit:
-      foundInfo = _GetIntroducingComposeInfo<SdfPath>(*this, &PcpComposeSiteInherits, &info, nullptr);
+      foundInfo = _GetIntroducingComposeInfo<SdfPath>(*this,
+                                                      &PcpComposeSiteInherits,
+                                                      &info,
+                                                      nullptr);
       break;
     case PcpArcTypeSpecialize:
-      foundInfo = _GetIntroducingComposeInfo<SdfPath>(*this, &PcpComposeSiteSpecializes, &info, nullptr);
+      foundInfo = _GetIntroducingComposeInfo<SdfPath>(*this,
+                                                      &PcpComposeSiteSpecializes,
+                                                      &info,
+                                                      nullptr);
       break;
     case PcpArcTypeVariant:
-      foundInfo = _GetIntroducingComposeInfo<std::string>(*this, &PcpComposeSiteVariantSets, &info, nullptr);
+      foundInfo = _GetIntroducingComposeInfo<std::string>(*this,
+                                                          &PcpComposeSiteVariantSets,
+                                                          &info,
+                                                          nullptr);
       break;
     default:
       break;
   }
-  if (foundInfo)
-  {
+  if (foundInfo) {
     return info.layer;
   }
   // Empty layer for root arc and unsupported arc types.
@@ -163,8 +172,7 @@ SdfLayerHandle UsdPrimCompositionQueryArc::GetIntroducingLayer() const
 SdfPath UsdPrimCompositionQueryArc::GetIntroducingPrimPath() const
 {
   // Special case for the root node. It doesn't have an introducing prim path.
-  if (_node.IsRootNode())
-  {
+  if (_node.IsRootNode()) {
     return SdfPath();
   }
   // We ask the introduced node for its GetIntroPath which gets its parent's
@@ -185,8 +193,7 @@ static SdfPrimSpecHandle _GetIntroducingPrimSpec(const UsdPrimCompositionQueryAr
 bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfReferenceEditorProxy *editor,
                                                           SdfReference *ref) const
 {
-  if (GetArcType() != PcpArcTypeReference)
-  {
+  if (GetArcType() != PcpArcTypeReference) {
     TF_CODING_ERROR(
       "Cannot retrieve a reference list editor and reference "
       "for arc types other than PcpArcTypeReference");
@@ -195,8 +202,7 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfReferenceEditorProx
 
   // Compose the references on the introducing node.
   PcpSourceArcInfo info;
-  if (!_GetIntroducingComposeInfo<SdfReference>(*this, &PcpComposeSiteReferences, &info, ref))
-  {
+  if (!_GetIntroducingComposeInfo<SdfReference>(*this, &PcpComposeSiteReferences, &info, ref)) {
     return false;
   }
   // Get the refence editor from the prim spec.
@@ -212,8 +218,7 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfReferenceEditorProx
 bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfPayloadEditorProxy *editor,
                                                           SdfPayload *payload) const
 {
-  if (GetArcType() != PcpArcTypePayload)
-  {
+  if (GetArcType() != PcpArcTypePayload) {
     TF_CODING_ERROR(
       "Cannot retrieve a payload list editor and payload "
       "for arc types other than PcpArcTypePayload");
@@ -222,8 +227,7 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfPayloadEditorProxy 
 
   // Compose the payloads on the introducing node.
   PcpSourceArcInfo info;
-  if (!_GetIntroducingComposeInfo<SdfPayload>(*this, &PcpComposeSitePayloads, &info, payload))
-  {
+  if (!_GetIntroducingComposeInfo<SdfPayload>(*this, &PcpComposeSitePayloads, &info, payload)) {
     return false;
   }
   // Get the payload editor from the prim spec.
@@ -236,10 +240,10 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfPayloadEditorProxy 
   return true;
 }
 
-bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfPathEditorProxy *editor, SdfPath *path) const
+bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfPathEditorProxy *editor,
+                                                          SdfPath *path) const
 {
-  if (GetArcType() != PcpArcTypeInherit && GetArcType() != PcpArcTypeSpecialize)
-  {
+  if (GetArcType() != PcpArcTypeInherit && GetArcType() != PcpArcTypeSpecialize) {
     TF_CODING_ERROR(
       "Cannot retrieve a path list editor and path "
       "for arc types other than PcpArcTypeInherit and "
@@ -248,20 +252,16 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfPathEditorProxy *ed
   }
 
   PcpSourceArcInfo info;
-  if (GetArcType() == PcpArcTypeInherit)
-  {
+  if (GetArcType() == PcpArcTypeInherit) {
     // Compose the inherit paths on the introducing node.
-    if (!_GetIntroducingComposeInfo<SdfPath>(*this, &PcpComposeSiteInherits, &info, path))
-    {
+    if (!_GetIntroducingComposeInfo<SdfPath>(*this, &PcpComposeSiteInherits, &info, path)) {
       return false;
     }
     // Get the inherit path editor from the prim spec.
     *editor = _GetIntroducingPrimSpec(*this, info)->GetInheritPathList();
-  } else
-  {
+  } else {
     // Compose the specialize paths on the introducing node.
-    if (!_GetIntroducingComposeInfo<SdfPath>(*this, &PcpComposeSiteSpecializes, &info, path))
-    {
+    if (!_GetIntroducingComposeInfo<SdfPath>(*this, &PcpComposeSiteSpecializes, &info, path)) {
       return false;
     }
     // Get the specialize path editor from the prim spec.
@@ -274,8 +274,7 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfPathEditorProxy *ed
 bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfNameEditorProxy *editor,
                                                           std::string *name) const
 {
-  if (GetArcType() != PcpArcTypeVariant)
-  {
+  if (GetArcType() != PcpArcTypeVariant) {
     TF_CODING_ERROR(
       "Cannot retrieve a name list editor and name "
       "for arc types other than PcpArcTypeVariant");
@@ -284,8 +283,7 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfNameEditorProxy *ed
 
   // Compose the variant set names on the introducing node.
   PcpSourceArcInfo info;
-  if (!_GetIntroducingComposeInfo<std::string>(*this, &PcpComposeSiteVariantSets, &info, name))
-  {
+  if (!_GetIntroducingComposeInfo<std::string>(*this, &PcpComposeSiteVariantSets, &info, name)) {
     return false;
   }
   // Get the variant set name editor from the prim spec.
@@ -323,8 +321,7 @@ bool UsdPrimCompositionQueryArc::IsIntroducedInRootLayerStack() const
 {
   // We say the root node of the graph is always introduced in the root layer
   // stack
-  if (_node.IsRootNode())
-  {
+  if (_node.IsRootNode()) {
     return true;
   }
   // We can't just compare the introducing layer stack with the root
@@ -360,10 +357,8 @@ UsdPrimCompositionQuery::UsdPrimCompositionQuery(const UsdPrim &prim, const Filt
   // We still skip inert nodes in the unfiltered query so we don't pick up
   // things like the original copies of specialize nodes that have been
   // moved for strength ordering purposes.
-  for (const PcpNodeRef &node : _expandedPrimIndex.GetNodeRange())
-  {
-    if (!node.IsInert())
-    {
+  for (const PcpNodeRef &node : _expandedPrimIndex.GetNodeRange()) {
+    if (!node.IsInert()) {
       _unfilteredArcs.push_back(UsdPrimCompositionQueryArc(node));
     }
   }
@@ -413,8 +408,7 @@ static bool _TestArcType(const UsdPrimCompositionQueryArc &compArc,
 
   // Convert to a bit mask so we filter by multiple arc types.
   int arcMask = 0;
-  switch (filter.arcTypeFilter)
-  {
+  switch (filter.arcTypeFilter) {
     case ArcTypeFilter::All:
       return true;
     case ArcTypeFilter::Reference:
@@ -457,8 +451,7 @@ static bool _TestDependencyType(const UsdPrimCompositionQueryArc &compArc,
 {
   using DependencyTypeFilter = UsdPrimCompositionQuery::DependencyTypeFilter;
 
-  switch (filter.dependencyTypeFilter)
-  {
+  switch (filter.dependencyTypeFilter) {
     case DependencyTypeFilter::All:
       return true;
     case DependencyTypeFilter::Direct:
@@ -474,8 +467,7 @@ static bool _TestArcIntroduced(const UsdPrimCompositionQueryArc &compArc,
 {
   using ArcIntroducedFilter = UsdPrimCompositionQuery::ArcIntroducedFilter;
 
-  switch (filter.arcIntroducedFilter)
-  {
+  switch (filter.arcIntroducedFilter) {
     case ArcIntroducedFilter::All:
       return true;
     case ArcIntroducedFilter::IntroducedInRootLayerStack:
@@ -491,8 +483,7 @@ static bool _TestHasSpecs(const UsdPrimCompositionQueryArc &compArc,
 {
   using HasSpecsFilter = UsdPrimCompositionQuery::HasSpecsFilter;
 
-  switch (filter.hasSpecsFilter)
-  {
+  switch (filter.hasSpecsFilter) {
     case HasSpecsFilter::All:
       return true;
     case HasSpecsFilter::HasSpecs:
@@ -510,35 +501,28 @@ std::vector<UsdPrimCompositionQueryArc> UsdPrimCompositionQuery::GetCompositionA
   using _TestFunc = std::function<bool(const UsdPrimCompositionQueryArc &)>;
 
   std::vector<_TestFunc> filterTests;
-  if (_filter.arcTypeFilter != ArcTypeFilter::All)
-  {
+  if (_filter.arcTypeFilter != ArcTypeFilter::All) {
     filterTests.push_back(std::bind(_TestArcType, std::placeholders::_1, _filter));
   }
-  if (_filter.dependencyTypeFilter != DependencyTypeFilter::All)
-  {
+  if (_filter.dependencyTypeFilter != DependencyTypeFilter::All) {
     filterTests.push_back(std::bind(_TestDependencyType, std::placeholders::_1, _filter));
   }
-  if (_filter.arcIntroducedFilter != ArcIntroducedFilter::All)
-  {
+  if (_filter.arcIntroducedFilter != ArcIntroducedFilter::All) {
     filterTests.push_back(std::bind(_TestArcIntroduced, std::placeholders::_1, _filter));
   }
-  if (_filter.hasSpecsFilter != HasSpecsFilter::All)
-  {
+  if (_filter.hasSpecsFilter != HasSpecsFilter::All) {
     filterTests.push_back(std::bind(_TestHasSpecs, std::placeholders::_1, _filter));
   }
 
   // No test, return unfiltered resuslts.
-  if (filterTests.empty())
-  {
+  if (filterTests.empty()) {
     return _unfilteredArcs;
   }
 
   // Runs the filter tests on an arc, failing in any test fails
   auto _RunFilterTests = [&filterTests](const UsdPrimCompositionQueryArc &compArc) {
-    for (auto test : filterTests)
-    {
-      if (!test(compArc))
-      {
+    for (auto test : filterTests) {
+      if (!test(compArc)) {
         return false;
       }
     }
@@ -547,10 +531,8 @@ std::vector<UsdPrimCompositionQueryArc> UsdPrimCompositionQuery::GetCompositionA
 
   // Create the filtered arc list from the unfiltered arcs.
   std::vector<UsdPrimCompositionQueryArc> result;
-  for (const UsdPrimCompositionQueryArc &compArc : _unfilteredArcs)
-  {
-    if (_RunFilterTests(compArc))
-    {
+  for (const UsdPrimCompositionQueryArc &compArc : _unfilteredArcs) {
+    if (_RunFilterTests(compArc)) {
       result.push_back(compArc);
     }
   }

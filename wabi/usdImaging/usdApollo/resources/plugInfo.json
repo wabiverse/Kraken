@@ -1,20 +1,22 @@
 {
   "Plugins": [
-      {
-          "Info": {
-              "Types": {
-                  "UsdApolloDrawModeAdapter" : {
-                      "bases": ["UsdImagingPrimAdapter"],
-                      "isInternal": true,
-                      "primTypeName": "__drawModeAdapter"
-                  }
-              }
-          },
-          "LibraryPath": "@PLUG_INFO_LIBRARY_PATH@",
-          "Name": "usdApollo",
-          "ResourcePath": "@PLUG_INFO_RESOURCE_PATH@",
-          "Root": "@PLUG_INFO_ROOT@",
-          "Type": "library"
-      }
+    {
+      "Info": {
+        "Types": {
+          "UsdApolloDrawModeAdapter": {
+            "bases": [
+              "UsdImagingPrimAdapter"
+            ],
+            "isInternal": true,
+            "primTypeName": "__drawModeAdapter"
+          }
+        }
+      },
+      "LibraryPath": "@PLUG_INFO_LIBRARY_PATH@",
+      "Name": "usdApollo",
+      "ResourcePath": "@PLUG_INFO_RESOURCE_PATH@",
+      "Root": "@PLUG_INFO_ROOT@",
+      "Type": "library"
+    }
   ]
 }

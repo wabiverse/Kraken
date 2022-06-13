@@ -46,6 +46,7 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 class Hd_DrawTask final : public HdTask
 {
  public:
+
   Hd_DrawTask(HdRenderPassSharedPtr const &renderPass,
               HdRenderPassStateSharedPtr const &renderPassState,
               bool withGuides)
@@ -57,8 +58,7 @@ class Hd_DrawTask final : public HdTask
     _renderTags.reserve(2);
     _renderTags.push_back(HdRenderTagTokens->geometry);
 
-    if (withGuides)
-    {
+    if (withGuides) {
       _renderTags.push_back(HdRenderTagTokens->guide);
     }
   }
@@ -84,6 +84,7 @@ class Hd_DrawTask final : public HdTask
   }
 
  private:
+
   HdRenderPassSharedPtr _renderPass;
   HdRenderPassStateSharedPtr _renderPassState;
   TfTokenVector _renderTags;
@@ -93,8 +94,7 @@ class Hd_DrawTask final : public HdTask
   Hd_DrawTask &operator=(const Hd_DrawTask &) = delete;
 };
 
-template<typename T>
-static VtArray<T> _BuildArray(T values[], int numValues)
+template<typename T> static VtArray<T> _BuildArray(T values[], int numValues)
 {
   VtArray<T> result(numValues);
   std::copy(values, values + numValues, result.begin());
@@ -113,8 +113,7 @@ Hd_TestDriver::Hd_TestDriver()
 {
   HdReprSelector reprSelector = HdReprSelector(HdReprTokens->hull);
   if (TfGetenv("HD_ENABLE_SMOOTH_NORMALS", "CPU") == "CPU" ||
-      TfGetenv("HD_ENABLE_SMOOTH_NORMALS", "CPU") == "GPU")
-  {
+      TfGetenv("HD_ENABLE_SMOOTH_NORMALS", "CPU") == "GPU") {
     reprSelector = HdReprSelector(HdReprTokens->smoothHull);
   }
   _Init(reprSelector);
@@ -173,7 +172,8 @@ void Hd_TestDriver::Draw(bool withGuides)
 
 void Hd_TestDriver::Draw(HdRenderPassSharedPtr const &renderPass, bool withGuides)
 {
-  HdTaskSharedPtrVector tasks = {std::make_shared<Hd_DrawTask>(renderPass, _renderPassState, withGuides)};
+  HdTaskSharedPtrVector tasks = {
+    std::make_shared<Hd_DrawTask>(renderPass, _renderPassState, withGuides)};
   _engine.Execute(&_sceneDelegate->GetRenderIndex(), &tasks);
 }
 
@@ -181,11 +181,17 @@ void Hd_TestDriver::SetCamera(GfMatrix4d const &modelViewMatrix,
                               GfMatrix4d const &projectionMatrix,
                               GfVec4d const &viewport)
 {
-  _sceneDelegate->UpdateCamera(_cameraId, HdCameraTokens->worldToViewMatrix, VtValue(modelViewMatrix));
-  _sceneDelegate->UpdateCamera(_cameraId, HdCameraTokens->projectionMatrix, VtValue(projectionMatrix));
+  _sceneDelegate->UpdateCamera(_cameraId,
+                               HdCameraTokens->worldToViewMatrix,
+                               VtValue(modelViewMatrix));
+  _sceneDelegate->UpdateCamera(_cameraId,
+                               HdCameraTokens->projectionMatrix,
+                               VtValue(projectionMatrix));
   // Baselines for tests were generated without constraining the view
   // frustum based on the viewport aspect ratio.
-  _sceneDelegate->UpdateCamera(_cameraId, HdCameraTokens->windowPolicy, VtValue(CameraUtilDontConform));
+  _sceneDelegate->UpdateCamera(_cameraId,
+                               HdCameraTokens->windowPolicy,
+                               VtValue(CameraUtilDontConform));
 
   HdSprim const *cam = _renderIndex->GetSprim(HdPrimTypeTokens->camera, _cameraId);
   TF_VERIFY(cam);
@@ -199,8 +205,7 @@ void Hd_TestDriver::SetCullStyle(HdCullStyle cullStyle)
 
 HdRenderPassSharedPtr const &Hd_TestDriver::GetRenderPass()
 {
-  if (!_renderPass)
-  {
+  if (!_renderPass) {
     _renderPass = HdRenderPassSharedPtr(
       new Hd_UnitTestNullRenderPass(&_sceneDelegate->GetRenderIndex(), _collection));
   }

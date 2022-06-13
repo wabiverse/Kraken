@@ -33,7 +33,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-static TfPyObjWrapper _WrapGetAttributeFallbackValue(const UsdPrimDefinition &self, const TfToken &attrName)
+static TfPyObjWrapper _WrapGetAttributeFallbackValue(const UsdPrimDefinition &self,
+                                                     const TfToken &attrName)
 {
   VtValue result;
   self.GetAttributeFallbackValue(attrName, &result);
@@ -80,13 +81,19 @@ void wrapUsdPrimDefinition()
   typedef UsdPrimDefinition This;
   class_<This, boost::noncopyable>("PrimDefinition", no_init)
     .def("GetPropertyNames", &This::GetPropertyNames, return_value_policy<TfPySequenceToList>())
-    .def("GetAppliedAPISchemas", &This::GetAppliedAPISchemas, return_value_policy<TfPySequenceToList>())
+    .def("GetAppliedAPISchemas",
+         &This::GetAppliedAPISchemas,
+         return_value_policy<TfPySequenceToList>())
     .def("GetSchemaPropertySpec", &This::GetSchemaPropertySpec, (arg("propName")))
     .def("GetSchemaAttributeSpec", &This::GetSchemaAttributeSpec, (arg("attrName")))
     .def("GetSchemaRelationshipSpec", &This::GetSchemaRelationshipSpec, (arg("relName")))
-    .def("GetAttributeFallbackValue", &_WrapGetAttributeFallbackValue, (arg("attrName"), arg("key")))
+    .def("GetAttributeFallbackValue",
+         &_WrapGetAttributeFallbackValue,
+         (arg("attrName"), arg("key")))
 
-    .def("ListMetadataFields", &This::ListMetadataFields, return_value_policy<TfPySequenceToList>())
+    .def("ListMetadataFields",
+         &This::ListMetadataFields,
+         return_value_policy<TfPySequenceToList>())
     .def("GetMetadata", &_WrapGetMetadata, (arg("key")))
     .def("GetMetadataByDictKey", &_WrapGetMetadataByDictKey, (arg("key"), arg("keyPath")))
     .def("GetDocumentation", &This::GetDocumentation)
@@ -103,9 +110,11 @@ void wrapUsdPrimDefinition()
          (UsdPrim(This::*)(const UsdPrim &, SdfSpecifier) const) & This::FlattenTo,
          (arg("prim"), arg("newSpecSpecifier") = SdfSpecifierOver))
     .def("FlattenTo",
-         (UsdPrim(This::*)(const UsdPrim &, const TfToken &, SdfSpecifier) const) & This::FlattenTo,
+         (UsdPrim(This::*)(const UsdPrim &, const TfToken &, SdfSpecifier) const) &
+           This::FlattenTo,
          (arg("parent"), arg("name"), arg("newSpecSpecifier") = SdfSpecifierOver))
     .def("FlattenTo",
-         (bool(This::*)(const SdfLayerHandle &, const SdfPath &, SdfSpecifier) const) & This::FlattenTo,
+         (bool(This::*)(const SdfLayerHandle &, const SdfPath &, SdfSpecifier) const) &
+           This::FlattenTo,
          (arg("layer"), arg("path"), arg("newSpecSpecifier") = SdfSpecifierOver));
 }

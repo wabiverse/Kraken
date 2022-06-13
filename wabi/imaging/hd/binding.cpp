@@ -27,8 +27,9 @@ WABI_NAMESPACE_BEGIN
 
 bool HdBindingRequest::operator==(HdBindingRequest const &other) const
 {
-  return _bindingType == other._bindingType && _dataType == other._dataType && _name == other._name &&
-         _resource == other._resource && _bar == other._bar && _isInterleaved == other._isInterleaved;
+  return _bindingType == other._bindingType && _dataType == other._dataType &&
+         _name == other._name && _resource == other._resource && _bar == other._bar &&
+         _isInterleaved == other._isInterleaved;
 }
 
 bool HdBindingRequest::operator!=(HdBindingRequest const &other) const

@@ -44,8 +44,7 @@ size_t HdPhShaderCode::ComputeHash(HdPhShaderCodeSharedPtrVector const &shaders)
 {
   size_t hash = 0;
 
-  TF_FOR_ALL (it, shaders)
-  {
+  TF_FOR_ALL (it, shaders) {
     boost::hash_combine(hash, (*it)->ComputeHash());
   }
 
@@ -93,8 +92,7 @@ HdPhShaderCode::NamedTextureHandleVector const &HdPhShaderCode::GetNamedTextureH
 }
 
 /*virtual*/
-void HdPhShaderCode::AddResourcesFromTextures(ResourceContext &ctx) const
-{}
+void HdPhShaderCode::AddResourcesFromTextures(ResourceContext &ctx) const {}
 
 HdPhShaderCode::ID HdPhShaderCode::ComputeTextureSourceHash() const
 {

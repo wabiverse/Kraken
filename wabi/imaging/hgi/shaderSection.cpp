@@ -43,8 +43,7 @@ HgiShaderSection::HgiShaderSection(const std::string &identifier,
 
 HgiShaderSection::~HgiShaderSection() = default;
 
-void HgiShaderSection::WriteType(std::ostream &ss) const
-{}
+void HgiShaderSection::WriteType(std::ostream &ss) const {}
 
 void HgiShaderSection::WriteIdentifier(std::ostream &ss) const
 {

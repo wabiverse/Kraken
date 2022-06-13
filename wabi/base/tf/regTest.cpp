@@ -67,11 +67,10 @@ static int _HandleErrors(const TfErrorMark &m, bool success)
     return 0;
 
   int rc(100);
-  for (TfErrorMark::Iterator i = m.GetBegin(); i != m.GetEnd(); ++i)
-  {
+  for (TfErrorMark::Iterator i = m.GetBegin(); i != m.GetEnd(); ++i) {
     ++rc;
-    cerr << "*** Error in " << i->GetSourceFileName() << "@line " << i->GetSourceLineNumber() << "\n    "
-         << i->GetCommentary() << "\n";
+    cerr << "*** Error in " << i->GetSourceFileName() << "@line " << i->GetSourceLineNumber()
+         << "\n    " << i->GetCommentary() << "\n";
   }
 
   return (rc);
@@ -87,13 +86,13 @@ void TfRegTest::_PrintTestNames()
   for (_Hash::const_iterator hi = _functionTable.begin(); hi != _functionTable.end(); ++hi)
     names.push_back(hi->first);
 
-  for (_HashWithArgs::const_iterator hi = _functionTableWithArgs.begin(); hi != _functionTableWithArgs.end();
+  for (_HashWithArgs::const_iterator hi = _functionTableWithArgs.begin();
+       hi != _functionTableWithArgs.end();
        ++hi)
     names.push_back(hi->first);
 
   sort(names.begin(), names.end());
-  for (const auto &name : names)
-  {
+  for (const auto &name : names) {
     cerr << "\n    " << name;
   }
 
@@ -109,8 +108,7 @@ int TfRegTest::_Main(int argc, char *argv[])
 {
   string progName(argv[0]);
 
-  if (argc < 2)
-  {
+  if (argc < 2) {
     _Usage(progName);
     _PrintTestNames();
     return 2;
@@ -118,21 +116,17 @@ int TfRegTest::_Main(int argc, char *argv[])
 
   std::string testName = argv[1];
 
-  if (_functionTable.find(testName) != _functionTable.end())
-  {
-    if (argc > 2)
-    {
+  if (_functionTable.find(testName) != _functionTable.end()) {
+    if (argc > 2) {
       cerr << progName << ": test function '" << testName << "' takes no arguments." << endl;
       return 2;
     }
     TfErrorMark m;
     return _HandleErrors(m, (*_functionTable[testName])());
-  } else if (_functionTableWithArgs.find(testName) != _functionTableWithArgs.end())
-  {
+  } else if (_functionTableWithArgs.find(testName) != _functionTableWithArgs.end()) {
     TfErrorMark m;
     return _HandleErrors(m, (*_functionTableWithArgs[testName])(argc - 1, argv + 1));
-  } else
-  {
+  } else {
     cerr << progName << ": unknown test function " << testName << ".\n";
     _PrintTestNames();
     return 3;

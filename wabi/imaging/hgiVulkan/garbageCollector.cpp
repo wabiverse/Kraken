@@ -56,26 +56,24 @@ std::vector<HgiVulkanGraphicsPipelineVector *> HgiVulkanGarbageCollector::_graph
 std::vector<HgiVulkanComputePipelineVector *> HgiVulkanGarbageCollector::_computePipelineList;
 
 template<class T>
-static void _EmptyTrash(std::vector<std::vector<T *> *> *list, VkDevice vkDevice, uint64_t queueInflightBits)
+static void _EmptyTrash(std::vector<std::vector<T *> *> *list,
+                        VkDevice vkDevice,
+                        uint64_t queueInflightBits)
 {
   // Loop the garbage vectors of each thread
-  for (auto vec : *list)
-  {
-    for (size_t i = vec->size(); i-- > 0;)
-    {
+  for (auto vec : *list) {
+    for (size_t i = vec->size(); i-- > 0;) {
       T *object = (*vec)[i];
 
       // Each device has its own queue, so its own set of inflight bits.
       // We must only destroy objects that belong to this device & queue.
       // (The garbage collector collects objects from all devices)
-      if (vkDevice != object->GetDevice()->GetVulkanDevice())
-      {
+      if (vkDevice != object->GetDevice()->GetVulkanDevice()) {
         continue;
       }
 
       // See comments in PerformGarbageCollection.
-      if ((queueInflightBits & object->GetInflightBits()) == 0)
-      {
+      if ((queueInflightBits & object->GetInflightBits()) == 0) {
         delete object;
         std::iter_swap(vec->begin() + i, vec->end() - 1);
         vec->pop_back();
@@ -189,8 +187,7 @@ void HgiVulkanGarbageCollector::PerformGarbageCollection(HgiVulkanDevice *device
 template<class T>
 T *HgiVulkanGarbageCollector::_GetThreadLocalStorageList(std::vector<T *> *collector)
 {
-  if (ARCH_UNLIKELY(_isDestroying))
-  {
+  if (ARCH_UNLIKELY(_isDestroying)) {
     TF_CODING_ERROR("Cannot destroy object during garbage collection ");
     while (_isDestroying)
       ;
@@ -204,8 +201,7 @@ T *HgiVulkanGarbageCollector::_GetThreadLocalStorageList(std::vector<T *> *colle
   thread_local T *_tls = nullptr;
   static std::mutex garbageMutex;
 
-  if (!_tls)
-  {
+  if (!_tls) {
     _tls = new T();
     std::lock_guard<std::mutex> guard(garbageMutex);
     collector->push_back(_tls);

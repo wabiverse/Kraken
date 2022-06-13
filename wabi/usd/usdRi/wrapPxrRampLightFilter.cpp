@@ -50,9 +50,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -61,7 +59,8 @@ namespace
                                           object defaultVal,
                                           bool writeSparsely)
   {
-    return self.CreateRampModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateRampModeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                   writeSparsely);
   }
 
   static UsdAttribute _CreateBeginDistanceAttr(UsdRiPxrRampLightFilter &self,
@@ -84,62 +83,70 @@ namespace
                                          object defaultVal,
                                          bool writeSparsely)
   {
-    return self.CreateFalloffAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+    return self.CreateFalloffAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
+                                  writeSparsely);
   }
 
   static UsdAttribute _CreateFalloffKnotsAttr(UsdRiPxrRampLightFilter &self,
                                               object defaultVal,
                                               bool writeSparsely)
   {
-    return self.CreateFalloffKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                       writeSparsely);
+    return self.CreateFalloffKnotsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateFalloffFloatsAttr(UsdRiPxrRampLightFilter &self,
                                                object defaultVal,
                                                bool writeSparsely)
   {
-    return self.CreateFalloffFloatsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                        writeSparsely);
+    return self.CreateFalloffFloatsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateFalloffInterpolationAttr(UsdRiPxrRampLightFilter &self,
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateFalloffInterpolationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                               writeSparsely);
+    return self.CreateFalloffInterpolationAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateColorRampAttr(UsdRiPxrRampLightFilter &self,
                                            object defaultVal,
                                            bool writeSparsely)
   {
-    return self.CreateColorRampAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int), writeSparsely);
+    return self.CreateColorRampAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
+                                    writeSparsely);
   }
 
   static UsdAttribute _CreateColorRampKnotsAttr(UsdRiPxrRampLightFilter &self,
                                                 object defaultVal,
                                                 bool writeSparsely)
   {
-    return self.CreateColorRampKnotsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                         writeSparsely);
+    return self.CreateColorRampKnotsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateColorRampColorsAttr(UsdRiPxrRampLightFilter &self,
                                                  object defaultVal,
                                                  bool writeSparsely)
   {
-    return self.CreateColorRampColorsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3fArray),
-                                          writeSparsely);
+    return self.CreateColorRampColorsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3fArray),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateColorRampInterpolationAttr(UsdRiPxrRampLightFilter &self,
                                                         object defaultVal,
                                                         bool writeSparsely)
   {
-    return self.CreateColorRampInterpolationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                                 writeSparsely);
+    return self.CreateColorRampInterpolationAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdRiPxrRampLightFilter &self)
@@ -172,7 +179,9 @@ void wrapUsdRiPxrRampLightFilter()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)

@@ -54,9 +54,9 @@ WABI_NAMESPACE_USING
 
 void wrapUsdEditContext()
 {
-  class_<UsdPyEditContext>(
-    "EditContext",
-    init<UsdStagePtr, optional<UsdEditTarget>>((arg("stage"), arg("editTarget") = UsdEditTarget())))
+  class_<UsdPyEditContext>("EditContext",
+                           init<UsdStagePtr, optional<UsdEditTarget>>(
+                             (arg("stage"), arg("editTarget") = UsdEditTarget())))
     .def("__enter__", &Usd_PyEditContextAccess::__enter__, return_self<>())
     .def("__exit__", &Usd_PyEditContextAccess::__exit__);
 }

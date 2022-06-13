@@ -35,13 +35,11 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-template<typename ProxyType>
-tuple _GetIntroducingListEditor(const UsdPrimCompositionQueryArc &arc)
+template<typename ProxyType> tuple _GetIntroducingListEditor(const UsdPrimCompositionQueryArc &arc)
 {
   ProxyType editor;
   typename ProxyType::value_type value;
-  if (arc.GetIntroducingListEditor(&editor, &value))
-  {
+  if (arc.GetIntroducingListEditor(&editor, &value)) {
     return make_tuple(object(editor), object(value));
   }
   TF_CODING_ERROR(
@@ -52,8 +50,7 @@ tuple _GetIntroducingListEditor(const UsdPrimCompositionQueryArc &arc)
 
 static tuple _WrapGetIntroducingListEditor(const UsdPrimCompositionQueryArc &arc)
 {
-  switch (arc.GetArcType())
-  {
+  switch (arc.GetArcType()) {
     case PcpArcTypeReference:
       return _GetIntroducingListEditor<SdfReferenceEditorProxy>(arc);
     case PcpArcTypePayload:
@@ -81,7 +78,8 @@ void wrapUsdPrimCompositionQueryArc()
     .def("IsAncestral", &UsdPrimCompositionQueryArc::IsAncestral)
     .def("HasSpecs", &UsdPrimCompositionQueryArc::HasSpecs)
     .def("IsIntroducedInRootLayerStack", &UsdPrimCompositionQueryArc::IsIntroducedInRootLayerStack)
-    .def("IsIntroducedInRootLayerPrimSpec", &UsdPrimCompositionQueryArc::IsIntroducedInRootLayerPrimSpec);
+    .def("IsIntroducedInRootLayerPrimSpec",
+         &UsdPrimCompositionQueryArc::IsIntroducedInRootLayerPrimSpec);
 }
 
 void wrapUsdPrimCompositionQuery()
@@ -91,7 +89,9 @@ void wrapUsdPrimCompositionQuery()
   scope s = class_<This>("PrimCompositionQuery", no_init)
               .def(init<const UsdPrim &>(arg("prim")))
               .def(init<const UsdPrim &, const This::Filter &>((arg("prim"), arg("filter"))))
-              .def("GetDirectReferences", &This::GetDirectReferences, return_value_policy<return_by_value>())
+              .def("GetDirectReferences",
+                   &This::GetDirectReferences,
+                   return_value_policy<return_by_value>())
               .staticmethod("GetDirectReferences")
               .def("GetDirectInherits", &This::GetDirectInherits)
               .staticmethod("GetDirectInherits")
@@ -105,7 +105,8 @@ void wrapUsdPrimCompositionQuery()
   enum_<This::ArcIntroducedFilter>("ArcIntroducedFilter")
     .value("All", This::ArcIntroducedFilter::All)
     .value("IntroducedInRootLayerStack", This::ArcIntroducedFilter::IntroducedInRootLayerStack)
-    .value("IntroducedInRootLayerPrimSpec", This::ArcIntroducedFilter::IntroducedInRootLayerPrimSpec);
+    .value("IntroducedInRootLayerPrimSpec",
+           This::ArcIntroducedFilter::IntroducedInRootLayerPrimSpec);
   enum_<This::ArcTypeFilter>("ArcTypeFilter")
     .value("All", This::ArcTypeFilter::All)
     .value("Reference", This::ArcTypeFilter::Reference)

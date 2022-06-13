@@ -143,7 +143,9 @@ SdfLayer::SdfLayer(const SdfFileFormatConstPtr &fileFormat,
     _validateAuthoring(validateAuthoring || TfGetEnvSetting<bool>(SDF_LAYER_VALIDATE_AUTHORING)),
     _hints{/*.mightHaveRelocates =*/false}
 {
-  TF_DEBUG(SDF_LAYER).Msg("SdfLayer::SdfLayer('%s', '%s')\n", identifier.c_str(), realPath.c_str());
+  TF_DEBUG(SDF_LAYER).Msg("SdfLayer::SdfLayer('%s', '%s')\n",
+                          identifier.c_str(),
+                          realPath.c_str());
 
   // If the identifier has the anonymous layer identifier prefix, it is a
   // template into which the layer address must be inserted. This ensures
@@ -170,8 +172,7 @@ SdfLayer::~SdfLayer()
 {
   TF_DEBUG(SDF_LAYER).Msg("SdfLayer::~SdfLayer('%s')\n", GetIdentifier().c_str());
 
-  if (IsMuted())
-  {
+  if (IsMuted()) {
     std::string mutedPath = _GetMutedPath();
     SdfAbstractDataRefPtr mutedData;
     {
@@ -181,8 +182,7 @@ SdfLayer::~SdfLayer()
       // erase the entry, then release the lock before proceeding
       // to drop the refcount.
       _MutedLayerDataMap::iterator i = _mutedLayerData->find(mutedPath);
-      if (i != _mutedLayerData->end())
-      {
+      if (i != _mutedLayerData->end()) {
         std::swap(mutedData, i->second);
         _mutedLayerData->erase(i);
       }
@@ -238,8 +238,7 @@ bool SdfLayer::_WaitForInitializationAndCheckIfSuccessful()
   // Wait until _initializationComplete is set to true.  If the layer is still
   // being initialized, this will be false, blocking progress until
   // initialization completes.
-  while (!_initializationComplete)
-  {
+  while (!_initializationComplete) {
     std::this_thread::yield();
   }
 
@@ -259,8 +258,7 @@ static VtDictionary _GetExternalAssetModificationTimes(const SdfLayer &layer)
 {
   VtDictionary result;
   std::set<std::string> externalAssetDependencies = layer.GetExternalAssetDependencies();
-  for (const std::string &resolvedPath : externalAssetDependencies)
-  {
+  for (const std::string &resolvedPath : externalAssetDependencies) {
     // Get the modification timestamp for the path. Note that external
     // asset dependencies only returns resolved paths so pass the same
     // path for both params.
@@ -274,18 +272,15 @@ SdfLayerRefPtr SdfLayer::CreateAnonymous(const string &tag, const FileFormatArgu
 {
   SdfFileFormatConstPtr fileFormat;
   string suffix = TfStringGetSuffix(tag);
-  if (!suffix.empty())
-  {
+  if (!suffix.empty()) {
     fileFormat = SdfFileFormat::FindByExtension(suffix, args);
   }
 
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     fileFormat = SdfFileFormat::FindById(SdfTextFileFormatTokens->Id);
   }
 
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     TF_CODING_ERROR("Cannot determine file format for anonymous SdfLayer");
     return SdfLayerRefPtr();
   }
@@ -297,8 +292,7 @@ SdfLayerRefPtr SdfLayer::CreateAnonymous(const string &tag,
                                          const SdfFileFormatConstPtr &format,
                                          const FileFormatArguments &args)
 {
-  if (!format)
-  {
+  if (!format) {
     TF_CODING_ERROR("Invalid file format for anonymous SdfLayer");
     return SdfLayerRefPtr();
   }
@@ -310,8 +304,7 @@ SdfLayerRefPtr SdfLayer::_CreateAnonymousWithFormat(const SdfFileFormatConstPtr 
                                                     const std::string &tag,
                                                     const FileFormatArguments &args)
 {
-  if (fileFormat->IsPackage())
-  {
+  if (fileFormat->IsPackage()) {
     TF_CODING_ERROR(
       "Cannot create anonymous layer: creating package %s "
       "layer is not allowed through this API.",
@@ -321,8 +314,11 @@ SdfLayerRefPtr SdfLayer::_CreateAnonymousWithFormat(const SdfFileFormatConstPtr 
 
   tbb::queuing_rw_mutex::scoped_lock lock(_GetLayerRegistryMutex());
 
-  SdfLayerRefPtr layer =
-    _CreateNewWithFormat(fileFormat, Sdf_GetAnonLayerIdentifierTemplate(tag), string(), ArAssetInfo(), args);
+  SdfLayerRefPtr layer = _CreateNewWithFormat(fileFormat,
+                                              Sdf_GetAnonLayerIdentifierTemplate(tag),
+                                              string(),
+                                              ArAssetInfo(),
+                                              args);
 
   // No layer initialization required, so initialization is complete.
   layer->_FinishInitialization(/* success = */ true);
@@ -371,8 +367,7 @@ SdfLayerRefPtr SdfLayer::_CreateNew(SdfFileFormatConstPtr fileFormat,
                                     const FileFormatArguments &args)
 {
   string whyNot;
-  if (!Sdf_CanCreateNewLayerWithIdentifier(identifier, &whyNot))
-  {
+  if (!Sdf_CanCreateNewLayerWithIdentifier(identifier, &whyNot)) {
     TF_CODING_ERROR("Cannot create new layer '%s': %s", identifier.c_str(), whyNot.c_str());
     return TfNullPtr;
   }
@@ -396,8 +391,7 @@ SdfLayerRefPtr SdfLayer::_CreateNew(SdfFileFormatConstPtr fileFormat,
   const string localPath = resolver.ResolveForNewAsset(absIdentifier);
 #endif
 
-  if (localPath.empty())
-  {
+  if (localPath.empty()) {
     TF_CODING_ERROR(
       "Failed to compute path for new layer with "
       "identifier '%s'",
@@ -407,8 +401,7 @@ SdfLayerRefPtr SdfLayer::_CreateNew(SdfFileFormatConstPtr fileFormat,
 
   // If not explicitly supplied one, try to determine the fileFormat
   // based on the local path suffix,
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     fileFormat = SdfFileFormat::FindByExtension(localPath, args);
     // XXX: This should be a coding error, not a failed verify.
     if (!TF_VERIFY(fileFormat))
@@ -417,8 +410,7 @@ SdfLayerRefPtr SdfLayer::_CreateNew(SdfFileFormatConstPtr fileFormat,
 
   // Restrict creating package layers via the Sdf API. These layers
   // are expected to be created via other libraries or external programs.
-  if (Sdf_IsPackageOrPackagedLayer(fileFormat, identifier))
-  {
+  if (Sdf_IsPackageOrPackagedLayer(fileFormat, identifier)) {
     TF_CODING_ERROR(
       "Cannot create new layer '%s': creating %s %s "
       "layer is not allowed through this API.",
@@ -435,16 +427,14 @@ SdfLayerRefPtr SdfLayer::_CreateNew(SdfFileFormatConstPtr fileFormat,
     tbb::queuing_rw_mutex::scoped_lock lock(_GetLayerRegistryMutex());
 
     // Check for existing layer with this identifier.
-    if (_layerRegistry->Find(absIdentifier))
-    {
+    if (_layerRegistry->Find(absIdentifier)) {
       TF_CODING_ERROR("A layer already exists with identifier '%s'", absIdentifier.c_str());
       return TfNullPtr;
     }
 
     layer = _CreateNewWithFormat(fileFormat, absIdentifier, localPath, ArAssetInfo(), args);
 
-    if (!TF_VERIFY(layer))
-    {
+    if (!TF_VERIFY(layer)) {
       return TfNullPtr;
     }
 
@@ -457,8 +447,7 @@ SdfLayerRefPtr SdfLayer::_CreateNew(SdfFileFormatConstPtr fileFormat,
     //
     // Force the save here to ensure this new layer overwrites any
     // existing layer on disk.
-    if (!layer->_Save(/* force = */ true))
-    {
+    if (!layer->_Save(/* force = */ true)) {
       // Dropping the layer reference will destroy it, and
       // the destructor will remove it from the registry.
       return TfNullPtr;
@@ -476,20 +465,17 @@ SdfLayerRefPtr SdfLayer::New(const SdfFileFormatConstPtr &fileFormat,
                              const string &identifier,
                              const FileFormatArguments &args)
 {
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     TF_CODING_ERROR("Invalid file format");
     return TfNullPtr;
   }
 
-  if (identifier.empty())
-  {
+  if (identifier.empty()) {
     TF_CODING_ERROR("Cannot construct a layer with an empty identifier.");
     return TfNullPtr;
   }
 
-  if (Sdf_IsPackageOrPackagedLayer(fileFormat, identifier))
-  {
+  if (Sdf_IsPackageOrPackagedLayer(fileFormat, identifier)) {
     TF_CODING_ERROR("Cannot construct new %s %s layer",
                     fileFormat->IsPackage() ? "package" : "packaged",
                     fileFormat->GetFormatId().GetText());
@@ -507,7 +493,8 @@ SdfLayerRefPtr SdfLayer::New(const SdfFileFormatConstPtr &fileFormat,
   const string absIdentifier = ArGetResolver().CreateIdentifierForNewAsset(identifier);
 #endif
 
-  SdfLayerRefPtr layer = _CreateNewWithFormat(fileFormat, absIdentifier, std::string(), ArAssetInfo(), args);
+  SdfLayerRefPtr layer =
+    _CreateNewWithFormat(fileFormat, absIdentifier, std::string(), ArAssetInfo(), args);
 
   // No further initialization required.
   layer->_FinishInitialization(/* success = */ true);
@@ -528,8 +515,7 @@ static SdfLayer::FileFormatArguments &_CanonicalizeFileFormatArguments(
 {
   // Nothing to do if there isn't an associated file format.
   // This is expected by _ComputeInfoToFindOrOpenLayer and isn't an error.
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     // XXX:
     // Sdf is unable to determine a file format for layers that are created
     // without a file extension (which includes anonymous layers). The keys
@@ -550,25 +536,21 @@ static SdfLayer::FileFormatArguments &_CanonicalizeFileFormatArguments(
     //
     // These are larger changes that require updating some clients, so
     // I don't want to do this yet.
-    if (Sdf_GetExtension(filePath).empty())
-    {
+    if (Sdf_GetExtension(filePath).empty()) {
       args.erase(SdfFileFormatTokens->TargetArg);
     }
     return args;
   }
 
   SdfLayer::FileFormatArguments::iterator targetIt = args.find(SdfFileFormatTokens->TargetArg);
-  if (targetIt != args.end())
-  {
-    if (fileFormat->IsPrimaryFormatForExtensions())
-    {
+  if (targetIt != args.end()) {
+    if (fileFormat->IsPrimaryFormatForExtensions()) {
       // If the file format plugin being used to open the indicated layer
       // is the primary plugin for layers of that type, it means the
       // 'target' argument (if any) had no effect and can be stripped
       // from the arguments.
       args.erase(targetIt);
-    } else
-    {
+    } else {
       // The target argument may have been a comma-delimited list of
       // targets to use. The canonical arguments should contain just
       // the target for the file format for this layer so that subsequent
@@ -580,8 +562,7 @@ static SdfLayer::FileFormatArguments &_CanonicalizeFileFormatArguments(
   }
 
   // If there aren't any more args to canonicalize, we can exit early.
-  if (args.empty())
-  {
+  if (args.empty()) {
     return args;
   }
 
@@ -590,11 +571,9 @@ static SdfLayer::FileFormatArguments &_CanonicalizeFileFormatArguments(
   // be considered equivalent to a layer opened with only default
   // arguments specified.
   const SdfLayer::FileFormatArguments defaultArgs = fileFormat->GetDefaultFileFormatArguments();
-  TF_FOR_ALL (it, defaultArgs)
-  {
+  TF_FOR_ALL (it, defaultArgs) {
     SdfLayer::FileFormatArguments::iterator argIt = args.find(it->first);
-    if (argIt != args.end() && argIt->second == it->second)
-    {
+    if (argIt != args.end() && argIt->second == it->second) {
       args.erase(argIt);
     }
   }
@@ -636,23 +615,20 @@ bool SdfLayer::_ComputeInfoToFindOrOpenLayer(const string &identifier,
 {
   TRACE_FUNCTION();
 
-  if (identifier.empty())
-  {
+  if (identifier.empty()) {
     return false;
   }
 
   string layerPath;
   SdfLayer::FileFormatArguments layerArgs;
-  if (!Sdf_SplitIdentifier(identifier, &layerPath, &layerArgs) || layerPath.empty())
-  {
+  if (!Sdf_SplitIdentifier(identifier, &layerPath, &layerArgs) || layerPath.empty()) {
     return false;
   }
 
   const bool isAnonymous = IsAnonymousLayerIdentifier(layerPath);
 
 #if AR_VERSION > 1
-  if (!isAnonymous)
-  {
+  if (!isAnonymous) {
     layerPath = ArGetResolver().CreateIdentifier(layerPath);
   }
 #endif
@@ -666,13 +642,10 @@ bool SdfLayer::_ComputeInfoToFindOrOpenLayer(const string &identifier,
 
   // Merge explicitly-specified arguments over any arguments
   // embedded in the given identifier.
-  if (layerArgs.empty())
-  {
+  if (layerArgs.empty()) {
     layerArgs = args;
-  } else
-  {
-    TF_FOR_ALL (it, args)
-    {
+  } else {
+    TF_FOR_ALL (it, args) {
       layerArgs[it->first] = it->second;
     }
   }
@@ -680,7 +653,8 @@ bool SdfLayer::_ComputeInfoToFindOrOpenLayer(const string &identifier,
   info->fileFormat = SdfFileFormat::FindByExtension(resolvedLayerPath.empty() ? layerPath :
                                                                                 resolvedLayerPath,
                                                     layerArgs);
-  info->fileFormatArgs.swap(_CanonicalizeFileFormatArguments(layerPath, info->fileFormat, layerArgs));
+  info->fileFormatArgs.swap(
+    _CanonicalizeFileFormatArguments(layerPath, info->fileFormat, layerArgs));
 
   info->isAnonymous = isAnonymous;
   info->layerPath.swap(layerPath);
@@ -700,14 +674,12 @@ SdfLayerRefPtr SdfLayer::_TryToFindLayer(const string &identifier,
   bool hasWriteLock = false;
 
 retry:
-  if (SdfLayerHandle layer = _layerRegistry->Find(identifier, resolvedPath))
-  {
+  if (SdfLayerHandle layer = _layerRegistry->Find(identifier, resolvedPath)) {
     // We found a layer in the registry -- try to acquire a TfRefPtr to this
     // layer.  Since we have the lock, we guarantee that the layer's
     // TfRefBase will not be destroyed until we unlock.
     result = TfCreateRefPtrFromProtectedWeakPtr(layer);
-    if (result)
-    {
+    if (result) {
       // We got an ownership stake in the layer, release the lock and
       // return it.
       lock.release();
@@ -719,22 +691,19 @@ retry:
     // try to remove this expiring layer from the registry.  If our upgrade
     // is non-atomic, we must retry the steps above, since everything
     // might've changed in the meantime.
-    if (!hasWriteLock && !lock.upgrade_to_writer())
-    {
+    if (!hasWriteLock && !lock.upgrade_to_writer()) {
       // We have the write lock, but we released it in the interim, so
       // repeat our steps above now that we have the write lock.
       hasWriteLock = true;
       goto retry;
     }
 
-    if (layer)
-    {
+    if (layer) {
       // Layer is expiring and we have the write lock: erase it from the
       // registry.
       _layerRegistry->Erase(layer);
     }
-  } else if (!hasWriteLock && retryAsWriter && !lock.upgrade_to_writer())
-  {
+  } else if (!hasWriteLock && retryAsWriter && !lock.upgrade_to_writer()) {
     // Retry the find since we released the lock in upgrade_to_writer().
     hasWriteLock = true;
     goto retry;
@@ -763,21 +732,20 @@ SdfLayerRefPtr SdfLayer::FindOrOpen(const string &identifier, const FileFormatAr
   if (!_ComputeInfoToFindOrOpenLayer(identifier,
                                      args,
                                      &layerInfo,
-                                     /* computeAssetInfo = */ true))
-  {
+                                     /* computeAssetInfo = */ true)) {
     return TfNullPtr;
   }
 
   // First see if this layer is already present.
   tbb::queuing_rw_mutex::scoped_lock lock(_GetLayerRegistryMutex(), /*write=*/false);
-  if (SdfLayerRefPtr layer =
-        _TryToFindLayer(layerInfo.identifier, layerInfo.resolvedLayerPath, lock, /*retryAsWriter=*/true))
-  {
+  if (SdfLayerRefPtr layer = _TryToFindLayer(layerInfo.identifier,
+                                             layerInfo.resolvedLayerPath,
+                                             lock,
+                                             /*retryAsWriter=*/true)) {
     // This could be written as a ternary, but we rely on return values
     // being implicitly moved to avoid making an unnecessary copy of
     // layer and the associated ref-count bump.
-    if (layer->_WaitForInitializationAndCheckIfSuccessful())
-    {
+    if (layer->_WaitForInitializationAndCheckIfSuccessful()) {
       return layer;
     }
     return TfNullPtr;
@@ -789,16 +757,13 @@ SdfLayerRefPtr SdfLayer::FindOrOpen(const string &identifier, const FileFormatAr
   // such a layer by identifier in the registry and the format doesn't specify
   // that anonymous layers should still be read, we're done since we don't
   // have an asset to open.
-  if (layerInfo.isAnonymous)
-  {
-    if (!layerInfo.fileFormat || !layerInfo.fileFormat->ShouldReadAnonymousLayers())
-    {
+  if (layerInfo.isAnonymous) {
+    if (!layerInfo.fileFormat || !layerInfo.fileFormat->ShouldReadAnonymousLayers()) {
       return TfNullPtr;
     }
   }
 
-  if (layerInfo.resolvedLayerPath.empty())
-  {
+  if (layerInfo.resolvedLayerPath.empty()) {
     return TfNullPtr;
   }
 
@@ -815,8 +780,7 @@ SdfLayerRefPtr SdfLayer::FindOrOpenRelativeToLayer(const SdfLayerHandle &anchor,
 {
   TRACE_FUNCTION();
 
-  if (!anchor)
-  {
+  if (!anchor) {
     TF_CODING_ERROR("Anchor layer is invalid");
     return TfNullPtr;
   }
@@ -824,8 +788,7 @@ SdfLayerRefPtr SdfLayer::FindOrOpenRelativeToLayer(const SdfLayerHandle &anchor,
   // For consistency with FindOrOpen, we silently bail out if identifier
   // is empty here to avoid the coding error that is emitted in that case
   // in SdfComputeAssetPathRelativeToLayer.
-  if (identifier.empty())
-  {
+  if (identifier.empty()) {
     return TfNullPtr;
   }
 
@@ -838,16 +801,14 @@ SdfLayerRefPtr SdfLayer::OpenAsAnonymous(const std::string &layerPath,
                                          const std::string &tag)
 {
   _FindOrOpenLayerInfo layerInfo;
-  if (!_ComputeInfoToFindOrOpenLayer(layerPath, FileFormatArguments(), &layerInfo))
-  {
+  if (!_ComputeInfoToFindOrOpenLayer(layerPath, FileFormatArguments(), &layerInfo)) {
     return TfNullPtr;
   }
 
   // XXX: Is this really a coding error? SdfLayer avoids issuing errors if
   //      given a non-existent file, for instance. Should we be following the
   //      same policy here?
-  if (!layerInfo.fileFormat)
-  {
+  if (!layerInfo.fileFormat) {
     TF_CODING_ERROR("Cannot determine file format for @%s@", layerInfo.identifier.c_str());
     return TfNullPtr;
   }
@@ -856,15 +817,16 @@ SdfLayerRefPtr SdfLayer::OpenAsAnonymous(const std::string &layerPath,
   SdfLayerRefPtr layer;
   {
     tbb::queuing_rw_mutex::scoped_lock lock(_GetLayerRegistryMutex());
-    layer = _CreateNewWithFormat(layerInfo.fileFormat, Sdf_GetAnonLayerIdentifierTemplate(tag), string());
+    layer = _CreateNewWithFormat(layerInfo.fileFormat,
+                                 Sdf_GetAnonLayerIdentifierTemplate(tag),
+                                 string());
     // From this point, we must call _FinishInitialization() on
     // either success or failure in order to unblock other
     // threads waiting for initialization to finish.
   }
 
   // Run the file parser to read in the file contents.
-  if (!layer->_Read(layerInfo.identifier, layerInfo.resolvedLayerPath, metadataOnly))
-  {
+  if (!layer->_Read(layerInfo.identifier, layerInfo.resolvedLayerPath, metadataOnly)) {
     layer->_FinishInitialization(/* success = */ false);
     return TfNullPtr;
   }
@@ -884,8 +846,7 @@ SdfLayer::_ReloadResult SdfLayer::_Reload(bool force)
   TRACE_FUNCTION();
 
   string identifier = GetIdentifier();
-  if (identifier.empty())
-  {
+  if (identifier.empty()) {
     TF_CODING_ERROR("Can't reload a layer with no identifier");
     return _ReloadFailed;
   }
@@ -893,8 +854,7 @@ SdfLayer::_ReloadResult SdfLayer::_Reload(bool force)
   const bool isAnonymous = IsAnonymous();
 
   SdfChangeBlock block;
-  if (isAnonymous && GetFileFormat()->ShouldSkipAnonymousReload())
-  {
+  if (isAnonymous && GetFileFormat()->ShouldSkipAnonymousReload()) {
     // Different file formats have different policies for reloading
     // anonymous layers.  Some want to treat it as a noop, others want to
     // treat it as 'Clear'.
@@ -903,23 +863,19 @@ SdfLayer::_ReloadResult SdfLayer::_Reload(bool force)
     // have a Reload function.  The plugin can manage when it needs to
     // reload data appropriately.
     return _ReloadSkipped;
-  } else if (IsMuted() || (isAnonymous && !GetFileFormat()->ShouldReadAnonymousLayers()))
-  {
+  } else if (IsMuted() || (isAnonymous && !GetFileFormat()->ShouldReadAnonymousLayers())) {
     // Reloading a muted layer leaves it with the initialized contents.
     SdfAbstractDataRefPtr initialData = GetFileFormat()->InitData(GetFileFormatArguments());
-    if (_data->Equals(initialData))
-    {
+    if (_data->Equals(initialData)) {
       return _ReloadSkipped;
     }
     _SetData(initialData);
-  } else if (isAnonymous)
-  {
+  } else if (isAnonymous) {
     // Ask the current external asset dependency state.
     VtDictionary externalAssetTimestamps = _GetExternalAssetModificationTimes(*this);
 
     // See if we can skip reloading.
-    if (!force && !IsDirty() && (externalAssetTimestamps == _externalAssetModificationTimes))
-    {
+    if (!force && !IsDirty() && (externalAssetTimestamps == _externalAssetModificationTimes)) {
       return _ReloadSkipped;
     }
 
@@ -927,14 +883,12 @@ SdfLayer::_ReloadResult SdfLayer::_Reload(bool force)
     std::string args;
     Sdf_SplitIdentifier(GetIdentifier(), &resolvedPath, &args);
 
-    if (!_Read(identifier, resolvedPath, /* metadataOnly = */ false))
-    {
+    if (!_Read(identifier, resolvedPath, /* metadataOnly = */ false)) {
       return _ReloadFailed;
     }
 
     _externalAssetModificationTimes = std::move(externalAssetTimestamps);
-  } else
-  {
+  } else {
     // The physical location of the file may have changed since
     // the last load, so re-resolve the identifier.
     const ArResolvedPath oldResolvedPath = GetResolvedPath();
@@ -943,9 +897,9 @@ SdfLayer::_ReloadResult SdfLayer::_Reload(bool force)
 
     // If asset resolution in UpdateAssetInfo failed, we may end
     // up with an empty real path, and cannot reload the layer.
-    if (resolvedPath.empty())
-    {
-      TF_RUNTIME_ERROR("Cannot determine resolved path for '%s', skipping reload.", identifier.c_str());
+    if (resolvedPath.empty()) {
+      TF_RUNTIME_ERROR("Cannot determine resolved path for '%s', skipping reload.",
+                       identifier.c_str());
       return _ReloadFailed;
     }
 
@@ -959,15 +913,13 @@ SdfLayer::_ReloadResult SdfLayer::_Reload(bool force)
     // unserialized new layers below, which would result in errors.
     //
     // XXX 2014-09-02 Reset layer to initial data?
-    if (_assetModificationTime.IsEmpty())
-    {
+    if (_assetModificationTime.IsEmpty()) {
       return _ReloadSkipped;
     }
 
     // Get the layer's modification timestamp.
     VtValue timestamp = ArGetResolver().GetModificationTimestamp(GetIdentifier(), resolvedPath);
-    if (timestamp.IsEmpty())
-    {
+    if (timestamp.IsEmpty()) {
       TF_CODING_ERROR("Unable to get modification time for '%s (%s)'",
                       GetIdentifier().c_str(),
                       resolvedPath.GetPathString().c_str());
@@ -978,22 +930,20 @@ SdfLayer::_ReloadResult SdfLayer::_Reload(bool force)
     VtDictionary externalAssetTimestamps = _GetExternalAssetModificationTimes(*this);
 
     // See if we can skip reloading.
-    if (!force && !IsDirty() && (resolvedPath == oldResolvedPath) && (timestamp == _assetModificationTime) &&
-        (externalAssetTimestamps == _externalAssetModificationTimes))
-    {
+    if (!force && !IsDirty() && (resolvedPath == oldResolvedPath) &&
+        (timestamp == _assetModificationTime) &&
+        (externalAssetTimestamps == _externalAssetModificationTimes)) {
       return _ReloadSkipped;
     }
 
-    if (!_Read(GetIdentifier(), resolvedPath, /* metadataOnly = */ false))
-    {
+    if (!_Read(GetIdentifier(), resolvedPath, /* metadataOnly = */ false)) {
       return _ReloadFailed;
     }
 
     _assetModificationTime.Swap(timestamp);
     _externalAssetModificationTimes = std::move(externalAssetTimestamps);
 
-    if (resolvedPath != oldResolvedPath)
-    {
+    if (resolvedPath != oldResolvedPath) {
       Sdf_ChangeManager::Get().DidChangeLayerResolvedPath(_self);
     }
   }
@@ -1017,12 +967,9 @@ bool SdfLayer::ReloadLayers(const set<SdfLayerHandle> &layers, bool force)
   // Block re-composition until we've finished reloading layers.
   SdfChangeBlock block;
   bool status = true;
-  TF_FOR_ALL (layer, layers)
-  {
-    if (*layer)
-    {
-      if ((*layer)->_Reload(force) == _ReloadFailed)
-      {
+  TF_FOR_ALL (layer, layers) {
+    if (*layer) {
+      if ((*layer)->_Reload(force) == _ReloadFailed) {
         status = false;
         TF_WARN("Unable to re-read @%s@", (*layer)->GetIdentifier().c_str());
       }
@@ -1058,10 +1005,8 @@ bool SdfLayer::_Read(const string &identifier, const string &resolvedPath, bool 
 
   SdfFileFormatConstPtr format = GetFileFormat();
 #if AR_VERSION == 1
-  if (format->LayersAreFileBased())
-  {
-    if (!ArGetResolver().FetchToLocalResolvedPath(identifier, resolvedPath))
-    {
+  if (format->LayersAreFileBased()) {
+    if (!ArGetResolver().FetchToLocalResolvedPath(identifier, resolvedPath)) {
       TF_DEBUG(SDF_LAYER).Msg(
         "SdfLayer::_Read - unable to fetch '%s' to "
         "local path '%s'\n",
@@ -1099,16 +1044,14 @@ SdfLayerRefPtr SdfLayer::_Find(const string &identifier,
   // there.
 
   _FindOrOpenLayerInfo layerInfo;
-  if (!_ComputeInfoToFindOrOpenLayer(identifier, args, &layerInfo))
-  {
+  if (!_ComputeInfoToFindOrOpenLayer(identifier, args, &layerInfo)) {
     return TfNullPtr;
   }
 
   // First see if this layer is already present.
   lock.acquire(_GetLayerRegistryMutex(), /*write=*/false);
   if (SdfLayerRefPtr layer =
-        _TryToFindLayer(layerInfo.identifier, layerInfo.resolvedLayerPath, lock, retryAsWriter))
-  {
+        _TryToFindLayer(layerInfo.identifier, layerInfo.resolvedLayerPath, lock, retryAsWriter)) {
     return layer->_WaitForInitializationAndCheckIfSuccessful() ? layer : TfNullPtr;
   }
   return TfNullPtr;
@@ -1121,8 +1064,7 @@ SdfLayerHandle SdfLayer::FindRelativeToLayer(const SdfLayerHandle &anchor,
 {
   TRACE_FUNCTION();
 
-  if (!anchor)
-  {
+  if (!anchor) {
     TF_CODING_ERROR("Anchor layer is invalid");
     return TfNullPtr;
   }
@@ -1130,8 +1072,7 @@ SdfLayerHandle SdfLayer::FindRelativeToLayer(const SdfLayerHandle &anchor,
   // For consistency with FindOrOpen, we silently bail out if identifier
   // is empty here to avoid the coding error that is emitted in that case
   // in SdfComputeAssetPathRelativeToLayer.
-  if (identifier.empty())
-  {
+  if (identifier.empty()) {
     return TfNullPtr;
   }
 
@@ -1179,15 +1120,13 @@ bool SdfLayer::QueryTimeSample(const SdfPath &path, double time, SdfAbstractData
 static TfType _GetExpectedTimeSampleValueType(const SdfLayer &layer, const SdfPath &path)
 {
   const SdfSpecType specType = layer.GetSpecType(path);
-  if (specType == SdfSpecTypeUnknown)
-  {
+  if (specType == SdfSpecTypeUnknown) {
     TF_CODING_ERROR(
       "Cannot set time sample at <%s> since spec does "
       "not exist",
       path.GetText());
     return TfType();
-  } else if (specType != SdfSpecTypeAttribute && specType != SdfSpecTypeRelationship)
-  {
+  } else if (specType != SdfSpecTypeAttribute && specType != SdfSpecTypeRelationship) {
     TF_CODING_ERROR(
       "Cannot set time sample at <%s> because spec "
       "is not an attribute or relationship",
@@ -1197,17 +1136,14 @@ static TfType _GetExpectedTimeSampleValueType(const SdfLayer &layer, const SdfPa
 
   TfType valueType;
   TfToken valueTypeName;
-  if (specType == SdfSpecTypeRelationship)
-  {
+  if (specType == SdfSpecTypeRelationship) {
     static const TfType pathType = TfType::Find<SdfPath>();
     valueType = pathType;
-  } else if (layer.HasField(path, SdfFieldKeys->TypeName, &valueTypeName))
-  {
+  } else if (layer.HasField(path, SdfFieldKeys->TypeName, &valueTypeName)) {
     valueType = layer.GetSchema().FindType(valueTypeName).GetType();
   }
 
-  if (!valueType)
-  {
+  if (!valueType) {
     TF_CODING_ERROR("Cannot determine value type for <%s>", path.GetText());
   }
 
@@ -1216,8 +1152,7 @@ static TfType _GetExpectedTimeSampleValueType(const SdfLayer &layer, const SdfPa
 
 void SdfLayer::SetTimeSample(const SdfPath &path, double time, const VtValue &value)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR(
       "Cannot set time sample on <%s>.  "
       "Layer @%s@ is not editable.",
@@ -1227,27 +1162,22 @@ void SdfLayer::SetTimeSample(const SdfPath &path, double time, const VtValue &va
   }
 
   // circumvent type checking if setting a block.
-  if (value.IsHolding<SdfValueBlock>())
-  {
+  if (value.IsHolding<SdfValueBlock>()) {
     _PrimSetTimeSample(path, time, value);
     return;
   }
 
   const TfType expectedType = _GetExpectedTimeSampleValueType(*this, path);
-  if (!expectedType)
-  {
+  if (!expectedType) {
     // Error already emitted, just bail.
     return;
   }
 
-  if (value.GetType() == expectedType)
-  {
+  if (value.GetType() == expectedType) {
     _PrimSetTimeSample(path, time, value);
-  } else
-  {
+  } else {
     const VtValue castValue = VtValue::CastToTypeid(value, expectedType.GetTypeid());
-    if (castValue.IsEmpty())
-    {
+    if (castValue.IsEmpty()) {
       TF_CODING_ERROR(
         "Can't set time sample on <%s> to %s: "
         "expected a value of type \"%s\"",
@@ -1271,10 +1201,11 @@ namespace
   }
 }  // namespace
 
-void SdfLayer::SetTimeSample(const SdfPath &path, double time, const SdfAbstractDataConstValue &value)
+void SdfLayer::SetTimeSample(const SdfPath &path,
+                             double time,
+                             const SdfAbstractDataConstValue &value)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR(
       "Cannot set time sample on <%s>.  "
       "Layer @%s@ is not editable.",
@@ -1283,30 +1214,25 @@ void SdfLayer::SetTimeSample(const SdfPath &path, double time, const SdfAbstract
     return;
   }
 
-  if (value.valueType == _GetSdfValueBlockType().GetTypeid())
-  {
+  if (value.valueType == _GetSdfValueBlockType().GetTypeid()) {
     _PrimSetTimeSample(path, time, value);
     return;
   }
 
   const TfType expectedType = _GetExpectedTimeSampleValueType(*this, path);
-  if (!expectedType)
-  {
+  if (!expectedType) {
     // Error already emitted, just bail.
     return;
   }
 
-  if (TfSafeTypeCompare(value.valueType, expectedType.GetTypeid()))
-  {
+  if (TfSafeTypeCompare(value.valueType, expectedType.GetTypeid())) {
     _PrimSetTimeSample(path, time, value);
-  } else
-  {
+  } else {
     VtValue tmpValue;
     value.GetValue(&tmpValue);
 
     const VtValue castValue = VtValue::CastToTypeid(tmpValue, expectedType.GetTypeid());
-    if (castValue.IsEmpty())
-    {
+    if (castValue.IsEmpty()) {
       TF_CODING_ERROR(
         "Can't set time sample on <%s> to %s: "
         "expected a value of type \"%s\"",
@@ -1322,8 +1248,7 @@ void SdfLayer::SetTimeSample(const SdfPath &path, double time, const SdfAbstract
 
 void SdfLayer::EraseTimeSample(const SdfPath &path, double time)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR(
       "Cannot set time sample on <%s>.  "
       "Layer @%s@ is not editable.",
@@ -1331,8 +1256,7 @@ void SdfLayer::EraseTimeSample(const SdfPath &path, double time)
       GetIdentifier().c_str());
     return;
   }
-  if (!HasSpec(path))
-  {
+  if (!HasSpec(path)) {
     TF_CODING_ERROR(
       "Cannot SetTimeSample at <%s> since spec does "
       "not exist",
@@ -1340,8 +1264,7 @@ void SdfLayer::EraseTimeSample(const SdfPath &path, double time)
     return;
   }
 
-  if (!QueryTimeSample(path, time))
-  {
+  if (!QueryTimeSample(path, time)) {
     // No time sample to remove.
     return;
   }
@@ -1362,10 +1285,12 @@ static VtValue _GetVtValue(const SdfAbstractDataConstValue &v)
 }
 
 template<class T>
-void SdfLayer::_PrimSetTimeSample(const SdfPath &path, double time, const T &value, bool useDelegate)
+void SdfLayer::_PrimSetTimeSample(const SdfPath &path,
+                                  double time,
+                                  const T &value,
+                                  bool useDelegate)
 {
-  if (useDelegate && TF_VERIFY(_stateDelegate))
-  {
+  if (useDelegate && TF_VERIFY(_stateDelegate)) {
     _stateDelegate->SetTimeSample(path, time, value);
     return;
   }
@@ -1382,7 +1307,10 @@ void SdfLayer::_PrimSetTimeSample(const SdfPath &path, double time, const T &val
 }
 
 template void SdfLayer::_PrimSetTimeSample(const SdfPath &, double, const VtValue &, bool);
-template void SdfLayer::_PrimSetTimeSample(const SdfPath &, double, const SdfAbstractDataConstValue &, bool);
+template void SdfLayer::_PrimSetTimeSample(const SdfPath &,
+                                           double,
+                                           const SdfAbstractDataConstValue &,
+                                           bool);
 
 // ---
 // End of SdfLayer static functions
@@ -1414,8 +1342,7 @@ void SdfLayer::_InitializeFromIdentifier(const string &identifier,
   _assetInfo.swap(newInfo);
 
   // Update layer state delegate.
-  if (TF_VERIFY(_stateDelegate))
-  {
+  if (TF_VERIFY(_stateDelegate)) {
     _stateDelegate->_SetLayer(_self);
   }
 
@@ -1425,32 +1352,26 @@ void SdfLayer::_InitializeFromIdentifier(const string &identifier,
   // Only send a notice if the identifier has changed (this notice causes
   // mass invalidation. See http://bug/33217). If the old identifier was
   // empty, this is a newly constructed layer, so don't send the notice.
-  if (!oldIdentifier.empty())
-  {
+  if (!oldIdentifier.empty()) {
     SdfChangeBlock block;
-    if (oldIdentifier != GetIdentifier())
-    {
+    if (oldIdentifier != GetIdentifier()) {
       Sdf_ChangeManager::Get().DidChangeLayerIdentifier(_self, oldIdentifier);
     }
-    if (oldResolvedPath != GetResolvedPath())
-    {
+    if (oldResolvedPath != GetResolvedPath()) {
       Sdf_ChangeManager::Get().DidChangeLayerResolvedPath(_self);
     }
   }
 }
 
-template<class T>
-inline void SdfLayer::_SetValue(const TfToken &key, T value)
+template<class T> inline void SdfLayer::_SetValue(const TfToken &key, T value)
 {
   SetField(SdfPath::AbsoluteRootPath(), key, VtValue(value));
 }
 
-template<class T>
-inline T SdfLayer::_GetValue(const TfToken &key) const
+template<class T> inline T SdfLayer::_GetValue(const TfToken &key) const
 {
   VtValue value;
-  if (!HasField(SdfPath::AbsoluteRootPath(), key, &value))
-  {
+  if (!HasField(SdfPath::AbsoluteRootPath(), key, &value)) {
     return GetSchema().GetFallback(key).Get<T>();
   }
 
@@ -1586,8 +1507,7 @@ double SdfLayer::GetTimeCodesPerSecond() const
 {
   // If there is an authored value for timeCodesPerSecond, return that.
   VtValue value;
-  if (HasField(SdfPath::AbsoluteRootPath(), SdfFieldKeys->TimeCodesPerSecond, &value))
-  {
+  if (HasField(SdfPath::AbsoluteRootPath(), SdfFieldKeys->TimeCodesPerSecond, &value)) {
     return value.Get<double>();
   }
 
@@ -1777,7 +1697,8 @@ void SdfLayer::ApplyRootPrimOrder(vector<TfToken> *vec) const
 
 SdfSubLayerProxy SdfLayer::GetSubLayerPaths() const
 {
-  boost::shared_ptr<Sdf_ListEditor<SdfSubLayerTypePolicy>> editor(new Sdf_SubLayerListEditor(_self));
+  boost::shared_ptr<Sdf_ListEditor<SdfSubLayerTypePolicy>> editor(
+    new Sdf_SubLayerListEditor(_self));
 
   return SdfSubLayerProxy(editor, SdfListOpTypeOrdered);
 }
@@ -1796,8 +1717,7 @@ void SdfLayer::InsertSubLayerPath(const string &path, int index)
 {
   SdfSubLayerProxy proxy = GetSubLayerPaths();
 
-  if (index == -1)
-  {
+  if (index == -1) {
     index = static_cast<int>(proxy.size());
   }
 
@@ -1811,14 +1731,14 @@ void SdfLayer::RemoveSubLayerPath(int index)
 
 SdfLayerOffsetVector SdfLayer::GetSubLayerOffsets() const
 {
-  return GetFieldAs<SdfLayerOffsetVector>(SdfPath::AbsoluteRootPath(), SdfFieldKeys->SubLayerOffsets);
+  return GetFieldAs<SdfLayerOffsetVector>(SdfPath::AbsoluteRootPath(),
+                                          SdfFieldKeys->SubLayerOffsets);
 }
 
 SdfLayerOffset SdfLayer::GetSubLayerOffset(int index) const
 {
   SdfLayerOffsetVector offsets = GetSubLayerOffsets();
-  if (index < 0 || static_cast<size_t>(index) >= offsets.size())
-  {
+  if (index < 0 || static_cast<size_t>(index) >= offsets.size()) {
     TF_CODING_ERROR("Invalid sublayer index");
     return SdfLayerOffset();
   }
@@ -1829,8 +1749,7 @@ void SdfLayer::SetSubLayerOffset(const SdfLayerOffset &offset, int index)
 {
   SdfLayerOffsetVector offsets = GetFieldAs<SdfLayerOffsetVector>(SdfPath::AbsoluteRootPath(),
                                                                   SdfFieldKeys->SubLayerOffsets);
-  if (index < 0 || static_cast<size_t>(index) >= offsets.size())
-  {
+  if (index < 0 || static_cast<size_t>(index) >= offsets.size()) {
     TF_CODING_ERROR("Invalid sublayer index");
     return;
   }
@@ -1840,10 +1759,11 @@ void SdfLayer::SetSubLayerOffset(const SdfLayerOffset &offset, int index)
   SetField(SdfPath::AbsoluteRootPath(), SdfFieldKeys->SubLayerOffsets, VtValue(offsets));
 }
 
-bool SdfLayer::_CanGetSpecAtPath(const SdfPath &path, SdfPath *canonicalPath, SdfSpecType *specType) const
+bool SdfLayer::_CanGetSpecAtPath(const SdfPath &path,
+                                 SdfPath *canonicalPath,
+                                 SdfSpecType *specType) const
 {
-  if (path.IsEmpty())
-  {
+  if (path.IsEmpty()) {
     return false;
   }
 
@@ -1851,8 +1771,7 @@ bool SdfLayer::_CanGetSpecAtPath(const SdfPath &path, SdfPath *canonicalPath, Sd
   // already absolute, because we also need to absolutize target paths
   // within the path.
   SdfPath const *absPath = &path;
-  if (ARCH_UNLIKELY(!path.IsAbsolutePath() || path.ContainsTargetPath()))
-  {
+  if (ARCH_UNLIKELY(!path.IsAbsolutePath() || path.ContainsTargetPath())) {
     *canonicalPath = path.MakeAbsolutePath(SdfPath::AbsoluteRootPath());
     absPath = canonicalPath;
   }
@@ -1862,18 +1781,16 @@ bool SdfLayer::_CanGetSpecAtPath(const SdfPath &path, SdfPath *canonicalPath, Sd
   return *specType != SdfSpecTypeUnknown;
 }
 
-template<class Spec>
-SdfHandle<Spec> SdfLayer::_GetSpecAtPath(const SdfPath &path)
+template<class Spec> SdfHandle<Spec> SdfLayer::_GetSpecAtPath(const SdfPath &path)
 {
   SdfPath canonicalPath;
   SdfSpecType specType;
-  if (!_CanGetSpecAtPath(path, &canonicalPath, &specType) || !Sdf_SpecType::CanCast(specType, typeid(Spec)))
-  {
+  if (!_CanGetSpecAtPath(path, &canonicalPath, &specType) ||
+      !Sdf_SpecType::CanCast(specType, typeid(Spec))) {
     return TfNullPtr;
   }
 
-  if (ARCH_UNLIKELY(!canonicalPath.IsEmpty()))
-  {
+  if (ARCH_UNLIKELY(!canonicalPath.IsEmpty())) {
     return SdfHandle<Spec>(_idRegistry.Identify(canonicalPath));
   }
   return SdfHandle<Spec>(_idRegistry.Identify(path));
@@ -1889,13 +1806,11 @@ SdfSpecHandle SdfLayer::GetObjectAtPath(const SdfPath &path)
   // able to get a generic SdfSpecHandle.
   SdfPath canonicalPath;
   SdfSpecType specType;
-  if (!_CanGetSpecAtPath(path, &canonicalPath, &specType))
-  {
+  if (!_CanGetSpecAtPath(path, &canonicalPath, &specType)) {
     return TfNullPtr;
   }
 
-  if (ARCH_UNLIKELY(!canonicalPath.IsEmpty()))
-  {
+  if (ARCH_UNLIKELY(!canonicalPath.IsEmpty())) {
     return SdfSpecHandle(_idRegistry.Identify(canonicalPath));
   }
   return SdfSpecHandle(_idRegistry.Identify(path));
@@ -1904,8 +1819,7 @@ SdfSpecHandle SdfLayer::GetObjectAtPath(const SdfPath &path)
 SdfPrimSpecHandle SdfLayer::GetPrimAtPath(const SdfPath &path)
 {
   // Special-case attempts to look up the pseudo-root via this function.
-  if (path == SdfPath::AbsoluteRootPath())
-  {
+  if (path == SdfPath::AbsoluteRootPath()) {
     return GetPseudoRoot();
   }
 
@@ -1934,7 +1848,8 @@ bool SdfLayer::PermissionToEdit() const
 
 bool SdfLayer::PermissionToSave() const
 {
-  return _permissionToSave && !IsAnonymous() && !IsMuted() && Sdf_CanWriteLayerToPath(GetRealPath());
+  return _permissionToSave && !IsAnonymous() && !IsMuted() &&
+         Sdf_CanWriteLayerToPath(GetRealPath());
 }
 
 void SdfLayer::SetPermissionToEdit(bool allow)
@@ -1952,20 +1867,19 @@ static bool _HasObjectAtPath(const SdfLayerHandle &layer, const SdfPath &path)
   return layer->GetObjectAtPath(path);
 }
 
-static bool _CanEdit(const SdfLayerHandle &layer, const SdfNamespaceEdit &edit, std::string *detail)
+static bool _CanEdit(const SdfLayerHandle &layer,
+                     const SdfNamespaceEdit &edit,
+                     std::string *detail)
 {
-  if (edit.currentPath.IsPrimPath())
-  {
-    if (edit.newPath.IsEmpty())
-    {
+  if (edit.currentPath.IsPrimPath()) {
+    if (edit.newPath.IsEmpty()) {
       // Remove prim child.
       return Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
         layer,
         edit.currentPath.GetParentPath(),
         edit.currentPath.GetNameToken(),
         detail);
-    } else
-    {
+    } else {
       // Insert prim child.
       return Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::CanMoveChildForBatchNamespaceEdit(
         layer,
@@ -1975,20 +1889,16 @@ static bool _CanEdit(const SdfLayerHandle &layer, const SdfNamespaceEdit &edit, 
         edit.index,
         detail);
     }
-  } else
-  {
-    if (edit.newPath.IsEmpty())
-    {
-      if (edit.currentPath.IsRelationalAttributePath())
-      {
+  } else {
+    if (edit.newPath.IsEmpty()) {
+      if (edit.currentPath.IsRelationalAttributePath()) {
         // Remove relational attribute.
         return Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
           layer,
           edit.currentPath.GetParentPath(),
           edit.currentPath.GetNameToken(),
           detail);
-      } else
-      {
+      } else {
         // Remove prim property.
         return Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::CanRemoveChildForBatchNamespaceEdit(
           layer,
@@ -1996,10 +1906,8 @@ static bool _CanEdit(const SdfLayerHandle &layer, const SdfNamespaceEdit &edit, 
           edit.currentPath.GetNameToken(),
           detail);
       }
-    } else if (edit.newPath.IsRelationalAttributePath())
-    {
-      if (SdfAttributeSpecHandle attr = layer->GetAttributeAtPath(edit.currentPath))
-      {
+    } else if (edit.newPath.IsRelationalAttributePath()) {
+      if (SdfAttributeSpecHandle attr = layer->GetAttributeAtPath(edit.currentPath)) {
         // Move a prim or relational attribute to be a relational
         // attribute.
         return Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::CanMoveChildForBatchNamespaceEdit(
@@ -2009,17 +1917,14 @@ static bool _CanEdit(const SdfLayerHandle &layer, const SdfNamespaceEdit &edit, 
           edit.newPath.GetNameToken(),
           edit.index,
           detail);
-      } else
-      {
+      } else {
         // Trying to make a non-attribute into a relational attribute.
-        if (detail)
-        {
+        if (detail) {
           *detail = "Object is not an attribute";
         }
         return false;
       }
-    } else
-    {
+    } else {
       // Move a prim property or relational attribute to be a prim
       // property
       return Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::CanMoveChildForBatchNamespaceEdit(
@@ -2035,17 +1940,14 @@ static bool _CanEdit(const SdfLayerHandle &layer, const SdfNamespaceEdit &edit, 
 
 static void _DoEdit(const SdfLayerHandle &layer, const SdfNamespaceEdit &edit)
 {
-  if (edit.currentPath.IsPrimPath())
-  {
-    if (edit.newPath.IsEmpty())
-    {
+  if (edit.currentPath.IsPrimPath()) {
+    if (edit.newPath.IsEmpty()) {
       // Remove prim child.
       Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::RemoveChildForBatchNamespaceEdit(
         layer,
         edit.currentPath.GetParentPath(),
         edit.currentPath.GetNameToken());
-    } else
-    {
+    } else {
       // Insert prim child.
       Sdf_ChildrenUtils<Sdf_PrimChildPolicy>::MoveChildForBatchNamespaceEdit(
         layer,
@@ -2054,29 +1956,23 @@ static void _DoEdit(const SdfLayerHandle &layer, const SdfNamespaceEdit &edit)
         edit.newPath.GetNameToken(),
         edit.index);
     }
-  } else
-  {
-    if (edit.newPath.IsEmpty())
-    {
-      if (edit.currentPath.IsRelationalAttributePath())
-      {
+  } else {
+    if (edit.newPath.IsEmpty()) {
+      if (edit.currentPath.IsRelationalAttributePath()) {
         // Remove relational attribute.
         Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::RemoveChildForBatchNamespaceEdit(
           layer,
           edit.currentPath.GetParentPath(),
           edit.currentPath.GetNameToken());
-      } else
-      {
+      } else {
         // Remove prim property.
         Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::RemoveChildForBatchNamespaceEdit(
           layer,
           edit.currentPath.GetParentPath(),
           edit.currentPath.GetNameToken());
       }
-    } else
-    {
-      if (edit.newPath.IsRelationalAttributePath())
-      {
+    } else {
+      if (edit.newPath.IsRelationalAttributePath()) {
         // Move a prim or relational attribute to be a relational
         // attribute.
         Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::MoveChildForBatchNamespaceEdit(
@@ -2085,8 +1981,7 @@ static void _DoEdit(const SdfLayerHandle &layer, const SdfNamespaceEdit &edit)
           layer->GetAttributeAtPath(edit.currentPath),
           edit.newPath.GetNameToken(),
           edit.index);
-      } else
-      {
+      } else {
         // Move a prim property or relational attribute to be a prim
         // property
         Sdf_ChildrenUtils<Sdf_PropertyChildPolicy>::MoveChildForBatchNamespaceEdit(
@@ -2110,8 +2005,7 @@ SdfNamespaceEditDetail::Result SdfLayer::CanApply(const SdfBatchNamespaceEdit &e
                      std::bind(&_HasObjectAtPath, _self, ph::_1),
                      std::bind(&_CanEdit, _self, ph::_1, ph::_2),
                      details,
-                     !fixBackpointers))
-  {
+                     !fixBackpointers)) {
     result = CombineError(result);
   }
 
@@ -2120,8 +2014,7 @@ SdfNamespaceEditDetail::Result SdfLayer::CanApply(const SdfBatchNamespaceEdit &e
 
 bool SdfLayer::Apply(const SdfBatchNamespaceEdit &edits)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     return false;
   }
 
@@ -2131,14 +2024,12 @@ bool SdfLayer::Apply(const SdfBatchNamespaceEdit &edits)
                      std::bind(&_HasObjectAtPath, _self, ph::_1),
                      std::bind(&_CanEdit, _self, ph::_1, ph::_2),
                      NULL,
-                     !fixBackpointers))
-  {
+                     !fixBackpointers)) {
     return false;
   }
 
   SdfChangeBlock block;
-  for (const auto &edit : final)
-  {
+  for (const auto &edit : final) {
     _DoEdit(_self, edit);
   }
 
@@ -2152,22 +2043,19 @@ void SdfLayer::ScheduleRemoveIfInert(const SdfSpec &spec)
 
 void SdfLayer::_RemoveIfInert(const SdfSpec &spec)
 {
-  if (!spec.IsDormant())
-  {
+  if (!spec.IsDormant()) {
     SdfSpecHandle specHandle(spec);
-    if (SdfPrimSpecHandle prim = TfDynamic_cast<SdfPrimSpecHandle>(specHandle))
-    {
+    if (SdfPrimSpecHandle prim = TfDynamic_cast<SdfPrimSpecHandle>(specHandle)) {
       // We only want to call RemovePrimIfInert if the prim itself is
       // inert because RemovePrimIfInert first removes any inert children
       // before checking if the prim is inert, but we don't want to touch
       // the children. We only want to concern ourselves with the
       // specified spec without modifying its children first.
-      if (prim->IsInert())
-      {
+      if (prim->IsInert()) {
         RemovePrimIfInert(prim);
       }
-    } else if (SdfPropertySpecHandle property = TfDynamic_cast<SdfPropertySpecHandle>(specHandle))
-    {
+    } else if (SdfPropertySpecHandle property = TfDynamic_cast<SdfPropertySpecHandle>(
+                 specHandle)) {
 
       RemovePropertyIfHasOnlyRequiredFields(property);
     }
@@ -2185,18 +2073,15 @@ void SdfLayer::RemovePropertyIfHasOnlyRequiredFields(SdfPropertySpecHandle prop)
   if (!(prop && prop->HasOnlyRequiredFields()))
     return;
 
-  if (SdfPrimSpecHandle owner = TfDynamic_cast<SdfPrimSpecHandle>(prop->GetOwner()))
-  {
+  if (SdfPrimSpecHandle owner = TfDynamic_cast<SdfPrimSpecHandle>(prop->GetOwner())) {
 
     owner->RemoveProperty(prop);
     _RemoveInertToRootmost(owner);
-  } else if (SdfAttributeSpecHandle attr = TfDynamic_cast<SdfAttributeSpecHandle>(prop))
-  {
+  } else if (SdfAttributeSpecHandle attr = TfDynamic_cast<SdfAttributeSpecHandle>(prop)) {
     Sdf_ChildrenUtils<Sdf_AttributeChildPolicy>::RemoveChild(_self,
                                                              attr->GetPath().GetParentPath(),
                                                              attr->GetNameToken());
-  } else if (SdfRelationshipSpecHandle rel = TfDynamic_cast<SdfRelationshipSpecHandle>(prop))
-  {
+  } else if (SdfRelationshipSpecHandle rel = TfDynamic_cast<SdfRelationshipSpecHandle>(prop)) {
     Sdf_ChildrenUtils<Sdf_RelationshipChildPolicy>::RemoveChild(_self,
                                                                 rel->GetPath().GetParentPath(),
                                                                 rel->GetNameToken());
@@ -2218,28 +2103,23 @@ bool SdfLayer::_RemoveInertDFS(SdfPrimSpecHandle prim)
 {
   bool inert = prim->IsInert();
 
-  if (!inert)
-  {
+  if (!inert) {
     // Child prims
     SdfPrimSpecHandleVector removedChildren;
-    TF_FOR_ALL (it, prim->GetNameChildren())
-    {
+    TF_FOR_ALL (it, prim->GetNameChildren()) {
       SdfPrimSpecHandle child = *it;
       if (_RemoveInertDFS(child) && !SdfIsDefiningSpecifier(child->GetSpecifier()))
         removedChildren.push_back(child);
     }
-    TF_FOR_ALL (it, removedChildren)
-    {
+    TF_FOR_ALL (it, removedChildren) {
       prim->RemoveNameChild(*it);
     }
     // Child prims inside variants
     SdfVariantSetsProxy variantSetMap = prim->GetVariantSets();
-    TF_FOR_ALL (varSetIt, variantSetMap)
-    {
+    TF_FOR_ALL (varSetIt, variantSetMap) {
       const SdfVariantSetSpecHandle &varSetSpec = varSetIt->second;
       const SdfVariantSpecHandleVector &variants = varSetSpec->GetVariantList();
-      TF_FOR_ALL (varIt, variants)
-      {
+      TF_FOR_ALL (varIt, variants) {
         _RemoveInertDFS((*varIt)->GetPrimSpec());
       }
     }
@@ -2250,11 +2130,9 @@ bool SdfLayer::_RemoveInertDFS(SdfPrimSpecHandle prim)
 
 void SdfLayer::_RemoveInertToRootmost(SdfPrimSpecHandle prim)
 {
-  while (prim && !SdfIsDefiningSpecifier(prim->GetSpecifier()) && prim->IsInert())
-  {
+  while (prim && !SdfIsDefiningSpecifier(prim->GetSpecifier()) && prim->IsInert()) {
     SdfPrimSpecHandle parent = prim->GetRealNameParent();
-    if (parent)
-    {
+    if (parent) {
       parent->RemoveNameChild(prim);
     }
 
@@ -2263,12 +2141,15 @@ void SdfLayer::_RemoveInertToRootmost(SdfPrimSpecHandle prim)
   }
 }
 
-bool SdfLayer::SplitIdentifier(const string &identifier, string *layerPath, FileFormatArguments *arguments)
+bool SdfLayer::SplitIdentifier(const string &identifier,
+                               string *layerPath,
+                               FileFormatArguments *arguments)
 {
   return Sdf_SplitIdentifier(identifier, layerPath, arguments);
 }
 
-std::string SdfLayer::CreateIdentifier(const string &layerPath, const FileFormatArguments &arguments)
+std::string SdfLayer::CreateIdentifier(const string &layerPath,
+                                       const FileFormatArguments &arguments)
 {
   return Sdf_CreateIdentifier(layerPath, arguments);
 }
@@ -2285,21 +2166,18 @@ void SdfLayer::SetIdentifier(const string &identifier)
 
   string oldLayerPath;
   SdfLayer::FileFormatArguments oldArguments;
-  if (!TF_VERIFY(Sdf_SplitIdentifier(GetIdentifier(), &oldLayerPath, &oldArguments)))
-  {
+  if (!TF_VERIFY(Sdf_SplitIdentifier(GetIdentifier(), &oldLayerPath, &oldArguments))) {
     return;
   }
 
   string newLayerPath;
   SdfLayer::FileFormatArguments newArguments;
-  if (!Sdf_SplitIdentifier(identifier, &newLayerPath, &newArguments))
-  {
+  if (!Sdf_SplitIdentifier(identifier, &newLayerPath, &newArguments)) {
     TF_CODING_ERROR("Invalid identifier '%s'", identifier.c_str());
     return;
   }
 
-  if (oldArguments != newArguments)
-  {
+  if (oldArguments != newArguments) {
     TF_CODING_ERROR(
       "Identifier '%s' contains arguments that differ from the layer's "
       "current arguments ('%s').",
@@ -2309,8 +2187,7 @@ void SdfLayer::SetIdentifier(const string &identifier)
   }
 
   string whyNot;
-  if (!Sdf_CanCreateNewLayerWithIdentifier(newLayerPath, &whyNot))
-  {
+  if (!Sdf_CanCreateNewLayerWithIdentifier(newLayerPath, &whyNot)) {
     TF_CODING_ERROR("Cannot change identifier to '%s': %s", identifier.c_str(), whyNot.c_str());
     return;
   }
@@ -2347,11 +2224,12 @@ void SdfLayer::SetIdentifier(const string &identifier)
     // resolves to that same path. In this case, we don't want to error
     // out.
     const bool retryAsWriter = true;
-    SdfLayerRefPtr existingLayer = _Find(absIdentifier, FileFormatArguments(), lock, retryAsWriter);
-    if (existingLayer)
-    {
-      if (get_pointer(existingLayer) != this)
-      {
+    SdfLayerRefPtr existingLayer = _Find(absIdentifier,
+                                         FileFormatArguments(),
+                                         lock,
+                                         retryAsWriter);
+    if (existingLayer) {
+      if (get_pointer(existingLayer) != this) {
         TF_CODING_ERROR("Layer with identifier '%s' and resolved path '%s' exists.",
                         existingLayer->GetIdentifier().c_str(),
                         existingLayer->GetResolvedPath().GetPathString().c_str());
@@ -2370,9 +2248,9 @@ void SdfLayer::SetIdentifier(const string &identifier)
   // This is OK -- this means the layer hasn't been serialized to this
   // new location yet.
   const ArResolvedPath newResolvedPath = GetResolvedPath();
-  if (oldResolvedPath != newResolvedPath)
-  {
-    _assetModificationTime = ArGetResolver().GetModificationTimestamp(GetIdentifier(), newResolvedPath);
+  if (oldResolvedPath != newResolvedPath) {
+    _assetModificationTime = ArGetResolver().GetModificationTimestamp(GetIdentifier(),
+                                                                      newResolvedPath);
   }
 }
 
@@ -2394,8 +2272,7 @@ void SdfLayer::UpdateAssetInfo(const string &fileVersion)
     // layer's search path identifier can be properly re-resolved within
     // _InitializeFromIdentifier.
     std::unique_ptr<ArResolverContextBinder> binder;
-    if (!GetAssetName().empty())
-    {
+    if (!GetAssetName().empty()) {
       binder.reset(new ArResolverContextBinder(_assetInfo->resolverContext));
     }
 
@@ -2424,8 +2301,7 @@ void SdfLayer::UpdateAssetInfo()
     // layer's search path identifier can be properly re-resolved within
     // _InitializeFromIdentifier.
     std::unique_ptr<ArResolverContextBinder> binder;
-    if (!GetAssetName().empty())
-    {
+    if (!GetAssetName().empty()) {
       binder.reset(new ArResolverContextBinder(_assetInfo->resolverContext));
     }
 
@@ -2502,8 +2378,7 @@ SdfDataRefPtr SdfLayer::GetMetadata() const
   //      just fields tagged as metadata in the schema.
   result->CreateSpec(absRoot, SdfSpecTypePseudoRoot);
   const TfTokenVector tokenVec = ListFields(absRoot);
-  for (auto const &token : tokenVec)
-  {
+  for (auto const &token : tokenVec) {
     const VtValue &value = GetField(absRoot, token);
     result->Set(absRoot, token, value);
   }
@@ -2513,8 +2388,7 @@ SdfDataRefPtr SdfLayer::GetMetadata() const
 
 string SdfLayer::ComputeAbsolutePath(const string &relativePath)
 {
-  if (relativePath.empty() || Sdf_IsAnonLayerIdentifier(relativePath))
-  {
+  if (relativePath.empty() || Sdf_IsAnonLayerIdentifier(relativePath)) {
     return relativePath;
   }
 
@@ -2539,16 +2413,13 @@ void SdfLayer::SetMuted(bool muted)
 {
   // XXX Racy...
 
-  if (muted == IsMuted())
-  {
+  if (muted == IsMuted()) {
     return;
   }
 
-  if (muted)
-  {
+  if (muted) {
     AddToMutedLayers(_GetMutedPath());
-  } else
-  {
+  } else {
     RemoveFromMutedLayers(_GetMutedPath());
   }
 }
@@ -2562,8 +2433,7 @@ bool SdfLayer::IsMuted() const
   // 'true', some other thread may have removed this layer from the muted set.
 
   size_t curRev = _mutedLayersRevision;
-  if (ARCH_UNLIKELY(_mutedLayersRevisionCache != curRev))
-  {
+  if (ARCH_UNLIKELY(_mutedLayersRevisionCache != curRev)) {
     string mutedPath = _GetMutedPath();
     std::lock_guard<std::mutex> lock(*_mutedLayersMutex);
     // Read again, since this is guaranteed to give us the current value
@@ -2593,16 +2463,12 @@ void SdfLayer::AddToMutedLayers(const string &path)
     ++_mutedLayersRevision;
     didChange = _mutedLayers->insert(path).second;
   }
-  if (didChange)
-  {
-    if (SdfLayerHandle layer = Find(path))
-    {
-      if (layer->IsDirty())
-      {
+  if (didChange) {
+    if (SdfLayerHandle layer = Find(path)) {
+      if (layer->IsDirty()) {
         SdfFileFormatConstPtr format = layer->GetFileFormat();
         SdfAbstractDataRefPtr initializedData = format->InitData(layer->GetFileFormatArguments());
-        if (layer->_data->StreamsData())
-        {
+        if (layer->_data->StreamsData()) {
           // See the discussion in TransferContent()
           // about streaming layers; the same concerns
           // apply here.  We must swap out the actual data
@@ -2616,8 +2482,7 @@ void SdfLayer::AddToMutedLayers(const string &path)
           // _SetData() takes ownership of initializedData and sends
           // change notification.
           layer->_SetData(initializedData);
-        } else
-        {
+        } else {
           // Copy the dirty layer data to an in-memory store
           // that will be owned by _mutedLayerData.
           SdfAbstractDataRefPtr mutedData = format->InitData(layer->GetFileFormatArguments());
@@ -2632,8 +2497,7 @@ void SdfLayer::AddToMutedLayers(const string &path)
           layer->_SetData(initializedData);
         }
         TF_VERIFY(layer->IsDirty());
-      } else
-      {
+      } else {
         // Reload as muted.
         layer->_Reload(/* force */ true);
       }
@@ -2652,24 +2516,19 @@ void SdfLayer::RemoveFromMutedLayers(const string &path)
     ++_mutedLayersRevision;
     didChange = _mutedLayers->erase(path);
   }
-  if (didChange)
-  {
-    if (SdfLayerHandle layer = Find(path))
-    {
-      if (layer->IsDirty())
-      {
+  if (didChange) {
+    if (SdfLayerHandle layer = Find(path)) {
+      if (layer->IsDirty()) {
         SdfAbstractDataRefPtr mutedData;
         {
           std::lock_guard<std::mutex> lock(*_mutedLayersMutex);
           _MutedLayerDataMap::iterator i = _mutedLayerData->find(path);
-          if (TF_VERIFY(i != _mutedLayerData->end()))
-          {
+          if (TF_VERIFY(i != _mutedLayerData->end())) {
             std::swap(mutedData, i->second);
             _mutedLayerData->erase(i);
           }
         }
-        if (TF_VERIFY(mutedData))
-        {
+        if (TF_VERIFY(mutedData)) {
           // If SdfAbstractData::StreamsData() is true, this re-takes
           // ownership of the mutedData object.  Otherwise, this
           // mutates the existing data container to match its
@@ -2677,8 +2536,7 @@ void SdfLayer::RemoveFromMutedLayers(const string &path)
           layer->_SetData(mutedData);
         }
         TF_VERIFY(layer->IsDirty());
-      } else
-      {
+      } else {
         // Reload as unmuted.
         layer->_Reload(/* force */ true);
       }
@@ -2696,8 +2554,7 @@ bool SdfLayer::_ShouldNotify() const
 
 void SdfLayer::Clear()
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR("Clear: Permission denied.");
     return;
   }
@@ -2706,8 +2563,7 @@ void SdfLayer::Clear()
 
   _SetData(GetFileFormat()->InitData(GetFileFormatArguments()));
 
-  if (isStreamingLayer)
-  {
+  if (isStreamingLayer) {
     _stateDelegate->_MarkCurrentStateAsDirty();
   }
 }
@@ -2738,8 +2594,7 @@ void SdfLayer::SetStateDelegate(const SdfLayerStateDelegateBaseRefPtr &delegate)
 {
   // A layer can never have an invalid state delegate, as it relies
   // on it to track dirtiness.
-  if (!delegate)
-  {
+  if (!delegate) {
     TF_CODING_ERROR("Invalid layer state delegate");
     return;
   }
@@ -2748,24 +2603,20 @@ void SdfLayer::SetStateDelegate(const SdfLayerStateDelegateBaseRefPtr &delegate)
   _stateDelegate = delegate;
   _stateDelegate->_SetLayer(_self);
 
-  if (_lastDirtyState)
-  {
+  if (_lastDirtyState) {
     _stateDelegate->_MarkCurrentStateAsDirty();
-  } else
-  {
+  } else {
     _stateDelegate->_MarkCurrentStateAsClean();
   }
 }
 
 void SdfLayer::_MarkCurrentStateAsClean() const
 {
-  if (TF_VERIFY(_stateDelegate))
-  {
+  if (TF_VERIFY(_stateDelegate)) {
     _stateDelegate->_MarkCurrentStateAsClean();
   }
 
-  if (_UpdateLastDirtinessState())
-  {
+  if (_UpdateLastDirtinessState()) {
     SdfNotice::LayerDirtinessChanged().Send(_self);
   }
 }
@@ -2780,8 +2631,7 @@ bool SdfLayer::IsEmpty() const
 
 void SdfLayer::TransferContent(const SdfLayerHandle &layer)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_RUNTIME_ERROR("TransferContent of '%s': Permission denied.", GetDisplayName().c_str());
     return;
   }
@@ -2802,20 +2652,16 @@ void SdfLayer::TransferContent(const SdfLayerHandle &layer)
   bool isStreamingLayer = _data->StreamsData();
   SdfAbstractDataRefPtr newData;
 
-  if (!notify || isStreamingLayer)
-  {
+  if (!notify || isStreamingLayer) {
     newData = GetFileFormat()->InitData(GetFileFormatArguments());
     newData->CopyFrom(layer->_data);
-  } else
-  {
+  } else {
     newData = layer->_data;
   }
 
-  if (notify)
-  {
+  if (notify) {
     _SetData(newData, &(layer->GetSchema()));
-  } else
-  {
+  } else {
     _data = newData;
   }
 
@@ -2823,44 +2669,37 @@ void SdfLayer::TransferContent(const SdfLayerHandle &layer)
   _hints = layer->_hints;
 
   // If this is a "streaming" layer, we must mark it dirty.
-  if (isStreamingLayer)
-  {
+  if (isStreamingLayer) {
     _stateDelegate->_MarkCurrentStateAsDirty();
   }
 }
 
 static void _GatherPrimAssetReferences(const SdfPrimSpecHandle &prim, set<string> *assetReferences)
 {
-  if (prim != prim->GetLayer()->GetPseudoRoot())
-  {
+  if (prim != prim->GetLayer()->GetPseudoRoot()) {
     // Prim references
-    for (const SdfReference &ref : prim->GetReferenceList().GetAddedOrExplicitItems())
-    {
+    for (const SdfReference &ref : prim->GetReferenceList().GetAddedOrExplicitItems()) {
       assetReferences->insert(ref.GetAssetPath());
     }
 
     // Prim payloads
-    for (const SdfPayload &payload : prim->GetPayloadList().GetAddedOrExplicitItems())
-    {
+    for (const SdfPayload &payload : prim->GetPayloadList().GetAddedOrExplicitItems()) {
       assetReferences->insert(payload.GetAssetPath());
     }
 
     // Prim variants
     SdfVariantSetsProxy variantSetMap = prim->GetVariantSets();
-    TF_FOR_ALL (varSetIt, variantSetMap)
-    {
+    TF_FOR_ALL (varSetIt, variantSetMap) {
       const SdfVariantSetSpecHandle &varSetSpec = varSetIt->second;
       const SdfVariantSpecHandleVector &variants = varSetSpec->GetVariantList();
-      TF_FOR_ALL (varIt, variants)
-      {
+      TF_FOR_ALL (varIt, variants) {
         _GatherPrimAssetReferences((*varIt)->GetPrimSpec(), assetReferences);
       }
     }
   }
 
   // Recurse on nameChildren
-  TF_FOR_ALL (child, prim->GetNameChildren())
-  {
+  TF_FOR_ALL (child, prim->GetNameChildren()) {
     _GatherPrimAssetReferences(*child, assetReferences);
   }
 }
@@ -2884,13 +2723,11 @@ bool SdfLayer::UpdateExternalReference(const string &oldLayerPath, const string 
   // Search sublayers and rename if found...
   SdfSubLayerProxy subLayers = GetSubLayerPaths();
   size_t index = subLayers.Find(oldLayerPath);
-  if (index != (size_t)-1)
-  {
+  if (index != (size_t)-1) {
     RemoveSubLayerPath(index);
 
     // If new layer path given, do rename, otherwise it's a delete.
-    if (!newLayerPath.empty())
-    {
+    if (!newLayerPath.empty()) {
       InsertSubLayerPath(newLayerPath, index);
     }
 
@@ -2910,18 +2747,16 @@ std::set<std::string> SdfLayer::GetExternalAssetDependencies() const
 // ModifyItemEdits() callback that updates a reference's or payload's
 // asset path for SdfReferenceListEditor and SdfPayloadListEditor.
 template<class RefOrPayloadType>
-static boost::optional<RefOrPayloadType> _UpdateRefOrPayloadPath(const string &oldLayerPath,
-                                                                 const string &newLayerPath,
-                                                                 const RefOrPayloadType &refOrPayload)
+static boost::optional<RefOrPayloadType> _UpdateRefOrPayloadPath(
+  const string &oldLayerPath,
+  const string &newLayerPath,
+  const RefOrPayloadType &refOrPayload)
 {
-  if (refOrPayload.GetAssetPath() == oldLayerPath)
-  {
+  if (refOrPayload.GetAssetPath() == oldLayerPath) {
     // Delete if new layer path is empty, otherwise rename.
-    if (newLayerPath.empty())
-    {
+    if (newLayerPath.empty()) {
       return boost::optional<RefOrPayloadType>();
-    } else
-    {
+    } else {
       RefOrPayloadType updatedRefOrPayload = refOrPayload;
       updatedRefOrPayload.SetAssetPath(newLayerPath);
       return updatedRefOrPayload;
@@ -2946,19 +2781,16 @@ void SdfLayer::_UpdateReferencePaths(const SdfPrimSpecHandle &prim,
 
   // Prim variants
   SdfVariantSetsProxy variantSetMap = prim->GetVariantSets();
-  for (const auto &setNameAndSpec : variantSetMap)
-  {
+  for (const auto &setNameAndSpec : variantSetMap) {
     const SdfVariantSetSpecHandle &varSetSpec = setNameAndSpec.second;
     const SdfVariantSpecHandleVector &variants = varSetSpec->GetVariantList();
-    for (const auto &variantSpec : variants)
-    {
+    for (const auto &variantSpec : variants) {
       _UpdateReferencePaths(variantSpec->GetPrimSpec(), oldLayerPath, newLayerPath);
     }
   }
 
   // Recurse on nameChildren
-  for (const auto &primSpec : prim->GetNameChildren())
-  {
+  for (const auto &primSpec : prim->GetNameChildren()) {
     _UpdateReferencePaths(primSpec, oldLayerPath, newLayerPath);
   }
 }
@@ -2967,8 +2799,7 @@ void SdfLayer::_UpdateReferencePaths(const SdfPrimSpecHandle &prim,
 void SdfLayer::DumpLayerInfo()
 {
   tbb::queuing_rw_mutex::scoped_lock lock(_GetLayerRegistryMutex(), /*write=*/false);
-  std::cerr << "Layer Registry Dump:" << std::endl
-            << *_layerRegistry << std::endl;
+  std::cerr << "Layer Registry Dump:" << std::endl << *_layerRegistry << std::endl;
 }
 
 bool SdfLayer::WriteDataFile(const string &filename)
@@ -3007,8 +2838,7 @@ SdfLayerRefPtr SdfLayer::_OpenLayerAndUnlockRegistry(Lock &lock,
   // XXX: Is this really a coding error? SdfLayer avoids issuing errors if
   //      given a non-existent file, for instance. Should we be following the
   //      same policy here?
-  if (!info.fileFormat)
-  {
+  if (!info.fileFormat) {
     TF_CODING_ERROR("Cannot determine file format for @%s@", info.identifier.c_str());
     lock.release();
     return TfNullPtr;
@@ -3037,17 +2867,14 @@ SdfLayerRefPtr SdfLayer::_OpenLayerAndUnlockRegistry(Lock &lock,
   // in order to unblock any other threads waiting for initialization
   // to finish.
 
-  if (info.isAnonymous != layer->IsAnonymous())
-  {
-    if (info.isAnonymous)
-    {
+  if (info.isAnonymous != layer->IsAnonymous()) {
+    if (info.isAnonymous) {
       TF_CODING_ERROR(
         "Opened anonymous layer ('%s' with format id '%s') "
         "but resulting layer is not anonymous.",
         info.identifier.c_str(),
         info.fileFormat->GetFormatId().GetText());
-    } else
-    {
+    } else {
       TF_CODING_ERROR(
         "Opened layer without anonymous prefix "
         "('%s' with format id '%s') but resulting layer is "
@@ -3065,11 +2892,9 @@ SdfLayerRefPtr SdfLayer::_OpenLayerAndUnlockRegistry(Lock &lock,
   // resolved path of the layer.
   const string readFilePath = info.isAnonymous ? info.layerPath : info.resolvedLayerPath;
 
-  if (!layer->IsMuted())
-  {
+  if (!layer->IsMuted()) {
     // Run the file parser to read in the file contents.
-    if (!layer->_Read(info.identifier, readFilePath, metadataOnly))
-    {
+    if (!layer->_Read(info.identifier, readFilePath, metadataOnly)) {
       layer->_FinishInitialization(/* success = */ false);
       return TfNullPtr;
     }
@@ -3079,13 +2904,11 @@ SdfLayerRefPtr SdfLayer::_OpenLayerAndUnlockRegistry(Lock &lock,
   // read. Since a muted layer may become unmuted later, there needs
   // to be a non-empty timestamp so it will not be misidentified as
   // a newly created non-serialized layer.
-  if (!info.isAnonymous)
-  {
+  if (!info.isAnonymous) {
     // Grab modification timestamp.
     VtValue timestamp = ArGetResolver().GetModificationTimestamp(info.identifier,
                                                                  ArResolvedPath(readFilePath));
-    if (timestamp.IsEmpty())
-    {
+    if (timestamp.IsEmpty()) {
       TF_CODING_ERROR("Unable to get modification timestamp for '%s (%s)'",
                       info.identifier.c_str(),
                       readFilePath.c_str());
@@ -3135,8 +2958,7 @@ vector<TfToken> SdfLayer::_ListFields(SdfSchemaBase const &schema,
 
   // Determine spec type.  If unknown, return early.
   SdfSpecType specType = data.GetSpecType(path);
-  if (ARCH_UNLIKELY(specType == SdfSpecTypeUnknown))
-  {
+  if (ARCH_UNLIKELY(specType == SdfSpecTypeUnknown)) {
     return dataList;
   }
 
@@ -3148,17 +2970,14 @@ vector<TfToken> SdfLayer::_ListFields(SdfSchemaBase const &schema,
   TfToken const *dataListBegin = dataList.data();
   TfToken const *dataListEnd = dataListBegin + dataList.size();
   bool mightAlloc = (dataList.size() + req.size()) > dataList.capacity();
-  for (size_t reqIdx = 0, reqSz = req.size(); reqIdx != reqSz; ++reqIdx)
-  {
+  for (size_t reqIdx = 0, reqSz = req.size(); reqIdx != reqSz; ++reqIdx) {
     TfToken const &reqName = req[reqIdx];
     TfToken const *iter = std::find(dataListBegin, dataListEnd, reqName);
-    if (iter == dataListEnd)
-    {
+    if (iter == dataListEnd) {
       // If the required field name is not already present, append it.
       // Make sure we have capacity for all required fields so we do no
       // more than one additional allocation here.
-      if (mightAlloc && dataList.size() == dataList.capacity())
-      {
+      if (mightAlloc && dataList.size() == dataList.capacity()) {
         dataList.reserve(dataList.size() + (reqSz - reqIdx));
         dataListEnd = dataList.data() + std::distance(dataListBegin, dataListEnd);
         dataListBegin = dataList.data();
@@ -3175,19 +2994,15 @@ SdfSchema::FieldDefinition const *SdfLayer::_GetRequiredFieldDef(const SdfPath &
                                                                  SdfSpecType specType) const
 {
   SdfSchemaBase const &schema = GetSchema();
-  if (ARCH_UNLIKELY(schema.IsRequiredFieldName(fieldName)))
-  {
+  if (ARCH_UNLIKELY(schema.IsRequiredFieldName(fieldName))) {
     // Get the spec definition.
-    if (specType == SdfSpecTypeUnknown)
-    {
+    if (specType == SdfSpecTypeUnknown) {
       specType = GetSpecType(path);
     }
-    if (SdfSchema::SpecDefinition const *specDef = schema.GetSpecDefinition(specType))
-    {
+    if (SdfSchema::SpecDefinition const *specDef = schema.GetSpecDefinition(specType)) {
       // If this field is required for this spec type, look up the
       // field definition.
-      if (specDef->IsRequiredField(fieldName))
-      {
+      if (specDef->IsRequiredField(fieldName)) {
         return schema.GetFieldDefinition(fieldName);
       }
     }
@@ -3199,14 +3014,11 @@ SdfSchema::FieldDefinition const *SdfLayer::_GetRequiredFieldDef(const SdfSchema
                                                                  const TfToken &fieldName,
                                                                  SdfSpecType specType)
 {
-  if (ARCH_UNLIKELY(schema.IsRequiredFieldName(fieldName)))
-  {
-    if (SdfSchema::SpecDefinition const *specDef = schema.GetSpecDefinition(specType))
-    {
+  if (ARCH_UNLIKELY(schema.IsRequiredFieldName(fieldName))) {
+    if (SdfSchema::SpecDefinition const *specDef = schema.GetSpecDefinition(specType)) {
       // If this field is required for this spec type, look up the
       // field definition.
-      if (specDef->IsRequiredField(fieldName))
-      {
+      if (specDef->IsRequiredField(fieldName)) {
         return schema.GetFieldDefinition(fieldName);
       }
     }
@@ -3221,18 +3033,15 @@ bool SdfLayer::_HasField(const SdfSchemaBase &schema,
                          VtValue *value)
 {
   SdfSpecType specType;
-  if (data.HasSpecAndField(path, fieldName, value, &specType))
-  {
+  if (data.HasSpecAndField(path, fieldName, value, &specType)) {
     return true;
   }
-  if (specType == SdfSpecTypeUnknown)
-  {
+  if (specType == SdfSpecTypeUnknown) {
     return false;
   }
   // Otherwise if this is a required field, and the data has a spec here,
   // return the fallback value.
-  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(schema, fieldName, specType))
-  {
+  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(schema, fieldName, specType)) {
     if (value)
       *value = def->GetFallbackValue();
     return true;
@@ -3243,18 +3052,15 @@ bool SdfLayer::_HasField(const SdfSchemaBase &schema,
 bool SdfLayer::HasField(const SdfPath &path, const TfToken &fieldName, VtValue *value) const
 {
   SdfSpecType specType;
-  if (_data->HasSpecAndField(path, fieldName, value, &specType))
-  {
+  if (_data->HasSpecAndField(path, fieldName, value, &specType)) {
     return true;
   }
-  if (specType == SdfSpecTypeUnknown)
-  {
+  if (specType == SdfSpecTypeUnknown) {
     return false;
   }
   // Otherwise if this is a required field, and the data has a spec here,
   // return the fallback value.
-  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName, specType))
-  {
+  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName, specType)) {
     if (value)
       *value = def->GetFallbackValue();
     return true;
@@ -3262,21 +3068,20 @@ bool SdfLayer::HasField(const SdfPath &path, const TfToken &fieldName, VtValue *
   return false;
 }
 
-bool SdfLayer::HasField(const SdfPath &path, const TfToken &fieldName, SdfAbstractDataValue *value) const
+bool SdfLayer::HasField(const SdfPath &path,
+                        const TfToken &fieldName,
+                        SdfAbstractDataValue *value) const
 {
   SdfSpecType specType;
-  if (_data->HasSpecAndField(path, fieldName, value, &specType))
-  {
+  if (_data->HasSpecAndField(path, fieldName, value, &specType)) {
     return true;
   }
-  if (specType == SdfSpecTypeUnknown)
-  {
+  if (specType == SdfSpecTypeUnknown) {
     return false;
   }
   // Otherwise if this is a required field, and the data has a spec here,
   // return the fallback value.
-  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName, specType))
-  {
+  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName, specType)) {
     if (value)
       return value->StoreValue(def->GetFallbackValue());
     return true;
@@ -3293,14 +3098,11 @@ bool SdfLayer::HasFieldDictKey(const SdfPath &path,
     return true;
   // Otherwise if this is a required field, and the data has a spec here,
   // return the fallback value.
-  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName))
-  {
+  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName)) {
     VtValue const &fallback = def->GetFallbackValue();
-    if (fallback.IsHolding<VtDictionary>())
-    {
+    if (fallback.IsHolding<VtDictionary>()) {
       VtDictionary const &dict = fallback.UncheckedGet<VtDictionary>();
-      if (VtValue const *v = dict.GetValueAtPath(keyPath))
-      {
+      if (VtValue const *v = dict.GetValueAtPath(keyPath)) {
         if (value)
           *value = *v;
         return true;
@@ -3319,14 +3121,11 @@ bool SdfLayer::HasFieldDictKey(const SdfPath &path,
     return true;
   // Otherwise if this is a required field, and the data has a spec here,
   // return the fallback value.
-  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName))
-  {
+  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName)) {
     VtValue const &fallback = def->GetFallbackValue();
-    if (fallback.IsHolding<VtDictionary>())
-    {
+    if (fallback.IsHolding<VtDictionary>()) {
       VtDictionary const &dict = fallback.UncheckedGet<VtDictionary>();
-      if (VtValue const *v = dict.GetValueAtPath(keyPath))
-      {
+      if (VtValue const *v = dict.GetValueAtPath(keyPath)) {
         if (value)
           return value->StoreValue(*v);
         return true;
@@ -3362,7 +3161,9 @@ VtValue SdfLayer::GetFieldDictValueByKey(const SdfPath &path,
   return result;
 }
 
-static bool _IsValidFieldForLayer(const SdfLayer &layer, const SdfPath &path, const TfToken &fieldName)
+static bool _IsValidFieldForLayer(const SdfLayer &layer,
+                                  const SdfPath &path,
+                                  const TfToken &fieldName)
 {
   return layer.GetSchema().IsValidFieldForSpec(fieldName, layer.GetSpecType(path));
 }
@@ -3372,8 +3173,7 @@ void SdfLayer::SetField(const SdfPath &path, const TfToken &fieldName, const VtV
   if (value.IsEmpty())
     return EraseField(path, fieldName);
 
-  if (ARCH_UNLIKELY(!PermissionToEdit()))
-  {
+  if (ARCH_UNLIKELY(!PermissionToEdit())) {
     TF_CODING_ERROR("Cannot set %s on <%s>. Layer @%s@ is not editable.",
                     fieldName.GetText(),
                     path.GetText(),
@@ -3381,8 +3181,7 @@ void SdfLayer::SetField(const SdfPath &path, const TfToken &fieldName, const VtV
     return;
   }
 
-  if (ARCH_UNLIKELY(_validateAuthoring) && !_IsValidFieldForLayer(*this, path, fieldName))
-  {
+  if (ARCH_UNLIKELY(_validateAuthoring) && !_IsValidFieldForLayer(*this, path, fieldName)) {
     TF_ERROR(SdfAuthoringErrorUnrecognizedFields,
              "Cannot set %s on <%s>. Field is not valid for layer @%s@.",
              fieldName.GetText(),
@@ -3403,8 +3202,7 @@ void SdfLayer::SetField(const SdfPath &path,
   if (value.IsEqual(VtValue()))
     return EraseField(path, fieldName);
 
-  if (ARCH_UNLIKELY(!PermissionToEdit()))
-  {
+  if (ARCH_UNLIKELY(!PermissionToEdit())) {
     TF_CODING_ERROR("Cannot set %s on <%s>. Layer @%s@ is not editable.",
                     fieldName.GetText(),
                     path.GetText(),
@@ -3412,8 +3210,7 @@ void SdfLayer::SetField(const SdfPath &path,
     return;
   }
 
-  if (ARCH_UNLIKELY(_validateAuthoring) && !_IsValidFieldForLayer(*this, path, fieldName))
-  {
+  if (ARCH_UNLIKELY(_validateAuthoring) && !_IsValidFieldForLayer(*this, path, fieldName)) {
     TF_ERROR(SdfAuthoringErrorUnrecognizedFields,
              "Cannot set %s on <%s>. Field is not valid for layer @%s@.",
              fieldName.GetText(),
@@ -3432,8 +3229,7 @@ void SdfLayer::SetFieldDictValueByKey(const SdfPath &path,
                                       const TfToken &keyPath,
                                       const VtValue &value)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR("Cannot set %s:%s on <%s>. Layer @%s@ is not editable.",
                     fieldName.GetText(),
                     keyPath.GetText(),
@@ -3442,8 +3238,7 @@ void SdfLayer::SetFieldDictValueByKey(const SdfPath &path,
     return;
   }
 
-  if (ARCH_UNLIKELY(_validateAuthoring) && !_IsValidFieldForLayer(*this, path, fieldName))
-  {
+  if (ARCH_UNLIKELY(_validateAuthoring) && !_IsValidFieldForLayer(*this, path, fieldName)) {
     TF_ERROR(SdfAuthoringErrorUnrecognizedFields,
              "Cannot set %s:%s on <%s>. Field is not valid for layer @%s@.",
              fieldName.GetText(),
@@ -3465,8 +3260,7 @@ void SdfLayer::SetFieldDictValueByKey(const SdfPath &path,
                                       const TfToken &keyPath,
                                       const SdfAbstractDataConstValue &value)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR("Cannot set %s:%s on <%s>. Layer @%s@ is not editable.",
                     fieldName.GetText(),
                     keyPath.GetText(),
@@ -3475,8 +3269,7 @@ void SdfLayer::SetFieldDictValueByKey(const SdfPath &path,
     return;
   }
 
-  if (ARCH_UNLIKELY(_validateAuthoring) && !_IsValidFieldForLayer(*this, path, fieldName))
-  {
+  if (ARCH_UNLIKELY(_validateAuthoring) && !_IsValidFieldForLayer(*this, path, fieldName)) {
     TF_ERROR(SdfAuthoringErrorUnrecognizedFields,
              "Cannot set %s:%s on <%s>. Field is not valid for layer @%s@.",
              fieldName.GetText(),
@@ -3495,8 +3288,7 @@ void SdfLayer::SetFieldDictValueByKey(const SdfPath &path,
 
 void SdfLayer::EraseField(const SdfPath &path, const TfToken &fieldName)
 {
-  if (ARCH_UNLIKELY(!PermissionToEdit()))
-  {
+  if (ARCH_UNLIKELY(!PermissionToEdit())) {
     TF_CODING_ERROR("Cannot erase %s on <%s>. Layer @%s@ is not editable.",
                     fieldName.GetText(),
                     path.GetText(),
@@ -3504,8 +3296,7 @@ void SdfLayer::EraseField(const SdfPath &path, const TfToken &fieldName)
     return;
   }
 
-  if (!_data->Has(path, fieldName))
-  {
+  if (!_data->Has(path, fieldName)) {
     return;
   }
 
@@ -3513,8 +3304,7 @@ void SdfLayer::EraseField(const SdfPath &path, const TfToken &fieldName)
   // differs from the fallback.  Required fields behave as if they're always
   // authored, so the effect of an "erase" is to set the value to the fallback
   // value.
-  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName))
-  {
+  if (SdfSchema::FieldDefinition const *def = _GetRequiredFieldDef(path, fieldName)) {
     if (GetField(path, fieldName) == def->GetFallbackValue())
       return;
   }
@@ -3532,8 +3322,7 @@ void SdfLayer::EraseFieldDictValueByKey(const SdfPath &path,
                                         const TfToken &fieldName,
                                         const TfToken &keyPath)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR("Cannot erase %s:%s on <%s>. Layer @%s@ is not editable.",
                     fieldName.GetText(),
                     keyPath.GetText(),
@@ -3542,8 +3331,7 @@ void SdfLayer::EraseFieldDictValueByKey(const SdfPath &path,
     return;
   }
 
-  if (!_data->HasDictKey(path, fieldName, keyPath, static_cast<VtValue *>(NULL)))
-  {
+  if (!_data->HasDictKey(path, fieldName, keyPath, static_cast<VtValue *>(NULL))) {
     return;
   }
 
@@ -3585,8 +3373,7 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
   // the data in the layer to be streamed in from disk.
   // So, all we can do is move the new data into place and
   // notify the world that this layer may have changed arbitrarily.
-  if (_data->StreamsData())
-  {
+  if (_data->StreamsData()) {
     _data = newData;
     Sdf_ChangeManager::Get().DidReplaceLayerContent(_self);
     return;
@@ -3597,14 +3384,11 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
     // Collect specs to delete, ordered by namespace.
     struct _SpecsToDelete : public SdfAbstractDataSpecVisitor
     {
-      _SpecsToDelete(const SdfAbstractDataPtr &newData_)
-        : newData(newData_)
-      {}
+      _SpecsToDelete(const SdfAbstractDataPtr &newData_) : newData(newData_) {}
 
       virtual bool VisitSpec(const SdfAbstractData &oldData, const SdfPath &path)
       {
-        if (!newData->HasSpec(path) || (newData->GetSpecType(path) != oldData.GetSpecType(path)))
-        {
+        if (!newData->HasSpec(path) || (newData->GetSpecType(path) != oldData.GetSpecType(path))) {
           paths.insert(path);
         }
         return true;
@@ -3634,8 +3418,7 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
       SdfSpecType specType = _data->GetSpecType(path);
       const SdfSchema::SpecDefinition *specDefinition = GetSchema().GetSpecDefinition(specType);
 
-      TF_FOR_ALL (field, fields)
-      {
+      TF_FOR_ALL (field, fields) {
         if (!specDefinition->IsRequiredField(*field))
           _PrimSetField(path, *field, VtValue());
       }
@@ -3648,14 +3431,11 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
     // Collect specs to create, ordered by namespace.
     struct _SpecsToCreate : public SdfAbstractDataSpecVisitor
     {
-      _SpecsToCreate(const SdfAbstractData &oldData_)
-        : oldData(oldData_)
-      {}
+      _SpecsToCreate(const SdfAbstractData &oldData_) : oldData(oldData_) {}
 
       virtual bool VisitSpec(const SdfAbstractData &newData, const SdfPath &path)
       {
-        if (!oldData.HasSpec(path))
-        {
+        if (!oldData.HasSpec(path)) {
           paths.insert(path);
         }
         return true;
@@ -3677,8 +3457,7 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
     SdfPath unrecognizedSpecTypePaths[SdfNumSpecTypes];
 
     // Create specs top-down to provide optimal diffs.
-    TF_FOR_ALL (i, specsToCreate.paths)
-    {
+    TF_FOR_ALL (i, specsToCreate.paths) {
       const SdfPath &path = *i;
 
       // Determine if the spec is inert based on its fields.
@@ -3686,8 +3465,7 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
       // XXX We should consolidate this with the logic
       //     in the spec _New() methods.
       bool inert = false;
-      if (path.IsPrimPath())
-      {
+      if (path.IsPrimPath()) {
         // Prims are considered inert if they are an 'over' with
         // no typename. Make sure we specify the expected fallback
         // values in case newData does not explicitly store a value
@@ -3695,8 +3473,7 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
         inert = (newData->GetAs<SdfSpecifier>(path, SdfFieldKeys->Specifier, SdfSpecifierOver) ==
                  SdfSpecifierOver) &&
                 (newData->GetAs<TfToken>(path, SdfFieldKeys->TypeName, TfToken()).IsEmpty());
-      } else if (path.IsPropertyPath())
-      {
+      } else if (path.IsPropertyPath()) {
         // Properties are considered inert if they are custom.
         inert = !newData->GetAs<bool>(path, SdfFieldKeys->Custom, false);
       }
@@ -3706,34 +3483,27 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
       // If this is a cross-schema _SetData call, check to see if the spec
       // type is known to this layer's schema.  If not, skip creating it
       // and record it to issue an error later.
-      if (differentSchema && !GetSchema().GetSpecDefinition(specType))
-      {
+      if (differentSchema && !GetSchema().GetSpecDefinition(specType)) {
         // Record the path where this spec type was first encountered.
-        if (unrecognizedSpecTypePaths[specType].IsEmpty())
-        {
+        if (unrecognizedSpecTypePaths[specType].IsEmpty()) {
           unrecognizedSpecTypePaths[specType] = path;
         }
-      } else
-      {
+      } else {
         _PrimCreateSpec(path, specType, inert);
       }
     }
     // If there were unrecognized specTypes, issue an error.
-    if (differentSchema)
-    {
+    if (differentSchema) {
       vector<string> specDescrs;
-      for (int i = 0; i != SdfSpecTypeUnknown; ++i)
-      {
-        if (unrecognizedSpecTypePaths[i].IsEmpty())
-        {
+      for (int i = 0; i != SdfSpecTypeUnknown; ++i) {
+        if (unrecognizedSpecTypePaths[i].IsEmpty()) {
           continue;
         }
         specDescrs.push_back(TfStringPrintf("'%s' first seen at <%s>",
                                             TfStringify(static_cast<SdfSpecType>(i)).c_str(),
                                             unrecognizedSpecTypePaths[i].GetAsString().c_str()));
       }
-      if (!specDescrs.empty())
-      {
+      if (!specDescrs.empty()) {
         TF_ERROR(SdfAuthoringErrorUnrecognizedSpecType,
                  "Omitted unrecognized spec types setting data on "
                  "@%s@: %s",
@@ -3765,38 +3535,31 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
         // it's possible there is no corresponding spec for the path, in
         // case the spec type is not supported.  Check for this, and
         // skip field processing if so.
-        if (differentSchema && !layer->HasSpec(path))
-        {
+        if (differentSchema && !layer->HasSpec(path)) {
           return true;
         }
 
         // Remove empty fields.
-        for (TfToken const &field : oldFields)
-        {
+        for (TfToken const &field : oldFields) {
           // This is O(N^2) in number of fields in each spec, but
           // we expect a small max N, around 10.
-          if (std::find(newFields.begin(), newFields.end(), field) == newFields.end())
-          {
+          if (std::find(newFields.begin(), newFields.end(), field) == newFields.end()) {
             layer->_PrimSetField(path, field, VtValue());
           }
         }
 
         // Set field values.
-        for (TfToken const &field : newFields)
-        {
+        for (TfToken const &field : newFields) {
           VtValue newValue = _GetField(newDataSchema, newData, path, field);
           VtValue oldValue = layer->GetField(path, field);
-          if (oldValue != newValue)
-          {
+          if (oldValue != newValue) {
             if (differentSchema && oldValue.IsEmpty() &&
-                !thisLayerSchema.IsValidFieldForSpec(field, layer->GetSpecType(path)))
-            {
+                !thisLayerSchema.IsValidFieldForSpec(field, layer->GetSpecType(path))) {
               // This field might not be valid for the target
               // schema.  If that's the case record it (if it's
               // not already recorded) and skip setting it.
               unrecognizedFields.emplace(field, path);
-            } else
-            {
+            } else {
               layer->_PrimSetField(path, field, newValue, &oldValue);
             }
           }
@@ -3820,12 +3583,10 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
     newData->VisitSpecs(&updater);
 
     // If there were unrecognized fields, report an error.
-    if (!updater.unrecognizedFields.empty())
-    {
+    if (!updater.unrecognizedFields.empty()) {
       vector<string> fieldDescrs;
       fieldDescrs.reserve(updater.unrecognizedFields.size());
-      for (std::pair<TfToken, SdfPath> const &tokenPath : updater.unrecognizedFields)
-      {
+      for (std::pair<TfToken, SdfPath> const &tokenPath : updater.unrecognizedFields) {
         fieldDescrs.push_back(TfStringPrintf("'%s' first seen at <%s>",
                                              tokenPath.first.GetText(),
                                              tokenPath.second.GetAsString().c_str()));
@@ -3839,8 +3600,7 @@ void SdfLayer::_SetData(const SdfAbstractDataPtr &newData, const SdfSchemaBase *
 
   // Verify that the result matches.
   // TODO Enable in debug builds.
-  if (0)
-  {
+  if (0) {
     TRACE_SCOPE("SdfLayer::_SetData - Verify result");
     TF_VERIFY(_data->Equals(newData));
   }
@@ -3853,8 +3613,7 @@ void SdfLayer::_PrimSetField(const SdfPath &path,
                              const VtValue *oldValuePtr,
                              bool useDelegate)
 {
-  if (useDelegate && TF_VERIFY(_stateDelegate))
-  {
+  if (useDelegate && TF_VERIFY(_stateDelegate)) {
     _stateDelegate->SetField(path, fieldName, value, oldValuePtr);
     return;
   }
@@ -3887,14 +3646,12 @@ void SdfLayer::_PrimPushChild(const SdfPath &parentPath,
                               const T &value,
                               bool useDelegate)
 {
-  if (!HasField(parentPath, fieldName))
-  {
+  if (!HasField(parentPath, fieldName)) {
     _PrimSetField(parentPath, fieldName, VtValue(std::vector<T>(1, value)));
     return;
   }
 
-  if (useDelegate && TF_VERIFY(_stateDelegate))
-  {
+  if (useDelegate && TF_VERIFY(_stateDelegate)) {
     _stateDelegate->PushChild(parentPath, fieldName, value);
     return;
   }
@@ -3917,11 +3674,9 @@ void SdfLayer::_PrimPushChild(const SdfPath &parentPath,
   VtValue box = _data->Get(parentPath, fieldName);
   _data->Erase(parentPath, fieldName);
   std::vector<T> vec;
-  if (box.IsHolding<std::vector<T>>())
-  {
+  if (box.IsHolding<std::vector<T>>()) {
     box.Swap(vec);
-  } else
-  {
+  } else {
     // If the value isn't a vector, we replace it with an empty one.
   }
   vec.push_back(value);
@@ -3935,15 +3690,12 @@ template void SdfLayer::_PrimPushChild(const SdfPath &, const TfToken &, const S
 template<class T>
 void SdfLayer::_PrimPopChild(const SdfPath &parentPath, const TfToken &fieldName, bool useDelegate)
 {
-  if (useDelegate && TF_VERIFY(_stateDelegate))
-  {
+  if (useDelegate && TF_VERIFY(_stateDelegate)) {
     std::vector<T> vec = GetFieldAs<std::vector<T>>(parentPath, fieldName);
-    if (!vec.empty())
-    {
+    if (!vec.empty()) {
       T oldValue = vec.back();
       _stateDelegate->PopChild(parentPath, fieldName, oldValue);
-    } else
-    {
+    } else {
       TF_CODING_ERROR(
         "SdfLayer::_PrimPopChild failed: field %s is "
         "empty vector",
@@ -3955,8 +3707,7 @@ void SdfLayer::_PrimPopChild(const SdfPath &parentPath, const TfToken &fieldName
   // See efficiency notes in _PrimPushChild().
   VtValue box = _data->Get(parentPath, fieldName);
   _data->Erase(parentPath, fieldName);
-  if (!box.IsHolding<std::vector<T>>())
-  {
+  if (!box.IsHolding<std::vector<T>>()) {
     TF_CODING_ERROR(
       "SdfLayer::_PrimPopChild failed: field %s is "
       "non-vector",
@@ -3965,8 +3716,7 @@ void SdfLayer::_PrimPopChild(const SdfPath &parentPath, const TfToken &fieldName
   }
   std::vector<T> vec;
   box.Swap(vec);
-  if (vec.empty())
-  {
+  if (vec.empty()) {
     TF_CODING_ERROR("SdfLayer::_PrimPopChild failed: %s is empty", fieldName.GetText());
     return;
   }
@@ -3986,8 +3736,7 @@ void SdfLayer::_PrimSetFieldDictValueByKey(const SdfPath &path,
                                            const VtValue *oldValuePtr,
                                            bool useDelegate)
 {
-  if (useDelegate && TF_VERIFY(_stateDelegate))
-  {
+  if (useDelegate && TF_VERIFY(_stateDelegate)) {
     _stateDelegate->SetFieldDictValueByKey(path, fieldName, keyPath, value, oldValuePtr);
     return;
   }
@@ -4024,8 +3773,7 @@ bool SdfLayer::_MoveSpec(const SdfPath &oldPath, const SdfPath &newPath)
 {
   TRACE_FUNCTION();
 
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR("Cannot move <%s> to <%s>. Layer @%s@ is not editable.",
                     oldPath.GetText(),
                     newPath.GetText(),
@@ -4033,8 +3781,7 @@ bool SdfLayer::_MoveSpec(const SdfPath &oldPath, const SdfPath &newPath)
     return false;
   }
 
-  if (oldPath.IsEmpty() || newPath.IsEmpty())
-  {
+  if (oldPath.IsEmpty() || newPath.IsEmpty()) {
     TF_CODING_ERROR(
       "Cannot move <%s> to <%s>. "
       "Source and destination must be non-empty paths",
@@ -4043,8 +3790,7 @@ bool SdfLayer::_MoveSpec(const SdfPath &oldPath, const SdfPath &newPath)
     return false;
   }
 
-  if (oldPath.HasPrefix(newPath) || newPath.HasPrefix(oldPath))
-  {
+  if (oldPath.HasPrefix(newPath) || newPath.HasPrefix(oldPath)) {
     TF_CODING_ERROR(
       "Cannot move <%s> to <%s>. "
       "Source and destination must not overlap",
@@ -4053,13 +3799,11 @@ bool SdfLayer::_MoveSpec(const SdfPath &oldPath, const SdfPath &newPath)
     return false;
   }
 
-  if (!_data->HasSpec(oldPath))
-  {
+  if (!_data->HasSpec(oldPath)) {
     // Cannot move; nothing at source.
     return false;
   }
-  if (_data->HasSpec(newPath))
-  {
+  if (_data->HasSpec(newPath)) {
     // Cannot move; destination exists.
     return false;
   }
@@ -4075,7 +3819,9 @@ static void _MoveSpecInternal(SdfAbstractDataRefPtr data,
                               const SdfPath &oldRootPath,
                               const SdfPath &newRootPath)
 {
-  const SdfPath newSpecPath = oldSpecPath.ReplacePrefix(oldRootPath, newRootPath, /* fixTargets = */ false);
+  const SdfPath newSpecPath = oldSpecPath.ReplacePrefix(oldRootPath,
+                                                        newRootPath,
+                                                        /* fixTargets = */ false);
 
   data->MoveSpec(oldSpecPath, newSpecPath);
   idReg->MoveIdentity(oldSpecPath, newSpecPath);
@@ -4083,8 +3829,7 @@ static void _MoveSpecInternal(SdfAbstractDataRefPtr data,
 
 void SdfLayer::_PrimMoveSpec(const SdfPath &oldPath, const SdfPath &newPath, bool useDelegate)
 {
-  if (useDelegate && TF_VERIFY(_stateDelegate))
-  {
+  if (useDelegate && TF_VERIFY(_stateDelegate)) {
     _stateDelegate->MoveSpec(oldPath, newPath);
     return;
   }
@@ -4104,21 +3849,18 @@ static bool _IsValidSpecForLayer(const SdfLayer &layer, SdfSpecType specType)
 
 bool SdfLayer::_CreateSpec(const SdfPath &path, SdfSpecType specType, bool inert)
 {
-  if (specType == SdfSpecTypeUnknown)
-  {
+  if (specType == SdfSpecTypeUnknown) {
     return false;
   }
 
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR("Cannot create spec at <%s>. Layer @%s@ is not editable.",
                     path.GetText(),
                     GetIdentifier().c_str());
     return false;
   }
 
-  if (_validateAuthoring && !_IsValidSpecForLayer(*this, specType))
-  {
+  if (_validateAuthoring && !_IsValidSpecForLayer(*this, specType)) {
     TF_ERROR(SdfAuthoringErrorUnrecognizedSpecType,
              "Cannot create spec at <%s>. %s is not a valid spec type "
              "for layer @%s@",
@@ -4128,8 +3870,7 @@ bool SdfLayer::_CreateSpec(const SdfPath &path, SdfSpecType specType, bool inert
     return false;
   }
 
-  if (_data->HasSpec(path))
-  {
+  if (_data->HasSpec(path)) {
     TF_CODING_ERROR("Cannot create spec <%s> because it already exists in @%s@",
                     path.GetText(),
                     GetIdentifier().c_str());
@@ -4143,52 +3884,44 @@ bool SdfLayer::_CreateSpec(const SdfPath &path, SdfSpecType specType, bool inert
 
 bool SdfLayer::_DeleteSpec(const SdfPath &path)
 {
-  if (!PermissionToEdit())
-  {
+  if (!PermissionToEdit()) {
     TF_CODING_ERROR("Cannot delete <%s>. Layer @%s@ is not editable",
                     path.GetText(),
                     GetIdentifier().c_str());
     return false;
   }
 
-  if (!HasSpec(path))
-  {
+  if (!HasSpec(path)) {
     return false;
   }
 
   std::vector<SdfPath> inertSpecs;
-  if (_IsInertSubtree(path, &inertSpecs))
-  {
+  if (_IsInertSubtree(path, &inertSpecs)) {
     // If the subtree is inert, delete each inert spec from the
     // bottom up to send a notification for each inert spec in the
     // subtree. This is necessary since inert specs notices don't
     // imply anything about descendant specs. See also _SetData.
     SdfChangeBlock block;
 
-    for (const SdfPath &inertSpecPath : inertSpecs)
-    {
-      if (inertSpecPath.IsPrimPath())
-      {
+    for (const SdfPath &inertSpecPath : inertSpecs) {
+      if (inertSpecPath.IsPrimPath()) {
         // Clear out prim and property children fields before calling
         // _PrimDeleteSpec so that function doesn't try to recursively
         // delete specs we've already deleted (since we're deleting
         // from the bottom up).
         VtValue val;
-        if (HasField(inertSpecPath, SdfChildrenKeys->PrimChildren, &val))
-        {
+        if (HasField(inertSpecPath, SdfChildrenKeys->PrimChildren, &val)) {
           _PrimSetField(inertSpecPath, SdfChildrenKeys->PrimChildren, VtValue(), &val);
         }
 
-        if (HasField(inertSpecPath, SdfChildrenKeys->PropertyChildren, &val))
-        {
+        if (HasField(inertSpecPath, SdfChildrenKeys->PropertyChildren, &val)) {
           _PrimSetField(inertSpecPath, SdfChildrenKeys->PropertyChildren, VtValue(), &val);
         }
       }
 
       _PrimDeleteSpec(inertSpecPath, /* inert = */ true);
     }
-  } else
-  {
+  } else {
     _PrimDeleteSpec(path, /* inert = */ false);
   }
 
@@ -4199,10 +3932,10 @@ template<typename ChildPolicy>
 void SdfLayer::_TraverseChildren(const SdfPath &path, const TraversalFunction &func)
 {
   std::vector<typename ChildPolicy::FieldType> children =
-    GetFieldAs<std::vector<typename ChildPolicy::FieldType>>(path, ChildPolicy::GetChildrenToken(path));
+    GetFieldAs<std::vector<typename ChildPolicy::FieldType>>(path,
+                                                             ChildPolicy::GetChildrenToken(path));
 
-  TF_FOR_ALL (i, children)
-  {
+  TF_FOR_ALL (i, children) {
     Traverse(ChildPolicy::GetChildPath(path, *i), func);
   }
 }
@@ -4210,34 +3943,24 @@ void SdfLayer::_TraverseChildren(const SdfPath &path, const TraversalFunction &f
 void SdfLayer::Traverse(const SdfPath &path, const TraversalFunction &func)
 {
   std::vector<TfToken> fields = ListFields(path);
-  TF_FOR_ALL (i, fields)
-  {
-    if (*i == SdfChildrenKeys->PrimChildren)
-    {
+  TF_FOR_ALL (i, fields) {
+    if (*i == SdfChildrenKeys->PrimChildren) {
       _TraverseChildren<Sdf_PrimChildPolicy>(path, func);
-    } else if (*i == SdfChildrenKeys->PropertyChildren)
-    {
+    } else if (*i == SdfChildrenKeys->PropertyChildren) {
       _TraverseChildren<Sdf_PropertyChildPolicy>(path, func);
-    } else if (*i == SdfChildrenKeys->MapperChildren)
-    {
+    } else if (*i == SdfChildrenKeys->MapperChildren) {
       _TraverseChildren<Sdf_MapperChildPolicy>(path, func);
-    } else if (*i == SdfChildrenKeys->MapperArgChildren)
-    {
+    } else if (*i == SdfChildrenKeys->MapperArgChildren) {
       _TraverseChildren<Sdf_MapperArgChildPolicy>(path, func);
-    } else if (*i == SdfChildrenKeys->VariantChildren)
-    {
+    } else if (*i == SdfChildrenKeys->VariantChildren) {
       _TraverseChildren<Sdf_VariantChildPolicy>(path, func);
-    } else if (*i == SdfChildrenKeys->VariantSetChildren)
-    {
+    } else if (*i == SdfChildrenKeys->VariantSetChildren) {
       _TraverseChildren<Sdf_VariantSetChildPolicy>(path, func);
-    } else if (*i == SdfChildrenKeys->ConnectionChildren)
-    {
+    } else if (*i == SdfChildrenKeys->ConnectionChildren) {
       _TraverseChildren<Sdf_AttributeConnectionChildPolicy>(path, func);
-    } else if (*i == SdfChildrenKeys->RelationshipTargetChildren)
-    {
+    } else if (*i == SdfChildrenKeys->RelationshipTargetChildren) {
       _TraverseChildren<Sdf_RelationshipTargetChildPolicy>(path, func);
-    } else if (*i == SdfChildrenKeys->ExpressionChildren)
-    {
+    } else if (*i == SdfChildrenKeys->ExpressionChildren) {
       _TraverseChildren<Sdf_ExpressionChildPolicy>(path, func);
     }
   }
@@ -4252,8 +3975,7 @@ static void _EraseSpecAtPath(SdfAbstractData *data, const SdfPath &path)
 
 void SdfLayer::_PrimDeleteSpec(const SdfPath &path, bool inert, bool useDelegate)
 {
-  if (useDelegate && TF_VERIFY(_stateDelegate))
-  {
+  if (useDelegate && TF_VERIFY(_stateDelegate)) {
     _stateDelegate->DeleteSpec(path, inert);
     return;
   }
@@ -4266,10 +3988,12 @@ void SdfLayer::_PrimDeleteSpec(const SdfPath &path, bool inert, bool useDelegate
   Traverse(path, eraseFunc);
 }
 
-void SdfLayer::_PrimCreateSpec(const SdfPath &path, SdfSpecType specType, bool inert, bool useDelegate)
+void SdfLayer::_PrimCreateSpec(const SdfPath &path,
+                               SdfSpecType specType,
+                               bool inert,
+                               bool useDelegate)
 {
-  if (useDelegate && TF_VERIFY(_stateDelegate))
-  {
+  if (useDelegate && TF_VERIFY(_stateDelegate)) {
     _stateDelegate->CreateSpec(path, specType, inert);
     return;
   }
@@ -4288,14 +4012,12 @@ bool SdfLayer::_IsInert(const SdfPath &path,
   // If the spec has only the required SpecType field (stored
   // separately from other fields), then it doesn't affect the scene.
   const std::vector<TfToken> fields = ListFields(path);
-  if (fields.empty())
-  {
+  if (fields.empty()) {
     return true;
   }
 
   // If the spec is custom it affects the scene.
-  if (GetFieldAs<bool>(path, SdfFieldKeys->Custom, false))
-  {
+  if (GetFieldAs<bool>(path, SdfFieldKeys->Custom, false)) {
     return false;
   }
 
@@ -4304,17 +4026,16 @@ bool SdfLayer::_IsInert(const SdfPath &path,
 
   // Prims that are defs or with a specific typename always affect the scene
   // since they bring a prim into existence.
-  if (specType == SdfSpecTypePrim)
-  {
-    const SdfSpecifier specifier = GetFieldAs<SdfSpecifier>(path, SdfFieldKeys->Specifier, SdfSpecifierOver);
-    if (SdfIsDefiningSpecifier(specifier))
-    {
+  if (specType == SdfSpecTypePrim) {
+    const SdfSpecifier specifier = GetFieldAs<SdfSpecifier>(path,
+                                                            SdfFieldKeys->Specifier,
+                                                            SdfSpecifierOver);
+    if (SdfIsDefiningSpecifier(specifier)) {
       return false;
     }
 
     const TfToken type = GetFieldAs<TfToken>(path, SdfFieldKeys->TypeName);
-    if (!type.IsEmpty())
-    {
+    if (!type.IsEmpty()) {
       return false;
     }
   }
@@ -4323,37 +4044,32 @@ bool SdfLayer::_IsInert(const SdfPath &path,
   // properties should never be considered inert because they might exist to
   // instantiate an on-demand property.
   if (!requiredFieldOnlyPropertiesAreInert &&
-      (specType == SdfSpecTypeAttribute || specType == SdfSpecTypeRelationship))
-  {
+      (specType == SdfSpecTypeAttribute || specType == SdfSpecTypeRelationship)) {
     return false;
   }
 
   // Prims and properties don't affect the scene if they only contain
   // opinions about required fields.
-  if (specType == SdfSpecTypePrim || specType == SdfSpecTypeAttribute || specType == SdfSpecTypeRelationship)
-  {
+  if (specType == SdfSpecTypePrim || specType == SdfSpecTypeAttribute ||
+      specType == SdfSpecTypeRelationship) {
 
     const SdfSchema::SpecDefinition *specDefinition = GetSchema().GetSpecDefinition(specType);
-    if (!TF_VERIFY(specDefinition))
-    {
+    if (!TF_VERIFY(specDefinition)) {
       return false;
     }
 
-    TF_FOR_ALL (field, fields)
-    {
+    TF_FOR_ALL (field, fields) {
       // If specified, skip over prim name children and properties.
       // This is a special case to allow _IsInertSubtree to process
       // these children separately.
-      if (specType == SdfSpecTypePrim && ignoreChildren)
-      {
-        if (*field == SdfChildrenKeys->PrimChildren || *field == SdfChildrenKeys->PropertyChildren)
-        {
+      if (specType == SdfSpecTypePrim && ignoreChildren) {
+        if (*field == SdfChildrenKeys->PrimChildren ||
+            *field == SdfChildrenKeys->PropertyChildren) {
           continue;
         }
       }
 
-      if (specDefinition->IsRequiredField(*field))
-      {
+      if (specDefinition->IsRequiredField(*field)) {
         continue;
       }
 
@@ -4368,46 +4084,36 @@ bool SdfLayer::_IsInert(const SdfPath &path,
 
 bool SdfLayer::_IsInertSubtree(const SdfPath &path, std::vector<SdfPath> *inertSpecs)
 {
-  if (!_IsInert(path, true /*ignoreChildren*/, true /* requiredFieldOnlyPropertiesAreInert */))
-  {
+  if (!_IsInert(path, true /*ignoreChildren*/, true /* requiredFieldOnlyPropertiesAreInert */)) {
     return false;
   }
 
-  if (path.IsPrimPath())
-  {
+  if (path.IsPrimPath()) {
     std::vector<TfToken> prims;
-    if (HasField(path, SdfChildrenKeys->PrimChildren, &prims))
-    {
-      for (const TfToken &child : prims)
-      {
-        if (!_IsInertSubtree(path.AppendChild(child), inertSpecs))
-        {
+    if (HasField(path, SdfChildrenKeys->PrimChildren, &prims)) {
+      for (const TfToken &child : prims) {
+        if (!_IsInertSubtree(path.AppendChild(child), inertSpecs)) {
           return false;
         }
       }
     }
 
     std::vector<TfToken> properties;
-    if (HasField(path, SdfChildrenKeys->PropertyChildren, &properties))
-    {
-      for (const TfToken &prop : properties)
-      {
+    if (HasField(path, SdfChildrenKeys->PropertyChildren, &properties)) {
+      for (const TfToken &prop : properties) {
         const SdfPath propPath = path.AppendProperty(prop);
         if (!_IsInert(propPath,
                       /* ignoreChildren = */ false,
-                      /* requiredFieldOnlyPropertiesAreInert = */ true))
-        {
+                      /* requiredFieldOnlyPropertiesAreInert = */ true)) {
           return false;
-        } else if (inertSpecs)
-        {
+        } else if (inertSpecs) {
           inertSpecs->push_back(propPath);
         }
       }
     }
   }
 
-  if (inertSpecs)
-  {
+  if (inertSpecs) {
     inertSpecs->push_back(path);
   }
   return true;
@@ -4434,22 +4140,19 @@ bool SdfLayer::_WriteToFile(const string &newFileName,
   if (newFileName.empty())
     return false;
 
-  if ((newFileName == GetRealPath()) && !PermissionToSave())
-  {
+  if ((newFileName == GetRealPath()) && !PermissionToSave()) {
     TF_RUNTIME_ERROR("Cannot save layer @%s@, saving not allowed", newFileName.c_str());
     return false;
   }
 
   // If a file format was explicitly provided, use that regardless of the
   // file extension, else discover the file format from the file extension.
-  if (!fileFormat)
-  {
+  if (!fileFormat) {
     const string ext = Sdf_GetExtension(newFileName);
     if (!ext.empty())
       fileFormat = SdfFileFormat::FindByExtension(ext);
 
-    if (!fileFormat)
-    {
+    if (!fileFormat) {
       // Some parts of the system generate temp files
       // with garbage extensions, furthermore we do not restrict
       // users from writing to arbitrary file names, so here we must fall
@@ -4459,8 +4162,7 @@ bool SdfLayer::_WriteToFile(const string &newFileName,
   }
 
   // Disallow saving or exporting package layers via the Sdf API.
-  if (Sdf_IsPackageOrPackagedLayer(fileFormat, newFileName))
-  {
+  if (Sdf_IsPackageOrPackagedLayer(fileFormat, newFileName)) {
     TF_CODING_ERROR(
       "Cannot save layer @%s@: writing %s %s layer "
       "is not allowed through this API.",
@@ -4470,15 +4172,13 @@ bool SdfLayer::_WriteToFile(const string &newFileName,
     return false;
   }
 
-  if (!TF_VERIFY(fileFormat))
-  {
+  if (!TF_VERIFY(fileFormat)) {
     TF_RUNTIME_ERROR("Unknown file format when attempting to write '%s'", newFileName.c_str());
     return false;
   }
 
 #if AR_VERSION == 1
-  if (!ArGetResolver().CreatePathForLayer(newFileName))
-  {
+  if (!ArGetResolver().CreatePathForLayer(newFileName)) {
     TF_RUNTIME_ERROR("Cannot create path to write '%s'", newFileName.c_str());
     return false;
   }
@@ -4511,14 +4211,12 @@ bool SdfLayer::_Save(bool force) const
 {
   TRACE_FUNCTION();
 
-  if (IsMuted())
-  {
+  if (IsMuted()) {
     TF_CODING_ERROR("Cannot save muted layer @%s@", GetIdentifier().c_str());
     return false;
   }
 
-  if (IsAnonymous())
-  {
+  if (IsAnonymous()) {
     TF_CODING_ERROR("Cannot save anonymous layer @%s@", GetIdentifier().c_str());
     return false;
   }
@@ -4540,8 +4238,7 @@ bool SdfLayer::_Save(bool force) const
 
   // Record modification timestamp.
   VtValue timestamp = ArGetResolver().GetModificationTimestamp(GetIdentifier(), path);
-  if (timestamp.IsEmpty())
-  {
+  if (timestamp.IsEmpty()) {
     TF_CODING_ERROR("Unable to get modification timestamp for '%s (%s)'",
                     GetIdentifier().c_str(),
                     path.GetPathString().c_str());

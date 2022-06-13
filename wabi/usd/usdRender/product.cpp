@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRenderProduct::~UsdRenderProduct()
-{}
+UsdRenderProduct::~UsdRenderProduct() {}
 
 /* static */
 UsdRenderProduct UsdRenderProduct::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderProduct();
   }
@@ -69,8 +67,7 @@ UsdRenderProduct UsdRenderProduct::Get(const UsdStagePtr &stage, const SdfPath &
 UsdRenderProduct UsdRenderProduct::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RenderProduct");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderProduct();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdRenderProduct::GetProductTypeAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->productType);
 }
 
-UsdAttribute UsdRenderProduct::CreateProductTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRenderProduct::CreateProductTypeAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->productType,
                                     SdfValueTypeNames->Token,
@@ -123,7 +121,8 @@ UsdAttribute UsdRenderProduct::GetProductNameAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->productName);
 }
 
-UsdAttribute UsdRenderProduct::CreateProductNameAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRenderProduct::CreateProductNameAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->productName,
                                     SdfValueTypeNames->Token,

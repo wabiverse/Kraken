@@ -69,23 +69,17 @@ namespace
 
   struct Entry
   {
-    Entry()
-    {}
-    Entry(const UsdStageRefPtr &stage, Id id)
-      : stage(stage),
-        id(id)
-    {}
+    Entry() {}
+    Entry(const UsdStageRefPtr &stage, Id id) : stage(stage), id(id) {}
     UsdStageRefPtr stage;
     Id id;
   };
 
   struct ById
-  {
-  };
+  {};
 
   struct ByStage
-  {
-  };
+  {};
 
   struct ByRootLayer
   {
@@ -104,8 +98,9 @@ namespace
       boost::multi_index::hashed_unique<boost::multi_index::tag<ById>,
                                         boost::multi_index::member<Entry, Id, &Entry::id>>,
 
-      boost::multi_index::hashed_unique<boost::multi_index::tag<ByStage>,
-                                        boost::multi_index::member<Entry, UsdStageRefPtr, &Entry::stage>>,
+      boost::multi_index::hashed_unique<
+        boost::multi_index::tag<ByStage>,
+        boost::multi_index::member<Entry, UsdStageRefPtr, &Entry::stage>>,
 
       boost::multi_index::hashed_non_unique<
         boost::multi_index::tag<ByRootLayer>,
@@ -124,16 +119,13 @@ namespace
   size_t EraseIf(Index &index, Range range, Pred pred, BackIns *out)
   {
     size_t numErased = 0;
-    while (range.first != range.second)
-    {
-      if (pred(*range.first))
-      {
+    while (range.first != range.second) {
+      if (pred(*range.first)) {
         if (out)
           out->push_back(*range.first);
         index.erase(range.first++);
         ++numErased;
-      } else
-      {
+      } else {
         ++range.first;
       }
     }
@@ -159,8 +151,7 @@ namespace
       return _enabled;
     }
 
-    template<class Range>
-    void AddEntries(const Range &rng)
+    template<class Range> void AddEntries(const Range &rng)
     {
       if (IsEnabled())
         _entries.insert(_entries.end(), boost::begin(rng), boost::end(rng));
@@ -174,18 +165,15 @@ namespace
 
     void IssueMessage() const
     {
-      if (_entries.size() == 1)
-      {
+      if (_entries.size() == 1) {
         DBG("%s %s %s (id=%s)\n",
             UsdDescribe(_cache).c_str(),
             _prefix,
             UsdDescribe(_entries.front().stage).c_str(),
             _entries.front().id.ToString().c_str());
-      } else if (_entries.size() > 1)
-      {
+      } else if (_entries.size() > 1) {
         DBG("%s %s %zu entries:\n", UsdDescribe(_cache).c_str(), _prefix, _entries.size());
-        for (auto const &entry : _entries)
-        {
+        for (auto const &entry : _entries) {
           DBG("      %s (id=%s)\n", UsdDescribe(entry.stage).c_str(), entry.id.ToString().c_str());
         }
       }
@@ -197,6 +185,7 @@ namespace
     }
 
    private:
+
     vector<Entry> _entries;
     const UsdStageCache &_cache;
     const char *_prefix;
@@ -207,14 +196,11 @@ namespace
 
 struct UsdStageCacheRequest::_Mailbox
 {
-  _Mailbox()
-    : state(0)
-  {}
+  _Mailbox() : state(0) {}
 
   UsdStageRefPtr Wait()
   {
-    while (state == 1)
-    {
+    while (state == 1) {
       std::this_thread::yield();
     }
     return stage;
@@ -246,9 +232,7 @@ struct Usd_StageCacheImpl
   string debugName;
 };
 
-UsdStageCache::UsdStageCache()
-  : _impl(new _Impl)
-{}
+UsdStageCache::UsdStageCache() : _impl(new _Impl) {}
 
 UsdStageCache::UsdStageCache(const UsdStageCache &other)
 {
@@ -256,13 +240,11 @@ UsdStageCache::UsdStageCache(const UsdStageCache &other)
   _impl.reset(new _Impl(*other._impl));
 }
 
-UsdStageCache::~UsdStageCache()
-{}
+UsdStageCache::~UsdStageCache() {}
 
 void UsdStageCache::swap(UsdStageCache &other)
 {
-  if (this != &other)
-  {
+  if (this != &other) {
     {
       LockGuard lockThis(_mutex), lockOther(other._mutex);
       _impl.swap(other._impl);
@@ -273,8 +255,7 @@ void UsdStageCache::swap(UsdStageCache &other)
 
 UsdStageCache &UsdStageCache::operator=(const UsdStageCache &other)
 {
-  if (this != &other)
-  {
+  if (this != &other) {
     DBG("assigning %s from %s\n", UsdDescribe(*this).c_str(), UsdDescribe(other).c_str());
     UsdStageCache tmp(other);
     LockGuard lock(_mutex);
@@ -313,10 +294,8 @@ std::pair<UsdStageRefPtr, bool> UsdStageCache::RequestStage(UsdStageCacheRequest
         return std::make_pair(entry.stage, false);
 
     // Check to see if any pending requests can satisfy.
-    for (auto *pending : _impl->pendingRequests)
-    {
-      if (request.IsSatisfiedBy(*pending))
-      {
+    for (auto *pending : _impl->pendingRequests) {
+      if (request.IsSatisfiedBy(*pending)) {
         // Subscribe to the request so it delivers us a stage.
         pending->_Subscribe(&mailbox);
         break;
@@ -339,8 +318,7 @@ std::pair<UsdStageRefPtr, bool> UsdStageCache::RequestStage(UsdStageCacheRequest
   // issue an error only if the manufacturing process didn't issue its own.
   TfErrorMark m;
   UsdStageRefPtr stage = request.Manufacture();
-  if (!stage && m.IsClean())
-  {
+  if (!stage && m.IsClean()) {
     TF_RUNTIME_ERROR(
       "UsdStageCacheRequest failed to manufacture a valid "
       "stage.");
@@ -354,10 +332,8 @@ std::pair<UsdStageRefPtr, bool> UsdStageCache::RequestStage(UsdStageCacheRequest
   // stage is null.
   {
     LockGuard lock(_mutex);
-    if (request._data)
-    {
-      for (auto *mbox : request._data->subscribed)
-      {
+    if (request._data) {
+      for (auto *mbox : request._data->subscribed) {
         mbox->stage = stage;
         mbox->state = 2;  // delivered - this unblocks Wait()ing mboxes.
       }
@@ -415,11 +391,9 @@ UsdStageRefPtr UsdStageCache::FindOneMatching(const SdfLayerHandle &rootLayer,
     LockGuard lock(_mutex);
     StagesByRootLayer &byRootLayer = _impl->stages.get<ByRootLayer>();
     auto range = byRootLayer.equal_range(rootLayer);
-    for (auto entryIt = range.first; entryIt != range.second; ++entryIt)
-    {
+    for (auto entryIt = range.first; entryIt != range.second; ++entryIt) {
       const auto &entry = *entryIt;
-      if (entry.stage->GetSessionLayer() == sessionLayer)
-      {
+      if (entry.stage->GetSessionLayer() == sessionLayer) {
         result = entry.stage;
         break;
       }
@@ -429,7 +403,8 @@ UsdStageRefPtr UsdStageCache::FindOneMatching(const SdfLayerHandle &rootLayer,
   DBG("%s by rootLayer%s, sessionLayer%s in %s\n",
       (result ? FMT("found %s", UsdDescribe(result).c_str()) : "failed to find stage"),
       (result ? "" : FMT(" @%s@", rootLayer->GetIdentifier().c_str())),
-      (result ? "" : (!sessionLayer ? " <null>" : FMT(" @%s@", sessionLayer->GetIdentifier().c_str()))),
+      (result ? "" :
+                (!sessionLayer ? " <null>" : FMT(" @%s@", sessionLayer->GetIdentifier().c_str()))),
       UsdDescribe(*this).c_str());
 
   return result;
@@ -443,11 +418,9 @@ UsdStageRefPtr UsdStageCache::FindOneMatching(const SdfLayerHandle &rootLayer,
     LockGuard lock(_mutex);
     StagesByRootLayer &byRootLayer = _impl->stages.get<ByRootLayer>();
     auto range = byRootLayer.equal_range(rootLayer);
-    for (auto entryIt = range.first; entryIt != range.second; ++entryIt)
-    {
+    for (auto entryIt = range.first; entryIt != range.second; ++entryIt) {
       const auto &entry = *entryIt;
-      if (entry.stage->GetPathResolverContext() == pathResolverContext)
-      {
+      if (entry.stage->GetPathResolverContext() == pathResolverContext) {
         result = entry.stage;
         break;
       }
@@ -471,12 +444,10 @@ UsdStageRefPtr UsdStageCache::FindOneMatching(const SdfLayerHandle &rootLayer,
     LockGuard lock(_mutex);
     StagesByRootLayer &byRootLayer = _impl->stages.get<ByRootLayer>();
     auto range = byRootLayer.equal_range(rootLayer);
-    for (auto entryIt = range.first; entryIt != range.second; ++entryIt)
-    {
+    for (auto entryIt = range.first; entryIt != range.second; ++entryIt) {
       const auto &entry = *entryIt;
       if (entry.stage->GetSessionLayer() == sessionLayer &&
-          entry.stage->GetPathResolverContext() == pathResolverContext)
-      {
+          entry.stage->GetPathResolverContext() == pathResolverContext) {
         result = entry.stage;
         break;
       }
@@ -486,7 +457,8 @@ UsdStageRefPtr UsdStageCache::FindOneMatching(const SdfLayerHandle &rootLayer,
   DBG("%s by rootLayer%s, sessionLayer%s, pathResolverContext in %s\n",
       (result ? FMT("found %s", UsdDescribe(result).c_str()) : "failed to find stage"),
       (result ? "" : FMT(" @%s@", rootLayer->GetIdentifier().c_str())),
-      (result ? "" : (!sessionLayer ? " <null>" : FMT(" @%s@", sessionLayer->GetIdentifier().c_str()))),
+      (result ? "" :
+                (!sessionLayer ? " <null>" : FMT(" @%s@", sessionLayer->GetIdentifier().c_str()))),
       UsdDescribe(*this).c_str());
 
   return result;
@@ -498,23 +470,22 @@ std::vector<UsdStageRefPtr> UsdStageCache::FindAllMatching(const SdfLayerHandle 
   StagesByRootLayer &byRootLayer = _impl->stages.get<ByRootLayer>();
   vector<UsdStageRefPtr> result;
   auto range = byRootLayer.equal_range(rootLayer);
-  for (auto entryIt = range.first; entryIt != range.second; ++entryIt)
-  {
+  for (auto entryIt = range.first; entryIt != range.second; ++entryIt) {
     const auto &entry = *entryIt;
     result.push_back(entry.stage);
   }
   return result;
 }
 
-std::vector<UsdStageRefPtr> UsdStageCache::FindAllMatching(const SdfLayerHandle &rootLayer,
-                                                           const SdfLayerHandle &sessionLayer) const
+std::vector<UsdStageRefPtr> UsdStageCache::FindAllMatching(
+  const SdfLayerHandle &rootLayer,
+  const SdfLayerHandle &sessionLayer) const
 {
   LockGuard lock(_mutex);
   StagesByRootLayer &byRootLayer = _impl->stages.get<ByRootLayer>();
   vector<UsdStageRefPtr> result;
   auto range = byRootLayer.equal_range(rootLayer);
-  for (auto entryIt = range.first; entryIt != range.second; ++entryIt)
-  {
+  for (auto entryIt = range.first; entryIt != range.second; ++entryIt) {
     const auto &entry = *entryIt;
     if (entry.stage->GetSessionLayer() == sessionLayer)
       result.push_back(entry.stage);
@@ -530,8 +501,7 @@ std::vector<UsdStageRefPtr> UsdStageCache::FindAllMatching(
   StagesByRootLayer &byRootLayer = _impl->stages.get<ByRootLayer>();
   vector<UsdStageRefPtr> result;
   auto range = byRootLayer.equal_range(rootLayer);
-  for (auto entryIt = range.first; entryIt != range.second; ++entryIt)
-  {
+  for (auto entryIt = range.first; entryIt != range.second; ++entryIt) {
     const auto &entry = *entryIt;
     if (entry.stage->GetPathResolverContext() == pathResolverContext)
       result.push_back(entry.stage);
@@ -548,12 +518,10 @@ std::vector<UsdStageRefPtr> UsdStageCache::FindAllMatching(
   StagesByRootLayer &byRootLayer = _impl->stages.get<ByRootLayer>();
   vector<UsdStageRefPtr> result;
   auto range = byRootLayer.equal_range(rootLayer);
-  for (auto entryIt = range.first; entryIt != range.second; ++entryIt)
-  {
+  for (auto entryIt = range.first; entryIt != range.second; ++entryIt) {
     const auto &entry = *entryIt;
     if (entry.stage->GetSessionLayer() == sessionLayer &&
-        entry.stage->GetPathResolverContext() == pathResolverContext)
-    {
+        entry.stage->GetPathResolverContext() == pathResolverContext) {
       result.push_back(entry.stage);
     }
   }
@@ -570,8 +538,7 @@ UsdStageCache::Id UsdStageCache::GetId(const UsdStageRefPtr &stage) const
 
 UsdStageCache::Id UsdStageCache::Insert(const UsdStageRefPtr &stage)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Inserted null stage in cache");
     return Id();
   }
@@ -622,8 +589,7 @@ size_t UsdStageCache::EraseAll(const SdfLayerHandle &rootLayer)
   size_t result;
   {
     LockGuard lock(_mutex);
-    if (debug.IsEnabled())
-    {
+    if (debug.IsEnabled()) {
       debug.AddEntries(_impl->stages.get<ByRootLayer>().equal_range(rootLayer));
     }
     result = _impl->stages.get<ByRootLayer>().erase(rootLayer);
@@ -641,7 +607,9 @@ size_t UsdStageCache::EraseAll(const SdfLayerHandle &rootLayer, const SdfLayerHa
     numErased = EraseIf(
       byRootLayer,
       byRootLayer.equal_range(rootLayer),
-      [&sessionLayer](Entry const &e) { return e.stage->GetSessionLayer() == sessionLayer; },
+      [&sessionLayer](Entry const &e) {
+        return e.stage->GetSessionLayer() == sessionLayer;
+      },
       debug.GetEntryVec());
   }
   return numErased;
@@ -695,14 +663,14 @@ string UsdStageCache::GetDebugName() const
 
 string UsdDescribe(const UsdStageCache &cache)
 {
-  return TfStringPrintf(
-    "stage cache %s (size=%zu)",
-    (cache.GetDebugName().empty() ? FMT("%p", &cache) : FMT("\"%s\"", cache.GetDebugName().c_str())),
-    cache.Size());
+  return TfStringPrintf("stage cache %s (size=%zu)",
+                        (cache.GetDebugName().empty() ?
+                           FMT("%p", &cache) :
+                           FMT("\"%s\"", cache.GetDebugName().c_str())),
+                        cache.Size());
 }
 
-UsdStageCacheRequest::~UsdStageCacheRequest()
-{}
+UsdStageCacheRequest::~UsdStageCacheRequest() {}
 
 void UsdStageCacheRequest::_Subscribe(_Mailbox *mailbox)
 {

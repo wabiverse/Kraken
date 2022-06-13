@@ -47,8 +47,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingSphereAdapter::~UsdImagingSphereAdapter()
-{}
+UsdImagingSphereAdapter::~UsdImagingSphereAdapter() {}
 
 bool UsdImagingSphereAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -59,19 +58,23 @@ SdfPath UsdImagingSphereAdapter::Populate(UsdPrim const &prim,
                                           UsdImagingIndexProxy *index,
                                           UsdImagingInstancerContext const *instancerContext)
 {
-  return _AddRprim(HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->mesh,
+                   prim,
+                   index,
+                   GetMaterialUsdPath(prim),
+                   instancerContext);
 }
 
-void UsdImagingSphereAdapter::TrackVariability(UsdPrim const &prim,
-                                               SdfPath const &cachePath,
-                                               HdDirtyBits *timeVaryingBits,
-                                               UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingSphereAdapter::TrackVariability(
+  UsdPrim const &prim,
+  SdfPath const &cachePath,
+  HdDirtyBits *timeVaryingBits,
+  UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
 
   // Check DirtyPoints before doing variability checks, to see if we can skip.
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
-  {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
     _IsVarying(prim,
                UsdGeomTokens->radius,
                HdChangeTracker::DirtyPoints,
@@ -85,8 +88,7 @@ HdDirtyBits UsdImagingSphereAdapter::ProcessPropertyChange(UsdPrim const &prim,
                                                            SdfPath const &cachePath,
                                                            TfToken const &propertyName)
 {
-  if (propertyName == UsdGeomTokens->radius)
-  {
+  if (propertyName == UsdGeomTokens->radius) {
     return HdChangeTracker::DirtyPoints;
   }
 
@@ -105,9 +107,9 @@ static GfMatrix4d _GetImplicitGeomScaleTransform(UsdPrim const &prim, UsdTimeCod
   UsdGeomSphere sphere(prim);
 
   double radius = 1.0;
-  if (!sphere.GetRadiusAttr().Get(&radius, time))
-  {
-    TF_WARN("Could not evaluate double-valued radius attribute on prim %s", prim.GetPath().GetText());
+  if (!sphere.GetRadiusAttr().Get(&radius, time)) {
+    TF_WARN("Could not evaluate double-valued radius attribute on prim %s",
+            prim.GetPath().GetText());
   }
 
   return UsdImagingGenerateSphereOrCubeTransform(2.0 * radius);
@@ -119,8 +121,7 @@ VtValue UsdImagingSphereAdapter::GetMeshPoints(UsdPrim const &prim, UsdTimeCode 
   // Return scaled points (and not that of a unit geometry)
   VtVec3fArray points = UsdImagingGetUnitSphereMeshPoints();
   GfMatrix4d scale = _GetImplicitGeomScaleTransform(prim, time);
-  for (GfVec3f &pt : points)
-  {
+  for (GfVec3f &pt : points) {
     pt = scale.Transform(pt);
   }
 

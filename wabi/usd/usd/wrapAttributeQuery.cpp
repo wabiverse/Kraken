@@ -54,7 +54,8 @@ namespace
     return result;
   }
 
-  static vector<double> _GetTimeSamplesInInterval(const UsdAttributeQuery &query, const GfInterval &interval)
+  static vector<double> _GetTimeSamplesInInterval(const UsdAttributeQuery &query,
+                                                  const GfInterval &interval)
   {
     vector<double> result;
     query.GetTimeSamplesInInterval(interval, &result);
@@ -68,8 +69,9 @@ namespace
     return result;
   }
 
-  static vector<double> _GetUnionedTimeSamplesInInterval(const vector<UsdAttributeQuery> &attrQueries,
-                                                         const GfInterval &interval)
+  static vector<double> _GetUnionedTimeSamplesInInterval(
+    const vector<UsdAttributeQuery> &attrQueries,
+    const GfInterval &interval)
   {
     vector<double> result;
     UsdAttributeQuery::GetUnionedTimeSamplesInInterval(attrQueries, interval, &result);
@@ -81,8 +83,7 @@ namespace
     double lower = 0.0, upper = 0.0;
     bool hasTimeSamples = false;
 
-    if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples))
-    {
+    if (self.GetBracketingTimeSamples(desiredTime, &lower, &upper, &hasTimeSamples)) {
       return hasTimeSamples ? make_tuple(lower, upper) : make_tuple();
     }
     return object();

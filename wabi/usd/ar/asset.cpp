@@ -33,10 +33,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-ArAsset::ArAsset()
-{}
+ArAsset::ArAsset() {}
 
-ArAsset::~ArAsset()
-{}
+ArAsset::~ArAsset() {}
 
 WABI_NAMESPACE_END

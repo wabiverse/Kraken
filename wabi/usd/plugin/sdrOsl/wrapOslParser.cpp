@@ -43,7 +43,8 @@ WABI_NAMESPACE_USING
 
 // Expose the unique_ptr returned from `Parse()` as a raw ptr. The Python side
 // will be responsible for managing this object.
-static SdrShaderNodePtr _Parse(SdrOslParserPlugin &self, const NdrNodeDiscoveryResult &discoveryResult)
+static SdrShaderNodePtr _Parse(SdrOslParserPlugin &self,
+                               const NdrNodeDiscoveryResult &discoveryResult)
 {
   return dynamic_cast<SdrShaderNodePtr>(self.Parse(discoveryResult).release());
 }

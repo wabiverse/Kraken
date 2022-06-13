@@ -52,7 +52,10 @@
 WABI_NAMESPACE_BEGIN
 
 template<typename T>
-VtValue _CreateVtArray(int numElements, int arraySize, int stride, std::vector<unsigned char> const &data)
+VtValue _CreateVtArray(int numElements,
+                       int arraySize,
+                       int stride,
+                       std::vector<unsigned char> const &data)
 {
   VtArray<T> array(numElements * arraySize);
   if (numElements == 0)
@@ -63,14 +66,11 @@ VtValue _CreateVtArray(int numElements, int arraySize, int stride, std::vector<u
 
   TF_VERIFY(data.size() == stride * (numElements - 1) + arraySize * sizeof(T));
 
-  if (stride == static_cast<int>(arraySize * sizeof(T)))
-  {
+  if (stride == static_cast<int>(arraySize * sizeof(T))) {
     memcpy(dst, src, numElements * arraySize * sizeof(T));
-  } else
-  {
+  } else {
     // deinterleaving
-    for (int i = 0; i < numElements; ++i)
-    {
+    for (int i = 0; i < numElements; ++i) {
       memcpy(dst, src, arraySize * sizeof(T));
       dst += arraySize * sizeof(T);
       src += stride;
@@ -79,7 +79,11 @@ VtValue _CreateVtArray(int numElements, int arraySize, int stride, std::vector<u
   return VtValue(array);
 }
 
-VtValue HdPhGLUtils::ReadBuffer(uint64_t vbo, HdTupleType tupleType, int vboOffset, int stride, int numElems)
+VtValue HdPhGLUtils::ReadBuffer(uint64_t vbo,
+                                HdTupleType tupleType,
+                                int vboOffset,
+                                int stride,
+                                int numElems)
 {
   if (glBufferSubData == NULL)
     return VtValue();
@@ -113,13 +117,10 @@ VtValue HdPhGLUtils::ReadBuffer(uint64_t vbo, HdTupleType tupleType, int vboOffs
   // Read data from GL
   std::vector<unsigned char> tmp(vboSize);
 
-  if (vbo > 0)
-  {
-    if (caps.directStateAccessEnabled)
-    {
+  if (vbo > 0) {
+    if (caps.directStateAccessEnabled) {
       glGetNamedBufferSubData(vbo, vboOffset, vboSize, &tmp[0]);
-    } else
-    {
+    } else {
       glBindBuffer(GL_ARRAY_BUFFER, vbo);
       glGetBufferSubData(GL_ARRAY_BUFFER, vboOffset, vboSize, &tmp[0]);
       glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -127,8 +128,7 @@ VtValue HdPhGLUtils::ReadBuffer(uint64_t vbo, HdTupleType tupleType, int vboOffs
   }
 
   // Convert data to Vt
-  switch (tupleType.type)
-  {
+  switch (tupleType.type) {
     case HdTypeInt8:
       return _CreateVtArray<char>(numElems, arraySize, stride, tmp);
     case HdTypeInt16:
@@ -176,8 +176,7 @@ VtValue HdPhGLUtils::ReadBuffer(uint64_t vbo, HdTupleType tupleType, int vboOffs
 void HdPhBufferRelocator::AddRange(ptrdiff_t readOffset, ptrdiff_t writeOffset, ptrdiff_t copySize)
 {
   _CopyUnit unit(readOffset, writeOffset, copySize);
-  if (_queue.empty() || (!_queue.back().Concat(unit)))
-  {
+  if (_queue.empty() || (!_queue.back().Concat(unit))) {
     _queue.push_back(unit);
   }
 }
@@ -188,8 +187,7 @@ void HdPhBufferRelocator::Commit(HgiBlitCmds *blitCmds)
   blitOp.gpuSourceBuffer = _srcBuffer;
   blitOp.gpuDestinationBuffer = _dstBuffer;
 
-  TF_FOR_ALL (it, _queue)
-  {
+  TF_FOR_ALL (it, _queue) {
     blitOp.sourceByteOffset = it->readOffset;
     blitOp.byteSize = it->copySize;
     blitOp.destinationByteOffset = it->writeOffset;

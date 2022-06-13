@@ -48,7 +48,9 @@ GarchGLXContextState::GarchGLXContextState()
   // Do nothing
 }
 
-GarchGLXContextState::GarchGLXContextState(Display *display_, GLXDrawable drawable_, GLXContext context_)
+GarchGLXContextState::GarchGLXContextState(Display *display_,
+                                           GLXDrawable drawable_,
+                                           GLXContext context_)
   : display(display_),
     drawable(drawable_),
     context(context_),
@@ -78,19 +80,16 @@ bool GarchGLXContextState::IsValid() const
 
 void GarchGLXContextState::MakeCurrent()
 {
-  if (IsValid())
-  {
+  if (IsValid()) {
     glXMakeCurrent(display, drawable, context);
-  } else if (_defaultCtor)
-  {
+  } else if (_defaultCtor) {
     DoneCurrent();
   }
 }
 
 void GarchGLXContextState::DoneCurrent()
 {
-  if (Display *display = glXGetCurrentDisplay())
-  {
+  if (Display *display = glXGetCurrentDisplay()) {
     glXMakeCurrent(display, None, NULL);
   }
 }

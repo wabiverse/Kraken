@@ -71,11 +71,9 @@ namespace
     TfToken sourceName;
     UsdShadeAttributeType sourceType;
 
-    if (self.GetConnectedSource(&source, &sourceName, &sourceType))
-    {
+    if (self.GetConnectedSource(&source, &sourceName, &sourceType)) {
       return boost::python::make_tuple(source, sourceName, sourceType);
-    } else
-    {
+    } else {
       return object();
     }
   }
@@ -112,7 +110,8 @@ void wrapUsdShadeInput()
   bool (Input::*ConnectToSource_4)(UsdShadeOutput const &) const = &Input::ConnectToSource;
 
   bool (Input::*ConnectToSource_5)(UsdShadeConnectionSourceInfo const &,
-                                   Input::ConnectionModification const mod) const = &Input::ConnectToSource;
+                                   Input::ConnectionModification const mod)
+    const = &Input::ConnectToSource;
 
   bool (Input::*CanConnect_1)(UsdAttribute const &) const = &Input::CanConnect;
 

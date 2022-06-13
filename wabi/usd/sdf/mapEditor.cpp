@@ -39,39 +39,30 @@ WABI_NAMESPACE_BEGIN
 // Sdf_MapEditor<T>
 //
 
-template<class T>
-Sdf_MapEditor<T>::Sdf_MapEditor()
-{}
+template<class T> Sdf_MapEditor<T>::Sdf_MapEditor() {}
 
-template<class T>
-Sdf_MapEditor<T>::~Sdf_MapEditor()
-{}
+template<class T> Sdf_MapEditor<T>::~Sdf_MapEditor() {}
 
 //
 // Sdf_LsdMapEditor<T>
 //
 
-template<class T>
-class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
+template<class T> class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
 {
  public:
+
   typedef typename Sdf_MapEditor<T>::key_type key_type;
   typedef typename Sdf_MapEditor<T>::mapped_type mapped_type;
   typedef typename Sdf_MapEditor<T>::value_type value_type;
   typedef typename Sdf_MapEditor<T>::iterator iterator;
 
-  Sdf_LsdMapEditor(const SdfSpecHandle &owner, const TfToken &field)
-    : _owner(owner),
-      _field(field)
+  Sdf_LsdMapEditor(const SdfSpecHandle &owner, const TfToken &field) : _owner(owner), _field(field)
   {
     const VtValue &dataVal = _owner->GetField(_field);
-    if (!dataVal.IsEmpty())
-    {
-      if (dataVal.IsHolding<T>())
-      {
+    if (!dataVal.IsEmpty()) {
+      if (dataVal.IsHolding<T>()) {
         _data = dataVal.Get<T>();
-      } else
-      {
+      } else {
         TF_CODING_ERROR("%s does not hold value of expected type.", GetLocation().c_str());
       }
     }
@@ -117,8 +108,7 @@ class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
   virtual std::pair<iterator, bool> Insert(const value_type &value)
   {
     const std::pair<iterator, bool> insertStatus = _data.insert(value);
-    if (insertStatus.second)
-    {
+    if (insertStatus.second) {
       _UpdateDataInSpec();
     }
 
@@ -128,8 +118,7 @@ class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
   virtual bool Erase(const key_type &key)
   {
     const bool didErase = (_data.erase(key) != 0);
-    if (didErase)
-    {
+    if (didErase) {
       _UpdateDataInSpec();
     }
 
@@ -138,8 +127,7 @@ class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
 
   virtual SdfAllowed IsValidKey(const key_type &key) const
   {
-    if (const SdfSchema::FieldDefinition *def = _owner->GetSchema().GetFieldDefinition(_field))
-    {
+    if (const SdfSchema::FieldDefinition *def = _owner->GetSchema().GetFieldDefinition(_field)) {
       return def->IsValidMapKey(key);
     }
     return true;
@@ -147,31 +135,29 @@ class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
 
   virtual SdfAllowed IsValidValue(const mapped_type &value) const
   {
-    if (const SdfSchema::FieldDefinition *def = _owner->GetSchema().GetFieldDefinition(_field))
-    {
+    if (const SdfSchema::FieldDefinition *def = _owner->GetSchema().GetFieldDefinition(_field)) {
       return def->IsValidMapValue(value);
     }
     return true;
   }
 
  private:
+
   void _UpdateDataInSpec()
   {
     TfAutoMallocTag2 tag("Sdf", "Sdf_LsdMapEditor::_UpdateDataInSpec");
 
-    if (TF_VERIFY(_owner))
-    {
-      if (_data.empty())
-      {
+    if (TF_VERIFY(_owner)) {
+      if (_data.empty()) {
         _owner->ClearField(_field);
-      } else
-      {
+      } else {
         _owner->SetField(_field, _data);
       }
     }
   }
 
  private:
+
   SdfSpecHandle _owner;
   TfToken _field;
   T _data;
@@ -182,7 +168,8 @@ class Sdf_LsdMapEditor : public Sdf_MapEditor<T>
 //
 
 template<class T>
-boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &owner, const TfToken &field)
+boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &owner,
+                                                        const TfToken &field)
 {
   return boost::shared_ptr<Sdf_MapEditor<T>>(new Sdf_LsdMapEditor<T>(owner, field));
 }

@@ -42,7 +42,6 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<TraceCollectionAvailable, TfType::Bases<TfNotice>>();
 }
 
-TraceCollectionAvailable::~TraceCollectionAvailable()
-{}
+TraceCollectionAvailable::~TraceCollectionAvailable() {}
 
 WABI_NAMESPACE_END

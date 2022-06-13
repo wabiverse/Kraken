@@ -24,11 +24,9 @@ TF_DEFINE_PRIVATE_TOKENS(RprUsdUDIMTags, ((arnoldTag, "<UDIM>"))((sidefxTag, "%(
 
 bool RprUsdGetUDIMFormatString(std::string const &filepath, std::string *out_formatString)
 {
-  for (auto &udimTag : RprUsdUDIMTags->allTokens)
-  {
+  for (auto &udimTag : RprUsdUDIMTags->allTokens) {
     auto idx = filepath.rfind(udimTag.GetString());
-    if (idx != std::string::npos)
-    {
+    if (idx != std::string::npos) {
       *out_formatString = filepath;
       out_formatString->replace(idx, udimTag.size(), "%i");
       return true;
@@ -93,26 +91,23 @@ static const RprUsdTextureData::GLMetadata g_GLMetadata[HioFormatCount] = {
   {GL_NONE, GL_NONE,           GL_NONE       }, // UNorm8srgb - not supported by OpenGL
   {GL_NONE, GL_NONE,           GL_NONE       }, // UNorm8Vec2srgb - not supported by OpenGL
   {
-   GL_RGB,
-   GL_UNSIGNED_BYTE,
-   GL_SRGB8,
-   }, // UNorm8Vec3srgb
-  {GL_RGBA,           GL_UNSIGNED_BYTE,                      GL_SRGB8_ALPHA8                                 }, // UNorm8Vec4sRGB
+   GL_RGB,  GL_UNSIGNED_BYTE,
+   GL_SRGB8,         }, // UNorm8Vec3srgb
+  {GL_RGBA,        GL_UNSIGNED_BYTE,                   GL_SRGB8_ALPHA8                  }, // UNorm8Vec4sRGB
 
-  {GL_RGB,       GL_FLOAT,                   GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT         }, // BC6FloatVec3
-  {GL_RGB,       GL_FLOAT,                   GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT}, // BC6UFloatVec3
+  {GL_RGB,       GL_FLOAT,                   GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT                  }, // BC6FloatVec3
+  {GL_RGB,       GL_FLOAT,                   GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT         }, // BC6UFloatVec3
   {GL_RGBA,       GL_UNSIGNED_BYTE,                  GL_COMPRESSED_RGBA_BPTC_UNORM         }, // BC7UNorm8Vec4
-  {GL_RGBA,       GL_UNSIGNED_BYTE,                  GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM                        }, // BC7UNorm8Vec4srgb
-  {GL_RGBA,       GL_UNSIGNED_BYTE,                  GL_COMPRESSED_RGBA_S3TC_DXT1_EXT}, // BC1UNorm8Vec4
-  {GL_RGBA,       GL_UNSIGNED_BYTE,                  GL_COMPRESSED_RGBA_S3TC_DXT5_EXT}, // BC3UNorm8Vec4
+  {GL_RGBA,       GL_UNSIGNED_BYTE,                  GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM         }, // BC7UNorm8Vec4srgb
+  {GL_RGBA,       GL_UNSIGNED_BYTE,                  GL_COMPRESSED_RGBA_S3TC_DXT1_EXT         }, // BC1UNorm8Vec4
+  {GL_RGBA,       GL_UNSIGNED_BYTE,                  GL_COMPRESSED_RGBA_S3TC_DXT5_EXT                                       }, // BC3UNorm8Vec4
 };
 
 std::shared_ptr<RprUsdTextureData> RprUsdTextureData::New(std::string const &filepath)
 {
   auto ret = std::make_unique<RprUsdTextureData>();
   auto hioImage = HioImage::OpenForReading(filepath);
-  if (!hioImage)
-  {
+  if (!hioImage) {
     return nullptr;
   }
 
@@ -127,8 +122,7 @@ std::shared_ptr<RprUsdTextureData> RprUsdTextureData::New(std::string const &fil
   ret->_data = std::make_unique<uint8_t[]>(dataSize);
   ret->_hioStorageSpec.data = ret->_data.get();
 
-  if (!hioImage->Read(ret->_hioStorageSpec))
-  {
+  if (!hioImage->Read(ret->_hioStorageSpec)) {
     return nullptr;
   }
 

@@ -57,9 +57,10 @@ void wrapUsdNotice()
 {
   scope s = class_<UsdNotice>("Notice", no_init);
 
-  TfPyNoticeWrapper<UsdNotice::StageNotice, TfNotice>::Wrap().def("GetStage",
-                                                                  &UsdNotice::StageNotice::GetStage,
-                                                                  return_value_policy<return_by_value>());
+  TfPyNoticeWrapper<UsdNotice::StageNotice, TfNotice>::Wrap().def(
+    "GetStage",
+    &UsdNotice::StageNotice::GetStage,
+    return_value_policy<return_by_value>());
 
   TfPyNoticeWrapper<UsdNotice::StageContentsChanged, UsdNotice::StageNotice>::Wrap();
 
@@ -68,7 +69,9 @@ void wrapUsdNotice()
     .def("ResyncedObject", &UsdNotice::ObjectsChanged::ResyncedObject)
     .def("ChangedInfoOnly", &UsdNotice::ObjectsChanged::ChangedInfoOnly)
     .def("GetResyncedPaths", &_GetResyncedPaths, return_value_policy<return_by_value>())
-    .def("GetChangedInfoOnlyPaths", &_GetChangedInfoOnlyPaths, return_value_policy<return_by_value>())
+    .def("GetChangedInfoOnlyPaths",
+         &_GetChangedInfoOnlyPaths,
+         return_value_policy<return_by_value>())
     .def("GetChangedFields",
          (TfTokenVector(UsdNotice::ObjectsChanged::*)(const UsdObject &) const) &
            UsdNotice::ObjectsChanged::GetChangedFields,

@@ -74,50 +74,42 @@ void HdCyclesParseUDIMS(const ccl::string &a_filepath, ccl::vector<int> &a_tiles
   std::string baseFileName = filepath.stem().string().substr(0, offset);
 
   std::vector<std::string> files;
-  try
-  {
+  try {
     boost::filesystem::path path(ccl::path_dirname(a_filepath));
-    if (boost::filesystem::is_directory(path))
-    {
-      for (boost::filesystem::directory_iterator it(path); it != boost::filesystem::directory_iterator();
-           ++it)
-      {
-        try
-        {
+    if (boost::filesystem::is_directory(path)) {
+      for (boost::filesystem::directory_iterator it(path);
+           it != boost::filesystem::directory_iterator();
+           ++it) {
+        try {
           if (boost::filesystem::is_regular_file(it->status()) ||
-              boost::filesystem::is_symlink(it->status()))
-          {
+              boost::filesystem::is_symlink(it->status())) {
             std::string foundFile = boost::filesystem::basename(it->path().filename());
 
-            if (baseFileName == (foundFile.substr(0, offset)))
-            {
+            if (baseFileName == (foundFile.substr(0, offset))) {
               files.push_back(foundFile);
             }
           }
         }
-        catch (boost::exception &e)
-        {
+        catch (boost::exception &e) {
           TF_WARN("Filesystem error in HdCyclesParseUDIMS() when parsing file %s",
                   it->path().filename().c_str());
         }
       }
     }
   }
-  catch (boost::exception &e)
-  {
-    TF_WARN("Filesystem error in HdCyclesParseUDIMS() when parsing directory %s", a_filepath.c_str());
+  catch (boost::exception &e) {
+    TF_WARN("Filesystem error in HdCyclesParseUDIMS() when parsing directory %s",
+            a_filepath.c_str());
   }
 
   a_tiles.clear();
 
-  if (files.empty())
-  {
+  if (files.empty()) {
     TF_WARN("Could not find any tiles for UDIM texture %s", a_filepath.c_str());
     return;
   }
 
-  for (std::string file : files)
-  {
+  for (std::string file : files) {
     a_tiles.push_back(atoi(file.substr(offset, offset + 3).c_str()));
   }
 }
@@ -204,8 +196,7 @@ ccl::Shader *HdCyclesCreateAttribColorSurface()
 // if it's available in an hydra delegate
 const char *_HdInterpolationStr(const HdInterpolation &i)
 {
-  switch (i)
-  {
+  switch (i) {
     case HdInterpolationConstant:
       return "Constant";
     case HdInterpolationUniform:
@@ -228,18 +219,15 @@ bool _DumpGraph(ccl::ShaderGraph *shaderGraph, const char *name)
 
   static const HdCyclesConfig &config = HdCyclesConfig::GetInstance();
 
-  if (config.cycles_shader_graph_dump_dir.size() > 0)
-  {
-    std::string dump_location = config.cycles_shader_graph_dump_dir + "/" + TfMakeValidIdentifier(name) +
-                                "_graph.txt";
+  if (config.cycles_shader_graph_dump_dir.size() > 0) {
+    std::string dump_location = config.cycles_shader_graph_dump_dir + "/" +
+                                TfMakeValidIdentifier(name) + "_graph.txt";
     std::cout << "Dumping shader graph: " << dump_location << '\n';
-    try
-    {
+    try {
       shaderGraph->dump_graph(dump_location.c_str());
       return true;
     }
-    catch (...)
-    {
+    catch (...) {
       std::cout << "Couldn't dump shadergraph: " << dump_location << "\n";
     }
   }
@@ -256,10 +244,11 @@ bool _DumpGraph(ccl::ShaderGraph *shaderGraph, const char *name)
 // UPDATE:
 // The function now resamples the transforms at uniform intervals
 // rendering more correctly.
-HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::Object *object,
-                                                                           HdSceneDelegate *delegate,
-                                                                           const SdfPath &id,
-                                                                           bool use_motion)
+HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(
+  ccl::Object *object,
+  HdSceneDelegate *delegate,
+  const SdfPath &id,
+  bool use_motion)
 {
   if (!object)
     return {};
@@ -270,29 +259,24 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::
   delegate->SampleTransform(id, &xf);
   size_t sampleCount = xf.count;
 
-  if (sampleCount == 0)
-  {
+  if (sampleCount == 0) {
     object->tfm = ccl::transform_identity();
     return xf;
   }
 
   object->tfm = mat4d_to_transform(xf.values.data()[0]);
-  if (sampleCount == 1)
-  {
+  if (sampleCount == 1) {
     return xf;
   }
 
-  if (!use_motion)
-  {
+  if (!use_motion) {
     return xf;
   }
 
-  if (object->geometry && object->geometry->motion_steps == sampleCount)
-  {
+  if (object->geometry && object->geometry->motion_steps == sampleCount) {
     object->geometry->use_motion_blur = true;
 
-    if (object->geometry->type == ccl::Geometry::MESH)
-    {
+    if (object->geometry->type == ccl::Geometry::MESH) {
       auto mesh = dynamic_cast<ccl::Mesh *>(object->geometry);
       if (mesh->transform_applied)
         mesh->need_update = true;
@@ -307,13 +291,11 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::
 
     // For each step, we use the available data from the neighbors
     // to calculate the transforms at uniform steps
-    for (size_t i = 0; i < numMotionSteps; ++i)
-    {
+    for (size_t i = 0; i < numMotionSteps; ++i) {
       const float stepTime = xf.times.front() + motionStepSize * static_cast<float>(i);
 
       // We always have the transforms at the boundaries
-      if (i == 0 || i == numMotionSteps - 1)
-      {
+      if (i == 0 || i == numMotionSteps - 1) {
         object->motion[i] = mat4d_to_transform(xf.values.data()[i]);
         continue;
       }
@@ -321,24 +303,20 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::
       // Find closest left/right neighbors
       float prevTimeDiff = -INFINITY, nextTimeDiff = INFINITY;
       int iXfPrev = -1, iXfNext = -1;
-      for (int j = 0; j < sampleCount; ++j)
-      {
+      for (int j = 0; j < sampleCount; ++j) {
         // If we only have three samples, we prefer to recalculate
         // the intermediate one as the left/right are calculated
         // using linear interpolation, leading to artifacts
-        if (i != 1 && (xf.times.data()[j] - stepTime) < 1e-5f)
-        {
+        if (i != 1 && (xf.times.data()[j] - stepTime) < 1e-5f) {
           iXfPrev = iXfNext = j;
           break;
         }
 
         const float stepTimeDiff = xf.times.data()[j] - stepTime;
-        if (stepTimeDiff < 0 && stepTimeDiff > prevTimeDiff)
-        {
+        if (stepTimeDiff < 0 && stepTimeDiff > prevTimeDiff) {
           iXfPrev = j;
           prevTimeDiff = stepTimeDiff;
-        } else if (stepTimeDiff > 0 && stepTimeDiff < nextTimeDiff)
-        {
+        } else if (stepTimeDiff > 0 && stepTimeDiff < nextTimeDiff) {
           iXfNext = j;
           nextTimeDiff = stepTimeDiff;
         }
@@ -347,13 +325,11 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::
 
       // If there is an authored sample for this specific timestep
       // we copy it.
-      if (iXfPrev == iXfNext)
-      {
+      if (iXfPrev == iXfNext) {
         object->motion[i] = mat4d_to_transform(xf.values.data()[iXfPrev]);
       }
       // Otherwise we interpolate the neighboring matrices
-      else
-      {
+      else {
         // Should the type conversion be precomputed?
         ccl::Transform xfPrev = mat4d_to_transform(xf.values.data()[iXfPrev]);
         ccl::Transform xfNext = mat4d_to_transform(xf.values.data()[iXfNext]);
@@ -363,8 +339,7 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::
         transform_motion_decompose(dxf + 1, &xfNext, 1);
 
         // Preferring the smaller rotation difference
-        if (ccl::len_squared(dxf[0].x - dxf[1].x) > ccl::len_squared(dxf[0].x + dxf[1].x))
-        {
+        if (ccl::len_squared(dxf[0].x - dxf[1].x) > ccl::len_squared(dxf[0].x + dxf[1].x)) {
           dxf[1].x = -dxf[1].x;
         }
 
@@ -375,8 +350,7 @@ HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::
         transform_motion_array_interpolate(&object->motion[i], dxf, 2, t);
       }
 
-      if (::std::fabs(stepTime) < 1e-5f)
-      {
+      if (::std::fabs(stepTime) < 1e-5f) {
         object->tfm = object->motion[i];
       }
     }
@@ -578,14 +552,12 @@ inline void _HdCyclesInsertPrimvar(HdCyclesPrimvarMap &primvars,
                                    const VtValue &value)
 {
   auto it = primvars.find(name);
-  if (it == primvars.end())
-  {
+  if (it == primvars.end()) {
     primvars.insert({
       name,
       {value, role, interpolation}
     });
-  } else
-  {
+  } else {
     it->second.value = value;
     it->second.role = role;
     it->second.interpolation = interpolation;
@@ -602,31 +574,25 @@ bool HdCyclesGetComputedPrimvars(HdSceneDelegate *a_delegate,
   // First we are querying which primvars need to be computed, and storing them in a list to rely
   // on the batched computation function in HdExtComputationUtils.
   HdExtComputationPrimvarDescriptorVector dirtyPrimvars;
-  for (HdInterpolation interpolation : interpolations)
-  {
+  for (HdInterpolation interpolation : interpolations) {
     auto computedPrimvars = a_delegate->GetExtComputationPrimvarDescriptors(a_id, interpolation);
-    for (const auto &primvar : computedPrimvars)
-    {
-      if (HdChangeTracker::IsPrimvarDirty(a_dirtyBits, a_id, primvar.name))
-      {
+    for (const auto &primvar : computedPrimvars) {
+      if (HdChangeTracker::IsPrimvarDirty(a_dirtyBits, a_id, primvar.name)) {
         dirtyPrimvars.emplace_back(primvar);
       }
     }
   }
 
   // Early exit.
-  if (dirtyPrimvars.empty())
-  {
+  if (dirtyPrimvars.empty()) {
     return false;
   }
 
   auto changed = false;
   auto valueStore = HdExtComputationUtils::GetComputedPrimvarValues(dirtyPrimvars, a_delegate);
-  for (const auto &primvar : dirtyPrimvars)
-  {
+  for (const auto &primvar : dirtyPrimvars) {
     const auto itComputed = valueStore.find(primvar.name);
-    if (itComputed == valueStore.end())
-    {
+    if (itComputed == valueStore.end()) {
       continue;
     }
     changed = true;
@@ -647,13 +613,10 @@ bool HdCyclesGetPrimvars(HdSceneDelegate *a_delegate,
                          bool a_multiplePositionKeys,
                          HdCyclesPrimvarMap &a_primvars)
 {
-  for (auto interpolation : interpolations)
-  {
+  for (auto interpolation : interpolations) {
     const auto primvarDescs = a_delegate->GetPrimvarDescriptors(a_id, interpolation);
-    for (const auto &primvarDesc : primvarDescs)
-    {
-      if (primvarDesc.name == HdTokens->points)
-      {
+    for (const auto &primvarDesc : primvarDescs) {
+      if (primvarDesc.name == HdTokens->points) {
         continue;
       }
       // The number of motion keys has to be matched between points and normals, so
@@ -674,8 +637,7 @@ void HdCyclesPopulatePrimvarDescsPerInterpolation(HdSceneDelegate *a_sceneDelega
                                                   SdfPath const &a_id,
                                                   HdCyclesPDPIMap *a_primvarDescsPerInterpolation)
 {
-  if (!a_primvarDescsPerInterpolation->empty())
-  {
+  if (!a_primvarDescsPerInterpolation->empty()) {
     return;
   }
 
@@ -687,10 +649,10 @@ void HdCyclesPopulatePrimvarDescsPerInterpolation(HdSceneDelegate *a_sceneDelega
     HdInterpolationFaceVarying,
     HdInterpolationInstance,
   };
-  for (auto &interpolation : hd_interpolations)
-  {
-    a_primvarDescsPerInterpolation->emplace(interpolation,
-                                            a_sceneDelegate->GetPrimvarDescriptors(a_id, interpolation));
+  for (auto &interpolation : hd_interpolations) {
+    a_primvarDescsPerInterpolation->emplace(
+      interpolation,
+      a_sceneDelegate->GetPrimvarDescriptors(a_id, interpolation));
   }
 }
 
@@ -698,14 +660,10 @@ bool HdCyclesIsPrimvarExists(TfToken const &a_name,
                              HdCyclesPDPIMap const &a_primvarDescsPerInterpolation,
                              HdInterpolation *a_interpolation)
 {
-  for (auto &entry : a_primvarDescsPerInterpolation)
-  {
-    for (auto &pv : entry.second)
-    {
-      if (pv.name == a_name)
-      {
-        if (a_interpolation)
-        {
+  for (auto &entry : a_primvarDescsPerInterpolation) {
+    for (auto &pv : entry.second) {
+      if (pv.name == a_name) {
+        if (a_interpolation) {
           *a_interpolation = entry.first;
         }
         return true;
@@ -715,87 +673,78 @@ bool HdCyclesIsPrimvarExists(TfToken const &a_name,
   return false;
 }
 
-template<>
-inline float to_cycles<float>(const float &v) noexcept
+template<> inline float to_cycles<float>(const float &v) noexcept
 {
   return v;
 }
-template<>
-inline float to_cycles<double>(const double &v) noexcept
+template<> inline float to_cycles<double>(const double &v) noexcept
 {
   return static_cast<float>(v);
 }
-template<>
-inline float to_cycles<int>(const int &v) noexcept
+template<> inline float to_cycles<int>(const int &v) noexcept
 {
   return static_cast<float>(v);
 }
 
-template<>
-inline ccl::float2 to_cycles<GfVec2f>(const GfVec2f &v) noexcept
+template<> inline ccl::float2 to_cycles<GfVec2f>(const GfVec2f &v) noexcept
 {
   return ccl::make_float2(v[0], v[1]);
 }
-template<>
-inline ccl::float2 to_cycles<GfVec2h>(const GfVec2h &v) noexcept
+template<> inline ccl::float2 to_cycles<GfVec2h>(const GfVec2h &v) noexcept
 {
   return ccl::make_float2(static_cast<float>(v[0]), static_cast<float>(v[1]));
 }
-template<>
-inline ccl::float2 to_cycles<GfVec2d>(const GfVec2d &v) noexcept
+template<> inline ccl::float2 to_cycles<GfVec2d>(const GfVec2d &v) noexcept
 {
   return ccl::make_float2(static_cast<float>(v[0]), static_cast<float>(v[1]));
 }
-template<>
-inline ccl::float2 to_cycles<GfVec2i>(const GfVec2i &v) noexcept
+template<> inline ccl::float2 to_cycles<GfVec2i>(const GfVec2i &v) noexcept
 {
   return ccl::make_float2(static_cast<float>(v[0]), static_cast<float>(v[1]));
 }
 
-template<>
-inline ccl::float3 to_cycles<GfVec3f>(const GfVec3f &v) noexcept
+template<> inline ccl::float3 to_cycles<GfVec3f>(const GfVec3f &v) noexcept
 {
   return ccl::make_float3(v[0], v[1], v[2]);
 }
-template<>
-inline ccl::float3 to_cycles<GfVec3h>(const GfVec3h &v) noexcept
+template<> inline ccl::float3 to_cycles<GfVec3h>(const GfVec3h &v) noexcept
 {
-  return ccl::make_float3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
+  return ccl::make_float3(static_cast<float>(v[0]),
+                          static_cast<float>(v[1]),
+                          static_cast<float>(v[2]));
 }
-template<>
-inline ccl::float3 to_cycles<GfVec3d>(const GfVec3d &v) noexcept
+template<> inline ccl::float3 to_cycles<GfVec3d>(const GfVec3d &v) noexcept
 {
-  return ccl::make_float3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
+  return ccl::make_float3(static_cast<float>(v[0]),
+                          static_cast<float>(v[1]),
+                          static_cast<float>(v[2]));
 }
-template<>
-inline ccl::float3 to_cycles<GfVec3i>(const GfVec3i &v) noexcept
+template<> inline ccl::float3 to_cycles<GfVec3i>(const GfVec3i &v) noexcept
 {
-  return ccl::make_float3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
+  return ccl::make_float3(static_cast<float>(v[0]),
+                          static_cast<float>(v[1]),
+                          static_cast<float>(v[2]));
 }
 
-template<>
-inline ccl::float4 to_cycles<GfVec4f>(const GfVec4f &v) noexcept
+template<> inline ccl::float4 to_cycles<GfVec4f>(const GfVec4f &v) noexcept
 {
   return ccl::make_float4(v[0], v[1], v[2], v[3]);
 }
-template<>
-inline ccl::float4 to_cycles<GfVec4h>(const GfVec4h &v) noexcept
+template<> inline ccl::float4 to_cycles<GfVec4h>(const GfVec4h &v) noexcept
 {
   return ccl::make_float4(static_cast<float>(v[0]),
                           static_cast<float>(v[1]),
                           static_cast<float>(v[2]),
                           static_cast<float>(v[3]));
 }
-template<>
-inline ccl::float4 to_cycles<GfVec4d>(const GfVec4d &v) noexcept
+template<> inline ccl::float4 to_cycles<GfVec4d>(const GfVec4d &v) noexcept
 {
   return ccl::make_float4(static_cast<float>(v[0]),
                           static_cast<float>(v[1]),
                           static_cast<float>(v[2]),
                           static_cast<float>(v[3]));
 }
-template<>
-inline ccl::float4 to_cycles<GfVec4i>(const GfVec4i &v) noexcept
+template<> inline ccl::float4 to_cycles<GfVec4i>(const GfVec4i &v) noexcept
 {
   return ccl::make_float4(static_cast<float>(v[0]),
                           static_cast<float>(v[1]),
@@ -807,7 +756,10 @@ inline ccl::float4 to_cycles<GfVec4i>(const GfVec4i &v) noexcept
 
 struct MikkUserData
 {
-  MikkUserData(const char *layer_name, ccl::Mesh *mesh_in, ccl::float3 *tangent_in, float *tangent_sign_in)
+  MikkUserData(const char *layer_name,
+               ccl::Mesh *mesh_in,
+               ccl::float3 *tangent_in,
+               float *tangent_sign_in)
     : mesh(mesh_in),
       corner_normal(NULL),
       vertex_normal(NULL),
@@ -821,8 +773,7 @@ struct MikkUserData
     ccl::Attribute *attr_vN = attributes.find(ccl::ATTR_STD_VERTEX_NORMAL);
     ccl::Attribute *attr_cN = attributes.find(ccl::ATTR_STD_CORNER_NORMAL);
 
-    if (!attr_vN && !attr_cN)
-    {
+    if (!attr_vN && !attr_cN) {
       mesh->add_face_normals();
       mesh->add_vertex_normals();
       attr_vN = attributes.find(ccl::ATTR_STD_VERTEX_NORMAL);
@@ -831,17 +782,14 @@ struct MikkUserData
     // This preference depends on what Cycles does inside the hood.
     // Works for now, but there should be a more clear way of knowing
     // which normals are used for rendering.
-    if (attr_cN)
-    {
+    if (attr_cN) {
       corner_normal = attr_cN->data_float3();
-    } else
-    {
+    } else {
       vertex_normal = attr_vN->data_float3();
     }
 
     ccl::Attribute *attr_uv = attributes.find(ccl::ustring(layer_name));
-    if (attr_uv != NULL)
-    {
+    if (attr_uv != NULL) {
       texface = attr_uv->data_float2();
     }
   }
@@ -860,11 +808,9 @@ struct MikkUserData
 int mikk_get_num_faces(const SMikkTSpaceContext *context)
 {
   auto userdata = static_cast<const MikkUserData *>(context->m_pUserData);
-  if (userdata->mesh->subd_faces.size())
-  {
+  if (userdata->mesh->subd_faces.size()) {
     return static_cast<int>(userdata->mesh->subd_faces.size());
-  } else
-  {
+  } else {
     return static_cast<int>(userdata->mesh->num_triangles());
   }
 }
@@ -872,41 +818,38 @@ int mikk_get_num_faces(const SMikkTSpaceContext *context)
 int mikk_get_num_verts_of_face(const SMikkTSpaceContext *context, const int face_num)
 {
   auto userdata = static_cast<const MikkUserData *>(context->m_pUserData);
-  if (userdata->mesh->subd_faces.size())
-  {
+  if (userdata->mesh->subd_faces.size()) {
     const ccl::Mesh *mesh = userdata->mesh;
     return mesh->subd_faces[face_num].num_corners;
-  } else
-  {
+  } else {
     return 3;
   }
 }
 
 int mikk_vertex_index(const ccl::Mesh *mesh, const int face_num, const int vert_num)
 {
-  if (mesh->subd_faces.size())
-  {
+  if (mesh->subd_faces.size()) {
     const ccl::Mesh::SubdFace &face = mesh->subd_faces[face_num];
     return mesh->subd_face_corners[face.start_corner + vert_num];
-  } else
-  {
+  } else {
     return mesh->triangles[face_num * 3 + vert_num];
   }
 }
 
 int mikk_corner_index(const ccl::Mesh *mesh, const int face_num, const int vert_num)
 {
-  if (mesh->subd_faces.size())
-  {
+  if (mesh->subd_faces.size()) {
     const ccl::Mesh::SubdFace &face = mesh->subd_faces[face_num];
     return face.start_corner + vert_num;
-  } else
-  {
+  } else {
     return face_num * 3 + vert_num;
   }
 }
 
-void mikk_get_position(const SMikkTSpaceContext *context, float P[3], const int face_num, const int vert_num)
+void mikk_get_position(const SMikkTSpaceContext *context,
+                       float P[3],
+                       const int face_num,
+                       const int vert_num)
 {
   const MikkUserData *userdata = static_cast<const MikkUserData *>(context->m_pUserData);
   const ccl::Mesh *mesh = userdata->mesh;
@@ -924,50 +867,43 @@ void mikk_get_texture_coordinate(const SMikkTSpaceContext *context,
 {
   const MikkUserData *userdata = static_cast<const MikkUserData *>(context->m_pUserData);
   const ccl::Mesh *mesh = userdata->mesh;
-  if (userdata->texface != NULL)
-  {
+  if (userdata->texface != NULL) {
     const int corner_index = mikk_corner_index(mesh, face_num, vert_num);
     ccl::float2 tfuv = userdata->texface[corner_index];
     uv[0] = tfuv.x;
     uv[1] = tfuv.y;
-  } else
-  {
+  } else {
     uv[0] = 0.0f;
     uv[1] = 0.0f;
   }
 }
 
-void mikk_get_normal(const SMikkTSpaceContext *context, float N[3], const int face_num, const int vert_num)
+void mikk_get_normal(const SMikkTSpaceContext *context,
+                     float N[3],
+                     const int face_num,
+                     const int vert_num)
 {
   const MikkUserData *userdata = static_cast<const MikkUserData *>(context->m_pUserData);
   const ccl::Mesh *mesh = userdata->mesh;
   ccl::float3 vN;
 
-  if (mesh->subd_faces.size())
-  {
+  if (mesh->subd_faces.size()) {
     const ccl::Mesh::SubdFace &face = mesh->subd_faces[face_num];
-    if (userdata->corner_normal)
-    {
+    if (userdata->corner_normal) {
       vN = userdata->corner_normal[face.start_corner + vert_num];
-    } else if (face.smooth)
-    {
+    } else if (face.smooth) {
       const int vertex_index = mikk_vertex_index(mesh, face_num, vert_num);
       vN = userdata->vertex_normal[vertex_index];
-    } else
-    {
+    } else {
       vN = face.normal(mesh);
     }
-  } else
-  {
-    if (userdata->corner_normal)
-    {
+  } else {
+    if (userdata->corner_normal) {
       vN = userdata->corner_normal[face_num * 3 + vert_num];
-    } else if (mesh->smooth[face_num])
-    {
+    } else if (mesh->smooth[face_num]) {
       const int vertex_index = mikk_vertex_index(mesh, face_num, vert_num);
       vN = userdata->vertex_normal[vertex_index];
-    } else
-    {
+    } else {
       const ccl::Mesh::Triangle tri = mesh->get_triangle(face_num);
       vN = tri.compute_normal(&mesh->verts[0]);
     }
@@ -987,55 +923,49 @@ void mikk_set_tangent_space(const SMikkTSpaceContext *context,
   const ccl::Mesh *mesh = userdata->mesh;
   const int corner_index = mikk_corner_index(mesh, face_num, vert_num);
   userdata->tangent[corner_index] = ccl::make_float3(T[0], T[1], T[2]);
-  if (userdata->tangent_sign != NULL)
-  {
+  if (userdata->tangent_sign != NULL) {
     userdata->tangent_sign[corner_index] = sign;
   }
 }
 
-void mikk_compute_tangents(const char *layer_name, ccl::Mesh *mesh, bool need_sign, bool active_render)
+void mikk_compute_tangents(const char *layer_name,
+                           ccl::Mesh *mesh,
+                           bool need_sign,
+                           bool active_render)
 {
   /* Create tangent attributes. */
-  ccl::AttributeSet &attributes = (mesh->subd_faces.size()) ? mesh->subd_attributes : mesh->attributes;
+  ccl::AttributeSet &attributes = (mesh->subd_faces.size()) ? mesh->subd_attributes :
+                                                              mesh->attributes;
   ccl::Attribute *attr;
   ccl::ustring name;
 
-  if (layer_name != NULL)
-  {
+  if (layer_name != NULL) {
     name = ccl::ustring((std::string(layer_name) + ".tangent").c_str());
-  } else
-  {
+  } else {
     name = ccl::ustring("orco.tangent");
   }
 
-  if (active_render)
-  {
+  if (active_render) {
     attr = attributes.add(ccl::ATTR_STD_UV_TANGENT, name);
-  } else
-  {
+  } else {
     attr = attributes.add(name, ccl::TypeDesc::TypeVector, ccl::ATTR_ELEMENT_CORNER);
   }
   ccl::float3 *tangent = attr->data_float3();
   /* Create bitangent sign attribute. */
   float *tangent_sign = NULL;
-  if (need_sign)
-  {
+  if (need_sign) {
     ccl::Attribute *attr_sign;
     ccl::ustring name_sign;
 
-    if (layer_name != NULL)
-    {
+    if (layer_name != NULL) {
       name_sign = ccl::ustring((std::string(layer_name) + ".tangent_sign").c_str());
-    } else
-    {
+    } else {
       name_sign = ccl::ustring("orco.tangent_sign");
     }
 
-    if (active_render)
-    {
+    if (active_render) {
       attr_sign = attributes.add(ccl::ATTR_STD_UV_TANGENT_SIGN, name_sign);
-    } else
-    {
+    } else {
       attr_sign = attributes.add(name_sign, ccl::TypeDesc::TypeFloat, ccl::ATTR_ELEMENT_CORNER);
     }
     tangent_sign = attr_sign->data_float();
@@ -1061,27 +991,25 @@ void mikk_compute_tangents(const char *layer_name, ccl::Mesh *mesh, bool need_si
 }
 
 template<>
-bool _HdCyclesGetVtValue<bool>(VtValue a_value, bool a_default, bool *a_hasChanged, bool a_checkWithDefault)
+bool _HdCyclesGetVtValue<bool>(VtValue a_value,
+                               bool a_default,
+                               bool *a_hasChanged,
+                               bool a_checkWithDefault)
 {
   bool val = a_default;
-  if (!a_value.IsEmpty())
-  {
-    if (a_value.IsHolding<bool>())
-    {
+  if (!a_value.IsEmpty()) {
+    if (a_value.IsHolding<bool>()) {
       if (!a_checkWithDefault && a_hasChanged)
         *a_hasChanged = true;
       val = a_value.UncheckedGet<bool>();
-    } else if (a_value.IsHolding<int>())
-    {
+    } else if (a_value.IsHolding<int>()) {
       if (!a_checkWithDefault && a_hasChanged)
         *a_hasChanged = true;
       val = static_cast<bool>(a_value.UncheckedGet<int>());
-    } else if (a_value.IsHolding<float>())
-    {
+    } else if (a_value.IsHolding<float>()) {
       if (!a_checkWithDefault && a_hasChanged)
         val = (a_value.UncheckedGet<float>() == 1.0f);
-    } else if (a_value.IsHolding<double>())
-    {
+    } else if (a_value.IsHolding<double>()) {
       if (!a_checkWithDefault && a_hasChanged)
         *a_hasChanged = true;
       val = (a_value.UncheckedGet<double>() == 1.0);

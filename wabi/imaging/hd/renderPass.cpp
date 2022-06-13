@@ -48,8 +48,7 @@ HdRenderPass::~HdRenderPass()
 
 void HdRenderPass::SetRprimCollection(HdRprimCollection const &col)
 {
-  if (col == _collection)
-  {
+  if (col == _collection) {
     return;
   }
 
@@ -58,23 +57,19 @@ void HdRenderPass::SetRprimCollection(HdRprimCollection const &col)
   // update dirty list subscription for the new collection.
   // holding shared_ptr for the lifetime of the dirty list.
   bool isMinorChange = true;
-  if (!_dirtyList || !_dirtyList->ApplyEdit(col))
-  {
+  if (!_dirtyList || !_dirtyList->ApplyEdit(col)) {
     _dirtyList.reset(new HdDirtyList(_collection, *_renderIndex));
     isMinorChange = false;
   }
 
-  if (TfDebug::IsEnabled(HD_DIRTY_LIST))
-  {
+  if (TfDebug::IsEnabled(HD_DIRTY_LIST)) {
     std::stringstream s;
     s << "  Include: \n";
-    for (auto i : col.GetRootPaths())
-    {
+    for (auto i : col.GetRootPaths()) {
       s << "    - " << i << "\n";
     }
     s << "  Exclude: \n";
-    for (auto i : col.GetExcludePaths())
-    {
+    for (auto i : col.GetExcludePaths()) {
       s << "    - " << i << "\n";
     }
     s << "  Repr: " << col.GetReprSelector() << "\n";

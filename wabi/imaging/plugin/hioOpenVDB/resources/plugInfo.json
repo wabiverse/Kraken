@@ -3,9 +3,13 @@
     {
       "Info": {
         "Types": {
-          "HioOpenVDB_TextureData" : {
-            "bases": ["HioFieldTextureData"],
-            "fieldDataTypes": ["vdb"],
+          "HioOpenVDB_TextureData": {
+            "bases": [
+              "HioFieldTextureData"
+            ],
+            "fieldDataTypes": [
+              "vdb"
+            ],
             "precedence": 0
           }
         }

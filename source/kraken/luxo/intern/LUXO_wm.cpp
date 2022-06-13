@@ -60,7 +60,11 @@ KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
   LUXO_ADD_ENUM_PROP(TABLET_STYLUS, "PEN", ICON_NONE, "Pen", "");
   LUXO_ADD_ENUM_PROP(TABLET_ERASER, "ERASER", ICON_NONE, "Eraser", "");
   LUXO_ADD_ENUM_PROP(MOUSEMOVE, "MOUSEMOVE", ICON_NONE, "Mouse Move", "MsMov");
-  LUXO_ADD_ENUM_PROP(INBETWEEN_MOUSEMOVE, "INBETWEEN_MOUSEMOVE", ICON_NONE, "In-between Move", "MsSubMov");
+  LUXO_ADD_ENUM_PROP(INBETWEEN_MOUSEMOVE,
+                     "INBETWEEN_MOUSEMOVE",
+                     ICON_NONE,
+                     "In-between Move",
+                     "MsSubMov");
   LUXO_ADD_ENUM_PROP(MOUSEPAN, "TRACKPADPAN", ICON_NONE, "Mouse/Trackpad Pan", "MsPan");
   LUXO_ADD_ENUM_PROP(MOUSEZOOM, "TRACKPADZOOM", ICON_NONE, "Mouse/Trackpad Zoom", "MsZoom");
   LUXO_ADD_ENUM_PROP(MOUSEROTATE, "MOUSEROTATE", ICON_NONE, "Mouse/Trackpad Rotate", "MsRot");
@@ -205,7 +209,11 @@ KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
   LUXO_ADD_ENUM_PROP(TIMERREPORT, "TIMER_REPORT", ICON_NONE, "Timer Report", "TmrReport");
   LUXO_ADD_ENUM_PROP(TIMERREGION, "TIMERREGION", ICON_NONE, "Timer Region", "TmrReg");
   /* Action Zones. */
-  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_AREA, "ACTIONZONE_AREA", ICON_NONE, "ActionZone Area", "AZone Area");
+  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_AREA,
+                     "ACTIONZONE_AREA",
+                     ICON_NONE,
+                     "ActionZone Area",
+                     "AZone Area");
   LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_REGION,
                      "ACTIONZONE_REGION",
                      ICON_NONE,

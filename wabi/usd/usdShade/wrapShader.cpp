@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -80,7 +78,9 @@ void wrapUsdShadeShader()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -119,20 +119,21 @@ namespace
                                                       object defaultVal,
                                                       bool writeSparsely)
   {
-    return self.CreateImplementationSourceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                               writeSparsely);
+    return self.CreateImplementationSourceAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+      writeSparsely);
   }
 
   static UsdAttribute _CreateIdAttr(UsdShadeShader &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateIdAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateIdAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                             writeSparsely);
   }
 
   static object _WrapGetShaderId(const UsdShadeShader &shader)
   {
     TfToken id;
-    if (shader.GetShaderId(&id))
-    {
+    if (shader.GetShaderId(&id)) {
       return object(id);
     }
     return object();
@@ -141,18 +142,17 @@ namespace
   static object _WrapGetSourceAsset(const UsdShadeShader &shader, const TfToken &sourceType)
   {
     SdfAssetPath asset;
-    if (shader.GetSourceAsset(&asset, sourceType))
-    {
+    if (shader.GetSourceAsset(&asset, sourceType)) {
       return object(asset);
     }
     return object();
   }
 
-  static object _WrapGetSourceAssetSubIdentifier(const UsdShadeShader &shader, const TfToken &sourceType)
+  static object _WrapGetSourceAssetSubIdentifier(const UsdShadeShader &shader,
+                                                 const TfToken &sourceType)
   {
     TfToken subIdentifier;
-    if (shader.GetSourceAssetSubIdentifier(&subIdentifier, sourceType))
-    {
+    if (shader.GetSourceAssetSubIdentifier(&subIdentifier, sourceType)) {
       return object(subIdentifier);
     }
     return object();
@@ -161,8 +161,7 @@ namespace
   static object _WrapGetSourceCode(const UsdShadeShader &shader, const TfToken &sourceType)
   {
     std::string code;
-    if (shader.GetSourceCode(&code, sourceType))
-    {
+    if (shader.GetSourceCode(&code, sourceType)) {
       return object(code);
     }
     return object();
@@ -181,7 +180,9 @@ namespace
            (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
       .def("GetIdAttr", &UsdShadeShader::GetIdAttr)
-      .def("CreateIdAttr", &_CreateIdAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+      .def("CreateIdAttr",
+           &_CreateIdAttr,
+           (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
       .def("GetImplementationSource", &UsdShadeShader::GetImplementationSource)
 
@@ -197,11 +198,15 @@ namespace
            (arg("sourceCode"), arg("sourceType") = UsdShadeTokens->universalSourceType))
 
       .def("GetShaderId", _WrapGetShaderId)
-      .def("GetSourceAsset", _WrapGetSourceAsset, arg("sourceType") = UsdShadeTokens->universalSourceType)
+      .def("GetSourceAsset",
+           _WrapGetSourceAsset,
+           arg("sourceType") = UsdShadeTokens->universalSourceType)
       .def("GetSourceAssetSubIdentifier",
            _WrapGetSourceAssetSubIdentifier,
            arg("sourceType") = UsdShadeTokens->universalSourceType)
-      .def("GetSourceCode", _WrapGetSourceCode, arg("sourceType") = UsdShadeTokens->universalSourceType)
+      .def("GetSourceCode",
+           _WrapGetSourceCode,
+           arg("sourceType") = UsdShadeTokens->universalSourceType)
 
       .def("GetSdrMetadata", &UsdShadeShader::GetSdrMetadata)
       .def("GetSdrMetadataByKey", &UsdShadeShader::GetSdrMetadataByKey, (arg("key")))

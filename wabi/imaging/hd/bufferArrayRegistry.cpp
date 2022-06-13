@@ -26,44 +26,41 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdBufferArrayRegistry::HdBufferArrayRegistry()
-  : _entries()
-{}
+HdBufferArrayRegistry::HdBufferArrayRegistry() : _entries() {}
 
-HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(HdAggregationStrategy *strategy,
-                                                                 TfToken const &role,
-                                                                 HdBufferSpecVector const &bufferSpecs,
-                                                                 HdBufferArrayUsageHint usageHint)
+HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(
+  HdAggregationStrategy *strategy,
+  TfToken const &role,
+  HdBufferSpecVector const &bufferSpecs,
+  HdBufferArrayUsageHint usageHint)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (!strategy)
-  {
+  if (!strategy) {
     TF_CODING_ERROR("Aggregation strategy is set to null");
     return HdBufferArrayRangeSharedPtr();
   }
 
   // early out for empty specs
-  if (bufferSpecs.empty())
-  {
+  if (bufferSpecs.empty()) {
     return HdBufferArrayRangeSharedPtr();
   }
 
   // compute an aggregation Id on current aggregation strategy
-  HdAggregationStrategy::AggregationId aggrId = strategy->ComputeAggregationId(bufferSpecs, usageHint);
+  HdAggregationStrategy::AggregationId aggrId = strategy->ComputeAggregationId(bufferSpecs,
+                                                                               usageHint);
 
   // We use insert to do a find and insert operation
-  std::pair<_BufferArrayIndex::iterator, bool> result = _entries.insert(std::make_pair(aggrId, _Entry()));
+  std::pair<_BufferArrayIndex::iterator, bool> result = _entries.insert(
+    std::make_pair(aggrId, _Entry()));
 
   _Entry &entry = (result.first)->second;
 
-  if (result.second)
-  {
+  if (result.second) {
     // We just created a new entry so make sure it has a buffer in it.
     _InsertNewBufferArray(entry, HdBufferArraySharedPtr(), strategy, role, bufferSpecs, usageHint);
-  } else
-  {
+  } else {
 
     // There's a potential multi-thread race condition where
     // another thread has created the entry and is still in the process of
@@ -85,17 +82,14 @@ HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(HdAggregationSt
   // on check end condition.
 
   _HdBufferArraySharedPtrList::iterator it = entry.bufferArrays.begin();
-  do
-  {
+  do {
     HdBufferArraySharedPtr currentArray = *it;
 
-    if (!currentArray->TryAssignRange(range))
-    {
+    if (!currentArray->TryAssignRange(range)) {
       _HdBufferArraySharedPtrList::iterator prev = it;
       ++it;
 
-      if (it == entry.bufferArrays.end())
-      {
+      if (it == entry.bufferArrays.end()) {
         // Reached end of buffer list, so try to insert new buffer
         // Only one thread will win and add the buffer
         // however, by the time we get back multiple buffers may have
@@ -113,12 +107,10 @@ HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(HdAggregationSt
 
 void HdBufferArrayRegistry::ReallocateAll(HdAggregationStrategy *strategy)
 {
-  for (auto &entry : _entries)
-  {
+  for (auto &entry : _entries) {
     for (auto bufferIt = entry.second.bufferArrays.begin(), e = entry.second.bufferArrays.end();
          bufferIt != e;
-         ++bufferIt)
-    {
+         ++bufferIt) {
 
       HdBufferArraySharedPtr const &bufferArray = *bufferIt;
       if (!bufferArray->NeedsReallocation())
@@ -135,8 +127,7 @@ void HdBufferArrayRegistry::ReallocateAll(HdAggregationStrategy *strategy)
       std::vector<HdBufferArrayRangeSharedPtr> ranges;
       ranges.reserve(rangeCount);
 
-      for (size_t rangeIdx = 0; rangeIdx < rangeCount; ++rangeIdx)
-      {
+      for (size_t rangeIdx = 0; rangeIdx < rangeCount; ++rangeIdx) {
         HdBufferArrayRangeSharedPtr range = bufferArray->GetRange(rangeIdx).lock();
 
         if (!range)
@@ -144,8 +135,7 @@ void HdBufferArrayRegistry::ReallocateAll(HdAggregationStrategy *strategy)
 
         size_t numElements = range->GetNumElements();
 
-        if (numElements > maxTotalElements)
-        {
+        if (numElements > maxTotalElements) {
           // Issue a warning and reset number of elements in the BAR.
           TF_WARN(
             "Number of elements in the buffer array range "
@@ -160,15 +150,13 @@ void HdBufferArrayRegistry::ReallocateAll(HdAggregationStrategy *strategy)
         }
 
         // over aggregation check of non-uniform buffer
-        if (numTotalElements + numElements > maxTotalElements)
-        {
+        if (numTotalElements + numElements > maxTotalElements) {
           // create new BufferArray with same specification
           HdBufferSpecVector bufferSpecs = strategy->GetBufferSpecs(bufferArray);
           HdBufferArrayUsageHint usageHint = bufferArray->GetUsageHint();
 
-          HdBufferArraySharedPtr newBufferArray = strategy->CreateBufferArray(bufferArray->GetRole(),
-                                                                              bufferSpecs,
-                                                                              usageHint);
+          HdBufferArraySharedPtr newBufferArray =
+            strategy->CreateBufferArray(bufferArray->GetRole(), bufferSpecs, usageHint);
           newBufferArray->Reallocate(ranges, bufferArray);
 
           // bufferArrays is std::list
@@ -191,28 +179,22 @@ void HdBufferArrayRegistry::GarbageCollect()
 {
   _BufferArrayIndex::iterator entryIt = _entries.begin();
 
-  while (entryIt != _entries.end())
-  {
+  while (entryIt != _entries.end()) {
     _Entry &entry = entryIt->second;
 
     _HdBufferArraySharedPtrList::iterator bufferIt = entry.bufferArrays.begin();
 
-    while (bufferIt != entry.bufferArrays.end())
-    {
-      if ((*bufferIt)->GarbageCollect())
-      {
+    while (bufferIt != entry.bufferArrays.end()) {
+      if ((*bufferIt)->GarbageCollect()) {
         bufferIt = entry.bufferArrays.erase(bufferIt);
-      } else
-      {
+      } else {
         ++bufferIt;
       }
     }
 
-    if (entry.bufferArrays.empty())
-    {
+    if (entry.bufferArrays.empty()) {
       entryIt = _entries.unsafe_erase(entryIt);
-    } else
-    {
+    } else {
       ++entryIt;
     }
   }
@@ -222,10 +204,8 @@ size_t HdBufferArrayRegistry::GetResourceAllocation(HdAggregationStrategy *strat
                                                     VtDictionary &result) const
 {
   size_t gpuMemoryUsed = 0;
-  TF_FOR_ALL (entryIt, _entries)
-  {
-    TF_FOR_ALL (bufferIt, entryIt->second.bufferArrays)
-    {
+  TF_FOR_ALL (entryIt, _entries) {
+    TF_FOR_ALL (bufferIt, entryIt->second.bufferArrays) {
       gpuMemoryUsed += strategy->GetResourceAllocation(*bufferIt, result);
     }
   }
@@ -245,14 +225,11 @@ void HdBufferArrayRegistry::_InsertNewBufferArray(_Entry &entry,
 
     // Check state of list, still matches what is expected.
     // If not another thread won and inserted a new buffer.
-    if (!entry.bufferArrays.empty())
-    {
-      if (entry.bufferArrays.back() != expectedTail)
-      {
+    if (!entry.bufferArrays.empty()) {
+      if (entry.bufferArrays.back() != expectedTail) {
         return;  // Lock_guard will unlock entry
       }
-    } else
-    {
+    } else {
       // This shouldn't ever happen, because where did the expected tail
       // come from if it wasn't in the list???
       TF_VERIFY(!expectedTail);
@@ -269,13 +246,11 @@ HD_API
 std::ostream &operator<<(std::ostream &out, const HdBufferArrayRegistry &self)
 {
   out << "HdBufferArrayRegistry " << &self << " :\n";
-  TF_FOR_ALL (entryIt, self._entries)
-  {
+  TF_FOR_ALL (entryIt, self._entries) {
     out << "  _Entry aggrId = " << entryIt->first << ": \n";
 
     size_t bufferNum = 0;
-    TF_FOR_ALL (bufferIt, entryIt->second.bufferArrays)
-    {
+    TF_FOR_ALL (bufferIt, entryIt->second.bufferArrays) {
       out << "HdBufferArray " << bufferNum << "\n";
       bufferNum++;
     }

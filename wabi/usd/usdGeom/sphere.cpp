@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomSphere::~UsdGeomSphere()
-{}
+UsdGeomSphere::~UsdGeomSphere() {}
 
 /* static */
 UsdGeomSphere UsdGeomSphere::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomSphere();
   }
@@ -62,8 +60,7 @@ UsdGeomSphere UsdGeomSphere::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomSphere UsdGeomSphere::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Sphere");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomSphere();
   }
@@ -146,8 +143,9 @@ const TfTokenVector &UsdGeomSphere::GetSchemaAttributeNames(bool includeInherite
     UsdGeomTokens->radius,
     UsdGeomTokens->extent,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomGprim::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomGprim::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -201,22 +199,18 @@ static bool _ComputeExtentForSphere(const UsdGeomBoundable &boundable,
                                     VtVec3fArray *extent)
 {
   const UsdGeomSphere sphereSchema(boundable);
-  if (!TF_VERIFY(sphereSchema))
-  {
+  if (!TF_VERIFY(sphereSchema)) {
     return false;
   }
 
   double radius;
-  if (!sphereSchema.GetRadiusAttr().Get(&radius, time))
-  {
+  if (!sphereSchema.GetRadiusAttr().Get(&radius, time)) {
     return false;
   }
 
-  if (transform)
-  {
+  if (transform) {
     return UsdGeomSphere::ComputeExtent(radius, *transform, extent);
-  } else
-  {
+  } else {
     return UsdGeomSphere::ComputeExtent(radius, extent);
   }
 }

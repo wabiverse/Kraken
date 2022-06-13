@@ -102,5 +102,7 @@ void wrapUsdSkelCache()
          return_value_policy<TfPySequenceToList>(),
          (arg("skelRoot"), arg("predicate")))
 
-    .def("ComputeSkelBinding", &_ComputeSkelBinding, (arg("skelRoot"), arg("skel"), arg("predicate")));
+    .def("ComputeSkelBinding",
+         &_ComputeSkelBinding,
+         (arg("skelRoot"), arg("skel"), arg("predicate")));
 }

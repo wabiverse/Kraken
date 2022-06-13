@@ -1,16 +1,18 @@
 {
-    "Plugins": [
-        {
-            "Type": "python",
-            "Name": "rprUsdviewMenu",
-            "Info": {
-                "Types": {
-                    "rprUsdviewMenu.RprPluginContainer": {
-                        "bases": ["wabi.Usdviewq.plugin.PluginContainer"],
-                        "displayName": "Usdview Radeon ProRender Plugin Menu"
-                    }
-                }
-            }
+  "Plugins": [
+    {
+      "Type": "python",
+      "Name": "rprUsdviewMenu",
+      "Info": {
+        "Types": {
+          "rprUsdviewMenu.RprPluginContainer": {
+            "bases": [
+              "wabi.Usdviewq.plugin.PluginContainer"
+            ],
+            "displayName": "Usdview Radeon ProRender Plugin Menu"
+          }
         }
-    ]
+      }
+    }
+  ]
 }

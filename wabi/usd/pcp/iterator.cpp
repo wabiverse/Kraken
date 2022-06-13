@@ -34,9 +34,7 @@ WABI_NAMESPACE_BEGIN
 
 ////////////////////////////////////////////////////////////
 
-PcpPrimIterator::PcpPrimIterator()
-  : _primIndex(NULL),
-    _pos(PCP_INVALID_INDEX)
+PcpPrimIterator::PcpPrimIterator() : _primIndex(NULL), _pos(PCP_INVALID_INDEX)
 {
   // Do nothing
 }
@@ -50,8 +48,7 @@ PcpPrimIterator::PcpPrimIterator(const PcpPrimIndex *primIndex, size_t pos)
 
 void PcpPrimIterator::increment()
 {
-  if (!_primIndex)
-  {
+  if (!_primIndex) {
     TF_CODING_ERROR("Cannot increment invalid iterator");
     return;
   }
@@ -61,8 +58,7 @@ void PcpPrimIterator::increment()
 
 void PcpPrimIterator::decrement()
 {
-  if (!_primIndex)
-  {
+  if (!_primIndex) {
     TF_CODING_ERROR("Cannot decrement invalid iterator");
     return;
   }
@@ -72,8 +68,7 @@ void PcpPrimIterator::decrement()
 
 void PcpPrimIterator::advance(difference_type n)
 {
-  if (!_primIndex)
-  {
+  if (!_primIndex) {
     TF_CODING_ERROR("Cannot advance invalid iterator");
     return;
   }
@@ -83,14 +78,12 @@ void PcpPrimIterator::advance(difference_type n)
 
 PcpPrimIterator::difference_type PcpPrimIterator::distance_to(const PcpPrimIterator &other) const
 {
-  if (!_primIndex || !other._primIndex)
-  {
+  if (!_primIndex || !other._primIndex) {
     TF_CODING_ERROR("Invalid iterator");
     return 0;
   }
 
-  if (_primIndex != other._primIndex)
-  {
+  if (_primIndex != other._primIndex) {
     TF_CODING_ERROR(
       "Cannot compute distance for iterators "
       "from different prim indexes.");
@@ -122,10 +115,7 @@ Pcp_SdSiteRef PcpPrimIterator::_GetSiteRef() const
 
 ////////////////////////////////////////////////////////////
 
-PcpPropertyIterator::PcpPropertyIterator()
-  : _propertyIndex(NULL),
-    _pos(0)
-{}
+PcpPropertyIterator::PcpPropertyIterator() : _propertyIndex(NULL), _pos(0) {}
 
 PcpPropertyIterator::PcpPropertyIterator(const PcpPropertyIndex &index, size_t pos)
   : _propertyIndex(&index),
@@ -134,8 +124,7 @@ PcpPropertyIterator::PcpPropertyIterator(const PcpPropertyIndex &index, size_t p
 
 void PcpPropertyIterator::increment()
 {
-  if (!_propertyIndex)
-  {
+  if (!_propertyIndex) {
     TF_CODING_ERROR("Cannot increment invalid iterator");
     return;
   }
@@ -145,8 +134,7 @@ void PcpPropertyIterator::increment()
 
 void PcpPropertyIterator::decrement()
 {
-  if (!_propertyIndex)
-  {
+  if (!_propertyIndex) {
     TF_CODING_ERROR("Cannot decrement invalid iterator");
     return;
   }
@@ -156,8 +144,7 @@ void PcpPropertyIterator::decrement()
 
 void PcpPropertyIterator::advance(difference_type n)
 {
-  if (!_propertyIndex)
-  {
+  if (!_propertyIndex) {
     TF_CODING_ERROR("Cannot advance invalid iterator");
     return;
   }
@@ -165,16 +152,15 @@ void PcpPropertyIterator::advance(difference_type n)
   _pos += n;
 }
 
-PcpPropertyIterator::difference_type PcpPropertyIterator::distance_to(const PcpPropertyIterator &other) const
+PcpPropertyIterator::difference_type PcpPropertyIterator::distance_to(
+  const PcpPropertyIterator &other) const
 {
-  if (!_propertyIndex || !other._propertyIndex)
-  {
+  if (!_propertyIndex || !other._propertyIndex) {
     TF_CODING_ERROR("Invalid iterator");
     return 0;
   }
 
-  if (_propertyIndex != other._propertyIndex)
-  {
+  if (_propertyIndex != other._propertyIndex) {
     TF_CODING_ERROR(
       "Cannot compute distance for iterators "
       "from different property indexes");

@@ -52,11 +52,16 @@ void wrapConditionalAbortDiagnosticDelegate()
   class_<ErrorFilters>("ConditionalAbortDiagnosticDelegateErrorFilters",
                        init<std::vector<std::string>, std::vector<std::string>>())
     .def(init<>())
-    .def("GetCodePathFilters", &ErrorFilters::GetCodePathFilters, return_value_policy<TfPySequenceToList>())
-    .def("GetStringFilters", &ErrorFilters::GetStringFilters, return_value_policy<TfPySequenceToList>())
+    .def("GetCodePathFilters",
+         &ErrorFilters::GetCodePathFilters,
+         return_value_policy<TfPySequenceToList>())
+    .def("GetStringFilters",
+         &ErrorFilters::GetStringFilters,
+         return_value_policy<TfPySequenceToList>())
     .def("SetStringFilters", &ErrorFilters::SetStringFilters, args("stringFilters"))
     .def("SetCodePathFilters", &ErrorFilters::SetCodePathFilters, args("codePathFilters"));
 
   using This = UsdUtilsConditionalAbortDiagnosticDelegate;
-  class_<This, boost::noncopyable>("ConditionalAbortDiagnosticDelegate", init<ErrorFilters, ErrorFilters>());
+  class_<This, boost::noncopyable>("ConditionalAbortDiagnosticDelegate",
+                                   init<ErrorFilters, ErrorFilters>());
 }

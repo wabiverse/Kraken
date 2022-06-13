@@ -56,8 +56,7 @@ using boost::python::dict;
 using boost::python::handle;
 using boost::python::object;
 
-TfScriptModuleLoader::TfScriptModuleLoader()
-{}
+TfScriptModuleLoader::TfScriptModuleLoader() {}
 
 // CODE_COVERAGE_OFF_GCOV_BUG
 TfScriptModuleLoader::~TfScriptModuleLoader()
@@ -69,11 +68,10 @@ void TfScriptModuleLoader::RegisterLibrary(TfToken const &name,
                                            vector<TfToken> const &predecessors)
 {
 
-  if (TfDebug::IsEnabled(TF_SCRIPT_MODULE_LOADER))
-  {
-    TF_DEBUG(TF_SCRIPT_MODULE_LOADER).Msg("Registering library %s with predecessors: ", name.GetText());
-    TF_FOR_ALL (pred, predecessors)
-    {
+  if (TfDebug::IsEnabled(TF_SCRIPT_MODULE_LOADER)) {
+    TF_DEBUG(TF_SCRIPT_MODULE_LOADER)
+      .Msg("Registering library %s with predecessors: ", name.GetText());
+    TF_FOR_ALL (pred, predecessors) {
       TF_DEBUG(TF_SCRIPT_MODULE_LOADER).Msg("%s, ", pred->GetText());
     }
     TF_DEBUG(TF_SCRIPT_MODULE_LOADER).Msg("\n");
@@ -86,8 +84,7 @@ void TfScriptModuleLoader::RegisterLibrary(TfToken const &name,
   _libsToModules[name] = moduleName;
 
   // Add this library as a successor to all predecessors.
-  TF_FOR_ALL (pred, predecessors)
-  {
+  TF_FOR_ALL (pred, predecessors) {
     _AddSuccessor(*pred, name);
   }
 }
@@ -98,8 +95,7 @@ vector<string> TfScriptModuleLoader::GetModuleNames() const
   vector<string> ret;
   _TopologicalSort(&order);
   ret.reserve(order.size());
-  TF_FOR_ALL (lib, order)
-  {
+  TF_FOR_ALL (lib, order) {
     _TokenToTokenMap::const_iterator i = _libsToModules.find(*lib);
     if (i != _libsToModules.end())
       ret.push_back(i->second.GetString());
@@ -109,8 +105,7 @@ vector<string> TfScriptModuleLoader::GetModuleNames() const
 
 dict TfScriptModuleLoader::GetModulesDict() const
 {
-  if (!TfPyIsInitialized())
-  {
+  if (!TfPyIsInitialized()) {
     TF_CODING_ERROR("Python is not initialized!");
     return dict();
   }
@@ -128,11 +123,9 @@ dict TfScriptModuleLoader::GetModulesDict() const
   vector<TfToken> order;
   dict ret;
   _TopologicalSort(&order);
-  TF_FOR_ALL (lib, order)
-  {
+  TF_FOR_ALL (lib, order) {
     _TokenToTokenMap::const_iterator i = _libsToModules.find(*lib);
-    if (i != _libsToModules.end() && modulesDict.has_key(i->second.GetText()))
-    {
+    if (i != _libsToModules.end() && modulesDict.has_key(i->second.GetText())) {
       handle<> modHandle(PyImport_ImportModule(const_cast<char *>(i->second.GetText())));
 
       // Use the upper-cased form of the library name as
@@ -169,18 +162,15 @@ dict TfScriptModuleLoader::GetModulesDict() const
 void TfScriptModuleLoader::WriteDotFile(string const &file) const
 {
   FILE *out = ArchOpenFile(file.c_str(), "w");
-  if (!out)
-  {
+  if (!out) {
     TF_RUNTIME_ERROR("Could not open '%s' for writing.\n", file.c_str());
     return;
   }
 
   fprintf(out, "digraph Modules {\n");
 
-  TF_FOR_ALL (info, _libInfo)
-  {
-    TF_FOR_ALL (successor, info->second.successors)
-    {
+  TF_FOR_ALL (info, _libInfo) {
+    TF_FOR_ALL (successor, info->second.successors) {
       fprintf(out, "\t%s -> %s;\n", info->first.GetText(), successor->GetText());
     }
   }
@@ -208,8 +198,7 @@ bool TfScriptModuleLoader::_HasTransitiveSuccessor(TfToken const &predecessor,
   vector<TfToken> predStack(1, predecessor);
   TfToken::HashSet seenPreds;
 
-  while (!predStack.empty())
-  {
+  while (!predStack.empty()) {
     TfToken pred = predStack.back();
     predStack.pop_back();
 
@@ -220,11 +209,9 @@ bool TfScriptModuleLoader::_HasTransitiveSuccessor(TfToken const &predecessor,
     // Look up successors, and push ones not yet visted as possible
     // predecessors.
     _TokenToInfoMap::const_iterator i = _libInfo.find(pred);
-    if (i != _libInfo.end())
-    {
+    if (i != _libInfo.end()) {
       // Walk all the successors.
-      TF_FOR_ALL (j, i->second.successors)
-      {
+      TF_FOR_ALL (j, i->second.successors) {
         // Push those that haven't yet been visited on the stack.
         if (seenPreds.insert(pred).second)
           predStack.push_back(pred);
@@ -246,16 +233,14 @@ void TfScriptModuleLoader::_LoadUpTo(TfToken const &name)
   string indentString;
   char const *indentTxt = 0;
 
-  if (TfDebug::IsEnabled(TF_SCRIPT_MODULE_LOADER))
-  {
+  if (TfDebug::IsEnabled(TF_SCRIPT_MODULE_LOADER)) {
     indentString = std::string(indent * 2, ' ');
     indentTxt = indentString.c_str();
   }
 
   // Don't do anything if the name isn't empty and it's not a name we know
   // about.
-  if (!name.IsEmpty() && !_libInfo.count(name))
-  {
+  if (!name.IsEmpty() && !_libInfo.count(name)) {
     TF_DEBUG(TF_SCRIPT_MODULE_LOADER)
       .Msg("%s*** Not loading modules for unknown lib '%s'\n", indentTxt, name.GetText());
     return;
@@ -264,24 +249,20 @@ void TfScriptModuleLoader::_LoadUpTo(TfToken const &name)
   // Otherwise load modules in topological dependency order until we
   // encounter the requested module.
   vector<TfToken> order;
-  if (name.IsEmpty())
-  {
+  if (name.IsEmpty()) {
     _TopologicalSort(&order);
-  } else
-  {
+  } else {
     _GetOrderedDependencies(vector<TfToken>(1, name), &order);
   }
 
   TF_DEBUG(TF_SCRIPT_MODULE_LOADER).Msg("%s_LoadUpTo('%s') {\n", indentTxt, name.GetText());
-  TF_FOR_ALL (lib, order)
-  {
+  TF_FOR_ALL (lib, order) {
     // If we encounter the library we're loading on behalf of, quit.
     // Mostly this is the last library in the order, but it may not be.
     if (*lib == name)
       break;
 
-    if (_libsToModules.count(*lib) && !_loadedSet.count(*lib))
-    {
+    if (_libsToModules.count(*lib) && !_loadedSet.count(*lib)) {
       TF_DEBUG(TF_SCRIPT_MODULE_LOADER).Msg("%s  Load('%s');\n", indentTxt, lib->GetText());
       _loadedSet.insert(*lib);
       ++indent;
@@ -289,8 +270,7 @@ void TfScriptModuleLoader::_LoadUpTo(TfToken const &name)
       --indent;
     }
 
-    if (_DidPyErrorOccur())
-    {
+    if (_DidPyErrorOccur()) {
       TF_DEBUG(TF_SCRIPT_MODULE_LOADER).Msg("%s  *error*\n", indentTxt);
       break;
     }
@@ -347,10 +327,8 @@ void TfScriptModuleLoader::_LoadModulesFor(TfToken const &inName)
 
   // If this is the outermost caller initiating loading, start processing the
   // queue.
-  if (_remainingLoadWork.size() == 1)
-  {
-    while (!_remainingLoadWork.empty() && !_DidPyErrorOccur())
-    {
+  if (_remainingLoadWork.size() == 1) {
+    while (!_remainingLoadWork.empty() && !_DidPyErrorOccur()) {
       // Note: we copy the front of the deque here, since _LoadUpTo may
       // add items into the deque.  _LoadUpTo currently doesn't access the
       // reference-to-token it's passed after it might have modified the
@@ -369,8 +347,7 @@ void TfScriptModuleLoader::_LoadModulesFor(TfToken const &inName)
     // (transitive) dependency of the library we're currently working on,
     // then load it immediately.
   } else if (!_remainingLoadWork.back().IsEmpty() &&
-             !_HasTransitiveSuccessor(_remainingLoadWork.front(), _remainingLoadWork.back()))
-  {
+             !_HasTransitiveSuccessor(_remainingLoadWork.front(), _remainingLoadWork.back())) {
     TfToken name = _remainingLoadWork.back();
     _remainingLoadWork.pop_back();
     _LoadUpTo(name);
@@ -379,8 +356,7 @@ void TfScriptModuleLoader::_LoadModulesFor(TfToken const &inName)
 
 void TfScriptModuleLoader::_AddSuccessor(TfToken const &lib, TfToken const &successor)
 {
-  if (ARCH_UNLIKELY(lib == successor))
-  {
+  if (ARCH_UNLIKELY(lib == successor)) {
     // CODE_COVERAGE_OFF Can only happen if there's a bug.
     TF_FATAL_ERROR("Library '%s' cannot depend on itself.", lib.GetText());
     return;
@@ -389,7 +365,8 @@ void TfScriptModuleLoader::_AddSuccessor(TfToken const &lib, TfToken const &succ
 
   // Add dependent as a dependent of lib.
   vector<TfToken> *successors = &(_libInfo[lib].successors);
-  successors->insert(std::lower_bound(successors->begin(), successors->end(), successor), successor);
+  successors->insert(std::lower_bound(successors->begin(), successors->end(), successor),
+                     successor);
 }
 
 void TfScriptModuleLoader ::_GetOrderedDependenciesRecursive(TfToken const &lib,
@@ -398,8 +375,7 @@ void TfScriptModuleLoader ::_GetOrderedDependenciesRecursive(TfToken const &lib,
 {
   // If we've not yet visited this library, then visit its predecessors, and
   // finally add it to the order.
-  if (seenLibs->insert(lib).second)
-  {
+  if (seenLibs->insert(lib).second) {
     TF_FOR_ALL (i, _libInfo.find(lib)->second.predecessors)
       _GetOrderedDependenciesRecursive(*i, seenLibs, result);
 
@@ -411,12 +387,10 @@ void TfScriptModuleLoader::_GetOrderedDependencies(vector<TfToken> const &input,
                                                    vector<TfToken> *result) const
 {
   TfToken::HashSet seenLibs;
-  TF_FOR_ALL (i, input)
-  {
+  TF_FOR_ALL (i, input) {
     // If we haven't seen the current input yet, add its predecessors (and
     // their dependencies) to the result.
-    if (seenLibs.insert(*i).second)
-    {
+    if (seenLibs.insert(*i).second) {
       TF_FOR_ALL (j, _libInfo.find(*i)->second.predecessors)
         _GetOrderedDependenciesRecursive(*j, &seenLibs, result);
     }
@@ -428,8 +402,7 @@ void TfScriptModuleLoader::_TopologicalSort(vector<TfToken> *result) const
   // Find all libs with no successors, then produce all ordered dependencies
   // from them.
   vector<TfToken> leaves;
-  TF_FOR_ALL (i, _libInfo)
-  {
+  TF_FOR_ALL (i, _libInfo) {
     if (i->second.successors.empty())
       leaves.push_back(i->first);
   }

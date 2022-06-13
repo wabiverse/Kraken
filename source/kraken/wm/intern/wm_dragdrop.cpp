@@ -41,16 +41,13 @@ void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent)
   /* Don't drag the same ID twice. */
   UNIVERSE_MUTABLE_FOR_ALL(drag_id, drag->ids)
   {
-    if (drag_id->id == id)
-    {
-      if (drag_id->from_parent.IsEmpty())
-      {
+    if (drag_id->id == id) {
+      if (drag_id->from_parent.IsEmpty()) {
         drag_id->from_parent = from_parent;
       }
       return;
     }
-    if (drag_id->id.GetName() != id.GetName())
-    {
+    if (drag_id->id.GetName() != id.GetName()) {
       KLI_assert(!"All dragged IDs must have the same type");
       return;
     }
@@ -63,7 +60,12 @@ void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent)
   drag->ids.push_back(drag_id);
 }
 
-wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double value, unsigned int flags)
+wmDrag *WM_event_start_drag(kContext *C,
+                            int icon,
+                            int type,
+                            void *poin,
+                            double value,
+                            unsigned int flags)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   wmDrag *drag = new wmDrag();
@@ -75,19 +77,16 @@ wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double 
   drag->flags = flags;
   drag->icon = icon;
   drag->type = type;
-  switch (type)
-  {
+  switch (type) {
     case WM_DRAG_PATH:
       KLI_strncpy(drag->path, (const char *)poin, FILE_MAX);
       /* As the path is being copied, free it immediately as `drag` wont "own" the data. */
-      if (flags & WM_DRAG_FREE_DATA)
-      {
+      if (flags & WM_DRAG_FREE_DATA) {
         delete poin;
       }
       break;
     case WM_DRAG_ID:
-      if (poin)
-      {
+      if (poin) {
         WM_drag_add_local_ID(drag, SdfPath((const char *)poin), SdfPath(""));
       }
       break;
@@ -107,8 +106,7 @@ wmDrag *WM_event_start_drag(kContext *C, int icon, int type, void *poin, double 
 
 void WM_drag_free_list(std::vector<wmDrag *> &drags)
 {
-  for (auto &drag : drags)
-  {
+  for (auto &drag : drags) {
     free(drag);
   }
 

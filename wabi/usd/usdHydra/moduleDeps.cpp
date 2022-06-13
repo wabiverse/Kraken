@@ -43,7 +43,9 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
 {
   // List of direct dependencies for this library.
   const std::vector<TfToken> reqs = {TfToken("tf"), TfToken("usd"), TfToken("usdShade")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdHydra"), TfToken("wabi.UsdHydra"), reqs);
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdHydra"),
+                                                      TfToken("wabi.UsdHydra"),
+                                                      reqs);
 }
 
 WABI_NAMESPACE_END

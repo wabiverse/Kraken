@@ -38,8 +38,7 @@ namespace Zep
 
     Wait();
 
-    if (m_processedChar < offset.Index() || (long)m_syntax.size() <= offset.Index())
-    {
+    if (m_processedChar < offset.Index() || (long)m_syntax.size() <= offset.Index()) {
       return result;
     }
 
@@ -48,11 +47,9 @@ namespace Zep
     result.underline = m_syntax[offset.Index()].underline;
 
     bool found = false;
-    for (auto &adorn : m_adornments)
-    {
+    for (auto &adorn : m_adornments) {
       auto adornResult = adorn->GetSyntaxAt(offset, found);
-      if (found)
-      {
+      if (found) {
         result = adornResult;
         break;
       }
@@ -63,8 +60,7 @@ namespace Zep
 
   void ZepSyntax::Wait() const
   {
-    if (m_syntaxResult.valid())
-    {
+    if (m_syntaxResult.valid()) {
       m_syntaxResult.wait();
     }
   }
@@ -73,8 +69,7 @@ namespace Zep
   {
     // Stop the thread, wait for it
     m_stop = true;
-    if (m_syntaxResult.valid())
-    {
+    if (m_syntaxResult.valid()) {
       m_syntaxResult.get();
     }
     m_stop = false;
@@ -96,7 +91,8 @@ namespace Zep
     // TODO: Unicode? I _think_ this may be OK, but need to revisit
     m_syntax.resize(m_buffer.GetWorkingBuffer().size(), SyntaxData{});
 
-    m_processedChar = std::min(long(m_processedChar), long(m_buffer.GetWorkingBuffer().size() - 1));
+    m_processedChar = std::min(long(m_processedChar),
+                               long(m_buffer.GetWorkingBuffer().size() - 1));
     m_targetChar = std::min(long(m_targetChar), long(m_buffer.GetWorkingBuffer().size() - 1));
 
     // Have the thread update the syntax in the new region
@@ -109,32 +105,26 @@ namespace Zep
   void ZepSyntax::Notify(std::shared_ptr<ZepMessage> spMsg)
   {
     // Handle any interesting buffer messages
-    if (spMsg->messageId == Msg::Buffer)
-    {
+    if (spMsg->messageId == Msg::Buffer) {
       auto spBufferMsg = std::static_pointer_cast<BufferMessage>(spMsg);
-      if (spBufferMsg->pBuffer != &m_buffer)
-      {
+      if (spBufferMsg->pBuffer != &m_buffer) {
         return;
       }
-      if (spBufferMsg->type == BufferMessageType::PreBufferChange)
-      {
+      if (spBufferMsg->type == BufferMessageType::PreBufferChange) {
         Interrupt();
-      } else if (spBufferMsg->type == BufferMessageType::TextDeleted)
-      {
+      } else if (spBufferMsg->type == BufferMessageType::TextDeleted) {
         Interrupt();
         m_syntax.erase(m_syntax.begin() + spBufferMsg->startLocation.Index(),
                        m_syntax.begin() + spBufferMsg->endLocation.Index());
         QueueUpdateSyntax(spBufferMsg->startLocation, spBufferMsg->endLocation);
       } else if (spBufferMsg->type == BufferMessageType::TextAdded ||
-                 spBufferMsg->type == BufferMessageType::Loaded)
-      {
+                 spBufferMsg->type == BufferMessageType::Loaded) {
         Interrupt();
         m_syntax.insert(m_syntax.begin() + spBufferMsg->startLocation.Index(),
                         ByteDistance(spBufferMsg->startLocation, spBufferMsg->endLocation),
                         SyntaxData{});
         QueueUpdateSyntax(spBufferMsg->startLocation, spBufferMsg->endLocation);
-      } else if (spBufferMsg->type == BufferMessageType::TextChanged)
-      {
+      } else if (spBufferMsg->type == BufferMessageType::TextChanged) {
         Interrupt();
         QueueUpdateSyntax(spBufferMsg->startLocation, spBufferMsg->endLocation);
       }
@@ -154,29 +144,23 @@ namespace Zep
     std::string delim;
     std::string lineEnd("\n");
 
-    if (m_flags & ZepSyntaxFlags::LispLike)
-    {
+    if (m_flags & ZepSyntaxFlags::LispLike) {
       delim = std::string(" \t.\n(){}[]");
-    } else
-    {
+    } else {
       delim = std::string(" \t.\n;(){}[]=:");
     }
 
     // Walk backwards to previous delimiter
-    while (itrCurrent > buffer.begin())
-    {
-      if (std::find(delim.begin(), delim.end(), *itrCurrent) == delim.end())
-      {
+    while (itrCurrent > buffer.begin()) {
+      if (std::find(delim.begin(), delim.end(), *itrCurrent) == delim.end()) {
         itrCurrent--;
-      } else
-      {
+      } else {
         break;
       }
     }
 
     // Back to the previous line
-    while (itrCurrent > buffer.begin() && *itrCurrent != '\n')
-    {
+    while (itrCurrent > buffer.begin() && *itrCurrent != '\n') {
       itrCurrent--;
     }
     itrEnd = buffer.find_first_of(itrEnd, buffer.end(), lineEnd.begin(), lineEnd.end());
@@ -191,24 +175,26 @@ namespace Zep
                 SyntaxData{type, background});
     };
 
-    auto markSingle = [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
-      (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
-      (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
-    };
+    auto markSingle =
+      [&](GapBuffer<uint8_t>::const_iterator itrA, ThemeColor type, ThemeColor background) {
+        (m_syntax.begin() + (itrA - buffer.begin()))->foreground = type;
+        (m_syntax.begin() + (itrA - buffer.begin()))->background = background;
+      };
 
     // Update start location
     m_processedChar = long(itrCurrent - buffer.begin());
 
     // Walk the buffer updating information about syntax coloring
-    while (itrCurrent != itrEnd)
-    {
-      if (m_stop == true)
-      {
+    while (itrCurrent != itrEnd) {
+      if (m_stop == true) {
         return;
       }
 
       // Find a token, skipping delim <itrFirst, itrLast>
-      auto itrFirst = buffer.find_first_not_of(itrCurrent, buffer.end(), delim.begin(), delim.end());
+      auto itrFirst = buffer.find_first_not_of(itrCurrent,
+                                               buffer.end(),
+                                               delim.begin(),
+                                               delim.end());
       if (itrFirst == buffer.end())
         break;
 
@@ -218,68 +204,53 @@ namespace Zep
       assert(itrLast >= itrFirst);
 
       // Mark whitespace
-      for (auto &itr = itrCurrent; itr < itrFirst; itr++)
-      {
-        if (*itr == ' ')
-        {
+      for (auto &itr = itrCurrent; itr < itrFirst; itr++) {
+        if (*itr == ' ') {
           mark(itr, itr + 1, ThemeColor::Whitespace, ThemeColor::None);
-        } else if (*itr == '\t')
-        {
+        } else if (*itr == '\t') {
           mark(itr, itr + 1, ThemeColor::Whitespace, ThemeColor::None);
         }
       }
 
       // Do I need to make a string here?
       auto token = std::string(itrFirst, itrLast);
-      if (m_flags & ZepSyntaxFlags::CaseInsensitive)
-      {
+      if (m_flags & ZepSyntaxFlags::CaseInsensitive) {
         token = string_tolower(token);
       }
 
-      if (m_keywords.find(token) != m_keywords.end())
-      {
+      if (m_keywords.find(token) != m_keywords.end()) {
         mark(itrFirst, itrLast, ThemeColor::Keyword, ThemeColor::None);
-      } else if (m_identifiers.find(token) != m_identifiers.end())
-      {
+      } else if (m_identifiers.find(token) != m_identifiers.end()) {
         mark(itrFirst, itrLast, ThemeColor::Identifier, ThemeColor::None);
-      } else if (token.find_first_not_of("0123456789") == std::string::npos)
-      {
+      } else if (token.find_first_not_of("0123456789") == std::string::npos) {
         mark(itrFirst, itrLast, ThemeColor::Number, ThemeColor::None);
-      } else if (token.find_first_not_of("{}()[]") == std::string::npos)
-      {
+      } else if (token.find_first_not_of("{}()[]") == std::string::npos) {
         mark(itrFirst, itrLast, ThemeColor::Parenthesis, ThemeColor::None);
-      } else if ((m_flags & ZepSyntaxFlags::LispLike) && token[0] == ':')
-      {
+      } else if ((m_flags & ZepSyntaxFlags::LispLike) && token[0] == ':') {
         mark(itrFirst, itrLast, ThemeColor::Identifier, ThemeColor::None);
-      } else
-      {
+      } else {
         mark(itrFirst, itrLast, ThemeColor::Normal, ThemeColor::None);
       }
 
       // Find String
       auto findString = [&](uint8_t ch) {
         auto itrString = itrFirst;
-        if (*itrString == ch)
-        {
+        if (*itrString == ch) {
           itrString++;
 
-          while (itrString < buffer.end())
-          {
+          while (itrString < buffer.end()) {
             // handle end of string
-            if (*itrString == ch)
-            {
+            if (*itrString == ch) {
               itrString++;
               mark(itrFirst, itrString, ThemeColor::String, ThemeColor::None);
               itrLast = itrString + 1;
               break;
             }
 
-            if (itrString < (buffer.end() - 1))
-            {
+            if (itrString < (buffer.end() - 1)) {
               auto itrNext = itrString + 1;
               // Ignore quoted
-              if (*itrString == '\\' && *itrNext == ch)
-              {
+              if (*itrString == '\\' && *itrNext == ch) {
                 itrString++;
               }
             }
@@ -291,28 +262,31 @@ namespace Zep
       findString('\"');
       findString('\'');
 
-      if (m_flags & ZepSyntaxFlags::LispLike)
-      {
+      if (m_flags & ZepSyntaxFlags::LispLike) {
         // Lisp languages use ; or # for comments
         std::string commentStr = ";#";
-        auto itrComment = buffer.find_first_of(itrFirst, itrLast, commentStr.begin(), commentStr.end());
-        if (itrComment != buffer.end())
-        {
+        auto itrComment = buffer.find_first_of(itrFirst,
+                                               itrLast,
+                                               commentStr.begin(),
+                                               commentStr.end());
+        if (itrComment != buffer.end()) {
           itrLast = buffer.find_first_of(itrComment, buffer.end(), lineEnd.begin(), lineEnd.end());
           mark(itrComment, itrLast, ThemeColor::Comment, ThemeColor::None);
         }
-      } else
-      {
+      } else {
         std::string commentStr = "/";
-        auto itrComment = buffer.find_first_of(itrFirst, itrLast, commentStr.begin(), commentStr.end());
-        if (itrComment != buffer.end())
-        {
+        auto itrComment = buffer.find_first_of(itrFirst,
+                                               itrLast,
+                                               commentStr.begin(),
+                                               commentStr.end());
+        if (itrComment != buffer.end()) {
           auto itrCommentStart = itrComment++;
-          if (itrComment < buffer.end())
-          {
-            if (*itrComment == '/')
-            {
-              itrLast = buffer.find_first_of(itrCommentStart, buffer.end(), lineEnd.begin(), lineEnd.end());
+          if (itrComment < buffer.end()) {
+            if (*itrComment == '/') {
+              itrLast = buffer.find_first_of(itrCommentStart,
+                                             buffer.end(),
+                                             lineEnd.begin(),
+                                             lineEnd.end());
               mark(itrCommentStart, itrLast, ThemeColor::Comment, ThemeColor::None);
             }
           }
@@ -330,22 +304,18 @@ namespace Zep
 
   const NVec4f &ZepSyntax::ToBackgroundColor(const SyntaxResult &res) const
   {
-    if (res.background == ThemeColor::Custom)
-    {
+    if (res.background == ThemeColor::Custom) {
       return res.customBackgroundColor;
-    } else
-    {
+    } else {
       return m_buffer.GetTheme().GetColor(res.background);
     }
   }
 
   const NVec4f &ZepSyntax::ToForegroundColor(const SyntaxResult &res) const
   {
-    if (res.foreground == ThemeColor::Custom)
-    {
+    if (res.foreground == ThemeColor::Custom) {
       return res.customForegroundColor;
-    } else
-    {
+    } else {
       return m_buffer.GetTheme().GetColor(res.foreground);
     }
   }

@@ -71,8 +71,7 @@ namespace
   // Python's getreadbuf interface function.
   static Py_ssize_t getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
-    if (segment != 0)
-    {
+    if (segment != 0) {
       // Always one-segment.
       PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
       return -1;
@@ -111,15 +110,13 @@ namespace
   // Python's getbuffer interface function.
   static int getbuffer(PyObject *self, Py_buffer *view, int flags)
   {
-    if (view == NULL)
-    {
+    if (view == NULL) {
       PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
       return -1;
     }
 
     // We don't support fortran order.
-    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
-    {
+    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS) {
       PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
       return -1;
     }
@@ -131,29 +128,23 @@ namespace
     view->len = sizeof(GfMatrix2d);
     view->readonly = 0;
     view->itemsize = sizeof(double);
-    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
-    {
+    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
       view->format = Gf_GetPyBufferFmtFor<double>();
-    } else
-    {
+    } else {
       view->format = NULL;
     }
-    if ((flags & PyBUF_ND) == PyBUF_ND)
-    {
+    if ((flags & PyBUF_ND) == PyBUF_ND) {
       view->ndim = 2;
       static Py_ssize_t shape[] = {2, 2};
       view->shape = shape;
-    } else
-    {
+    } else {
       view->ndim = 0;
       view->shape = NULL;
     }
-    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
-    {
+    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
       static Py_ssize_t strides[] = {2 * sizeof(double), sizeof(double)};
       view->strides = strides;
-    } else
-    {
+    } else {
       view->strides = NULL;
     }
     view->suboffsets = NULL;
@@ -182,8 +173,8 @@ namespace
   static string _Repr(GfMatrix2d const &self)
   {
     static char newline[] = ",\n            ";
-    return TF_PY_REPR_PREFIX + "Matrix2d(" + TfPyRepr(self[0][0]) + ", " + TfPyRepr(self[0][1]) + newline +
-           TfPyRepr(self[1][0]) + ", " + TfPyRepr(self[1][1]) + ")";
+    return TF_PY_REPR_PREFIX + "Matrix2d(" + TfPyRepr(self[0][0]) + ", " + TfPyRepr(self[0][1]) +
+           newline + TfPyRepr(self[1][0]) + ", " + TfPyRepr(self[1][1]) + ")";
   }
 
   static GfMatrix2d GetInverseWrapper(const GfMatrix2d &self)
@@ -211,8 +202,7 @@ namespace
   static double __getitem__double(GfMatrix2d const &self, tuple index)
   {
     int i1 = 0, i2 = 0;
-    if (len(index) == 2)
-    {
+    if (len(index) == 2) {
       i1 = normalizeIndex(extract<int>(index[0]));
       i2 = normalizeIndex(extract<int>(index[1]));
     } else
@@ -229,8 +219,7 @@ namespace
   static void __setitem__double(GfMatrix2d &self, tuple index, double value)
   {
     int i1 = 0, i2 = 0;
-    if (len(index) == 2)
-    {
+    if (len(index) == 2) {
       i1 = normalizeIndex(extract<int>(index[0]));
       i2 = normalizeIndex(extract<int>(index[1]));
     } else

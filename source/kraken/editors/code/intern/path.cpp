@@ -13,21 +13,18 @@ namespace Zep
     ZepPath::const_iterator toIter = to.begin();
 
     // Loop through both
-    while (fromIter != from.end() && toIter != to.end() && (*toIter) == (*fromIter))
-    {
+    while (fromIter != from.end() && toIter != to.end() && (*toIter) == (*fromIter)) {
       ++toIter;
       ++fromIter;
     }
 
     ZepPath finalPath;
-    while (fromIter != from.end())
-    {
+    while (fromIter != from.end()) {
       finalPath = finalPath / "..";
       ++fromIter;
     }
 
-    while (toIter != to.end())
-    {
+    while (toIter != to.end()) {
       finalPath = finalPath / *toIter;
       ++toIter;
     }

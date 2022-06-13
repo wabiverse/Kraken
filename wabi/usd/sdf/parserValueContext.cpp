@@ -31,8 +31,7 @@ WABI_NAMESPACE_BEGIN
 
 struct Sdf_ToStringVisitor : boost::static_visitor<std::string>
 {
-  template<typename T>
-  std::string operator()(const T &value)
+  template<typename T> std::string operator()(const T &value)
   {
     return TfStringify(value);
   }
@@ -58,21 +57,17 @@ Sdf_ParserValueContext::Sdf_ParserValueContext()
 
 bool Sdf_ParserValueContext::SetupFactory(const std::string &typeName)
 {
-  if (typeName != lastTypeName)
-  {
-    const Sdf_ParserHelpers::ValueFactory &factory = Sdf_ParserHelpers::GetValueFactoryForMenvaName(
-      typeName,
-      &valueTypeIsValid);
+  if (typeName != lastTypeName) {
+    const Sdf_ParserHelpers::ValueFactory &factory =
+      Sdf_ParserHelpers::GetValueFactoryForMenvaName(typeName, &valueTypeIsValid);
 
     valueTypeName = typeName;
 
-    if (!valueTypeIsValid)
-    {
+    if (!valueTypeIsValid) {
       valueFunc = Sdf_ParserHelpers::ValueFactoryFunc();
       valueIsShaped = false;
       valueTupleDimensions = SdfTupleDimensions();
-    } else
-    {
+    } else {
       valueFunc = factory.func;
       valueIsShaped = factory.isShaped;
       valueTupleDimensions = factory.dimensions;
@@ -87,13 +82,10 @@ bool Sdf_ParserValueContext::SetupFactory(const std::string &typeName)
 VtValue Sdf_ParserValueContext::ProduceValue(std::string *errStrPtr)
 {
   VtValue ret;
-  if (_isRecordingString)
-  {
+  if (_isRecordingString) {
     ret = SdfUnregisteredValue(GetRecordedString());
-  } else
-  {
-    if (!valueFunc)
-    {
+  } else {
+    if (!valueFunc) {
       // CODE_COVERAGE_OFF
       // We will already have detected a bad typename as we tried to
       // create the attribute for this value.  We should not hit this
@@ -145,27 +137,21 @@ void Sdf_ParserValueContext::Clear()
 
 void Sdf_ParserValueContext::AppendValue(const Value &value)
 {
-  if (_isRecordingString)
-  {
-    if (_needComma)
-    {
+  if (_isRecordingString) {
+    if (_needComma) {
       _recordedString += ", ";
     }
     Sdf_ToStringVisitor v;
     _recordedString += value.ApplyVisitor(v);
     _needComma = true;
-  } else
-  {
+  } else {
     vars.push_back(value);
   }
 
-  if (pushDim == -1)
-  {
+  if (pushDim == -1) {
     pushDim = dim;
-  } else
-  {
-    if (pushDim != dim)
-    {
+  } else {
+    if (pushDim != dim) {
       errorReporter("Non-square shaped value");
       return;
     }
@@ -179,18 +165,15 @@ void Sdf_ParserValueContext::AppendValue(const Value &value)
   // elements added along the current dimension so that EndTuple() can
   // validate the completed tuple dimensions with the correct tuple
   // dimensions from the factory.
-  if (tupleDepth && static_cast<size_t>(tupleDepth) == valueTupleDimensions.size)
-  {
+  if (tupleDepth && static_cast<size_t>(tupleDepth) == valueTupleDimensions.size) {
     --tupleDimensions.d[tupleDepth - 1];
   }
 }
 
 void Sdf_ParserValueContext::BeginList()
 {
-  if (_isRecordingString)
-  {
-    if (_needComma)
-    {
+  if (_isRecordingString) {
+    if (_needComma) {
       _needComma = false;
       _recordedString += ", ";
     }
@@ -200,8 +183,7 @@ void Sdf_ParserValueContext::BeginList()
   // Dim starts at 1, so the current shape index is dim - 1.
   ++dim;
   // Check if the shape is big enough for dim values
-  if (static_cast<size_t>(dim) > shape.size())
-  {
+  if (static_cast<size_t>(dim) > shape.size()) {
     shape.push_back(0);
     workingShape.push_back(0);
   }
@@ -209,48 +191,41 @@ void Sdf_ParserValueContext::BeginList()
 
 void Sdf_ParserValueContext::EndList()
 {
-  if (_isRecordingString)
-  {
+  if (_isRecordingString) {
     _recordedString += ']';
     _needComma = true;
   }
 
-  if (dim == 0)
-  {
+  if (dim == 0) {
     // CODE_COVERAGE_OFF
     // This can't happen unless there's a bug in the parser
     errorReporter("Mismatched [ ] in shaped value");
     return;
     // CODE_COVERAGE_ON
   }
-  if (shape[dim - 1] == 0)
-  {
+  if (shape[dim - 1] == 0) {
     // This is the first time we've completed a run in this
     // dimension, so store the size of this dimension into
     // our discovered shape vector.
     shape[dim - 1] = workingShape[dim - 1];
-    if (shape[dim - 1] == 0)
-    {
+    if (shape[dim - 1] == 0) {
       // CODE_COVERAGE_OFF
       // This can't happen unless there's a bug in the parser
       errorReporter("Shaped value with a zero dimension");
       return;
       // CODE_COVERAGE_ON
     }
-  } else
-  {
+  } else {
     // We've seen a run in this dimension before, so check
     // that the size is the same as before.
-    if (shape[dim - 1] != workingShape[dim - 1])
-    {
+    if (shape[dim - 1] != workingShape[dim - 1]) {
       errorReporter("Non-square shaped value");
       return;
     }
   }
 
   // XXX Dim should always be valid here due to check above?
-  if (dim)
-  {
+  if (dim) {
     // Reset our counter for the dimension we just finished
     // parsing
     workingShape[dim - 1] = 0;
@@ -263,18 +238,15 @@ void Sdf_ParserValueContext::EndList()
 
 void Sdf_ParserValueContext::BeginTuple()
 {
-  if (_isRecordingString)
-  {
-    if (_needComma)
-    {
+  if (_isRecordingString) {
+    if (_needComma) {
       _needComma = false;
       _recordedString += ", ";
     }
     _recordedString += '(';
   }
 
-  if (static_cast<size_t>(tupleDepth) >= valueTupleDimensions.size)
-  {
+  if (static_cast<size_t>(tupleDepth) >= valueTupleDimensions.size) {
     errorReporter(
       TfStringPrintf("Tuple nesting too deep! Should not be "
                      "deeper than %d for attribute of type %s.",
@@ -289,14 +261,12 @@ void Sdf_ParserValueContext::BeginTuple()
 
 void Sdf_ParserValueContext::EndTuple()
 {
-  if (_isRecordingString)
-  {
+  if (_isRecordingString) {
     _recordedString += ')';
     _needComma = true;
   }
 
-  if (tupleDepth == 0)
-  {
+  if (tupleDepth == 0) {
     // CODE_COVERAGE_OFF
     // This can't happen unless there's a bug in the parser
     errorReporter(
@@ -309,16 +279,14 @@ void Sdf_ParserValueContext::EndTuple()
 
   --tupleDepth;
 
-  if (tupleDimensions.d[tupleDepth] != 0)
-  {
+  if (tupleDimensions.d[tupleDepth] != 0) {
     errorReporter(
       TfStringPrintf("Tuple dimensions error for "
                      "attribute of type %s.",
                      valueTypeName.c_str()));
     return;
   }
-  if (tupleDepth > 0)
-  {
+  if (tupleDepth > 0) {
     --tupleDimensions.d[tupleDepth - 1];
   }
   // If we're working on a shaped type and we popped out of a tuple,

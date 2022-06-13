@@ -33,8 +33,7 @@ using std::string;
 
 WABI_NAMESPACE_BEGIN
 
-TfPyNoticeWrapperBase::~TfPyNoticeWrapperBase()
-{}
+TfPyNoticeWrapperBase::~TfPyNoticeWrapperBase() {}
 
 Tf_PyNoticeObjectGenerator::MakeObjectFunc Tf_PyNoticeObjectGenerator::_Lookup(TfNotice const &n)
 {

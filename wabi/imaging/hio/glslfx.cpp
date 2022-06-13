@@ -82,12 +82,14 @@ namespace
   class ShaderResourceRegistry
   {
    public:
+
     ShaderResourceRegistry();
 
     std::string GetShaderResourcePath(std::string const &packageName,
                                       std::string const &shaderAssetPath) const;
 
    private:
+
     std::unordered_map<std::string, std::string> _resourceMap;
   };
 
@@ -96,14 +98,12 @@ namespace
     PlugRegistry &plugReg = PlugRegistry::GetInstance();
     PlugPluginPtrVector plugins = plugReg.GetAllPlugins();
 
-    for (PlugPluginPtr const &plugin : plugins)
-    {
+    for (PlugPluginPtr const &plugin : plugins) {
       std::string packageName = plugin->GetName();
       JsObject metadata = plugin->GetMetadata();
 
       JsValue value;
-      if (TfMapLookup(metadata, _tokens->shaderResources, &value) && value.Is<std::string>())
-      {
+      if (TfMapLookup(metadata, _tokens->shaderResources, &value) && value.Is<std::string>()) {
 
         string shaderPath = TfStringCatPaths(plugin->GetResourcePath(), value.Get<std::string>());
         _resourceMap[packageName] = shaderPath;
@@ -111,12 +111,12 @@ namespace
     }
   }
 
-  std::string ShaderResourceRegistry::GetShaderResourcePath(std::string const &packageName,
-                                                            std::string const &shaderAssetPath) const
+  std::string ShaderResourceRegistry::GetShaderResourcePath(
+    std::string const &packageName,
+    std::string const &shaderAssetPath) const
   {
     string resourcePath;
-    if (!TfMapLookup(_resourceMap, packageName, &resourcePath))
-    {
+    if (!TfMapLookup(_resourceMap, packageName, &resourcePath)) {
       return std::string();
     }
 
@@ -130,10 +130,8 @@ namespace
 static string _ResolveResourcePath(const string &importFile, string *errorStr)
 {
   const vector<string> pathTokens = TfStringTokenize(importFile, "/");
-  if (pathTokens.size() < 3)
-  {
-    if (errorStr)
-    {
+  if (pathTokens.size() < 3) {
+    if (errorStr) {
       *errorStr = TfStringPrintf(
         "Expected line of the form "
         "%s/<packageName>/path",
@@ -144,11 +142,12 @@ static string _ResolveResourcePath(const string &importFile, string *errorStr)
 
   const string packageName = pathTokens[1];
 
-  const string assetPath = TfStringJoin(vector<string>(pathTokens.begin() + 3, pathTokens.end()), "/");
+  const string assetPath = TfStringJoin(vector<string>(pathTokens.begin() + 3, pathTokens.end()),
+                                        "/");
 
-  const string resourcePath = _shaderResourceRegistry->GetShaderResourcePath(packageName, assetPath);
-  if (resourcePath.empty() && errorStr)
-  {
+  const string resourcePath = _shaderResourceRegistry->GetShaderResourcePath(packageName,
+                                                                             assetPath);
+  if (resourcePath.empty() && errorStr) {
     *errorStr = TfStringPrintf(
       "Can't find "
       "resource dir to resolve tools path "
@@ -159,19 +158,19 @@ static string _ResolveResourcePath(const string &importFile, string *errorStr)
   return TfPathExists(resourcePath) ? resourcePath : "";
 }
 
-static string _ComputeResolvedPath(const string &containingFile, const string &filename, string *errorStr)
+static string _ComputeResolvedPath(const string &containingFile,
+                                   const string &filename,
+                                   string *errorStr)
 {
   // Resolve $TOOLS-prefixed paths.
-  if (TfStringStartsWith(filename, _tokens->toolSubst.GetString() + "/"))
-  {
+  if (TfStringStartsWith(filename, _tokens->toolSubst.GetString() + "/")) {
     return _ResolveResourcePath(filename, errorStr);
   }
 
   ArResolver &resolver = ArGetResolver();
 
 #if AR_VERSION == 1
-  if (filename[0] == '/')
-  {
+  if (filename[0] == '/') {
     return resolver.Resolve(filename);
   }
 
@@ -181,10 +180,10 @@ static string _ComputeResolvedPath(const string &containingFile, const string &f
   // repository path, perform a simple existence check.
   const string anchoredPath = resolver.AnchorRelativePath(containingFile, filename);
   const string repositoryPath = resolver.ComputeRepositoryPath(anchoredPath);
-  const string resolvedPath = repositoryPath.empty() ? (TfPathExists(anchoredPath) ? anchoredPath : "") :
-                                                       resolver.Resolve(repositoryPath);
-  if (!resolvedPath.empty() || filename[0] == '.')
-  {
+  const string resolvedPath = repositoryPath.empty() ?
+                                (TfPathExists(anchoredPath) ? anchoredPath : "") :
+                                resolver.Resolve(repositoryPath);
+  if (!resolvedPath.empty() || filename[0] == '.') {
     // If we found the path via file-relative search, return it.
     // Otherwise, if we didn't find the file, and it actually has a
     // file-relative prefix (./, ../), return empty to avoid a fruitless
@@ -198,14 +197,13 @@ static string _ComputeResolvedPath(const string &containingFile, const string &f
   // Create an identifier for the specified .glslfx file by combining
   // the containing file and the new file to accommodate relative paths,
   // then resolve it.
-  const std::string assetPath = resolver.CreateIdentifier(filename, ArResolvedPath(containingFile));
+  const std::string assetPath = resolver.CreateIdentifier(filename,
+                                                          ArResolvedPath(containingFile));
   return assetPath.empty() ? string() : resolver.Resolve(assetPath);
 #endif
 }
 
-HioGlslfx::HioGlslfx()
-  : _valid(false),
-    _hash(0)
+HioGlslfx::HioGlslfx() : _valid(false), _hash(0)
 {
   // do nothing
 }
@@ -224,13 +222,10 @@ HioGlslfx::HioGlslfx(string const &filePath, TfToken const &technique)
 #else
   const string resolvedPath = _ComputeResolvedPath(string(), filePath, &errorStr);
 #endif
-  if (resolvedPath.empty())
-  {
-    if (!errorStr.empty())
-    {
+  if (resolvedPath.empty()) {
+    if (!errorStr.empty()) {
       TF_RUNTIME_ERROR(errorStr);
-    } else
-    {
+    } else {
       TF_WARN("File doesn't exist: \"%s\"\n", filePath.c_str());
     }
     _valid = false;
@@ -243,8 +238,7 @@ HioGlslfx::HioGlslfx(string const &filePath, TfToken const &technique)
 
   _valid = _ProcessFile(_globalContext.filename, _globalContext);
 
-  if (_valid)
-  {
+  if (_valid) {
     _valid = _ComposeConfiguration(&_invalidReason);
   }
 }
@@ -259,16 +253,14 @@ HioGlslfx::HioGlslfx(istream &is, TfToken const &technique)
 
   _valid = _ProcessInput(&is, _globalContext);
 
-  if (_valid)
-  {
+  if (_valid) {
     _valid = _ComposeConfiguration(&_invalidReason);
   }
 }
 
 bool HioGlslfx::IsValid(std::string *reason) const
 {
-  if (reason && !_valid)
-  {
+  if (reason && !_valid) {
     *reason = _invalidReason;
   }
   return _valid;
@@ -276,8 +268,7 @@ bool HioGlslfx::IsValid(std::string *reason) const
 
 bool HioGlslfx::_ProcessFile(string const &filePath, _ParseContext &context)
 {
-  if (_seenFiles.count(filePath))
-  {
+  if (_seenFiles.count(filePath)) {
     // for now, just ignore files that have already been included
     TF_DEBUG(HIO_DEBUG_GLSLFX).Msg("Multiple import of %s\n", filePath.c_str());
     return true;
@@ -292,18 +283,15 @@ bool HioGlslfx::_ProcessFile(string const &filePath, _ParseContext &context)
 vector<string> HioGlslfx::ExtractImports(const string &filename)
 {
   ifstream input(filename);
-  if (!input)
-  {
+  if (!input) {
     return {};
   }
 
   vector<string> imports;
 
   string line;
-  while (getline(input, line))
-  {
-    if (line.find(_tokens->import) == 0)
-    {
+  while (getline(input, line)) {
+    if (line.find(_tokens->import) == 0) {
       imports.push_back(TfStringTrim(line.substr(_tokens->import.size())));
     }
   }
@@ -313,8 +301,7 @@ vector<string> HioGlslfx::ExtractImports(const string &filename)
 
 bool HioGlslfx::_ProcessInput(std::istream *input, _ParseContext &context)
 {
-  while (getline(*input, context.currentLine))
-  {
+  while (getline(*input, context.currentLine)) {
     // trim to avoid issues with cross-platform line endings
     context.currentLine = TfStringTrimRight(context.currentLine);
 
@@ -324,8 +311,7 @@ bool HioGlslfx::_ProcessInput(std::istream *input, _ParseContext &context)
     // update hash
     boost::hash_combine(_hash, context.currentLine);
 
-    if (context.lineNo > 1 && context.version < 0)
-    {
+    if (context.lineNo > 1 && context.version < 0) {
       TF_RUNTIME_ERROR(
         "Syntax Error on line 1 of %s. First line in file "
         "must be version info.",
@@ -334,15 +320,12 @@ bool HioGlslfx::_ProcessInput(std::istream *input, _ParseContext &context)
     }
 
     // simply ignore comments
-    if (context.currentLine.find(_tokens->commentDelimiter.GetText()) == 0)
-    {
+    if (context.currentLine.find(_tokens->commentDelimiter.GetText()) == 0) {
       continue;
     } else
       // we found a section delimiter
-      if (context.currentLine.find(_tokens->sectionDelimiter.GetText()) == 0)
-      {
-        if (!_ParseSectionLine(context))
-        {
+      if (context.currentLine.find(_tokens->sectionDelimiter.GetText()) == 0) {
+        if (!_ParseSectionLine(context)) {
           return false;
         }
 
@@ -352,19 +335,15 @@ bool HioGlslfx::_ProcessInput(std::istream *input, _ParseContext &context)
                context.lineNo,
                context.currentLine.c_str());
       } else if (context.currentSectionType == HioGlslfxTokens->glslfx &&
-                 context.currentLine.find(_tokens->import.GetText()) == 0)
-      {
-        if (!_ProcessImport(context))
-        {
+                 context.currentLine.find(_tokens->import.GetText()) == 0) {
+        if (!_ProcessImport(context)) {
           return false;
         }
-      } else if (context.currentSectionType == _tokens->glsl)
-      {
+      } else if (context.currentSectionType == _tokens->glsl) {
         // don't do any parsing of these lines. this will be compiled
         // and linked with the glsl compiler later.
         _sourceMap[context.currentSectionId].append(context.currentLine + "\n");
-      } else if (context.currentSectionType == _tokens->configuration)
-      {
+      } else if (context.currentSectionType == _tokens->configuration) {
         // this is added to the config dictionary which we will compose
         // later
         _configMap[context.filename].append(context.currentLine + "\n");
@@ -372,18 +351,15 @@ bool HioGlslfx::_ProcessInput(std::istream *input, _ParseContext &context)
   }
 
   // If we never found the glslfx version this isn't a valid glslfx.
-  if (context.version < 0)
-  {
+  if (context.version < 0) {
     return false;
   }
 
-  for (std::string const &importFile : context.imports)
-  {
+  for (std::string const &importFile : context.imports) {
     TF_DEBUG(HIO_DEBUG_GLSLFX).Msg(" Importing File : %s\n", importFile.c_str());
 
     _ParseContext localContext(importFile);
-    if (!_ProcessFile(importFile, localContext))
-    {
+    if (!_ProcessFile(importFile, localContext)) {
       return false;
     }
   }
@@ -395,8 +371,7 @@ bool HioGlslfx::_ProcessImport(_ParseContext &context)
 {
   const vector<string> tokens = TfStringTokenize(context.currentLine);
 
-  if (tokens.size() != 2)
-  {
+  if (tokens.size() != 2) {
     TF_RUNTIME_ERROR(
       "Syntax Error on line %d of %s. #import declaration "
       "must be followed by a valid file path.",
@@ -408,10 +383,8 @@ bool HioGlslfx::_ProcessImport(_ParseContext &context)
   string errorStr;
   const string importFile = _ComputeResolvedPath(context.filename, tokens[1], &errorStr);
 
-  if (importFile.empty())
-  {
-    if (!errorStr.empty())
-    {
+  if (importFile.empty()) {
+    if (!errorStr.empty()) {
       TF_RUNTIME_ERROR("Syntax Error on line %d of %s. %s",
                        context.lineNo,
                        context.filename.c_str(),
@@ -433,8 +406,7 @@ bool HioGlslfx::_ParseSectionLine(_ParseContext &context)
 {
 
   vector<string> tokens = TfStringTokenize(context.currentLine);
-  if (tokens.size() == 1)
-  {
+  if (tokens.size() == 1) {
     TF_RUNTIME_ERROR(
       "Syntax Error on line %d of %s. Section delimiter "
       "must be followed by a valid token.",
@@ -446,15 +418,12 @@ bool HioGlslfx::_ParseSectionLine(_ParseContext &context)
   context.currentSectionType = tokens[1];
   context.currentSectionId.clear();
 
-  if (context.currentSectionType == HioGlslfxTokens->glslfx.GetText())
-  {
+  if (context.currentSectionType == HioGlslfxTokens->glslfx.GetText()) {
     return _ParseVersionLine(tokens, context);
   }
-  if (context.currentSectionType == _tokens->configuration.GetText())
-  {
+  if (context.currentSectionType == _tokens->configuration.GetText()) {
     return _ParseConfigurationLine(context);
-  } else if (context.currentSectionType == _tokens->glsl.GetText())
-  {
+  } else if (context.currentSectionType == _tokens->glsl.GetText()) {
     return _ParseGLSLSectionLine(tokens, context);
   }
 
@@ -467,8 +436,7 @@ bool HioGlslfx::_ParseSectionLine(_ParseContext &context)
 
 bool HioGlslfx::_ParseGLSLSectionLine(vector<string> const &tokens, _ParseContext &context)
 {
-  if (tokens.size() < 3)
-  {
+  if (tokens.size() < 3) {
     TF_RUNTIME_ERROR(
       "Syntax Error on line %d of %s. \"glsl\" tag must"
       "be followed by a valid identifier.",
@@ -482,8 +450,7 @@ bool HioGlslfx::_ParseGLSLSectionLine(vector<string> const &tokens, _ParseContex
   // if we already have a section id that is registered in our source map,
   // bail
   _SourceMap::const_iterator cit = _sourceMap.find(context.currentSectionId);
-  if (cit != _sourceMap.end())
-  {
+  if (cit != _sourceMap.end()) {
     TF_RUNTIME_ERROR(
       "Syntax Error on line %d of %s. Source for \"%s\" has "
       "already been defined",
@@ -503,8 +470,7 @@ bool HioGlslfx::_ParseGLSLSectionLine(vector<string> const &tokens, _ParseContex
 
 bool HioGlslfx::_ParseVersionLine(vector<string> const &tokens, _ParseContext &context)
 {
-  if (context.lineNo != 1)
-  {
+  if (context.lineNo != 1) {
     TF_RUNTIME_ERROR(
       "Syntax Error on line %d of %s. Version "
       "specifier must be on the first line.",
@@ -514,8 +480,7 @@ bool HioGlslfx::_ParseVersionLine(vector<string> const &tokens, _ParseContext &c
   }
 
   // verify that the version spec is what we expect
-  if (tokens.size() != 4 || tokens[2] != _tokens->version.GetText())
-  {
+  if (tokens.size() != 4 || tokens[2] != _tokens->version.GetText()) {
     TF_RUNTIME_ERROR(
       "Syntax Error on line %d of %s. Invalid "
       "version specifier.",
@@ -527,8 +492,7 @@ bool HioGlslfx::_ParseVersionLine(vector<string> const &tokens, _ParseContext &c
   context.version = TfStringToDouble(tokens[3]);
 
   // verify this with the global version. for now, mismatch is an error
-  if (context.version != _globalContext.version)
-  {
+  if (context.version != _globalContext.version) {
     TF_RUNTIME_ERROR(
       "Version mismatch. %s specifies %2.2f, but %s "
       "specifies %2.2f",
@@ -545,8 +509,7 @@ bool HioGlslfx::_ParseVersionLine(vector<string> const &tokens, _ParseContext &c
 
 bool HioGlslfx::_ParseConfigurationLine(_ParseContext &context)
 {
-  if (_configMap.find(context.filename) != _configMap.end())
-  {
+  if (_configMap.find(context.filename) != _configMap.end()) {
     TF_RUNTIME_ERROR(
       "Syntax Error on line %d of %s. "
       "configuration for this file has already been defined",
@@ -584,16 +547,14 @@ bool HioGlslfx::_ComposeConfiguration(std::string *reason)
   //
   // there is an opportunity to do more powerful dictionary composition here
 
-  for (std::string const &item : _configOrder)
-  {
+  for (std::string const &item : _configOrder) {
     TF_AXIOM(_configMap.find(item) != _configMap.end());
     TF_DEBUG(HIO_DEBUG_GLSLFX).Msg("    Parsing config for %s\n", TfGetBaseName(item).c_str());
 
     string errorStr;
     _config.reset(HioGlslfxConfig::Read(_technique, _configMap[item], item, &errorStr));
 
-    if (!errorStr.empty())
-    {
+    if (!errorStr.empty()) {
       *reason = TfStringPrintf("Error parsing configuration section of %s: %s.",
                                item.c_str(),
                                errorStr.c_str());
@@ -606,8 +567,7 @@ bool HioGlslfx::_ComposeConfiguration(std::string *reason)
 
 HioGlslfxConfig::Parameters HioGlslfx::GetParameters() const
 {
-  if (_config)
-  {
+  if (_config) {
     return _config->GetParameters();
   }
 
@@ -616,8 +576,7 @@ HioGlslfxConfig::Parameters HioGlslfx::GetParameters() const
 
 HioGlslfxConfig::Textures HioGlslfx::GetTextures() const
 {
-  if (_config)
-  {
+  if (_config) {
     return _config->GetTextures();
   }
 
@@ -626,8 +585,7 @@ HioGlslfxConfig::Textures HioGlslfx::GetTextures() const
 
 HioGlslfxConfig::Attributes HioGlslfx::GetAttributes() const
 {
-  if (_config)
-  {
+  if (_config) {
     return _config->GetAttributes();
   }
 
@@ -636,8 +594,7 @@ HioGlslfxConfig::Attributes HioGlslfx::GetAttributes() const
 
 HioGlslfxConfig::MetadataDictionary HioGlslfx::GetMetadata() const
 {
-  if (_config)
-  {
+  if (_config) {
     return _config->GetMetadata();
   }
 
@@ -646,8 +603,7 @@ HioGlslfxConfig::MetadataDictionary HioGlslfx::GetMetadata() const
 
 string HioGlslfx::_GetSource(const TfToken &shaderStageKey) const
 {
-  if (!_config)
-  {
+  if (!_config) {
     return "";
   }
 
@@ -656,13 +612,11 @@ string HioGlslfx::_GetSource(const TfToken &shaderStageKey) const
 
   string ret;
 
-  for (std::string const &key : sourceKeys)
-  {
+  for (std::string const &key : sourceKeys) {
     // now look up the keys and concatenate them together..
     _SourceMap::const_iterator cit = _sourceMap.find(key);
 
-    if (cit == _sourceMap.end())
-    {
+    if (cit == _sourceMap.end()) {
       TF_RUNTIME_ERROR(
         "Can't find shader source for <%s> with the key "
         "<%s>",

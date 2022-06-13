@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdRenderVar::~UsdRenderVar()
-{}
+UsdRenderVar::~UsdRenderVar() {}
 
 /* static */
 UsdRenderVar UsdRenderVar::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderVar();
   }
@@ -69,8 +67,7 @@ UsdRenderVar UsdRenderVar::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdRenderVar UsdRenderVar::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("RenderVar");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderVar();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdRenderVar::GetDataTypeAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->dataType);
 }
 
-UsdAttribute UsdRenderVar::CreateDataTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRenderVar::CreateDataTypeAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->dataType,
                                     SdfValueTypeNames->Token,
@@ -123,7 +121,8 @@ UsdAttribute UsdRenderVar::GetSourceNameAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->sourceName);
 }
 
-UsdAttribute UsdRenderVar::CreateSourceNameAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRenderVar::CreateSourceNameAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->sourceName,
                                     SdfValueTypeNames->String,
@@ -138,7 +137,8 @@ UsdAttribute UsdRenderVar::GetSourceTypeAttr() const
   return GetPrim().GetAttribute(UsdRenderTokens->sourceType);
 }
 
-UsdAttribute UsdRenderVar::CreateSourceTypeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdRenderVar::CreateSourceTypeAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdRenderTokens->sourceType,
                                     SdfValueTypeNames->Token,
@@ -169,8 +169,9 @@ const TfTokenVector &UsdRenderVar::GetSchemaAttributeNames(bool includeInherited
     UsdRenderTokens->sourceName,
     UsdRenderTokens->sourceType,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdTyped::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdTyped::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

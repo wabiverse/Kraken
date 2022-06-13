@@ -58,10 +58,7 @@ bool SdfLayerOffset::IsIdentity() const
   return *this == identityOffset;
 }
 
-SdfLayerOffset::SdfLayerOffset(double offset, double scale)
-  : _offset(offset),
-    _scale(scale)
-{}
+SdfLayerOffset::SdfLayerOffset(double offset, double scale) : _offset(offset), _scale(scale) {}
 
 bool SdfLayerOffset::IsValid() const
 {
@@ -70,17 +67,14 @@ bool SdfLayerOffset::IsValid() const
 
 SdfLayerOffset SdfLayerOffset::GetInverse() const
 {
-  if (IsIdentity())
-  {
+  if (IsIdentity()) {
     return *this;
   }
 
   double newScale;
-  if (_scale != 0.0)
-  {
+  if (_scale != 0.0) {
     newScale = 1.0 / _scale;
-  } else
-  {
+  } else {
     newScale = std::numeric_limits<double>::infinity();
   }
   return SdfLayerOffset(-_offset * newScale, newScale);
@@ -110,25 +104,19 @@ bool SdfLayerOffset::operator==(const SdfLayerOffset &rhs) const
 
 bool SdfLayerOffset::operator<(const SdfLayerOffset &rhs) const
 {
-  if (!IsValid())
-  {
+  if (!IsValid()) {
     return false;
   }
-  if (!rhs.IsValid())
-  {
+  if (!rhs.IsValid()) {
     return true;
   }
-  if (GfIsClose(_scale, rhs._scale, EPSILON))
-  {
-    if (GfIsClose(_offset, rhs._offset, EPSILON))
-    {
+  if (GfIsClose(_scale, rhs._scale, EPSILON)) {
+    if (GfIsClose(_offset, rhs._offset, EPSILON)) {
       return false;
-    } else
-    {
+    } else {
       return _offset < rhs._offset;
     }
-  } else
-  {
+  } else {
     return _scale < rhs._scale;
   }
 }
@@ -143,7 +131,8 @@ size_t SdfLayerOffset::GetHash() const
 
 std::ostream &operator<<(std::ostream &out, const SdfLayerOffset &layerOffset)
 {
-  return out << "SdfLayerOffset(" << layerOffset.GetOffset() << ", " << layerOffset.GetScale() << ")";
+  return out << "SdfLayerOffset(" << layerOffset.GetOffset() << ", " << layerOffset.GetScale()
+             << ")";
 }
 
 WABI_NAMESPACE_END

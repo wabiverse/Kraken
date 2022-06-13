@@ -59,10 +59,8 @@ int find_free_screenid(kContext *C)
   int id = 1;
 
   Main *kmain = CTX_data_main(C);
-  UNIVERSE_FOR_ALL (screen, kmain->screens)
-  {
-    if (id <= screen->winid)
-    {
+  UNIVERSE_FOR_ALL (screen, kmain->screens) {
+    if (id <= screen->winid) {
       id = screen->winid + 1;
     }
   }
@@ -78,10 +76,8 @@ bool KKE_screen_is_used(const kScreen *screen)
 
 SpaceType *KKE_spacetype_from_id(int spaceid)
 {
-  UNIVERSE_FOR_ALL (st, spacetypes)
-  {
-    if (st->spaceid == spaceid)
-    {
+  UNIVERSE_FOR_ALL (st, spacetypes) {
+    if (st->spaceid == spaceid) {
       return st;
     }
   }
@@ -94,18 +90,14 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
   ScrArea *big = nullptr;
   int maxsize = 0;
 
-  UNIVERSE_FOR_ALL (area, screen->areas)
-  {
-    if (spacetype == SPACE_TYPE_ANY)
-    {
+  UNIVERSE_FOR_ALL (area, screen->areas) {
+    if (spacetype == SPACE_TYPE_ANY) {
       GfVec2f winsize = FormFactory(area->size);
 
-      if (min <= GET_X(winsize) && min <= GET_Y(winsize))
-      {
+      if (min <= GET_X(winsize) && min <= GET_Y(winsize)) {
         int size = GET_X(winsize) * GET_Y(winsize);
 
-        if (size > maxsize)
-        {
+        if (size > maxsize) {
           maxsize = size;
           big = area;
         }
@@ -118,12 +110,9 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
 
 ARegion *KKE_area_find_region_type(const ScrArea *area, int region_type)
 {
-  if (area)
-  {
-    UNIVERSE_FOR_ALL (region, area->regions)
-    {
-      if (region->regiontype == region_type)
-      {
+  if (area) {
+    UNIVERSE_FOR_ALL (region, area->regions) {
+      if (region->regiontype == region_type) {
         return region;
       }
     }
@@ -134,14 +123,12 @@ ARegion *KKE_area_find_region_type(const ScrArea *area, int region_type)
 
 ARegion *KKE_area_find_region_active_win(ScrArea *area)
 {
-  if (area == NULL)
-  {
+  if (area == NULL) {
     return NULL;
   }
 
   ARegion *region = area->regions.at(area->region_active_win);
-  if (region && (region->regiontype == RGN_TYPE_WINDOW))
-  {
+  if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
     return region;
   }
 
@@ -151,8 +138,7 @@ ARegion *KKE_area_find_region_active_win(ScrArea *area)
 
 void KKE_screen_sort_scrvert(ScrVert **v1, ScrVert **v2)
 {
-  if (*v1 > *v2)
-  {
+  if (*v1 > *v2) {
     ScrVert *tmp = *v1;
     *v1 = *v2;
     *v2 = tmp;

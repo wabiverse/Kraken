@@ -85,8 +85,7 @@ DIR *opendir(const char *path)
   DIR *newd = NULL;
 
   if ((GetFileAttributesW(path_16) & FILE_ATTRIBUTE_DIRECTORY) &&
-      ((path_len = strlen(path)) < (sizeof(newd->path) - PATH_SUFFIX_LEN)))
-  {
+      ((path_len = strlen(path)) < (sizeof(newd->path) - PATH_SUFFIX_LEN))) {
     newd = (DIR *)malloc(sizeof(DIR));
     newd->handle = INVALID_HANDLE_VALUE;
     memcpy(newd->path, path, path_len);
@@ -106,8 +105,7 @@ static char *KLI_alloc_utf_8_from_16(wchar_t *in16, size_t add)
 {
   size_t bsize = count_utf_8_from_16(in16);
   char *out8 = NULL;
-  if (!bsize)
-  {
+  if (!bsize) {
     return NULL;
   }
   out8 = (char *)malloc(sizeof(char) * (bsize + add));
@@ -119,8 +117,7 @@ static wchar_t *UNUSED_FUNCTION(KLI_alloc_utf16_from_8)(char *in8, size_t add)
 {
   size_t bsize = count_utf_16_from_8(in8);
   wchar_t *out16 = NULL;
-  if (!bsize)
-  {
+  if (!bsize) {
     return NULL;
   }
   out16 = (wchar_t *)malloc(sizeof(wchar_t) * (bsize + add));
@@ -130,44 +127,37 @@ static wchar_t *UNUSED_FUNCTION(KLI_alloc_utf16_from_8)(char *in8, size_t add)
 
 struct dirent *readdir(DIR *dp)
 {
-  if (dp->direntry.d_name)
-  {
+  if (dp->direntry.d_name) {
     free(dp->direntry.d_name);
     dp->direntry.d_name = NULL;
   }
 
-  if (dp->handle == INVALID_HANDLE_VALUE)
-  {
+  if (dp->handle == INVALID_HANDLE_VALUE) {
     wchar_t *path_16 = alloc_utf16_from_8(dp->path, 0);
     dp->handle = FindFirstFileW(path_16, &(dp->data));
     free(path_16);
-    if (dp->handle == INVALID_HANDLE_VALUE)
-    {
+    if (dp->handle == INVALID_HANDLE_VALUE) {
       return NULL;
     }
 
     dp->direntry.d_name = KLI_alloc_utf_8_from_16(dp->data.cFileName, 0);
 
     return &dp->direntry;
-  } else if (FindNextFileW(dp->handle, &(dp->data)))
-  {
+  } else if (FindNextFileW(dp->handle, &(dp->data))) {
     dp->direntry.d_name = KLI_alloc_utf_8_from_16(dp->data.cFileName, 0);
 
     return &dp->direntry;
-  } else
-  {
+  } else {
     return NULL;
   }
 }
 
 int closedir(DIR *dp)
 {
-  if (dp->direntry.d_name)
-  {
+  if (dp->direntry.d_name) {
     free(dp->direntry.d_name);
   }
-  if (dp->handle != INVALID_HANDLE_VALUE)
-  {
+  if (dp->handle != INVALID_HANDLE_VALUE) {
     FindClose(dp->handle);
   }
 
@@ -188,12 +178,10 @@ int KLI_windows_get_executable_dir(char *str)
 static void register_pixar_extension_failed(HKEY root, const bool background)
 {
   printf("failed\n");
-  if (root)
-  {
+  if (root) {
     RegCloseKey(root);
   }
-  if (!background)
-  {
+  if (!background) {
     TF_MSG_ERROR("Could not register file extension.");
     // MessageBox(0, "Could not register file extension.", "Kraken error", MB_OK | MB_ICONERROR);
   }
@@ -244,7 +232,8 @@ bool KLI_windows_register_pixar_extension(const bool background)
   // }
 
   // lresult =
-  //   RegCreateKeyEx(root, "pixarfile", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
+  //   RegCreateKeyEx(root, "pixarfile", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL,
+  //   &hkey, &dwd);
   // if (lresult == ERROR_SUCCESS)
   // {
   //   strcpy(buffer, "Kraken File");
@@ -300,7 +289,8 @@ bool KLI_windows_register_pixar_extension(const bool background)
   // }
 
   // lresult =
-  //   RegCreateKeyEx(root, ".usd", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, &dwd);
+  //   RegCreateKeyEx(root, ".usd", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey,
+  //   &dwd);
   // if (lresult == ERROR_SUCCESS)
   // {
   //   strcpy(buffer, "pixarfile");
@@ -316,8 +306,8 @@ bool KLI_windows_register_pixar_extension(const bool background)
   // KLI_windows_get_executable_dir(InstallDir);
   // GetSystemDirectory(SysDir, FILE_MAXDIR);
   // ThumbHandlerDLL = "KrakenThumb.dll";
-  // snprintf(RegCmd, MAX_PATH * 2, "%s\\regsvr32 /s \"%s\\%s\"", SysDir, InstallDir, ThumbHandlerDLL);
-  // system(RegCmd);
+  // snprintf(RegCmd, MAX_PATH * 2, "%s\\regsvr32 /s \"%s\\%s\"", SysDir, InstallDir,
+  // ThumbHandlerDLL); system(RegCmd);
 
   // RegCloseKey(root);
   // printf("success (%s)\n", usr_mode ? "user" : "system");
@@ -325,7 +315,8 @@ bool KLI_windows_register_pixar_extension(const bool background)
   // {
   //   sprintf(MBox,
   //           "File extension registered for %s.",
-  //           usr_mode ? "the current user. To register for all users, run as an administrator" : "all users");
+  //           usr_mode ? "the current user. To register for all users, run as an administrator" :
+  //           "all users");
   //   // MessageBox(0, MBox, "Kraken", MB_OK | MB_ICONINFORMATION);
   // }
   return true;

@@ -55,7 +55,9 @@ void wrapUsdSchemaRegistry()
   class_<This, ThisPtr, boost::noncopyable>("SchemaRegistry", no_init)
     .def(TfPySingleton())
 
-    .def("GetSchemaTypeName", (TfToken(*)(const TfType &)) & This::GetSchemaTypeName, (arg("schemaType")))
+    .def("GetSchemaTypeName",
+         (TfToken(*)(const TfType &)) & This::GetSchemaTypeName,
+         (arg("schemaType")))
     .staticmethod("GetSchemaTypeName")
     .def("GetConcreteSchemaTypeName",
          (TfToken(*)(const TfType &)) & This::GetConcreteSchemaTypeName,
@@ -68,7 +70,9 @@ void wrapUsdSchemaRegistry()
 
     .def("GetTypeFromSchemaTypeName", &This::GetTypeFromSchemaTypeName, (arg("typeName")))
     .staticmethod("GetTypeFromSchemaTypeName")
-    .def("GetConcreteTypeFromSchemaTypeName", &This::GetConcreteTypeFromSchemaTypeName, (arg("typeName")))
+    .def("GetConcreteTypeFromSchemaTypeName",
+         &This::GetConcreteTypeFromSchemaTypeName,
+         (arg("typeName")))
     .staticmethod("GetConcreteTypeFromSchemaTypeName")
     .def("GetAPITypeFromSchemaTypeName", &This::GetAPITypeFromSchemaTypeName, (arg("typeName")))
     .staticmethod("GetAPITypeFromSchemaTypeName")
@@ -79,15 +83,21 @@ void wrapUsdSchemaRegistry()
     .def("IsTyped", &This::IsTyped, (arg("primType")))
     .staticmethod("IsTyped")
 
-    .def("GetSchemaKind", (UsdSchemaKind(*)(const TfType &)) & This::GetSchemaKind, (arg("primType")))
-    .def("GetSchemaKind", (UsdSchemaKind(*)(const TfToken &)) & This::GetSchemaKind, (arg("primType")))
+    .def("GetSchemaKind",
+         (UsdSchemaKind(*)(const TfType &)) & This::GetSchemaKind,
+         (arg("primType")))
+    .def("GetSchemaKind",
+         (UsdSchemaKind(*)(const TfToken &)) & This::GetSchemaKind,
+         (arg("primType")))
     .staticmethod("GetSchemaKind")
 
     .def("IsConcrete", (bool (*)(const TfType &)) & This::IsConcrete, (arg("primType")))
     .def("IsConcrete", (bool (*)(const TfToken &)) & This::IsConcrete, (arg("primType")))
     .staticmethod("IsConcrete")
 
-    .def("IsAppliedAPISchema", (bool (*)(const TfType &)) & This::IsAppliedAPISchema, (arg("apiSchemaType")))
+    .def("IsAppliedAPISchema",
+         (bool (*)(const TfType &)) & This::IsAppliedAPISchema,
+         (arg("apiSchemaType")))
     .def("IsAppliedAPISchema",
          (bool (*)(const TfToken &)) & This::IsAppliedAPISchema,
          (arg("apiSchemaType")))
@@ -121,10 +131,14 @@ void wrapUsdSchemaRegistry()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetAPISchemaCanOnlyApplyToTypeNames")
 
-    .def("GetAutoApplyAPISchemas", &This::GetAutoApplyAPISchemas, return_value_policy<TfPyMapToDictionary>())
+    .def("GetAutoApplyAPISchemas",
+         &This::GetAutoApplyAPISchemas,
+         return_value_policy<TfPyMapToDictionary>())
     .staticmethod("GetAutoApplyAPISchemas")
 
-    .def("GetPropertyNamespacePrefix", &This::GetPropertyNamespacePrefix, (arg("multiApplyAPISchemaName")))
+    .def("GetPropertyNamespacePrefix",
+         &This::GetPropertyNamespacePrefix,
+         (arg("multiApplyAPISchemaName")))
 
     .def("FindConcretePrimDefinition",
          &This::FindConcretePrimDefinition,
@@ -142,5 +156,7 @@ void wrapUsdSchemaRegistry()
          &_WrapBuildComposedPrimDefinition,
          return_value_policy<manage_new_object>())
 
-    .def("GetFallbackPrimTypes", &This::GetFallbackPrimTypes, return_value_policy<return_by_value>());
+    .def("GetFallbackPrimTypes",
+         &This::GetFallbackPrimTypes,
+         return_value_policy<return_by_value>());
 }

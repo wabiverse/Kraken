@@ -71,21 +71,20 @@ HdPhMaterial::~HdPhMaterial()
 // Check whether the texture node points to a render buffer and
 // use information from it to get the texture identifier.
 //
-static HdPhTextureIdentifier _GetTextureIdentifier(HdPhMaterialNetwork::TextureDescriptor const &desc,
-                                                   HdSceneDelegate *const sceneDelegate)
+static HdPhTextureIdentifier _GetTextureIdentifier(
+  HdPhMaterialNetwork::TextureDescriptor const &desc,
+  HdSceneDelegate *const sceneDelegate)
 {
-  if (!desc.useTexturePrimToFindTexture)
-  {
+  if (!desc.useTexturePrimToFindTexture) {
     return desc.textureId;
   }
 
   // Get render buffer texture node is pointing to.
   if (HdPhRenderBuffer *const renderBuffer = dynamic_cast<HdPhRenderBuffer *>(
-        sceneDelegate->GetRenderIndex().GetBprim(HdPrimTypeTokens->renderBuffer, desc.texturePrim)))
-  {
+        sceneDelegate->GetRenderIndex().GetBprim(HdPrimTypeTokens->renderBuffer,
+                                                 desc.texturePrim))) {
 
-    if (desc.type == HdTextureType::Uv)
-    {
+    if (desc.type == HdTextureType::Uv) {
       return renderBuffer->GetTextureIdentifier(
         /* multiSampled = */ false);
     }
@@ -119,8 +118,7 @@ void HdPhMaterial::_ProcessTextureDescriptors(
 {
   const bool bindlessTextureEnabled = GlfContextCaps::GetInstance().bindlessTextureEnabled;
 
-  for (HdPhMaterialNetwork::TextureDescriptor const &desc : descs)
-  {
+  for (HdPhMaterialNetwork::TextureDescriptor const &desc : descs) {
     HdPhTextureHandleSharedPtr const textureHandle = resourceRegistry->AllocateTextureHandle(
       _GetTextureIdentifier(desc, sceneDelegate),
       desc.type,
@@ -162,18 +160,20 @@ void HdPhMaterial::_ProcessTextureDescriptors(
 }
 
 /* virtual */
-void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate,
+                        HdRenderParam *renderParam,
+                        HdDirtyBits *dirtyBits)
 {
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  HdPhResourceRegistrySharedPtr const &resourceRegistry = std::static_pointer_cast<HdPhResourceRegistry>(
-    sceneDelegate->GetRenderIndex().GetResourceRegistry());
+  HdPhResourceRegistrySharedPtr const &resourceRegistry =
+    std::static_pointer_cast<HdPhResourceRegistry>(
+      sceneDelegate->GetRenderIndex().GetResourceRegistry());
 
   HdDirtyBits bits = *dirtyBits;
 
-  if (!(bits & DirtyResource) && !(bits & DirtyParams))
-  {
+  if (!(bits & DirtyResource) && !(bits & DirtyParams)) {
     *dirtyBits = Clean;
     return;
   }
@@ -189,11 +189,9 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPar
   HdPhMaterialNetwork::TextureDescriptorVector textureDescriptors;
 
   VtValue vtMat = sceneDelegate->GetMaterialResource(GetId());
-  if (vtMat.IsHolding<HdMaterialNetworkMap>())
-  {
+  if (vtMat.IsHolding<HdMaterialNetworkMap>()) {
     HdMaterialNetworkMap const &hdNetworkMap = vtMat.UncheckedGet<HdMaterialNetworkMap>();
-    if (!hdNetworkMap.terminals.empty() && !hdNetworkMap.map.empty())
-    {
+    if (!hdNetworkMap.terminals.empty() && !hdNetworkMap.map.empty()) {
       _networkProcessor.ProcessMaterialNetwork(GetId(), hdNetworkMap, resourceRegistry.get());
       fragmentSource = _networkProcessor.GetFragmentCode();
       geometrySource = _networkProcessor.GetGeometryCode();
@@ -204,8 +202,7 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPar
     }
   }
 
-  if (fragmentSource.empty() && geometrySource.empty())
-  {
+  if (fragmentSource.empty() && geometrySource.empty()) {
     _InitFallbackShader();
     fragmentSource = _fallbackGlslfx->GetSurfaceSource();
     // Note that we don't want displacement on purpose for the
@@ -219,29 +216,27 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPar
   std::string const &oldFragmentSource = _surfaceShader->GetSource(HdShaderTokens->fragmentShader);
   std::string const &oldGeometrySource = _surfaceShader->GetSource(HdShaderTokens->geometryShader);
 
-  markBatchesDirty |= (oldFragmentSource != fragmentSource) || (oldGeometrySource != geometrySource);
+  markBatchesDirty |= (oldFragmentSource != fragmentSource) ||
+                      (oldGeometrySource != geometrySource);
 
   _surfaceShader->SetFragmentSource(fragmentSource);
   _surfaceShader->SetGeometrySource(geometrySource);
 
   bool hasDisplacement = !(geometrySource.empty());
 
-  if (_hasDisplacement != hasDisplacement)
-  {
+  if (_hasDisplacement != hasDisplacement) {
     _hasDisplacement = hasDisplacement;
     needsRprimMaterialStateUpdate = true;
   }
 
   bool hasLimitSurfaceEvaluation = _GetHasLimitSurfaceEvaluation(materialMetadata);
 
-  if (_hasLimitSurfaceEvaluation != hasLimitSurfaceEvaluation)
-  {
+  if (_hasLimitSurfaceEvaluation != hasLimitSurfaceEvaluation) {
     _hasLimitSurfaceEvaluation = hasLimitSurfaceEvaluation;
     needsRprimMaterialStateUpdate = true;
   }
 
-  if (_materialTag != materialTag)
-  {
+  if (_materialTag != materialTag) {
     _materialTag = materialTag;
     _surfaceShader->SetMaterialTag(_materialTag);
     needsRprimMaterialStateUpdate = true;
@@ -261,20 +256,15 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPar
   HdBufferSourceSharedPtrVector sources;
 
   bool hasPtex = false;
-  for (HdPh_MaterialParam const &param : params)
-  {
-    if (param.IsPrimvarRedirect() || param.IsFallback() || param.IsTransform2d())
-    {
+  for (HdPh_MaterialParam const &param : params) {
+    if (param.IsPrimvarRedirect() || param.IsFallback() || param.IsTransform2d()) {
       HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &specs, &sources);
-    } else if (param.IsTexture())
-    {
+    } else if (param.IsTexture()) {
       // Fallback value only supported for Uv and Field textures.
-      if (param.textureType == HdTextureType::Uv || param.textureType == HdTextureType::Field)
-      {
+      if (param.textureType == HdTextureType::Uv || param.textureType == HdTextureType::Field) {
         HdPhSurfaceShader::AddFallbackValueToSpecsAndSources(param, &specs, &sources);
       }
-      if (param.textureType == HdTextureType::Ptex)
-      {
+      if (param.textureType == HdTextureType::Ptex) {
         hasPtex = true;
       }
     }
@@ -296,13 +286,11 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPar
   // hashes based on scene graph path, meaning each textured gprim gets its
   // own batch.
   size_t textureHash = 0;
-  for (HdPhShaderCode::NamedTextureHandle const &tex : textures)
-  {
+  for (HdPhShaderCode::NamedTextureHandle const &tex : textures) {
     textureHash = TfHash::Combine(textureHash, tex.hash);
   }
 
-  if (_textureHash != textureHash)
-  {
+  if (_textureHash != textureHash) {
     _textureHash = textureHash;
     markBatchesDirty = true;
   }
@@ -310,21 +298,18 @@ void HdPhMaterial::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderPar
   _surfaceShader->SetNamedTextureHandles(textures);
   _surfaceShader->SetBufferSources(specs, std::move(sources), resourceRegistry);
 
-  if (_hasPtex != hasPtex)
-  {
+  if (_hasPtex != hasPtex) {
     _hasPtex = hasPtex;
     needsRprimMaterialStateUpdate = true;
   }
 
-  if (markBatchesDirty && _isInitialized)
-  {
+  if (markBatchesDirty && _isInitialized) {
     // Only invalidate batches if this isn't our first round through sync.
     // If this is the initial sync, we haven't formed batches yet.
     HdPhMarkDrawBatchesDirty(renderParam);
   }
 
-  if (needsRprimMaterialStateUpdate && _isInitialized)
-  {
+  if (needsRprimMaterialStateUpdate && _isInitialized) {
     // XXX Forcing rprims to have a dirty material id to re-evaluate
     // their material state as we don't know which rprims are bound to
     // this one. We can skip this invalidation the first time this
@@ -369,8 +354,7 @@ void HdPhMaterial::SetSurfaceShader(HdPhSurfaceShaderSharedPtr &shaderCode)
 
 void HdPhMaterial::_InitFallbackShader()
 {
-  if (_fallbackGlslfx != nullptr)
-  {
+  if (_fallbackGlslfx != nullptr) {
     return;
   }
 

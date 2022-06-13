@@ -37,13 +37,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhTexture::HdPhTexture(SdfPath const &id)
-  : HdTexture(id)
-{}
+HdPhTexture::HdPhTexture(SdfPath const &id) : HdTexture(id) {}
 
 HdPhTexture::~HdPhTexture() = default;
 
-void HdPhTexture::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdPhTexture::Sync(HdSceneDelegate *sceneDelegate,
+                       HdRenderParam *renderParam,
+                       HdDirtyBits *dirtyBits)
 {
   TF_UNUSED(sceneDelegate);
   TF_UNUSED(renderParam);

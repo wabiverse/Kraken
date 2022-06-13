@@ -59,25 +59,17 @@ static HdCompareFunction HdxDrawTargetTask_GetResolvedDepthFunc(HdCompareFunctio
 {
   static const HdCompareFunction ResolvedDepthFunc[HdDepthPriorityCount][HdCmpFuncLast] = {
     {
-      HdCmpFuncNever,
-      HdCmpFuncLess,
-      HdCmpFuncEqual,
-      HdCmpFuncLEqual,
-      HdCmpFuncGreater,
-      HdCmpFuncNotEqual,
-      HdCmpFuncGEqual,
-      HdCmpFuncAlways,
-    },
+     HdCmpFuncNever, HdCmpFuncLess,
+     HdCmpFuncEqual, HdCmpFuncLEqual,
+     HdCmpFuncGreater, HdCmpFuncNotEqual,
+     HdCmpFuncGEqual, HdCmpFuncAlways,
+     },
     {
-      HdCmpFuncNever,
-      HdCmpFuncGEqual,
-      HdCmpFuncEqual,
-      HdCmpFuncGreater,
-      HdCmpFuncLEqual,
-      HdCmpFuncNotEqual,
-      HdCmpFuncLess,
-      HdCmpFuncAlways,
-    },
+     HdCmpFuncNever,              HdCmpFuncGEqual,
+     HdCmpFuncEqual, HdCmpFuncGreater,
+     HdCmpFuncLEqual,   HdCmpFuncNotEqual,
+     HdCmpFuncLess, HdCmpFuncAlways,
+     },
   };
 
   return ResolvedDepthFunc[priority][depthFunc];
@@ -113,17 +105,13 @@ namespace
 
   bool _DoesCollectionContainPath(HdRprimCollection const &collection, SdfPath const &path)
   {
-    for (SdfPath const &excludePath : collection.GetExcludePaths())
-    {
-      if (path.HasPrefix(excludePath))
-      {
+    for (SdfPath const &excludePath : collection.GetExcludePaths()) {
+      if (path.HasPrefix(excludePath)) {
         return false;
       }
     }
-    for (SdfPath const &rootPath : collection.GetRootPaths())
-    {
-      if (path.HasPrefix(rootPath))
-      {
+    for (SdfPath const &rootPath : collection.GetRootPaths()) {
+      if (path.HasPrefix(rootPath)) {
         return true;
       }
     }
@@ -159,12 +147,12 @@ namespace
   using _DrawTargetEntryVector = std::vector<_DrawTargetEntry>;
 
   // Topologically sort draw targets.
-  static void _SortDrawTargets(HdPhDrawTargetPtrVector const &drawTargets, _DrawTargetEntryVector *result)
+  static void _SortDrawTargets(HdPhDrawTargetPtrVector const &drawTargets,
+                               _DrawTargetEntryVector *result)
   {
     TRACE_FUNCTION();
 
-    if (drawTargets.empty())
-    {
+    if (drawTargets.empty()) {
       return;
     }
 
@@ -180,12 +168,9 @@ namespace
       TRACE_FUNCTION_SCOPE("Computing drawtarget dependencies");
 
       // Determine which draw target depends on which
-      for (size_t dependent = 0; dependent < n; dependent++)
-      {
-        for (size_t dependency = 0; dependency < n; dependency++)
-        {
-          if (_IsDependentOn(drawTargets[dependent], drawTargets[dependency]))
-          {
+      for (size_t dependent = 0; dependent < n; dependent++) {
+        for (size_t dependency = 0; dependency < n; dependency++) {
+          if (_IsDependentOn(drawTargets[dependent], drawTargets[dependency])) {
             indexToDependencies[dependent].insert(dependency);
             indexToDependents[dependency].push_back(dependent);
           }
@@ -199,30 +184,25 @@ namespace
       // Start by scheduling draw targets that do not depend on
       // any other draw target.
       result->reserve(n);
-      for (size_t dependent = 0; dependent < n; dependent++)
-      {
-        if (indexToDependencies[dependent].empty())
-        {
+      for (size_t dependent = 0; dependent < n; dependent++) {
+        if (indexToDependencies[dependent].empty()) {
           result->push_back({dependent, drawTargets[dependent]});
         }
       }
 
       // Iterate through all scheduled draw targets (while scheduling
       // new draw targets).
-      for (size_t i = 0; i < result->size(); i++)
-      {
+      for (size_t i = 0; i < result->size(); i++) {
         _DrawTargetEntry &entry = (*result)[i];
         const size_t dependency = entry.originalIndex;
         // For each draw target that depends on this draw target.
-        for (const size_t dependent : indexToDependents[dependency])
-        {
+        for (const size_t dependent : indexToDependents[dependency]) {
           // Since this draw target has been scheduled, remove it as
           // dependency.
           indexToDependencies[dependent].erase(dependency);
           // If this was the last dependency of the other draw
           // target, we can schedule the other draw target.
-          if (indexToDependencies[dependent].empty())
-          {
+          if (indexToDependencies[dependent].empty()) {
             result->push_back({dependent, drawTargets[dependent]});
           }
         }
@@ -232,20 +212,16 @@ namespace
       //
       // If there are any cycles, the above process didn't schedule
       // the involved draw targets.
-      if (result->size() < n)
-      {
+      if (result->size() < n) {
         // Schedule them now in the order they were given originally.
-        for (size_t i = 0; i < n; i++)
-        {
-          if (!indexToDependencies[i].empty())
-          {
+        for (size_t i = 0; i < n; i++) {
+          if (!indexToDependencies[i].empty()) {
             result->push_back({i, drawTargets[i]});
           }
         }
       }
 
-      if (result->size() != drawTargets.size())
-      {
+      if (result->size() != drawTargets.size()) {
         TF_CODING_ERROR("Mismatch");
       }
     }
@@ -272,12 +248,9 @@ HdxDrawTargetTask::_RenderPassInfoVector HdxDrawTargetTask::_ComputeRenderPassIn
 
   result.reserve(drawTargetEntries.size());
 
-  for (_DrawTargetEntry const &entry : drawTargetEntries)
-  {
-    if (HdPhDrawTarget *const drawTarget = entry.drawTarget)
-    {
-      if (drawTarget->IsEnabled())
-      {
+  for (_DrawTargetEntry const &entry : drawTargetEntries) {
+    if (HdPhDrawTarget *const drawTarget = entry.drawTarget) {
+      if (drawTarget->IsEnabled()) {
         result.push_back({std::make_unique<HdPh_RenderPass>(renderIndex, HdRprimCollection()),
                           std::make_shared<HdPhRenderPassState>(),
                           std::make_shared<HdPhSimpleLightingShader>(),
@@ -290,8 +263,9 @@ HdxDrawTargetTask::_RenderPassInfoVector HdxDrawTargetTask::_ComputeRenderPassIn
   return result;
 }
 
-HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(const HdRenderIndex &renderIndex,
-                                                                     const HdPhDrawTarget *const drawTarget)
+HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(
+  const HdRenderIndex &renderIndex,
+  const HdPhDrawTarget *const drawTarget)
 {
   // Update camera/framing state
   // XXX Since we flip the projection matrix below, we can't set the
@@ -309,8 +283,7 @@ HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(const HdRen
   const HdCamera *const camera = static_cast<const HdCamera *>(
     renderIndex.GetSprim(HdPrimTypeTokens->camera, cameraId));
 
-  if (!camera)
-  {
+  if (!camera) {
     // Render pass should not have been added to task list.
     TF_CODING_ERROR("Invalid camera for render pass: %s", cameraId.GetText());
     return {GfMatrix4d(1.0), GfMatrix4d(1.0), viewport, {}};
@@ -318,17 +291,20 @@ HdxDrawTargetTask::_CameraInfo HdxDrawTargetTask::_ComputeCameraInfo(const HdRen
 
   static const GfMatrix4d yflip = GfMatrix4d().SetScale(GfVec3d(1.0, -1.0, 1.0));
 
-  const GfMatrix4d projectionMatrix =
-    CameraUtilConformedWindow(camera->GetProjectionMatrix(), camera->GetWindowPolicy(), aspect) * yflip;
+  const GfMatrix4d projectionMatrix = CameraUtilConformedWindow(camera->GetProjectionMatrix(),
+                                                                camera->GetWindowPolicy(),
+                                                                aspect) *
+                                      yflip;
 
   return {camera->GetViewMatrix(), projectionMatrix, viewport, camera->GetClipPlanes()};
 }
 
-void HdxDrawTargetTask::_UpdateRenderPassState(const HdRenderIndex &renderIndex,
-                                               const _CameraInfo &cameraInfo,
-                                               HdPhSimpleLightingShaderSharedPtr const &lightingShader,
-                                               const HdPhDrawTargetRenderPassState *const srcState,
-                                               HdPhRenderPassStateSharedPtr const &state) const
+void HdxDrawTargetTask::_UpdateRenderPassState(
+  const HdRenderIndex &renderIndex,
+  const _CameraInfo &cameraInfo,
+  HdPhSimpleLightingShaderSharedPtr const &lightingShader,
+  const HdPhDrawTargetRenderPassState *const srcState,
+  HdPhRenderPassStateSharedPtr const &state) const
 {
   // Update Raster States
   state->SetOverrideColor(_overrideColor);
@@ -338,7 +314,8 @@ void HdxDrawTargetTask::_UpdateRenderPassState(const HdRenderIndex &renderIndex,
   state->SetAlphaToCoverageEnabled(_enableSampleAlphaToCoverage);
   state->SetCullStyle(_cullStyle);
 
-  state->SetDepthFunc(HdxDrawTargetTask_GetResolvedDepthFunc(_depthFunc, srcState->GetDepthPriority()));
+  state->SetDepthFunc(
+    HdxDrawTargetTask_GetResolvedDepthFunc(_depthFunc, srcState->GetDepthPriority()));
 
   state->SetAovBindings(srcState->GetAovBindings());
 
@@ -352,14 +329,14 @@ void HdxDrawTargetTask::_UpdateRenderPassState(const HdRenderIndex &renderIndex,
   state->Prepare(renderIndex.GetResourceRegistry());
 }
 
-void HdxDrawTargetTask::_UpdateLightingContext(const _CameraInfo &cameraInfo,
-                                               GlfSimpleLightingContextConstRefPtr const &srcContext,
-                                               GlfSimpleLightingContextRefPtr const &ctx)
+void HdxDrawTargetTask::_UpdateLightingContext(
+  const _CameraInfo &cameraInfo,
+  GlfSimpleLightingContextConstRefPtr const &srcContext,
+  GlfSimpleLightingContextRefPtr const &ctx)
 {
   ctx->SetCamera(cameraInfo.viewMatrix, cameraInfo.projectionMatrix);
 
-  if (!srcContext)
-  {
+  if (!srcContext) {
     return;
   }
 
@@ -376,8 +353,7 @@ void HdxDrawTargetTask::_UpdateRenderPass(_RenderPassInfo *info)
   const HdPhDrawTargetRenderPassState *const state = info->target->GetDrawTargetRenderPassState();
   const unsigned newCollectionVersion = state->GetRprimCollectionVersion();
 
-  if (info->collectionVersion != newCollectionVersion)
-  {
+  if (info->collectionVersion != newCollectionVersion) {
     info->renderPass->SetRprimCollection(state->GetRprimCollection());
     info->collectionVersion = newCollectionVersion;
   }
@@ -390,12 +366,10 @@ void HdxDrawTargetTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyParams)
-  {
+  if ((*dirtyBits) & HdChangeTracker::DirtyParams) {
     HdxDrawTargetTaskParams params;
 
-    if (!_GetTaskParams(delegate, &params))
-    {
+    if (!_GetTaskParams(delegate, &params)) {
       return;
     }
 
@@ -418,18 +392,17 @@ void HdxDrawTargetTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
     _depthFunc = params.depthFunc;
   }
 
-  if ((*dirtyBits) & HdChangeTracker::DirtyRenderTags)
-  {
+  if ((*dirtyBits) & HdChangeTracker::DirtyRenderTags) {
     _renderTags = _GetTaskRenderTags(delegate);
   }
 
   HdRenderIndex &renderIndex = delegate->GetRenderIndex();
   const HdChangeTracker &changeTracker = renderIndex.GetChangeTracker();
 
-  const unsigned drawTargetVersion = changeTracker.GetStateVersion(HdPhDrawTargetTokens->drawTargetSet);
+  const unsigned drawTargetVersion = changeTracker.GetStateVersion(
+    HdPhDrawTargetTokens->drawTargetSet);
 
-  if (_currentDrawTargetSetVersion != drawTargetVersion)
-  {
+  if (_currentDrawTargetSetVersion != drawTargetVersion) {
     _renderPassesInfo = _ComputeRenderPassInfos(&renderIndex);
     _currentDrawTargetSetVersion = drawTargetVersion;
   }
@@ -440,8 +413,7 @@ void HdxDrawTargetTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDi
   GlfSimpleLightingContextRefPtr srcLightingContext;
   _GetTaskContextData(ctx, HdxTokens->lightingContext, &srcLightingContext);
 
-  for (_RenderPassInfo &renderPassInfo : _renderPassesInfo)
-  {
+  for (_RenderPassInfo &renderPassInfo : _renderPassesInfo) {
 
     const _CameraInfo cameraInfo = _ComputeCameraInfo(renderIndex, renderPassInfo.target);
 
@@ -474,14 +446,11 @@ void HdxDrawTargetTask::Execute(HdTaskContext *ctx)
 
   // Apply polygon offset to whole pass.
   // XXX TODO: Move to an appropriate home
-  if (!_depthBiasUseDefault)
-  {
-    if (_depthBiasEnable)
-    {
+  if (!_depthBiasUseDefault) {
+    if (_depthBiasEnable) {
       glEnable(GL_POLYGON_OFFSET_FILL);
       glPolygonOffset(_depthBiasSlopeFactor, _depthBiasConstantFactor);
-    } else
-    {
+    } else {
       glDisable(GL_POLYGON_OFFSET_FILL);
     }
   }
@@ -493,8 +462,7 @@ void HdxDrawTargetTask::Execute(HdTaskContext *ctx)
   // PSO.
   glFrontFace(GL_CW);
 
-  for (const _RenderPassInfo &renderPassInfo : _renderPassesInfo)
-  {
+  for (const _RenderPassInfo &renderPassInfo : _renderPassesInfo) {
     HdPhRenderPassStateSharedPtr const renderPassState = renderPassInfo.renderPassState;
 
     // XXX: Should the Raster State or Renderpass set and restore this?
@@ -543,7 +511,8 @@ bool operator==(const HdxDrawTargetTaskParams &lhs, const HdxDrawTargetTaskParam
 {
   return lhs.overrideColor == rhs.overrideColor && lhs.wireframeColor == rhs.wireframeColor &&
          lhs.enableLighting == rhs.enableLighting && lhs.alphaThreshold == rhs.alphaThreshold &&
-         lhs.depthBiasUseDefault == rhs.depthBiasUseDefault && lhs.depthBiasEnable == rhs.depthBiasEnable &&
+         lhs.depthBiasUseDefault == rhs.depthBiasUseDefault &&
+         lhs.depthBiasEnable == rhs.depthBiasEnable &&
          lhs.depthBiasConstantFactor == rhs.depthBiasConstantFactor &&
          lhs.depthBiasSlopeFactor == rhs.depthBiasSlopeFactor && lhs.depthFunc == rhs.depthFunc &&
          lhs.cullStyle == rhs.cullStyle;

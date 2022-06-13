@@ -43,9 +43,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -77,7 +75,9 @@ void wrapUsdShadeConnectableAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
@@ -119,11 +119,12 @@ namespace
     TfToken sourceName;
     UsdShadeAttributeType sourceType;
 
-    if (UsdShadeConnectableAPI::GetConnectedSource(shadingAttr, &source, &sourceName, &sourceType))
-    {
+    if (UsdShadeConnectableAPI::GetConnectedSource(shadingAttr,
+                                                   &source,
+                                                   &sourceName,
+                                                   &sourceType)) {
       return boost::python::make_tuple(source, sourceName, sourceType);
-    } else
-    {
+    } else {
       return object();
     }
   }
@@ -131,8 +132,9 @@ namespace
   static object _GetConnectedSources(const UsdAttribute &shadingAttr)
   {
     SdfPathVector invalidSourcePaths;
-    UsdShadeSourceInfoVector sources = UsdShadeConnectableAPI::GetConnectedSources(shadingAttr,
-                                                                                   &invalidSourcePaths);
+    UsdShadeSourceInfoVector sources = UsdShadeConnectableAPI::GetConnectedSources(
+      shadingAttr,
+      &invalidSourcePaths);
     return boost::python::make_tuple(
       std::vector<UsdShadeConnectionSourceInfo>(sources.begin(), sources.end()),
       invalidSourcePaths);
@@ -150,7 +152,8 @@ namespace
     return sourceInfo.sourceName.GetString();
   }
 
-  static void _SetSourceName(UsdShadeConnectionSourceInfo &sourceInfo, const std::string &sourceName)
+  static void _SetSourceName(UsdShadeConnectionSourceInfo &sourceInfo,
+                             const std::string &sourceName)
   {
     sourceInfo.sourceName = TfToken(sourceName);
   }
@@ -227,9 +230,10 @@ namespace
       .def("ConnectToSource", ConnectToSource_2, (arg("shadingAttr"), arg("sourcePath")))
       .def("ConnectToSource", ConnectToSource_3, (arg("shadingAttr"), arg("input")))
       .def("ConnectToSource", ConnectToSource_4, (arg("shadingAttr"), arg("output")))
-      .def("ConnectToSource",
-           ConnectToSource_5,
-           (arg("shadingAttr"), arg("source"), arg("mod") = UsdShadeConnectionModification::Replace))
+      .def(
+        "ConnectToSource",
+        ConnectToSource_5,
+        (arg("shadingAttr"), arg("source"), arg("mod") = UsdShadeConnectionModification::Replace))
       .staticmethod("ConnectToSource")
 
       .def("SetConnectedSources", &UsdShadeConnectableAPI::SetConnectedSources)
@@ -250,10 +254,14 @@ namespace
       .def("HasConnectedSource", HasConnectedSource, (arg("shadingAttr")))
       .staticmethod("HasConnectedSource")
 
-      .def("IsSourceConnectionFromBaseMaterial", IsSourceConnectionFromBaseMaterial, (arg("shadingAttr")))
+      .def("IsSourceConnectionFromBaseMaterial",
+           IsSourceConnectionFromBaseMaterial,
+           (arg("shadingAttr")))
       .staticmethod("IsSourceConnectionFromBaseMaterial")
 
-      .def("DisconnectSource", DisconnectSource, (arg("shadingAttr"), arg("sourceAttr") = UsdAttribute()))
+      .def("DisconnectSource",
+           DisconnectSource,
+           (arg("shadingAttr"), arg("sourceAttr") = UsdAttribute()))
       .staticmethod("DisconnectSource")
 
       .def("ClearSources", ClearSources, (arg("shadingAttr")))
@@ -282,8 +290,13 @@ namespace
       ;
 
     class_<ConnectionSourceInfo>("ConnectionSourceInfo")
-      .def(init<UsdShadeConnectableAPI const &, TfToken const &, UsdShadeAttributeType, SdfValueTypeName>(
-        (arg("source"), arg("sourceName"), arg("sourceType"), arg("typeName") = SdfValueTypeName())))
+      .def(init<UsdShadeConnectableAPI const &,
+                TfToken const &,
+                UsdShadeAttributeType,
+                SdfValueTypeName>((arg("source"),
+                                   arg("sourceName"),
+                                   arg("sourceType"),
+                                   arg("typeName") = SdfValueTypeName())))
       .def(init<UsdShadeInput const &>(arg("input")))
       .def(init<UsdShadeOutput const &>(arg("output")))
       .def(init<UsdStagePtr const &, SdfPath const &>())
@@ -301,8 +314,9 @@ namespace
 
     to_python_converter<std::vector<ConnectionSourceInfo>,
                         TfPySequenceToPython<std::vector<ConnectionSourceInfo>>>();
-    TfPyContainerConversions::from_python_sequence<std::vector<ConnectionSourceInfo>,
-                                                   TfPyContainerConversions::variable_capacity_policy>();
+    TfPyContainerConversions::from_python_sequence<
+      std::vector<ConnectionSourceInfo>,
+      TfPyContainerConversions::variable_capacity_policy>();
   }
 
 }  // anonymous namespace

@@ -34,14 +34,12 @@ HdPhDrawItemInstance::HdPhDrawItemInstance(HdPhDrawItem const *drawItem)
     _visible(drawItem->GetVisible())
 {}
 
-HdPhDrawItemInstance::~HdPhDrawItemInstance()
-{}
+HdPhDrawItemInstance::~HdPhDrawItemInstance() {}
 
 void HdPhDrawItemInstance::SetVisible(bool visible)
 {
   _visible = visible;
-  if (_batch)
-  {
+  if (_batch) {
     _batch->DrawItemInstanceChanged(this);
   }
 }

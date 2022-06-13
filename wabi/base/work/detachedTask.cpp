@@ -48,16 +48,13 @@ void Work_EnsureDetachedTaskProgress()
   // Check to see if there's a waiter thread already.  If not, try to create
   // one.
   std::thread *c = detachedWaiter.load();
-  if (ARCH_UNLIKELY(!c))
-  {
+  if (ARCH_UNLIKELY(!c)) {
     std::thread *newThread = new std::thread;
-    if (detachedWaiter.compare_exchange_strong(c, newThread))
-    {
+    if (detachedWaiter.compare_exchange_strong(c, newThread)) {
       // We won the race, so start the waiter thread.
       WorkDispatcher &dispatcher = Work_GetDetachedDispatcher();
       *newThread = std::move(std::thread([&dispatcher]() {
-        while (true)
-        {
+        while (true) {
           // Process detached tasks.
           dispatcher.Wait();
           // Now sleep for a bit, and try again.
@@ -66,8 +63,7 @@ void Work_EnsureDetachedTaskProgress()
         }
       }));
       newThread->detach();
-    } else
-    {
+    } else {
       // We lost the race, so delete our temporary thread.
       delete newThread;
     }

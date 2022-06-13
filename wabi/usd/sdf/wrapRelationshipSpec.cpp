@@ -40,20 +40,23 @@ void wrapRelationshipSpec()
 {
   typedef SdfRelationshipSpec This;
 
-  class_<This, SdfHandle<This>, bases<SdfPropertySpec>, boost::noncopyable>("RelationshipSpec", no_init)
+  class_<This, SdfHandle<This>, bases<SdfPropertySpec>, boost::noncopyable>("RelationshipSpec",
+                                                                            no_init)
 
     .def(SdfPySpec())
 
-    .def(
-      "__unused__",
-      SdfMakePySpecConstructor(&This::New,
-                               "__init__(ownerPrimSpec, name, custom = True, variability = "
-                               "Sd.VariabilityUniform)\n"
-                               "ownerPrimSpec: PrimSpec\n"
-                               "name : string\n"
-                               "custom : bool\n"
-                               "varibility : Sd.Variability\n"),
-      (arg("ownerPrimSpec"), arg("name"), arg("custom") = true, arg("variability") = SdfVariabilityUniform))
+    .def("__unused__",
+         SdfMakePySpecConstructor(&This::New,
+                                  "__init__(ownerPrimSpec, name, custom = True, variability = "
+                                  "Sd.VariabilityUniform)\n"
+                                  "ownerPrimSpec: PrimSpec\n"
+                                  "name : string\n"
+                                  "custom : bool\n"
+                                  "varibility : Sd.Variability\n"),
+         (arg("ownerPrimSpec"),
+          arg("name"),
+          arg("custom") = true,
+          arg("variability") = SdfVariabilityUniform))
 
     .add_property("targetPathList",
                   &This::GetTargetPathList,

@@ -104,12 +104,10 @@ namespace
 
     void ThreadTask()
     {
-      while (true)
-      {
+      while (true) {
         // Try to take the next plugin to load.
         size_t cur = nextAvailable;
-        while (cur != plugins.size() && !nextAvailable.compare_exchange_strong(cur, cur + 1))
-        {
+        while (cur != plugins.size() && !nextAvailable.compare_exchange_strong(cur, cur + 1)) {
           cur = nextAvailable;
         }
 
@@ -127,14 +125,16 @@ namespace
     std::atomic<size_t> nextAvailable;
   };
 
-  template<class Range>
-  string PluginNames(Range const &range)
+  template<class Range> string PluginNames(Range const &range)
   {
     using std::distance;
     vector<string> names(distance(boost::begin(range), boost::end(range)));
-    transform(boost::begin(range), boost::end(range), names.begin(), [](PlugPluginPtr const &plug) {
-      return plug->GetName();
-    });
+    transform(boost::begin(range),
+              boost::end(range),
+              names.begin(),
+              [](PlugPluginPtr const &plug) {
+                return plug->GetName();
+              });
     return TfStringJoin(names.begin(), names.end(), ", ");
   }
 
@@ -149,12 +149,14 @@ namespace
     plugins.erase(partition(plugins.begin(), plugins.end(), pred), plugins.end());
 
     // Shuffle all already loaded plugins to the end.
-    PlugPluginPtrVector::iterator alreadyLoaded =
-      partition(plugins.begin(), plugins.end(), [](PlugPluginPtr const &plug) { return !plug->IsLoaded(); });
+    PlugPluginPtrVector::iterator alreadyLoaded = partition(plugins.begin(),
+                                                            plugins.end(),
+                                                            [](PlugPluginPtr const &plug) {
+                                                              return !plug->IsLoaded();
+                                                            });
 
     // Report any already loaded plugins as skipped.
-    if (verbose && alreadyLoaded != plugins.end())
-    {
+    if (verbose && alreadyLoaded != plugins.end()) {
       printf("Skipping already-loaded plugins: %s\n",
              PluginNames(make_pair(alreadyLoaded, plugins.end())).c_str());
     }
@@ -162,8 +164,7 @@ namespace
     // Trim the already loaded plugins from the vector.
     plugins.erase(alreadyLoaded, plugins.end());
 
-    if (plugins.empty())
-    {
+    if (plugins.empty()) {
       if (verbose)
         printf("No plugins to load.\n");
       return;
@@ -176,9 +177,10 @@ namespace
     numThreads = numThreads ? numThreads : std::min(hwThreads, (unsigned int)plugins.size());
 
     // Report what we're doing.
-    if (verbose)
-    {
-      printf("Loading %zu plugins concurrently: %s\n", plugins.size(), PluginNames(plugins).c_str());
+    if (verbose) {
+      printf("Loading %zu plugins concurrently: %s\n",
+             plugins.size(),
+             PluginNames(plugins).c_str());
     }
 
     // Establish shared state.
@@ -188,19 +190,18 @@ namespace
 
     // Load in multiple threads.
     std::vector<std::thread> threads;
-    for (size_t i = 0; i != numThreads; ++i)
-    {
-      threads.emplace_back([&state]() { state.ThreadTask(); });
+    for (size_t i = 0; i != numThreads; ++i) {
+      threads.emplace_back([&state]() {
+        state.ThreadTask();
+      });
     }
 
     // Wait for threads.
-    for (auto &thread : threads)
-    {
+    for (auto &thread : threads) {
       thread.join();
     }
 
-    if (verbose)
-    {
+    if (verbose) {
       printf("Used %zu threads.\n", numThreads);
     }
   }
@@ -224,7 +225,8 @@ void wrapRegistry()
     .def("FindTypeByName", This::FindTypeByName, return_value_policy<return_by_value>())
     .staticmethod("FindTypeByName")
 
-    .def("FindDerivedTypeByName", (TfType(*)(TfType, std::string const &))This::FindDerivedTypeByName)
+    .def("FindDerivedTypeByName",
+         (TfType(*)(TfType, std::string const &))This::FindDerivedTypeByName)
     .staticmethod("FindDerivedTypeByName")
 
     .def("GetDirectlyDerivedTypes",

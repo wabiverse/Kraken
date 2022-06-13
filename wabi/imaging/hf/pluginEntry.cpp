@@ -48,8 +48,7 @@ Hf_PluginEntry::~Hf_PluginEntry()
 {
   // Memory leak detection - All instances should be released before
   // deleting the class
-  if (!TF_VERIFY(_instance == nullptr))
-  {
+  if (!TF_VERIFY(_instance == nullptr)) {
     delete _instance;
   }
 }
@@ -88,8 +87,7 @@ void Hf_PluginEntry::GetDesc(HfPluginDesc *desc) const
 
 void Hf_PluginEntry::IncRefCount()
 {
-  if (_refCount == 0)
-  {
+  if (_refCount == 0) {
     _Factory *factory = _type.GetFactory<_Factory>();
 
     _instance = factory->New();
@@ -101,16 +99,14 @@ void Hf_PluginEntry::IncRefCount()
 void Hf_PluginEntry::DecRefCount()
 {
   // something went wrong with ref counting
-  if (!TF_VERIFY(_refCount > 0))
-  {
+  if (!TF_VERIFY(_refCount > 0)) {
     _refCount = 0;
     return;
   }
 
   --_refCount;
 
-  if (_refCount == 0)
-  {
+  if (_refCount == 0) {
     delete _instance;
     _instance = nullptr;
   }
@@ -124,14 +120,11 @@ bool Hf_PluginEntry::operator<(const Hf_PluginEntry &other) const
   int aPriority = this->_priority;
   int bPriority = other._priority;
 
-  if (aPriority < bPriority)
-  {
+  if (aPriority < bPriority) {
     return true;
-  } else if (aPriority > bPriority)
-  {
+  } else if (aPriority > bPriority) {
     return false;
-  } else
-  {
+  } else {
     // Use TypeName string rather than machine name token
     // as we want to sort alphabetically not hash order.
     return this->_type.GetTypeName() < other._type.GetTypeName();

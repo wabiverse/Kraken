@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdPhysicsFixedJoint::~UsdPhysicsFixedJoint()
-{}
+UsdPhysicsFixedJoint::~UsdPhysicsFixedJoint() {}
 
 /* static */
 UsdPhysicsFixedJoint UsdPhysicsFixedJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsFixedJoint();
   }
@@ -62,8 +60,7 @@ UsdPhysicsFixedJoint UsdPhysicsFixedJoint::Get(const UsdStagePtr &stage, const S
 UsdPhysicsFixedJoint UsdPhysicsFixedJoint::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PhysicsFixedJoint");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsFixedJoint();
   }

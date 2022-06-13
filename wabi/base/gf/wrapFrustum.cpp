@@ -66,8 +66,7 @@ namespace
     kwargs.push_back("window = " + TfPyRepr(self.GetWindow()));
     kwargs.push_back("nearFar = " + TfPyRepr(self.GetNearFar()));
     kwargs.push_back("projectionType = " + TfPyRepr(self.GetProjectionType()));
-    if (self.GetViewDistance() != 5.0)
-    {
+    if (self.GetViewDistance() != 5.0) {
       kwargs.push_back("viewDistance = " + TfPyRepr(self.GetViewDistance()));
     }
     return prefix + TfStringJoin(kwargs, seperator.c_str()) + ")";
@@ -104,10 +103,14 @@ void wrapFrustum()
 
   // Create some objects that will be reused a few times.
   //
-  object getPositionFunc = make_function(&This::GetPosition, return_value_policy<copy_const_reference>());
-  object getRotationFunc = make_function(&This::GetRotation, return_value_policy<copy_const_reference>());
-  object getWindowFunc = make_function(&This::GetWindow, return_value_policy<copy_const_reference>());
-  object getNearFarFunc = make_function(&This::GetNearFar, return_value_policy<copy_const_reference>());
+  object getPositionFunc = make_function(&This::GetPosition,
+                                         return_value_policy<copy_const_reference>());
+  object getRotationFunc = make_function(&This::GetRotation,
+                                         return_value_policy<copy_const_reference>());
+  object getWindowFunc = make_function(&This::GetWindow,
+                                       return_value_policy<copy_const_reference>());
+  object getNearFarFunc = make_function(&This::GetNearFar,
+                                        return_value_policy<copy_const_reference>());
 
   scope thisScope =
     class_<This>("Frustum", "Basic view frustum", init<>())
@@ -124,12 +127,15 @@ void wrapFrustum()
                          args("projectionType"),
                          args("viewDistance") = 5.0)))
 
-      .def(init<const GfMatrix4d &, const GfRange2d &, const GfRange1d &, GfFrustum::ProjectionType, double>(
-        (args("camToWorldXf"),
-         args("window"),
-         args("nearFar"),
-         args("projectionType"),
-         args("viewDistance") = 5.0)))
+      .def(init<const GfMatrix4d &,
+                const GfRange2d &,
+                const GfRange1d &,
+                GfFrustum::ProjectionType,
+                double>((args("camToWorldXf"),
+                         args("window"),
+                         args("nearFar"),
+                         args("projectionType"),
+                         args("viewDistance") = 5.0)))
 
       .def(TfTypePythonClass())
 
@@ -217,18 +223,22 @@ void wrapFrustum()
            return_value_policy<TfPySequenceToTuple>())
 
       .def("ComputeNarrowedFrustum",
-           (GfFrustum(This::*)(const GfVec2d &, const GfVec2d &) const) & This::ComputeNarrowedFrustum)
+           (GfFrustum(This::*)(const GfVec2d &, const GfVec2d &) const) &
+             This::ComputeNarrowedFrustum)
       .def("ComputeNarrowedFrustum",
-           (GfFrustum(This::*)(const GfVec3d &, const GfVec2d &) const) & This::ComputeNarrowedFrustum)
+           (GfFrustum(This::*)(const GfVec3d &, const GfVec2d &) const) &
+             This::ComputeNarrowedFrustum)
 
       .def("ComputePickRay", (GfRay(This::*)(const GfVec2d &) const) & This::ComputePickRay)
       .def("ComputePickRay", (GfRay(This::*)(const GfVec3d &) const) & This::ComputePickRay)
 
       .def("Intersects", (bool(This::*)(const GfBBox3d &) const) & This::Intersects)
       .def("Intersects", (bool(This::*)(const GfVec3d &) const) & This::Intersects)
-      .def("Intersects", (bool(This::*)(const GfVec3d &, const GfVec3d &) const) & This::Intersects)
       .def("Intersects",
-           (bool(This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &) const) & This::Intersects)
+           (bool(This::*)(const GfVec3d &, const GfVec3d &) const) & This::Intersects)
+      .def("Intersects",
+           (bool(This::*)(const GfVec3d &, const GfVec3d &, const GfVec3d &) const) &
+             This::Intersects)
 
       .def("SetProjectionType", &This::SetProjectionType)
       .def("GetProjectionType", &This::GetProjectionType)

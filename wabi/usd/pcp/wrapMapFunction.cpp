@@ -42,18 +42,16 @@ namespace
 
   static string _Repr(const PcpMapFunction &f)
   {
-    if (f.IsIdentity())
-    {
+    if (f.IsIdentity()) {
       return "Pcp.MapFunction.Identity()";
     }
     string s = "Pcp.MapFunction(";
-    if (!f.IsNull())
-    {
-      const boost::python::dict sourceToTargetMap = TfPyCopyMapToDictionary(f.GetSourceToTargetMap());
+    if (!f.IsNull()) {
+      const boost::python::dict sourceToTargetMap = TfPyCopyMapToDictionary(
+        f.GetSourceToTargetMap());
 
       s += TfPyObjectRepr(sourceToTargetMap);
-      if (f.GetTimeOffset() != SdfLayerOffset())
-      {
+      if (f.GetTimeOffset() != SdfLayerOffset()) {
         s += ", ";
         s += TfPyRepr(f.GetTimeOffset());
       }
@@ -67,12 +65,12 @@ namespace
     return f.GetString();
   }
 
-  static PcpMapFunction *_Create(const boost::python::dict &sourceToTargetMap, SdfLayerOffset offset)
+  static PcpMapFunction *_Create(const boost::python::dict &sourceToTargetMap,
+                                 SdfLayerOffset offset)
   {
     PcpMapFunction::PathMap pathMap;
     boost::python::list keys = sourceToTargetMap.keys();
-    for (int i = 0; i < boost::python::len(keys); ++i)
-    {
+    for (int i = 0; i < boost::python::len(keys); ++i) {
       // Just blindly try to extract SdfPaths.
       // If the dict is not holding the right types,
       // we'll raise a boost exception, which boost
@@ -95,15 +93,17 @@ void wrapMapFunction()
 {
   typedef PcpMapFunction This;
 
-  TfPyContainerConversions::from_python_sequence<std::vector<PcpMapFunction>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<PcpMapFunction>,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   class_<This>("MapFunction")
     .def(init<const This &>())
     .def("__init__",
-         boost::python::make_constructor(&_Create,
-                                         default_call_policies(),
-                                         (arg("sourceToTargetMap"), arg("timeOffset") = SdfLayerOffset())))
+         boost::python::make_constructor(
+           &_Create,
+           default_call_policies(),
+           (arg("sourceToTargetMap"), arg("timeOffset") = SdfLayerOffset())))
 
     .def("__repr__", _Repr)
     .def("__str__", _Str)
@@ -121,9 +121,11 @@ void wrapMapFunction()
     .def("ComposeOffset", &This::ComposeOffset, arg("offset"))
     .def("GetInverse", &This::GetInverse)
 
-    .add_property("sourceToTargetMap",
-                  make_function(&This::GetSourceToTargetMap, return_value_policy<TfPyMapToDictionary>()))
-    .add_property("timeOffset", make_function(&This::GetTimeOffset, return_value_policy<return_by_value>()))
+    .add_property(
+      "sourceToTargetMap",
+      make_function(&This::GetSourceToTargetMap, return_value_policy<TfPyMapToDictionary>()))
+    .add_property("timeOffset",
+                  make_function(&This::GetTimeOffset, return_value_policy<return_by_value>()))
 
     .def(self == self)
     .def(self != self);

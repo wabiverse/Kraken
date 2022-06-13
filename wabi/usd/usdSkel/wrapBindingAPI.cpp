@@ -50,9 +50,7 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
@@ -61,32 +59,43 @@ namespace
                                                    object defaultVal,
                                                    bool writeSparsely)
   {
-    return self.CreateGeomBindTransformAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4d),
-                                            writeSparsely);
+    return self.CreateGeomBindTransformAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Matrix4d),
+      writeSparsely);
   }
 
-  static UsdAttribute _CreateJointsAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateJointsAttr(UsdSkelBindingAPI &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
     return self.CreateJointsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
                                  writeSparsely);
   }
 
-  static UsdAttribute _CreateJointIndicesAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateJointIndicesAttr(UsdSkelBindingAPI &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateJointIndicesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->IntArray),
                                        writeSparsely);
   }
 
-  static UsdAttribute _CreateJointWeightsAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateJointWeightsAttr(UsdSkelBindingAPI &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
-    return self.CreateJointWeightsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                       writeSparsely);
+    return self.CreateJointWeightsAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
+      writeSparsely);
   }
 
-  static UsdAttribute _CreateBlendShapesAttr(UsdSkelBindingAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateBlendShapesAttr(UsdSkelBindingAPI &self,
+                                             object defaultVal,
+                                             bool writeSparsely)
   {
-    return self.CreateBlendShapesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
-                                      writeSparsely);
+    return self.CreateBlendShapesAttr(
+      UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray),
+      writeSparsely);
   }
 
   static std::string _Repr(const UsdSkelBindingAPI &self)
@@ -119,7 +128,9 @@ void wrapUsdSkelBindingAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)

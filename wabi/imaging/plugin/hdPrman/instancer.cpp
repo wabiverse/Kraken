@@ -43,15 +43,15 @@ HdPrmanInstancer::HdPrmanInstancer(HdSceneDelegate *delegate, SdfPath const &id)
   : HdInstancer(delegate, id)
 {}
 
-HdPrmanInstancer::~HdPrmanInstancer()
-{}
+HdPrmanInstancer::~HdPrmanInstancer() {}
 
-void HdPrmanInstancer::Sync(HdSceneDelegate *delegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdPrmanInstancer::Sync(HdSceneDelegate *delegate,
+                            HdRenderParam *renderParam,
+                            HdDirtyBits *dirtyBits)
 {
   _UpdateInstancer(delegate, dirtyBits);
 
-  if (HdChangeTracker::IsAnyPrimvarDirty(*dirtyBits, GetId()))
-  {
+  if (HdChangeTracker::IsAnyPrimvarDirty(*dirtyBits, GetId())) {
     _SyncPrimvars(delegate, *dirtyBits);
   }
 }
@@ -64,21 +64,19 @@ void HdPrmanInstancer::_SyncPrimvars(HdSceneDelegate *delegate, HdDirtyBits dirt
   SdfPath const &id = GetId();
 
   // Get the list of primvar names and then cache each one.
-  for (HdPrimvarDescriptor const &primvar : delegate->GetPrimvarDescriptors(id, HdInterpolationInstance))
-  {
+  for (HdPrimvarDescriptor const &primvar :
+       delegate->GetPrimvarDescriptors(id, HdInterpolationInstance)) {
     // Skip primvars that have special handling elsewhere.
     // The transform primvars are all handled in
     // SampleInstanceTransform.
-    if (primvar.name == HdInstancerTokens->instanceTransform || primvar.name == HdInstancerTokens->rotate ||
-        primvar.name == HdInstancerTokens->scale || primvar.name == HdInstancerTokens->translate)
-    {
+    if (primvar.name == HdInstancerTokens->instanceTransform ||
+        primvar.name == HdInstancerTokens->rotate || primvar.name == HdInstancerTokens->scale ||
+        primvar.name == HdInstancerTokens->translate) {
       continue;
     }
-    if (HdChangeTracker::IsPrimvarDirty(dirtyBits, id, primvar.name))
-    {
+    if (HdChangeTracker::IsPrimvarDirty(dirtyBits, id, primvar.name)) {
       VtValue value = delegate->Get(id, primvar.name);
-      if (!value.IsEmpty())
-      {
+      if (!value.IsEmpty()) {
         _PrimvarValue &entry = _primvarMap[primvar.name];
         entry.desc = primvar;
         std::swap(entry.value, value);
@@ -90,10 +88,10 @@ void HdPrmanInstancer::_SyncPrimvars(HdSceneDelegate *delegate, HdDirtyBits dirt
 // Helper to accumulate sample times from the largest set of
 // samples seen, up to maxNumSamples.
 template<typename T1, typename T2, unsigned int C>
-static void _AccumulateSampleTimes(HdTimeSampleArray<T1, C> const &in, HdTimeSampleArray<T2, C> *out)
+static void _AccumulateSampleTimes(HdTimeSampleArray<T1, C> const &in,
+                                   HdTimeSampleArray<T2, C> *out)
 {
-  if (in.count > out->count)
-  {
+  if (in.count > out->count) {
     out->Resize(in.count);
     out->times = in.times;
   }
@@ -148,62 +146,51 @@ void HdPrmanInstancer::SampleInstanceTransforms(
   // all indices.  We should only do this work for the instances
   // indicated in the instanceIndices array.
   //
-  for (size_t i = 0; i < sa->count; ++i)
-  {
+  for (size_t i = 0; i < sa->count; ++i) {
     const float t = sa->times[i];
     GfMatrix4d xf(1);
-    if (instancerXform.count > 0)
-    {
+    if (instancerXform.count > 0) {
       xf = instancerXform.Resample(t);
     }
     VtMatrix4dArray ixf;
-    if (instanceXforms.count > 0)
-    {
+    if (instanceXforms.count > 0) {
       ixf = instanceXforms.Resample(t);
     }
     VtVec3fArray trans;
-    if (translates.count > 0)
-    {
+    if (translates.count > 0) {
       trans = translates.Resample(t);
     }
     VtQuathArray rot;
-    if (rotates.count > 0)
-    {
+    if (rotates.count > 0) {
       rot = rotates.Resample(t);
     }
     VtVec3fArray scale;
-    if (scales.count > 0)
-    {
+    if (scales.count > 0) {
       scale = scales.Resample(t);
     }
 
     // Concatenate transformations and filter to just the instanceIndices.
     VtMatrix4dArray &ma = sa->values[i];
     ma.resize(instanceIndices.size());
-    for (size_t j = 0; j < instanceIndices.size(); ++j)
-    {
+    for (size_t j = 0; j < instanceIndices.size(); ++j) {
       ma[j] = xf;
       size_t instanceIndex = instanceIndices[j];
-      if (trans.size() > instanceIndex)
-      {
+      if (trans.size() > instanceIndex) {
         GfMatrix4d t(1);
         t.SetTranslate(GfVec3d(trans[instanceIndex]));
         ma[j] = t * ma[j];
       }
-      if (rot.size() > instanceIndex)
-      {
+      if (rot.size() > instanceIndex) {
         GfMatrix4d r(1);
         r.SetRotate(GfRotation(rot[instanceIndex]));
         ma[j] = r * ma[j];
       }
-      if (scale.size() > instanceIndex)
-      {
+      if (scale.size() > instanceIndex) {
         GfMatrix4d s(1);
         s.SetScale(GfVec3d(scale[instanceIndex]));
         ma[j] = s * ma[j];
       }
-      if (ixf.size() > instanceIndex)
-      {
+      if (ixf.size() > instanceIndex) {
         ma[j] = ixf[instanceIndex] * ma[j];
       }
     }
@@ -211,14 +198,12 @@ void HdPrmanInstancer::SampleInstanceTransforms(
 
   // If there is a parent instancer, continue to unroll
   // the child instances across the parent; otherwise we're done.
-  if (GetParentId().IsEmpty())
-  {
+  if (GetParentId().IsEmpty()) {
     return;
   }
 
   HdInstancer *parentInstancer = GetDelegate()->GetRenderIndex().GetInstancer(GetParentId());
-  if (!TF_VERIFY(parentInstancer))
-  {
+  if (!TF_VERIFY(parentInstancer)) {
     return;
   }
   HdPrmanInstancer *hdPrmanParentInstancer = static_cast<HdPrmanInstancer *>(parentInstancer);
@@ -232,8 +217,7 @@ void HdPrmanInstancer::SampleInstanceTransforms(
   HdTimeSampleArray<VtMatrix4dArray, HDPRMAN_MAX_TIME_SAMPLES> parentXf;
   VtIntArray instanceIndicesParent = GetDelegate()->GetInstanceIndices(GetParentId(), GetId());
   hdPrmanParentInstancer->SampleInstanceTransforms(GetId(), instanceIndicesParent, &parentXf);
-  if (parentXf.count == 0 || parentXf.values[0].empty())
-  {
+  if (parentXf.count == 0 || parentXf.values[0].empty()) {
     // No samples for parent instancer.
     return;
   }
@@ -242,8 +226,7 @@ void HdPrmanInstancer::SampleInstanceTransforms(
   // Merge sample times, taking the densest sampling.
   _AccumulateSampleTimes(parentXf, sa);
   // Apply parent xforms to the children.
-  for (size_t i = 0; i < sa->count; ++i)
-  {
+  for (size_t i = 0; i < sa->count; ++i) {
     const float t = sa->times[i];
     // Resample transforms at the same time.
     VtMatrix4dArray curParentXf = parentXf.Resample(t);
@@ -251,10 +234,8 @@ void HdPrmanInstancer::SampleInstanceTransforms(
     // Multiply out each combination.
     VtMatrix4dArray &result = sa->values[i];
     result.resize(curParentXf.size() * curChildXf.size());
-    for (size_t j = 0; j < curParentXf.size(); ++j)
-    {
-      for (size_t k = 0; k < curChildXf.size(); ++k)
-      {
+    for (size_t j = 0; j < curParentXf.size(); ++j) {
+      for (size_t k = 0; k < curChildXf.size(); ++k) {
         result[j * curChildXf.size() + k] = curChildXf[k] * curParentXf[j];
       }
     }
@@ -265,19 +246,16 @@ void HdPrmanInstancer::GetInstancePrimvars(SdfPath const &prototypeId,
                                            size_t instanceIndex,
                                            RtParamList &attrs)
 {
-  for (auto entry : _primvarMap)
-  {
+  for (auto entry : _primvarMap) {
     HdPrimvarDescriptor const &primvar = entry.second.desc;
     // Skip non-instance-rate primvars.
-    if (primvar.interpolation != HdInterpolationInstance)
-    {
+    if (primvar.interpolation != HdInterpolationInstance) {
       continue;
     }
     // Confirm that instance-rate primvars are array-valued
     // and have sufficient dimensions.
     VtValue const &val = entry.second.value;
-    if (instanceIndex >= val.GetArraySize())
-    {
+    if (instanceIndex >= val.GetArraySize()) {
       TF_WARN(
         "HdPrman: Instance-rate primvar has array size %zu; "
         "cannot provide a value for instance index %zu\n",
@@ -293,62 +271,47 @@ void HdPrmanInstancer::GetInstancePrimvars(SdfPath const &prototypeId,
     RtUString name;
     static const char *userPrefix = "user:";
     static const char *riAttrPrefix = "ri:attributes:";
-    if (!strncmp(entry.first.GetText(), userPrefix, strlen(userPrefix)))
-    {
+    if (!strncmp(entry.first.GetText(), userPrefix, strlen(userPrefix))) {
       name = RtUString(entry.first.GetText());
-    } else if (!strncmp(entry.first.GetText(), riAttrPrefix, strlen(riAttrPrefix)))
-    {
+    } else if (!strncmp(entry.first.GetText(), riAttrPrefix, strlen(riAttrPrefix))) {
       const char *strippedName = entry.first.GetText();
       strippedName += strlen(riAttrPrefix);
       name = RtUString(strippedName);
-    } else
-    {
+    } else {
       std::string mangled = TfStringPrintf("user:%s", entry.first.GetText());
       name = RtUString(mangled.c_str());
     }
 
-    if (val.IsHolding<VtArray<float>>())
-    {
+    if (val.IsHolding<VtArray<float>>()) {
       const VtArray<float> &v = val.UncheckedGet<VtArray<float>>();
       attrs.SetFloat(name, v[instanceIndex]);
-    } else if (val.IsHolding<VtArray<int>>())
-    {
+    } else if (val.IsHolding<VtArray<int>>()) {
       const VtArray<int> &v = val.UncheckedGet<VtArray<int>>();
       attrs.SetInteger(name, v[instanceIndex]);
-    } else if (val.IsHolding<VtArray<GfVec2f>>())
-    {
+    } else if (val.IsHolding<VtArray<GfVec2f>>()) {
       const VtArray<GfVec2f> &v = val.UncheckedGet<VtArray<GfVec2f>>();
       attrs.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 2);
-    } else if (val.IsHolding<VtArray<GfVec3f>>())
-    {
+    } else if (val.IsHolding<VtArray<GfVec3f>>()) {
       const GfVec3f &v = val.UncheckedGet<VtArray<GfVec3f>>()[instanceIndex];
-      if (primvar.role == HdPrimvarRoleTokens->color)
-      {
+      if (primvar.role == HdPrimvarRoleTokens->color) {
         attrs.SetColor(name, RtColorRGB(v[0], v[1], v[2]));
-      } else if (primvar.role == HdPrimvarRoleTokens->point)
-      {
+      } else if (primvar.role == HdPrimvarRoleTokens->point) {
         attrs.SetPoint(name, RtPoint3(v[0], v[1], v[2]));
-      } else if (primvar.role == HdPrimvarRoleTokens->normal)
-      {
+      } else if (primvar.role == HdPrimvarRoleTokens->normal) {
         attrs.SetPoint(name, RtNormal3(v[0], v[1], v[2]));
-      } else
-      {
+      } else {
         attrs.SetVector(name, RtVector3(v[0], v[1], v[2]));
       }
-    } else if (val.IsHolding<VtArray<GfVec4f>>())
-    {
+    } else if (val.IsHolding<VtArray<GfVec4f>>()) {
       const VtArray<GfVec4f> &v = val.UncheckedGet<VtArray<GfVec4f>>();
       attrs.SetFloatArray(name, reinterpret_cast<const float *>(v.cdata()), 4);
-    } else if (val.IsHolding<VtArray<GfMatrix4d>>())
-    {
+    } else if (val.IsHolding<VtArray<GfMatrix4d>>()) {
       const VtArray<GfMatrix4d> &v = val.UncheckedGet<VtArray<GfMatrix4d>>();
       attrs.SetMatrix(name, HdPrman_GfMatrixToRtMatrix(v[instanceIndex]));
-    } else if (val.IsHolding<VtArray<std::string>>())
-    {
+    } else if (val.IsHolding<VtArray<std::string>>()) {
       const VtArray<std::string> &v = val.UncheckedGet<VtArray<std::string>>();
       attrs.SetString(name, RtUString(v[instanceIndex].c_str()));
-    } else if (val.IsHolding<VtArray<TfToken>>())
-    {
+    } else if (val.IsHolding<VtArray<TfToken>>()) {
       const VtArray<TfToken> &v = val.UncheckedGet<VtArray<TfToken>>();
       attrs.SetString(name, RtUString(v[instanceIndex].GetText()));
     }

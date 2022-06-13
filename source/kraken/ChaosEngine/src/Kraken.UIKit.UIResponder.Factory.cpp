@@ -40,22 +40,26 @@ namespace winrt::Kraken::UIKit::factory_implementation
   /**
    * Signal Handlers. */
 
-  winrt::event_token UIResponder::SignalTitleBarUpdateLayout(Kraken::UIKit::SignalDelegate const& handler)
+  winrt::event_token UIResponder::SignalTitleBarUpdateLayout(
+    Kraken::UIKit::SignalDelegate const &handler)
   {
     return m_signal.add(handler);
   }
 
-  winrt::event_token UIResponder::SignalTitleBarIsVisible(Kraken::UIKit::SignalDelegate const& handler)
+  winrt::event_token UIResponder::SignalTitleBarIsVisible(
+    Kraken::UIKit::SignalDelegate const &handler)
   {
     return m_signal.add(handler);
   }
 
-  winrt::event_token UIResponder::SignalNavigationIsDisplaying(Kraken::UIKit::SignalDelegate const& handler)
+  winrt::event_token UIResponder::SignalNavigationIsDisplaying(
+    Kraken::UIKit::SignalDelegate const &handler)
   {
     return m_signal.add(handler);
   }
 
-  winrt::event_token UIResponder::SignalWindowIsActivated(Kraken::UIKit::SignalDelegate const& handler)
+  winrt::event_token UIResponder::SignalWindowIsActivated(
+    Kraken::UIKit::SignalDelegate const &handler)
   {
     return m_signal.add(handler);
   }
@@ -63,22 +67,22 @@ namespace winrt::Kraken::UIKit::factory_implementation
   /**
    * Cookie Eaters. */
 
-  void UIResponder::SignalTitleBarUpdateLayout(winrt::event_token const& cookie)
+  void UIResponder::SignalTitleBarUpdateLayout(winrt::event_token const &cookie)
   {
     m_signal.remove(cookie);
   }
 
-  void UIResponder::SignalTitleBarIsVisible(winrt::event_token const& cookie)
+  void UIResponder::SignalTitleBarIsVisible(winrt::event_token const &cookie)
   {
     m_signal.remove(cookie);
   }
 
-  void UIResponder::SignalNavigationIsDisplaying(winrt::event_token const& cookie)
+  void UIResponder::SignalNavigationIsDisplaying(winrt::event_token const &cookie)
   {
     m_signal.remove(cookie);
   }
 
-  void UIResponder::SignalWindowIsActivated(winrt::event_token const& cookie)
+  void UIResponder::SignalWindowIsActivated(winrt::event_token const &cookie)
   {
     m_signal.remove(cookie);
   }
@@ -86,9 +90,10 @@ namespace winrt::Kraken::UIKit::factory_implementation
   /**
    * Core functionality. Signaling upon completion. */
 
-  void UIResponder::SetTitleBarLayout(Border const& layout)
+  void UIResponder::SetTitleBarLayout(Border const &layout)
   {
-    auto coreTitleBar = Windows::ApplicationModel::Core::CoreApplication::GetCurrentView().TitleBar();
+    auto coreTitleBar =
+      Windows::ApplicationModel::Core::CoreApplication::GetCurrentView().TitleBar();
 
     layout.Height(coreTitleBar.Height());
 
@@ -104,20 +109,22 @@ namespace winrt::Kraken::UIKit::factory_implementation
     m_signal();
   }
 
-  void UIResponder::SetTitleBarIsVisible(CoreApplicationViewTitleBar const& titleBar)
+  void UIResponder::SetTitleBarIsVisible(CoreApplicationViewTitleBar const &titleBar)
   {
     if (titleBar.IsVisible()) {
-      auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(Windows::UI::Xaml::Visibility::Visible);
+      auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(
+        Windows::UI::Xaml::Visibility::Visible);
       m_titleBarIsVisibleEvent(*this, *args);
     } else {
-      auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(Windows::UI::Xaml::Visibility::Collapsed);
+      auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(
+        Windows::UI::Xaml::Visibility::Collapsed);
       m_titleBarIsVisibleEvent(*this, *args);
     }
 
     m_signal();
   }
 
-  void UIResponder::SetNavigationView(NavigationView const& view)
+  void UIResponder::SetNavigationView(NavigationView const &view)
   {
     auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(view);
     m_setNavigationViewEvent(*this, *args);
@@ -127,9 +134,10 @@ namespace winrt::Kraken::UIKit::factory_implementation
 
   void UIResponder::SetWindowActivated(bool activate)
   {
-    auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(WindowIsActivated());
+    auto args = winrt::make_self<winrt::Kraken::UIKit::implementation::UIEvent>(
+      WindowIsActivated());
     m_windowActivatedEvent(*this, *args);
 
     m_signal();
   }
-} // namespace winrt::Kraken::UIKit::factory_implementation
+}  // namespace winrt::Kraken::UIKit::factory_implementation

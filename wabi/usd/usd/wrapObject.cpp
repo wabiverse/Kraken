@@ -70,7 +70,8 @@ namespace
   static bool _SetMetadata(const UsdObject &self, const TfToken &key, object obj)
   {
     VtValue value;
-    return UsdPythonToMetadataValue(key, /*keyPath*/ TfToken(), obj, &value) && self.SetMetadata(key, value);
+    return UsdPythonToMetadataValue(key, /*keyPath*/ TfToken(), obj, &value) &&
+           self.SetMetadata(key, value);
   }
 
   static bool _SetMetadataByDictKey(const UsdObject &self,
@@ -97,8 +98,7 @@ namespace
   {
     VtValue value;
     if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, TfToken(), obj, &value) &&
-        value.IsHolding<VtDictionary>())
-    {
+        value.IsHolding<VtDictionary>()) {
       self.SetCustomData(value.UncheckedGet<VtDictionary>());
     }
   }
@@ -106,8 +106,7 @@ namespace
   static void _SetCustomDataByKey(UsdObject &self, const TfToken &keyPath, object obj)
   {
     VtValue value;
-    if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, keyPath, obj, &value))
-    {
+    if (UsdPythonToMetadataValue(SdfFieldKeys->CustomData, keyPath, obj, &value)) {
       self.SetCustomDataByKey(keyPath, value);
     }
   }
@@ -126,8 +125,7 @@ namespace
   {
     VtValue value;
     if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, TfToken(), obj, &value) &&
-        value.IsHolding<VtDictionary>())
-    {
+        value.IsHolding<VtDictionary>()) {
       self.SetAssetInfo(value.UncheckedGet<VtDictionary>());
     }
   }
@@ -135,8 +133,7 @@ namespace
   static void _SetAssetInfoByKey(UsdObject &self, const TfToken &keyPath, object obj)
   {
     VtValue value;
-    if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, keyPath, obj, &value))
-    {
+    if (UsdPythonToMetadataValue(SdfFieldKeys->AssetInfo, keyPath, obj, &value)) {
       self.SetAssetInfoByKey(keyPath, value);
     }
   }
@@ -159,15 +156,14 @@ namespace
     // Allow attribute lookups if the attribute name starts with '__', if the
     // object's prim is valid, or if the attribute is one of a specific
     // inclusion list.
-    if ((name[0] == '_' && name[1] == '_') || extract<UsdObject &>(selfObj)().GetPrim().IsValid() ||
-        strcmp(name, "IsValid") == 0 || strcmp(name, "GetDescription") == 0 ||
-        strcmp(name, "GetPrim") == 0 || strcmp(name, "GetPath") == 0 || strcmp(name, "GetPrimPath") == 0 ||
-        strcmp(name, "IsPseudoRoot") == 0)
-    {
+    if ((name[0] == '_' && name[1] == '_') ||
+        extract<UsdObject &>(selfObj)().GetPrim().IsValid() || strcmp(name, "IsValid") == 0 ||
+        strcmp(name, "GetDescription") == 0 || strcmp(name, "GetPrim") == 0 ||
+        strcmp(name, "GetPath") == 0 || strcmp(name, "GetPrimPath") == 0 ||
+        strcmp(name, "IsPseudoRoot") == 0) {
       // Dispatch to object's __getattribute__.
       return (*_object__getattribute__)(selfObj, name);
-    } else
-    {
+    } else {
       // Otherwise raise a runtime error.
       TfPyThrowRuntimeError(TfStringPrintf("Accessed %s", TfPyRepr(selfObj).c_str()));
     }
@@ -205,9 +201,13 @@ void wrapUsdObject()
     .def("GetMetadataByDictKey", _GetMetadataByDictKey, (arg("key"), arg("keyPath")))
     .def("SetMetadataByDictKey", _SetMetadataByDictKey, (arg("key"), arg("keyPath"), arg("value")))
 
-    .def("ClearMetadataByDictKey", &UsdObject::ClearMetadataByDictKey, (arg("key"), arg("keyPath")))
+    .def("ClearMetadataByDictKey",
+         &UsdObject::ClearMetadataByDictKey,
+         (arg("key"), arg("keyPath")))
     .def("HasMetadataDictKey", &UsdObject::HasMetadataDictKey, (arg("key"), arg("keyPath")))
-    .def("HasAuthoredMetadataDictKey", &UsdObject::HasAuthoredMetadataDictKey, (arg("key"), arg("keyPath")))
+    .def("HasAuthoredMetadataDictKey",
+         &UsdObject::HasAuthoredMetadataDictKey,
+         (arg("key"), arg("keyPath")))
 
     .def("GetAllMetadata", &UsdObject::GetAllMetadata, return_value_policy<TfPyMapToDictionary>())
     .def("GetAllAuthoredMetadata",

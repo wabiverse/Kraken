@@ -45,8 +45,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdRiImagingPxrIntMultLightFilterAdapter::~UsdRiImagingPxrIntMultLightFilterAdapter()
-{}
+UsdRiImagingPxrIntMultLightFilterAdapter::~UsdRiImagingPxrIntMultLightFilterAdapter() {}
 
 bool UsdRiImagingPxrIntMultLightFilterAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {

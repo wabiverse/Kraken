@@ -65,8 +65,7 @@ HgiGL_ScopedStateHolder::HgiGL_ScopedStateHolder()
   TRACE_FUNCTION();
 
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug))
-  {
+  if (GARCH_GLAPI_HAS(KHR_debug)) {
     glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, "Capture state");
   }
 #endif
@@ -98,8 +97,7 @@ HgiGL_ScopedStateHolder::HgiGL_ScopedStateHolder()
 
   HGIGL_POST_PENDING_GL_ERRORS();
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug))
-  {
+  if (GARCH_GLAPI_HAS(KHR_debug)) {
     glPopDebugGroup();
   }
 #endif
@@ -110,25 +108,20 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   TRACE_FUNCTION();
 
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug))
-  {
+  if (GARCH_GLAPI_HAS(KHR_debug)) {
     glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, "Restore state");
   }
 #endif
 
-  if (_restoreAlphaToCoverage)
-  {
+  if (_restoreAlphaToCoverage) {
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-  } else
-  {
+  } else {
     glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   }
 
-  if (_restoreSampleAlphaToOne)
-  {
+  if (_restoreSampleAlphaToOne) {
     glEnable(GL_SAMPLE_ALPHA_TO_ONE);
-  } else
-  {
+  } else {
     glDisable(GL_SAMPLE_ALPHA_TO_ONE);
   }
 
@@ -138,11 +131,9 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
                       _restoreAlphaDstFnOp);
   glBlendEquationSeparate(_restoreColorOp, _restoreAlphaOp);
 
-  if (_restoreblendEnabled)
-  {
+  if (_restoreblendEnabled) {
     glEnable(GL_BLEND);
-  } else
-  {
+  } else {
     glDisable(GL_BLEND);
   }
 
@@ -150,11 +141,9 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   glDepthFunc(_restoreDepthFunc);
   glDepthMask(_restoreDepthWriteMask);
   glStencilMask(_restoreStencilWriteMask);
-  if (_restoreDepthTest)
-  {
+  if (_restoreDepthTest) {
     glEnable(GL_DEPTH_TEST);
-  } else
-  {
+  } else {
     glDisable(GL_DEPTH_TEST);
   }
   glBindVertexArray(_restoreVao);
@@ -162,29 +151,23 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
   glBindFramebuffer(GL_READ_FRAMEBUFFER, _restoreReadFramebuffer);
   glBindRenderbuffer(GL_RENDERBUFFER, _restoreRenderBuffer);
   glLineWidth(_lineWidth);
-  if (_cullFace)
-  {
+  if (_cullFace) {
     glEnable(GL_CULL_FACE);
-  } else
-  {
+  } else {
     glDisable(GL_CULL_FACE);
   }
   glCullFace(_cullMode);
   glFrontFace(_frontFace);
 
-  if (_rasterizerDiscard)
-  {
+  if (_rasterizerDiscard) {
     glEnable(GL_RASTERIZER_DISCARD);
-  } else
-  {
+  } else {
     glDisable(GL_RASTERIZER_DISCARD);
   }
 
-  if (_restoreFramebufferSRGB)
-  {
+  if (_restoreFramebufferSRGB) {
     glEnable(GL_FRAMEBUFFER_SRGB);
-  } else
-  {
+  } else {
     glDisable(GL_FRAMEBUFFER_SRGB);
   }
 
@@ -193,8 +176,7 @@ HgiGL_ScopedStateHolder::~HgiGL_ScopedStateHolder()
 
   HGIGL_POST_PENDING_GL_ERRORS();
 #if defined(GL_KHR_debug)
-  if (GARCH_GLAPI_HAS(KHR_debug))
-  {
+  if (GARCH_GLAPI_HAS(KHR_debug)) {
     glPopDebugGroup();
   }
 #endif

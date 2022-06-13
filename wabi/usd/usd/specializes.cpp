@@ -36,8 +36,7 @@ using _ListEditImpl = Usd_ListEditImpl<UsdSpecializes, SdfSpecializesProxy>;
 
 // The implementation doesn't define this function as it needs to be specialized
 // so we implement it here.
-template<>
-SdfSpecializesProxy _ListEditImpl::_GetListEditorForSpec(const SdfPrimSpecHandle &spec)
+template<> SdfSpecializesProxy _ListEditImpl::_GetListEditorForSpec(const SdfPrimSpecHandle &spec)
 {
   return spec->GetSpecializesList();
 }

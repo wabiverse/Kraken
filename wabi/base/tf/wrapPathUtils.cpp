@@ -42,8 +42,7 @@ namespace
   {
     string error;
     string realPath = TfRealPath(path, allowInaccessibleSuffix, &error);
-    if (raiseOnError && !error.empty())
-    {
+    if (raiseOnError && !error.empty()) {
       TF_RUNTIME_ERROR(error);
     }
     return realPath;
@@ -56,8 +55,7 @@ namespace
     string error;
     string::size_type result = TfFindLongestAccessiblePrefix(path, &error);
 
-    if (!error.empty())
-    {
+    if (!error.empty()) {
       PyErr_SetString(PyExc_OSError, error.c_str());
       throw_error_already_set();
     }

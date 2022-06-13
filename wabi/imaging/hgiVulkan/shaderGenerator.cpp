@@ -48,7 +48,8 @@ HgiVulkanShaderGenerator::HgiVulkanShaderGenerator(const HgiShaderFunctionDesc &
     _bindIndex(0)
 {
   // Write out all GL shaders and add to shader sections
-  GetShaderSections()->push_back(std::make_unique<HgiVulkanMacroShaderSection>(_GetMacroBlob(), ""));
+  GetShaderSections()->push_back(
+    std::make_unique<HgiVulkanMacroShaderSection>(_GetMacroBlob(), ""));
 
   // The ordering here is important (buffers before textures), because we
   // need to increment the bind location for resources in the same order
@@ -61,27 +62,28 @@ HgiVulkanShaderGenerator::HgiVulkanShaderGenerator(const HgiShaderFunctionDesc &
   _WriteInOuts(descriptor.stageOutputs, "out");
 }
 
-void HgiVulkanShaderGenerator::_WriteConstantParams(const HgiShaderFunctionParamDescVector &parameters)
+void HgiVulkanShaderGenerator::_WriteConstantParams(
+  const HgiShaderFunctionParamDescVector &parameters)
 {
-  if (parameters.empty())
-  {
+  if (parameters.empty()) {
     return;
   }
-  GetShaderSections()->push_back(std::make_unique<HgiVulkanBlockShaderSection>("ParamBuffer", parameters));
+  GetShaderSections()->push_back(
+    std::make_unique<HgiVulkanBlockShaderSection>("ParamBuffer", parameters));
 }
 
 void HgiVulkanShaderGenerator::_WriteTextures(const HgiShaderFunctionTextureDescVector &textures)
 {
-  for (const HgiShaderFunctionTextureDesc &desc : textures)
-  {
+  for (const HgiShaderFunctionTextureDesc &desc : textures) {
     const HgiShaderSectionAttributeVector attrs = {
       HgiShaderSectionAttribute{"binding", std::to_string(_bindIndex)}
     };
 
-    GetShaderSections()->push_back(std::make_unique<HgiVulkanTextureShaderSection>(desc.nameInShader,
-                                                                                   _bindIndex,
-                                                                                   desc.dimensions,
-                                                                                   attrs));
+    GetShaderSections()->push_back(
+      std::make_unique<HgiVulkanTextureShaderSection>(desc.nameInShader,
+                                                      _bindIndex,
+                                                      desc.dimensions,
+                                                      attrs));
 
     // In Vulkan buffers and textures cannot have the same binding index.
     _bindIndex++;
@@ -91,8 +93,7 @@ void HgiVulkanShaderGenerator::_WriteTextures(const HgiShaderFunctionTextureDesc
 void HgiVulkanShaderGenerator::_WriteBuffers(const HgiShaderFunctionBufferDescVector &buffers)
 {
   // Extract buffer descriptors and add appropriate buffer sections
-  for (size_t i = 0; i < buffers.size(); i++)
-  {
+  for (size_t i = 0; i < buffers.size(); i++) {
     const HgiShaderFunctionBufferDesc &bufferDescription = buffers[i];
     const HgiShaderSectionAttributeVector attrs = {
       HgiShaderSectionAttribute{"binding", std::to_string(_bindIndex)}
@@ -125,20 +126,16 @@ void HgiVulkanShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVect
 
   const bool in_qualifier = qualifier == "in";
   const bool out_qualifier = qualifier == "out";
-  for (const HgiShaderFunctionParamDesc &param : parameters)
-  {
+  for (const HgiShaderFunctionParamDesc &param : parameters) {
     // Skip writing out taken parameter names
     const std::string &paramName = param.nameInShader;
-    if (out_qualifier && takenOutParams.find(paramName) != takenOutParams.end())
-    {
+    if (out_qualifier && takenOutParams.find(paramName) != takenOutParams.end()) {
       continue;
     }
-    if (in_qualifier)
-    {
+    if (in_qualifier) {
       const std::string &role = param.role;
       auto const &keyword = takenInParams.find(role);
-      if (keyword != takenInParams.end())
-      {
+      if (keyword != takenInParams.end()) {
         GetShaderSections()->push_back(
           std::make_unique<HgiVulkanKeywordShaderSection>(paramName, param.type, keyword->second));
         continue;
@@ -165,32 +162,27 @@ void HgiVulkanShaderGenerator::_Execute(std::ostream &ss, const std::string &ori
   // section, capabilities to define macros in global space,
   // and abilities to declare some members or functions there
 
-  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalIncludes(ss);
     ss << "\n";
   }
 
-  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalMacros(ss);
     ss << "\n";
   }
 
-  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalStructs(ss);
     ss << "\n";
   }
 
-  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalMemberDeclarations(ss);
     ss << "\n";
   }
 
-  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections)
-  {
+  for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalFunctionDefinitions(ss);
     ss << "\n";
   }

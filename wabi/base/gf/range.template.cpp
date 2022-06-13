@@ -36,9 +36,7 @@
 {% for S in SCALARS if S != SCL %
 }
 #include "wabi/base/gf/range{{ DIM }}{{ S[0] }}.h"
-{
-  % endfor %
-}
+{ % endfor % }
 
 #include "wabi/base/gf/math.h"
 #include "wabi/base/gf/ostreamHelpers.h"
@@ -60,7 +58,8 @@ std::ostream &operator<<(std::ostream &out, {
   }
 } const &r)
 {
-  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << "..." << Gf_OstreamHelperP(r.GetMax()) << ']';
+  return out << '[' << Gf_OstreamHelperP(r.GetMin()) << "..." << Gf_OstreamHelperP(r.GetMax())
+             << ']';
 }
 
 double
@@ -80,45 +79,37 @@ double
   {
     % if DIM == 1 %
   }
-  if (p < _min)
-  {
+  if (p < _min) {
     // p is left of box
     dist += GfSqr(_min - p);
-  } else if (p > _max)
-  {
+  } else if (p > _max) {
     // p is right of box
     dist += GfSqr(p - _max);
   }
   { % endif % } {
     % if DIM >= 2 %
   }
-  if (p[0] < _min[0])
-  {
+  if (p[0] < _min[0]) {
     // p is left of box
     dist += GfSqr(_min[0] - p[0]);
-  } else if (p[0] > _max[0])
-  {
+  } else if (p[0] > _max[0]) {
     // p is right of box
     dist += GfSqr(p[0] - _max[0]);
   }
-  if (p[1] < _min[1])
-  {
+  if (p[1] < _min[1]) {
     // p is front of box
     dist += GfSqr(_min[1] - p[1]);
-  } else if (p[1] > _max[1])
-  {
+  } else if (p[1] > _max[1]) {
     // p is back of box
     dist += GfSqr(p[1] - _max[1]);
   }
   { % endif % } {
     % if DIM == 3 %
   }
-  if (p[2] < _min[2])
-  {
+  if (p[2] < _min[2]) {
     // p is below of box
     dist += GfSqr(_min[2] - p[2]);
-  } else if (p[2] > _max[2])
-  {
+  } else if (p[2] > _max[2]) {
     // p is above of box
     dist += GfSqr(p[2] - _max[2]);
   }
@@ -139,8 +130,7 @@ double
 }
 ::GetCorner(size_t i) const
 {
-  if (i > 3)
-  {
+  if (i > 3) {
     TF_CODING_ERROR("Invalid corner %zu > 3.", i);
     return _min;
   }
@@ -155,8 +145,7 @@ double
 }
 ::GetQuadrant(size_t i) const
 {
-  if (i > 3)
-  {
+  if (i > 3) {
     TF_CODING_ERROR("Invalid quadrant %zu > 3.", i);
     return {{RNG}}();
   }
@@ -194,8 +183,7 @@ const {{RNG}}
 }
 ::GetCorner(size_t i) const
 {
-  if (i > 7)
-  {
+  if (i > 7) {
     TF_CODING_ERROR("Invalid corner %zu > 7.", i);
     return _min;
   }
@@ -209,8 +197,7 @@ const {{RNG}}
 }
 ::GetOctant(size_t i) const
 {
-  if (i > 7)
-  {
+  if (i > 7) {
     TF_CODING_ERROR("Invalid octant %zu > 7.", i);
     return {{RNG}}();
   }

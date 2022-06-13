@@ -37,11 +37,14 @@ WABI_NAMESPACE_BEGIN
 bool operator==(const HgiAttachmentDesc &lhs, const HgiAttachmentDesc &rhs)
 {
   return lhs.format == rhs.format && lhs.usage == rhs.usage && lhs.clearValue == rhs.clearValue &&
-         lhs.loadOp == rhs.loadOp && lhs.storeOp == rhs.storeOp && lhs.blendEnabled == rhs.blendEnabled &&
+         lhs.loadOp == rhs.loadOp && lhs.storeOp == rhs.storeOp &&
+         lhs.blendEnabled == rhs.blendEnabled &&
          lhs.srcColorBlendFactor == rhs.srcColorBlendFactor &&
-         lhs.dstColorBlendFactor == rhs.dstColorBlendFactor && lhs.colorBlendOp == rhs.colorBlendOp &&
+         lhs.dstColorBlendFactor == rhs.dstColorBlendFactor &&
+         lhs.colorBlendOp == rhs.colorBlendOp &&
          lhs.srcAlphaBlendFactor == rhs.srcAlphaBlendFactor &&
-         lhs.dstAlphaBlendFactor == rhs.dstAlphaBlendFactor && lhs.alphaBlendOp == rhs.alphaBlendOp;
+         lhs.dstAlphaBlendFactor == rhs.dstAlphaBlendFactor &&
+         lhs.alphaBlendOp == rhs.alphaBlendOp;
 }
 
 bool operator!=(const HgiAttachmentDesc &lhs, const HgiAttachmentDesc &rhs)

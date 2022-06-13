@@ -37,7 +37,8 @@ static bool _ReprHasOpinion(const TfToken &reprToken)
 
 bool HdReprSelector::Contains(const TfToken &reprToken) const
 {
-  return (reprToken == refinedToken) || (reprToken == unrefinedToken) || (reprToken == pointsToken);
+  return (reprToken == refinedToken) || (reprToken == unrefinedToken) ||
+         (reprToken == pointsToken);
 }
 
 bool HdReprSelector::IsActiveRepr(size_t topologyIndex) const
@@ -49,10 +50,8 @@ bool HdReprSelector::IsActiveRepr(size_t topologyIndex) const
 
 bool HdReprSelector::AnyActiveRepr() const
 {
-  for (size_t i = 0; i < MAX_TOPOLOGY_REPRS; ++i)
-  {
-    if (IsActiveRepr(i))
-    {
+  for (size_t i = 0; i < MAX_TOPOLOGY_REPRS; ++i) {
+    if (IsActiveRepr(i)) {
       return true;
     }
   }
@@ -101,8 +100,7 @@ std::ostream &operator<<(std::ostream &stream, HdReprSelector const &t)
 
 TfToken const &HdReprSelector::operator[](size_t topologyIndex) const
 {
-  switch (topologyIndex)
-  {
+  switch (topologyIndex) {
     case 0:
       return refinedToken;
     case 1:

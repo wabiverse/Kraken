@@ -21,16 +21,12 @@ std::string ArnoldUsdMakeCamelCase(const std::string &in)
   out.reserve(in.length());
   bool capitalize = false;
   unsigned char c;
-  for (size_t i = 0; i < in.length(); ++i)
-  {
+  for (size_t i = 0; i < in.length(); ++i) {
     c = in[i];
-    if (c == '_')
-    {
+    if (c == '_') {
       capitalize = true;
-    } else
-    {
-      if (capitalize)
-      {
+    } else {
+      if (capitalize) {
         c = toupper(c);
         capitalize = false;
       }

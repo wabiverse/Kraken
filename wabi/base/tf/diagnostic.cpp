@@ -78,18 +78,15 @@ bool Tf_FailedVerifyHelper(const TfCallContext &context, char const *condition, 
 {
   std::string errorMsg = std::string("Failed verification: ' ") + condition + " '";
 
-  if (msg)
-  {
+  if (msg) {
     errorMsg += " -- ";
     errorMsg += msg;
     free(const_cast<char *>(msg));
   }
 
-  if (TfGetenvBool("TF_FATAL_VERIFY", false))
-  {
+  if (TfGetenvBool("TF_FATAL_VERIFY", false)) {
     Tf_DiagnosticHelper(context, TF_DIAGNOSTIC_FATAL_ERROR_TYPE).IssueFatalError(errorMsg);
-  } else
-  {
+  } else {
     Tf_PostErrorHelper(context, TF_DIAGNOSTIC_CODING_ERROR_TYPE, errorMsg);
   }
 
@@ -127,28 +124,24 @@ void Tf_TerminateHandler()
   string reason;
   string type;
 
-  try
-  {
+  try {
     /*
      * If there's no exception, we'll end up in the handler above.
      */
     std::set_terminate(_BadThrowHandler);
     throw;
   }
-  catch (std::bad_alloc &)
-  {
+  catch (std::bad_alloc &) {
     std::set_terminate(Tf_TerminateHandler);
     reason = "allocation failed (you've run out of memory)";
     type = "bad_alloc";
   }
-  catch (std::exception &exc)
-  {
+  catch (std::exception &exc) {
     std::set_terminate(Tf_TerminateHandler);
     reason = exc.what();
     type = typeid(exc).name();
   }
-  catch (...)
-  {
+  catch (...) {
     std::set_terminate(Tf_TerminateHandler);
     /*
      * Unknown exception type.
@@ -184,8 +177,7 @@ _fatalSignalHandler(int signo)
 #endif
 {
   const char *msg = "unknown signal";
-  switch (signo)
-  {
+  switch (signo) {
     case SIGSEGV:
       msg = "received SIGSEGV";
       break;

@@ -36,15 +36,13 @@ struct PcpInstanceKey::_Collector
 {
   bool Visit(const PcpNodeRef &node, bool nodeIsInstanceable)
   {
-    if (nodeIsInstanceable)
-    {
+    if (nodeIsInstanceable) {
       instancingArcs.push_back(_Arc(node));
       // We can stop immediately if we know there is no payload
       // arc in the node graph -- but otherwise we must continue,
       // since payload arcs can be optionally included, and
       // therefore affect instance sharing.
-      if (!indexHasPayload)
-      {
+      if (!indexHasPayload) {
         return false;
       }
     }
@@ -55,18 +53,14 @@ struct PcpInstanceKey::_Collector
   bool indexHasPayload;
 };
 
-PcpInstanceKey::PcpInstanceKey()
-  : _hash(0)
-{}
+PcpInstanceKey::PcpInstanceKey() : _hash(0) {}
 
-PcpInstanceKey::PcpInstanceKey(const PcpPrimIndex &primIndex)
-  : _hash(0)
+PcpInstanceKey::PcpInstanceKey(const PcpPrimIndex &primIndex) : _hash(0)
 {
   TRACE_FUNCTION();
 
   // Instance keys only apply to instanceable prim indexes.
-  if (!primIndex.IsInstanceable())
-  {
+  if (!primIndex.IsInstanceable()) {
     return;
   }
 
@@ -78,21 +72,17 @@ PcpInstanceKey::PcpInstanceKey(const PcpPrimIndex &primIndex)
 
   // Collect all authored variant selections in strong-to-weak order.
   SdfVariantSelectionMap variantSelection;
-  for (const PcpNodeRef &node : primIndex.GetNodeRange())
-  {
-    if (node.CanContributeSpecs())
-    {
+  for (const PcpNodeRef &node : primIndex.GetNodeRange()) {
+    if (node.CanContributeSpecs()) {
       PcpComposeSiteVariantSelections(node, &variantSelection);
     }
   }
   _variantSelection.assign(variantSelection.begin(), variantSelection.end());
 
-  for (const auto &arc : _arcs)
-  {
+  for (const auto &arc : _arcs) {
     boost::hash_combine(_hash, arc.GetHash());
   }
-  for (const auto &vsel : _variantSelection)
-  {
+  for (const auto &vsel : _variantSelection) {
     boost::hash_combine(_hash, vsel);
   }
 }
@@ -111,32 +101,27 @@ std::string PcpInstanceKey::GetString() const
 {
   std::string s;
   s += "Arcs:\n";
-  if (_arcs.empty())
-  {
+  if (_arcs.empty()) {
     s += "  (none)\n";
-  } else
-  {
-    for (const auto &arc : _arcs)
-    {
-      s += TfStringPrintf(
-        "  %s%s : %s\n",
-        TfEnum::GetDisplayName(arc._arcType).c_str(),
-        (arc._timeOffset.IsIdentity() ?
-           "" :
-           TfStringPrintf(" (offset: %f scale: %f)", arc._timeOffset.GetOffset(), arc._timeOffset.GetScale())
-             .c_str()),
-        Pcp_FormatSite(arc._sourceSite).c_str());
+  } else {
+    for (const auto &arc : _arcs) {
+      s += TfStringPrintf("  %s%s : %s\n",
+                          TfEnum::GetDisplayName(arc._arcType).c_str(),
+                          (arc._timeOffset.IsIdentity() ?
+                             "" :
+                             TfStringPrintf(" (offset: %f scale: %f)",
+                                            arc._timeOffset.GetOffset(),
+                                            arc._timeOffset.GetScale())
+                               .c_str()),
+                          Pcp_FormatSite(arc._sourceSite).c_str());
     }
   }
 
   s += "Variant selections:\n";
-  if (_variantSelection.empty())
-  {
+  if (_variantSelection.empty()) {
     s += "  (none)";
-  } else
-  {
-    for (const auto &vsel : _variantSelection)
-    {
+  } else {
+    for (const auto &vsel : _variantSelection) {
       s += TfStringPrintf("  %s = %s\n", vsel.first.c_str(), vsel.second.c_str());
     }
     // Kill the last newline.

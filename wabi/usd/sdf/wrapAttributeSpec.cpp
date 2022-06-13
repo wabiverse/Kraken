@@ -72,8 +72,9 @@ void wrapAttributeSpec()
   typedef SdfAttributeSpec This;
   typedef SdfAttributeSpecHandle ThisHandle;
 
-  TfPyContainerConversions::from_python_sequence<std::vector<SdfAttributeSpecHandle>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<SdfAttributeSpecHandle>,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   // Get function pointers to static New methods.
   ThisHandle (*wrapNewPrimAttr)(const SdfPrimSpecHandle &,
@@ -82,7 +83,8 @@ void wrapAttributeSpec()
                                 SdfVariability,
                                 bool) = &This::New;
 
-  class_<This, SdfHandle<This>, bases<SdfPropertySpec>, boost::noncopyable>("AttributeSpec", no_init)
+  class_<This, SdfHandle<This>, bases<SdfPropertySpec>, boost::noncopyable>("AttributeSpec",
+                                                                            no_init)
 
     .def(SdfPySpec())
     .def("__unused__",

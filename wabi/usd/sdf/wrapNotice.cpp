@@ -42,7 +42,8 @@ namespace
   TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayersDidChange, SdfNotice::Base);
   TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayersDidChangeSentPerLayer, SdfNotice::Base);
   TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayerDidReplaceContent, SdfNotice::Base);
-  TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayerDidReloadContent, SdfNotice::LayerDidReplaceContent);
+  TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayerDidReloadContent,
+                                SdfNotice::LayerDidReplaceContent);
   TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayerInfoDidChange, SdfNotice::Base);
   TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayerIdentifierDidChange, SdfNotice::Base);
   TF_INSTANTIATE_NOTICE_WRAPPER(SdfNotice::LayerDirtinessChanged, SdfNotice::Base);
@@ -57,7 +58,9 @@ void wrapNotice()
   TfPyNoticeWrapper<SdfNotice::Base, TfNotice>::Wrap();
 
   TfPyNoticeWrapper<SdfNotice::LayersDidChange, SdfNotice::Base>::Wrap()
-    .def("GetLayers", &SdfNotice::LayersDidChange::GetLayers, return_value_policy<TfPySequenceToList>())
+    .def("GetLayers",
+         &SdfNotice::LayersDidChange::GetLayers,
+         return_value_policy<TfPySequenceToList>())
     .def("GetSerialNumber", &SdfNotice::LayersDidChange::GetSerialNumber);
 
   TfPyNoticeWrapper<SdfNotice::LayersDidChangeSentPerLayer, SdfNotice::Base>::Wrap()
@@ -86,8 +89,8 @@ void wrapNotice()
   TfPyNoticeWrapper<SdfNotice::LayerDirtinessChanged, SdfNotice::Base>::Wrap();
 
   TfPyNoticeWrapper<SdfNotice::LayerMutenessChanged, SdfNotice::Base>::Wrap()
-    .add_property(
-      "layerPath",
-      make_function(&SdfNotice::LayerMutenessChanged::GetLayerPath, return_value_policy<return_by_value>()))
+    .add_property("layerPath",
+                  make_function(&SdfNotice::LayerMutenessChanged::GetLayerPath,
+                                return_value_policy<return_by_value>()))
     .add_property("wasMuted", &SdfNotice::LayerMutenessChanged::WasMuted);
 }

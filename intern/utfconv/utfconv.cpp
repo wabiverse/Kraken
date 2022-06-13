@@ -29,9 +29,9 @@
 
 #ifdef WIN32
 
-#include <io.h>
-#include <wchar.h>
-#include <windows.h>
+#  include <io.h>
+#  include <wchar.h>
+#  include <windows.h>
 
 int umkdir(const char *pathname)
 {
@@ -64,16 +64,13 @@ size_t count_utf_8_from_16(const wchar_t *string16)
   for (i = 0; (u = string16[i]); i++) {
     if (u < 0x0080) {
       count += 1;
-    }
-    else {
+    } else {
       if (u < 0x0800) {
         count += 2;
-      }
-      else {
+      } else {
         if (u < 0xD800) {
           count += 3;
-        }
-        else {
+        } else {
           if (u < 0xDC00) {
             i++;
             if ((u = string16[i]) == 0) {
@@ -82,12 +79,10 @@ size_t count_utf_8_from_16(const wchar_t *string16)
             if (u >= 0xDC00 && u < 0xE000) {
               count += 4;
             }
-          }
-          else {
+          } else {
             if (u < 0xE000) {
               /*illigal*/;
-            }
-            else {
+            } else {
               count += 3;
             }
           }
@@ -108,39 +103,29 @@ int conv_utf_16_to_8(const wchar_t *in16, char *out8, size_t size8)
     return UTF_ERROR_NULL_IN;
   out8end--;
 
-  for (; out8 < out8end && (u = *in16); in16++, out8++)
-  {
-    if (u < 0x0080)
-    {
+  for (; out8 < out8end && (u = *in16); in16++, out8++) {
+    if (u < 0x0080) {
       *out8 = u;
-    }
-    else if (u < 0x0800)
-    {
+    } else if (u < 0x0800) {
       if (out8 + 1 >= out8end)
         break;
       *out8++ = (0x3 << 6) | (0x1F & (u >> 6));
       *out8 = (0x1 << 7) | (0x3F & (u));
-    }
-    else if (u < 0xD800 || u >= 0xE000)
-    {
+    } else if (u < 0xD800 || u >= 0xE000) {
       if (out8 + 2 >= out8end)
         break;
       *out8++ = (0x7 << 5) | (0xF & (u >> 12));
       *out8++ = (0x1 << 7) | (0x3F & (u >> 6));
       *out8 = (0x1 << 7) | (0x3F & (u));
-    }
-    else if (u < 0xDC00)
-    {
+    } else if (u < 0xDC00) {
       wchar_t u2 = *++in16;
 
       if (!u2)
         break;
-      if (u2 >= 0xDC00 && u2 < 0xE000)
-      {
+      if (u2 >= 0xDC00 && u2 < 0xE000) {
         if (out8 + 3 >= out8end)
           break;
-        else
-        {
+        else {
           unsigned int uc = 0x10000 + (u2 - 0xDC00) + ((u - 0xD800) << 10);
 
           *out8++ = (0xF << 4) | (0x7 & (uc >> 18));
@@ -148,15 +133,11 @@ int conv_utf_16_to_8(const wchar_t *in16, char *out8, size_t size8)
           *out8++ = (0x1 << 7) | (0x3F & (uc >> 6));
           *out8 = (0x1 << 7) | (0x3F & (uc));
         }
-      }
-      else
-      {
+      } else {
         out8--;
         err |= UTF_ERROR_ILLCHAR;
       }
-    }
-    else if (u < 0xE000)
-    {
+    } else if (u < 0xE000) {
       out8--;
       err |= UTF_ERROR_ILLCHAR;
     }
@@ -180,52 +161,40 @@ size_t count_utf_16_from_8(const char *string8)
   if (!string8)
     return 0;
 
-  for (; (u = *string8); string8++)
-  {
-    if (type == 0)
-    {
-      if ((u & 0x01 << 7) == 0)
-      {
+  for (; (u = *string8); string8++) {
+    if (type == 0) {
+      if ((u & 0x01 << 7) == 0) {
         count++;
         u32 = 0;
         continue;
       }  // 1 utf-8 char
-      if ((u & 0x07 << 5) == 0xC0)
-      {
+      if ((u & 0x07 << 5) == 0xC0) {
         type = 1;
         u32 = u & 0x1F;
         continue;
       }  // 2 utf-8 char
-      if ((u & 0x0F << 4) == 0xE0)
-      {
+      if ((u & 0x0F << 4) == 0xE0) {
         type = 2;
         u32 = u & 0x0F;
         continue;
       }  // 3 utf-8 char
-      if ((u & 0x1F << 3) == 0xF0)
-      {
+      if ((u & 0x1F << 3) == 0xF0) {
         type = 3;
         u32 = u & 0x07;
         continue;
       }  // 4 utf-8 char
       continue;
-    }
-    else
-    {
-      if ((u & 0xC0) == 0x80)
-      {
+    } else {
+      if ((u & 0xC0) == 0x80) {
         u32 = (u32 << 6) | (u & 0x3F);
         type--;
-      }
-      else
-      {
+      } else {
         u32 = 0;
         type = 0;
       }
     }
 
-    if (type == 0)
-    {
+    if (type == 0) {
       if ((0 < u32 && u32 < 0xD800) || (0xE000 <= u32 && u32 < 0x10000))
         count++;
       else if (0x10000 <= u32 && u32 < 0x110000)
@@ -248,61 +217,46 @@ int conv_utf_8_to_16(const char *in8, wchar_t *out16, size_t size16)
     return UTF_ERROR_NULL_IN;
   out16end--;
 
-  for (; out16 < out16end && (u = *in8); in8++)
-  {
-    if (type == 0)
-    {
-      if ((u & 0x01 << 7) == 0)
-      {
+  for (; out16 < out16end && (u = *in8); in8++) {
+    if (type == 0) {
+      if ((u & 0x01 << 7) == 0) {
         *out16 = u;
         out16++;
         u32 = 0;
         continue;
       }  // 1 utf-8 char
-      if ((u & 0x07 << 5) == 0xC0)
-      {
+      if ((u & 0x07 << 5) == 0xC0) {
         type = 1;
         u32 = u & 0x1F;
         continue;
       }  // 2 utf-8 char
-      if ((u & 0x0F << 4) == 0xE0)
-      {
+      if ((u & 0x0F << 4) == 0xE0) {
         type = 2;
         u32 = u & 0x0F;
         continue;
       }  // 3 utf-8 char
-      if ((u & 0x1F << 3) == 0xF0)
-      {
+      if ((u & 0x1F << 3) == 0xF0) {
         type = 3;
         u32 = u & 0x07;
         continue;
       }  // 4 utf-8 char
       err |= UTF_ERROR_ILLCHAR;
       continue;
-    }
-    else
-    {
-      if ((u & 0xC0) == 0x80)
-      {
+    } else {
+      if ((u & 0xC0) == 0x80) {
         u32 = (u32 << 6) | (u & 0x3F);
         type--;
-      }
-      else
-      {
+      } else {
         u32 = 0;
         type = 0;
         err |= UTF_ERROR_ILLSEQ;
       }
     }
-    if (type == 0)
-    {
-      if ((0 < u32 && u32 < 0xD800) || (0xE000 <= u32 && u32 < 0x10000))
-      {
+    if (type == 0) {
+      if ((0 < u32 && u32 < 0xD800) || (0xE000 <= u32 && u32 < 0x10000)) {
         *out16 = u32;
         out16++;
-      }
-      else if (0x10000 <= u32 && u32 < 0x110000)
-      {
+      } else if (0x10000 <= u32 && u32 < 0x110000) {
         if (out16 + 1 >= out16end)
           break;
         u32 -= 0x10000;

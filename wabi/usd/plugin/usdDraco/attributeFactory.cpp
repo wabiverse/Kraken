@@ -58,45 +58,48 @@ draco::DataType UsdDracoAttributeFactory::GetDracoDataType(const std::type_info 
       typeInfo == typeid(GfVec4f) || typeInfo == typeid(GfQuatf))
     return draco::DT_FLOAT32;
   if (typeInfo == typeid(double) || typeInfo == typeid(GfVec2d) || typeInfo == typeid(GfVec3d) ||
-      typeInfo == typeid(GfVec4d) || typeInfo == typeid(GfQuatd) || typeInfo == typeid(GfMatrix2d) ||
-      typeInfo == typeid(GfMatrix3d) || typeInfo == typeid(GfMatrix4d))
+      typeInfo == typeid(GfVec4d) || typeInfo == typeid(GfQuatd) ||
+      typeInfo == typeid(GfMatrix2d) || typeInfo == typeid(GfMatrix3d) ||
+      typeInfo == typeid(GfMatrix4d))
     return draco::DT_FLOAT64;
   return draco::DT_INVALID;
 }
 
-UsdDracoAttributeDescriptor::Shape UsdDracoAttributeFactory::GetShape(const std::type_info &typeInfo)
+UsdDracoAttributeDescriptor::Shape UsdDracoAttributeFactory::GetShape(
+  const std::type_info &typeInfo)
 {
   if (typeInfo == typeid(bool) || typeInfo == typeid(uint8_t) || typeInfo == typeid(int32_t) ||
-      typeInfo == typeid(uint32_t) || typeInfo == typeid(int64_t) || typeInfo == typeid(uint64_t) ||
-      typeInfo == typeid(GfHalf) || typeInfo == typeid(float) || typeInfo == typeid(double) ||
-      typeInfo == typeid(GfVec2i) || typeInfo == typeid(GfVec3i) || typeInfo == typeid(GfVec4i) ||
-      typeInfo == typeid(GfVec2h) || typeInfo == typeid(GfVec3h) || typeInfo == typeid(GfVec4h) ||
-      typeInfo == typeid(GfVec2f) || typeInfo == typeid(GfVec3f) || typeInfo == typeid(GfVec4f) ||
-      typeInfo == typeid(GfVec2d) || typeInfo == typeid(GfVec3d) || typeInfo == typeid(GfVec4d))
+      typeInfo == typeid(uint32_t) || typeInfo == typeid(int64_t) ||
+      typeInfo == typeid(uint64_t) || typeInfo == typeid(GfHalf) || typeInfo == typeid(float) ||
+      typeInfo == typeid(double) || typeInfo == typeid(GfVec2i) || typeInfo == typeid(GfVec3i) ||
+      typeInfo == typeid(GfVec4i) || typeInfo == typeid(GfVec2h) || typeInfo == typeid(GfVec3h) ||
+      typeInfo == typeid(GfVec4h) || typeInfo == typeid(GfVec2f) || typeInfo == typeid(GfVec3f) ||
+      typeInfo == typeid(GfVec4f) || typeInfo == typeid(GfVec2d) || typeInfo == typeid(GfVec3d) ||
+      typeInfo == typeid(GfVec4d))
     return UsdDracoAttributeDescriptor::VECTOR;
   if (typeInfo == typeid(GfQuath) || typeInfo == typeid(GfQuatf) || typeInfo == typeid(GfQuatd))
     return UsdDracoAttributeDescriptor::QUATERNION;
-  if (typeInfo == typeid(GfMatrix2d) || typeInfo == typeid(GfMatrix3d) || typeInfo == typeid(GfMatrix4d))
+  if (typeInfo == typeid(GfMatrix2d) || typeInfo == typeid(GfMatrix3d) ||
+      typeInfo == typeid(GfMatrix4d))
     return UsdDracoAttributeDescriptor::MATRIX;
   return UsdDracoAttributeDescriptor::GetDefaultShape();
 }
 
 bool UsdDracoAttributeFactory::IsHalf(const std::type_info &typeInfo)
 {
-  return typeInfo == typeid(GfHalf) || typeInfo == typeid(GfVec2h) || typeInfo == typeid(GfVec3h) ||
-         typeInfo == typeid(GfVec4h) || typeInfo == typeid(GfQuath);
+  return typeInfo == typeid(GfHalf) || typeInfo == typeid(GfVec2h) ||
+         typeInfo == typeid(GfVec3h) || typeInfo == typeid(GfVec4h) || typeInfo == typeid(GfQuath);
 }
 
-SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAttributeDescriptor &descriptor)
+SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(
+  const UsdDracoAttributeDescriptor &descriptor)
 {
-  switch (descriptor.GetShape())
-  {
+  switch (descriptor.GetShape()) {
     case UsdDracoAttributeDescriptor::MATRIX:
       // All matrices in USD have elements of type double.
       if (descriptor.GetDataType() != draco::DT_FLOAT64)
         break;
-      switch (descriptor.GetNumComponents())
-      {
+      switch (descriptor.GetNumComponents()) {
         case 4:  // 2-by-2 matrix.
           return SdfValueTypeNames->Matrix2dArray;
         case 9:  // 3-by-3 matrix.
@@ -111,8 +114,7 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
       // Quaternion has four entries.
       if (descriptor.GetNumComponents() != 4)
         break;
-      switch (descriptor.GetDataType())
-      {
+      switch (descriptor.GetDataType()) {
         // USD halfs are stored as Draco 16-bit ints.
         case draco::DT_INT16:
           if (descriptor.GetIsHalf())
@@ -127,11 +129,9 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
       }
       break;
     case UsdDracoAttributeDescriptor::VECTOR:
-      switch (descriptor.GetNumComponents())
-      {
+      switch (descriptor.GetNumComponents()) {
         case 1:  // Scalar.
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             case draco::DT_UINT8:
               return SdfValueTypeNames->UCharArray;
             case draco::DT_INT32:
@@ -158,8 +158,7 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
           }
           break;
         case 2:  // Length-two vector.
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             case draco::DT_INT32:
               return SdfValueTypeNames->Int2Array;
             // USD halfs are stored as Draco 16-bit ints.
@@ -176,8 +175,7 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
           }
           break;
         case 3:  // Length-three vector.
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             case draco::DT_INT32:
               return SdfValueTypeNames->Int3Array;
             // USD halfs are stored as Draco 16-bit ints.
@@ -194,8 +192,7 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(const UsdDracoAtt
           }
           break;
         case 4:  // Length-four vector.
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             case draco::DT_INT32:
               return SdfValueTypeNames->Int4Array;
             // USD halfs are stored as Draco 16-bit ints.

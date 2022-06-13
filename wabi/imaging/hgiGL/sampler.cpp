@@ -39,14 +39,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiGLSampler::HgiGLSampler(HgiSamplerDesc const &desc)
-  : HgiSampler(desc),
-    _samplerId(0)
+HgiGLSampler::HgiGLSampler(HgiSamplerDesc const &desc) : HgiSampler(desc), _samplerId(0)
 {
   glCreateSamplers(1, &_samplerId);
 
-  if (!_descriptor.debugName.empty())
-  {
+  if (!_descriptor.debugName.empty()) {
     HgiGLObjectLabel(GL_SAMPLER, _samplerId, _descriptor.debugName);
   }
 
@@ -66,7 +63,9 @@ HgiGLSampler::HgiGLSampler(HgiSamplerDesc const &desc)
                       GL_TEXTURE_MIN_FILTER,
                       HgiGLConversions::GetMinFilter(desc.minFilter, desc.mipFilter));
 
-  glSamplerParameteri(_samplerId, GL_TEXTURE_MAG_FILTER, HgiGLConversions::GetMagFilter(desc.magFilter));
+  glSamplerParameteri(_samplerId,
+                      GL_TEXTURE_MAG_FILTER,
+                      HgiGLConversions::GetMagFilter(desc.magFilter));
 
   static const GfVec4f borderColor(0);
   glSamplerParameterfv(_samplerId, GL_TEXTURE_BORDER_COLOR, borderColor.GetArray());

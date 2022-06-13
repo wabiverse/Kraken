@@ -29,8 +29,7 @@ HdPrman_RenderPass::HdPrman_RenderPass(HdRenderIndex *index, HdRprimCollection c
   : HdRenderPass(index, collection)
 {}
 
-HdPrman_RenderPass::~HdPrman_RenderPass()
-{}
+HdPrman_RenderPass::~HdPrman_RenderPass() {}
 
 void HdPrman_RenderPass::_Execute(HdRenderPassStateSharedPtr const &renderPassState,
                                   TfTokenVector const &renderTags)

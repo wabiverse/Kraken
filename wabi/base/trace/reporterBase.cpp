@@ -37,28 +37,24 @@
 
 WABI_NAMESPACE_BEGIN
 
-TraceReporterBase::TraceReporterBase(DataSourcePtr dataSource)
-  : _dataSource(std::move(dataSource))
+TraceReporterBase::TraceReporterBase(DataSourcePtr dataSource) : _dataSource(std::move(dataSource))
 {}
 
 bool TraceReporterBase::SerializeProcessedCollections(std::ostream &ostr) const
 {
   std::vector<CollectionPtr> collections;
-  for (const CollectionPtr &col : _processedCollections)
-  {
+  for (const CollectionPtr &col : _processedCollections) {
     collections.push_back(col);
   }
   return TraceSerialization::Write(ostr, collections);
 }
 
-TraceReporterBase::~TraceReporterBase()
-{}
+TraceReporterBase::~TraceReporterBase() {}
 
 void TraceReporterBase::_Clear()
 {
   _processedCollections.clear();
-  if (_dataSource)
-  {
+  if (_dataSource) {
     _dataSource->Clear();
   }
 }
@@ -69,8 +65,7 @@ void TraceReporterBase::_Update()
     return;
 
   std::vector<CollectionPtr> data = _dataSource->ConsumeData();
-  for (const CollectionPtr &collection : data)
-  {
+  for (const CollectionPtr &collection : data) {
     _ProcessCollection(collection);
     _processedCollections.push_back(collection);
   }

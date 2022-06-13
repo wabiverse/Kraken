@@ -73,8 +73,7 @@ void HgiVulkanComputeCmds::BindPipeline(HgiComputePipelineHandle pipeline)
 
   HgiVulkanComputePipeline *pso = static_cast<HgiVulkanComputePipeline *>(pipeline.Get());
 
-  if (TF_VERIFY(pso))
-  {
+  if (TF_VERIFY(pso)) {
     _pipelineLayout = pso->GetVulkanPipelineLayout();
     pso->BindPipeline(_commandBuffer->GetVulkanCommandBuffer());
   }
@@ -94,8 +93,7 @@ void HgiVulkanComputeCmds::SetConstantValues(HgiComputePipelineHandle pipeline,
 {
   _CreateCommandBuffer();
   // Delay pushing until we know for sure what the pipeline will be.
-  if (!_pushConstants || _pushConstantsByteSize < byteSize)
-  {
+  if (!_pushConstants || _pushConstantsByteSize < byteSize) {
     delete[] _pushConstants;
     _pushConstants = new uint8_t[byteSize];
     _pushConstantsByteSize = byteSize;
@@ -114,8 +112,7 @@ void HgiVulkanComputeCmds::Dispatch(int dimX, int dimY)
 
 bool HgiVulkanComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 {
-  if (!_commandBuffer)
-  {
+  if (!_commandBuffer) {
     return false;
   }
 
@@ -130,17 +127,15 @@ bool HgiVulkanComputeCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 
 void HgiVulkanComputeCmds::_BindResources()
 {
-  if (!_pipelineLayout)
-  {
+  if (!_pipelineLayout) {
     return;
   }
 
-  if (_resourceBindings)
-  {
-    HgiVulkanResourceBindings *rb = static_cast<HgiVulkanResourceBindings *>(_resourceBindings.Get());
+  if (_resourceBindings) {
+    HgiVulkanResourceBindings *rb = static_cast<HgiVulkanResourceBindings *>(
+      _resourceBindings.Get());
 
-    if (rb)
-    {
+    if (rb) {
       rb->BindResources(_commandBuffer->GetVulkanCommandBuffer(),
                         VK_PIPELINE_BIND_POINT_COMPUTE,
                         _pipelineLayout);
@@ -150,8 +145,7 @@ void HgiVulkanComputeCmds::_BindResources()
     _resourceBindings = HgiResourceBindingsHandle();
   }
 
-  if (_pushConstantsDirty && _pushConstants && _pushConstantsByteSize > 0)
-  {
+  if (_pushConstantsDirty && _pushConstants && _pushConstantsByteSize > 0) {
     vkCmdPushConstants(_commandBuffer->GetVulkanCommandBuffer(),
                        _pipelineLayout,
                        VK_SHADER_STAGE_COMPUTE_BIT,
@@ -172,8 +166,7 @@ void HgiVulkanComputeCmds::MemoryBarrier(HgiMemoryBarrier barrier)
 
 void HgiVulkanComputeCmds::_CreateCommandBuffer()
 {
-  if (!_commandBuffer)
-  {
+  if (!_commandBuffer) {
     HgiVulkanDevice *device = _hgi->GetPrimaryDevice();
     HgiVulkanCommandQueue *queue = device->GetCommandQueue();
     _commandBuffer = queue->AcquireCommandBuffer();

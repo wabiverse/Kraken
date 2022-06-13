@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdMediaSpatialAudio::~UsdMediaSpatialAudio()
-{}
+UsdMediaSpatialAudio::~UsdMediaSpatialAudio() {}
 
 /* static */
 UsdMediaSpatialAudio UsdMediaSpatialAudio::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdMediaSpatialAudio();
   }
@@ -69,8 +67,7 @@ UsdMediaSpatialAudio UsdMediaSpatialAudio::Get(const UsdStagePtr &stage, const S
 UsdMediaSpatialAudio UsdMediaSpatialAudio::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("SpatialAudio");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdMediaSpatialAudio();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdMediaSpatialAudio::GetFilePathAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->filePath);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateFilePathAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateFilePathAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->filePath,
                                     SdfValueTypeNames->Asset,
@@ -123,7 +121,8 @@ UsdAttribute UsdMediaSpatialAudio::GetAuralModeAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->auralMode);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateAuralModeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateAuralModeAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->auralMode,
                                     SdfValueTypeNames->Token,
@@ -154,7 +153,8 @@ UsdAttribute UsdMediaSpatialAudio::GetStartTimeAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->startTime);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateStartTimeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateStartTimeAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->startTime,
                                     SdfValueTypeNames->TimeCode,
@@ -169,7 +169,8 @@ UsdAttribute UsdMediaSpatialAudio::GetEndTimeAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->endTime);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateEndTimeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateEndTimeAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->endTime,
                                     SdfValueTypeNames->TimeCode,
@@ -200,7 +201,8 @@ UsdAttribute UsdMediaSpatialAudio::GetGainAttr() const
   return GetPrim().GetAttribute(UsdMediaTokens->gain);
 }
 
-UsdAttribute UsdMediaSpatialAudio::CreateGainAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdMediaSpatialAudio::CreateGainAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdMediaTokens->gain,
                                     SdfValueTypeNames->Double,
@@ -235,8 +237,9 @@ const TfTokenVector &UsdMediaSpatialAudio::GetSchemaAttributeNames(bool includeI
     UsdMediaTokens->mediaOffset,
     UsdMediaTokens->gain,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomXformable::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomXformable::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

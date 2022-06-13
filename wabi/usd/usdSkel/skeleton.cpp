@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdSkelSkeleton::~UsdSkelSkeleton()
-{}
+UsdSkelSkeleton::~UsdSkelSkeleton() {}
 
 /* static */
 UsdSkelSkeleton UsdSkelSkeleton::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelSkeleton();
   }
@@ -69,8 +67,7 @@ UsdSkelSkeleton UsdSkelSkeleton::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdSkelSkeleton UsdSkelSkeleton::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Skeleton");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdSkelSkeleton();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdSkelSkeleton::GetJointsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->joints);
 }
 
-UsdAttribute UsdSkelSkeleton::CreateJointsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelSkeleton::CreateJointsAttr(VtValue const &defaultValue,
+                                               bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->joints,
                                     SdfValueTypeNames->TokenArray,
@@ -123,7 +121,8 @@ UsdAttribute UsdSkelSkeleton::GetJointNamesAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->jointNames);
 }
 
-UsdAttribute UsdSkelSkeleton::CreateJointNamesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelSkeleton::CreateJointNamesAttr(VtValue const &defaultValue,
+                                                   bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->jointNames,
                                     SdfValueTypeNames->TokenArray,
@@ -138,7 +137,8 @@ UsdAttribute UsdSkelSkeleton::GetBindTransformsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->bindTransforms);
 }
 
-UsdAttribute UsdSkelSkeleton::CreateBindTransformsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelSkeleton::CreateBindTransformsAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->bindTransforms,
                                     SdfValueTypeNames->Matrix4dArray,
@@ -153,7 +153,8 @@ UsdAttribute UsdSkelSkeleton::GetRestTransformsAttr() const
   return GetPrim().GetAttribute(UsdSkelTokens->restTransforms);
 }
 
-UsdAttribute UsdSkelSkeleton::CreateRestTransformsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdSkelSkeleton::CreateRestTransformsAttr(VtValue const &defaultValue,
+                                                       bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdSkelTokens->restTransforms,
                                     SdfValueTypeNames->Matrix4dArray,
@@ -185,8 +186,9 @@ const TfTokenVector &UsdSkelSkeleton::GetSchemaAttributeNames(bool includeInheri
     UsdSkelTokens->bindTransforms,
     UsdSkelTokens->restTransforms,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomBoundable::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomBoundable::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -222,8 +224,7 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
                            VtVec3fArray *extent)
 {
   UsdSkelSkeleton skel(boundable);
-  if (!TF_VERIFY(skel))
-  {
+  if (!TF_VERIFY(skel)) {
     return false;
   }
 
@@ -231,13 +232,11 @@ static bool _ComputeExtent(const UsdGeomBoundable &boundable,
 
   UsdSkelSkeletonQuery skelQuery = skelCache.GetSkelQuery(UsdSkelSkeleton(boundable.GetPrim()));
 
-  if (TF_VERIFY(skelQuery))
-  {
+  if (TF_VERIFY(skelQuery)) {
     // Compute skel-space joint transforms.
     // The extent for this skel is based on the pivots of all joints.
     VtMatrix4dArray skelXforms;
-    if (skelQuery.ComputeJointSkelTransforms(&skelXforms, time))
-    {
+    if (skelQuery.ComputeJointSkelTransforms(&skelXforms, time)) {
       return UsdSkelComputeJointsExtent(skelXforms,
                                         extent,
                                         /*padding*/ 0,

@@ -40,8 +40,7 @@ HdPh_BasisCurvesTopology::HdPh_BasisCurvesTopology(const HdBasisCurvesTopology &
   : HdBasisCurvesTopology(src)
 {}
 
-HdPh_BasisCurvesTopology::~HdPh_BasisCurvesTopology()
-{}
+HdPh_BasisCurvesTopology::~HdPh_BasisCurvesTopology() {}
 
 HdBufferSourceSharedPtr HdPh_BasisCurvesTopology::GetPointsIndexBuilderComputation()
 {
@@ -50,29 +49,24 @@ HdBufferSourceSharedPtr HdPh_BasisCurvesTopology::GetPointsIndexBuilderComputati
   const VtIntArray &vertexCounts = GetCurveVertexCounts();
   int numVerts = 0;
   std::vector<int> indices;
-  for (int count : vertexCounts)
-  {
+  for (int count : vertexCounts) {
     numVerts += count;
   }
 
   int vi = 0;
-  while (vi < numVerts)
-  {
+  while (vi < numVerts) {
     indices.emplace_back(vi++);
   }
 
   VtIntArray finalIndices(indices.size());
   const VtIntArray &curveIndices = GetCurveIndices();
-  if (curveIndices.empty())
-  {
+  if (curveIndices.empty()) {
     std::copy(indices.begin(), indices.end(), finalIndices.begin());
-  } else
-  {
+  } else {
     // If have topology has indices set, map the generated indices
     // with the given indices.
     int maxIndex = curveIndices.size() - 1;
-    for (const int &index : indices)
-    {
+    for (const int &index : indices) {
       finalIndices[index] = std::min(curveIndices[index], maxIndex);
     }
   }

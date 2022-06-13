@@ -72,12 +72,10 @@ void GarchGLDebugWindow::ExitApp()
 }
 
 /* virtual */
-void GarchGLDebugWindow::OnInitializeGL()
-{}
+void GarchGLDebugWindow::OnInitializeGL() {}
 
 /* virtual */
-void GarchGLDebugWindow::OnUninitializeGL()
-{}
+void GarchGLDebugWindow::OnUninitializeGL() {}
 
 /* virtual */
 void GarchGLDebugWindow::OnResize(int w, int h)
@@ -87,27 +85,21 @@ void GarchGLDebugWindow::OnResize(int w, int h)
 }
 
 /* virtual */
-void GarchGLDebugWindow::OnIdle()
-{}
+void GarchGLDebugWindow::OnIdle() {}
 
 /* virtual */
-void GarchGLDebugWindow::OnPaintGL()
-{}
+void GarchGLDebugWindow::OnPaintGL() {}
 
 /* virtual */
-void GarchGLDebugWindow::OnKeyRelease(int key)
-{}
+void GarchGLDebugWindow::OnKeyRelease(int key) {}
 
 /* virtual */
-void GarchGLDebugWindow::OnMousePress(int button, int x, int y, int modKeys)
-{}
+void GarchGLDebugWindow::OnMousePress(int button, int x, int y, int modKeys) {}
 
 /* virtual */
-void GarchGLDebugWindow::OnMouseRelease(int button, int x, int y, int modKeys)
-{}
+void GarchGLDebugWindow::OnMouseRelease(int button, int x, int y, int modKeys) {}
 
 /* virtual */
-void GarchGLDebugWindow::OnMouseMove(int x, int y, int modKeys)
-{}
+void GarchGLDebugWindow::OnMouseMove(int x, int y, int modKeys) {}
 
 WABI_NAMESPACE_END

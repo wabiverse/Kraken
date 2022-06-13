@@ -44,10 +44,11 @@ HdPhField::HdPhField(SdfPath const &id, TfToken const &fieldType)
 
 HdPhField::~HdPhField() = default;
 
-void HdPhField::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits)
+void HdPhField::Sync(HdSceneDelegate *sceneDelegate,
+                     HdRenderParam *renderParam,
+                     HdDirtyBits *dirtyBits)
 {
-  if (*dirtyBits & DirtyParams)
-  {
+  if (*dirtyBits & DirtyParams) {
 
     // Get asset path from scene delegate.
     //
@@ -67,26 +68,25 @@ void HdPhField::Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam,
 
     const int fieldIndex = fieldIndexValue.Get<int>();
 
-    if (_fieldType == _tokens->openvdbAsset)
-    {
+    if (_fieldType == _tokens->openvdbAsset) {
       _textureId = HdPhTextureIdentifier(
         resolvedFilePath,
         std::make_unique<HdPhOpenVDBAssetSubtextureIdentifier>(fieldName, fieldIndex));
-    } else
-    {
+    } else {
       const VtValue fieldPurposeValue = sceneDelegate->Get(GetId(), _tokens->fieldPurpose);
       const TfToken &fieldPurpose = fieldPurposeValue.Get<TfToken>();
 
       _textureId = HdPhTextureIdentifier(
         resolvedFilePath,
-        std::make_unique<HdPhField3DAssetSubtextureIdentifier>(fieldName, fieldIndex, fieldPurpose));
+        std::make_unique<HdPhField3DAssetSubtextureIdentifier>(fieldName,
+                                                               fieldIndex,
+                                                               fieldPurpose));
     }
 
     const VtValue textureMemoryValue = sceneDelegate->Get(GetId(), _tokens->textureMemory);
     _textureMemory = 1048576 * textureMemoryValue.GetWithDefault<float>(0.0f);
 
-    if (_isInitialized)
-    {
+    if (_isInitialized) {
       // Force volume prim to pick up the new field resource and
       // recompute bounding box.
       //

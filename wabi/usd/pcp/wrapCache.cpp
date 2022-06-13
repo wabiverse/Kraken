@@ -46,15 +46,17 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-  static boost::python::tuple _ComputeLayerStack(PcpCache &cache, const PcpLayerStackIdentifier &identifier)
+  static boost::python::tuple _ComputeLayerStack(PcpCache &cache,
+                                                 const PcpLayerStackIdentifier &identifier)
   {
     PcpErrorVector errors;
     PcpLayerStackRefPtr result = cache.ComputeLayerStack(identifier, &errors);
 
     typedef Tf_MakePyConstructor::RefPtrFactory<>::apply<PcpLayerStackRefPtr>::type RefPtrFactory;
 
-    return boost::python::make_tuple(boost::python::object(boost::python::handle<>(RefPtrFactory()(result))),
-                                     errors);
+    return boost::python::make_tuple(
+      boost::python::object(boost::python::handle<>(RefPtrFactory()(result))),
+      errors);
   }
 
   static const PcpPrimIndex &_WrapPrimIndex(PcpCache &, const PcpPrimIndex &primIndex)
@@ -82,8 +84,7 @@ namespace
 
   static boost::python::object _FindPrimIndex(PcpCache &cache, const SdfPath &path)
   {
-    if (const PcpPrimIndex *primIndex = cache.FindPrimIndex(path))
-    {
+    if (const PcpPrimIndex *primIndex = cache.FindPrimIndex(path)) {
       // Wrap the prim index to python as an internal reference on cache.
       // The return_internal_reference<> says that the result is owned
       // by the first argument, the PcpCache, and shouldn't be destroyed
@@ -101,25 +102,27 @@ namespace
     PcpErrorVector errors;
     const PcpPropertyIndex &result = cache.ComputePropertyIndex(path, &errors);
     return_by_value::apply<PcpPropertyIndex>::type converter;
-    return boost::python::make_tuple(boost::python::object(boost::python::handle<>(converter(result))),
-                                     errors);
+    return boost::python::make_tuple(
+      boost::python::object(boost::python::handle<>(converter(result))),
+      errors);
   }
 
-  static const PcpPropertyIndex &_WrapPropertyIndex(PcpCache &, const PcpPropertyIndex &propertyIndex)
+  static const PcpPropertyIndex &_WrapPropertyIndex(PcpCache &,
+                                                    const PcpPropertyIndex &propertyIndex)
   {
     return propertyIndex;
   }
 
   static boost::python::object _FindPropertyIndex(PcpCache &cache, const SdfPath &path)
   {
-    if (const PcpPropertyIndex *propIndex = cache.FindPropertyIndex(path))
-    {
+    if (const PcpPropertyIndex *propIndex = cache.FindPropertyIndex(path)) {
       // Wrap the index to python as an internal reference on cache.
       // The return_internal_reference<> says that the result is owned
       // by the first argument, the PcpCache, and shouldn't be destroyed
       // by Python.  The boost::ref() around the arguments ensure that
       // boost python will not make temporary copies of them.
-      object pyWrapPropertyIndex = make_function(_WrapPropertyIndex, return_internal_reference<>());
+      object pyWrapPropertyIndex = make_function(_WrapPropertyIndex,
+                                                 return_internal_reference<>());
       object pyPropertyIndex(pyWrapPropertyIndex(boost::ref(cache), boost::ref(*propIndex)));
       return pyPropertyIndex;
     }
@@ -167,8 +170,7 @@ namespace
   static void _SetVariantFallbacks(PcpCache &cache, const dict &d)
   {
     PcpVariantFallbackMap fallbacks;
-    if (PcpVariantFallbackMapFromPython(d, &fallbacks))
-    {
+    if (PcpVariantFallbackMapFromPython(d, &fallbacks)) {
       cache.SetVariantFallbacks(fallbacks);
     }
   }
@@ -228,20 +230,25 @@ void wrapCache()
          &PcpCache::GetLayerStackIdentifier,
          return_value_policy<return_by_value>())
     .def("SetVariantFallbacks", &_SetVariantFallbacks)
-    .def("GetVariantFallbacks", &PcpCache::GetVariantFallbacks, return_value_policy<TfPyMapToDictionary>())
+    .def("GetVariantFallbacks",
+         &PcpCache::GetVariantFallbacks,
+         return_value_policy<TfPyMapToDictionary>())
     .def("GetUsedLayers", &PcpCache::GetUsedLayers, return_value_policy<TfPySequenceToList>())
     .def("GetUsedLayersRevision", &PcpCache::GetUsedLayersRevision)
     .def("IsPayloadIncluded", &PcpCache::IsPayloadIncluded)
     .def("RequestPayloads", &_RequestPayloads)
-    .def("RequestLayerMuting", &_RequestLayerMuting, (args("layersToMute"), args("layersToUnmute")))
+    .def("RequestLayerMuting",
+         &_RequestLayerMuting,
+         (args("layersToMute"), args("layersToUnmute")))
     .def("GetMutedLayers", &PcpCache::GetMutedLayers, return_value_policy<TfPySequenceToList>())
     .def("IsLayerMuted",
          (bool(PcpCache::*)(const std::string &) const) & PcpCache::IsLayerMuted,
          (args("layerIdentifier")))
 
     .add_property("layerStack", &PcpCache::GetLayerStack)
-    .add_property("fileFormatTarget",
-                  make_function(&PcpCache::GetFileFormatTarget, return_value_policy<return_by_value>()))
+    .add_property(
+      "fileFormatTarget",
+      make_function(&PcpCache::GetFileFormatTarget, return_value_policy<return_by_value>()))
 
     .def("ComputeLayerStack", &_ComputeLayerStack)
     .def("UsesLayerStack", &PcpCache::UsesLayerStack)
@@ -281,7 +288,8 @@ void wrapCache()
 
     .def("HasAnyDynamicFileFormatArgumentDependencies",
          &PcpCache::HasAnyDynamicFileFormatArgumentDependencies)
-    .def("IsPossibleDynamicFileFormatArgumentField", &PcpCache::IsPossibleDynamicFileFormatArgumentField)
+    .def("IsPossibleDynamicFileFormatArgumentField",
+         &PcpCache::IsPossibleDynamicFileFormatArgumentField)
     .def("GetDynamicFileFormatArgumentDependencyData",
          &PcpCache::GetDynamicFileFormatArgumentDependencyData,
          return_value_policy<reference_existing_object>())

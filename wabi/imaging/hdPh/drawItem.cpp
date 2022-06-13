@@ -26,8 +26,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdPhDrawItem::HdPhDrawItem(HdRprimSharedData const *sharedData)
-  : HdDrawItem(sharedData)
+HdPhDrawItem::HdPhDrawItem(HdRprimSharedData const *sharedData) : HdDrawItem(sharedData)
 {
   HF_MALLOC_TAG_FUNCTION();
 }
@@ -40,10 +39,8 @@ HdPhDrawItem::~HdPhDrawItem()
 /*virtual*/
 size_t HdPhDrawItem::_GetBufferArraysHash() const
 {
-  if (const HdPhShaderCodeSharedPtr &shader = GetMaterialShader())
-  {
-    if (const HdBufferArrayRangeSharedPtr &shaderBAR = shader->GetShaderData())
-    {
+  if (const HdPhShaderCodeSharedPtr &shader = GetMaterialShader()) {
+    if (const HdBufferArrayRangeSharedPtr &shaderBAR = shader->GetShaderData()) {
       return shaderBAR->GetVersion();
     }
   }
@@ -54,10 +51,8 @@ size_t HdPhDrawItem::_GetBufferArraysHash() const
 /*virtual*/
 size_t HdPhDrawItem::_GetElementOffsetsHash() const
 {
-  if (const HdPhShaderCodeSharedPtr &shader = GetMaterialShader())
-  {
-    if (const HdBufferArrayRangeSharedPtr &shaderBAR = shader->GetShaderData())
-    {
+  if (const HdPhShaderCodeSharedPtr &shader = GetMaterialShader()) {
+    if (const HdBufferArrayRangeSharedPtr &shaderBAR = shader->GetShaderData()) {
       return shaderBAR->GetElementOffset();
     }
   }

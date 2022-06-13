@@ -51,16 +51,22 @@ namespace AnchorGraphEditor
     return (v >= 0.f) ? 1.f : -1.f;
   }
 
-  static GfVec2f GetInputSlotPos(Delegate &delegate, const Node &node, SlotIndex slotIndex, float factor)
+  static GfVec2f GetInputSlotPos(Delegate &delegate,
+                                 const Node &node,
+                                 SlotIndex slotIndex,
+                                 float factor)
   {
     GfVec2f Size = node.mRect.GetSize() * factor;
     size_t InputsCount = delegate.GetTemplate(node.mTemplateIndex).mInputCount;
     return GfVec2f(node.mRect.Min[0] * factor,
-                   node.mRect.Min[1] * factor + Size[1] * ((float)slotIndex + 1) / ((float)InputsCount + 1) +
-                     8.f);
+                   node.mRect.Min[1] * factor +
+                     Size[1] * ((float)slotIndex + 1) / ((float)InputsCount + 1) + 8.f);
   }
 
-  static GfVec2f GetOutputSlotPos(Delegate &delegate, const Node &node, SlotIndex slotIndex, float factor)
+  static GfVec2f GetOutputSlotPos(Delegate &delegate,
+                                  const Node &node,
+                                  SlotIndex slotIndex,
+                                  float factor)
   {
     GfVec2f Size = node.mRect.GetSize() * factor;
     size_t OutputsCount = delegate.GetTemplate(node.mTemplateIndex).mOutputCount;
@@ -94,25 +100,25 @@ namespace AnchorGraphEditor
   {
     AnchorIO &io = ANCHOR::GetIO();
 
-    if (regionRect.Contains(io.MousePos))
-    {
-      if (io.MouseWheel < -FLT_EPSILON)
-      {
+    if (regionRect.Contains(io.MousePos)) {
+      if (io.MouseWheel < -FLT_EPSILON) {
         viewState.mFactorTarget *= 1.f - options.mZoomRatio;
       }
 
-      if (io.MouseWheel > FLT_EPSILON)
-      {
+      if (io.MouseWheel > FLT_EPSILON) {
         viewState.mFactorTarget *= 1.0f + options.mZoomRatio;
       }
     }
 
     GfVec2f mouseWPosPre = (io.MousePos - ANCHOR::GetCursorScreenPos()) / viewState.mFactor;
-    viewState.mFactorTarget = AnchorClamp(viewState.mFactorTarget, options.mMinZoom, options.mMaxZoom);
-    viewState.mFactor = AnchorLerp(viewState.mFactor, viewState.mFactorTarget, options.mZoomLerpFactor);
+    viewState.mFactorTarget = AnchorClamp(viewState.mFactorTarget,
+                                          options.mMinZoom,
+                                          options.mMaxZoom);
+    viewState.mFactor = AnchorLerp(viewState.mFactor,
+                                   viewState.mFactorTarget,
+                                   options.mZoomLerpFactor);
     GfVec2f mouseWPosPost = (io.MousePos - ANCHOR::GetCursorScreenPos()) / viewState.mFactor;
-    if (ANCHOR::IsMousePosValid())
-    {
+    if (ANCHOR::IsMousePosValid()) {
       viewState.mPosition += mouseWPosPost - mouseWPosPre;
     }
   }
@@ -129,20 +135,17 @@ namespace AnchorGraphEditor
   {
     const size_t nodeCount = delegate.GetNodeCount();
 
-    if (!nodeCount)
-    {
+    if (!nodeCount) {
       return;
     }
 
     bool validNode = false;
     GfVec2f mapmin(FLT_MAX, FLT_MAX);
     GfVec2f mapmax(-FLT_MAX, -FLT_MAX);
-    for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-    {
+    for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
       const Node &node = delegate.GetNode(nodeIndex);
 
-      if (selectedNodesOnly && !node.mSelected)
-      {
+      if (selectedNodesOnly && !node.mSelected) {
         continue;
       }
 
@@ -153,8 +156,7 @@ namespace AnchorGraphEditor
       validNode = true;
     }
 
-    if (!validNode)
-    {
+    if (!validNode) {
       return;
     }
 
@@ -180,8 +182,7 @@ namespace AnchorGraphEditor
                            const Options &options)
   {
     const size_t linkCount = delegate.GetLinkCount();
-    for (LinkIndex linkIndex = 0; linkIndex < linkCount; linkIndex++)
-    {
+    for (LinkIndex linkIndex = 0; linkIndex < linkCount; linkIndex++) {
       const auto link = delegate.GetLink(linkIndex);
       const auto nodeInput = delegate.GetNode(link.mInputNodeIndex);
       const auto nodeOutput = delegate.GetNode(link.mOutputNodeIndex);
@@ -189,15 +190,16 @@ namespace AnchorGraphEditor
       GfVec2f p2 = offset + GetInputSlotPos(delegate, nodeOutput, link.mOutputSlotIndex, factor);
 
       // con. view clipping
-      if ((p1[1] < 0.f && p2[1] < 0.f) || (p1[1] > regionRect.Max[1] && p2[1] > regionRect.Max[1]) ||
+      if ((p1[1] < 0.f && p2[1] < 0.f) ||
+          (p1[1] > regionRect.Max[1] && p2[1] > regionRect.Max[1]) ||
           (p1[0] < 0.f && p2[0] < 0.f) || (p1[0] > regionRect.Max[0] && p2[0] > regionRect.Max[0]))
         continue;
 
-      bool highlightCons = hoveredNode == link.mInputNodeIndex || hoveredNode == link.mOutputNodeIndex;
+      bool highlightCons = hoveredNode == link.mInputNodeIndex ||
+                           hoveredNode == link.mOutputNodeIndex;
       uint32_t col = delegate.GetTemplate(nodeInput.mTemplateIndex).mHeaderColor |
                      (highlightCons ? 0xF0F0F0 : 0);
-      if (options.mDisplayLinksAsCurves)
-      {
+      if (options.mDisplayLinksAsCurves) {
         // curves
         drawList->AddBezierCurve(p1,
                                  p1 + GfVec2f(50, 0) * factor,
@@ -219,13 +221,13 @@ namespace AnchorGraphEditor
               GfVec2f p1a, p1b;
               if (fabsf(dif[0]) > fabsf(dif[1]))
               {
-                  p1a = p10 + GfVec2f(fabsf(fabsf(dif[0]) - fabsf(dif[1])) * 0.5 * sign(dif[0]), 0.f);
-                  p1b = p1a + GfVec2f(fabsf(dif[1]) * sign(dif[0]) , dif[1]);
+                  p1a = p10 + GfVec2f(fabsf(fabsf(dif[0]) - fabsf(dif[1])) * 0.5 * sign(dif[0]),
+           0.f); p1b = p1a + GfVec2f(fabsf(dif[1]) * sign(dif[0]) , dif[1]);
               }
               else
               {
-                  p1a = p10 + GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(dif[0])) * 0.5 * sign(dif[1]));
-                  p1b = p1a + GfVec2f(dif[0], fabsf(dif[0]) * sign(dif[1]));
+                  p1a = p10 + GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(dif[0])) * 0.5 *
+           sign(dif[1])); p1b = p1a + GfVec2f(dif[0], fabsf(dif[0]) * sign(dif[1]));
               }
               drawList->AddLine(p1,  p10, col, 3.f * factor);
               drawList->AddLine(p10, p1a, col, 3.f * factor);
@@ -233,8 +235,7 @@ namespace AnchorGraphEditor
               drawList->AddLine(p1b, p20, col, 3.f * factor);
               drawList->AddLine(p20,  p2, col, 3.f * factor);
               */
-      } else
-      {
+      } else {
         // straight lines
         std::array<GfVec2f, 6> pts;
         int ptCount = 0;
@@ -242,8 +243,7 @@ namespace AnchorGraphEditor
 
         GfVec2f p1a, p1b;
         const float limitx = 12.f * factor;
-        if (dif[0] < limitx)
-        {
+        if (dif[0] < limitx) {
           GfVec2f p10 = p1 + GfVec2f(limitx, 0.f);
           GfVec2f p20 = p2 - GfVec2f(limitx, 0.f);
 
@@ -253,34 +253,27 @@ namespace AnchorGraphEditor
 
           pts = {p1, p10, p1a, p1b, p20, p2};
           ptCount = 6;
-        } else
-        {
-          if (fabsf(dif[1]) < 1.f)
-          {
+        } else {
+          if (fabsf(dif[1]) < 1.f) {
             pts = {p1, (p1 + p2) * 0.5f, p2};
             ptCount = 3;
-          } else
-          {
-            if (fabsf(dif[1]) < 10.f)
-            {
-              if (fabsf(dif[0]) > fabsf(dif[1]))
-              {
-                p1a = p1 + GfVec2f(fabsf(fabsf(dif[0]) - fabsf(dif[1])) * 0.5f * sign(dif[0]), 0.f);
+          } else {
+            if (fabsf(dif[1]) < 10.f) {
+              if (fabsf(dif[0]) > fabsf(dif[1])) {
+                p1a = p1 +
+                      GfVec2f(fabsf(fabsf(dif[0]) - fabsf(dif[1])) * 0.5f * sign(dif[0]), 0.f);
                 p1b = p1a + GfVec2f(fabsf(dif[1]) * sign(dif[0]), dif[1]);
-              } else
-              {
-                p1a = p1 + GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(dif[0])) * 0.5f * sign(dif[1]));
+              } else {
+                p1a = p1 +
+                      GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(dif[0])) * 0.5f * sign(dif[1]));
                 p1b = p1a + GfVec2f(dif[0], fabsf(dif[0]) * sign(dif[1]));
               }
-            } else
-            {
-              if (fabsf(dif[0]) > fabsf(dif[1]))
-              {
+            } else {
+              if (fabsf(dif[0]) > fabsf(dif[1])) {
                 float d = fabsf(dif[1]) * sign(dif[0]) * 0.5f;
                 p1a = p1 + GfVec2f(d, dif[1] * 0.5f);
                 p1b = p1a + GfVec2f(fabsf(fabsf(dif[0]) - fabsf(d) * 2.f) * sign(dif[0]), 0.f);
-              } else
-              {
+              } else {
                 float d = fabsf(dif[0]) * sign(dif[1]) * 0.5f;
                 p1a = p1 + GfVec2f(dif[0] * 0.5f, d);
                 p1b = p1a + GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(d) * 2.f) * sign(dif[1]));
@@ -291,8 +284,7 @@ namespace AnchorGraphEditor
           }
         }
         float highLightFactor = factor * (highlightCons ? 2.0f : 1.f);
-        for (int pass = 0; pass < 2; pass++)
-        {
+        for (int pass = 0; pass < 2; pass++) {
           drawList->AddPolyline(pts.data(),
                                 ptCount,
                                 pass ? col : 0xFF000000,
@@ -311,8 +303,7 @@ namespace AnchorGraphEditor
                                   AnchorBBox contentRect,
                                   const Options &options)
   {
-    if (!options.mAllowQuadSelection)
-    {
+    if (!options.mAllowQuadSelection) {
       return;
     }
     AnchorIO &io = ANCHOR::GetIO();
@@ -320,50 +311,39 @@ namespace AnchorGraphEditor
     // auto& nodes = delegate->GetNodes();
     auto nodeCount = delegate.GetNodeCount();
 
-    if (nodeOperation == NO_QuadSelecting && ANCHOR::IsWindowFocused())
-    {
+    if (nodeOperation == NO_QuadSelecting && ANCHOR::IsWindowFocused()) {
       const GfVec2f bmin = AnchorMin(quadSelectPos, io.MousePos);
       const GfVec2f bmax = AnchorMax(quadSelectPos, io.MousePos);
       drawList->AddRectFilled(bmin, bmax, options.mQuadSelection, 1.f);
       drawList->AddRect(bmin, bmax, options.mQuadSelectionBorder, 1.f);
-      if (!io.MouseDown[0])
-      {
-        if (!io.KeyCtrl && !io.KeyShift)
-        {
-          for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-          {
+      if (!io.MouseDown[0]) {
+        if (!io.KeyCtrl && !io.KeyShift) {
+          for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
             delegate.SelectNode(nodeIndex, false);
           }
         }
 
         nodeOperation = NO_None;
         AnchorBBox selectionRect(bmin, bmax);
-        for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-        {
+        for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
           const auto node = delegate.GetNode(nodeIndex);
           GfVec2f nodeRectangleMin = offset + node.mRect.Min * factor;
           GfVec2f nodeRectangleMax = nodeRectangleMin + node.mRect.GetSize() * factor;
-          if (selectionRect.Overlaps(AnchorBBox(nodeRectangleMin, nodeRectangleMax)))
-          {
-            if (io.KeyCtrl)
-            {
+          if (selectionRect.Overlaps(AnchorBBox(nodeRectangleMin, nodeRectangleMax))) {
+            if (io.KeyCtrl) {
               delegate.SelectNode(nodeIndex, false);
-            } else
-            {
+            } else {
               delegate.SelectNode(nodeIndex, true);
             }
-          } else
-          {
-            if (!io.KeyShift)
-            {
+          } else {
+            if (!io.KeyShift) {
               delegate.SelectNode(nodeIndex, false);
             }
           }
         }
       }
     } else if (nodeOperation == NO_None && io.MouseDown[0] && ANCHOR::IsWindowFocused() &&
-               contentRect.Contains(io.MousePos))
-    {
+               contentRect.Contains(io.MousePos)) {
       nodeOperation = NO_QuadSelecting;
       quadSelectPos = io.MousePos;
     }
@@ -395,16 +375,14 @@ namespace AnchorGraphEditor
 
     // draw/use inputs/outputs
     bool hoverSlot = false;
-    for (int i = 0; i < 2; i++)
-    {
+    for (int i = 0; i < 2; i++) {
       float closestDistance = FLT_MAX;
       SlotIndex closestConn = -1;
       GfVec2f closestTextPos;
       GfVec2f closestPos;
       const size_t slotCount[2] = {InputsCount, OutputsCount};
 
-      for (SlotIndex slotIndex = 0; slotIndex < slotCount[i]; slotIndex++)
-      {
+      for (SlotIndex slotIndex = 0; slotIndex < slotCount[i]; slotIndex++) {
         const char **con = i ? nodeTemplate.mOutputNames : nodeTemplate.mInputNames;
         const char *conText = (con && con[slotIndex]) ? con[slotIndex] : "";
 
@@ -417,50 +395,52 @@ namespace AnchorGraphEditor
 
         GfVec2f textSize;
         textSize = ANCHOR::CalcTextSize(conText);
-        GfVec2f textPos = p + GfVec2f(-options.mNodeSlotRadius * (i ? -1.f : 1.f) * (overCon ? 3.f : 2.f) -
+        GfVec2f textPos = p + GfVec2f(-options.mNodeSlotRadius * (i ? -1.f : 1.f) *
+                                          (overCon ? 3.f : 2.f) -
                                         (i ? 0 : textSize[0]),
                                       -textSize[1] / 2);
 
         AnchorBBox nodeRect = GetNodeRect(node, factor);
-        if (!inMinimap && (overCon || (nodeRect.Contains(io.MousePos - offset) && closestConn == -1 &&
-                                       (editingInput == (i != 0)) && nodeOperation == NO_EditingLink)))
-        {
+        if (!inMinimap &&
+            (overCon || (nodeRect.Contains(io.MousePos - offset) && closestConn == -1 &&
+                         (editingInput == (i != 0)) && nodeOperation == NO_EditingLink))) {
           closestDistance = distance;
           closestConn = slotIndex;
           closestTextPos = textPos;
           closestPos = p;
 
-          if (i)
-          {
+          if (i) {
             outputSlotOver = slotIndex;
-          } else
-          {
+          } else {
             inputSlotOver = slotIndex;
           }
-        } else
-        {
-          const AnchorU32 *slotColorSource = i ? nodeTemplate.mOutputColors : nodeTemplate.mInputColors;
+        } else {
+          const AnchorU32 *slotColorSource = i ? nodeTemplate.mOutputColors :
+                                                 nodeTemplate.mInputColors;
           const AnchorU32 slotColor = slotColorSource ? slotColorSource[slotIndex] :
                                                         options.mDefaultSlotColor;
           drawList->AddCircleFilled(p, options.mNodeSlotRadius, ANCHOR_COL32(0, 0, 0, 200));
           drawList->AddCircleFilled(p, options.mNodeSlotRadius * 0.75f, slotColor);
-          if (!options.mDrawIONameOnHover)
-          {
+          if (!options.mDrawIONameOnHover) {
             drawList->AddText(io.FontDefault,
                               14,
                               textPos + GfVec2f(2, 2),
                               ANCHOR_COL32(0, 0, 0, 255),
                               conText);
-            drawList->AddText(io.FontDefault, 14, textPos, ANCHOR_COL32(150, 150, 150, 255), conText);
+            drawList->AddText(io.FontDefault,
+                              14,
+                              textPos,
+                              ANCHOR_COL32(150, 150, 150, 255),
+                              conText);
           }
         }
       }
 
-      if (closestConn != -1)
-      {
+      if (closestConn != -1) {
         const char **con = i ? nodeTemplate.mOutputNames : nodeTemplate.mInputNames;
         const char *conText = (con && con[closestConn]) ? con[closestConn] : "";
-        const AnchorU32 *slotColorSource = i ? nodeTemplate.mOutputColors : nodeTemplate.mInputColors;
+        const AnchorU32 *slotColorSource = i ? nodeTemplate.mOutputColors :
+                                               nodeTemplate.mInputColors;
         const AnchorU32 slotColor = slotColorSource ? slotColorSource[closestConn] :
                                                       options.mDefaultSlotColor;
         hoverSlot = true;
@@ -475,12 +455,14 @@ namespace AnchorGraphEditor
                           closestTextPos + GfVec2f(1, 1),
                           ANCHOR_COL32(0, 0, 0, 255),
                           conText);
-        drawList->AddText(io.FontDefault, 16, closestTextPos, ANCHOR_COL32(250, 250, 250, 255), conText);
+        drawList->AddText(io.FontDefault,
+                          16,
+                          closestTextPos,
+                          ANCHOR_COL32(250, 250, 250, 255),
+                          conText);
         bool inputToOutput = (!editingInput && !i) || (editingInput && i);
-        if (nodeOperation == NO_EditingLink && !io.MouseDown[0] && !bDrawOnly)
-        {
-          if (inputToOutput)
-          {
+        if (nodeOperation == NO_EditingLink && !io.MouseDown[0] && !bDrawOnly) {
+          if (inputToOutput) {
             // check loopback
             Link nl;
             if (editingInput)
@@ -488,29 +470,23 @@ namespace AnchorGraphEditor
             else
               nl = Link{editingNodeIndex, editingSlotIndex, nodeIndex, closestConn};
 
-            if (!delegate.AllowedLink(nl.mOutputNodeIndex, nl.mInputNodeIndex))
-            {
+            if (!delegate.AllowedLink(nl.mOutputNodeIndex, nl.mInputNodeIndex)) {
               break;
             }
             bool alreadyExisting = false;
-            for (size_t linkIndex = 0; linkIndex < linkCount; linkIndex++)
-            {
+            for (size_t linkIndex = 0; linkIndex < linkCount; linkIndex++) {
               const auto link = delegate.GetLink(linkIndex);
-              if (!memcmp(&link, &nl, sizeof(Link)))
-              {
+              if (!memcmp(&link, &nl, sizeof(Link))) {
                 alreadyExisting = true;
                 break;
               }
             }
 
-            if (!alreadyExisting)
-            {
-              for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-              {
+            if (!alreadyExisting) {
+              for (int linkIndex = 0; linkIndex < linkCount; linkIndex++) {
                 const auto link = delegate.GetLink(linkIndex);
                 if (link.mOutputNodeIndex == nl.mOutputNodeIndex &&
-                    link.mOutputSlotIndex == nl.mOutputSlotIndex)
-                {
+                    link.mOutputSlotIndex == nl.mOutputSlotIndex) {
                   delegate.DelLink(linkIndex);
 
                   break;
@@ -524,24 +500,21 @@ namespace AnchorGraphEditor
             }
           }
         }
-        // when ANCHOR::IsWindowHovered() && !ANCHOR::IsAnyItemActive() is uncommented, one can't click the
-        // node input/output when mouse is over the node itself.
+        // when ANCHOR::IsWindowHovered() && !ANCHOR::IsAnyItemActive() is uncommented, one can't
+        // click the node input/output when mouse is over the node itself.
         if (nodeOperation == NO_None &&
-            /*ANCHOR::IsWindowHovered() && !ANCHOR::IsAnyItemActive() &&*/ io.MouseClicked[0] && !bDrawOnly)
-        {
+            /*ANCHOR::IsWindowHovered() && !ANCHOR::IsAnyItemActive() &&*/ io.MouseClicked[0] &&
+            !bDrawOnly) {
           nodeOperation = NO_EditingLink;
           editingInput = i == 0;
           editingNodeSource = closestPos;
           editingNodeIndex = nodeIndex;
           editingSlotIndex = closestConn;
-          if (editingInput)
-          {
+          if (editingInput) {
             // remove existing link
-            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-            {
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++) {
               const auto link = delegate.GetLink(linkIndex);
-              if (link.mOutputNodeIndex == nodeIndex && link.mOutputSlotIndex == closestConn)
-              {
+              if (link.mOutputNodeIndex == nodeIndex && link.mOutputSlotIndex == closestConn) {
                 delegate.DelLink(linkIndex);
                 break;
               }
@@ -565,16 +538,14 @@ namespace AnchorGraphEditor
     int divx = static_cast<int>(-viewState.mPosition[0] / gridSize);
     int divy = static_cast<int>(-viewState.mPosition[1] / gridSize);
     for (float x = fmodf(viewState.mPosition[0] * viewState.mFactor, gridSpace); x < canvasSize[0];
-         x += gridSpace, divx++)
-    {
+         x += gridSpace, divx++) {
       bool tenth = !(divx % 10);
       drawList->AddLine(GfVec2f(x, 0.0f) + windowPos,
                         GfVec2f(x, canvasSize[1]) + windowPos,
                         tenth ? gridColor2 : gridColor);
     }
     for (float y = fmodf(viewState.mPosition[1] * viewState.mFactor, gridSpace); y < canvasSize[1];
-         y += gridSpace, divy++)
-    {
+         y += gridSpace, divy++) {
       bool tenth = !(divy % 10);
       drawList->AddLine(GfVec2f(0.0f, y) + windowPos,
                         GfVec2f(canvasSize[0], y) + windowPos,
@@ -623,19 +594,22 @@ namespace AnchorGraphEditor
               continue;
 
               GfVec2f p = offset + (i ? GetOutputSlotPos(delegate, node, slotIndex, factor) :
-      GetInputSlotPos(delegate, node, slotIndex, factor)); const float arc = 28.f * (float(i) * 0.3f + 1.0f)
+      GetInputSlotPos(delegate, node, slotIndex, factor)); const float arc = 28.f * (float(i) *
+      0.3f + 1.0f)
       * (i ? 1.f : -1.f); const float ofs = 0.f;
 
-              GfVec2f pts[3] = {p + GfVec2f(arc + ofs, 0.f), p + GfVec2f(0.f + ofs, -arc), p + GfVec2f(0.f +
-      ofs, arc)}; drawList->AddTriangleFilled(pts[0], pts[1], pts[2], i ? 0xFFAA5030 : 0xFF30AA50);
-              drawList->AddTriangle(pts[0], pts[1], pts[2], 0xFF000000, 2.f);
+              GfVec2f pts[3] = {p + GfVec2f(arc + ofs, 0.f), p + GfVec2f(0.f + ofs, -arc), p +
+      GfVec2f(0.f + ofs, arc)}; drawList->AddTriangleFilled(pts[0], pts[1], pts[2], i ? 0xFFAA5030
+      : 0xFF30AA50); drawList->AddTriangle(pts[0], pts[1], pts[2], 0xFF000000, 2.f);
           }
       }
       */
 
     ANCHOR::SetCursorScreenPos(nodeRectangleMin);
-    float maxHeight = AnchorMin(viewPort.Max[1], nodeRectangleMin[1] + nodeSize[1]) - nodeRectangleMin[1];
-    float maxWidth = AnchorMin(viewPort.Max[0], nodeRectangleMin[0] + nodeSize[0]) - nodeRectangleMin[0];
+    float maxHeight = AnchorMin(viewPort.Max[1], nodeRectangleMin[1] + nodeSize[1]) -
+                      nodeRectangleMin[1];
+    float maxWidth = AnchorMin(viewPort.Max[0], nodeRectangleMin[0] + nodeSize[0]) -
+                     nodeRectangleMin[0];
     ANCHOR::InvisibleButton("node", GfVec2f(maxWidth, maxHeight));
     // must be called right after creating the control we want to be able to move
     bool nodeMovingActive = ANCHOR::IsItemActive();
@@ -645,22 +619,16 @@ namespace AnchorGraphEditor
     GfVec2f nodeRectangleMax = nodeRectangleMin + nodeSize;
 
     bool nodeHovered = false;
-    if (ANCHOR::IsItemHovered() && nodeOperation == NO_None && !overInput)
-    {
+    if (ANCHOR::IsItemHovered() && nodeOperation == NO_None && !overInput) {
       nodeHovered = true;
     }
 
-    if (ANCHOR::IsWindowFocused())
-    {
-      if ((nodeWidgetsActive || nodeMovingActive) && !inMinimap)
-      {
-        if (!node.mSelected)
-        {
-          if (!io.KeyShift)
-          {
+    if (ANCHOR::IsWindowFocused()) {
+      if ((nodeWidgetsActive || nodeMovingActive) && !inMinimap) {
+        if (!node.mSelected) {
+          if (!io.KeyShift) {
             const auto nodeCount = delegate.GetNodeCount();
-            for (size_t i = 0; i < nodeCount; i++)
-            {
+            for (size_t i = 0; i < nodeCount; i++) {
               delegate.SelectNode(i, false);
             }
           }
@@ -668,10 +636,8 @@ namespace AnchorGraphEditor
         }
       }
     }
-    if (nodeMovingActive && io.MouseDown[0] && nodeHovered && !inMinimap)
-    {
-      if (nodeOperation != NO_MovingNodes)
-      {
+    if (nodeMovingActive && io.MouseDown[0] && nodeHovered && !inMinimap) {
+      if (nodeOperation != NO_MovingNodes) {
         nodeOperation = NO_MovingNodes;
       }
     }
@@ -680,12 +646,13 @@ namespace AnchorGraphEditor
     const AnchorU32 node_bg_color = nodeHovered ? nodeTemplate.mBackgroundColorOver :
                                                   nodeTemplate.mBackgroundColor;
 
-    drawList->AddRect(nodeRectangleMin,
-                      nodeRectangleMax,
-                      currentSelectedNode ? options.mSelectedNodeBorderColor : options.mNodeBorderColor,
-                      options.mRounding,
-                      AnchorDrawFlags_RoundCornersAll,
-                      currentSelectedNode ? options.mBorderSelectionThickness : options.mBorderThickness);
+    drawList->AddRect(
+      nodeRectangleMin,
+      nodeRectangleMax,
+      currentSelectedNode ? options.mSelectedNodeBorderColor : options.mNodeBorderColor,
+      options.mRounding,
+      AnchorDrawFlags_RoundCornersAll,
+      currentSelectedNode ? options.mBorderSelectionThickness : options.mBorderThickness);
 
     GfVec2f imgPos = nodeRectangleMin + GfVec2f(14, 25);
     GfVec2f imgSize = nodeRectangleMax + GfVec2f(-5, -5) - imgPos;
@@ -727,14 +694,17 @@ namespace AnchorGraphEditor
                             nodeTemplate.mHeaderColor,
                             options.mRounding);
 
-    drawList->PushClipRect(nodeRectangleMin, GfVec2f(nodeRectangleMax[0], nodeRectangleMin[1] + 20), true);
+    drawList->PushClipRect(nodeRectangleMin,
+                           GfVec2f(nodeRectangleMax[0], nodeRectangleMin[1] + 20),
+                           true);
     drawList->AddText(nodeRectangleMin + GfVec2f(2, 2), ANCHOR_COL32(0, 0, 0, 255), node.mName);
     drawList->PopClipRect();
 
-    AnchorBBox customDrawRect(nodeRectangleMin + GfVec2f(options.mRounding, 20 + options.mRounding),
+    AnchorBBox customDrawRect(nodeRectangleMin +
+                                GfVec2f(options.mRounding, 20 + options.mRounding),
                               nodeRectangleMax - GfVec2f(options.mRounding, options.mRounding));
-    if (customDrawRect.Max[1] > customDrawRect.Min[1] && customDrawRect.Max[0] > customDrawRect.Min[0])
-    {
+    if (customDrawRect.Max[1] > customDrawRect.Min[1] &&
+        customDrawRect.Max[0] > customDrawRect.Min[0]) {
       delegate.CustomDraw(drawList, customDrawRect, nodeIndex);
     }
     /*
@@ -778,23 +748,20 @@ namespace AnchorGraphEditor
                    const GfVec2f windowPos,
                    const GfVec2f canvasSize)
   {
-    if (Distance(options.mMinimap.Min, options.mMinimap.Max) <= FLT_EPSILON)
-    {
+    if (Distance(options.mMinimap.Min, options.mMinimap.Max) <= FLT_EPSILON) {
       return false;
     }
 
     const size_t nodeCount = delegate.GetNodeCount();
 
-    if (!nodeCount)
-    {
+    if (!nodeCount) {
       return false;
     }
 
     GfVec2f mapmin(FLT_MAX, FLT_MAX);
     GfVec2f mapmax(-FLT_MAX, -FLT_MAX);
     const GfVec2f margin(50, 50);
-    for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-    {
+    for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
       const Node &node = delegate.GetNode(nodeIndex);
       mapmin = AnchorMin(mapmin, node.mRect.Min - margin);
       mapmin = AnchorMin(mapmin, node.mRect.Max + margin);
@@ -824,8 +791,7 @@ namespace AnchorGraphEditor
                             3,
                             AnchorDrawFlags_RoundCornersAll);
 
-    for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-    {
+    for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
       const Node &node = delegate.GetNode(nodeIndex);
       const auto nodeTemplate = delegate.GetTemplate(node.mTemplateIndex);
 
@@ -843,8 +809,7 @@ namespace AnchorGraphEditor
                               nodeTemplate.mBackgroundColor,
                               1,
                               AnchorDrawFlags_RoundCornersAll);
-      if (node.mSelected)
-      {
+      if (node.mSelected) {
         drawList->AddRect(rect.Min,
                           rect.Max,
                           options.mSelectedNodeBorderColor,
@@ -869,31 +834,26 @@ namespace AnchorGraphEditor
 
     AnchorIO &io = ANCHOR::GetIO();
     const bool mouseInMinimap = AnchorBBox(minScreen, maxScreen).Contains(io.MousePos);
-    if (mouseInMinimap && io.MouseClicked[0])
-    {
+    if (mouseInMinimap && io.MouseClicked[0]) {
       const GfVec2f clickedRatio = (io.MousePos - minScreen) / viewSize;
       const GfVec2f worldPosCenter = GfVec2f(AnchorLerp(mapmin[0], mapmax[0], clickedRatio[0]),
                                              AnchorLerp(mapmin[1], mapmax[1], clickedRatio[1]));
 
       GfVec2f worldPosViewMin = worldPosCenter - worldSizeView * 0.5;
       GfVec2f worldPosViewMax = worldPosCenter + worldSizeView * 0.5;
-      if (worldPosViewMin[0] < mapmin[0])
-      {
+      if (worldPosViewMin[0] < mapmin[0]) {
         worldPosViewMin[0] = mapmin[0];
         worldPosViewMax[0] = worldPosViewMin[0] + worldSizeView[0];
       }
-      if (worldPosViewMin[1] < mapmin[1])
-      {
+      if (worldPosViewMin[1] < mapmin[1]) {
         worldPosViewMin[1] = mapmin[1];
         worldPosViewMax[1] = worldPosViewMin[1] + worldSizeView[1];
       }
-      if (worldPosViewMax[0] > mapmax[0])
-      {
+      if (worldPosViewMax[0] > mapmax[0]) {
         worldPosViewMax[0] = mapmax[0];
         worldPosViewMin[0] = worldPosViewMax[0] - worldSizeView[0];
       }
-      if (worldPosViewMax[1] > mapmax[1])
-      {
+      if (worldPosViewMax[1] > mapmax[1]) {
         worldPosViewMax[1] = mapmax[1];
         worldPosViewMin[1] = worldPosViewMax[1] - worldSizeView[1];
       }
@@ -902,7 +862,11 @@ namespace AnchorGraphEditor
     return mouseInMinimap;
   }
 
-  void Show(Delegate &delegate, const Options &options, ViewState &viewState, bool enabled, FitOnScreen *fit)
+  void Show(Delegate &delegate,
+            const Options &options,
+            ViewState &viewState,
+            bool enabled,
+            FitOnScreen *fit)
   {
     ANCHOR::PushStyleVar(AnchorStyleVar_ChildBorderSize, 0.f);
     ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0.f, 0.f));
@@ -936,8 +900,7 @@ namespace AnchorGraphEditor
     drawList->AddRectFilled(windowPos, windowPos + canvasSize, options.mBackgroundColor);
 
     // Background or Display grid
-    if (options.mRenderGrid)
-    {
+    if (options.mRenderGrid) {
       DrawGrid(drawList,
                windowPos,
                viewState,
@@ -948,35 +911,38 @@ namespace AnchorGraphEditor
     }
 
     // Fit view
-    if (fit && ((*fit == Fit_AllNodes) || (*fit == Fit_SelectedNodes)))
-    {
+    if (fit && ((*fit == Fit_AllNodes) || (*fit == Fit_SelectedNodes))) {
       FitNodes(delegate, viewState, canvasSize, (*fit == Fit_SelectedNodes));
     }
 
-    if (enabled)
-    {
+    if (enabled) {
       static NodeIndex hoveredNode = -1;
       // Display links
       drawList->ChannelsSplit(3);
 
       // minimap
       drawList->ChannelsSetCurrent(2);  // minimap
-      const bool inMinimap = DrawMiniMap(drawList, delegate, viewState, options, windowPos, canvasSize);
+      const bool inMinimap =
+        DrawMiniMap(drawList, delegate, viewState, options, windowPos, canvasSize);
 
       // Focus rectangle
-      if (ANCHOR::IsWindowFocused())
-      {
+      if (ANCHOR::IsWindowFocused()) {
         drawList->AddRect(regionRect.Min, regionRect.Max, options.mFrameFocus, 1.f, 0, 2.f);
       }
 
       drawList->ChannelsSetCurrent(1);  // Background
 
       // Links
-      DisplayLinks(delegate, drawList, offset, viewState.mFactor, regionRect, hoveredNode, options);
+      DisplayLinks(delegate,
+                   drawList,
+                   offset,
+                   viewState.mFactor,
+                   regionRect,
+                   hoveredNode,
+                   options);
 
       // edit node link
-      if (nodeOperation == NO_EditingLink)
-      {
+      if (nodeOperation == NO_EditingLink) {
         GfVec2f p1 = editingNodeSource;
         GfVec2f p2 = io.MousePos;
         drawList->AddLine(p1, p2, ANCHOR_COL32(200, 200, 200, 255), 3.0f);
@@ -991,14 +957,11 @@ namespace AnchorGraphEditor
       NodeIndex nodeOver = -1;
 
       const auto nodeCount = delegate.GetNodeCount();
-      for (int i = 0; i < 2; i++)
-      {
-        for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-        {
+      for (int i = 0; i < 2; i++) {
+        for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
           // const auto* node = &nodes[nodeIndex];
           const auto node = delegate.GetNode(nodeIndex);
-          if (node.mSelected != (i != 0))
-          {
+          if (node.mSelected != (i != 0)) {
             continue;
           }
 
@@ -1006,8 +969,7 @@ namespace AnchorGraphEditor
           AnchorBBox nodeRect = GetNodeRect(node, viewState.mFactor);
           nodeRect.Min += offset;
           nodeRect.Max += offset;
-          if (!regionRect.Overlaps(nodeRect))
-          {
+          if (!regionRect.Overlaps(nodeRect)) {
             continue;
           }
 
@@ -1076,8 +1038,7 @@ namespace AnchorGraphEditor
                        overInput,
                        options,
                        inMinimap,
-                       regionRect))
-          {
+                       regionRect)) {
             hoveredNode = nodeIndex;
           }
 
@@ -1091,8 +1052,7 @@ namespace AnchorGraphEditor
                             inputSlot,
                             outputSlot,
                             inMinimap);
-          if (inputSlot != -1 || outputSlot != -1)
-          {
+          if (inputSlot != -1 || outputSlot != -1) {
             inputSlotOver = inputSlot;
             outputSlotOver = outputSlot;
             nodeOver = nodeIndex;
@@ -1105,13 +1065,10 @@ namespace AnchorGraphEditor
 
       drawList->PopClipRect();
 
-      if (nodeOperation == NO_MovingNodes)
-      {
-        if (ANCHOR::IsMouseDragging(0, 1))
-        {
+      if (nodeOperation == NO_MovingNodes) {
+        if (ANCHOR::IsMouseDragging(0, 1)) {
           GfVec2f delta = io.MouseDelta / viewState.mFactor;
-          if (fabsf(delta[0]) >= 1.f || fabsf(delta[1]) >= 1.f)
-          {
+          if (fabsf(delta[0]) >= 1.f || fabsf(delta[1]) >= 1.f) {
             delegate.MoveSelectedNodes(delta);
           }
         }
@@ -1120,41 +1077,34 @@ namespace AnchorGraphEditor
       drawList->ChannelsSetCurrent(0);
 
       // quad selection
-      if (!inMinimap)
-      {
+      if (!inMinimap) {
         HandleQuadSelection(delegate, drawList, offset, viewState.mFactor, regionRect, options);
       }
 
       drawList->ChannelsMerge();
 
       // releasing mouse button means it's done in any operation
-      if (nodeOperation == NO_PanView)
-      {
-        if (!io.MouseDown[2])
-        {
+      if (nodeOperation == NO_PanView) {
+        if (!io.MouseDown[2]) {
           nodeOperation = NO_None;
         }
-      } else if (nodeOperation != NO_None && !io.MouseDown[0])
-      {
+      } else if (nodeOperation != NO_None && !io.MouseDown[0]) {
         nodeOperation = NO_None;
       }
 
       // right click
       if (!inMinimap && nodeOperation == NO_None && regionRect.Contains(io.MousePos) &&
           (ANCHOR::IsMouseClicked(
-            1) /*|| (ANCHOR::IsWindowFocused() && ANCHOR::IsKeyPressedMap(AnchorKey_Tab))*/))
-      {
+            1) /*|| (ANCHOR::IsWindowFocused() && ANCHOR::IsKeyPressedMap(AnchorKey_Tab))*/)) {
         delegate.RightClick(nodeOver, inputSlotOver, outputSlotOver);
       }
 
       // Scrolling
       if (ANCHOR::IsWindowHovered() && !ANCHOR::IsAnyItemActive() && io.MouseClicked[2] &&
-          nodeOperation == NO_None)
-      {
+          nodeOperation == NO_None) {
         nodeOperation = NO_PanView;
       }
-      if (nodeOperation == NO_PanView)
-      {
+      if (nodeOperation == NO_PanView) {
         viewState.mPosition += io.MouseDelta / viewState.mFactor;
       }
     }
@@ -1169,8 +1119,7 @@ namespace AnchorGraphEditor
     ANCHOR::PopStyleVar(3);
 
     // change fit to none
-    if (fit)
-    {
+    if (fit) {
       *fit = Fit_None;
     }
   }
@@ -1178,8 +1127,7 @@ namespace AnchorGraphEditor
   bool EditOptions(Options &options)
   {
     bool updated = false;
-    if (ANCHOR::CollapsingHeader("Colors", nullptr))
-    {
+    if (ANCHOR::CollapsingHeader("Colors", nullptr)) {
       AnchorColor backgroundColor(options.mBackgroundColor);
       AnchorColor gridColor(options.mGridColor);
       AnchorColor selectedNodeBorderColor(options.mSelectedNodeBorderColor);
@@ -1208,28 +1156,26 @@ namespace AnchorGraphEditor
       options.mFrameFocus = frameFocus;
     }
 
-    if (ANCHOR::CollapsingHeader("Options", nullptr))
-    {
+    if (ANCHOR::CollapsingHeader("Options", nullptr)) {
       updated |= ANCHOR::InputFloat4("Minimap", &options.mMinimap.Min[0]);
       updated |= ANCHOR::InputFloat("Line Thickness", &options.mLineThickness);
       updated |= ANCHOR::InputFloat("Grid Size", &options.mGridSize);
       updated |= ANCHOR::InputFloat("Rounding", &options.mRounding);
       updated |= ANCHOR::InputFloat("Zoom Ratio", &options.mZoomRatio);
       updated |= ANCHOR::InputFloat("Zoom Lerp Factor", &options.mZoomLerpFactor);
-      updated |= ANCHOR::InputFloat("Border Selection Thickness", &options.mBorderSelectionThickness);
+      updated |= ANCHOR::InputFloat("Border Selection Thickness",
+                                    &options.mBorderSelectionThickness);
       updated |= ANCHOR::InputFloat("Border Thickness", &options.mBorderThickness);
       updated |= ANCHOR::InputFloat("Slot Radius", &options.mNodeSlotRadius);
       updated |= ANCHOR::InputFloat("Slot Hover Factor", &options.mNodeSlotHoverFactor);
       updated |= ANCHOR::InputFloat2("Zoom min/max", &options.mMinZoom);
       updated |= ANCHOR::InputFloat("Slot Hover Factor", &options.mSnap);
 
-      if (ANCHOR::RadioButton("Curved Links", options.mDisplayLinksAsCurves))
-      {
+      if (ANCHOR::RadioButton("Curved Links", options.mDisplayLinksAsCurves)) {
         options.mDisplayLinksAsCurves = !options.mDisplayLinksAsCurves;
         updated = true;
       }
-      if (ANCHOR::RadioButton("Straight Links", !options.mDisplayLinksAsCurves))
-      {
+      if (ANCHOR::RadioButton("Straight Links", !options.mDisplayLinksAsCurves)) {
         options.mDisplayLinksAsCurves = !options.mDisplayLinksAsCurves;
         updated = true;
       }

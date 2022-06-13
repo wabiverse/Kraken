@@ -51,14 +51,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdLuxDomeLight::~UsdLuxDomeLight()
-{}
+UsdLuxDomeLight::~UsdLuxDomeLight() {}
 
 /* static */
 UsdLuxDomeLight UsdLuxDomeLight::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxDomeLight();
   }
@@ -69,8 +67,7 @@ UsdLuxDomeLight UsdLuxDomeLight::Get(const UsdStagePtr &stage, const SdfPath &pa
 UsdLuxDomeLight UsdLuxDomeLight::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("DomeLight");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxDomeLight();
   }
@@ -108,7 +105,8 @@ UsdAttribute UsdLuxDomeLight::GetTextureFileAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsTextureFile);
 }
 
-UsdAttribute UsdLuxDomeLight::CreateTextureFileAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxDomeLight::CreateTextureFileAttr(VtValue const &defaultValue,
+                                                    bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsTextureFile,
                                     SdfValueTypeNames->Asset,
@@ -123,7 +121,8 @@ UsdAttribute UsdLuxDomeLight::GetTextureFormatAttr() const
   return GetPrim().GetAttribute(UsdLuxTokens->inputsTextureFormat);
 }
 
-UsdAttribute UsdLuxDomeLight::CreateTextureFormatAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdLuxDomeLight::CreateTextureFormatAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsTextureFormat,
                                     SdfValueTypeNames->Token,
@@ -164,8 +163,9 @@ const TfTokenVector &UsdLuxDomeLight::GetSchemaAttributeNames(bool includeInheri
     UsdLuxTokens->inputsTextureFile,
     UsdLuxTokens->inputsTextureFormat,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdLuxLight::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdLuxLight::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -191,16 +191,13 @@ WABI_NAMESPACE_BEGIN
 
 void UsdLuxDomeLight::OrientToStageUpAxis() const
 {
-  if (UsdGeomGetStageUpAxis(GetPrim().GetStage()) == UsdGeomTokens->z)
-  {
+  if (UsdGeomGetStageUpAxis(GetPrim().GetStage()) == UsdGeomTokens->z) {
     UsdGeomXformOp::Type const opType = UsdGeomXformOp::TypeRotateX;
     TfToken const &opSuffix = UsdLuxTokens->orientToStageUpAxis;
     TfToken const opName = UsdGeomXformOp::GetOpName(opType, opSuffix);
     bool resetsXformStack;
-    for (UsdGeomXformOp const &op : GetOrderedXformOps(&resetsXformStack))
-    {
-      if (op.GetName() == opName)
-      {
+    for (UsdGeomXformOp const &op : GetOrderedXformOps(&resetsXformStack)) {
+      if (op.GetName() == opName) {
         // Op already exists.
         return;
       }

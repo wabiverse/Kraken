@@ -50,11 +50,15 @@ namespace
     // Constructor stores off arguments to pass to the factory later.
     template<class Arg>
     explicit Usd_PyStageCacheContext(Arg arg)
-      : _makeContext([arg]() { return new UsdStageCacheContext(arg); })
+      : _makeContext([arg]() {
+          return new UsdStageCacheContext(arg);
+        })
     {}
 
     explicit Usd_PyStageCacheContext(UsdStageCache &cache)
-      : _makeContext([&cache]() { return new UsdStageCacheContext(cache); })
+      : _makeContext([&cache]() {
+          return new UsdStageCacheContext(cache);
+        })
     {}
 
     // Instantiate the C++ class object and hold it by shared_ptr.
@@ -70,6 +74,7 @@ namespace
     }
 
    private:
+
     std::shared_ptr<UsdStageCacheContext> _context;
     std::function<UsdStageCacheContext *()> _makeContext;
   };

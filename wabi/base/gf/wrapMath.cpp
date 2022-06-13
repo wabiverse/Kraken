@@ -181,21 +181,25 @@ void wrapMath()
   def("CompMult", (double (*)(double, double))GfCompMult);
   def("CompDiv", (double (*)(double, double))GfCompDiv);
 
-  TfPyContainerConversions::from_python_sequence<std::vector<int>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::
+    from_python_sequence<std::vector<int>, TfPyContainerConversions::variable_capacity_policy>();
 
-  TfPyContainerConversions::from_python_sequence<std::vector<unsigned int>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<unsigned int>,
+    TfPyContainerConversions::variable_capacity_policy>();
 
-  TfPyContainerConversions::from_python_sequence<std::vector<bool>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::
+    from_python_sequence<std::vector<bool>, TfPyContainerConversions::variable_capacity_policy>();
 
-  TfPyContainerConversions::from_python_sequence<std::vector<double>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<double>,
+    TfPyContainerConversions::variable_capacity_policy>();
 
-  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<int>>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<std::vector<int>>,
+    TfPyContainerConversions::variable_capacity_policy>();
 
-  TfPyContainerConversions::from_python_sequence<std::vector<std::vector<double>>,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<std::vector<double>>,
+    TfPyContainerConversions::variable_capacity_policy>();
 }

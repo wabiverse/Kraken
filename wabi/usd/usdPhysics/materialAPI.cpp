@@ -40,14 +40,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsMaterialAPI));
 
 /* virtual */
-UsdPhysicsMaterialAPI::~UsdPhysicsMaterialAPI()
-{}
+UsdPhysicsMaterialAPI::~UsdPhysicsMaterialAPI() {}
 
 /* static */
 UsdPhysicsMaterialAPI UsdPhysicsMaterialAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsMaterialAPI();
   }
@@ -70,8 +68,7 @@ bool UsdPhysicsMaterialAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
 /* static */
 UsdPhysicsMaterialAPI UsdPhysicsMaterialAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdPhysicsMaterialAPI>())
-  {
+  if (prim.ApplyAPI<UsdPhysicsMaterialAPI>()) {
     return UsdPhysicsMaterialAPI(prim);
   }
   return UsdPhysicsMaterialAPI();
@@ -150,7 +147,8 @@ UsdAttribute UsdPhysicsMaterialAPI::GetDensityAttr() const
   return GetPrim().GetAttribute(UsdPhysicsTokens->physicsDensity);
 }
 
-UsdAttribute UsdPhysicsMaterialAPI::CreateDensityAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsMaterialAPI::CreateDensityAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsDensity,
                                     SdfValueTypeNames->Float,
@@ -182,8 +180,9 @@ const TfTokenVector &UsdPhysicsMaterialAPI::GetSchemaAttributeNames(bool include
     UsdPhysicsTokens->physicsRestitution,
     UsdPhysicsTokens->physicsDensity,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

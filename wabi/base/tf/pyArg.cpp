@@ -55,22 +55,19 @@ std::pair<tuple, dict> TfPyProcessOptionalArgs(const tuple &args,
   const unsigned int numArgs = static_cast<unsigned int>(len(args));
   const unsigned int numExpectedArgs = static_cast<unsigned int>(expectedArgs.size());
 
-  if (!allowExtraArgs)
-  {
-    if (numArgs > numExpectedArgs)
-    {
+  if (!allowExtraArgs) {
+    if (numArgs > numExpectedArgs) {
       TfPyThrowTypeError("Too many arguments for function");
     }
 
     const list keys = kwargs.keys();
 
     typedef stl_input_iterator<string> KeyIterator;
-    for (KeyIterator it(keys), it_end; it != it_end; ++it)
-    {
+    for (KeyIterator it(keys), it_end; it != it_end; ++it) {
       if (std::find_if(expectedArgs.begin(),
                        expectedArgs.end(),
-                       std::bind(_ArgumentIsNamed, *it, std::placeholders::_1)) == expectedArgs.end())
-      {
+                       std::bind(_ArgumentIsNamed, *it, std::placeholders::_1)) ==
+          expectedArgs.end()) {
 
         TfPyThrowTypeError("Unexpected keyword argument '%s'");
       }
@@ -79,30 +76,29 @@ std::pair<tuple, dict> TfPyProcessOptionalArgs(const tuple &args,
 
   rval.second = kwargs;
 
-  for (unsigned int i = 0; i < std::min(numArgs, numExpectedArgs); ++i)
-  {
+  for (unsigned int i = 0; i < std::min(numArgs, numExpectedArgs); ++i) {
     const string &argName = expectedArgs[i].GetName();
-    if (rval.second.has_key(argName))
-    {
-      TfPyThrowTypeError(TfStringPrintf("Multiple values for keyword argument '%s'", argName.c_str()));
+    if (rval.second.has_key(argName)) {
+      TfPyThrowTypeError(
+        TfStringPrintf("Multiple values for keyword argument '%s'", argName.c_str()));
     }
 
     rval.second[argName] = args[i];
   }
 
-  if (numArgs > numExpectedArgs)
-  {
+  if (numArgs > numExpectedArgs) {
     rval.first = tuple(args[slice(numExpectedArgs, numArgs)]);
   }
 
   return rval;
 }
 
-static void _AddArgAndTypeDocStrings(const TfPyArg &arg, vector<string> *argStrs, vector<string> *typeStrs)
+static void _AddArgAndTypeDocStrings(const TfPyArg &arg,
+                                     vector<string> *argStrs,
+                                     vector<string> *typeStrs)
 {
   argStrs->push_back(arg.GetName());
-  if (!arg.GetDefaultValueDoc().empty())
-  {
+  if (!arg.GetDefaultValueDoc().empty()) {
     argStrs->back() += TfStringPrintf(" = %s", arg.GetDefaultValueDoc().c_str());
   }
 
@@ -119,27 +115,23 @@ string TfPyCreateFunctionDocString(const string &functionName,
   vector<string> argStrs;
   vector<string> typeStrs;
 
-  for (size_t i = 0; i < requiredArgs.size(); ++i)
-  {
+  for (size_t i = 0; i < requiredArgs.size(); ++i) {
     _AddArgAndTypeDocStrings(requiredArgs[i], &argStrs, &typeStrs);
   }
 
-  for (size_t i = 0; i < optionalArgs.size(); ++i)
-  {
+  for (size_t i = 0; i < optionalArgs.size(); ++i) {
     _AddArgAndTypeDocStrings(optionalArgs[i], &argStrs, &typeStrs);
   }
 
   rval += TfStringJoin(argStrs.begin(), argStrs.end(), ", ");
   rval += ")";
 
-  if (!typeStrs.empty())
-  {
+  if (!typeStrs.empty()) {
     rval += "\n";
     rval += TfStringJoin(typeStrs.begin(), typeStrs.end(), "\n");
   }
 
-  if (!description.empty())
-  {
+  if (!description.empty()) {
     rval += "\n\n";
     rval += description;
   }

@@ -50,27 +50,33 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateSurfaceAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateSurfaceAttr(UsdRiMaterialAPI &self,
+                                         object defaultVal,
+                                         bool writeSparsely)
   {
-    return self.CreateSurfaceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateSurfaceAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                  writeSparsely);
   }
 
-  static UsdAttribute _CreateDisplacementAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateDisplacementAttr(UsdRiMaterialAPI &self,
+                                              object defaultVal,
+                                              bool writeSparsely)
   {
     return self.CreateDisplacementAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
                                        writeSparsely);
   }
 
-  static UsdAttribute _CreateVolumeAttr(UsdRiMaterialAPI &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateVolumeAttr(UsdRiMaterialAPI &self,
+                                        object defaultVal,
+                                        bool writeSparsely)
   {
-    return self.CreateVolumeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateVolumeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                 writeSparsely);
   }
 
   static std::string _Repr(const UsdRiMaterialAPI &self)
@@ -103,7 +109,9 @@ void wrapUsdRiMaterialAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)

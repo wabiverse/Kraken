@@ -43,16 +43,13 @@ int PyC_ParseStringEnum(PyObject *o, void *p)
 {
   struct PyC_StringEnum *e = (PyC_StringEnum *)p;
   const char *value = PyUnicode_AsUTF8(o);
-  if (value == NULL)
-  {
+  if (value == NULL) {
     PyErr_Format(PyExc_ValueError, "expected a string, got %s", Py_TYPE(o)->tp_name);
     return 0;
   }
   int i;
-  for (i = 0; e->items[i].id; i++)
-  {
-    if (STREQ(e->items[i].id, value))
-    {
+  for (i = 0; e->items[i].id; i++) {
+    if (STREQ(e->items[i].id, value)) {
       e->value_found = e->items[i].value;
       return 1;
     }
@@ -62,8 +59,7 @@ int PyC_ParseStringEnum(PyObject *o, void *p)
   e->value_found = -1;
 
   PyObject *enum_items = PyTuple_New(i);
-  for (i = 0; e->items[i].id; i++)
-  {
+  for (i = 0; e->items[i].id; i++) {
     PyTuple_SET_ITEM(enum_items, i, PyUnicode_FromString(e->items[i].id));
   }
   PyErr_Format(PyExc_ValueError, "expected a string in %S, got '%s'", enum_items, value);
@@ -80,8 +76,7 @@ int PyC_ParseBool(PyObject *o, void *p)
 {
   bool *bool_p = (bool *)p;
   long value;
-  if (((value = PyLong_AsLong(o)) == -1) || ((value != 0) && (value != 1)))
-  {
+  if (((value = PyLong_AsLong(o)) == -1) || ((value != 0) && (value != 1))) {
     PyErr_Format(PyExc_ValueError, "expected a bool or int (0/1), got %s", Py_TYPE(o)->tp_name);
     return 0;
   }
@@ -93,8 +88,7 @@ int PyC_ParseBool(PyObject *o, void *p)
 PyObject *PyC_UnicodeFromByteAndSize(const char *str, Py_ssize_t size)
 {
   PyObject *result = PyUnicode_FromStringAndSize(str, size);
-  if (result)
-  {
+  if (result) {
     /* 99% of the time this is enough but we better support non unicode
      * chars since blender doesn't limit this */
     return result;
@@ -130,8 +124,7 @@ PyObject *PyC_UnicodeFromByte(const char *str)
 int PyC_Long_AsBool(PyObject *value)
 {
   const int test = _PyLong_AsInt(value);
-  if (ARCH_UNLIKELY((uint)test > 1))
-  {
+  if (ARCH_UNLIKELY((uint)test > 1)) {
     PyErr_SetString(PyExc_TypeError, "Python number not a bool (0/1)");
     return -1;
   }
@@ -141,8 +134,7 @@ int PyC_Long_AsBool(PyObject *value)
 int8_t PyC_Long_AsI8(PyObject *value)
 {
   const int test = _PyLong_AsInt(value);
-  if (ARCH_UNLIKELY(test < INT8_MIN || test > INT8_MAX))
-  {
+  if (ARCH_UNLIKELY(test < INT8_MIN || test > INT8_MAX)) {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C int8");
     return -1;
   }
@@ -152,8 +144,7 @@ int8_t PyC_Long_AsI8(PyObject *value)
 int16_t PyC_Long_AsI16(PyObject *value)
 {
   const int test = _PyLong_AsInt(value);
-  if (ARCH_UNLIKELY(test < INT16_MIN || test > INT16_MAX))
-  {
+  if (ARCH_UNLIKELY(test < INT16_MIN || test > INT16_MAX)) {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C int16");
     return -1;
   }
@@ -168,8 +159,7 @@ int16_t PyC_Long_AsI16(PyObject *value)
 uint8_t PyC_Long_AsU8(PyObject *value)
 {
   const ulong test = PyLong_AsUnsignedLong(value);
-  if (ARCH_UNLIKELY(test > UINT8_MAX))
-  {
+  if (ARCH_UNLIKELY(test > UINT8_MAX)) {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint8");
     return (uint8_t)-1;
   }
@@ -179,8 +169,7 @@ uint8_t PyC_Long_AsU8(PyObject *value)
 uint16_t PyC_Long_AsU16(PyObject *value)
 {
   const ulong test = PyLong_AsUnsignedLong(value);
-  if (ARCH_UNLIKELY(test > UINT16_MAX))
-  {
+  if (ARCH_UNLIKELY(test > UINT16_MAX)) {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint16");
     return (uint16_t)-1;
   }
@@ -190,8 +179,7 @@ uint16_t PyC_Long_AsU16(PyObject *value)
 uint32_t PyC_Long_AsU32(PyObject *value)
 {
   const ulong test = PyLong_AsUnsignedLong(value);
-  if (ARCH_UNLIKELY(test > UINT32_MAX))
-  {
+  if (ARCH_UNLIKELY(test > UINT32_MAX)) {
     PyErr_SetString(PyExc_OverflowError, "Python int too large to convert to C uint32");
     return (uint32_t)-1;
   }
@@ -216,66 +204,54 @@ void PyC_FileAndNum(const char **r_filename, int *r_lineno)
 {
   PyFrameObject *frame;
 
-  if (r_filename)
-  {
+  if (r_filename) {
     *r_filename = NULL;
   }
-  if (r_lineno)
-  {
+  if (r_lineno) {
     *r_lineno = -1;
   }
 
-  if (!(frame = PyThreadState_GET()->frame))
-  {
+  if (!(frame = PyThreadState_GET()->frame)) {
     return;
   }
 
   /* when executing a script */
-  if (r_filename)
-  {
+  if (r_filename) {
     *r_filename = PyUnicode_AsUTF8(frame->f_code->co_filename);
   }
 
   /* when executing a module */
-  if (r_filename && *r_filename == NULL)
-  {
+  if (r_filename && *r_filename == NULL) {
     /* try an alternative method to get the r_filename - module based
      * references below are all borrowed (double checked) */
     PyObject *mod_name = PyDict_GetItemString(PyEval_GetGlobals(), "__name__");
-    if (mod_name)
-    {
+    if (mod_name) {
       PyObject *mod = PyDict_GetItem(PyImport_GetModuleDict(), mod_name);
-      if (mod)
-      {
+      if (mod) {
         PyObject *mod_file = PyModule_GetFilenameObject(mod);
-        if (mod_file)
-        {
+        if (mod_file) {
           *r_filename = PyUnicode_AsUTF8(mod_name);
           Py_DECREF(mod_file);
-        } else
-        {
+        } else {
           PyErr_Clear();
         }
       }
 
       /* unlikely, fallback */
-      if (*r_filename == NULL)
-      {
+      if (*r_filename == NULL) {
         *r_filename = PyUnicode_AsUTF8(mod_name);
       }
     }
   }
 
-  if (r_lineno)
-  {
+  if (r_lineno) {
     *r_lineno = PyFrame_GetLineNumber(frame);
   }
 }
 
 void PyC_FileAndNum_Safe(const char **r_filename, int *r_lineno)
 {
-  if (!PyC_IsInterpreterActive())
-  {
+  if (!PyC_IsInterpreterActive()) {
     return;
   }
 
@@ -303,24 +279,20 @@ PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *for
   error_value_prefix = PyUnicode_FromFormatV(format, args); /* can fail and be NULL */
   va_end(args);
 
-  if (PyErr_Occurred())
-  {
+  if (PyErr_Occurred()) {
     PyObject *error_type, *error_value, *error_traceback;
     PyErr_Fetch(&error_type, &error_value, &error_traceback);
 
-    if (PyUnicode_Check(error_value))
-    {
+    if (PyUnicode_Check(error_value)) {
       PyErr_Format(exception_type_prefix, "%S, %S", error_value_prefix, error_value);
-    } else
-    {
+    } else {
       PyErr_Format(exception_type_prefix,
                    "%S, %.200s(%S)",
                    error_value_prefix,
                    Py_TYPE(error_value)->tp_name,
                    error_value);
     }
-  } else
-  {
+  } else {
     PyErr_SetObject(exception_type_prefix, error_value_prefix);
   }
 
@@ -346,8 +318,7 @@ PyObject *PyC_ExceptionBuffer(void)
 
   PyObject *error_type, *error_value, *error_traceback;
 
-  if (!PyErr_Occurred())
-  {
+  if (!PyErr_Occurred()) {
     return NULL;
   }
 
@@ -359,14 +330,11 @@ PyObject *PyC_ExceptionBuffer(void)
    * string_io = io.StringIO()
    */
 
-  if (!(string_io_mod = PyImport_ImportModule("io")))
-  {
+  if (!(string_io_mod = PyImport_ImportModule("io"))) {
     goto error_cleanup;
-  } else if (!(string_io = PyObject_CallMethod(string_io_mod, "StringIO", NULL)))
-  {
+  } else if (!(string_io = PyObject_CallMethod(string_io_mod, "StringIO", NULL))) {
     goto error_cleanup;
-  } else if (!(string_io_getvalue = PyObject_GetAttrString(string_io, "getvalue")))
-  {
+  } else if (!(string_io_getvalue = PyObject_GetAttrString(string_io, "getvalue"))) {
     goto error_cleanup;
   }
 
@@ -415,37 +383,31 @@ PyObject *PyC_ExceptionBuffer_Simple(void)
 
   PyObject *error_type, *error_value, *error_traceback;
 
-  if (!PyErr_Occurred())
-  {
+  if (!PyErr_Occurred()) {
     return NULL;
   }
 
   PyErr_Fetch(&error_type, &error_value, &error_traceback);
 
-  if (error_value == NULL)
-  {
+  if (error_value == NULL) {
     return NULL;
   }
 
-  if (PyErr_GivenExceptionMatches(error_type, PyExc_SyntaxError))
-  {
+  if (PyErr_GivenExceptionMatches(error_type, PyExc_SyntaxError)) {
     /* Special exception for syntax errors,
      * in these cases the full error is verbose and not very useful,
      * just use the initial text so we know what the error is. */
-    if (PyTuple_CheckExact(error_value) && PyTuple_GET_SIZE(error_value) >= 1)
-    {
+    if (PyTuple_CheckExact(error_value) && PyTuple_GET_SIZE(error_value) >= 1) {
       string_io_buf = PyObject_Str(PyTuple_GET_ITEM(error_value, 0));
     }
   }
 
-  if (string_io_buf == NULL)
-  {
+  if (string_io_buf == NULL) {
     string_io_buf = PyObject_Str(error_value);
   }
 
   /* Python does this too */
-  if (ARCH_UNLIKELY(string_io_buf == NULL))
-  {
+  if (ARCH_UNLIKELY(string_io_buf == NULL)) {
     string_io_buf = PyUnicode_FromFormat("<unprintable %s object>", Py_TYPE(error_value)->tp_name);
   }
 
@@ -469,8 +431,7 @@ PyObject *PyC_DefaultNameSpace(const char *filename)
   PyDict_SetItemString(modules, "__main__", mod_main);
   Py_DECREF(mod_main); /* sys.modules owns now */
   PyModule_AddStringConstant(mod_main, "__name__", "__main__");
-  if (filename)
-  {
+  if (filename) {
     /* __file__ mainly for nice UI'ness
      * note: this won't map to a real file when executing text-blocks and buttons. */
     PyModule_AddObject(mod_main, "__file__", PyC_UnicodeFromByte(filename));
@@ -482,21 +443,18 @@ PyObject *PyC_DefaultNameSpace(const char *filename)
 
 bool PyC_NameSpace_ImportArray(PyObject *py_dict, const char *imports[])
 {
-  for (int i = 0; imports[i]; i++)
-  {
+  for (int i = 0; imports[i]; i++) {
     PyObject *name = PyUnicode_FromString(imports[i]);
     PyObject *mod = PyImport_ImportModuleLevelObject(name, NULL, NULL, 0, 0);
     bool ok = false;
-    if (mod)
-    {
+    if (mod) {
       PyDict_SetItem(py_dict, name, mod);
       ok = true;
       Py_DECREF(mod);
     }
     Py_DECREF(name);
 
-    if (!ok)
-    {
+    if (!ok) {
       return false;
     }
   }
@@ -533,47 +491,39 @@ bool KPy_errors_to_report_ex(ReportList *reports,
 {
   PyObject *pystring;
 
-  if (!PyErr_Occurred())
-  {
+  if (!PyErr_Occurred()) {
     return 1;
   }
 
   /* less hassle if we allow NULL */
-  if (reports == NULL)
-  {
+  if (reports == NULL) {
     PyErr_Print();
     PyErr_Clear();
     return 1;
   }
 
-  if (use_full)
-  {
+  if (use_full) {
     pystring = PyC_ExceptionBuffer();
-  } else
-  {
+  } else {
     pystring = PyC_ExceptionBuffer_Simple();
   }
 
-  if (pystring == NULL)
-  {
+  if (pystring == NULL) {
     KKE_report(reports, RPT_ERROR, "Unknown py-exception, could not convert");
     return 0;
   }
 
-  if (error_prefix == NULL)
-  {
+  if (error_prefix == NULL) {
     /* Not very helpful, better than nothing. */
     error_prefix = "Python";
   }
 
-  if (use_location)
-  {
+  if (use_location) {
     const char *filename;
     int lineno;
 
     PyC_FileAndNum(&filename, &lineno);
-    if (filename == NULL)
-    {
+    if (filename == NULL) {
       filename = "<unknown location>";
     }
 
@@ -592,8 +542,7 @@ bool KPy_errors_to_report_ex(ReportList *reports,
             PyUnicode_AsUTF8(pystring),
             filename,
             lineno);
-  } else
-  {
+  } else {
     KKE_reportf(reports, RPT_ERROR, "%s: %s", error_prefix, PyUnicode_AsUTF8(pystring));
   }
 
@@ -607,13 +556,11 @@ short KPy_reports_to_error(ReportList *reports, PyObject *exception, const bool 
 
   report_str = KKE_reports_string(reports, RPT_ERROR);
 
-  if (clear == true)
-  {
+  if (clear == true) {
     KKE_reports_clear(reports);
   }
 
-  if (report_str)
-  {
+  if (report_str) {
     PyErr_SetString(exception, report_str);
     free(report_str);
   }

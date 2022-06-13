@@ -44,8 +44,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingDiskLightAdapter::~UsdImagingDiskLightAdapter()
-{}
+UsdImagingDiskLightAdapter::~UsdImagingDiskLightAdapter() {}
 
 bool UsdImagingDiskLightAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {

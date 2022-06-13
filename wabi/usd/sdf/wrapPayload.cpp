@@ -46,27 +46,21 @@ namespace
     string args;
     bool useKeywordArgs = false;
 
-    if (!self.GetAssetPath().empty())
-    {
+    if (!self.GetAssetPath().empty()) {
       args += TfPyRepr(self.GetAssetPath());
-    } else
-    {
+    } else {
       useKeywordArgs = true;
     }
-    if (!self.GetPrimPath().IsEmpty())
-    {
+    if (!self.GetPrimPath().IsEmpty()) {
       args += (args.empty() ? "" : ", ");
       args += (useKeywordArgs ? "primPath=" : "") + TfPyRepr(self.GetPrimPath());
-    } else
-    {
+    } else {
       useKeywordArgs = true;
     }
-    if (!self.GetLayerOffset().IsIdentity())
-    {
+    if (!self.GetLayerOffset().IsIdentity()) {
       args += (args.empty() ? "" : ", ");
       args += (useKeywordArgs ? "layerOffset=" : "") + TfPyRepr(self.GetLayerOffset());
-    } else
-    {
+    } else {
       useKeywordArgs = true;
     }
 
@@ -81,7 +75,9 @@ void wrapPayload()
 
   class_<This>("Payload")
     .def(init<const string &, const SdfPath &, const SdfLayerOffset &>(
-      (arg("assetPath") = string(), arg("primPath") = SdfPath(), arg("layerOffset") = SdfLayerOffset())))
+      (arg("assetPath") = string(),
+       arg("primPath") = SdfPath(),
+       arg("layerOffset") = SdfLayerOffset())))
     .def(init<const This &>())
 
     .add_property("assetPath",
@@ -111,6 +107,6 @@ void wrapPayload()
 
   // Register conversion for python list <-> vector<SdfPayload>
   to_python_converter<SdfPayloadVector, TfPySequenceToPython<SdfPayloadVector>>();
-  TfPyContainerConversions::from_python_sequence<SdfPayloadVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::
+    from_python_sequence<SdfPayloadVector, TfPyContainerConversions::variable_capacity_policy>();
 }

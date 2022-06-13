@@ -68,8 +68,7 @@ struct Tf_TokenRegistry
     }
   };
 
-  template<int Mul>
-  struct _Hash
+  template<int Mul> struct _Hash
   {
     inline size_t operator()(TfToken::_Rep const &rep) const
     {
@@ -94,8 +93,7 @@ struct Tf_TokenRegistry
 
   // Utility to pad an instance to take up a cache line to avoid false
   // sharing.
-  template<class T>
-  struct alignas(ARCH_CACHE_LINE_SIZE) _CacheLinePadded
+  template<class T> struct alignas(ARCH_CACHE_LINE_SIZE) _CacheLinePadded
   {
     T val;
   };
@@ -168,31 +166,31 @@ struct Tf_TokenRegistry
       if (--rep->_refCount != 0)
         return;
 
-      if (!_sets[setNum].erase(*rep))
-      {
+      if (!_sets[setNum].erase(*rep)) {
         repFoundInSet = false;
         repString = rep->_str;
       }
     }
-    TF_VERIFY(repFoundInSet, "failed to find token '%s' in table for destruction", repString.c_str());
+    TF_VERIFY(repFoundInSet,
+              "failed to find token '%s' in table for destruction",
+              repString.c_str());
   }
 
   void _DumpStats() const
   {
     std::vector<std::pair<size_t, size_t>> sizesWithSet;
-    for (size_t i = 0; i != _NumSets; ++i)
-    {
+    for (size_t i = 0; i != _NumSets; ++i) {
       sizesWithSet.push_back(std::make_pair(_sets[i].size(), i));
     }
     std::sort(sizesWithSet.begin(), sizesWithSet.end());
     printf("Set # -- Size\n");
-    TF_FOR_ALL (i, sizesWithSet)
-    {
+    TF_FOR_ALL (i, sizesWithSet) {
       printf("%zu -- %zu\n", i->second, i->first);
     }
   }
 
  private:
+
   inline bool _IsEmpty(char const *s) const
   {
     return !s || !s[0];
@@ -222,11 +220,9 @@ struct Tf_TokenRegistry
   {
     uint64_t compCode = 0;
     int nchars = sizeof(compCode);
-    while (nchars--)
-    {
+    while (nchars--) {
       compCode |= static_cast<uint64_t>(*p) << (8 * nchars);
-      if (*p)
-      {
+      if (*p) {
         ++p;
       }
     }
@@ -237,8 +233,7 @@ struct Tf_TokenRegistry
    * Either finds a key that is stringwise-equal to s,
    * or puts a new _Rep into the map for s.
    */
-  template<class Str>
-  inline _RepPtrAndBits _GetPtrImpl(Str s, bool makeImmortal)
+  template<class Str> inline _RepPtrAndBits _GetPtrImpl(Str s, bool makeImmortal)
   {
     if (_IsEmpty(s))
       return _RepPtrAndBits();
@@ -249,20 +244,17 @@ struct Tf_TokenRegistry
 
     // Insert or lookup an existing.
     _RepSet::iterator iter = _sets[setNum].find(_LookupRep(_CStr(s)));
-    if (iter != _sets[setNum].end())
-    {
+    if (iter != _sets[setNum].end()) {
       _RepPtr rep = &(*iter);
       bool isCounted = rep->_isCounted;
-      if (isCounted)
-      {
+      if (isCounted) {
         if (makeImmortal)
           isCounted = rep->_isCounted = false;
         else
           ++rep->_refCount;
       }
       return _RepPtrAndBits(rep, isCounted);
-    } else
-    {
+    } else {
       // No entry present, add a new entry.
       TfAutoMallocTag noname("TfToken");
       _RepPtr rep = &(*_sets[setNum].insert(TfToken::_Rep(s)).first);
@@ -275,8 +267,7 @@ struct Tf_TokenRegistry
     }
   }
 
-  template<class Str>
-  _RepPtrAndBits _FindPtrImpl(Str s) const
+  template<class Str> _RepPtrAndBits _FindPtrImpl(Str s) const
   {
     if (_IsEmpty(s))
       return _RepPtrAndBits();

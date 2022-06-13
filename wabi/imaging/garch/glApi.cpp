@@ -1244,7 +1244,8 @@ namespace internal
     PFNGLGETFRAGDATALOCATIONPROC glGetFragDataLocation = NULL;
     PFNGLGETFRAGDATALOCATIONEXTPROC glGetFragDataLocationEXT = NULL;
     PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetFramebufferAttachmentParameteriv = NULL;
-    PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC glGetFramebufferAttachmentParameterivEXT = NULL;
+    PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC glGetFramebufferAttachmentParameterivEXT =
+      NULL;
     PFNGLGETFRAMEBUFFERPARAMETERFVAMDPROC glGetFramebufferParameterfvAMD = NULL;
     PFNGLGETFRAMEBUFFERPARAMETERIVPROC glGetFramebufferParameteriv = NULL;
     PFNGLGETFRAMEBUFFERPARAMETERIVEXTPROC glGetFramebufferParameterivEXT = NULL;
@@ -1320,7 +1321,8 @@ namespace internal
     PFNGLGETNAMEDBUFFERSUBDATAPROC glGetNamedBufferSubData = NULL;
     PFNGLGETNAMEDBUFFERSUBDATAEXTPROC glGetNamedBufferSubDataEXT = NULL;
     PFNGLGETNAMEDFRAMEBUFFERPARAMETERFVAMDPROC glGetNamedFramebufferParameterfvAMD = NULL;
-    PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetNamedFramebufferAttachmentParameteriv = NULL;
+    PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetNamedFramebufferAttachmentParameteriv =
+      NULL;
     PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC
     glGetNamedFramebufferAttachmentParameterivEXT = NULL;
     PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVPROC glGetNamedFramebufferParameteriv = NULL;
@@ -1796,7 +1798,8 @@ namespace internal
     PFNGLMULTIDRAWARRAYSEXTPROC glMultiDrawArraysEXT = NULL;
     PFNGLMULTIDRAWARRAYSINDIRECTPROC glMultiDrawArraysIndirect = NULL;
     PFNGLMULTIDRAWARRAYSINDIRECTAMDPROC glMultiDrawArraysIndirectAMD = NULL;
-    PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSCOUNTNVPROC glMultiDrawArraysIndirectBindlessCountNV = NULL;
+    PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSCOUNTNVPROC glMultiDrawArraysIndirectBindlessCountNV =
+      NULL;
     PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSNVPROC glMultiDrawArraysIndirectBindlessNV = NULL;
     PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC glMultiDrawArraysIndirectCount = NULL;
     PFNGLMULTIDRAWARRAYSINDIRECTCOUNTARBPROC glMultiDrawArraysIndirectCountARB = NULL;
@@ -1806,7 +1809,8 @@ namespace internal
     PFNGLMULTIDRAWELEMENTSEXTPROC glMultiDrawElementsEXT = NULL;
     PFNGLMULTIDRAWELEMENTSINDIRECTPROC glMultiDrawElementsIndirect = NULL;
     PFNGLMULTIDRAWELEMENTSINDIRECTAMDPROC glMultiDrawElementsIndirectAMD = NULL;
-    PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNVPROC glMultiDrawElementsIndirectBindlessCountNV = NULL;
+    PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNVPROC glMultiDrawElementsIndirectBindlessCountNV =
+      NULL;
     PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSNVPROC glMultiDrawElementsIndirectBindlessNV = NULL;
     PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC glMultiDrawElementsIndirectCount = NULL;
     PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTARBPROC glMultiDrawElementsIndirectCountARB = NULL;
@@ -1923,7 +1927,8 @@ namespace internal
     PFNGLMULTICASTBUFFERSUBDATANVPROC glMulticastBufferSubDataNV = NULL;
     PFNGLMULTICASTCOPYBUFFERSUBDATANVPROC glMulticastCopyBufferSubDataNV = NULL;
     PFNGLMULTICASTCOPYIMAGESUBDATANVPROC glMulticastCopyImageSubDataNV = NULL;
-    PFNGLMULTICASTFRAMEBUFFERSAMPLELOCATIONSFVNVPROC glMulticastFramebufferSampleLocationsfvNV = NULL;
+    PFNGLMULTICASTFRAMEBUFFERSAMPLELOCATIONSFVNVPROC glMulticastFramebufferSampleLocationsfvNV =
+      NULL;
     PFNGLMULTICASTGETQUERYOBJECTI64VNVPROC glMulticastGetQueryObjecti64vNV = NULL;
     PFNGLMULTICASTGETQUERYOBJECTIVNVPROC glMulticastGetQueryObjectivNV = NULL;
     PFNGLMULTICASTGETQUERYOBJECTUI64VNVPROC glMulticastGetQueryObjectui64vNV = NULL;
@@ -1982,7 +1987,8 @@ namespace internal
     glNamedRenderbufferStorageMultisampleAdvancedAMD = NULL;
     PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXTPROC
     glNamedRenderbufferStorageMultisampleCoverageEXT = NULL;
-    PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC glNamedRenderbufferStorageMultisampleEXT = NULL;
+    PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC glNamedRenderbufferStorageMultisampleEXT =
+      NULL;
     PFNGLNAMEDSTRINGARBPROC glNamedStringARB = NULL;
     PFNGLNEWLISTPROC glNewList = NULL;
     PFNGLNORMAL3BPROC glNormal3b = NULL;
@@ -2322,8 +2328,10 @@ namespace internal
     PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage = NULL;
     PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorageEXT = NULL;
     PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC glRenderbufferStorageMultisample = NULL;
-    PFNGLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC glRenderbufferStorageMultisampleAdvancedAMD = NULL;
-    PFNGLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENVPROC glRenderbufferStorageMultisampleCoverageNV = NULL;
+    PFNGLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC
+      glRenderbufferStorageMultisampleAdvancedAMD = NULL;
+    PFNGLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENVPROC glRenderbufferStorageMultisampleCoverageNV =
+      NULL;
     PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC glRenderbufferStorageMultisampleEXT = NULL;
     PFNGLREQUESTRESIDENTPROGRAMSNVPROC glRequestResidentProgramsNV = NULL;
     PFNGLRESETHISTOGRAMPROC glResetHistogram = NULL;
@@ -3155,13 +3163,16 @@ namespace internal
     {
 #if defined(ARCH_OS_WINDOWS)
       libHandle = ArchLibraryOpen("opengl32.dll", 0);
-      libGetProcAddress = (PFNGETPROCADDRESS)ArchLibraryGetSymbolAddress(libHandle, "wglGetProcAddress");
+      libGetProcAddress = (PFNGETPROCADDRESS)ArchLibraryGetSymbolAddress(libHandle,
+                                                                         "wglGetProcAddress");
 #elif defined(ARCH_OS_DARWIN)
-      libHandle = ArchLibraryOpen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL",
-                                  RTLD_LAZY | RTLD_LOCAL);
+      libHandle = ArchLibraryOpen(
+        "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL",
+        RTLD_LAZY | RTLD_LOCAL);
 #elif defined(ARCH_OS_LINUX)
       libHandle = ArchLibraryOpen("libGL.so.1", RTLD_LAZY | RTLD_LOCAL);
-      libGetProcAddress = (PFNGETPROCADDRESS)ArchLibraryGetSymbolAddress(libHandle, "glXGetProcAddressARB");
+      libGetProcAddress = (PFNGETPROCADDRESS)ArchLibraryGetSymbolAddress(libHandle,
+                                                                         "glXGetProcAddressARB");
 #else
       return false;
 #endif
@@ -3171,8 +3182,7 @@ namespace internal
 
     static void unloadLibrary()
     {
-      if (libHandle != NULL)
-      {
+      if (libHandle != NULL) {
         ArchLibraryClose(libHandle);
         libHandle = NULL;
       }
@@ -3185,8 +3195,7 @@ namespace internal
 
 #if !defined(ARCH_OS_DARWIN)
       result = libGetProcAddress(name);
-      if (result == NULL)
-      {
+      if (result == NULL) {
         result = ArchLibraryGetSymbolAddress(libHandle, name);
       }
 #else
@@ -3198,10 +3207,8 @@ namespace internal
 
     static bool hasExt(const char *ext, const std::vector<const char *> &extensions)
     {
-      for (size_t i = 0; i < extensions.size(); ++i)
-      {
-        if (strcmp(ext, extensions[i]) == 0)
-        {
+      for (size_t i = 0; i < extensions.size(); ++i) {
+        if (strcmp(ext, extensions[i]) == 0) {
           return true;
         }
       }
@@ -3218,16 +3225,13 @@ namespace internal
 
       // direct version query is supported only for versions 3.x and greater
       const char *versionStr = (const char *)glGetString(GL_VERSION);
-      if (versionStr && versionStr[0] == '1' && versionStr[1] == '.')
-      {
+      if (versionStr && versionStr[0] == '1' && versionStr[1] == '.') {
         major = 1;
         minor = versionStr[2] - '0';
-      } else if (versionStr && versionStr[0] == '2' && versionStr[1] == '.')
-      {
+      } else if (versionStr && versionStr[0] == '2' && versionStr[1] == '.') {
         major = 2;
         minor = versionStr[2] - '0';
-      } else
-      {
+      } else {
         glGetIntegerv(GL_MAJOR_VERSION, &major);
         glGetIntegerv(GL_MINOR_VERSION, &minor);
       }
@@ -3236,17 +3240,14 @@ namespace internal
       std::vector<char> extensionsBuffer;  // used when parsing extensions string
 
       // direct extension query is supported only for versions 3.x and greater
-      if (major >= 3)
-      {
+      if (major >= 3) {
         GLint numExtensions = 0;
         glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         extensions.resize(numExtensions);
-        for (size_t i = 0; i < extensions.size(); ++i)
-        {
+        for (size_t i = 0; i < extensions.size(); ++i) {
           extensions[i] = (const char *)glGetStringi(GL_EXTENSIONS, (GLuint)i);
         }
-      } else if (major > 0)
-      {
+      } else if (major > 0) {
         const char *extStr = (const char *)glGetString(GL_EXTENSIONS);
         const size_t extStrLen = strlen(extStr);
 
@@ -3255,14 +3256,11 @@ namespace internal
 
         // identify and terminate substrings
         bool inSubstring = false;
-        for (size_t i = 0; i < extStrLen; ++i)
-        {
-          if (extensionsBuffer[i] == ' ')
-          {
+        for (size_t i = 0; i < extStrLen; ++i) {
+          if (extensionsBuffer[i] == ' ') {
             extensionsBuffer[i] = '\0';
             inSubstring = false;
-          } else if (!inSubstring)
-          {
+          } else if (!inSubstring) {
             extensions.push_back(&extensionsBuffer[i]);
             inSubstring = true;
           }
@@ -3294,9 +3292,11 @@ namespace internal
       GARCH_GL_AMD_debug_output = hasExt("GL_AMD_debug_output", extensions);
       GARCH_GL_AMD_depth_clamp_separate = hasExt("GL_AMD_depth_clamp_separate", extensions);
       GARCH_GL_AMD_draw_buffers_blend = hasExt("GL_AMD_draw_buffers_blend", extensions);
-      GARCH_GL_AMD_framebuffer_multisample_advanced = hasExt("GL_AMD_framebuffer_multisample_advanced",
-                                                             extensions);
-      GARCH_GL_AMD_framebuffer_sample_positions = hasExt("GL_AMD_framebuffer_sample_positions", extensions);
+      GARCH_GL_AMD_framebuffer_multisample_advanced = hasExt(
+        "GL_AMD_framebuffer_multisample_advanced",
+        extensions);
+      GARCH_GL_AMD_framebuffer_sample_positions = hasExt("GL_AMD_framebuffer_sample_positions",
+                                                         extensions);
       GARCH_GL_AMD_gcn_shader = hasExt("GL_AMD_gcn_shader", extensions);
       GARCH_GL_AMD_gpu_shader_half_float = hasExt("GL_AMD_gpu_shader_half_float", extensions);
       GARCH_GL_AMD_gpu_shader_int16 = hasExt("GL_AMD_gpu_shader_int16", extensions);
@@ -3309,26 +3309,35 @@ namespace internal
       GARCH_GL_AMD_pinned_memory = hasExt("GL_AMD_pinned_memory", extensions);
       GARCH_GL_AMD_query_buffer_object = hasExt("GL_AMD_query_buffer_object", extensions);
       GARCH_GL_AMD_sample_positions = hasExt("GL_AMD_sample_positions", extensions);
-      GARCH_GL_AMD_seamless_cubemap_per_texture = hasExt("GL_AMD_seamless_cubemap_per_texture", extensions);
-      GARCH_GL_AMD_shader_atomic_counter_ops = hasExt("GL_AMD_shader_atomic_counter_ops", extensions);
+      GARCH_GL_AMD_seamless_cubemap_per_texture = hasExt("GL_AMD_seamless_cubemap_per_texture",
+                                                         extensions);
+      GARCH_GL_AMD_shader_atomic_counter_ops = hasExt("GL_AMD_shader_atomic_counter_ops",
+                                                      extensions);
       GARCH_GL_AMD_shader_ballot = hasExt("GL_AMD_shader_ballot", extensions);
-      GARCH_GL_AMD_shader_gpu_shader_half_float_fetch = hasExt("GL_AMD_shader_gpu_shader_half_float_fetch",
-                                                               extensions);
-      GARCH_GL_AMD_shader_image_load_store_lod = hasExt("GL_AMD_shader_image_load_store_lod", extensions);
+      GARCH_GL_AMD_shader_gpu_shader_half_float_fetch = hasExt(
+        "GL_AMD_shader_gpu_shader_half_float_fetch",
+        extensions);
+      GARCH_GL_AMD_shader_image_load_store_lod = hasExt("GL_AMD_shader_image_load_store_lod",
+                                                        extensions);
       GARCH_GL_AMD_shader_stencil_export = hasExt("GL_AMD_shader_stencil_export", extensions);
       GARCH_GL_AMD_shader_trinary_minmax = hasExt("GL_AMD_shader_trinary_minmax", extensions);
-      GARCH_GL_AMD_shader_explicit_vertex_parameter = hasExt("GL_AMD_shader_explicit_vertex_parameter",
-                                                             extensions);
+      GARCH_GL_AMD_shader_explicit_vertex_parameter = hasExt(
+        "GL_AMD_shader_explicit_vertex_parameter",
+        extensions);
       GARCH_GL_AMD_sparse_texture = hasExt("GL_AMD_sparse_texture", extensions);
-      GARCH_GL_AMD_stencil_operation_extended = hasExt("GL_AMD_stencil_operation_extended", extensions);
+      GARCH_GL_AMD_stencil_operation_extended = hasExt("GL_AMD_stencil_operation_extended",
+                                                       extensions);
       GARCH_GL_AMD_texture_gather_bias_lod = hasExt("GL_AMD_texture_gather_bias_lod", extensions);
       GARCH_GL_AMD_texture_texture4 = hasExt("GL_AMD_texture_texture4", extensions);
-      GARCH_GL_AMD_transform_feedback3_lines_triangles = hasExt("GL_AMD_transform_feedback3_lines_triangles",
-                                                                extensions);
+      GARCH_GL_AMD_transform_feedback3_lines_triangles = hasExt(
+        "GL_AMD_transform_feedback3_lines_triangles",
+        extensions);
       GARCH_GL_AMD_transform_feedback4 = hasExt("GL_AMD_transform_feedback4", extensions);
       GARCH_GL_AMD_vertex_shader_layer = hasExt("GL_AMD_vertex_shader_layer", extensions);
-      GARCH_GL_AMD_vertex_shader_tessellator = hasExt("GL_AMD_vertex_shader_tessellator", extensions);
-      GARCH_GL_AMD_vertex_shader_viewport_index = hasExt("GL_AMD_vertex_shader_viewport_index", extensions);
+      GARCH_GL_AMD_vertex_shader_tessellator = hasExt("GL_AMD_vertex_shader_tessellator",
+                                                      extensions);
+      GARCH_GL_AMD_vertex_shader_viewport_index = hasExt("GL_AMD_vertex_shader_viewport_index",
+                                                         extensions);
       GARCH_GL_APPLE_aux_depth_stencil = hasExt("GL_APPLE_aux_depth_stencil", extensions);
       GARCH_GL_APPLE_client_storage = hasExt("GL_APPLE_client_storage", extensions);
       GARCH_GL_APPLE_element_array = hasExt("GL_APPLE_element_array", extensions);
@@ -3343,7 +3352,8 @@ namespace internal
       GARCH_GL_APPLE_transform_hint = hasExt("GL_APPLE_transform_hint", extensions);
       GARCH_GL_APPLE_vertex_array_object = hasExt("GL_APPLE_vertex_array_object", extensions);
       GARCH_GL_APPLE_vertex_array_range = hasExt("GL_APPLE_vertex_array_range", extensions);
-      GARCH_GL_APPLE_vertex_program_evaluators = hasExt("GL_APPLE_vertex_program_evaluators", extensions);
+      GARCH_GL_APPLE_vertex_program_evaluators = hasExt("GL_APPLE_vertex_program_evaluators",
+                                                        extensions);
       GARCH_GL_APPLE_ycbcr_422 = hasExt("GL_APPLE_ycbcr_422", extensions);
       GARCH_GL_ARB_ES2_compatibility = hasExt("GL_ARB_ES2_compatibility", extensions);
       GARCH_GL_ARB_ES3_1_compatibility = hasExt("GL_ARB_ES3_1_compatibility", extensions);
@@ -3360,11 +3370,14 @@ namespace internal
       GARCH_GL_ARB_clip_control = hasExt("GL_ARB_clip_control", extensions);
       GARCH_GL_ARB_color_buffer_float = hasExt("GL_ARB_color_buffer_float", extensions);
       GARCH_GL_ARB_compatibility = hasExt("GL_ARB_compatibility", extensions);
-      GARCH_GL_ARB_compressed_texture_pixel_storage = hasExt("GL_ARB_compressed_texture_pixel_storage",
-                                                             extensions);
+      GARCH_GL_ARB_compressed_texture_pixel_storage = hasExt(
+        "GL_ARB_compressed_texture_pixel_storage",
+        extensions);
       GARCH_GL_ARB_compute_shader = hasExt("GL_ARB_compute_shader", extensions);
-      GARCH_GL_ARB_compute_variable_group_size = hasExt("GL_ARB_compute_variable_group_size", extensions);
-      GARCH_GL_ARB_conditional_render_inverted = hasExt("GL_ARB_conditional_render_inverted", extensions);
+      GARCH_GL_ARB_compute_variable_group_size = hasExt("GL_ARB_compute_variable_group_size",
+                                                        extensions);
+      GARCH_GL_ARB_conditional_render_inverted = hasExt("GL_ARB_conditional_render_inverted",
+                                                        extensions);
       GARCH_GL_ARB_conservative_depth = hasExt("GL_ARB_conservative_depth", extensions);
       GARCH_GL_ARB_copy_buffer = hasExt("GL_ARB_copy_buffer", extensions);
       GARCH_GL_ARB_copy_image = hasExt("GL_ARB_copy_image", extensions);
@@ -3377,19 +3390,25 @@ namespace internal
       GARCH_GL_ARB_direct_state_access = hasExt("GL_ARB_direct_state_access", extensions);
       GARCH_GL_ARB_draw_buffers = hasExt("GL_ARB_draw_buffers", extensions);
       GARCH_GL_ARB_draw_buffers_blend = hasExt("GL_ARB_draw_buffers_blend", extensions);
-      GARCH_GL_ARB_draw_elements_base_vertex = hasExt("GL_ARB_draw_elements_base_vertex", extensions);
+      GARCH_GL_ARB_draw_elements_base_vertex = hasExt("GL_ARB_draw_elements_base_vertex",
+                                                      extensions);
       GARCH_GL_ARB_draw_indirect = hasExt("GL_ARB_draw_indirect", extensions);
       GARCH_GL_ARB_draw_instanced = hasExt("GL_ARB_draw_instanced", extensions);
       GARCH_GL_ARB_enhanced_layouts = hasExt("GL_ARB_enhanced_layouts", extensions);
-      GARCH_GL_ARB_explicit_attrib_location = hasExt("GL_ARB_explicit_attrib_location", extensions);
-      GARCH_GL_ARB_explicit_uniform_location = hasExt("GL_ARB_explicit_uniform_location", extensions);
-      GARCH_GL_ARB_fragment_coord_conventions = hasExt("GL_ARB_fragment_coord_conventions", extensions);
+      GARCH_GL_ARB_explicit_attrib_location = hasExt("GL_ARB_explicit_attrib_location",
+                                                     extensions);
+      GARCH_GL_ARB_explicit_uniform_location = hasExt("GL_ARB_explicit_uniform_location",
+                                                      extensions);
+      GARCH_GL_ARB_fragment_coord_conventions = hasExt("GL_ARB_fragment_coord_conventions",
+                                                       extensions);
       GARCH_GL_ARB_fragment_layer_viewport = hasExt("GL_ARB_fragment_layer_viewport", extensions);
       GARCH_GL_ARB_fragment_program = hasExt("GL_ARB_fragment_program", extensions);
       GARCH_GL_ARB_fragment_program_shadow = hasExt("GL_ARB_fragment_program_shadow", extensions);
       GARCH_GL_ARB_fragment_shader = hasExt("GL_ARB_fragment_shader", extensions);
-      GARCH_GL_ARB_fragment_shader_interlock = hasExt("GL_ARB_fragment_shader_interlock", extensions);
-      GARCH_GL_ARB_framebuffer_no_attachments = hasExt("GL_ARB_framebuffer_no_attachments", extensions);
+      GARCH_GL_ARB_fragment_shader_interlock = hasExt("GL_ARB_fragment_shader_interlock",
+                                                      extensions);
+      GARCH_GL_ARB_framebuffer_no_attachments = hasExt("GL_ARB_framebuffer_no_attachments",
+                                                       extensions);
       GARCH_GL_ARB_framebuffer_object = hasExt("GL_ARB_framebuffer_object", extensions);
       GARCH_GL_ARB_framebuffer_sRGB = hasExt("GL_ARB_framebuffer_sRGB", extensions);
       GARCH_GL_ARB_geometry_shader4 = hasExt("GL_ARB_geometry_shader4", extensions);
@@ -3417,7 +3436,8 @@ namespace internal
       GARCH_GL_ARB_occlusion_query = hasExt("GL_ARB_occlusion_query", extensions);
       GARCH_GL_ARB_occlusion_query2 = hasExt("GL_ARB_occlusion_query2", extensions);
       GARCH_GL_ARB_parallel_shader_compile = hasExt("GL_ARB_parallel_shader_compile", extensions);
-      GARCH_GL_ARB_pipeline_statistics_query = hasExt("GL_ARB_pipeline_statistics_query", extensions);
+      GARCH_GL_ARB_pipeline_statistics_query = hasExt("GL_ARB_pipeline_statistics_query",
+                                                      extensions);
       GARCH_GL_ARB_pixel_buffer_object = hasExt("GL_ARB_pixel_buffer_object", extensions);
       GARCH_GL_ARB_point_parameters = hasExt("GL_ARB_point_parameters", extensions);
       GARCH_GL_ARB_point_sprite = hasExt("GL_ARB_point_sprite", extensions);
@@ -3434,9 +3454,11 @@ namespace internal
       GARCH_GL_ARB_sample_shading = hasExt("GL_ARB_sample_shading", extensions);
       GARCH_GL_ARB_sampler_objects = hasExt("GL_ARB_sampler_objects", extensions);
       GARCH_GL_ARB_seamless_cube_map = hasExt("GL_ARB_seamless_cube_map", extensions);
-      GARCH_GL_ARB_seamless_cubemap_per_texture = hasExt("GL_ARB_seamless_cubemap_per_texture", extensions);
+      GARCH_GL_ARB_seamless_cubemap_per_texture = hasExt("GL_ARB_seamless_cubemap_per_texture",
+                                                         extensions);
       GARCH_GL_ARB_separate_shader_objects = hasExt("GL_ARB_separate_shader_objects", extensions);
-      GARCH_GL_ARB_shader_atomic_counter_ops = hasExt("GL_ARB_shader_atomic_counter_ops", extensions);
+      GARCH_GL_ARB_shader_atomic_counter_ops = hasExt("GL_ARB_shader_atomic_counter_ops",
+                                                      extensions);
       GARCH_GL_ARB_shader_atomic_counters = hasExt("GL_ARB_shader_atomic_counters", extensions);
       GARCH_GL_ARB_shader_ballot = hasExt("GL_ARB_shader_ballot", extensions);
       GARCH_GL_ARB_shader_bit_encoding = hasExt("GL_ARB_shader_bit_encoding", extensions);
@@ -3448,15 +3470,21 @@ namespace internal
       GARCH_GL_ARB_shader_objects = hasExt("GL_ARB_shader_objects", extensions);
       GARCH_GL_ARB_shader_precision = hasExt("GL_ARB_shader_precision", extensions);
       GARCH_GL_ARB_shader_stencil_export = hasExt("GL_ARB_shader_stencil_export", extensions);
-      GARCH_GL_ARB_shader_storage_buffer_object = hasExt("GL_ARB_shader_storage_buffer_object", extensions);
+      GARCH_GL_ARB_shader_storage_buffer_object = hasExt("GL_ARB_shader_storage_buffer_object",
+                                                         extensions);
       GARCH_GL_ARB_shader_subroutine = hasExt("GL_ARB_shader_subroutine", extensions);
-      GARCH_GL_ARB_shader_texture_image_samples = hasExt("GL_ARB_shader_texture_image_samples", extensions);
+      GARCH_GL_ARB_shader_texture_image_samples = hasExt("GL_ARB_shader_texture_image_samples",
+                                                         extensions);
       GARCH_GL_ARB_shader_texture_lod = hasExt("GL_ARB_shader_texture_lod", extensions);
-      GARCH_GL_ARB_shader_viewport_layer_array = hasExt("GL_ARB_shader_viewport_layer_array", extensions);
+      GARCH_GL_ARB_shader_viewport_layer_array = hasExt("GL_ARB_shader_viewport_layer_array",
+                                                        extensions);
       GARCH_GL_ARB_shading_language_100 = hasExt("GL_ARB_shading_language_100", extensions);
-      GARCH_GL_ARB_shading_language_420pack = hasExt("GL_ARB_shading_language_420pack", extensions);
-      GARCH_GL_ARB_shading_language_include = hasExt("GL_ARB_shading_language_include", extensions);
-      GARCH_GL_ARB_shading_language_packing = hasExt("GL_ARB_shading_language_packing", extensions);
+      GARCH_GL_ARB_shading_language_420pack = hasExt("GL_ARB_shading_language_420pack",
+                                                     extensions);
+      GARCH_GL_ARB_shading_language_include = hasExt("GL_ARB_shading_language_include",
+                                                     extensions);
+      GARCH_GL_ARB_shading_language_packing = hasExt("GL_ARB_shading_language_packing",
+                                                     extensions);
       GARCH_GL_ARB_shadow = hasExt("GL_ARB_shadow", extensions);
       GARCH_GL_ARB_shadow_ambient = hasExt("GL_ARB_shadow_ambient", extensions);
       GARCH_GL_ARB_sparse_buffer = hasExt("GL_ARB_sparse_buffer", extensions);
@@ -3470,25 +3498,31 @@ namespace internal
       GARCH_GL_ARB_texture_barrier = hasExt("GL_ARB_texture_barrier", extensions);
       GARCH_GL_ARB_texture_border_clamp = hasExt("GL_ARB_texture_border_clamp", extensions);
       GARCH_GL_ARB_texture_buffer_object = hasExt("GL_ARB_texture_buffer_object", extensions);
-      GARCH_GL_ARB_texture_buffer_object_rgb32 = hasExt("GL_ARB_texture_buffer_object_rgb32", extensions);
+      GARCH_GL_ARB_texture_buffer_object_rgb32 = hasExt("GL_ARB_texture_buffer_object_rgb32",
+                                                        extensions);
       GARCH_GL_ARB_texture_buffer_range = hasExt("GL_ARB_texture_buffer_range", extensions);
       GARCH_GL_ARB_texture_compression = hasExt("GL_ARB_texture_compression", extensions);
-      GARCH_GL_ARB_texture_compression_bptc = hasExt("GL_ARB_texture_compression_bptc", extensions);
-      GARCH_GL_ARB_texture_compression_rgtc = hasExt("GL_ARB_texture_compression_rgtc", extensions);
+      GARCH_GL_ARB_texture_compression_bptc = hasExt("GL_ARB_texture_compression_bptc",
+                                                     extensions);
+      GARCH_GL_ARB_texture_compression_rgtc = hasExt("GL_ARB_texture_compression_rgtc",
+                                                     extensions);
       GARCH_GL_ARB_texture_cube_map = hasExt("GL_ARB_texture_cube_map", extensions);
       GARCH_GL_ARB_texture_cube_map_array = hasExt("GL_ARB_texture_cube_map_array", extensions);
       GARCH_GL_ARB_texture_env_add = hasExt("GL_ARB_texture_env_add", extensions);
       GARCH_GL_ARB_texture_env_combine = hasExt("GL_ARB_texture_env_combine", extensions);
       GARCH_GL_ARB_texture_env_crossbar = hasExt("GL_ARB_texture_env_crossbar", extensions);
       GARCH_GL_ARB_texture_env_dot3 = hasExt("GL_ARB_texture_env_dot3", extensions);
-      GARCH_GL_ARB_texture_filter_anisotropic = hasExt("GL_ARB_texture_filter_anisotropic", extensions);
+      GARCH_GL_ARB_texture_filter_anisotropic = hasExt("GL_ARB_texture_filter_anisotropic",
+                                                       extensions);
       GARCH_GL_ARB_texture_filter_minmax = hasExt("GL_ARB_texture_filter_minmax", extensions);
       GARCH_GL_ARB_texture_float = hasExt("GL_ARB_texture_float", extensions);
       GARCH_GL_ARB_texture_gather = hasExt("GL_ARB_texture_gather", extensions);
-      GARCH_GL_ARB_texture_mirror_clamp_to_edge = hasExt("GL_ARB_texture_mirror_clamp_to_edge", extensions);
+      GARCH_GL_ARB_texture_mirror_clamp_to_edge = hasExt("GL_ARB_texture_mirror_clamp_to_edge",
+                                                         extensions);
       GARCH_GL_ARB_texture_mirrored_repeat = hasExt("GL_ARB_texture_mirrored_repeat", extensions);
       GARCH_GL_ARB_texture_multisample = hasExt("GL_ARB_texture_multisample", extensions);
-      GARCH_GL_ARB_texture_non_power_of_two = hasExt("GL_ARB_texture_non_power_of_two", extensions);
+      GARCH_GL_ARB_texture_non_power_of_two = hasExt("GL_ARB_texture_non_power_of_two",
+                                                     extensions);
       GARCH_GL_ARB_texture_query_levels = hasExt("GL_ARB_texture_query_levels", extensions);
       GARCH_GL_ARB_texture_query_lod = hasExt("GL_ARB_texture_query_lod", extensions);
       GARCH_GL_ARB_texture_rectangle = hasExt("GL_ARB_texture_rectangle", extensions);
@@ -3496,15 +3530,18 @@ namespace internal
       GARCH_GL_ARB_texture_rgb10_a2ui = hasExt("GL_ARB_texture_rgb10_a2ui", extensions);
       GARCH_GL_ARB_texture_stencil8 = hasExt("GL_ARB_texture_stencil8", extensions);
       GARCH_GL_ARB_texture_storage = hasExt("GL_ARB_texture_storage", extensions);
-      GARCH_GL_ARB_texture_storage_multisample = hasExt("GL_ARB_texture_storage_multisample", extensions);
+      GARCH_GL_ARB_texture_storage_multisample = hasExt("GL_ARB_texture_storage_multisample",
+                                                        extensions);
       GARCH_GL_ARB_texture_swizzle = hasExt("GL_ARB_texture_swizzle", extensions);
       GARCH_GL_ARB_texture_view = hasExt("GL_ARB_texture_view", extensions);
       GARCH_GL_ARB_timer_query = hasExt("GL_ARB_timer_query", extensions);
       GARCH_GL_ARB_transform_feedback2 = hasExt("GL_ARB_transform_feedback2", extensions);
       GARCH_GL_ARB_transform_feedback3 = hasExt("GL_ARB_transform_feedback3", extensions);
-      GARCH_GL_ARB_transform_feedback_instanced = hasExt("GL_ARB_transform_feedback_instanced", extensions);
-      GARCH_GL_ARB_transform_feedback_overflow_query = hasExt("GL_ARB_transform_feedback_overflow_query",
-                                                              extensions);
+      GARCH_GL_ARB_transform_feedback_instanced = hasExt("GL_ARB_transform_feedback_instanced",
+                                                         extensions);
+      GARCH_GL_ARB_transform_feedback_overflow_query = hasExt(
+        "GL_ARB_transform_feedback_overflow_query",
+        extensions);
       GARCH_GL_ARB_transpose_matrix = hasExt("GL_ARB_transpose_matrix", extensions);
       GARCH_GL_ARB_uniform_buffer_object = hasExt("GL_ARB_uniform_buffer_object", extensions);
       GARCH_GL_ARB_vertex_array_bgra = hasExt("GL_ARB_vertex_array_bgra", extensions);
@@ -3515,8 +3552,10 @@ namespace internal
       GARCH_GL_ARB_vertex_buffer_object = hasExt("GL_ARB_vertex_buffer_object", extensions);
       GARCH_GL_ARB_vertex_program = hasExt("GL_ARB_vertex_program", extensions);
       GARCH_GL_ARB_vertex_shader = hasExt("GL_ARB_vertex_shader", extensions);
-      GARCH_GL_ARB_vertex_type_10f_11f_11f_rev = hasExt("GL_ARB_vertex_type_10f_11f_11f_rev", extensions);
-      GARCH_GL_ARB_vertex_type_2_10_10_10_rev = hasExt("GL_ARB_vertex_type_2_10_10_10_rev", extensions);
+      GARCH_GL_ARB_vertex_type_10f_11f_11f_rev = hasExt("GL_ARB_vertex_type_10f_11f_11f_rev",
+                                                        extensions);
+      GARCH_GL_ARB_vertex_type_2_10_10_10_rev = hasExt("GL_ARB_vertex_type_2_10_10_10_rev",
+                                                       extensions);
       GARCH_GL_ARB_viewport_array = hasExt("GL_ARB_viewport_array", extensions);
       GARCH_GL_ARB_window_pos = hasExt("GL_ARB_window_pos", extensions);
       GARCH_GL_EXT_422_pixels = hasExt("GL_EXT_422_pixels", extensions);
@@ -3550,8 +3589,9 @@ namespace internal
       GARCH_GL_EXT_fog_coord = hasExt("GL_EXT_fog_coord", extensions);
       GARCH_GL_EXT_framebuffer_blit = hasExt("GL_EXT_framebuffer_blit", extensions);
       GARCH_GL_EXT_framebuffer_multisample = hasExt("GL_EXT_framebuffer_multisample", extensions);
-      GARCH_GL_EXT_framebuffer_multisample_blit_scaled = hasExt("GL_EXT_framebuffer_multisample_blit_scaled",
-                                                                extensions);
+      GARCH_GL_EXT_framebuffer_multisample_blit_scaled = hasExt(
+        "GL_EXT_framebuffer_multisample_blit_scaled",
+        extensions);
       GARCH_GL_EXT_framebuffer_object = hasExt("GL_EXT_framebuffer_object", extensions);
       GARCH_GL_EXT_framebuffer_sRGB = hasExt("GL_EXT_framebuffer_sRGB", extensions);
       GARCH_GL_EXT_geometry_shader4 = hasExt("GL_EXT_geometry_shader4", extensions);
@@ -3581,7 +3621,8 @@ namespace internal
       GARCH_GL_EXT_paletted_texture = hasExt("GL_EXT_paletted_texture", extensions);
       GARCH_GL_EXT_pixel_buffer_object = hasExt("GL_EXT_pixel_buffer_object", extensions);
       GARCH_GL_EXT_pixel_transform = hasExt("GL_EXT_pixel_transform", extensions);
-      GARCH_GL_EXT_pixel_transform_color_table = hasExt("GL_EXT_pixel_transform_color_table", extensions);
+      GARCH_GL_EXT_pixel_transform_color_table = hasExt("GL_EXT_pixel_transform_color_table",
+                                                        extensions);
       GARCH_GL_EXT_point_parameters = hasExt("GL_EXT_point_parameters", extensions);
       GARCH_GL_EXT_polygon_offset = hasExt("GL_EXT_polygon_offset", extensions);
       GARCH_GL_EXT_polygon_offset_clamp = hasExt("GL_EXT_polygon_offset_clamp", extensions);
@@ -3595,11 +3636,13 @@ namespace internal
       GARCH_GL_EXT_secondary_color = hasExt("GL_EXT_secondary_color", extensions);
       GARCH_GL_EXT_separate_shader_objects = hasExt("GL_EXT_separate_shader_objects", extensions);
       GARCH_GL_EXT_separate_specular_color = hasExt("GL_EXT_separate_specular_color", extensions);
-      GARCH_GL_EXT_shader_framebuffer_fetch = hasExt("GL_EXT_shader_framebuffer_fetch", extensions);
+      GARCH_GL_EXT_shader_framebuffer_fetch = hasExt("GL_EXT_shader_framebuffer_fetch",
+                                                     extensions);
       GARCH_GL_EXT_shader_framebuffer_fetch_non_coherent = hasExt(
         "GL_EXT_shader_framebuffer_fetch_non_coherent",
         extensions);
-      GARCH_GL_EXT_shader_image_load_formatted = hasExt("GL_EXT_shader_image_load_formatted", extensions);
+      GARCH_GL_EXT_shader_image_load_formatted = hasExt("GL_EXT_shader_image_load_formatted",
+                                                        extensions);
       GARCH_GL_EXT_shader_image_load_store = hasExt("GL_EXT_shader_image_load_store", extensions);
       GARCH_GL_EXT_shader_integer_mix = hasExt("GL_EXT_shader_integer_mix", extensions);
       GARCH_GL_EXT_shadow_funcs = hasExt("GL_EXT_shadow_funcs", extensions);
@@ -3613,14 +3656,18 @@ namespace internal
       GARCH_GL_EXT_texture3D = hasExt("GL_EXT_texture3D", extensions);
       GARCH_GL_EXT_texture_array = hasExt("GL_EXT_texture_array", extensions);
       GARCH_GL_EXT_texture_buffer_object = hasExt("GL_EXT_texture_buffer_object", extensions);
-      GARCH_GL_EXT_texture_compression_latc = hasExt("GL_EXT_texture_compression_latc", extensions);
-      GARCH_GL_EXT_texture_compression_rgtc = hasExt("GL_EXT_texture_compression_rgtc", extensions);
-      GARCH_GL_EXT_texture_compression_s3tc = hasExt("GL_EXT_texture_compression_s3tc", extensions);
+      GARCH_GL_EXT_texture_compression_latc = hasExt("GL_EXT_texture_compression_latc",
+                                                     extensions);
+      GARCH_GL_EXT_texture_compression_rgtc = hasExt("GL_EXT_texture_compression_rgtc",
+                                                     extensions);
+      GARCH_GL_EXT_texture_compression_s3tc = hasExt("GL_EXT_texture_compression_s3tc",
+                                                     extensions);
       GARCH_GL_EXT_texture_cube_map = hasExt("GL_EXT_texture_cube_map", extensions);
       GARCH_GL_EXT_texture_env_add = hasExt("GL_EXT_texture_env_add", extensions);
       GARCH_GL_EXT_texture_env_combine = hasExt("GL_EXT_texture_env_combine", extensions);
       GARCH_GL_EXT_texture_env_dot3 = hasExt("GL_EXT_texture_env_dot3", extensions);
-      GARCH_GL_EXT_texture_filter_anisotropic = hasExt("GL_EXT_texture_filter_anisotropic", extensions);
+      GARCH_GL_EXT_texture_filter_anisotropic = hasExt("GL_EXT_texture_filter_anisotropic",
+                                                       extensions);
       GARCH_GL_EXT_texture_filter_minmax = hasExt("GL_EXT_texture_filter_minmax", extensions);
       GARCH_GL_EXT_texture_integer = hasExt("GL_EXT_texture_integer", extensions);
       GARCH_GL_EXT_texture_lod_bias = hasExt("GL_EXT_texture_lod_bias", extensions);
@@ -3644,16 +3691,19 @@ namespace internal
       GARCH_GL_EXT_win32_keyed_mutex = hasExt("GL_EXT_win32_keyed_mutex", extensions);
       GARCH_GL_EXT_window_rectangles = hasExt("GL_EXT_window_rectangles", extensions);
       GARCH_GL_EXT_x11_sync_object = hasExt("GL_EXT_x11_sync_object", extensions);
-      GARCH_GL_INTEL_conservative_rasterization = hasExt("GL_INTEL_conservative_rasterization", extensions);
-      GARCH_GL_INTEL_fragment_shader_ordering = hasExt("GL_INTEL_fragment_shader_ordering", extensions);
+      GARCH_GL_INTEL_conservative_rasterization = hasExt("GL_INTEL_conservative_rasterization",
+                                                         extensions);
+      GARCH_GL_INTEL_fragment_shader_ordering = hasExt("GL_INTEL_fragment_shader_ordering",
+                                                       extensions);
       GARCH_GL_INTEL_framebuffer_CMAA = hasExt("GL_INTEL_framebuffer_CMAA", extensions);
       GARCH_GL_INTEL_map_texture = hasExt("GL_INTEL_map_texture", extensions);
       GARCH_GL_INTEL_blackhole_render = hasExt("GL_INTEL_blackhole_render", extensions);
       GARCH_GL_INTEL_parallel_arrays = hasExt("GL_INTEL_parallel_arrays", extensions);
       GARCH_GL_INTEL_performance_query = hasExt("GL_INTEL_performance_query", extensions);
       GARCH_GL_KHR_blend_equation_advanced = hasExt("GL_KHR_blend_equation_advanced", extensions);
-      GARCH_GL_KHR_blend_equation_advanced_coherent = hasExt("GL_KHR_blend_equation_advanced_coherent",
-                                                             extensions);
+      GARCH_GL_KHR_blend_equation_advanced_coherent = hasExt(
+        "GL_KHR_blend_equation_advanced_coherent",
+        extensions);
       GARCH_GL_KHR_context_flush_control = hasExt("GL_KHR_context_flush_control", extensions);
       GARCH_GL_KHR_debug = hasExt("GL_KHR_debug", extensions);
       GARCH_GL_KHR_no_error = hasExt("GL_KHR_no_error", extensions);
@@ -3661,10 +3711,13 @@ namespace internal
                                                           extensions);
       GARCH_GL_KHR_robustness = hasExt("GL_KHR_robustness", extensions);
       GARCH_GL_KHR_shader_subgroup = hasExt("GL_KHR_shader_subgroup", extensions);
-      GARCH_GL_KHR_texture_compression_astc_hdr = hasExt("GL_KHR_texture_compression_astc_hdr", extensions);
-      GARCH_GL_KHR_texture_compression_astc_ldr = hasExt("GL_KHR_texture_compression_astc_ldr", extensions);
-      GARCH_GL_KHR_texture_compression_astc_sliced_3d = hasExt("GL_KHR_texture_compression_astc_sliced_3d",
-                                                               extensions);
+      GARCH_GL_KHR_texture_compression_astc_hdr = hasExt("GL_KHR_texture_compression_astc_hdr",
+                                                         extensions);
+      GARCH_GL_KHR_texture_compression_astc_ldr = hasExt("GL_KHR_texture_compression_astc_ldr",
+                                                         extensions);
+      GARCH_GL_KHR_texture_compression_astc_sliced_3d = hasExt(
+        "GL_KHR_texture_compression_astc_sliced_3d",
+        extensions);
       GARCH_GL_KHR_parallel_shader_compile = hasExt("GL_KHR_parallel_shader_compile", extensions);
       GARCH_GL_NVX_blend_equation_advanced_multi_draw_buffers = hasExt(
         "GL_NVX_blend_equation_advanced_multi_draw_buffers",
@@ -3672,30 +3725,38 @@ namespace internal
       GARCH_GL_NVX_conditional_render = hasExt("GL_NVX_conditional_render", extensions);
       GARCH_GL_NVX_gpu_memory_info = hasExt("GL_NVX_gpu_memory_info", extensions);
       GARCH_GL_NVX_linked_gpu_multicast = hasExt("GL_NVX_linked_gpu_multicast", extensions);
-      GARCH_GL_NV_alpha_to_coverage_dither_control = hasExt("GL_NV_alpha_to_coverage_dither_control",
-                                                            extensions);
-      GARCH_GL_NV_bindless_multi_draw_indirect = hasExt("GL_NV_bindless_multi_draw_indirect", extensions);
-      GARCH_GL_NV_bindless_multi_draw_indirect_count = hasExt("GL_NV_bindless_multi_draw_indirect_count",
-                                                              extensions);
+      GARCH_GL_NV_alpha_to_coverage_dither_control = hasExt(
+        "GL_NV_alpha_to_coverage_dither_control",
+        extensions);
+      GARCH_GL_NV_bindless_multi_draw_indirect = hasExt("GL_NV_bindless_multi_draw_indirect",
+                                                        extensions);
+      GARCH_GL_NV_bindless_multi_draw_indirect_count = hasExt(
+        "GL_NV_bindless_multi_draw_indirect_count",
+        extensions);
       GARCH_GL_NV_bindless_texture = hasExt("GL_NV_bindless_texture", extensions);
       GARCH_GL_NV_blend_equation_advanced = hasExt("GL_NV_blend_equation_advanced", extensions);
-      GARCH_GL_NV_blend_equation_advanced_coherent = hasExt("GL_NV_blend_equation_advanced_coherent",
-                                                            extensions);
+      GARCH_GL_NV_blend_equation_advanced_coherent = hasExt(
+        "GL_NV_blend_equation_advanced_coherent",
+        extensions);
       GARCH_GL_NV_blend_minmax_factor = hasExt("GL_NV_blend_minmax_factor", extensions);
       GARCH_GL_NV_blend_square = hasExt("GL_NV_blend_square", extensions);
       GARCH_GL_NV_clip_space_w_scaling = hasExt("GL_NV_clip_space_w_scaling", extensions);
       GARCH_GL_NV_command_list = hasExt("GL_NV_command_list", extensions);
       GARCH_GL_NV_compute_program5 = hasExt("GL_NV_compute_program5", extensions);
-      GARCH_GL_NV_compute_shader_derivatives = hasExt("GL_NV_compute_shader_derivatives", extensions);
+      GARCH_GL_NV_compute_shader_derivatives = hasExt("GL_NV_compute_shader_derivatives",
+                                                      extensions);
       GARCH_GL_NV_conditional_render = hasExt("GL_NV_conditional_render", extensions);
       GARCH_GL_NV_conservative_raster = hasExt("GL_NV_conservative_raster", extensions);
-      GARCH_GL_NV_conservative_raster_dilate = hasExt("GL_NV_conservative_raster_dilate", extensions);
-      GARCH_GL_NV_conservative_raster_pre_snap = hasExt("GL_NV_conservative_raster_pre_snap", extensions);
+      GARCH_GL_NV_conservative_raster_dilate = hasExt("GL_NV_conservative_raster_dilate",
+                                                      extensions);
+      GARCH_GL_NV_conservative_raster_pre_snap = hasExt("GL_NV_conservative_raster_pre_snap",
+                                                        extensions);
       GARCH_GL_NV_conservative_raster_pre_snap_triangles = hasExt(
         "GL_NV_conservative_raster_pre_snap_triangles",
         extensions);
-      GARCH_GL_NV_conservative_raster_underestimation = hasExt("GL_NV_conservative_raster_underestimation",
-                                                               extensions);
+      GARCH_GL_NV_conservative_raster_underestimation = hasExt(
+        "GL_NV_conservative_raster_underestimation",
+        extensions);
       GARCH_GL_NV_copy_depth_to_color = hasExt("GL_NV_copy_depth_to_color", extensions);
       GARCH_GL_NV_copy_image = hasExt("GL_NV_copy_image", extensions);
       GARCH_GL_NV_deep_texture3D = hasExt("GL_NV_deep_texture3D", extensions);
@@ -3709,25 +3770,33 @@ namespace internal
       GARCH_GL_NV_fill_rectangle = hasExt("GL_NV_fill_rectangle", extensions);
       GARCH_GL_NV_float_buffer = hasExt("GL_NV_float_buffer", extensions);
       GARCH_GL_NV_fog_distance = hasExt("GL_NV_fog_distance", extensions);
-      GARCH_GL_NV_fragment_coverage_to_color = hasExt("GL_NV_fragment_coverage_to_color", extensions);
+      GARCH_GL_NV_fragment_coverage_to_color = hasExt("GL_NV_fragment_coverage_to_color",
+                                                      extensions);
       GARCH_GL_NV_fragment_program = hasExt("GL_NV_fragment_program", extensions);
       GARCH_GL_NV_fragment_program2 = hasExt("GL_NV_fragment_program2", extensions);
       GARCH_GL_NV_fragment_program4 = hasExt("GL_NV_fragment_program4", extensions);
       GARCH_GL_NV_fragment_program_option = hasExt("GL_NV_fragment_program_option", extensions);
-      GARCH_GL_NV_fragment_shader_barycentric = hasExt("GL_NV_fragment_shader_barycentric", extensions);
-      GARCH_GL_NV_fragment_shader_interlock = hasExt("GL_NV_fragment_shader_interlock", extensions);
-      GARCH_GL_NV_framebuffer_mixed_samples = hasExt("GL_NV_framebuffer_mixed_samples", extensions);
-      GARCH_GL_NV_framebuffer_multisample_coverage = hasExt("GL_NV_framebuffer_multisample_coverage",
-                                                            extensions);
+      GARCH_GL_NV_fragment_shader_barycentric = hasExt("GL_NV_fragment_shader_barycentric",
+                                                       extensions);
+      GARCH_GL_NV_fragment_shader_interlock = hasExt("GL_NV_fragment_shader_interlock",
+                                                     extensions);
+      GARCH_GL_NV_framebuffer_mixed_samples = hasExt("GL_NV_framebuffer_mixed_samples",
+                                                     extensions);
+      GARCH_GL_NV_framebuffer_multisample_coverage = hasExt(
+        "GL_NV_framebuffer_multisample_coverage",
+        extensions);
       GARCH_GL_NV_geometry_program4 = hasExt("GL_NV_geometry_program4", extensions);
       GARCH_GL_NV_geometry_shader4 = hasExt("GL_NV_geometry_shader4", extensions);
-      GARCH_GL_NV_geometry_shader_passthrough = hasExt("GL_NV_geometry_shader_passthrough", extensions);
+      GARCH_GL_NV_geometry_shader_passthrough = hasExt("GL_NV_geometry_shader_passthrough",
+                                                       extensions);
       GARCH_GL_NV_gpu_program4 = hasExt("GL_NV_gpu_program4", extensions);
       GARCH_GL_NV_gpu_program5 = hasExt("GL_NV_gpu_program5", extensions);
-      GARCH_GL_NV_gpu_program5_mem_extended = hasExt("GL_NV_gpu_program5_mem_extended", extensions);
+      GARCH_GL_NV_gpu_program5_mem_extended = hasExt("GL_NV_gpu_program5_mem_extended",
+                                                     extensions);
       GARCH_GL_NV_gpu_shader5 = hasExt("GL_NV_gpu_shader5", extensions);
       GARCH_GL_NV_half_float = hasExt("GL_NV_half_float", extensions);
-      GARCH_GL_NV_internalformat_sample_query = hasExt("GL_NV_internalformat_sample_query", extensions);
+      GARCH_GL_NV_internalformat_sample_query = hasExt("GL_NV_internalformat_sample_query",
+                                                       extensions);
       GARCH_GL_NV_light_max_exponent = hasExt("GL_NV_light_max_exponent", extensions);
       GARCH_GL_NV_gpu_multicast = hasExt("GL_NV_gpu_multicast", extensions);
       GARCH_GL_NVX_gpu_multicast2 = hasExt("GL_NVX_gpu_multicast2", extensions);
@@ -3742,7 +3811,8 @@ namespace internal
       GARCH_GL_NV_parameter_buffer_object = hasExt("GL_NV_parameter_buffer_object", extensions);
       GARCH_GL_NV_parameter_buffer_object2 = hasExt("GL_NV_parameter_buffer_object2", extensions);
       GARCH_GL_NV_path_rendering = hasExt("GL_NV_path_rendering", extensions);
-      GARCH_GL_NV_path_rendering_shared_edge = hasExt("GL_NV_path_rendering_shared_edge", extensions);
+      GARCH_GL_NV_path_rendering_shared_edge = hasExt("GL_NV_path_rendering_shared_edge",
+                                                      extensions);
       GARCH_GL_NV_pixel_data_range = hasExt("GL_NV_pixel_data_range", extensions);
       GARCH_GL_NV_point_sprite = hasExt("GL_NV_point_sprite", extensions);
       GARCH_GL_NV_present_video = hasExt("GL_NV_present_video", extensions);
@@ -3751,20 +3821,26 @@ namespace internal
       GARCH_GL_NV_query_resource_tag = hasExt("GL_NV_query_resource_tag", extensions);
       GARCH_GL_NV_register_combiners = hasExt("GL_NV_register_combiners", extensions);
       GARCH_GL_NV_register_combiners2 = hasExt("GL_NV_register_combiners2", extensions);
-      GARCH_GL_NV_representative_fragment_test = hasExt("GL_NV_representative_fragment_test", extensions);
-      GARCH_GL_NV_robustness_video_memory_purge = hasExt("GL_NV_robustness_video_memory_purge", extensions);
+      GARCH_GL_NV_representative_fragment_test = hasExt("GL_NV_representative_fragment_test",
+                                                        extensions);
+      GARCH_GL_NV_robustness_video_memory_purge = hasExt("GL_NV_robustness_video_memory_purge",
+                                                         extensions);
       GARCH_GL_NV_sample_locations = hasExt("GL_NV_sample_locations", extensions);
-      GARCH_GL_NV_sample_mask_override_coverage = hasExt("GL_NV_sample_mask_override_coverage", extensions);
+      GARCH_GL_NV_sample_mask_override_coverage = hasExt("GL_NV_sample_mask_override_coverage",
+                                                         extensions);
       GARCH_GL_NV_scissor_exclusive = hasExt("GL_NV_scissor_exclusive", extensions);
       GARCH_GL_NV_shader_atomic_counters = hasExt("GL_NV_shader_atomic_counters", extensions);
       GARCH_GL_NV_shader_atomic_float = hasExt("GL_NV_shader_atomic_float", extensions);
       GARCH_GL_NV_shader_atomic_float64 = hasExt("GL_NV_shader_atomic_float64", extensions);
-      GARCH_GL_NV_shader_atomic_fp16_vector = hasExt("GL_NV_shader_atomic_fp16_vector", extensions);
+      GARCH_GL_NV_shader_atomic_fp16_vector = hasExt("GL_NV_shader_atomic_fp16_vector",
+                                                     extensions);
       GARCH_GL_NV_shader_atomic_int64 = hasExt("GL_NV_shader_atomic_int64", extensions);
       GARCH_GL_NV_shader_buffer_load = hasExt("GL_NV_shader_buffer_load", extensions);
       GARCH_GL_NV_shader_buffer_store = hasExt("GL_NV_shader_buffer_store", extensions);
-      GARCH_GL_NV_shader_storage_buffer_object = hasExt("GL_NV_shader_storage_buffer_object", extensions);
-      GARCH_GL_NV_shader_subgroup_partitioned = hasExt("GL_NV_shader_subgroup_partitioned", extensions);
+      GARCH_GL_NV_shader_storage_buffer_object = hasExt("GL_NV_shader_storage_buffer_object",
+                                                        extensions);
+      GARCH_GL_NV_shader_subgroup_partitioned = hasExt("GL_NV_shader_subgroup_partitioned",
+                                                       extensions);
       GARCH_GL_NV_shader_texture_footprint = hasExt("GL_NV_shader_texture_footprint", extensions);
       GARCH_GL_NV_shader_thread_group = hasExt("GL_NV_shader_thread_group", extensions);
       GARCH_GL_NV_shader_thread_shuffle = hasExt("GL_NV_shader_thread_shuffle", extensions);
@@ -3779,19 +3855,23 @@ namespace internal
       GARCH_GL_NV_texture_expand_normal = hasExt("GL_NV_texture_expand_normal", extensions);
       GARCH_GL_NV_texture_multisample = hasExt("GL_NV_texture_multisample", extensions);
       GARCH_GL_NV_texture_rectangle = hasExt("GL_NV_texture_rectangle", extensions);
-      GARCH_GL_NV_texture_rectangle_compressed = hasExt("GL_NV_texture_rectangle_compressed", extensions);
+      GARCH_GL_NV_texture_rectangle_compressed = hasExt("GL_NV_texture_rectangle_compressed",
+                                                        extensions);
       GARCH_GL_NV_texture_shader = hasExt("GL_NV_texture_shader", extensions);
       GARCH_GL_NV_texture_shader2 = hasExt("GL_NV_texture_shader2", extensions);
       GARCH_GL_NV_texture_shader3 = hasExt("GL_NV_texture_shader3", extensions);
       GARCH_GL_NV_transform_feedback = hasExt("GL_NV_transform_feedback", extensions);
       GARCH_GL_NV_transform_feedback2 = hasExt("GL_NV_transform_feedback2", extensions);
-      GARCH_GL_NV_uniform_buffer_unified_memory = hasExt("GL_NV_uniform_buffer_unified_memory", extensions);
+      GARCH_GL_NV_uniform_buffer_unified_memory = hasExt("GL_NV_uniform_buffer_unified_memory",
+                                                         extensions);
       GARCH_GL_NV_vdpau_interop = hasExt("GL_NV_vdpau_interop", extensions);
       GARCH_GL_NV_vdpau_interop2 = hasExt("GL_NV_vdpau_interop2", extensions);
       GARCH_GL_NV_vertex_array_range = hasExt("GL_NV_vertex_array_range", extensions);
       GARCH_GL_NV_vertex_array_range2 = hasExt("GL_NV_vertex_array_range2", extensions);
-      GARCH_GL_NV_vertex_attrib_integer_64bit = hasExt("GL_NV_vertex_attrib_integer_64bit", extensions);
-      GARCH_GL_NV_vertex_buffer_unified_memory = hasExt("GL_NV_vertex_buffer_unified_memory", extensions);
+      GARCH_GL_NV_vertex_attrib_integer_64bit = hasExt("GL_NV_vertex_attrib_integer_64bit",
+                                                       extensions);
+      GARCH_GL_NV_vertex_buffer_unified_memory = hasExt("GL_NV_vertex_buffer_unified_memory",
+                                                        extensions);
       GARCH_GL_NV_vertex_program = hasExt("GL_NV_vertex_program", extensions);
       GARCH_GL_NV_vertex_program1_1 = hasExt("GL_NV_vertex_program1_1", extensions);
       GARCH_GL_NV_vertex_program2 = hasExt("GL_NV_vertex_program2", extensions);
@@ -3806,22 +3886,26 @@ namespace internal
       glAccum = (PFNGLACCUMPROC)loadFunction("glAccum");
       glActiveProgramEXT = (PFNGLACTIVEPROGRAMEXTPROC)loadFunction("glActiveProgramEXT");
       glActiveShaderProgram = (PFNGLACTIVESHADERPROGRAMPROC)loadFunction("glActiveShaderProgram");
-      glActiveShaderProgramEXT = (PFNGLACTIVESHADERPROGRAMEXTPROC)loadFunction("glActiveShaderProgramEXT");
-      glActiveStencilFaceEXT = (PFNGLACTIVESTENCILFACEEXTPROC)loadFunction("glActiveStencilFaceEXT");
+      glActiveShaderProgramEXT = (PFNGLACTIVESHADERPROGRAMEXTPROC)loadFunction(
+        "glActiveShaderProgramEXT");
+      glActiveStencilFaceEXT = (PFNGLACTIVESTENCILFACEEXTPROC)loadFunction(
+        "glActiveStencilFaceEXT");
       glActiveTexture = (PFNGLACTIVETEXTUREPROC)loadFunction("glActiveTexture");
       glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC)loadFunction("glActiveTextureARB");
       glActiveVaryingNV = (PFNGLACTIVEVARYINGNVPROC)loadFunction("glActiveVaryingNV");
       glAlphaFunc = (PFNGLALPHAFUNCPROC)loadFunction("glAlphaFunc");
       glAlphaToCoverageDitherControlNV = (PFNGLALPHATOCOVERAGEDITHERCONTROLNVPROC)loadFunction(
         "glAlphaToCoverageDitherControlNV");
-      glApplyFramebufferAttachmentCMAAINTEL = (PFNGLAPPLYFRAMEBUFFERATTACHMENTCMAAINTELPROC)loadFunction(
-        "glApplyFramebufferAttachmentCMAAINTEL");
+      glApplyFramebufferAttachmentCMAAINTEL = (PFNGLAPPLYFRAMEBUFFERATTACHMENTCMAAINTELPROC)
+        loadFunction("glApplyFramebufferAttachmentCMAAINTEL");
       glApplyTextureEXT = (PFNGLAPPLYTEXTUREEXTPROC)loadFunction("glApplyTextureEXT");
       glAcquireKeyedMutexWin32EXT = (PFNGLACQUIREKEYEDMUTEXWIN32EXTPROC)loadFunction(
         "glAcquireKeyedMutexWin32EXT");
-      glAreProgramsResidentNV = (PFNGLAREPROGRAMSRESIDENTNVPROC)loadFunction("glAreProgramsResidentNV");
+      glAreProgramsResidentNV = (PFNGLAREPROGRAMSRESIDENTNVPROC)loadFunction(
+        "glAreProgramsResidentNV");
       glAreTexturesResident = (PFNGLARETEXTURESRESIDENTPROC)loadFunction("glAreTexturesResident");
-      glAreTexturesResidentEXT = (PFNGLARETEXTURESRESIDENTEXTPROC)loadFunction("glAreTexturesResidentEXT");
+      glAreTexturesResidentEXT = (PFNGLARETEXTURESRESIDENTEXTPROC)loadFunction(
+        "glAreTexturesResidentEXT");
       glArrayElement = (PFNGLARRAYELEMENTPROC)loadFunction("glArrayElement");
       glArrayElementEXT = (PFNGLARRAYELEMENTEXTPROC)loadFunction("glArrayElementEXT");
       glAsyncCopyBufferSubDataNVX = (PFNGLASYNCCOPYBUFFERSUBDATANVXPROC)loadFunction(
@@ -3831,26 +3915,31 @@ namespace internal
       glAttachObjectARB = (PFNGLATTACHOBJECTARBPROC)loadFunction("glAttachObjectARB");
       glAttachShader = (PFNGLATTACHSHADERPROC)loadFunction("glAttachShader");
       glBegin = (PFNGLBEGINPROC)loadFunction("glBegin");
-      glBeginConditionalRender = (PFNGLBEGINCONDITIONALRENDERPROC)loadFunction("glBeginConditionalRender");
+      glBeginConditionalRender = (PFNGLBEGINCONDITIONALRENDERPROC)loadFunction(
+        "glBeginConditionalRender");
       glBeginConditionalRenderNV = (PFNGLBEGINCONDITIONALRENDERNVPROC)loadFunction(
         "glBeginConditionalRenderNV");
       glBeginConditionalRenderNVX = (PFNGLBEGINCONDITIONALRENDERNVXPROC)loadFunction(
         "glBeginConditionalRenderNVX");
-      glBeginOcclusionQueryNV = (PFNGLBEGINOCCLUSIONQUERYNVPROC)loadFunction("glBeginOcclusionQueryNV");
+      glBeginOcclusionQueryNV = (PFNGLBEGINOCCLUSIONQUERYNVPROC)loadFunction(
+        "glBeginOcclusionQueryNV");
       glBeginPerfMonitorAMD = (PFNGLBEGINPERFMONITORAMDPROC)loadFunction("glBeginPerfMonitorAMD");
       glBeginPerfQueryINTEL = (PFNGLBEGINPERFQUERYINTELPROC)loadFunction("glBeginPerfQueryINTEL");
       glBeginQuery = (PFNGLBEGINQUERYPROC)loadFunction("glBeginQuery");
       glBeginQueryARB = (PFNGLBEGINQUERYARBPROC)loadFunction("glBeginQueryARB");
       glBeginQueryIndexed = (PFNGLBEGINQUERYINDEXEDPROC)loadFunction("glBeginQueryIndexed");
-      glBeginTransformFeedback = (PFNGLBEGINTRANSFORMFEEDBACKPROC)loadFunction("glBeginTransformFeedback");
+      glBeginTransformFeedback = (PFNGLBEGINTRANSFORMFEEDBACKPROC)loadFunction(
+        "glBeginTransformFeedback");
       glBeginTransformFeedbackEXT = (PFNGLBEGINTRANSFORMFEEDBACKEXTPROC)loadFunction(
         "glBeginTransformFeedbackEXT");
       glBeginTransformFeedbackNV = (PFNGLBEGINTRANSFORMFEEDBACKNVPROC)loadFunction(
         "glBeginTransformFeedbackNV");
-      glBeginVertexShaderEXT = (PFNGLBEGINVERTEXSHADEREXTPROC)loadFunction("glBeginVertexShaderEXT");
+      glBeginVertexShaderEXT = (PFNGLBEGINVERTEXSHADEREXTPROC)loadFunction(
+        "glBeginVertexShaderEXT");
       glBeginVideoCaptureNV = (PFNGLBEGINVIDEOCAPTURENVPROC)loadFunction("glBeginVideoCaptureNV");
       glBindAttribLocation = (PFNGLBINDATTRIBLOCATIONPROC)loadFunction("glBindAttribLocation");
-      glBindAttribLocationARB = (PFNGLBINDATTRIBLOCATIONARBPROC)loadFunction("glBindAttribLocationARB");
+      glBindAttribLocationARB = (PFNGLBINDATTRIBLOCATIONARBPROC)loadFunction(
+        "glBindAttribLocationARB");
       glBindBuffer = (PFNGLBINDBUFFERPROC)loadFunction("glBindBuffer");
       glBindBufferARB = (PFNGLBINDBUFFERARBPROC)loadFunction("glBindBufferARB");
       glBindBufferBase = (PFNGLBINDBUFFERBASEPROC)loadFunction("glBindBufferBase");
@@ -3863,7 +3952,8 @@ namespace internal
       glBindBufferRangeNV = (PFNGLBINDBUFFERRANGENVPROC)loadFunction("glBindBufferRangeNV");
       glBindBuffersBase = (PFNGLBINDBUFFERSBASEPROC)loadFunction("glBindBuffersBase");
       glBindBuffersRange = (PFNGLBINDBUFFERSRANGEPROC)loadFunction("glBindBuffersRange");
-      glBindFragDataLocation = (PFNGLBINDFRAGDATALOCATIONPROC)loadFunction("glBindFragDataLocation");
+      glBindFragDataLocation = (PFNGLBINDFRAGDATALOCATIONPROC)loadFunction(
+        "glBindFragDataLocation");
       glBindFragDataLocationEXT = (PFNGLBINDFRAGDATALOCATIONEXTPROC)loadFunction(
         "glBindFragDataLocationEXT");
       glBindFragDataLocationIndexed = (PFNGLBINDFRAGDATALOCATIONINDEXEDPROC)loadFunction(
@@ -3873,7 +3963,8 @@ namespace internal
       glBindImageTexture = (PFNGLBINDIMAGETEXTUREPROC)loadFunction("glBindImageTexture");
       glBindImageTextureEXT = (PFNGLBINDIMAGETEXTUREEXTPROC)loadFunction("glBindImageTextureEXT");
       glBindImageTextures = (PFNGLBINDIMAGETEXTURESPROC)loadFunction("glBindImageTextures");
-      glBindLightParameterEXT = (PFNGLBINDLIGHTPARAMETEREXTPROC)loadFunction("glBindLightParameterEXT");
+      glBindLightParameterEXT = (PFNGLBINDLIGHTPARAMETEREXTPROC)loadFunction(
+        "glBindLightParameterEXT");
       glBindMaterialParameterEXT = (PFNGLBINDMATERIALPARAMETEREXTPROC)loadFunction(
         "glBindMaterialParameterEXT");
       glBindMultiTextureEXT = (PFNGLBINDMULTITEXTUREEXTPROC)loadFunction("glBindMultiTextureEXT");
@@ -3881,24 +3972,29 @@ namespace internal
       glBindProgramARB = (PFNGLBINDPROGRAMARBPROC)loadFunction("glBindProgramARB");
       glBindProgramNV = (PFNGLBINDPROGRAMNVPROC)loadFunction("glBindProgramNV");
       glBindProgramPipeline = (PFNGLBINDPROGRAMPIPELINEPROC)loadFunction("glBindProgramPipeline");
-      glBindProgramPipelineEXT = (PFNGLBINDPROGRAMPIPELINEEXTPROC)loadFunction("glBindProgramPipelineEXT");
+      glBindProgramPipelineEXT = (PFNGLBINDPROGRAMPIPELINEEXTPROC)loadFunction(
+        "glBindProgramPipelineEXT");
       glBindRenderbuffer = (PFNGLBINDRENDERBUFFERPROC)loadFunction("glBindRenderbuffer");
       glBindRenderbufferEXT = (PFNGLBINDRENDERBUFFEREXTPROC)loadFunction("glBindRenderbufferEXT");
       glBindSampler = (PFNGLBINDSAMPLERPROC)loadFunction("glBindSampler");
       glBindSamplers = (PFNGLBINDSAMPLERSPROC)loadFunction("glBindSamplers");
-      glBindShadingRateImageNV = (PFNGLBINDSHADINGRATEIMAGENVPROC)loadFunction("glBindShadingRateImageNV");
-      glBindTexGenParameterEXT = (PFNGLBINDTEXGENPARAMETEREXTPROC)loadFunction("glBindTexGenParameterEXT");
+      glBindShadingRateImageNV = (PFNGLBINDSHADINGRATEIMAGENVPROC)loadFunction(
+        "glBindShadingRateImageNV");
+      glBindTexGenParameterEXT = (PFNGLBINDTEXGENPARAMETEREXTPROC)loadFunction(
+        "glBindTexGenParameterEXT");
       glBindTexture = (PFNGLBINDTEXTUREPROC)loadFunction("glBindTexture");
       glBindTextureEXT = (PFNGLBINDTEXTUREEXTPROC)loadFunction("glBindTextureEXT");
       glBindTextureUnit = (PFNGLBINDTEXTUREUNITPROC)loadFunction("glBindTextureUnit");
       glBindTextureUnitParameterEXT = (PFNGLBINDTEXTUREUNITPARAMETEREXTPROC)loadFunction(
         "glBindTextureUnitParameterEXT");
       glBindTextures = (PFNGLBINDTEXTURESPROC)loadFunction("glBindTextures");
-      glBindTransformFeedback = (PFNGLBINDTRANSFORMFEEDBACKPROC)loadFunction("glBindTransformFeedback");
+      glBindTransformFeedback = (PFNGLBINDTRANSFORMFEEDBACKPROC)loadFunction(
+        "glBindTransformFeedback");
       glBindTransformFeedbackNV = (PFNGLBINDTRANSFORMFEEDBACKNVPROC)loadFunction(
         "glBindTransformFeedbackNV");
       glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)loadFunction("glBindVertexArray");
-      glBindVertexArrayAPPLE = (PFNGLBINDVERTEXARRAYAPPLEPROC)loadFunction("glBindVertexArrayAPPLE");
+      glBindVertexArrayAPPLE = (PFNGLBINDVERTEXARRAYAPPLEPROC)loadFunction(
+        "glBindVertexArrayAPPLE");
       glBindVertexBuffer = (PFNGLBINDVERTEXBUFFERPROC)loadFunction("glBindVertexBuffer");
       glBindVertexBuffers = (PFNGLBINDVERTEXBUFFERSPROC)loadFunction("glBindVertexBuffers");
       glBindVertexShaderEXT = (PFNGLBINDVERTEXSHADEREXTPROC)loadFunction("glBindVertexShaderEXT");
@@ -3926,12 +4022,14 @@ namespace internal
       glBlendEquationEXT = (PFNGLBLENDEQUATIONEXTPROC)loadFunction("glBlendEquationEXT");
       glBlendEquationIndexedAMD = (PFNGLBLENDEQUATIONINDEXEDAMDPROC)loadFunction(
         "glBlendEquationIndexedAMD");
-      glBlendEquationSeparate = (PFNGLBLENDEQUATIONSEPARATEPROC)loadFunction("glBlendEquationSeparate");
+      glBlendEquationSeparate = (PFNGLBLENDEQUATIONSEPARATEPROC)loadFunction(
+        "glBlendEquationSeparate");
       glBlendEquationSeparateEXT = (PFNGLBLENDEQUATIONSEPARATEEXTPROC)loadFunction(
         "glBlendEquationSeparateEXT");
       glBlendEquationSeparateIndexedAMD = (PFNGLBLENDEQUATIONSEPARATEINDEXEDAMDPROC)loadFunction(
         "glBlendEquationSeparateIndexedAMD");
-      glBlendEquationSeparatei = (PFNGLBLENDEQUATIONSEPARATEIPROC)loadFunction("glBlendEquationSeparatei");
+      glBlendEquationSeparatei = (PFNGLBLENDEQUATIONSEPARATEIPROC)loadFunction(
+        "glBlendEquationSeparatei");
       glBlendEquationSeparateiARB = (PFNGLBLENDEQUATIONSEPARATEIARBPROC)loadFunction(
         "glBlendEquationSeparateiARB");
       glBlendEquationi = (PFNGLBLENDEQUATIONIPROC)loadFunction("glBlendEquationi");
@@ -3939,26 +4037,32 @@ namespace internal
       glBlendFunc = (PFNGLBLENDFUNCPROC)loadFunction("glBlendFunc");
       glBlendFuncIndexedAMD = (PFNGLBLENDFUNCINDEXEDAMDPROC)loadFunction("glBlendFuncIndexedAMD");
       glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC)loadFunction("glBlendFuncSeparate");
-      glBlendFuncSeparateEXT = (PFNGLBLENDFUNCSEPARATEEXTPROC)loadFunction("glBlendFuncSeparateEXT");
+      glBlendFuncSeparateEXT = (PFNGLBLENDFUNCSEPARATEEXTPROC)loadFunction(
+        "glBlendFuncSeparateEXT");
       glBlendFuncSeparateIndexedAMD = (PFNGLBLENDFUNCSEPARATEINDEXEDAMDPROC)loadFunction(
         "glBlendFuncSeparateIndexedAMD");
       glBlendFuncSeparatei = (PFNGLBLENDFUNCSEPARATEIPROC)loadFunction("glBlendFuncSeparatei");
-      glBlendFuncSeparateiARB = (PFNGLBLENDFUNCSEPARATEIARBPROC)loadFunction("glBlendFuncSeparateiARB");
+      glBlendFuncSeparateiARB = (PFNGLBLENDFUNCSEPARATEIARBPROC)loadFunction(
+        "glBlendFuncSeparateiARB");
       glBlendFunci = (PFNGLBLENDFUNCIPROC)loadFunction("glBlendFunci");
       glBlendFunciARB = (PFNGLBLENDFUNCIARBPROC)loadFunction("glBlendFunciARB");
       glBlendParameteriNV = (PFNGLBLENDPARAMETERINVPROC)loadFunction("glBlendParameteriNV");
       glBlitFramebuffer = (PFNGLBLITFRAMEBUFFERPROC)loadFunction("glBlitFramebuffer");
       glBlitFramebufferEXT = (PFNGLBLITFRAMEBUFFEREXTPROC)loadFunction("glBlitFramebufferEXT");
-      glBlitNamedFramebuffer = (PFNGLBLITNAMEDFRAMEBUFFERPROC)loadFunction("glBlitNamedFramebuffer");
-      glBufferAddressRangeNV = (PFNGLBUFFERADDRESSRANGENVPROC)loadFunction("glBufferAddressRangeNV");
-      glBufferAttachMemoryNV = (PFNGLBUFFERATTACHMEMORYNVPROC)loadFunction("glBufferAttachMemoryNV");
+      glBlitNamedFramebuffer = (PFNGLBLITNAMEDFRAMEBUFFERPROC)loadFunction(
+        "glBlitNamedFramebuffer");
+      glBufferAddressRangeNV = (PFNGLBUFFERADDRESSRANGENVPROC)loadFunction(
+        "glBufferAddressRangeNV");
+      glBufferAttachMemoryNV = (PFNGLBUFFERATTACHMEMORYNVPROC)loadFunction(
+        "glBufferAttachMemoryNV");
       glBufferData = (PFNGLBUFFERDATAPROC)loadFunction("glBufferData");
       glBufferDataARB = (PFNGLBUFFERDATAARBPROC)loadFunction("glBufferDataARB");
       glBufferPageCommitmentARB = (PFNGLBUFFERPAGECOMMITMENTARBPROC)loadFunction(
         "glBufferPageCommitmentARB");
       glBufferPageCommitmentMemNV = (PFNGLBUFFERPAGECOMMITMENTMEMNVPROC)loadFunction(
         "glBufferPageCommitmentMemNV");
-      glBufferParameteriAPPLE = (PFNGLBUFFERPARAMETERIAPPLEPROC)loadFunction("glBufferParameteriAPPLE");
+      glBufferParameteriAPPLE = (PFNGLBUFFERPARAMETERIAPPLEPROC)loadFunction(
+        "glBufferParameteriAPPLE");
       glBufferStorage = (PFNGLBUFFERSTORAGEPROC)loadFunction("glBufferStorage");
       glBufferStorageExternalEXT = (PFNGLBUFFERSTORAGEEXTERNALEXTPROC)loadFunction(
         "glBufferStorageExternalEXT");
@@ -3968,7 +4072,8 @@ namespace internal
       glCallCommandListNV = (PFNGLCALLCOMMANDLISTNVPROC)loadFunction("glCallCommandListNV");
       glCallList = (PFNGLCALLLISTPROC)loadFunction("glCallList");
       glCallLists = (PFNGLCALLLISTSPROC)loadFunction("glCallLists");
-      glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)loadFunction("glCheckFramebufferStatus");
+      glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)loadFunction(
+        "glCheckFramebufferStatus");
       glCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)loadFunction(
         "glCheckFramebufferStatusEXT");
       glCheckNamedFramebufferStatus = (PFNGLCHECKNAMEDFRAMEBUFFERSTATUSPROC)loadFunction(
@@ -3992,7 +4097,8 @@ namespace internal
       glClearDepthdNV = (PFNGLCLEARDEPTHDNVPROC)loadFunction("glClearDepthdNV");
       glClearDepthf = (PFNGLCLEARDEPTHFPROC)loadFunction("glClearDepthf");
       glClearIndex = (PFNGLCLEARINDEXPROC)loadFunction("glClearIndex");
-      glClearNamedBufferData = (PFNGLCLEARNAMEDBUFFERDATAPROC)loadFunction("glClearNamedBufferData");
+      glClearNamedBufferData = (PFNGLCLEARNAMEDBUFFERDATAPROC)loadFunction(
+        "glClearNamedBufferData");
       glClearNamedBufferDataEXT = (PFNGLCLEARNAMEDBUFFERDATAEXTPROC)loadFunction(
         "glClearNamedBufferDataEXT");
       glClearNamedBufferSubData = (PFNGLCLEARNAMEDBUFFERSUBDATAPROC)loadFunction(
@@ -4011,8 +4117,10 @@ namespace internal
       glClearTexImage = (PFNGLCLEARTEXIMAGEPROC)loadFunction("glClearTexImage");
       glClearTexSubImage = (PFNGLCLEARTEXSUBIMAGEPROC)loadFunction("glClearTexSubImage");
       glClientActiveTexture = (PFNGLCLIENTACTIVETEXTUREPROC)loadFunction("glClientActiveTexture");
-      glClientActiveTextureARB = (PFNGLCLIENTACTIVETEXTUREARBPROC)loadFunction("glClientActiveTextureARB");
-      glClientAttribDefaultEXT = (PFNGLCLIENTATTRIBDEFAULTEXTPROC)loadFunction("glClientAttribDefaultEXT");
+      glClientActiveTextureARB = (PFNGLCLIENTACTIVETEXTUREARBPROC)loadFunction(
+        "glClientActiveTextureARB");
+      glClientAttribDefaultEXT = (PFNGLCLIENTATTRIBDEFAULTEXTPROC)loadFunction(
+        "glClientAttribDefaultEXT");
       glClientWaitSemaphoreui64NVX = (PFNGLCLIENTWAITSEMAPHOREUI64NVXPROC)loadFunction(
         "glClientWaitSemaphoreui64NVX");
       glClientWaitSync = (PFNGLCLIENTWAITSYNCPROC)loadFunction("glClientWaitSync");
@@ -4070,18 +4178,26 @@ namespace internal
       glColorSubTableEXT = (PFNGLCOLORSUBTABLEEXTPROC)loadFunction("glColorSubTableEXT");
       glColorTable = (PFNGLCOLORTABLEPROC)loadFunction("glColorTable");
       glColorTableEXT = (PFNGLCOLORTABLEEXTPROC)loadFunction("glColorTableEXT");
-      glColorTableParameterfv = (PFNGLCOLORTABLEPARAMETERFVPROC)loadFunction("glColorTableParameterfv");
-      glColorTableParameteriv = (PFNGLCOLORTABLEPARAMETERIVPROC)loadFunction("glColorTableParameteriv");
+      glColorTableParameterfv = (PFNGLCOLORTABLEPARAMETERFVPROC)loadFunction(
+        "glColorTableParameterfv");
+      glColorTableParameteriv = (PFNGLCOLORTABLEPARAMETERIVPROC)loadFunction(
+        "glColorTableParameteriv");
       glCombinerInputNV = (PFNGLCOMBINERINPUTNVPROC)loadFunction("glCombinerInputNV");
       glCombinerOutputNV = (PFNGLCOMBINEROUTPUTNVPROC)loadFunction("glCombinerOutputNV");
-      glCombinerParameterfNV = (PFNGLCOMBINERPARAMETERFNVPROC)loadFunction("glCombinerParameterfNV");
-      glCombinerParameterfvNV = (PFNGLCOMBINERPARAMETERFVNVPROC)loadFunction("glCombinerParameterfvNV");
-      glCombinerParameteriNV = (PFNGLCOMBINERPARAMETERINVPROC)loadFunction("glCombinerParameteriNV");
-      glCombinerParameterivNV = (PFNGLCOMBINERPARAMETERIVNVPROC)loadFunction("glCombinerParameterivNV");
+      glCombinerParameterfNV = (PFNGLCOMBINERPARAMETERFNVPROC)loadFunction(
+        "glCombinerParameterfNV");
+      glCombinerParameterfvNV = (PFNGLCOMBINERPARAMETERFVNVPROC)loadFunction(
+        "glCombinerParameterfvNV");
+      glCombinerParameteriNV = (PFNGLCOMBINERPARAMETERINVPROC)loadFunction(
+        "glCombinerParameteriNV");
+      glCombinerParameterivNV = (PFNGLCOMBINERPARAMETERIVNVPROC)loadFunction(
+        "glCombinerParameterivNV");
       glCombinerStageParameterfvNV = (PFNGLCOMBINERSTAGEPARAMETERFVNVPROC)loadFunction(
         "glCombinerStageParameterfvNV");
-      glCommandListSegmentsNV = (PFNGLCOMMANDLISTSEGMENTSNVPROC)loadFunction("glCommandListSegmentsNV");
-      glCompileCommandListNV = (PFNGLCOMPILECOMMANDLISTNVPROC)loadFunction("glCompileCommandListNV");
+      glCommandListSegmentsNV = (PFNGLCOMMANDLISTSEGMENTSNVPROC)loadFunction(
+        "glCommandListSegmentsNV");
+      glCompileCommandListNV = (PFNGLCOMPILECOMMANDLISTNVPROC)loadFunction(
+        "glCompileCommandListNV");
       glCompileShader = (PFNGLCOMPILESHADERPROC)loadFunction("glCompileShader");
       glCompileShaderARB = (PFNGLCOMPILESHADERARBPROC)loadFunction("glCompileShaderARB");
       glCompileShaderIncludeARB = (PFNGLCOMPILESHADERINCLUDEARBPROC)loadFunction(
@@ -4098,13 +4214,16 @@ namespace internal
         "glCompressedMultiTexSubImage2DEXT");
       glCompressedMultiTexSubImage3DEXT = (PFNGLCOMPRESSEDMULTITEXSUBIMAGE3DEXTPROC)loadFunction(
         "glCompressedMultiTexSubImage3DEXT");
-      glCompressedTexImage1D = (PFNGLCOMPRESSEDTEXIMAGE1DPROC)loadFunction("glCompressedTexImage1D");
+      glCompressedTexImage1D = (PFNGLCOMPRESSEDTEXIMAGE1DPROC)loadFunction(
+        "glCompressedTexImage1D");
       glCompressedTexImage1DARB = (PFNGLCOMPRESSEDTEXIMAGE1DARBPROC)loadFunction(
         "glCompressedTexImage1DARB");
-      glCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)loadFunction("glCompressedTexImage2D");
+      glCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)loadFunction(
+        "glCompressedTexImage2D");
       glCompressedTexImage2DARB = (PFNGLCOMPRESSEDTEXIMAGE2DARBPROC)loadFunction(
         "glCompressedTexImage2DARB");
-      glCompressedTexImage3D = (PFNGLCOMPRESSEDTEXIMAGE3DPROC)loadFunction("glCompressedTexImage3D");
+      glCompressedTexImage3D = (PFNGLCOMPRESSEDTEXIMAGE3DPROC)loadFunction(
+        "glCompressedTexImage3D");
       glCompressedTexImage3DARB = (PFNGLCOMPRESSEDTEXIMAGE3DARBPROC)loadFunction(
         "glCompressedTexImage3DARB");
       glCompressedTexSubImage1D = (PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC)loadFunction(
@@ -4142,24 +4261,31 @@ namespace internal
       glConservativeRasterParameteriNV = (PFNGLCONSERVATIVERASTERPARAMETERINVPROC)loadFunction(
         "glConservativeRasterParameteriNV");
       glConvolutionFilter1D = (PFNGLCONVOLUTIONFILTER1DPROC)loadFunction("glConvolutionFilter1D");
-      glConvolutionFilter1DEXT = (PFNGLCONVOLUTIONFILTER1DEXTPROC)loadFunction("glConvolutionFilter1DEXT");
+      glConvolutionFilter1DEXT = (PFNGLCONVOLUTIONFILTER1DEXTPROC)loadFunction(
+        "glConvolutionFilter1DEXT");
       glConvolutionFilter2D = (PFNGLCONVOLUTIONFILTER2DPROC)loadFunction("glConvolutionFilter2D");
-      glConvolutionFilter2DEXT = (PFNGLCONVOLUTIONFILTER2DEXTPROC)loadFunction("glConvolutionFilter2DEXT");
-      glConvolutionParameterf = (PFNGLCONVOLUTIONPARAMETERFPROC)loadFunction("glConvolutionParameterf");
+      glConvolutionFilter2DEXT = (PFNGLCONVOLUTIONFILTER2DEXTPROC)loadFunction(
+        "glConvolutionFilter2DEXT");
+      glConvolutionParameterf = (PFNGLCONVOLUTIONPARAMETERFPROC)loadFunction(
+        "glConvolutionParameterf");
       glConvolutionParameterfEXT = (PFNGLCONVOLUTIONPARAMETERFEXTPROC)loadFunction(
         "glConvolutionParameterfEXT");
-      glConvolutionParameterfv = (PFNGLCONVOLUTIONPARAMETERFVPROC)loadFunction("glConvolutionParameterfv");
+      glConvolutionParameterfv = (PFNGLCONVOLUTIONPARAMETERFVPROC)loadFunction(
+        "glConvolutionParameterfv");
       glConvolutionParameterfvEXT = (PFNGLCONVOLUTIONPARAMETERFVEXTPROC)loadFunction(
         "glConvolutionParameterfvEXT");
-      glConvolutionParameteri = (PFNGLCONVOLUTIONPARAMETERIPROC)loadFunction("glConvolutionParameteri");
+      glConvolutionParameteri = (PFNGLCONVOLUTIONPARAMETERIPROC)loadFunction(
+        "glConvolutionParameteri");
       glConvolutionParameteriEXT = (PFNGLCONVOLUTIONPARAMETERIEXTPROC)loadFunction(
         "glConvolutionParameteriEXT");
-      glConvolutionParameteriv = (PFNGLCONVOLUTIONPARAMETERIVPROC)loadFunction("glConvolutionParameteriv");
+      glConvolutionParameteriv = (PFNGLCONVOLUTIONPARAMETERIVPROC)loadFunction(
+        "glConvolutionParameteriv");
       glConvolutionParameterivEXT = (PFNGLCONVOLUTIONPARAMETERIVEXTPROC)loadFunction(
         "glConvolutionParameterivEXT");
       glCopyBufferSubData = (PFNGLCOPYBUFFERSUBDATAPROC)loadFunction("glCopyBufferSubData");
       glCopyColorSubTable = (PFNGLCOPYCOLORSUBTABLEPROC)loadFunction("glCopyColorSubTable");
-      glCopyColorSubTableEXT = (PFNGLCOPYCOLORSUBTABLEEXTPROC)loadFunction("glCopyColorSubTableEXT");
+      glCopyColorSubTableEXT = (PFNGLCOPYCOLORSUBTABLEEXTPROC)loadFunction(
+        "glCopyColorSubTableEXT");
       glCopyColorTable = (PFNGLCOPYCOLORTABLEPROC)loadFunction("glCopyColorTable");
       glCopyConvolutionFilter1D = (PFNGLCOPYCONVOLUTIONFILTER1DPROC)loadFunction(
         "glCopyConvolutionFilter1D");
@@ -4171,15 +4297,18 @@ namespace internal
         "glCopyConvolutionFilter2DEXT");
       glCopyImageSubData = (PFNGLCOPYIMAGESUBDATAPROC)loadFunction("glCopyImageSubData");
       glCopyImageSubDataNV = (PFNGLCOPYIMAGESUBDATANVPROC)loadFunction("glCopyImageSubDataNV");
-      glCopyMultiTexImage1DEXT = (PFNGLCOPYMULTITEXIMAGE1DEXTPROC)loadFunction("glCopyMultiTexImage1DEXT");
-      glCopyMultiTexImage2DEXT = (PFNGLCOPYMULTITEXIMAGE2DEXTPROC)loadFunction("glCopyMultiTexImage2DEXT");
+      glCopyMultiTexImage1DEXT = (PFNGLCOPYMULTITEXIMAGE1DEXTPROC)loadFunction(
+        "glCopyMultiTexImage1DEXT");
+      glCopyMultiTexImage2DEXT = (PFNGLCOPYMULTITEXIMAGE2DEXTPROC)loadFunction(
+        "glCopyMultiTexImage2DEXT");
       glCopyMultiTexSubImage1DEXT = (PFNGLCOPYMULTITEXSUBIMAGE1DEXTPROC)loadFunction(
         "glCopyMultiTexSubImage1DEXT");
       glCopyMultiTexSubImage2DEXT = (PFNGLCOPYMULTITEXSUBIMAGE2DEXTPROC)loadFunction(
         "glCopyMultiTexSubImage2DEXT");
       glCopyMultiTexSubImage3DEXT = (PFNGLCOPYMULTITEXSUBIMAGE3DEXTPROC)loadFunction(
         "glCopyMultiTexSubImage3DEXT");
-      glCopyNamedBufferSubData = (PFNGLCOPYNAMEDBUFFERSUBDATAPROC)loadFunction("glCopyNamedBufferSubData");
+      glCopyNamedBufferSubData = (PFNGLCOPYNAMEDBUFFERSUBDATAPROC)loadFunction(
+        "glCopyNamedBufferSubData");
       glCopyPathNV = (PFNGLCOPYPATHNVPROC)loadFunction("glCopyPathNV");
       glCopyPixels = (PFNGLCOPYPIXELSPROC)loadFunction("glCopyPixels");
       glCopyTexImage1D = (PFNGLCOPYTEXIMAGE1DPROC)loadFunction("glCopyTexImage1D");
@@ -4187,20 +4316,28 @@ namespace internal
       glCopyTexImage2D = (PFNGLCOPYTEXIMAGE2DPROC)loadFunction("glCopyTexImage2D");
       glCopyTexImage2DEXT = (PFNGLCOPYTEXIMAGE2DEXTPROC)loadFunction("glCopyTexImage2DEXT");
       glCopyTexSubImage1D = (PFNGLCOPYTEXSUBIMAGE1DPROC)loadFunction("glCopyTexSubImage1D");
-      glCopyTexSubImage1DEXT = (PFNGLCOPYTEXSUBIMAGE1DEXTPROC)loadFunction("glCopyTexSubImage1DEXT");
+      glCopyTexSubImage1DEXT = (PFNGLCOPYTEXSUBIMAGE1DEXTPROC)loadFunction(
+        "glCopyTexSubImage1DEXT");
       glCopyTexSubImage2D = (PFNGLCOPYTEXSUBIMAGE2DPROC)loadFunction("glCopyTexSubImage2D");
-      glCopyTexSubImage2DEXT = (PFNGLCOPYTEXSUBIMAGE2DEXTPROC)loadFunction("glCopyTexSubImage2DEXT");
+      glCopyTexSubImage2DEXT = (PFNGLCOPYTEXSUBIMAGE2DEXTPROC)loadFunction(
+        "glCopyTexSubImage2DEXT");
       glCopyTexSubImage3D = (PFNGLCOPYTEXSUBIMAGE3DPROC)loadFunction("glCopyTexSubImage3D");
-      glCopyTexSubImage3DEXT = (PFNGLCOPYTEXSUBIMAGE3DEXTPROC)loadFunction("glCopyTexSubImage3DEXT");
-      glCopyTextureImage1DEXT = (PFNGLCOPYTEXTUREIMAGE1DEXTPROC)loadFunction("glCopyTextureImage1DEXT");
-      glCopyTextureImage2DEXT = (PFNGLCOPYTEXTUREIMAGE2DEXTPROC)loadFunction("glCopyTextureImage2DEXT");
-      glCopyTextureSubImage1D = (PFNGLCOPYTEXTURESUBIMAGE1DPROC)loadFunction("glCopyTextureSubImage1D");
+      glCopyTexSubImage3DEXT = (PFNGLCOPYTEXSUBIMAGE3DEXTPROC)loadFunction(
+        "glCopyTexSubImage3DEXT");
+      glCopyTextureImage1DEXT = (PFNGLCOPYTEXTUREIMAGE1DEXTPROC)loadFunction(
+        "glCopyTextureImage1DEXT");
+      glCopyTextureImage2DEXT = (PFNGLCOPYTEXTUREIMAGE2DEXTPROC)loadFunction(
+        "glCopyTextureImage2DEXT");
+      glCopyTextureSubImage1D = (PFNGLCOPYTEXTURESUBIMAGE1DPROC)loadFunction(
+        "glCopyTextureSubImage1D");
       glCopyTextureSubImage1DEXT = (PFNGLCOPYTEXTURESUBIMAGE1DEXTPROC)loadFunction(
         "glCopyTextureSubImage1DEXT");
-      glCopyTextureSubImage2D = (PFNGLCOPYTEXTURESUBIMAGE2DPROC)loadFunction("glCopyTextureSubImage2D");
+      glCopyTextureSubImage2D = (PFNGLCOPYTEXTURESUBIMAGE2DPROC)loadFunction(
+        "glCopyTextureSubImage2D");
       glCopyTextureSubImage2DEXT = (PFNGLCOPYTEXTURESUBIMAGE2DEXTPROC)loadFunction(
         "glCopyTextureSubImage2DEXT");
-      glCopyTextureSubImage3D = (PFNGLCOPYTEXTURESUBIMAGE3DPROC)loadFunction("glCopyTextureSubImage3D");
+      glCopyTextureSubImage3D = (PFNGLCOPYTEXTURESUBIMAGE3DPROC)loadFunction(
+        "glCopyTextureSubImage3D");
       glCopyTextureSubImage3DEXT = (PFNGLCOPYTEXTURESUBIMAGE3DEXTPROC)loadFunction(
         "glCopyTextureSubImage3DEXT");
       glCoverFillPathInstancedNV = (PFNGLCOVERFILLPATHINSTANCEDNVPROC)loadFunction(
@@ -4209,26 +4346,36 @@ namespace internal
       glCoverStrokePathInstancedNV = (PFNGLCOVERSTROKEPATHINSTANCEDNVPROC)loadFunction(
         "glCoverStrokePathInstancedNV");
       glCoverStrokePathNV = (PFNGLCOVERSTROKEPATHNVPROC)loadFunction("glCoverStrokePathNV");
-      glCoverageModulationNV = (PFNGLCOVERAGEMODULATIONNVPROC)loadFunction("glCoverageModulationNV");
+      glCoverageModulationNV = (PFNGLCOVERAGEMODULATIONNVPROC)loadFunction(
+        "glCoverageModulationNV");
       glCoverageModulationTableNV = (PFNGLCOVERAGEMODULATIONTABLENVPROC)loadFunction(
         "glCoverageModulationTableNV");
       glCreateBuffers = (PFNGLCREATEBUFFERSPROC)loadFunction("glCreateBuffers");
-      glCreateCommandListsNV = (PFNGLCREATECOMMANDLISTSNVPROC)loadFunction("glCreateCommandListsNV");
+      glCreateCommandListsNV = (PFNGLCREATECOMMANDLISTSNVPROC)loadFunction(
+        "glCreateCommandListsNV");
       glCreateFramebuffers = (PFNGLCREATEFRAMEBUFFERSPROC)loadFunction("glCreateFramebuffers");
-      glCreateMemoryObjectsEXT = (PFNGLCREATEMEMORYOBJECTSEXTPROC)loadFunction("glCreateMemoryObjectsEXT");
-      glCreatePerfQueryINTEL = (PFNGLCREATEPERFQUERYINTELPROC)loadFunction("glCreatePerfQueryINTEL");
+      glCreateMemoryObjectsEXT = (PFNGLCREATEMEMORYOBJECTSEXTPROC)loadFunction(
+        "glCreateMemoryObjectsEXT");
+      glCreatePerfQueryINTEL = (PFNGLCREATEPERFQUERYINTELPROC)loadFunction(
+        "glCreatePerfQueryINTEL");
       glCreateProgram = (PFNGLCREATEPROGRAMPROC)loadFunction("glCreateProgram");
-      glCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC)loadFunction("glCreateProgramObjectARB");
-      glCreateProgramPipelines = (PFNGLCREATEPROGRAMPIPELINESPROC)loadFunction("glCreateProgramPipelines");
-      glCreateProgressFenceNVX = (PFNGLCREATEPROGRESSFENCENVXPROC)loadFunction("glCreateProgressFenceNVX");
+      glCreateProgramObjectARB = (PFNGLCREATEPROGRAMOBJECTARBPROC)loadFunction(
+        "glCreateProgramObjectARB");
+      glCreateProgramPipelines = (PFNGLCREATEPROGRAMPIPELINESPROC)loadFunction(
+        "glCreateProgramPipelines");
+      glCreateProgressFenceNVX = (PFNGLCREATEPROGRESSFENCENVXPROC)loadFunction(
+        "glCreateProgressFenceNVX");
       glCreateQueries = (PFNGLCREATEQUERIESPROC)loadFunction("glCreateQueries");
       glCreateRenderbuffers = (PFNGLCREATERENDERBUFFERSPROC)loadFunction("glCreateRenderbuffers");
       glCreateSamplers = (PFNGLCREATESAMPLERSPROC)loadFunction("glCreateSamplers");
       glCreateSemaphoresNV = (PFNGLCREATESEMAPHORESNVPROC)loadFunction("glCreateSemaphoresNV");
       glCreateShader = (PFNGLCREATESHADERPROC)loadFunction("glCreateShader");
-      glCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC)loadFunction("glCreateShaderObjectARB");
-      glCreateShaderProgramEXT = (PFNGLCREATESHADERPROGRAMEXTPROC)loadFunction("glCreateShaderProgramEXT");
-      glCreateShaderProgramv = (PFNGLCREATESHADERPROGRAMVPROC)loadFunction("glCreateShaderProgramv");
+      glCreateShaderObjectARB = (PFNGLCREATESHADEROBJECTARBPROC)loadFunction(
+        "glCreateShaderObjectARB");
+      glCreateShaderProgramEXT = (PFNGLCREATESHADERPROGRAMEXTPROC)loadFunction(
+        "glCreateShaderProgramEXT");
+      glCreateShaderProgramv = (PFNGLCREATESHADERPROGRAMVPROC)loadFunction(
+        "glCreateShaderProgramv");
       glCreateShaderProgramvEXT = (PFNGLCREATESHADERPROGRAMVEXTPROC)loadFunction(
         "glCreateShaderProgramvEXT");
       glCreateStatesNV = (PFNGLCREATESTATESNVPROC)loadFunction("glCreateStatesNV");
@@ -4243,7 +4390,8 @@ namespace internal
       glCullParameterfvEXT = (PFNGLCULLPARAMETERFVEXTPROC)loadFunction("glCullParameterfvEXT");
       glCurrentPaletteMatrixARB = (PFNGLCURRENTPALETTEMATRIXARBPROC)loadFunction(
         "glCurrentPaletteMatrixARB");
-      glDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKPROC)loadFunction("glDebugMessageCallback");
+      glDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKPROC)loadFunction(
+        "glDebugMessageCallback");
       glDebugMessageCallbackAMD = (PFNGLDEBUGMESSAGECALLBACKAMDPROC)loadFunction(
         "glDebugMessageCallbackAMD");
       glDebugMessageCallbackARB = (PFNGLDEBUGMESSAGECALLBACKARBPROC)loadFunction(
@@ -4251,32 +4399,45 @@ namespace internal
       glDebugMessageCallbackKHR = (PFNGLDEBUGMESSAGECALLBACKKHRPROC)loadFunction(
         "glDebugMessageCallbackKHR");
       glDebugMessageControl = (PFNGLDEBUGMESSAGECONTROLPROC)loadFunction("glDebugMessageControl");
-      glDebugMessageControlARB = (PFNGLDEBUGMESSAGECONTROLARBPROC)loadFunction("glDebugMessageControlARB");
-      glDebugMessageControlKHR = (PFNGLDEBUGMESSAGECONTROLKHRPROC)loadFunction("glDebugMessageControlKHR");
-      glDebugMessageEnableAMD = (PFNGLDEBUGMESSAGEENABLEAMDPROC)loadFunction("glDebugMessageEnableAMD");
+      glDebugMessageControlARB = (PFNGLDEBUGMESSAGECONTROLARBPROC)loadFunction(
+        "glDebugMessageControlARB");
+      glDebugMessageControlKHR = (PFNGLDEBUGMESSAGECONTROLKHRPROC)loadFunction(
+        "glDebugMessageControlKHR");
+      glDebugMessageEnableAMD = (PFNGLDEBUGMESSAGEENABLEAMDPROC)loadFunction(
+        "glDebugMessageEnableAMD");
       glDebugMessageInsert = (PFNGLDEBUGMESSAGEINSERTPROC)loadFunction("glDebugMessageInsert");
-      glDebugMessageInsertAMD = (PFNGLDEBUGMESSAGEINSERTAMDPROC)loadFunction("glDebugMessageInsertAMD");
-      glDebugMessageInsertARB = (PFNGLDEBUGMESSAGEINSERTARBPROC)loadFunction("glDebugMessageInsertARB");
-      glDebugMessageInsertKHR = (PFNGLDEBUGMESSAGEINSERTKHRPROC)loadFunction("glDebugMessageInsertKHR");
+      glDebugMessageInsertAMD = (PFNGLDEBUGMESSAGEINSERTAMDPROC)loadFunction(
+        "glDebugMessageInsertAMD");
+      glDebugMessageInsertARB = (PFNGLDEBUGMESSAGEINSERTARBPROC)loadFunction(
+        "glDebugMessageInsertARB");
+      glDebugMessageInsertKHR = (PFNGLDEBUGMESSAGEINSERTKHRPROC)loadFunction(
+        "glDebugMessageInsertKHR");
       glDeleteBuffers = (PFNGLDELETEBUFFERSPROC)loadFunction("glDeleteBuffers");
       glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC)loadFunction("glDeleteBuffersARB");
-      glDeleteCommandListsNV = (PFNGLDELETECOMMANDLISTSNVPROC)loadFunction("glDeleteCommandListsNV");
+      glDeleteCommandListsNV = (PFNGLDELETECOMMANDLISTSNVPROC)loadFunction(
+        "glDeleteCommandListsNV");
       glDeleteFencesAPPLE = (PFNGLDELETEFENCESAPPLEPROC)loadFunction("glDeleteFencesAPPLE");
       glDeleteFencesNV = (PFNGLDELETEFENCESNVPROC)loadFunction("glDeleteFencesNV");
       glDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC)loadFunction("glDeleteFramebuffers");
-      glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC)loadFunction("glDeleteFramebuffersEXT");
+      glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC)loadFunction(
+        "glDeleteFramebuffersEXT");
       glDeleteLists = (PFNGLDELETELISTSPROC)loadFunction("glDeleteLists");
-      glDeleteMemoryObjectsEXT = (PFNGLDELETEMEMORYOBJECTSEXTPROC)loadFunction("glDeleteMemoryObjectsEXT");
-      glDeleteNamedStringARB = (PFNGLDELETENAMEDSTRINGARBPROC)loadFunction("glDeleteNamedStringARB");
+      glDeleteMemoryObjectsEXT = (PFNGLDELETEMEMORYOBJECTSEXTPROC)loadFunction(
+        "glDeleteMemoryObjectsEXT");
+      glDeleteNamedStringARB = (PFNGLDELETENAMEDSTRINGARBPROC)loadFunction(
+        "glDeleteNamedStringARB");
       glDeleteNamesAMD = (PFNGLDELETENAMESAMDPROC)loadFunction("glDeleteNamesAMD");
       glDeleteObjectARB = (PFNGLDELETEOBJECTARBPROC)loadFunction("glDeleteObjectARB");
       glDeleteOcclusionQueriesNV = (PFNGLDELETEOCCLUSIONQUERIESNVPROC)loadFunction(
         "glDeleteOcclusionQueriesNV");
       glDeletePathsNV = (PFNGLDELETEPATHSNVPROC)loadFunction("glDeletePathsNV");
-      glDeletePerfMonitorsAMD = (PFNGLDELETEPERFMONITORSAMDPROC)loadFunction("glDeletePerfMonitorsAMD");
-      glDeletePerfQueryINTEL = (PFNGLDELETEPERFQUERYINTELPROC)loadFunction("glDeletePerfQueryINTEL");
+      glDeletePerfMonitorsAMD = (PFNGLDELETEPERFMONITORSAMDPROC)loadFunction(
+        "glDeletePerfMonitorsAMD");
+      glDeletePerfQueryINTEL = (PFNGLDELETEPERFQUERYINTELPROC)loadFunction(
+        "glDeletePerfQueryINTEL");
       glDeleteProgram = (PFNGLDELETEPROGRAMPROC)loadFunction("glDeleteProgram");
-      glDeleteProgramPipelines = (PFNGLDELETEPROGRAMPIPELINESPROC)loadFunction("glDeleteProgramPipelines");
+      glDeleteProgramPipelines = (PFNGLDELETEPROGRAMPIPELINESPROC)loadFunction(
+        "glDeleteProgramPipelines");
       glDeleteProgramPipelinesEXT = (PFNGLDELETEPROGRAMPIPELINESEXTPROC)loadFunction(
         "glDeleteProgramPipelinesEXT");
       glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)loadFunction("glDeleteProgramsARB");
@@ -4286,7 +4447,8 @@ namespace internal
       glDeleteQueryResourceTagNV = (PFNGLDELETEQUERYRESOURCETAGNVPROC)loadFunction(
         "glDeleteQueryResourceTagNV");
       glDeleteRenderbuffers = (PFNGLDELETERENDERBUFFERSPROC)loadFunction("glDeleteRenderbuffers");
-      glDeleteRenderbuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC)loadFunction("glDeleteRenderbuffersEXT");
+      glDeleteRenderbuffersEXT = (PFNGLDELETERENDERBUFFERSEXTPROC)loadFunction(
+        "glDeleteRenderbuffersEXT");
       glDeleteSamplers = (PFNGLDELETESAMPLERSPROC)loadFunction("glDeleteSamplers");
       glDeleteSemaphoresEXT = (PFNGLDELETESEMAPHORESEXTPROC)loadFunction("glDeleteSemaphoresEXT");
       glDeleteShader = (PFNGLDELETESHADERPROC)loadFunction("glDeleteShader");
@@ -4301,7 +4463,8 @@ namespace internal
       glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC)loadFunction("glDeleteVertexArrays");
       glDeleteVertexArraysAPPLE = (PFNGLDELETEVERTEXARRAYSAPPLEPROC)loadFunction(
         "glDeleteVertexArraysAPPLE");
-      glDeleteVertexShaderEXT = (PFNGLDELETEVERTEXSHADEREXTPROC)loadFunction("glDeleteVertexShaderEXT");
+      glDeleteVertexShaderEXT = (PFNGLDELETEVERTEXSHADEREXTPROC)loadFunction(
+        "glDeleteVertexShaderEXT");
       glDepthBoundsEXT = (PFNGLDEPTHBOUNDSEXTPROC)loadFunction("glDepthBoundsEXT");
       glDepthBoundsdNV = (PFNGLDEPTHBOUNDSDNVPROC)loadFunction("glDepthBoundsdNV");
       glDepthFunc = (PFNGLDEPTHFUNCPROC)loadFunction("glDepthFunc");
@@ -4310,7 +4473,8 @@ namespace internal
       glDepthRangeArraydvNV = (PFNGLDEPTHRANGEARRAYDVNVPROC)loadFunction("glDepthRangeArraydvNV");
       glDepthRangeArrayv = (PFNGLDEPTHRANGEARRAYVPROC)loadFunction("glDepthRangeArrayv");
       glDepthRangeIndexed = (PFNGLDEPTHRANGEINDEXEDPROC)loadFunction("glDepthRangeIndexed");
-      glDepthRangeIndexeddNV = (PFNGLDEPTHRANGEINDEXEDDNVPROC)loadFunction("glDepthRangeIndexeddNV");
+      glDepthRangeIndexeddNV = (PFNGLDEPTHRANGEINDEXEDDNVPROC)loadFunction(
+        "glDepthRangeIndexeddNV");
       glDepthRangedNV = (PFNGLDEPTHRANGEDNVPROC)loadFunction("glDepthRangedNV");
       glDepthRangef = (PFNGLDEPTHRANGEFPROC)loadFunction("glDepthRangef");
       glDetachObjectARB = (PFNGLDETACHOBJECTARBPROC)loadFunction("glDetachObjectARB");
@@ -4319,7 +4483,8 @@ namespace internal
       glDisableClientState = (PFNGLDISABLECLIENTSTATEPROC)loadFunction("glDisableClientState");
       glDisableClientStateIndexedEXT = (PFNGLDISABLECLIENTSTATEINDEXEDEXTPROC)loadFunction(
         "glDisableClientStateIndexedEXT");
-      glDisableClientStateiEXT = (PFNGLDISABLECLIENTSTATEIEXTPROC)loadFunction("glDisableClientStateiEXT");
+      glDisableClientStateiEXT = (PFNGLDISABLECLIENTSTATEIEXTPROC)loadFunction(
+        "glDisableClientStateiEXT");
       glDisableIndexedEXT = (PFNGLDISABLEINDEXEDEXTPROC)loadFunction("glDisableIndexedEXT");
       glDisableVariantClientStateEXT = (PFNGLDISABLEVARIANTCLIENTSTATEEXTPROC)loadFunction(
         "glDisableVariantClientStateEXT");
@@ -4327,7 +4492,8 @@ namespace internal
         "glDisableVertexArrayAttrib");
       glDisableVertexArrayAttribEXT = (PFNGLDISABLEVERTEXARRAYATTRIBEXTPROC)loadFunction(
         "glDisableVertexArrayAttribEXT");
-      glDisableVertexArrayEXT = (PFNGLDISABLEVERTEXARRAYEXTPROC)loadFunction("glDisableVertexArrayEXT");
+      glDisableVertexArrayEXT = (PFNGLDISABLEVERTEXARRAYEXTPROC)loadFunction(
+        "glDisableVertexArrayEXT");
       glDisableVertexAttribAPPLE = (PFNGLDISABLEVERTEXATTRIBAPPLEPROC)loadFunction(
         "glDisableVertexAttribAPPLE");
       glDisableVertexAttribArray = (PFNGLDISABLEVERTEXATTRIBARRAYPROC)loadFunction(
@@ -4344,31 +4510,40 @@ namespace internal
       glDrawArraysEXT = (PFNGLDRAWARRAYSEXTPROC)loadFunction("glDrawArraysEXT");
       glDrawArraysIndirect = (PFNGLDRAWARRAYSINDIRECTPROC)loadFunction("glDrawArraysIndirect");
       glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDPROC)loadFunction("glDrawArraysInstanced");
-      glDrawArraysInstancedARB = (PFNGLDRAWARRAYSINSTANCEDARBPROC)loadFunction("glDrawArraysInstancedARB");
+      glDrawArraysInstancedARB = (PFNGLDRAWARRAYSINSTANCEDARBPROC)loadFunction(
+        "glDrawArraysInstancedARB");
       glDrawArraysInstancedBaseInstance = (PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEPROC)loadFunction(
         "glDrawArraysInstancedBaseInstance");
-      glDrawArraysInstancedEXT = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)loadFunction("glDrawArraysInstancedEXT");
+      glDrawArraysInstancedEXT = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)loadFunction(
+        "glDrawArraysInstancedEXT");
       glDrawBuffer = (PFNGLDRAWBUFFERPROC)loadFunction("glDrawBuffer");
       glDrawBuffers = (PFNGLDRAWBUFFERSPROC)loadFunction("glDrawBuffers");
       glDrawBuffersARB = (PFNGLDRAWBUFFERSARBPROC)loadFunction("glDrawBuffersARB");
-      glDrawCommandsAddressNV = (PFNGLDRAWCOMMANDSADDRESSNVPROC)loadFunction("glDrawCommandsAddressNV");
+      glDrawCommandsAddressNV = (PFNGLDRAWCOMMANDSADDRESSNVPROC)loadFunction(
+        "glDrawCommandsAddressNV");
       glDrawCommandsNV = (PFNGLDRAWCOMMANDSNVPROC)loadFunction("glDrawCommandsNV");
       glDrawCommandsStatesAddressNV = (PFNGLDRAWCOMMANDSSTATESADDRESSNVPROC)loadFunction(
         "glDrawCommandsStatesAddressNV");
-      glDrawCommandsStatesNV = (PFNGLDRAWCOMMANDSSTATESNVPROC)loadFunction("glDrawCommandsStatesNV");
-      glDrawElementArrayAPPLE = (PFNGLDRAWELEMENTARRAYAPPLEPROC)loadFunction("glDrawElementArrayAPPLE");
+      glDrawCommandsStatesNV = (PFNGLDRAWCOMMANDSSTATESNVPROC)loadFunction(
+        "glDrawCommandsStatesNV");
+      glDrawElementArrayAPPLE = (PFNGLDRAWELEMENTARRAYAPPLEPROC)loadFunction(
+        "glDrawElementArrayAPPLE");
       glDrawElements = (PFNGLDRAWELEMENTSPROC)loadFunction("glDrawElements");
-      glDrawElementsBaseVertex = (PFNGLDRAWELEMENTSBASEVERTEXPROC)loadFunction("glDrawElementsBaseVertex");
-      glDrawElementsIndirect = (PFNGLDRAWELEMENTSINDIRECTPROC)loadFunction("glDrawElementsIndirect");
-      glDrawElementsInstanced = (PFNGLDRAWELEMENTSINSTANCEDPROC)loadFunction("glDrawElementsInstanced");
+      glDrawElementsBaseVertex = (PFNGLDRAWELEMENTSBASEVERTEXPROC)loadFunction(
+        "glDrawElementsBaseVertex");
+      glDrawElementsIndirect = (PFNGLDRAWELEMENTSINDIRECTPROC)loadFunction(
+        "glDrawElementsIndirect");
+      glDrawElementsInstanced = (PFNGLDRAWELEMENTSINSTANCEDPROC)loadFunction(
+        "glDrawElementsInstanced");
       glDrawElementsInstancedARB = (PFNGLDRAWELEMENTSINSTANCEDARBPROC)loadFunction(
         "glDrawElementsInstancedARB");
-      glDrawElementsInstancedBaseInstance = (PFNGLDRAWELEMENTSINSTANCEDBASEINSTANCEPROC)loadFunction(
-        "glDrawElementsInstancedBaseInstance");
+      glDrawElementsInstancedBaseInstance = (PFNGLDRAWELEMENTSINSTANCEDBASEINSTANCEPROC)
+        loadFunction("glDrawElementsInstancedBaseInstance");
       glDrawElementsInstancedBaseVertex = (PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC)loadFunction(
         "glDrawElementsInstancedBaseVertex");
-      glDrawElementsInstancedBaseVertexBaseInstance = (PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEPROC)
-        loadFunction("glDrawElementsInstancedBaseVertexBaseInstance");
+      glDrawElementsInstancedBaseVertexBaseInstance =
+        (PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEPROC)loadFunction(
+          "glDrawElementsInstancedBaseVertexBaseInstance");
       glDrawElementsInstancedEXT = (PFNGLDRAWELEMENTSINSTANCEDEXTPROC)loadFunction(
         "glDrawElementsInstancedEXT");
       glDrawMeshTasksNV = (PFNGLDRAWMESHTASKSNVPROC)loadFunction("glDrawMeshTasksNV");
@@ -4380,17 +4555,19 @@ namespace internal
       glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC)loadFunction("glDrawRangeElements");
       glDrawRangeElementsBaseVertex = (PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC)loadFunction(
         "glDrawRangeElementsBaseVertex");
-      glDrawRangeElementsEXT = (PFNGLDRAWRANGEELEMENTSEXTPROC)loadFunction("glDrawRangeElementsEXT");
+      glDrawRangeElementsEXT = (PFNGLDRAWRANGEELEMENTSEXTPROC)loadFunction(
+        "glDrawRangeElementsEXT");
       glDrawTextureNV = (PFNGLDRAWTEXTURENVPROC)loadFunction("glDrawTextureNV");
-      glDrawTransformFeedback = (PFNGLDRAWTRANSFORMFEEDBACKPROC)loadFunction("glDrawTransformFeedback");
+      glDrawTransformFeedback = (PFNGLDRAWTRANSFORMFEEDBACKPROC)loadFunction(
+        "glDrawTransformFeedback");
       glDrawTransformFeedbackInstanced = (PFNGLDRAWTRANSFORMFEEDBACKINSTANCEDPROC)loadFunction(
         "glDrawTransformFeedbackInstanced");
       glDrawTransformFeedbackNV = (PFNGLDRAWTRANSFORMFEEDBACKNVPROC)loadFunction(
         "glDrawTransformFeedbackNV");
       glDrawTransformFeedbackStream = (PFNGLDRAWTRANSFORMFEEDBACKSTREAMPROC)loadFunction(
         "glDrawTransformFeedbackStream");
-      glDrawTransformFeedbackStreamInstanced = (PFNGLDRAWTRANSFORMFEEDBACKSTREAMINSTANCEDPROC)loadFunction(
-        "glDrawTransformFeedbackStreamInstanced");
+      glDrawTransformFeedbackStreamInstanced = (PFNGLDRAWTRANSFORMFEEDBACKSTREAMINSTANCEDPROC)
+        loadFunction("glDrawTransformFeedbackStreamInstanced");
       glEGLImageTargetTexStorageEXT = (PFNGLEGLIMAGETARGETTEXSTORAGEEXTPROC)loadFunction(
         "glEGLImageTargetTexStorageEXT");
       glEGLImageTargetTextureStorageEXT = (PFNGLEGLIMAGETARGETTEXTURESTORAGEEXTPROC)loadFunction(
@@ -4405,7 +4582,8 @@ namespace internal
       glEnableClientState = (PFNGLENABLECLIENTSTATEPROC)loadFunction("glEnableClientState");
       glEnableClientStateIndexedEXT = (PFNGLENABLECLIENTSTATEINDEXEDEXTPROC)loadFunction(
         "glEnableClientStateIndexedEXT");
-      glEnableClientStateiEXT = (PFNGLENABLECLIENTSTATEIEXTPROC)loadFunction("glEnableClientStateiEXT");
+      glEnableClientStateiEXT = (PFNGLENABLECLIENTSTATEIEXTPROC)loadFunction(
+        "glEnableClientStateiEXT");
       glEnableIndexedEXT = (PFNGLENABLEINDEXEDEXTPROC)loadFunction("glEnableIndexedEXT");
       glEnableVariantClientStateEXT = (PFNGLENABLEVARIANTCLIENTSTATEEXTPROC)loadFunction(
         "glEnableVariantClientStateEXT");
@@ -4413,7 +4591,8 @@ namespace internal
         "glEnableVertexArrayAttrib");
       glEnableVertexArrayAttribEXT = (PFNGLENABLEVERTEXARRAYATTRIBEXTPROC)loadFunction(
         "glEnableVertexArrayAttribEXT");
-      glEnableVertexArrayEXT = (PFNGLENABLEVERTEXARRAYEXTPROC)loadFunction("glEnableVertexArrayEXT");
+      glEnableVertexArrayEXT = (PFNGLENABLEVERTEXARRAYEXTPROC)loadFunction(
+        "glEnableVertexArrayEXT");
       glEnableVertexAttribAPPLE = (PFNGLENABLEVERTEXATTRIBAPPLEPROC)loadFunction(
         "glEnableVertexAttribAPPLE");
       glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)loadFunction(
@@ -4422,8 +4601,10 @@ namespace internal
         "glEnableVertexAttribArrayARB");
       glEnablei = (PFNGLENABLEIPROC)loadFunction("glEnablei");
       glEnd = (PFNGLENDPROC)loadFunction("glEnd");
-      glEndConditionalRender = (PFNGLENDCONDITIONALRENDERPROC)loadFunction("glEndConditionalRender");
-      glEndConditionalRenderNV = (PFNGLENDCONDITIONALRENDERNVPROC)loadFunction("glEndConditionalRenderNV");
+      glEndConditionalRender = (PFNGLENDCONDITIONALRENDERPROC)loadFunction(
+        "glEndConditionalRender");
+      glEndConditionalRenderNV = (PFNGLENDCONDITIONALRENDERNVPROC)loadFunction(
+        "glEndConditionalRenderNV");
       glEndConditionalRenderNVX = (PFNGLENDCONDITIONALRENDERNVXPROC)loadFunction(
         "glEndConditionalRenderNVX");
       glEndList = (PFNGLENDLISTPROC)loadFunction("glEndList");
@@ -4433,10 +4614,12 @@ namespace internal
       glEndQuery = (PFNGLENDQUERYPROC)loadFunction("glEndQuery");
       glEndQueryARB = (PFNGLENDQUERYARBPROC)loadFunction("glEndQueryARB");
       glEndQueryIndexed = (PFNGLENDQUERYINDEXEDPROC)loadFunction("glEndQueryIndexed");
-      glEndTransformFeedback = (PFNGLENDTRANSFORMFEEDBACKPROC)loadFunction("glEndTransformFeedback");
+      glEndTransformFeedback = (PFNGLENDTRANSFORMFEEDBACKPROC)loadFunction(
+        "glEndTransformFeedback");
       glEndTransformFeedbackEXT = (PFNGLENDTRANSFORMFEEDBACKEXTPROC)loadFunction(
         "glEndTransformFeedbackEXT");
-      glEndTransformFeedbackNV = (PFNGLENDTRANSFORMFEEDBACKNVPROC)loadFunction("glEndTransformFeedbackNV");
+      glEndTransformFeedbackNV = (PFNGLENDTRANSFORMFEEDBACKNVPROC)loadFunction(
+        "glEndTransformFeedbackNV");
       glEndVertexShaderEXT = (PFNGLENDVERTEXSHADEREXTPROC)loadFunction("glEndVertexShaderEXT");
       glEndVideoCaptureNV = (PFNGLENDVIDEOCAPTURENVPROC)loadFunction("glEndVideoCaptureNV");
       glEvalCoord1d = (PFNGLEVALCOORD1DPROC)loadFunction("glEvalCoord1d");
@@ -4452,25 +4635,29 @@ namespace internal
       glEvalMesh2 = (PFNGLEVALMESH2PROC)loadFunction("glEvalMesh2");
       glEvalPoint1 = (PFNGLEVALPOINT1PROC)loadFunction("glEvalPoint1");
       glEvalPoint2 = (PFNGLEVALPOINT2PROC)loadFunction("glEvalPoint2");
-      glEvaluateDepthValuesARB = (PFNGLEVALUATEDEPTHVALUESARBPROC)loadFunction("glEvaluateDepthValuesARB");
+      glEvaluateDepthValuesARB = (PFNGLEVALUATEDEPTHVALUESARBPROC)loadFunction(
+        "glEvaluateDepthValuesARB");
       glExecuteProgramNV = (PFNGLEXECUTEPROGRAMNVPROC)loadFunction("glExecuteProgramNV");
       glExtractComponentEXT = (PFNGLEXTRACTCOMPONENTEXTPROC)loadFunction("glExtractComponentEXT");
       glFeedbackBuffer = (PFNGLFEEDBACKBUFFERPROC)loadFunction("glFeedbackBuffer");
       glFenceSync = (PFNGLFENCESYNCPROC)loadFunction("glFenceSync");
-      glFinalCombinerInputNV = (PFNGLFINALCOMBINERINPUTNVPROC)loadFunction("glFinalCombinerInputNV");
+      glFinalCombinerInputNV = (PFNGLFINALCOMBINERINPUTNVPROC)loadFunction(
+        "glFinalCombinerInputNV");
       glFinish = (PFNGLFINISHPROC)loadFunction("glFinish");
       glFinishFenceAPPLE = (PFNGLFINISHFENCEAPPLEPROC)loadFunction("glFinishFenceAPPLE");
       glFinishFenceNV = (PFNGLFINISHFENCENVPROC)loadFunction("glFinishFenceNV");
       glFinishObjectAPPLE = (PFNGLFINISHOBJECTAPPLEPROC)loadFunction("glFinishObjectAPPLE");
       glFlush = (PFNGLFLUSHPROC)loadFunction("glFlush");
-      glFlushMappedBufferRange = (PFNGLFLUSHMAPPEDBUFFERRANGEPROC)loadFunction("glFlushMappedBufferRange");
+      glFlushMappedBufferRange = (PFNGLFLUSHMAPPEDBUFFERRANGEPROC)loadFunction(
+        "glFlushMappedBufferRange");
       glFlushMappedBufferRangeAPPLE = (PFNGLFLUSHMAPPEDBUFFERRANGEAPPLEPROC)loadFunction(
         "glFlushMappedBufferRangeAPPLE");
       glFlushMappedNamedBufferRange = (PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC)loadFunction(
         "glFlushMappedNamedBufferRange");
       glFlushMappedNamedBufferRangeEXT = (PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEEXTPROC)loadFunction(
         "glFlushMappedNamedBufferRangeEXT");
-      glFlushPixelDataRangeNV = (PFNGLFLUSHPIXELDATARANGENVPROC)loadFunction("glFlushPixelDataRangeNV");
+      glFlushPixelDataRangeNV = (PFNGLFLUSHPIXELDATARANGENVPROC)loadFunction(
+        "glFlushPixelDataRangeNV");
       glFlushVertexArrayRangeAPPLE = (PFNGLFLUSHVERTEXARRAYRANGEAPPLEPROC)loadFunction(
         "glFlushVertexArrayRangeAPPLE");
       glFlushVertexArrayRangeNV = (PFNGLFLUSHVERTEXARRAYRANGENVPROC)loadFunction(
@@ -4500,7 +4687,8 @@ namespace internal
         "glFramebufferDrawBuffersEXT");
       glFramebufferFetchBarrierEXT = (PFNGLFRAMEBUFFERFETCHBARRIEREXTPROC)loadFunction(
         "glFramebufferFetchBarrierEXT");
-      glFramebufferParameteri = (PFNGLFRAMEBUFFERPARAMETERIPROC)loadFunction("glFramebufferParameteri");
+      glFramebufferParameteri = (PFNGLFRAMEBUFFERPARAMETERIPROC)loadFunction(
+        "glFramebufferParameteri");
       glFramebufferReadBufferEXT = (PFNGLFRAMEBUFFERREADBUFFEREXTPROC)loadFunction(
         "glFramebufferReadBufferEXT");
       glFramebufferRenderbuffer = (PFNGLFRAMEBUFFERRENDERBUFFERPROC)loadFunction(
@@ -4514,17 +4702,22 @@ namespace internal
       glFramebufferSamplePositionsfvAMD = (PFNGLFRAMEBUFFERSAMPLEPOSITIONSFVAMDPROC)loadFunction(
         "glFramebufferSamplePositionsfvAMD");
       glFramebufferTexture = (PFNGLFRAMEBUFFERTEXTUREPROC)loadFunction("glFramebufferTexture");
-      glFramebufferTexture1D = (PFNGLFRAMEBUFFERTEXTURE1DPROC)loadFunction("glFramebufferTexture1D");
+      glFramebufferTexture1D = (PFNGLFRAMEBUFFERTEXTURE1DPROC)loadFunction(
+        "glFramebufferTexture1D");
       glFramebufferTexture1DEXT = (PFNGLFRAMEBUFFERTEXTURE1DEXTPROC)loadFunction(
         "glFramebufferTexture1DEXT");
-      glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC)loadFunction("glFramebufferTexture2D");
+      glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC)loadFunction(
+        "glFramebufferTexture2D");
       glFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)loadFunction(
         "glFramebufferTexture2DEXT");
-      glFramebufferTexture3D = (PFNGLFRAMEBUFFERTEXTURE3DPROC)loadFunction("glFramebufferTexture3D");
+      glFramebufferTexture3D = (PFNGLFRAMEBUFFERTEXTURE3DPROC)loadFunction(
+        "glFramebufferTexture3D");
       glFramebufferTexture3DEXT = (PFNGLFRAMEBUFFERTEXTURE3DEXTPROC)loadFunction(
         "glFramebufferTexture3DEXT");
-      glFramebufferTextureARB = (PFNGLFRAMEBUFFERTEXTUREARBPROC)loadFunction("glFramebufferTextureARB");
-      glFramebufferTextureEXT = (PFNGLFRAMEBUFFERTEXTUREEXTPROC)loadFunction("glFramebufferTextureEXT");
+      glFramebufferTextureARB = (PFNGLFRAMEBUFFERTEXTUREARBPROC)loadFunction(
+        "glFramebufferTextureARB");
+      glFramebufferTextureEXT = (PFNGLFRAMEBUFFERTEXTUREEXTPROC)loadFunction(
+        "glFramebufferTextureEXT");
       glFramebufferTextureFaceARB = (PFNGLFRAMEBUFFERTEXTUREFACEARBPROC)loadFunction(
         "glFramebufferTextureFaceARB");
       glFramebufferTextureFaceEXT = (PFNGLFRAMEBUFFERTEXTUREFACEEXTPROC)loadFunction(
@@ -4545,16 +4738,19 @@ namespace internal
       glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC)loadFunction("glGenFramebuffersEXT");
       glGenLists = (PFNGLGENLISTSPROC)loadFunction("glGenLists");
       glGenNamesAMD = (PFNGLGENNAMESAMDPROC)loadFunction("glGenNamesAMD");
-      glGenOcclusionQueriesNV = (PFNGLGENOCCLUSIONQUERIESNVPROC)loadFunction("glGenOcclusionQueriesNV");
+      glGenOcclusionQueriesNV = (PFNGLGENOCCLUSIONQUERIESNVPROC)loadFunction(
+        "glGenOcclusionQueriesNV");
       glGenPathsNV = (PFNGLGENPATHSNVPROC)loadFunction("glGenPathsNV");
       glGenPerfMonitorsAMD = (PFNGLGENPERFMONITORSAMDPROC)loadFunction("glGenPerfMonitorsAMD");
       glGenProgramPipelines = (PFNGLGENPROGRAMPIPELINESPROC)loadFunction("glGenProgramPipelines");
-      glGenProgramPipelinesEXT = (PFNGLGENPROGRAMPIPELINESEXTPROC)loadFunction("glGenProgramPipelinesEXT");
+      glGenProgramPipelinesEXT = (PFNGLGENPROGRAMPIPELINESEXTPROC)loadFunction(
+        "glGenProgramPipelinesEXT");
       glGenProgramsARB = (PFNGLGENPROGRAMSARBPROC)loadFunction("glGenProgramsARB");
       glGenProgramsNV = (PFNGLGENPROGRAMSNVPROC)loadFunction("glGenProgramsNV");
       glGenQueries = (PFNGLGENQUERIESPROC)loadFunction("glGenQueries");
       glGenQueriesARB = (PFNGLGENQUERIESARBPROC)loadFunction("glGenQueriesARB");
-      glGenQueryResourceTagNV = (PFNGLGENQUERYRESOURCETAGNVPROC)loadFunction("glGenQueryResourceTagNV");
+      glGenQueryResourceTagNV = (PFNGLGENQUERYRESOURCETAGNVPROC)loadFunction(
+        "glGenQueryResourceTagNV");
       glGenRenderbuffers = (PFNGLGENRENDERBUFFERSPROC)loadFunction("glGenRenderbuffers");
       glGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC)loadFunction("glGenRenderbuffersEXT");
       glGenSamplers = (PFNGLGENSAMPLERSPROC)loadFunction("glGenSamplers");
@@ -4562,17 +4758,20 @@ namespace internal
       glGenSymbolsEXT = (PFNGLGENSYMBOLSEXTPROC)loadFunction("glGenSymbolsEXT");
       glGenTextures = (PFNGLGENTEXTURESPROC)loadFunction("glGenTextures");
       glGenTexturesEXT = (PFNGLGENTEXTURESEXTPROC)loadFunction("glGenTexturesEXT");
-      glGenTransformFeedbacks = (PFNGLGENTRANSFORMFEEDBACKSPROC)loadFunction("glGenTransformFeedbacks");
+      glGenTransformFeedbacks = (PFNGLGENTRANSFORMFEEDBACKSPROC)loadFunction(
+        "glGenTransformFeedbacks");
       glGenTransformFeedbacksNV = (PFNGLGENTRANSFORMFEEDBACKSNVPROC)loadFunction(
         "glGenTransformFeedbacksNV");
       glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)loadFunction("glGenVertexArrays");
-      glGenVertexArraysAPPLE = (PFNGLGENVERTEXARRAYSAPPLEPROC)loadFunction("glGenVertexArraysAPPLE");
+      glGenVertexArraysAPPLE = (PFNGLGENVERTEXARRAYSAPPLEPROC)loadFunction(
+        "glGenVertexArraysAPPLE");
       glGenVertexShadersEXT = (PFNGLGENVERTEXSHADERSEXTPROC)loadFunction("glGenVertexShadersEXT");
       glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)loadFunction("glGenerateMipmap");
       glGenerateMipmapEXT = (PFNGLGENERATEMIPMAPEXTPROC)loadFunction("glGenerateMipmapEXT");
       glGenerateMultiTexMipmapEXT = (PFNGLGENERATEMULTITEXMIPMAPEXTPROC)loadFunction(
         "glGenerateMultiTexMipmapEXT");
-      glGenerateTextureMipmap = (PFNGLGENERATETEXTUREMIPMAPPROC)loadFunction("glGenerateTextureMipmap");
+      glGenerateTextureMipmap = (PFNGLGENERATETEXTUREMIPMAPPROC)loadFunction(
+        "glGenerateTextureMipmap");
       glGenerateTextureMipmapEXT = (PFNGLGENERATETEXTUREMIPMAPEXTPROC)loadFunction(
         "glGenerateTextureMipmapEXT");
       glGetActiveAtomicCounterBufferiv = (PFNGLGETACTIVEATOMICCOUNTERBUFFERIVPROC)loadFunction(
@@ -4591,24 +4790,31 @@ namespace internal
         "glGetActiveUniformBlockName");
       glGetActiveUniformBlockiv = (PFNGLGETACTIVEUNIFORMBLOCKIVPROC)loadFunction(
         "glGetActiveUniformBlockiv");
-      glGetActiveUniformName = (PFNGLGETACTIVEUNIFORMNAMEPROC)loadFunction("glGetActiveUniformName");
+      glGetActiveUniformName = (PFNGLGETACTIVEUNIFORMNAMEPROC)loadFunction(
+        "glGetActiveUniformName");
       glGetActiveUniformsiv = (PFNGLGETACTIVEUNIFORMSIVPROC)loadFunction("glGetActiveUniformsiv");
       glGetActiveVaryingNV = (PFNGLGETACTIVEVARYINGNVPROC)loadFunction("glGetActiveVaryingNV");
-      glGetAttachedObjectsARB = (PFNGLGETATTACHEDOBJECTSARBPROC)loadFunction("glGetAttachedObjectsARB");
+      glGetAttachedObjectsARB = (PFNGLGETATTACHEDOBJECTSARBPROC)loadFunction(
+        "glGetAttachedObjectsARB");
       glGetAttachedShaders = (PFNGLGETATTACHEDSHADERSPROC)loadFunction("glGetAttachedShaders");
       glGetAttribLocation = (PFNGLGETATTRIBLOCATIONPROC)loadFunction("glGetAttribLocation");
-      glGetAttribLocationARB = (PFNGLGETATTRIBLOCATIONARBPROC)loadFunction("glGetAttribLocationARB");
-      glGetBooleanIndexedvEXT = (PFNGLGETBOOLEANINDEXEDVEXTPROC)loadFunction("glGetBooleanIndexedvEXT");
+      glGetAttribLocationARB = (PFNGLGETATTRIBLOCATIONARBPROC)loadFunction(
+        "glGetAttribLocationARB");
+      glGetBooleanIndexedvEXT = (PFNGLGETBOOLEANINDEXEDVEXTPROC)loadFunction(
+        "glGetBooleanIndexedvEXT");
       glGetBooleani_v = (PFNGLGETBOOLEANI_VPROC)loadFunction("glGetBooleani_v");
       glGetBooleanv = (PFNGLGETBOOLEANVPROC)loadFunction("glGetBooleanv");
-      glGetBufferParameteri64v = (PFNGLGETBUFFERPARAMETERI64VPROC)loadFunction("glGetBufferParameteri64v");
-      glGetBufferParameteriv = (PFNGLGETBUFFERPARAMETERIVPROC)loadFunction("glGetBufferParameteriv");
+      glGetBufferParameteri64v = (PFNGLGETBUFFERPARAMETERI64VPROC)loadFunction(
+        "glGetBufferParameteri64v");
+      glGetBufferParameteriv = (PFNGLGETBUFFERPARAMETERIVPROC)loadFunction(
+        "glGetBufferParameteriv");
       glGetBufferParameterivARB = (PFNGLGETBUFFERPARAMETERIVARBPROC)loadFunction(
         "glGetBufferParameterivARB");
       glGetBufferParameterui64vNV = (PFNGLGETBUFFERPARAMETERUI64VNVPROC)loadFunction(
         "glGetBufferParameterui64vNV");
       glGetBufferPointerv = (PFNGLGETBUFFERPOINTERVPROC)loadFunction("glGetBufferPointerv");
-      glGetBufferPointervARB = (PFNGLGETBUFFERPOINTERVARBPROC)loadFunction("glGetBufferPointervARB");
+      glGetBufferPointervARB = (PFNGLGETBUFFERPOINTERVARBPROC)loadFunction(
+        "glGetBufferPointervARB");
       glGetBufferSubData = (PFNGLGETBUFFERSUBDATAPROC)loadFunction("glGetBufferSubData");
       glGetBufferSubDataARB = (PFNGLGETBUFFERSUBDATAARBPROC)loadFunction("glGetBufferSubDataARB");
       glGetClipPlane = (PFNGLGETCLIPPLANEPROC)loadFunction("glGetClipPlane");
@@ -4635,7 +4841,8 @@ namespace internal
       glGetCommandHeaderNV = (PFNGLGETCOMMANDHEADERNVPROC)loadFunction("glGetCommandHeaderNV");
       glGetCompressedMultiTexImageEXT = (PFNGLGETCOMPRESSEDMULTITEXIMAGEEXTPROC)loadFunction(
         "glGetCompressedMultiTexImageEXT");
-      glGetCompressedTexImage = (PFNGLGETCOMPRESSEDTEXIMAGEPROC)loadFunction("glGetCompressedTexImage");
+      glGetCompressedTexImage = (PFNGLGETCOMPRESSEDTEXIMAGEPROC)loadFunction(
+        "glGetCompressedTexImage");
       glGetCompressedTexImageARB = (PFNGLGETCOMPRESSEDTEXIMAGEARBPROC)loadFunction(
         "glGetCompressedTexImageARB");
       glGetCompressedTextureImage = (PFNGLGETCOMPRESSEDTEXTUREIMAGEPROC)loadFunction(
@@ -4644,7 +4851,8 @@ namespace internal
         "glGetCompressedTextureImageEXT");
       glGetCompressedTextureSubImage = (PFNGLGETCOMPRESSEDTEXTURESUBIMAGEPROC)loadFunction(
         "glGetCompressedTextureSubImage");
-      glGetConvolutionFilter = (PFNGLGETCONVOLUTIONFILTERPROC)loadFunction("glGetConvolutionFilter");
+      glGetConvolutionFilter = (PFNGLGETCONVOLUTIONFILTERPROC)loadFunction(
+        "glGetConvolutionFilter");
       glGetConvolutionFilterEXT = (PFNGLGETCONVOLUTIONFILTEREXTPROC)loadFunction(
         "glGetConvolutionFilterEXT");
       glGetConvolutionParameterfv = (PFNGLGETCONVOLUTIONPARAMETERFVPROC)loadFunction(
@@ -4658,19 +4866,23 @@ namespace internal
       glGetCoverageModulationTableNV = (PFNGLGETCOVERAGEMODULATIONTABLENVPROC)loadFunction(
         "glGetCoverageModulationTableNV");
       glGetDebugMessageLog = (PFNGLGETDEBUGMESSAGELOGPROC)loadFunction("glGetDebugMessageLog");
-      glGetDebugMessageLogAMD = (PFNGLGETDEBUGMESSAGELOGAMDPROC)loadFunction("glGetDebugMessageLogAMD");
-      glGetDebugMessageLogARB = (PFNGLGETDEBUGMESSAGELOGARBPROC)loadFunction("glGetDebugMessageLogARB");
-      glGetDebugMessageLogKHR = (PFNGLGETDEBUGMESSAGELOGKHRPROC)loadFunction("glGetDebugMessageLogKHR");
-      glGetDoubleIndexedvEXT = (PFNGLGETDOUBLEINDEXEDVEXTPROC)loadFunction("glGetDoubleIndexedvEXT");
+      glGetDebugMessageLogAMD = (PFNGLGETDEBUGMESSAGELOGAMDPROC)loadFunction(
+        "glGetDebugMessageLogAMD");
+      glGetDebugMessageLogARB = (PFNGLGETDEBUGMESSAGELOGARBPROC)loadFunction(
+        "glGetDebugMessageLogARB");
+      glGetDebugMessageLogKHR = (PFNGLGETDEBUGMESSAGELOGKHRPROC)loadFunction(
+        "glGetDebugMessageLogKHR");
+      glGetDoubleIndexedvEXT = (PFNGLGETDOUBLEINDEXEDVEXTPROC)loadFunction(
+        "glGetDoubleIndexedvEXT");
       glGetDoublei_v = (PFNGLGETDOUBLEI_VPROC)loadFunction("glGetDoublei_v");
       glGetDoublei_vEXT = (PFNGLGETDOUBLEI_VEXTPROC)loadFunction("glGetDoublei_vEXT");
       glGetDoublev = (PFNGLGETDOUBLEVPROC)loadFunction("glGetDoublev");
       glGetError = (PFNGLGETERRORPROC)loadFunction("glGetError");
       glGetFenceivNV = (PFNGLGETFENCEIVNVPROC)loadFunction("glGetFenceivNV");
-      glGetFinalCombinerInputParameterfvNV = (PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC)loadFunction(
-        "glGetFinalCombinerInputParameterfvNV");
-      glGetFinalCombinerInputParameterivNV = (PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC)loadFunction(
-        "glGetFinalCombinerInputParameterivNV");
+      glGetFinalCombinerInputParameterfvNV = (PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC)
+        loadFunction("glGetFinalCombinerInputParameterfvNV");
+      glGetFinalCombinerInputParameterivNV = (PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC)
+        loadFunction("glGetFinalCombinerInputParameterivNV");
       glGetFirstPerfQueryIdINTEL = (PFNGLGETFIRSTPERFQUERYIDINTELPROC)loadFunction(
         "glGetFirstPerfQueryIdINTEL");
       glGetFloatIndexedvEXT = (PFNGLGETFLOATINDEXEDVEXTPROC)loadFunction("glGetFloatIndexedvEXT");
@@ -4679,9 +4891,10 @@ namespace internal
       glGetFloatv = (PFNGLGETFLOATVPROC)loadFunction("glGetFloatv");
       glGetFragDataIndex = (PFNGLGETFRAGDATAINDEXPROC)loadFunction("glGetFragDataIndex");
       glGetFragDataLocation = (PFNGLGETFRAGDATALOCATIONPROC)loadFunction("glGetFragDataLocation");
-      glGetFragDataLocationEXT = (PFNGLGETFRAGDATALOCATIONEXTPROC)loadFunction("glGetFragDataLocationEXT");
-      glGetFramebufferAttachmentParameteriv = (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC)loadFunction(
-        "glGetFramebufferAttachmentParameteriv");
+      glGetFragDataLocationEXT = (PFNGLGETFRAGDATALOCATIONEXTPROC)loadFunction(
+        "glGetFragDataLocationEXT");
+      glGetFramebufferAttachmentParameteriv = (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC)
+        loadFunction("glGetFramebufferAttachmentParameteriv");
       glGetFramebufferAttachmentParameterivEXT = (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC)
         loadFunction("glGetFramebufferAttachmentParameterivEXT");
       glGetFramebufferParameterfvAMD = (PFNGLGETFRAMEBUFFERPARAMETERFVAMDPROC)loadFunction(
@@ -4690,7 +4903,8 @@ namespace internal
         "glGetFramebufferParameteriv");
       glGetFramebufferParameterivEXT = (PFNGLGETFRAMEBUFFERPARAMETERIVEXTPROC)loadFunction(
         "glGetFramebufferParameterivEXT");
-      glGetGraphicsResetStatus = (PFNGLGETGRAPHICSRESETSTATUSPROC)loadFunction("glGetGraphicsResetStatus");
+      glGetGraphicsResetStatus = (PFNGLGETGRAPHICSRESETSTATUSPROC)loadFunction(
+        "glGetGraphicsResetStatus");
       glGetGraphicsResetStatusARB = (PFNGLGETGRAPHICSRESETSTATUSARBPROC)loadFunction(
         "glGetGraphicsResetStatusARB");
       glGetGraphicsResetStatusKHR = (PFNGLGETGRAPHICSRESETSTATUSKHRPROC)loadFunction(
@@ -4711,18 +4925,21 @@ namespace internal
       glGetInfoLogARB = (PFNGLGETINFOLOGARBPROC)loadFunction("glGetInfoLogARB");
       glGetInteger64i_v = (PFNGLGETINTEGER64I_VPROC)loadFunction("glGetInteger64i_v");
       glGetInteger64v = (PFNGLGETINTEGER64VPROC)loadFunction("glGetInteger64v");
-      glGetIntegerIndexedvEXT = (PFNGLGETINTEGERINDEXEDVEXTPROC)loadFunction("glGetIntegerIndexedvEXT");
+      glGetIntegerIndexedvEXT = (PFNGLGETINTEGERINDEXEDVEXTPROC)loadFunction(
+        "glGetIntegerIndexedvEXT");
       glGetIntegeri_v = (PFNGLGETINTEGERI_VPROC)loadFunction("glGetIntegeri_v");
       glGetIntegerui64i_vNV = (PFNGLGETINTEGERUI64I_VNVPROC)loadFunction("glGetIntegerui64i_vNV");
       glGetIntegerui64vNV = (PFNGLGETINTEGERUI64VNVPROC)loadFunction("glGetIntegerui64vNV");
       glGetIntegerv = (PFNGLGETINTEGERVPROC)loadFunction("glGetIntegerv");
       glGetInternalformatSampleivNV = (PFNGLGETINTERNALFORMATSAMPLEIVNVPROC)loadFunction(
         "glGetInternalformatSampleivNV");
-      glGetInternalformati64v = (PFNGLGETINTERNALFORMATI64VPROC)loadFunction("glGetInternalformati64v");
+      glGetInternalformati64v = (PFNGLGETINTERNALFORMATI64VPROC)loadFunction(
+        "glGetInternalformati64v");
       glGetInternalformativ = (PFNGLGETINTERNALFORMATIVPROC)loadFunction("glGetInternalformativ");
       glGetInvariantBooleanvEXT = (PFNGLGETINVARIANTBOOLEANVEXTPROC)loadFunction(
         "glGetInvariantBooleanvEXT");
-      glGetInvariantFloatvEXT = (PFNGLGETINVARIANTFLOATVEXTPROC)loadFunction("glGetInvariantFloatvEXT");
+      glGetInvariantFloatvEXT = (PFNGLGETINVARIANTFLOATVEXTPROC)loadFunction(
+        "glGetInvariantFloatvEXT");
       glGetInvariantIntegervEXT = (PFNGLGETINVARIANTINTEGERVEXTPROC)loadFunction(
         "glGetInvariantIntegervEXT");
       glGetLightfv = (PFNGLGETLIGHTFVPROC)loadFunction("glGetLightfv");
@@ -4737,7 +4954,8 @@ namespace internal
         "glGetMapAttribParameterfvNV");
       glGetMapAttribParameterivNV = (PFNGLGETMAPATTRIBPARAMETERIVNVPROC)loadFunction(
         "glGetMapAttribParameterivNV");
-      glGetMapControlPointsNV = (PFNGLGETMAPCONTROLPOINTSNVPROC)loadFunction("glGetMapControlPointsNV");
+      glGetMapControlPointsNV = (PFNGLGETMAPCONTROLPOINTSNVPROC)loadFunction(
+        "glGetMapControlPointsNV");
       glGetMapParameterfvNV = (PFNGLGETMAPPARAMETERFVNVPROC)loadFunction("glGetMapParameterfvNV");
       glGetMapParameterivNV = (PFNGLGETMAPPARAMETERIVNVPROC)loadFunction("glGetMapParameterivNV");
       glGetMapdv = (PFNGLGETMAPDVPROC)loadFunction("glGetMapdv");
@@ -4745,16 +4963,18 @@ namespace internal
       glGetMapiv = (PFNGLGETMAPIVPROC)loadFunction("glGetMapiv");
       glGetMaterialfv = (PFNGLGETMATERIALFVPROC)loadFunction("glGetMaterialfv");
       glGetMaterialiv = (PFNGLGETMATERIALIVPROC)loadFunction("glGetMaterialiv");
-      glGetMemoryObjectDetachedResourcesuivNV = (PFNGLGETMEMORYOBJECTDETACHEDRESOURCESUIVNVPROC)loadFunction(
-        "glGetMemoryObjectDetachedResourcesuivNV");
+      glGetMemoryObjectDetachedResourcesuivNV = (PFNGLGETMEMORYOBJECTDETACHEDRESOURCESUIVNVPROC)
+        loadFunction("glGetMemoryObjectDetachedResourcesuivNV");
       glGetMemoryObjectParameterivEXT = (PFNGLGETMEMORYOBJECTPARAMETERIVEXTPROC)loadFunction(
         "glGetMemoryObjectParameterivEXT");
       glGetMinmax = (PFNGLGETMINMAXPROC)loadFunction("glGetMinmax");
       glGetMinmaxEXT = (PFNGLGETMINMAXEXTPROC)loadFunction("glGetMinmaxEXT");
-      glGetMinmaxParameterfv = (PFNGLGETMINMAXPARAMETERFVPROC)loadFunction("glGetMinmaxParameterfv");
+      glGetMinmaxParameterfv = (PFNGLGETMINMAXPARAMETERFVPROC)loadFunction(
+        "glGetMinmaxParameterfv");
       glGetMinmaxParameterfvEXT = (PFNGLGETMINMAXPARAMETERFVEXTPROC)loadFunction(
         "glGetMinmaxParameterfvEXT");
-      glGetMinmaxParameteriv = (PFNGLGETMINMAXPARAMETERIVPROC)loadFunction("glGetMinmaxParameteriv");
+      glGetMinmaxParameteriv = (PFNGLGETMINMAXPARAMETERIVPROC)loadFunction(
+        "glGetMinmaxParameteriv");
       glGetMinmaxParameterivEXT = (PFNGLGETMINMAXPARAMETERIVEXTPROC)loadFunction(
         "glGetMinmaxParameterivEXT");
       glGetMultiTexEnvfvEXT = (PFNGLGETMULTITEXENVFVEXTPROC)loadFunction("glGetMultiTexEnvfvEXT");
@@ -4785,37 +5005,42 @@ namespace internal
         "glGetNamedBufferParameterivEXT");
       glGetNamedBufferParameterui64vNV = (PFNGLGETNAMEDBUFFERPARAMETERUI64VNVPROC)loadFunction(
         "glGetNamedBufferParameterui64vNV");
-      glGetNamedBufferPointerv = (PFNGLGETNAMEDBUFFERPOINTERVPROC)loadFunction("glGetNamedBufferPointerv");
+      glGetNamedBufferPointerv = (PFNGLGETNAMEDBUFFERPOINTERVPROC)loadFunction(
+        "glGetNamedBufferPointerv");
       glGetNamedBufferPointervEXT = (PFNGLGETNAMEDBUFFERPOINTERVEXTPROC)loadFunction(
         "glGetNamedBufferPointervEXT");
-      glGetNamedBufferSubData = (PFNGLGETNAMEDBUFFERSUBDATAPROC)loadFunction("glGetNamedBufferSubData");
+      glGetNamedBufferSubData = (PFNGLGETNAMEDBUFFERSUBDATAPROC)loadFunction(
+        "glGetNamedBufferSubData");
       glGetNamedBufferSubDataEXT = (PFNGLGETNAMEDBUFFERSUBDATAEXTPROC)loadFunction(
         "glGetNamedBufferSubDataEXT");
-      glGetNamedFramebufferParameterfvAMD = (PFNGLGETNAMEDFRAMEBUFFERPARAMETERFVAMDPROC)loadFunction(
-        "glGetNamedFramebufferParameterfvAMD");
-      glGetNamedFramebufferAttachmentParameteriv = (PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVPROC)
-        loadFunction("glGetNamedFramebufferAttachmentParameteriv");
-      glGetNamedFramebufferAttachmentParameterivEXT = (PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC)
-        loadFunction("glGetNamedFramebufferAttachmentParameterivEXT");
+      glGetNamedFramebufferParameterfvAMD = (PFNGLGETNAMEDFRAMEBUFFERPARAMETERFVAMDPROC)
+        loadFunction("glGetNamedFramebufferParameterfvAMD");
+      glGetNamedFramebufferAttachmentParameteriv =
+        (PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVPROC)loadFunction(
+          "glGetNamedFramebufferAttachmentParameteriv");
+      glGetNamedFramebufferAttachmentParameterivEXT =
+        (PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC)loadFunction(
+          "glGetNamedFramebufferAttachmentParameterivEXT");
       glGetNamedFramebufferParameteriv = (PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVPROC)loadFunction(
         "glGetNamedFramebufferParameteriv");
-      glGetNamedFramebufferParameterivEXT = (PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVEXTPROC)loadFunction(
-        "glGetNamedFramebufferParameterivEXT");
-      glGetNamedProgramLocalParameterIivEXT = (PFNGLGETNAMEDPROGRAMLOCALPARAMETERIIVEXTPROC)loadFunction(
-        "glGetNamedProgramLocalParameterIivEXT");
-      glGetNamedProgramLocalParameterIuivEXT = (PFNGLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXTPROC)loadFunction(
-        "glGetNamedProgramLocalParameterIuivEXT");
-      glGetNamedProgramLocalParameterdvEXT = (PFNGLGETNAMEDPROGRAMLOCALPARAMETERDVEXTPROC)loadFunction(
-        "glGetNamedProgramLocalParameterdvEXT");
-      glGetNamedProgramLocalParameterfvEXT = (PFNGLGETNAMEDPROGRAMLOCALPARAMETERFVEXTPROC)loadFunction(
-        "glGetNamedProgramLocalParameterfvEXT");
+      glGetNamedFramebufferParameterivEXT = (PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVEXTPROC)
+        loadFunction("glGetNamedFramebufferParameterivEXT");
+      glGetNamedProgramLocalParameterIivEXT = (PFNGLGETNAMEDPROGRAMLOCALPARAMETERIIVEXTPROC)
+        loadFunction("glGetNamedProgramLocalParameterIivEXT");
+      glGetNamedProgramLocalParameterIuivEXT = (PFNGLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXTPROC)
+        loadFunction("glGetNamedProgramLocalParameterIuivEXT");
+      glGetNamedProgramLocalParameterdvEXT = (PFNGLGETNAMEDPROGRAMLOCALPARAMETERDVEXTPROC)
+        loadFunction("glGetNamedProgramLocalParameterdvEXT");
+      glGetNamedProgramLocalParameterfvEXT = (PFNGLGETNAMEDPROGRAMLOCALPARAMETERFVEXTPROC)
+        loadFunction("glGetNamedProgramLocalParameterfvEXT");
       glGetNamedProgramStringEXT = (PFNGLGETNAMEDPROGRAMSTRINGEXTPROC)loadFunction(
         "glGetNamedProgramStringEXT");
-      glGetNamedProgramivEXT = (PFNGLGETNAMEDPROGRAMIVEXTPROC)loadFunction("glGetNamedProgramivEXT");
+      glGetNamedProgramivEXT = (PFNGLGETNAMEDPROGRAMIVEXTPROC)loadFunction(
+        "glGetNamedProgramivEXT");
       glGetNamedRenderbufferParameteriv = (PFNGLGETNAMEDRENDERBUFFERPARAMETERIVPROC)loadFunction(
         "glGetNamedRenderbufferParameteriv");
-      glGetNamedRenderbufferParameterivEXT = (PFNGLGETNAMEDRENDERBUFFERPARAMETERIVEXTPROC)loadFunction(
-        "glGetNamedRenderbufferParameterivEXT");
+      glGetNamedRenderbufferParameterivEXT = (PFNGLGETNAMEDRENDERBUFFERPARAMETERIVEXTPROC)
+        loadFunction("glGetNamedRenderbufferParameterivEXT");
       glGetNamedStringARB = (PFNGLGETNAMEDSTRINGARBPROC)loadFunction("glGetNamedStringARB");
       glGetNamedStringivARB = (PFNGLGETNAMEDSTRINGIVARBPROC)loadFunction("glGetNamedStringivARB");
       glGetNextPerfQueryIdINTEL = (PFNGLGETNEXTPERFQUERYIDINTELPROC)loadFunction(
@@ -4830,19 +5055,25 @@ namespace internal
       glGetObjectParameterivARB = (PFNGLGETOBJECTPARAMETERIVARBPROC)loadFunction(
         "glGetObjectParameterivARB");
       glGetObjectPtrLabel = (PFNGLGETOBJECTPTRLABELPROC)loadFunction("glGetObjectPtrLabel");
-      glGetObjectPtrLabelKHR = (PFNGLGETOBJECTPTRLABELKHRPROC)loadFunction("glGetObjectPtrLabelKHR");
-      glGetOcclusionQueryivNV = (PFNGLGETOCCLUSIONQUERYIVNVPROC)loadFunction("glGetOcclusionQueryivNV");
-      glGetOcclusionQueryuivNV = (PFNGLGETOCCLUSIONQUERYUIVNVPROC)loadFunction("glGetOcclusionQueryuivNV");
+      glGetObjectPtrLabelKHR = (PFNGLGETOBJECTPTRLABELKHRPROC)loadFunction(
+        "glGetObjectPtrLabelKHR");
+      glGetOcclusionQueryivNV = (PFNGLGETOCCLUSIONQUERYIVNVPROC)loadFunction(
+        "glGetOcclusionQueryivNV");
+      glGetOcclusionQueryuivNV = (PFNGLGETOCCLUSIONQUERYUIVNVPROC)loadFunction(
+        "glGetOcclusionQueryuivNV");
       glGetPathColorGenfvNV = (PFNGLGETPATHCOLORGENFVNVPROC)loadFunction("glGetPathColorGenfvNV");
       glGetPathColorGenivNV = (PFNGLGETPATHCOLORGENIVNVPROC)loadFunction("glGetPathColorGenivNV");
       glGetPathCommandsNV = (PFNGLGETPATHCOMMANDSNVPROC)loadFunction("glGetPathCommandsNV");
       glGetPathCoordsNV = (PFNGLGETPATHCOORDSNVPROC)loadFunction("glGetPathCoordsNV");
       glGetPathDashArrayNV = (PFNGLGETPATHDASHARRAYNVPROC)loadFunction("glGetPathDashArrayNV");
       glGetPathLengthNV = (PFNGLGETPATHLENGTHNVPROC)loadFunction("glGetPathLengthNV");
-      glGetPathMetricRangeNV = (PFNGLGETPATHMETRICRANGENVPROC)loadFunction("glGetPathMetricRangeNV");
+      glGetPathMetricRangeNV = (PFNGLGETPATHMETRICRANGENVPROC)loadFunction(
+        "glGetPathMetricRangeNV");
       glGetPathMetricsNV = (PFNGLGETPATHMETRICSNVPROC)loadFunction("glGetPathMetricsNV");
-      glGetPathParameterfvNV = (PFNGLGETPATHPARAMETERFVNVPROC)loadFunction("glGetPathParameterfvNV");
-      glGetPathParameterivNV = (PFNGLGETPATHPARAMETERIVNVPROC)loadFunction("glGetPathParameterivNV");
+      glGetPathParameterfvNV = (PFNGLGETPATHPARAMETERFVNVPROC)loadFunction(
+        "glGetPathParameterfvNV");
+      glGetPathParameterivNV = (PFNGLGETPATHPARAMETERIVNVPROC)loadFunction(
+        "glGetPathParameterivNV");
       glGetPathSpacingNV = (PFNGLGETPATHSPACINGNVPROC)loadFunction("glGetPathSpacingNV");
       glGetPathTexGenfvNV = (PFNGLGETPATHTEXGENFVNVPROC)loadFunction("glGetPathTexGenfvNV");
       glGetPathTexGenivNV = (PFNGLGETPATHTEXGENIVNVPROC)loadFunction("glGetPathTexGenivNV");
@@ -4860,10 +5091,12 @@ namespace internal
         "glGetPerfMonitorGroupStringAMD");
       glGetPerfMonitorGroupsAMD = (PFNGLGETPERFMONITORGROUPSAMDPROC)loadFunction(
         "glGetPerfMonitorGroupsAMD");
-      glGetPerfQueryDataINTEL = (PFNGLGETPERFQUERYDATAINTELPROC)loadFunction("glGetPerfQueryDataINTEL");
+      glGetPerfQueryDataINTEL = (PFNGLGETPERFQUERYDATAINTELPROC)loadFunction(
+        "glGetPerfQueryDataINTEL");
       glGetPerfQueryIdByNameINTEL = (PFNGLGETPERFQUERYIDBYNAMEINTELPROC)loadFunction(
         "glGetPerfQueryIdByNameINTEL");
-      glGetPerfQueryInfoINTEL = (PFNGLGETPERFQUERYINFOINTELPROC)loadFunction("glGetPerfQueryInfoINTEL");
+      glGetPerfQueryInfoINTEL = (PFNGLGETPERFQUERYINFOINTELPROC)loadFunction(
+        "glGetPerfQueryInfoINTEL");
       glGetPixelMapfv = (PFNGLGETPIXELMAPFVPROC)loadFunction("glGetPixelMapfv");
       glGetPixelMapuiv = (PFNGLGETPIXELMAPUIVPROC)loadFunction("glGetPixelMapuiv");
       glGetPixelMapusv = (PFNGLGETPIXELMAPUSVPROC)loadFunction("glGetPixelMapusv");
@@ -4871,7 +5104,8 @@ namespace internal
         "glGetPixelTransformParameterfvEXT");
       glGetPixelTransformParameterivEXT = (PFNGLGETPIXELTRANSFORMPARAMETERIVEXTPROC)loadFunction(
         "glGetPixelTransformParameterivEXT");
-      glGetPointerIndexedvEXT = (PFNGLGETPOINTERINDEXEDVEXTPROC)loadFunction("glGetPointerIndexedvEXT");
+      glGetPointerIndexedvEXT = (PFNGLGETPOINTERINDEXEDVEXTPROC)loadFunction(
+        "glGetPointerIndexedvEXT");
       glGetPointeri_vEXT = (PFNGLGETPOINTERI_VEXTPROC)loadFunction("glGetPointeri_vEXT");
       glGetPointerv = (PFNGLGETPOINTERVPROC)loadFunction("glGetPointerv");
       glGetPointervEXT = (PFNGLGETPOINTERVEXTPROC)loadFunction("glGetPointervEXT");
@@ -4887,7 +5121,8 @@ namespace internal
       glGetProgramEnvParameterfvARB = (PFNGLGETPROGRAMENVPARAMETERFVARBPROC)loadFunction(
         "glGetProgramEnvParameterfvARB");
       glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)loadFunction("glGetProgramInfoLog");
-      glGetProgramInterfaceiv = (PFNGLGETPROGRAMINTERFACEIVPROC)loadFunction("glGetProgramInterfaceiv");
+      glGetProgramInterfaceiv = (PFNGLGETPROGRAMINTERFACEIVPROC)loadFunction(
+        "glGetProgramInterfaceiv");
       glGetProgramLocalParameterIivNV = (PFNGLGETPROGRAMLOCALPARAMETERIIVNVPROC)loadFunction(
         "glGetProgramLocalParameterIivNV");
       glGetProgramLocalParameterIuivNV = (PFNGLGETPROGRAMLOCALPARAMETERIUIVNVPROC)loadFunction(
@@ -4908,7 +5143,8 @@ namespace internal
         "glGetProgramPipelineInfoLog");
       glGetProgramPipelineInfoLogEXT = (PFNGLGETPROGRAMPIPELINEINFOLOGEXTPROC)loadFunction(
         "glGetProgramPipelineInfoLogEXT");
-      glGetProgramPipelineiv = (PFNGLGETPROGRAMPIPELINEIVPROC)loadFunction("glGetProgramPipelineiv");
+      glGetProgramPipelineiv = (PFNGLGETPROGRAMPIPELINEIVPROC)loadFunction(
+        "glGetProgramPipelineiv");
       glGetProgramPipelineivEXT = (PFNGLGETPROGRAMPIPELINEIVEXTPROC)loadFunction(
         "glGetProgramPipelineivEXT");
       glGetProgramResourceIndex = (PFNGLGETPROGRAMRESOURCEINDEXPROC)loadFunction(
@@ -4917,50 +5153,61 @@ namespace internal
         "glGetProgramResourceLocation");
       glGetProgramResourceLocationIndex = (PFNGLGETPROGRAMRESOURCELOCATIONINDEXPROC)loadFunction(
         "glGetProgramResourceLocationIndex");
-      glGetProgramResourceName = (PFNGLGETPROGRAMRESOURCENAMEPROC)loadFunction("glGetProgramResourceName");
-      glGetProgramResourcefvNV = (PFNGLGETPROGRAMRESOURCEFVNVPROC)loadFunction("glGetProgramResourcefvNV");
-      glGetProgramResourceiv = (PFNGLGETPROGRAMRESOURCEIVPROC)loadFunction("glGetProgramResourceiv");
+      glGetProgramResourceName = (PFNGLGETPROGRAMRESOURCENAMEPROC)loadFunction(
+        "glGetProgramResourceName");
+      glGetProgramResourcefvNV = (PFNGLGETPROGRAMRESOURCEFVNVPROC)loadFunction(
+        "glGetProgramResourcefvNV");
+      glGetProgramResourceiv = (PFNGLGETPROGRAMRESOURCEIVPROC)loadFunction(
+        "glGetProgramResourceiv");
       glGetProgramStageiv = (PFNGLGETPROGRAMSTAGEIVPROC)loadFunction("glGetProgramStageiv");
       glGetProgramStringARB = (PFNGLGETPROGRAMSTRINGARBPROC)loadFunction("glGetProgramStringARB");
       glGetProgramStringNV = (PFNGLGETPROGRAMSTRINGNVPROC)loadFunction("glGetProgramStringNV");
-      glGetProgramSubroutineParameteruivNV = (PFNGLGETPROGRAMSUBROUTINEPARAMETERUIVNVPROC)loadFunction(
-        "glGetProgramSubroutineParameteruivNV");
+      glGetProgramSubroutineParameteruivNV = (PFNGLGETPROGRAMSUBROUTINEPARAMETERUIVNVPROC)
+        loadFunction("glGetProgramSubroutineParameteruivNV");
       glGetProgramiv = (PFNGLGETPROGRAMIVPROC)loadFunction("glGetProgramiv");
       glGetProgramivARB = (PFNGLGETPROGRAMIVARBPROC)loadFunction("glGetProgramivARB");
       glGetProgramivNV = (PFNGLGETPROGRAMIVNVPROC)loadFunction("glGetProgramivNV");
       glGetQueryBufferObjecti64v = (PFNGLGETQUERYBUFFEROBJECTI64VPROC)loadFunction(
         "glGetQueryBufferObjecti64v");
-      glGetQueryBufferObjectiv = (PFNGLGETQUERYBUFFEROBJECTIVPROC)loadFunction("glGetQueryBufferObjectiv");
+      glGetQueryBufferObjectiv = (PFNGLGETQUERYBUFFEROBJECTIVPROC)loadFunction(
+        "glGetQueryBufferObjectiv");
       glGetQueryBufferObjectui64v = (PFNGLGETQUERYBUFFEROBJECTUI64VPROC)loadFunction(
         "glGetQueryBufferObjectui64v");
       glGetQueryBufferObjectuiv = (PFNGLGETQUERYBUFFEROBJECTUIVPROC)loadFunction(
         "glGetQueryBufferObjectuiv");
       glGetQueryIndexediv = (PFNGLGETQUERYINDEXEDIVPROC)loadFunction("glGetQueryIndexediv");
       glGetQueryObjecti64v = (PFNGLGETQUERYOBJECTI64VPROC)loadFunction("glGetQueryObjecti64v");
-      glGetQueryObjecti64vEXT = (PFNGLGETQUERYOBJECTI64VEXTPROC)loadFunction("glGetQueryObjecti64vEXT");
+      glGetQueryObjecti64vEXT = (PFNGLGETQUERYOBJECTI64VEXTPROC)loadFunction(
+        "glGetQueryObjecti64vEXT");
       glGetQueryObjectiv = (PFNGLGETQUERYOBJECTIVPROC)loadFunction("glGetQueryObjectiv");
       glGetQueryObjectivARB = (PFNGLGETQUERYOBJECTIVARBPROC)loadFunction("glGetQueryObjectivARB");
       glGetQueryObjectui64v = (PFNGLGETQUERYOBJECTUI64VPROC)loadFunction("glGetQueryObjectui64v");
-      glGetQueryObjectui64vEXT = (PFNGLGETQUERYOBJECTUI64VEXTPROC)loadFunction("glGetQueryObjectui64vEXT");
+      glGetQueryObjectui64vEXT = (PFNGLGETQUERYOBJECTUI64VEXTPROC)loadFunction(
+        "glGetQueryObjectui64vEXT");
       glGetQueryObjectuiv = (PFNGLGETQUERYOBJECTUIVPROC)loadFunction("glGetQueryObjectuiv");
-      glGetQueryObjectuivARB = (PFNGLGETQUERYOBJECTUIVARBPROC)loadFunction("glGetQueryObjectuivARB");
+      glGetQueryObjectuivARB = (PFNGLGETQUERYOBJECTUIVARBPROC)loadFunction(
+        "glGetQueryObjectuivARB");
       glGetQueryiv = (PFNGLGETQUERYIVPROC)loadFunction("glGetQueryiv");
       glGetQueryivARB = (PFNGLGETQUERYIVARBPROC)loadFunction("glGetQueryivARB");
       glGetRenderbufferParameteriv = (PFNGLGETRENDERBUFFERPARAMETERIVPROC)loadFunction(
         "glGetRenderbufferParameteriv");
       glGetRenderbufferParameterivEXT = (PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC)loadFunction(
         "glGetRenderbufferParameterivEXT");
-      glGetSamplerParameterIiv = (PFNGLGETSAMPLERPARAMETERIIVPROC)loadFunction("glGetSamplerParameterIiv");
+      glGetSamplerParameterIiv = (PFNGLGETSAMPLERPARAMETERIIVPROC)loadFunction(
+        "glGetSamplerParameterIiv");
       glGetSamplerParameterIuiv = (PFNGLGETSAMPLERPARAMETERIUIVPROC)loadFunction(
         "glGetSamplerParameterIuiv");
-      glGetSamplerParameterfv = (PFNGLGETSAMPLERPARAMETERFVPROC)loadFunction("glGetSamplerParameterfv");
-      glGetSamplerParameteriv = (PFNGLGETSAMPLERPARAMETERIVPROC)loadFunction("glGetSamplerParameteriv");
+      glGetSamplerParameterfv = (PFNGLGETSAMPLERPARAMETERFVPROC)loadFunction(
+        "glGetSamplerParameterfv");
+      glGetSamplerParameteriv = (PFNGLGETSAMPLERPARAMETERIVPROC)loadFunction(
+        "glGetSamplerParameteriv");
       glGetSemaphoreParameterivNV = (PFNGLGETSEMAPHOREPARAMETERIVNVPROC)loadFunction(
         "glGetSemaphoreParameterivNV");
       glGetSemaphoreParameterui64vEXT = (PFNGLGETSEMAPHOREPARAMETERUI64VEXTPROC)loadFunction(
         "glGetSemaphoreParameterui64vEXT");
       glGetSeparableFilter = (PFNGLGETSEPARABLEFILTERPROC)loadFunction("glGetSeparableFilter");
-      glGetSeparableFilterEXT = (PFNGLGETSEPARABLEFILTEREXTPROC)loadFunction("glGetSeparableFilterEXT");
+      glGetSeparableFilterEXT = (PFNGLGETSEPARABLEFILTEREXTPROC)loadFunction(
+        "glGetSeparableFilterEXT");
       glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)loadFunction("glGetShaderInfoLog");
       glGetShaderPrecisionFormat = (PFNGLGETSHADERPRECISIONFORMATPROC)loadFunction(
         "glGetShaderPrecisionFormat");
@@ -4984,12 +5231,16 @@ namespace internal
       glGetTexGenfv = (PFNGLGETTEXGENFVPROC)loadFunction("glGetTexGenfv");
       glGetTexGeniv = (PFNGLGETTEXGENIVPROC)loadFunction("glGetTexGeniv");
       glGetTexImage = (PFNGLGETTEXIMAGEPROC)loadFunction("glGetTexImage");
-      glGetTexLevelParameterfv = (PFNGLGETTEXLEVELPARAMETERFVPROC)loadFunction("glGetTexLevelParameterfv");
-      glGetTexLevelParameteriv = (PFNGLGETTEXLEVELPARAMETERIVPROC)loadFunction("glGetTexLevelParameteriv");
+      glGetTexLevelParameterfv = (PFNGLGETTEXLEVELPARAMETERFVPROC)loadFunction(
+        "glGetTexLevelParameterfv");
+      glGetTexLevelParameteriv = (PFNGLGETTEXLEVELPARAMETERIVPROC)loadFunction(
+        "glGetTexLevelParameteriv");
       glGetTexParameterIiv = (PFNGLGETTEXPARAMETERIIVPROC)loadFunction("glGetTexParameterIiv");
-      glGetTexParameterIivEXT = (PFNGLGETTEXPARAMETERIIVEXTPROC)loadFunction("glGetTexParameterIivEXT");
+      glGetTexParameterIivEXT = (PFNGLGETTEXPARAMETERIIVEXTPROC)loadFunction(
+        "glGetTexParameterIivEXT");
       glGetTexParameterIuiv = (PFNGLGETTEXPARAMETERIUIVPROC)loadFunction("glGetTexParameterIuiv");
-      glGetTexParameterIuivEXT = (PFNGLGETTEXPARAMETERIUIVEXTPROC)loadFunction("glGetTexParameterIuivEXT");
+      glGetTexParameterIuivEXT = (PFNGLGETTEXPARAMETERIUIVEXTPROC)loadFunction(
+        "glGetTexParameterIuivEXT");
       glGetTexParameterPointervAPPLE = (PFNGLGETTEXPARAMETERPOINTERVAPPLEPROC)loadFunction(
         "glGetTexParameterPointervAPPLE");
       glGetTexParameterfv = (PFNGLGETTEXPARAMETERFVPROC)loadFunction("glGetTexParameterfv");
@@ -5006,17 +5257,20 @@ namespace internal
         "glGetTextureLevelParameteriv");
       glGetTextureLevelParameterivEXT = (PFNGLGETTEXTURELEVELPARAMETERIVEXTPROC)loadFunction(
         "glGetTextureLevelParameterivEXT");
-      glGetTextureParameterIiv = (PFNGLGETTEXTUREPARAMETERIIVPROC)loadFunction("glGetTextureParameterIiv");
+      glGetTextureParameterIiv = (PFNGLGETTEXTUREPARAMETERIIVPROC)loadFunction(
+        "glGetTextureParameterIiv");
       glGetTextureParameterIivEXT = (PFNGLGETTEXTUREPARAMETERIIVEXTPROC)loadFunction(
         "glGetTextureParameterIivEXT");
       glGetTextureParameterIuiv = (PFNGLGETTEXTUREPARAMETERIUIVPROC)loadFunction(
         "glGetTextureParameterIuiv");
       glGetTextureParameterIuivEXT = (PFNGLGETTEXTUREPARAMETERIUIVEXTPROC)loadFunction(
         "glGetTextureParameterIuivEXT");
-      glGetTextureParameterfv = (PFNGLGETTEXTUREPARAMETERFVPROC)loadFunction("glGetTextureParameterfv");
+      glGetTextureParameterfv = (PFNGLGETTEXTUREPARAMETERFVPROC)loadFunction(
+        "glGetTextureParameterfv");
       glGetTextureParameterfvEXT = (PFNGLGETTEXTUREPARAMETERFVEXTPROC)loadFunction(
         "glGetTextureParameterfvEXT");
-      glGetTextureParameteriv = (PFNGLGETTEXTUREPARAMETERIVPROC)loadFunction("glGetTextureParameteriv");
+      glGetTextureParameteriv = (PFNGLGETTEXTUREPARAMETERIVPROC)loadFunction(
+        "glGetTextureParameteriv");
       glGetTextureParameterivEXT = (PFNGLGETTEXTUREPARAMETERIVEXTPROC)loadFunction(
         "glGetTextureParameterivEXT");
       glGetTextureSamplerHandleARB = (PFNGLGETTEXTURESAMPLERHANDLEARBPROC)loadFunction(
@@ -5035,13 +5289,16 @@ namespace internal
         "glGetTransformFeedbacki64_v");
       glGetTransformFeedbacki_v = (PFNGLGETTRANSFORMFEEDBACKI_VPROC)loadFunction(
         "glGetTransformFeedbacki_v");
-      glGetTransformFeedbackiv = (PFNGLGETTRANSFORMFEEDBACKIVPROC)loadFunction("glGetTransformFeedbackiv");
-      glGetUniformBlockIndex = (PFNGLGETUNIFORMBLOCKINDEXPROC)loadFunction("glGetUniformBlockIndex");
+      glGetTransformFeedbackiv = (PFNGLGETTRANSFORMFEEDBACKIVPROC)loadFunction(
+        "glGetTransformFeedbackiv");
+      glGetUniformBlockIndex = (PFNGLGETUNIFORMBLOCKINDEXPROC)loadFunction(
+        "glGetUniformBlockIndex");
       glGetUniformBufferSizeEXT = (PFNGLGETUNIFORMBUFFERSIZEEXTPROC)loadFunction(
         "glGetUniformBufferSizeEXT");
       glGetUniformIndices = (PFNGLGETUNIFORMINDICESPROC)loadFunction("glGetUniformIndices");
       glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)loadFunction("glGetUniformLocation");
-      glGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)loadFunction("glGetUniformLocationARB");
+      glGetUniformLocationARB = (PFNGLGETUNIFORMLOCATIONARBPROC)loadFunction(
+        "glGetUniformLocationARB");
       glGetUniformOffsetEXT = (PFNGLGETUNIFORMOFFSETEXTPROC)loadFunction("glGetUniformOffsetEXT");
       glGetUniformSubroutineuiv = (PFNGLGETUNIFORMSUBROUTINEUIVPROC)loadFunction(
         "glGetUniformSubroutineuiv");
@@ -5057,12 +5314,17 @@ namespace internal
       glGetUniformuiv = (PFNGLGETUNIFORMUIVPROC)loadFunction("glGetUniformuiv");
       glGetUniformuivEXT = (PFNGLGETUNIFORMUIVEXTPROC)loadFunction("glGetUniformuivEXT");
       glGetUnsignedBytevEXT = (PFNGLGETUNSIGNEDBYTEVEXTPROC)loadFunction("glGetUnsignedBytevEXT");
-      glGetUnsignedBytei_vEXT = (PFNGLGETUNSIGNEDBYTEI_VEXTPROC)loadFunction("glGetUnsignedBytei_vEXT");
-      glGetVariantBooleanvEXT = (PFNGLGETVARIANTBOOLEANVEXTPROC)loadFunction("glGetVariantBooleanvEXT");
+      glGetUnsignedBytei_vEXT = (PFNGLGETUNSIGNEDBYTEI_VEXTPROC)loadFunction(
+        "glGetUnsignedBytei_vEXT");
+      glGetVariantBooleanvEXT = (PFNGLGETVARIANTBOOLEANVEXTPROC)loadFunction(
+        "glGetVariantBooleanvEXT");
       glGetVariantFloatvEXT = (PFNGLGETVARIANTFLOATVEXTPROC)loadFunction("glGetVariantFloatvEXT");
-      glGetVariantIntegervEXT = (PFNGLGETVARIANTINTEGERVEXTPROC)loadFunction("glGetVariantIntegervEXT");
-      glGetVariantPointervEXT = (PFNGLGETVARIANTPOINTERVEXTPROC)loadFunction("glGetVariantPointervEXT");
-      glGetVaryingLocationNV = (PFNGLGETVARYINGLOCATIONNVPROC)loadFunction("glGetVaryingLocationNV");
+      glGetVariantIntegervEXT = (PFNGLGETVARIANTINTEGERVEXTPROC)loadFunction(
+        "glGetVariantIntegervEXT");
+      glGetVariantPointervEXT = (PFNGLGETVARIANTPOINTERVEXTPROC)loadFunction(
+        "glGetVariantPointervEXT");
+      glGetVaryingLocationNV = (PFNGLGETVARYINGLOCATIONNVPROC)loadFunction(
+        "glGetVaryingLocationNV");
       glGetVertexArrayIndexed64iv = (PFNGLGETVERTEXARRAYINDEXED64IVPROC)loadFunction(
         "glGetVertexArrayIndexed64iv");
       glGetVertexArrayIndexediv = (PFNGLGETVERTEXARRAYINDEXEDIVPROC)loadFunction(
@@ -5077,12 +5339,16 @@ namespace internal
         "glGetVertexArrayPointervEXT");
       glGetVertexArrayiv = (PFNGLGETVERTEXARRAYIVPROC)loadFunction("glGetVertexArrayiv");
       glGetVertexAttribIiv = (PFNGLGETVERTEXATTRIBIIVPROC)loadFunction("glGetVertexAttribIiv");
-      glGetVertexAttribIivEXT = (PFNGLGETVERTEXATTRIBIIVEXTPROC)loadFunction("glGetVertexAttribIivEXT");
+      glGetVertexAttribIivEXT = (PFNGLGETVERTEXATTRIBIIVEXTPROC)loadFunction(
+        "glGetVertexAttribIivEXT");
       glGetVertexAttribIuiv = (PFNGLGETVERTEXATTRIBIUIVPROC)loadFunction("glGetVertexAttribIuiv");
-      glGetVertexAttribIuivEXT = (PFNGLGETVERTEXATTRIBIUIVEXTPROC)loadFunction("glGetVertexAttribIuivEXT");
+      glGetVertexAttribIuivEXT = (PFNGLGETVERTEXATTRIBIUIVEXTPROC)loadFunction(
+        "glGetVertexAttribIuivEXT");
       glGetVertexAttribLdv = (PFNGLGETVERTEXATTRIBLDVPROC)loadFunction("glGetVertexAttribLdv");
-      glGetVertexAttribLdvEXT = (PFNGLGETVERTEXATTRIBLDVEXTPROC)loadFunction("glGetVertexAttribLdvEXT");
-      glGetVertexAttribLi64vNV = (PFNGLGETVERTEXATTRIBLI64VNVPROC)loadFunction("glGetVertexAttribLi64vNV");
+      glGetVertexAttribLdvEXT = (PFNGLGETVERTEXATTRIBLDVEXTPROC)loadFunction(
+        "glGetVertexAttribLdvEXT");
+      glGetVertexAttribLi64vNV = (PFNGLGETVERTEXATTRIBLI64VNVPROC)loadFunction(
+        "glGetVertexAttribLi64vNV");
       glGetVertexAttribLui64vARB = (PFNGLGETVERTEXATTRIBLUI64VARBPROC)loadFunction(
         "glGetVertexAttribLui64vARB");
       glGetVertexAttribLui64vNV = (PFNGLGETVERTEXATTRIBLUI64VNVPROC)loadFunction(
@@ -5094,13 +5360,16 @@ namespace internal
       glGetVertexAttribPointervNV = (PFNGLGETVERTEXATTRIBPOINTERVNVPROC)loadFunction(
         "glGetVertexAttribPointervNV");
       glGetVertexAttribdv = (PFNGLGETVERTEXATTRIBDVPROC)loadFunction("glGetVertexAttribdv");
-      glGetVertexAttribdvARB = (PFNGLGETVERTEXATTRIBDVARBPROC)loadFunction("glGetVertexAttribdvARB");
+      glGetVertexAttribdvARB = (PFNGLGETVERTEXATTRIBDVARBPROC)loadFunction(
+        "glGetVertexAttribdvARB");
       glGetVertexAttribdvNV = (PFNGLGETVERTEXATTRIBDVNVPROC)loadFunction("glGetVertexAttribdvNV");
       glGetVertexAttribfv = (PFNGLGETVERTEXATTRIBFVPROC)loadFunction("glGetVertexAttribfv");
-      glGetVertexAttribfvARB = (PFNGLGETVERTEXATTRIBFVARBPROC)loadFunction("glGetVertexAttribfvARB");
+      glGetVertexAttribfvARB = (PFNGLGETVERTEXATTRIBFVARBPROC)loadFunction(
+        "glGetVertexAttribfvARB");
       glGetVertexAttribfvNV = (PFNGLGETVERTEXATTRIBFVNVPROC)loadFunction("glGetVertexAttribfvNV");
       glGetVertexAttribiv = (PFNGLGETVERTEXATTRIBIVPROC)loadFunction("glGetVertexAttribiv");
-      glGetVertexAttribivARB = (PFNGLGETVERTEXATTRIBIVARBPROC)loadFunction("glGetVertexAttribivARB");
+      glGetVertexAttribivARB = (PFNGLGETVERTEXATTRIBIVARBPROC)loadFunction(
+        "glGetVertexAttribivARB");
       glGetVertexAttribivNV = (PFNGLGETVERTEXATTRIBIVNVPROC)loadFunction("glGetVertexAttribivNV");
       glGetVideoCaptureStreamdvNV = (PFNGLGETVIDEOCAPTURESTREAMDVNVPROC)loadFunction(
         "glGetVideoCaptureStreamdvNV");
@@ -5115,10 +5384,12 @@ namespace internal
       glGetVideouivNV = (PFNGLGETVIDEOUIVNVPROC)loadFunction("glGetVideouivNV");
       glGetnColorTable = (PFNGLGETNCOLORTABLEPROC)loadFunction("glGetnColorTable");
       glGetnColorTableARB = (PFNGLGETNCOLORTABLEARBPROC)loadFunction("glGetnColorTableARB");
-      glGetnCompressedTexImage = (PFNGLGETNCOMPRESSEDTEXIMAGEPROC)loadFunction("glGetnCompressedTexImage");
+      glGetnCompressedTexImage = (PFNGLGETNCOMPRESSEDTEXIMAGEPROC)loadFunction(
+        "glGetnCompressedTexImage");
       glGetnCompressedTexImageARB = (PFNGLGETNCOMPRESSEDTEXIMAGEARBPROC)loadFunction(
         "glGetnCompressedTexImageARB");
-      glGetnConvolutionFilter = (PFNGLGETNCONVOLUTIONFILTERPROC)loadFunction("glGetnConvolutionFilter");
+      glGetnConvolutionFilter = (PFNGLGETNCONVOLUTIONFILTERPROC)loadFunction(
+        "glGetnConvolutionFilter");
       glGetnConvolutionFilterARB = (PFNGLGETNCONVOLUTIONFILTERARBPROC)loadFunction(
         "glGetnConvolutionFilterARB");
       glGetnHistogram = (PFNGLGETNHISTOGRAMPROC)loadFunction("glGetnHistogram");
@@ -5138,9 +5409,11 @@ namespace internal
       glGetnPixelMapusv = (PFNGLGETNPIXELMAPUSVPROC)loadFunction("glGetnPixelMapusv");
       glGetnPixelMapusvARB = (PFNGLGETNPIXELMAPUSVARBPROC)loadFunction("glGetnPixelMapusvARB");
       glGetnPolygonStipple = (PFNGLGETNPOLYGONSTIPPLEPROC)loadFunction("glGetnPolygonStipple");
-      glGetnPolygonStippleARB = (PFNGLGETNPOLYGONSTIPPLEARBPROC)loadFunction("glGetnPolygonStippleARB");
+      glGetnPolygonStippleARB = (PFNGLGETNPOLYGONSTIPPLEARBPROC)loadFunction(
+        "glGetnPolygonStippleARB");
       glGetnSeparableFilter = (PFNGLGETNSEPARABLEFILTERPROC)loadFunction("glGetnSeparableFilter");
-      glGetnSeparableFilterARB = (PFNGLGETNSEPARABLEFILTERARBPROC)loadFunction("glGetnSeparableFilterARB");
+      glGetnSeparableFilterARB = (PFNGLGETNSEPARABLEFILTERARBPROC)loadFunction(
+        "glGetnSeparableFilterARB");
       glGetnTexImage = (PFNGLGETNTEXIMAGEPROC)loadFunction("glGetnTexImage");
       glGetnTexImageARB = (PFNGLGETNTEXIMAGEARBPROC)loadFunction("glGetnTexImageARB");
       glGetnUniformdv = (PFNGLGETNUNIFORMDVPROC)loadFunction("glGetnUniformdv");
@@ -5164,7 +5437,8 @@ namespace internal
         "glImportMemoryWin32HandleEXT");
       glImportMemoryWin32NameEXT = (PFNGLIMPORTMEMORYWIN32NAMEEXTPROC)loadFunction(
         "glImportMemoryWin32NameEXT");
-      glImportSemaphoreFdEXT = (PFNGLIMPORTSEMAPHOREFDEXTPROC)loadFunction("glImportSemaphoreFdEXT");
+      glImportSemaphoreFdEXT = (PFNGLIMPORTSEMAPHOREFDEXTPROC)loadFunction(
+        "glImportSemaphoreFdEXT");
       glImportSemaphoreWin32HandleEXT = (PFNGLIMPORTSEMAPHOREWIN32HANDLEEXTPROC)loadFunction(
         "glImportSemaphoreWin32HandleEXT");
       glImportSemaphoreWin32NameEXT = (PFNGLIMPORTSEMAPHOREWIN32NAMEEXTPROC)loadFunction(
@@ -5188,21 +5462,25 @@ namespace internal
       glIndexubv = (PFNGLINDEXUBVPROC)loadFunction("glIndexubv");
       glInitNames = (PFNGLINITNAMESPROC)loadFunction("glInitNames");
       glInsertComponentEXT = (PFNGLINSERTCOMPONENTEXTPROC)loadFunction("glInsertComponentEXT");
-      glInsertEventMarkerEXT = (PFNGLINSERTEVENTMARKEREXTPROC)loadFunction("glInsertEventMarkerEXT");
+      glInsertEventMarkerEXT = (PFNGLINSERTEVENTMARKEREXTPROC)loadFunction(
+        "glInsertEventMarkerEXT");
       glInterleavedArrays = (PFNGLINTERLEAVEDARRAYSPROC)loadFunction("glInterleavedArrays");
       glInterpolatePathsNV = (PFNGLINTERPOLATEPATHSNVPROC)loadFunction("glInterpolatePathsNV");
-      glInvalidateBufferData = (PFNGLINVALIDATEBUFFERDATAPROC)loadFunction("glInvalidateBufferData");
+      glInvalidateBufferData = (PFNGLINVALIDATEBUFFERDATAPROC)loadFunction(
+        "glInvalidateBufferData");
       glInvalidateBufferSubData = (PFNGLINVALIDATEBUFFERSUBDATAPROC)loadFunction(
         "glInvalidateBufferSubData");
-      glInvalidateFramebuffer = (PFNGLINVALIDATEFRAMEBUFFERPROC)loadFunction("glInvalidateFramebuffer");
+      glInvalidateFramebuffer = (PFNGLINVALIDATEFRAMEBUFFERPROC)loadFunction(
+        "glInvalidateFramebuffer");
       glInvalidateNamedFramebufferData = (PFNGLINVALIDATENAMEDFRAMEBUFFERDATAPROC)loadFunction(
         "glInvalidateNamedFramebufferData");
-      glInvalidateNamedFramebufferSubData = (PFNGLINVALIDATENAMEDFRAMEBUFFERSUBDATAPROC)loadFunction(
-        "glInvalidateNamedFramebufferSubData");
+      glInvalidateNamedFramebufferSubData = (PFNGLINVALIDATENAMEDFRAMEBUFFERSUBDATAPROC)
+        loadFunction("glInvalidateNamedFramebufferSubData");
       glInvalidateSubFramebuffer = (PFNGLINVALIDATESUBFRAMEBUFFERPROC)loadFunction(
         "glInvalidateSubFramebuffer");
       glInvalidateTexImage = (PFNGLINVALIDATETEXIMAGEPROC)loadFunction("glInvalidateTexImage");
-      glInvalidateTexSubImage = (PFNGLINVALIDATETEXSUBIMAGEPROC)loadFunction("glInvalidateTexSubImage");
+      glInvalidateTexSubImage = (PFNGLINVALIDATETEXSUBIMAGEPROC)loadFunction(
+        "glInvalidateTexSubImage");
       glIsBuffer = (PFNGLISBUFFERPROC)loadFunction("glIsBuffer");
       glIsBufferARB = (PFNGLISBUFFERARBPROC)loadFunction("glIsBufferARB");
       glIsBufferResidentNV = (PFNGLISBUFFERRESIDENTNVPROC)loadFunction("glIsBufferResidentNV");
@@ -5227,12 +5505,14 @@ namespace internal
       glIsOcclusionQueryNV = (PFNGLISOCCLUSIONQUERYNVPROC)loadFunction("glIsOcclusionQueryNV");
       glIsPathNV = (PFNGLISPATHNVPROC)loadFunction("glIsPathNV");
       glIsPointInFillPathNV = (PFNGLISPOINTINFILLPATHNVPROC)loadFunction("glIsPointInFillPathNV");
-      glIsPointInStrokePathNV = (PFNGLISPOINTINSTROKEPATHNVPROC)loadFunction("glIsPointInStrokePathNV");
+      glIsPointInStrokePathNV = (PFNGLISPOINTINSTROKEPATHNVPROC)loadFunction(
+        "glIsPointInStrokePathNV");
       glIsProgram = (PFNGLISPROGRAMPROC)loadFunction("glIsProgram");
       glIsProgramARB = (PFNGLISPROGRAMARBPROC)loadFunction("glIsProgramARB");
       glIsProgramNV = (PFNGLISPROGRAMNVPROC)loadFunction("glIsProgramNV");
       glIsProgramPipeline = (PFNGLISPROGRAMPIPELINEPROC)loadFunction("glIsProgramPipeline");
-      glIsProgramPipelineEXT = (PFNGLISPROGRAMPIPELINEEXTPROC)loadFunction("glIsProgramPipelineEXT");
+      glIsProgramPipelineEXT = (PFNGLISPROGRAMPIPELINEEXTPROC)loadFunction(
+        "glIsProgramPipelineEXT");
       glIsQuery = (PFNGLISQUERYPROC)loadFunction("glIsQuery");
       glIsQueryARB = (PFNGLISQUERYARBPROC)loadFunction("glIsQueryARB");
       glIsRenderbuffer = (PFNGLISRENDERBUFFERPROC)loadFunction("glIsRenderbuffer");
@@ -5249,7 +5529,8 @@ namespace internal
       glIsTextureHandleResidentNV = (PFNGLISTEXTUREHANDLERESIDENTNVPROC)loadFunction(
         "glIsTextureHandleResidentNV");
       glIsTransformFeedback = (PFNGLISTRANSFORMFEEDBACKPROC)loadFunction("glIsTransformFeedback");
-      glIsTransformFeedbackNV = (PFNGLISTRANSFORMFEEDBACKNVPROC)loadFunction("glIsTransformFeedbackNV");
+      glIsTransformFeedbackNV = (PFNGLISTRANSFORMFEEDBACKNVPROC)loadFunction(
+        "glIsTransformFeedbackNV");
       glIsVariantEnabledEXT = (PFNGLISVARIANTENABLEDEXTPROC)loadFunction("glIsVariantEnabledEXT");
       glIsVertexArray = (PFNGLISVERTEXARRAYPROC)loadFunction("glIsVertexArray");
       glIsVertexArrayAPPLE = (PFNGLISVERTEXARRAYAPPLEPROC)loadFunction("glIsVertexArrayAPPLE");
@@ -5281,17 +5562,20 @@ namespace internal
       glLoadMatrixf = (PFNGLLOADMATRIXFPROC)loadFunction("glLoadMatrixf");
       glLoadName = (PFNGLLOADNAMEPROC)loadFunction("glLoadName");
       glLoadProgramNV = (PFNGLLOADPROGRAMNVPROC)loadFunction("glLoadProgramNV");
-      glLoadTransposeMatrixd = (PFNGLLOADTRANSPOSEMATRIXDPROC)loadFunction("glLoadTransposeMatrixd");
+      glLoadTransposeMatrixd = (PFNGLLOADTRANSPOSEMATRIXDPROC)loadFunction(
+        "glLoadTransposeMatrixd");
       glLoadTransposeMatrixdARB = (PFNGLLOADTRANSPOSEMATRIXDARBPROC)loadFunction(
         "glLoadTransposeMatrixdARB");
-      glLoadTransposeMatrixf = (PFNGLLOADTRANSPOSEMATRIXFPROC)loadFunction("glLoadTransposeMatrixf");
+      glLoadTransposeMatrixf = (PFNGLLOADTRANSPOSEMATRIXFPROC)loadFunction(
+        "glLoadTransposeMatrixf");
       glLoadTransposeMatrixfARB = (PFNGLLOADTRANSPOSEMATRIXFARBPROC)loadFunction(
         "glLoadTransposeMatrixfARB");
       glLockArraysEXT = (PFNGLLOCKARRAYSEXTPROC)loadFunction("glLockArraysEXT");
       glLogicOp = (PFNGLLOGICOPPROC)loadFunction("glLogicOp");
       glMakeBufferNonResidentNV = (PFNGLMAKEBUFFERNONRESIDENTNVPROC)loadFunction(
         "glMakeBufferNonResidentNV");
-      glMakeBufferResidentNV = (PFNGLMAKEBUFFERRESIDENTNVPROC)loadFunction("glMakeBufferResidentNV");
+      glMakeBufferResidentNV = (PFNGLMAKEBUFFERRESIDENTNVPROC)loadFunction(
+        "glMakeBufferResidentNV");
       glMakeImageHandleNonResidentARB = (PFNGLMAKEIMAGEHANDLENONRESIDENTARBPROC)loadFunction(
         "glMakeImageHandleNonResidentARB");
       glMakeImageHandleNonResidentNV = (PFNGLMAKEIMAGEHANDLENONRESIDENTNVPROC)loadFunction(
@@ -5327,26 +5611,33 @@ namespace internal
       glMapNamedBuffer = (PFNGLMAPNAMEDBUFFERPROC)loadFunction("glMapNamedBuffer");
       glMapNamedBufferEXT = (PFNGLMAPNAMEDBUFFEREXTPROC)loadFunction("glMapNamedBufferEXT");
       glMapNamedBufferRange = (PFNGLMAPNAMEDBUFFERRANGEPROC)loadFunction("glMapNamedBufferRange");
-      glMapNamedBufferRangeEXT = (PFNGLMAPNAMEDBUFFERRANGEEXTPROC)loadFunction("glMapNamedBufferRangeEXT");
+      glMapNamedBufferRangeEXT = (PFNGLMAPNAMEDBUFFERRANGEEXTPROC)loadFunction(
+        "glMapNamedBufferRangeEXT");
       glMapParameterfvNV = (PFNGLMAPPARAMETERFVNVPROC)loadFunction("glMapParameterfvNV");
       glMapParameterivNV = (PFNGLMAPPARAMETERIVNVPROC)loadFunction("glMapParameterivNV");
       glMapTexture2DINTEL = (PFNGLMAPTEXTURE2DINTELPROC)loadFunction("glMapTexture2DINTEL");
-      glMapVertexAttrib1dAPPLE = (PFNGLMAPVERTEXATTRIB1DAPPLEPROC)loadFunction("glMapVertexAttrib1dAPPLE");
-      glMapVertexAttrib1fAPPLE = (PFNGLMAPVERTEXATTRIB1FAPPLEPROC)loadFunction("glMapVertexAttrib1fAPPLE");
-      glMapVertexAttrib2dAPPLE = (PFNGLMAPVERTEXATTRIB2DAPPLEPROC)loadFunction("glMapVertexAttrib2dAPPLE");
-      glMapVertexAttrib2fAPPLE = (PFNGLMAPVERTEXATTRIB2FAPPLEPROC)loadFunction("glMapVertexAttrib2fAPPLE");
+      glMapVertexAttrib1dAPPLE = (PFNGLMAPVERTEXATTRIB1DAPPLEPROC)loadFunction(
+        "glMapVertexAttrib1dAPPLE");
+      glMapVertexAttrib1fAPPLE = (PFNGLMAPVERTEXATTRIB1FAPPLEPROC)loadFunction(
+        "glMapVertexAttrib1fAPPLE");
+      glMapVertexAttrib2dAPPLE = (PFNGLMAPVERTEXATTRIB2DAPPLEPROC)loadFunction(
+        "glMapVertexAttrib2dAPPLE");
+      glMapVertexAttrib2fAPPLE = (PFNGLMAPVERTEXATTRIB2FAPPLEPROC)loadFunction(
+        "glMapVertexAttrib2fAPPLE");
       glMaterialf = (PFNGLMATERIALFPROC)loadFunction("glMaterialf");
       glMaterialfv = (PFNGLMATERIALFVPROC)loadFunction("glMaterialfv");
       glMateriali = (PFNGLMATERIALIPROC)loadFunction("glMateriali");
       glMaterialiv = (PFNGLMATERIALIVPROC)loadFunction("glMaterialiv");
       glMatrixFrustumEXT = (PFNGLMATRIXFRUSTUMEXTPROC)loadFunction("glMatrixFrustumEXT");
-      glMatrixIndexPointerARB = (PFNGLMATRIXINDEXPOINTERARBPROC)loadFunction("glMatrixIndexPointerARB");
+      glMatrixIndexPointerARB = (PFNGLMATRIXINDEXPOINTERARBPROC)loadFunction(
+        "glMatrixIndexPointerARB");
       glMatrixIndexubvARB = (PFNGLMATRIXINDEXUBVARBPROC)loadFunction("glMatrixIndexubvARB");
       glMatrixIndexuivARB = (PFNGLMATRIXINDEXUIVARBPROC)loadFunction("glMatrixIndexuivARB");
       glMatrixIndexusvARB = (PFNGLMATRIXINDEXUSVARBPROC)loadFunction("glMatrixIndexusvARB");
       glMatrixLoad3x2fNV = (PFNGLMATRIXLOAD3X2FNVPROC)loadFunction("glMatrixLoad3x2fNV");
       glMatrixLoad3x3fNV = (PFNGLMATRIXLOAD3X3FNVPROC)loadFunction("glMatrixLoad3x3fNV");
-      glMatrixLoadIdentityEXT = (PFNGLMATRIXLOADIDENTITYEXTPROC)loadFunction("glMatrixLoadIdentityEXT");
+      glMatrixLoadIdentityEXT = (PFNGLMATRIXLOADIDENTITYEXTPROC)loadFunction(
+        "glMatrixLoadIdentityEXT");
       glMatrixLoadTranspose3x3fNV = (PFNGLMATRIXLOADTRANSPOSE3X3FNVPROC)loadFunction(
         "glMatrixLoadTranspose3x3fNV");
       glMatrixLoadTransposedEXT = (PFNGLMATRIXLOADTRANSPOSEDEXTPROC)loadFunction(
@@ -5380,7 +5671,8 @@ namespace internal
       glMaxShaderCompilerThreadsARB = (PFNGLMAXSHADERCOMPILERTHREADSARBPROC)loadFunction(
         "glMaxShaderCompilerThreadsARB");
       glMemoryBarrier = (PFNGLMEMORYBARRIERPROC)loadFunction("glMemoryBarrier");
-      glMemoryBarrierByRegion = (PFNGLMEMORYBARRIERBYREGIONPROC)loadFunction("glMemoryBarrierByRegion");
+      glMemoryBarrierByRegion = (PFNGLMEMORYBARRIERBYREGIONPROC)loadFunction(
+        "glMemoryBarrierByRegion");
       glMemoryBarrierEXT = (PFNGLMEMORYBARRIEREXTPROC)loadFunction("glMemoryBarrierEXT");
       glMemoryObjectParameterivEXT = (PFNGLMEMORYOBJECTPARAMETERIVEXTPROC)loadFunction(
         "glMemoryObjectParameterivEXT");
@@ -5390,10 +5682,12 @@ namespace internal
       glMinmaxEXT = (PFNGLMINMAXEXTPROC)loadFunction("glMinmaxEXT");
       glMultMatrixd = (PFNGLMULTMATRIXDPROC)loadFunction("glMultMatrixd");
       glMultMatrixf = (PFNGLMULTMATRIXFPROC)loadFunction("glMultMatrixf");
-      glMultTransposeMatrixd = (PFNGLMULTTRANSPOSEMATRIXDPROC)loadFunction("glMultTransposeMatrixd");
+      glMultTransposeMatrixd = (PFNGLMULTTRANSPOSEMATRIXDPROC)loadFunction(
+        "glMultTransposeMatrixd");
       glMultTransposeMatrixdARB = (PFNGLMULTTRANSPOSEMATRIXDARBPROC)loadFunction(
         "glMultTransposeMatrixdARB");
-      glMultTransposeMatrixf = (PFNGLMULTTRANSPOSEMATRIXFPROC)loadFunction("glMultTransposeMatrixf");
+      glMultTransposeMatrixf = (PFNGLMULTTRANSPOSEMATRIXFPROC)loadFunction(
+        "glMultTransposeMatrixf");
       glMultTransposeMatrixfARB = (PFNGLMULTTRANSPOSEMATRIXFARBPROC)loadFunction(
         "glMultTransposeMatrixfARB");
       glMultiDrawArrays = (PFNGLMULTIDRAWARRAYSPROC)loadFunction("glMultiDrawArrays");
@@ -5404,8 +5698,8 @@ namespace internal
         "glMultiDrawArraysIndirectAMD");
       glMultiDrawArraysIndirectBindlessCountNV = (PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSCOUNTNVPROC)
         loadFunction("glMultiDrawArraysIndirectBindlessCountNV");
-      glMultiDrawArraysIndirectBindlessNV = (PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSNVPROC)loadFunction(
-        "glMultiDrawArraysIndirectBindlessNV");
+      glMultiDrawArraysIndirectBindlessNV = (PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSNVPROC)
+        loadFunction("glMultiDrawArraysIndirectBindlessNV");
       glMultiDrawArraysIndirectCount = (PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC)loadFunction(
         "glMultiDrawArraysIndirectCount");
       glMultiDrawArraysIndirectCountARB = (PFNGLMULTIDRAWARRAYSINDIRECTCOUNTARBPROC)loadFunction(
@@ -5415,23 +5709,25 @@ namespace internal
       glMultiDrawElements = (PFNGLMULTIDRAWELEMENTSPROC)loadFunction("glMultiDrawElements");
       glMultiDrawElementsBaseVertex = (PFNGLMULTIDRAWELEMENTSBASEVERTEXPROC)loadFunction(
         "glMultiDrawElementsBaseVertex");
-      glMultiDrawElementsEXT = (PFNGLMULTIDRAWELEMENTSEXTPROC)loadFunction("glMultiDrawElementsEXT");
+      glMultiDrawElementsEXT = (PFNGLMULTIDRAWELEMENTSEXTPROC)loadFunction(
+        "glMultiDrawElementsEXT");
       glMultiDrawElementsIndirect = (PFNGLMULTIDRAWELEMENTSINDIRECTPROC)loadFunction(
         "glMultiDrawElementsIndirect");
       glMultiDrawElementsIndirectAMD = (PFNGLMULTIDRAWELEMENTSINDIRECTAMDPROC)loadFunction(
         "glMultiDrawElementsIndirectAMD");
-      glMultiDrawElementsIndirectBindlessCountNV = (PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNVPROC)
-        loadFunction("glMultiDrawElementsIndirectBindlessCountNV");
-      glMultiDrawElementsIndirectBindlessNV = (PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSNVPROC)loadFunction(
-        "glMultiDrawElementsIndirectBindlessNV");
+      glMultiDrawElementsIndirectBindlessCountNV =
+        (PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNVPROC)loadFunction(
+          "glMultiDrawElementsIndirectBindlessCountNV");
+      glMultiDrawElementsIndirectBindlessNV = (PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSNVPROC)
+        loadFunction("glMultiDrawElementsIndirectBindlessNV");
       glMultiDrawElementsIndirectCount = (PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC)loadFunction(
         "glMultiDrawElementsIndirectCount");
-      glMultiDrawElementsIndirectCountARB = (PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTARBPROC)loadFunction(
-        "glMultiDrawElementsIndirectCountARB");
+      glMultiDrawElementsIndirectCountARB = (PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTARBPROC)
+        loadFunction("glMultiDrawElementsIndirectCountARB");
       glMultiDrawMeshTasksIndirectNV = (PFNGLMULTIDRAWMESHTASKSINDIRECTNVPROC)loadFunction(
         "glMultiDrawMeshTasksIndirectNV");
-      glMultiDrawMeshTasksIndirectCountNV = (PFNGLMULTIDRAWMESHTASKSINDIRECTCOUNTNVPROC)loadFunction(
-        "glMultiDrawMeshTasksIndirectCountNV");
+      glMultiDrawMeshTasksIndirectCountNV = (PFNGLMULTIDRAWMESHTASKSINDIRECTCOUNTNVPROC)
+        loadFunction("glMultiDrawMeshTasksIndirectCountNV");
       glMultiDrawRangeElementArrayAPPLE = (PFNGLMULTIDRAWRANGEELEMENTARRAYAPPLEPROC)loadFunction(
         "glMultiDrawRangeElementArrayAPPLE");
       glMultiTexBufferEXT = (PFNGLMULTITEXBUFFEREXTPROC)loadFunction("glMultiTexBufferEXT");
@@ -5534,15 +5830,22 @@ namespace internal
         "glMultiTexParameterIivEXT");
       glMultiTexParameterIuivEXT = (PFNGLMULTITEXPARAMETERIUIVEXTPROC)loadFunction(
         "glMultiTexParameterIuivEXT");
-      glMultiTexParameterfEXT = (PFNGLMULTITEXPARAMETERFEXTPROC)loadFunction("glMultiTexParameterfEXT");
-      glMultiTexParameterfvEXT = (PFNGLMULTITEXPARAMETERFVEXTPROC)loadFunction("glMultiTexParameterfvEXT");
-      glMultiTexParameteriEXT = (PFNGLMULTITEXPARAMETERIEXTPROC)loadFunction("glMultiTexParameteriEXT");
-      glMultiTexParameterivEXT = (PFNGLMULTITEXPARAMETERIVEXTPROC)loadFunction("glMultiTexParameterivEXT");
+      glMultiTexParameterfEXT = (PFNGLMULTITEXPARAMETERFEXTPROC)loadFunction(
+        "glMultiTexParameterfEXT");
+      glMultiTexParameterfvEXT = (PFNGLMULTITEXPARAMETERFVEXTPROC)loadFunction(
+        "glMultiTexParameterfvEXT");
+      glMultiTexParameteriEXT = (PFNGLMULTITEXPARAMETERIEXTPROC)loadFunction(
+        "glMultiTexParameteriEXT");
+      glMultiTexParameterivEXT = (PFNGLMULTITEXPARAMETERIVEXTPROC)loadFunction(
+        "glMultiTexParameterivEXT");
       glMultiTexRenderbufferEXT = (PFNGLMULTITEXRENDERBUFFEREXTPROC)loadFunction(
         "glMultiTexRenderbufferEXT");
-      glMultiTexSubImage1DEXT = (PFNGLMULTITEXSUBIMAGE1DEXTPROC)loadFunction("glMultiTexSubImage1DEXT");
-      glMultiTexSubImage2DEXT = (PFNGLMULTITEXSUBIMAGE2DEXTPROC)loadFunction("glMultiTexSubImage2DEXT");
-      glMultiTexSubImage3DEXT = (PFNGLMULTITEXSUBIMAGE3DEXTPROC)loadFunction("glMultiTexSubImage3DEXT");
+      glMultiTexSubImage1DEXT = (PFNGLMULTITEXSUBIMAGE1DEXTPROC)loadFunction(
+        "glMultiTexSubImage1DEXT");
+      glMultiTexSubImage2DEXT = (PFNGLMULTITEXSUBIMAGE2DEXTPROC)loadFunction(
+        "glMultiTexSubImage2DEXT");
+      glMultiTexSubImage3DEXT = (PFNGLMULTITEXSUBIMAGE3DEXTPROC)loadFunction(
+        "glMultiTexSubImage3DEXT");
       glMulticastBarrierNV = (PFNGLMULTICASTBARRIERNVPROC)loadFunction("glMulticastBarrierNV");
       glMulticastBlitFramebufferNV = (PFNGLMULTICASTBLITFRAMEBUFFERNVPROC)loadFunction(
         "glMulticastBlitFramebufferNV");
@@ -5552,8 +5855,9 @@ namespace internal
         "glMulticastCopyBufferSubDataNV");
       glMulticastCopyImageSubDataNV = (PFNGLMULTICASTCOPYIMAGESUBDATANVPROC)loadFunction(
         "glMulticastCopyImageSubDataNV");
-      glMulticastFramebufferSampleLocationsfvNV = (PFNGLMULTICASTFRAMEBUFFERSAMPLELOCATIONSFVNVPROC)
-        loadFunction("glMulticastFramebufferSampleLocationsfvNV");
+      glMulticastFramebufferSampleLocationsfvNV =
+        (PFNGLMULTICASTFRAMEBUFFERSAMPLELOCATIONSFVNVPROC)loadFunction(
+          "glMulticastFramebufferSampleLocationsfvNV");
       glMulticastGetQueryObjecti64vNV = (PFNGLMULTICASTGETQUERYOBJECTI64VNVPROC)loadFunction(
         "glMulticastGetQueryObjecti64vNV");
       glMulticastGetQueryObjectivNV = (PFNGLMULTICASTGETQUERYOBJECTIVNVPROC)loadFunction(
@@ -5566,8 +5870,8 @@ namespace internal
         "glMulticastScissorArrayvNVX");
       glMulticastViewportArrayvNVX = (PFNGLMULTICASTVIEWPORTARRAYVNVXPROC)loadFunction(
         "glMulticastViewportArrayvNVX");
-      glMulticastViewportPositionWScaleNVX = (PFNGLMULTICASTVIEWPORTPOSITIONWSCALENVXPROC)loadFunction(
-        "glMulticastViewportPositionWScaleNVX");
+      glMulticastViewportPositionWScaleNVX = (PFNGLMULTICASTVIEWPORTPOSITIONWSCALENVXPROC)
+        loadFunction("glMulticastViewportPositionWScaleNVX");
       glMulticastWaitSyncNV = (PFNGLMULTICASTWAITSYNCNVPROC)loadFunction("glMulticastWaitSyncNV");
       glNamedBufferAttachMemoryNV = (PFNGLNAMEDBUFFERATTACHMEMORYNVPROC)loadFunction(
         "glNamedBufferAttachMemoryNV");
@@ -5582,11 +5886,13 @@ namespace internal
       glNamedBufferStorage = (PFNGLNAMEDBUFFERSTORAGEPROC)loadFunction("glNamedBufferStorage");
       glNamedBufferStorageExternalEXT = (PFNGLNAMEDBUFFERSTORAGEEXTERNALEXTPROC)loadFunction(
         "glNamedBufferStorageExternalEXT");
-      glNamedBufferStorageEXT = (PFNGLNAMEDBUFFERSTORAGEEXTPROC)loadFunction("glNamedBufferStorageEXT");
+      glNamedBufferStorageEXT = (PFNGLNAMEDBUFFERSTORAGEEXTPROC)loadFunction(
+        "glNamedBufferStorageEXT");
       glNamedBufferStorageMemEXT = (PFNGLNAMEDBUFFERSTORAGEMEMEXTPROC)loadFunction(
         "glNamedBufferStorageMemEXT");
       glNamedBufferSubData = (PFNGLNAMEDBUFFERSUBDATAPROC)loadFunction("glNamedBufferSubData");
-      glNamedBufferSubDataEXT = (PFNGLNAMEDBUFFERSUBDATAEXTPROC)loadFunction("glNamedBufferSubDataEXT");
+      glNamedBufferSubDataEXT = (PFNGLNAMEDBUFFERSUBDATAEXTPROC)loadFunction(
+        "glNamedBufferSubDataEXT");
       glNamedCopyBufferSubDataEXT = (PFNGLNAMEDCOPYBUFFERSUBDATAEXTPROC)loadFunction(
         "glNamedCopyBufferSubDataEXT");
       glNamedFramebufferDrawBuffer = (PFNGLNAMEDFRAMEBUFFERDRAWBUFFERPROC)loadFunction(
@@ -5603,14 +5909,14 @@ namespace internal
         "glNamedFramebufferRenderbuffer");
       glNamedFramebufferRenderbufferEXT = (PFNGLNAMEDFRAMEBUFFERRENDERBUFFEREXTPROC)loadFunction(
         "glNamedFramebufferRenderbufferEXT");
-      glNamedFramebufferSampleLocationsfvARB = (PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVARBPROC)loadFunction(
-        "glNamedFramebufferSampleLocationsfvARB");
-      glNamedFramebufferSampleLocationsfvNV = (PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNVPROC)loadFunction(
-        "glNamedFramebufferSampleLocationsfvNV");
+      glNamedFramebufferSampleLocationsfvARB = (PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVARBPROC)
+        loadFunction("glNamedFramebufferSampleLocationsfvARB");
+      glNamedFramebufferSampleLocationsfvNV = (PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNVPROC)
+        loadFunction("glNamedFramebufferSampleLocationsfvNV");
       glNamedFramebufferTexture = (PFNGLNAMEDFRAMEBUFFERTEXTUREPROC)loadFunction(
         "glNamedFramebufferTexture");
-      glNamedFramebufferSamplePositionsfvAMD = (PFNGLNAMEDFRAMEBUFFERSAMPLEPOSITIONSFVAMDPROC)loadFunction(
-        "glNamedFramebufferSamplePositionsfvAMD");
+      glNamedFramebufferSamplePositionsfvAMD = (PFNGLNAMEDFRAMEBUFFERSAMPLEPOSITIONSFVAMDPROC)
+        loadFunction("glNamedFramebufferSamplePositionsfvAMD");
       glNamedFramebufferTexture1DEXT = (PFNGLNAMEDFRAMEBUFFERTEXTURE1DEXTPROC)loadFunction(
         "glNamedFramebufferTexture1DEXT");
       glNamedFramebufferTexture2DEXT = (PFNGLNAMEDFRAMEBUFFERTEXTURE2DEXTPROC)loadFunction(
@@ -5635,25 +5941,26 @@ namespace internal
         "glNamedProgramLocalParameter4fvEXT");
       glNamedProgramLocalParameterI4iEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERI4IEXTPROC)loadFunction(
         "glNamedProgramLocalParameterI4iEXT");
-      glNamedProgramLocalParameterI4ivEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERI4IVEXTPROC)loadFunction(
-        "glNamedProgramLocalParameterI4ivEXT");
-      glNamedProgramLocalParameterI4uiEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERI4UIEXTPROC)loadFunction(
-        "glNamedProgramLocalParameterI4uiEXT");
-      glNamedProgramLocalParameterI4uivEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERI4UIVEXTPROC)loadFunction(
-        "glNamedProgramLocalParameterI4uivEXT");
-      glNamedProgramLocalParameters4fvEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERS4FVEXTPROC)loadFunction(
-        "glNamedProgramLocalParameters4fvEXT");
-      glNamedProgramLocalParametersI4ivEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERSI4IVEXTPROC)loadFunction(
-        "glNamedProgramLocalParametersI4ivEXT");
-      glNamedProgramLocalParametersI4uivEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXTPROC)loadFunction(
-        "glNamedProgramLocalParametersI4uivEXT");
-      glNamedProgramStringEXT = (PFNGLNAMEDPROGRAMSTRINGEXTPROC)loadFunction("glNamedProgramStringEXT");
+      glNamedProgramLocalParameterI4ivEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERI4IVEXTPROC)
+        loadFunction("glNamedProgramLocalParameterI4ivEXT");
+      glNamedProgramLocalParameterI4uiEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERI4UIEXTPROC)
+        loadFunction("glNamedProgramLocalParameterI4uiEXT");
+      glNamedProgramLocalParameterI4uivEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERI4UIVEXTPROC)
+        loadFunction("glNamedProgramLocalParameterI4uivEXT");
+      glNamedProgramLocalParameters4fvEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERS4FVEXTPROC)
+        loadFunction("glNamedProgramLocalParameters4fvEXT");
+      glNamedProgramLocalParametersI4ivEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERSI4IVEXTPROC)
+        loadFunction("glNamedProgramLocalParametersI4ivEXT");
+      glNamedProgramLocalParametersI4uivEXT = (PFNGLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXTPROC)
+        loadFunction("glNamedProgramLocalParametersI4uivEXT");
+      glNamedProgramStringEXT = (PFNGLNAMEDPROGRAMSTRINGEXTPROC)loadFunction(
+        "glNamedProgramStringEXT");
       glNamedRenderbufferStorage = (PFNGLNAMEDRENDERBUFFERSTORAGEPROC)loadFunction(
         "glNamedRenderbufferStorage");
       glNamedRenderbufferStorageEXT = (PFNGLNAMEDRENDERBUFFERSTORAGEEXTPROC)loadFunction(
         "glNamedRenderbufferStorageEXT");
-      glNamedRenderbufferStorageMultisample = (PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEPROC)loadFunction(
-        "glNamedRenderbufferStorageMultisample");
+      glNamedRenderbufferStorageMultisample = (PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEPROC)
+        loadFunction("glNamedRenderbufferStorageMultisample");
       glNamedRenderbufferStorageMultisampleAdvancedAMD =
         (PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC)loadFunction(
           "glNamedRenderbufferStorageMultisampleAdvancedAMD");
@@ -5686,8 +5993,10 @@ namespace internal
       glObjectLabelKHR = (PFNGLOBJECTLABELKHRPROC)loadFunction("glObjectLabelKHR");
       glObjectPtrLabel = (PFNGLOBJECTPTRLABELPROC)loadFunction("glObjectPtrLabel");
       glObjectPtrLabelKHR = (PFNGLOBJECTPTRLABELKHRPROC)loadFunction("glObjectPtrLabelKHR");
-      glObjectPurgeableAPPLE = (PFNGLOBJECTPURGEABLEAPPLEPROC)loadFunction("glObjectPurgeableAPPLE");
-      glObjectUnpurgeableAPPLE = (PFNGLOBJECTUNPURGEABLEAPPLEPROC)loadFunction("glObjectUnpurgeableAPPLE");
+      glObjectPurgeableAPPLE = (PFNGLOBJECTPURGEABLEAPPLEPROC)loadFunction(
+        "glObjectPurgeableAPPLE");
+      glObjectUnpurgeableAPPLE = (PFNGLOBJECTUNPURGEABLEAPPLEPROC)loadFunction(
+        "glObjectUnpurgeableAPPLE");
       glOrtho = (PFNGLORTHOPROC)loadFunction("glOrtho");
       glPassThrough = (PFNGLPASSTHROUGHPROC)loadFunction("glPassThrough");
       glPatchParameterfv = (PFNGLPATCHPARAMETERFVPROC)loadFunction("glPatchParameterfv");
@@ -5695,11 +6004,14 @@ namespace internal
       glPathColorGenNV = (PFNGLPATHCOLORGENNVPROC)loadFunction("glPathColorGenNV");
       glPathCommandsNV = (PFNGLPATHCOMMANDSNVPROC)loadFunction("glPathCommandsNV");
       glPathCoordsNV = (PFNGLPATHCOORDSNVPROC)loadFunction("glPathCoordsNV");
-      glPathCoverDepthFuncNV = (PFNGLPATHCOVERDEPTHFUNCNVPROC)loadFunction("glPathCoverDepthFuncNV");
+      glPathCoverDepthFuncNV = (PFNGLPATHCOVERDEPTHFUNCNVPROC)loadFunction(
+        "glPathCoverDepthFuncNV");
       glPathDashArrayNV = (PFNGLPATHDASHARRAYNVPROC)loadFunction("glPathDashArrayNV");
       glPathFogGenNV = (PFNGLPATHFOGGENNVPROC)loadFunction("glPathFogGenNV");
-      glPathGlyphIndexArrayNV = (PFNGLPATHGLYPHINDEXARRAYNVPROC)loadFunction("glPathGlyphIndexArrayNV");
-      glPathGlyphIndexRangeNV = (PFNGLPATHGLYPHINDEXRANGENVPROC)loadFunction("glPathGlyphIndexRangeNV");
+      glPathGlyphIndexArrayNV = (PFNGLPATHGLYPHINDEXARRAYNVPROC)loadFunction(
+        "glPathGlyphIndexArrayNV");
+      glPathGlyphIndexRangeNV = (PFNGLPATHGLYPHINDEXRANGENVPROC)loadFunction(
+        "glPathGlyphIndexRangeNV");
       glPathGlyphRangeNV = (PFNGLPATHGLYPHRANGENVPROC)loadFunction("glPathGlyphRangeNV");
       glPathGlyphsNV = (PFNGLPATHGLYPHSNVPROC)loadFunction("glPathGlyphsNV");
       glPathMemoryGlyphIndexArrayNV = (PFNGLPATHMEMORYGLYPHINDEXARRAYNVPROC)loadFunction(
@@ -5715,7 +6027,8 @@ namespace internal
       glPathSubCommandsNV = (PFNGLPATHSUBCOMMANDSNVPROC)loadFunction("glPathSubCommandsNV");
       glPathSubCoordsNV = (PFNGLPATHSUBCOORDSNVPROC)loadFunction("glPathSubCoordsNV");
       glPathTexGenNV = (PFNGLPATHTEXGENNVPROC)loadFunction("glPathTexGenNV");
-      glPauseTransformFeedback = (PFNGLPAUSETRANSFORMFEEDBACKPROC)loadFunction("glPauseTransformFeedback");
+      glPauseTransformFeedback = (PFNGLPAUSETRANSFORMFEEDBACKPROC)loadFunction(
+        "glPauseTransformFeedback");
       glPauseTransformFeedbackNV = (PFNGLPAUSETRANSFORMFEEDBACKNVPROC)loadFunction(
         "glPauseTransformFeedbackNV");
       glPixelDataRangeNV = (PFNGLPIXELDATARANGENVPROC)loadFunction("glPixelDataRangeNV");
@@ -5750,7 +6063,8 @@ namespace internal
       glPolygonMode = (PFNGLPOLYGONMODEPROC)loadFunction("glPolygonMode");
       glPolygonOffset = (PFNGLPOLYGONOFFSETPROC)loadFunction("glPolygonOffset");
       glPolygonOffsetClamp = (PFNGLPOLYGONOFFSETCLAMPPROC)loadFunction("glPolygonOffsetClamp");
-      glPolygonOffsetClampEXT = (PFNGLPOLYGONOFFSETCLAMPEXTPROC)loadFunction("glPolygonOffsetClampEXT");
+      glPolygonOffsetClampEXT = (PFNGLPOLYGONOFFSETCLAMPEXTPROC)loadFunction(
+        "glPolygonOffsetClampEXT");
       glPolygonOffsetEXT = (PFNGLPOLYGONOFFSETEXTPROC)loadFunction("glPolygonOffsetEXT");
       glPolygonStipple = (PFNGLPOLYGONSTIPPLEPROC)loadFunction("glPolygonStipple");
       glPopAttrib = (PFNGLPOPATTRIBPROC)loadFunction("glPopAttrib");
@@ -5760,16 +6074,19 @@ namespace internal
       glPopGroupMarkerEXT = (PFNGLPOPGROUPMARKEREXTPROC)loadFunction("glPopGroupMarkerEXT");
       glPopMatrix = (PFNGLPOPMATRIXPROC)loadFunction("glPopMatrix");
       glPopName = (PFNGLPOPNAMEPROC)loadFunction("glPopName");
-      glPresentFrameDualFillNV = (PFNGLPRESENTFRAMEDUALFILLNVPROC)loadFunction("glPresentFrameDualFillNV");
+      glPresentFrameDualFillNV = (PFNGLPRESENTFRAMEDUALFILLNVPROC)loadFunction(
+        "glPresentFrameDualFillNV");
       glPresentFrameKeyedNV = (PFNGLPRESENTFRAMEKEYEDNVPROC)loadFunction("glPresentFrameKeyedNV");
       glPrimitiveBoundingBoxARB = (PFNGLPRIMITIVEBOUNDINGBOXARBPROC)loadFunction(
         "glPrimitiveBoundingBoxARB");
-      glPrimitiveRestartIndex = (PFNGLPRIMITIVERESTARTINDEXPROC)loadFunction("glPrimitiveRestartIndex");
+      glPrimitiveRestartIndex = (PFNGLPRIMITIVERESTARTINDEXPROC)loadFunction(
+        "glPrimitiveRestartIndex");
       glPrimitiveRestartIndexNV = (PFNGLPRIMITIVERESTARTINDEXNVPROC)loadFunction(
         "glPrimitiveRestartIndexNV");
       glPrimitiveRestartNV = (PFNGLPRIMITIVERESTARTNVPROC)loadFunction("glPrimitiveRestartNV");
       glPrioritizeTextures = (PFNGLPRIORITIZETEXTURESPROC)loadFunction("glPrioritizeTextures");
-      glPrioritizeTexturesEXT = (PFNGLPRIORITIZETEXTURESEXTPROC)loadFunction("glPrioritizeTexturesEXT");
+      glPrioritizeTexturesEXT = (PFNGLPRIORITIZETEXTURESEXTPROC)loadFunction(
+        "glPrioritizeTexturesEXT");
       glProgramBinary = (PFNGLPROGRAMBINARYPROC)loadFunction("glProgramBinary");
       glProgramBufferParametersIivNV = (PFNGLPROGRAMBUFFERPARAMETERSIIVNVPROC)loadFunction(
         "glProgramBufferParametersIivNV");
@@ -5829,15 +6146,23 @@ namespace internal
         "glProgramNamedParameter4fNV");
       glProgramNamedParameter4fvNV = (PFNGLPROGRAMNAMEDPARAMETER4FVNVPROC)loadFunction(
         "glProgramNamedParameter4fvNV");
-      glProgramParameter4dNV = (PFNGLPROGRAMPARAMETER4DNVPROC)loadFunction("glProgramParameter4dNV");
-      glProgramParameter4dvNV = (PFNGLPROGRAMPARAMETER4DVNVPROC)loadFunction("glProgramParameter4dvNV");
-      glProgramParameter4fNV = (PFNGLPROGRAMPARAMETER4FNVPROC)loadFunction("glProgramParameter4fNV");
-      glProgramParameter4fvNV = (PFNGLPROGRAMPARAMETER4FVNVPROC)loadFunction("glProgramParameter4fvNV");
+      glProgramParameter4dNV = (PFNGLPROGRAMPARAMETER4DNVPROC)loadFunction(
+        "glProgramParameter4dNV");
+      glProgramParameter4dvNV = (PFNGLPROGRAMPARAMETER4DVNVPROC)loadFunction(
+        "glProgramParameter4dvNV");
+      glProgramParameter4fNV = (PFNGLPROGRAMPARAMETER4FNVPROC)loadFunction(
+        "glProgramParameter4fNV");
+      glProgramParameter4fvNV = (PFNGLPROGRAMPARAMETER4FVNVPROC)loadFunction(
+        "glProgramParameter4fvNV");
       glProgramParameteri = (PFNGLPROGRAMPARAMETERIPROC)loadFunction("glProgramParameteri");
-      glProgramParameteriARB = (PFNGLPROGRAMPARAMETERIARBPROC)loadFunction("glProgramParameteriARB");
-      glProgramParameteriEXT = (PFNGLPROGRAMPARAMETERIEXTPROC)loadFunction("glProgramParameteriEXT");
-      glProgramParameters4dvNV = (PFNGLPROGRAMPARAMETERS4DVNVPROC)loadFunction("glProgramParameters4dvNV");
-      glProgramParameters4fvNV = (PFNGLPROGRAMPARAMETERS4FVNVPROC)loadFunction("glProgramParameters4fvNV");
+      glProgramParameteriARB = (PFNGLPROGRAMPARAMETERIARBPROC)loadFunction(
+        "glProgramParameteriARB");
+      glProgramParameteriEXT = (PFNGLPROGRAMPARAMETERIEXTPROC)loadFunction(
+        "glProgramParameteriEXT");
+      glProgramParameters4dvNV = (PFNGLPROGRAMPARAMETERS4DVNVPROC)loadFunction(
+        "glProgramParameters4dvNV");
+      glProgramParameters4fvNV = (PFNGLPROGRAMPARAMETERS4FVNVPROC)loadFunction(
+        "glProgramParameters4fvNV");
       glProgramPathFragmentInputGenNV = (PFNGLPROGRAMPATHFRAGMENTINPUTGENNVPROC)loadFunction(
         "glProgramPathFragmentInputGenNV");
       glProgramStringARB = (PFNGLPROGRAMSTRINGARBPROC)loadFunction("glProgramStringARB");
@@ -5846,103 +6171,151 @@ namespace internal
       glProgramUniform1d = (PFNGLPROGRAMUNIFORM1DPROC)loadFunction("glProgramUniform1d");
       glProgramUniform1dEXT = (PFNGLPROGRAMUNIFORM1DEXTPROC)loadFunction("glProgramUniform1dEXT");
       glProgramUniform1dv = (PFNGLPROGRAMUNIFORM1DVPROC)loadFunction("glProgramUniform1dv");
-      glProgramUniform1dvEXT = (PFNGLPROGRAMUNIFORM1DVEXTPROC)loadFunction("glProgramUniform1dvEXT");
+      glProgramUniform1dvEXT = (PFNGLPROGRAMUNIFORM1DVEXTPROC)loadFunction(
+        "glProgramUniform1dvEXT");
       glProgramUniform1f = (PFNGLPROGRAMUNIFORM1FPROC)loadFunction("glProgramUniform1f");
       glProgramUniform1fEXT = (PFNGLPROGRAMUNIFORM1FEXTPROC)loadFunction("glProgramUniform1fEXT");
       glProgramUniform1fv = (PFNGLPROGRAMUNIFORM1FVPROC)loadFunction("glProgramUniform1fv");
-      glProgramUniform1fvEXT = (PFNGLPROGRAMUNIFORM1FVEXTPROC)loadFunction("glProgramUniform1fvEXT");
+      glProgramUniform1fvEXT = (PFNGLPROGRAMUNIFORM1FVEXTPROC)loadFunction(
+        "glProgramUniform1fvEXT");
       glProgramUniform1i = (PFNGLPROGRAMUNIFORM1IPROC)loadFunction("glProgramUniform1i");
-      glProgramUniform1i64ARB = (PFNGLPROGRAMUNIFORM1I64ARBPROC)loadFunction("glProgramUniform1i64ARB");
-      glProgramUniform1i64NV = (PFNGLPROGRAMUNIFORM1I64NVPROC)loadFunction("glProgramUniform1i64NV");
-      glProgramUniform1i64vARB = (PFNGLPROGRAMUNIFORM1I64VARBPROC)loadFunction("glProgramUniform1i64vARB");
-      glProgramUniform1i64vNV = (PFNGLPROGRAMUNIFORM1I64VNVPROC)loadFunction("glProgramUniform1i64vNV");
+      glProgramUniform1i64ARB = (PFNGLPROGRAMUNIFORM1I64ARBPROC)loadFunction(
+        "glProgramUniform1i64ARB");
+      glProgramUniform1i64NV = (PFNGLPROGRAMUNIFORM1I64NVPROC)loadFunction(
+        "glProgramUniform1i64NV");
+      glProgramUniform1i64vARB = (PFNGLPROGRAMUNIFORM1I64VARBPROC)loadFunction(
+        "glProgramUniform1i64vARB");
+      glProgramUniform1i64vNV = (PFNGLPROGRAMUNIFORM1I64VNVPROC)loadFunction(
+        "glProgramUniform1i64vNV");
       glProgramUniform1iEXT = (PFNGLPROGRAMUNIFORM1IEXTPROC)loadFunction("glProgramUniform1iEXT");
       glProgramUniform1iv = (PFNGLPROGRAMUNIFORM1IVPROC)loadFunction("glProgramUniform1iv");
-      glProgramUniform1ivEXT = (PFNGLPROGRAMUNIFORM1IVEXTPROC)loadFunction("glProgramUniform1ivEXT");
+      glProgramUniform1ivEXT = (PFNGLPROGRAMUNIFORM1IVEXTPROC)loadFunction(
+        "glProgramUniform1ivEXT");
       glProgramUniform1ui = (PFNGLPROGRAMUNIFORM1UIPROC)loadFunction("glProgramUniform1ui");
-      glProgramUniform1ui64ARB = (PFNGLPROGRAMUNIFORM1UI64ARBPROC)loadFunction("glProgramUniform1ui64ARB");
-      glProgramUniform1ui64NV = (PFNGLPROGRAMUNIFORM1UI64NVPROC)loadFunction("glProgramUniform1ui64NV");
+      glProgramUniform1ui64ARB = (PFNGLPROGRAMUNIFORM1UI64ARBPROC)loadFunction(
+        "glProgramUniform1ui64ARB");
+      glProgramUniform1ui64NV = (PFNGLPROGRAMUNIFORM1UI64NVPROC)loadFunction(
+        "glProgramUniform1ui64NV");
       glProgramUniform1ui64vARB = (PFNGLPROGRAMUNIFORM1UI64VARBPROC)loadFunction(
         "glProgramUniform1ui64vARB");
-      glProgramUniform1ui64vNV = (PFNGLPROGRAMUNIFORM1UI64VNVPROC)loadFunction("glProgramUniform1ui64vNV");
-      glProgramUniform1uiEXT = (PFNGLPROGRAMUNIFORM1UIEXTPROC)loadFunction("glProgramUniform1uiEXT");
+      glProgramUniform1ui64vNV = (PFNGLPROGRAMUNIFORM1UI64VNVPROC)loadFunction(
+        "glProgramUniform1ui64vNV");
+      glProgramUniform1uiEXT = (PFNGLPROGRAMUNIFORM1UIEXTPROC)loadFunction(
+        "glProgramUniform1uiEXT");
       glProgramUniform1uiv = (PFNGLPROGRAMUNIFORM1UIVPROC)loadFunction("glProgramUniform1uiv");
-      glProgramUniform1uivEXT = (PFNGLPROGRAMUNIFORM1UIVEXTPROC)loadFunction("glProgramUniform1uivEXT");
+      glProgramUniform1uivEXT = (PFNGLPROGRAMUNIFORM1UIVEXTPROC)loadFunction(
+        "glProgramUniform1uivEXT");
       glProgramUniform2d = (PFNGLPROGRAMUNIFORM2DPROC)loadFunction("glProgramUniform2d");
       glProgramUniform2dEXT = (PFNGLPROGRAMUNIFORM2DEXTPROC)loadFunction("glProgramUniform2dEXT");
       glProgramUniform2dv = (PFNGLPROGRAMUNIFORM2DVPROC)loadFunction("glProgramUniform2dv");
-      glProgramUniform2dvEXT = (PFNGLPROGRAMUNIFORM2DVEXTPROC)loadFunction("glProgramUniform2dvEXT");
+      glProgramUniform2dvEXT = (PFNGLPROGRAMUNIFORM2DVEXTPROC)loadFunction(
+        "glProgramUniform2dvEXT");
       glProgramUniform2f = (PFNGLPROGRAMUNIFORM2FPROC)loadFunction("glProgramUniform2f");
       glProgramUniform2fEXT = (PFNGLPROGRAMUNIFORM2FEXTPROC)loadFunction("glProgramUniform2fEXT");
       glProgramUniform2fv = (PFNGLPROGRAMUNIFORM2FVPROC)loadFunction("glProgramUniform2fv");
-      glProgramUniform2fvEXT = (PFNGLPROGRAMUNIFORM2FVEXTPROC)loadFunction("glProgramUniform2fvEXT");
+      glProgramUniform2fvEXT = (PFNGLPROGRAMUNIFORM2FVEXTPROC)loadFunction(
+        "glProgramUniform2fvEXT");
       glProgramUniform2i = (PFNGLPROGRAMUNIFORM2IPROC)loadFunction("glProgramUniform2i");
-      glProgramUniform2i64ARB = (PFNGLPROGRAMUNIFORM2I64ARBPROC)loadFunction("glProgramUniform2i64ARB");
-      glProgramUniform2i64NV = (PFNGLPROGRAMUNIFORM2I64NVPROC)loadFunction("glProgramUniform2i64NV");
-      glProgramUniform2i64vARB = (PFNGLPROGRAMUNIFORM2I64VARBPROC)loadFunction("glProgramUniform2i64vARB");
-      glProgramUniform2i64vNV = (PFNGLPROGRAMUNIFORM2I64VNVPROC)loadFunction("glProgramUniform2i64vNV");
+      glProgramUniform2i64ARB = (PFNGLPROGRAMUNIFORM2I64ARBPROC)loadFunction(
+        "glProgramUniform2i64ARB");
+      glProgramUniform2i64NV = (PFNGLPROGRAMUNIFORM2I64NVPROC)loadFunction(
+        "glProgramUniform2i64NV");
+      glProgramUniform2i64vARB = (PFNGLPROGRAMUNIFORM2I64VARBPROC)loadFunction(
+        "glProgramUniform2i64vARB");
+      glProgramUniform2i64vNV = (PFNGLPROGRAMUNIFORM2I64VNVPROC)loadFunction(
+        "glProgramUniform2i64vNV");
       glProgramUniform2iEXT = (PFNGLPROGRAMUNIFORM2IEXTPROC)loadFunction("glProgramUniform2iEXT");
       glProgramUniform2iv = (PFNGLPROGRAMUNIFORM2IVPROC)loadFunction("glProgramUniform2iv");
-      glProgramUniform2ivEXT = (PFNGLPROGRAMUNIFORM2IVEXTPROC)loadFunction("glProgramUniform2ivEXT");
+      glProgramUniform2ivEXT = (PFNGLPROGRAMUNIFORM2IVEXTPROC)loadFunction(
+        "glProgramUniform2ivEXT");
       glProgramUniform2ui = (PFNGLPROGRAMUNIFORM2UIPROC)loadFunction("glProgramUniform2ui");
-      glProgramUniform2ui64ARB = (PFNGLPROGRAMUNIFORM2UI64ARBPROC)loadFunction("glProgramUniform2ui64ARB");
-      glProgramUniform2ui64NV = (PFNGLPROGRAMUNIFORM2UI64NVPROC)loadFunction("glProgramUniform2ui64NV");
+      glProgramUniform2ui64ARB = (PFNGLPROGRAMUNIFORM2UI64ARBPROC)loadFunction(
+        "glProgramUniform2ui64ARB");
+      glProgramUniform2ui64NV = (PFNGLPROGRAMUNIFORM2UI64NVPROC)loadFunction(
+        "glProgramUniform2ui64NV");
       glProgramUniform2ui64vARB = (PFNGLPROGRAMUNIFORM2UI64VARBPROC)loadFunction(
         "glProgramUniform2ui64vARB");
-      glProgramUniform2ui64vNV = (PFNGLPROGRAMUNIFORM2UI64VNVPROC)loadFunction("glProgramUniform2ui64vNV");
-      glProgramUniform2uiEXT = (PFNGLPROGRAMUNIFORM2UIEXTPROC)loadFunction("glProgramUniform2uiEXT");
+      glProgramUniform2ui64vNV = (PFNGLPROGRAMUNIFORM2UI64VNVPROC)loadFunction(
+        "glProgramUniform2ui64vNV");
+      glProgramUniform2uiEXT = (PFNGLPROGRAMUNIFORM2UIEXTPROC)loadFunction(
+        "glProgramUniform2uiEXT");
       glProgramUniform2uiv = (PFNGLPROGRAMUNIFORM2UIVPROC)loadFunction("glProgramUniform2uiv");
-      glProgramUniform2uivEXT = (PFNGLPROGRAMUNIFORM2UIVEXTPROC)loadFunction("glProgramUniform2uivEXT");
+      glProgramUniform2uivEXT = (PFNGLPROGRAMUNIFORM2UIVEXTPROC)loadFunction(
+        "glProgramUniform2uivEXT");
       glProgramUniform3d = (PFNGLPROGRAMUNIFORM3DPROC)loadFunction("glProgramUniform3d");
       glProgramUniform3dEXT = (PFNGLPROGRAMUNIFORM3DEXTPROC)loadFunction("glProgramUniform3dEXT");
       glProgramUniform3dv = (PFNGLPROGRAMUNIFORM3DVPROC)loadFunction("glProgramUniform3dv");
-      glProgramUniform3dvEXT = (PFNGLPROGRAMUNIFORM3DVEXTPROC)loadFunction("glProgramUniform3dvEXT");
+      glProgramUniform3dvEXT = (PFNGLPROGRAMUNIFORM3DVEXTPROC)loadFunction(
+        "glProgramUniform3dvEXT");
       glProgramUniform3f = (PFNGLPROGRAMUNIFORM3FPROC)loadFunction("glProgramUniform3f");
       glProgramUniform3fEXT = (PFNGLPROGRAMUNIFORM3FEXTPROC)loadFunction("glProgramUniform3fEXT");
       glProgramUniform3fv = (PFNGLPROGRAMUNIFORM3FVPROC)loadFunction("glProgramUniform3fv");
-      glProgramUniform3fvEXT = (PFNGLPROGRAMUNIFORM3FVEXTPROC)loadFunction("glProgramUniform3fvEXT");
+      glProgramUniform3fvEXT = (PFNGLPROGRAMUNIFORM3FVEXTPROC)loadFunction(
+        "glProgramUniform3fvEXT");
       glProgramUniform3i = (PFNGLPROGRAMUNIFORM3IPROC)loadFunction("glProgramUniform3i");
-      glProgramUniform3i64ARB = (PFNGLPROGRAMUNIFORM3I64ARBPROC)loadFunction("glProgramUniform3i64ARB");
-      glProgramUniform3i64NV = (PFNGLPROGRAMUNIFORM3I64NVPROC)loadFunction("glProgramUniform3i64NV");
-      glProgramUniform3i64vARB = (PFNGLPROGRAMUNIFORM3I64VARBPROC)loadFunction("glProgramUniform3i64vARB");
-      glProgramUniform3i64vNV = (PFNGLPROGRAMUNIFORM3I64VNVPROC)loadFunction("glProgramUniform3i64vNV");
+      glProgramUniform3i64ARB = (PFNGLPROGRAMUNIFORM3I64ARBPROC)loadFunction(
+        "glProgramUniform3i64ARB");
+      glProgramUniform3i64NV = (PFNGLPROGRAMUNIFORM3I64NVPROC)loadFunction(
+        "glProgramUniform3i64NV");
+      glProgramUniform3i64vARB = (PFNGLPROGRAMUNIFORM3I64VARBPROC)loadFunction(
+        "glProgramUniform3i64vARB");
+      glProgramUniform3i64vNV = (PFNGLPROGRAMUNIFORM3I64VNVPROC)loadFunction(
+        "glProgramUniform3i64vNV");
       glProgramUniform3iEXT = (PFNGLPROGRAMUNIFORM3IEXTPROC)loadFunction("glProgramUniform3iEXT");
       glProgramUniform3iv = (PFNGLPROGRAMUNIFORM3IVPROC)loadFunction("glProgramUniform3iv");
-      glProgramUniform3ivEXT = (PFNGLPROGRAMUNIFORM3IVEXTPROC)loadFunction("glProgramUniform3ivEXT");
+      glProgramUniform3ivEXT = (PFNGLPROGRAMUNIFORM3IVEXTPROC)loadFunction(
+        "glProgramUniform3ivEXT");
       glProgramUniform3ui = (PFNGLPROGRAMUNIFORM3UIPROC)loadFunction("glProgramUniform3ui");
-      glProgramUniform3ui64ARB = (PFNGLPROGRAMUNIFORM3UI64ARBPROC)loadFunction("glProgramUniform3ui64ARB");
-      glProgramUniform3ui64NV = (PFNGLPROGRAMUNIFORM3UI64NVPROC)loadFunction("glProgramUniform3ui64NV");
+      glProgramUniform3ui64ARB = (PFNGLPROGRAMUNIFORM3UI64ARBPROC)loadFunction(
+        "glProgramUniform3ui64ARB");
+      glProgramUniform3ui64NV = (PFNGLPROGRAMUNIFORM3UI64NVPROC)loadFunction(
+        "glProgramUniform3ui64NV");
       glProgramUniform3ui64vARB = (PFNGLPROGRAMUNIFORM3UI64VARBPROC)loadFunction(
         "glProgramUniform3ui64vARB");
-      glProgramUniform3ui64vNV = (PFNGLPROGRAMUNIFORM3UI64VNVPROC)loadFunction("glProgramUniform3ui64vNV");
-      glProgramUniform3uiEXT = (PFNGLPROGRAMUNIFORM3UIEXTPROC)loadFunction("glProgramUniform3uiEXT");
+      glProgramUniform3ui64vNV = (PFNGLPROGRAMUNIFORM3UI64VNVPROC)loadFunction(
+        "glProgramUniform3ui64vNV");
+      glProgramUniform3uiEXT = (PFNGLPROGRAMUNIFORM3UIEXTPROC)loadFunction(
+        "glProgramUniform3uiEXT");
       glProgramUniform3uiv = (PFNGLPROGRAMUNIFORM3UIVPROC)loadFunction("glProgramUniform3uiv");
-      glProgramUniform3uivEXT = (PFNGLPROGRAMUNIFORM3UIVEXTPROC)loadFunction("glProgramUniform3uivEXT");
+      glProgramUniform3uivEXT = (PFNGLPROGRAMUNIFORM3UIVEXTPROC)loadFunction(
+        "glProgramUniform3uivEXT");
       glProgramUniform4d = (PFNGLPROGRAMUNIFORM4DPROC)loadFunction("glProgramUniform4d");
       glProgramUniform4dEXT = (PFNGLPROGRAMUNIFORM4DEXTPROC)loadFunction("glProgramUniform4dEXT");
       glProgramUniform4dv = (PFNGLPROGRAMUNIFORM4DVPROC)loadFunction("glProgramUniform4dv");
-      glProgramUniform4dvEXT = (PFNGLPROGRAMUNIFORM4DVEXTPROC)loadFunction("glProgramUniform4dvEXT");
+      glProgramUniform4dvEXT = (PFNGLPROGRAMUNIFORM4DVEXTPROC)loadFunction(
+        "glProgramUniform4dvEXT");
       glProgramUniform4f = (PFNGLPROGRAMUNIFORM4FPROC)loadFunction("glProgramUniform4f");
       glProgramUniform4fEXT = (PFNGLPROGRAMUNIFORM4FEXTPROC)loadFunction("glProgramUniform4fEXT");
       glProgramUniform4fv = (PFNGLPROGRAMUNIFORM4FVPROC)loadFunction("glProgramUniform4fv");
-      glProgramUniform4fvEXT = (PFNGLPROGRAMUNIFORM4FVEXTPROC)loadFunction("glProgramUniform4fvEXT");
+      glProgramUniform4fvEXT = (PFNGLPROGRAMUNIFORM4FVEXTPROC)loadFunction(
+        "glProgramUniform4fvEXT");
       glProgramUniform4i = (PFNGLPROGRAMUNIFORM4IPROC)loadFunction("glProgramUniform4i");
-      glProgramUniform4i64ARB = (PFNGLPROGRAMUNIFORM4I64ARBPROC)loadFunction("glProgramUniform4i64ARB");
-      glProgramUniform4i64NV = (PFNGLPROGRAMUNIFORM4I64NVPROC)loadFunction("glProgramUniform4i64NV");
-      glProgramUniform4i64vARB = (PFNGLPROGRAMUNIFORM4I64VARBPROC)loadFunction("glProgramUniform4i64vARB");
-      glProgramUniform4i64vNV = (PFNGLPROGRAMUNIFORM4I64VNVPROC)loadFunction("glProgramUniform4i64vNV");
+      glProgramUniform4i64ARB = (PFNGLPROGRAMUNIFORM4I64ARBPROC)loadFunction(
+        "glProgramUniform4i64ARB");
+      glProgramUniform4i64NV = (PFNGLPROGRAMUNIFORM4I64NVPROC)loadFunction(
+        "glProgramUniform4i64NV");
+      glProgramUniform4i64vARB = (PFNGLPROGRAMUNIFORM4I64VARBPROC)loadFunction(
+        "glProgramUniform4i64vARB");
+      glProgramUniform4i64vNV = (PFNGLPROGRAMUNIFORM4I64VNVPROC)loadFunction(
+        "glProgramUniform4i64vNV");
       glProgramUniform4iEXT = (PFNGLPROGRAMUNIFORM4IEXTPROC)loadFunction("glProgramUniform4iEXT");
       glProgramUniform4iv = (PFNGLPROGRAMUNIFORM4IVPROC)loadFunction("glProgramUniform4iv");
-      glProgramUniform4ivEXT = (PFNGLPROGRAMUNIFORM4IVEXTPROC)loadFunction("glProgramUniform4ivEXT");
+      glProgramUniform4ivEXT = (PFNGLPROGRAMUNIFORM4IVEXTPROC)loadFunction(
+        "glProgramUniform4ivEXT");
       glProgramUniform4ui = (PFNGLPROGRAMUNIFORM4UIPROC)loadFunction("glProgramUniform4ui");
-      glProgramUniform4ui64ARB = (PFNGLPROGRAMUNIFORM4UI64ARBPROC)loadFunction("glProgramUniform4ui64ARB");
-      glProgramUniform4ui64NV = (PFNGLPROGRAMUNIFORM4UI64NVPROC)loadFunction("glProgramUniform4ui64NV");
+      glProgramUniform4ui64ARB = (PFNGLPROGRAMUNIFORM4UI64ARBPROC)loadFunction(
+        "glProgramUniform4ui64ARB");
+      glProgramUniform4ui64NV = (PFNGLPROGRAMUNIFORM4UI64NVPROC)loadFunction(
+        "glProgramUniform4ui64NV");
       glProgramUniform4ui64vARB = (PFNGLPROGRAMUNIFORM4UI64VARBPROC)loadFunction(
         "glProgramUniform4ui64vARB");
-      glProgramUniform4ui64vNV = (PFNGLPROGRAMUNIFORM4UI64VNVPROC)loadFunction("glProgramUniform4ui64vNV");
-      glProgramUniform4uiEXT = (PFNGLPROGRAMUNIFORM4UIEXTPROC)loadFunction("glProgramUniform4uiEXT");
+      glProgramUniform4ui64vNV = (PFNGLPROGRAMUNIFORM4UI64VNVPROC)loadFunction(
+        "glProgramUniform4ui64vNV");
+      glProgramUniform4uiEXT = (PFNGLPROGRAMUNIFORM4UIEXTPROC)loadFunction(
+        "glProgramUniform4uiEXT");
       glProgramUniform4uiv = (PFNGLPROGRAMUNIFORM4UIVPROC)loadFunction("glProgramUniform4uiv");
-      glProgramUniform4uivEXT = (PFNGLPROGRAMUNIFORM4UIVEXTPROC)loadFunction("glProgramUniform4uivEXT");
+      glProgramUniform4uivEXT = (PFNGLPROGRAMUNIFORM4UIVEXTPROC)loadFunction(
+        "glProgramUniform4uivEXT");
       glProgramUniformHandleui64ARB = (PFNGLPROGRAMUNIFORMHANDLEUI64ARBPROC)loadFunction(
         "glProgramUniformHandleui64ARB");
       glProgramUniformHandleui64NV = (PFNGLPROGRAMUNIFORMHANDLEUI64NVPROC)loadFunction(
@@ -6023,9 +6396,12 @@ namespace internal
         "glProgramUniformMatrix4x3fv");
       glProgramUniformMatrix4x3fvEXT = (PFNGLPROGRAMUNIFORMMATRIX4X3FVEXTPROC)loadFunction(
         "glProgramUniformMatrix4x3fvEXT");
-      glProgramUniformui64NV = (PFNGLPROGRAMUNIFORMUI64NVPROC)loadFunction("glProgramUniformui64NV");
-      glProgramUniformui64vNV = (PFNGLPROGRAMUNIFORMUI64VNVPROC)loadFunction("glProgramUniformui64vNV");
-      glProgramVertexLimitNV = (PFNGLPROGRAMVERTEXLIMITNVPROC)loadFunction("glProgramVertexLimitNV");
+      glProgramUniformui64NV = (PFNGLPROGRAMUNIFORMUI64NVPROC)loadFunction(
+        "glProgramUniformui64NV");
+      glProgramUniformui64vNV = (PFNGLPROGRAMUNIFORMUI64VNVPROC)loadFunction(
+        "glProgramUniformui64vNV");
+      glProgramVertexLimitNV = (PFNGLPROGRAMVERTEXLIMITNVPROC)loadFunction(
+        "glProgramVertexLimitNV");
       glProvokingVertex = (PFNGLPROVOKINGVERTEXPROC)loadFunction("glProvokingVertex");
       glProvokingVertexEXT = (PFNGLPROVOKINGVERTEXEXTPROC)loadFunction("glProvokingVertexEXT");
       glPushAttrib = (PFNGLPUSHATTRIBPROC)loadFunction("glPushAttrib");
@@ -6082,19 +6458,23 @@ namespace internal
       glRectiv = (PFNGLRECTIVPROC)loadFunction("glRectiv");
       glRects = (PFNGLRECTSPROC)loadFunction("glRects");
       glRectsv = (PFNGLRECTSVPROC)loadFunction("glRectsv");
-      glReleaseShaderCompiler = (PFNGLRELEASESHADERCOMPILERPROC)loadFunction("glReleaseShaderCompiler");
+      glReleaseShaderCompiler = (PFNGLRELEASESHADERCOMPILERPROC)loadFunction(
+        "glReleaseShaderCompiler");
       glRenderGpuMaskNV = (PFNGLRENDERGPUMASKNVPROC)loadFunction("glRenderGpuMaskNV");
       glRenderMode = (PFNGLRENDERMODEPROC)loadFunction("glRenderMode");
       glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEPROC)loadFunction("glRenderbufferStorage");
-      glRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC)loadFunction("glRenderbufferStorageEXT");
+      glRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC)loadFunction(
+        "glRenderbufferStorageEXT");
       glRenderbufferStorageMultisample = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC)loadFunction(
         "glRenderbufferStorageMultisample");
-      glRenderbufferStorageMultisampleAdvancedAMD = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC)
-        loadFunction("glRenderbufferStorageMultisampleAdvancedAMD");
-      glRenderbufferStorageMultisampleCoverageNV = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENVPROC)
-        loadFunction("glRenderbufferStorageMultisampleCoverageNV");
-      glRenderbufferStorageMultisampleEXT = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC)loadFunction(
-        "glRenderbufferStorageMultisampleEXT");
+      glRenderbufferStorageMultisampleAdvancedAMD =
+        (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC)loadFunction(
+          "glRenderbufferStorageMultisampleAdvancedAMD");
+      glRenderbufferStorageMultisampleCoverageNV =
+        (PFNGLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENVPROC)loadFunction(
+          "glRenderbufferStorageMultisampleCoverageNV");
+      glRenderbufferStorageMultisampleEXT = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC)
+        loadFunction("glRenderbufferStorageMultisampleEXT");
       glRequestResidentProgramsNV = (PFNGLREQUESTRESIDENTPROGRAMSNVPROC)loadFunction(
         "glRequestResidentProgramsNV");
       glResetHistogram = (PFNGLRESETHISTOGRAMPROC)loadFunction("glResetHistogram");
@@ -6103,7 +6483,8 @@ namespace internal
         "glResetMemoryObjectParameterNV");
       glResetMinmax = (PFNGLRESETMINMAXPROC)loadFunction("glResetMinmax");
       glResetMinmaxEXT = (PFNGLRESETMINMAXEXTPROC)loadFunction("glResetMinmaxEXT");
-      glResolveDepthValuesNV = (PFNGLRESOLVEDEPTHVALUESNVPROC)loadFunction("glResolveDepthValuesNV");
+      glResolveDepthValuesNV = (PFNGLRESOLVEDEPTHVALUESNVPROC)loadFunction(
+        "glResolveDepthValuesNV");
       glResumeTransformFeedback = (PFNGLRESUMETRANSFORMFEEDBACKPROC)loadFunction(
         "glResumeTransformFeedback");
       glResumeTransformFeedbackNV = (PFNGLRESUMETRANSFORMFEEDBACKNVPROC)loadFunction(
@@ -6117,7 +6498,8 @@ namespace internal
       glSampleMaski = (PFNGLSAMPLEMASKIPROC)loadFunction("glSampleMaski");
       glSamplePatternEXT = (PFNGLSAMPLEPATTERNEXTPROC)loadFunction("glSamplePatternEXT");
       glSamplerParameterIiv = (PFNGLSAMPLERPARAMETERIIVPROC)loadFunction("glSamplerParameterIiv");
-      glSamplerParameterIuiv = (PFNGLSAMPLERPARAMETERIUIVPROC)loadFunction("glSamplerParameterIuiv");
+      glSamplerParameterIuiv = (PFNGLSAMPLERPARAMETERIUIVPROC)loadFunction(
+        "glSamplerParameterIuiv");
       glSamplerParameterf = (PFNGLSAMPLERPARAMETERFPROC)loadFunction("glSamplerParameterf");
       glSamplerParameterfv = (PFNGLSAMPLERPARAMETERFVPROC)loadFunction("glSamplerParameterfv");
       glSamplerParameteri = (PFNGLSAMPLERPARAMETERIPROC)loadFunction("glSamplerParameteri");
@@ -6134,51 +6516,66 @@ namespace internal
       glSecondaryColor3b = (PFNGLSECONDARYCOLOR3BPROC)loadFunction("glSecondaryColor3b");
       glSecondaryColor3bEXT = (PFNGLSECONDARYCOLOR3BEXTPROC)loadFunction("glSecondaryColor3bEXT");
       glSecondaryColor3bv = (PFNGLSECONDARYCOLOR3BVPROC)loadFunction("glSecondaryColor3bv");
-      glSecondaryColor3bvEXT = (PFNGLSECONDARYCOLOR3BVEXTPROC)loadFunction("glSecondaryColor3bvEXT");
+      glSecondaryColor3bvEXT = (PFNGLSECONDARYCOLOR3BVEXTPROC)loadFunction(
+        "glSecondaryColor3bvEXT");
       glSecondaryColor3d = (PFNGLSECONDARYCOLOR3DPROC)loadFunction("glSecondaryColor3d");
       glSecondaryColor3dEXT = (PFNGLSECONDARYCOLOR3DEXTPROC)loadFunction("glSecondaryColor3dEXT");
       glSecondaryColor3dv = (PFNGLSECONDARYCOLOR3DVPROC)loadFunction("glSecondaryColor3dv");
-      glSecondaryColor3dvEXT = (PFNGLSECONDARYCOLOR3DVEXTPROC)loadFunction("glSecondaryColor3dvEXT");
+      glSecondaryColor3dvEXT = (PFNGLSECONDARYCOLOR3DVEXTPROC)loadFunction(
+        "glSecondaryColor3dvEXT");
       glSecondaryColor3f = (PFNGLSECONDARYCOLOR3FPROC)loadFunction("glSecondaryColor3f");
       glSecondaryColor3fEXT = (PFNGLSECONDARYCOLOR3FEXTPROC)loadFunction("glSecondaryColor3fEXT");
       glSecondaryColor3fv = (PFNGLSECONDARYCOLOR3FVPROC)loadFunction("glSecondaryColor3fv");
-      glSecondaryColor3fvEXT = (PFNGLSECONDARYCOLOR3FVEXTPROC)loadFunction("glSecondaryColor3fvEXT");
+      glSecondaryColor3fvEXT = (PFNGLSECONDARYCOLOR3FVEXTPROC)loadFunction(
+        "glSecondaryColor3fvEXT");
       glSecondaryColor3hNV = (PFNGLSECONDARYCOLOR3HNVPROC)loadFunction("glSecondaryColor3hNV");
       glSecondaryColor3hvNV = (PFNGLSECONDARYCOLOR3HVNVPROC)loadFunction("glSecondaryColor3hvNV");
       glSecondaryColor3i = (PFNGLSECONDARYCOLOR3IPROC)loadFunction("glSecondaryColor3i");
       glSecondaryColor3iEXT = (PFNGLSECONDARYCOLOR3IEXTPROC)loadFunction("glSecondaryColor3iEXT");
       glSecondaryColor3iv = (PFNGLSECONDARYCOLOR3IVPROC)loadFunction("glSecondaryColor3iv");
-      glSecondaryColor3ivEXT = (PFNGLSECONDARYCOLOR3IVEXTPROC)loadFunction("glSecondaryColor3ivEXT");
+      glSecondaryColor3ivEXT = (PFNGLSECONDARYCOLOR3IVEXTPROC)loadFunction(
+        "glSecondaryColor3ivEXT");
       glSecondaryColor3s = (PFNGLSECONDARYCOLOR3SPROC)loadFunction("glSecondaryColor3s");
       glSecondaryColor3sEXT = (PFNGLSECONDARYCOLOR3SEXTPROC)loadFunction("glSecondaryColor3sEXT");
       glSecondaryColor3sv = (PFNGLSECONDARYCOLOR3SVPROC)loadFunction("glSecondaryColor3sv");
-      glSecondaryColor3svEXT = (PFNGLSECONDARYCOLOR3SVEXTPROC)loadFunction("glSecondaryColor3svEXT");
+      glSecondaryColor3svEXT = (PFNGLSECONDARYCOLOR3SVEXTPROC)loadFunction(
+        "glSecondaryColor3svEXT");
       glSecondaryColor3ub = (PFNGLSECONDARYCOLOR3UBPROC)loadFunction("glSecondaryColor3ub");
-      glSecondaryColor3ubEXT = (PFNGLSECONDARYCOLOR3UBEXTPROC)loadFunction("glSecondaryColor3ubEXT");
+      glSecondaryColor3ubEXT = (PFNGLSECONDARYCOLOR3UBEXTPROC)loadFunction(
+        "glSecondaryColor3ubEXT");
       glSecondaryColor3ubv = (PFNGLSECONDARYCOLOR3UBVPROC)loadFunction("glSecondaryColor3ubv");
-      glSecondaryColor3ubvEXT = (PFNGLSECONDARYCOLOR3UBVEXTPROC)loadFunction("glSecondaryColor3ubvEXT");
+      glSecondaryColor3ubvEXT = (PFNGLSECONDARYCOLOR3UBVEXTPROC)loadFunction(
+        "glSecondaryColor3ubvEXT");
       glSecondaryColor3ui = (PFNGLSECONDARYCOLOR3UIPROC)loadFunction("glSecondaryColor3ui");
-      glSecondaryColor3uiEXT = (PFNGLSECONDARYCOLOR3UIEXTPROC)loadFunction("glSecondaryColor3uiEXT");
+      glSecondaryColor3uiEXT = (PFNGLSECONDARYCOLOR3UIEXTPROC)loadFunction(
+        "glSecondaryColor3uiEXT");
       glSecondaryColor3uiv = (PFNGLSECONDARYCOLOR3UIVPROC)loadFunction("glSecondaryColor3uiv");
-      glSecondaryColor3uivEXT = (PFNGLSECONDARYCOLOR3UIVEXTPROC)loadFunction("glSecondaryColor3uivEXT");
+      glSecondaryColor3uivEXT = (PFNGLSECONDARYCOLOR3UIVEXTPROC)loadFunction(
+        "glSecondaryColor3uivEXT");
       glSecondaryColor3us = (PFNGLSECONDARYCOLOR3USPROC)loadFunction("glSecondaryColor3us");
-      glSecondaryColor3usEXT = (PFNGLSECONDARYCOLOR3USEXTPROC)loadFunction("glSecondaryColor3usEXT");
+      glSecondaryColor3usEXT = (PFNGLSECONDARYCOLOR3USEXTPROC)loadFunction(
+        "glSecondaryColor3usEXT");
       glSecondaryColor3usv = (PFNGLSECONDARYCOLOR3USVPROC)loadFunction("glSecondaryColor3usv");
-      glSecondaryColor3usvEXT = (PFNGLSECONDARYCOLOR3USVEXTPROC)loadFunction("glSecondaryColor3usvEXT");
-      glSecondaryColorFormatNV = (PFNGLSECONDARYCOLORFORMATNVPROC)loadFunction("glSecondaryColorFormatNV");
+      glSecondaryColor3usvEXT = (PFNGLSECONDARYCOLOR3USVEXTPROC)loadFunction(
+        "glSecondaryColor3usvEXT");
+      glSecondaryColorFormatNV = (PFNGLSECONDARYCOLORFORMATNVPROC)loadFunction(
+        "glSecondaryColorFormatNV");
       glSecondaryColorP3ui = (PFNGLSECONDARYCOLORP3UIPROC)loadFunction("glSecondaryColorP3ui");
       glSecondaryColorP3uiv = (PFNGLSECONDARYCOLORP3UIVPROC)loadFunction("glSecondaryColorP3uiv");
-      glSecondaryColorPointer = (PFNGLSECONDARYCOLORPOINTERPROC)loadFunction("glSecondaryColorPointer");
+      glSecondaryColorPointer = (PFNGLSECONDARYCOLORPOINTERPROC)loadFunction(
+        "glSecondaryColorPointer");
       glSecondaryColorPointerEXT = (PFNGLSECONDARYCOLORPOINTEREXTPROC)loadFunction(
         "glSecondaryColorPointerEXT");
       glSelectBuffer = (PFNGLSELECTBUFFERPROC)loadFunction("glSelectBuffer");
       glSelectPerfMonitorCountersAMD = (PFNGLSELECTPERFMONITORCOUNTERSAMDPROC)loadFunction(
         "glSelectPerfMonitorCountersAMD");
-      glSemaphoreParameterivNV = (PFNGLSEMAPHOREPARAMETERIVNVPROC)loadFunction("glSemaphoreParameterivNV");
+      glSemaphoreParameterivNV = (PFNGLSEMAPHOREPARAMETERIVNVPROC)loadFunction(
+        "glSemaphoreParameterivNV");
       glSemaphoreParameterui64vEXT = (PFNGLSEMAPHOREPARAMETERUI64VEXTPROC)loadFunction(
         "glSemaphoreParameterui64vEXT");
       glSeparableFilter2D = (PFNGLSEPARABLEFILTER2DPROC)loadFunction("glSeparableFilter2D");
-      glSeparableFilter2DEXT = (PFNGLSEPARABLEFILTER2DEXTPROC)loadFunction("glSeparableFilter2DEXT");
+      glSeparableFilter2DEXT = (PFNGLSEPARABLEFILTER2DEXTPROC)loadFunction(
+        "glSeparableFilter2DEXT");
       glSetFenceAPPLE = (PFNGLSETFENCEAPPLEPROC)loadFunction("glSetFenceAPPLE");
       glSetFenceNV = (PFNGLSETFENCENVPROC)loadFunction("glSetFenceNV");
       glSetInvariantEXT = (PFNGLSETINVARIANTEXTPROC)loadFunction("glSetInvariantEXT");
@@ -6202,7 +6599,8 @@ namespace internal
       glShadingRateSampleOrderCustomNV = (PFNGLSHADINGRATESAMPLEORDERCUSTOMNVPROC)loadFunction(
         "glShadingRateSampleOrderCustomNV");
       glSignalSemaphoreEXT = (PFNGLSIGNALSEMAPHOREEXTPROC)loadFunction("glSignalSemaphoreEXT");
-      glSignalSemaphoreui64NVX = (PFNGLSIGNALSEMAPHOREUI64NVXPROC)loadFunction("glSignalSemaphoreui64NVX");
+      glSignalSemaphoreui64NVX = (PFNGLSIGNALSEMAPHOREUI64NVXPROC)loadFunction(
+        "glSignalSemaphoreui64NVX");
       glSpecializeShader = (PFNGLSPECIALIZESHADERPROC)loadFunction("glSpecializeShader");
       glSpecializeShaderARB = (PFNGLSPECIALIZESHADERARBPROC)loadFunction("glSpecializeShaderARB");
       glStateCaptureNV = (PFNGLSTATECAPTURENVPROC)loadFunction("glStateCaptureNV");
@@ -6220,12 +6618,12 @@ namespace internal
       glStencilStrokePathInstancedNV = (PFNGLSTENCILSTROKEPATHINSTANCEDNVPROC)loadFunction(
         "glStencilStrokePathInstancedNV");
       glStencilStrokePathNV = (PFNGLSTENCILSTROKEPATHNVPROC)loadFunction("glStencilStrokePathNV");
-      glStencilThenCoverFillPathInstancedNV = (PFNGLSTENCILTHENCOVERFILLPATHINSTANCEDNVPROC)loadFunction(
-        "glStencilThenCoverFillPathInstancedNV");
+      glStencilThenCoverFillPathInstancedNV = (PFNGLSTENCILTHENCOVERFILLPATHINSTANCEDNVPROC)
+        loadFunction("glStencilThenCoverFillPathInstancedNV");
       glStencilThenCoverFillPathNV = (PFNGLSTENCILTHENCOVERFILLPATHNVPROC)loadFunction(
         "glStencilThenCoverFillPathNV");
-      glStencilThenCoverStrokePathInstancedNV = (PFNGLSTENCILTHENCOVERSTROKEPATHINSTANCEDNVPROC)loadFunction(
-        "glStencilThenCoverStrokePathInstancedNV");
+      glStencilThenCoverStrokePathInstancedNV = (PFNGLSTENCILTHENCOVERSTROKEPATHINSTANCEDNVPROC)
+        loadFunction("glStencilThenCoverStrokePathInstancedNV");
       glStencilThenCoverStrokePathNV = (PFNGLSTENCILTHENCOVERSTROKEPATHNVPROC)loadFunction(
         "glStencilThenCoverStrokePathNV");
       glSubpixelPrecisionBiasNV = (PFNGLSUBPIXELPRECISIONBIASNVPROC)loadFunction(
@@ -6243,7 +6641,8 @@ namespace internal
       glTangent3sEXT = (PFNGLTANGENT3SEXTPROC)loadFunction("glTangent3sEXT");
       glTangent3svEXT = (PFNGLTANGENT3SVEXTPROC)loadFunction("glTangent3svEXT");
       glTangentPointerEXT = (PFNGLTANGENTPOINTEREXTPROC)loadFunction("glTangentPointerEXT");
-      glTessellationFactorAMD = (PFNGLTESSELLATIONFACTORAMDPROC)loadFunction("glTessellationFactorAMD");
+      glTessellationFactorAMD = (PFNGLTESSELLATIONFACTORAMDPROC)loadFunction(
+        "glTessellationFactorAMD");
       glTessellationModeAMD = (PFNGLTESSELLATIONMODEAMDPROC)loadFunction("glTessellationModeAMD");
       glTestFenceAPPLE = (PFNGLTESTFENCEAPPLEPROC)loadFunction("glTestFenceAPPLE");
       glTestFenceNV = (PFNGLTESTFENCENVPROC)loadFunction("glTestFenceNV");
@@ -6304,7 +6703,8 @@ namespace internal
       glTexCoordP4uiv = (PFNGLTEXCOORDP4UIVPROC)loadFunction("glTexCoordP4uiv");
       glTexCoordPointer = (PFNGLTEXCOORDPOINTERPROC)loadFunction("glTexCoordPointer");
       glTexCoordPointerEXT = (PFNGLTEXCOORDPOINTEREXTPROC)loadFunction("glTexCoordPointerEXT");
-      glTexCoordPointervINTEL = (PFNGLTEXCOORDPOINTERVINTELPROC)loadFunction("glTexCoordPointervINTEL");
+      glTexCoordPointervINTEL = (PFNGLTEXCOORDPOINTERVINTELPROC)loadFunction(
+        "glTexCoordPointervINTEL");
       glTexEnvf = (PFNGLTEXENVFPROC)loadFunction("glTexEnvf");
       glTexEnvfv = (PFNGLTEXENVFVPROC)loadFunction("glTexEnvfv");
       glTexEnvi = (PFNGLTEXENVIPROC)loadFunction("glTexEnvi");
@@ -6317,16 +6717,20 @@ namespace internal
       glTexGeniv = (PFNGLTEXGENIVPROC)loadFunction("glTexGeniv");
       glTexImage1D = (PFNGLTEXIMAGE1DPROC)loadFunction("glTexImage1D");
       glTexImage2D = (PFNGLTEXIMAGE2DPROC)loadFunction("glTexImage2D");
-      glTexImage2DMultisample = (PFNGLTEXIMAGE2DMULTISAMPLEPROC)loadFunction("glTexImage2DMultisample");
+      glTexImage2DMultisample = (PFNGLTEXIMAGE2DMULTISAMPLEPROC)loadFunction(
+        "glTexImage2DMultisample");
       glTexImage2DMultisampleCoverageNV = (PFNGLTEXIMAGE2DMULTISAMPLECOVERAGENVPROC)loadFunction(
         "glTexImage2DMultisampleCoverageNV");
       glTexImage3D = (PFNGLTEXIMAGE3DPROC)loadFunction("glTexImage3D");
       glTexImage3DEXT = (PFNGLTEXIMAGE3DEXTPROC)loadFunction("glTexImage3DEXT");
-      glTexImage3DMultisample = (PFNGLTEXIMAGE3DMULTISAMPLEPROC)loadFunction("glTexImage3DMultisample");
+      glTexImage3DMultisample = (PFNGLTEXIMAGE3DMULTISAMPLEPROC)loadFunction(
+        "glTexImage3DMultisample");
       glTexImage3DMultisampleCoverageNV = (PFNGLTEXIMAGE3DMULTISAMPLECOVERAGENVPROC)loadFunction(
         "glTexImage3DMultisampleCoverageNV");
-      glTexPageCommitmentARB = (PFNGLTEXPAGECOMMITMENTARBPROC)loadFunction("glTexPageCommitmentARB");
-      glTexPageCommitmentMemNV = (PFNGLTEXPAGECOMMITMENTMEMNVPROC)loadFunction("glTexPageCommitmentMemNV");
+      glTexPageCommitmentARB = (PFNGLTEXPAGECOMMITMENTARBPROC)loadFunction(
+        "glTexPageCommitmentARB");
+      glTexPageCommitmentMemNV = (PFNGLTEXPAGECOMMITMENTMEMNVPROC)loadFunction(
+        "glTexPageCommitmentMemNV");
       glTexParameterIiv = (PFNGLTEXPARAMETERIIVPROC)loadFunction("glTexParameterIiv");
       glTexParameterIivEXT = (PFNGLTEXPARAMETERIIVEXTPROC)loadFunction("glTexParameterIivEXT");
       glTexParameterIuiv = (PFNGLTEXPARAMETERIUIVPROC)loadFunction("glTexParameterIuiv");
@@ -6357,22 +6761,24 @@ namespace internal
       glTexSubImage2DEXT = (PFNGLTEXSUBIMAGE2DEXTPROC)loadFunction("glTexSubImage2DEXT");
       glTexSubImage3D = (PFNGLTEXSUBIMAGE3DPROC)loadFunction("glTexSubImage3D");
       glTexSubImage3DEXT = (PFNGLTEXSUBIMAGE3DEXTPROC)loadFunction("glTexSubImage3DEXT");
-      glTextureAttachMemoryNV = (PFNGLTEXTUREATTACHMEMORYNVPROC)loadFunction("glTextureAttachMemoryNV");
+      glTextureAttachMemoryNV = (PFNGLTEXTUREATTACHMEMORYNVPROC)loadFunction(
+        "glTextureAttachMemoryNV");
       glTextureBarrier = (PFNGLTEXTUREBARRIERPROC)loadFunction("glTextureBarrier");
       glTextureBarrierNV = (PFNGLTEXTUREBARRIERNVPROC)loadFunction("glTextureBarrierNV");
       glTextureBuffer = (PFNGLTEXTUREBUFFERPROC)loadFunction("glTextureBuffer");
       glTextureBufferEXT = (PFNGLTEXTUREBUFFEREXTPROC)loadFunction("glTextureBufferEXT");
       glTextureBufferRange = (PFNGLTEXTUREBUFFERRANGEPROC)loadFunction("glTextureBufferRange");
-      glTextureBufferRangeEXT = (PFNGLTEXTUREBUFFERRANGEEXTPROC)loadFunction("glTextureBufferRangeEXT");
+      glTextureBufferRangeEXT = (PFNGLTEXTUREBUFFERRANGEEXTPROC)loadFunction(
+        "glTextureBufferRangeEXT");
       glTextureImage1DEXT = (PFNGLTEXTUREIMAGE1DEXTPROC)loadFunction("glTextureImage1DEXT");
       glTextureImage2DEXT = (PFNGLTEXTUREIMAGE2DEXTPROC)loadFunction("glTextureImage2DEXT");
-      glTextureImage2DMultisampleCoverageNV = (PFNGLTEXTUREIMAGE2DMULTISAMPLECOVERAGENVPROC)loadFunction(
-        "glTextureImage2DMultisampleCoverageNV");
+      glTextureImage2DMultisampleCoverageNV = (PFNGLTEXTUREIMAGE2DMULTISAMPLECOVERAGENVPROC)
+        loadFunction("glTextureImage2DMultisampleCoverageNV");
       glTextureImage2DMultisampleNV = (PFNGLTEXTUREIMAGE2DMULTISAMPLENVPROC)loadFunction(
         "glTextureImage2DMultisampleNV");
       glTextureImage3DEXT = (PFNGLTEXTUREIMAGE3DEXTPROC)loadFunction("glTextureImage3DEXT");
-      glTextureImage3DMultisampleCoverageNV = (PFNGLTEXTUREIMAGE3DMULTISAMPLECOVERAGENVPROC)loadFunction(
-        "glTextureImage3DMultisampleCoverageNV");
+      glTextureImage3DMultisampleCoverageNV = (PFNGLTEXTUREIMAGE3DMULTISAMPLECOVERAGENVPROC)
+        loadFunction("glTextureImage3DMultisampleCoverageNV");
       glTextureImage3DMultisampleNV = (PFNGLTEXTUREIMAGE3DMULTISAMPLENVPROC)loadFunction(
         "glTextureImage3DMultisampleNV");
       glTextureLightEXT = (PFNGLTEXTURELIGHTEXTPROC)loadFunction("glTextureLightEXT");
@@ -6383,20 +6789,27 @@ namespace internal
       glTexturePageCommitmentMemNV = (PFNGLTEXTUREPAGECOMMITMENTMEMNVPROC)loadFunction(
         "glTexturePageCommitmentMemNV");
       glTextureParameterIiv = (PFNGLTEXTUREPARAMETERIIVPROC)loadFunction("glTextureParameterIiv");
-      glTextureParameterIivEXT = (PFNGLTEXTUREPARAMETERIIVEXTPROC)loadFunction("glTextureParameterIivEXT");
-      glTextureParameterIuiv = (PFNGLTEXTUREPARAMETERIUIVPROC)loadFunction("glTextureParameterIuiv");
+      glTextureParameterIivEXT = (PFNGLTEXTUREPARAMETERIIVEXTPROC)loadFunction(
+        "glTextureParameterIivEXT");
+      glTextureParameterIuiv = (PFNGLTEXTUREPARAMETERIUIVPROC)loadFunction(
+        "glTextureParameterIuiv");
       glTextureParameterIuivEXT = (PFNGLTEXTUREPARAMETERIUIVEXTPROC)loadFunction(
         "glTextureParameterIuivEXT");
       glTextureParameterf = (PFNGLTEXTUREPARAMETERFPROC)loadFunction("glTextureParameterf");
-      glTextureParameterfEXT = (PFNGLTEXTUREPARAMETERFEXTPROC)loadFunction("glTextureParameterfEXT");
+      glTextureParameterfEXT = (PFNGLTEXTUREPARAMETERFEXTPROC)loadFunction(
+        "glTextureParameterfEXT");
       glTextureParameterfv = (PFNGLTEXTUREPARAMETERFVPROC)loadFunction("glTextureParameterfv");
-      glTextureParameterfvEXT = (PFNGLTEXTUREPARAMETERFVEXTPROC)loadFunction("glTextureParameterfvEXT");
+      glTextureParameterfvEXT = (PFNGLTEXTUREPARAMETERFVEXTPROC)loadFunction(
+        "glTextureParameterfvEXT");
       glTextureParameteri = (PFNGLTEXTUREPARAMETERIPROC)loadFunction("glTextureParameteri");
-      glTextureParameteriEXT = (PFNGLTEXTUREPARAMETERIEXTPROC)loadFunction("glTextureParameteriEXT");
+      glTextureParameteriEXT = (PFNGLTEXTUREPARAMETERIEXTPROC)loadFunction(
+        "glTextureParameteriEXT");
       glTextureParameteriv = (PFNGLTEXTUREPARAMETERIVPROC)loadFunction("glTextureParameteriv");
-      glTextureParameterivEXT = (PFNGLTEXTUREPARAMETERIVEXTPROC)loadFunction("glTextureParameterivEXT");
+      glTextureParameterivEXT = (PFNGLTEXTUREPARAMETERIVEXTPROC)loadFunction(
+        "glTextureParameterivEXT");
       glTextureRangeAPPLE = (PFNGLTEXTURERANGEAPPLEPROC)loadFunction("glTextureRangeAPPLE");
-      glTextureRenderbufferEXT = (PFNGLTEXTURERENDERBUFFEREXTPROC)loadFunction("glTextureRenderbufferEXT");
+      glTextureRenderbufferEXT = (PFNGLTEXTURERENDERBUFFEREXTPROC)loadFunction(
+        "glTextureRenderbufferEXT");
       glTextureStorage1D = (PFNGLTEXTURESTORAGE1DPROC)loadFunction("glTextureStorage1D");
       glTextureStorage1DEXT = (PFNGLTEXTURESTORAGE1DEXTPROC)loadFunction("glTextureStorage1DEXT");
       glTextureStorage2D = (PFNGLTEXTURESTORAGE2DPROC)loadFunction("glTextureStorage2D");
@@ -6411,21 +6824,27 @@ namespace internal
         "glTextureStorage3DMultisample");
       glTextureStorage3DMultisampleEXT = (PFNGLTEXTURESTORAGE3DMULTISAMPLEEXTPROC)loadFunction(
         "glTextureStorage3DMultisampleEXT");
-      glTextureStorageMem1DEXT = (PFNGLTEXTURESTORAGEMEM1DEXTPROC)loadFunction("glTextureStorageMem1DEXT");
-      glTextureStorageMem2DEXT = (PFNGLTEXTURESTORAGEMEM2DEXTPROC)loadFunction("glTextureStorageMem2DEXT");
-      glTextureStorageMem2DMultisampleEXT = (PFNGLTEXTURESTORAGEMEM2DMULTISAMPLEEXTPROC)loadFunction(
-        "glTextureStorageMem2DMultisampleEXT");
-      glTextureStorageMem3DEXT = (PFNGLTEXTURESTORAGEMEM3DEXTPROC)loadFunction("glTextureStorageMem3DEXT");
-      glTextureStorageMem3DMultisampleEXT = (PFNGLTEXTURESTORAGEMEM3DMULTISAMPLEEXTPROC)loadFunction(
-        "glTextureStorageMem3DMultisampleEXT");
+      glTextureStorageMem1DEXT = (PFNGLTEXTURESTORAGEMEM1DEXTPROC)loadFunction(
+        "glTextureStorageMem1DEXT");
+      glTextureStorageMem2DEXT = (PFNGLTEXTURESTORAGEMEM2DEXTPROC)loadFunction(
+        "glTextureStorageMem2DEXT");
+      glTextureStorageMem2DMultisampleEXT = (PFNGLTEXTURESTORAGEMEM2DMULTISAMPLEEXTPROC)
+        loadFunction("glTextureStorageMem2DMultisampleEXT");
+      glTextureStorageMem3DEXT = (PFNGLTEXTURESTORAGEMEM3DEXTPROC)loadFunction(
+        "glTextureStorageMem3DEXT");
+      glTextureStorageMem3DMultisampleEXT = (PFNGLTEXTURESTORAGEMEM3DMULTISAMPLEEXTPROC)
+        loadFunction("glTextureStorageMem3DMultisampleEXT");
       glTextureStorageSparseAMD = (PFNGLTEXTURESTORAGESPARSEAMDPROC)loadFunction(
         "glTextureStorageSparseAMD");
       glTextureSubImage1D = (PFNGLTEXTURESUBIMAGE1DPROC)loadFunction("glTextureSubImage1D");
-      glTextureSubImage1DEXT = (PFNGLTEXTURESUBIMAGE1DEXTPROC)loadFunction("glTextureSubImage1DEXT");
+      glTextureSubImage1DEXT = (PFNGLTEXTURESUBIMAGE1DEXTPROC)loadFunction(
+        "glTextureSubImage1DEXT");
       glTextureSubImage2D = (PFNGLTEXTURESUBIMAGE2DPROC)loadFunction("glTextureSubImage2D");
-      glTextureSubImage2DEXT = (PFNGLTEXTURESUBIMAGE2DEXTPROC)loadFunction("glTextureSubImage2DEXT");
+      glTextureSubImage2DEXT = (PFNGLTEXTURESUBIMAGE2DEXTPROC)loadFunction(
+        "glTextureSubImage2DEXT");
       glTextureSubImage3D = (PFNGLTEXTURESUBIMAGE3DPROC)loadFunction("glTextureSubImage3D");
-      glTextureSubImage3DEXT = (PFNGLTEXTURESUBIMAGE3DEXTPROC)loadFunction("glTextureSubImage3DEXT");
+      glTextureSubImage3DEXT = (PFNGLTEXTURESUBIMAGE3DEXTPROC)loadFunction(
+        "glTextureSubImage3DEXT");
       glTextureView = (PFNGLTEXTUREVIEWPROC)loadFunction("glTextureView");
       glTrackMatrixNV = (PFNGLTRACKMATRIXNVPROC)loadFunction("glTrackMatrixNV");
       glTransformFeedbackAttribsNV = (PFNGLTRANSFORMFEEDBACKATTRIBSNVPROC)loadFunction(
@@ -6535,10 +6954,13 @@ namespace internal
       glUniform4uivEXT = (PFNGLUNIFORM4UIVEXTPROC)loadFunction("glUniform4uivEXT");
       glUniformBlockBinding = (PFNGLUNIFORMBLOCKBINDINGPROC)loadFunction("glUniformBlockBinding");
       glUniformBufferEXT = (PFNGLUNIFORMBUFFEREXTPROC)loadFunction("glUniformBufferEXT");
-      glUniformHandleui64ARB = (PFNGLUNIFORMHANDLEUI64ARBPROC)loadFunction("glUniformHandleui64ARB");
+      glUniformHandleui64ARB = (PFNGLUNIFORMHANDLEUI64ARBPROC)loadFunction(
+        "glUniformHandleui64ARB");
       glUniformHandleui64NV = (PFNGLUNIFORMHANDLEUI64NVPROC)loadFunction("glUniformHandleui64NV");
-      glUniformHandleui64vARB = (PFNGLUNIFORMHANDLEUI64VARBPROC)loadFunction("glUniformHandleui64vARB");
-      glUniformHandleui64vNV = (PFNGLUNIFORMHANDLEUI64VNVPROC)loadFunction("glUniformHandleui64vNV");
+      glUniformHandleui64vARB = (PFNGLUNIFORMHANDLEUI64VARBPROC)loadFunction(
+        "glUniformHandleui64vARB");
+      glUniformHandleui64vNV = (PFNGLUNIFORMHANDLEUI64VNVPROC)loadFunction(
+        "glUniformHandleui64vNV");
       glUniformMatrix2dv = (PFNGLUNIFORMMATRIX2DVPROC)loadFunction("glUniformMatrix2dv");
       glUniformMatrix2fv = (PFNGLUNIFORMMATRIX2FVPROC)loadFunction("glUniformMatrix2fv");
       glUniformMatrix2fvARB = (PFNGLUNIFORMMATRIX2FVARBPROC)loadFunction("glUniformMatrix2fvARB");
@@ -6560,7 +6982,8 @@ namespace internal
       glUniformMatrix4x2fv = (PFNGLUNIFORMMATRIX4X2FVPROC)loadFunction("glUniformMatrix4x2fv");
       glUniformMatrix4x3dv = (PFNGLUNIFORMMATRIX4X3DVPROC)loadFunction("glUniformMatrix4x3dv");
       glUniformMatrix4x3fv = (PFNGLUNIFORMMATRIX4X3FVPROC)loadFunction("glUniformMatrix4x3fv");
-      glUniformSubroutinesuiv = (PFNGLUNIFORMSUBROUTINESUIVPROC)loadFunction("glUniformSubroutinesuiv");
+      glUniformSubroutinesuiv = (PFNGLUNIFORMSUBROUTINESUIVPROC)loadFunction(
+        "glUniformSubroutinesuiv");
       glUniformui64NV = (PFNGLUNIFORMUI64NVPROC)loadFunction("glUniformui64NV");
       glUniformui64vNV = (PFNGLUNIFORMUI64VNVPROC)loadFunction("glUniformui64vNV");
       glUnlockArraysEXT = (PFNGLUNLOCKARRAYSEXTPROC)loadFunction("glUnlockArraysEXT");
@@ -6587,8 +7010,10 @@ namespace internal
       glVDPAURegisterVideoSurfaceWithPictureStructureNV =
         (PFNGLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENVPROC)loadFunction(
           "glVDPAURegisterVideoSurfaceWithPictureStructureNV");
-      glVDPAUSurfaceAccessNV = (PFNGLVDPAUSURFACEACCESSNVPROC)loadFunction("glVDPAUSurfaceAccessNV");
-      glVDPAUUnmapSurfacesNV = (PFNGLVDPAUUNMAPSURFACESNVPROC)loadFunction("glVDPAUUnmapSurfacesNV");
+      glVDPAUSurfaceAccessNV = (PFNGLVDPAUSURFACEACCESSNVPROC)loadFunction(
+        "glVDPAUSurfaceAccessNV");
+      glVDPAUUnmapSurfacesNV = (PFNGLVDPAUUNMAPSURFACESNVPROC)loadFunction(
+        "glVDPAUUnmapSurfacesNV");
       glVDPAUUnregisterSurfaceNV = (PFNGLVDPAUUNREGISTERSURFACENVPROC)loadFunction(
         "glVDPAUUnregisterSurfaceNV");
       glValidateProgram = (PFNGLVALIDATEPROGRAMPROC)loadFunction("glValidateProgram");
@@ -6658,36 +7083,37 @@ namespace internal
         "glVertexArrayFogCoordOffsetEXT");
       glVertexArrayIndexOffsetEXT = (PFNGLVERTEXARRAYINDEXOFFSETEXTPROC)loadFunction(
         "glVertexArrayIndexOffsetEXT");
-      glVertexArrayMultiTexCoordOffsetEXT = (PFNGLVERTEXARRAYMULTITEXCOORDOFFSETEXTPROC)loadFunction(
-        "glVertexArrayMultiTexCoordOffsetEXT");
+      glVertexArrayMultiTexCoordOffsetEXT = (PFNGLVERTEXARRAYMULTITEXCOORDOFFSETEXTPROC)
+        loadFunction("glVertexArrayMultiTexCoordOffsetEXT");
       glVertexArrayNormalOffsetEXT = (PFNGLVERTEXARRAYNORMALOFFSETEXTPROC)loadFunction(
         "glVertexArrayNormalOffsetEXT");
       glVertexArrayParameteriAPPLE = (PFNGLVERTEXARRAYPARAMETERIAPPLEPROC)loadFunction(
         "glVertexArrayParameteriAPPLE");
-      glVertexArrayRangeAPPLE = (PFNGLVERTEXARRAYRANGEAPPLEPROC)loadFunction("glVertexArrayRangeAPPLE");
+      glVertexArrayRangeAPPLE = (PFNGLVERTEXARRAYRANGEAPPLEPROC)loadFunction(
+        "glVertexArrayRangeAPPLE");
       glVertexArrayRangeNV = (PFNGLVERTEXARRAYRANGENVPROC)loadFunction("glVertexArrayRangeNV");
-      glVertexArraySecondaryColorOffsetEXT = (PFNGLVERTEXARRAYSECONDARYCOLOROFFSETEXTPROC)loadFunction(
-        "glVertexArraySecondaryColorOffsetEXT");
+      glVertexArraySecondaryColorOffsetEXT = (PFNGLVERTEXARRAYSECONDARYCOLOROFFSETEXTPROC)
+        loadFunction("glVertexArraySecondaryColorOffsetEXT");
       glVertexArrayTexCoordOffsetEXT = (PFNGLVERTEXARRAYTEXCOORDOFFSETEXTPROC)loadFunction(
         "glVertexArrayTexCoordOffsetEXT");
-      glVertexArrayVertexAttribBindingEXT = (PFNGLVERTEXARRAYVERTEXATTRIBBINDINGEXTPROC)loadFunction(
-        "glVertexArrayVertexAttribBindingEXT");
-      glVertexArrayVertexAttribDivisorEXT = (PFNGLVERTEXARRAYVERTEXATTRIBDIVISOREXTPROC)loadFunction(
-        "glVertexArrayVertexAttribDivisorEXT");
+      glVertexArrayVertexAttribBindingEXT = (PFNGLVERTEXARRAYVERTEXATTRIBBINDINGEXTPROC)
+        loadFunction("glVertexArrayVertexAttribBindingEXT");
+      glVertexArrayVertexAttribDivisorEXT = (PFNGLVERTEXARRAYVERTEXATTRIBDIVISOREXTPROC)
+        loadFunction("glVertexArrayVertexAttribDivisorEXT");
       glVertexArrayVertexAttribFormatEXT = (PFNGLVERTEXARRAYVERTEXATTRIBFORMATEXTPROC)loadFunction(
         "glVertexArrayVertexAttribFormatEXT");
-      glVertexArrayVertexAttribIFormatEXT = (PFNGLVERTEXARRAYVERTEXATTRIBIFORMATEXTPROC)loadFunction(
-        "glVertexArrayVertexAttribIFormatEXT");
-      glVertexArrayVertexAttribIOffsetEXT = (PFNGLVERTEXARRAYVERTEXATTRIBIOFFSETEXTPROC)loadFunction(
-        "glVertexArrayVertexAttribIOffsetEXT");
-      glVertexArrayVertexAttribLFormatEXT = (PFNGLVERTEXARRAYVERTEXATTRIBLFORMATEXTPROC)loadFunction(
-        "glVertexArrayVertexAttribLFormatEXT");
-      glVertexArrayVertexAttribLOffsetEXT = (PFNGLVERTEXARRAYVERTEXATTRIBLOFFSETEXTPROC)loadFunction(
-        "glVertexArrayVertexAttribLOffsetEXT");
+      glVertexArrayVertexAttribIFormatEXT = (PFNGLVERTEXARRAYVERTEXATTRIBIFORMATEXTPROC)
+        loadFunction("glVertexArrayVertexAttribIFormatEXT");
+      glVertexArrayVertexAttribIOffsetEXT = (PFNGLVERTEXARRAYVERTEXATTRIBIOFFSETEXTPROC)
+        loadFunction("glVertexArrayVertexAttribIOffsetEXT");
+      glVertexArrayVertexAttribLFormatEXT = (PFNGLVERTEXARRAYVERTEXATTRIBLFORMATEXTPROC)
+        loadFunction("glVertexArrayVertexAttribLFormatEXT");
+      glVertexArrayVertexAttribLOffsetEXT = (PFNGLVERTEXARRAYVERTEXATTRIBLOFFSETEXTPROC)
+        loadFunction("glVertexArrayVertexAttribLOffsetEXT");
       glVertexArrayVertexAttribOffsetEXT = (PFNGLVERTEXARRAYVERTEXATTRIBOFFSETEXTPROC)loadFunction(
         "glVertexArrayVertexAttribOffsetEXT");
-      glVertexArrayVertexBindingDivisorEXT = (PFNGLVERTEXARRAYVERTEXBINDINGDIVISOREXTPROC)loadFunction(
-        "glVertexArrayVertexBindingDivisorEXT");
+      glVertexArrayVertexBindingDivisorEXT = (PFNGLVERTEXARRAYVERTEXBINDINGDIVISOREXTPROC)
+        loadFunction("glVertexArrayVertexBindingDivisorEXT");
       glVertexArrayVertexBuffer = (PFNGLVERTEXARRAYVERTEXBUFFERPROC)loadFunction(
         "glVertexArrayVertexBuffer");
       glVertexArrayVertexBuffers = (PFNGLVERTEXARRAYVERTEXBUFFERSPROC)loadFunction(
@@ -6763,11 +7189,14 @@ namespace internal
       glVertexAttrib4Nub = (PFNGLVERTEXATTRIB4NUBPROC)loadFunction("glVertexAttrib4Nub");
       glVertexAttrib4NubARB = (PFNGLVERTEXATTRIB4NUBARBPROC)loadFunction("glVertexAttrib4NubARB");
       glVertexAttrib4Nubv = (PFNGLVERTEXATTRIB4NUBVPROC)loadFunction("glVertexAttrib4Nubv");
-      glVertexAttrib4NubvARB = (PFNGLVERTEXATTRIB4NUBVARBPROC)loadFunction("glVertexAttrib4NubvARB");
+      glVertexAttrib4NubvARB = (PFNGLVERTEXATTRIB4NUBVARBPROC)loadFunction(
+        "glVertexAttrib4NubvARB");
       glVertexAttrib4Nuiv = (PFNGLVERTEXATTRIB4NUIVPROC)loadFunction("glVertexAttrib4Nuiv");
-      glVertexAttrib4NuivARB = (PFNGLVERTEXATTRIB4NUIVARBPROC)loadFunction("glVertexAttrib4NuivARB");
+      glVertexAttrib4NuivARB = (PFNGLVERTEXATTRIB4NUIVARBPROC)loadFunction(
+        "glVertexAttrib4NuivARB");
       glVertexAttrib4Nusv = (PFNGLVERTEXATTRIB4NUSVPROC)loadFunction("glVertexAttrib4Nusv");
-      glVertexAttrib4NusvARB = (PFNGLVERTEXATTRIB4NUSVARBPROC)loadFunction("glVertexAttrib4NusvARB");
+      glVertexAttrib4NusvARB = (PFNGLVERTEXATTRIB4NUSVARBPROC)loadFunction(
+        "glVertexAttrib4NusvARB");
       glVertexAttrib4bv = (PFNGLVERTEXATTRIB4BVPROC)loadFunction("glVertexAttrib4bv");
       glVertexAttrib4bvARB = (PFNGLVERTEXATTRIB4BVARBPROC)loadFunction("glVertexAttrib4bvARB");
       glVertexAttrib4d = (PFNGLVERTEXATTRIB4DPROC)loadFunction("glVertexAttrib4d");
@@ -6802,9 +7231,11 @@ namespace internal
       glVertexAttrib4usvARB = (PFNGLVERTEXATTRIB4USVARBPROC)loadFunction("glVertexAttrib4usvARB");
       glVertexAttribBinding = (PFNGLVERTEXATTRIBBINDINGPROC)loadFunction("glVertexAttribBinding");
       glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORPROC)loadFunction("glVertexAttribDivisor");
-      glVertexAttribDivisorARB = (PFNGLVERTEXATTRIBDIVISORARBPROC)loadFunction("glVertexAttribDivisorARB");
+      glVertexAttribDivisorARB = (PFNGLVERTEXATTRIBDIVISORARBPROC)loadFunction(
+        "glVertexAttribDivisorARB");
       glVertexAttribFormat = (PFNGLVERTEXATTRIBFORMATPROC)loadFunction("glVertexAttribFormat");
-      glVertexAttribFormatNV = (PFNGLVERTEXATTRIBFORMATNVPROC)loadFunction("glVertexAttribFormatNV");
+      glVertexAttribFormatNV = (PFNGLVERTEXATTRIBFORMATNVPROC)loadFunction(
+        "glVertexAttribFormatNV");
       glVertexAttribI1i = (PFNGLVERTEXATTRIBI1IPROC)loadFunction("glVertexAttribI1i");
       glVertexAttribI1iEXT = (PFNGLVERTEXATTRIBI1IEXTPROC)loadFunction("glVertexAttribI1iEXT");
       glVertexAttribI1iv = (PFNGLVERTEXATTRIBI1IVPROC)loadFunction("glVertexAttribI1iv");
@@ -6812,7 +7243,8 @@ namespace internal
       glVertexAttribI1ui = (PFNGLVERTEXATTRIBI1UIPROC)loadFunction("glVertexAttribI1ui");
       glVertexAttribI1uiEXT = (PFNGLVERTEXATTRIBI1UIEXTPROC)loadFunction("glVertexAttribI1uiEXT");
       glVertexAttribI1uiv = (PFNGLVERTEXATTRIBI1UIVPROC)loadFunction("glVertexAttribI1uiv");
-      glVertexAttribI1uivEXT = (PFNGLVERTEXATTRIBI1UIVEXTPROC)loadFunction("glVertexAttribI1uivEXT");
+      glVertexAttribI1uivEXT = (PFNGLVERTEXATTRIBI1UIVEXTPROC)loadFunction(
+        "glVertexAttribI1uivEXT");
       glVertexAttribI2i = (PFNGLVERTEXATTRIBI2IPROC)loadFunction("glVertexAttribI2i");
       glVertexAttribI2iEXT = (PFNGLVERTEXATTRIBI2IEXTPROC)loadFunction("glVertexAttribI2iEXT");
       glVertexAttribI2iv = (PFNGLVERTEXATTRIBI2IVPROC)loadFunction("glVertexAttribI2iv");
@@ -6820,7 +7252,8 @@ namespace internal
       glVertexAttribI2ui = (PFNGLVERTEXATTRIBI2UIPROC)loadFunction("glVertexAttribI2ui");
       glVertexAttribI2uiEXT = (PFNGLVERTEXATTRIBI2UIEXTPROC)loadFunction("glVertexAttribI2uiEXT");
       glVertexAttribI2uiv = (PFNGLVERTEXATTRIBI2UIVPROC)loadFunction("glVertexAttribI2uiv");
-      glVertexAttribI2uivEXT = (PFNGLVERTEXATTRIBI2UIVEXTPROC)loadFunction("glVertexAttribI2uivEXT");
+      glVertexAttribI2uivEXT = (PFNGLVERTEXATTRIBI2UIVEXTPROC)loadFunction(
+        "glVertexAttribI2uivEXT");
       glVertexAttribI3i = (PFNGLVERTEXATTRIBI3IPROC)loadFunction("glVertexAttribI3i");
       glVertexAttribI3iEXT = (PFNGLVERTEXATTRIBI3IEXTPROC)loadFunction("glVertexAttribI3iEXT");
       glVertexAttribI3iv = (PFNGLVERTEXATTRIBI3IVPROC)loadFunction("glVertexAttribI3iv");
@@ -6828,7 +7261,8 @@ namespace internal
       glVertexAttribI3ui = (PFNGLVERTEXATTRIBI3UIPROC)loadFunction("glVertexAttribI3ui");
       glVertexAttribI3uiEXT = (PFNGLVERTEXATTRIBI3UIEXTPROC)loadFunction("glVertexAttribI3uiEXT");
       glVertexAttribI3uiv = (PFNGLVERTEXATTRIBI3UIVPROC)loadFunction("glVertexAttribI3uiv");
-      glVertexAttribI3uivEXT = (PFNGLVERTEXATTRIBI3UIVEXTPROC)loadFunction("glVertexAttribI3uivEXT");
+      glVertexAttribI3uivEXT = (PFNGLVERTEXATTRIBI3UIVEXTPROC)loadFunction(
+        "glVertexAttribI3uivEXT");
       glVertexAttribI4bv = (PFNGLVERTEXATTRIBI4BVPROC)loadFunction("glVertexAttribI4bv");
       glVertexAttribI4bvEXT = (PFNGLVERTEXATTRIBI4BVEXTPROC)loadFunction("glVertexAttribI4bvEXT");
       glVertexAttribI4i = (PFNGLVERTEXATTRIBI4IPROC)loadFunction("glVertexAttribI4i");
@@ -6838,16 +7272,21 @@ namespace internal
       glVertexAttribI4sv = (PFNGLVERTEXATTRIBI4SVPROC)loadFunction("glVertexAttribI4sv");
       glVertexAttribI4svEXT = (PFNGLVERTEXATTRIBI4SVEXTPROC)loadFunction("glVertexAttribI4svEXT");
       glVertexAttribI4ubv = (PFNGLVERTEXATTRIBI4UBVPROC)loadFunction("glVertexAttribI4ubv");
-      glVertexAttribI4ubvEXT = (PFNGLVERTEXATTRIBI4UBVEXTPROC)loadFunction("glVertexAttribI4ubvEXT");
+      glVertexAttribI4ubvEXT = (PFNGLVERTEXATTRIBI4UBVEXTPROC)loadFunction(
+        "glVertexAttribI4ubvEXT");
       glVertexAttribI4ui = (PFNGLVERTEXATTRIBI4UIPROC)loadFunction("glVertexAttribI4ui");
       glVertexAttribI4uiEXT = (PFNGLVERTEXATTRIBI4UIEXTPROC)loadFunction("glVertexAttribI4uiEXT");
       glVertexAttribI4uiv = (PFNGLVERTEXATTRIBI4UIVPROC)loadFunction("glVertexAttribI4uiv");
-      glVertexAttribI4uivEXT = (PFNGLVERTEXATTRIBI4UIVEXTPROC)loadFunction("glVertexAttribI4uivEXT");
+      glVertexAttribI4uivEXT = (PFNGLVERTEXATTRIBI4UIVEXTPROC)loadFunction(
+        "glVertexAttribI4uivEXT");
       glVertexAttribI4usv = (PFNGLVERTEXATTRIBI4USVPROC)loadFunction("glVertexAttribI4usv");
-      glVertexAttribI4usvEXT = (PFNGLVERTEXATTRIBI4USVEXTPROC)loadFunction("glVertexAttribI4usvEXT");
+      glVertexAttribI4usvEXT = (PFNGLVERTEXATTRIBI4USVEXTPROC)loadFunction(
+        "glVertexAttribI4usvEXT");
       glVertexAttribIFormat = (PFNGLVERTEXATTRIBIFORMATPROC)loadFunction("glVertexAttribIFormat");
-      glVertexAttribIFormatNV = (PFNGLVERTEXATTRIBIFORMATNVPROC)loadFunction("glVertexAttribIFormatNV");
-      glVertexAttribIPointer = (PFNGLVERTEXATTRIBIPOINTERPROC)loadFunction("glVertexAttribIPointer");
+      glVertexAttribIFormatNV = (PFNGLVERTEXATTRIBIFORMATNVPROC)loadFunction(
+        "glVertexAttribIFormatNV");
+      glVertexAttribIPointer = (PFNGLVERTEXATTRIBIPOINTERPROC)loadFunction(
+        "glVertexAttribIPointer");
       glVertexAttribIPointerEXT = (PFNGLVERTEXATTRIBIPOINTEREXTPROC)loadFunction(
         "glVertexAttribIPointerEXT");
       glVertexAttribL1d = (PFNGLVERTEXATTRIBL1DPROC)loadFunction("glVertexAttribL1d");
@@ -6855,38 +7294,54 @@ namespace internal
       glVertexAttribL1dv = (PFNGLVERTEXATTRIBL1DVPROC)loadFunction("glVertexAttribL1dv");
       glVertexAttribL1dvEXT = (PFNGLVERTEXATTRIBL1DVEXTPROC)loadFunction("glVertexAttribL1dvEXT");
       glVertexAttribL1i64NV = (PFNGLVERTEXATTRIBL1I64NVPROC)loadFunction("glVertexAttribL1i64NV");
-      glVertexAttribL1i64vNV = (PFNGLVERTEXATTRIBL1I64VNVPROC)loadFunction("glVertexAttribL1i64vNV");
-      glVertexAttribL1ui64ARB = (PFNGLVERTEXATTRIBL1UI64ARBPROC)loadFunction("glVertexAttribL1ui64ARB");
-      glVertexAttribL1ui64NV = (PFNGLVERTEXATTRIBL1UI64NVPROC)loadFunction("glVertexAttribL1ui64NV");
-      glVertexAttribL1ui64vARB = (PFNGLVERTEXATTRIBL1UI64VARBPROC)loadFunction("glVertexAttribL1ui64vARB");
-      glVertexAttribL1ui64vNV = (PFNGLVERTEXATTRIBL1UI64VNVPROC)loadFunction("glVertexAttribL1ui64vNV");
+      glVertexAttribL1i64vNV = (PFNGLVERTEXATTRIBL1I64VNVPROC)loadFunction(
+        "glVertexAttribL1i64vNV");
+      glVertexAttribL1ui64ARB = (PFNGLVERTEXATTRIBL1UI64ARBPROC)loadFunction(
+        "glVertexAttribL1ui64ARB");
+      glVertexAttribL1ui64NV = (PFNGLVERTEXATTRIBL1UI64NVPROC)loadFunction(
+        "glVertexAttribL1ui64NV");
+      glVertexAttribL1ui64vARB = (PFNGLVERTEXATTRIBL1UI64VARBPROC)loadFunction(
+        "glVertexAttribL1ui64vARB");
+      glVertexAttribL1ui64vNV = (PFNGLVERTEXATTRIBL1UI64VNVPROC)loadFunction(
+        "glVertexAttribL1ui64vNV");
       glVertexAttribL2d = (PFNGLVERTEXATTRIBL2DPROC)loadFunction("glVertexAttribL2d");
       glVertexAttribL2dEXT = (PFNGLVERTEXATTRIBL2DEXTPROC)loadFunction("glVertexAttribL2dEXT");
       glVertexAttribL2dv = (PFNGLVERTEXATTRIBL2DVPROC)loadFunction("glVertexAttribL2dv");
       glVertexAttribL2dvEXT = (PFNGLVERTEXATTRIBL2DVEXTPROC)loadFunction("glVertexAttribL2dvEXT");
       glVertexAttribL2i64NV = (PFNGLVERTEXATTRIBL2I64NVPROC)loadFunction("glVertexAttribL2i64NV");
-      glVertexAttribL2i64vNV = (PFNGLVERTEXATTRIBL2I64VNVPROC)loadFunction("glVertexAttribL2i64vNV");
-      glVertexAttribL2ui64NV = (PFNGLVERTEXATTRIBL2UI64NVPROC)loadFunction("glVertexAttribL2ui64NV");
-      glVertexAttribL2ui64vNV = (PFNGLVERTEXATTRIBL2UI64VNVPROC)loadFunction("glVertexAttribL2ui64vNV");
+      glVertexAttribL2i64vNV = (PFNGLVERTEXATTRIBL2I64VNVPROC)loadFunction(
+        "glVertexAttribL2i64vNV");
+      glVertexAttribL2ui64NV = (PFNGLVERTEXATTRIBL2UI64NVPROC)loadFunction(
+        "glVertexAttribL2ui64NV");
+      glVertexAttribL2ui64vNV = (PFNGLVERTEXATTRIBL2UI64VNVPROC)loadFunction(
+        "glVertexAttribL2ui64vNV");
       glVertexAttribL3d = (PFNGLVERTEXATTRIBL3DPROC)loadFunction("glVertexAttribL3d");
       glVertexAttribL3dEXT = (PFNGLVERTEXATTRIBL3DEXTPROC)loadFunction("glVertexAttribL3dEXT");
       glVertexAttribL3dv = (PFNGLVERTEXATTRIBL3DVPROC)loadFunction("glVertexAttribL3dv");
       glVertexAttribL3dvEXT = (PFNGLVERTEXATTRIBL3DVEXTPROC)loadFunction("glVertexAttribL3dvEXT");
       glVertexAttribL3i64NV = (PFNGLVERTEXATTRIBL3I64NVPROC)loadFunction("glVertexAttribL3i64NV");
-      glVertexAttribL3i64vNV = (PFNGLVERTEXATTRIBL3I64VNVPROC)loadFunction("glVertexAttribL3i64vNV");
-      glVertexAttribL3ui64NV = (PFNGLVERTEXATTRIBL3UI64NVPROC)loadFunction("glVertexAttribL3ui64NV");
-      glVertexAttribL3ui64vNV = (PFNGLVERTEXATTRIBL3UI64VNVPROC)loadFunction("glVertexAttribL3ui64vNV");
+      glVertexAttribL3i64vNV = (PFNGLVERTEXATTRIBL3I64VNVPROC)loadFunction(
+        "glVertexAttribL3i64vNV");
+      glVertexAttribL3ui64NV = (PFNGLVERTEXATTRIBL3UI64NVPROC)loadFunction(
+        "glVertexAttribL3ui64NV");
+      glVertexAttribL3ui64vNV = (PFNGLVERTEXATTRIBL3UI64VNVPROC)loadFunction(
+        "glVertexAttribL3ui64vNV");
       glVertexAttribL4d = (PFNGLVERTEXATTRIBL4DPROC)loadFunction("glVertexAttribL4d");
       glVertexAttribL4dEXT = (PFNGLVERTEXATTRIBL4DEXTPROC)loadFunction("glVertexAttribL4dEXT");
       glVertexAttribL4dv = (PFNGLVERTEXATTRIBL4DVPROC)loadFunction("glVertexAttribL4dv");
       glVertexAttribL4dvEXT = (PFNGLVERTEXATTRIBL4DVEXTPROC)loadFunction("glVertexAttribL4dvEXT");
       glVertexAttribL4i64NV = (PFNGLVERTEXATTRIBL4I64NVPROC)loadFunction("glVertexAttribL4i64NV");
-      glVertexAttribL4i64vNV = (PFNGLVERTEXATTRIBL4I64VNVPROC)loadFunction("glVertexAttribL4i64vNV");
-      glVertexAttribL4ui64NV = (PFNGLVERTEXATTRIBL4UI64NVPROC)loadFunction("glVertexAttribL4ui64NV");
-      glVertexAttribL4ui64vNV = (PFNGLVERTEXATTRIBL4UI64VNVPROC)loadFunction("glVertexAttribL4ui64vNV");
+      glVertexAttribL4i64vNV = (PFNGLVERTEXATTRIBL4I64VNVPROC)loadFunction(
+        "glVertexAttribL4i64vNV");
+      glVertexAttribL4ui64NV = (PFNGLVERTEXATTRIBL4UI64NVPROC)loadFunction(
+        "glVertexAttribL4ui64NV");
+      glVertexAttribL4ui64vNV = (PFNGLVERTEXATTRIBL4UI64VNVPROC)loadFunction(
+        "glVertexAttribL4ui64vNV");
       glVertexAttribLFormat = (PFNGLVERTEXATTRIBLFORMATPROC)loadFunction("glVertexAttribLFormat");
-      glVertexAttribLFormatNV = (PFNGLVERTEXATTRIBLFORMATNVPROC)loadFunction("glVertexAttribLFormatNV");
-      glVertexAttribLPointer = (PFNGLVERTEXATTRIBLPOINTERPROC)loadFunction("glVertexAttribLPointer");
+      glVertexAttribLFormatNV = (PFNGLVERTEXATTRIBLFORMATNVPROC)loadFunction(
+        "glVertexAttribLFormatNV");
+      glVertexAttribLPointer = (PFNGLVERTEXATTRIBLPOINTERPROC)loadFunction(
+        "glVertexAttribLPointer");
       glVertexAttribLPointerEXT = (PFNGLVERTEXATTRIBLPOINTEREXTPROC)loadFunction(
         "glVertexAttribLPointerEXT");
       glVertexAttribP1ui = (PFNGLVERTEXATTRIBP1UIPROC)loadFunction("glVertexAttribP1ui");
@@ -6900,8 +7355,10 @@ namespace internal
       glVertexAttribParameteriAMD = (PFNGLVERTEXATTRIBPARAMETERIAMDPROC)loadFunction(
         "glVertexAttribParameteriAMD");
       glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)loadFunction("glVertexAttribPointer");
-      glVertexAttribPointerARB = (PFNGLVERTEXATTRIBPOINTERARBPROC)loadFunction("glVertexAttribPointerARB");
-      glVertexAttribPointerNV = (PFNGLVERTEXATTRIBPOINTERNVPROC)loadFunction("glVertexAttribPointerNV");
+      glVertexAttribPointerARB = (PFNGLVERTEXATTRIBPOINTERARBPROC)loadFunction(
+        "glVertexAttribPointerARB");
+      glVertexAttribPointerNV = (PFNGLVERTEXATTRIBPOINTERNVPROC)loadFunction(
+        "glVertexAttribPointerNV");
       glVertexAttribs1dvNV = (PFNGLVERTEXATTRIBS1DVNVPROC)loadFunction("glVertexAttribs1dvNV");
       glVertexAttribs1fvNV = (PFNGLVERTEXATTRIBS1FVNVPROC)loadFunction("glVertexAttribs1fvNV");
       glVertexAttribs1hvNV = (PFNGLVERTEXATTRIBS1HVNVPROC)loadFunction("glVertexAttribs1hvNV");
@@ -6919,7 +7376,8 @@ namespace internal
       glVertexAttribs4hvNV = (PFNGLVERTEXATTRIBS4HVNVPROC)loadFunction("glVertexAttribs4hvNV");
       glVertexAttribs4svNV = (PFNGLVERTEXATTRIBS4SVNVPROC)loadFunction("glVertexAttribs4svNV");
       glVertexAttribs4ubvNV = (PFNGLVERTEXATTRIBS4UBVNVPROC)loadFunction("glVertexAttribs4ubvNV");
-      glVertexBindingDivisor = (PFNGLVERTEXBINDINGDIVISORPROC)loadFunction("glVertexBindingDivisor");
+      glVertexBindingDivisor = (PFNGLVERTEXBINDINGDIVISORPROC)loadFunction(
+        "glVertexBindingDivisor");
       glVertexBlendARB = (PFNGLVERTEXBLENDARBPROC)loadFunction("glVertexBlendARB");
       glVertexFormatNV = (PFNGLVERTEXFORMATNVPROC)loadFunction("glVertexFormatNV");
       glVertexP2ui = (PFNGLVERTEXP2UIPROC)loadFunction("glVertexP2ui");
@@ -6931,7 +7389,8 @@ namespace internal
       glVertexPointer = (PFNGLVERTEXPOINTERPROC)loadFunction("glVertexPointer");
       glVertexPointerEXT = (PFNGLVERTEXPOINTEREXTPROC)loadFunction("glVertexPointerEXT");
       glVertexPointervINTEL = (PFNGLVERTEXPOINTERVINTELPROC)loadFunction("glVertexPointervINTEL");
-      glVertexWeightPointerEXT = (PFNGLVERTEXWEIGHTPOINTEREXTPROC)loadFunction("glVertexWeightPointerEXT");
+      glVertexWeightPointerEXT = (PFNGLVERTEXWEIGHTPOINTEREXTPROC)loadFunction(
+        "glVertexWeightPointerEXT");
       glVertexWeightfEXT = (PFNGLVERTEXWEIGHTFEXTPROC)loadFunction("glVertexWeightfEXT");
       glVertexWeightfvEXT = (PFNGLVERTEXWEIGHTFVEXTPROC)loadFunction("glVertexWeightfvEXT");
       glVertexWeighthNV = (PFNGLVERTEXWEIGHTHNVPROC)loadFunction("glVertexWeighthNV");
@@ -6951,7 +7410,8 @@ namespace internal
         "glViewportPositionWScaleNV");
       glViewportSwizzleNV = (PFNGLVIEWPORTSWIZZLENVPROC)loadFunction("glViewportSwizzleNV");
       glWaitSemaphoreEXT = (PFNGLWAITSEMAPHOREEXTPROC)loadFunction("glWaitSemaphoreEXT");
-      glWaitSemaphoreui64NVX = (PFNGLWAITSEMAPHOREUI64NVXPROC)loadFunction("glWaitSemaphoreui64NVX");
+      glWaitSemaphoreui64NVX = (PFNGLWAITSEMAPHOREUI64NVXPROC)loadFunction(
+        "glWaitSemaphoreui64NVX");
       glWaitSync = (PFNGLWAITSYNCPROC)loadFunction("glWaitSync");
       glWeightPathsNV = (PFNGLWEIGHTPATHSNVPROC)loadFunction("glWeightPathsNV");
       glWeightPointerARB = (PFNGLWEIGHTPOINTERARBPROC)loadFunction("glWeightPointerARB");
@@ -7009,8 +7469,7 @@ namespace internal
     const GLubyte *gluErrorString(GLenum error)
     {
       const char *result = NULL;
-      switch (error)
-      {
+      switch (error) {
         case GL_NO_ERROR:
           result = "no error";
           break;
@@ -7044,8 +7503,7 @@ namespace internal
     bool GarchGLApiLoad()
     {
       static bool initialized = false;
-      if (initialized)
-      {
+      if (initialized) {
         return true;
       }
       initialized = true;

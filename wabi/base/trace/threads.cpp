@@ -40,20 +40,16 @@ WABI_NAMESPACE_BEGIN
 
 TraceThreadId::TraceThreadId()
 {
-  if (std::this_thread::get_id() == ArchGetMainThreadId())
-  {
+  if (std::this_thread::get_id() == ArchGetMainThreadId()) {
     _id = "Main Thread";
-  } else
-  {
+  } else {
     std::ostringstream threadName;
     threadName << "Thread " << std::this_thread::get_id();
     _id = threadName.str();
   }
 }
 
-TraceThreadId::TraceThreadId(const std::string &s)
-  : _id(s)
-{}
+TraceThreadId::TraceThreadId(const std::string &s) : _id(s) {}
 
 bool TraceThreadId::operator==(const TraceThreadId &rhs) const
 {

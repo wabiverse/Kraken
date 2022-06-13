@@ -34,8 +34,7 @@ PcpDynamicFileFormatDependencyData::PcpDynamicFileFormatDependencyData(
   const PcpDynamicFileFormatDependencyData &other)
 {
   // Have to copy the contents of the unique pointer if it's non-null.
-  if (other._data)
-  {
+  if (other._data) {
     _data.reset(new _Data(*other._data));
   }
 }
@@ -46,8 +45,7 @@ void PcpDynamicFileFormatDependencyData::AddDependencyContext(
   TfToken::Set &&composedFieldNames)
 {
   // Create the data now if it was empty before this call..
-  if (!_data)
-  {
+  if (!_data) {
     _data.reset(new _Data());
   }
 
@@ -60,23 +58,19 @@ void PcpDynamicFileFormatDependencyData::AddDependencyContext(
 void PcpDynamicFileFormatDependencyData::AppendDependencyData(
   PcpDynamicFileFormatDependencyData &&dependencyData)
 {
-  if (!dependencyData._data)
-  {
+  if (!dependencyData._data) {
     return;
   }
   // If we have our own data we need to append, otherwise we can just take
   // the other dependency data wholesale.
-  if (_data)
-  {
+  if (_data) {
     // Take each context from the other data and add it to ours.
-    for (_Data::_ContextData &contextData : dependencyData._data->dependencyContexts)
-    {
+    for (_Data::_ContextData &contextData : dependencyData._data->dependencyContexts) {
       _data->dependencyContexts.emplace_back(std::move(contextData));
     }
     // Add the other data's relevants fields to ours as well.
     _data->_AddRelevantFieldNames(std::move(dependencyData._data->relevantFieldNames));
-  } else
-  {
+  } else {
     Swap(dependencyData);
   }
 }
@@ -86,24 +80,20 @@ bool PcpDynamicFileFormatDependencyData::CanFieldChangeAffectFileFormatArguments
   const VtValue &oldValue,
   const VtValue &newValue) const
 {
-  if (!_data)
-  {
+  if (!_data) {
     return false;
   }
 
   // Early out if this particular field wasn't composed for this dependency.
-  if (_data->relevantFieldNames.count(fieldName) == 0)
-  {
+  if (_data->relevantFieldNames.count(fieldName) == 0) {
     return false;
   }
 
   // Check each dependency context.
-  for (const _Data::_ContextData &contextData : _data->dependencyContexts)
-  {
+  for (const _Data::_ContextData &contextData : _data->dependencyContexts) {
     // We better not have logged a dependency for a file format that doesn't
     // support dynamic arguments.
-    if (!TF_VERIFY(contextData.first))
-    {
+    if (!TF_VERIFY(contextData.first)) {
       continue;
     }
 
@@ -112,8 +102,7 @@ bool PcpDynamicFileFormatDependencyData::CanFieldChangeAffectFileFormatArguments
     if (contextData.first->CanFieldChangeAffectFileFormatArguments(fieldName,
                                                                    oldValue,
                                                                    newValue,
-                                                                   contextData.second))
-    {
+                                                                   contextData.second)) {
       return true;
     }
   }
@@ -129,11 +118,9 @@ const TfToken::Set &PcpDynamicFileFormatDependencyData::GetRelevantFieldNames() 
 void PcpDynamicFileFormatDependencyData::_Data::_AddRelevantFieldNames(TfToken::Set &&fieldNames)
 {
   // Avoid copying if our current relevant fields list is empty.
-  if (relevantFieldNames.empty())
-  {
+  if (relevantFieldNames.empty()) {
     relevantFieldNames.swap(fieldNames);
-  } else
-  {
+  } else {
     relevantFieldNames.insert(fieldNames.begin(), fieldNames.end());
   }
 }

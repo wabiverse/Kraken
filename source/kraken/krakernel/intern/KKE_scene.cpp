@@ -50,8 +50,7 @@ Scene::Scene(const std::string &identifier, const UsdSchemaBase &schemaObj)
     KrakenPrim(schemaObj)
 {}
 
-Scene::~Scene()
-{}
+Scene::~Scene() {}
 
 UsdSchemaKind Scene::GetSchemaKind() const
 {
@@ -86,14 +85,14 @@ static bool SceneInitData(KrakenPrim *prim)
   Scene scene(G.main->stage_id.string(), *prim);
   Stage stage = scene.stage;
 
-  if (ARCH_UNLIKELY(scene.GetPrim().IsValid() != NULL))
-  {
+  if (ARCH_UNLIKELY(scene.GetPrim().IsValid() != NULL)) {
     return false;
   }
 
   stage->SetMetadata(UsdGeomTokens->upAxis, UsdGeomTokens->z);
   stage->GetRootLayer()->SetDocumentation(KRAKEN_FILE_VERSION_HEADER);
-  stage->SetColorConfiguration(SdfAssetPath(STRCAT(G.main->datafiles_path, "colormanagement/config.ocio")));
+  stage->SetColorConfiguration(
+    SdfAssetPath(STRCAT(G.main->datafiles_path, "colormanagement/config.ocio")));
   stage->SetColorManagementSystem(HdxColorCorrectionTokens->openColorIO);
 
   return true;

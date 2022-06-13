@@ -40,19 +40,15 @@
 
 WABI_NAMESPACE_BEGIN
 
-HdEngine::HdEngine()
-  : _taskContext()
-{}
+HdEngine::HdEngine() : _taskContext() {}
 
-HdEngine::~HdEngine()
-{}
+HdEngine::~HdEngine() {}
 
 void HdEngine::SetTaskContextData(const TfToken &id, const VtValue &data)
 {
   // See if the token exists in the context and if not add it.
   std::pair<HdTaskContext::iterator, bool> result = _taskContext.emplace(id, data);
-  if (!result.second)
-  {
+  if (!result.second) {
     // Item wasn't new, so need to update it
     result.first->second = data;
   }
@@ -60,14 +56,12 @@ void HdEngine::SetTaskContextData(const TfToken &id, const VtValue &data)
 
 bool HdEngine::GetTaskContextData(const TfToken &id, VtValue *data) const
 {
-  if (!TF_VERIFY(data))
-  {
+  if (!TF_VERIFY(data)) {
     return false;
   }
 
   auto const &it = _taskContext.find(id);
-  if (it != _taskContext.end())
-  {
+  if (it != _taskContext.end()) {
     *data = it->second;
     return true;
   }
@@ -89,8 +83,7 @@ void HdEngine::Execute(HdRenderIndex *index, HdTaskSharedPtrVector *tasks)
 {
   TRACE_FUNCTION();
 
-  if ((index == nullptr) || (tasks == nullptr))
-  {
+  if ((index == nullptr) || (tasks == nullptr)) {
     TF_CODING_ERROR("Passed nullptr to HdEngine::Execute()");
     return;
   }
@@ -143,8 +136,7 @@ void HdEngine::Execute(HdRenderIndex *index, HdTaskSharedPtrVector *tasks)
       "--------------------------------------------------------------\n");
   {
     TRACE_FUNCTION_SCOPE("Task Prepare");
-    for (size_t taskNum = 0; taskNum < numTasks; ++taskNum)
-    {
+    for (size_t taskNum = 0; taskNum < numTasks; ++taskNum) {
       const HdTaskSharedPtr &task = (*tasks)[taskNum];
 
       task->Prepare(&_taskContext, index);
@@ -181,8 +173,7 @@ void HdEngine::Execute(HdRenderIndex *index, HdTaskSharedPtrVector *tasks)
         "             HdEngine [Execute Phase](Task::Execute)          \n"
         "--------------------------------------------------------------\n");
 
-    for (size_t taskNum = 0; taskNum < numTasks; ++taskNum)
-    {
+    for (size_t taskNum = 0; taskNum < numTasks; ++taskNum) {
       const HdTaskSharedPtr &task = (*tasks)[taskNum];
 
       task->Execute(&_taskContext);

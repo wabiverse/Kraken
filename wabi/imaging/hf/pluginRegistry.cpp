@@ -51,25 +51,21 @@ HfPluginRegistry::HfPluginRegistry(const TfType &pluginBaseType)
     _pluginCachePopulated(false)
 {}
 
-HfPluginRegistry::~HfPluginRegistry()
-{}
+HfPluginRegistry::~HfPluginRegistry() {}
 
 void HfPluginRegistry::GetPluginDescs(HfPluginDescVector *plugins)
 {
-  if (!_pluginCachePopulated)
-  {
+  if (!_pluginCachePopulated) {
     _DiscoverPlugins();
   }
 
   // Expect the plugin list to be empty
-  if (!TF_VERIFY(plugins->empty()))
-  {
+  if (!TF_VERIFY(plugins->empty())) {
     plugins->clear();
   }
 
   plugins->resize(_pluginEntries.size());
-  for (size_t index = 0; index < _pluginEntries.size(); ++index)
-  {
+  for (size_t index = 0; index < _pluginEntries.size(); ++index) {
     const Hf_PluginEntry &entry = _pluginEntries[index];
     HfPluginDesc *desc = &(*plugins)[index];
 
@@ -79,14 +75,12 @@ void HfPluginRegistry::GetPluginDescs(HfPluginDescVector *plugins)
 
 bool HfPluginRegistry::GetPluginDesc(const TfToken &pluginId, HfPluginDesc *desc)
 {
-  if (!_pluginCachePopulated)
-  {
+  if (!_pluginCachePopulated) {
     _DiscoverPlugins();
   }
 
   _TokenMap::const_iterator it = _pluginIndex.find(pluginId);
-  if (it == _pluginIndex.end())
-  {
+  if (it == _pluginIndex.end()) {
     return false;
   }
 
@@ -99,8 +93,7 @@ bool HfPluginRegistry::GetPluginDesc(const TfToken &pluginId, HfPluginDesc *desc
 void HfPluginRegistry::AddPluginReference(HfPluginBase *plugin)
 {
   Hf_PluginEntry *entry = _GetEntryForPlugin(plugin);
-  if (entry == nullptr)
-  {
+  if (entry == nullptr) {
     return;
   }
 
@@ -109,14 +102,12 @@ void HfPluginRegistry::AddPluginReference(HfPluginBase *plugin)
 
 void HfPluginRegistry::ReleasePlugin(HfPluginBase *plugin)
 {
-  if (plugin == nullptr)
-  {
+  if (plugin == nullptr) {
     return;
   }
 
   Hf_PluginEntry *entry = _GetEntryForPlugin(plugin);
-  if (entry == nullptr)
-  {
+  if (entry == nullptr) {
     return;
   }
 
@@ -125,8 +116,7 @@ void HfPluginRegistry::ReleasePlugin(HfPluginBase *plugin)
 
 bool HfPluginRegistry::IsRegisteredPlugin(const TfToken &pluginId)
 {
-  if (!_pluginCachePopulated)
-  {
+  if (!_pluginCachePopulated) {
     _DiscoverPlugins();
   }
 
@@ -136,32 +126,27 @@ bool HfPluginRegistry::IsRegisteredPlugin(const TfToken &pluginId)
 
 HfPluginBase *HfPluginRegistry::GetPlugin(const TfToken &pluginId)
 {
-  if (!_pluginCachePopulated)
-  {
+  if (!_pluginCachePopulated) {
     _DiscoverPlugins();
   }
 
   _TokenMap::const_iterator it = _pluginIndex.find(pluginId);
-  if (it == _pluginIndex.end())
-  {
+  if (it == _pluginIndex.end()) {
     return nullptr;
   }
 
   Hf_PluginEntry &entry = _pluginEntries[it->second];
 
-  if (entry.GetInstance() == nullptr)
-  {
+  if (entry.GetInstance() == nullptr) {
     // If instance has not be created yet, make sure plugin is loaded
     PlugRegistry &pluginRegistry = PlugRegistry::GetInstance();
 
     PlugPluginPtr plugin = pluginRegistry.GetPluginForType(entry.GetType());
-    if (!TF_VERIFY(plugin))
-    {
+    if (!TF_VERIFY(plugin)) {
       return nullptr;
     }
 
-    if (!plugin->Load())
-    {
+    if (!plugin->Load()) {
       return nullptr;
     }
   }
@@ -194,18 +179,16 @@ void HfPluginRegistry::_DiscoverPlugins()
 
   _pluginEntries.reserve(pluginTypes.size());
 
-  for (TfTypeSet::const_iterator it = pluginTypes.begin(); it != pluginTypes.end(); ++it)
-  {
+  for (TfTypeSet::const_iterator it = pluginTypes.begin(); it != pluginTypes.end(); ++it) {
     const TfType &pluginType = *it;
 
-    const std::string &displayName = pluginRegistry.GetStringFromPluginMetaData(pluginType, DISPLAY_NAME);
+    const std::string &displayName = pluginRegistry.GetStringFromPluginMetaData(pluginType,
+                                                                                DISPLAY_NAME);
     const JsValue &priorityValue = pluginRegistry.GetDataFromPluginMetaData(pluginType, PRIORITY);
 
-    if (displayName.empty() || !priorityValue.IsInt())
-    {
+    if (displayName.empty() || !priorityValue.IsInt()) {
       TF_WARN("Plugin %s type information incomplete", pluginType.GetTypeName().c_str());
-    } else
-    {
+    } else {
       int priority = priorityValue.GetInt();
 
       _pluginEntries.emplace_back(pluginType, displayName, priority);
@@ -216,8 +199,7 @@ void HfPluginRegistry::_DiscoverPlugins()
   std::sort(_pluginEntries.begin(), _pluginEntries.end());
 
   // Now sorted create index for fast lookup
-  for (size_t index = 0; index < _pluginEntries.size(); ++index)
-  {
+  for (size_t index = 0; index < _pluginEntries.size(); ++index) {
     TfToken id(_pluginEntries[index].GetId());
 
     _pluginIndex.emplace(id, index);
@@ -229,23 +211,20 @@ void HfPluginRegistry::_DiscoverPlugins()
 Hf_PluginEntry *HfPluginRegistry::_GetEntryForPlugin(HfPluginBase *plugin)
 {
   const TfType &type = TfType::Find(plugin);
-  if (!TF_VERIFY(!type.IsUnknown()))
-  {
+  if (!TF_VERIFY(!type.IsUnknown())) {
     return nullptr;
   }
 
   TfToken machineName(type.GetTypeName());
 
   _TokenMap::const_iterator it = _pluginIndex.find(machineName);
-  if (!TF_VERIFY(it != _pluginIndex.end()))
-  {
+  if (!TF_VERIFY(it != _pluginIndex.end())) {
     return nullptr;
   }
 
   Hf_PluginEntry &entry = _pluginEntries[it->second];
 
-  if (!TF_VERIFY(entry.GetInstance() == plugin))
-  {
+  if (!TF_VERIFY(entry.GetInstance() == plugin)) {
     return nullptr;
   }
 
@@ -254,10 +233,8 @@ Hf_PluginEntry *HfPluginRegistry::_GetEntryForPlugin(HfPluginBase *plugin)
 
 TfToken HfPluginRegistry::GetPluginId(const HfPluginBase *plugin) const
 {
-  for (const Hf_PluginEntry &entry : _pluginEntries)
-  {
-    if (entry.GetInstance() == plugin)
-    {
+  for (const Hf_PluginEntry &entry : _pluginEntries) {
+    if (entry.GetInstance() == plugin) {
       return entry.GetId();
     }
   }

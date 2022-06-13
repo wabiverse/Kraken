@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomHermiteCurves::~UsdGeomHermiteCurves()
-{}
+UsdGeomHermiteCurves::~UsdGeomHermiteCurves() {}
 
 /* static */
 UsdGeomHermiteCurves UsdGeomHermiteCurves::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomHermiteCurves();
   }
@@ -62,8 +60,7 @@ UsdGeomHermiteCurves UsdGeomHermiteCurves::Get(const UsdStagePtr &stage, const S
 UsdGeomHermiteCurves UsdGeomHermiteCurves::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("HermiteCurves");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomHermiteCurves();
   }
@@ -101,7 +98,8 @@ UsdAttribute UsdGeomHermiteCurves::GetTangentsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->tangents);
 }
 
-UsdAttribute UsdGeomHermiteCurves::CreateTangentsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomHermiteCurves::CreateTangentsAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->tangents,
                                     SdfValueTypeNames->Vector3fArray,
@@ -130,8 +128,9 @@ const TfTokenVector &UsdGeomHermiteCurves::GetSchemaAttributeNames(bool includeI
   static TfTokenVector localNames = {
     UsdGeomTokens->tangents,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdGeomCurves::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdGeomCurves::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -152,14 +151,13 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-UsdGeomHermiteCurves::PointAndTangentArrays::PointAndTangentArrays(const VtArray<GfVec3f> &interleaved)
+UsdGeomHermiteCurves::PointAndTangentArrays::PointAndTangentArrays(
+  const VtArray<GfVec3f> &interleaved)
 {
-  if (interleaved.empty())
-  {
+  if (interleaved.empty()) {
     return;
   }
-  if (interleaved.size() % 2 != 0)
-  {
+  if (interleaved.size() % 2 != 0) {
     TF_CODING_ERROR(
       "Cannot separate odd-shaped interleaved points and tangents "
       "data.");
@@ -170,8 +168,7 @@ UsdGeomHermiteCurves::PointAndTangentArrays::PointAndTangentArrays(const VtArray
   auto interleavedIt = interleaved.cbegin();
   auto pointsIt = _points.begin();
   auto tangentsIt = _tangents.begin();
-  while (interleavedIt != interleaved.end())
-  {
+  while (interleavedIt != interleaved.end()) {
     *pointsIt = *interleavedIt;
     std::advance(pointsIt, 1);
     std::advance(interleavedIt, 1);
@@ -185,16 +182,14 @@ UsdGeomHermiteCurves::PointAndTangentArrays::PointAndTangentArrays(const VtArray
 
 VtVec3fArray UsdGeomHermiteCurves::PointAndTangentArrays::Interleave() const
 {
-  if (IsEmpty())
-  {
+  if (IsEmpty()) {
     return VtVec3fArray();
   }
   VtVec3fArray interleaved(GetPoints().size() * 2);
   auto interleavedIt = interleaved.begin();
   auto pointsIt = GetPoints().cbegin();
   auto tangentsIt = GetTangents().cbegin();
-  while (interleavedIt != interleaved.end())
-  {
+  while (interleavedIt != interleaved.end()) {
     *interleavedIt = *pointsIt;
     std::advance(pointsIt, 1);
     std::advance(interleavedIt, 1);

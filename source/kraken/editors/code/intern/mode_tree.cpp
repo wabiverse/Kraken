@@ -25,11 +25,9 @@ namespace Zep
       m_window(window)
   {}
 
-  ZepMode_Tree::~ZepMode_Tree()
-  {}
+  ZepMode_Tree::~ZepMode_Tree() {}
 
-  void ZepMode_Tree::Notify(std::shared_ptr<ZepMessage> message)
-  {}
+  void ZepMode_Tree::Notify(std::shared_ptr<ZepMessage> message) {}
 
   void ZepMode_Tree::BuildTree()
   {
@@ -39,34 +37,27 @@ namespace Zep
     std::function<void(ZepTreeNode *, uint32_t indent)> fnVisit;
 
     fnVisit = [&](ZepTreeNode *pNode, uint32_t indent) {
-      for (uint32_t i = 0; i < indent; i++)
-      {
+      for (uint32_t i = 0; i < indent; i++) {
         strBuffer << " ";
       }
 
-      if (pNode->HasChildren())
-      {
+      if (pNode->HasChildren()) {
         strBuffer << (pNode->IsExpanded() ? "~ " : "+ ");
-      } else
-      {
+      } else {
         strBuffer << "  ";
       }
 
       strBuffer << pNode->GetName() << std::endl;
 
-      if (pNode->IsExpanded())
-      {
-        for (auto &pChild : pNode->GetChildren())
-        {
+      if (pNode->IsExpanded()) {
+        for (auto &pChild : pNode->GetChildren()) {
           fnVisit(pChild.get(), indent + 2);
         }
       }
     };
 
-    if (m_spTree->GetRoot()->IsExpanded())
-    {
-      for (auto pChild : m_spTree->GetRoot()->GetChildren())
-      {
+    if (m_spTree->GetRoot()->IsExpanded()) {
+      for (auto pChild : m_spTree->GetRoot()->GetChildren()) {
         fnVisit(pChild.get(), 0);
       }
     }

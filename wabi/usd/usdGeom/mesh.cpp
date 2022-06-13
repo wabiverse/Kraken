@@ -44,14 +44,12 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdGeomMesh::~UsdGeomMesh()
-{}
+UsdGeomMesh::~UsdGeomMesh() {}
 
 /* static */
 UsdGeomMesh UsdGeomMesh::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomMesh();
   }
@@ -62,8 +60,7 @@ UsdGeomMesh UsdGeomMesh::Get(const UsdStagePtr &stage, const SdfPath &path)
 UsdGeomMesh UsdGeomMesh::Define(const UsdStagePtr &stage, const SdfPath &path)
 {
   static TfToken usdPrimTypeName("Mesh");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdGeomMesh();
   }
@@ -101,7 +98,8 @@ UsdAttribute UsdGeomMesh::GetFaceVertexIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->faceVertexIndices);
 }
 
-UsdAttribute UsdGeomMesh::CreateFaceVertexIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateFaceVertexIndicesAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->faceVertexIndices,
                                     SdfValueTypeNames->IntArray,
@@ -116,7 +114,8 @@ UsdAttribute UsdGeomMesh::GetFaceVertexCountsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->faceVertexCounts);
 }
 
-UsdAttribute UsdGeomMesh::CreateFaceVertexCountsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateFaceVertexCountsAttr(VtValue const &defaultValue,
+                                                     bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->faceVertexCounts,
                                     SdfValueTypeNames->IntArray,
@@ -131,7 +130,8 @@ UsdAttribute UsdGeomMesh::GetSubdivisionSchemeAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->subdivisionScheme);
 }
 
-UsdAttribute UsdGeomMesh::CreateSubdivisionSchemeAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateSubdivisionSchemeAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->subdivisionScheme,
                                     SdfValueTypeNames->Token,
@@ -194,7 +194,8 @@ UsdAttribute UsdGeomMesh::GetHoleIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->holeIndices);
 }
 
-UsdAttribute UsdGeomMesh::CreateHoleIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateHoleIndicesAttr(VtValue const &defaultValue,
+                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->holeIndices,
                                     SdfValueTypeNames->IntArray,
@@ -209,7 +210,8 @@ UsdAttribute UsdGeomMesh::GetCornerIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->cornerIndices);
 }
 
-UsdAttribute UsdGeomMesh::CreateCornerIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCornerIndicesAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->cornerIndices,
                                     SdfValueTypeNames->IntArray,
@@ -224,7 +226,8 @@ UsdAttribute UsdGeomMesh::GetCornerSharpnessesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->cornerSharpnesses);
 }
 
-UsdAttribute UsdGeomMesh::CreateCornerSharpnessesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCornerSharpnessesAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->cornerSharpnesses,
                                     SdfValueTypeNames->FloatArray,
@@ -239,7 +242,8 @@ UsdAttribute UsdGeomMesh::GetCreaseIndicesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->creaseIndices);
 }
 
-UsdAttribute UsdGeomMesh::CreateCreaseIndicesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCreaseIndicesAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->creaseIndices,
                                     SdfValueTypeNames->IntArray,
@@ -254,7 +258,8 @@ UsdAttribute UsdGeomMesh::GetCreaseLengthsAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->creaseLengths);
 }
 
-UsdAttribute UsdGeomMesh::CreateCreaseLengthsAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCreaseLengthsAttr(VtValue const &defaultValue,
+                                                  bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->creaseLengths,
                                     SdfValueTypeNames->IntArray,
@@ -269,7 +274,8 @@ UsdAttribute UsdGeomMesh::GetCreaseSharpnessesAttr() const
   return GetPrim().GetAttribute(UsdGeomTokens->creaseSharpnesses);
 }
 
-UsdAttribute UsdGeomMesh::CreateCreaseSharpnessesAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdGeomMesh::CreateCreaseSharpnessesAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdGeomTokens->creaseSharpnesses,
                                     SdfValueTypeNames->FloatArray,
@@ -345,10 +351,8 @@ bool UsdGeomMesh::ValidateTopology(const VtIntArray &faceVertexIndices,
   // Sum of the vertex counts should be equal to the number of vertex indices.
   size_t vertCountsSum = std::accumulate(faceVertexCounts.cbegin(), faceVertexCounts.cend(), 0);
 
-  if (vertCountsSum != faceVertexIndices.size())
-  {
-    if (reason)
-    {
+  if (vertCountsSum != faceVertexIndices.size()) {
+    if (reason) {
       *reason = TfStringPrintf(
         "Sum of faceVertexCounts [%zu] != "
         "size of faceVertexIndices [%zu].",
@@ -359,12 +363,9 @@ bool UsdGeomMesh::ValidateTopology(const VtIntArray &faceVertexIndices,
   }
 
   // Make sure all verts are within the range of the point count.
-  for (int vertexIndex : faceVertexIndices)
-  {
-    if (ARCH_UNLIKELY(vertexIndex < 0 || (size_t)vertexIndex >= numPoints))
-    {
-      if (reason)
-      {
+  for (int vertexIndex : faceVertexIndices) {
+    if (ARCH_UNLIKELY(vertexIndex < 0 || (size_t)vertexIndex >= numPoints)) {
+      if (reason) {
         *reason = TfStringPrintf(
           "Out of range face vertex index %d: "
           "Vertex must be in the range [0,%zu).",

@@ -49,8 +49,7 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-UsdImagingCapsuleAdapter::~UsdImagingCapsuleAdapter()
-{}
+UsdImagingCapsuleAdapter::~UsdImagingCapsuleAdapter() {}
 
 bool UsdImagingCapsuleAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -62,20 +61,24 @@ SdfPath UsdImagingCapsuleAdapter::Populate(UsdPrim const &prim,
                                            UsdImagingInstancerContext const *instancerContext)
 
 {
-  return _AddRprim(HdPrimTypeTokens->mesh, prim, index, GetMaterialUsdPath(prim), instancerContext);
+  return _AddRprim(HdPrimTypeTokens->mesh,
+                   prim,
+                   index,
+                   GetMaterialUsdPath(prim),
+                   instancerContext);
 }
 
-void UsdImagingCapsuleAdapter::TrackVariability(UsdPrim const &prim,
-                                                SdfPath const &cachePath,
-                                                HdDirtyBits *timeVaryingBits,
-                                                UsdImagingInstancerContext const *instancerContext) const
+void UsdImagingCapsuleAdapter::TrackVariability(
+  UsdPrim const &prim,
+  SdfPath const &cachePath,
+  HdDirtyBits *timeVaryingBits,
+  UsdImagingInstancerContext const *instancerContext) const
 {
   BaseAdapter::TrackVariability(prim, cachePath, timeVaryingBits, instancerContext);
 
   // Check DirtyPoints before doing variability checks, in case we can skip
   // any of them...
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
-  {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
     _IsVarying(prim,
                UsdGeomTokens->height,
                HdChangeTracker::DirtyPoints,
@@ -83,8 +86,7 @@ void UsdImagingCapsuleAdapter::TrackVariability(UsdPrim const &prim,
                timeVaryingBits,
                /*inherited*/ false);
   }
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
-  {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
     _IsVarying(prim,
                UsdGeomTokens->radius,
                HdChangeTracker::DirtyPoints,
@@ -92,8 +94,7 @@ void UsdImagingCapsuleAdapter::TrackVariability(UsdPrim const &prim,
                timeVaryingBits,
                /*inherited*/ false);
   }
-  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0)
-  {
+  if ((*timeVaryingBits & HdChangeTracker::DirtyPoints) == 0) {
     _IsVarying(prim,
                UsdGeomTokens->axis,
                HdChangeTracker::DirtyPoints,
@@ -108,8 +109,7 @@ HdDirtyBits UsdImagingCapsuleAdapter::ProcessPropertyChange(UsdPrim const &prim,
                                                             TfToken const &propertyName)
 {
   if (propertyName == UsdGeomTokens->height || propertyName == UsdGeomTokens->radius ||
-      propertyName == UsdGeomTokens->axis)
-  {
+      propertyName == UsdGeomTokens->axis) {
     return HdChangeTracker::DirtyPoints;
   }
 

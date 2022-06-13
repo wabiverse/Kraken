@@ -30,18 +30,17 @@ TF_REGISTRY_FUNCTION(TfType)
   HdRendererPluginRegistry::Define<HdCyclesRendererPlugin>();
 }
 
-HdCyclesRendererPlugin::HdCyclesRendererPlugin()
-{}
+HdCyclesRendererPlugin::HdCyclesRendererPlugin() {}
 
-HdCyclesRendererPlugin::~HdCyclesRendererPlugin()
-{}
+HdCyclesRendererPlugin::~HdCyclesRendererPlugin() {}
 
 HdRenderDelegate *HdCyclesRendererPlugin::CreateRenderDelegate()
 {
   return new HdCyclesRenderDelegate();
 }
 
-HdRenderDelegate *HdCyclesRendererPlugin::CreateRenderDelegate(HdRenderSettingsMap const &settingsMap)
+HdRenderDelegate *HdCyclesRendererPlugin::CreateRenderDelegate(
+  HdRenderSettingsMap const &settingsMap)
 {
   return new HdCyclesRenderDelegate(settingsMap);
 }

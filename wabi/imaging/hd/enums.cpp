@@ -41,8 +41,7 @@ TF_REGISTRY_FUNCTION(TfEnum)
 
 HdCullStyle HdInvertCullStyle(HdCullStyle cs)
 {
-  switch (cs)
-  {
+  switch (cs) {
     case HdCullStyleDontCare:
       return HdCullStyleDontCare;
     case HdCullStyleNothing:

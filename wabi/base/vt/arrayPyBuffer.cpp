@@ -60,115 +60,95 @@ namespace
 
   ////////////////////////////////////////////////////////////////////////
   // Element sub-type.  e.g. GfVec3f -> float.
-  template<class T, class Enable = void>
-  struct Vt_GetSubElementType
+  template<class T, class Enable = void> struct Vt_GetSubElementType
   {
     typedef T Type;
   };
 
   template<class T>
-  struct Vt_GetSubElementType<T,
-                              typename std::enable_if<GfIsGfVec<T>::value || GfIsGfMatrix<T>::value ||
-                                                      GfIsGfQuat<T>::value || GfIsGfRange<T>::value>::type>
+  struct Vt_GetSubElementType<
+    T,
+    typename std::enable_if<GfIsGfVec<T>::value || GfIsGfMatrix<T>::value ||
+                            GfIsGfQuat<T>::value || GfIsGfRange<T>::value>::type>
   {
     typedef typename T::ScalarType Type;
   };
 
-  template<>
-  struct Vt_GetSubElementType<GfRect2i>
+  template<> struct Vt_GetSubElementType<GfRect2i>
   {
     typedef int Type;
   };
 
   ////////////////////////////////////////////////////////////////////////
   // Format strings.
-  template<class T>
-  constexpr char Vt_FmtFor();
-  template<>
-  constexpr char Vt_FmtFor<bool>()
+  template<class T> constexpr char Vt_FmtFor();
+  template<> constexpr char Vt_FmtFor<bool>()
   {
     return '?';
   }
-  template<>
-  constexpr char Vt_FmtFor<char>()
+  template<> constexpr char Vt_FmtFor<char>()
   {
     return 'b';
   }
-  template<>
-  constexpr char Vt_FmtFor<unsigned char>()
+  template<> constexpr char Vt_FmtFor<unsigned char>()
   {
     return 'B';
   }
-  template<>
-  constexpr char Vt_FmtFor<short>()
+  template<> constexpr char Vt_FmtFor<short>()
   {
     return 'h';
   }
-  template<>
-  constexpr char Vt_FmtFor<unsigned short>()
+  template<> constexpr char Vt_FmtFor<unsigned short>()
   {
     return 'H';
   }
-  template<>
-  constexpr char Vt_FmtFor<int>()
+  template<> constexpr char Vt_FmtFor<int>()
   {
     return 'i';
   }
-  template<>
-  constexpr char Vt_FmtFor<unsigned int>()
+  template<> constexpr char Vt_FmtFor<unsigned int>()
   {
     return 'I';
   }
-  template<>
-  constexpr char Vt_FmtFor<long>()
+  template<> constexpr char Vt_FmtFor<long>()
   {
     return 'l';
   }
-  template<>
-  constexpr char Vt_FmtFor<unsigned long>()
+  template<> constexpr char Vt_FmtFor<unsigned long>()
   {
     return 'L';
   }
-  template<>
-  constexpr char Vt_FmtFor<long long>()
+  template<> constexpr char Vt_FmtFor<long long>()
   {
     return 'q';
   }
-  template<>
-  constexpr char Vt_FmtFor<unsigned long long>()
+  template<> constexpr char Vt_FmtFor<unsigned long long>()
   {
     return 'Q';
   }
-  template<>
-  constexpr char Vt_FmtFor<GfHalf>()
+  template<> constexpr char Vt_FmtFor<GfHalf>()
   {
     return 'e';
   }
-  template<>
-  constexpr char Vt_FmtFor<float>()
+  template<> constexpr char Vt_FmtFor<float>()
   {
     return 'f';
   }
-  template<>
-  constexpr char Vt_FmtFor<double>()
+  template<> constexpr char Vt_FmtFor<double>()
   {
     return 'd';
   }
 
-  template<class Src, class Dst>
-  inline Dst Vt_ConvertSingle(void const *src)
+  template<class Src, class Dst> inline Dst Vt_ConvertSingle(void const *src)
   {
     return static_cast<Dst>(*static_cast<Src const *>(src));
   }
 
-  template<class Dst>
-  using Vt_ConvertFn = Dst (*)(void const *);
+  template<class Dst> using Vt_ConvertFn = Dst (*)(void const *);
 
-  template<class Dst>
-  Vt_ConvertFn<Dst> Vt_GetConvertFn(char srcFmt)
+  template<class Dst> Vt_ConvertFn<Dst> Vt_GetConvertFn(char srcFmt)
   {
-    switch (srcFmt)
-    {
+    switch (srcFmt) {
       case '?':
         return Vt_ConvertSingle<bool, Dst>;
       case 'b':
@@ -201,8 +181,7 @@ namespace
     return nullptr;
   }
 
-  template<class T>
-  struct Vt_FormatStr
+  template<class T> struct Vt_FormatStr
   {
     static char *Get()
     {
@@ -215,8 +194,7 @@ namespace
 
   ////////////////////////////////////////////////////////////////////////
   // Element intrinsic shape.  e.g. GfVec3f -> 1x3.
-  template<size_t N>
-  using Vt_PyShape = std::array<Py_ssize_t, N>;
+  template<size_t N> using Vt_PyShape = std::array<Py_ssize_t, N>;
 
   constexpr Vt_PyShape<0> Vt_GetElementShapeImpl(...)
   {
@@ -224,33 +202,38 @@ namespace
   }
 
   template<class T>
-  constexpr typename std::enable_if<GfIsGfVec<T>::value, Vt_PyShape<1>>::type Vt_GetElementShapeImpl(T *)
+  constexpr typename std::enable_if<GfIsGfVec<T>::value, Vt_PyShape<1>>::type
+  Vt_GetElementShapeImpl(T *)
   {
     return {T::dimension};
   }
 
   template<class T>
-  constexpr typename std::enable_if<GfIsGfMatrix<T>::value, Vt_PyShape<2>>::type Vt_GetElementShapeImpl(T *)
+  constexpr typename std::enable_if<GfIsGfMatrix<T>::value, Vt_PyShape<2>>::type
+  Vt_GetElementShapeImpl(T *)
   {
     return {T::numRows, T::numColumns};
   }
 
   template<class T>
-  constexpr typename std::enable_if<GfIsGfQuat<T>::value, Vt_PyShape<1>>::type Vt_GetElementShapeImpl(T *)
+  constexpr typename std::enable_if<GfIsGfQuat<T>::value, Vt_PyShape<1>>::type
+  Vt_GetElementShapeImpl(T *)
   {
     return {4};
   }
 
   template<class T>
-  constexpr typename std::enable_if<GfIsGfRange<T>::value && T::dimension == 1, Vt_PyShape<1>>::type
-  Vt_GetElementShapeImpl(T *)
+  constexpr
+    typename std::enable_if<GfIsGfRange<T>::value && T::dimension == 1, Vt_PyShape<1>>::type
+    Vt_GetElementShapeImpl(T *)
   {
     return {2};
   }
 
   template<class T>
-  constexpr typename std::enable_if<GfIsGfRange<T>::value && T::dimension != 1, Vt_PyShape<2>>::type
-  Vt_GetElementShapeImpl(T *)
+  constexpr
+    typename std::enable_if<GfIsGfRange<T>::value && T::dimension != 1, Vt_PyShape<2>>::type
+    Vt_GetElementShapeImpl(T *)
   {
     return {2, T::dimension};
   }
@@ -261,7 +244,8 @@ namespace
   }
 
   template<class T>
-  constexpr auto Vt_GetElementShape() -> decltype(Vt_GetElementShapeImpl(static_cast<T *>(nullptr)))
+  constexpr auto Vt_GetElementShape()
+    -> decltype(Vt_GetElementShapeImpl(static_cast<T *>(nullptr)))
   {
     return Vt_GetElementShapeImpl(static_cast<T *>(nullptr));
   }
@@ -271,14 +255,12 @@ namespace
   // request.  It holds a copy of the VtArray, plus shape and stride arrays.  We
   // store a pointer to the allocated wrapper in the Py_buffer object and delete
   // it on 'releasebuffer'.
-  template<class Array>
-  struct Vt_ArrayBufferWrapper
+  template<class Array> struct Vt_ArrayBufferWrapper
   {
     using value_type = typename Array::value_type;
     using SubElementType = typename Vt_GetSubElementType<value_type>::Type;
 
-    explicit Vt_ArrayBufferWrapper(Array const &array)
-      : array(array)
+    explicit Vt_ArrayBufferWrapper(Array const &array) : array(array)
     {
       // First element of shape is overall length.  Other elements are filled
       // from the array's value_type's intrinsic shape (e.g. an array of
@@ -295,8 +277,7 @@ namespace
       //   shape   = [11,          3,        3]
       //   strides = [36 (=12*3), 12 (=4*3), 4 (=sizeof(float))]
       strides[strides.size() - 1] = sizeof(SubElementType);
-      for (size_t i = strides.size() - 1; i; --i)
-      {
+      for (size_t i = strides.size() - 1; i; --i) {
         strides[i - 1] = strides[i] * shape[i];
       }
     }
@@ -312,11 +293,9 @@ namespace
 
 #if PY_MAJOR_VERSION == 2
   // Python's getreadbuf interface function.
-  template<class T>
-  Py_ssize_t Vt_getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
+  template<class T> Py_ssize_t Vt_getreadbuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
-    if (segment != 0)
-    {
+    if (segment != 0) {
       // Always one-segment for arrays.
       PyErr_SetString(PyExc_ValueError, "accessed non-existent segment");
       return -1;
@@ -328,16 +307,14 @@ namespace
   }
 
   // Python's getwritebuf interface function.
-  template<class T>
-  Py_ssize_t Vt_getwritebuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
+  template<class T> Py_ssize_t Vt_getwritebuf(PyObject *self, Py_ssize_t segment, void **ptrptr)
   {
     PyErr_SetString(PyExc_ValueError, "writable buffers unsupported");
     return -1;
   }
 
   // Python's getsegcount interface function.
-  template<class T>
-  Py_ssize_t Vt_getsegcount(PyObject *self, Py_ssize_t *lenp)
+  template<class T> Py_ssize_t Vt_getsegcount(PyObject *self, Py_ssize_t *lenp)
   {
     T &selfT = bp::extract<T &>(self);
     if (lenp)
@@ -354,27 +331,23 @@ namespace
 #endif
 
   // Python's releasebuffer interface function.
-  template<class T>
-  void Vt_releasebuffer(PyObject *self, Py_buffer *view)
+  template<class T> void Vt_releasebuffer(PyObject *self, Py_buffer *view)
   {
     delete static_cast<Vt_ArrayBufferWrapper<T> *>(view->internal);
   }
 
   // Python's getbuffer interface function.
-  template<class T>
-  int Vt_getbuffer(PyObject *self, Py_buffer *view, int flags)
+  template<class T> int Vt_getbuffer(PyObject *self, Py_buffer *view, int flags)
   {
     using value_type = typename T::value_type;
 
-    if (view == NULL)
-    {
+    if (view == NULL) {
       PyErr_SetString(PyExc_ValueError, "NULL view in getbuffer");
       return -1;
     }
 
     // We don't support fortran order.
-    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS)
-    {
+    if ((flags & PyBUF_F_CONTIGUOUS) == PyBUF_F_CONTIGUOUS) {
       PyErr_SetString(PyExc_ValueError, "Fortran contiguity unsupported");
       return -1;
     }
@@ -382,8 +355,7 @@ namespace
     // We don't support writable buffers, since we'd have to make a copy (in
     // general) and guaranteed O(1) buffer requests outweigh that.  Clients can
     // always make copies themselves if they want a writable thing.
-    if ((flags & PyBUF_WRITABLE) == PyBUF_WRITABLE)
-    {
+    if ((flags & PyBUF_WRITABLE) == PyBUF_WRITABLE) {
       PyErr_SetString(PyExc_ValueError, "writable buffers unsupported");
       return -1;
     }
@@ -396,27 +368,21 @@ namespace
     view->len = wrapper->array.size() * sizeof(value_type);
     view->readonly = 1;
     view->itemsize = sizeof(typename Vt_GetSubElementType<value_type>::Type);
-    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT)
-    {
+    if ((flags & PyBUF_FORMAT) == PyBUF_FORMAT) {
       view->format = Vt_FormatStr<value_type>::Get();
-    } else
-    {
+    } else {
       view->format = NULL;
     }
-    if ((flags & PyBUF_ND) == PyBUF_ND)
-    {
+    if ((flags & PyBUF_ND) == PyBUF_ND) {
       view->ndim = wrapper->shape.size();
       view->shape = wrapper->shape.data();
-    } else
-    {
+    } else {
       view->ndim = 0;
       view->shape = NULL;
     }
-    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES)
-    {
+    if ((flags & PyBUF_STRIDES) == PyBUF_STRIDES) {
       view->strides = wrapper->strides.data();
-    } else
-    {
+    } else {
       view->strides = NULL;
     }
     view->suboffsets = NULL;
@@ -428,8 +394,7 @@ namespace
 
   // This structure serves to instantiate a PyBufferProcs instance with pointers
   // to the right buffer protocol functions.
-  template<class T>
-  struct Vt_ArrayBufferProcs
+  template<class T> struct Vt_ArrayBufferProcs
   {
     static PyBufferProcs procs;
   };
@@ -447,17 +412,16 @@ namespace
 
   ////////////////////////////////////////////////////////////////////////
   // Top-level protocol install functions.
-  template<class ArrayType>
-  void Vt_AddBufferProtocol()
+  template<class ArrayType> void Vt_AddBufferProtocol()
   {
     TfPyLock lock;
 
     // Look up the python class object, then set its fields to point at our
     // buffer protocol implementation.
     bp::object cls = TfPyGetClassObject<ArrayType>();
-    if (TfPyIsNone(cls))
-    {
-      TF_CODING_ERROR("Failed to find python class object for '%s'", ArchGetDemangled<ArrayType>().c_str());
+    if (TfPyIsNone(cls)) {
+      TF_CODING_ERROR("Failed to find python class object for '%s'",
+                      ArchGetDemangled<ArrayType>().c_str());
       return;
     }
 
@@ -480,8 +444,7 @@ namespace
 
     TfPyLock lock;
 
-    if (!PyObject_CheckBuffer(obj.ptr()))
-    {
+    if (!PyObject_CheckBuffer(obj.ptr())) {
       err = "Python object does not support the buffer protocol";
       return false;
     }
@@ -489,23 +452,23 @@ namespace
     // Request a strided buffer with type & dimensions.
     Py_buffer view;
     memset(&view, 0, sizeof(view));
-    if (PyObject_GetBuffer(obj.ptr(), &view, PyBUF_FORMAT | PyBUF_STRIDES) != 0)
-    {
+    if (PyObject_GetBuffer(obj.ptr(), &view, PyBUF_FORMAT | PyBUF_STRIDES) != 0) {
       err = "Failed to get dimensioned, typed buffer";
       return false;
     }
 
     // We have a buffer.  Check that the type matches.
     if (!view.format || view.format[0] == '>' || view.format[0] == '!' || view.format[0] == '=' ||
-        view.format[0] == '^')
-    {
+        view.format[0] == '^') {
       err = TfStringPrintf("Unsupported format '%s'", view.format ? view.format : "<null>");
       PyBuffer_Release(&view);
       return false;
     }
 
     // Check that the number of elements matches.
-    auto multiply = [](Py_ssize_t x, Py_ssize_t y) { return x * y; };
+    auto multiply = [](Py_ssize_t x, Py_ssize_t y) {
+      return x * y;
+    };
     auto numItems = std::accumulate(view.shape, view.shape + view.ndim, 1, multiply);
 
     // Compute the total # of items in one element.
@@ -517,8 +480,7 @@ namespace
 
     // Check that the element shape evenly divides the items in the buffer and
     // that the byte sizes match.
-    if (numItems % elemSize)
-    {
+    if (numItems % elemSize) {
       err = TfStringPrintf("Buffer size (%s items) must be a multiple of %s",
                            TfStringify(numItems).c_str(),
                            TfStringify(elemSize).c_str());
@@ -540,12 +502,10 @@ namespace
     using SubType = typename Vt_GetSubElementType<T>::Type;
     auto convertFn = Vt_GetConvertFn<SubType>(typeChar);
 
-    if (convertFn)
-    {
+    if (convertFn) {
       isConvertible = true;
 
-      if (out)
-      {
+      if (out) {
         out->resize(arraySize);
 
         // Copy the contents to out.  An element at 'index' is located at:
@@ -559,8 +519,7 @@ namespace
         Py_ssize_t localIdx[8];
         std::unique_ptr<Py_ssize_t[]> overflowIdx;
         Py_ssize_t *index = localIdx;
-        if ((size_t)view.ndim > std::extent<decltype(localIdx)>::value)
-        {
+        if ((size_t)view.ndim > std::extent<decltype(localIdx)>::value) {
           overflowIdx.reset(new Py_ssize_t[view.ndim]);
           index = overflowIdx.get();
         }
@@ -570,8 +529,7 @@ namespace
         // Helper function to increment an index.
         auto increment = [&view](Py_ssize_t *index) {
           auto ndim = view.ndim;
-          for (int i = 0; i != view.ndim; ++i)
-          {
+          for (int i = 0; i != view.ndim; ++i) {
             if (++index[ndim - i - 1] < view.shape[ndim - i - 1])
               return;
             index[ndim - i - 1] = 0;
@@ -589,14 +547,12 @@ namespace
 
         // Roll through, converting elements.
         auto outPtr = reinterpret_cast<SubType *>(out->data());
-        while (numItems--)
-        {
+        while (numItems--) {
           *outPtr++ = convertFn(getPtrAt(index));
           increment(index);
         }
       }
-    } else
-    {
+    } else {
       err = TfStringPrintf("No known conversion from format %c to %c", typeChar, desiredFmt[0]);
     }
 
@@ -604,8 +560,7 @@ namespace
     return isConvertible;
   }
 
-  template<class T>
-  static VtValue Vt_CastPyObjToArray(VtValue const &v)
+  template<class T> static VtValue Vt_CastPyObjToArray(VtValue const &v)
   {
     VtValue ret;
     TfPyObjWrapper obj;
@@ -614,57 +569,46 @@ namespace
 
     // Attempt to produce the requested VtArray.
     VtArray<T> array;
-    if (Vt_ArrayFromBuffer(obj, &array))
-    {
+    if (Vt_ArrayFromBuffer(obj, &array)) {
       ret.Swap(array);
-    } else
-    {
+    } else {
       ret = Vt_ConvertFromPySequence<VtArray<T>>(obj);
     }
 
     return ret;
   }
 
-  template<class T>
-  static VtValue Vt_CastVectorToArray(VtValue const &v)
+  template<class T> static VtValue Vt_CastVectorToArray(VtValue const &v)
   {
     VtValue ret;
-    if (v.IsHolding<vector<VtValue>>())
-    {
+    if (v.IsHolding<vector<VtValue>>()) {
       // This is a bit unfortunate.  We convert back to python, attempt to get
       // a python list, and then attempt to convert each element in it.
       VtArray<T> result;
       TfPyLock lock;
-      try
-      {
+      try {
         auto obj = TfPyObject(v);
         bp::list pylist = bp::extract<bp::list>(obj);
         size_t len = bp::len(pylist);
         result.reserve(len);
-        for (size_t i = 0; i != len; ++i)
-        {
+        for (size_t i = 0; i != len; ++i) {
           bp::object item = pylist[i];
           bp::extract<T> e(item);
-          if (e.check())
-          {
+          if (e.check()) {
             result.push_back(e());
-          } else
-          {
+          } else {
             VtValue val = bp::extract<VtValue>(item);
-            if (val.Cast<T>().template IsHolding<T>())
-            {
+            if (val.Cast<T>().template IsHolding<T>()) {
               result.push_back(val.UncheckedGet<T>());
-            } else
-            {
-              TfPyThrowValueError(
-                TfStringPrintf("Failed to produce an element of type '%s'", ArchGetDemangled<T>().c_str()));
+            } else {
+              TfPyThrowValueError(TfStringPrintf("Failed to produce an element of type '%s'",
+                                                 ArchGetDemangled<T>().c_str()));
             }
           }
         }
         ret.Swap(result);
       }
-      catch (bp::error_already_set const &)
-      {
+      catch (bp::error_already_set const &) {
         // swallow the exception and just fail the cast.
         PyErr_Clear();
       }
@@ -672,13 +616,11 @@ namespace
     return ret;
   }
 
-  template<class T>
-  TfPyObjWrapper Vt_WrapArrayFromBuffer(TfPyObjWrapper const &obj)
+  template<class T> TfPyObjWrapper Vt_WrapArrayFromBuffer(TfPyObjWrapper const &obj)
   {
     VtArray<T> result;
     string err;
-    if (Vt_ArrayFromBuffer(obj, &result, &err))
-    {
+    if (Vt_ArrayFromBuffer(obj, &result, &err)) {
       return bp::object(result);
     }
     TfPyThrowValueError(
@@ -712,11 +654,13 @@ VT_API void Vt_AddBufferProtocolSupportToVtArrays()
 {
 
 // Add the buffer protocol support to every array type that we support it for.
-#define VT_ADD_BUFFER_PROTOCOL(r, unused, elem)                                                        \
-  Vt_AddBufferProtocol<VtArray<VT_TYPE(elem)>>();                                                      \
-  VtValue::RegisterCast<TfPyObjWrapper, VtArray<VT_TYPE(elem)>>(Vt_CastPyObjToArray<VT_TYPE(elem)>);   \
-  VtValue::RegisterCast<vector<VtValue>, VtArray<VT_TYPE(elem)>>(Vt_CastVectorToArray<VT_TYPE(elem)>); \
-  boost::python::def(TF_PP_STRINGIZE(VT_TYPE_NAME(elem)) "ArrayFromBuffer",                            \
+#define VT_ADD_BUFFER_PROTOCOL(r, unused, elem)                             \
+  Vt_AddBufferProtocol<VtArray<VT_TYPE(elem)>>();                           \
+  VtValue::RegisterCast<TfPyObjWrapper, VtArray<VT_TYPE(elem)>>(            \
+    Vt_CastPyObjToArray<VT_TYPE(elem)>);                                    \
+  VtValue::RegisterCast<vector<VtValue>, VtArray<VT_TYPE(elem)>>(           \
+    Vt_CastVectorToArray<VT_TYPE(elem)>);                                   \
+  boost::python::def(TF_PP_STRINGIZE(VT_TYPE_NAME(elem)) "ArrayFromBuffer", \
                      Vt_WrapArrayFromBuffer<VT_TYPE(elem)>);
 
   BOOST_PP_SEQ_FOR_EACH(VT_ADD_BUFFER_PROTOCOL, ~, VT_ARRAY_PYBUFFER_TYPES)

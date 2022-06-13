@@ -44,14 +44,13 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdPhysicsPrismaticJoint::~UsdPhysicsPrismaticJoint()
-{}
+UsdPhysicsPrismaticJoint::~UsdPhysicsPrismaticJoint() {}
 
 /* static */
-UsdPhysicsPrismaticJoint UsdPhysicsPrismaticJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsPrismaticJoint UsdPhysicsPrismaticJoint::Get(const UsdStagePtr &stage,
+                                                       const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsPrismaticJoint();
   }
@@ -59,11 +58,11 @@ UsdPhysicsPrismaticJoint UsdPhysicsPrismaticJoint::Get(const UsdStagePtr &stage,
 }
 
 /* static */
-UsdPhysicsPrismaticJoint UsdPhysicsPrismaticJoint::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsPrismaticJoint UsdPhysicsPrismaticJoint::Define(const UsdStagePtr &stage,
+                                                          const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PhysicsPrismaticJoint");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsPrismaticJoint();
   }
@@ -101,7 +100,8 @@ UsdAttribute UsdPhysicsPrismaticJoint::GetAxisAttr() const
   return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAxis);
 }
 
-UsdAttribute UsdPhysicsPrismaticJoint::CreateAxisAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsPrismaticJoint::CreateAxisAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAxis,
                                     SdfValueTypeNames->Token,
@@ -164,8 +164,9 @@ const TfTokenVector &UsdPhysicsPrismaticJoint::GetSchemaAttributeNames(bool incl
     UsdPhysicsTokens->physicsLowerLimit,
     UsdPhysicsTokens->physicsUpperLimit,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdPhysicsJoint::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdPhysicsJoint::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

@@ -78,10 +78,10 @@ namespace
   // table stays up-to-date with changes to HdFormat and HgiFormat.
   constexpr bool _CompileTimeValidateFormatTable()
   {
-    return HdFormatCount == 29 && HdFormatUNorm8 == 0 && HgiFormatUNorm8 == 0 && HdFormatFloat16Vec4 == 11 &&
-           HgiFormatFloat16Vec4 == 9 && HdFormatFloat32Vec4 == 15 && HgiFormatFloat32Vec4 == 13 &&
-           HdFormatUInt16Vec4 == 23 && HgiFormatUInt16Vec4 == 21 && HdFormatInt32Vec4 == 27 &&
-           HgiFormatInt32Vec4 == 25;
+    return HdFormatCount == 29 && HdFormatUNorm8 == 0 && HgiFormatUNorm8 == 0 &&
+           HdFormatFloat16Vec4 == 11 && HgiFormatFloat16Vec4 == 9 && HdFormatFloat32Vec4 == 15 &&
+           HgiFormatFloat32Vec4 == 13 && HdFormatUInt16Vec4 == 23 && HgiFormatUInt16Vec4 == 21 &&
+           HdFormatInt32Vec4 == 27 && HgiFormatInt32Vec4 == 25;
   }
 
   static_assert(_CompileTimeValidateFormatTable(),
@@ -146,8 +146,8 @@ namespace
 
   constexpr bool _CompileTimeValidateMinTable()
   {
-    return HdMinFilterNearest == 0 && HdMinFilterLinear == 1 && HdMinFilterNearestMipmapNearest == 2 &&
-           HdMinFilterLinearMipmapLinear == 5;
+    return HdMinFilterNearest == 0 && HdMinFilterLinear == 1 &&
+           HdMinFilterNearestMipmapNearest == 2 && HdMinFilterLinearMipmapLinear == 5;
   }
 
   static_assert(_CompileTimeValidateMinTable(), "_MinDesc array out of sync with HdMinFilter");
@@ -156,15 +156,13 @@ namespace
 
 HgiFormat HdPhHgiConversions::GetHgiFormat(const HdFormat hdFormat)
 {
-  if ((hdFormat < 0) || (hdFormat >= HdFormatCount))
-  {
+  if ((hdFormat < 0) || (hdFormat >= HdFormatCount)) {
     TF_CODING_ERROR("Unexpected HdFormat %d", hdFormat);
     return HgiFormatInvalid;
   }
 
   HgiFormat hgiFormat = FORMAT_DESC[hdFormat].hgiFormat;
-  if (ARCH_UNLIKELY(hgiFormat == HgiFormatInvalid))
-  {
+  if (ARCH_UNLIKELY(hgiFormat == HgiFormatInvalid)) {
     TF_CODING_ERROR("Unsupported format");
   }
 
@@ -173,8 +171,7 @@ HgiFormat HdPhHgiConversions::GetHgiFormat(const HdFormat hdFormat)
 
 HgiSamplerAddressMode HdPhHgiConversions::GetHgiSamplerAddressMode(const HdWrap hdWrap)
 {
-  if ((hdWrap < 0) || (hdWrap > HdWrapLegacyNoOpinionFallbackRepeat))
-  {
+  if ((hdWrap < 0) || (hdWrap > HdWrapLegacyNoOpinionFallbackRepeat)) {
     TF_CODING_ERROR("Unexpected HdWrap %d", hdWrap);
     return HgiSamplerAddressModeClampToBorderColor;
   }
@@ -184,8 +181,7 @@ HgiSamplerAddressMode HdPhHgiConversions::GetHgiSamplerAddressMode(const HdWrap 
 
 HgiSamplerFilter HdPhHgiConversions::GetHgiMagFilter(const HdMagFilter hdMagFilter)
 {
-  if ((hdMagFilter < 0) || (hdMagFilter > HdMagFilterLinear))
-  {
+  if ((hdMagFilter < 0) || (hdMagFilter > HdMagFilterLinear)) {
     TF_CODING_ERROR("Unexpected HdMagFilter %d", hdMagFilter);
     return HgiSamplerFilterLinear;
   }
@@ -196,8 +192,7 @@ void HdPhHgiConversions::GetHgiMinAndMipFilter(const HdMinFilter hdMinFilter,
                                                HgiSamplerFilter *const hgiSamplerFilter,
                                                HgiMipFilter *const hgiMipFilter)
 {
-  if ((hdMinFilter < 0) || (hdMinFilter > HdMinFilterLinearMipmapLinear))
-  {
+  if ((hdMinFilter < 0) || (hdMinFilter > HdMinFilterLinearMipmapLinear)) {
     TF_CODING_ERROR("Unexpected HdMinFilter %d", hdMinFilter);
     *hgiSamplerFilter = HgiSamplerFilterLinear;
     *hgiMipFilter = HgiMipFilterNotMipmapped;

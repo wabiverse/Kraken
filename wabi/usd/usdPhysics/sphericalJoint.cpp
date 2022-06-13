@@ -44,14 +44,13 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 /* virtual */
-UsdPhysicsSphericalJoint::~UsdPhysicsSphericalJoint()
-{}
+UsdPhysicsSphericalJoint::~UsdPhysicsSphericalJoint() {}
 
 /* static */
-UsdPhysicsSphericalJoint UsdPhysicsSphericalJoint::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsSphericalJoint UsdPhysicsSphericalJoint::Get(const UsdStagePtr &stage,
+                                                       const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsSphericalJoint();
   }
@@ -59,11 +58,11 @@ UsdPhysicsSphericalJoint UsdPhysicsSphericalJoint::Get(const UsdStagePtr &stage,
 }
 
 /* static */
-UsdPhysicsSphericalJoint UsdPhysicsSphericalJoint::Define(const UsdStagePtr &stage, const SdfPath &path)
+UsdPhysicsSphericalJoint UsdPhysicsSphericalJoint::Define(const UsdStagePtr &stage,
+                                                          const SdfPath &path)
 {
   static TfToken usdPrimTypeName("PhysicsSphericalJoint");
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdPhysicsSphericalJoint();
   }
@@ -101,7 +100,8 @@ UsdAttribute UsdPhysicsSphericalJoint::GetAxisAttr() const
   return GetPrim().GetAttribute(UsdPhysicsTokens->physicsAxis);
 }
 
-UsdAttribute UsdPhysicsSphericalJoint::CreateAxisAttr(VtValue const &defaultValue, bool writeSparsely) const
+UsdAttribute UsdPhysicsSphericalJoint::CreateAxisAttr(VtValue const &defaultValue,
+                                                      bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(UsdPhysicsTokens->physicsAxis,
                                     SdfValueTypeNames->Token,
@@ -164,8 +164,9 @@ const TfTokenVector &UsdPhysicsSphericalJoint::GetSchemaAttributeNames(bool incl
     UsdPhysicsTokens->physicsConeAngle0Limit,
     UsdPhysicsTokens->physicsConeAngle1Limit,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdPhysicsJoint::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdPhysicsJoint::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;

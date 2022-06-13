@@ -84,11 +84,9 @@ namespace
   template<typename Fn>
   void _ParallelForN(size_t count, bool inSerial, Fn &&callback, size_t grainSize = 1000)
   {
-    if (inSerial || count < grainSize)
-    {
+    if (inSerial || count < grainSize) {
       WorkSerialForN(count, callback);
-    } else
-    {
+    } else {
       WorkParallelForN(count, callback, grainSize);
     }
   }
@@ -102,8 +100,7 @@ namespace
       xforms.size(),
       false,
       [&](size_t start, size_t end) {
-        for (size_t i = start; i < end; ++i)
-        {
+        for (size_t i = start; i < end; ++i) {
           inverseXforms[i] = xforms[i].GetInverse();
         }
       },
@@ -118,34 +115,26 @@ namespace
   {
     TRACE_FUNCTION();
 
-    if (ARCH_UNLIKELY(jointLocalXforms.size() != topology.size()))
-    {
+    if (ARCH_UNLIKELY(jointLocalXforms.size() != topology.size())) {
       TF_WARN("Size of jointLocalXforms [%zu] != number of joints [%zu]",
               jointLocalXforms.size(),
               topology.size());
       return false;
     }
-    if (ARCH_UNLIKELY(xforms.size() != topology.size()))
-    {
+    if (ARCH_UNLIKELY(xforms.size() != topology.size())) {
       TF_WARN("Size of xforms [%zu] != number of joints [%zu]", xforms.size(), topology.size());
       return false;
     }
 
-    for (size_t i = 0; i < topology.size(); ++i)
-    {
+    for (size_t i = 0; i < topology.size(); ++i) {
       const int parent = topology.GetParent(i);
-      if (parent >= 0)
-      {
-        if (static_cast<size_t>(parent) < i)
-        {
+      if (parent >= 0) {
+        if (static_cast<size_t>(parent) < i) {
           xforms[i] = jointLocalXforms[i] * xforms[parent];
-        } else
-        {
-          if (static_cast<size_t>(parent) == i)
-          {
+        } else {
+          if (static_cast<size_t>(parent) == i) {
             TF_WARN("Joint %zu has itself as its parent.", i);
-          } else
-          {
+          } else {
             TF_WARN(
               "Joint %zu has mis-ordered parent %d. Joints are "
               "expected to be ordered with parent joints always "
@@ -155,12 +144,10 @@ namespace
           }
           return false;
         }
-      } else
-      {
+      } else {
         // Root joint.
         xforms[i] = jointLocalXforms[i];
-        if (rootXform)
-        {
+        if (rootXform) {
           xforms[i] *= (*rootXform);
         }
       }
@@ -192,8 +179,7 @@ bool UsdSkelConcatJointTransforms(const UsdSkelTopology &topology,
                                   VtMatrix4dArray *xforms,
                                   const GfMatrix4d *rootXform)
 {
-  if (!xforms)
-  {
+  if (!xforms) {
     TF_CODING_ERROR("'xforms' is null");
     return false;
   }
@@ -225,20 +211,17 @@ namespace
   {
     TRACE_FUNCTION();
 
-    if (ARCH_UNLIKELY(xforms.size() != topology.size()))
-    {
+    if (ARCH_UNLIKELY(xforms.size() != topology.size())) {
       TF_WARN("Size of xforms [%zu] != number of joints [%zu]", xforms.size(), topology.size());
       return false;
     }
-    if (ARCH_UNLIKELY(inverseXforms.size() != topology.size()))
-    {
+    if (ARCH_UNLIKELY(inverseXforms.size() != topology.size())) {
       TF_WARN("Size of inverseXforms [%zu] != number of joints [%zu]",
               inverseXforms.size(),
               topology.size());
       return false;
     }
-    if (ARCH_UNLIKELY(jointLocalXforms.size() != topology.size()))
-    {
+    if (ARCH_UNLIKELY(jointLocalXforms.size() != topology.size())) {
       TF_WARN("Size of jointLocalXforms [%zu] != number of joints [%zu]",
               jointLocalXforms.size(),
               topology.size());
@@ -250,18 +233,13 @@ namespace
     // So we want:
     //     jointLocalXform = skelXform*inv(parentSkelXform)
 
-    for (size_t i = 0; i < topology.size(); ++i)
-    {
+    for (size_t i = 0; i < topology.size(); ++i) {
       const int parent = topology.GetParent(i);
-      if (parent >= 0)
-      {
-        if (static_cast<size_t>(parent) < i)
-        {
+      if (parent >= 0) {
+        if (static_cast<size_t>(parent) < i) {
           jointLocalXforms[i] = xforms[i] * inverseXforms[parent];
-        } else
-        {
-          if (static_cast<size_t>(parent) == i)
-          {
+        } else {
+          if (static_cast<size_t>(parent) == i) {
             TF_WARN("Joint %zu has itself as its parent.", i);
             return false;
           }
@@ -273,12 +251,10 @@ namespace
             parent);
           return false;
         }
-      } else
-      {
+      } else {
         // Root joint.
         jointLocalXforms[i] = xforms[i];
-        if (rootInverseXform)
-        {
+        if (rootInverseXform) {
           jointLocalXforms[i] *= (*rootInverseXform);
         }
       }
@@ -354,8 +330,7 @@ bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
                                         VtMatrix4dArray *jointLocalXforms,
                                         const GfMatrix4d *rootInverseXform)
 {
-  if (!jointLocalXforms)
-  {
+  if (!jointLocalXforms) {
     TF_CODING_ERROR("'jointLocalXforms' is null");
     return false;
   }
@@ -373,8 +348,7 @@ bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
                                         VtMatrix4dArray *jointLocalXforms,
                                         const GfMatrix4d *rootInverseXform)
 {
-  if (!jointLocalXforms)
-  {
+  if (!jointLocalXforms) {
     TF_CODING_ERROR("'jointLocalXforms' is null");
     return false;
   }
@@ -389,11 +363,12 @@ bool UsdSkelComputeJointLocalTransforms(const UsdSkelTopology &topology,
                                         GfMatrix4d *jointLocalXforms,
                                         const GfMatrix4d *rootInverseXform)
 {
-  return UsdSkelComputeJointLocalTransforms(topology,
-                                            TfSpan<const GfMatrix4d>(xforms, topology.size()),
-                                            TfSpan<const GfMatrix4d>(inverseXforms, topology.size()),
-                                            TfSpan<GfMatrix4d>(jointLocalXforms, topology.size()),
-                                            rootInverseXform);
+  return UsdSkelComputeJointLocalTransforms(
+    topology,
+    TfSpan<const GfMatrix4d>(xforms, topology.size()),
+    TfSpan<const GfMatrix4d>(inverseXforms, topology.size()),
+    TfSpan<GfMatrix4d>(jointLocalXforms, topology.size()),
+    rootInverseXform);
 }
 
 namespace
@@ -401,25 +376,24 @@ namespace
 
   /// Helper to return the GfVec3 type with the same precision
   /// as the given matrix type.
-  template<typename T>
-  struct _Vec3MatchingMatrix4
-  {
-  };
+  template<typename T> struct _Vec3MatchingMatrix4
+  {};
 
-  template<>
-  struct _Vec3MatchingMatrix4<GfMatrix4d>
+  template<> struct _Vec3MatchingMatrix4<GfMatrix4d>
   {
     using type = GfVec3d;
   };
 
-  template<>
-  struct _Vec3MatchingMatrix4<GfMatrix4f>
+  template<> struct _Vec3MatchingMatrix4<GfMatrix4f>
   {
     using type = GfVec3f;
   };
 
   template<class Matrix4>
-  bool _DecomposeTransform(const Matrix4 &xform, GfVec3f *translate, Matrix4 *rotate, GfVec3h *scale)
+  bool _DecomposeTransform(const Matrix4 &xform,
+                           GfVec3f *translate,
+                           Matrix4 *rotate,
+                           GfVec3h *scale)
   {
     // XXX: GfMatrix4x::Factor() may crash if the value isn't properly aligned.
     TF_DEV_AXIOM(size_t(&xform) % alignof(Matrix4) == 0);
@@ -432,11 +406,9 @@ namespace
 
     Vec3 factoredScale, factoredTranslate;
     ;
-    if (xform.Factor(&scaleOrient, &factoredScale, rotate, &factoredTranslate, &perspMat))
-    {
+    if (xform.Factor(&scaleOrient, &factoredScale, rotate, &factoredTranslate, &perspMat)) {
 
-      if (rotate->Orthonormalize())
-      {
+      if (rotate->Orthonormalize()) {
         *scale = GfVec3h(factoredScale);
         *translate = GfVec3f(factoredTranslate);
         return true;
@@ -446,11 +418,13 @@ namespace
   }
 
   template<typename Matrix4>
-  bool _DecomposeTransform(const Matrix4 &xform, GfVec3f *translate, GfQuatf *rotate, GfVec3h *scale)
+  bool _DecomposeTransform(const Matrix4 &xform,
+                           GfVec3f *translate,
+                           GfQuatf *rotate,
+                           GfVec3h *scale)
   {
     Matrix4 rotateMx;
-    if (_DecomposeTransform(xform, translate, &rotateMx, scale))
-    {
+    if (_DecomposeTransform(xform, translate, &rotateMx, scale)) {
       *rotate = rotateMx.ExtractRotationQuat();
       return true;
     }
@@ -460,70 +434,80 @@ namespace
 }  // namespace
 
 template<typename Matrix4>
-bool UsdSkelDecomposeTransform(const Matrix4 &xform, GfVec3f *translate, GfRotation *rotate, GfVec3h *scale)
+bool UsdSkelDecomposeTransform(const Matrix4 &xform,
+                               GfVec3f *translate,
+                               GfRotation *rotate,
+                               GfVec3h *scale)
 {
   TRACE_FUNCTION();
 
-  if (!translate)
-  {
+  if (!translate) {
     TF_CODING_ERROR("'translate' pointer is null.");
     return false;
   }
-  if (!rotate)
-  {
+  if (!rotate) {
     TF_CODING_ERROR("'rotate' pointer is null.");
     return false;
   }
-  if (!scale)
-  {
+  if (!scale) {
     TF_CODING_ERROR("'scale' pointer is null.");
     return false;
   }
   Matrix4 rotateMx;
-  if (_DecomposeTransform(xform, translate, &rotateMx, scale))
-  {
+  if (_DecomposeTransform(xform, translate, &rotateMx, scale)) {
     *rotate = rotateMx.ExtractRotation();
     return true;
   }
   return false;
 }
 
-template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4d &, GfVec3f *, GfRotation *, GfVec3h *);
+template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4d &,
+                                                    GfVec3f *,
+                                                    GfRotation *,
+                                                    GfVec3h *);
 
-template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4f &, GfVec3f *, GfRotation *, GfVec3h *);
+template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4f &,
+                                                    GfVec3f *,
+                                                    GfRotation *,
+                                                    GfVec3h *);
 
 template<typename Matrix4>
-bool UsdSkelDecomposeTransform(const Matrix4 &xform, GfVec3f *translate, GfQuatf *rotate, GfVec3h *scale)
+bool UsdSkelDecomposeTransform(const Matrix4 &xform,
+                               GfVec3f *translate,
+                               GfQuatf *rotate,
+                               GfVec3h *scale)
 {
   TRACE_FUNCTION();
 
-  if (!translate)
-  {
+  if (!translate) {
     TF_CODING_ERROR("'translate' pointer is null.");
     return false;
   }
-  if (!rotate)
-  {
+  if (!rotate) {
     TF_CODING_ERROR("'rotate' pointer is null.");
     return false;
   }
-  if (!scale)
-  {
+  if (!scale) {
     TF_CODING_ERROR("'scale' pointer is null.");
     return false;
   }
   Matrix4 rotateMx;
-  if (_DecomposeTransform(xform, translate, &rotateMx, scale))
-  {
+  if (_DecomposeTransform(xform, translate, &rotateMx, scale)) {
     *rotate = GfQuatf(rotateMx.ExtractRotationQuat());
     return true;
   }
   return false;
 }
 
-template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4d &, GfVec3f *, GfQuatf *, GfVec3h *);
+template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4d &,
+                                                    GfVec3f *,
+                                                    GfQuatf *,
+                                                    GfVec3h *);
 
-template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4f &, GfVec3f *, GfQuatf *, GfVec3h *);
+template USDSKEL_API bool UsdSkelDecomposeTransform(const GfMatrix4f &,
+                                                    GfVec3f *,
+                                                    GfQuatf *,
+                                                    GfVec3h *);
 
 namespace
 {
@@ -536,18 +520,17 @@ namespace
   {
     TRACE_FUNCTION();
 
-    if (translations.size() != xforms.size())
-    {
-      TF_WARN("Size of translations [%zu] != size of xforms [%zu]", translations.size(), xforms.size());
+    if (translations.size() != xforms.size()) {
+      TF_WARN("Size of translations [%zu] != size of xforms [%zu]",
+              translations.size(),
+              xforms.size());
       return false;
     }
-    if (rotations.size() != xforms.size())
-    {
+    if (rotations.size() != xforms.size()) {
       TF_WARN("Size of rotations [%zu] != size of xforms [%zu]", rotations.size(), xforms.size());
       return false;
     }
-    if (scales.size() != xforms.size())
-    {
+    if (scales.size() != xforms.size()) {
       TF_WARN("Size of scales [%zu] != size of xforms [%zu]", scales.size(), xforms.size());
       return false;
     }
@@ -557,14 +540,11 @@ namespace
 
     _ParallelForN(xforms.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
       Matrix4 rotateMx;
-      for (size_t i = start; i < end; ++i)
-      {
+      for (size_t i = start; i < end; ++i) {
 
-        if (_DecomposeTransform(xforms[i], &translations[i], &rotateMx, &scales[i]))
-        {
+        if (_DecomposeTransform(xforms[i], &translations[i], &rotateMx, &scales[i])) {
           rotations[i] = GfQuatf(rotateMx.ExtractRotationQuat());
-        } else
-        {
+        } else {
           TF_WARN(
             "Failed decomposing transform %zu. "
             "The source transform may be singular.",
@@ -615,18 +595,15 @@ bool UsdSkelDecomposeTransforms(const VtMatrix4dArray &xforms,
                                 VtQuatfArray *rotations,
                                 VtVec3hArray *scales)
 {
-  if (!translations)
-  {
+  if (!translations) {
     TF_CODING_ERROR("'translations' pointer is null.");
     return false;
   }
-  if (!rotations)
-  {
+  if (!rotations) {
     TF_CODING_ERROR("'rotations' pointer is null.");
     return false;
   }
-  if (!scales)
-  {
+  if (!scales) {
     TF_CODING_ERROR("'scales' pointer is null.");
     return false;
   }
@@ -644,8 +621,7 @@ void UsdSkelMakeTransform(const GfVec3f &translate,
                           const GfVec3h &scale,
                           Matrix4 *xform)
 {
-  if (xform)
-  {
+  if (xform) {
     // Order is scale*rotate*translate
     *xform = Matrix4(rotate[0][0] * scale[0],
                      rotate[0][1] * scale[0],
@@ -666,8 +642,7 @@ void UsdSkelMakeTransform(const GfVec3f &translate,
                      translate[1],
                      translate[2],
                      1);
-  } else
-  {
+  } else {
     TF_CODING_ERROR("'xform' is null");
   }
 }
@@ -712,24 +687,22 @@ namespace
   {
     TRACE_FUNCTION();
 
-    if (ARCH_UNLIKELY(translations.size() != xforms.size()))
-    {
-      TF_WARN("Size of translations [%zu] != size of xforms [%zu]", translations.size(), xforms.size());
+    if (ARCH_UNLIKELY(translations.size() != xforms.size())) {
+      TF_WARN("Size of translations [%zu] != size of xforms [%zu]",
+              translations.size(),
+              xforms.size());
       return false;
     }
-    if (ARCH_UNLIKELY(rotations.size() != xforms.size()))
-    {
+    if (ARCH_UNLIKELY(rotations.size() != xforms.size())) {
       TF_WARN("Size of rotations [%zu] != size of xforms [%zu]", rotations.size(), xforms.size());
       return false;
     }
-    if (ARCH_UNLIKELY(scales.size() != xforms.size()))
-    {
+    if (ARCH_UNLIKELY(scales.size() != xforms.size())) {
       TF_WARN("Size of scales [%zu] != size of xforms [%zu]", scales.size(), xforms.size());
       return false;
     }
 
-    for (size_t i = 0; i < xforms.size(); ++i)
-    {
+    for (size_t i = 0; i < xforms.size(); ++i) {
       UsdSkelMakeTransform(translations[i], rotations[i], scales[i], &xforms[i]);
     }
     return true;
@@ -772,8 +745,7 @@ bool UsdSkelMakeTransforms(const VtVec3fArray &translations,
                            const VtVec3hArray &scales,
                            VtMatrix4dArray *xforms)
 {
-  if (!xforms)
-  {
+  if (!xforms) {
     TF_CODING_ERROR("'xforms' pointer is null.");
     return false;
   }
@@ -790,14 +762,12 @@ bool UsdSkelComputeJointsExtent(TfSpan<const Matrix4> xforms,
 {
   TRACE_FUNCTION();
 
-  if (!extent)
-  {
+  if (!extent) {
     TF_CODING_ERROR("'extent' pointer is null.");
     return false;
   }
 
-  for (size_t i = 0; i < xforms.size(); ++i)
-  {
+  for (size_t i = 0; i < xforms.size(); ++i) {
     const GfVec3f pivot(xforms[i].ExtractTranslation());
     extent->UnionWith(rootXform ? rootXform->TransformAffine(pivot) : pivot);
   }
@@ -824,8 +794,7 @@ bool UsdSkelComputeJointsExtent(const VtMatrix4dArray &joints,
                                 const GfMatrix4d *rootXform)
 {
   GfRange3f range;
-  if (UsdSkelComputeJointsExtent<GfMatrix4d>(joints, &range, pad, rootXform))
-  {
+  if (UsdSkelComputeJointsExtent<GfMatrix4d>(joints, &range, pad, rootXform)) {
 
     extent->resize(2);
     (*extent)[0] = range.GetMin();
@@ -846,8 +815,7 @@ bool UsdSkelComputeJointsExtent(const GfMatrix4d *xforms,
   if (UsdSkelComputeJointsExtent<GfMatrix4d>(TfSpan<const GfMatrix4d>(xforms, count),
                                              &range,
                                              pad,
-                                             rootXform))
-  {
+                                             rootXform)) {
     extent->resize(2);
     (*extent)[0] = range.GetMin();
     (*extent)[1] = range.GetMax();
@@ -864,21 +832,17 @@ namespace
   /// Throws a warning for failed validation.
   bool _ValidateArrayShape(size_t size, int numInfluencesPerComponent)
   {
-    if (numInfluencesPerComponent > 0)
-    {
-      if (size % numInfluencesPerComponent == 0)
-      {
+    if (numInfluencesPerComponent > 0) {
+      if (size % numInfluencesPerComponent == 0) {
         return true;
-      } else
-      {
+      } else {
         TF_WARN(
           "Unexpected array size [%zu]: Size must be a multiple of "
           "the number of influences per component [%d].",
           size,
           numInfluencesPerComponent);
       }
-    } else
-    {
+    } else {
       TF_WARN(
         "Invalid number of influences per component (%d): "
         "number of influences must be greater than zero.",
@@ -893,35 +857,28 @@ bool UsdSkelNormalizeWeights(TfSpan<float> weights, int numInfluencesPerComponen
 {
   TRACE_FUNCTION();
 
-  if (!_ValidateArrayShape(weights.size(), numInfluencesPerComponent))
-  {
+  if (!_ValidateArrayShape(weights.size(), numInfluencesPerComponent)) {
     return false;
   }
 
   const size_t numComponents = weights.size() / numInfluencesPerComponent;
 
   _ParallelForN(numComponents, /* inSerial = */ false, [&](size_t start, size_t end) {
-    for (size_t i = start; i < end; ++i)
-    {
+    for (size_t i = start; i < end; ++i) {
 
       float *weightSet = weights.data() + i * numInfluencesPerComponent;
 
       float sum = 0.0f;
-      for (int j = 0; j < numInfluencesPerComponent; ++j)
-      {
+      for (int j = 0; j < numInfluencesPerComponent; ++j) {
         sum += weightSet[j];
       }
 
-      if (std::abs(sum) > std::numeric_limits<float>::epsilon())
-      {
-        for (int j = 0; j < numInfluencesPerComponent; ++j)
-        {
+      if (std::abs(sum) > std::numeric_limits<float>::epsilon()) {
+        for (int j = 0; j < numInfluencesPerComponent; ++j) {
           weightSet[j] /= sum;
         }
-      } else
-      {
-        for (int j = 0; j < numInfluencesPerComponent; ++j)
-        {
+      } else {
+        for (int j = 0; j < numInfluencesPerComponent; ++j) {
           weightSet[j] = 0.0f;
         }
       }
@@ -934,30 +891,28 @@ bool UsdSkelNormalizeWeights(TfSpan<float> weights, int numInfluencesPerComponen
 // deprecated
 bool UsdSkelNormalizeWeights(VtFloatArray *weights, int numInfluencesPerComponent)
 {
-  if (!weights)
-  {
+  if (!weights) {
     TF_CODING_ERROR("'weights' pointer is null.");
     return false;
   }
   return UsdSkelNormalizeWeights(*weights, numInfluencesPerComponent);
 }
 
-bool UsdSkelSortInfluences(TfSpan<int> indices, TfSpan<float> weights, int numInfluencesPerComponent)
+bool UsdSkelSortInfluences(TfSpan<int> indices,
+                           TfSpan<float> weights,
+                           int numInfluencesPerComponent)
 {
   TRACE_FUNCTION();
 
-  if (indices.size() != weights.size())
-  {
+  if (indices.size() != weights.size()) {
     TF_WARN("Size of 'indices' [%zu] != size of 'weights' [%zu].", indices.size(), weights.size());
     return false;
   }
-  if (!_ValidateArrayShape(indices.size(), numInfluencesPerComponent))
-  {
+  if (!_ValidateArrayShape(indices.size(), numInfluencesPerComponent)) {
     return false;
   }
 
-  if (numInfluencesPerComponent < 2)
-  {
+  if (numInfluencesPerComponent < 2) {
     // Nothing to do.
     return true;
   }
@@ -966,20 +921,17 @@ bool UsdSkelSortInfluences(TfSpan<int> indices, TfSpan<float> weights, int numIn
 
   _ParallelForN(numComponents, /* inSerial = */ false, [&](size_t start, size_t end) {
     std::vector<std::pair<float, int>> influences;
-    for (size_t i = start; i < end; ++i)
-    {
+    for (size_t i = start; i < end; ++i) {
       const size_t offset = i * numInfluencesPerComponent;
       float *weightsSet = weights.data() + offset;
       int *indexSet = indices.data() + offset;
 
       influences.resize(numInfluencesPerComponent);
-      for (int j = 0; j < numInfluencesPerComponent; ++j)
-      {
+      for (int j = 0; j < numInfluencesPerComponent; ++j) {
         influences[j] = std::make_pair(weightsSet[j], indexSet[j]);
       }
       std::sort(influences.begin(), influences.end(), std::greater<std::pair<float, int>>());
-      for (int j = 0; j < numInfluencesPerComponent; ++j)
-      {
+      for (int j = 0; j < numInfluencesPerComponent; ++j) {
         const auto &pair = influences[j];
         weightsSet[j] = pair.first;
         indexSet[j] = pair.second;
@@ -991,15 +943,15 @@ bool UsdSkelSortInfluences(TfSpan<int> indices, TfSpan<float> weights, int numIn
 }
 
 // deprecated
-bool UsdSkelSortInfluences(VtIntArray *indices, VtFloatArray *weights, int numInfluencesPerComponent)
+bool UsdSkelSortInfluences(VtIntArray *indices,
+                           VtFloatArray *weights,
+                           int numInfluencesPerComponent)
 {
-  if (!indices)
-  {
+  if (!indices) {
     TF_CODING_ERROR("'indices' pointer is null.");
     return false;
   }
-  if (!weights)
-  {
+  if (!weights) {
     TF_CODING_ERROR("'weights' pointer is null.");
     return false;
   }
@@ -1010,26 +962,21 @@ bool UsdSkelSortInfluences(VtIntArray *indices, VtFloatArray *weights, int numIn
 namespace
 {
 
-  template<typename T>
-  bool _ExpandConstantArray(T *array, size_t size)
+  template<typename T> bool _ExpandConstantArray(T *array, size_t size)
   {
-    if (!array)
-    {
+    if (!array) {
       TF_CODING_ERROR("'array' pointer is null.");
       return false;
     }
 
-    if (size == 0)
-    {
+    if (size == 0) {
       array->clear();
-    } else
-    {
+    } else {
       size_t numInfluencesPerComponent = array->size();
       array->resize(numInfluencesPerComponent * size);
 
       auto *data = array->data();
-      for (size_t i = 1; i < size; ++i)
-      {
+      for (size_t i = 1; i < size; ++i) {
         std::copy(data, data + numInfluencesPerComponent, data + i * numInfluencesPerComponent);
       }
     }
@@ -1060,8 +1007,7 @@ namespace
     if (srcNumInfluencesPerComponent == newNumInfluencesPerComponent)
       return true;
 
-    if (!array)
-    {
+    if (!array) {
       TF_CODING_ERROR("'array' pointer is null.");
       return false;
     }
@@ -1073,12 +1019,10 @@ namespace
     if (numComponents == 0)
       return true;
 
-    if (newNumInfluencesPerComponent < srcNumInfluencesPerComponent)
-    {
+    if (newNumInfluencesPerComponent < srcNumInfluencesPerComponent) {
       // Truncate influences in-place.
       auto *data = array->data();
-      for (size_t i = 1; i < numComponents; ++i)
-      {
+      for (size_t i = 1; i < numComponents; ++i) {
         size_t srcStart = i * srcNumInfluencesPerComponent;
         size_t srcEnd = srcStart + newNumInfluencesPerComponent;
         size_t dstStart = i * newNumInfluencesPerComponent;
@@ -1088,24 +1032,22 @@ namespace
         std::copy(data + srcStart, data + srcEnd, data + dstStart);
       }
       array->resize(numComponents * newNumInfluencesPerComponent);
-    } else
-    {
+    } else {
       // Expand influences in-place.
       // This is possible IFF all elements are copied in *reverse order*
       array->resize(numComponents * newNumInfluencesPerComponent);
 
       auto *data = array->data();
-      for (size_t i = 0; i < numComponents; ++i)
-      {
+      for (size_t i = 0; i < numComponents; ++i) {
         // Reverse the order.
         size_t idx = numComponents - i - 1;
 
         // Copy source values (*reverse order*)
-        for (int j = (srcNumInfluencesPerComponent - 1); j >= 0; --j)
-        {
+        for (int j = (srcNumInfluencesPerComponent - 1); j >= 0; --j) {
           TF_DEV_AXIOM((idx * newNumInfluencesPerComponent + j) < array->size());
 
-          data[idx * newNumInfluencesPerComponent + j] = data[idx * srcNumInfluencesPerComponent + j];
+          data[idx * newNumInfluencesPerComponent + j] =
+            data[idx * srcNumInfluencesPerComponent + j];
         }
         // Initialize values not filled by copying from src.
         TF_DEV_AXIOM((idx + 1) * newNumInfluencesPerComponent <= array->size());
@@ -1133,10 +1075,11 @@ bool UsdSkelResizeInfluences(VtFloatArray *weights,
 {
   TRACE_FUNCTION();
 
-  if (_ResizeInfluences(weights, srcNumInfluencesPerComponent, newNumInfluencesPerComponent, 0.0f))
-  {
-    if (newNumInfluencesPerComponent < srcNumInfluencesPerComponent)
-    {
+  if (_ResizeInfluences(weights,
+                        srcNumInfluencesPerComponent,
+                        newNumInfluencesPerComponent,
+                        0.0f)) {
+    if (newNumInfluencesPerComponent < srcNumInfluencesPerComponent) {
       // Some weights have been stripped off. Need to renormalize.
       return UsdSkelNormalizeWeights(weights, newNumInfluencesPerComponent);
     }
@@ -1151,22 +1094,19 @@ bool UsdSkelInterleaveInfluences(const TfSpan<const int> &indices,
 {
   TRACE_FUNCTION();
 
-  if (weights.size() != indices.size())
-  {
+  if (weights.size() != indices.size()) {
     TF_WARN("Size of weights [%zu] != size of indices [%zu]", weights.size(), indices.size());
     return false;
   }
 
-  if (interleavedInfluences.size() != indices.size())
-  {
+  if (interleavedInfluences.size() != indices.size()) {
     TF_WARN("Size of interleavedInfluences [%zu] != size of indices [%zu]",
             interleavedInfluences.size(),
             indices.size());
     return false;
   }
 
-  for (size_t i = 0; i < indices.size(); ++i)
-  {
+  for (size_t i = 0; i < indices.size(); ++i) {
     interleavedInfluences[i] = GfVec2f(static_cast<float>(indices[i]), weights[i]);
   }
   return true;
@@ -1232,23 +1172,19 @@ namespace
     std::atomic_bool errors(false);
 
     _ParallelForN(points.size(), /* inSerial = */ inSerial, [&](size_t start, size_t end) {
-      for (size_t pi = start; pi < end; ++pi)
-      {
+      for (size_t pi = start; pi < end; ++pi) {
 
         const GfVec3f initialP = geomBindTransform.Transform(points[pi]);
         GfVec3f p(0, 0, 0);
 
-        for (int wi = 0; wi < numInfluencesPerPoint; ++wi)
-        {
+        for (int wi = 0; wi < numInfluencesPerPoint; ++wi) {
           const size_t influenceIdx = pi * numInfluencesPerPoint + wi;
           const int jointIdx = influenceFn.GetIndex(influenceIdx);
 
-          if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
-          {
+          if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size()) {
 
             const float w = influenceFn.GetWeight(influenceIdx);
-            if (w != 0.0f)
-            {
+            if (w != 0.0f) {
               // Since joint transforms are encoded in terms of
               // t,r,s components, it shouldn't be possible to
               // encode non-affine transforms, except for the rest
@@ -1270,8 +1206,7 @@ namespace
             // most points have few influences.
             // This optimization is not being applied now because
             // the schema does not (yet) require sorted influences.
-          } else
-          {
+          } else {
 
             // XXX: Generally, if one joint index is bad, an asset
             // has probably gotten out of sync, and probably many
@@ -1306,8 +1241,7 @@ namespace
                                  TfSpan<GfVec3f> points,
                                  bool inSerial)
   {
-    if (influences.size() != (points.size() * numInfluencesPerPoint))
-    {
+    if (influences.size() != (points.size() * numInfluencesPerPoint)) {
       TF_WARN(
         "Size of influences [%zu] != "
         "(points.size() [%zu] * numInfluencesPerPoint [%d]).",
@@ -1335,16 +1269,14 @@ namespace
                                     TfSpan<GfVec3f> points,
                                     bool inSerial)
   {
-    if (jointIndices.size() != jointWeights.size())
-    {
+    if (jointIndices.size() != jointWeights.size()) {
       TF_WARN("Size of jointIndices [%zu] != size of jointWeights [%zu]",
               jointIndices.size(),
               jointWeights.size());
       return false;
     }
 
-    if (jointIndices.size() != (points.size() * numInfluencesPerPoint))
-    {
+    if (jointIndices.size() != (points.size() * numInfluencesPerPoint)) {
       TF_WARN(
         "Size of jointIndices [%zu] != "
         "(points.size() [%zu] * numInfluencesPerPoint [%d]).",
@@ -1458,8 +1390,7 @@ bool UsdSkelSkinPointsLBS(const GfMatrix4d &geomBindTransform,
                           int numInfluencesPerPoint,
                           VtVec3fArray *points)
 {
-  if (!points)
-  {
+  if (!points) {
     TF_CODING_ERROR("'points' pointer is null.");
     return false;
   }
@@ -1496,28 +1427,23 @@ namespace
       // considered in the future (E.g, Accurate and Efficient
       // Lighting for Skinned Models, Tarini, et. al.)
 
-      for (size_t pi = start; pi < end; ++pi)
-      {
+      for (size_t pi = start; pi < end; ++pi) {
 
         const GfVec3f initialN = normals[pi] * geomBindTransform;
 
         GfVec3f n(0, 0, 0);
 
-        for (int wi = 0; wi < numInfluencesPerPoint; ++wi)
-        {
+        for (int wi = 0; wi < numInfluencesPerPoint; ++wi) {
           const size_t influenceIdx = pi * numInfluencesPerPoint + wi;
           const int jointIdx = influenceFn.GetIndex(influenceIdx);
 
-          if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
-          {
+          if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size()) {
 
             const float w = influenceFn.GetWeight(influenceIdx);
-            if (w != 0.0f)
-            {
+            if (w != 0.0f) {
               n += (initialN * jointXforms[jointIdx]) * w;
             }
-          } else
-          {
+          } else {
             // XXX: Generally, if one joint index is bad, an asset
             // has probably gotten out of sync, and probably many
             // other indices will be invalid, too.
@@ -1550,8 +1476,7 @@ namespace
                                   TfSpan<GfVec3f> normals,
                                   bool inSerial)
   {
-    if (influences.size() != (normals.size() * numInfluencesPerPoint))
-    {
+    if (influences.size() != (normals.size() * numInfluencesPerPoint)) {
       TF_WARN(
         "Size of influences [%zu] != "
         "(normals.size() [%zu] * numInfluencesPerPoint [%d]).",
@@ -1579,16 +1504,14 @@ namespace
                                      TfSpan<GfVec3f> normals,
                                      bool inSerial)
   {
-    if (jointIndices.size() != jointWeights.size())
-    {
+    if (jointIndices.size() != jointWeights.size()) {
       TF_WARN("Size of jointIndices [%zu] != size of jointWeights [%zu]",
               jointIndices.size(),
               jointWeights.size());
       return false;
     }
 
-    if (jointIndices.size() != (normals.size() * numInfluencesPerPoint))
-    {
+    if (jointIndices.size() != (normals.size() * numInfluencesPerPoint)) {
       TF_WARN(
         "Size of jointIndices [%zu] != "
         "(normals.size() [%zu] * numInfluencesPerPoint [%d]).",
@@ -1684,23 +1607,19 @@ namespace
   {
     TRACE_FUNCTION();
 
-    if (!xform)
-    {
+    if (!xform) {
       TF_CODING_ERROR("'xform' is null");
       return false;
     }
 
     // Early-out for the common case where an object is rigidly
     // bound to a single joint.
-    if (influencesFn.size() == 1 && GfIsClose(influencesFn.GetWeight(0), 1.0f, 1e-6))
-    {
+    if (influencesFn.size() == 1 && GfIsClose(influencesFn.GetWeight(0), 1.0f, 1e-6)) {
       const int jointIdx = influencesFn.GetIndex(0);
-      if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
-      {
+      if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size()) {
         *xform = geomBindTransform * jointXforms[jointIdx];
         return true;
-      } else
-      {
+      } else {
         TF_WARN(
           "Out of range joint index %d at index 0"
           " (num joints = %zu).",
@@ -1732,25 +1651,20 @@ namespace
       pivot,                                          // translate
     };
 
-    for (int pi = 0; pi < 4; ++pi)
-    {
+    for (int pi = 0; pi < 4; ++pi) {
       const GfVec3f initialP = framePoints[pi];
 
       GfVec3f p(0, 0, 0);
-      for (size_t wi = 0; wi < influencesFn.size(); ++wi)
-      {
+      for (size_t wi = 0; wi < influencesFn.size(); ++wi) {
         const int jointIdx = influencesFn.GetIndex(wi);
-        if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size())
-        {
+        if (jointIdx >= 0 && static_cast<size_t>(jointIdx) < jointXforms.size()) {
           const float w = influencesFn.GetWeight(wi);
-          if (w != 0.0f)
-          {
+          if (w != 0.0f) {
             // XXX: See the notes from _SkinPointsLBS():
             // affine transforms should be okay.
             p += jointXforms[jointIdx].TransformAffine(initialP) * w;
           }
-        } else
-        {
+        } else {
           TF_WARN(
             "Out of range joint index %d at index %zu"
             " (num joints = %zu).",
@@ -1765,8 +1679,7 @@ namespace
 
     const GfVec3f skinnedPivot = framePoints[3];
     xform->SetTranslate(skinnedPivot);
-    for (int i = 0; i < 3; ++i)
-    {
+    for (int i = 0; i < 3; ++i) {
       xform->SetRow3(i, (framePoints[i] - skinnedPivot));
     }
     return true;
@@ -1779,8 +1692,7 @@ namespace
                                               TfSpan<const float> jointWeights,
                                               Matrix4 *xform)
   {
-    if (jointIndices.size() != jointWeights.size())
-    {
+    if (jointIndices.size() != jointWeights.size()) {
       TF_WARN("Size of jointIndices [%zu] != size of jointWeights [%zu]",
               jointIndices.size(),
               jointWeights.size());
@@ -1868,14 +1780,11 @@ namespace
     std::atomic_bool errors(false);
 
     _ParallelForN(offsets.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
-      for (size_t i = start; i < end; ++i)
-      {
+      for (size_t i = start; i < end; ++i) {
         const int index = indices[i];
-        if (index >= 0 && static_cast<size_t>(index) < points.size())
-        {
+        if (index >= 0 && static_cast<size_t>(index) < points.size()) {
           points[index] += offsets[i] * weight;
-        } else
-        {
+        } else {
           // XXX: If one offset index is bad, an asset has probably
           // gotten out of sync, and probably many other indices
           // will be invalid, too. Bail out early.
@@ -1897,8 +1806,7 @@ namespace
     TRACE_FUNCTION();
 
     _ParallelForN(points.size(), /*inSerial*/ false, [&](size_t start, size_t end) {
-      for (size_t i = start; i < end; ++i)
-      {
+      for (size_t i = start; i < end; ++i) {
         points[i] += offsets[i] * weight;
       }
     });
@@ -1912,32 +1820,29 @@ bool UsdSkelApplyBlendShape(const float weight,
                             TfSpan<GfVec3f> points)
 {
   // Early out if weights are zero.
-  if (GfIsClose(weight, 0.0, 1e-6))
-  {
+  if (GfIsClose(weight, 0.0, 1e-6)) {
     return true;
   }
 
-  if (indices.empty())
-  {
+  if (indices.empty()) {
 
-    if (offsets.size() == points.size())
-    {
+    if (offsets.size() == points.size()) {
       UsdSkel_ApplyNonIndexedBlendShape(weight, offsets, points);
-    } else
-    {
-      TF_WARN("Size of non-indexed offsets [%zu] != size of points [%zu]", offsets.size(), points.size());
+    } else {
+      TF_WARN("Size of non-indexed offsets [%zu] != size of points [%zu]",
+              offsets.size(),
+              points.size());
       return false;
     }
-  } else
-  {
+  } else {
 
-    if (offsets.size() == indices.size())
-    {
+    if (offsets.size() == indices.size()) {
 
       return UsdSkel_ApplyIndexedBlendShape(weight, offsets, indices, points);
-    } else
-    {
-      TF_WARN("Size of indexed offsets [%zu] != size of indices [%zu]", offsets.size(), indices.size());
+    } else {
+      TF_WARN("Size of indexed offsets [%zu] != size of indices [%zu]",
+              offsets.size(),
+              indices.size());
       return false;
     }
   }

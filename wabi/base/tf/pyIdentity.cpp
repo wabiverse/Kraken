@@ -61,23 +61,16 @@ struct Tf_PyIdHandle
   PyObject *_weakRef;
 };
 
-Tf_PyIdHandle::Tf_PyIdHandle()
-  : _isAcquired(false),
-    _weakRef(0)
-{}
+Tf_PyIdHandle::Tf_PyIdHandle() : _isAcquired(false), _weakRef(0) {}
 
-Tf_PyIdHandle::Tf_PyIdHandle(PyObject *obj)
-  : _isAcquired(false),
-    _weakRef(0)
+Tf_PyIdHandle::Tf_PyIdHandle(PyObject *obj) : _isAcquired(false), _weakRef(0)
 {
   TfPyLock lock;
   _weakRef = PyWeakref_NewRef(obj, 0);
   Acquire();
 }
 
-Tf_PyIdHandle::Tf_PyIdHandle(Tf_PyIdHandle const &other)
-  : _isAcquired(false),
-    _weakRef(0)
+Tf_PyIdHandle::Tf_PyIdHandle(Tf_PyIdHandle const &other) : _isAcquired(false), _weakRef(0)
 {
   *this = other;
 }
@@ -85,8 +78,7 @@ Tf_PyIdHandle::Tf_PyIdHandle(Tf_PyIdHandle const &other)
 Tf_PyIdHandle &Tf_PyIdHandle::operator=(Tf_PyIdHandle const &other)
 {
   CleanUp();
-  if (other._weakRef)
-  {
+  if (other._weakRef) {
     _weakRef = other._weakRef;
     TfPyLock lock;
     Py_INCREF(_weakRef);
@@ -111,20 +103,17 @@ void Tf_PyIdHandle::CleanUp()
 
 void Tf_PyIdHandle::Release() const
 {
-  if (_weakRef && !_isAcquired)
-  {
+  if (_weakRef && !_isAcquired) {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR("Releasing while not acquired!");
     return;
     // CODE_COVERAGE_ON
   }
-  if (PyObject *ptr = Ptr())
-  {
+  if (PyObject *ptr = Ptr()) {
     _isAcquired = false;
     TfPyLock lock;
     Py_DECREF(ptr);
-  } else
-  {
+  } else {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
       "Acquiring Python identity with "
@@ -138,20 +127,17 @@ void Tf_PyIdHandle::Release() const
 
 void Tf_PyIdHandle::Acquire() const
 {
-  if (_isAcquired)
-  {
+  if (_isAcquired) {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR("Acquiring while already acquired!");
     return;
     // CODE_COVERAGE_ON
   }
-  if (PyObject *ptr = Ptr())
-  {
+  if (PyObject *ptr = Ptr()) {
     _isAcquired = true;
     TfPyLock lock;
     Py_INCREF(ptr);
-  } else
-  {
+  } else {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
       "Acquiring Python identity with expired Python "
@@ -165,8 +151,7 @@ void Tf_PyIdHandle::Acquire() const
 
 PyObject *Tf_PyIdHandle::Ptr() const
 {
-  if (_weakRef)
-  {
+  if (_weakRef) {
     TfPyLock lock;
     return PyWeakref_GetObject(_weakRef);
   }
@@ -192,8 +177,7 @@ static std::string _GetTypeName(PyObject *obj)
   using namespace boost::python;
   TfPyLock lock;
   handle<> typeHandle(borrowed<>(PyObject_Type(obj)));
-  if (typeHandle)
-  {
+  if (typeHandle) {
     object classObj(typeHandle);
     object nameObj(classObj.attr("__name__"));
     extract<string> name(nameObj);
@@ -232,14 +216,11 @@ static void _IssueMultipleIdentityErrorStacks(void const *key)
 
 #else
 
-static void _RecordEstablishedIdentityStack(void const *)
-{}
+static void _RecordEstablishedIdentityStack(void const *) {}
 
-static void _EraseEstablishedIdentityStack(void const *)
-{}
+static void _EraseEstablishedIdentityStack(void const *) {}
 
-static void _IssueMultipleIdentityErrorStacks(void const *)
-{}
+static void _IssueMultipleIdentityErrorStacks(void const *) {}
 
 #endif
 
@@ -251,7 +232,9 @@ void Tf_PyIdentityHelper::Set(void const *key, PyObject *obj)
   TfAutoMallocTag2 tag("Tf", "Tf_PyIdentityHelper::Set");
 
   static std::once_flag once;
-  std::call_once(once, []() { Tf_ExpiryNotifier::SetNotifier(_WeakBaseDied); });
+  std::call_once(once, []() {
+    Tf_ExpiryNotifier::SetNotifier(_WeakBaseDied);
+  });
 
   if (!key || !obj)
     return;
@@ -265,12 +248,10 @@ void Tf_PyIdentityHelper::Set(void const *key, PyObject *obj)
   _IdentityMap &_identityMap = _GetIdentityMap();
   _IdentityMap::iterator i = _identityMap.find(key);
 
-  if (i == _identityMap.end())
-  {
+  if (i == _identityMap.end()) {
     _identityMap[key] = Tf_PyIdHandle(obj);
     _RecordEstablishedIdentityStack(key);
-  } else if (i->second.Ptr() != obj)
-  {
+  } else if (i->second.Ptr() != obj) {
     // CODE_COVERAGE_OFF Can only get here if there's a bug.
     TF_CODING_ERROR(
       "Multiple Python objects for C++ object %p: "
@@ -291,16 +272,14 @@ void Tf_PyIdentityHelper::Set(void const *key, PyObject *obj)
 // there is none, return 0.
 PyObject *Tf_PyIdentityHelper::Get(void const *key)
 {
-  if (!key)
-  {
+  if (!key) {
     return 0;
   }
 
   TfPyLock lock;
   _IdentityMap &_identityMap = _GetIdentityMap();
   _IdentityMap::iterator i = _identityMap.find(key);
-  if (i == _identityMap.end())
-  {
+  if (i == _identityMap.end()) {
     return 0;
   }
 
@@ -351,16 +330,14 @@ static TfStaticData<vector<PyGILState_STATE>> _pyLocks;
 static void _LockPython()
 {
   // Python may already be shut down -- if so, don't do anything.
-  if (Py_IsInitialized())
-  {
+  if (Py_IsInitialized()) {
     _pyLocks->push_back(PyGILState_Ensure());
   }
 }
 static void _UnlockPython()
 {
   // Python may already be shut down -- if so, don't do anything.
-  if (Py_IsInitialized())
-  {
+  if (Py_IsInitialized()) {
     PyGILState_STATE state = _pyLocks->back();
     _pyLocks->pop_back();
     PyGILState_Release(state);
@@ -410,14 +387,12 @@ void Tf_PyOwnershipRefBaseUniqueChanged(TfRefBase const *refBase, bool isNowUniq
 
   void const *uniqueId = Tf_PyOwnershipPtrMap::Lookup(refBase);
 
-  if (!uniqueId)
-  {
+  if (!uniqueId) {
     // CODE_COVERAGE_OFF Can only happen if there's a bug.
     TF_CODING_ERROR("Couldn't get uniqueId associated with refBase!");
     TfLogStackTrace("RefBase Unique Changed Error");
     // CODE_COVERAGE_ON
-  } else
-  {
+  } else {
     if (isNowUnique)
       Tf_PyIdentityHelper::Release(uniqueId);
     else

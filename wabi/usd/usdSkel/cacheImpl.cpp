@@ -88,11 +88,9 @@ UsdSkelAnimQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateAnimQuery(const UsdPr
       return UsdSkelAnimQuery(a->second);
   }
 
-  if (UsdSkelIsSkelAnimationPrim(prim))
-  {
+  if (UsdSkelIsSkelAnimationPrim(prim)) {
     _PrimToAnimMap::accessor a;
-    if (_cache->_animQueryCache.insert(a, prim))
-    {
+    if (_cache->_animQueryCache.insert(a, prim)) {
       a->second = UsdSkel_AnimQueryImpl::New(prim);
     }
     return UsdSkelAnimQuery(a->second);
@@ -100,7 +98,8 @@ UsdSkelAnimQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateAnimQuery(const UsdPr
   return UsdSkelAnimQuery();
 }
 
-UsdSkel_SkelDefinitionRefPtr UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelDefinition(const UsdPrim &prim)
+UsdSkel_SkelDefinitionRefPtr UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelDefinition(
+  const UsdPrim &prim)
 {
   TRACE_FUNCTION();
 
@@ -116,11 +115,9 @@ UsdSkel_SkelDefinitionRefPtr UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelDefin
       return a->second;
   }
 
-  if (prim.IsA<UsdSkelSkeleton>())
-  {
+  if (prim.IsA<UsdSkelSkeleton>()) {
     _PrimToSkelDefinitionMap::accessor a;
-    if (_cache->_skelDefinitionCache.insert(a, prim))
-    {
+    if (_cache->_skelDefinitionCache.insert(a, prim)) {
       a->second = UsdSkel_SkelDefinition::New(UsdSkelSkeleton(prim));
     }
     return a->second;
@@ -138,11 +135,9 @@ UsdSkelSkeletonQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelQuery(const U
       return a->second;
   }
 
-  if (auto skelDef = FindOrCreateSkelDefinition(prim))
-  {
+  if (auto skelDef = FindOrCreateSkelDefinition(prim)) {
     _PrimToSkelQueryMap::accessor a;
-    if (_cache->_skelQueryCache.insert(a, prim))
-    {
+    if (_cache->_skelQueryCache.insert(a, prim)) {
 
       UsdSkelAnimQuery animQuery = FindOrCreateAnimQuery(
         UsdSkelBindingAPI(prim).GetInheritedAnimationSource());
@@ -162,8 +157,9 @@ UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::GetSkinningQuery(const UsdPri
   return UsdSkelSkinningQuery();
 }
 
-UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::_FindOrCreateSkinningQuery(const UsdPrim &skinnedPrim,
-                                                                              const _SkinningQueryKey &key)
+UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::_FindOrCreateSkinningQuery(
+  const UsdPrim &skinnedPrim,
+  const _SkinningQueryKey &key)
 {
   UsdSkelSkeletonQuery skelQuery = FindOrCreateSkelQuery(key.skel);
   const UsdSkelAnimQuery &animQuery = skelQuery.GetAnimQuery();
@@ -191,8 +187,7 @@ namespace
 
   void _DeprecatedBindingCheck(bool hasBindingAPI, const UsdProperty &prop)
   {
-    if (!hasBindingAPI)
-    {
+    if (!hasBindingAPI) {
       TF_WARN(
         "Found binding property <%s>, but the SkelBindingAPI was not "
         "applied on the owning prim. In the future, binding properties "
@@ -206,8 +201,7 @@ namespace
   /// instance prototype. Otherwise return the original attr.
   UsdAttribute _GetAttrInPrototype(const UsdAttribute &attr)
   {
-    if (attr && attr.GetPrim().IsInstanceProxy())
-    {
+    if (attr && attr.GetPrim().IsInstanceProxy()) {
       return attr.GetPrim().GetPrimInPrototype().GetAttribute(attr.GetName());
     }
     return attr;
@@ -217,8 +211,7 @@ namespace
   /// instance prototype. Otherwise return the original rel.
   UsdRelationship _GetRelInPrototype(const UsdRelationship &rel)
   {
-    if (rel && rel.GetPrim().IsInstanceProxy())
-    {
+    if (rel && rel.GetPrim().IsInstanceProxy()) {
       return rel.GetPrim().GetPrimInPrototype().GetRelationship(rel.GetName());
     }
     return rel;
@@ -226,14 +219,15 @@ namespace
 
 }  // namespace
 
-bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root, Usd_PrimFlagsPredicate predicate)
+bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root,
+                                            Usd_PrimFlagsPredicate predicate)
 {
   TRACE_FUNCTION();
 
-  TF_DEBUG(USDSKEL_CACHE).Msg("[UsdSkelCache] Populate map from <%s>\n", root.GetPrim().GetPath().GetText());
+  TF_DEBUG(USDSKEL_CACHE)
+    .Msg("[UsdSkelCache] Populate map from <%s>\n", root.GetPrim().GetPath().GetText());
 
-  if (!root)
-  {
+  if (!root) {
     TF_CODING_ERROR("'root' is invalid.");
     return false;
   }
@@ -242,20 +236,16 @@ bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root, Usd_PrimFla
 
   const UsdPrimRange range = UsdPrimRange::PreAndPostVisit(root.GetPrim(), predicate);
 
-  for (auto it = range.begin(); it != range.end(); ++it)
-  {
+  for (auto it = range.begin(); it != range.end(); ++it) {
 
-    if (it.IsPostVisit())
-    {
-      if (stack.size() > 0 && stack.back().second == *it)
-      {
+    if (it.IsPostVisit()) {
+      if (stack.size() > 0 && stack.back().second == *it) {
         stack.pop_back();
       }
       continue;
     }
 
-    if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>()))
-    {
+    if (ARCH_UNLIKELY(!it->IsA<UsdGeomImageable>())) {
       TF_DEBUG(USDSKEL_CACHE)
         .Msg(
           "[UsdSkelCache]  %sPruning traversal at <%s> "
@@ -278,8 +268,7 @@ bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root, Usd_PrimFla
     const UsdSkelBindingAPI binding(*it);
 
     UsdSkelSkeleton skel;
-    if (binding.GetSkeleton(&skel))
-    {
+    if (binding.GetSkeleton(&skel)) {
       key.skel = skel.GetPrim();
     }
 
@@ -287,37 +276,29 @@ bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root, Usd_PrimFla
     // properties that have an authored value. Properties with
     // no authored value are treated as if they do not exist.
 
-    if (UsdAttribute attr = _GetAttrInPrototype(binding.GetJointIndicesAttr()))
-    {
-      if (attr.HasAuthoredValue())
-      {
+    if (UsdAttribute attr = _GetAttrInPrototype(binding.GetJointIndicesAttr())) {
+      if (attr.HasAuthoredValue()) {
         _DeprecatedBindingCheck(hasBindingAPI, attr);
         key.jointIndicesAttr = std::move(attr);
       }
     }
 
-    if (UsdAttribute attr = _GetAttrInPrototype(binding.GetJointWeightsAttr()))
-    {
-      if (attr.HasAuthoredValue())
-      {
+    if (UsdAttribute attr = _GetAttrInPrototype(binding.GetJointWeightsAttr())) {
+      if (attr.HasAuthoredValue()) {
         _DeprecatedBindingCheck(hasBindingAPI, attr);
         key.jointWeightsAttr = std::move(attr);
       }
     }
 
-    if (UsdAttribute attr = _GetAttrInPrototype(binding.GetGeomBindTransformAttr()))
-    {
-      if (attr.HasAuthoredValue())
-      {
+    if (UsdAttribute attr = _GetAttrInPrototype(binding.GetGeomBindTransformAttr())) {
+      if (attr.HasAuthoredValue()) {
         _DeprecatedBindingCheck(hasBindingAPI, attr);
         key.geomBindTransformAttr = std::move(attr);
       }
     }
 
-    if (UsdAttribute attr = _GetAttrInPrototype(binding.GetJointsAttr()))
-    {
-      if (attr.HasAuthoredValue())
-      {
+    if (UsdAttribute attr = _GetAttrInPrototype(binding.GetJointsAttr())) {
+      if (attr.HasAuthoredValue()) {
         _DeprecatedBindingCheck(hasBindingAPI, attr);
         key.jointsAttr = std::move(attr);
       }
@@ -328,34 +309,27 @@ bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root, Usd_PrimFla
     // Unlike other binding properties above, skel:blendShapes and
     // skel:blendShapeTargets are *not* inherited, so we only check
     // for them on skinnable prims.
-    if (isSkinnable)
-    {
-      if (UsdAttribute attr = _GetAttrInPrototype(binding.GetBlendShapesAttr()))
-      {
-        if (attr.HasAuthoredValue())
-        {
+    if (isSkinnable) {
+      if (UsdAttribute attr = _GetAttrInPrototype(binding.GetBlendShapesAttr())) {
+        if (attr.HasAuthoredValue()) {
           _DeprecatedBindingCheck(hasBindingAPI, attr);
           key.blendShapesAttr = std::move(attr);
         }
       }
 
-      if (UsdRelationship rel = _GetRelInPrototype(binding.GetBlendShapeTargetsRel()))
-      {
-        if (rel.HasAuthoredTargets())
-        {
+      if (UsdRelationship rel = _GetRelInPrototype(binding.GetBlendShapeTargetsRel())) {
+        if (rel.HasAuthoredTargets()) {
           _DeprecatedBindingCheck(hasBindingAPI, rel);
           key.blendShapeTargetsRel = std::move(rel);
         }
       }
     }
 
-    if (isSkinnable)
-    {
+    if (isSkinnable) {
       // Append a skinning query using the resolved binding properties.
 
       _PrimToSkinningQueryMap::accessor a;
-      if (_cache->_primSkinningQueryCache.insert(a, *it))
-      {
+      if (_cache->_primSkinningQueryCache.insert(a, *it)) {
         a->second = _FindOrCreateSkinningQuery(*it, key);
       }
 

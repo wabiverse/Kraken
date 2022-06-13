@@ -53,29 +53,27 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens,
 
 NDR_REGISTER_DISCOVERY_PLUGIN(NdrArnoldDiscoveryPlugin);
 
-NdrArnoldDiscoveryPlugin::NdrArnoldDiscoveryPlugin()
-{}
+NdrArnoldDiscoveryPlugin::NdrArnoldDiscoveryPlugin() {}
 
-NdrArnoldDiscoveryPlugin::~NdrArnoldDiscoveryPlugin()
-{}
+NdrArnoldDiscoveryPlugin::~NdrArnoldDiscoveryPlugin() {}
 
 NdrNodeDiscoveryResultVec NdrArnoldDiscoveryPlugin::DiscoverNodes(const Context &context)
 {
   NdrNodeDiscoveryResultVec ret;
   auto shaderDefs = NdrArnoldGetShaderDefs();
-  for (const UsdPrim &prim : shaderDefs->Traverse())
-  {
+  for (const UsdPrim &prim : shaderDefs->Traverse()) {
     const auto shaderName = prim.GetName();
     TfToken filename("<built-in>");
     prim.GetMetadata(_tokens->filename, &filename);
-    ret.emplace_back(NdrIdentifier(TfStringPrintf("arnold:%s", shaderName.GetText())),  // identifier
-                     NdrVersion(AI_VERSION_ARCH_NUM, AI_VERSION_MAJOR_NUM),             // version
-                     shaderName,                                                        // name
-                     _tokens->shader,                                                   // family
-                     _tokens->arnold,                                                   // discoveryType
-                     _tokens->arnold,                                                   // sourceType
-                     filename,                                                          // uri
-                     filename                                                           // resolvedUri
+    ret.emplace_back(
+      NdrIdentifier(TfStringPrintf("arnold:%s", shaderName.GetText())),  // identifier
+      NdrVersion(AI_VERSION_ARCH_NUM, AI_VERSION_MAJOR_NUM),             // version
+      shaderName,                                                        // name
+      _tokens->shader,                                                   // family
+      _tokens->arnold,                                                   // discoveryType
+      _tokens->arnold,                                                   // sourceType
+      filename,                                                          // uri
+      filename                                                           // resolvedUri
     );
   }
   return ret;

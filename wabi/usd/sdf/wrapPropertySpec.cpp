@@ -70,17 +70,20 @@ void wrapPropertySpec()
   typedef SdfPropertySpec This;
 
   // Register python conversions for vector<SdfPropertySpecHandle>
-  to_python_converter<SdfPropertySpecHandleVector, TfPySequenceToPython<SdfPropertySpecHandleVector>>();
+  to_python_converter<SdfPropertySpecHandleVector,
+                      TfPySequenceToPython<SdfPropertySpecHandleVector>>();
 
-  TfPyContainerConversions::from_python_sequence<SdfPropertySpecHandleVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    SdfPropertySpecHandleVector,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   // Register python conversions for vector<SdfPropertySpecConstHandle>
   to_python_converter<SdfPropertySpecConstHandleVector,
                       TfPySequenceToPython<SdfPropertySpecConstHandleVector>>();
 
-  TfPyContainerConversions::from_python_sequence<SdfPropertySpecConstHandleVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    SdfPropertySpecConstHandleVector,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   class_<This, SdfHandle<This>, bases<SdfSpec>, boost::noncopyable>("PropertySpec", no_init)
     .def(SdfPyAbstractSpec())
@@ -90,7 +93,10 @@ void wrapPropertySpec()
                   &_WrapSetName,
                   "The name of the property.")
 
-    .add_property("comment", &This::GetComment, &This::SetComment, "A comment describing the property.")
+    .add_property("comment",
+                  &This::GetComment,
+                  &This::SetComment,
+                  "A comment describing the property.")
 
     .add_property("documentation",
                   &This::GetDocumentation,
@@ -186,7 +192,9 @@ void wrapPropertySpec()
                   "Note: It is only valid to author assetInfo on attributes that "
                   "are of type SdfAssetPath.\n")
 
-    .add_property("owner", &This::GetOwner, "The owner of this property.  Either a relationship or a prim.")
+    .add_property("owner",
+                  &This::GetOwner,
+                  "The owner of this property.  Either a relationship or a prim.")
 
     .add_property("default",
                   &This::GetDefaultValue,

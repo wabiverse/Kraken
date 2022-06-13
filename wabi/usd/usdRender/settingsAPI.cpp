@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (RenderSettingsAPI));
 
 /* virtual */
-UsdRenderSettingsAPI::~UsdRenderSettingsAPI()
-{}
+UsdRenderSettingsAPI::~UsdRenderSettingsAPI() {}
 
 /* static */
 UsdRenderSettingsAPI UsdRenderSettingsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdRenderSettingsAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdRenderSettingsAPI::GetSchemaKind() const
 /* static */
 UsdRenderSettingsAPI UsdRenderSettingsAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdRenderSettingsAPI>())
-  {
+  if (prim.ApplyAPI<UsdRenderSettingsAPI>()) {
     return UsdRenderSettingsAPI(prim);
   }
   return UsdRenderSettingsAPI();

@@ -69,19 +69,23 @@ namespace
   bool _SetOffsets(const UsdSkelInbetweenShape &self, const object &val)
   {
     const VtValue vtVal = UsdPythonToSdfType(val, SdfValueTypeNames->Vector3fArray);
-    return vtVal.IsHolding<VtVec3fArray>() ? self.SetOffsets(vtVal.UncheckedGet<VtVec3fArray>()) : false;
+    return vtVal.IsHolding<VtVec3fArray>() ? self.SetOffsets(vtVal.UncheckedGet<VtVec3fArray>()) :
+                                             false;
   }
 
   bool _SetNormalOffsets(const UsdSkelInbetweenShape &self, const object &val)
   {
     const VtValue vtVal = UsdPythonToSdfType(val, SdfValueTypeNames->Vector3fArray);
-    return vtVal.IsHolding<VtVec3fArray>() ? self.SetNormalOffsets(vtVal.UncheckedGet<VtVec3fArray>()) :
-                                             false;
+    return vtVal.IsHolding<VtVec3fArray>() ?
+             self.SetNormalOffsets(vtVal.UncheckedGet<VtVec3fArray>()) :
+             false;
   }
 
-  UsdAttribute _CreateNormalOffsetsAttr(const UsdSkelInbetweenShape &self, const object &defaultValue)
+  UsdAttribute _CreateNormalOffsetsAttr(const UsdSkelInbetweenShape &self,
+                                        const object &defaultValue)
   {
-    return self.CreateNormalOffsetsAttr(UsdPythonToSdfType(defaultValue, SdfValueTypeNames->Vector3fArray));
+    return self.CreateNormalOffsetsAttr(
+      UsdPythonToSdfType(defaultValue, SdfValueTypeNames->Vector3fArray));
   }
 
 }  // namespace

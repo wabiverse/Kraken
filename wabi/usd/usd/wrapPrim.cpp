@@ -90,41 +90,45 @@ namespace
 
   static string __repr__(const UsdPrim &self)
   {
-    if (self)
-    {
+    if (self) {
       return TF_PY_REPR_PREFIX + TfStringPrintf("Prim(<%s>)", self.GetPath().GetText());
-    } else
-    {
+    } else {
       return "invalid " + self.GetDescription();
     }
   }
 
   static TfTokenVector _WrapGetPropertyNames(const UsdPrim &prim, boost::python::object predicate)
   {
-    const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                                   UsdPrim::PropertyPredicateFunc();
+    const auto &pred = predicate ?
+                         boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                         UsdPrim::PropertyPredicateFunc();
     return prim.GetPropertyNames(pred);
   }
 
-  static TfTokenVector _WrapGetAuthoredPropertyNames(const UsdPrim &prim, boost::python::object predicate)
+  static TfTokenVector _WrapGetAuthoredPropertyNames(const UsdPrim &prim,
+                                                     boost::python::object predicate)
   {
-    const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                                   UsdPrim::PropertyPredicateFunc();
+    const auto &pred = predicate ?
+                         boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                         UsdPrim::PropertyPredicateFunc();
     return prim.GetAuthoredPropertyNames(pred);
   }
 
-  static std::vector<UsdProperty> _WrapGetProperties(const UsdPrim &prim, boost::python::object predicate)
+  static std::vector<UsdProperty> _WrapGetProperties(const UsdPrim &prim,
+                                                     boost::python::object predicate)
   {
-    const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                                   UsdPrim::PropertyPredicateFunc();
+    const auto &pred = predicate ?
+                         boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                         UsdPrim::PropertyPredicateFunc();
     return prim.GetProperties(pred);
   }
 
   static std::vector<UsdProperty> _WrapGetAuthoredProperties(const UsdPrim &prim,
                                                              boost::python::object predicate)
   {
-    const auto &pred = predicate ? boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
-                                   UsdPrim::PropertyPredicateFunc();
+    const auto &pred = predicate ?
+                         boost::python::extract<UsdPrim::PropertyPredicateFunc>(predicate) :
+                         UsdPrim::PropertyPredicateFunc();
     return prim.GetAuthoredProperties(pred);
   }
 
@@ -214,12 +218,14 @@ void wrapUsdPrim()
          return_value_policy<TfPySequenceToList>())
 
     .def("GetPropertiesInNamespace",
-         (vector<UsdProperty>(UsdPrim::*)(const vector<string> &) const) & UsdPrim::GetPropertiesInNamespace,
+         (vector<UsdProperty>(UsdPrim::*)(const vector<string> &) const) &
+           UsdPrim::GetPropertiesInNamespace,
          arg("namespaces"),
          return_value_policy<TfPySequenceToList>())
 
     .def("GetPropertiesInNamespace",
-         (vector<UsdProperty>(UsdPrim::*)(const string &) const) & UsdPrim::GetPropertiesInNamespace,
+         (vector<UsdProperty>(UsdPrim::*)(const string &) const) &
+           UsdPrim::GetPropertiesInNamespace,
          arg("namespaces"),
          return_value_policy<TfPySequenceToList>())
 
@@ -230,11 +236,14 @@ void wrapUsdPrim()
          return_value_policy<TfPySequenceToList>())
 
     .def("GetAuthoredPropertiesInNamespace",
-         (vector<UsdProperty>(UsdPrim::*)(const string &) const) & UsdPrim::GetAuthoredPropertiesInNamespace,
+         (vector<UsdProperty>(UsdPrim::*)(const string &) const) &
+           UsdPrim::GetAuthoredPropertiesInNamespace,
          arg("namespaces"),
          return_value_policy<TfPySequenceToList>())
 
-    .def("GetAppliedSchemas", &UsdPrim::GetAppliedSchemas, return_value_policy<TfPySequenceToList>())
+    .def("GetAppliedSchemas",
+         &UsdPrim::GetAppliedSchemas,
+         return_value_policy<TfPySequenceToList>())
 
     .def("GetPropertyOrder", &UsdPrim::GetPropertyOrder, return_value_policy<TfPySequenceToList>())
     .def("SetPropertyOrder", &UsdPrim::SetPropertyOrder, arg("order"))
@@ -246,11 +255,15 @@ void wrapUsdPrim()
          (arg("schemaType"), arg("instanceName") = TfToken()))
     .def("CanApplyAPI", &_WrapCanApplyAPI, (arg("schemaType")))
     .def("CanApplyAPI", &_WrapCanApplyAPI_2, (arg("schemaType"), arg("instanceName")))
-    .def("ApplyAPI", (bool(UsdPrim::*)(const TfType &) const) & UsdPrim::ApplyAPI, (arg("schemaType")))
+    .def("ApplyAPI",
+         (bool(UsdPrim::*)(const TfType &) const) & UsdPrim::ApplyAPI,
+         (arg("schemaType")))
     .def("ApplyAPI",
          (bool(UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::ApplyAPI,
          (arg("schemaType"), arg("instanceName")))
-    .def("RemoveAPI", (bool(UsdPrim::*)(const TfType &) const) & UsdPrim::RemoveAPI, (arg("schemaType")))
+    .def("RemoveAPI",
+         (bool(UsdPrim::*)(const TfType &) const) & UsdPrim::RemoveAPI,
+         (arg("schemaType")))
     .def("RemoveAPI",
          (bool(UsdPrim::*)(const TfType &, const TfToken &) const) & UsdPrim::RemoveAPI,
          (arg("schemaType"), arg("instanceName")))
@@ -268,19 +281,24 @@ void wrapUsdPrim()
          return_value_policy<TfPySequenceToList>())
 
     .def("GetChildrenNames", &UsdPrim::GetChildrenNames, return_value_policy<TfPySequenceToList>())
-    .def("GetAllChildrenNames", &UsdPrim::GetAllChildrenNames, return_value_policy<TfPySequenceToList>())
+    .def("GetAllChildrenNames",
+         &UsdPrim::GetAllChildrenNames,
+         return_value_policy<TfPySequenceToList>())
     .def("GetFilteredChildrenNames",
          &UsdPrim::GetFilteredChildrenNames,
          return_value_policy<TfPySequenceToList>())
 
-    .def("GetChildrenReorder", &UsdPrim::GetChildrenReorder, return_value_policy<TfPySequenceToList>())
+    .def("GetChildrenReorder",
+         &UsdPrim::GetChildrenReorder,
+         return_value_policy<TfPySequenceToList>())
     .def("SetChildrenReorder", &UsdPrim::SetChildrenReorder, arg("order"))
     .def("ClearChildrenReorder", &UsdPrim::ClearChildrenReorder)
 
     .def("GetParent", &UsdPrim::GetParent)
     .def("GetNextSibling", (UsdPrim(UsdPrim::*)() const) & UsdPrim::GetNextSibling)
     .def("GetFilteredNextSibling",
-         (UsdPrim(UsdPrim::*)(const Usd_PrimFlagsPredicate &) const) & UsdPrim::GetFilteredNextSibling)
+         (UsdPrim(UsdPrim::*)(const Usd_PrimFlagsPredicate &) const) &
+           UsdPrim::GetFilteredNextSibling)
     .def("IsPseudoRoot", &UsdPrim::IsPseudoRoot)
 
     .def("HasVariantSets", &UsdPrim::HasVariantSets)
@@ -292,19 +310,28 @@ void wrapUsdPrim()
     .def("ComputeExpandedPrimIndex", &UsdPrim::ComputeExpandedPrimIndex)
 
     .def("CreateAttribute",
-         (UsdAttribute(UsdPrim::*)(const TfToken &, const SdfValueTypeName &, bool, SdfVariability) const) &
+         (UsdAttribute(UsdPrim::*)(const TfToken &, const SdfValueTypeName &, bool, SdfVariability)
+            const) &
            UsdPrim::CreateAttribute,
-         (arg("name"), arg("typeName"), arg("custom") = true, arg("variability") = SdfVariabilityVarying))
+         (arg("name"),
+          arg("typeName"),
+          arg("custom") = true,
+          arg("variability") = SdfVariabilityVarying))
 
-    .def(
-      "CreateAttribute",
-      (UsdAttribute(UsdPrim::*)(const vector<string> &, const SdfValueTypeName &, bool, SdfVariability)
-         const) &
-        UsdPrim::CreateAttribute,
-      (arg("nameElts"), arg("typeName"), arg("custom") = true, arg("variability") = SdfVariabilityVarying))
+    .def("CreateAttribute",
+         (UsdAttribute(
+           UsdPrim::*)(const vector<string> &, const SdfValueTypeName &, bool, SdfVariability)
+            const) &
+           UsdPrim::CreateAttribute,
+         (arg("nameElts"),
+          arg("typeName"),
+          arg("custom") = true,
+          arg("variability") = SdfVariabilityVarying))
 
     .def("GetAttributes", &UsdPrim::GetAttributes, return_value_policy<TfPySequenceToList>())
-    .def("GetAuthoredAttributes", &UsdPrim::GetAuthoredAttributes, return_value_policy<TfPySequenceToList>())
+    .def("GetAuthoredAttributes",
+         &UsdPrim::GetAuthoredAttributes,
+         return_value_policy<TfPySequenceToList>())
 
     .def("GetAttribute", &UsdPrim::GetAttribute, arg("attrName"))
     .def("HasAttribute", &UsdPrim::HasAttribute, arg("attrName"))
@@ -318,7 +345,8 @@ void wrapUsdPrim()
          (arg("name"), arg("custom") = true))
 
     .def("CreateRelationship",
-         (UsdRelationship(UsdPrim::*)(const vector<string> &, bool) const) & UsdPrim::CreateRelationship,
+         (UsdRelationship(UsdPrim::*)(const vector<string> &, bool) const) &
+           UsdPrim::CreateRelationship,
          (arg("nameElts"), arg("custom") = true))
 
     .def("GetRelationships", &UsdPrim::GetRelationships, return_value_policy<TfPySequenceToList>())
@@ -334,7 +362,9 @@ void wrapUsdPrim()
          (arg("predicate") = object(), arg("recurseOnTargets") = false))
 
     .def("HasPayload", &UsdPrim::HasPayload)
-    .def("SetPayload", (bool(UsdPrim::*)(const SdfPayload &) const) & UsdPrim::SetPayload, (arg("payload")))
+    .def("SetPayload",
+         (bool(UsdPrim::*)(const SdfPayload &) const) & UsdPrim::SetPayload,
+         (arg("payload")))
     .def("SetPayload",
          (bool(UsdPrim::*)(const string &, const SdfPath &) const) & UsdPrim::SetPayload,
          (arg("assetPath"), arg("primPath")))
@@ -388,7 +418,9 @@ void wrapUsdPrim()
     .def("GetInstances", &UsdPrim::GetInstances, return_value_policy<TfPySequenceToList>())
 
     // Exposed only for testing and debugging.
-    .def("_GetSourcePrimIndex", &Usd_PrimGetSourcePrimIndex, return_value_policy<return_by_value>());
+    .def("_GetSourcePrimIndex",
+         &Usd_PrimGetSourcePrimIndex,
+         return_value_policy<return_by_value>());
 
   to_python_converter<std::vector<UsdPrim>, TfPySequenceToPython<std::vector<UsdPrim>>>();
 

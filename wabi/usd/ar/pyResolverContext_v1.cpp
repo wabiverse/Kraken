@@ -41,6 +41,7 @@ WABI_NAMESPACE_BEGIN
 class Ar_PythonConverterRegistry
 {
  public:
+
   std::vector<Ar_MakeResolverContextFromPythonFn> _convertFromPython;
   std::vector<Ar_ResolverContextToPythonFn> _convertToPython;
 };
@@ -51,8 +52,9 @@ static Ar_PythonConverterRegistry &_GetRegistry()
   return registry;
 }
 
-void Ar_RegisterResolverContextPythonConversion(const Ar_MakeResolverContextFromPythonFn &convertFunc,
-                                                const Ar_ResolverContextToPythonFn &getObjectFunc)
+void Ar_RegisterResolverContextPythonConversion(
+  const Ar_MakeResolverContextFromPythonFn &convertFunc,
+  const Ar_ResolverContextToPythonFn &getObjectFunc)
 {
   _GetRegistry()._convertFromPython.push_back(convertFunc);
   _GetRegistry()._convertToPython.push_back(getObjectFunc);
@@ -61,10 +63,8 @@ void Ar_RegisterResolverContextPythonConversion(const Ar_MakeResolverContextFrom
 bool Ar_CanConvertResolverContextFromPython(PyObject *pyObj)
 {
   Ar_PythonConverterRegistry &reg = _GetRegistry();
-  TF_FOR_ALL (canMakeContextFrom, reg._convertFromPython)
-  {
-    if ((*canMakeContextFrom)(pyObj, NULL))
-    {
+  TF_FOR_ALL (canMakeContextFrom, reg._convertFromPython) {
+    if ((*canMakeContextFrom)(pyObj, NULL)) {
       return true;
     }
   }
@@ -76,10 +76,8 @@ ArResolverContext Ar_ConvertResolverContextFromPython(PyObject *pyObj)
   ArResolverContext context;
 
   Ar_PythonConverterRegistry &reg = _GetRegistry();
-  TF_FOR_ALL (makeContextFrom, reg._convertFromPython)
-  {
-    if ((*makeContextFrom)(pyObj, &context))
-    {
+  TF_FOR_ALL (makeContextFrom, reg._convertFromPython) {
+    if ((*makeContextFrom)(pyObj, &context)) {
       break;
     }
   }
@@ -91,10 +89,8 @@ TfPyObjWrapper Ar_ConvertResolverContextToPython(const ArResolverContext &contex
   TfPyObjWrapper pyObj;
 
   Ar_PythonConverterRegistry &reg = _GetRegistry();
-  TF_FOR_ALL (convertToPython, reg._convertToPython)
-  {
-    if ((*convertToPython)(context, &pyObj))
-    {
+  TF_FOR_ALL (convertToPython, reg._convertToPython) {
+    if ((*convertToPython)(context, &pyObj)) {
       break;
     }
   }

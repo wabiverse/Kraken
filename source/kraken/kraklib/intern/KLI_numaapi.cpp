@@ -101,15 +101,13 @@ static NUMAAPI_Result loadNumaSymbols(void)
   // Prevent multiple initializations.
   static bool initialized = false;
   static NUMAAPI_Result result = NUMAAPI_NOT_AVAILABLE;
-  if (initialized)
-  {
+  if (initialized) {
     return result;
   }
   initialized = true;
   // Register de-initialization.
   const int error = atexit(numaExit);
-  if (error)
-  {
+  if (error) {
     result = NUMAAPI_ERROR_ATEXIT;
     return result;
   }
@@ -118,8 +116,7 @@ static NUMAAPI_Result loadNumaSymbols(void)
   // Load symbols.
 
 #  define _LIBRARY_FIND(lib, name)                      \
-    do                                                  \
-    {                                                   \
+    do {                                                \
       _##name = (t_##name *)GetProcAddress(lib, #name); \
     } while (0)
 #  define KERNEL_LIBRARY_FIND(name) _LIBRARY_FIND(kernel_lib, name)
@@ -165,8 +162,7 @@ static int countNumSetBits(ULONGLONG mask)
   // TODO(sergey): There might be faster way calculating number of set bits.
   // NOTE: mask must be unsigned, there is undefined behavior for signed ints.
   int num_bits = 0;
-  while (mask != 0)
-  {
+  while (mask != 0) {
     num_bits += (mask & 1);
     mask = (mask >> 1);
   }
@@ -179,8 +175,7 @@ static int countNumSetBits(ULONGLONG mask)
 int numaAPI_GetNumNodes(void)
 {
   ULONG highest_node_number;
-  if (!_GetNumaHighestNodeNumber(&highest_node_number))
-  {
+  if (!_GetNumaHighestNodeNumber(&highest_node_number)) {
     return 0;
   }
   // TODO(sergey): Resolve the type narrowing.
@@ -196,12 +191,10 @@ bool numaAPI_IsNodeAvailable(int node)
   // This is needed because numaApiGetNumNodes() is not guaranteed to
   // give total amount of nodes and some nodes might be unavailable.
   GROUP_AFFINITY processor_mask = {0};
-  if (!_GetNumaNodeProcessorMaskEx(node, &processor_mask))
-  {
+  if (!_GetNumaNodeProcessorMaskEx(node, &processor_mask)) {
     return false;
   }
-  if (processor_mask.Mask == 0)
-  {
+  if (processor_mask.Mask == 0) {
     return false;
   }
   return true;
@@ -210,8 +203,7 @@ bool numaAPI_IsNodeAvailable(int node)
 int numaAPI_GetNumNodeProcessors(int node)
 {
   GROUP_AFFINITY processor_mask = {0};
-  if (!_GetNumaNodeProcessorMaskEx(node, &processor_mask))
-  {
+  if (!_GetNumaNodeProcessorMaskEx(node, &processor_mask)) {
     return 0;
   }
   return countNumSetBits(processor_mask.Mask);
@@ -225,16 +217,14 @@ int numaAPI_GetNumCurrentNodesProcessors(void)
   HANDLE thread_handle = GetCurrentThread();
   GROUP_AFFINITY group_affinity;
   // TODO(sergey): Needs implementation.
-  if (!_GetThreadGroupAffinity(thread_handle, &group_affinity))
-  {
+  if (!_GetThreadGroupAffinity(thread_handle, &group_affinity)) {
     return 0;
   }
   // First, count number of possible bits in the affinity mask.
   const int num_processors = countNumSetBits(group_affinity.Mask);
   // Then check that it's not exceeding number of processors in tjhe group.
   const int num_group_processors = _GetActiveProcessorCount(group_affinity.Group);
-  if (num_group_processors < num_processors)
-  {
+  if (num_group_processors < num_processors) {
     return num_group_processors;
   }
   return num_processors;
@@ -249,13 +239,11 @@ bool numaAPI_RunProcessOnNode(int node)
   // Change affinity of the proces to make it to run on a given node.
   HANDLE process_handle = GetCurrentProcess();
   GROUP_AFFINITY processor_mask = {0};
-  if (_GetNumaNodeProcessorMaskEx(node, &processor_mask) == 0)
-  {
+  if (_GetNumaNodeProcessorMaskEx(node, &processor_mask) == 0) {
     return false;
   }
   // TODO: Affinity should respect processor group.
-  if (_SetProcessAffinityMask(process_handle, processor_mask.Mask) == 0)
-  {
+  if (_SetProcessAffinityMask(process_handle, processor_mask.Mask) == 0) {
     return false;
   }
   return true;
@@ -265,12 +253,10 @@ bool numaAPI_RunThreadOnNode(int node)
 {
   HANDLE thread_handle = GetCurrentThread();
   GROUP_AFFINITY group_affinity = {0};
-  if (_GetNumaNodeProcessorMaskEx(node, &group_affinity) == 0)
-  {
+  if (_GetNumaNodeProcessorMaskEx(node, &group_affinity) == 0) {
     return false;
   }
-  if (_SetThreadGroupAffinity(thread_handle, &group_affinity, NULL) == 0)
-  {
+  if (_SetThreadGroupAffinity(thread_handle, &group_affinity, NULL) == 0) {
     return false;
   }
   return true;
@@ -293,8 +279,7 @@ void *numaAPI_AllocateLocal(size_t size)
 {
   UCHAR current_processor = (UCHAR)_GetCurrentProcessorNumber();
   UCHAR node;
-  if (!_GetNumaProcessorNode(current_processor, &node))
-  {
+  if (!_GetNumaProcessorNode(current_processor, &node)) {
     return NULL;
   }
   return numaAPI_AllocateOnNode(size, node);
@@ -302,8 +287,7 @@ void *numaAPI_AllocateLocal(size_t size)
 
 void numaAPI_Free(void *start, size_t size)
 {
-  if (!_VirtualFree(start, size, MEM_RELEASE))
-  {
+  if (!_VirtualFree(start, size, MEM_RELEASE)) {
     // TODO(sergey): Throw an error!
   }
 }
@@ -375,11 +359,9 @@ static tnuma_set_localalloc *numa_set_localalloc;
 static void *findLibrary(const char **paths)
 {
   int i = 0;
-  while (paths[i] != NULL)
-  {
+  while (paths[i] != NULL) {
     void *lib = dlopen(paths[i], RTLD_LAZY);
-    if (lib != NULL)
-    {
+    if (lib != NULL) {
       return lib;
     }
     ++i;
@@ -389,8 +371,7 @@ static void *findLibrary(const char **paths)
 
 static void numaExit(void)
 {
-  if (numa_lib == NULL)
-  {
+  if (numa_lib == NULL) {
     return;
   }
   dlclose(numa_lib);
@@ -402,8 +383,7 @@ static NUMAAPI_Result loadNumaSymbols(void)
   // Prevent multiple initializations.
   static bool initialized = false;
   static NUMAAPI_Result result = NUMAAPI_NOT_AVAILABLE;
-  if (initialized)
-  {
+  if (initialized) {
     return result;
   }
   initialized = true;
@@ -411,23 +391,20 @@ static NUMAAPI_Result loadNumaSymbols(void)
   const char *numa_paths[] = {"libnuma.so.1", "libnuma.so", NULL};
   // Register de-initialization.
   const int error = atexit(numaExit);
-  if (error)
-  {
+  if (error) {
     result = NUMAAPI_ERROR_ATEXIT;
     return result;
   }
   // Load library.
   numa_lib = findLibrary(numa_paths);
-  if (numa_lib == NULL)
-  {
+  if (numa_lib == NULL) {
     result = NUMAAPI_NOT_AVAILABLE;
     return result;
   }
   // Load symbols.
 
 #    define _LIBRARY_FIND(lib, name)         \
-      do                                     \
-      {                                      \
+      do {                                   \
         name = (t##name *)dlsym(lib, #name); \
       } while (0)
 #    define NUMA_LIBRARY_FIND(name) _LIBRARY_FIND(numa_lib, name)
@@ -470,13 +447,11 @@ NUMAAPI_Result numaAPI_Initialize(void)
 {
 #  ifdef WITH_DYNLOAD
   NUMAAPI_Result result = loadNumaSymbols();
-  if (result != NUMAAPI_SUCCESS)
-  {
+  if (result != NUMAAPI_SUCCESS) {
     return result;
   }
 #  endif
-  if (numa_available() < 0)
-  {
+  if (numa_available() < 0) {
     return NUMAAPI_NOT_AVAILABLE;
   }
   return NUMAAPI_SUCCESS;
@@ -503,19 +478,15 @@ int numaAPI_GetNumNodeProcessors(int node)
   const unsigned int num_bits = num_bytes * 8;
   // TODO(sergey): There might be faster way calculating number of set bits.
   int num_processors = 0;
-  for (unsigned int bit = 0; bit < num_bits; ++bit)
-  {
-    if (numa_bitmask_isbitset(cpu_mask, bit))
-    {
+  for (unsigned int bit = 0; bit < num_bits; ++bit) {
+    if (numa_bitmask_isbitset(cpu_mask, bit)) {
       ++num_processors;
     }
   }
 #  ifdef WITH_DYNLOAD
-  if (numa_free_cpumask != NULL)
-  {
+  if (numa_free_cpumask != NULL) {
     numa_free_cpumask(cpu_mask);
-  } else
-  {
+  } else {
     numa_bitmask_free(cpu_mask);
   }
 #  else
@@ -533,10 +504,8 @@ int numaAPI_GetNumCurrentNodesProcessors(void)
   const unsigned int num_bytes = numa_bitmask_nbytes(node_mask);
   const unsigned int num_bits = num_bytes * 8;
   int num_processors = 0;
-  for (unsigned int bit = 0; bit < num_bits; ++bit)
-  {
-    if (numa_bitmask_isbitset(node_mask, bit))
-    {
+  for (unsigned int bit = 0; bit < num_bits; ++bit) {
+    if (numa_bitmask_isbitset(node_mask, bit)) {
       num_processors += numaAPI_GetNumNodeProcessors(bit);
     }
   }
@@ -564,17 +533,14 @@ bool numaAPI_RunThreadOnNode(int node)
   // to make those optional, or require to call those explicitly.
   //
   // Current assumption is that this is similar to SetThreadGroupAffinity().
-  if (numa_node_size(node, NULL) > 0)
-  {
+  if (numa_node_size(node, NULL) > 0) {
     numa_set_interleave_mask(node_mask);
     numa_set_localalloc();
   }
 #  ifdef WITH_DYNLOAD
-  if (numa_free_nodemask != NULL)
-  {
+  if (numa_free_nodemask != NULL) {
     numa_free_nodemask(node_mask);
-  } else
-  {
+  } else {
     numa_bitmask_free(node_mask);
   }
 #  else

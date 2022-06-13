@@ -58,7 +58,8 @@ namespace
     return xforms;
   }
 
-  boost::python::tuple _ComputeJointLocalTransformComponents(const UsdSkelAnimQuery &self, UsdTimeCode time)
+  boost::python::tuple _ComputeJointLocalTransformComponents(const UsdSkelAnimQuery &self,
+                                                             UsdTimeCode time)
   {
     VtVec3fArray translations;
     VtQuatfArray rotations;
@@ -128,7 +129,9 @@ void wrapUsdSkelAnimQuery()
          &_ComputeJointLocalTransformComponents,
          (arg("time") = UsdTimeCode::Default()))
 
-    .def("ComputeBlendShapeWeights", &_ComputeBlendShapeWeights, (arg("time") = UsdTimeCode::Default()))
+    .def("ComputeBlendShapeWeights",
+         &_ComputeBlendShapeWeights,
+         (arg("time") = UsdTimeCode::Default()))
 
     .def("GetJointTransformTimeSamples", &_GetJointTransformTimeSamples)
 

@@ -47,10 +47,12 @@ void wrapUsdShadeTypes()
     .value("Append", UsdShadeConnectionModification::Append);
 
   to_python_converter<UsdShadeAttributeVector, TfPySequenceToPython<UsdShadeAttributeVector>>();
-  TfPyContainerConversions::from_python_sequence<UsdShadeAttributeVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    UsdShadeAttributeVector,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   to_python_converter<UsdShadeSourceInfoVector, TfPySequenceToPython<UsdShadeSourceInfoVector>>();
-  TfPyContainerConversions::from_python_sequence<UsdShadeSourceInfoVector,
-                                                 TfPyContainerConversions::variable_capacity_policy>();
+  TfPyContainerConversions::from_python_sequence<
+    UsdShadeSourceInfoVector,
+    TfPyContainerConversions::variable_capacity_policy>();
 }

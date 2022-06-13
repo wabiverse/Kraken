@@ -36,8 +36,7 @@ WABI_NAMESPACE_BEGIN
 
 std::string KLI_icon(eKrakenIcon icon_id)
 {
-  switch (icon_id)
-  {
+  switch (icon_id) {
     case ICON_NONE:
       return std::string();
     case ICON_KRAKEN:

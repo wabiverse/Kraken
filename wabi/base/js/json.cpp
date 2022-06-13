@@ -128,8 +128,7 @@ namespace
       const size_t vstart = values.size() - memberCount;
 
       JsObject object;
-      for (size_t i = 0; i < memberCount; ++i)
-      {
+      for (size_t i = 0; i < memberCount; ++i) {
         object.insert(std::make_pair(std::move(keys[kstart + i]), std::move(values[vstart + i])));
       }
 
@@ -152,6 +151,7 @@ namespace
     }
 
    public:
+
     std::vector<JsObject::key_type> keys;
     std::vector<JsObject::mapped_type> values;
   };
@@ -161,10 +161,10 @@ namespace
   // library to do the conversion instead.
   // See: https://github.com/Tencent/rapidjson/issues/954
 
-  template<class TBase>
-  class _WriterFix : public TBase
+  template<class TBase> class _WriterFix : public TBase
   {
    public:
+
     using Base = TBase;
     using Base::Base;
 
@@ -187,8 +187,7 @@ static rj::Value _ToImplObjectValue(const JsObject &object, Allocator &allocator
 {
   rj::Value value(rj::kObjectType);
 
-  for (const auto &p : object)
-  {
+  for (const auto &p : object) {
     value.AddMember(rj::Value(p.first.c_str(), allocator).Move(),
                     _JsValueToImplValue(p.second, allocator),
                     allocator);
@@ -202,8 +201,7 @@ static rj::Value _ToImplArrayValue(const JsArray &array, Allocator &allocator)
 {
   rj::Value value(rj::kArrayType);
 
-  for (const auto &e : array)
-  {
+  for (const auto &e : array) {
     value.PushBack(rj::Value(_JsValueToImplValue(e, allocator)).Move(), allocator);
   }
 
@@ -213,8 +211,7 @@ static rj::Value _ToImplArrayValue(const JsArray &array, Allocator &allocator)
 template<typename Allocator>
 static rj::Value _JsValueToImplValue(const JsValue &value, Allocator &allocator)
 {
-  switch (value.GetType())
-  {
+  switch (value.GetType()) {
     case JsValue::ObjectType:
       return _ToImplObjectValue(value.GetJsObject(), allocator);
     case JsValue::ArrayType:
@@ -238,8 +235,7 @@ static rj::Value _JsValueToImplValue(const JsValue &value, Allocator &allocator)
 
 JsValue JsParseStream(std::istream &istr, JsParseError *error)
 {
-  if (!istr)
-  {
+  if (!istr) {
     TF_CODING_ERROR("Stream error");
     return JsValue();
   }
@@ -247,14 +243,14 @@ JsValue JsParseStream(std::istream &istr, JsParseError *error)
   // Parse streams by reading into a string first. This makes it easier to
   // yield good error messages that include line and column numbers, rather
   // than the character offset that rapidjson currently provides.
-  return JsParseString(std::string((std::istreambuf_iterator<char>(istr)), std::istreambuf_iterator<char>()),
-                       error);
+  return JsParseString(
+    std::string((std::istreambuf_iterator<char>(istr)), std::istreambuf_iterator<char>()),
+    error);
 }
 
 JsValue JsParseString(const std::string &data, JsParseError *error)
 {
-  if (data.empty())
-  {
+  if (data.empty()) {
     TF_CODING_ERROR("JSON string is empty");
     return JsValue();
   }
@@ -263,13 +259,12 @@ JsValue JsParseString(const std::string &data, JsParseError *error)
   rj::Reader reader;
   rj::StringStream ss(data.c_str());
   // Need Full precision flag to round trip double values correctly.
-  rj::ParseResult result = reader.Parse<rj::kParseFullPrecisionFlag | rj::kParseStopWhenDoneFlag>(ss,
-                                                                                                  handler);
+  rj::ParseResult result = reader.Parse<rj::kParseFullPrecisionFlag | rj::kParseStopWhenDoneFlag>(
+    ss,
+    handler);
 
-  if (!result)
-  {
-    if (error)
-    {
+  if (!result) {
+    if (error) {
       // Rapidjson only provides a character offset for errors, not
       // line/column information like other parsers (like json_spirit,
       // upon which this library was previously implemented). Analyze
@@ -277,10 +272,8 @@ JsValue JsParseString(const std::string &data, JsParseError *error)
       error->line = 1;
       const size_t eoff = result.Offset();
       size_t nlpos = 0;
-      for (size_t i = 0; i < eoff; ++i)
-      {
-        if (data[i] == '\n')
-        {
+      for (size_t i = 0; i < eoff; ++i) {
+        if (data[i] == '\n') {
           error->line++;
           nlpos = i;
         }
@@ -298,8 +291,7 @@ JsValue JsParseString(const std::string &data, JsParseError *error)
 
 void JsWriteToStream(const JsValue &value, std::ostream &ostr)
 {
-  if (!ostr)
-  {
+  if (!ostr) {
     TF_CODING_ERROR("Stream error");
     return;
   }
@@ -328,47 +320,36 @@ std::string JsWriteToString(const JsValue &value)
 
 void JsWriteValue(JsWriter *writer, const JsValue &js)
 {
-  if (!writer)
-  {
+  if (!writer) {
     return;
   }
 
-  if (js.IsObject())
-  {
+  if (js.IsObject()) {
     const JsObject &obj = js.GetJsObject();
     writer->BeginObject();
-    for (const JsObject::value_type &field : obj)
-    {
+    for (const JsObject::value_type &field : obj) {
       writer->WriteKey(field.first);
       JsWriteValue(writer, field.second);
     }
     writer->EndObject();
-  } else if (js.IsArray())
-  {
+  } else if (js.IsArray()) {
     const JsArray &array = js.GetJsArray();
     writer->BeginArray();
-    for (const JsValue &elem : array)
-    {
+    for (const JsValue &elem : array) {
       JsWriteValue(writer, elem);
     }
     writer->EndArray();
-  } else if (js.IsUInt64())
-  {
+  } else if (js.IsUInt64()) {
     writer->WriteValue(js.GetUInt64());
-  } else if (js.IsString())
-  {
+  } else if (js.IsString()) {
     writer->WriteValue(js.GetString());
-  } else if (js.IsBool())
-  {
+  } else if (js.IsBool()) {
     writer->WriteValue(js.GetBool());
-  } else if (js.IsReal())
-  {
+  } else if (js.IsReal()) {
     writer->WriteValue(js.GetReal());
-  } else if (js.IsInt())
-  {
+  } else if (js.IsInt()) {
     writer->WriteValue(js.GetInt64());
-  } else if (js.IsNull())
-  {
+  } else if (js.IsNull()) {
     writer->WriteValue(nullptr);
   }
 }
@@ -385,6 +366,7 @@ namespace
   class Js_PolymorphicWriterInterface
   {
    public:
+
     virtual ~Js_PolymorphicWriterInterface();
     virtual bool Null() = 0;
     virtual bool Bool(bool b) = 0;
@@ -408,6 +390,7 @@ namespace
   class Js_PolymorphicWriter : public Js_PolymorphicWriterInterface, public TWriter
   {
    public:
+
     using Writer = TWriter;
     using Writer::Writer;
 
@@ -474,11 +457,10 @@ class JsWriter::_Impl
   using Writer = Js_PolymorphicWriter<_WriterFix<rj::Writer<rj::OStreamWrapper>>>;
 
  public:
-  _Impl(std::ostream &s, Style style)
-    : _strWrapper(s)
+
+  _Impl(std::ostream &s, Style style) : _strWrapper(s)
   {
-    switch (style)
-    {
+    switch (style) {
       case Style::Compact:
         _writer = std::unique_ptr<Writer>(new Writer(_strWrapper));
         break;
@@ -494,13 +476,12 @@ class JsWriter::_Impl
   }
 
  private:
+
   std::unique_ptr<Js_PolymorphicWriterInterface> _writer;
   rj::OStreamWrapper _strWrapper;
 };
 
-JsWriter::JsWriter(std::ostream &ostr, Style style)
-  : _impl(new _Impl(ostr, style))
-{}
+JsWriter::JsWriter(std::ostream &ostr, Style style) : _impl(new _Impl(ostr, style)) {}
 
 JsWriter::~JsWriter() = default;
 

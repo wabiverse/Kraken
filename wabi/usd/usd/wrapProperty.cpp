@@ -74,7 +74,8 @@ void wrapUsdProperty()
          (UsdProperty(UsdProperty::*)(const UsdPrim &) const) & UsdProperty::FlattenTo,
          (arg("parent")))
     .def("FlattenTo",
-         (UsdProperty(UsdProperty::*)(const UsdPrim &, const TfToken &) const) & UsdProperty::FlattenTo,
+         (UsdProperty(UsdProperty::*)(const UsdPrim &, const TfToken &) const) &
+           UsdProperty::FlattenTo,
          (arg("parent"), arg("propName")))
     .def("FlattenTo",
          (UsdProperty(UsdProperty::*)(const UsdProperty &) const) & UsdProperty::FlattenTo,

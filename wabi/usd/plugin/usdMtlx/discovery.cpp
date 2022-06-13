@@ -56,18 +56,14 @@ namespace
   {
     static const std::string inheritAttr("inherit");
 
-    while (true)
-    {
+    while (true) {
       const std::string &inherit = mtlx->getAttribute(inheritAttr);
-      if (inherit.empty())
-      {
+      if (inherit.empty()) {
         break;
       }
-      if (auto inherited = mtlx->getRoot()->getChild(inherit))
-      {
+      if (auto inherited = mtlx->getRoot()->getChild(inherit)) {
         mtlx = inherited;
-      } else
-      {
+      } else {
         break;
       }
     }
@@ -83,8 +79,7 @@ namespace
     // nodedef on the inheritance chain where top-most is the one
     // that doesn't itself inherit anything.  The 1.36 spec gives
     // guidance that this should be sufficient.
-    for (auto &&mtlxNodeDef : doc->getNodeDefs())
-    {
+    for (auto &&mtlxNodeDef : doc->getNodeDefs()) {
       result.emplace(mtlxNodeDef->getName(), _GetTopMostAncestralName(mtlxNodeDef));
     }
 
@@ -111,19 +106,16 @@ namespace
     // insert into the discovery result list.
 
     // Get the implementations.
-    for (auto &&impl : doc->getImplementations())
-    {
+    for (auto &&impl : doc->getImplementations()) {
       auto &&nodeDef = impl->getNodeDef();
-      if (!nodeDef)
-      {
+      if (!nodeDef) {
         continue;
       }
 
       // Ignore implementations that don't refer to a file.
       // XXX -- Do we want to allow these?  The renderer will
       //        be expected to provide the implementation.
-      if (impl->getFile().empty())
-      {
+      if (impl->getFile().empty()) {
         continue;
       }
 
@@ -142,11 +134,9 @@ namespace
     }
 
     // Get the nodegraphs implementing node defs.
-    for (auto &&nodeGraph : doc->getNodeGraphs())
-    {
+    for (auto &&nodeGraph : doc->getNodeGraphs()) {
       auto &&nodeDef = nodeGraph->getNodeDef();
-      if (!nodeDef)
-      {
+      if (!nodeDef) {
         continue;
       }
 
@@ -171,6 +161,7 @@ namespace
 class UsdMtlxDiscoveryPlugin : public NdrDiscoveryPlugin
 {
  public:
+
   UsdMtlxDiscoveryPlugin();
   ~UsdMtlxDiscoveryPlugin() override = default;
 
@@ -182,6 +173,7 @@ class UsdMtlxDiscoveryPlugin : public NdrDiscoveryPlugin
   const NdrStringVec &GetSearchURIs() const override;
 
  private:
+
   /// The paths (abs) indicating where the plugin should search for nodes.
   NdrStringVec _searchPaths;
   NdrStringVec _allSearchPaths;
@@ -189,7 +181,8 @@ class UsdMtlxDiscoveryPlugin : public NdrDiscoveryPlugin
 
 UsdMtlxDiscoveryPlugin::UsdMtlxDiscoveryPlugin()
 {
-  static const auto searchPaths = UsdMtlxGetSearchPathsFromEnvVar("wabi_USDMTLX_PLUGIN_SEARCH_PATHS");
+  static const auto searchPaths = UsdMtlxGetSearchPathsFromEnvVar(
+    "wabi_USDMTLX_PLUGIN_SEARCH_PATHS");
 
   _searchPaths = searchPaths;
   _allSearchPaths = UsdMtlxMergeSearchPaths(_searchPaths, UsdMtlxStandardLibraryPaths());
@@ -205,8 +198,7 @@ NdrNodeDiscoveryResultVec UsdMtlxDiscoveryPlugin::DiscoverNodes(const Context &c
   // all included by a single document.  We could construct such
   // a document in memory and parse it but instead we choose to
   // read each document separately and merge them.
-  if (auto document = UsdMtlxGetDocument(""))
-  {
+  if (auto document = UsdMtlxGetDocument("")) {
     auto standardResult = NdrNodeDiscoveryResult(NdrIdentifier(),  // identifier unused
                                                  NdrVersion(),     // version unused
                                                  "",               // name unused
@@ -220,12 +212,11 @@ NdrNodeDiscoveryResultVec UsdMtlxDiscoveryPlugin::DiscoverNodes(const Context &c
   }
 
   // Find the mtlx files from other search paths.
-  for (auto &&fileResult : NdrFsHelpersDiscoverNodes(_searchPaths,
-                                                     UsdMtlxStandardFileExtensions(),
-                                                     TfGetenvBool("USDMTLX_PLUGIN_FOLLOW_SYMLINKS", false)))
-  {
-    if (auto document = UsdMtlxGetDocument(fileResult.resolvedUri))
-    {
+  for (auto &&fileResult :
+       NdrFsHelpersDiscoverNodes(_searchPaths,
+                                 UsdMtlxStandardFileExtensions(),
+                                 TfGetenvBool("USDMTLX_PLUGIN_FOLLOW_SYMLINKS", false))) {
+    if (auto document = UsdMtlxGetDocument(fileResult.resolvedUri)) {
       _DiscoverNodes(&result, document, fileResult, _ComputeNameMapping(document));
     }
   }

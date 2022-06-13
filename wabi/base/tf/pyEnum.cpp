@@ -54,8 +54,7 @@ Tf_PyEnumRegistry::Tf_PyEnumRegistry()
 Tf_PyEnumRegistry::~Tf_PyEnumRegistry()
 {
   // release our references on all the objects we own.
-  TF_FOR_ALL (i, _objectsToEnums)
-  {
+  TF_FOR_ALL (i, _objectsToEnums) {
     decref(i->first);
   }
 }
@@ -67,14 +66,14 @@ string Tf_PyEnumRepr(object const &self)
   string baseName = extract<string>(self.attr("_baseName"));
   string name = extract<string>(self.attr("name"));
 
-  return TfStringGetSuffix(moduleName) + "." + (baseName.empty() ? string() : baseName + ".") + name;
+  return TfStringGetSuffix(moduleName) + "." + (baseName.empty() ? string() : baseName + ".") +
+         name;
 }
 
 string Tf_PyCleanEnumName(string name)
 {
   string pkgName = Tf_PyWrapContextManager::GetInstance().GetCurrentContext();
-  if (TfStringStartsWith(name, pkgName) && name != pkgName)
-  {
+  if (TfStringStartsWith(name, pkgName) && name != pkgName) {
     name.erase(0, pkgName.size());
   }
   return TfStringReplace(name, " ", "_");
@@ -87,14 +86,12 @@ void Tf_PyEnumAddAttribute(boost::python::scope &s,
   // Skip exporting attr if the scope already has an attribute
   // with that name, but do make sure to place it in .allValues
   // for the class.
-  if (PyObject_HasAttrString(s.ptr(), name.c_str()))
-  {
+  if (PyObject_HasAttrString(s.ptr(), name.c_str())) {
     TF_CODING_ERROR(
       "Ignoring enum value '%s'; an attribute with that "
       "name already exists in that scope.",
       name.c_str());
-  } else
-  {
+  } else {
     s.attr(name.c_str()) = value;
   }
 }

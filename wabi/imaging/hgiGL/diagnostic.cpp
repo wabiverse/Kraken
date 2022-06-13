@@ -70,22 +70,18 @@ void HgiGLPostPendingGLErrors(std::string const &where)
   // Protect from doing infinite looping when glGetError
   // is called from an invalid context.
   int watchDogCount = 0;
-  while ((watchDogCount++ < 256) && ((error = glGetError()) != GL_NO_ERROR))
-  {
+  while ((watchDogCount++ < 256) && ((error = glGetError()) != GL_NO_ERROR)) {
     foundError = true;
     const GLubyte *errorString = gluErrorString(error);
 
     std::ostringstream errorMessage;
-    if (!errorString)
-    {
+    if (!errorString) {
       errorMessage << "GL error code: 0x" << std::hex << error << std::dec;
-    } else
-    {
+    } else {
       errorMessage << "GL error: " << errorString;
     }
 
-    if (!where.empty())
-    {
+    if (!where.empty()) {
       errorMessage << ", reported from " << where;
     }
 
@@ -93,8 +89,7 @@ void HgiGLPostPendingGLErrors(std::string const &where)
 
     TF_RUNTIME_ERROR(errorMessage.str());
   }
-  if (foundError)
-  {
+  if (foundError) {
     TF_DEBUG(HGIGL_DEBUG_ERROR_STACKTRACE)
       .Msg(TfStringPrintf("==== GL Error Stack ====\n%s\n", TfGetStackTrace().c_str()));
   }
@@ -115,8 +110,7 @@ static void _HgiGLGL4DbgCallback(GLenum src,
                                  const GLchar *msg,
                                  GLvoid *user)
 {
-  switch (id)
-  {
+  switch (id) {
     case 131218:
       return;  // 'Shader re-compiled due to GL state mismatch'
     case 131185:
@@ -151,8 +145,7 @@ bool HgiGLMeetsMinimumRequirements()
   int glVersion = 0;
 
   const char *dot = strchr(glVersionStr, '.');
-  if (TF_VERIFY((dot && dot != glVersionStr), "Can't parse GL_VERSION %s", glVersionStr))
-  {
+  if (TF_VERIFY((dot && dot != glVersionStr), "Can't parse GL_VERSION %s", glVersionStr)) {
     // GL_VERSION = "4.5.0 <vendor> <version>"
     //              "4.1 <vendor-os-ver> <version>"
     //              "4.1 <vendor-os-ver>"

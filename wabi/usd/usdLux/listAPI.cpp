@@ -47,14 +47,12 @@ TF_REGISTRY_FUNCTION(TfType)
 TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (ListAPI));
 
 /* virtual */
-UsdLuxListAPI::~UsdLuxListAPI()
-{}
+UsdLuxListAPI::~UsdLuxListAPI() {}
 
 /* static */
 UsdLuxListAPI UsdLuxListAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdLuxListAPI();
   }
@@ -70,8 +68,7 @@ UsdSchemaKind UsdLuxListAPI::GetSchemaKind() const
 /* static */
 UsdLuxListAPI UsdLuxListAPI::Apply(const UsdPrim &prim)
 {
-  if (prim.ApplyAPI<UsdLuxListAPI>())
-  {
+  if (prim.ApplyAPI<UsdLuxListAPI>()) {
     return UsdLuxListAPI(prim);
   }
   return UsdLuxListAPI();
@@ -143,8 +140,9 @@ const TfTokenVector &UsdLuxListAPI::GetSchemaAttributeNames(bool includeInherite
   static TfTokenVector localNames = {
     UsdLuxTokens->lightListCacheBehavior,
   };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(UsdAPISchemaBase::GetSchemaAttributeNames(true),
-                                                             localNames);
+  static TfTokenVector allNames = _ConcatenateAttributeNames(
+    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    localNames);
 
   if (includeInherited)
     return allNames;
@@ -171,7 +169,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_REGISTRY_FUNCTION(TfEnum)
 {
-  TF_ADD_ENUM_NAME(UsdLuxListAPI::ComputeModeConsultModelHierarchyCache, "Consult lightList cache");
+  TF_ADD_ENUM_NAME(UsdLuxListAPI::ComputeModeConsultModelHierarchyCache,
+                   "Consult lightList cache");
   TF_ADD_ENUM_NAME(UsdLuxListAPI::ComputeModeIgnoreCache, "Ignore lightList cache");
 }
 
@@ -179,40 +178,34 @@ static void _Traverse(const UsdPrim &prim, UsdLuxListAPI::ComputeMode mode, SdfP
 {
   // If requested, check lightList cache.
   if (mode == UsdLuxListAPI::ComputeModeConsultModelHierarchyCache &&
-      prim.GetPath().IsPrimPath() /* no cache on pseudoRoot */)
-  {
+      prim.GetPath().IsPrimPath() /* no cache on pseudoRoot */) {
     UsdLuxListAPI listAPI(prim);
     TfToken cacheBehavior;
-    if (listAPI.GetLightListCacheBehaviorAttr().Get(&cacheBehavior))
-    {
-      if (cacheBehavior == UsdLuxTokens->consumeAndContinue || cacheBehavior == UsdLuxTokens->consumeAndHalt)
-      {
+    if (listAPI.GetLightListCacheBehaviorAttr().Get(&cacheBehavior)) {
+      if (cacheBehavior == UsdLuxTokens->consumeAndContinue ||
+          cacheBehavior == UsdLuxTokens->consumeAndHalt) {
         // Check stored lightList.
         UsdRelationship rel = listAPI.GetLightListRel();
         SdfPathVector targets;
         rel.GetForwardedTargets(&targets);
         lights->insert(targets.begin(), targets.end());
-        if (cacheBehavior == UsdLuxTokens->consumeAndHalt)
-        {
+        if (cacheBehavior == UsdLuxTokens->consumeAndHalt) {
           return;
         }
       }
     }
   }
   // Accumulate discovered prims.
-  if (prim.IsA<UsdLuxLight>() || prim.IsA<UsdLuxLightFilter>())
-  {
+  if (prim.IsA<UsdLuxLight>() || prim.IsA<UsdLuxLightFilter>()) {
     lights->insert(prim.GetPath());
   }
   // Traverse descendants.
   auto flags = UsdPrimIsActive && !UsdPrimIsAbstract && UsdPrimIsDefined;
-  if (mode == UsdLuxListAPI::ComputeModeConsultModelHierarchyCache)
-  {
+  if (mode == UsdLuxListAPI::ComputeModeConsultModelHierarchyCache) {
     // When consulting the cache we only traverse model hierarchy.
     flags = flags && UsdPrimIsModel;
   }
-  for (const UsdPrim &child : prim.GetFilteredChildren(UsdTraverseInstanceProxies(flags)))
-  {
+  for (const UsdPrim &child : prim.GetFilteredChildren(UsdTraverseInstanceProxies(flags))) {
     _Traverse(child, mode, lights);
   }
 }
@@ -227,10 +220,8 @@ SdfPathSet UsdLuxListAPI::ComputeLightList(UsdLuxListAPI::ComputeMode mode) cons
 void UsdLuxListAPI::StoreLightList(const SdfPathSet &lights) const
 {
   SdfPathVector targets;
-  for (const SdfPath &p : lights)
-  {
-    if (p.IsAbsolutePath() && !p.HasPrefix(GetPath()))
-    {
+  for (const SdfPath &p : lights) {
+    if (p.IsAbsolutePath() && !p.HasPrefix(GetPath())) {
       // Light path does not have this prim as a prefix; ignore.
       continue;
     }

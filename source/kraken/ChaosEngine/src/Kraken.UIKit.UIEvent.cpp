@@ -30,19 +30,19 @@
 
 namespace winrt::Kraken::UIKit::implementation
 {
-  UIEvent::UIEvent(CoreApplicationViewTitleBar const& titleBar)
+  UIEvent::UIEvent(CoreApplicationViewTitleBar const &titleBar)
     : m_titleBar(titleBar),
       m_navigationView(nullptr),
       m_window(nullptr)
   {}
 
-  UIEvent::UIEvent(NavigationView const& view)
+  UIEvent::UIEvent(NavigationView const &view)
     : m_titleBar(nullptr),
       m_navigationView(view),
       m_window(nullptr)
   {}
 
-  UIEvent::UIEvent(IInspectable const& window)
+  UIEvent::UIEvent(IInspectable const &window)
     : m_titleBar(nullptr),
       m_navigationView(nullptr),
       m_window(window)
@@ -62,5 +62,4 @@ namespace winrt::Kraken::UIKit::implementation
   {
     return m_window;
   }
-}
-
+}  // namespace winrt::Kraken::UIKit::implementation

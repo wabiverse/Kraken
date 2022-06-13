@@ -55,9 +55,7 @@ bool HdxOitBufferAccessor::IsOitEnabled()
   return true;
 }
 
-HdxOitBufferAccessor::HdxOitBufferAccessor(HdTaskContext *ctx)
-  : _ctx(ctx)
-{}
+HdxOitBufferAccessor::HdxOitBufferAccessor(HdTaskContext *ctx) : _ctx(ctx) {}
 
 void HdxOitBufferAccessor::RequestOitBuffers()
 {
@@ -67,8 +65,7 @@ void HdxOitBufferAccessor::RequestOitBuffers()
 HdBufferArrayRangeSharedPtr const &HdxOitBufferAccessor::_GetBar(const TfToken &name)
 {
   const auto it = _ctx->find(name);
-  if (it == _ctx->end())
-  {
+  if (it == _ctx->end()) {
     static HdBufferArrayRangeSharedPtr n;
     return n;
   }
@@ -85,8 +82,7 @@ bool HdxOitBufferAccessor::AddOitBufferBindings(const HdPhRenderPassShaderShared
   HdBufferArrayRangeSharedPtr const &indexBar = _GetBar(HdxTokens->oitIndexBufferBar);
   HdBufferArrayRangeSharedPtr const &uniformBar = _GetBar(HdxTokens->oitUniformBar);
 
-  if (counterBar && dataBar && depthBar && indexBar && uniformBar)
-  {
+  if (counterBar && dataBar && depthBar && indexBar && uniformBar) {
     shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
                                               HdxTokens->oitCounterBufferBar,
                                               counterBar,
@@ -112,8 +108,7 @@ bool HdxOitBufferAccessor::AddOitBufferBindings(const HdPhRenderPassShaderShared
                                               uniformBar,
                                               /*interleave = */ true));
     return true;
-  } else
-  {
+  } else {
     shader->RemoveBufferBinding(HdxTokens->oitCounterBufferBar);
     shader->RemoveBufferBinding(HdxTokens->oitDataBufferBar);
     shader->RemoveBufferBinding(HdxTokens->oitDepthBufferBar);
@@ -128,8 +123,7 @@ void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
   // If the OIT buffers were already cleared earlier, skip and do not
   // clear them again.
   VtValue &clearFlag = (*_ctx)[HdxTokens->oitClearedFlag];
-  if (!clearFlag.IsEmpty())
-  {
+  if (!clearFlag.IsEmpty()) {
     return;
   }
 
@@ -144,13 +138,13 @@ void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
   HdPhBufferArrayRangeSharedPtr stCounterBar = std::dynamic_pointer_cast<HdPhBufferArrayRange>(
     _GetBar(HdxTokens->oitCounterBufferBar));
 
-  if (!stCounterBar)
-  {
+  if (!stCounterBar) {
     TF_CODING_ERROR("No OIT counter buffer allocateed when trying to clear it");
     return;
   }
 
-  HdPhBufferResourceSharedPtr stCounterResource = stCounterBar->GetResource(HdxTokens->hdxOitCounterBuffer);
+  HdPhBufferResourceSharedPtr stCounterResource = stCounterBar->GetResource(
+    HdxTokens->hdxOitCounterBuffer);
 
   GlfContextCaps const &caps = GlfContextCaps::GetInstance();
   const GLint clearCounter = -1;
@@ -159,17 +153,18 @@ void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
   // to use direct gl calls. below.
   HgiBufferHandle const &buffer = stCounterResource->GetHandle();
   HgiGLBuffer const *glBuffer = dynamic_cast<HgiGLBuffer const *>(buffer.Get());
-  if (!glBuffer)
-  {
+  if (!glBuffer) {
     TF_CODING_ERROR("Todo: Add HdPhBufferResource::Clear");
     return;
   }
 
-  if (ARCH_LIKELY(caps.directStateAccessEnabled))
-  {
-    glClearNamedBufferData(glBuffer->GetBufferId(), GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);
-  } else
-  {
+  if (ARCH_LIKELY(caps.directStateAccessEnabled)) {
+    glClearNamedBufferData(glBuffer->GetBufferId(),
+                           GL_R32I,
+                           GL_RED_INTEGER,
+                           GL_INT,
+                           &clearCounter);
+  } else {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, glBuffer->GetBufferId());
     glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);

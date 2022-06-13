@@ -39,7 +39,8 @@ TraceReporterDataSourceCollection::TraceReporterDataSourceCollection(CollectionP
   : _data({collection})
 {}
 
-TraceReporterDataSourceCollection::TraceReporterDataSourceCollection(std::vector<CollectionPtr> collections)
+TraceReporterDataSourceCollection::TraceReporterDataSourceCollection(
+  std::vector<CollectionPtr> collections)
   : _data(std::move(collections))
 {}
 
@@ -50,7 +51,8 @@ void TraceReporterDataSourceCollection::Clear()
   swap(_data, newData);
 }
 
-std::vector<TraceReporterDataSourceBase::CollectionPtr> TraceReporterDataSourceCollection::ConsumeData()
+std::vector<TraceReporterDataSourceBase::CollectionPtr> TraceReporterDataSourceCollection::
+  ConsumeData()
 {
   using std::swap;
   std::vector<CollectionPtr> result;

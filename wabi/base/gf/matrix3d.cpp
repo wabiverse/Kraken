@@ -73,10 +73,8 @@ GfMatrix3d::GfMatrix3d(const std::vector<std::vector<double>> &v)
     {0.0, 1.0, 0.0},
     {0.0, 0.0, 1.0}
   };
-  for (size_t row = 0; row < 3 && row < v.size(); ++row)
-  {
-    for (size_t col = 0; col < 3 && col < v[row].size(); ++col)
-    {
+  for (size_t row = 0; row < 3 && row < v.size(); ++row) {
+    for (size_t col = 0; col < 3 && col < v[row].size(); ++col) {
       m[row][col] = v[row][col];
     }
   }
@@ -90,10 +88,8 @@ GfMatrix3d::GfMatrix3d(const std::vector<std::vector<float>> &v)
     {0.0, 1.0, 0.0},
     {0.0, 0.0, 1.0}
   };
-  for (size_t row = 0; row < 3 && row < v.size(); ++row)
-  {
-    for (size_t col = 0; col < 3 && col < v[row].size(); ++col)
-    {
+  for (size_t row = 0; row < 3 && row < v.size(); ++row) {
+    for (size_t col = 0; col < 3 && col < v[row].size(); ++col) {
       m[row][col] = v[row][col];
     }
   }
@@ -196,18 +192,16 @@ GfMatrix3d GfMatrix3d::GetInverse(double *detPtr, double eps) const
   a20 = _mtx[2][0];
   a21 = _mtx[2][1];
   a22 = _mtx[2][2];
-  det = -(a02 * a11 * a20) + a01 * a12 * a20 + a02 * a10 * a21 - a00 * a12 * a21 - a01 * a10 * a22 +
-        a00 * a11 * a22;
+  det = -(a02 * a11 * a20) + a01 * a12 * a20 + a02 * a10 * a21 - a00 * a12 * a21 -
+        a01 * a10 * a22 + a00 * a11 * a22;
 
-  if (detPtr)
-  {
+  if (detPtr) {
     *detPtr = det;
   }
 
   GfMatrix3d inverse;
 
-  if (GfAbs(det) > eps)
-  {
+  if (GfAbs(det) > eps) {
     rcp = 1.0 / det;
     inverse._mtx[0][0] = (-(a12 * a21) + a11 * a22) * rcp;
     inverse._mtx[0][1] = (a02 * a21 - a01 * a22) * rcp;
@@ -218,8 +212,7 @@ GfMatrix3d GfMatrix3d::GetInverse(double *detPtr, double eps) const
     inverse._mtx[2][0] = (-(a11 * a20) + a10 * a21) * rcp;
     inverse._mtx[2][1] = (a01 * a20 - a00 * a21) * rcp;
     inverse._mtx[2][2] = (-(a01 * a10) + a00 * a11) * rcp;
-  } else
-  {
+  } else {
     inverse.SetScale(FLT_MAX);
   }
 
@@ -347,23 +340,32 @@ GfMatrix3d &GfMatrix3d::operator*=(const GfMatrix3d &m)
   // Save current values before they are overwritten
   GfMatrix3d tmp = *this;
 
-  _mtx[0][0] = tmp._mtx[0][0] * m._mtx[0][0] + tmp._mtx[0][1] * m._mtx[1][0] + tmp._mtx[0][2] * m._mtx[2][0];
+  _mtx[0][0] = tmp._mtx[0][0] * m._mtx[0][0] + tmp._mtx[0][1] * m._mtx[1][0] +
+               tmp._mtx[0][2] * m._mtx[2][0];
 
-  _mtx[0][1] = tmp._mtx[0][0] * m._mtx[0][1] + tmp._mtx[0][1] * m._mtx[1][1] + tmp._mtx[0][2] * m._mtx[2][1];
+  _mtx[0][1] = tmp._mtx[0][0] * m._mtx[0][1] + tmp._mtx[0][1] * m._mtx[1][1] +
+               tmp._mtx[0][2] * m._mtx[2][1];
 
-  _mtx[0][2] = tmp._mtx[0][0] * m._mtx[0][2] + tmp._mtx[0][1] * m._mtx[1][2] + tmp._mtx[0][2] * m._mtx[2][2];
+  _mtx[0][2] = tmp._mtx[0][0] * m._mtx[0][2] + tmp._mtx[0][1] * m._mtx[1][2] +
+               tmp._mtx[0][2] * m._mtx[2][2];
 
-  _mtx[1][0] = tmp._mtx[1][0] * m._mtx[0][0] + tmp._mtx[1][1] * m._mtx[1][0] + tmp._mtx[1][2] * m._mtx[2][0];
+  _mtx[1][0] = tmp._mtx[1][0] * m._mtx[0][0] + tmp._mtx[1][1] * m._mtx[1][0] +
+               tmp._mtx[1][2] * m._mtx[2][0];
 
-  _mtx[1][1] = tmp._mtx[1][0] * m._mtx[0][1] + tmp._mtx[1][1] * m._mtx[1][1] + tmp._mtx[1][2] * m._mtx[2][1];
+  _mtx[1][1] = tmp._mtx[1][0] * m._mtx[0][1] + tmp._mtx[1][1] * m._mtx[1][1] +
+               tmp._mtx[1][2] * m._mtx[2][1];
 
-  _mtx[1][2] = tmp._mtx[1][0] * m._mtx[0][2] + tmp._mtx[1][1] * m._mtx[1][2] + tmp._mtx[1][2] * m._mtx[2][2];
+  _mtx[1][2] = tmp._mtx[1][0] * m._mtx[0][2] + tmp._mtx[1][1] * m._mtx[1][2] +
+               tmp._mtx[1][2] * m._mtx[2][2];
 
-  _mtx[2][0] = tmp._mtx[2][0] * m._mtx[0][0] + tmp._mtx[2][1] * m._mtx[1][0] + tmp._mtx[2][2] * m._mtx[2][0];
+  _mtx[2][0] = tmp._mtx[2][0] * m._mtx[0][0] + tmp._mtx[2][1] * m._mtx[1][0] +
+               tmp._mtx[2][2] * m._mtx[2][0];
 
-  _mtx[2][1] = tmp._mtx[2][0] * m._mtx[0][1] + tmp._mtx[2][1] * m._mtx[1][1] + tmp._mtx[2][2] * m._mtx[2][1];
+  _mtx[2][1] = tmp._mtx[2][0] * m._mtx[0][1] + tmp._mtx[2][1] * m._mtx[1][1] +
+               tmp._mtx[2][2] * m._mtx[2][1];
 
-  _mtx[2][2] = tmp._mtx[2][0] * m._mtx[0][2] + tmp._mtx[2][1] * m._mtx[1][2] + tmp._mtx[2][2] * m._mtx[2][2];
+  _mtx[2][2] = tmp._mtx[2][0] * m._mtx[0][2] + tmp._mtx[2][1] * m._mtx[1][2] +
+               tmp._mtx[2][2] * m._mtx[2][2];
 
   return *this;
 }
@@ -458,14 +460,12 @@ GfQuaternion GfMatrix3d::ExtractRotationQuaternion() const
   GfVec3d im;
   double r;
 
-  if (_mtx[0][0] + _mtx[1][1] + _mtx[2][2] > _mtx[i][i])
-  {
+  if (_mtx[0][0] + _mtx[1][1] + _mtx[2][2] > _mtx[i][i]) {
     r = 0.5 * sqrt(_mtx[0][0] + _mtx[1][1] + _mtx[2][2] + 1);
     im.Set((_mtx[1][2] - _mtx[2][1]) / (4.0 * r),
            (_mtx[2][0] - _mtx[0][2]) / (4.0 * r),
            (_mtx[0][1] - _mtx[1][0]) / (4.0 * r));
-  } else
-  {
+  } else {
     int j = (i + 1) % 3;
     int k = (i + 2) % 3;
     double q = 0.5 * sqrt(_mtx[i][i] - _mtx[j][j] - _mtx[k][k] + 1);
@@ -484,17 +484,17 @@ GfRotation GfMatrix3d::ExtractRotation() const
   return GfRotation(ExtractRotationQuaternion());
 }
 
-GfVec3d GfMatrix3d::DecomposeRotation(const GfVec3d &axis0, const GfVec3d &axis1, const GfVec3d &axis2) const
+GfVec3d GfMatrix3d::DecomposeRotation(const GfVec3d &axis0,
+                                      const GfVec3d &axis1,
+                                      const GfVec3d &axis2) const
 {
   return (ExtractRotation().Decompose(axis0, axis1, axis2));
 }
 
 bool GfIsClose(GfMatrix3d const &m1, GfMatrix3d const &m2, double tolerance)
 {
-  for (size_t row = 0; row < 3; ++row)
-  {
-    for (size_t col = 0; col < 3; ++col)
-    {
+  for (size_t row = 0; row < 3; ++row) {
+    for (size_t col = 0; col < 3; ++col) {
       if (!GfIsClose(m1[row][col], m2[row][col], tolerance))
         return false;
     }

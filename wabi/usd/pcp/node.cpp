@@ -57,7 +57,9 @@ PcpNodeRef PcpNodeRef::InsertChildSubgraph(const PcpPrimIndex_GraphPtr &subgraph
   return _graph->InsertChildSubgraph(*this, subgraph, arc, error);
 }
 
-PcpNodeRef PcpNodeRef::InsertChild(const PcpLayerStackSite &site, const PcpArc &arc, PcpErrorBasePtr *error)
+PcpNodeRef PcpNodeRef::InsertChild(const PcpLayerStackSite &site,
+                                   const PcpArc &arc,
+                                   PcpErrorBasePtr *error)
 {
   return _graph->InsertChildNode(*this, site, arc, error);
 }
@@ -100,8 +102,7 @@ PcpNodeRef PcpNodeRef::GetOriginRootNode() const
   void PcpNodeRef::setter(typeName val)                                                    \
   {                                                                                        \
     const PcpPrimIndex_Graph::_Node &graphNode = _graph->_GetNode(_nodeIdx);               \
-    if (graphNode.varName != val)                                                          \
-    {                                                                                      \
+    if (graphNode.varName != val) {                                                        \
       PcpPrimIndex_Graph::_Node &writeableGraphNode = _graph->_GetWriteableNode(_nodeIdx); \
       writeableGraphNode.varName = val;                                                    \
     }                                                                                      \
@@ -197,10 +198,8 @@ bool PcpNodeRef::IsDueToAncestor() const
 SdfPath PcpNodeRef::GetPathAtIntroduction() const
 {
   SdfPath pathAtIntroduction = GetPath();
-  for (int depth = GetDepthBelowIntroduction(); depth; --depth)
-  {
-    while (pathAtIntroduction.IsPrimVariantSelectionPath())
-    {
+  for (int depth = GetDepthBelowIntroduction(); depth; --depth) {
+    while (pathAtIntroduction.IsPrimVariantSelectionPath()) {
       // Skip over variant selections, since they do not
       // constitute levels of namespace depth. We do not simply
       // strip all variant selections here, because we want to
@@ -223,10 +222,8 @@ SdfPath PcpNodeRef::GetIntroPath() const
   SdfPath introPath = parent.GetPath();
 
   // Walk back up to the depth where this child was introduced.
-  for (int depth = GetDepthBelowIntroduction(); depth; --depth)
-  {
-    while (introPath.IsPrimVariantSelectionPath())
-    {
+  for (int depth = GetDepthBelowIntroduction(); depth; --depth) {
+    while (introPath.IsPrimVariantSelectionPath()) {
       // Skip over variant selections, since they do not
       // constitute levels of namespace depth. We do not simply
       // strip all variant selections here, because we want to
@@ -286,20 +283,20 @@ PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator()
   // Do nothing
 }
 
-PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(const PcpNodeRef_ChildrenIterator &i)
+PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(
+  const PcpNodeRef_ChildrenIterator &i)
   : _node(i._node),
     _index(i._index)
 {
-  if (_index == PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
-  {
+  if (_index == PcpPrimIndex_Graph::_Node::_invalidNodeIndex) {
     _index = _node._graph->_GetNode(_node).smallInts.lastChildIndex;
-  } else
-  {
+  } else {
     increment();
   }
 }
 
-PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(const PcpNodeRef &node, bool end)
+PcpNodeRef_ChildrenReverseIterator::PcpNodeRef_ChildrenReverseIterator(const PcpNodeRef &node,
+                                                                       bool end)
   : _node(node),
     _index(!end ? _node._graph->_GetNode(_node).smallInts.lastChildIndex :
                   PcpPrimIndex_Graph::_Node::_invalidNodeIndex)
@@ -320,16 +317,14 @@ int PcpNode_GetNonVariantPathElementCount(const SdfPath &path)
 static inline int _GetNonVariantPathElementCount(const SdfPath &path)
 {
   // return path.StripAllVariantSelections().GetPathElementCount();
-  if (ARCH_UNLIKELY(path.ContainsPrimVariantSelection()))
-  {
+  if (ARCH_UNLIKELY(path.ContainsPrimVariantSelection())) {
     SdfPath cur(path);
     int result = (!cur.IsPrimVariantSelectionPath());
     cur = cur.GetParentPath();
     for (; cur.ContainsPrimVariantSelection(); cur = cur.GetParentPath())
       result += (!cur.IsPrimVariantSelectionPath());
     return result + static_cast<int>(cur.GetPathElementCount());
-  } else
-  {
+  } else {
     return static_cast<int>(path.GetPathElementCount());
   }
 }

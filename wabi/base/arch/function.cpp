@@ -52,16 +52,12 @@ namespace
     // do this by skipping over everything between matching '<' and '>'
     // and then searching for a space.
     i = s.find_last_of(" >", i);
-    while (i != string::npos && s[i] != ' ')
-    {
+    while (i != string::npos && s[i] != ' ') {
       int nestingDepth = 1;
-      while (nestingDepth && --i)
-      {
-        if (s[i] == '>')
-        {
+      while (nestingDepth && --i) {
+        if (s[i] == '>') {
           ++nestingDepth;
-        } else if (s[i] == '<')
-        {
+        } else if (s[i] == '<') {
           --nestingDepth;
         }
       }
@@ -115,12 +111,10 @@ namespace
   static pair<string, string> _Split(const string &prettyFunction)
   {
     auto i = prettyFunction.find(" [with ");
-    if (i != string::npos)
-    {
+    if (i != string::npos) {
       const auto n = prettyFunction.size();
       return std::make_pair(prettyFunction.substr(0, i), prettyFunction.substr(i + 6, n - i - 7));
-    } else
-    {
+    } else {
       return std::make_pair(prettyFunction, std::string());
     }
   }
@@ -137,13 +131,13 @@ namespace
 
     string::size_type typeEnd = templates.size();
     string::size_type i = templates.rfind('=', typeEnd);
-    while (i != string::npos)
-    {
+    while (i != string::npos) {
       auto typeStart = templates.find_first_not_of(" =", i);
       auto nameEnd = templates.find_last_not_of(" =", i);
       auto nameStart = _GetStartOfName(templates, nameEnd);
       result[templates.substr(nameStart, nameEnd + 1 - nameStart)] = templates.substr(typeStart,
-                                                                                      typeEnd - typeStart);
+                                                                                      typeEnd -
+                                                                                        typeStart);
       typeEnd = templates.find_last_not_of(" =,;", nameStart - 1) + 1;
       i = templates.rfind('=', typeEnd);
     }
@@ -154,15 +148,11 @@ namespace
   static string _FormatTemplateList(const std::map<string, string> &templates)
   {
     string result;
-    if (!templates.empty())
-    {
-      for (const auto &value : templates)
-      {
-        if (result.empty())
-        {
+    if (!templates.empty()) {
+      for (const auto &value : templates) {
+        if (result.empty()) {
           result += " [with ";
-        } else
-        {
+        } else {
           result += ", ";
         }
         result += value.first;
@@ -193,8 +183,7 @@ namespace
     const string::size_type first = prettyFunction.find_first_not_of("< ", pos);
 
     // If we found nothing or '<' then this is probably operator< or <<.
-    if (first == string::npos || prettyFunction[first] == '<')
-    {
+    if (first == string::npos || prettyFunction[first] == '<') {
       pos = string::npos;
       return string();
     }
@@ -203,18 +192,15 @@ namespace
     // the last identifier, and then it should be a '>'.  Update pos to
     // be just before the next identifier.
     std::string::size_type last = prettyFunction.find_first_of(",>", first);
-    if (last == string::npos)
-    {
+    if (last == string::npos) {
       pos = string::npos;
       last = prettyFunction.find('>', first);
       if (last == string::npos)
         last = prettyFunction.size();
-    } else if (prettyFunction[last] == ',')
-    {
+    } else if (prettyFunction[last] == ',') {
       // Skip ','.
       pos = last + 1;
-    } else
-    {
+    } else {
       // Skip to next template.
       pos = prettyFunction.find('<', first);
     }
@@ -232,14 +218,11 @@ namespace
     std::map<string, string> result;
 
     string::size_type pos = prettyFunction.find("<");
-    while (pos != string::npos)
-    {
+    while (pos != string::npos) {
       const auto identifier = _GetNextIdentifier(prettyFunction, pos);
-      if (!identifier.empty())
-      {
+      if (!identifier.empty()) {
         auto i = templates.find(identifier);
-        if (i != templates.end())
-        {
+        if (i != templates.end()) {
           result.insert(*i);
         }
       }

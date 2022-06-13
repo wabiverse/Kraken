@@ -64,20 +64,19 @@ void GlfGLContext::MakeCurrent(const GlfGLContextSharedPtr &context)
 {
   TRACE_FUNCTION();
 
-  if (context && context->IsValid())
-  {
+  if (context && context->IsValid()) {
     context->_MakeCurrent();
 
     // Now that this context is current add it to the registry for
     // later lookup.
     GlfGLContextRegistry::GetInstance().DidMakeCurrent(context);
-  } else
-  {
+  } else {
     DoneCurrent();
   }
 }
 
-bool GlfGLContext::AreSharing(GlfGLContextSharedPtr const &context1, GlfGLContextSharedPtr const &context2)
+bool GlfGLContext::AreSharing(GlfGLContextSharedPtr const &context1,
+                              GlfGLContextSharedPtr const &context2)
 {
   return (context1 && context1->IsSharing(context2));
 }
@@ -94,8 +93,7 @@ bool GlfGLContext::IsCurrent() const
 
 void GlfGLContext::MakeCurrent()
 {
-  if (IsValid())
-  {
+  if (IsValid()) {
     _MakeCurrent();
   }
 }
@@ -117,8 +115,7 @@ bool GlfGLContext::IsSharing(GlfGLContextSharedPtr const &otherContext)
 GlfGLContextScopeHolder::GlfGLContextScopeHolder(const GlfGLContextSharedPtr &newContext)
   : _newContext(newContext)
 {
-  if (_newContext)
-  {
+  if (_newContext) {
     _oldContext = GlfGLContext::GetCurrentGLContext();
   }
   _MakeNewContextCurrent();
@@ -131,16 +128,14 @@ GlfGLContextScopeHolder::~GlfGLContextScopeHolder()
 
 void GlfGLContextScopeHolder::_MakeNewContextCurrent()
 {
-  if (_newContext)
-  {
+  if (_newContext) {
     GlfGLContext::MakeCurrent(_newContext);
   }
 }
 
 void GlfGLContextScopeHolder::_RestoreOldContext()
 {
-  if (_newContext)
-  {
+  if (_newContext) {
     GlfGLContext::MakeCurrent(_oldContext);
   }
 }

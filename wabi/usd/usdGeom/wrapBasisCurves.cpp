@@ -43,26 +43,33 @@ WABI_NAMESPACE_USING
 namespace
 {
 
-#define WRAP_CUSTOM   \
-  template<class Cls> \
-  static void _CustomWrapCode(Cls &_class)
+#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
 
   // fwd decl.
   WRAP_CUSTOM;
 
-  static UsdAttribute _CreateTypeAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateTypeAttr(UsdGeomBasisCurves &self,
+                                      object defaultVal,
+                                      bool writeSparsely)
   {
-    return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateTypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                               writeSparsely);
   }
 
-  static UsdAttribute _CreateBasisAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateBasisAttr(UsdGeomBasisCurves &self,
+                                       object defaultVal,
+                                       bool writeSparsely)
   {
-    return self.CreateBasisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateBasisAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                writeSparsely);
   }
 
-  static UsdAttribute _CreateWrapAttr(UsdGeomBasisCurves &self, object defaultVal, bool writeSparsely)
+  static UsdAttribute _CreateWrapAttr(UsdGeomBasisCurves &self,
+                                      object defaultVal,
+                                      bool writeSparsely)
   {
-    return self.CreateWrapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+    return self.CreateWrapAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                               writeSparsely);
   }
 
   static std::string _Repr(const UsdGeomBasisCurves &self)
@@ -95,13 +102,17 @@ void wrapUsdGeomBasisCurves()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType", (TfType const &(*)())TfType::Find<This>, return_value_policy<return_by_value>())
+    .def("GetStaticTfType",
+         (TfType const &(*)())TfType::Find<This>,
+         return_value_policy<return_by_value>())
     .staticmethod("GetStaticTfType")
 
     .def(!self)
 
     .def("GetTypeAttr", &This::GetTypeAttr)
-    .def("CreateTypeAttr", &_CreateTypeAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateTypeAttr",
+         &_CreateTypeAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetBasisAttr", &This::GetBasisAttr)
     .def("CreateBasisAttr",
@@ -109,7 +120,9 @@ void wrapUsdGeomBasisCurves()
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetWrapAttr", &This::GetWrapAttr)
-    .def("CreateWrapAttr", &_CreateWrapAttr, (arg("defaultValue") = object(), arg("writeSparsely") = false))
+    .def("CreateWrapAttr",
+         &_CreateWrapAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("__repr__", ::_Repr);
 

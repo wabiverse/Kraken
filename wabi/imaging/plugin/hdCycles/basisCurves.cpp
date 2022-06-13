@@ -49,8 +49,7 @@ namespace
 
   ccl::AttributeElement interpolation_to_hair_element(const HdInterpolation &interpolation)
   {
-    switch (interpolation)
-    {
+    switch (interpolation) {
       case HdInterpolationConstant:
         return ccl::AttributeElement::ATTR_ELEMENT_OBJECT;
       case HdInterpolationUniform:
@@ -119,40 +118,36 @@ HdCyclesBasisCurves::HdCyclesBasisCurves(HdCyclesRenderDelegate *renderDelegate,
   // reference
   auto resource_registry = dynamic_cast<HdCyclesResourceRegistry *>(
     m_renderDelegate->GetResourceRegistry().get());
-  HdInstance<HdCyclesObjectSourceSharedPtr> object_instance = resource_registry->GetObjectInstance(id);
+  HdInstance<HdCyclesObjectSourceSharedPtr> object_instance = resource_registry->GetObjectInstance(
+    id);
   object_instance.SetValue(std::make_shared<HdCyclesObjectSource>(m_cyclesObject, id));
   m_object_source = object_instance.GetValue();
 }
 
 HdCyclesBasisCurves::~HdCyclesBasisCurves()
 {
-  if (m_cyclesHair)
-  {
+  if (m_cyclesHair) {
     m_renderDelegate->GetCyclesRenderParam()->RemoveGeometrySafe(m_cyclesHair);
     delete m_cyclesHair;
   }
-  if (m_cyclesMesh)
-  {
+  if (m_cyclesMesh) {
     m_renderDelegate->GetCyclesRenderParam()->RemoveGeometrySafe(m_cyclesMesh);
     delete m_cyclesMesh;
   }
-  if (m_cyclesObject)
-  {
+  if (m_cyclesObject) {
     m_renderDelegate->GetCyclesRenderParam()->RemoveObjectSafe(m_cyclesObject);
     delete m_cyclesObject;
   }
 }
 
-void HdCyclesBasisCurves::_InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits)
-{}
+void HdCyclesBasisCurves::_InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits) {}
 
 HdDirtyBits HdCyclesBasisCurves::_PropagateDirtyBits(HdDirtyBits bits) const
 {
   return bits;
 }
 
-void HdCyclesBasisCurves::Finalize(HdRenderParam *renderParam)
-{}
+void HdCyclesBasisCurves::Finalize(HdRenderParam *renderParam) {}
 
 void HdCyclesBasisCurves::_PopulateCurveMesh(HdRenderParam *renderParam)
 {
@@ -166,17 +161,13 @@ void HdCyclesBasisCurves::_PopulateCurveMesh(HdRenderParam *renderParam)
   bool use_old_curves;
   config.use_old_curves.eval(use_old_curves, true);
 
-  if (use_old_curves)
-  {
-    if (m_curveShape == ccl::CURVE_RIBBON)
-    {
+  if (use_old_curves) {
+    if (m_curveShape == ccl::CURVE_RIBBON) {
       _CreateRibbons(scene->camera);
-    } else
-    {
+    } else {
       _CreateTubeMesh();
     }
-  } else
-  {
+  } else {
     _CreateCurves(scene);
   }
 
@@ -195,13 +186,11 @@ void HdCyclesBasisCurves::_PopulateMotion(HdSceneDelegate *sceneDelegate, const 
 
   ccl::AttributeSet *attributes = &m_cyclesHair->attributes;
   ccl::Attribute *attr_mP = attributes->find(ccl::ATTR_STD_MOTION_VERTEX_POSITION);
-  if (attr_mP)
-  {
+  if (attr_mP) {
     attributes->remove(attr_mP);
   }
 
-  if (numSamples <= 1)
-  {
+  if (numSamples <= 1) {
     m_cyclesHair->use_motion_blur = false;
     m_cyclesHair->motion_steps = 0;
     return;
@@ -213,16 +202,14 @@ void HdCyclesBasisCurves::_PopulateMotion(HdSceneDelegate *sceneDelegate, const 
   attr_mP = attributes->add(ccl::ATTR_STD_MOTION_VERTEX_POSITION);
   ccl::float3 *mP = attr_mP->data_float3();
 
-  for (size_t i = 0; i < motion_samples.count; ++i)
-  {
+  for (size_t i = 0; i < motion_samples.count; ++i) {
     if (times[i] == 0.0f)  // todo: more flexible check?
       continue;
 
     VtVec3fArray pp;
     pp = motion_samples.values.data()[i].Get<VtVec3fArray>();
 
-    for (size_t j = 0; j < m_points.size(); ++j, ++mP)
-    {
+    for (size_t j = 0; j < m_points.size(); ++j, ++mP) {
       *mP = vec3f_to_float3(pp[j]);
     }
   }
@@ -240,23 +227,19 @@ void HdCyclesBasisCurves::_AddColors(TfToken name, VtValue value, HdInterpolatio
   VtVec3fArray colors3f;
   VtVec4fArray colors4f;
 
-  if (value.IsHolding<VtArray<GfVec3f>>())
-  {
+  if (value.IsHolding<VtArray<GfVec3f>>()) {
     colors3f = value.UncheckedGet<VtArray<GfVec3f>>();
     vecSize = 3;
     numColors = colors3f.size();
-  } else if (value.IsHolding<VtArray<GfVec4f>>())
-  {
+  } else if (value.IsHolding<VtArray<GfVec4f>>()) {
     colors4f = value.UncheckedGet<VtArray<GfVec4f>>();
     vecSize = 4;
     numColors = colors4f.size();
-  } else if (value.IsHolding<VtArray<GfVec2f>>())
-  {
+  } else if (value.IsHolding<VtArray<GfVec2f>>()) {
     colors2f = value.UncheckedGet<VtArray<GfVec2f>>();
     vecSize = 2;
     numColors = colors2f.size();
-  } else if (value.IsHolding<VtArray<float>>())
-  {
+  } else if (value.IsHolding<VtArray<float>>()) {
     colors1f = value.UncheckedGet<VtArray<float>>();
     vecSize = 1;
     numColors = colors1f.size();
@@ -265,26 +248,21 @@ void HdCyclesBasisCurves::_AddColors(TfToken name, VtValue value, HdInterpolatio
   if (vecSize == 0)
     return;
 
-  if (interpolation == HdInterpolationUniform)
-  {
-    if (m_cyclesHair)
-    {
+  if (interpolation == HdInterpolationUniform) {
+    if (m_cyclesHair) {
       ccl::Attribute *attr_vcol = m_cyclesHair->attributes.add(attribName,
                                                                ccl::TypeDesc::TypeColor,
                                                                ccl::ATTR_ELEMENT_CURVE);
 
       ccl::float3 *fdata = attr_vcol->data_float3();
 
-      if (fdata)
-      {
+      if (fdata) {
         size_t i = 0;
 
-        for (size_t curve = 0; curve < numColors; curve++)
-        {
+        for (size_t curve = 0; curve < numColors; curve++) {
           ccl::float3 color;
 
-          switch (vecSize)
-          {
+          switch (vecSize) {
             case 1:
               color = float_to_float3(colors1f[curve]);
               break;
@@ -302,8 +280,7 @@ void HdCyclesBasisCurves::_AddColors(TfToken name, VtValue value, HdInterpolatio
           fdata[i++] = color;
         }
       }
-    } else
-    {
+    } else {
       // @TODO: Unhandled support for deprecated curve mesh geo
       ccl::Attribute *attr_vcol = m_cyclesMesh->attributes.add(attribName,
                                                                ccl::TypeDesc::TypeColor,
@@ -311,11 +288,9 @@ void HdCyclesBasisCurves::_AddColors(TfToken name, VtValue value, HdInterpolatio
       (void)attr_vcol;
       assert(0);
     }
-  } else if (interpolation == HdInterpolationVertex)
-  {
+  } else if (interpolation == HdInterpolationVertex) {
     VtIntArray curveVertexCounts = m_topology.GetCurveVertexCounts();
-    if (m_cyclesHair)
-    {
+    if (m_cyclesHair) {
       // Support for vertex varying attributes is not supported in Cycles hair.
       // For now we just get the root value and apply to the whole strand...
       ccl::Attribute *attr_vcol = m_cyclesHair->attributes.add(attribName,
@@ -324,15 +299,12 @@ void HdCyclesBasisCurves::_AddColors(TfToken name, VtValue value, HdInterpolatio
 
       ccl::float3 *fdata = attr_vcol->data_float3();
 
-      if (fdata)
-      {
+      if (fdata) {
         int curveOffset = 0;
-        for (size_t i = 0; i < curveVertexCounts.size(); i++)
-        {
+        for (size_t i = 0; i < curveVertexCounts.size(); i++) {
           ccl::float3 color;
 
-          switch (vecSize)
-          {
+          switch (vecSize) {
             case 1:
               color = float_to_float3(colors1f[curveOffset]);
               break;
@@ -352,8 +324,7 @@ void HdCyclesBasisCurves::_AddColors(TfToken name, VtValue value, HdInterpolatio
           curveOffset += curveVertexCounts[i];
         }
       }
-    } else
-    {
+    } else {
       // @TODO: Unhandled support for deprecated curve mesh geo
       ccl::Attribute *attr_vcol = m_cyclesMesh->attributes.add(attribName,
                                                                ccl::TypeDesc::TypeColor,
@@ -375,35 +346,27 @@ void HdCyclesBasisCurves::_AddUVS(TfToken name, VtValue value, HdInterpolation i
     ccl::Attribute *attr_std_uv = attributes.add(ccl::ATTR_STD_UV, attribName);
     ccl::float2 *std_uv_data = attr_std_uv->data_float2();
 
-    for (size_t curve = 0; curve < attr_uvs.size(); curve++)
-    {
+    for (size_t curve = 0; curve < attr_uvs.size(); curve++) {
       std_uv_data[curve][0] = attr_uvs[curve][0];
       std_uv_data[curve][1] = attr_uvs[curve][1];
     }
   };
 
-  if (interpolation == HdInterpolationUniform)
-  {
-    if (value.IsHolding<VtArray<GfVec2f>>())
-    {
+  if (interpolation == HdInterpolationUniform) {
+    if (value.IsHolding<VtArray<GfVec2f>>()) {
       VtVec2fArray uvs = value.UncheckedGet<VtArray<GfVec2f>>();
-      if (m_cyclesHair)
-      {
+      if (m_cyclesHair) {
         fill_uniform_uv_attrib(uvs, m_cyclesHair->attributes);
-      } else
-      {
+      } else {
         // @TODO: Unhandled support for deprecated curve mesh geo
         ccl::Attribute *attr_std_uv = m_cyclesMesh->attributes.add(ccl::ATTR_STD_UV, attribName);
         (void)attr_std_uv;
       }
-    } else if (value.IsHolding<VtArray<GfVec3f>>())
-    {
+    } else if (value.IsHolding<VtArray<GfVec3f>>()) {
       VtVec3fArray uvs = value.UncheckedGet<VtArray<GfVec3f>>();
-      if (m_cyclesHair)
-      {
+      if (m_cyclesHair) {
         fill_uniform_uv_attrib(uvs, m_cyclesHair->attributes);
-      } else
-      {
+      } else {
         // @TODO: Unhandled support for deprecated curve mesh geo
         ccl::Attribute *attr_std_uv = m_cyclesMesh->attributes.add(ccl::ATTR_STD_UV, attribName);
         (void)attr_std_uv;
@@ -419,18 +382,18 @@ void HdCyclesBasisCurves::_AddUVS(TfToken name, VtValue value, HdInterpolation i
       ccl::Attribute *attr_std_uv = attributes.add(ccl::ATTR_STD_UV, attribName);
       ccl::float2 *std_uv_data = attr_std_uv->data_float2();
 
-      ccl::Attribute *attr_st = attributes.add(attribName, ccl::TypeFloat2, ccl::ATTR_ELEMENT_CURVE_KEY);
+      ccl::Attribute *attr_st = attributes.add(attribName,
+                                               ccl::TypeFloat2,
+                                               ccl::ATTR_ELEMENT_CURVE_KEY);
       ccl::float2 *st_data = attr_st->data_float2();
 
-      for (size_t curve = 0, offset = 0; curve < vertexCounts.size(); ++curve)
-      {
+      for (size_t curve = 0, offset = 0; curve < vertexCounts.size(); ++curve) {
         // std_uv - per curve
         std_uv_data[curve][0] = attr_uvs[offset][0];
         std_uv_data[curve][1] = attr_uvs[offset][1];
 
         // st - per vertex
-        for (size_t vertex = 0; vertex < vertexCounts[curve]; ++vertex)
-        {
+        for (size_t vertex = 0; vertex < vertexCounts[curve]; ++vertex) {
           st_data[offset + vertex][0] = attr_uvs[offset + vertex][0];
           st_data[offset + vertex][1] = attr_uvs[offset + vertex][1];
         }
@@ -438,30 +401,23 @@ void HdCyclesBasisCurves::_AddUVS(TfToken name, VtValue value, HdInterpolation i
       }
     };
 
-  if (interpolation == HdInterpolationVertex || interpolation == HdInterpolationVarying)
-  {
+  if (interpolation == HdInterpolationVertex || interpolation == HdInterpolationVarying) {
     VtIntArray curveVertexCounts = m_topology.GetCurveVertexCounts();
 
-    if (value.IsHolding<VtArray<GfVec2f>>())
-    {
+    if (value.IsHolding<VtArray<GfVec2f>>()) {
       VtVec2fArray uvs = value.UncheckedGet<VtArray<GfVec2f>>();
-      if (m_cyclesHair)
-      {
+      if (m_cyclesHair) {
         fill_vertex_or_varying_uv_attrib(uvs, m_cyclesHair->attributes, curveVertexCounts);
-      } else
-      {
+      } else {
         // @TODO: Unhandled support for deprecated curve mesh geo
         ccl::Attribute *attr_std_uv = m_cyclesMesh->attributes.add(ccl::ATTR_STD_UV, attribName);
         (void)attr_std_uv;
       }
-    } else if (value.IsHolding<VtArray<GfVec3f>>())
-    {
+    } else if (value.IsHolding<VtArray<GfVec3f>>()) {
       VtVec3fArray uvs = value.UncheckedGet<VtArray<GfVec3f>>();
-      if (m_cyclesHair)
-      {
+      if (m_cyclesHair) {
         fill_vertex_or_varying_uv_attrib(uvs, m_cyclesHair->attributes, curveVertexCounts);
-      } else
-      {
+      } else {
         // @TODO: Unhandled support for deprecated curve mesh geo
         ccl::Attribute *attr_std_uv = m_cyclesMesh->attributes.add(ccl::ATTR_STD_UV, attribName);
         (void)attr_std_uv;
@@ -478,22 +434,19 @@ void HdCyclesBasisCurves::_PopulateGenerated()
 
   ccl::float3 loc, size;
 
-  if (m_cyclesMesh)
-  {
+  if (m_cyclesMesh) {
     HdCyclesMeshTextureSpace(m_cyclesMesh, loc, size);
     ccl::Attribute *attr_generated = m_cyclesMesh->attributes.add(ccl::ATTR_STD_GENERATED);
     ccl::float3 *generated = attr_generated->data_float3();
 
     for (size_t i = 0; i < m_cyclesMesh->verts.size(); i++)
       generated[i] = m_cyclesMesh->verts[i] * size - loc;
-  } else
-  {
+  } else {
     HdCyclesMeshTextureSpace(m_cyclesHair, loc, size);
     ccl::Attribute *attr_generated = m_cyclesHair->attributes.add(ccl::ATTR_STD_GENERATED);
     ccl::float3 *generated = attr_generated->data_float3();
 
-    for (size_t i = 0; i < m_cyclesHair->num_curves(); i++)
-    {
+    for (size_t i = 0; i < m_cyclesHair->num_curves(); i++) {
       ccl::float3 co = m_cyclesHair->curve_keys[m_cyclesHair->get_curve(i).first_key];
       generated[i] = co * size - loc;
     }
@@ -536,11 +489,9 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
   m_visibilityFlags = 0;
   m_curveResolution = 5;
 
-  if (*dirtyBits & HdChangeTracker::DirtyTopology)
-  {
+  if (*dirtyBits & HdChangeTracker::DirtyTopology) {
     m_topology = sceneDelegate->GetBasisCurvesTopology(id);
-    if (m_topology.HasIndices())
-    {
+    if (m_topology.HasIndices()) {
       m_indices = m_topology.GetCurveIndices();
     }
     generate_new_curve = true;
@@ -554,8 +505,7 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
   };
   std::vector<HdBbPrimvar> primvars;
 
-  if (*dirtyBits & HdChangeTracker::DirtyPrimvar)
-  {
+  if (*dirtyBits & HdChangeTracker::DirtyPrimvar) {
     std::array<std::pair<HdInterpolation, HdPrimvarDescriptorVector>, 5> primvars_desc{
       std::make_pair(HdInterpolationConstant, HdPrimvarDescriptorVector{}),
       std::make_pair(HdInterpolationUniform, HdPrimvarDescriptorVector{}),
@@ -564,34 +514,28 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
       std::make_pair(HdInterpolationFaceVarying, HdPrimvarDescriptorVector{}),
     };
 
-    for (auto &info : primvars_desc)
-    {
+    for (auto &info : primvars_desc) {
       info.second = sceneDelegate->GetPrimvarDescriptors(id, info.first);
     }
 
     //
-    for (auto &interpolation_description : primvars_desc)
-    {
-      for (const HdPrimvarDescriptor &description : interpolation_description.second)
-      {
-        if (!HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, description.name))
-        {
+    for (auto &interpolation_description : primvars_desc) {
+      for (const HdPrimvarDescriptor &description : interpolation_description.second) {
+        if (!HdChangeTracker::IsPrimvarDirty(*dirtyBits, id, description.name)) {
           continue;
         }
 
         //
         // special primvars
         //
-        if (description.name == HdTokens->points)
-        {
+        if (description.name == HdTokens->points) {
           VtValue value = sceneDelegate->Get(id, HdTokens->points);
           m_points = value.Get<VtVec3fArray>();
           generate_new_curve = true;
           continue;
         }
 
-        if (description.name == HdTokens->widths)
-        {
+        if (description.name == HdTokens->widths) {
           VtValue value = sceneDelegate->Get(id, HdTokens->widths);
           m_widths = value.Get<VtFloatArray>();
           m_widthsInterpolation = description.interpolation;
@@ -599,23 +543,20 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
           continue;
         }
 
-        if (description.name == HdTokens->normals)
-        {
+        if (description.name == HdTokens->normals) {
           VtValue value = sceneDelegate->Get(id, HdTokens->normals);
           m_normals = value.Get<VtVec3fArray>();
           generate_new_curve = true;
           continue;
         }
 
-        if (description.role == HdPrimvarRoleTokens->textureCoordinate)
-        {
+        if (description.role == HdPrimvarRoleTokens->textureCoordinate) {
           VtValue value = GetPrimvar(sceneDelegate, description.name);
           primvars.emplace_back(HdBbPrimvar{description, value});
           continue;
         }
 
-        if (description.role == HdPrimvarRoleTokens->color)
-        {
+        if (description.role == HdPrimvarRoleTokens->color) {
           VtValue value = GetPrimvar(sceneDelegate, description.name);
           primvars.emplace_back(HdBbPrimvar{description, value});
           continue;
@@ -624,8 +565,7 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
         //
         // arbitrary primvar - do not submit cycles: prefixed schema
         //
-        if (!TfStringStartsWith(description.name.GetString(), "cycles:"))
-        {
+        if (!TfStringStartsWith(description.name.GetString(), "cycles:")) {
           VtValue value = GetPrimvar(sceneDelegate, description.name);
           primvars.emplace_back(HdBbPrimvar{description, value});
           continue;
@@ -634,26 +574,21 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
         //
         // cycles schema primvars
         //
-        if (!TfStringStartsWith(description.name.GetString(), "cycles:"))
-        {
+        if (!TfStringStartsWith(description.name.GetString(), "cycles:")) {
           continue;
         }
 
         //
         const std::string primvar_name = std::string{"primvars:"} + description.name.GetString();
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesCurveShape)
-        {
+        if (primvar_name == HdCyclesTokens->primvarsCyclesCurveShape) {
           VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesCurveShape);
-          if (value.IsHolding<TfToken>())
-          {
+          if (value.IsHolding<TfToken>()) {
             curveShape = value.UncheckedGet<TfToken>();
-            if (curveShape == HdCyclesTokens->ribbon)
-            {
+            if (curveShape == HdCyclesTokens->ribbon) {
               m_curveShape = ccl::CURVE_RIBBON;
               update_curve = true;
-            } else
-            {
+            } else {
               m_curveShape = ccl::CURVE_THICK;
               update_curve = true;
             }
@@ -661,57 +596,53 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectAssetName)
-        {
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectAssetName) {
           VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectAssetName);
-          if (value.IsHolding<std::string>())
-          {
+          if (value.IsHolding<std::string>()) {
             std::string assetName = value.Get<std::string>();
             m_cyclesObject->asset_name = ccl::ustring(assetName);
           }
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectMblur)
-        {
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectMblur) {
           VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectMblur);
           m_motionBlur = value.Get<bool>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectTransformSamples)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectTransformSamples);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectTransformSamples) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectTransformSamples);
           m_motionTransformSteps = value.Get<int>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectDeformSamples)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectDeformSamples);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectDeformSamples) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectDeformSamples);
           m_motionDeformSteps = value.Get<int>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectIsShadowCatcher)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectIsShadowCatcher);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectIsShadowCatcher) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectIsShadowCatcher);
           if (value.IsHolding<bool>())
             m_cyclesObject->is_shadow_catcher = value.Get<bool>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectPassId)
-        {
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectPassId) {
           VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectPassId);
           if (value.IsHolding<bool>())
             m_cyclesObject->pass_id = value.Get<bool>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectUseHoldout)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectUseHoldout);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectUseHoldout) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectUseHoldout);
           if (value.IsHolding<bool>())
             m_cyclesObject->use_holdout = value.Get<bool>();
           continue;
@@ -720,48 +651,47 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
         //
         // Visibility schema
         //
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityCamera)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityCamera);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityCamera) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectVisibilityCamera);
           if (value.IsHolding<bool>())
             m_visCamera = value.Get<bool>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityDiffuse)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityDiffuse);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityDiffuse) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectVisibilityDiffuse);
           if (value.IsHolding<bool>())
             m_visDiffuse = value.Get<bool>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityGlossy)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityGlossy);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityGlossy) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectVisibilityGlossy);
           if (value.IsHolding<bool>())
             m_visGlossy = value.Get<bool>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityScatter)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityScatter);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityScatter) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectVisibilityScatter);
           if (value.IsHolding<bool>())
             m_visScatter = value.Get<bool>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityShadow)
-        {
-          VtValue value = GetPrimvar(sceneDelegate, HdCyclesTokens->primvarsCyclesObjectVisibilityShadow);
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityShadow) {
+          VtValue value = GetPrimvar(sceneDelegate,
+                                     HdCyclesTokens->primvarsCyclesObjectVisibilityShadow);
           if (value.IsHolding<bool>())
             m_visShadow = value.Get<bool>();
           continue;
         }
 
-        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityTransmission)
-        {
+        if (primvar_name == HdCyclesTokens->primvarsCyclesObjectVisibilityTransmission) {
           VtValue value = GetPrimvar(sceneDelegate,
                                      HdCyclesTokens->primvarsCyclesObjectVisibilityTransmission);
           if (value.IsHolding<bool>())
@@ -772,8 +702,7 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     }
   }
 
-  if (*dirtyBits & HdChangeTracker::DirtyVisibility)
-  {
+  if (*dirtyBits & HdChangeTracker::DirtyVisibility) {
     update_curve = true;
     _sharedData.visible = sceneDelegate->GetVisible(id);
   }
@@ -781,19 +710,16 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
   //
   // create curve geometry
   //
-  if (generate_new_curve)
-  {
-    if (HdCyclesIsPrimvarExists(_tokens->cyclesCurveResolution, pdpi))
-    {
-      VtIntArray resolution = sceneDelegate->Get(id, _tokens->cyclesCurveResolution).Get<VtIntArray>();
-      if (resolution.size() > 0)
-      {
+  if (generate_new_curve) {
+    if (HdCyclesIsPrimvarExists(_tokens->cyclesCurveResolution, pdpi)) {
+      VtIntArray resolution =
+        sceneDelegate->Get(id, _tokens->cyclesCurveResolution).Get<VtIntArray>();
+      if (resolution.size() > 0) {
         m_curveResolution = resolution[0];
       }
     }
 
-    if (m_cyclesGeometry)
-    {
+    if (m_cyclesGeometry) {
       param->RemoveGeometry(m_cyclesHair);
 
       m_cyclesGeometry->clear();
@@ -802,8 +728,7 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
 
     _PopulateCurveMesh(param);
 
-    if (m_cyclesGeometry)
-    {
+    if (m_cyclesGeometry) {
       m_renderDelegate->GetCyclesRenderParam()->AddObject(m_cyclesObject);
       m_cyclesObject->geometry = m_cyclesGeometry;
       m_cyclesGeometry->compute_bounds();
@@ -813,13 +738,10 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
       param->AddGeometry(m_cyclesGeometry);
     }
 
-    if (m_cyclesHair)
-    {
-      if (m_motionBlur && m_motionDeformSteps > 0)
-      {
+    if (m_cyclesHair) {
+      if (m_motionBlur && m_motionDeformSteps > 0) {
         _PopulateMotion(sceneDelegate, id);
-      } else
-      {
+      } else {
         m_cyclesHair->use_motion_blur = false;
         m_cyclesHair->motion_steps = 0;
       }
@@ -829,73 +751,63 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
   //
   // commit attributes to the curve
   //
-  for (auto &primvar : primvars)
-  {
-    if (primvar.descriptor.role == HdPrimvarRoleTokens->textureCoordinate)
-    {
+  for (auto &primvar : primvars) {
+    if (primvar.descriptor.role == HdPrimvarRoleTokens->textureCoordinate) {
       _AddUVS(primvar.descriptor.name, primvar.value, primvar.descriptor.interpolation);
       continue;
     }
 
-    if (primvar.descriptor.role == HdPrimvarRoleTokens->color)
-    {
+    if (primvar.descriptor.role == HdPrimvarRoleTokens->color) {
       _AddColors(primvar.descriptor.name, primvar.value, primvar.descriptor.interpolation);
       continue;
     }
 
-    m_object_source->CreateAttributeSource<HdBbHairAttributeSource>(primvar.descriptor.name,
-                                                                    primvar.descriptor.role,
-                                                                    primvar.value,
-                                                                    m_cyclesHair,
-                                                                    primvar.descriptor.interpolation);
+    m_object_source->CreateAttributeSource<HdBbHairAttributeSource>(
+      primvar.descriptor.name,
+      primvar.descriptor.role,
+      primvar.value,
+      m_cyclesHair,
+      primvar.descriptor.interpolation);
   }
 
-  if (*dirtyBits & HdChangeTracker::DirtyTransform)
-  {
+  if (*dirtyBits & HdChangeTracker::DirtyTransform) {
     auto fallback = sceneDelegate->GetTransform(id);
     HdCyclesMatrix4dTimeSampleArray xf{};
 
     std::shared_ptr<HdCyclesTransformSource> transform_source;
-    if (m_motionBlur && m_motionTransformSteps > 1)
-    {
+    if (m_motionBlur && m_motionTransformSteps > 1) {
       sceneDelegate->SampleTransform(id, &xf);
       transform_source = std::make_shared<HdCyclesTransformSource>(m_object_source->GetObject(),
                                                                    xf,
                                                                    fallback,
                                                                    m_motionTransformSteps);
-    } else
-    {
+    } else {
       transform_source = std::make_shared<HdCyclesTransformSource>(m_object_source->GetObject(),
                                                                    xf,
                                                                    fallback);
     }
-    if (transform_source->IsValid())
-    {
+    if (transform_source->IsValid()) {
       transform_source->Resolve();
       update_curve = true;
     }
   }
 
-  if (*dirtyBits & HdChangeTracker::DirtyMaterialId)
-  {
+  if (*dirtyBits & HdChangeTracker::DirtyMaterialId) {
     // We probably need to clear this array, however putting this here,
     // breaks some IPR sessions
     // m_usedShaders.clear();
 
-    if (m_cyclesGeometry)
-    {
+    if (m_cyclesGeometry) {
       // Add default shader
       const SdfPath &materialId = sceneDelegate->GetMaterialId(GetId());
       const HdCyclesMaterial *material = static_cast<const HdCyclesMaterial *>(
         sceneDelegate->GetRenderIndex().GetSprim(HdPrimTypeTokens->material, materialId));
 
-      if (material && material->GetCyclesShader())
-      {
+      if (material && material->GetCyclesShader()) {
         m_usedShaders.push_back(material->GetCyclesShader());
 
         material->GetCyclesShader()->tag_update(scene);
-      } else
-      {
+      } else {
         m_usedShaders.push_back(scene->default_surface);
       }
 
@@ -904,8 +816,7 @@ void HdCyclesBasisCurves::Sync(HdSceneDelegate *sceneDelegate,
     }
   }
 
-  if (generate_new_curve || update_curve)
-  {
+  if (generate_new_curve || update_curve) {
     m_cyclesHair->curve_shape = m_curveShape;
 
     m_visibilityFlags |= m_visCamera ? ccl::PATH_RAY_CAMERA : 0;
@@ -941,8 +852,7 @@ void HdCyclesBasisCurves::_CreateCurves(ccl::Scene *a_scene)
   size_t num_curves = curveVertexCounts.size();
   size_t num_keys = 0;
 
-  for (size_t i = 0; i < num_curves; i++)
-  {
+  for (size_t i = 0; i < num_curves; i++) {
     num_keys += static_cast<size_t>(curveVertexCounts[i]);
   }
 
@@ -963,19 +873,16 @@ void HdCyclesBasisCurves::_CreateCurves(ccl::Scene *a_scene)
   int currentPointCount = 0;
 
   // For every curve
-  for (size_t i = 0; i < curveVertexCounts.size(); i++)
-  {
+  for (size_t i = 0; i < curveVertexCounts.size(); i++) {
     size_t num_curve_keys = 0;
 
     // For every section
-    for (size_t j = 0; j < curveVertexCounts[i]; j++)
-    {
+    for (size_t j = 0; j < curveVertexCounts[i]; j++) {
       size_t idx = j + currentPointCount;
 
       const float time = static_cast<float>(j) / static_cast<float>(curveVertexCounts[i] - 1);
 
-      if (idx > m_points.size())
-      {
+      if (idx > m_points.size()) {
         TF_WARN("Attempted to access invalid point. Continuing");
         continue;
       }
@@ -1007,8 +914,7 @@ void HdCyclesBasisCurves::_CreateCurves(ccl::Scene *a_scene)
       num_curve_keys++;
     }
 
-    if (attr_random != nullptr)
-    {
+    if (attr_random != nullptr) {
       attr_random->add(ccl::hash_uint2_to_float(static_cast<unsigned int>(num_curves), 0));
     }
 
@@ -1018,8 +924,8 @@ void HdCyclesBasisCurves::_CreateCurves(ccl::Scene *a_scene)
     num_curves++;
   }
 
-  if ((m_cyclesHair->curve_keys.size() != num_keys) || (m_cyclesHair->num_curves() != num_curves))
-  {
+  if ((m_cyclesHair->curve_keys.size() != num_keys) ||
+      (m_cyclesHair->num_curves() != num_curves)) {
     TF_WARN("Allocation failed. Clearing data");
 
     m_cyclesHair->clear();
@@ -1035,17 +941,13 @@ void HdCyclesBasisCurves::_CreateRibbons(ccl::Camera *a_camera)
 
   ccl::float3 RotCam;
   bool is_ortho = false;
-  if (m_normals.size() <= 0)
-  {
-    if (a_camera != nullptr)
-    {
+  if (m_normals.size() <= 0) {
+    if (a_camera != nullptr) {
       isCameraOriented = true;
       ccl::Transform &ctfm = a_camera->matrix;
-      if (a_camera->type == ccl::CAMERA_ORTHOGRAPHIC)
-      {
+      if (a_camera->type == ccl::CAMERA_ORTHOGRAPHIC) {
         RotCam = -ccl::make_float3(ctfm.x.z, ctfm.y.z, ctfm.z.z);
-      } else
-      {
+      } else {
         ccl::Transform tfm = m_cyclesObject->tfm;
         ccl::Transform itfm = ccl::transform_quick_inverse(tfm);
         RotCam = ccl::transform_point(&itfm, ccl::make_float3(ctfm.x.w, ctfm.y.w, ctfm.z.w));
@@ -1062,8 +964,7 @@ void HdCyclesBasisCurves::_CreateRibbons(ccl::Camera *a_camera)
 
   int num_vertices = 0;
   int num_tris = 0;
-  for (size_t i = 0; i < curveVertexCounts.size(); i++)
-  {
+  for (size_t i = 0; i < curveVertexCounts.size(); i++) {
     num_vertices += curveVertexCounts[i] * 2;
     num_tris += ((curveVertexCounts[i] - 1) * 2);
   }
@@ -1074,8 +975,7 @@ void HdCyclesBasisCurves::_CreateRibbons(ccl::Camera *a_camera)
   m_cyclesMesh->reserve_mesh(num_vertices, num_tris);
 
   // For every curve
-  for (size_t i = 0; i < curveVertexCounts.size(); i++)
-  {
+  for (size_t i = 0; i < curveVertexCounts.size(); i++) {
     ccl::float3 xbasis;
     ccl::float3 v1;
 
@@ -1097,14 +997,12 @@ void HdCyclesBasisCurves::_CreateRibbons(ccl::Camera *a_camera)
       radius = m_widths[width_idx] / 2.0f;
 
     v1 = vec3f_to_float3(m_points[1] - m_points[0]);
-    if (isCameraOriented)
-    {
+    if (isCameraOriented) {
       if (is_ortho)
         xbasis = normalize(cross(RotCam, v1));
       else
         xbasis = ccl::normalize(ccl::cross(RotCam - ickey_loc, v1));
-    } else
-    {
+    } else {
       if (m_normals.size() > 0)
         xbasis = ccl::normalize(vec3f_to_float3(m_normals[0]));
       else
@@ -1117,20 +1015,17 @@ void HdCyclesBasisCurves::_CreateRibbons(ccl::Camera *a_camera)
     vertexindex += 2;
 
     // For every section
-    for (int j = 0; j < curveVertexCounts[i]; j++)
-    {
+    for (int j = 0; j < curveVertexCounts[i]; j++) {
       int first_idx = (static_cast<int>(i) * curveVertexCounts[i]);
       int idx = j + (static_cast<int>(i) * curveVertexCounts[i]);
 
       ickey_loc = vec3f_to_float3(m_points[idx]);
 
-      if (j == 0)
-      {
+      if (j == 0) {
         // subv = 0;
         // First curve point
         v1 = vec3f_to_float3(m_points[idx] - m_points[std::max(idx - 1, first_idx)]);
-      } else
-      {
+      } else {
         v1 = vec3f_to_float3(m_points[idx + 1] - m_points[idx - 1]);
       }
 
@@ -1149,14 +1044,12 @@ void HdCyclesBasisCurves::_CreateRibbons(ccl::Camera *a_camera)
       if (m_widths.size() > 0)
         radius = m_widths[width_idx] / 2.0f;
 
-      if (isCameraOriented)
-      {
+      if (isCameraOriented) {
         if (is_ortho)
           xbasis = normalize(cross(RotCam, v1));
         else
           xbasis = ccl::normalize(ccl::cross(RotCam - ickey_loc, v1));
-      } else
-      {
+      } else {
         if (m_normals.size() > 0)
           xbasis = ccl::normalize(vec3f_to_float3(m_normals[idx]));
         else
@@ -1188,8 +1081,7 @@ void HdCyclesBasisCurves::_CreateTubeMesh()
 
   int num_vertices = 0;
   int num_tris = 0;
-  for (size_t i = 0; i < curveVertexCounts.size(); i++)
-  {
+  for (size_t i = 0; i < curveVertexCounts.size(); i++) {
     num_vertices += curveVertexCounts[i] * m_curveResolution;
     num_tris += ((curveVertexCounts[i] - 1) * 2 * m_curveResolution);
   }
@@ -1200,20 +1092,20 @@ void HdCyclesBasisCurves::_CreateTubeMesh()
   m_cyclesMesh->reserve_mesh(num_vertices, num_tris);
 
   // For every curve
-  for (size_t i = 0; i < curveVertexCounts.size(); i++)
-  {
+  for (size_t i = 0; i < curveVertexCounts.size(); i++) {
     ccl::float3 firstxbasis = ccl::cross(ccl::make_float3(1.0f, 0.0f, 0.0f),
-                                         vec3f_to_float3(m_points[1]) - vec3f_to_float3(m_points[0]));
+                                         vec3f_to_float3(m_points[1]) -
+                                           vec3f_to_float3(m_points[0]));
 
     if (!ccl::is_zero(firstxbasis))
       firstxbasis = ccl::normalize(firstxbasis);
     else
-      firstxbasis = ccl::normalize(ccl::cross(ccl::make_float3(0.0f, 1.0f, 0.0f),
-                                              vec3f_to_float3(m_points[1]) - vec3f_to_float3(m_points[0])));
+      firstxbasis = ccl::normalize(
+        ccl::cross(ccl::make_float3(0.0f, 1.0f, 0.0f),
+                   vec3f_to_float3(m_points[1]) - vec3f_to_float3(m_points[0])));
 
     // For every section
-    for (int j = 0; j < curveVertexCounts[i]; j++)
-    {
+    for (int j = 0; j < curveVertexCounts[i]; j++) {
       int first_idx = (static_cast<int>(i) * curveVertexCounts[i]);
       int idx = j + (static_cast<int>(i) * curveVertexCounts[i]);
 
@@ -1221,34 +1113,31 @@ void HdCyclesBasisCurves::_CreateTubeMesh()
       ccl::float3 v1;
       ccl::float3 v2;
 
-      if (j == 0)
-      {
+      if (j == 0) {
         // First curve point
-        v1 = vec3f_to_float3(m_points[std::min(idx + 2, (curveVertexCounts[i] + curveVertexCounts[i] - 1))]);
+        v1 = vec3f_to_float3(
+          m_points[std::min(idx + 2, (curveVertexCounts[i] + curveVertexCounts[i] - 1))]);
         v2 = vec3f_to_float3(m_points[idx + 1] - m_points[idx]);
-      } else if (j == (curveVertexCounts[i] - 1))
-      {
+      } else if (j == (curveVertexCounts[i] - 1)) {
         // Last curve point
         v1 = vec3f_to_float3(m_points[idx] - m_points[idx - 1]);
-        v2 = vec3f_to_float3(m_points[idx - 1] - m_points[std::max(idx - 2, first_idx)]);  // First key
-      } else
-      {
+        v2 = vec3f_to_float3(m_points[idx - 1] -
+                             m_points[std::max(idx - 2, first_idx)]);  // First key
+      } else {
         v1 = vec3f_to_float3(m_points[idx + 1] - m_points[idx]);
         v2 = vec3f_to_float3(m_points[idx] - m_points[idx - 1]);
       }
 
       xbasis = ccl::cross(v1, v2);
 
-      if (ccl::len_squared(xbasis) >= 0.05f * ccl::len_squared(v1) * ccl::len_squared(v2))
-      {
+      if (ccl::len_squared(xbasis) >= 0.05f * ccl::len_squared(v1) * ccl::len_squared(v2)) {
         firstxbasis = ccl::normalize(xbasis);
         break;
       }
     }
 
     // For every section
-    for (int j = 0; j < curveVertexCounts[i]; j++)
-    {
+    for (int j = 0; j < curveVertexCounts[i]; j++) {
       int first_idx = (static_cast<int>(i) * curveVertexCounts[i]);
       int idx = j + (static_cast<int>(i) * curveVertexCounts[i]);
       ccl::float3 xbasis;
@@ -1258,17 +1147,15 @@ void HdCyclesBasisCurves::_CreateTubeMesh()
 
       ccl::float3 usd_location = vec3f_to_float3(m_points[idx]);
 
-      if (j == 0)
-      {
+      if (j == 0) {
         // First curve point
-        v1 = vec3f_to_float3(m_points[std::min(idx + 2, (curveVertexCounts[i] - 1))] - m_points[idx + 1]);
+        v1 = vec3f_to_float3(m_points[std::min(idx + 2, (curveVertexCounts[i] - 1))] -
+                             m_points[idx + 1]);
         v2 = vec3f_to_float3(m_points[idx + 1] - m_points[idx]);
-      } else if (j == (curveVertexCounts[i] - 1))
-      {
+      } else if (j == (curveVertexCounts[i] - 1)) {
         v1 = vec3f_to_float3(m_points[idx] - m_points[idx - 1]);
         v2 = vec3f_to_float3(m_points[idx - 1] - m_points[std::max(idx - 2, first_idx)]);
-      } else
-      {
+      } else {
         v1 = vec3f_to_float3(m_points[idx + 1] - m_points[idx]);
         v1 = vec3f_to_float3(m_points[idx] - m_points[idx - 1]);
       }
@@ -1294,12 +1181,10 @@ void HdCyclesBasisCurves::_CreateTubeMesh()
 
       xbasis = ccl::cross(v1, v2);
 
-      if (ccl::len_squared(xbasis) >= 0.05f * ccl::len_squared(v1) * ccl::len_squared(v2))
-      {
+      if (ccl::len_squared(xbasis) >= 0.05f * ccl::len_squared(v1) * ccl::len_squared(v2)) {
         xbasis = ccl::normalize(xbasis);
         firstxbasis = xbasis;
-      } else
-      {
+      } else {
         xbasis = firstxbasis;
       }
 
@@ -1307,18 +1192,15 @@ void HdCyclesBasisCurves::_CreateTubeMesh()
 
       // Add vertices
       float segment_angle = 0.0f;
-      for (int k = 0; k < m_curveResolution; k++)
-      {
-        ccl::float3 vertex_location = usd_location +
-                                      radius * (cosf(segment_angle) * xbasis + sinf(segment_angle) * ybasis);
+      for (int k = 0; k < m_curveResolution; k++) {
+        ccl::float3 vertex_location = usd_location + radius * (cosf(segment_angle) * xbasis +
+                                                               sinf(segment_angle) * ybasis);
         segment_angle += angle;
         m_cyclesMesh->add_vertex(vertex_location);
       }
 
-      if (j < curveVertexCounts[i] - 1)
-      {
-        for (int k = 0; k < m_curveResolution - 1; k++)
-        {
+      if (j < curveVertexCounts[i] - 1) {
+        for (int k = 0; k < m_curveResolution - 1; k++) {
           int t1 = vertexindex - m_curveResolution + k;
           int t2 = vertexindex + k;
           int t3 = vertexindex - m_curveResolution + k + 1;
@@ -1352,8 +1234,9 @@ void HdCyclesBasisCurves::_CreateTubeMesh()
 
 HdDirtyBits HdCyclesBasisCurves::GetInitialDirtyBitsMask() const
 {
-  return HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyPoints | HdChangeTracker::DirtyNormals |
-         HdChangeTracker::DirtyWidths | HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyTransform |
+  return HdChangeTracker::DirtyTopology | HdChangeTracker::DirtyPoints |
+         HdChangeTracker::DirtyNormals | HdChangeTracker::DirtyWidths |
+         HdChangeTracker::DirtyPrimvar | HdChangeTracker::DirtyTransform |
          HdChangeTracker::DirtyVisibility | HdChangeTracker::DirtyMaterialId;
 }
 

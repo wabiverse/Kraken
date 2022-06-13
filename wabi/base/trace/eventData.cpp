@@ -43,9 +43,8 @@ namespace
   class JsValue_visitor : public boost::static_visitor<void>
   {
    public:
-    JsValue_visitor(JsWriter &writer)
-      : _writer(writer)
-    {}
+
+    JsValue_visitor(JsWriter &writer) : _writer(writer) {}
 
     void operator()(int64_t i) const
     {
@@ -72,13 +71,13 @@ namespace
       _writer.WriteValue(s);
     }
 
-    template<class T>
-    void operator()(T) const
+    template<class T> void operator()(T) const
     {
       _writer.WriteValue(nullptr);
     }
 
    private:
+
     JsWriter &_writer;
   };
 
@@ -86,6 +85,7 @@ namespace
   class Type_visitor : public boost::static_visitor<TraceEvent::DataType>
   {
    public:
+
     TraceEvent::DataType operator()(int64_t i) const
     {
       return TraceEvent::DataType::Int;
@@ -111,8 +111,7 @@ namespace
       return TraceEvent::DataType::String;
     }
 
-    template<class T>
-    TraceEvent::DataType operator()(T) const
+    template<class T> TraceEvent::DataType operator()(T) const
     {
       return TraceEvent::DataType::Invalid;
     }
