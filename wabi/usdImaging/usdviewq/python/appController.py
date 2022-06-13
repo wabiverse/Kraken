@@ -855,7 +855,7 @@ class AppController(QtCore.QObject):
                 self._toggleStop)
 
             # Typically, a handler is registered to the 'aboutToQuit' signal
-            # to handle cleanup. However, with PySide2, stageView's GL context
+            # to handle cleanup. However, with PySide6, stageView's GL context
             # is destroyed by then, making it too late in the shutdown process
             # to release any GL resources used by the renderer (relevant for 
             # Phoenix's GL renderer).

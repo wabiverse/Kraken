@@ -319,7 +319,7 @@ if(WIN32)
   target_link_options(kraken PUBLIC "LINKER:/WHOLEARCHIVE:maelstrom")
 elseif(APPLE)
   target_link_libraries(kraken -Wl,-force_load maelstrom)
-elseif(UNIX)
+elseif(UNIX AND NOT APPLE)
   target_link_libraries(kraken "-Wl,--whole-archive $<TARGET_FILE:maelstrom> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
 endif()
 
@@ -352,17 +352,13 @@ elseif(WIN32)
   set(TARGETDIR_VER ${KRAKEN_VERSION})
 
 elseif(APPLE)
-  if(WITH_PYTHON_MODULE)
-    set(TARGETDIR_VER ${KRAKEN_VERSION})
-  else()
-    set(TARGETDIR_VER Kraken.app/Contents/Resources/${KRAKEN_VERSION})
-  endif()
+  set(TARGETDIR_VER Kraken.app/Contents/Resources/${KRAKEN_VERSION})
   # Skip relinking on cpack / install
   set_target_properties(kraken PROPERTIES BUILD_WITH_INSTALL_RPATH true)
 endif()
 
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   set_target_properties(kraken PROPERTIES BUILD_WITH_INSTALL_RPATH true)
   set_target_properties(kraken PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${KRAKEN_VERSION}/lib")
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${KRAKEN_VERSION}/lib")
@@ -372,7 +368,7 @@ endif()
 # -----------------------------------------------------------------------------
 # Install Targets (Generic, All Platforms)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   install(
     DIRECTORY
       ${LIBDIR}/bin/
@@ -402,7 +398,7 @@ if(UNIX)
   )
 endif()
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   install(
     TARGETS
       maelstrom # <- Pixar monolithic
@@ -1076,10 +1072,8 @@ endif()
 # endif()
 
 elseif(APPLE)
-  if(NOT WITH_PYTHON_MODULE)
-    # Uppercase name for app bundle
-    set_target_properties(kraken PROPERTIES OUTPUT_NAME KRAKEN)
-  endif()
+  # Uppercase name for app bundle
+  set_target_properties(kraken PROPERTIES OUTPUT_NAME KRAKEN)
 
   # handy install macro to exclude files, we use \$ escape for the "to"
   # argument when calling so ${BUILD_TYPE} does not get expanded
@@ -1189,7 +1183,7 @@ endif()
 
 # KRAKEN PYTHON MODULE
 if(WITH_PYTHON)
-  if(UNIX)
+  if(UNIX AND NOT APPLE)
     install(
       DIRECTORY
         ${CMAKE_SOURCE_DIR}/release/scripts/modules/
@@ -1208,7 +1202,7 @@ endif()
 
 # ARNOLD PYTHON MODULE
 if(WITH_ARNOLD)
-  if(UNIX)
+  if(UNIX AND NOT APPLE)
     install(
       DIRECTORY
         ${LIBDIR}/python/arnold
@@ -1306,7 +1300,7 @@ unset(_f)
 # -----------------------------------------------------------------------------
 # Icons
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   install(
     DIRECTORY
       ${CMAKE_SOURCE_DIR}/release/iconfiles/
@@ -1334,7 +1328,7 @@ endif()
 # -----------------------------------------------------------------------------
 # Textures
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   install(
     DIRECTORY
       ${CMAKE_SOURCE_DIR}/release/textures/
@@ -1351,7 +1345,7 @@ endif()
 # -----------------------------------------------------------------------------
 # Color Management (OCIO)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   install(
     DIRECTORY
       ${CMAKE_SOURCE_DIR}/release/datafiles/colormanagement/
@@ -1379,7 +1373,7 @@ setup_platform_linker_libs(kraken)
 
 if(APPLE)
   set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
-elseif(UNIX)
+elseif(UNIX AND NOT APPLE)
   set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kraken.map)
 endif()
 

@@ -45,7 +45,27 @@ endif()
 set(CMAKE_INSTALL_MESSAGE LAZY)
 
 if(APPLE)
+  # !! Cmake < 3.24 will not work on macOS.
+  #
+  # You will need to download and install a change as of 6/10/2022 here: 
+  # https://cmake.org/files/dev/cmake-3.24.20220611-gd8a8b9f-macos-universal.dmg
+  #
+  # and add this at the end of your .zshrc:
+  # export PATH="/Applications/CMake.app/Contents/bin":"$PATH"
+  #  
+  # until brew updates the formula for 3.24 (should not take long).
+  #
+  # otherwise, compiler identification checks will fail and cause all sorts of issues.
+
   set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "Build architectures for MacOS" FORCE)
+  # Prefer to target Xcode 14.0 Beta on macOS.
+  if (EXISTS "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man/man1/clang.1")
+    set(CMAKE_C_COMPILER "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man/man1/clang.1")
+  endif()
+  # Prefer to target Xcode 14.0 Beta on macOS.
+  if (EXISTS "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man/man1/clang++.1")
+    set(CMAKE_CXX_COMPILER "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man/man1/clang++.1")
+  endif()
 endif()
 
 # global compile definitions since add_definitions() adds for all.
@@ -195,7 +215,7 @@ option(WITH_EMBREE                   "Enable Embree, Intel's Render Engine"     
 option(WITH_ALEMBIC                  "Enable Alembic Support"                                                                     ON)
 option(WITH_ALEMBIC_HDF5             "Enable HDF5 in Alembic for high performance data management and storage"                    ON)
 option(WITH_DRACO                    "Enable Draco Support"                                                                       ON)
-option(WITH_MATERIALX                "Enable MaterialX support for Kraken through the usdMatx plugin"                             ON)
+option(WITH_MATERIALX                "Enable MaterialX support for Kraken through the usdMatx plugin"                             OFF)
 option(WITH_OSL                      "Build with full OSL support for MaterialX, and others."                                     ON)
 option(WITH_OPENIMAGEIO              "Enable OpenImageIO Support (http://www.openimageio.org)"                                    ON)
 option(WITH_PTEX                     "Enable Walt Disney Animation Studios Ptex support (https://ptex.us/)"                       ON)

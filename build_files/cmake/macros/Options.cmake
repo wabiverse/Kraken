@@ -142,9 +142,8 @@ if(${WITH_MATERIALX})
 endif()
 
 if(WITH_PYTHON)
-  add_definitions(-DWITH_PYTHON)
+  add_definitions(-DWITH_PYTHON=1)
 endif()
-
 if(WITH_SAFETY_OVER_SPEED)
   add_definitions(-DWITH_SAFETY_OVER_SPEED)
 endif()

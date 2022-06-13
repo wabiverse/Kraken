@@ -196,12 +196,18 @@ else()
 endif()
 
 if(WITH_PIXAR_TOOLKIT)
-  if(UNIX)
+  if(UNIX AND NOT APPLE)
     install(
         FILES
         python/usdGenSchema.py
         DESTINATION
         /usr/local/share/kraken/${TARGETDIR_VER}/bin/toolkit)
+  elseif(APPLE)
+    install(
+        FILES
+        python/usdGenSchema.py
+        DESTINATION
+        ${TARGETDIR_VER}/toolkit)
   elseif(WIN32)
     install(
         FILES

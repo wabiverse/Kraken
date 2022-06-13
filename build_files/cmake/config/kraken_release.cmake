@@ -36,7 +36,7 @@ endif()
 ################################################################################## FILE FORMATS ######
 
 set(WITH_ALEMBIC             ON  CACHE BOOL "" FORCE)
-set(WITH_MATERIALX           ON  CACHE BOOL "" FORCE)
+set(WITH_MATERIALX          OFF  CACHE BOOL "" FORCE)
 set(WITH_OSL                 ON  CACHE BOOL "" FORCE)
 
 ################################################################################# IMAGE FORMATS ######

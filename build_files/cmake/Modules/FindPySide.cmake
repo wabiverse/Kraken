@@ -33,18 +33,17 @@ if (NOT PYTHON_EXECUTABLE)
     return()
 endif()
 
-# Prefer PySide2 over PySide
-# Note: Windows does not support PySide2 with Python2.7
+# Prefer PySide6 (QT6)
 execute_process(
-    COMMAND "${PYTHON_EXECUTABLE}" "-c" "import PySide2"
+    COMMAND "${PYTHON_EXECUTABLE}" "-c" "import PySide6"
     RESULT_VARIABLE pySideImportResult 
 )
 if (pySideImportResult EQUAL 0)
-    set(pySideImportResult "PySide2")
-    set(pySideUIC pyside2-uic python2-pyside2-uic pyside2-uic-2.7)
+    set(pySideImportResult "PySide6")
+    set(pySideUIC pyside6-uic python3-pyside6-uic pyside6-uic-3.9)
 endif()
 
-# PySide2 not found OR PYSIDE explicitly requested
+# PySide6 not found OR PYSIDE explicitly requested
 if (pySideImportResult EQUAL 1 OR PYSIDE_USE_PYSIDE)
     execute_process(
         COMMAND "${PYTHON_EXECUTABLE}" "-c" "import PySide"
@@ -58,8 +57,8 @@ if (pySideImportResult EQUAL 1 OR PYSIDE_USE_PYSIDE)
     endif()
 endif()
 
-if(UNIX)
-  set(PYSIDEUICBINARY /usr/local/bin/pyside2-uic)
+if(UNIX AND NOT APPLE)
+  set(PYSIDEUICBINARY /usr/local/bin/pyside6-uic)
 else()
   find_program(PYSIDEUICBINARY NAMES ${pySideUIC} HINTS ${PYSIDE_BIN_DIR})
 endif()
@@ -76,7 +75,7 @@ else()
     if (PYSIDE_USE_PYSIDE)
         message(STATUS "Did not find PySide with ${PYTHON_EXECUTABLE}")
     else()
-        message(STATUS "Did not find PySide2 with ${PYTHON_EXECUTABLE}")
+        message(STATUS "Did not find PySide6 with ${PYTHON_EXECUTABLE}")
     endif()
     set(PYSIDE_AVAILABLE False)
 endif()

@@ -45,10 +45,14 @@ set(MTLX_FILES
 
 foreach(mtlx ${MTLX_FILES})
     get_filename_component(dir ${mtlx} DIRECTORY)
-    if(UNIX)
+    if(UNIX AND NOT APPLE)
         install(
             FILES ${mtlx}
             DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/materials/${dir})
+    elseif(APPLE)
+        install(
+          FILES ${mtlx}
+          DESTINATION ${TARGETDIR_VER}/materials/${dir})
     elseif(WIN32)
         install(
             FILES ${mtlx}

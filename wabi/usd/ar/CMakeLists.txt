@@ -5,10 +5,15 @@ configure_file(
     resources/ar.h.in
     ${CMAKE_BINARY_DIR}/include/wabi/usd/ar/ar.h)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
     install(
         FILES ${CMAKE_BINARY_DIR}/include/wabi/usd/ar/ar.h
         DESTINATION "/usr/local/share/kraken/${TARGETDIR_VER}/include/wabi/usd/ar"
+    )
+elseif(APPLE)
+    install(
+        FILES ${CMAKE_BINARY_DIR}/include/wabi/usd/ar/ar.h
+        DESTINATION "${TARGETDIR_VER}/include/wabi/usd/ar"
     )
 elseif(WIN32)
     install(

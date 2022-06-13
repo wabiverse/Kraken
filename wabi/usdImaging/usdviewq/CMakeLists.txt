@@ -83,7 +83,7 @@ wabi_library(usdviewq
         docs/blackBoxTesting.md
 )
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
     install(DIRECTORY
         resources/icons
         DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
@@ -92,6 +92,16 @@ if(UNIX)
     install(DIRECTORY
         resources/fonts
         DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+    )
+elseif(APPLE)
+    install(DIRECTORY
+        resources/icons
+        DESTINATION ${TARGETDIR_VER}/scripts/modules/wabi/Usdviewq
+    )
+
+    install(DIRECTORY
+        resources/fonts
+        DESTINATION ${TARGETDIR_VER}/scripts/modules/wabi/Usdviewq
     )
 elseif(WIN32)
     install(DIRECTORY

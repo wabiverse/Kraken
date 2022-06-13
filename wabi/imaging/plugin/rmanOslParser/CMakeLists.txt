@@ -38,8 +38,10 @@ wabi_plugin(rmanOslParser
 # it so this library wasn't embedded in the monolithic library.
 get_filename_component(RMANTREE_PATH "${RENDERMAN_INCLUDE_DIR}/.." ABSOLUTE)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
     get_filename_component(RMANSHADER_PATH "/usr/local/share/kraken/1.50/datafiles/plugin/maelstrom/resources/shaders" ABSOLUTE)
+elseif(APPLE)
+    get_filename_component(RMANSHADER_PATH "${TARGETDIR_VER}/datafiles/plugin/maelstrom/resources/shaders" ABSOLUTE)
 elseif(WIN32)
     get_filename_component(RMANSHADER_PATH "${TARGETDIR_VER}/datafiles/plugin/maelstrom/resources/shaders" ABSOLUTE)
 endif()

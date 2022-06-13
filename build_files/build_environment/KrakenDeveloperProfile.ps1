@@ -603,10 +603,12 @@ Set-Alias krkn HopIntoRootDir
 Set-Alias kraken_r RunDevelopmentReleaseKraken
 Set-Alias kraken_d RunDevelopmentDebugKraken
 
-# Run Kraken Python
-Set-Alias python RunKrakenPythonOfficialRelease
-Set-Alias python_r RunKrakenPythonRelease
-Set-Alias python_d RunKrakenPythonDebug
+# Run Kraken Python (use system on *nix)
+if ($IsWindows) {
+  Set-Alias python RunKrakenPythonOfficialRelease
+  Set-Alias python_r RunKrakenPythonRelease
+  Set-Alias python_d RunKrakenPythonDebug
+}
 
 # Enter Kraken Server
 Set-Alias wabiserver ConnectKraken

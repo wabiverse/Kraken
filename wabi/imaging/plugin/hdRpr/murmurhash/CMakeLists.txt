@@ -25,7 +25,7 @@ add_library(murmurhash
   PMurHash.c
 )
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   install(
     TARGETS
       murmurhash

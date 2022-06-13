@@ -182,7 +182,7 @@ else
 	endif
 endif
 ifneq "$(findstring xcode, $(MAKECMDGOALS))" ""
-    CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Xcode
+	CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Xcode
 	BUILD_COMMAND:=xcodebuild
 	DEPS_BUILD_COMMAND:=xcodebuild
 endif
@@ -194,8 +194,10 @@ endif
 # use the default build path can still use utility helpers.
 ifeq ($(OS), Darwin)
 	KRAKEN_BIN?="$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
+	CLEAN_BUILD_COMMAND:=rm -r "$(BUILD_DIR)"
 else
 	KRAKEN_BIN?="$(BUILD_DIR)/bin/kraken"
+	CLEAN_BUILD_COMMAND:=$(BUILD_COMMAND) -C "$(BUILD_DIR)" clean
 endif
 
 
@@ -274,7 +276,7 @@ xcode:
 
 	@echo
 	@echo Building Kraken and Pixar USD...
-	$(BUILD_COMMAND) -arch "arm64" -project "$(BUILD_DIR)/Kraken.xcodeproj" -jobs $(NPROCS) -configuration Release -scheme install
+	$(BUILD_COMMAND) -arch "arm64" -sdk "macosx" -project "$(BUILD_DIR)/Kraken.xcodeproj" -jobs $(NPROCS) -configuration Release -scheme install CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain" CODE_SIGNING_ALLOWED=NO
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
 	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken"
@@ -380,7 +382,7 @@ doc_man: .FORCE
 	$(PYTHON) doc/manpage/kraken.1.py $(KRAKEN_BIN) kraken.1
 
 clean: .FORCE
-	$(BUILD_COMMAND) -C "$(BUILD_DIR)" clean
+	$(CLEAN_BUILD_COMMAND)
 
 .PHONY: all
 

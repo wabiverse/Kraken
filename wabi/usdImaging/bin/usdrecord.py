@@ -47,8 +47,8 @@ def _Err(msg):
 
 def _SetupOpenGLContext(width=100, height=100):
     try:
-        from PySide2 import QtOpenGL
-        from PySide2.QtWidgets import QApplication
+        from PySide6 import QtOpenGL
+        from PySide6.QtWidgets import QApplication
     except ImportError:
         from PySide import QtOpenGL
         from PySide.QtGui import QApplication

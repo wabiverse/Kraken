@@ -31,10 +31,15 @@ configure_file(
   ${CMAKE_SOURCE_DIR}/build_files/cmake/config/wabiConfig.cmake.in
   "${PROJECT_BINARY_DIR}/wabiConfig.cmake" @ONLY)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   install(FILES
     "${PROJECT_BINARY_DIR}/wabiConfig.cmake"
     DESTINATION "${CMAKE_INSTALL_PREFIX}"
+  )
+elseif(APPLE)
+  install(FILES
+    "${PROJECT_BINARY_DIR}/wabiConfig.cmake"
+    DESTINATION "./cmake/wabiConfig.cmake"
   )
 elseif(WIN32)
   install(FILES
