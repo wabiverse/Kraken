@@ -68,29 +68,29 @@ UsdGeomCapsule UsdGeomCapsule::Define(const UsdStagePtr &stage, const SdfPath &p
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomCapsule::GetSchemaKind() const
+UsdSchemaKind UsdGeomCapsule::_GetSchemaKind() const
 {
   return UsdGeomCapsule::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomCapsule::GetStaticTfType()
+const TfType &UsdGeomCapsule::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomCapsule>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomCapsule::IsTypedSchema()
+bool UsdGeomCapsule::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomCapsule::GetTfType() const
+const TfType &UsdGeomCapsule::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomCapsule::GetHeightAttr() const

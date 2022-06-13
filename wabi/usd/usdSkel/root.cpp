@@ -75,29 +75,29 @@ UsdSkelRoot UsdSkelRoot::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdSkelRoot::GetSchemaKind() const
+UsdSchemaKind UsdSkelRoot::_GetSchemaKind() const
 {
   return UsdSkelRoot::schemaKind;
 }
 
 /* static */
-const TfType &UsdSkelRoot::GetStaticTfType()
+const TfType &UsdSkelRoot::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdSkelRoot>();
   return tfType;
 }
 
 /* static */
-bool UsdSkelRoot::IsTypedSchema()
+bool UsdSkelRoot::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdSkelRoot::GetTfType() const
+const TfType &UsdSkelRoot::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/

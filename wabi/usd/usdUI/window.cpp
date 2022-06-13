@@ -79,29 +79,29 @@ UsdUIWindow UsdUIWindow::Define(const UsdStagePtr &stage, const SdfPath &path)
   return UsdUIWindow(stage->DefinePrim(path, usdPrimTypeName));
 }
 /* virtual */
-UsdSchemaKind UsdUIWindow::GetSchemaKind() const
+UsdSchemaKind UsdUIWindow::_GetSchemaKind() const
 {
   return UsdUIWindow::schemaKind;
 }
 
 /* static */
-const TfType &UsdUIWindow::GetStaticTfType()
+const TfType &UsdUIWindow::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdUIWindow>();
   return tfType;
 }
 
 /* static */
-bool UsdUIWindow::IsTypedSchema()
+bool UsdUIWindow::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUIWindow::GetTfType() const
+const TfType &UsdUIWindow::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdUIWindow::GetTitleAttr() const

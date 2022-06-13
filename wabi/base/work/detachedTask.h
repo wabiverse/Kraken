@@ -31,6 +31,8 @@
 #include "wabi/base/work/dispatcher.h"
 #include "wabi/wabi.h"
 
+#include <tbb/task.h>
+
 #include <type_traits>
 #include <utility>
 

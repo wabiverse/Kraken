@@ -60,7 +60,7 @@ UsdRiLightFilterAPI UsdRiLightFilterAPI::Get(const UsdStagePtr &stage, const Sdf
 }
 
 /* virtual */
-UsdSchemaKind UsdRiLightFilterAPI::GetSchemaKind() const
+UsdSchemaKind UsdRiLightFilterAPI::_GetSchemaKind() const
 {
   return UsdRiLightFilterAPI::schemaKind;
 }
@@ -75,23 +75,23 @@ UsdRiLightFilterAPI UsdRiLightFilterAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdRiLightFilterAPI::GetStaticTfType()
+const TfType &UsdRiLightFilterAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiLightFilterAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdRiLightFilterAPI::IsTypedSchema()
+bool UsdRiLightFilterAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiLightFilterAPI::GetTfType() const
+const TfType &UsdRiLightFilterAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiLightFilterAPI::GetRiCombineModeAttr() const

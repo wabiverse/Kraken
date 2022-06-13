@@ -68,29 +68,29 @@ UsdShadeShader UsdShadeShader::Define(const UsdStagePtr &stage, const SdfPath &p
 }
 
 /* virtual */
-UsdSchemaKind UsdShadeShader::GetSchemaKind() const
+UsdSchemaKind UsdShadeShader::_GetSchemaKind() const
 {
   return UsdShadeShader::schemaKind;
 }
 
 /* static */
-const TfType &UsdShadeShader::GetStaticTfType()
+const TfType &UsdShadeShader::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdShadeShader>();
   return tfType;
 }
 
 /* static */
-bool UsdShadeShader::IsTypedSchema()
+bool UsdShadeShader::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdShadeShader::GetTfType() const
+const TfType &UsdShadeShader::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/

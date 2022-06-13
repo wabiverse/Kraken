@@ -125,14 +125,14 @@ struct Scene : public KrakenPrim
   UsdStageRefPtr stage;
 
  protected:
-  UsdSchemaKind GetSchemaKind() const override;
+  UsdSchemaKind _GetSchemaKind() const override;
 
  private:
   friend class UsdSchemaRegistry;
 
-  static const TfType &GetStaticTfType();
-  static bool IsTypedSchema();
-  const TfType &GetTfType() const override;
+  static const TfType &_GetStaticTfType();
+  static bool _IsTypedSchema();
+  const TfType &_GetTfType() const override;;
 };
 
 WABI_NAMESPACE_END

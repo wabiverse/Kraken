@@ -109,6 +109,7 @@ wabi_library(ar
         resolverContextBinder.h
         resolverScopedCache.h
         threadLocalScopedCache.h
+        timestamp.h
         ${versionedHeaders}
 
     PYTHON_PUBLIC_HEADERS
@@ -128,6 +129,7 @@ wabi_library(ar
         resolvedPath.cpp
         resolverContextBinder.cpp
         resolverScopedCache.cpp
+        timestamp.cpp
         debugCodes.cpp
         defaultResolverContext.cpp
         ${versionedCPPFiles}
@@ -143,6 +145,7 @@ wabi_library(ar
         wrapResolvedPath.cpp
         wrapResolverContextBinder.cpp
         wrapResolverScopedCache.cpp
+        wrapTimestamp.cpp
         ${versionedPymoduleCPPFiles}
 
     PYMODULE_FILES

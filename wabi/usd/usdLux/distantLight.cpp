@@ -75,29 +75,29 @@ UsdLuxDistantLight UsdLuxDistantLight::Define(const UsdStagePtr &stage, const Sd
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxDistantLight::GetSchemaKind() const
+UsdSchemaKind UsdLuxDistantLight::_GetSchemaKind() const
 {
   return UsdLuxDistantLight::schemaKind;
 }
 
 /* static */
-const TfType &UsdLuxDistantLight::GetStaticTfType()
+const TfType &UsdLuxDistantLight::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxDistantLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxDistantLight::IsTypedSchema()
+bool UsdLuxDistantLight::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxDistantLight::GetTfType() const
+const TfType &UsdLuxDistantLight::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdLuxDistantLight::GetAngleAttr() const

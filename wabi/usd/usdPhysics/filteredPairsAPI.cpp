@@ -55,7 +55,7 @@ UsdPhysicsFilteredPairsAPI UsdPhysicsFilteredPairsAPI::Get(const UsdStagePtr &st
 
 
 /* virtual */
-UsdSchemaKind UsdPhysicsFilteredPairsAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsFilteredPairsAPI::_GetSchemaKind() const
 {
   return UsdPhysicsFilteredPairsAPI::schemaKind;
 }
@@ -76,23 +76,23 @@ UsdPhysicsFilteredPairsAPI UsdPhysicsFilteredPairsAPI::Apply(const UsdPrim &prim
 }
 
 /* static */
-const TfType &UsdPhysicsFilteredPairsAPI::GetStaticTfType()
+const TfType &UsdPhysicsFilteredPairsAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsFilteredPairsAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsFilteredPairsAPI::IsTypedSchema()
+bool UsdPhysicsFilteredPairsAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsFilteredPairsAPI::GetTfType() const
+const TfType &UsdPhysicsFilteredPairsAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdRelationship UsdPhysicsFilteredPairsAPI::GetFilteredPairsRel() const

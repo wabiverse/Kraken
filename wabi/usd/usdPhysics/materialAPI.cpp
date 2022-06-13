@@ -54,7 +54,7 @@ UsdPhysicsMaterialAPI UsdPhysicsMaterialAPI::Get(const UsdStagePtr &stage, const
 
 
 /* virtual */
-UsdSchemaKind UsdPhysicsMaterialAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsMaterialAPI::_GetSchemaKind() const
 {
   return UsdPhysicsMaterialAPI::schemaKind;
 }
@@ -75,23 +75,23 @@ UsdPhysicsMaterialAPI UsdPhysicsMaterialAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdPhysicsMaterialAPI::GetStaticTfType()
+const TfType &UsdPhysicsMaterialAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsMaterialAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsMaterialAPI::IsTypedSchema()
+bool UsdPhysicsMaterialAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsMaterialAPI::GetTfType() const
+const TfType &UsdPhysicsMaterialAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsMaterialAPI::GetDynamicFrictionAttr() const

@@ -77,29 +77,29 @@ UsdSkelPackedJointAnimation UsdSkelPackedJointAnimation::Define(const UsdStagePt
 }
 
 /* virtual */
-UsdSchemaKind UsdSkelPackedJointAnimation::GetSchemaKind() const
+UsdSchemaKind UsdSkelPackedJointAnimation::_GetSchemaKind() const
 {
   return UsdSkelPackedJointAnimation::schemaKind;
 }
 
 /* static */
-const TfType &UsdSkelPackedJointAnimation::GetStaticTfType()
+const TfType &UsdSkelPackedJointAnimation::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdSkelPackedJointAnimation>();
   return tfType;
 }
 
 /* static */
-bool UsdSkelPackedJointAnimation::IsTypedSchema()
+bool UsdSkelPackedJointAnimation::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdSkelPackedJointAnimation::GetTfType() const
+const TfType &UsdSkelPackedJointAnimation::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/

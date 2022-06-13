@@ -238,7 +238,7 @@ class UsdGeomImageable : public UsdTyped
   //
   // Just remember to:
   //  - Close the class declaration with };
-  //  - Close the namespace with PXR_NAMESPACE_CLOSE_SCOPE
+  //  - Close the namespace with WABI_NAMESPACE_END
   //  - Close the include guard with #endif
   // ===================================================================== //
   // --(BEGIN CUSTOM CODE)--

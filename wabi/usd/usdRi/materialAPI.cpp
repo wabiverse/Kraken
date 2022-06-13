@@ -60,7 +60,7 @@ UsdRiMaterialAPI UsdRiMaterialAPI::Get(const UsdStagePtr &stage, const SdfPath &
 }
 
 /* virtual */
-UsdSchemaKind UsdRiMaterialAPI::GetSchemaKind() const
+UsdSchemaKind UsdRiMaterialAPI::_GetSchemaKind() const
 {
   return UsdRiMaterialAPI::schemaKind;
 }
@@ -75,23 +75,23 @@ UsdRiMaterialAPI UsdRiMaterialAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdRiMaterialAPI::GetStaticTfType()
+const TfType &UsdRiMaterialAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiMaterialAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdRiMaterialAPI::IsTypedSchema()
+bool UsdRiMaterialAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiMaterialAPI::GetTfType() const
+const TfType &UsdRiMaterialAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiMaterialAPI::GetSurfaceAttr() const

@@ -163,7 +163,7 @@ bool {{ cls.cppClassName }}::Is{{ cls.usdPrimTypeName }}Path(const SdfPath &path
 }
 {% endif %}
 /* virtual */
-UsdSchemaKind {{ cls.cppClassName }}::GetSchemaKind() const
+UsdSchemaKind {{ cls.cppClassName }}::_GetSchemaKind() const
 {
   return {{ cls.cppClassName }}::schemaKind;
 }
@@ -210,23 +210,23 @@ UsdSchemaKind {{ cls.cppClassName }}::GetSchemaKind() const
 {% endif %}
 
 /* static */
-const TfType &{{ cls.cppClassName }}::GetStaticTfType()
+const TfType &{{ cls.cppClassName }}::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<{{cls.cppClassName}}>();
   return tfType;
 }
 
 /* static */
-bool {{ cls.cppClassName }}::IsTypedSchema()
+bool {{ cls.cppClassName }}::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &{{ cls.cppClassName }}::GetTfType() const
+const TfType &{{ cls.cppClassName }}::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 {% if cls.isMultipleApply and cls.propertyNamespacePrefix %}
 

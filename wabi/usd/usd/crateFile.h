@@ -465,6 +465,14 @@ namespace Usd_CrateFile
           return seed;
         }
 
+        friend size_t hash_value(ZeroCopySource const &s)
+        {
+          _Hasher h;
+          size_t seed = h(s._addr);
+          boost::hash_combine(seed, s._numBytes);
+          return seed;
+        }
+
         // Return true if the refcount is nonzero.
         bool IsInUse() const
         {
@@ -556,7 +564,7 @@ namespace Usd_CrateFile
       ArchMutableFileMapping _mapping;
       char *_start;
       int64_t _length;
-      tbb::concurrent_unordered_set<ZeroCopySource> _outstandingRanges;
+      tbb::concurrent_unordered_set<ZeroCopySource, _Hasher> _outstandingRanges;
     };
     using _FileMappingIPtr = boost::intrusive_ptr<_FileMapping>;
 

@@ -68,29 +68,29 @@ UsdGeomSphere UsdGeomSphere::Define(const UsdStagePtr &stage, const SdfPath &pat
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomSphere::GetSchemaKind() const
+UsdSchemaKind UsdGeomSphere::_GetSchemaKind() const
 {
   return UsdGeomSphere::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomSphere::GetStaticTfType()
+const TfType &UsdGeomSphere::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomSphere>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomSphere::IsTypedSchema()
+bool UsdGeomSphere::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomSphere::GetTfType() const
+const TfType &UsdGeomSphere::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomSphere::GetRadiusAttr() const

@@ -53,7 +53,7 @@ UsdShadeNodeDefAPI UsdShadeNodeDefAPI::Get(const UsdStagePtr &stage, const SdfPa
 }
 
 /* virtual */
-UsdSchemaKind UsdShadeNodeDefAPI::GetSchemaKind() const
+UsdSchemaKind UsdShadeNodeDefAPI::_GetSchemaKind() const
 {
   return UsdShadeNodeDefAPI::schemaKind;
 }
@@ -68,23 +68,23 @@ UsdShadeNodeDefAPI UsdShadeNodeDefAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdShadeNodeDefAPI::GetStaticTfType()
+const TfType &UsdShadeNodeDefAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdShadeNodeDefAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdShadeNodeDefAPI::IsTypedSchema()
+bool UsdShadeNodeDefAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdShadeNodeDefAPI::GetTfType() const
+const TfType &UsdShadeNodeDefAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdShadeNodeDefAPI::GetImplementationSourceAttr() const

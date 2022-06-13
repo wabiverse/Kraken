@@ -75,29 +75,29 @@ UsdVolOpenVDBAsset UsdVolOpenVDBAsset::Define(const UsdStagePtr &stage, const Sd
 }
 
 /* virtual */
-UsdSchemaKind UsdVolOpenVDBAsset::GetSchemaKind() const
+UsdSchemaKind UsdVolOpenVDBAsset::_GetSchemaKind() const
 {
   return UsdVolOpenVDBAsset::schemaKind;
 }
 
 /* static */
-const TfType &UsdVolOpenVDBAsset::GetStaticTfType()
+const TfType &UsdVolOpenVDBAsset::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdVolOpenVDBAsset>();
   return tfType;
 }
 
 /* static */
-bool UsdVolOpenVDBAsset::IsTypedSchema()
+bool UsdVolOpenVDBAsset::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdVolOpenVDBAsset::GetTfType() const
+const TfType &UsdVolOpenVDBAsset::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdVolOpenVDBAsset::GetFieldDataTypeAttr() const

@@ -77,29 +77,29 @@ UsdRiPxrCookieLightFilter UsdRiPxrCookieLightFilter::Define(const UsdStagePtr &s
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrCookieLightFilter::GetSchemaKind() const
+UsdSchemaKind UsdRiPxrCookieLightFilter::_GetSchemaKind() const
 {
   return UsdRiPxrCookieLightFilter::schemaKind;
 }
 
 /* static */
-const TfType &UsdRiPxrCookieLightFilter::GetStaticTfType()
+const TfType &UsdRiPxrCookieLightFilter::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrCookieLightFilter>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrCookieLightFilter::IsTypedSchema()
+bool UsdRiPxrCookieLightFilter::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrCookieLightFilter::GetTfType() const
+const TfType &UsdRiPxrCookieLightFilter::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrCookieLightFilter::GetCookieModeAttr() const

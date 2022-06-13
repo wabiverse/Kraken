@@ -48,26 +48,26 @@ KrakenPrim::KrakenPrim(const UsdSchemaBase &schemaObj)
 KrakenPrim::~KrakenPrim() {}
 
 
-UsdSchemaKind KrakenPrim::GetSchemaKind() const
+UsdSchemaKind KrakenPrim::_GetSchemaKind() const
 {
   return KrakenPrim::schemaKind;
 }
 
 
-const TfType &KrakenPrim::GetStaticTfType()
+const TfType &KrakenPrim::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<KrakenPrim>();
   return tfType;
 }
 
-const TfType &KrakenPrim::GetTfType() const
+const TfType &KrakenPrim::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
-bool KrakenPrim::IsTypedSchema()
+bool KrakenPrim::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 

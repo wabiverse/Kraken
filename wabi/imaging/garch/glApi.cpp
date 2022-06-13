@@ -2329,7 +2329,7 @@ namespace internal
     PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorageEXT = NULL;
     PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC glRenderbufferStorageMultisample = NULL;
     PFNGLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC
-      glRenderbufferStorageMultisampleAdvancedAMD = NULL;
+    glRenderbufferStorageMultisampleAdvancedAMD = NULL;
     PFNGLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENVPROC glRenderbufferStorageMultisampleCoverageNV =
       NULL;
     PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC glRenderbufferStorageMultisampleEXT = NULL;

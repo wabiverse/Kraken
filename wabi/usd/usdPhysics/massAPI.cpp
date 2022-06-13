@@ -54,7 +54,7 @@ UsdPhysicsMassAPI UsdPhysicsMassAPI::Get(const UsdStagePtr &stage, const SdfPath
 
 
 /* virtual */
-UsdSchemaKind UsdPhysicsMassAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsMassAPI::_GetSchemaKind() const
 {
   return UsdPhysicsMassAPI::schemaKind;
 }
@@ -75,23 +75,23 @@ UsdPhysicsMassAPI UsdPhysicsMassAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdPhysicsMassAPI::GetStaticTfType()
+const TfType &UsdPhysicsMassAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsMassAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsMassAPI::IsTypedSchema()
+bool UsdPhysicsMassAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsMassAPI::GetTfType() const
+const TfType &UsdPhysicsMassAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsMassAPI::GetMassAttr() const

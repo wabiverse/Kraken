@@ -143,19 +143,19 @@ class UsdVolOpenVDBAsset : public UsdVolFieldAsset
   ///
   /// \sa UsdSchemaKind
   USDVOL_API
-  UsdSchemaKind GetSchemaKind() const override;
+  UsdSchemaKind _GetSchemaKind() const override;
 
  private:
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDVOL_API
-  static const TfType &GetStaticTfType();
+  static const TfType &_GetStaticTfType();
 
-  static bool IsTypedSchema();
+  static bool _IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDVOL_API
-  const TfType &GetTfType() const override;
+  const TfType &_GetTfType() const override;;
 
  public:
   // --------------------------------------------------------------------- //

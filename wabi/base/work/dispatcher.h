@@ -89,14 +89,14 @@ class WorkDispatcher
 
   template<class Callable> inline void Run(Callable &&c)
   {
-    _tg.run(_InvokerTask<typename std::remove_reference<Callable>::type>(std::forward<Callable>(c),
+    _tg.run(_InvokerTask<typename std::remove_reference<Callable>::type>(std::forward<Callable>(c)(),
                                                                          &_errors));
   }
 
   template<class Callable, class A0, class... Args>
   inline void Run(Callable &&c, A0 &&a0, Args &&...args)
   {
-    Run(std::bind(std::forward<Callable>(c), std::forward<A0>(a0), std::forward<Args>(args)...));
+    Run(std::bind(std::forward<Callable>(c), std::forward<A0>(a0)(), std::forward<Args>(args)...));
   }
 
 #  endif  // doxygen

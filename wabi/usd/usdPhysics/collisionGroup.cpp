@@ -70,29 +70,29 @@ UsdPhysicsCollisionGroup UsdPhysicsCollisionGroup::Define(const UsdStagePtr &sta
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsCollisionGroup::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsCollisionGroup::_GetSchemaKind() const
 {
   return UsdPhysicsCollisionGroup::schemaKind;
 }
 
 /* static */
-const TfType &UsdPhysicsCollisionGroup::GetStaticTfType()
+const TfType &UsdPhysicsCollisionGroup::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsCollisionGroup>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsCollisionGroup::IsTypedSchema()
+bool UsdPhysicsCollisionGroup::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsCollisionGroup::GetTfType() const
+const TfType &UsdPhysicsCollisionGroup::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdRelationship UsdPhysicsCollisionGroup::GetFilteredGroupsRel() const

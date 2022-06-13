@@ -314,7 +314,7 @@ GetSchemaAttributeNames(bool includeInherited = true);
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  UsdSchemaKind GetSchemaKind() const override;
+  UsdSchemaKind _GetSchemaKind() const override;
 
  private:
   /* needs to invoke GetStaticTfType. */
@@ -323,15 +323,15 @@ GetSchemaAttributeNames(bool includeInherited = true);
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  static const TfType &GetStaticTfType();
+  static const TfType &_GetStaticTfType();
 
-  static bool IsTypedSchema();
+  static bool _IsTypedSchema();
 
   /* override SchemaBase virtuals. */
   {% if useExportAPI -%}
   {{ Upper(libraryName) }}_API
   {% endif -%}
-  const TfType &GetTfType() const override;
+  const TfType &_GetTfType() const override;;
 {% for attrName in cls.attrOrder %}
 {% set attr = cls.attrs[attrName]%}
 {# Only emit Create / Get API and doxygen if apiName is not empty string. #}

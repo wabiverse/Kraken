@@ -55,7 +55,7 @@ UsdPhysicsArticulationRootAPI UsdPhysicsArticulationRootAPI::Get(const UsdStageP
 
 
 /* virtual */
-UsdSchemaKind UsdPhysicsArticulationRootAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsArticulationRootAPI::_GetSchemaKind() const
 {
   return UsdPhysicsArticulationRootAPI::schemaKind;
 }
@@ -76,23 +76,23 @@ UsdPhysicsArticulationRootAPI UsdPhysicsArticulationRootAPI::Apply(const UsdPrim
 }
 
 /* static */
-const TfType &UsdPhysicsArticulationRootAPI::GetStaticTfType()
+const TfType &UsdPhysicsArticulationRootAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsArticulationRootAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsArticulationRootAPI::IsTypedSchema()
+bool UsdPhysicsArticulationRootAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsArticulationRootAPI::GetTfType() const
+const TfType &UsdPhysicsArticulationRootAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/

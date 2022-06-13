@@ -77,29 +77,29 @@ UsdRiPxrIntMultLightFilter UsdRiPxrIntMultLightFilter::Define(const UsdStagePtr 
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrIntMultLightFilter::GetSchemaKind() const
+UsdSchemaKind UsdRiPxrIntMultLightFilter::_GetSchemaKind() const
 {
   return UsdRiPxrIntMultLightFilter::schemaKind;
 }
 
 /* static */
-const TfType &UsdRiPxrIntMultLightFilter::GetStaticTfType()
+const TfType &UsdRiPxrIntMultLightFilter::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrIntMultLightFilter>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrIntMultLightFilter::IsTypedSchema()
+bool UsdRiPxrIntMultLightFilter::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrIntMultLightFilter::GetTfType() const
+const TfType &UsdRiPxrIntMultLightFilter::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrIntMultLightFilter::GetRiIntensityAttr() const

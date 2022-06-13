@@ -57,23 +57,23 @@ UsdRiRiLightFilterAPI UsdRiRiLightFilterAPI::Get(const UsdStagePtr &stage, const
 }
 
 /* static */
-const TfType &UsdRiRiLightFilterAPI::GetStaticTfType()
+const TfType &UsdRiRiLightFilterAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiRiLightFilterAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdRiRiLightFilterAPI::IsTypedSchema()
+bool UsdRiRiLightFilterAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiRiLightFilterAPI::GetTfType() const
+const TfType &UsdRiRiLightFilterAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiRiLightFilterAPI::GetRiCombineModeAttr() const

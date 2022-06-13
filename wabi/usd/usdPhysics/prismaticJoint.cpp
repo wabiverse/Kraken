@@ -70,29 +70,29 @@ UsdPhysicsPrismaticJoint UsdPhysicsPrismaticJoint::Define(const UsdStagePtr &sta
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsPrismaticJoint::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsPrismaticJoint::_GetSchemaKind() const
 {
   return UsdPhysicsPrismaticJoint::schemaKind;
 }
 
 /* static */
-const TfType &UsdPhysicsPrismaticJoint::GetStaticTfType()
+const TfType &UsdPhysicsPrismaticJoint::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsPrismaticJoint>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsPrismaticJoint::IsTypedSchema()
+bool UsdPhysicsPrismaticJoint::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsPrismaticJoint::GetTfType() const
+const TfType &UsdPhysicsPrismaticJoint::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsPrismaticJoint::GetAxisAttr() const

@@ -76,29 +76,29 @@ UsdRiPxrRampLightFilter UsdRiPxrRampLightFilter::Define(const UsdStagePtr &stage
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrRampLightFilter::GetSchemaKind() const
+UsdSchemaKind UsdRiPxrRampLightFilter::_GetSchemaKind() const
 {
   return UsdRiPxrRampLightFilter::schemaKind;
 }
 
 /* static */
-const TfType &UsdRiPxrRampLightFilter::GetStaticTfType()
+const TfType &UsdRiPxrRampLightFilter::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrRampLightFilter>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrRampLightFilter::IsTypedSchema()
+bool UsdRiPxrRampLightFilter::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrRampLightFilter::GetTfType() const
+const TfType &UsdRiPxrRampLightFilter::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrRampLightFilter::GetRampModeAttr() const

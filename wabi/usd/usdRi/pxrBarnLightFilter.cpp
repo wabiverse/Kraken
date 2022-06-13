@@ -76,29 +76,29 @@ UsdRiPxrBarnLightFilter UsdRiPxrBarnLightFilter::Define(const UsdStagePtr &stage
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrBarnLightFilter::GetSchemaKind() const
+UsdSchemaKind UsdRiPxrBarnLightFilter::_GetSchemaKind() const
 {
   return UsdRiPxrBarnLightFilter::schemaKind;
 }
 
 /* static */
-const TfType &UsdRiPxrBarnLightFilter::GetStaticTfType()
+const TfType &UsdRiPxrBarnLightFilter::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrBarnLightFilter>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrBarnLightFilter::IsTypedSchema()
+bool UsdRiPxrBarnLightFilter::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrBarnLightFilter::GetTfType() const
+const TfType &UsdRiPxrBarnLightFilter::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrBarnLightFilter::GetBarnModeAttr() const

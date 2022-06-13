@@ -18,7 +18,7 @@ wabi_library(usdImaging
         usdShade
         usdVol
         ar
-        ${TBB_LIBRARIES}
+        ${TBB_tbb_LIBRARY}
 
     INCLUDE_DIRS
         ${TBB_INCLUDE_DIRS}
@@ -26,11 +26,24 @@ wabi_library(usdImaging
     PUBLIC_CLASSES
         adapterRegistry
         collectionCache
+        dataSourceAttribute
+        dataSourceBasisCurves
+        dataSourceCamera
+        dataSourceGprim
+        dataSourceMesh
+        dataSourcePoints
+        dataSourcePrim
+        dataSourcePrimvars
+        dataSourceRelationship
+        dataSourceStageGlobals
+        dataSourceVolume
         debugCodes
         delegate
         indexProxy
+        materialParamUtils
         resolvedAttributeCache
         instancerContext
+        # stageSceneIndex
         tokens
         basisCurvesAdapter
         capsuleAdapter
@@ -67,9 +80,6 @@ wabi_library(usdImaging
         sphereLightAdapter
         textureUtils
         volumeAdapter
-
-    PRIVATE_CLASSES
-        materialParamUtils
 
     PUBLIC_HEADERS
         api.h

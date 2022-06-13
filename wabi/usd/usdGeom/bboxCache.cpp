@@ -294,8 +294,6 @@ UsdGeomBBoxCache::UsdGeomBBoxCache(UsdGeomBBoxCache const &other)
     _useExtentsHint(other._useExtentsHint)
 {}
 
-UsdGeomBBoxCache::~UsdGeomBBoxCache() noexcept {}
-
 UsdGeomBBoxCache &UsdGeomBBoxCache::operator=(UsdGeomBBoxCache const &other)
 {
   if (this == &other)
@@ -481,6 +479,7 @@ GfBBox3d UsdGeomBBoxCache::ComputeUntransformedBound(
   return result;
 }
 
+
 bool UsdGeomBBoxCache::_ComputePointInstanceBoundsHelper(const UsdGeomPointInstancer &instancer,
                                                          int64_t const *instanceIdBegin,
                                                          size_t numIds,
@@ -548,6 +547,7 @@ bool UsdGeomBBoxCache::_ComputePointInstanceBoundsHelper(const UsdGeomPointInsta
 
   return true;
 }
+
 
 bool UsdGeomBBoxCache::ComputePointInstanceWorldBounds(UsdGeomPointInstancer const &instancer,
                                                        int64_t const *instanceIdBegin,
@@ -780,6 +780,7 @@ static bool _IsComponentOrSubComponent(const UsdPrim &prim)
   TfToken kind;
   if (!model.GetKind(&kind))
     return false;
+
 
   return KindRegistry::IsA(kind, KindTokens->component) ||
          KindRegistry::IsA(kind, KindTokens->subcomponent);
@@ -1069,32 +1070,6 @@ bool UsdGeomBBoxCache::_GetBBoxFromExtentsHint(const UsdGeomModelAPI &geomModel,
   return true;
 }
 
-bool UsdGeomBBoxCache::_ComputeExtent(const UsdGeomBoundable &boundableObj,
-                                      VtVec3fArray *extent) const
-{
-  // Display a message if the debug flag is enabled.
-  TF_DEBUG(USDGEOM_BBOX)
-    .Msg(
-      "[BBox Cache] WARNING: No valid extent authored for "
-      "<%s>. Computing a fallback value.",
-      boundableObj.GetPath().GetString().c_str());
-
-  // Create extent
-  bool successGettingExtent = UsdGeomBoundable::ComputeExtentFromPlugins(boundableObj,
-                                                                         _time,
-                                                                         extent);
-
-  if (!successGettingExtent) {
-    TF_DEBUG(USDGEOM_BBOX)
-      .Msg(
-        "[BBox Cache] WARNING: Unable to compute extent for "
-        "<%s>.",
-        boundableObj.GetPath().GetString().c_str());
-  }
-
-  return successGettingExtent;
-}
-
 void UsdGeomBBoxCache::_ResolvePrim(_BBoxTask *task,
                                     const _PrimContext &primContext,
                                     const GfMatrix4d &inverseComponentCtm)
@@ -1196,70 +1171,28 @@ void UsdGeomBBoxCache::_ResolvePrim(_BBoxTask *task,
   // it cannot be created or found, the user is notified of an incorrect prim.
   if (UsdGeomBoundable boundableObj = UsdGeomBoundable(prim)) {
     VtVec3fArray extent;
-    // Read the extent of the geometry, an axis-aligned bounding box in
-    // local space.
-    const UsdAttributeQuery &extentQuery = _GetOrCreateExtentQuery(prim, &queries[Extent]);
 
-    // If some extent is authored, check validity
-    bool successGettingExtent = false;
-    if (extentQuery.Get(&extent, _time)) {
+    // UsdGeomBoundable::ComputeExtent checks to see if extent attr has an
+    // authored value and sets extent to that, if not it computes extent
+    // using intrinsic geometric parameters, provided ComputeExtentFunction
+    // is registered for this boundableObj.
+    bool successGettingExtent = boundableObj.ComputeExtent(_time, &extent);
 
+    // On Successful extent, create BBox for purpose.
+    if (successGettingExtent) {
+      // Extent computation reported success, but validate the result.
       successGettingExtent = extent.size() == 2;
-      if (!successGettingExtent) {
+      if (successGettingExtent) {
+        pruneChildren = true;
+        GfBBox3d &bboxForPurpose = (*bboxes)[entry->purposeInfo.purpose];
+        bboxForPurpose.SetRange(GfRange3d(extent[0], extent[1]));
+      } else {
         TF_WARN(
-          "[BBox Cache] Extent for <%s> is of size %zu "
+          "[BBox Cache] Computed extent for <%s> is of size %zu "
           "instead of 2.",
           primContext.ToString().c_str(),
           extent.size());
       }
-    }
-
-    // If we failed to get extent, try to create it.
-    if (!successGettingExtent) {
-
-      // Try to calculate the extent.
-      if (UsdGeomPointBased pointBasedObj = UsdGeomPointBased(prim)) {
-
-        // XXX: We check if the points attribute is authored on the
-        // given prim. All we require from clients is that IF they
-        // author points, they MUST also author extent.
-        //
-        // If no extent is authored, but points has some value, we
-        // compute the extent and display a debug message.
-        //
-        // Otherwise, the client is consistent with our demands;
-        // no warning is issued, and no extent is computed.
-        //
-        // For more information, see bugzilla #115735
-
-        bool primHasAuthoredPoints = pointBasedObj.GetPointsAttr().HasAuthoredValue();
-
-        if (primHasAuthoredPoints) {
-          successGettingExtent = _ComputeExtent(boundableObj, &extent);
-        }
-      } else {
-
-        successGettingExtent = _ComputeExtent(boundableObj, &extent);
-      }
-
-      if (successGettingExtent) {
-        // Extent computation reported success, but validate the result.
-        successGettingExtent = extent.size() == 2;
-        if (!successGettingExtent) {
-          TF_WARN(
-            "[BBox Cache] Computed extent for <%s> is of size %zu "
-            "instead of 2.",
-            primContext.ToString().c_str(),
-            extent.size());
-        }
-      }
-    }
-
-    // On Successful extent, create BBox for purpose.
-    if (successGettingExtent) {
-      pruneChildren = true;
-      GfBBox3d &bboxForPurpose = (*bboxes)[entry->purposeInfo.purpose];
-      bboxForPurpose.SetRange(GfRange3d(extent[0], extent[1]));
     }
   }
 

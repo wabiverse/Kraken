@@ -75,29 +75,29 @@ UsdSkelSkeleton UsdSkelSkeleton::Define(const UsdStagePtr &stage, const SdfPath 
 }
 
 /* virtual */
-UsdSchemaKind UsdSkelSkeleton::GetSchemaKind() const
+UsdSchemaKind UsdSkelSkeleton::_GetSchemaKind() const
 {
   return UsdSkelSkeleton::schemaKind;
 }
 
 /* static */
-const TfType &UsdSkelSkeleton::GetStaticTfType()
+const TfType &UsdSkelSkeleton::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdSkelSkeleton>();
   return tfType;
 }
 
 /* static */
-bool UsdSkelSkeleton::IsTypedSchema()
+bool UsdSkelSkeleton::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdSkelSkeleton::GetTfType() const
+const TfType &UsdSkelSkeleton::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdSkelSkeleton::GetJointsAttr() const

@@ -75,29 +75,29 @@ UsdRiRisObject UsdRiRisObject::Define(const UsdStagePtr &stage, const SdfPath &p
 }
 
 /* virtual */
-UsdSchemaKind UsdRiRisObject::GetSchemaKind() const
+UsdSchemaKind UsdRiRisObject::_GetSchemaKind() const
 {
   return UsdRiRisObject::schemaKind;
 }
 
 /* static */
-const TfType &UsdRiRisObject::GetStaticTfType()
+const TfType &UsdRiRisObject::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiRisObject>();
   return tfType;
 }
 
 /* static */
-bool UsdRiRisObject::IsTypedSchema()
+bool UsdRiRisObject::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiRisObject::GetTfType() const
+const TfType &UsdRiRisObject::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiRisObject::GetFilePathAttr() const

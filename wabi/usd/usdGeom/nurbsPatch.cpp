@@ -68,29 +68,29 @@ UsdGeomNurbsPatch UsdGeomNurbsPatch::Define(const UsdStagePtr &stage, const SdfP
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomNurbsPatch::GetSchemaKind() const
+UsdSchemaKind UsdGeomNurbsPatch::_GetSchemaKind() const
 {
   return UsdGeomNurbsPatch::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomNurbsPatch::GetStaticTfType()
+const TfType &UsdGeomNurbsPatch::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomNurbsPatch>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomNurbsPatch::IsTypedSchema()
+bool UsdGeomNurbsPatch::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomNurbsPatch::GetTfType() const
+const TfType &UsdGeomNurbsPatch::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomNurbsPatch::GetUVertexCountAttr() const

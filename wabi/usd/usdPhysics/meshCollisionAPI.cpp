@@ -55,7 +55,7 @@ UsdPhysicsMeshCollisionAPI UsdPhysicsMeshCollisionAPI::Get(const UsdStagePtr &st
 
 
 /* virtual */
-UsdSchemaKind UsdPhysicsMeshCollisionAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsMeshCollisionAPI::_GetSchemaKind() const
 {
   return UsdPhysicsMeshCollisionAPI::schemaKind;
 }
@@ -76,23 +76,23 @@ UsdPhysicsMeshCollisionAPI UsdPhysicsMeshCollisionAPI::Apply(const UsdPrim &prim
 }
 
 /* static */
-const TfType &UsdPhysicsMeshCollisionAPI::GetStaticTfType()
+const TfType &UsdPhysicsMeshCollisionAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsMeshCollisionAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsMeshCollisionAPI::IsTypedSchema()
+bool UsdPhysicsMeshCollisionAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsMeshCollisionAPI::GetTfType() const
+const TfType &UsdPhysicsMeshCollisionAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsMeshCollisionAPI::GetApproximationAttr() const

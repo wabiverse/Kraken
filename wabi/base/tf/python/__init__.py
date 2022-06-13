@@ -40,7 +40,7 @@ if sys.version_info >= (3, 8) and platform.system() == "Windows":
     def WindowsImportWrapper():
         import os
         dirs = []
-        import_paths = os.getenv('PXR_USD_WINDOWS_DLL_PATH')
+        import_paths = os.getenv('WABI_USD_WINDOWS_DLL_PATH')
         if import_paths is None:
             import_paths = os.getenv('PATH', '')
         for path in import_paths.split(os.pathsep):

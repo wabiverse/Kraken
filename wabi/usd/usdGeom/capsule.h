@@ -137,20 +137,20 @@ class UsdGeomCapsule : public UsdGeomGprim
   ///
   /// \sa UsdSchemaKind
   USDGEOM_API
-  UsdSchemaKind GetSchemaKind() const override;
+  UsdSchemaKind _GetSchemaKind() const override;
 
 
  private:
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
-  static const TfType &GetStaticTfType();
+  static const TfType &_GetStaticTfType();
 
-  static bool IsTypedSchema();
+  static bool _IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &GetTfType() const override;
+  const TfType &_GetTfType() const override;;
 
  public:
   // --------------------------------------------------------------------- //

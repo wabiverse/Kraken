@@ -57,29 +57,29 @@ UsdVolFieldBase UsdVolFieldBase::Get(const UsdStagePtr &stage, const SdfPath &pa
 }
 
 /* virtual */
-UsdSchemaKind UsdVolFieldBase::GetSchemaKind() const
+UsdSchemaKind UsdVolFieldBase::_GetSchemaKind() const
 {
   return UsdVolFieldBase::schemaKind;
 }
 
 /* static */
-const TfType &UsdVolFieldBase::GetStaticTfType()
+const TfType &UsdVolFieldBase::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdVolFieldBase>();
   return tfType;
 }
 
 /* static */
-bool UsdVolFieldBase::IsTypedSchema()
+bool UsdVolFieldBase::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdVolFieldBase::GetTfType() const
+const TfType &UsdVolFieldBase::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/

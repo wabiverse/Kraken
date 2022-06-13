@@ -75,29 +75,29 @@ UsdLuxCylinderLight UsdLuxCylinderLight::Define(const UsdStagePtr &stage, const 
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxCylinderLight::GetSchemaKind() const
+UsdSchemaKind UsdLuxCylinderLight::_GetSchemaKind() const
 {
   return UsdLuxCylinderLight::schemaKind;
 }
 
 /* static */
-const TfType &UsdLuxCylinderLight::GetStaticTfType()
+const TfType &UsdLuxCylinderLight::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxCylinderLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxCylinderLight::IsTypedSchema()
+bool UsdLuxCylinderLight::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxCylinderLight::GetTfType() const
+const TfType &UsdLuxCylinderLight::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdLuxCylinderLight::GetLengthAttr() const

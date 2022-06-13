@@ -76,29 +76,29 @@ UsdRiPxrRodLightFilter UsdRiPxrRodLightFilter::Define(const UsdStagePtr &stage,
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrRodLightFilter::GetSchemaKind() const
+UsdSchemaKind UsdRiPxrRodLightFilter::_GetSchemaKind() const
 {
   return UsdRiPxrRodLightFilter::schemaKind;
 }
 
 /* static */
-const TfType &UsdRiPxrRodLightFilter::GetStaticTfType()
+const TfType &UsdRiPxrRodLightFilter::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrRodLightFilter>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrRodLightFilter::IsTypedSchema()
+bool UsdRiPxrRodLightFilter::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrRodLightFilter::GetTfType() const
+const TfType &UsdRiPxrRodLightFilter::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrRodLightFilter::GetWidthAttr() const

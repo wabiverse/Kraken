@@ -69,29 +69,29 @@ UsdPhysicsDistanceJoint UsdPhysicsDistanceJoint::Define(const UsdStagePtr &stage
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsDistanceJoint::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsDistanceJoint::_GetSchemaKind() const
 {
   return UsdPhysicsDistanceJoint::schemaKind;
 }
 
 /* static */
-const TfType &UsdPhysicsDistanceJoint::GetStaticTfType()
+const TfType &UsdPhysicsDistanceJoint::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsDistanceJoint>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsDistanceJoint::IsTypedSchema()
+bool UsdPhysicsDistanceJoint::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsDistanceJoint::GetTfType() const
+const TfType &UsdPhysicsDistanceJoint::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsDistanceJoint::GetMinDistanceAttr() const

@@ -52,29 +52,29 @@ Scene::Scene(const std::string &identifier, const UsdSchemaBase &schemaObj)
 
 Scene::~Scene() {}
 
-UsdSchemaKind Scene::GetSchemaKind() const
+UsdSchemaKind Scene::_GetSchemaKind() const
 {
   return Scene::schemaKind;
 }
 
 /* static */
-const TfType &Scene::GetStaticTfType()
+const TfType &Scene::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<Scene>();
   return tfType;
 }
 
 /* static */
-bool Scene::IsTypedSchema()
+bool Scene::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &Scene::GetTfType() const
+const TfType &Scene::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 

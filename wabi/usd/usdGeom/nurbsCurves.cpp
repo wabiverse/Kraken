@@ -68,29 +68,29 @@ UsdGeomNurbsCurves UsdGeomNurbsCurves::Define(const UsdStagePtr &stage, const Sd
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomNurbsCurves::GetSchemaKind() const
+UsdSchemaKind UsdGeomNurbsCurves::_GetSchemaKind() const
 {
   return UsdGeomNurbsCurves::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomNurbsCurves::GetStaticTfType()
+const TfType &UsdGeomNurbsCurves::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomNurbsCurves>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomNurbsCurves::IsTypedSchema()
+bool UsdGeomNurbsCurves::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomNurbsCurves::GetTfType() const
+const TfType &UsdGeomNurbsCurves::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomNurbsCurves::GetOrderAttr() const

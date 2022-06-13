@@ -68,29 +68,29 @@ UsdPhysicsScene UsdPhysicsScene::Define(const UsdStagePtr &stage, const SdfPath 
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsScene::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsScene::_GetSchemaKind() const
 {
   return UsdPhysicsScene::schemaKind;
 }
 
 /* static */
-const TfType &UsdPhysicsScene::GetStaticTfType()
+const TfType &UsdPhysicsScene::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsScene>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsScene::IsTypedSchema()
+bool UsdPhysicsScene::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsScene::GetTfType() const
+const TfType &UsdPhysicsScene::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsScene::GetGravityDirectionAttr() const

@@ -75,29 +75,29 @@ UsdLuxPortalLight UsdLuxPortalLight::Define(const UsdStagePtr &stage, const SdfP
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxPortalLight::GetSchemaKind() const
+UsdSchemaKind UsdLuxPortalLight::_GetSchemaKind() const
 {
   return UsdLuxPortalLight::schemaKind;
 }
 
 /* static */
-const TfType &UsdLuxPortalLight::GetStaticTfType()
+const TfType &UsdLuxPortalLight::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxPortalLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxPortalLight::IsTypedSchema()
+bool UsdLuxPortalLight::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxPortalLight::GetTfType() const
+const TfType &UsdLuxPortalLight::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/

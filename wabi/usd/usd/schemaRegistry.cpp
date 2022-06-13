@@ -21,16 +21,17 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/primDefinition.h"
-#include "wabi/wabi.h"
 
-#include "wabi/usd/usd/apiSchemaBase.h"
-#include "wabi/usd/usd/clip.h"
 #include "wabi/usd/usd/debugCodes.h"
-#include "wabi/usd/usd/schemaBase.h"
-#include "wabi/usd/usd/tokens.h"
+#include "wabi/usd/usd/clip.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/schemaBase.h"
+#include "wabi/usd/usd/apiSchemaBase.h"
+#include "wabi/usd/usd/tokens.h"
 
 #include "wabi/base/plug/plugin.h"
 #include "wabi/base/plug/registry.h"
@@ -41,6 +42,7 @@
 #include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/schema.h"
 
+#include "wabi/base/tf/envSetting.h"
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/instantiateSingleton.h"
 #include "wabi/base/tf/registryManager.h"

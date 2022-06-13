@@ -75,29 +75,29 @@ UsdRiPxrEnvDayLight UsdRiPxrEnvDayLight::Define(const UsdStagePtr &stage, const 
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrEnvDayLight::GetSchemaKind() const
+UsdSchemaKind UsdRiPxrEnvDayLight::_GetSchemaKind() const
 {
   return UsdRiPxrEnvDayLight::schemaKind;
 }
 
 /* static */
-const TfType &UsdRiPxrEnvDayLight::GetStaticTfType()
+const TfType &UsdRiPxrEnvDayLight::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrEnvDayLight>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrEnvDayLight::IsTypedSchema()
+bool UsdRiPxrEnvDayLight::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrEnvDayLight::GetTfType() const
+const TfType &UsdRiPxrEnvDayLight::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrEnvDayLight::GetDayAttr() const

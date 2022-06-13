@@ -68,29 +68,29 @@ UsdGeomCylinder UsdGeomCylinder::Define(const UsdStagePtr &stage, const SdfPath 
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomCylinder::GetSchemaKind() const
+UsdSchemaKind UsdGeomCylinder::_GetSchemaKind() const
 {
   return UsdGeomCylinder::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomCylinder::GetStaticTfType()
+const TfType &UsdGeomCylinder::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomCylinder>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomCylinder::IsTypedSchema()
+bool UsdGeomCylinder::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomCylinder::GetTfType() const
+const TfType &UsdGeomCylinder::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomCylinder::GetHeightAttr() const

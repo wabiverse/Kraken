@@ -278,7 +278,7 @@ WABI_NAMESPACE_END
 // the code generator.
 //
 // Just remember to wrap code in the appropriate delimiters:
-// 'PXR_NAMESPACE_OPEN_SCOPE', 'PXR_NAMESPACE_CLOSE_SCOPE'.
+// 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 

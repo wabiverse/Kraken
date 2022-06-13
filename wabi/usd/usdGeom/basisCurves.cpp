@@ -68,29 +68,29 @@ UsdGeomBasisCurves UsdGeomBasisCurves::Define(const UsdStagePtr &stage, const Sd
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomBasisCurves::GetSchemaKind() const
+UsdSchemaKind UsdGeomBasisCurves::_GetSchemaKind() const
 {
   return UsdGeomBasisCurves::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomBasisCurves::GetStaticTfType()
+const TfType &UsdGeomBasisCurves::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomBasisCurves>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomBasisCurves::IsTypedSchema()
+bool UsdGeomBasisCurves::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomBasisCurves::GetTfType() const
+const TfType &UsdGeomBasisCurves::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomBasisCurves::GetTypeAttr() const

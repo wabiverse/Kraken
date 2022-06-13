@@ -53,7 +53,7 @@ UsdGeomModelAPI UsdGeomModelAPI::Get(const UsdStagePtr &stage, const SdfPath &pa
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomModelAPI::GetSchemaKind() const
+UsdSchemaKind UsdGeomModelAPI::_GetSchemaKind() const
 {
   return UsdGeomModelAPI::schemaKind;
 }
@@ -68,23 +68,23 @@ UsdGeomModelAPI UsdGeomModelAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdGeomModelAPI::GetStaticTfType()
+const TfType &UsdGeomModelAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomModelAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomModelAPI::IsTypedSchema()
+bool UsdGeomModelAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomModelAPI::GetTfType() const
+const TfType &UsdGeomModelAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomModelAPI::GetModelDrawModeAttr() const

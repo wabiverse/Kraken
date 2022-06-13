@@ -79,29 +79,29 @@ UsdUIBackdrop UsdUIBackdrop::Define(const UsdStagePtr &stage, const SdfPath &pat
   return UsdUIBackdrop(stage->DefinePrim(path, usdPrimTypeName));
 }
 /* virtual */
-UsdSchemaKind UsdUIBackdrop::GetSchemaKind() const
+UsdSchemaKind UsdUIBackdrop::_GetSchemaKind() const
 {
   return UsdUIBackdrop::schemaKind;
 }
 
 /* static */
-const TfType &UsdUIBackdrop::GetStaticTfType()
+const TfType &UsdUIBackdrop::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdUIBackdrop>();
   return tfType;
 }
 
 /* static */
-bool UsdUIBackdrop::IsTypedSchema()
+bool UsdUIBackdrop::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUIBackdrop::GetTfType() const
+const TfType &UsdUIBackdrop::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdUIBackdrop::GetDescriptionAttr() const

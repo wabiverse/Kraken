@@ -60,7 +60,7 @@ UsdLuxListAPI UsdLuxListAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxListAPI::GetSchemaKind() const
+UsdSchemaKind UsdLuxListAPI::_GetSchemaKind() const
 {
   return UsdLuxListAPI::schemaKind;
 }
@@ -75,23 +75,23 @@ UsdLuxListAPI UsdLuxListAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdLuxListAPI::GetStaticTfType()
+const TfType &UsdLuxListAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxListAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxListAPI::IsTypedSchema()
+bool UsdLuxListAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxListAPI::GetTfType() const
+const TfType &UsdLuxListAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdLuxListAPI::GetLightListCacheBehaviorAttr() const

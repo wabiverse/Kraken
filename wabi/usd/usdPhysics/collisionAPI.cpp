@@ -54,7 +54,7 @@ UsdPhysicsCollisionAPI UsdPhysicsCollisionAPI::Get(const UsdStagePtr &stage, con
 
 
 /* virtual */
-UsdSchemaKind UsdPhysicsCollisionAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsCollisionAPI::_GetSchemaKind() const
 {
   return UsdPhysicsCollisionAPI::schemaKind;
 }
@@ -75,23 +75,23 @@ UsdPhysicsCollisionAPI UsdPhysicsCollisionAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdPhysicsCollisionAPI::GetStaticTfType()
+const TfType &UsdPhysicsCollisionAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsCollisionAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsCollisionAPI::IsTypedSchema()
+bool UsdPhysicsCollisionAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsCollisionAPI::GetTfType() const
+const TfType &UsdPhysicsCollisionAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsCollisionAPI::GetCollisionEnabledAttr() const

@@ -75,29 +75,29 @@ UsdRiPxrAovLight UsdRiPxrAovLight::Define(const UsdStagePtr &stage, const SdfPat
 }
 
 /* virtual */
-UsdSchemaKind UsdRiPxrAovLight::GetSchemaKind() const
+UsdSchemaKind UsdRiPxrAovLight::_GetSchemaKind() const
 {
   return UsdRiPxrAovLight::schemaKind;
 }
 
 /* static */
-const TfType &UsdRiPxrAovLight::GetStaticTfType()
+const TfType &UsdRiPxrAovLight::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRiPxrAovLight>();
   return tfType;
 }
 
 /* static */
-bool UsdRiPxrAovLight::IsTypedSchema()
+bool UsdRiPxrAovLight::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRiPxrAovLight::GetTfType() const
+const TfType &UsdRiPxrAovLight::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRiPxrAovLight::GetAovNameAttr() const

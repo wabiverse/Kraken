@@ -82,6 +82,7 @@ class SdfAssetPath;
 class UsdGeomBoundable : public UsdGeomXformable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -91,16 +92,12 @@ class UsdGeomBoundable : public UsdGeomXformable
   /// Equivalent to UsdGeomBoundable::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomBoundable(const UsdPrim &prim = UsdPrim())
-    : UsdGeomXformable(prim)
-  {}
+  explicit UsdGeomBoundable(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim) {}
 
   /// Construct a UsdGeomBoundable on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomBoundable(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomBoundable(const UsdSchemaBase &schemaObj)
-    : UsdGeomXformable(schemaObj)
-  {}
+  explicit UsdGeomBoundable(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -124,36 +121,44 @@ class UsdGeomBoundable : public UsdGeomXformable
   USDGEOM_API
   static UsdGeomBoundable Get(const UsdStagePtr &stage, const SdfPath &path);
 
+
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
   USDGEOM_API
-  UsdSchemaKind GetSchemaKind() const override;
-
+  UsdSchemaKind _GetSchemaKind() const override;
 
  private:
-  // needs to invoke GetStaticTfType.
+
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
-  static const TfType &GetStaticTfType();
+  static const TfType &_GetStaticTfType();
 
-  static bool IsTypedSchema();
+  static bool _IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &GetTfType() const override;
+  const TfType &_GetTfType() const override;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EXTENT
   // --------------------------------------------------------------------- //
   /// Extent is a three dimensional range measuring the geometric
   /// extent of the authored gprim in its own local space (i.e. its own
   /// transform not applied), \em without accounting for any shader-induced
-  /// displacement.  Whenever any geometry-affecting attribute is authored
-  /// for any gprim in a layer, extent must also be authored at the same
-  /// timesample; failure to do so will result in incorrect bounds-computation.
+  /// displacement. If __any__ extent value has been authored for a given
+  /// Boundable, then it should be authored at every timeSample at which
+  /// geometry-affecting properties are authored, to ensure correct
+  /// evaluation via ComputeExtent(). If __no__ extent value has been
+  /// authored, then ComputeExtent() will call the Boundable's registered
+  /// ComputeExtentFunction(), which may be expensive, which is why we
+  /// strongly encourage proper authoring of extent.
+  /// \sa ComputeExtent()
   /// \sa \ref UsdGeom_Boundable_Extent.
   ///
   /// An authored extent on a prim which has children is expected to include
@@ -174,9 +179,11 @@ class UsdGeomBoundable : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -187,6 +194,17 @@ class UsdGeomBoundable : public UsdGeomXformable
   //  - Close the include guard with #endif
   // ===================================================================== //
   // --(BEGIN CUSTOM CODE)--
+
+  /// If an extent is authored on this boundable, it queries the \p extent
+  /// from the extent attribute, otherwise if ComputeExtentFunction is
+  /// registered for the boundable's type, it computes the \p extent at
+  /// \p time. Returns true when extent is successfully populated, false
+  /// otherwise.
+  ///
+  /// \sa ComputeExtentFromPlugins
+  /// \sa UsdGeomRegisterComputeExtentFunction
+  USDGEOM_API
+  bool ComputeExtent(const UsdTimeCode &time, VtVec3fArray *extent);
 
   /// Compute the extent for the Boundable prim \p boundable at time
   /// \p time.  If successful, populates \p extent with the result and

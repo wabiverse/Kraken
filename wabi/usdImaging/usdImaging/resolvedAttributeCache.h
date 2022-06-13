@@ -43,8 +43,10 @@
 #include "wabi/base/work/utils.h"
 
 #include <boost/functional/hash.hpp>
-#include <functional>
 #include <tbb/concurrent_unordered_map.h>
+
+#include <atomic>
+#include <functional>
 
 WABI_NAMESPACE_BEGIN
 
@@ -70,6 +72,7 @@ WABI_NAMESPACE_BEGIN
 /// thread-safe. The fallback type for ImplData is bool, when it's not specified
 /// by a cache.
 ///
+
 template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedAttributeCache
 {
   friend Strategy;
@@ -309,7 +312,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 
     query_type query;
     value_type value;
-    std::atomic<unsigned> version;
+    std::atomic<unsigned> version { 1 };
   };
 
   // Returns the version number for a valid cache entry
@@ -349,7 +352,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
   // Mutable is required here to allow const methods to update the cache when
   // it is thread safe, however not all mutations of this map are thread safe.
   // See underlying map documentation for details.
-  mutable _CacheMap _cache;
+  mutable _CacheMap _cache { 1 };
 
   // The time at which this stack is querying and caching attribute values.
   UsdTimeCode _time;
@@ -357,7 +360,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 
   // A serial number indicating the valid state of entries in the cache. When
   // an entry has an equal or greater value, the entry is valid.
-  std::atomic<unsigned> _cacheVersion;
+  std::atomic<unsigned> _cacheVersion {1};
 
   // Value overrides for a set of descendents.
   ValueOverridesMap _valueOverrides;
@@ -373,8 +376,9 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
   _Entry *entry) const
 {
   // Note: _cacheVersion is not allowed to change during cache access.
+
   unsigned v = entry->version;
-  if (v < _cacheVersion && entry->version.compare_and_swap(_cacheVersion, v) == v) {
+  if (v < _cacheVersion && entry->version.compare_exchange_strong(v, _cacheVersion)) {
     entry->value = value;
     entry->version = _GetValidVersion();
   } else {

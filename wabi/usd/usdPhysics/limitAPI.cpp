@@ -101,7 +101,7 @@ bool UsdPhysicsLimitAPI::IsPhysicsLimitAPIPath(const SdfPath &path, TfToken *nam
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsLimitAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsLimitAPI::_GetSchemaKind() const
 {
   return UsdPhysicsLimitAPI::schemaKind;
 }
@@ -140,23 +140,23 @@ UsdPhysicsLimitAPI UsdPhysicsLimitAPI::Apply(const UsdPrim &prim, const TfToken 
 }
 
 /* static */
-const TfType &UsdPhysicsLimitAPI::GetStaticTfType()
+const TfType &UsdPhysicsLimitAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsLimitAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsLimitAPI::IsTypedSchema()
+bool UsdPhysicsLimitAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsLimitAPI::GetTfType() const
+const TfType &UsdPhysicsLimitAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /// Returns the property name prefixed with the correct namespace prefix, which

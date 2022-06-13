@@ -14,7 +14,7 @@ wabi_library(hd
         cameraUtil
         hf
         pxOsd
-        ${TBB_LIBRARIES}
+        ${TBB_tbb_LIBRARY}
 
     INCLUDE_DIRS
         ${TBB_INCLUDE_DIRS}
@@ -22,7 +22,9 @@ wabi_library(hd
     PUBLIC_CLASSES
         aov
         basisCurves
+        # basisCurvesSchema
         basisCurvesTopology
+        # basisCurvesTopologySchema
         binding
         bprim
         bufferArray
@@ -32,12 +34,23 @@ wabi_library(hd
         bufferSource
         bufferSpec
         camera
+        # cameraSchema
+        # categoriesSchema
         changeTracker
         command
         compExtCompInputSource
         computation
+        # containerDataSourceEditor
         coordSys
+        # coordSysBindingSchema
+        dataSource
+        dataSourceLegacyPrim
+        dataSourceLocator
+        dataSourceMaterialNetworkInterface
         debugCodes
+        # dependenciesSchema
+        # dependencySchema
+        # dirtyBitsTranslator
         dirtyList
         drawingCoord
         drawItem
@@ -48,44 +61,88 @@ wabi_library(hd
         extCompPrimvarBufferSource
         extComputation
         extComputationContext
+        # extComputationInputComputationSchema
+        # extComputationOutputSchema
+        # extComputationPrimvarSchema
+        # extComputationPrimvarsSchema
+        # extComputationSchema
         extComputationUtils
+        # extentSchema
         field
+        # filteringSceneIndex
+        # flatteningSceneIndex
         flatNormals
         geomSubset
+        # geomSubsetSchema
+        # geomSubsetsSchema
+        # instanceCategoriesSchema
+        # instancedBySchema
         instancer
         instanceRegistry
+        # instancerTopologySchema
+        # instanceSchema
+        # legacyDisplayStyleSchema
+        # legacyPrimSceneIndex
         light
+        # lightSchema
         material
+        # materialBindingSchema
+        # materialConnectionSchema
+        # materialFilteringSceneIndexBase
+        # materialNetworkSchema
+        # materialNetwork2Interface
+        # materialNodeSchema
+        # materialSchema
+        # mergingSceneIndex
         mesh
+        # meshSchema
         meshTopology
+        # meshTopologySchema
         meshUtil
+        # noticeBatchingSceneIndex
+        # overlayContainerDataSource
         perfLog
         pluginRenderDelegateUniqueHandle
         points
+        # prefixingSceneIndex
+        # primDataSourceOverlayCache
         primGather
         primTypeIndex
+        # primvarSchema
+        # primvarsSchema
+        # purposeSchema
         renderBuffer
+        # renderBufferSchema
         renderDelegate
-        renderIndex
-        renderPass
-        renderPassState
         rendererPlugin
         rendererPluginHandle
         rendererPluginRegistry
+        renderIndex
+        renderPass
+        renderPassState
         renderThread
         repr
         resource
         resourceRegistry
+        # retainedDataSource
+        # retainedSceneIndex
         rprim
         rprimCollection
         rprimSharedData
         sceneDelegate
         sceneExtCompInputSource
+        # sceneIndex
+        # sceneIndexAdapterSceneDelegate
+        # sceneIndexObserver
+        # sceneIndexPlugin
+        # sceneIndexPluginRegistry
+        # schema
         selection
         smoothNormals
-        sortedIds                   
+        # sortedIds
         sprim
         strategyBase
+        # subdivisionTagsSchema
         task
         timeSampleArray
         tokens
@@ -96,12 +153,18 @@ wabi_library(hd
         unitTestNullRenderDelegate
         unitTestNullRenderPass
         vertexAdjacency
+        # visibilitySchema
         volume
+        # volumeFieldBindingSchema
+        # volumeFieldSchema
         vtBufferSource
+        # xformSchema
 
     PUBLIC_HEADERS
         api.h
+        dataSourceTypeDefs.h
         driver.h
+        materialNetworkInterface.h
         version.h
 
     PRIVATE_CLASSES

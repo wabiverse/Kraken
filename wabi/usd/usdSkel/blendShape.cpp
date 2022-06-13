@@ -75,29 +75,29 @@ UsdSkelBlendShape UsdSkelBlendShape::Define(const UsdStagePtr &stage, const SdfP
 }
 
 /* virtual */
-UsdSchemaKind UsdSkelBlendShape::GetSchemaKind() const
+UsdSchemaKind UsdSkelBlendShape::_GetSchemaKind() const
 {
   return UsdSkelBlendShape::schemaKind;
 }
 
 /* static */
-const TfType &UsdSkelBlendShape::GetStaticTfType()
+const TfType &UsdSkelBlendShape::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdSkelBlendShape>();
   return tfType;
 }
 
 /* static */
-bool UsdSkelBlendShape::IsTypedSchema()
+bool UsdSkelBlendShape::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdSkelBlendShape::GetTfType() const
+const TfType &UsdSkelBlendShape::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdSkelBlendShape::GetOffsetsAttr() const

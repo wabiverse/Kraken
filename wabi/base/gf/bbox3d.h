@@ -92,6 +92,7 @@ class GfBBox3d
 {
 
  public:
+
   /// The default constructor leaves the box empty, the transformation
   /// matrix identity, and the \ref bbox3d_zeroAreaFlag "zero-area
   /// primitives flag" \c false.
@@ -104,8 +105,7 @@ class GfBBox3d
   }
 
   /// Copy constructor
-  GfBBox3d(const GfBBox3d &rhs)
-    : _box(rhs._box)
+  GfBBox3d(const GfBBox3d &rhs) : _box(rhs._box)
   {
     _matrix = rhs._matrix;
     _inverse = rhs._inverse;
@@ -114,8 +114,7 @@ class GfBBox3d
   }
 
   /// This constructor takes a box and sets the matrix to identity.
-  GfBBox3d(const GfRange3d &box)
-    : _box(box)
+  GfBBox3d(const GfRange3d &box) : _box(box)
   {
     _matrix.SetIdentity();
     _inverse.SetIdentity();
@@ -258,6 +257,7 @@ class GfBBox3d
   }
 
  private:
+
   /// The axis-aligned box.
   GfRange3d _box;
   /// Transformation matrix.

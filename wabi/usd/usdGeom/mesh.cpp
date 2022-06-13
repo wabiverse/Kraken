@@ -68,29 +68,29 @@ UsdGeomMesh UsdGeomMesh::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomMesh::GetSchemaKind() const
+UsdSchemaKind UsdGeomMesh::_GetSchemaKind() const
 {
   return UsdGeomMesh::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomMesh::GetStaticTfType()
+const TfType &UsdGeomMesh::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomMesh>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomMesh::IsTypedSchema()
+bool UsdGeomMesh::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomMesh::GetTfType() const
+const TfType &UsdGeomMesh::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomMesh::GetFaceVertexIndicesAttr() const

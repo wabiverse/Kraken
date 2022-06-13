@@ -50,29 +50,29 @@ UsdGeomGprim UsdGeomGprim::Get(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomGprim::GetSchemaKind() const
+UsdSchemaKind UsdGeomGprim::_GetSchemaKind() const
 {
   return UsdGeomGprim::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomGprim::GetStaticTfType()
+const TfType &UsdGeomGprim::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomGprim>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomGprim::IsTypedSchema()
+bool UsdGeomGprim::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomGprim::GetTfType() const
+const TfType &UsdGeomGprim::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomGprim::GetDisplayColorAttr() const

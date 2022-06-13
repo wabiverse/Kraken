@@ -75,29 +75,29 @@ UsdLuxDomeLight UsdLuxDomeLight::Define(const UsdStagePtr &stage, const SdfPath 
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxDomeLight::GetSchemaKind() const
+UsdSchemaKind UsdLuxDomeLight::_GetSchemaKind() const
 {
   return UsdLuxDomeLight::schemaKind;
 }
 
 /* static */
-const TfType &UsdLuxDomeLight::GetStaticTfType()
+const TfType &UsdLuxDomeLight::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxDomeLight>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxDomeLight::IsTypedSchema()
+bool UsdLuxDomeLight::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxDomeLight::GetTfType() const
+const TfType &UsdLuxDomeLight::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdLuxDomeLight::GetTextureFileAttr() const

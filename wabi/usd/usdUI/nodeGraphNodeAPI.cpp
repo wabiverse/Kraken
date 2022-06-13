@@ -69,7 +69,7 @@ UsdUINodeGraphNodeAPI UsdUINodeGraphNodeAPI::Get(const UsdStagePtr &stage, const
 }
 
 /* virtual */
-UsdSchemaKind UsdUINodeGraphNodeAPI::GetSchemaKind() const
+UsdSchemaKind UsdUINodeGraphNodeAPI::_GetSchemaKind() const
 {
   return UsdUINodeGraphNodeAPI::schemaKind;
 }
@@ -85,23 +85,23 @@ UsdUINodeGraphNodeAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdUINodeGraphNodeAPI::GetStaticTfType()
+const TfType &UsdUINodeGraphNodeAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdUINodeGraphNodeAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdUINodeGraphNodeAPI::IsTypedSchema()
+bool UsdUINodeGraphNodeAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUINodeGraphNodeAPI::GetTfType() const
+const TfType &UsdUINodeGraphNodeAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdUINodeGraphNodeAPI::GetPosAttr() const

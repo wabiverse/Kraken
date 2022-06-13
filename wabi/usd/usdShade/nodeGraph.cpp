@@ -68,29 +68,29 @@ UsdShadeNodeGraph UsdShadeNodeGraph::Define(const UsdStagePtr &stage, const SdfP
 }
 
 /* virtual */
-UsdSchemaKind UsdShadeNodeGraph::GetSchemaKind() const
+UsdSchemaKind UsdShadeNodeGraph::_GetSchemaKind() const
 {
   return UsdShadeNodeGraph::schemaKind;
 }
 
 /* static */
-const TfType &UsdShadeNodeGraph::GetStaticTfType()
+const TfType &UsdShadeNodeGraph::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdShadeNodeGraph>();
   return tfType;
 }
 
 /* static */
-bool UsdShadeNodeGraph::IsTypedSchema()
+bool UsdShadeNodeGraph::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdShadeNodeGraph::GetTfType() const
+const TfType &UsdShadeNodeGraph::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/

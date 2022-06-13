@@ -70,29 +70,29 @@ UsdPhysicsSphericalJoint UsdPhysicsSphericalJoint::Define(const UsdStagePtr &sta
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsSphericalJoint::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsSphericalJoint::_GetSchemaKind() const
 {
   return UsdPhysicsSphericalJoint::schemaKind;
 }
 
 /* static */
-const TfType &UsdPhysicsSphericalJoint::GetStaticTfType()
+const TfType &UsdPhysicsSphericalJoint::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsSphericalJoint>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsSphericalJoint::IsTypedSchema()
+bool UsdPhysicsSphericalJoint::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsSphericalJoint::GetTfType() const
+const TfType &UsdPhysicsSphericalJoint::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsSphericalJoint::GetAxisAttr() const

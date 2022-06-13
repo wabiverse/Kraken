@@ -105,7 +105,7 @@ bool UsdPhysicsDriveAPI::IsPhysicsDriveAPIPath(const SdfPath &path, TfToken *nam
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsDriveAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsDriveAPI::_GetSchemaKind() const
 {
   return UsdPhysicsDriveAPI::schemaKind;
 }
@@ -144,23 +144,23 @@ UsdPhysicsDriveAPI UsdPhysicsDriveAPI::Apply(const UsdPrim &prim, const TfToken 
 }
 
 /* static */
-const TfType &UsdPhysicsDriveAPI::GetStaticTfType()
+const TfType &UsdPhysicsDriveAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsDriveAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsDriveAPI::IsTypedSchema()
+bool UsdPhysicsDriveAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsDriveAPI::GetTfType() const
+const TfType &UsdPhysicsDriveAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /// Returns the property name prefixed with the correct namespace prefix, which

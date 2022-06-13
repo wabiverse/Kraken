@@ -68,29 +68,29 @@ UsdPhysicsJoint UsdPhysicsJoint::Define(const UsdStagePtr &stage, const SdfPath 
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsJoint::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsJoint::_GetSchemaKind() const
 {
   return UsdPhysicsJoint::schemaKind;
 }
 
 /* static */
-const TfType &UsdPhysicsJoint::GetStaticTfType()
+const TfType &UsdPhysicsJoint::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsJoint>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsJoint::IsTypedSchema()
+bool UsdPhysicsJoint::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsJoint::GetTfType() const
+const TfType &UsdPhysicsJoint::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsJoint::GetLocalPos0Attr() const

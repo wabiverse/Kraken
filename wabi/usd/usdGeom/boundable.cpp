@@ -49,30 +49,31 @@ UsdGeomBoundable UsdGeomBoundable::Get(const UsdStagePtr &stage, const SdfPath &
   return UsdGeomBoundable(stage->GetPrimAtPath(path));
 }
 
+
 /* virtual */
-UsdSchemaKind UsdGeomBoundable::GetSchemaKind() const
+UsdSchemaKind UsdGeomBoundable::_GetSchemaKind() const
 {
   return UsdGeomBoundable::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomBoundable::GetStaticTfType()
+const TfType &UsdGeomBoundable::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomBoundable>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomBoundable::IsTypedSchema()
+bool UsdGeomBoundable::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomBoundable::GetTfType() const
+const TfType &UsdGeomBoundable::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomBoundable::GetExtentAttr() const
@@ -118,6 +119,60 @@ const TfTokenVector &UsdGeomBoundable::GetSchemaAttributeNames(bool includeInher
     return allNames;
   else
     return localNames;
+}
+
+WABI_NAMESPACE_END
+
+// ===================================================================== //
+// Feel free to add custom code below this line. It will be preserved by
+// the code generator.
+//
+// Just remember to wrap code in the appropriate delimiters:
+// 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+// ===================================================================== //
+// --(BEGIN CUSTOM CODE)--
+
+#include "wabi/usd/usdGeom/debugCodes.h"
+
+WABI_NAMESPACE_BEGIN
+
+bool UsdGeomBoundable::ComputeExtent(const UsdTimeCode &time, VtVec3fArray *extent)
+{
+  UsdAttributeQuery extentAttrQuery = UsdAttributeQuery(GetExtentAttr());
+
+  bool success = false;
+  if (extentAttrQuery.HasAuthoredValue()) {
+    success = extentAttrQuery.Get(extent, time);
+    if (success) {
+      // validate the result
+      success = extent->size() == 2;
+      if (!success) {
+        TF_WARN(
+          "[Boundable Extent] Authored extent for <%s> is of "
+          "size %zu instead of 2.\n",
+          GetPath().GetString().c_str(),
+          extent->size());
+      }
+    }
+  }
+
+  if (!success) {
+    TF_DEBUG(USDGEOM_EXTENT)
+      .Msg(
+        "[Boundable Extent] WARNING: No valid extent authored for "
+        "<%s>. Computing extent from source geometry data dynamically..\n",
+        GetPath().GetString().c_str());
+    success = ComputeExtentFromPlugins(*this, time, extent);
+    if (!success) {
+      TF_DEBUG(USDGEOM_EXTENT)
+        .Msg(
+          "[Boundable Extent] WARNING: Unable to compute extent for "
+          "<%s>.\n",
+          GetPath().GetString().c_str());
+    }
+  }
+
+  return success;
 }
 
 WABI_NAMESPACE_END

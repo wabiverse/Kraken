@@ -68,29 +68,29 @@ UsdGeomCone UsdGeomCone::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomCone::GetSchemaKind() const
+UsdSchemaKind UsdGeomCone::_GetSchemaKind() const
 {
   return UsdGeomCone::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomCone::GetStaticTfType()
+const TfType &UsdGeomCone::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomCone>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomCone::IsTypedSchema()
+bool UsdGeomCone::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomCone::GetTfType() const
+const TfType &UsdGeomCone::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomCone::GetHeightAttr() const

@@ -68,7 +68,7 @@ UsdUISceneGraphPrimAPI UsdUISceneGraphPrimAPI::Get(const UsdStagePtr &stage, con
 }
 
 /* virtual */
-UsdSchemaKind UsdUISceneGraphPrimAPI::GetSchemaKind() const
+UsdSchemaKind UsdUISceneGraphPrimAPI::_GetSchemaKind() const
 {
   return UsdUISceneGraphPrimAPI::schemaKind;
 }
@@ -84,23 +84,23 @@ UsdUISceneGraphPrimAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdUISceneGraphPrimAPI::GetStaticTfType()
+const TfType &UsdUISceneGraphPrimAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdUISceneGraphPrimAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdUISceneGraphPrimAPI::IsTypedSchema()
+bool UsdUISceneGraphPrimAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUISceneGraphPrimAPI::GetTfType() const
+const TfType &UsdUISceneGraphPrimAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdUISceneGraphPrimAPI::GetDisplayNameAttr() const

@@ -79,29 +79,29 @@ UsdUIUserPref UsdUIUserPref::Define(const UsdStagePtr &stage, const SdfPath &pat
   return UsdUIUserPref(stage->DefinePrim(path, usdPrimTypeName));
 }
 /* virtual */
-UsdSchemaKind UsdUIUserPref::GetSchemaKind() const
+UsdSchemaKind UsdUIUserPref::_GetSchemaKind() const
 {
   return UsdUIUserPref::schemaKind;
 }
 
 /* static */
-const TfType &UsdUIUserPref::GetStaticTfType()
+const TfType &UsdUIUserPref::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdUIUserPref>();
   return tfType;
 }
 
 /* static */
-bool UsdUIUserPref::IsTypedSchema()
+bool UsdUIUserPref::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUIUserPref::GetTfType() const
+const TfType &UsdUIUserPref::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdUIUserPref::GetShowSavePromptAttr() const

@@ -54,7 +54,7 @@ UsdPhysicsRigidBodyAPI UsdPhysicsRigidBodyAPI::Get(const UsdStagePtr &stage, con
 
 
 /* virtual */
-UsdSchemaKind UsdPhysicsRigidBodyAPI::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsRigidBodyAPI::_GetSchemaKind() const
 {
   return UsdPhysicsRigidBodyAPI::schemaKind;
 }
@@ -75,23 +75,23 @@ UsdPhysicsRigidBodyAPI UsdPhysicsRigidBodyAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdPhysicsRigidBodyAPI::GetStaticTfType()
+const TfType &UsdPhysicsRigidBodyAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsRigidBodyAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsRigidBodyAPI::IsTypedSchema()
+bool UsdPhysicsRigidBodyAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsRigidBodyAPI::GetTfType() const
+const TfType &UsdPhysicsRigidBodyAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsRigidBodyAPI::GetRigidBodyEnabledAttr() const

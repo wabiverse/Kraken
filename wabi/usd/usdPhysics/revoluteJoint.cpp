@@ -69,29 +69,29 @@ UsdPhysicsRevoluteJoint UsdPhysicsRevoluteJoint::Define(const UsdStagePtr &stage
 }
 
 /* virtual */
-UsdSchemaKind UsdPhysicsRevoluteJoint::GetSchemaKind() const
+UsdSchemaKind UsdPhysicsRevoluteJoint::_GetSchemaKind() const
 {
   return UsdPhysicsRevoluteJoint::schemaKind;
 }
 
 /* static */
-const TfType &UsdPhysicsRevoluteJoint::GetStaticTfType()
+const TfType &UsdPhysicsRevoluteJoint::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdPhysicsRevoluteJoint>();
   return tfType;
 }
 
 /* static */
-bool UsdPhysicsRevoluteJoint::IsTypedSchema()
+bool UsdPhysicsRevoluteJoint::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdPhysicsRevoluteJoint::GetTfType() const
+const TfType &UsdPhysicsRevoluteJoint::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdPhysicsRevoluteJoint::GetAxisAttr() const

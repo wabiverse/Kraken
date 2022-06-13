@@ -116,9 +116,9 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
-  static const TfType &GetStaticTfType();
+  static const TfType &_GetStaticTfType();
 
-  static bool IsTypedSchema();
+  static bool _IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDRI_API

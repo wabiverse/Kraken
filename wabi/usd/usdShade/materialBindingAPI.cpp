@@ -54,7 +54,7 @@ UsdShadeMaterialBindingAPI UsdShadeMaterialBindingAPI::Get(const UsdStagePtr &st
 }
 
 /* virtual */
-UsdSchemaKind UsdShadeMaterialBindingAPI::GetSchemaKind() const
+UsdSchemaKind UsdShadeMaterialBindingAPI::_GetSchemaKind() const
 {
   return UsdShadeMaterialBindingAPI::schemaKind;
 }
@@ -69,23 +69,23 @@ UsdShadeMaterialBindingAPI UsdShadeMaterialBindingAPI::Apply(const UsdPrim &prim
 }
 
 /* static */
-const TfType &UsdShadeMaterialBindingAPI::GetStaticTfType()
+const TfType &UsdShadeMaterialBindingAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdShadeMaterialBindingAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdShadeMaterialBindingAPI::IsTypedSchema()
+bool UsdShadeMaterialBindingAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdShadeMaterialBindingAPI::GetTfType() const
+const TfType &UsdShadeMaterialBindingAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/

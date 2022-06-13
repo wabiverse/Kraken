@@ -75,29 +75,29 @@ UsdRenderVar UsdRenderVar::Define(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdRenderVar::GetSchemaKind() const
+UsdSchemaKind UsdRenderVar::_GetSchemaKind() const
 {
   return UsdRenderVar::schemaKind;
 }
 
 /* static */
-const TfType &UsdRenderVar::GetStaticTfType()
+const TfType &UsdRenderVar::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdRenderVar>();
   return tfType;
 }
 
 /* static */
-bool UsdRenderVar::IsTypedSchema()
+bool UsdRenderVar::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdRenderVar::GetTfType() const
+const TfType &UsdRenderVar::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdRenderVar::GetDataTypeAttr() const

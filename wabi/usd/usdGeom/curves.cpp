@@ -50,29 +50,29 @@ UsdGeomCurves UsdGeomCurves::Get(const UsdStagePtr &stage, const SdfPath &path)
 }
 
 /* virtual */
-UsdSchemaKind UsdGeomCurves::GetSchemaKind() const
+UsdSchemaKind UsdGeomCurves::_GetSchemaKind() const
 {
   return UsdGeomCurves::schemaKind;
 }
 
 /* static */
-const TfType &UsdGeomCurves::GetStaticTfType()
+const TfType &UsdGeomCurves::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdGeomCurves>();
   return tfType;
 }
 
 /* static */
-bool UsdGeomCurves::IsTypedSchema()
+bool UsdGeomCurves::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdGeomCurves::GetTfType() const
+const TfType &UsdGeomCurves::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdGeomCurves::GetCurveVertexCountsAttr() const

@@ -60,7 +60,7 @@ UsdLuxShadowAPI UsdLuxShadowAPI::Get(const UsdStagePtr &stage, const SdfPath &pa
 }
 
 /* virtual */
-UsdSchemaKind UsdLuxShadowAPI::GetSchemaKind() const
+UsdSchemaKind UsdLuxShadowAPI::_GetSchemaKind() const
 {
   return UsdLuxShadowAPI::schemaKind;
 }
@@ -75,23 +75,23 @@ UsdLuxShadowAPI UsdLuxShadowAPI::Apply(const UsdPrim &prim)
 }
 
 /* static */
-const TfType &UsdLuxShadowAPI::GetStaticTfType()
+const TfType &UsdLuxShadowAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdLuxShadowAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdLuxShadowAPI::IsTypedSchema()
+bool UsdLuxShadowAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxShadowAPI::GetTfType() const
+const TfType &UsdLuxShadowAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 UsdAttribute UsdLuxShadowAPI::GetShadowEnableAttr() const
