@@ -122,7 +122,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
 
     // Number of dependencies -- prototype prims that must be resolved
     // before this prototype can be resolved.
-    tbb::atomic<size_t> numDependencies;
+    std::atomic<size_t> numDependencies;
 
     // List of prototype prims that depend on this prototype.
     std::vector<_PrimContext> dependentPrototypes;
@@ -211,7 +211,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
     for (const auto &dependentPrototype : prototypeData.dependentPrototypes)
     {
       _PrototypeTask &dependentPrototypeData = prototypeTasks->find(dependentPrototype)->second;
-      if (dependentPrototypeData.numDependencies.fetch_and_decrement() == 1)
+      if (dependentPrototypeData.numDependencies.fetch_sub(1) == 1)
       {
         dispatcher->Run(&_PrototypeBBoxResolver::_ExecuteTaskForPrototype,
                         this,

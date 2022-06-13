@@ -34,19 +34,18 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdTyped, TfType::Bases<UsdSchemaBase>>();
 }
 
-UsdTyped::~UsdTyped()
-{}
+UsdTyped::~UsdTyped() {}
 
 /* static */
 UsdTyped UsdTyped::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdTyped();
   }
   return UsdTyped(stage->GetPrimAtPath(path));
 }
+
 
 bool UsdTyped::_IsCompatible() const
 {
@@ -60,7 +59,7 @@ TF_MAKE_STATIC_DATA(TfType, _tfType)
 {
   *_tfType = TfType::Find<UsdTyped>();
 }
-const TfType &UsdTyped::GetTfType() const
+const TfType &UsdTyped::_GetTfType() const
 {
   return *_tfType;
 }

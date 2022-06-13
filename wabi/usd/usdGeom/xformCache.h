@@ -57,6 +57,7 @@ WABI_NAMESPACE_BEGIN
 class UsdGeomXformCache
 {
  public:
+
   /// Construct a new XformCache for the specified \p time.
   USDGEOM_API
   explicit UsdGeomXformCache(const UsdTimeCode time);
@@ -99,7 +100,9 @@ class UsdGeomXformCache
   /// Intermediate transforms are cached, but the result of this call itself
   /// is not cached.
   USDGEOM_API
-  GfMatrix4d ComputeRelativeTransform(const UsdPrim &prim, const UsdPrim &ancestor, bool *resetXformStack);
+  GfMatrix4d ComputeRelativeTransform(const UsdPrim &prim,
+                                      const UsdPrim &ancestor,
+                                      bool *resetXformStack);
 
   /// Whether the attribute named \p attrName, belonging to the
   /// given \p prim affects the local transform value at the prim.
@@ -144,6 +147,7 @@ class UsdGeomXformCache
   void Swap(UsdGeomXformCache &other);
 
  private:
+
   // Traverses backwards the hierarchy starting from prim
   // all the way to the root and computes the ctm
   GfMatrix4d const *_GetCtm(const UsdPrim &prim);

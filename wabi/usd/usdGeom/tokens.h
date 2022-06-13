@@ -276,6 +276,10 @@ struct UsdGeomTokensType
   ///
   /// Possible value for UsdGeomImageable::GetPurposeAttr()
   const TfToken guide;
+  /// \brief "guideVisibility"
+  ///
+  /// UsdGeomVisibilityAPI
+  const TfToken guideVisibility;
   /// \brief "height"
   ///
   /// UsdGeomCone, UsdGeomCapsule, UsdGeomCylinder
@@ -404,6 +408,14 @@ struct UsdGeomTokensType
   /// Possible value for UsdGeomCamera::GetStereoRoleAttr(), Default value for
   /// UsdGeomCamera::GetStereoRoleAttr()
   const TfToken mono;
+  /// \brief "motion:blurScale"
+  ///
+  /// UsdGeomMotionAPI
+  const TfToken motionBlurScale;
+  /// \brief "motion:nonlinearSampleCount"
+  ///
+  /// UsdGeomMotionAPI
+  const TfToken motionNonlinearSampleCount;
   /// \brief "motion:velocityScale"
   ///
   /// UsdGeomMotionAPI
@@ -522,6 +534,10 @@ struct UsdGeomTokensType
   ///
   /// UsdGeomImageable
   const TfToken proxyPrim;
+  /// \brief "proxyVisibility"
+  ///
+  /// UsdGeomVisibilityAPI
+  const TfToken proxyVisibility;
   /// \brief "purpose"
   ///
   /// UsdGeomImageable
@@ -538,6 +554,10 @@ struct UsdGeomTokensType
   ///
   /// Possible value for UsdGeomImageable::GetPurposeAttr()
   const TfToken render;
+  /// \brief "renderVisibility"
+  ///
+  /// UsdGeomVisibilityAPI
+  const TfToken renderVisibility;
   /// \brief "right"
   ///
   /// Possible value for UsdGeomCamera::GetStereoRoleAttr()
@@ -685,6 +705,12 @@ struct UsdGeomTokensType
   ///
   /// UsdGeomImageable
   const TfToken visibility;
+  /// \brief "visible"
+  ///
+  /// Possible value for UsdGeomVisibilityAPI::GetGuideVisibilityAttr(), Possible value for
+  /// UsdGeomVisibilityAPI::GetProxyVisibilityAttr(), Possible value for
+  /// UsdGeomVisibilityAPI::GetRenderVisibilityAttr()
+  const TfToken visible;
   /// \brief "vKnots"
   ///
   /// UsdGeomNurbsPatch

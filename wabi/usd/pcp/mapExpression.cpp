@@ -259,7 +259,7 @@ PcpMapExpression::_NodeRefPtr PcpMapExpression::_Node::New(_Op op_,
   {
     // Check for existing instance to re-use
     _NodeMap::accessor accessor;
-    if (_nodeRegistry->map.insert(accessor, key) || accessor->second->_refCount.fetch_and_increment() == 0)
+    if (_nodeRegistry->map.insert(accessor, key) || accessor->second->_refCount.fetch_add(1) == 0)
     {
       // Either there was no node in the table, or there was but it had
       // begun dying (another client dropped its refcount to 0).  We have
@@ -410,7 +410,7 @@ void intrusive_ptr_add_ref(PcpMapExpression::_Node *p)
 
 void intrusive_ptr_release(PcpMapExpression::_Node *p)
 {
-  if (p->_refCount.fetch_and_decrement() == 1)
+  if (p->_refCount.fetch_sub(1) == 1)
     delete p;
 }
 

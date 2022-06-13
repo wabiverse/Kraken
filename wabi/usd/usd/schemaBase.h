@@ -55,6 +55,7 @@ WABI_NAMESPACE_BEGIN
 class UsdSchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind in usd/common.h
@@ -102,9 +103,9 @@ class UsdSchemaBase
   }
 
   /// Returns the kind of schema this class is.
-  UsdSchemaKind GetUsdSchemaKind() const
+  UsdSchemaKind GetSchemaKind() const
   {
-    return GetSchemaKind();
+    return _GetSchemaKind();
   }
 
   /// Construct and store \p prim as the held prim.
@@ -131,11 +132,9 @@ class UsdSchemaBase
   /// Shorthand for GetPrim()->GetPath().
   SdfPath GetPath() const
   {
-    if (!_proxyPrimPath.IsEmpty())
-    {
+    if (!_proxyPrimPath.IsEmpty()) {
       return _proxyPrimPath;
-    } else if (Usd_PrimDataConstPtr p = get_pointer(_primData))
-    {
+    } else if (Usd_PrimDataConstPtr p = get_pointer(_primData)) {
       return p->GetPath();
     }
     return SdfPath::EmptyPath();
@@ -162,6 +161,7 @@ class UsdSchemaBase
     return names;
   }
 
+  /// \anchor UsdSchemaBase_bool
   /// Return true if this schema object is compatible with its held prim,
   /// false otherwise.  For untyped schemas return true if the held prim is
   /// not expired, otherwise return false.  For typed schemas return true if
@@ -177,10 +177,24 @@ class UsdSchemaBase
   }
 
  protected:
+
   /// Returns the kind of schema this class is.
   ///
   /// \sa UsdSchemaBase::schemaKind
-  virtual UsdSchemaKind GetSchemaKind() const
+  virtual UsdSchemaKind _GetSchemaKind() const
+  {
+    return schemaKind;
+  }
+
+  /// \deprecated
+  /// This has been replace with _GetSchemaKind but is around for now for
+  /// backwards compatibility while schemas are being updated.
+  ///
+  /// Leaving this around for one more release as schema classes up until now
+  /// have been generated with an override of this function. We don't want
+  /// those classes to immediately not compile before a chance is given to
+  /// regenerate the schemas.
+  virtual UsdSchemaKind _GetSchemaType() const
   {
     return schemaKind;
   }
@@ -189,7 +203,7 @@ class UsdSchemaBase
   // C++ type.
   const TfType &_GetType() const
   {
-    return GetTfType();
+    return _GetTfType();
   }
 
   USD_API
@@ -208,10 +222,11 @@ class UsdSchemaBase
   virtual bool _IsCompatible() const;
 
  private:
-  // Subclasses should not override GetType(). It is implemented by the
+
+  // Subclasses should not override _GetTfType.  It is implemented by the
   // schema class code generator.
   USD_API
-  virtual const TfType &GetTfType() const;
+  virtual const TfType &_GetTfType() const;
 
   // The held prim and proxy prim path.
   Usd_PrimDataHandle _primData;

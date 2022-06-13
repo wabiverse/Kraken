@@ -94,6 +94,8 @@ struct Sdf_PathNodeHandleImpl
   typedef Sdf_PathNodeHandleImpl this_type;
 
  public:
+  static constexpr bool IsCounted = Counted;
+
   constexpr Sdf_PathNodeHandleImpl() noexcept {};
 
   explicit Sdf_PathNodeHandleImpl(Sdf_PathNode const *p, bool add_ref = true)

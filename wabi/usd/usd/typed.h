@@ -46,6 +46,7 @@ WABI_NAMESPACE_BEGIN
 class UsdTyped : public UsdSchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -55,16 +56,12 @@ class UsdTyped : public UsdSchemaBase
   /// Equivalent to UsdTyped::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdTyped(const UsdPrim &prim = UsdPrim())
-    : UsdSchemaBase(prim)
-  {}
+  explicit UsdTyped(const UsdPrim &prim = UsdPrim()) : UsdSchemaBase(prim) {}
 
   /// Construct a UsdTyped on the prim wrapped by \p schemaObj .
   /// Should be preferred over UsdTyped(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdTyped(const UsdSchemaBase &schemaObj)
-    : UsdSchemaBase(schemaObj)
-  {}
+  explicit UsdTyped(const UsdSchemaBase &schemaObj) : UsdSchemaBase(schemaObj) {}
 
   USD_API
   virtual ~UsdTyped();
@@ -92,12 +89,14 @@ class UsdTyped : public UsdSchemaBase
   static UsdTyped Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   USD_API
   bool _IsCompatible() const override;
 
  private:
+
   USD_API
-  const TfType &GetTfType() const override;
+  const TfType &_GetTfType() const override;
 };
 
 WABI_NAMESPACE_END

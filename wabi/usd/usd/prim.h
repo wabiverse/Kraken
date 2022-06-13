@@ -516,6 +516,15 @@ class UsdPrim : public UsdObject
   USD_API
   bool _HasAPI(const TfType &schemaType, bool validateSchemaType, const TfToken &instanceName) const;
 
+  // Separate implementations for UsdPrim::HasAPI for single and multiple
+  // apply API schema TfTypes.
+  USD_API
+  bool _HasSingleApplyAPI(const TfType& schemaType) const;
+
+  USD_API
+  bool _HasMultiApplyAPI(const TfType& schemaType, 
+                          const TfToken &instanceName) const;
+
   // Private implementation for all ApplyAPI, CanApplyAPI, and RemoveAPI
   // methods for both single apply and multiple apply APIs. The multiple
   // apply API methods validate that the instance name is non-empty, but

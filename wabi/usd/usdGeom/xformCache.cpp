@@ -31,13 +31,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-UsdGeomXformCache::UsdGeomXformCache(const UsdTimeCode time)
-  : _time(time)
-{}
+UsdGeomXformCache::UsdGeomXformCache(const UsdTimeCode time) : _time(time) {}
 
-UsdGeomXformCache::UsdGeomXformCache()
-  : _time(UsdTimeCode::Default())
-{}
+UsdGeomXformCache::UsdGeomXformCache() : _time(UsdTimeCode::Default()) {}
 
 GfMatrix4d UsdGeomXformCache::GetLocalToWorldTransform(const UsdPrim &prim)
 {
@@ -75,7 +71,8 @@ bool UsdGeomXformCache::GetResetXformStack(const UsdPrim &prim)
   return false;
 }
 
-bool UsdGeomXformCache::IsAttributeIncludedInLocalTransform(const UsdPrim &prim, const TfToken &attrName)
+bool UsdGeomXformCache::IsAttributeIncludedInLocalTransform(const UsdPrim &prim,
+                                                            const TfToken &attrName)
 {
   // Get or create an entry for the prim in the CTM cache.
   // The validity of the ctm value itself is irrelevant here.
@@ -90,10 +87,8 @@ UsdGeomXformCache::_Entry *UsdGeomXformCache::_GetCacheEntryForPrim(const UsdPri
 {
   auto iresult = _ctmCache.insert({prim, _Entry()});
   _Entry *result = &iresult.first->second;
-  if (iresult.second)
-  {
-    if (UsdGeomXformable xf = UsdGeomXformable(prim))
-    {
+  if (iresult.second) {
+    if (UsdGeomXformable xf = UsdGeomXformable(prim)) {
       result->query = UsdGeomXformable::XformQuery(xf);
     }
     result->ctm.SetIdentity();
@@ -104,20 +99,17 @@ UsdGeomXformCache::_Entry *UsdGeomXformCache::_GetCacheEntryForPrim(const UsdPri
 
 GfMatrix4d UsdGeomXformCache::GetLocalTransformation(const UsdPrim &prim, bool *resetsXformStack)
 {
-  if (!resetsXformStack)
-  {
+  if (!resetsXformStack) {
     TF_CODING_ERROR("'resetsXformStack' pointer is null.");
     return GfMatrix4d(1);
   }
 
   _Entry *entry = _GetCacheEntryForPrim(prim);
   GfMatrix4d xform(1.);
-  if (TF_VERIFY(entry))
-  {
+  if (TF_VERIFY(entry)) {
     entry->query.GetLocalTransformation(&xform, _time);
     *resetsXformStack = entry->query.GetResetXformStack();
-  } else
-  {
+  } else {
     *resetsXformStack = false;
   }
 
@@ -130,17 +122,14 @@ GfMatrix4d UsdGeomXformCache::ComputeRelativeTransform(const UsdPrim &prim,
 {
   GfMatrix4d xform(1.);
 
-  if (!resetXformStack)
-  {
+  if (!resetXformStack) {
     TF_CODING_ERROR("'resetXformStack' pointer is null.");
     return xform;
   }
 
-  for (UsdPrim p = prim; p && p != ancestor; p = p.GetParent())
-  {
+  for (UsdPrim p = prim; p && p != ancestor; p = p.GetParent()) {
     xform *= GetLocalTransformation(p, resetXformStack);
-    if (*resetXformStack)
-    {
+    if (*resetXformStack) {
       break;
     }
   }
@@ -182,8 +171,7 @@ void UsdGeomXformCache::SetTime(UsdTimeCode time)
     return;
 
   // Mark all cached CTMs as invalid, but leave the queries behind.
-  TF_FOR_ALL (it, _ctmCache)
-  {
+  TF_FOR_ALL (it, _ctmCache) {
     it->second.ctmIsValid = false;
   }
 

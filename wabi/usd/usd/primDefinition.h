@@ -47,6 +47,7 @@ class UsdPrim;
 class UsdPrimDefinition
 {
  public:
+
   ~UsdPrimDefinition() = default;
 
   /// Return the list of names of builtin properties for this prim definition.
@@ -67,8 +68,7 @@ class UsdPrimDefinition
   /// SdfSpecTypeUnknown.
   SdfSpecType GetSpecType(const TfToken &propName) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
-    {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
       return _GetSchematics()->GetSpecType(*path);
     }
     return SdfSpecTypeUnknown;
@@ -79,8 +79,7 @@ class UsdPrimDefinition
   /// if there is no such property spec.
   SdfPropertySpecHandle GetSchemaPropertySpec(const TfToken &propName) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
-    {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
       return _GetSchematics()->GetPropertyAtPath(*path);
     }
     return TfNullPtr;
@@ -91,8 +90,7 @@ class UsdPrimDefinition
   ///     GetSchemaPropertySpec(primType, attrName));
   SdfAttributeSpecHandle GetSchemaAttributeSpec(const TfToken &attrName) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, attrName))
-    {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, attrName)) {
       return _GetSchematics()->GetAttributeAtPath(*path);
     }
     return TfNullPtr;
@@ -103,8 +101,7 @@ class UsdPrimDefinition
   ///     GetSchemaPropertySpec(primType, relName));
   SdfRelationshipSpecHandle GetSchemaRelationshipSpec(const TfToken &relName) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, relName))
-    {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, relName)) {
       return _GetSchematics()->GetRelationshipAtPath(*path);
     }
     return TfNullPtr;
@@ -115,8 +112,7 @@ class UsdPrimDefinition
   ///
   /// Returns true if the attribute exists in this prim definition and it has
   /// a fallback value defined. Returns false otherwise.
-  template<class T>
-  bool GetAttributeFallbackValue(const TfToken &attrName, T *value) const
+  template<class T> bool GetAttributeFallbackValue(const TfToken &attrName, T *value) const
   {
     return _HasField(attrName, SdfFieldKeys->Default, value);
   }
@@ -134,11 +130,9 @@ class UsdPrimDefinition
   ///
   /// Returns true if a fallback value is defined for the given metadata
   /// \p key. Returns false otherwise.
-  template<class T>
-  bool GetMetadata(const TfToken &key, T *value) const
+  template<class T> bool GetMetadata(const TfToken &key, T *value) const
   {
-    if (UsdSchemaRegistry::IsDisallowedField(key))
-    {
+    if (UsdSchemaRegistry::IsDisallowedField(key)) {
       return false;
     }
     return _HasField(TfToken(), key, value);
@@ -155,8 +149,7 @@ class UsdPrimDefinition
   template<class T>
   bool GetMetadataByDictKey(const TfToken &key, const TfToken &keyPath, T *value) const
   {
-    if (UsdSchemaRegistry::IsDisallowedField(key))
-    {
+    if (UsdSchemaRegistry::IsDisallowedField(key)) {
       return false;
     }
     return _HasFieldDictKey(TfToken(), key, keyPath, value);
@@ -184,8 +177,7 @@ class UsdPrimDefinition
   template<class T>
   bool GetPropertyMetadata(const TfToken &propName, const TfToken &key, T *value) const
   {
-    if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key))
-    {
+    if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key)) {
       return false;
     }
     return _HasField(propName, key, value);
@@ -205,8 +197,7 @@ class UsdPrimDefinition
                                     const TfToken &keyPath,
                                     T *value) const
   {
-    if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key))
-    {
+    if (propName.IsEmpty() || UsdSchemaRegistry::IsDisallowedField(key)) {
       return false;
     }
     return _HasFieldDictKey(propName, key, keyPath, value);
@@ -260,7 +251,9 @@ class UsdPrimDefinition
   USD_API
   UsdPrim FlattenTo(const UsdPrim &prim, SdfSpecifier newSpecSpecifier = SdfSpecifierOver) const;
 
+
  private:
+
   // Only the UsdSchemaRegistry can construct prim definitions.
   friend class UsdSchemaRegistry;
 
@@ -287,8 +280,7 @@ class UsdPrimDefinition
   template<class T>
   bool _HasField(const TfToken &propName, const TfToken &fieldName, T *value) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
-    {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
       return _GetSchematics()->HasField(*path, fieldName, value);
     }
     return false;
@@ -300,8 +292,7 @@ class UsdPrimDefinition
                         const TfToken &keyPath,
                         T *value) const
   {
-    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName))
-    {
+    if (const SdfPath *path = TfMapLookupPtr(_propPathMap, propName)) {
       return _GetSchematics()->HasFieldDictKey(*path, fieldName, keyPath, value);
     }
     return false;
@@ -309,7 +300,10 @@ class UsdPrimDefinition
 
   UsdPrimDefinition() = default;
 
-  UsdPrimDefinition(const SdfPrimSpecHandle &primSpec, bool isAPISchema);
+  // Constructor that initializes the prim definition with prim path of
+  // the primary prim spec of this definition's schema type in the schematics.
+  // This does not populate any of the properties of the prim definition.
+  UsdPrimDefinition(const SdfPath &schematicsPrimPath, bool isAPISchema);
 
   // Access to the schema registry's schematics.
   const SdfLayerRefPtr &_GetSchematics() const
@@ -322,32 +316,21 @@ class UsdPrimDefinition
 
   // Helpers for constructing the prim definition.
   USD_API
-  void _SetPrimSpec(const SdfPrimSpecHandle &primSpec, bool providesPrimMetadata);
+  void _ComposePropertiesFromPrimSpec(const SdfLayerRefPtr &layer,
+                                      const SdfPath &weakerPrimSpecPath,
+                                      const std::string &instanceName = "");
 
   USD_API
-  void _ApplyPropertiesFromPrimDef(const UsdPrimDefinition &primDef, const std::string &propPrefix = "");
+  void _ComposePropertiesFromPrimDef(const UsdPrimDefinition &weakerPrimDef,
+                                     bool useWeakerPropertyForTypeConflict,
+                                     const std::string &instanceName = "");
 
-  void _AddProperty(const TfToken &name, const SdfPath &schemaPath)
-  {
-    // Adds the property name with schema path to the prim def. This makes
-    // sure we overwrite the original property path with the new path if it
-    // already exists, but makes sure we don't end up with duplicate names
-    // in the property names list.
-    auto it = _propPathMap.insert(std::make_pair(name, schemaPath));
-    if (it.second)
-    {
-      _properties.push_back(name);
-    } else
-    {
-      it.first->second = schemaPath;
-    }
-  }
-
-  SdfPrimSpecHandle _primSpec;
+  // Path to the prim in the schematics for this prim definition.
+  SdfPath _schematicsPrimPath;
 
   // Map for caching the paths to each property spec in the schematics by
   // property name.
-  using _PrimTypePropNameToPathMap = TfHashMap<TfToken, SdfPath, TfToken::HashFunctor>;
+  using _PrimTypePropNameToPathMap = std::unordered_map<TfToken, SdfPath, TfToken::HashFunctor>;
   _PrimTypePropNameToPathMap _propPathMap;
   TfTokenVector _appliedAPISchemas;
 

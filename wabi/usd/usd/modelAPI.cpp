@@ -39,59 +39,55 @@
 
 WABI_NAMESPACE_BEGIN
 
-/**
- * Register the schema with the TfType system. */
+// Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
   TfType::Define<UsdModelAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-/* clang-format off */
 TF_DEFINE_PRIVATE_TOKENS(
-  _schemaTokens,
-  (ModelAPI)
+    _schemaTokens,
+    (ModelAPI)
 );
-/* clang-format on */
 
 /* virtual */
-UsdModelAPI::~UsdModelAPI()
-{}
+UsdModelAPI::~UsdModelAPI() {}
 
 /* static */
 UsdModelAPI UsdModelAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage)
-  {
+  if (!stage) {
     TF_CODING_ERROR("Invalid stage");
     return UsdModelAPI();
   }
   return UsdModelAPI(stage->GetPrimAtPath(path));
 }
 
+
 /* virtual */
-UsdSchemaKind UsdModelAPI::GetSchemaKind() const
+UsdSchemaKind UsdModelAPI::_GetSchemaKind() const
 {
   return UsdModelAPI::schemaKind;
 }
 
 /* static */
-const TfType &UsdModelAPI::GetStaticTfType()
+const TfType &UsdModelAPI::_GetStaticTfType()
 {
   static TfType tfType = TfType::Find<UsdModelAPI>();
   return tfType;
 }
 
 /* static */
-bool UsdModelAPI::IsTypedSchema()
+bool UsdModelAPI::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
+  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdModelAPI::GetTfType() const
+const TfType &UsdModelAPI::_GetTfType() const
 {
-  return GetStaticTfType();
+  return _GetStaticTfType();
 }
 
 /*static*/
@@ -108,25 +104,19 @@ const TfTokenVector &UsdModelAPI::GetSchemaAttributeNames(bool includeInherited)
 
 WABI_NAMESPACE_END
 
-/* clang-format off */
-
-  /**
-   * ======================================================================
-   *   Feel free to add custom code below this line. It will be preserved
-   *   by the code generator.
-   *
-   *   Just remember to wrap code in the appropriate delimiters:
-   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-   * ======================================================================
-   * --(BEGIN CUSTOM CODE)-- */
-
-/* clang-format on */
-
+// ===================================================================== //
+// Feel free to add custom code below this line. It will be preserved by
+// the code generator.
+//
+// Just remember to wrap code in the appropriate delimiters:
+// 'PXR_NAMESPACE_OPEN_SCOPE', 'PXR_NAMESPACE_CLOSE_SCOPE'.
+// ===================================================================== //
+// --(BEGIN CUSTOM CODE)--
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/registryManager.h"
-#include "wabi/usd/kind/registry.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/usd/clip.h"
+#include "wabi/usd/kind/registry.h"
 
 #include <string>
 using std::string;
@@ -141,12 +131,11 @@ TF_REGISTRY_FUNCTION(TfEnum)
   TF_ADD_ENUM_NAME(UsdModelAPI::KindValidationModelHierarchy);
 }
 
+
 bool UsdModelAPI::GetKind(TfToken *retValue) const
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath())
-  {
-    /**
-     * Special-case to pre-empt coding errors. */
+  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+    // Special-case to pre-empt coding errors.
     return false;
   }
 
@@ -154,10 +143,8 @@ bool UsdModelAPI::GetKind(TfToken *retValue) const
 }
 bool UsdModelAPI::SetKind(const TfToken &value) const
 {
-  if (GetPath() == SdfPath::AbsoluteRootPath())
-  {
-    /**
-     * Special-case to pre-empt coding errors. */
+  if (GetPath() == SdfPath::AbsoluteRootPath()) {
+    // Special-case to pre-empt coding errors.
     return false;
   }
 
@@ -166,8 +153,7 @@ bool UsdModelAPI::SetKind(const TfToken &value) const
 
 bool UsdModelAPI::IsKind(const TfToken &baseKind, UsdModelAPI::KindValidation validation) const
 {
-  if (validation == UsdModelAPI::KindValidationModelHierarchy)
-  {
+  if (validation == UsdModelAPI::KindValidationModelHierarchy) {
     if (KindRegistry::IsA(baseKind, KindTokens->model) && !IsModel())
       return false;
   }
@@ -187,10 +173,9 @@ bool UsdModelAPI::IsGroup() const
   return GetPrim().IsGroup();
 }
 
-/**
- * ---------------------------------------------------------------------
- *  Asset Info API
- * --------------------------------------------------------------------- */
+////////////////////////////////////////////////////////////////////////
+// Asset Info API
+////////////////////////////////////////////////////////////////////////
 
 bool UsdModelAPI::GetAssetIdentifier(SdfAssetPath *identifier) const
 {
@@ -227,15 +212,16 @@ bool UsdModelAPI::GetPayloadAssetDependencies(VtArray<SdfAssetPath> *assetDeps) 
   return _GetAssetInfoByKey(UsdModelAPIAssetInfoKeys->payloadAssetDependencies, assetDeps);
 }
 
+
 void UsdModelAPI::SetPayloadAssetDependencies(const VtArray<SdfAssetPath> &assetDeps) const
 {
-  GetPrim().SetAssetInfoByKey(UsdModelAPIAssetInfoKeys->payloadAssetDependencies, VtValue(assetDeps));
+  GetPrim().SetAssetInfoByKey(UsdModelAPIAssetInfoKeys->payloadAssetDependencies,
+                              VtValue(assetDeps));
 }
 
 bool UsdModelAPI::GetAssetInfo(VtDictionary *info) const
 {
-  if (GetPrim().HasAssetInfo())
-  {
+  if (GetPrim().HasAssetInfo()) {
     *info = GetPrim().GetAssetInfo();
     return true;
   }

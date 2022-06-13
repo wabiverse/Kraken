@@ -30,7 +30,7 @@
 #include "wabi/base/tf/envSetting.h"
 
 #if WITH_TBB_LEGACY
-#include <tbb/task_scheduler_init.h>
+#  include <tbb/task_scheduler_init.h>
 #endif /* WITH_TBB_LEGACY */
 #include <tbb/task_arena.h>
 

@@ -38,96 +38,103 @@
 
 WABI_NAMESPACE_BEGIN
 
-/**
- * Register the schema with the TfType system. */
+// Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-  TfType::Define<UsdAPISchemaBase, TfType::Bases<UsdSchemaBase>>();
+    TfType::Define<UsdAPISchemaBase,
+        TfType::Bases< UsdSchemaBase > >();
+    
 }
 
 /* virtual */
 UsdAPISchemaBase::~UsdAPISchemaBase()
-{}
+{
+}
+
 
 /* virtual */
-UsdSchemaKind UsdAPISchemaBase::GetSchemaKind() const
+UsdSchemaKind UsdAPISchemaBase::_GetSchemaKind() const
 {
-  return UsdAPISchemaBase::schemaKind;
+    return UsdAPISchemaBase::schemaKind;
 }
 
 /* static */
-const TfType &UsdAPISchemaBase::GetStaticTfType()
+const TfType &
+UsdAPISchemaBase::_GetStaticTfType()
 {
-  static TfType tfType = TfType::Find<UsdAPISchemaBase>();
-  return tfType;
+    static TfType tfType = TfType::Find<UsdAPISchemaBase>();
+    return tfType;
 }
 
 /* static */
-bool UsdAPISchemaBase::IsTypedSchema()
+bool 
+UsdAPISchemaBase::_IsTypedSchema()
 {
-  static bool isTyped = GetStaticTfType().IsA<UsdTyped>();
-  return isTyped;
+    static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+    return isTyped;
 }
 
 /* virtual */
-const TfType &UsdAPISchemaBase::GetTfType() const
+const TfType &
+UsdAPISchemaBase::_GetTfType() const
 {
-  return GetStaticTfType();
+    return _GetStaticTfType();
 }
 
 /*static*/
-const TfTokenVector &UsdAPISchemaBase::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector&
+UsdAPISchemaBase::GetSchemaAttributeNames(bool includeInherited)
 {
-  static TfTokenVector localNames;
-  static TfTokenVector allNames = UsdSchemaBase::GetSchemaAttributeNames(true);
+    static TfTokenVector localNames;
+    static TfTokenVector allNames =
+        UsdSchemaBase::GetSchemaAttributeNames(true);
 
-  if (includeInherited)
-    return allNames;
-  else
-    return localNames;
+    if (includeInherited)
+        return allNames;
+    else
+        return localNames;
 }
 
 WABI_NAMESPACE_END
 
-/* clang-format off */
-
-  /**
-   * ======================================================================
-   *   Feel free to add custom code below this line. It will be preserved
-   *   by the code generator.
-   *
-   *   Just remember to wrap code in the appropriate delimiters:
-   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-   * ======================================================================
-   * --(BEGIN CUSTOM CODE)-- */
-
-/* clang-format on */
+// ===================================================================== //
+// Feel free to add custom code below this line. It will be preserved by
+// the code generator.
+//
+// Just remember to wrap code in the appropriate delimiters:
+// 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+// ===================================================================== //
+// --(BEGIN CUSTOM CODE)--
 
 #include "wabi/usd/usd/tokens.h"
 
 WABI_NAMESPACE_BEGIN
 
+
 /* virtual */
-bool UsdAPISchemaBase::_IsCompatible() const
+bool 
+UsdAPISchemaBase::_IsCompatible() const
 {
-  if (!UsdSchemaBase::_IsCompatible())
-    return false;
+    if (!UsdSchemaBase::_IsCompatible())
+        return false;
 
-  /**
-   * This virtual function call tells us whether we're an applied
-   * API schema. For applied API schemas, we'd like to check whether
-   * the API schema has been applied properly on the prim. */
-  if (IsAppliedAPISchema() && !GetPrim()._HasAPI(GetTfType(), /*validateSchemaType*/ false, _instanceName))
-  {
-    return false;
-  }
+    // This virtual function call tells us whether we're an applied 
+    // API schema. For applied API schemas, we'd like to check whether 
+    // the API schema has been applied properly on the prim.
+    if (IsAppliedAPISchema()) {
+        if (IsMultipleApplyAPISchema()) {
+            if (_instanceName.IsEmpty() ||
+                !GetPrim()._HasMultiApplyAPI(_GetTfType(), _instanceName)) {
+                return false;
+            }
+        } else {
+            if (!GetPrim()._HasSingleApplyAPI(_GetTfType())) {
+                return false;
+            }
+        }
+    }
 
-  if (IsMultipleApplyAPISchema() && _instanceName.IsEmpty())
-  {
-    return false;
-  }
-
-  return true;
+    return true;
 }
 
 WABI_NAMESPACE_END

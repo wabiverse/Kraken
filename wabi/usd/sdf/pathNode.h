@@ -26,6 +26,7 @@
 
 #include "wabi/base/tf/mallocTag.h"
 #include "wabi/base/tf/token.h"
+#include "wabi/base/tf/functionRef.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
 
@@ -64,6 +65,7 @@ class Sdf_PathNode
   Sdf_PathNode &operator=(Sdf_PathNode const &) = delete;
 
  public:
+
   // Node types identify what kind of path node a given instance is.
   // There are restrictions on what type of children each node type
   // can have,
@@ -126,24 +128,37 @@ class Sdf_PathNode
     NumNodeTypes  ///< Internal sentinel value
   };
 
-  static Sdf_PathPrimNodeHandle FindOrCreatePrim(Sdf_PathNode const *parent, const TfToken &name);
+  static Sdf_PathPrimNodeHandle FindOrCreatePrim(Sdf_PathNode const *parent,
+                                                 const TfToken &name,
+                                                 TfFunctionRef<bool()> isValid);
 
-  static Sdf_PathPropNodeHandle FindOrCreatePrimProperty(Sdf_PathNode const *parent, const TfToken &name);
+  static Sdf_PathPropNodeHandle FindOrCreatePrimProperty(Sdf_PathNode const *parent,
+                                                         const TfToken &name,
+                                                         TfFunctionRef<bool()> isValid);
 
   static Sdf_PathPrimNodeHandle FindOrCreatePrimVariantSelection(Sdf_PathNode const *parent,
                                                                  const TfToken &variantSet,
-                                                                 const TfToken &variant);
+                                                                 const TfToken &variant,
+                                                                 TfFunctionRef<bool()> isValid);
 
-  static Sdf_PathPropNodeHandle FindOrCreateTarget(Sdf_PathNode const *parent, SdfPath const &targetPath);
+  static Sdf_PathPropNodeHandle FindOrCreateTarget(Sdf_PathNode const *parent,
+                                                   SdfPath const &targetPath,
+                                                   TfFunctionRef<bool()> isValid);
 
   static Sdf_PathPropNodeHandle FindOrCreateRelationalAttribute(Sdf_PathNode const *parent,
-                                                                const TfToken &name);
+                                                                const TfToken &name,
+                                                                TfFunctionRef<bool()> isValid);
 
-  static Sdf_PathPropNodeHandle FindOrCreateMapper(Sdf_PathNode const *parent, SdfPath const &targetPath);
+  static Sdf_PathPropNodeHandle FindOrCreateMapper(Sdf_PathNode const *parent,
+                                                   SdfPath const &targetPath,
+                                                   TfFunctionRef<bool()> isValid);
 
-  static Sdf_PathPropNodeHandle FindOrCreateMapperArg(Sdf_PathNode const *parent, const TfToken &name);
+  static Sdf_PathPropNodeHandle FindOrCreateMapperArg(Sdf_PathNode const *parent,
+                                                      const TfToken &name,
+                                                      TfFunctionRef<bool()> isValid);
 
-  static Sdf_PathPropNodeHandle FindOrCreateExpression(Sdf_PathNode const *parent);
+  static Sdf_PathPropNodeHandle FindOrCreateExpression(Sdf_PathNode const *parent,
+                                                       TfFunctionRef<bool()> isValid);
 
   static Sdf_PathNode const *GetAbsoluteRootNode();
   static Sdf_PathNode const *GetRelativeRootNode();
@@ -153,9 +168,10 @@ class Sdf_PathNode
     return NodeType(_nodeType);
   }
 
-  static std::pair<Sdf_PathNode const *, Sdf_PathNode const *> RemoveCommonSuffix(Sdf_PathNode const *a,
-                                                                                  Sdf_PathNode const *b,
-                                                                                  bool stopAtRootPrim);
+  static std::pair<Sdf_PathNode const *, Sdf_PathNode const *> RemoveCommonSuffix(
+    Sdf_PathNode const *a,
+    Sdf_PathNode const *b,
+    bool stopAtRootPrim);
 
   // This method returns a node pointer
   Sdf_PathNode const *GetParentNode() const
@@ -181,7 +197,8 @@ class Sdf_PathNode
   }
   bool IsNamespaced() const
   {
-    return (_nodeType == PrimPropertyNode || _nodeType == RelationalAttributeNode) && _IsNamespacedImpl();
+    return (_nodeType == PrimPropertyNode || _nodeType == RelationalAttributeNode) &&
+           _IsNamespacedImpl();
   }
 
   bool ContainsPrimVariantSelection() const
@@ -206,20 +223,20 @@ class Sdf_PathNode
   // targets, etc...)
   inline TfToken GetElement() const;
 
-  // Append this element's text (same as GetElement()) to \p str.
-  void AppendText(std::string *str) const;
-
   // Return the stringified path to this node as a TfToken lvalue.
-  SDF_API static const TfToken &GetPathToken(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart);
+  SDF_API static const TfToken &GetPathToken(Sdf_PathNode const *primPart,
+                                             Sdf_PathNode const *propPart);
 
   // Return the stringified path to this node as a TfToken rvalue.
-  SDF_API static TfToken GetPathAsToken(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart);
+  SDF_API static TfToken GetPathAsToken(Sdf_PathNode const *primPart,
+                                        Sdf_PathNode const *propPart);
+
+  static char const *GetDebugText(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart);
 
   // Lexicographic ordering for Compare().
   struct LessThan
   {
-    template<class T>
-    inline bool operator()(T const &a, T const &b) const
+    template<class T> inline bool operator()(T const &a, T const &b) const
     {
       return a < b;
     }
@@ -227,8 +244,7 @@ class Sdf_PathNode
 
   // This operator only works properly when the rhs has the same parent
   // as this node.
-  template<class Less>
-  inline bool Compare(const Sdf_PathNode &rhs) const;
+  template<class Less> inline bool Compare(const Sdf_PathNode &rhs) const;
 
   // Return the current ref-count.
   // Meant for diagnostic use.
@@ -238,6 +254,7 @@ class Sdf_PathNode
   }
 
  protected:
+
   Sdf_PathNode(Sdf_PathNode const *parent, NodeType nodeType)
     : _parent(parent),
       _refCount(1),
@@ -265,16 +282,27 @@ class Sdf_PathNode
   // for space reasons.
   inline void _Destroy() const;
 
-  // // Helper function for GetPathToken, which lazily creates its token
+  TfToken _GetElementImpl() const;
+
+  // Helper function for GetPathToken, which lazily creates its token
   static TfToken _CreatePathToken(Sdf_PathNode const *primPart, Sdf_PathNode const *propPart);
+
+  template<class Buffer>
+  static void _WriteTextToBuffer(Sdf_PathNode const *primPart,
+                                 Sdf_PathNode const *propPart,
+                                 Buffer &out);
+
+  template<class Buffer> static void _WriteTextToBuffer(SdfPath const &path, Buffer &out);
+
+  // Append this element's text (same as GetElement()) to \p out.
+  template<class Buffer> void _WriteText(Buffer &out) const;
 
   // Helper for dtor, removes this path node's token from the token table.
   SDF_API void _RemovePathTokenFromTable() const;
 
   struct _EqualElement
   {
-    template<class T>
-    inline bool operator()(T const &a, T const &b) const
+    template<class T> inline bool operator()(T const &a, T const &b) const
     {
       return a == b;
     }
@@ -287,9 +315,9 @@ class Sdf_PathNode
   friend void intrusive_ptr_release(const Sdf_PathNode *);
 
  private:
+
   // Downcast helper, just sugar to static_cast this to Derived const *.
-  template<class Derived>
-  Derived const *_Downcast() const
+  template<class Derived> Derived const *_Downcast() const
   {
     return static_cast<Derived const *>(this);
   }
@@ -303,7 +331,7 @@ class Sdf_PathNode
   // Instance variables.  PathNode's size is important to keep small.  Please
   // be mindful of that when making any changes here.
   const Sdf_PathNodeConstRefPtr _parent;
-  mutable tbb::atomic<unsigned int> _refCount;
+  mutable std::atomic<unsigned int> _refCount;
 
   const short _elementCount;
   const unsigned char _nodeType;
@@ -325,6 +353,7 @@ class Sdf_PathNode
 class Sdf_PrimPartPathNode : public Sdf_PathNode
 {
  public:
+
   using Sdf_PathNode::Sdf_PathNode;
   SDF_API void operator delete(void *p);
 };
@@ -332,6 +361,7 @@ class Sdf_PrimPartPathNode : public Sdf_PathNode
 class Sdf_PropPartPathNode : public Sdf_PathNode
 {
  public:
+
   using Sdf_PathNode::Sdf_PathNode;
   SDF_API void operator delete(void *p);
 };
@@ -339,16 +369,16 @@ class Sdf_PropPartPathNode : public Sdf_PathNode
 class Sdf_RootPathNode : public Sdf_PrimPartPathNode
 {
  public:
+
   typedef bool ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::RootNode;
 
   static SDF_API Sdf_PathNode const *New(bool isAbsolute);
 
  private:
+
   // This constructor is used only to create the two special root nodes.
-  Sdf_RootPathNode(bool isAbsolute)
-    : Sdf_PrimPartPathNode(isAbsolute)
-  {}
+  Sdf_RootPathNode(bool isAbsolute) : Sdf_PrimPartPathNode(isAbsolute) {}
 
   ComparisonType _GetComparisonValue() const
   {
@@ -358,17 +388,18 @@ class Sdf_RootPathNode : public Sdf_PrimPartPathNode
   }
 
   friend class Sdf_PathNode;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 };
 
 class Sdf_PrimPathNode : public Sdf_PrimPartPathNode
 {
  public:
+
   typedef TfToken ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::PrimNode;
 
  private:
+
   Sdf_PrimPathNode(Sdf_PathNode const *parent, const TfToken &name)
     : Sdf_PrimPartPathNode(parent, nodeType),
       _name(name)
@@ -383,8 +414,7 @@ class Sdf_PrimPathNode : public Sdf_PrimPartPathNode
 
   friend class Sdf_PathNode;
   friend struct Sdf_PathNodePrivateAccess;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 
   // Instance variables
   TfToken _name;
@@ -393,10 +423,12 @@ class Sdf_PrimPathNode : public Sdf_PrimPartPathNode
 class Sdf_PrimPropertyPathNode : public Sdf_PropPartPathNode
 {
  public:
+
   typedef TfToken ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::PrimPropertyNode;
 
  private:
+
   Sdf_PrimPropertyPathNode(Sdf_PathNode const *parent, const TfToken &name)
     : Sdf_PropPartPathNode(parent, nodeType),
       _name(name)
@@ -406,8 +438,7 @@ class Sdf_PrimPropertyPathNode : public Sdf_PropPartPathNode
 
   friend class Sdf_PathNode;
   friend struct Sdf_PathNodePrivateAccess;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 
   const ComparisonType &_GetComparisonValue() const
   {
@@ -421,14 +452,18 @@ class Sdf_PrimPropertyPathNode : public Sdf_PropPartPathNode
 class Sdf_PrimVariantSelectionNode : public Sdf_PrimPartPathNode
 {
  public:
+
   typedef VariantSelectionType ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::PrimVariantSelectionNode;
 
   const TfToken &_GetNameImpl() const;
-  void _AppendText(std::string *str) const;
+
+  template<class Buffer> void _WriteTextImpl(Buffer &out) const;
 
  private:
-  Sdf_PrimVariantSelectionNode(Sdf_PathNode const *parent, const VariantSelectionType &variantSelection)
+
+  Sdf_PrimVariantSelectionNode(Sdf_PathNode const *parent,
+                               const VariantSelectionType &variantSelection)
     : Sdf_PrimPartPathNode(parent, nodeType),
       _variantSelection(new VariantSelectionType(variantSelection))
   {}
@@ -442,8 +477,7 @@ class Sdf_PrimVariantSelectionNode : public Sdf_PrimPartPathNode
 
   friend class Sdf_PathNode;
   friend struct Sdf_PathNodePrivateAccess;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 
   // Instance variables
   std::unique_ptr<VariantSelectionType> _variantSelection;
@@ -452,12 +486,14 @@ class Sdf_PrimVariantSelectionNode : public Sdf_PrimPartPathNode
 class Sdf_TargetPathNode : public Sdf_PropPartPathNode
 {
  public:
+
   typedef SdfPath ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::TargetNode;
 
-  void _AppendText(std::string *str) const;
+  template<class Buffer> void _WriteTextImpl(Buffer &out) const;
 
  private:
+
   Sdf_TargetPathNode(Sdf_PathNode const *parent, const SdfPath &targetPath)
     : Sdf_PropPartPathNode(parent, nodeType),
       _targetPath(targetPath)
@@ -472,8 +508,7 @@ class Sdf_TargetPathNode : public Sdf_PropPartPathNode
 
   friend class Sdf_PathNode;
   friend struct Sdf_PathNodePrivateAccess;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 
   // Instance variables
   SdfPath _targetPath;
@@ -482,10 +517,12 @@ class Sdf_TargetPathNode : public Sdf_PropPartPathNode
 class Sdf_RelationalAttributePathNode : public Sdf_PropPartPathNode
 {
  public:
+
   typedef TfToken ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::RelationalAttributeNode;
 
  private:
+
   Sdf_RelationalAttributePathNode(Sdf_PathNode const *parent, const TfToken &name)
     : Sdf_PropPartPathNode(parent, nodeType),
       _name(name)
@@ -500,8 +537,7 @@ class Sdf_RelationalAttributePathNode : public Sdf_PropPartPathNode
 
   friend class Sdf_PathNode;
   friend struct Sdf_PathNodePrivateAccess;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 
   // Instance variables
   TfToken _name;
@@ -510,12 +546,14 @@ class Sdf_RelationalAttributePathNode : public Sdf_PropPartPathNode
 class Sdf_MapperPathNode : public Sdf_PropPartPathNode
 {
  public:
+
   typedef SdfPath ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::MapperNode;
 
-  void _AppendText(std::string *str) const;
+  template<class Buffer> void _WriteTextImpl(Buffer &out) const;
 
  private:
+
   Sdf_MapperPathNode(Sdf_PathNode const *parent, const SdfPath &targetPath)
     : Sdf_PropPartPathNode(parent, nodeType),
       _targetPath(targetPath)
@@ -530,8 +568,7 @@ class Sdf_MapperPathNode : public Sdf_PropPartPathNode
 
   friend class Sdf_PathNode;
   friend struct Sdf_PathNodePrivateAccess;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 
   // Instance variables
   SdfPath _targetPath;
@@ -540,12 +577,14 @@ class Sdf_MapperPathNode : public Sdf_PropPartPathNode
 class Sdf_MapperArgPathNode : public Sdf_PropPartPathNode
 {
  public:
+
   typedef TfToken ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::MapperArgNode;
 
-  void _AppendText(std::string *str) const;
+  template<class Buffer> void _WriteTextImpl(Buffer &out) const;
 
  private:
+
   Sdf_MapperArgPathNode(Sdf_PathNode const *parent, const TfToken &name)
     : Sdf_PropPartPathNode(parent, nodeType),
       _name(name)
@@ -560,8 +599,7 @@ class Sdf_MapperArgPathNode : public Sdf_PropPartPathNode
 
   friend class Sdf_PathNode;
   friend struct Sdf_PathNodePrivateAccess;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 
   // Instance variables
   TfToken _name;
@@ -570,15 +608,15 @@ class Sdf_MapperArgPathNode : public Sdf_PropPartPathNode
 class Sdf_ExpressionPathNode : public Sdf_PropPartPathNode
 {
  public:
+
   typedef void *ComparisonType;
   static const NodeType nodeType = Sdf_PathNode::ExpressionNode;
 
-  void _AppendText(std::string *str) const;
+  template<class Buffer> void _WriteTextImpl(Buffer &out) const;
 
  private:
-  Sdf_ExpressionPathNode(Sdf_PathNode const *parent)
-    : Sdf_PropPartPathNode(parent, nodeType)
-  {}
+
+  Sdf_ExpressionPathNode(Sdf_PathNode const *parent) : Sdf_PropPartPathNode(parent, nodeType) {}
 
   SDF_API ~Sdf_ExpressionPathNode();
 
@@ -589,65 +627,52 @@ class Sdf_ExpressionPathNode : public Sdf_PropPartPathNode
 
   friend class Sdf_PathNode;
   friend struct Sdf_PathNodePrivateAccess;
-  template<int nodeType, class Comp>
-  friend struct Sdf_PathNodeCompare;
+  template<int nodeType, class Comp> friend struct Sdf_PathNodeCompare;
 
   // Instance variables
   // <none>
 };
 
-template<int nodeType>
-struct Sdf_PathNodeTypeToType
-{
-};
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::PrimNode>
+template<int nodeType> struct Sdf_PathNodeTypeToType
+{};
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::PrimNode>
 {
   typedef Sdf_PrimPathNode Type;
 };
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::PrimPropertyNode>
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::PrimPropertyNode>
 {
   typedef Sdf_PrimPropertyPathNode Type;
 };
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::RelationalAttributeNode>
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::RelationalAttributeNode>
 {
   typedef Sdf_RelationalAttributePathNode Type;
 };
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::MapperArgNode>
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::MapperArgNode>
 {
   typedef Sdf_MapperArgPathNode Type;
 };
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::TargetNode>
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::TargetNode>
 {
   typedef Sdf_TargetPathNode Type;
 };
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::MapperNode>
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::MapperNode>
 {
   typedef Sdf_MapperPathNode Type;
 };
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::PrimVariantSelectionNode>
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::PrimVariantSelectionNode>
 {
   typedef Sdf_PrimVariantSelectionNode Type;
 };
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::ExpressionNode>
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::ExpressionNode>
 {
   typedef Sdf_ExpressionPathNode Type;
 };
-template<>
-struct Sdf_PathNodeTypeToType<Sdf_PathNode::RootNode>
+template<> struct Sdf_PathNodeTypeToType<Sdf_PathNode::RootNode>
 {
   typedef Sdf_RootPathNode Type;
 };
 
-template<int nodeType, class Comp>
-struct Sdf_PathNodeCompare
+template<int nodeType, class Comp> struct Sdf_PathNodeCompare
 {
   inline bool operator()(const Sdf_PathNode &lhs, const Sdf_PathNode &rhs) const
   {
@@ -657,8 +682,7 @@ struct Sdf_PathNodeCompare
   }
 };
 
-template<class Comp>
-inline bool Sdf_PathNode::Compare(const Sdf_PathNode &rhs) const
+template<class Comp> inline bool Sdf_PathNode::Compare(const Sdf_PathNode &rhs) const
 {
   // Compare two nodes.
   // We first compare types, then, if types match, we compare
@@ -669,14 +693,12 @@ inline bool Sdf_PathNode::Compare(const Sdf_PathNode &rhs) const
   // continue to node-specific comparisons.
 
   NodeType nodeType = GetNodeType(), rhsNodeType = rhs.GetNodeType();
-  if (nodeType != rhsNodeType)
-  {
+  if (nodeType != rhsNodeType) {
     return Comp()(nodeType, rhsNodeType);
   }
 
   // Types are the same.  Avoid virtual function calls for performance.
-  switch (nodeType)
-  {
+  switch (nodeType) {
     case Sdf_PathNode::PrimNode:
       return Sdf_PathNodeCompare<Sdf_PathNode::PrimNode, Comp>()(*this, rhs);
     case Sdf_PathNode::PrimPropertyNode:
@@ -704,8 +726,7 @@ inline bool Sdf_PathNode::Compare(const Sdf_PathNode &rhs) const
 inline void Sdf_PathNode::_Destroy() const
 {
   // Note: This function deletes this object!
-  switch (_nodeType)
-  {
+  switch (_nodeType) {
     case RootNode:
       return delete _Downcast<Sdf_RootPathNode>();
     case PrimNode:
@@ -731,8 +752,7 @@ inline void Sdf_PathNode::_Destroy() const
 
 inline const TfToken &Sdf_PathNode::GetName() const
 {
-  switch (_nodeType)
-  {
+  switch (_nodeType) {
     default:
       return SdfPathTokens->empty;
     case RootNode:
@@ -754,8 +774,7 @@ inline const TfToken &Sdf_PathNode::GetName() const
 
 inline const SdfPath &Sdf_PathNode::GetTargetPath() const
 {
-  switch (_nodeType)
-  {
+  switch (_nodeType) {
     default:
       return SdfPath::EmptyPath();
     case TargetNode:
@@ -767,8 +786,7 @@ inline const SdfPath &Sdf_PathNode::GetTargetPath() const
 
 inline const Sdf_PathNode::VariantSelectionType &Sdf_PathNode::GetVariantSelection() const
 {
-  if (ARCH_LIKELY(_nodeType == PrimVariantSelectionNode))
-  {
+  if (ARCH_LIKELY(_nodeType == PrimVariantSelectionNode)) {
     return *_Downcast<Sdf_PrimVariantSelectionNode>()->_variantSelection;
   }
   return _GetEmptyVariantSelection();
@@ -776,16 +794,13 @@ inline const Sdf_PathNode::VariantSelectionType &Sdf_PathNode::GetVariantSelecti
 
 inline TfToken Sdf_PathNode::GetElement() const
 {
-  switch (_nodeType)
-  {
+  switch (_nodeType) {
     case RootNode:
       return TfToken();
     case PrimNode:
       return _Downcast<Sdf_PrimPathNode>()->_name;
     default:
-      std::string str;
-      AppendText(&str);
-      return TfToken(str);
+      return _GetElementImpl();
   };
 }
 
@@ -798,7 +813,7 @@ inline void intrusive_ptr_add_ref(const WABI_NS::Sdf_PathNode *p)
 }
 inline void intrusive_ptr_release(const WABI_NS::Sdf_PathNode *p)
 {
-  if (p->_refCount.fetch_and_decrement() == 1)
+  if (p->_refCount.fetch_sub(1) == 1)
     p->_Destroy();
 }
 

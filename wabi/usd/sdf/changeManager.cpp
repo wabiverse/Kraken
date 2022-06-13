@@ -144,9 +144,9 @@ void Sdf_ChangeManager::_ProcessRemoveIfInert()
   TF_VERIFY(data.changeBlockDepth == 1);
 }
 
-static tbb::atomic<size_t> &_InitChangeSerialNumber()
+static std::atomic<size_t> &_InitChangeSerialNumber()
 {
-  static tbb::atomic<size_t> value;
+  static std::atomic<size_t> value;
   value = 1;
   return value;
 }
@@ -181,8 +181,8 @@ void Sdf_ChangeManager::_SendNotices()
   }
 
   // Obtain a serial number for this round of change processing.
-  static tbb::atomic<size_t> &changeSerialNumber = _InitChangeSerialNumber();
-  size_t serialNumber = changeSerialNumber.fetch_and_increment();
+  static std::atomic<size_t> &changeSerialNumber = _InitChangeSerialNumber();
+  size_t serialNumber = changeSerialNumber.fetch_add(1);
 
   // Send global notice.
   SdfNotice::LayersDidChange(changes, serialNumber).Send();

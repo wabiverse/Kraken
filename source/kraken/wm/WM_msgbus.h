@@ -28,7 +28,7 @@
 #include <wabi/base/tf/refBase.h>
 #include <wabi/usd/usd/common.h>
 
-#include <tbb/atomic.h>
+#include <atomic>
 
 #include "UNI_window.h"
 
@@ -70,7 +70,7 @@ struct MsgBusCallback : public TfWeakBase
   void OperatorCOMM(const TfNotice &notice, MsgBus const &sender);
 
   /** Reference Count. */
-  tbb::atomic<int> ref;
+  std::atomic<int> ref;
 
   /** Notify @ Subscribe MsgBus. */
   TfNotice notice;

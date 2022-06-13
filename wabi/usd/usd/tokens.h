@@ -51,131 +51,95 @@
 
 WABI_NAMESPACE_BEGIN
 
-/**
- * @class UsdTokensType
- *
- * @link UsdTokens @endlink provides static, efficient
- * @link TfToken TfTokens\endlink for use in all public USD API.
- *
- * These tokens are auto-generated from the module's schema, representing
- * property names, for when you need to fetch an attribute or relationship
- * directly by name, e.g. UsdPrim::GetAttribute(), in the most efficient
- * manner, and allow the compiler to verify that you spelled the name
- * correctly.
- *
- * UsdTokens also contains all of the @em allowedTokens values
- * declared for schema builtin attributes of 'token' scene description type.
- *
- * Use UsdTokens like so:
- *
- * @code
- *   gprim.GetMyTokenValuedAttr().Set(UsdTokens->apiSchemas);
- * @endcode
- */
+/// \class UsdTokensType
+///
+/// \link UsdTokens \endlink provides static, efficient
+/// \link TfToken TfTokens\endlink for use in all public USD API.
+///
+/// These tokens are auto-generated from the module's schema, representing
+/// property names, for when you need to fetch an attribute or relationship
+/// directly by name, e.g. UsdPrim::GetAttribute(), in the most efficient
+/// manner, and allow the compiler to verify that you spelled the name
+/// correctly.
+///
+/// UsdTokens also contains all of the \em allowedTokens values
+/// declared for schema builtin attributes of 'token' scene description type.
+/// Use UsdTokens like so:
+///
+/// \code
+///     gprim.GetMyTokenValuedAttr().Set(UsdTokens->apiSchemas);
+/// \endcode
 struct UsdTokensType
 {
-
-  USD_API
-  UsdTokensType();
-
-  /**
-   * @brief "apiSchemas"
-   *
-   *  A listop metadata containing the API schemas which have been applied to this prim, using the
-   * Apply() method on the particular schema class.   */
+  USD_API UsdTokensType();
+  /// \brief "apiSchemas"
+  ///
+  ///  A listop metadata containing the API schemas which have been applied to this prim, using the
+  ///  Apply() method on the particular schema class.
   const TfToken apiSchemas;
-
-  /**
-   * @brief "clips"
-   *
-   *  Dictionary that contains the definition of the clip sets on this prim. See \ref
-   * UsdClipsAPI::GetClips.  */
+  /// \brief "clips"
+  ///
+  ///  Dictionary that contains the definition of the clip sets on this prim. See \ref
+  ///  UsdClipsAPI::GetClips.
   const TfToken clips;
-
-  /**
-   * @brief "clipSets"
-   *
-   *  ListOp that may be used to affect how opinions from clip sets are applied during value
-   * resolution.  See \ref UsdClipsAPI::GetClipSets.  */
+  /// \brief "clipSets"
+  ///
+  ///  ListOp that may be used to affect how opinions from clip sets are applied during value
+  ///  resolution.  See \ref UsdClipsAPI::GetClipSets.
   const TfToken clipSets;
-
-  /**
-   * @brief "collection"
-   *
-   * Property namespace prefix for the UsdCollectionAPI schema. */
+  /// \brief "collection"
+  ///
+  /// Property namespace prefix for the UsdCollectionAPI schema.
   const TfToken collection;
-
-  /**
-   * @brief "exclude"
-   *
-   *  This is the token used to exclude a path from a collection.  Although it is not a possible
-   * value for the "expansionRule" attribute, it is used as the expansionRule for excluded paths
-   * in UsdCollectionAPI::MembershipQuery::IsPathIncluded.  */
+  /// \brief "collection:__INSTANCE_NAME__:excludes"
+  ///
+  /// UsdCollectionAPI
+  const TfToken collection_MultipleApplyTemplate_Excludes;
+  /// \brief "collection:__INSTANCE_NAME__:expansionRule"
+  ///
+  /// UsdCollectionAPI
+  const TfToken collection_MultipleApplyTemplate_ExpansionRule;
+  /// \brief "collection:__INSTANCE_NAME__:includeRoot"
+  ///
+  /// UsdCollectionAPI
+  const TfToken collection_MultipleApplyTemplate_IncludeRoot;
+  /// \brief "collection:__INSTANCE_NAME__:includes"
+  ///
+  /// UsdCollectionAPI
+  const TfToken collection_MultipleApplyTemplate_Includes;
+  /// \brief "exclude"
+  ///
+  ///  This is the token used to exclude a path from a collection.  Although it is not a possible
+  ///  value for the "expansionRule" attribute, it is used as the expansionRule for excluded paths
+  ///  in UsdCollectionAPI::MembershipQuery::IsPathIncluded.
   const TfToken exclude;
-
-  /**
-   * @brief "excludes"
-   *
-   * UsdCollectionAPI */
-  const TfToken excludes;
-
-  /**
-   * @brief "expandPrims"
-   *
-   * Possible value for UsdCollectionAPI::GetExpansionRuleAttr(), Default value for
-   * UsdCollectionAPI::GetExpansionRuleAttr() */
+  /// \brief "expandPrims"
+  ///
+  /// Possible value for UsdCollectionAPI::GetExpansionRuleAttr(), Default value for
+  /// UsdCollectionAPI::GetExpansionRuleAttr()
   const TfToken expandPrims;
-
-  /**
-   * @brief "expandPrimsAndProperties"
-   *
-   * Possible value for UsdCollectionAPI::GetExpansionRuleAttr() */
+  /// \brief "expandPrimsAndProperties"
+  ///
+  /// Possible value for UsdCollectionAPI::GetExpansionRuleAttr()
   const TfToken expandPrimsAndProperties;
-
-  /**
-   * @brief "expansionRule"
-   *
-   * UsdCollectionAPI */
-  const TfToken expansionRule;
-
-  /**
-   * @brief "explicitOnly"
-   *
-   * Possible value for UsdCollectionAPI::GetExpansionRuleAttr() */
+  /// \brief "explicitOnly"
+  ///
+  /// Possible value for UsdCollectionAPI::GetExpansionRuleAttr()
   const TfToken explicitOnly;
-
-  /**
-   * @brief "fallbackPrimTypes"
-   *
-   *  A dictionary metadata that maps the name of a concrete schema prim type to an ordered list of
-   * schema prim types to use instead if the schema prim type doesn't exist in version of USD being
-   * used.  */
+  /// \brief "fallbackPrimTypes"
+  ///
+  ///  A dictionary metadata that maps the name of a concrete schema prim type to an ordered list
+  ///  of schema prim types to use instead if the schema prim type doesn't exist in version of USD
+  ///  being used.
   const TfToken fallbackPrimTypes;
-
-  /**
-   * @brief "includeRoot"
-   *
-   * UsdCollectionAPI */
-  const TfToken includeRoot;
-
-  /**
-   * @brief "includes"
-   *
-   * UsdCollectionAPI */
-  const TfToken includes;
-
-  /**
-   * A vector of all of the tokens listed above. */
+  /// A vector of all of the tokens listed above.
   const std::vector<TfToken> allTokens;
 };
 
-/**
- * @var UsdTokens
- *
- * A global variable with static, efficient @link TfToken
- * TfTokens\endlink for use in all public USD API.
- *
- * @sa UsdTokensType */
+/// \var UsdTokens
+///
+/// A global variable with static, efficient \link TfToken TfTokens\endlink
+/// for use in all public USD API.  \sa UsdTokensType
 extern USD_API TfStaticData<UsdTokensType> UsdTokens;
 
 WABI_NAMESPACE_END

@@ -74,26 +74,22 @@ class SdfAssetPath;
 class UsdGeomImageable : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractTyped;
 
-
   /// Construct a UsdGeomImageable on UsdPrim \p prim .
   /// Equivalent to UsdGeomImageable::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomImageable(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdGeomImageable(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdGeomImageable on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomImageable(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomImageable(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdGeomImageable(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -117,27 +113,30 @@ class UsdGeomImageable : public UsdTyped
   USDGEOM_API
   static UsdGeomImageable Get(const UsdStagePtr &stage, const SdfPath &path);
 
+
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
   USDGEOM_API
-  UsdSchemaKind GetSchemaKind() const override;
-
+  UsdSchemaKind _GetSchemaKind() const override;
 
  private:
-  // needs to invoke GetStaticTfType.
+
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
-  static const TfType &GetStaticTfType();
+  static const TfType &_GetStaticTfType();
 
-  static bool IsTypedSchema();
+  static bool _IsTypedSchema();
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &GetTfType() const override;
+  const TfType &_GetTfType() const override;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VISIBILITY
   // --------------------------------------------------------------------- //
@@ -167,6 +166,7 @@ class UsdGeomImageable : public UsdTyped
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PURPOSE
   // --------------------------------------------------------------------- //
@@ -193,9 +193,11 @@ class UsdGeomImageable : public UsdTyped
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreatePurposeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreatePurposeAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PROXYPRIM
   // --------------------------------------------------------------------- //
@@ -229,16 +231,18 @@ class UsdGeomImageable : public UsdTyped
   UsdRelationship CreateProxyPrimRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
   //
   // Just remember to:
   //  - Close the class declaration with };
-  //  - Close the namespace with WABI_NAMESPACE_END
+  //  - Close the namespace with PXR_NAMESPACE_CLOSE_SCOPE
   //  - Close the include guard with #endif
   // ===================================================================== //
   // --(BEGIN CUSTOM CODE)--
+
 
   // --------------------------------------------------------------------- //
   /// \name Primvar Creation and Introspection
@@ -267,6 +271,7 @@ class UsdGeomImageable : public UsdTyped
   /// \deprecated Please use UsdGeomPrimvarsAPI::HasPrimvar() instead.
   USDGEOM_API
   bool HasPrimvar(const TfToken &name) const;
+
 
   /// Returns an ordered list of allowed values of the purpose attribute.
   ///
@@ -369,14 +374,48 @@ class UsdGeomImageable : public UsdTyped
   USDGEOM_API
   TfToken ComputeVisibility(UsdTimeCode const &time = UsdTimeCode::Default()) const;
 
-  /// \overload
-  /// Calculates the effective visibility of this prim, given the computed
-  /// visibility of its parent prim at the given \p time.
+  /// Return the attribute that is used for expressing visibility opinions
+  /// for the given \p purpose.
   ///
-  /// \sa GetVisibilityAttr()
+  /// For "default" purpose, return the overall *visibility* attribute.
+  /// Otherwise, return *guideVisibility*, *proxyVisibility*, or
+  /// *renderVisibility*.
+  ///
+  /// \sa UsdGeomVisibilityAPI
   USDGEOM_API
-  TfToken ComputeVisibility(const TfToken &parentVisibility,
-                            UsdTimeCode const &time = UsdTimeCode::Default()) const;
+  UsdAttribute GetPurposeVisibilityAttr(const TfToken &purpose = UsdGeomTokens->default_) const;
+
+  /// Calculate the effective purpose visibility of this prim for the
+  /// given \p purpose, taking into account opinions for the corresponding
+  /// purpose attribute, along with overall visibility opinions.
+  ///
+  /// If ComputeVisibility() returns "invisible", then
+  /// ComputeEffectiveVisibility() is "invisible" for all purpose
+  /// values. Otherwise, ComputeEffectiveVisibility() returns the value of
+  /// the nearest ancestral authored opinion for the corresponding purpose
+  /// visibility attribute, as retured by
+  /// GetPurposeVisibilityAttr(purpose).
+  ///
+  /// Note that the value returned here can be "invisible" (indicating the
+  /// prim is invisible for the given purpose), "visible" (indicating that
+  /// it's visible), or "inherited" (indicating that the purpose visibility
+  /// is context-dependent and the fallback behavior must be determined by
+  /// the caller.
+  ///
+  /// This function should be considered a reference implementation for
+  /// correctness. <b>If called on each prim in the context of a traversal
+  /// we will perform massive overcomputation, because sibling prims share
+  /// sub-problems in the query that can be efficiently cached, but are not
+  /// (cannot be) by this simple implementation.</b> If you have control of
+  /// your traversal, it will be far more efficient to manage visibility
+  /// on a stack as you traverse.
+  ///
+  /// \sa UsdGeomVisibilityAPI
+  /// \sa GetPurposeVisibilityAttr()
+  /// \sa ComputeVisibility()
+  USDGEOM_API
+  TfToken ComputeEffectiveVisibility(const TfToken &purpose = UsdGeomTokens->default_,
+                                     const UsdTimeCode &time = UsdTimeCode::Default()) const;
 
   /// Value type containing information about a prim's computed effective
   /// purpose as well as storing whether the prim's purpose value can be
@@ -534,6 +573,7 @@ class UsdGeomImageable : public UsdTyped
                              TfToken const &purpose2 = TfToken(),
                              TfToken const &purpose3 = TfToken(),
                              TfToken const &purpose4 = TfToken()) const;
+
 
   /// Compute the bound of this prim in local space, at the specified
   /// \p time, and for the specified purposes.

@@ -70,23 +70,24 @@ WABI_NAMESPACE_BEGIN
 /// thread-safe. The fallback type for ImplData is bool, when it's not specified
 /// by a cache.
 ///
-template<typename Strategy, typename ImplData = bool>
-class UsdImaging_ResolvedAttributeCache
+template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedAttributeCache
 {
   friend Strategy;
   struct _Entry;
   typedef tbb::concurrent_unordered_map<UsdPrim, _Entry, boost::hash<UsdPrim>> _CacheMap;
 
  public:
+
   typedef typename Strategy::value_type value_type;
   typedef typename Strategy::query_type query_type;
 
   typedef TfHashMap<UsdPrim, value_type, boost::hash<UsdPrim>> ValueOverridesMap;
 
   /// Construct a new for the specified \p time.
-  explicit UsdImaging_ResolvedAttributeCache(const UsdTimeCode time,
-                                             ImplData *implData = nullptr,
-                                             const ValueOverridesMap valueOverrides = ValueOverridesMap())
+  explicit UsdImaging_ResolvedAttributeCache(
+    const UsdTimeCode time,
+    ImplData *implData = nullptr,
+    const ValueOverridesMap valueOverrides = ValueOverridesMap())
     : _time(time),
       _rootPath(SdfPath::AbsoluteRootPath()),
       _cacheVersion(_GetInitialCacheVersion()),
@@ -106,13 +107,13 @@ class UsdImaging_ResolvedAttributeCache
     WorkSwapDestroyAsync(_cache);
   }
 
+
   /// Compute the inherited value for the given \p prim, including the value
   /// authored on the Prim itself, if present.
   value_type GetValue(const UsdPrim &prim) const
   {
     TRACE_FUNCTION();
-    if (!prim.GetPath().HasPrefix(_rootPath) && !prim.IsInPrototype())
-    {
+    if (!prim.GetPath().HasPrefix(_rootPath) && !prim.IsInPrototype()) {
       TF_CODING_ERROR(
         "Attempt to get value for: %s "
         "which is not within the specified root: %s",
@@ -147,8 +148,7 @@ class UsdImaging_ResolvedAttributeCache
     if (time == _time)
       return;
 
-    if (Strategy::ValueMightBeTimeVarying())
-    {
+    if (Strategy::ValueMightBeTimeVarying()) {
       // Mark all cached entries as invalid, but leave the queries behind.
       // We increment by 2 here and always keep the version an odd number,
       // this enables the use of even versions as a per-entry spin lock.
@@ -175,8 +175,7 @@ class UsdImaging_ResolvedAttributeCache
   /// semantics are complicated and special-cased.
   void SetRootPath(const SdfPath &rootPath)
   {
-    if (!rootPath.IsAbsolutePath())
-    {
+    if (!rootPath.IsAbsolutePath()) {
       TF_CODING_ERROR("Invalid root path: %s", rootPath.GetString().c_str());
       return;
     }
@@ -216,8 +215,7 @@ class UsdImaging_ResolvedAttributeCache
 
     ValueOverridesMap valueOverridesToProcess;
     SdfPathVector processedOverridePaths;
-    TF_FOR_ALL (it, valueOverrides)
-    {
+    TF_FOR_ALL (it, valueOverrides) {
       const UsdPrim &prim = it->first;
       const value_type &value = it->second;
 
@@ -229,8 +227,7 @@ class UsdImaging_ResolvedAttributeCache
       valueOverridesToProcess[prim] = value;
     }
 
-    TF_FOR_ALL (it, valueOverridesToProcess)
-    {
+    TF_FOR_ALL (it, valueOverridesToProcess) {
       const UsdPrim &prim = it->first;
       const value_type &value = it->second;
 
@@ -240,10 +237,8 @@ class UsdImaging_ResolvedAttributeCache
       // common to update value overrides for more than one path at a
       // time.
       bool isDescendantOfProcessedOverride = false;
-      for (const SdfPath &processedPath : processedOverridePaths)
-      {
-        if (prim.GetPath().HasPrefix(processedPath))
-        {
+      for (const SdfPath &processedPath : processedOverridePaths) {
+        if (prim.GetPath().HasPrefix(processedPath)) {
           isDescendantOfProcessedOverride = true;
           break;
         }
@@ -251,12 +246,9 @@ class UsdImaging_ResolvedAttributeCache
 
       // Invalidate cache entries if the prim is not a descendant of a
       // path that has already been processed.
-      if (!isDescendantOfProcessedOverride)
-      {
-        for (UsdPrim descendant : UsdPrimRange(prim))
-        {
-          if (_Entry *entry = _GetCacheEntryForPrim(descendant))
-          {
+      if (!isDescendantOfProcessedOverride) {
+        for (UsdPrim descendant : UsdPrimRange(prim)) {
+          if (_Entry *entry = _GetCacheEntryForPrim(descendant)) {
             entry->version = _GetInvalidVersion();
           }
         }
@@ -268,23 +260,19 @@ class UsdImaging_ResolvedAttributeCache
       _valueOverrides[prim] = value;
     }
 
-    for (const UsdPrim &prim : overridesToRemove)
-    {
+    for (const UsdPrim &prim : overridesToRemove) {
 
       // Erase the entry from the map of overrides.
       size_t numErased = _valueOverrides.erase(prim);
 
       // If the override doesn't exist, then there's nothing to do.
-      if (numErased == 0)
-      {
+      if (numErased == 0) {
         continue;
       }
 
       bool isDescendantOfProcessedOverride = false;
-      for (const SdfPath &processedPath : processedOverridePaths)
-      {
-        if (prim.GetPath().HasPrefix(processedPath))
-        {
+      for (const SdfPath &processedPath : processedOverridePaths) {
+        if (prim.GetPath().HasPrefix(processedPath)) {
           isDescendantOfProcessedOverride = true;
           break;
         }
@@ -292,12 +280,9 @@ class UsdImaging_ResolvedAttributeCache
 
       // Invalidate cache entries if the prim is not a descendant of a
       // path that has already been processed.
-      if (!isDescendantOfProcessedOverride)
-      {
-        for (UsdPrim descendant : UsdPrimRange(prim))
-        {
-          if (_Entry *entry = _GetCacheEntryForPrim(descendant))
-          {
+      if (!isDescendantOfProcessedOverride) {
+        for (UsdPrim descendant : UsdPrimRange(prim)) {
+          if (_Entry *entry = _GetCacheEntryForPrim(descendant)) {
             entry->version = _GetInvalidVersion();
           }
         }
@@ -308,15 +293,13 @@ class UsdImaging_ResolvedAttributeCache
   }
 
  private:
+
   // Cached value entries. Note that because query objects may be caching
   // non-time varying data, entries may exist in the cache with invalid
   // values. The version is used to determine validity.
   struct _Entry
   {
-    _Entry()
-      : value(Strategy::MakeDefault()),
-        version(_GetInitialEntryVersion())
-    {}
+    _Entry() : value(Strategy::MakeDefault()), version(_GetInitialEntryVersion()) {}
 
     _Entry(const query_type &query_, const value_type &value_, unsigned version_)
       : query(query_),
@@ -326,7 +309,7 @@ class UsdImaging_ResolvedAttributeCache
 
     query_type query;
     value_type value;
-    tbb::atomic<unsigned> version;
+    std::atomic<unsigned> version;
   };
 
   // Returns the version number for a valid cache entry
@@ -374,7 +357,7 @@ class UsdImaging_ResolvedAttributeCache
 
   // A serial number indicating the valid state of entries in the cache. When
   // an entry has an equal or greater value, the entry is valid.
-  tbb::atomic<unsigned> _cacheVersion;
+  std::atomic<unsigned> _cacheVersion;
 
   // Value overrides for a set of descendents.
   ValueOverridesMap _valueOverrides;
@@ -384,20 +367,18 @@ class UsdImaging_ResolvedAttributeCache
 };
 
 template<typename Strategy, typename ImplData>
-void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPrim(const UsdPrim &prim,
-                                                                                  value_type const &value,
-                                                                                  _Entry *entry) const
+void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPrim(
+  const UsdPrim &prim,
+  value_type const &value,
+  _Entry *entry) const
 {
   // Note: _cacheVersion is not allowed to change during cache access.
   unsigned v = entry->version;
-  if (v < _cacheVersion && entry->version.compare_and_swap(_cacheVersion, v) == v)
-  {
+  if (v < _cacheVersion && entry->version.compare_and_swap(_cacheVersion, v) == v) {
     entry->value = value;
     entry->version = _GetValidVersion();
-  } else
-  {
-    while (entry->version != _GetValidVersion())
-    {
+  } else {
+    while (entry->version != _GetValidVersion()) {
       // Future work: A suggestion is that rather than literally spinning
       // here, we should use the pause instruction, which sleeps for one
       // cycle while allowing hyper threads to continue. Folly has a nice
@@ -408,13 +389,12 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
 }
 
 template<typename Strategy, typename ImplData>
-typename UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_Entry *UsdImaging_ResolvedAttributeCache<
-  Strategy,
-  ImplData>::_GetCacheEntryForPrim(const UsdPrim &prim) const
+typename UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_Entry *
+UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetCacheEntryForPrim(
+  const UsdPrim &prim) const
 {
   typename _CacheMap::const_iterator it = _cache.find(prim);
-  if (it != _cache.end())
-  {
+  if (it != _cache.end()) {
     return &it->second;
   }
 
@@ -436,8 +416,7 @@ UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetValue(const UsdPrim &
     return &default_;
 
   _Entry *entry = _GetCacheEntryForPrim(prim);
-  if (entry->version == _GetValidVersion())
-  {
+  if (entry->version == _GetValidVersion()) {
     // Cache hit
     return &entry->value;
   }
@@ -450,11 +429,9 @@ UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetValue(const UsdPrim &
   // Future work: A suggestion is that we make this iterative instead of
   // recursive.
   typename ValueOverridesMap::const_iterator it = _valueOverrides.find(prim);
-  if (it != _valueOverrides.end())
-  {
+  if (it != _valueOverrides.end()) {
     _SetCacheEntryForPrim(prim, it->second, entry);
-  } else
-  {
+  } else {
     _SetCacheEntryForPrim(prim, Strategy::Compute(this, prim, &entry->query), entry);
   }
   return &entry->value;
@@ -466,8 +443,8 @@ WABI_NAMESPACE_END
 // Xform Cache
 // -------------------------------------------------------------------------- //
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/usd/usdGeom/xformable.h"
+#include "wabi/base/gf/matrix4d.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -490,12 +467,15 @@ struct UsdImaging_XfStrategy
 
   static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
-    if (UsdGeomXformable xf = UsdGeomXformable(prim))
+    if (const UsdGeomXformable xf = UsdGeomXformable(prim)) {
       return query_type(xf);
+    }
     return query_type();
   }
 
-  static value_type Compute(UsdImaging_XformCache const *owner, UsdPrim const &prim, query_type const *query)
+  static value_type Compute(UsdImaging_XformCache const *owner,
+                            UsdPrim const &prim,
+                            query_type const *query)
   {
     value_type xform = MakeDefault();
     // No need to check query validity here because XformQuery doesn't
@@ -507,25 +487,23 @@ struct UsdImaging_XfStrategy
 
   // Compute the full transform, this is not part of the interface required by
   // the cache.
-  static value_type ComputeTransform(UsdPrim const &prim,
-                                     SdfPath const &rootPath,
-                                     UsdTimeCode time,
-                                     const TfHashMap<SdfPath, GfMatrix4d, SdfPath::Hash> &ctmOverrides)
+  static value_type ComputeTransform(
+    UsdPrim const &prim,
+    SdfPath const &rootPath,
+    UsdTimeCode time,
+    const TfHashMap<SdfPath, GfMatrix4d, SdfPath::Hash> &ctmOverrides)
   {
     bool reset = false;
     GfMatrix4d ctm(1.0);
     GfMatrix4d localXf(1.0);
     UsdPrim p = prim;
-    while (p && p.GetPath() != rootPath)
-    {
+    while (p && p.GetPath() != rootPath) {
       const auto &overIt = ctmOverrides.find(p.GetPath());
       // If there's a ctm override, use it and break out of the loop.
-      if (overIt != ctmOverrides.end())
-      {
+      if (overIt != ctmOverrides.end()) {
         ctm *= overIt->second;
         break;
-      } else if (UsdGeomXformable xf = UsdGeomXformable(p))
-      {
+      } else if (UsdGeomXformable xf = UsdGeomXformable(p)) {
         if (xf.GetLocalTransformation(&localXf, &reset, time))
           ctm *= localXf;
         if (reset)
@@ -543,8 +521,8 @@ WABI_NAMESPACE_END
 // Visibility Cache
 // -------------------------------------------------------------------------- //
 
-#include "wabi/base/tf/token.h"
 #include "wabi/usd/usdGeom/imageable.h"
+#include "wabi/base/tf/token.h"
 #include "wabi/usdImaging/usdImaging/debugCodes.h"
 
 WABI_NAMESPACE_BEGIN
@@ -572,27 +550,26 @@ struct UsdImaging_VisStrategy
 
   static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
-    if (const UsdGeomImageable xf = UsdGeomImageable(prim))
-    {
+    if (const UsdGeomImageable xf = UsdGeomImageable(prim)) {
       return query_type(xf.GetVisibilityAttr());
     }
     return query_type();
   }
 
-  static value_type Compute(UsdImaging_VisCache const *owner, UsdPrim const &prim, query_type const *query)
+  static value_type Compute(UsdImaging_VisCache const *owner,
+                            UsdPrim const &prim,
+                            query_type const *query)
   {
     value_type v = *owner->_GetValue(prim.GetParent());
 
     // If prim inherits 'invisible', then it's invisible, due to pruning
     // visibility.
-    if (v == UsdGeomTokens->invisible)
-    {
+    if (v == UsdGeomTokens->invisible) {
       return v;
     }
 
     // Otherwise, prim's value, if it has one, determines its visibility.
-    if (*query)
-    {
+    if (*query) {
       query->Get(&v, owner->GetTime());
     }
     return v;
@@ -627,8 +604,10 @@ struct UsdImaging_PurposeStrategy
 
   static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
-    UsdGeomImageable im = UsdGeomImageable(prim);
-    return im ? query_type(im.GetPurposeAttr()) : query_type();
+    if (const UsdGeomImageable im = UsdGeomImageable(prim)) {
+      return query_type(im.GetPurposeAttr());
+    }
+    return query_type();
   }
 
   static value_type Compute(UsdImaging_PurposeCache const *owner,
@@ -638,14 +617,12 @@ struct UsdImaging_PurposeStrategy
     // Fallback to parent if the prim isn't imageable or doesn't have a
     // purpose attribute. Note that this returns the default purpose if
     // there's no parent prim.
-    if (!*query)
-    {
+    if (!*query) {
       return *(owner->_GetValue(prim.GetParent()));
     }
 
     // If the prim has an authored purpose value, we get and use that.
-    if (query->HasAuthoredValue())
-    {
+    if (query->HasAuthoredValue()) {
       value_type info;
       query->Get(&info.purpose);
       info.isInheritable = true;
@@ -656,8 +633,7 @@ struct UsdImaging_PurposeStrategy
     // purpose is inheritable. An inherited purpose is itself inheritable
     // by child prims..
     const value_type *v = owner->_GetValue(prim.GetParent());
-    if (v->isInheritable)
-    {
+    if (v->isInheritable) {
       return *v;
     }
 
@@ -724,13 +700,15 @@ struct UsdImaging_MaterialBindingImplData
   void ClearCaches();
 
  private:
+
   const TfToken _materialPurpose;
   UsdShadeMaterialBindingAPI::BindingsCache _bindingsCache;
   UsdShadeMaterialBindingAPI::CollectionQueryCache _collQueryCache;
 };
 
 struct UsdImaging_MaterialStrategy;
-typedef UsdImaging_ResolvedAttributeCache<UsdImaging_MaterialStrategy, UsdImaging_MaterialBindingImplData>
+typedef UsdImaging_ResolvedAttributeCache<UsdImaging_MaterialStrategy,
+                                          UsdImaging_MaterialBindingImplData>
   UsdImaging_MaterialBindingCache;
 
 struct UsdImaging_MaterialStrategy
@@ -751,9 +729,10 @@ struct UsdImaging_MaterialStrategy
 
   static query_type MakeQuery(UsdPrim const &prim, ImplData *implData)
   {
-    return UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(&implData->GetBindingsCache(),
-                                                                 &implData->GetCollectionQueryCache(),
-                                                                 implData->GetMaterialPurpose());
+    return UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(
+      &implData->GetBindingsCache(),
+      &implData->GetCollectionQueryCache(),
+      implData->GetMaterialPurpose());
   }
 
   static value_type Compute(UsdImaging_MaterialBindingCache const *owner,
@@ -765,11 +744,9 @@ struct UsdImaging_MaterialStrategy
         "Looking for \"preview\" material "
         "binding for %s\n",
         prim.GetPath().GetText());
-    if (*query)
-    {
+    if (*query) {
       SdfPath binding = query->GetPath();
-      if (!binding.IsEmpty())
-      {
+      if (!binding.IsEmpty()) {
         return binding;
       }
     }
@@ -787,8 +764,7 @@ struct UsdImaging_MaterialStrategy
     if (UsdShadeMaterial mat = UsdShadeMaterialBindingAPI(prim).ComputeBoundMaterial(
           &implData->GetBindingsCache(),
           &implData->GetCollectionQueryCache(),
-          implData->GetMaterialPurpose()))
-    {
+          implData->GetMaterialPurpose())) {
       return mat.GetPath();
     }
     return value_type();
@@ -824,8 +800,9 @@ struct UsdImaging_DrawModeStrategy
 
   static query_type MakeQuery(UsdPrim const &prim, bool *)
   {
-    if (UsdAttribute a = UsdGeomModelAPI(prim).GetModelDrawModeAttr())
-      return query_type(a);
+    if (const UsdGeomModelAPI modelApi = UsdGeomModelAPI(prim)) {
+      return query_type(modelApi.GetModelDrawModeAttr());
+    }
     return query_type();
   }
 
@@ -838,17 +815,14 @@ struct UsdImaging_DrawModeStrategy
     // If the drawMode is inherited all the way to the root of the scene,
     // that means "default".
     value_type v = UsdGeomTokens->inherited;
-    if (*query)
-    {
+    if (*query) {
       query->Get(&v);
     }
-    if (v != UsdGeomTokens->inherited)
-    {
+    if (v != UsdGeomTokens->inherited) {
       return v;
     }
     v = *owner->_GetValue(prim.GetParent());
-    if (v == UsdGeomTokens->inherited)
-    {
+    if (v == UsdGeomTokens->inherited) {
       return UsdGeomTokens->default_;
     }
     return v;
@@ -918,25 +892,21 @@ struct UsdImaging_PointInstancerIndicesStrategy
 
     UsdGeomPointInstancer pi(prim);
     VtIntArray protoIndices;
-    if (!pi.GetProtoIndicesAttr().Get(&protoIndices, time))
-    {
+    if (!pi.GetProtoIndicesAttr().Get(&protoIndices, time)) {
       TF_WARN("Failed to read point instancer protoIndices");
       return v;
     }
 
     std::vector<bool> mask = pi.ComputeMaskAtTime(time);
 
-    for (size_t instanceId = 0; instanceId < protoIndices.size(); ++instanceId)
-    {
+    for (size_t instanceId = 0; instanceId < protoIndices.size(); ++instanceId) {
       size_t protoIndex = protoIndices[instanceId];
 
-      if (protoIndex >= v.size())
-      {
+      if (protoIndex >= v.size()) {
         v.resize(protoIndex + 1);
       }
 
-      if (mask.size() == 0 || mask[instanceId])
-      {
+      if (mask.size() == 0 || mask[instanceId]) {
         v[protoIndex].push_back(instanceId);
       }
     }
@@ -951,8 +921,8 @@ WABI_NAMESPACE_END
 // CoordSysBinding Cache
 // -------------------------------------------------------------------------- //
 
-#include "wabi/imaging/hd/coordSys.h"
 #include "wabi/usd/usdShade/coordSysAPI.h"
+#include "wabi/imaging/hd/coordSys.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -1014,30 +984,23 @@ struct UsdImaging_CoordSysBindingStrategy
                             query_type const *query)
   {
     value_type v;
-    if (query->coordSysAPI)
-    {
+    if (query->coordSysAPI) {
       // Pull inherited bindings first.
-      if (UsdPrim parentPrim = prim.GetParent())
-      {
+      if (UsdPrim parentPrim = prim.GetParent()) {
         v = *owner->_GetValue(parentPrim);
       }
       // Merge any local bindings.
-      if (query->coordSysAPI.HasLocalBindings())
-      {
+      if (query->coordSysAPI.HasLocalBindings()) {
         SdfPathVector hdIds;
         UsdBindingVec usdBindings;
-        if (v.idVecPtr)
-        {
+        if (v.idVecPtr) {
           hdIds = *v.idVecPtr;
         }
-        if (v.usdBindingVecPtr)
-        {
+        if (v.usdBindingVecPtr) {
           usdBindings = *v.usdBindingVecPtr;
         }
-        for (auto const &binding : query->coordSysAPI.GetLocalBindings())
-        {
-          if (!prim.GetStage()->GetPrimAtPath(binding.coordSysPrimPath).IsValid())
-          {
+        for (auto const &binding : query->coordSysAPI.GetLocalBindings()) {
+          if (!prim.GetStage()->GetPrimAtPath(binding.coordSysPrimPath).IsValid()) {
             // The target xform prim does not exist, so ignore
             // this coord sys binding.
             TF_WARN(
@@ -1047,10 +1010,8 @@ struct UsdImaging_CoordSysBindingStrategy
             continue;
           }
           bool found = false;
-          for (size_t i = 0, n = hdIds.size(); i < n; ++i)
-          {
-            if (usdBindings[i].name == binding.name)
-            {
+          for (size_t i = 0, n = hdIds.size(); i < n; ++i) {
+            if (usdBindings[i].name == binding.name) {
               // Found an override -- replace this binding.
               usdBindings[i] = binding;
               hdIds[i] = query->_IdForBinding(binding);
@@ -1058,8 +1019,7 @@ struct UsdImaging_CoordSysBindingStrategy
               break;
             }
           }
-          if (!found)
-          {
+          if (!found) {
             // New binding, so append.
             usdBindings.push_back(binding);
             hdIds.push_back(query->_IdForBinding(binding));
@@ -1070,6 +1030,132 @@ struct UsdImaging_CoordSysBindingStrategy
       }
     }
     return v;
+  }
+};
+
+WABI_NAMESPACE_END
+
+// -------------------------------------------------------------------------- //
+// Nonlinear sample count Primvar Cache
+// -------------------------------------------------------------------------- //
+
+#include "wabi/usd/usdGeom/motionAPI.h"
+
+WABI_NAMESPACE_BEGIN
+
+struct UsdImaging_NonlinearSampleCountStrategy;
+typedef UsdImaging_ResolvedAttributeCache<UsdImaging_NonlinearSampleCountStrategy>
+  UsdImaging_NonlinearSampleCountCache;
+
+struct UsdImaging_NonlinearSampleCountStrategy
+{
+  typedef int value_type;
+  typedef UsdAttributeQuery query_type;
+
+  // Used to indicate that no (valid) opinion exists
+  // for nonlinear sample count.
+  static constexpr value_type invalidValue = -1;
+
+  static bool ValueMightBeTimeVarying()
+  {
+    return true;
+  }
+
+  static value_type MakeDefault()
+  {
+    return invalidValue;
+  }
+
+  static query_type MakeQuery(UsdPrim const &prim, bool *)
+  {
+    if (const UsdGeomMotionAPI motionAPI = UsdGeomMotionAPI(prim)) {
+      return query_type(motionAPI.GetNonlinearSampleCountAttr());
+    }
+    return query_type();
+  }
+
+  static value_type Compute(UsdImaging_NonlinearSampleCountCache const *owner,
+                            UsdPrim const &prim,
+                            query_type const *query)
+  {
+    if (query->HasAuthoredValue()) {
+      int value;
+      if (query->Get(&value, owner->GetTime())) {
+        return value;
+      }
+    }
+
+    return *owner->_GetValue(prim.GetParent());
+  }
+
+  static value_type ComputeNonlinearSampleCount(UsdPrim const &prim, UsdTimeCode time)
+  {
+    return UsdGeomMotionAPI(prim).ComputeNonlinearSampleCount(time);
+  }
+};
+
+WABI_NAMESPACE_END
+
+// -------------------------------------------------------------------------- //
+// Blur scale Primvar Cache
+// -------------------------------------------------------------------------- //
+
+#include "wabi/usd/usdGeom/motionAPI.h"
+
+WABI_NAMESPACE_BEGIN
+
+struct UsdImaging_BlurScaleStrategy;
+typedef UsdImaging_ResolvedAttributeCache<UsdImaging_BlurScaleStrategy> UsdImaging_BlurScaleCache;
+
+struct UsdImaging_BlurScaleStrategy
+{
+  struct value_type
+  {
+    float value;
+    bool has_value;
+  };
+
+  typedef UsdAttributeQuery query_type;
+
+  // Used to indicate that no (valid) opinion exists
+  // for blur scale.
+  static const value_type invalidValue;
+
+  static bool ValueMightBeTimeVarying()
+  {
+    return true;
+  }
+
+  static value_type MakeDefault()
+  {
+    return invalidValue;
+  }
+
+  static query_type MakeQuery(UsdPrim const &prim, bool *)
+  {
+    if (const UsdGeomMotionAPI motionAPI = UsdGeomMotionAPI(prim)) {
+      return query_type(motionAPI.GetMotionBlurScaleAttr());
+    }
+    return query_type();
+  }
+
+  static value_type Compute(UsdImaging_BlurScaleCache const *owner,
+                            UsdPrim const &prim,
+                            query_type const *query)
+  {
+    if (query->HasAuthoredValue()) {
+      float value;
+      if (query->Get(&value, owner->GetTime())) {
+        return {value, true};
+      }
+    }
+
+    return *owner->_GetValue(prim.GetParent());
+  }
+
+  static value_type ComputeBlurScale(UsdPrim const &prim, UsdTimeCode time)
+  {
+    return {UsdGeomMotionAPI(prim).ComputeMotionBlurScale(time), true};
   }
 };
 
@@ -1119,25 +1205,20 @@ struct UsdImaging_InheritedPrimvarStrategy
                             query_type const *query)
   {
     value_type v;
-    if (*query)
-    {
+    if (*query) {
       // Pull inherited bindings first.
-      if (UsdPrim parentPrim = prim.GetParent())
-      {
+      if (UsdPrim parentPrim = prim.GetParent()) {
         v = *owner->_GetValue(parentPrim);
       }
       // Merge any local bindings.
       std::vector<UsdGeomPrimvar> primvars = query->FindIncrementallyInheritablePrimvars(
         v ? v->primvars : std::vector<UsdGeomPrimvar>());
-      if (!primvars.empty())
-      {
+      if (!primvars.empty()) {
         v = std::make_shared<PrimvarRecord>();
         v->primvars = std::move(primvars);
         v->variable = false;
-        for (UsdGeomPrimvar const &pv : v->primvars)
-        {
-          if (pv.ValueMightBeTimeVarying())
-          {
+        for (UsdGeomPrimvar const &pv : v->primvars) {
+          if (pv.ValueMightBeTimeVarying()) {
             v->variable = true;
             break;
           }
