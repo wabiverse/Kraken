@@ -34,6 +34,38 @@
 
 WABI_NAMESPACE_BEGIN
 
+#if !WITH_TBB_LEGACY
+WorkDispatcher::WorkDispatcher()
+{
+  _waitCleanupFlag.clear();
+}
+
+WorkDispatcher::~WorkDispatcher()
+{
+  Wait();
+}
+
+void WorkDispatcher::Wait()
+{
+  _tg.wait();
+
+  // If we take the flag from false -> true, we do the cleanup.
+  if (_waitCleanupFlag.test_and_set() == false) {
+    // Post all diagnostics to this thread's list.
+    for (auto &et : _errors) {
+      et.Post();
+    }
+    _errors.clear();
+    _waitCleanupFlag.clear();
+  }
+}
+
+void WorkDispatcher::Cancel()
+{
+  _tg.cancel();
+}
+#else  /* WITH_TBB_LEGACY */
+
 WorkDispatcher::WorkDispatcher()
   : _context(tbb::task_group_context::isolated,
              tbb::task_group_context::concurrent_wait | tbb::task_group_context::default_traits)
@@ -55,8 +87,7 @@ void WorkDispatcher::Wait()
 {
   _rootTask->wait_for_all();
 
-  if (_context.is_group_execution_cancelled())
-  {
+  if (_context.is_group_execution_cancelled()) {
     _context.reset();
   }
 
@@ -71,6 +102,7 @@ void WorkDispatcher::Cancel()
 {
   _context.cancel_group_execution();
 }
+#endif /* WITH_TBB_LEGACY */
 
 /* static */
 void WorkDispatcher::_TransportErrors(const TfErrorMark &mark, _ErrorTransports *errors)
