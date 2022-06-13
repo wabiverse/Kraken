@@ -139,7 +139,7 @@ wabi_library(hd
         # schema
         selection
         smoothNormals
-        # sortedIds
+        sortedIds
         sprim
         strategyBase
         # subdivisionTagsSchema

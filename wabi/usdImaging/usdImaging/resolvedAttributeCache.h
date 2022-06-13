@@ -312,7 +312,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 
     query_type query;
     value_type value;
-    std::atomic<unsigned> version { 1 };
+    std::atomic<unsigned> version;
   };
 
   // Returns the version number for a valid cache entry
@@ -352,7 +352,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
   // Mutable is required here to allow const methods to update the cache when
   // it is thread safe, however not all mutations of this map are thread safe.
   // See underlying map documentation for details.
-  mutable _CacheMap _cache { 1 };
+  mutable _CacheMap _cache;
 
   // The time at which this stack is querying and caching attribute values.
   UsdTimeCode _time;
@@ -360,7 +360,7 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
 
   // A serial number indicating the valid state of entries in the cache. When
   // an entry has an equal or greater value, the entry is valid.
-  std::atomic<unsigned> _cacheVersion {1};
+  std::atomic<unsigned> _cacheVersion;
 
   // Value overrides for a set of descendents.
   ValueOverridesMap _valueOverrides;
@@ -378,7 +378,7 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
   // Note: _cacheVersion is not allowed to change during cache access.
 
   unsigned v = entry->version;
-  if (v < _cacheVersion && entry->version.compare_exchange_strong(v, _cacheVersion)) {
+  if (v < _cacheVersion && entry->version.compare_and_swap(_cacheVersion, v) == v) {
     entry->value = value;
     entry->version = _GetValidVersion();
   } else {
