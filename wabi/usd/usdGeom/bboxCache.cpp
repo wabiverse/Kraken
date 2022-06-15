@@ -50,7 +50,10 @@
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/token.h"
 
+#include <atomic>
 #include <algorithm>
+
+#include <boost/atomic.hpp>
 #include <tbb/enumerable_thread_specific.h>
 
 WABI_NAMESPACE_BEGIN
@@ -115,11 +118,13 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
 
   struct _PrototypeTask
   {
-    _PrototypeTask() : numDependencies(0) {}
+    _PrototypeTask() noexcept
+      : numDependencies(std::make_unique<std::atomic<size_t>>(0))
+    {}
 
     // Number of dependencies -- prototype prims that must be resolved
     // before this prototype can be resolved.
-    std::atomic<size_t> numDependencies;
+    std::unique_ptr<std::atomic<size_t>> numDependencies;
 
     // List of prototype prims that depend on this prototype.
     std::vector<_PrimContext> dependentPrototypes;
@@ -146,7 +151,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
     _ThreadXformCache xfCache;
 
     for (const auto &t : prototypeTasks) {
-      if (t.second.numDependencies == 0) {
+      if (*t.second.numDependencies == 0) {
         _owner->_dispatcher.Run(&_PrototypeBBoxResolver::_ExecuteTaskForPrototype,
                                 this,
                                 t.first,
@@ -177,7 +182,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
       // to compute the bounding boxes for all prototypes for nested
       // instances.
       _PrototypeTask &prototypeTaskData = prototypeTaskStatus.first->second;
-      prototypeTaskData.numDependencies = requiredPrototypes.size();
+      *prototypeTaskData.numDependencies = requiredPrototypes.size();
     }
 
     // Recursively populate the task map for the prototypes needed for
@@ -203,7 +208,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
     const _PrototypeTask &prototypeData = prototypeTasks->find(prototype)->second;
     for (const auto &dependentPrototype : prototypeData.dependentPrototypes) {
       _PrototypeTask &dependentPrototypeData = prototypeTasks->find(dependentPrototype)->second;
-      if (dependentPrototypeData.numDependencies.fetch_sub(1) == 1) {
+      if (dependentPrototypeData.numDependencies->fetch_sub(1) == 1) {
         dispatcher->Run(&_PrototypeBBoxResolver::_ExecuteTaskForPrototype,
                         this,
                         dependentPrototype,
