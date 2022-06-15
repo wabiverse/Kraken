@@ -234,21 +234,21 @@ struct Arch_ConstructorEntry
   unsigned int priority : 8;  // Priority of function
 };
 
-// Emit a Arch_ConstructorEntry in the __Data,pxrctor section.
+// Emit a Arch_ConstructorEntry in the __Data,wabictor section.
 #  define ARCH_CONSTRUCTOR(_name, _priority, ...)                            \
     static void _name(__VA_ARGS__);                                          \
     static const Arch_ConstructorEntry _ARCH_CAT_NOEXPAND(arch_ctor_, _name) \
-      __attribute__((used, section("__DATA,pxrctor"))) = {                   \
+      __attribute__((used, section("__DATA,wabictor"))) = {                   \
         reinterpret_cast<Arch_ConstructorEntry::Type>(&_name),               \
         0u,                                                                  \
         _priority};                                                          \
     static void _name(__VA_ARGS__)
 
-// Emit a Arch_ConstructorEntry in the __Data,pxrdtor section.
+// Emit a Arch_ConstructorEntry in the __Data,wabidtor section.
 #  define ARCH_DESTRUCTOR(_name, _priority, ...)                             \
     static void _name(__VA_ARGS__);                                          \
     static const Arch_ConstructorEntry _ARCH_CAT_NOEXPAND(arch_dtor_, _name) \
-      __attribute__((used, section("__DATA,pxrdtor"))) = {                   \
+      __attribute__((used, section("__DATA,wabidtor"))) = {                   \
         reinterpret_cast<Arch_ConstructorEntry::Type>(&_name),               \
         0u,                                                                  \
         _priority};                                                          \
@@ -259,15 +259,15 @@ struct Arch_ConstructorEntry
 // The used attribute is required to prevent these apparently unused functions
 // from being removed by the linker.
 #  define ARCH_CONSTRUCTOR(_name, _priority, ...)                                                 \
-    __attribute__((used, section(".pxrctor"), constructor((_priority) + 100))) static void _name( \
+    __attribute__((used, section(".wabictor"), constructor((_priority) + 100))) static void _name( \
       __VA_ARGS__)
 #  define ARCH_DESTRUCTOR(_name, _priority, ...)                                                 \
-    __attribute__((used, section(".pxrdtor"), destructor((_priority) + 100))) static void _name( \
+    __attribute__((used, section(".wabidtor"), destructor((_priority) + 100))) static void _name( \
       __VA_ARGS__)
 
 #elif defined(ARCH_OS_WINDOWS)
 
-#  include "pxr/base/arch/api.h"
+#  include "wabi/base/arch/api.h"
 
 // Entry for a constructor/destructor in the custom section.
 __declspec(align(16)) struct Arch_ConstructorEntry
@@ -279,8 +279,8 @@ __declspec(align(16)) struct Arch_ConstructorEntry
 };
 
 // Declare the special sections.
-#  pragma section(".pxrctor", read)
-#  pragma section(".pxrdtor", read)
+#  pragma section(".wabictor", read)
+#  pragma section(".wabidtor", read)
 
 // Objects of this type run the ARCH_CONSTRUCTOR and ARCH_DESTRUCTOR functions
 // for the library containing the object in the c'tor and d'tor, respectively.
@@ -291,7 +291,7 @@ struct Arch_ConstructorInit
   ARCH_API ~Arch_ConstructorInit();
 };
 
-// Emit a Arch_ConstructorEntry in the .pxrctor section.  The namespace and
+// Emit a Arch_ConstructorEntry in the .wabictor section.  The namespace and
 // extern are to convince the compiler and linker to leave the object in the
 // final library/executable instead of stripping it out.  In clang/gcc we use
 // __attribute__((used)) to do that.
@@ -299,7 +299,7 @@ struct Arch_ConstructorInit
     static void _name(__VA_ARGS__);                                                         \
     namespace                                                                               \
     {                                                                                       \
-      __declspec(allocate(".pxrctor")) extern const Arch_ConstructorEntry                   \
+      __declspec(allocate(".wabictor")) extern const Arch_ConstructorEntry                   \
         _ARCH_CAT_NOEXPAND(arch_ctor_,                                                      \
                            _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), \
                                      0u,                                                    \
@@ -308,12 +308,12 @@ struct Arch_ConstructorInit
     _ARCH_ENSURE_PER_LIB_INIT(Arch_ConstructorInit, _archCtorInit);                         \
     static void _name(__VA_ARGS__)
 
-// Emit a Arch_ConstructorEntry in the .pxrdtor section.
+// Emit a Arch_ConstructorEntry in the .wabidtor section.
 #  define ARCH_DESTRUCTOR(_name, _priority, ...)                                            \
     static void _name(__VA_ARGS__);                                                         \
     namespace                                                                               \
     {                                                                                       \
-      __declspec(allocate(".pxrdtor")) extern const Arch_ConstructorEntry                   \
+      __declspec(allocate(".wabidtor")) extern const Arch_ConstructorEntry                   \
         _ARCH_CAT_NOEXPAND(arch_dtor_,                                                      \
                            _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), \
                                      0u,                                                    \

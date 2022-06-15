@@ -182,7 +182,7 @@ namespace
   // Execute constructor entries in a shared library in priority order.
   static void AddImage(const struct mach_header *mh, intptr_t slide)
   {
-    const auto entries = GetConstructorEntries(mh, slide, "__DATA", "pxrctor");
+    const auto entries = GetConstructorEntries(mh, slide, "__DATA", "wabictor");
 
     // Execute in priority order.
     for (size_t i = 0, n = entries.size(); i != n; ++i) {
@@ -195,7 +195,7 @@ namespace
   // Execute destructor entries in a shared library in reverse priority order.
   static void RemoveImage(const struct mach_header *mh, intptr_t slide)
   {
-    const auto entries = GetConstructorEntries(mh, slide, "__DATA", "pxrdtor");
+    const auto entries = GetConstructorEntries(mh, slide, "__DATA", "wabidtor");
 
     // Execute in reverse priority order.
     for (size_t i = entries.size(); i-- != 0;) {
@@ -319,7 +319,7 @@ namespace
     // Do each HMODULE at most once.
     if (visited->insert(hModule).second) {
       // Execute in priority order.
-      const auto entries = GetConstructorEntries(hModule, ".pxrctor");
+      const auto entries = GetConstructorEntries(hModule, ".wabictor");
       for (size_t i = 0, n = entries.size(); i != n; ++i) {
         if (entries[i].function && entries[i].version == 0u) {
           entries[i].function();
@@ -336,7 +336,7 @@ namespace
     // Do each HMODULE at most once.
     if (visited->insert(hModule).second) {
       // Execute in reverse priority order.
-      const auto entries = GetConstructorEntries(hModule, ".pxrdtor");
+      const auto entries = GetConstructorEntries(hModule, ".wabidtor");
       for (size_t i = entries.size(); i-- != 0;) {
         if (entries[i].function && entries[i].version == 0u) {
           entries[i].function();

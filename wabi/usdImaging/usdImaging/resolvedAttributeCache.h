@@ -301,13 +301,23 @@ template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedA
   // values. The version is used to determine validity.
   struct _Entry
   {
-    _Entry() : value(Strategy::MakeDefault()), version(_GetInitialEntryVersion()) {}
+    _Entry() noexcept : value(Strategy::MakeDefault()), version(_GetInitialEntryVersion()) {}
 
-    _Entry(const query_type &query_, const value_type &value_, unsigned version_)
+    _Entry(const query_type &query_, const value_type &value_, unsigned version_) noexcept
       : query(query_),
         value(value_),
         version(version_)
     {}
+
+    _Entry(const _Entry &other) noexcept : query(other.query), value(other.value)
+    {
+      version.store(other.version.load());
+    }
+
+    _Entry(_Entry &&other) noexcept : query(std::move(other.query)), value(std::move(other.value))
+    {
+      version.store(other.version.load());
+    }
 
     query_type query;
     value_type value;
