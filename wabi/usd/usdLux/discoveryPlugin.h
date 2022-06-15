@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef PXR_USD_USDLUX_DISCOVERY_PLUGIN_H
-#define PXR_USD_USDLUX_DISCOVERY_PLUGIN_H
+#ifndef WABI_USD_USDLUX_DISCOVERY_PLUGIN_H
+#define WABI_USD_USDLUX_DISCOVERY_PLUGIN_H
 
 #include "wabi/wabi.h"
 #include "wabi/usd/usdLux/api.h"
@@ -55,4 +55,4 @@ public:
 
 WABI_NAMESPACE_END
 
-#endif // PXR_USD_USDLUX_DISCOVERY_PLUGIN_H
+#endif // WABI_USD_USDLUX_DISCOVERY_PLUGIN_H

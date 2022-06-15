@@ -38,7 +38,7 @@
 
 #include <iostream>
 
-#ifdef PXR_OCIO_PLUGIN_ENABLED
+#ifdef WITH_OPENCOLORIO
 #  include <OpenColorIO/OpenColorIO.h>
 namespace OCIO = OCIO_NAMESPACE;
 #endif
@@ -107,7 +107,7 @@ bool HdxColorCorrectionTask::_GetUseOcio() const
 {
 // Client can choose to use Hydra's build-in sRGB color correction or use
 // OpenColorIO for color correction in which case we insert extra OCIO code.
-#ifdef PXR_OCIO_PLUGIN_ENABLED
+#ifdef WITH_OPENCOLORIO
   // Only use if $OCIO environment variable is set.
   // (Otherwise this option should be disabled.)
   if (TfGetenv("OCIO") == "") {
@@ -122,7 +122,7 @@ bool HdxColorCorrectionTask::_GetUseOcio() const
 
 std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
 {
-#ifdef PXR_OCIO_PLUGIN_ENABLED
+#ifdef WITH_OPENCOLORIO
   // Use client provided OCIO values, or use default fallback values
   OCIO::ConstConfigRcPtr config = OCIO::GetCurrentConfig();
 

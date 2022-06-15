@@ -26,7 +26,7 @@
 #include "wabi/base/tf/pyModule.h"
 #include <boost/python/def.hpp>
 
-PXR_NAMESPACE_USING_DIRECTIVE
+WABI_NAMESPACE_USING
 
 TF_WRAP_MODULE
 {

@@ -25,7 +25,7 @@
 #include <boost/python/class.hpp>
 #include "wabi/usd/usdLux/tokens.h"
 
-PXR_NAMESPACE_USING_DIRECTIVE
+WABI_NAMESPACE_USING
 
 namespace {
 
