@@ -24,6 +24,8 @@
 #ifndef HDX_COLORCORRECTION_TASK_H
 #define HDX_COLORCORRECTION_TASK_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/path.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/task.h"
 #include "wabi/imaging/hdx/tokens.h"
@@ -33,12 +35,11 @@
 #include "wabi/imaging/hgi/resourceBindings.h"
 #include "wabi/imaging/hgi/shaderProgram.h"
 #include "wabi/imaging/hgi/texture.h"
-#include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 #include <string>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class HdxColorCorrectionTask
 ///
@@ -126,6 +127,7 @@ class HdxColorCorrectionTask : public HdxTask
   TfToken _aovName;
 };
 
+
 /// \class HdxColorCorrectionTaskParams
 ///
 /// ColorCorrectionTask parameters.
@@ -171,6 +173,7 @@ HDX_API
 bool operator==(const HdxColorCorrectionTaskParams &lhs, const HdxColorCorrectionTaskParams &rhs);
 HDX_API
 bool operator!=(const HdxColorCorrectionTaskParams &lhs, const HdxColorCorrectionTaskParams &rhs);
+
 
 WABI_NAMESPACE_END
 

@@ -24,14 +24,14 @@
 #ifndef WABI_IMAGING_HDX_SHADOW_TASK_H
 #define WABI_IMAGING_HDX_SHADOW_TASK_H
 
-#include "wabi/imaging/hd/enums.h"
-#include "wabi/imaging/hd/task.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
+#include "wabi/imaging/hd/enums.h"
+#include "wabi/imaging/hd/task.h"
 
-#include "wabi/base/gf/vec4d.h"
 #include "wabi/base/gf/vec4f.h"
+#include "wabi/base/gf/vec4d.h"
 #include "wabi/base/tf/declarePtrs.h"
 
 #include <memory>
@@ -41,15 +41,15 @@ WABI_NAMESPACE_BEGIN
 class GlfSimpleLight;
 class HdRenderIndex;
 class HdSceneDelegate;
-class HdPhRenderPassState;
+class HdStRenderPassState;
 
-using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
-using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
+using HdStRenderPassShaderSharedPtr = std::shared_ptr<class HdStRenderPassShader>;
+using HdStShaderCodeSharedPtr = std::shared_ptr<class HdStShaderCode>;
 
 using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
 using HdRenderPassSharedPtrVector = std::vector<HdRenderPassSharedPtr>;
-using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
-using HdPhRenderPassStateSharedPtrVector = std::vector<HdPhRenderPassStateSharedPtr>;
+using HdStRenderPassStateSharedPtr = std::shared_ptr<class HdStRenderPassState>;
+using HdStRenderPassStateSharedPtrVector = std::vector<HdStRenderPassStateSharedPtr>;
 
 TF_DECLARE_WEAK_AND_REF_PTRS(GlfSimpleShadowArray);
 
@@ -113,15 +113,17 @@ class HdxShadowTask : public HdTask
   HDX_API
   const TfTokenVector &GetRenderTags() const override;
 
+
  private:
 
-  void _UpdateDirtyParams(HdPhRenderPassStateSharedPtr &renderPassState,
+  void _UpdateDirtyParams(HdStRenderPassStateSharedPtr &renderPassState,
                           HdxShadowTaskParams const &params);
 
   HdRenderPassSharedPtrVector _passes;
-  HdPhRenderPassStateSharedPtrVector _renderPassStates;
+  HdStRenderPassStateSharedPtrVector _renderPassStates;
   HdxShadowTaskParams _params;
   TfTokenVector _renderTags;
+
 
   HdxShadowTask() = delete;
   HdxShadowTask(const HdxShadowTask &) = delete;
@@ -135,6 +137,7 @@ HDX_API
 bool operator==(const HdxShadowTaskParams &lhs, const HdxShadowTaskParams &rhs);
 HDX_API
 bool operator!=(const HdxShadowTaskParams &lhs, const HdxShadowTaskParams &rhs);
+
 
 WABI_NAMESPACE_END
 

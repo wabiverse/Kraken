@@ -28,9 +28,9 @@
 
 #include "wabi/imaging/hdx/api.h"
 
+#include "wabi/imaging/hd/sceneDelegate.h"
 #include "wabi/base/gf/camera.h"
 #include "wabi/imaging/cameraUtil/conformWindow.h"
-#include "wabi/imaging/hd/sceneDelegate.h"
 
 WABI_NAMESPACE_BEGIN
 

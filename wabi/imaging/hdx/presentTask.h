@@ -24,12 +24,12 @@
 #ifndef WABI_IMAGING_HDX_PRESENT_TASK_H
 #define WABI_IMAGING_HDX_PRESENT_TASK_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/task.h"
 #include "wabi/imaging/hgi/tokens.h"
 #include "wabi/imaging/hgi/types.h"
 #include "wabi/imaging/hgiInterop/hgiInterop.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -108,6 +108,7 @@ class HdxPresentTask : public HdxTask
   HdxPresentTask &operator=(const HdxPresentTask &) = delete;
 };
 
+
 // VtValue requirements
 HDX_API
 std::ostream &operator<<(std::ostream &out, const HdxPresentTaskParams &pv);
@@ -115,6 +116,7 @@ HDX_API
 bool operator==(const HdxPresentTaskParams &lhs, const HdxPresentTaskParams &rhs);
 HDX_API
 bool operator!=(const HdxPresentTaskParams &lhs, const HdxPresentTaskParams &rhs);
+
 
 WABI_NAMESPACE_END
 

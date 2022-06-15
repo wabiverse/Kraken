@@ -23,7 +23,7 @@ It currently houses common tasks, such as:
 \li HdxShadowTask
 \li HdxSimpleLightTask
 
-It also houses HdxTaskController, which wraps the above tasks and provides
+It also houses HdxTaskController, which wraps the above tasks and provides 
 setters for these tasks' params. It attempts to encapsulate some of the
 task-specific boiler plate code when using Hydra to render a scene.
 

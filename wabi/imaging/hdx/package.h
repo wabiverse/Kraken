@@ -24,11 +24,12 @@
 #ifndef WABI_IMAGING_HDX_PACKAGE_H
 #define WABI_IMAGING_HDX_PACKAGE_H
 
-#include "wabi/base/tf/token.h"
-#include "wabi/imaging/hdx/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hdx/version.h"
+#include "wabi/base/tf/token.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TfToken HdxPackageFullscreenShader();
 TfToken HdxPackageRenderPassColorShader();
@@ -45,6 +46,7 @@ TfToken HdxPackageRenderPassOitOpaqueShader();
 TfToken HdxPackageRenderPassOitVolumeShader();
 TfToken HdxPackageOitResolveImageShader();
 TfToken HdxPackageOutlineShader();
+TfToken HdxPackageSkydomeShader();
 
 TfToken HdxPackageDefaultDomeLightTexture();
 

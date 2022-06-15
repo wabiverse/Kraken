@@ -21,31 +21,32 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/imaging/garch/glApi.h"
-
-#include "wabi/imaging/hdx/package.h"
 #include "wabi/imaging/hdx/shadowTask.h"
 #include "wabi/imaging/hdx/tokens.h"
+#include "wabi/imaging/hdx/package.h"
 
 #include "wabi/imaging/hd/changeTracker.h"
+#include "wabi/imaging/hd/renderBuffer.h"
 #include "wabi/imaging/hd/renderIndex.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
 
-#include "wabi/imaging/hdPh/light.h"
-#include "wabi/imaging/hdPh/renderPass.h"
-#include "wabi/imaging/hdPh/renderPassShader.h"
-#include "wabi/imaging/hdPh/renderPassState.h"
-#include "wabi/imaging/hdPh/tokens.h"
+#include "wabi/imaging/hdSt/light.h"
+#include "wabi/imaging/hdSt/renderPass.h"
+#include "wabi/imaging/hdSt/renderPassShader.h"
+#include "wabi/imaging/hdSt/renderPassState.h"
+#include "wabi/imaging/hdSt/simpleLightingShader.h"
+#include "wabi/imaging/hdSt/textureUtils.h"
+#include "wabi/imaging/hdSt/tokens.h"
 
-#include "wabi/imaging/glf/diagnostic.h"
 #include "wabi/imaging/glf/simpleLightingContext.h"
+#include "wabi/imaging/glf/diagnostic.h"
 
 WABI_NAMESPACE_BEGIN
 
-bool _HasDrawItems(HdRenderPassSharedPtr pass)
+static bool _HasDrawItems(HdRenderPassSharedPtr pass, const TfTokenVector &renderTags)
 {
-  HdPh_RenderPass *hdPhRenderPass = static_cast<HdPh_RenderPass *>(pass.get());
-  return hdPhRenderPass && hdPhRenderPass->GetDrawItemCount() > 0;
+  HdSt_RenderPass *hdStRenderPass = static_cast<HdSt_RenderPass *>(pass.get());
+  return hdStRenderPass && hdStRenderPass->HasDrawItems(renderTags);
 }
 
 HdxShadowTask::HdxShadowTask(HdSceneDelegate *delegate, SdfPath const &id)
@@ -100,8 +101,8 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
   // Thus we must make a distinction between the number of render passes and
   // the number of shadow maps indicated by the shadow array.
   size_t numShadowMaps = shadows->GetNumShadowMapPasses();
-  static const TfToken shadowMaterialTags[2] = {HdPhMaterialTagTokens->defaultMaterialTag,
-                                                HdPhMaterialTagTokens->masked};
+  static const TfToken shadowMaterialTags[2] = {HdStMaterialTagTokens->defaultMaterialTag,
+                                                HdStMaterialTagTokens->masked};
   _passes.resize(TfArraySize(shadowMaterialTags) * numShadowMaps);
 
   // Mostly we can populate the renderpasses from shadow info, but the lights
@@ -113,11 +114,14 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
       continue;
     }
 
-    const HdPhLight *light = static_cast<const HdPhLight *>(
+    // Shadows are supported on for SimpleLights and DistantLights
+    HdStLight *light = static_cast<HdStLight *>(
       renderIndex.GetSprim(HdPrimTypeTokens->simpleLight, glfLights[lightId].GetID()));
+    if (!light) {
+      light = static_cast<HdStLight *>(
+        renderIndex.GetSprim(HdPrimTypeTokens->distantLight, glfLights[lightId].GetID()));
+    }
 
-    // It is possible the light is nullptr for area lights converted to
-    // simple lights, however they should not have shadows enabled.
     TF_VERIFY(light);
 
     // Extract the collection from the HD light
@@ -146,14 +150,14 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
       if (_passes[shadowId]) {
         _passes[shadowId]->SetRprimCollection(newColDefault);
       } else {
-        _passes[shadowId] = std::make_shared<HdPh_RenderPass>(&renderIndex, newColDefault);
+        _passes[shadowId] = std::make_shared<HdSt_RenderPass>(&renderIndex, newColDefault);
       }
 
       // Then the "masked" materialTag passes
       if (_passes[shadowId + numShadowMaps]) {
         _passes[shadowId + numShadowMaps]->SetRprimCollection(newColMasked);
       } else {
-        _passes[shadowId + numShadowMaps] = std::make_shared<HdPh_RenderPass>(&renderIndex,
+        _passes[shadowId + numShadowMaps] = std::make_shared<HdSt_RenderPass>(&renderIndex,
                                                                               newColMasked);
       }
     }
@@ -174,15 +178,17 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
   // Add new states if the number of passes has grown
   if (_renderPassStates.size() < _passes.size()) {
     for (size_t passId = _renderPassStates.size(); passId < _passes.size(); passId++) {
-      HdPhRenderPassShaderSharedPtr renderPassShadowShader =
-        std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassShadowShader());
-      HdPhRenderPassStateSharedPtr renderPassState = std::make_shared<HdPhRenderPassState>(
+      HdStRenderPassShaderSharedPtr renderPassShadowShader =
+        std::make_shared<HdStRenderPassShader>(HdxPackageRenderPassShadowShader());
+      HdStRenderPassStateSharedPtr renderPassState = std::make_shared<HdStRenderPassState>(
         renderPassShadowShader);
 
       renderPassState->SetDepthFunc(_params.depthFunc);
       renderPassState->SetDepthBiasUseDefault(!_params.depthBiasEnable);
       renderPassState->SetDepthBiasEnabled(_params.depthBiasEnable);
       renderPassState->SetDepthBias(_params.depthBiasConstantFactor, _params.depthBiasSlopeFactor);
+      renderPassState->SetEnableDepthClamp(true);
+      renderPassState->SetDepthRange(GfVec2f(0, 0.99999));
 
       // This state is invariant of parameter changes so set it
       // once.
@@ -198,6 +204,17 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
       _UpdateDirtyParams(renderPassState, _params);
 
       _renderPassStates.push_back(std::move(renderPassState));
+    }
+  }
+
+  // Get AOV bindings created by simple lighting shader.
+  HdRenderPassAovBindingVector shadowAovBindings;
+  VtValue lightingShader = (*ctx)[HdxTokens->lightingShader];
+  if (lightingShader.IsHolding<HdStLightingShaderSharedPtr>()) {
+    if (HdStSimpleLightingShaderSharedPtr simpleLightingShader =
+          std::dynamic_pointer_cast<HdStSimpleLightingShader>(
+            lightingShader.UncheckedGet<HdStLightingShaderSharedPtr>())) {
+      shadowAovBindings = simpleLightingShader->GetShadowAovBindings();
     }
   }
 
@@ -223,6 +240,18 @@ void HdxShadowTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyB
       GfVec4d(0, 0, shadowMapRes[0], shadowMapRes[1]),
       HdRenderPassState::ClipPlanesVector());
 
+    // Set AOV bindings.
+    if (shadowMapId < shadowAovBindings.size()) {
+      if (passId == shadowMapId) {
+        _renderPassStates[passId]->SetAovBindings({shadowAovBindings[shadowMapId]});
+      } else {
+        // Don't want "masked" render passes to clear.
+        HdRenderPassAovBinding aovBindingCopy = shadowAovBindings[shadowMapId];
+        aovBindingCopy.clearValue = VtValue();
+        _renderPassStates[passId]->SetAovBindings({aovBindingCopy});
+      }
+    }
+
     _passes[passId]->Sync();
   }
 
@@ -235,7 +264,6 @@ void HdxShadowTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 
   for (size_t passId = 0; passId < _passes.size(); passId++) {
     _renderPassStates[passId]->Prepare(resourceRegistry);
-    _passes[passId]->Prepare(GetRenderTags());
   }
 }
 
@@ -254,6 +282,38 @@ void HdxShadowTask::Execute(HdTaskContext *ctx)
   // Generate the actual shadow maps
   GlfSimpleShadowArrayRefPtr const shadows = lightingContext->GetShadows();
   size_t numShadowMaps = shadows->GetNumShadowMapPasses();
+
+  // Get AOV bindings.
+  HdRenderPassAovBindingVector shadowAovBindings;
+  VtValue lightingShader = (*ctx)[HdxTokens->lightingShader];
+  if (lightingShader.IsHolding<HdStLightingShaderSharedPtr>()) {
+    if (HdStSimpleLightingShaderSharedPtr simpleLightingShader =
+          std::dynamic_pointer_cast<HdStSimpleLightingShader>(
+            lightingShader.UncheckedGet<HdStLightingShaderSharedPtr>())) {
+      shadowAovBindings = simpleLightingShader->GetShadowAovBindings();
+    }
+  }
+
+  // Though we no longer use GlfSimpleShadowArray's raw GL code to capture
+  // shadows in Hdx, Presto expects the textures in GlfSimpleShadowArray to
+  // contain the shadows captured here. We fulfill this by setting
+  // GlfSimpleShadowArray's shadow textures to the textures backing the
+  // shadow render buffers.
+  std::vector<uint32_t> textureIds;
+  for (size_t shadowId = 0; shadowId < numShadowMaps; shadowId++) {
+    if (shadowId < shadowAovBindings.size()) {
+      HdRenderBuffer const *renderBuffer = shadowAovBindings[shadowId].renderBuffer;
+      VtValue aov = renderBuffer->GetResource(false);
+      if (aov.IsHolding<HgiTextureHandle>()) {
+        HgiTextureHandle texture = aov.UncheckedGet<HgiTextureHandle>();
+        if (texture) {
+          textureIds.push_back((uint32_t)texture->GetRawResource());
+        }
+      }
+    }
+  }
+  shadows->SetTextures(textureIds);
+
   for (size_t shadowId = 0; shadowId < numShadowMaps; shadowId++) {
 
     // Make sure each pass got created. Light shadow indices are supposed
@@ -262,22 +322,15 @@ void HdxShadowTask::Execute(HdTaskContext *ctx)
       continue;
     }
 
-    // Bind the framebuffer that will store shadowId shadow map
-    shadows->BeginCapture(shadowId, true);
+    // Render the actual geometry in the "defaultMaterialTag" collection.
+    // Always execute this render pass because it clears the AOVs.
+    _passes[shadowId]->Execute(_renderPassStates[shadowId], GetRenderTags());
 
-    if (_HasDrawItems(_passes[shadowId])) {
-      // Render the actual geometry in the "defaultMaterialTag" collection
-      _passes[shadowId]->Execute(_renderPassStates[shadowId], GetRenderTags());
-    }
-
-    if (_HasDrawItems(_passes[shadowId + numShadowMaps])) {
+    if (_HasDrawItems(_passes[shadowId + numShadowMaps], GetRenderTags())) {
       // Render the actual geometry in the "masked" materialTag collection
       _passes[shadowId + numShadowMaps]->Execute(_renderPassStates[shadowId + numShadowMaps],
                                                  GetRenderTags());
     }
-
-    // Unbind the buffer and move on to the next shadow map
-    shadows->EndCapture(shadowId);
   }
 }
 
@@ -286,14 +339,14 @@ const TfTokenVector &HdxShadowTask::GetRenderTags() const
   return _renderTags;
 }
 
-void HdxShadowTask::_UpdateDirtyParams(HdPhRenderPassStateSharedPtr &renderPassState,
+void HdxShadowTask::_UpdateDirtyParams(HdStRenderPassStateSharedPtr &renderPassState,
                                        HdxShadowTaskParams const &params)
 {
   renderPassState->SetOverrideColor(params.overrideColor);
   renderPassState->SetWireframeColor(params.wireframeColor);
   renderPassState->SetCullStyle(HdInvertCullStyle(params.cullStyle));
 
-  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(
+  if (HdStRenderPassState *extendedState = dynamic_cast<HdStRenderPassState *>(
         renderPassState.get())) {
     extendedState->SetUseSceneMaterials(params.enableSceneMaterials);
   }

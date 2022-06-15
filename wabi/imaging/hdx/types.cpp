@@ -29,6 +29,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 // hdxShaderInputs implementation
 bool operator==(const HdxShaderInputs &lhs, const HdxShaderInputs &rhs)
 {
@@ -101,6 +102,8 @@ const HioFormat FORMAT_DESC[] = {
 
   HioFormatFloat32,  // HdFormatFloat32UInt8
 
+  HioFormatInt32,  // PackedInt1010102
+
 };
 
 // A few random format validations to make sure out Hio table stays aligned
@@ -122,5 +125,6 @@ HioFormat HdxGetHioFormat(HgiFormat hgiFormat)
 {
   return FORMAT_DESC[hgiFormat];
 }
+
 
 WABI_NAMESPACE_END

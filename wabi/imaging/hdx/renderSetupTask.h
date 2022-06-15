@@ -24,32 +24,33 @@
 #ifndef WABI_IMAGING_HDX_RENDER_SETUP_TASK_H
 #define WABI_IMAGING_HDX_RENDER_SETUP_TASK_H
 
-#include "wabi/imaging/hd/enums.h"
-#include "wabi/imaging/hd/renderPassState.h"
-#include "wabi/imaging/hd/task.h"
-#include "wabi/imaging/hd/tokens.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
+#include "wabi/imaging/hd/task.h"
+#include "wabi/imaging/hd/tokens.h"
+#include "wabi/imaging/hd/enums.h"
+#include "wabi/imaging/hd/renderPassState.h"
 
 #include "wabi/imaging/cameraUtil/framing.h"
 
 #include "wabi/base/gf/vec2f.h"
-#include "wabi/base/gf/vec4d.h"
 #include "wabi/base/gf/vec4f.h"
+#include "wabi/base/gf/vec4d.h"
 
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
 
 using HdxRenderSetupTaskSharedPtr = std::shared_ptr<class HdxRenderSetupTask>;
-using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
-using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
+using HdStRenderPassShaderSharedPtr = std::shared_ptr<class HdStRenderPassShader>;
+using HdStShaderCodeSharedPtr = std::shared_ptr<class HdStShaderCode>;
 
 using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 
 struct HdxRenderTaskParams;
-class HdPhRenderPassState;
+class HdStRenderPassState;
+
 
 /// \class HdxRenderSetupTask
 ///
@@ -71,6 +72,7 @@ class HdxRenderSetupTask : public HdTask
 
   HDX_API
   ~HdxRenderSetupTask() override;
+
 
   // APIs used from HdxRenderTask to manage the sync/prepare process.
   HDX_API
@@ -98,8 +100,8 @@ class HdxRenderSetupTask : public HdTask
  private:
 
   HdRenderPassStateSharedPtr _renderPassState;
-  HdPhRenderPassShaderSharedPtr _colorRenderPassShader;
-  HdPhRenderPassShaderSharedPtr _idRenderPassShader;
+  HdStRenderPassShaderSharedPtr _colorRenderPassShader;
+  HdStRenderPassShaderSharedPtr _idRenderPassShader;
   SdfPath _cameraId;
   CameraUtilFraming _framing;
   std::pair<bool, CameraUtilConformWindowPolicy> _overrideWindowPolicy;
@@ -109,12 +111,13 @@ class HdxRenderSetupTask : public HdTask
   HdRenderPassAovBindingVector _aovBindings;
   HdRenderPassAovBindingVector _aovInputBindings;
 
-  void _SetRenderpassShadersForPhoenix(HdxRenderTaskParams const &params,
-                                       HdPhRenderPassState *renderPassState);
+  void _SetRenderpassShadersForStorm(HdxRenderTaskParams const &params,
+                                     HdStRenderPassState *renderPassState);
 
   HdRenderPassStateSharedPtr &_GetRenderPassState(HdRenderIndex *renderIndex);
 
   void _PrepareAovBindings(HdTaskContext *ctx, HdRenderIndex *renderIndex);
+
 
   HdxRenderSetupTask() = delete;
   HdxRenderSetupTask(const HdxRenderSetupTask &) = delete;
@@ -144,7 +147,7 @@ struct HdxRenderTaskParams
       maskColor(1.0f, 0.0f, 0.0f, 1.0f),
       indicatorColor(0.0f, 1.0f, 0.0f, 1.0f),
       pointSelectedSize(3.0)
-      // Phoenix render pipeline state
+      // Storm render pipeline state
       ,
       depthBiasUseDefault(true),
       depthBiasEnable(false),
@@ -180,7 +183,7 @@ struct HdxRenderTaskParams
   // ---------------------------------------------------------------------- //
   // Application rendering state
   // XXX: Several of the parameters below are specific to (or work only with)
-  // Phoenix and stem from its integration in Presto and usdview.
+  // Storm and stem from its integration in Presto and usdview.
   // ---------------------------------------------------------------------- //
   // "Global" parameters while rendering.
   GfVec4f overrideColor;
@@ -207,7 +210,7 @@ struct HdxRenderTaskParams
 
   // ---------------------------------------------------------------------- //
   // Render pipeline state for rasterizers.
-  // XXX: These are relevant only for Phoenix.
+  // XXX: These are relevant only for Storm.
   // ---------------------------------------------------------------------- //
   bool depthBiasUseDefault;  // inherit application GL state
   bool depthBiasEnable;
@@ -265,6 +268,7 @@ HDX_API
 bool operator==(const HdxRenderTaskParams &lhs, const HdxRenderTaskParams &rhs);
 HDX_API
 bool operator!=(const HdxRenderTaskParams &lhs, const HdxRenderTaskParams &rhs);
+
 
 WABI_NAMESPACE_END
 

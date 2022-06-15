@@ -24,13 +24,14 @@
 #ifndef WABI_IMAGING_HDX_TASK_H
 #define WABI_IMAGING_HDX_TASK_H
 
-#include "wabi/imaging/hd/task.h"
-#include "wabi/imaging/hdx/api.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hdx/api.h"
+#include "wabi/imaging/hd/task.h"
 
 WABI_NAMESPACE_BEGIN
 
 class Hgi;
+
 
 /// \class HdxTask
 ///
@@ -66,7 +67,7 @@ class HdxTask : public HdTask
   /// classes can't override it and instead override _Sync.
   /// This 'non-virtual interface'-like pattern allows us to ensure we always
   /// initialized Hgi during the Sync task so derived classes don't have to.
-  void Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) final;
+  void Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override final;
 
  protected:
 

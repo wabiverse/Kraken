@@ -25,11 +25,11 @@
 //
 
 --- This is what an import might look like.
---- #import $TOOLS/hdx/shaders/renderPassShader.glslfx
+--- #import $TOOLS/hdx/shaders/renderPassColorWithOccludedSelectionShader.glslfx
 // Render pass shader configuration that writes color and selection information
 // (whether the fragment is selected).
 
-#import $TOOLS/hdPh/shaders/renderPass.glslfx
+#import $TOOLS/hdSt/shaders/renderPass.glslfx
 #import $TOOLS/hdx/shaders/renderPass.glslfx
 #import $TOOLS/hdx/shaders/selection.glslfx
 
@@ -38,6 +38,10 @@
     "techniques": {
         "default": {
             "vertexShader" : {
+                "source": [ "RenderPass.Camera",
+                            "RenderPass.ApplyClipPlanes" ]
+            },
+            "postTessVertexShader" : {
                 "source": [ "RenderPass.Camera",
                             "RenderPass.ApplyClipPlanes" ]
             },
@@ -55,7 +59,6 @@
             },
             "fragmentShader" : {
                 "source": [ "RenderPass.Camera",
-                            "RenderPass.ShouldCullFace",
                             "Selection.DecodeUtils",
                             "Selection.ComputeColor",
                             "RenderPass.ApplyColorOverrides",

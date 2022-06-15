@@ -38,7 +38,7 @@ HdxPickFromRenderBufferTask::HdxPickFromRenderBufferTask(HdSceneDelegate *delega
     _converged(false)
 {}
 
-HdxPickFromRenderBufferTask::~HdxPickFromRenderBufferTask() {}
+HdxPickFromRenderBufferTask::~HdxPickFromRenderBufferTask() = default;
 
 bool HdxPickFromRenderBufferTask::IsConverged() const
 {
@@ -89,11 +89,11 @@ GfMatrix4d HdxPickFromRenderBufferTask::_ComputeProjectionMatrix() const
     const CameraUtilConformWindowPolicy policy = _params.overrideWindowPolicy.first ?
                                                    _params.overrideWindowPolicy.second :
                                                    _camera->GetWindowPolicy();
-    return _params.framing.ApplyToProjectionMatrix(_camera->GetProjectionMatrix(), policy);
+    return _params.framing.ApplyToProjectionMatrix(_camera->ComputeProjectionMatrix(), policy);
   } else {
     const double aspect = _params.viewport[3] != 0.0 ? _params.viewport[2] / _params.viewport[3] :
                                                        1.0;
-    return CameraUtilConformedWindow(_camera->GetProjectionMatrix(),
+    return CameraUtilConformedWindow(_camera->ComputeProjectionMatrix(),
                                      _camera->GetWindowPolicy(),
                                      aspect);
   }
@@ -182,7 +182,7 @@ void HdxPickFromRenderBufferTask::Execute(HdTaskContext *ctx)
   // buffer to look at.
 
   // Get the view, projection used to generate the ID buffers.
-  const GfMatrix4d renderView = _camera->GetViewMatrix();
+  const GfMatrix4d renderView = _camera->GetTransform().GetInverse();
   const GfMatrix4d renderProj = _ComputeProjectionMatrix();
 
   // renderBufferXf transforms renderbuffer NDC to integer renderbuffer

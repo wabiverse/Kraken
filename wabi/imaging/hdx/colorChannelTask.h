@@ -24,12 +24,12 @@
 #ifndef HDX_COLORCHANNEL_TASK_H
 #define HDX_COLORCHANNEL_TASK_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/path.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/task.h"
 #include "wabi/imaging/hdx/tokens.h"
 #include "wabi/imaging/hgi/graphicsCmds.h"
-#include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -95,6 +95,7 @@ class HdxColorChannelTask : public HdxTask
   TfToken _channel;
 };
 
+
 /// \class HdxColorChannelTaskParams
 ///
 /// ColorChannelTask parameters.
@@ -115,6 +116,7 @@ HDX_API
 bool operator==(const HdxColorChannelTaskParams &lhs, const HdxColorChannelTaskParams &rhs);
 HDX_API
 bool operator!=(const HdxColorChannelTaskParams &lhs, const HdxColorChannelTaskParams &rhs);
+
 
 WABI_NAMESPACE_END
 

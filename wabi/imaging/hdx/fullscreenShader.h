@@ -26,15 +26,16 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/gf/vec2i.h"
-#include "wabi/imaging/hd/types.h"
 #include "wabi/imaging/hdx/api.h"
+#include "wabi/imaging/hd/types.h"
+#include "wabi/base/gf/vec4i.h"
 #include "wabi/imaging/hgi/buffer.h"
 #include "wabi/imaging/hgi/graphicsPipeline.h"
 #include "wabi/imaging/hgi/resourceBindings.h"
 #include "wabi/imaging/hgi/shaderProgram.h"
 #include "wabi/imaging/hgi/texture.h"
 
+#include <map>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
@@ -122,6 +123,13 @@ class HdxFullscreenShader
   HDX_API
   void Draw(HgiTextureHandle const &colorDst, HgiTextureHandle const &depthDst);
 
+  HDX_API
+  void Draw(HgiTextureHandle const &colorDst,
+            HgiTextureHandle const &colorResolveDst,
+            HgiTextureHandle const &depthDst,
+            HgiTextureHandle const &depthResolveDst,
+            GfVec4i const &viewport);
+
  private:
 
   HdxFullscreenShader() = delete;
@@ -152,7 +160,10 @@ class HdxFullscreenShader
   // Internal draw method
   void _Draw(TextureMap const &textures,
              HgiTextureHandle const &colorDst,
+             HgiTextureHandle const &colorResolveDst,
              HgiTextureHandle const &depthDst,
+             HgiTextureHandle const &depthResolveDst,
+             GfVec4i const &viewport,
              bool depthWrite);
 
   static HgiShaderFunctionDesc GetFullScreenVertexDesc();

@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HDX_AOV_INPUT_TASK_H
 #define WABI_IMAGING_HDX_AOV_INPUT_TASK_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/task.h"
 #include "wabi/imaging/hgi/texture.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -89,6 +89,7 @@ class HdxAovInputTask : public HdxTask
   HdxAovInputTask &operator=(const HdxAovInputTask &) = delete;
 };
 
+
 /// \class HdxAovInputTaskParams
 ///
 /// AovInput parameters.
@@ -108,6 +109,7 @@ HDX_API
 bool operator==(const HdxAovInputTaskParams &lhs, const HdxAovInputTaskParams &rhs);
 HDX_API
 bool operator!=(const HdxAovInputTaskParams &lhs, const HdxAovInputTaskParams &rhs);
+
 
 WABI_NAMESPACE_END
 

@@ -24,11 +24,12 @@
 #ifndef WABI_IMAGING_HDX_DEBUG_CODES_H
 #define WABI_IMAGING_HDX_DEBUG_CODES_H
 
-#include "wabi/base/tf/debug.h"
-#include "wabi/imaging/hdx/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hdx/version.h"
+#include "wabi/base/tf/debug.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DEBUG_CODES(
 
@@ -37,6 +38,7 @@ TF_DEBUG_CODES(
   HDX_SELECTION_SETUP
 
 );
+
 
 WABI_NAMESPACE_END
 

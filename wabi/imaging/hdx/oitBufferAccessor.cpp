@@ -21,15 +21,11 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/imaging/garch/glApi.h"
-
 #include "wabi/imaging/hdx/oitBufferAccessor.h"
 
-#include "wabi/imaging/glf/contextCaps.h"
-
-#include "wabi/imaging/hdPh/bufferArrayRange.h"
-#include "wabi/imaging/hdPh/bufferResource.h"
-#include "wabi/imaging/hdPh/renderPassShader.h"
+#include "wabi/imaging/hdSt/bufferArrayRange.h"
+#include "wabi/imaging/hdSt/bufferResource.h"
+#include "wabi/imaging/hdSt/renderPassShader.h"
 
 // XXX todo tmp needed until we remove direct gl calls below.
 #include "wabi/imaging/hgiGL/buffer.h"
@@ -40,19 +36,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(HDX_ENABLE_OIT, true, "Enable order independent translucency");
+TF_DEFINE_ENV_SETTING(HDX_ENABLE_OIT, true, 
+                      "Enable order independent translucency");
 
 /* static */
 bool HdxOitBufferAccessor::IsOitEnabled()
 {
-  if (!bool(TfGetEnvSetting(HDX_ENABLE_OIT)))
-    return false;
-
-  GlfContextCaps const &caps = GlfContextCaps::GetInstance();
-  if (!caps.shaderStorageBufferEnabled)
-    return false;
-
-  return true;
+  return TfGetEnvSetting(HDX_ENABLE_OIT);
 }
 
 HdxOitBufferAccessor::HdxOitBufferAccessor(HdTaskContext *ctx) : _ctx(ctx) {}
@@ -74,7 +64,7 @@ HdBufferArrayRangeSharedPtr const &HdxOitBufferAccessor::_GetBar(const TfToken &
   return v.Get<HdBufferArrayRangeSharedPtr>();
 }
 
-bool HdxOitBufferAccessor::AddOitBufferBindings(const HdPhRenderPassShaderSharedPtr &shader)
+bool HdxOitBufferAccessor::AddOitBufferBindings(const HdStRenderPassShaderSharedPtr &shader)
 {
   HdBufferArrayRangeSharedPtr const &counterBar = _GetBar(HdxTokens->oitCounterBufferBar);
   HdBufferArrayRangeSharedPtr const &dataBar = _GetBar(HdxTokens->oitDataBufferBar);
@@ -86,22 +76,26 @@ bool HdxOitBufferAccessor::AddOitBufferBindings(const HdPhRenderPassShaderShared
     shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
                                               HdxTokens->oitCounterBufferBar,
                                               counterBar,
-                                              /*interleave = */ false));
+                                              /*interleave = */ false,
+                                              /*writable = */ true));
 
     shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
                                               HdxTokens->oitDataBufferBar,
                                               dataBar,
-                                              /*interleave = */ false));
+                                              /*interleave = */ false,
+                                              /*writable = */ true));
 
     shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
                                               HdxTokens->oitDepthBufferBar,
                                               depthBar,
-                                              /*interleave = */ false));
+                                              /*interleave = */ false,
+                                              /*writable = */ true));
 
     shader->AddBufferBinding(HdBindingRequest(HdBinding::SSBO,
                                               HdxTokens->oitIndexBufferBar,
                                               indexBar,
-                                              /*interleave = */ false));
+                                              /*interleave = */ false,
+                                              /*writable = */ true));
 
     shader->AddBufferBinding(HdBindingRequest(HdBinding::UBO,
                                               HdxTokens->oitUniformBar,
@@ -118,7 +112,7 @@ bool HdxOitBufferAccessor::AddOitBufferBindings(const HdPhRenderPassShaderShared
   }
 }
 
-void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
+void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary(Hgi *hgi)
 {
   // If the OIT buffers were already cleared earlier, skip and do not
   // clear them again.
@@ -135,7 +129,7 @@ void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
   // The shader determines what elements in each buffer are used based on
   // finding -1 in the counter buffer. We can skip clearing the other buffers.
 
-  HdPhBufferArrayRangeSharedPtr stCounterBar = std::dynamic_pointer_cast<HdPhBufferArrayRange>(
+  HdStBufferArrayRangeSharedPtr stCounterBar = std::dynamic_pointer_cast<HdStBufferArrayRange>(
     _GetBar(HdxTokens->oitCounterBufferBar));
 
   if (!stCounterBar) {
@@ -143,32 +137,20 @@ void HdxOitBufferAccessor::InitializeOitBuffersIfNecessary()
     return;
   }
 
-  HdPhBufferResourceSharedPtr stCounterResource = stCounterBar->GetResource(
+  HdStBufferResourceSharedPtr stCounterResource = stCounterBar->GetResource(
     HdxTokens->hdxOitCounterBuffer);
 
-  GlfContextCaps const &caps = GlfContextCaps::GetInstance();
-  const GLint clearCounter = -1;
+  // We want to fill the buffer with int -1 but the FillBuffer interface
+  // supports uint8_t (due to a limitation in the Metal API which we can later
+  // revisit to find a workaround). A buffer filled with uint8_t 0xff is the
+  // same as a buffer filled with int 0xffffffff.
+  const uint8_t clearCounter = -1;
 
-  // XXX todo add a Clear() fn on HdPhBufferResource so that we do not have
-  // to use direct gl calls. below.
-  HgiBufferHandle const &buffer = stCounterResource->GetHandle();
-  HgiGLBuffer const *glBuffer = dynamic_cast<HgiGLBuffer const *>(buffer.Get());
-  if (!glBuffer) {
-    TF_CODING_ERROR("Todo: Add HdPhBufferResource::Clear");
-    return;
-  }
-
-  if (ARCH_LIKELY(caps.directStateAccessEnabled)) {
-    glClearNamedBufferData(glBuffer->GetBufferId(),
-                           GL_R32I,
-                           GL_RED_INTEGER,
-                           GL_INT,
-                           &clearCounter);
-  } else {
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, glBuffer->GetBufferId());
-    glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R32I, GL_RED_INTEGER, GL_INT, &clearCounter);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-  }
+  HgiBlitCmdsUniquePtr blitCmds = hgi->CreateBlitCmds();
+  blitCmds->PushDebugGroup("Clear OIT buffers");
+  blitCmds->FillBuffer(stCounterResource->GetHandle(), clearCounter);
+  blitCmds->PopDebugGroup();
+  hgi->SubmitCmds(blitCmds.get());
 }
 
 WABI_NAMESPACE_END

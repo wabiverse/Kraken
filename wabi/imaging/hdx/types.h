@@ -24,15 +24,16 @@
 #ifndef WABI_IMAGING_HDX_TYPES_H
 #define WABI_IMAGING_HDX_TYPES_H
 
-#include "wabi/base/tf/token.h"
-#include "wabi/base/vt/dictionary.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
 #include "wabi/imaging/hgi/types.h"
 #include "wabi/imaging/hio/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/token.h"
+#include "wabi/base/vt/dictionary.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 // Struct used to send shader inputs from Presto and send them to Hydra
 struct HdxShaderInputs

@@ -24,12 +24,13 @@
 #ifndef WABI_IMAGING_HDX_TOKENS_H
 #define WABI_IMAGING_HDX_TOKENS_H
 
-#include "wabi/base/tf/staticTokens.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/staticTokens.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 #define HDX_TOKENS                         \
   (hdxOitCounterBuffer)(hdxOitDataBuffer)( \
@@ -40,7 +41,7 @@ TF_DECLARE_PUBLIC_TOKENS(HdxTokens, HDX_API, HDX_TOKENS);
 #define HDX_PRIMITIVE_TOKENS                                 \
   (lightTypePositional)(lightTypeDirectional)(lightTypeSpot) \
                                                              \
-    (aovInputTask)(drawTargetTask)(drawTargetResolveTask)(colorizeSelectionTask)(oitRenderTask)(oitResolveTask)(oitVolumeRenderTask)(pickTask)(pickFromRenderBufferTask)(presentTask)(renderTask)(renderSetupTask)(simpleLightTask)(shadowTask)
+    (aovInputTask)(colorCorrectionTask)(colorizeSelectionTask)(drawTargetTask)(drawTargetResolveTask)(oitRenderTask)(oitResolveTask)(oitVolumeRenderTask)(pickTask)(pickFromRenderBufferTask)(presentTask)(renderTask)(renderSetupTask)(simpleLightTask)(shadowTask)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxPrimitiveTokens, HDX_API, HDX_PRIMITIVE_TOKENS);
 
@@ -48,11 +49,12 @@ TF_DECLARE_PUBLIC_TOKENS(HdxPrimitiveTokens, HDX_API, HDX_PRIMITIVE_TOKENS);
 // through that camera.
 
 #define HDX_RENDERTAG_TOKENS \
-  (renderingGuide)(label)(cameraGuide)(inCameraGuide)(streamline)(interactiveOnlyGeom)(path)
+  (renderingGuide)(label)(   \
+    cameraGuide)(inCameraGuide)(streamline)(interactiveOnlyGeom)(path)(widget)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxRenderTagTokens, HDX_API, HDX_RENDERTAG_TOKENS);
 
-#define HDX_COLOR_CORRECTION_TOKENS (disabled)(sRGB)(openColorIO)(channelsOnly)
+#define HDX_COLOR_CORRECTION_TOKENS (disabled)(sRGB)(openColorIO)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxColorCorrectionTokens, HDX_API, HDX_COLOR_CORRECTION_TOKENS);
 
@@ -70,6 +72,13 @@ TF_DECLARE_PUBLIC_TOKENS(HdxColorChannelTokens, HDX_API, HDX_COLOR_CHANNEL_TOKEN
   (colorIntermediate)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxAovTokens, HDX_API, HDX_AOV_TOKENS);
+
+// Simple lighting
+#define HDX_SIMPLELIGHTTASK_TOKENS \
+  (lighting)(lightingContext)(     \
+    useLighting)(useColorMaterialDiffuse)(lightSource)(position)(ambient)(diffuse)(specular)(spotDirection)(spotCutoff)(spotFalloff)(attenuation)(worldToLightTransform)(shadowIndexStart)(shadowIndexEnd)(hasShadow)(isIndirectLight)(shadow)(worldToShadowMatrix)(shadowToWorldMatrix)(blur)(bias)(material)(emission)(sceneColor)(shininess)
+
+TF_DECLARE_PUBLIC_TOKENS(HdxSimpleLightTaskTokens, HDX_API, HDX_SIMPLELIGHTTASK_TOKENS);
 
 WABI_NAMESPACE_END
 

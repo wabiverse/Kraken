@@ -24,6 +24,7 @@
 #ifndef HDX_VISUALIZE_AOV_TASK_H
 #define HDX_VISUALIZE_AOV_TASK_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/gf/vec3i.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/task.h"
@@ -35,7 +36,6 @@
 #include "wabi/imaging/hgi/shaderProgram.h"
 #include "wabi/imaging/hgi/texture.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -153,6 +153,7 @@ class HdxVisualizeAovTask : public HdxTask
   float _minMaxDepth[2];
   VizKernel _vizKernel;
 };
+
 
 /// \class HdxVisualizeAovTaskParams
 ///

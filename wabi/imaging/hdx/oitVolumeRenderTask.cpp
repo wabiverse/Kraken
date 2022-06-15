@@ -21,17 +21,19 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/imaging/garch/glApi.h"
-
-#include "wabi/imaging/hdx/oitBufferAccessor.h"
 #include "wabi/imaging/hdx/oitVolumeRenderTask.h"
 #include "wabi/imaging/hdx/package.h"
+#include "wabi/imaging/hdx/oitBufferAccessor.h"
 
+#include "wabi/imaging/hd/renderDelegate.h"
 #include "wabi/imaging/hd/renderPassState.h"
 #include "wabi/imaging/hd/rprimCollection.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
+#include "wabi/imaging/hd/vtBufferSource.h"
 
-#include "wabi/imaging/hdPh/renderPassShader.h"
+#include "wabi/imaging/hdSt/renderPassShader.h"
+#include "wabi/imaging/hdSt/tokens.h"
+#include "wabi/imaging/hdSt/volume.h"
 
 #include "wabi/imaging/glf/diagnostic.h"
 
@@ -40,7 +42,7 @@ WABI_NAMESPACE_BEGIN
 HdxOitVolumeRenderTask::HdxOitVolumeRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
   : HdxRenderTask(delegate, id),
     _oitVolumeRenderPassShader(
-      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitVolumeShader())),
+      std::make_shared<HdStRenderPassShader>(HdxPackageRenderPassOitVolumeShader())),
     _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
 {}
 
@@ -63,19 +65,17 @@ void HdxOitVolumeRenderTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIn
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (_isOitEnabled) {
-    HdxRenderTask::Prepare(ctx, renderIndex);
+  // OIT buffers take up significant GPU resources. Skip if there are no
+  // oit draw items (i.e. no volumetric draw items)
+  if (!_isOitEnabled || !HdxRenderTask::_HasDrawItems()) {
+    return;
+  }
 
-    // OIT buffers take up significant GPU resources. Skip if there are no
-    // oit draw items (i.e. no translucent or volumetric draw items)
-    if (HdxRenderTask::_HasDrawItems()) {
-      HdxOitBufferAccessor(ctx).RequestOitBuffers();
-    }
+  HdxRenderTask::Prepare(ctx, renderIndex);
+  HdxOitBufferAccessor(ctx).RequestOitBuffers();
 
-    if (HdRenderPassStateSharedPtr const state = _GetRenderPassState(ctx)) {
-      _oitVolumeRenderPassShader->UpdateAovInputTextures(state->GetAovInputBindings(),
-                                                         renderIndex);
-    }
+  if (HdRenderPassStateSharedPtr const state = _GetRenderPassState(ctx)) {
+    _oitVolumeRenderPassShader->UpdateAovInputTextures(state->GetAovInputBindings(), renderIndex);
   }
 }
 
@@ -86,10 +86,9 @@ void HdxOitVolumeRenderTask::Execute(HdTaskContext *ctx)
 
   GLF_GROUP_FUNCTION();
 
-  if (!_isOitEnabled)
+  if (!_isOitEnabled || !HdxRenderTask::_HasDrawItems()) {
     return;
-  if (!HdxRenderTask::_HasDrawItems())
-    return;
+  }
 
   //
   // Pre Execute Setup
@@ -98,14 +97,14 @@ void HdxOitVolumeRenderTask::Execute(HdTaskContext *ctx)
   HdxOitBufferAccessor oitBufferAccessor(ctx);
 
   oitBufferAccessor.RequestOitBuffers();
-  oitBufferAccessor.InitializeOitBuffersIfNecessary();
+  oitBufferAccessor.InitializeOitBuffersIfNecessary(_GetHgi());
 
   HdRenderPassStateSharedPtr renderPassState = _GetRenderPassState(ctx);
   if (!TF_VERIFY(renderPassState))
     return;
 
-  HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get());
-  if (!TF_VERIFY(extendedState, "OIT only works with HdPh")) {
+  HdStRenderPassState *extendedState = dynamic_cast<HdStRenderPassState *>(renderPassState.get());
+  if (!TF_VERIFY(extendedState, "OIT only works with HdSt")) {
     return;
   }
 
@@ -120,28 +119,13 @@ void HdxOitVolumeRenderTask::Execute(HdTaskContext *ctx)
     return;
   }
 
-  // We render into a SSBO -- not MSSA compatible
-  bool oldMSAA = glIsEnabled(GL_MULTISAMPLE);
-  glDisable(GL_MULTISAMPLE);
-  // XXX When rendering HdPhPoints we set GL_POINTS and assume that
-  //     GL_POINT_SMOOTH is enabled by default. This renders circles instead
-  //     of squares. However, when toggling MSAA off (above) we see GL_POINTS
-  //     start to render squares (driver bug?).
-  //     For now we always enable GL_POINT_SMOOTH.
-  // XXX Switch points rendering to emit quad with FS that draws circle.
-  bool oldPointSmooth = glIsEnabled(GL_POINT_SMOOTH);
-  glEnable(GL_POINT_SMOOTH);
+  // We render into an SSBO -- not MSSA compatible
+  renderPassState->SetMultiSampleEnabled(false);
 
   // XXX
   //
   // To show volumes that intersect the far clipping plane, we might consider
   // calling glEnable(GL_DEPTH_CLAMP) here.
-
-  // XXX HdxRenderTask::Prepare calls HdPhRenderPassState::Prepare.
-  // This sets the cullStyle for the render pass shader.
-  // Since Oit uses a custom render pass shader, we must manually
-  // set cullStyle.
-  _oitVolumeRenderPassShader->SetCullStyle(renderPassState->GetCullStyle());
 
   //
   // Translucent pixels pass
@@ -150,18 +134,7 @@ void HdxOitVolumeRenderTask::Execute(HdTaskContext *ctx)
   renderPassState->SetEnableDepthMask(false);
   renderPassState->SetColorMasks({HdRenderPassState::ColorMaskNone});
   HdxRenderTask::Execute(ctx);
-
-  //
-  // Post Execute Restore
-  //
-
-  if (oldMSAA) {
-    glEnable(GL_MULTISAMPLE);
-  }
-
-  if (!oldPointSmooth) {
-    glDisable(GL_POINT_SMOOTH);
-  }
 }
+
 
 WABI_NAMESPACE_END

@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HDX_DRAW_TARGET_TASK_H
 #define WABI_IMAGING_HDX_DRAW_TARGET_TASK_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/task.h"
 
@@ -35,10 +35,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-class HdPhDrawTarget;
-class HdPhDrawTargetRenderPassState;
-using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
-using HdPhSimpleLightingShaderSharedPtr = std::shared_ptr<class HdPhSimpleLightingShader>;
+class HdStDrawTarget;
+class HdStDrawTargetRenderPassState;
+using HdStRenderPassStateSharedPtr = std::shared_ptr<class HdStRenderPassState>;
+using HdStSimpleLightingShaderSharedPtr = std::shared_ptr<class HdStSimpleLightingShader>;
 TF_DECLARE_REF_PTRS(GlfSimpleLightingContext);
 
 // Not strictly necessary here.
@@ -79,15 +79,15 @@ class HdxDrawTargetTask : public HdTask
   static _RenderPassInfoVector _ComputeRenderPassInfos(HdRenderIndex *renderIndex);
 
   static _CameraInfo _ComputeCameraInfo(const HdRenderIndex &renderIndex,
-                                        const HdPhDrawTarget *drawTarget);
+                                        const HdStDrawTarget *drawTarget);
   static void _UpdateLightingContext(const _CameraInfo &cameraInfo,
                                      GlfSimpleLightingContextConstRefPtr const &srcContext,
                                      GlfSimpleLightingContextRefPtr const &ctx);
   void _UpdateRenderPassState(const HdRenderIndex &renderIndex,
                               const _CameraInfo &cameraInfo,
-                              HdPhSimpleLightingShaderSharedPtr const &lightingShader,
-                              const HdPhDrawTargetRenderPassState *srcState,
-                              HdPhRenderPassStateSharedPtr const &state) const;
+                              HdStSimpleLightingShaderSharedPtr const &lightingShader,
+                              const HdStDrawTargetRenderPassState *srcState,
+                              HdStRenderPassStateSharedPtr const &state) const;
   static void _UpdateRenderPass(_RenderPassInfo *info);
 
   unsigned _currentDrawTargetSetVersion;

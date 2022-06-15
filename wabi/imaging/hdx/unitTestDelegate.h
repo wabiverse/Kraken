@@ -24,18 +24,18 @@
 #ifndef WABI_IMAGING_HDX_UNIT_TEST_DELEGATE_H
 #define WABI_IMAGING_HDX_UNIT_TEST_DELEGATE_H
 
-#include "wabi/imaging/glf/simpleLight.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
 #include "wabi/imaging/hd/tokens.h"
+#include "wabi/imaging/glf/simpleLight.h"
 #include "wabi/imaging/pxOsd/tokens.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/gf/matrix4d.h"
-#include "wabi/base/gf/matrix4f.h"
-#include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
-#include "wabi/base/gf/vec4d.h"
+#include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec4f.h"
+#include "wabi/base/gf/vec4d.h"
+#include "wabi/base/gf/matrix4f.h"
+#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/vt/array.h"
 
 WABI_NAMESPACE_BEGIN
@@ -51,7 +51,8 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
 {
  public:
 
-  Hdx_UnitTestDelegate(HdRenderIndex *renderIndex);
+  Hdx_UnitTestDelegate(HdRenderIndex *renderIndex,
+                       SdfPath const &delegateId = SdfPath::AbsoluteRootPath());
 
   void SetRefineLevel(int level);
 
@@ -59,13 +60,19 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
   void SetCamera(GfMatrix4d const &viewMatrix, GfMatrix4d const &projMatrix);
   void SetCamera(SdfPath const &id, GfMatrix4d const &viewMatrix, GfMatrix4d const &projMatrix);
   void AddCamera(SdfPath const &id);
+  void UpdateCamera(SdfPath const &id, TfToken const &key, VtValue value);
 
   // light
   void AddLight(SdfPath const &id, GlfSimpleLight const &light);
   void SetLight(SdfPath const &id, TfToken const &key, VtValue value);
+  void RemoveLight(SdfPath const &id);
+
+  // transform
+  void UpdateTransform(SdfPath const &id, GfMatrix4f const &mat);
 
   // render buffer
-  void AddRenderBuffer(SdfPath const &id, const HdRenderBufferDescriptor &desc);
+  void AddRenderBuffer(SdfPath const &id, HdRenderBufferDescriptor const &desc);
+  void UpdateRenderBuffer(SdfPath const &id, HdRenderBufferDescriptor const &desc);
 
   // draw target
   void AddDrawTarget(SdfPath const &id);
@@ -162,6 +169,7 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
   HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id,
                                                   HdInterpolation interpolation) override;
   VtIntArray GetInstanceIndices(SdfPath const &instancerId, SdfPath const &prototypeId) override;
+  SdfPathVector GetInstancerPrototypes(SdfPath const &instancerId) override;
 
   GfMatrix4d GetInstancerTransform(SdfPath const &instancerId) override;
   HdDisplayStyle GetDisplayStyle(SdfPath const &id) override;
@@ -254,6 +262,7 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
   std::map<SdfPath, VtValue> _materials;
   std::map<SdfPath, int> _refineLevels;
   std::map<SdfPath, _DrawTarget> _drawTargets;
+  std::map<SdfPath, GfMatrix4d> _cameraTransforms;
   int _refineLevel;
 
   using SdfPathMap = std::map<SdfPath, SdfPath>;
@@ -266,6 +275,7 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
 
   SdfPath _cameraId;
 };
+
 
 WABI_NAMESPACE_END
 

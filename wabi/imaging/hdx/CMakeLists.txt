@@ -58,6 +58,7 @@ wabi_library(hdx
         selectionTracker
         shadowTask
         simpleLightTask
+        skydomeTask
         task
         taskController
         tokens

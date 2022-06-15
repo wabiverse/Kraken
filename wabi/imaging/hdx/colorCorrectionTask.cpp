@@ -22,14 +22,14 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/imaging/hdx/colorCorrectionTask.h"
-#include "wabi/base/tf/getenv.h"
+#include "wabi/imaging/hdx/package.h"
 #include "wabi/imaging/hd/aov.h"
 #include "wabi/imaging/hd/perfLog.h"
 #include "wabi/imaging/hd/renderBuffer.h"
 #include "wabi/imaging/hd/tokens.h"
-#include "wabi/imaging/hdx/package.h"
 #include "wabi/imaging/hf/perfLog.h"
 #include "wabi/imaging/hio/glslfx.h"
+#include "wabi/base/tf/getenv.h"
 
 #include "wabi/imaging/hgi/graphicsCmds.h"
 #include "wabi/imaging/hgi/graphicsCmdsDesc.h"
@@ -38,16 +38,19 @@
 
 #include <iostream>
 
-#ifdef WABI_OCIO_PLUGIN_ENABLED
+#ifdef PXR_OCIO_PLUGIN_ENABLED
 #  include <OpenColorIO/OpenColorIO.h>
 namespace OCIO = OCIO_NAMESPACE;
 #endif
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((colorCorrectionVertex, "ColorCorrectionVertex"))(
-                           (colorCorrectionFragment, "ColorCorrectionFragment"))(colorCorrectionShader));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((colorCorrectionVertex,    "ColorCorrectionVertex"))
+    ((colorCorrectionFragment,  "ColorCorrectionFragment"))
+    (colorCorrectionShader)
+);
 
 static const int HDX_DEFAULT_LUT3D_SIZE_OCIO = 65;
 
@@ -104,7 +107,7 @@ bool HdxColorCorrectionTask::_GetUseOcio() const
 {
 // Client can choose to use Hydra's build-in sRGB color correction or use
 // OpenColorIO for color correction in which case we insert extra OCIO code.
-#ifdef WABI_OCIO_PLUGIN_ENABLED
+#ifdef PXR_OCIO_PLUGIN_ENABLED
   // Only use if $OCIO environment variable is set.
   // (Otherwise this option should be disabled.)
   if (TfGetenv("OCIO") == "") {
@@ -119,7 +122,7 @@ bool HdxColorCorrectionTask::_GetUseOcio() const
 
 std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
 {
-#ifdef WABI_OCIO_PLUGIN_ENABLED
+#ifdef PXR_OCIO_PLUGIN_ENABLED
   // Use client provided OCIO values, or use default fallback values
   OCIO::ConstConfigRcPtr config = OCIO::GetCurrentConfig();
 
@@ -138,6 +141,7 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
   }
 
   // Setup the transformation we need to apply
+#  if OCIO_VERSION_HEX < 0x02000000
   OCIO::DisplayTransformRcPtr transform = OCIO::DisplayTransform::Create();
   transform->setDisplay(display);
   transform->setView(view);
@@ -148,19 +152,33 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
   } else {
     transform->setLooksOverrideEnabled(false);
   }
+#  else
+  OCIO::DisplayViewTransformRcPtr transform = OCIO::DisplayViewTransform::Create();
+  transform->setDisplay(display);
+  transform->setView(view);
+  transform->setSrc(inputColorSpace.c_str());
+#  endif
 
   OCIO::ConstProcessorRcPtr processor = config->getProcessor(transform);
 
   // Create a GPU Shader Description
+#  if OCIO_VERSION_HEX < 0x02000000
   OCIO::GpuShaderDesc shaderDesc;
   shaderDesc.setLanguage(OCIO::GPU_LANGUAGE_GLSL_1_3);
   shaderDesc.setFunctionName("OCIODisplay");
   shaderDesc.setLut3DEdgeLen(_lut3dSizeOCIO);
+#  else
+  OCIO::GpuShaderDescRcPtr shaderDesc = OCIO::GpuShaderDesc::CreateShaderDesc();
+  shaderDesc->setLanguage(OCIO::GPU_LANGUAGE_GLSL_1_3);
+  shaderDesc->setFunctionName("OCIODisplay");
+#  endif
 
   // Compute and the 3D LUT
   const int num3Dentries = 3 * _lut3dSizeOCIO * _lut3dSizeOCIO * _lut3dSizeOCIO;
   std::vector<float> lut3d(num3Dentries);
+#  if OCIO_VERSION_HEX < 0x02000000
   processor->getGpuLut3D(lut3d.data(), shaderDesc);
+#  endif
 
   // Load the data into an OpenGL 3D Texture
   if (_texture3dLUT) {
@@ -180,7 +198,13 @@ std::string HdxColorCorrectionTask::_CreateOpenColorIOResources()
   lutDesc.usage = HgiTextureUsageBitsShaderRead;
   _texture3dLUT = _GetHgi()->CreateTexture(lutDesc);
 
+#  if OCIO_VERSION_HEX < 0x02000000
   const char *gpuShaderText = processor->getGpuShaderText(shaderDesc);
+#  else
+  OCIO::ConstGPUProcessorRcPtr gpuProcessor = processor->getDefaultGPUProcessor();
+  gpuProcessor->extractGpuShaderInfo(shaderDesc);
+  const char *gpuShaderText = shaderDesc->getShaderText();
+#  endif
 
   return std::string(gpuShaderText);
 #else
@@ -204,9 +228,6 @@ bool HdxColorCorrectionTask::_CreateShaderResources()
   vertDesc.shaderStage = HgiShaderStageVertex;
   HgiShaderFunctionAddStageInput(&vertDesc, "position", "vec4");
   HgiShaderFunctionAddStageInput(&vertDesc, "uvIn", "vec2");
-  if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan) {
-    vsCode = "#version 450 \n";
-  }
   HgiShaderFunctionAddStageOutput(&vertDesc, "gl_Position", "vec4", "position");
   HgiShaderFunctionAddStageOutput(&vertDesc, "uvOut", "vec2");
   vsCode += glslfx.GetSource(_tokens->colorCorrectionVertex);
@@ -225,9 +246,6 @@ bool HdxColorCorrectionTask::_CreateShaderResources()
   HgiShaderFunctionAddConstantParam(&fragDesc, "screenSize", "vec2");
   fragDesc.debugName = _tokens->colorCorrectionFragment.GetString();
   fragDesc.shaderStage = HgiShaderStageFragment;
-  if (_hgi->GetAPIName() == HgiTokens->OpenGL || _hgi->GetAPIName() == HgiTokens->Vulkan) {
-    fsCode = "#version 450 \n";
-  }
   if (useOCIO) {
     fsCode += "#define GLSLFX_USE_OCIO\n";
     // Our current version of OCIO outputs 130 glsl and texture3D is
@@ -267,24 +285,18 @@ bool HdxColorCorrectionTask::_CreateBufferResources()
   }
 
   // A larger-than screen triangle made to fit the screen.
-  constexpr float vertDataGL[][6] = {
+  constexpr float vertData[][6] = {
     {-1, 3,  0, 1, 0, 2},
     {-1, -1, 0, 1, 0, 0},
     {3,  -1, 0, 1, 2, 0}
   };
 
-  constexpr float vertDataOther[][6] = {
-    {-1, 3,  0, 1, 0, -1},
-    {-1, -1, 0, 1, 0, 1 },
-    {3,  -1, 0, 1, 2, 1 }
-  };
-
   HgiBufferDesc vboDesc;
   vboDesc.debugName = "HdxColorCorrectionTask VertexBuffer";
   vboDesc.usage = HgiBufferUsageVertex;
-  vboDesc.initialData = _hgi->GetAPIName() != HgiTokens->OpenGL ? vertDataOther : vertDataGL;
-  vboDesc.byteSize = sizeof(vertDataOther);
-  vboDesc.vertexStride = sizeof(vertDataOther[0]);
+  vboDesc.initialData = vertData;
+  vboDesc.byteSize = sizeof(vertData);
+  vboDesc.vertexStride = sizeof(vertData[0]);
   _vertexBuffer = _GetHgi()->CreateBuffer(vboDesc);
 
   static const int32_t indices[3] = {0, 1, 2};
@@ -388,7 +400,10 @@ bool HdxColorCorrectionTask::_CreatePipeline(HgiTextureHandle const &aovTexture)
   // pixels that were set with a clearColor alpha of 0.0.
   desc.multiSampleState.alphaToCoverageEnable = false;
 
-  // Setup raserization state
+  // The MSAA on renderPipelineState has to match the render target.
+  desc.multiSampleState.sampleCount = aovTexture->GetDescriptor().sampleCount;
+
+  // Setup rasterization state
   desc.rasterizationState.cullMode = HgiCullModeBack;
   desc.rasterizationState.polygonMode = HgiPolygonModeFill;
   desc.rasterizationState.winding = HgiWindingCounterClockwise;
@@ -452,7 +467,7 @@ void HdxColorCorrectionTask::_ApplyColorCorrection(HgiTextureHandle const &aovTe
                              sizeof(_screenSize),
                              &_screenSize);
   gfxCmds->SetViewport(vp);
-  gfxCmds->DrawIndexed(_indexBuffer, 3, 0, 0, 1);
+  gfxCmds->DrawIndexed(_indexBuffer, 3, 0, 0, 1, 0);
   gfxCmds->PopDebugGroup();
 
   // Done recording commands, submit work.

@@ -24,16 +24,17 @@
 #ifndef WABI_IMAGING_HDX_RENDER_TASK_H
 #define WABI_IMAGING_HDX_RENDER_TASK_H
 
-#include "wabi/imaging/hdPh/renderPassState.h"
-#include "wabi/imaging/hdx/api.h"
-#include "wabi/imaging/hdx/renderSetupTask.h"  // for short-term compatibility.
-#include "wabi/imaging/hdx/task.h"
-#include "wabi/imaging/hdx/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hdx/api.h"
+#include "wabi/imaging/hdx/version.h"
+#include "wabi/imaging/hdx/task.h"
+#include "wabi/imaging/hdx/renderSetupTask.h"  // for short-term compatibility.
+#include "wabi/imaging/hdSt/renderPassState.h"
 
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
+
 
 class HdSceneDelegate;
 
@@ -95,14 +96,14 @@ class HdxRenderTask : public HdxTask
   HDX_API
   HdRenderPassStateSharedPtr _GetRenderPassState(HdTaskContext *ctx) const;
 
-  // XXX: Phoenix specific API
+  // XXX: Storm specific API
   // While HdDrawItem is currently a core-Hydra concept, it'll be moved
-  // to Phoenix. Until then, allow querying the render pass to know if there's
+  // to Storm. Until then, allow querying the render pass to know if there's
   // draw submission work.
 
   // Returns whether the render pass has any draw items to submit.
-  // For non-Phoenix backends, this returns true.
-  // When using with Phoenix tasks, make sure to call it after
+  // For non-Storm backends, this returns true.
+  // When using with Storm tasks, make sure to call it after
   // HdxRenderTask::Prepare().
   HDX_API
   bool _HasDrawItems() const;
@@ -115,9 +116,9 @@ class HdxRenderTask : public HdxTask
   // Optional internal render setup task, for params unpacking.
   HdxRenderSetupTaskSharedPtr _setupTask;
 
-  // XXX: Phoenix specific API
-  // Setup additional state that HdPhRenderPassState requires.
-  void _SetHdPhRenderPassState(HdTaskContext *ctx, HdPhRenderPassState *renderPassState);
+  // XXX: Storm specific API
+  // Setup additional state that HdStRenderPassState requires.
+  void _SetHdStRenderPassState(HdTaskContext *ctx, HdStRenderPassState *renderPassState);
 
   // Inspect the AOV bindings to determine if any of them need to be cleared.
   bool _NeedToClearAovs(HdRenderPassStateSharedPtr const &renderPassState) const;
@@ -126,6 +127,7 @@ class HdxRenderTask : public HdxTask
   HdxRenderTask(const HdxRenderTask &) = delete;
   HdxRenderTask &operator=(const HdxRenderTask &) = delete;
 };
+
 
 WABI_NAMESPACE_END
 

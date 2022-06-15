@@ -24,16 +24,17 @@
 #ifndef WABI_IMAGING_HDX_SELECTION_TASK_H
 #define WABI_IMAGING_HDX_SELECTION_TASK_H
 
-#include "wabi/imaging/hd/task.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
+#include "wabi/imaging/hd/task.h"
 
 #include "wabi/base/gf/vec4f.h"
 
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
+
 
 class HdRenderIndex;
 class HdSceneDelegate;
@@ -71,6 +72,7 @@ class HdxSelectionTask : public HdTask
   HDX_API
   void Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
+
   /// Prepare the tasks resources
   HDX_API
   void Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex) override;
@@ -78,6 +80,7 @@ class HdxSelectionTask : public HdTask
   /// Execute render pass task
   HDX_API
   void Execute(HdTaskContext *ctx) override;
+
 
  private:
 
@@ -100,6 +103,7 @@ HDX_API
 bool operator==(const HdxSelectionTaskParams &lhs, const HdxSelectionTaskParams &rhs);
 HDX_API
 bool operator!=(const HdxSelectionTaskParams &lhs, const HdxSelectionTaskParams &rhs);
+
 
 WABI_NAMESPACE_END
 

@@ -33,10 +33,11 @@
 #include "wabi/imaging/hd/rprimCollection.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
 
-#include "wabi/imaging/hdPh/renderPass.h"
-#include "wabi/imaging/hdPh/renderPassShader.h"
+#include "wabi/imaging/hdSt/renderPass.h"
+#include "wabi/imaging/hdSt/renderPassShader.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 // -------------------------------------------------------------------------- //
 
@@ -107,6 +108,7 @@ void HdxRenderTask::_Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirty
       }
 
       _setupTask->SyncParams(delegate, params);
+
     } else {
       // If params are not set, expect the renderpass state to be passed
       // in the task context.
@@ -130,10 +132,6 @@ void HdxRenderTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
   if (_setupTask) {
     _setupTask->Prepare(ctx, renderIndex);
   }
-
-  if (_pass) {
-    _pass->Prepare(GetRenderTags());
-  }
 }
 
 void HdxRenderTask::Execute(HdTaskContext *ctx)
@@ -146,15 +144,15 @@ void HdxRenderTask::Execute(HdTaskContext *ctx)
   if (!TF_VERIFY(renderPassState))
     return;
 
-  if (HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(
+  if (HdStRenderPassState *extendedState = dynamic_cast<HdStRenderPassState *>(
         renderPassState.get())) {
 
-    // Bail out early for Phoenix tasks that have no rendering work to submit
+    // Bail out early for Storm tasks that have no rendering work to submit
     // and don't need to clear AOVs.
     if (!_HasDrawItems() && !_NeedToClearAovs(renderPassState)) {
       return;
     }
-    _SetHdPhRenderPassState(ctx, extendedState);
+    _SetHdStRenderPassState(ctx, extendedState);
   }
 
   // Render geometry with the rendertags (if any)
@@ -187,17 +185,17 @@ HdRenderPassStateSharedPtr HdxRenderTask::_GetRenderPassState(HdTaskContext *ctx
 
 bool HdxRenderTask::_HasDrawItems() const
 {
-  if (HdPh_RenderPass *hdPhRenderPass = dynamic_cast<HdPh_RenderPass *>(_pass.get())) {
-    return hdPhRenderPass->GetDrawItemCount() > 0;
+  if (HdSt_RenderPass *hdStRenderPass = dynamic_cast<HdSt_RenderPass *>(_pass.get())) {
+    return hdStRenderPass->HasDrawItems(GetRenderTags());
   } else {
-    // Non-Phoenix backends don't typically use the draw item subsystem.
+    // Non-Storm backends don't typically use the draw item subsystem.
     // Return true to signify that there is rendering work to do.
     return true;
   }
 }
 
-void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx,
-                                            HdPhRenderPassState *renderPassState)
+void HdxRenderTask::_SetHdStRenderPassState(HdTaskContext *ctx,
+                                            HdStRenderPassState *renderPassState)
 {
   // Can't use GetTaskContextData because the lightingShader
   // is optional.
@@ -205,8 +203,8 @@ void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx,
 
   // it's possible to not set lighting shader to HdRenderPassState.
   // Hd_DefaultLightingShader will be used in that case.
-  if (lightingShader.IsHolding<HdPhLightingShaderSharedPtr>()) {
-    renderPassState->SetLightingShader(lightingShader.Get<HdPhLightingShaderSharedPtr>());
+  if (lightingShader.IsHolding<HdStLightingShaderSharedPtr>()) {
+    renderPassState->SetLightingShader(lightingShader.Get<HdStLightingShaderSharedPtr>());
   }
 
   // Selection Setup
@@ -216,7 +214,7 @@ void HdxRenderTask::_SetHdPhRenderPassState(HdTaskContext *ctx,
   VtValue vu = (*ctx)[HdxTokens->selectionUniforms];
   VtValue vc = (*ctx)[HdxTokens->selectionPointColors];
 
-  HdPhRenderPassShaderSharedPtr renderPassShader = renderPassState->GetRenderPassShader();
+  HdStRenderPassShaderSharedPtr renderPassShader = renderPassState->GetRenderPassShader();
 
   if (!vo.IsEmpty() && !vu.IsEmpty() && !vc.IsEmpty()) {
     HdBufferArrayRangeSharedPtr obar = vo.Get<HdBufferArrayRangeSharedPtr>();
@@ -252,5 +250,6 @@ bool HdxRenderTask::_NeedToClearAovs(HdRenderPassStateSharedPtr const &renderPas
   }
   return false;
 }
+
 
 WABI_NAMESPACE_END

@@ -24,12 +24,12 @@
 #ifndef WABI_IMAGING_HDX_OIT_VOLUME_RENDER_TASK_H
 #define WABI_IMAGING_HDX_OIT_VOLUME_RENDER_TASK_H
 
-#include "wabi/imaging/hdx/api.h"
-#include "wabi/imaging/hdx/renderTask.h"
-#include "wabi/imaging/hdx/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hdx/api.h"
+#include "wabi/imaging/hdx/version.h"
+#include "wabi/imaging/hdx/renderTask.h"
 
-#include "wabi/imaging/hdPh/renderPassState.h"
+#include "wabi/imaging/hdSt/renderPassState.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -68,9 +68,10 @@ class HdxOitVolumeRenderTask : public HdxRenderTask
   HdxOitVolumeRenderTask(const HdxOitVolumeRenderTask &) = delete;
   HdxOitVolumeRenderTask &operator=(const HdxOitVolumeRenderTask &) = delete;
 
-  HdPhRenderPassShaderSharedPtr _oitVolumeRenderPassShader;
+  HdStRenderPassShaderSharedPtr _oitVolumeRenderPassShader;
   const bool _isOitEnabled;
 };
+
 
 WABI_NAMESPACE_END
 

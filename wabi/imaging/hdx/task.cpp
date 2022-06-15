@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/imaging/hdx/task.h"
-#include "wabi/imaging/hdx/tokens.h"
 #include "wabi/imaging/hgi/hgi.h"
 #include "wabi/imaging/hgi/tokens.h"
+#include "wabi/imaging/hdx/tokens.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -42,7 +42,7 @@ void HdxTask::Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *d
   // Hgi is pushed is provided by the application and pushed into the
   // task context by hydra.
   // We only have to find the Hgi driver once as it should not change.
-  // All gpu resources (in tasks and Phoenix) are created with a specific
+  // All gpu resources (in tasks and Storm) are created with a specific
   // Hgi device so we (correctly) assume Hgi* will not change during a
   // Hydra session. Not all tasks need Hgi, so we do not consider it an
   // error here to not find Hgi.

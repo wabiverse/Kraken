@@ -22,19 +22,21 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/imaging/hdx/renderSetupTask.h"
-#include "wabi/imaging/hdx/debugCodes.h"
 #include "wabi/imaging/hdx/package.h"
 #include "wabi/imaging/hdx/tokens.h"
+#include "wabi/imaging/hdx/debugCodes.h"
 
 #include "wabi/imaging/hd/changeTracker.h"
-#include "wabi/imaging/hd/renderBuffer.h"
-#include "wabi/imaging/hd/renderDelegate.h"
 #include "wabi/imaging/hd/renderIndex.h"
+#include "wabi/imaging/hd/renderDelegate.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
+#include "wabi/imaging/hd/renderBuffer.h"
 
 #include "wabi/imaging/hd/camera.h"
-#include "wabi/imaging/hdPh/renderPassShader.h"
-#include "wabi/imaging/hdPh/renderPassState.h"
+#include "wabi/imaging/hdSt/renderPassShader.h"
+#include "wabi/imaging/hdSt/renderPassState.h"
+#include "wabi/imaging/hdSt/tokens.h"
+#include "wabi/imaging/hdSt/volume.h"
 
 #include "wabi/imaging/cameraUtil/conformWindow.h"
 
@@ -45,8 +47,8 @@ WABI_NAMESPACE_BEGIN
 HdxRenderSetupTask::HdxRenderSetupTask(HdSceneDelegate *delegate, SdfPath const &id)
   : HdTask(id),
     _colorRenderPassShader(
-      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassColorShader())),
-    _idRenderPassShader(std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassIdShader())),
+      std::make_shared<HdStRenderPassShader>(HdxPackageRenderPassColorShader())),
+    _idRenderPassShader(std::make_shared<HdStRenderPassShader>(HdxPackageRenderPassIdShader())),
     _overrideWindowPolicy{false, CameraUtilFit},
     _viewport(0)
 {}
@@ -75,11 +77,18 @@ void HdxRenderSetupTask::Sync(HdSceneDelegate *delegate,
 
 void HdxRenderSetupTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 {
-
   _PrepareAovBindings(ctx, renderIndex);
   PrepareCamera(renderIndex);
 
   HdRenderPassStateSharedPtr &renderPassState = _GetRenderPassState(renderIndex);
+
+  const float stepSize = renderIndex->GetRenderDelegate()->GetRenderSetting<float>(
+    HdStRenderSettingsTokens->volumeRaymarchingStepSize,
+    HdStVolume::defaultStepSize);
+  const float stepSizeLighting = renderIndex->GetRenderDelegate()->GetRenderSetting<float>(
+    HdStRenderSettingsTokens->volumeRaymarchingStepSizeLighting,
+    HdStVolume::defaultStepSizeLighting);
+  renderPassState->SetVolumeRenderingConstants(stepSize, stepSizeLighting);
 
   renderPassState->Prepare(renderIndex->GetResourceRegistry());
   (*ctx)[HdxTokens->renderPassState] = VtValue(_renderPassState);
@@ -94,8 +103,8 @@ void HdxRenderSetupTask::Execute(HdTaskContext *ctx)
   (*ctx)[HdxTokens->renderPassState] = VtValue(_renderPassState);
 }
 
-void HdxRenderSetupTask::_SetRenderpassShadersForPhoenix(HdxRenderTaskParams const &params,
-                                                         HdPhRenderPassState *renderPassState)
+void HdxRenderSetupTask::_SetRenderpassShadersForStorm(HdxRenderTaskParams const &params,
+                                                       HdStRenderPassState *renderPassState)
 {
   renderPassState->SetUseSceneMaterials(params.enableSceneMaterials);
   if (params.enableIdRender) {
@@ -123,7 +132,7 @@ void HdxRenderSetupTask::SyncParams(HdSceneDelegate *delegate, HdxRenderTaskPara
   renderPassState->SetIndicatorColor(params.indicatorColor);
   renderPassState->SetPointSelectedSize(params.pointSelectedSize);
 
-  // Phoenix render pipeline state
+  // Storm render pipeline state
   {
     renderPassState->SetDepthBiasUseDefault(params.depthBiasUseDefault);
     renderPassState->SetDepthBiasEnabled(params.depthBiasEnable);
@@ -151,12 +160,12 @@ void HdxRenderSetupTask::SyncParams(HdSceneDelegate *delegate, HdxRenderTaskPara
     renderPassState->SetAlphaToCoverageEnabled(params.enableAlphaToCoverage &&
                                                !TfDebug::IsEnabled(HDX_DISABLE_ALPHA_TO_COVERAGE));
 
-    if (HdPhRenderPassState *const hdPhRenderPassState = dynamic_cast<HdPhRenderPassState *>(
+    if (HdStRenderPassState *const hdStRenderPassState = dynamic_cast<HdStRenderPassState *>(
           renderPassState.get())) {
-      hdPhRenderPassState->SetUseAovMultiSample(params.useAovMultiSample);
-      hdPhRenderPassState->SetResolveAovMultiSample(params.resolveAovMultiSample);
+      hdStRenderPassState->SetUseAovMultiSample(params.useAovMultiSample);
+      hdStRenderPassState->SetResolveAovMultiSample(params.resolveAovMultiSample);
 
-      _SetRenderpassShadersForPhoenix(params, hdPhRenderPassState);
+      _SetRenderpassShadersForStorm(params, hdStRenderPassState);
     }
   }
 
@@ -174,7 +183,7 @@ void HdxRenderSetupTask::_PrepareAovBindings(HdTaskContext *ctx, HdRenderIndex *
   // encountered.
   //
   // This is somewhat fragile. One of the clients is _BindTexture in
-  // hdPh/renderPassShader.cpp.
+  // hdSt/renderPassShader.cpp.
   //
   for (size_t i = 0; i < _aovBindings.size(); ++i) {
     if (_aovBindings[i].renderBuffer == nullptr) {

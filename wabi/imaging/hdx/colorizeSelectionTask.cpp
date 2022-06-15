@@ -35,8 +35,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((outlineFrag, "OutlineFragment"))(colorIn)(enableOutline)(radius)(texelSize));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((outlineFrag, "OutlineFragment"))
+    (colorIn)
+    (enableOutline)
+    (radius)
+    (texelSize)    
+);
 
 HdxColorizeSelectionTask::HdxColorizeSelectionTask(HdSceneDelegate *delegate, SdfPath const &id)
   : HdxTask(id),

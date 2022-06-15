@@ -29,8 +29,10 @@
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/stringUtils.h"
+#include "wabi/imaging/hio/imageRegistry.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 static TfToken _GetShaderPath(char const *shader)
 {
@@ -140,9 +142,20 @@ TfToken HdxPackageOutlineShader()
   return shader;
 }
 
+TfToken HdxPackageSkydomeShader()
+{
+  static TfToken shader = _GetShaderPath("skydome.glslfx");
+  return shader;
+}
+
 TfToken HdxPackageDefaultDomeLightTexture()
 {
-  static TfToken domeLightTexture = _GetTexturePath("StinsonBeach.exr");
+  // Use the tex version of the Domelight's environment map if supported
+  HioImageRegistry &hioImageReg = HioImageRegistry::GetInstance();
+  static bool useTex = hioImageReg.IsSupportedImageFile("StinsonBeach.tex");
+
+  static TfToken domeLightTexture = (useTex) ? _GetTexturePath("StinsonBeach.tex") :
+                                               _GetTexturePath("StinsonBeach.hdr");
   return domeLightTexture;
 }
 

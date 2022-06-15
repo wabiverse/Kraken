@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HDX_OIT_BUFFER_ACCESSOR_H
 #define WABI_IMAGING_HDX_OIT_BUFFER_ACCESSOR_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/task.h"
 
@@ -34,9 +34,11 @@
 
 WABI_NAMESPACE_BEGIN
 
+class Hgi;
+
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 
-using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
+using HdStRenderPassShaderSharedPtr = std::shared_ptr<class HdStRenderPassShader>;
 
 /// Class for OIT render tasks to access the OIT buffers.
 class HdxOitBufferAccessor
@@ -54,13 +56,13 @@ class HdxOitBufferAccessor
 
   /// Called during Excecute before writing to OIT buffers.
   HDX_API
-  void InitializeOitBuffersIfNecessary();
+  void InitializeOitBuffersIfNecessary(Hgi *hgi);
 
   /// Called during Execute to add necessary OIT buffer shader bindings.
   ///
   /// Returns false if the OIT buffers were not allocated.
   HDX_API
-  bool AddOitBufferBindings(const HdPhRenderPassShaderSharedPtr &);
+  bool AddOitBufferBindings(const HdStRenderPassShaderSharedPtr &);
 
  private:
 

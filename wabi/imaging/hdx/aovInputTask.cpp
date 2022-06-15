@@ -26,11 +26,12 @@
 
 #include "wabi/imaging/hd/aov.h"
 #include "wabi/imaging/hd/tokens.h"
-#include "wabi/imaging/hdPh/renderBuffer.h"
 #include "wabi/imaging/hdx/tokens.h"
+#include "wabi/imaging/hdSt/renderBuffer.h"
+#include "wabi/imaging/hgi/tokens.h"
 #include "wabi/imaging/hgi/blitCmds.h"
 #include "wabi/imaging/hgi/blitCmdsOps.h"
-#include "wabi/imaging/hgi/tokens.h"
+
 
 WABI_NAMESPACE_BEGIN
 

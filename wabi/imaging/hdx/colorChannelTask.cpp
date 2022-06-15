@@ -38,7 +38,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, ((colorChannelFrag, "ColorChannelFragment"))(colorIn));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((colorChannelFrag, "ColorChannelFragment"))
+    (colorIn)
+);
 
 HdxColorChannelTask::HdxColorChannelTask(HdSceneDelegate *delegate, SdfPath const &id)
   : HdxTask(id),
@@ -131,6 +135,7 @@ bool HdxColorChannelTask::_UpdateParameterBuffer(float screenSizeX, float screen
 
   return true;
 }
+
 
 // -------------------------------------------------------------------------- //
 // VtValue Requirements

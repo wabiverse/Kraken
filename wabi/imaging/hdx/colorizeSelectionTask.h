@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HDX_COLORIZE_SELECTION_TASK_H
 #define WABI_IMAGING_HDX_COLORIZE_SELECTION_TASK_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/gf/vec2f.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/task.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hgi/texture.h"
 

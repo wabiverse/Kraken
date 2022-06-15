@@ -24,21 +24,31 @@
 #ifndef WABI_IMAGING_HDX_OIT_RESOLVE_TASK_H
 #define WABI_IMAGING_HDX_OIT_RESOLVE_TASK_H
 
-#include "wabi/imaging/hd/task.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
+#include "wabi/imaging/hd/task.h"
 
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
 
+
 class HdSceneDelegate;
 
-using HdPhRenderPassStateSharedPtr = std::shared_ptr<class HdPhRenderPassState>;
+using HdStRenderPassStateSharedPtr = std::shared_ptr<class HdStRenderPassState>;
 
-using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
-using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader>;
+using HdSt_ImageShaderRenderPassSharedPtr = std::shared_ptr<class HdSt_ImageShaderRenderPass>;
+using HdStRenderPassShaderSharedPtr = std::shared_ptr<class HdStRenderPassShader>;
+
+/// OIT resolve task params.
+struct HdxOitResolveTaskParams
+{
+  HdxOitResolveTaskParams() : useAovMultiSample(true), resolveAovMultiSample(true) {}
+
+  bool useAovMultiSample;
+  bool resolveAovMultiSample;
+};
 
 /// \class HdxOitResolveTask
 ///
@@ -92,9 +102,9 @@ class HdxOitResolveTask : public HdTask
 
   const HdRenderPassAovBindingVector &_GetAovBindings(HdTaskContext *ctx) const;
 
-  HdRenderPassSharedPtr _renderPass;
-  HdPhRenderPassStateSharedPtr _renderPassState;
-  HdPhRenderPassShaderSharedPtr _renderPassShader;
+  HdSt_ImageShaderRenderPassSharedPtr _renderPass;
+  HdStRenderPassStateSharedPtr _renderPassState;
+  HdStRenderPassShaderSharedPtr _renderPassShader;
 
   GfVec2i _screenSize;
   HdBufferArrayRangeSharedPtr _counterBar;
@@ -103,6 +113,13 @@ class HdxOitResolveTask : public HdTask
   HdBufferArrayRangeSharedPtr _indexBar;
   HdBufferArrayRangeSharedPtr _uniformBar;
 };
+
+HDX_API
+bool operator==(const HdxOitResolveTaskParams &lhs, const HdxOitResolveTaskParams &rhs);
+HDX_API
+bool operator!=(const HdxOitResolveTaskParams &lhs, const HdxOitResolveTaskParams &rhs);
+HDX_API
+std::ostream &operator<<(std::ostream &out, const HdxOitResolveTaskParams &pv);
 
 WABI_NAMESPACE_END
 

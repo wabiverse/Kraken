@@ -25,15 +25,15 @@
 
 #include "wabi/imaging/hdx/debugCodes.h"
 
-#include "wabi/base/trace/trace.h"
-#include "wabi/base/work/loops.h"
 #include "wabi/imaging/hd/renderIndex.h"
 #include "wabi/imaging/hd/rprim.h"
+#include "wabi/base/trace/trace.h"
+#include "wabi/base/work/loops.h"
 
 #include <algorithm>
+#include <limits>
 #include <iomanip>
 #include <iostream>
-#include <limits>
 
 WABI_NAMESPACE_BEGIN
 

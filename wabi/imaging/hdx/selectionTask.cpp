@@ -30,9 +30,10 @@
 #include "wabi/imaging/hd/sceneDelegate.h"
 #include "wabi/imaging/hd/vtBufferSource.h"
 
-#include "wabi/imaging/hdPh/resourceRegistry.h"
+#include "wabi/imaging/hdSt/resourceRegistry.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 // -------------------------------------------------------------------------- //
 
@@ -80,12 +81,12 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     sel->UpdateSelection(renderIndex);
   }
 
-  HdPhResourceRegistrySharedPtr const &hdPhResourceRegistry =
-    std::dynamic_pointer_cast<HdPhResourceRegistry>(renderIndex->GetResourceRegistry());
+  HdStResourceRegistrySharedPtr const &hdStResourceRegistry =
+    std::dynamic_pointer_cast<HdStResourceRegistry>(renderIndex->GetResourceRegistry());
 
-  // Only Phoenix supports buffer array range. Without its registry
+  // Only Storm supports buffer array range. Without its registry
   // there's nowhere to put selection state, so don't compute it.
-  if (!hdPhResourceRegistry) {
+  if (!hdStResourceRegistry) {
     return;
   }
 
@@ -97,7 +98,7 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
 
       HdBufferSpecVector offsetSpecs;
       offsetSpecs.emplace_back(HdxTokens->hdxSelectionBuffer, HdTupleType{HdTypeInt32, 1});
-      _selOffsetBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
+      _selOffsetBar = hdStResourceRegistry->AllocateSingleBufferArrayRange(
         /*role*/ HdxTokens->selection,
         offsetSpecs,
         HdBufferArrayUsageHint());
@@ -108,7 +109,7 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
       uniformSpecs.emplace_back(HdxTokens->selColor, HdTupleType{HdTypeFloatVec4, 1});
       uniformSpecs.emplace_back(HdxTokens->selLocateColor, HdTupleType{HdTypeFloatVec4, 1});
       uniformSpecs.emplace_back(HdxTokens->occludedSelectionOpacity, HdTupleType{HdTypeFloat, 1});
-      _selUniformBar = hdPhResourceRegistry->AllocateUniformBufferArrayRange(
+      _selUniformBar = hdStResourceRegistry->AllocateUniformBufferArrayRange(
         /*role*/ HdxTokens->selection,
         uniformSpecs,
         HdBufferArrayUsageHint());
@@ -117,7 +118,7 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     if (!_selPointColorsBar) {
       HdBufferSpecVector colorSpecs;
       colorSpecs.emplace_back(HdxTokens->selectionPointColors, HdTupleType{HdTypeFloatVec4, 1});
-      _selPointColorsBar = hdPhResourceRegistry->AllocateSingleBufferArrayRange(
+      _selPointColorsBar = hdStResourceRegistry->AllocateSingleBufferArrayRange(
         /*role*/ HdxTokens->selection,
         colorSpecs,
         HdBufferArrayUsageHint());
@@ -126,7 +127,7 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     //
     // Uniforms
     //
-    hdPhResourceRegistry->AddSources(
+    hdStResourceRegistry->AddSources(
       _selUniformBar,
       {std::make_shared<HdVtBufferSource>(HdxTokens->selColor, VtValue(_params.selectionColor)),
        std::make_shared<HdVtBufferSource>(HdxTokens->selLocateColor, VtValue(_params.locateColor)),
@@ -138,7 +139,7 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     //
     VtIntArray offsets;
     _hasSelection = sel->GetSelectionOffsetBuffer(renderIndex, _params.enableSelection, &offsets);
-    hdPhResourceRegistry->AddSource(
+    hdStResourceRegistry->AddSource(
       _selOffsetBar,
       std::make_shared<HdVtBufferSource>(HdxTokens->hdxSelectionBuffer, VtValue(offsets)));
 
@@ -146,7 +147,7 @@ void HdxSelectionTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
     // Point Colors
     //
     const VtVec4fArray ptColors = sel->GetSelectedPointColors();
-    hdPhResourceRegistry->AddSource(
+    hdStResourceRegistry->AddSource(
       _selPointColorsBar,
       std::make_shared<HdVtBufferSource>(HdxTokens->selectionPointColors, VtValue(ptColors)));
   }
@@ -163,6 +164,7 @@ void HdxSelectionTask::Execute(HdTaskContext *ctx)
 
   // Note that selectionTask comes after renderTask.
 }
+
 
 // -------------------------------------------------------------------------- //
 // VtValue requirements

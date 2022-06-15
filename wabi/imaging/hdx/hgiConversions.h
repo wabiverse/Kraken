@@ -24,8 +24,8 @@
 #ifndef WABI_IMAGING_HDX_HGI_CONVERSIONS_H
 #define WABI_IMAGING_HDX_HGI_CONVERSIONS_H
 
-#include "wabi/imaging/hd/types.h"
 #include "wabi/imaging/hdx/api.h"
+#include "wabi/imaging/hd/types.h"
 #include "wabi/imaging/hgi/types.h"
 
 WABI_NAMESPACE_BEGIN
@@ -45,6 +45,7 @@ class HdxHgiConversions
   HDX_API
   static HdFormat GetHdFormat(HgiFormat hgiFormat);
 };
+
 
 WABI_NAMESPACE_END
 

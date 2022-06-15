@@ -29,6 +29,7 @@
 #include "wabi/imaging/hgi/hgi.h"
 #include "wabi/imaging/hgi/tokens.h"
 
+
 WABI_NAMESPACE_BEGIN
 
 bool _IsIntegerFormat(HgiFormat format)
@@ -117,6 +118,7 @@ void HdxPresentTask::Execute(HdTaskContext *ctx)
   // This is important for Hgi garbage collection to run.
   _GetHgi()->EndFrame();
 }
+
 
 // --------------------------------------------------------------------------- //
 // VtValue Requirements

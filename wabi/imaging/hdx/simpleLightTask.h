@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HDX_SIMPLE_LIGHT_TASK_H
 #define WABI_IMAGING_HDX_SIMPLE_LIGHT_TASK_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/task.h"
 
@@ -47,10 +47,11 @@ class HdSceneDelegate;
 class HdCamera;
 
 using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
-using HdPhSimpleLightingShaderSharedPtr = std::shared_ptr<class HdPhSimpleLightingShader>;
+using HdStSimpleLightingShaderSharedPtr = std::shared_ptr<class HdStSimpleLightingShader>;
 using HdxShadowMatrixComputationSharedPtr = std::shared_ptr<class HdxShadowMatrixComputation>;
 
 TF_DECLARE_REF_PTRS(GlfSimpleShadowArray);
+
 
 class HdxSimpleLightTask : public HdTask
 {
@@ -87,7 +88,7 @@ class HdxSimpleLightTask : public HdTask
   size_t _numLights;
 
   // Should be weak ptrs
-  HdPhSimpleLightingShaderSharedPtr _lightingShader;
+  HdStSimpleLightingShaderSharedPtr _lightingShader;
   bool _enableShadows;
   GfVec4f _viewport;
   CameraUtilFraming _framing;
@@ -102,8 +103,13 @@ class HdxSimpleLightTask : public HdTask
   // the render graph.  Maybe long-term these could be change-tracked.
   GlfSimpleLightVector _glfSimpleLights;
 
+  HdBufferArrayRangeSharedPtr _lightingBar;
+  HdBufferArrayRangeSharedPtr _lightSourcesBar;
+  HdBufferArrayRangeSharedPtr _shadowsBar;
+  HdBufferArrayRangeSharedPtr _materialBar;
+
   size_t _AppendLightsOfType(HdRenderIndex &renderIndex,
-                             std::vector<TfToken> const &lightTypes,
+                             TfTokenVector const &lightTypes,
                              SdfPathVector const &lightIncludePaths,
                              SdfPathVector const &lightExcludePaths,
                              std::map<TfToken, SdfPathVector> *lights);
@@ -166,6 +172,7 @@ HDX_API
 bool operator==(const HdxShadowParams &lhs, const HdxShadowParams &rhs);
 HDX_API
 bool operator!=(const HdxShadowParams &lhs, const HdxShadowParams &rhs);
+
 
 WABI_NAMESPACE_END
 

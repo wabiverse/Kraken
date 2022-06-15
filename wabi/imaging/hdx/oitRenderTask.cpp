@@ -21,18 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/imaging/garch/glApi.h"
-
-#include "wabi/imaging/hdx/oitBufferAccessor.h"
 #include "wabi/imaging/hdx/oitRenderTask.h"
 #include "wabi/imaging/hdx/package.h"
+#include "wabi/imaging/hdx/oitBufferAccessor.h"
 
 #include "wabi/imaging/hd/renderDelegate.h"
 #include "wabi/imaging/hd/renderIndex.h"
 #include "wabi/imaging/hd/rprimCollection.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
 
-#include "wabi/imaging/hdPh/renderPassShader.h"
+#include "wabi/imaging/hdSt/renderPassShader.h"
 
 #include "wabi/imaging/glf/diagnostic.h"
 
@@ -41,9 +39,9 @@ WABI_NAMESPACE_BEGIN
 HdxOitRenderTask::HdxOitRenderTask(HdSceneDelegate *delegate, SdfPath const &id)
   : HdxRenderTask(delegate, id),
     _oitTranslucentRenderPassShader(
-      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitShader())),
+      std::make_shared<HdStRenderPassShader>(HdxPackageRenderPassOitShader())),
     _oitOpaqueRenderPassShader(
-      std::make_shared<HdPhRenderPassShader>(HdxPackageRenderPassOitOpaqueShader())),
+      std::make_shared<HdStRenderPassShader>(HdxPackageRenderPassOitOpaqueShader())),
     _isOitEnabled(HdxOitBufferAccessor::IsOitEnabled())
 {}
 
@@ -64,14 +62,11 @@ void HdxOitRenderTask::Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex)
   HD_TRACE_FUNCTION();
   HF_MALLOC_TAG_FUNCTION();
 
-  if (_isOitEnabled) {
+  // OIT buffers take up significant GPU resources. Skip if there are no
+  // oit draw items (i.e. no translucent draw items)
+  if (_isOitEnabled && HdxRenderTask::_HasDrawItems()) {
     HdxRenderTask::Prepare(ctx, renderIndex);
-
-    // OIT buffers take up significant GPU resources. Skip if there are no
-    // oit draw items (i.e. no translucent or volumetric draw items)
-    if (HdxRenderTask::_HasDrawItems()) {
-      HdxOitBufferAccessor(ctx).RequestOitBuffers();
-    }
+    HdxOitBufferAccessor(ctx).RequestOitBuffers();
   }
 }
 
@@ -82,10 +77,9 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
 
   GLF_GROUP_FUNCTION();
 
-  if (!_isOitEnabled)
+  if (!_isOitEnabled || !HdxRenderTask::_HasDrawItems()) {
     return;
-  if (!HdxRenderTask::_HasDrawItems())
-    return;
+  }
 
   //
   // Pre Execute Setup
@@ -94,7 +88,7 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
     HdxOitBufferAccessor oitBufferAccessor(ctx);
 
     oitBufferAccessor.RequestOitBuffers();
-    oitBufferAccessor.InitializeOitBuffersIfNecessary();
+    oitBufferAccessor.InitializeOitBuffersIfNecessary(_GetHgi());
     if (!oitBufferAccessor.AddOitBufferBindings(_oitTranslucentRenderPassShader)) {
       TF_CODING_ERROR("No OIT buffers allocated but needed by OIT render task");
       return;
@@ -105,8 +99,8 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
   if (!TF_VERIFY(renderPassState))
     return;
 
-  HdPhRenderPassState *extendedState = dynamic_cast<HdPhRenderPassState *>(renderPassState.get());
-  if (!TF_VERIFY(extendedState, "OIT only works with HdPh")) {
+  HdStRenderPassState *extendedState = dynamic_cast<HdStRenderPassState *>(renderPassState.get());
+  if (!TF_VERIFY(extendedState, "OIT only works with HdSt")) {
     return;
   }
 
@@ -119,24 +113,8 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
     extendedState->SetAlphaThreshold(0.f);
   }
 
-  // We render into a SSBO -- not MSSA compatible
-  bool oldMSAA = glIsEnabled(GL_MULTISAMPLE);
-  glDisable(GL_MULTISAMPLE);
-  // XXX When rendering HdPhPoints we set GL_POINTS and assume that
-  //     GL_POINT_SMOOTH is enabled by default. This renders circles instead
-  //     of squares. However, when toggling MSAA off (above) we see GL_POINTS
-  //     start to render squares (driver bug?).
-  //     For now we always enable GL_POINT_SMOOTH.
-  // XXX Switch points rendering to emit quad with FS that draws circle.
-  bool oldPointSmooth = glIsEnabled(GL_POINT_SMOOTH);
-  glEnable(GL_POINT_SMOOTH);
-
-  // XXX HdxRenderTask::Prepare calls HdPhRenderPassState::Prepare.
-  // This sets the cullStyle for the render pass shader.
-  // Since Oit uses a custom render pass shader, we must manually
-  // set cullStyle.
-  _oitOpaqueRenderPassShader->SetCullStyle(extendedState->GetCullStyle());
-  _oitTranslucentRenderPassShader->SetCullStyle(extendedState->GetCullStyle());
+  // We render into an SSBO -- not MSAA compatible
+  renderPassState->SetMultiSampleEnabled(false);
 
   //
   // 1. Opaque pixels pass
@@ -149,6 +127,7 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
   {
     extendedState->SetRenderPassShader(_oitOpaqueRenderPassShader);
     renderPassState->SetEnableDepthMask(true);
+    renderPassState->SetColorMaskUseDefault(false);
     renderPassState->SetColorMasks({HdRenderPassState::ColorMaskRGBA});
 
     HdxRenderTask::Execute(ctx);
@@ -165,18 +144,7 @@ void HdxOitRenderTask::Execute(HdTaskContext *ctx)
     renderPassState->SetColorMasks({HdRenderPassState::ColorMaskNone});
     HdxRenderTask::Execute(ctx);
   }
-
-  //
-  // Post Execute Restore
-  //
-
-  if (oldMSAA) {
-    glEnable(GL_MULTISAMPLE);
-  }
-
-  if (!oldPointSmooth) {
-    glDisable(GL_POINT_SMOOTH);
-  }
 }
+
 
 WABI_NAMESPACE_END

@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HDX_PICK_FROM_RENDER_BUFFER_TASK_H
 #define WABI_IMAGING_HDX_PICK_FROM_RENDER_BUFFER_TASK_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/task.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/camera.h"
 #include "wabi/imaging/hd/renderBuffer.h"

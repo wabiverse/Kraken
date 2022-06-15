@@ -30,9 +30,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
 
-                         (camera));
+    (camera)
+);
 
 static SdfPath _ComputeCameraId(HdRenderIndex *renderIndex, SdfPath const &delegateId)
 {
@@ -108,7 +110,7 @@ void HdxFreeCameraSceneDelegate::SetWindowPolicy(const CameraUtilConformWindowPo
 void HdxFreeCameraSceneDelegate::SetMatrices(GfMatrix4d const &viewMatrix,
                                              GfMatrix4d const &projMatrix)
 {
-  GfCamera cam;
+  GfCamera cam = _camera;
   cam.SetFromViewAndProjectionMatrix(viewMatrix, projMatrix);
   SetCamera(cam);
 }
@@ -140,6 +142,7 @@ static HdCamera::Projection _ToHd(const GfCamera::Projection projection)
   TF_CODING_ERROR("Bad GfCamera::Projection value");
   return HdCamera::Perspective;
 }
+
 
 VtValue HdxFreeCameraSceneDelegate::GetCameraParamValue(SdfPath const &id, TfToken const &key)
 {

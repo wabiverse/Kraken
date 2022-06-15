@@ -24,16 +24,16 @@
 #ifndef WABI_IMAGING_HDX_OIT_RENDER_TASK_H
 #define WABI_IMAGING_HDX_OIT_RENDER_TASK_H
 
-#include "wabi/imaging/hdx/api.h"
-#include "wabi/imaging/hdx/renderTask.h"
-#include "wabi/imaging/hdx/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hdx/api.h"
+#include "wabi/imaging/hdx/version.h"
+#include "wabi/imaging/hdx/renderTask.h"
 
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
 
-using HdPhRenderPassShaderSharedPtr = std::shared_ptr<HdPhRenderPassShader>;
+using HdStRenderPassShaderSharedPtr = std::shared_ptr<HdStRenderPassShader>;
 
 /// \class HdxOitRenderTask
 ///
@@ -70,10 +70,11 @@ class HdxOitRenderTask : public HdxRenderTask
   HdxOitRenderTask(const HdxOitRenderTask &) = delete;
   HdxOitRenderTask &operator=(const HdxOitRenderTask &) = delete;
 
-  HdPhRenderPassShaderSharedPtr _oitTranslucentRenderPassShader;
-  HdPhRenderPassShaderSharedPtr _oitOpaqueRenderPassShader;
+  HdStRenderPassShaderSharedPtr _oitTranslucentRenderPassShader;
+  HdStRenderPassShaderSharedPtr _oitOpaqueRenderPassShader;
   const bool _isOitEnabled;
 };
+
 
 WABI_NAMESPACE_END
 

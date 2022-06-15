@@ -24,11 +24,11 @@
 #ifndef WABI_IMAGING_HDX_SHADOW_MATRIX_COMPUTATION_H
 #define WABI_IMAGING_HDX_SHADOW_MATRIX_COMPUTATION_H
 
-#include "wabi/base/gf/matrix4d.h"
-#include "wabi/imaging/cameraUtil/conformWindow.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hdx/api.h"
 #include "wabi/imaging/hdx/version.h"
-#include "wabi/wabi.h"
+#include "wabi/imaging/cameraUtil/conformWindow.h"
+#include "wabi/base/gf/matrix4d.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -58,6 +58,7 @@ class HdxShadowMatrixComputation
   HdxShadowMatrixComputation(const HdxShadowMatrixComputation &) = delete;
   HdxShadowMatrixComputation &operator=(const HdxShadowMatrixComputation &) = delete;
 };
+
 
 WABI_NAMESPACE_END
 
