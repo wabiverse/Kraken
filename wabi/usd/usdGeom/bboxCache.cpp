@@ -125,7 +125,7 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
       numDependencies.store(other.numDependencies.load());
     }
 
-    _PrototypeTask(_PrototypeTask &&other)
+    _PrototypeTask(_PrototypeTask &&other) noexcept
       : dependentPrototypes(std::move(other.dependentPrototypes))
     {
       numDependencies.store(other.numDependencies.load());
