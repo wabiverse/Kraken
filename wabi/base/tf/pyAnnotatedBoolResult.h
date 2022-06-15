@@ -77,7 +77,7 @@ struct TfPyAnnotatedBoolResult
     typedef TfPyAnnotatedBoolResult<Annotation> This;
     using namespace boost::python;
     TfPyLock lock;
-    return class_<Derived>(name, no_init)
+    return class_<Derived>(name, init<bool, Annotation>())
       .def(TfPyBoolBuiltinFuncName, &Derived::GetValue)
       .def("__repr__", &Derived::GetRepr)
       .def(self == bool())
@@ -137,13 +137,13 @@ struct TfPyAnnotatedBoolResult
 /// Returns \c true if the result of \p lhs is the same as \p rhs.
 template<class Annotation> bool operator==(bool lhs, TfPyAnnotatedBoolResult<Annotation> &rhs)
 {
-  return rhs.operator==(lhs);
+  return rhs == lhs;
 }
 
 /// Returns \c false if the result of \p lhs is the same as \p rhs.
 template<class Annotation> bool operator!=(bool lhs, TfPyAnnotatedBoolResult<Annotation> &rhs)
 {
-  return !(rhs == lhs);
+  return rhs != lhs;
 }
 
 WABI_NAMESPACE_END

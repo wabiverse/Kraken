@@ -31,8 +31,8 @@
 
 #include <locale>
 
-#include "wabi/base/tf/preprocessorUtilsLite.h"
 #include "wabi/base/tf/staticTokens.h"
+#include "wabi/base/tf/preprocessorUtilsLite.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/scope.hpp>

@@ -36,8 +36,8 @@
 #include <boost/mpl/vector/vector10.hpp>
 
 #include <boost/python/class.hpp>
-#include <boost/python/def_visitor.hpp>
 #include <boost/python/default_call_policies.hpp>
+#include <boost/python/def_visitor.hpp>
 #include <boost/python/raw_function.hpp>
 
 #include <functional>

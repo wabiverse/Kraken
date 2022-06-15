@@ -35,9 +35,9 @@
 /// which will produce a temporary structure containing the local contextual
 /// information. The intended usage is in a macro.
 
-#include "wabi/base/arch/functionLite.h"
-#include "wabi/base/tf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
+#include "wabi/base/arch/functionLite.h"
 
 #include <stddef.h>
 
@@ -56,7 +56,6 @@ class TfCallContext
       _function(nullptr),
       _line(0),
       _prettyFunction(nullptr),
-      _disabled(false),
       _hidden(false)
   {}
 
@@ -68,7 +67,6 @@ class TfCallContext
       _function(function),
       _line(line),
       _prettyFunction(prettyFunction),
-      _disabled(false),
       _hidden(false)
   {}
 
@@ -92,21 +90,10 @@ class TfCallContext
     return _prettyFunction;
   }
 
-  TfCallContext const &Disable() const
-  {
-    _disabled = true;
-    return *this;
-  }
-
   TfCallContext const &Hide() const
   {
     _hidden = true;
     return *this;
-  }
-
-  bool IsDisabled() const
-  {
-    return _disabled;
   }
 
   bool IsHidden() const
@@ -125,7 +112,6 @@ class TfCallContext
   char const *_function;
   size_t _line;
   char const *_prettyFunction;
-  mutable bool _disabled;
   mutable bool _hidden;
 };
 

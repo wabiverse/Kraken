@@ -23,12 +23,12 @@
 //
 #include "wabi/base/tf/pySafePython.h"
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/mallocTag.h"
 #include "wabi/base/tf/pyIdentity.h"
-#include "wabi/base/tf/stackTrace.h"
 #include "wabi/base/tf/staticData.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/stackTrace.h"
 
 #include <mutex>
 #include <vector>
@@ -42,6 +42,7 @@ using std::vector;
 WABI_NAMESPACE_BEGIN
 
 Tf_PyOwnershipPtrMap::_CacheType Tf_PyOwnershipPtrMap::_cache;
+
 
 struct Tf_PyIdHandle
 {
@@ -60,6 +61,7 @@ struct Tf_PyIdHandle
   mutable bool _isAcquired;
   PyObject *_weakRef;
 };
+
 
 Tf_PyIdHandle::Tf_PyIdHandle() : _isAcquired(false), _weakRef(0) {}
 
@@ -158,6 +160,7 @@ PyObject *Tf_PyIdHandle::Ptr() const
   return 0;
 }
 
+
 typedef TfHashMap<void const *, Tf_PyIdHandle, TfHash> _IdentityMap;
 
 static _IdentityMap &_GetIdentityMap()
@@ -165,6 +168,7 @@ static _IdentityMap &_GetIdentityMap()
   static _IdentityMap *_identityMap = new _IdentityMap();
   return *_identityMap;
 }
+
 
 static void _WeakBaseDied(void const *key)
 {
@@ -186,6 +190,7 @@ static std::string _GetTypeName(PyObject *obj)
   }
   return "unknown";
 }
+
 
 #ifdef DEBUG_IDENTITY
 
@@ -223,6 +228,7 @@ static void _EraseEstablishedIdentityStack(void const *) {}
 static void _IssueMultipleIdentityErrorStacks(void const *) {}
 
 #endif
+
 
 // Set the identity of ptr (which derives from TfWeakBase) to be the
 // python object \a obj.
@@ -287,6 +293,7 @@ PyObject *Tf_PyIdentityHelper::Get(void const *key)
   return boost::python::xincref(i->second.Ptr());
 }
 
+
 void Tf_PyIdentityHelper::Erase(void const *key)
 {
   if (!key)
@@ -295,6 +302,7 @@ void Tf_PyIdentityHelper::Erase(void const *key)
   _GetIdentityMap().erase(key);
   _EraseEstablishedIdentityStack(key);
 }
+
 
 void Tf_PyIdentityHelper::Acquire(void const *key)
 {
@@ -325,6 +333,7 @@ void Tf_PyIdentityHelper::Release(void const *key)
 
   i->second.Release();
 }
+
 
 static TfStaticData<vector<PyGILState_STATE>> _pyLocks;
 static void _LockPython()

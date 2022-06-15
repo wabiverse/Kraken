@@ -24,8 +24,8 @@
 #ifndef WABI_BASE_TF_PY_ARG_H
 #define WABI_BASE_TF_PY_ARG_H
 
-#include "wabi/base/tf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
 
 #include <boost/python/dict.hpp>
 #include <boost/python/tuple.hpp>

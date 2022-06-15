@@ -25,10 +25,10 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/pySingleton.h"
 #include "wabi/base/tf/refPtr.h"
-#include "wabi/base/tf/refPtrTracker.h"
 #include "wabi/base/tf/weakPtr.h"
+#include "wabi/base/tf/refPtrTracker.h"
+#include "wabi/base/tf/pySingleton.h"
 
 #include <boost/python/class.hpp>
 #include <sstream>

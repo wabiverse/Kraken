@@ -31,8 +31,8 @@
 #include "wabi/base/tf/api.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/hashmap.h"
-#include "wabi/base/tf/singleton.h"
 #include "wabi/base/tf/weakBase.h"
+#include "wabi/base/tf/singleton.h"
 #include <boost/noncopyable.hpp>
 #include <iosfwd>
 #include <mutex>

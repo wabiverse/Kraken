@@ -64,6 +64,7 @@ class TfFastCompression
                                             size_t maxOutputSize);
 };
 
+
 WABI_NAMESPACE_END
 
 #endif  // WABI_BASE_TF_FAST_COMPRESSION_H

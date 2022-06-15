@@ -26,8 +26,8 @@
 
 #ifdef WITH_PYTHON
 
-#  include "wabi/base/tf/diagnosticLite.h"
 #  include "wabi/base/tf/pyLock.h"
+#  include "wabi/base/tf/diagnosticLite.h"
 
 WABI_NAMESPACE_BEGIN
 

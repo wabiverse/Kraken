@@ -34,12 +34,12 @@
 
 // XXX: This include is a hack to avoid build errors due to
 // incompatible macro definitions in pyport.h on macOS.
-#include <boost/python/dict.hpp>
 #include <locale>
+#include <boost/python/dict.hpp>
 
+#include <deque>
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/hashset.h"
-#include <deque>
 #include <string>
 #include <vector>
 

@@ -30,17 +30,17 @@
 
 #include "wabi/base/tf/pyOverride.h"
 
+#include "wabi/base/tf/refPtr.h"
+#include "wabi/base/tf/weakPtr.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/pyCall.h"
 #include "wabi/base/tf/pyLock.h"
-#include "wabi/base/tf/refPtr.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/base/tf/weakPtr.h"
 
-#include <boost/python/has_back_reference.hpp>
 #include <boost/python/object/class_detail.hpp>
 #include <boost/python/wrapper.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/python/has_back_reference.hpp>
 
 #include <functional>
 #include <type_traits>
@@ -90,9 +90,15 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
           PyErr_Clear();
 
           // do the appropriate conversion, if possible
+#if PY_MAJOR_VERSION > 2
+          if (borrowed_f && PyCallable_Check(borrowed_f.get())) {
+            func_object = borrowed_f.get();
+          }
+#else
           if (borrowed_f && PyMethod_Check(borrowed_f.get())) {
             func_object = ((PyMethodObject *)borrowed_f.get())->im_func;
           }
+#endif
         }
 
         // now, func_object is either NULL, or pointing at the method

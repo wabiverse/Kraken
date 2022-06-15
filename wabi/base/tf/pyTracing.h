@@ -24,9 +24,11 @@
 #ifndef WABI_BASE_TF_PY_TRACING_H
 #define WABI_BASE_TF_PY_TRACING_H
 
-#include "wabi/base/tf/pySafePython.h"
-
 #include "wabi/wabi.h"
+
+#ifdef WITH_PYTHON
+#  include "wabi/base/tf/pySafePython.h"
+#endif  // WITH_PYTHON
 
 #include "wabi/base/tf/api.h"
 
@@ -35,6 +37,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+#ifdef WITH_PYTHON
 /// \struct TfPyTraceInfo
 /// Structure passed to python trace functions.  See the Python C API
 /// documentation reference for the meaning of \a what and \a arg.
@@ -60,6 +63,13 @@ void Tf_PyFabricateTraceEvent(TfPyTraceInfo const &info);
 
 // For internal use only.  Do not use.
 void Tf_PyTracingPythonInitialized();
+#else
+/// \struct For storage alignment when WITH_PYTHON
+/// is not enabled.
+struct TfPyTraceInfo;
+typedef std::function<void(TfPyTraceInfo const &)> TfPyTraceFn;
+typedef std::shared_ptr<TfPyTraceFn> TfPyTraceFnId;
+#endif  // WITH_PYTHON
 
 WABI_NAMESPACE_END
 

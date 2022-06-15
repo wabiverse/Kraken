@@ -27,9 +27,9 @@
 /// \file tf/hash.h
 /// \ingroup group_tf_String
 
-#include "wabi/base/tf/api.h"
-#include "wabi/base/tf/tf.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/tf.h"
+#include "wabi/base/tf/api.h"
 
 #include <cstring>
 #include <string>

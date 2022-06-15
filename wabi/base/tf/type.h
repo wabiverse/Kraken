@@ -163,6 +163,7 @@ class TfType
     return _info >= t._info;
   }
 
+
   /// \name Finding types
   /// @{
 
@@ -271,6 +272,7 @@ class TfType
 #endif  // WITH_PYTHON
 
   /// @}
+
 
   /// \name Type queries
   /// @{
@@ -461,6 +463,7 @@ class TfType
 
   /// @}
 
+
   /// \name Registering new types
   /// @{
 
@@ -558,6 +561,7 @@ class TfType
   }
 
   /// @}
+
 
   /// \name Pointer casts
   /// @{

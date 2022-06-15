@@ -22,6 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
+#include "wabi/base/tf/type.h"
 #include "wabi/base/tf/notice.h"
 #include "wabi/base/tf/pyFunction.h"
 #include "wabi/base/tf/pyIdentity.h"
@@ -30,7 +32,6 @@
 #include "wabi/base/tf/pyWeakObject.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
 
 #include <boost/noncopyable.hpp>
 #include <boost/python/class.hpp>
@@ -272,6 +273,7 @@ void wrapNotice()
                         "as an argument. "
                         "")
                    .staticmethod("RegisterGlobally")
+
 
                    // We register the method that takes any python object first, as this is
                    // the last overload that will be tried.  Thus, it will only be invoked

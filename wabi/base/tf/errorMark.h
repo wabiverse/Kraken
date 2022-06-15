@@ -26,10 +26,10 @@
 
 /// \file tf/errorMark.h
 
-#include "wabi/base/tf/api.h"
+#include "wabi/wabi.h"
 #include "wabi/base/tf/diagnosticMgr.h"
 #include "wabi/base/tf/errorTransport.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
 
 #include <boost/noncopyable.hpp>
 
@@ -195,6 +195,7 @@ class TfErrorMark : boost::noncopyable
 
   size_t _mark;
 };
+
 
 /// Convenience macro to check if errors occurred.
 ///

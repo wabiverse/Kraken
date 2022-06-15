@@ -24,9 +24,9 @@
 
 #include "wabi/wabi.h"
 
+#include "wabi/base/tf/regTest.h"
 #include "wabi/base/tf/errorMark.h"
 #include "wabi/base/tf/instantiateSingleton.h"
-#include "wabi/base/tf/regTest.h"
 
 #include <algorithm>
 #include <iostream>
@@ -90,6 +90,7 @@ void TfRegTest::_PrintTestNames()
        hi != _functionTableWithArgs.end();
        ++hi)
     names.push_back(hi->first);
+
 
   sort(names.begin(), names.end());
   for (const auto &name : names) {

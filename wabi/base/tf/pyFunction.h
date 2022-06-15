@@ -173,6 +173,7 @@ template<typename Ret, typename... Args> struct TfPyFunctionFromPython<Ret(Args.
             TfPyObjWrapper(cls)
 #endif
         });
+
       } else if (PyObject_HasAttrString(pyCallable, "__name__") &&
                  extract<string>(callable.attr("__name__"))() == "<lambda>") {
         // Explicitly hold on to strong references to lambdas.

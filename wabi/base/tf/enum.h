@@ -27,22 +27,22 @@
 /// \file tf/enum.h
 /// \ingroup group_tf_RuntimeTyping
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/defines.h"
 #include "wabi/base/arch/demangle.h"
-#include "wabi/base/tf/api.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/preprocessorUtils.h"
 #include "wabi/base/tf/preprocessorUtilsLite.h"
 #include "wabi/base/tf/safeTypeCompare.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
 
 #include <boost/operators.hpp>
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 
 #include <iosfwd>
 #include <string>
-#include <type_traits>
 #include <typeinfo>
+#include <type_traits>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
@@ -189,14 +189,14 @@ class TfEnum : boost::totally_ordered<TfEnum>
   template<class T>
   friend std::enable_if_t<std::is_enum<T>::value, bool> operator==(T val, TfEnum const &e)
   {
-    return e.operator==(val);
+    return e == val;
   }
 
   /// Compare a literal enum value \a val of enum type \a T with TfEnum \a e.
   template<class T>
   friend std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T val, TfEnum const &e)
   {
-    return !(e == val);
+    return e != val;
   }
 
   /// True if \c *this has been assigned any enumerated value of type \c T.
@@ -355,36 +355,6 @@ class TfEnum : boost::totally_ordered<TfEnum>
 
   ///@}
 
-  /**
-   * Associates a name with an enumerated value, icon, display name, as
-   * well as user interface description. This is to be used with Digital
-   * Content Creation Platforms.
-   *
-   * @warning This method is called by the @c TF_ADD_ENUM_NAME() macro, and
-   * should NOT be called directly. Instead, call AddName(), which does
-   * exactly the same thing. */
-  TF_API
-  static void _AddName(TfEnum val,
-                       const std::string &valName,
-                       TfEnum icon,
-                       const std::string &displayName,
-                       const std::string &description);
-
-  /**
-   * Associates a name with an enumerated value, icon, display name, as
-   * well as user interface description. This is to be used with Digital
-   * Content Creation Platforms.
-   *
-   * @see _AddName(). */
-  static void AddName(TfEnum val,
-                      const std::string &valName,
-                      TfEnum icon,
-                      const std::string &displayName,
-                      const std::string &description)
-  {
-    _AddName(val, valName, icon, displayName, description);
-  }
-
   /// Associates a name with an enumerated value.
   ///
   /// \warning This method is called by the \c TF_ADD_ENUM_NAME() macro, and
@@ -464,9 +434,6 @@ TF_API std::ostream &operator<<(std::ostream &out, const TfEnum &e);
 ///
 /// \ingroup group_tf_RuntimeTyping
 /// \hideinitializer
-#define TF_ADD_USER_INTERFACE_ENUM(VAL, IDENT, ICO, NAME, DESC) \
-  TfEnum::_AddName(VAL, IDENT, ICO, NAME, DESC)
-
 #define TF_ADD_ENUM_NAME(VAL, ...) \
   TfEnum::_AddName(VAL,            \
                    TF_PP_STRINGIZE(VAL) BOOST_PP_COMMA_IF(TF_NUM_ARGS(__VA_ARGS__)) __VA_ARGS__)

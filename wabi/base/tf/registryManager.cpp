@@ -117,8 +117,7 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/arch/demangle.h"
-#include "wabi/base/arch/symbols.h"
+#include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/debugCodes.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/dl.h"
@@ -126,8 +125,9 @@
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/instantiateSingleton.h"
-#include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/stringUtils.h"
+#include "wabi/base/arch/demangle.h"
+#include "wabi/base/arch/symbols.h"
 
 #include <tbb/enumerable_thread_specific.h>
 

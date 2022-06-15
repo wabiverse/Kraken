@@ -22,10 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/envSetting.h"
-#include "wabi/base/arch/env.h"
-#include "wabi/base/arch/fileSystem.h"
+#include "wabi/wabi.h"
 #include "wabi/base/tf/api.h"
+#include "wabi/base/tf/envSetting.h"
 #include "wabi/base/tf/getenv.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/hashmap.h"
@@ -34,7 +33,8 @@
 #include "wabi/base/tf/singleton.h"
 #include "wabi/base/tf/stl.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/env.h"
+#include "wabi/base/arch/fileSystem.h"
 
 #ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyUtils.h"
@@ -62,7 +62,7 @@ class Tf_EnvSettingRegistry
 
   Tf_EnvSettingRegistry()
   {
-    string fileName = TfGetenv("WABI_TF_ENV_SETTING_FILE", "");
+    string fileName = TfGetenv("PIXAR_TF_ENV_SETTING_FILE", "");
     if (FILE *fp = ArchOpenFile(fileName.c_str(), "r")) {
       char buffer[1024];
 
@@ -76,7 +76,7 @@ class Tf_EnvSettingRegistry
         va_list ap;
         va_start(ap, fmt);
         fprintf(stderr,
-                "File '%s' (From WABI_TF_ENV_SETTING_FILE) "
+                "File '%s' (From PIXAR_TF_ENV_SETTING_FILE) "
                 "line %d: %s.\n",
                 fileName.c_str(),
                 lineNo,

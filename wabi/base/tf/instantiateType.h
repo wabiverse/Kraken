@@ -32,10 +32,10 @@
 
 #define WABI_BASE_TF_INSTANTIATE_TYPE_H
 
-#include "wabi/base/arch/attributes.h"
-#include "wabi/base/tf/refPtr.h"
-#include "wabi/base/tf/type.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/attributes.h"
+#include "wabi/base/tf/type.h"
+#include "wabi/base/tf/refPtr.h"
 
 WABI_NAMESPACE_BEGIN
 

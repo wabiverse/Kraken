@@ -28,23 +28,23 @@
 #include "wabi/base/tf/wrapTypeHelpers.h"
 
 #include "wabi/base/tf/hash.h"
-#include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/makePyConstructor.h"
 #include "wabi/base/tf/py3Compat.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyObjectFinder.h"
 #include "wabi/base/tf/pyPtrHelpers.h"
 #include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/weakBase.h"
 
-#include <boost/preprocessor.hpp>
 #include <boost/python/converter/registry.hpp>
-#include <boost/python/extract.hpp>
-#include <boost/python/has_back_reference.hpp>
 #include <boost/python/make_constructor.hpp>
+#include <boost/python/extract.hpp>
 #include <boost/python/object.hpp>
+#include <boost/python/has_back_reference.hpp>
 #include <boost/python/operators.hpp>
 #include <boost/python/overloads.hpp>
+#include <boost/preprocessor.hpp>
 
 #include <string>
 
@@ -61,15 +61,15 @@ namespace
 
   // Provide conversion of either string typenames or Python class objects
   // to TfTypes.
-  static TfType GetTfTypeFromPython(PyObject *p)
+  static TfType _GetTfTypeFromPython(PyObject *p)
   {
-    if (TfPyString_Check(p))
+    if (TfPyBytes_Check(p) || PyUnicode_Check(p))
       return TfType::FindByName(extract<string>(p)());
     else
       return TfType::FindByPythonClass(object(borrowed(p)));
   }
 
-  // A from-Python converter that uses the GetTfTypeFromPython function.
+  // A from-Python converter that uses the _GetTfTypeFromPython function.
   struct _TfTypeFromPython
   {
     _TfTypeFromPython()
@@ -81,7 +81,7 @@ namespace
 
     static void *_Convertible(PyObject *p)
     {
-      if (GetTfTypeFromPython(p).IsUnknown()) {
+      if (_GetTfTypeFromPython(p).IsUnknown()) {
         TfPyThrowTypeError(
           TfStringPrintf("cannot convert %s to TfType; has that type "
                          "been defined as a TfType?",
@@ -94,7 +94,7 @@ namespace
     {
       void *const storage = ((converter::rvalue_from_python_storage<TfType> *)data)->storage.bytes;
 
-      TfType type = GetTfTypeFromPython(p);
+      TfType type = _GetTfTypeFromPython(p);
       new (storage) TfType(type);
       data->convertible = storage;
     }
@@ -213,7 +213,7 @@ static void wrapTestCppBase()
     // string typename.  Rather than returning the unknown type (assuming
     // of course that we never declare Python's string type as a TfType),
     // we instead direct the caller to use FindByName().
-    if (TfPyString_Check(classObj.ptr())) {
+    if (TfPyBytes_Check(classObj.ptr()) || PyUnicode_Check(classObj.ptr())) {
       TfPyThrowTypeError(
         "String passed to Tf.Type.Find() -- you probably "
         "want Tf.Type.FindByName() instead");

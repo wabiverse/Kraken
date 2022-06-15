@@ -24,9 +24,9 @@
 
 #include "wabi/wabi.h"
 
-#include <locale>
-#include <utility>
 #include <vector>
+#include <utility>
+#include <locale>
 
 #include "wabi/base/tf/token.h"
 

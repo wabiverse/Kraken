@@ -26,9 +26,9 @@
 
 #include "wabi/base/tf/wrapTypeHelpers.h"
 
-#include <boost/python/detail/api_placeholder.hpp>  // for len()
 #include <boost/python/extract.hpp>
 #include <boost/python/object.hpp>
+#include <boost/python/detail/api_placeholder.hpp>  // for len()
 
 using namespace std;
 using namespace boost::python;

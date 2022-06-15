@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/scriptModuleLoader.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/scriptModuleLoader.h"
 
 #include "wabi/base/tf/debug.h"
 #include "wabi/base/tf/debugCodes.h"
@@ -56,6 +56,7 @@ using boost::python::dict;
 using boost::python::handle;
 using boost::python::object;
 
+
 TfScriptModuleLoader::TfScriptModuleLoader() {}
 
 // CODE_COVERAGE_OFF_GCOV_BUG
@@ -84,9 +85,8 @@ void TfScriptModuleLoader::RegisterLibrary(TfToken const &name,
   _libsToModules[name] = moduleName;
 
   // Add this library as a successor to all predecessors.
-  TF_FOR_ALL (pred, predecessors) {
+  TF_FOR_ALL (pred, predecessors)
     _AddSuccessor(*pred, name);
-  }
 }
 
 vector<string> TfScriptModuleLoader::GetModuleNames() const
@@ -396,6 +396,7 @@ void TfScriptModuleLoader::_GetOrderedDependencies(vector<TfToken> const &input,
     }
   }
 }
+
 
 void TfScriptModuleLoader::_TopologicalSort(vector<TfToken> *result) const
 {

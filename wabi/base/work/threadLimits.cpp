@@ -61,7 +61,7 @@ TF_DEFINE_ENV_SETTING(
 WABI_NAMESPACE_BEGIN
 
 // We create a task_scheduler_init instance at static initialization time if
-// PXR_WORK_THREAD_LIMIT is set to a nonzero value.  Otherwise this stays NULL.
+// WABI_WORK_THREAD_LIMIT is set to a nonzero value.  Otherwise this stays NULL.
 #if WITH_TBB_LEGACY
 static tbb::task_scheduler_init *m_tbbTaskArena;
 #else /* WITH_TBB_LEGACY */
@@ -121,7 +121,7 @@ static void Work_InitializeThreading()
   // "no change".
   unsigned threadLimit = Work_OverrideConcurrencyLimit(physicalLimit, settingVal);
 
-  // Only eagerly grab TBB if the PXR_WORK_THREAD_LIMIT setting was set to
+  // Only eagerly grab TBB if the WABI_WORK_THREAD_LIMIT setting was set to
   // some non-zero value. Otherwise, the scheduler will be default initialized
   // with maximum physical concurrency, or will be left untouched if
   // previously initialized by the hosting environment (e.g. if we are running

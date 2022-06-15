@@ -37,8 +37,8 @@
 #include <boost/preprocessor/arithmetic/inc.hpp>
 #include <boost/preprocessor/arithmetic/sub.hpp>
 #include <boost/preprocessor/cat.hpp>
-#include <boost/preprocessor/comparison/equal.hpp>
 #include <boost/preprocessor/control/expr_iif.hpp>
+#include <boost/preprocessor/comparison/equal.hpp>
 #include <boost/preprocessor/facilities/expand.hpp>
 #include <boost/preprocessor/punctuation/comma.hpp>
 #include <boost/preprocessor/punctuation/paren.hpp>
@@ -101,18 +101,15 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 #  define _TF_NUM_ARGS1(...) \
     _TF_EXPAND(BOOST_PP_CAT(TF_ARG_, BOOST_PP_INC(TF_MAX_ARITY)) _TF_NUM_ARGS_EXT(__VA_ARGS__))
 
-#  define _TF_NUM_ARGS_DEC(z, i, n) \
-    BOOST_PP_COMMA()                \
-    BOOST_PP_SUB(n, i)
-#  define _TF_NUM_ARGS_REP(z, i, n) \
-    BOOST_PP_COMMA()                \
-    n
+#  define _TF_NUM_ARGS_DEC(z, i, n) BOOST_PP_COMMA() BOOST_PP_SUB(n, i)
+#  define _TF_NUM_ARGS_REP(z, i, n) BOOST_PP_COMMA() n
 
 #  define _TF_NUM_ARGS_EXT(...) \
     (__VA_ARGS__ BOOST_PP_REPEAT(BOOST_PP_INC(TF_MAX_ARITY), _TF_NUM_ARGS_DEC, TF_MAX_ARITY))
 #  define _TF_NUM_ARGS_TF(...) \
     (__VA_ARGS__ BOOST_PP_REPEAT(BOOST_PP_INC(TF_MAX_ARITY), _TF_NUM_ARGS_REP, _TF))
 #endif
+
 
 /// Return the arguments as is except if the first argument starts with a
 /// matched parenthesis then remove those parentheses.
@@ -146,9 +143,7 @@ ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS
 // Expands to the second argument if c is 1 and the third argument if c is
 // 0.  No other values of c are allowed.  We can't use BOOST_PP_IFF() because
 // it won't expand during stringizing under MSVC.
-#define _TF_PP_EAT_PARENS_IFF(c, t, f)    \
-  BOOST_PP_CAT(_TF_PP_EAT_PARENS_IFF_, c) \
-  (t, f)
+#define _TF_PP_EAT_PARENS_IFF(c, t, f) BOOST_PP_CAT(_TF_PP_EAT_PARENS_IFF_, c)(t, f)
 #define _TF_PP_EAT_PARENS_IFF_0(t, f) f
 #define _TF_PP_EAT_PARENS_IFF_1(t, f) t
 

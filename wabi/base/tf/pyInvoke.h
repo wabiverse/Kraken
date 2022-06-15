@@ -27,8 +27,8 @@
 /// \file
 /// Flexible, high-level interface for calling Python functions.
 
-#include "wabi/base/tf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
 
 #include "wabi/base/tf/diagnosticLite.h"
 #include "wabi/base/tf/pyError.h"

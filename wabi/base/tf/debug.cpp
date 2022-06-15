@@ -22,6 +22,7 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/debug.h"
 #include "wabi/base/tf/debugCodes.h"
 #include "wabi/base/tf/debugNotice.h"
@@ -33,15 +34,14 @@
 #include "wabi/base/tf/span.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/arch/export.h"
 
 #include <tbb/spin_mutex.h>
 
-#include <algorithm>
 #include <atomic>
+#include <algorithm>
 #include <map>
 #include <set>
 

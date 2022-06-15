@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/mallocTag.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/mallocTag.h"
 
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/getenv.h"
@@ -44,12 +44,12 @@
 #include <tbb/spin_mutex.h>
 
 #include <algorithm>
-#include <ostream>
-#include <stdlib.h>
 #include <string>
+#include <stdlib.h>
 #include <thread>
 #include <type_traits>
 #include <vector>
+#include <ostream>
 
 using std::make_pair;
 using std::map;
@@ -693,6 +693,7 @@ void Tf_MallocGlobalData::_BuildUniqueMallocStacks(TfMallocTag::CallTree *tree)
   }
 }
 
+
 void Tf_MallocPathNode::_BuildTree(TfMallocTag::CallTree::PathNode *node, bool skipRepeated)
 {
   node->children.reserve(_children.size());
@@ -831,7 +832,7 @@ class TfMallocTag::Tls
     // the _ThreadData.
     static thread_local std::aligned_storage<sizeof(_ThreadData), alignof(_ThreadData)>::type
       dataBuffer;
-    static _ThreadData *data = new (&dataBuffer) _ThreadData;
+    static thread_local _ThreadData *data = new (&dataBuffer) _ThreadData;
     return data;
 #else
     TF_FATAL_ERROR(
@@ -961,9 +962,8 @@ void *TfMallocTag::_MallocWrapper(size_t nBytes, const void *)
   // miscount memory usage, but the allocated pointer is still valid and the
   // system should continue to work. So, we issue a warning but continue on
   // instead of using an axiom.
-  TF_VERIFY(!
-            "Failed to register path for allocated block. "
-            "Memory usage may be miscounted");
+  TF_VERIFY(!"Failed to register path for allocated block. "
+               "Memory usage may be miscounted");
 
   return ptr;
 }
@@ -1044,9 +1044,8 @@ void *TfMallocTag::_ReallocWrapper(void *oldPtr, size_t nBytes, const void *)
   }
 
   // See comment in _MallocWrapper.
-  TF_VERIFY(!
-            "Failed to register path for allocated block. "
-            "Memory usage may be miscounted");
+  TF_VERIFY(!"Failed to register path for allocated block. "
+               "Memory usage may be miscounted");
   return newPtr;
 }
 
@@ -1280,6 +1279,7 @@ bool TfMallocTag::Initialize(string *errMsg)
   return status;
 }
 
+
 bool TfMallocTag::GetCallTree(CallTree *tree, bool skipRepeated)
 {
   tree->callSites.clear();
@@ -1416,6 +1416,7 @@ void TfMallocTag::Auto::_Begin(const char *name)
         _threadData->_callSiteOnStack.reserve(128);
       _threadData->_callSiteOnStack.resize(site->_index + 1, 0);
     }
+
 
     if (_threadData->_tagStack.empty())
       thisNode = _mallocGlobalData->_rootNode->_GetOrCreateChild(site);
@@ -1748,6 +1749,7 @@ static void _ReportCapturedMallocStacks(std::ostream &out,
     ArchPrintStackFrames(out, stackInfo.stack);
   }
 }
+
 
 string TfMallocTag::CallTree::GetPrettyPrintString(PrintSetting setting,
                                                    size_t maxPrintedNodes) const

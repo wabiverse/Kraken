@@ -24,11 +24,11 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/scriptModuleLoader.h"
 #include "wabi/base/tf/weakPtr.h"
+#include "wabi/base/tf/scriptModuleLoader.h"
 
-#include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pySingleton.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/python/class.hpp>
 

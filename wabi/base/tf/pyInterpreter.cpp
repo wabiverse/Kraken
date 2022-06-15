@@ -36,13 +36,13 @@
 #include "wabi/base/arch/systemInfo.h"
 #include "wabi/base/arch/threads.h"
 
-#include "wabi/base/tf/pySafePython.h"
-#include <atomic>
 #include <boost/python.hpp>
 #include <boost/python/detail/api_placeholder.hpp>
+#include <atomic>
 #include <mutex>
-#include <signal.h>
 #include <string>
+#include "wabi/base/tf/pySafePython.h"
+#include <signal.h>
 
 using std::string;
 
@@ -66,7 +66,14 @@ void TfPyInitialize()
 
   if (!Py_IsInitialized()) {
 
-    ArchIsMainThread();
+    if (!ArchIsMainThread() && !PyEval_ThreadsInitialized()) {
+      // Python claims that PyEval_InitThreads "should be called in the
+      // main thread before creating a second thread or engaging in any
+      // other thread operations."  So we'll issue a warning here.
+      TF_WARN(
+        "Calling PyEval_InitThreads() for the first time outside "
+        "the 'main thread'.  Python doc says not to do this.");
+    }
 
     const std::string s = ArchGetExecutablePath();
 
@@ -104,6 +111,15 @@ void TfPyInitialize()
 #if !defined(ARCH_OS_WINDOWS)
     // Restore original sigint handler.
     sigaction(SIGINT, &origSigintHandler, NULL);
+#endif
+
+#if PY_MAJOR_VERSION > 2
+    // In python 3 PyEval_InitThreads must be called after Py_Initialize()
+    // see https://docs.python.org/3/c-api/init.html
+    //
+    // Initialize Python threading.  This grabs the GIL.  We'll release it
+    // at the end of this function.
+    PyEval_InitThreads();
 #endif
 
 #if PY_MAJOR_VERSION == 2

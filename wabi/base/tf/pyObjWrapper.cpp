@@ -26,11 +26,12 @@
 
 #include "wabi/base/tf/pyObjWrapper.h"
 
-#include "wabi/base/tf/pyLock.h"
-#include "wabi/base/tf/pyUtils.h"
-#include "wabi/base/tf/type.h"
+#ifdef WITH_PYTHON
+#  include "wabi/base/tf/pyLock.h"
+#  include "wabi/base/tf/pyUtils.h"
+#  include "wabi/base/tf/type.h"
 
-#include <boost/python/object.hpp>
+#  include <boost/python/object.hpp>
 
 WABI_NAMESPACE_BEGIN
 
@@ -93,3 +94,5 @@ bool TfPyObjWrapper::operator!=(TfPyObjWrapper const &other) const
 }
 
 WABI_NAMESPACE_END
+
+#endif  // WITH_PYTHON

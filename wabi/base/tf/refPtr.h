@@ -426,12 +426,12 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/api.h"
 #include "wabi/base/tf/diagnosticLite.h"
 #include "wabi/base/tf/nullPtr.h"
 #include "wabi/base/tf/refBase.h"
 #include "wabi/base/tf/safeTypeCompare.h"
 #include "wabi/base/tf/typeFunctions.h"
+#include "wabi/base/tf/api.h"
 
 #include "wabi/base/arch/hints.h"
 
@@ -442,9 +442,9 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 
-#include <cstddef>
-#include <type_traits>
 #include <typeinfo>
+#include <type_traits>
+#include <cstddef>
 
 WABI_NAMESPACE_BEGIN
 
@@ -563,7 +563,7 @@ struct Tf_RefPtr_Counter
 
 // Helper to post a fatal error when a NULL Tf pointer is dereferenced.
 [[noreturn]] TF_API void Tf_PostNullSmartPtrDereferenceFatalError(const TfCallContext &,
-                                                                  const std::type_info &);
+                                                                  const char *);
 
 /// \class TfRefPtr
 /// \ingroup group_tf_Memory
@@ -588,6 +588,7 @@ template<class T> class TfRefPtr
 
   /// Convenience type accessor to underlying type \c T for template code.
   typedef T DataType;
+
 
   template<class U> struct Rebind
   {
@@ -978,11 +979,10 @@ template<class T> class TfRefPtr
   /// Accessor to \c T's public members.
   T *operator->() const
   {
-    if (ARCH_LIKELY(_refBase)) {
+    if (_refBase) {
       return static_cast<T *>(const_cast<TfRefBase *>(_refBase));
     }
-    static const TfCallContext ctx(TF_CALL_CONTEXT);
-    Tf_PostNullSmartPtrDereferenceFatalError(ctx, typeid(TfRefPtr));
+    Tf_PostNullSmartPtrDereferenceFatalError(TF_CALL_CONTEXT, typeid(TfRefPtr).name());
   }
 
   /// Dereferences the stored pointer.
@@ -1236,6 +1236,7 @@ template<class T> inline bool operator>=(std::nullptr_t, const TfRefPtr<T> &p)
   return !(nullptr < p);
 }
 
+
 template<typename T> inline TfRefPtr<T> TfCreateRefPtr(T *ptr)
 {
   return TfRefPtr<T>(ptr, typename TfRefPtr<T>::_CreateRefPtr());
@@ -1285,14 +1286,14 @@ template<> class TfRefPtr<TfRefBase>
 {
  private:
 
-  TfRefPtr(TfRefBase) {}
+  TfRefPtr<TfRefBase>() {}
 };
 
 template<> class TfRefPtr<const TfRefBase>
 {
  private:
 
-  TfRefPtr(const TfRefBase) {}
+  TfRefPtr<const TfRefBase>() {}
 };
 
 template<class T> struct TfTypeFunctions<TfRefPtr<T>>

@@ -24,11 +24,11 @@
 
 #include "wabi/wabi.h"
 
+#include "wabi/base/tf/warning.h"
+#include "wabi/base/tf/pyCallContext.h"
 #include "wabi/base/tf/callContext.h"
 #include "wabi/base/tf/diagnosticMgr.h"
-#include "wabi/base/tf/pyCallContext.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/base/tf/warning.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/def.hpp>

@@ -26,8 +26,8 @@
 
 /// \file tf/denseHashSet.h
 
-#include "wabi/base/tf/hashmap.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/hashmap.h"
 
 #include <memory>
 #include <vector>
@@ -258,6 +258,7 @@ class TfDenseHashSet
 
       if (!res.second)
         return insert_result(_vec().begin() + res.first->second, false);
+
     } else {
 
       // Bail if already inserted.
@@ -379,6 +380,7 @@ class TfDenseHashSet
     if (sz < Threshold) {
 
       _h.reset();
+
     } else {
 
       // Otherwise, allocate a new hash map with the optimal size.

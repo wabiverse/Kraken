@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/error.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/error.h"
 
 #include "wabi/base/tf/diagnosticMgr.h"
 

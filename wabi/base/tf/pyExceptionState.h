@@ -25,8 +25,8 @@
 #include "wabi/wabi.h"
 
 #include "wabi/base/tf/api.h"
-#include "wabi/base/tf/errorMark.h"
 #include "wabi/base/tf/pyLock.h"
+#include "wabi/base/tf/errorMark.h"
 
 #include <boost/python/handle.hpp>
 

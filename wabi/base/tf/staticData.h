@@ -27,10 +27,10 @@
 /// \file tf/staticData.h
 /// \ingroup group_tf_Initialization
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/tf/preprocessorUtils.h"
 #include "wabi/base/tf/preprocessorUtilsLite.h"
-#include "wabi/wabi.h"
 
 #include <atomic>
 
@@ -208,8 +208,7 @@ template<class T, class Factory = Tf_StaticDataDefaultFactory<T>> class TfStatic
       static TF_PP_EAT_PARENS(Type) * New()                                                 \
       {                                                                                     \
         auto *p = new TF_PP_EAT_PARENS(Type);                                               \
-        TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl)                                          \
-        (p);                                                                                \
+        TF_PP_CAT(Name, _Tf_StaticDataFactoryImpl)(p);                                      \
         return p;                                                                           \
       }                                                                                     \
     };                                                                                      \

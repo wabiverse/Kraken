@@ -5,13 +5,13 @@ Describes the use of low-level programming macros to issue coding errors, runtim
 
 \section DiagnosticContents Contents
 
-\li \ref DiagnosticQuickStart
-\li \ref DiagnosticIntendedUse
-\li \ref DiagnosticTF_FATAL_ERROR
-\li \ref DiagnosticTF_ERROR
-\li \ref DiagnosticTF_WARN
-\li \ref DiagnosticTF_STATUS
-\li \ref DiagnosticTF_FUNC_NAME
+\li \ref DiagnosticQuickStart 
+\li \ref DiagnosticIntendedUse 
+\li \ref DiagnosticTF_FATAL_ERROR 
+\li \ref DiagnosticTF_ERROR 
+\li \ref DiagnosticTF_WARN 
+\li \ref DiagnosticTF_STATUS 
+\li \ref DiagnosticTF_FUNC_NAME 
 
 \section DiagnosticQuickStart Quick Guide to Functions and Macros
 
@@ -92,7 +92,7 @@ Here are some reasonable uses of TF_AXIOM():
 
 \code
     // private accessor -- no client code can call this directly
-    double _GetValue(size_t index)
+    double _GetValue(size_t index) 
 	{
 	TF_AXIOM(index < GetMaxIndex());
 	return _values[index];
@@ -103,7 +103,7 @@ Here are some reasonable uses of TF_AXIOM():
 
 You should avoid using TF_AXIOM() when it can fail because of a client's use of the code.  (Killing off the program is serious enough; doing so without giving the client a strong indication of what they did wrong, and how to fix it, is extremely unhelpful.)  The following code sample illustrates improper use of TF_AXIOM():
 
-\code
+\code    
     // in refPtr.h:
     T* operator->() const {
 	TF_AXIOM(_data);
@@ -153,7 +153,7 @@ TfSingleton<T>::SetInstanceConstructed(T& instance)
 
 \section DiagnosticTF_ERROR Non-Fatal Errors
 
-To report non-fatal errors, use the TF_ERROR system.  That system is documented here: \ref page_tf_TfError.  Generally, errors reported this way will let execution continue.  The system may turn the errors into Python exceptions when returning into Python.  Also, if there are unhandled errors remaining at the end of an application iteration, the system may roll back the undo stack to the last known good state.
+To report non-fatal errors, use the TF_ERROR system.  That system is documented here: \ref page_tf_TfError.  Generally, errors reported this way will let execution continue.  The system may turn the errors into Python exceptions when returning into Python.  Also, if there are unhandled errors remaining at the end of an application iteration, the system may roll back the undo stack to the last known good state.  
 
 There are two convenience macros provided here that generate errors.  Use TF_CODING_ERROR() to indicate a recoverable coding error.  Use TF_RUNTIME_ERROR() to indicate a generic runtime error.  Use TF_ERROR() to provide more specific error codes when possible.
 
@@ -192,7 +192,7 @@ If you need to get the name of the function you are currently in, use the TF_FUN
 For example:
 
 \code
-void YourClass::SomeMethod(int x)
+void YourClass::SomeMethod(int x) 
 {
     cout << "Debugging info about function " << TF_FUNC_NAME() << "." << endl;
     ...

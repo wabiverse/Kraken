@@ -26,9 +26,9 @@
 
 #include "wabi/wabi.h"
 
+#include "wabi/base/tf/templateString.h"
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/base/tf/templateString.h"
 
 using std::string;
 using std::vector;
@@ -50,6 +50,7 @@ static const char *const _IdentChars =
   "0123456789_";
 
 TfTemplateString::TfTemplateString() : _data(new _Data) {}
+
 
 TfTemplateString::TfTemplateString(const string &template_) : _data(new _Data)
 {

@@ -22,13 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/errorMark.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/errorMark.h"
 
-#include "wabi/base/arch/stackTrace.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/iterator.h"
+#include "wabi/base/arch/stackTrace.h"
 
 #include <boost/utility.hpp>
 
@@ -57,6 +57,7 @@ void TfErrorMark::_ReportErrors(TfDiagnosticMgr &mgr) const
   mgr.EraseRange(b, e);
 }
 
+
 // To enable tracking stack traces for error marks when
 // TF_ERROR_MARK_TRACKING is enabled, change the 'false' to 'true' below.
 static const bool _enableTfErrorMarkStackTraces = false;
@@ -67,6 +68,7 @@ static _ActiveMarkStacksMap &TfErrorMark_GetActiveMarkStacks()
   return activeMarkStacks;
 }
 static tbb::spin_mutex _activeMarkStacksLock;
+
 
 TfErrorMark::TfErrorMark()
 {

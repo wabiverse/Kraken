@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/anyWeakPtr.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/anyWeakPtr.h"
 
 using std::string;
 using std::type_info;
@@ -62,12 +62,10 @@ bool TfAnyWeakPtr::_EmptyHolder::_IsConst() const
   return true;
 }
 
-#ifdef WITH_PYTHON
-boost::python::api::object TfAnyWeakPtr::_EmptyHolder::GetPythonObject() const
+TfPyObjWrapper TfAnyWeakPtr::_EmptyHolder::GetPythonObject() const
 {
-  return boost::python::api::object();
+  return {};
 }
-#endif  // WITH_PYTHON
 
 const std::type_info &TfAnyWeakPtr::_EmptyHolder::GetTypeInfo() const
 {
@@ -88,6 +86,7 @@ bool TfAnyWeakPtr::_EmptyHolder::_IsPolymorphic() const
 {
   return false;
 }
+
 
 //! Return true *only* if this expiry checker is watching a weak pointer
 // which has expired.
@@ -140,7 +139,7 @@ TfType const &TfAnyWeakPtr::GetType() const
 boost::python::api::object TfAnyWeakPtr::_GetPythonObject() const
 {
   TfPyLock pyLock;
-  return _Get()->GetPythonObject();
+  return _Get()->GetPythonObject().Get();
 }
 #endif  // WITH_PYTHON
 

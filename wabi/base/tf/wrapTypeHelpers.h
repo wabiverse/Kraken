@@ -66,6 +66,7 @@ namespace TfType_WrapHelpers
 
 }  // namespace TfType_WrapHelpers
 
+
 /// \struct TfTypePythonClass
 /// A boost.python visitor that associates the Python class object created by
 /// the wrapping with the TfType of the C++ type being wrapped.

@@ -118,15 +118,15 @@ static void _FixupStringNames(string *name)
 #endif
 }
 
-#if PXR_USE_NAMESPACES
+#if WABI_USE_NAMESPACES
 
 #  define ARCH_STRINGIZE_EXPAND(x) #  x
 #  define ARCH_STRINGIZE(x) ARCH_STRINGIZE_EXPAND(x)
 
 static void _StripPxrInternalNamespace(string *name)
 {
-  // Note that this assumes PXR_INTERNAL_NS to be non-empty
-  constexpr const char nsQualifier[] = ARCH_STRINGIZE(PXR_INTERNAL_NS) "::";
+  // Note that this assumes WABI_INTERNAL_NS to be non-empty
+  constexpr const char nsQualifier[] = ARCH_STRINGIZE(WABI_INTERNAL_NS) "::";
   constexpr const auto nsQualifierSize = sizeof(nsQualifier);
   size_t lastNsQualifierEndPos = name->find(nsQualifier);
   while (lastNsQualifierEndPos != std::string::npos) {
@@ -223,7 +223,7 @@ bool ArchDemangle(string *mangledTypeName)
               mangledTypeName->c_str());
     }
 
-#    if PXR_USE_NAMESPACES
+#    if WABI_USE_NAMESPACES
     _StripPxrInternalNamespace(mangledTypeName);
 #    endif
     return true;
@@ -231,7 +231,7 @@ bool ArchDemangle(string *mangledTypeName)
   return false;
 #  else
   if (_DemangleNew(mangledTypeName)) {
-#    if PXR_USE_NAMESPACES
+#    if WABI_USE_NAMESPACES
     _StripPxrInternalNamespace(mangledTypeName);
 #    endif
     return true;
@@ -261,7 +261,7 @@ static string *_NewDemangledStringTypeName()
 bool ArchDemangle(string *mangledTypeName)
 {
   _FixupStringNames(mangledTypeName);
-#  if PXR_USE_NAMESPACES
+#  if WABI_USE_NAMESPACES
   _StripPxrInternalNamespace(mangledTypeName);
 #  endif
   return true;

@@ -24,9 +24,9 @@
 #ifndef WABI_BASE_TF_DIAGNOSTIC_HELPER_H
 #define WABI_BASE_TF_DIAGNOSTIC_HELPER_H
 
-#include "wabi/base/arch/attributes.h"
-#include "wabi/base/tf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
+#include "wabi/base/arch/attributes.h"
 
 // XXX: This include is a hack to avoid build errors due to
 // incompatible macro definitions in pyport.h on macOS.
@@ -42,11 +42,6 @@ class TfCallContext;
 enum TfDiagnosticType : int;
 class TfEnum;
 class TfError;
-
-TF_API void Tf_PostErrorHelper(const TfCallContext &context, const char *fmt, ...)
-  ARCH_PRINTF_FUNCTION(2, 3);
-
-TF_API void Tf_PostErrorHelper(const TfCallContext &context, const std::string &msg);
 
 TF_API bool Tf_PostErrorHelper(const TfCallContext &context,
                                const TfEnum &code,
@@ -97,6 +92,7 @@ TF_API bool Tf_PostQuietlyErrorHelper(const TfCallContext &context,
                                       const char *fmt,
                                       ...) ARCH_PRINTF_FUNCTION(3, 4);
 
+
 // Helper functions for posting a warning with TF_WARN.
 TF_API void Tf_PostWarningHelper(const TfCallContext &context, const std::string &msg);
 
@@ -132,29 +128,11 @@ TF_API void Tf_PostWarningHelper(const TfCallContext &context,
                                  const char *fmt,
                                  ...) ARCH_PRINTF_FUNCTION(4, 5);
 
-
-TF_API void Tf_PostMsgWarningHelper(const TfCallContext &context, const char *fmt, ...)
-  ARCH_PRINTF_FUNCTION(2, 3);
-
-TF_API void Tf_PostMsgWarningHelper(const TfCallContext &context, const std::string &msg);
-
-
-TF_API void Tf_PostMsgSuccessHelper(const TfCallContext &context, const char *fmt, ...)
-  ARCH_PRINTF_FUNCTION(2, 3);
-
-TF_API void Tf_PostMsgSuccessHelper(const TfCallContext &context, const std::string &msg);
-
-
-TF_API void Tf_PostMsgHelper(const TfCallContext &context, const char *fmt, ...)
-  ARCH_PRINTF_FUNCTION(2, 3);
-
-TF_API void Tf_PostMsgHelper(const TfCallContext &context, const std::string &msg);
-
-
 TF_API void Tf_PostStatusHelper(const TfCallContext &context, const char *fmt, ...)
   ARCH_PRINTF_FUNCTION(2, 3);
 
 TF_API void Tf_PostStatusHelper(const TfCallContext &context, const std::string &msg);
+
 
 TF_API void Tf_PostStatusHelper(const TfCallContext &context,
                                 const TfEnum &code,

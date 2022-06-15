@@ -27,8 +27,8 @@
 
 #define WABI_BASE_TF_INSTANTIATE_STACKED_H
 
-#include "wabi/base/tf/stacked.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/stacked.h"
 
 WABI_NAMESPACE_BEGIN
 

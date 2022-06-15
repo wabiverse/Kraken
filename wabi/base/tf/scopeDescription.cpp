@@ -24,9 +24,9 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/scopeDescription.h"
 #include "wabi/base/tf/scopeDescriptionPrivate.h"
+#include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/staticData.h"
 
 #include "wabi/base/arch/hints.h"

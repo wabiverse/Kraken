@@ -411,13 +411,11 @@ UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetCacheEntryForPrim(
     return &it->second;
   }
 
-  /* clang-format off */
-  return &(_cache.emplace(std::piecewise_construct,
-            std::forward_as_tuple(prim),
-            std::forward_as_tuple(Strategy::MakeQuery(prim, _implData),
-            Strategy::MakeDefault(),
-            _GetInvalidVersion())).first->second);
-  /* clang-format on */
+  _Entry e;
+  e.query = Strategy::MakeQuery(prim, _implData);
+  e.value = Strategy::MakeDefault();
+  e.version = _GetInvalidVersion();
+  return &(_cache.insert(typename _CacheMap::value_type(prim, e)).first->second);
 }
 
 template<typename Strategy, typename ImplData>

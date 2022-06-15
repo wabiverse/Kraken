@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/makePyConstructor.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/makePyConstructor.h"
 
 WABI_NAMESPACE_BEGIN
 

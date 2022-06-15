@@ -162,6 +162,7 @@ string TfPyObjectRepr(boost::python::object const &t)
   return reprString;
 }
 
+
 boost::python::object TfPyEvaluate(std::string const &expr, dict const &extraGlobals)
 {
   TfPyLock lock;
@@ -184,6 +185,7 @@ boost::python::object TfPyEvaluate(std::string const &expr, dict const &extraGlo
   return boost::python::object();
 }
 
+
 int64_t TfPyNormalizeIndex(int64_t index, uint64_t size, bool throwError)
 {
   if (index < 0)
@@ -195,6 +197,7 @@ int64_t TfPyNormalizeIndex(int64_t index, uint64_t size, bool throwError)
 
   return index < 0 ? 0 : static_cast<uint64_t>(index) >= size ? size - 1 : index;
 }
+
 
 TF_API void Tf_PyWrapOnceImpl(boost::python::type_info const &type,
                               std::function<void()> const &wrapFunc,
@@ -227,6 +230,7 @@ TF_API void Tf_PyWrapOnceImpl(boost::python::type_info const &type,
 
   *isTypeWrapped = true;
 }
+
 
 boost::python::object TfPyGetClassObject(std::type_info const &type)
 {
@@ -334,6 +338,7 @@ void TfPyDumpTraceback()
   TF_FOR_ALL (i, tb)
     printf("%s", i->c_str());
 }
+
 
 static object _GetOsEnviron()
 {

@@ -28,9 +28,9 @@
 
 #include "wabi/base/tf/pyUtils.h"
 
-#include <boost/python/dict.hpp>
-#include <boost/python/list.hpp>
 #include <boost/python/tuple.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/dict.hpp>
 
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/remove_reference.hpp>

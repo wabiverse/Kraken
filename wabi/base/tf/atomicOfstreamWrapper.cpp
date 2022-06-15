@@ -24,8 +24,8 @@
 ///
 /// \file Tf/AtomicOfstreamWrapper.cpp
 
-#include "wabi/base/tf/atomicOfstreamWrapper.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/atomicOfstreamWrapper.h"
 
 #include "wabi/base/arch/defines.h"
 #include "wabi/base/arch/errno.h"
@@ -37,9 +37,9 @@
 #include "wabi/base/tf/pathUtils.h"
 #include "wabi/base/tf/stringUtils.h"
 
+#include <iostream>
 #include <cerrno>
 #include <cstdio>
-#include <iostream>
 
 #if defined(ARCH_OS_WINDOWS)
 #  include <Windows.h>
@@ -79,8 +79,13 @@ bool TfAtomicOfstreamWrapper::Open(string *reason)
   // with the same file name.
   ArchCloseFile(tmpFd);
 
+#if defined(ARCH_OS_WINDOWS)
+  _stream.open(ArchWindowsUtf8ToUtf16(_tmpFilePath).c_str(),
+               std::fstream::out | std::fstream::binary | std::fstream::trunc);
+#else
   _stream.open(_tmpFilePath.c_str(),
                std::fstream::out | std::fstream::binary | std::fstream::trunc);
+#endif
   if (!_stream) {
     if (reason) {
       *reason = TfStringPrintf("Unable to open '%s' for writing: %s",

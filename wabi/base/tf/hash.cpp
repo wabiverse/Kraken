@@ -22,13 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/hash.h"
-#include "wabi/base/arch/hash.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/hash.h"
 
 #include <cstring>
 

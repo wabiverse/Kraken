@@ -65,6 +65,7 @@ namespace
     return instance;
   }
 
+
   // Need an init method that accepts any arguments and does nothing.
   static object _DummyInit(tuple const &, dict const &)
   {

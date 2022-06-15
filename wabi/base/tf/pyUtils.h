@@ -29,18 +29,18 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/api.h"
+#include "wabi/base/tf/refPtr.h"
+#include "wabi/base/tf/weakPtr.h"
 #include "wabi/base/tf/diagnosticLite.h"
 #include "wabi/base/tf/preprocessorUtilsLite.h"
 #include "wabi/base/tf/py3Compat.h"
 #include "wabi/base/tf/pyInterpreter.h"
 #include "wabi/base/tf/pyLock.h"
-#include "wabi/base/tf/refPtr.h"
-#include "wabi/base/tf/weakPtr.h"
+#include "wabi/base/tf/api.h"
 
 #include <functional>
-#include <string>
 #include <typeinfo>
+#include <string>
 #include <vector>
 
 #include <boost/python/dict.hpp>
@@ -174,6 +174,7 @@ int64_t TfPyNormalizeIndex(int64_t index, uint64_t size, bool throwError = false
 
 /// Return the name of the class of \a obj.
 TF_API std::string TfPyGetClassName(boost::python::object const &obj);
+
 
 /// Return the python class object for \a type if \a type has been wrapped.
 /// Otherwise return None.

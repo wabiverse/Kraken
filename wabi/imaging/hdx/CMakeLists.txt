@@ -95,8 +95,10 @@ wabi_library(hdx
         resources/shaders/renderPassOitVolumeShader.glslfx
         resources/shaders/renderPassShadowShader.glslfx
         resources/shaders/selection.glslfx
+        resources/shaders/skydome.glslfx
         resources/shaders/visualize.glslfx
-        resources/textures/StinsonBeach.exr
+        resources/textures/StinsonBeach.hdr
+        resources/textures/StinsonBeach.tex
 
     DOXYGEN_FILES
         docs/overview.dox

@@ -23,8 +23,8 @@
 //
 
 #include "wabi/base/tf/anyWeakPtr.h"
-#include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyUtils.h"
+#include "wabi/base/tf/pyContainerConversions.h"
 
 #include <boost/python/to_python_converter.hpp>
 
@@ -32,8 +32,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_BEGIN
 
-// put this in the presto namespace so that we can declare it a friend in
-// AnyweakPtr.h
+// Put this in the pxr namespace so that we can declare it a friend in
+// anyWeakPtr.h
 
 object Tf_GetPythonObjectFromAnyWeakPtr(TfAnyWeakPtr const &self)
 {

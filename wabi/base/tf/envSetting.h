@@ -84,7 +84,7 @@
 /// You can also access a variable's value from Python:
 ///
 /// \code{.py}
-/// from wabi import Tf
+/// from pxr import Tf
 /// suffix = Tf.GetEnvSetting("TDS_FILE_SUFFIX")
 /// \endcode
 ///
@@ -96,13 +96,13 @@
 /// the TfEnvSetting variable is loaded, a warning messages is printed.
 ///
 /// Additionally, at program startup time (or when lib/tf is first loaded),
-/// the environment variable WABI_TF_ENV_SETTING_FILE is examined.  If this
+/// the environment variable PIXAR_TF_ENV_SETTING_FILE is examined.  If this
 /// variable indicates a file that can be read, then the file is parsed, and
 /// should contain lines of the form key=value.  For each line read, the
 /// environment variable key is set to value.  For example:
 ///
 /// \code{.sh}
-/// $ setenv WABI_TF_ENV_SETTING_FILE /usr/anim/<UNIT>/admin/env-settings
+/// $ setenv PIXAR_TF_ENV_SETTING_FILE /usr/anim/<UNIT>/admin/env-settings
 ///
 /// $ cat /usr/anim/<UNIT>/admin/env-settings
 /// TDS_DEF_VERSION=30
@@ -114,9 +114,9 @@
 /// ignored.  If the file itself cannot be read, no error is printed; however,
 /// if the file is malformed, errors are printed to stderr.
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/tf/registryManager.h"
-#include "wabi/wabi.h"
 
 #include <atomic>
 #include <string>

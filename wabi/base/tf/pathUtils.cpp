@@ -22,19 +22,18 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/pathUtils.h"
-#include "wabi/base/arch/errno.h"
-#include "wabi/base/arch/fileSystem.h"
-#include "wabi/base/arch/systemInfo.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/systemInfo.h"
+#include "wabi/base/arch/fileSystem.h"
+#include "wabi/base/arch/errno.h"
 
 #include <algorithm>
 #include <cctype>
 #include <errno.h>
-#include <filesystem>
 #include <limits.h>
 #include <string>
 #include <sys/stat.h>
@@ -42,15 +41,11 @@
 #include <vector>
 
 #if defined(ARCH_OS_WINDOWS)
-#  include <winrt/base.h>
-#  include <winrt/Windows.Storage.h>
-#  include <Shlwapi.h>
 #  include <Windows.h>
+#  include <Shlwapi.h>
 #else
 #  include <glob.h>
 #endif
-
-namespace fs = std::filesystem;
 
 using std::pair;
 using std::string;
@@ -80,11 +75,14 @@ namespace
         prefix.push_back('\\');
       }
       if (TfIsLink(prefix)) {
-        // Expand the link and repeat with the new path.
-        return _ExpandSymlinks(TfReadLink(prefix) + path.substr(i));
-      } else {
-        i = path.find_first_of("/\\", i + 1);
+        // Expand the link and repeat with the new path if the path changed.
+        // The path may remain unchanged or be empty if the link type is
+        // unsupported or the mount destination is not available.
+        auto newPrefix = TfReadLink(prefix);
+        if (!newPrefix.empty() && newPrefix != prefix)
+          return _ExpandSymlinks(newPrefix + path.substr(i));
       }
+      i = path.find_first_of("/\\", i + 1);
     }
 
     // No ancestral symlinks.
@@ -277,8 +275,8 @@ string TfReadLink(string const &path)
 bool TfIsRelativePath(std::string const &path)
 {
 #if defined(ARCH_OS_WINDOWS)
-  fs::path filepath = path;
-  return path.empty() || (filepath.is_relative() && path[0] != '/' && path[0] != '\\');
+  return path.empty() || (PathIsRelativeW(ArchWindowsUtf8ToUtf16(path).c_str()) &&
+                          path[0] != '/' && path[0] != '\\');
 #else
   return path.empty() || path[0] != '/';
 #endif
@@ -331,7 +329,7 @@ namespace
       // Conveniently GetFileAttributes() works on paths with a trailing
       // backslash.
       string path = prefix + pattern;
-      const DWORD attributes = GetFileAttributes(LPCWSTR(path.c_str()));
+      const DWORD attributes = GetFileAttributesW(ArchWindowsUtf8ToUtf16(path).c_str());
       if (attributes != INVALID_FILE_ATTRIBUTES) {
         // File exists.
 
@@ -363,17 +361,16 @@ namespace
       const string leftmostDir = TfGetPathName(leftmostPattern);
 
       // Glob the leftmost pattern.
-      WIN32_FIND_DATA data;
-      HANDLE find = FindFirstFile(LPCWSTR(leftmostPattern.c_str()), &data);
+      WIN32_FIND_DATAW data;
+      HANDLE find = FindFirstFileW(ArchWindowsUtf8ToUtf16(leftmostPattern).c_str(), &data);
       if (find != INVALID_HANDLE_VALUE) {
-        char DefChar = ' ';
-        std::vector<char> ch(j);
         do {
           // Recurse with next pattern.
-          WideCharToMultiByte(CP_ACP, 0, data.cFileName, -1, &ch[0], 260, &DefChar, NULL);
-          std::wstring s(data.cFileName);
-          Tf_Glob(result, leftmostDir + std::string(s.begin(), s.end()), remainingPattern, flags);
-        } while (FindNextFile(find, &data));
+          Tf_Glob(result,
+                  leftmostDir + ArchWindowsUtf16ToUtf8(data.cFileName),
+                  remainingPattern,
+                  flags);
+        } while (FindNextFileW(find, &data));
         FindClose(find);
       }
     }

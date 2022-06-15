@@ -24,8 +24,8 @@
 #ifndef WABI_BASE_TF_STACK_TRACE_H
 #define WABI_BASE_TF_STACK_TRACE_H
 
-#include "wabi/base/tf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
 
 #include <cstdio>
 #include <ctime>

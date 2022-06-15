@@ -48,7 +48,7 @@
 /// instanced object after initial creation). The \c TfSingleton template
 /// works in conjunction with a macro in the source file
 /// TF_INSTANTIATE_SINGLETON(), which is itself defined by  including the file
-/// "wabi/base/tf/instantiateSingleton.h".
+/// "pxr/base/tf/instantiateSingleton.h".
 ///
 /// \anchor TfSingleton_typicalUse
 /// <B> Typical Use </B>
@@ -102,10 +102,10 @@
 /// the longer \c TfSingleton<Registry>::GetInstance() to obtain a reference
 /// to the sole instance of the registry.
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/arch/pragmas.h"
 #include "wabi/base/tf/diagnosticLite.h"
-#include "wabi/wabi.h"
 
 #include <mutex>
 

@@ -31,8 +31,8 @@
 #include "wabi/base/tf/pyError.h"
 #include "wabi/base/tf/pyErrorInternal.h"
 
-#include <boost/python/extract.hpp>
 #include <boost/python/handle.hpp>
+#include <boost/python/extract.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/tuple.hpp>
 
@@ -89,6 +89,7 @@ bool TfPyConvertTfErrorsToPythonException(TfErrorMark const &m)
   return false;
 }
 
+
 void TfPyConvertPythonExceptionToTfErrors()
 {
   // Get the python exception info.
@@ -108,6 +109,19 @@ void TfPyConvertPythonExceptionToTfErrors()
       }
     } else {
       TF_ERROR(exc, TF_PYTHON_EXCEPTION, "Tf Python Exception");
+    }
+  } else if (exc.GetValue()) {
+    object exception(exc.GetValue());
+    if (PyObject_HasAttrString(exception.ptr(), "_wabi_SavedTfException")) {
+      extract<uintptr_t> extractor(exception.attr("_wabi_SavedTfException"));
+      std::exception_ptr *excPtrPtr;
+      if (extractor.check()) {
+        uintptr_t addr = extractor();
+        memcpy(&excPtrPtr, &addr, sizeof(addr));
+        std::exception_ptr eptr = *excPtrPtr;
+        delete excPtrPtr;
+        std::rethrow_exception(eptr);
+      }
     }
   }
 }

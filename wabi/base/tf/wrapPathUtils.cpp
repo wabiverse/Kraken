@@ -23,9 +23,9 @@
 //
 ///
 /// \file tf/wrapPathUtils.cpp
-#include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/tf/pathUtils.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/pathUtils.h"
+#include "wabi/base/tf/diagnostic.h"
 #include <boost/python/def.hpp>
 #include <string>
 

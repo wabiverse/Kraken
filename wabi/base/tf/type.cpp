@@ -42,12 +42,12 @@
 #ifdef WITH_PYTHON
 // XXX: This include is a hack to avoid build errors due to
 // incompatible macro definitions in pyport.h on macOS.
+#  include <locale>
 #  include "wabi/base/tf/cxxCast.h"
 #  include "wabi/base/tf/pyLock.h"
 #  include "wabi/base/tf/pyObjWrapper.h"
 #  include "wabi/base/tf/pyObjectFinder.h"
 #  include "wabi/base/tf/pyUtils.h"
-#  include <locale>
 #endif  // WITH_PYTHON
 
 #include <boost/noncopyable.hpp>
@@ -56,8 +56,8 @@
 
 #include <tbb/spin_rw_mutex.h>
 
-#include <algorithm>
 #include <atomic>
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -674,6 +674,7 @@ static bool _MergeAncestors(vector<TypeVector> *seqs, TypeVector *result)
       }
     }
 
+
     if (cand.IsUnknown()) {
       // If we were unable to find a candidate, we're done.
       // If we've consumed all the inputs, then we've succeeded.
@@ -997,6 +998,7 @@ void TfType::_AddBases(const TypeVector &newBases, vector<string> *errorsToEmit)
                        GetTypeName().c_str(),
                        haveBase.GetTypeName().c_str(),
                        newBasesStr.c_str()));
+
     } else {
 
       // Make sure the new bases are also ordered strictly monotonically
@@ -1207,6 +1209,7 @@ size_t TfType::GetSizeof() const
   ScopedLock lock(_info->mutex, /*write=*/false);
   return _info->sizeofType;
 }
+
 
 TF_REGISTRY_FUNCTION(TfType)
 {

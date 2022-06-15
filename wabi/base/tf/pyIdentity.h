@@ -118,12 +118,14 @@ struct Tf_PyOwnershipPtrMap
   static _CacheType _cache;
 };
 
+
 // Doxygen generates files whose names are mangled typenames.  This is fine
 // except when the filenames get longer than 256 characters.  This is one case
 // of that, so we'll just disable doxygen.  There's no actual doxygen doc here,
 // so this is fine.  If/when this gets solved for real, we can remove this
 // (6/06)
 #ifndef doxygen
+
 
 template<class Ptr, typename Enable = void> struct Tf_PyOwnershipHelper
 {
@@ -216,6 +218,7 @@ struct Tf_PyOwnershipHelper<Ptr,
 
 #endif  // doxygen -- see comment above.
 
+
 template<typename Ptr> struct Tf_PyIsRefPtr
 {
   static const bool value = false;
@@ -225,6 +228,7 @@ template<typename T> struct Tf_PyIsRefPtr<TfRefPtr<T>>
 {
   static const bool value = true;
 };
+
 
 template<class Ptr>
 typename boost::enable_if<Tf_PyIsRefPtr<Ptr>>::type Tf_PySetPythonIdentity(Ptr const &, PyObject *)

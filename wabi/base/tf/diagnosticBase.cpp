@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/diagnosticBase.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/diagnosticBase.h"
 
+#include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/diagnosticMgr.h"
 #include "wabi/base/tf/registryManager.h"
-#include "wabi/base/tf/stringUtils.h"
 
 #include <string>
 

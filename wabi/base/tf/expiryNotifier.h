@@ -26,9 +26,9 @@
 
 /// \file tf/expiryNotifier.h
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/tf/api.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

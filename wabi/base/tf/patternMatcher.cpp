@@ -22,14 +22,15 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/patternMatcher.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/patternMatcher.h"
 
 using namespace std;
 
 WABI_NAMESPACE_BEGIN
 
 TfPatternMatcher::TfPatternMatcher() : _caseSensitive(false), _isGlob(false), _recompile(true) {}
+
 
 TfPatternMatcher::TfPatternMatcher(const string &pattern, bool caseSensitive, bool isGlob)
   : _caseSensitive(caseSensitive),
@@ -38,10 +39,12 @@ TfPatternMatcher::TfPatternMatcher(const string &pattern, bool caseSensitive, bo
     _recompile(true)
 {}
 
+
 TfPatternMatcher::~TfPatternMatcher()
 {
   // Do nothing.
 }
+
 
 string TfPatternMatcher::GetInvalidReason() const
 {
@@ -71,6 +74,7 @@ bool TfPatternMatcher::Match(const string &query, string *errorMsg) const
   }
 }
 
+
 void TfPatternMatcher::SetIsCaseSensitive(bool sensitive)
 {
   if (sensitive != _caseSensitive) {
@@ -87,6 +91,7 @@ void TfPatternMatcher::SetIsGlobPattern(bool isGlob)
   }
 }
 
+
 void TfPatternMatcher::SetPattern(const string &pattern)
 {
   if (pattern != _pattern) {
@@ -95,7 +100,9 @@ void TfPatternMatcher::SetPattern(const string &pattern)
   }
 }
 
+
 ////////////////////////////////// Private ////////////////////////////////
+
 
 void TfPatternMatcher::_Compile() const
 {
@@ -109,5 +116,6 @@ void TfPatternMatcher::_Compile() const
     _regex = ArchRegex(_pattern, flags);
   }
 }
+
 
 WABI_NAMESPACE_END

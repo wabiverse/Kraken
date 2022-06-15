@@ -24,9 +24,9 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/diagnosticMgr.h"
-#include "wabi/base/tf/pyCallContext.h"
 #include "wabi/base/tf/status.h"
+#include "wabi/base/tf/pyCallContext.h"
+#include "wabi/base/tf/diagnosticMgr.h"
 #include "wabi/base/tf/stringUtils.h"
 
 #include <boost/python/class.hpp>

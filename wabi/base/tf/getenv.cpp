@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/getenv.h"
-#include "wabi/base/arch/env.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/env.h"
+#include "wabi/base/tf/getenv.h"
 #include <ctype.h>
 #include <string>
 

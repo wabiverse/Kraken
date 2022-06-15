@@ -26,8 +26,8 @@
 
 /// \file tf/error.h
 
-#include "wabi/base/tf/diagnosticBase.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/diagnosticBase.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -54,6 +54,7 @@ void Tf_PySetErrorExceptionClass(object const &cls)
   _ExceptionClass = handle<>(borrowed(cls.ptr()));
 }
 
+
 TfPyExceptionState Tf_PyFetchPythonExceptionState()
 {
   PyObject *excType, *excValue, *excTrace;
@@ -62,6 +63,7 @@ TfPyExceptionState Tf_PyFetchPythonExceptionState()
                             handle<>(allow_null(excValue)),
                             handle<>(allow_null(excTrace)));
 }
+
 
 void Tf_PyRestorePythonExceptionState(TfPyExceptionState state)
 {

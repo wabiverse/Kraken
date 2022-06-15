@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 
 #include <boost/python/def.hpp>
 #include <string>

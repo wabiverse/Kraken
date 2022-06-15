@@ -29,9 +29,9 @@
 #include "wabi/base/tf/pyContainerConversions.h"
 
 #include <boost/python/def.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/str.hpp>
 #include <boost/python/to_python_converter.hpp>
+#include <boost/python/str.hpp>
+#include <boost/python/object.hpp>
 
 #include <set>
 #include <string>

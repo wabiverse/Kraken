@@ -1,37 +1,34 @@
-# 
-#  Copyright 2021 Pixar. All Rights Reserved.
-# 
-#  Portions of this file are derived from original work by Pixar
-#  distributed with Universal Scene Description, a project of the
-#  Academy Software Foundation (ASWF). https://www.aswf.io/
-# 
-#  Licensed under the Apache License, Version 2.0 (the "Apache License")
-#  with the following modification; you may not use this file except in
-#  compliance with the Apache License and the following modification:
-#  Section 6. Trademarks. is deleted and replaced with:
-# 
-#  6. Trademarks. This License does not grant permission to use the trade
-#     names, trademarks, service marks, or product names of the Licensor
-#     and its affiliates, except as required to comply with Section 4(c)
-#     of the License and to reproduce the content of the NOTICE file.
 #
-#  You may obtain a copy of the Apache License at:
+# Copyright 2016 Pixar
 #
-#       http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
 #
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the Apache License with the above modification is
-#  distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-#  ANY KIND, either express or implied. See the Apache License for the
-#  specific language governing permissions and limitations under the
-#  Apache License.
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
 #
-#  Modifications copyright (C) 2020-2021 Wabi.
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
 #
 """
 Tf -- Tools Foundation
 """
 
+# Type to help handle DLL import paths on Windows with python interpreters v3.8
+# and newer. These interpreters don't search for DLLs in the path anymore, you
+# have to provide a path explicitly. This re-enables path searching for USD 
+# dependency libraries
 import platform, sys
 if sys.version_info >= (3, 8) and platform.system() == "Windows":
     import contextlib
@@ -58,20 +55,11 @@ if sys.version_info >= (3, 8) and platform.system() == "Windows":
         del os
     del contextlib
 else:
-    import ctypes, os
-    # Fix libai.so from crashing python, Linux problem only, Autodesk has a support ticket
-    # for this. In the meantime. This will work. If you move the python installation be sure
-    # to also update this path.
-    currentFile = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
-    # Relative path to kraken installation, where libai.so is installed to kraken/X.XX/bin
-    aiSO = os.path.abspath(os.path.join(currentFile, "../../../../../../bin/libai.so"))
-    ctypes.CDLL(aiSO, mode=os.RTLD_GLOBAL)
     class WindowsImportWrapper(object):
         def __enter__(self):
             pass
         def __exit__(self, exc_type, ex_val, exc_tb):
             pass
-    del ctypes
 del platform, sys
 
 
@@ -80,6 +68,7 @@ def PreparePythonModule(moduleName=None):
     Python module associated with the caller's module (e.g. '_tf' for 'wabi.Tf')
     or the module with the specified moduleName and copy its contents into
     the caller's local namespace.
+
     Generally, this should only be called by the __init__.py script for a module
     upon loading a boost python module (generally '_libName.so')."""
     import importlib
@@ -145,18 +134,25 @@ def PrepareModule(module, result):
 
 def GetCodeLocation(framesUp):
     """Returns a tuple (moduleName, functionName, fileName, lineNo).
+
     To trace the current location of python execution, use GetCodeLocation().
     By default, the information is returned at the current stack-frame; thus
+
         info = GetCodeLocation()
+
     will return information about the line that GetCodeLocation() was called 
     from. One can write:
+
         def genericDebugFacility():
             info = GetCodeLocation(1)
             # print out data
+
+
         def someCode():
             ...
             if bad:
                 genericDebugFacility()
+
     and genericDebugFacility() will get information associated with its caller, 
     i.e. the function someCode()."""
     import sys
@@ -178,6 +174,7 @@ __SetErrorExceptionClass(ErrorException)
 
 def Warn(msg, template=""):
     """Issue a warning via the TfDiagnostic system.
+
     At this time, template is ignored.
     """
     codeInfo = GetCodeLocation(framesUp=1)
@@ -185,6 +182,7 @@ def Warn(msg, template=""):
     
 def Status(msg, verbose=True):
     """Issues a status update to the Tf diagnostic system.
+
     If verbose is True (the default) then information about where in the code
     the status update was issued from is included.
     """

@@ -28,15 +28,15 @@
 /// \ingroup group_tf_DebuggingOutput
 /// Conditional debugging output class and macros.
 
-#include "wabi/base/arch/attributes.h"
-#include "wabi/base/arch/hints.h"
+#include "wabi/wabi.h"
 #include "wabi/base/tf/api.h"
+#include "wabi/base/tf/tf.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/preprocessorUtilsLite.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/stopwatch.h"
-#include "wabi/base/tf/tf.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/attributes.h"
+#include "wabi/base/arch/hints.h"
 
 #include <atomic>
 #include <cstdio>

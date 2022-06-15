@@ -32,8 +32,8 @@
 #  include "wabi/wabi.h"
 
 #  include "wabi/base/arch/buildMode.h"
-#  include "wabi/base/arch/inttypes.h"
 #  include "wabi/base/arch/math.h"
+#  include "wabi/base/arch/inttypes.h"
 
 #  include <math.h>
 #  include <utility>
@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 #  ifndef TF_MAX_ARITY
 #    define TF_MAX_ARITY 7
 #  endif  // TF_MAX_ARITY
+
 
 /// This value may be used by functions that return a \c size_t to indicate
 /// that a special or error condition has occurred.

@@ -34,80 +34,37 @@
 ///
 /// In particular, this header file does not include the C++ header file
 /// \c < \c string \c >, making inclusion of this file a very light-weight
-/// addition. Include this file, as opposed to wabi/base/tf/diagnostic.h in
+/// addition. Include this file, as opposed to pxr/base/tf/diagnostic.h in
 /// header files that need to remain as light-weight as possible.
 ///
 /// These macros are safe to use in multiple threads.
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/attributes.h"
+#include "wabi/base/tf/api.h"
 #include "wabi/base/arch/buildMode.h"
 #include "wabi/base/arch/hints.h"
-#include "wabi/base/tf/api.h"
 #include "wabi/base/tf/callContext.h"
-#include "wabi/wabi.h"
 
 #include <stddef.h>
 
 WABI_NAMESPACE_BEGIN
 
-/**
- * @enum TfDiagnosticType
- * Enum describing various
- * diagnostic conditions.
- *
- * These are ordered by enum
- * value of MSDOS's ability
- * to color console messages
- * w/ SetConsoleTextAttribute
- *
- * Those color values are as
- * follows:
- *
- * 1: Blue
- * 2: Green
- * 3: Cyan
- * 4: Red
- * 5: Pink
- * 6: Yellow
- * 7: White
- * 8: Gray
- *
- * Then, these color values repeat
- * with higher vibrancies, ex:
- *
- * 9: Light Blue
- * 10: Light Green
- * 11: Light Cyan
- * etc... */
+/// \enum TfDiagnosticType
+/// Enum describing various diagnostic conditions.
 enum TfDiagnosticType : int
 {
-  /** Color Invalid - Black */
   TF_DIAGNOSTIC_INVALID_TYPE = 0,
-  /** Color Blue */
   TF_DIAGNOSTIC_CODING_ERROR_TYPE,
-  /** Color Green (User Friendly) */
-  TF_DIAGNOSTIC_MSG_SUCCESS_TYPE,
-  /** Color Cyan */
   TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE,
-  /** Color Red (User Friendly) */
-  TF_DIAGNOSTIC_MSG_ERROR_TYPE,
-  /** Color Pink */
   TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE,
-  /** Color Yellow (User Friendly) */
-  TF_DIAGNOSTIC_MSG_WARNING_TYPE,
-  /** Color White (User Friendly) */
-  TF_DIAGNOSTIC_MSG_TYPE,
-  /** Color Gray */
-  TF_DIAGNOSTIC_STATUS_TYPE,
-  /** Color Light Blue */
-  TF_DIAGNOSTIC_NONFATAL_ERROR_TYPE,
-  /** Color Light Green */
   TF_DIAGNOSTIC_FATAL_ERROR_TYPE,
-  /** Color Light Cyan */
+  TF_DIAGNOSTIC_NONFATAL_ERROR_TYPE,
   TF_DIAGNOSTIC_WARNING_TYPE,
-  /** Color Light Red */
+  TF_DIAGNOSTIC_STATUS_TYPE,
   TF_APPLICATION_EXIT_TYPE,
 };
+
 
 #if !defined(doxygen)
 
@@ -137,18 +94,6 @@ struct Tf_DiagnosticLiteHelper
 
 #  define TF_FATAL_CODING_ERROR \
     Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_CODING_ERROR_TYPE).IssueFatalError
-
-#  define TF_RUNTIME_MSG \
-    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
-
-#  define TF_RUNTIME_MSG_SUCCESS \
-    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_SUCCESS_TYPE).IssueStatus
-
-#  define TF_RUNTIME_MSG_ERROR \
-    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueError
-
-#  define TF_RUNTIME_MSG_WARNING \
-    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_WARNING_TYPE).IssueWarning
 
 #  define TF_RUNTIME_ERROR \
     Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE).IssueError

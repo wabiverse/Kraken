@@ -24,9 +24,9 @@
 #ifndef WABI_BASE_TF_PATH_UTILS_H
 #define WABI_BASE_TF_PATH_UTILS_H
 
-#include "wabi/base/arch/fileSystem.h"
-#include "wabi/base/tf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
+#include "wabi/base/arch/fileSystem.h"
 #include <string>
 #include <vector>
 

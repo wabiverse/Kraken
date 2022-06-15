@@ -14,9 +14,10 @@ wabi_library(tf
         ${WINLIBS}
         ${PYTHON_LIBRARIES}
         ${Boost_PYTHON_LIBRARY}
-        ${TBB_LIBRARIES}
+        ${TBB_tbb_LIBRARY}
 
     INCLUDE_DIRS
+        ${PYTHON_INCLUDE_DIRS}
         ${PYTHON_INCLUDE_DIR}
         ${Boost_INCLUDE_DIRS}
         ${TBB_INCLUDE_DIRS}
@@ -40,6 +41,7 @@ wabi_library(tf
         error
         errorMark
         errorTransport
+        exception
         expiryNotifier
         fastCompression
         fileUtils
@@ -54,6 +56,8 @@ wabi_library(tf
         patternMatcher
         pointerAndBits
         pyLock
+        pyObjWrapper
+        pyTracing
         refBase
         refCount
         refPtr
@@ -102,14 +106,12 @@ wabi_library(tf
         pyModuleNotice
         pyNoticeWrapper
         pyObjectFinder
-        pyObjWrapper
         pyOptional
         pyOverride
         pyPolymorphic
         pyPtrHelpers
         pyResultConversions
         pySingleton
-        pyTracing
         pyUtils
         pyWrapContext
         scriptModuleLoader
@@ -195,6 +197,7 @@ wabi_library(tf
         wrapEnum.cpp
         wrapEnvSetting.cpp
         wrapError.cpp
+        wrapException.cpp
         wrapFileUtils.cpp
         wrapFunction.cpp
         wrapMallocTag.cpp
@@ -223,9 +226,9 @@ wabi_library(tf
         wrapWarning.cpp
 
 
-    PYMODULE_FILES
+    PYMODULE_FILES 
         python/__init__.py
-        # testenv/python/__init__.py
+        # testenv/__init__.py
         # testenv/testTfScriptModuleLoader_AAA_RaisesError.py
         # testenv/testTfScriptModuleLoader_DepLoadsAll.py
         # testenv/testTfScriptModuleLoader_LoadsAll.py
@@ -233,6 +236,7 @@ wabi_library(tf
         # testenv/testTfScriptModuleLoader_Other.py
         # testenv/testTfScriptModuleLoader_Test.py
         # testenv/testTfScriptModuleLoader_Unknown.py
+        # testenv/testTfPyInvoke_callees.py
 
     DOXYGEN_FILES
         docs/diagnosticOverview.dox

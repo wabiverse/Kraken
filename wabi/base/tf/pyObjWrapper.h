@@ -28,14 +28,40 @@
 
 #include "wabi/base/tf/api.h"
 
-#include <boost/functional/hash.hpp>
-#include <boost/python/object_fwd.hpp>
-#include <boost/python/object_operators.hpp>
+#ifdef WITH_PYTHON
+// Include this header first to pick up additional mitigations
+// for build issues when including Python.h
+#  include "wabi/base/tf/pySafePython.h"
 
-#include <iosfwd>
-#include <memory>
+#  include <boost/functional/hash.hpp>
+#  include <boost/python/object_fwd.hpp>
+#  include <boost/python/object_operators.hpp>
+
+#  include <iosfwd>
+#  include <memory>
+
+#else
+
+#  include <type_traits>
+
+#endif
 
 WABI_NAMESPACE_BEGIN
+
+// We define the empty stub for ABI compatibility even if Python support is
+// enabled so we can make sure size and alignment is the same.
+class TfPyObjWrapperStub
+{
+ public:
+
+  static constexpr std::size_t Size = 16;
+  static constexpr std::size_t Align = 8;
+
+ private:
+
+  std::aligned_storage<Size, Align>::type _stub;
+};
+
 
 /// \class TfPyObjWrapper
 ///
@@ -63,6 +89,7 @@ WABI_NAMESPACE_BEGIN
 /// provides, by virtue of deriving from boost::python::api::object_operators<T>.
 /// However it is important to note that callers must ensure the GIL is held
 /// before using these operators!
+#ifdef WITH_PYTHON
 class TfPyObjWrapper : public boost::python::api::object_operators<TfPyObjWrapper>
 {
   typedef boost::python::object object;
@@ -127,6 +154,18 @@ class TfPyObjWrapper : public boost::python::api::object_operators<TfPyObjWrappe
   // Store a shared_ptr to a python object.
   std::shared_ptr<object> _objectPtr;
 };
+
+static_assert(sizeof(TfPyObjWrapper) == sizeof(TfPyObjWrapperStub),
+              "ABI break: Incompatible class sizes.");
+static_assert(alignof(TfPyObjWrapper) == alignof(TfPyObjWrapperStub),
+              "ABI break: Incompatible class alignments.");
+
+#else  // WITH_PYTHON
+
+class TfPyObjWrapper : TfPyObjWrapperStub
+{};
+
+#endif  // WITH_PYTHON
 
 WABI_NAMESPACE_END
 

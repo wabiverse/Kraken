@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/diagnosticMgr.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/diagnosticMgr.h"
 
 #include "wabi/base/tf/debugCodes.h"
 #include "wabi/base/tf/error.h"
@@ -47,8 +47,8 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#include <memory>
 #include <thread>
+#include <memory>
 
 using std::list;
 using std::string;
@@ -94,6 +94,7 @@ namespace
   };
 }  // end anonymous namespace
 
+
 // Helper function for printing a diagnostic message when a delegate is not
 // available.
 //
@@ -106,6 +107,7 @@ static void _PrintDiagnostic(FILE *fout,
                              const TfDiagnosticInfo &info);
 
 static std::string _FormatDiagnostic(const TfDiagnosticBase &d, const TfDiagnosticInfo &info);
+
 
 TF_REGISTRY_FUNCTION(TfDebug)
 {
@@ -120,6 +122,7 @@ TF_REGISTRY_FUNCTION(TfDebug)
                               "confusing output");
 }
 
+
 // Abort without logging.  This is meant for use by things like TF_FATAL_ERROR,
 // which already log (more extensive) session information before doing the
 // abort.
@@ -130,6 +133,7 @@ static void Tf_UnhandledAbort()
 }
 
 TF_INSTANTIATE_SINGLETON(TfDiagnosticMgr);
+
 
 TfDiagnosticMgr::Delegate::~Delegate() {}
 
@@ -396,9 +400,6 @@ void TfDiagnosticMgr::PostFatal(TfCallContext const &context,
     } else if (statusCode == TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE) {
       fprintf(stderr, "Fatal error: %s [%s].\n", msg.c_str(), ArchGetProgramNameForErrors());
       exit(1);
-    } else if (statusCode == TF_DIAGNOSTIC_MSG_TYPE ||
-               statusCode == TF_DIAGNOSTIC_MSG_ERROR_TYPE) {
-      fprintf(stderr, "%s\n", msg.c_str());
     } else {
       // Report and log information about the fatal error
       TfLogCrash("FATAL ERROR", msg, std::string() /*additionalInfo*/, context, true /*logToDB*/);
@@ -468,6 +469,7 @@ void TfDiagnosticMgr::ErrorHelper::PostQuietly(const string &msg, TfDiagnosticIn
   TfDiagnosticMgr::GetInstance()
     .PostError(_errorCode, _errorCodeString, _context, msg, info, true);
 }
+
 
 void TfDiagnosticMgr::ErrorHelper::Post(const char *fmt, ...) const
 {
@@ -611,21 +613,7 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
 {
   string output;
   string codeName = TfDiagnosticMgr::GetCodeName(code);
-
-#if _WIN32
-  /**
-   * Implement Console Colors.  */
-  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleTextAttribute(hConsole, code);
-#endif
-
-  if (context.IsDisabled()) {
-    output = TfStringPrintf("[%s]%s %s\n",
-                            codeName.c_str(),
-                            ArchIsMainThread() ? "" : " (secondary thread)",
-                            msg.c_str());
-  } else if (context.IsHidden() || !strcmp(context.GetFunction(), "") ||
-             !strcmp(context.GetFile(), "")) {
+  if (context.IsHidden() || !strcmp(context.GetFunction(), "") || !strcmp(context.GetFile(), "")) {
     output = TfStringPrintf("%s%s: %s [%s]\n",
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",

@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/enum.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/enum.h"
 
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/errorMark.h"
@@ -37,8 +37,8 @@
 
 #include "wabi/base/arch/demangle.h"
 
-#include "wabi/base/tf/hashmap.h"
 #include <boost/noncopyable.hpp>
+#include "wabi/base/tf/hashmap.h"
 
 #include <tbb/spin_mutex.h>
 
@@ -58,8 +58,6 @@ TF_REGISTRY_FUNCTION(TfType)
 
 // Convenience typedefs for value/name tables.
 typedef TfHashMap<TfEnum, string, TfHash> _EnumToNameTableType;
-typedef TfHashMap<TfEnum, int, TfHash> _EnumToIDTableType;
-typedef TfHashMap<int, TfEnum, TfHash> _IDToEnumTableType;
 typedef TfHashMap<string, TfEnum, TfHash> _NameToEnumTableType;
 typedef TfHashMap<string, vector<string>, TfHash> _TypeNameToNameVectorTableType;
 typedef TfHashMap<string, const type_info *, TfHash> _TypeNameToTypeTableType;
@@ -102,7 +100,6 @@ class Tf_EnumRegistry : boost::noncopyable
     _fullNameToEnum.erase(_enumToFullName[val]);
     _enumToFullName.erase(val);
     _enumToName.erase(val);
-    _idIconToEnum.erase(_enumToIconID[val]);
     _enumToDisplayName.erase(val);
   }
 
@@ -110,10 +107,6 @@ class Tf_EnumRegistry : boost::noncopyable
   _EnumToNameTableType _enumToName;
   _EnumToNameTableType _enumToFullName;
   _EnumToNameTableType _enumToDisplayName;
-  _EnumToIDTableType _enumToIconID;
-
-  _IDToEnumTableType _idIconToEnum;
-
   _NameToEnumTableType _fullNameToEnum;
   _TypeNameToNameVectorTableType _typeNameToNameVector;
   _TypeNameToTypeTableType _typeNameToType;
@@ -123,43 +116,6 @@ class Tf_EnumRegistry : boost::noncopyable
 };
 
 TF_INSTANTIATE_SINGLETON(Tf_EnumRegistry);
-
-void TfEnum::_AddName(TfEnum val,
-                      const string &valName,
-                      TfEnum icon,
-                      const string &displayName,
-                      const string &description)
-{
-  TfAutoMallocTag2 tag("Tf", "TfEnum::_AddName");
-  string typeName = ArchGetDemangled(val.GetType());
-
-  /**
-   * In case valName looks like "stuff::VALUE", strip off the leading
-   * prefix. */
-  size_t i = valName.rfind(':');
-  string shortName = (i == string::npos) ? valName : valName.substr(i + 1);
-
-  if (shortName.empty())
-    return;
-
-  Tf_EnumRegistry &r = Tf_EnumRegistry::_GetInstance();
-  tbb::spin_mutex::scoped_lock lock(r._tableLock);
-
-  string fullName = typeName + "::" + shortName;
-
-  r._enumToName[val] = shortName;
-  r._enumToFullName[val] = fullName;
-  r._enumToDisplayName[val] = displayName.empty() ? shortName : displayName;
-  r._enumToIconID[val] = icon.GetValueAsInt();
-  r._idIconToEnum[icon.GetValueAsInt()] = icon;
-  r._fullNameToEnum[fullName] = val;
-  r._typeNameToNameVector[val.GetType().name()].push_back(shortName);
-  r._typeNameToType[typeName] = &val.GetType();
-
-  TfRegistryManager::GetInstance().AddFunctionForUnload([&r, val]() {
-    r._Remove(val);
-  });
-}
 
 void TfEnum::_AddName(TfEnum val, const string &valName, const string &displayName)
 {
@@ -184,8 +140,6 @@ void TfEnum::_AddName(TfEnum val, const string &valName, const string &displayNa
   r._enumToName[val] = shortName;
   r._enumToFullName[val] = fullName;
   r._enumToDisplayName[val] = displayName.empty() ? shortName : displayName;
-  r._enumToIconID[val] = val.GetValueAsInt();
-  r._idIconToEnum[val.GetValueAsInt()] = val;
   r._fullNameToEnum[fullName] = val;
   r._typeNameToNameVector[val.GetType().name()].push_back(shortName);
   r._typeNameToType[typeName] = &val.GetType();

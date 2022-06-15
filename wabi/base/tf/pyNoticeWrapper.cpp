@@ -35,6 +35,7 @@ WABI_NAMESPACE_BEGIN
 
 TfPyNoticeWrapperBase::~TfPyNoticeWrapperBase() {}
 
+
 Tf_PyNoticeObjectGenerator::MakeObjectFunc Tf_PyNoticeObjectGenerator::_Lookup(TfNotice const &n)
 {
   if (!_generators.IsInitialized())
@@ -43,6 +44,7 @@ Tf_PyNoticeObjectGenerator::MakeObjectFunc Tf_PyNoticeObjectGenerator::_Lookup(T
   map<string, MakeObjectFunc>::iterator i = _generators->find(typeName);
   return i == _generators->end() ? 0 : i->second;
 }
+
 
 object Tf_PyNoticeObjectGenerator::Invoke(TfNotice const &n)
 {

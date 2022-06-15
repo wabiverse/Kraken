@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/base/tf/mallocTag.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/mallocTag.h"
 
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/iterator.h"
@@ -35,8 +35,8 @@
 #include <boost/python/class.hpp>
 #include <boost/python/scope.hpp>
 
-#include <fstream>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <string>
 #include <vector>

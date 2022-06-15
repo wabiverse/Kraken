@@ -26,19 +26,20 @@
 
 #include "wabi/base/tf/pyTracing.h"
 
-#include "wabi/base/tf/pyInterpreter.h"
-#include "wabi/base/tf/pyUtils.h"
-#include "wabi/base/tf/staticData.h"
+#ifdef WITH_PYTHON
+#  include "wabi/base/tf/pyInterpreter.h"
+#  include "wabi/base/tf/pyUtils.h"
+#  include "wabi/base/tf/staticData.h"
 
-#include <memory>
+#  include <memory>
 
-#include <tbb/spin_mutex.h>
+#  include <tbb/spin_mutex.h>
 
 // This is from python, needed for PyFrameObject.
-#include <frameobject.h>
+#  include <frameobject.h>
 
-#include <list>
-#include <mutex>
+#  include <list>
+#  include <mutex>
 
 using std::list;
 
@@ -49,6 +50,7 @@ typedef list<std::weak_ptr<TfPyTraceFn>> TraceFnList;
 static TfStaticData<TraceFnList> _traceFns;
 static bool _traceFnInstalled;
 static tbb::spin_mutex _traceFnMutex;
+
 
 static void _SetTraceFnEnabled(bool enable);
 
@@ -87,6 +89,7 @@ static void _InvokeTraceFns(TfPyTraceInfo const &info)
   }
 }
 
+
 static int _TracePythonFn(PyObject *, PyFrameObject *frame, int what, PyObject *arg);
 
 static void _SetTraceFnEnabled(bool enable)
@@ -100,6 +103,7 @@ static void _SetTraceFnEnabled(bool enable)
     PyEval_SetTrace(NULL, NULL);
   }
 }
+
 
 static int _TracePythonFn(PyObject *, PyFrameObject *frame, int what, PyObject *arg)
 {
@@ -115,6 +119,7 @@ static int _TracePythonFn(PyObject *, PyFrameObject *frame, int what, PyObject *
 
   return 0;
 }
+
 
 void Tf_PyFabricateTraceEvent(TfPyTraceInfo const &info)
 {
@@ -135,6 +140,7 @@ TfPyTraceFnId TfPyRegisterTraceFn(TfPyTraceFn const &f)
   return ret;
 }
 
+
 void Tf_PyTracingPythonInitialized()
 {
   static std::once_flag once;
@@ -147,3 +153,4 @@ void Tf_PyTracingPythonInitialized()
 }
 
 WABI_NAMESPACE_END
+#endif  // WITH_PYTHON

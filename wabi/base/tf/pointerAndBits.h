@@ -24,8 +24,8 @@
 #ifndef WABI_BASE_TF_POINTER_AND_BITS_H
 #define WABI_BASE_TF_POINTER_AND_BITS_H
 
-#include "wabi/base/arch/pragmas.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/pragmas.h"
 
 #include <cstdint>
 #include <type_traits>

@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/pyModule.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/pyModule.h"
 
 WABI_NAMESPACE_USING
 
@@ -38,6 +38,7 @@ TF_WRAP_MODULE
   TF_WRAP(DiagnosticBase);
   TF_WRAP(EnvSetting);
   TF_WRAP(Error);
+  TF_WRAP(Exception);
   TF_WRAP(FileUtils);
   TF_WRAP(Function);
   TF_WRAP(MallocTag);

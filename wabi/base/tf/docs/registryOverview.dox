@@ -3,7 +3,7 @@
 
 \section RegistryManagerContents Contents
 
-\li \ref RegistryManagerRationale
+\li \ref RegistryManagerRationale 
 \li \ref RegistryManagerPushModel
 \li \ref RegistryManagerPitfalls
 \li \ref RegistryManagerDefiningRegistryFunctions
@@ -26,7 +26,7 @@ As an example, consider a facility for registering image transformation function
 \code
 class ImageTransformer;
 
-class ImageTransformerRegistry
+class ImageTransformerRegistry 
 {
     void Add(ImageTransformer*, const std::string& name);
 
@@ -39,12 +39,12 @@ Suppose a library Xyz wishes to make available a new image transformation.  Imag
 However, you often don't know what libraries may be linked into our program, and keeping track can be quite difficult.  Additionally, a library might not even be linked into a program: it might be loaded manually, as in the case of plugins.  The usual solution is to add a static constructor into the Xyz library, to "push" data into the registry at startup time:
 
 \code
-class XyzTransformer : public ImageTransformer
+class XyzTransformer : public ImageTransformer 
 {
      ...
 };
 
-void XyzInit()
+void XyzInit() 
 {
     static bool initialized = false;
     if (initialized)
@@ -56,7 +56,7 @@ void XyzInit()
     return 0;
 }
 
-struct Xyz_GlobalObject
+struct Xyz_GlobalObject 
 {
     Xyz_GlobalObject() {
        XyzInit();
@@ -98,7 +98,7 @@ First, let us start with the Xyz library.  The library needs to define a functio
 \code
 #include "wabi/base/tf/registryManager.h"
 
-class XyzTransformer : public ImageTransformer
+class XyzTransformer : public ImageTransformer 
 {
      ...
 };
@@ -115,7 +115,7 @@ The first argument to the TF_REGISTRY_FUNCTION_WITH_TAG() macro in the above exa
 \code
 #include "wabi/base/tf/registryManager.h"
 
-class OtherTransformer : public ImageTransformer
+class OtherTransformer : public ImageTransformer 
 {
      ...
 };
@@ -163,7 +163,7 @@ ImageTransformerRegistry::ImageTransformerRegistry()
     // ImageTransformerRegistry::GetInstance() before this constructor
     // has finished.
 
-    TfSingleton<ImageTransformerRegistry>::SetInstanceConstructed(*this);
+    TfSingleton<ImageTransformerRegistry>::SetInstanceConstructed(*this);    
 
     // now pull the data (i.e. run
     //    TF_REGISTRY_FUNCTION_WITH_TAG(ImageTransformerRegistry,T) for all T.

@@ -24,8 +24,8 @@
 // Do not include pyModule.h or we'd need an implementation of WrapModule().
 //#include "wabi/base/tf/pyModule.h"
 
-#include "wabi/base/arch/defines.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/defines.h"
 
 #include "wabi/base/tf/error.h"
 #include "wabi/base/tf/errorMark.h"
@@ -42,15 +42,15 @@
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/token.h"
 
-#include <boost/python/dict.hpp>
 #include <boost/python/docstring_options.hpp>
 #include <boost/python/extract.hpp>
 #include <boost/python/handle.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/object/function.hpp>
+#include <boost/python/tuple.hpp>
+#include <boost/python/dict.hpp>
 #include <boost/python/raw_function.hpp>
 #include <boost/python/scope.hpp>
-#include <boost/python/tuple.hpp>
 
 #include <string>
 
@@ -315,6 +315,7 @@ class Tf_ModuleProcessor
     WalkModule(_module, &This::WrapForErrorHandlingCB);
   }
 
+
   bool FixModuleAttrsCB(char const *name, object const &owner, object const &obj)
   {
     if (PyObject_HasAttrString(obj.ptr(), "__module__")) {
@@ -333,6 +334,7 @@ class Tf_ModuleProcessor
   {
     WalkModule(_module, &This::FixModuleAttrsCB);
   }
+
 
   Tf_ModuleProcessor(object const &module)
     : _module(module),
@@ -382,6 +384,9 @@ void Tf_PyInitWrapModule(void (*wrapModule)(),
                          const char *packageTag,
                          const char *packageTag2)
 {
+  // Ensure the python GIL is created.
+  PyEval_InitThreads();
+
   // Tell the tracing mechanism that python is alive.
   Tf_PyTracingPythonInitialized();
 

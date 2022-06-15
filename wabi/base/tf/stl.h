@@ -30,10 +30,10 @@
 #include "wabi/wabi.h"
 
 #include "wabi/base/tf/api.h"
+#include "wabi/base/tf/tf.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/hashset.h"
 #include "wabi/base/tf/iterator.h"
-#include "wabi/base/tf/tf.h"
 
 #include <boost/call_traits.hpp>
 
@@ -219,6 +219,7 @@ inline void TfReset(TfHashSet<Value, Hash, Equal, Alloc> &hash)
   else if (!hash.empty())
     hash.clear();
 }
+
 
 /// An unary function that represents the identity function; it takes a single
 /// argument \a arg, and returns \a arg.

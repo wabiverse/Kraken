@@ -24,14 +24,14 @@
 #ifndef WABI_BASE_TF_PY_NOTICE_WRAPPER_H
 #define WABI_BASE_TF_PY_NOTICE_WRAPPER_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/notice.h"
+#include "wabi/base/tf/stringUtils.h"
+#include "wabi/base/tf/staticData.h"
+#include "wabi/base/tf/type.h"
 #include "wabi/base/tf/pyLock.h"
 #include "wabi/base/tf/pyObjectFinder.h"
-#include "wabi/base/tf/staticData.h"
-#include "wabi/base/tf/stringUtils.h"
-#include "wabi/base/tf/type.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/wabi.h"
 
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/if.hpp>
@@ -41,9 +41,9 @@
 #include <boost/python/extract.hpp>
 #include <boost/python/handle.hpp>
 
+#include <type_traits>
 #include <map>
 #include <string>
-#include <type_traits>
 
 WABI_NAMESPACE_BEGIN
 

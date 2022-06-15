@@ -28,9 +28,9 @@
 /// \ingroup group_tf_Containers
 /// A simple iterator adapter for \c STL containers.
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/tf/diagnosticLite.h"
-#include "wabi/wabi.h"
 
 #include <iterator>
 #include <type_traits>

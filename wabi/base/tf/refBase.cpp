@@ -24,8 +24,8 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/refBase.h"
+#include "wabi/base/tf/diagnostic.h"
 
 WABI_NAMESPACE_BEGIN
 

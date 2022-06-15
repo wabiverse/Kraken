@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/setenv.h"
-#include "wabi/base/arch/env.h"
-#include "wabi/base/arch/errno.h"
-#include "wabi/base/tf/diagnostic.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/env.h"
+#include "wabi/base/tf/setenv.h"
+#include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/arch/errno.h"
 
 #ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyUtils.h"

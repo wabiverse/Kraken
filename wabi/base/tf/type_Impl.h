@@ -87,7 +87,7 @@ template<typename T, typename BaseTypes> TfType const &TfType::Define()
   TfType const &newType = TfType::Declare(typeName, baseTfTypes);
 
   // Record traits information about T.
-  const bool isPodType = std::is_trivial<T>::value;
+  const bool isPodType = std::is_pod<T>::value;
   const bool isEnumType = std::is_enum<T>::value;
   const size_t sizeofType = TfSizeofType<T>::value;
 

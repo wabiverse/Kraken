@@ -26,8 +26,8 @@
 
 /// \file tf/denseHashMap.h
 
-#include "wabi/base/tf/hashmap.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/hashmap.h"
 
 #include <memory>
 #include <vector>
@@ -540,6 +540,7 @@ class TfDenseHashMap
     if (sz < Threshold) {
 
       _h.reset();
+
     } else {
 
       // Otherwise, allocate a new hash map with the optimal size.

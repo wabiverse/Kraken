@@ -26,22 +26,22 @@
 
 /// \file tf/diagnosticMgr.h
 
-#include "wabi/base/tf/api.h"
+#include "wabi/wabi.h"
 #include "wabi/base/tf/callContext.h"
 #include "wabi/base/tf/debug.h"
 #include "wabi/base/tf/diagnosticLite.h"
-#include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/error.h"
 #include "wabi/base/tf/singleton.h"
 #include "wabi/base/tf/status.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/warning.h"
 #include "wabi/base/tf/weakPtr.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/enum.h"
+#include "wabi/base/tf/api.h"
 
+#include "wabi/base/arch/inttypes.h"
 #include "wabi/base/arch/attributes.h"
 #include "wabi/base/arch/functionLite.h"
-#include "wabi/base/arch/inttypes.h"
 
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/spin_rw_mutex.h>

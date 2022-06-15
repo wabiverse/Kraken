@@ -35,18 +35,18 @@
 /// in this file is appropriate, (and more importantly, when they're not!)
 /// see \ref page_tf_Diagnostic.
 
-#include "wabi/base/arch/function.h"
-#include "wabi/base/tf/api.h"
-#include "wabi/base/tf/diagnosticLite.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/function.h"
+#include "wabi/base/tf/diagnosticLite.h"
+#include "wabi/base/tf/api.h"
 
 #if defined(__cplusplus) || defined(doxygen)
 
 #  include "wabi/base/arch/hints.h"
 #  include "wabi/base/tf/diagnosticHelper.h"
 
-#  include <stdarg.h>
 #  include <stddef.h>
+#  include <stdarg.h>
 #  include <string>
 
 WABI_NAMESPACE_BEGIN
@@ -327,6 +327,7 @@ void Tf_TerminateHandler();
 #      define TF_FATAL_CODING_ERROR \
         Tf_DiagnosticHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_CODING_ERROR_TYPE).IssueFatalError
 
+
 #      ifdef TF_CODING_WARNING
 #        undef TF_CODING_WARNING
 #      endif
@@ -338,30 +339,6 @@ void Tf_TerminateHandler();
 #      endif
 #      define TF_DIAGNOSTIC_WARNING \
         Tf_DiagnosticHelper(TF_CALL_CONTEXT.Hide(), TF_DIAGNOSTIC_WARNING_TYPE).IssueWarning
-
-#      ifdef TF_RUNTIME_MSG
-#        undef TF_RUNTIME_MSG
-#      endif
-#      define TF_RUNTIME_MSG(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
-
-#      ifdef TF_RUNTIME_MSG_SUCCESS
-#        undef TF_RUNTIME_MSG_SUCCESS
-#      endif
-#      define TF_RUNTIME_MSG_SUCCESS(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_SUCCESS_TYPE).IssueStatus
-
-#      ifdef TF_RUNTIME_MSG_ERROR
-#        undef TF_RUNTIME_MSG_ERROR
-#      endif
-#      define TF_RUNTIME_MSG_ERROR(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueError
-
-#      ifdef TF_RUNTIME_MSG_WARNING
-#        undef TF_RUNTIME_MSG_WARNING
-#      endif
-#      define TF_RUNTIME_MSG_WARNING(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueWarning
 
 #      ifdef TF_RUNTIME_ERROR
 #        undef TF_RUNTIME_ERROR
@@ -395,26 +372,6 @@ void Tf_TerminateHandler();
 // * MACRO(ENUM, const std::string *msg)
 // * MACRO(TfDiagnosticInfo, ENUM, const char *, ...)
 // * MACRO(TfDiagnosticInfo, ENUM, const std::string *msg)
-
-#      ifdef TF_MSG
-#        undef TF_MSG
-#      endif  // TF_MSG
-#      define TF_MSG(...) Tf_PostMsgHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
-
-#      ifdef TF_MSG_SUCCESS
-#        undef TF_MSG_SUCCESS
-#      endif  // TF_MSG_SUCCESS
-#      define TF_MSG_SUCCESS(...) Tf_PostMsgSuccessHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
-
-#      ifdef TF_MSG_ERROR
-#        undef TF_MSG_ERROR
-#      endif  // TF_MSG_ERROR
-#      define TF_MSG_ERROR(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
-
-#      ifdef TF_MSG_WARNING
-#        undef TF_MSG_WARNING
-#      endif  // TF_MSG_ERROR
-#      define TF_MSG_WARNING(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 #      ifdef TF_WARN
 #        undef TF_WARN

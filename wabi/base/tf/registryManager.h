@@ -30,8 +30,8 @@
 #include "wabi/wabi.h"
 
 #include "wabi/base/arch/attributes.h"
-#include "wabi/base/tf/api.h"
 #include "wabi/base/tf/preprocessorUtilsLite.h"
+#include "wabi/base/tf/api.h"
 
 #include <functional>
 #include <typeinfo>
@@ -191,6 +191,7 @@ class Tf_RegistryInit
   }                                                                                           \
   _ARCH_ENSURE_PER_LIB_INIT(Tf_RegistryStaticInit, _tfRegistryInit);                          \
   static void TF_PP_CAT(_Tf_RegistryFunction, NAME)(KEY_TYPE *, void *)
+
 
 /// Define a function that is called on demand by \c TfRegistryManager.
 ///

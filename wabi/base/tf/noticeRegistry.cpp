@@ -22,15 +22,15 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/noticeRegistry.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/noticeRegistry.h"
 
-#include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/instantiateSingleton.h"
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/mallocTag.h"
 #include "wabi/base/tf/stringUtils.h"
+#include "wabi/base/arch/demangle.h"
 
 #include <typeinfo>
 
@@ -118,6 +118,7 @@ void Tf_NoticeRegistry::_InsertProbe(const TfNotice::WeakProbePtr &probe)
   _doProbing = !_probes.empty();
 }
 
+
 void Tf_NoticeRegistry::_RemoveProbe(const TfNotice::WeakProbePtr &probe)
 {
   _Lock lock(_probeMutex);
@@ -130,20 +131,16 @@ void Tf_NoticeRegistry::_BeginSend(const TfNotice &notice,
                                    const std::type_info &senderType,
                                    const std::vector<TfNotice::WeakProbePtr> &probes)
 {
-  TF_FOR_ALL (i, probes) {
-    if (*i) {
+  TF_FOR_ALL (i, probes)
+    if (*i)
       (*i)->BeginSend(notice, sender, senderType);
-    }
-  }
 }
 
 void Tf_NoticeRegistry::_EndSend(const std::vector<TfNotice::WeakProbePtr> &probes)
 {
-  TF_FOR_ALL (i, probes) {
-    if (*i) {
+  TF_FOR_ALL (i, probes)
+    if (*i)
       (*i)->EndSend();
-    }
-  }
 }
 
 void Tf_NoticeRegistry::_BeginDelivery(const TfNotice &notice,
@@ -153,20 +150,16 @@ void Tf_NoticeRegistry::_BeginDelivery(const TfNotice &notice,
                                        const std::type_info &listenerType,
                                        const std::vector<TfNotice::WeakProbePtr> &probes)
 {
-  TF_FOR_ALL (i, probes) {
-    if (*i) {
+  TF_FOR_ALL (i, probes)
+    if (*i)
       (*i)->BeginDelivery(notice, sender, senderType, listener, listenerType);
-    }
-  }
 }
 
 void Tf_NoticeRegistry::_EndDelivery(const std::vector<TfNotice::WeakProbePtr> &probes)
 {
-  TF_FOR_ALL (i, probes) {
-    if (*i) {
+  TF_FOR_ALL (i, probes)
+    if (*i)
       (*i)->EndDelivery();
-    }
-  }
 }
 
 TfNotice::Key Tf_NoticeRegistry::_Register(TfNotice::_DelivererBase *deliverer)

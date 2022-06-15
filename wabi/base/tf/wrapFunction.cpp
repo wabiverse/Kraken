@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/pyFunction.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/pyFunction.h"
 
 #include <boost/python/object.hpp>
 

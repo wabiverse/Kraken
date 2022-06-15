@@ -27,14 +27,14 @@
 /// \file tf/notice.h
 /// \ingroup group_tf_Notification
 
-#include "wabi/base/arch/demangle.h"
-#include "wabi/base/arch/hints.h"
-#include "wabi/base/tf/anyWeakPtr.h"
+#include "wabi/wabi.h"
 #include "wabi/base/tf/api.h"
+#include "wabi/base/tf/anyWeakPtr.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/type.h"
 #include "wabi/base/tf/weakPtr.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/demangle.h"
+#include "wabi/base/arch/hints.h"
 
 #include <list>
 #include <typeinfo>
@@ -203,6 +203,7 @@ class TfNotice
         L::*)(const TfNotice &, const TfType &, TfWeakBase *, const void *, const std::type_info &)
         const>(listener, method, sender, noticeType);
   }
+
 
  public:
 
@@ -643,6 +644,7 @@ class TfNotice
       return static_cast<Derived const *>(this);
     }
   };
+
 
   template<typename LPtr, typename SPtr, typename Method, typename Notice>
   class _Deliverer : public _StandardDeliverer<_Deliverer<LPtr, SPtr, Method, Notice>>

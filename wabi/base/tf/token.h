@@ -39,9 +39,9 @@
 
 #include <atomic>
 #include <iosfwd>
-#include <set>
 #include <string>
 #include <vector>
+#include <set>
 
 WABI_NAMESPACE_BEGIN
 

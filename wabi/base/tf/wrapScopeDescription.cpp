@@ -24,8 +24,8 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/scopeDescription.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/noncopyable.hpp>
 #include <boost/python/class.hpp>

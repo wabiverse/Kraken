@@ -177,9 +177,8 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
   void _PopulateTasksForPrototype(const _PrimContext &prototypePrim,
                                   _PrototypeTaskMap *prototypeTasks)
   {
-    std::pair<_PrototypeTaskMap::iterator, bool> prototypeTaskStatus = prototypeTasks->try_emplace(
-      prototypePrim,
-      _PrototypeTask());
+    std::pair<_PrototypeTaskMap::iterator, bool> prototypeTaskStatus = prototypeTasks->insert(
+      std::make_pair(prototypePrim, _PrototypeTask()));
     if (!prototypeTaskStatus.second) {
       return;
     }

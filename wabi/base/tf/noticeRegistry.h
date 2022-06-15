@@ -27,6 +27,7 @@
 /// \file tf/noticeRegistry.h
 /// \ingroup group_tf_Notification
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/api.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/hashmap.h"
@@ -34,13 +35,12 @@
 #include "wabi/base/tf/notice.h"
 #include "wabi/base/tf/singleton.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
 
 #include <boost/noncopyable.hpp>
 
-#include <atomic>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/spin_mutex.h>
+#include <atomic>
 
 WABI_NAMESPACE_BEGIN
 

@@ -28,7 +28,9 @@
 
 #include <ostream>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 std::ostream &operator<<(std::ostream &out, const TfStopwatch &s)
 {

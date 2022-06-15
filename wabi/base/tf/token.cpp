@@ -39,11 +39,12 @@
 
 #include <tbb/spin_mutex.h>
 
-#include <cstring>
-#include <ostream>
 #include <string>
-#include <utility>
+#include <ostream>
 #include <vector>
+#include <cstring>
+#include <utility>
+#include <algorithm>
 
 using std::pair;
 using std::string;

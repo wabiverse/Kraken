@@ -144,12 +144,12 @@ class TfWeakPtrFacade : public TfWeakPtrFacadeBase
 
   template<class T> friend bool operator==(const TfRefPtr<T> &p1, Derived const &p2)
   {
-    return p2.operator==(p1);
+    return p2 == p1;
   }
 
   template<class T> friend bool operator!=(const TfRefPtr<T> &p1, Derived const &p2)
   {
-    return !(p2 == p1);
+    return !(p1 == p2);
   }
 
   template<class Other> bool operator<(PtrTemplate<Other> const &p) const
@@ -222,11 +222,10 @@ class TfWeakPtrFacade : public TfWeakPtrFacadeBase
   DataType *operator->() const
   {
     DataType *ptr = _FetchPointer();
-    if (ARCH_LIKELY(ptr)) {
+    if (ptr) {
       return ptr;
     }
-    static const TfCallContext ctx(TF_CALL_CONTEXT);
-    Tf_PostNullSmartPtrDereferenceFatalError(ctx, typeid(Derived));
+    Tf_PostNullSmartPtrDereferenceFatalError(TF_CALL_CONTEXT, typeid(Derived).name());
   }
 
   DataType &operator*() const
@@ -265,6 +264,7 @@ class TfWeakPtrFacade : public TfWeakPtrFacadeBase
     return static_cast<Derived const &>(*this);
   }
 };
+
 
 /// \section nullptr comparisons
 ///@{

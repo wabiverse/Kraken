@@ -26,8 +26,8 @@
 
 #include "wabi/base/tf/pyErrorInternal.h"
 
-#include <boost/python/extract.hpp>
 #include <boost/python/object.hpp>
+#include <boost/python/extract.hpp>
 
 using namespace boost::python;
 using std::string;

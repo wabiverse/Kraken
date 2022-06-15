@@ -64,7 +64,7 @@ class TfStopwatch
   /// TfStopwatch.
   inline void Start()
   {
-    _startTick = ArchGetTickTime();
+    _startTick = ArchGetStartTickTime();
   }
 
   /// Increases the accumulated time stored in the \c TfStopwatch.
@@ -79,7 +79,7 @@ class TfStopwatch
   /// called.
   inline void Stop()
   {
-    _nTicks += ArchGetTickTime() - _startTick;
+    _nTicks += ArchGetStopTickTime() - _startTick;
     _sampleCount++;
   }
 

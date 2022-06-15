@@ -26,16 +26,16 @@
 
 /// \file tf/diagnosticBase.h
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/callContext.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/refBase.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/weakPtr.h"
-#include "wabi/wabi.h"
 
+#include "wabi/base/arch/inttypes.h"
 #include "wabi/base/arch/attributes.h"
 #include "wabi/base/arch/function.h"
-#include "wabi/base/arch/inttypes.h"
 
 #include <boost/any.hpp>
 #include <cstdarg>
@@ -121,6 +121,7 @@ class TfDiagnosticBase
   {
     return _code;
   }
+
 
   /// Return the diagnostic code posted as a string.
   ///

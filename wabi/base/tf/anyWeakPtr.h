@@ -28,17 +28,17 @@
 /// \ingroup group_tf_Memory
 /// Type independent WeakPtr holder class
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/api.h"
 #include "wabi/base/tf/cxxCast.h"
 #include "wabi/base/tf/type.h"
 #include "wabi/base/tf/weakPtr.h"
-#include "wabi/wabi.h"
 
 #ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyUtils.h"
-#  include <boost/python/object.hpp>
 #endif  // WITH_PYTHON
 
+#include "wabi/base/tf/pyObjWrapper.h"
 #include <boost/operators.hpp>
 
 #include <cstddef>
@@ -166,9 +166,7 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr>
     virtual TfWeakBase const *GetWeakBase() const = 0;
     virtual operator bool() const = 0;
     virtual bool _IsConst() const = 0;
-#ifdef WITH_PYTHON
-    virtual boost::python::api::object GetPythonObject() const = 0;
-#endif  // WITH_PYTHON
+    virtual TfPyObjWrapper GetPythonObject() const = 0;
     virtual const std::type_info &GetTypeInfo() const = 0;
     virtual TfType const &GetType() const = 0;
     virtual const void *_GetMostDerivedPtr() const = 0;
@@ -184,9 +182,7 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr>
     TF_API virtual TfWeakBase const *GetWeakBase() const;
     TF_API virtual operator bool() const;
     TF_API virtual bool _IsConst() const;
-#ifdef WITH_PYTHON
-    TF_API virtual boost::python::api::object GetPythonObject() const;
-#endif  // WITH_PYTHON
+    TF_API virtual TfPyObjWrapper GetPythonObject() const;
     TF_API virtual const std::type_info &GetTypeInfo() const;
     TF_API virtual TfType const &GetType() const;
     TF_API virtual const void *_GetMostDerivedPtr() const;
@@ -204,9 +200,7 @@ class TfAnyWeakPtr : boost::totally_ordered<TfAnyWeakPtr>
     virtual TfWeakBase const *GetWeakBase() const;
     virtual operator bool() const;
     virtual bool _IsConst() const;
-#ifdef WITH_PYTHON
-    virtual boost::python::api::object GetPythonObject() const;
-#endif  // WITH_PYTHON
+    virtual TfPyObjWrapper GetPythonObject() const;
     virtual const std::type_info &GetTypeInfo() const;
     virtual TfType const &GetType() const;
     virtual const void *_GetMostDerivedPtr() const;
@@ -264,14 +258,14 @@ template<class Ptr> TfAnyWeakPtr::_PointerHolder<Ptr>::operator bool() const
   return bool(_ptr);
 }
 
-#ifdef WITH_PYTHON
-template<class Ptr>
-boost::python::api::object TfAnyWeakPtr::_PointerHolder<Ptr>::GetPythonObject() const
+template<class Ptr> TfPyObjWrapper TfAnyWeakPtr::_PointerHolder<Ptr>::GetPythonObject() const
 {
+#ifdef WITH_PYTHON
   return TfPyObject(_ptr);
-}
+#else
+  return {};
 #endif  // WITH_PYTHON
-
+}
 template<class Ptr> const std::type_info &TfAnyWeakPtr::_PointerHolder<Ptr>::GetTypeInfo() const
 {
   return TfTypeid(_ptr);

@@ -72,53 +72,55 @@
 
 /*!
 \page tf_page_front Tf: Tools Foundations
-\if ( WABI_MFB_BUILD )
+\if ( PIXAR_MFB_BUILD )
 \mainpage Tf : Tools Foundations
 \publicLib
 \endif
 
 \anchor mainpage_tf
 
-Contains foundation classes and functions for all C/C++ software development.
+Contains foundation classes and functions for all C/C++ software development.  
 
 The high-level grouping of C++ classes and functions is as follows:
-
+   
 <ul>
-	<li> \link group_tf_Memory \b Memory \b Management - \endlink
+	<li> \link group_tf_Memory \b Memory \b Management - \endlink 
 		TfRefPtr,  TfWeakPtr,  TfRefBase,  TfWeakBase,  TfMallocTag
-	<li> \link group_tf_RuntimeTyping \b Runtime \b Typing - \endlink
+	<li> \link group_tf_RuntimeTyping \b Runtime \b Typing - \endlink 
 		TfType,  TfEnum,  TfTypeInfoMap
 	<li> \link group_tf_Path \b Path \b Utilities - \endlink
 		TfRealPath, TfNormPath, TfAbsPath, TfReadLink, TfGlob
-	<li> \link group_tf_Diagnostic \b Diagnostic \b Utilities - \endlink
-		TF_AXIOM(),  TF_FATAL_ERROR(),  TF_CODING_ERROR(), TF_RUNTIME_ERROR(),  TF_WARN(),  TF_STATUS()
-	<li> \link group_tf_DebuggingOutput \b Output \b For \b Debugging - \endlink
-		TfDebug,  TF_DEBUG(),  TF_FUNC_NAME()
-	<li> \link group_tf_String \b String \b Utilities - \endlink
-		TfStringPrintf(),  TfHash, (and a large number of miscellaneous free functions)
-	<li> \link group_tf_Containers \b Containers - \endlink
+	<li> \link group_tf_Diagnostic \b Diagnostic \b Utilities - \endlink 
+		TF_AXIOM(), TF_VERIFY(), TF_FATAL_ERROR(), TF_THROW(), TF_CODING_ERROR(), TF_RUNTIME_ERROR(), TF_WARN(), TF_STATUS()
+	<li> \link group_tf_DebuggingOutput \b Output \b For \b Debugging - \endlink 
+		TfDebug,  TF_DEBUG(),  TF_FUNC_NAME() 
+	<li> \link group_tf_String \b String \b Utilities - \endlink 
+		TfStringPrintf(),  TfHash, (and a large number of miscellaneous free functions) 
+	<li> \link group_tf_Containers \b Containers - \endlink 
 		TfByteData,  TfArray2,  TfArray3, TfTypeInfoMap
-	<li> \link group_tf_Stl \b STL \b Utilities - \endlink
+	<li> \link group_tf_Stl \b STL \b Utilities - \endlink 
 		TfIterator,  TfDeleter, TfMapLookup(),  TfOrderedPair()
-	<li> \link group_tf_ObjectCreation \b Object \b Creation - \endlink
+	<li> \link group_tf_ObjectCreation \b Object \b Creation - \endlink 
 		TfSingleton,  TfType
-	<li> \link group_tf_BasicMath \b Mathematical \b Operations - \endlink
+	<li> \link group_tf_BasicMath \b Mathematical \b Operations - \endlink 
 		TfAbs(),  TfMin(),  TfMax()
-	<li> \link group_tf_Performance \b Performance \b Measurements - \endlink
+	<li> \link group_tf_Performance \b Performance \b Measurements - \endlink 
 		TfStopwatch
-	<li> \link group_tf_File \b File \b Utilities - \endlink
+	<li> \link group_tf_File \b File \b Utilities - \endlink 
 		TfSearchPath
-	<li> \link group_tf_SystemsExt \b Systems \b Extensions \b and \b Enhancements - \endlink
+	<li> \link group_tf_SystemsExt \b Systems \b Extensions \b and \b Enhancements - \endlink 
 		TfDlopen(),  TfDlclose(),  TfGetenv()
 </ul>
 
-For a detailed explanation of topics specific to C++, see these additional Related Pages in the C++ API documentation:
-<ul>
-    <li> \subpage page_tf_Notification  </li>
-    <li> \subpage page_tf_TfError   </li>
-    <li> \subpage page_tf_Diagnostic   </li>
-    <li> \subpage page_tf_RegistryManager   </li>
-    <li> \subpage page_tf_MallocTag   </li>
-</ul>
+For a detailed explanation of topics specific to C++, see these additional Related Pages in the C++ API documentation: 
+<ul> 
+    <li> \subpage page_tf_Notification  </li> 
+    <li> \subpage page_tf_TfError   </li> 
+    <li> \subpage page_tf_Diagnostic   </li> 
+    <li> \subpage page_tf_RegistryManager   </li> 
+    <li> \subpage page_tf_MallocTag   </li> 
+</ul> 
 
 */
+
+

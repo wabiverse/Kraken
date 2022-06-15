@@ -27,9 +27,9 @@
 #include "wabi/wabi.h"
 
 #include <boost/python/class.hpp>
-#include <boost/python/def_visitor.hpp>
 #include <boost/python/dict.hpp>
 #include <boost/python/object.hpp>
+#include <boost/python/def_visitor.hpp>
 
 WABI_NAMESPACE_BEGIN
 

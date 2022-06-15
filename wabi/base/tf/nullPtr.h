@@ -24,8 +24,8 @@
 #ifndef WABI_BASE_TF_NULL_PTR_H
 #define WABI_BASE_TF_NULL_PTR_H
 
-#include "wabi/base/tf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
 
 WABI_NAMESPACE_BEGIN
 

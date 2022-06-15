@@ -25,8 +25,8 @@
 #include "wabi/wabi.h"
 
 #include "wabi/base/arch/fileSystem.h"
-#include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/stackTrace.h"
+#include "wabi/base/tf/pyUtils.h"
 
 #include <boost/python/def.hpp>
 

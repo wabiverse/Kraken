@@ -23,8 +23,8 @@
 //
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/instantiateSingleton.h"
 #include "wabi/base/tf/pyWeakObject.h"
+#include "wabi/base/tf/instantiateSingleton.h"
 
 #include <boost/python/class.hpp>
 
@@ -121,6 +121,7 @@ Tf_PyWeakObjectPtr Tf_PyWeakObject::GetOrCreate(boost::python::object const &obj
   PyErr_Clear();
   return Tf_PyWeakObjectPtr();
 }
+
 
 boost::python::object Tf_PyWeakObject::GetObject() const
 {

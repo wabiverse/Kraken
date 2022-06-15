@@ -24,10 +24,10 @@
 #ifndef WABI_BASE_TF_STACKED_H
 #define WABI_BASE_TF_STACKED_H
 
-#include "wabi/base/arch/demangle.h"
+#include "wabi/wabi.h"
 #include "wabi/base/tf/api.h"
 #include "wabi/base/tf/diagnostic.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/demangle.h"
 
 #include <tbb/enumerable_thread_specific.h>
 

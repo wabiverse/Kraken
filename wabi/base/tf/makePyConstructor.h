@@ -35,14 +35,16 @@
 #      define TF_MAX_ARITY 7
 #    endif  // TF_MAX_ARITY
 
+
+#    include "wabi/wabi.h"
+#    include "wabi/base/tf/api.h"
+#    include "wabi/base/tf/refPtr.h"
+#    include "wabi/base/tf/weakPtr.h"
 #    include "wabi/base/tf/diagnostic.h"
 #    include "wabi/base/tf/pyError.h"
 #    include "wabi/base/tf/pyIdentity.h"
 #    include "wabi/base/tf/pyUtils.h"
-#    include "wabi/base/tf/refPtr.h"
 #    include "wabi/base/tf/stringUtils.h"
-#    include "wabi/base/tf/weakPtr.h"
-#    include "wabi/wabi.h"
 
 #    include "wabi/base/arch/demangle.h"
 
@@ -129,6 +131,7 @@ namespace Tf_MakePyConstructor
     }
   };
 
+  TF_API
   bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */);
 
   template<typename CTOR> struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>>
@@ -189,6 +192,7 @@ namespace Tf_MakePyConstructor
     }
   };
 
+
   typedef bp::object object;
 
   template<typename T> struct InstallPolicy
@@ -247,6 +251,7 @@ namespace Tf_MakePyConstructor
       throw;
     }
   }
+
 
   template<typename WeakPtr, typename P> struct _RefPtrFactoryConverter
   {
@@ -332,6 +337,7 @@ namespace Tf_MakePyConstructor
 
 }  // namespace Tf_MakePyConstructor
 
+
 template<typename T>
 Tf_MakePyConstructor::InitVisitor<typename Tf_MakePyConstructor::InitCtor<T>> TfMakePyConstructor(
   T *func,
@@ -379,6 +385,7 @@ TfMakePyNewWithClassReference(T *func, const std::string &doc = std::string())
   Tf_MakePyConstructor::NewCtorWithClassReference<T> Ctor(func);
   return Tf_MakePyConstructor::NewVisitor<Tf_MakePyConstructor::NewCtorWithClassReference<T>>(doc);
 }
+
 
 template<typename T = void>
 struct TfPyRefPtrFactory : public Tf_MakePyConstructor::RefPtrFactory<T>

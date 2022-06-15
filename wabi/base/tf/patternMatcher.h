@@ -28,9 +28,9 @@
 /// \ingroup group_tf_String
 /// A simple glob and regex matching utility.
 
-#include "wabi/base/arch/regex.h"
-#include "wabi/base/tf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/api.h"
+#include "wabi/base/arch/regex.h"
 
 #include <string>
 

@@ -31,8 +31,8 @@
 
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
-#include <boost/python/return_by_value.hpp>
 #include <boost/python/return_value_policy.hpp>
+#include <boost/python/return_by_value.hpp>
 
 #include <string>
 

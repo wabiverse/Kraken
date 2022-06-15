@@ -29,8 +29,8 @@
 #include "wabi/base/tf/errorMark.h"
 #include "wabi/base/tf/pyCallContext.h"
 #include "wabi/base/tf/pyContainerConversions.h"
-#include "wabi/base/tf/pyError.h"
 #include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyError.h"
 #include "wabi/base/tf/pyTracing.h"
 #include "wabi/base/tf/stringUtils.h"
 

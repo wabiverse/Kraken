@@ -26,15 +26,17 @@
 
 /// \file tf/span.h
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/api.h"
 #include "wabi/base/tf/diagnostic.h"
-#include "wabi/wabi.h"
 
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class TfSpan
 /// Represents a range of contiguous elements.
@@ -264,11 +266,13 @@ template<typename T> class TfSpan
   index_type _size = 0;
 };
 
+
 /// Helper for constructing a non-const TfSpan from a container.
 template<typename Container> TfSpan<typename Container::value_type> TfMakeSpan(Container &cont)
 {
   return TfSpan<typename Container::value_type>(cont);
 }
+
 
 /// Helper for constructing a const TfSpan from a container.
 template<typename Container>

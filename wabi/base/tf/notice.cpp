@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/notice.h"
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/noticeRegistry.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
 
 using std::type_info;
 using std::vector;
@@ -37,6 +37,7 @@ WABI_NAMESPACE_BEGIN
 // Instead, we register it in Type.cpp.  See Tf_TypeRegistry's constructor.
 
 TfNotice::~TfNotice() {}
+
 
 TfNotice::_DelivererBase::~_DelivererBase() {}
 
@@ -57,6 +58,7 @@ void TfNotice::_DelivererBase::_EndDelivery(const vector<TfNotice::WeakProbePtr>
 }
 
 TfNotice::Probe::~Probe() {}
+
 
 void TfNotice::InsertProbe(const WeakProbePtr &probe)
 {

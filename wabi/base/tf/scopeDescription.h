@@ -26,16 +26,16 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/api.h"
 #include "wabi/base/tf/callContext.h"
 #include "wabi/base/tf/preprocessorUtils.h"
 #include "wabi/base/tf/stringUtils.h"
+#include "wabi/base/tf/api.h"
 
 #include <boost/optional.hpp>
 #include <boost/preprocessor/if.hpp>
 
-#include <string>
 #include <vector>
+#include <string>
 
 WABI_NAMESPACE_BEGIN
 

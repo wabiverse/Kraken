@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/pyCallContext.h"
 #include "wabi/base/tf/callContext.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
 
 #include <tbb/spin_mutex.h>
 
@@ -42,6 +42,7 @@ namespace
     set<string> data;
   };
 }  // namespace
+
 
 WABI_NAMESPACE_BEGIN
 

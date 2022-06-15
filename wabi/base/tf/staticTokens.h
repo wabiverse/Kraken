@@ -75,25 +75,25 @@
 /// file, in which case they can be made file static.  In the case of the
 /// PRIVATE, you only need to use the DEFINE macro.
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/preprocessorUtils.h"
 #include "wabi/base/tf/preprocessorUtilsLite.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/wabi.h"
 
 #include <vector>
 
 #include <boost/preprocessor/cat.hpp>
-#include <boost/preprocessor/control/expr_iif.hpp>
 #include <boost/preprocessor/control/iif.hpp>
+#include <boost/preprocessor/control/expr_iif.hpp>
 #include <boost/preprocessor/logical/and.hpp>
 #include <boost/preprocessor/logical/not.hpp>
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/seq/filter.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/seq/for_each_i.hpp>
-#include <boost/preprocessor/seq/push_back.hpp>
 #include <boost/preprocessor/seq/size.hpp>
+#include <boost/preprocessor/seq/push_back.hpp>
 #include <boost/preprocessor/tuple/elem.hpp>
 
 WABI_NAMESPACE_BEGIN
@@ -199,8 +199,7 @@ WABI_NAMESPACE_BEGIN
 #define _TF_DECLARE_TOKENS2(key, seq) \
   struct _TF_TOKENS_STRUCT_NAME(key)  \
   {                                   \
-    _TF_TOKENS_STRUCT_NAME(key)       \
-    ();                               \
+    _TF_TOKENS_STRUCT_NAME(key)();    \
     ~_TF_TOKENS_STRUCT_NAME(key)();   \
     _TF_TOKENS_DECLARE_MEMBERS(seq)   \
   };
@@ -219,8 +218,7 @@ WABI_NAMESPACE_BEGIN
                                    (_TF_TOKENS_INITIALIZE_MEMBER(elem))))
 
 #define _TF_TOKENS_INITIALIZE_MEMBER_TUPLE(elem) \
-  BOOST_PP_TUPLE_ELEM(2, 0, elem)                \
-  (BOOST_PP_TUPLE_ELEM(2, 1, elem), TfToken::Immortal)
+  BOOST_PP_TUPLE_ELEM(2, 0, elem)(BOOST_PP_TUPLE_ELEM(2, 1, elem), TfToken::Immortal)
 
 #define _TF_TOKENS_INITIALIZE_MEMBER(elem) elem(TF_PP_STRINGIZE(elem), TfToken::Immortal)
 

@@ -38,16 +38,16 @@
 
 #include "wabi/wabi.h"
 
+#include "wabi/base/tf/refPtr.h"
+#include "wabi/base/tf/weakPtr.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/pyUtils.h"
-#include "wabi/base/tf/refPtr.h"
-#include "wabi/base/tf/weakPtr.h"
 
-#include <boost/python/extract.hpp>
 #include <boost/python/list.hpp>
-#include <boost/python/to_python_converter.hpp>
 #include <boost/python/tuple.hpp>
+#include <boost/python/extract.hpp>
+#include <boost/python/to_python_converter.hpp>
 
 #include <deque>
 #include <list>

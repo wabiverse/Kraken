@@ -134,6 +134,7 @@ class Tf_TestDerived : public Tf_TestBase
   Tf_TestDerived() {}
 };
 
+
 static string TakesConstBase(Tf_TestBaseConstPtr base)
 {
   return base->Virtual();
@@ -243,10 +244,12 @@ struct polymorphic_Tf_TestDerived : public polymorphic_Tf_TestBase<T>
   }
 };
 
+
 template<typename T> static TfRefPtr<T> __Ref_init__()
 {
   return TfCreateRefPtr(new T);
 }
+
 
 enum TfPyTestErrorCodes
 {
@@ -268,6 +271,7 @@ static void mightRaise(bool raise)
   }
 }
 
+
 static void doErrors()
 {
   TF_ERROR(TF_TEST_ERROR_1, "TestError 1!");
@@ -278,6 +282,7 @@ static void doErrors()
   TF_STATUS("status message %d", 4);
 };
 
+
 struct _TestStaticMethodError
 {
   static void Error()
@@ -285,6 +290,7 @@ struct _TestStaticMethodError
     TF_ERROR(TF_TEST_ERROR_1, "Test error 1!");
   }
 };
+
 
 ////////////////////////////////
 // Enums
@@ -327,6 +333,7 @@ struct Tf_Enum
     Gimel
   };
 };
+
 
 TF_REGISTRY_FUNCTION(TfEnum)
 {
@@ -396,6 +403,7 @@ static void registerInvalidEnum(object &obj)
   TfPyWrapEnum<Tf_Enum::TestEnum3>();
 }
 
+
 ////////////////////////////////
 // Function callback stuff.
 
@@ -433,6 +441,7 @@ static string invokeTestCallback()
   return string();
 }
 
+
 ////////////////////////////////
 // Sending notice from C++ sender
 
@@ -459,6 +468,7 @@ static tuple _TestClassMethod(object &pyClassObj, const object &callable)
 
 // ////////////////////////////////
 // // keywords and overloading.
+
 
 // static void f1(string const &a1, int x, int y) {
 //     printf("f1 with %s, %d, %d\n", a1.c_str(), x, y);
@@ -522,6 +532,7 @@ static Tf_ClassWithVarArgInitRefPtr _MakeClassWithVarArgInit(bool allowExtraArgs
   return rval;
 }
 
+
 ////////////////////////////////
 // Bytearray conversion
 
@@ -534,6 +545,7 @@ static object _ConvertByteListToByteArray(const list &byteList)
 
   return TfPyCopyBufferToByteArray(inputList.data(), inputList.size());
 }
+
 
 WABI_NAMESPACE_END
 
@@ -570,6 +582,7 @@ void wrapTf_TestTfPython()
   def("_takesTestEnum", takesTestEnum);
   def("_takesTestEnum2", takesTestEnum2);
   def("_registerInvalidEnum", registerInvalidEnum);
+
 
   def("_doErrors", doErrors);
 

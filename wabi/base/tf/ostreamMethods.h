@@ -38,16 +38,16 @@
 /// human-readable display; the formats described herein are subject to change
 /// without notice.
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/smallVector.h"
-#include "wabi/wabi.h"
 
+#include <ostream>
+#include <vector>
 #include <list>
 #include <map>
-#include <ostream>
 #include <set>
 #include <type_traits>
-#include <vector>
 
 #include <boost/type_traits/has_left_shift.hpp>
 

@@ -33,12 +33,12 @@
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/iterator.h"
 
-#include "wabi/base/tf/hashmap.h"
 #include <boost/noncopyable.hpp>
+#include "wabi/base/tf/hashmap.h"
 
-#include <list>
-#include <string>
 #include <typeinfo>
+#include <string>
+#include <list>
 
 WABI_NAMESPACE_BEGIN
 

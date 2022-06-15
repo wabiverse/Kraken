@@ -245,6 +245,7 @@ template<class T> class TfWeakPtr : public TfWeakPtrFacade<TfWeakPtr, T>
   mutable TfRefPtr<Tf_Remnant> _remnant;
 };
 
+
 template<class U> TfWeakPtr<U> TfCreateWeakPtr(U *p)
 {
   return TfWeakPtr<U>(p);
@@ -290,6 +291,7 @@ template<class T> TfRefPtr<T> TfCreateRefPtrFromProtectedWeakPtr(TfWeakPtr<T> co
   }
   return TfNullPtr;
 }
+
 
 #if !defined(doxygen)
 
@@ -389,6 +391,7 @@ template<> class TfWeakPtr<void>
 };
 
 #endif
+
 
 //
 // A mechanism to determine whether a class type has a method

@@ -35,11 +35,11 @@
 #include "wabi/base/tf/wrapTypeHelpers.h"
 
 #include "wabi/base/arch/demangle.h"
-#include "wabi/base/tf/anyWeakPtr.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/refPtr.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/weakPtr.h"
+#include "wabi/base/tf/anyWeakPtr.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/converter/from_python.hpp>
@@ -152,6 +152,11 @@ namespace Tf_PyDefHelpers
   {
     return self != other;
   }
+  template<typename PtrType> bool _ArePtrsLessThan(PtrType const &self, PtrType const &other)
+  {
+    return self < other;
+  }
+
 
   // Default ownership policy does nothing.
   template<class PtrType> struct _PtrFromPythonConversionPolicy
@@ -383,7 +388,8 @@ namespace Tf_PyDefHelpers
             _IsPtrValid<UnwrappedPtrType>,
             (char const *)"True if this object has not expired.  False otherwise.");
       c.def("__eq__", _ArePtrsEqual<UnwrappedPtrType>, "Equality operator:  x == y");
-      c.def("__ne__", _ArePtrsNotEqual<UnwrappedPtrType>, "Non-equality  operator: x != y");
+      c.def("__ne__", _ArePtrsNotEqual<UnwrappedPtrType>, "Non-equality operator: x != y");
+      c.def("__lt__", _ArePtrsLessThan<UnwrappedPtrType>, "Less than operator: x < y");
       c.def(TfTypePythonClass());
     }
 

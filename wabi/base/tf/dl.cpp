@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/base/tf/dl.h"
 #include "wabi/base/arch/library.h"
+#include "wabi/base/tf/dl.h"
 #include "wabi/base/tf/debugCodes.h"
 #include "wabi/base/tf/registryManager.h"
 
@@ -31,8 +31,8 @@
 #endif  // WITH_PYTHON
 
 #include "wabi/base/tf/getenv.h"
-#include <stdlib.h>
 #include <string>
+#include <stdlib.h>
 
 using std::string;
 

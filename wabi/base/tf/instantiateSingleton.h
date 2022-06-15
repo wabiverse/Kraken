@@ -36,10 +36,10 @@
 /// \ingroup group_tf_ObjectCreation
 /// Manage a single instance of an object.
 
-#include "wabi/base/arch/demangle.h"
-#include "wabi/base/tf/mallocTag.h"
-#include "wabi/base/tf/singleton.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/singleton.h"
+#include "wabi/base/tf/mallocTag.h"
+#include "wabi/base/arch/demangle.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -94,5 +94,6 @@ template<typename T> void TfSingleton<T>::_DestroyInstance()
 ///
 /// \hideinitializer
 #define TF_INSTANTIATE_SINGLETON(T) template class WABI_NS_GLOBAL::TfSingleton<T>
+
 
 WABI_NAMESPACE_END

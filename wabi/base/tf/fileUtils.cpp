@@ -22,44 +22,42 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/fileUtils.h"
-#include "wabi/base/arch/defines.h"
-#include "wabi/base/arch/errno.h"
-#include "wabi/base/arch/fileSystem.h"
-#include "wabi/base/arch/systemInfo.h"
+#include "wabi/wabi.h"
 #include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/tf/iterator.h"
+#include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/pathUtils.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/iterator.h"
+#include "wabi/base/arch/defines.h"
+#include "wabi/base/arch/fileSystem.h"
+#include "wabi/base/arch/systemInfo.h"
+#include "wabi/base/arch/errno.h"
 
-#include "wabi/base/tf/hashset.h"
 #include <boost/assign.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/noncopyable.hpp>
+#include "wabi/base/tf/hashset.h"
 
-#include <cstdio>
-#include <errno.h>
-#include <fcntl.h>
 #include <set>
 #include <string>
+#include <cstdio>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
+#include <errno.h>
 #if !defined(ARCH_OS_WINDOWS)
-#  include <dirent.h>
 #  include <sys/time.h>
 #  include <unistd.h>
 #  include <utime.h>
+#  include <dirent.h>
+#  include <utime.h>
 #else
-#  include <winrt/base.h>
-#  include <winrt/Windows.Storage.h>
+#  include <Windows.h>
 #  include <Shellapi.h>
 #  include <ShlwAPI.h>
-#  include <Windows.h>
 #  include <sys/utime.h>
 #endif
-
 using std::set;
 using std::string;
 using std::vector;
@@ -82,7 +80,7 @@ bool Tf_HasAttribute(string const &path, bool resolveSymlinks, DWORD attribute, 
   if (path.back() == '/' || path.back() == '\\')
     resolveSymlinks = true;
 
-  const DWORD attribs = GetFileAttributes(LPCWSTR(path.c_str()));
+  const DWORD attribs = GetFileAttributesW(ArchWindowsUtf8ToUtf16(path).c_str());
   if (attribs == INVALID_FILE_ATTRIBUTES) {
     if (attribute == 0 && GetLastError() == ERROR_FILE_NOT_FOUND) {
       // Don't report an error if we're just testing existence.
@@ -156,7 +154,7 @@ bool TfIsDir(string const &path, bool resolveSymlinks)
 #else
   ArchStatType st;
   if (Tf_Stat(path, resolveSymlinks, &st)) {
-    return ARCH_S_ISDIR(st.st_mode);
+    return S_ISDIR(st.st_mode);
   }
   return false;
 #endif
@@ -213,9 +211,7 @@ bool TfIsDirEmpty(string const &path)
   if (!TfIsDir(path))
     return false;
 #if defined(ARCH_OS_WINDOWS)
-  auto file = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(
-    LPCWSTR(path.c_str()));
-  return file.GetResults().Path().empty();
+  return PathIsDirectoryEmptyW(ArchWindowsUtf8ToUtf16(path).c_str()) == TRUE;
 #else
   if (DIR *dirp = opendir(path.c_str())) {
     struct dirent *dent;
@@ -236,14 +232,11 @@ bool TfIsDirEmpty(string const &path)
 bool TfSymlink(string const &src, string const &dst)
 {
 #if defined(ARCH_OS_WINDOWS)
-#  ifndef SYMBOLIC_LINK_FLAG_DIRECTORY
-#    define SYMBOLIC_LINK_FLAG_DIRECTORY (0x1)
-#  endif
-  // if (CreateSymbolicLink(LPCWSTR(dst.c_str()), LPCWSTR(src.c_str()), TfIsDir(src) ?
-  // SYMBOLIC_LINK_FLAG_DIRECTORY : 0))
-  // {
-  //   return true;
-  // }
+  if (CreateSymbolicLinkW(ArchWindowsUtf8ToUtf16(dst).c_str(),
+                          ArchWindowsUtf8ToUtf16(src).c_str(),
+                          TfIsDir(src) ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0)) {
+    return true;
+  }
 
   // Translate lack of privilege to EPERM,  Anything else translates
   // to something else.  This is used by tests to disable symlink
@@ -270,7 +263,7 @@ bool TfDeleteFile(std::string const &path)
 bool TfMakeDir(string const &path, int mode)
 {
 #if defined(ARCH_OS_WINDOWS)
-  return CreateDirectory(LPCWSTR(path.c_str()), nullptr) == TRUE;
+  return CreateDirectoryW(ArchWindowsUtf8ToUtf16(path).c_str(), nullptr) == TRUE;
 #else
   // Default mode is 0777
   if (mode == -1)
@@ -325,40 +318,31 @@ bool TfReadDir(const string &dirPath,
                string *errMsg)
 {
 #if defined(ARCH_OS_WINDOWS)
-  char szPath[MAX_PATH];
-  WIN32_FIND_DATA fdFile;
+  wchar_t szPath[MAX_PATH];
+  WIN32_FIND_DATAW fdFile;
   HANDLE hFind = NULL;
 
-  auto p1 = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(LPWSTR(szPath))
-              .GetResults()
-              .Path();
-  auto p2 = winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(
-              LPCWSTR(dirPath.c_str()))
-              .GetResults()
-              .Path();
-  strncpy(szPath, TfStringCatPaths(to_string(p2), "*.*").c_str(), MAX_PATH);
+  PathCombineW(szPath, ArchWindowsUtf8ToUtf16(dirPath).c_str(), L"*.*");
 
-
-  strncpy(szPath, TfStringCatPaths(dirPath.c_str(), "*.*").c_str(), MAX_PATH);
-
-  if ((hFind = FindFirstFile(LPCWSTR(szPath), &fdFile)) == INVALID_HANDLE_VALUE) {
+  if ((hFind = FindFirstFileW(szPath, &fdFile)) == INVALID_HANDLE_VALUE) {
     if (errMsg) {
       *errMsg = TfStringPrintf("Path not found: %s", szPath);
     }
     return false;
   } else {
     do {
-      if (strcmp((LPCSTR)fdFile.cFileName, ".") != 0 &&
-          strcmp((LPCSTR)fdFile.cFileName, "..") != 0) {
+      if (wcscmp(fdFile.cFileName, L".") != 0 && wcscmp(fdFile.cFileName, L"..") != 0) {
         if (fdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-          if (dirnames)
-            dirnames->push_back((LPCSTR)fdFile.cFileName);
+          if (dirnames) {
+            dirnames->push_back(ArchWindowsUtf16ToUtf8(fdFile.cFileName));
+          }
         } else {
-          if (filenames)
-            filenames->push_back((LPCSTR)fdFile.cFileName);
+          if (filenames) {
+            filenames->push_back(ArchWindowsUtf16ToUtf8(fdFile.cFileName));
+          }
         }
       }
-    } while (FindNextFile(hFind, &fdFile));
+    } while (FindNextFileW(hFind, &fdFile));
 
     FindClose(hFind);
 
@@ -366,7 +350,9 @@ bool TfReadDir(const string &dirPath,
   }
 #else
   DIR *dir;
-  struct dirent *entry;
+  struct dirent entry;
+  struct dirent *result;
+  int rc;
 
   if ((dir = opendir(dirPath.c_str())) == NULL) {
     if (errMsg) {
@@ -375,9 +361,10 @@ bool TfReadDir(const string &dirPath,
     return false;
   }
 
-  while ((entry = readdir(dir)) != NULL) {
+  for (rc = readdir_r(dir, &entry, &result); result && rc == 0;
+       rc = readdir_r(dir, &entry, &result)) {
 
-    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+    if (strcmp(entry.d_name, ".") == 0 || strcmp(entry.d_name, "..") == 0)
       continue;
 
     bool entryIsDir = false;
@@ -385,19 +372,19 @@ bool TfReadDir(const string &dirPath,
 #  if defined(_DIRENT_HAVE_D_TYPE)
     // If we are on a BSD-like system, and the underlying filesystem has
     // support for it, we can use dirent.d_type to avoid lstat.
-    if (entry->d_type == DT_DIR) {
+    if (entry.d_type == DT_DIR) {
       entryIsDir = true;
-    } else if (entry->d_type == DT_LNK) {
+    } else if (entry.d_type == DT_LNK) {
       entryIsLnk = true;
-    } else if (entry->d_type == DT_UNKNOWN) {
+    } else if (entry.d_type == DT_UNKNOWN) {
 #  endif
       // If d_type is not available, or the filesystem has no support
       // for d_type, fall back to lstat.
       ArchStatType st;
-      if (fstatat(dirfd(dir), entry->d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
+      if (fstatat(dirfd(dir), entry.d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
         continue;
 
-      if (ARCH_S_ISDIR(st.st_mode)) {
+      if (S_ISDIR(st.st_mode)) {
         entryIsDir = true;
       } else if (S_ISLNK(st.st_mode)) {
         entryIsLnk = true;
@@ -408,12 +395,12 @@ bool TfReadDir(const string &dirPath,
 
     if (entryIsDir) {
       if (dirnames)
-        dirnames->push_back(entry->d_name);
+        dirnames->push_back(entry.d_name);
     } else if (entryIsLnk) {
       if (symlinknames)
-        symlinknames->push_back(entry->d_name);
+        symlinknames->push_back(entry.d_name);
     } else if (filenames) {
-      filenames->push_back(entry->d_name);
+      filenames->push_back(entry.d_name);
     }
   }
 
@@ -485,7 +472,7 @@ static bool Tf_WalkDirsRec(const string &dirpath,
       if (Tf_Stat(string(dirpath + "/" + name).c_str(),
                   /* resolveSymlinks */ true,
                   &st)) {
-        if (ARCH_S_ISDIR(st.st_mode)) {
+        if (S_ISDIR(st.st_mode)) {
           Tf_FileId fileId(st);
           if (linkTargets->find(fileId) != linkTargets->end())
             continue;
@@ -607,7 +594,7 @@ vector<string> TfListDir(string const &path, bool recursive)
   return result;
 }
 
-bool TfTouchFile(string const &fileName, bool create)
+TF_API bool TfTouchFile(string const &fileName, bool create)
 {
   if (create) {
 #if !defined(ARCH_OS_WINDOWS)
@@ -620,19 +607,20 @@ bool TfTouchFile(string const &fileName, bool create)
       return false;
     close(fd);
 #else
-    winrt::Windows::Storage::StreamedFileDataRequestedHandler req;
-    winrt::Windows::Storage::Streams::IRandomAccessStreamReference thumb;
-    auto f = winrt::Windows::Storage::StorageFile::CreateStreamedFileAsync(
-      (LPCWSTR)fileName.c_str(),
-      req,
-      thumb);  // no template
+    HANDLE fileHandle = ::CreateFileW(ArchWindowsUtf8ToUtf16(fileName).c_str(),
+                                      GENERIC_WRITE,          // open for write
+                                      0,                      // not for sharing
+                                      NULL,                   // default security
+                                      CREATE_ALWAYS,          // overwrite existing
+                                      FILE_ATTRIBUTE_NORMAL,  // normal file
+                                      NULL);                  // no template
 
-    if (!f.GetResults().IsAvailable()) {
+    if (fileHandle == INVALID_HANDLE_VALUE) {
       return false;
     }
 
     // Close the file
-    f.Close();
+    ::CloseHandle(fileHandle);
 #endif
   }
 
