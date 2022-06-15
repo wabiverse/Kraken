@@ -1425,7 +1425,7 @@ class BasisCurves "BasisCurves" (
     wabi/extras/examples/usdGeomExamples/basisCurves.usda.  It's provided
     as a reference on how to properly image both tubes and ribbons. The first
     row of curves are linear; the second are cubic bezier. (We aim in future
-    releases of HdPh to fix the discontinuity seen with broken tangents to
+    releases of HdSt to fix the discontinuity seen with broken tangents to
     better match offline renderers like RenderMan.) The yellow and violet
     cubic curves represent cubic vertex width interpolation for which there is
     no equivalent for linear curves.

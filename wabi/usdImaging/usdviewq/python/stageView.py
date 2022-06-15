@@ -979,7 +979,7 @@ class StageView(QtOpenGL.QGLWidget):
         self._rendererAovName = "color"
         self._renderPauseState = False
         self._renderStopState = False
-        # XXX For HdPh we explicitely enable AOV via SetRendererAov
+        # XXX For HdSt we explicitely enable AOV via SetRendererAov
         # This is because ImagingGL / TaskController are spawned via prims in
         # Presto, so we default AOVs OFF until everything is AOV ready.
         self.SetRendererAov(self.rendererAovName)

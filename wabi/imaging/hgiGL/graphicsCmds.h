@@ -55,9 +55,9 @@ class HgiGLGraphicsCmds final : public HgiGraphicsCmds
   ~HgiGLGraphicsCmds() override;
 
   /// XXX This function is exposed temporarily for Hgi transition.
-  /// It allows code that is not yet converted to Hgi (e.g. HdPh) to insert
+  /// It allows code that is not yet converted to Hgi (e.g. HdSt) to insert
   /// its opengl calls into the ops-stack of HgiGL to ensure that all commands
-  /// execute in the correct order. Once HdPh has transition fully to Hgi we
+  /// execute in the correct order. Once HdSt has transition fully to Hgi we
   /// should remove this function.
   HGIGL_API
   void InsertFunctionOp(std::function<void(void)> const &fn);

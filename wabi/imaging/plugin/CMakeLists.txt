@@ -1,4 +1,4 @@
-add_subdirectory(hdPhoenix)
+add_subdirectory(hdStorm)
 add_subdirectory(hdEmbree)
 add_subdirectory(hioOiio)
 add_subdirectory(hioOpenVDB)

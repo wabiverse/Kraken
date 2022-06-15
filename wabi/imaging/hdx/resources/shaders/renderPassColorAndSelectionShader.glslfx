@@ -29,7 +29,7 @@
 // Render pass shader configuration that writes color and selection information
 // (whether the fragment is selected).
 
-#import $TOOLS/hdPh/shaders/renderPass.glslfx
+#import $TOOLS/hdSt/shaders/renderPass.glslfx
 #import $TOOLS/hdx/shaders/renderPass.glslfx
 #import $TOOLS/hdx/shaders/selection.glslfx
 

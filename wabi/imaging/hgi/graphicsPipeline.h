@@ -292,7 +292,7 @@ bool operator!=(const HgiGraphicsPipelineDesc &lhs, const HgiGraphicsPipelineDes
 /// resource.
 ///
 /// Base class for Hgi pipelines.
-/// To the client (HdPh) pipeline resources are referred to via
+/// To the client (HdSt) pipeline resources are referred to via
 /// opaque, stateless handles (HgiPipelineHandle).
 ///
 class HgiGraphicsPipeline

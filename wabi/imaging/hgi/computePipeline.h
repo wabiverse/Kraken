@@ -103,7 +103,7 @@ bool operator!=(const HgiComputePipelineDesc &lhs, const HgiComputePipelineDesc 
 /// Represents a graphics platform independent GPU compute pipeline resource.
 ///
 /// Base class for Hgi compute pipelines.
-/// To the client (HdPh) compute pipeline resources are referred to via
+/// To the client (HdSt) compute pipeline resources are referred to via
 /// opaque, stateless handles (HgiComputePipelineHandle).
 ///
 class HgiComputePipeline

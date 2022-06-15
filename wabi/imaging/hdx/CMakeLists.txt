@@ -25,7 +25,7 @@ wabi_library(hdx
         glf
         pxOsd
         hd
-        hdPh
+        hdSt
         hgi
         hgiInterop
         cameraUtil

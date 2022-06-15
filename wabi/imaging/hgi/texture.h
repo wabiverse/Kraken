@@ -151,7 +151,7 @@ bool operator!=(const HgiTextureDesc &lhs, const HgiTextureDesc &rhs);
 /// Textures should be created via Hgi::CreateTexture.
 ///
 /// Base class for Hgi textures.
-/// To the client (HdPh) texture resources are referred to via
+/// To the client (HdSt) texture resources are referred to via
 /// opaque, stateless handles (HgTextureHandle).
 ///
 class HgiTexture

@@ -1,8 +1,9 @@
 add_subdirectory(usdImaging)
 
-if(WITH_VULKAN)
-  add_subdirectory(usdApollo)
-endif()
+# Vulkan specific engine needed?
+# if(WITH_VULKAN)
+#   add_subdirectory(usdApollo)
+# endif()
 
 add_subdirectory(usdImagingGL)
 add_subdirectory(usdRiImaging)

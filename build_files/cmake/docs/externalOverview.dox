@@ -221,7 +221,7 @@ modules that layer on top of the core.  In low-to-high order, the modules are:
 
 - \b Glf : The GL Foundations module provides access to textures, ptextures
   and GL resources (such as draw targets).
-  It also provides some basic glsl shaders used by hdPh.
+  It also provides some basic glsl shaders used by hdSt.
 
 - \b Hio : The Hydra Resource I/O module provides resource loaders used by
   Hydra, such as Pixar's shader container format (glslfx). It will eventually
