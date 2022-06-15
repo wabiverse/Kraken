@@ -1,47 +1,40 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2018 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #ifndef WABI_USD_SDR_SHADER_PROPERTY_H
 #define WABI_USD_SDR_SHADER_PROPERTY_H
 
 /// \file sdr/shaderProperty.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdr/api.h"
 #include "wabi/base/tf/staticTokens.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/weakBase.h"
 #include "wabi/base/vt/value.h"
 #include "wabi/usd/ndr/property.h"
-#include "wabi/usd/sdr/api.h"
 #include "wabi/usd/sdr/shaderNode.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -63,8 +56,10 @@ WABI_NAMESPACE_BEGIN
     (VstructMemberName, "vstructMemberName"))(                                                    \
     (VstructConditionalExpr, "vstructConditionalExpr"))(                                          \
     (IsAssetIdentifier, "__SDR__isAssetIdentifier"))(                                             \
-    (ImplementationName, "__SDR__implementationName"))((DefaultInput, "__SDR__defaultinput"))(    \
+    (ImplementationName, "__SDR__implementationName"))(                                           \
+    (SdrUsdDefinitionType, "sdrUsdDefinitionType"))((DefaultInput, "__SDR__defaultinput"))(       \
     (Target, "__SDR__target"))((Colorspace, "__SDR__colorspace"))
+
 
 // The following tokens are valid values for the metadata "role"
 #define SDR_PROPERTY_ROLE_TOKENS ((None, "none"))
@@ -157,6 +152,7 @@ class SdrShaderProperty : public NdrProperty
 
   /// @}
 
+
   /// \name VStruct Information
   /// @{
 
@@ -182,6 +178,7 @@ class SdrShaderProperty : public NdrProperty
   SDR_API
   bool IsVStruct() const;
 
+
   /// If this field is part of a vstruct, this is the conditional expression
   SDR_API
   const TfToken &GetVStructConditionalExpr() const
@@ -190,6 +187,7 @@ class SdrShaderProperty : public NdrProperty
   }
 
   /// @}
+
 
   /// \name Connection Information
   /// @{
@@ -219,6 +217,7 @@ class SdrShaderProperty : public NdrProperty
 
   /// @}
 
+
   /// \name Utilities
   /// @{
 
@@ -230,8 +229,23 @@ class SdrShaderProperty : public NdrProperty
   /// a TfToken, will be empty. In the second scenario, the Sdf type will be
   /// set to `Token` to indicate an unclean mapping, and the second element
   /// will be set to the original type returned by `GetType()`.
+  ///
+  /// \sa GetDefaultValueAsSdfType
   SDR_API
-  const SdfTypeIndicator GetTypeAsSdfType() const override;
+  const NdrSdfTypeIndicator GetTypeAsSdfType() const override;
+
+  /// Accessor for default value corresponding to the SdfValueTypeName
+  /// returned by GetTypeAsSdfType. Note that this is different than
+  /// GetDefaultValue which returns the default value associated with the
+  /// SdrPropertyType and may differ from the SdfValueTypeName, example when
+  /// sdrUsdDefinitionType metadata is specified for a sdr property.
+  ///
+  /// \sa GetTypeAsSdfType
+  SDR_API
+  const VtValue &GetDefaultValueAsSdfType() const override
+  {
+    return _sdfTypeDefaultValue;
+  }
 
   /// Determines if the value held by this property is an asset identifier
   /// (eg, a file path); the logic for this is left up to the parser.
@@ -258,6 +272,20 @@ class SdrShaderProperty : public NdrProperty
   // time.
   friend void SdrShaderNode::_PostProcessProperties();
 
+  // Set the USD encoding version to something other than the default.
+  // This can be set in SdrShaderNode::_PostProcessProperties for all the
+  // properties on a shader node.
+  void _SetUsdEncodingVersion(int usdEncodingVersion);
+
+  // Convert this property to a VStruct, which has a special type and a
+  // different default value
+  void _ConvertToVStruct();
+
+  // This function is called by SdrShaderNode::_PostProcessProperties once all
+  // information is locked in and won't be changed anymore. This allows each
+  // property to take some extra steps once all information is available.
+  void _FinalizeProperty();
+
   // Some metadata values cannot be returned by reference from the main
   // metadata dictionary because they need additional parsing.
   const NdrTokenMap _hints;
@@ -271,6 +299,12 @@ class SdrShaderProperty : public NdrProperty
   TfToken _vstructMemberOf;
   TfToken _vstructMemberName;
   TfToken _vstructConditionalExpr;
+
+  VtValue _sdfTypeDefaultValue;
+
+  // Metadatum to control the behavior of GetTypeAsSdfType and indirectly
+  // CanConnectTo
+  int _usdEncodingVersion;
 };
 
 WABI_NAMESPACE_END

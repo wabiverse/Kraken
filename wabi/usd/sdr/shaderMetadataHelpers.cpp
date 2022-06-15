@@ -1,70 +1,68 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2018 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
-#include "wabi/usd/sdr/shaderMetadataHelpers.h"
 #include "wabi/base/tf/staticTokens.h"
 #include "wabi/base/tf/stringUtils.h"
+#include "wabi/usd/sdr/shaderMetadataHelpers.h"
 #include "wabi/usd/sdr/shaderProperty.h"
 
 #include <iostream>
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
 
-                         // Values for "widget" metadata that indicate the property is an
-                         // asset identifier
-                         ((filename, "filename"))          // OSL spec
-                         ((fileInput, "fileInput"))        // Args spec
-                         ((assetIdInput, "assetIdInput"))  // Pixar convention
+    // Values for "widget" metadata that indicate the property is an
+    // asset identifier
+    ((filename, "filename"))            // OSL spec
+    ((fileInput, "fileInput"))          // Args spec
+    ((assetIdInput, "assetIdInput"))    // Pixar convention
 
-                         // Values for "renderType" metadata that indicate the property is a
-                         // SdrPropertyTypes->Terminal
-                         ((terminal, "terminal")));
+    // Values for "renderType" metadata that indicate the property is a
+    // SdrPropertyTypes->Terminal
+    ((terminal, "terminal"))
+);
 
 namespace ShaderMetadataHelpers
 {
-  bool IsTruthy(const TfToken &propName, const NdrTokenMap &metadata)
+  bool IsTruthy(const TfToken &key, const NdrTokenMap &metadata)
   {
+    const NdrTokenMap::const_iterator search = metadata.find(key);
+
     // Absence of the option implies false
-    if (metadata.count(propName) == 0) {
+    if (search == metadata.end()) {
       return false;
     }
 
-    std::string boolStr = metadata.at(propName);
-
     // Presence of the option without a value implies true
-    if (boolStr.empty()) {
+    if (search->second.empty()) {
       return true;
     }
+
+    // Copy string for modification below
+    std::string boolStr = search->second;
 
     // Turn into a lower case string
     std::transform(boolStr.begin(), boolStr.end(), boolStr.begin(), ::tolower);
@@ -76,13 +74,15 @@ namespace ShaderMetadataHelpers
     return true;
   }
 
+
   // -------------------------------------------------------------------------
 
-  std::string StringVal(const TfToken &propName,
+
+  std::string StringVal(const TfToken &key,
                         const NdrTokenMap &metadata,
                         const std::string &defaultValue)
   {
-    const NdrTokenMap::const_iterator search = metadata.find(propName);
+    const NdrTokenMap::const_iterator search = metadata.find(key);
 
     if (search != metadata.end()) {
       return search->second;
@@ -91,13 +91,13 @@ namespace ShaderMetadataHelpers
     return defaultValue;
   }
 
+
   // -------------------------------------------------------------------------
 
-  TfToken TokenVal(const TfToken &propName,
-                   const NdrTokenMap &metadata,
-                   const TfToken &defaultValue)
+
+  TfToken TokenVal(const TfToken &key, const NdrTokenMap &metadata, const TfToken &defaultValue)
   {
-    const NdrTokenMap::const_iterator search = metadata.find(propName);
+    const NdrTokenMap::const_iterator search = metadata.find(key);
 
     if (search != metadata.end()) {
       return TfToken(search->second);
@@ -106,11 +106,33 @@ namespace ShaderMetadataHelpers
     return defaultValue;
   }
 
+
   // -------------------------------------------------------------------------
 
-  NdrStringVec StringVecVal(const TfToken &propName, const NdrTokenMap &metadata)
+
+  int IntVal(const TfToken &key, const NdrTokenMap &metadata, int defaultValue)
   {
-    const NdrTokenMap::const_iterator search = metadata.find(propName);
+    const NdrTokenMap::const_iterator search = metadata.find(key);
+
+    if (search == metadata.end()) {
+      return defaultValue;
+    }
+
+    try {
+      return std::stoi(search->second);
+    }
+    catch (...) {
+      return defaultValue;
+    }
+  }
+
+
+  // -------------------------------------------------------------------------
+
+
+  NdrStringVec StringVecVal(const TfToken &key, const NdrTokenMap &metadata)
+  {
+    const NdrTokenMap::const_iterator search = metadata.find(key);
 
     if (search != metadata.end()) {
       return TfStringSplit(search->second, "|");
@@ -119,11 +141,13 @@ namespace ShaderMetadataHelpers
     return NdrStringVec();
   }
 
+
   // -------------------------------------------------------------------------
 
-  NdrTokenVec TokenVecVal(const TfToken &propName, const NdrTokenMap &metadata)
+
+  NdrTokenVec TokenVecVal(const TfToken &key, const NdrTokenMap &metadata)
   {
-    const NdrStringVec untokenized = StringVecVal(propName, metadata);
+    const NdrStringVec untokenized = StringVecVal(key, metadata);
     NdrTokenVec tokenized;
 
     for (const std::string &item : untokenized) {
@@ -133,7 +157,9 @@ namespace ShaderMetadataHelpers
     return tokenized;
   }
 
+
   // -------------------------------------------------------------------------
+
 
   NdrOptionVec OptionVecVal(const std::string &optionStr)
   {
@@ -163,14 +189,18 @@ namespace ShaderMetadataHelpers
     return options;
   }
 
+
   // -------------------------------------------------------------------------
+
 
   std::string CreateStringFromStringVec(const NdrStringVec &stringVec)
   {
     return TfStringJoin(stringVec, "|");
   }
 
+
   // -------------------------------------------------------------------------
+
 
   bool IsPropertyAnAssetIdentifier(const NdrTokenMap &metadata)
   {

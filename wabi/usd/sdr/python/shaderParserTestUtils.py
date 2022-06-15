@@ -338,7 +338,7 @@ def TestBasicNode(node, nodeSourceType, nodeDefinitionURI, nodeImplementationURI
     assert set(node.GetOutputNames()) == outputNames
 
     # There may be additional metadata passed in via the NdrNodeDiscoveryResult.
-    # So, ensure that the bits we expect to see are there instead of doing
+    # So, ensure that the bits we expect to see are there instead of doing 
     # an equality check.
     nodeMetadata = node.GetMetadata()
     for i,j in metadata.items():
@@ -616,3 +616,4 @@ def TestShaderPropertiesNode(node):
     property = nodeInputs["normal"]
     assert property.GetImplementationName() == "aliasedNormalInput"
     assert Ndr._ValidateProperty(node, property)
+

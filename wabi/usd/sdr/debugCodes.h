@@ -1,5 +1,5 @@
 //
-// Copyright 2018 Pixar
+// Copyright 2021 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,27 +21,18 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_USD_SDR_API_H
-#define WABI_USD_SDR_API_H
+#ifndef WABI_USD_SDR_DEBUG_CODES_H
+#define WABI_USD_SDR_DEBUG_CODES_H
 
-#include "wabi/base/arch/export.h"
+#include "wabi/wabi.h"
+#include "wabi/base/tf/debug.h"
 
-#if defined(WABI_STATIC)
-#  define SDR_API
-#  define SDR_API_TEMPLATE_CLASS(...)
-#  define SDR_API_TEMPLATE_STRUCT(...)
-#  define SDR_LOCAL
-#else
-#  if defined(SDR_EXPORTS)
-#    define SDR_API ARCH_EXPORT
-#    define SDR_API_TEMPLATE_CLASS(...) ARCH_EXPORT_TEMPLATE(class, __VA_ARGS__)
-#    define SDR_API_TEMPLATE_STRUCT(...) ARCH_EXPORT_TEMPLATE(struct, __VA_ARGS__)
-#  else
-#    define SDR_API ARCH_IMPORT
-#    define SDR_API_TEMPLATE_CLASS(...) ARCH_IMPORT_TEMPLATE(class, __VA_ARGS__)
-#    define SDR_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
-#  endif
-#  define SDR_LOCAL ARCH_HIDDEN
-#endif
+WABI_NAMESPACE_BEGIN
 
-#endif
+
+TF_DEBUG_CODES(SDR_TYPE_CONFORMANCE);
+
+
+WABI_NAMESPACE_END
+
+#endif  // WABI_USD_SDR_DEBUG_CODES_H
