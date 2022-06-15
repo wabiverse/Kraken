@@ -1,36 +1,29 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/imaging/hgiVulkan/hgi.h"
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hgiVulkan/blitCmds.h"
 #include "wabi/imaging/hgiVulkan/buffer.h"
+#include "wabi/imaging/hgiVulkan/capabilities.h"
 #include "wabi/imaging/hgiVulkan/commandQueue.h"
 #include "wabi/imaging/hgiVulkan/computeCmds.h"
 #include "wabi/imaging/hgiVulkan/computePipeline.h"
@@ -39,6 +32,7 @@
 #include "wabi/imaging/hgiVulkan/garbageCollector.h"
 #include "wabi/imaging/hgiVulkan/graphicsCmds.h"
 #include "wabi/imaging/hgiVulkan/graphicsPipeline.h"
+#include "wabi/imaging/hgiVulkan/hgi.h"
 #include "wabi/imaging/hgiVulkan/instance.h"
 #include "wabi/imaging/hgiVulkan/resourceBindings.h"
 #include "wabi/imaging/hgiVulkan/sampler.h"
@@ -54,13 +48,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(HGIVULKAN_MAX_FPS, true, "Enable maximum frames per second");
-
-bool HgiVulkanIsMaxFPSEnabled()
-{
-  static bool _v = TfGetEnvSetting(HGIVULKAN_MAX_FPS) == true;
-  return _v;
-}
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -76,14 +63,6 @@ HgiVulkan::HgiVulkan()
     _frameDepth(0)
 {}
 
-HgiVulkan::HgiVulkan(HgiVulkanInstance *existingInst)
-  : _instance(existingInst),
-    _device(new HgiVulkanDevice(_instance)),
-    _garbageCollector(new HgiVulkanGarbageCollector(this)),
-    _threadId(std::this_thread::get_id()),
-    _frameDepth(0)
-{}
-
 HgiVulkan::~HgiVulkan()
 {
   // Wait for all devices and perform final garbage collection.
@@ -92,6 +71,16 @@ HgiVulkan::~HgiVulkan()
   delete _garbageCollector;
   delete _device;
   delete _instance;
+}
+
+bool HgiVulkan::IsBackendSupported() const
+{
+  // Want Vulkan 1.2 or higher.
+  const uint32_t apiVersion = GetCapabilities()->GetAPIVersion();
+  const uint32_t majorVersion = VK_VERSION_MAJOR(apiVersion);
+  const uint32_t minorVersion = VK_VERSION_MINOR(apiVersion);
+
+  return (majorVersion >= 1) && (minorVersion >= 2);
 }
 
 /* Multi threaded */
@@ -176,8 +165,12 @@ void HgiVulkan::DestroyBuffer(HgiBufferHandle *bufHandle)
 /* Multi threaded */
 HgiShaderFunctionHandle HgiVulkan::CreateShaderFunction(HgiShaderFunctionDesc const &desc)
 {
-  return HgiShaderFunctionHandle(new HgiVulkanShaderFunction(GetPrimaryDevice(), desc),
-                                 GetUniqueId());
+  return HgiShaderFunctionHandle(
+    new HgiVulkanShaderFunction(GetPrimaryDevice(),
+                                this,
+                                desc,
+                                GetCapabilities()->GetShaderVersion()),
+    GetUniqueId());
 }
 
 /* Multi threaded */
@@ -238,6 +231,12 @@ void HgiVulkan::DestroyComputePipeline(HgiComputePipelineHandle *pipeHandle)
 TfToken const &HgiVulkan::GetAPIName() const
 {
   return HgiTokens->Vulkan;
+}
+
+/* Multi threaded */
+HgiVulkanCapabilities const *HgiVulkan::GetCapabilities() const
+{
+  return &_device->GetDeviceCapabilities();
 }
 
 /* Single threaded */
@@ -329,5 +328,6 @@ void HgiVulkan::_EndFrameSync()
   // Perform garbage collection for each device.
   _garbageCollector->PerformGarbageCollection(device);
 }
+
 
 WABI_NAMESPACE_END

@@ -4057,8 +4057,8 @@ Library has its own container implementation.
 Following headers are used in this CONFIGURATION section only, so feel free to
 remove them if not needed.
 */
-#include <algorithm>  // for min, max
 #include <cassert>    // for assert
+#include <algorithm>  // for min, max
 #include <mutex>
 
 #ifndef VMA_NULL
@@ -6477,18 +6477,18 @@ class VmaBlockMetadata
   // Tries to find a place for suballocation with given parameters inside this block.
   // If succeeded, fills pAllocationRequest and returns true.
   // If failed, returns false.
-  virtual bool CreateAllocationRequest(uint32_t currentFrameIndex,
-                                       uint32_t frameInUseCount,
-                                       VkDeviceSize bufferImageGranularity,
-                                       VkDeviceSize allocSize,
-                                       VkDeviceSize allocAlignment,
-                                       bool upperAddress,
-                                       VmaSuballocationType allocType,
-                                       bool canMakeOtherLost,
-                                       // Always one of VMA_ALLOCATION_CREATE_STRATEGY_* or
-                                       // VMA_ALLOCATION_INTERNAL_STRATEGY_* flags.
-                                       uint32_t strategy,
-                                       VmaAllocationRequest *pAllocationRequest) = 0;
+  virtual bool CreateAllocationRequest(
+    uint32_t currentFrameIndex,
+    uint32_t frameInUseCount,
+    VkDeviceSize bufferImageGranularity,
+    VkDeviceSize allocSize,
+    VkDeviceSize allocAlignment,
+    bool upperAddress,
+    VmaSuballocationType allocType,
+    bool canMakeOtherLost,
+    // Always one of VMA_ALLOCATION_CREATE_STRATEGY_* or VMA_ALLOCATION_INTERNAL_STRATEGY_* flags.
+    uint32_t strategy,
+    VmaAllocationRequest *pAllocationRequest) = 0;
 
   virtual bool MakeRequestedAllocationsLost(uint32_t currentFrameIndex,
                                             uint32_t frameInUseCount,
@@ -9083,6 +9083,7 @@ struct VmaSuballocationItemSizeLess
   }
 };
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // class VmaBlockMetadata
 
@@ -9973,6 +9974,7 @@ void VmaBlockMetadata_Generic::RegisterFreeSuballocation(VmaSuballocationList::i
 
   // VMA_HEAVY_ASSERT(ValidateFreeSuballocationList());
 }
+
 
 void VmaBlockMetadata_Generic::UnregisterFreeSuballocation(VmaSuballocationList::iterator item)
 {
@@ -11175,8 +11177,8 @@ bool VmaBlockMetadata_Linear::CreateAllocationRequest_LowerAddress(
           resultOffset + allocSize + VMA_DEBUG_MARGIN > size) {
         // TODO: This is a known bug that it's not yet implemented and the allocation is failing.
         VMA_DEBUG_LOG(
-          "Unsupported special case in custom pool with linear allocation algorithm used as "
-          "ring buffer with allocations that can be lost.");
+          "Unsupported special case in custom pool with linear allocation algorithm used as ring "
+          "buffer with allocations that can be lost.");
       }
     }
 
@@ -11595,6 +11597,7 @@ void VmaBlockMetadata_Linear::CleanupAfterFree()
 
   VMA_HEAVY_ASSERT(Validate());
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // class VmaBlockMetadata_Buddy
@@ -12109,6 +12112,7 @@ void VmaBlockMetadata_Buddy::PrintDetailedMapNode(class VmaJsonWriter &json,
   }
 }
 #endif  // #if VMA_STATS_STRING_ENABLED
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // class VmaDeviceMemoryBlock
@@ -15380,7 +15384,7 @@ void VmaAllocationObjectAllocator::Free(VmaAllocation hAlloc)
 VmaAllocator_T::VmaAllocator_T(const VmaAllocatorCreateInfo *pCreateInfo)
   : m_UseMutex((pCreateInfo->flags & VMA_ALLOCATOR_CREATE_EXTERNALLY_SYNCHRONIZED_BIT) == 0),
     m_VulkanApiVersion(pCreateInfo->vulkanApiVersion != 0 ? pCreateInfo->vulkanApiVersion :
-                                                            VK_API_VERSION_1_2),
+                                                            VK_API_VERSION_1_0),
     m_UseKhrDedicatedAllocation(
       (pCreateInfo->flags & VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT) != 0),
     m_UseKhrBindMemory2((pCreateInfo->flags & VMA_ALLOCATOR_CREATE_KHR_BIND_MEMORY2_BIT) != 0),
@@ -16893,9 +16897,9 @@ VkResult VmaAllocator_T::BindBufferMemory(VmaAllocation hAllocation,
       break;
     case VmaAllocation_T::ALLOCATION_TYPE_BLOCK: {
       VmaDeviceMemoryBlock *const pBlock = hAllocation->GetBlock();
-      VMA_ASSERT(pBlock &&
-                 "Binding buffer to allocation that doesn't belong to any block. Is the "
-                 "allocation lost?");
+      VMA_ASSERT(
+        pBlock &&
+        "Binding buffer to allocation that doesn't belong to any block. Is the allocation lost?");
       res = pBlock->BindBufferMemory(this, hAllocation, allocationLocalOffset, hBuffer, pNext);
       break;
     }

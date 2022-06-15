@@ -1,39 +1,32 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2019 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HGI_HGI_H
 #define WABI_IMAGING_HGI_HGI_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hgi/api.h"
 #include "wabi/imaging/hgi/blitCmds.h"
@@ -54,7 +47,10 @@
 
 WABI_NAMESPACE_BEGIN
 
+class HgiCapabilities;
+
 using HgiUniquePtr = std::unique_ptr<class Hgi>;
+
 
 /// \class Hgi
 ///
@@ -90,7 +86,7 @@ using HgiUniquePtr = std::unique_ptr<class Hgi>;
 /// * Multi threaded support for resource creation and destruction.
 ///
 /// We currently do not rely on these additional multi-threading features in
-/// Hydra / Phoenix where we still wish to run OpenGL. In Hydra we make sure to
+/// Hydra / Storm where we still wish to run OpenGL. In Hydra we make sure to
 /// use the main-thread for resource creation and command submission.
 /// One day we may wish to switch this to be multi-threaded so new Hgi backends
 /// are encouraged to support it.
@@ -141,6 +137,17 @@ class Hgi
   /// Thread safety: Not thread safe.
   HGI_API
   static HgiUniquePtr CreatePlatformDefaultHgi();
+
+  /// Determine if Hgi instance can run on current hardware.
+  /// Thread safety: This call is thread safe.
+  HGI_API
+  virtual bool IsBackendSupported() const = 0;
+
+  /// Constructs a temporary Hgi object for the current platform and calls
+  /// the object's IsBackendSupported() function.
+  /// Thread safety: Not thread safe.
+  HGI_API
+  static bool IsSupported();
 
   /// Returns a GraphicsCmds object (for temporary use) that is ready to
   /// record draw commands. GraphicsCmds is a lightweight object that
@@ -274,6 +281,11 @@ class Hgi
   HGI_API
   virtual TfToken const &GetAPIName() const = 0;
 
+  /// Returns the device-specific capabilities structure.
+  /// Thread safety: This call is thread safe.
+  HGI_API
+  virtual HgiCapabilities const *GetCapabilities() const = 0;
+
   /// Optionally called by client app at the start of a new rendering frame.
   /// We can't rely on StartFrame for anything important, because it is up to
   /// the external client to (optionally) call this and they may never do.
@@ -310,6 +322,7 @@ class Hgi
   std::atomic<uint64_t> _uniqueIdCounter;
 };
 
+
 ///
 /// Hgi factory for plugin system
 ///
@@ -329,6 +342,7 @@ template<class T> class HgiFactory : public HgiFactoryBase
     return new T;
   }
 };
+
 
 WABI_NAMESPACE_END
 

@@ -24,11 +24,11 @@
 #ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROP_H
 #define WABI_IMAGING_HGIINTEROP_HGIINTEROP_H
 
-#include "wabi/base/gf/vec4i.h"
-#include "wabi/base/tf/token.h"
-#include "wabi/imaging/hgi/texture.h"
-#include "wabi/imaging/hgiInterop/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/token.h"
+#include "wabi/base/gf/vec4i.h"
+#include "wabi/imaging/hgiInterop/api.h"
+#include "wabi/imaging/hgi/texture.h"
 
 #include <memory>
 
@@ -38,7 +38,6 @@ class Hgi;
 class HgiInteropMetal;
 class HgiInteropOpenGL;
 class HgiInteropVulkan;
-class HgiInteropDX3D;
 class VtValue;
 
 /// \class HgiInterop
@@ -104,18 +103,13 @@ class HgiInterop final
 
 #if defined(WITH_METAL)
   std::unique_ptr<HgiInteropMetal> _metalToOpenGL;
-#endif /* WITH_METAL */
-
-#if defined(WITH_DIRECTX)
-  std::unique_ptr<HgiInteropDX3D> _dX3DToOpenGL;
-#endif /* WITH_DIRECTX */
-
-#if defined(WITH_VULKAN)
+#elif defined(WITH_VULKAN)
   std::unique_ptr<HgiInteropVulkan> _vulkanToOpenGL;
-#endif /* WITH_VULKAN */
-
+#else
   std::unique_ptr<HgiInteropOpenGL> _openGLToOpenGL;
+#endif
 };
+
 
 WABI_NAMESPACE_END
 

@@ -26,13 +26,14 @@
 
 #include "wabi/imaging/garch/glApi.h"
 
-#include <AppKit/AppKit.h>
 #include <Metal/Metal.h>
+#include <AppKit/AppKit.h>
 
+#include "wabi/wabi.h"
 #include "wabi/base/gf/vec4i.h"
 #include "wabi/imaging/hgi/texture.h"
 #include "wabi/imaging/hgiInterop/api.h"
-#include "wabi/wabi.h"
+
 
 WABI_NAMESPACE_BEGIN
 
@@ -96,10 +97,7 @@ class HgiInteropMetal final
     void *pointer;
   };
 
-  void _BlitToOpenGL(VtValue const &framebuffer,
-                     GfVec4i const &compRegion,
-                     bool flipY,
-                     int shaderIndex);
+  void _BlitToOpenGL(VtValue const &framebuffer, GfVec4i const &compRegion, int shaderIndex);
   void _FreeTransientTextureCacheRefs();
   void _CaptureOpenGlState();
   void _RestoreOpenGlState();

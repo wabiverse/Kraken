@@ -20,6 +20,10 @@ if(WITH_METAL)
   list(APPEND optionalLibraries ${COREVIDEO_LIBRARY} hgiMetal)
   list(APPEND optionalCppFiles metal.mm)
   list(APPEND optionalPrivateHeaders metal.h)
+else()
+  # No OpenGL-to-OpenGL interop when using Metal.
+  list(APPEND optionalCppFiles opengl.cpp)
+  list(APPEND optionalPrivateHeaders opengl.h)
 endif()
 
 if(WITH_OPENGL)
@@ -39,22 +43,22 @@ if(WITH_DIRECTX)
   list(APPEND optionalCppFiles dx3d.cpp)
   list(APPEND optionalPrivateHeaders dx3d.h)
 endif()
-
 wabi_library(hgiInterop
-  LIBRARIES
-    gf
-    tf
-    hgi
-    ${optionalLibraries}
-  
-  PUBLIC_HEADERS
-    api.h
-    hgiInterop.h
-  
-  PRIVATE_HEADERS
-    ${optionalPrivateHeaders}
-  
-  CPPFILES
-    hgiInterop.cpp
-    ${optionalCppFiles}
+    LIBRARIES
+        gf
+        tf
+        hgi
+        vt
+        ${optionalLibraries}
+
+    PUBLIC_HEADERS
+        api.h
+        hgiInterop.h
+
+    PRIVATE_HEADERS
+        ${optionalPrivateHeaders}
+
+    CPPFILES
+        hgiInterop.cpp
+        ${optionalCppFiles}
 )

@@ -1,46 +1,40 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2019 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/garch/glApi.h"
 
 #include "wabi/imaging/hgi/handle.h"
+#include "wabi/imaging/hgiGL/hgi.h"
 #include "wabi/imaging/hgiGL/blitCmds.h"
 #include "wabi/imaging/hgiGL/buffer.h"
 #include "wabi/imaging/hgiGL/computeCmds.h"
 #include "wabi/imaging/hgiGL/computePipeline.h"
+#include "wabi/imaging/hgiGL/contextArena.h"
 #include "wabi/imaging/hgiGL/conversions.h"
 #include "wabi/imaging/hgiGL/device.h"
 #include "wabi/imaging/hgiGL/diagnostic.h"
 #include "wabi/imaging/hgiGL/graphicsCmds.h"
 #include "wabi/imaging/hgiGL/graphicsPipeline.h"
-#include "wabi/imaging/hgiGL/hgi.h"
 #include "wabi/imaging/hgiGL/resourceBindings.h"
 #include "wabi/imaging/hgiGL/sampler.h"
 #include "wabi/imaging/hgiGL/shaderFunction.h"
@@ -55,13 +49,15 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(HGIGL_ENABLE_GL_VERSION_VALIDATION, true, "Enables validation OpenGL version.");
+TF_DEFINE_ENV_SETTING(HGIGL_ENABLE_GL_VERSION_VALIDATION, true,
+    "Enables validation OpenGL version.");
 
 TF_REGISTRY_FUNCTION(TfType)
 {
   TfType t = TfType::Define<HgiGL, TfType::Bases<Hgi>>();
   t.SetFactory<HgiFactory<HgiGL>>();
 }
+
 
 HgiGL::HgiGL() : _device(nullptr), _garbageCollector(this), _frameDepth(0)
 {
@@ -78,12 +74,20 @@ HgiGL::HgiGL() : _device(nullptr), _garbageCollector(this), _frameDepth(0)
 
   // Create "primary device" (note there is only one for GL)
   _device = new HgiGLDevice();
+
+  _capabilities.reset(new HgiGLCapabilities());
 }
 
 HgiGL::~HgiGL()
 {
   _garbageCollector.PerformGarbageCollection();
   delete _device;
+}
+
+bool HgiGL::IsBackendSupported() const
+{
+  // Want OpenGL 4.5 or higher.
+  return GetCapabilities()->GetAPIVersion() >= 450;
 }
 
 HgiGLDevice *HgiGL::GetPrimaryDevice() const
@@ -162,7 +166,7 @@ void HgiGL::DestroyBuffer(HgiBufferHandle *bufHandle)
 
 HgiShaderFunctionHandle HgiGL::CreateShaderFunction(HgiShaderFunctionDesc const &desc)
 {
-  return HgiShaderFunctionHandle(new HgiGLShaderFunction(desc), GetUniqueId());
+  return HgiShaderFunctionHandle(new HgiGLShaderFunction(this, desc), GetUniqueId());
 }
 
 void HgiGL::DestroyShaderFunction(HgiShaderFunctionHandle *shaderFunctionHandle)
@@ -192,7 +196,7 @@ void HgiGL::DestroyResourceBindings(HgiResourceBindingsHandle *resHandle)
 
 HgiGraphicsPipelineHandle HgiGL::CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &desc)
 {
-  return HgiGraphicsPipelineHandle(new HgiGLGraphicsPipeline(desc), GetUniqueId());
+  return HgiGraphicsPipelineHandle(new HgiGLGraphicsPipeline(this, desc), GetUniqueId());
 }
 
 void HgiGL::DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle)
@@ -215,6 +219,11 @@ TfToken const &HgiGL::GetAPIName() const
   return HgiTokens->OpenGL;
 }
 
+HgiGLCapabilities const *HgiGL::GetCapabilities() const
+{
+  return _capabilities.get();
+}
+
 void HgiGL::StartFrame()
 {
   // Protect against client calling StartFrame more than once (nested engines)
@@ -232,6 +241,7 @@ void HgiGL::EndFrame()
 {
   if (--_frameDepth == 0) {
     _garbageCollector.PerformGarbageCollection();
+    _device->GarbageCollect();
 
 // End Full Frame debug label
 #if defined(GL_KHR_debug)
@@ -240,6 +250,24 @@ void HgiGL::EndFrame()
     }
 #endif
   }
+}
+
+HgiGLContextArenaHandle HgiGL::CreateContextArena()
+{
+  return HgiGLContextArenaHandle(new HgiGLContextArena(), GetUniqueId());
+}
+
+void HgiGL::DestroyContextArena(HgiGLContextArenaHandle *arenaHandle)
+{
+  if (arenaHandle) {
+    delete arenaHandle->Get();
+    *arenaHandle = HgiGLContextArenaHandle();
+  }
+}
+
+void HgiGL::SetContextArena(HgiGLContextArenaHandle const &arenaHandle)
+{
+  _device->SetCurrentArena(arenaHandle);
 }
 
 bool HgiGL::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
@@ -264,6 +292,7 @@ bool HgiGL::_SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait)
   // If the Hgi client does not call Hgi::EndFrame we garbage collect here.
   if (_frameDepth == 0) {
     _garbageCollector.PerformGarbageCollection();
+    _device->GarbageCollect();
   }
 
   return result;

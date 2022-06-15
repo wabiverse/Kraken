@@ -24,10 +24,11 @@
 #ifndef WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
 #define WABI_IMAGING_HGIINTEROP_HGIINTEROPOPENGL_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/gf/vec4i.h"
 #include "wabi/imaging/hgi/texture.h"
 #include "wabi/imaging/hgiInterop/api.h"
-#include "wabi/wabi.h"
+
 
 WABI_NAMESPACE_BEGIN
 

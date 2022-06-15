@@ -1,48 +1,42 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2019 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HGI_GRAPHICS_CMDS_H
 #define WABI_IMAGING_HGI_GRAPHICS_CMDS_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/gf/vec4i.h"
 #include "wabi/imaging/hgi/api.h"
-#include "wabi/imaging/hgi/cmds.h"
 #include "wabi/imaging/hgi/graphicsCmdsDesc.h"
 #include "wabi/imaging/hgi/graphicsPipeline.h"
 #include "wabi/imaging/hgi/resourceBindings.h"
-#include "wabi/wabi.h"
+#include "wabi/imaging/hgi/cmds.h"
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
 
 using HgiGraphicsCmdsUniquePtr = std::unique_ptr<class HgiGraphicsCmds>;
+
 
 /// \class HgiGraphicsCmds
 ///
@@ -118,10 +112,14 @@ class HgiGraphicsCmds : public HgiCmds
   /// The 'primitive type' (eg. Lines, Triangles, etc) can be acquired from
   /// the bound HgiPipeline.
   /// `vertexCount`: The number of vertices to draw.
-  /// `firstVertex`: The index of the first vertex to draw.
+  /// `baseVertex`: The index of the first vertex to draw.
   /// `instanceCount`: Number of instances to draw.
+  /// `baseInstance`: The first instance to draw.
   HGI_API
-  virtual void Draw(uint32_t vertexCount, uint32_t firstVertex, uint32_t instanceCount) = 0;
+  virtual void Draw(uint32_t vertexCount,
+                    uint32_t baseVertex,
+                    uint32_t instanceCount,
+                    uint32_t baseInstance) = 0;
 
   /// Records a multi-draw command that reads the draw parameters
   /// from a provided drawParameterBuffer.
@@ -131,15 +129,15 @@ class HgiGraphicsCmds : public HgiCmds
   //     struct IndirectCommand {
   //         uint32_t vertexCount;
   //         uint32_t instanceCount;
-  //         uint32_t firstVertex;
-  //         uint32_t firstInstance;
+  //         uint32_t baseVertex;
+  //         uint32_t baseInstance;
   //     }
-  /// `drawBufferOffset`: Byte offset where the draw parameters begin.
+  /// `drawBufferByteOffset`: Byte offset where the draw parameters begin.
   /// `drawCount`: The number of draws to execute.
   /// `stride`: byte stride between successive sets of draw parameters.
   HGI_API
   virtual void DrawIndirect(HgiBufferHandle const &drawParameterBuffer,
-                            uint32_t drawBufferOffset,
+                            uint32_t drawBufferByteOffset,
                             uint32_t drawCount,
                             uint32_t stride) = 0;
 
@@ -150,37 +148,55 @@ class HgiGraphicsCmds : public HgiCmds
   /// `indexCount`: The number of indices in the index buffer (num vertices).
   /// `indexBufferByteOffset`: Byte offset within index buffer to start
   ///                          reading the indices from.
-  /// `vertexOffset`: The value added to the vertex index before indexing
+  /// `baseVertex`: The value added to the vertex index before indexing
   ///                 into the vertex buffer (baseVertex).
   /// `instanceCount`: Number of instances to draw.
+  /// `baseInstance`: The first instance to draw.
   HGI_API
   virtual void DrawIndexed(HgiBufferHandle const &indexBuffer,
                            uint32_t indexCount,
                            uint32_t indexBufferByteOffset,
-                           uint32_t vertexOffset,
-                           uint32_t instanceCount) = 0;
+                           uint32_t baseVertex,
+                           uint32_t instanceCount,
+                           uint32_t baseInstance) = 0;
 
   /// Records a indexed multi-draw command that reads the draw parameters
   /// from a provided drawParameterBuffer, and indices from indexBuffer.
   /// The 'primitive type' (eg. Lines, Triangles, etc) can be acquired from
   /// the bound HgiPipeline.
-  /// `drawParameterBuffer`: an array of structures:
+  /// `drawParameterBuffer`: an array of structures (Metal has a different
+  /// encoding of indirect commands for tessellated patches):
   //     struct IndirectCommand {
   //         uint32_t indexCount;
   //         uint32_t instanceCount;
-  //         uint32_t firstIndex;
-  //         uint32_t vertexOffset;
-  //         uint32_t firstInstance;
+  //         uint32_t baseIndex;
+  //         uint32_t baseVertex;
+  //         uint32_t baseInstance;
   //     }
-  /// `drawBufferOffset`: Byte offset where the draw parameters begin.
+  //     struct MetalPatchIndirectCommand {
+  //         uint32_t patchCount;
+  //         uint32_t instanceCount;
+  //         uint32_t patchStart;
+  //         uint32_t baseInstance;
+  //     }
+  /// `drawBufferByteOffset`: Byte offset where the draw parameters begin.
   /// `drawCount`: The number of draws to execute.
   /// `stride`: byte stride between successive sets of draw parameters.
+  /// `drawParameterBufferUInt32`: CPU addressable `drawParameterBuffer`
+  /// which contains the `baseVertex` offset needed for each patch draw
+  /// for Metal.
+  /// `patchBaseVertexByteOffset`: Byte offset to the uint32_t value
+  /// in `drawParameterBufferUint32` which is the `baseVertex` value
+  /// which must be applied to each HgiVertexBufferPerPatchControlPoint
+  /// vertex buffer for each patch draw for Metal.
   HGI_API
   virtual void DrawIndexedIndirect(HgiBufferHandle const &indexBuffer,
                                    HgiBufferHandle const &drawParameterBuffer,
-                                   uint32_t drawBufferOffset,
+                                   uint32_t drawBufferByteOffset,
                                    uint32_t drawCount,
-                                   uint32_t stride) = 0;
+                                   uint32_t stride,
+                                   std::vector<uint32_t> const &drawParameterBufferUInt32,
+                                   uint32_t patchBaseVertexByteOffset) = 0;
 
   /// Inserts a barrier so that data written to memory by commands before
   /// the barrier is available to commands after the barrier.
@@ -197,6 +213,7 @@ class HgiGraphicsCmds : public HgiCmds
   HgiGraphicsCmds &operator=(const HgiGraphicsCmds &) = delete;
   HgiGraphicsCmds(const HgiGraphicsCmds &) = delete;
 };
+
 
 WABI_NAMESPACE_END
 

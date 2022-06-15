@@ -1,43 +1,37 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2019 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HGI_ENUMS_H
 #define WABI_IMAGING_HGI_ENUMS_H
 
-#include "wabi/imaging/hgi/api.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hgi/api.h"
 #include <cstdint>
 
 WABI_NAMESPACE_BEGIN
 
 using HgiBits = uint32_t;
+
 
 /// \enum HgiDeviceCapabilitiesBits
 ///
@@ -46,11 +40,57 @@ using HgiBits = uint32_t;
 /// <ul>
 /// <li>HgiDeviceCapabilitiesBitsPresentation:
 ///   The device must be capable of presenting graphics to screen</li>
+/// <li>HgiDeviceCapabilitiesBitsBindlessBuffers:
+///   THe device can access GPU buffers using bindless handles</li>
+/// <li>HgiDeviceCapabilitiesBitsConcurrentDispatch:
+///   The device can execute commands concurrently</li>
+/// <li>HgiDeviceCapabilitiesBitsUnifiedMemory:
+///   The device shares all GPU and CPU memory</li>
+/// <li>HgiDeviceCapabilitiesBitsBuiltinBarycentrics:
+///   The device can provide built-in barycentric coordinates</li>
+/// <li>HgiDeviceCapabilitiesBitsShaderDrawParameters:
+///   The device can provide additional built-in shader variables corresponding
+///   to draw command parameters</li>
+/// <li>HgiDeviceCapabilitiesBitsMultiDrawIndirect:
+///   The device supports multiple primitive, indirect drawing</li>
+/// <li>HgiDeviceCapabilitiesBitsBindlessTextures:
+///   The device can access GPU textures using bindless handles</li>
+/// <li>HgiDeviceCapabilitiesBitsShaderDoublePrecision:
+///   The device supports double precision types in shaders</li>
+/// <li>HgiDeviceCapabilitiesBitsDepthRangeMinusOnetoOne:
+///   The device's clip space depth ranges from [-1,1]</li>
+/// <li>HgiDeviceCapabilitiesBitsCppShaderPadding:
+///   Use CPP padding for shader language structures</li>
+/// <li>HgiDeviceCapabilitiesBitsConservativeRaster:
+///   The device supports conservative rasterization</li>
+/// <li>HgiDeviceCapabilitiesBitsStencilReadback:
+///   Supports reading back the stencil buffer from GPU to CPU.</li>
+/// <li>HgiDeviceCapabilitiesBitsCustomDepthRange:
+///   The device supports setting a custom depth range.</li>
+/// <li>HgiDeviceCapabilitiesBitsMetalTessellation:
+///   Supports Metal tessellation shaders</li>
+/// <li>HgiDeviceCapabilitiesBitsBasePrimitiveOffset:
+///   The device requires workaround for base primitive offset</li>
 /// </ul>
 ///
 enum HgiDeviceCapabilitiesBits : HgiBits
 {
   HgiDeviceCapabilitiesBitsPresentation = 1 << 0,
+  HgiDeviceCapabilitiesBitsBindlessBuffers = 1 << 1,
+  HgiDeviceCapabilitiesBitsConcurrentDispatch = 1 << 2,
+  HgiDeviceCapabilitiesBitsUnifiedMemory = 1 << 3,
+  HgiDeviceCapabilitiesBitsBuiltinBarycentrics = 1 << 4,
+  HgiDeviceCapabilitiesBitsShaderDrawParameters = 1 << 5,
+  HgiDeviceCapabilitiesBitsMultiDrawIndirect = 1 << 6,
+  HgiDeviceCapabilitiesBitsBindlessTextures = 1 << 7,
+  HgiDeviceCapabilitiesBitsShaderDoublePrecision = 1 << 8,
+  HgiDeviceCapabilitiesBitsDepthRangeMinusOnetoOne = 1 << 9,
+  HgiDeviceCapabilitiesBitsCppShaderPadding = 1 << 10,
+  HgiDeviceCapabilitiesBitsConservativeRaster = 1 << 11,
+  HgiDeviceCapabilitiesBitsStencilReadback = 1 << 12,
+  HgiDeviceCapabilitiesBitsCustomDepthRange = 1 << 13,
+  HgiDeviceCapabilitiesBitsMetalTessellation = 1 << 14,
+  HgiDeviceCapabilitiesBasePrimitiveOffset = 1 << 15,
 };
 
 using HgiDeviceCapabilities = HgiBits;
@@ -176,6 +216,25 @@ enum HgiMipFilter
   HgiMipFilterCount
 };
 
+/// \enum HgiBorderColor
+///
+/// Border color to use for clamped texture values.
+///
+/// <ul>
+/// <li>HgiBorderColorTransparentBlack</li>
+/// <li>HgiBorderColorOpaqueBlack</li>
+/// <li>HgiBorderColorOpaqueWhite</li>
+/// </ul>
+///
+enum HgiBorderColor
+{
+  HgiBorderColorTransparentBlack = 0,
+  HgiBorderColorOpaqueBlack = 1,
+  HgiBorderColorOpaqueWhite = 2,
+
+  HgiBorderColorCount
+};
+
 /// \enum HgiSampleCount
 ///
 /// Sample count for multi-sampling
@@ -279,9 +338,15 @@ using HgiBufferUsage = HgiBits;
 /// <li>HgiShaderStageTessellationEval:
 ///   Generates the surface geometry (the points) from the transformed control
 ///   points for every coordinate coming out of the tessellator fixed function
-///  stage. </li>
+///  stage.</li>
 /// <li>HgiShaderStageGeometry:
 ///   Governs the processing of Primitives.</li>
+/// <li>HgiShaderStagePostTessellationControl:
+///   Metal specific stage which computes tess factors
+///   and modifies user post tess vertex data.</li>
+/// <li>HgiShaderStagePostTessellationVertex:
+///   Metal specific stage which performs tessellation and
+///   vertex processing.</li>
 /// </ul>
 ///
 enum HgiShaderStageBits : HgiBits
@@ -292,8 +357,9 @@ enum HgiShaderStageBits : HgiBits
   HgiShaderStageTessellationControl = 1 << 3,
   HgiShaderStageTessellationEval = 1 << 4,
   HgiShaderStageGeometry = 1 << 5,
-
-  HgiShaderStageCustomBitsBegin = 1 << 6,
+  HgiShaderStagePostTessellationControl = 1 << 6,
+  HgiShaderStagePostTessellationVertex = 1 << 7,
+  HgiShaderStageCustomBitsBegin = 1 << 8,
 };
 using HgiShaderStage = HgiBits;
 
@@ -399,6 +465,7 @@ enum HgiWinding
   HgiWindingCount
 };
 
+
 /// \enum HgiBlendOp
 ///
 /// Blend operations
@@ -443,6 +510,20 @@ enum HgiBlendFactor
   HgiBlendFactorCount
 };
 
+/// \enum HgiColorMaskBits
+///
+/// Describes whether to permit or restrict writing to color components
+/// of a color attachment.
+///
+enum HgiColorMaskBits : HgiBits
+{
+  HgiColorMaskRed = 1 << 0,
+  HgiColorMaskGreen = 1 << 1,
+  HgiColorMaskBlue = 1 << 2,
+  HgiColorMaskAlpha = 1 << 3,
+};
+using HgiColorMask = HgiBits;
+
 /// \enum HgiCompareFunction
 ///
 /// Compare functions.
@@ -459,6 +540,24 @@ enum HgiCompareFunction
   HgiCompareFunctionAlways,
 
   HgiCompareFunctionCount
+};
+
+/// \enum HgiStencilOp
+///
+/// Stencil operations.
+///
+enum HgiStencilOp
+{
+  HgiStencilOpKeep = 0,
+  HgiStencilOpZero,
+  HgiStencilOpReplace,
+  HgiStencilOpIncrementClamp,
+  HgiStencilOpDecrementClamp,
+  HgiStencilOpInvert,
+  HgiStencilOpIncrementWrap,
+  HgiStencilOpDecrementWrap,
+
+  HgiStencilOpCount
 };
 
 /// \enum HgiComponentSwizzle
@@ -493,6 +592,9 @@ enum HgiComponentSwizzle
 /// <li>HgiPrimitiveTypePatchList:
 ///   A user-defined number of vertices, which is tessellated into
 ///   points, lines, or triangles.</li>
+/// <li>HgiPrimitiveTypeLineListWithAdjacency:
+///   A four-vertex encoding used to draw untriangulated quads.
+///   Rasterize two triangles for every separate set of four vertices.</li>
 /// </ul>
 ///
 enum HgiPrimitiveType
@@ -502,8 +604,40 @@ enum HgiPrimitiveType
   HgiPrimitiveTypeLineStrip,
   HgiPrimitiveTypeTriangleList,
   HgiPrimitiveTypePatchList,
+  HgiPrimitiveTypeLineListWithAdjacency,
 
   HgiPrimitiveTypeCount
+};
+
+/// \enum HgiVertexBufferStepFunction
+///
+/// Describes the rate at which vertex attributes are pulled from buffers.
+///
+/// <ul>
+/// <li>HgiVertexBufferStepFunctionConstant:
+///   The same attribute data is used for every vertex.</li>
+/// <li>HgiVertexBufferStepFunctionPerVertex:
+///   New attribute data is fetched for each vertex.</li>
+/// <li>HgiVertexBufferStepFunctionPerInstance:
+///   New attribute data is fetched for each instance.</li>
+/// <li>HgiVertexBufferStepFunctionPerPatch:
+///   New attribute data is fetched for each patch.</li>
+/// <li>HgiVertexBufferStepFunctionPerPatchControlPoint:
+///   New attribute data is fetched for each patch control point.</li>
+/// <li>HgiVertexBufferStepFunctionPerDrawCommand:
+///   New attribute data is fetched for each draw in a multi-draw command.</li>
+/// </ul>
+///
+enum HgiVertexBufferStepFunction
+{
+  HgiVertexBufferStepFunctionConstant = 0,
+  HgiVertexBufferStepFunctionPerVertex,
+  HgiVertexBufferStepFunctionPerInstance,
+  HgiVertexBufferStepFunctionPerPatch,
+  HgiVertexBufferStepFunctionPerPatchControlPoint,
+  HgiVertexBufferStepFunctionPerDrawCommand,
+
+  HgiVertexBufferStepFunctionCount
 };
 
 /// \enum HgiSubmitWaitType
@@ -540,6 +674,88 @@ enum HgiMemoryBarrierBits
   HgiMemoryBarrierAll = 1 << 0
 };
 using HgiMemoryBarrier = HgiBits;
+
+/// \enum HgiBindingType
+///
+/// Describes the type of shader resource binding model to use.
+///
+/// <ul>
+/// <li>HgiBindingTypeValue:
+///   Shader declares binding as a value.
+///   Glsl example: buffer { int parameter; };
+///   Msl example: int parameter;</li>
+/// <li>HgiBindingTypeUniformValue:
+///   Shader declares binding as a uniform block value.
+///   Glsl example: uniform { int parameter; };
+///   Msl example: int parameter;</li>
+/// <li>HgiBindingTypeArray:
+///   Shader declares binding as array value.
+///   Glsl example: buffer { int parameter[n]; };
+///   Msl example: int parameter[n];</li>
+/// <li>HgiBindingTypeUniformArray:
+///   Shader declares binding as uniform block array value.
+///   Glsl example: uniform { int parameter[n]; };
+///   Msl example: int parameter[n];</li>
+/// <li>HgiBindingTypePointer:
+///   Shader declares binding as pointer value.
+///   Glsl example: buffer { int parameter[] };
+///   Msl example: int *parameter;</li>
+/// </ul>
+///
+enum HgiBindingType
+{
+  HgiBindingTypeValue = 0,
+  HgiBindingTypeUniformValue,
+  HgiBindingTypeArray,
+  HgiBindingTypeUniformArray,
+  HgiBindingTypePointer,
+};
+
+/// \enum HgiInterpolationType
+///
+/// Describes the type of shader resource binding model to use.
+///
+/// <ul>
+/// <li>HgiInterpolationDefault:
+///   The shader input will have default interpolation.
+///   Glsl example: vec2 parameter;
+///   Msl example: vec2 parameter;</li>
+/// <li>HgiInterpolationFlat:
+///   The shader input will have no interpolation.
+///   Glsl example: flat vec2 parameter;
+///   Msl example: vec2 parameter[[flat]];</li>
+/// <li>HgiBindingTypeNoPerspective:
+///   The shader input will be linearly interpolated in screen-space
+///   Glsl example: noperspective vec2 parameter;
+///   Msl example: vec2 parameter[[center_no_perspective]];</li>
+/// </ul>
+///
+enum HgiInterpolationType
+{
+  HgiInterpolationDefault = 0,
+  HgiInterpolationFlat,
+  HgiInterpolationNoPerspective,
+};
+
+/// \enum HgiShaderTextureType
+///
+/// Describes the type of texture to be used in shader gen.
+///
+/// <ul>
+/// <li>HgiShaderTextureTypeTexture:
+///   Indicates a regular texture.</li>
+/// <li>HgiShaderTextureTypeShadowTexture:
+///   Indicates a shadow texture.</li>
+/// <li>HgiShaderTextureTypeArrayTexture:
+///   Indicates an array texture.</li>
+/// </ul>
+///
+enum HgiShaderTextureType
+{
+  HgiShaderTextureTypeTexture = 0,
+  HgiShaderTextureTypeShadowTexture,
+  HgiShaderTextureTypeArrayTexture
+};
 
 WABI_NAMESPACE_END
 

@@ -1,35 +1,28 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/imaging/hgiVulkan/conversions.h"
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hgiVulkan/vulkan.h"
+#include "wabi/imaging/hgiVulkan/conversions.h"
 
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/iterator.h"
@@ -37,6 +30,7 @@
 #include "wabi/imaging/hgi/types.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 static const uint32_t _LoadOpTable[HgiAttachmentLoadOpCount][2] = {
   {HgiAttachmentLoadOpDontCare, VK_ATTACHMENT_LOAD_OP_DONT_CARE},
@@ -53,49 +47,50 @@ static_assert(HgiAttachmentStoreOpCount == 2, "");
 
 static const uint32_t _FormatTable[HgiFormatCount][2] = {
   // HGI FORMAT              VK FORMAT
-  {HgiFormatUNorm8,            VK_FORMAT_R8_UNORM            },
-  {HgiFormatUNorm8Vec2,        VK_FORMAT_R8G8_UNORM          },
+  {HgiFormatUNorm8,            VK_FORMAT_R8_UNORM                },
+  {HgiFormatUNorm8Vec2,        VK_FORMAT_R8G8_UNORM              },
  // HgiFormatUNorm8Vec3, VK_FORMAT_R8G8B8_UNORM // not supported by HgiFormat
-  {HgiFormatUNorm8Vec4,        VK_FORMAT_R8G8B8A8_UNORM      },
-  {HgiFormatSNorm8,            VK_FORMAT_R8_SNORM            },
-  {HgiFormatSNorm8Vec2,        VK_FORMAT_R8G8_SNORM          },
+  {HgiFormatUNorm8Vec4,        VK_FORMAT_R8G8B8A8_UNORM          },
+  {HgiFormatSNorm8,            VK_FORMAT_R8_SNORM                },
+  {HgiFormatSNorm8Vec2,        VK_FORMAT_R8G8_SNORM              },
  // HgiFormatSNorm8Vec3, VK_FORMAT_R8G8B8_SNORM // not supported by HgiFormat
-  {HgiFormatSNorm8Vec4,        VK_FORMAT_R8G8B8A8_SNORM      },
-  {HgiFormatFloat16,           VK_FORMAT_R16_SFLOAT          },
-  {HgiFormatFloat16Vec2,       VK_FORMAT_R16G16_SFLOAT       },
-  {HgiFormatFloat16Vec3,       VK_FORMAT_R16G16B16_SFLOAT    },
-  {HgiFormatFloat16Vec4,       VK_FORMAT_R16G16B16A16_SFLOAT },
-  {HgiFormatFloat32,           VK_FORMAT_R32_SFLOAT          },
-  {HgiFormatFloat32Vec2,       VK_FORMAT_R32G32_SFLOAT       },
-  {HgiFormatFloat32Vec3,       VK_FORMAT_R32G32B32_SFLOAT    },
-  {HgiFormatFloat32Vec4,       VK_FORMAT_R32G32B32A32_SFLOAT },
-  {HgiFormatInt16,             VK_FORMAT_R16_SINT            },
-  {HgiFormatInt16Vec2,         VK_FORMAT_R16G16_SINT         },
-  {HgiFormatInt16Vec3,         VK_FORMAT_R16G16B16_SINT      },
-  {HgiFormatInt16Vec4,         VK_FORMAT_R16G16B16A16_SINT   },
-  {HgiFormatUInt16,            VK_FORMAT_R16_UINT            },
-  {HgiFormatUInt16Vec2,        VK_FORMAT_R16G16_UINT         },
-  {HgiFormatUInt16Vec3,        VK_FORMAT_R16G16B16_UINT      },
-  {HgiFormatUInt16Vec4,        VK_FORMAT_R16G16B16A16_UINT   },
-  {HgiFormatInt32,             VK_FORMAT_R32_SINT            },
-  {HgiFormatInt32Vec2,         VK_FORMAT_R32G32_SINT         },
-  {HgiFormatInt32Vec3,         VK_FORMAT_R32G32B32_SINT      },
-  {HgiFormatInt32Vec4,         VK_FORMAT_R32G32B32A32_SINT   },
-  {HgiFormatUNorm8Vec4srgb,    VK_FORMAT_R8G8B8_SRGB         },
-  {HgiFormatBC6FloatVec3,      VK_FORMAT_BC6H_SFLOAT_BLOCK   },
-  {HgiFormatBC6UFloatVec3,     VK_FORMAT_BC6H_UFLOAT_BLOCK   },
-  {HgiFormatBC7UNorm8Vec4,     VK_FORMAT_BC7_UNORM_BLOCK     },
-  {HgiFormatBC7UNorm8Vec4srgb, VK_FORMAT_BC7_SRGB_BLOCK      },
-  {HgiFormatBC1UNorm8Vec4,     VK_FORMAT_BC1_RGBA_UNORM_BLOCK},
-  {HgiFormatBC3UNorm8Vec4,     VK_FORMAT_BC3_UNORM_BLOCK     },
-  {HgiFormatFloat32UInt8,      VK_FORMAT_D32_SFLOAT_S8_UINT  }
+  {HgiFormatSNorm8Vec4,        VK_FORMAT_R8G8B8A8_SNORM          },
+  {HgiFormatFloat16,           VK_FORMAT_R16_SFLOAT              },
+  {HgiFormatFloat16Vec2,       VK_FORMAT_R16G16_SFLOAT           },
+  {HgiFormatFloat16Vec3,       VK_FORMAT_R16G16B16_SFLOAT        },
+  {HgiFormatFloat16Vec4,       VK_FORMAT_R16G16B16A16_SFLOAT     },
+  {HgiFormatFloat32,           VK_FORMAT_R32_SFLOAT              },
+  {HgiFormatFloat32Vec2,       VK_FORMAT_R32G32_SFLOAT           },
+  {HgiFormatFloat32Vec3,       VK_FORMAT_R32G32B32_SFLOAT        },
+  {HgiFormatFloat32Vec4,       VK_FORMAT_R32G32B32A32_SFLOAT     },
+  {HgiFormatInt16,             VK_FORMAT_R16_SINT                },
+  {HgiFormatInt16Vec2,         VK_FORMAT_R16G16_SINT             },
+  {HgiFormatInt16Vec3,         VK_FORMAT_R16G16B16_SINT          },
+  {HgiFormatInt16Vec4,         VK_FORMAT_R16G16B16A16_SINT       },
+  {HgiFormatUInt16,            VK_FORMAT_R16_UINT                },
+  {HgiFormatUInt16Vec2,        VK_FORMAT_R16G16_UINT             },
+  {HgiFormatUInt16Vec3,        VK_FORMAT_R16G16B16_UINT          },
+  {HgiFormatUInt16Vec4,        VK_FORMAT_R16G16B16A16_UINT       },
+  {HgiFormatInt32,             VK_FORMAT_R32_SINT                },
+  {HgiFormatInt32Vec2,         VK_FORMAT_R32G32_SINT             },
+  {HgiFormatInt32Vec3,         VK_FORMAT_R32G32B32_SINT          },
+  {HgiFormatInt32Vec4,         VK_FORMAT_R32G32B32A32_SINT       },
+  {HgiFormatUNorm8Vec4srgb,    VK_FORMAT_R8G8B8_SRGB             },
+  {HgiFormatBC6FloatVec3,      VK_FORMAT_BC6H_SFLOAT_BLOCK       },
+  {HgiFormatBC6UFloatVec3,     VK_FORMAT_BC6H_UFLOAT_BLOCK       },
+  {HgiFormatBC7UNorm8Vec4,     VK_FORMAT_BC7_UNORM_BLOCK         },
+  {HgiFormatBC7UNorm8Vec4srgb, VK_FORMAT_BC7_SRGB_BLOCK          },
+  {HgiFormatBC1UNorm8Vec4,     VK_FORMAT_BC1_RGBA_UNORM_BLOCK    },
+  {HgiFormatBC3UNorm8Vec4,     VK_FORMAT_BC3_UNORM_BLOCK         },
+  {HgiFormatFloat32UInt8,      VK_FORMAT_D32_SFLOAT_S8_UINT      },
+  {HgiFormatPackedInt1010102,  VK_FORMAT_A2B10G10R10_SNORM_PACK32},
 };
 
 // A few random format validations to make sure the table above stays in sync
 // with the HgiFormat table.
 constexpr bool _CompileTimeValidateHgiFormatTable()
 {
-  return (HgiFormatCount == 34 && HgiFormatUNorm8 == 0 && HgiFormatFloat16Vec4 == 9 &&
+  return (HgiFormatCount == 35 && HgiFormatUNorm8 == 0 && HgiFormatFloat16Vec4 == 9 &&
           HgiFormatFloat32Vec4 == 13 && HgiFormatUInt16Vec4 == 21 &&
           HgiFormatUNorm8Vec4srgb == 26 && HgiFormatBC3UNorm8Vec4 == 32) ?
            true :
@@ -104,6 +99,7 @@ constexpr bool _CompileTimeValidateHgiFormatTable()
 
 static_assert(_CompileTimeValidateHgiFormatTable(),
               "_FormatDesc array out of sync with HgiFormat enum");
+
 
 static const uint32_t _SampleCountTable[][2] = {
   {HgiSampleCount1,  VK_SAMPLE_COUNT_1_BIT },
@@ -122,7 +118,7 @@ static const uint32_t _ShaderStageTable[][2] = {
   {HgiShaderStageTessellationEval,    VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
   {HgiShaderStageGeometry,            VK_SHADER_STAGE_GEOMETRY_BIT               },
 };
-static_assert(HgiShaderStageCustomBitsBegin == 1 << 6, "");
+static_assert(HgiShaderStageCustomBitsBegin == 1 << 8, "");
 
 static const uint32_t _TextureUsageTable[][2] = {
   {HgiTextureUsageBitsColorTarget,   VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT        },
@@ -265,6 +261,13 @@ static const uint32_t _mipFilterTable[HgiMipFilterCount][2] = {
 };
 static_assert(HgiMipFilterCount == 3, "");
 
+static const uint32_t _borderColorTable[HgiBorderColorCount][2] = {
+  {HgiBorderColorTransparentBlack, VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK},
+  {HgiBorderColorOpaqueBlack,      VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK     },
+  {HgiBorderColorOpaqueWhite,      VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE     }
+};
+static_assert(HgiBorderColorCount == 3, "");
+
 static const uint32_t _componentSwizzleTable[HgiComponentSwizzleCount][2] = {
   {HgiComponentSwizzleZero, VK_COMPONENT_SWIZZLE_ZERO},
   {HgiComponentSwizzleOne,  VK_COMPONENT_SWIZZLE_ONE },
@@ -276,13 +279,52 @@ static const uint32_t _componentSwizzleTable[HgiComponentSwizzleCount][2] = {
 static_assert(HgiComponentSwizzleCount == 6, "");
 
 static const uint32_t _primitiveTypeTable[HgiPrimitiveTypeCount][2] = {
-  {HgiPrimitiveTypePointList,    VK_PRIMITIVE_TOPOLOGY_POINT_LIST   },
-  {HgiPrimitiveTypeLineList,     VK_PRIMITIVE_TOPOLOGY_LINE_LIST    },
-  {HgiPrimitiveTypeLineStrip,    VK_PRIMITIVE_TOPOLOGY_LINE_STRIP   },
-  {HgiPrimitiveTypeTriangleList, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST},
-  {HgiPrimitiveTypePatchList,    VK_PRIMITIVE_TOPOLOGY_PATCH_LIST   }
+  {HgiPrimitiveTypePointList,             VK_PRIMITIVE_TOPOLOGY_POINT_LIST              },
+  {HgiPrimitiveTypeLineList,              VK_PRIMITIVE_TOPOLOGY_LINE_LIST               },
+  {HgiPrimitiveTypeLineStrip,             VK_PRIMITIVE_TOPOLOGY_LINE_STRIP              },
+  {HgiPrimitiveTypeTriangleList,          VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST           },
+  {HgiPrimitiveTypePatchList,             VK_PRIMITIVE_TOPOLOGY_PATCH_LIST              },
+  {HgiPrimitiveTypeLineListWithAdjacency, VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY}
 };
-static_assert(HgiPrimitiveTypeCount == 5, "");
+static_assert(HgiPrimitiveTypeCount == 6, "");
+
+static const std::string _imageLayoutFormatTable[HgiFormatCount][2] = {
+  {"HgiFormatUNorm8",            "r8"         },
+  {"HgiFormatUNorm8Vec2",        "rg8"        },
+  {"HgiFormatUNorm8Vec4",        "rgba8"      },
+  {"HgiFormatSNorm8",            "r8_snorm"   },
+  {"HgiFormatSNorm8Vec2",        "rg8_snorm"  },
+  {"HgiFormatSNorm8Vec4",        "rgba8_snorm"},
+  {"HgiFormatFloat16",           "r16f"       },
+  {"HgiFormatFloat16Vec2",       "rg16f"      },
+  {"HgiFormatFloat16Vec3",       ""           },
+  {"HgiFormatFloat16Vec4",       "rgba16f"    },
+  {"HgiFormatFloat32",           "r32f"       },
+  {"HgiFormatFloat32Vec2",       "rg32f"      },
+  {"HgiFormatFloat32Vec3",       ""           },
+  {"HgiFormatFloat32Vec4",       "rgba32f"    },
+  {"HgiFormatInt16",             "r16i"       },
+  {"HgiFormatInt16Vec2",         "rg16i"      },
+  {"HgiFormatInt16Vec3",         ""           },
+  {"HgiFormatInt16Vec4",         "rgba16i"    },
+  {"HgiFormatUInt16",            "r16ui"      },
+  {"HgiFormatUInt16Vec2",        "rg16ui"     },
+  {"HgiFormatUInt16Vec3",        ""           },
+  {"HgiFormatUInt16Vec4",        "rgba16ui"   },
+  {"HgiFormatInt32",             "r32i"       },
+  {"HgiFormatInt32Vec2",         "rg32i"      },
+  {"HgiFormatInt32Vec3",         ""           },
+  {"HgiFormatInt32Vec4",         "rgba32i"    },
+  {"HgiFormatUNorm8Vec4srgb",    ""           },
+  {"HgiFormatBC6FloatVec3",      ""           },
+  {"HgiFormatBC6UFloatVec3",     ""           },
+  {"HgiFormatBC7UNorm8Vec4",     ""           },
+  {"HgiFormatBC7UNorm8Vec4srgb", ""           },
+  {"HgiFormatBC1UNorm8Vec4",     ""           },
+  {"HgiFormatBC3UNorm8Vec4",     ""           },
+  {"HgiFormatFloat32UInt8",      ""           },
+  {"HgiFormatPackedInt1010102",  ""           },
+};
 
 VkFormat HgiVulkanConversions::GetFormat(HgiFormat inFormat)
 {
@@ -462,6 +504,11 @@ VkSamplerMipmapMode HgiVulkanConversions::GetMipFilter(HgiMipFilter mf)
   return VkSamplerMipmapMode(_mipFilterTable[mf][1]);
 }
 
+VkBorderColor HgiVulkanConversions::GetBorderColor(HgiBorderColor bc)
+{
+  return VkBorderColor(_borderColorTable[bc][1]);
+}
+
 VkComponentSwizzle HgiVulkanConversions::GetComponentSwizzle(HgiComponentSwizzle cs)
 {
   return VkComponentSwizzle(_componentSwizzleTable[cs][1]);
@@ -470,6 +517,18 @@ VkComponentSwizzle HgiVulkanConversions::GetComponentSwizzle(HgiComponentSwizzle
 VkPrimitiveTopology HgiVulkanConversions::GetPrimitiveType(HgiPrimitiveType pt)
 {
   return VkPrimitiveTopology(_primitiveTypeTable[pt][1]);
+}
+
+std::string HgiVulkanConversions::GetImageLayoutFormatQualifier(HgiFormat inFormat)
+{
+  const std::string layoutQualifier = _imageLayoutFormatTable[inFormat][1];
+  if (layoutQualifier.empty()) {
+    TF_WARN(
+      "Given HgiFormat is not a supported image unit format, "
+      "defaulting to rgba16f");
+    return _imageLayoutFormatTable[9][1];
+  }
+  return layoutQualifier;
 }
 
 WABI_NAMESPACE_END

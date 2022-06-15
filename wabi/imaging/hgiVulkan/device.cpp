@@ -1,36 +1,29 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/imaging/hgiVulkan/device.h"
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hgiVulkan/capabilities.h"
 #include "wabi/imaging/hgiVulkan/commandQueue.h"
+#include "wabi/imaging/hgiVulkan/device.h"
 #include "wabi/imaging/hgiVulkan/diagnostic.h"
 #include "wabi/imaging/hgiVulkan/hgi.h"
 #include "wabi/imaging/hgiVulkan/instance.h"
@@ -43,6 +36,7 @@
 #undef VMA_IMPLEMENTATION
 
 WABI_NAMESPACE_BEGIN
+
 
 static uint32_t _GetGraphicsQueueFamilyIndex(VkPhysicalDevice physicalDevice)
 {
@@ -163,29 +157,29 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
   // Allow certain buffers/images to have dedicated memory allocations to
   // improve performance on some GPUs.
   bool dedicatedAllocations = false;
-  if (_IsSupportedExtension(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME) &&
-      _IsSupportedExtension(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME)) {
+  if (IsSupportedExtension(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME) &&
+      IsSupportedExtension(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME)) {
     dedicatedAllocations = true;
     extensions.push_back(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME);
     extensions.push_back(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME);
   }
 
   // Allow OpenGL interop - Note requires two extensions in HgiVulkanInstance.
-  if (_IsSupportedExtension(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME) &&
-      _IsSupportedExtension(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME)) {
+  if (IsSupportedExtension(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME) &&
+      IsSupportedExtension(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME)) {
     extensions.push_back(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME);
     extensions.push_back(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME);
   }
 
   // Memory budget query extension
   bool supportsMemExtension = false;
-  if (_IsSupportedExtension(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
+  if (IsSupportedExtension(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
     supportsMemExtension = true;
     extensions.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);
   }
 
   // Resolve depth during render pass resolve extension
-  if (_IsSupportedExtension(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME)) {
+  if (IsSupportedExtension(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME)) {
     extensions.push_back(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
     extensions.push_back(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME);
     extensions.push_back(VK_KHR_MULTIVIEW_EXTENSION_NAME);
@@ -194,12 +188,17 @@ HgiVulkanDevice::HgiVulkanDevice(HgiVulkanInstance *instance)
 
   // Allows the same layout in structs between c++ and glsl (share structs).
   // This means instead of 'std430' you can now use 'scalar'.
-  if (_IsSupportedExtension(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME)) {
+  if (IsSupportedExtension(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME)) {
     extensions.push_back(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME);
   } else {
     TF_WARN(
       "Unsupported VK_EXT_scalar_block_layout."
       "Update gfx driver?");
+  }
+
+  // Allow conservative rasterization.
+  if (IsSupportedExtension(VK_EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME)) {
+    extensions.push_back(VK_EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME);
   }
 
   // This extension is needed to allow the viewport to be flipped in Y so that
@@ -337,7 +336,7 @@ void HgiVulkanDevice::WaitForIdle()
   TF_VERIFY(vkDeviceWaitIdle(_vkDevice) == VK_SUCCESS);
 }
 
-bool HgiVulkanDevice::_IsSupportedExtension(const char *extensionName) const
+bool HgiVulkanDevice::IsSupportedExtension(const char *extensionName) const
 {
   for (VkExtensionProperties const &ext : _vkExtensions) {
     if (!strcmp(extensionName, ext.extensionName)) {
@@ -347,5 +346,6 @@ bool HgiVulkanDevice::_IsSupportedExtension(const char *extensionName) const
 
   return false;
 }
+
 
 WABI_NAMESPACE_END

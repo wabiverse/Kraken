@@ -1,35 +1,30 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #include "wabi/imaging/hgiVulkan/shaderGenerator.h"
+#include "wabi/imaging/hgiVulkan/conversions.h"
+#include "wabi/imaging/hgiVulkan/hgi.h"
 #include "wabi/imaging/hgi/tokens.h"
 
 WABI_NAMESPACE_BEGIN
@@ -39,17 +34,43 @@ static const std::string &_GetMacroBlob()
   // Allows metal and GL to both handle out function params.
   // On the metal side, the ref(space,type) parameter defines
   // if items are in device or thread domain.
-  const static std::string header = "#define REF(space,type) inout type\n";
+  const static std::string header =
+    "#define REF(space,type) inout type\n"
+    "#define HD_NEEDS_FORWARD_DECL\n"
+    "#define HD_FWD_DECL(decl) decl\n";
   return header;
 }
 
-HgiVulkanShaderGenerator::HgiVulkanShaderGenerator(const HgiShaderFunctionDesc &descriptor)
+HgiVulkanShaderGenerator::HgiVulkanShaderGenerator(Hgi const *hgi,
+                                                   const HgiShaderFunctionDesc &descriptor)
   : HgiShaderGenerator(descriptor),
+    _hgi(hgi),
     _bindIndex(0)
 {
   // Write out all GL shaders and add to shader sections
   GetShaderSections()->push_back(
     std::make_unique<HgiVulkanMacroShaderSection>(_GetMacroBlob(), ""));
+
+  if (descriptor.shaderStage == HgiShaderStageCompute) {
+    int workSizeX = descriptor.computeDescriptor.localSize[0];
+    int workSizeY = descriptor.computeDescriptor.localSize[1];
+    int workSizeZ = descriptor.computeDescriptor.localSize[2];
+
+    if (workSizeX == 0 || workSizeY == 0 || workSizeZ == 0) {
+      workSizeX = 1;
+      workSizeY = 1;
+      workSizeZ = 1;
+    }
+
+    _shaderLayoutAttributes.push_back(std::string("layout(") +
+                                      "local_size_x = " + std::to_string(workSizeX) +
+                                      ", "
+                                      "local_size_y = " +
+                                      std::to_string(workSizeY) +
+                                      ", "
+                                      "local_size_z = " +
+                                      std::to_string(workSizeZ) + ") in;\n");
+  }
 
   // The ordering here is important (buffers before textures), because we
   // need to increment the bind location for resources in the same order
@@ -60,6 +81,13 @@ HgiVulkanShaderGenerator::HgiVulkanShaderGenerator(const HgiShaderFunctionDesc &
   _WriteBuffers(descriptor.buffers);
   _WriteInOuts(descriptor.stageInputs, "in");
   _WriteInOuts(descriptor.stageOutputs, "out");
+}
+
+void HgiVulkanShaderGenerator::_WriteVersion(std::ostream &ss)
+{
+  const int glslVersion = _hgi->GetCapabilities()->GetShaderVersion();
+
+  ss << "#version " << std::to_string(glslVersion) << "\n";
 }
 
 void HgiVulkanShaderGenerator::_WriteConstantParams(
@@ -75,14 +103,25 @@ void HgiVulkanShaderGenerator::_WriteConstantParams(
 void HgiVulkanShaderGenerator::_WriteTextures(const HgiShaderFunctionTextureDescVector &textures)
 {
   for (const HgiShaderFunctionTextureDesc &desc : textures) {
-    const HgiShaderSectionAttributeVector attrs = {
+    HgiShaderSectionAttributeVector attrs = {
       HgiShaderSectionAttribute{"binding", std::to_string(_bindIndex)}
     };
+
+    if (desc.writable) {
+      attrs.insert(
+        attrs.begin(),
+        HgiShaderSectionAttribute{HgiVulkanConversions::GetImageLayoutFormatQualifier(desc.format),
+                                  ""});
+    }
 
     GetShaderSections()->push_back(
       std::make_unique<HgiVulkanTextureShaderSection>(desc.nameInShader,
                                                       _bindIndex,
                                                       desc.dimensions,
+                                                      desc.format,
+                                                      desc.textureType,
+                                                      desc.arraySize,
+                                                      desc.writable,
                                                       attrs));
 
     // In Vulkan buffers and textures cannot have the same binding index.
@@ -120,7 +159,7 @@ void HgiVulkanShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVect
   // taken in opengl we ignore them
   const static std::set<std::string> takenOutParams{"gl_Position", "gl_FragColor", "gl_FragDepth"};
   const static std::map<std::string, std::string> takenInParams{
-    {HgiShaderKeywordTokens->hdPosition,           "gl_Postiion"          },
+    {HgiShaderKeywordTokens->hdPosition,           "gl_Position"          },
     {HgiShaderKeywordTokens->hdGlobalInvocationID, "gl_GlobalInvocationID"}
   };
 
@@ -152,9 +191,16 @@ void HgiVulkanShaderGenerator::_WriteInOuts(const HgiShaderFunctionParamDescVect
   }
 }
 
-void HgiVulkanShaderGenerator::_Execute(std::ostream &ss, const std::string &originalShaderShader)
+void HgiVulkanShaderGenerator::_Execute(std::ostream &ss)
 {
-  ss << _GetVersion() << " \n";
+  // Version number must be first line in glsl shader
+  _WriteVersion(ss);
+
+  ss << _GetShaderCodeDeclarations();
+
+  for (const std::string &attr : _shaderLayoutAttributes) {
+    ss << attr;
+  }
 
   HgiVulkanShaderSectionUniquePtrVector *shaderSections = GetShaderSections();
   // For all shader sections, visit the areas defined for all
@@ -162,36 +208,35 @@ void HgiVulkanShaderGenerator::_Execute(std::ostream &ss, const std::string &ori
   // section, capabilities to define macros in global space,
   // and abilities to declare some members or functions there
 
+  ss << "\n// //////// Global Includes ////////\n";
   for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalIncludes(ss);
-    ss << "\n";
   }
 
+  ss << "\n// //////// Global Macros ////////\n";
   for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalMacros(ss);
-    ss << "\n";
   }
 
+  ss << "\n// //////// Global Structs ////////\n";
   for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalStructs(ss);
-    ss << "\n";
   }
 
+  ss << "\n// //////// Global Member Declarations ////////\n";
   for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalMemberDeclarations(ss);
-    ss << "\n";
   }
 
+  ss << "\n// //////// Global Function Definitions ////////\n";
   for (const std::unique_ptr<HgiVulkanShaderSection> &shaderSection : *shaderSections) {
     shaderSection->VisitGlobalFunctionDefinitions(ss);
-    ss << "\n";
   }
 
   ss << "\n";
-  const char *cstr = originalShaderShader.c_str();
 
-  // write all the original shader except the version string
-  ss.write(cstr + _GetVersion().length(), originalShaderShader.length() - _GetVersion().length());
+  // write all the original shader
+  ss << _GetShaderCode();
 }
 
 HgiVulkanShaderSectionUniquePtrVector *HgiVulkanShaderGenerator::GetShaderSections()

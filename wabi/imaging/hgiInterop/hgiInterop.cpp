@@ -25,24 +25,16 @@
 #include "wabi/imaging/hgi/hgi.h"
 #include "wabi/imaging/hgi/tokens.h"
 
-/* clang-format off */
+
 #if defined(WITH_METAL)
-#  include "wabi/imaging/hgiInterop/metal.h"
 #  include "wabi/imaging/hgiMetal/hgi.h"
-#endif /* WITH_METAL */
-
-#if defined(WITH_VULKAN)
-#  include "wabi/imaging/hgiInterop/vulkan.h"
+#  include "wabi/imaging/hgiInterop/metal.h"
+#elif defined(WITH_VULKAN)
 #  include "wabi/imaging/hgiVulkan/hgi.h"
-#endif /* WITH_VULKAN */
-
-#if defined(WITH_DIRECTX)
-#  include "wabi/imaging/hgiInterop/dx3d.h"
-#  include "wabi/imaging/hgiDX3D/hgi.h"
-#endif /* WITH_DIRECTX */
-
-#include "wabi/imaging/hgiInterop/opengl.h"
-/* clang-format on */
+#  include "wabi/imaging/hgiInterop/vulkan.h"
+#else
+#  include "wabi/imaging/hgiInterop/opengl.h"
+#endif
 
 WABI_NAMESPACE_BEGIN
 
@@ -59,63 +51,37 @@ void HgiInterop::TransferToApp(Hgi *srcHgi,
 {
   TfToken const &srcApi = srcHgi->GetAPIName();
 
-/**
- * ----------------------------------------- Check Metal -> OpenGL first. ----- */
 #if defined(WITH_METAL)
   if (srcApi == HgiTokens->Metal && dstApi == HgiTokens->OpenGL) {
-    /**
-     * Transfer Metal textures to OpenGL application. */
+    // Transfer Metal textures to OpenGL application
     if (!_metalToOpenGL) {
       _metalToOpenGL = std::make_unique<HgiInteropMetal>(srcHgi);
     }
     _metalToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
-    return;
+  } else {
+    TF_CODING_ERROR("Unsupported Hgi backend: %s", srcApi.GetText());
   }
-#endif /* WITH_METAL */
-
-/**
- * ------------------------------------ Otherwise check DirectX -> OpenGL. ----- */
-#if defined(WITH_DIRECTX)
-  if (srcApi == HgiTokens->DX3D && dstApi == HgiTokens->OpenGL) {
-    /**
-     * Transfer DirectX textures to OpenGL application. */
-    if (!_dX3DToOpenGL) {
-      _dX3DToOpenGL = std::make_unique<HgiInteropDX3D>(srcHgi);
-    }
-    _dX3DToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
-    return;
-  }
-#endif /* WITH_DIRECTX */
-
-/**
- * ------------------------------------ Otherwise check Vulkan -> OpenGL. ----- */
-#if defined(WITH_VULKAN)
+#elif defined(WITH_VULKAN)
   if (srcApi == HgiTokens->Vulkan && dstApi == HgiTokens->OpenGL) {
-    /**
-     * Transfer Vulkan textures to OpenGL application. */
+    // Transfer Vulkan textures to OpenGL application
     if (!_vulkanToOpenGL) {
       _vulkanToOpenGL = std::make_unique<HgiInteropVulkan>(srcHgi);
     }
     _vulkanToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
-    return;
+  } else {
+    TF_CODING_ERROR("Unsupported Hgi backend: %s", srcApi.GetText());
   }
-#endif /* WITH_VULKAN */
-
-  /**
-   * ---------------------------------------- Otherwise fallback to OpenGL. ----- */
+#else
   if (srcApi == HgiTokens->OpenGL && dstApi == HgiTokens->OpenGL) {
-    /**
-     * Transfer OpenGL textures to OpenGL application. */
+    // Transfer OpenGL textures to OpenGL application
     if (!_openGLToOpenGL) {
       _openGLToOpenGL = std::make_unique<HgiInteropOpenGL>();
     }
     _openGLToOpenGL->CompositeToInterop(srcColor, srcDepth, dstFramebuffer, dstRegion);
-    return;
+  } else {
+    TF_CODING_ERROR("Unsupported Hgi backend: %s", srcApi.GetText());
   }
-
-  /**
-   * --------------------- No backend outside of OpenGL, Vulkan, and Metal. ----- */
-  TF_CODING_ERROR("Unsupported Hgi backend: %s", srcApi.GetText());
+#endif
 }
 
 WABI_NAMESPACE_END

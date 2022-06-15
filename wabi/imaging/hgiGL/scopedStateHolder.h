@@ -1,40 +1,37 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HGIGL_STATE_H
 #define WABI_IMAGING_HGIGL_STATE_H
 
-#include "wabi/imaging/hgiGL/api.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hgiGL/api.h"
+
+#include <cstdint>
+#include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class HgiGLScopedStateHolder
 ///
@@ -64,22 +61,36 @@ class HgiGL_ScopedStateHolder final
   HgiGL_ScopedStateHolder &operator=(const HgiGL_ScopedStateHolder &) = delete;
   HgiGL_ScopedStateHolder(const HgiGL_ScopedStateHolder &) = delete;
 
-  int32_t _restoreDrawFramebuffer;
-  int32_t _restoreReadFramebuffer;
   int32_t _restoreRenderBuffer;
   int32_t _restoreVao;
+
   bool _restoreDepthTest;
   bool _restoreDepthWriteMask;
-  int32_t _restoreStencilWriteMask;
   int32_t _restoreDepthFunc;
+
+  bool _restoreDepthBias;
+  float _restoreDepthBiasConstantFactor;
+  float _restoreDepthBiasSlopeFactor;
+
+  bool _restoreStencilTest;
+  int32_t _restoreStencilCompareFn[2];
+  int32_t _restoreStencilReferenceValue[2];
+  int32_t _restoreStencilFail[2];
+  int32_t _restoreStencilReadMask[2];
+  int32_t _restoreStencilPass[2];
+  int32_t _restoreStencilDepthFail[2];
+  int32_t _restoreStencilDepthPass[2];
+  int32_t _restoreStencilWriteMask[2];
+
   int32_t _restoreViewport[4];
-  bool _restoreblendEnabled;
+  bool _restoreBlendEnabled;
   int32_t _restoreColorOp;
   int32_t _restoreAlphaOp;
   int32_t _restoreColorSrcFnOp;
   int32_t _restoreAlphaSrcFnOp;
   int32_t _restoreColorDstFnOp;
   int32_t _restoreAlphaDstFnOp;
+  float _restoreBlendColor[4];
   bool _restoreAlphaToCoverage;
   bool _restoreSampleAlphaToOne;
   float _lineWidth;
@@ -87,8 +98,15 @@ class HgiGL_ScopedStateHolder final
   int32_t _cullMode;
   int32_t _frontFace;
   bool _rasterizerDiscard;
+  bool _restoreDepthClamp;
+  float _depthRange[2];
   bool _restoreFramebufferSRGB;
+  bool _restoreConservativeRaster;
+  std::vector<bool> _restoreClipDistances;
+  bool _restoreMultiSample;
+  bool _restorePointSmooth;
 };
+
 
 WABI_NAMESPACE_END
 

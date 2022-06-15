@@ -1,48 +1,44 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/imaging/hgiVulkan/shaderFunction.h"
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hgiVulkan/conversions.h"
 #include "wabi/imaging/hgiVulkan/device.h"
 #include "wabi/imaging/hgiVulkan/diagnostic.h"
 #include "wabi/imaging/hgiVulkan/garbageCollector.h"
 #include "wabi/imaging/hgiVulkan/hgi.h"
 #include "wabi/imaging/hgiVulkan/shaderCompiler.h"
+#include "wabi/imaging/hgiVulkan/shaderFunction.h"
 #include "wabi/imaging/hgiVulkan/shaderGenerator.h"
 
 #include "wabi/base/tf/diagnostic.h"
 
 WABI_NAMESPACE_BEGIN
 
+
 HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device,
-                                                 HgiShaderFunctionDesc const &desc)
+                                                 Hgi const *hgi,
+                                                 HgiShaderFunctionDesc const &desc,
+                                                 int shaderVersion)
   : HgiShaderFunction(desc),
     _device(device),
     _spirvByteSize(0),
@@ -55,11 +51,9 @@ HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device,
 
   const char *debugLbl = _descriptor.debugName.empty() ? "unknown" : _descriptor.debugName.c_str();
 
-  HgiVulkanShaderGenerator shaderGenerator{desc};
-  std::stringstream ss;
-  shaderGenerator.Execute(ss);
-  std::string shaderStr = ss.str();
-  const char *shaderCode = shaderStr.c_str();
+  HgiVulkanShaderGenerator shaderGenerator(hgi, desc);
+  shaderGenerator.Execute();
+  const char *shaderCode = shaderGenerator.GetGeneratedShaderCode();
 
   // Compile shader and capture errors
   bool result = HgiVulkanCompileGLSL(debugLbl, &shaderCode, 1, desc.shaderStage, &spirv, &_errors);
@@ -95,7 +89,11 @@ HgiVulkanShaderFunction::HgiVulkanShaderFunction(HgiVulkanDevice *device,
     _descriptorSetInfo = HgiVulkanGatherDescriptorSetInfo(spirv);
   }
 
+  // Clear these pointers in our copy of the descriptor since we
+  // have to assume they could become invalid after we return.
+  _descriptor.shaderCodeDeclarations = nullptr;
   _descriptor.shaderCode = nullptr;
+  _descriptor.generatedShaderCodeOut = nullptr;
 }
 
 HgiVulkanShaderFunction::~HgiVulkanShaderFunction()

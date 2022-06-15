@@ -1,46 +1,40 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HGI_METAL_HGIMETAL_H
 #define WABI_IMAGING_HGI_METAL_HGIMETAL_H
 
+#include "wabi/wabi.h"
+#include "wabi/imaging/hgiMetal/api.h"
+#include "wabi/imaging/hgiMetal/capabilities.h"
 #include "wabi/imaging/hgi/hgi.h"
 #include "wabi/imaging/hgi/tokens.h"
-#include "wabi/imaging/hgiMetal/api.h"
-#include "wabi/wabi.h"
 
 #import <Metal/Metal.h>
+#include <stack>
 
 WABI_NAMESPACE_BEGIN
 
-class HgiMetalCapabilities;
 
 enum
 {
@@ -69,6 +63,9 @@ class HgiMetal final : public Hgi
 
   HGIMETAL_API
   ~HgiMetal() override;
+
+  HGIMETAL_API
+  bool IsBackendSupported() const override;
 
   HGIMETAL_API
   HgiGraphicsCmdsUniquePtr CreateGraphicsCmds(HgiGraphicsCmdsDesc const &desc) override;
@@ -138,6 +135,9 @@ class HgiMetal final : public Hgi
   TfToken const &GetAPIName() const override;
 
   HGIMETAL_API
+  HgiMetalCapabilities const *GetCapabilities() const override;
+
+  HGIMETAL_API
   void StartFrame() override;
 
   HGIMETAL_API
@@ -162,16 +162,13 @@ class HgiMetal final : public Hgi
   // For example, the client code may record in a HgiBlitCmds and a
   // HgiComputeCmds at the same time.
   HGIMETAL_API
-  id<MTLCommandBuffer> GetPrimaryCommandBuffer(bool flush = true);
+  id<MTLCommandBuffer> GetPrimaryCommandBuffer(HgiCmds *requester = nullptr, bool flush = true);
 
   HGIMETAL_API
   id<MTLCommandBuffer> GetSecondaryCommandBuffer();
 
   HGIMETAL_API
   int GetAPIVersion() const;
-
-  HGIMETAL_API
-  HgiMetalCapabilities const &GetCapabilities() const;
 
   HGIMETAL_API
   void CommitPrimaryCommandBuffer(
@@ -184,6 +181,15 @@ class HgiMetal final : public Hgi
 
   HGIMETAL_API
   void ReleaseSecondaryCommandBuffer(id<MTLCommandBuffer> commandBuffer);
+
+  HGIMETAL_API
+  id<MTLArgumentEncoder> GetBufferArgumentEncoder() const;
+  HGIMETAL_API
+  id<MTLArgumentEncoder> GetSamplerArgumentEncoder() const;
+  HGIMETAL_API
+  id<MTLArgumentEncoder> GetTextureArgumentEncoder() const;
+  HGIMETAL_API
+  id<MTLBuffer> GetArgBuffer();
 
  protected:
 
@@ -207,13 +213,22 @@ class HgiMetal final : public Hgi
   id<MTLCommandQueue> _commandQueue;
   id<MTLCommandBuffer> _commandBuffer;
   id<MTLCaptureScope> _captureScopeFullFrame;
+  id<MTLArgumentEncoder> _argEncoderBuffer;
+  id<MTLArgumentEncoder> _argEncoderSampler;
+  id<MTLArgumentEncoder> _argEncoderTexture;
+  std::stack<id<MTLBuffer>> _freeArgBuffers;
+  std::mutex _freeArgMutex;
+
   HgiCmds *_currentCmds;
 
   std::unique_ptr<HgiMetalCapabilities> _capabilities;
 
   int _frameDepth;
-  int _apiVersion;
   bool _workToFlush;
+
+#if !__has_feature(objc_arc)
+  NSAutoreleasePool *_pool;
+#endif
 };
 
 WABI_NAMESPACE_END

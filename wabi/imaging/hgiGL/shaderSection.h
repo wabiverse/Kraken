@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #ifndef WABI_IMAGING_HGIGL_SHADERSECTION_H
 #define WABI_IMAGING_HGIGL_SHADERSECTION_H
@@ -53,7 +46,9 @@ class HgiGLShaderSection : public HgiShaderSection
   explicit HgiGLShaderSection(const std::string &identifier,
                               const HgiShaderSectionAttributeVector &attributes = {},
                               const std::string &storageQualifier = std::string(),
-                              const std::string &defaultValue = std::string());
+                              const std::string &defaultValue = std::string(),
+                              const std::string &arraySize = std::string(),
+                              const std::string &blockInstanceIdentifier = std::string());
 
   HGIGL_API
   ~HgiGLShaderSection() override;
@@ -81,7 +76,10 @@ class HgiGLShaderSection : public HgiShaderSection
   HgiGLShaderSection(const HgiGLShaderSection &) = delete;
 
   const std::string _storageQualifier;
+  const std::string _arraySize;
 };
+
+using HgiGLShaderSectionPtrVector = std::vector<HgiGLShaderSection *>;
 
 /// \class HgiGLMacroShaderSection
 ///
@@ -123,9 +121,12 @@ class HgiGLMemberShaderSection final : public HgiGLShaderSection
   HGIGL_API
   explicit HgiGLMemberShaderSection(const std::string &identifier,
                                     const std::string &typeName,
+                                    const HgiInterpolationType interpolation,
                                     const HgiShaderSectionAttributeVector &attributes,
                                     const std::string &storageQualifier = std::string(),
-                                    const std::string &defaultValue = std::string());
+                                    const std::string &defaultValue = std::string(),
+                                    const std::string &arraySize = std::string(),
+                                    const std::string &blockInstanceIdentifier = std::string());
 
   HGIGL_API
   ~HgiGLMemberShaderSection() override;
@@ -143,6 +144,7 @@ class HgiGLMemberShaderSection final : public HgiGLShaderSection
   HgiGLMemberShaderSection(const HgiGLMemberShaderSection &) = delete;
 
   std::string _typeName;
+  HgiInterpolationType _interpolation;
 };
 
 /// \class HgiGLBlockShaderSection
@@ -183,6 +185,9 @@ class HgiGLTextureShaderSection final : public HgiGLShaderSection
                                      const uint32_t layoutIndex,
                                      const uint32_t dimensions,
                                      const HgiFormat format,
+                                     const HgiShaderTextureType textureType,
+                                     const uint32_t arraySize,
+                                     const bool writable,
                                      const HgiShaderSectionAttributeVector &attributes,
                                      const std::string &defaultValue = std::string());
 
@@ -208,6 +213,9 @@ class HgiGLTextureShaderSection final : public HgiGLShaderSection
 
   const uint32_t _dimensions;
   const HgiFormat _format;
+  const HgiShaderTextureType _textureType;
+  const uint32_t _arraySize;
+  const bool _writable;
   static const std::string _storageQualifier;
 };
 
@@ -223,6 +231,8 @@ class HgiGLBufferShaderSection final : public HgiGLShaderSection
   explicit HgiGLBufferShaderSection(const std::string &identifier,
                                     const uint32_t layoutIndex,
                                     const std::string &type,
+                                    const HgiBindingType binding,
+                                    const std::string arraySize,
                                     const HgiShaderSectionAttributeVector &attributes);
 
   HGIGL_API
@@ -241,6 +251,8 @@ class HgiGLBufferShaderSection final : public HgiGLShaderSection
   HgiGLBufferShaderSection(const HgiGLBufferShaderSection &) = delete;
 
   const std::string _type;
+  const HgiBindingType _binding;
+  const std::string _arraySize;
 };
 
 /// \class HgiGLKeywordShaderSection
@@ -273,6 +285,34 @@ class HgiGLKeywordShaderSection final : public HgiGLShaderSection
 
   const std::string _type;
   const std::string _keyword;
+};
+
+/// \class HgiGLInterstageBlockShaderSection
+///
+/// Defines and writes out an interstage interface block
+///
+class HgiGLInterstageBlockShaderSection final : public HgiGLShaderSection
+{
+ public:
+
+  HGIGL_API
+  explicit HgiGLInterstageBlockShaderSection(const std::string &blockIdentifier,
+                                             const std::string &blockInstanceIdentifier,
+                                             const std::string &qualifier,
+                                             const std::string &arraySize,
+                                             const HgiGLShaderSectionPtrVector &members);
+
+  HGIGL_API
+  bool VisitGlobalMemberDeclarations(std::ostream &ss) override;
+
+ private:
+
+  HgiGLInterstageBlockShaderSection() = delete;
+  HgiGLInterstageBlockShaderSection &operator=(const HgiGLInterstageBlockShaderSection &) = delete;
+  HgiGLInterstageBlockShaderSection(const HgiGLInterstageBlockShaderSection &) = delete;
+
+  const std::string _qualifier;
+  const HgiGLShaderSectionPtrVector _members;
 };
 
 WABI_NAMESPACE_END

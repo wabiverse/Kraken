@@ -1,70 +1,60 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/imaging/hgiVulkan/shaderCompiler.h"
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/imaging/hgiVulkan/api.h"
 #include "wabi/imaging/hgiVulkan/device.h"
 #include "wabi/imaging/hgiVulkan/diagnostic.h"
+#include "wabi/imaging/hgiVulkan/shaderCompiler.h"
 #include "wabi/imaging/hgiVulkan/spirv_reflect.h"
 
-// The glslang header versions must match the vulkan libraries we link against.
-// The vulkan SDK (including glslang) must have been compiled with the same
-// compiler that HgiVulkan is compiled with.
-#include <glslang/Public/ShaderLang.h>
-#include <glslang/SPIRV/GlslangToSpv.h>
+#include <shaderc/shaderc.hpp>
 
-/** Deprecated include. */
-// #include <OGLCompilersDLL/InitializeDll.h>
+#include <unordered_map>
+
 
 WABI_NAMESPACE_BEGIN
 
-EShLanguage _GetShaderStage(HgiShaderStage stage)
+
+static shaderc_shader_kind _GetShaderStage(HgiShaderStage stage)
 {
   switch (stage) {
     case HgiShaderStageVertex:
-      return EShLangVertex;
+      return shaderc_glsl_vertex_shader;
     case HgiShaderStageTessellationControl:
-      return EShLangTessControl;
+      return shaderc_glsl_tess_control_shader;
     case HgiShaderStageTessellationEval:
-      return EShLangTessEvaluation;
+      return shaderc_glsl_tess_evaluation_shader;
     case HgiShaderStageGeometry:
-      return EShLangGeometry;
+      return shaderc_glsl_geometry_shader;
     case HgiShaderStageFragment:
-      return EShLangFragment;
+      return shaderc_glsl_fragment_shader;
     case HgiShaderStageCompute:
-      return EShLangCompute;
+      return shaderc_glsl_compute_shader;
   }
 
   TF_CODING_ERROR("Unknown stage");
-  return EShLangCount;
+  return shaderc_glsl_infer_from_source;
 }
 
 bool HgiVulkanCompileGLSL(const char *name,
@@ -74,18 +64,6 @@ bool HgiVulkanCompileGLSL(const char *name,
                           std::vector<unsigned int> *spirvOUT,
                           std::string *errors)
 {
-  // InitializeProcess() should be called exactly once per PROCESS.
-  // We also have the option to call glslang::FinalizeProcess() in case we
-  // need to re-initialize in the process, but we have no such need currently.
-  static bool glslangInitialized = glslang::InitializeProcess();
-
-  if (ARCH_UNLIKELY(!glslangInitialized)) {
-    TF_CODING_ERROR("Glslang not initialized in process.");
-  }
-
-  // Each thread that uses glslang compiler must initialize.
-  // glslang::InitThread();
-
   if (numShaderCodes == 0 || !spirvOUT) {
     if (errors) {
       errors->append("No shader to compile %s", name);
@@ -93,226 +71,26 @@ bool HgiVulkanCompileGLSL(const char *name,
     return false;
   }
 
-  EShLanguage shaderType = _GetShaderStage(stage);
-  glslang::TShader shader(shaderType);
-  shader.setStrings(shaderCodes, numShaderCodes);
+  std::string source;
+  for (uint8_t i = 0; i < numShaderCodes; ++i) {
+    source += shaderCodes[i];
+  }
 
-  //
-  // Set up Vulkan/SpirV Environment
-  //
+  shaderc::CompileOptions options;
+  options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_0);
+  options.SetTargetSpirv(shaderc_spirv_version_1_0);
 
-  // Maps approx to #define VULKAN 100
-  int ClientInputSemanticsVersion = 100;
+  shaderc_shader_kind const kind = _GetShaderStage(stage);
 
-  glslang::EShTargetClientVersion vulkanClientVersion = glslang::EShTargetVulkan_1_0;
+  shaderc::Compiler compiler;
+  shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(source, kind, name, options);
 
-  glslang::EShTargetLanguageVersion targetVersion = glslang::EShTargetSpv_1_0;
-
-  shader.setEnvInput(glslang::EShSourceGlsl,
-                     shaderType,
-                     glslang::EShClientVulkan,
-                     ClientInputSemanticsVersion);
-
-  shader.setEnvClient(glslang::EShClientVulkan, vulkanClientVersion);
-  shader.setEnvTarget(glslang::EShTargetSpv, targetVersion);
-
-  //
-  // Setup compiler limits/caps
-  //
-
-  // Reference see file: StandAlone/ResourceLimits.cpp on Khronos git
-  const TBuiltInResource DefaultTBuiltInResource = {
-  /* .MaxLights = */ 32,
- /* .MaxClipPlanes = */ 6,
- /* .MaxTextureUnits = */ 32,
- /* .MaxTextureCoords = */ 32,
- /* .MaxVertexAttribs = */ 64,
- /* .MaxVertexUniformComponents = */ 4096,
- /* .MaxVaryingFloats = */ 64,
- /* .MaxVertexTextureImageUnits = */ 32,
- /* .MaxCombinedTextureImageUnits = */ 80,
- /* .MaxTextureImageUnits = */ 32,
- /* .MaxFragmentUniformComponents = */ 4096,
- /* .MaxDrawBuffers = */ 32,
- /* .MaxVertexUniformVectors = */ 128,
- /* .MaxVaryingVectors = */ 8,
- /* .MaxFragmentUniformVectors = */ 16,
- /* .MaxVertexOutputVectors = */ 16,
- /* .MaxFragmentInputVectors = */ 15,
- /* .MinProgramTexelOffset = */ -8,
- /* .MaxProgramTexelOffset = */ 7,
- /* .MaxClipDistances = */ 8,
- /* .MaxComputeWorkGroupCountX = */ 65535,
- /* .MaxComputeWorkGroupCountY = */ 65535,
- /* .MaxComputeWorkGroupCountZ = */ 65535,
- /* .MaxComputeWorkGroupSizeX = */ 1024,
- /* .MaxComputeWorkGroupSizeY = */ 1024,
- /* .MaxComputeWorkGroupSizeZ = */ 64,
- /* .MaxComputeUniformComponents = */ 1024,
- /* .MaxComputeTextureImageUnits = */ 16,
- /* .MaxComputeImageUniforms = */ 8,
- /* .MaxComputeAtomicCounters = */ 8,
- /* .MaxComputeAtomicCounterBuffers = */ 1,
- /* .MaxVaryingComponents = */ 60,
- /* .MaxVertexOutputComponents = */ 64,
- /* .MaxGeometryInputComponents = */ 64,
- /* .MaxGeometryOutputComponents = */ 128,
- /* .MaxFragmentInputComponents = */ 128,
- /* .MaxImageUnits = */ 8,
- /* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
- /* .MaxCombinedShaderOutputResources = */ 8,
- /* .MaxImageSamples = */ 0,
- /* .MaxVertexImageUniforms = */ 0,
- /* .MaxTessControlImageUniforms = */ 0,
- /* .MaxTessEvaluationImageUniforms = */ 0,
- /* .MaxGeometryImageUniforms = */ 0,
- /* .MaxFragmentImageUniforms = */ 8,
- /* .MaxCombinedImageUniforms = */ 8,
- /* .MaxGeometryTextureImageUnits = */ 16,
- /* .MaxGeometryOutputVertices = */ 256,
- /* .MaxGeometryTotalOutputComponents = */ 1024,
- /* .MaxGeometryUniformComponents = */ 1024,
- /* .MaxGeometryVaryingComponents = */ 64,
- /* .MaxTessControlInputComponents = */ 128,
- /* .MaxTessControlOutputComponents = */ 128,
- /* .MaxTessControlTextureImageUnits = */ 16,
- /* .MaxTessControlUniformComponents = */ 1024,
- /* .MaxTessControlTotalOutputComponents = */ 4096,
- /* .MaxTessEvaluationInputComponents = */ 128,
- /* .MaxTessEvaluationOutputComponents = */ 128,
- /* .MaxTessEvaluationTextureImageUnits = */ 16,
- /* .MaxTessEvaluationUniformComponents = */ 1024,
- /* .MaxTessPatchComponents = */ 120,
- /* .MaxPatchVertices = */ 32,
- /* .MaxTessGenLevel = */ 64,
- /* .MaxViewports = */ 16,
- /* .MaxVertexAtomicCounters = */ 0,
- /* .MaxTessControlAtomicCounters = */ 0,
- /* .MaxTessEvaluationAtomicCounters = */ 0,
- /* .MaxGeometryAtomicCounters = */ 0,
- /* .MaxFragmentAtomicCounters = */ 8,
- /* .MaxCombinedAtomicCounters = */ 8,
- /* .MaxAtomicCounterBindings = */ 1,
- /* .MaxVertexAtomicCounterBuffers = */ 0,
- /* .MaxTessControlAtomicCounterBuffers = */ 0,
- /* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
- /* .MaxGeometryAtomicCounterBuffers = */ 0,
- /* .MaxFragmentAtomicCounterBuffers = */ 1,
- /* .MaxCombinedAtomicCounterBuffers = */ 1,
- /* .MaxAtomicCounterBufferSize = */ 16384,
- /* .MaxTransformFeedbackBuffers = */ 4,
- /* .MaxTransformFeedbackInterleavedComponents = */ 64,
- /* .MaxCullDistances = */ 8,
- /* .MaxCombinedClipAndCullDistances = */ 8,
- /* .MaxSamples = */ 4,
- /* .maxMeshOutputVerticesNV = */ 256,
- /* .maxMeshOutputPrimitivesNV = */ 512,
- /* .maxMeshWorkGroupSizeX_NV = */ 32,
- /* .maxMeshWorkGroupSizeY_NV = */ 1,
- /* .maxMeshWorkGroupSizeZ_NV = */ 1,
- /* .maxTaskWorkGroupSizeX_NV = */ 32,
- /* .maxTaskWorkGroupSizeY_NV = */ 1,
- /* .maxTaskWorkGroupSizeZ_NV = */ 1,
- /* .maxMeshViewCountNV = */ 4,
- /* .maxDualSourceDrawBuffersEXT = */ 1,
-
- /* .limits = */
-    {
-     /* .nonInductiveForLoops = */ 1,
-     /* .whileLoops = */ 1,
-     /* .doWhileLoops = */ 1,
-     /* .generalUniformIndexing = */ 1,
-     /* .generalAttributeMatrixVectorIndexing = */ 1,
-     /* .generalVaryingIndexing = */ 1,
-     /* .generalSamplerIndexing = */ 1,
-     /* .generalVariableIndexing = */ 1,
-     /* .generalConstantMatrixVectorIndexing = */ 1,
-     }
-  };
-
-  EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
-
-  //
-  // Run PreProcess
-  //
-  const int defaultVersion = 100;
-  std::string preprocessedGLSL;
-
-  // Includes are resolved in glslfx so we currently do not support
-  // using #include in glsl (GL_GOOGLE_include_directive).
-  glslang::TShader::ForbidIncluder noIncludes;
-
-  bool preProcessOK = shader.preprocess(&DefaultTBuiltInResource,
-                                        defaultVersion,
-                                        ECoreProfile,
-                                        false,
-                                        false,
-                                        messages,
-                                        &preprocessedGLSL,
-                                        noIncludes);
-
-  if (!preProcessOK) {
-    if (errors) {
-      errors->append("GLSL Preprocessing Failed for: ");
-      errors->append(name);
-      errors->append("\n");
-      errors->append(shader.getInfoLog());
-      errors->append(shader.getInfoDebugLog());
-    }
+  if (result.GetCompilationStatus() != shaderc_compilation_status_success) {
+    *errors = result.GetErrorMessage();
     return false;
   }
 
-  //
-  // Parse and link shader
-  //
-  const char *preprocessedCStr = preprocessedGLSL.c_str();
-  shader.setStrings(&preprocessedCStr, 1);
-
-  if (!shader.parse(&DefaultTBuiltInResource, 100, false, messages)) {
-    if (errors) {
-      errors->append("GLSL Parsing Failed for: ");
-      errors->append(name);
-      errors->append("\n");
-      errors->append(shader.getInfoLog());
-      errors->append(shader.getInfoDebugLog());
-    }
-    return false;
-  }
-
-  glslang::TProgram program;
-  program.addShader(&shader);
-
-  if (!program.link(messages)) {
-    if (errors) {
-      errors->append("GLSL linking failed for: ");
-      errors->append(name);
-      errors->append("\n");
-      errors->append(shader.getInfoLog());
-      errors->append(shader.getInfoDebugLog());
-    }
-    return false;
-  }
-
-  //
-  // Convert to SPIRV
-  //
-  spv::SpvBuildLogger logger;
-  glslang::SpvOptions spvOptions;
-  spvOptions.generateDebugInfo = false;
-  spvOptions.optimizeSize = false;
-  spvOptions.disassemble = false;
-  spvOptions.validate = false;
-
-  glslang::GlslangToSpv(*program.getIntermediate(shaderType), *spirvOUT, &logger, &spvOptions);
-
-  if (logger.getAllMessages().length() > 0) {
-    if (errors) {
-      errors->append(logger.getAllMessages().c_str());
-    }
-  }
-
-  // glslang can also directly output the spirv binary for us:
-  // glslang::OutputSpvBin(*spirvOUT, "filename.spv");
+  spirvOUT->assign(result.cbegin(), result.cend());
 
   return true;
 }

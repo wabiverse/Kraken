@@ -1,41 +1,34 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HGI_METAL_CONVERSIONS_H
 #define WABI_IMAGING_HGI_METAL_CONVERSIONS_H
 
+#include <Metal/Metal.h>
+#include "wabi/wabi.h"
+#include "wabi/imaging/hgiMetal/api.h"
 #include "wabi/imaging/hgi/enums.h"
 #include "wabi/imaging/hgi/types.h"
-#include "wabi/imaging/hgiMetal/api.h"
-#include "wabi/wabi.h"
-#include <Metal/Metal.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -53,7 +46,7 @@ class HgiMetalConversions final
   //
 
   HGIMETAL_API
-  static MTLPixelFormat GetPixelFormat(HgiFormat inFormat);
+  static MTLPixelFormat GetPixelFormat(HgiFormat inFormat, HgiTextureUsage inUsage);
 
   HGIMETAL_API
   static MTLVertexFormat GetVertexFormat(HgiFormat inFormat);
@@ -80,7 +73,10 @@ class HgiMetalConversions final
   static MTLStoreAction GetAttachmentStoreOp(HgiAttachmentStoreOp storeOp);
 
   HGIMETAL_API
-  static MTLCompareFunction GetDepthCompareFunction(HgiCompareFunction cf);
+  static MTLCompareFunction GetCompareFunction(HgiCompareFunction cf);
+
+  HGIMETAL_API
+  static MTLStencilOperation GetStencilOp(HgiStencilOp op);
 
   HGIMETAL_API
   static MTLTextureType GetTextureType(HgiTextureType tt);
@@ -94,6 +90,9 @@ class HgiMetalConversions final
   HGIMETAL_API
   static MTLSamplerMipFilter GetMipFilter(HgiMipFilter mf);
 
+  HGIMETAL_API
+  static MTLSamplerBorderColor GetBorderColor(HgiBorderColor bc);
+
 #if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_15) || \
   __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
   HGIMETAL_API
@@ -105,7 +104,11 @@ class HgiMetalConversions final
 
   HGIMETAL_API
   static MTLPrimitiveType GetPrimitiveType(HgiPrimitiveType pt);
+
+  HGIMETAL_API
+  static MTLColorWriteMask GetColorWriteMask(HgiColorMask mask);
 };
+
 
 WABI_NAMESPACE_END
 

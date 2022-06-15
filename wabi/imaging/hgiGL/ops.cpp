@@ -1,48 +1,42 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/garch/glApi.h"
 
-#include "wabi/base/trace/trace.h"
+#include "wabi/imaging/hgiGL/ops.h"
 #include "wabi/imaging/hgiGL/buffer.h"
 #include "wabi/imaging/hgiGL/computePipeline.h"
 #include "wabi/imaging/hgiGL/conversions.h"
 #include "wabi/imaging/hgiGL/diagnostic.h"
 #include "wabi/imaging/hgiGL/graphicsCmds.h"
 #include "wabi/imaging/hgiGL/graphicsPipeline.h"
-#include "wabi/imaging/hgiGL/ops.h"
 #include "wabi/imaging/hgiGL/resourceBindings.h"
 #include "wabi/imaging/hgiGL/shaderProgram.h"
 #include "wabi/imaging/hgiGL/texture.h"
+#include "wabi/base/trace/trace.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 HgiGLOpsFn HgiGLOps::PushDebugGroup(const char *label)
 {
@@ -234,6 +228,8 @@ HgiGLOpsFn HgiGLOps::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
                              copyOp.sourceByteOffset,
                              copyOp.destinationByteOffset,
                              copyOp.byteSize);
+
+    HGIGL_POST_PENDING_GL_ERRORS();
   };
 }
 
@@ -564,91 +560,121 @@ HgiGLOpsFn HgiGLOps::BindVertexBuffers(uint32_t firstBinding,
 }
 
 HgiGLOpsFn HgiGLOps::Draw(HgiPrimitiveType primitiveType,
+                          uint32_t primitiveIndexSize,
                           uint32_t vertexCount,
-                          uint32_t firstVertex,
-                          uint32_t instanceCount)
+                          uint32_t baseVertex,
+                          uint32_t instanceCount,
+                          uint32_t baseInstance)
 {
-  return [primitiveType, vertexCount, firstVertex, instanceCount] {
-    TRACE_SCOPE("HgiGLOps::Draw");
-    TF_VERIFY(instanceCount > 0);
+  return
+    [primitiveType, primitiveIndexSize, vertexCount, baseVertex, instanceCount, baseInstance] {
+      TRACE_SCOPE("HgiGLOps::Draw");
 
-    glDrawArraysInstanced(HgiGLConversions::GetPrimitiveType(primitiveType),
-                          firstVertex,
-                          vertexCount,
-                          instanceCount);
+      if (primitiveType == HgiPrimitiveTypePatchList) {
+        glPatchParameteri(GL_PATCH_VERTICES, primitiveIndexSize);
+      }
 
-    HGIGL_POST_PENDING_GL_ERRORS();
-  };
+      glDrawArraysInstancedBaseInstance(HgiGLConversions::GetPrimitiveType(primitiveType),
+                                        baseVertex,
+                                        vertexCount,
+                                        instanceCount,
+                                        baseInstance);
+
+      HGIGL_POST_PENDING_GL_ERRORS();
+    };
 }
 
 HgiGLOpsFn HgiGLOps::DrawIndirect(HgiPrimitiveType primitiveType,
+                                  uint32_t primitiveIndexSize,
                                   HgiBufferHandle const &drawParameterBuffer,
-                                  uint32_t drawBufferOffset,
+                                  uint32_t drawBufferByteOffset,
                                   uint32_t drawCount,
                                   uint32_t stride)
 {
-  return [primitiveType, drawParameterBuffer, drawBufferOffset, drawCount, stride] {
+  return [primitiveType,
+          primitiveIndexSize,
+          drawParameterBuffer,
+          drawBufferByteOffset,
+          drawCount,
+          stride] {
     TRACE_SCOPE("HgiGLOps::DrawIndirect");
 
     HgiGLBuffer *drawBuf = static_cast<HgiGLBuffer *>(drawParameterBuffer.Get());
 
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, drawBuf->GetBufferId());
 
-    glMultiDrawArraysIndirect(HgiGLConversions::GetPrimitiveType(primitiveType),
-                              reinterpret_cast<const void *>(drawBufferOffset),
-                              drawCount,
-                              stride);
+    if (primitiveType == HgiPrimitiveTypePatchList) {
+      glPatchParameteri(GL_PATCH_VERTICES, primitiveIndexSize);
+    }
+
+    glMultiDrawArraysIndirect(
+      HgiGLConversions::GetPrimitiveType(primitiveType),
+      reinterpret_cast<const void *>(static_cast<uintptr_t>(drawBufferByteOffset)),
+      drawCount,
+      stride);
 
     HGIGL_POST_PENDING_GL_ERRORS();
   };
 }
 
 HgiGLOpsFn HgiGLOps::DrawIndexed(HgiPrimitiveType primitiveType,
+                                 uint32_t primitiveIndexSize,
                                  HgiBufferHandle const &indexBuffer,
                                  uint32_t indexCount,
                                  uint32_t indexBufferByteOffset,
-                                 uint32_t vertexOffset,
-                                 uint32_t instanceCount)
+                                 uint32_t baseVertex,
+                                 uint32_t instanceCount,
+                                 uint32_t baseInstance)
 {
-  return
-    [primitiveType, indexBuffer, indexCount, indexBufferByteOffset, vertexOffset, instanceCount] {
-      TRACE_SCOPE("HgiGLOps::DrawIndexed");
-      TF_VERIFY(instanceCount > 0);
+  return [primitiveType,
+          primitiveIndexSize,
+          indexBuffer,
+          indexCount,
+          indexBufferByteOffset,
+          baseVertex,
+          instanceCount,
+          baseInstance] {
+    TRACE_SCOPE("HgiGLOps::DrawIndexed");
 
-      HgiGLBuffer *indexBuf = static_cast<HgiGLBuffer *>(indexBuffer.Get());
-      HgiBufferDesc const &indexDesc = indexBuf->GetDescriptor();
+    HgiGLBuffer *indexBuf = static_cast<HgiGLBuffer *>(indexBuffer.Get());
 
-      // We assume 32bit indices: GL_UNSIGNED_INT
-      TF_VERIFY(indexDesc.usage & HgiBufferUsageIndex32);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf->GetBufferId());
 
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf->GetBufferId());
+    if (primitiveType == HgiPrimitiveTypePatchList) {
+      glPatchParameteri(GL_PATCH_VERTICES, primitiveIndexSize);
+    }
 
-      glDrawElementsInstancedBaseVertex(HgiGLConversions::GetPrimitiveType(primitiveType),
-                                        indexCount,
-                                        GL_UNSIGNED_INT,
-                                        (void *)(uintptr_t(indexBufferByteOffset)),
-                                        instanceCount,
-                                        vertexOffset);
+    glDrawElementsInstancedBaseVertexBaseInstance(
+      HgiGLConversions::GetPrimitiveType(primitiveType),
+      indexCount,
+      GL_UNSIGNED_INT,
+      reinterpret_cast<const void *>(static_cast<uintptr_t>(indexBufferByteOffset)),
+      instanceCount,
+      baseVertex,
+      baseInstance);
 
-      HGIGL_POST_PENDING_GL_ERRORS();
-    };
+    HGIGL_POST_PENDING_GL_ERRORS();
+  };
 }
 
 HgiGLOpsFn HgiGLOps::DrawIndexedIndirect(HgiPrimitiveType primitiveType,
+                                         uint32_t primitiveIndexSize,
                                          HgiBufferHandle const &indexBuffer,
                                          HgiBufferHandle const &drawParameterBuffer,
-                                         uint32_t drawBufferOffset,
+                                         uint32_t drawBufferByteOffset,
                                          uint32_t drawCount,
                                          uint32_t stride)
 {
-  return [primitiveType, indexBuffer, drawParameterBuffer, drawBufferOffset, drawCount, stride] {
+  return [primitiveType,
+          primitiveIndexSize,
+          indexBuffer,
+          drawParameterBuffer,
+          drawBufferByteOffset,
+          drawCount,
+          stride] {
     TRACE_SCOPE("HgiGLOps::DrawIndexedIndirect");
 
     HgiGLBuffer *indexBuf = static_cast<HgiGLBuffer *>(indexBuffer.Get());
-    HgiBufferDesc const &indexDesc = indexBuf->GetDescriptor();
-
-    // We assume 32bit indices: GL_UNSIGNED_INT
-    TF_VERIFY(indexDesc.usage & HgiBufferUsageIndex32);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf->GetBufferId());
 
@@ -656,11 +682,16 @@ HgiGLOpsFn HgiGLOps::DrawIndexedIndirect(HgiPrimitiveType primitiveType,
 
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, drawBuf->GetBufferId());
 
-    glMultiDrawElementsIndirect(HgiGLConversions::GetPrimitiveType(primitiveType),
-                                GL_UNSIGNED_INT,
-                                reinterpret_cast<const void *>(drawBufferOffset),
-                                drawCount,
-                                stride);
+    if (primitiveType == HgiPrimitiveTypePatchList) {
+      glPatchParameteri(GL_PATCH_VERTICES, primitiveIndexSize);
+    }
+
+    glMultiDrawElementsIndirect(
+      HgiGLConversions::GetPrimitiveType(primitiveType),
+      GL_UNSIGNED_INT,
+      reinterpret_cast<const void *>(static_cast<uintptr_t>(drawBufferByteOffset)),
+      drawCount,
+      stride);
 
     HGIGL_POST_PENDING_GL_ERRORS();
   };
@@ -719,6 +750,10 @@ HgiGLOpsFn HgiGLOps::BindFramebufferOp(HgiGLDevice *device, HgiGraphicsCmdsDesc 
 
       glBlendFuncSeparatei(i, srcColor, dstColor, srcAlpha, dstAlpha);
       glBlendEquationSeparatei(i, colorOp, alphaOp);
+      glBlendColor(colorAttachment.blendConstantColor[0],
+                   colorAttachment.blendConstantColor[1],
+                   colorAttachment.blendConstantColor[2],
+                   colorAttachment.blendConstantColor[3]);
     }
 
     HgiAttachmentDesc const &depthAttachment = desc.depthAttachmentDesc;
@@ -750,6 +785,23 @@ HgiGLOpsFn HgiGLOps::BindFramebufferOp(HgiGLDevice *device, HgiGraphicsCmdsDesc 
     }
 
     HGIGL_POST_PENDING_GL_ERRORS();
+  };
+}
+
+HgiGLOpsFn HgiGLOps::FillBuffer(HgiBufferHandle const &buffer, uint8_t value)
+{
+  return [buffer, value] {
+    TRACE_SCOPE("HgiGLOps::FillBuffer");
+
+    HgiGLBuffer *glBuffer = static_cast<HgiGLBuffer *>(buffer.Get());
+    if (glBuffer && glBuffer->GetBufferId()) {
+      glClearNamedBufferData(glBuffer->GetBufferId(),
+                             GL_R8UI,
+                             GL_RED_INTEGER,
+                             GL_UNSIGNED_BYTE,
+                             &value);
+      HGIGL_POST_PENDING_GL_ERRORS();
+    }
   };
 }
 

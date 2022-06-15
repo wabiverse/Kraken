@@ -127,14 +127,14 @@
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <boost/preprocessor/tuple/to_list.hpp>
 #include <boost/preprocessor/tuple/to_seq.hpp>
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include <boost/python/object_fwd.hpp>
 #  include <boost/python/object_operators.hpp>
 #  if defined(__APPLE__)  // Fix breakage caused by Python's pyport.h.
 #    undef tolower
 #    undef toupper
 #  endif
-#endif  // PXR_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 #include <boost/range/iterator.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
@@ -163,6 +163,6 @@
 #include <tbb/parallel_for_each.h>
 #include <tbb/spin_mutex.h>
 #include <tbb/task.h>
-#ifdef PXR_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pySafePython.h"
-#endif  // PXR_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON

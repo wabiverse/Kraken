@@ -1,34 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/imaging/hgiVulkan/graphicsCmds.h"
+//
+// Copyright 2020 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hgi/graphicsCmdsDesc.h"
 #include "wabi/imaging/hgiVulkan/buffer.h"
 #include "wabi/imaging/hgiVulkan/commandBuffer.h"
@@ -36,8 +28,9 @@
 #include "wabi/imaging/hgiVulkan/conversions.h"
 #include "wabi/imaging/hgiVulkan/device.h"
 #include "wabi/imaging/hgiVulkan/diagnostic.h"
-#include "wabi/imaging/hgiVulkan/graphicsPipeline.h"
+#include "wabi/imaging/hgiVulkan/graphicsCmds.h"
 #include "wabi/imaging/hgiVulkan/hgi.h"
+#include "wabi/imaging/hgiVulkan/graphicsPipeline.h"
 #include "wabi/imaging/hgiVulkan/resourceBindings.h"
 #include "wabi/imaging/hgiVulkan/texture.h"
 
@@ -213,8 +206,9 @@ void HgiVulkanGraphicsCmds::BindVertexBuffers(uint32_t firstBinding,
 }
 
 void HgiVulkanGraphicsCmds::Draw(uint32_t vertexCount,
-                                 uint32_t firstVertex,
-                                 uint32_t instanceCount)
+                                 uint32_t baseVertex,
+                                 uint32_t instanceCount,
+                                 uint32_t baseInstance)
 {
   // Make sure the render pass has begun and resource are bound
   _ApplyPendingUpdates();
@@ -222,12 +216,12 @@ void HgiVulkanGraphicsCmds::Draw(uint32_t vertexCount,
   vkCmdDraw(_commandBuffer->GetVulkanCommandBuffer(),
             vertexCount,
             instanceCount,
-            firstVertex,
-            0);  // firstInstance
+            baseVertex,
+            baseInstance);
 }
 
 void HgiVulkanGraphicsCmds::DrawIndirect(HgiBufferHandle const &drawParameterBuffer,
-                                         uint32_t drawBufferOffset,
+                                         uint32_t drawBufferByteOffset,
                                          uint32_t drawCount,
                                          uint32_t stride)
 {
@@ -238,7 +232,7 @@ void HgiVulkanGraphicsCmds::DrawIndirect(HgiBufferHandle const &drawParameterBuf
 
   vkCmdDrawIndirect(_commandBuffer->GetVulkanCommandBuffer(),
                     drawBuf->GetVulkanBuffer(),
-                    drawBufferOffset,
+                    drawBufferByteOffset,
                     drawCount,
                     stride);
 }
@@ -246,19 +240,14 @@ void HgiVulkanGraphicsCmds::DrawIndirect(HgiBufferHandle const &drawParameterBuf
 void HgiVulkanGraphicsCmds::DrawIndexed(HgiBufferHandle const &indexBuffer,
                                         uint32_t indexCount,
                                         uint32_t indexBufferByteOffset,
-                                        uint32_t vertexOffset,
-                                        uint32_t instanceCount)
+                                        uint32_t baseVertex,
+                                        uint32_t instanceCount,
+                                        uint32_t baseInstance)
 {
   // Make sure the render pass has begun and resource are bound
   _ApplyPendingUpdates();
 
-  TF_VERIFY(instanceCount > 0);
-
   HgiVulkanBuffer *ibo = static_cast<HgiVulkanBuffer *>(indexBuffer.Get());
-  HgiBufferDesc const &indexDesc = ibo->GetDescriptor();
-
-  // We assume 32bit indices
-  TF_VERIFY(indexDesc.usage & HgiBufferUsageIndex32);
 
   vkCmdBindIndexBuffer(_commandBuffer->GetVulkanCommandBuffer(),
                        ibo->GetVulkanBuffer(),
@@ -268,25 +257,24 @@ void HgiVulkanGraphicsCmds::DrawIndexed(HgiBufferHandle const &indexBuffer,
   vkCmdDrawIndexed(_commandBuffer->GetVulkanCommandBuffer(),
                    indexCount,
                    instanceCount,
-                   0,  // firstIndex,
-                   vertexOffset,
-                   0);  // firstInstance
+                   static_cast<uint32_t>(indexBufferByteOffset / sizeof(uint32_t)),
+                   baseVertex,
+                   baseInstance);
 }
 
-void HgiVulkanGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuffer,
-                                                HgiBufferHandle const &drawParameterBuffer,
-                                                uint32_t drawBufferOffset,
-                                                uint32_t drawCount,
-                                                uint32_t stride)
+void HgiVulkanGraphicsCmds::DrawIndexedIndirect(
+  HgiBufferHandle const &indexBuffer,
+  HgiBufferHandle const &drawParameterBuffer,
+  uint32_t drawBufferByteOffset,
+  uint32_t drawCount,
+  uint32_t stride,
+  std::vector<uint32_t> const & /*drawParameterBufferUInt32*/,
+  uint32_t /*patchBaseVertexByteOffset*/)
 {
   // Make sure the render pass has begun and resource are bound
   _ApplyPendingUpdates();
 
   HgiVulkanBuffer *ibo = static_cast<HgiVulkanBuffer *>(indexBuffer.Get());
-  HgiBufferDesc const &indexDesc = ibo->GetDescriptor();
-
-  // We assume 32bit indices
-  TF_VERIFY(indexDesc.usage & HgiBufferUsageIndex32);
 
   vkCmdBindIndexBuffer(_commandBuffer->GetVulkanCommandBuffer(),
                        ibo->GetVulkanBuffer(),
@@ -297,7 +285,7 @@ void HgiVulkanGraphicsCmds::DrawIndexedIndirect(HgiBufferHandle const &indexBuff
 
   vkCmdDrawIndexedIndirect(_commandBuffer->GetVulkanCommandBuffer(),
                            drawBuf->GetVulkanBuffer(),
-                           drawBufferOffset,
+                           drawBufferByteOffset,
                            drawCount,
                            stride);
 }

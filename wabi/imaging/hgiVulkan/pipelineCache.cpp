@@ -44,4 +44,5 @@ VkPipelineCache HgiVulkanPipelineCache::GetVulkanPipelineCache() const
   return _vkPipelineCache;
 }
 
+
 WABI_NAMESPACE_END

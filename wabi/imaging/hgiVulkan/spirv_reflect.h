@@ -30,11 +30,7 @@ VERSION HISTORY
 #ifndef SPIRV_REFLECT_H
 #define SPIRV_REFLECT_H
 
-#ifdef __linux__
-#  include <spirv/unified1/spirv.h>
-#elif _WIN32
-#  include <spirv_cross/spirv.h>
-#endif
+#include <spirv_cross/spirv.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -45,8 +41,7 @@ VERSION HISTORY
 #elif defined(__clang__)
 #  define SPV_REFLECT_DEPRECATED(msg_str) __attribute__((deprecated(msg_str)))
 #elif defined(__GNUC__)
-#  include <features.h>
-#  if __GNUC_PREREQ(4, 5)
+#  if GCC_VERSION >= 40500
 #    define SPV_REFLECT_DEPRECATED(msg_str) __attribute__((deprecated(msg_str)))
 #  else
 #    define SPV_REFLECT_DEPRECATED(msg_str) __attribute__((deprecated))
@@ -302,6 +297,7 @@ typedef struct SpvReflectTypeDescription
   struct SpvReflectTypeDescription *members;
 } SpvReflectTypeDescription;
 
+
 /*! @struct SpvReflectInterfaceVariable
 
 */
@@ -487,12 +483,14 @@ SpvReflectResult spvReflectGetShaderModule(size_t size,
                                            const void *p_code,
                                            SpvReflectShaderModule *p_module);
 
+
 /*! @fn spvReflectDestroyShaderModule
 
  @param  p_module  Pointer to an instance of SpvReflectShaderModule.
 
 */
 void spvReflectDestroyShaderModule(SpvReflectShaderModule *p_module);
+
 
 /*! @fn spvReflectGetCodeSize
 
@@ -501,6 +499,7 @@ void spvReflectDestroyShaderModule(SpvReflectShaderModule *p_module);
 
 */
 uint32_t spvReflectGetCodeSize(const SpvReflectShaderModule *p_module);
+
 
 /*! @fn spvReflectGetCode
 
@@ -616,6 +615,7 @@ SpvReflectResult spvReflectEnumerateEntryPointDescriptorSets(
   uint32_t *p_count,
   SpvReflectDescriptorSet **pp_sets);
 
+
 /*! @fn spvReflectEnumerateInputVariables
  @brief  If the module contains multiple entry points, this will only get
          the input variables for the first one.
@@ -664,6 +664,7 @@ SpvReflectResult spvReflectEnumerateEntryPointInputVariables(
   uint32_t *p_count,
   SpvReflectInterfaceVariable **pp_variables);
 
+
 /*! @fn spvReflectEnumerateOutputVariables
  @brief  Note: If the module contains multiple entry points, this will only get
          the output variables for the first one.
@@ -711,6 +712,7 @@ SpvReflectResult spvReflectEnumerateEntryPointOutputVariables(
   const char *entry_point,
   uint32_t *p_count,
   SpvReflectInterfaceVariable **pp_variables);
+
 
 /*! @fn spvReflectEnumeratePushConstantBlocks
  @brief  Note: If the module contains multiple entry points, this will only get
@@ -765,6 +767,7 @@ SpvReflectResult spvReflectEnumerateEntryPointPushConstantBlocks(
   const char *entry_point,
   uint32_t *p_count,
   SpvReflectBlockVariable **pp_blocks);
+
 
 /*! @fn spvReflectGetDescriptorBinding
 
@@ -826,6 +829,7 @@ const SpvReflectDescriptorBinding *spvReflectGetEntryPointDescriptorBinding(
   uint32_t set_number,
   SpvReflectResult *p_result);
 
+
 /*! @fn spvReflectGetDescriptorSet
 
  @param  p_module    Pointer to an instance of SpvReflectShaderModule.
@@ -868,6 +872,7 @@ const SpvReflectDescriptorSet *spvReflectGetEntryPointDescriptorSet(
   const char *entry_point,
   uint32_t set_number,
   SpvReflectResult *p_result);
+
 
 /* @fn spvReflectGetInputVariableByLocation
 
@@ -1141,6 +1146,7 @@ const SpvReflectBlockVariable *spvReflectGetEntryPointPushConstantBlock(
   const char *entry_point,
   SpvReflectResult *p_result);
 
+
 /*! @fn spvReflectChangeDescriptorBindingNumbers
  @brief  Assign new set and/or binding numbers to a descriptor binding.
          In addition to updating the reflection data, this function modifies
@@ -1224,6 +1230,7 @@ SpvReflectResult spvReflectChangeInputVariableLocation(
   const SpvReflectInterfaceVariable *p_input_variable,
   uint32_t new_location);
 
+
 /*! @fn spvReflectChangeOutputVariableLocation
  @brief  Assign a new location to an output interface variable.
          In addition to updating the reflection data, this function modifies
@@ -1245,6 +1252,7 @@ SpvReflectResult spvReflectChangeOutputVariableLocation(
   SpvReflectShaderModule *p_module,
   const SpvReflectInterfaceVariable *p_output_variable,
   uint32_t new_location);
+
 
 /*! @fn spvReflectSourceLanguage
 
@@ -1433,6 +1441,7 @@ namespace spv_reflect
     SpvReflectShaderModule m_module = {};
   };
 
+
   // =================================================================================================
   // ShaderModule
   // =================================================================================================
@@ -1441,6 +1450,7 @@ namespace spv_reflect
 
   */
   inline ShaderModule::ShaderModule() {}
+
 
   /*! @fn ShaderModule
 
@@ -1483,6 +1493,7 @@ namespace spv_reflect
     spvReflectDestroyShaderModule(&m_module);
   }
 
+
   /*! @fn GetResult
 
     @return
@@ -1492,6 +1503,7 @@ namespace spv_reflect
   {
     return m_result;
   }
+
 
   /*! @fn GetShaderModule
 
@@ -1503,6 +1515,7 @@ namespace spv_reflect
     return m_module;
   }
 
+
   /*! @fn GetCodeSize
 
     @return
@@ -1513,6 +1526,7 @@ namespace spv_reflect
     return spvReflectGetCodeSize(&m_module);
   }
 
+
   /*! @fn GetCode
 
     @return
@@ -1522,6 +1536,7 @@ namespace spv_reflect
   {
     return spvReflectGetCode(&m_module);
   }
+
 
   /*! @fn GetEntryPoint
 
@@ -1609,6 +1624,7 @@ namespace spv_reflect
     return m_result;
   }
 
+
   /*! @fn EnumerateDescriptorSets
 
     @param  count
@@ -1643,6 +1659,7 @@ namespace spv_reflect
                                                            pp_sets);
     return m_result;
   }
+
 
   /*! @fn EnumerateInputVariables
 
@@ -1679,6 +1696,7 @@ namespace spv_reflect
     return m_result;
   }
 
+
   /*! @fn EnumerateOutputVariables
 
     @param  count
@@ -1714,6 +1732,7 @@ namespace spv_reflect
     return m_result;
   }
 
+
   /*! @fn EnumeratePushConstantBlocks
 
     @param  count
@@ -1748,6 +1767,7 @@ namespace spv_reflect
                                                                pp_blocks);
     return m_result;
   }
+
 
   /*! @fn GetDescriptorBinding
 
@@ -1787,6 +1807,7 @@ namespace spv_reflect
                                                     p_result);
   }
 
+
   /*! @fn GetDescriptorSet
 
     @param  set_number
@@ -1816,6 +1837,7 @@ namespace spv_reflect
   {
     return spvReflectGetEntryPointDescriptorSet(&m_module, entry_point, set_number, p_result);
   }
+
 
   /*! @fn GetInputVariable
 
@@ -1866,6 +1888,7 @@ namespace spv_reflect
                                                           p_result);
   }
 
+
   /*! @fn GetOutputVariable
 
     @param  location
@@ -1915,6 +1938,7 @@ namespace spv_reflect
                                                            p_result);
   }
 
+
   /*! @fn GetPushConstant
 
     @param  index
@@ -1944,6 +1968,7 @@ namespace spv_reflect
     return spvReflectGetEntryPointPushConstantBlock(&m_module, entry_point, p_result);
   }
 
+
   /*! @fn ChangeDescriptorBindingNumbers
 
     @param  p_binding
@@ -1963,6 +1988,7 @@ namespace spv_reflect
                                                     new_set_number);
   }
 
+
   /*! @fn ChangeDescriptorSetNumber
 
     @param  p_set
@@ -1977,6 +2003,7 @@ namespace spv_reflect
     return spvReflectChangeDescriptorSetNumber(&m_module, p_set, new_set_number);
   }
 
+
   /*! @fn ChangeInputVariableLocation
 
     @param  p_input_variable
@@ -1990,6 +2017,7 @@ namespace spv_reflect
   {
     return spvReflectChangeInputVariableLocation(&m_module, p_input_variable, new_location);
   }
+
 
   /*! @fn ChangeOutputVariableLocation
 

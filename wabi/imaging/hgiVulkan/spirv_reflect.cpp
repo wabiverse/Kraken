@@ -21,8 +21,8 @@
 
 #if defined(WIN32)
 #  define _CRTDBG_MAP_ALLOC
-#  include <crtdbg.h>
 #  include <stdlib.h>
+#  include <crtdbg.h>
 #else
 #  include <stdlib.h>
 #endif
@@ -325,6 +325,7 @@ static SpvReflectResult IntersectSortedUint32(const uint32_t *p_arr0,
   }
   return SPV_REFLECT_RESULT_SUCCESS;
 }
+
 
 static bool InRange(const Parser *p_parser, uint32_t index)
 {
@@ -1776,6 +1777,7 @@ static SpvReflectResult ParseDescriptorBindings(Parser *p_parser, SpvReflectShad
 
     // Count
 
+
     p_descriptor->word_offset.binding = p_node->decorations.binding.word_offset;
     p_descriptor->word_offset.set = p_node->decorations.set.word_offset;
 
@@ -2501,6 +2503,7 @@ static SpvReflectResult ParseInterfaceVariables(Parser *p_parser,
       return SPV_REFLECT_RESULT_ERROR_ALLOC_FAILED;
     }
   }
+
 
   if (p_entry->output_variable_count > 0) {
     p_entry->output_variables = (SpvReflectInterfaceVariable *)calloc(
@@ -3848,6 +3851,7 @@ SpvReflectResult spvReflectEnumerateEntryPointPushConstantBlocks(
     return SPV_REFLECT_RESULT_ERROR_NULL_POINTER;
   }
 
+
   const SpvReflectEntryPoint *p_entry = spvReflectGetEntryPoint(p_module, entry_point);
   if (IsNull(p_entry)) {
     return SPV_REFLECT_RESULT_ERROR_ELEMENT_NOT_FOUND;
@@ -3990,6 +3994,7 @@ const SpvReflectDescriptorSet *spvReflectGetEntryPointDescriptorSet(
   }
   return p_set;
 }
+
 
 const SpvReflectInterfaceVariable *spvReflectGetInputVariableByLocation(
   const SpvReflectShaderModule *p_module,

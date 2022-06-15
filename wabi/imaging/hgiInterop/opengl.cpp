@@ -23,11 +23,11 @@
 //
 #include "wabi/imaging/garch/glApi.h"
 
-#include "wabi/base/vt/value.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hgi/hgi.h"
 #include "wabi/imaging/hgi/texture.h"
 #include "wabi/imaging/hgiInterop/opengl.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/value.h"
 
 WABI_NAMESPACE_BEGIN
 

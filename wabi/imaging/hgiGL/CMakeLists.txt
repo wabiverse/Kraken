@@ -24,10 +24,12 @@ wabi_library(hgiGL
     PUBLIC_CLASSES
         blitCmds
         buffer
+        capabilities
         computeCmds
         computePipeline
+        contextArena
+        debugCodes
         device
-        framebufferCache
         garbageCollector
         graphicsCmds
         graphicsPipeline

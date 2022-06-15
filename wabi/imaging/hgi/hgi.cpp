@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2019 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hgi/hgi.h"
 #include "wabi/base/arch/defines.h"
 #include "wabi/base/plug/plugin.h"
@@ -37,25 +30,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-#if defined(ARCH_OS_WINDOWS)
-/**
- * DirectX for Microsoft Windows. */
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_DIRECTX, true, "Enable DirectX as platform default Hgi backend (WIP)");
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, false, "Enable Vulkan as platform default Hgi backend (WIP)");
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_METAL, false, "Enable Metal as platform default Hgi backend (WIP)");
-#elif defined(ARCH_OS_LINUX)
-/**
- * Vulkan for Linux. */
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_DIRECTX, false, "Enable DirectX as platform default Hgi backend (WIP)");
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, true, "Enable Vulkan as platform default Hgi backend (WIP)");
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_METAL, false, "Enable Metal as platform default Hgi backend (WIP)");
-#elif defined(ARCH_OS_DARWIN)
-/**
- * Metal for Apple macOS. */
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_DIRECTX, false, "Enable DirectX as platform default Hgi backend (WIP)");
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, false, "Enable Vulkan as platform default Hgi backend (WIP)");
-TF_DEFINE_ENV_SETTING(HGI_ENABLE_METAL, true, "Enable Metal as platform default Hgi backend (WIP)");
-#endif
+TF_DEFINE_ENV_SETTING(HGI_ENABLE_VULKAN, 0,
+                      "Enable Vulkan as platform default Hgi backend (WIP)");
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -104,14 +80,6 @@ static Hgi *_MakeNewPlatformDefaultHgi()
 #endif
   }
 
-  if (TfGetEnvSetting(HGI_ENABLE_DIRECTX)) {
-#if defined(WITH_DIRECTX)
-    hgiType = "HgiDX3D";
-#else
-    TF_CODING_ERROR("Build requires WITH_DIRECTX=true to use DirectX");
-#endif
-  }
-
   const TfType plugType = plugReg.FindDerivedTypeByName<Hgi>(hgiType);
 
   PlugPluginPtr plugin = plugReg.GetPluginForType(plugType);
@@ -150,6 +118,15 @@ Hgi *Hgi::GetPlatformDefaultHgi()
 HgiUniquePtr Hgi::CreatePlatformDefaultHgi()
 {
   return HgiUniquePtr(_MakeNewPlatformDefaultHgi());
+}
+
+bool Hgi::IsSupported()
+{
+  if (HgiUniquePtr const instance = CreatePlatformDefaultHgi()) {
+    return instance->IsBackendSupported();
+  }
+
+  return false;
 }
 
 uint64_t Hgi::GetUniqueId()

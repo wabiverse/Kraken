@@ -14,9 +14,6 @@ wabi_library(hgiVulkan
         trace
         ${VULKAN_LIBS}
 
-    PRIVATE_CLASSES
-        spirv_reflect
-
     PUBLIC_CLASSES
         blitCmds
         buffer
@@ -47,6 +44,9 @@ wabi_library(hgiVulkan
         api.h
         vulkan.h
         vk_mem_alloc.h
+
+    PRIVATE_CLASSES
+        spirv_reflect
 
     RESOURCE_FILES
         resources/plugInfo.json

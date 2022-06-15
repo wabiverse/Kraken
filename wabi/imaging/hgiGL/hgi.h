@@ -1,43 +1,38 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2019 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HGI_GL_HGI_H
 #define WABI_IMAGING_HGI_GL_HGI_H
 
+#include "wabi/wabi.h"
+#include "wabi/imaging/hgiGL/api.h"
+#include "wabi/imaging/hgiGL/capabilities.h"
+#include "wabi/imaging/hgiGL/garbageCollector.h"
 #include "wabi/imaging/hgi/hgi.h"
 #include "wabi/imaging/hgi/tokens.h"
-#include "wabi/imaging/hgiGL/api.h"
-#include "wabi/imaging/hgiGL/garbageCollector.h"
-#include "wabi/wabi.h"
 
 #include <functional>
+#include <memory>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
@@ -46,15 +41,32 @@ class HgiGLDevice;
 
 using HgiGLOpsFn = std::function<void(void)>;
 using HgiGLOpsVector = std::vector<HgiGLOpsFn>;
+using HgiGLContextArenaHandle = HgiHandle<class HgiGLContextArena>;
 
 /// \class HgiGL
 ///
 /// OpenGL implementation of the Hydra Graphics Interface.
 ///
-/// HgiGL expects the GL context to be externally managed.
+/// \section GL Context Management
+/// HgiGL expects any GL context(s) to be externally managed.
 /// When HgiGL is constructed and during any of its resource create / destroy
-/// calls and during command recording operations it expects that the OpenGL
+/// calls and during command recording operations, it expects that an OpenGL
 /// context is valid and current.
+///
+/// When an application uses the same HgiGL instance from multiple GL contexts,
+/// the expectations are that:
+/// 1. The application has set up sharing amongst the various GL contexts. This
+///    ensures that any non-container resources created may be shared amongst
+///    the contexts. These shared resources may be safely deleted from
+///    any context in the share group.
+///
+/// 2. A context arena (see relevant API below) is used per GL context to
+///    manage container resources that can't be shared amongst GL contexts.
+///    Currently, HgiGL's support is limited to framebuffer objects.
+///
+/// In the absence of an application provided context arena, the default arena
+/// is used with the implied expectation that the same GL context is valid
+/// and current for the lifetime of the HgiGL instance.
 ///
 class HgiGL final : public Hgi
 {
@@ -65,6 +77,13 @@ class HgiGL final : public Hgi
 
   HGIGL_API
   ~HgiGL() override;
+
+  /// ------------------------------------------------------------------------
+  /// Virtual API
+  /// ------------------------------------------------------------------------
+
+  HGIGL_API
+  bool IsBackendSupported() const override;
 
   HGIGL_API
   HgiGraphicsCmdsUniquePtr CreateGraphicsCmds(HgiGraphicsCmdsDesc const &desc) override;
@@ -134,18 +153,41 @@ class HgiGL final : public Hgi
   TfToken const &GetAPIName() const override;
 
   HGIGL_API
+  HgiGLCapabilities const *GetCapabilities() const override;
+
+  HGIGL_API
   void StartFrame() override;
 
   HGIGL_API
   void EndFrame() override;
 
-  //
-  // HgiGL specific
-  //
+  /// ------------------------------------------------------------------------
+  // HgiGL specific API
+  /// ------------------------------------------------------------------------
 
-  /// Returns the opengl device.
+  // Returns the opengl device.
   HGIGL_API
   HgiGLDevice *GetPrimaryDevice() const;
+
+  /// ------------------------------------------------------------------------
+  /// Context arena API
+  /// Please refer to \ref "GL Context Management" for usage expectations.
+  ///
+  /// Creates and return a context arena object handle.
+  HGIGL_API
+  HgiGLContextArenaHandle CreateContextArena();
+
+  /// Destroy a context arena.
+  /// Note: The context arena must be unset (by calling SetContextArena with
+  ///       an empty handle) prior to destruction.
+  HGIGL_API
+  void DestroyContextArena(HgiGLContextArenaHandle *arenaHandle);
+
+  /// Set the context arena to manage container resources (currently limited to
+  /// framebuffer objects) for graphics commands submitted subsequently.
+  HGIGL_API
+  void SetContextArena(HgiGLContextArenaHandle const &arenaHandle);
+  // -------------------------------------------------------------------------
 
  protected:
 
@@ -157,9 +199,9 @@ class HgiGL final : public Hgi
   HgiGL &operator=(const HgiGL &) = delete;
   HgiGL(const HgiGL &) = delete;
 
-  // Invalidates the resource handle and places the object in the garbage
-  // collector vector for future destruction.
-  // This is helpful to avoid destroying GPU resources still in-flight.
+  /// Invalidates the resource handle and places the object in the garbage
+  /// collector vector for future destruction.
+  /// This is helpful to avoid destroying GPU resources still in-flight.
   template<class T> void _TrashObject(HgiHandle<T> *handle, std::vector<HgiHandle<T>> *collector)
   {
     collector->push_back(HgiHandle<T>(handle->Get(), /*id*/ 0));
@@ -167,9 +209,17 @@ class HgiGL final : public Hgi
   }
 
   HgiGLDevice *_device;
+  std::unique_ptr<HgiGLCapabilities> _capabilities;
   HgiGLGarbageCollector _garbageCollector;
   int _frameDepth;
 };
+
+/// ----------------------------------------------------------------------------
+/// API Version & History
+/// ----------------------------------------------------------------------------
+/// 1 -> 2: Added Context Arena API
+///
+#define HGIGL_API_VERSION 2
 
 WABI_NAMESPACE_END
 
