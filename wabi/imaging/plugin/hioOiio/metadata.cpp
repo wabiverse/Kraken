@@ -1,5 +1,5 @@
 //
-// Copyright 2016 Pixar
+// Copyright 2021 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,25 +21,24 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-////////////////////////////////////////////////////////////////////////
 
-#include "wabi/wabi.h"
-#include "wabi/base/tf/registryManager.h"
-#include "wabi/base/tf/scriptModuleLoader.h"
-#include "wabi/base/tf/token.h"
+#include "wabi/base/arch/pragmas.h"
 
-#include <vector>
+ARCH_PRAGMA_PUSH
+ARCH_PRAGMA_MACRO_REDEFINITION  // due to Python copysign
+#include <OpenImageIO/imageio.h>
+  ARCH_PRAGMA_POP
 
-WABI_NAMESPACE_BEGIN
+    WABI_NAMESPACE_BEGIN
 
-TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
+  class TfToken;
+class VtValue;
+
+OIIO_NAMESPACE_USING
+
+bool HioOIIO_ExtractCustomMetadata(const ImageSpec &imagespec, TfToken const &key, VtValue *value)
 {
-  // List of direct dependencies for this library.
-  const std::vector<TfToken> reqs = {TfToken("arch"),
-                                     TfToken("gf"),
-                                     TfToken("tf"),
-                                     TfToken("trace")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("vt"), TfToken("wabi.Vt"), reqs);
+  return false;
 }
 
 WABI_NAMESPACE_END

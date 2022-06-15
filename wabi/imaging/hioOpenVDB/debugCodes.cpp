@@ -1,5 +1,5 @@
 //
-// Copyright 2016 Pixar
+// Copyright 2021 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,25 +21,19 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-////////////////////////////////////////////////////////////////////////
+/// \file debugCodes.cpp
 
-#include "wabi/wabi.h"
+#include "wabi/imaging/hioOpenVDB/debugCodes.h"
+
+#include "wabi/base/tf/debug.h"
 #include "wabi/base/tf/registryManager.h"
-#include "wabi/base/tf/scriptModuleLoader.h"
-#include "wabi/base/tf/token.h"
-
-#include <vector>
 
 WABI_NAMESPACE_BEGIN
 
-TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
+
+TF_REGISTRY_FUNCTION(TfDebug)
 {
-  // List of direct dependencies for this library.
-  const std::vector<TfToken> reqs = {TfToken("arch"),
-                                     TfToken("gf"),
-                                     TfToken("tf"),
-                                     TfToken("trace")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("vt"), TfToken("wabi.Vt"), reqs);
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HIOOPENVDB_DEBUG_TEXTURE, "HioVDB texture loading");
 }
 
 WABI_NAMESPACE_END

@@ -1,5 +1,5 @@
 //
-// Copyright 2016 Pixar
+// Copyright 2021 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,25 +21,27 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-////////////////////////////////////////////////////////////////////////
+#ifndef WABI_IMAGING_HIOOPENVDB_API_H
+#define WABI_IMAGING_HIOOPENVDB_API_H
 
-#include "wabi/wabi.h"
-#include "wabi/base/tf/registryManager.h"
-#include "wabi/base/tf/scriptModuleLoader.h"
-#include "wabi/base/tf/token.h"
+#include "wabi/base/arch/export.h"
 
-#include <vector>
+#if defined(WABI_STATIC)
+#  define HIOOPENVDB_API
+#  define HIOOPENVDB_API_TEMPLATE_CLASS(...)
+#  define HIOOPENVDB_API_TEMPLATE_STRUCT(...)
+#  define HIOOPENVDB_LOCAL
+#else
+#  if defined(HIOOPENVDB_EXPORTS)
+#    define HIOOPENVDB_API ARCH_EXPORT
+#    define HIOOPENVDB_API_TEMPLATE_CLASS(...) ARCH_EXPORT_TEMPLATE(class, __VA_ARGS__)
+#    define HIOOPENVDB_API_TEMPLATE_STRUCT(...) ARCH_EXPORT_TEMPLATE(struct, __VA_ARGS__)
+#  else
+#    define HIOOPENVDB_API ARCH_IMPORT
+#    define HIOOPENVDB_API_TEMPLATE_CLASS(...) ARCH_IMPORT_TEMPLATE(class, __VA_ARGS__)
+#    define HIOOPENVDB_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
+#  endif
+#  define HIOOPENVDB_LOCAL ARCH_HIDDEN
+#endif
 
-WABI_NAMESPACE_BEGIN
-
-TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
-{
-  // List of direct dependencies for this library.
-  const std::vector<TfToken> reqs = {TfToken("arch"),
-                                     TfToken("gf"),
-                                     TfToken("tf"),
-                                     TfToken("trace")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("vt"), TfToken("wabi.Vt"), reqs);
-}
-
-WABI_NAMESPACE_END
+#endif

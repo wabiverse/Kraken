@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hio/image.h"
 #include "wabi/imaging/hio/types.h"
 
@@ -36,8 +29,8 @@
 #include "wabi/usd/ar/resolver.h"
 
 // use gf types to read and write metadata
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/matrix4f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/arch/pragmas.h"
 #include "wabi/base/tf/diagnostic.h"
@@ -48,10 +41,10 @@
 
 ARCH_PRAGMA_PUSH
 ARCH_PRAGMA_MACRO_REDEFINITION  // due to Python copysign
-#include <OpenImageIO/filesystem.h>
 #include <OpenImageIO/imagebuf.h>
 #include <OpenImageIO/imagebufalgo.h>
 #include <OpenImageIO/imageio.h>
+#include <OpenImageIO/filesystem.h>
 #include <OpenImageIO/typedesc.h>
   ARCH_PRAGMA_POP
 
@@ -316,7 +309,7 @@ static VtValue _FindAttribute(ImageSpec const &spec, std::string const &metadata
     case TypeDesc::SCALAR:
       switch (type.basetype) {
         case TypeDesc::STRING:
-          return VtValue(std::string((char *)param->data()));
+          return VtValue(std::string(*(const char **)param->data()));
         case TypeDesc::INT8:
           return VtValue(*((char *)param->data()));
         case TypeDesc::UINT8:
@@ -389,7 +382,7 @@ static void _SetAttribute(ImageSpec *spec, std::string const &metadataKey, VtVal
 HioOIIO_Image::HioOIIO_Image() : _subimage(0), _miplevel(0) {}
 
 /* virtual */
-HioOIIO_Image::~HioOIIO_Image() {}
+HioOIIO_Image::~HioOIIO_Image() = default;
 
 /* virtual */
 std::string const &HioOIIO_Image::GetFilename() const
@@ -435,6 +428,8 @@ bool HioOIIO_Image::IsColorSpaceSRGB() const
           _imagespec.format == TypeDesc::UINT8);
 }
 
+bool HioOIIO_ExtractCustomMetadata(const ImageSpec &imagespec, TfToken const &key, VtValue *value);
+
 /* virtual */
 bool HioOIIO_Image::GetMetadata(TfToken const &key, VtValue *value) const
 {
@@ -443,7 +438,8 @@ bool HioOIIO_Image::GetMetadata(TfToken const &key, VtValue *value) const
     *value = result;
     return true;
   }
-  return false;
+
+  return HioOIIO_ExtractCustomMetadata(_imagespec, key, value);
 }
 
 static HioAddressMode _TranslateWrap(std::string const &wrapMode)
@@ -753,5 +749,6 @@ bool HioOIIO_Image::Write(StorageSpec const &storage, VtDictionary const &metada
 
   return true;
 }
+
 
 WABI_NAMESPACE_END

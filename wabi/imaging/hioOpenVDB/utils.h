@@ -1,5 +1,5 @@
 //
-// Copyright 2016 Pixar
+// Copyright 2021 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,25 +21,31 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-////////////////////////////////////////////////////////////////////////
+
+#ifndef WABI_IMAGING_HIO_OPENVDB_UTILS_H
+#define WABI_IMAGING_HIO_OPENVDB_UTILS_H
+
+/// \file hioOpenVDB/utils.h
 
 #include "wabi/wabi.h"
-#include "wabi/base/tf/registryManager.h"
-#include "wabi/base/tf/scriptModuleLoader.h"
-#include "wabi/base/tf/token.h"
+#include "wabi/imaging/hioOpenVDB/api.h"
 
-#include <vector>
+#include "openvdb/openvdb.h"
+#include <string>
 
 WABI_NAMESPACE_BEGIN
 
-TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
-{
-  // List of direct dependencies for this library.
-  const std::vector<TfToken> reqs = {TfToken("arch"),
-                                     TfToken("gf"),
-                                     TfToken("tf"),
-                                     TfToken("trace")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("vt"), TfToken("wabi.Vt"), reqs);
-}
+/// Return a shared pointer to an OpenVDB grid with \p name (or nullptr
+/// if no grid matching \p name exists), given an \p assetPath.
+HIOOPENVDB_API
+openvdb::GridBase::Ptr HioOpenVDBGridFromAsset(const std::string &name,
+                                               const std::string &assetPath);
+
+/// Return a shared pointer to a vector of OpenVDB grids,
+/// given an \p assetPath.
+HIOOPENVDB_API
+openvdb::GridPtrVecPtr HioOpenVDBGridsFromAsset(const std::string &assetPath);
 
 WABI_NAMESPACE_END
+
+#endif  // WABI_IMAGING_HIO_OPENVDB_UTILS_H

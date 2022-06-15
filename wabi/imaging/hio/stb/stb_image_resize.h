@@ -1,4 +1,4 @@
-/* stb_image_resize - v0.95 - public domain image resizing
+/* stb_image_resize - v0.97 - public domain image resizing
    by Jorge L Rodriguez (@VinoBS) - 2014
    http://github.com/nothings/stb
 
@@ -159,6 +159,8 @@
       Nathan Reed: warning fixes
 
    REVISIONS
+      0.97 (2020-02-02) fixed warning
+      0.96 (2019-03-04) fixed warnings
       0.95 (2017-07-23) fixed warnings
       0.94 (2017-03-18) fixed warnings
       0.93 (2017-03-03) fixed bug with certain combinations of heights
@@ -194,13 +196,15 @@ typedef uint16_t stbir_uint16;
 typedef uint32_t stbir_uint32;
 #  endif
 
-#  ifdef STB_IMAGE_RESIZE_STATIC
-#    define STBIRDEF static
-#  else
-#    ifdef __cplusplus
-#      define STBIRDEF extern "C"
+#  ifndef STBIRDEF
+#    ifdef STB_IMAGE_RESIZE_STATIC
+#      define STBIRDEF static
 #    else
-#      define STBIRDEF extern
+#      ifdef __cplusplus
+#        define STBIRDEF extern "C"
+#      else
+#        define STBIRDEF extern
+#      endif
 #    endif
 #  endif
 
@@ -244,6 +248,7 @@ STBIRDEF int stbir_resize_float(const float *input_pixels,
                                 int output_stride_in_bytes,
                                 int num_channels);
 
+
 // The following functions interpret image data as gamma-corrected sRGB.
 // Specify STBIR_ALPHA_CHANNEL_NONE if you have no alpha channel,
 // or otherwise provide the index of the alpha channel. Flags value
@@ -271,6 +276,7 @@ STBIRDEF int stbir_resize_uint8_srgb(const unsigned char *input_pixels,
                                      int num_channels,
                                      int alpha_channel,
                                      int flags);
+
 
 typedef enum
 {
@@ -381,6 +387,7 @@ STBIRDEF int stbir_resize_float_generic(const float *input_pixels,
                                         stbir_colorspace space,
                                         void *alloc_context);
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 // Full-complexity API
@@ -476,6 +483,7 @@ STBIRDEF int stbir_resize_region(const void *input_pixels,
 ////   end header file   /////////////////////////////////////////////////////
 #endif  // STBIR_INCLUDE_STB_IMAGE_RESIZE_H
 
+
 #ifdef STB_IMAGE_RESIZE_IMPLEMENTATION
 
 #  ifndef STBIR_ASSERT
@@ -504,6 +512,7 @@ STBIRDEF int stbir_resize_region(const void *input_pixels,
 #  else
 #    define stbir__inline __forceinline
 #  endif
+
 
 // should produce compiler error if size is wrong
 typedef unsigned char stbir__validate_uint32[sizeof(stbir_uint32) == 4 ? 1 : -1];
@@ -545,6 +554,7 @@ typedef unsigned char stbir__validate_uint32[sizeof(stbir_uint32) == 4 ? 1 : -1]
 #  ifndef STBIR_ALPHA_EPSILON
 #    define STBIR_ALPHA_EPSILON ((float)1 / (1 << 20) / (1 << 20) / (1 << 20) / (1 << 20))
 #  endif
+
 
 #  ifdef _MSC_VER
 #    define STBIR__UNUSED_PARAM(v) (void)(v)
@@ -649,9 +659,11 @@ typedef struct
   int encode_buffer_size;
 } stbir__info;
 
+
 static const float stbir__max_uint8_as_float = 255.0f;
 static const float stbir__max_uint16_as_float = 65535.0f;
 static const double stbir__max_uint32_as_float = 4294967295.0;
+
 
 static stbir__inline int stbir__min(int a, int b)
 {
@@ -1198,9 +1210,12 @@ static void stbir__calculate_coefficients_upsample(stbir_filter filter,
     total_filter += coefficient_group[i];
   }
 
-  STBIR_ASSERT(
-    stbir__filter_info_table[filter].kernel((float)(in_last_pixel + 1) + 0.5f - in_center_of_out,
-                                            1 / scale) == 0);
+  // NOTE(fg): Not actually true in general, nor is there any reason to expect it should be.
+  // It would be true in exact math but is at best approximately true in floating-point math,
+  // and it would not make sense to try and put actual bounds on this here because it depends
+  // on the image aspect ratio which can get pretty extreme.
+  // STBIR_ASSERT(stbir__filter_info_table[filter].kernel((float)(in_last_pixel + 1) + 0.5f -
+  // in_center_of_out, 1/scale) == 0);
 
   STBIR_ASSERT(total_filter > 0.9);
   STBIR_ASSERT(total_filter < 1.1f);  // Make sure it's not way off.
@@ -1246,9 +1261,12 @@ static void stbir__calculate_coefficients_downsample(stbir_filter filter,
     coefficient_group[i] = stbir__filter_info_table[filter].kernel(x, scale_ratio) * scale_ratio;
   }
 
-  STBIR_ASSERT(
-    stbir__filter_info_table[filter].kernel((float)(out_last_pixel + 1) + 0.5f - out_center_of_in,
-                                            scale_ratio) == 0);
+  // NOTE(fg): Not actually true in general, nor is there any reason to expect it should be.
+  // It would be true in exact math but is at best approximately true in floating-point math,
+  // and it would not make sense to try and put actual bounds on this here because it depends
+  // on the image aspect ratio which can get pretty extreme.
+  // STBIR_ASSERT(stbir__filter_info_table[filter].kernel((float)(out_last_pixel + 1) + 0.5f -
+  // out_center_of_in, scale_ratio) == 0);
 
   for (i = out_last_pixel - out_first_pixel; i >= 0; i--) {
     if (coefficient_group[i])
@@ -1417,7 +1435,8 @@ static float *stbir__get_decode_buffer(stbir__info *stbir_info)
             ->decode_buffer[stbir_info->horizontal_filter_pixel_margin * stbir_info->channels];
 }
 
-#  define STBIR__DECODE(type, colorspace) ((type) * (STBIR_MAX_COLORSPACES) + (colorspace))
+#  define STBIR__DECODE(type, colorspace) \
+    ((int)(type) * (STBIR_MAX_COLORSPACES) + (int)(colorspace))
 
 static void stbir__decode_scanline(stbir__info *stbir_info, int n)
 {
@@ -1624,6 +1643,7 @@ static float *stbir__add_empty_ring_buffer_entry(stbir__info *stbir_info, int n)
   return ring_buffer;
 }
 
+
 static void stbir__resample_horizontal_upsample(stbir__info *stbir_info, float *output_buffer)
 {
   int x, k;
@@ -1729,7 +1749,6 @@ static void stbir__resample_horizontal_downsample(stbir__info *stbir_info, float
         for (k = n0; k <= max_n; k++) {
           int out_pixel_index = k * 1;
           float coefficient = horizontal_coefficients[coefficient_group + k - n0];
-          STBIR_ASSERT(coefficient != 0);
           output_buffer[out_pixel_index + 0] += decode_buffer[in_pixel_index + 0] * coefficient;
         }
       }
@@ -1748,7 +1767,6 @@ static void stbir__resample_horizontal_downsample(stbir__info *stbir_info, float
         for (k = n0; k <= max_n; k++) {
           int out_pixel_index = k * 2;
           float coefficient = horizontal_coefficients[coefficient_group + k - n0];
-          STBIR_ASSERT(coefficient != 0);
           output_buffer[out_pixel_index + 0] += decode_buffer[in_pixel_index + 0] * coefficient;
           output_buffer[out_pixel_index + 1] += decode_buffer[in_pixel_index + 1] * coefficient;
         }
@@ -1768,7 +1786,6 @@ static void stbir__resample_horizontal_downsample(stbir__info *stbir_info, float
         for (k = n0; k <= max_n; k++) {
           int out_pixel_index = k * 3;
           float coefficient = horizontal_coefficients[coefficient_group + k - n0];
-          STBIR_ASSERT(coefficient != 0);
           output_buffer[out_pixel_index + 0] += decode_buffer[in_pixel_index + 0] * coefficient;
           output_buffer[out_pixel_index + 1] += decode_buffer[in_pixel_index + 1] * coefficient;
           output_buffer[out_pixel_index + 2] += decode_buffer[in_pixel_index + 2] * coefficient;
@@ -1789,7 +1806,6 @@ static void stbir__resample_horizontal_downsample(stbir__info *stbir_info, float
         for (k = n0; k <= max_n; k++) {
           int out_pixel_index = k * 4;
           float coefficient = horizontal_coefficients[coefficient_group + k - n0];
-          STBIR_ASSERT(coefficient != 0);
           output_buffer[out_pixel_index + 0] += decode_buffer[in_pixel_index + 0] * coefficient;
           output_buffer[out_pixel_index + 1] += decode_buffer[in_pixel_index + 1] * coefficient;
           output_buffer[out_pixel_index + 2] += decode_buffer[in_pixel_index + 2] * coefficient;
@@ -1812,7 +1828,6 @@ static void stbir__resample_horizontal_downsample(stbir__info *stbir_info, float
           int c;
           int out_pixel_index = k * channels;
           float coefficient = horizontal_coefficients[coefficient_group + k - n0];
-          STBIR_ASSERT(coefficient != 0);
           for (c = 0; c < channels; c++)
             output_buffer[out_pixel_index + c] += decode_buffer[in_pixel_index + c] * coefficient;
         }
@@ -1867,6 +1882,7 @@ static float *stbir__get_ring_buffer_scanline(int get_scanline,
                           ring_buffer_num_entries;
   return stbir__get_ring_buffer_entry(ring_buffer, ring_buffer_index, ring_buffer_length);
 }
+
 
 static void stbir__encode_scanline(stbir__info *stbir_info,
                                    int num_pixels,
@@ -2598,8 +2614,9 @@ static int stbir__resize_allocated(stbir__info *info,
   if (alpha_channel < 0)
     flags |= STBIR_FLAG_ALPHA_USES_COLORSPACE | STBIR_FLAG_ALPHA_PREMULTIPLIED;
 
-  if (!(flags & STBIR_FLAG_ALPHA_USES_COLORSPACE) || !(flags & STBIR_FLAG_ALPHA_PREMULTIPLIED))
+  if (!(flags & STBIR_FLAG_ALPHA_USES_COLORSPACE) || !(flags & STBIR_FLAG_ALPHA_PREMULTIPLIED)) {
     STBIR_ASSERT(alpha_channel >= 0 && alpha_channel < info->channels);
+  }
 
   if (alpha_channel >= info->channels)
     return 0;
@@ -2717,6 +2734,7 @@ static int stbir__resize_allocated(stbir__info *info,
 
   return 1;
 }
+
 
 static int stbir__resize_arbitrary(void *alloc_context,
                                    const void *input_data,
@@ -3002,6 +3020,7 @@ STBIRDEF int stbir_resize_uint16_generic(const stbir_uint16 *input_pixels,
                                  space);
 }
 
+
 STBIRDEF int stbir_resize_float_generic(const float *input_pixels,
                                         int input_w,
                                         int input_h,
@@ -3042,6 +3061,7 @@ STBIRDEF int stbir_resize_float_generic(const float *input_pixels,
                                  edge_wrap_mode,
                                  space);
 }
+
 
 STBIRDEF int stbir_resize(const void *input_pixels,
                           int input_w,
@@ -3086,6 +3106,7 @@ STBIRDEF int stbir_resize(const void *input_pixels,
                                  edge_mode_vertical,
                                  space);
 }
+
 
 STBIRDEF int stbir_resize_subpixel(const void *input_pixels,
                                    int input_w,

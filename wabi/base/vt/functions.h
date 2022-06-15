@@ -45,7 +45,7 @@ WABI_NAMESPACE_BEGIN
 
 // VtCat
 #    define BOOST_PP_ITERATION_PARAMS_1 \
-      (4, (0, VT_FUNCTIONS_MAX_ARGS, "pxr/base/vt/functions.h", 0))
+      (4, (0, VT_FUNCTIONS_MAX_ARGS, "wabi/base/vt/functions.h", 0))
 #    include BOOST_PP_ITERATE()
 
 // ****************************************************************************

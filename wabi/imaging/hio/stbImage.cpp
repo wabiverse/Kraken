@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2018 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #include "wabi/imaging/hio/image.h"
 #include "wabi/imaging/hio/types.h"
@@ -37,8 +30,8 @@
 #include "wabi/usd/ar/resolver.h"
 
 // use gf types to read and write metadata
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/matrix4f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/arch/defines.h"
 #include "wabi/base/arch/pragmas.h"
@@ -46,14 +39,21 @@
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/type.h"
 
+ARCH_PRAGMA_PUSH
 // To avoid exporting the stb_* functions from our shared library
 // we define the STB_IMAGE_..._STATIC macros so that stb marks
 // them as static. This causes many "unused function" warnings,
 // so we use ARCH_PRAGMA_UNUSED_FUNCTION to suppress them.
-ARCH_PRAGMA_PUSH
 ARCH_PRAGMA_UNUSED_FUNCTION
+// We also turn off the "maybe uninitialized" warning because the version of
+// stb we are currently using produces these warnings, though the particular
+// case in question appears to be benign.
+ARCH_PRAGMA_MAYBE_UNINITIALIZED
 
 #define STB_IMAGE_STATIC
+#ifdef ARCH_OS_WINDOWS
+#  define STBI_WINDOWS_UTF8
+#endif
 #define STB_IMAGE_IMPLEMENTATION
 #include "wabi/imaging/hio/stb/stb_image.h"
 
@@ -62,6 +62,9 @@ ARCH_PRAGMA_UNUSED_FUNCTION
 #include "wabi/imaging/hio/stb/stb_image_resize.h"
 
 #define STB_IMAGE_WRITE_STATIC
+#ifdef ARCH_OS_WINDOWS
+#  define STBIW_WINDOWS_UTF8
+#endif
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "wabi/imaging/hio/stb/stb_image_write.h"
 
@@ -168,7 +171,15 @@ void Hio_StbImage::_GetInfoFromStorageSpec(HioImage::StorageSpec const &storage)
   _nchannels = HioGetComponentCount(storage.format);
 }
 
-Hio_StbImage::Hio_StbImage() : _width(0), _height(0), _gamma(0.0f), _nchannels(0) {}
+Hio_StbImage::Hio_StbImage()
+  : _width(0),
+    _height(0),
+    _gamma(0.0f),
+    _outputType(HioTypeUnsignedByte),
+    _nchannels(0),
+    _format(HioFormatInvalid),
+    _sourceColorSpace(Auto)
+{}
 
 /// Copies the region of the source image defined by cropTop, cropBottom,
 /// cropLeft, and cropRight into storage.data.  If needed, we resize
@@ -193,6 +204,7 @@ bool Hio_StbImage::_CropAndResize(void const *sourceData,
   const int croppedStrideLength = cropWidth * bpp;
 
   const int strideLength = _width * bpp;
+
 
   // set destination
   // if resizing is needed, then copy into temporary memory
@@ -269,6 +281,7 @@ std::string const &Hio_StbImage::GetFilename() const
 {
   return _filename;
 }
+
 
 /* virtual */
 int Hio_StbImage::GetWidth() const
@@ -472,6 +485,7 @@ bool Hio_StbImage::ReadCropped(int const cropTop,
       stbi_image_free(imageData);
       return false;
     }
+
   } else {
     const int bpp = GetBytesPerPixel();
     const int inputStrideInBytes = _width * bpp;
@@ -615,8 +629,8 @@ bool Hio_StbImage::Write(StorageSpec const &storageIn, VtDictionary const &metad
 
   // Again, how to store metadata?
   // for (const std::pair<std::string, VtValue>& m : metadata) {
-  //    _SetAttribute(&spec, m.first, m.second);
-  //}
+  //     _SetAttribute(&spec, m.first, m.second);
+  // }
 
   // configure to flip vertically
   if (storage.flipped)
@@ -659,5 +673,6 @@ bool Hio_StbImage::Write(StorageSpec const &storageIn, VtDictionary const &metad
 
   return true;
 }
+
 
 WABI_NAMESPACE_END

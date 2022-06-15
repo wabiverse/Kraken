@@ -1,26 +1,30 @@
 set(WABI_PREFIX wabi/imaging)
 set(WABI_PACKAGE hioOpenVDB)
 
-if (NOT ${WITH_GPU_SUPPORT})
+if(NOT ${WITH_GPU_SUPPORT})
   message(STATUS "Skipping ${WABI_PACKAGE} because WITH_GPU_SUPPORT is OFF")
   return()
 endif()
 
-wabi_plugin(hioOpenVDB
+wabi_library(hioOpenVDB
     LIBRARIES
         ar
         gf
         hio
         tf
         usd
-        ${TBB_LIBRARIES}
-        ${OPENEXR_LIBRARIES}
+        ${OPENEXR_Half_LIBRARY}
         ${OPENVDB_LIBRARY}
 
     INCLUDE_DIRS
-        ${TBB_INCLUDE_DIRS}
         ${OPENVDB_INCLUDE_DIR}
-        ${OPENEXR_INCLUDE_DIR}
+
+    PUBLIC_CLASSES
+        utils
+        vdbAssetInterface
+
+    PUBLIC_HEADERS
+        api.h
 
     PRIVATE_CLASSES
         debugCodes

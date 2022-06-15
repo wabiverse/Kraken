@@ -1,49 +1,38 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2021 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
-#include "wabi/imaging/plugin/hioOpenVDB/vdbTextureData.h"
-#include "wabi/imaging/plugin/hioOpenVDB/debugCodes.h"
+#include "wabi/imaging/hioOpenVDB/vdbTextureData.h"
+#include "wabi/imaging/hioOpenVDB/debugCodes.h"
+#include "wabi/imaging/hioOpenVDB/utils.h"
 
 #include "wabi/imaging/hf/perfLog.h"
 #include "wabi/imaging/hio/fieldTextureData.h"
 
-#include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/type.h"
+#include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/trace/trace.h"
 
-#include "wabi/usd/ar/asset.h"
-#include "wabi/usd/ar/resolvedPath.h"
-#include "wabi/usd/ar/resolver.h"
-
-#include "openvdb/io/Stream.h"
 #include "openvdb/openvdb.h"
 #include "openvdb/tools/Dense.h"
 #include "openvdb/tools/GridTransformer.h"
@@ -258,6 +247,8 @@ namespace
     // box of the tree in the grid.
     static _GridHolderBase *New(const openvdb::GridBase::Ptr &grid);
 
+    virtual ~_GridHolderBase() = default;
+
    protected:
 
     _GridHolderBase(const openvdb::GridBase::Ptr &grid)
@@ -390,53 +381,6 @@ namespace
     return nullptr;
   }
 
-  // Classes for converting a char buffer and size to an istream, similar to the
-  // functionality of boost::iostreams. These are pretty generic and could be
-  // moved to a lower level library if desired in the future.
-  class _CharBuf : public std::basic_streambuf<char>
-  {
-   public:
-
-    _CharBuf(const char *p, size_t l)
-    {
-      setg((char *)p, (char *)p, (char *)p + l);
-    }
-
-    pos_type seekpos(pos_type pos, std::ios_base::openmode which) override
-    {
-      return seekoff(pos - pos_type(off_type(0)), std::ios_base::beg, which);
-    }
-
-    pos_type seekoff(off_type off,
-                     std::ios_base::seekdir dir,
-                     std::ios_base::openmode which = std::ios_base::in) override
-    {
-      // Should use switch(dir) but that results in a compiler error due to
-      // a missing case (_S_ios_seekdir_end) which isn't actually a case.
-      if (dir == std::ios_base::cur)
-        gbump(off);
-      else if (dir == std::ios_base::end)
-        setg(eback(), egptr() + off, egptr());
-      else if (dir == std::ios_base::beg)
-        setg(eback(), eback() + off, egptr());
-      return gptr() - eback();
-    }
-  };
-
-  class _CharStream : public std::istream
-  {
-   public:
-
-    _CharStream(const char *p, size_t l) : std::istream(&_buffer), _buffer(p, l)
-    {
-      rdbuf(&_buffer);
-    }
-
-   private:
-
-    _CharBuf _buffer;
-  };
-
   // Load the grid with given name from the OpenVDB file at given path
   _GridHolderBase *_LoadGrid(const std::string &filePath, std::string const &gridName)
   {
@@ -482,41 +426,13 @@ namespace
         f.close();
       }
     } else {
-      // Try reading the vdb with ArAsset.
-      // XXX In the future we may want to first try to read with a vdb
-      // specific subclass of ArAsset that directly stores a GridPtrVecPtr,
-      // to avoid serializing and deserializing the vdb data.
-      std::shared_ptr<ArAsset> asset;
-      {
-        TRACE_FUNCTION_SCOPE("Opening VDB ArAsset");
-        asset = ArGetResolver().OpenAsset(ArResolvedPath(filePath));
-      }
+      // The filePath is not actually a path on disk. Attempt to resolve
+      // it as an ArAsset and retrieve a vdb grid from that asset.
+      result = HioOpenVDBGridFromAsset(gridName, filePath);
 
-      // Use an openvdb::io::Stream to read raw bytes provided by ArAsset.
-      // ArAsset provides a char buffer and size, but Stream requires a
-      // std::istream. To bridge the gap, we use the _CharStream above to
-      // wrap the char buffer from ArAsset in a std::istream.
-      {
-        TRACE_FUNCTION_SCOPE("Streaming VDB grids from ArAsset bytes");
-        std::shared_ptr<const char> vdbBytes = asset->GetBuffer();
-        const size_t vdbNumBytes = asset->GetSize();
-        _CharStream vdbSource(vdbBytes.get(), vdbNumBytes);
-
-        openvdb::io::Stream s(vdbSource);
-        openvdb::GridPtrVecPtr grids = s.getGrids();
-
-        // Find the grid in the grid vector.
-        for (const openvdb::GridBase::Ptr grid : *grids) {
-          if (grid->getName() == gridName) {
-            result = grid;
-            break;
-          }
-        }
-
-        if (!result) {
-          TF_WARN("OpenVDB asset path %s has no grid %s", filePath.c_str(), gridName.c_str());
-          return nullptr;
-        }
+      if (!result) {
+        TF_WARN("OpenVDB asset path %s has no grid %s", filePath.c_str(), gridName.c_str());
+        return nullptr;
       }
     }
 
@@ -574,6 +490,7 @@ namespace
 bool HioOpenVDB_TextureData::Read()
 {
   TRACE_FUNCTION();
+  HF_MALLOC_TAG_FUNCTION();
 
   TF_DEBUG(HIOOPENVDB_DEBUG_TEXTURE)
     .Msg("[VdbTextureData] Path: %s GridName: %s\n", _filePath.c_str(), _gridName.c_str());

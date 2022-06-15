@@ -6,6 +6,7 @@ add_subdirectory(pxOsd)
 add_subdirectory(glf)
 add_subdirectory(hgi)
 add_subdirectory(hgiGL)
+add_subdirectory(hioOpenVDB)
 
 if(WITH_METAL)
   add_subdirectory(hgiMetal)

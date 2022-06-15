@@ -10,7 +10,6 @@ wabi_plugin(hioOiio
     LIBRARIES
         ar
         arch
-        garch
         gf
         hio
         tf
@@ -19,11 +18,11 @@ wabi_plugin(hioOiio
 
     INCLUDE_DIRS
         ${OIIO_INCLUDE_DIRS}
-        ${OPENEXR_INCLUDE_DIR}
-        ${IMATH_INCLUDE_DIR}
+        ${OPENEXR_INCLUDE_DIRS}
 
     CPPFILES
         oiioImage.cpp
+        metadata.cpp
 
     RESOURCE_FILES
         resources/plugInfo.json
