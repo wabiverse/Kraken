@@ -6,7 +6,7 @@
 $KRAKEN_BUILDING_VERSION_MAJOR = 1
 $KRAKEN_BUILDING_VERSION_MINOR = 50
 $KRAKEN_DEVELOPMENT_MILESTONE = "Initial Release Sprint"
-$PIXAR_BUILDING_VERSION = 21.08
+$PIXAR_BUILDING_VERSION = 22.05
 
 # ---------------------------------------------- Environment. -----
 
