@@ -13,15 +13,18 @@ wabi_library(usdLux
 
     PUBLIC_CLASSES
         blackbody
+        boundableLightBase
         cylinderLight
         diskLight
         distantLight
         domeLight
         geometryLight
-        light
+        lightAPI
         lightFilter
-        lightPortal
+        lightListAPI
         listAPI
+        meshLightAPI
+        nonboundableLightBase
         pluginLight
         pluginLightFilter
         portalLight
@@ -30,6 +33,7 @@ wabi_library(usdLux
         shapingAPI
         sphereLight
         tokens
+        volumeLightAPI
 
     PUBLIC_HEADERS
         api.h
@@ -43,15 +47,18 @@ wabi_library(usdLux
 
     PYMODULE_CPPFILES
         module.cpp
+        wrapBoundableLightBase.cpp
         wrapCylinderLight.cpp
         wrapDiskLight.cpp
         wrapDistantLight.cpp
         wrapDomeLight.cpp
         wrapGeometryLight.cpp
-        wrapLight.cpp
+        wrapLightAPI.cpp
         wrapLightFilter.cpp
-        wrapLightPortal.cpp
+        wrapLightListAPI.cpp
         wrapListAPI.cpp
+        wrapMeshLightAPI.cpp
+        wrapNonboundableLightBase.cpp
         wrapPluginLight.cpp
         wrapPluginLightFilter.cpp
         wrapPortalLight.cpp
@@ -60,8 +67,9 @@ wabi_library(usdLux
         wrapShapingAPI.cpp
         wrapSphereLight.cpp
         wrapTokens.cpp
+        wrapVolumeLightAPI.cpp
 
-    PYMODULE_FILES
+    PYMODULE_FILES 
         python/__init__.py
 
     RESOURCE_FILES

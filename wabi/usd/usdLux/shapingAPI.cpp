@@ -1,244 +1,266 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdLux/shapingAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-  TfType::Define<UsdLuxShapingAPI, TfType::Bases<UsdAPISchemaBase>>();
+    TfType::Define<UsdLuxShapingAPI,
+        TfType::Bases< UsdAPISchemaBase > >();
+    
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (ShapingAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (ShapingAPI)
+);
 
 /* virtual */
-UsdLuxShapingAPI::~UsdLuxShapingAPI() {}
+UsdLuxShapingAPI::~UsdLuxShapingAPI()
+{
+}
 
 /* static */
-UsdLuxShapingAPI UsdLuxShapingAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdLuxShapingAPI
+UsdLuxShapingAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
-  if (!stage) {
-    TF_CODING_ERROR("Invalid stage");
-    return UsdLuxShapingAPI();
-  }
-  return UsdLuxShapingAPI(stage->GetPrimAtPath(path));
+    if (!stage) {
+        TF_CODING_ERROR("Invalid stage");
+        return UsdLuxShapingAPI();
+    }
+    return UsdLuxShapingAPI(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdLuxShapingAPI::_GetSchemaKind() const
 {
-  return UsdLuxShapingAPI::schemaKind;
+    return UsdLuxShapingAPI::schemaKind;
 }
 
 /* static */
-UsdLuxShapingAPI UsdLuxShapingAPI::Apply(const UsdPrim &prim)
+bool
+UsdLuxShapingAPI::CanApply(
+    const UsdPrim &prim, std::string *whyNot)
 {
-  if (prim.ApplyAPI<UsdLuxShapingAPI>()) {
-    return UsdLuxShapingAPI(prim);
-  }
-  return UsdLuxShapingAPI();
+    return prim.CanApplyAPI<UsdLuxShapingAPI>(whyNot);
 }
 
 /* static */
-const TfType &UsdLuxShapingAPI::_GetStaticTfType()
+UsdLuxShapingAPI
+UsdLuxShapingAPI::Apply(const UsdPrim &prim)
 {
-  static TfType tfType = TfType::Find<UsdLuxShapingAPI>();
-  return tfType;
+    if (prim.ApplyAPI<UsdLuxShapingAPI>()) {
+        return UsdLuxShapingAPI(prim);
+    }
+    return UsdLuxShapingAPI();
 }
 
 /* static */
-bool UsdLuxShapingAPI::_IsTypedSchema()
+const TfType &
+UsdLuxShapingAPI::_GetStaticTfType()
 {
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
-  return isTyped;
+    static TfType tfType = TfType::Find<UsdLuxShapingAPI>();
+    return tfType;
+}
+
+/* static */
+bool 
+UsdLuxShapingAPI::_IsTypedSchema()
+{
+    static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
+    return isTyped;
 }
 
 /* virtual */
-const TfType &UsdLuxShapingAPI::_GetTfType() const
+const TfType &
+UsdLuxShapingAPI::_GetTfType() const
 {
-  return _GetStaticTfType();
+    return _GetStaticTfType();
 }
 
-UsdAttribute UsdLuxShapingAPI::GetShapingFocusAttr() const
+UsdAttribute
+UsdLuxShapingAPI::GetShapingFocusAttr() const
 {
-  return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingFocus);
+    return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingFocus);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingFocusAttr(VtValue const &defaultValue,
-                                                      bool writeSparsely) const
+UsdAttribute
+UsdLuxShapingAPI::CreateShapingFocusAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingFocus,
-                                    SdfValueTypeNames->Float,
-                                    /* custom = */ false,
-                                    SdfVariabilityVarying,
-                                    defaultValue,
-                                    writeSparsely);
+    return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingFocus,
+                       SdfValueTypeNames->Float,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
 }
 
-UsdAttribute UsdLuxShapingAPI::GetShapingFocusTintAttr() const
+UsdAttribute
+UsdLuxShapingAPI::GetShapingFocusTintAttr() const
 {
-  return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingFocusTint);
+    return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingFocusTint);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingFocusTintAttr(VtValue const &defaultValue,
-                                                          bool writeSparsely) const
+UsdAttribute
+UsdLuxShapingAPI::CreateShapingFocusTintAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingFocusTint,
-                                    SdfValueTypeNames->Color3f,
-                                    /* custom = */ false,
-                                    SdfVariabilityVarying,
-                                    defaultValue,
-                                    writeSparsely);
+    return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingFocusTint,
+                       SdfValueTypeNames->Color3f,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
 }
 
-UsdAttribute UsdLuxShapingAPI::GetShapingConeAngleAttr() const
+UsdAttribute
+UsdLuxShapingAPI::GetShapingConeAngleAttr() const
 {
-  return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingConeAngle);
+    return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingConeAngle);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingConeAngleAttr(VtValue const &defaultValue,
-                                                          bool writeSparsely) const
+UsdAttribute
+UsdLuxShapingAPI::CreateShapingConeAngleAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingConeAngle,
-                                    SdfValueTypeNames->Float,
-                                    /* custom = */ false,
-                                    SdfVariabilityVarying,
-                                    defaultValue,
-                                    writeSparsely);
+    return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingConeAngle,
+                       SdfValueTypeNames->Float,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
 }
 
-UsdAttribute UsdLuxShapingAPI::GetShapingConeSoftnessAttr() const
+UsdAttribute
+UsdLuxShapingAPI::GetShapingConeSoftnessAttr() const
 {
-  return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingConeSoftness);
+    return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingConeSoftness);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingConeSoftnessAttr(VtValue const &defaultValue,
-                                                             bool writeSparsely) const
+UsdAttribute
+UsdLuxShapingAPI::CreateShapingConeSoftnessAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingConeSoftness,
-                                    SdfValueTypeNames->Float,
-                                    /* custom = */ false,
-                                    SdfVariabilityVarying,
-                                    defaultValue,
-                                    writeSparsely);
+    return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingConeSoftness,
+                       SdfValueTypeNames->Float,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
 }
 
-UsdAttribute UsdLuxShapingAPI::GetShapingIesFileAttr() const
+UsdAttribute
+UsdLuxShapingAPI::GetShapingIesFileAttr() const
 {
-  return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingIesFile);
+    return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingIesFile);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingIesFileAttr(VtValue const &defaultValue,
-                                                        bool writeSparsely) const
+UsdAttribute
+UsdLuxShapingAPI::CreateShapingIesFileAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingIesFile,
-                                    SdfValueTypeNames->Asset,
-                                    /* custom = */ false,
-                                    SdfVariabilityVarying,
-                                    defaultValue,
-                                    writeSparsely);
+    return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingIesFile,
+                       SdfValueTypeNames->Asset,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
 }
 
-UsdAttribute UsdLuxShapingAPI::GetShapingIesAngleScaleAttr() const
+UsdAttribute
+UsdLuxShapingAPI::GetShapingIesAngleScaleAttr() const
 {
-  return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingIesAngleScale);
+    return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingIesAngleScale);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingIesAngleScaleAttr(VtValue const &defaultValue,
-                                                              bool writeSparsely) const
+UsdAttribute
+UsdLuxShapingAPI::CreateShapingIesAngleScaleAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingIesAngleScale,
-                                    SdfValueTypeNames->Float,
-                                    /* custom = */ false,
-                                    SdfVariabilityVarying,
-                                    defaultValue,
-                                    writeSparsely);
+    return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingIesAngleScale,
+                       SdfValueTypeNames->Float,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
 }
 
-UsdAttribute UsdLuxShapingAPI::GetShapingIesNormalizeAttr() const
+UsdAttribute
+UsdLuxShapingAPI::GetShapingIesNormalizeAttr() const
 {
-  return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingIesNormalize);
+    return GetPrim().GetAttribute(UsdLuxTokens->inputsShapingIesNormalize);
 }
 
-UsdAttribute UsdLuxShapingAPI::CreateShapingIesNormalizeAttr(VtValue const &defaultValue,
-                                                             bool writeSparsely) const
+UsdAttribute
+UsdLuxShapingAPI::CreateShapingIesNormalizeAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingIesNormalize,
-                                    SdfValueTypeNames->Bool,
-                                    /* custom = */ false,
-                                    SdfVariabilityVarying,
-                                    defaultValue,
-                                    writeSparsely);
+    return UsdSchemaBase::_CreateAttr(UsdLuxTokens->inputsShapingIesNormalize,
+                       SdfValueTypeNames->Bool,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
 }
 
-namespace
+namespace {
+static inline TfTokenVector
+_ConcatenateAttributeNames(const TfTokenVector& left,const TfTokenVector& right)
 {
-  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
-                                                         const TfTokenVector &right)
-  {
     TfTokenVector result;
     result.reserve(left.size() + right.size());
     result.insert(result.end(), left.begin(), left.end());
     result.insert(result.end(), right.begin(), right.end());
     return result;
-  }
-}  // namespace
+}
+}
 
 /*static*/
-const TfTokenVector &UsdLuxShapingAPI::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector&
+UsdLuxShapingAPI::GetSchemaAttributeNames(bool includeInherited)
 {
-  static TfTokenVector localNames = {
-    UsdLuxTokens->inputsShapingFocus,
-    UsdLuxTokens->inputsShapingFocusTint,
-    UsdLuxTokens->inputsShapingConeAngle,
-    UsdLuxTokens->inputsShapingConeSoftness,
-    UsdLuxTokens->inputsShapingIesFile,
-    UsdLuxTokens->inputsShapingIesAngleScale,
-    UsdLuxTokens->inputsShapingIesNormalize,
-  };
-  static TfTokenVector allNames = _ConcatenateAttributeNames(
-    UsdAPISchemaBase::GetSchemaAttributeNames(true),
-    localNames);
+    static TfTokenVector localNames = {
+        UsdLuxTokens->inputsShapingFocus,
+        UsdLuxTokens->inputsShapingFocusTint,
+        UsdLuxTokens->inputsShapingConeAngle,
+        UsdLuxTokens->inputsShapingConeSoftness,
+        UsdLuxTokens->inputsShapingIesFile,
+        UsdLuxTokens->inputsShapingIesAngleScale,
+        UsdLuxTokens->inputsShapingIesNormalize,
+    };
+    static TfTokenVector allNames =
+        _ConcatenateAttributeNames(
+            UsdAPISchemaBase::GetSchemaAttributeNames(true),
+            localNames);
 
-  if (includeInherited)
-    return allNames;
-  else
-    return localNames;
+    if (includeInherited)
+        return allNames;
+    else
+        return localNames;
 }
 
 WABI_NAMESPACE_END
@@ -257,43 +279,52 @@ WABI_NAMESPACE_END
 WABI_NAMESPACE_BEGIN
 
 UsdLuxShapingAPI::UsdLuxShapingAPI(const UsdShadeConnectableAPI &connectable)
-  : UsdLuxShapingAPI(connectable.GetPrim())
-{}
-
-UsdShadeConnectableAPI UsdLuxShapingAPI::ConnectableAPI() const
+    : UsdLuxShapingAPI(connectable.GetPrim())
 {
-  return UsdShadeConnectableAPI(GetPrim());
 }
 
-UsdShadeOutput UsdLuxShapingAPI::CreateOutput(const TfToken &name,
-                                              const SdfValueTypeName &typeName)
+UsdShadeConnectableAPI 
+UsdLuxShapingAPI::ConnectableAPI() const
 {
-  return UsdShadeConnectableAPI(GetPrim()).CreateOutput(name, typeName);
+    return UsdShadeConnectableAPI(GetPrim());
 }
 
-UsdShadeOutput UsdLuxShapingAPI::GetOutput(const TfToken &name) const
+UsdShadeOutput
+UsdLuxShapingAPI::CreateOutput(const TfToken& name,
+                                const SdfValueTypeName& typeName)
 {
-  return UsdShadeConnectableAPI(GetPrim()).GetOutput(name);
+    return UsdShadeConnectableAPI(GetPrim()).CreateOutput(name, typeName);
 }
 
-std::vector<UsdShadeOutput> UsdLuxShapingAPI::GetOutputs(bool onlyAuthored) const
+UsdShadeOutput
+UsdLuxShapingAPI::GetOutput(const TfToken &name) const
 {
-  return UsdShadeConnectableAPI(GetPrim()).GetOutputs(onlyAuthored);
+    return UsdShadeConnectableAPI(GetPrim()).GetOutput(name);
 }
 
-UsdShadeInput UsdLuxShapingAPI::CreateInput(const TfToken &name, const SdfValueTypeName &typeName)
+std::vector<UsdShadeOutput>
+UsdLuxShapingAPI::GetOutputs(bool onlyAuthored) const
 {
-  return UsdShadeConnectableAPI(GetPrim()).CreateInput(name, typeName);
+    return UsdShadeConnectableAPI(GetPrim()).GetOutputs(onlyAuthored);
 }
 
-UsdShadeInput UsdLuxShapingAPI::GetInput(const TfToken &name) const
+UsdShadeInput
+UsdLuxShapingAPI::CreateInput(const TfToken& name,
+                               const SdfValueTypeName& typeName)
 {
-  return UsdShadeConnectableAPI(GetPrim()).GetInput(name);
+    return UsdShadeConnectableAPI(GetPrim()).CreateInput(name, typeName);
 }
 
-std::vector<UsdShadeInput> UsdLuxShapingAPI::GetInputs(bool onlyAuthored) const
+UsdShadeInput
+UsdLuxShapingAPI::GetInput(const TfToken &name) const
 {
-  return UsdShadeConnectableAPI(GetPrim()).GetInputs(onlyAuthored);
+    return UsdShadeConnectableAPI(GetPrim()).GetInput(name);
+}
+
+std::vector<UsdShadeInput>
+UsdLuxShapingAPI::GetInputs(bool onlyAuthored) const
+{
+    return UsdShadeConnectableAPI(GetPrim()).GetInputs(onlyAuthored);
 }
 
 WABI_NAMESPACE_END
