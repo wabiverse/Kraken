@@ -24,9 +24,9 @@
 #ifndef WABI_USD_SDF_TOKENS_H
 #define WABI_USD_SDF_TOKENS_H
 
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
+#include "wabi/base/tf/staticTokens.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -35,14 +35,28 @@ WABI_NAMESPACE_BEGIN
 
 TF_DECLARE_PUBLIC_TOKENS(SdfTokens, SDF_API, SDF_TOKENS);
 
+#define SDF_PATH_ABSOLUTE_INDICATOR_CHAR '/'
+#define SDF_PATH_ABSOLUTE_INDICATOR_STR "/"
+#define SDF_PATH_RELATIVE_ROOT_CHAR '.'
+#define SDF_PATH_RELATIVE_ROOT_STR "."
+#define SDF_PATH_CHILD_DELIMITER_CHAR '/'
+#define SDF_PATH_CHILD_DELIMITER_STR "/"
 #define SDF_PATH_NS_DELIMITER_CHAR ':'
 #define SDF_PATH_NS_DELIMITER_STR ":"
+#define SDF_PATH_RELATIONSHIP_TARGET_START_CHAR '['
+#define SDF_PATH_RELATIONSHIP_TARGET_START_STR "["
+#define SDF_PATH_RELATIONSHIP_TARGET_END_CHAR ']'
+#define SDF_PATH_RELATIONSHIP_TARGET_END_STR "]"
+#define SDF_PATH_PROPERTY_DELIMITER_CHAR '.'
+#define SDF_PATH_PROPERTY_DELIMITER_STR "."
 
-#define SDF_PATH_TOKENS                                                                    \
-  ((menvaStart, "<"))((menvaEnd, ">"))((absoluteIndicator, "/"))((relativeRoot, "."))(     \
-    (childDelimiter, "/"))((propertyDelimiter, "."))((relationshipTargetStart, "["))(      \
-    (relationshipTargetEnd, "]"))((parentPathElement, ".."))((mapperIndicator, "mapper"))( \
-    (expressionIndicator, "expression"))((mapperArgDelimiter, "."))(                       \
+#define SDF_PATH_TOKENS                                                                           \
+  ((absoluteIndicator, SDF_PATH_ABSOLUTE_INDICATOR_STR))(                                         \
+    (relativeRoot, SDF_PATH_RELATIVE_ROOT_STR))((childDelimiter, SDF_PATH_CHILD_DELIMITER_STR))(  \
+    (propertyDelimiter, SDF_PATH_PROPERTY_DELIMITER_STR))(                                        \
+    (relationshipTargetStart, SDF_PATH_RELATIONSHIP_TARGET_START_STR))(                           \
+    (relationshipTargetEnd, SDF_PATH_RELATIONSHIP_TARGET_END_STR))((parentPathElement, ".."))(    \
+    (mapperIndicator, "mapper"))((expressionIndicator, "expression"))((mapperArgDelimiter, "."))( \
     (namespaceDelimiter, SDF_PATH_NS_DELIMITER_STR))((empty, ""))
 
 TF_DECLARE_PUBLIC_TOKENS(SdfPathTokens, SDF_API, SDF_PATH_TOKENS);
