@@ -37,7 +37,7 @@ void ED_view3d_init_engine(const SdfPath &root, bool &reset)
   TF_UNUSED(root);
 
   if (ARCH_UNLIKELY(reset)) {
-    ANCHOR::GetEngineApollo().reset(new UsdApolloEngine(ANCHOR::GetPixarDriver()));
+    ANCHOR::GetEngineGL().reset(new UsdImagingGLEngine(ANCHOR::GetPixarDriver()));
     reset = false;
   }
 }

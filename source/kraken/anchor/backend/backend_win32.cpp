@@ -107,7 +107,7 @@ WABI_NAMESPACE_USING
 
 /**
  * HYDRA RENDERING PARAMS. */
-static UsdApolloRenderParams g_HDPARAMS_Apollo;
+static UsdImagingGLRenderParams g_HDPARAMS_GL;
 
 static VkDescriptorSetLayout g_DescriptorSetLayout = VK_NULL_HANDLE;
 static VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
@@ -4840,10 +4840,10 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
     const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f ||
                                draw_data->DisplaySize[1] <= 0.0f);
     if (!is_minimized) {
-      m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
-      m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
-      m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
-      m_vulkan_context->ClearValue.color.float32[3] = g_HDPARAMS_Apollo.clearColor[3];
+      m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_GL.clearColor[0];
+      m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_GL.clearColor[1];
+      m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_GL.clearColor[2];
+      m_vulkan_context->ClearValue.color.float32[3] = g_HDPARAMS_GL.clearColor[3];
       FrameRender(draw_data);
       FramePresent();
     }
@@ -4865,10 +4865,10 @@ eAnchorStatus AnchorWindowWin32::swapBuffers()
     m_d3dCommandList->ResourceBarrier(1, &barrier);
 
     const float clear_color_with_alpha[4] = {
-      g_HDPARAMS_Apollo.clearColor[0] * g_HDPARAMS_Apollo.clearColor[3],
-      g_HDPARAMS_Apollo.clearColor[1] * g_HDPARAMS_Apollo.clearColor[3],
-      g_HDPARAMS_Apollo.clearColor[2] * g_HDPARAMS_Apollo.clearColor[3],
-      g_HDPARAMS_Apollo.clearColor[3]};
+      g_HDPARAMS_GL.clearColor[0] * g_HDPARAMS_GL.clearColor[3],
+      g_HDPARAMS_GL.clearColor[1] * g_HDPARAMS_GL.clearColor[3],
+      g_HDPARAMS_GL.clearColor[2] * g_HDPARAMS_GL.clearColor[3],
+      g_HDPARAMS_GL.clearColor[3]};
 
     m_d3dCommandList->ClearRenderTargetView(m_mainRenderTargetDescriptor[backBufferIdx],
                                             clear_color_with_alpha,

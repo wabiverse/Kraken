@@ -33,7 +33,7 @@ WABI_NAMESPACE_BEGIN
 
 /* clang-format off */
 #define VIEW3D_RENDERER_TOKENS                          \
-  ((RENDERER_PHOENIX,   "HdPhoenixRendererPlugin"))     \
+  ((RENDERER_STORM      "HdStormRendererPlugin"))       \
   ((RENDERER_ARNOLD,    "HdArnoldRendererPlugin"))      \
   ((RENDERER_RENDERMAN, "HdPrmanLoaderRendererPlugin")) \
   ((RENDERER_EMBREE,    "HdEmbreeRendererPlugin"))      \

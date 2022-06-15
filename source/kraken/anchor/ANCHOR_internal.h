@@ -40,7 +40,7 @@
 #include <wabi/imaging/hgi/hgi.h>
 #include <wabi/imaging/hgi/tokens.h>
 
-#include <wabi/usdImaging/usdApollo/engine.h>
+#include <wabi/usdImaging/usdImagingGL/engine.h>
 
 /**
  * Visual Studio warnings */
@@ -2600,7 +2600,7 @@ struct AnchorContext
    * of Hydra Engines -- all using the same
    * underlying & shared Graphics Resources. */
   wabi::HdDriver HydraDriver;
-  APOLLO_EnginePtr ApolloEngine;
+  wabi::UsdImagingGLEngine GLEngine;
 
   AnchorIO IO;
   AnchorStyle Style;

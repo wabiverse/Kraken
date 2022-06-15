@@ -25,7 +25,7 @@ if(WITH_MATERIALX)
   add_subdirectory(hdMtlx)
 endif()
 
-add_subdirectory(hdPh)
+add_subdirectory(hdSt)
 add_subdirectory(hdx)
 
 if(WITH_PRORENDER)

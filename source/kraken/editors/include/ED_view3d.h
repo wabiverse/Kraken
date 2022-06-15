@@ -52,7 +52,7 @@
 #include <wabi/usd/usd/timeCode.h>
 #include <wabi/usd/usdGeom/camera.h>
 
-#include <wabi/usdImaging/usdApollo/engine.h>
+#include <wabi/usdImaging/usdImagingGL/engine.h>
 
 #if defined(WABI_STATIC)
 #  define VIEW3D_EDITOR_API
@@ -212,7 +212,7 @@ struct View3D
   View3DStatus status;
 
   /** Hydra Engine Params. */
-  UsdApolloRenderParams render_params;
+  UsdImagingGLRenderParams render_params;
 };
 
 VIEW3D_EDITOR_API

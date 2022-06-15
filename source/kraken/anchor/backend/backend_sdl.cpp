@@ -61,7 +61,7 @@ static HgiVulkanInstance *g_PixarVkInstance = nullptr;
 
 /**
  * HYDRA RENDERING PARAMS. */
-static UsdApolloRenderParams g_HDPARAMS_Apollo;
+static UsdImagingGLRenderParams g_HDPARAMS_GL;
 
 /**
  * ANCHOR VULKAN GLOBALS. */
@@ -1905,10 +1905,10 @@ eAnchorStatus AnchorWindowSDL::swapBuffers()
   const bool is_minimized = (draw_data->DisplaySize[0] <= 0.0f ||
                              draw_data->DisplaySize[1] <= 0.0f);
   if (!is_minimized) {
-    m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_Apollo.clearColor[0];
-    m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_Apollo.clearColor[1];
-    m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_Apollo.clearColor[2];
-    m_vulkan_context->ClearValue.color.float32[3] = g_HDPARAMS_Apollo.clearColor[3];
+    m_vulkan_context->ClearValue.color.float32[0] = g_HDPARAMS_GL.clearColor[0];
+    m_vulkan_context->ClearValue.color.float32[1] = g_HDPARAMS_GL.clearColor[1];
+    m_vulkan_context->ClearValue.color.float32[2] = g_HDPARAMS_GL.clearColor[2];
+    m_vulkan_context->ClearValue.color.float32[3] = g_HDPARAMS_GL.clearColor[3];
     FrameRender(m_vulkan_context, draw_data);
     FramePresent(m_vulkan_context);
   }

@@ -3600,9 +3600,9 @@ wabi::HdDriver &ANCHOR::GetPixarDriver()
   return G_CTX->HydraDriver;
 }
 
-APOLLO_EnginePtr ANCHOR::GetEngineApollo()
+wabi::UsdImagingGLEngine ANCHOR::GetEngineGL()
 {
-  return G_CTX->ApolloEngine;
+  return G_CTX->GLEngine;
 }
 
 AnchorIO &ANCHOR::GetIO()

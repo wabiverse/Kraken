@@ -40,7 +40,7 @@
 #include <wabi/imaging/hd/driver.h>
 #include <wabi/imaging/hd/engine.h>
 
-#include <wabi/usdImaging/usdApollo/engine.h>
+#include <wabi/usdImaging/usdImagingGL/engine.h>
 
 #ifndef ANCHOR_API
 #  define ANCHOR_API
@@ -1162,7 +1162,7 @@ namespace ANCHOR
    *      - Game Engine (RTX)
    *      - Misc. */
   ANCHOR_API
-  APOLLO_EnginePtr GetEngineApollo();
+  wabi::UsdImagingGLEngine GetEngineGL();
 
   /**
    * Access the IO structure.
