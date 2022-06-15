@@ -24,9 +24,9 @@
 #ifndef WABI_BASE_VT_HASH_H
 #define WABI_BASE_VT_HASH_H
 
-#include "wabi/base/tf/hash.h"
-#include "wabi/base/vt/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/api.h"
+#include "wabi/base/tf/hash.h"
 #include <boost/functional/hash.hpp>
 #include <typeinfo>
 #include <utility>
@@ -80,6 +80,7 @@ namespace Vt_HashDetail
   }
 
 }  // namespace Vt_HashDetail
+
 
 /// A constexpr function that returns true if T is hashable via VtHashValue,
 /// false otherwise.  This is true if we can either invoke

@@ -28,9 +28,9 @@
 
 /// \file vt/functions.h
 
+#    include "wabi/wabi.h"
 #    include "wabi/base/vt/api.h"
 #    include "wabi/base/vt/array.h"
-#    include "wabi/wabi.h"
 #    include <boost/preprocessor/enum_params.hpp>
 #    include <boost/preprocessor/iterate.hpp>
 #    include <boost/preprocessor/repeat.hpp>
@@ -45,7 +45,7 @@ WABI_NAMESPACE_BEGIN
 
 // VtCat
 #    define BOOST_PP_ITERATION_PARAMS_1 \
-      (4, (0, VT_FUNCTIONS_MAX_ARGS, "wabi/base/vt/functions.h", 0))
+      (4, (0, VT_FUNCTIONS_MAX_ARGS, "pxr/base/vt/functions.h", 0))
 #    include BOOST_PP_ITERATE()
 
 // ****************************************************************************
@@ -166,6 +166,7 @@ template<typename T> bool VtAnyTrue(VtArray<T> const &a)
 
   return false;
 }
+
 
 /// Returns true if every element of input array is not VtZero, else false.
 ///

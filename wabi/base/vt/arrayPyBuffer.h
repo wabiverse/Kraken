@@ -24,10 +24,10 @@
 #ifndef WABI_BASE_VT_ARRAY_PY_BUFFER_H
 #define WABI_BASE_VT_ARRAY_PY_BUFFER_H
 
-#include "wabi/base/tf/pyObjWrapper.h"
+#include "wabi/wabi.h"
 #include "wabi/base/vt/api.h"
 #include "wabi/base/vt/array.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyObjWrapper.h"
 
 #include <boost/optional.hpp>
 
@@ -50,6 +50,7 @@ boost::optional<VtArray<T>> VtArrayFromPyBuffer(TfPyObjWrapper const &obj,
   VT_MATRIX_VALUE_TYPES                      \
   VT_GFRANGE_VALUE_TYPES((GfRect2i, Rect2i)) \
   ((GfQuath, Quath))((GfQuatf, Quatf))((GfQuatd, Quatd))
+
 
 WABI_NAMESPACE_END
 

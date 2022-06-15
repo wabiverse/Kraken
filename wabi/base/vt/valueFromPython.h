@@ -26,9 +26,9 @@
 
 /// \file vt/valueFromPython.h
 
+#include "wabi/wabi.h"
 #include "wabi/base/vt/api.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/hashmap.h"

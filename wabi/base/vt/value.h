@@ -26,11 +26,9 @@
 
 #include "wabi/wabi.h"
 
-#ifdef WITH_PYTHON
 // XXX: Include pyLock.h after pyObjWrapper.h to work around
 // Python include ordering issues.
-#  include "wabi/base/tf/pyObjWrapper.h"
-#endif  // WITH_PYTHON
+#include "wabi/base/tf/pyObjWrapper.h"
 
 #include "wabi/base/tf/pyLock.h"
 
@@ -56,8 +54,8 @@
 #include <boost/type_traits/has_trivial_destructor.hpp>
 
 #include <iosfwd>
-#include <type_traits>
 #include <typeinfo>
+#include <type_traits>
 
 WABI_NAMESPACE_BEGIN
 
@@ -252,9 +250,7 @@ class VtValue
     using _EqualFunc = bool (*)(_Storage const &, _Storage const &);
     using _EqualPtrFunc = bool (*)(_Storage const &, void const *);
     using _MakeMutableFunc = void (*)(_Storage &);
-#ifdef WITH_PYTHON
     using _GetPyObjFunc = TfPyObjWrapper (*)(_Storage const &);
-#endif  // WITH_PYTHON
     using _StreamOutFunc = std::ostream &(*)(_Storage const &, std::ostream &);
     using _GetTypeidFunc = std::type_info const &(*)(_Storage const &);
     using _IsArrayValuedFunc = bool (*)(_Storage const &);
@@ -282,9 +278,7 @@ class VtValue
                         _EqualFunc equal,
                         _EqualPtrFunc equalPtr,
                         _MakeMutableFunc makeMutable,
-#ifdef WITH_PYTHON
                         _GetPyObjFunc getPyObj,
-#endif  // WITH_PYTHON
                         _StreamOutFunc streamOut,
                         _GetTypeidFunc getTypeid,
                         _IsArrayValuedFunc isArrayValued,
@@ -310,12 +304,8 @@ class VtValue
         _hash(hash),
         _equal(equal),
         _equalPtr(equalPtr),
-        _makeMutable(makeMutable)
-#ifdef WITH_PYTHON
-        ,
-        _getPyObj(getPyObj)
-#endif  // WITH_PYTHON
-        ,
+        _makeMutable(makeMutable),
+        _getPyObj(getPyObj),
         _streamOut(streamOut),
         _getTypeid(getTypeid),
         _isArrayValued(isArrayValued),
@@ -363,12 +353,10 @@ class VtValue
     {
       _makeMutable(storage);
     }
-#ifdef WITH_PYTHON
     TfPyObjWrapper GetPyObj(_Storage const &storage) const
     {
       return _getPyObj(storage);
     }
-#endif  // WITH_PYTHON
     std::ostream &StreamOut(_Storage const &storage, std::ostream &out) const
     {
       return _streamOut(storage, out);
@@ -430,9 +418,7 @@ class VtValue
     _EqualFunc _equal;
     _EqualPtrFunc _equalPtr;
     _MakeMutableFunc _makeMutable;
-#ifdef WITH_PYTHON
     _GetPyObjFunc _getPyObj;
-#endif  // WITH_PYTHON
     _StreamOutFunc _streamOut;
     _GetTypeidFunc _getTypeid;
     _IsArrayValuedFunc _isArrayValued;
@@ -527,14 +513,16 @@ class VtValue
       // comparison on the *proxied* type instead.
       return _TypedProxyEqualityImpl(a, b, 0);
     }
-#ifdef WITH_PYTHON
     static TfPyObjWrapper GetPyObj(T const &obj)
     {
+#ifdef WITH_PYTHON
       ProxiedType const &p = VtGetProxiedObject(obj);
       TfPyLock lock;
       return boost::python::api::object(p);
-    }
+#else
+      return {};
 #endif  // WITH_PYTHON
+    }
     static std::ostream &StreamOut(T const &obj, std::ostream &out)
     {
       return VtStreamOut(VtGetProxiedObject(obj), out);
@@ -597,15 +585,16 @@ class VtValue
       // comparison on the VtValue containing the *proxied* type instead.
       return _ErasedProxyEqualityImpl(a, b, 0);
     }
-#ifdef WITH_PYTHON
     static TfPyObjWrapper GetPyObj(ErasedProxy const &obj)
     {
+#ifdef WITH_PYTHON
       VtValue const *val = VtGetErasedProxiedVtValue(obj);
       TfPyLock lock;
       return boost::python::api::object(*val);
-    }
+#else
+      return {};
 #endif  // WITH_PYTHON
-
+    }
     static std::ostream &StreamOut(ErasedProxy const &obj, std::ostream &out)
     {
       return VtStreamOut(obj, out);
@@ -676,9 +665,7 @@ class VtValue
                   &This::_Equal,
                   &This::_EqualPtr,
                   &This::_MakeMutable,
-#ifdef WITH_PYTHON
                   &This::_GetPyObj,
-#endif  // WITH_PYTHON
                   &This::_StreamOut,
 
                   &This::_GetTypeid,
@@ -768,12 +755,10 @@ class VtValue
       GetMutableObj(storage);
     }
 
-#ifdef WITH_PYTHON
     static TfPyObjWrapper _GetPyObj(_Storage const &storage)
     {
       return ProxyHelper::GetPyObj(GetObj(storage));
     }
-#endif  // WITH_PYTHON
 
     static std::ostream &_StreamOut(_Storage const &storage, std::ostream &out)
     {
@@ -1316,7 +1301,7 @@ class VtValue
   /// \sa \ref VtValue_Casting
   VtValue &CastToTypeOf(VtValue const &other)
   {
-    return *this = _PerformCast(other.GetTypeid(), *this);
+    return CastToTypeid(other.GetTypeid());
   }
 
   /// Return \c this holding value type cast to \a type.  This value is
@@ -1328,7 +1313,10 @@ class VtValue
   /// \sa \ref VtValue_Casting
   VtValue &CastToTypeid(std::type_info const &type)
   {
-    return *this = _PerformCast(type, *this);
+    if (!TfSafeTypeCompare(GetTypeid(), type)) {
+      *this = _PerformCast(type, *this);
+    }
+    return *this;
   }
 
   /// Return if \c this can be cast to \a T.
@@ -1530,8 +1518,12 @@ class VtValue
                                    std::type_info const &to,
                                    VtValue (*castFn)(VtValue const &));
 
+  // Cast \p value to the type \p to.  Caller must ensure that val's type is
+  // not already \p to.
   VT_API static VtValue _PerformCast(std::type_info const &to, VtValue const &val);
 
+  // Return true if \p from == \p to or if there is a registered cast to
+  // convert VtValues holding \p from to \p to.
   VT_API static bool _CanCast(std::type_info const &from, std::type_info const &to);
 
   // helper template function for simple casts from From to To.
@@ -1540,7 +1532,6 @@ class VtValue
     return VtValue(To(val.UncheckedGet<From>()));
   }
 
-#ifdef WITH_PYTHON
   // This grants friend access to a function in the wrapper file for this
   // class.  This lets the wrapper reach down into a value to get a
   // boost::python wrapped object corresponding to the held type.  This
@@ -1548,7 +1539,6 @@ class VtValue
   friend TfPyObjWrapper Vt_GetPythonObjectFromHeldValue(VtValue const &self);
 
   VT_API TfPyObjWrapper _GetPythonObject() const;
-#endif  // WITH_PYTHON
 
   _Storage _storage;
   TfPointerAndBits<const _TypeInfo> _info;
@@ -1625,6 +1615,7 @@ template<> inline bool VtValue::IsHolding<void>() const
 {
   return false;
 }
+
 
 #endif  // !doxygen
 

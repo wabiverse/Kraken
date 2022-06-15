@@ -72,7 +72,7 @@
 
 /*!
 \page tf_page_front Tf: Tools Foundations
-\if ( PIXAR_MFB_BUILD )
+\if ( WABI_MFB_BUILD )
 \mainpage Tf : Tools Foundations
 \publicLib
 \endif

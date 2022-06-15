@@ -26,13 +26,13 @@
 
 /// \file vt/array.h
 
+#include "wabi/wabi.h"
 #include "wabi/base/vt/api.h"
 #include "wabi/base/vt/hash.h"
 #include "wabi/base/vt/operators.h"
 #include "wabi/base/vt/streamOut.h"
 #include "wabi/base/vt/traits.h"
 #include "wabi/base/vt/types.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/functionLite.h"
 #include "wabi/base/arch/pragmas.h"
@@ -40,8 +40,8 @@
 #include "wabi/base/tf/mallocTag.h"
 
 #include <boost/functional/hash.hpp>
-#include <boost/iterator/reverse_iterator.hpp>
 #include <boost/iterator_adaptors.hpp>
+#include <boost/iterator/reverse_iterator.hpp>
 
 #include <algorithm>
 #include <atomic>

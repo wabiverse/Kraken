@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/vt/value.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/value.h"
 
-#include "wabi/base/vt/dictionary.h"
 #include "wabi/base/vt/typeHeaders.h"
 #include "wabi/base/vt/types.h"
+#include "wabi/base/vt/dictionary.h"
 
 #include "wabi/base/gf/math.h"
 #include "wabi/base/tf/instantiateSingleton.h"
@@ -37,20 +37,20 @@
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/token.h"
 
-#include <boost/numeric/conversion/cast.hpp>
 #include <boost/preprocessor.hpp>
-#include <tbb/concurrent_unordered_map.h>
+#include <boost/numeric/conversion/cast.hpp>
 #include <tbb/spin_mutex.h>
+#include <tbb/concurrent_unordered_map.h>
 
-#include <cmath>
-#include <limits>
 #include <map>
 #include <ostream>
 #include <string>
-#include <type_traits>
 #include <typeindex>
 #include <typeinfo>
+#include <type_traits>
 #include <vector>
+#include <cmath>
+#include <limits>
 
 using std::map;
 using std::string;
@@ -333,6 +333,7 @@ class Vt_CastRegistry
 };
 TF_INSTANTIATE_SINGLETON(Vt_CastRegistry);
 
+
 // Force instantiation for the registry instance.
 ARCH_CONSTRUCTOR(Vt_CastRegistryInit, 255)
 {
@@ -437,8 +438,7 @@ void VtValue::_RegisterCast(type_info const &from,
 
 VtValue VtValue::_PerformCast(type_info const &to, VtValue const &val)
 {
-  if (TfSafeTypeCompare(val.GetTypeid(), to))
-    return val;
+  TF_DEV_AXIOM(!TfSafeTypeCompare(val.GetTypeid(), to));
   return Vt_CastRegistry::GetInstance().PerformCast(to, val);
 }
 
@@ -485,12 +485,10 @@ std::ostream &operator<<(std::ostream &out, const VtValue &self)
   return self.IsEmpty() ? out : self._info->StreamOut(self._storage, out);
 }
 
-#ifdef WITH_PYTHON
 TfPyObjWrapper VtValue::_GetPythonObject() const
 {
   return _info.GetLiteral() ? _info.Get()->GetPyObj(_storage) : TfPyObjWrapper();
 }
-#endif  // WITH_PYTHON
 
 static void const *_FindOrCreateDefaultValue(std::type_info const &type,
                                              Vt_DefaultValueHolder (*factory)())

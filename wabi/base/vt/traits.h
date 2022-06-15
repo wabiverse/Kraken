@@ -26,9 +26,9 @@
 
 /// \file vt/traits.h
 
-#include "wabi/base/tf/preprocessorUtils.h"
-#include "wabi/base/vt/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/api.h"
+#include "wabi/base/tf/preprocessorUtils.h"
 
 #include <boost/type_traits/has_trivial_assign.hpp>
 

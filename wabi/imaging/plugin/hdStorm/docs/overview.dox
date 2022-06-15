@@ -1,6 +1,6 @@
 /*!
 \page hdStorm_page_front HdStorm : Real-time Hydra renderer plugin
-\if ( PIXAR_MFB_BUILD )
+\if ( WABI_MFB_BUILD )
 \mainpage  HdStorm : Real-time Hydra renderer plugin
 \publicLib
 \endif

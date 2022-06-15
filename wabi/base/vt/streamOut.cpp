@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/vt/streamOut.h"
+#include "wabi/wabi.h"
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/stringUtils.h"
+#include "wabi/base/vt/streamOut.h"
 #include "wabi/base/vt/types.h"
-#include "wabi/wabi.h"
 
 #ifdef WITH_PYTHON
 #  include "wabi/base/tf/pyObjWrapper.h"

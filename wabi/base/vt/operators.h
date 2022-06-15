@@ -24,11 +24,11 @@
 #ifndef WABI_BASE_VT_OPERATORS_H
 #define WABI_BASE_VT_OPERATORS_H
 
-#include "wabi/base/vt/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/api.h"
 
-#include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 //
 // Operators.h

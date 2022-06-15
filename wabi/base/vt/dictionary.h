@@ -26,9 +26,9 @@
 
 /// \file vt/dictionary.h
 
+#include "wabi/wabi.h"
 #include "wabi/base/vt/api.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/hash.h"
@@ -395,6 +395,7 @@ template<typename T> bool VtDictionaryIsHolding(const VtDictionary &dictionary, 
   return i->second.IsHolding<T>();
 }
 
+
 /// Return a value held in a VtDictionary by reference.
 ///
 /// If \p key is in \p dictionary and the corresponding value is of type
@@ -430,6 +431,7 @@ template<typename T> const T &VtDictionaryGet(const VtDictionary &dictionary, co
 
   return i->second.Get<T>();
 }
+
 
 // This is an internal holder class that is used in the version of
 // VtDictionaryGet that takes a default.
@@ -486,6 +488,7 @@ T VtDictionaryGet(const VtDictionary &dictionary, const char *key, Vt_DefaultHol
     return def.val;
   return i->second.UncheckedGet<T>();
 }
+
 
 /// Creates a dictionary containing \p strong composed over \p weak.
 ///
@@ -598,6 +601,7 @@ VT_API void VtDictionaryOverRecursive(VtDictionary *strong,
 VT_API void VtDictionaryOverRecursive(const VtDictionary &strong,
                                       VtDictionary *weak,
                                       bool coerceToWeakerOpinionType = false);
+
 
 struct VtDictionaryHash
 {

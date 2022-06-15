@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/base/vt/hash.h"
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/diagnostic.h"
-#include "wabi/wabi.h"
 
 #include <string>
 

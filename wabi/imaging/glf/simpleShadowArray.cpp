@@ -1,41 +1,34 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 /// \file simpleShadowArray.cpp
 
 #include "wabi/imaging/garch/glApi.h"
 
+#include "wabi/imaging/glf/simpleShadowArray.h"
 #include "wabi/imaging/glf/debugCodes.h"
 #include "wabi/imaging/glf/diagnostic.h"
 #include "wabi/imaging/glf/glContext.h"
-#include "wabi/imaging/glf/simpleShadowArray.h"
 #include "wabi/imaging/hio/image.h"
 
 #include "wabi/base/arch/fileSystem.h"
@@ -48,22 +41,17 @@
 #include <string>
 #include <vector>
 
+
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(GLF_ENABLE_BINDLESS_SHADOW_TEXTURES, true, "Enable use of bindless shadow maps");
-
 GlfSimpleShadowArray::GlfSimpleShadowArray()
-  :  // bindful state
-    _size(0),
-    _numLayers(0),
-    _bindfulTexture(0),
+  : _framebuffer(0),
     _shadowDepthSampler(0),
-    // common state
-    _framebuffer(0),
     _shadowCompareSampler(0),
     _unbindRestoreDrawFramebuffer(0),
     _unbindRestoreReadFramebuffer(0),
-    _unbindRestoreViewport{0, 0, 0, 0}
+    _unbindRestoreViewport{0, 0, 0, 0},
+    _texturesAllocatedExternally(false)
 {}
 
 GlfSimpleShadowArray::~GlfSimpleShadowArray()
@@ -71,87 +59,26 @@ GlfSimpleShadowArray::~GlfSimpleShadowArray()
   _FreeResources();
 }
 
-/*static*/
-bool GlfSimpleShadowArray::GetBindlessShadowMapsEnabled()
+GLuint GlfSimpleShadowArray::GetShadowMapTexture(int shadowIndex) const
 {
-  // Note: We do not test the GL context caps for the availability of the
-  // bindless texture and int64 extensions.
-  static bool usingBindlessShadowMaps = TfGetEnvSetting(GLF_ENABLE_BINDLESS_SHADOW_TEXTURES);
-
-  return usingBindlessShadowMaps;
+  return _textures[shadowIndex];
 }
-
-// --------- (public) Bindful API ----------
-void GlfSimpleShadowArray::SetSize(GfVec2i const &size)
-{
-  if (GetBindlessShadowMapsEnabled()) {
-    TF_CODING_ERROR(
-      "Using bindful API %s when bindless "
-      "shadow maps are enabled\n",
-      TF_FUNC_NAME().c_str());
-    return;
-  }
-  if (_size != size) {
-    _FreeBindfulTextures();
-    _size = size;
-  }
-}
-
-void GlfSimpleShadowArray::SetNumLayers(size_t numLayers)
-{
-  if (GetBindlessShadowMapsEnabled()) {
-    TF_CODING_ERROR(
-      "Using bindful API %s when bindless "
-      "shadow maps are enabled\n",
-      TF_FUNC_NAME().c_str());
-    return;
-  }
-
-  if (_numLayers != numLayers) {
-    _viewMatrix.resize(numLayers, GfMatrix4d().SetIdentity());
-    _projectionMatrix.resize(numLayers, GfMatrix4d().SetIdentity());
-    _FreeBindfulTextures();
-    _numLayers = numLayers;
-  }
-}
-
-GLuint GlfSimpleShadowArray::GetShadowMapTexture() const
-{
-  if (GetBindlessShadowMapsEnabled()) {
-    TF_CODING_ERROR(
-      "Using bindful API in %s when bindless "
-      "shadow maps are enabled\n",
-      TF_FUNC_NAME().c_str());
-    return -1;
-  }
-  return _bindfulTexture;
-}
-
 GLuint GlfSimpleShadowArray::GetShadowMapDepthSampler() const
 {
-  if (GetBindlessShadowMapsEnabled()) {
-    TF_CODING_ERROR(
-      "Using bindful API in %s when bindless "
-      "shadow maps are enabled\n",
-      TF_FUNC_NAME().c_str());
-    return -1;
+  if (!_shadowDepthSampler) {
+    TF_CODING_ERROR("Shadow depth sampler has not been allocated");
   }
   return _shadowDepthSampler;
 }
 
 GLuint GlfSimpleShadowArray::GetShadowMapCompareSampler() const
 {
-  if (GetBindlessShadowMapsEnabled()) {
-    TF_CODING_ERROR(
-      "Using bindful API in %s when bindless "
-      "shadow maps are enabled\n",
-      TF_FUNC_NAME().c_str());
-    return -1;
+  if (!_shadowCompareSampler) {
+    TF_CODING_ERROR("Shadow compare sampler has not been allocated");
   }
   return _shadowCompareSampler;
 }
 
-// --------- (public) Bindless API ----------
 void GlfSimpleShadowArray::SetShadowMapResolutions(std::vector<GfVec2i> const &resolutions)
 {
   if (_resolutions == resolutions) {
@@ -160,42 +87,30 @@ void GlfSimpleShadowArray::SetShadowMapResolutions(std::vector<GfVec2i> const &r
 
   _resolutions = resolutions;
 
-  _FreeBindlessTextures();
+  if (!_texturesAllocatedExternally) {
+    _FreeTextures();
+  }
 
   size_t numShadowMaps = _resolutions.size();
   if (_viewMatrix.size() != numShadowMaps || _projectionMatrix.size() != numShadowMaps) {
     _viewMatrix.resize(numShadowMaps, GfMatrix4d().SetIdentity());
     _projectionMatrix.resize(numShadowMaps, GfMatrix4d().SetIdentity());
   }
+
+  _texturesAllocatedExternally = false;
 }
 
-std::vector<uint64_t> const &GlfSimpleShadowArray::GetBindlessShadowMapHandles() const
-{
-  return _bindlessTextureHandles;
-}
-
-// --------- (public) Common API ----------
 size_t GlfSimpleShadowArray::GetNumShadowMapPasses() const
 {
-  // In both the bindful and bindless cases, we require one pass per shadow
-  // map.
-  if (GetBindlessShadowMapsEnabled()) {
-    return _resolutions.size();
-  } else {
-    return _numLayers;
-  }
+  // we require one pass per shadow map.
+  return _resolutions.size();
 }
 
 GfVec2i GlfSimpleShadowArray::GetShadowMapSize(size_t index) const
 {
   GfVec2i shadowMapSize(0);
-  if (GetBindlessShadowMapsEnabled()) {
-    if (TF_VERIFY(index < _resolutions.size())) {
-      shadowMapSize = _resolutions[index];
-    }
-  } else {
-    // In the bindful case, all shadow map textures use the same size.
-    shadowMapSize = _size;
+  if (TF_VERIFY(index < _resolutions.size())) {
+    shadowMapSize = _resolutions[index];
   }
 
   return shadowMapSize;
@@ -330,10 +245,10 @@ void GlfSimpleShadowArray::EndCapture(size_t index)
 // --------- private helpers ----------
 bool GlfSimpleShadowArray::_ShadowMapExists() const
 {
-  return GetBindlessShadowMapsEnabled() ? !_bindlessTextures.empty() : _bindfulTexture;
+  return !_textures.empty();
 }
 
-void GlfSimpleShadowArray::_AllocResources()
+void GlfSimpleShadowArray::AllocSamplers()
 {
   // Samplers
   GLfloat border[] = {1, 1, 1, 1};
@@ -357,12 +272,16 @@ void GlfSimpleShadowArray::_AllocResources()
     glSamplerParameteri(_shadowCompareSampler, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
     glSamplerParameteri(_shadowCompareSampler, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
   }
+}
+
+void GlfSimpleShadowArray::_AllocResources()
+{
+  // Samplers
+  AllocSamplers();
 
   // Shadow maps
-  if (GetBindlessShadowMapsEnabled()) {
-    _AllocBindlessTextures();
-  } else {
-    _AllocBindfulTextures();
+  if (!_texturesAllocatedExternally) {
+    _AllocTextures();
   }
 
   // Framebuffer
@@ -371,40 +290,20 @@ void GlfSimpleShadowArray::_AllocResources()
   }
 }
 
-void GlfSimpleShadowArray::_AllocBindfulTextures()
+void GlfSimpleShadowArray::SetTextures(std::vector<GLuint> textureIds)
 {
-  glGenTextures(1, &_bindfulTexture);
-  glBindTexture(GL_TEXTURE_2D_ARRAY, _bindfulTexture);
-
-  glTexImage3D(GL_TEXTURE_2D_ARRAY,
-               0,
-               GL_DEPTH_COMPONENT32F,
-               _size[0],
-               _size[1],
-               _numLayers,
-               0,
-               GL_DEPTH_COMPONENT,
-               GL_FLOAT,
-               NULL);
-  glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-
-  TF_DEBUG(GLF_DEBUG_SHADOW_TEXTURES)
-    .Msg("Created bindful shadow map texture array with %lu %dx%d textures\n",
-         _numLayers,
-         _size[0],
-         _size[1]);
+  _textures = textureIds;
+  _texturesAllocatedExternally = !textureIds.empty();
 }
 
-void GlfSimpleShadowArray::_AllocBindlessTextures()
+void GlfSimpleShadowArray::_AllocTextures()
 {
-  if (!TF_VERIFY(_shadowCompareSampler) || !TF_VERIFY(_bindlessTextures.empty()) ||
-      !TF_VERIFY(_bindlessTextureHandles.empty())) {
+  if (!TF_VERIFY(_shadowDepthSampler) || !TF_VERIFY(_shadowCompareSampler) ||
+      !TF_VERIFY(_textures.empty())) {
     TF_CODING_ERROR("Unexpected entry state in %s\n", TF_FUNC_NAME().c_str());
     return;
   }
 
-  // Commenting out the line below results in the residency check in
-  // _FreeBindlessTextures failing.
   GlfSharedGLContextScopeHolder sharedContextScopeHolder;
 
   // XXX: Currently, we allocate/reallocate ALL shadow maps each time.
@@ -421,39 +320,27 @@ void GlfSimpleShadowArray::_AllocBindlessTextures()
                  GL_DEPTH_COMPONENT,
                  GL_FLOAT,
                  NULL);
-    _bindlessTextures.push_back(id);
-
-    GLuint64 handle = glGetTextureSamplerHandleARB(id, _shadowCompareSampler);
-
-    _bindlessTextureHandles.push_back(handle);
-
-    if (TF_VERIFY(!glIsTextureHandleResidentARB(handle))) {
-      glMakeTextureHandleResidentARB(handle);
-    } else {
-      GLF_POST_PENDING_GL_ERRORS();
-    }
+    _textures.push_back(id);
 
     TF_DEBUG(GLF_DEBUG_SHADOW_TEXTURES)
       .Msg(
-        "Created bindless shadow map texture of size %dx%d "
-        "(id %#x, handle %#lx)\n",
+        "Created shadow map texture of size %dx%d "
+        "(id %#x)\n",
         size[0],
         size[1],
-        id,
-        handle);
+        id);
   }
 
   glBindTexture(GL_TEXTURE_2D, 0);
+  _texturesAllocatedExternally = false;
 }
 
 void GlfSimpleShadowArray::_FreeResources()
 {
   GlfSharedGLContextScopeHolder sharedContextScopeHolder;
 
-  if (GetBindlessShadowMapsEnabled()) {
-    _FreeBindlessTextures();
-  } else {
-    _FreeBindfulTextures();
+  if (!_texturesAllocatedExternally) {
+    _FreeTextures();
   }
 
   if (_framebuffer) {
@@ -470,42 +357,22 @@ void GlfSimpleShadowArray::_FreeResources()
   }
 }
 
-void GlfSimpleShadowArray::_FreeBindfulTextures()
+void GlfSimpleShadowArray::_FreeTextures()
 {
-  GlfSharedGLContextScopeHolder sharedContextScopeHolder;
+  if (!_textures.empty()) {
+    GlfSharedGLContextScopeHolder sharedContextScopeHolder;
+    // XXX: Ideally, we don't deallocate all textures, and only those that
+    // have resolution modified.
 
-  if (_bindfulTexture) {
-    glDeleteTextures(1, &_bindfulTexture);
-    _bindfulTexture = 0;
-  }
-
-  GLF_POST_PENDING_GL_ERRORS();
-}
-
-void GlfSimpleShadowArray::_FreeBindlessTextures()
-{
-  GlfSharedGLContextScopeHolder sharedContextScopeHolder;
-  // XXX: Ideally, we don't deallocate all textures, and only those that have
-  // resolution modified.
-
-  if (!_bindlessTextureHandles.empty()) {
-    for (uint64_t handle : _bindlessTextureHandles) {
-      // Handles are made resident on creation.
-      if (TF_VERIFY(glIsTextureHandleResidentARB(handle))) {
-        glMakeTextureHandleNonResidentARB(handle);
+    for (GLuint const &id : _textures) {
+      if (id) {
+        glDeleteTextures(1, &id);
       }
     }
-    _bindlessTextureHandles.clear();
-  }
+    _textures.clear();
 
-  for (GLuint const &id : _bindlessTextures) {
-    if (id) {
-      glDeleteTextures(1, &id);
-    }
+    GLF_POST_PENDING_GL_ERRORS();
   }
-  _bindlessTextures.clear();
-
-  GLF_POST_PENDING_GL_ERRORS();
 }
 
 void GlfSimpleShadowArray::_BindFramebuffer(size_t index)
@@ -518,10 +385,11 @@ void GlfSimpleShadowArray::_BindFramebuffer(size_t index)
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-  if (GetBindlessShadowMapsEnabled()) {
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _bindlessTextures[index], 0);
+
+  if (index < _textures.size()) {
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _textures[index], 0);
   } else {
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _bindfulTexture, 0, index);
+    TF_CODING_WARNING("Texture index is out of bounds");
   }
 
   GLF_POST_PENDING_GL_ERRORS();
@@ -534,5 +402,6 @@ void GlfSimpleShadowArray::_UnbindFramebuffer()
 
   GLF_POST_PENDING_GL_ERRORS();
 }
+
 
 WABI_NAMESPACE_END

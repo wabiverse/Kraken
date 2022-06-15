@@ -24,13 +24,13 @@
 #ifndef WABI_BASE_VT_STREAM_OUT_H
 #define WABI_BASE_VT_STREAM_OUT_H
 
-#include "wabi/base/tf/enum.h"
-#include "wabi/base/vt/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/api.h"
+#include "wabi/base/tf/enum.h"
 
 #include <iosfwd>
-#include <type_traits>
 #include <typeinfo>
+#include <type_traits>
 
 WABI_NAMESPACE_BEGIN
 

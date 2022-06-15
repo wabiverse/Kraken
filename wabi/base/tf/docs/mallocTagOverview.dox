@@ -22,7 +22,7 @@ Each line of code in the program that pushes a tag is called a \e call-site.  A 
 \code
 #include "wabi/base/tf/mallocTag.h"
 
-void TopFunction()
+void TopFunction() 
 {
     TfAutoMallocTag noname("Top");	// call-site "Top"
 
@@ -33,7 +33,7 @@ void TopFunction()
     FuncB();
 }
 
-void FuncA()
+void FuncA() 
 {
     TfAutoMallocTag noname("A");	// call-site "A"
 
@@ -42,7 +42,7 @@ void FuncA()
     FuncB();
 }
 
-void FuncB()
+void FuncB() 
 {
     TfAutoMallocTag noname("B");	// call-site "B"
 
@@ -88,7 +88,7 @@ void FancyMesh::CreateFace()
 
 \section MallocTagVaryingTags Varying Tags
 
-Thus far,  all of the tags shown in examples have been string literals.  Sometimes it is useful to let tags be constructed on the fly, as in the following example:
+Thus far,  all of the tags shown in examples have been string literals.  Sometimes it is useful to let tags be constructed on the fly, as in the following example: 
 
 \code
 void LoadModel(string const& name)
@@ -133,3 +133,4 @@ In particular, the C++ STL library maintains its own allocator for small request
 The TfMallocTag system is completely thread-safe.  Each thread has its own local stack of call-site objects.  You can call TfMallocTag::GetCallTree() or TfMallocTag::GetTotalBytes() at any time and from any thread.
 
 */
+

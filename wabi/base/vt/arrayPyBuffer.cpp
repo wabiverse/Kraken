@@ -22,14 +22,14 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/vt/arrayPyBuffer.h"
+#include "wabi/wabi.h"
 #include "wabi/base/vt/api.h"
+#include "wabi/base/vt/arrayPyBuffer.h"
 #include "wabi/base/vt/array.h"
-#include "wabi/base/vt/typeHeaders.h"
 #include "wabi/base/vt/types.h"
+#include "wabi/base/vt/typeHeaders.h"
 #include "wabi/base/vt/value.h"
 #include "wabi/base/vt/wrapArray.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/gf/traits.h"
 
@@ -191,6 +191,7 @@ namespace
   };
   template<class T>
   char Vt_FormatStr<T>::str[2] = {Vt_FmtFor<typename Vt_GetSubElementType<T>::Type>(), '\0'};
+
 
   ////////////////////////////////////////////////////////////////////////
   // Element intrinsic shape.  e.g. GfVec3f -> 1x3.
@@ -433,6 +434,7 @@ namespace
     typeObj->tp_flags |= (TfPy_TPFLAGS_HAVE_NEWBUFFER | TfPy_TPFLAGS_HAVE_GETCHARBUFFER);
   }
 
+
   ////////////////////////////////////////////////////////////////////////
   // Consumer-side: make VtArrays from python objects that provide the buffer
   // protocol.
@@ -552,6 +554,7 @@ namespace
           increment(index);
         }
       }
+
     } else {
       err = TfStringPrintf("No known conversion from format %c to %c", typeChar, desiredFmt[0]);
     }
@@ -559,6 +562,7 @@ namespace
     PyBuffer_Release(&view);
     return isConvertible;
   }
+
 
   template<class T> static VtValue Vt_CastPyObjToArray(VtValue const &v)
   {
@@ -572,7 +576,7 @@ namespace
     if (Vt_ArrayFromBuffer(obj, &array)) {
       ret.Swap(array);
     } else {
-      ret = Vt_ConvertFromPySequence<VtArray<T>>(obj);
+      ret = Vt_ConvertFromPySequenceOrIter<VtArray<T>>(obj);
     }
 
     return ret;

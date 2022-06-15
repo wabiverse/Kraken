@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/vt/types.h"
-#include "wabi/base/vt/typeHeaders.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/typeHeaders.h"
+#include "wabi/base/vt/types.h"
 
 #include "wabi/base/vt/array.h"
 #include "wabi/base/vt/value.h"
@@ -75,6 +75,7 @@ BOOST_PP_SEQ_FOR_EACH(VT_ZERO_0DOUBLE_CONSTRUCTOR, ~, VT_MATRIX_DOUBLE_VALUE_TYP
 BOOST_PP_SEQ_FOR_EACH(VT_ZERO_EMPTY_CONSTRUCTOR,
                       ~,
                       VT_RANGE_VALUE_TYPES VT_STRING_VALUE_TYPES VT_NONARRAY_VALUE_TYPES)
+
 
 TF_REGISTRY_FUNCTION(TfType)
 {

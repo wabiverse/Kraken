@@ -38,9 +38,9 @@
 // Vecs also don't generally support division.  As a special case, the non-int
 // vec types support division by a double, but since it's not all Vecs we can't
 // define Vec / double.
+#include "wabi/wabi.h"
 #include "wabi/base/vt/typeHeaders.h"
 #include "wabi/base/vt/wrapArray.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_USING
 

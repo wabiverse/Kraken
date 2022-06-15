@@ -23,9 +23,9 @@
 //
 #define ADDITION_OPERATOR
 
+#include "wabi/wabi.h"
 #include "wabi/base/vt/typeHeaders.h"
 #include "wabi/base/vt/wrapArray.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_USING
 

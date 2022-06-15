@@ -120,7 +120,7 @@ static void _CallThrowTest(boost::python::object fn)
 
 void wrapException()
 {
-  char excClassName[] = "pxr.Tf.CppException";  // XXX: Custom py NS here?
+  char excClassName[] = "wabi.Tf.CppException";  // XXX: Custom py NS here?
   tfExceptionClass = PyErr_NewException(excClassName, NULL, NULL);
 
   // Expose the exception class to python.

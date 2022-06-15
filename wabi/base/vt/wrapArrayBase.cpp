@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/vt/wrapArray.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/wrapArray.h"
 
 WABI_NAMESPACE_USING
 

@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/vt/value.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/value.h"
 
 #include "wabi/base/vt/array.h"
-#include "wabi/base/vt/typeHeaders.h"
 #include "wabi/base/vt/types.h"
+#include "wabi/base/vt/typeHeaders.h"
 #include "wabi/base/vt/valueFromPython.h"
 #include "wabi/base/vt/wrapArray.h"
 
@@ -50,8 +50,8 @@
 #include <boost/python/object.hpp>
 #include <boost/python/operators.hpp>
 #include <boost/python/return_arg.hpp>
-#include <boost/python/str.hpp>
 #include <boost/python/type_id.hpp>
+#include <boost/python/str.hpp>
 
 #include <iostream>
 #include <limits>
@@ -155,6 +155,7 @@ namespace
     }
   };
 
+
   struct Vt_ValueFromPython
   {
 
@@ -246,7 +247,7 @@ namespace
         data->convertible = storage;
         return;
       }
-      if (TfPyString_Check(obj_ptr) || PyUnicode_Check(obj_ptr)) {
+      if (TfPyBytes_Check(obj_ptr) || PyUnicode_Check(obj_ptr)) {
         // Py string or unicode -> std::string.
         new (storage) VtValue(std::string(extract<std::string>(obj_ptr)));
         data->convertible = storage;

@@ -23,10 +23,10 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/scriptModuleLoader.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/wabi.h"
 
 #include <vector>
 
@@ -39,7 +39,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
                                      TfToken("gf"),
                                      TfToken("tf"),
                                      TfToken("trace")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("vt"), TfToken("wabi.Vt"), reqs);
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("vt"), TfToken("pxr.Vt"), reqs);
 }
 
 WABI_NAMESPACE_END

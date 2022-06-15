@@ -24,25 +24,25 @@
 #ifndef WABI_BASE_VT_WRAP_ARRAY_H
 #define WABI_BASE_VT_WRAP_ARRAY_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/vt/api.h"
 #include "wabi/base/vt/array.h"
-#include "wabi/base/vt/functions.h"
-#include "wabi/base/vt/pyOperators.h"
 #include "wabi/base/vt/types.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/pyOperators.h"
+#include "wabi/base/vt/functions.h"
 
-#include "wabi/base/arch/inttypes.h"
 #include "wabi/base/arch/math.h"
+#include "wabi/base/arch/inttypes.h"
 #include "wabi/base/arch/pragmas.h"
 #include "wabi/base/gf/half.h"
-#include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyFunction.h"
 #include "wabi/base/tf/pyLock.h"
 #include "wabi/base/tf/pyObjWrapper.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
+#include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/span.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/tf.h"
@@ -63,16 +63,16 @@
 #include <boost/python/make_constructor.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/operators.hpp>
-#include <boost/python/overloads.hpp>
 #include <boost/python/return_arg.hpp>
 #include <boost/python/slice.hpp>
 #include <boost/python/type_id.hpp>
+#include <boost/python/overloads.hpp>
 
 #include <algorithm>
-#include <memory>
 #include <numeric>
 #include <ostream>
 #include <string>
+#include <memory>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
@@ -117,7 +117,7 @@ namespace Vt_WrapArray
       result[i] = *range.start;
       return object(result);
     }
-    catch (std::invalid_argument &) {
+    catch (std::invalid_argument) {
       return object();
     }
   }
@@ -174,7 +174,7 @@ namespace Vt_WrapArray
       T *data = self.data();
       range = idx.get_indices(data, data + self.size());
     }
-    catch (std::invalid_argument &) {
+    catch (std::invalid_argument) {
       // Do nothing
       return;
     }
@@ -235,6 +235,7 @@ namespace Vt_WrapArray
     }
   }
 
+
   template<typename T> void setitem_ellipsis(VtArray<T> &self, object idx, object value)
   {
     object ellipsis = object(handle<>(borrowed(Py_Ellipsis)));
@@ -256,7 +257,9 @@ namespace Vt_WrapArray
     setArraySlice(self, idx, value);
   }
 
+
   template<class T> VT_API string GetVtArrayName();
+
 
   // To avoid overhead we stream out certain builtin types directly
   // without calling TfPyRepr().
@@ -430,33 +433,35 @@ template<typename T> void VtWrapArray()
   string typeStr = ArchGetDemangled(typeid(Type));
   string docStr = TfStringPrintf("An array of type %s.", typeStr.c_str());
 
-  class_<This>(name.c_str(), docStr.c_str(), no_init)
-    .setattr("_isVtArray", true)
-    .def(TfTypePythonClass())
-    .def(init<>())
-    .def("__init__", make_constructor(VtArray__init__<Type>), (const char *)
-                                                                "__init__(values)\n\n"
-                                                                "values: a sequence (tuple, list, or another VtArray with "
-                                                                "element type convertible to the new array's element type)\n\n")
-    .def("__init__", make_constructor(VtArray__init__2<Type>))
-    .def(init<unsigned int>())
+  auto selfCls = class_<This>(name.c_str(), docStr.c_str(), no_init)
+        .setattr("_isVtArray", true)
+        .def(TfTypePythonClass())
+        .def(init<>())
+        .def("__init__", make_constructor(VtArray__init__<Type>),
+            (const char *)
+            "__init__(values)\n\n"
+            "values: a sequence (tuple, list, or another VtArray with "
+            "element type convertible to the new array's element type)\n\n"
+            )
+        .def("__init__", make_constructor(VtArray__init__2<Type>))
+        .def(init<unsigned int>())
 
-    .def("__getitem__", getitem_ellipsis<Type>)
-    .def("__getitem__", getitem_slice<Type>)
-    .def("__getitem__", getitem_index<Type>)
-    .def("__setitem__", setitem_ellipsis<Type>)
-    .def("__setitem__", setitem_slice<Type>)
-    .def("__setitem__", setitem_index<Type>)
+        .def("__getitem__", getitem_ellipsis<Type>)
+        .def("__getitem__", getitem_slice<Type>)
+        .def("__getitem__", getitem_index<Type>)
+        .def("__setitem__", setitem_ellipsis<Type>)
+        .def("__setitem__", setitem_slice<Type>)
+        .def("__setitem__", setitem_index<Type>)
 
-    .def("__len__", &This::size)
-    .def("__iter__", iterator<This>())
+        .def("__len__", &This::size)
+        .def("__iter__", iterator<This>())
 
-    .def("__repr__", __repr__<Type>)
+        .def("__repr__", __repr__<Type>)
 
-    //        .def(str(self))
-    .def("__str__", _VtStr<T>)
-    .def(self == self)
-    .def(self != self)
+//        .def(str(self))
+        .def("__str__", _VtStr<T>)
+        .def(self == self)
+        .def(self != self)
 
 #ifdef NUMERIC_OPERATORS
 #  define ADDITION_OPERATOR
@@ -467,36 +472,47 @@ template<typename T> void VtWrapArray()
 #endif
 
 #ifdef ADDITION_OPERATOR
-      VTOPERATOR_WRAPDECLARE(+, __add__, __radd__)
+        VTOPERATOR_WRAPDECLARE(+,__add__,__radd__)
 #endif
 #ifdef SUBTRACTION_OPERATOR
-  VTOPERATOR_WRAPDECLARE(-, __sub__, __rsub__)
+        VTOPERATOR_WRAPDECLARE(-,__sub__,__rsub__)
 #endif
 #ifdef MULTIPLICATION_OPERATOR
-  VTOPERATOR_WRAPDECLARE(*, __mul__, __rmul__)
+        VTOPERATOR_WRAPDECLARE(*,__mul__,__rmul__)
 #endif
 #ifdef DIVISION_OPERATOR
-  VTOPERATOR_WRAPDECLARE(/, __div__, __rdiv__)
+        VTOPERATOR_WRAPDECLARE(/,__div__,__rdiv__)
 #endif
 #ifdef MOD_OPERATOR
-  VTOPERATOR_WRAPDECLARE(%, __mod__, __rmod__)
+        VTOPERATOR_WRAPDECLARE(%,__mod__,__rmod__)
 #endif
 #ifdef DOUBLE_MULT_OPERATOR
-    .def(self * double())
-    .def(double() * self)
+        .def(self * double())
+        .def(double() * self)
 #endif
 #ifdef DOUBLE_DIV_OPERATOR
-    .def(self / double())
+        .def(self / double())
 #endif
 #ifdef UNARY_NEG_OPERATOR
-    .def(-self)
+        .def(- self)
 #endif
 
-    ;
+        ;
 
-#define WRITE(z, n, data) \
-  BOOST_PP_COMMA_IF(n)    \
-  data
+#if PY_MAJOR_VERSION == 2
+  // The above generates bindings for scalar division of arrays, but we
+  // need to explicitly add bindings for __truediv__ and __rtruediv__
+  // in Python 2 to support "from __future__ import division".
+  if (PyObject_HasAttrString(selfCls.ptr(), "__div__")) {
+    selfCls.attr("__truediv__") = selfCls.attr("__div__");
+  }
+
+  if (PyObject_HasAttrString(selfCls.ptr(), "__rdiv__")) {
+    selfCls.attr("__rtruediv__") = selfCls.attr("__rdiv__");
+  }
+#endif
+
+#define WRITE(z, n, data) BOOST_PP_COMMA_IF(n) data
 #define VtCat_DEF(z, n, unused) \
   def("Cat", (VtArray<Type>(*)(BOOST_PP_REPEAT(n, WRITE, VtArray<Type> const &)))VtCat<Type>);
   BOOST_PP_REPEAT_FROM_TO(1, VT_FUNCTIONS_MAX_ARGS, VtCat_DEF, ~)
@@ -532,7 +548,7 @@ template<typename T> void VtWrapComparisonFunctions()
   VTOPERATOR_WRAPDECLARE_BOOL(LessOrEqual)
 }
 
-template<class Array> VtValue Vt_ConvertFromPySequence(TfPyObjWrapper const &obj)
+template<class Array> VtValue Vt_ConvertFromPySequenceOrIter(TfPyObjWrapper const &obj)
 {
   typedef typename Array::ElementType ElemType;
   TfPyLock lock;
@@ -551,6 +567,21 @@ template<class Array> VtValue Vt_ConvertFromPySequence(TfPyObjWrapper const &obj
       if (!e.check())
         return VtValue();
       *elem++ = e();
+    }
+    return VtValue(result);
+  } else if (PyIter_Check(obj.ptr())) {
+    Array result;
+    while (PyObject *item = PyIter_Next(obj.ptr())) {
+      boost::python::handle<> h(item);
+      if (!h) {
+        if (PyErr_Occurred())
+          PyErr_Clear();
+        return VtValue();
+      }
+      boost::python::extract<ElemType> e(h.get());
+      if (!e.check())
+        return VtValue();
+      result.push_back(e());
     }
     return VtValue(result);
   }
@@ -576,7 +607,7 @@ template<class T> VtValue Vt_CastToArray(VtValue const &v)
   TfPyObjWrapper obj;
   // Attempt to convert from either python sequence or vector<VtValue>.
   if (v.IsHolding<TfPyObjWrapper>()) {
-    ret = Vt_ConvertFromPySequence<T>(v.UncheckedGet<TfPyObjWrapper>());
+    ret = Vt_ConvertFromPySequenceOrIter<T>(v.UncheckedGet<TfPyObjWrapper>());
   } else if (v.IsHolding<std::vector<VtValue>>()) {
     std::vector<VtValue> const &vec = v.UncheckedGet<std::vector<VtValue>>();
     ret = Vt_ConvertFromRange<T>(vec.begin(), vec.end());

@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/vt/dictionary.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/dictionary.h"
 
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/mallocTag.h"
@@ -297,6 +297,7 @@ void VtDictionary::EraseValueAtPath(vector<string> const &keyPath)
   _EraseValueAtPathImpl(keyPath.begin(), keyPath.end());
 }
 
+
 void VtDictionary::_CreateDictIfNeeded()
 {
   if (!_dictMap) {
@@ -304,6 +305,7 @@ void VtDictionary::_CreateDictIfNeeded()
     _dictMap.reset(new _Map());
   }
 }
+
 
 VtDictionary const &VtGetEmptyDictionary()
 {
@@ -403,6 +405,7 @@ void VtDictionaryOverRecursive(VtDictionary *strong,
       VtDictionaryOverRecursive(&strongSubDict, weakSubDict);
       // Swap the modified dict back into place.
       i->second.Swap(strongSubDict);
+
     } else {
       // Insert will set strong with value from weak only if
       // strong does not already have a value for that key.
@@ -441,6 +444,7 @@ void VtDictionaryOverRecursive(const VtDictionary &strong,
       VtDictionaryOverRecursive(strongSubDict, &weakSubDict);
       // Swap the modified dict back into place.
       i->second.Swap(weakSubDict);
+
     } else if (coerceToWeakerOpinionType) {
       // Else stomp over weak with strong but with type coersion.
       VtDictionary::iterator j = weak->find(it->first);
@@ -455,6 +459,7 @@ void VtDictionaryOverRecursive(const VtDictionary &strong,
     }
   }
 }
+
 
 bool operator==(VtDictionary const &lhs, VtDictionary const &rhs)
 {

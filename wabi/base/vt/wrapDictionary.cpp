@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/base/vt/dictionary.h"
 #include "wabi/base/vt/types.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/mallocTag.h"
 #include "wabi/base/tf/pyContainerConversions.h"
@@ -35,14 +35,14 @@
 
 #include "wabi/base/trace/trace.h"
 
+#include <boost/python/dict.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/to_python_converter.hpp>
 #include <boost/python/converter/from_python.hpp>
 #include <boost/python/converter/registered.hpp>
 #include <boost/python/converter/rvalue_from_python_data.hpp>
-#include <boost/python/def.hpp>
 #include <boost/python/detail/api_placeholder.hpp>
-#include <boost/python/dict.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/to_python_converter.hpp>
 
 using namespace boost::python;
 
@@ -274,6 +274,7 @@ namespace
     }
   };
 
+
   static bool _CanVtValueFromPython(object pVal)
   {
     if (_VtDictionaryFromPython::convertible(pVal.ptr()))
@@ -285,6 +286,7 @@ namespace
     extract<VtValue> e(pVal);
     return e.check() && !e().IsHolding<TfPyObjWrapper>();
   }
+
 
   static VtDictionary _ReturnDictionary(VtDictionary const &x)
   {

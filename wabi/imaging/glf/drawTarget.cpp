@@ -1,54 +1,49 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 // glf/drawTarget.cpp
 //
 
 #include "wabi/imaging/garch/glApi.h"
 
-#include "wabi/imaging/glf/diagnostic.h"
 #include "wabi/imaging/glf/drawTarget.h"
 #include "wabi/imaging/glf/glContext.h"
-#include "wabi/imaging/glf/utils.h"
+#include "wabi/imaging/glf/diagnostic.h"
 #include "wabi/imaging/hio/image.h"
+#include "wabi/imaging/glf/utils.h"
 
 #include "wabi/imaging/hf/perfLog.h"
 
-#include "wabi/base/tf/envSetting.h"
 #include "wabi/base/tf/stringUtils.h"
+#include "wabi/base/tf/envSetting.h"
 
 #include "wabi/base/trace/trace.h"
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(GLF_DRAW_TARGETS_NUM_SAMPLES, 4, "Number of samples greater than 1 forces MSAA.");
+
+TF_DEFINE_ENV_SETTING(GLF_DRAW_TARGETS_NUM_SAMPLES, 4,
+                      "Number of samples greater than 1 forces MSAA.");
 
 static unsigned int GetNumSamples()
 {
@@ -168,12 +163,14 @@ void GlfDrawTarget::AddAttachment(std::string const &name,
 
     attachments.insert(AttachmentsMap::value_type(name, attachment));
 
+
     TF_VERIFY(attachment->GetGlTextureName() > 0,
               "Attachment \"%s\" was not added "
               "and cannot be bound in MatDisplayMaterial",
               name.c_str());
 
     _BindAttachment(attachment);
+
   } else {
     TF_CODING_ERROR("Attachment \"" + name +
                     "\" already exists for this "

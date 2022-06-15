@@ -27,13 +27,13 @@
 /// \file vt/types.h
 /// Defines all the types "TYPED" for which Vt creates a VtTYPEDArray typedef.
 
+#include "wabi/wabi.h"
+#include "wabi/base/vt/api.h"
+#include "wabi/base/vt/traits.h"
 #include "wabi/base/arch/inttypes.h"
 #include "wabi/base/gf/declare.h"
 #include "wabi/base/gf/half.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/base/vt/api.h"
-#include "wabi/base/vt/traits.h"
-#include "wabi/wabi.h"
 
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
@@ -100,6 +100,7 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 #define VT_TYPE(elem) BOOST_PP_TUPLE_ELEM(2, 0, elem)
 #define VT_TYPE_NAME(elem) BOOST_PP_TUPLE_ELEM(2, 1, elem)
 
+
 // Composite groups of types.
 #define VT_BUILTIN_NUMERIC_VALUE_TYPES \
   VT_INTEGRAL_BUILTIN_VALUE_TYPES VT_FLOATING_POINT_BUILTIN_VALUE_TYPES
@@ -113,6 +114,7 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
   VT_QUATERNION_VALUE_TYPES
 
 #define VT_SCALAR_VALUE_TYPES VT_SCALAR_CLASS_VALUE_TYPES VT_BUILTIN_VALUE_TYPES
+
 
 // The following preprocessor code produces typedefs for VtArray holding
 // various scalar value types.  The produced typedefs are of the form:

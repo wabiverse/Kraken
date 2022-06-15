@@ -22,18 +22,18 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/base/vt/array.h"
 #include "wabi/base/tf/envSetting.h"
 #include "wabi/base/tf/stackTrace.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(VT_LOG_STACK_ON_ARRAY_DETACH_COPY,
-                      false,
-                      "Log a stack trace when a VtArray is copied to detach it from shared "
-                      "storage, to help track down unintended copies.");
+TF_DEFINE_ENV_SETTING(
+    VT_LOG_STACK_ON_ARRAY_DETACH_COPY, false,
+    "Log a stack trace when a VtArray is copied to detach it from shared "
+    "storage, to help track down unintended copies.");
 
 void Vt_ArrayBase::_DetachCopyHook(char const *funcName) const
 {

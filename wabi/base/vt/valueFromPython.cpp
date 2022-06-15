@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/vt/valueFromPython.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/valueFromPython.h"
 
-#include "wabi/base/tf/instantiateSingleton.h"
 #include "wabi/base/tf/pyLock.h"
+#include "wabi/base/tf/instantiateSingleton.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -71,6 +71,7 @@ VtValue Vt_ValueFromPythonRegistry::Invoke(PyObject *obj)
   }
   return VtValue();
 }
+
 
 void Vt_ValueFromPythonRegistry::_RegisterLValue(_Extractor const &e)
 {
