@@ -30,37 +30,16 @@
 
 #include "wabi/base/tf/pyResultConversions.h"
 
-#include "wabi/usd/usdShade/shader.h"
 #include "wabi/usd/usdShade/shaderDefUtils.h"
+#include "wabi/usd/usdShade/shader.h"
 
 using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace
-{
-
-  static object _WrapSplitShaderIdentifier(const TfToken &identifier)
-  {
-    TfToken familyName, shaderName;
-    NdrVersion version;
-    if (UsdShadeShaderDefUtils::SplitShaderIdentifier(identifier,
-                                                      &familyName,
-                                                      &shaderName,
-                                                      &version)) {
-      return boost::python::make_tuple(familyName, shaderName, version);
-    } else {
-      return object();
-    }
-  }
-
-}  // namespace
-
 void wrapUsdShadeShaderDefUtils()
 {
   scope thisScope = class_<UsdShadeShaderDefUtils>("ShaderDefUtils", no_init)
-                      .def("SplitShaderIdentifier", _WrapSplitShaderIdentifier, arg("identifier"))
-                      .staticmethod("SplitShaderIdentifier")
                       .def("GetNodeDiscoveryResults",
                            &UsdShadeShaderDefUtils::GetNodeDiscoveryResults,
                            (arg("shaderDef"), arg("sourceUri")),

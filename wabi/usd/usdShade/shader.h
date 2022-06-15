@@ -26,23 +26,23 @@
 
 /// \file usdShade/shader.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdShade/api.h"
+#include "wabi/usd/usd/typed.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usd/typed.h"
-#include "wabi/usd/usdShade/api.h"
-#include "wabi/wabi.h"
 
-#include "wabi/usd/ndr/declare.h"
-#include "wabi/usd/sdr/shaderNode.h"
 #include "wabi/usd/usdShade/input.h"
 #include "wabi/usd/usdShade/output.h"
 #include "wabi/usd/usdShade/tokens.h"
+#include "wabi/usd/ndr/declare.h"
+#include "wabi/usd/sdr/shaderNode.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -90,7 +90,6 @@ class UsdShadeShader : public UsdTyped
   ///
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
-
 
   /// Construct a UsdShadeShader on UsdPrim \p prim .
   /// Equivalent to UsdShadeShader::Get(prim.GetStage(), prim.GetPath())
@@ -160,7 +159,7 @@ class UsdShadeShader : public UsdTyped
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
   static const TfType &_GetStaticTfType();
@@ -170,7 +169,6 @@ class UsdShadeShader : public UsdTyped
   // override SchemaBase virtuals.
   USDSHADE_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -191,9 +189,12 @@ class UsdShadeShader : public UsdTyped
   /// @{
 
   /// Constructor that takes a ConnectableAPI object.
-  /// Allow implicit (auto) conversion of UsdShadeShader to
-  /// UsdShadeConnectableAPI, so that a shader can be passed into any function
-  /// that accepts a ConnectableAPI.
+  /// Allow implicit (auto) conversion of UsdShadeConnectableAPI to
+  /// UsdShadeShader, so that a ConnectableAPI can be passed into any function
+  /// that accepts a Shader.
+  ///
+  /// \note that the conversion may produce an invalid Shader object, because
+  /// not all UsdShadeConnectableAPI%s are Shader%s
   USDSHADE_API
   UsdShadeShader(const UsdShadeConnectableAPI &connectable);
 

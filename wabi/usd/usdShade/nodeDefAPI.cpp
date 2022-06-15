@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usdShade/nodeDefAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdShadeNodeDefAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (NodeDefAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (NodeDefAPI)
+);
 
 /* virtual */
 UsdShadeNodeDefAPI::~UsdShadeNodeDefAPI() {}
@@ -52,10 +55,17 @@ UsdShadeNodeDefAPI UsdShadeNodeDefAPI::Get(const UsdStagePtr &stage, const SdfPa
   return UsdShadeNodeDefAPI(stage->GetPrimAtPath(path));
 }
 
+
 /* virtual */
 UsdSchemaKind UsdShadeNodeDefAPI::_GetSchemaKind() const
 {
   return UsdShadeNodeDefAPI::schemaKind;
+}
+
+/* static */
+bool UsdShadeNodeDefAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
+{
+  return prim.CanApplyAPI<UsdShadeNodeDefAPI>(whyNot);
 }
 
 /* static */
@@ -164,10 +174,13 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         (info)((infoSourceAsset, "info:sourceAsset"))(
-                           (infoSubIdentifier, "info:sourceAsset:subIdentifier"))((infoSourceCode,
-                                                                                   "info:sourceCode")));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (info)
+    ((infoSourceAsset, "info:sourceAsset"))
+    ((infoSubIdentifier, "info:sourceAsset:subIdentifier"))
+    ((infoSourceCode, "info:sourceCode"))
+);
 
 TfToken UsdShadeNodeDefAPI::GetImplementationSource() const
 {

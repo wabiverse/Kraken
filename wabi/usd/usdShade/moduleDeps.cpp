@@ -23,10 +23,10 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/scriptModuleLoader.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/wabi.h"
 
 #include <vector>
 
@@ -43,7 +43,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
                                      TfToken("usdGeom"),
                                      TfToken("vt")};
   TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdShade"),
-                                                      TfToken("wabi.UsdShade"),
+                                                      TfToken("pxr.UsdShade"),
                                                       reqs);
 }
 

@@ -23,8 +23,8 @@
 //
 #include "wabi/wabi.h"
 
-#include "wabi/usd/usdShade/connectableAPI.h"
 #include "wabi/usd/usdShade/types.h"
+#include "wabi/usd/usdShade/connectableAPI.h"
 
 #include "wabi/base/tf/pyContainerConversions.h"
 

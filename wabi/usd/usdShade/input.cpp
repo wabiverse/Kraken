@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdShade/input.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdShade/input.h"
 
 #include "wabi/usd/usdShade/connectableAPI.h"
 #include "wabi/usd/usdShade/output.h"
@@ -35,15 +35,20 @@
 
 #include "wabi/base/tf/smallVector.h"
 
-#include <algorithm>
 #include <stdlib.h>
+#include <algorithm>
 
 WABI_NAMESPACE_BEGIN
+
 
 using std::string;
 using std::vector;
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (connectability)(renderType));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (connectability)
+    (renderType)
+);
 
 UsdShadeInput::UsdShadeInput(const UsdAttribute &attr) : _attr(attr) {}
 
@@ -112,6 +117,7 @@ bool UsdShadeInput::HasRenderType() const
 {
   return _attr.HasMetadata(_tokens->renderType);
 }
+
 
 NdrTokenMap UsdShadeInput::GetSdrMetadata() const
 {

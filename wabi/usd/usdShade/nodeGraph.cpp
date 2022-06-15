@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -339,24 +339,30 @@ UsdShadeNodeGraph::InterfaceInputConsumersMap UsdShadeNodeGraph::ComputeInterfac
   return resolved;
 }
 
-bool UsdShadeNodeGraph::ConnectableAPIBehavior::CanConnectOutputToSource(
-  const UsdShadeOutput &output,
-  const UsdAttribute &source,
-  std::string *reason)
+class UsdShadeNodeGraph_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
 {
-  return UsdShadeConnectableAPIBehavior::_CanConnectOutputToSource(output, source, reason);
-}
+ public:
 
-bool UsdShadeNodeGraph::ConnectableAPIBehavior::IsContainer() const
-{
-  // NodeGraph does act as a namespace container for connected nodes
-  return true;
-}
+  // By default all NodeGraph Connectable Behavior should be
+  // container (of nodes) and exhibit encapsulation behavior.
+  USDSHADE_API
+  UsdShadeNodeGraph_ConnectableAPIBehavior()
+    : UsdShadeConnectableAPIBehavior(true /*isContainer*/, true /*requiresEncapsulation*/)
+  {}
+
+  USDSHADE_API
+  bool CanConnectOutputToSource(const UsdShadeOutput &output,
+                                const UsdAttribute &source,
+                                std::string *reason) const override
+  {
+    return _CanConnectOutputToSource(output, source, reason);
+  }
+};
 
 TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
 {
   UsdShadeRegisterConnectableAPIBehavior<UsdShadeNodeGraph,
-                                         UsdShadeNodeGraph::ConnectableAPIBehavior>();
+                                         UsdShadeNodeGraph_ConnectableAPIBehavior>();
 }
 
 WABI_NAMESPACE_END

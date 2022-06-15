@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -123,10 +123,21 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
+class UsdShadeShader_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
+{
+  // UsdShadeShader outputs are not connectable!
+  bool CanConnectOutputToSource(const UsdShadeOutput &output,
+                                const UsdAttribute &source,
+                                std::string *reason) const override
+  {
+    return false;
+  }
+};
+
 TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
 {
   // UsdShadeShader prims are connectable, with default behavior rules.
-  UsdShadeRegisterConnectableAPIBehavior<UsdShadeShader>();
+  UsdShadeRegisterConnectableAPIBehavior<UsdShadeShader, UsdShadeShader_ConnectableAPIBehavior>();
 }
 
 UsdShadeShader::UsdShadeShader(const UsdShadeConnectableAPI &connectable)

@@ -26,25 +26,25 @@
 
 /// \file usdShade/nodeGraph.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdShade/api.h"
+#include "wabi/usd/usd/typed.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usd/typed.h"
-#include "wabi/usd/usdShade/api.h"
-#include "wabi/wabi.h"
 
+#include <utility>
 #include "wabi/usd/usd/editTarget.h"
 #include "wabi/usd/usd/relationship.h"
-#include "wabi/usd/usdShade/connectableAPIBehavior.h"
 #include "wabi/usd/usdShade/input.h"
 #include "wabi/usd/usdShade/output.h"
 #include "wabi/usd/usdShade/shader.h"
-#include <utility>
+#include "wabi/usd/usdShade/connectableAPIBehavior.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -85,7 +85,6 @@ class UsdShadeNodeGraph : public UsdTyped
   ///
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
-
 
   /// Construct a UsdShadeNodeGraph on UsdPrim \p prim .
   /// Equivalent to UsdShadeNodeGraph::Get(prim.GetStage(), prim.GetPath())
@@ -155,7 +154,7 @@ class UsdShadeNodeGraph : public UsdTyped
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
   static const TfType &_GetStaticTfType();
@@ -165,7 +164,6 @@ class UsdShadeNodeGraph : public UsdTyped
   // override SchemaBase virtuals.
   USDSHADE_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -180,10 +178,13 @@ class UsdShadeNodeGraph : public UsdTyped
   // ===================================================================== //
   // --(BEGIN CUSTOM CODE)--
 
-  /// Constructor that takes a ConnectableAPI object.
-  /// Allow implicit (auto) conversion of UsdShadeNodeGraph to
-  /// UsdShadeConnectableAPI, so that a NodeGraph can be passed into any
-  /// function that accepts a ConnectableAPI.
+  /// Constructor that takes a ConnectableAPI object.  Allow implicit
+  /// (auto) conversion of UsdShadeConnectableAPI to UsdShadeNodeGraph, so
+  /// that a ConnectableAPI can be passed into any function that accepts a
+  /// NodeGraph.
+  ///
+  /// \note that the conversion may produce an invalid NodeGraph object,
+  /// because not all UsdShadeConnectableAPI%s are UsdShadeNodeGraph%s
   USDSHADE_API
   UsdShadeNodeGraph(const UsdShadeConnectableAPI &connectable);
 
@@ -371,19 +372,6 @@ class UsdShadeNodeGraph : public UsdTyped
     bool computeTransitiveConsumers = false) const;
 
   /// @}
-
-  /// UsdShadeNodeGraph provides its own connectability behavior,
-  /// to support nesting of node graphs.
-  class ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
-  {
-    USDSHADE_API
-    bool CanConnectOutputToSource(const UsdShadeOutput &output,
-                                  const UsdAttribute &source,
-                                  std::string *reason) override;
-
-    USDSHADE_API
-    bool IsContainer() const override;
-  };
 };
 
 WABI_NAMESPACE_END

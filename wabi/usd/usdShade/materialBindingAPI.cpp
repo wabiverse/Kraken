@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usdShade/materialBindingAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdShadeMaterialBindingAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (MaterialBindingAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (MaterialBindingAPI)
+);
 
 /* virtual */
 UsdShadeMaterialBindingAPI::~UsdShadeMaterialBindingAPI() {}
@@ -53,10 +56,17 @@ UsdShadeMaterialBindingAPI UsdShadeMaterialBindingAPI::Get(const UsdStagePtr &st
   return UsdShadeMaterialBindingAPI(stage->GetPrimAtPath(path));
 }
 
+
 /* virtual */
 UsdSchemaKind UsdShadeMaterialBindingAPI::_GetSchemaKind() const
 {
   return UsdShadeMaterialBindingAPI::schemaKind;
+}
+
+/* static */
+bool UsdShadeMaterialBindingAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
+{
+  return prim.CanApplyAPI<UsdShadeMaterialBindingAPI>(whyNot);
 }
 
 /* static */
@@ -115,12 +125,14 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((materialBindingFull, "material:binding:full"))((materialBindingPreview,
-                                                                           "material:binding:preview"))
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((materialBindingFull, "material:binding:full"))
+    ((materialBindingPreview, "material:binding:preview"))
 
-                           ((materialBindingCollectionFull, "material:binding:collection:full"))(
-                             (materialBindingCollectionPreview, "material:binding:collection:preview")));
+    ((materialBindingCollectionFull, "material:binding:collection:full"))
+    ((materialBindingCollectionPreview, "material:binding:collection:preview"))
+);
 
 static TfToken _GetDirectBindingRelName(const TfToken &materialPurpose)
 {
@@ -180,6 +192,7 @@ static TfToken _GetMaterialPurpose(const UsdRelationship &bindingRel)
   }
   return UsdShadeTokens->allPurpose;
 }
+
 
 UsdShadeMaterialBindingAPI::DirectBinding::DirectBinding(const UsdRelationship &directBindingRel)
   : _bindingRel(directBindingRel),
@@ -262,6 +275,7 @@ UsdCollectionAPI UsdShadeMaterialBindingAPI::CollectionBinding::GetCollection() 
   }
   return UsdCollectionAPI();
 }
+
 
 UsdShadeMaterialBindingAPI::CollectionBindingVector UsdShadeMaterialBindingAPI::
   GetCollectionBindings(const TfToken &materialPurpose) const
@@ -549,6 +563,7 @@ UsdShadeMaterialBindingAPI::BindingsAtPrim::BindingsAtPrim(const UsdPrim &prim,
     }
   }
 
+
   TfTokenVector collBindingPropertyNames = _GetCollectionBindingPropertyNames(
     matBindingPropNames,
     UsdShadeTokens->allPurpose);
@@ -556,6 +571,12 @@ UsdShadeMaterialBindingAPI::BindingsAtPrim::BindingsAtPrim(const UsdPrim &prim,
     UsdShadeMaterialBindingAPI bindingAPI(prim);
     allPurposeCollBindings = bindingAPI._GetCollectionBindings(collBindingPropertyNames);
   }
+}
+
+/* static */
+TfTokenVector UsdShadeMaterialBindingAPI::GetMaterialPurposes()
+{
+  return {UsdShadeTokens->allPurpose, UsdShadeTokens->preview, UsdShadeTokens->full};
 }
 
 UsdShadeMaterial UsdShadeMaterialBindingAPI::ComputeBoundMaterial(
@@ -737,6 +758,7 @@ UsdGeomSubset UsdShadeMaterialBindingAPI::CreateMaterialBindSubset(const TfToken
 
   return result;
 }
+
 
 std::vector<UsdGeomSubset> UsdShadeMaterialBindingAPI::GetMaterialBindSubsets()
 {

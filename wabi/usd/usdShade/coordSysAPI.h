@@ -26,20 +26,20 @@
 
 /// \file usdShade/coordSysAPI.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdShade/api.h"
 #include "wabi/usd/usd/apiSchemaBase.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usdShade/api.h"
 #include "wabi/usd/usdShade/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/usdGeom/xformable.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -118,6 +118,7 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase
   USDSHADE_API
   static UsdShadeCoordSysAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
+
  protected:
 
   /// Returns the kind of schema this class belongs to.
@@ -128,7 +129,7 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
   static const TfType &_GetStaticTfType();
@@ -138,7 +139,6 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase
   // override SchemaBase virtuals.
   USDSHADE_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 

@@ -21,13 +21,13 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usdShade/utils.h"
-#include "wabi/usd/sdf/path.h"
-#include "wabi/usd/usdShade/connectableAPI.h"
+#include "wabi/usd/usdShade/tokens.h"
 #include "wabi/usd/usdShade/input.h"
 #include "wabi/usd/usdShade/output.h"
-#include "wabi/usd/usdShade/tokens.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/usdShade/connectableAPI.h"
+#include "wabi/usd/sdf/path.h"
 
 #include "wabi/base/tf/stringUtils.h"
 
@@ -49,6 +49,19 @@ string UsdShadeUtils::GetPrefixForAttributeType(UsdShadeAttributeType sourceType
     default:
       return string();
   }
+}
+
+/* static */
+SdfPath UsdShadeUtils::GetConnectedSourcePath(const UsdShadeConnectionSourceInfo &srcInfo)
+{
+  SdfPath src;
+
+  if (srcInfo) {
+    string propName = GetPrefixForAttributeType(srcInfo.sourceType) +
+                      srcInfo.sourceName.GetString();
+    src = srcInfo.source.GetPrim().GetPath().AppendProperty(TfToken(propName));
+  }
+  return src;
 }
 
 /* static */
@@ -207,8 +220,6 @@ bool _GetValueProducingAttributesRecursive(UsdShadeInOutput const &inoutput,
     // N.B. Checking whether an attribute has an authored value is a
     // non-trivial operation and should not be done unless required
     if (inoutput.GetAttr().HasAuthoredValue()) {
-      VtValue val;
-      inoutput.GetAttr().Get(&val);
       attrs.push_back(inoutput.GetAttr());
       foundValidAttr = true;
     }

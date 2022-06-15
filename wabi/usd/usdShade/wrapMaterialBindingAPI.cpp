@@ -21,16 +21,17 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/schemaBase.h"
 #include "wabi/usd/usdShade/materialBindingAPI.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -48,10 +49,25 @@ namespace
   // fwd decl.
   WRAP_CUSTOM;
 
+
   static std::string _Repr(const UsdShadeMaterialBindingAPI &self)
   {
     std::string primRepr = TfPyRepr(self.GetPrim());
     return TfStringPrintf("UsdShade.MaterialBindingAPI(%s)", primRepr.c_str());
+  }
+
+  struct UsdShadeMaterialBindingAPI_CanApplyResult : public TfPyAnnotatedBoolResult<std::string>
+  {
+    UsdShadeMaterialBindingAPI_CanApplyResult(bool val, std::string const &msg)
+      : TfPyAnnotatedBoolResult<std::string>(val, msg)
+    {}
+  };
+
+  static UsdShadeMaterialBindingAPI_CanApplyResult _WrapCanApply(const UsdPrim &prim)
+  {
+    std::string whyNot;
+    bool result = UsdShadeMaterialBindingAPI::CanApply(prim, &whyNot);
+    return UsdShadeMaterialBindingAPI_CanApplyResult(result, whyNot);
   }
 
 }  // anonymous namespace
@@ -59,6 +75,10 @@ namespace
 void wrapUsdShadeMaterialBindingAPI()
 {
   typedef UsdShadeMaterialBindingAPI This;
+
+  UsdShadeMaterialBindingAPI_CanApplyResult::Wrap<UsdShadeMaterialBindingAPI_CanApplyResult>(
+    "_CanApplyResult",
+    "whyNot");
 
   class_<This, bases<UsdAPISchemaBase>> cls("MaterialBindingAPI");
 
@@ -69,6 +89,9 @@ void wrapUsdShadeMaterialBindingAPI()
     .def("Get", &This::Get, (arg("stage"), arg("path")))
     .staticmethod("Get")
 
+    .def("CanApply", &_WrapCanApply, (arg("prim")))
+    .staticmethod("CanApply")
+
     .def("Apply", &This::Apply, (arg("prim")))
     .staticmethod("Apply")
 
@@ -78,12 +101,13 @@ void wrapUsdShadeMaterialBindingAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
+
 
     .def("__repr__", ::_Repr);
 
@@ -244,6 +268,9 @@ namespace
           "AddPrimToBindingCollection",
           &This::AddPrimToBindingCollection,
           (arg("prim"), arg("bindingName"), arg("materialPurpose") = UsdShadeTokens->allPurpose))
+
+        .def("GetMaterialPurposes", &This::GetMaterialPurposes)
+        .staticmethod("GetMaterialPurposes")
 
         .def("ComputeBoundMaterial",
              &_WrapComputeBoundMaterial,

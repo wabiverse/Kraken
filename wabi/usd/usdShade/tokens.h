@@ -33,13 +33,14 @@
 //
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdShade/api.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/usd/usdShade/api.h"
-#include "wabi/wabi.h"
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdShadeTokensType
 ///

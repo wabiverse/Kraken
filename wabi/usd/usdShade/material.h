@@ -26,12 +26,12 @@
 
 /// \file usdShade/material.h
 
-#include "wabi/usd/usd/prim.h"
-#include "wabi/usd/usd/stage.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usdShade/api.h"
 #include "wabi/usd/usdShade/nodeGraph.h"
+#include "wabi/usd/usd/prim.h"
+#include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usdShade/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/usd/variantSets.h"
 #include "wabi/usd/usdGeom/subset.h"
@@ -39,9 +39,9 @@
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -117,7 +117,6 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
-
   /// Construct a UsdShadeMaterial on UsdPrim \p prim .
   /// Equivalent to UsdShadeMaterial::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
@@ -186,7 +185,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
   static const TfType &_GetStaticTfType();
@@ -196,7 +195,6 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   // override SchemaBase virtuals.
   USDSHADE_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -295,6 +293,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   typedef std::function<bool(const SdfPath &)> PathPredicate;
 
   /// @}
+
 
   // --------------------------------------------------------------------- //
   /// \anchor UsdShadeMaterial_Outputs

@@ -24,11 +24,11 @@
 #ifndef WABI_USD_USD_SHADE_INPUT_H
 #define WABI_USD_USD_SHADE_INPUT_H
 
-#include "wabi/usd/usd/attribute.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usdShade/api.h"
 #include "wabi/usd/usdShade/types.h"
 #include "wabi/usd/usdShade/utils.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/usd/attribute.h"
 
 #include "wabi/usd/ndr/declare.h"
 

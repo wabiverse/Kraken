@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usdShade/coordSysAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdShadeCoordSysAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (CoordSysAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (CoordSysAPI)
+);
 
 /* virtual */
 UsdShadeCoordSysAPI::~UsdShadeCoordSysAPI() {}
@@ -51,6 +54,7 @@ UsdShadeCoordSysAPI UsdShadeCoordSysAPI::Get(const UsdStagePtr &stage, const Sdf
   }
   return UsdShadeCoordSysAPI(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdShadeCoordSysAPI::_GetSchemaKind() const
@@ -103,7 +107,10 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (coordSys));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (coordSys)
+);
 
 std::vector<UsdShadeCoordSysAPI::Binding> UsdShadeCoordSysAPI::GetLocalBindings() const
 {

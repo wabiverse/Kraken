@@ -29,9 +29,10 @@
 #include <boost/python/scope.hpp>
 #include <boost/python/tuple.hpp>
 
+#include "wabi/usd/usdShade/utils.h"
+#include "wabi/usd/usdShade/connectableAPI.h"
 #include "wabi/usd/usdShade/input.h"
 #include "wabi/usd/usdShade/output.h"
-#include "wabi/usd/usdShade/utils.h"
 
 using namespace boost::python;
 
@@ -60,6 +61,11 @@ void wrapUsdShadeUtils()
   scope thisScope = class_<UsdShadeUtils>("Utils", no_init)
                       .def("GetPrefixForAttributeType", UsdShadeUtils::GetPrefixForAttributeType)
                       .staticmethod("GetPrefixForAttributeType")
+
+                      .def("GetConnectedSourcePath",
+                           UsdShadeUtils::GetConnectedSourcePath,
+                           (arg("connectionSourceInfo")))
+                      .staticmethod("GetConnectedSourcePath")
 
                       .def("GetBaseNameAndType", _GetBaseNameAndType)
                       .staticmethod("GetBaseNameAndType")

@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -190,8 +190,8 @@ WABI_NAMESPACE_END
 #include "wabi/usd/sdf/path.h"
 
 #include "wabi/usd/usd/editContext.h"
-#include "wabi/usd/usd/primRange.h"
 #include "wabi/usd/usd/specializes.h"
+#include "wabi/usd/usd/primRange.h"
 #include "wabi/usd/usd/variantSets.h"
 
 #include "wabi/usd/usdShade/connectableAPI.h"
@@ -207,7 +207,11 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (material));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (material)
+);
+
 
 std::pair<UsdStagePtr, UsdEditTarget> UsdShadeMaterial::GetEditContextForVariant(
   const TfToken &materialVariation,
@@ -687,11 +691,18 @@ UsdShadeShader UsdShadeMaterial::ComputeVolumeSource(const TfTokenVector &contex
   return _ComputeNamedOutputShader(UsdShadeTokens->volume, contextVector, sourceName, sourceType);
 }
 
-class UsdShadeMaterial_ConnectableAPIBehavior : public UsdShadeNodeGraph::ConnectableAPIBehavior
+class UsdShadeMaterial_ConnectableAPIBehavior : public UsdShadeConnectableAPIBehavior
 {
+ public:
+
+  // By default all Material Connectable Behavior should be
+  // container (of nodes) and exhibit encapsulation behavior.
+  UsdShadeMaterial_ConnectableAPIBehavior()
+    : UsdShadeConnectableAPIBehavior(true /*isContainer*/, true /*requiresEncapsulation*/)
+  {}
   bool CanConnectInputToSource(const UsdShadeInput &input,
                                const UsdAttribute &source,
-                               std::string *reason) override
+                               std::string *reason) const override
   {
     return _CanConnectInputToSource(input,
                                     source,
@@ -701,18 +712,12 @@ class UsdShadeMaterial_ConnectableAPIBehavior : public UsdShadeNodeGraph::Connec
 
   bool CanConnectOutputToSource(const UsdShadeOutput &output,
                                 const UsdAttribute &source,
-                                std::string *reason)
+                                std::string *reason) const override
   {
     return _CanConnectOutputToSource(output,
                                      source,
                                      reason,
-                                     ConnectableAPIBehavior::DerivedContainerNodes);
-  }
-
-  bool IsContainer() const
-  {
-    // Material does act as a namespace container for connected nodes
-    return true;
+                                     ConnectableNodeTypes::DerivedContainerNodes);
   }
 };
 
@@ -721,5 +726,6 @@ TF_REGISTRY_FUNCTION(UsdShadeConnectableAPI)
   UsdShadeRegisterConnectableAPIBehavior<UsdShadeMaterial,
                                          UsdShadeMaterial_ConnectableAPIBehavior>();
 }
+
 
 WABI_NAMESPACE_END

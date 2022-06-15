@@ -21,16 +21,17 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/schemaBase.h"
 #include "wabi/usd/usdShade/nodeDefAPI.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,6 +48,7 @@ namespace
 
   // fwd decl.
   WRAP_CUSTOM;
+
 
   static UsdAttribute _CreateImplementationSourceAttr(UsdShadeNodeDefAPI &self,
                                                       object defaultVal,
@@ -71,11 +73,28 @@ namespace
     return TfStringPrintf("UsdShade.NodeDefAPI(%s)", primRepr.c_str());
   }
 
+  struct UsdShadeNodeDefAPI_CanApplyResult : public TfPyAnnotatedBoolResult<std::string>
+  {
+    UsdShadeNodeDefAPI_CanApplyResult(bool val, std::string const &msg)
+      : TfPyAnnotatedBoolResult<std::string>(val, msg)
+    {}
+  };
+
+  static UsdShadeNodeDefAPI_CanApplyResult _WrapCanApply(const UsdPrim &prim)
+  {
+    std::string whyNot;
+    bool result = UsdShadeNodeDefAPI::CanApply(prim, &whyNot);
+    return UsdShadeNodeDefAPI_CanApplyResult(result, whyNot);
+  }
+
 }  // anonymous namespace
 
 void wrapUsdShadeNodeDefAPI()
 {
   typedef UsdShadeNodeDefAPI This;
+
+  UsdShadeNodeDefAPI_CanApplyResult::Wrap<UsdShadeNodeDefAPI_CanApplyResult>("_CanApplyResult",
+                                                                             "whyNot");
 
   class_<This, bases<UsdAPISchemaBase>> cls("NodeDefAPI");
 
@@ -86,6 +105,9 @@ void wrapUsdShadeNodeDefAPI()
     .def("Get", &This::Get, (arg("stage"), arg("path")))
     .staticmethod("Get")
 
+    .def("CanApply", &_WrapCanApply, (arg("prim")))
+    .staticmethod("CanApply")
+
     .def("Apply", &This::Apply, (arg("prim")))
     .staticmethod("Apply")
 
@@ -95,12 +117,13 @@ void wrapUsdShadeNodeDefAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
+
 
     .def("GetImplementationSourceAttr", &This::GetImplementationSourceAttr)
     .def("CreateImplementationSourceAttr",

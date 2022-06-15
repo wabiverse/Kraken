@@ -21,16 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/schemaBase.h"
 #include "wabi/usd/usdShade/material.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,6 +47,7 @@ namespace
 
   // fwd decl.
   WRAP_CUSTOM;
+
 
   static UsdAttribute _CreateSurfaceAttr(UsdShadeMaterial &self,
                                          object defaultVal,
@@ -102,12 +103,13 @@ void wrapUsdShadeMaterial()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
+
 
     .def("GetSurfaceAttr", &This::GetSurfaceAttr)
     .def("CreateSurfaceAttr",
@@ -211,6 +213,7 @@ namespace
       .def("SetBaseMaterial", &UsdShadeMaterial::SetBaseMaterial, (arg("baseMaterial")))
       .def("ClearBaseMaterial", &UsdShadeMaterial::ClearBaseMaterial)
       .def("HasBaseMaterial", &UsdShadeMaterial::HasBaseMaterial)
+
 
       .def("CreateSurfaceOutput",
            &UsdShadeMaterial::CreateSurfaceOutput,

@@ -26,8 +26,8 @@
 
 /// \file usdShade/connectableAPIBehavior.h
 
-#include "wabi/usd/usdShade/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdShade/api.h"
 
 #include "wabi/base/gf/vec3f.h"
 #include "wabi/base/vt/array.h"
@@ -57,6 +57,17 @@ class UsdShadeConnectableAPIBehavior
     DerivedContainerNodes,  // Material, etc
   };
 
+  // By default we want a connectableBehavior to not exhibit a container like
+  // behavior. And we want encapsulation behavior enabled by default.
+  USDSHADE_API
+  UsdShadeConnectableAPIBehavior() : _isContainer(false), _requiresEncapsulation(true) {}
+
+  USDSHADE_API
+  UsdShadeConnectableAPIBehavior(const bool isContainer, const bool requiresEncapsulation)
+    : _isContainer(isContainer),
+      _requiresEncapsulation(requiresEncapsulation)
+  {}
+
   USDSHADE_API
   virtual ~UsdShadeConnectableAPIBehavior();
 
@@ -76,7 +87,7 @@ class UsdShadeConnectableAPIBehavior
   USDSHADE_API
   virtual bool CanConnectInputToSource(const UsdShadeInput &,
                                        const UsdAttribute &,
-                                       std::string *reason);
+                                       std::string *reason) const;
 
   /// The prim owning the output is guaranteed to be of the type this
   /// behavior was registered with. The function must be thread-safe.
@@ -93,15 +104,29 @@ class UsdShadeConnectableAPIBehavior
   USDSHADE_API
   virtual bool CanConnectOutputToSource(const UsdShadeOutput &,
                                         const UsdAttribute &,
-                                        std::string *reason);
+                                        std::string *reason) const;
 
-  /// The prim owning the output is guaranteed to be of the type this
-  /// behavior was registered with. The function must be thread-safe.
+  /// The function must be thread-safe.
   ///
   /// It should return true if the associated prim type is considered
   /// a "container" for connected nodes.
+  /// Returns the value set for _isContainer.
   USDSHADE_API
-  virtual bool IsContainer() const;
+  virtual bool IsContainer() const final;
+
+  /// The function must be thread-safe.
+  ///
+  /// Determines if the behavior should respect container encapsulation rules
+  /// (\ref UsdShadeConnectability), when evaluating CanConnectInputToSource
+  /// or CanConnectOutputToSource. This should return true if the container
+  /// encapsulation rules need to be respected, false otherwise.
+  //
+  /// Returns the value set for _requiresEncapsulation.
+  ///
+  /// \sa IsContainer()
+  ///
+  USDSHADE_API
+  virtual bool RequiresEncapsulation() const final;
 
  protected:
 
@@ -113,16 +138,23 @@ class UsdShadeConnectableAPIBehavior
   /// output of a sibling source, both encapsulated by the same container
   /// node.
   USDSHADE_API
-  bool _CanConnectInputToSource(const UsdShadeInput &,
-                                const UsdAttribute &,
-                                std::string *reason,
-                                ConnectableNodeTypes nodeType = ConnectableNodeTypes::BasicNodes);
+  bool _CanConnectInputToSource(
+    const UsdShadeInput &,
+    const UsdAttribute &,
+    std::string *reason,
+    ConnectableNodeTypes nodeType = ConnectableNodeTypes::BasicNodes) const;
 
   USDSHADE_API
-  bool _CanConnectOutputToSource(const UsdShadeOutput &,
-                                 const UsdAttribute &,
-                                 std::string *reason,
-                                 ConnectableNodeTypes nodeType = ConnectableNodeTypes::BasicNodes);
+  bool _CanConnectOutputToSource(
+    const UsdShadeOutput &,
+    const UsdAttribute &,
+    std::string *reason,
+    ConnectableNodeTypes nodeType = ConnectableNodeTypes::BasicNodes) const;
+
+ private:
+
+  bool _isContainer;
+  bool _requiresEncapsulation;
 };
 
 /// Registers \p behavior to define connectability of attributes for \p PrimType.
@@ -146,7 +178,7 @@ class UsdShadeConnectableAPIBehavior
 ///     ...
 ///     customData = {
 ///         dictionary extraPlugInfo = {
-///             bool implementsUsdShadeConnectableAPIBehavior = true
+///             bool providesUsdShadeConnectableAPIBehavior = true
 ///         }
 ///     }
 ///     ...
@@ -156,6 +188,21 @@ class UsdShadeConnectableAPIBehavior
 ///
 /// This allows the plugin system to discover this behavior dynamically
 /// and load the plugin if needed.
+///
+/// In addition to Typed schemas, single apply API schemas can also include
+/// **providesUsdShadeConnectableAPIBehavior** in their **extraPlugInfo** and
+/// hence impart connectableAPIBehavior to the prim definition in which they
+/// are participating. Additionally a schema can include metadata in their
+/// extraPlugInfo fields to override isContainer and requiresEncapsulation
+/// properties by specifying bool values for **isUsdShadeContainer** and
+/// **requiresUsdShadeEncapsulation**. This can be especially useful for
+/// \ref codeless_schema that cannot provide a C++ derivation of
+/// UsdShadeConnectableAPIBehavior.
+///
+/// \ref UsdShadeConnectableAPIBehavior_ResolutionOrder defines the
+/// resolution order when multiple types and apiSchemas provide a
+/// UsdShadeConnectableAPIBehavior.
+///
 template<class PrimType, class BehaviorType = UsdShadeConnectableAPIBehavior>
 inline void UsdShadeRegisterConnectableAPIBehavior()
 {

@@ -30,10 +30,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
 
-                         /* discoveryTypes */
-                         (usda)(usdc)(usd));
+    /* discoveryTypes */
+    (usda)
+    (usdc)
+    (usd)
+);
 
 UsdStageCache UsdShadeShaderDefParserPlugin::_cache;
 

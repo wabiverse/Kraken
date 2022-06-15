@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/ndr/node.h"
 #include "wabi/usd/ndr/nodeDiscoveryResult.h"
 #include "wabi/usd/sdr/shaderNode.h"
 #include "wabi/usd/usdShade/shaderDefParser.h"
-#include "wabi/wabi.h"
 
 #include <boost/python.hpp>
 

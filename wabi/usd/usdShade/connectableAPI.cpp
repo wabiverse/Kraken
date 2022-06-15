@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usdShade/connectableAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdShadeConnectableAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (ConnectableAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (ConnectableAPI)
+);
 
 /* virtual */
 UsdShadeConnectableAPI::~UsdShadeConnectableAPI() {}
@@ -51,6 +54,7 @@ UsdShadeConnectableAPI UsdShadeConnectableAPI::Get(const UsdStagePtr &stage, con
   }
   return UsdShadeConnectableAPI(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdShadeConnectableAPI::_GetSchemaKind() const
@@ -105,16 +109,20 @@ WABI_NAMESPACE_END
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/primIndex.h"
 
-#include "wabi/base/tf/envSetting.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/propertySpec.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
+#include "wabi/base/tf/envSetting.h"
 #include "wabi/usd/usdShade/tokens.h"
 #include "wabi/usd/usdShade/utils.h"
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (outputName)(outputs));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (outputName)
+    (outputs)
+);
 
 static UsdAttribute _GetOrCreateSourceAttr(UsdShadeConnectionSourceInfo const &sourceInfo,
                                            SdfValueTypeName fallbackTypeName)

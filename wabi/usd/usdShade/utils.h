@@ -24,10 +24,11 @@
 #ifndef WABI_USD_USD_SHADE_UTILS_H
 #define WABI_USD_USD_SHADE_UTILS_H
 
-#include "wabi/usd/usd/attribute.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usdShade/api.h"
 #include "wabi/usd/usdShade/types.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/path.h"
+#include "wabi/usd/usd/attribute.h"
 
 #include "wabi/base/tf/smallVector.h"
 #include "wabi/base/tf/token.h"
@@ -39,6 +40,7 @@ WABI_NAMESPACE_BEGIN
 
 class UsdShadeInput;
 class UsdShadeOutput;
+struct UsdShadeConnectionSourceInfo;
 
 /// \class UsdShadeUtils
 ///
@@ -53,6 +55,11 @@ class UsdShadeUtils
   /// given shading attribute type.
   USDSHADE_API
   static std::string GetPrefixForAttributeType(UsdShadeAttributeType sourceType);
+
+  /// For a valid UsdShadeConnectionSourceInfo, return the complete path
+  /// to the source property; otherwise the empty path.
+  USDSHADE_API
+  static SdfPath GetConnectedSourcePath(const UsdShadeConnectionSourceInfo &srcInfo);
 
   /// Given the full name of a shading attribute, returns it's base name and
   /// shading attribute type.

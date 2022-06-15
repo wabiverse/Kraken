@@ -26,21 +26,22 @@
 
 /// \file usdShade/nodeDefAPI.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdShade/api.h"
 #include "wabi/usd/usd/apiSchemaBase.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usdShade/api.h"
 #include "wabi/usd/usdShade/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/ndr/declare.h"
 #include "wabi/usd/sdr/shaderNode.h"
 
+
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -89,7 +90,6 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
 
-
   /// Construct a UsdShadeNodeDefAPI on UsdPrim \p prim .
   /// Equivalent to UsdShadeNodeDefAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
@@ -123,6 +123,26 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase
   USDSHADE_API
   static UsdShadeNodeDefAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
+
+  /// Returns true if this <b>single-apply</b> API schema can be applied to
+  /// the given \p prim. If this schema can not be a applied to the prim,
+  /// this returns false and, if provided, populates \p whyNot with the
+  /// reason it can not be applied.
+  ///
+  /// Note that if CanApply returns false, that does not necessarily imply
+  /// that calling Apply will fail. Callers are expected to call CanApply
+  /// before calling Apply if they want to ensure that it is valid to
+  /// apply a schema.
+  ///
+  /// \sa UsdPrim::GetAppliedSchemas()
+  /// \sa UsdPrim::HasAPI()
+  /// \sa UsdPrim::CanApplyAPI()
+  /// \sa UsdPrim::ApplyAPI()
+  /// \sa UsdPrim::RemoveAPI()
+  ///
+  USDSHADE_API
+  static bool CanApply(const UsdPrim &prim, std::string *whyNot = nullptr);
+
   /// Applies this <b>single-apply</b> API schema to the given \p prim.
   /// This information is stored by adding "NodeDefAPI" to the
   /// token-valued, listOp metadata \em apiSchemas on the prim.
@@ -134,6 +154,7 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase
   ///
   /// \sa UsdPrim::GetAppliedSchemas()
   /// \sa UsdPrim::HasAPI()
+  /// \sa UsdPrim::CanApplyAPI()
   /// \sa UsdPrim::ApplyAPI()
   /// \sa UsdPrim::RemoveAPI()
   ///
@@ -150,7 +171,7 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
   static const TfType &_GetStaticTfType();
@@ -160,7 +181,6 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase
   // override SchemaBase virtuals.
   USDSHADE_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -246,6 +266,7 @@ class UsdShadeNodeDefAPI : public UsdAPISchemaBase
   //  - Close the include guard with #endif
   // ===================================================================== //
   // --(BEGIN CUSTOM CODE)--
+
 
   // -------------------------------------------------------------------------
   /// \anchor UsdShadeNodeDefAPI_ImplementationSource

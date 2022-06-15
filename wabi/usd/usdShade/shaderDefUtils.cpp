@@ -29,7 +29,10 @@
 
 #include "wabi/usd/ar/resolver.h"
 
+#include "wabi/usd/ndr/filesystemDiscoveryHelpers.h"
+
 #include "wabi/usd/sdf/assetPath.h"
+#include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/types.h"
 
 #include "wabi/usd/sdr/shaderMetadataHelpers.h"
@@ -40,72 +43,14 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
 
-                         /* property metadata */
-                         (primvarProperty)(defaultInput)(implementationName));
-
-static bool _IsNumber(const std::string &s)
-{
-  return !s.empty() && std::find_if(s.begin(), s.end(), [](unsigned char c) {
-                         return !std::isdigit(c);
-                       }) == s.end();
-}
-
-/* static */
-bool UsdShadeShaderDefUtils::SplitShaderIdentifier(const TfToken &identifier,
-                                                   TfToken *familyName,
-                                                   TfToken *implementationName,
-                                                   NdrVersion *version)
-{
-  std::vector<std::string> tokens = TfStringTokenize(identifier.GetString(), "_");
-
-  if (tokens.empty()) {
-    return false;
-  }
-
-  *familyName = TfToken(tokens[0]);
-
-  if (tokens.size() == 1) {
-    *familyName = identifier;
-    *implementationName = identifier;
-    *version = NdrVersion();
-  } else if (tokens.size() == 2) {
-    if (_IsNumber(tokens[tokens.size() - 1])) {
-      int major = std::stoi(*tokens.rbegin());
-      *version = NdrVersion(major);
-      *implementationName = *familyName;
-    } else {
-      *version = NdrVersion();
-      *implementationName = identifier;
-    }
-  } else if (tokens.size() > 2) {
-    bool lastTokenIsNumber = _IsNumber(tokens[tokens.size() - 1]);
-    bool penultimateTokenIsNumber = _IsNumber(tokens[tokens.size() - 2]);
-
-    if (penultimateTokenIsNumber && !lastTokenIsNumber) {
-      TF_WARN("Invalid shader identifier '%s'.", identifier.GetText());
-      return false;
-    }
-
-    if (lastTokenIsNumber && penultimateTokenIsNumber) {
-      *version = NdrVersion(std::stoi(tokens[tokens.size() - 2]),
-                            std::stoi(tokens[tokens.size() - 1]));
-      *implementationName = TfToken(
-        TfStringJoin(tokens.begin(), tokens.begin() + (tokens.size() - 2), "_"));
-    } else if (lastTokenIsNumber) {
-      *version = NdrVersion(std::stoi(tokens[tokens.size() - 1]));
-      *implementationName = TfToken(
-        TfStringJoin(tokens.begin(), tokens.begin() + (tokens.size() - 1), "_"));
-    } else {
-      // No version information is available.
-      *implementationName = identifier;
-      *version = NdrVersion();
-    }
-  }
-
-  return true;
-}
+    /* property metadata */
+    (primvarProperty)
+    (defaultInput)
+    (implementationName)
+);
 
 /* static */
 NdrNodeDiscoveryResultVec UsdShadeShaderDefUtils::GetNodeDiscoveryResults(
@@ -127,7 +72,7 @@ NdrNodeDiscoveryResultVec UsdShadeShaderDefUtils::GetNodeDiscoveryResults(
   TfToken family;
   TfToken name;
   NdrVersion version;
-  if (!SplitShaderIdentifier(shaderDefPrim.GetName(), &family, &name, &version)) {
+  if (!NdrFsHelpersSplitShaderIdentifier(shaderDefPrim.GetName(), &family, &name, &version)) {
     // A warning has already been issued by SplitShaderIdentifier.
     return result;
   }
@@ -335,6 +280,38 @@ static SdrShaderPropertyUniquePtr _CreateSdrShaderProperty(const ShaderProperty 
     metadata[SdrPropertyMetadata->IsAssetIdentifier] = "1";
   }
 
+  // look for sdrMetadata options field first (which overrides a schema's
+  // allowedTokens list)
+  auto optionsMetadata = shaderMetadata.find(SdrPropertyMetadata->Options);
+  if (optionsMetadata != shaderMetadata.end()) {
+    options = ShaderMetadataHelpers::OptionVecVal(shaderMetadata.at(SdrPropertyMetadata->Options));
+  }
+
+  if (options.empty()) {
+    // No options were found in sdrMetadata, look for allowedTokens on the
+    // schema attr.
+    VtTokenArray attrAllowedTokens;
+    shaderProperty.GetAttr().GetMetadata(SdfFieldKeys->AllowedTokens, &attrAllowedTokens);
+    for (const TfToken &token : attrAllowedTokens) {
+      options.emplace_back(std::make_pair(token, TfToken()));
+    }
+  }
+
+  // If sdrUsdDefinitionType is not already set, we try to have it set in
+  // order to save the SdfValueTypeName set for this property. This makes sure
+  // ShaderProperty::GetAsSdfType and ShaderProperty::GetDefaultValueAsSdfType
+  // return appropriate result.
+  if (metadata.find(SdrPropertyMetadata->SdrUsdDefinitionType) == metadata.end()) {
+    // Note that currently we only have a usecase where bool properties are
+    // marked with sdrUsdDefinitionType, but this may be extended for other
+    // types in future, example Asset or AssetArray. When this happens, it
+    // would be good to break this logic in its own little helper function.
+    const SdfValueTypeName &sdfTypeName = shaderProperty.GetTypeName();
+    if (sdfTypeName == SdfValueTypeNames->Bool) {
+      metadata[SdrPropertyMetadata->SdrUsdDefinitionType] = sdfTypeName.GetType().GetTypeName();
+    }
+  }
+
   TfToken propertyType;
   size_t arraySize;
   std::tie(propertyType,
@@ -432,5 +409,6 @@ std::string UsdShadeShaderDefUtils::GetPrimvarNamesMetadataString(
 
   return TfStringJoin(primvarNames, "|");
 }
+
 
 WABI_NAMESPACE_END

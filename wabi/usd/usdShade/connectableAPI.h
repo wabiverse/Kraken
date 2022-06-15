@@ -26,11 +26,11 @@
 
 /// \file usdShade/connectableAPI.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdShade/api.h"
 #include "wabi/usd/usd/apiSchemaBase.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usdShade/api.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/usd/typed.h"
 #include "wabi/usd/usdShade/input.h"
@@ -40,9 +40,9 @@
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -120,6 +120,7 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   USDSHADE_API
   static UsdShadeConnectableAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
+
  protected:
 
   /// Returns the kind of schema this class belongs to.
@@ -130,7 +131,7 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
   static const TfType &_GetStaticTfType();
@@ -140,7 +141,6 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   // override SchemaBase virtuals.
   USDSHADE_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -159,6 +159,8 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
 
   /// Returns true if the given prim is compatible with this API schema,
   /// i.e. if it is a valid shader or a node-graph.
+  /// A prim has a compatible connectableAPI if a valid behavior is registered
+  /// for it.
   USDSHADE_API
   bool _IsCompatible() const override;
 
@@ -170,6 +172,14 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   /// that defines whether it is a container.
   USDSHADE_API
   bool IsContainer() const;
+
+  /// Returns true if container encapsulation rules should be respected when
+  /// evaluating connectibility behavior, false otherwise.
+  ///
+  /// The underlying prim type may provide runtime behavior that defines if
+  /// encapsulation rules are respected or not.
+  USDSHADE_API
+  bool RequiresEncapsulation() const;
 
   /// \name Connections
   ///
@@ -403,6 +413,7 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   USDSHADE_API
   static bool SetConnectedSources(UsdAttribute const &shadingAttr,
                                   std::vector<UsdShadeConnectionSourceInfo> const &sourceInfos);
+
 
   /// \deprecated Shading attributes can have multiple connections and so
   /// using GetConnectedSources is needed in general
@@ -647,8 +658,10 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
     return ClearSources(output.GetAttr());
   }
 
-  /// Return true if the \p schemaType has a connectableAPIBehavior
+  /// Return true if the \p schemaType has a valid connectableAPIBehavior
   /// registered, false otherwise.
+  /// To check if a prim's connectableAPI has a behavior defined, use
+  /// UsdSchemaBase::operator bool().
   USDSHADE_API
   static bool HasConnectableAPI(const TfType &schemaType);
 
@@ -656,11 +669,13 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   /// registered, false otherwise.
   template<typename T> static bool HasConnectableAPI()
   {
-    static_assert(std::is_base_of<UsdTyped, T>::value, "Provided type must derive UsdTyped.");
+    static_assert(std::is_base_of<UsdSchemaBase, T>::value,
+                  "Provided type must derive UsdSchemaBase.");
     return HasConnectableAPI(TfType::Find<T>());
   };
 
   /// @}
+
 
   /// \name Outputs
   /// @{
