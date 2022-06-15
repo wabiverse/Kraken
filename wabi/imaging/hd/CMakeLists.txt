@@ -124,7 +124,7 @@ wabi_library(hd
         repr
         resource
         resourceRegistry
-        # retainedDataSource
+        retainedDataSource
         # retainedSceneIndex
         rprim
         rprimCollection
@@ -136,7 +136,7 @@ wabi_library(hd
         # sceneIndexObserver
         # sceneIndexPlugin
         # sceneIndexPluginRegistry
-        # schema
+        schema
         selection
         smoothNormals
         sortedIds
@@ -155,7 +155,7 @@ wabi_library(hd
         vertexAdjacency
         # visibilitySchema
         volume
-        # volumeFieldBindingSchema
+        volumeFieldBindingSchema
         # volumeFieldSchema
         vtBufferSource
         # xformSchema
@@ -164,7 +164,7 @@ wabi_library(hd
         api.h
         dataSourceTypeDefs.h
         driver.h
-        materialNetworkInterface.h
+        # materialNetworkInterface.h
         version.h
 
     PRIVATE_CLASSES
