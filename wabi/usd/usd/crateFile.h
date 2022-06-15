@@ -446,9 +446,11 @@ namespace Usd_CrateFile
         {
           return !(*this == other);
         }
-        friend size_t tbb_hasher(ZeroCopySource const &z)
+
+        friend size_t hash_value(ZeroCopySource const &z)
         {
-          size_t seed = reinterpret_cast<uintptr_t>(z._addr);
+          _Hasher h;
+          size_t seed = reinterpret_cast<uintptr_t>(h(z._addr));
           boost::hash_combine(seed, z._numBytes);
           return seed;
         }
@@ -546,7 +548,7 @@ namespace Usd_CrateFile
       ArchMutableFileMapping _mapping;
       char *_start;
       int64_t _length;
-      tbb::concurrent_unordered_set<ZeroCopySource> _outstandingRanges;
+      tbb::concurrent_unordered_set<ZeroCopySource, _Hasher> _outstandingRanges;
     };
     using _FileMappingIPtr = boost::intrusive_ptr<_FileMapping>;
 

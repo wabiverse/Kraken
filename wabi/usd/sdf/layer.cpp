@@ -171,7 +171,7 @@ SdfLayer::SdfLayer(const SdfFileFormatConstPtr &fileFormat,
   _MarkCurrentStateAsClean();
 }
 
-SdfLayer::~SdfLayer()
+SdfLayer::~SdfLayer() noexcept
 {
   TF_DEBUG(SDF_LAYER).Msg("SdfLayer::~SdfLayer('%s')\n", GetIdentifier().c_str());
 
@@ -776,14 +776,30 @@ SdfLayerRefPtr SdfLayer::FindOrOpen(const string &identifier, const FileFormatAr
   // instance), we'll deadlock.
   TF_PY_ALLOW_THREADS_IN_SCOPE();
 
+  /**
+   * Some sort of dumb compiler issue, it doesn't recognize this lambda has a return type and so we
+   * get:
+   *
+   * @error: no viable conversion from returned value of type 'void' to function return type
+   * 'WABImaelstrom::SdfLayerRefPtr'.
+   *
+   * when we try to directly return:
+   *
+   * @code return WorkWithScopedParallelism([&]() -> SdfLayerRefPtr {})
+   *
+   * So as a workaround, we set the result below.
+   */
+
+  SdfLayerRefPtr result = TfNullPtr;
+
   // Isolate.
-  return WorkWithScopedParallelism([&]() -> SdfLayerRefPtr {
+  WorkWithScopedParallelism([&]() -> SdfLayerRefPtr {
     _FindOrOpenLayerInfo layerInfo;
     if (!_ComputeInfoToFindOrOpenLayer(identifier,
                                        args,
                                        &layerInfo,
                                        /* computeAssetInfo = */ true)) {
-      return TfNullPtr;
+      return (result = TfNullPtr);
     }
 
     // First see if this layer is already present.
@@ -796,9 +812,9 @@ SdfLayerRefPtr SdfLayer::FindOrOpen(const string &identifier, const FileFormatAr
       // being implicitly moved to avoid making an unnecessary copy of
       // layer and the associated ref-count bump.
       if (layer->_WaitForInitializationAndCheckIfSuccessful()) {
-        return layer;
+        return (result = layer);
       }
-      return TfNullPtr;
+      return (result = TfNullPtr);
     }
     // At this point _TryToFindLayer has upgraded lock to a writer.
 
@@ -809,19 +825,19 @@ SdfLayerRefPtr SdfLayer::FindOrOpen(const string &identifier, const FileFormatAr
     // have an asset to open.
     if (layerInfo.isAnonymous) {
       if (!layerInfo.fileFormat || !layerInfo.fileFormat->ShouldReadAnonymousLayers()) {
-        return TfNullPtr;
+        return (result = TfNullPtr);
       }
     }
 
     if (layerInfo.resolvedLayerPath.empty()) {
-      return TfNullPtr;
+      return (result = TfNullPtr);
     }
 
     // Otherwise we create the layer and insert it into the registry.
-    return _OpenLayerAndUnlockRegistry(lock,
-                                       layerInfo,
-                                       /* metadataOnly */ false);
+    return (result = _OpenLayerAndUnlockRegistry(lock, layerInfo, /* metadataOnly */ false));
   });
+
+  return result;
 }
 
 /* static */

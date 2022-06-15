@@ -30,7 +30,6 @@
 #include "wabi/usd/sdf/path.h"
 #include "wabi/base/tf/hashmap.h"
 
-#include <tbb/mutex.h>
 #include <map>
 #include <unordered_map>
 #include <vector>
