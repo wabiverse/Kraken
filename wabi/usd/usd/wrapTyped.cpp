@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/typed.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/typed.h"
 
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"

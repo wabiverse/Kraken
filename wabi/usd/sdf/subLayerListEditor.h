@@ -26,10 +26,10 @@
 
 /// \file sdf/subLayerListEditor.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/vectorListEditor.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/proxyPolicies.h"
-#include "wabi/usd/sdf/vectorListEditor.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

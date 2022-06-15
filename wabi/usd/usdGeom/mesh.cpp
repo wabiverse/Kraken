@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -382,6 +382,7 @@ bool UsdGeomMesh::IsSharpnessInfinite(const float sharpness)
 {
   return sharpness >= UsdGeomMesh::SHARPNESS_INFINITE;
 }
+
 
 const float UsdGeomMesh::SHARPNESS_INFINITE = 10.0f;
 

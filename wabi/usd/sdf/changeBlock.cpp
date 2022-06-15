@@ -22,20 +22,17 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/changeManager.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
-SdfChangeBlock::SdfChangeBlock()
-{
-  Sdf_ChangeManager::Get().OpenChangeBlock();
-}
+SdfChangeBlock::SdfChangeBlock() : _key(Sdf_ChangeManager::Get()._OpenChangeBlock(this)) {}
 
-SdfChangeBlock::~SdfChangeBlock()
+void SdfChangeBlock::_CloseChangeBlock(void const *key) const
 {
-  Sdf_ChangeManager::Get().CloseChangeBlock();
+  Sdf_ChangeManager::Get()._CloseChangeBlock(this, key);
 }
 
 WABI_NAMESPACE_END

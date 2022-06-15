@@ -1,52 +1,48 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdSkel/animQueryImpl.h"
 
 #include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/matrix4f.h"
 
-#include "wabi/usd/usd/attribute.h"
 #include "wabi/usd/usd/attributeQuery.h"
 #include "wabi/usd/usd/prim.h"
+#include "wabi/usd/usd/attribute.h"
 
 #include "wabi/usd/usdGeom/xformable.h"
 
 #include "wabi/usd/usdSkel/animation.h"
 #include "wabi/usd/usdSkel/utils.h"
 
+
 WABI_NAMESPACE_BEGIN
+
 
 // --------------------------------------------------
 // UsdSkel_SkelAnimationQueryImpl
 // --------------------------------------------------
+
 
 /// Animation query implementation for UsdSkelAnimation primitives.
 class UsdSkel_SkelAnimationQueryImpl : public UsdSkel_AnimQueryImpl
@@ -104,6 +100,7 @@ class UsdSkel_SkelAnimationQueryImpl : public UsdSkel_AnimQueryImpl
   UsdAttributeQuery _translations, _rotations, _scales, _blendShapeWeights;
 };
 
+
 UsdSkel_SkelAnimationQueryImpl::UsdSkel_SkelAnimationQueryImpl(const UsdSkelAnimation &anim)
   : _anim(anim),
     _translations(anim.GetTranslationsAttr()),
@@ -116,6 +113,7 @@ UsdSkel_SkelAnimationQueryImpl::UsdSkel_SkelAnimationQueryImpl(const UsdSkelAnim
     anim.GetBlendShapesAttr().Get(&_blendShapeOrder);
   }
 }
+
 
 template<typename Matrix4>
 bool UsdSkel_SkelAnimationQueryImpl::_ComputeJointLocalTransforms(VtArray<Matrix4> *xforms,
@@ -164,6 +162,7 @@ bool UsdSkel_SkelAnimationQueryImpl::_ComputeJointLocalTransforms(VtArray<Matrix
   return false;
 }
 
+
 bool UsdSkel_SkelAnimationQueryImpl::ComputeJointLocalTransformComponents(
   VtVec3fArray *translations,
   VtQuatfArray *rotations,
@@ -175,6 +174,7 @@ bool UsdSkel_SkelAnimationQueryImpl::ComputeJointLocalTransformComponents(
   return _translations.Get(translations, time) && _rotations.Get(rotations, time) &&
          _scales.Get(scales, time);
 }
+
 
 bool UsdSkel_SkelAnimationQueryImpl::GetJointTransformTimeSamples(const GfInterval &interval,
                                                                   std::vector<double> *times) const
@@ -194,11 +194,13 @@ bool UsdSkel_SkelAnimationQueryImpl::GetJointTransformAttributes(
   return true;
 }
 
+
 bool UsdSkel_SkelAnimationQueryImpl::JointTransformsMightBeTimeVarying() const
 {
   return _translations.ValueMightBeTimeVarying() || _rotations.ValueMightBeTimeVarying() ||
          _scales.ValueMightBeTimeVarying();
 }
+
 
 bool UsdSkel_SkelAnimationQueryImpl::ComputeBlendShapeWeights(VtFloatArray *weights,
                                                               UsdTimeCode time) const
@@ -209,12 +211,14 @@ bool UsdSkel_SkelAnimationQueryImpl::ComputeBlendShapeWeights(VtFloatArray *weig
   return false;
 }
 
+
 bool UsdSkel_SkelAnimationQueryImpl::GetBlendShapeWeightTimeSamples(
   const GfInterval &interval,
   std::vector<double> *times) const
 {
   return _blendShapeWeights.GetTimeSamplesInInterval(interval, times);
 }
+
 
 bool UsdSkel_SkelAnimationQueryImpl::GetBlendShapeWeightAttributes(
   std::vector<UsdAttribute> *attrs) const
@@ -228,9 +232,11 @@ bool UsdSkel_SkelAnimationQueryImpl::BlendShapeWeightsMightBeTimeVarying() const
   return _blendShapeWeights.ValueMightBeTimeVarying();
 }
 
+
 // --------------------------------------------------
 // UsdSkel_AnimQueryImpl
 // --------------------------------------------------
+
 
 UsdSkel_AnimQueryImplRefPtr UsdSkel_AnimQueryImpl::New(const UsdPrim &prim)
 {
@@ -239,5 +245,6 @@ UsdSkel_AnimQueryImplRefPtr UsdSkel_AnimQueryImpl::New(const UsdPrim &prim)
   }
   return nullptr;
 }
+
 
 WABI_NAMESPACE_END

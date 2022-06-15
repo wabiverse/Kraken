@@ -24,14 +24,15 @@
 #ifndef WABI_USD_USD_SHARED_H
 #define WABI_USD_USD_SHARED_H
 
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
 
-#include <atomic>
 #include <boost/functional/hash.hpp>
 #include <boost/smart_ptr/intrusive_ptr.hpp>
+#include <atomic>
 
 WABI_NAMESPACE_BEGIN
+
 
 // Implementation storage + refcount for Usd_Shared.
 template<class T> struct Usd_Counted
@@ -139,6 +140,7 @@ template<class T> struct Usd_Shared
 
   boost::intrusive_ptr<Usd_Counted<T>> _held;
 };
+
 
 WABI_NAMESPACE_END
 

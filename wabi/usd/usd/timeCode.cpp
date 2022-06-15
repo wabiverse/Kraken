@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/timeCode.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/timeCode.h"
 
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/staticTokens.h"
@@ -32,9 +32,12 @@
 #include <iostream>
 #include <string>
 
+
 WABI_NAMESPACE_BEGIN
 
+
 TF_DEFINE_PUBLIC_TOKENS(UsdTimeCodeTokens, USD_TIME_CODE_TOKENS);
+
 
 void UsdTimeCode::_IssueGetValueOnDefaultError() const
 {
@@ -77,5 +80,6 @@ std::istream &operator>>(std::istream &is, UsdTimeCode &time)
 
   return is;
 }
+
 
 WABI_NAMESPACE_END

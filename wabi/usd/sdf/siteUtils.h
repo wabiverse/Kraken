@@ -30,12 +30,12 @@
 ///
 /// These functions simply forward to the indicated functions on SdfLayer.
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/site.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/propertySpec.h"
-#include "wabi/usd/sdf/site.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

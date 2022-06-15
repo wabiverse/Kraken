@@ -24,10 +24,10 @@
 #ifndef WABI_USD_USD_USDZ_FILE_FORMAT_H
 #define WABI_USD_USD_USDZ_FILE_FORMAT_H
 
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/usd/sdf/fileFormat.h"
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/sdf/fileFormat.h"
+#include "wabi/base/tf/staticTokens.h"
 
 #include <string>
 

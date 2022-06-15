@@ -21,14 +21,14 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/clip.h"
-#include "wabi/usd/usd/common.h"
-#include "wabi/usd/usd/interpolators.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/common.h"
+#include "wabi/usd/usd/clip.h"
+#include "wabi/usd/usd/interpolators.h"
 
 #include "wabi/usd/ar/resolver.h"
-#include "wabi/usd/ar/resolverContextBinder.h"
 #include "wabi/usd/ar/resolverScopedCache.h"
+#include "wabi/usd/ar/resolverContextBinder.h"
 
 #include "wabi/usd/pcp/layerStack.h"
 
@@ -704,7 +704,11 @@ SdfPropertySpecHandle Usd_Clip::GetPropertyAtPath(const SdfPath &path) const
   return _GetLayerForClip()->GetPropertyAtPath(_TranslatePathToClip(path));
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (dummy_clip)((dummy_clipFormat, "dummy_clip.%s")));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (dummy_clip)
+    ((dummy_clipFormat, "dummy_clip.%s"))
+    );
 
 SdfLayerRefPtr Usd_Clip::_GetLayerForClip() const
 {

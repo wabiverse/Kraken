@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/statistics.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/layerStackRegistry.h"
 #include "wabi/usd/pcp/primIndex.h"
 #include "wabi/usd/pcp/primIndex_Graph.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/defines.h"
 

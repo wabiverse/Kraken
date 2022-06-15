@@ -26,16 +26,16 @@
 
 /// \file sdf/fileFormatRegistry.h
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
 #include "wabi/base/tf/weakBase.h"
-#include "wabi/wabi.h"
-#include <atomic>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <atomic>
 #include <mutex>
 #include <vector>
 

@@ -24,18 +24,19 @@
 #ifndef WABI_USD_USD_RELATIONSHIP_H
 #define WABI_USD_USD_RELATIONSHIP_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/property.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/vt/value.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/base/vt/value.h"
 
 #include <string>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdRelationship;
 
@@ -274,6 +275,7 @@ class UsdRelationship : public UsdProperty
 
   SdfPath _GetTargetForAuthoring(const SdfPath &targetPath, std::string *whyNot = 0) const;
 };
+
 
 WABI_NAMESPACE_END
 

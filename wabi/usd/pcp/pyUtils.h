@@ -26,9 +26,9 @@
 
 #include <boost/python/dict.hpp>
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/types.h"
-#include "wabi/wabi.h"
 
 #include <string>
 

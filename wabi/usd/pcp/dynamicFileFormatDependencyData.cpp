@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/pcp/dynamicFileFormatDependencyData.h"
-#include "wabi/base/vt/value.h"
-#include "wabi/usd/pcp/dynamicFileFormatInterface.h"
-#include "wabi/usd/sdf/fileFormat.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/dynamicFileFormatInterface.h"
+#include "wabi/usd/pcp/dynamicFileFormatDependencyData.h"
+#include "wabi/usd/sdf/fileFormat.h"
+#include "wabi/base/vt/value.h"
 
 WABI_NAMESPACE_BEGIN
 

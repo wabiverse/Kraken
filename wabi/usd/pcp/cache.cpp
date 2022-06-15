@@ -22,12 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/arc.h"
 #include "wabi/usd/pcp/changes.h"
+#include "wabi/usd/pcp/diagnostic.h"
 #include "wabi/usd/pcp/debugCodes.h"
 #include "wabi/usd/pcp/dependencies.h"
-#include "wabi/usd/pcp/diagnostic.h"
 #include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/pcp/layerStackIdentifier.h"
 #include "wabi/usd/pcp/layerStackRegistry.h"
@@ -37,28 +38,26 @@
 #include "wabi/usd/pcp/propertyIndex.h"
 #include "wabi/usd/pcp/statistics.h"
 #include "wabi/usd/pcp/targetIndex.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/enum.h"
-#include "wabi/base/tf/envSetting.h"
-#include "wabi/base/tf/registryManager.h"
+#include "wabi/usd/ar/resolver.h"
+#include "wabi/usd/ar/resolverScopedCache.h"
+#include "wabi/usd/ar/resolverContextBinder.h"
+#include "wabi/usd/sdf/layer.h"
+#include "wabi/usd/sdf/schema.h"
 #include "wabi/base/trace/trace.h"
 #include "wabi/base/work/dispatcher.h"
 #include "wabi/base/work/loops.h"
 #include "wabi/base/work/utils.h"
 #include "wabi/base/work/withScopedParallelism.h"
-#include "wabi/usd/ar/resolver.h"
-#include "wabi/usd/ar/resolverContextBinder.h"
-#include "wabi/usd/ar/resolverScopedCache.h"
-#include "wabi/usd/sdf/layer.h"
-#include "wabi/usd/sdf/schema.h"
+#include "wabi/base/tf/enum.h"
+#include "wabi/base/tf/envSetting.h"
+#include "wabi/base/tf/registryManager.h"
 
 #include <tbb/concurrent_queue.h>
 #include <tbb/concurrent_vector.h>
 #include <tbb/spin_rw_mutex.h>
 
 #include <algorithm>
-#include <atomic>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -69,7 +68,9 @@ using std::vector;
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(PCP_CULLING, true, "Controls whether culling is enabled in Pcp caches.");
+TF_DEFINE_ENV_SETTING(
+    PCP_CULLING, true,
+    "Controls whether culling is enabled in Pcp caches.");
 
 // Helper for applying changes immediately if the client hasn't asked that
 // they only be collected instead.
@@ -1073,7 +1074,7 @@ void PcpCache::ReloadReferences(PcpChanges *changes, const SdfPath &primPath)
   // local layers.
   SdfLayerHandleSet layersToReload;
   for (const PcpLayerStackPtr &layerStack : layerStacksAtOrUnderPrim) {
-    for (const auto &layer : layerStack->GetLayers()) {
+    for (const SdfLayerHandle &layer : layerStack->GetLayers()) {
       if (!_layerStack->HasLayer(layer)) {
         layersToReload.insert(layer);
       }
@@ -1129,6 +1130,21 @@ void PcpCache::_RemovePropertyCaches(const SdfPath &root, PcpLifeboat *lifeboat)
 
 ////////////////////////////////////////////////////////////////////////
 // Private helper methods.
+
+void PcpCache::_ForEachLayerStack(const TfFunctionRef<void(const PcpLayerStackPtr &)> &fn) const
+{
+  _layerStackCache->ForEachLayerStack(fn);
+}
+
+void PcpCache::_ForEachPrimIndex(const TfFunctionRef<void(const PcpPrimIndex &)> &fn) const
+{
+  for (const auto &entry : _primIndexCache) {
+    const PcpPrimIndex &primIndex = entry.second;
+    if (primIndex.IsValid()) {
+      fn(primIndex);
+    }
+  }
+}
 
 PcpPrimIndex *PcpCache::_GetPrimIndex(const SdfPath &path)
 {

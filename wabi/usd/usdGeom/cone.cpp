@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -196,8 +196,8 @@ WABI_NAMESPACE_END
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-#include "wabi/base/tf/registryManager.h"
 #include "wabi/usd/usdGeom/boundableComputeExtent.h"
+#include "wabi/base/tf/registryManager.h"
 
 WABI_NAMESPACE_BEGIN
 

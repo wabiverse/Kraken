@@ -26,9 +26,9 @@
 
 /// \file sdf/pseudoRootSpec.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/declareSpec.h"
 #include "wabi/usd/sdf/primSpec.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

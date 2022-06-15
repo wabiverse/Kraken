@@ -24,10 +24,11 @@
 #ifndef WABI_USD_SDF_PATH_TABLE_H
 #define WABI_USD_SDF_PATH_TABLE_H
 
-#include "wabi/base/tf/pointerAndBits.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pointerAndBits.h"
+#include "wabi/base/tf/functionRef.h"
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/noncopyable.hpp>
@@ -38,9 +39,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-// Helper function for clearing path tables.
+// Parallel visitation helper function.
 SDF_API
-void Sdf_ClearPathTableInParallel(void **, size_t, void (*)(void *));
+void Sdf_VisitPathTableInParallel(void **, size_t, TfFunctionRef<void(void *&)>);
 
 /// \class SdfPathTable
 ///
@@ -236,6 +237,13 @@ template<class MappedType> class SdfPathTable
         }
       }
       return result;
+    }
+
+    /// Returns true if incrementing this iterator would move to a child
+    /// entry, false otherwise.
+    bool HasChild() const
+    {
+      return bool(_entry->firstChild);
     }
 
    protected:
@@ -530,9 +538,18 @@ template<class MappedType> class SdfPathTable
   /// requires that running the contained objects' destructors is thread-safe.
   void ClearInParallel()
   {
-    Sdf_ClearPathTableInParallel(reinterpret_cast<void **>(_buckets.data()),
+    auto visitFn = [](void *&voidEntry) {
+      _Entry *entry = static_cast<_Entry *>(voidEntry);
+      while (entry) {
+        _Entry *next = entry->next;
+        delete entry;
+        entry = next;
+      }
+      voidEntry = nullptr;
+    };
+    Sdf_VisitPathTableInParallel(reinterpret_cast<void **>(_buckets.data()),
                                  _buckets.size(),
-                                 _DeleteEntryChain);
+                                 visitFn);
     _size = 0;
   }
 
@@ -577,20 +594,46 @@ template<class MappedType> class SdfPathTable
       erase(oldName);
   }
 
+  /// ParallelForEach: parallel iteration over all of the key-value pairs
+  /// in the path table.  The type of \p visitFn should be a callable,
+  /// taking a (const SdfPath&, mapped_type&), representing the loop
+  /// body.  Note: since this function is run in parallel, visitFn is
+  /// responsible for synchronizing access to any non-pathtable state.
+  template<typename Callback> void ParallelForEach(Callback const &visitFn)
+  {
+    auto lambda = [&visitFn](void *&voidEntry) {
+      _Entry *entry = static_cast<_Entry *>(voidEntry);
+      while (entry) {
+        visitFn(std::cref(entry->value.first), std::ref(entry->value.second));
+        entry = entry->next;
+      }
+    };
+    Sdf_VisitPathTableInParallel(reinterpret_cast<void **>(_buckets.data()),
+                                 _buckets.size(),
+                                 lambda);
+  }
+
+  /// ParallelForEach: const version, runnable on a const path table and
+  /// taking a (const SdfPath&, const mapped_type&) input.
+  template<typename Callback> void ParallelForEach(Callback const &visitFn) const
+  {
+    auto lambda = [&visitFn](void *&voidEntry) {
+      const _Entry *entry = static_cast<const _Entry *>(voidEntry);
+      while (entry) {
+        visitFn(std::cref(entry->value.first), std::cref(entry->value.second));
+        entry = entry->next;
+      }
+    };
+    Sdf_VisitPathTableInParallel(
+      // Note: the const cast here is undone by the static cast above...
+      reinterpret_cast<void **>(const_cast<_Entry **>(_buckets.data())),
+      _buckets.size(),
+      lambda);
+  }
+
   /// @}
 
  private:
-
-  // Helper to delete entries.
-  static void _DeleteEntryChain(void *voidEntry)
-  {
-    _Entry *entry = static_cast<_Entry *>(voidEntry);
-    while (entry) {
-      _Entry *next = entry->next;
-      delete entry;
-      entry = next;
-    }
-  }
 
   // Helper to get parent paths.
   static SdfPath _GetParentPath(SdfPath const &path)

@@ -1,42 +1,35 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
-#include "wabi/usd/ar/defaultResolver.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/ar/defaultResolver.h"
 
-#include "wabi/usd/ar/assetInfo.h"
 #include "wabi/usd/ar/defaultResolverContext.h"
 #include "wabi/usd/ar/defineResolver.h"
 #include "wabi/usd/ar/filesystemAsset.h"
 #include "wabi/usd/ar/filesystemWritableAsset.h"
+#include "wabi/usd/ar/assetInfo.h"
 #include "wabi/usd/ar/resolverContext.h"
 #include "wabi/usd/ar/writableAsset.h"
 
@@ -51,8 +44,6 @@
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/vt/value.h"
 
-#include <tbb/concurrent_hash_map.h>
-
 WABI_NAMESPACE_BEGIN
 
 AR_DEFINE_RESOLVER(ArDefaultResolver, ArResolver);
@@ -62,18 +53,41 @@ static bool _IsFileRelative(const std::string &path)
   return path.find("./") == 0 || path.find("../") == 0;
 }
 
+static bool _IsRelativePath(const std::string &path)
+{
+  return (!path.empty() && TfIsRelativePath(path));
+}
+
+static bool _IsSearchPath(const std::string &path)
+{
+  return _IsRelativePath(path) && !_IsFileRelative(path);
+}
+
+static std::string _AnchorRelativePath(const std::string &anchorPath, const std::string &path)
+{
+  if (TfIsRelativePath(anchorPath) || !_IsRelativePath(path)) {
+    return path;
+  }
+
+  // Ensure we are using forward slashes and not back slashes.
+  std::string forwardPath = anchorPath;
+  std::replace(forwardPath.begin(), forwardPath.end(), '\\', '/');
+
+  // If anchorPath does not end with a '/', we assume it is specifying
+  // a file, strip off the last component, and anchor the path to that
+  // directory.
+  const std::string anchoredPath = TfStringCatPaths(TfStringGetBeforeSuffix(forwardPath, '/'),
+                                                    path);
+  return TfNormPath(anchoredPath);
+}
+
+
 static std::vector<std::string> _ParseSearchPaths(const std::string &pathStr)
 {
   return TfStringTokenize(pathStr, ARCH_PATH_LIST_SEP);
 }
 
 static TfStaticData<std::vector<std::string>> _SearchPath;
-
-struct ArDefaultResolver::_Cache
-{
-  using _PathToResolvedPathMap = tbb::concurrent_hash_map<std::string, ArResolvedPath>;
-  _PathToResolvedPathMap _pathToResolvedPathMap;
-};
 
 ArDefaultResolver::ArDefaultResolver()
 {
@@ -95,37 +109,8 @@ void ArDefaultResolver::SetDefaultSearchPath(const std::vector<std::string> &sea
   *_SearchPath = searchPath;
 }
 
-void ArDefaultResolver::ConfigureResolverForAsset(const std::string &path)
-{
-  _defaultContext = CreateDefaultContextForAsset(path);
-}
-
-bool ArDefaultResolver::IsRelativePath(const std::string &path)
-{
-  return (!path.empty() && TfIsRelativePath(path));
-}
-
-std::string ArDefaultResolver::AnchorRelativePath(const std::string &anchorPath,
-                                                  const std::string &path)
-{
-  if (TfIsRelativePath(anchorPath) || !IsRelativePath(path)) {
-    return path;
-  }
-
-  // Ensure we are using forward slashes and not back slashes.
-  std::string forwardPath = anchorPath;
-  std::replace(forwardPath.begin(), forwardPath.end(), '\\', '/');
-
-  // If anchorPath does not end with a '/', we assume it is specifying
-  // a file, strip off the last component, and anchor the path to that
-  // directory.
-  const std::string anchoredPath = TfStringCatPaths(TfStringGetBeforeSuffix(forwardPath, '/'),
-                                                    path);
-  return TfNormPath(anchoredPath);
-}
-
 std::string ArDefaultResolver::_CreateIdentifier(const std::string &assetPath,
-                                                 const ArResolvedPath &anchorAssetPath)
+                                                 const ArResolvedPath &anchorAssetPath) const
 {
   if (assetPath.empty()) {
     return assetPath;
@@ -146,38 +131,29 @@ std::string ArDefaultResolver::_CreateIdentifier(const std::string &assetPath,
   // path, we first look relative to the specified anchor. If an asset
   // exists there, we just return the anchored path. Otherwise, we return
   // the asset path as-is.
-  const std::string anchoredAssetPath = AnchorRelativePath(anchorAssetPath, assetPath);
+  const std::string anchoredAssetPath = _AnchorRelativePath(anchorAssetPath, assetPath);
 
-  if (IsSearchPath(assetPath) && Resolve(anchoredAssetPath).empty()) {
+  if (_IsSearchPath(assetPath) && Resolve(anchoredAssetPath).empty()) {
     return TfNormPath(assetPath);
   }
 
   return TfNormPath(anchoredAssetPath);
 }
 
-std::string ArDefaultResolver::_CreateIdentifierForNewAsset(const std::string &assetPath,
-                                                            const ArResolvedPath &anchorAssetPath)
+std::string ArDefaultResolver::_CreateIdentifierForNewAsset(
+  const std::string &assetPath,
+  const ArResolvedPath &anchorAssetPath) const
 {
   if (assetPath.empty()) {
     return assetPath;
   }
 
-  if (IsRelativePath(assetPath)) {
-    return TfNormPath(anchorAssetPath ? AnchorRelativePath(anchorAssetPath, assetPath) :
+  if (_IsRelativePath(assetPath)) {
+    return TfNormPath(anchorAssetPath ? _AnchorRelativePath(anchorAssetPath, assetPath) :
                                         TfAbsPath(assetPath));
   }
 
   return TfNormPath(assetPath);
-}
-
-bool ArDefaultResolver::IsSearchPath(const std::string &path)
-{
-  return IsRelativePath(path) && !_IsFileRelative(path);
-}
-
-std::string ArDefaultResolver::_GetExtension(const std::string &path)
-{
-  return TfGetExtension(path);
 }
 
 static ArResolvedPath _ResolveAnchored(const std::string &anchorPath, const std::string &path)
@@ -190,7 +166,7 @@ static ArResolvedPath _ResolveAnchored(const std::string &anchorPath, const std:
     // causes consumers to break.
     //
     // Ultimately what we should do is specify whether anchorPath
-    // in both Resolve and AnchorRelativePath can be files or directories
+    // in both Resolve and _AnchorRelativePath can be files or directories
     // and fix up all the callers to accommodate this.
     resolvedPath = TfStringCatPaths(anchorPath, path);
   }
@@ -201,13 +177,13 @@ static ArResolvedPath _ResolveAnchored(const std::string &anchorPath, const std:
   return TfPathExists(resolvedPath) ? ArResolvedPath(TfAbsPath(resolvedPath)) : ArResolvedPath();
 }
 
-ArResolvedPath ArDefaultResolver::_ResolveNoCache(const std::string &path)
+ArResolvedPath ArDefaultResolver::_Resolve(const std::string &path) const
 {
   if (path.empty()) {
     return ArResolvedPath();
   }
 
-  if (IsRelativePath(path)) {
+  if (_IsRelativePath(path)) {
     // First try to resolve relative paths against the current
     // working directory.
     ArResolvedPath resolvedPath = _ResolveAnchored(ArchGetCwd(), path);
@@ -217,7 +193,7 @@ ArResolvedPath ArDefaultResolver::_ResolveNoCache(const std::string &path)
 
     // If that fails and the path is a search path, try to resolve
     // against each directory in the specified search paths.
-    if (IsSearchPath(path)) {
+    if (_IsSearchPath(path)) {
       const ArDefaultResolverContext *contexts[2] = {_GetCurrentContextPtr(), &_fallbackContext};
       for (const ArDefaultResolverContext *ctx : contexts) {
         if (ctx) {
@@ -237,75 +213,46 @@ ArResolvedPath ArDefaultResolver::_ResolveNoCache(const std::string &path)
   return _ResolveAnchored(std::string(), path);
 }
 
-ArResolvedPath ArDefaultResolver::_Resolve(const std::string &assetPath)
-{
-  if (assetPath.empty()) {
-    return ArResolvedPath();
-  }
-
-  if (_CachePtr currentCache = _GetCurrentCache()) {
-    _Cache::_PathToResolvedPathMap::accessor accessor;
-    if (currentCache->_pathToResolvedPathMap.insert(accessor,
-                                                    std::make_pair(assetPath, ArResolvedPath()))) {
-      accessor->second = _ResolveNoCache(assetPath);
-    }
-    return accessor->second;
-  }
-
-  return _ResolveNoCache(assetPath);
-}
-
-ArResolvedPath ArDefaultResolver::_ResolveForNewAsset(const std::string &assetPath)
+ArResolvedPath ArDefaultResolver::_ResolveForNewAsset(const std::string &assetPath) const
 {
   return ArResolvedPath(assetPath.empty() ? assetPath : TfAbsPath(assetPath));
 }
 
-VtValue ArDefaultResolver::_GetModificationTimestamp(const std::string &path,
-                                                     const ArResolvedPath &resolvedPath)
+ArTimestamp ArDefaultResolver::_GetModificationTimestamp(const std::string &path,
+                                                         const ArResolvedPath &resolvedPath) const
 {
-  // Since the default resolver always resolves paths to local
-  // paths, we can just look at the mtime of the file indicated
-  // by resolvedPath.
-  double time;
-  if (ArchGetModificationTime(resolvedPath.GetPathString().c_str(), &time)) {
-    return VtValue(time);
-  }
-  return VtValue();
+  return ArFilesystemAsset::GetModificationTimestamp(resolvedPath);
 }
 
-std::shared_ptr<ArAsset> ArDefaultResolver::_OpenAsset(const ArResolvedPath &resolvedPath)
+std::shared_ptr<ArAsset> ArDefaultResolver::_OpenAsset(const ArResolvedPath &resolvedPath) const
 {
-  FILE *f = ArchOpenFile(resolvedPath.GetPathString().c_str(), "rb");
-  if (!f) {
-    return nullptr;
-  }
-
-  return std::shared_ptr<ArAsset>(new ArFilesystemAsset(f));
+  return ArFilesystemAsset::Open(resolvedPath);
 }
 
 std::shared_ptr<ArWritableAsset> ArDefaultResolver::_OpenAssetForWrite(
   const ArResolvedPath &resolvedPath,
-  WriteMode writeMode)
+  WriteMode writeMode) const
 {
   return ArFilesystemWritableAsset::Create(resolvedPath, writeMode);
 }
 
-bool ArDefaultResolver::_IsContextDependentPath(const std::string &assetPath)
+bool ArDefaultResolver::_IsContextDependentPath(const std::string &assetPath) const
 {
-  return IsSearchPath(assetPath);
+  return _IsSearchPath(assetPath);
 }
 
-ArResolverContext ArDefaultResolver::_CreateDefaultContext()
+ArResolverContext ArDefaultResolver::_CreateDefaultContext() const
 {
   return _defaultContext;
 }
 
-ArResolverContext ArDefaultResolver::_CreateContextFromString(const std::string &contextStr)
+ArResolverContext ArDefaultResolver::_CreateContextFromString(const std::string &contextStr) const
 {
   return ArDefaultResolverContext(_ParseSearchPaths(contextStr));
 }
 
-ArResolverContext ArDefaultResolver::_CreateDefaultContextForAsset(const std::string &assetPath)
+ArResolverContext ArDefaultResolver::_CreateDefaultContextForAsset(
+  const std::string &assetPath) const
 {
   if (assetPath.empty()) {
     return ArResolverContext(ArDefaultResolverContext());
@@ -316,52 +263,9 @@ ArResolverContext ArDefaultResolver::_CreateDefaultContextForAsset(const std::st
   return ArResolverContext(ArDefaultResolverContext(std::vector<std::string>(1, assetDir)));
 }
 
-ArResolverContext ArDefaultResolver::_GetCurrentContext()
+const ArDefaultResolverContext *ArDefaultResolver::_GetCurrentContextPtr() const
 {
-  const ArDefaultResolverContext *ctx = _GetCurrentContextPtr();
-  return ctx ? ArResolverContext(*ctx) : ArResolverContext();
-}
-
-void ArDefaultResolver::_BeginCacheScope(VtValue *cacheScopeData)
-{
-  _threadCache.BeginCacheScope(cacheScopeData);
-}
-
-void ArDefaultResolver::_EndCacheScope(VtValue *cacheScopeData)
-{
-  _threadCache.EndCacheScope(cacheScopeData);
-}
-
-ArDefaultResolver::_CachePtr ArDefaultResolver::_GetCurrentCache()
-{
-  return _threadCache.GetCurrentCache();
-}
-
-void ArDefaultResolver::_BindContext(const ArResolverContext &context, VtValue *bindingData)
-{
-  const ArDefaultResolverContext *ctx = context.Get<ArDefaultResolverContext>();
-
-  _ContextStack &contextStack = _threadContextStack.local();
-  contextStack.push_back(ctx);
-}
-
-void ArDefaultResolver::_UnbindContext(const ArResolverContext &context, VtValue *bindingData)
-{
-  _ContextStack &contextStack = _threadContextStack.local();
-  if (contextStack.empty()) {
-    TF_CODING_ERROR("No context was bound, cannot unbind context: %s",
-                    context.GetDebugString().c_str());
-  }
-
-  if (!contextStack.empty()) {
-    contextStack.pop_back();
-  }
-}
-
-const ArDefaultResolverContext *ArDefaultResolver::_GetCurrentContextPtr()
-{
-  _ContextStack &contextStack = _threadContextStack.local();
-  return contextStack.empty() ? nullptr : contextStack.back();
+  return _GetCurrentContextObject<ArDefaultResolverContext>();
 }
 
 WABI_NAMESPACE_END

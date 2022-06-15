@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdSkel/cacheImpl.h"
 
 #include "wabi/base/arch/hints.h"
@@ -38,9 +31,9 @@
 #include "wabi/usd/usdGeom/boundable.h"
 #include "wabi/usd/usdGeom/imageable.h"
 
-#include "wabi/usd/usdSkel/animation.h"
 #include "wabi/usd/usdSkel/bindingAPI.h"
 #include "wabi/usd/usdSkel/debugCodes.h"
+#include "wabi/usd/usdSkel/animation.h"
 #include "wabi/usd/usdSkel/root.h"
 #include "wabi/usd/usdSkel/utils.h"
 
@@ -50,10 +43,12 @@ WABI_NAMESPACE_BEGIN
 // UsdSkel_CacheImpl::WriteScope
 // ------------------------------------------------------------
 
+
 UsdSkel_CacheImpl::WriteScope::WriteScope(UsdSkel_CacheImpl *cache)
   : _cache(cache),
     _lock(cache->_mutex, /*write*/ true)
 {}
+
 
 void UsdSkel_CacheImpl::WriteScope::Clear()
 {
@@ -63,14 +58,17 @@ void UsdSkel_CacheImpl::WriteScope::Clear()
   _cache->_primSkinningQueryCache.clear();
 }
 
+
 // ------------------------------------------------------------
 // UsdSkel_CacheImpl::ReadScope
 // ------------------------------------------------------------
+
 
 UsdSkel_CacheImpl::ReadScope::ReadScope(UsdSkel_CacheImpl *cache)
   : _cache(cache),
     _lock(cache->_mutex, /*write*/ false)
 {}
+
 
 UsdSkelAnimQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateAnimQuery(const UsdPrim &prim)
 {
@@ -97,6 +95,7 @@ UsdSkelAnimQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateAnimQuery(const UsdPr
   }
   return UsdSkelAnimQuery();
 }
+
 
 UsdSkel_SkelDefinitionRefPtr UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelDefinition(
   const UsdPrim &prim)
@@ -125,6 +124,7 @@ UsdSkel_SkelDefinitionRefPtr UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelDefin
   return nullptr;
 }
 
+
 UsdSkelSkeletonQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelQuery(const UsdPrim &prim)
 {
   TRACE_FUNCTION();
@@ -149,6 +149,7 @@ UsdSkelSkeletonQuery UsdSkel_CacheImpl::ReadScope::FindOrCreateSkelQuery(const U
   return UsdSkelSkeletonQuery();
 }
 
+
 UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::GetSkinningQuery(const UsdPrim &prim) const
 {
   _PrimToSkinningQueryMap::const_accessor a;
@@ -156,6 +157,7 @@ UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::GetSkinningQuery(const UsdPri
     return a->second;
   return UsdSkelSkinningQuery();
 }
+
 
 UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::_FindOrCreateSkinningQuery(
   const UsdPrim &skinnedPrim,
@@ -175,6 +177,7 @@ UsdSkelSkinningQuery UsdSkel_CacheImpl::ReadScope::_FindOrCreateSkinningQuery(
                               key.blendShapesAttr,
                               key.blendShapeTargetsRel);
 }
+
 
 namespace
 {
@@ -218,6 +221,7 @@ namespace
   }
 
 }  // namespace
+
 
 bool UsdSkel_CacheImpl::ReadScope::Populate(const UsdSkelRoot &root,
                                             Usd_PrimFlagsPredicate predicate)

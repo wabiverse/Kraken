@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/pyConversions.h"
 
 #include "wabi/base/vt/dictionary.h"
 #include "wabi/base/vt/value.h"
@@ -30,8 +30,8 @@
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/layerOffset.h"
 #include "wabi/usd/sdf/listOp.h"
-#include "wabi/usd/sdf/payload.h"
 #include "wabi/usd/sdf/reference.h"
+#include "wabi/usd/sdf/payload.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/types.h"
 
@@ -42,6 +42,7 @@
 #include <string>
 
 WABI_NAMESPACE_BEGIN
+
 
 // XXX: This function is no longer required -- remove.
 TfPyObjWrapper UsdVtValueToPython(const VtValue &value)

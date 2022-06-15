@@ -24,13 +24,13 @@
 #ifndef WABI_USD_SDF_LIST_OP_LIST_EDITOR_H
 #define WABI_USD_SDF_LIST_OP_LIST_EDITOR_H
 
-#include "wabi/usd/sdf/changeBlock.h"
-#include "wabi/usd/sdf/layer.h"
-#include "wabi/usd/sdf/listEditor.h"
-#include "wabi/usd/sdf/listOp.h"
-#include "wabi/usd/sdf/path.h"
-#include "wabi/usd/sdf/spec.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/listEditor.h"
+#include "wabi/usd/sdf/changeBlock.h"
+#include "wabi/usd/sdf/spec.h"
+#include "wabi/usd/sdf/path.h"
+#include "wabi/usd/sdf/layer.h"
+#include "wabi/usd/sdf/listOp.h"
 
 WABI_NAMESPACE_BEGIN
 

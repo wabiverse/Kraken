@@ -24,10 +24,10 @@
 #ifndef WABI_USD_SDF_CHILDREN_H
 #define WABI_USD_SDF_CHILDREN_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <vector>

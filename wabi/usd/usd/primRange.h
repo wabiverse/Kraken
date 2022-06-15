@@ -24,14 +24,14 @@
 #ifndef WABI_USD_USD_PRIM_RANGE_H
 #define WABI_USD_USD_PRIM_RANGE_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/primFlags.h"
-#include "wabi/wabi.h"
 
-#include <iterator>
 #include <vector>
+#include <iterator>
 
 WABI_NAMESPACE_BEGIN
 
@@ -430,6 +430,7 @@ class UsdPrimRange
   unsigned int _initDepth;
   bool _postOrder;
 };
+
 
 WABI_NAMESPACE_END
 

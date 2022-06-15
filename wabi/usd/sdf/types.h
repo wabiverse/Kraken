@@ -27,13 +27,13 @@
 /// \file sdf/types.h
 /// Basic Sdf data types
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/listOp.h"
 #include "wabi/usd/sdf/timeCode.h"
 #include "wabi/usd/sdf/valueTypeName.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/arch/inttypes.h"
@@ -185,6 +185,7 @@ enum SdfVariability
   SdfNumVariabilities
 };
 
+
 /// An enum for TfError codes related to authoring operations.
 ///
 /// <b>SdfAuthoringError:</b>
@@ -276,8 +277,8 @@ typedef std::map<std::string, std::string> SdfVariantSelectionMap;
 typedef std::map<std::string, std::vector<std::string>> SdfVariantsMap;
 
 /// A map of source SdfPaths to target SdfPaths for relocation.
-//  Note: This map needs to be lexicographically sorted for Csd composition
-//        implementation, so SdfPath::FastLessThan is explicitly omitted as
+//  Note: This map needs to be lexicographically sorted for some downstream
+//        clients, so SdfPath::FastLessThan is explicitly omitted as
 //        the Compare template parameter.
 typedef std::map<SdfPath, SdfPath> SdfRelocatesMap;
 

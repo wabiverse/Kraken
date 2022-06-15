@@ -21,9 +21,9 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/primDefinition.h"
-#include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/schemaRegistry.h"
+#include "wabi/usd/usd/primDefinition.h"
 
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/propertySpec.h"
@@ -95,6 +95,10 @@ void wrapUsdSchemaRegistry()
     .def("IsConcrete", (bool (*)(const TfToken &)) & This::IsConcrete, (arg("primType")))
     .staticmethod("IsConcrete")
 
+    .def("IsAbstract", (bool (*)(const TfType &)) & This::IsAbstract, (arg("primType")))
+    .def("IsAbstract", (bool (*)(const TfToken &)) & This::IsAbstract, (arg("primType")))
+    .staticmethod("IsAbstract")
+
     .def("IsAppliedAPISchema",
          (bool (*)(const TfType &)) & This::IsAppliedAPISchema,
          (arg("apiSchemaType")))
@@ -136,9 +140,25 @@ void wrapUsdSchemaRegistry()
          return_value_policy<TfPyMapToDictionary>())
     .staticmethod("GetAutoApplyAPISchemas")
 
-    .def("GetPropertyNamespacePrefix",
-         &This::GetPropertyNamespacePrefix,
-         (arg("multiApplyAPISchemaName")))
+    .def("MakeMultipleApplyNameTemplate",
+         &This::MakeMultipleApplyNameTemplate,
+         arg("namespacePrefix"),
+         arg("baseName"))
+    .staticmethod("MakeMultipleApplyNameTemplate")
+
+    .def("MakeMultipleApplyNameInstance",
+         &This::MakeMultipleApplyNameInstance,
+         arg("nameTemplate"),
+         arg("instanceName"))
+    .staticmethod("MakeMultipleApplyNameInstance")
+
+    .def("GetMultipleApplyNameTemplateBaseName",
+         &This::GetMultipleApplyNameTemplateBaseName,
+         arg("nameTemplate"))
+    .staticmethod("GetMultipleApplyNameTemplateBaseName")
+
+    .def("IsMultipleApplyNameTemplate", &This::IsMultipleApplyNameTemplate, arg("nameTemplate"))
+    .staticmethod("IsMultipleApplyNameTemplate")
 
     .def("FindConcretePrimDefinition",
          &This::FindConcretePrimDefinition,

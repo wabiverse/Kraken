@@ -23,12 +23,12 @@
 //
 /// \file wrapRelationshipSpec.cpp
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/pySpec.h"
-#include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
 
 #include <boost/python.hpp>
 

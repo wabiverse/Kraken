@@ -26,16 +26,16 @@
 
 /// \file sdf/mapEditProxy.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/allowed.h"
 #include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/mapEditor.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 
+#include "wabi/base/vt/value.h"  // for Vt_DefaultValueFactory
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/mallocTag.h"
-#include "wabi/base/vt/value.h"  // for Vt_DefaultValueFactory
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
 #include <boost/operators.hpp>

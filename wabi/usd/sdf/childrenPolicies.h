@@ -28,13 +28,13 @@
 // determine how the view maps between keys (the child's name or path) and
 // values (the child's SpecHandle).
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
-#include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/proxyPolicies.h"
 #include "wabi/usd/sdf/schema.h"
-#include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -24,17 +24,17 @@
 #ifndef WABI_USD_USD_INSTANCE_KEY_H
 #define WABI_USD_USD_INSTANCE_KEY_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/clipSetDefinition.h"
 #include "wabi/usd/usd/primData.h"
 #include "wabi/usd/usd/stageLoadRules.h"
 #include "wabi/usd/usd/stagePopulationMask.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/pcp/instanceKey.h"
 
-#include <iosfwd>
 #include <string>
 #include <vector>
+#include <iosfwd>
 
 WABI_NAMESPACE_BEGIN
 

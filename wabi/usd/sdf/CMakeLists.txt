@@ -74,7 +74,7 @@ wabi_library(sdf
         # Flex/Bison generated code
         path.tab
         textFileFormat.tab
-
+   
     PYTHON_PUBLIC_CLASSES
         pyChildrenProxy
         pyChildrenView
@@ -153,7 +153,7 @@ wabi_library(sdf
         wrapVariantSpec.cpp
         wrapVariantSetSpec.cpp
 
-    PYMODULE_FILES
+    PYMODULE_FILES 
         python/__init__.py
 
     RESOURCE_FILES
@@ -162,26 +162,3 @@ wabi_library(sdf
     DOXYGEN_FILES
         docs/overview.dox
 )
-
-# Validate that the checked in generated code matches the sources. This requires
-# a specific version of bison/flex to get the same results
-# if (NOT ${WABI_VALIDATE_GENERATED_CODE})
-#     message(STATUS "Skipping validation of sdf generated code because WABI_VALIDATE_GENERATED_CODE=OFF")
-# elseif(NOT BISON_FOUND)
-#     message(STATUS "Skipping validation of sdf generated code because of missing dependency: bison")
-# elseif(NOT FLEX_FOUND)
-#     message(STATUS "Skipping validation of sdf generated code because of missing dependency: flex")
-# else()
-#     add_custom_command(
-#         TARGET sdf
-#         PRE_BUILD
-#         COMMENT "Validating sdf generated code..."
-#         COMMAND
-#             ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/sdfGenAsciiParsers.py
-#             --srcDir ${CMAKE_CURRENT_SOURCE_DIR}
-#             --bison ${BISON_EXECUTABLE}
-#             --flex ${FLEX_EXECUTABLE}
-#             --bases textFileFormat path
-#             --validate
-#     )
-# endif()

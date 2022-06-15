@@ -1,4 +1,0 @@
-# We don't want to format
-# our codegen templates.
-
-DisableFormat: true

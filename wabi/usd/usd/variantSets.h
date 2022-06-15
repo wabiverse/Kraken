@@ -24,11 +24,11 @@
 #ifndef WABI_USD_USD_VARIANT_SETS_H
 #define WABI_USD_USD_VARIANT_SETS_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/editTarget.h"
 #include "wabi/usd/usd/prim.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/declareHandles.h"
 
@@ -36,6 +36,7 @@
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 SDF_DECLARE_HANDLES(SdfLayer);
 SDF_DECLARE_HANDLES(SdfPrimSpec);
@@ -165,17 +166,20 @@ class UsdVariantSet
   std::pair<UsdStagePtr, UsdEditTarget> GetVariantEditContext(
     const SdfLayerHandle &layer = SdfLayerHandle()) const;
 
+
   /// Return this VariantSet's held prim.
   UsdPrim const &GetPrim() const
   {
     return _prim;
   }
 
+
   /// Return this VariantSet's name
   std::string const &GetName() const
   {
     return _variantSetName;
   }
+
 
   /// Is this UsdVariantSet object usable?  If not, calling any of
   /// its other methods is likely to crash.
@@ -206,6 +210,7 @@ class UsdVariantSet
   friend class UsdPrim;
   friend class UsdVariantSets;
 };
+
 
 // TODO:
 // VariantSet Names are stored as SdListOps, but a VariantSet is an actual spec
@@ -284,6 +289,7 @@ class UsdVariantSets
   USD_API
   SdfVariantSelectionMap GetAllVariantSelections() const;
 
+
  private:
 
   explicit UsdVariantSets(const UsdPrim &prim) : _prim(prim)
@@ -295,6 +301,7 @@ class UsdVariantSets
 
   friend class UsdPrim;
 };
+
 
 WABI_NAMESPACE_END
 

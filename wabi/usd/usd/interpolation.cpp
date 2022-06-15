@@ -21,13 +21,14 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/interpolation.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/interpolation.h"
 
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/registryManager.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_REGISTRY_FUNCTION(TfEnum)
 {

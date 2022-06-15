@@ -140,7 +140,7 @@ class UsdPhysicsCollisionGroup : public UsdTyped
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
   static const TfType &_GetStaticTfType();
@@ -150,7 +150,6 @@ class UsdPhysicsCollisionGroup : public UsdTyped
   // override SchemaBase virtuals.
   USDPHYSICS_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 

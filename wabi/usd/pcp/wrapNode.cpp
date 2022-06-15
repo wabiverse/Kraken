@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/node_Iterator.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/pyResultConversions.h"
 

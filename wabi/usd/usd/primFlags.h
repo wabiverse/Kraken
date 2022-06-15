@@ -72,10 +72,10 @@
 /// The following variables provide the clauses that can be combined and
 /// negated to produce predicates:
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/tf/bitUtils.h"
-#include "wabi/usd/usd/api.h"
-#include "wabi/wabi.h"
 
 #include <boost/functional/hash.hpp>
 
@@ -309,6 +309,7 @@ class Usd_PrimFlagsPredicate
   bool _negate;
 };
 
+
 /// Conjunction of prim flag predicate terms.
 ///
 /// Usually clients will implicitly create conjunctions by &&-ing together flag
@@ -414,6 +415,7 @@ inline Usd_PrimFlagsConjunction operator&&(Usd_PrimFlags lhs, Usd_PrimFlags rhs)
 {
   return Usd_Term(lhs) && Usd_Term(rhs);
 }
+
 
 /// Disjunction of prim flag predicate terms.
 ///

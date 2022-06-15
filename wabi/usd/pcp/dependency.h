@@ -24,10 +24,10 @@
 #ifndef WABI_USD_PCP_DEPENDENCY_H
 #define WABI_USD_PCP_DEPENDENCY_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/mapFunction.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 #include <vector>
 

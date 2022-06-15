@@ -24,7 +24,7 @@ over "GLOBAL" (
 class "RenderSettingsBase" (
     inherits = </Typed>
     doc = """Abstract base class that defines render settings that
-    can be specified on either a RenderSettings prim or a RenderProduct
+    can be specified on either a RenderSettings prim or a RenderProduct 
     prim."""
     customData = {
          string className = "SettingsBase"
@@ -103,13 +103,19 @@ class "RenderSettingsBase" (
         """
     )
     uniform bool instantaneousShutter = false (
-        doc = """Override the targeted _camera_'s _shutterClose_ to be
-        equal to the value of its _shutterOpen_, to produce a zero-width
-        shutter interval.  This gives us a convenient way to disable
-        motion blur."""
+        doc = """Deprecated - use disableMotionBlur instead. Override
+        the targeted _camera_'s _shutterClose_ to be equal to the
+        value of its _shutterOpen_, to produce a zero-width shutter
+        interval.  This gives us a convenient way to disable motion
+        blur."""
+    )
+    uniform bool disableMotionBlur = false (
+        doc = """Disable all motion blur by setting the shutter interval
+        of the targeted camera to [0,0] - that is, take only one sample,
+        namely at the current time code."""
     )
 }
-
+ 
 class RenderSettings "RenderSettings" (
     inherits = </RenderSettingsBase>
     doc = """A UsdRenderSettings prim specifies global settings for
@@ -118,9 +124,6 @@ class RenderSettings "RenderSettings" (
     be rendered.  \\ref UsdRenderHowSettingsAffectRendering"""
     customData = {
          string className = "Settings"
-         string extraIncludes = """
-#include "wabi/base/gf/frustum.h"
-"""
     }
 )
 {
@@ -145,17 +148,6 @@ class RenderSettings "RenderSettings" (
     )
 }
 
-class "RenderSettingsAPI" (
-    inherits = </APISchemaBase>
-    customData = {
-        token apiSchemaType = "singleApply"
-        string className = "SettingsAPI"
-    }
-    doc = """UsdRenderSettingsAPI is a base class for API schemas
-    to encode renderer-specific settings."""
-) {
-}
-
 class RenderVar "RenderVar" (
     inherits = </Typed>
     doc = """A UsdRenderVar describes a custom data variable for
@@ -163,7 +155,7 @@ class RenderVar "RenderVar" (
     can be a shader output or an LPE (Light Path Expression), and also
     allows encoding of (generally renderer-specific) parameters that
     configure the renderer for computing the variable.
-
+ 
     \note In the future, UsdRender may standardize RenderVar representation
     for well-known variables under the sourceType `intrinsic`,
     such as _r_, _g_, _b_, _a_, _z_, or _id_.
@@ -201,7 +193,7 @@ class RenderVar "RenderVar" (
         allowedTokens = ["raw", "primvar", "lpe", "intrinsic"]
     )
 }
-
+ 
 class RenderProduct "RenderProduct" (
     inherits = </RenderSettingsBase>
     doc = """A UsdRenderProduct describes an image or other

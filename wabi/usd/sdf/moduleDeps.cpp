@@ -23,10 +23,10 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/scriptModuleLoader.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/wabi.h"
 
 #include <vector>
 

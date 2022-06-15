@@ -24,16 +24,16 @@
 #ifndef WABI_USD_PCP_NODE_H
 #define WABI_USD_PCP_NODE_H
 
-#include "wabi/base/tf/hashset.h"
-#include "wabi/base/tf/iterator.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/types.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/iterator.h"
+#include "wabi/base/tf/hashset.h"
 
+#include <boost/operators.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
-#include <boost/operators.hpp>
 
 WABI_NAMESPACE_BEGIN
 
@@ -448,6 +448,18 @@ template<> struct Tf_IteratorInterface<PcpNodeRef::child_const_range, true>
 
 template<> struct Tf_ShouldIterateOverCopy<PcpNodeRef::child_const_range> : boost::true_type
 {};
+
+/// Support for range-based for loops for PcpNodeRef children ranges.
+inline PcpNodeRef_ChildrenIterator begin(const PcpNodeRef::child_const_range &r)
+{
+  return r.first;
+}
+
+/// Support for range-based for loops for PcpNodeRef children ranges.
+inline PcpNodeRef_ChildrenIterator end(const PcpNodeRef::child_const_range &r)
+{
+  return r.second;
+}
 
 // Helper to count the non-variant path components of a path; equivalent
 // to path.StripAllVariantSelections().GetPathElementCount() except

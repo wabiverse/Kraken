@@ -22,13 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/iterator.h"
 #include "wabi/usd/pcp/arc.h"
 #include "wabi/usd/pcp/primIndex.h"
 #include "wabi/usd/pcp/primIndex_Graph.h"
 #include "wabi/usd/pcp/propertyIndex.h"
 #include "wabi/usd/pcp/types.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

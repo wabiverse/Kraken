@@ -26,9 +26,9 @@
 
 /// \file usd/primCompositionQuery.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/prim.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/primIndex.h"
@@ -357,6 +357,7 @@ class UsdPrimCompositionQuery
   PcpPrimIndex _expandedPrimIndex;
   std::vector<UsdPrimCompositionQueryArc> _unfilteredArcs;
 };
+
 
 WABI_NAMESPACE_END
 

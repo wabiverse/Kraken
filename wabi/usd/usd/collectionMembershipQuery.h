@@ -27,10 +27,10 @@
 /// \file usd/collectionMembershipQuery.h
 
 #include "wabi/base/tf/declarePtrs.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/primFlags.h"
-#include "wabi/wabi.h"
 
 #include <unordered_map>
 

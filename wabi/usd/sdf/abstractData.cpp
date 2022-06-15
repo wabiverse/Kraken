@@ -21,13 +21,13 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/abstractData.h"
 #include "wabi/base/trace/trace.h"
-#include "wabi/wabi.h"
 
 #include <ostream>
-#include <utility>
 #include <vector>
+#include <utility>
 
 using std::make_pair;
 using std::pair;
@@ -373,6 +373,7 @@ std::vector<TfToken> SdfAbstractData::ListDictKeys(const SdfPath &path,
   }
   return result;
 }
+
 
 ////////////////////////////////////////////////////////////
 

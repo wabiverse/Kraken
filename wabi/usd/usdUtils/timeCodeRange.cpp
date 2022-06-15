@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdUtils/timeCodeRange.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/timeCodeRange.h"
 
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/staticTokens.h"
@@ -33,9 +33,14 @@
 #include <string>
 #include <vector>
 
+
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PUBLIC_TOKENS(UsdUtilsTimeCodeRangeTokens, USDUTILS_TIME_CODE_RANGE_TOKENS);
+
+TF_DEFINE_PUBLIC_TOKENS(
+    UsdUtilsTimeCodeRangeTokens,
+    USDUTILS_TIME_CODE_RANGE_TOKENS);
+
 
 /// Attempts to convert the string \p valueString to a double.
 ///
@@ -153,5 +158,6 @@ std::istream &operator>>(std::istream &is, UsdUtilsTimeCodeRange &timeCodeRange)
   timeCodeRange = UsdUtilsTimeCodeRange::CreateFromFrameSpec(rangeString);
   return is;
 }
+
 
 WABI_NAMESPACE_END

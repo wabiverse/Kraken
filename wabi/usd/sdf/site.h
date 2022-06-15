@@ -24,13 +24,13 @@
 #ifndef WABI_USD_SDF_SITE_H
 #define WABI_USD_SDF_SITE_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
-#include <boost/operators.hpp>
 #include <set>
 #include <vector>
+#include <boost/operators.hpp>
 
 WABI_NAMESPACE_BEGIN
 

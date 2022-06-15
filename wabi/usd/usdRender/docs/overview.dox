@@ -1,6 +1,6 @@
 /*!
 \page usdRender_page_front UsdRender : USD Render Schema
-\if ( WABI_MFB_BUILD )
+\if ( PIXAR_MFB_BUILD )
 \publicLib
 \mainpage UsdRender : USD Render Schema
 \endif
@@ -45,10 +45,6 @@ process follows.
 
 - UsdRenderSpec is a self-contained, evaluated specification
   of render settings, suitable for consumption by a backend.
-
-- UsdRenderSettingsAPI is a base class for renderer-specific
-  API schemas (provided by other schema libraries) that encode
-  renderer-specific settings.
 
 ## Reading settings {#UsdRenderReadingSettings}
 

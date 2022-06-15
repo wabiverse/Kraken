@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/valueTypeName.h"
 #include "wabi/usd/sdf/valueTypePrivate.h"
-#include "wabi/wabi.h"
 
 #include <boost/functional/hash.hpp>
 #include <ostream>
@@ -46,6 +46,7 @@ namespace
 
 }  // anonymous namespace
 
+
 //
 // SdfTupleDimensions
 //
@@ -63,6 +64,7 @@ bool SdfTupleDimensions::operator==(const SdfTupleDimensions &rhs) const
   }
   return true;
 }
+
 
 //
 // SdfValueTypeName

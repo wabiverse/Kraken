@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/data.h"
 #include "wabi/base/trace/trace.h"
 #include "wabi/base/work/utils.h"
-#include "wabi/wabi.h"
 
 #include <iostream>
 
@@ -279,6 +279,7 @@ std::vector<TfToken> SdfData::List(const SdfPath &path) const
   }
   return names;
 }
+
 
 ////////////////////////////////////////////////////////////////////////
 // This is a basic prototype implementation of the time-sampling API

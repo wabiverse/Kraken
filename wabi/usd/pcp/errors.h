@@ -24,13 +24,13 @@
 #ifndef WABI_USD_PCP_ERRORS_H
 #define WABI_USD_PCP_ERRORS_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/site.h"
 #include "wabi/usd/pcp/types.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/layerOffset.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/enum.h"
 

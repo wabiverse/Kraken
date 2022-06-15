@@ -26,11 +26,11 @@
 
 /// \file usd/object.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/primData.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/abstractData.h"
 #include "wabi/usd/sdf/path.h"
@@ -38,6 +38,7 @@
 #include <type_traits>
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DECLARE_WEAK_PTRS(UsdStage);
 
@@ -56,6 +57,7 @@ enum UsdObjType
 
   Usd_NumObjTypes
 };
+
 
 namespace _Detail
 {
@@ -268,6 +270,7 @@ class UsdObject
   // --------------------------------------------------------------------- //
   /// @}
   // --------------------------------------------------------------------- //
+
 
   // --------------------------------------------------------------------- //
   /// \name Generic Metadata Access

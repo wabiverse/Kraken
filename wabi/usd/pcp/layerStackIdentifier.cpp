@@ -23,11 +23,11 @@
 //
 /// \file LayerStackIdentifier.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/layerStackIdentifier.h"
+#include "wabi/usd/sdf/layer.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
 
 #include <boost/functional/hash.hpp>
 #include <ostream>

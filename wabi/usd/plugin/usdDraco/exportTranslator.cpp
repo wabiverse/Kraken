@@ -22,15 +22,16 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "exportTranslator.h"
 #include "attributeDescriptor.h"
 #include "attributeFactory.h"
 #include "exportAttribute.h"
+#include "exportTranslator.h"
 
-#include "wabi/base/vt/types.h"
-#include "wabi/usd/usdGeom/mesh.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/mesh.h"
+#include "wabi/base/vt/types.h"
 
+#include <draco/core/macros.h>
 #include <draco/mesh/mesh.h>
 
 WABI_NAMESPACE_BEGIN
@@ -226,10 +227,8 @@ bool UsdDracoExportTranslator::_CheckData() const
   }
   for (size_t i = 0; i < _genericAttributes.size(); i++) {
     if (!_CheckPrimvarData(*_genericAttributes[i])) {
-      std::string message("Primvar ");
-      message += _genericAttributes[i]->GetDescriptor().GetName().GetText();
-      message += " index is inconsistent.";
-      TF_RUNTIME_ERROR(message.c_str());
+      TF_RUNTIME_ERROR("Primvar %s index is inconsistent.",
+                       _genericAttributes[i]->GetDescriptor().GetName().GetText());
       return false;
     }
   }
@@ -371,9 +370,14 @@ void UsdDracoExportTranslator::_SetPointMapsToMesh()
 
 void UsdDracoExportTranslator::_Deduplicate() const
 {
+#ifdef DRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED
   if (!_posOrder.HasPointAttribute())
     _dracoMesh->DeduplicateAttributeValues();
+#endif
+
+#ifdef DRACO_ATTRIBUTE_INDICES_DEDUPLICATION_SUPPORTED
   _dracoMesh->DeduplicatePointIds();
+#endif
 }
 
 // Polygon reconstruction attribute is associated with every triangle corner and

@@ -26,11 +26,13 @@
 
 #include <typeinfo>
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/types.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/wabi.h"
+
 
 WABI_NAMESPACE_BEGIN
+
 
 draco::DataType UsdDracoAttributeFactory::GetDracoDataType(const std::type_info &typeInfo)
 {
@@ -216,5 +218,6 @@ SdfValueTypeName UsdDracoAttributeFactory::GetSdfValueTypeName(
   TF_RUNTIME_ERROR("Unsupported value type.");
   return SdfValueTypeName();
 }
+
 
 WABI_NAMESPACE_END

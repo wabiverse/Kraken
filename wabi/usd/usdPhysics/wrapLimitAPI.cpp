@@ -123,16 +123,20 @@ void wrapUsdPhysicsLimitAPI()
     .staticmethod("Apply")
 
     .def("GetSchemaAttributeNames",
-         &This::GetSchemaAttributeNames,
+         (const TfTokenVector &(*)(bool)) & This::GetSchemaAttributeNames,
          arg("includeInherited") = true,
-         arg("instanceName") = TfToken(),
+         return_value_policy<TfPySequenceToList>())
+    .def("GetSchemaAttributeNames",
+         (TfTokenVector(*)(bool, const TfToken &)) & This::GetSchemaAttributeNames,
+         arg("includeInherited"),
+         arg("instanceName"),
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
 

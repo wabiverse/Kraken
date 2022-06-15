@@ -328,6 +328,7 @@ bool UsdCollectionMembershipQuery::IsPathIncluded(const SdfPath &path,
     }
 
     return !parentIsExcludedOrExplicitlyIncluded;
+
   } else {
     // If it's a property path, then the path is excluded unless its
     // parent-path's expansionRule is "expandPrimsAndProperties".

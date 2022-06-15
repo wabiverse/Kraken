@@ -24,10 +24,10 @@
 #ifndef WABI_USD_SDF_VECTOR_LIST_EDITOR_H
 #define WABI_USD_SDF_VECTOR_LIST_EDITOR_H
 
-#include "wabi/usd/sdf/changeBlock.h"
-#include "wabi/usd/sdf/listEditor.h"
-#include "wabi/usd/sdf/listOp.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/listEditor.h"
+#include "wabi/usd/sdf/changeBlock.h"
+#include "wabi/usd/sdf/listOp.h"
 
 #include "wabi/base/tf/ostreamMethods.h"
 #include <vector>

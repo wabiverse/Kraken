@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdUtils/pipeline.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/pipeline.h"
 
 #include "wabi/base/plug/plugin.h"
 #include "wabi/base/plug/registry.h"
@@ -43,24 +43,36 @@
 
 #include <string>
 
+
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(USD_FORCE_DEFAULT_MATERIALS_SCOPE_NAME,
-                      false,
-                      "Disables the ability to configure the materials scope name with a "
-                      "plugInfo.json value and forces the use of the built-in default instead. "
-                      "This is primarily used for unit testing purposes as a way to ignore any "
-                      "site-based configuration.");
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+TF_DEFINE_ENV_SETTING(
+    USD_FORCE_DEFAULT_MATERIALS_SCOPE_NAME,
+    false,
+    "Disables the ability to configure the materials scope name with a "
+    "plugInfo.json value and forces the use of the built-in default instead. "
+    "This is primarily used for unit testing purposes as a way to ignore any "
+    "site-based configuration.");
 
-                         (UsdUtilsPipeline)(MaterialsScopeName)(PrimaryCameraName)(RegisteredVariantSets)(selectionExportPolicy)
-                         // lowerCamelCase of the enums.
-                         (never)(ifAuthored)(always)
 
-                           ((DefaultMaterialsScopeName, "Looks"))((DefaultPrimaryCameraName, "main_cam"))
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
 
-                             (pref)(st));
+    (UsdUtilsPipeline)
+        (MaterialsScopeName)
+        (PrimaryCameraName)
+        (ProvidesRegisteredVariantSetsFromPlugin)
+        (RegisteredVariantSets)
+            (selectionExportPolicy)
+
+    ((DefaultMaterialsScopeName, "Looks"))
+    ((DefaultPrimaryCameraName, "main_cam"))
+
+    (pref)
+    (st)
+);
+
 
 TfToken UsdUtilsGetAlphaAttributeNameForColor(TfToken const &colorAttrName)
 {
@@ -97,11 +109,11 @@ TfToken UsdUtilsGetModelNameFromRootLayer(const SdfLayerHandle &rootLayer)
   return modelName;
 }
 
-TF_MAKE_STATIC_DATA(std::set<UsdUtilsRegisteredVariantSet>, _regVarSets)
+TF_MAKE_STATIC_DATA(std::set<UsdUtilsRegisteredVariantSet>, _regVarSets) {}
+
+static void _RegisterVariantSetsFromPlugInfos()
 {
-  PlugPluginPtrVector plugs = PlugRegistry::GetInstance().GetAllPlugins();
-  TF_FOR_ALL (plugIter, plugs) {
-    PlugPluginPtr plug = *plugIter;
+  for (PlugPluginPtr plug : PlugRegistry::GetInstance().GetAllPlugins()) {
     JsObject metadata = plug->GetMetadata();
     JsValue pipelineUtilsDictValue;
     if (TfMapLookup(metadata, _tokens->UsdUtilsPipeline, &pipelineUtilsDictValue)) {
@@ -138,20 +150,45 @@ TF_MAKE_STATIC_DATA(std::set<UsdUtilsRegisteredVariantSet>, _regVarSets)
           std::string variantSetType = info[_tokens->selectionExportPolicy].GetString();
 
           UsdUtilsRegisteredVariantSet::SelectionExportPolicy selectionExportPolicy;
-          if (variantSetType == _tokens->never) {
-            selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::Never;
-          } else if (variantSetType == _tokens->ifAuthored) {
-            selectionExportPolicy =
-              UsdUtilsRegisteredVariantSet::SelectionExportPolicy::IfAuthored;
-          } else if (variantSetType == _tokens->always) {
-            selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::Always;
-          } else {
+          if (!UsdUtilsRegisteredVariantSet::GetSelectionExportPolicyFromString(
+                variantSetType,
+                &selectionExportPolicy)) {
             TF_CODING_ERROR("%s[UsdUtilsPipeline][RegisteredVariantSets][%s] was not valid.",
                             plug->GetName().c_str(),
                             variantSetName.c_str());
             continue;
           }
-          _regVarSets->insert(UsdUtilsRegisteredVariantSet(variantSetName, selectionExportPolicy));
+          UsdUtilsRegisterVariantSet(variantSetName, selectionExportPolicy);
+        }
+      }
+    }
+  }
+}
+
+static void _LoadPluginsThatRegisterVariantSets()
+{
+  for (PlugPluginPtr plug : PlugRegistry::GetInstance().GetAllPlugins()) {
+    JsObject metadata = plug->GetMetadata();
+    JsValue pipelineUtilsDictValue;
+    if (TfMapLookup(metadata, _tokens->UsdUtilsPipeline, &pipelineUtilsDictValue)) {
+      if (!pipelineUtilsDictValue.Is<JsObject>()) {
+        TF_CODING_ERROR("%s[UsdUtilsPipeline] was not a dictionary.", plug->GetName().c_str());
+        continue;
+      }
+
+      JsObject pipelineUtilsDict = pipelineUtilsDictValue.Get<JsObject>();
+      JsValue registersVariantSets;
+      if (TfMapLookup(pipelineUtilsDict,
+                      _tokens->ProvidesRegisteredVariantSetsFromPlugin,
+                      &registersVariantSets)) {
+        if (!registersVariantSets.IsBool()) {
+          TF_CODING_ERROR(
+            "%s[UsdUtilsPipeline][ProvidesRegisteredVariantSetsFromPlugin] was not a bool.",
+            plug->GetName().c_str());
+        }
+
+        if (registersVariantSets.GetBool()) {
+          plug->Load();
         }
       }
     }
@@ -160,7 +197,27 @@ TF_MAKE_STATIC_DATA(std::set<UsdUtilsRegisteredVariantSet>, _regVarSets)
 
 const std::set<UsdUtilsRegisteredVariantSet> &UsdUtilsGetRegisteredVariantSets()
 {
+  // Lazy population on first use.
+  static std::once_flag _flag;
+  std::call_once(_flag, []() {
+    // First, we'll populate from any plugInfos that provide this information.
+    _RegisterVariantSetsFromPlugInfos();
+
+    // Now, we load any plugins that may want register variantSets as well.
+    _LoadPluginsThatRegisterVariantSets();
+
+    // Invoke any code for UsdUtilsRegisteredVariantSet.
+    TfRegistryManager::GetInstance().SubscribeTo<UsdUtilsRegisteredVariantSet>();
+  });
+
   return *_regVarSets;
+}
+
+void UsdUtilsRegisterVariantSet(
+  const std::string &variantSetName,
+  const UsdUtilsRegisteredVariantSet::SelectionExportPolicy &selectionExportPolicy)
+{
+  _regVarSets->emplace(variantSetName, selectionExportPolicy);
 }
 
 UsdPrim UsdUtilsGetPrimAtPathWithForwarding(const UsdStagePtr &stage, const SdfPath &path)
@@ -236,7 +293,7 @@ static _TokenToTokenMap _GetPipelineIdentifierTokens(const TfTokenVector &identi
   _TokenToTokenMap identifierMap;
 
   const PlugPluginPtrVector plugs = PlugRegistry::GetInstance().GetAllPlugins();
-  for (const auto &plug : plugs) {
+  for (const PlugPluginPtr plug : plugs) {
     JsObject metadata = plug->GetMetadata();
     JsValue metadataDictValue;
     if (!TfMapLookup(metadata, metadataDictKey, &metadataDictValue)) {
@@ -317,5 +374,6 @@ TfToken UsdUtilsGetPrimaryCameraName(const bool forceDefault)
                             _tokens->PrimaryCameraName,
                             _tokens->DefaultPrimaryCameraName);
 }
+
 
 WABI_NAMESPACE_END

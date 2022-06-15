@@ -26,17 +26,17 @@
 
 /// \file usd/common.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/usd/sdf/layerOffset.h"
-#include "wabi/usd/usd/api.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/usd/primDataHandle.h"
 #include "wabi/usd/usd/timeCode.h"
 
-#include <map>
 #include <string>
+#include <map>
 
 WABI_NAMESPACE_BEGIN
 

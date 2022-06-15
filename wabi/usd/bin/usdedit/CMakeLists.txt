@@ -1,7 +1,7 @@
 set(WABI_PREFIX wabi/usd)
 set(WABI_PACKAGE usd)
 
-wabi_python_bin(usdedit
+pxr_python_bin(usdedit
     DEPENDENCIES
         sdf
         usd
@@ -9,7 +9,7 @@ wabi_python_bin(usdedit
 
 # Look up programs needed for testing
 find_program(SEDBIN
-    NAMES sed
+    NAMES sed 
 )
 
 find_program(CHMODBIN
@@ -27,28 +27,28 @@ elseif(NOT EXISTS ${CHMODBIN})
 elseif(NOT EXISTS ${HEADBIN})
     message(STATUS "Skipping usdedit tests, could not find head command.")
 else()
-    wabi_install_test_dir(
+    pxr_install_test_dir(
         SRC testenv/testUsdEditFilePermissions
         DEST testUsdEditFilePermissions1
     )
 
-    wabi_register_test(testUsdEditFilePermissions1
+    pxr_register_test(testUsdEditFilePermissions1
         PYTHON
         PRE_COMMAND "${CHMODBIN} -w write_protected.usda"
         COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdedit write_protected.usda"
-        EXPECTED_RETURN_CODE 1
+        EXPECTED_RETURN_CODE 1 
         ENV
           USD_EDITOR="${HEADBIN}"
         PRE_PATH
             ${CMAKE_INSTALL_PREFIX}/bin
     )
 
-    wabi_install_test_dir(
+    pxr_install_test_dir(
         SRC testenv/testUsdEditFilePermissions
         DEST testUsdEditFilePermissions2
     )
 
-    wabi_register_test(testUsdEditFilePermissions2
+    pxr_register_test(testUsdEditFilePermissions2
         PYTHON
         PRE_COMMAND "${CHMODBIN} -w write_protected.usda"
         COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdedit -n write_protected.usda"
@@ -59,12 +59,12 @@ else()
             ${CMAKE_INSTALL_PREFIX}/bin
     )
 
-    wabi_install_test_dir(
+    pxr_install_test_dir(
         SRC testenv/testUsdEditFilePermissions
         DEST testUsdEditFilePermissions3
     )
 
-    wabi_register_test(testUsdEditFilePermissions3
+    pxr_register_test(testUsdEditFilePermissions3
         PYTHON
         PRE_COMMAND "${CHMODBIN} -w write_protected.usda"
         COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdedit -f write_protected.usda"
@@ -75,12 +75,12 @@ else()
             ${CMAKE_INSTALL_PREFIX}/bin
     )
 
-    wabi_install_test_dir(
-        SRC testenv/testUsdEditRespectFileFormat
+    pxr_install_test_dir(
+        SRC testenv/testUsdEditRespectFileFormat    
         DEST testUsdEditRespectFileFormat1
     )
 
-    wabi_register_test(testUsdEditRespectFileFormat1
+    pxr_register_test(testUsdEditRespectFileFormat1
         PYTHON
         COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdedit hello_ascii.usd"
         POST_COMMAND "${HEADBIN} -c9 hello_ascii.usd"
@@ -93,16 +93,16 @@ else()
             ${CMAKE_INSTALL_PREFIX}/bin
     )
 
-    wabi_install_test_dir(
-        SRC testenv/testUsdEditRespectFileFormat
+    pxr_install_test_dir(
+        SRC testenv/testUsdEditRespectFileFormat    
         DEST testUsdEditRespectFileFormat2
     )
 
-    wabi_register_test(testUsdEditRespectFileFormat2
+    pxr_register_test(testUsdEditRespectFileFormat2
         PYTHON
         COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdedit hello_crate.usd"
         POST_COMMAND "${HEADBIN} -c8 hello_crate.usd"
-        POST_COMMAND_STDOUT_REDIRECT crate_output.txt
+        POST_COMMAND_STDOUT_REDIRECT crate_output.txt   
         EXPECTED_RETURN_CODE 0
         DIFF_COMPARE crate_output.txt
         ENV
@@ -111,12 +111,12 @@ else()
             ${CMAKE_INSTALL_PREFIX}/bin
     )
 
-    wabi_install_test_dir(
-        SRC testenv/testUsdEditPackageFile
+    pxr_install_test_dir(
+        SRC testenv/testUsdEditPackageFile    
         DEST testUsdEditPackageFile1
     )
 
-    wabi_register_test(testUsdEditPackageFile1
+    pxr_register_test(testUsdEditPackageFile1
         PYTHON
         COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdedit test.usdz"
         EXPECTED_RETURN_CODE 0
@@ -126,12 +126,12 @@ else()
             ${CMAKE_INSTALL_PREFIX}/bin
     )
 
-    wabi_install_test_dir(
-        SRC testenv/testUsdEditPackageFile
+    pxr_install_test_dir(
+        SRC testenv/testUsdEditPackageFile    
         DEST testUsdEditPackageFile2
     )
 
-    wabi_register_test(testUsdEditPackageFile2
+    pxr_register_test(testUsdEditPackageFile2
         PYTHON
         COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdedit test.usdz[test.usda]"
         EXPECTED_RETURN_CODE 0

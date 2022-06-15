@@ -26,20 +26,20 @@
 
 /// \file sdf/declareHandles.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/arch/hints.h"
-#include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/weakPtrFacade.h"
-#include "wabi/usd/sdf/api.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/declarePtrs.h"
 
+#include <set>
+#include <typeinfo>
+#include <type_traits>
+#include <vector>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/operators.hpp>
-#include <set>
-#include <type_traits>
-#include <typeinfo>
-#include <vector>
 
 WABI_NAMESPACE_BEGIN
 

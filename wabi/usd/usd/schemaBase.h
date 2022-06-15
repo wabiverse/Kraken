@@ -24,14 +24,15 @@
 #ifndef WABI_USD_USD_SCHEMA_BASE_H
 #define WABI_USD_USD_SCHEMA_BASE_H
 
-#include "wabi/usd/usd/api.h"
-#include "wabi/usd/usd/attribute.h"
-#include "wabi/usd/usd/prim.h"
-#include "wabi/usd/usd/references.h"
-#include "wabi/usd/usd/relationship.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/usd/prim.h"
+#include "wabi/usd/usd/attribute.h"
+#include "wabi/usd/usd/relationship.h"
+#include "wabi/usd/usd/references.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdSchemaBase
 ///
@@ -232,6 +233,7 @@ class UsdSchemaBase
   Usd_PrimDataHandle _primData;
   SdfPath _proxyPrimPath;
 };
+
 
 WABI_NAMESPACE_END
 

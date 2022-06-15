@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/sdf/pyUtils.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/pyUtils.h"
 #include <boost/python/extract.hpp>
 #include <boost/python/object.hpp>
 

@@ -13,7 +13,7 @@ wabi_library(usdSkel
         usd
         usdGeom
         ${Boost_PYTHON_LIBRARY}
-        ${TBB_LIBRARIES}
+        ${TBB_tbb_LIBRARY}
 
     INCLUDE_DIRS
         ${Boost_INCLUDE_DIRS}
@@ -49,7 +49,7 @@ wabi_library(usdSkel
         skelDefinition
 
     PYTHON_CPPFILES
-        moduleDeps.cpp
+        moduleDeps.cpp    
 
     PYMODULE_FILES
         python/__init__.py
@@ -81,7 +81,7 @@ wabi_library(usdSkel
         resources/schema.usda:usdSkel/schema.usda
 
     DOXYGEN_FILES
-        docs/overview.dox
+        overview.dox
         docs/apiIntro.dox
         docs/bestPractices.dox
         docs/instancing.dox
@@ -89,4 +89,9 @@ wabi_library(usdSkel
         docs/objectModel.dox
         docs/schemaOverview.dox
         docs/schemas.dox
+        docs/skinnedArm.usda
+        docs/images/blendshapes.svg
+        docs/images/blendshapesWithInbetweens.svg
+        docs/images/influencesPrimvarLayout.svg
+        docs/images/unboundedInterpolationExample.svg
 )

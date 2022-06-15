@@ -22,6 +22,7 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/primIndex_Graph.h"
 #include "wabi/usd/pcp/arc.h"
 #include "wabi/usd/pcp/diagnostic.h"
@@ -29,10 +30,9 @@
 #include "wabi/usd/pcp/node_Iterator.h"
 #include "wabi/usd/pcp/strengthOrdering.h"
 #include "wabi/usd/pcp/types.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/mallocTag.h"
 #include "wabi/base/trace/trace.h"
+#include "wabi/base/tf/mallocTag.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -298,7 +298,7 @@ void PcpPrimIndex_Graph::Finalize()
   // this point because we wouldn't be able to fix up the _nodeSitePaths
   // member in those other graphs. That data is aligned with the node pool,
   // but is *not* shared.
-  TF_VERIFY(_data.use_count() == 1);
+  TF_VERIFY(_data.unique());
 
   // We want to store the nodes in the node pool in strong-to-weak order.
   // In particular, this allows strength-order iteration over the nodes in
@@ -587,7 +587,7 @@ PcpNodeRef PcpPrimIndex_Graph::_InsertChildInStrengthOrder(size_t parentNodeIdx,
 
 void PcpPrimIndex_Graph::_DetachSharedNodePool()
 {
-  if (!_data.use_count() == 1) {
+  if (!_data.unique()) {
     TRACE_FUNCTION();
     _data.reset(new _SharedData(*_data));
 

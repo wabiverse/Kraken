@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
+#include "wabi/usd/pcp/layerStack.h"
+#include "wabi/usd/sdf/layer.h"
 #include "wabi/base/tf/makePyConstructor.h"
 #include "wabi/base/tf/pyPtrHelpers.h"
 #include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/usd/pcp/layerStack.h"
-#include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
 
 #include <boost/python.hpp>
 

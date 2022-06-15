@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/stageCache.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/stageCache.h"
 
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/usd/debugCodes.h"
@@ -31,20 +31,21 @@
 #include "wabi/usd/ar/resolverContext.h"
 
 #include <boost/functional/hash.hpp>
-#include <boost/multi_index/global_fun.hpp>
+#include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
-#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/global_fun.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 
 #include <atomic>
+#include <vector>
 #include <thread>
 #include <utility>
-#include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 using std::pair;
 using std::string;
@@ -635,6 +636,7 @@ size_t UsdStageCache::EraseAll(const SdfLayerHandle &rootLayer,
   }
   return numErased;
 }
+
 
 void UsdStageCache::Clear()
 {

@@ -24,15 +24,17 @@
 #ifndef WABI_USD_USD_GEOM_PRIMVAR_H
 #define WABI_USD_USD_GEOM_PRIMVAR_H
 
-#include "wabi/usd/usd/attribute.h"
-#include "wabi/usd/usdGeom/api.h"
-#include "wabi/usd/usdGeom/tokens.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/api.h"
+#include "wabi/usd/usd/attribute.h"
+#include "wabi/usd/usdGeom/tokens.h"
 
+#include <atomic>
 #include <string>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdGeomPrimvar
 ///
@@ -268,6 +270,14 @@ class UsdGeomPrimvar
     /* NOTHING */
   }
 
+  /// Copy construct.
+  USDGEOM_API
+  UsdGeomPrimvar(const UsdGeomPrimvar &other);
+
+  /// Copy assign.
+  USDGEOM_API
+  UsdGeomPrimvar &operator=(const UsdGeomPrimvar &other);
+
   /// Speculative constructor that will produce a valid UsdGeomPrimvar when
   /// \p attr already represents an attribute that is Primvar, and
   /// produces an \em invalid Primvar otherwise (i.e.
@@ -341,12 +351,14 @@ class UsdGeomPrimvar
   USDGEOM_API
   bool HasAuthoredElementSize() const;
 
+
   /// Test whether a given UsdAttribute represents valid Primvar, which
   /// implies that creating a UsdGeomPrimvar from the attribute will succeed.
   ///
   /// Success implies that \c attr.IsDefined() is true.
   USDGEOM_API
   static bool IsPrimvar(const UsdAttribute &attr);
+
 
   /// Test whether a given \p name represents a valid name of a primvar,
   /// which implies that creating a UsdGeomPrimvar with the given name will
@@ -645,6 +657,7 @@ class UsdGeomPrimvar
                                const VtIntArray &indices,
                                std::string *errString);
 
+
   /// @}
 
   // ---------------------------------------------------------------
@@ -723,6 +736,7 @@ class UsdGeomPrimvar
     return hash_value(obj.GetAttr());
   }
 
+
  private:
 
   friend class UsdGeomImageable;
@@ -766,11 +780,6 @@ class UsdGeomPrimvar
 
   UsdAttribute _attr;
 
-  // upon construction, we'll take note of the attrType.  If we're a type
-  // that could possibly have an Id associated with it, we'll store that name
-  // so we don't have to pay the cost of constructing that token per-Get().
-  void _SetIdTargetRelName();
-
   // Gets or creates the indices attribute corresponding to the primvar.
   UsdAttribute _GetIndicesAttr(bool create) const;
 
@@ -791,7 +800,24 @@ class UsdGeomPrimvar
 
   // Should only be called if _idTargetRelName is set
   UsdRelationship _GetIdTargetRel(bool create) const;
-  TfToken _idTargetRelName;
+
+  // Compute & cache whether or not this primvar can be an idtarget.  After a
+  // call to this function, _idTargetStatus will be either IdTargetImpossible
+  // or IdTargetPossible.  If the result is "possible" then _idTargetRelName
+  // will contain the relationship name.  This function returns true if
+  // _idTargetStatus was set to IdTargetPossible, else false.
+  bool _ComputeIdTargetPossibility() const;
+
+  enum _IdTargetStatus
+  {
+    IdTargetUninitialized,
+    IdTargetInitializing,
+    IdTargetImpossible,
+    IdTargetPossible
+  };
+
+  mutable TfToken _idTargetRelName;
+  mutable std::atomic<_IdTargetStatus> _idTargetStatus;
 };
 
 // We instantiate the following so we can check and provide the correct value
@@ -874,6 +900,7 @@ bool UsdGeomPrimvar::_ComputeFlattenedHelper(const VtArray<ScalarType> &authored
 
   return success;
 }
+
 
 WABI_NAMESPACE_END
 

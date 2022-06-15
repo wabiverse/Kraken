@@ -21,39 +21,39 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usdUtils/stitchClips.h"
 #include "wabi/usd/usdUtils/stitch.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/usd/clipsAPI.h"
 #include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
-#include "wabi/usd/sdf/attributeSpec.h"
-#include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/usd/sdf/primSpec.h"
-#include "wabi/usd/sdf/reference.h"
-#include "wabi/usd/sdf/relationshipSpec.h"
+#include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/spec.h"
+#include "wabi/usd/sdf/primSpec.h"
+#include "wabi/usd/sdf/relationshipSpec.h"
+#include "wabi/usd/sdf/attributeSpec.h"
+#include "wabi/usd/sdf/assetPath.h"
+#include "wabi/usd/sdf/reference.h"
 
-#include "wabi/base/arch/fileSystem.h"
-#include "wabi/base/gf/vec2d.h"
-#include "wabi/base/tf/fileUtils.h"
-#include "wabi/base/tf/nullPtr.h"
 #include "wabi/base/tf/pathUtils.h"
-#include "wabi/base/tf/pyLock.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/warning.h"
+#include "wabi/base/tf/pyLock.h"
+#include "wabi/base/tf/fileUtils.h"
+#include "wabi/base/tf/nullPtr.h"
+#include "wabi/base/arch/fileSystem.h"
 #include "wabi/base/vt/value.h"
+#include "wabi/base/gf/vec2d.h"
 #include "wabi/base/work/loops.h"
 
 #include <tbb/parallel_reduce.h>
 
-#include <limits>
 #include <set>
 #include <string>
+#include <limits>
 #include <tuple>
 
 WABI_NAMESPACE_BEGIN
@@ -752,6 +752,7 @@ namespace
 
     return true;
   }
+
 
   bool _OpenClipLayers(SdfLayerRefPtrVector *clipLayers,
                        const _ClipFileVector &clipLayerFiles,

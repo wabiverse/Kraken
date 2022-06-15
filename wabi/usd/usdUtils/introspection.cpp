@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdUtils/introspection.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/introspection.h"
 
 #include "wabi/usd/kind/registry.h"
 
@@ -33,11 +33,12 @@
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/token.h"
 
-#include <set>
 #include <string>
+#include <set>
 #include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
+
 
 using std::string;
 
@@ -219,6 +220,7 @@ size_t UsdUtilsComputeUsdStageStats(const UsdStageWeakPtr &stage, VtDictionary *
     primCountsByTypeDict[typeNameAndCount.first] = typeNameAndCount.second;
   }
   primaryDict[UsdUtilsUsdStageStatsKeys->primCountsByType] = primCountsByTypeDict;
+
 
   (*stats)[UsdUtilsUsdStageStatsKeys->primary] = primaryDict;
 

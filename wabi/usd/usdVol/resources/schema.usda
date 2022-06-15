@@ -5,14 +5,14 @@
         @usdGeom/schema.usda@
     ]
 )
-
+ 
 over "GLOBAL" (
     customData = {
         string libraryName = "usdVol"
         string libraryPath = "wabi/usd/usdVol"
 	dictionary libraryTokens = {
             dictionary field = {
-                string doc = """This is the namespace prefix used to
+                string doc = """This is the namespace prefix used to 
                 specify the fields that make up a volume primitive."""
             }
 	}
@@ -46,7 +46,7 @@ class Volume "Volume" (
 }
 
 class "FieldBase" (
-    inherits = </Boundable>
+    inherits = </Xformable>
     doc = """Base class for field primitives."""
 )
 {
@@ -60,8 +60,8 @@ class "FieldAsset" (
     asset filePath (
         doc = """An asset path attribute that points to a file on disk.
                  For each supported file format, a separate FieldAsset
-                 subclass is required.
-
+                 subclass is required. 
+                  
                  This attribute's value can be animated over time, as most
                  volume asset formats represent just a single timeSample of
                  a volume.  However, it does not, at this time, support
@@ -80,19 +80,19 @@ class "FieldAsset" (
     token fieldDataType (
         doc = """Token which is used to indicate the data type of an
                  individual field. Authors use this to tell consumers more
-                 about the field without opening the file on disk. The list of
-                 allowed tokens is specified with the specific asset type.
+                 about the field without opening the file on disk. The list of 
+                 allowed tokens is specified with the specific asset type. 
                  A missing value is considered an error."""
     )
     token vectorDataRoleHint = "None" (
         allowedTokens = ["None", "Point", "Normal", "Vector", "Color"]
         doc = """Optional token which is used to indicate the role of a vector
                  valued field. This can drive the data type in which fields
-                 are made available in a renderer or whether the vector values
+                 are made available in a renderer or whether the vector values 
                  are to be transformed."""
     )
 }
-
+ 
 class Field3DAsset "Field3DAsset" (
     doc = """Field3D field primitive. The FieldAsset filePath attribute must
              specify a file in the Field3D format on disk."""
@@ -104,17 +104,17 @@ class Field3DAsset "Field3DAsset" (
                          "half3", "float3", "double3"]
         doc = """Token which is used to indicate the data type of an
                  individual field. Authors use this to tell consumers more
-                 about the field without opening the file on disk. The list of
-                 allowed tokens reflects the available choices for Field3d
+                 about the field without opening the file on disk. The list of 
+                 allowed tokens reflects the available choices for Field3d 
                  volumes."""
     )
     token fieldPurpose (
-        doc = """Optional token which can be used to indicate the purpose or
-                 grouping of an individual field. Clients which consume Field3D
+        doc = """Optional token which can be used to indicate the purpose or 
+                 grouping of an individual field. Clients which consume Field3D 
                  files should treat this as the Field3D field \\em name."""
     )
 }
-
+ 
 class OpenVDBAsset "OpenVDBAsset" (
     doc = """OpenVDB field primitive. The FieldAsset filePath attribute must
              specify a file in the OpenVDB format on disk."""
@@ -129,15 +129,16 @@ class OpenVDBAsset "OpenVDBAsset" (
                          "bool", "mask", "string"]
         doc = """Token which is used to indicate the data type of an
                  individual field. Authors use this to tell consumers more
-                 about the field without opening the file on disk. The list of
-                 allowed tokens reflects the available choices for OpenVDB
+                 about the field without opening the file on disk. The list of 
+                 allowed tokens reflects the available choices for OpenVDB 
                  volumes."""
     )
     token fieldClass (
         allowedTokens = ["levelSet", "fogVolume", "staggered", "unknown"]
         doc = """Optional token which can be used to indicate the class of
                  an individual grid. This is a mapping to openvdb::GridClass
-                 where the values are GRID_LEVEL_SET, GRID_FOG_VOLUME,
+                 where the values are GRID_LEVEL_SET, GRID_FOG_VOLUME, 
                  GRID_STAGGERED, and GRID_UNKNOWN."""
     )
 }
+

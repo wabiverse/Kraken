@@ -26,14 +26,14 @@
 
 /// \file usd/prim.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/object.h"
 #include "wabi/usd/usd/primFlags.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/sdf/schema.h"
+#include "wabi/base/trace/trace.h"
 
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/refBase.h"
@@ -507,19 +507,6 @@ class UsdPrim : public UsdObject
   USD_API
   bool _IsA(const TfType &schemaType, bool validateSchemaType) const;
 
-  // The non-templated implementation of UsdPrim::HasAPI using the
-  // TfType system.
-  //
-  // \p validateSchemaType is provided for python clients
-  // because they can't use compile time assertions on the input type.
-  //
-  // \p instanceName is used to determine whether a particular instance
-  // of a multiple-apply API schema has been applied to the prim.
-  USD_API
-  bool _HasAPI(const TfType &schemaType,
-               bool validateSchemaType,
-               const TfToken &instanceName) const;
-
   // Separate implementations for UsdPrim::HasAPI for single and multiple
   // apply API schema TfTypes.
   USD_API
@@ -574,16 +561,6 @@ class UsdPrim : public UsdObject
   USD_API
   bool IsA(const TfType &schemaType) const;
 
-  /// Return true if the UsdPrim has had an API schema represented by the C++
-  /// class type __T__ applied to it through the Apply() method provided
-  /// on the API schema class.
-  ///
-  /// \p instanceName, if non-empty is used to determine if a particular
-  /// instance of a multiple-apply API schema (eg. UsdCollectionAPI) has been
-  /// applied to the prim. A coding error is issued if a non-empty
-  /// \p instanceName is passed in and __T__ represents a single-apply API
-  /// schema.
-  ///
   /// __Using HasAPI in C++__
   /// \code
   /// UsdPrim prim = stage->OverridePrim("/path/to/prim");
@@ -611,26 +588,51 @@ class UsdPrim : public UsdObject
   /// assert(prim.HasAPI(Usd.CollectionAPI))
   /// assert(prim.HasAPI(Usd.CollectionAPI, instanceName="geom"))
   /// \endcode
-  template<typename T> bool HasAPI(const TfToken &instanceName = TfToken()) const
+  /// @{
+
+  /// Return true if the UsdPrim has had a single API schema represented by
+  /// the C++ class type __T__ applied to it through the Apply() method
+  /// provided on the API schema class.
+  ///
+  template<typename T>
+  typename std::enable_if<T::schemaKind != UsdSchemaKind::MultipleApplyAPI, bool>::type HasAPI()
+    const
   {
     static_assert(std::is_base_of<UsdAPISchemaBase, T>::value,
                   "Provided type must derive UsdAPISchemaBase.");
     static_assert(!std::is_same<UsdAPISchemaBase, T>::value,
                   "Provided type must not be UsdAPISchemaBase.");
-    static_assert((T::schemaKind == UsdSchemaKind::SingleApplyAPI ||
-                   T::schemaKind == UsdSchemaKind::MultipleApplyAPI),
-                  "Provided schema type must be an applied API schema.");
+    // Note that this function template is enabled for any schema kind,
+    // other than MultipleApplyAPI, but is only valid for SingleApplyAPI.
+    // This static assert provides better error information for calling
+    // HasAPI with an invalid template type than if we limited HasAPI
+    // substitution matching to just the two valid schema kinds.
+    static_assert(T::schemaKind == UsdSchemaKind::SingleApplyAPI,
+                  "Provided schema type must be a single apply API schema.");
 
-    if (T::schemaKind != UsdSchemaKind::MultipleApplyAPI && !instanceName.IsEmpty()) {
-      TF_CODING_ERROR(
-        "HasAPI: single application API schemas like %s do "
-        "not contain an application instanceName ( %s ).",
-        TfType::GetCanonicalTypeName(typeid(T)).c_str(),
-        instanceName.GetText());
-      return false;
-    }
+    return _HasSingleApplyAPI(TfType::Find<T>());
+  }
 
-    return _HasAPI(TfType::Find<T>(), /*validateSchemaType=*/false, instanceName);
+  /// Return true if the UsdPrim has had a multiple-apply API schema
+  /// represented by the C++ class type __T__ applied to it through the
+  /// Apply() method provided on the API schema class.
+  ///
+  /// \p instanceName, if non-empty is used to determine if a particular
+  /// instance of a multiple-apply API schema (eg. UsdCollectionAPI) has been
+  /// applied to the prim, otherwise this returns true if any instance of
+  /// the multiple-apply API has been applied.
+  template<typename T>
+  typename std::enable_if<T::schemaKind == UsdSchemaKind::MultipleApplyAPI, bool>::type HasAPI(
+    const TfToken &instanceName = TfToken()) const
+  {
+    static_assert(std::is_base_of<UsdAPISchemaBase, T>::value,
+                  "Provided type must derive UsdAPISchemaBase.");
+    static_assert(!std::is_same<UsdAPISchemaBase, T>::value,
+                  "Provided type must not be UsdAPISchemaBase.");
+    static_assert(T::schemaKind == UsdSchemaKind::MultipleApplyAPI,
+                  "Provided schema type must be a multi apply API schema.");
+
+    return _HasMultiApplyAPI(TfType::Find<T>(), instanceName);
   }
 
   /// Return true if a prim has an API schema with TfType \p schemaType.
@@ -640,8 +642,15 @@ class UsdPrim : public UsdObject
   /// applied to the prim. A coding error is issued if a non-empty
   /// \p instanceName is passed in and __T__ represents a single-apply API
   /// schema.
+  ///
+  /// This function behaves exactly like the templated HasAPI functions
+  /// except for the runtime schemaType validation which happens at compile
+  /// time in the templated versions. This method is provided for python
+  /// clients. Use of the templated HasAPI functions are preferred.
   USD_API
   bool HasAPI(const TfType &schemaType, const TfToken &instanceName = TfToken()) const;
+
+  /// }@
 
   /// Returns whether a __single-apply__ API schema with the given C++ type
   /// 'SchemaType' can be applied to this prim. If the return value is false,
@@ -1426,9 +1435,10 @@ class UsdPrim : public UsdObject
   /// Return a UsdPayloads object that allows one to add, remove, or
   /// mutate payloads <em>at the currently set UsdEditTarget</em>.
   ///
-  /// There is currently no facility for \em listing the currently authored
-  /// payloads on a prim... the problem is somewhat ill-defined, and
-  /// requires some thought.
+  /// While the UsdPayloads object has no methods for \em listing the
+  /// currently authored payloads on a prim, one can use a
+  /// UsdPrimCompositionQuery to query the payload arcs that are composed
+  /// by this prim.
   USD_API
   UsdPayloads GetPayloads() const;
 
@@ -1457,9 +1467,12 @@ class UsdPrim : public UsdObject
   /// Return a UsdReferences object that allows one to add, remove, or
   /// mutate references <em>at the currently set UsdEditTarget</em>.
   ///
-  /// There is currently no facility for \em listing the currently authored
-  /// references on a prim... the problem is somewhat ill-defined, and
-  /// requires some thought.
+  /// While the UsdReferences object has no methods for \em listing the
+  /// currently authored references on a prim, one can use a
+  /// UsdPrimCompositionQuery to query the reference arcs that are composed
+  /// by this prim.
+  ///
+  /// \sa UsdPrimCompositionQuery::GetDirectReferences
   USD_API
   UsdReferences GetReferences() const;
 
@@ -1474,9 +1487,12 @@ class UsdPrim : public UsdObject
   /// Return a UsdInherits object that allows one to add, remove, or
   /// mutate inherits <em>at the currently set UsdEditTarget</em>.
   ///
-  /// There is currently no facility for \em listing the currently authored
-  /// inherits on a prim... the problem is somewhat ill-defined, and
-  /// requires some thought.
+  /// While the UsdInherits object has no methods for \em listing the
+  /// currently authored inherits on a prim, one can use a
+  /// UsdPrimCompositionQuery to query the inherits arcs that are composed
+  /// by this prim.
+  ///
+  /// \sa UsdPrimCompositionQuery::GetDirectInherits
   USD_API
   UsdInherits GetInherits() const;
 
@@ -1491,9 +1507,10 @@ class UsdPrim : public UsdObject
   /// Return a UsdSpecializes object that allows one to add, remove, or
   /// mutate specializes <em>at the currently set UsdEditTarget</em>.
   ///
-  /// There is currently no facility for \em listing the currently authored
-  /// specializes on a prim... the problem is somewhat ill-defined, and
-  /// requires some thought.
+  /// While the UsdSpecializes object has no methods for \em listing the
+  /// currently authored specializes on a prim, one can use a
+  /// UsdPrimCompositionQuery to query the specializes arcs that are composed
+  /// by this prim.
   USD_API
   UsdSpecializes GetSpecializes() const;
 
@@ -1897,6 +1914,7 @@ template<> struct Tf_ShouldIterateOverCopy<const UsdPrimSiblingRange> : boost::t
 
 #endif  // doxygen
 
+
 UsdPrimSiblingRange UsdPrim::GetFilteredChildren(const Usd_PrimFlagsPredicate &pred) const
 {
   return _MakeSiblingRange(Usd_CreatePredicateForTraversal(_Prim(), _ProxyPrimPath(), pred));
@@ -2122,6 +2140,7 @@ UsdPrim::SubtreeRange UsdPrim::_MakeDescendantsRange(const Usd_PrimFlagsPredicat
   return SubtreeRange(SubtreeIterator(firstChild, firstChildPath, pred),
                       SubtreeIterator(endChild, endChildPath, pred));
 }
+
 
 ////////////////////////////////////////////////////////////////////////
 // UsdObject methods that require UsdPrim be a complete type.

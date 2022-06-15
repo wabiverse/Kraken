@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/sdf/layerStateDelegate.h"
-#include "wabi/base/tf/staticData.h"
-#include "wabi/usd/sdf/layer.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/layerStateDelegate.h"
+#include "wabi/usd/sdf/layer.h"
+#include "wabi/base/tf/staticData.h"
 
 #include <string>
 

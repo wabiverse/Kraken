@@ -26,11 +26,11 @@
 
 /// \file sdf/payload.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/layerOffset.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 #include <boost/functional/hash.hpp>
 #include <boost/operators.hpp>

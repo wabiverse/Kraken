@@ -24,9 +24,9 @@
 #ifndef WABI_USD_USD_PY_CONVERSIONS_H
 #define WABI_USD_USD_PY_CONVERSIONS_H
 
-#include "wabi/base/tf/pyObjWrapper.h"
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/base/tf/pyObjWrapper.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -64,6 +64,7 @@ bool UsdPythonToMetadataValue(const TfToken &key,
                               const TfToken &keyPath,
                               TfPyObjWrapper pyVal,
                               VtValue *result);
+
 
 WABI_NAMESPACE_END
 

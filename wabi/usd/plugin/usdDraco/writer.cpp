@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "writer.h"
 #include "exportTranslator.h"
 #include "flag.h"
+#include "writer.h"
 
 #include "wabi/wabi.h"
 
@@ -35,7 +35,9 @@
 #include <fstream>
 #include <vector>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 bool UsdDraco_WriteDraco(const UsdGeomMesh &usdMesh,
                          const std::string &fileName,
@@ -93,5 +95,6 @@ bool UsdDraco_PrimvarSupported(const UsdGeomPrimvar &primvar)
 {
   return UsdDracoExportTranslator::CreateAttributeFrom(primvar) != nullptr;
 }
+
 
 WABI_NAMESPACE_END

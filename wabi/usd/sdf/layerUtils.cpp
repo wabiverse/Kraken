@@ -24,16 +24,16 @@
 ///
 /// \file sdf/layerUtils.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/layerUtils.h"
 #include "wabi/usd/sdf/assetPathResolver.h"
 #include "wabi/usd/sdf/fileFormat.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/pathUtils.h"
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/ar/packageUtils.h"
 #include "wabi/usd/ar/resolver.h"
+#include "wabi/base/tf/pathUtils.h"
+#include "wabi/base/trace/trace.h"
 
 using std::string;
 

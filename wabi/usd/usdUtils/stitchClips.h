@@ -30,11 +30,11 @@
 /// sequential time-varying data into
 /// \ref Usd_Page_ValueClips "USD Value Clips".
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/api.h"
+#include "wabi/usd/usd/clipsAPI.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/usd/usd/clipsAPI.h"
-#include "wabi/usd/usdUtils/api.h"
-#include "wabi/wabi.h"
 
 #include <limits>
 

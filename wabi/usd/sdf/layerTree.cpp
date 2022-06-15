@@ -23,8 +23,8 @@
 //
 /// \file LayerTree.cpp
 
-#include "wabi/usd/sdf/layerTree.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/layerTree.h"
 
 WABI_NAMESPACE_BEGIN
 

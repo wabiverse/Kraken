@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/primTypeInfo.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/primTypeInfo.h"
 
 WABI_NAMESPACE_BEGIN
 

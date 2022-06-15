@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/pcp/types.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/types.h"
 
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/registryManager.h"

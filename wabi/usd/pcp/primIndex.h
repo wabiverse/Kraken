@@ -24,9 +24,7 @@
 #ifndef WABI_USD_PCP_PRIM_INDEX_H
 #define WABI_USD_PCP_PRIM_INDEX_H
 
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/base/tf/hashmap.h"
-#include "wabi/base/tf/hashset.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/composeSite.h"
 #include "wabi/usd/pcp/dynamicFileFormatDependencyData.h"
@@ -36,7 +34,9 @@
 #include "wabi/usd/pcp/types.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/site.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/declarePtrs.h"
+#include "wabi/base/tf/hashmap.h"
+#include "wabi/base/tf/hashset.h"
 
 #include <tbb/spin_rw_mutex.h>
 
@@ -216,6 +216,7 @@ class PcpPrimIndex
                       bool includeMaps = false) const;
 
   /// @}
+
 
   /// \name Derived computations
   /// @{

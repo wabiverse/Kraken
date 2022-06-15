@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdUtils/stageCache.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/stageCache.h"
 
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/primSpec.h"
@@ -32,6 +32,7 @@
 #include <mutex>
 
 WABI_NAMESPACE_BEGIN
+
 
 namespace
 {
@@ -97,5 +98,6 @@ SdfLayerRefPtr UsdUtilsStageCache::GetSessionLayerForVariantSelections(
   }
   return ret;
 }
+
 
 WABI_NAMESPACE_END

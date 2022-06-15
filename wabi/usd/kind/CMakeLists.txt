@@ -8,7 +8,7 @@ wabi_library(kind
 
     PUBLIC_CLASSES
         registry
-
+        
     PUBLIC_HEADERS
         api.h
 
@@ -20,7 +20,7 @@ wabi_library(kind
         wrapRegistry.cpp
         wrapTokens.cpp
 
-    PYMODULE_FILES
+    PYMODULE_FILES 
         python/__init__.py
 
     DOXYGEN_FILES

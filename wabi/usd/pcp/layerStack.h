@@ -26,18 +26,18 @@
 
 /// \file pcp/layerStack.h
 
-#include "wabi/base/tf/declarePtrs.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/errors.h"
 #include "wabi/usd/pcp/layerStackIdentifier.h"
 #include "wabi/usd/pcp/mapExpression.h"
 #include "wabi/usd/sdf/layerTree.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/declarePtrs.h"
 
+#include <tbb/spin_mutex.h>
 #include <iosfwd>
 #include <memory>
 #include <string>
-#include <tbb/spin_mutex.h>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN

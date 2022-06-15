@@ -24,18 +24,20 @@
 #ifndef WABI_USD_USD_CRATE_DATA_H
 #define WABI_USD_USD_CRATE_DATA_H
 
-#include "wabi/usd/sdf/abstractData.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/abstractData.h"
 
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/vt/value.h"
 
 #include <memory>
-#include <set>
 #include <vector>
+#include <set>
 
 WABI_NAMESPACE_BEGIN
+
+class ArAsset;
 
 /// \class Usd_CrateData
 ///
@@ -49,8 +51,12 @@ class Usd_CrateData : public SdfAbstractData
   static TfToken const &GetSoftwareVersionToken();
 
   static bool CanRead(const std::string &assetPath);
+  static bool CanRead(const std::string &assetPath, const std::shared_ptr<ArAsset> &asset);
+
   bool Save(const std::string &fileName);
+
   bool Open(const std::string &assetPath);
+  bool Open(const std::string &assetPath, const std::shared_ptr<ArAsset> &asset);
 
   virtual bool StreamsData() const;
   virtual void CreateSpec(const SdfPath &path, SdfSpecType specType);
@@ -63,6 +69,15 @@ class Usd_CrateData : public SdfAbstractData
                    const TfToken &fieldName,
                    SdfAbstractDataValue *value) const;
   virtual bool Has(const SdfPath &path, const TfToken &fieldName, VtValue *value = nullptr) const;
+  virtual bool HasSpecAndField(const SdfPath &path,
+                               const TfToken &fieldName,
+                               SdfAbstractDataValue *value,
+                               SdfSpecType *specType) const;
+  virtual bool HasSpecAndField(const SdfPath &path,
+                               const TfToken &fieldName,
+                               VtValue *value,
+                               SdfSpecType *specType) const;
+
   virtual VtValue Get(const SdfPath &path, const TfToken &fieldName) const;
   virtual std::type_info const &GetTypeid(const SdfPath &path, const TfToken &fieldname) const;
   virtual void Set(const SdfPath &path, const TfToken &fieldName, const VtValue &value);
@@ -107,6 +122,7 @@ class Usd_CrateData : public SdfAbstractData
   friend class Usd_CrateDataImpl;
   std::unique_ptr<class Usd_CrateDataImpl> _impl;
 };
+
 
 WABI_NAMESPACE_END
 

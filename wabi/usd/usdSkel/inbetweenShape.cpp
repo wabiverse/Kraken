@@ -1,42 +1,41 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/usd/usdSkel/inbetweenShape.h"
+//
+// Copyright 2018 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/wabi.h"
+#include "wabi/usd/usdSkel/inbetweenShape.h"
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((inbetweensPrefix, "inbetweens:"))((normalOffsetsSuffix, ":normalOffsets")));
+
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((inbetweensPrefix, "inbetweens:"))
+    ((normalOffsetsSuffix, ":normalOffsets"))
+);
+
 
 UsdSkelInbetweenShape::UsdSkelInbetweenShape(const UsdAttribute &attr) : _attr(attr) {}
+
 
 /* static */
 UsdSkelInbetweenShape UsdSkelInbetweenShape::_Create(const UsdPrim &prim, const TfToken &name)
@@ -54,11 +53,13 @@ UsdSkelInbetweenShape UsdSkelInbetweenShape::_Create(const UsdPrim &prim, const 
   return UsdSkelInbetweenShape();
 }
 
+
 /* static */
 bool UsdSkelInbetweenShape::IsInbetween(const UsdAttribute &attr)
 {
   return attr ? _IsValidInbetweenName(attr.GetName()) : false;
 }
+
 
 /* static */
 bool UsdSkelInbetweenShape::_IsValidInbetweenName(const std::string &name, bool quiet)
@@ -71,11 +72,13 @@ bool UsdSkelInbetweenShape::_IsValidInbetweenName(const std::string &name, bool 
          !TfStringEndsWith(name, _tokens->normalOffsetsSuffix);
 }
 
+
 /* static */
 bool UsdSkelInbetweenShape::_IsNamespaced(const TfToken &name)
 {
   return TfStringStartsWith(name, _tokens->inbetweensPrefix);
 }
+
 
 /* static */
 TfToken UsdSkelInbetweenShape::_MakeNamespaced(const TfToken &name, bool quiet)
@@ -98,11 +101,13 @@ TfToken UsdSkelInbetweenShape::_MakeNamespaced(const TfToken &name, bool quiet)
   return result;
 }
 
+
 /* static */
 const TfToken &UsdSkelInbetweenShape::_GetNamespacePrefix()
 {
   return _tokens->inbetweensPrefix;
 }
+
 
 UsdAttribute UsdSkelInbetweenShape::_GetNormalOffsetsAttr(bool create) const
 {
@@ -119,10 +124,12 @@ UsdAttribute UsdSkelInbetweenShape::_GetNormalOffsetsAttr(bool create) const
   }
 }
 
+
 UsdAttribute UsdSkelInbetweenShape::GetNormalOffsetsAttr() const
 {
   return _GetNormalOffsetsAttr(/*create*/ false);
 }
+
 
 UsdAttribute UsdSkelInbetweenShape::CreateNormalOffsetsAttr(const VtValue &defaultValue) const
 {
@@ -133,30 +140,36 @@ UsdAttribute UsdSkelInbetweenShape::CreateNormalOffsetsAttr(const VtValue &defau
   return attr;
 }
 
+
 bool UsdSkelInbetweenShape::GetWeight(float *weight) const
 {
   return _attr.GetMetadata(UsdSkelTokens->weight, weight);
 }
+
 
 bool UsdSkelInbetweenShape::SetWeight(float weight) const
 {
   return _attr.SetMetadata(UsdSkelTokens->weight, weight);
 }
 
+
 bool UsdSkelInbetweenShape::HasAuthoredWeight() const
 {
   return _attr.HasAuthoredMetadata(UsdSkelTokens->weight);
 }
+
 
 bool UsdSkelInbetweenShape::GetOffsets(VtVec3fArray *offsets) const
 {
   return _attr.Get(offsets);
 }
 
+
 bool UsdSkelInbetweenShape::SetOffsets(const VtVec3fArray &offsets) const
 {
   return _attr.Set(offsets);
 }
+
 
 bool UsdSkelInbetweenShape::GetNormalOffsets(VtVec3fArray *offsets) const
 {
@@ -166,6 +179,7 @@ bool UsdSkelInbetweenShape::GetNormalOffsets(VtVec3fArray *offsets) const
   return false;
 }
 
+
 bool UsdSkelInbetweenShape::SetNormalOffsets(const VtVec3fArray &offsets) const
 {
   if (const UsdAttribute attr = _GetNormalOffsetsAttr(/*create*/ true)) {
@@ -173,5 +187,6 @@ bool UsdSkelInbetweenShape::SetNormalOffsets(const VtVec3fArray &offsets) const
   }
   return false;
 }
+
 
 WABI_NAMESPACE_END

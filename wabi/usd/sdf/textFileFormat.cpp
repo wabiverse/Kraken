@@ -24,22 +24,22 @@
 ///
 /// \file Sdf/textFileFormat.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/textFileFormat.h"
-#include "wabi/usd/ar/asset.h"
-#include "wabi/usd/ar/resolvedPath.h"
-#include "wabi/usd/ar/resolver.h"
 #include "wabi/usd/sdf/fileIO.h"
 #include "wabi/usd/sdf/fileIO_Common.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/ar/asset.h"
+#include "wabi/usd/ar/resolvedPath.h"
+#include "wabi/usd/ar/resolver.h"
 
-#include "wabi/base/arch/fileSystem.h"
+#include "wabi/base/trace/trace.h"
 #include "wabi/base/tf/atomicOfstreamWrapper.h"
 #include "wabi/base/tf/envSetting.h"
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/staticData.h"
-#include "wabi/base/trace/trace.h"
+#include "wabi/base/arch/fileSystem.h"
 
 #include <boost/assign.hpp>
 #include <ostream>
@@ -50,10 +50,10 @@ WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(SdfTextFileFormatTokens, SDF_TEXT_FILE_FORMAT_TOKENS);
 
-TF_DEFINE_ENV_SETTING(SDF_TEXTFILE_SIZE_WARNING_MB,
-                      0,
-                      "Warn when reading a text file larger than this number of MB "
-                      "(no warnings if set to 0)");
+TF_DEFINE_ENV_SETTING(
+    SDF_TEXTFILE_SIZE_WARNING_MB, 0,
+    "Warn when reading a text file larger than this number of MB "
+    "(no warnings if set to 0)");
 
 WABI_NAMESPACE_END
 
@@ -135,6 +135,12 @@ bool SdfTextFileFormat::CanRead(const string &filePath) const
   return asset && _CanReadImpl(asset, GetFileCookie());
 }
 
+bool SdfTextFileFormat::_CanReadFromAsset(const std::string &resolvedPath,
+                                          const std::shared_ptr<ArAsset> &asset) const
+{
+  return _CanReadImpl(asset, GetFileCookie());
+}
+
 bool SdfTextFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool metadataOnly) const
 {
   TRACE_FUNCTION();
@@ -144,6 +150,14 @@ bool SdfTextFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool m
     return false;
   }
 
+  return _ReadFromAsset(layer, resolvedPath, asset, metadataOnly);
+}
+
+bool SdfTextFileFormat::_ReadFromAsset(SdfLayer *layer,
+                                       const string &resolvedPath,
+                                       const std::shared_ptr<ArAsset> &asset,
+                                       bool metadataOnly) const
+{
   // Quick check to see if the file has the magic cookie before spinning up
   // the parser.
   if (!_CanReadImpl(asset, GetFileCookie())) {
@@ -189,6 +203,7 @@ struct Sdf_IsLayerMetadataField : public Sdf_IsMetadataField
     return (Sdf_IsMetadataField::operator()(field) || field == SdfFieldKeys->SubLayers);
   }
 };
+
 
 #define _Write Sdf_FileIOUtility::Write
 #define _WriteQuotedString Sdf_FileIOUtility::WriteQuotedString

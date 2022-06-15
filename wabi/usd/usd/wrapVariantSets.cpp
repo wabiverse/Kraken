@@ -21,17 +21,17 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
+#include "wabi/usd/usd/variantSets.h"
 #include "wabi/usd/usd/editContext.h"
 #include "wabi/usd/usd/pyEditContext.h"
-#include "wabi/usd/usd/variantSets.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/python/class.hpp>
-#include <boost/python/object.hpp>
 #include <boost/python/operators.hpp>
+#include <boost/python/object.hpp>
 
 #include <string>
 #include <vector>

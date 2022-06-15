@@ -21,14 +21,15 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/object.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/ostreamMethods.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 UsdStageWeakPtr UsdObject::GetStage() const
 {
@@ -245,6 +246,7 @@ bool UsdObject::HasAuthoredAssetInfoKey(const TfToken &keyPath) const
   return HasAuthoredMetadataDictKey(SdfFieldKeys->AssetInfo, keyPath);
 }
 
+
 // ------------------------------------------------------------------------- //
 // 'Hidden' Metadata
 // ------------------------------------------------------------------------- //
@@ -270,6 +272,7 @@ bool UsdObject::HasAuthoredHidden() const
 {
   return HasAuthoredMetadata(SdfFieldKeys->Hidden);
 }
+
 
 // ------------------------------------------------------------------------- //
 // 'Documentation' Metadata

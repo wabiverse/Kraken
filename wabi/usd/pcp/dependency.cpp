@@ -23,11 +23,11 @@
 //
 /// \file Dependency.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/dependency.h"
-#include "wabi/base/tf/enum.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/enum.h"
 
 WABI_NAMESPACE_BEGIN
 

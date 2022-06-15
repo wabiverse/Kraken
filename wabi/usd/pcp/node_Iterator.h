@@ -26,9 +26,9 @@
 
 /// \file pcp/node_Iterator.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/primIndex_Graph.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

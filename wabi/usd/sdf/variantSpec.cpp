@@ -23,17 +23,17 @@
 //
 /// \file VariantSpec.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/variantSpec.h"
-#include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/tf/type.h"
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/childrenUtils.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/variantSetSpec.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/tf/type.h"
+#include "wabi/base/trace/trace.h"
 
 using std::string;
 
@@ -69,6 +69,7 @@ SdfVariantSpecHandle SdfVariantSpec::New(const SdfVariantSetSpecHandle &owner,
 
   return TfStatic_cast<SdfVariantSpecHandle>(layer->GetObjectAtPath(childPath));
 }
+
 
 //
 // Name

@@ -21,16 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/schemaBase.h"
 #include "wabi/usd/usdGeom/boundable.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,6 +47,7 @@ namespace
 
   // fwd decl.
   WRAP_CUSTOM;
+
 
   static UsdAttribute _CreateExtentAttr(UsdGeomBoundable &self,
                                         object defaultVal,
@@ -83,12 +84,13 @@ void wrapUsdGeomBoundable()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
+
 
     .def("GetExtentAttr", &This::GetExtentAttr)
     .def("CreateExtentAttr",
@@ -122,6 +124,15 @@ void wrapUsdGeomBoundable()
 namespace
 {
 
+  static object _ComputeExtent(UsdGeomBoundable &boundable, const UsdTimeCode &time)
+  {
+    VtVec3fArray extent;
+    if (!boundable.ComputeExtent(time, &extent)) {
+      return object();
+    }
+    return object(extent);
+  }
+
   static object _ComputeExtentFromPlugins(const UsdGeomBoundable &boundable,
                                           const UsdTimeCode &time)
   {
@@ -145,7 +156,7 @@ namespace
 
   WRAP_CUSTOM
   {
-    _class
+    _class.def("ComputeExtent", &_ComputeExtent, (arg("time")))
       .def("ComputeExtentFromPlugins", &_ComputeExtentFromPlugins, (arg("boundable"), arg("time")))
       .def("ComputeExtentFromPlugins",
            &_ComputeExtentFromPluginsWithTransform,

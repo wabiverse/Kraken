@@ -23,9 +23,8 @@
 //
 /// \file Changes.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/changes.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/usd/ar/resolverContextBinder.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/debugCodes.h"
 #include "wabi/usd/pcp/dependencies.h"
@@ -36,7 +35,8 @@
 #include "wabi/usd/pcp/utils.h"
 #include "wabi/usd/sdf/changeList.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/ar/resolverContextBinder.h"
+#include "wabi/base/trace/trace.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -1099,9 +1099,11 @@ void PcpChanges::DidChange(const TfSpan<const PcpCache *> &caches,
     LayerStackChangeBitmask layerStackChanges = entry.second;
 
     if (layerStackChanges & LayerStackResolvedPathChange) {
-      _DidChangeLayerStackResolvedPath(caches, layerStack, debugSummary);
-      if (Pcp_NeedToRecomputeDueToAssetPathChange(layerStack)) {
-        layerStackChanges |= LayerStackSignificantChange;
+      const bool needToRecompute = Pcp_NeedToRecomputeDueToAssetPathChange(layerStack);
+
+      _DidChangeLayerStackResolvedPath(caches, layerStack, needToRecompute, debugSummary);
+      if (needToRecompute) {
+        layerStackChanges |= LayerStackLayersChange | LayerStackSignificantChange;
       }
     }
 
@@ -1435,6 +1437,44 @@ void PcpChanges::DidDestroyCache(const PcpCache *cache)
   // Note that a layer stack in _layerStackChanges may be expired.  We
   // just leave it there and let clients and Apply() check for expired
   // layer stacks.
+}
+
+void PcpChanges::DidChangeAssetResolver(const PcpCache *cache)
+{
+  TF_DEBUG(PCP_CHANGES).Msg("PcpChanges::DidChangeAssetResolver\n");
+
+  // Change debugging.
+  std::string summary;
+  std::string *debugSummary = TfDebug::IsEnabled(PCP_CHANGES) ? &summary : 0;
+
+  const ArResolverContextBinder binder(cache->GetLayerStackIdentifier().pathResolverContext);
+
+  cache->ForEachPrimIndex([this, cache, debugSummary](const PcpPrimIndex &primIndex) {
+    if (Pcp_NeedToRecomputeDueToAssetPathChange(primIndex)) {
+      DidChangeSignificantly(cache, primIndex.GetPath());
+      PCP_APPEND_DEBUG("    %s\n", primIndex.GetPath().GetText());
+    }
+  });
+
+  cache->ForEachLayerStack([this, &cache, debugSummary](const PcpLayerStackPtr &layerStack) {
+    // This matches logic in _DidChange when processing changes
+    // to a layer's resolved path.
+    if (Pcp_NeedToRecomputeDueToAssetPathChange(layerStack)) {
+      _DidChangeLayerStack(TfSpan<const PcpCache *>(&cache, 1),
+                           layerStack,
+                           /* requiresLayerStackChange = */ true,
+                           /* requiresLayerStackOffsetChange = */ false,
+                           /* requiresSignificantChange = */ true);
+    }
+  });
+
+  if (debugSummary && !debugSummary->empty()) {
+    TfDebug::Helper().Msg(
+      "   Resync following in @%s@ significant due to layer "
+      "resolved path change:\n%s",
+      cache->GetLayerStackIdentifier().rootLayer->GetIdentifier().c_str(),
+      debugSummary->c_str());
+  }
 }
 
 void PcpChanges::Swap(PcpChanges &other)
@@ -1870,27 +1910,53 @@ void PcpChanges::_DidChangeLayerStackRelocations(const TfSpan<const PcpCache *> 
 
 void PcpChanges::_DidChangeLayerStackResolvedPath(const TfSpan<const PcpCache *> &caches,
                                                   const PcpLayerStackPtr &layerStack,
+                                                  bool requiresLayerStackChange,
                                                   std::string *debugSummary)
 {
   const ArResolverContextBinder binder(layerStack->GetIdentifier().pathResolverContext);
 
   for (const PcpCache *cache : caches) {
-    PcpDependencyVector deps = cache->FindSiteDependencies(layerStack,
-                                                           SdfPath::AbsoluteRootPath(),
-                                                           PcpDependencyTypeAnyIncludingVirtual,
-                                                           /* recurseOnSite */ true,
-                                                           /* recurseOnIndex */ false,
-                                                           /* filterForExisting */ true);
+    PcpDependencyVector deps;
 
-    auto noResyncNeeded = [cache](const PcpDependency &dep) {
-      if (!dep.indexPath.IsPrimPath()) {
-        return true;
-      }
-      const PcpPrimIndex *primIndex = cache->FindPrimIndex(dep.indexPath);
-      return (TF_VERIFY(primIndex) && !Pcp_NeedToRecomputeDueToAssetPathChange(*primIndex));
-    };
+    if (requiresLayerStackChange) {
+      // If layerStack needs to be recomputed, any prim index that depends
+      // on any site in layerStack must be resynced since recomputing the
+      // layer stack may cause new opinions to be added or removed.
+      deps = cache->FindSiteDependencies(layerStack,
+                                         SdfPath::AbsoluteRootPath(),
+                                         PcpDependencyTypeAnyIncludingVirtual,
+                                         /* recurseOnSite */ true,
+                                         /* recurseOnIndex */ false,
+                                         /* filterForExisting */ true);
+    } else {
+      // If layerStack does not need to be recomputed, it's still possible
+      // that prim indexes that use sites in layerStack need to be
+      // resynced because they have references to asset paths that now
+      // resolve to different assets. For example, if the resolved path
+      // for layer A in layerStack changed, any asset paths in that layer
+      // that were relative to layer A may now resolve differently.
+      //
+      // So, we grab all prim indexes that depend on any site in the layer
+      // stack, and all of the descendants of those prim indexes, and
+      // mark them as needing a resync if we detect the above.
+      deps = cache->FindSiteDependencies(layerStack,
+                                         SdfPath::AbsoluteRootPath(),
+                                         PcpDependencyTypeAnyIncludingVirtual,
+                                         /* recurseOnSite */ true,
+                                         /* recurseOnIndex */ true,
+                                         /* filterForExisting */ true);
 
-    deps.erase(std::remove_if(deps.begin(), deps.end(), noResyncNeeded), deps.end());
+      auto noResyncNeeded = [cache](const PcpDependency &dep) {
+        if (!dep.indexPath.IsPrimPath()) {
+          return true;
+        }
+        const PcpPrimIndex *primIndex = cache->FindPrimIndex(dep.indexPath);
+        return (TF_VERIFY(primIndex) && !Pcp_NeedToRecomputeDueToAssetPathChange(*primIndex));
+      };
+
+      deps.erase(std::remove_if(deps.begin(), deps.end(), noResyncNeeded), deps.end());
+    }
+
     if (deps.empty()) {
       continue;
     }

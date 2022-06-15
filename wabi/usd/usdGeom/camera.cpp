@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -419,6 +419,7 @@ static TfToken _ProjectionToToken(GfCamera::Projection projection)
   }
 }
 
+
 static GfRange1f _Vec2fToRange1f(const GfVec2f &vec)
 {
   return GfRange1f(vec[0], vec[1]);
@@ -511,7 +512,15 @@ void UsdGeomCamera::SetFromCamera(const GfCamera &camera, const UsdTimeCode &tim
 
   const GfMatrix4d camMatrix = camera.GetTransform() * parentToWorldInverse;
 
-  MakeMatrixXform().Set(camMatrix, time);
+  UsdGeomXformOp xformOp = MakeMatrixXform();
+  if (!xformOp) {
+    // The returned xformOp may be invalid if there are xform op
+    // opinions in the composed layer stack stronger than that of
+    // the current edit target.
+    return;
+  }
+  xformOp.Set(camMatrix, time);
+
   GetProjectionAttr().Set(_ProjectionToToken(camera.GetProjection()), time);
   GetHorizontalApertureAttr().Set(camera.GetHorizontalAperture(), time);
   GetVerticalApertureAttr().Set(camera.GetVerticalAperture(), time);

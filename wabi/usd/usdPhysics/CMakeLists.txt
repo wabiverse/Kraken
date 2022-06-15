@@ -11,9 +11,10 @@ wabi_library(usdPhysics
         trace
         usd
         usdGeom
+        usdShade
         work
         ${Boost_PYTHON_LIBRARY}
-        ${TBB_LIBRARIES}
+        ${TBB_tbb_LIBRARY}
 
     INCLUDE_DIRS
         ${Boost_INCLUDE_DIRS}
@@ -42,6 +43,7 @@ wabi_library(usdPhysics
         
     PUBLIC_HEADERS
         api.h
+        massProperties.h
 
     PYTHON_CPPFILES
         moduleDeps.cpp
@@ -75,15 +77,8 @@ wabi_library(usdPhysics
         resources/plugInfo.json
         resources/generatedSchema.usda
         resources/schema.usda:usdPhysics/schema.usda
-        resources/examples/usdPhysicsBoxOnBox.usda
-        resources/examples/usdPhysicsBoxOnQuad.usda
-        resources/examples/usdPhysicsDistanceJoint.usda
-        resources/examples/usdPhysicsGroupFiltering.usda
-        resources/examples/usdPhysicsJoints.usda
-        resources/examples/usdPhysicsPairFiltering.usda
-        resources/examples/usdPhysicsSpheresWithMaterial.usda
 
     DOXYGEN_FILES
-        docs/overview.dox        
+        docs/overview.dox
 )
 

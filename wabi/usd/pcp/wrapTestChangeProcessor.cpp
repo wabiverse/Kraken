@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/changes.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/changeList.h"
 #include "wabi/usd/sdf/notice.h"

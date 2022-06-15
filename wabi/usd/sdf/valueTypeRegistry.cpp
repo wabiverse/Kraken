@@ -22,14 +22,14 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/valueTypeRegistry.h"
+#include "wabi/usd/sdf/valueTypeName.h"
+#include "wabi/usd/sdf/valueTypePrivate.h"
+#include "wabi/usd/sdf/types.h"  // For SdfDimensionlessUnitDefault
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/usd/sdf/types.h"  // For SdfDimensionlessUnitDefault
-#include "wabi/usd/sdf/valueTypeName.h"
-#include "wabi/usd/sdf/valueTypePrivate.h"
-#include "wabi/wabi.h"
 #include <boost/functional/hash.hpp>
 
 #include <tbb/spin_rw_mutex.h>
@@ -46,6 +46,7 @@ namespace
   }
 
 }  // anonymous namespace
+
 
 //
 // Sdf_ValueTypePrivate
@@ -518,6 +519,7 @@ namespace
   }
 
 }  // anonymous namespace
+
 
 //
 // Sdf_ValueTypeRegistry

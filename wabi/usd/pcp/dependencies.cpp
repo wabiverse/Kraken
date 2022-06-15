@@ -23,11 +23,9 @@
 //
 /// \file Dependencies.cpp
 
-#include "wabi/usd/pcp/dependencies.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/dependencies.h"
 
-#include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/tf/stl.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/changes.h"
 #include "wabi/usd/pcp/debugCodes.h"
@@ -37,6 +35,8 @@
 #include "wabi/usd/pcp/primIndex.h"
 #include "wabi/usd/sdf/pathTable.h"
 #include "wabi/usd/sdf/primSpec.h"
+#include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/tf/stl.h"
 
 #include <algorithm>
 

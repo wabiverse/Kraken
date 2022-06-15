@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdSkel/cache.h"
 
 #include "wabi/usd/usd/primRange.h"
@@ -45,12 +38,14 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 UsdSkelCache::UsdSkelCache() : _impl(new UsdSkel_CacheImpl) {}
 
 void UsdSkelCache::Clear()
 {
   return UsdSkel_CacheImpl::WriteScope(_impl.get()).Clear();
 }
+
 
 // XXX: This method exists only so that it's clear to users that
 // GetAnimQuery() is valid on UsdSkelAnimation prims.
@@ -59,6 +54,7 @@ UsdSkelAnimQuery UsdSkelCache::GetAnimQuery(const UsdSkelAnimation &anim) const
   return UsdSkel_CacheImpl::ReadScope(_impl.get()).FindOrCreateAnimQuery(anim.GetPrim());
 }
 
+
 // XXX: Keeping this method around for backwards-compatibility,
 /// but we should prefer the form above.
 UsdSkelAnimQuery UsdSkelCache::GetAnimQuery(const UsdPrim &prim) const
@@ -66,20 +62,24 @@ UsdSkelAnimQuery UsdSkelCache::GetAnimQuery(const UsdPrim &prim) const
   return UsdSkel_CacheImpl::ReadScope(_impl.get()).FindOrCreateAnimQuery(prim);
 }
 
+
 UsdSkelSkeletonQuery UsdSkelCache::GetSkelQuery(const UsdSkelSkeleton &skel) const
 {
   return UsdSkel_CacheImpl::ReadScope(_impl.get()).FindOrCreateSkelQuery(skel.GetPrim());
 }
+
 
 bool UsdSkelCache::Populate(const UsdSkelRoot &root, Usd_PrimFlagsPredicate predicate) const
 {
   return UsdSkel_CacheImpl::ReadScope(_impl.get()).Populate(root, predicate);
 }
 
+
 UsdSkelSkinningQuery UsdSkelCache::GetSkinningQuery(const UsdPrim &prim) const
 {
   return UsdSkel_CacheImpl::ReadScope(_impl.get()).GetSkinningQuery(prim);
 }
+
 
 namespace
 {
@@ -92,7 +92,9 @@ namespace
     }
   };
 
+
 }  // namespace
+
 
 bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
                                        std::vector<UsdSkelBinding> *bindings,
@@ -189,6 +191,7 @@ bool UsdSkelCache::ComputeSkelBindings(const UsdSkelRoot &skelRoot,
   return true;
 }
 
+
 bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
                                       const UsdSkelSkeleton &skel,
                                       UsdSkelBinding *binding,
@@ -275,5 +278,6 @@ bool UsdSkelCache::ComputeSkelBinding(const UsdSkelRoot &skelRoot,
   *binding = UsdSkelBinding(skel, skinningQueries);
   return true;
 }
+
 
 WABI_NAMESPACE_END

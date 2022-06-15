@@ -23,8 +23,8 @@
 //
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/usd/usd/zipFile.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/noncopyable.hpp>
 #include <boost/python/class.hpp>

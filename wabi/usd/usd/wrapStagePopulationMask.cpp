@@ -26,9 +26,9 @@
 #include <boost/python/operators.hpp>
 #include <boost/python/return_arg.hpp>
 
-#include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/base/tf/pyUtils.h"
 #include "wabi/usd/usd/stagePopulationMask.h"
+#include "wabi/base/tf/pyUtils.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 using std::string;
 

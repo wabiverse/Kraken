@@ -22,10 +22,7 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/makePyConstructor.h"
-#include "wabi/base/tf/pyEnum.h"
-#include "wabi/base/tf/pyPtrHelpers.h"
-#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/changes.h"
 #include "wabi/usd/pcp/errors.h"
@@ -33,7 +30,10 @@
 #include "wabi/usd/pcp/pyUtils.h"
 #include "wabi/usd/pcp/types.h"
 #include "wabi/usd/sdf/primSpec.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/makePyConstructor.h"
+#include "wabi/base/tf/pyEnum.h"
+#include "wabi/base/tf/pyPtrHelpers.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/python.hpp>
 #include <memory>

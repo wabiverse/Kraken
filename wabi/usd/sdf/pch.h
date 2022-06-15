@@ -241,4 +241,3 @@
 #ifdef WITH_PYTHON
 #  include "wabi/base/tf/pySafePython.h"
 #endif  // WITH_PYTHON
-\

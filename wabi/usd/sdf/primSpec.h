@@ -26,15 +26,15 @@
 
 /// \file sdf/primSpec.h
 
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/usd/sdf/api.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/declareSpec.h"
+#include "wabi/usd/sdf/spec.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/payload.h"
 #include "wabi/usd/sdf/proxyTypes.h"
-#include "wabi/usd/sdf/spec.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
+#include "wabi/base/tf/declarePtrs.h"
 
 #include <iosfwd>
 #include <map>
@@ -346,10 +346,10 @@ class SdfPrimSpec : public SdfSpec
   /// \name Metadata
   /// @{
 
-  /// Returns the typeName of the model prim.
+  /// Returns the typeName of the prim.
   ///
-  /// For prims this specifies the sub-class of MfPrim that
-  /// this prim describes.
+  /// The typeName should be meaningful to a higher level
+  /// prim definition system.
   ///
   /// The default value for typeName is the empty token.
   SDF_API
@@ -769,6 +769,7 @@ class SdfPrimSpec : public SdfSpec
 /// primPath must be a valid prim path.
 SDF_API
 SdfPrimSpecHandle SdfCreatePrimInLayer(const SdfLayerHandle &layer, const SdfPath &primPath);
+
 
 /// Convenience function to create a prim at the given path, and any
 /// necessary parent prims, in the given layer.

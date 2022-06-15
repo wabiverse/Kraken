@@ -21,12 +21,12 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/assetPath.h"
+#include "wabi/base/vt/valueFromPython.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/base/vt/valueFromPython.h"
 #include "wabi/base/vt/wrapArray.h"
-#include "wabi/usd/sdf/assetPath.h"
-#include "wabi/wabi.h"
 
 #include <boost/functional/hash.hpp>
 #include <boost/python/class.hpp>

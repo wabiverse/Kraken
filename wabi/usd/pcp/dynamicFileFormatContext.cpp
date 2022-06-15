@@ -22,13 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/dynamicFileFormatContext.h"
-#include "wabi/base/vt/value.h"
 #include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/pcp/node_Iterator.h"
 #include "wabi/usd/pcp/primIndex_StackFrame.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/value.h"
 
 WABI_NAMESPACE_BEGIN
 

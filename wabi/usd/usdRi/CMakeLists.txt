@@ -49,5 +49,5 @@ wabi_library(usdRi
         resources/schema.usda:usdRi/schema.usda
 
     DOXYGEN_FILES
-      docs/overview.dox
+        docs/overview.dox
 )

@@ -1,7 +1,7 @@
 set(WABI_PREFIX wabi/usd)
 set(WABI_PACKAGE usd)
 
-wabi_python_bin(usdcompress
+pxr_python_bin(usdcompress
     DEPENDENCIES
         tf
         gf
@@ -12,12 +12,12 @@ wabi_python_bin(usdcompress
 )
 
 # Checks that compression succeeds with return code of zero.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testExitCodes
     DEST testUsdCompressExitCodeSuccess
 )
 
-wabi_register_test(testUsdCompressExitCodeSuccess
+pxr_register_test(testUsdCompressExitCodeSuccess
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress a.usda -o out.usda"
     EXPECTED_RETURN_CODE 0
@@ -26,12 +26,12 @@ wabi_register_test(testUsdCompressExitCodeSuccess
 )
 
 # Checks that compression fails when an invalid input file name is given.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testExitCodes
     DEST testUsdCompressExitCodeBadInputFileName
 )
 
-wabi_register_test(testUsdCompressExitCodeBadInputFileName
+pxr_register_test(testUsdCompressExitCodeBadInputFileName
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress bad.usda -o out.usda"
     EXPECTED_RETURN_CODE 1
@@ -40,12 +40,12 @@ wabi_register_test(testUsdCompressExitCodeBadInputFileName
 )
 
 # Checks that compression fails when an invalid command-line flag is given.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testExitCodes
     DEST testUsdCompressExitCodeBadArgumentName
 )
 
-wabi_register_test(testUsdCompressExitCodeBadArgumentName
+pxr_register_test(testUsdCompressExitCodeBadArgumentName
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress a.usda --bad -o out.usda"
     EXPECTED_RETURN_CODE 2
@@ -54,12 +54,12 @@ wabi_register_test(testUsdCompressExitCodeBadArgumentName
 )
 
 # Checks that compression fails when property has one custom opinion.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testPropertyOpinions
     DEST testUsdCompressPropertyOpinionsOneCustom
 )
 
-wabi_register_test(testUsdCompressPropertyOpinionsOneCustom
+pxr_register_test(testUsdCompressPropertyOpinionsOneCustom
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeOneCustomOpinion.usda -o out.usda"
     EXPECTED_RETURN_CODE 1
@@ -68,12 +68,12 @@ wabi_register_test(testUsdCompressPropertyOpinionsOneCustom
 )
 
 # Checks that compression fails when property has multiple opinions.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testPropertyOpinions
     DEST testUsdCompressPropertyOpinionsMultiple
 )
 
-wabi_register_test(testUsdCompressPropertyOpinionsMultiple
+pxr_register_test(testUsdCompressPropertyOpinionsMultiple
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeMultipleOpinions.usda -o out.usda"
     EXPECTED_RETURN_CODE 1
@@ -82,12 +82,12 @@ wabi_register_test(testUsdCompressPropertyOpinionsMultiple
 )
 
 # Checks that compression finishes with flag to ignore opinion errors.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testPropertyOpinions
     DEST testUsdCompressPropertyOpinionsIgnoreErrors
 )
 
-wabi_register_test(testUsdCompressPropertyOpinionsIgnoreErrors
+pxr_register_test(testUsdCompressPropertyOpinionsIgnoreErrors
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeMultipleOpinions.usda -o CubeMultipleOpinionsCompressed.usda --ignore_opinion_errors"
     EXPECTED_RETURN_CODE 0
@@ -98,12 +98,12 @@ wabi_register_test(testUsdCompressPropertyOpinionsIgnoreErrors
 )
 
 # Checks that a complex set scene can be successfully compressed.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testComplexSet
     DEST testUsdCompressComplexSet
 )
 
-wabi_register_test(testUsdCompressComplexSet
+pxr_register_test(testUsdCompressComplexSet
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress ComplexSet.usda -o ComplexSetCompressed.usda"
     EXPECTED_RETURN_CODE 0
@@ -123,12 +123,12 @@ wabi_register_test(testUsdCompressComplexSet
 )
 
 # Checks that cube with triangles can be compressed.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testTriangles
     DEST testUsdCompressTriangles
 )
 
-wabi_register_test(testUsdCompressTriangles
+pxr_register_test(testUsdCompressTriangles
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithTriangles.usda -o CubeWithTrianglesCompressed.usda"
     EXPECTED_RETURN_CODE 0
@@ -139,12 +139,12 @@ wabi_register_test(testUsdCompressTriangles
 )
 
 # Checks that cube with quads can be compressed with quads preserved.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testQuads
     DEST testUsdCompressQuads
 )
 
-wabi_register_test(testUsdCompressQuads
+pxr_register_test(testUsdCompressQuads
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithQuads.usda -o CubeWithQuadsCompressed.usda"
     EXPECTED_RETURN_CODE 0
@@ -155,12 +155,12 @@ wabi_register_test(testUsdCompressQuads
 )
 
 # Checks that cube with quads can be compressed with quads split into triangles.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testQuads
     DEST testUsdCompressDiscardQuads
 )
 
-wabi_register_test(testUsdCompressDiscardQuads
+pxr_register_test(testUsdCompressDiscardQuads
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithQuads.usda -o CubeWithQuadsCompressedDiscarded.usda --preserve_polygons 0"
     EXPECTED_RETURN_CODE 0
@@ -172,12 +172,12 @@ wabi_register_test(testUsdCompressDiscardQuads
 
 # Checks that supported generic primvars of various types and shapes are
 # successfully compressed and unsupported primvars remain in USDA file.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testGenericPrimvars
     DEST testUsdCompressGenericPrimvars
 )
 
-wabi_register_test(testUsdCompressGenericPrimvars
+pxr_register_test(testUsdCompressGenericPrimvars
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithGenericPrimvars.usda -o CubeWithGenericPrimvarsCompressed.usda"
     EXPECTED_RETURN_CODE 0
@@ -189,12 +189,12 @@ wabi_register_test(testUsdCompressGenericPrimvars
 
 # Checks that attributes with vertex interpolation are comporessed correctly
 # when position order is discarded (default).
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testPositionOrder
     DEST testUsdCompressVertexColor
 )
 
-wabi_register_test(testUsdCompressVertexColor
+pxr_register_test(testUsdCompressVertexColor
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithVertexColor.usda -o CubeWithVertexColorCompressed.usda --discard_subdivision 1"
     EXPECTED_RETURN_CODE 0
@@ -206,12 +206,12 @@ wabi_register_test(testUsdCompressVertexColor
 
 # Checks that attributes with vertex interpolation are comporessed correctly when
 # position order is preserved (with --discard_subdivision 0).
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testPositionOrder
     DEST testUsdCompressVertexColorPreservePositionOrder
 )
 
-wabi_register_test(testUsdCompressVertexColorPreservePositionOrder
+pxr_register_test(testUsdCompressVertexColorPreservePositionOrder
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithVertexColor.usda -o CubeWithVertexColorCompressedWithPositionOrder.usda --discard_subdivision 0"
     EXPECTED_RETURN_CODE 0
@@ -223,12 +223,12 @@ wabi_register_test(testUsdCompressVertexColorPreservePositionOrder
 
 # Checks that attributes with face-varying interpolation are comporessed
 # correctly when position order is discarded (default).
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testPositionOrder
     DEST testUsdCompressCornerColor
 )
 
-wabi_register_test(testUsdCompressCornerColor
+pxr_register_test(testUsdCompressCornerColor
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithCornerColor.usda -o CubeWithCornerColorCompressed.usda"
     EXPECTED_RETURN_CODE 0
@@ -240,12 +240,12 @@ wabi_register_test(testUsdCompressCornerColor
 
 # Checks that attributes with face-varying interpolation are comporessed
 # correctly when position order is preserved (with --discard_subdivision 0).
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testPositionOrder
     DEST testUsdCompressCornerColorPreservePositionOrder
 )
 
-wabi_register_test(testUsdCompressCornerColorPreservePositionOrder
+pxr_register_test(testUsdCompressCornerColorPreservePositionOrder
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithCornerColor.usda -o CubeWithCornerColorCompressedWithPositionOrder.usda --discard_subdivision 0"
     EXPECTED_RETURN_CODE 0
@@ -256,12 +256,12 @@ wabi_register_test(testUsdCompressCornerColorPreservePositionOrder
 )
 
 # Checks that cube with holes is successfully compressed.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testHoles
     DEST testUsdCompressHoles
 )
 
-wabi_register_test(testUsdCompressHoles
+pxr_register_test(testUsdCompressHoles
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithHoles.usda -o CubeWithHolesCompressed.usda"
     EXPECTED_RETURN_CODE 0
@@ -272,12 +272,12 @@ wabi_register_test(testUsdCompressHoles
 )
 
 # Checks that cube holes are discarded (with --discard_subdivision 1).
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testHoles
     DEST testUsdCompressDiscardHoles
 )
 
-wabi_register_test(testUsdCompressDiscardHoles
+pxr_register_test(testUsdCompressDiscardHoles
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithHoles.usda -o CubeWithHolesCompressedDiscarded.usda --discard_subdivision 1"
     EXPECTED_RETURN_CODE 0
@@ -288,12 +288,12 @@ wabi_register_test(testUsdCompressDiscardHoles
 )
 
 # Checks that mesh with creases is successfully compressed.
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testCreases
     DEST testUsdCompressCreases
 )
 
-wabi_register_test(testUsdCompressCreases
+pxr_register_test(testUsdCompressCreases
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress MeshWithCreases.usda -o MeshWithCreasesCompressed.usda"
     EXPECTED_RETURN_CODE 0
@@ -304,12 +304,12 @@ wabi_register_test(testUsdCompressCreases
 )
 
 # Checks that mesh creases are discarded (with --discard_subdivision 1).
-wabi_install_test_dir(
+pxr_install_test_dir(
     SRC testenv/testCreases
     DEST testUsdCompressDiscardCreases
 )
 
-wabi_register_test(testUsdCompressDiscardCreases
+pxr_register_test(testUsdCompressDiscardCreases
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress MeshWithCreases.usda -o MeshWithCreasesCompressedDiscarded.usda --discard_subdivision 1"
     EXPECTED_RETURN_CODE 0
@@ -320,12 +320,12 @@ wabi_register_test(testUsdCompressDiscardCreases
 )
 
 # Checks that cube with one time sample for color is successfully compressed.
-wabi_install_test_dir(
+pxr_install_test_dir(
 	SRC testenv/testTimeSample
 	DEST testUsdCompressTimeSample
 )
 
-wabi_register_test(testUsdCompressTimeSample
+pxr_register_test(testUsdCompressTimeSample
     PYTHON
     COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdcompress CubeWithTimeSample.usda -o CubeWithTimeSampleCompressed.usda"
     EXPECTED_RETURN_CODE 0
@@ -334,3 +334,4 @@ wabi_register_test(testUsdCompressTimeSample
     PRE_PATH
         ${CMAKE_INSTALL_PREFIX}/bin
 )
+

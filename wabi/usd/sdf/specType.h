@@ -26,8 +26,8 @@
 
 /// \file sdf/specType.h
 
-#include "wabi/usd/sdf/types.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/types.h"
 
 #include <typeinfo>
 #include <vector>

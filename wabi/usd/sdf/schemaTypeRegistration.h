@@ -24,14 +24,14 @@
 #ifndef WABI_USD_SDF_SCHEMA_TYPE_REGISTRATION_H
 #define WABI_USD_SDF_SCHEMA_TYPE_REGISTRATION_H
 
-#include "wabi/base/vt/dictionary.h"
-#include "wabi/base/vt/value.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/layerOffset.h"
 #include "wabi/usd/sdf/listOp.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/dictionary.h"
+#include "wabi/base/vt/value.h"
 
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/token.h"

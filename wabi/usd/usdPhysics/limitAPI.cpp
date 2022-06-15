@@ -37,7 +37,11 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdPhysicsLimitAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsLimitAPI)(limit));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (PhysicsLimitAPI)
+    (limit)
+);
 
 /* virtual */
 UsdPhysicsLimitAPI::~UsdPhysicsLimitAPI() {}
@@ -67,8 +71,10 @@ UsdPhysicsLimitAPI UsdPhysicsLimitAPI::Get(const UsdPrim &prim, const TfToken &n
 bool UsdPhysicsLimitAPI::IsSchemaPropertyBaseName(const TfToken &baseName)
 {
   static TfTokenVector attrsAndRels = {
-    UsdPhysicsTokens->physicsLow,
-    UsdPhysicsTokens->physicsHigh,
+    UsdSchemaRegistry::GetMultipleApplyNameTemplateBaseName(
+      UsdPhysicsTokens->limit_MultipleApplyTemplate_PhysicsLow),
+    UsdSchemaRegistry::GetMultipleApplyNameTemplateBaseName(
+      UsdPhysicsTokens->limit_MultipleApplyTemplate_PhysicsHigh),
   };
 
   return find(attrsAndRels.begin(), attrsAndRels.end(), baseName) != attrsAndRels.end();
@@ -115,24 +121,6 @@ bool UsdPhysicsLimitAPI::CanApply(const UsdPrim &prim, const TfToken &name, std:
 /* static */
 UsdPhysicsLimitAPI UsdPhysicsLimitAPI::Apply(const UsdPrim &prim, const TfToken &name)
 {
-  // Ensure that the instance name is valid.
-  TfTokenVector tokens = SdfPath::TokenizeIdentifierAsTokens(name);
-
-  if (tokens.empty()) {
-    TF_CODING_ERROR("Invalid PhysicsLimitAPI name '%s'.", name.GetText());
-    return UsdPhysicsLimitAPI();
-  }
-
-  const TfToken &baseName = tokens.back();
-  if (IsSchemaPropertyBaseName(baseName)) {
-    TF_CODING_ERROR(
-      "Invalid PhysicsLimitAPI name '%s'. "
-      "The base-name '%s' is a schema property name.",
-      name.GetText(),
-      baseName.GetText());
-    return UsdPhysicsLimitAPI();
-  }
-
   if (prim.ApplyAPI<UsdPhysicsLimitAPI>(name)) {
     return UsdPhysicsLimitAPI(prim, name);
   }
@@ -165,21 +153,22 @@ const TfType &UsdPhysicsLimitAPI::_GetTfType() const
 static inline TfToken _GetNamespacedPropertyName(const TfToken instanceName,
                                                  const TfToken propName)
 {
-  TfTokenVector identifiers = {_schemaTokens->limit, instanceName, propName};
-  return TfToken(SdfPath::JoinIdentifier(identifiers));
+  return UsdSchemaRegistry::MakeMultipleApplyNameInstance(propName, instanceName);
 }
 
 UsdAttribute UsdPhysicsLimitAPI::GetLowAttr() const
 {
   return GetPrim().GetAttribute(
-    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsLow));
+    _GetNamespacedPropertyName(GetName(),
+                               UsdPhysicsTokens->limit_MultipleApplyTemplate_PhysicsLow));
 }
 
 UsdAttribute UsdPhysicsLimitAPI::CreateLowAttr(VtValue const &defaultValue,
                                                bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
-    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsLow),
+    _GetNamespacedPropertyName(GetName(),
+                               UsdPhysicsTokens->limit_MultipleApplyTemplate_PhysicsLow),
     SdfValueTypeNames->Float,
     /* custom = */ false,
     SdfVariabilityVarying,
@@ -190,14 +179,16 @@ UsdAttribute UsdPhysicsLimitAPI::CreateLowAttr(VtValue const &defaultValue,
 UsdAttribute UsdPhysicsLimitAPI::GetHighAttr() const
 {
   return GetPrim().GetAttribute(
-    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsHigh));
+    _GetNamespacedPropertyName(GetName(),
+                               UsdPhysicsTokens->limit_MultipleApplyTemplate_PhysicsHigh));
 }
 
 UsdAttribute UsdPhysicsLimitAPI::CreateHighAttr(VtValue const &defaultValue,
                                                 bool writeSparsely) const
 {
   return UsdSchemaBase::_CreateAttr(
-    _GetNamespacedPropertyName(GetName(), UsdPhysicsTokens->physicsHigh),
+    _GetNamespacedPropertyName(GetName(),
+                               UsdPhysicsTokens->limit_MultipleApplyTemplate_PhysicsHigh),
     SdfValueTypeNames->Float,
     /* custom = */ false,
     SdfVariabilityVarying,
@@ -207,32 +198,25 @@ UsdAttribute UsdPhysicsLimitAPI::CreateHighAttr(VtValue const &defaultValue,
 
 namespace
 {
-  static inline TfTokenVector _ConcatenateAttributeNames(const TfToken instanceName,
-                                                         const TfTokenVector &left,
+  static inline TfTokenVector _ConcatenateAttributeNames(const TfTokenVector &left,
                                                          const TfTokenVector &right)
   {
     TfTokenVector result;
     result.reserve(left.size() + right.size());
     result.insert(result.end(), left.begin(), left.end());
-
-    for (const TfToken attrName : right) {
-      result.push_back(_GetNamespacedPropertyName(instanceName, attrName));
-    }
     result.insert(result.end(), right.begin(), right.end());
     return result;
   }
 }  // namespace
 
 /*static*/
-const TfTokenVector &UsdPhysicsLimitAPI::GetSchemaAttributeNames(bool includeInherited,
-                                                                 const TfToken instanceName)
+const TfTokenVector &UsdPhysicsLimitAPI::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-    UsdPhysicsTokens->physicsLow,
-    UsdPhysicsTokens->physicsHigh,
+    UsdPhysicsTokens->limit_MultipleApplyTemplate_PhysicsLow,
+    UsdPhysicsTokens->limit_MultipleApplyTemplate_PhysicsHigh,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-    instanceName,
     UsdAPISchemaBase::GetSchemaAttributeNames(true),
     localNames);
 
@@ -240,6 +224,22 @@ const TfTokenVector &UsdPhysicsLimitAPI::GetSchemaAttributeNames(bool includeInh
     return allNames;
   else
     return localNames;
+}
+
+/*static*/
+TfTokenVector UsdPhysicsLimitAPI::GetSchemaAttributeNames(bool includeInherited,
+                                                          const TfToken &instanceName)
+{
+  const TfTokenVector &attrNames = GetSchemaAttributeNames(includeInherited);
+  if (instanceName.IsEmpty()) {
+    return attrNames;
+  }
+  TfTokenVector result;
+  result.reserve(attrNames.size());
+  for (const TfToken &attrName : attrNames) {
+    result.push_back(UsdSchemaRegistry::MakeMultipleApplyNameInstance(attrName, instanceName));
+  }
+  return result;
 }
 
 WABI_NAMESPACE_END

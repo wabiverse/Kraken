@@ -21,12 +21,13 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/usdFileFormat.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/usdFileFormat.h"
 
 #include "wabi/usd/usd/usdaFileFormat.h"
 #include "wabi/usd/usd/usdcFileFormat.h"
 
+#include "wabi/usd/ar/resolver.h"
 #include "wabi/usd/sdf/layer.h"
 
 #include "wabi/base/trace/trace.h"
@@ -40,15 +41,16 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 using std::string;
 
 TF_DECLARE_WEAK_AND_REF_PTRS(Usd_CrateData);
 
 TF_DEFINE_PUBLIC_TOKENS(UsdUsdFileFormatTokens, USD_USD_FILE_FORMAT_TOKENS);
 
-TF_DEFINE_ENV_SETTING(USD_DEFAULT_FILE_FORMAT,
-                      "usdc",
-                      "Default file format for new .usd files; either 'usda' or 'usdc'.");
+TF_DEFINE_ENV_SETTING(
+    USD_DEFAULT_FILE_FORMAT, "usdc",
+    "Default file format for new .usd files; either 'usda' or 'usdc'.");
 
 // ------------------------------------------------------------
 
@@ -59,24 +61,23 @@ static SdfFileFormatConstPtr _GetFileFormat(const TfToken &formatId)
   return fileFormat;
 }
 
-// A .usd file may actually be either a text .usda file or a binary crate
-// .usdc file. These functions returns the appropriate file format for a
-// given file or data object.
-static SdfFileFormatConstPtr _GetUnderlyingFileFormat(const string &filePath)
+static const UsdUsdcFileFormatConstPtr &_GetUsdcFileFormat()
 {
-  auto usdcFormat = _GetFileFormat(UsdUsdcFileFormatTokens->Id);
-  if (usdcFormat->CanRead(filePath)) {
-    return usdcFormat;
-  }
-
-  auto usdaFormat = _GetFileFormat(UsdUsdaFileFormatTokens->Id);
-  if (usdaFormat->CanRead(filePath)) {
-    return usdaFormat;
-  }
-
-  return SdfFileFormatConstPtr();
+  static const auto usdcFormat = TfDynamic_cast<UsdUsdcFileFormatConstPtr>(
+    _GetFileFormat(UsdUsdcFileFormatTokens->Id));
+  return usdcFormat;
 }
 
+static const UsdUsdaFileFormatConstPtr &_GetUsdaFileFormat()
+{
+  static const auto usdaFormat = TfDynamic_cast<UsdUsdaFileFormatConstPtr>(
+    _GetFileFormat(UsdUsdaFileFormatTokens->Id));
+  return usdaFormat;
+}
+
+// A .usd file may actually be either a text .usda file or a binary crate
+// .usdc file. This function returns the appropriate file format for a
+// given data object.
 static SdfFileFormatConstPtr _GetUnderlyingFileFormat(const SdfAbstractDataConstPtr &data)
 {
   // A .usd file can only be backed by one of these formats,
@@ -173,32 +174,53 @@ SdfAbstractDataRefPtr UsdUsdFileFormat::InitData(const FileFormatArguments &args
 
 bool UsdUsdFileFormat::CanRead(const string &filePath) const
 {
-  return _GetUnderlyingFileFormat(filePath) != SdfFileFormatConstPtr();
+  auto asset = ArGetResolver().OpenAsset(ArResolvedPath(filePath));
+  return asset && (_GetUsdcFileFormat()->_CanReadFromAsset(filePath, asset) ||
+                   _GetUsdaFileFormat()->_CanReadFromAsset(filePath, asset));
 }
 
 bool UsdUsdFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool metadataOnly) const
 {
   TRACE_FUNCTION();
 
-  // Try binary usdc format first, since that's most common, then usda text.
-  static auto formats = {
-    _GetFileFormat(UsdUsdcFileFormatTokens->Id),
-    _GetFileFormat(UsdUsdaFileFormatTokens->Id),
-  };
+  // Fetch the asset from Ar.
+  auto asset = ArGetResolver().OpenAsset(ArResolvedPath(resolvedPath));
+  if (!asset) {
+    return false;
+  }
+
+  const auto &usdcFileFormat = _GetUsdcFileFormat();
+  const auto &usdaFileFormat = _GetUsdaFileFormat();
 
   // Network-friendly path -- just try to read the file and if we get one that
   // works we're good.
-  for (auto const &fmt : formats) {
+  //
+  // Try binary usdc format first, since that's most common, then usda text.
+  {
     TfErrorMark m;
-    if (fmt && fmt->Read(layer, resolvedPath, metadataOnly))
+    if (usdcFileFormat->_ReadFromAsset(layer, resolvedPath, asset, metadataOnly)) {
       return true;
+    }
+    m.Clear();
+
+    if (usdaFileFormat->_ReadFromAsset(layer, resolvedPath, asset, metadataOnly)) {
+      return true;
+    }
     m.Clear();
   }
 
   // Failed to load.  Do the slower (for the network) version where we attempt
-  // to determine the underlying format first, and then load using it.
-  auto underlyingFormat = _GetUnderlyingFileFormat(resolvedPath);
-  return underlyingFormat && underlyingFormat->Read(layer, resolvedPath, metadataOnly);
+  // to determine the underlying format first, and then load using it. This
+  // gives us better diagnostic messages.
+  if (usdcFileFormat->_CanReadFromAsset(resolvedPath, asset)) {
+    return usdcFileFormat->_ReadFromAsset(layer, resolvedPath, asset, metadataOnly);
+  }
+
+  if (usdaFileFormat->_CanReadFromAsset(resolvedPath, asset)) {
+    return usdaFileFormat->_ReadFromAsset(layer, resolvedPath, asset, metadataOnly);
+  }
+
+  return false;
 }
 
 SdfFileFormatConstPtr UsdUsdFileFormat::_GetUnderlyingFileFormatForLayer(const SdfLayer &layer)

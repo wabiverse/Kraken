@@ -24,23 +24,24 @@
 #ifndef WABI_USD_USD_ATTRIBUTE_H
 #define WABI_USD_USD_ATTRIBUTE_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/property.h"
 #include "wabi/usd/usd/resolveInfo.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/gf/interval.h"
-#include "wabi/base/vt/value.h"
 #include "wabi/usd/sdf/abstractData.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/base/vt/value.h"
+#include "wabi/base/gf/interval.h"
 
 #include <string>
 #include <type_traits>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdAttribute;
 

@@ -26,11 +26,11 @@
 
 /// \file sdf/textFileFormat.h
 
-#include "wabi/base/tf/staticTokens.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/fileFormat.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/staticTokens.h"
 
 #include <iosfwd>
 #include <string>
@@ -44,6 +44,8 @@ TF_DECLARE_PUBLIC_TOKENS(SdfTextFileFormatTokens, SDF_API, SDF_TEXT_FILE_FORMAT_
 TF_DECLARE_WEAK_AND_REF_PTRS(SdfTextFileFormat);
 
 SDF_DECLARE_HANDLES(SdfSpec);
+
+class ArAsset;
 
 /// \class SdfTextFileFormat
 ///
@@ -102,6 +104,18 @@ class SdfTextFileFormat : public SdfFileFormat
   explicit SdfTextFileFormat(const TfToken &formatId,
                              const TfToken &versionString = TfToken(),
                              const TfToken &target = TfToken());
+
+  /// Return true if layer can be read from \p asset at \p resolvedPath.
+  SDF_API
+  bool _CanReadFromAsset(const std::string &resolvedPath,
+                         const std::shared_ptr<ArAsset> &asset) const;
+
+  /// Read layer from \p asset at \p resolvedPath into \p layer.
+  SDF_API
+  bool _ReadFromAsset(SdfLayer *layer,
+                      const std::string &resolvedPath,
+                      const std::shared_ptr<ArAsset> &asset,
+                      bool metadataOnly) const;
 
  private:
 

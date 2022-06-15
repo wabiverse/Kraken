@@ -26,14 +26,14 @@
 
 /// \file sdf/assetPathResolver.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/vt/value.h"
 #include "wabi/usd/ar/assetInfo.h"
 #include "wabi/usd/ar/resolvedPath.h"
 #include "wabi/usd/ar/resolverContext.h"
+#include "wabi/base/vt/value.h"
 
 #include <string>
 
@@ -73,8 +73,8 @@ ArResolvedPath Sdf_ResolvePath(const std::string &layerPath, ArAssetInfo *assetI
 /// if it's non-nullptr.
 ArResolvedPath Sdf_ComputeFilePath(const std::string &layerPath, ArAssetInfo *assetInfo = nullptr);
 
-/// Returns true if a layer can be written to \p layerPath.
-bool Sdf_CanWriteLayerToPath(const std::string &layerPath);
+/// Returns true if a layer can be written to \p resolvedPath.
+bool Sdf_CanWriteLayerToPath(const ArResolvedPath &resolvedPath);
 
 /// Returns a newly allocated Sdf_AssetInfo struct with fields computed using
 /// the specified \p identifier and \p filePath. If \p fileVersion is
@@ -102,9 +102,16 @@ std::string Sdf_GetAnonLayerDisplayName(const std::string &identifier);
 /// Sdf_ComputeAnonLayerIdentifier can compute an anonymous layer identifier.
 std::string Sdf_GetAnonLayerIdentifierTemplate(const std::string &tag);
 
-/// Splits the given \p identifier into two portions: the layer path
-/// and the arguments. For example, given the identifier foo.menva?a=b,
-/// this function returns ("foo.menva", "?a=b")
+/// If \p identifier contains file format arguments
+/// (e.g. foo.sdf:SDF_FORMAT_ARGS:a=b), strip them, assign the resulting string
+/// to *strippedIdentifier and return true.  Otherwise just return false.
+bool Sdf_StripIdentifierArgumentsIfPresent(const std::string &identifier,
+                                           std::string *strippedIdentifier);
+
+/// Splits the given \p identifier into two portions: the layer path and the
+/// arguments. For example, given the identifier foo.sdf:SDF_FORMAT_ARGS:a=b,
+/// this function will set \p layerPath to "foo.sdf" and \p arguments to
+/// ":SDF_FORMAT_ARGS:a=b".
 bool Sdf_SplitIdentifier(const std::string &identifier,
                          std::string *layerPath,
                          std::string *arguments);

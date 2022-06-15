@@ -26,10 +26,10 @@
 
 /// \file sdf/accessorHelpers.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/spec.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
 
 // This file defines macros intended to reduce the amount of boilerplate code
 // associated with adding new metadata to SdfSpec subclasses.  There's still a

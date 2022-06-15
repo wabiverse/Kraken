@@ -1,60 +1,46 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2018 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec2f.h"
 #include "wabi/base/gf/vec3f.h"
 #include "wabi/base/gf/vec4f.h"
-
+#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/staticTokens.h"
 #include "wabi/base/tf/weakPtr.h"
-
-#include "wabi/base/vt/array.h"
 #include "wabi/base/vt/types.h"
-
+#include "wabi/base/vt/array.h"
 #include "wabi/usd/ar/ar.h"
 #include "wabi/usd/ar/asset.h"
 #include "wabi/usd/ar/resolvedPath.h"
 #include "wabi/usd/ar/resolver.h"
-
 #include "wabi/usd/ndr/debugCodes.h"
 #include "wabi/usd/ndr/nodeDiscoveryResult.h"
-
 #include "wabi/usd/sdf/assetPath.h"
-
 #include "wabi/usd/sdr/shaderMetadataHelpers.h"
 #include "wabi/usd/sdr/shaderNode.h"
 #include "wabi/usd/sdr/shaderProperty.h"
-
 #include "wabi/usd/plugin/sdrOsl/oslParser.h"
 
 #include <tuple>
@@ -68,19 +54,17 @@ using ShaderMetadataHelpers::OptionVecVal;
 
 NDR_REGISTER_PARSER_PLUGIN(SdrOslParserPlugin)
 
-/* clang-format off */
 TF_DEFINE_PRIVATE_TOKENS(
-  _tokens,
+    _tokens,
 
-  ((arraySize, "arraySize"))
-  ((vstructMember, "vstructmember"))
-  (sdrDefinitionName)
+    ((arraySize, "arraySize"))
+    ((vstructMember, "vstructmember"))
+    (sdrDefinitionName)
 
-  // Discovery and source type
-  ((discoveryType, "oso"))
-  ((sourceType, "OSL"))
+    // Discovery and source type
+    ((discoveryType, "oso"))
+    ((sourceType, "OSL"))
 );
-/* clang-format on */
 
 const NdrTokenVec &SdrOslParserPlugin::GetDiscoveryTypes() const
 {
@@ -167,6 +151,7 @@ NdrNodeUniquePtr SdrOslParserPlugin::Parse(const NdrNodeDiscoveryResult &discove
       parseSuccessful = _ParseFromSourceCode(&oslQuery,
                                              OSL::string_view(buffer.get(), asset->GetSize()));
     }
+
   } else if (!discoveryResult.sourceCode.empty()) {
     parseSuccessful = _ParseFromSourceCode(&oslQuery, discoveryResult.sourceCode);
   } else {

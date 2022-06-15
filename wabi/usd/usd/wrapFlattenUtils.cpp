@@ -21,17 +21,17 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/base/arch/pragmas.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/pragmas.h"
 
 #include <boost/python/def.hpp>
 
-#include "wabi/base/tf/makePyConstructor.h"
-#include "wabi/base/tf/pyFunction.h"
-#include "wabi/base/tf/pyPtrHelpers.h"
-#include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/usd/flattenUtils.h"
+#include "wabi/usd/sdf/layer.h"
+#include "wabi/base/tf/pyFunction.h"
+#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyPtrHelpers.h"
+#include "wabi/base/tf/makePyConstructor.h"
 
 using namespace boost::python;
 

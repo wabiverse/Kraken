@@ -1,40 +1,33 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdSkel/bindingAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -44,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdSkelBindingAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (SkelBindingAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (SkelBindingAPI)
+);
 
 /* virtual */
 UsdSkelBindingAPI::~UsdSkelBindingAPI() {}
@@ -59,10 +55,17 @@ UsdSkelBindingAPI UsdSkelBindingAPI::Get(const UsdStagePtr &stage, const SdfPath
   return UsdSkelBindingAPI(stage->GetPrimAtPath(path));
 }
 
+
 /* virtual */
 UsdSchemaKind UsdSkelBindingAPI::_GetSchemaKind() const
 {
   return UsdSkelBindingAPI::schemaKind;
+}
+
+/* static */
+bool UsdSkelBindingAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
+{
+  return prim.CanApplyAPI<UsdSkelBindingAPI>(whyNot);
 }
 
 /* static */
@@ -251,6 +254,7 @@ WABI_NAMESPACE_END
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
+
 #include "wabi/usd/usdGeom/boundable.h"
 #include "wabi/usd/usdGeom/imageable.h"
 #include "wabi/usd/usdGeom/tokens.h"
@@ -258,12 +262,15 @@ WABI_NAMESPACE_END
 #include "wabi/usd/usdSkel/skeleton.h"
 #include "wabi/usd/usdSkel/utils.h"
 
+
 WABI_NAMESPACE_BEGIN
+
 
 UsdGeomPrimvar UsdSkelBindingAPI::GetJointIndicesPrimvar() const
 {
   return UsdGeomPrimvar(GetJointIndicesAttr());
 }
+
 
 UsdGeomPrimvar UsdSkelBindingAPI::CreateJointIndicesPrimvar(bool constant, int elementSize) const
 {
@@ -274,10 +281,12 @@ UsdGeomPrimvar UsdSkelBindingAPI::CreateJointIndicesPrimvar(bool constant, int e
                                                    elementSize);
 }
 
+
 UsdGeomPrimvar UsdSkelBindingAPI::GetJointWeightsPrimvar() const
 {
   return UsdGeomPrimvar(GetJointWeightsAttr());
 }
+
 
 UsdGeomPrimvar UsdSkelBindingAPI::CreateJointWeightsPrimvar(bool constant, int elementSize) const
 {
@@ -287,6 +296,7 @@ UsdGeomPrimvar UsdSkelBindingAPI::CreateJointWeightsPrimvar(bool constant, int e
                                                               UsdGeomTokens->vertex,
                                                    elementSize);
 }
+
 
 bool UsdSkelBindingAPI::SetRigidJointInfluence(int jointIndex, float weight) const
 {
@@ -302,8 +312,10 @@ bool UsdSkelBindingAPI::SetRigidJointInfluence(int jointIndex, float weight) con
          jointWeightsPv.Set(VtFloatArray(1, weight));
 }
 
+
 namespace
 {
+
 
   bool _HasInactiveAncestor(const UsdStagePtr &stage, const SdfPath &path)
   {
@@ -317,6 +329,7 @@ namespace
     }
     return false;
   }
+
 
   /// Return the a resolved prim for a target in \p targets.
   UsdPrim _GetFirstTargetPrimForRel(const UsdRelationship &rel, const SdfPathVector &targets)
@@ -343,7 +356,9 @@ namespace
     return UsdPrim();
   }
 
+
 }  // namespace
+
 
 bool UsdSkelBindingAPI::GetSkeleton(UsdSkelSkeleton *skel) const
 {
@@ -375,6 +390,7 @@ bool UsdSkelBindingAPI::GetSkeleton(UsdSkelSkeleton *skel) const
   return false;
 }
 
+
 UsdSkelSkeleton UsdSkelBindingAPI::GetInheritedSkeleton() const
 {
   UsdSkelSkeleton skel;
@@ -388,6 +404,7 @@ UsdSkelSkeleton UsdSkelBindingAPI::GetInheritedSkeleton() const
   }
   return skel;
 }
+
 
 bool UsdSkelBindingAPI::GetAnimationSource(UsdPrim *prim) const
 {
@@ -419,6 +436,7 @@ bool UsdSkelBindingAPI::GetAnimationSource(UsdPrim *prim) const
   return false;
 }
 
+
 UsdPrim UsdSkelBindingAPI::GetInheritedAnimationSource() const
 {
   UsdPrim animPrim;
@@ -432,6 +450,7 @@ UsdPrim UsdSkelBindingAPI::GetInheritedAnimationSource() const
   }
   return animPrim;
 }
+
 
 bool UsdSkelBindingAPI::ValidateJointIndices(TfSpan<const int> indices,
                                              size_t numJoints,
@@ -451,5 +470,6 @@ bool UsdSkelBindingAPI::ValidateJointIndices(TfSpan<const int> indices,
   }
   return true;
 }
+
 
 WABI_NAMESPACE_END

@@ -21,16 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/schemaBase.h"
 #include "wabi/usd/usdGeom/imageable.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,6 +47,7 @@ namespace
 
   // fwd decl.
   WRAP_CUSTOM;
+
 
   static UsdAttribute _CreateVisibilityAttr(UsdGeomImageable &self,
                                             object defaultVal,
@@ -91,12 +92,13 @@ void wrapUsdGeomImageable()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
+
 
     .def("GetVisibilityAttr", &This::GetVisibilityAttr)
     .def("CreateVisibilityAttr",
@@ -107,6 +109,7 @@ void wrapUsdGeomImageable()
     .def("CreatePurposeAttr",
          &_CreatePurposeAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
 
     .def("GetProxyPrimRel", &This::GetProxyPrimRel)
     .def("CreateProxyPrimRel", &This::CreateProxyPrimRel)
@@ -191,13 +194,15 @@ namespace
       .staticmethod("GetOrderedPurposeTokens")
 
       .def("ComputeVisibility",
-           (TfToken(UsdGeomImageable::*)(UsdTimeCode const &) const) &
-             UsdGeomImageable::ComputeVisibility,
+           &UsdGeomImageable::ComputeVisibility,
            arg("time") = UsdTimeCode::Default())
-      .def("ComputeVisibility",
-           (TfToken(UsdGeomImageable::*)(TfToken const &, UsdTimeCode const &) const) &
-             UsdGeomImageable::ComputeVisibility,
-           (arg("parentVisibility"), arg("time") = UsdTimeCode::Default()))
+
+      .def("GetPurposeVisibilityAttr",
+           &UsdGeomImageable::GetPurposeVisibilityAttr,
+           (arg("purpose") = UsdGeomTokens->default_))
+      .def("ComputeEffectiveVisibility",
+           &UsdGeomImageable::ComputeEffectiveVisibility,
+           (arg("purpose") = UsdGeomTokens->default_, arg("time") = UsdTimeCode::Default()))
 
       .def("ComputePurpose",
            (TfToken(UsdGeomImageable::*)() const) & UsdGeomImageable::ComputePurpose)
@@ -257,7 +262,7 @@ namespace
       class_<UsdGeomImageable::PurposeInfo>("PurposeInfo")
         .def(init<>())
         .def(init<const TfToken &, bool>())
-        .def("__nonzero__", &_Nonzero)
+        .def(TfPyBoolBuiltinFuncName, &_Nonzero)
         .def(self == self)
         .def(self != self)
         .add_property("purpose", &_GetPurpose, &_SetPurpose)

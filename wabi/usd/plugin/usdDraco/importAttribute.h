@@ -28,14 +28,16 @@
 #include "attributeDescriptor.h"
 #include "attributeFactory.h"
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usdGeom/mesh.h"
 #include "wabi/usd/usdGeom/primvarsAPI.h"
-#include "wabi/wabi.h"
 
 #include <draco/attributes/point_attribute.h>
 #include <draco/mesh/mesh.h>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdDracoImportAttributeInterface
 ///
@@ -57,6 +59,7 @@ class UsdDracoImportAttributeInterface
   virtual size_t GetNumIndices() const = 0;
   virtual bool HasPointAttribute() const = 0;
 };
+
 
 /// \class UsdDracoImportAttribute
 ///
@@ -146,6 +149,7 @@ template<class T> class UsdDracoImportAttribute : public UsdDracoImportAttribute
   VtArray<T> _values;
   VtArray<int> _indices;
 };
+
 
 template<class T>
 UsdDracoImportAttribute<T>::UsdDracoImportAttribute(UsdDracoAttributeDescriptor descriptor,
@@ -287,6 +291,7 @@ template<class T> inline bool UsdDracoImportAttribute<T>::HasPointAttribute() co
 {
   return _pointAttribute != nullptr;
 }
+
 
 WABI_NAMESPACE_END
 

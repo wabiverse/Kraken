@@ -26,10 +26,10 @@
 
 /// \file sdf/layerTree.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/layerOffset.h"
-#include "wabi/wabi.h"
 
 #include <boost/noncopyable.hpp>
 #include <vector>

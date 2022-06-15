@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/wabi.h"
-#include <boost/python.hpp>
 #include <boost/python/def.hpp>
+#include <boost/python.hpp>
 
 #include "wabi/usd/usdUtils/stageCache.h"
 

@@ -24,10 +24,10 @@
 #ifndef WABI_USD_PCP_NAMESPACE_EDITS_H
 #define WABI_USD_PCP_NAMESPACE_EDITS_H
 
-#include "wabi/base/tf/hashset.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/cache.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/hashset.h"
 
 #include <string>
 #include <vector>

@@ -24,9 +24,9 @@
 //
 // FileIO_Common.cpp
 
-#include "wabi/usd/sdf/fileIO_Common.h"
-#include "wabi/usd/sdf/fileIO.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/fileIO.h"
+#include "wabi/usd/sdf/fileIO_Common.h"
 
 #include "wabi/base/tf/stringUtils.h"
 

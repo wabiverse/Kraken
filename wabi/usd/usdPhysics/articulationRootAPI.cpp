@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdPhysicsArticulationRootAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsArticulationRootAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (PhysicsArticulationRootAPI)
+);
 
 /* virtual */
 UsdPhysicsArticulationRootAPI::~UsdPhysicsArticulationRootAPI() {}

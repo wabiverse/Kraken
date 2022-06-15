@@ -26,11 +26,11 @@
 
 /// \file sdf/listProxy.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/allowed.h"
 #include "wabi/usd/sdf/listEditor.h"
 #include "wabi/usd/sdf/listOp.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/errorMark.h"

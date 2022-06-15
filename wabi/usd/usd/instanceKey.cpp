@@ -21,10 +21,10 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/instanceKey.h"
-#include "wabi/usd/pcp/primIndex.h"
-#include "wabi/usd/usd/resolver.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/instanceKey.h"
+#include "wabi/usd/usd/resolver.h"
+#include "wabi/usd/pcp/primIndex.h"
 
 #include <boost/functional/hash.hpp>
 

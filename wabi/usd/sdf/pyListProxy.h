@@ -26,17 +26,17 @@
 
 /// \file sdf/pyListProxy.h
 
-#include "wabi/base/arch/demangle.h"
-#include "wabi/base/tf/pyLock.h"
-#include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/base/tf/pyUtils.h"
-#include "wabi/base/tf/stringUtils.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/listProxy.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/demangle.h"
+#include "wabi/base/tf/pyLock.h"
+#include "wabi/base/tf/pyUtils.h"
+#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/stringUtils.h"
+#include <stdexcept>
 #include <boost/python.hpp>
 #include <boost/python/slice.hpp>
-#include <stdexcept>
 
 WABI_NAMESPACE_BEGIN
 

@@ -24,12 +24,14 @@
 #ifndef WABI_USD_USD_UTILS_DEBUG_CODES_H
 #define WABI_USD_USD_UTILS_DEBUG_CODES_H
 
-#include "wabi/base/tf/debug.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/debug.h"
 
 WABI_NAMESPACE_BEGIN
 
+
 TF_DEBUG_CODES(USDUTILS_CREATE_USDZ_PACKAGE);
+
 
 WABI_NAMESPACE_END
 

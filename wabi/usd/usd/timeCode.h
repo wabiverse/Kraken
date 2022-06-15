@@ -24,23 +24,26 @@
 #ifndef WABI_USD_USD_TIME_CODE_H
 #define WABI_USD_USD_TIME_CODE_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/sdf/timeCode.h"
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/tf/staticTokens.h"
-#include "wabi/usd/sdf/timeCode.h"
-#include "wabi/usd/usd/api.h"
-#include "wabi/wabi.h"
 
 #include <boost/functional/hash.hpp>
 
-#include <cmath>
-#include <iosfwd>
 #include <limits>
+#include <iosfwd>
+#include <cmath>
+
 
 WABI_NAMESPACE_BEGIN
+
 
 #define USD_TIME_CODE_TOKENS (DEFAULT)(EARLIEST)
 
 TF_DECLARE_PUBLIC_TOKENS(UsdTimeCodeTokens, USD_API, USD_TIME_CODE_TOKENS);
+
 
 /// \class UsdTimeCode
 ///
@@ -218,6 +221,7 @@ std::ostream &operator<<(std::ostream &os, const UsdTimeCode &time);
 
 USD_API
 std::istream &operator>>(std::istream &is, UsdTimeCode &time);
+
 
 WABI_NAMESPACE_END
 

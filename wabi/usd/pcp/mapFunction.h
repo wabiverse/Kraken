@@ -24,10 +24,10 @@
 #ifndef WABI_USD_PCP_MAP_FUNCTION_H
 #define WABI_USD_PCP_MAP_FUNCTION_H
 
-#include "wabi/usd/pcp/api.h"
-#include "wabi/usd/sdf/layerOffset.h"
-#include "wabi/usd/sdf/path.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/api.h"
+#include "wabi/usd/sdf/path.h"
+#include "wabi/usd/sdf/layerOffset.h"
 
 #include <atomic>
 #include <memory>
@@ -128,9 +128,15 @@ class PcpMapFunction
   bool IsNull() const;
 
   /// Return true if the map function is the identity function.
-  /// For identity, MapSourceToTarget() always returns the path unchanged.
+  /// The identity function has an identity path mapping and time offset.
   PCP_API
   bool IsIdentity() const;
+
+  /// Return true if the map function uses the identity path mapping.
+  /// If true, MapSourceToTarget() always returns the path unchanged.
+  /// However, this map function may have a non-identity time offset.
+  PCP_API
+  bool IsIdentityPathMapping() const;
 
   /// Return true if the map function maps the absolute root path to the
   /// absolute root path, false otherwise.

@@ -55,6 +55,7 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+
 /* Tokens.  */
 #ifndef YYTOKENTYPE
 #define YYTOKENTYPE
@@ -72,6 +73,7 @@ enum yytokentype
   TOK_WHITESPACE = 265
 };
 #endif
+
 
 #if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
 typedef int YYSTYPE;

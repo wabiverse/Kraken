@@ -26,11 +26,11 @@
 
 /// \file sdf/proxyPolicies.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -90,6 +90,7 @@ class SdfPathKeyPolicy
 
   SdfPathKeyPolicy() {}
   explicit SdfPathKeyPolicy(const SdfSpecHandle &owner) : _owner(owner) {}
+
 
   value_type Canonicalize(const value_type &x) const
   {

@@ -63,25 +63,25 @@
 /// If you need a custom repr you can use SdfPySpecNoRepr() or
 /// SdfPyAbstractSpecNoRepr() and def("__repr__", ...).
 
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
 
 #include <boost/python/def_visitor.hpp>
 #include <boost/python/dict.hpp>
 #include <boost/python/errors.hpp>
-#include <boost/python/pointee.hpp>
 #include <boost/python/raw_function.hpp>
+#include <boost/python/pointee.hpp>
 #include <boost/python/to_python_converter.hpp>
 #include <boost/python/tuple.hpp>
 
 #include "wabi/base/tf/pyError.h"
 #include "wabi/base/tf/pyUtils.h"
 
-#include "wabi/base/arch/demangle.h"
+#include "wabi/usd/sdf/declareHandles.h"
+#include "wabi/base/tf/tf.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/base/tf/tf.h"
-#include "wabi/usd/sdf/declareHandles.h"
+#include "wabi/base/arch/demangle.h"
 
 #include <string>
 #include <type_traits>
@@ -467,6 +467,7 @@ inline Sdf_PySpecDetail::SpecVisitor<true> SdfPyAbstractSpecNoRepr()
 {
   return Sdf_PySpecDetail::SpecVisitor<true>(false);
 }
+
 
 namespace Sdf_PySpecDetail
 {

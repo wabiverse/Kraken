@@ -21,15 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/property.h"
-#include "wabi/usd/pcp/targetIndex.h"
 #include "wabi/usd/usd/resolver.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/pcp/targetIndex.h"
 
 #include <boost/iterator/transform_iterator.hpp>
 
 WABI_NAMESPACE_BEGIN
+
 
 SdfPropertySpecHandleVector UsdProperty::GetPropertyStack(UsdTimeCode time) const
 {
@@ -94,6 +95,7 @@ bool UsdProperty::SetNestedDisplayGroups(const std::vector<std::string> &nestedG
 {
   return SetDisplayGroup(SdfPath::JoinIdentifier(nestedGroups));
 }
+
 
 std::string UsdProperty::GetDisplayName() const
 {

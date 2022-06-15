@@ -11,9 +11,8 @@ wabi_library(usdGeom
         trace
         usd
         work
-        ${Boost_ATOMIC_LIBRARY}
         ${Boost_PYTHON_LIBRARY}
-        ${TBB_LIBRARIES}
+        ${TBB_tbb_LIBRARY}
 
     INCLUDE_DIRS
         ${Boost_INCLUDE_DIRS}
@@ -51,11 +50,12 @@ wabi_library(usdGeom
         scope
         sphere
         subset
+        visibilityAPI
         xform
         xformable
         xformOp
         xformCommonAPI
-
+        
     PUBLIC_HEADERS
         api.h
 
@@ -95,6 +95,7 @@ wabi_library(usdGeom
         wrapSphere.cpp
         wrapSubset.cpp
         wrapTokens.cpp
+        wrapVisibilityAPI.cpp
         wrapXform.cpp
         wrapXformCache.cpp
         wrapXformable.cpp
@@ -112,4 +113,7 @@ wabi_library(usdGeom
     DOXYGEN_FILES
         docs/overview.dox
         docs/snippets.dox
+        docs/images/USDCurveBasisMatrix.png
+        docs/images/USDCurveHydra.png
+        docs/images/USDCurvePrimvars.png
 )

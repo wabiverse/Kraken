@@ -24,20 +24,20 @@
 ///
 /// \file Sdf/AssetPathResolver.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/assetPathResolver.h"
 #include "wabi/usd/sdf/debugCodes.h"
 #include "wabi/usd/sdf/fileFormat.h"
-#include "wabi/wabi.h"
 
+#include "wabi/base/trace/trace.h"
 #include "wabi/base/arch/systemInfo.h"
+#include "wabi/usd/ar/assetInfo.h"
+#include "wabi/usd/ar/packageUtils.h"
+#include "wabi/usd/ar/resolver.h"
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/pathUtils.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/staticTokens.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/usd/ar/assetInfo.h"
-#include "wabi/usd/ar/packageUtils.h"
-#include "wabi/usd/ar/resolver.h"
 
 #include <utility>
 #include <vector>
@@ -49,7 +49,10 @@ using std::vector;
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_Tokens, ((AnonLayerPrefix, "anon:"))((ArgsDelimiter, ":SDF_FORMAT_ARGS:")));
+TF_DEFINE_PRIVATE_TOKENS(_Tokens,
+    ((AnonLayerPrefix,  "anon:"))
+    ((ArgsDelimiter, ":SDF_FORMAT_ARGS:"))
+    );
 
 bool operator==(const Sdf_AssetInfo &lhs, const Sdf_AssetInfo &rhs)
 {
@@ -80,7 +83,11 @@ bool Sdf_CanCreateNewLayerWithIdentifier(const string &identifier, string *whyNo
     return false;
   }
 
+#if AR_VERSION == 1
   return ArGetResolver().CanCreateNewLayerWithIdentifier(identifier, whyNot);
+#else
+  return true;
+#endif
 }
 
 ArResolvedPath Sdf_ResolvePath(const string &layerPath, ArAssetInfo *assetInfo)
@@ -93,9 +100,13 @@ ArResolvedPath Sdf_ResolvePath(const string &layerPath, ArAssetInfo *assetInfo)
 #endif
 }
 
-bool Sdf_CanWriteLayerToPath(const string &layerPath)
+bool Sdf_CanWriteLayerToPath(const ArResolvedPath &resolvedPath)
 {
-  return ArGetResolver().CanWriteLayerToPath(layerPath, /* whyNot = */ nullptr);
+#if AR_VERSION == 1
+  return ArGetResolver().CanWriteLayerToPath(resolvedPath, /* whyNot = */ nullptr);
+#else
+  return ArGetResolver().CanWriteAssetToPath(resolvedPath, /* whyNot = */ nullptr);
+#endif
 }
 
 ArResolvedPath Sdf_ComputeFilePath(const string &layerPath, ArAssetInfo *assetInfo)
@@ -159,9 +170,9 @@ Sdf_AssetInfo *Sdf_ComputeAssetInfoFromIdentifier(const string &identifier,
     assetInfo->identifier = identifier;
 #endif
 
+    string layerPath, arguments;
+    Sdf_SplitIdentifier(assetInfo->identifier, &layerPath, &arguments);
     if (filePath.empty()) {
-      string layerPath, arguments;
-      Sdf_SplitIdentifier(assetInfo->identifier, &layerPath, &arguments);
       assetInfo->resolvedPath = Sdf_ComputeFilePath(layerPath, &resolveInfo);
     } else {
       assetInfo->resolvedPath = ArResolvedPath(filePath);
@@ -175,7 +186,7 @@ Sdf_AssetInfo *Sdf_ComputeAssetInfoFromIdentifier(const string &identifier,
                                     fileVersion,
                                     &resolveInfo);
 #else
-    resolveInfo = ArGetResolver().GetAssetInfo(assetInfo->identifier, assetInfo->resolvedPath);
+    resolveInfo = ArGetResolver().GetAssetInfo(layerPath, assetInfo->resolvedPath);
 #endif
   }
 
@@ -300,6 +311,18 @@ string Sdf_CreateIdentifier(const string &layerPath,
   return layerPath + Sdf_EncodeArguments(arguments);
 }
 
+bool Sdf_StripIdentifierArgumentsIfPresent(const std::string &identifier,
+                                           std::string *strippedIdentifier)
+{
+  size_t argPos = identifier.find(_Tokens->ArgsDelimiter.GetString());
+  if (argPos == string::npos) {
+    return false;
+  }
+
+  *strippedIdentifier = string(identifier, 0, argPos);
+  return true;
+}
+
 bool Sdf_SplitIdentifier(const string &identifier, string *layerPath, string *arguments)
 {
   size_t argPos = identifier.find(_Tokens->ArgsDelimiter.GetString());
@@ -363,9 +386,10 @@ string Sdf_GetExtension(const string &identifier)
 {
   // Split the identifier to get the layer asset path without
   // any file format arguments.
-  string assetPath;
-  std::string dummyArgs;
-  Sdf_SplitIdentifier(identifier, &assetPath, &dummyArgs);
+  string strippedPath;
+  const string &assetPath = Sdf_StripIdentifierArgumentsIfPresent(identifier, &strippedPath) ?
+                              strippedPath :
+                              identifier;
 
   if (Sdf_IsAnonLayerIdentifier(assetPath)) {
     // Strip off the "anon:0x...:" portion of the anonymous layer
@@ -373,7 +397,7 @@ string Sdf_GetExtension(const string &identifier)
     // allows clients to create anonymous layers using tags that
     // match their asset path scheme and retrieve the extension
     // via ArResolver.
-    assetPath = Sdf_GetAnonLayerDisplayName(assetPath);
+    return Sdf_GetExtension(Sdf_GetAnonLayerDisplayName(assetPath));
   }
 
   // XXX: If the asset path is a dot file (e.g. ".sdf"), we append
@@ -381,7 +405,7 @@ string Sdf_GetExtension(const string &identifier)
   // interpreted as a directory name. This is legacy behavior that
   // should be fixed.
   if (!assetPath.empty() && assetPath[0] == '.') {
-    assetPath = "temp_file_name" + assetPath;
+    return Sdf_GetExtension("temp_file_name" + assetPath);
   }
 
   return ArGetResolver().GetExtension(assetPath);

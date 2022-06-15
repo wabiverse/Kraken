@@ -26,15 +26,16 @@
 
 /// \file usd/interpolation.h
 
-#include "wabi/base/gf/declare.h"
-#include "wabi/base/vt/array.h"
-#include "wabi/usd/sdf/timeCode.h"
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/sdf/timeCode.h"
+#include "wabi/base/vt/array.h"
+#include "wabi/base/gf/declare.h"
 
 #include <boost/preprocessor/seq/for_each.hpp>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \enum UsdInterpolationType
 ///
@@ -99,6 +100,7 @@ BOOST_PP_SEQ_FOR_EACH(_USD_DECLARE_INTERPOLATION_TRAITS, ~, USD_LINEAR_INTERPOLA
 
 #undef _USD_DECLARE_INTERPOLATION_TRAITS
 /// \endcond
+
 
 WABI_NAMESPACE_END
 

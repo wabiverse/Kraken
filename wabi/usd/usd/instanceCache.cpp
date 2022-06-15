@@ -21,9 +21,9 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/instanceCache.h"
 #include "wabi/usd/usd/debugCodes.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/pcp/primIndex.h"
 
@@ -38,11 +38,11 @@ using std::make_pair;
 using std::pair;
 using std::vector;
 
-TF_DEFINE_ENV_SETTING(USD_ASSIGN_PROTOTYPES_DETERMINISTICALLY,
-                      false,
-                      "Set to true to cause instances to be assigned to prototypes in a "
-                      "deterministic way, ensuring consistency across runs.  This incurs "
-                      "some additional overhead.");
+TF_DEFINE_ENV_SETTING(
+    USD_ASSIGN_PROTOTYPES_DETERMINISTICALLY, false,
+    "Set to true to cause instances to be assigned to prototypes in a "
+    "deterministic way, ensuring consistency across runs.  This incurs "
+    "some additional overhead.");
 
 Usd_InstanceCache::Usd_InstanceCache() : _lastPrototypeIndex(0) {}
 
@@ -122,6 +122,7 @@ void Usd_InstanceCache::ProcessChanges(Usd_InstanceChanges *changes)
 {
   TRACE_FUNCTION();
   TfAutoMallocTag tag("InstanceCache::ProcessChanges");
+
 
   // Remove unregistered prim indexes from the cache.
   std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> prototypeToOldSourceIndexPath;
@@ -373,6 +374,7 @@ void Usd_InstanceCache::_RemoveInstances(
 
       changes->changedPrototypePrims.push_back(prototypePath);
       changes->changedPrototypePrimIndexes.push_back(newSourceIndexPath);
+
     } else {
       // Fill a data structure with the removedPrototypePrimIndexPath
       // for the prototype so that we can fill in the right "before" path

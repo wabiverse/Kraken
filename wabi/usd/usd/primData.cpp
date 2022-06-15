@@ -21,18 +21,20 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/prim.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/prim.h"
 
 #include "wabi/usd/usd/debugCodes.h"
+#include "wabi/usd/usd/errors.h"
 #include "wabi/usd/usd/instanceCache.h"
-#include "wabi/usd/usd/primRange.h"
 #include "wabi/usd/usd/resolver.h"
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usd/tokens.h"
+#include "wabi/usd/usd/primRange.h"
 
 #include "wabi/usd/kind/registry.h"
 
+#include "wabi/base/tf/exception.h"
 #include "wabi/base/tf/stringUtils.h"
 
 #include <algorithm>
@@ -233,9 +235,11 @@ std::string Usd_DescribePrimData(const Usd_PrimData *p, SdfPath const &proxyPrim
     p->_stage ? TfStringPrintf("on %s", UsdDescribe(p->_stage).c_str()).c_str() : "");
 }
 
-void Usd_IssueFatalPrimAccessError(const Usd_PrimData *p)
+void Usd_ThrowExpiredPrimAccessError(const Usd_PrimData *p)
 {
-  TF_FATAL_ERROR("Used %s", Usd_DescribePrimData(p, SdfPath()).c_str());
+  TF_THROW(UsdExpiredPrimAccessError,
+           TfStringPrintf("Used %s", Usd_DescribePrimData(p, SdfPath()).c_str()));
 }
+
 
 WABI_NAMESPACE_END

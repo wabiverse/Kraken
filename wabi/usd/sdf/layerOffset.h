@@ -26,8 +26,8 @@
 
 /// \file sdf/layerOffset.h
 
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
 
 #include <boost/operators.hpp>
 #include <iosfwd>

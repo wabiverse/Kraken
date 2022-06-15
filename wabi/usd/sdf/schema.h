@@ -24,11 +24,11 @@
 #ifndef WABI_USD_SDF_SCHEMA_H
 #define WABI_USD_SDF_SCHEMA_H
 
-#include "wabi/usd/sdf/allowed.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
+#include "wabi/usd/sdf/allowed.h"
 #include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/valueTypeName.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/plug/notice.h"
 #include "wabi/base/tf/hash.h"
@@ -199,6 +199,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
     /// Returns whether the given field is required for this spec.
     SDF_API bool IsRequiredField(const TfToken &name) const;
 
+
    private:
 
     typedef TfHashMap<TfToken, _FieldInfo, TfToken::HashFunctor> _FieldMap;
@@ -313,6 +314,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   SdfAllowed IsValidValue(const VtValue &value) const;
 
   /// Returns all registered type names.
+  SDF_API
   std::vector<SdfValueTypeName> GetAllTypes() const;
 
   /// Return the type name object for the given type name token.

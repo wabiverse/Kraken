@@ -21,11 +21,11 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/connectionListEditor.h"
-#include "wabi/base/tf/ostreamMethods.h"
 #include "wabi/usd/sdf/childrenUtils.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/ostreamMethods.h"
 
 #include <set>
 

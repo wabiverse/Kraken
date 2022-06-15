@@ -24,10 +24,10 @@
 #ifndef WABI_USD_USD_GEOM_XFORM_CACHE_H
 #define WABI_USD_USD_GEOM_XFORM_CACHE_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/api.h"
 #include "wabi/usd/usd/attributeQuery.h"
 #include "wabi/usd/usd/prim.h"
-#include "wabi/usd/usdGeom/api.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/usdGeom/xformable.h"
 
@@ -38,6 +38,7 @@
 #include <boost/functional/hash.hpp>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdGeomXformCache
 ///
@@ -178,6 +179,7 @@ class UsdGeomXformCache
 };
 
 #define USDGEOM_XFORM_CACHE_API_VERSION 1
+
 
 WABI_NAMESPACE_END
 

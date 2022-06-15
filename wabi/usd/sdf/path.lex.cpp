@@ -21,8 +21,9 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#line 2 "wabi/usd/sdf/path.lex.cpp"
 
-#line 3 "<stdout>"
+#line 4 "wabi/usd/sdf/path.lex.cpp"
 
 #define YY_INT_ALIGNED short int
 
@@ -39,10 +40,10 @@
 /* First, we deal with  platform-specific or compiler-specific issues. */
 
 /* begin standard C headers. */
-#include <errno.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <errno.h>
+#include <stdlib.h>
 
 /* end standard C headers. */
 
@@ -352,6 +353,122 @@ typedef int yy_state_type;
 
 #define yytext_ptr yytext_r
 
+static yyconst flex_int16_t yy_nxt[][21] = {
+  {0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,   0,   0,   0,   0,   0,   0,   0,   0  },
+
+  {3,  4,   5,   6,   7,   8,   7,   4,   9,   10,  9,   11, 9,   12,  9,   9,   9,   9,   9,   9,   13 },
+
+  {3,  4,   5,   6,   7,   8,   7,   4,   9,   10,  9,   11, 9,   12,  9,   9,   9,   9,   9,   9,   13 },
+
+  {-3, -3,  -3,  -3,  -3,  -3,  -3,  -3,  -3,  -3,
+
+   -3,                                                   -3, -3,  -3,  -3,  -3,  -3,  -3,  -3,  -3,  -3 },
+
+  {3,  -4,  -4,  -4,  -4,  -4,  -4,  -4,  -4,  -4,  -4,  -4, -4,  -4,  -4,  -4,  -4,  -4,  -4,  -4,  -4 },
+
+  {3,  -5,  14,  -5,  -5,  -5,  -5,  -5,  -5,  -5,  -5,  -5, -5,  -5,  -5,  -5,  -5,  -5,  -5,  -5,  -5 },
+
+  {3,  -6,  -6,  -6,  -6,  -6,  -6,  -6,  -6,  -6,  -6,  -6, -6,  -6,  -6,  -6,  -6,  -6,  -6,  -6,
+
+   -6                                                                                                   },
+
+  {3,  -7,  -7,  -7,  15,  -7,  15,  -7,  15,  15,  15,  15, 15,  15,  15,  15,  15,  15,  15,  15,  16 },
+
+  {3,  -8,  -8,  -8,  -8,  17,  -8,  -8,  -8,  -8,  -8,  -8, -8,  -8,  -8,  -8,  -8,  -8,  -8,  -8,  -8 },
+
+  {3,  -9,  -9,  -9,  18,  -9,  19,  20,  19,  19,  19,
+   19,                                                       19,  19,  19,  19,  19,  19,  19,  19,  21
+
+  },
+
+  {3,  -10, -10, -10, 22,  -10, 23,  20,  23,  23,  23,  23, 23,  23,  23,  23,  23,  23,  23,  23,  16 },
+
+  {3,  -11, -11, -11, 18,  -11, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  19,  19,  19,  24,  21 },
+
+  {3,  -12, -12, -12, 18,  -12, 19,  20,  19,  19,  25,  19, 19,  19,  19,  19,  19,  19,  19,  19,  21 },
+
+  {3,  -13, -13, -13, 26,  -13, 26,  -13, 26,  26,
+
+   26,                                                   26, 26,  26,  26,  26,  26,  26,  26,  26,  26 },
+
+  {3,  -14, 14,  -14, -14, -14, -14, -14, -14, -14, -14,
+   -14,                                                      -14, -14, -14, -14, -14, -14, -14, -14, -14},
+
+  {3,  -15, -15, -15, 15,  -15, 15,  -15, 15,  15,  15,  15, 15,  15,  15,  15,  15,  15,  15,  15,  16 },
+
+  {3,  -16, -16, -16, 26,  -16, 26,  -16, 26,  26,  26,  26, 26,  26,  26,  26,  26,  26,  26,  26,
+
+   26                                                                                                   },
+
+  {3,  -17, -17, -17, -17, -17, -17, -17, -17, -17, -17,
+   -17,                                                      -17, -17, -17, -17, -17, -17, -17, -17, -17},
+
+  {3,  -18, -18, -18, 18,  -18, 18,  -18, 18,  18,  18,  18, 18,  18,  18,  18,  18,  18,  18,  18,  21 },
+
+  {3,  -19, -19, -19, 18,  -19, 19,  20,  19,  19,  19,
+   19,                                                       19,  19,  19,  19,  19,  19,  19,  19,  21
+
+  },
+
+  {3,  -20, -20, -20, -20, -20, -20, -20, 27,  27,  27,  27, 27,  27,  27,  27,  27,  27,  27,  27,  -20},
+
+  {3,  -21, -21, -21, 28,  -21, 28,  -21, 28,  28,  28,  28, 28,  28,  28,  28,  28,  28,  28,  28,  28 },
+
+  {3,  -22, -22, -22, 22,  -22, 22,  -22, 22,  22,  22,  22, 22,  22,  22,  22,  22,  22,  22,  22,  16 },
+
+  {3,  -23, -23, -23, 22,  -23, 23,  20,  23,  23,
+
+   23,                                                   23, 23,  23,  23,  23,  23,  23,  23,  23,  16 },
+
+  {3,  -24, -24, -24, 18,  -24, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  29,  19,  19,  19,  21 },
+
+  {3,  -25, -25, -25, 18,  -25, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  30,  19,  19,  19,  21 },
+
+  {3,  -26, -26, -26, 26,  -26, 26,  -26, 26,  26,  26,  26, 26,  26,  26,  26,  26,  26,  26,  26,
+
+   26                                                                                                   },
+
+  {3,  -27, -27, -27, -27, -27, 31,  20,  31,  31,  31,  31, 31,  31,  31,  31,  31,  31,  31,  31,  -27},
+
+  {3,  -28, -28, -28, 28,  -28, 28,  -28, 28,  28,  28,  28, 28,  28,  28,  28,  28,  28,  28,  28,  28 },
+
+  {3,  -29, -29, -29, 18,  -29, 19,  20,  19,  19,  19,
+   19,                                                       19,  19,  19,  19,  19,  32,  19,  19,  21
+
+  },
+
+  {3,  -30, -30, -30, 18,  -30, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  33,  19,  19,  19,  21 },
+
+  {3,  -31, -31, -31, -31, -31, 31,  20,  31,  31,  31,  31, 31,  31,  31,  31,  31,  31,  31,  31,  -31},
+
+  {3,  -32, -32, -32, 18,  -32, 19,  20,  19,  19,  19,  34, 19,  19,  19,  19,  19,  19,  19,  19,  21 },
+
+  {3,  -33, -33, -33, 18,  -33, 19,  20,  19,  19,
+
+   19,                                                   35, 19,  19,  19,  19,  19,  19,  19,  19,  21 },
+
+  {3,  -34, -34, -34, 18,  -34, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  19,  19,  36,  19,  21 },
+
+  {3,  -35, -35, -35, 18,  -35, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  19,  37,  19,  19,  21 },
+
+  {3,  -36, -36, -36, 18,  -36, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  19,  19,  38,  19,
+
+   21                                                                                                   },
+
+  {3,  -37, -37, -37, 18,  -37, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  19,  19,  19,  19,  21 },
+
+  {3,  -38, -38, -38, 18,  -38, 19,  20,  19,  19,  19,  19, 39,  19,  19,  19,  19,  19,  19,  19,  21 },
+
+  {3,  -39, -39, -39, 18,  -39, 19,  20,  19,  19,  19,
+   19,                                                       19,  19,  19,  40,  19,  19,  19,  19,  21
+
+  },
+
+  {3,  -40, -40, -40, 18,  -40, 19,  20,  19,  19,  19,  19, 19,  19,  41,  19,  19,  19,  19,  19,  21 },
+
+  {3,  -41, -41, -41, 18,  -41, 19,  20,  19,  19,  19,  19, 19,  19,  19,  19,  19,  19,  19,  19,  21 },
+};
+
 static yy_state_type yy_get_previous_state(yyscan_t yyscanner);
 static yy_state_type yy_try_NUL_trans(yy_state_type current_state, yyscan_t yyscanner);
 static int yy_get_next_buffer(yyscan_t yyscanner);
@@ -376,9 +493,9 @@ struct yy_trans_info
   flex_int32_t yy_verify;
   flex_int32_t yy_nxt;
 };
-static yyconst flex_int16_t yy_accept[43] = {0, 0, 0, 11, 9, 8, 10, 6, 9, 3, 3, 3, 3, 6, 8,
-                                             6, 6, 7, 5,  3, 0, 6,  5, 3, 3, 3, 6, 4, 6, 3,
-                                             3, 4, 3, 3,  3, 3, 3,  1, 3, 3, 3, 2, 0};
+static yyconst flex_int16_t yy_accept[42] = {0, 0, 0, 11, 9, 8, 10, 6, 9, 3, 3, 3, 3, 6,
+                                             8, 6, 6, 7,  5, 3, 0,  6, 5, 3, 3, 3, 6, 4,
+                                             6, 3, 3, 4,  3, 3, 3,  3, 3, 1, 3, 3, 3, 2};
 
 static yyconst flex_int32_t yy_ec[256] = {
   0,  1, 1, 1, 1,  1, 1, 1, 1,  2,  3,  1,  1, 1,  1,  1, 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
@@ -393,37 +510,6 @@ static yyconst flex_int32_t yy_ec[256] = {
 
   1,  1, 1, 1, 1,  1, 1, 1, 1,  1,  1,  1,  1, 1,  1,  1, 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
   1,  1, 1, 1, 1,  1, 1, 1, 1,  1,  1,  1,  1, 1,  1,  1, 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1};
-
-static yyconst flex_int32_t yy_meta[21] = {0, 1, 1, 1, 2, 1, 3, 4, 5, 5, 5,
-                                           5, 5, 5, 5, 5, 5, 5, 5, 5, 2};
-
-static yyconst flex_int16_t yy_base[52] = {0,  0,  0,  99,  100, 96, 100, 77, 91, 17, 18, 35, 13,
-                                           0,  93, 74, 0,   100, 69, 66,  0,  0,  61, 23, 10, 12,
-                                           0,  70, 0,  16,  25,  58, 29,  34, 28, 17, 31, 42, 39,
-                                           37, 43, 41, 100, 61,  65, 69,  73, 77, 54, 81, 85, 88};
-
-static yyconst flex_int16_t yy_def[52] = {0,  42, 1,  42, 42, 42, 42, 43, 42, 44, 45, 44, 11,
-                                          46, 42, 43, 46, 42, 47, 11, 48, 49, 50, 45, 11, 11,
-                                          46, 51, 49, 11, 11, 51, 11, 11, 11, 11, 11, 11, 11,
-                                          11, 11, 11, 0,  42, 42, 42, 42, 42, 42, 42, 42, 42};
-
-static yyconst flex_int16_t yy_nxt[121] = {
-  0,  4,  5,  6,  7,  8,  7,  4,  9,  10, 9,  11, 9,  12, 9,  9,  9,  9,  9,  9,  13,
-  18, 22, 25, 20, 20, 29, 22, 30, 19, 20, 19, 19, 32, 37, 19, 19, 21, 16, 18, 34, 33,
-  20, 16, 19, 35, 36, 19, 19, 38, 19, 39, 40, 19, 24, 21, 19, 41, 19, 27, 19, 19, 19,
-  15, 15, 20, 15, 19, 19, 19, 19, 23, 23, 23, 23, 26, 26, 20, 26, 18, 18, 16, 18, 28,
-  28, 19, 28, 22, 22, 21, 22, 31, 31, 31, 16, 14, 17, 16, 14, 42, 3,
-
-  42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42};
-
-static yyconst flex_int16_t yy_chk[121] = {
-  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-  9,  10, 12, 9,  10, 24, 23, 25, 24, 23, 25, 12, 29, 35, 29, 35, 9,  10, 11, 32, 30,
-  11, 23, 30, 33, 34, 34, 32, 36, 36, 38, 39, 33, 11, 11, 39, 40, 38, 48, 41, 37, 40,
-  43, 43, 31, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 27, 46, 47, 47, 22, 47, 49,
-  49, 19, 49, 50, 50, 18, 50, 51, 51, 51, 15, 14, 8,  7,  5,  3,  42,
-
-  42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42};
 
 /* The intent behind this definition is that it'll catch
  * any uses of REJECT which flex missed.
@@ -458,11 +544,11 @@ static yyconst flex_int16_t yy_chk[121] = {
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "path.tab.h"
+#include "wabi/wabi.h"
 #include "wabi/base/arch/fileSystem.h"
 #include "wabi/usd/sdf/pathParser.h"
 #include "wabi/usd/sdf/tokens.h"
-#include "wabi/wabi.h"
+#include "path.tab.h"
 
 #include <string>
 
@@ -481,7 +567,7 @@ WABI_NAMESPACE_USING
 #define YY_DECL int pathYylex(YYSTYPE *yylval_param, yyscan_t yyscanner)
 
 /* Configuration options for flex */
-#line 520 "<stdout>"
+#line 729 "wabi/usd/sdf/path.lex.cpp"
 
 #define INITIAL 0
 
@@ -654,6 +740,7 @@ static int input(yyscan_t yyscanner);
       }                                                                       \
     }
 
+
 #endif
 
 /* No semi-colon after return; correct usage is to write "yyterminate();" -
@@ -705,9 +792,9 @@ extern int pathYylex(YYSTYPE *yylval_param, yyscan_t yyscanner);
  */
 YY_DECL
 {
-  yy_state_type yy_current_state;
-  char *yy_cp, *yy_bp;
-  int yy_act;
+  register yy_state_type yy_current_state;
+  register char *yy_cp, *yy_bp;
+  register int yy_act;
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
 
   yylval = yylval_param;
@@ -739,7 +826,8 @@ YY_DECL
   {
 #line 56 "wabi/usd/sdf/path.ll"
 
-#line 787 "<stdout>"
+
+#line 996 "wabi/usd/sdf/path.lex.cpp"
 
     while (1) /* loops until end-of-file is reached */
     {
@@ -755,28 +843,19 @@ YY_DECL
 
       yy_current_state = yyg->yy_start;
     yy_match:
-      do {
-        YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+      while ((yy_current_state = yy_nxt[yy_current_state][yy_ec[YY_SC_TO_UI(*yy_cp)]]) > 0) {
         if (yy_accept[yy_current_state]) {
           yyg->yy_last_accepting_state = yy_current_state;
           yyg->yy_last_accepting_cpos = yy_cp;
         }
-        while (yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state) {
-          yy_current_state = (int)yy_def[yy_current_state];
-          if (yy_current_state >= 43)
-            yy_c = yy_meta[(unsigned int)yy_c];
-        }
-        yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int)yy_c];
+
         ++yy_cp;
-      } while (yy_base[yy_current_state] != 100);
+      }
+
+      yy_current_state = -yy_current_state;
 
     yy_find_action:
       yy_act = yy_accept[yy_current_state];
-      if (yy_act == 0) { /* have to back up */
-        yy_cp = yyg->yy_last_accepting_cpos;
-        yy_current_state = yyg->yy_last_accepting_state;
-        yy_act = yy_accept[yy_current_state];
-      }
 
       YY_DO_BEFORE_ACTION;
 
@@ -786,7 +865,7 @@ YY_DECL
         case 0:         /* must back up */
           /* undo the effects of YY_DO_BEFORE_ACTION */
           *yy_cp = yyg->yy_hold_char;
-          yy_cp = yyg->yy_last_accepting_cpos;
+          yy_cp = yyg->yy_last_accepting_cpos + 1;
           yy_current_state = yyg->yy_last_accepting_state;
           goto yy_find_action;
 
@@ -806,7 +885,7 @@ YY_DECL
             return TOK_EXPRESSION;
           }
           YY_BREAK
-        /* This should always match identifiers in the menva parser.  We
+        /* This should always match identifiers in the sdf parser.  We
          * currently allow valid C/Python identifiers.
          */
         case 3:
@@ -882,7 +961,7 @@ YY_DECL
 #line 117 "wabi/usd/sdf/path.ll"
           ECHO;
           YY_BREAK
-#line 936 "<stdout>"
+#line 1133 "wabi/usd/sdf/path.lex.cpp"
         case YY_STATE_EOF(INITIAL):
           yyterminate();
 
@@ -1016,9 +1095,9 @@ YY_DECL
 static int yy_get_next_buffer(yyscan_t yyscanner)
 {
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
-  char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-  char *source = yyg->yytext_ptr;
-  int number_to_move, i;
+  register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+  register char *source = yyg->yytext_ptr;
+  register int number_to_move, i;
   int ret_val;
 
   if (yyg->yy_c_buf_p > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars + 1])
@@ -1134,24 +1213,18 @@ static int yy_get_next_buffer(yyscan_t yyscanner)
 
 static yy_state_type yy_get_previous_state(yyscan_t yyscanner)
 {
-  yy_state_type yy_current_state;
-  char *yy_cp;
+  register yy_state_type yy_current_state;
+  register char *yy_cp;
   struct yyguts_t *yyg = (struct yyguts_t *)yyscanner;
 
   yy_current_state = yyg->yy_start;
 
   for (yy_cp = yyg->yytext_ptr + YY_MORE_ADJ; yy_cp < yyg->yy_c_buf_p; ++yy_cp) {
-    YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+    yy_current_state = yy_nxt[yy_current_state][(*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1)];
     if (yy_accept[yy_current_state]) {
       yyg->yy_last_accepting_state = yy_current_state;
       yyg->yy_last_accepting_cpos = yy_cp;
     }
-    while (yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state) {
-      yy_current_state = (int)yy_def[yy_current_state];
-      if (yy_current_state >= 43)
-        yy_c = yy_meta[(unsigned int)yy_c];
-    }
-    yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int)yy_c];
   }
 
   return yy_current_state;
@@ -1164,23 +1237,20 @@ static yy_state_type yy_get_previous_state(yyscan_t yyscanner)
  */
 static yy_state_type yy_try_NUL_trans(yy_state_type yy_current_state, yyscan_t yyscanner)
 {
-  int yy_is_jam;
+  register int yy_is_jam;
   struct yyguts_t *yyg = (struct yyguts_t *)
     yyscanner; /* This var may be unused depending upon options. */
-  char *yy_cp = yyg->yy_c_buf_p;
+  register char *yy_cp = yyg->yy_c_buf_p;
 
-  YY_CHAR yy_c = 1;
-  if (yy_accept[yy_current_state]) {
-    yyg->yy_last_accepting_state = yy_current_state;
-    yyg->yy_last_accepting_cpos = yy_cp;
+  yy_current_state = yy_nxt[yy_current_state][1];
+  yy_is_jam = (yy_current_state <= 0);
+
+  if (!yy_is_jam) {
+    if (yy_accept[yy_current_state]) {
+      yyg->yy_last_accepting_state = yy_current_state;
+      yyg->yy_last_accepting_cpos = yy_cp;
+    }
   }
-  while (yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state) {
-    yy_current_state = (int)yy_def[yy_current_state];
-    if (yy_current_state >= 43)
-      yy_c = yy_meta[(unsigned int)yy_c];
-  }
-  yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int)yy_c];
-  yy_is_jam = (yy_current_state == 42);
 
   (void)yyg;
   return yy_is_jam ? 0 : yy_current_state;
@@ -1932,7 +2002,7 @@ int pathYylex_destroy(yyscan_t yyscanner)
 #ifndef yytext_ptr
 static void yy_flex_strncpy(char *s1, yyconst char *s2, int n, yyscan_t yyscanner)
 {
-  int i;
+  register int i;
   for (i = 0; i < n; ++i)
     s1[i] = s2[i];
 }
@@ -1941,7 +2011,7 @@ static void yy_flex_strncpy(char *s1, yyconst char *s2, int n, yyscan_t yyscanne
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen(yyconst char *s, yyscan_t yyscanner)
 {
-  int n;
+  register int n;
   for (n = 0; s[n]; ++n)
     ;
 

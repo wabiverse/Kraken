@@ -26,8 +26,8 @@
 
 /// \file sdf/assetPath.h
 
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
 
 #include <boost/functional/hash.hpp>
 #include <boost/operators.hpp>

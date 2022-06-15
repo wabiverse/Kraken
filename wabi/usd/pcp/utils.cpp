@@ -24,10 +24,10 @@
 ///
 /// \file Pcp/Utils.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/utils.h"
 #include "wabi/usd/sdf/fileFormat.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -78,6 +78,24 @@ const SdfLayer::FileFormatArguments &Pcp_GetArgumentsForFileFormatTarget(
   *localArgs = *defaultArgs;
   localArgs->erase(SdfFileFormatTokens->TargetArg);
   return *localArgs;
+}
+
+std::pair<PcpNodeRef, PcpNodeRef> Pcp_FindStartingNodeOfClassHierarchy(const PcpNodeRef &n)
+{
+  TF_VERIFY(PcpIsClassBasedArc(n.GetArcType()));
+
+  const int depth = n.GetDepthBelowIntroduction();
+  PcpNodeRef instanceNode = n;
+  PcpNodeRef classNode;
+
+  while (PcpIsClassBasedArc(instanceNode.GetArcType()) &&
+         instanceNode.GetDepthBelowIntroduction() == depth) {
+    TF_VERIFY(instanceNode.GetParentNode());
+    classNode = instanceNode;
+    instanceNode = instanceNode.GetParentNode();
+  }
+
+  return std::make_pair(instanceNode, classNode);
 }
 
 WABI_NAMESPACE_END

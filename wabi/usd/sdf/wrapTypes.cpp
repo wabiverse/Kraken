@@ -22,23 +22,23 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/listOp.h"
-#include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/propertySpec.h"
-#include "wabi/usd/sdf/proxyTypes.h"
 #include "wabi/usd/sdf/pyChildrenView.h"
-#include "wabi/usd/sdf/pyListEditorProxy.h"
+#include "wabi/usd/sdf/path.h"
+#include "wabi/usd/sdf/proxyTypes.h"
 #include "wabi/usd/sdf/pyListOp.h"
+#include "wabi/usd/sdf/pyListEditorProxy.h"
 #include "wabi/usd/sdf/pyListProxy.h"
 #include "wabi/usd/sdf/pyMapEditProxy.h"
 #include "wabi/usd/sdf/reference.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
-#include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/variantSetSpec.h"
 #include "wabi/usd/sdf/variantSpec.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyEnum.h"

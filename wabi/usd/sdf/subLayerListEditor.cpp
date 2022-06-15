@@ -23,13 +23,13 @@
 //
 /// \file SubLayerListEditor.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/subLayerListEditor.h"
-#include "wabi/base/tf/mallocTag.h"
-#include "wabi/base/vt/dictionary.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/layerOffset.h"
 #include "wabi/usd/sdf/primSpec.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/dictionary.h"
+#include "wabi/base/tf/mallocTag.h"
 
 WABI_NAMESPACE_BEGIN
 

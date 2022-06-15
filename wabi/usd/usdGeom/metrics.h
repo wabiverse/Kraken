@@ -24,12 +24,13 @@
 #ifndef WABI_USD_USD_GEOM_METRICS_H
 #define WABI_USD_USD_GEOM_METRICS_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/api.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/usd/usd/common.h"
-#include "wabi/usd/usdGeom/api.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \file usdGeom/metrics.h
 ///

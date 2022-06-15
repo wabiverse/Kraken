@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/schemaBase.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
@@ -57,10 +57,10 @@ static object __getattribute__(object selfObj, const char *name)
   if ((name[0] == '_' && name[1] == '_') ||
       extract<UsdSchemaBase &>(selfObj)().GetPrim().IsValid() || strcmp(name, "GetPrim") == 0 ||
       strcmp(name, "GetPath") == 0 || strcmp(name, "GetSchemaClassPrimDefinition") == 0 ||
-      strcmp(name, "GetSchemaAttributeNames") == 0 || strcmp(name, "GetSchemaType") == 0 ||
-      strcmp(name, "GetUsdSchemaKind") == 0 || strcmp(name, "IsAPISchema") == 0 ||
-      strcmp(name, "IsConcrete") == 0 || strcmp(name, "IsTyped") == 0 ||
-      strcmp(name, "IsAppliedAPISchema") == 0 || strcmp(name, "IsMultipleApplyAPISchema") == 0) {
+      strcmp(name, "GetSchemaAttributeNames") == 0 || strcmp(name, "GetSchemaKind") == 0 ||
+      strcmp(name, "IsAPISchema") == 0 || strcmp(name, "IsConcrete") == 0 ||
+      strcmp(name, "IsTyped") == 0 || strcmp(name, "IsAppliedAPISchema") == 0 ||
+      strcmp(name, "IsMultipleApplyAPISchema") == 0) {
     // Dispatch to object's __getattribute__.
     return (*_object__getattribute__)(selfObj, name);
   } else {
@@ -96,7 +96,7 @@ void wrapUsdSchemaBase()
     .def("IsAppliedAPISchema", &UsdSchemaBase::IsAppliedAPISchema)
     .def("IsMultipleApplyAPISchema", &UsdSchemaBase::IsMultipleApplyAPISchema)
 
-    .def("GetUsdSchemaKind", &UsdSchemaBase::GetUsdSchemaKind)
+    .def("GetSchemaKind", &UsdSchemaBase::GetSchemaKind)
 
     .def(!self)
 

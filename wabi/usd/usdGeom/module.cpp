@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/base/tf/pyModule.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/pyModule.h"
 
 WABI_NAMESPACE_USING
 
@@ -39,6 +39,7 @@ TF_WRAP_MODULE
   TF_WRAP(UsdGeomXformCache);
   TF_WRAP(Metrics);
   TF_WRAP(UsdGeomMotionAPI);
+  TF_WRAP(UsdGeomVisibilityAPI);
 
   // Generated schema.  Base classes must precede derived classes.
   // Indentation shows class hierarchy.

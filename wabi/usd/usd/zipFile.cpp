@@ -21,11 +21,11 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/zipFile.h"
 #include "wabi/usd/ar/asset.h"
 #include "wabi/usd/ar/resolvedPath.h"
 #include "wabi/usd/ar/resolver.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/fileSystem.h"
 #include "wabi/base/tf/diagnostic.h"
@@ -37,7 +37,9 @@
 
 #include <cstdint>
 #include <ctime>
+#include <shared_mutex>
 #include <vector>
+#include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
 
@@ -139,17 +141,17 @@ namespace
 
     struct Fixed
     {
-      uint32_t signature;
-      uint16_t versionForExtract;
-      uint16_t bits;
-      uint16_t compressionMethod;
-      uint16_t lastModTime;
-      uint16_t lastModDate;
-      uint32_t crc32;
-      uint32_t compressedSize;
-      uint32_t uncompressedSize;
-      uint16_t filenameLength;
-      uint16_t extraFieldLength;
+      uint32_t signature = 0;
+      uint16_t versionForExtract = 0;
+      uint16_t bits = 0;
+      uint16_t compressionMethod = 0;
+      uint16_t lastModTime = 0;
+      uint16_t lastModDate = 0;
+      uint32_t crc32 = 0;
+      uint32_t compressedSize = 0;
+      uint32_t uncompressedSize = 0;
+      uint16_t filenameLength = 0;
+      uint16_t extraFieldLength = 0;
     };
 
     static const size_t FixedSize = sizeof(uint32_t) * 4 + sizeof(uint16_t) * 7;
@@ -163,11 +165,11 @@ namespace
     // Use indicated memory ranges.
 
     // Filename in [filenameStart, filenameStart + f.filenameLength)
-    const char *filenameStart;
+    const char *filenameStart = nullptr;
     // Extra data in [extraFieldStart, extraFieldStart + f.extraFieldLength)
-    const char *extraFieldStart;
+    const char *extraFieldStart = nullptr;
     // File data in [dataStart, dataStart + f.compressedSize)
-    const char *dataStart;
+    const char *dataStart = nullptr;
 
     // Return true if the required signature is stored in this header.
     bool IsValid() const
@@ -193,7 +195,7 @@ namespace
     // its original position and bail.
     src.Read(&h.f.signature);
     if (!h.IsValid()) {
-      src.Advance(-2147483647 - 1);
+      src.Advance(-sizeof(decltype(h.f.signature)));
       return _LocalFileHeader();
     }
 
@@ -263,23 +265,23 @@ namespace
 
     struct Fixed
     {
-      uint32_t signature;
-      uint16_t versionMadeBy;
-      uint16_t versionForExtract;
-      uint16_t bits;
-      uint16_t compressionMethod;
-      uint16_t lastModTime;
-      uint16_t lastModDate;
-      uint32_t crc32;
-      uint32_t compressedSize;
-      uint32_t uncompressedSize;
-      uint16_t filenameLength;
-      uint16_t extraFieldLength;
-      uint16_t commentLength;
-      uint16_t diskNumberStart;
-      uint16_t internalAttrs;
-      uint32_t externalAttrs;
-      uint32_t localHeaderOffset;
+      uint32_t signature = 0;
+      uint16_t versionMadeBy = 0;
+      uint16_t versionForExtract = 0;
+      uint16_t bits = 0;
+      uint16_t compressionMethod = 0;
+      uint16_t lastModTime = 0;
+      uint16_t lastModDate = 0;
+      uint32_t crc32 = 0;
+      uint32_t compressedSize = 0;
+      uint32_t uncompressedSize = 0;
+      uint16_t filenameLength = 0;
+      uint16_t extraFieldLength = 0;
+      uint16_t commentLength = 0;
+      uint16_t diskNumberStart = 0;
+      uint16_t internalAttrs = 0;
+      uint32_t externalAttrs = 0;
+      uint32_t localHeaderOffset = 0;
     };
 
     static const size_t FixedSize = sizeof(uint32_t) * 6 + sizeof(uint16_t) * 11;
@@ -293,11 +295,11 @@ namespace
     // Use indicated memory ranges.
 
     // Filename in [filenameStart, filenameStart + f.filenameLength)
-    const char *filenameStart;
+    const char *filenameStart = nullptr;
     // Extra data in [extraFieldStart, extraFieldStart + f.extraFieldLength)
-    const char *extraFieldStart;
+    const char *extraFieldStart = nullptr;
     // Comment in [commentStart, commentStart + f.commentLength)
-    const char *commentStart;
+    const char *commentStart = nullptr;
 
     // Return true if the required signature is stored in this header.
     bool IsValid() const
@@ -341,14 +343,14 @@ namespace
 
     struct Fixed
     {
-      uint32_t signature;
-      uint16_t diskNumber;
-      uint16_t diskNumberForCentralDir;
-      uint16_t numCentralDirEntriesOnDisk;
-      uint16_t numCentralDirEntries;
-      uint32_t centralDirLength;
-      uint32_t centralDirOffset;
-      uint16_t commentLength;
+      uint32_t signature = 0;
+      uint16_t diskNumber = 0;
+      uint16_t diskNumberForCentralDir = 0;
+      uint16_t numCentralDirEntriesOnDisk = 0;
+      uint16_t numCentralDirEntries = 0;
+      uint32_t centralDirLength = 0;
+      uint32_t centralDirOffset = 0;
+      uint16_t commentLength = 0;
     };
 
     static const size_t FixedSize = sizeof(uint32_t) * 3 + sizeof(uint16_t) * 5;
@@ -362,7 +364,7 @@ namespace
     // Use indicated memory ranges.
 
     // Comment in [commentStart, commentStart + f.commentLength)
-    const char *commentStart;
+    const char *commentStart = nullptr;
 
     // Return true if the required signature is stored in this header.
     bool IsValid() const
@@ -395,8 +397,8 @@ namespace
 
   struct _ExtraFieldHeader
   {
-    uint16_t headerId;
-    uint16_t dataSize;
+    uint16_t headerId = 0;
+    uint16_t dataSize = 0;
   };
 
   constexpr size_t _HeaderSize = sizeof(uint16_t) * 2;
@@ -448,7 +450,30 @@ namespace
 
 class UsdZipFile::_Impl
 {
+  std::shared_ptr<const char> storage;
+
+  // Cached mapping of filename to buffer
+  std::unordered_map<std::string, Iterator> _cachedPaths;
+  // Iterator to start on when adding to the cached mapping
+  std::unique_ptr<Iterator> _cachedPathIt;
+  // UsdZipFile::begin is called often, so might as well cache it too
+  std::unique_ptr<Iterator> _cachedBeginIt;
+  // Use a single mutex as there doesn't look to be much contention from
+  // calling through via UsdZipFile::begin() and UsdZipFile::Find()
+  std::shared_timed_mutex _rwMutex;
+
+  void _SetupIterators()
+  {
+    _cachedBeginIt.reset(new Iterator(this));
+    _cachedPathIt.reset(new Iterator(*_cachedBeginIt));
+  }
+
  public:
+
+  // This is the same as storage.get(), but saved separately to simplify
+  // code so they don't have to call storage.get() all the time.
+  const char *buffer;
+  size_t size;
 
   _Impl(std::shared_ptr<const char> &&buffer_, size_t size_)
     : storage(std::move(buffer_)),
@@ -456,12 +481,65 @@ class UsdZipFile::_Impl
       size(size_)
   {}
 
-  std::shared_ptr<const char> storage;
+  Iterator CachedBegin()
+  {
+    {
+      std::shared_lock<std::shared_timed_mutex> l(_rwMutex);
+      if (_cachedBeginIt) {
+        return *_cachedBeginIt;
+      }
+    }
+    std::unique_lock<std::shared_timed_mutex> l(_rwMutex);
+    _SetupIterators();
+    return *_cachedBeginIt;
+  }
 
-  // This is the same as storage.get(), but saved separately to simplify
-  // code so they don't have to call storage.get() all the time.
-  const char *buffer;
-  size_t size;
+  Iterator Find(const std::string &path)
+  {
+    const Iterator vend;
+    // ReadOnly lock to lookup if this item has already been found
+    {
+      std::shared_lock<std::shared_timed_mutex> l(_rwMutex);
+      auto cached = _cachedPaths.find(path);
+      if (cached != _cachedPaths.end()) {
+        return cached->second;
+      }
+      // Early exit if _cachedPathIt exists and is at end
+      if (_cachedPathIt && *_cachedPathIt == vend) {
+        return vend;
+      }
+    }
+    // Simplest implementation to lock and iterate linearly until found,
+    // filling in cache along the way was chosen as all other
+    // 'more complicated' attempts with less contention/blocking didn't
+    // add much savings in performance/time.
+
+    // WriteLock for linear traversal saving into cache
+    {
+      std::unique_lock<std::shared_timed_mutex> l(_rwMutex);
+      if (!_cachedPathIt) {
+        _SetupIterators();
+      }
+      for (Iterator &itr = *_cachedPathIt; itr != vend;) {
+        auto added = _cachedPaths.emplace(*itr, itr).first;
+        ++itr;
+        if (path == added->first) {
+          return added->second;
+        }
+      }
+    }
+
+    // ReadOnly lock in case a different thread cached _cachedPaths[path]
+    {
+      std::shared_lock<std::shared_timed_mutex> l(_rwMutex);
+      auto cached = _cachedPaths.find(path);
+      if (cached != _cachedPaths.end()) {
+        return cached->second;
+      }
+    }
+
+    return vend;
+  }
 };
 
 UsdZipFile UsdZipFile::Open(const std::string &filePath)
@@ -517,12 +595,12 @@ void UsdZipFile::DumpContents() const
 
 UsdZipFile::Iterator UsdZipFile::Find(const std::string &path) const
 {
-  return std::find(begin(), end(), path);
+  return _impl ? _impl->Find(path) : end();
 }
 
 UsdZipFile::Iterator UsdZipFile::begin() const
 {
-  return Iterator(_impl.get());
+  return _impl ? _impl->CachedBegin() : end();
 }
 
 UsdZipFile::Iterator UsdZipFile::end() const
@@ -530,21 +608,55 @@ UsdZipFile::Iterator UsdZipFile::end() const
   return Iterator();
 }
 
-UsdZipFile::Iterator::Iterator() : _impl(nullptr), _offset(0) {}
-
-UsdZipFile::Iterator::Iterator(const _Impl *impl) : _impl(impl), _offset(0)
+class UsdZipFile::Iterator::_IteratorData
 {
-  _InputStream src(_impl->buffer, _impl->size, _offset);
-  if (!_ReadLocalFileHeader(src).IsValid()) {
-    *this = Iterator();
+ public:
+
+  const _Impl *impl = nullptr;
+  size_t offset = 0;
+  _LocalFileHeader fileHeader;
+  size_t nextHeaderOffset = 0;
+};
+
+UsdZipFile::Iterator::Iterator() = default;
+
+UsdZipFile::Iterator::Iterator(const _Impl *impl, size_t offset)
+{
+  _InputStream src(impl->buffer, impl->size, offset);
+  _LocalFileHeader fileHeader = _ReadLocalFileHeader(src);
+  if (fileHeader.IsValid()) {
+    _data.reset(new _IteratorData);
+    _data->impl = impl;
+    _data->offset = offset;
+    _data->fileHeader = fileHeader;
+    _data->nextHeaderOffset = src.Tell();
   }
 }
 
+UsdZipFile::Iterator::Iterator(const Iterator &rhs)
+  : _data(rhs._data ? new _IteratorData(*rhs._data) : nullptr)
+{}
+
+UsdZipFile::Iterator::Iterator(Iterator &&rhs) = default;
+
+UsdZipFile::Iterator::~Iterator() = default;
+
+UsdZipFile::Iterator &UsdZipFile::Iterator::operator=(const Iterator &rhs)
+{
+  Iterator rhsCopy(rhs);
+  *this = std::move(rhsCopy);
+  return *this;
+}
+
+UsdZipFile::Iterator &UsdZipFile::Iterator::operator=(Iterator &&rhs) = default;
+
 UsdZipFile::Iterator::reference UsdZipFile::Iterator::operator*() const
 {
-  _InputStream src(_impl->buffer, _impl->size, _offset);
-  _LocalFileHeader h = _ReadLocalFileHeader(src);
-  return std::string(h.filenameStart, h.f.filenameLength);
+  if (_data) {
+    const _LocalFileHeader &h = _data->fileHeader;
+    return std::string(h.filenameStart, h.f.filenameLength);
+  }
+  return std::string();
 }
 
 UsdZipFile::Iterator::pointer UsdZipFile::Iterator::operator->() const
@@ -554,18 +666,18 @@ UsdZipFile::Iterator::pointer UsdZipFile::Iterator::operator->() const
 
 UsdZipFile::Iterator &UsdZipFile::Iterator::operator++()
 {
-  // Advance past the file the iterator is currently pointing
-  // to, then check if we can read the next file header. If not,
-  // we've hit the end.
-  _InputStream src(_impl->buffer, _impl->size, _offset);
-  _ReadLocalFileHeader(src);
-
-  size_t newOffset = src.Tell();
-  const _LocalFileHeader newHeader = _ReadLocalFileHeader(src);
-  if (newHeader.IsValid()) {
-    _offset = newOffset;
-  } else {
-    *this = Iterator();
+  // See if we can read a header at the next header offset.
+  // If not, we've hit the end.
+  if (_data) {
+    _InputStream src(_data->impl->buffer, _data->impl->size, _data->nextHeaderOffset);
+    _LocalFileHeader nextHeader = _ReadLocalFileHeader(src);
+    if (nextHeader.IsValid()) {
+      _data->offset = _data->nextHeaderOffset;
+      _data->fileHeader = nextHeader;
+      _data->nextHeaderOffset = src.Tell();
+    } else {
+      *this = Iterator();
+    }
   }
   return *this;
 }
@@ -579,7 +691,12 @@ UsdZipFile::Iterator UsdZipFile::Iterator::operator++(int)
 
 bool UsdZipFile::Iterator::operator==(const Iterator &rhs) const
 {
-  return _impl == rhs._impl && _offset == rhs._offset;
+  if (!_data && !rhs._data) {
+    return true;
+  }
+
+  return _data && rhs._data && _data->impl == rhs._data->impl &&
+         _data->offset == rhs._data->offset;
 }
 
 bool UsdZipFile::Iterator::operator!=(const Iterator &rhs) const
@@ -589,22 +706,20 @@ bool UsdZipFile::Iterator::operator!=(const Iterator &rhs) const
 
 const char *UsdZipFile::Iterator::GetFile() const
 {
-  _InputStream src(_impl->buffer, _impl->size, _offset);
-  const _LocalFileHeader h = _ReadLocalFileHeader(src);
-  return h.dataStart;
+  return _data ? _data->fileHeader.dataStart : nullptr;
 }
 
 UsdZipFile::FileInfo UsdZipFile::Iterator::GetFileInfo() const
 {
-  _InputStream src(_impl->buffer, _impl->size, _offset);
-  const _LocalFileHeader h = _ReadLocalFileHeader(src);
-
   FileInfo f;
-  f.dataOffset = h.dataStart - _impl->buffer;
-  f.size = h.f.compressedSize;
-  f.uncompressedSize = h.f.uncompressedSize;
-  f.compressionMethod = h.f.compressionMethod;
-  f.encrypted = h.f.bits & 0x1;  // Per 4.4.4, bit 0 is set if encrypted
+  if (_data) {
+    const _LocalFileHeader &h = _data->fileHeader;
+    f.dataOffset = h.dataStart - _data->impl->buffer;
+    f.size = h.f.compressedSize;
+    f.uncompressedSize = h.f.uncompressedSize;
+    f.compressionMethod = h.f.compressionMethod;
+    f.encrypted = h.f.bits & 0x1;  // Per 4.4.4, bit 0 is set if encrypted
+  }
   return f;
 }
 

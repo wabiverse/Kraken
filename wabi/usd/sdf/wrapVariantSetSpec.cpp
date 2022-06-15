@@ -23,13 +23,13 @@
 //
 /// \file wrapVariantSetSpec.cpp
 
-#include "wabi/base/tf/pyContainerConversions.h"
-#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/variantSetSpec.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/pySpec.h"
-#include "wabi/usd/sdf/variantSetSpec.h"
 #include "wabi/usd/sdf/variantSpec.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyContainerConversions.h"
+#include "wabi/base/tf/pyResultConversions.h"
 #include <boost/python.hpp>
 
 using namespace boost::python;

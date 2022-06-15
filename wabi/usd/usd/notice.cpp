@@ -21,10 +21,10 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/notice.h"
-#include "wabi/base/tf/stl.h"
-#include "wabi/usd/usd/stage.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/notice.h"
+#include "wabi/usd/usd/stage.h"
+#include "wabi/base/tf/stl.h"
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -45,6 +45,7 @@ TF_REGISTRY_FUNCTION(TfType)
 
   TfType::Define<UsdNotice::LayerMutingChanged, TfType::Bases<UsdNotice::StageNotice>>();
 }
+
 
 UsdNotice::StageNotice::StageNotice(const UsdStageWeakPtr &stage) : _stage(stage) {}
 

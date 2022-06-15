@@ -21,12 +21,12 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usd/stageCache.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/stageCache.h"
+#include "wabi/usd/usd/stage.h"
 
-#include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/usd/ar/resolverContext.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/python.hpp>
 

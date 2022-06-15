@@ -27,15 +27,17 @@
 
 #include "attributeDescriptor.h"
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/usd/sdf/valueTypeName.h"
 #include "wabi/usd/usdGeom/primvarsAPI.h"
-#include "wabi/wabi.h"
 
 #include <draco/attributes/geometry_attribute.h>
 #include <draco/attributes/point_attribute.h>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdDracoAttributeFactory
 ///
@@ -72,6 +74,7 @@ class UsdDracoAttributeFactory
   // 16-bit floating point data type.
   static bool IsHalf(const std::type_info &typeInfo);
 };
+
 
 // Macros to make the switch cases below more compact.
 #define CASE_FOR_ATTRIBUTE_TYPE(dracoType, valueType)                 \
@@ -190,6 +193,7 @@ std::unique_ptr<InterfaceT> UsdDracoAttributeFactory::CreateAttribute(
   }
   return nullptr;
 }
+
 
 WABI_NAMESPACE_END
 

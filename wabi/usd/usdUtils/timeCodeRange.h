@@ -26,8 +26,8 @@
 
 /// \file usdUtils/timeCodeRange.h
 
-#include "wabi/usd/usdUtils/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/api.h"
 
 #include "wabi/base/gf/math.h"
 #include "wabi/base/tf/diagnostic.h"
@@ -38,7 +38,9 @@
 #include <iterator>
 #include <string>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 #define USDUTILS_TIME_CODE_RANGE_TOKENS \
   ((EmptyTimeCodeRange, "NONE"))((RangeSeparator, ":"))((StrideSeparator, "x"))
@@ -46,6 +48,7 @@ WABI_NAMESPACE_BEGIN
 TF_DECLARE_PUBLIC_TOKENS(UsdUtilsTimeCodeRangeTokens,
                          USDUTILS_API,
                          USDUTILS_TIME_CODE_RANGE_TOKENS);
+
 
 /// \class UsdUtilsTimeCodeRange
 ///
@@ -396,6 +399,8 @@ std::ostream &operator<<(std::ostream &os, const UsdUtilsTimeCodeRange &timeCode
 USDUTILS_API
 std::istream &operator>>(std::istream &is, UsdUtilsTimeCodeRange &timeCodeRange);
 
+
 WABI_NAMESPACE_END
+
 
 #endif

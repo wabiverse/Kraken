@@ -24,16 +24,15 @@
 #ifndef WABI_USD_SDF_PATH_NODE_H
 #define WABI_USD_SDF_PATH_NODE_H
 
-#include "wabi/base/tf/mallocTag.h"
-#include "wabi/base/tf/token.h"
-#include "wabi/base/tf/functionRef.h"
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
-
-#include <boost/intrusive_ptr.hpp>
-#include <boost/noncopyable.hpp>
+#include "wabi/usd/sdf/api.h"
+#include "wabi/base/tf/functionRef.h"
+#include "wabi/base/tf/token.h"
+#include "wabi/base/tf/mallocTag.h"
 
 #include <atomic>
+#include <boost/noncopyable.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 WABI_NAMESPACE_BEGIN
 

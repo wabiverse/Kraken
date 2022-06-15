@@ -24,11 +24,11 @@
 #ifndef WABI_USD_PCP_PROPERTY_INDEX_H
 #define WABI_USD_PCP_PROPERTY_INDEX_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/errors.h"
 #include "wabi/usd/pcp/iterator.h"
 #include "wabi/usd/pcp/node.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/propertySpec.h"

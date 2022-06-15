@@ -21,11 +21,11 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/base/vt/array.h"
-#include "wabi/base/vt/valueFromPython.h"
-#include "wabi/base/vt/wrapArray.h"
-#include "wabi/usd/sdf/timeCode.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/timeCode.h"
+#include "wabi/base/vt/array.h"
+#include "wabi/base/vt/wrapArray.h"
+#include "wabi/base/vt/valueFromPython.h"
 
 WABI_NAMESPACE_BEGIN
 

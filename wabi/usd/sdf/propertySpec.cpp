@@ -22,19 +22,19 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/propertySpec.h"
 #include "wabi/usd/sdf/accessorHelpers.h"
 #include "wabi/usd/sdf/childrenUtils.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/schema.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/staticData.h"
 
-#include "wabi/base/plug/plugin.h"
 #include "wabi/base/plug/registry.h"
+#include "wabi/base/plug/plugin.h"
 #include "wabi/base/trace/trace.h"
 
 #include <ostream>
@@ -178,6 +178,7 @@ bool SdfPropertySpec::SetDefaultValue(const VtValue &defaultValue)
     if (valueType == defaultValue.GetType()) {
       return SetField(SdfFieldKeys->Default, defaultValue);
     }
+
   } else {
     // Otherwise check if defaultValue is castable to valueType
     VtValue value = VtValue::CastToTypeid(defaultValue, valueType.GetTypeid());

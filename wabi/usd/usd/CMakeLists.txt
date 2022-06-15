@@ -14,7 +14,7 @@ wabi_library(usd
         vt
         work
         ${Boost_PYTHON_LIBRARY}
-        ${TBB_LIBRARIES}
+        ${TBB_tbb_LIBRARY}
 
     INCLUDE_DIRS
         ${Boost_INCLUDE_DIRS}
@@ -32,6 +32,7 @@ wabi_library(usd
         debugCodes
         editContext
         editTarget
+        errors
         flattenUtils
         inherits
         interpolation
@@ -163,24 +164,25 @@ wabi_library(usd
         resources/codegenTemplates/wrapTokens.cpp
 
     DOXYGEN_FILES
-        doxygen/advancedFeatures.dox
-        doxygen/authoringEditing.dox
-        doxygen/bestPractices.dox
-        doxygen/commonIdioms.dox
-        doxygen/datatypes.dox
-        doxygen/dynamicFileFormat.dox
-        doxygen/front.dox
-        doxygen/generatingSchemas.dox
-        doxygen/instancing.dox
-        doxygen/multiThreading.dox
-        doxygen/objectModel.dox
-        doxygen/propertiesOfSceneDescription.dox
-        doxygen/valueClips.dox
-        doxygen/images/instancing/Instancing_Example.png
-        doxygen/images/instancing/Nested_Instancing_Example.png
-        doxygen/images/instancing/Relationship_Example.png
-        doxygen/images/instancing/Uninstanced_vs_Instanced.png
+        docs/advancedFeatures.dox
+        docs/authoringEditing.dox
+        docs/bestPractices.dox
+        docs/commonIdioms.dox
+        docs/datatypes.dox
+        docs/dynamicFileFormat.dox
+        docs/front.dox
+        docs/generatingSchemas.dox
+        docs/instancing.dox
+        docs/multiThreading.dox
+        docs/objectModel.dox
+        docs/propertiesOfSceneDescription.dox 
+        docs/valueClips.dox
+        docs/images/instancing/Instancing_Example.png
+        docs/images/instancing/Nested_Instancing_Example.png
+        docs/images/instancing/Relationship_Example.png
+        docs/images/instancing/Uninstanced_vs_Instanced.png
 )
+
 
 if(NOT WITH_PYTHON)
     message(STATUS "Skipping building usdGenSchema, Python modules required.")
@@ -216,3 +218,5 @@ if(WITH_PIXAR_TOOLKIT)
         ${TARGETDIR_VER}/toolkit) 
   endif()
 endif()
+
+

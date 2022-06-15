@@ -26,20 +26,20 @@
 
 /// \file usdGeom/camera.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/api.h"
+#include "wabi/usd/usdGeom/xformable.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usdGeom/api.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/usd/usdGeom/xformable.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/gf/camera.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -80,6 +80,27 @@ class SdfAssetPath;
 /// -Z axis, with +Y as the up axis, and +X pointing to the right. This describes a __right handed
 /// coordinate system__.
 ///
+/// \section UsdGeom_CameraUnits Units of Measure for Camera Properties
+///
+/// Despite the familiarity of millimeters for specifying some physical
+/// camera properties, UsdGeomCamera opts for greater consistency with all
+/// other UsdGeom schemas, which measure geometric properties in scene units,
+/// as determined by UsdGeomGetStageMetersPerUnit().  We do make a
+/// concession, however, in that lens and filmback properties are measured in
+/// __tenths of a scene unit__ rather than "raw" scene units.  This means
+/// that with the fallback value of .01 for _metersPerUnit_ - i.e. scene unit
+/// of centimeters - then these "tenth of scene unit" properties are
+/// effectively millimeters.
+///
+/// \note If one adds a Camera prim to a UsdStage whose scene unit is not
+/// centimeters, the fallback values for filmback properties will be
+/// incorrect (or at the least, unexpected) in an absolute sense; however,
+/// proper imaging through a "default camera" with focusing disabled depends
+/// only on ratios of the other properties, so the camera is still usable.
+/// However, it follows that if even one property is authored in the correct
+/// scene units, then they all must be.
+///
+///
 /// \sa \ref UsdGeom_LinAlgBasics
 ///
 ///
@@ -96,7 +117,6 @@ class UsdGeomCamera : public UsdGeomXformable
   ///
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
-
 
   /// Construct a UsdGeomCamera on UsdPrim \p prim .
   /// Equivalent to UsdGeomCamera::Get(prim.GetStage(), prim.GetPath())
@@ -164,10 +184,9 @@ class UsdGeomCamera : public UsdGeomXformable
   USDGEOM_API
   UsdSchemaKind _GetSchemaKind() const override;
 
-
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
   static const TfType &_GetStaticTfType();
@@ -177,7 +196,6 @@ class UsdGeomCamera : public UsdGeomXformable
   // override SchemaBase virtuals.
   USDGEOM_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -209,9 +227,9 @@ class UsdGeomCamera : public UsdGeomXformable
   // --------------------------------------------------------------------- //
   // HORIZONTALAPERTURE
   // --------------------------------------------------------------------- //
-  /// Horizontal aperture in millimeters (or, more general, tenths
-  /// of a world unit).
-  /// Defaults to the standard 35mm spherical projector aperture.
+  /// Horizontal aperture in tenths of a scene unit; see
+  /// \ref UsdGeom_CameraUnits . Default is the equivalent of
+  /// the standard 35mm spherical projector aperture.
   ///
   /// | ||
   /// | -- | -- |
@@ -235,9 +253,9 @@ class UsdGeomCamera : public UsdGeomXformable
   // --------------------------------------------------------------------- //
   // VERTICALAPERTURE
   // --------------------------------------------------------------------- //
-  /// Vertical aperture in millimeters (or, more general, tenths of
-  /// a world unit).
-  /// Defaults to the standard 35mm spherical projector aperture.
+  /// Vertical aperture in tenths of a scene unit; see
+  /// \ref UsdGeom_CameraUnits . Default is the equivalent of
+  /// the standard 35mm spherical projector aperture.
   ///
   /// | ||
   /// | -- | -- |
@@ -311,8 +329,8 @@ class UsdGeomCamera : public UsdGeomXformable
   // --------------------------------------------------------------------- //
   // FOCALLENGTH
   // --------------------------------------------------------------------- //
-  /// Perspective focal length in millimeters (or, more general,
-  /// tenths of a world unit).
+  /// Perspective focal length in tenths of a scene unit; see
+  /// \ref UsdGeom_CameraUnits .
   ///
   /// | ||
   /// | -- | -- |
@@ -336,8 +354,8 @@ class UsdGeomCamera : public UsdGeomXformable
   // --------------------------------------------------------------------- //
   // CLIPPINGRANGE
   // --------------------------------------------------------------------- //
-  /// Near and far clipping distances in centimeters (or, more
-  /// general, world units).
+  /// Near and far clipping distances in scene units; see
+  /// \ref UsdGeom_CameraUnits .
   ///
   /// | ||
   /// | -- | -- |
@@ -412,8 +430,8 @@ class UsdGeomCamera : public UsdGeomXformable
   // --------------------------------------------------------------------- //
   // FOCUSDISTANCE
   // --------------------------------------------------------------------- //
-  /// Distance from the camera to the focus plane in centimeters (or
-  /// more general, world units).
+  /// Distance from the camera to the focus plane in scene units; see
+  /// \ref UsdGeom_CameraUnits .
   ///
   /// | ||
   /// | -- | -- |
@@ -558,6 +576,25 @@ class UsdGeomCamera : public UsdGeomXformable
   GfCamera GetCamera(const UsdTimeCode &time) const;
 
   /// Write attribute values from \p camera for \p time.
+  /// These attributes will be updated:
+  ///  - projection
+  ///  - horizontalAperture
+  ///  - horizontalApertureOffset
+  ///  - verticalAperture
+  ///  - verticalApertureOffset
+  ///  - focalLength
+  ///  - clippingRange
+  ///  - clippingPlanes
+  ///  - fStop
+  ///  - focalDistance
+  ///  - xformOpOrder and xformOp:transform
+  ///
+  /// \note This will clear any existing xformOpOrder and replace
+  /// it with a single xformOp:transform entry. The xformOp:transform
+  /// property is created or updated here to match the transform
+  /// on \p camera . This operation will fail if there are stronger xform op
+  /// opinions in the composed layer stack that are stronger than that of
+  /// the current edit target.
   ///
   USDGEOM_API
   void SetFromCamera(const GfCamera &camera, const UsdTimeCode &time);

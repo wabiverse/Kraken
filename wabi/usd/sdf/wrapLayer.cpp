@@ -23,20 +23,20 @@
 //
 /// \file wrapLayer.cpp
 
-#include "wabi/base/tf/makePyConstructor.h"
-#include "wabi/base/tf/pyContainerConversions.h"
-#include "wabi/base/tf/pyFunction.h"
-#include "wabi/base/tf/pyPtrHelpers.h"
-#include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/base/tf/pyUtils.h"
-#include "wabi/usd/sdf/attributeSpec.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/layerUtils.h"
+#include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/pyChildrenProxy.h"
 #include "wabi/usd/sdf/pyUtils.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyContainerConversions.h"
+#include "wabi/base/tf/makePyConstructor.h"
+#include "wabi/base/tf/pyFunction.h"
+#include "wabi/base/tf/pyPtrHelpers.h"
+#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyUtils.h"
 
 #include <boost/python.hpp>
 #include <boost/python/overloads.hpp>
@@ -602,6 +602,8 @@ void wrapLayer()
 
       .def("UpdateExternalReference", &This::UpdateExternalReference)
 
+      .def("UpdateCompositionAssetDependency", &This::UpdateCompositionAssetDependency)
+
       .def("SetMuted", &This::SetMuted)
 
       .def("IsMuted", &_WrapIsMuted)
@@ -803,6 +805,10 @@ void wrapLayer()
         make_function(&This::GetExternalReferences, return_value_policy<TfPySequenceToList>()),
         "Return unique list of asset paths of external references for\n"
         "given layer.")
+
+      .def("GetCompositionAssetDependencies",
+           make_function(&This::GetCompositionAssetDependencies,
+                         return_value_policy<TfPySequenceToList>()))
 
       .def("GetExternalAssetDependencies",
            make_function(&This::GetExternalAssetDependencies,

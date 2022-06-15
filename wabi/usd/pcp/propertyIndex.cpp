@@ -24,24 +24,24 @@
 
 #include "wabi/wabi.h"
 
+#include "wabi/usd/pcp/propertyIndex.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/node_Iterator.h"
 #include "wabi/usd/pcp/pathTranslation.h"
 #include "wabi/usd/pcp/primIndex.h"
-#include "wabi/usd/pcp/propertyIndex.h"
 #include "wabi/usd/pcp/site.h"
 
-#include "wabi/base/tf/token.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/listOp.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/base/trace/trace.h"
+#include "wabi/base/tf/token.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -158,6 +158,7 @@ class Pcp_PropertyIndexer
       // First one, just record the property type and layer
       _firstSpec = propSpec;
       _propType = propType;
+
     } else if (_propType != propType) {
       // This property spec is inconsistent with the type of the
       // specs previously seen.

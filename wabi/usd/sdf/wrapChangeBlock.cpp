@@ -21,13 +21,15 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/tf/pyUtils.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/changeManager.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/tf/pyUtils.h"
 
 #include <boost/python.hpp>
+
+#include <memory>
 
 using namespace boost::python;
 
@@ -40,47 +42,29 @@ namespace
   {
    public:
 
-    Sdf_PythonChangeBlock() : _block(0)
-    {
-      // Do nothing.
-    }
-
-    ~Sdf_PythonChangeBlock()
-    {
-      delete _block;
-    }
+    explicit Sdf_PythonChangeBlock(bool enabled) : _enabled(enabled) {}
 
     void Open()
     {
-      if (!TF_VERIFY(_block == 0)) {
+      if (!_enabled || !TF_VERIFY(!_block)) {
         return;
       }
-      _block = new SdfChangeBlock;
+      _block.reset(new SdfChangeBlock);
     }
 
     void Close(object, object, object)
     {
-      if (!TF_VERIFY(_block != 0)) {
+      if (!_enabled || !TF_VERIFY(_block)) {
         return;
       }
-      delete _block;
-      _block = 0;
+      _block.reset();
     }
 
    private:
 
-    SdfChangeBlock *_block;
+    std::unique_ptr<SdfChangeBlock> _block;
+    const bool _enabled;
   };
-
-  static void _BeginBlock()
-  {
-    Sdf_ChangeManager::Get().OpenChangeBlock();
-  }
-
-  static void _EndBlock()
-  {
-    Sdf_ChangeManager::Get().CloseChangeBlock();
-  }
 
 }  // anonymous namespace
 
@@ -89,13 +73,7 @@ void wrapChangeBlock()
   // This allows SdfChangeBlocks to be used in an RAII fashion in Python
   // with the 'with' statement.
   typedef Sdf_PythonChangeBlock This;
-  class_<This, boost::noncopyable>("ChangeBlock", init<>())
+  class_<This, boost::noncopyable>("ChangeBlock", init<bool>(arg("enabled") = true))
     .def("__enter__", &This::Open)
     .def("__exit__", &This::Close);
-
-  // Helpers to open/close change blocks in a non-RAII fashion. Primarily
-  // here for API compatibility, consumers should prefer the ChangeBlock
-  // object above.
-  def("BeginChangeBlock", &_BeginBlock);
-  def("EndChangeBlock", &_EndBlock);
 }

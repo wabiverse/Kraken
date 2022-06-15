@@ -24,13 +24,14 @@
 #ifndef WABI_USD_USD_GEOM_CONSTRAINT_TARGET_H
 #define WABI_USD_USD_GEOM_CONSTRAINT_TARGET_H
 
-#include "wabi/usd/usd/attribute.h"
-#include "wabi/usd/usdGeom/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/api.h"
+#include "wabi/usd/usd/attribute.h"
 
 #include <string>
 
 WABI_NAMESPACE_BEGIN
+
 
 class GfMatrix4d;
 class UsdGeomXformCache;
@@ -122,6 +123,7 @@ class UsdGeomConstraintTarget
     return IsValid(_attr);
   }
 
+
   /// \anchor UsdGeomConstraintTarget_explicit_bool
   /// Explicit bool conversion operator. A ConstraintTarget object converts
   /// to \c true iff it is valid for querying and authoring values and
@@ -175,6 +177,7 @@ class UsdGeomConstraintTarget
 
   UsdAttribute _attr;
 };
+
 
 WABI_NAMESPACE_END
 

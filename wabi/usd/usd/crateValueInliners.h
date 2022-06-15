@@ -24,15 +24,16 @@
 #ifndef WABI_USD_USD_CRATE_VALUE_INLINERS_H
 #define WABI_USD_USD_CRATE_VALUE_INLINERS_H
 
-#include "wabi/base/gf/traits.h"
 #include "wabi/wabi.h"
+#include "wabi/base/gf/traits.h"
 
+#include <type_traits>
+#include <limits>
 #include <cstdint>
 #include <cstring>
-#include <limits>
-#include <type_traits>
 
 WABI_NAMESPACE_BEGIN
+
 
 namespace Usd_CrateValueInliners
 {
@@ -185,6 +186,7 @@ namespace Usd_CrateValueInliners
   }
 
 }  // namespace Usd_CrateValueInliners
+
 
 WABI_NAMESPACE_END
 

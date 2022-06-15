@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -185,15 +185,17 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
 
-                         // Namespace prefix of the attribute used to encode the familyType of a
-                         // family of GeomSubsets below an imageable prim.
-                         (subsetFamily)
+    // Namespace prefix of the attribute used to encode the familyType of a 
+    // family of GeomSubsets below an imageable prim.
+    (subsetFamily)
 
-                         // Base name of token-valued attribute used to encode the type of family
-                         // that a collection of GeomSubsets with a common familyName belong to.
-                         (familyType));
+    // Base name of token-valued attribute used to encode the type of family 
+    // that a collection of GeomSubsets with a common familyName belong to.
+    (familyType)
+);
 
 /* static */
 UsdGeomSubset UsdGeomSubset::CreateGeomSubset(const UsdGeomImageable &geom,

@@ -24,10 +24,10 @@
 // Payload.cpp
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/payload.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
 
 #include <ostream>
 

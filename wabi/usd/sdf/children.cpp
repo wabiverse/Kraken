@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/children.h"
-#include "wabi/base/tf/ostreamMethods.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/childrenPolicies.h"
 #include "wabi/usd/sdf/childrenUtils.h"
@@ -33,7 +33,7 @@
 #include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/variantSetSpec.h"
 #include "wabi/usd/sdf/variantSpec.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/ostreamMethods.h"
 
 WABI_NAMESPACE_BEGIN
 

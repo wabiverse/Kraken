@@ -31,10 +31,10 @@
 /// layer will be the first parameter to the function and will always have
 /// precedence in conflicts during the merge.
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/usd/usdUtils/api.h"
-#include "wabi/wabi.h"
 
 #include <functional>
 

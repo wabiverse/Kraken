@@ -21,15 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usdGeom/xformCache.h"
 #include "wabi/usd/usdGeom/xform.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/trace/trace.h"
 
 #include "wabi/base/tf/diagnostic.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 UsdGeomXformCache::UsdGeomXformCache(const UsdTimeCode time) : _time(time) {}
 

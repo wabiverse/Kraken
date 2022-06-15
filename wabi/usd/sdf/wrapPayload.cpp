@@ -22,14 +22,14 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/payload.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/vt/valueFromPython.h"
-#include "wabi/usd/sdf/payload.h"
-#include "wabi/wabi.h"
 
-#include <boost/function.hpp>
 #include <boost/python.hpp>
+#include <boost/function.hpp>
 
 #include <string>
 

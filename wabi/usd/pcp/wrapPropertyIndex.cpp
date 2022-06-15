@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/pcp/cache.h"
-#include "wabi/usd/pcp/primIndex.h"
-#include "wabi/usd/pcp/propertyIndex.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/propertyIndex.h"
+#include "wabi/usd/pcp/primIndex.h"
+#include "wabi/usd/pcp/cache.h"
 
 #include "wabi/base/tf/pyResultConversions.h"
 

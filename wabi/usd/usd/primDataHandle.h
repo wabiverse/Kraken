@@ -24,8 +24,8 @@
 #ifndef WABI_USD_USD_PRIM_DATA_HANDLE_H
 #define WABI_USD_USD_PRIM_DATA_HANDLE_H
 
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
 #include <boost/functional/hash.hpp>
 #include <boost/intrusive_ptr.hpp>
 
@@ -42,7 +42,7 @@ void intrusive_ptr_release(const class Usd_PrimData *prim);
 
 // Forward declarations for Usd_PrimDataHandle's use.  Defined in primData.h.
 USD_API
-void Usd_IssueFatalPrimAccessError(Usd_PrimData const *p);
+void Usd_ThrowExpiredPrimAccessError(Usd_PrimData const *p);
 bool Usd_IsDead(Usd_PrimData const *p);
 
 // convenience typedefs for raw ptrs.
@@ -92,8 +92,9 @@ class Usd_PrimDataHandle
   {
     element_type *p = _p.get();
 #ifdef USD_CHECK_ALL_PRIM_ACCESSES
-    if (!p || Usd_IsDead(p))
-      Usd_IssueFatalPrimAccessError(p);
+    if (!p || Usd_IsDead(p)) {
+      Usd_ThrowExpiredPrimAccessError(p);
+    }
 #endif
     return p;
   }
@@ -143,6 +144,7 @@ class Usd_PrimDataHandle
 
   Usd_PrimDataConstIPtr _p;
 };
+
 
 WABI_NAMESPACE_END
 

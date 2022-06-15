@@ -26,16 +26,16 @@
 
 /// \file pcp/dependencies.h
 
-#include "wabi/usd/pcp/cache.h"
+#include "wabi/wabi.h"
+#include "wabi/usd/pcp/node.h"
+#include "wabi/usd/pcp/types.h"
 #include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/pcp/layerStackRegistry.h"
-#include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/primIndex.h"
-#include "wabi/usd/pcp/types.h"
+#include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/site.h"
-#include "wabi/wabi.h"
 
 #include <tbb/spin_mutex.h>
 

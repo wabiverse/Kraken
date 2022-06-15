@@ -24,10 +24,10 @@
 ///
 /// LayerOffset.cpp
 
-#include "wabi/usd/sdf/layerOffset.h"
-#include "wabi/base/gf/math.h"
-#include "wabi/usd/sdf/timeCode.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/layerOffset.h"
+#include "wabi/usd/sdf/timeCode.h"
+#include "wabi/base/gf/math.h"
 
 #include "wabi/base/tf/type.h"
 

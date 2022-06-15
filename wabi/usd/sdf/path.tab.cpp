@@ -95,6 +95,7 @@
 #define yydebug pathYydebug
 #define yynerrs pathYynerrs
 
+
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
@@ -102,10 +103,10 @@
 
 // sdf/path.yy
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/pathParser.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/staticData.h"
-#include "wabi/usd/sdf/pathParser.h"
-#include "wabi/wabi.h"
 
 #include <string>
 #include <utility>
@@ -124,6 +125,7 @@ extern int pathYylex(YYSTYPE *yylval_param, yyscan_t yyscanner);
 static void pathYyerror(Sdf_PathParserContext *context, const char *msg);
 
 #define yyscanner context->scanner
+
 
 /* Line 189 of yacc.c  */
 #line 110 "wabi/usd/sdf/path.tab.cpp"
@@ -146,6 +148,7 @@ static void pathYyerror(Sdf_PathParserContext *context, const char *msg);
 #  define YYTOKEN_TABLE 0
 #endif
 
+
 /* Tokens.  */
 #ifndef YYTOKENTYPE
 #  define YYTOKENTYPE
@@ -164,6 +167,7 @@ enum yytokentype
 };
 #endif
 
+
 #if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
 typedef int YYSTYPE;
 #  define YYSTYPE_IS_TRIVIAL 1
@@ -171,7 +175,9 @@ typedef int YYSTYPE;
 #  define YYSTYPE_IS_DECLARED 1
 #endif
 
+
 /* Copy the second part of user declarations.  */
+
 
 /* Line 264 of yacc.c  */
 #line 162 "wabi/usd/sdf/path.tab.cpp"
@@ -326,6 +332,7 @@ void free(void *);      /* INFRINGES ON USER NAME SPACE */
 #    endif
 #  endif
 #endif /* ! defined yyoverflow || YYERROR_VERBOSE */
+
 
 #if (!defined yyoverflow && \
      (!defined __cplusplus || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
@@ -567,6 +574,7 @@ static const yytype_uint8 yystos[] = {
 #define YYABORT goto yyabortlab
 #define YYERROR goto yyerrorlab
 
+
 /* Like YYERROR except do call yyerror.  This remains here temporarily
    to ease the transition to the new meaning of YYERROR, for GCC.
    Once GCC version 2 has supplanted version 1, this can go.  */
@@ -589,8 +597,10 @@ static const yytype_uint8 yystos[] = {
     }                                                        \
   while (YYID(0))
 
+
 #define YYTERROR 1
 #define YYERRCODE 256
+
 
 /* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
    If N is 0, then set CURRENT to the empty location which ends
@@ -612,6 +622,7 @@ static const yytype_uint8 yystos[] = {
     while (YYID(0))
 #endif
 
+
 /* YY_LOCATION_PRINT -- Print the location on the stream.
    This macro was not mandated originally: define only if we know
    we won't break user code: when these are the locations we know.  */
@@ -629,6 +640,7 @@ static const yytype_uint8 yystos[] = {
 #    define YY_LOCATION_PRINT(File, Loc) ((void)0)
 #  endif
 #endif
+
 
 /* YYLEX -- calling `yylex' with the right arguments.  */
 
@@ -661,6 +673,7 @@ static const yytype_uint8 yystos[] = {
       }                                                 \
     } while (YYID(0))
 
+
 /*--------------------------------.
 | Print this symbol on YYOUTPUT.  |
 `--------------------------------*/
@@ -692,6 +705,7 @@ Sdf_PathParserContext *context;
       break;
   }
 }
+
 
 /*--------------------------------.
 | Print this symbol on YYOUTPUT.  |
@@ -744,6 +758,7 @@ yytype_int16 *yytop;
         yy_stack_print((Bottom), (Top)); \
     } while (YYID(0))
 
+
 /*------------------------------------------------.
 | Report that the YYRULE is going to be reduced.  |
 `------------------------------------------------*/
@@ -784,6 +799,7 @@ int yydebug;
 #  define YY_REDUCE_PRINT(Rule)
 #endif /* !YYDEBUG */
 
+
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
 #ifndef YYINITDEPTH
 #  define YYINITDEPTH 200
@@ -799,6 +815,7 @@ int yydebug;
 #ifndef YYMAXDEPTH
 #  define YYMAXDEPTH 10000
 #endif
+
 
 #if YYERROR_VERBOSE
 
@@ -992,6 +1009,7 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
 }
 #endif /* YYERROR_VERBOSE */
 
+
 /*-----------------------------------------------.
 | Release the memory associated to this symbol.  |
 `-----------------------------------------------*/
@@ -1037,6 +1055,7 @@ int yyparse(Sdf_PathParserContext *context);
 int yyparse();
 #  endif
 #endif /* ! YYPARSE_PARAM */
+
 
 /*-------------------------.
 | yyparse or yypush_parse.  |
@@ -1267,6 +1286,7 @@ yybackup:
 
   goto yynewstate;
 
+
 /*-----------------------------------------------------------.
 | yydefault -- do the default action for the current state.  |
 `-----------------------------------------------------------*/
@@ -1275,6 +1295,7 @@ yydefault:
   if (yyn == 0)
     goto yyerrlab;
   goto yyreduce;
+
 
 /*-----------------------------.
 | yyreduce -- Do a reduction.  |
@@ -1292,6 +1313,7 @@ yyreduce:
      unconditionally makes the parser a bit smaller, and it avoids a
      GCC warning that YYVAL may be used uninitialized.  */
   yyval = yyvsp[1 - yylen];
+
 
   YY_REDUCE_PRINT(yyn);
   switch (yyn) {
@@ -1599,6 +1621,7 @@ yyreduce:
       ;
     } break;
 
+
 /* Line 1455 of yacc.c  */
 #line 1748 "wabi/usd/sdf/path.tab.cpp"
     default:
@@ -1625,6 +1648,7 @@ yyreduce:
     yystate = yydefgoto[yyn - YYNTOKENS];
 
   goto yynewstate;
+
 
 /*------------------------------------.
 | yyerrlab -- here on detecting error |
@@ -1665,6 +1689,7 @@ yyerrlab:
 #endif
   }
 
+
   if (yyerrstatus == 3) {
     /* If just tried and failed to reuse lookahead token after an
  error, discard it.  */
@@ -1682,6 +1707,7 @@ yyerrlab:
   /* Else will try to reuse lookahead token after shifting the error
      token.  */
   goto yyerrlab1;
+
 
 /*---------------------------------------------------.
 | yyerrorlab -- error raised explicitly by YYERROR.  |
@@ -1701,6 +1727,7 @@ yyerrorlab:
   YY_STACK_PRINT(yyss, yyssp);
   yystate = *yyssp;
   goto yyerrlab1;
+
 
 /*-------------------------------------------------------------.
 | yyerrlab1 -- common code for both syntax error and YYERROR.  |
@@ -1723,6 +1750,7 @@ yyerrlab1:
     if (yyssp == yyss)
       YYABORT;
 
+
     yydestruct("Error: popping", yystos[yystate], yyvsp, context);
     YYPOPSTACK(1);
     yystate = *yyssp;
@@ -1731,11 +1759,13 @@ yyerrlab1:
 
   *++yyvsp = yylval;
 
+
   /* Shift the error token.  */
   YY_SYMBOL_PRINT("Shifting", yystos[yyn], yyvsp, yylsp);
 
   yystate = yyn;
   goto yynewstate;
+
 
 /*-------------------------------------.
 | yyacceptlab -- YYACCEPT comes here.  |
@@ -1784,8 +1814,10 @@ yyreturn:
   return YYID(yyresult);
 }
 
+
 /* Line 1675 of yacc.c  */
 #line 280 "wabi/usd/sdf/path.yy"
+
 
 static void pathYyerror(Sdf_PathParserContext *context, const char *msg)
 {

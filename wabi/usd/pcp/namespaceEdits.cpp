@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/namespaceEdits.h"
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/pcp/debugCodes.h"
 #include "wabi/usd/pcp/dependencies.h"
 #include "wabi/usd/pcp/layerStack.h"
-#include "wabi/wabi.h"
+#include "wabi/base/trace/trace.h"
 
 #include <algorithm>
 #include <utility>

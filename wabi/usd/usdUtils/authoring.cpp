@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdUtils/authoring.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/authoring.h"
 
 #include "wabi/base/gf/math.h"
 #include "wabi/base/work/loops.h"
@@ -34,8 +34,8 @@
 #include "wabi/usd/usd/primRange.h"
 #include "wabi/usd/usd/stage.h"
 
-#include <algorithm>
 #include <vector>
+#include <algorithm>
 
 WABI_NAMESPACE_BEGIN
 
@@ -324,6 +324,7 @@ UsdCollectionAPI UsdUtilsAuthorCollection(const TfToken &collectionName,
 
   return collection;
 }
+
 
 std::vector<UsdCollectionAPI> UsdUtilsCreateCollections(
   const std::vector<std::pair<TfToken, SdfPathSet>> &assignments,

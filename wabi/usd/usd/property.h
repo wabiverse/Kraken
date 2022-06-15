@@ -24,17 +24,18 @@
 #ifndef WABI_USD_USD_PROPERTY_H
 #define WABI_USD_USD_PROPERTY_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/object.h"
 #include "wabi/usd/usd/prim.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/vt/value.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/propertySpec.h"
+#include "wabi/base/vt/value.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdProperty;
 
@@ -299,6 +300,7 @@ class UsdProperty : public UsdObject
     : UsdObject(objType, prim, proxyPrimPath, propName)
   {}
 };
+
 
 WABI_NAMESPACE_END
 

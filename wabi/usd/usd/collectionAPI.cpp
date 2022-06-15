@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usd/collectionAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 

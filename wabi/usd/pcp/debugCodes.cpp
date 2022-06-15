@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/debugCodes.h"
 #include "wabi/base/arch/functionLite.h"
 #include "wabi/base/tf/debug.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -21,11 +21,11 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/cleanupTracker.h"
 #include "wabi/usd/sdf/cleanupEnabler.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/instantiateSingleton.h"
 #include "wabi/base/tf/weakPtr.h"
@@ -50,6 +50,7 @@ This::Sdf_CleanupTracker()
 // CODE_COVERAGE_OFF -- singleton instance
 This::~Sdf_CleanupTracker() {}
 // CODE_COVERAGE_ON
+
 
 void This::AddSpecIfTracking(SdfSpecHandle const &spec)
 {

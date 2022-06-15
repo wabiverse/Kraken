@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 // GENERATED FILE.  DO NOT EDIT.
-#include "wabi/usd/usdGeom/tokens.h"
 #include <boost/python/class.hpp>
+#include "wabi/usd/usdGeom/tokens.h"
 
 WABI_NAMESPACE_USING
 

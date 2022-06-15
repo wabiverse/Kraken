@@ -22,6 +22,7 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/targetIndex.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/layerStack.h"
@@ -29,7 +30,6 @@
 #include "wabi/usd/pcp/pathTranslation.h"
 #include "wabi/usd/pcp/primIndex.h"
 #include "wabi/usd/pcp/propertyIndex.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/listOp.h"
 #include "wabi/usd/sdf/propertySpec.h"

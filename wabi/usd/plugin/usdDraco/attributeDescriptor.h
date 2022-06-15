@@ -25,17 +25,19 @@
 #ifndef WABI_USD_PLUGIN_USD_DRACO_ATTRIBUTE_DESCRIPTOR_H
 #define WABI_USD_PLUGIN_USD_DRACO_ATTRIBUTE_DESCRIPTOR_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/usd/sdf/valueTypeName.h"
 #include "wabi/usd/usdGeom/mesh.h"
 #include "wabi/usd/usdGeom/primvarsAPI.h"
-#include "wabi/wabi.h"
 
 #include <draco/attributes/geometry_attribute.h>
 #include <draco/attributes/point_attribute.h>
 #include <draco/mesh/mesh.h>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdDracoAttributeDescriptor
 ///
@@ -301,6 +303,7 @@ class UsdDracoAttributeDescriptor
   const UsdTimeCode _indicesTime;
   const TfToken _interpolation;
 };
+
 
 WABI_NAMESPACE_END
 

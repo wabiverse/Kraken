@@ -24,16 +24,17 @@
 #ifndef WABI_USD_USD_EDIT_TARGET_H
 #define WABI_USD_USD_EDIT_TARGET_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
 #include "wabi/usd/pcp/layerStackIdentifier.h"
 #include "wabi/usd/pcp/mapFunction.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/primSpec.h"
-#include "wabi/usd/usd/api.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DECLARE_WEAK_PTRS(UsdStage);
 
@@ -193,6 +194,7 @@ class UsdEditTarget
   SdfLayerHandle _layer;
   PcpMapFunction _mapping;
 };
+
 
 WABI_NAMESPACE_END
 

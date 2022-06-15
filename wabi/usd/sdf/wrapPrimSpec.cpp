@@ -23,25 +23,26 @@
 //
 /// \file wrapPrimSpec.cpp
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/pyChildrenProxy.h"
 #include "wabi/usd/sdf/pySpec.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/variantSetSpec.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyEnum.h"
 #include "wabi/base/tf/pyPtrHelpers.h"
 #include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/token.h"
 
-#include <boost/function.hpp>
 #include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
+#include <boost/function.hpp>
 
 using namespace boost::python;
 
@@ -123,12 +124,12 @@ namespace
   {
     SdfRelocatesMap reloMap;
 
-    list keys = d.keys();
-    int numKeys = len(d);
-
-    for (int i = 0; i < numKeys; i++) {
-      SdfPath key = extract<SdfPath>(keys[i]);
-      SdfPath val = extract<SdfPath>(d[keys[i]]);
+    auto items = d.attr("items")();
+    auto end = stl_input_iterator<tuple>();
+    for (auto it = stl_input_iterator<tuple>(items); it != end; ++it) {
+      tuple kv = *it;
+      SdfPath key = extract<SdfPath>(kv[0]);
+      SdfPath val = extract<SdfPath>(kv[1]);
 
       reloMap[key] = val;
     }

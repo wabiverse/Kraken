@@ -26,12 +26,12 @@
 
 /// \file sdf/pyChildrenProxy.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/childrenProxy.h"
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/pyError.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/usd/sdf/childrenProxy.h"
-#include "wabi/wabi.h"
 #include <boost/python.hpp>
 #include <boost/python/slice.hpp>
 

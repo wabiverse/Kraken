@@ -24,9 +24,9 @@
 #ifndef WABI_USD_USD_CRATE_INFO_H
 #define WABI_USD_USD_CRATE_INFO_H
 
-#include "wabi/base/tf/token.h"
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/base/tf/token.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -35,6 +35,7 @@
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdCrateInfo
 ///
@@ -98,6 +99,7 @@ class UsdCrateInfo
   struct _Impl;
   std::shared_ptr<_Impl> _impl;
 };
+
 
 WABI_NAMESPACE_END
 

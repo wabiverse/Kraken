@@ -119,7 +119,7 @@ struct NdrNodeDiscoveryResult;
 ///         multiple parser plugins exist in the same folder, you can continue
 ///         adding additional plugins under the `Types` key in the JSON. More
 ///         detailed information about the plugInfo.json format can be found in
-///         the documentation for the `plug` library (in pxr/base).
+///         the documentation for the `plug` library (in wabi/base).
 ///     </li>
 /// </ul>
 class NdrParserPlugin : public TfWeakBase

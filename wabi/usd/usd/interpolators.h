@@ -24,12 +24,12 @@
 #ifndef WABI_USD_USD_INTERPOLATORS_H
 #define WABI_USD_USD_INTERPOLATORS_H
 
-#include "wabi/base/gf/math.h"
-#include "wabi/usd/sdf/layer.h"
-#include "wabi/usd/usd/clipSet.h"
-#include "wabi/usd/usd/common.h"
-#include "wabi/usd/usd/valueUtils.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/common.h"
+#include "wabi/usd/usd/clipSet.h"
+#include "wabi/usd/usd/valueUtils.h"
+#include "wabi/usd/sdf/layer.h"
+#include "wabi/base/gf/math.h"
 
 WABI_NAMESPACE_BEGIN
 

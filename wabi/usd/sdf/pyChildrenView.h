@@ -26,11 +26,11 @@
 
 /// \file sdf/pyChildrenView.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/childrenView.h"
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/usd/sdf/childrenView.h"
-#include "wabi/wabi.h"
 #include <boost/python.hpp>
 
 WABI_NAMESPACE_BEGIN

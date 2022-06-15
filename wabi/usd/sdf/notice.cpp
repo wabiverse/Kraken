@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/sdf/notice.h"
-#include "wabi/base/tf/type.h"
-#include "wabi/usd/sdf/layer.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/notice.h"
+#include "wabi/usd/sdf/layer.h"
+#include "wabi/base/tf/type.h"
 
 WABI_NAMESPACE_BEGIN
 

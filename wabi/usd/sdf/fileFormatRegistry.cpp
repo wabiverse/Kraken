@@ -24,16 +24,16 @@
 ///
 /// \file Sdf/fileFormatRegistry.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/fileFormatRegistry.h"
+#include "wabi/usd/sdf/debugCodes.h"
+#include "wabi/usd/sdf/fileFormat.h"
 #include "wabi/base/plug/plugin.h"
 #include "wabi/base/plug/registry.h"
+#include "wabi/base/trace/trace.h"
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/scopeDescription.h"
 #include "wabi/base/tf/staticTokens.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/usd/sdf/debugCodes.h"
-#include "wabi/usd/sdf/fileFormat.h"
-#include "wabi/wabi.h"
 
 using std::string;
 using std::vector;
@@ -41,8 +41,11 @@ using std::vector;
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PRIVATE_TOKENS(_PlugInfoKeyTokens,
-                         ((FormatId, "formatId"))((Extensions,
-                                                   "extensions"))((Target, "target"))((Primary, "primary")));
+    ((FormatId,   "formatId"))
+    ((Extensions, "extensions"))
+    ((Target,     "target"))
+    ((Primary,    "primary"))
+    );
 
 SdfFileFormatRefPtr Sdf_FileFormatRegistry::_Info::GetFileFormat() const
 {

@@ -24,12 +24,12 @@
 ///
 /// \file Sdf/wrapFileFormat.cpp
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/fileFormat.h"
 #include "wabi/base/tf/pyCall.h"
 #include "wabi/base/tf/pyPtrHelpers.h"
-#include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyStaticTokens.h"
-#include "wabi/usd/sdf/fileFormat.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/scope.hpp>
@@ -72,29 +72,6 @@ namespace
     mutable TfPyCall<SdfFileFormatRefPtr> _factory;
   };
 
-  // Helper function for registering a file format from Python.
-  // Shamelessly stolen from Mf/wrapMapper.cpp and Mf/wrapExpression.cpp.
-  void _RegisterFileFormat(object classObject)
-  {
-    std::string typeName = extract<std::string>(classObject.attr("__name__"));
-
-    TfType fileFormatType = TfType_DefinePythonTypeAndBases(classObject);
-
-    if (fileFormatType.IsUnknown()) {
-      // CODE_COVERAGE_OFF - The code above registers this TfType, and
-      // currently never fails.
-      TF_CODING_ERROR("Could not define Python type for %s.", typeName.c_str());
-      return;
-      // CODE_COVERAGE_ON
-    }
-
-    // Set an type alias under MfPrim with the module-less name of the
-    // Python class.
-    fileFormatType.AddAlias(TfType::Find<SdfFileFormat>(), typeName);
-
-    // Register the factory function with the type.
-    fileFormatType.SetFactory(Sdf_PyFileFormatFactory::New(classObject));
-  }
 
 }  // anonymous namespace
 
@@ -148,8 +125,7 @@ void wrapFileFormat()
            (arg("extension"), arg("args")))
       .staticmethod("FindByExtension")
 
-      .def("RegisterFileFormat", &_RegisterFileFormat)
-      .staticmethod("RegisterFileFormat");
+    ;
 
   TF_PY_WRAP_PUBLIC_TOKENS("Tokens", SdfFileFormatTokens, SDF_FILE_FORMAT_TOKENS);
 }

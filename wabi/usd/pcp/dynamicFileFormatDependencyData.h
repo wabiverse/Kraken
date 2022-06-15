@@ -24,10 +24,10 @@
 #ifndef WABI_USD_PCP_DYNAMIC_FILE_FORMAT_DEPENDENCY_DATA_H
 #define WABI_USD_PCP_DYNAMIC_FILE_FORMAT_DEPENDENCY_DATA_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/pcp/api.h"
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/usd/pcp/api.h"
-#include "wabi/wabi.h"
 
 #include <memory>
 #include <vector>

@@ -26,11 +26,11 @@
 
 /// \file sdf/relationshipSpec.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareSpec.h"
 #include "wabi/usd/sdf/propertySpec.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

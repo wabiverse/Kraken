@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdSkel/bakeSkinning.h"
 
 #include "wabi/base/gf/matrix4d.h"
@@ -51,8 +44,8 @@
 #include "wabi/usd/usdGeom/modelAPI.h"
 #include "wabi/usd/usdGeom/pointBased.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/usd/usdGeom/xformCache.h"
 #include "wabi/usd/usdGeom/xformable.h"
+#include "wabi/usd/usdGeom/xformCache.h"
 #include "wabi/usd/usdSkel/animQuery.h"
 #include "wabi/usd/usdSkel/binding.h"
 #include "wabi/usd/usdSkel/bindingAPI.h"
@@ -70,9 +63,16 @@
 #include <unordered_map>
 #include <vector>
 
+
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, ((xformOpTransform, "xformOp:transform"))(Xform));
+
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((xformOpTransform, "xformOp:transform"))
+    (Xform)
+);
+
 
 /*
 
@@ -117,8 +117,10 @@ TF_DEFINE_PRIVATE_TOKENS(_tokens, ((xformOpTransform, "xformOp:transform"))(Xfor
 
 */
 
+
 namespace
 {
+
 
   std::string _DeformationFlagsToString(int flags, const char *indent)
   {
@@ -140,9 +142,11 @@ namespace
       bool(flags & UsdSkelBakeSkinningParms::DeformNormalsWithBlendShapes));
   }
 
+
   // ------------------------------------------------------------
   // _Task
   // ------------------------------------------------------------
+
 
   /// Helper for managing exec of a task over time.
   /// This class only manages the state of the computation; The actual computation
@@ -271,9 +275,11 @@ namespace
     bool _hasSampleAtCurrentTime : 1;
   };
 
+
   // ------------------------------------------------------------
   // _OutputHolder
   // ------------------------------------------------------------
+
 
   /// Helper for holding a pending output value.
   template<class T> struct _OutputHolder
@@ -287,9 +293,11 @@ namespace
     bool hasSampleAtCurrentTime;
   };
 
+
   // ------------------------------------------------------------
   // _AttrWriter
   // ------------------------------------------------------------
+
 
   /// Helper for efficiently writing attribute values through Sdf.
   struct _AttrWriter
@@ -316,6 +324,7 @@ namespace
     SdfPath _primPath;
     TfToken _name;
   };
+
 
   const SdfAttributeSpecHandle _CreateAttribute(const SdfPrimSpecHandle &owner,
                                                 const TfToken &name,
@@ -346,6 +355,7 @@ namespace
     return TfNullPtr;
   }
 
+
   bool _AttrWriter::Define(const SdfPrimSpecHandle &prim,
                            const TfToken &name,
                            const SdfValueTypeName &typeName,
@@ -362,15 +372,18 @@ namespace
     return false;
   }
 
+
   template<class T> size_t _GetSizeEstimate(const VtArray<T> &value)
   {
     return value.size() * sizeof(T) + sizeof(VtArray<T>);
   }
 
+
   template<class T> size_t _GetSizeEstimate(const T &value)
   {
     return sizeof(T);
   }
+
 
   template<class T> size_t _AttrWriter::Set(const T &value, UsdTimeCode time)
   {
@@ -385,9 +398,11 @@ namespace
     return _GetSizeEstimate(value);
   }
 
+
   // ------------------------------------------------------------
   // _SkelAdapter
   // ------------------------------------------------------------
+
 
   /// Object which interfaces with USD to pull on skel animation data,
   /// and cache data where appropriate.
@@ -551,10 +566,13 @@ namespace
     std::vector<bool> _timeSampleMask;
   };
 
+
   using _SkelAdapterRefPtr = std::shared_ptr<_SkelAdapter>;
+
 
   namespace
   {
+
 
     bool _WorldTransformMightBeTimeVarying(const UsdPrim &prim, UsdGeomXformCache *xformCache)
     {
@@ -568,6 +586,7 @@ namespace
       }
       return false;
     }
+
 
     void _ExtendWorldTransformTimeSamples(const UsdPrim &prim,
                                           const GfInterval &interval,
@@ -588,7 +607,9 @@ namespace
       }
     }
 
+
   }  // namespace
+
 
   _SkelAdapter::_SkelAdapter(const UsdSkelBakeSkinningParms &parms,
                              const UsdSkelSkeletonQuery &skelQuery,
@@ -670,6 +691,7 @@ namespace
         _skelLocalToWorldXformTask.GetDescription().c_str());
   }
 
+
   void _SkelAdapter::ExtendTimeSamples(const GfInterval &interval, std::vector<double> *times)
   {
     std::vector<double> tmpTimes;
@@ -691,6 +713,7 @@ namespace
       _ExtendWorldTransformTimeSamples(GetPrim(), interval, times);
     }
   }
+
 
   void _SkelAdapter::UpdateTransform(const size_t timeIndex, UsdGeomXformCache *xfCache)
   {
@@ -716,12 +739,14 @@ namespace
     }
   }
 
+
   void _SkelAdapter::_ComputeSkinningXforms(const UsdTimeCode time)
   {
     _skinningXformsTask.Run(time, GetPrim(), "compute skinning xforms", [&](UsdTimeCode time) {
       return _skelQuery.ComputeSkinningTransforms(&_skinningXforms, time);
     });
   }
+
 
   void _SkelAdapter::_ComputeSkinningInvTransposeXforms(const UsdTimeCode time)
   {
@@ -739,6 +764,7 @@ namespace
     }
   }
 
+
   void _SkelAdapter::_ComputeBlendShapeWeights(const UsdTimeCode time)
   {
     _blendShapeWeightsTask
@@ -746,6 +772,7 @@ namespace
         return _skelQuery.GetAnimQuery().ComputeBlendShapeWeights(&_blendShapeWeights, time);
       });
   }
+
 
   void _SkelAdapter::UpdateAnimation(const UsdTimeCode time, const size_t timeIndex)
   {
@@ -766,9 +793,11 @@ namespace
     }
   }
 
+
   // ------------------------------------------------------------
   // _SkinningAdapter
   // ------------------------------------------------------------
+
 
   /// Object used to store the output of skinning.
   /// This object is bound to a single skinnable primitive, and manages
@@ -861,6 +890,7 @@ namespace
 
     bool _ComputeRestPoints(const UsdTimeCode time);
     bool _ComputeRestNormals(const UsdTimeCode time);
+    bool _ComputeFaceVertexIndices(const UsdTimeCode time);
     bool _ComputeGeomBindXform(const UsdTimeCode time);
     bool _ComputeJointInfluences(const UsdTimeCode time);
 
@@ -898,6 +928,11 @@ namespace
     _Task _restNormalsTask;
     VtVec3fArray _restNormals;
     UsdAttributeQuery _restNormalsQuery;
+
+    // Topology for face-varying normals.
+    _Task _faceVertexIndicesTask;
+    VtIntArray _faceVertexIndices;
+    UsdAttributeQuery _faceVertexIndicesQuery;
 
     // Geom bind transform.
     _Task _geomBindXformTask;
@@ -942,7 +977,9 @@ namespace
     _AttrWriter _xformWriter;
   };
 
+
   using _SkinningAdapterRefPtr = std::shared_ptr<_SkinningAdapter>;
+
 
   _SkinningAdapter::_SkinningAdapter(const UsdSkelBakeSkinningParms &parms,
                                      const UsdSkelSkinningQuery &skinningQuery,
@@ -981,9 +1018,25 @@ namespace
       if (parms.deformationFlags & UsdSkelBakeSkinningParms::ModifiesNormals) {
         _restNormalsQuery = UsdAttributeQuery(pointBased.GetNormalsAttr());
         const TfToken &normalsInterp = pointBased.GetNormalsInterpolation();
-        // Can only process vertex/varying normals.
-        if (!_restNormalsQuery.HasAuthoredValue() ||
-            (normalsInterp != UsdGeomTokens->vertex && normalsInterp != UsdGeomTokens->varying)) {
+
+        // Face-varying normals are supported for mesh prims and require
+        // the faceVertexIndices attribute.
+        // Otherwise, can only process vertex/varying normals.
+        if (normalsInterp == UsdGeomTokens->faceVarying &&
+            skinningQuery.GetPrim().IsA<UsdGeomMesh>()) {
+
+          const UsdGeomMesh mesh(skinningQuery.GetPrim());
+          _faceVertexIndicesQuery = UsdAttributeQuery(mesh.GetFaceVertexIndicesAttr());
+
+          if (!_restNormalsQuery.HasAuthoredValue() ||
+              !_faceVertexIndicesQuery.HasAuthoredValue()) {
+            _faceVertexIndicesQuery = UsdAttributeQuery();
+            _restNormalsQuery = UsdAttributeQuery();
+          }
+
+        } else if (!_restNormalsQuery.HasAuthoredValue() ||
+                   (normalsInterp != UsdGeomTokens->vertex &&
+                    normalsInterp != UsdGeomTokens->varying)) {
           _restNormalsQuery = UsdAttributeQuery();
         }
       }
@@ -1033,8 +1086,11 @@ namespace
             _flags |= UsdSkelBakeSkinningParms::DeformPointsWithBlendShapes;
           }
         }
+        // Only vertex/varying normals are supported for blendshapes.
+        // Supporting faceVarying normals would require extending the
+        // schema.
         if ((parms.deformationFlags & UsdSkelBakeSkinningParms::DeformNormalsWithBlendShapes) &&
-            _restNormalsQuery) {
+            _restNormalsQuery && !_faceVertexIndicesQuery) {
 
           _subShapeNormalOffsets = _blendShapeQuery->ComputeSubShapeNormalOffsets();
           const bool hasNormalOffsets = std::any_of(_subShapeNormalOffsets.begin(),
@@ -1130,6 +1186,12 @@ namespace
       // Will need rest normals.
       _restNormalsTask.SetActive(true);
       _restNormalsTask.SetMightBeTimeVarying(_restNormalsQuery.ValueMightBeTimeVarying());
+
+      if (_faceVertexIndicesQuery.IsValid()) {
+        _faceVertexIndicesTask.SetActive(true);
+        _faceVertexIndicesTask.SetMightBeTimeVarying(
+          _faceVertexIndicesQuery.ValueMightBeTimeVarying());
+      }
     }
 
     if (_flags & RequiresGeomBindXform) {
@@ -1190,6 +1252,7 @@ namespace
         "[UsdSkelBakeSkinning]\n  Computation state for skinnable prim <%s>:\n"
         "    _restPointsTask: %s\n"
         "    _restNormalsTask: %s\n"
+        "    _faceVertexIndicesTask: %s\n"
         "    _geomBindXformTask: %s\n"
         "    _geomBindInvTransposeXformTask: %s\n"
         "    _jointInfluencesTask: %s\n"
@@ -1199,6 +1262,7 @@ namespace
         _skinningQuery.GetPrim().GetPath().GetText(),
         _restPointsTask.GetDescription().c_str(),
         _restNormalsTask.GetDescription().c_str(),
+        _faceVertexIndicesTask.GetDescription().c_str(),
         _geomBindXformTask.GetDescription().c_str(),
         _geomBindInvTransposeXformTask.GetDescription().c_str(),
         _jointInfluencesTask.GetDescription().c_str(),
@@ -1206,6 +1270,7 @@ namespace
         _parentToWorldXformTask.GetDescription().c_str(),
         _DeformationFlagsToString(_flags, "    ").c_str());
   }
+
 
   void _SkinningAdapter::ExtendTimeSamples(const GfInterval &interval, std::vector<double> *times)
   {
@@ -1217,6 +1282,11 @@ namespace
     }
     if (_restNormalsTask) {
       if (_restNormalsQuery.GetTimeSamplesInInterval(interval, &tmpTimes)) {
+        times->insert(times->end(), tmpTimes.begin(), tmpTimes.end());
+      }
+    }
+    if (_faceVertexIndicesTask) {
+      if (_faceVertexIndicesQuery.GetTimeSamplesInInterval(interval, &tmpTimes)) {
         times->insert(times->end(), tmpTimes.begin(), tmpTimes.end());
       }
     }
@@ -1240,6 +1310,7 @@ namespace
       _ExtendWorldTransformTimeSamples(_skinningQuery.GetPrim().GetParent(), interval, times);
     }
   }
+
 
   size_t _SkinningAdapter::Write(const UsdTimeCode time, const size_t timeIndex)
   {
@@ -1269,6 +1340,7 @@ namespace
     }
     return bytesStored;
   }
+
 
   void _SkinningAdapter::UpdateTransform(const size_t timeIndex, UsdGeomXformCache *xfCache)
   {
@@ -1303,6 +1375,7 @@ namespace
     }
   }
 
+
   bool _SkinningAdapter::_ComputeRestPoints(const UsdTimeCode time)
   {
     return _restPointsTask.Run(time,
@@ -1313,12 +1386,23 @@ namespace
                                });
   }
 
+
   bool _SkinningAdapter::_ComputeRestNormals(const UsdTimeCode time)
   {
     return _restNormalsTask.Run(time, GetPrim(), "compute rest normals", [&](UsdTimeCode time) {
       return _restNormalsQuery.Get(&_restNormals, time);
     });
   }
+
+
+  bool _SkinningAdapter::_ComputeFaceVertexIndices(const UsdTimeCode time)
+  {
+    return _faceVertexIndicesTask
+      .Run(time, GetPrim(), "compute face vertex indices", [&](UsdTimeCode time) {
+        return _faceVertexIndicesQuery.Get(&_faceVertexIndices, time);
+      });
+  }
+
 
   bool _SkinningAdapter::_ComputeGeomBindXform(const UsdTimeCode time)
   {
@@ -1337,6 +1421,7 @@ namespace
     return true;
   }
 
+
   bool _SkinningAdapter::_ComputeJointInfluences(const UsdTimeCode time)
   {
     return _jointInfluencesTask
@@ -1344,6 +1429,7 @@ namespace
         return _skinningQuery.ComputeJointInfluences(&_jointIndices, &_jointWeights, time);
       });
   }
+
 
   void _SkinningAdapter::_DeformWithBlendShapes()
   {
@@ -1395,6 +1481,7 @@ namespace
     }
   }
 
+
   void _SkinningAdapter::_DeformWithLBS(const UsdTimeCode time, const size_t timeIndex)
   {
     if (!_ComputeGeomBindXform(time) || !_ComputeJointInfluences(time)) {
@@ -1438,6 +1525,7 @@ namespace
       _DeformXformWithLBS(skelLocalToWorldXform);
     }
   }
+
 
   void _SkinningAdapter::_DeformPointsWithLBS(const GfMatrix4d &skelToGprimXf)
   {
@@ -1490,6 +1578,7 @@ namespace
     });
   }
 
+
   void _SkinningAdapter::_DeformNormalsWithLBS(const GfMatrix4d &skelToGprimXf)
   {
     TRACE_FUNCTION();
@@ -1526,13 +1615,25 @@ namespace
       _normals.value = _restNormals;
     }
 
-    _normals.hasSampleAtCurrentTime = UsdSkelSkinNormalsLBS(
-      _geomBindInvTransposeXform,
-      xformsForPrim,
-      _jointIndices,
-      _jointWeights,
-      _skinningQuery.GetNumInfluencesPerComponent(),
-      _normals.value);
+    if (_faceVertexIndicesTask) {
+      _normals.hasSampleAtCurrentTime = UsdSkelSkinFaceVaryingNormalsLBS(
+        _geomBindInvTransposeXform,
+        xformsForPrim,
+        _jointIndices,
+        _jointWeights,
+        _skinningQuery.GetNumInfluencesPerComponent(),
+        _faceVertexIndices,
+        _normals.value);
+    } else {
+      _normals.hasSampleAtCurrentTime = UsdSkelSkinNormalsLBS(
+        _geomBindInvTransposeXform,
+        xformsForPrim,
+        _jointIndices,
+        _jointWeights,
+        _skinningQuery.GetNumInfluencesPerComponent(),
+        _normals.value);
+    }
+
     if (!_normals.hasSampleAtCurrentTime) {
       return;
     }
@@ -1549,6 +1650,7 @@ namespace
                           n = n * skelToGprimInvTransposeXform;
                         });
   }
+
 
   void _SkinningAdapter::_DeformXformWithLBS(const GfMatrix4d &skelLocalToWorldXform)
   {
@@ -1603,6 +1705,7 @@ namespace
     _xform.value = _xform.value * skelLocalToWorldXform * _parentToWorldXform.GetInverse();
   }
 
+
   void _SkinningAdapter::Update(const UsdTimeCode time, const size_t timeIndex)
   {
     TRACE_FUNCTION();
@@ -1626,6 +1729,7 @@ namespace
     // Compute inputs.
     _ComputeRestPoints(time);
     _ComputeRestNormals(time);
+    _ComputeFaceVertexIndices(time);
 
     // Blend shapes precede LBS skinning.
     if (_flags & UsdSkelBakeSkinningParms::DeformWithBlendShapes) {
@@ -1643,6 +1747,7 @@ namespace
     }
   }
 
+
   void _UnionTimes(const std::vector<double> additionalTimes,
                    std::vector<double> *times,
                    std::vector<double> *tmpUnionTimes)
@@ -1656,6 +1761,7 @@ namespace
     tmpUnionTimes->resize(std::distance(tmpUnionTimes->begin(), it));
     times->swap(*tmpUnionTimes);
   }
+
 
   /// Create skel and skinning adapters from UsdSkelBinding objects to help
   /// wrangle I/O.
@@ -1727,6 +1833,7 @@ namespace
     return true;
   }
 
+
   /// Compute an array of time samples over \p interval.
   /// The samples are added based on the expected sampling rate for playback.
   /// I.e., the exact set of time codes that we expect to be queried when
@@ -1767,6 +1874,7 @@ namespace
     }
     return times;
   }
+
 
   /// Compute the full set of time samples at which data must be sampled.
   /// A mask is applied to each SkelAdapter indicating at what times within
@@ -1895,6 +2003,7 @@ namespace
     return times;
   }
 
+
   /// Convert all SkelRoot prims to Xform prims.
   /// This disables the effect of skels, resulting in a normal geometry hierarchy.
   void _ConvertSkelRootsToXforms(const UsdSkelBakeSkinningParms &parms)
@@ -1925,6 +2034,7 @@ namespace
       }
     }
   }
+
 
   /// Update extents of any prims whose points were modified by skinning,
   /// but which weren't directly updated by the main skinning loop.
@@ -1987,6 +2097,7 @@ namespace
     }
   }
 
+
   struct _HashComparePrim
   {
     bool operator()(const UsdPrim &a, const UsdPrim &b) const
@@ -1998,6 +2109,7 @@ namespace
       return hash_value(prim);
     }
   };
+
 
   /// Update extents hints of any ancestor models of skinned prims
   /// that already define an extents hint.
@@ -2094,6 +2206,7 @@ namespace
     }
   }
 
+
   bool _SaveLayers(const UsdSkelBakeSkinningParms &parms)
   {
     TRACE_FUNCTION();
@@ -2112,7 +2225,9 @@ namespace
     return !error;
   }
 
+
 }  // namespace
+
 
 bool UsdSkelBakeSkinning(const UsdSkelCache &skelCache,
                          const UsdSkelBakeSkinningParms &parms,
@@ -2294,6 +2409,7 @@ bool UsdSkelBakeSkinning(const UsdSkelCache &skelCache,
   return !parms.saveLayers || _SaveLayers(parms);
 }
 
+
 bool UsdSkelBakeSkinning(const UsdPrimRange &range, const GfInterval &interval)
 {
   UsdSkelBakeSkinningParms parms;
@@ -2342,6 +2458,7 @@ bool UsdSkelBakeSkinning(const UsdPrimRange &range, const GfInterval &interval)
   return UsdSkelBakeSkinning(skelCache, parms, interval);
 }
 
+
 bool UsdSkelBakeSkinning(const UsdSkelRoot &skelRoot, const GfInterval &interval)
 {
   if (skelRoot.GetPrim().IsInstance() || skelRoot.GetPrim().IsInstanceProxy()) {
@@ -2375,5 +2492,6 @@ bool UsdSkelBakeSkinning(const UsdSkelRoot &skelRoot, const GfInterval &interval
   }
   return false;
 }
+
 
 WABI_NAMESPACE_END

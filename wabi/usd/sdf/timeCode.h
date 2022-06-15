@@ -26,8 +26,8 @@
 
 /// \file sdf/timeCode.h
 
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
 
 #include <algorithm>
 #include <functional>

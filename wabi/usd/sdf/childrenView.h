@@ -26,16 +26,16 @@
 
 /// \file sdf/childrenView.h
 
-#include "wabi/base/tf/iterator.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/children.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/iterator.h"
 
-#include <algorithm>
 #include <boost/compressed_pair.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
+#include <algorithm>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN

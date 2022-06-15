@@ -26,15 +26,15 @@
 
 /// \file usdAbc/alembicUtil.h
 
-#include "wabi/base/arch/demangle.h"
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/base/vt/array.h"
-#include "wabi/base/vt/value.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/plugin/usdAbc/alembicReader.h"
 #include "wabi/usd/sdf/abstractData.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/array.h"
+#include "wabi/base/vt/value.h"
+#include "wabi/base/arch/demangle.h"
+#include "wabi/base/tf/staticTokens.h"
 #include <Alembic/Abc/ICompoundProperty.h>
 #include <Alembic/Abc/ISampleSelector.h>
 #include <boost/call_traits.hpp>
@@ -47,12 +47,13 @@
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/variant.hpp>
 
-#include <algorithm>
 #include <functional>
+#include <algorithm>
 #include <iosfwd>
 #include <map>
 #include <string>
 #include <vector>
+
 
 namespace Alembic
 {
@@ -66,14 +67,15 @@ namespace Alembic
   }    // namespace Util
 }  // end namespace Alembic
 
+
 WABI_NAMESPACE_BEGIN
+
 
 class SdfAbstractDataValue;
 
 /// Flags for readers and writers.
 #define USDABC_ALEMBIC_CONTEXT_FLAG_NAMES \
   (verbose)(expandInstances)(disableInstancing)(promoteInstances) /* end */
-
 TF_DECLARE_PUBLIC_TOKENS(UsdAbc_AlembicContextFlagNames, USDABC_ALEMBIC_CONTEXT_FLAG_NAMES);
 
 // A namespace so we can bring Alembic namespaces into it.
@@ -87,7 +89,6 @@ namespace UsdAbc_AlembicUtil
 #define USD_ABC_PRIM_TYPE_NAMES \
   (BasisCurves)(Camera)(        \
     HermiteCurves)(Mesh)(NurbsCurves)(Points)(PolyMesh)(PseudoRoot)(Scope)(Xform)(GeomSubset) /* end */
-
   TF_DECLARE_PUBLIC_TOKENS(UsdAbcPrimTypeNames, USD_ABC_PRIM_TYPE_NAMES);
 
 // Property names in the UsdGeom schema.
@@ -101,13 +102,10 @@ namespace UsdAbc_AlembicUtil
   USD_ABC_GPRIM_NAMES          \
   USD_ABC_POINTBASED_NAMES     \
   /* end */
-
   TF_DECLARE_PUBLIC_TOKENS(UsdAbcPropertyNames, USD_ABC_PROPERTY_NAMES);
 
-#define USD_ABC_CUSTOM_METADATA                                   \
-  (gprimDataRender)(riName)(riType)(singleSampleAsDefault) /* end \
-                                                            */
-
+#define USD_ABC_CUSTOM_METADATA (gprimDataRender)(riName)(riType)(singleSampleAsDefault) /* end \
+                                                                                          */
   TF_DECLARE_PUBLIC_TOKENS(UsdAbcCustomMetadata, USD_ABC_CUSTOM_METADATA);
 
   //
@@ -708,6 +706,7 @@ namespace UsdAbc_AlembicUtil
     }
   };
 
+
   // Construct matrix.
   template<> struct _ConvertPODToUsd<GfMatrix4d, float32_t, 16>
   {
@@ -1054,6 +1053,7 @@ namespace UsdAbc_AlembicUtil
   }
 
 }  // namespace UsdAbc_AlembicUtil
+
 
 WABI_NAMESPACE_END
 

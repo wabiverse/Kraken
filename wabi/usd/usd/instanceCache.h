@@ -24,14 +24,14 @@
 #ifndef WABI_USD_USD_INSTANCE_CACHE_H
 #define WABI_USD_USD_INSTANCE_CACHE_H
 
-#include "wabi/usd/usd/instanceKey.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/instanceKey.h"
 
-#include "wabi/base/tf/hashmap.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/base/tf/hashmap.h"
 
+#include <tbb/mutex.h>
 #include <map>
-#include <mutex>
 #include <unordered_map>
 #include <vector>
 

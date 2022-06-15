@@ -24,6 +24,7 @@
 #ifndef WABI_USD_SDF_LIST_EDITOR_H
 #define WABI_USD_SDF_LIST_EDITOR_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/usd/sdf/allowed.h"
 #include "wabi/usd/sdf/declareHandles.h"
@@ -31,7 +32,6 @@
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>

@@ -30,10 +30,10 @@
 /// Future additions might include full-on dependency extraction, queries like
 /// "Does this stage contain this asset?", "usd grep" functionality, etc.
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/usd/usdUtils/api.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/usd/stage.h"
 
@@ -41,6 +41,7 @@
 #include "wabi/base/vt/dictionary.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 SDF_DECLARE_HANDLES(SdfLayer);
 
@@ -101,6 +102,7 @@ UsdStageRefPtr UsdUtilsComputeUsdStageStats(const std::string &rootLayerPath, Vt
 ///
 USDUTILS_API
 size_t UsdUtilsComputeUsdStageStats(const UsdStageWeakPtr &stage, VtDictionary *stats);
+
 
 WABI_NAMESPACE_END
 

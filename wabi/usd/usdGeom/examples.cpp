@@ -21,12 +21,13 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/xformable.h"
 #include "wabi/usd/usdGeom/xformCommonAPI.h"
 #include "wabi/usd/usdGeom/xformOp.h"
-#include "wabi/usd/usdGeom/xformable.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 //! [CreateMatrixWithDefault]
 bool CreateMatrixWithDefault(UsdGeomXformable const &gprim, GfMatrix4d const &defValue)
@@ -38,6 +39,7 @@ bool CreateMatrixWithDefault(UsdGeomXformable const &gprim, GfMatrix4d const &de
   }
 }
 //! [CreateMatrixWithDefault]
+
 
 //! [CreateExampleSRT]
 bool CreateExampleSRT(UsdGeomXformable const &gprim)
@@ -64,6 +66,7 @@ bool CreateExampleSRT(UsdGeomXformable const &gprim)
 }
 //! [CreateExampleSRT]
 
+
 //! [CreateSRTWithDefaults]
 bool CreateSRTWithDefaults(UsdGeomXformable const &gprim,
                            GfVec3d const &defTranslate,
@@ -83,6 +86,7 @@ bool CreateSRTWithDefaults(UsdGeomXformable const &gprim,
   }
 }
 //! [CreateSRTWithDefaults]
+
 
 //! [CreateAnimatedTransform]
 bool CreateAnimatedTransform(UsdGeomXformable const &gprim,

@@ -21,9 +21,9 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/usd/usd/inherits.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/inherits.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/operators.hpp>

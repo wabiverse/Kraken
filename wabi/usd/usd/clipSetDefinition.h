@@ -26,11 +26,11 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/gf/vec2d.h"
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/base/vt/array.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/base/vt/array.h"
+#include "wabi/base/gf/vec2d.h"
+#include "wabi/base/tf/declarePtrs.h"
 
 #include <boost/optional.hpp>
 

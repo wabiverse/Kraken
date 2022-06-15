@@ -24,14 +24,15 @@
 #ifndef WABI_USD_USD_WRAP_UTILS_H
 #define WABI_USD_USD_WRAP_UTILS_H
 
-#include "wabi/usd/usd/object.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/object.h"
 
-#include <boost/python/converter/to_python_function_type.hpp>
 #include <boost/python/def_visitor.hpp>
 #include <boost/python/type_id.hpp>
+#include <boost/python/converter/to_python_function_type.hpp>
 
 WABI_NAMESPACE_BEGIN
+
 
 // This boost.python def_visitor is used to wrap UsdObject and its subclasses.
 // It replaces boost.python's to_python converter with one that downcasts to the
@@ -82,6 +83,7 @@ struct Usd_ObjectSubclass : boost::python::def_visitor<Usd_ObjectSubclass>
   // Non-template helper function for _Convert.
   static PyObject *_ConvertHelper(const UsdObject *obj);
 };
+
 
 WABI_NAMESPACE_END
 

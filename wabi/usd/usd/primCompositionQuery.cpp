@@ -21,9 +21,9 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/primCompositionQuery.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/pcp/layerStack.h"
 
@@ -291,6 +291,7 @@ bool UsdPrimCompositionQueryArc::GetIntroducingListEditor(SdfNameEditorProxy *ed
   return true;
 }
 
+
 PcpArcType UsdPrimCompositionQueryArc::GetArcType() const
 {
   return _node.GetArcType();
@@ -445,6 +446,7 @@ static bool _TestArcType(const UsdPrimCompositionQueryArc &compArc,
 
   return arcMask & (1 << compArc.GetArcType());
 }
+
 
 static bool _TestDependencyType(const UsdPrimCompositionQueryArc &compArc,
                                 const UsdPrimCompositionQuery::Filter &filter)

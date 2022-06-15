@@ -26,16 +26,16 @@
 
 /// \file sdf/pyListEditorProxy.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/listEditorProxy.h"
 #include "wabi/usd/sdf/listOp.h"
 #include "wabi/usd/sdf/pyListProxy.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/pyCall.h"
-#include "wabi/base/tf/pyLock.h"
 #include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyLock.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/stringUtils.h"
 #include <boost/python.hpp>

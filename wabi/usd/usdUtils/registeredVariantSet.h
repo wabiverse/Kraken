@@ -26,11 +26,12 @@
 
 /// \file usdUtils/registeredVariantSet.h
 
-#include "wabi/usd/usdUtils/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/api.h"
 #include <string>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdUtilsRegisteredVariantSet
 ///
@@ -54,14 +55,14 @@ struct UsdUtilsRegisteredVariantSet
   /// lowerCamelCase.
   enum class SelectionExportPolicy
   {
-    /// Never
+    /// Never `"never"`
     ///
     /// This variantSet selection is meant to remain entirely within an
     /// application.  This typically represents a "session" variantSelection
     /// that should not be transmitted down the pipeline.
     Never,
 
-    /// IfAuthored
+    /// IfAuthored `"ifAuthored"`
     ///
     /// This variantSet selection should be exported if there is an authored
     /// opinion in the application.  This is only relevant if the
@@ -69,11 +70,15 @@ struct UsdUtilsRegisteredVariantSet
     /// opinions.
     IfAuthored,
 
-    /// Authored
+    /// Authored `"authored"`
     ///
     /// This variantSet selection should always be exported.
     Always,
   };
+
+  /// Returns the export policy from the string.
+  static bool GetSelectionExportPolicyFromString(const std::string &selectionExportPolicyStr,
+                                                 SelectionExportPolicy *selectionExportPolicy);
 
   /// Specifies how to export a variant selection.
   const SelectionExportPolicy selectionExportPolicy;
@@ -90,6 +95,7 @@ struct UsdUtilsRegisteredVariantSet
     return this->name < other.name;
   }
 };
+
 
 WABI_NAMESPACE_END
 

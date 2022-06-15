@@ -23,6 +23,7 @@
 //
 /// \file AttributeSpec.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/accessorHelpers.h"
 #include "wabi/usd/sdf/changeBlock.h"
@@ -32,10 +33,9 @@
 #include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/ostreamMethods.h"
 #include "wabi/base/tf/type.h"
+#include "wabi/base/tf/ostreamMethods.h"
 #include "wabi/base/trace/trace.h"
 
 WABI_NAMESPACE_BEGIN
@@ -88,7 +88,11 @@ SdfAttributeSpecHandle SdfAttributeSpec::New(const SdfPrimSpecHandle &owner,
     const SdfValueTypeName typeInSchema = layer->GetSchema().FindType(
       typeName.GetAsToken().GetString());
     if (!typeInSchema) {
-      TF_CODING_ERROR("Cannot create attribute spec <%s> with invalid type", attrPath.GetText());
+      TF_CODING_ERROR(
+        "Cannot create attribute spec <%s> with type '%s' not "
+        "supported by schema",
+        attrPath.GetText(),
+        typeName.GetAsToken().GetText());
       return result;
     }
   }

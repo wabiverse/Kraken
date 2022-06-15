@@ -10,11 +10,11 @@ wabi_library(usdVol
 
     PUBLIC_CLASSES
         volume
-	    fieldBase
-	    fieldAsset
-	    field3DAsset
-	    openVDBAsset
-	    tokens
+        fieldBase
+        fieldAsset
+        field3DAsset
+        openVDBAsset
+        tokens
 
     PUBLIC_HEADERS
         api.h
@@ -25,11 +25,11 @@ wabi_library(usdVol
     PYMODULE_CPPFILES
         module.cpp
         wrapVolume.cpp
-	    wrapFieldBase.cpp
-	    wrapFieldAsset.cpp
-	    wrapField3DAsset.cpp
-	    wrapOpenVDBAsset.cpp
-	    wrapTokens.cpp
+        wrapFieldBase.cpp
+        wrapFieldAsset.cpp
+        wrapField3DAsset.cpp
+        wrapOpenVDBAsset.cpp
+        wrapTokens.cpp
 
     PYMODULE_FILES
         python/__init__.py
@@ -40,5 +40,5 @@ wabi_library(usdVol
         resources/schema.usda:usdVol/schema.usda
 
     DOXYGEN_FILES
-        docs/overview.dox
+        overview.dox
 )

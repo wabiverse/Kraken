@@ -27,12 +27,14 @@
 
 #include <typeinfo>
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/types.h"
 #include "wabi/usd/usdGeom/mesh.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/wabi.h"
+
 
 WABI_NAMESPACE_BEGIN
+
 
 const std::string UsdDracoAttributeDescriptor::METADATA_NAME_KEY = "name";
 const std::string UsdDracoAttributeDescriptor::METADATA_SHAPE_KEY = "shape";
@@ -462,5 +464,6 @@ std::unique_ptr<draco::AttributeMetadata> UsdDracoAttributeDescriptor::ToMetadat
       metadata->AddEntryString(METADATA_INTERPOLATION_KEY.c_str(), _interpolation.GetString());
   return metadata;
 }
+
 
 WABI_NAMESPACE_END

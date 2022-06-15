@@ -22,19 +22,18 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/path.h"
+#include "wabi/usd/sdf/tokens.h"
+#include "wabi/usd/sdf/instantiatePool.h"
 #include "wabi/base/tf/bitUtils.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/mallocTag.h"
+#include "wabi/base/tf/pxrTslRobinMap/robin_map.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/stl.h"
-#include "wabi/base/tf/functionRef.h"
-#include "wabi/base/tf/pxrTslRobinMap/robin_map.h"
-#include "wabi/usd/sdf/instantiatePool.h"
-#include "wabi/usd/sdf/path.h"
-#include "wabi/usd/sdf/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/trace/trace.h"
 
@@ -62,7 +61,7 @@ static_assert(sizeof(Sdf_PrimPropertyPathNode) == 3 * sizeof(void *), "");
 
 struct Sdf_PathNodePrivateAccess
 {
-  template<class Handle> static inline std::atomic<unsigned int> &GetRefCount(Handle h)
+  template<class Handle> static inline tbb::atomic<unsigned int> &GetRefCount(Handle h)
   {
     Sdf_PathNode const *p = reinterpret_cast<Sdf_PathNode const *>(h.GetPtr());
     return p->_refCount;
@@ -265,8 +264,9 @@ namespace
         return typename Table::NodeHandle();
       }
     }
-    if (iresult.second || (Table::NodeHandle::IsCounted &&
-                           Access::GetRefCount(iresult.first->second).fetch_add(1) == 0)) {
+    if (iresult.second ||
+        (Table::NodeHandle::IsCounted &&
+         Access::GetRefCount(iresult.first->second).fetch_and_increment() == 0)) {
       // There was either no entry, or there was one but it had begun dying
       // (another client dropped its refcount to 0).  We have to create a new
       // entry in the table.  When the client that is deleting the other node

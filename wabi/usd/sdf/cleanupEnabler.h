@@ -26,9 +26,9 @@
 
 /// \file sdf/cleanupEnabler.h
 
-#include "wabi/base/tf/stacked.h"
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
+#include "wabi/base/tf/stacked.h"
 
 WABI_NAMESPACE_BEGIN
 

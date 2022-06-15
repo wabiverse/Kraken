@@ -24,15 +24,16 @@
 #ifndef WABI_USD_USD_TYPED_H
 #define WABI_USD_USD_TYPED_H
 
-#include "wabi/usd/usd/api.h"
-#include "wabi/usd/usd/prim.h"
-#include "wabi/usd/usd/schemaBase.h"
-#include "wabi/usd/usd/stage.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/usd/schemaBase.h"
+#include "wabi/usd/usd/prim.h"
+#include "wabi/usd/usd/stage.h"
 
 #include "wabi/base/tf/token.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdTyped
 ///
@@ -98,6 +99,7 @@ class UsdTyped : public UsdSchemaBase
   USD_API
   const TfType &_GetTfType() const override;
 };
+
 
 WABI_NAMESPACE_END
 

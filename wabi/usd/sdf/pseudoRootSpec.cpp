@@ -23,9 +23,9 @@
 //
 /// \file PseudoRootSpec.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/pseudoRootSpec.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -56,6 +56,7 @@ xx(Bool, 1, bool, true) xx(UChar, 2, uint8_t, true) xx(Int, 3, int, true)
                           xx(Matrix2d, 13, GfMatrix2d, true) xx(Matrix3d, 14, GfMatrix3d, true)
                             xx(Matrix4d, 15, GfMatrix4d, true)
 
+
   // Non-array types.
   xx(Dictionary, 31, VtDictionary, false)
 
@@ -71,6 +72,7 @@ xx(Bool, 1, bool, true) xx(UChar, 2, uint8_t, true) xx(Int, 3, int, true)
 
               xx(Specifier, 42, SdfSpecifier, false) xx(Permission, 43, SdfPermission, false)
                 xx(Variability, 44, SdfVariability, false)
+
 
                   xx(VariantSelectionMap, 45, SdfVariantSelectionMap, false)
                     xx(TimeSamples, 46, TimeSamples, false) xx(Payload, 47, SdfPayload, false)

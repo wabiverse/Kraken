@@ -101,10 +101,10 @@ void wrapUsdPhysicsArticulationRootAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
 

@@ -26,10 +26,10 @@
 
 /// \file sdf/layerUtils.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
 
 #include <string>
 

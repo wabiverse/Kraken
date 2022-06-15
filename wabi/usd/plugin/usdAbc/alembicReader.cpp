@@ -23,19 +23,21 @@
 //
 /// \file alembicReader.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/plugin/usdAbc/alembicReader.h"
-#include "wabi/base/tf/envSetting.h"
-#include "wabi/base/tf/ostreamMethods.h"
-#include "wabi/base/tf/staticData.h"
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/base/work/threadLimits.h"
 #include "wabi/usd/plugin/usdAbc/alembicUtil.h"
-#include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/usdGeom/hermiteCurves.h"
 #include "wabi/usd/usdGeom/tokens.h"
 #include "wabi/usd/usdGeom/xformable.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/schema.h"
+#include "wabi/base/work/threadLimits.h"
+#include "wabi/base/trace/trace.h"
+#include "wabi/base/tf/envSetting.h"
+#include "wabi/base/tf/staticData.h"
+#include "wabi/base/tf/staticTokens.h"
+#include "wabi/base/tf/ostreamMethods.h"
+#include <boost/type_traits/is_base_of.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <Alembic/Abc/ArchiveInfo.h>
 #include <Alembic/Abc/IArchive.h>
 #include <Alembic/Abc/IObject.h>
@@ -52,38 +54,44 @@
 #include <Alembic/AbcGeom/IXform.h>
 #include <Alembic/AbcGeom/SchemaInfoDeclarations.h>
 #include <Alembic/AbcGeom/Visibility.h>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <functional>
 #include <memory>
 #include <mutex>
 
 WABI_NAMESPACE_BEGIN
 
+
 // Define this to dump the namespace hierarchy as we traverse Alembic.
 //#define USDABC_ALEMBIC_DEBUG
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (transform)((xformOpTransform, "xformOp:transform")));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (transform)
+    ((xformOpTransform, "xformOp:transform"))
+);
 
-TF_DEFINE_ENV_SETTING(USD_ABC_WARN_ALL_UNSUPPORTED_VALUES,
-                      false,
-                      "Issue warnings for all unsupported values encountered.");
+TF_DEFINE_ENV_SETTING(
+    USD_ABC_WARN_ALL_UNSUPPORTED_VALUES, false,
+    "Issue warnings for all unsupported values encountered.");
 
-TF_DEFINE_ENV_SETTING(USD_ABC_NUM_OGAWA_STREAMS,
-                      4,
-                      "The number of threads available for reading ogawa-backed files via UsdAbc.");
+TF_DEFINE_ENV_SETTING(
+    USD_ABC_NUM_OGAWA_STREAMS, 1,
+    "The number of threads available for reading ogawa-backed files via UsdAbc.");
 
-TF_DEFINE_ENV_SETTING(USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY,
-                      true,
-                      "Switch to false to disable writing Alembic uv sets as primvars:st with "
-                      "type texCoord2fArray to USD");
+TF_DEFINE_ENV_SETTING(
+    USD_ABC_WRITE_UV_AS_ST_TEXCOORD2FARRAY, true,
+    "Switch to false to disable writing Alembic uv sets as primvars:st with "
+    "type texCoord2fArray to USD");
 
-TF_DEFINE_ENV_SETTING(USD_ABC_XFORM_PRIM_COLLAPSE,
-                      true,
-                      "Collapse Xforms containing a single geometry into a single geom Prim in USD");
+
+TF_DEFINE_ENV_SETTING(
+    USD_ABC_XFORM_PRIM_COLLAPSE, true,
+    "Collapse Xforms containing a single geometry into a single geom Prim in USD");
 
 #if ALEMBIC_LIBRARY_VERSION >= 10709
-TF_DEFINE_ENV_SETTING(USD_ABC_READ_ARCHIVE_USE_MMAP, false, "Use mmap when reading from an Ogawa archive.");
+TF_DEFINE_ENV_SETTING(
+    USD_ABC_READ_ARCHIVE_USE_MMAP, false,
+    "Use mmap when reading from an Ogawa archive.");
 #endif
 
 namespace
@@ -116,12 +124,12 @@ namespace
                     static_cast<int>(WorkGetConcurrencyLimit()));
   }
 
-#if WITH_ALEMBIC_HDF5 && !H5_HAVE_THREADSAFE
+#if WABI_HDF5_SUPPORT_ENABLED && !H5_HAVE_THREADSAFE
   // A global mutex until our HDF5 library is thread safe.  It has to be
   // recursive to handle the case where we write an Alembic file using an
   // UsdAbc_AlembicData as the source.
   static TfStaticData<std::recursive_mutex> _hdf5;
-#endif  // WITH_ALEMBIC_HDF5
+#endif  // WABI_HDF5_SUPPORT_ENABLED
 
   // The SdfAbstractData time samples type.
   // XXX: SdfAbstractData should typedef this.
@@ -284,6 +292,9 @@ namespace
       }
       name = attempt;
     }
+
+    if (name == "vals")
+      return "";
 
     return name;
   }
@@ -887,7 +898,7 @@ namespace
     }
     layeredABC.emplace_back(filePath);
 
-#if WITH_ALEMBIC_HDF5 && !H5_HAVE_THREADSAFE
+#if WABI_HDF5_SUPPORT_ENABLED && !H5_HAVE_THREADSAFE
     // HDF5 may not be thread-safe.
     using lock_guard = std::lock_guard<std::recursive_mutex>;
     std::unique_ptr<std::lock_guard<std::recursive_mutex>> hfd5Lock(new lock_guard(*_hdf5));
@@ -900,7 +911,7 @@ namespace
     factory.setOgawaNumStreams(_GetNumOgawaStreams());
     IArchive archive = factory.getArchive(layeredABC, abcType);
 
-#if WITH_ALEMBIC_HDF5 && !H5_HAVE_THREADSAFE
+#if WABI_HDF5_SUPPORT_ENABLED && !H5_HAVE_THREADSAFE
     if (abcType == IFactory::kHDF5 || abcType == IFactory::kLayer) {
       // An HDF5, or layered which may have an HDF5 layer
       _mutex = &*_hdf5;
@@ -2713,6 +2724,7 @@ namespace
     }
   };
 
+
   /// Base class to copy attributes of an alembic faceset to a USD GeomSubset
   struct _CopyFaceSetBase
   {
@@ -2816,6 +2828,7 @@ namespace
         return UsdGeomTokens->periodic;
     }
   }
+
 
   //
   // Object property readers
@@ -3702,6 +3715,7 @@ static const _ReaderSchema &_GetSchema()
 //
 // UsdAbc_AlembicDataReader::TimeSamples
 //
+
 
 UsdAbc_AlembicDataReader::TimeSamples::TimeSamples()
 {

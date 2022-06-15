@@ -24,9 +24,9 @@
 #ifndef WABI_USD_SDF_VALUE_TYPE_NAME_H
 #define WABI_USD_SDF_VALUE_TYPE_NAME_H
 
-#include "wabi/base/tf/token.h"
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
+#include "wabi/base/tf/token.h"
 
 #include <iosfwd>
 #include <string>

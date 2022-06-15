@@ -23,9 +23,9 @@
 //
 /// \file wrapPseudoRootSpec.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/pseudoRootSpec.h"
 #include "wabi/usd/sdf/pySpec.h"
-#include "wabi/wabi.h"
 
 #include <boost/python.hpp>
 

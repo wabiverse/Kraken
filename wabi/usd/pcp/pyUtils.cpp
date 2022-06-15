@@ -22,8 +22,8 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/pcp/pyUtils.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/pyUtils.h"
 
 using namespace boost::python;
 using std::string;

@@ -24,9 +24,9 @@
 #ifndef WABI_USD_PCP_DYNAMIC_FILE_FORMAT_INTERFACE_H
 #define WABI_USD_PCP_DYNAMIC_FILE_FORMAT_INTERFACE_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/sdf/fileFormat.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -23,11 +23,11 @@
 //
 /// \file wrapPropertySpec.cpp
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/propertySpec.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/primSpec.h"
-#include "wabi/usd/sdf/propertySpec.h"
 #include "wabi/usd/sdf/pySpec.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyPtrHelpers.h"

@@ -1,7 +1,7 @@
 /*!
 
 \page usdSkel_page_front UsdSkel : USD Skeleton Schema and API
-\if ( WABI_MFB_BUILD )
+\if ( PIXAR_MFB_BUILD )
 \mainpage UsdSkel : USD Skeleton Schema and API
 \endif
 

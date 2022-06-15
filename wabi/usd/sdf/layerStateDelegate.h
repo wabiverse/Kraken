@@ -24,13 +24,13 @@
 #ifndef WABI_USD_SDF_LAYER_STATE_DELEGATE_H
 #define WABI_USD_SDF_LAYER_STATE_DELEGATE_H
 
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/base/tf/refBase.h"
-#include "wabi/base/tf/weakBase.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/declarePtrs.h"
+#include "wabi/base/tf/refBase.h"
+#include "wabi/base/tf/weakBase.h"
 
 WABI_NAMESPACE_BEGIN
 

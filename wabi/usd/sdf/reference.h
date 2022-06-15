@@ -26,13 +26,13 @@
 
 /// \file sdf/reference.h
 
-#include "wabi/base/vt/dictionary.h"
-#include "wabi/base/vt/value.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/layerOffset.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/dictionary.h"
+#include "wabi/base/vt/value.h"
 
 #include <boost/operators.hpp>
 

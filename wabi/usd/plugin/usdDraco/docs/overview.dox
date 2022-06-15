@@ -1,6 +1,6 @@
 /*!
 \page usddraco_page_front UsdDraco : Draco File Format Plugin
-\if ( WABI_MFB_BUILD )
+\if ( PIXAR_MFB_BUILD )
 \mainpage UsdDraco : Draco File Format Plugin
 \publicLib
 \endif
@@ -10,3 +10,4 @@
 This library provides Draco file format plugin for USD.
 
 */
+

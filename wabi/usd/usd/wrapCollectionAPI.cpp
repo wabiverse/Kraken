@@ -26,11 +26,12 @@
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,6 +48,7 @@ namespace
 
   // fwd decl.
   WRAP_CUSTOM;
+
 
   static UsdAttribute _CreateExpansionRuleAttr(UsdCollectionAPI &self,
                                                object defaultVal,
@@ -77,11 +79,28 @@ namespace
     return TfStringPrintf("Usd.CollectionAPI(%s, '%s')", primRepr.c_str(), instanceName.c_str());
   }
 
+  struct UsdCollectionAPI_CanApplyResult : public TfPyAnnotatedBoolResult<std::string>
+  {
+    UsdCollectionAPI_CanApplyResult(bool val, std::string const &msg)
+      : TfPyAnnotatedBoolResult<std::string>(val, msg)
+    {}
+  };
+
+  static UsdCollectionAPI_CanApplyResult _WrapCanApply(const UsdPrim &prim, const TfToken &name)
+  {
+    std::string whyNot;
+    bool result = UsdCollectionAPI::CanApply(prim, name, &whyNot);
+    return UsdCollectionAPI_CanApplyResult(result, whyNot);
+  }
+
 }  // anonymous namespace
 
 void wrapUsdCollectionAPI()
 {
   typedef UsdCollectionAPI This;
+
+  UsdCollectionAPI_CanApplyResult::Wrap<UsdCollectionAPI_CanApplyResult>("_CanApplyResult",
+                                                                         "whyNot");
 
   class_<This, bases<UsdAPISchemaBase>> cls("CollectionAPI");
 
@@ -97,22 +116,30 @@ void wrapUsdCollectionAPI()
          (arg("prim"), arg("name")))
     .staticmethod("Get")
 
+    .def("CanApply", &_WrapCanApply, (arg("prim"), arg("name")))
+    .staticmethod("CanApply")
+
     .def("Apply", &This::Apply, (arg("prim"), arg("name")))
     .staticmethod("Apply")
 
     .def("GetSchemaAttributeNames",
-         &This::GetSchemaAttributeNames,
+         (const TfTokenVector &(*)(bool)) & This::GetSchemaAttributeNames,
          arg("includeInherited") = true,
-         arg("instanceName") = TfToken(),
+         return_value_policy<TfPySequenceToList>())
+    .def("GetSchemaAttributeNames",
+         (TfTokenVector(*)(bool, const TfToken &)) & This::GetSchemaAttributeNames,
+         arg("includeInherited"),
+         arg("instanceName"),
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
+
 
     .def("GetExpansionRuleAttr", &This::GetExpansionRuleAttr)
     .def("CreateExpansionRuleAttr",
@@ -123,6 +150,7 @@ void wrapUsdCollectionAPI()
     .def("CreateIncludeRootAttr",
          &_CreateIncludeRootAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
 
     .def("GetIncludesRel", &This::GetIncludesRel)
     .def("CreateIncludesRel", &This::CreateIncludesRel)
@@ -136,19 +164,24 @@ void wrapUsdCollectionAPI()
   _CustomWrapCode(cls);
 }
 
-/* clang-format off */
-
-  /**
-   * ======================================================================
-   *   Feel free to add custom code below this line. It will be preserved
-   *   by the code generator.
-   *
-   *   Just remember to wrap code in the appropriate delimiters:
-   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-   * ======================================================================
-   * --(BEGIN CUSTOM CODE)-- */
-
-/* clang-format on */
+// ===================================================================== //
+// Feel free to add custom code below this line, it will be preserved by
+// the code generator.  The entry point for your custom code should look
+// minimally like the following:
+//
+// WRAP_CUSTOM {
+//     _class
+//         .def("MyCustomMethod", ...)
+//     ;
+// }
+//
+// Of course any other ancillary or support code may be provided.
+//
+// Just remember to wrap code in the appropriate delimiters:
+// 'namespace {', '}'.
+//
+// ===================================================================== //
+// --(BEGIN CUSTOM CODE)--
 
 #include <boost/python/tuple.hpp>
 

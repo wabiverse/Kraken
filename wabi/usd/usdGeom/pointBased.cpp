@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -48,6 +48,7 @@ UsdGeomPointBased UsdGeomPointBased::Get(const UsdStagePtr &stage, const SdfPath
   }
   return UsdGeomPointBased(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdGeomPointBased::_GetSchemaKind() const
@@ -182,13 +183,13 @@ WABI_NAMESPACE_END
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-#include "wabi/base/gf/transform.h"
-#include "wabi/base/tf/registryManager.h"
-#include "wabi/base/work/loops.h"
-#include "wabi/base/work/reduce.h"
+#include "wabi/usd/usdGeom/samplingUtils.h"
 #include "wabi/usd/usdGeom/boundableComputeExtent.h"
 #include "wabi/usd/usdGeom/motionAPI.h"
-#include "wabi/usd/usdGeom/samplingUtils.h"
+#include "wabi/base/tf/registryManager.h"
+#include "wabi/base/gf/transform.h"
+#include "wabi/base/work/loops.h"
+#include "wabi/base/work/reduce.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -321,7 +322,6 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
   VtVec3fArray velocities;
   UsdTimeCode velocitiesSampleTime;
   VtVec3fArray accelerations;
-  float velocityScale;
 
   // by passing in 0 to expectedNumPositions we default the expected number
   // of positions to the number of points in the points attribute
@@ -334,7 +334,6 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
                                                       &velocities,
                                                       &velocitiesSampleTime,
                                                       &accelerations,
-                                                      &velocityScale,
                                                       GetPrim())) {
     return false;
   }
@@ -377,8 +376,7 @@ bool UsdGeomPointBased::ComputePointsAtTimes(std::vector<VtArray<GfVec3f>> *poin
                              positions,
                              velocities,
                              velocitiesSampleTime,
-                             accelerations,
-                             velocityScale)) {
+                             accelerations)) {
       return false;
     }
   }
@@ -394,15 +392,14 @@ bool UsdGeomPointBased::ComputePointsAtTime(VtArray<GfVec3f> *points,
                                             const VtVec3fArray &velocities,
                                             UsdTimeCode velocitiesSampleTime,
                                             const VtVec3fArray &accelerations,
-                                            float velocityScale)
+                                            float /* velocityScale */)
 {
   size_t numPoints = positions.size();
 
   const double timeCodesPerSecond = stage->GetTimeCodesPerSecond();
-  const float velocityTimeDelta = UsdGeom_CalculateTimeDelta(velocityScale,
-                                                             time,
-                                                             velocitiesSampleTime,
-                                                             timeCodesPerSecond);
+  const double velocityTimeDelta = UsdGeom_CalculateTimeDelta(time,
+                                                              velocitiesSampleTime,
+                                                              timeCodesPerSecond);
 
   points->resize(numPoints);
 

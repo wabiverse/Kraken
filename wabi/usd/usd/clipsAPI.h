@@ -26,18 +26,18 @@
 
 /// \file usd/clipsAPI.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/apiSchemaBase.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usd/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -144,6 +144,7 @@ class UsdClipsAPI : public UsdAPISchemaBase
   USD_API
   static UsdClipsAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
+
  protected:
 
   /// Returns the kind of schema this class belongs to.
@@ -154,7 +155,7 @@ class UsdClipsAPI : public UsdAPISchemaBase
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USD_API
   static const TfType &_GetStaticTfType();
@@ -164,19 +165,20 @@ class UsdClipsAPI : public UsdAPISchemaBase
   // override SchemaBase virtuals.
   USD_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
-  /**
-   * ======================================================================
-   *   Feel free to add custom code below this line. It will be preserved
-   *   by the code generator.
-   *
-   *   Just remember to wrap code in the appropriate delimiters:
-   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-   * ======================================================================
-   * --(BEGIN CUSTOM CODE)-- */
+  // ===================================================================== //
+  // Feel free to add custom code below this line, it will be preserved by
+  // the code generator.
+  //
+  // Just remember to:
+  //  - Close the class declaration with };
+  //  - Close the namespace with WABI_NAMESPACE_END
+  //  - Close the include guard with #endif
+  // ===================================================================== //
+  // --(BEGIN CUSTOM CODE)--
+  //
 
   // --------------------------------------------------------------------- //
   /// \anchor Usd_ClipInfo_API

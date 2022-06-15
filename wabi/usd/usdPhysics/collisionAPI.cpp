@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdPhysicsCollisionAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsCollisionAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (PhysicsCollisionAPI)
+);
 
 /* virtual */
 UsdPhysicsCollisionAPI::~UsdPhysicsCollisionAPI() {}

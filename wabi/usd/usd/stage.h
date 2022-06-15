@@ -26,42 +26,44 @@
 
 /// \file usd/stage.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/editTarget.h"
 #include "wabi/usd/usd/interpolation.h"
-#include "wabi/usd/usd/primFlags.h"
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/stageLoadRules.h"
 #include "wabi/usd/usd/stagePopulationMask.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/usd/primFlags.h"
 
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/weakBase.h"
 
-#include "wabi/base/vt/value.h"
-#include "wabi/base/work/dispatcher.h"
 #include "wabi/usd/ar/ar.h"
-#include "wabi/usd/pcp/cache.h"
+#include "wabi/usd/ar/notice.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/notice.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/pcp/cache.h"
+#include "wabi/base/vt/value.h"
+#include "wabi/base/work/dispatcher.h"
 
 #include <boost/optional.hpp>
 
-#include <tbb/concurrent_unordered_set.h>
 #include <tbb/concurrent_vector.h>
+#include <tbb/concurrent_unordered_set.h>
 #include <tbb/spin_rw_mutex.h>
 
 #include <functional>
-#include <memory>
 #include <string>
+#include <memory>
 #include <unordered_map>
 #include <utility>
 
 WABI_NAMESPACE_BEGIN
+
 
 class ArResolverContext;
 class GfInterval;
@@ -174,11 +176,13 @@ class UsdStage : public TfRefBase, public TfWeakBase
   /// The initial set of prims to load on the stage can be specified
   /// using the \p load parameter. \sa UsdStage::InitialLoadSet.
   ///
-  /// Note that the \p pathResolverContext passed here will apply to all path
-  /// resolutions for this stage, regardless of what other context may be
-  /// bound at resolve time. If no context is passed in here, Usd will create
-  /// one by calling \sa ArResolver::CreateDefaultContextForAsset with the
-  /// root layer's repository path if the layer has one, otherwise its real
+  /// If \p pathResolverContext is provided it will be bound when creating the
+  /// root layer at \p identifier and whenever asset path resolution is done
+  /// for this stage, regardless of what other context may be bound at that
+  /// time. Otherwise Usd will create the root layer with no context bound,
+  /// then create a context for all future asset path resolution for the stage
+  /// by calling ArResolver::CreateDefaultContextForAsset with the root
+  /// layer's repository path if the layer has one, otherwise its resolved
   /// path.
   USD_API
   static UsdStageRefPtr CreateNew(const std::string &identifier, InitialLoadSet load = LoadAll);
@@ -202,10 +206,12 @@ class UsdStage : public TfRefBase, public TfWeakBase
   /// Creates a new stage only in memory, analogous to creating an
   /// anonymous SdfLayer.
   ///
-  /// Note that the \p pathResolverContext passed here will apply to all path
-  /// resolutions for this stage, regardless of what other context may be
-  /// bound at resolve time. If no context is passed in here, Usd will create
-  /// one by calling \sa ArResolver::CreateDefaultContext.
+  /// If \p pathResolverContext is provided it will be bound when creating the
+  /// root layer at \p identifier and whenever asset path resolution is done
+  /// for this stage, regardless of what other context may be bound at that
+  /// time. Otherwise Usd will create the root layer with no context bound,
+  /// then create a context for all future asset path resolution for the stage
+  /// by calling ArResolver::CreateDefaultContext.
   ///
   /// The initial set of prims to load on the stage can be specified
   /// using the \p load parameter. \sa UsdStage::InitialLoadSet.
@@ -245,12 +251,13 @@ class UsdStage : public TfRefBase, public TfWeakBase
   /// The initial set of prims to load on the stage can be specified
   /// using the \p load parameter. \sa UsdStage::InitialLoadSet.
   ///
-  /// Note that the \p pathResolverContext passed here will apply to all path
-  /// resolutions for this stage, regardless of what other context may be
-  /// bound at resolve time. If no context is passed in here, Usd will create
-  /// one by calling \sa ArResolver::CreateDefaultContextForAsset with the
-  /// root layer's repository path if the layer has one, otherwise its real
-  /// path.
+  /// If \p pathResolverContext is provided it will be bound when opening the
+  /// root layer at \p filePath and whenever asset path resolution is done for
+  /// this stage, regardless of what other context may be bound at that
+  /// time. Otherwise Usd will open the root layer with no context bound, then
+  /// create a context for all future asset path resolution for the stage by
+  /// calling ArResolver::CreateDefaultContextForAsset with the layer's
+  /// repository path if the layer has one, otherwise its resolved path.
   USD_API
   static UsdStageRefPtr Open(const std::string &filePath, InitialLoadSet load = LoadAll);
   /// \overload
@@ -269,12 +276,13 @@ class UsdStage : public TfRefBase, public TfWeakBase
   /// The initial set of prims to load on the stage can be specified
   /// using the \p load parameter. \sa UsdStage::InitialLoadSet.
   ///
-  /// Note that the \p pathResolverContext passed here will apply to all path
-  /// resolutions for this stage, regardless of what other context may be
-  /// bound at resolve time. If no context is passed in here, Usd will create
-  /// one by calling \sa ArResolver::CreateDefaultContextForAsset with the
-  /// root layer's repository path if the layer has one, otherwise its real
-  /// path.
+  /// If \p pathResolverContext is provided it will be bound when opening the
+  /// root layer at \p filePath and whenever asset path resolution is done for
+  /// this stage, regardless of what other context may be bound at that
+  /// time. Otherwise Usd will open the root layer with no context bound, then
+  /// create a context for all future asset path resolution for the stage by
+  /// calling ArResolver::CreateDefaultContextForAsset with the layer's
+  /// repository path if the layer has one, otherwise its resolved path.
   USD_API
   static UsdStageRefPtr OpenMasked(const std::string &filePath,
                                    UsdStagePopulationMask const &mask,
@@ -301,12 +309,12 @@ class UsdStage : public TfRefBase, public TfWeakBase
   /// The initial set of prims to load on the stage can be specified
   /// using the \p load parameter. \sa UsdStage::InitialLoadSet.
   ///
-  /// Note that the \p pathResolverContext passed here will apply to all path
-  /// resolutions for this stage, regardless of what other context may be
-  /// bound at resolve time. If no context is passed in here, Usd will create
-  /// one by calling \sa ArResolver::CreateDefaultContextForAsset with the
-  /// root layer's repository path if the layer has one, otherwise its real
-  /// path.
+  /// If \p pathResolverContext is provided it will be bound when whenever
+  /// asset path resolution is done for this stage, regardless of what other
+  /// context may be bound at that time. Otherwise Usd will create a context
+  /// for all future asset path resolution for the stage by calling
+  /// ArResolver::CreateDefaultContextForAsset with the layer's repository
+  /// path if the layer has one, otherwise its resolved path.
   ///
   /// When searching for a matching stage in bound UsdStageCache s, only the
   /// provided arguments matter for cache lookup.  For example, if only a root
@@ -347,12 +355,12 @@ class UsdStage : public TfRefBase, public TfWeakBase
   /// The initial set of prims to load on the stage can be specified
   /// using the \p load parameter. \sa UsdStage::InitialLoadSet.
   ///
-  /// Note that the \p pathResolverContext passed here will apply to all path
-  /// resolutions for this stage, regardless of what other context may be
-  /// bound at resolve time. If no context is passed in here, Usd will create
-  /// one by calling \sa ArResolver::CreateDefaultContextForAsset with the
-  /// root layer's repository path if the layer has one, otherwise its real
-  /// path.
+  /// If \p pathResolverContext is provided it will be bound when whenever
+  /// asset path resolution is done for this stage, regardless of what other
+  /// context may be bound at that time. Otherwise Usd will create a context
+  /// for all future asset path resolution for the stage by calling
+  /// ArResolver::CreateDefaultContextForAsset with the layer's repository
+  /// path if the layer has one, otherwise its resolved path.
   USD_API
   static UsdStageRefPtr OpenMasked(const SdfLayerHandle &rootLayer,
                                    const UsdStagePopulationMask &mask,
@@ -1767,7 +1775,6 @@ class UsdStage : public TfRefBase, public TfWeakBase
                            Usd_PrimDataConstPtr parent,
                            UsdStagePopulationMask const *mask,
                            const SdfPath &primIndexPath = SdfPath());
-  void _ComposeSubtreeInParallel(Usd_PrimDataPtr prim);
   void _ComposeSubtreesInParallel(const std::vector<Usd_PrimDataPtr> &prims,
                                   const std::vector<SdfPath> *primIndexPaths = nullptr);
 
@@ -1823,6 +1830,13 @@ class UsdStage : public TfRefBase, public TfWeakBase
 
   // Update stage contents in response to changes in scene description.
   void _HandleLayersDidChange(const SdfNotice::LayersDidChangeSentPerLayer &);
+
+  // Update stage contents in response to changes to the asset resolver.
+  void _HandleResolverDidChange(const ArNotice::ResolverChanged &);
+
+  // Process stage change information stored in _pendingChanges.
+  // _pendingChanges will be set to nullptr by the end of the function.
+  void _ProcessPendingChanges();
 
   // Remove scene description for the prim at \p fullPath in the current edit
   // target.
@@ -2064,6 +2078,7 @@ class UsdStage : public TfRefBase, public TfWeakBase
 
   SdfLayerRefPtr _GetLayerWithStrongestValue(UsdTimeCode time, const UsdAttribute &attr) const;
 
+
   USD_API
   bool _GetValueFromResolveInfo(const UsdResolveInfo &info,
                                 UsdTimeCode time,
@@ -2131,6 +2146,7 @@ class UsdStage : public TfRefBase, public TfWeakBase
                                                const UsdAttribute &attr) const;
 
   void _RegisterPerLayerNotices();
+  void _RegisterResolverChangeNotice();
 
  private:
 
@@ -2146,6 +2162,7 @@ class UsdStage : public TfRefBase, public TfWeakBase
 
   // The stage's EditTarget.
   UsdEditTarget _editTarget;
+  bool _editTargetIsLocalLayer;
 
   std::unique_ptr<PcpCache> _cache;
   std::unique_ptr<Usd_ClipCache> _clipCache;
@@ -2166,6 +2183,12 @@ class UsdStage : public TfRefBase, public TfWeakBase
   typedef std::vector<std::pair<SdfLayerHandle, TfNotice::Key>> _LayerAndNoticeKeyVec;
   _LayerAndNoticeKeyVec _layersAndNoticeKeys;
   size_t _lastChangeSerialNumber;
+
+  TfNotice::Key _resolverChangeKey;
+
+  // Data for pending change processing.
+  class _PendingChanges;
+  _PendingChanges *_pendingChanges;
 
   boost::optional<WorkDispatcher> _dispatcher;
 
@@ -2305,6 +2328,7 @@ typename std::enable_if<UsdStage::_HasTypeSpecificResolution<T>::value, bool>::t
   return _GetTypeSpecificResolvedMetadata(obj, fieldName, keyPath, useFallbacks, result);
 }
 
+
 // Set metadata for types that don't need to be mapped across edit targets.
 template<class T>
 typename std::enable_if<!UsdStage::_IsEditTargetMappable<T>::value, bool>::type UsdStage::
@@ -2323,6 +2347,7 @@ typename std::enable_if<UsdStage::_IsEditTargetMappable<T>::value, bool>::type U
 {
   return _SetEditTargetMappedMetadata(object, key, keyPath, value);
 }
+
 
 WABI_NAMESPACE_END
 

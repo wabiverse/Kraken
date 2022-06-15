@@ -24,16 +24,17 @@
 #ifndef WABI_USD_USD_PRIM_DEFINITION_H
 #define WABI_USD_USD_PRIM_DEFINITION_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/hash.h"
-#include "wabi/base/tf/hashmap.h"
-#include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/layer.h"
+#include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/propertySpec.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
+#include "wabi/base/tf/hash.h"
+
+#include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
 

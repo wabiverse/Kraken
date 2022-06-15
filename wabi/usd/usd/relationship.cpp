@@ -21,27 +21,28 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/relationship.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/common.h"
+#include "wabi/usd/usd/relationship.h"
 #include "wabi/usd/usd/instanceCache.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usd/valueUtils.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/schema.h"
+#include "wabi/base/trace/trace.h"
 
 #include <algorithm>
 #include <set>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 // ------------------------------------------------------------------------- //
 // UsdRelationship

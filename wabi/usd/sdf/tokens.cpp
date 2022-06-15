@@ -22,13 +22,14 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/sdf/tokens.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/tokens.h"
 
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_PUBLIC_TOKENS(SdfTokens, SDF_TOKENS);
 TF_DEFINE_PUBLIC_TOKENS(SdfPathTokens, SDF_PATH_TOKENS);
-TF_DEFINE_PUBLIC_TOKENS(SdfMetadataDisplayGroupTokens, SDF_METADATA_DISPLAYGROUP_TOKENS);
+TF_DEFINE_PUBLIC_TOKENS(SdfMetadataDisplayGroupTokens,
+                        SDF_METADATA_DISPLAYGROUP_TOKENS);
 
 WABI_NAMESPACE_END

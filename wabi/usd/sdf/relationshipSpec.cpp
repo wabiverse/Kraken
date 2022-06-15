@@ -23,17 +23,17 @@
 //
 /// \file RelationshipSpec.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
 #include "wabi/usd/sdf/accessorHelpers.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/changeBlock.h"
-#include "wabi/usd/sdf/childrenPolicies.h"
 #include "wabi/usd/sdf/childrenUtils.h"
+#include "wabi/usd/sdf/childrenPolicies.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/proxyTypes.h"
 #include "wabi/usd/sdf/schema.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/type.h"
 #include "wabi/base/trace/trace.h"
@@ -244,10 +244,6 @@ void SdfRelationshipSpec::ReplaceTargetPath(const SdfPath &oldPath, const SdfPat
 
 void SdfRelationshipSpec::RemoveTargetPath(const SdfPath &path, bool preserveTargetOrder)
 {
-  // Csd expects to see remove property notices for all of our
-  // relational attributes.  The change below won't send them since
-  // they're implied by the removal of their owner.
-  // XXX: Csd should implicitly assume these notices.
   const SdfPath targetSpecPath = GetPath().AppendTarget(_CanonicalizeTargetPath(path));
 
   SdfChangeBlock block;

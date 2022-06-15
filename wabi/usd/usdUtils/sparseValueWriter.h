@@ -33,9 +33,9 @@
 
 #include "wabi/base/vt/value.h"
 
+#include "wabi/usd/usdUtils/api.h"
 #include "wabi/usd/usd/attribute.h"
 #include "wabi/usd/usd/timeCode.h"
-#include "wabi/usd/usdUtils/api.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -21,9 +21,9 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usdGeom/metrics.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/usd/stage.h"
@@ -41,7 +41,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (UsdGeomMetrics));
+
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (UsdGeomMetrics)
+);
 
 TfToken UsdGeomGetStageUpAxis(const UsdStageWeakPtr &stage)
 {
@@ -157,6 +161,7 @@ TfToken UsdGeomGetFallbackUpAxis()
   return *_fallbackUpAxis;
 }
 
+
 constexpr double UsdGeomLinearUnits::nanometers;
 constexpr double UsdGeomLinearUnits::micrometers;
 constexpr double UsdGeomLinearUnits::millimeters;
@@ -209,5 +214,6 @@ bool UsdGeomLinearUnitsAre(double authoredUnits, double standardUnits, double ep
   const double diff = GfAbs(authoredUnits - standardUnits);
   return (diff / authoredUnits < epsilon) && (diff / standardUnits < epsilon);
 }
+
 
 WABI_NAMESPACE_END

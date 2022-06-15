@@ -24,15 +24,16 @@
 #ifndef WABI_USD_USD_EDIT_CONTEXT_H
 #define WABI_USD_USD_EDIT_CONTEXT_H
 
-#include "wabi/base/tf/declarePtrs.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/editTarget.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/declarePtrs.h"
 
 #include <memory>
 #include <utility>
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DECLARE_WEAK_PTRS(UsdStage);
 

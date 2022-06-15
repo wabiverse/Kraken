@@ -24,8 +24,8 @@
 #ifndef WABI_USD_SDF_CHANGE_BLOCK_H
 #define WABI_USD_SDF_CHANGE_BLOCK_H
 
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -43,7 +43,7 @@ WABI_NAMESPACE_BEGIN
 /// scene description in order to process them more efficiently.
 ///
 /// Normally, Sdf sends notification immediately as changes are made so
-/// that downstream representations in Csd and Mf can update accordingly.
+/// that downstream representations like UsdStage can update accordingly.
 ///
 /// However, sometimes it can be advantageous to group a series of Sdf
 /// changes into a batch so that they can be processed more efficiently,
@@ -54,8 +54,8 @@ WABI_NAMESPACE_BEGIN
 /// changes until the outermost changeblock is exited.  Until then,
 /// Sdf internally queues up the notification it needs to send.
 ///
-/// \note  It is *not* safe to use Csd, Mf, or other downstream API
-/// while a changeblock is open!!111  This is because those derived
+/// \note  It is *not* safe to use Usd or other downstream API
+/// while a changeblock is open!!  This is because those derived
 /// representations will not have had a chance to update while the
 /// changeblock is open.  Not only will their view of the world be
 /// stale, it could be unsafe to even make queries from, since they
@@ -66,7 +66,8 @@ WABI_NAMESPACE_BEGIN
 /// the best approach is to build a list of necessary changes that
 /// can be performed directly via the Sdf API, then submit those all
 /// inside a changeblock without talking to any downstream libraries.
-/// For example, this is how Csd performs namespace edits.
+/// For example, this is how many mutators in Usd that operate on more
+/// than one field or Spec work.
 ///
 
 class SdfChangeBlock
@@ -75,8 +76,19 @@ class SdfChangeBlock
 
   SDF_API
   SdfChangeBlock();
+  ~SdfChangeBlock()
+  {
+    if (_key) {
+      _CloseChangeBlock(_key);
+    }
+  }
+
+ private:
+
   SDF_API
-  ~SdfChangeBlock();
+  void _CloseChangeBlock(void const *key) const;
+
+  void const *_key;
 };
 
 WABI_NAMESPACE_END

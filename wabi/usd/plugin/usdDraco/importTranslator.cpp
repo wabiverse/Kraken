@@ -27,16 +27,18 @@
 #include "attributeFactory.h"
 #include "importAttribute.h"
 
-#include "wabi/base/gf/range3f.h"
+#include "wabi/wabi.h"
 #include "wabi/base/vt/array.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/wabi.h"
+#include "wabi/base/gf/range3f.h"
 
 #include <draco/mesh/mesh_misc_functions.h>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 UsdDracoImportTranslator::UsdDracoImportTranslator(const draco::Mesh &dracoMesh)
   : _dracoMesh(dracoMesh),
@@ -362,5 +364,6 @@ bool UsdDracoImportTranslator::_SubdivisionRefersToFaces(const UsdGeomMesh &usdM
     return true;
   return false;
 }
+
 
 WABI_NAMESPACE_END

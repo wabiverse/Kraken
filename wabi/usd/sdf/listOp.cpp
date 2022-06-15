@@ -22,18 +22,18 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/listOp.h"
-#include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/tf/iterator.h"
-#include "wabi/base/tf/registryManager.h"
-#include "wabi/base/tf/token.h"
-#include "wabi/base/tf/type.h"
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/payload.h"
 #include "wabi/usd/sdf/reference.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/tf/iterator.h"
+#include "wabi/base/tf/registryManager.h"
+#include "wabi/base/tf/type.h"
+#include "wabi/base/tf/token.h"
+#include "wabi/base/trace/trace.h"
 
 #include <boost/optional.hpp>
 
@@ -70,6 +70,7 @@ TF_REGISTRY_FUNCTION(TfEnum)
   TF_ADD_ENUM_NAME(SdfListOpTypeDeleted);
   TF_ADD_ENUM_NAME(SdfListOpTypeOrdered);
 }
+
 
 template<typename T> SdfListOp<T>::SdfListOp() : _isExplicit(false) {}
 
@@ -432,7 +433,6 @@ void SdfListOp<T>::_AppendKeys(SdfListOpType op,
                                _ApplyMap *search) const
 {
   const ItemVector &items = GetItems(op);
-  typename _ApplyList::iterator insertPos = result->begin();
   if (callback) {
     for (const T &item : items) {
       if (boost::optional<T> mappedItem = callback(op, item)) {

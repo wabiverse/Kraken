@@ -23,16 +23,16 @@
 //
 /// \file PySpec.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/pySpec.h"
+#include "wabi/usd/sdf/layer.h"
+#include "wabi/usd/sdf/spec.h"
+#include "wabi/usd/sdf/specType.h"
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/usd/sdf/layer.h"
-#include "wabi/usd/sdf/spec.h"
-#include "wabi/usd/sdf/specType.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -23,9 +23,9 @@
 //
 ///
 /// \file usdUtils/dependencies.cpp
+#include "wabi/wabi.h"
 #include "wabi/usd/usdUtils/dependencies.h"
 #include "wabi/usd/usdUtils/debugCodes.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/ar/packageUtils.h"
 #include "wabi/usd/ar/resolver.h"
@@ -88,22 +88,18 @@ namespace
    public:
 
     // The asset remapping function's signature.
-    // It takes a given asset path, the layer it was found in and a boolean
-    // value. The bool is used to indicate whether a dependency must be skipped
-    // on the given asset path, which is useful to skip for things like
-    // templated clip paths that cannot be resolved directly without additional
-    // processing.
-    // The function returns the corresponding remapped path.
+    // It takes a given asset path and the layer it was found in and returns
+    // the corresponding remapped path.
     //
     // The layer is used to resolve the asset path in cases where the given
     // asset path is a search path or a relative path.
-    using RemapAssetPathFunc = std::function<
-      std::string(const std::string &assetPath, const SdfLayerRefPtr &layer, bool skipDependency)>;
+    using RemapAssetPathFunc =
+      std::function<std::string(const std::string &assetPath, const SdfLayerRefPtr &layer)>;
 
     // Takes the asset path and the type of dependency it is and does some
     // arbitrary processing (like enumerating dependencies).
-    using ProcessAssetPathFunc =
-      std::function<void(const std::string &assetPath, const _DepType &depType)>;
+    using ProcessAssetPathFunc = std::function<
+      void(const std::string &assetPath, const SdfLayerRefPtr &layer, const _DepType &depType)>;
 
     // Opens the file at \p resolvedFilePath and analyzes its external
     // dependencies.
@@ -230,11 +226,11 @@ namespace
                                                 const _DepType &depType)
   {
     if (_processPathFunc) {
-      _processPathFunc(rawRefPath, depType);
+      _processPathFunc(rawRefPath, GetLayer(), depType);
     }
 
     if (_remapPathFunc) {
-      return _remapPathFunc(rawRefPath, GetLayer(), /*skipDependency*/ false);
+      return _remapPathFunc(rawRefPath, GetLayer());
     }
 
     // Return the raw reference path if there's no asset path remapping
@@ -317,11 +313,16 @@ namespace
 
   void _FileAnalyzer::_ProcessPayloads(const SdfPrimSpecHandle &primSpec)
   {
-    SdfPayloadsProxy payloadList = primSpec->GetPayloadList();
-    payloadList.ModifyItemEdits(
-      std::bind(&_FileAnalyzer::_RemapRefOrPayload<SdfPayload, _DepType::Payload>,
-                this,
-                std::placeholders::_1));
+    if (_remapPathFunc) {
+      primSpec->GetPayloadList().ModifyItemEdits(
+        std::bind(&_FileAnalyzer::_RemapRefOrPayload<SdfPayload, _DepType::Payload>,
+                  this,
+                  std::placeholders::_1));
+    } else {
+      for (SdfPayload const &payload : primSpec->GetPayloadList().GetAddedOrExplicitItems()) {
+        _ProcessDependency(payload.GetAssetPath(), _DepType::Payload);
+      }
+    }
   }
 
   void _FileAnalyzer::_ProcessProperties(const SdfPrimSpecHandle &primSpec)
@@ -431,9 +432,7 @@ namespace
               // Not adding a dependency on the templated asset path
               // since it can't be resolved by the resolver.
               clipDict[UsdClipsAPIInfoKeys->templateAssetPath] = VtValue(
-                _remapPathFunc(templateAssetPath,
-                               GetLayer(),
-                               /*skipDependency*/ true));
+                _remapPathFunc(templateAssetPath, GetLayer()));
               clipsDict[clipSetNameAndDict.first] = VtValue(clipDict);
             }
 
@@ -489,11 +488,17 @@ namespace
 
   void _FileAnalyzer::_ProcessReferences(const SdfPrimSpecHandle &primSpec)
   {
-    SdfReferencesProxy refList = primSpec->GetReferenceList();
-    refList.ModifyItemEdits(
-      std::bind(&_FileAnalyzer::_RemapRefOrPayload<SdfReference, _DepType::Reference>,
-                this,
-                std::placeholders::_1));
+    if (_remapPathFunc) {
+      primSpec->GetReferenceList().ModifyItemEdits(
+        std::bind(&_FileAnalyzer::_RemapRefOrPayload<SdfReference, _DepType::Reference>,
+                  this,
+                  std::placeholders::_1));
+    } else {
+      for (SdfReference const &reference :
+           primSpec->GetReferenceList().GetAddedOrExplicitItems()) {
+        _ProcessDependency(reference.GetAssetPath(), _DepType::Reference);
+      }
+    }
   }
 
   void _FileAnalyzer::_AnalyzeDependencies()
@@ -588,32 +593,33 @@ namespace
       }
 #endif
 
-      const auto remapAssetPathFunc = [&layerDependenciesMap,
-                                       &dirRemapper,
-                                       &destDir,
-                                       &rootFilePath,
-                                       &origRootFilePath,
-                                       &firstLayerName](const std::string &ap,
-                                                        const SdfLayerRefPtr &layer,
-                                                        bool skipDependency) {
-        if (!skipDependency) {
-          layerDependenciesMap[layer].push_back(ap);
-        }
-
-        // If destination directory is an empty string, skip any remapping.
-        // of asset paths.
-        if (destDir.empty()) {
-          return ap;
-        }
-
-        return _RemapAssetPath(ap,
-                               layer,
-                               origRootFilePath,
-                               rootFilePath,
-                               firstLayerName,
-                               &dirRemapper,
-                               /* isRelativePath */ nullptr);
+      // Record all dependencies in layerDependenciesMap so we can recurse
+      // on them.
+      const auto processPathFunc = [&layerDependenciesMap](const std::string &ap,
+                                                           const SdfLayerRefPtr &layer,
+                                                           _DepType depType) {
+        layerDependenciesMap[layer].push_back(ap);
       };
+
+      // If destination directory is an empty string, skip any remapping
+      // of asset paths.
+      const auto remapAssetPathFunc = destDir.empty() ?
+                                        _FileAnalyzer::RemapAssetPathFunc() :
+                                        [&layerDependenciesMap,
+                                         &dirRemapper,
+                                         &destDir,
+                                         &rootFilePath,
+                                         &origRootFilePath,
+                                         &firstLayerName](const std::string &ap,
+                                                          const SdfLayerRefPtr &layer) {
+                                          return _RemapAssetPath(ap,
+                                                                 layer,
+                                                                 origRootFilePath,
+                                                                 rootFilePath,
+                                                                 firstLayerName,
+                                                                 &dirRemapper,
+                                                                 /* isRelativePath */ nullptr);
+                                        };
 
       // Set of all seen files. We maintain this set to avoid redundant
       // dependency analysis of already seen files.
@@ -626,7 +632,8 @@ namespace
         filesToLocalize.emplace(destFilePath,
                                 _FileAnalyzer(rootFilePath,
                                               /*refTypesToInclude*/ _ReferenceTypesToInclude::All,
-                                              remapAssetPathFunc));
+                                              remapAssetPathFunc,
+                                              processPathFunc));
       }
 
       while (!filesToLocalize.empty()) {
@@ -732,7 +739,8 @@ namespace
             destFilePathForRef,
             _FileAnalyzer(resolvedRefFilePath,
                           /* refTypesToInclude */ _ReferenceTypesToInclude::All,
-                          remapAssetPathFunc));
+                          remapAssetPathFunc,
+                          processPathFunc));
         }
       }
     }
@@ -954,6 +962,7 @@ namespace
 
 }  // end of anonymous namespace
 
+
 static void _ExtractExternalReferences(const std::string &filePath,
                                        const _ReferenceTypesToInclude &refTypesToInclude,
                                        std::vector<std::string> *subLayers,
@@ -962,19 +971,20 @@ static void _ExtractExternalReferences(const std::string &filePath,
 {
   // We only care about knowing what the dependencies are. Hence, set
   // remapPathFunc to empty.
-  _FileAnalyzer(
-    filePath,
-    refTypesToInclude,
-    /*remapPathFunc*/ {},
-    [&subLayers, &references, &payloads](const std::string &assetPath, const _DepType &depType) {
-      if (depType == _DepType::Reference) {
-        references->push_back(assetPath);
-      } else if (depType == _DepType::Sublayer) {
-        subLayers->push_back(assetPath);
-      } else if (depType == _DepType::Payload) {
-        payloads->push_back(assetPath);
-      }
-    });
+  _FileAnalyzer(filePath,
+                refTypesToInclude,
+                /*remapPathFunc*/ {},
+                [&subLayers, &references, &payloads](const std::string &assetPath,
+                                                     const SdfLayerRefPtr &layer,
+                                                     const _DepType &depType) {
+                  if (depType == _DepType::Reference) {
+                    references->push_back(assetPath);
+                  } else if (depType == _DepType::Sublayer) {
+                    subLayers->push_back(assetPath);
+                  } else if (depType == _DepType::Payload) {
+                    payloads->push_back(assetPath);
+                  }
+                });
 
   // Sort and remove duplicates
   std::sort(references->begin(), references->end());
@@ -1302,12 +1312,11 @@ bool UsdUtilsComputeAllDependencies(const SdfAssetPath &assetPath,
 void UsdUtilsModifyAssetPaths(const SdfLayerHandle &layer,
                               const UsdUtilsModifyAssetPathFn &modifyFn)
 {
-  _FileAnalyzer(
-    layer,
-    _ReferenceTypesToInclude::All,
-    [&modifyFn](const std::string &assetPath, const SdfLayerRefPtr &layer, bool skipDep) {
-      return modifyFn(assetPath);
-    });
+  _FileAnalyzer(layer,
+                _ReferenceTypesToInclude::All,
+                [&modifyFn](const std::string &assetPath, const SdfLayerRefPtr &layer) {
+                  return modifyFn(assetPath);
+                });
 }
 
 WABI_NAMESPACE_END

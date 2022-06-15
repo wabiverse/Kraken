@@ -146,7 +146,7 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
   static const TfType &_GetStaticTfType();
@@ -156,7 +156,6 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
   // override SchemaBase virtuals.
   USDPHYSICS_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -234,7 +233,7 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
   ///
   /// | ||
   /// | -- | -- |
-  /// | Declaration | `point3f physics:centerOfMass = (0, 0, 0)` |
+  /// | Declaration | `point3f physics:centerOfMass = (-inf, -inf, -inf)` |
   /// | C++ Type | GfVec3f |
   /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Point3f |
   USDPHYSICS_API
@@ -285,7 +284,7 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
   ///
   /// | ||
   /// | -- | -- |
-  /// | Declaration | `quatf physics:principalAxes = (1, 0, 0, 0)` |
+  /// | Declaration | `quatf physics:principalAxes = (0, 0, 0, 0)` |
   /// | C++ Type | GfQuatf |
   /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Quatf |
   USDPHYSICS_API

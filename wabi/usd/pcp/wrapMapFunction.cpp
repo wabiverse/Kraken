@@ -22,14 +22,14 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
+#include "wabi/usd/pcp/mapFunction.h"
 #include "wabi/base/tf/makePyConstructor.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyEnum.h"
 #include "wabi/base/tf/pyPtrHelpers.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
-#include "wabi/usd/pcp/mapFunction.h"
-#include "wabi/wabi.h"
 #include <boost/python.hpp>
 
 using namespace boost::python;
@@ -113,6 +113,7 @@ void wrapMapFunction()
     .def("IdentityPathMap", &This::IdentityPathMap, return_value_policy<TfPyMapToDictionary>())
     .staticmethod("IdentityPathMap")
     .add_property("isIdentity", &This::IsIdentity)
+    .add_property("isIdentityPathMapping", &This::IsIdentityPathMapping)
     .add_property("isNull", &This::IsNull)
 
     .def("MapSourceToTarget", &This::MapSourceToTarget, (arg("path")))

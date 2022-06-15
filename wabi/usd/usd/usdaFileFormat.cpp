@@ -21,15 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/usdaFileFormat.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/usdaFileFormat.h"
 
 #include "wabi/usd/usd/usdFileFormat.h"
 
-#include "wabi/base/tf/registryManager.h"
 #include "wabi/usd/sdf/layer.h"
+#include "wabi/base/tf/registryManager.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DEFINE_PUBLIC_TOKENS(UsdUsdaFileFormatTokens, USD_USDA_FILE_FORMAT_TOKENS);
 

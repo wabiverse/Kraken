@@ -27,10 +27,10 @@
 /// \file pcp/diagnostic.h
 /// Diagnostic helpers.
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/debugCodes.h"
 #include "wabi/usd/pcp/errors.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/hints.h"
 

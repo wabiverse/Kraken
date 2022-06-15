@@ -24,9 +24,9 @@
 #ifndef WABI_USD_USD_UTILS_CONDITIONAL_ABORT_DIAGNOSTIC_DELEGATE_H
 #define WABI_USD_USD_UTILS_CONDITIONAL_ABORT_DIAGNOSTIC_DELEGATE_H
 
-#include "wabi/base/tf/diagnosticMgr.h"
-#include "wabi/usd/usdUtils/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/api.h"
+#include "wabi/base/tf/diagnosticMgr.h"
 
 #include <string>
 #include <vector>
@@ -84,14 +84,14 @@ class UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters
 /// Include Rules determine what errors or warnings will cause a fatal abort.
 /// Exclude Rules determine what errors or warnings matched from the Include
 /// Rules should not cause the fatal abort.
-/// Example: to abort on all errors and warnings coming from "*wabi*" codepath
+/// Example: to abort on all errors and warnings coming from "*pxr*" codepath
 /// but not from "*ConditionalAbortDiagnosticDelegate*", a client can create the
 /// following delegate:
 ///
 /// \code
 /// UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters includeFilters;
 /// UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters excludeFilters;
-/// includeFilters.SetCodePathFilters({"*wabi*"});
+/// includeFilters.SetCodePathFilters({"*pxr*"});
 /// excludeFilters.SetCodePathFilters({"*ConditionalAbortDiagnosticDelegate*"});
 /// UsdUtilsConditionalAbortDiagnosticDelegate delegate =
 ///     UsdUtilsConditionalAbortDiagnosticDelegate(includeFilters,
@@ -144,6 +144,7 @@ class UsdUtilsConditionalAbortDiagnosticDelegate : public TfDiagnosticMgr::Deleg
                             const std::vector<TfPatternMatcher> &stringPatternFilters,
                             const std::vector<TfPatternMatcher> &codePathPatternFilters);
 };
+
 
 WABI_NAMESPACE_END
 

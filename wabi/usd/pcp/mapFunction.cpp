@@ -22,15 +22,15 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/mapFunction.h"
+#include "wabi/base/trace/trace.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/mallocTag.h"
-#include "wabi/base/tf/ostreamMethods.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/ostreamMethods.h"
 
 #include <boost/functional/hash.hpp>
 
@@ -233,7 +233,12 @@ const PcpMapFunction::PathMap &PcpMapFunction::IdentityPathMap()
 
 bool PcpMapFunction::IsIdentity() const
 {
-  return *this == Identity();
+  return IsIdentityPathMapping() && _offset.IsIdentity();
+}
+
+bool PcpMapFunction::IsIdentityPathMapping() const
+{
+  return _data.numPairs == 0 && _data.hasRootIdentity;
 }
 
 void PcpMapFunction::Swap(PcpMapFunction &map)
@@ -424,6 +429,7 @@ PcpMapFunction PcpMapFunction::Compose(const PcpMapFunction &inner) const
       }
     }
   }
+
 
   // Apply the inverse of inner to the domain of this function.
   const _Data &data_outer = _data;

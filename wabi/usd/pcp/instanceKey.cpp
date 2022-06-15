@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/instanceKey.h"
 #include "wabi/usd/pcp/composeSite.h"
 #include "wabi/usd/pcp/diagnostic.h"
 #include "wabi/usd/pcp/instancing.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/trace/trace.h"
 

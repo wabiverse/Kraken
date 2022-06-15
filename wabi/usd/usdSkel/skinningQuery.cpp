@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdSkel/skinningQuery.h"
 
 #include "wabi/base/gf/matrix4d.h"
@@ -42,10 +35,13 @@
 
 #include "wabi/usd/usdSkel/utils.h"
 
+
 WABI_NAMESPACE_BEGIN
+
 
 namespace
 {
+
 
   enum UsdSkel_SkinningQueryFlags
   {
@@ -53,9 +49,12 @@ namespace
     UsdSkel_HasBlendShapes = 1 << 1
   };
 
+
 }  // namespace
 
+
 UsdSkelSkinningQuery::UsdSkelSkinningQuery() {}
+
 
 UsdSkelSkinningQuery::UsdSkelSkinningQuery(const UsdPrim &prim,
                                            const VtTokenArray &skelJointOrder,
@@ -87,6 +86,7 @@ UsdSkelSkinningQuery::UsdSkelSkinningQuery(const UsdPrim &prim,
   _InitializeJointInfluenceBindings(jointIndices, jointWeights);
   _InitializeBlendShapeBindings(blendShapes, blendShapeTargets);
 }
+
 
 void UsdSkelSkinningQuery::_InitializeJointInfluenceBindings(const UsdAttribute &jointIndices,
                                                              const UsdAttribute &jointWeights)
@@ -148,6 +148,7 @@ void UsdSkelSkinningQuery::_InitializeJointInfluenceBindings(const UsdAttribute 
   _flags |= UsdSkel_HasJointInfluences;
 }
 
+
 void UsdSkelSkinningQuery::_InitializeBlendShapeBindings(const UsdAttribute &blendShapes,
                                                          const UsdRelationship &blendShapeTargets)
 {
@@ -156,20 +157,24 @@ void UsdSkelSkinningQuery::_InitializeBlendShapeBindings(const UsdAttribute &ble
   }
 }
 
+
 bool UsdSkelSkinningQuery::HasBlendShapes() const
 {
   return _flags & UsdSkel_HasBlendShapes;
 }
+
 
 bool UsdSkelSkinningQuery::HasJointInfluences() const
 {
   return _flags & UsdSkel_HasJointInfluences;
 }
 
+
 bool UsdSkelSkinningQuery::IsRigidlyDeformed() const
 {
   return _interpolation == UsdGeomTokens->constant;
 }
+
 
 bool UsdSkelSkinningQuery::GetJointOrder(VtTokenArray *jointOrder) const
 {
@@ -184,6 +189,7 @@ bool UsdSkelSkinningQuery::GetJointOrder(VtTokenArray *jointOrder) const
   return false;
 }
 
+
 bool UsdSkelSkinningQuery::GetBlendShapeOrder(VtTokenArray *blendShapeOrder) const
 {
   if (blendShapeOrder) {
@@ -197,10 +203,12 @@ bool UsdSkelSkinningQuery::GetBlendShapeOrder(VtTokenArray *blendShapeOrder) con
   return false;
 }
 
+
 bool UsdSkelSkinningQuery::GetTimeSamples(std::vector<double> *times) const
 {
   return GetTimeSamplesInInterval(GfInterval::GetFullInterval(), times);
 }
+
 
 bool UsdSkelSkinningQuery::GetTimeSamplesInInterval(const GfInterval &interval,
                                                     std::vector<double> *times) const
@@ -226,6 +234,7 @@ bool UsdSkelSkinningQuery::GetTimeSamplesInInterval(const GfInterval &interval,
   times->erase(std::unique(times->begin(), times->end()), times->end());
   return true;
 }
+
 
 bool UsdSkelSkinningQuery::ComputeJointInfluences(VtIntArray *indices,
                                                   VtFloatArray *weights,
@@ -282,6 +291,7 @@ bool UsdSkelSkinningQuery::ComputeJointInfluences(VtIntArray *indices,
   return false;
 }
 
+
 bool UsdSkelSkinningQuery::ComputeVaryingJointInfluences(size_t numPoints,
                                                          VtIntArray *indices,
                                                          VtFloatArray *weights,
@@ -311,6 +321,7 @@ bool UsdSkelSkinningQuery::ComputeVaryingJointInfluences(size_t numPoints,
   }
   return false;
 }
+
 
 template<typename Matrix4>
 bool UsdSkelSkinningQuery::ComputeSkinnedPoints(const VtArray<Matrix4> &xforms,
@@ -349,6 +360,7 @@ bool UsdSkelSkinningQuery::ComputeSkinnedPoints(const VtArray<Matrix4> &xforms,
   return false;
 }
 
+
 template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedPoints(const VtArray<GfMatrix4d> &,
                                                                      VtVec3fArray *,
                                                                      UsdTimeCode) const;
@@ -356,6 +368,7 @@ template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedPoints(const VtArr
 template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedPoints(const VtArray<GfMatrix4f> &,
                                                                      VtVec3fArray *,
                                                                      UsdTimeCode) const;
+
 
 template<class Matrix4> struct _Matrix3FromMatrix4
 {};
@@ -369,6 +382,7 @@ template<> struct _Matrix3FromMatrix4<GfMatrix4f>
 {
   using value_type = GfMatrix3f;
 };
+
 
 template<class Matrix4>
 bool UsdSkelSkinningQuery::ComputeSkinnedNormals(const VtArray<Matrix4> &xforms,
@@ -422,6 +436,7 @@ bool UsdSkelSkinningQuery::ComputeSkinnedNormals(const VtArray<Matrix4> &xforms,
   return false;
 }
 
+
 template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedNormals(const VtArray<GfMatrix4d> &,
                                                                       VtVec3fArray *,
                                                                       UsdTimeCode) const;
@@ -429,6 +444,7 @@ template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedNormals(const VtAr
 template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedNormals(const VtArray<GfMatrix4f> &,
                                                                       VtVec3fArray *,
                                                                       UsdTimeCode) const;
+
 
 template<typename Matrix4>
 bool UsdSkelSkinningQuery::ComputeSkinnedTransform(const VtArray<Matrix4> &xforms,
@@ -473,6 +489,7 @@ bool UsdSkelSkinningQuery::ComputeSkinnedTransform(const VtArray<Matrix4> &xform
   return false;
 }
 
+
 template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedTransform(
   const VtArray<GfMatrix4d> &,
   GfMatrix4d *,
@@ -482,6 +499,7 @@ template USDSKEL_API bool UsdSkelSkinningQuery::ComputeSkinnedTransform(
   const VtArray<GfMatrix4f> &,
   GfMatrix4f *,
   UsdTimeCode time) const;
+
 
 template<typename Matrix4>
 float UsdSkelSkinningQuery::ComputeExtentsPadding(const VtArray<Matrix4> &skelRestXforms,
@@ -517,6 +535,7 @@ float UsdSkelSkinningQuery::ComputeExtentsPadding(const VtArray<Matrix4> &skelRe
   return 0.0f;
 }
 
+
 template USDSKEL_API float UsdSkelSkinningQuery::ComputeExtentsPadding(
   const VtArray<GfMatrix4d> &,
   const UsdGeomBoundable &) const;
@@ -524,6 +543,7 @@ template USDSKEL_API float UsdSkelSkinningQuery::ComputeExtentsPadding(
 template USDSKEL_API float UsdSkelSkinningQuery::ComputeExtentsPadding(
   const VtArray<GfMatrix4f> &,
   const UsdGeomBoundable &) const;
+
 
 GfMatrix4d UsdSkelSkinningQuery::GetGeomBindTransform(UsdTimeCode time) const
 {
@@ -535,6 +555,7 @@ GfMatrix4d UsdSkelSkinningQuery::GetGeomBindTransform(UsdTimeCode time) const
   return xform;
 }
 
+
 std::string UsdSkelSkinningQuery::GetDescription() const
 {
   if (IsValid()) {
@@ -542,5 +563,6 @@ std::string UsdSkelSkinningQuery::GetDescription() const
   }
   return "invalid UsdSkelSkinningQuery";
 }
+
 
 WABI_NAMESPACE_END

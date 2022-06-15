@@ -29,10 +29,10 @@
 /// A collection of private helper utilities to support instancing
 /// functionality.
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/composeSite.h"
 #include "wabi/usd/pcp/node_Iterator.h"
 #include "wabi/usd/pcp/primIndex.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

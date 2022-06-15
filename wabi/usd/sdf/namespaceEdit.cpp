@@ -23,12 +23,12 @@
 //
 /// \file namespaceEdit.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/namespaceEdit.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
 
 #include <boost/noncopyable.hpp>
 #include <boost/ptr_container/ptr_map.hpp>

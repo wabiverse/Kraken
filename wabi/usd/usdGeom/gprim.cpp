@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -48,6 +48,7 @@ UsdGeomGprim UsdGeomGprim::Get(const UsdStagePtr &stage, const SdfPath &path)
   }
   return UsdGeomGprim(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdGeomGprim::_GetSchemaKind() const

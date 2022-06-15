@@ -24,10 +24,10 @@
 #ifndef WABI_USD_USD_USDC_FILE_FORMAT_H
 #define WABI_USD_USD_USDC_FILE_FORMAT_H
 
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/usd/sdf/fileFormat.h"
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/sdf/fileFormat.h"
+#include "wabi/base/tf/staticTokens.h"
 #include <string>
 
 WABI_NAMESPACE_BEGIN
@@ -37,6 +37,8 @@ WABI_NAMESPACE_BEGIN
 TF_DECLARE_PUBLIC_TOKENS(UsdUsdcFileFormatTokens, USD_API, USD_USDC_FILE_FORMAT_TOKENS);
 
 TF_DECLARE_WEAK_AND_REF_PTRS(UsdUsdcFileFormat);
+
+class ArAsset;
 
 /// \class UsdUsdcFileFormat
 ///
@@ -76,6 +78,24 @@ class UsdUsdcFileFormat : public SdfFileFormat
 
   UsdUsdcFileFormat();
   virtual ~UsdUsdcFileFormat();
+
+ private:
+
+  friend class UsdUsdFileFormat;
+
+  bool _CanReadFromAsset(const std::string &resolvedPath,
+                         const std::shared_ptr<ArAsset> &asset) const;
+
+  bool _ReadFromAsset(SdfLayer *layer,
+                      const std::string &resolvedPath,
+                      const std::shared_ptr<ArAsset> &asset,
+                      bool metadataOnly) const;
+
+  template<class... Args>
+  bool _ReadHelper(SdfLayer *layer,
+                   const std::string &resolvedPath,
+                   bool metadataOnly,
+                   Args &&...args) const;
 };
 
 WABI_NAMESPACE_END

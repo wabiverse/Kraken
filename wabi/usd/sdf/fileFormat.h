@@ -26,16 +26,16 @@
 
 /// \file sdf/fileFormat.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/ar/ar.h"
+#include "wabi/usd/sdf/api.h"
+#include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/refBase.h"
 #include "wabi/base/tf/staticTokens.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
 #include "wabi/base/tf/weakBase.h"
-#include "wabi/usd/ar/ar.h"
-#include "wabi/usd/sdf/api.h"
-#include "wabi/usd/sdf/declareHandles.h"
-#include "wabi/wabi.h"
 
 #include <map>
 #include <string>
@@ -340,7 +340,7 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase
   SDF_API
   static SdfAbstractDataConstPtr _GetLayerData(const SdfLayer &layer);
 
- private:
+ protected:
 
   SDF_API
   virtual SdfLayer *_InstantiateNewLayer(const SdfFileFormatConstPtr &fileFormat,
@@ -368,6 +368,8 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase
   /// Default implementation returns false.
   SDF_API
   virtual bool _ShouldReadAnonymousLayers() const;
+
+ private:
 
   const SdfSchemaBase &_schema;
   const TfToken _formatId;

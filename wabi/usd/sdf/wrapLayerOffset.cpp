@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/pyContainerConversions.h"
-#include "wabi/base/tf/pyUtils.h"
-#include "wabi/base/vt/valueFromPython.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/layerOffset.h"
 #include "wabi/usd/sdf/timeCode.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/valueFromPython.h"
+#include "wabi/base/tf/pyContainerConversions.h"
+#include "wabi/base/tf/pyUtils.h"
 
 #include <boost/python.hpp>
 

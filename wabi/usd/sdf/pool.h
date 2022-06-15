@@ -24,8 +24,8 @@
 #ifndef WABI_USD_SDF_POOL_H
 #define WABI_USD_SDF_POOL_H
 
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
 
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/arch/hints.h"

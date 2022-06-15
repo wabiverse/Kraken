@@ -22,17 +22,17 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/enum.h"
-#include "wabi/base/tf/envSetting.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/envSetting.h"
+#include "wabi/base/tf/enum.h"
 
 #include "wabi/usd/usd/common.h"
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(USD_SHADING_MODEL,
-                      "usdRi",
-                      "Set to usdRi when models can interchange UsdShade prims.");
+TF_DEFINE_ENV_SETTING(
+    USD_SHADING_MODEL, "usdRi",
+    "Set to usdRi when models can interchange UsdShade prims.");
 
 TF_REGISTRY_FUNCTION(TfEnum)
 {

@@ -26,17 +26,17 @@
 
 /// \file sdf/layerRegistry.h
 
-#include "wabi/base/tf/hash.h"
-#include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/declareHandles.h"
+#include "wabi/base/tf/hash.h"
 
+#include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/identity.hpp>
-#include <boost/multi_index_container.hpp>
 #include <boost/noncopyable.hpp>
 
-#include <iosfwd>
 #include <string>
+#include <iosfwd>
 
 WABI_NAMESPACE_BEGIN
 

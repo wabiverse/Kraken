@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -176,12 +176,3 @@ bool UsdGeomBoundable::ComputeExtent(const UsdTimeCode &time, VtVec3fArray *exte
 }
 
 WABI_NAMESPACE_END
-
-// ===================================================================== //
-// Feel free to add custom code below this line. It will be preserved by
-// the code generator.
-//
-// Just remember to wrap code in the appropriate delimiters:
-// 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-// ===================================================================== //
-// --(BEGIN CUSTOM CODE)--

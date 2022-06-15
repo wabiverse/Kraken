@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usdGeom/modelAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdGeomModelAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (GeomModelAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (GeomModelAPI)
+);
 
 /* virtual */
 UsdGeomModelAPI::~UsdGeomModelAPI() {}
@@ -52,10 +55,17 @@ UsdGeomModelAPI UsdGeomModelAPI::Get(const UsdStagePtr &stage, const SdfPath &pa
   return UsdGeomModelAPI(stage->GetPrimAtPath(path));
 }
 
+
 /* virtual */
 UsdSchemaKind UsdGeomModelAPI::_GetSchemaKind() const
 {
   return UsdGeomModelAPI::schemaKind;
+}
+
+/* static */
+bool UsdGeomModelAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
+{
+  return prim.CanApplyAPI<UsdGeomModelAPI>(whyNot);
 }
 
 /* static */
@@ -460,5 +470,6 @@ TfToken UsdGeomModelAPI::ComputeModelDrawMode(const TfToken &parentDrawMode) con
   // If the attribute isn't set on any ancestors, return "default".
   return UsdGeomTokens->default_;
 }
+
 
 WABI_NAMESPACE_END

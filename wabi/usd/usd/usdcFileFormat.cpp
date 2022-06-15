@@ -21,15 +21,15 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/usdcFileFormat.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/usdcFileFormat.h"
 
 #include "wabi/usd/usd/usdFileFormat.h"
 #include "wabi/usd/usd/usdaFileFormat.h"
 
 #include "wabi/usd/sdf/fileFormat.h"
-#include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/textFileFormat.h"
+#include "wabi/usd/sdf/layer.h"
 
 #include "wabi/base/trace/trace.h"
 
@@ -40,6 +40,7 @@
 #include <iosfwd>
 
 WABI_NAMESPACE_BEGIN
+
 
 using std::string;
 
@@ -76,15 +77,39 @@ bool UsdUsdcFileFormat::CanRead(const string &filePath) const
   return Usd_CrateData::CanRead(filePath);
 }
 
+bool UsdUsdcFileFormat::_CanReadFromAsset(const string &filePath,
+                                          const std::shared_ptr<ArAsset> &asset) const
+{
+  return Usd_CrateData::CanRead(filePath, asset);
+}
+
 bool UsdUsdcFileFormat::Read(SdfLayer *layer, const string &resolvedPath, bool metadataOnly) const
 {
   TRACE_FUNCTION();
+  return _ReadHelper(layer, resolvedPath, metadataOnly);
+}
 
+bool UsdUsdcFileFormat::_ReadFromAsset(SdfLayer *layer,
+                                       const string &resolvedPath,
+                                       const std::shared_ptr<ArAsset> &asset,
+                                       bool metadataOnly) const
+{
+  TRACE_FUNCTION();
+  return _ReadHelper(layer, resolvedPath, metadataOnly, asset);
+}
+
+template<class... Args>
+bool UsdUsdcFileFormat::_ReadHelper(SdfLayer *layer,
+                                    const std::string &resolvedPath,
+                                    bool metadataOnly,
+                                    Args &&...args) const
+{
   SdfAbstractDataRefPtr data = InitData(layer->GetFileFormatArguments());
   auto crateData = TfDynamic_cast<Usd_CrateDataRefPtr>(data);
 
-  if (!crateData || !crateData->Open(resolvedPath))
+  if (!crateData || !crateData->Open(resolvedPath, std::forward<Args>(args)...)) {
     return false;
+  }
 
   _SetLayerData(layer, data);
   return true;

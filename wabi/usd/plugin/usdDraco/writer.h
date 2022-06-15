@@ -25,17 +25,16 @@
 #ifndef WABI_USD_PLUGIN_USD_DRACO_WRITER_H
 #define WABI_USD_PLUGIN_USD_DRACO_WRITER_H
 
-#include "wabi/usd/plugin/usdDraco/api.h"
-#include "wabi/usd/usdGeom/mesh.h"
-#include "wabi/usd/usdGeom/primvar.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/mesh.h"
 
 #include <string>
 
+
 WABI_NAMESPACE_BEGIN
 
+
 /// Encodes mesh and writes it in Draco format to a file at \p fileName.
-USDDRACO_API
 bool UsdDraco_WriteDraco(const UsdGeomMesh &mesh,
                          const std::string &fileName,
                          int qp,
@@ -49,8 +48,8 @@ bool UsdDraco_WriteDraco(const UsdGeomMesh &mesh,
 /// Checks whether a USD primvar can be encoded to Draco. It is called from
 /// usdcompress.py script to determine whether a primvar should be deleted from
 /// USD mesh or remain in USD mesh.
-USDDRACO_API
 bool UsdDraco_PrimvarSupported(const UsdGeomPrimvar &primvar);
+
 
 WABI_NAMESPACE_END
 

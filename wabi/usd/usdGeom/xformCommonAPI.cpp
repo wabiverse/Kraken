@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usdGeom/xformCommonAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdGeomXformCommonAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (XformCommonAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (XformCommonAPI)
+);
 
 /* virtual */
 UsdGeomXformCommonAPI::~UsdGeomXformCommonAPI() {}
@@ -51,6 +54,7 @@ UsdGeomXformCommonAPI UsdGeomXformCommonAPI::Get(const UsdStagePtr &stage, const
   }
   return UsdGeomXformCommonAPI(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdGeomXformCommonAPI::_GetSchemaKind() const
@@ -405,6 +409,27 @@ static vector<UsdGeomXformOp::Type> _GetCommonOpTypesForOpOrder(
   return commonOpTypes;
 }
 
+static bool _GetFromVec3dOrVec3f(const UsdGeomXformOp &attr,
+                                 GfVec3f *value,
+                                 const UsdTimeCode &time)
+{
+  // First, try GfVec3d which we downcast to GfVec3f.
+  GfVec3d valueD;
+  if (attr.Get(&valueD, time)) {
+    if (value) {
+      *value = GfVec3f(valueD);
+    }
+    return true;
+  }
+
+  // Fallback to GfVec3f.
+  if (attr.Get(value, time)) {
+    return true;
+  }
+
+  return false;
+}
+
 bool UsdGeomXformCommonAPI::GetXformVectors(GfVec3d *translation,
                                             GfVec3f *rotation,
                                             GfVec3f *scale,
@@ -454,7 +479,7 @@ bool UsdGeomXformCommonAPI::GetXformVectors(GfVec3d *translation,
     *scale = GfVec3f(1.);
   }
 
-  if (!p || !p.Get(pivot, time)) {
+  if (!p || !_GetFromVec3dOrVec3f(p, pivot, time)) {
     *pivot = GfVec3f(0.);
   }
 

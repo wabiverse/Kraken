@@ -22,13 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/pathTranslation.h"
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/pcp/mapExpression.h"
 #include "wabi/usd/pcp/mapFunction.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
+#include "wabi/base/trace/trace.h"
 
 WABI_NAMESPACE_BEGIN
 

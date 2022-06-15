@@ -64,7 +64,7 @@ WABI_NAMESPACE_USING
     return TOK_EXPRESSION;
 }
 
- /* This should always match identifiers in the menva parser.  We
+ /* This should always match identifiers in the sdf parser.  We
   * currently allow valid C/Python identifiers.
   */
 [[:alpha:]_][[:alnum:]_]* {

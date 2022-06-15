@@ -24,6 +24,38 @@
 #include "wabi/usd/usdUtils/registeredVariantSet.h"
 #include "wabi/wabi.h"
 
+#include "wabi/base/tf/staticTokens.h"
+
 WABI_NAMESPACE_BEGIN
+
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    // lowerCamelCase of enums
+    (never)
+    (ifAuthored)
+    (always)
+);
+
+// static
+bool UsdUtilsRegisteredVariantSet::GetSelectionExportPolicyFromString(
+  const std::string &selectionExportPolicyStr,
+  SelectionExportPolicy *outSelectionExportPolicy)
+{
+  SelectionExportPolicy selectionExportPolicy;
+  if (selectionExportPolicyStr == _tokens->never) {
+    selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::Never;
+  } else if (selectionExportPolicyStr == _tokens->ifAuthored) {
+    selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::IfAuthored;
+  } else if (selectionExportPolicyStr == _tokens->always) {
+    selectionExportPolicy = UsdUtilsRegisteredVariantSet::SelectionExportPolicy::Always;
+  } else {
+    return false;
+  }
+
+  if (outSelectionExportPolicy) {
+    *outSelectionExportPolicy = selectionExportPolicy;
+  }
+  return true;
+}
 
 WABI_NAMESPACE_END

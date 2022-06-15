@@ -24,11 +24,11 @@
 #ifndef WABI_USD_SDF_PARSER_HELPERS_H
 #define WABI_USD_SDF_PARSER_HELPERS_H
 
-#include "wabi/base/arch/inttypes.h"
-#include "wabi/base/vt/value.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/valueTypeName.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/inttypes.h"
+#include "wabi/base/vt/value.h"
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/variant.hpp>
@@ -187,6 +187,7 @@ namespace Sdf_ParserHelpers
       }
     }
   };
+
 
   ////////////////////////////////////////////////////////////////////////
 

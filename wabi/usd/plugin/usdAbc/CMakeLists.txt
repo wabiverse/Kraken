@@ -23,14 +23,15 @@ wabi_plugin(usdAbc
         usd
         usdGeom
         ${ALEMBIC_LIBRARIES}
-        ${OPENEXR_LIBRARIES}
-        ${IMATH_LIBRARY}
+        ${OPENEXR_Half_LIBRARY} 
+        ${OPENEXR_Imath_LIBRARY} 
+        ${OPENEXR_Iex_LIBRARY} 
+        ${OPENEXR_IexMath_LIBRARY}
         ${optionalLibs}
 
     INCLUDE_DIRS
         ${ALEMBIC_INCLUDE_DIR}
-        ${ILMBASE_INCLUDES}/Imath
-        ${OPENEXR_INCLUDE_DIR}
+        ${OPENEXR_INCLUDE_DIRS}
         ${optionalIncludeDirs}
 
     PRIVATE_CLASSES

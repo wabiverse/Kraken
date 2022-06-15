@@ -24,20 +24,20 @@
 ///
 /// \file Sdf/fileFormat.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/fileFormat.h"
 #include "wabi/usd/sdf/assetPathResolver.h"
 #include "wabi/usd/sdf/data.h"
 #include "wabi/usd/sdf/fileFormatRegistry.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/layerHints.h"
-#include "wabi/wabi.h"
 
+#include "wabi/usd/ar/resolver.h"
+#include "wabi/base/trace/trace.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/usd/ar/resolver.h"
 
 WABI_NAMESPACE_BEGIN
 

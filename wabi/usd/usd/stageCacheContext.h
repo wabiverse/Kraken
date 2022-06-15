@@ -24,13 +24,14 @@
 #ifndef WABI_USD_USD_STAGE_CACHE_CONTEXT_H
 #define WABI_USD_USD_STAGE_CACHE_CONTEXT_H
 
-#include "wabi/base/tf/stacked.h"
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/base/tf/stacked.h"
 
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdStageCache;
 
@@ -157,6 +158,7 @@ TF_DEFINE_STACKED(UsdStageCacheContext, true, USD_API)
   bool _isReadOnlyCache;
   UsdStageCacheContextBlockType _blockType;
 };
+
 
 WABI_NAMESPACE_END
 

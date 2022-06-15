@@ -24,14 +24,14 @@
 #ifndef WABI_USD_PCP_PRIM_INDEX_GRAPH_H
 #define WABI_USD_PCP_PRIM_INDEX_GRAPH_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/iterator.h"
 #include "wabi/usd/pcp/layerStack.h"
+#include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/mapExpression.h"
 #include "wabi/usd/pcp/mapFunction.h"
-#include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/types.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/attributes.h"
 #include "wabi/base/tf/declarePtrs.h"
@@ -145,7 +145,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
   /// Get a node from compressed site \p site.
   PcpNodeRef GetNode(const Pcp_CompressedSdSite &site)
   {
-    TF_VERIFY(site.nodeIndex < _GetNumNodes());
+    TF_DEV_AXIOM(site.nodeIndex < _GetNumNodes());
     return PcpNodeRef(this, site.nodeIndex);
   }
 
@@ -226,7 +226,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
 
   const _Node &_GetNode(size_t idx) const
   {
-    TF_VERIFY(idx < _GetNumNodes());
+    TF_DEV_AXIOM(idx < _GetNumNodes());
     return _data->nodes[idx];
   }
   const _Node &_GetNode(const PcpNodeRef &node) const
@@ -253,7 +253,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
     // Index used to represent an invalid node.
     static const size_t _invalidNodeIndex = (1lu << _nodeIndexSize) - 1lu;
 
-    _Node()
+    _Node() noexcept
     /* The equivalent initializations to the memset().
     , permission(SdfPermissionPublic)
     , hasSymmetry(false)
@@ -276,7 +276,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
       smallInts.nextSiblingIndex = _invalidNodeIndex;
     }
 
-    void Swap(_Node &rhs)
+    void Swap(_Node &rhs) noexcept
     {
       std::swap(layerStack, rhs.layerStack);
       mapToRoot.Swap(rhs.mapToRoot);

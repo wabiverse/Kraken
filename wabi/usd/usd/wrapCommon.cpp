@@ -21,15 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/base/tf/pyEnum.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/object.h"
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usd/stageCache.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyEnum.h"
 
 #include <boost/python/def.hpp>
 #include <boost/python/enum.hpp>
+
 
 using namespace boost::python;
 

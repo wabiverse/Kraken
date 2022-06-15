@@ -21,10 +21,10 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usdGeom/primvar.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/relationship.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/staticTokens.h"
@@ -33,12 +33,31 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((primvarsPrefix, "primvars:"))((idFrom, ":idFrom"))((indicesSuffix, ":indices")));
 
-UsdGeomPrimvar::UsdGeomPrimvar(const UsdAttribute &attr) : _attr(attr)
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((primvarsPrefix, "primvars:"))
+    ((idFrom, ":idFrom"))
+    ((indicesSuffix, ":indices"))
+);
+
+UsdGeomPrimvar::UsdGeomPrimvar(const UsdAttribute &attr)
+  : _attr(attr),
+    _idTargetStatus(IdTargetUninitialized)
+{}
+
+UsdGeomPrimvar::UsdGeomPrimvar(const UsdGeomPrimvar &other)
+  : _attr(other._attr),
+    _idTargetStatus(IdTargetUninitialized)
+{}
+
+UsdGeomPrimvar &UsdGeomPrimvar::operator=(const UsdGeomPrimvar &other)
 {
-  _SetIdTargetRelName();
+  if (this != &other) {
+    _idTargetStatus = IdTargetUninitialized;
+    _attr = other._attr;
+  }
+  return *this;
 }
 
 /* static */
@@ -171,6 +190,7 @@ bool UsdGeomPrimvar::HasAuthoredElementSize() const
 {
   return _attr.HasAuthoredMetadata(UsdGeomTokens->elementSize);
 }
+
 
 void UsdGeomPrimvar::GetDeclarationInfo(TfToken *name,
                                         SdfValueTypeName *typeName,
@@ -362,6 +382,7 @@ bool UsdGeomPrimvar::ComputeFlattened(VtValue *value,
 UsdGeomPrimvar::UsdGeomPrimvar(const UsdPrim &prim,
                                const TfToken &primvarName,
                                const SdfValueTypeName &typeName)
+  : _idTargetStatus(IdTargetUninitialized)
 {
   TF_VERIFY(prim);
 
@@ -372,23 +393,10 @@ UsdGeomPrimvar::UsdGeomPrimvar(const UsdPrim &prim,
   }
   // If a problem occurred, an error should already have been issued,
   // and _attr will be invalid, which is what we want
-
-  _SetIdTargetRelName();
 }
 
-void UsdGeomPrimvar::_SetIdTargetRelName()
-{
-  if (!_attr) {
-    return;
-  }
-
-  const SdfValueTypeName &typeName = _attr.GetTypeName();
-  if (typeName == SdfValueTypeNames->String || typeName == SdfValueTypeNames->StringArray) {
-    std::string name(_attr.GetName().GetString());
-    _idTargetRelName = TfToken(name.append(_tokens->idFrom.GetText()));
-  }
-}
-
+// Note! caller must ensure that _idTargetStatus == IdTargetPossible before
+// calling.
 UsdRelationship UsdGeomPrimvar::_GetIdTargetRel(bool create) const
 {
   if (create) {
@@ -400,12 +408,12 @@ UsdRelationship UsdGeomPrimvar::_GetIdTargetRel(bool create) const
 
 bool UsdGeomPrimvar::IsIdTarget() const
 {
-  return !_idTargetRelName.IsEmpty() && _GetIdTargetRel(false);
+  return _ComputeIdTargetPossibility() && !_idTargetRelName.IsEmpty() && _GetIdTargetRel(false);
 }
 
 bool UsdGeomPrimvar::SetIdTarget(const SdfPath &path) const
 {
-  if (_idTargetRelName.IsEmpty()) {
+  if (!_ComputeIdTargetPossibility()) {
     TF_CODING_ERROR(
       "Can only set ID Target for string or string[] typed"
       " primvars (primvar type is '%s')",
@@ -425,7 +433,7 @@ template<> bool UsdGeomPrimvar::Get(std::string *value, UsdTimeCode time) const
 {
   // check if there is a relationship and if so use the target path string to
   // get the string value.
-  if (!_idTargetRelName.IsEmpty()) {
+  if (_ComputeIdTargetPossibility()) {
     if (UsdRelationship rel = _GetIdTargetRel(false)) {
       SdfPathVector targets;
       if (rel.GetForwardedTargets(&targets) && targets.size() == 1) {
@@ -448,7 +456,7 @@ template<> bool UsdGeomPrimvar::Get(VtStringArray *value, UsdTimeCode time) cons
 {
   // check if there is a relationship and if so use the target path string to
   // get the string value... Just take the first target, for now.
-  if (!_idTargetRelName.IsEmpty()) {
+  if (_ComputeIdTargetPossibility()) {
     if (UsdRelationship rel = _GetIdTargetRel(false)) {
       value->clear();
       SdfPathVector targets;
@@ -465,7 +473,7 @@ template<> bool UsdGeomPrimvar::Get(VtStringArray *value, UsdTimeCode time) cons
 
 template<> bool UsdGeomPrimvar::Get(VtValue *value, UsdTimeCode time) const
 {
-  if (!_idTargetRelName.IsEmpty()) {
+  if (_ComputeIdTargetPossibility()) {
     const SdfValueTypeName &typeName = _attr.GetTypeName();
     if (typeName == SdfValueTypeNames->String) {
       std::string s;
@@ -531,6 +539,37 @@ bool UsdGeomPrimvar::NameContainsNamespaces() const
 {
   static const size_t primvarsPrefixLen = _tokens->primvarsPrefix.GetString().size();
   return (_attr.GetName().GetString().find(':', primvarsPrefixLen) != std::string::npos);
+}
+
+bool UsdGeomPrimvar::_ComputeIdTargetPossibility() const
+{
+  // Read the current value.
+  _IdTargetStatus status = _idTargetStatus.load();
+
+  if (status == IdTargetUninitialized) {
+    // Attempt to take it to Initializing.
+    if (_idTargetStatus.compare_exchange_strong(status, IdTargetInitializing)) {
+      // We get to do the initialization.
+      if (!_attr) {
+        _idTargetStatus = IdTargetImpossible;
+      } else {
+        // Set the rel target name.
+        const SdfValueTypeName &typeName = _attr.GetTypeName();
+        if (typeName == SdfValueTypeNames->String || typeName == SdfValueTypeNames->StringArray) {
+          std::string name(_attr.GetName().GetString());
+          _idTargetRelName = TfToken(name.append(_tokens->idFrom.GetText()));
+          _idTargetStatus = status = IdTargetPossible;
+        } else {
+          _idTargetStatus = status = IdTargetImpossible;
+        }
+      }
+    }
+  }
+  while (status == IdTargetInitializing) {
+    std::this_thread::yield();
+    status = _idTargetStatus.load();
+  }
+  return status == IdTargetPossible;
 }
 
 WABI_NAMESPACE_END

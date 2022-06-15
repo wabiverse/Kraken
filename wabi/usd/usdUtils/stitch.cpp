@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdUtils/stitch.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/stitch.h"
 
 #include "wabi/usd/sdf/copyUtils.h"
 #include "wabi/usd/sdf/layer.h"
@@ -31,9 +31,9 @@
 #include "wabi/usd/sdf/reference.h"
 #include "wabi/usd/sdf/schema.h"
 
-#include "wabi/base/tf/token.h"
-#include "wabi/base/tf/warning.h"
 #include "wabi/base/vt/value.h"
+#include "wabi/base/tf/warning.h"
+#include "wabi/base/tf/token.h"
 
 #include <algorithm>
 #include <functional>

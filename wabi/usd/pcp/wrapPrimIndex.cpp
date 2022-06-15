@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/primIndex.h"
 #include "wabi/usd/sdf/siteUtils.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyResultConversions.h"
 #include <boost/python.hpp>
 
 using namespace boost::python;

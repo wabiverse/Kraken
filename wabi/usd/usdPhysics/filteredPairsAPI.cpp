@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdPhysicsFilteredPairsAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsFilteredPairsAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (PhysicsFilteredPairsAPI)
+);
 
 /* virtual */
 UsdPhysicsFilteredPairsAPI::~UsdPhysicsFilteredPairsAPI() {}

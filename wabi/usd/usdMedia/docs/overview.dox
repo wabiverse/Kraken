@@ -1,6 +1,6 @@
 /*!
 \page usdMedia_page_front UsdMedia : USD Media Schema
-\if ( WABI_MFB_BUILD )
+\if ( PIXAR_MFB_BUILD )
 \mainpage UsdMedia : USD Media Schema
 \publicLib
 \endif

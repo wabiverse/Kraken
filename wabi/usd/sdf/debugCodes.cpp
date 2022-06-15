@@ -21,10 +21,10 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/debugCodes.h"
 #include "wabi/base/tf/debug.h"
 #include "wabi/base/tf/registryManager.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

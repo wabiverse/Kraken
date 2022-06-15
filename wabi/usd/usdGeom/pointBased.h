@@ -26,18 +26,18 @@
 
 /// \file usdGeom/pointBased.h
 
-#include "wabi/usd/usd/prim.h"
-#include "wabi/usd/usd/stage.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usdGeom/api.h"
 #include "wabi/usd/usdGeom/gprim.h"
+#include "wabi/usd/usd/prim.h"
+#include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -63,7 +63,6 @@ class UsdGeomPointBased : public UsdGeomGprim
   ///
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::AbstractTyped;
-
 
   /// Construct a UsdGeomPointBased on UsdPrim \p prim .
   /// Equivalent to UsdGeomPointBased::Get(prim.GetStage(), prim.GetPath())
@@ -98,6 +97,7 @@ class UsdGeomPointBased : public UsdGeomGprim
   USDGEOM_API
   static UsdGeomPointBased Get(const UsdStagePtr &stage, const SdfPath &path);
 
+
  protected:
 
   /// Returns the kind of schema this class belongs to.
@@ -106,10 +106,9 @@ class UsdGeomPointBased : public UsdGeomGprim
   USDGEOM_API
   UsdSchemaKind _GetSchemaKind() const override;
 
-
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
   static const TfType &_GetStaticTfType();
@@ -119,7 +118,6 @@ class UsdGeomPointBased : public UsdGeomGprim
   // override SchemaBase virtuals.
   USDGEOM_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -377,8 +375,7 @@ class UsdGeomPointBased : public UsdGeomGprim
   ///                     \p positions or empty. If it is empty, points
   ///                     are computed as if all accelerations were zero in
   ///                     all dimensions.
-  /// \param velocityScale - factor used to artificially increase the effect
-  ///                        of velocity on positions.
+  /// \param velocityScale - \deprecated
   USDGEOM_API
   static bool ComputePointsAtTime(VtArray<GfVec3f> *points,
                                   UsdStageWeakPtr &stage,
@@ -387,7 +384,7 @@ class UsdGeomPointBased : public UsdGeomGprim
                                   const VtVec3fArray &velocities,
                                   UsdTimeCode velocitiesSampleTime,
                                   const VtVec3fArray &accelerations,
-                                  float velocityScale);
+                                  float velocityScale = 1.0);
 };
 
 WABI_NAMESPACE_END

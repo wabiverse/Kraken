@@ -132,7 +132,7 @@ class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
   static const TfType &_GetStaticTfType();
@@ -142,7 +142,6 @@ class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
   // override SchemaBase virtuals.
   USDPHYSICS_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 

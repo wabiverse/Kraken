@@ -23,8 +23,8 @@
 //
 /// \file ProxyPolicies.cpp
 
-#include "wabi/usd/sdf/proxyPolicies.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/proxyPolicies.h"
 
 WABI_NAMESPACE_BEGIN
 

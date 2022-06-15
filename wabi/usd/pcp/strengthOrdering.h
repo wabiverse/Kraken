@@ -24,8 +24,8 @@
 #ifndef WABI_USD_PCP_STRENGTH_ORDERING_H
 #define WABI_USD_PCP_STRENGTH_ORDERING_H
 
-#include "wabi/usd/pcp/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/api.h"
 
 WABI_NAMESPACE_BEGIN
 

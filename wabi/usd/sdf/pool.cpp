@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/sdf/pool.h"
-#include "wabi/base/arch/virtualMemory.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/virtualMemory.h"
+#include "wabi/usd/sdf/pool.h"
 
 WABI_NAMESPACE_BEGIN
 

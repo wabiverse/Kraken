@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdUtils/timeCodeRange.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/timeCodeRange.h"
 
 #include "wabi/base/tf/pyStaticTokens.h"
 #include "wabi/base/tf/pyUtils.h"
@@ -40,12 +40,16 @@
 #include <sstream>
 #include <string>
 
+
 using namespace boost::python;
+
 
 WABI_NAMESPACE_USING
 
+
 namespace
 {
+
 
   static std::string _FrameSpec(const UsdUtilsTimeCodeRange &timeCodeRange)
   {
@@ -116,7 +120,9 @@ namespace
     return UsdUtils_PyTimeCodeRangeIterator(timeCodeRange);
   }
 
+
 }  // anonymous namespace
+
 
 void wrapTimeCodeRange()
 {

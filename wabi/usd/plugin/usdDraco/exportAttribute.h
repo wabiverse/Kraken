@@ -28,15 +28,17 @@
 #include "attributeDescriptor.h"
 
 #include "wabi/base/gf/matrix2f.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usdGeom/mesh.h"
 #include "wabi/usd/usdGeom/primvarsAPI.h"
-#include "wabi/wabi.h"
 
 #include <draco/attributes/geometry_attribute.h>
 #include <draco/attributes/point_attribute.h>
 #include <draco/mesh/mesh.h>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdDracoExportAttributeInterface
 ///
@@ -58,6 +60,7 @@ class UsdDracoExportAttributeInterface
   virtual size_t GetNumIndices() const = 0;
   virtual bool UsesPositionIndex() const = 0;
 };
+
 
 /// \class UsdDracoExportAttribute
 ///
@@ -151,6 +154,7 @@ template<class T> class UsdDracoExportAttribute : public UsdDracoExportAttribute
   VtArray<T> _values;
   VtArray<int> _indices;
 };
+
 
 template<class T>
 UsdDracoExportAttribute<T>::UsdDracoExportAttribute(const UsdDracoAttributeDescriptor &descriptor)
@@ -292,6 +296,7 @@ template<class T> inline bool UsdDracoExportAttribute<T>::HasPointAttribute() co
 {
   return _pointAttribute != nullptr;
 }
+
 
 WABI_NAMESPACE_END
 

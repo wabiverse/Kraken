@@ -23,15 +23,15 @@
 //
 /// \file LayerStackRegistry.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/layerStackRegistry.h"
 #include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/pcp/layerStackIdentifier.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/tf/staticData.h"
 #include "wabi/usd/ar/resolver.h"
 #include "wabi/usd/sdf/layerUtils.h"
+#include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/tf/staticData.h"
 
 #include <tbb/queuing_rw_mutex.h>
 
@@ -133,20 +133,29 @@ PcpLayerStackRefPtr Pcp_LayerStackRegistry::FindOrCreate(const PcpLayerStackIden
   }
 
   tbb::queuing_rw_mutex::scoped_lock lock(_data->mutex, /*write=*/false);
+  PcpLayerStackRefPtr refLayerStack;
 
   if (const PcpLayerStackPtr &layerStack = _Find(identifier)) {
-    return layerStack;
-  } else {
+    refLayerStack = TfCreateRefPtrFromProtectedWeakPtr(layerStack);
+  }
+  if (!refLayerStack) {
     lock.release();
 
-    PcpLayerStackRefPtr refLayerStack = TfCreateRefPtr(
+    PcpLayerStackRefPtr createdLayerStack = TfCreateRefPtr(
       new PcpLayerStack(identifier, _GetFileFormatTarget(), _GetMutedLayers(), _IsUsd()));
 
-    // Take the lock and see if we get to install the layerstack.
+    // Take the lock and check again for an existing layer stack, or
+    // install the one we just created.
     lock.acquire(_data->mutex);
-    auto iresult = _data->identifierToLayerStack.emplace(identifier, refLayerStack);
-    if (iresult.second) {
-      // If so give it a link back to us so it can remove itself upon
+    if (const PcpLayerStackPtr &layerStack = _Find(identifier)) {
+      refLayerStack = TfCreateRefPtrFromProtectedWeakPtr(layerStack);
+    }
+    if (!refLayerStack) {
+      // No existing entry, or it is being deleted. Add the one we just
+      // create to the map.
+      refLayerStack = createdLayerStack;
+      _data->identifierToLayerStack[identifier] = refLayerStack;
+      // Also give it a link back to us so it can remove itself upon
       // destruction, and install its layers into our structures.
       refLayerStack->_registry = TfCreateWeakPtr(this);
       _SetLayers(get_pointer(refLayerStack));
@@ -156,9 +165,9 @@ PcpLayerStackRefPtr Pcp_LayerStackRegistry::FindOrCreate(const PcpLayerStackIden
       PcpErrorVector errors = refLayerStack->GetLocalErrors();
       allErrors->insert(allErrors->end(), errors.begin(), errors.end());
     }
-
-    return iresult.first->second;
   }
+
+  return refLayerStack;
 }
 
 PcpLayerStackPtr Pcp_LayerStackRegistry::Find(const PcpLayerStackIdentifier &identifier) const
@@ -199,16 +208,37 @@ std::vector<PcpLayerStackPtr> Pcp_LayerStackRegistry::GetAllLayerStacks() const
   return result;
 }
 
+void Pcp_LayerStackRegistry::ForEachLayerStack(
+  const TfFunctionRef<void(const PcpLayerStackPtr &)> &fn)
+{
+  // Copy all layer stacks so that we can run the callback
+  // without holding a read lock on the layer registry.
+  const std::vector<PcpLayerStackPtr> layerStacks = GetAllLayerStacks();
+  for (const PcpLayerStackPtr &layerStack : layerStacks) {
+    fn(layerStack);
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////
 // Private helper methods.
 
-void Pcp_LayerStackRegistry::_Remove(const PcpLayerStackIdentifier &identifier,
-                                     const PcpLayerStack *layerStack)
+void Pcp_LayerStackRegistry::_SetLayersAndRemove(const PcpLayerStackIdentifier &identifier,
+                                                 const PcpLayerStack *layerStack)
 {
+  tbb::queuing_rw_mutex::scoped_lock lock(_data->mutex, /*write=*/true);
+
   Pcp_LayerStackRegistryData::IdentifierToLayerStack::const_iterator i =
     _data->identifierToLayerStack.find(identifier);
-  if (TF_VERIFY(i != _data->identifierToLayerStack.end()) &&
-      TF_VERIFY(i->second.operator->() == layerStack)) {
+  // It's possible that layerStack has already been removed from the
+  // map if a FindOrCreate call intercedes between the moment when the
+  // layer stack's ref count drops to zero and the time the layer stack
+  // destructor is called (which is how we get into this method).
+  // Always call _SetLayers to clear this (now empty) layer stack's
+  // pointer from the maps inside _data, even if a new layer stack with the
+  // same identifier has already been added to the identifierToLayerStack
+  // map.
+  _SetLayers(layerStack);
+  if (i != _data->identifierToLayerStack.end() && i->second.operator->() == layerStack) {
     _data->identifierToLayerStack.erase(identifier);
   }
 }

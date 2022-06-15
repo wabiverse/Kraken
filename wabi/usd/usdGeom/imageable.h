@@ -26,21 +26,21 @@
 
 /// \file usdGeom/imageable.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/api.h"
+#include "wabi/usd/usd/typed.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/usd/usd/typed.h"
-#include "wabi/usd/usdGeom/api.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/gf/bbox3d.h"
 #include "wabi/usd/usdGeom/primvar.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"

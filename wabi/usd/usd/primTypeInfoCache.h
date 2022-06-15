@@ -24,10 +24,10 @@
 #ifndef WABI_USD_USD_PRIM_TYPE_INFO_CACHE_H
 #define WABI_USD_USD_PRIM_TYPE_INFO_CACHE_H
 
-#include "wabi/base/tf/token.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/primTypeInfo.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/token.h"
 
 #include <tbb/concurrent_hash_map.h>
 

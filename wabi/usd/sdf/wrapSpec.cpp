@@ -23,14 +23,14 @@
 //
 /// \file wrapSpec.cpp
 
-#include "wabi/base/tf/ostreamMethods.h"
-#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/spec.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/pySpec.h"
 #include "wabi/usd/sdf/schema.h"
-#include "wabi/usd/sdf/spec.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/ostreamMethods.h"
 
 #include <boost/python/class.hpp>
 

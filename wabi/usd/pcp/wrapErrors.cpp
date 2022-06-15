@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
+#include "wabi/usd/pcp/errors.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyPtrHelpers.h"
 #include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/usd/pcp/errors.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/pyEnum.h"
 #include <boost/python.hpp>

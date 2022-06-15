@@ -24,12 +24,12 @@
 #ifndef WABI_USD_SDF_DECLARE_SPEC_H
 #define WABI_USD_SDF_DECLARE_SPEC_H
 
-#include "wabi/base/tf/registryManager.h"
-#include "wabi/base/tf/type.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/specType.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/registryManager.h"
+#include "wabi/base/tf/type.h"
 
 WABI_NAMESPACE_BEGIN
 

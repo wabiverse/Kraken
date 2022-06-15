@@ -21,12 +21,12 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/timeCode.h"
+#include "wabi/base/vt/valueFromPython.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/base/vt/valueFromPython.h"
 #include "wabi/base/vt/wrapArray.h"
-#include "wabi/usd/sdf/timeCode.h"
-#include "wabi/wabi.h"
 
 #include <boost/functional/hash.hpp>
 #include <boost/python/class.hpp>
@@ -76,38 +76,44 @@ void wrapTimeCode()
 {
   typedef SdfTimeCode This;
 
-  class_<This>("TimeCode", init<>())
-    .def(init<double>())
+  auto selfCls = class_<This>("TimeCode", init<>())
+                   .def(init<double>())
 
-    .def("GetValue", &This::GetValue)
+                   .def("GetValue", &This::GetValue)
 
-    .def("__repr__", _Repr)
-    .def("__str__", _Str)
-    .def(TfPyBoolBuiltinFuncName, _Nonzero)
-    .def("__hash__", &This::GetHash)
-    .def("__float__", _Float)
+                   .def("__repr__", _Repr)
+                   .def("__str__", _Str)
+                   .def(TfPyBoolBuiltinFuncName, _Nonzero)
+                   .def("__hash__", &This::GetHash)
+                   .def("__float__", _Float)
 
-    .def(self == self)
-    .def(double() == self)
-    .def(self != self)
-    .def(double() != self)
-    .def(self < self)
-    .def(double() < self)
-    .def(self > self)
-    .def(double() > self)
-    .def(self <= self)
-    .def(double() <= self)
-    .def(self >= self)
-    .def(double() >= self)
+                   .def(self == self)
+                   .def(double() == self)
+                   .def(self != self)
+                   .def(double() != self)
+                   .def(self < self)
+                   .def(double() < self)
+                   .def(self > self)
+                   .def(double() > self)
+                   .def(self <= self)
+                   .def(double() <= self)
+                   .def(self >= self)
+                   .def(double() >= self)
 
-    .def(self * self)
-    .def(double() * self)
-    .def(self / self)
-    .def(double() / self)
-    .def(self + self)
-    .def(double() + self)
-    .def(self - self)
-    .def(double() - self);
+                   .def(self * self)
+                   .def(double() * self)
+                   .def(self / self)
+                   .def(double() / self)
+                   .def(self + self)
+                   .def(double() + self)
+                   .def(self - self)
+                   .def(double() - self);
+
+#if PY_MAJOR_VERSION == 2
+  // Needed to support "from __future__ import division" in python 2.
+  selfCls.attr("__truediv__") = selfCls.attr("__div__");
+  selfCls.attr("__rtruediv__") = selfCls.attr("__rdiv__");
+#endif
 
   implicitly_convertible<double, This>();
 

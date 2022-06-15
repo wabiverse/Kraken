@@ -26,11 +26,11 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/declarePtrs.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/propertySpec.h"
+#include "wabi/base/tf/declarePtrs.h"
 
 #include <iosfwd>
 #include <memory>

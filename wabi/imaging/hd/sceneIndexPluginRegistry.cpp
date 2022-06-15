@@ -26,8 +26,6 @@
 #include "wabi/imaging/hd/overlayContainerDataSource.h"
 #include "wabi/imaging/hd/retainedDataSource.h"
 
-#include "wabi/base/js/value.h"
-
 #include "wabi/base/tf/instantiateSingleton.h"
 #include "wabi/base/tf/iterator.h"
 

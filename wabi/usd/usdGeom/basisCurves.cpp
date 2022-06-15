@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -255,6 +255,7 @@ static size_t _ComputeVertexDataSize(const VtIntArray &curveVertexCounts)
 
   return result;
 }
+
 
 #define RETURN_OR_APPEND_INFO(interpToken, val, expected)   \
   if (val == expected) {                                    \

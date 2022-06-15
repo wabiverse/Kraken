@@ -21,16 +21,17 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/schemaBase.h"
 #include "wabi/usd/usdGeom/modelAPI.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,6 +48,7 @@ namespace
 
   // fwd decl.
   WRAP_CUSTOM;
+
 
   static UsdAttribute _CreateModelDrawModeAttr(UsdGeomModelAPI &self,
                                                object defaultVal,
@@ -143,11 +145,28 @@ namespace
     return TfStringPrintf("UsdGeom.ModelAPI(%s)", primRepr.c_str());
   }
 
+  struct UsdGeomModelAPI_CanApplyResult : public TfPyAnnotatedBoolResult<std::string>
+  {
+    UsdGeomModelAPI_CanApplyResult(bool val, std::string const &msg)
+      : TfPyAnnotatedBoolResult<std::string>(val, msg)
+    {}
+  };
+
+  static UsdGeomModelAPI_CanApplyResult _WrapCanApply(const UsdPrim &prim)
+  {
+    std::string whyNot;
+    bool result = UsdGeomModelAPI::CanApply(prim, &whyNot);
+    return UsdGeomModelAPI_CanApplyResult(result, whyNot);
+  }
+
 }  // anonymous namespace
 
 void wrapUsdGeomModelAPI()
 {
   typedef UsdGeomModelAPI This;
+
+  UsdGeomModelAPI_CanApplyResult::Wrap<UsdGeomModelAPI_CanApplyResult>("_CanApplyResult",
+                                                                       "whyNot");
 
   class_<This, bases<UsdAPISchemaBase>> cls("ModelAPI");
 
@@ -158,6 +177,9 @@ void wrapUsdGeomModelAPI()
     .def("Get", &This::Get, (arg("stage"), arg("path")))
     .staticmethod("Get")
 
+    .def("CanApply", &_WrapCanApply, (arg("prim")))
+    .staticmethod("CanApply")
+
     .def("Apply", &This::Apply, (arg("prim")))
     .staticmethod("Apply")
 
@@ -167,12 +189,13 @@ void wrapUsdGeomModelAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
+
 
     .def("GetModelDrawModeAttr", &This::GetModelDrawModeAttr)
     .def("CreateModelDrawModeAttr",

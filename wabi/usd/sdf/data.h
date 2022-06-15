@@ -24,14 +24,14 @@
 #ifndef WABI_USD_SDF_DATA_H
 #define WABI_USD_SDF_DATA_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
+#include "wabi/usd/sdf/abstractData.h"
+#include "wabi/usd/sdf/path.h"
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/usd/sdf/abstractData.h"
-#include "wabi/usd/sdf/api.h"
-#include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 #include <vector>
 

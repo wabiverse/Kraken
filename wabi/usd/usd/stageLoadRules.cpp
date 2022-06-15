@@ -21,12 +21,12 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/stageLoadRules.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/ostreamMethods.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/stl.h"
-#include "wabi/wabi.h"
 
 #include <boost/functional/hash.hpp>
 

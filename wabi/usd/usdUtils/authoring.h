@@ -33,10 +33,10 @@
 
 #include "wabi/base/tf/hashset.h"
 
-#include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/usd/collectionAPI.h"
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usdUtils/api.h"
+#include "wabi/usd/sdf/declareHandles.h"
 
 WABI_NAMESPACE_BEGIN
 

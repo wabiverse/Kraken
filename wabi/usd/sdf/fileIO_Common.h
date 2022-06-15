@@ -26,6 +26,7 @@
 
 /// \file sdf/fileIO_Common.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/fileIO.h"
@@ -39,7 +40,6 @@
 #include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/variantSetSpec.h"
 #include "wabi/usd/sdf/variantSpec.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/vt/dictionary.h"
 #include "wabi/base/vt/value.h"
@@ -128,7 +128,7 @@ class Sdf_FileIOUtility
   // Create a string from a value
   static std::string StringFromVtValue(const VtValue &value);
 
-  // Convert enums to a strings for use in menva syntax.
+  // Convert enums to strings for use in sdf text format syntax.
   // Note that in some cases we use empty strings to represent the
   // default values of these enums.
   static const char *Stringify(SdfPermission val);
@@ -962,7 +962,7 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel,
   // Sdf_GetGenericRelationshipMetadataFields().
   //
   // These special cases below were all kept to prevent reordering in existing
-  // menva files, which would create noise in file diffs.
+  // Pixar files, which would create noise in file diffs.
   bool hasComment = !rel.GetComment().empty();
   bool hasTargets = rel.HasField(SdfFieldKeys->TargetPaths);
   bool hasDefaultValue = rel.HasField(SdfFieldKeys->Default);
@@ -993,6 +993,7 @@ static inline bool Sdf_WriteRelationship(const SdfRelationshipSpec &rel,
   // If relationship is a varying relationship, use varying keyword.
   bool isVarying = (rel.GetVariability() == SdfVariabilityVarying);
   std::string varyingStr = isVarying ? "varying " : "";  // the space in "varying " is required...
+
 
   // Write the basic line if we have info or a default (i.e. explicit
   // targets) or if we have nothing else to write and we're not custom

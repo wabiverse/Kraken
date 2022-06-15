@@ -23,11 +23,11 @@
 //
 /// \file wrapNamespaceEdit.cpp
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/namespaceEdit.h"
 #include "wabi/base/tf/pyCall.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyEnum.h"
-#include "wabi/usd/sdf/namespaceEdit.h"
-#include "wabi/wabi.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/extract.hpp>

@@ -21,10 +21,10 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/sdf/cleanupEnabler.h"
-#include "wabi/base/tf/instantiateStacked.h"
-#include "wabi/usd/sdf/cleanupTracker.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/cleanupEnabler.h"
+#include "wabi/usd/sdf/cleanupTracker.h"
+#include "wabi/base/tf/instantiateStacked.h"
 
 WABI_NAMESPACE_BEGIN
 

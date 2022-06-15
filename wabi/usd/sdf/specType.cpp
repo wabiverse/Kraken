@@ -23,10 +23,10 @@
 //
 /// \file SpecType.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/specType.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/diagnostic.h"

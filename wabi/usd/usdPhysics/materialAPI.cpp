@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdPhysicsMaterialAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PhysicsMaterialAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (PhysicsMaterialAPI)
+);
 
 /* virtual */
 UsdPhysicsMaterialAPI::~UsdPhysicsMaterialAPI() {}

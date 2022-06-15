@@ -24,10 +24,10 @@
 #ifndef WABI_USD_PCP_PRIM_INDEX_STACK_FRAME_H
 #define WABI_USD_PCP_PRIM_INDEX_STACK_FRAME_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/arc.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/site.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

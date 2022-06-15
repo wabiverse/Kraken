@@ -27,8 +27,8 @@
 #include <boost/python/def.hpp>
 #include <boost/python/extract.hpp>
 
-#include "wabi/base/tf/pyUtils.h"
 #include "wabi/usd/usdUtils/stitchClips.h"
+#include "wabi/base/tf/pyUtils.h"
 
 #include <limits>
 

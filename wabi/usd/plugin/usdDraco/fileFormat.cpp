@@ -25,14 +25,14 @@
 #include "fileFormat.h"
 #include "importTranslator.h"
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/fileUtils.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/usd/ar/asset.h"
 #include "wabi/usd/ar/resolvedPath.h"
 #include "wabi/usd/ar/resolver.h"
-#include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/usd/usdaFileFormat.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/layer.h"
 
 #include <draco/compression/decode.h>
 
@@ -40,9 +40,13 @@
 #include <memory>
 #include <string>
 
+
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PUBLIC_TOKENS(UsdDracoFileFormatTokens, USDDRACO_FILE_FORMAT_TOKENS);
+
+TF_DEFINE_PUBLIC_TOKENS(
+    UsdDracoFileFormatTokens,
+    USDDRACO_FILE_FORMAT_TOKENS);
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -173,5 +177,6 @@ bool UsdDracoFileFormat::WriteToStream(const SdfSpecHandle &spec,
   // to USDA file format instead.
   return SdfFileFormat::FindById(UsdUsdaFileFormatTokens->Id)->WriteToStream(spec, out, indent);
 }
+
 
 WABI_NAMESPACE_END

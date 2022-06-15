@@ -27,9 +27,9 @@
 /// \file usdUtils/stageCache.h
 /// A simple interface for handling a singleton usd stage cache.
 
-#include "wabi/usd/usd/stageCache.h"
-#include "wabi/usd/usdUtils/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdUtils/api.h"
+#include "wabi/usd/usd/stageCache.h"
 
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/token.h"
@@ -38,6 +38,7 @@
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DECLARE_WEAK_AND_REF_PTRS(SdfLayer);
 
@@ -64,6 +65,7 @@ class UsdUtilsStageCache
     const TfToken &modelName,
     const std::vector<std::pair<std::string, std::string>> &variantSelections);
 };
+
 
 WABI_NAMESPACE_END
 

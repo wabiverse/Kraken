@@ -33,13 +33,14 @@
 //
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/api.h"
 #include "wabi/base/tf/staticData.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/usd/usdGeom/api.h"
-#include "wabi/wabi.h"
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdGeomTokensType
 ///
@@ -318,6 +319,11 @@ struct UsdGeomTokensType
   ///
   /// Possible value for UsdGeomModelAPI::GetModelDrawModeAttr(), Default value for
   /// UsdGeomModelAPI::GetModelDrawModeAttr(), Possible value for
+  /// UsdGeomVisibilityAPI::GetGuideVisibilityAttr(), Possible value for
+  /// UsdGeomVisibilityAPI::GetProxyVisibilityAttr(), Default value for
+  /// UsdGeomVisibilityAPI::GetProxyVisibilityAttr(), Possible value for
+  /// UsdGeomVisibilityAPI::GetRenderVisibilityAttr(), Default value for
+  /// UsdGeomVisibilityAPI::GetRenderVisibilityAttr(), Possible value for
   /// UsdGeomImageable::GetVisibilityAttr(), Default value for
   /// UsdGeomImageable::GetVisibilityAttr()
   const TfToken inherited;
@@ -332,7 +338,11 @@ struct UsdGeomTokensType
   const TfToken interpolation;
   /// \brief "invisible"
   ///
-  /// Possible value for UsdGeomImageable::GetVisibilityAttr()
+  /// Possible value for UsdGeomVisibilityAPI::GetGuideVisibilityAttr(), Default value for
+  /// UsdGeomVisibilityAPI::GetGuideVisibilityAttr(), Possible value for
+  /// UsdGeomVisibilityAPI::GetProxyVisibilityAttr(), Possible value for
+  /// UsdGeomVisibilityAPI::GetRenderVisibilityAttr(), Possible value for
+  /// UsdGeomImageable::GetVisibilityAttr()
   const TfToken invisible;
   /// \brief "invisibleIds"
   ///

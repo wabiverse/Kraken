@@ -24,20 +24,20 @@
 #ifndef WABI_USD_SDF_ABSTRACT_DATA_H
 #define WABI_USD_SDF_ABSTRACT_DATA_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/base/tf/refBase.h"
 #include "wabi/base/tf/staticTokens.h"
 #include "wabi/base/tf/token.h"
+#include "wabi/base/tf/refBase.h"
 #include "wabi/base/tf/weakBase.h"
+#include "wabi/base/tf/declarePtrs.h"
 
-#include <type_traits>
 #include <vector>
+#include <type_traits>
 
 WABI_NAMESPACE_BEGIN
 
@@ -46,9 +46,11 @@ class SdfAbstractDataSpecVisitor;
 class SdfAbstractDataConstValue;
 class SdfAbstractDataValue;
 
+
 #define SDF_DATA_TOKENS ((TimeSamples, "timeSamples"))
 
 TF_DECLARE_PUBLIC_TOKENS(SdfDataTokens, SDF_API, SDF_DATA_TOKENS);
+
 
 /// \class SdfAbstractData
 ///
@@ -244,6 +246,7 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase
 
   /// @}
 
+
   /// \name Dict key access API
   /// @{
 
@@ -301,7 +304,9 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase
                                             const TfToken &fieldName,
                                             const TfToken &keyPath) const;
 
+
   /// @}
+
 
   /// \name Time-sample API
   ///
@@ -381,6 +386,7 @@ class SdfAbstractDataValue
  public:
 
   virtual bool StoreValue(const VtValue &value) = 0;
+  virtual bool StoreValue(VtValue &&value) = 0;
 
   template<class T> bool StoreValue(const T &v)
   {
@@ -432,10 +438,30 @@ template<class T> class SdfAbstractDataTypedValue : public SdfAbstractDataValue
 
   SdfAbstractDataTypedValue(T *value) : SdfAbstractDataValue(value, typeid(T)) {}
 
-  virtual bool StoreValue(const VtValue &v)
+  virtual bool StoreValue(const VtValue &v) override
   {
     if (ARCH_LIKELY(v.IsHolding<T>())) {
       *static_cast<T *>(value) = v.UncheckedGet<T>();
+      if (std::is_same<T, SdfValueBlock>::value) {
+        isValueBlock = true;
+      }
+      return true;
+    }
+
+    if (v.IsHolding<SdfValueBlock>()) {
+      isValueBlock = true;
+      return true;
+    }
+
+    typeMismatch = true;
+
+    return false;
+  }
+
+  virtual bool StoreValue(VtValue &&v) override
+  {
+    if (ARCH_LIKELY(v.IsHolding<T>())) {
+      *static_cast<T *>(value) = v.UncheckedRemove<T>();
       if (std::is_same<T, SdfValueBlock>::value) {
         isValueBlock = true;
       }

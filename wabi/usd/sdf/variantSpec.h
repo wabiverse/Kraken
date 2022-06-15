@@ -26,11 +26,11 @@
 
 /// \file sdf/variantSpec.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareSpec.h"
 #include "wabi/usd/sdf/proxyTypes.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 #include <string>
 
 WABI_NAMESPACE_BEGIN

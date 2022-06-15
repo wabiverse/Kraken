@@ -26,21 +26,22 @@
 
 /// \file usdGeom/xformOp.h
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/api.h"
 #include "wabi/usd/usd/attribute.h"
 #include "wabi/usd/usd/attributeQuery.h"
-#include "wabi/usd/usdGeom/api.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/wabi.h"
 
 #include <string>
-#include <typeinfo>
 #include <vector>
+#include <typeinfo>
 
 #include <boost/variant.hpp>
 
 #include "wabi/base/tf/staticTokens.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \hideinitializer
 #define USDGEOM_XFORM_OP_TYPES                                                                                        \
@@ -289,6 +290,7 @@ class UsdGeomXformOp
   static GfMatrix4d GetOpTransform(Type const opType,
                                    VtValue const &opVal,
                                    bool isInverseOp = false);
+
 
   /// Return the 4x4 matrix that applies the transformation encoded
   /// in this op at \p time.
@@ -632,6 +634,7 @@ class UsdGeomXformOp
     }
   };
 };
+
 
 WABI_NAMESPACE_END
 

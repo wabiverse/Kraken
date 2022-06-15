@@ -26,18 +26,19 @@
 
 /// \file usd/resolveInfo.h
 
-#include "wabi/usd/pcp/node.h"
-#include "wabi/usd/sdf/layerOffset.h"
-#include "wabi/usd/sdf/path.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/layerOffset.h"
+#include "wabi/usd/sdf/path.h"
+#include "wabi/usd/pcp/node.h"
 
 #include "wabi/base/tf/declarePtrs.h"
 
 #include <limits>
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DECLARE_WEAK_PTRS(PcpLayerStack);
 
@@ -168,6 +169,7 @@ class UsdResolveInfo
   friend class UsdStage_ResolveInfoAccess;
   friend class UsdAttributeQuery;
 };
+
 
 WABI_NAMESPACE_END
 

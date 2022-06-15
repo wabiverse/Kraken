@@ -24,15 +24,15 @@
 #ifndef WABI_USD_SDF_PROXY_TYPES_H
 #define WABI_USD_SDF_PROXY_TYPES_H
 
-#include "wabi/usd/sdf/childrenPolicies.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/childrenProxy.h"
 #include "wabi/usd/sdf/childrenView.h"
+#include "wabi/usd/sdf/childrenPolicies.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/listEditorProxy.h"
 #include "wabi/usd/sdf/listProxy.h"
 #include "wabi/usd/sdf/mapEditProxy.h"
 #include "wabi/usd/sdf/proxyPolicies.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -24,11 +24,11 @@
 ///
 /// \file Sdf/wrapNotice.cpp
 
-#include "wabi/base/tf/pyNoticeWrapper.h"
-#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/notice.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyNoticeWrapper.h"
+#include "wabi/base/tf/pyResultConversions.h"
 #include <boost/python.hpp>
 
 using namespace boost::python;

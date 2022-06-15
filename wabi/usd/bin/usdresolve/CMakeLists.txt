@@ -1,7 +1,7 @@
 set(WABI_PREFIX wabi/usd)
 set(WABI_PACKAGE usd)
 
-wabi_python_bin(usdresolve
+pxr_python_bin(usdresolve
     DEPENDENCIES
         ar
         sdf
@@ -13,12 +13,12 @@ wabi_python_bin(usdresolve
 # a file path but the specified regex isn't stripping off the
 # directory as expected.
 if (NOT WIN32)
-    wabi_install_test_dir(
+    pxr_install_test_dir(
         SRC testenv/testResolveRelPath
         DEST testResolveRelPath
     )
 
-    wabi_register_test(testResolveRelPath
+    pxr_register_test(testResolveRelPath
         PYTHON
         COMMAND "${CMAKE_INSTALL_PREFIX}/bin/usdresolve input.usda"
         STDOUT_REDIRECT output.txt

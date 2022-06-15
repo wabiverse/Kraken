@@ -24,10 +24,10 @@
 #ifndef WABI_USD_USD_USDZ_RESOLVER_H
 #define WABI_USD_USD_USDZ_RESOLVER_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/ar/packageResolver.h"
 #include "wabi/usd/ar/threadLocalScopedCache.h"
 #include "wabi/usd/usd/zipFile.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

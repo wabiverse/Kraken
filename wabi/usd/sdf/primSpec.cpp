@@ -23,6 +23,7 @@
 //
 /// \file PrimSpec.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/accessorHelpers.h"
 #include "wabi/usd/sdf/attributeSpec.h"
@@ -37,7 +38,6 @@
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/variantSetSpec.h"
 #include "wabi/usd/sdf/variantSpec.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/iterator.h"
 #include "wabi/base/tf/ostreamMethods.h"
@@ -45,8 +45,8 @@
 #include "wabi/base/trace/trace.h"
 
 #include <ostream>
-#include <string>
 #include <utility>
+#include <string>
 #include <vector>
 
 using std::pair;
@@ -756,7 +756,7 @@ static bool _FindOrCreateVariantSpec(SdfLayer *layer, const SdfPath &vsPath)
   // Create a new variant set spec and add it to the variant set list.
   if (!varSetSpec) {
     if ((varSetSpec = SdfVariantSetSpec::New(primSpec, varSel.first)))
-      primSpec->GetVariantSetNameList().Add(varSel.first);
+      primSpec->GetVariantSetNameList().Prepend(varSel.first);
   }
 
   if (!TF_VERIFY(varSetSpec,

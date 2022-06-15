@@ -24,20 +24,21 @@
 #ifndef WABI_USD_USD_STAGE_CACHE_H
 #define WABI_USD_USD_STAGE_CACHE_H
 
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/usd/sdf/declareHandles.h"
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/sdf/declareHandles.h"
+#include "wabi/base/tf/declarePtrs.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/operators.hpp>
 
+#include <string>
 #include <memory>
 #include <mutex>
-#include <string>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 SDF_DECLARE_HANDLES(SdfLayer);
 TF_DECLARE_REF_PTRS(UsdStage);
@@ -414,6 +415,7 @@ class UsdStageCacheRequest
   };
   std::unique_ptr<_Data, _DataDeleter> _data;
 };
+
 
 WABI_NAMESPACE_END
 

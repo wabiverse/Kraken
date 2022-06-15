@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/changeList.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/instantiateSingleton.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
 
 #include <ostream>
 

@@ -23,11 +23,11 @@
 //
 // Types.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/valueTypeName.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/enum.h"
@@ -289,7 +289,7 @@ const string &SdfGetNameForUnit(const TfEnum &unit)
 
   // get indices
   std::pair<uint32_t, uint32_t> indices = Sdf_GetUnitIndices(unit);
-  // look up menva name in our table
+  // look up sdf name in our table
   return info._UnitNameTable[indices.first][indices.second];
 }
 
@@ -471,7 +471,7 @@ static bool _ValueVectorToAnyVtArray(VtValue *value,
   return true;
 }
 
-#ifdef WITH_PYTHON
+#ifdef WABI_PYTHON_SUPPORT_ENABLED
 
 using _PySeqToVtArrayFn = bool (*)(VtValue *,
                                    std::vector<std::string> *,
@@ -604,7 +604,7 @@ static bool _PyObjToAnyVtArray(VtValue *value,
   return true;
 }
 
-#endif  // WITH_PYTHON
+#endif  // WABI_PYTHON_SUPPORT_ENABLED
 
 static bool _ConvertToValidMetadataDictValueInternal(VtValue *value,
                                                      std::vector<std::string> *errMsgs,
@@ -625,11 +625,11 @@ static bool _ConvertToValidMetadataDictValueInternal(VtValue *value,
   } else if (value->IsHolding<std::vector<VtValue>>()) {
     allValid &= _ValueVectorToAnyVtArray(value, errMsgs, keyPath);
   }
-#ifdef WITH_PYTHON
+#ifdef WABI_PYTHON_SUPPORT_ENABLED
   else if (value->IsHolding<TfPyObjWrapper>()) {
     allValid &= _PyObjToAnyVtArray(value, errMsgs, keyPath);
   }
-#endif  // WITH_PYTHON
+#endif  // WABI_PYTHON_SUPPORT_ENABLED
   else if (!SdfValueHasValidType(*value)) {
     allValid = false;
     *value = VtValue();

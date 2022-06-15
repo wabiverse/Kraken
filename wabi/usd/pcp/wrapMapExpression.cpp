@@ -23,8 +23,8 @@
 //
 #include <boost/python.hpp>
 
-#include "wabi/usd/pcp/mapExpression.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/mapExpression.h"
 
 #include <string>
 

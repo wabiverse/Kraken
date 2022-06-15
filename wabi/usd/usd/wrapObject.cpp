@@ -21,22 +21,22 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/object.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/object.h"
 
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/wrapUtils.h"
 
 #include "wabi/base/tf/ostreamMethods.h"
 
+#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python/class.hpp>
-#include <boost/python/extract.hpp>
 #include <boost/python/operators.hpp>
+#include <boost/python/extract.hpp>
 
 #include <string>
 #include <vector>
@@ -66,6 +66,7 @@ namespace
     self.GetMetadataByDictKey(key, keyPath, &result);
     return UsdVtValueToPython(result);
   }
+
 
   static bool _SetMetadata(const UsdObject &self, const TfToken &key, object obj)
   {

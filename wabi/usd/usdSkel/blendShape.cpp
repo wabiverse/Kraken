@@ -1,39 +1,32 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdSkel/blendShape.h"
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -197,11 +190,13 @@ UsdSkelInbetweenShape UsdSkelBlendShape::CreateInbetween(const TfToken &name) co
   return UsdSkelInbetweenShape::_Create(GetPrim(), name);
 }
 
+
 UsdSkelInbetweenShape UsdSkelBlendShape::GetInbetween(const TfToken &name) const
 {
   return UsdSkelInbetweenShape(
     GetPrim().GetAttribute(UsdSkelInbetweenShape::_MakeNamespaced(name)));
 }
+
 
 bool UsdSkelBlendShape::HasInbetween(const TfToken &name) const
 {
@@ -210,6 +205,7 @@ bool UsdSkelBlendShape::HasInbetween(const TfToken &name) const
            false :
            UsdSkelInbetweenShape::IsInbetween(GetPrim().GetAttribute(inbetweenName));
 }
+
 
 std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::_MakeInbetweens(
   const std::vector<UsdProperty> &props) const
@@ -228,6 +224,7 @@ std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::_MakeInbetweens(
   return shapes;
 }
 
+
 std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::GetInbetweens() const
 {
   const UsdPrim &prim = GetPrim();
@@ -236,6 +233,7 @@ std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::GetInbetweens() const
            std::vector<UsdProperty>());
 }
 
+
 std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::GetAuthoredInbetweens() const
 {
   const UsdPrim &prim = GetPrim();
@@ -243,6 +241,7 @@ std::vector<UsdSkelInbetweenShape> UsdSkelBlendShape::GetAuthoredInbetweens() co
     prim ? prim.GetAuthoredPropertiesInNamespace(UsdSkelInbetweenShape::_GetNamespacePrefix()) :
            std::vector<UsdProperty>());
 }
+
 
 bool UsdSkelBlendShape::ValidatePointIndices(TfSpan<const int> indices,
                                              size_t numPoints,
@@ -269,5 +268,6 @@ bool UsdSkelBlendShape::ValidatePointIndices(TfSpan<const int> indices,
   }
   return true;
 }
+
 
 WABI_NAMESPACE_END

@@ -28,11 +28,11 @@
 ///
 /// Utilities for flattening layer stacks into a single layer.
 
-#include "wabi/usd/pcp/layerStackIdentifier.h"
-#include "wabi/usd/sdf/declareHandles.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/declareHandles.h"
+#include "wabi/usd/pcp/layerStackIdentifier.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -116,6 +116,7 @@ SdfLayerRefPtr UsdFlattenLayerStack(const PcpLayerStackRefPtr &layerStack,
 USD_API
 std::string UsdFlattenLayerStackResolveAssetPath(const SdfLayerHandle &sourceLayer,
                                                  const std::string &assetPath);
+
 
 WABI_NAMESPACE_END
 

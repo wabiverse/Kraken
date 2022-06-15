@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -296,28 +296,28 @@ WABI_NAMESPACE_END
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-#include "wabi/base/gf/transform.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/envSetting.h"
+#include "wabi/base/gf/transform.h"
+#include "wabi/usd/usdGeom/samplingUtils.h"
 #include "wabi/usd/usdGeom/bboxCache.h"
 #include "wabi/usd/usdGeom/debugCodes.h"
-#include "wabi/usd/usdGeom/motionAPI.h"
-#include "wabi/usd/usdGeom/samplingUtils.h"
 #include "wabi/usd/usdGeom/xformCache.h"
+#include "wabi/usd/usdGeom/motionAPI.h"
 
-#include "wabi/base/tf/registryManager.h"
+#include "wabi/usd/usdGeom/boundableComputeExtent.h"
 #include "wabi/base/work/loops.h"
 #include "wabi/base/work/reduce.h"
-#include "wabi/usd/usdGeom/boundableComputeExtent.h"
+#include "wabi/base/tf/registryManager.h"
 
 WABI_NAMESPACE_BEGIN
 
 // XXX Bug 139215: When we enable this, we can remove
 // SdfListOp::ComposeOperations().
-TF_DEFINE_ENV_SETTING(USDGEOM_POINTINSTANCER_NEW_APPLYOPS,
-                      true,
-                      "Set to true to use SdfListOp::ApplyOperations() instead of "
-                      "ComposeOperations().");
+TF_DEFINE_ENV_SETTING(
+    USDGEOM_POINTINSTANCER_NEW_APPLYOPS, true,
+    "Set to true to use SdfListOp::ApplyOperations() instead of "
+    "ComposeOperations().");
 
 TF_REGISTRY_FUNCTION(TfEnum)
 {
@@ -603,6 +603,7 @@ bool UsdGeomPointInstancer::_GetProtoIndicesForInstanceTransforms(UsdTimeCode ba
     if (!GetProtoIndicesAttr().Get(protoIndices, sampleTime)) {
       return false;
     }
+
   } else {
     // baseTime is UsdTimeCode.Default()
     if (!GetProtoIndicesAttr().Get(protoIndices, baseTime)) {
@@ -719,7 +720,6 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(
   UsdTimeCode angularVelocitiesSampleTime;
   SdfPathVector protoPaths;
   std::vector<bool> mask;
-  float velocityScale;
 
   if (!_ComputePointInstancerAttributesPreamble(baseTime,
                                                 doProtoXforms,
@@ -741,7 +741,6 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(
                                                       &velocities,
                                                       &velocitiesSampleTime,
                                                       &accelerations,
-                                                      &velocityScale,
                                                       GetPrim())) {
     return false;
   }
@@ -813,8 +812,7 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTimes(
                                                                 angularVelocities,
                                                                 angularVelocitiesSampleTime,
                                                                 protoPaths,
-                                                                mask,
-                                                                velocityScale)) {
+                                                                mask)) {
       return false;
     }
   }
@@ -838,21 +836,19 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTime(
   UsdTimeCode angularVelocitiesSampleTime,
   const SdfPathVector &protoPaths,
   const std::vector<bool> &mask,
-  float velocityScale)
+  float /* velocityScale */)
 {
   TRACE_FUNCTION();
 
   size_t numInstances = protoIndices.size();
 
   const double timeCodesPerSecond = stage->GetTimeCodesPerSecond();
-  const float velocityTimeDelta = UsdGeom_CalculateTimeDelta(velocityScale,
-                                                             time,
-                                                             velocitiesSampleTime,
-                                                             timeCodesPerSecond);
-  const float angularVelocityTimeDelta = UsdGeom_CalculateTimeDelta(velocityScale,
-                                                                    time,
-                                                                    angularVelocitiesSampleTime,
-                                                                    timeCodesPerSecond);
+  const double velocityTimeDelta = UsdGeom_CalculateTimeDelta(time,
+                                                              velocitiesSampleTime,
+                                                              timeCodesPerSecond);
+  const double angularVelocityTimeDelta = UsdGeom_CalculateTimeDelta(time,
+                                                                     angularVelocitiesSampleTime,
+                                                                     timeCodesPerSecond);
 
   xforms->resize(numInstances);
 
@@ -879,7 +875,6 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTime(
                                       &velocities,
                                       &accelerations,
                                       &angularVelocities,
-                                      &identity,
                                       &protoXforms,
                                       &protoIndices,
                                       &protoPaths,
@@ -889,20 +884,31 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTime(
         continue;
       }
 
-      GfTransform instanceTransform;
+      bool identity = true;
+      GfMatrix4d instanceTransform(1.0);
 
       if (!scales.empty()) {
         instanceTransform.SetScale(scales[instanceId]);
+        identity = false;
       }
 
       if (!orientations.empty()) {
-        GfRotation rotation = GfRotation(orientations[instanceId]);
+        if (identity) {
+          instanceTransform.SetRotate(orientations[instanceId]);
+          identity = false;
+        } else {
+          GfMatrix4d rotation;
+          rotation.SetRotate(orientations[instanceId]);
+          instanceTransform *= rotation;
+        }
+
         if (angularVelocities.size() != 0) {
           GfVec3f angularVelocity = angularVelocities[instanceId];
-          rotation *= GfRotation(angularVelocity,
-                                 angularVelocityTimeDelta * angularVelocity.GetLength());
+          GfMatrix4d rotation;
+          rotation.SetRotate(
+            GfRotation(angularVelocity, angularVelocityTimeDelta * angularVelocity.GetLength()));
+          instanceTransform *= rotation;
         }
-        instanceTransform.SetRotation(rotation);
       }
 
       GfVec3f translation = positions[instanceId];
@@ -913,12 +919,15 @@ bool UsdGeomPointInstancer::ComputeInstanceTransformsAtTime(
         }
         translation += velocityTimeDelta * velocity;
       }
-      instanceTransform.SetTranslation(translation);
+      instanceTransform.SetTranslateOnly(translation);
 
       const int protoIndex = protoIndices[instanceId];
-      const GfMatrix4d &protoXform = (protoPaths.size() != 0) ? protoXforms[protoIndex] : identity;
 
-      (*xforms)[instanceId] = protoXform * instanceTransform.GetMatrix();
+      if (protoPaths.size() != 0) {
+        (*xforms)[instanceId] = protoXforms[protoIndex] * instanceTransform;
+      } else {
+        (*xforms)[instanceId] = instanceTransform;
+      }
     }
   };
 
@@ -1224,6 +1233,7 @@ size_t UsdGeomPointInstancer::GetInstanceCount(UsdTimeCode timeCode) const
   indicesAttr.Get(&indices, timeCode);
   return indices.size();
 }
+
 
 TF_REGISTRY_FUNCTION(UsdGeomBoundable)
 {

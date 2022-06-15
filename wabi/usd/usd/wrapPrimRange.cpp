@@ -21,16 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/primRange.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/primRange.h"
 
 #include <boost/python/class.hpp>
-#include <boost/python/converter/from_python.hpp>
 #include <boost/python/def.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/operators.hpp>
 #include <boost/python/return_arg.hpp>
 #include <boost/python/to_python_converter.hpp>
+#include <boost/python/converter/from_python.hpp>
 
 using namespace boost::python;
 

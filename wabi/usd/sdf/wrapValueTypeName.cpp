@@ -22,11 +22,11 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/valueTypeName.h"
 #include "wabi/base/tf/type.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/usd/sdf/valueTypeName.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/python.hpp>
 

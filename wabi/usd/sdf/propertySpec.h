@@ -26,13 +26,13 @@
 
 /// \file sdf/propertySpec.h
 
-#include "wabi/usd/sdf/api.h"
-#include "wabi/usd/sdf/declareHandles.h"
-#include "wabi/usd/sdf/declareSpec.h"
-#include "wabi/usd/sdf/proxyTypes.h"
-#include "wabi/usd/sdf/spec.h"
-#include "wabi/usd/sdf/types.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
+#include "wabi/usd/sdf/declareSpec.h"
+#include "wabi/usd/sdf/spec.h"
+#include "wabi/usd/sdf/declareHandles.h"
+#include "wabi/usd/sdf/proxyTypes.h"
+#include "wabi/usd/sdf/types.h"
 
 #include "wabi/base/vt/value.h"
 

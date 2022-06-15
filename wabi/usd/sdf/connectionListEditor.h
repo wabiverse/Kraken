@@ -24,12 +24,12 @@
 #ifndef WABI_USD_SDF_CONNECTION_LIST_EDITOR_H
 #define WABI_USD_SDF_CONNECTION_LIST_EDITOR_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/listOpListEditor.h"
 #include "wabi/usd/sdf/childrenPolicies.h"
 #include "wabi/usd/sdf/declareHandles.h"
-#include "wabi/usd/sdf/listOpListEditor.h"
 #include "wabi/usd/sdf/proxyPolicies.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -88,7 +88,7 @@ class Sdf_AttributeConnectionListEditor
 
 /// \class Sdf_RelationshipTargetListEditor
 ///
-/// List editor implementation for attribute connections.
+/// List editor implementation for relationship targets.
 ///
 class Sdf_RelationshipTargetListEditor
   : public Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy>

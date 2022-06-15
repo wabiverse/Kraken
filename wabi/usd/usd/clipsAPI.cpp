@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usd/clipsAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdClipsAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (ClipsAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (ClipsAPI)
+);
 
 /* virtual */
 UsdClipsAPI::~UsdClipsAPI() {}
@@ -51,6 +54,7 @@ UsdClipsAPI UsdClipsAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
   }
   return UsdClipsAPI(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdClipsAPI::_GetSchemaKind() const
@@ -92,19 +96,14 @@ const TfTokenVector &UsdClipsAPI::GetSchemaAttributeNames(bool includeInherited)
 
 WABI_NAMESPACE_END
 
-/* clang-format off */
-
-  /**
-   * ======================================================================
-   *   Feel free to add custom code below this line. It will be preserved
-   *   by the code generator.
-   *
-   *   Just remember to wrap code in the appropriate delimiters:
-   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-   * ======================================================================
-   * --(BEGIN CUSTOM CODE)-- */
-
-/* clang-format on */
+// ===================================================================== //
+// Feel free to add custom code below this line. It will be preserved by
+// the code generator.
+//
+// Just remember to wrap code in the appropriate delimiters:
+// 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
+// ===================================================================== //
+// --(BEGIN CUSTOM CODE)--
 
 #include "wabi/usd/usd/clipSet.h"
 #include "wabi/usd/usd/clipSetDefinition.h"

@@ -27,13 +27,13 @@
 #  define TF_MAX_ARITY 8
 #endif
 
-#include "wabi/base/tf/pyContainerConversions.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/pyChildrenProxy.h"
 #include "wabi/usd/sdf/pySpec.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyContainerConversions.h"
 
 #include <boost/python.hpp>
 

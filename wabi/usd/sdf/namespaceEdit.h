@@ -26,9 +26,9 @@
 
 /// \file sdf/namespaceEdit.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 #include <boost/operators.hpp>
 

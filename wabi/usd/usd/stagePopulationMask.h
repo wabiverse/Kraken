@@ -24,14 +24,15 @@
 #ifndef WABI_USD_USD_STAGE_POPULATION_MASK_H
 #define WABI_USD_USD_STAGE_POPULATION_MASK_H
 
-#include "wabi/usd/sdf/path.h"
-#include "wabi/usd/usd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/sdf/path.h"
 
 #include <iosfwd>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdStagePopulationMask
 ///

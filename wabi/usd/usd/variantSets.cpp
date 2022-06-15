@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/variantSets.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/variantSets.h"
 
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/prim.h"
@@ -31,10 +31,10 @@
 
 #include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/layer.h"
+#include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/primSpec.h"
 #include "wabi/usd/sdf/schema.h"
-#include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/variantSetSpec.h"
 #include "wabi/usd/sdf/variantSpec.h"
 
@@ -85,6 +85,7 @@ bool UsdVariantSet::HasAuthoredVariant(const std::string &variantName) const
 
   return std::find(variants.begin(), variants.end(), variantName) != variants.end();
 }
+
 
 string UsdVariantSet::GetVariantSelection() const
 {

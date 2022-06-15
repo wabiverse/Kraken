@@ -24,14 +24,12 @@
 #ifndef WABI_USD_SDF_NOTICE_H
 #define WABI_USD_SDF_NOTICE_H
 
-/// \file sdf/notice.h
-
-#include "wabi/base/tf/notice.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/changeList.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/notice.h"
 
 WABI_NAMESPACE_BEGIN
 

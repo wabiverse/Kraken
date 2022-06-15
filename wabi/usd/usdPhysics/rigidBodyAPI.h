@@ -33,6 +33,9 @@
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usdPhysics/tokens.h"
 
+#include "wabi/base/gf/matrix3f.h"
+#include "wabi/base/gf/quatf.h"
+
 #include "wabi/base/vt/value.h"
 
 #include "wabi/base/gf/vec3d.h"
@@ -147,7 +150,7 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
 
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
   static const TfType &_GetStaticTfType();
@@ -157,7 +160,6 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
   // override SchemaBase virtuals.
   USDPHYSICS_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 
@@ -315,6 +317,32 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
   //  - Close the include guard with #endif
   // ===================================================================== //
   // --(BEGIN CUSTOM CODE)--
+
+  /// Mass information for a collision, used in ComputeMassProperties MassInformationFn callback
+  struct MassInformation
+  {
+    float volume;          //< Collision volume
+    GfMatrix3f inertia;    //< Collision inertia
+    GfVec3f centerOfMass;  //< Collision center of mass
+    GfVec3f localPos;      //< Collision local position with respect to the rigid body
+    GfQuatf localRot;      //< Collision local rotation with respect to the rigid body
+  };
+
+  /// Mass information function signature, for given UsdPrim gather MassInformation
+  typedef MassInformation MassInformationFnSig(const UsdPrim &);
+  typedef std::function<MassInformationFnSig> MassInformationFn;
+
+  /// Compute mass properties of the rigid body
+  /// \p diagonalInertia Computed diagonal of the inertial tensor for the rigid body.
+  /// \p com Computed center of mass for the rigid body.
+  /// \p principalAxes Inertia tensor's principal axes orienttion for the rigid body.
+  /// \p massInfoFn Callback function to get collision mass information.
+  /// \return Computed mass of the rigid body
+  USDPHYSICS_API
+  float ComputeMassProperties(GfVec3f *diagonalInertia,
+                              GfVec3f *com,
+                              GfQuatf *principalAxes,
+                              const MassInformationFn &massInfoFn) const;
 };
 
 WABI_NAMESPACE_END

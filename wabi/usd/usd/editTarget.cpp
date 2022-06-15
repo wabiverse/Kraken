@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/editTarget.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/editTarget.h"
 
 #include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/pcp/layerStackIdentifier.h"
@@ -38,6 +38,7 @@
 #include "wabi/base/tf/registryManager.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 ////////////////////////////////////////////////////////////////////////
 // UsdEditTarget

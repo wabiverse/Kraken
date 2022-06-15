@@ -24,9 +24,9 @@
 #ifndef WABI_USD_SDF_MAP_EDITOR_H
 #define WABI_USD_SDF_MAP_EDITOR_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/allowed.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>

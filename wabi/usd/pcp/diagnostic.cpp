@@ -24,11 +24,11 @@
 
 #include "wabi/wabi.h"
 
+#include "wabi/usd/pcp/diagnostic.h"
 #include "wabi/usd/pcp/cache.h"
 #include "wabi/usd/pcp/composeSite.h"
 #include "wabi/usd/pcp/debugCodes.h"
 #include "wabi/usd/pcp/dependencies.h"
-#include "wabi/usd/pcp/diagnostic.h"
 #include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/node_Iterator.h"
@@ -42,10 +42,10 @@
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/stringUtils.h"
 
+#include <tbb/concurrent_hash_map.h>
 #include <fstream>
 #include <mutex>
 #include <sstream>
-#include <tbb/concurrent_hash_map.h>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN

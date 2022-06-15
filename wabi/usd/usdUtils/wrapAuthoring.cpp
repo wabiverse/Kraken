@@ -30,8 +30,8 @@
 
 #include "wabi/usd/sdf/layer.h"
 
-#include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyContainerConversions.h"
 
 using namespace boost::python;
 

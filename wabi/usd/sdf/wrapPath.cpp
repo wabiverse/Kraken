@@ -24,22 +24,22 @@
 
 #include "wabi/wabi.h"
 
-#include <locale>
 #include <set>
 #include <utility>
 #include <vector>
+#include <locale>
 
-#include "wabi/base/tf/hash.h"
-#include "wabi/base/tf/pyAnnotatedBoolResult.h"
-#include "wabi/base/tf/pyContainerConversions.h"
-#include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/base/vt/valueFromPython.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
+#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyContainerConversions.h"
+#include "wabi/base/tf/hash.h"
+#include "wabi/base/vt/valueFromPython.h"
 
 #include <boost/python.hpp>
 
-#include <atomic>
 #include <thread>
+#include <atomic>
 
 using namespace boost::python;
 using std::pair;
@@ -156,8 +156,8 @@ namespace
         }
         // if ((i-begin) % 1000 == 0) {
         // printf("%zu: storing path %zu: <%s>\n",
-        //       (i-begin), index, p.GetText());
-        //}
+        //        (i-begin), index, p.GetText());
+        // }
         *i = p;
       }
       printf("%zu did iter %zu\n", index, stressIter);
@@ -179,6 +179,7 @@ namespace
       t.join();
     }
   }
+
 
   struct Sdf_PyPathAncestorsRangeIterator
   {
@@ -213,10 +214,12 @@ namespace
     bool _didFirst = false;
   };
 
+
   Sdf_PyPathAncestorsRangeIterator Sdf_GetIterator(const SdfPathAncestorsRange &range)
   {
     return {range.begin(), range.end()};
   }
+
 
   void Sdf_wrapAncestorsRange()
   {
@@ -230,12 +233,14 @@ namespace
     class_<Iter>("_iterator", no_init).def(TfPyIteratorNextMethodName, &Iter::next);
   }
 
+
 }  // anonymous namespace
 
 void wrapPath()
 {
   typedef SdfPath This;
 
+  def("_PathGetDebuggerPathText", Sdf_PathGetDebuggerPathText);
   def("_PathStress", &_PathStress);
   def("_DumpPathStats", &Sdf_DumpPathStats);
 
@@ -407,8 +412,6 @@ void wrapPath()
       .def("__repr__", _Repr)
       .def("__hash__", &This::GetHash);
 
-  s.attr("menvaStart") = SdfPathTokens->menvaStart;
-  s.attr("menvaEnd") = &SdfPathTokens->menvaEnd;
   s.attr("absoluteIndicator") = &SdfPathTokens->absoluteIndicator;
   s.attr("childDelimiter") = &SdfPathTokens->childDelimiter;
   s.attr("propertyDelimiter") = &SdfPathTokens->propertyDelimiter;

@@ -23,11 +23,11 @@
 //
 /// \file wrapLayerStackIdentifier.cpp
 
-#include "wabi/base/tf/pyUtils.h"
-#include "wabi/base/tf/stringUtils.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/layerStackIdentifier.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/pyUtils.h"
+#include "wabi/base/tf/stringUtils.h"
 
 #include <boost/python.hpp>
 

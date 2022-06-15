@@ -21,11 +21,12 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/primDataHandle.h"
 #include "wabi/usd/usd/primData.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 // defined in primData.cpp.
 std::string Usd_DescribePrimData(const Usd_PrimData *p);
@@ -34,5 +35,6 @@ std::string Usd_PrimDataHandle::GetDescription(SdfPath const &proxyPrimPath) con
 {
   return Usd_DescribePrimData(_p.get(), proxyPrimPath);
 }
+
 
 WABI_NAMESPACE_END

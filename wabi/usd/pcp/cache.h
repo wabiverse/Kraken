@@ -24,6 +24,7 @@
 #ifndef WABI_USD_PCP_CACHE_H
 #define WABI_USD_PCP_CACHE_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/dependency.h"
 #include "wabi/usd/pcp/errors.h"
@@ -33,12 +34,12 @@
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/pathTable.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/base/tf/hashset.h"
 #include "wabi/usd/ar/ar.h"
 #include "wabi/usd/ar/resolverContext.h"
+#include "wabi/base/tf/declarePtrs.h"
+#include "wabi/base/tf/functionRef.h"
+#include "wabi/base/tf/hashset.h"
 
 #include <memory>
 #include <string>
@@ -369,6 +370,14 @@ class PcpCache
   PCP_API
   const PcpPrimIndex *FindPrimIndex(const SdfPath &primPath) const;
 
+  /// Run the given \p callback on every prim index in the cache.
+  /// The callback must have the signature: void(const PcpPrimIndex&).
+  template<class Callback> void ForEachPrimIndex(const Callback &callback) const
+  {
+    TfFunctionRef<void(const PcpPrimIndex &)> fn(callback);
+    _ForEachPrimIndex(fn);
+  }
+
   /// Compute and return a reference to the cached result for the
   /// property index for the given path. \p allErrors will contain any
   /// errors encountered while performing this operation.
@@ -439,6 +448,15 @@ class PcpCache
   /// Returns every computed & cached layer stack that includes \p layer.
   PCP_API
   const PcpLayerStackPtrVector &FindAllLayerStacksUsingLayer(const SdfLayerHandle &layer) const;
+
+  /// Run the given \p callbcack on every layer stack used by prim
+  /// indexes in the cache. The callback must have the signature:
+  /// void(const PcpLayerStackPtr&).
+  template<class Callback> void ForEachLayerStack(const Callback &callback) const
+  {
+    TfFunctionRef<void(const PcpLayerStackPtr &)> fn(callback);
+    _ForEachLayerStack(fn);
+  }
 
   /// Returns dependencies on the given site of scene description,
   /// as discovered by the cached index computations.
@@ -697,6 +715,12 @@ class PcpCache
   // Returns the property index for \p path if it exists, NULL otherwise.
   PcpPropertyIndex *_GetPropertyIndex(const SdfPath &path);
   const PcpPropertyIndex *_GetPropertyIndex(const SdfPath &path) const;
+
+  PCP_API
+  void _ForEachPrimIndex(const TfFunctionRef<void(const PcpPrimIndex &)> &fn) const;
+
+  PCP_API
+  void _ForEachLayerStack(const TfFunctionRef<void(const PcpLayerStackPtr &)> &fn) const;
 
  private:
 

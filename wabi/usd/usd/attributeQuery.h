@@ -24,19 +24,20 @@
 #ifndef WABI_USD_USD_ATTRIBUTE_QUERY_H
 #define WABI_USD_USD_ATTRIBUTE_QUERY_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/attribute.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/resolveInfo.h"
 #include "wabi/usd/usd/timeCode.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/token.h"
 
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdAttributeQuery
 ///

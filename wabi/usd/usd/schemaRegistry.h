@@ -24,16 +24,17 @@
 #ifndef WABI_USD_USD_SCHEMA_REGISTRY_H
 #define WABI_USD_USD_SCHEMA_REGISTRY_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/primSpec.h"
 
 #include "wabi/base/tf/hash.h"
-#include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/singleton.h"
+
+#include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
 

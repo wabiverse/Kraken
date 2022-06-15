@@ -137,7 +137,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(NdrDiscoveryPlugin);
 ///         same folder, you can continue adding additional plugins under the
 ///         `Types` key in the JSON. More detailed information about the
 ///         plugInfo.json format can be found in the documentation for the
-///         `plug` library (in pxr/base).
+///         `plug` library (in wabi/base).
 ///     </li>
 /// </ul>
 ///

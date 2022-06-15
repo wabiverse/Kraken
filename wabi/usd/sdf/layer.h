@@ -26,11 +26,7 @@
 
 /// \file sdf/layer.h
 
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/base/vt/value.h"
-#include "wabi/usd/ar/ar.h"
-#include "wabi/usd/ar/assetInfo.h"
-#include "wabi/usd/ar/resolvedPath.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/data.h"
 #include "wabi/usd/sdf/declareHandles.h"
@@ -42,7 +38,12 @@
 #include "wabi/usd/sdf/proxyTypes.h"
 #include "wabi/usd/sdf/spec.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/ar/ar.h"
+#include "wabi/usd/ar/assetInfo.h"
+#include "wabi/usd/ar/resolvedPath.h"
+#include "wabi/base/tf/declarePtrs.h"
+#include "wabi/base/vt/value.h"
+#include "wabi/base/work/dispatcher.h"
 
 #include <boost/optional.hpp>
 
@@ -62,19 +63,25 @@ struct Sdf_AssetInfo;
 
 /// \class SdfLayer
 ///
-/// A unit of scene description that you combine with other units of scene
-/// description to form a shot, model, set, shader, and so on.
+/// A scene description container that can combine with other such containers
+/// to form simple component assets, and successively larger aggregates.  The
+/// contents of an SdfLayer adhere to the SdfData data model.  A layer can be
+/// ephemeral, or be an asset accessed and serialized through the ArAsset and
+/// ArResolver interfaces.
 ///
-/// SdfLayer objects provide a persistent way to store layers on the
-/// filesystem in .menva files.  Currently the supported file format is
-/// <c>.menva</c>, the ASCII file format.
+/// The SdfLayer class provides a consistent API for accesing and serializing
+/// scene description, using any data store provided by Ar plugins.  Sdf
+/// itself provides a UTF-8 text format for layers identified by the ".sdf"
+/// identifier extension, but via the SdfFileFormat abstraction, allows
+/// downstream modules and plugins to adapt arbitrary data formats to the
+/// SdfData/SdfLayer model.
 ///
-/// The FindOrOpen() method returns a new SdfLayer object with scene description
-/// from a <c>.menva</c> file. Once read, a layer remembers which asset it was
-/// read from. The Save() method saves the layer back out to the original file.
-/// You can use the Export() method to write the layer to a different
-/// location. You can use the GetIdentifier() method to get the layer's Id or
-/// GetRealPath() to get the resolved, full file path.
+/// The FindOrOpen() method returns a new SdfLayer object with scene
+/// description from any supported asset format. Once read, a layer
+/// remembers which asset it was read from. The Save() method saves the layer
+/// back out to the original asset.  You can use the Export() method to write
+/// the layer to a different location. You can use the GetIdentifier() method
+/// to get the layer's Id or GetRealPath() to get the resolved, full URI.
 ///
 /// Layers can have a timeCode range (startTimeCode and endTimeCode). This range
 /// represents the suggested playback range, but has no impact on the extent of
@@ -83,15 +90,6 @@ struct Sdf_AssetInfo;
 /// contained in the file scales to seconds. For example, if timeCodesPerSecond
 /// is 24, then a sample at time ordinate 24 should be viewed exactly one second
 /// after the sample at time ordinate 0.
-///
-/// Compared to Menv2x, layers are most closely analogous to
-/// hooksets, <c>.hook</c> files, and <c>.cue</c> files.
-///
-/// \todo
-/// \li Insert a discussion of subLayers semantics here.
-///
-/// \todo
-/// \li Should have validate... methods for rootPrims
 ///
 class SdfLayer : public TfRefBase, public TfWeakBase
 {
@@ -292,10 +290,6 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   /// \name File I/O
   /// @{
 
-  /// Converts \e layerPath to a file system path.
-  SDF_API
-  static std::string ComputeRealPath(const std::string &layerPath);
-
   /// Returns \c true if successful, \c false if an error occurred.
   /// Returns \c false if the layer has no remembered file name or the
   /// layer type cannot be saved. The layer will not be overwritten if the
@@ -388,21 +382,39 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   /// \name External references
   /// @{
 
-  /// Return paths of all external references of layer.
+  /// \deprecated
+  /// Use GetCompositionAssetDependencies instead.
   SDF_API
   std::set<std::string> GetExternalReferences() const;
 
-  /// Updates the external references of the layer.
-  ///
-  /// If only the old asset path is given, this update works as delete,
-  /// removing any sublayers or prims referencing the pathtype using the
-  /// old asset path as reference.
-  ///
-  /// If new asset path is supplied, the update works as "rename", updating
-  /// any occurrence of the old reference to the new reference.
+  /// \deprecated
+  /// Use UpdateCompositionAssetDependency instead.
   SDF_API
   bool UpdateExternalReference(const std::string &oldAssetPath,
                                const std::string &newAssetPath = std::string());
+
+  /// Return paths of all assets this layer depends on due to composition
+  /// fields.
+  ///
+  /// This includes the paths of all layers referred to by reference,
+  /// payload, and sublayer fields in this layer. This function only returns
+  /// direct composition dependencies of this layer, i.e. it does not recurse
+  /// to find composition dependencies from its dependent layer assets.
+  SDF_API
+  std::set<std::string> GetCompositionAssetDependencies() const;
+
+  /// Updates the asset path of a composation dependency in this layer.
+  ///
+  /// If \p newAssetPath is supplied, the update works as "rename", updating
+  /// any occurrence of \p oldAssetPath to \p newAssetPath in all reference,
+  /// payload, and sublayer fields.
+  ///
+  /// If \p newAssetPath is not given, this update behaves as a "delete",
+  /// removing all occurrences of \p oldAssetPath from all reference, payload,
+  /// and sublayer fields.
+  SDF_API
+  bool UpdateCompositionAssetDependency(const std::string &oldAssetPath,
+                                        const std::string &newAssetPath = std::string());
 
   /// Returns a set of resolved paths to all external asset dependencies
   /// the layer needs to generate its contents. These are additional asset
@@ -425,7 +437,7 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   ///
   /// For example:
   ///     FindOrOpen('foo.sdf', args={'a':'b', 'c':'d'}).identifier
-  ///         => "foo.sdf?sdf_args:a=b&c=d"
+  ///         => "foo.sdf:SDF_FORMAT_ARGS:a=b&c=d"
   ///
   /// Note that this means the identifier may in general not be a path.
   ///
@@ -516,11 +528,23 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   SDF_API
   const VtValue &GetAssetInfo() const;
 
-  /// Make the given \p relativePath absolute using the identifier of this
-  /// layer.  If this layer does not have an identifier, or if the layer
-  /// identifier is itself relative, \p relativePath is returned unmodified.
+  /// Returns the path to the asset specified by \p assetPath using this layer
+  /// to anchor the path if necessary. Returns \p assetPath if it's empty or
+  /// an anonymous layer identifier.
+  ///
+  /// This method can be used on asset paths that are authored in this layer
+  /// to create new asset paths that can be copied to other layers.  These new
+  /// asset paths should refer to the same assets as the original asset
+  /// paths. For example, if the underlying ArResolver is filesystem-based and
+  /// \p assetPath is a relative filesystem path, this method might return the
+  /// absolute filesystem path using this layer's location as the anchor.
+  ///
+  /// The returned path should in general not be assumed to be an absolute
+  /// filesystem path or any other specific form. It is "absolute" in that it
+  /// should resolve to the same asset regardless of what layer it's authored
+  /// in.
   SDF_API
-  std::string ComputeAbsolutePath(const std::string &relativePath);
+  std::string ComputeAbsolutePath(const std::string &assetPath) const;
 
   /// @}
 
@@ -612,6 +636,7 @@ class SdfLayer : public TfRefBase, public TfWeakBase
     SdfAbstractDataTypedValue<T> outValue(value);
     return HasFieldDictKey(path, name, keyPath, static_cast<SdfAbstractDataValue *>(&outValue));
   }
+
 
   /// Return the value for the given \a path and \a fieldName. Returns an
   /// empty value if none is set.
@@ -1410,13 +1435,13 @@ class SdfLayer : public TfRefBase, public TfWeakBase
 
   // Finish initializing this layer (which may have succeeded or not)
   // and publish the results to other threads by unlocking the mutex.
-  // Sets _initializationWasSuccessful and unlocks _initializationMutex.
+  // Sets _initializationWasSuccessful.
   void _FinishInitialization(bool success);
 
   // Layers retrieved from the layer registry may still be in the
   // process of having their contents initialized.  Other threads
   // retrieving layers from the registry must wait until initialization
-  // is complete, using this method.  See _initializationMutex.
+  // is complete, using this method.
   // Returns _initializationWasSuccessful.
   //
   // Callers *must* be holding an SdfLayerRefPtr to this layer to
@@ -1543,10 +1568,10 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   std::string _GetMutedPath() const;
 
   // If old and new asset path is given, rename all external prim
-  // references referring to the old path.
-  void _UpdateReferencePaths(const SdfPrimSpecHandle &parent,
-                             const std::string &oldLayerPath,
-                             const std::string &newLayerPath);
+  // composition dependency referring to the old path.
+  void _UpdatePrimCompositionDependencyPaths(const SdfPrimSpecHandle &parent,
+                                             const std::string &oldLayerPath,
+                                             const std::string &newLayerPath);
 
   // Set the clean state to the current state.
   void _MarkCurrentStateAsClean() const;
@@ -1703,6 +1728,11 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   SdfFileFormatConstPtr _fileFormat;
   FileFormatArguments _fileFormatArgs;
 
+  // Cached reference to the _fileFormat's schema -- we need access to this to
+  // be as fast as possible since we look at it on every SetField(), for
+  // example.
+  const SdfSchemaBase &_schema;
+
   // Registry of Sdf Identities
   mutable Sdf_IdentityRegistry _idRegistry;
 
@@ -1711,6 +1741,10 @@ class SdfLayer : public TfRefBase, public TfWeakBase
 
   // The state delegate for this layer.
   SdfLayerStateDelegateBaseRefPtr _stateDelegate;
+
+  // Dispatcher used in layer initialization, letting waiters participate in
+  // loading instead of just busy-waiting.
+  WorkDispatcher _initDispatcher;
 
   // Atomic variable protecting layer initialization -- the interval between
   // adding a layer to the layer registry and finishing the process of
@@ -1721,8 +1755,7 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   std::atomic<bool> _initializationComplete;
 
   // This is an optional<bool> that is only set once initialization
-  // is complete, while _initializationMutex is locked.  If the
-  // optional<bool> is unset, initialization is still underway.
+  // is complete, before _initializationComplete is set.
   boost::optional<bool> _initializationWasSuccessful;
 
   // remembers the last 'IsDirty' state.

@@ -24,8 +24,8 @@
 #ifndef WABI_USD_PCP_DEBUG_CODES_H
 #define WABI_USD_PCP_DEBUG_CODES_H
 
-#include "wabi/base/tf/debug.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/debug.h"
 
 WABI_NAMESPACE_BEGIN
 

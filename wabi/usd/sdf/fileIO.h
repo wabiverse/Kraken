@@ -32,9 +32,10 @@
 #  include <ostream>
 #  include <sstream>
 #else
-#  include "wabi/base/tf/diagnosticLite.h"
 #  include "wabi/usd/ar/writableAsset.h"
+#  include "wabi/base/tf/diagnosticLite.h"
 
+#  include <algorithm>
 #  include <cstring>
 #  include <memory>
 #  include <ostream>

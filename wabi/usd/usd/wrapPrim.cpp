@@ -21,16 +21,16 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/attribute.h"
-#include "wabi/usd/usd/inherits.h"
-#include "wabi/usd/usd/payloads.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/prim.h"
-#include "wabi/usd/usd/references.h"
+#include "wabi/usd/usd/attribute.h"
+#include "wabi/usd/usd/payloads.h"
 #include "wabi/usd/usd/relationship.h"
+#include "wabi/usd/usd/references.h"
+#include "wabi/usd/usd/inherits.h"
 #include "wabi/usd/usd/specializes.h"
 #include "wabi/usd/usd/variantSets.h"
 #include "wabi/usd/usd/wrapUtils.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/pcp/primIndex.h"
 #include "wabi/usd/sdf/payload.h"
@@ -42,6 +42,7 @@
 #include "wabi/base/tf/pyResultConversions.h"
 
 #include <boost/python/class.hpp>
+#include <boost/python/def.hpp>
 #include <boost/python/operators.hpp>
 
 #include <string>
@@ -154,6 +155,12 @@ namespace
     bool result = prim.CanApplyAPI(schemaType, instanceName, &whyNot);
     return Usd_PrimCanApplyAPIResult(result, whyNot);
   }
+
+  static UsdStageWeakPtr _UnsafeGetStageForTesting(UsdObject const &obj)
+  {
+    return obj.GetStage();
+  }
+
 }  // anonymous namespace
 
 void wrapUsdPrim()
@@ -328,6 +335,7 @@ void wrapUsdPrim()
           arg("custom") = true,
           arg("variability") = SdfVariabilityVarying))
 
+
     .def("GetAttributes", &UsdPrim::GetAttributes, return_value_policy<TfPySequenceToList>())
     .def("GetAuthoredAttributes",
          &UsdPrim::GetAuthoredAttributes,
@@ -425,4 +433,9 @@ void wrapUsdPrim()
   to_python_converter<std::vector<UsdPrim>, TfPySequenceToPython<std::vector<UsdPrim>>>();
 
   TfPyRegisterStlSequencesFromPython<UsdPrim>();
+
+  // This is wrapped in order to let python call an API that will get through
+  // our usual Python API guards to access an invalid prim and throw an
+  // exception.
+  boost::python::def("_UnsafeGetStageForTesting", &_UnsafeGetStageForTesting);
 }

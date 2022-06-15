@@ -32,8 +32,8 @@
 
 #define WABI_USD_SDF_INSTANTIATE_POOL_H
 
-#include "wabi/usd/sdf/pool.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/pool.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -59,6 +59,7 @@ template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpa
 TfStaticData<
   tbb::concurrent_queue<typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_FreeList>>
   Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_sharedFreeLists;
+
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
 typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_RegionState Sdf_Pool<
@@ -198,5 +199,6 @@ void Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_ReserveSpan(_PoolSpan &
 // Source file definition of an Sdf_Pool instantiation.
 #define SDF_INSTANTIATE_POOL(Tag, ElemSize, RegionBits) \
   template class WABI_NS_GLOBAL::Sdf_Pool<Tag, ElemSize, RegionBits>
+
 
 WABI_NAMESPACE_END

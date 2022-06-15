@@ -24,11 +24,11 @@
 #ifndef WABI_USD_PCP_TYPES_H
 #define WABI_USD_PCP_TYPES_H
 
-#include "wabi/base/tf/denseHashSet.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/site.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/denseHashSet.h"
 
 #include <limits>
 #include <vector>

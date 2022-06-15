@@ -21,10 +21,10 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdGeom/xformOp.h"
-#include "wabi/usd/usd/prim.h"
-#include "wabi/usd/usdGeom/xformable.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/xformOp.h"
+#include "wabi/usd/usdGeom/xformable.h"
+#include "wabi/usd/usd/prim.h"
 
 #include "wabi/base/gf/matrix3d.h"
 #include "wabi/base/gf/matrix4d.h"
@@ -37,6 +37,7 @@
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DEFINE_PUBLIC_TOKENS(UsdGeomXformOpTypes, USDGEOM_XFORM_OP_TYPES);
 
@@ -63,19 +64,24 @@ TF_REGISTRY_FUNCTION(TfEnum)
   TF_ADD_ENUM_NAME(UsdGeomXformOp::PrecisionHalf, "Half");
 };
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
-                         ((xformOpPrefix, "xformOp:"))((inverseXformOpPrefix, "!invert!xformOp:"))((invertPrefix, "!invert!"))
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    ((xformOpPrefix, "xformOp:"))
+    ((inverseXformOpPrefix, "!invert!xformOp:"))
+    ((invertPrefix, "!invert!"))
 
-                         // This following tokens are not used here, but they're listed so they
-                         // become immortal and are not ref-counted.
-                         // Tokens for the xformOps that are missing here (eg, RotateXYZ, translate,
-                         // scale etc.)are added in UsdGeomXformCommonAPI.
-                         ((xformOpTransform, "xformOp:transform"))((xformOpRotateX, "xformOp:rotateX"))(
-                           (xformOpRotateY, "xformOp:rotateY"))((xformOpRotateZ, "xformOp:rotateZ"))((xformOpOrient,
-                                                                                                      "xformOp:orient"))
+    // This following tokens are not used here, but they're listed so they 
+    // become immortal and are not ref-counted.
+    // Tokens for the xformOps that are missing here (eg, RotateXYZ, translate,
+    // scale etc.)are added in UsdGeomXformCommonAPI.
+    ((xformOpTransform, "xformOp:transform"))
+    ((xformOpRotateX, "xformOp:rotateX"))
+    ((xformOpRotateY, "xformOp:rotateY"))
+    ((xformOpRotateZ, "xformOp:rotateZ"))
+    ((xformOpOrient, "xformOp:orient"))
 
-                         // XXX: backwards compatibility
-                         (transform)
+    // XXX: backwards compatibility
+    (transform)
 
 );
 

@@ -24,11 +24,11 @@
 #ifndef WABI_USD_SDF_VALUE_TYPE_PRIVATE_H
 #define WABI_USD_SDF_VALUE_TYPE_PRIVATE_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/valueTypeName.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/type.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/usd/sdf/valueTypeName.h"
-#include "wabi/wabi.h"
 #include <vector>
 
 WABI_NAMESPACE_BEGIN

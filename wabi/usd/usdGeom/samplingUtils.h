@@ -24,14 +24,15 @@
 #ifndef WABI_USD_USD_GEOM_SAMPLING_UTILS_H
 #define WABI_USD_USD_GEOM_SAMPLING_UTILS_H
 
-#include "wabi/base/vt/types.h"
 #include "wabi/wabi.h"
+#include "wabi/base/vt/types.h"
 
 WABI_NAMESPACE_BEGIN
 
 class UsdAttribute;
 class UsdPrim;
 class UsdTimeCode;
+
 
 /// Get the authored positions (or points), velocities, and accelerations.
 /// Also fetches the velocity scale. This method fails if the positions can't
@@ -47,7 +48,6 @@ bool UsdGeom_GetPositionsVelocitiesAndAccelerations(const UsdAttribute &position
                                                     VtVec3fArray *velocities,
                                                     UsdTimeCode *velocitiesSampleTime,
                                                     VtVec3fArray *accelerations,
-                                                    float *velocityScale,
                                                     UsdPrim const &prim);
 
 /// Get the authored scales. This method fails if the scales can't be fetched.
@@ -56,6 +56,7 @@ bool UsdGeom_GetScales(const UsdAttribute &scalesAttr,
                        size_t expectedNumScales,
                        VtVec3fArray *scales,
                        UsdPrim const &prim);
+
 
 /// Get the authored orientations and angular velocities for instance
 /// transform computation. This method fails if the orientations can't be
@@ -71,12 +72,11 @@ bool UsdGeom_GetOrientationsAndAngularVelocities(const UsdAttribute &orientation
                                                  UsdTimeCode *angularVelocitiesSampleTime,
                                                  UsdPrim const &prim);
 
-/// Compute the scaled time difference based on velocity scale and
-/// timeCodesPerSecond
-float UsdGeom_CalculateTimeDelta(const float velocityScale,
-                                 const UsdTimeCode time,
-                                 const UsdTimeCode sampleTime,
-                                 const double timeCodesPerSecond);
+/// Compute the scaled time difference based on timeCodesPerSecond
+double UsdGeom_CalculateTimeDelta(const UsdTimeCode time,
+                                  const UsdTimeCode sampleTime,
+                                  const double timeCodesPerSecond);
+
 
 WABI_NAMESPACE_END
 

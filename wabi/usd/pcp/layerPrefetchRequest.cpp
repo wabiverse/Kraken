@@ -22,12 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/layerPrefetchRequest.h"
+#include "wabi/usd/pcp/layerStackRegistry.h"
 #include "wabi/base/work/dispatcher.h"
 #include "wabi/base/work/threadLimits.h"
 #include "wabi/base/work/withScopedParallelism.h"
-#include "wabi/usd/pcp/layerStackRegistry.h"
-#include "wabi/wabi.h"
 
 #include <tbb/spin_mutex.h>
 

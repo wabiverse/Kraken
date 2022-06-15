@@ -50,15 +50,15 @@
 /// Conceptually, though, they are operating on the scene description
 /// identified by a PcpSite.
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/sdf/layerOffset.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/payload.h"
 #include "wabi/usd/sdf/reference.h"
-#include "wabi/usd/sdf/site.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/site.h"
 
 #include <set>
 #include <vector>

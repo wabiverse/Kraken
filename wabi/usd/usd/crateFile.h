@@ -24,11 +24,11 @@
 #ifndef WABI_USD_USD_CRATE_FILE_H
 #define WABI_USD_USD_CRATE_FILE_H
 
-#include "wabi/usd/usd/crateData.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/crateData.h"
 
-#include "crateValueInliners.h"
 #include "shared.h"
+#include "crateValueInliners.h"
 
 #include "wabi/base/arch/fileSystem.h"
 #include "wabi/base/tf/token.h"
@@ -446,10 +446,9 @@ namespace Usd_CrateFile
         {
           return !(*this == other);
         }
-        friend size_t hash_value(ZeroCopySource const &z)
+        friend size_t tbb_hasher(ZeroCopySource const &z)
         {
-          _Hasher h;
-          size_t seed = h(z._addr);
+          size_t seed = reinterpret_cast<uintptr_t>(z._addr);
           boost::hash_combine(seed, z._numBytes);
           return seed;
         }
@@ -547,7 +546,7 @@ namespace Usd_CrateFile
       ArchMutableFileMapping _mapping;
       char *_start;
       int64_t _length;
-      tbb::concurrent_unordered_set<ZeroCopySource, _Hasher> _outstandingRanges;
+      tbb::concurrent_unordered_set<ZeroCopySource> _outstandingRanges;
     };
     using _FileMappingIPtr = boost::intrusive_ptr<_FileMapping>;
 
@@ -587,6 +586,77 @@ namespace Usd_CrateFile
 
     friend struct ValueRep;
     friend struct TimeSamples;
+
+    struct Version
+    {
+      // Not named 'major' since that's a macro name conflict on POSIXes.
+      uint8_t majver, minver, patchver;
+
+      constexpr Version() : Version(0, 0, 0) {}
+      constexpr Version(uint8_t majver, uint8_t minver, uint8_t patchver)
+        : majver(majver),
+          minver(minver),
+          patchver(patchver)
+      {}
+
+      explicit Version(CrateFile::_BootStrap const &boot)
+        : Version(boot.version[0], boot.version[1], boot.version[2])
+      {}
+
+      /// Read a version from a dotted decimal integer string, e.g. "1.2.3".
+      static Version FromString(char const *str);
+
+      /// Return a version number as a single 32-bit integer.  From most to
+      /// least significant, the returned integer's bytes are 0,
+      /// major-version, minor-version, patch-version.
+      constexpr uint32_t AsInt() const
+      {
+        return static_cast<uint32_t>(majver) << 16 | static_cast<uint32_t>(minver) << 8 |
+               static_cast<uint32_t>(patchver);
+      }
+
+      /// Return a dotted decimal integer string for this version,
+      /// e.g. "1.2.3".
+      std::string AsString() const;
+
+      /// Return true if this version is not zero in all components.
+      bool IsValid() const
+      {
+        return AsInt() != 0;
+      }
+
+      // Return true if fileVer has the same major version as this, and has a
+      // lesser or same minor version.  Patch version irrelevant, since the
+      // versioning scheme specifies that patch level changes are
+      // forward-compatible.
+      bool CanRead(Version const &fileVer) const
+      {
+        return fileVer.majver == majver && fileVer.minver <= minver;
+      }
+
+      // Return true if fileVer has the same major version as this, and has a
+      // lesser minor version, or has the same minor version and a lesser or
+      // equal patch version.
+      bool CanWrite(Version const &fileVer) const
+      {
+        return fileVer.majver == majver &&
+               (fileVer.minver < minver ||
+                (fileVer.minver == minver && fileVer.patchver <= patchver));
+      }
+
+#define LOGIC_OP(op)                                     \
+  constexpr bool operator op(Version const &other) const \
+  {                                                      \
+    return AsInt() op other.AsInt();                     \
+  }
+      LOGIC_OP(==);
+      LOGIC_OP(!=);
+      LOGIC_OP(<);
+      LOGIC_OP(>);
+      LOGIC_OP(<=);
+      LOGIC_OP(>=);
+#undef LOGIC_OP
+    };
 
     typedef std::pair<TfToken, VtValue> FieldValuePair;
 
@@ -701,13 +771,19 @@ namespace Usd_CrateFile
     ~CrateFile();
 
     static bool CanRead(string const &assetPath);
+    static bool CanRead(string const &assetPath, ArAssetSharedPtr const &asset);
+
+    static Version GetSoftwareVersion();
     static TfToken const &GetSoftwareVersionToken();
+
+    Version GetFileVersion() const;
     TfToken GetFileVersionToken() const;
 
     static std::unique_ptr<CrateFile> CreateNew();
 
     // Return nullptr on failure.
     static std::unique_ptr<CrateFile> Open(string const &assetPath);
+    static std::unique_ptr<CrateFile> Open(string const &assetPath, ArAssetSharedPtr const &asset);
 
     // Helper for saving to a file.
     struct Packer
@@ -759,7 +835,7 @@ namespace Usd_CrateFile
 
     inline Field const &GetField(FieldIndex i) const
     {
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef WABI_PREFER_SAFETY_OVER_SPEED
       if (ARCH_LIKELY(i.value < _fields.size())) {
         return _fields[i.value];
       }
@@ -787,7 +863,7 @@ namespace Usd_CrateFile
 
     inline SdfPath const &GetPath(PathIndex i) const
     {
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef WABI_PREFER_SAFETY_OVER_SPEED
       if (ARCH_LIKELY(i.value < _paths.size())) {
         return _paths[i.value];
       }
@@ -833,7 +909,7 @@ namespace Usd_CrateFile
 
     inline TfToken const &GetToken(TokenIndex i) const
     {
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef WABI_PREFER_SAFETY_OVER_SPEED
       if (ARCH_LIKELY(i.value < _tokens.size())) {
         return _tokens[i.value];
       }
@@ -850,7 +926,7 @@ namespace Usd_CrateFile
 
     inline std::string const &GetString(StringIndex i) const
     {
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef WABI_PREFER_SAFETY_OVER_SPEED
       if (ARCH_LIKELY(i.value < _strings.size())) {
         return GetToken(_strings[i.value]).GetString();
       }
@@ -993,6 +1069,7 @@ namespace Usd_CrateFile
     TokenIndex _GetIndexForToken(const TfToken &token) const;
     StringIndex _AddString(const string &str);
 
+
     ////////////////////////////////////////////////////////////////////////
 
     // Base class, to have a pointer type.
@@ -1025,12 +1102,12 @@ namespace Usd_CrateFile
 
     static bool _IsKnownSection(char const *name);
 
-#ifdef WITH_SAFETY_OVER_SPEED
+#ifdef WABI_PREFER_SAFETY_OVER_SPEED
     // Helpers for error cases.
     Field const &_GetEmptyField() const;
     std::string const &_GetEmptyString() const;
     TfToken const &_GetEmptyToken() const;
-#endif  // WITH_SAFETY_OVER_SPEED
+#endif  // WABI_PREFER_SAFETY_OVER_SPEED
 
     struct _PackingContext;
 
@@ -1117,6 +1194,7 @@ namespace Usd_CrateFile
     _TableOfContents _toc;  // only valid if we have read an asset.
     _BootStrap _boot;       // only valid if we have read an asset.
 
+
     // If we're reading data from an mmap'd file, then _mmapSrc will be non-null
     // and _preadSrc & _assetSrc will be null.  Otherwise if we're reading data
     // by pread()ing from a file obtained from an ArAsset, then _assetSrc is
@@ -1158,7 +1236,9 @@ namespace Usd_CrateFile
   template<> struct _IsBitwiseReadWrite<CrateFile::Spec_0_0_1> : std::true_type
   {};
 
+
 }  // namespace Usd_CrateFile
+
 
 WABI_NAMESPACE_END
 

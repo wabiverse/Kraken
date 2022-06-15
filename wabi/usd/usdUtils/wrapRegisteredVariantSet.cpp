@@ -22,13 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/wabi.h"
-#include <boost/python.hpp>
 #include <boost/python/def.hpp>
+#include <boost/python.hpp>
 
 #include "wabi/usd/usdUtils/registeredVariantSet.h"
 
-#include "wabi/base/tf/pyEnum.h"
 #include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyEnum.h"
 
 using namespace boost::python;
 

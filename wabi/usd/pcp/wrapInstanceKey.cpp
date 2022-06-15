@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/instanceKey.h"
 #include "wabi/usd/pcp/primIndex.h"
-#include "wabi/wabi.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/operators.hpp>

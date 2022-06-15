@@ -26,13 +26,13 @@
 
 /// \file usd/primData.h
 
-#include "wabi/usd/sdf/types.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
-#include "wabi/usd/usd/primDefinition.h"
 #include "wabi/usd/usd/primFlags.h"
+#include "wabi/usd/usd/primDefinition.h"
 #include "wabi/usd/usd/primTypeInfo.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/types.h"
 
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/pointerAndBits.h"
@@ -40,9 +40,9 @@
 
 #include "wabi/usd/sdf/path.h"
 
-#include <boost/intrusive_ptr.hpp>
-#include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 #include <atomic>
 #include <cstdint>
@@ -398,7 +398,7 @@ class Usd_PrimData
   }
 
   USD_API
-  friend void Usd_IssueFatalPrimAccessError(Usd_PrimData const *p);
+  friend void Usd_ThrowExpiredPrimAccessError(Usd_PrimData const *p);
   friend std::string Usd_DescribePrimData(const Usd_PrimData *p, SdfPath const &proxyPrimPath);
 
   friend inline bool Usd_IsDead(Usd_PrimData const *p)
@@ -466,6 +466,7 @@ Usd_PrimData::SiblingRange Usd_PrimData::_GetChildrenRange() const
 {
   return Usd_PrimData::SiblingRange(_ChildrenBegin(), _ChildrenEnd());
 }
+
 
 // Tree iterator class.
 class Usd_PrimDataSubtreeIterator

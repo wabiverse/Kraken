@@ -21,16 +21,17 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/usdzFileFormat.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/usdaFileFormat.h"
+#include "wabi/usd/usd/usdzFileFormat.h"
 #include "wabi/usd/usd/usdzResolver.h"
 #include "wabi/usd/usd/zipFile.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/layer.h"
 
 #include "wabi/usd/ar/packageUtils.h"
 #include "wabi/usd/ar/resolver.h"
+#include "wabi/usd/ar/resolverScopedCache.h"
 
 #include "wabi/base/trace/trace.h"
 
@@ -111,6 +112,15 @@ bool UsdUsdzFileFormat::Read(SdfLayer *layer,
                              bool metadataOnly) const
 {
   TRACE_FUNCTION();
+
+  // Use a scoped cache here so we only open the .usdz asset once.
+  //
+  // If the call to Read below calls ArResolver::OpenAsset, it will
+  // ultimately ask Usd_UsdzResolver to open the .usdz asset. The
+  // scoped cache will ensure that will pick up the asset opened
+  // in _GetFirstFileInZipFile instead of asking the resolver to
+  // open the asset again.
+  ArResolverScopedCache scopedCache;
 
   const std::string firstFile = _GetFirstFileInZipFile(resolvedPath);
   if (firstFile.empty()) {

@@ -1,6 +1,6 @@
 /*!
 \page usdLux_page_front UsdLux : USD Lighting Schema
-\if ( WABI_MFB_BUILD )
+\if ( PIXAR_MFB_BUILD )
 \mainpage UsdLux : USD Lighting Schema
 \publicLib
 \endif

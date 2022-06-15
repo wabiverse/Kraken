@@ -26,9 +26,9 @@
 
 /// \file sdf/cleanupTracker.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/spec.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

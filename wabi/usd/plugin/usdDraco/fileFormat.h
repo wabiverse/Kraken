@@ -25,19 +25,22 @@
 #ifndef WABI_USD_PLUGIN_USD_DRACO_FILE_FORMAT_H
 #define WABI_USD_PLUGIN_USD_DRACO_FILE_FORMAT_H
 
-#include "wabi/usd/sdf/fileFormat.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/fileFormat.h"
 
 #include <ostream>
 #include <string>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 #define USDDRACO_FILE_FORMAT_TOKENS ((Id, "drc"))((Version, "1.3.5.0"))((Target, "usd"))
 
-TF_DECLARE_PUBLIC_TOKENS(UsdDracoFileFormatTokens, USDDRACO_FILE_FORMAT_TOKENS);
 
+TF_DECLARE_PUBLIC_TOKENS(UsdDracoFileFormatTokens, USDDRACO_FILE_FORMAT_TOKENS);
 TF_DECLARE_WEAK_AND_REF_PTRS(UsdDracoFileFormat);
+
 
 /// \class UsdDracoFileFormat
 ///
@@ -79,6 +82,7 @@ class UsdDracoFileFormat : public SdfFileFormat
     return false;
   }
 };
+
 
 WABI_NAMESPACE_END
 

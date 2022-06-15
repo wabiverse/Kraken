@@ -26,13 +26,13 @@
 
 /// \file sdf/attributeSpec.h
 
-#include "wabi/base/tf/enum.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/declareSpec.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/propertySpec.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/enum.h"
 
 WABI_NAMESPACE_BEGIN
 

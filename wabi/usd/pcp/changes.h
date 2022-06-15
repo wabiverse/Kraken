@@ -26,14 +26,14 @@
 
 /// \file pcp/changes.h
 
-#include "wabi/base/tf/declarePtrs.h"
-#include "wabi/base/tf/span.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/sdf/changeList.h"
 #include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/declarePtrs.h"
+#include "wabi/base/tf/span.h"
 
 #include <map>
 #include <set>
@@ -279,6 +279,13 @@ class PcpChanges
   PCP_API
   void DidDestroyCache(const PcpCache *cache);
 
+  /// The asset resolver has changed, invalidating previously-resolved
+  /// asset paths. This function will check all prim indexes in \p cache
+  /// for composition arcs that may now refer to a different asset and
+  /// mark them as needing significant resyncs.
+  PCP_API
+  void DidChangeAssetResolver(const PcpCache *cache);
+
   /// Swap the contents of this and \p other.
   PCP_API
   void Swap(PcpChanges &other);
@@ -327,6 +334,7 @@ class PcpChanges
 
   // Returns the _PathEditMap for the given cache.
   _PathEditMap &_GetRenameChanges(const PcpCache *cache);
+
 
   // Optimize the changes.
   void _Optimize() const;
@@ -401,6 +409,7 @@ class PcpChanges
   // by a change to a layer's resolved path used by \p layerStack.
   void _DidChangeLayerStackResolvedPath(const TfSpan<const PcpCache *> &caches,
                                         const PcpLayerStackPtr &layerStack,
+                                        bool requiresLayerStackChange,
                                         std::string *debugSummary);
 
   // The spec stack for the prim or property index at \p path must be

@@ -81,6 +81,7 @@ static bool _GetAttrForTransforms(const UsdAttribute &attr,
     *lowerTimeValue = sampleTimeValue;
     *upperTimeValue = sampleUpperTimeValue;
     *attrHasSamples = hasSamples;
+
   } else {
 
     // baseTime is UsdTimeCode.Default()
@@ -149,7 +150,6 @@ bool UsdGeom_GetPositionsVelocitiesAndAccelerations(const UsdAttribute &position
                                                     VtVec3fArray *velocities,
                                                     UsdTimeCode *velocitiesSampleTime,
                                                     VtVec3fArray *accelerations,
-                                                    float *velocityScale,
                                                     UsdPrim const &prim)
 {
   // Get positions attribute and check array size
@@ -224,6 +224,7 @@ bool UsdGeom_GetPositionsVelocitiesAndAccelerations(const UsdAttribute &position
     velocities->clear();
   }
 
+
   // Get accelerations attribute and check sample alignment with velocities
   // attribute and array size
 
@@ -267,8 +268,6 @@ bool UsdGeom_GetPositionsVelocitiesAndAccelerations(const UsdAttribute &position
     }
     accelerations->clear();
   }
-
-  *velocityScale = UsdGeomMotionAPI(prim).ComputeVelocityScale(baseTime);
 
   return true;
 }
@@ -358,6 +357,7 @@ bool UsdGeom_GetOrientationsAndAngularVelocities(const UsdAttribute &orientation
   return true;
 }
 
+
 bool UsdGeom_GetScales(const UsdAttribute &scalesAttr,
                        const UsdTimeCode baseTime,
                        size_t expectedScales,
@@ -399,13 +399,11 @@ bool UsdGeom_GetScales(const UsdAttribute &scalesAttr,
   return true;
 }
 
-float UsdGeom_CalculateTimeDelta(const float velocityScale,
-                                 const UsdTimeCode time,
-                                 const UsdTimeCode sampleTime,
-                                 const double timeCodesPerSecond)
+double UsdGeom_CalculateTimeDelta(const UsdTimeCode time,
+                                  const UsdTimeCode sampleTime,
+                                  const double timeCodesPerSecond)
 {
-  return velocityScale *
-         static_cast<float>((time.GetValue() - sampleTime.GetValue()) / timeCodesPerSecond);
+  return (time.GetValue() - sampleTime.GetValue()) / timeCodesPerSecond;
 }
 
 WABI_NAMESPACE_END

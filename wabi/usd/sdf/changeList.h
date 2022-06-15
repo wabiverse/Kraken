@@ -26,16 +26,16 @@
 
 /// \file sdf/changeList.h
 
-#include "wabi/base/tf/smallVector.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/smallVector.h"
 
-#include <iosfwd>
-#include <map>
 #include <set>
+#include <map>
 #include <unordered_map>
+#include <iosfwd>
 
 WABI_NAMESPACE_BEGIN
 

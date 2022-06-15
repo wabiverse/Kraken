@@ -28,13 +28,15 @@
 #include "attributeDescriptor.h"
 #include "importAttribute.h"
 
-#include "wabi/usd/usdGeom/mesh.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/mesh.h"
 
 #include <draco/mesh/corner_table.h>
 #include <draco/mesh/mesh.h>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdDracoImportTranslator
 ///
@@ -91,6 +93,7 @@ class UsdDracoImportTranslator
   VtIntArray _faceVertexIndices;
   VtIntArray _holeIndices;
 };
+
 
 WABI_NAMESPACE_END
 

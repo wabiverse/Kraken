@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/usd/pcp/mapExpression.h"
-#include "wabi/usd/pcp/layerStack.h"
-#include "wabi/usd/pcp/mapFunction.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/mapExpression.h"
+#include "wabi/usd/pcp/mapFunction.h"
+#include "wabi/usd/pcp/layerStack.h"
 
 #include "wabi/base/trace/trace.h"
 
@@ -50,18 +50,6 @@ static PcpMapFunction _AddRootIdentity(const PcpMapFunction &value)
 }
 
 ////////////////////////////////////////////////////////////////////////
-
-PcpMapExpression::PcpMapExpression() {}
-
-bool PcpMapExpression::IsNull() const
-{
-  return !_node;
-}
-
-void PcpMapExpression::Swap(PcpMapExpression &other)
-{
-  _node.swap(other._node);
-}
 
 const PcpMapExpression::Value &PcpMapExpression::Evaluate() const
 {
@@ -244,7 +232,7 @@ PcpMapExpression::_NodeRefPtr PcpMapExpression::_Node::New(_Op op_,
     // Check for existing instance to re-use
     _NodeMap::accessor accessor;
     if (_nodeRegistry->map.insert(accessor, key) ||
-        accessor->second->_refCount.fetch_add(1) == 0) {
+        accessor->second->_refCount.fetch_and_increment() == 0) {
       // Either there was no node in the table, or there was but it had
       // begun dying (another client dropped its refcount to 0).  We have
       // to create a new node in the table.  When the client that is
@@ -381,7 +369,7 @@ void intrusive_ptr_add_ref(PcpMapExpression::_Node *p)
 
 void intrusive_ptr_release(PcpMapExpression::_Node *p)
 {
-  if (p->_refCount.fetch_sub(1) == 1)
+  if (p->_refCount.fetch_and_decrement() == 1)
     delete p;
 }
 

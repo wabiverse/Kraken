@@ -21,29 +21,29 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/flattenUtils.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/flattenUtils.h"
 
-#include "wabi/base/tf/staticData.h"
-#include "wabi/usd/ar/resolverContextBinder.h"
-#include "wabi/usd/pcp/composeSite.h"
-#include "wabi/usd/pcp/layerStack.h"
-#include "wabi/usd/sdf/assetPath.h"
-#include "wabi/usd/sdf/attributeSpec.h"
-#include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/layer.h"
+#include "wabi/usd/sdf/assetPath.h"
+#include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/layerUtils.h"
 #include "wabi/usd/sdf/primSpec.h"
-#include "wabi/usd/sdf/pseudoRootSpec.h"
+#include "wabi/usd/sdf/attributeSpec.h"
 #include "wabi/usd/sdf/relationshipSpec.h"
-#include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/variantSetSpec.h"
 #include "wabi/usd/sdf/variantSpec.h"
-#include "wabi/usd/usd/clipsAPI.h"
+#include "wabi/usd/sdf/pseudoRootSpec.h"
+#include "wabi/usd/sdf/schema.h"
+#include "wabi/usd/pcp/composeSite.h"
+#include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/usd/common.h"
+#include "wabi/usd/usd/clipsAPI.h"
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/valueUtils.h"
+#include "wabi/usd/ar/resolverContextBinder.h"
+#include "wabi/base/tf/staticData.h"
 
 #include <algorithm>
 #include <functional>
@@ -662,5 +662,6 @@ std::string UsdFlattenLayerStackResolveAssetPath(const SdfLayerHandle &sourceLay
   return assetPath.empty() ? assetPath :
                              SdfComputeAssetPathRelativeToLayer(sourceLayer, assetPath);
 }
+
 
 WABI_NAMESPACE_END

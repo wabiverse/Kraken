@@ -24,12 +24,12 @@
 #ifndef WABI_USD_PCP_ARC_H
 #define WABI_USD_PCP_ARC_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/mapExpression.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/types.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

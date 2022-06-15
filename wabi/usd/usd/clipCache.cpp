@@ -21,30 +21,26 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/clipCache.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/clipCache.h"
 
+#include "wabi/usd/usd/clipSetDefinition.h"
+#include "wabi/usd/usd/debugCodes.h"
+#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/pcp/layerStack.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/primIndex.h"
 #include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/usd/usd/clipSetDefinition.h"
-#include "wabi/usd/usd/debugCodes.h"
-#include "wabi/usd/usd/tokens.h"
 
+#include "wabi/base/vt/array.h"
 #include "wabi/base/gf/vec2d.h"
+#include "wabi/base/trace/trace.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/mallocTag.h"
 #include "wabi/base/tf/ostreamMethods.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/base/vt/array.h"
 
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/thread.hpp>
-
-#include <atomic>
 #include <string>
 #include <unordered_map>
 
@@ -195,8 +191,9 @@ bool Usd_ClipCache::PopulateClipsForPrim(const SdfPath &path, const PcpPrimIndex
 
   const bool primHasClips = !allClips.empty();
   if (primHasClips) {
+    tbb::mutex::scoped_lock lock;
     if (_concurrentPopulationContext) {
-      std::scoped_lock lock(_concurrentPopulationContext->_mutex);
+      lock.acquire(_concurrentPopulationContext->_mutex);
     }
 
     // Find nearest ancestor with clips specified.
@@ -231,8 +228,9 @@ bool Usd_ClipCache::PopulateClipsForPrim(const SdfPath &path, const PcpPrimIndex
 
 SdfLayerHandleSet Usd_ClipCache::GetUsedLayers() const
 {
+  tbb::mutex::scoped_lock lock;
   if (_concurrentPopulationContext) {
-    std::scoped_lock lock(_concurrentPopulationContext->_mutex);
+    lock.acquire(_concurrentPopulationContext->_mutex);
   }
   SdfLayerHandleSet layers;
   for (_ClipTable::iterator::value_type const &clipsListIter : _table) {
@@ -308,8 +306,9 @@ void Usd_ClipCache::Reload()
 const std::vector<Usd_ClipSetRefPtr> &Usd_ClipCache::GetClipsForPrim(const SdfPath &path) const
 {
   TRACE_FUNCTION();
+  tbb::mutex::scoped_lock lock;
   if (_concurrentPopulationContext) {
-    std::scoped_lock lock(_concurrentPopulationContext->_mutex);
+    lock.acquire(_concurrentPopulationContext->_mutex);
   }
   return _GetClipsForPrim_NoLock(path);
 }

@@ -23,8 +23,8 @@
 //
 /// \file Allowed.cpp
 
-#include "wabi/usd/sdf/allowed.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/allowed.h"
 
 WABI_NAMESPACE_BEGIN
 

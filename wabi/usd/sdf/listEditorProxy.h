@@ -26,10 +26,10 @@
 
 /// \file sdf/listEditorProxy.h
 
-#include "wabi/usd/sdf/changeBlock.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/listEditor.h"
 #include "wabi/usd/sdf/listProxy.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/changeBlock.h"
 
 #include "wabi/base/vt/value.h"  // for Vt_DefaultValueFactory
 

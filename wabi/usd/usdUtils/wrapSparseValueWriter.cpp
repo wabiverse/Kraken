@@ -23,13 +23,13 @@
 //
 #include "wabi/wabi.h"
 
-#include "wabi/base/tf/pyContainerConversions.h"
-#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/usd/usdUtils/sparseValueWriter.h"
+#include "wabi/usd/usd/pyConversions.h"
+#include "wabi/base/tf/pyContainerConversions.h"
 
 #include <boost/python.hpp>
-#include <boost/python/def.hpp>
 #include <boost/python/make_constructor.hpp>
+#include <boost/python/def.hpp>
 
 using namespace boost::python;
 

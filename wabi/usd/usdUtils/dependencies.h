@@ -35,9 +35,9 @@
 /// dependencies into a specified directory.
 ///
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/usdUtils/api.h"
-#include "wabi/wabi.h"
 
 #include <string>
 #include <vector>

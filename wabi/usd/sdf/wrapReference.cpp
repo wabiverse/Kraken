@@ -22,13 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
+#include "wabi/usd/sdf/reference.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyUtils.h"
-#include "wabi/usd/sdf/reference.h"
-#include "wabi/wabi.h"
 
-#include <boost/function.hpp>
 #include <boost/python.hpp>
+#include <boost/function.hpp>
 
 #include <string>
 
@@ -84,7 +84,7 @@ void wrapReference()
 
   // Note: Since we have no proxy for Sdf.Reference we wrap it as an
   //       immutable type to avoid confusion about code like this
-  //       prim.referenceList.explicitItems[0].assetPath = '//menv30/test.menva'
+  //       prim.referenceList.explicitItems[0].assetPath = '//pixar/test.sdf'
   //       This looks like it's updating the assetPath for the prim's
   //       first explicit reference, but would instead modify a temporary
   //       Sdf.Reference object.

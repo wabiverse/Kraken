@@ -21,18 +21,19 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usd/attributeQuery.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usd/attributeQuery.h"
 
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usd/valueUtils.h"
 
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/base/trace/trace.h"
 
 #include <boost/preprocessor/seq/for_each.hpp>
 
 WABI_NAMESPACE_BEGIN
+
 
 UsdAttributeQuery::UsdAttributeQuery(const UsdAttribute &attr)
 {

@@ -1,6 +1,6 @@
 /*!
 \page sdf_page_front Sdf : Scene Description Foundations
-\if ( WABI_MFB_BUILD )
+\if ( PIXAR_MFB_BUILD )
 \mainpage Sdf : Scene Description Foundations
 \publicLib
 \endif
@@ -9,7 +9,7 @@ Sdf provides the foundations for serializing scene description to a reference as
 
 \section sdf_overview Overview
 
-Implements scene description \em layers in USD.  In USD, a complete scene description is composed from partial scene description stored in SdfLayer objects.  The primary unit of scene description within a layer is a \em prim \em spec, represented by the SdfPrimSpec class.  A complete UsdPrim on a stage is a composition of the prim's built-in fallback values and all of the prim spec objects specified in Sdf layers.  (For an overview of prims and stages, see the \ref usd_page_front "Usd library overview".)
+Implements scene description \em layers in USD.  In USD, a complete scene description is composed from partial scene description stored in SdfLayer objects.  The primary unit of scene description within a layer is a \em prim \em spec, represented by the SdfPrimSpec class.  A complete UsdPrim on a stage is a composition of the prim's built-in fallback values and all of the prim spec objects specified in Sdf layers.  (For an overview of prims and stages, see the \ref usd_page_front "Usd library overview".) 
 
 Use methods on an SdfLayer object to export and save a layer to a file, or to load a file from disk.  Scene description files are stored in <c>.usd</c> format (one layer per file, ascii or binary).  Other features abstracted at the layer level include undo/redo functionality and logging, which can be customized by subclassing SdfLayerStateDelegateBase .
 
@@ -21,7 +21,7 @@ An SdfPrimSpec object is named and forms a namespace hierarchy with other prims.
 
 Layers can be combined in several ways.  An SdfLayer can have \e sublayers.  When layering, the SdfPrimSpec objects in an SdfLayer object merge over the prims at the same namespace path in the layer.  An SdfPrimSpec object can also reference another prim within its own layer or a prim from another layer.  When referencing, a prim and its name children merge over the other prim that it references.
 
-Note that layering and referencing means that multiple SdfPrimSpec objects may contribute partial descriptions for the same logical prim.  The full description of the prim in a given scene comes only from combining or \em composing the contributions of each of the SdfPrimSpec objects.
+Note that layering and referencing means that multiple SdfPrimSpec objects may contribute partial descriptions for the same logical prim.  The full description of the prim in a given scene comes only from combining or \em composing the contributions of each of the SdfPrimSpec objects. 
 
 \section sdf_layers_opinions Layers and Opinions
 
@@ -35,7 +35,7 @@ SdfPrimSpec properties are represented by the SdfPropertySpec class. Property sp
 
 <ul>
 	<li>
-        <b>SdfAttributeSpec.</b> Represents values, which can be scalar or array-valued.  For example, the \c radius attribute of a Sphere gprim holds a scalar value; the \c points attribute of a Mesh gprim holds an array value.
+        <b>SdfAttributeSpec.</b> Represents values, which can be scalar or array-valued.  For example, the \c radius attribute of a Sphere gprim holds a scalar value; the \c points attribute of a Mesh gprim holds an array value. 
 	</li>
 	<li>
 	    <b>SdfRelationshipSpec.</b> Represents a relationship to other prims, attributes, or relationships, such as the \c material:binding relationship that assigns Materials to Gprims.
@@ -152,11 +152,11 @@ The "type" entry for a metadata field must be one of the types listed below.
                 <tr><th colspan="2">List Operation Types</th></tr>
                 <tr><th>"type" value</th><th>C++ type</th></tr>
                 <tr><td>intlistop</td><td>SdfIntListOp</td></tr>
-                <tr><td>int64listop</td><td>SdfInt64ListOp</td></tr>
+                <tr><td>int64listop</td><td>SdfInt64ListOp</td></tr>    
                 <tr><td>uintlistop</td><td>SdfUIntListOp</td></tr>
-                <tr><td>uint64listop</td><td>SdfUInt64ListOp</td></tr>
-                <tr><td>stringlistop</td><td>SdfStringListOp</td></tr>
-                <tr><td>tokenlistop</td><td>SdfTokenListOp</td></tr>
+                <tr><td>uint64listop</td><td>SdfUInt64ListOp</td></tr>    
+                <tr><td>stringlistop</td><td>SdfStringListOp</td></tr>    
+                <tr><td>tokenlistop</td><td>SdfTokenListOp</td></tr>    
             </table>
         </td>
     </tr>

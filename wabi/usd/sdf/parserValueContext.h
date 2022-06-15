@@ -24,9 +24,9 @@
 #ifndef WABI_USD_SDF_PARSER_VALUE_CONTEXT_H
 #define WABI_USD_SDF_PARSER_VALUE_CONTEXT_H
 
-#include "wabi/base/vt/array.h"
-#include "wabi/usd/sdf/parserHelpers.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/parserHelpers.h"
+#include "wabi/base/vt/array.h"
 
 #include <functional>
 #include <string>

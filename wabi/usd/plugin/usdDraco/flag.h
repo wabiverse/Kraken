@@ -25,7 +25,9 @@
 #ifndef WABI_USD_PLUGIN_USD_DRACO_FLAG_H
 #define WABI_USD_PLUGIN_USD_DRACO_FLAG_H
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdDracoFlag
 ///
@@ -59,6 +61,7 @@ template<class T> class UsdDracoFlag
   const bool _specified;
   const T _value;
 };
+
 
 WABI_NAMESPACE_END
 

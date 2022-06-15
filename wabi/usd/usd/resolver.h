@@ -24,15 +24,15 @@
 #ifndef WABI_USD_USD_RESOLVER_H
 #define WABI_USD_USD_RESOLVER_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
-#include "wabi/wabi.h"
 
-#include "wabi/usd/pcp/iterator.h"
 #include "wabi/usd/pcp/node.h"
+#include "wabi/usd/pcp/iterator.h"
 
-#include "wabi/usd/sdf/declareHandles.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/usd/sdf/declareHandles.h"
 
 WABI_NAMESPACE_BEGIN
 

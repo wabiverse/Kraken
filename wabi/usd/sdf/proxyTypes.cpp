@@ -24,13 +24,13 @@
 // Types.cpp
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/proxyTypes.h"
 #include "wabi/usd/sdf/connectionListEditor.h"
 #include "wabi/usd/sdf/listOpListEditor.h"
 #include "wabi/usd/sdf/payload.h"
 #include "wabi/usd/sdf/reference.h"
 #include "wabi/usd/sdf/vectorListEditor.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/registryManager.h"
 

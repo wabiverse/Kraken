@@ -22,6 +22,7 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/layerOffset.h"
@@ -32,7 +33,6 @@
 #include "wabi/usd/sdf/tokens.h"
 #include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/valueTypeRegistry.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/plug/plugin.h"
 #include "wabi/base/plug/registry.h"
@@ -53,10 +53,14 @@ using std::vector;
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens,
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
 
-                         ((Default, "default"))((DisplayGroup,
-                                                 "displayGroup"))((Type, "type"))((AppliesTo, "appliesTo")));
+    ((Default, "default"))
+    ((DisplayGroup,"displayGroup"))
+    ((Type,"type"))
+    ((AppliesTo,"appliesTo"))
+);
 
 //
 // SdfSchemaBase::FieldDefinition
@@ -274,6 +278,7 @@ SdfSchemaBase::_SpecDefiner &SdfSchemaBase::_SpecDefiner::CopyFrom(const SpecDef
   *_definition = other;
   return *this;
 }
+
 
 //
 // Validation helpers
@@ -1309,7 +1314,7 @@ static VtValue _ParseValue(const std::string &valueTypeName,
 
   // Feed the ParserValueContext the values in the correct format.
   // A better solution would be to have the default value be a string,
-  // which is parsed using the menva file format syntax for typed values.
+  // which is parsed using the sdf text file format syntax for typed values.
   // This would involve extracting the typed value rule out of the parser
   // and into a new parser.
   if (context.valueIsShaped)

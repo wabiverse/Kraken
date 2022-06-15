@@ -26,16 +26,16 @@
 
 /// \file sdf/spec.h
 
-#include "wabi/base/tf/token.h"
-#include "wabi/base/tf/type.h"
-#include "wabi/base/vt/value.h"
-#include "wabi/usd/sdf/abstractData.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
-#include "wabi/usd/sdf/declareSpec.h"
+#include "wabi/usd/sdf/abstractData.h"
 #include "wabi/usd/sdf/identity.h"
+#include "wabi/usd/sdf/declareSpec.h"
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/sdf/types.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/value.h"
+#include "wabi/base/tf/token.h"
+#include "wabi/base/tf/type.h"
 
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/utility/enable_if.hpp>

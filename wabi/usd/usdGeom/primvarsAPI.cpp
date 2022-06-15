@@ -23,11 +23,11 @@
 //
 #include "wabi/usd/usdGeom/primvarsAPI.h"
 #include "wabi/usd/usd/schemaRegistry.h"
-#include "wabi/usd/usd/tokens.h"
 #include "wabi/usd/usd/typed.h"
+#include "wabi/usd/usd/tokens.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,7 +37,10 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdGeomPrimvarsAPI, TfType::Bases<UsdAPISchemaBase>>();
 }
 
-TF_DEFINE_PRIVATE_TOKENS(_schemaTokens, (PrimvarsAPI));
+TF_DEFINE_PRIVATE_TOKENS(
+    _schemaTokens,
+    (PrimvarsAPI)
+);
 
 /* virtual */
 UsdGeomPrimvarsAPI::~UsdGeomPrimvarsAPI() {}
@@ -51,6 +54,7 @@ UsdGeomPrimvarsAPI UsdGeomPrimvarsAPI::Get(const UsdStagePtr &stage, const SdfPa
   }
   return UsdGeomPrimvarsAPI(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdGeomPrimvarsAPI::_GetSchemaKind() const
@@ -176,6 +180,7 @@ void UsdGeomPrimvarsAPI::BlockPrimvar(const TfToken &name)
   primvar.GetAttr().Block();
 }
 
+
 UsdGeomPrimvar UsdGeomPrimvarsAPI::GetPrimvar(const TfToken &name) const
 {
   // The getter SHOULD issue an error if 'name' is malformed, which
@@ -187,7 +192,7 @@ static std::vector<UsdGeomPrimvar> _MakePrimvars(std::vector<UsdProperty> const 
                                                  bool(filterPass)(UsdGeomPrimvar const &))
 {
   std::vector<UsdGeomPrimvar> primvars;
-
+  primvars.reserve(props.size());
   for (UsdProperty const &prop : props) {
     // All prefixed properties except the ones that contain extra
     // namespaces (eg. the ":indices" attributes belonging to indexed
@@ -199,6 +204,7 @@ static std::vector<UsdGeomPrimvar> _MakePrimvars(std::vector<UsdProperty> const 
   }
   return primvars;
 }
+
 
 std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetPrimvars() const
 {
@@ -229,6 +235,7 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetAuthoredPrimvars() const
     });
 }
 
+
 std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetPrimvarsWithValues() const
 {
   TRACE_FUNCTION();
@@ -243,6 +250,7 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetPrimvarsWithValues() const
       return pv.HasValue();
     });
 }
+
 
 std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetPrimvarsWithAuthoredValues() const
 {
@@ -260,6 +268,7 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::GetPrimvarsWithAuthoredValues() 
     });
 }
 
+
 static void _AddPrimToInheritedPrimvars(const UsdPrim &prim,
                                         const TfToken &pvPrefix,
                                         const std::vector<UsdGeomPrimvar> *inputPrimvars,
@@ -272,6 +281,7 @@ static void _AddPrimToInheritedPrimvars(const UsdPrim &prim,
       inputPrimvars = outputPrimvars;
     }
   };
+
 
   for (UsdProperty const &prop : prim.GetAuthoredPropertiesInNamespace(pvPrefix)) {
     if (UsdGeomPrimvar pv = UsdGeomPrimvar(prop.As<UsdAttribute>())) {
@@ -472,6 +482,7 @@ std::vector<UsdGeomPrimvar> UsdGeomPrimvarsAPI::FindPrimvarsWithInheritance(
   // gotten a copy of `inheritedFromAncestors`, so ensure we compensate
   return primvars.empty() ? inheritedFromAncestors : primvars;
 }
+
 
 bool UsdGeomPrimvarsAPI::HasPrimvar(const TfToken &name) const
 {

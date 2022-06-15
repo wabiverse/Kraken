@@ -24,12 +24,12 @@
 #ifndef WABI_USD_PCP_INSTANCE_KEY_H
 #define WABI_USD_PCP_INSTANCE_KEY_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/mapExpression.h"
 #include "wabi/usd/pcp/node.h"
 #include "wabi/usd/pcp/site.h"
 #include "wabi/usd/pcp/types.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/layerOffset.h"
 

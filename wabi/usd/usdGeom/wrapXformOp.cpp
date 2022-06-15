@@ -21,18 +21,18 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/usdGeom/xformOp.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/xformOp.h"
 
+#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyEnum.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyStaticTokens.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python/class.hpp>
-#include <boost/python/implicit.hpp>
 #include <boost/python/operators.hpp>
+#include <boost/python/implicit.hpp>
 
 using namespace boost::python;
 
@@ -90,6 +90,7 @@ namespace
   }
 
 }  // anonymous namespace
+
 
 // We override __getattribute__ for UsdGeomXformOp to check object validity
 // and raise an exception instead of crashing from Python.

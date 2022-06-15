@@ -23,21 +23,22 @@
 //
 /// \file alembicWriter.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/plugin/usdAbc/alembicWriter.h"
-#include "wabi/base/tf/enum.h"
-#include "wabi/base/tf/envSetting.h"
-#include "wabi/base/tf/ostreamMethods.h"
-#include "wabi/base/trace/trace.h"
 #include "wabi/usd/plugin/usdAbc/alembicUtil.h"
-#include "wabi/usd/sdf/schema.h"
-#include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usdGeom/hermiteCurves.h"
 #include "wabi/usd/usdGeom/tokens.h"
 #include "wabi/usd/usdGeom/xformOp.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/schema.h"
+#include "wabi/usd/usd/schemaRegistry.h"
+#include "wabi/base/trace/trace.h"
+#include "wabi/base/tf/enum.h"
+#include "wabi/base/tf/envSetting.h"
+#include "wabi/base/tf/fileUtils.h"
+#include "wabi/base/tf/ostreamMethods.h"
+#include "wabi/base/tf/pathUtils.h"
 #include <Alembic/Abc/OArchive.h>
 #include <Alembic/Abc/OObject.h>
-#include <Alembic/AbcCoreOgawa/All.h>
 #include <Alembic/AbcGeom/OCamera.h>
 #include <Alembic/AbcGeom/OCurves.h>
 #include <Alembic/AbcGeom/OPoints.h>
@@ -45,8 +46,9 @@
 #include <Alembic/AbcGeom/OSubD.h>
 #include <Alembic/AbcGeom/OXform.h>
 #include <Alembic/AbcGeom/Visibility.h>
-#include <algorithm>
+#include <Alembic/AbcCoreOgawa/All.h>
 #include <boost/functional/hash.hpp>
+#include <algorithm>
 #include <functional>
 #include <memory>
 #include <set>
@@ -54,14 +56,18 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 // The name of this exporter, embedded in written Alembic files.
 static const char *writerName = "UsdAbc_AlembicData";
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (transform)((xformOpTransform, "xformOp:transform")));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (transform)
+    ((xformOpTransform, "xformOp:transform"))
+);
 
-TF_DEFINE_ENV_SETTING(USD_ABC_READ_FLOAT2_AS_UV,
-                      true,
-                      "Turn to false to disable reading float2 arrays as uv sets");
+TF_DEFINE_ENV_SETTING(USD_ABC_READ_FLOAT2_AS_UV, true,
+        "Turn to false to disable reading float2 arrays as uv sets");
 
 namespace
 {
@@ -3349,6 +3355,13 @@ bool UsdAbc_AlembicDataWriter::Open(const std::string &filePath, const std::stri
   TRACE_FUNCTION();
 
   _errorLog.clear();
+
+  const std::string dir = TfGetPathName(filePath);
+  if (!dir.empty() && !TfIsDir(dir) && !TfMakeDirs(dir)) {
+    TF_RUNTIME_ERROR("Could not create directory '%s'", dir.c_str());
+    return false;
+  }
+
   try {
     _impl->SetArchive(
       CreateArchiveWithInfo(Alembic::AbcCoreOgawa::WriteArchive(), filePath, writerName, comment));

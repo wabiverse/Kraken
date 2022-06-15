@@ -26,12 +26,12 @@
 
 /// \file sdf/childrenProxy.h
 
-#include "wabi/base/tf/diagnostic.h"
-#include "wabi/base/tf/iterator.h"
-#include "wabi/base/vt/value.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/changeBlock.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/value.h"
+#include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/tf/iterator.h"
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/reverse_iterator.hpp>

@@ -27,10 +27,10 @@
 
 /// \file usd/stageLoadRules.h
 
-#include "wabi/usd/sdf/path.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/path.h"
 
 #include <iosfwd>
 #include <vector>
@@ -239,6 +239,7 @@ std::ostream &operator<<(std::ostream &, std::pair<SdfPath, UsdStageLoadRules::R
 /// Return the hash code for a UsdStageLoadRules object.
 USD_API
 size_t hash_value(UsdStageLoadRules const &);
+
 
 WABI_NAMESPACE_END
 

@@ -26,18 +26,18 @@
 
 /// \file usdGeom/capsule.h
 
-#include "wabi/usd/usd/prim.h"
-#include "wabi/usd/usd/stage.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/usdGeom/api.h"
 #include "wabi/usd/usdGeom/gprim.h"
+#include "wabi/usd/usd/prim.h"
+#include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usdGeom/tokens.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/tf/type.h"
@@ -69,7 +69,6 @@ class UsdGeomCapsule : public UsdGeomGprim
   ///
   /// \sa UsdSchemaKind
   static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
-
 
   /// Construct a UsdGeomCapsule on UsdPrim \p prim .
   /// Equivalent to UsdGeomCapsule::Get(prim.GetStage(), prim.GetPath())
@@ -137,10 +136,9 @@ class UsdGeomCapsule : public UsdGeomGprim
   USDGEOM_API
   UsdSchemaKind _GetSchemaKind() const override;
 
-
  private:
 
-  // needs to invoke GetStaticTfType.
+  // needs to invoke _GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
   static const TfType &_GetStaticTfType();
@@ -150,7 +148,6 @@ class UsdGeomCapsule : public UsdGeomGprim
   // override SchemaBase virtuals.
   USDGEOM_API
   const TfType &_GetTfType() const override;
-  ;
 
  public:
 

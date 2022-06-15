@@ -24,13 +24,12 @@
 #ifndef WABI_USD_PCP_MAP_EXPRESSION_H
 #define WABI_USD_PCP_MAP_EXPRESSION_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/pcp/mapFunction.h"
-#include "wabi/wabi.h"
 
 #include <boost/intrusive_ptr.hpp>
 
-#include <atomic>
 #include <tbb/spin_mutex.h>
 
 #include <atomic>
@@ -68,16 +67,19 @@ class PcpMapExpression
   const Value &Evaluate() const;
 
   /// Default-construct a NULL expression.
-  PCP_API
-  PcpMapExpression();
+  PcpMapExpression() noexcept = default;
 
   /// Swap this expression with the other.
-  PCP_API
-  void Swap(PcpMapExpression &other);
+  void Swap(PcpMapExpression &other) noexcept
+  {
+    _node.swap(other._node);
+  }
 
   /// Return true if this is a null expression.
-  PCP_API
-  bool IsNull() const;
+  bool IsNull() const noexcept
+  {
+    return !_node;
+  }
 
   /// \name Creating expressions
   /// @{

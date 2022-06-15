@@ -24,8 +24,8 @@
 // Reference.cpp
 //
 
-#include "wabi/usd/sdf/reference.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/reference.h"
 
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/type.h"

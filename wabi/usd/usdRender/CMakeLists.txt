@@ -11,7 +11,6 @@ wabi_library(usdRender
     PUBLIC_CLASSES
         product
         settings
-        settingsAPI
         settingsBase
         spec
         tokens
@@ -26,7 +25,6 @@ wabi_library(usdRender
     PYMODULE_CPPFILES
         module.cpp
         wrapProduct.cpp
-        wrapSettingsAPI.cpp
         wrapSettingsBase.cpp
         wrapSettings.cpp
         wrapTokens.cpp
@@ -42,4 +40,8 @@ wabi_library(usdRender
 
     DOXYGEN_FILES
         docs/overview.dox
+        docs/images/aperture.svg
+        docs/images/dataWindow.svg
+        docs/images/nonSquarePixels.svg
+        docs/images/pixelAspectRatio.svg
 )

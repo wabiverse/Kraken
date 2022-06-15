@@ -84,7 +84,7 @@
 /// You can also access a variable's value from Python:
 ///
 /// \code{.py}
-/// from pxr import Tf
+/// from wabi import Tf
 /// suffix = Tf.GetEnvSetting("TDS_FILE_SUFFIX")
 /// \endcode
 ///

@@ -26,14 +26,14 @@
 
 /// \file sdf/allowed.h
 
-#include "wabi/base/tf/diagnostic.h"
-#include "wabi/usd/sdf/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/sdf/api.h"
+#include "wabi/base/tf/diagnostic.h"
 
-#include <boost/operators.hpp>
-#include <boost/optional.hpp>
 #include <string>
 #include <utility>
+#include <boost/operators.hpp>
+#include <boost/optional.hpp>
 
 WABI_NAMESPACE_BEGIN
 

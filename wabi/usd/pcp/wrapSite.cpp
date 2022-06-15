@@ -22,9 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
-#include "wabi/base/tf/stringUtils.h"
-#include "wabi/usd/pcp/site.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/site.h"
+#include "wabi/base/tf/stringUtils.h"
 #include <boost/python.hpp>
 
 using namespace boost::python;

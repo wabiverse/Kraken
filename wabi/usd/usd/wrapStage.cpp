@@ -21,25 +21,26 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/attribute.h"
-#include "wabi/usd/usd/primRange.h"
 #include "wabi/usd/usd/property.h"
 #include "wabi/usd/usd/relationship.h"
 #include "wabi/usd/usd/stage.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/usd/primRange.h"
 
 #include "wabi/usd/ar/resolverContext.h"
 
+#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/usd/pcp/pyUtils.h"
 #include "wabi/usd/sdf/pyUtils.h"
-#include "wabi/usd/usd/pyConversions.h"
 
-#include "wabi/base/tf/makePyConstructor.h"
+#include "wabi/base/tf/weakPtr.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyEnum.h"
 #include "wabi/base/tf/pyPtrHelpers.h"
 #include "wabi/base/tf/pyResultConversions.h"
-#include "wabi/base/tf/weakPtr.h"
+#include "wabi/base/tf/pyPtrHelpers.h"
+#include "wabi/base/tf/makePyConstructor.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/tuple.hpp>

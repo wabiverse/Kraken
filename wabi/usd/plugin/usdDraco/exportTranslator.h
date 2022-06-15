@@ -29,12 +29,14 @@
 #include "exportAttribute.h"
 #include "flag.h"
 
-#include "wabi/usd/usdGeom/mesh.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/usdGeom/mesh.h"
 
 #include <draco/mesh/mesh.h>
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdDracoExportTranslator
 ///

@@ -26,11 +26,11 @@
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,6 +47,7 @@ namespace
 
   // fwd decl.
   WRAP_CUSTOM;
+
 
   static std::string _Repr(const UsdClipsAPI &self)
   {
@@ -75,31 +76,37 @@ void wrapUsdClipsAPI()
          return_value_policy<TfPySequenceToList>())
     .staticmethod("GetSchemaAttributeNames")
 
-    .def("GetStaticTfType",
+    .def("_GetStaticTfType",
          (TfType const &(*)())TfType::Find<This>,
          return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+    .staticmethod("_GetStaticTfType")
 
     .def(!self)
+
 
     .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);
 }
 
-/* clang-format off */
-
-  /**
-   * ======================================================================
-   *   Feel free to add custom code below this line. It will be preserved
-   *   by the code generator.
-   *
-   *   Just remember to wrap code in the appropriate delimiters:
-   *     - 'WABI_NAMESPACE_BEGIN', 'WABI_NAMESPACE_END'.
-   * ======================================================================
-   * --(BEGIN CUSTOM CODE)-- */
-
-/* clang-format on */
+// ===================================================================== //
+// Feel free to add custom code below this line, it will be preserved by
+// the code generator.  The entry point for your custom code should look
+// minimally like the following:
+//
+// WRAP_CUSTOM {
+//     _class
+//         .def("MyCustomMethod", ...)
+//     ;
+// }
+//
+// Of course any other ancillary or support code may be provided.
+//
+// Just remember to wrap code in the appropriate delimiters:
+// 'namespace {', '}'.
+//
+// ===================================================================== //
+// --(BEGIN CUSTOM CODE)--
 
 #include "wabi/base/tf/makePyConstructor.h"
 

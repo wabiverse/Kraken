@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/usd/pcp/instancing.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/instancing.h"
 
 #include "wabi/base/tf/envSetting.h"
 #include "wabi/base/tf/smallVector.h"
@@ -30,13 +30,13 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(PCP_OVERRIDE_INSTANCEABLE,
-                      -1,
-                      "Overrides Pcp's default computation for whether a PrimIndex is "
-                      "instanceable:\n"
-                      " -1: (the default) computes instanceable only in USD mode\n"
-                      "  0: NEVER computes instanceable (always returns false)\n"
-                      "  1: always compute instanceable, whether in USD mode or not.");
+TF_DEFINE_ENV_SETTING(
+    PCP_OVERRIDE_INSTANCEABLE, -1,
+    "Overrides Pcp's default computation for whether a PrimIndex is "
+    "instanceable:\n"
+    " -1: (the default) computes instanceable only in USD mode\n"
+    "  0: NEVER computes instanceable (always returns false)\n"
+    "  1: always compute instanceable, whether in USD mode or not.");
 
 // Visitor to determine if a prim index has instanceable data.
 // This essentially checks if a prim index had a direct composition arc

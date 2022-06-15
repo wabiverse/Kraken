@@ -26,10 +26,10 @@
 
 /// \file pcp/layerStackIdentifier.h
 
-#include "wabi/usd/ar/resolverContext.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/sdf/declareHandles.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/ar/resolverContext.h"
 
 #include <boost/operators.hpp>
 
@@ -113,6 +113,7 @@ class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier>
   const size_t _hash;
 };
 
+
 /// \class PcpLayerStackIdentifierStr
 ///
 /// A "string"-based version of PcpLayerStackIdentifier.  These are used in
@@ -183,6 +184,7 @@ class PcpLayerStackIdentifierStr : boost::totally_ordered<PcpLayerStackIdentifie
 
   size_t _hash;
 };
+
 
 inline size_t hash_value(const PcpLayerStackIdentifier &x)
 {

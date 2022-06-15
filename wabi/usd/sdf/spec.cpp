@@ -22,7 +22,9 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/spec.h"
+#include "wabi/usd/sdf/specType.h"
 #include "wabi/usd/sdf/changeBlock.h"
 #include "wabi/usd/sdf/cleanupTracker.h"
 #include "wabi/usd/sdf/fileFormat.h"
@@ -30,8 +32,6 @@
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/proxyTypes.h"
 #include "wabi/usd/sdf/schema.h"
-#include "wabi/usd/sdf/specType.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/tf/type.h"

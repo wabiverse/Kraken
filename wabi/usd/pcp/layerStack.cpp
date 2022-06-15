@@ -23,19 +23,19 @@
 //
 // \file LayerStack.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/layerStack.h"
-#include "wabi/base/tf/envSetting.h"
-#include "wabi/base/tf/mallocTag.h"
-#include "wabi/base/trace/trace.h"
-#include "wabi/usd/ar/resolverContextBinder.h"
 #include "wabi/usd/pcp/changes.h"
-#include "wabi/usd/pcp/layerPrefetchRequest.h"
 #include "wabi/usd/pcp/layerStackRegistry.h"
+#include "wabi/usd/pcp/layerPrefetchRequest.h"
 #include "wabi/usd/pcp/utils.h"
 #include "wabi/usd/sdf/layer.h"
 #include "wabi/usd/sdf/layerUtils.h"
 #include "wabi/usd/sdf/primSpec.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/ar/resolverContextBinder.h"
+#include "wabi/base/trace/trace.h"
+#include "wabi/base/tf/envSetting.h"
+#include "wabi/base/tf/mallocTag.h"
 
 #include <algorithm>
 #include <iterator>
@@ -54,14 +54,14 @@ WABI_NAMESPACE_BEGIN
 // can be fixed, specifically plugin loading:
 // - FileFormat plugins
 // - value type plugins for parsing AnimSplines
-TF_DEFINE_ENV_SETTING(PCP_ENABLE_PARALLEL_LAYER_PREFETCH,
-                      false,
-                      "Enables parallel, threaded pre-fetch of sublayers.");
+TF_DEFINE_ENV_SETTING(
+    PCP_ENABLE_PARALLEL_LAYER_PREFETCH, false,
+    "Enables parallel, threaded pre-fetch of sublayers.");
 
-TF_DEFINE_ENV_SETTING(PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS,
-                      false,
-                      "Disables automatic layer offset scaling from time codes per second "
-                      "metadata in layers.");
+TF_DEFINE_ENV_SETTING(
+    PCP_DISABLE_TIME_SCALING_BY_LAYER_TCPS, false,
+    "Disables automatic layer offset scaling from time codes per second "
+    "metadata in layers.");
 
 bool PcpIsTimeScalingForLayerTimeCodesPerSecondDisabled()
 {
@@ -415,8 +415,7 @@ PcpLayerStack::~PcpLayerStack()
   // Update layer-stack-to-layer maps in the registry.
   _BlowLayers();
   if (_registry) {
-    _registry->_SetLayers(this);
-    _registry->_Remove(_identifier, this);
+    _registry->_SetLayersAndRemove(_identifier, this);
   }
 }
 

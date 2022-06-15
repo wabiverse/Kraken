@@ -27,8 +27,8 @@
 /// \file pcp/pathTranslation.h
 /// Path translation.
 
-#include "wabi/usd/pcp/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usd/pcp/api.h"
 
 WABI_NAMESPACE_BEGIN
 

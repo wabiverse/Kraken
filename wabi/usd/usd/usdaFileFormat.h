@@ -24,11 +24,11 @@
 #ifndef WABI_USD_USD_USDA_FILE_FORMAT_H
 #define WABI_USD_USD_USDA_FILE_FORMAT_H
 
+#include "wabi/wabi.h"
+#include "wabi/usd/usd/api.h"
+#include "wabi/usd/sdf/textFileFormat.h"
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/staticTokens.h"
-#include "wabi/usd/sdf/textFileFormat.h"
-#include "wabi/usd/usd/api.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -49,8 +49,9 @@ class UsdUsdaFileFormat : public SdfTextFileFormat
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
   UsdUsdaFileFormat();
-
   virtual ~UsdUsdaFileFormat();
+
+  friend class UsdUsdFileFormat;
 };
 
 WABI_NAMESPACE_END

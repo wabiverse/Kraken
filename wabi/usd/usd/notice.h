@@ -24,16 +24,17 @@
 #ifndef WABI_USD_USD_NOTICE_H
 #define WABI_USD_USD_NOTICE_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usd/api.h"
 #include "wabi/usd/usd/common.h"
 #include "wabi/usd/usd/object.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/tf/notice.h"
 #include "wabi/usd/sdf/changeList.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/base/tf/notice.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdNotice
 ///
@@ -342,12 +343,20 @@ class UsdNotice
     USD_API virtual ~LayerMutingChanged();
 
     /// Returns the identifier of the layers that were muted.
+    ///
+    /// The stage's resolver context must be bound when looking up
+    /// layers using the returned identifiers to ensure the same layers
+    /// that would be used by the stage are found.
     const std::vector<std::string> &GetMutedLayers() const
     {
       return _mutedLayers;
     }
 
     /// Returns the identifier of the layers that were unmuted.
+    ///
+    /// The stage's resolver context must be bound when looking up
+    /// layers using the returned identifiers to ensure the same layers
+    /// that would be used by the stage are found.
     const std::vector<std::string> &GetUnmutedLayers() const
     {
       return _unMutedLayers;
@@ -359,6 +368,7 @@ class UsdNotice
     const std::vector<std::string> &_unMutedLayers;
   };
 };
+
 
 WABI_NAMESPACE_END
 

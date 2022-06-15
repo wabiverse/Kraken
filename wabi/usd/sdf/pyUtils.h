@@ -24,9 +24,9 @@
 #ifndef WABI_USD_SDF_PY_UTILS_H
 #define WABI_USD_SDF_PY_UTILS_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/sdf/api.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
 
 #include <boost/python/dict.hpp>
 #include <string>

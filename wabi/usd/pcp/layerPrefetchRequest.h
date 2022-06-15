@@ -24,9 +24,9 @@
 #ifndef WABI_USD_PCP_LAYER_PREFETCH_REQUEST_H
 #define WABI_USD_PCP_LAYER_PREFETCH_REQUEST_H
 
+#include "wabi/wabi.h"
 #include "wabi/usd/pcp/api.h"
 #include "wabi/usd/sdf/layer.h"
-#include "wabi/wabi.h"
 
 #include <set>
 #include <utility>

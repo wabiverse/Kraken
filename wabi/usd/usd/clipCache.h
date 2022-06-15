@@ -26,15 +26,11 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/usd/sdf/pathTable.h"
 #include "wabi/usd/usd/clip.h"
 #include "wabi/usd/usd/clipSet.h"
+#include "wabi/usd/sdf/pathTable.h"
 
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/thread.hpp>
-
-#include <atomic>
-#include <mutex>
+#include <tbb/mutex.h>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
@@ -67,7 +63,7 @@ class Usd_ClipCache
     explicit ConcurrentPopulationContext(Usd_ClipCache &cache);
     ~ConcurrentPopulationContext();
     Usd_ClipCache &_cache;
-    std::mutex _mutex;
+    tbb::mutex _mutex;
   };
 
   /// Populate the cache with clips for \p prim. Returns true if clips
