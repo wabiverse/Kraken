@@ -375,9 +375,9 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
   _Entry *entry) const
 {
   // Note: _cacheVersion is not allowed to change during cache access.
-
   unsigned v = entry->version;
-  if (v < _cacheVersion && entry->version.compare_exchange_weak(v, _GetValidVersion())) {
+  unsigned cv = _cacheVersion.load();
+  if (v < _cacheVersion && entry->version.compare_exchange_weak(cv, v)) {
     entry->value = value;
     entry->version = _GetValidVersion();
   } else {

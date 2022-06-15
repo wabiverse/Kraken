@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_BASE_ARCH_FILE_SYSTEM_H
 #define WABI_BASE_ARCH_FILE_SYSTEM_H
 
@@ -35,29 +28,31 @@
 /// \ingroup group_arch_SystemFunctions
 /// Architecture dependent file system access
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/api.h"
 #include "wabi/base/arch/defines.h"
 #include "wabi/base/arch/inttypes.h"
-#include "wabi/wabi.h"
-#include <cstdio>
 #include <memory>
-#include <set>
+#include <cstdio>
 #include <string>
+#include <set>
 
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #if defined(ARCH_OS_LINUX)
-#  include <glob.h>
+#  include <unistd.h>
 #  include <sys/statfs.h>
-#  include <unistd.h>
-#elif defined(ARCH_OS_DARWIN)
 #  include <glob.h>
-#  include <sys/mount.h>
+#elif defined(ARCH_OS_DARWIN)
 #  include <unistd.h>
+#  include <sys/mount.h>
+#  include <glob.h>
 #elif defined(ARCH_OS_WINDOWS)
 #  include <io.h>
+#  include <windows.h>
+#  include <stringapiset.h>
 #endif
 
 WABI_NAMESPACE_BEGIN
@@ -71,6 +66,9 @@ WABI_NAMESPACE_BEGIN
 #    include <sys/param.h> /* for MAXPATHLEN */
 #  endif
 #else
+// XXX -- Should probably have ARCH_ macro for this.
+#  define S_ISDIR(m) (((m)&S_IFMT) == S_IFDIR)
+
 // See https://msdn.microsoft.com/en-us/library/1w06ktdy.aspx
 // XXX -- Should probably have Arch enum for these.
 #  define F_OK 0  // Test for existence.
@@ -78,8 +76,6 @@ WABI_NAMESPACE_BEGIN
 #  define W_OK 2  // Test for write permission.
 #  define R_OK 4  // Test for read permission.
 #endif
-
-#define ARCH_S_ISDIR(m) (((m)&S_IFMT) == S_IFDIR)
 
 #if defined(ARCH_OS_WINDOWS)
 #  define ARCH_GLOB_NOCHECK 1
@@ -426,6 +422,43 @@ enum ArchFileAdvice
 /// some systems.
 ARCH_API
 void ArchFileAdvise(FILE *file, int64_t offset, size_t count, ArchFileAdvice adv);
+
+#if defined(ARCH_OS_WINDOWS)
+
+/// Converts UTF-16 windows string to regular std::string - Windows-only
+inline std::string ArchWindowsUtf16ToUtf8(const std::wstring &wstr)
+{
+  if (wstr.empty())
+    return std::string();
+  // first call is only to get required size for string
+  int size = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), NULL, 0, NULL, NULL);
+  if (size == 0)
+    return std::string();
+  std::string str(size, 0);
+  if (WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &str[0], size, NULL, NULL) ==
+      0) {
+    return std::string();
+  }
+  return str;
+}
+
+/// Converts regular std::string to UTF-16 windows string - Windows-only
+inline std::wstring ArchWindowsUtf8ToUtf16(const std::string &str)
+{
+  if (str.empty())
+    return std::wstring();
+  // first call is only to get required size for wstring
+  int size = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), NULL, 0);
+  if (size == 0)
+    return std::wstring();
+  std::wstring wstr(size, 0);
+  if (MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), &wstr[0], size) == 0) {
+    return std::wstring();
+  }
+  return wstr;
+}
+
+#endif
 
 ///@}
 

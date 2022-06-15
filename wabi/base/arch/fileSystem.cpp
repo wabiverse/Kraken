@@ -1,33 +1,27 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
+#include "wabi/wabi.h"
 #include "wabi/base/arch/fileSystem.h"
 #include "wabi/base/arch/defines.h"
 #include "wabi/base/arch/env.h"
@@ -36,58 +30,32 @@
 #include "wabi/base/arch/export.h"
 #include "wabi/base/arch/hints.h"
 #include "wabi/base/arch/vsnprintf.h"
-#include "wabi/wabi.h"
 
 #include <algorithm>
 #include <atomic>
 #include <cctype>
-#include <cerrno>
+#include <cstring>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <cerrno>
 #include <memory>
 #include <utility>
 
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #if defined(ARCH_OS_WINDOWS)
-#  ifdef WIN32_LEAN_AND_MEAN
-#    undef WIN32_LEAN_AND_MEAN
-#    ifdef WINRT_LEAN_AND_MEAN
-#      undef WINRT_LEAN_AND_MEAN
-#    endif /* WINRT_LEAN_AND_MEAN */
-#  endif   /* WIN_LEAN_AND_MEAN */
-#  include <Windows.h>
-#  include "pch.h"
-#  include <winrt/Windows.Foundation.h>
-#  include <winrt/Windows.Security.Dataprotection.h>
-#  include <winrt/Windows.Storage.h>
-#  include <winrt/Windows.Storage.Streams.h>
-#  include <winrt/Windows.ApplicationModel.h>
-#  include <winrt/Windows.ApplicationModel.Resources.h>
-#  include <winrt/Windows.Devices.h>
-#  include <winrt/Windows.Devices.Custom.h>
-#  include <filesystem>
 #  include <functional>
 #  include <io.h>
 #  include <process.h>
-
-using namespace winrt;
-using namespace winrt::Windows;
-using namespace winrt::Windows::Storage;
-using namespace winrt::Windows::ApplicationModel;
-using namespace winrt::Windows::ApplicationModel::Resources;
-
+#  include <Windows.h>
+#  include <WinIoCtl.h>
 #else
 #  include <alloca.h>
-#  include <sys/file.h>
 #  include <sys/mman.h>
+#  include <sys/file.h>
 #  include <unistd.h>
-#  include <filesystem>
 #endif
-
-namespace fs = std::filesystem;
 
 WABI_NAMESPACE_BEGIN
 
@@ -107,16 +75,17 @@ namespace
 
 FILE *ArchOpenFile(char const *fileName, char const *mode)
 {
+#if defined(ARCH_OS_WINDOWS)
+  return _wfopen(ArchWindowsUtf8ToUtf16(fileName).c_str(), ArchWindowsUtf8ToUtf16(mode).c_str());
+#else
   return fopen(fileName, mode);
+#endif
 }
 
 #if defined(ARCH_OS_WINDOWS)
 int ArchRmDir(const char *path)
 {
-  auto dir = StorageFolder::GetFolderFromPathAsync((LPCWSTR)path);
-  dir.GetResults().DeleteAsync(StorageDeleteOption::PermanentDelete);
-
-  return (uint32_t)dir.Status();
+  return RemoveDirectoryW(ArchWindowsUtf8ToUtf16(path).c_str()) ? 0 : -1;
 }
 #endif
 
@@ -142,7 +111,7 @@ bool ArchGetModificationTime(const char *pathname, double *time)
 {
   ArchStatType st;
 #if defined(ARCH_OS_WINDOWS)
-  if (_stat64(pathname, &st) == 0)
+  if (_wstat64(ArchWindowsUtf8ToUtf16(pathname).c_str(), &st) == 0)
 #else
   if (stat(pathname, &st) == 0)
 #endif
@@ -366,10 +335,13 @@ string ArchAbsPath(const string &path)
   }
 
 #if defined(ARCH_OS_WINDOWS)
-  if (fs::path(path).is_absolute()) {
-    return path;
+  // @TODO support 32,767 long paths on windows by prepending "\\?\" to the
+  // path
+  wchar_t buffer[ARCH_PATH_MAX];
+  if (GetFullPathNameW(ArchWindowsUtf8ToUtf16(path).c_str(), ARCH_PATH_MAX, buffer, nullptr)) {
+    return ArchWindowsUtf16ToUtf8(buffer);
   } else {
-    return fs::absolute(path).string();
+    return path;
   }
 #else
   if (path[0] == '/') {
@@ -463,15 +435,16 @@ int64_t ArchGetFileLength(const char *fileName)
 #elif defined(ARCH_OS_WINDOWS)
   // Open a handle with 0 as the desired access and full sharing.
   // This opens the file even if exclusively locked.
-  Storage::StreamedFileDataRequestedHandler handle;
-  Storage::Streams::IRandomAccessStreamReference thumbnail;
-  StorageFile::CreateStreamedFileAsync((LPCWSTR)fileName, handle, thumbnail);
-
+  HANDLE handle = CreateFileW(ArchWindowsUtf8ToUtf16(fileName).c_str(),
+                              0,
+                              FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                              nullptr,
+                              OPEN_EXISTING,
+                              FILE_ATTRIBUTE_NORMAL,
+                              nullptr);
   if (handle) {
-    auto file = Storage::PathIO::ReadBufferAsync((LPCWSTR)fileName);
-    const auto result = file.GetResults().Length();
-
-    file.Close();
+    const auto result = _GetFileLength(handle);
+    CloseHandle(handle);
     return result;
   }
   return -1;
@@ -540,7 +513,7 @@ string ArchMakeTmpFileName(const string &prefix, const string &suffix)
   static std::atomic<int> nCalls(1);
   const int n = nCalls++;
 #if defined(ARCH_OS_WINDOWS)
-  int pid = GetCurrentProcessId();
+  int pid = _getpid();
 #else
   int pid = getpid();
 #endif
@@ -611,11 +584,11 @@ int ArchMakeTmpFile(const std::string &tmpdir, const std::string &prefix, std::s
 #if defined(ARCH_OS_WINDOWS)
   int fd = -1;
   auto cTemplate = MakeUnique(sTemplate, [&fd](const char *name) {
-    _sopen_s(&fd,
-             name,
-             _O_CREAT | _O_EXCL | _O_RDWR | _O_BINARY,
-             _SH_DENYNO,
-             _S_IREAD | _S_IWRITE);
+    _wsopen_s(&fd,
+              ArchWindowsUtf8ToUtf16(name).c_str(),
+              _O_CREAT | _O_EXCL | _O_RDWR | _O_BINARY,
+              _SH_DENYNO,
+              _S_IREAD | _S_IWRITE);
     return fd != -1;
   });
 #else
@@ -652,7 +625,7 @@ std::string ArchMakeTmpSubdir(const std::string &tmpdir, const std::string &pref
 
 #if defined(ARCH_OS_WINDOWS)
   retstr = MakeUnique(sTemplate, [](const char *name) {
-    return CreateDirectory((LPCWSTR)name, NULL) != FALSE;
+    return CreateDirectoryW(ArchWindowsUtf8ToUtf16(name).c_str(), NULL) != FALSE;
   });
 #else
   // Copy template to a writable buffer.
@@ -678,18 +651,35 @@ static const char *_TmpDir = 0;
 ARCH_HIDDEN
 void Arch_InitTmpDir()
 {
-  /* Removes the trailing slash. */
-  auto temp_path = fs::temp_directory_path().parent_path().string();
+#if defined(ARCH_OS_WINDOWS)
+  wchar_t tmpPath[MAX_PATH];
 
-  if (temp_path.empty()) {
-    /* Defaults temp to root if not found. */
+  // On Windows, let GetTempPath use the standard env vars, not our own.
+  int sizeOfPath = GetTempPathW(MAX_PATH - 1, tmpPath);
+  if (sizeOfPath > MAX_PATH || sizeOfPath == 0) {
     ARCH_ERROR("Call to GetTempPath failed.");
     _TmpDir = ".";
     return;
   }
 
-  /* No leaks. */
-  _TmpDir = temp_path.c_str();
+  // Strip the trailing slash
+  tmpPath[sizeOfPath - 1] = 0;
+  _TmpDir = _strdup(ArchWindowsUtf16ToUtf8(tmpPath).c_str());
+#else
+  const std::string tmpdir = ArchGetEnv("TMPDIR");
+  if (!tmpdir.empty()) {
+    // This function is not exposed in the header; it is only used during
+    // Arch_InitConfig. If this is called more than once when TMPDIR is
+    // set, the following call will leak a string.
+    _TmpDir = strdup(tmpdir.c_str());
+  } else {
+#  if defined(ARCH_OS_DARWIN)
+    _TmpDir = "/tmp";
+#  else
+    _TmpDir = "/var/tmp";
+#  endif
+  }
+#endif
 }
 
 const char *ArchGetTmpDir()
@@ -817,6 +807,7 @@ ArchMutableFileMapping ArchMapFileReadWrite(std::string const &path, std::string
   return Arch_MapFileImpl<ArchMutableFileMapping>(path, errMsg);
 }
 
+ARCH_API
 void ArchMemAdvise(void const *addr, size_t len, ArchMemAdvice adv)
 {
 #if defined(ARCH_OS_WINDOWS)
@@ -900,7 +891,7 @@ int64_t ArchPRead(FILE *file, void *buffer, size_t count, int64_t offset)
     return nread;
 
   // Track a total and retry until we read everything or hit EOF or an error.
-  int64_t total = std::max<int64_t>(nread, 0);
+  int64_t total = 0;
   while (nread != -1 || (nread == -1 && errno == EINTR)) {
     // Update bookkeeping and retry.
     if (nread > 0) {
@@ -957,7 +948,7 @@ int64_t ArchPWrite(FILE *file, void const *bytes, size_t count, int64_t offset)
     return nwritten;
 
   // Track a total and retry until we write everything or hit an error.
-  int64_t total = std::max<int64_t>(nwritten, 0);
+  int64_t total = 0;
   while (nwritten != -1) {
     // Update bookkeeping and retry.
     total += nwritten;
@@ -1033,29 +1024,30 @@ static int Arch_FileAccessError()
 int ArchFileAccess(const char *path, int mode)
 {
   // Simple existence check is handled specially.
+  std::wstring wpath{ArchWindowsUtf8ToUtf16(path)};
   if (mode == F_OK) {
-    fs::path filePath = path;
-
-    return (GetFileAttributes((LPCWSTR)path) != INVALID_FILE_ATTRIBUTES) ? 0 :
-                                                                           Arch_FileAccessError();
+    return (GetFileAttributesW(wpath.c_str()) != INVALID_FILE_ATTRIBUTES) ? 0 :
+                                                                            Arch_FileAccessError();
   }
 
+  const SECURITY_INFORMATION securityInfo = OWNER_SECURITY_INFORMATION |
+                                            GROUP_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION;
+
   // Get the SECURITY_DESCRIPTOR size.
-  auto file = Storage::StorageFile::GetFileFromPathAsync((LPCWSTR)path);
-  if (file.GetResults().Attributes() != FileAttributes::Normal) {
+  DWORD length = 0;
+  if (!GetFileSecurityW(wpath.c_str(), securityInfo, NULL, 0, &length)) {
     if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
       return Arch_FileAccessError();
     }
   }
 
   // Get the SECURITY_DESCRIPTOR.
-  DWORD length = 0;
   std::unique_ptr<unsigned char[]> buffer(new unsigned char[length]);
   PSECURITY_DESCRIPTOR security = (PSECURITY_DESCRIPTOR)buffer.get();
-
-  if (file.GetResults().Attributes() != FileAttributes::Normal) {
+  if (!GetFileSecurityW(wpath.c_str(), securityInfo, security, length, &length)) {
     return Arch_FileAccessError();
   }
+
 
   HANDLE token;
   DWORD desiredAccess = TOKEN_IMPERSONATE | TOKEN_QUERY | TOKEN_DUPLICATE | STANDARD_RIGHTS_READ;
@@ -1082,27 +1074,22 @@ int ArchFileAccess(const char *path, int mode)
     mapping.GenericAll = FILE_ALL_ACCESS;
 
     DWORD accessMask = ArchModeToAccess(mode);
+    MapGenericMask(&accessMask, &mapping);
 
-
-    // MapGenericMask(&accessMask, &mapping);
-
-    // if (AccessCheck(security,
-    //                 duplicateToken,
-    //                 accessMask,
-    //                 &mapping,
-    //                 &privileges,
-    //                 &privilegesLength,
-    //                 &grantedAccess,
-    //                 &accessStatus))
-    // {
-    // if (accessStatus)
-    // {
-    //   result = true;
-    // } else
-    // {
-    //   errno = EACCES;
-    // }
-    // }
+    if (AccessCheck(security,
+                    duplicateToken,
+                    accessMask,
+                    &mapping,
+                    &privileges,
+                    &privilegesLength,
+                    &grantedAccess,
+                    &accessStatus)) {
+      if (accessStatus) {
+        result = true;
+      } else {
+        errno = EACCES;
+      }
+    }
     CloseHandle(duplicateToken);
   }
   CloseHandle(token);
@@ -1148,23 +1135,32 @@ typedef struct _REPARSE_DATA_BUFFER
 
 std::string ArchReadLink(const char *path)
 {
-  auto file = StorageFile::GetFileFromPathAsync((LPCWSTR)path);
+  HANDLE handle = ::CreateFileW(ArchWindowsUtf8ToUtf16(path).c_str(),
+                                GENERIC_READ,
+                                FILE_SHARE_READ,
+                                NULL,
+                                OPEN_EXISTING,
+                                FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS,
+                                NULL);
 
-  if (file.ErrorCode())
+  if (handle == INVALID_HANDLE_VALUE)
     return std::string();
 
   std::unique_ptr<unsigned char[]> buffer(new unsigned char[MAX_REPARSE_DATA_SIZE]);
   REPARSE_DATA_BUFFER *reparse = (REPARSE_DATA_BUFFER *)buffer.get();
 
-  auto stream = file.GetResults().OpenAsync(FileAccessMode::Read);
-  // if (!DeviceIoControl((HANDLE)stream.GetResults().GetOutputStreamAt(0),
-  // FSCTL_GET_REPARSE_POINT, NULL, 0, reparse, MAX_REPARSE_DATA_SIZE, NULL, NULL))
-  // {
-  //   stream.Close();
-  //   file.Close();
-  //   return std::string();
-  // }
-  file.Close();
+  if (!DeviceIoControl(handle,
+                       FSCTL_GET_REPARSE_POINT,
+                       NULL,
+                       0,
+                       reparse,
+                       MAX_REPARSE_DATA_SIZE,
+                       NULL,
+                       NULL)) {
+    CloseHandle(handle);
+    return std::string();
+  }
+  CloseHandle(handle);
 
   if (IsReparseTagMicrosoft(reparse->ReparseTag)) {
     if (reparse->ReparseTag == IO_REPARSE_TAG_SYMLINK) {
@@ -1210,6 +1206,15 @@ std::string ArchReadLink(const char *path)
       std::wstring ws(reparsePath.get());
       string str(ws.begin(), ws.end());
 
+      // Mount point paths starting with \?? are NT Object Manager paths
+      // and cannot be used as file paths, so disable converting the path
+      // by returning the original path.
+      //
+      // See:
+      // https://superuser.com/questions/1069055/what-is-the-function-of-question-marks-in-file-system-paths-in-windows-registry
+      if (str.length() >= 3 && str.substr(0, 3) == "\\??")
+        return path;
+
       // Note that junctions do not support the relative path form
       // like SYMLINKS do, so nothing more to do here.
 
@@ -1229,8 +1234,10 @@ std::string ArchReadLink(const char *path)
   }
 
   // Make a buffer for the link on the heap.
+  // Explicit deleter to work around libc++ bug.
+  // See https://llvm.org/bugs/show_bug.cgi?id=18350.
   ssize_t size = ARCH_PATH_MAX;
-  std::unique_ptr<char[]> buffer;
+  std::unique_ptr<char, std::default_delete<char[]>> buffer;
 
   // Read the link.
   while (true) {
@@ -1264,6 +1271,7 @@ std::string ArchReadLink(const char *path)
 
 #endif
 
+ARCH_API
 void ArchFileAdvise(FILE *file, int64_t offset, size_t count, ArchFileAdvice adv)
 {
 #if defined(ARCH_OS_WINDOWS)

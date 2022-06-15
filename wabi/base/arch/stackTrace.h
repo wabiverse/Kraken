@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_BASE_ARCH_STACK_TRACE_H
 #define WABI_BASE_ARCH_STACK_TRACE_H
 
@@ -35,16 +28,17 @@
 /// \ingroup group_arch_Diagnostics
 /// Architecture-specific call-stack tracing routines.
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/api.h"
 #include "wabi/base/arch/defines.h"
-#include "wabi/wabi.h"
 
-#include <functional>
 #include <inttypes.h>
-#include <iosfwd>
 #include <stdio.h>
-#include <string>
+#include <functional>
 #include <vector>
+#include <string>
+#include <iosfwd>
+#include <ctime>
 
 WABI_NAMESPACE_BEGIN
 
@@ -261,6 +255,7 @@ void ArchLogStackTrace(const std::string &reason,
 ARCH_API
 std::vector<std::string> ArchGetStackTrace(size_t maxDepth);
 
+
 /// Save frames of current stack
 ///
 /// This function saves at maximum \c maxDepth frames of the current stack
@@ -281,7 +276,9 @@ void ArchGetStackFrames(size_t maxDepth,
 
 /// Print stack frames to the given ostream.
 ARCH_API
-void ArchPrintStackFrames(std::ostream &out, const std::vector<uintptr_t> &frames);
+void ArchPrintStackFrames(std::ostream &out,
+                          const std::vector<uintptr_t> &frames,
+                          bool skipUnknownFrames = false);
 
 /// Callback for handling crashes.
 /// \see ArchCrashHandlerSystemv

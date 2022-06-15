@@ -1,73 +1,53 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/arch/error.h"
-#include "wabi/base/arch/fileSystem.h"
 #include "wabi/base/arch/systemInfo.h"
+#include "wabi/base/arch/fileSystem.h"
+#include "wabi/base/arch/error.h"
 
 #include <cstdlib>
 #include <functional>
 #include <limits>
-#include <filesystem>
 
 #if defined(ARCH_OS_LINUX)
 
-#  include <sys/stat.h>
 #  include <sys/types.h>
+#  include <sys/stat.h>
 #  include <unistd.h>
 
 #elif defined(ARCH_OS_DARWIN)
 
-#  include <mach-o/dyld.h>
 #  include <unistd.h>
+#  include <mach-o/dyld.h>
 
 #elif defined(ARCH_OS_WINDOWS)
 
 #  include <Windows.h>
 #  include <direct.h>
-#  include <winrt/base.h>
-#  include <winrt/Windows.Foundation.h>
-#  include <winrt/Windows.ApplicationModel.h>
-#  include <winrt/Windows.Storage.h>
 #  define getcwd(buffer_, size_) _getcwd(buffer_, size_)
-
-using namespace winrt;
-using namespace winrt::Windows;
-using namespace winrt::Windows::Foundation;
-using namespace winrt::Windows::ApplicationModel;
-using namespace winrt::Windows::Storage;
-
-namespace fs = std::filesystem;
 
 #else
 
@@ -107,7 +87,9 @@ namespace
                                        const std::function<bool(char *, size_t *)> &callback)
   {
     // Make a buffer for the data.
-    std::unique_ptr<char[]> buffer;
+    // We use an explicit deleter to work around libc++ bug.
+    // See https://llvm.org/bugs/show_bug.cgi?id=18350.
+    std::unique_ptr<char, std::default_delete<char[]>> buffer;
     buffer.reset(new char[initialSize]);
 
     // Repeatedly invoke the callback with our buffer until it's big enough.
@@ -172,36 +154,24 @@ std::string ArchGetExecutablePath()
 
 #elif defined(ARCH_OS_WINDOWS)
 
-  return winrt::to_string(Package::Current().InstalledLocation().Path());
-
-#  if 0
-  /**
-   * On Windows GetModuleFileName()
-   * Will no longer work on UWP.
-   * 
-   * Leaving this here for posterity,
-   * as well as historical reasons. */
+  // On Windows GetModuleFileName() returns the executable path.
   return _DynamicSizedRead(ARCH_PATH_MAX, [](char *buffer, size_t *size) {
     DWORD nSize = *size;
-    const DWORD n = GetModuleFileName(NULL, (LPWSTR)buffer, nSize);
-    if (n == 0)
-    {
+    const DWORD n = GetModuleFileName(NULL, buffer, nSize);
+    if (n == 0) {
       ARCH_WARNING(
         "Unable to read GetModuleFileName() to obtain "
         "executable path");
       *size = std::numeric_limits<size_t>::max();
       return false;
-    } else if (n >= nSize)
-    {
+    } else if (n >= nSize) {
       // We have to iterate to find a suitable size.
       *size *= 2;
       return false;
-    } else
-    {
+    } else {
       return true;
     }
   });
-#  endif
 
 #endif
 }

@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_BASE_ARCH_ATTRIBUTES_H
 #define WABI_BASE_ARCH_ATTRIBUTES_H
 
@@ -37,8 +30,8 @@
 /// This file allows you to define architecture-specific or compiler-specific
 /// options to be used outside lib/arch.
 
-#include "wabi/base/arch/export.h"
 #include "wabi/wabi.h"
+#include "wabi/base/arch/export.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -241,21 +234,21 @@ struct Arch_ConstructorEntry
   unsigned int priority : 8;  // Priority of function
 };
 
-// Emit a Arch_ConstructorEntry in the __Data,wabictor section.
+// Emit a Arch_ConstructorEntry in the __Data,pxrctor section.
 #  define ARCH_CONSTRUCTOR(_name, _priority, ...)                            \
     static void _name(__VA_ARGS__);                                          \
     static const Arch_ConstructorEntry _ARCH_CAT_NOEXPAND(arch_ctor_, _name) \
-      __attribute__((used, section("__DATA,wabictor"))) = {                  \
+      __attribute__((used, section("__DATA,pxrctor"))) = {                   \
         reinterpret_cast<Arch_ConstructorEntry::Type>(&_name),               \
         0u,                                                                  \
         _priority};                                                          \
     static void _name(__VA_ARGS__)
 
-// Emit a Arch_ConstructorEntry in the __Data,wabidtor section.
+// Emit a Arch_ConstructorEntry in the __Data,pxrdtor section.
 #  define ARCH_DESTRUCTOR(_name, _priority, ...)                             \
     static void _name(__VA_ARGS__);                                          \
     static const Arch_ConstructorEntry _ARCH_CAT_NOEXPAND(arch_dtor_, _name) \
-      __attribute__((used, section("__DATA,wabidtor"))) = {                  \
+      __attribute__((used, section("__DATA,pxrdtor"))) = {                   \
         reinterpret_cast<Arch_ConstructorEntry::Type>(&_name),               \
         0u,                                                                  \
         _priority};                                                          \
@@ -265,16 +258,16 @@ struct Arch_ConstructorEntry
 
 // The used attribute is required to prevent these apparently unused functions
 // from being removed by the linker.
-#  define ARCH_CONSTRUCTOR(_name, _priority, ...)                                           \
-    __attribute__((used, section(".wabictor"), constructor((_priority) + 100))) static void \
-    _name(__VA_ARGS__)
-#  define ARCH_DESTRUCTOR(_name, _priority, ...)                                                  \
-    __attribute__((used, section(".wabidtor"), destructor((_priority) + 100))) static void _name( \
+#  define ARCH_CONSTRUCTOR(_name, _priority, ...)                                                 \
+    __attribute__((used, section(".pxrctor"), constructor((_priority) + 100))) static void _name( \
+      __VA_ARGS__)
+#  define ARCH_DESTRUCTOR(_name, _priority, ...)                                                 \
+    __attribute__((used, section(".pxrdtor"), destructor((_priority) + 100))) static void _name( \
       __VA_ARGS__)
 
 #elif defined(ARCH_OS_WINDOWS)
 
-#  include "wabi/base/arch/api.h"
+#  include "pxr/base/arch/api.h"
 
 // Entry for a constructor/destructor in the custom section.
 __declspec(align(16)) struct Arch_ConstructorEntry
@@ -286,8 +279,8 @@ __declspec(align(16)) struct Arch_ConstructorEntry
 };
 
 // Declare the special sections.
-#  pragma section(".wabictor", read)
-#  pragma section(".wabidtor", read)
+#  pragma section(".pxrctor", read)
+#  pragma section(".pxrdtor", read)
 
 // Objects of this type run the ARCH_CONSTRUCTOR and ARCH_DESTRUCTOR functions
 // for the library containing the object in the c'tor and d'tor, respectively.
@@ -298,7 +291,7 @@ struct Arch_ConstructorInit
   ARCH_API ~Arch_ConstructorInit();
 };
 
-// Emit a Arch_ConstructorEntry in the .wabictor section.  The namespace and
+// Emit a Arch_ConstructorEntry in the .pxrctor section.  The namespace and
 // extern are to convince the compiler and linker to leave the object in the
 // final library/executable instead of stripping it out.  In clang/gcc we use
 // __attribute__((used)) to do that.
@@ -306,7 +299,7 @@ struct Arch_ConstructorInit
     static void _name(__VA_ARGS__);                                                         \
     namespace                                                                               \
     {                                                                                       \
-      __declspec(allocate(".wabictor")) extern const Arch_ConstructorEntry                  \
+      __declspec(allocate(".pxrctor")) extern const Arch_ConstructorEntry                   \
         _ARCH_CAT_NOEXPAND(arch_ctor_,                                                      \
                            _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), \
                                      0u,                                                    \
@@ -315,12 +308,12 @@ struct Arch_ConstructorInit
     _ARCH_ENSURE_PER_LIB_INIT(Arch_ConstructorInit, _archCtorInit);                         \
     static void _name(__VA_ARGS__)
 
-// Emit a Arch_ConstructorEntry in the .wabidtor section.
+// Emit a Arch_ConstructorEntry in the .pxrdtor section.
 #  define ARCH_DESTRUCTOR(_name, _priority, ...)                                            \
     static void _name(__VA_ARGS__);                                                         \
     namespace                                                                               \
     {                                                                                       \
-      __declspec(allocate(".wabidtor")) extern const Arch_ConstructorEntry                  \
+      __declspec(allocate(".pxrdtor")) extern const Arch_ConstructorEntry                   \
         _ARCH_CAT_NOEXPAND(arch_dtor_,                                                      \
                            _name) = {reinterpret_cast<Arch_ConstructorEntry::Type>(&_name), \
                                      0u,                                                    \

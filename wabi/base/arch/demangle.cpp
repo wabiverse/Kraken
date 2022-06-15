@@ -1,42 +1,35 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/arch/defines.h"
 #include "wabi/base/arch/error.h"
-#include "wabi/wabi.h"
 #include <cstdlib>
-#include <string.h>
-#include <string>
 #include <typeinfo>
+#include <string>
+#include <string.h>
 
 using std::string;
 
@@ -109,31 +102,31 @@ static void _FixupStringNames(string *name)
 
 #if defined(ARCH_OS_WINDOWS)
   pos = 0;
-  while ((pos = name->find("class", pos)) != string::npos) {
+  while ((pos = name->find("class ", pos)) != string::npos) {
     name->erase(pos, 6);
   }
 
   pos = 0;
-  while ((pos = name->find("struct", pos)) != string::npos) {
+  while ((pos = name->find("struct ", pos)) != string::npos) {
     name->erase(pos, 7);
   }
 
   pos = 0;
-  while ((pos = name->find("enum", pos)) != string::npos) {
+  while ((pos = name->find("enum ", pos)) != string::npos) {
     name->erase(pos, 5);
   }
 #endif
 }
 
-#if WABI_USE_NAMESPACES
+#if PXR_USE_NAMESPACES
 
 #  define ARCH_STRINGIZE_EXPAND(x) #  x
 #  define ARCH_STRINGIZE(x) ARCH_STRINGIZE_EXPAND(x)
 
 static void _StripPxrInternalNamespace(string *name)
 {
-  // Note that this assumes WABI_INTERNAL_NS to be non-empty
-  constexpr const char nsQualifier[] = ARCH_STRINGIZE(WABI_INTERNAL_NS) "::";
+  // Note that this assumes PXR_INTERNAL_NS to be non-empty
+  constexpr const char nsQualifier[] = ARCH_STRINGIZE(PXR_INTERNAL_NS) "::";
   constexpr const auto nsQualifierSize = sizeof(nsQualifier);
   size_t lastNsQualifierEndPos = name->find(nsQualifier);
   while (lastNsQualifierEndPos != std::string::npos) {
@@ -164,6 +157,7 @@ static bool _DemangleOld(string *mangledTypeName)
 
   return false;
 }
+
 
 /*
  * This routine should work for both gcc3.3 library and the "broken" gcc3.4
@@ -229,7 +223,7 @@ bool ArchDemangle(string *mangledTypeName)
               mangledTypeName->c_str());
     }
 
-#    if WABI_USE_NAMESPACES
+#    if PXR_USE_NAMESPACES
     _StripPxrInternalNamespace(mangledTypeName);
 #    endif
     return true;
@@ -237,7 +231,7 @@ bool ArchDemangle(string *mangledTypeName)
   return false;
 #  else
   if (_DemangleNew(mangledTypeName)) {
-#    if WABI_USE_NAMESPACES
+#    if PXR_USE_NAMESPACES
     _StripPxrInternalNamespace(mangledTypeName);
 #    endif
     return true;
@@ -267,7 +261,7 @@ static string *_NewDemangledStringTypeName()
 bool ArchDemangle(string *mangledTypeName)
 {
   _FixupStringNames(mangledTypeName);
-#  if WABI_USE_NAMESPACES
+#  if PXR_USE_NAMESPACES
   _StripPxrInternalNamespace(mangledTypeName);
 #  endif
   return true;

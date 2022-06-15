@@ -1,39 +1,32 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/mallocHook.h"
 #include "wabi/base/arch/attributes.h"
 #include "wabi/base/arch/defines.h"
 #include "wabi/base/arch/env.h"
-#include "wabi/wabi.h"
 
 #if !defined(ARCH_OS_WINDOWS)
 #  include <dlfcn.h>
@@ -57,12 +50,12 @@ using std::string;
  * an extern "C"). Allocator libraries must provide these hooks in order for
  * ArchMallocHook to work.
  */
-extern void *(*__MALLOC_HOOK_VOLATILE __libc_malloc)(size_t __size, const void *);
-extern void *(*__MALLOC_HOOK_VOLATILE __libc_realloc)(void *__ptr, size_t __size, const void *);
-extern void *(*__MALLOC_HOOK_VOLATILE __libc_memalign)(size_t __alignment,
+extern void *(*__MALLOC_HOOK_VOLATILE __malloc_hook)(size_t __size, const void *);
+extern void *(*__MALLOC_HOOK_VOLATILE __realloc_hook)(void *__ptr, size_t __size, const void *);
+extern void *(*__MALLOC_HOOK_VOLATILE __memalign_hook)(size_t __alignment,
                                                        size_t __size,
                                                        const void *);
-extern void (*__MALLOC_HOOK_VOLATILE __libc_free)(void *__ptr, const void *);
+extern void (*__MALLOC_HOOK_VOLATILE __free_hook)(void *__ptr, const void *);
 
 WABI_NAMESPACE_BEGIN
 
@@ -259,10 +252,10 @@ bool ArchMallocHook::Initialize(
   // the system (glibc) malloc symbols instead of the custom allocator's
   // (jemalloc's).  Pixar's pxmalloc wrapper does the same, for the same
   // reason.
-  if ((__libc_malloc && __libc_malloc != reinterpret_cast<void *>(malloc)) ||
-      (__libc_realloc && __libc_realloc != reinterpret_cast<void *>(realloc)) ||
-      (__libc_memalign && __libc_memalign != reinterpret_cast<void *>(memalign)) ||
-      (__libc_free && __libc_free != reinterpret_cast<void *>(free))) {
+  if ((__malloc_hook && __malloc_hook != reinterpret_cast<void *>(malloc)) ||
+      (__realloc_hook && __realloc_hook != reinterpret_cast<void *>(realloc)) ||
+      (__memalign_hook && __memalign_hook != reinterpret_cast<void *>(memalign)) ||
+      (__free_hook && __free_hook != reinterpret_cast<void *>(free))) {
     *errMsg =
       "One or more malloc/realloc/free hook variables are already set.\n"
       "This probably means another entity in the program is trying to\n"
@@ -284,16 +277,16 @@ bool ArchMallocHook::Initialize(
   }
 
   if (mallocWrapper)
-    __libc_malloc = mallocWrapper;
+    __malloc_hook = mallocWrapper;
 
   if (reallocWrapper)
-    __libc_realloc = reallocWrapper;
+    __realloc_hook = reallocWrapper;
 
   if (memalignWrapper)
-    __libc_memalign = memalignWrapper;
+    __memalign_hook = memalignWrapper;
 
   if (freeWrapper)
-    __libc_free = freeWrapper;
+    __free_hook = freeWrapper;
 
   return true;
 #endif

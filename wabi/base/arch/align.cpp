@@ -1,5 +1,4 @@
-//
-// Copyright 2016 Pixar
+// Copyright 2022 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,34 +20,56 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_BASE_ARCH_BUILD_MODE_H
-#define WABI_BASE_ARCH_BUILD_MODE_H
 
 #include "wabi/wabi.h"
+#include "wabi/base/arch/align.h"
 #include "wabi/base/arch/defines.h"
+#include "wabi/base/arch/error.h"
+
+#if defined(ARCH_OS_DARWIN)
+#  include <sys/malloc.h>
+#else
+#  include <malloc.h>
+#endif /* defined(ARCH_OS_DARWIN) */
+
+#include <cstdlib>
 
 WABI_NAMESPACE_BEGIN
 
-struct ArchBuildMode
+/// Aligned memory allocation.
+void *ArchAlignedAlloc(size_t alignment, size_t size)
 {
-// Check if the build system has specified a build mode, falling
-// back to commonly-used macros if it has not. (Typically, _DEBUG
-// is defined by Visual Studio and DEBUG by Xcode for debug-mode builds)
-#if defined(BUILD_OPTLEVEL_DEV) || defined(_DEBUG) || defined(DEBUG)
-  enum
-  {
-    DEV_BUILD = 1
-  };
-#else
-  enum
-  {
-    DEV_BUILD = 0
-  };
-#endif
-};
+#if defined(ARCH_OS_DARWIN) || \
+  (defined(ARCH_OS_LINUX) && defined(__GLIBCXX__) && !defined(_GLIBCXX_HAVE_ALIGNED_ALLOC))
+  // alignment must be >= sizeof(void*)
+  if (alignment < sizeof(void *)) {
+    alignment = sizeof(void *);
+  }
 
-#define ARCH_DEV_BUILD ArchBuildMode::DEV_BUILD
+  void *pointer;
+  if (posix_memalign(&pointer, alignment, size) == 0) {
+    return pointer;
+  }
+
+  return nullptr;
+#elif defined(ARCH_OS_WINDOWS)
+  return _aligned_malloc(size, alignment);
+#else
+  return aligned_alloc(alignment, size);
+#endif
+}
+
+/// Free memory allocated by ArchAlignedAlloc.
+void ArchAlignedFree(void *ptr)
+{
+#if defined(ARCH_OS_DARWIN) || \
+  (defined(ARCH_OS_LINUX) && defined(__GLIBCXX__) && !defined(_GLIBCXX_HAVE_ALIGNED_ALLOC))
+  free(ptr);
+#elif defined(ARCH_OS_WINDOWS)
+  _aligned_free(ptr);
+#else
+  free(ptr);
+#endif
+}
 
 WABI_NAMESPACE_END
-
-#endif  // WABI_BASE_ARCH_BUILD_MODE_H
