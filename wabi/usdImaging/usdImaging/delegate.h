@@ -26,13 +26,13 @@
 
 /// \file usdImaging/delegate.h
 
+#include "wabi/wabi.h"
 #include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/usdImaging/usdImaging/version.h"
 #include "wabi/usdImaging/usdImaging/collectionCache.h"
-#include "wabi/usdImaging/usdImaging/instancerContext.h"
 #include "wabi/usdImaging/usdImaging/primvarDescCache.h"
 #include "wabi/usdImaging/usdImaging/resolvedAttributeCache.h"
-#include "wabi/usdImaging/usdImaging/version.h"
-#include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/instancerContext.h"
 
 #include "wabi/imaging/cameraUtil/conformWindow.h"
 
@@ -41,7 +41,6 @@
 #include "wabi/imaging/hd/selection.h"
 #include "wabi/imaging/hd/version.h"
 
-#include "wabi/base/vt/value.h"
 #include "wabi/imaging/pxOsd/subdivTags.h"
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/sdf/pathTable.h"
@@ -52,20 +51,22 @@
 #include "wabi/usd/usdGeom/cube.h"
 #include "wabi/usd/usdGeom/sphere.h"
 #include "wabi/usd/usdGeom/xformCache.h"
+#include "wabi/base/vt/value.h"
 
-#include "wabi/base/gf/interval.h"
 #include "wabi/base/gf/range3d.h"
+#include "wabi/base/gf/interval.h"
 #include "wabi/base/tf/declarePtrs.h"
-#include "wabi/base/tf/denseHashSet.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/hashset.h"
+#include "wabi/base/tf/denseHashSet.h"
 
 #include <boost/container/flat_map.hpp>
+#include <tbb/spin_rw_mutex.h>
 #include <map>
 #include <string>
-#include <tbb/spin_rw_mutex.h>
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DECLARE_WEAK_PTRS(UsdImagingDelegate);
 typedef std::vector<UsdPrim> UsdPrimVector;
@@ -104,11 +105,6 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   // tests). Note this method is not virtual.
   USDIMAGING_API
   void SyncAll(bool includeUnvarying);
-
-  /// Opportunity for the delegate to clean itself up after
-  /// performing parallel work during sync phase
-  USDIMAGING_API
-  virtual void PostSyncCleanup() override;
 
   /// Populates the rootPrim in the HdRenderIndex.
   USDIMAGING_API
@@ -443,6 +439,12 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
                                    int instanceIndex,
                                    HdInstancerContext *instancerContext = nullptr) override;
 
+  USDIMAGING_API
+  virtual SdfPathVector GetScenePrimPaths(
+    SdfPath const &rprimId,
+    std::vector<int> instanceIndices,
+    std::vector<HdInstancerContext> *instancerContexts = nullptr) override;
+
   // ExtComputation support
   USDIMAGING_API
   TfTokenVector GetExtComputationSceneInputNames(SdfPath const &computationId) override;
@@ -599,7 +601,8 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   // be refreshed.
   void _RefreshUsdObject(SdfPath const &usdPath,
                          TfTokenVector const &changedPrimInfoFields,
-                         UsdImagingIndexProxy *proxy);
+                         UsdImagingIndexProxy *proxy,
+                         SdfPathSet *allTrackedVariabilityPaths);
 
   // Heavy-weight invalidation of an entire prim subtree. All cached data is
   // reconstructed for all prims below \p rootPath.
@@ -717,10 +720,10 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   // This is done in response to toggling the purpose-based display settings.
   void _MarkRenderTagsDirty();
 
-  typedef TfHashSet<SdfPath, SdfPath::Hash> _InstancerSet;
+  typedef TfHashSet<SdfPath, SdfPath::Hash> _DirtySet;
 
-  // Set of cache paths representing instancers
-  _InstancerSet _instancerPrimCachePaths;
+  // Set of cache paths that are due a Sync()
+  _DirtySet _dirtyCachePaths;
 
   /// Refinement level per-USD-prim and fallback.
   typedef TfHashMap<SdfPath, int, SdfPath::Hash> _RefineLevelMap;
@@ -779,6 +782,8 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   UsdImaging_CollectionCache _collectionCache;
   UsdImaging_InheritedPrimvarCache _inheritedPrimvarCache;
   UsdImaging_PointInstancerIndicesCache _pointInstancerIndicesCache;
+  UsdImaging_NonlinearSampleCountCache _nonlinearSampleCountCache;
+  UsdImaging_BlurScaleCache _blurScaleCache;
 
   // Pickability
   PickabilityMap _pickablesMap;

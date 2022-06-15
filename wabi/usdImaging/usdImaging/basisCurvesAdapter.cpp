@@ -23,6 +23,7 @@
 //
 #include "wabi/usdImaging/usdImaging/basisCurvesAdapter.h"
 
+#include "wabi/usdImaging/usdImaging/dataSourceBasisCurves.h"
 #include "wabi/usdImaging/usdImaging/delegate.h"
 #include "wabi/usdImaging/usdImaging/indexProxy.h"
 #include "wabi/usdImaging/usdImaging/tokens.h"
@@ -38,6 +39,18 @@
 
 WABI_NAMESPACE_BEGIN
 
+// XXX: These primvar names are known here so that they may be exempted from
+// the filtering procedure that would normally exclude them.  This primvar
+// filtering procedure is slated for removal in favor of the one in hdSt,
+// but in the mean time we must know these names here, despite them not yet
+// being part of any formal schema and thus subject to change or deletion.
+TF_DEFINE_PRIVATE_TOKENS(
+    _rprimPrimvarNameTokens,
+    (pointSizeScale)
+    (screenSpaceWidths)
+    (minScreenSpaceWidths)
+);
+
 TF_REGISTRY_FUNCTION(TfType)
 {
   typedef UsdImagingBasisCurvesAdapter Adapter;
@@ -46,6 +59,30 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdImagingBasisCurvesAdapter::~UsdImagingBasisCurvesAdapter() {}
+
+TfTokenVector UsdImagingBasisCurvesAdapter::GetImagingSubprims()
+{
+  return {TfToken()};
+}
+
+TfToken UsdImagingBasisCurvesAdapter::GetImagingSubprimType(TfToken const &subprim)
+{
+  if (subprim.IsEmpty()) {
+    return HdPrimTypeTokens->basisCurves;
+  }
+  return TfToken();
+}
+
+HdContainerDataSourceHandle UsdImagingBasisCurvesAdapter::GetImagingSubprimData(
+  TfToken const &subprim,
+  UsdPrim const &prim,
+  const UsdImagingDataSourceStageGlobals &stageGlobals)
+{
+  if (subprim.IsEmpty()) {
+    return UsdImagingDataSourceBasisCurvesPrim::New(prim.GetPath(), prim, stageGlobals);
+  }
+  return nullptr;
+}
 
 bool UsdImagingBasisCurvesAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -221,6 +258,7 @@ HdDirtyBits UsdImagingBasisCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
   // treated as a vertex primvar.
   if (propertyName == UsdGeomTokens->points) {
     return HdChangeTracker::DirtyPoints;
+
   } else if (propertyName == UsdGeomTokens->curveVertexCounts ||
              propertyName == UsdGeomTokens->basis || propertyName == UsdGeomTokens->type ||
              propertyName == UsdGeomTokens->wrap) {
@@ -236,6 +274,7 @@ HdDirtyBits UsdImagingBasisCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
       HdTokens->widths,
       _UsdToHdInterpolation(curves.GetWidthsInterpolation()),
       HdChangeTracker::DirtyWidths);
+
   } else if (propertyName == UsdGeomTokens->normals) {
     UsdGeomPointBased pb(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
@@ -253,6 +292,7 @@ HdDirtyBits UsdImagingBasisCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
       cachePath,
       propertyName,
       HdChangeTracker::DirtyWidths);
+
   } else if (propertyName == UsdImagingTokens->primvarsNormals) {
     return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
       prim,
@@ -365,6 +405,7 @@ VtValue UsdImagingBasisCurvesAdapter::Get(UsdPrim const &prim,
       value = normals;
       return value;
     }
+
   } else if (key == HdTokens->widths) {
     // First check for "primvars:widths"
     UsdGeomPrimvarsAPI primvarsApi(prim);
@@ -395,6 +436,22 @@ VtValue UsdImagingBasisCurvesAdapter::Get(UsdPrim const &prim,
   }
 
   return BaseAdapter::Get(prim, cachePath, key, time, outIndices);
+}
+
+/*override*/
+TfTokenVector const &UsdImagingBasisCurvesAdapter::_GetRprimPrimvarNames() const
+{
+  // This result should match the GetBuiltinPrimvarNames result from
+  // HdStBasisCurves, which we're not allowed to call here. Points, normals
+  // and widths are already handled explicitly in GprimAdapter, so there's no
+  // need to except them from filtering by claiming them here.
+  //
+  // See comment on _rprimPrimvarNameTokens warning regarding using these
+  // primvars.
+  static TfTokenVector primvarNames{_rprimPrimvarNameTokens->pointSizeScale,
+                                    _rprimPrimvarNameTokens->screenSpaceWidths,
+                                    _rprimPrimvarNameTokens->minScreenSpaceWidths};
+  return primvarNames;
 }
 
 WABI_NAMESPACE_END

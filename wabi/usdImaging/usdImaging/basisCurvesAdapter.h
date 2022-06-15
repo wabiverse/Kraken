@@ -26,12 +26,13 @@
 
 /// \file usdImaging/basisCurvesAdapter.h
 
-#include "wabi/usdImaging/usdImaging/api.h"
-#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
-#include "wabi/usdImaging/usdImaging/primAdapter.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/usdImaging/usdImaging/primAdapter.h"
+#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdImagingBasisCurvesAdapter
 ///
@@ -47,6 +48,26 @@ class UsdImagingBasisCurvesAdapter : public UsdImagingGprimAdapter
 
   USDIMAGING_API
   ~UsdImagingBasisCurvesAdapter() override;
+
+  // ---------------------------------------------------------------------- //
+  /// \name Scene Index Support
+  // ---------------------------------------------------------------------- //
+
+  USDIMAGING_API
+  TfTokenVector GetImagingSubprims() override;
+
+  USDIMAGING_API
+  TfToken GetImagingSubprimType(TfToken const &subprim) override;
+
+  USDIMAGING_API
+  HdContainerDataSourceHandle GetImagingSubprimData(
+    TfToken const &subprim,
+    UsdPrim const &prim,
+    const UsdImagingDataSourceStageGlobals &stageGlobals) override;
+
+  // ---------------------------------------------------------------------- //
+  /// \name Initialization
+  // ---------------------------------------------------------------------- //
 
   USDIMAGING_API
   SdfPath Populate(UsdPrim const &prim,
@@ -105,7 +126,11 @@ class UsdImagingBasisCurvesAdapter : public UsdImagingGprimAdapter
 
   USDIMAGING_API
   bool _IsBuiltinPrimvar(TfToken const &primvarName) const override;
+
+  USDIMAGING_API
+  TfTokenVector const &_GetRprimPrimvarNames() const override;
 };
+
 
 WABI_NAMESPACE_END
 

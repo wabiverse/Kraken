@@ -46,7 +46,7 @@ WABI_NAMESPACE_BEGIN
 /// search paths) correctly.
 ///
 /// The corresponding functions for the new texture system are in
-/// usdImaging/materialParamUtils.cpp and HdPhUdimTextureObject.
+/// usdImaging/materialParamUtils.cpp and HdStUdimTextureObject.
 ///
 USDIMAGING_API
 std::vector<std::tuple<int, TfToken>> UsdImaging_GetUdimTiles(

@@ -25,7 +25,7 @@
 #define WABI_USD_IMAGING_MATERIAL_PARAM_UTILS_H
 
 #include "wabi/wabi.h"
-
+#include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/base/tf/token.h"
 
 WABI_NAMESPACE_BEGIN
@@ -36,32 +36,24 @@ class UsdPrim;
 class UsdTimeCode;
 class VtValue;
 
-/// Get the value from the usd attribute at given time. If it is an
-/// SdfAssetPath containing a UDIM pattern, e.g., //SHOW/myImage.<UDIM>.exr,
-/// the resolved path of the SdfAssetPath will be updated to a file path
-/// with a UDIM pattern, e.g., /filePath/myImage.<UDIM>.exr.
-/// There might be support for different patterns, e.g., myImage._MAPID_.exr,
-/// but this function always normalizes it to myImage.<UDIM>.exr.
-///
-/// The function assumes that the correct ArResolverContext is bound.
-///
-VtValue UsdImaging_ResolveMaterialParamValue(const UsdAttribute &attr, const UsdTimeCode &time);
-
 /// Builds an HdMaterialNetwork for the usdTerminal prim and
 /// populates it in the materialNetworkMap under the terminalIdentifier.
 /// This shared implementation is usable for populating material networks for
 /// any connectable source including lights and light filters in addition to
 /// materials.
-void UsdImaging_BuildHdMaterialNetworkFromTerminal(UsdPrim const &usdTerminal,
-                                                   TfToken const &terminalIdentifier,
-                                                   TfTokenVector const &shaderSourceTypes,
-                                                   HdMaterialNetworkMap *materialNetworkMap,
-                                                   UsdTimeCode time);
+USDIMAGING_API
+void UsdImagingBuildHdMaterialNetworkFromTerminal(UsdPrim const &usdTerminal,
+                                                  TfToken const &terminalIdentifier,
+                                                  TfTokenVector const &shaderSourceTypes,
+                                                  TfTokenVector const &renderContexts,
+                                                  HdMaterialNetworkMap *materialNetworkMap,
+                                                  UsdTimeCode time);
 
 /// Returns whether the material network built by
-/// UsdImaging_BuildHdMaterialNetworkFromTerminal for the given usdTerminal
+/// UsdImagingBuildHdMaterialNetworkFromTerminal for the given usdTerminal
 /// prim is time varying.
-bool UsdImaging_IsHdMaterialNetworkTimeVarying(UsdPrim const &usdTerminal);
+USDIMAGING_API
+bool UsdImagingIsHdMaterialNetworkTimeVarying(UsdPrim const &usdTerminal);
 
 WABI_NAMESPACE_END
 

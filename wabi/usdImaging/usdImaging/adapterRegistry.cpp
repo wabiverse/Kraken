@@ -39,6 +39,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 TF_INSTANTIATE_SINGLETON(UsdImagingAdapterRegistry);
 
 TF_MAKE_STATIC_DATA(TfType, _adapterBaseType)
@@ -46,7 +47,8 @@ TF_MAKE_STATIC_DATA(TfType, _adapterBaseType)
   *_adapterBaseType = TfType::Find<UsdImagingPrimAdapter>();
 }
 
-TF_DEFINE_PUBLIC_TOKENS(UsdImagingAdapterKeyTokens, USD_IMAGING_ADAPTER_KEY_TOKENS);
+TF_DEFINE_PUBLIC_TOKENS(UsdImagingAdapterKeyTokens, 
+                        USD_IMAGING_ADAPTER_KEY_TOKENS);
 
 // static
 bool UsdImagingAdapterRegistry::AreExternalPluginsEnabled()
@@ -195,6 +197,12 @@ UsdImagingAdapterRegistry::UsdImagingAdapterRegistry()
       }
     }
   }
+
+  // Fill in the _adapterKeys vector, from the valid keys to _typeMap.
+  _adapterKeys.reserve(_typeMap.size());
+  for (auto const &pair : _typeMap) {
+    _adapterKeys.push_back(pair.first);
+  }
 }
 
 bool UsdImagingAdapterRegistry::HasAdapter(TfToken const &adapterKey)
@@ -204,6 +212,11 @@ bool UsdImagingAdapterRegistry::HasAdapter(TfToken const &adapterKey)
     return true;
   }
   return _typeMap.find(adapterKey) != _typeMap.end();
+}
+
+const TfTokenVector &UsdImagingAdapterRegistry::GetAdapterKeys()
+{
+  return _adapterKeys;
 }
 
 UsdImagingPrimAdapterSharedPtr UsdImagingAdapterRegistry::ConstructAdapter(

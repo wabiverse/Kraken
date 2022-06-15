@@ -26,11 +26,12 @@
 
 /// \file usdImaging/geometryLightAdapter.h
 
+#include "wabi/wabi.h"
 #include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/usdImaging/usdImaging/lightAdapter.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdPrim;
 
@@ -61,6 +62,7 @@ class UsdImagingGeometryLightAdapter : public UsdImagingLightAdapter
 
   virtual void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) final;
 };
+
 
 WABI_NAMESPACE_END
 

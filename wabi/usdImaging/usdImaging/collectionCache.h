@@ -26,13 +26,13 @@
 
 /// \file usdImaging/collectionCache.h
 
-#include "wabi/usd/usd/collectionAPI.h"
-#include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/usd/usd/collectionAPI.h"
 
 #include <boost/noncopyable.hpp>
-#include <tbb/concurrent_queue.h>
 #include <tbb/concurrent_unordered_map.h>
+#include <tbb/concurrent_queue.h>
 #include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
@@ -98,6 +98,7 @@ class UsdImaging_CollectionCache : boost::noncopyable
 
   std::mutex _mutex;
 };
+
 
 WABI_NAMESPACE_END
 

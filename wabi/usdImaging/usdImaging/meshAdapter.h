@@ -26,12 +26,13 @@
 
 /// \file usdImaging/meshAdapter.h
 
-#include "wabi/usdImaging/usdImaging/api.h"
-#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
-#include "wabi/usdImaging/usdImaging/primAdapter.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/usdImaging/usdImaging/primAdapter.h"
+#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 class HdSubdivTags;
 class PxOsdSubdivTags;
@@ -49,6 +50,26 @@ class UsdImagingMeshAdapter : public UsdImagingGprimAdapter
   UsdImagingMeshAdapter() : UsdImagingGprimAdapter() {}
   USDIMAGING_API
   ~UsdImagingMeshAdapter() override;
+
+  // ---------------------------------------------------------------------- //
+  /// \name Scene Index Support
+  // ---------------------------------------------------------------------- //
+
+  USDIMAGING_API
+  TfTokenVector GetImagingSubprims() override;
+
+  USDIMAGING_API
+  TfToken GetImagingSubprimType(TfToken const &subprim) override;
+
+  USDIMAGING_API
+  HdContainerDataSourceHandle GetImagingSubprimData(
+    TfToken const &subprim,
+    UsdPrim const &prim,
+    const UsdImagingDataSourceStageGlobals &stageGlobals) override;
+
+  // ---------------------------------------------------------------------- //
+  /// \name Initialization
+  // ---------------------------------------------------------------------- //
 
   USDIMAGING_API
   SdfPath Populate(UsdPrim const &prim,
@@ -69,6 +90,7 @@ class UsdImagingMeshAdapter : public UsdImagingGprimAdapter
     SdfPath const &cachePath,
     HdDirtyBits *timeVaryingBits,
     UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+
 
   /// Thread Safe.
   USDIMAGING_API
@@ -113,6 +135,7 @@ class UsdImagingMeshAdapter : public UsdImagingGprimAdapter
   USDIMAGING_API
   bool _IsBuiltinPrimvar(TfToken const &primvarName) const override;
 };
+
 
 WABI_NAMESPACE_END
 

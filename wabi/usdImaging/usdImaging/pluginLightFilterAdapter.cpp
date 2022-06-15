@@ -22,14 +22,15 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/usdImaging/usdImaging/pluginLightFilterAdapter.h"
+#include "wabi/usdImaging/usdImaging/lightAdapter.h"
 #include "wabi/usdImaging/usdImaging/delegate.h"
 #include "wabi/usdImaging/usdImaging/indexProxy.h"
-#include "wabi/usdImaging/usdImaging/lightAdapter.h"
 #include "wabi/usdImaging/usdImaging/tokens.h"
 
 #include "wabi/imaging/hd/tokens.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_REGISTRY_FUNCTION(TfType)
 {

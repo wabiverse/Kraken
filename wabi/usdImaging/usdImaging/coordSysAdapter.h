@@ -26,11 +26,12 @@
 
 /// \file usdImaging/coordSysAdapter.h
 
+#include "wabi/wabi.h"
 #include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/usdImaging/usdImaging/primAdapter.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdPrim;
 
@@ -104,6 +105,7 @@ class UsdImagingCoordSysAdapter : public UsdImagingPrimAdapter
   USDIMAGING_API
   virtual void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index);
 };
+
 
 WABI_NAMESPACE_END
 

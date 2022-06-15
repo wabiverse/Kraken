@@ -1423,4 +1423,4 @@ static_assert(Sdf_SizeofPropPathNode == sizeof(Sdf_PrimPropertyPathNode), "");
 
 WABI_NAMESPACE_END
 
-#endif  // PXR_USD_SDF_PATH_H
+#endif  // WABI_USD_SDF_PATH_H

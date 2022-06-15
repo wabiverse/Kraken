@@ -26,11 +26,12 @@
 
 /// \file usdImaging/cameraAdapter.h
 
+#include "wabi/wabi.h"
 #include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/usdImaging/usdImaging/primAdapter.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdPrim;
 
@@ -48,6 +49,26 @@ class UsdImagingCameraAdapter : public UsdImagingPrimAdapter
 
   USDIMAGING_API
   ~UsdImagingCameraAdapter();
+
+  // ---------------------------------------------------------------------- //
+  /// \name Scene Index Support
+  // ---------------------------------------------------------------------- //
+
+  USDIMAGING_API
+  TfTokenVector GetImagingSubprims() override;
+
+  USDIMAGING_API
+  TfToken GetImagingSubprimType(TfToken const &subprim) override;
+
+  USDIMAGING_API
+  HdContainerDataSourceHandle GetImagingSubprimData(
+    TfToken const &subprim,
+    UsdPrim const &prim,
+    const UsdImagingDataSourceStageGlobals &stageGlobals) override;
+
+  // ---------------------------------------------------------------------- //
+  /// \name Initialization
+  // ---------------------------------------------------------------------- //
 
   USDIMAGING_API
   SdfPath Populate(UsdPrim const &prim,
@@ -67,6 +88,7 @@ class UsdImagingCameraAdapter : public UsdImagingPrimAdapter
                         SdfPath const &cachePath,
                         HdDirtyBits *timeVaryingBits,
                         UsdImagingInstancerContext const *instancerContext = NULL) const override;
+
 
   /// Thread Safe.
   USDIMAGING_API
@@ -116,6 +138,7 @@ class UsdImagingCameraAdapter : public UsdImagingPrimAdapter
 
   void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 };
+
 
 WABI_NAMESPACE_END
 

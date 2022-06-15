@@ -30,6 +30,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 TF_REGISTRY_FUNCTION(TfType)
 {
   typedef UsdImagingPluginLightAdapter Adapter;

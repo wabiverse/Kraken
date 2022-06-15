@@ -26,8 +26,8 @@
 
 /// \file usdImaging/unitTestHelper.h
 
-#include "wabi/usdImaging/usdImaging/delegate.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/delegate.h"
 
 #include "wabi/imaging/hd/changeTracker.h"
 #include "wabi/imaging/hd/engine.h"

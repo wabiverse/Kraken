@@ -26,8 +26,8 @@
 #include "wabi/usdImaging/usdImaging/debugCodes.h"
 #include "wabi/usdImaging/usdImaging/delegate.h"
 #include "wabi/usdImaging/usdImaging/indexProxy.h"
-#include "wabi/usdImaging/usdImaging/instancerContext.h"
 #include "wabi/usdImaging/usdImaging/resolvedAttributeCache.h"
+#include "wabi/usdImaging/usdImaging/instancerContext.h"
 
 #include "wabi/usd/sdf/schema.h"
 #include "wabi/usd/usd/collectionAPI.h"
@@ -49,36 +49,39 @@ TF_REGISTRY_FUNCTION(TfType)
   TfType::Define<UsdImagingPrimAdapter>();
 }
 
-TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_SHARED_XFORM_CACHE, 1, "Enable a shared cache for transforms.");
+TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_SHARED_XFORM_CACHE, 1, 
+                      "Enable a shared cache for transforms.");
 static bool _IsEnabledXformCache()
 {
   static bool _v = TfGetEnvSetting(USDIMAGING_ENABLE_SHARED_XFORM_CACHE) == 1;
   return _v;
 }
 
-TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_BINDING_CACHE, 1, "Enable a cache for material bindings.");
+TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_BINDING_CACHE, 1, 
+                      "Enable a cache for material bindings.");
 static bool _IsEnabledBindingCache()
 {
   static bool _v = TfGetEnvSetting(USDIMAGING_ENABLE_BINDING_CACHE) == 1;
   return _v;
 }
 
-TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_VIS_CACHE, 1, "Enable a cache for visibility.");
+TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_VIS_CACHE, 1, 
+                      "Enable a cache for visibility.");
 static bool _IsEnabledVisCache()
 {
   static bool _v = TfGetEnvSetting(USDIMAGING_ENABLE_VIS_CACHE) == 1;
   return _v;
 }
 
-TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_PURPOSE_CACHE, 1, "Enable a cache for purpose.");
+TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_PURPOSE_CACHE, 1, 
+                      "Enable a cache for purpose.");
 static bool _IsEnabledPurposeCache()
 {
   static bool _v = TfGetEnvSetting(USDIMAGING_ENABLE_PURPOSE_CACHE) == 1;
   return _v;
 }
 
-TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_POINT_INSTANCER_INDICES_CACHE,
-                      1,
+TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_POINT_INSTANCER_INDICES_CACHE, 1,
                       "Enable a cache for point instancer indices.");
 static bool _IsEnabledPointInstancerIndicesCache()
 {
@@ -87,6 +90,26 @@ static bool _IsEnabledPointInstancerIndicesCache()
 }
 
 UsdImagingPrimAdapter::~UsdImagingPrimAdapter() {}
+
+TfTokenVector UsdImagingPrimAdapter::GetImagingSubprims()
+{
+  TF_WARN("Datasource support not yet added for adapter '%s'",
+          TfType::GetCanonicalTypeName(typeid(*this)).c_str());
+  return TfTokenVector();
+}
+
+TfToken UsdImagingPrimAdapter::GetImagingSubprimType(TfToken const &subprim)
+{
+  return TfToken();
+}
+
+HdContainerDataSourceHandle UsdImagingPrimAdapter::GetImagingSubprimData(
+  TfToken const &subprim,
+  UsdPrim const &prim,
+  const UsdImagingDataSourceStageGlobals &stageGlobals)
+{
+  return nullptr;
+}
 
 /*static*/
 bool UsdImagingPrimAdapter::ShouldCullSubtree(UsdPrim const &prim)
@@ -125,7 +148,7 @@ HdDirtyBits UsdImagingPrimAdapter::ProcessPrimChange(UsdPrim const &prim,
                                                      SdfPath const &cachePath,
                                                      TfTokenVector const &changedFields)
 {
-  // By default, resync the prim if there are any changes to non-plugin
+  // By default, resync the prim if there are any changes to plugin
   // fields and ignore changes to built-in fields. Schemas typically register
   // their own plugin metadata fields instead of relying on built-in fields.
   const SdfSchema &schema = SdfSchema::GetInstance();
@@ -425,6 +448,17 @@ SdfPath UsdImagingPrimAdapter::GetScenePrimPath(SdfPath const &cachePath,
 }
 
 /*virtual*/
+SdfPathVector UsdImagingPrimAdapter::GetScenePrimPaths(
+  SdfPath const &cachePath,
+  std::vector<int> const &instanceIndices,
+  std::vector<HdInstancerContext> *instancerCtxs) const
+{
+  // Note: if we end up here, we're not instanced, since primInfo
+  // holds the instance adapter for instanced gprims.
+  return SdfPathVector(instanceIndices.size(), cachePath);
+}
+
+/*virtual*/
 bool UsdImagingPrimAdapter::PopulateSelection(HdSelection::HighlightMode const &mode,
                                               SdfPath const &cachePath,
                                               UsdPrim const &usdPrim,
@@ -492,6 +526,16 @@ bool UsdImagingPrimAdapter::IsChildPath(SdfPath const &path) const
 UsdImagingPrimvarDescCache *UsdImagingPrimAdapter::_GetPrimvarDescCache() const
 {
   return &_delegate->_primvarDescCache;
+}
+
+UsdImaging_NonlinearSampleCountCache *UsdImagingPrimAdapter::_GetNonlinearSampleCountCache() const
+{
+  return &_delegate->_nonlinearSampleCountCache;
+}
+
+UsdImaging_BlurScaleCache *UsdImagingPrimAdapter::_GetBlurScaleCache() const
+{
+  return &_delegate->_blurScaleCache;
 }
 
 GfMatrix4d UsdImagingPrimAdapter::GetRootTransform() const
@@ -587,10 +631,21 @@ TfTokenVector UsdImagingPrimAdapter::_GetMaterialRenderContexts() const
   return _delegate->GetRenderIndex().GetRenderDelegate()->GetMaterialRenderContexts();
 }
 
+bool UsdImagingPrimAdapter::_GetSceneMaterialsEnabled() const
+{
+  return _delegate->_sceneMaterialsEnabled;
+}
+
+bool UsdImagingPrimAdapter::_GetSceneLightsEnabled() const
+{
+  return _delegate->_sceneLightsEnabled;
+}
+
 bool UsdImagingPrimAdapter::_IsPrimvarFilteringNeeded() const
 {
   return _delegate->GetRenderIndex().GetRenderDelegate()->IsPrimvarFilteringNeeded();
 }
+
 
 TfTokenVector UsdImagingPrimAdapter::_GetShaderSourceTypes() const
 {
@@ -663,6 +718,7 @@ TfToken UsdImagingPrimAdapter::_UsdToHdRole(TfToken const &usdRole)
   return TfToken();
 }
 
+
 void UsdImagingPrimAdapter::_ComputeAndMergePrimvar(UsdPrim const &gprim,
                                                     UsdGeomPrimvar const &primvar,
                                                     UsdTimeCode time,
@@ -688,6 +744,7 @@ void UsdImagingPrimAdapter::_ComputeAndMergePrimvar(UsdPrim const &gprim,
            primvarName.GetText(),
            TfEnum::GetName(interp).c_str());
     _MergePrimvar(primvarDescs, primvarName, interp, role, primvar.IsIndexed());
+
   } else {
     TF_DEBUG(USDIMAGING_SHADERS)
       .Msg("\t\t No primvar on <%s> named %s\n", gprim.GetPath().GetText(), primvarName.GetText());
@@ -768,6 +825,7 @@ namespace
 
       // Remove the value cache entry.
       primvarDescs->erase(primvarIt);
+
     } else if (primvarInValueCache && primvarOnPrim &&
                (primvarIt->interpolation != primvarInterpOnPrim)) {
       changeType = PrimvarChangeDesc;

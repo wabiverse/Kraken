@@ -37,6 +37,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 TF_REGISTRY_FUNCTION(TfType)
 {
   typedef UsdImagingNurbsCurvesAdapter Adapter;
@@ -232,6 +233,7 @@ HdDirtyBits UsdImagingNurbsCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
       HdTokens->widths,
       _UsdToHdInterpolation(curves.GetWidthsInterpolation()),
       HdChangeTracker::DirtyWidths);
+
   } else if (propertyName == UsdGeomTokens->normals) {
     UsdGeomPointBased pb(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
@@ -249,6 +251,7 @@ HdDirtyBits UsdImagingNurbsCurvesAdapter::ProcessPropertyChange(UsdPrim const &p
       cachePath,
       propertyName,
       HdChangeTracker::DirtyWidths);
+
   } else if (propertyName == UsdImagingTokens->primvarsNormals) {
     return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
       prim,
@@ -319,6 +322,7 @@ VtValue UsdImagingNurbsCurvesAdapter::Get(UsdPrim const &prim,
       value = normals;
       return value;
     }
+
   } else if (key == HdTokens->widths) {
     // First check for "primvars:widths"
     UsdGeomPrimvarsAPI primvarsApi(prim);

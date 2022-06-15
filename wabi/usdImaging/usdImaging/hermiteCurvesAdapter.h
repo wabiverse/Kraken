@@ -26,12 +26,13 @@
 
 /// \file usdImaging/hermiteCurvesAdapter.h
 
-#include "wabi/usdImaging/usdImaging/api.h"
-#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
-#include "wabi/usdImaging/usdImaging/primAdapter.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/usdImaging/usdImaging/primAdapter.h"
+#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdImagingHermiteCurvesAdapter
 ///
@@ -94,6 +95,7 @@ class UsdImagingHermiteCurvesAdapter : public UsdImagingGprimAdapter
   USDIMAGING_API
   bool _IsBuiltinPrimvar(TfToken const &primvarName) const override;
 };
+
 
 WABI_NAMESPACE_END
 

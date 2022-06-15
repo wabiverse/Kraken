@@ -49,4 +49,8 @@ void UsdImaging_MaterialBindingImplData::ClearCaches()
   _collQueryCache.clear();
 }
 
+const UsdImaging_BlurScaleStrategy::value_type UsdImaging_BlurScaleStrategy::invalidValue = {
+  0.0f,
+  false};
+
 WABI_NAMESPACE_END

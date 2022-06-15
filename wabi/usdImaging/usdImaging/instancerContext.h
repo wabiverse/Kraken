@@ -26,11 +26,12 @@
 
 /// \file usdImaging/instancerContext.h
 
-#include "wabi/usd/sdf/path.h"
-#include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/usd/sdf/path.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<class UsdImagingPrimAdapter>;
 
@@ -65,6 +66,7 @@ class UsdImagingInstancerContext
   /// default adapter may be overridden for the sake of instancing.
   UsdImagingPrimAdapterSharedPtr instancerAdapter;
 };
+
 
 WABI_NAMESPACE_END
 

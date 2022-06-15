@@ -28,6 +28,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 // Version 3 -- add support for nested instancers in InsertInstancer.
 // Version 4 -- Populate returns SdfPath, HdxSelectionInstanceMap.
 // Version 5 -- GetPathForInstanceIndex returns absoluteInstanceIndex.
@@ -48,6 +49,7 @@ WABI_NAMESPACE_BEGIN
 // Version 16 - InsertRprim/InsertInstancer no longer take an instancer path.
 
 #define USD_IMAGING_API_VERSION 16
+
 
 WABI_NAMESPACE_END
 

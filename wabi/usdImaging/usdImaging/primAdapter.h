@@ -26,12 +26,12 @@
 
 /// \file usdImaging/primAdapter.h
 
+#include "wabi/wabi.h"
 #include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/usdImaging/usdImaging/version.h"
 #include "wabi/usdImaging/usdImaging/collectionCache.h"
 #include "wabi/usdImaging/usdImaging/primvarDescCache.h"
 #include "wabi/usdImaging/usdImaging/resolvedAttributeCache.h"
-#include "wabi/usdImaging/usdImaging/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/changeTracker.h"
 #include "wabi/imaging/hd/selection.h"
@@ -55,6 +55,8 @@ class UsdImagingIndexProxy;
 class UsdImagingInstancerContext;
 class HdExtComputationContext;
 
+class UsdImagingDataSourceStageGlobals;
+
 using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<class UsdImagingPrimAdapter>;
 
 /// \class UsdImagingPrimAdapter
@@ -65,14 +67,30 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
 {
  public:
 
-  // ---------------------------------------------------------------------- //
-  /// \name Initialization
-  // ---------------------------------------------------------------------- //
-
   UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   virtual ~UsdImagingPrimAdapter();
+
+  // ---------------------------------------------------------------------- //
+  /// \name Scene Index Support
+  // ---------------------------------------------------------------------- //
+
+  USDIMAGING_API
+  virtual TfTokenVector GetImagingSubprims();
+
+  USDIMAGING_API
+  virtual TfToken GetImagingSubprimType(TfToken const &subprim);
+
+  USDIMAGING_API
+  virtual HdContainerDataSourceHandle GetImagingSubprimData(
+    TfToken const &subprim,
+    UsdPrim const &prim,
+    const UsdImagingDataSourceStageGlobals &stageGlobals);
+
+  // ---------------------------------------------------------------------- //
+  /// \name Initialization
+  // ---------------------------------------------------------------------- //
 
   /// Called to populate the RenderIndex for this UsdPrim. The adapter is
   /// expected to create one or more prims in the render index using the
@@ -195,6 +213,7 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   /// without scheduling them for repopulation.
   USDIMAGING_API
   virtual void ProcessPrimRemoval(SdfPath const &cachePath, UsdImagingIndexProxy *index);
+
 
   virtual void MarkDirty(UsdPrim const &prim,
                          SdfPath const &cachePath,
@@ -326,10 +345,16 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   /// \name Selection
   // ---------------------------------------------------------------------- //
 
+  /// \deprecated Call and implement GetScenePrimPaths instead.
   USDIMAGING_API
   virtual SdfPath GetScenePrimPath(SdfPath const &cachePath,
                                    int instanceIndex,
                                    HdInstancerContext *instancerCtx) const;
+
+  USDIMAGING_API
+  virtual SdfPathVector GetScenePrimPaths(SdfPath const &cachePath,
+                                          std::vector<int> const &instanceIndices,
+                                          std::vector<HdInstancerContext> *instancerCtxs) const;
 
   // Add the given usdPrim to the HdSelection object, to mark it for
   // selection highlighting. cachePath is the path of the object referencing
@@ -580,6 +605,10 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   USDIMAGING_API
   UsdImagingPrimvarDescCache *_GetPrimvarDescCache() const;
 
+  UsdImaging_NonlinearSampleCountCache *_GetNonlinearSampleCountCache() const;
+
+  UsdImaging_BlurScaleCache *_GetBlurScaleCache() const;
+
   USDIMAGING_API
   UsdPrim _GetPrim(SdfPath const &usdPath) const;
 
@@ -621,6 +650,14 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   // Returns the material contexts from the renderer delegate.
   USDIMAGING_API
   TfTokenVector _GetMaterialRenderContexts() const;
+
+  /// Returns whether custom shading of prims is enabled.
+  USDIMAGING_API
+  bool _GetSceneMaterialsEnabled() const;
+
+  /// Returns whether lights found in the usdscene are enabled.
+  USDIMAGING_API
+  bool _GetSceneLightsEnabled() const;
 
   // Returns true if render delegate wants primvars to be filtered based.
   // This will filter the primvars based on the bound material primvar needs.
@@ -778,6 +815,7 @@ template<class T> class UsdImagingPrimAdapterFactory : public UsdImagingPrimAdap
     return std::make_shared<T>();
   }
 };
+
 
 WABI_NAMESPACE_END
 

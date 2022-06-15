@@ -30,7 +30,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (textureMemory));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (textureMemory)
+);
+
 
 TF_REGISTRY_FUNCTION(TfType)
 {

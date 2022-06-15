@@ -26,11 +26,11 @@
 
 /// \file usdImaging/volumeAdapter.h
 
+#include "wabi/wabi.h"
 #include "wabi/usd/usdVol/volume.h"
 #include "wabi/usdImaging/usdImaging/api.h"
-#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
 #include "wabi/usdImaging/usdImaging/primAdapter.h"
-#include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -46,6 +46,26 @@ class UsdImagingVolumeAdapter : public UsdImagingGprimAdapter
 
   UsdImagingVolumeAdapter() : UsdImagingGprimAdapter() {}
   virtual ~UsdImagingVolumeAdapter();
+
+  // ---------------------------------------------------------------------- //
+  /// \name Scene Index Support
+  // ---------------------------------------------------------------------- //
+
+  USDIMAGING_API
+  TfTokenVector GetImagingSubprims() override;
+
+  USDIMAGING_API
+  TfToken GetImagingSubprimType(TfToken const &subprim) override;
+
+  USDIMAGING_API
+  HdContainerDataSourceHandle GetImagingSubprimData(
+    TfToken const &subprim,
+    UsdPrim const &prim,
+    const UsdImagingDataSourceStageGlobals &stageGlobals) override;
+
+  // ---------------------------------------------------------------------- //
+  /// \name Initialization
+  // ---------------------------------------------------------------------- //
 
   virtual SdfPath Populate(UsdPrim const &prim,
                            UsdImagingIndexProxy *index,

@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usdImaging/usdImaging/lightAdapter.h"
 #include "wabi/usdImaging/usdImaging/delegate.h"
 #include "wabi/usdImaging/usdImaging/indexProxy.h"
@@ -36,13 +29,14 @@
 
 #include "wabi/imaging/hd/light.h"
 #include "wabi/imaging/hd/material.h"
-#include "wabi/usd/ar/resolverContextBinder.h"
 #include "wabi/usd/ar/resolverScopedCache.h"
-#include "wabi/usd/usdLux/light.h"
+#include "wabi/usd/ar/resolverContextBinder.h"
+#include "wabi/usd/usdLux/lightAPI.h"
 
 #include "wabi/base/tf/envSetting.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -51,7 +45,8 @@ TF_REGISTRY_FUNCTION(TfType)
   t.SetFactory<UsdImagingPrimAdapterFactory<Adapter>>();
 }
 
-TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_SCENE_LIGHTS, 1, "Enable loading scene lights.");
+TF_DEFINE_ENV_SETTING(USDIMAGING_ENABLE_SCENE_LIGHTS, 1, 
+                      "Enable loading scene lights.");
 /*static*/
 bool UsdImagingLightAdapter::IsEnabledSceneLights()
 {
@@ -102,7 +97,7 @@ void UsdImagingLightAdapter::TrackVariability(
              true);
 
   // Determine if the light material network is time varying.
-  if (UsdImaging_IsHdMaterialNetworkTimeVarying(prim)) {
+  if (UsdImagingIsHdMaterialNetworkTimeVarying(prim)) {
     *timeVaryingBits |= HdLight::DirtyBits::DirtyResource;
   }
 
@@ -122,7 +117,7 @@ void UsdImagingLightAdapter::TrackVariability(
 
   UsdImagingPrimvarDescCache *primvarDescCache = _GetPrimvarDescCache();
 
-  UsdLuxLight light(prim);
+  UsdLuxLightAPI light(prim);
   if (TF_VERIFY(light)) {
     UsdImaging_CollectionCache &collectionCache = _GetCollectionCache();
     collectionCache.UpdateCollection(light.GetLightLinkCollectionAPI());
@@ -206,17 +201,20 @@ void UsdImagingLightAdapter::MarkLightParamsDirty(UsdPrim const &prim,
   index->MarkSprimDirty(cachePath, paramsDirty);
 }
 
+
 VtValue UsdImagingLightAdapter::GetMaterialResource(UsdPrim const &prim,
                                                     SdfPath const &cachePath,
                                                     UsdTimeCode time) const
 {
-  UsdLuxLight light(prim);
-  if (!light) {
+  if (!_GetSceneLightsEnabled()) {
+    return VtValue();
+  }
+
+  if (!prim.HasAPI<UsdLuxLightAPI>()) {
     TF_RUNTIME_ERROR(
-      "Expected light prim at <%s> to be a subclass of type "
-      "'UsdLuxLight', not type '%s'; ignoring",
-      prim.GetPath().GetText(),
-      prim.GetTypeName().GetText());
+      "Expected light prim at <%s> to have an applied API "
+      "of type 'UsdLuxLightAPI'; ignoring",
+      prim.GetPath().GetText());
     return VtValue();
   }
 
@@ -226,11 +224,12 @@ VtValue UsdImagingLightAdapter::GetMaterialResource(UsdPrim const &prim,
 
   HdMaterialNetworkMap networkMap;
 
-  UsdImaging_BuildHdMaterialNetworkFromTerminal(prim,
-                                                HdMaterialTerminalTokens->light,
-                                                _GetShaderSourceTypes(),
-                                                &networkMap,
-                                                time);
+  UsdImagingBuildHdMaterialNetworkFromTerminal(prim,
+                                               HdMaterialTerminalTokens->light,
+                                               _GetShaderSourceTypes(),
+                                               _GetMaterialRenderContexts(),
+                                               &networkMap,
+                                               time);
 
   return VtValue(networkMap);
 }

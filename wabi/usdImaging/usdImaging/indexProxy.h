@@ -26,16 +26,18 @@
 
 /// \file usdImaging/indexProxy.h
 
+#include "wabi/wabi.h"
 #include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/usdImaging/usdImaging/delegate.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/path.h"
 #include "wabi/usd/usd/prim.h"
 
 #include "wabi/base/tf/token.h"
 
+
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdImagingIndexProxy
 ///
@@ -67,6 +69,7 @@ class UsdImagingIndexProxy
   /// need to specify the related USD prim.  The naming helps clarify them,
   /// and the fact that we pass a UsdPrim and not an SdfPath further ensures
   /// that we pass valid USD paths instead of passing cache paths by mistake.
+
 
   /// Adds a dependency from the given usdPrim to the given cache path.
   /// Insert* will automatically add a dependency, so this is for hydra prims
@@ -207,9 +210,9 @@ class UsdImagingIndexProxy
   // Called by UsdImagingDelegate::ApplyPendingUpdates.
   void _UniqueifyPathsToRepopulate();
 
-  bool _AddHdPrimInfo(SdfPath const &cachePath,
-                      UsdPrim const &usdPrim,
-                      UsdImagingPrimAdapterSharedPtr const &adapter);
+  UsdImagingDelegate::_HdPrimInfo *_AddHdPrimInfo(SdfPath const &cachePath,
+                                                  UsdPrim const &usdPrim,
+                                                  UsdImagingPrimAdapterSharedPtr const &adapter);
 
   USDIMAGING_API
   void _RemoveDependencies(SdfPath const &cachePath);
@@ -242,6 +245,7 @@ class UsdImagingIndexProxy
   SdfPathVector _hdPrimInfoToRemove;
   _DependencyVector _dependenciesToRemove;
 };
+
 
 WABI_NAMESPACE_END
 

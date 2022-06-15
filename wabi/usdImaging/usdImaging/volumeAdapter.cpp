@@ -23,17 +23,19 @@
 //
 
 #include "wabi/usdImaging/usdImaging/volumeAdapter.h"
-#include "wabi/usdImaging/usdImaging/delegate.h"
+
+#include "wabi/usdImaging/usdImaging/dataSourceVolume.h"
 #include "wabi/usdImaging/usdImaging/fieldAdapter.h"
+#include "wabi/usdImaging/usdImaging/delegate.h"
 #include "wabi/usdImaging/usdImaging/indexProxy.h"
 #include "wabi/usdImaging/usdImaging/tokens.h"
 
 #include "wabi/imaging/hd/tokens.h"
 #include "wabi/imaging/hd/volume.h"
 
-#include "wabi/usd/usdVol/fieldBase.h"
 #include "wabi/usd/usdVol/tokens.h"
 #include "wabi/usd/usdVol/volume.h"
+#include "wabi/usd/usdVol/fieldBase.h"
 
 #include "wabi/base/tf/type.h"
 
@@ -47,6 +49,30 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdImagingVolumeAdapter::~UsdImagingVolumeAdapter() {}
+
+TfTokenVector UsdImagingVolumeAdapter::GetImagingSubprims()
+{
+  return {TfToken()};
+}
+
+TfToken UsdImagingVolumeAdapter::GetImagingSubprimType(TfToken const &subprim)
+{
+  if (subprim.IsEmpty()) {
+    return HdPrimTypeTokens->volume;
+  }
+  return TfToken();
+}
+
+HdContainerDataSourceHandle UsdImagingVolumeAdapter::GetImagingSubprimData(
+  TfToken const &subprim,
+  UsdPrim const &prim,
+  const UsdImagingDataSourceStageGlobals &stageGlobals)
+{
+  if (subprim.IsEmpty()) {
+    return UsdImagingDataSourceVolumePrim::New(prim.GetPath(), prim, stageGlobals);
+  }
+  return nullptr;
+}
 
 bool UsdImagingVolumeAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {

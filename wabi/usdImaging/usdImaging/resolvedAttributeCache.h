@@ -28,17 +28,17 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#ifndef WABI_USD_IMAGING_USD_IMAGING_INHERITED_CACHE_H
-#define WABI_USD_IMAGING_USD_IMAGING_INHERITED_CACHE_H
+#ifndef WABI_USD_IMAGING_USD_IMAGING_RESOLVED_ATTRIBUTE_CACHE_H
+#define WABI_USD_IMAGING_USD_IMAGING_RESOLVED_ATTRIBUTE_CACHE_H
 
-/// \file usdImaging/resolvedAttributeCache.h
+/// \file
 
-#include "wabi/usd/sdf/path.h"
+#include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/primRange.h"
 #include "wabi/usd/usdShade/tokens.h"
-#include "wabi/usdImaging/usdImaging/api.h"
-#include "wabi/wabi.h"
+#include "wabi/usd/sdf/path.h"
 
 #include "wabi/base/work/utils.h"
 
@@ -72,7 +72,6 @@ WABI_NAMESPACE_BEGIN
 /// thread-safe. The fallback type for ImplData is bool, when it's not specified
 /// by a cache.
 ///
-
 template<typename Strategy, typename ImplData = bool> class UsdImaging_ResolvedAttributeCache
 {
   friend Strategy;
@@ -1241,4 +1240,4 @@ struct UsdImaging_InheritedPrimvarStrategy
 
 WABI_NAMESPACE_END
 
-#endif  // WABI_USD_IMAGING_USD_IMAGING_INHERITED_CACHE_H
+#endif

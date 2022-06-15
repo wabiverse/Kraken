@@ -43,7 +43,7 @@ wabi_library(usdImaging
         materialParamUtils
         resolvedAttributeCache
         instancerContext
-        # stageSceneIndex
+        stageSceneIndex
         tokens
         basisCurvesAdapter
         capsuleAdapter
@@ -89,3 +89,4 @@ wabi_library(usdImaging
     RESOURCE_FILES
         resources/plugInfo.json
 )
+

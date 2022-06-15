@@ -25,6 +25,7 @@
 
 #include "wabi/usdImaging/usdImaging/debugCodes.h"
 #include "wabi/usdImaging/usdImaging/delegate.h"
+#include "wabi/usdImaging/usdImaging/debugCodes.h"
 #include "wabi/usdImaging/usdImaging/indexProxy.h"
 #include "wabi/usdImaging/usdImaging/instancerContext.h"
 #include "wabi/usdImaging/usdImaging/tokens.h"
@@ -40,18 +41,26 @@
 #include "wabi/usd/usdGeom/tokens.h"
 #include "wabi/usd/usdGeom/xformable.h"
 
-#include "wabi/base/gf/quath.h"
 #include "wabi/base/tf/staticTokens.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/type.h"
+#include "wabi/base/gf/quath.h"
 
-#include <atomic>
 #include <limits>
+#include <atomic>
 
 WABI_NAMESPACE_BEGIN
 
+
 // XXX: These should come from Hd or UsdImaging
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (instance)(instancer)(rotate)(scale)(translate));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (instance)
+    (instancer)
+    (rotate)
+    (scale)
+    (translate)
+);
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -221,12 +230,6 @@ SdfPath UsdImagingPointInstancerAdapter::_Populate(
                                       instancerAdapter};
     _PopulatePrototype(protoIndex, instrData, protoRootPrim, index, &ctx);
   }
-
-  // Make sure we populate instancer data to the value cache the first time
-  // through UpdateForTime.
-  index->MarkInstancerDirty(instancerCachePath,
-                            HdChangeTracker::DirtyTransform | HdChangeTracker::DirtyPrimvar |
-                              HdChangeTracker::DirtyInstanceIndex);
 
   return instancerCachePath;
 }
@@ -702,6 +705,7 @@ HdDirtyBits UsdImagingPointInstancerAdapter::ProcessPropertyChange(UsdPrim const
                pv.GetInterpolation() == UsdGeomTokens->uniform)) {
       return HdChangeTracker::Clean;
     }
+
 
     return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
       prim,
@@ -1299,6 +1303,27 @@ SdfPath UsdImagingPointInstancerAdapter::GetScenePrimPath(
   return _GetPrimPathFromInstancerChain(paths);
 }
 
+/* virtual */
+SdfPathVector UsdImagingPointInstancerAdapter::GetScenePrimPaths(
+  SdfPath const &cachePath,
+  std::vector<int> const &instanceIndices,
+  std::vector<HdInstancerContext> *instancerCtxs) const
+{
+  SdfPathVector result;
+  HdInstancerContext instanceCtx;
+
+  result.reserve(instanceIndices.size());
+  if (instancerCtxs)
+    instancerCtxs->reserve(instanceIndices.size());
+  for (size_t i = 0; i < instanceIndices.size(); i++) {
+    result.push_back(GetScenePrimPath(cachePath, instanceIndices[i], &instanceCtx));
+    if (instancerCtxs)
+      instancerCtxs->push_back(std::move(instanceCtx));
+  }
+
+  return result;
+}
+
 static size_t _GatherAuthoredTransformTimeSamples(UsdPrim const &prim,
                                                   GfInterval interval,
                                                   std::vector<double> *timeSamples)
@@ -1700,6 +1725,7 @@ GfRange3d UsdImagingPointInstancerAdapter::GetExtent(UsdPrim const &usdPrim,
   return BaseAdapter::GetExtent(usdPrim, cachePath, time);
 }
 
+
 /*virtual*/
 bool UsdImagingPointInstancerAdapter::GetDoubleSided(UsdPrim const &usdPrim,
                                                      SdfPath const &cachePath,
@@ -1749,6 +1775,7 @@ VtValue UsdImagingPointInstancerAdapter::Get(UsdPrim const &usdPrim,
     _ProtoPrim const &proto = _GetProtoPrim(usdPrim.GetPath(), cachePath);
     UsdPrim protoPrim = _GetProtoUsdPrim(proto);
     return proto.adapter->Get(protoPrim, cachePath, key, time, outIndices);
+
   } else if (_InstancerData const *instrData = TfMapLookupPtr(_instancerData, cachePath)) {
     TF_UNUSED(instrData);
 
@@ -1758,30 +1785,21 @@ VtValue UsdImagingPointInstancerAdapter::Get(UsdPrim const &usdPrim,
       if (instancer.GetPositionsAttr().Get(&positions, time)) {
         return VtValue(positions);
       }
+
     } else if (key == _tokens->rotate) {
       UsdGeomPointInstancer instancer(usdPrim);
       VtQuathArray orientations;
       if (instancer.GetOrientationsAttr().Get(&orientations, time)) {
-        // convert to Vec4Array that hydra instancer requires.
-        // Also note that hydra's instancer takes GfQuaterion layout
-        // (real, imaginary) which differs from GfQuath's
-        // (imaginary, real)
-        VtVec4fArray rotations;
-        rotations.reserve(orientations.size());
-        for (const GfQuath &orientation : orientations) {
-          rotations.push_back(GfVec4f(orientation.GetReal(),
-                                      orientation.GetImaginary()[0],
-                                      orientation.GetImaginary()[1],
-                                      orientation.GetImaginary()[2]));
-        }
-        return VtValue(rotations);
+        return VtValue(orientations);
       }
+
     } else if (key == _tokens->scale) {
       UsdGeomPointInstancer instancer(usdPrim);
       VtVec3fArray scales;
       if (instancer.GetScalesAttr().Get(&scales, time)) {
         return VtValue(scales);
       }
+
     } else {
       UsdGeomPrimvarsAPI primvars(usdPrim);
       if (UsdGeomPrimvar pv = primvars.GetPrimvar(key)) {
@@ -1941,6 +1959,7 @@ std::string UsdImagingPointInstancerAdapter::GetExtComputationKernel(
   }
   return BaseAdapter::GetExtComputationKernel(usdPrim, cachePath, nullptr);
 }
+
 
 /*virtual*/
 bool UsdImagingPointInstancerAdapter::PopulateSelection(
@@ -2161,6 +2180,7 @@ bool UsdImagingPointInstancerAdapter::PopulateSelection(
         continue;
       }
       VtIntArray const &indices = indicesValue.UncheckedGet<VtIntArray>();
+
 
       if (parentInstanceIndices.size() > 0) {
         for (const int pi : parentInstanceIndices) {

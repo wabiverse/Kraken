@@ -26,15 +26,16 @@
 
 /// \file usdImaging/pointInstancerAdapter.h
 
-#include "wabi/base/tf/denseHashMap.h"
-#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
-#include "wabi/usdImaging/usdImaging/primAdapter.h"
-#include "wabi/usdImaging/usdImaging/version.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/denseHashMap.h"
+#include "wabi/usdImaging/usdImaging/version.h"
+#include "wabi/usdImaging/usdImaging/primAdapter.h"
+#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
 
 #include <mutex>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// Delegate support for UsdGeomPointInstancer
 ///
@@ -180,6 +181,7 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter
                       SdfPath const &cachePath,
                       UsdTimeCode time) const override;
 
+
   SdfPath GetMaterialId(UsdPrim const &prim,
                         SdfPath const &cachePath,
                         UsdTimeCode time) const override;
@@ -238,6 +240,11 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter
   virtual SdfPath GetScenePrimPath(SdfPath const &cachePath,
                                    int instanceIndex,
                                    HdInstancerContext *instancerContext) const override;
+
+  virtual SdfPathVector GetScenePrimPaths(
+    SdfPath const &cachePath,
+    std::vector<int> const &instanceIndices,
+    std::vector<HdInstancerContext> *instancerCtxs) const override;
 
   virtual bool PopulateSelection(HdSelection::HighlightMode const &highlightMode,
                                  SdfPath const &cachePath,
@@ -381,6 +388,7 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter
     using PathToIndexMap = TfDenseHashMap<SdfPath, size_t, SdfPath::Hash>;
     PathToIndexMap prototypePathIndices;
 
+
     // XXX: We keep a bunch of state around visibility that's set in
     // TrackVariability and UpdateForTime.  "visible", and "visibleTime"
     // (the cache key for visible) are set in UpdateForTime and guarded
@@ -398,6 +406,7 @@ class UsdImagingPointInstancerAdapter : public UsdImagingPrimAdapter
     _InstancerDataMap;
   _InstancerDataMap _instancerData;
 };
+
 
 WABI_NAMESPACE_END
 

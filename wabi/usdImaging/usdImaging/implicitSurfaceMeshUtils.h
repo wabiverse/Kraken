@@ -24,9 +24,9 @@
 #ifndef WABI_USD_IMAGING_USD_IMAGING_IMPLICIT_SURFACE_MESH_UTILS_H
 #define WABI_USD_IMAGING_USD_IMAGING_IMPLICIT_SURFACE_MESH_UTILS_H
 
-#include "wabi/base/vt/types.h"
-#include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/base/vt/types.h"
 
 WABI_NAMESPACE_BEGIN
 

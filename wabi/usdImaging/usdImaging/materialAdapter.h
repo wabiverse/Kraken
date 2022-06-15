@@ -26,12 +26,13 @@
 
 /// \file usdImaging/materialAdapter.h
 
-#include "wabi/usdImaging/usdImaging/primAdapter.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/primAdapter.h"
 
 WABI_NAMESPACE_BEGIN
 
 struct HdMaterialNetworkMap;
+
 
 /// \class UsdImagingMaterialAdapter
 /// \brief Provides information that can be used to generate a material.
@@ -64,6 +65,7 @@ class UsdImagingMaterialAdapter : public UsdImagingPrimAdapter
                         SdfPath const &cachePath,
                         HdDirtyBits *timeVaryingBits,
                         UsdImagingInstancerContext const *instancerContext = NULL) const override;
+
 
   /// Thread Safe.
   USDIMAGING_API

@@ -26,14 +26,15 @@
 
 /// \file usdImaging/instanceAdapter.h
 
-#include "wabi/usdImaging/usdImaging/primAdapter.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/primAdapter.h"
 
 #include "wabi/base/tf/hashmap.h"
 
 #include <mutex>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class UsdImagingInstanceAdapter
 ///
@@ -132,6 +133,7 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
   virtual void ProcessPrimResync(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 
   virtual void ProcessPrimRemoval(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
+
 
   virtual void MarkDirty(UsdPrim const &prim,
                          SdfPath const &cachePath,
@@ -245,6 +247,7 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
     SdfPath const &cachePath,
     const UsdImagingInstancerContext *instancerContext) const override;
 
+
   HdExtComputationOutputDescriptorVector GetExtComputationOutputs(
     UsdPrim const &prim,
     SdfPath const &cachePath,
@@ -294,6 +297,11 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
   virtual SdfPath GetScenePrimPath(SdfPath const &cachePath,
                                    int instanceIndex,
                                    HdInstancerContext *instancerContext) const override;
+
+  virtual SdfPathVector GetScenePrimPaths(
+    SdfPath const &cachePath,
+    std::vector<int> const &instanceIndices,
+    std::vector<HdInstancerContext> *instancerCtxs) const override;
 
   virtual bool PopulateSelection(HdSelection::HighlightMode const &highlightMode,
                                  SdfPath const &cachePath,
@@ -426,7 +434,7 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
   bool _IsInstanceInheritedPrimvarVarying(UsdPrim const &instancer) const;
 
   struct _PopulateInstanceSelectionFn;
-  struct _GetScenePrimPathFn;
+  struct _GetScenePrimPathsFn;
 
   // Helper functions for dealing with "actual" instances to be drawn.
   //
@@ -595,6 +603,7 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
   typedef TfHashMultiMap<SdfPath, SdfPath, SdfPath::Hash> _PrototypeToInstancerMap;
   _PrototypeToInstancerMap _prototypeToInstancerMap;
 };
+
 
 WABI_NAMESPACE_END
 

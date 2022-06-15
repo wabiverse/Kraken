@@ -23,12 +23,13 @@
 //
 #include "wabi/usdImaging/usdImaging/pointsAdapter.h"
 
+#include "wabi/usdImaging/usdImaging/dataSourcePoints.h"
 #include "wabi/usdImaging/usdImaging/delegate.h"
 #include "wabi/usdImaging/usdImaging/indexProxy.h"
 #include "wabi/usdImaging/usdImaging/tokens.h"
 
-#include "wabi/imaging/hd/perfLog.h"
 #include "wabi/imaging/hd/points.h"
+#include "wabi/imaging/hd/perfLog.h"
 
 #include "wabi/usd/usdGeom/points.h"
 #include "wabi/usd/usdGeom/primvarsAPI.h"
@@ -36,6 +37,7 @@
 #include "wabi/base/tf/type.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_REGISTRY_FUNCTION(TfType)
 {
@@ -45,6 +47,30 @@ TF_REGISTRY_FUNCTION(TfType)
 }
 
 UsdImagingPointsAdapter::~UsdImagingPointsAdapter() {}
+
+TfTokenVector UsdImagingPointsAdapter::GetImagingSubprims()
+{
+  return {TfToken()};
+}
+
+TfToken UsdImagingPointsAdapter::GetImagingSubprimType(TfToken const &subprim)
+{
+  if (subprim.IsEmpty()) {
+    return HdPrimTypeTokens->points;
+  }
+  return TfToken();
+}
+
+HdContainerDataSourceHandle UsdImagingPointsAdapter::GetImagingSubprimData(
+  TfToken const &subprim,
+  UsdPrim const &prim,
+  const UsdImagingDataSourceStageGlobals &stageGlobals)
+{
+  if (subprim.IsEmpty()) {
+    return UsdImagingDataSourcePointsPrim::New(prim.GetPath(), prim, stageGlobals);
+  }
+  return nullptr;
+}
 
 bool UsdImagingPointsAdapter::IsSupported(UsdImagingIndexProxy const *index) const
 {
@@ -217,6 +243,7 @@ HdDirtyBits UsdImagingPointsAdapter::ProcessPropertyChange(UsdPrim const &prim,
       HdTokens->widths,
       _UsdToHdInterpolation(points.GetWidthsInterpolation()),
       HdChangeTracker::DirtyWidths);
+
   } else if (propertyName == UsdGeomTokens->normals) {
     UsdGeomPoints points(prim);
     return UsdImagingPrimAdapter::_ProcessNonPrefixedPrimvarPropertyChange(
@@ -234,6 +261,7 @@ HdDirtyBits UsdImagingPointsAdapter::ProcessPropertyChange(UsdPrim const &prim,
       cachePath,
       propertyName,
       HdChangeTracker::DirtyWidths);
+
   } else if (propertyName == UsdImagingTokens->primvarsNormals) {
     return UsdImagingPrimAdapter::_ProcessPrefixedPrimvarPropertyChange(
       prim,
@@ -284,6 +312,7 @@ VtValue UsdImagingPointsAdapter::Get(UsdPrim const &prim,
       value = normals;
       return value;
     }
+
   } else if (key == HdTokens->widths) {
     // First check for "primvars:widths"
     UsdGeomPrimvarsAPI primvarsApi(prim);

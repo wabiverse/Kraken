@@ -26,12 +26,13 @@
 
 /// \file usdImaging/cubeAdapter.h
 
-#include "wabi/usdImaging/usdImaging/api.h"
-#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
-#include "wabi/usdImaging/usdImaging/primAdapter.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/usdImaging/usdImaging/primAdapter.h"
+#include "wabi/usdImaging/usdImaging/gprimAdapter.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdGeomCube;
 
@@ -94,6 +95,7 @@ class UsdImagingCubeAdapter : public UsdImagingGprimAdapter
   USDIMAGING_API
   static VtValue GetMeshTopology();
 };
+
 
 WABI_NAMESPACE_END
 

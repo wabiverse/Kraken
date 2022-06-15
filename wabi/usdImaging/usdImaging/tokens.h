@@ -24,11 +24,12 @@
 #ifndef WABI_USD_IMAGING_USD_IMAGING_TOKENS_H
 #define WABI_USD_IMAGING_USD_IMAGING_TOKENS_H
 
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/wabi.h"
+#include "wabi/usdImaging/usdImaging/api.h"
+#include "wabi/base/tf/staticTokens.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 #define USDIMAGING_TOKENS                                       \
   ((infoSource, "info:source"))(faceIndexPrimvar)(              \

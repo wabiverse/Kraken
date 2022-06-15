@@ -26,11 +26,12 @@
 
 /// \file usdImaging/fieldAdapter.h
 
+#include "wabi/wabi.h"
 #include "wabi/usdImaging/usdImaging/api.h"
 #include "wabi/usdImaging/usdImaging/primAdapter.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 class UsdPrim;
 
@@ -43,6 +44,7 @@ class UsdImagingFieldAdapter : public UsdImagingPrimAdapter
  public:
 
   using BaseAdapter = UsdImagingPrimAdapter;
+
 
   UsdImagingFieldAdapter() : UsdImagingPrimAdapter() {}
 
@@ -68,6 +70,7 @@ class UsdImagingFieldAdapter : public UsdImagingPrimAdapter
     SdfPath const &cachePath,
     HdDirtyBits *timeVaryingBits,
     UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+
 
   /// Thread Safe.
   USDIMAGING_API
@@ -128,6 +131,7 @@ class UsdImagingFieldAdapter : public UsdImagingPrimAdapter
   USDIMAGING_API
   void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 };
+
 
 WABI_NAMESPACE_END
 
