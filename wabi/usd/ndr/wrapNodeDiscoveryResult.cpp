@@ -1,39 +1,32 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2018 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/usd/ndr/nodeDiscoveryResult.h"
-#include "wabi/wabi.h"
 
 #include <boost/python.hpp>
 
@@ -41,8 +34,10 @@ namespace bp = boost::python;
 
 WABI_NAMESPACE_USING
 
+
 namespace
 {
+
 
   static std::string _Repr(const NdrNodeDiscoveryResult &x)
   {
@@ -70,15 +65,13 @@ namespace
     if (!x.subIdentifier.IsEmpty()) {
       ADD_KW_ARG(args, subIdentifier);
     };
-    if (!x.aliases.empty()) {
-      ADD_KW_ARG(args, aliases);
-    };
 
 #undef ADD_KW_ARG
 
     return TF_PY_REPR_PREFIX +
            TfStringPrintf("NodeDiscoveryResult(%s)", TfStringJoin(args, ", ").c_str());
   }
+
 
   // XXX: WBN if Tf provided this sort of converter for stl maps.
   template<typename MAP> struct MapConverter
@@ -175,20 +168,18 @@ void wrapNodeDiscoveryResult()
               std::string,
               NdrTokenMap,
               std::string,
-              TfToken,
-              NdrTokenVec>((arg("identifier"),
-                            arg("version"),
-                            arg("name"),
-                            arg("family"),
-                            arg("discoveryType"),
-                            arg("sourceType"),
-                            arg("uri"),
-                            arg("resolvedUri"),
-                            arg("sourceCode") = std::string(),
-                            arg("metadata") = NdrTokenMap(),
-                            arg("blindData") = std::string(),
-                            arg("subIdentifier") = TfToken(),
-                            arg("aliases") = NdrTokenVec())))
+              TfToken>((arg("identifier"),
+                        arg("version"),
+                        arg("name"),
+                        arg("family"),
+                        arg("discoveryType"),
+                        arg("sourceType"),
+                        arg("uri"),
+                        arg("resolvedUri"),
+                        arg("sourceCode") = std::string(),
+                        arg("metadata") = NdrTokenMap(),
+                        arg("blindData") = std::string(),
+                        arg("subIdentifier") = TfToken())))
     .add_property("identifier",
                   make_getter(&This::identifier, return_value_policy<return_by_value>()))
     .add_property("version", &This::version)
@@ -206,8 +197,6 @@ void wrapNodeDiscoveryResult()
     .add_property("blindData", &This::blindData)
     .add_property("subIdentifier",
                   make_getter(&This::subIdentifier, return_value_policy<return_by_value>()))
-    .add_property("aliases",
-                  make_getter(&This::aliases, return_value_policy<TfPySequenceToList>()))
     .def("__repr__", _Repr);
 
   TfPyContainerConversions::

@@ -1,48 +1,42 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2018 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 
 #ifndef WABI_USD_NDR_REGISTRY_H
 #define WABI_USD_NDR_REGISTRY_H
 
 /// \file ndr/registry.h
 
-#include "wabi/base/tf/weakBase.h"
+#include "wabi/wabi.h"
 #include "wabi/usd/ndr/api.h"
+#include "wabi/base/tf/weakBase.h"
 #include "wabi/usd/ndr/declare.h"
 #include "wabi/usd/ndr/discoveryPlugin.h"
 #include "wabi/usd/ndr/node.h"
 #include "wabi/usd/ndr/nodeDiscoveryResult.h"
 #include "wabi/usd/ndr/parserPlugin.h"
 #include "wabi/usd/sdf/assetPath.h"
-#include "wabi/wabi.h"
+#include <map>
 #include <mutex>
 
 WABI_NAMESPACE_BEGIN
@@ -183,14 +177,11 @@ class NdrRegistry : public TfWeakBase
   ///
   /// If no sourceTypePriority is specified, the first encountered node with
   /// the specified identifier will be returned (first is arbitrary) if found.
-  /// If no matching node is found then the first node found with an alias
-  /// matching the identifier will be returned if one exists.
   ///
   /// If a sourceTypePriority list is specified, then this will iterate
-  /// through each source type and try to find a node matching by identifier
-  /// or alias. This is equivalent to calling
-  /// NdrRegistry::GetNodeByIdentifierAndType for each source type until a
-  /// node is found.
+  /// through each source type and try to find a node matching by identifier.
+  /// This is equivalent to calling NdrRegistry::GetNodeByIdentifierAndType
+  /// for each source type until a node is found.
   ///
   /// Nodes of the same identifier but different source type can exist
   /// in the registry. If a node 'Foo' with source types 'abc' and 'xyz'
@@ -200,19 +191,12 @@ class NdrRegistry : public TfWeakBase
   /// the registry, then the 'xyz' version would be returned.
   ///
   /// Returns `nullptr` if a node matching the arguments can't be found.
-  ///
-  /// \sa NdrNodeDiscoveryResult::aliases
   NDR_API
   NdrNodeConstPtr GetNodeByIdentifier(const NdrIdentifier &identifier,
                                       const NdrTokenVec &sourceTypePriority = NdrTokenVec());
 
-  /// Get the node with the specified \p identifier and \p sourceType. If,
-  /// for the given sourceType, there is no node with the given identifier,
-  /// this will instead search for a node which has an alias that matches the
-  /// identifier and return it if it exists. Otherwise there is no matching
-  /// node for the sourceType and nullptr is returned.
-  ///
-  /// \sa NdrNodeDiscoveryResult::aliases
+  /// Get the node with the specified \p identifier and \p sourceType.
+  /// If there is no matching node for the sourceType, nullptr is returned.
   NDR_API
   NdrNodeConstPtr GetNodeByIdentifierAndType(const NdrIdentifier &identifier,
                                              const TfToken &sourceType);
@@ -245,11 +229,8 @@ class NdrRegistry : public TfWeakBase
                                        NdrVersionFilter filter = NdrVersionFilterDefaultOnly);
 
   /// Get all nodes matching the specified identifier (multiple nodes of
-  /// the same identifier, but different source types, may exist) as well as
-  /// any nodes which have an alias that matches the identifier. If no nodes
+  /// the same identifier, but different source types, may exist). If no nodes
   /// match the identifier, an empty vector is returned.
-  ///
-  /// \sa NdrNodeDiscoveryResult::aliases
   NDR_API
   NdrNodeConstPtrVec GetNodesByIdentifier(const NdrIdentifier &identifier);
 
@@ -301,29 +282,45 @@ class NdrRegistry : public TfWeakBase
   class _DiscoveryContext;
   friend class _DiscoveryContext;
 
-  typedef std::unordered_map<TfToken, NdrParserPlugin *, TfToken::HashFunctor>
-    TypeToParserPluginMap;
-  typedef std::pair<NdrIdentifier, TfToken> NodeMapKey;
-  struct NodeMapKeyHashFunctor
-  {
-    size_t operator()(const NodeMapKey &x) const
-    {
-      return NdrIdentifierHashFunctor()(x.first) ^ TfToken::HashFunctor()(x.second);
-    }
-  };
-  typedef std::unordered_multimap<NodeMapKey, NdrNodeUniquePtr, NodeMapKeyHashFunctor> NodeMap;
+  using _TypeToParserPluginMap =
+    std::unordered_map<TfToken, NdrParserPlugin *, TfToken::HashFunctor>;
 
-  // The discovery result vec is not a concurrent data structure, thus it
-  // needs some locking infrastructure.
+  // Node cache data structure, stored NdrNodes keyed by identifier and source
+  // type.
+  using _NodeMapKey = std::pair<NdrIdentifier, TfToken>;
+  using _NodeMap = std::unordered_map<_NodeMapKey, NdrNodeUniquePtr, TfHash>;
+
+  // Discovery results data structure, NdrNodeDiscoveryResults multimap keyed
+  // by identifier
+  using _DiscoveryResultsByIdentifier =
+    std::unordered_multimap<TfToken, NdrNodeDiscoveryResult, TfHash>;
+  using _DiscoveryResultsByIdentifierRange =
+    std::pair<_DiscoveryResultsByIdentifier::const_iterator,
+              _DiscoveryResultsByIdentifier::const_iterator>;
+
+  // Discovery results data structure: a multimap of raw pointers to
+  // NdrNodeDiscoveryResults (i.e. pointers to the discovery results stored
+  // in a _DiscoveryResultsByIdentifier) keyed by name.
+  using _DiscoveryResultPtrsByName =
+    std::unordered_multimap<std::string, const NdrNodeDiscoveryResult *, TfHash>;
+  using _DiscoveryResultPtrsByNameRange = std::pair<_DiscoveryResultPtrsByName::const_iterator,
+                                                    _DiscoveryResultPtrsByName::const_iterator>;
+
+  // The discovery result data structures are not concurrent and must be kept
+  // in sync, thus they need some locking infrastructure.
   mutable std::mutex _discoveryResultMutex;
 
   // The node map is not a concurrent data structure, thus it needs some
   // locking infrastructure.
   mutable std::mutex _nodeMapMutex;
 
-  // Runs each discovery plugin provided and appends the results to the
-  // internal discovery results vector
+  // Runs each discovery plugin provided and adds the results to the
+  // internal discovery result maps
   void _RunDiscoveryPlugins(const DiscoveryPluginRefPtrVec &discoveryPlugins);
+
+  // Takes the discovery and puts in the maps that hold the discovery results,
+  // keeping them in sync.
+  void _AddDiscoveryResultNoLock(NdrNodeDiscoveryResult &&dr);
 
   // Finds and instantiates the discovery plugins
   void _FindAndInstantiateDiscoveryPlugins();
@@ -335,42 +332,39 @@ class NdrRegistry : public TfWeakBase
   // the registry.
   void _InstantiateParserPlugins(const std::set<TfType> &parserPluginTypes);
 
-  // Returns the cached or newly parsed node for the discovery result if its
-  // identifier matches the given identifier.
-  NdrNodeConstPtr _ParseNodeMatchingIdentifier(const NdrNodeDiscoveryResult &dr,
-                                               const NdrIdentifier &identifier);
-
-  // Returns the cached or newly parsed node for the discovery result if it
-  // has an alias that matches the given identifier.
-  NdrNodeConstPtr _ParseNodeMatchingAlias(const NdrNodeDiscoveryResult &dr,
-                                          const NdrIdentifier &identifier);
-
-  // Returns the cached or newly parsed node for the discovery result if its
-  // name and version match the given name and version filter.
-  NdrNodeConstPtr _ParseNodeMatchingNameAndFilter(const NdrNodeDiscoveryResult &dr,
-                                                  const std::string &name,
-                                                  NdrVersionFilter filter);
+  // Parses the node for the discovery result if adding it to the node map if
+  // able and adds the discovery result to the discovery result maps. Intended
+  // for the GetNodeFromAsset and GetNodeFromSourceCode APIs which can add
+  // nodes that don't already appear in the discovery results.
+  NdrNodeConstPtr _ParseNodeFromAssetOrSourceCode(NdrParserPlugin &parser,
+                                                  NdrNodeDiscoveryResult &&dr);
 
   // Implementation helper for getting the first node of the given sourceType
-  // that matches the given indentifier. This includes node that match the
-  // identifier through an alias.
-  NdrNodeConstPtr _GetNodeByIdentifierAndTypeImpl(const NdrIdentifier &identifier,
-                                                  const TfToken &sourceType);
+  // in the range of node discovery results for a paricular identifier.
+  NdrNodeConstPtr _GetNodeInIdentifierRangeWithSourceType(_DiscoveryResultsByIdentifierRange range,
+                                                          const TfToken &sourceType);
 
   // Implementation helper for getting the first node of the given sourceType
-  // that matches the given name and version filter.
-  NdrNodeConstPtr _GetNodeByNameAndTypeImpl(const std::string &name,
-                                            const TfToken &sourceType,
-                                            NdrVersionFilter filter);
+  // and matching the given version filter in the range of node discovery
+  // results for a paricular name.
+  NdrNodeConstPtr _GetNodeInNameRangeWithSourceType(_DiscoveryResultPtrsByNameRange range,
+                                                    const TfToken &sourceType,
+                                                    NdrVersionFilter filter);
 
-  // Inserts a new node into the node cache. If a node with the
-  // same name and type already exists in the cache, the pointer to the
-  // existing node will be returned. If there was an error inserting the node,
+  // Thread-safe find of a node in the cache by key.
+  NdrNodeConstPtr _FindNodeInCache(const _NodeMapKey &key) const;
+
+  // Thread-safe insertion of a node into the cache with a given key. If a
+  // node with the same key already exists in the cache, the pointer to the
+  // existing node will be returned, otherwise the pointer to pointer to the
+  // inserted node is returned.
+  NdrNodeConstPtr _InsertNodeInCache(_NodeMapKey &&key, NdrNodeUniquePtr &&node);
+
+  // Finds an existing node in the node cache for the discovery result if one
+  // exists. Otherwise it parses the new node, inserts it into the cache, and
+  // returns it. If there was an error parsing or validating the node,
   // `nullptr` will be returned.
-  NdrNodeConstPtr _InsertNodeIntoCache(const NdrNodeDiscoveryResult &dr);
-
-  // Get a vector of all of the node unique_ptrs in the node map as raw ptrs
-  NdrNodeConstPtrVec _GetNodeMapAsNodePtrVec(const TfToken &family, NdrVersionFilter filter) const;
+  NdrNodeConstPtr _FindOrParseNodeInCache(const NdrNodeDiscoveryResult &dr);
 
   // Return the parser plugin for a discovery type. Returns null if no parser
   // plugin has that discovery type.
@@ -382,23 +376,25 @@ class NdrRegistry : public TfWeakBase
 
   // The parser plugins that have been discovered via the plugin system. Maps
   // a discovery result's "discovery type" to a specific parser.
-  TypeToParserPluginMap _parserPluginMap;
+  _TypeToParserPluginMap _parserPluginMap;
 
   // The parser plugins.  This has ownership of the plugin objects.
   std::vector<std::unique_ptr<NdrParserPlugin>> _parserPlugins;
 
-  // The preliminary discovery results prior to parsing. If accessing or
+  // The preliminary discovery results prior to parsing. These are stored
+  // in a multimap by identifier and a multimap by name. If accessing or
   // mutating, _discoveryResultMutex should be used.
-  NdrNodeDiscoveryResultVec _discoveryResults;
+  _DiscoveryResultsByIdentifier _discoveryResultsByIdentifier;
+  _DiscoveryResultPtrsByName _discoveryResultPtrsByName;
 
-  // Additional mapping of discovery results by grouped source type to aid in
-  // getting nodes by type priority. Stored as indices into the
-  // _disoveryResults vector.
-  std::map<TfToken, std::vector<size_t>> _discoveryResultIndicesBySourceType;
+  // Set of all possible source types as determined by the existing discovery
+  // results. Populated along with the discovery result multimaps. If
+  // accessing or mutating, _discoveryResultMutex should be used.
+  TfToken::Set _allSourceTypes;
 
-  // Maps a node's name to a node instance. If accessing or mutating,
-  // _nodeMapMutex should be used.
-  NodeMap _nodeMap;
+  // Maps a node's identifier and source type to a node instance. If accessing
+  // or mutating, _nodeMapMutex should be used.
+  _NodeMap _nodeMap;
 };
 
 WABI_NAMESPACE_END

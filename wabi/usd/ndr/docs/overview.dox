@@ -50,17 +50,17 @@ information such as:
     <li>Any metadata attached to the node</li>
 </ul>
 
-An NdrNode represents a dataflow-connectable computation, intended to be a
-node in a computational network.  A node's NdrProperty's represent its
+An NdrNode represents a dataflow-connectable computation, intended to be a 
+node in a computational network.  A node's NdrProperty's represent its 
 computational inputs and outputs, and its __URI__'s identify its external
 sources:
 - NdrNode::GetResolvedDefinitionURI() identifies the asset that provided
-  the definition of the node, which is determined during
+  the definition of the node, which is determined during 
   \ref ndr_DiscoveryPlugin "node discovery."
-- NdrNode::GetResolvedImplementationURI() identifies (if relevant) an
+- NdrNode::GetResolvedImplementationURI() identifies (if relevant) an 
   implementation of the node's computation, for use by clients of computational
   networks in which node instances may appear. It is the responsibility of a
-  \ref ndr_ParserPlugin "parser plugin" to determine and resolve an
+  \ref ndr_ParserPlugin "parser plugin" to determine and resolve an 
   implementation from the node's definition.
 
 \subsection ndr_BaseProperty Ndr Base Property
