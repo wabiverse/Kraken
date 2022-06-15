@@ -46,12 +46,12 @@
 WABI_NAMESPACE_BEGIN
 
 TF_DEFINE_ENV_SETTING(
-    PXR_NDR_SKIP_DISCOVERY_PLUGIN_DISCOVERY, 0,
+    WABI_NDR_SKIP_DISCOVERY_PLUGIN_DISCOVERY, 0,
     "The auto-discovery of discovery plugins in ndr can be skipped. "
     "This is used mostly for testing purposes.");
 
 TF_DEFINE_ENV_SETTING(
-    PXR_NDR_SKIP_PARSER_PLUGIN_DISCOVERY, 0,
+    WABI_NDR_SKIP_PARSER_PLUGIN_DISCOVERY, 0,
     "The auto-discovery of parser plugins in ndr can be skipped. "
     "This is used mostly for testing purposes.");
 
@@ -872,7 +872,7 @@ void NdrRegistry::_FindAndInstantiateDiscoveryPlugins()
 {
   // The auto-discovery of discovery plugins can be skipped. This is mostly
   // for testing purposes.
-  if (TfGetEnvSetting(PXR_NDR_SKIP_DISCOVERY_PLUGIN_DISCOVERY)) {
+  if (TfGetEnvSetting(WABI_NDR_SKIP_DISCOVERY_PLUGIN_DISCOVERY)) {
     return;
   }
 
@@ -898,7 +898,7 @@ void NdrRegistry::_FindAndInstantiateParserPlugins()
 {
   // The auto-discovery of parser plugins can be skipped. This is mostly
   // for testing purposes.
-  if (TfGetEnvSetting(PXR_NDR_SKIP_PARSER_PLUGIN_DISCOVERY)) {
+  if (TfGetEnvSetting(WABI_NDR_SKIP_PARSER_PLUGIN_DISCOVERY)) {
     return;
   }
 
