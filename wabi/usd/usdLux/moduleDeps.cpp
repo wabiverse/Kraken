@@ -44,7 +44,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader) {
         TfToken("vt")
     };
     TfScriptModuleLoader::GetInstance().
-        RegisterLibrary(TfToken("usdLux"), TfToken("pxr.UsdLux"), reqs);
+        RegisterLibrary(TfToken("usdLux"), TfToken("wabi.UsdLux"), reqs);
 }
 
 WABI_NAMESPACE_END

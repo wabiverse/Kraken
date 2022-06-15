@@ -43,7 +43,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
                                      TfToken("usdGeom"),
                                      TfToken("vt")};
   TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdShade"),
-                                                      TfToken("pxr.UsdShade"),
+                                                      TfToken("wabi.UsdShade"),
                                                       reqs);
 }
 

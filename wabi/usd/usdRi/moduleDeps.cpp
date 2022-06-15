@@ -43,7 +43,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader) {
         TfToken("vt")
     };
     TfScriptModuleLoader::GetInstance().
-        RegisterLibrary(TfToken("usdRi"), TfToken("pxr.UsdRi"), reqs);
+        RegisterLibrary(TfToken("usdRi"), TfToken("wabi.UsdRi"), reqs);
 }
 
 WABI_NAMESPACE_END
