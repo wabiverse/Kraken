@@ -1,43 +1,37 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/usd/usd/schemaBase.h"
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdRi/statementsAPI.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,58 +41,86 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace
+namespace {
+
+#define WRAP_CUSTOM                                                     \
+    template <class Cls> static void _CustomWrapCode(Cls &_class)
+
+// fwd decl.
+WRAP_CUSTOM;
+
+
+static std::string
+_Repr(const UsdRiStatementsAPI &self)
 {
-
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
-
-  // fwd decl.
-  WRAP_CUSTOM;
-
-  static std::string _Repr(const UsdRiStatementsAPI &self)
-  {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf("UsdRi.StatementsAPI(%s)", primRepr.c_str());
-  }
+    return TfStringPrintf(
+        "UsdRi.StatementsAPI(%s)",
+        primRepr.c_str());
+}
 
-}  // anonymous namespace
+struct UsdRiStatementsAPI_CanApplyResult : 
+    public TfPyAnnotatedBoolResult<std::string>
+{
+    UsdRiStatementsAPI_CanApplyResult(bool val, std::string const &msg) :
+        TfPyAnnotatedBoolResult<std::string>(val, msg) {}
+};
+
+static UsdRiStatementsAPI_CanApplyResult
+_WrapCanApply(const UsdPrim& prim)
+{
+    std::string whyNot;
+    bool result = UsdRiStatementsAPI::CanApply(prim, &whyNot);
+    return UsdRiStatementsAPI_CanApplyResult(result, whyNot);
+}
+
+} // anonymous namespace
 
 void wrapUsdRiStatementsAPI()
 {
-  typedef UsdRiStatementsAPI This;
+    typedef UsdRiStatementsAPI This;
 
-  class_<This, bases<UsdAPISchemaBase>> cls("StatementsAPI");
+    UsdRiStatementsAPI_CanApplyResult::Wrap<UsdRiStatementsAPI_CanApplyResult>(
+        "_CanApplyResult", "whyNot");
 
-  cls.def(init<UsdPrim>(arg("prim")))
-    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-    .def(TfTypePythonClass())
+    class_<This, bases<UsdAPISchemaBase> >
+        cls("StatementsAPI");
 
-    .def("Get", &This::Get, (arg("stage"), arg("path")))
-    .staticmethod("Get")
+    cls
+        .def(init<UsdPrim>(arg("prim")))
+        .def(init<UsdSchemaBase const&>(arg("schemaObj")))
+        .def(TfTypePythonClass())
 
-    .def("Apply", &This::Apply, (arg("prim")))
-    .staticmethod("Apply")
+        .def("Get", &This::Get, (arg("stage"), arg("path")))
+        .staticmethod("Get")
 
-    .def("GetSchemaAttributeNames",
-         &This::GetSchemaAttributeNames,
-         arg("includeInherited") = true,
-         return_value_policy<TfPySequenceToList>())
-    .staticmethod("GetSchemaAttributeNames")
+        .def("CanApply", &_WrapCanApply, (arg("prim")))
+        .staticmethod("CanApply")
 
-    .def("GetStaticTfType",
-         (TfType const &(*)())TfType::Find<This>,
-         return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+        .def("Apply", &This::Apply, (arg("prim")))
+        .staticmethod("Apply")
 
-    .def(!self)
+        .def("GetSchemaAttributeNames",
+             &This::GetSchemaAttributeNames,
+             arg("includeInherited")=true,
+             return_value_policy<TfPySequenceToList>())
+        .staticmethod("GetSchemaAttributeNames")
 
-    .def("__repr__", ::_Repr);
+        .def("_GetStaticTfType", (TfType const &(*)()) TfType::Find<This>,
+             return_value_policy<return_by_value>())
+        .staticmethod("_GetStaticTfType")
 
-  _CustomWrapCode(cls);
+        .def(!self)
+
+
+        .def("__repr__", ::_Repr)
+    ;
+
+    _CustomWrapCode(cls);
 }
 
 // ===================================================================== //
-// Feel free to add custom code below this line, it will be preserved by
+// Feel free to add custom code below this line, it will be preserved by 
 // the code generator.  The entry point for your custom code should look
 // minimally like the following:
 //
@@ -109,76 +131,78 @@ void wrapUsdRiStatementsAPI()
 // }
 //
 // Of course any other ancillary or support code may be provided.
-//
+// 
 // Just remember to wrap code in the appropriate delimiters:
 // 'namespace {', '}'.
 //
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace
-{
+namespace {
 
-  static SdfPathVector _GetModelCoordinateSystems(const UsdRiStatementsAPI &self)
-  {
+static SdfPathVector
+_GetModelCoordinateSystems(const UsdRiStatementsAPI &self)
+{
     SdfPathVector result;
     self.GetModelCoordinateSystems(&result);
     return result;
-  }
+}
 
-  static SdfPathVector _GetModelScopedCoordinateSystems(const UsdRiStatementsAPI &self)
-  {
+static SdfPathVector
+_GetModelScopedCoordinateSystems(const UsdRiStatementsAPI &self)
+{
     SdfPathVector result;
     self.GetModelScopedCoordinateSystems(&result);
     return result;
-  }
+}
 
-  WRAP_CUSTOM
-  {
+WRAP_CUSTOM {
     _class
-      .def("CreateRiAttribute",
-           (UsdAttribute(
-             UsdRiStatementsAPI::*)(const TfToken &, const TfType &, const std::string &)) &
-             UsdRiStatementsAPI::CreateRiAttribute,
-           (arg("name"), arg("tfType"), arg("nameSpace") = "user"))
-      .def("CreateRiAttribute",
-           (UsdAttribute(
-             UsdRiStatementsAPI::*)(const TfToken &, const std::string &, const std::string &)) &
-             UsdRiStatementsAPI::CreateRiAttribute,
-           (arg("name"), arg("riType"), arg("nameSpace") = "user"))
-      .def("GetRiAttribute",
-           &UsdRiStatementsAPI::GetRiAttribute,
-           (arg("name"), arg("nameSpace") = "user"))
-      .def("GetRiAttributes",
-           &UsdRiStatementsAPI::GetRiAttributes,
-           (arg("nameSpace") = ""),
-           return_value_policy<TfPySequenceToList>())
-      .def("GetRiAttributeName", UsdRiStatementsAPI::GetRiAttributeName, (arg("prop")))
-      .staticmethod("GetRiAttributeName")
-      .def("GetRiAttributeNameSpace", &UsdRiStatementsAPI::GetRiAttributeNameSpace, (arg("prop")))
-      .staticmethod("GetRiAttributeNameSpace")
-      .def("IsRiAttribute", &UsdRiStatementsAPI::IsRiAttribute, (arg("prop")))
-      .staticmethod("IsRiAttribute")
-      .def("MakeRiAttributePropertyName",
-           &UsdRiStatementsAPI::MakeRiAttributePropertyName,
-           (arg("attrName")))
-      .staticmethod("MakeRiAttributePropertyName")
-      .def("SetCoordinateSystem", &UsdRiStatementsAPI::SetCoordinateSystem, (arg("coordSysName")))
-      .def("GetCoordinateSystem", &UsdRiStatementsAPI::GetCoordinateSystem)
-      .def("HasCoordinateSystem", &UsdRiStatementsAPI::HasCoordinateSystem)
+        .def("CreateRiAttribute",
+             (UsdAttribute (UsdRiStatementsAPI::*)(
+                 const TfToken &, const TfType &, const std::string &))
+             &UsdRiStatementsAPI::CreateRiAttribute,
+             (arg("name"), arg("tfType"), arg("nameSpace")="user"))
+        .def("CreateRiAttribute",
+             (UsdAttribute (UsdRiStatementsAPI::*)(
+                 const TfToken &, const std::string &, const std::string &))
+             &UsdRiStatementsAPI::CreateRiAttribute,
+             (arg("name"), arg("riType"), arg("nameSpace")="user"))
+        .def("GetRiAttribute",
+             &UsdRiStatementsAPI::GetRiAttribute,
+             (arg("name"), arg("nameSpace")="user"))
+        .def("GetRiAttributes", &UsdRiStatementsAPI::GetRiAttributes,
+             (arg("nameSpace")=""),
+             return_value_policy<TfPySequenceToList>())
+        .def("GetRiAttributeName",
+             UsdRiStatementsAPI::GetRiAttributeName, (arg("prop")))
+        .staticmethod("GetRiAttributeName")
+        .def("GetRiAttributeNameSpace",
+             &UsdRiStatementsAPI::GetRiAttributeNameSpace, (arg("prop")))
+        .staticmethod("GetRiAttributeNameSpace")
+        .def("IsRiAttribute", &UsdRiStatementsAPI::IsRiAttribute, (arg("prop")))
+        .staticmethod("IsRiAttribute")
+        .def("MakeRiAttributePropertyName",
+             &UsdRiStatementsAPI::MakeRiAttributePropertyName, (arg("attrName")))
+        .staticmethod("MakeRiAttributePropertyName")
+        .def("SetCoordinateSystem", &UsdRiStatementsAPI::SetCoordinateSystem,
+             (arg("coordSysName")))
+        .def("GetCoordinateSystem", &UsdRiStatementsAPI::GetCoordinateSystem)
+        .def("HasCoordinateSystem", &UsdRiStatementsAPI::HasCoordinateSystem)
 
-      .def("SetScopedCoordinateSystem",
-           &UsdRiStatementsAPI::SetScopedCoordinateSystem,
-           (arg("coordSysName")))
-      .def("GetScopedCoordinateSystem", &UsdRiStatementsAPI::GetScopedCoordinateSystem)
-      .def("HasScopedCoordinateSystem", &UsdRiStatementsAPI::HasScopedCoordinateSystem)
+        .def("SetScopedCoordinateSystem",
+             &UsdRiStatementsAPI::SetScopedCoordinateSystem,
+             (arg("coordSysName")))
+        .def("GetScopedCoordinateSystem",
+             &UsdRiStatementsAPI::GetScopedCoordinateSystem)
+        .def("HasScopedCoordinateSystem",
+             &UsdRiStatementsAPI::HasScopedCoordinateSystem)
 
-      .def("GetModelCoordinateSystems",
-           _GetModelCoordinateSystems,
-           return_value_policy<TfPySequenceToList>())
-      .def("GetModelScopedCoordinateSystems",
-           _GetModelScopedCoordinateSystems,
-           return_value_policy<TfPySequenceToList>());
-  }
+        .def("GetModelCoordinateSystems", _GetModelCoordinateSystems,
+             return_value_policy<TfPySequenceToList>())
+        .def("GetModelScopedCoordinateSystems", _GetModelScopedCoordinateSystems,
+             return_value_policy<TfPySequenceToList>())
+        ;
+}
 
-}  // anonymous namespace
+} // anonymous namespace

@@ -1,43 +1,37 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
-#include "wabi/usd/usd/schemaBase.h"
+//
+// Copyright 2016 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/usd/usdRi/splineAPI.h"
+#include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
+#include "wabi/usd/usd/pyConversions.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/wrapTypeHelpers.h"
-#include "wabi/usd/usd/pyConversions.h"
 
 #include <boost/python.hpp>
 
@@ -47,58 +41,86 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
-namespace
+namespace {
+
+#define WRAP_CUSTOM                                                     \
+    template <class Cls> static void _CustomWrapCode(Cls &_class)
+
+// fwd decl.
+WRAP_CUSTOM;
+
+
+static std::string
+_Repr(const UsdRiSplineAPI &self)
 {
-
-#define WRAP_CUSTOM template<class Cls> static void _CustomWrapCode(Cls &_class)
-
-  // fwd decl.
-  WRAP_CUSTOM;
-
-  static std::string _Repr(const UsdRiSplineAPI &self)
-  {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf("UsdRi.SplineAPI(%s)", primRepr.c_str());
-  }
+    return TfStringPrintf(
+        "UsdRi.SplineAPI(%s)",
+        primRepr.c_str());
+}
 
-}  // anonymous namespace
+struct UsdRiSplineAPI_CanApplyResult : 
+    public TfPyAnnotatedBoolResult<std::string>
+{
+    UsdRiSplineAPI_CanApplyResult(bool val, std::string const &msg) :
+        TfPyAnnotatedBoolResult<std::string>(val, msg) {}
+};
+
+static UsdRiSplineAPI_CanApplyResult
+_WrapCanApply(const UsdPrim& prim)
+{
+    std::string whyNot;
+    bool result = UsdRiSplineAPI::CanApply(prim, &whyNot);
+    return UsdRiSplineAPI_CanApplyResult(result, whyNot);
+}
+
+} // anonymous namespace
 
 void wrapUsdRiSplineAPI()
 {
-  typedef UsdRiSplineAPI This;
+    typedef UsdRiSplineAPI This;
 
-  class_<This, bases<UsdAPISchemaBase>> cls("SplineAPI");
+    UsdRiSplineAPI_CanApplyResult::Wrap<UsdRiSplineAPI_CanApplyResult>(
+        "_CanApplyResult", "whyNot");
 
-  cls.def(init<UsdPrim>(arg("prim")))
-    .def(init<UsdSchemaBase const &>(arg("schemaObj")))
-    .def(TfTypePythonClass())
+    class_<This, bases<UsdAPISchemaBase> >
+        cls("SplineAPI");
 
-    .def("Get", &This::Get, (arg("stage"), arg("path")))
-    .staticmethod("Get")
+    cls
+        .def(init<UsdPrim>(arg("prim")))
+        .def(init<UsdSchemaBase const&>(arg("schemaObj")))
+        .def(TfTypePythonClass())
 
-    .def("Apply", &This::Apply, (arg("prim")))
-    .staticmethod("Apply")
+        .def("Get", &This::Get, (arg("stage"), arg("path")))
+        .staticmethod("Get")
 
-    .def("GetSchemaAttributeNames",
-         &This::GetSchemaAttributeNames,
-         arg("includeInherited") = true,
-         return_value_policy<TfPySequenceToList>())
-    .staticmethod("GetSchemaAttributeNames")
+        .def("CanApply", &_WrapCanApply, (arg("prim")))
+        .staticmethod("CanApply")
 
-    .def("GetStaticTfType",
-         (TfType const &(*)())TfType::Find<This>,
-         return_value_policy<return_by_value>())
-    .staticmethod("GetStaticTfType")
+        .def("Apply", &This::Apply, (arg("prim")))
+        .staticmethod("Apply")
 
-    .def(!self)
+        .def("GetSchemaAttributeNames",
+             &This::GetSchemaAttributeNames,
+             arg("includeInherited")=true,
+             return_value_policy<TfPySequenceToList>())
+        .staticmethod("GetSchemaAttributeNames")
 
-    .def("__repr__", ::_Repr);
+        .def("_GetStaticTfType", (TfType const &(*)()) TfType::Find<This>,
+             return_value_policy<return_by_value>())
+        .staticmethod("_GetStaticTfType")
 
-  _CustomWrapCode(cls);
+        .def(!self)
+
+
+        .def("__repr__", ::_Repr)
+    ;
+
+    _CustomWrapCode(cls);
 }
 
 // ===================================================================== //
-// Feel free to add custom code below this line, it will be preserved by
+// Feel free to add custom code below this line, it will be preserved by 
 // the code generator.  The entry point for your custom code should look
 // minimally like the following:
 //
@@ -109,69 +131,75 @@ void wrapUsdRiSplineAPI()
 // }
 //
 // Of course any other ancillary or support code may be provided.
-//
+// 
 // Just remember to wrap code in the appropriate delimiters:
 // 'namespace {', '}'.
 //
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
 
-namespace
-{
+namespace {
 
-  static UsdAttribute _CreateInterpolationAttr(UsdRiSplineAPI &self,
-                                               object defaultVal,
-                                               bool writeSparsely)
-  {
-    return self.CreateInterpolationAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                        writeSparsely);
-  }
+static UsdAttribute
+_CreateInterpolationAttr(UsdRiSplineAPI &self,
+                                      object defaultVal, bool writeSparsely) {
+    return self.CreateInterpolationAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token), writeSparsely);
+}
 
-  static UsdAttribute _CreatePositionsAttr(UsdRiSplineAPI &self,
-                                           object defaultVal,
-                                           bool writeSparsely)
-  {
-    return self.CreatePositionsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                    writeSparsely);
-  }
+static UsdAttribute
+_CreatePositionsAttr(UsdRiSplineAPI &self,
+                                      object defaultVal, bool writeSparsely) {
+    return self.CreatePositionsAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray), writeSparsely);
+}
+        
+static UsdAttribute
+_CreateValuesAttr(UsdRiSplineAPI &self,
+                                      object defaultVal, bool writeSparsely) {
+    return self.CreateValuesAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray), writeSparsely);
+}
 
-  static UsdAttribute _CreateValuesAttr(UsdRiSplineAPI &self,
-                                        object defaultVal,
-                                        bool writeSparsely)
-  {
-    return self.CreateValuesAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->FloatArray),
-                                 writeSparsely);
-  }
-
-  static boost::python::tuple _Validate(const UsdRiSplineAPI &self)
-  {
+static boost::python::tuple 
+_Validate(const UsdRiSplineAPI &self) {
     std::string reason;
     bool result = self.Validate(&reason);
     return boost::python::make_tuple(result, reason);
-  }
+}
 
-  WRAP_CUSTOM
-  {
+
+WRAP_CUSTOM {
     typedef UsdRiSplineAPI This;
-    _class.def(init<const UsdPrim &, const TfToken &, const SdfValueTypeName &, bool>())
-      .def(init<const UsdSchemaBase &, const TfToken &, const SdfValueTypeName &, bool>())
+    _class
+        .def(init<const UsdPrim &, const TfToken &,
+             const SdfValueTypeName &, bool>())
+        .def(init<const UsdSchemaBase &, const TfToken &,
+             const SdfValueTypeName &, bool>())
 
-      .def("GetValuesTypeName", &This::GetValuesTypeName)
+        .def("GetValuesTypeName", &This::GetValuesTypeName)
 
-      .def("GetInterpolationAttr", &This::GetInterpolationAttr)
-      .def("CreateInterpolationAttr",
-           &_CreateInterpolationAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
-      .def("GetPositionsAttr", &This::GetPositionsAttr)
-      .def("CreatePositionsAttr",
-           &_CreatePositionsAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
-      .def("GetValuesAttr", &This::GetValuesAttr)
-      .def("CreateValuesAttr",
-           &_CreateValuesAttr,
-           (arg("defaultValue") = object(), arg("writeSparsely") = false))
+        .def("GetInterpolationAttr",
+             &This::GetInterpolationAttr)
+        .def("CreateInterpolationAttr",
+             &_CreateInterpolationAttr,
+             (arg("defaultValue")=object(),
+              arg("writeSparsely")=false))
+        .def("GetPositionsAttr",
+             &This::GetPositionsAttr)
+        .def("CreatePositionsAttr",
+             &_CreatePositionsAttr,
+             (arg("defaultValue")=object(),
+              arg("writeSparsely")=false))
+        .def("GetValuesAttr",
+             &This::GetValuesAttr)
+        .def("CreateValuesAttr",
+             &_CreateValuesAttr,
+             (arg("defaultValue")=object(),
+              arg("writeSparsely")=false))
 
-      .def("Validate", &_Validate);
-  }
+        .def("Validate", &_Validate)
+        ;
+}
 
-}  // namespace
+}
