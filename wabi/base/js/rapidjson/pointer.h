@@ -954,9 +954,8 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
 #ifndef __clang__  // -Wdocumentation
                    /*!
                        \param source Either a JSON Pointer string, or its URI fragment representation. Not need to
-                      be null terminated.                  \param length Length of the source string.                  \note                  Source
-                      cannot be JSON                  String Representation of JSON Pointer, e.g. In
-                      "/\u0000",                  \u0000                  will not be                  unescaped.
+                      be null terminated.                  \param length Length of the source string.                  \note Source cannot be JSON
+                      String Representation of JSON Pointer, e.g. In "/\u0000", \u0000 will not be unescaped.
                    */
 #endif
   void Parse(const Ch *source, size_t length)
@@ -1217,13 +1216,13 @@ template<typename ValueType, typename Allocator = CrtAllocator> class GenericPoi
     OutputStream &os_;
   };
 
-  Allocator *allocator_;     //!< The current allocator. It is either user-supplied or equal to
-                             //!< ownAllocator_.
-  Allocator *ownAllocator_;  //!< Allocator owned by this Pointer.
-  Ch *nameBuffer_;           //!< A buffer containing all names in tokens.
-  Token *tokens_;            //!< A list of tokens.
-  size_t tokenCount_;        //!< Number of tokens in tokens_.
-  size_t parseErrorOffset_;  //!< Offset in code unit when parsing fail.
+  Allocator
+    *allocator_;  //!< The current allocator. It is either user-supplied or equal to ownAllocator_.
+  Allocator *ownAllocator_;               //!< Allocator owned by this Pointer.
+  Ch *nameBuffer_;                        //!< A buffer containing all names in tokens.
+  Token *tokens_;                         //!< A list of tokens.
+  size_t tokenCount_;                     //!< Number of tokens in tokens_.
+  size_t parseErrorOffset_;               //!< Offset in code unit when parsing fail.
   PointerParseErrorCode parseErrorCode_;  //!< Parsing error code.
 };
 

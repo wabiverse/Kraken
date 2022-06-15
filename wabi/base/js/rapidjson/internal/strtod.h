@@ -15,9 +15,9 @@
 #ifndef RAPIDJSON_STRTOD_
 #define RAPIDJSON_STRTOD_
 
+#include "ieee754.h"
 #include "biginteger.h"
 #include "diyfp.h"
-#include "ieee754.h"
 #include "pow10.h"
 
 RAPIDJSON_NAMESPACE_BEGIN

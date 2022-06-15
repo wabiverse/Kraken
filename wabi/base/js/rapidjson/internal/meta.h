@@ -52,6 +52,7 @@ namespace internal
   typedef BoolType<true> TrueType;
   typedef BoolType<false> FalseType;
 
+
   ///////////////////////////////////////////////////////////////////////////////
   // SelectIf, BoolExpr, NotExpr, AndExpr, OrExpr
   //
@@ -94,6 +95,7 @@ namespace internal
   template<typename C1, typename C2> struct OrExpr : OrExprCond<C1::Value, C2::Value>::Type
   {};
 
+
   ///////////////////////////////////////////////////////////////////////////////
   // AddConst, MaybeAddConst, RemoveConst
   template<typename T> struct AddConst
@@ -110,6 +112,7 @@ namespace internal
   {
     typedef T Type;
   };
+
 
   ///////////////////////////////////////////////////////////////////////////////
   // IsSame, IsConst, IsMoreConst, IsPointer
@@ -173,6 +176,7 @@ namespace internal
   {};
 
 #endif  // RAPIDJSON_HAS_CXX11_TYPETRAITS
+
 
   //////////////////////////////////////////////////////////////////////////
   // EnableIf / DisableIf

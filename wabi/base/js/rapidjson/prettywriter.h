@@ -67,6 +67,7 @@ class PrettyWriter
       formatOptions_(kFormatDefault)
   {}
 
+
   explicit PrettyWriter(StackAllocator *allocator = 0,
                         size_t levelDepth = Base::kDefaultLevelDepth)
     : Base(allocator, levelDepth),

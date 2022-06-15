@@ -15,11 +15,11 @@
 #ifndef RAPIDJSON_WRITER_H_
 #define RAPIDJSON_WRITER_H_
 
-#include "internal/dtoa.h"
-#include "internal/itoa.h"
+#include "stream.h"
 #include "internal/stack.h"
 #include "internal/strfunc.h"
-#include "stream.h"
+#include "internal/dtoa.h"
+#include "internal/itoa.h"
 #include "stringbuffer.h"
 #include <new>  // placement new
 
@@ -421,18 +421,12 @@ class Writer
     static const char escape[256] = {
 #define Z16 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       // 0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
-      'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'b', 't', 'n', 'u', 'f',  'r', 'u',
-      'u',  // 00
-      'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',  'u', 'u',
-      'u',  // 10
-      0,   0,   '"', 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,
-      0,  // 20
-      Z16,
-      Z16,  // 30~4F
-      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   '\\', 0,   0,
-      0,  // 50
-      Z16, Z16, Z16, Z16, Z16, Z16, Z16, Z16, Z16,
-      Z16  // 60~FF
+      'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'b', 't', 'n', 'u', 'f',  'r', 'u', 'u',  // 00
+      'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',  'u', 'u', 'u',  // 10
+      0,   0,   '"', 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,   0,    // 20
+      Z16, Z16,                                                                         // 30~4F
+      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   '\\', 0,   0,   0,    // 50
+      Z16, Z16, Z16, Z16, Z16, Z16, Z16, Z16, Z16, Z16                                  // 60~FF
 #undef Z16
     };
 

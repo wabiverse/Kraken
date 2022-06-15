@@ -17,11 +17,11 @@
 
 /*! \file document.h */
 
-#include "encodedstream.h"
+#include "reader.h"
 #include "internal/meta.h"
 #include "internal/strfunc.h"
 #include "memorystream.h"
-#include "reader.h"
+#include "encodedstream.h"
 #include <new>  // placement new
 
 #ifdef _MSC_VER
@@ -93,22 +93,19 @@ template<typename Encoding, typename Allocator> struct GenericMember
 
     \see GenericMember, GenericValue::MemberIterator, GenericValue::ConstMemberIterator
  */
-template<bool Const, typename Encoding, typename Allocator> class GenericMemberIterator
+template<bool Const, typename Encoding, typename Allocator>
+class GenericMemberIterator
+  : public std::iterator<
+      std::random_access_iterator_tag,
+      typename internal::MaybeAddConst<Const, GenericMember<Encoding, Allocator>>::Type>
 {
-
-  typedef GenericMember<Encoding, Allocator> PlainType;
-  typedef typename internal::MaybeAddConst<Const, PlainType>::Type ValueType;
 
   friend class GenericValue<Encoding, Allocator>;
   template<bool, typename, typename> friend class GenericMemberIterator;
 
-  using difference_type = std::ptrdiff_t;
-  using value_type = ValueType;
-  using reference = typename std::conditional<Const, value_type const &, value_type &>::type;
-  using pointer = typename std::conditional<Const, value_type const *, value_type *>::type;
-  using iterator_category = std::random_access_iterator_tag;
-
-  using BaseType = GenericMemberIterator<Const, Encoding, Allocator>;
+  typedef GenericMember<Encoding, Allocator> PlainType;
+  typedef typename internal::MaybeAddConst<Const, PlainType>::Type ValueType;
+  typedef std::iterator<std::random_access_iterator_tag, ValueType> BaseType;
 
  public:
 
@@ -1727,6 +1724,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
   }
 #endif  // RAPIDJSON_HAS_CXX11_RVALUE_REFS
 
+
   //! Add a member (name-value pair) to the object.
   /*! \param name A constant string reference as name of member.
       \param value Value of any type.
@@ -2489,7 +2487,7 @@ template<typename Encoding, typename Allocator = MemoryPoolAllocator<>> class Ge
 #elif RAPIDJSON_64BIT
     char payload[sizeof(SizeType) * 2 + sizeof(void *) + 6];  // 6 padding bytes
 #else
-      char payload[sizeof(SizeType) * 2 + sizeof(void *) + 2];  // 2 padding bytes
+          char payload[sizeof(SizeType) * 2 + sizeof(void *) + 2];  // 2 padding bytes
 #endif
     uint16_t flags;
   };

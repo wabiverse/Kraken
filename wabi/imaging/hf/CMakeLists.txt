@@ -18,7 +18,7 @@ wabi_library(hf
     PUBLIC_CLASSES
         pluginBase
         pluginRegistry
-
+        
     PRIVATE_CLASSES
         pluginEntry
 )

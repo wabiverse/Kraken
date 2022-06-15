@@ -21,44 +21,53 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HF_PLUGIN_BASE_H
-#define WABI_IMAGING_HF_PLUGIN_BASE_H
+///
+/// \file testenv/testJsIO.cpp
 
 #include "wabi/wabi.h"
-#include "wabi/imaging/hf/api.h"
+#include "wabi/base/js/json.h"
 
-WABI_NAMESPACE_BEGIN
+#include <iostream>
+#include <fstream>
 
-///
-/// \class HfPluginBase
-///
-/// Base class for all hydra plugin classes. This class provides no
-/// functionality other than to serve as a polymorphic type for the
-/// plugin registry.
-///
-class HfPluginBase
+WABI_NAMESPACE_USING
+
+int main(int argc, char const *argv[])
 {
- public:
+  if (argc != 3) {
+    fprintf(stderr, "Usage: %s inputFile outputFile\n", argv[0]);
+    return 1;
+  }
 
-  HF_API
-  virtual ~HfPluginBase();  // = default: See workaround in cpp file
+  std::ifstream ifs(argv[1]);
+  if (!ifs) {
+    fprintf(stderr, "Error: failed to open input file '%s'", argv[1]);
+    return 2;
+  }
 
- protected:
+  JsParseError error;
+  const JsValue value = JsParseStream(ifs, &error);
 
-  // Pure virtual class, must be derived
-  HF_API
-  HfPluginBase() = default;
+  if (value.IsNull()) {
+    fprintf(stderr,
+            "Error: parse error at %s:%d:%d: %s\n",
+            argv[1],
+            error.line,
+            error.column,
+            error.reason.c_str());
+    return 2;
+  }
 
- private:
+  if (argv[2][0] == '-') {
+    JsWriteToStream(value, std::cout);
+  } else {
+    std::ofstream ofs(argv[2]);
+    if (!ofs) {
+      fprintf(stderr, "Error: failed to open output file '%s'", argv[2]);
+      return 2;
+    }
+    JsWriteToStream(value, ofs);
+  }
 
-  ///
-  /// This class is not intended to be copied.
-  ///
-  HfPluginBase(const HfPluginBase &) = delete;
-  HfPluginBase &operator=(const HfPluginBase &) = delete;
-};
-
-
-WABI_NAMESPACE_END
-
-#endif  // WABI_IMAGING_HF_PLUGIN_BASE_H
+  return 0;
+}

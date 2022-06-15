@@ -21,44 +21,30 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HF_PLUGIN_BASE_H
-#define WABI_IMAGING_HF_PLUGIN_BASE_H
+///
+/// \file testenv/testJsUtils.cpp
 
 #include "wabi/wabi.h"
-#include "wabi/imaging/hf/api.h"
+#include "wabi/base/js/utils.h"
+#include "wabi/base/tf/diagnosticLite.h"
 
-WABI_NAMESPACE_BEGIN
+WABI_NAMESPACE_USING
 
-///
-/// \class HfPluginBase
-///
-/// Base class for all hydra plugin classes. This class provides no
-/// functionality other than to serve as a polymorphic type for the
-/// plugin registry.
-///
-class HfPluginBase
+int main(int argc, char const *argv[])
 {
- public:
+  JsObject emptyObject;
+  TF_AXIOM(!JsFindValue(emptyObject, "key"));
+  JsOptionalValue v = JsFindValue(emptyObject, "key", JsValue("value"));
+  TF_AXIOM(v);
+  TF_AXIOM(v->IsString());
+  TF_AXIOM(v->GetString() == "value");
 
-  HF_API
-  virtual ~HfPluginBase();  // = default: See workaround in cpp file
+  JsObject object;
+  object["key"] = JsValue(42);
+  JsOptionalValue jsInt = JsFindValue(object, "key", JsValue(43));
+  TF_AXIOM(jsInt);
+  TF_AXIOM(jsInt->IsInt());
+  TF_AXIOM(jsInt->GetInt() == 42);
 
- protected:
-
-  // Pure virtual class, must be derived
-  HF_API
-  HfPluginBase() = default;
-
- private:
-
-  ///
-  /// This class is not intended to be copied.
-  ///
-  HfPluginBase(const HfPluginBase &) = delete;
-  HfPluginBase &operator=(const HfPluginBase &) = delete;
-};
-
-
-WABI_NAMESPACE_END
-
-#endif  // WABI_IMAGING_HF_PLUGIN_BASE_H
+  return 0;
+}

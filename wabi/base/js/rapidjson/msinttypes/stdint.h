@@ -111,6 +111,7 @@ extern "C" {
 #      endif
 #    endif
 
+
 // 7.18.1 Integer types
 
 // 7.18.1.1 Exact-width integer types
@@ -135,6 +136,7 @@ typedef unsigned __int32 uint32_t;
 #    endif
 typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
+
 
 // 7.18.1.2 Minimum-width integer types
 typedef int8_t int_least8_t;
@@ -169,11 +171,12 @@ typedef _W64 unsigned int uintptr_t;
 typedef int64_t intmax_t;
 typedef uint64_t uintmax_t;
 
+
 // 7.18.2 Limits of specified-width integer types
 
 #    if !defined(__cplusplus) || \
-      defined(__STDC_LIMIT_MACROS)  // [   See footnote 220 at page 257 \
-                                                               // and footnote 221 at page 259
+      defined(                   \
+        __STDC_LIMIT_MACROS)  // [   See footnote 220 at page 257 and footnote 221 at page 259
 
 // 7.18.2.1 Limits of exact-width integer types
 #      define INT8_MIN ((int8_t)_I8_MIN)
@@ -266,6 +269,7 @@ typedef uint64_t uintmax_t;
 #      define WINT_MAX _UI16_MAX
 
 #    endif  // __STDC_LIMIT_MACROS ]
+
 
 // 7.18.4 Limits of other integer types
 

@@ -1,5 +1,5 @@
 //
-// Copyright 2016 Pixar
+// Copyright 2018 Pixar
 //
 // Licensed under the Apache License, Version 2.0 (the "Apache License")
 // with the following modification; you may not use this file except in
@@ -21,44 +21,43 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HF_PLUGIN_BASE_H
-#define WABI_IMAGING_HF_PLUGIN_BASE_H
+///
+/// \file testenv/testJsDouble.cpp
 
 #include "wabi/wabi.h"
-#include "wabi/imaging/hf/api.h"
+#include "wabi/base/js/json.h"
+#include "wabi/base/tf/diagnosticLite.h"
 
-WABI_NAMESPACE_BEGIN
+#include <iostream>
+#include <sstream>
 
-///
-/// \class HfPluginBase
-///
-/// Base class for all hydra plugin classes. This class provides no
-/// functionality other than to serve as a polymorphic type for the
-/// plugin registry.
-///
-class HfPluginBase
+WABI_NAMESPACE_USING
+
+void TestStreamInterface(const double d)
 {
- public:
+  JsValue v(d);
+  std::stringstream sstr;
+  JsWriteToStream(v, sstr);
+  std::cout << sstr.str() << std::endl;
+  JsValue v2 = JsParseStream(sstr);
+  TF_AXIOM(v2.IsReal());
+  TF_AXIOM(v2.GetReal() == d);
+}
 
-  HF_API
-  virtual ~HfPluginBase();  // = default: See workaround in cpp file
+void TestWriterInterface(const double d)
+{
+  std::stringstream sstr;
+  JsWriter writer(sstr);
+  writer.WriteValue(d);
+  std::cout << sstr.str() << std::endl;
+  JsValue v2 = JsParseStream(sstr);
+  TF_AXIOM(v2.IsReal());
+  TF_AXIOM(v2.GetReal() == d);
+}
 
- protected:
-
-  // Pure virtual class, must be derived
-  HF_API
-  HfPluginBase() = default;
-
- private:
-
-  ///
-  /// This class is not intended to be copied.
-  ///
-  HfPluginBase(const HfPluginBase &) = delete;
-  HfPluginBase &operator=(const HfPluginBase &) = delete;
-};
-
-
-WABI_NAMESPACE_END
-
-#endif  // WABI_IMAGING_HF_PLUGIN_BASE_H
+int main(int argc, char const *argv[])
+{
+  const double d = 0.42745098039215684;
+  TestStreamInterface(d);
+  TestWriterInterface(d);
+}

@@ -19,9 +19,9 @@
 #ifndef RAPIDJSON_DTOA_
 #define RAPIDJSON_DTOA_
 
+#include "itoa.h"  // GetDigitsLut()
 #include "diyfp.h"
 #include "ieee754.h"
-#include "itoa.h"  // GetDigitsLut()
 
 RAPIDJSON_NAMESPACE_BEGIN
 namespace internal

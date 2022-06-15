@@ -363,6 +363,7 @@ template<typename CharType = wchar_t> struct UTF16
     }
   }
 
+
   template<typename OutputStream> static void EncodeUnsafe(OutputStream &os, unsigned codepoint)
   {
     RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputStream::Ch) >= 2);

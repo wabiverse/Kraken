@@ -27,6 +27,7 @@
 #include "wabi/wabi.h"
 #include "wabi/base/tf/singleton.h"
 #include "wabi/base/tf/staticTokens.h"
+#include "wabi/base/plug/registry.h"
 #include "wabi/imaging/hf/pluginRegistry.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/sceneIndex.h"

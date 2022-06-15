@@ -18,11 +18,11 @@
 /*! \file reader.h */
 
 #include "allocators.h"
+#include "stream.h"
 #include "encodedstream.h"
 #include "internal/meta.h"
 #include "internal/stack.h"
 #include "internal/strtod.h"
-#include "stream.h"
 
 #if defined(RAPIDJSON_SIMD) && defined(_MSC_VER)
 #  include <intrin.h>
@@ -82,8 +82,8 @@ RAPIDJSON_DIAG_OFF(effc++)
     #define RAPIDJSON_PARSE_ERROR_NORETURN(parseErrorCode,offset) \
        throw ParseException(parseErrorCode, #parseErrorCode, offset)
 
-    #include "rapidjson/error/error.h" // rapidjson::ParseResult
     #include <stdexcept>               // std::runtime_error
+    #include "rapidjson/error/error.h" // rapidjson::ParseResult
 
     struct ParseException : std::runtime_error, rapidjson::ParseResult {
       ParseException(rapidjson::ParseErrorCode code, const char* msg, size_t offset)
@@ -1751,8 +1751,7 @@ class GenericReader
       N,           N,
       N,           N,
       CommaToken,  N,
-      N,
-      N,  // 20~2F
+      N,           N,  // 20~2F
       N,           N,
       N,           N,
       N,           N,
@@ -1760,9 +1759,8 @@ class GenericReader
       N,           N,
       ColonToken,  N,
       N,           N,
-      N,
-      N,    // 30~3F
-      N16,  // 40~4F
+      N,           N,  // 30~3F
+      N16,             // 40~4F
       N,           N,
       N,           N,
       N,           N,
@@ -1770,8 +1768,7 @@ class GenericReader
       N,           N,
       N,           LeftBracketToken,
       N,           RightBracketToken,
-      N,
-      N,  // 50~5F
+      N,           N,  // 50~5F
       N,           N,
       N,           N,
       N,           N,
@@ -1779,8 +1776,7 @@ class GenericReader
       N,           N,
       N,           N,
       N,           N,
-      NullToken,
-      N,  // 60~6F
+      NullToken,   N,  // 60~6F
       N,           N,
       N,           N,
       TrueToken,   N,
@@ -1788,13 +1784,11 @@ class GenericReader
       N,           N,
       N,           LeftCurlyBracketToken,
       N,           RightCurlyBracketToken,
-      N,
-      N,  // 70~7F
+      N,           N,  // 70~7F
       N16,         N16,
       N16,         N16,
       N16,         N16,
-      N16,
-      N16  // 80~FF
+      N16,         N16  // 80~FF
     };
 #undef N
 #undef N16
@@ -1810,104 +1804,167 @@ class GenericReader
   {
     // current state x one lookahead token -> new state
     static const char G[cIterativeParsingStateCount][kTokenCount] = {
+  // Start
       {
-       IterativeParsingArrayInitialState, IterativeParsingErrorState,
-       IterativeParsingObjectInitialState,                                 IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                              IterativeParsingErrorState,
-       IterativeParsingValueState,                                         IterativeParsingValueState,
-       IterativeParsingValueState,                                                                IterativeParsingValueState,
-       IterativeParsingValueState, },
+       IterativeParsingArrayInitialState, // Left bracket
+        IterativeParsingErrorState,       // Right bracket
+        IterativeParsingObjectInitialState,       // Left curly bracket
+        IterativeParsingErrorState,       // Right curly bracket
+        IterativeParsingErrorState,       // Comma
+        IterativeParsingErrorState,       // Colon
+        IterativeParsingValueState,         // String
+        IterativeParsingValueState,             // False
+        IterativeParsingValueState,                   // True
+        IterativeParsingValueState,                         // Null
+        IterativeParsingValueState           // Number
+      },
+ // Finish(sink state)
+      {IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                               IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                     IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                                                                                                   IterativeParsingErrorState                           },
+ // Error(sink state)
+      {IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                               IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                     IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                                                                                                   IterativeParsingErrorState                           },
+ // ObjectInitial
       {
-       IterativeParsingErrorState,                                IterativeParsingErrorState,
-       IterativeParsingErrorState,                                         IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                              IterativeParsingErrorState,
-       IterativeParsingErrorState,                                         IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                                IterativeParsingErrorState,
-       IterativeParsingErrorState, },
+       IterativeParsingErrorState,        // Left bracket
+        IterativeParsingErrorState,              // Right bracket
+        IterativeParsingErrorState,                      // Left curly bracket
+        IterativeParsingObjectFinishState,               // Right curly bracket
+        IterativeParsingErrorState,               // Comma
+        IterativeParsingErrorState,               // Colon
+        IterativeParsingMemberKeyState,             // String
+        IterativeParsingErrorState,                 // False
+        IterativeParsingErrorState,                       // True
+        IterativeParsingErrorState,                             // Null
+        IterativeParsingErrorState          // Number
+      },
+ // MemberKey
       {
-       IterativeParsingErrorState,       IterativeParsingErrorState,
-       IterativeParsingErrorState,                                     IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                              IterativeParsingErrorState,
-       IterativeParsingErrorState,                                         IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                                IterativeParsingErrorState,
-       IterativeParsingErrorState, },
+       IterativeParsingErrorState,        // Left bracket
+        IterativeParsingErrorState,              // Right bracket
+        IterativeParsingErrorState,                      // Left curly bracket
+        IterativeParsingErrorState,                      // Right curly bracket
+        IterativeParsingErrorState,                      // Comma
+        IterativeParsingKeyValueDelimiterState,          // Colon
+        IterativeParsingErrorState,            // String
+        IterativeParsingErrorState,                // False
+        IterativeParsingErrorState,                      // True
+        IterativeParsingErrorState,                            // Null
+        IterativeParsingErrorState               // Number
+      },
+ // KeyValueDelimiter
       {
-       IterativeParsingErrorState,       IterativeParsingErrorState,
-       IterativeParsingErrorState,             IterativeParsingObjectFinishState,
-       IterativeParsingErrorState,                                                          IterativeParsingErrorState,
-       IterativeParsingMemberKeyState,                                         IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                                IterativeParsingErrorState,
-       IterativeParsingErrorState, },
+       IterativeParsingArrayInitialState, // Left bracket(push MemberValue state)
+        IterativeParsingErrorState,       // Right bracket
+        IterativeParsingObjectInitialState,       // Left curly bracket(push MemberValue state)
+        IterativeParsingErrorState,       // Right curly bracket
+        IterativeParsingErrorState,       // Comma
+        IterativeParsingErrorState,       // Colon
+        IterativeParsingMemberValueState,   // String
+        IterativeParsingMemberValueState, // False
+        IterativeParsingMemberValueState, // True
+        IterativeParsingMemberValueState, // Null
+        IterativeParsingMemberValueState     // Number
+      },
+ // MemberValue
       {
-       IterativeParsingErrorState,       IterativeParsingErrorState,
-       IterativeParsingErrorState,         IterativeParsingErrorState,
-       IterativeParsingErrorState,                                  IterativeParsingKeyValueDelimiterState,
-       IterativeParsingErrorState,                                     IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                                IterativeParsingErrorState,
-       IterativeParsingErrorState, },
+       IterativeParsingErrorState,        // Left bracket
+        IterativeParsingErrorState,              // Right bracket
+        IterativeParsingErrorState,                      // Left curly bracket
+        IterativeParsingObjectFinishState,               // Right curly bracket
+        IterativeParsingMemberDelimiterState,     // Comma
+        IterativeParsingErrorState,     // Colon
+        IterativeParsingErrorState,       // String
+        IterativeParsingErrorState,           // False
+        IterativeParsingErrorState,                 // True
+        IterativeParsingErrorState,                       // Null
+        IterativeParsingErrorState             // Number
+      },
+ // MemberDelimiter
       {
-       IterativeParsingArrayInitialState,       IterativeParsingErrorState,
-       IterativeParsingObjectInitialState, IterativeParsingErrorState,
-       IterativeParsingErrorState,                                  IterativeParsingErrorState,
-       IterativeParsingMemberValueState,             IterativeParsingMemberValueState,
-       IterativeParsingMemberValueState,                                                            IterativeParsingMemberValueState,
-       IterativeParsingMemberValueState, },
+       IterativeParsingErrorState,        // Left bracket
+        IterativeParsingErrorState,              // Right bracket
+        IterativeParsingErrorState,                      // Left curly bracket
+        IterativeParsingErrorState,                      // Right curly bracket
+        IterativeParsingErrorState,                      // Comma
+        IterativeParsingErrorState,                      // Colon
+        IterativeParsingMemberKeyState,                    // String
+        IterativeParsingErrorState,                        // False
+        IterativeParsingErrorState,                              // True
+        IterativeParsingErrorState,                                    // Null
+        IterativeParsingErrorState       // Number
+      },
+ // ObjectFinish(sink state)
+      {IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                               IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                     IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                                                                                                   IterativeParsingErrorState                           },
+ // ArrayInitial
       {
-       IterativeParsingErrorState, IterativeParsingErrorState,
-       IterativeParsingErrorState,     IterativeParsingObjectFinishState,
-       IterativeParsingMemberDelimiterState, IterativeParsingErrorState,
-       IterativeParsingErrorState,IterativeParsingErrorState,
-       IterativeParsingErrorState,IterativeParsingErrorState,
-       IterativeParsingErrorState, },
+       IterativeParsingArrayInitialState, // Left bracket(push Element state)
+        IterativeParsingArrayFinishState, // Right bracket
+        IterativeParsingObjectInitialState, // Left curly bracket(push Element state)
+        IterativeParsingErrorState, // Right curly bracket
+        IterativeParsingErrorState, // Comma
+        IterativeParsingErrorState, // Colon
+        IterativeParsingElementState, // String
+        IterativeParsingElementState,   // False
+        IterativeParsingElementState,       // True
+        IterativeParsingElementState,           // Null
+        IterativeParsingElementState         // Number
+      },
+ // Element
       {
-       IterativeParsingErrorState,                                  IterativeParsingErrorState,
-       IterativeParsingErrorState,             IterativeParsingErrorState,
-       IterativeParsingErrorState,                       IterativeParsingErrorState,
-       IterativeParsingMemberKeyState,   IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                IterativeParsingErrorState,
-       IterativeParsingErrorState, },
+       IterativeParsingErrorState,        // Left bracket
+        IterativeParsingArrayFinishState,        // Right bracket
+        IterativeParsingErrorState,                // Left curly bracket
+        IterativeParsingErrorState,                // Right curly bracket
+        IterativeParsingElementDelimiterState,     // Comma
+        IterativeParsingErrorState,     // Colon
+        IterativeParsingErrorState,       // String
+        IterativeParsingErrorState,           // False
+        IterativeParsingErrorState,                 // True
+        IterativeParsingErrorState,                       // Null
+        IterativeParsingErrorState              // Number
+      },
+ // ElementDelimiter
       {
-       IterativeParsingErrorState,       IterativeParsingErrorState,
-       IterativeParsingErrorState,                                    IterativeParsingErrorState,
-       IterativeParsingErrorState, IterativeParsingErrorState,
-       IterativeParsingErrorState, IterativeParsingErrorState,
-       IterativeParsingErrorState,              IterativeParsingErrorState,
-       IterativeParsingErrorState, },
-      {
-       IterativeParsingArrayInitialState,        IterativeParsingArrayFinishState,
-       IterativeParsingObjectInitialState,                                        IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                         IterativeParsingErrorState,
-       IterativeParsingElementState,       IterativeParsingElementState,
-       IterativeParsingElementState, IterativeParsingElementState,
-       IterativeParsingElementState, },
-      {
-       IterativeParsingErrorState,        IterativeParsingArrayFinishState,
-       IterativeParsingErrorState,                                         IterativeParsingErrorState,
-       IterativeParsingElementDelimiterState,                                                             IterativeParsingErrorState,
-       IterativeParsingErrorState,                                    IterativeParsingErrorState,
-       IterativeParsingErrorState,                IterativeParsingErrorState,
-       IterativeParsingErrorState, },
-      {
-       IterativeParsingArrayInitialState,        IterativeParsingErrorState,
-       IterativeParsingObjectInitialState,                                       IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                            IterativeParsingErrorState,
-       IterativeParsingElementState,                                      IterativeParsingElementState,
-       IterativeParsingElementState,                                                         IterativeParsingElementState,
-       IterativeParsingElementState, },
-      {
-       IterativeParsingErrorState,        IterativeParsingErrorState,
-       IterativeParsingErrorState,                              IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                              IterativeParsingErrorState,
-       IterativeParsingErrorState,                                         IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                               IterativeParsingErrorState,
-       IterativeParsingErrorState, },
-      {
-       IterativeParsingErrorState, IterativeParsingErrorState,
-       IterativeParsingErrorState,                                 IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                              IterativeParsingErrorState,
-       IterativeParsingErrorState,                                       IterativeParsingErrorState,
-       IterativeParsingErrorState,                                                              IterativeParsingErrorState,
-       IterativeParsingErrorState, },
+       IterativeParsingArrayInitialState, // Left bracket(push Element state)
+        IterativeParsingErrorState,       // Right bracket
+        IterativeParsingObjectInitialState,       // Left curly bracket(push Element state)
+        IterativeParsingErrorState,       // Right curly bracket
+        IterativeParsingErrorState,       // Comma
+        IterativeParsingErrorState,       // Colon
+        IterativeParsingElementState,       // String
+        IterativeParsingElementState,         // False
+        IterativeParsingElementState,             // True
+        IterativeParsingElementState,                 // Null
+        IterativeParsingElementState         // Number
+      },
+ // ArrayFinish(sink state)
+      {IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                               IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                     IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                                                                                                   IterativeParsingErrorState                           },
+ // Single Value (sink state)
+      {IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                               IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                     IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                 IterativeParsingErrorState,
+       IterativeParsingErrorState,                                                                                                                                                                                                                                                                                                                                                                   IterativeParsingErrorState                           }
     };  // End of G
 
     return static_cast<IterativeParsingState>(G[state][token]);
@@ -2145,6 +2202,7 @@ RAPIDJSON_NAMESPACE_END
 #ifdef __clang__
 RAPIDJSON_DIAG_POP
 #endif
+
 
 #ifdef __GNUC__
 RAPIDJSON_DIAG_POP

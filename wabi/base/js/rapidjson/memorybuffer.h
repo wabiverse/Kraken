@@ -15,8 +15,8 @@
 #ifndef RAPIDJSON_MEMORYBUFFER_H_
 #define RAPIDJSON_MEMORYBUFFER_H_
 
-#include "internal/stack.h"
 #include "stream.h"
+#include "internal/stack.h"
 
 RAPIDJSON_NAMESPACE_BEGIN
 
